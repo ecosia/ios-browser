@@ -1,0 +1,2 @@
+/.githooks/post-merge !text !filter !merge !diff
+firefox-ios/EcosiaTests/SnapshotTests/**/*.png filter=lfs diff=lfs merge=lfs -text
