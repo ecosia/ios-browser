@@ -1,2 +1,5 @@
+# Don't include third party files in the Github language stats!
+ThirdParty/* linguist-vendored=true
+FxA/* linguist-vendored=true
 /.githooks/post-merge !text !filter !merge !diff
 firefox-ios/EcosiaTests/SnapshotTests/**/*.png filter=lfs diff=lfs merge=lfs -text
