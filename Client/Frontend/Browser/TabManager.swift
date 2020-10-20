@@ -622,7 +622,7 @@ extension TabManager {
         return store.hasTabsToRestoreAtStartup
     }
 
-    func restoreTabs() {
+    func restoreTabs(_ forced: Bool = false) {
         defer {
             // Always make sure there is a single normal tab.
             if normalTabs.isEmpty {
@@ -633,7 +633,7 @@ extension TabManager {
             }
         }
         
-        guard count == 0, !AppConstants.IsRunningTest, !DebugSettingsBundleOptions.skipSessionRestore, store.hasTabsToRestoreAtStartup else {
+        guard forced || count == 0, !AppConstants.IsRunningTest, !DebugSettingsBundleOptions.skipSessionRestore, store.hasTabsToRestoreAtStartup else {
             return
         }
 
@@ -643,11 +643,11 @@ extension TabManager {
             tabToSelect = addTab(isPrivate: true)
         }
 
+        selectTab(tabToSelect)
+        
         for delegate in self.delegates {
             delegate.get()?.tabManagerDidRestoreTabs(self)
         }
-
-        selectTab(tabToSelect)
     }
 }
 
