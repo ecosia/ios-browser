@@ -61,6 +61,7 @@ struct TopSitesHandler {
             result.forEach { site in
                 // Favicon icon url
                 let iconUrl = site.icon?.url ?? ""
+                let webUrl = URL(string: site.url)
                 let imageKey = site.tileURL.baseDomain ?? ""
                 if let webUrl = URL(string: site.url) {
                     widgetkitTopSites.append(WidgetKitTopSiteModel(title: site.title, faviconUrl: iconUrl, url: webUrl, imageKey: imageKey))

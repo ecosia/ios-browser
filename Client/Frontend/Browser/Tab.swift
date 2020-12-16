@@ -50,6 +50,13 @@ struct TabState {
     var favicon: Favicon?
 }
 
+enum TabUrlType: String {
+    case regular
+    case search
+    case followOnSearch
+    case organicSearch
+}
+
 class Tab: NSObject {
     fileprivate var _isPrivate: Bool = false
     internal fileprivate(set) var isPrivate: Bool {
@@ -62,7 +69,7 @@ class Tab: NSObject {
             }
         }
     }
-
+    var urlType: TabUrlType = .regular
     var tabState: TabState {
         return TabState(isPrivate: _isPrivate, url: url, title: displayTitle, favicon: displayFavicon)
     }
@@ -75,6 +82,7 @@ class Tab: NSObject {
     
     // Setting defualt page as topsites
     var newTabPageType: NewTabPage = .topSites
+    var tabUUID: String = UUID().uuidString
 
     // To check if current URL is the starting page i.e. either blank page or internal page like topsites
     var isURLStartingPage: Bool {
@@ -111,7 +119,11 @@ class Tab: NSObject {
     var tabDelegate: TabDelegate?
     weak var urlDidChangeDelegate: URLChangeDelegate?     // TODO: generalize this.
     var bars = [SnackBar]()
-    var favicons = [Favicon]()
+    var favicons = [Favicon]() {
+        didSet {
+            updateFaviconCache()
+        }
+    }
     var lastExecutedTime: Timestamp?
     var sessionData: SessionData?
     fileprivate var lastRequest: URLRequest?
@@ -134,7 +146,7 @@ class Tab: NSObject {
     }
     var mimeType: String?
     var isEditing: Bool = false
-
+    var currentFaviconUrl: URL?
     // When viewing a non-HTML content type in the webview (like a PDF document), this URL will
     // point to a tempfile containing the content so it can be shared to external applications.
     var temporaryDocument: TemporaryDocument?
@@ -615,6 +627,32 @@ class Tab: NSObject {
 
     func applyTheme() {
         UITextField.appearance().keyboardAppearance = isPrivate ? .dark : (ThemeManager.instance.currentName == .dark ? .dark : .light)
+    }
+    
+    func getProviderForUrl() -> SearchEngine {
+        guard let url = self.webView?.url else {
+            return .none
+        }
+        for provider in SearchEngine.allCases {
+            if (url.absoluteString.contains(provider.rawValue)) {
+                return provider
+            }
+        }
+        return .none
+    }
+    
+    func updateFaviconCache() {
+        guard let displayFavicon = displayFavicon?.url, let faviconUrl = URL(string: displayFavicon), let baseDomain = url?.baseDomain else {
+            return
+        }
+
+        if currentFaviconUrl == nil {
+            currentFaviconUrl = faviconUrl
+        } else if !faviconUrl.isEqual(currentFaviconUrl!) {
+            return
+        }
+        
+        FaviconFetcher.downloadFaviconAndCache(imageURL: currentFaviconUrl, imageKey: baseDomain)
     }
 }
 
