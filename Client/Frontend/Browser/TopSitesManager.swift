@@ -7,6 +7,7 @@ import Shared
 import UIKit
 import Storage
 import SyncTelemetry
+import WidgetKit
 
 struct TopSitesHandler {
     static func getTopSites(profile: Profile) -> Deferred<[Site]> {      
@@ -53,24 +54,24 @@ struct TopSitesHandler {
         }
     }
     
-    // We compare WidgetKit top sites with client sites so as to avoid updating it if they are same
-    static func compareAndUpdateWidgetKitTopSite(clientSites:[TopSite])  {
-        let widgetSites = SiteArchiver.fetchTopSitesForWidget(topSiteArchivePath: topSitesWidgetKitArchivePath())
-        guard clientSites != widgetSites else { return }
-        TopSitesHandler.writeTopSitesForWidget(topSites: clientSites)
-    }
-    
-    static func writeTopSitesForWidget(topSites: [TopSite]) {
-        let tabStateData = NSMutableData()
-        let archiver = NSKeyedArchiver(forWritingWith: tabStateData)
-
-        DispatchQueue.main.async {
-            archiver.encode(topSites, forKey: "topSites")
-            archiver.finishEncoding()
-            
-            if let path = topSitesWidgetKitArchivePath() {
-                tabStateData.write(toFile: path, atomically: true)
+    @available(iOS 14.0, *)
+    static func writeWidgetKitTopSites(profile: Profile) {
+        TopSitesHandler.getTopSites(profile: profile).uponQueue(.main) { result in
+            var widgetkitTopSites = [WidgetKitTopSiteModel]()
+            result.forEach { site in
+                // Favicon icon url
+                let iconUrl = site.icon?.url ?? ""
+                let imageKey = site.tileURL.baseDomain ?? ""
+                if let webUrl = URL(string: site.url) {
+                    widgetkitTopSites.append(WidgetKitTopSiteModel(title: site.title, faviconUrl: iconUrl, url: webUrl, imageKey: imageKey))
+                    // fetch favicons and cache them on disk
+                    FaviconFetcher.downloadFaviconAndCache(imageURL: !iconUrl.isEmpty ? URL(string: iconUrl) : nil, imageKey: imageKey )
+                }
             }
+            // save top sites for widgetkit use
+            WidgetKitTopSiteModel.save(widgetKitTopSites: widgetkitTopSites)
+            // Update widget timeline
+            WidgetCenter.shared.reloadAllTimelines()
         }
     }
     
@@ -78,13 +79,6 @@ struct TopSitesHandler {
         let suggested = SuggestedSites.asArray()
         let deleted = profile.prefs.arrayForKey(DefaultSuggestedSitesKey) as? [String] ?? []
         return suggested.filter({deleted.firstIndex(of: $0.url) == .none})
-    }
-    
-    static func topSitesWidgetKitArchivePath() -> String? {
-        let profilePath: String?
-        profilePath = FileManager.default.containerURL( forSecurityApplicationGroupIdentifier: AppInfo.sharedContainerIdentifier)?.appendingPathComponent("profile.profile").path
-        guard let path = profilePath else { return nil }
-        return URL(fileURLWithPath: path).appendingPathComponent("topSites.archive").path
     }
     
     static let DefaultSuggestedSitesKey = "topSites.deletedSuggestedSites"
