@@ -198,9 +198,12 @@ class SiteTableViewController: UIViewController, UITableViewDelegate, UITableVie
 
         tableView.backgroundColor = UIColor.theme.tableView.rowBackground
         tableView.separatorColor = UIColor.theme.tableView.separator
+        tableView.visibleCells.forEach({ ($0 as? Themeable)?.applyTheme() })
         if let rows = tableView.indexPathsForVisibleRows {
-            tableView.reloadRows(at: rows, with: .none)
-            tableView.reloadSections(IndexSet(rows.map { $0.section }), with: .none)
+            IndexSet(rows.map { $0.section }).forEach {
+                (tableView.headerView(forSection: $0) as? Themeable)?.applyTheme()
+                (tableView.footerView(forSection: $0) as? Themeable)?.applyTheme()
+            }
         }
     }
 }
