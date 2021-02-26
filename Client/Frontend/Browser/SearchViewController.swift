@@ -57,9 +57,11 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
 
     // Views for displaying the bottom scrollable search engine list. searchEngineScrollView is the
     // scrollable container; searchEngineScrollViewContent contains the actual set of search engine buttons.
+    /* Ecosia: deactivate search engine customization
     fileprivate let searchEngineContainerView = UIView()
     fileprivate let searchEngineScrollView = ButtonScrollView()
     fileprivate let searchEngineScrollViewContent = UIView()
+    */
 
     fileprivate lazy var bookmarkedBadge: UIImage = {
         return UIImage.templateImageNamed("bookmarked_passive")!.tinted(withColor: .lightGray).createScaled(CGSize(width: 16, height: 16))
@@ -89,6 +91,7 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
 
         KeyboardHelper.defaultHelper.addDelegate(self)
 
+        /* Ecosia: deactivate search engine customization
         searchEngineContainerView.layer.backgroundColor = SearchViewControllerUX.SearchEngineScrollViewBackgroundColor
         searchEngineContainerView.layer.shadowRadius = 0
         searchEngineContainerView.layer.shadowOpacity = 100
@@ -102,8 +105,10 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
 
         searchEngineScrollViewContent.layer.backgroundColor = UIColor.clear.cgColor
         searchEngineScrollView.addSubview(searchEngineScrollViewContent)
+        */
 
         layoutTable()
+        /* Ecosia: deactivate search engine customization
         layoutSearchEngineScrollView()
 
         searchEngineScrollViewContent.snp.makeConstraints { make in
@@ -118,14 +123,17 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
             make.top.equalTo(self.searchEngineScrollView)
             make.bottom.equalTo(self.searchEngineScrollView)
         }
+        */
 
         blur.snp.makeConstraints { make in
             make.edges.equalTo(self.view)
         }
     
+        /* Ecosia: deactivate search engine customization
         searchEngineContainerView.snp.makeConstraints { make in
             make.left.right.bottom.equalToSuperview()
         }
+        */
 
         suggestionCell.delegate = self
 
@@ -144,6 +152,7 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
         reloadData()
     }
 
+    /* Ecosia: deactivate search engine customization
     fileprivate func layoutSearchEngineScrollView() {
         let keyboardHeight = KeyboardHelper.defaultHelper.currentState?.intersectionHeightForView(self.view) ?? 0
         searchEngineScrollView.snp.remakeConstraints { make in
@@ -155,6 +164,7 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
             }
         }
     }
+    */
 
     var searchEngines: SearchEngines! {
         didSet {
@@ -201,11 +211,12 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
         tableView.snp.remakeConstraints { make in
             make.top.equalTo(self.view.snp.top)
             make.leading.trailing.equalTo(self.view)
-            make.bottom.equalTo(self.searchEngineScrollView.snp.top)
+            make.bottom.equalTo(self.view.safeArea.bottom)
         }
     }
 
     fileprivate func reloadSearchEngines() {
+        /* Ecosia: deactivate search engine customization
         searchEngineScrollViewContent.subviews.forEach { $0.removeFromSuperview() }
         var leftEdge = searchEngineScrollViewContent.snp.left
 
@@ -255,9 +266,11 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
             }
             leftEdge = engineButton.snp.right
         }
+        */
     }
 
     @objc func didSelectEngine(_ sender: UIButton) {
+        /* Ecosia: deactivate search engine customization
         // The UIButtons are the same cardinality and order as the array of quick search engines.
         // Subtract 1 from index to account for magnifying glass accessory.
         guard let index = searchEngineScrollViewContent.subviews.firstIndex(of: sender) else {
@@ -276,6 +289,7 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
         //GleanMetrics.Search.counts["\(engine.engineID ?? "custom").\(SearchesMeasurement.SearchLocation.quickSearch.rawValue)"].add()
 
         searchDelegate?.searchViewController(self, didSelectURL: url)
+        */
     }
 
     @objc func didClickSearchButton() {
@@ -302,7 +316,8 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
     }
 
     fileprivate func animateSearchEnginesWithKeyboard(_ keyboardState: KeyboardState) {
-        layoutSearchEngineScrollView()
+        // Ecosia: remove search customization
+        // layoutSearchEngineScrollView()
 
         UIView.animate(withDuration: keyboardState.animationDuration, animations: {
             UIView.setAnimationCurve(keyboardState.animationCurve)
