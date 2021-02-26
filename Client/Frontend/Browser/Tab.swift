@@ -450,7 +450,7 @@ class Tab: NSObject {
             }
 
             // Ecosia: inject cookie
-            if let cookie = browserViewController?.tabManager.cookie {
+            if !isPrivate, let cookie = browserViewController?.tabManager.cookie {
                 webView.configuration.websiteDataStore.httpCookieStore.setCookie(cookie.value) {
                     completion?(webView.load(request))
                 }
