@@ -463,6 +463,9 @@
 		CAA2F3F3257A79C700EBAD38 /* FilterController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA2F3F2257A79C700EBAD38 /* FilterController.swift */; };
 		CAA2F430257A990C00EBAD38 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = CAA2F42F257A990C00EBAD38 /* Core */; };
 		CAA3B7E62497DCB60094E3C1 /* LoginDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA3B7E52497DCB60094E3C1 /* LoginDataSource.swift */; };
+		CAA6148525E961B100CA0D45 /* MozillaAppServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAA6148425E961B000CA0D45 /* MozillaAppServices.framework */; };
+		CAA6148625E961B100CA0D45 /* MozillaAppServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAA6148425E961B000CA0D45 /* MozillaAppServices.framework */; };
+		CAA6148725E961B200CA0D45 /* MozillaAppServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAA6148425E961B000CA0D45 /* MozillaAppServices.framework */; };
 		CAAD533F2541B68C002501A5 /* EcosiaTabs.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAAD533E2541B68C002501A5 /* EcosiaTabs.swift */; };
 		CAAD53542541B6A1002501A5 /* EcosiaHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAAD53532541B6A1002501A5 /* EcosiaHistory.swift */; };
 		CAAED1EF25810C7B0048199C /* NewsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAAED1ED25810C7A0048199C /* NewsController.swift */; };
@@ -478,9 +481,6 @@
 		CD1CE85F24EDE66A00006DFB /* WKWebViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD1CE85E24EDE66A00006DFB /* WKWebViewExtensions.swift */; };
 		CDB3BE8724746787009320EE /* FirefoxAccountSignInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB3BE8624746787009320EE /* FirefoxAccountSignInViewController.swift */; };
 		CDF54E989E0BC7BF172D71BD /* Shared.strings in Resources */ = {isa = PBXBuildFile; fileRef = 064741F8AE308A64808E6265 /* Shared.strings */; };
-		CE06103625B5DF8C00044C2D /* MozillaAppServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE0D8D0F25B5DEE200B76E47 /* MozillaAppServices.framework */; };
-		CE06104A25B5DFBE00044C2D /* MozillaAppServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE0D8D0F25B5DEE200B76E47 /* MozillaAppServices.framework */; };
-		CE0D8D1025B5DEE200B76E47 /* MozillaAppServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE0D8D0F25B5DEE200B76E47 /* MozillaAppServices.framework */; };
 		CE7F11941F3CEEC800ABFC0B /* RemoteDevices.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7F115E1F3CCEF900ABFC0B /* RemoteDevices.swift */; };
 		CEFA977E1FAA6B490016F365 /* SyncContentSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA977D1FAA6B490016F365 /* SyncContentSettingsViewController.swift */; };
 		D006F2E32283307B0004D3AB /* KIF.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7B604F981C494F74006EEEC3 /* KIF.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -3231,6 +3231,7 @@
 		CAA246D0257A725100D84AD9 /* markets.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = markets.json; sourceTree = "<group>"; };
 		CAA2F3F2257A79C700EBAD38 /* FilterController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterController.swift; sourceTree = "<group>"; };
 		CAA3B7E52497DCB60094E3C1 /* LoginDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginDataSource.swift; sourceTree = "<group>"; };
+		CAA6148425E961B000CA0D45 /* MozillaAppServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MozillaAppServices.framework; path = Carthage/Build/iOS/Static/MozillaAppServices.framework; sourceTree = "<group>"; };
 		CAAD533E2541B68C002501A5 /* EcosiaTabs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaTabs.swift; sourceTree = "<group>"; };
 		CAAD53532541B6A1002501A5 /* EcosiaHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaHistory.swift; sourceTree = "<group>"; };
 		CAAED1ED25810C7A0048199C /* NewsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewsController.swift; sourceTree = "<group>"; };
@@ -3268,7 +3269,6 @@
 		CD6E4272BD7C7D94B5FD3026 /* hy-AM */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "hy-AM"; path = "hy-AM.lproj/Menu.strings"; sourceTree = "<group>"; };
 		CDB3BE8624746787009320EE /* FirefoxAccountSignInViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirefoxAccountSignInViewController.swift; sourceTree = "<group>"; };
 		CDF4403FBD53453987C9B8CB /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/ClearHistoryConfirm.strings; sourceTree = "<group>"; };
-		CE0D8D0F25B5DEE200B76E47 /* MozillaAppServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MozillaAppServices.framework; path = Carthage/Build/iOS/MozillaAppServices.framework; sourceTree = "<group>"; };
 		CE664A9AB0ACFC6960CD6E81 /* pt-PT */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-PT"; path = "pt-PT.lproj/HistoryPanel.strings"; sourceTree = "<group>"; };
 		CE7F115E1F3CCEF900ABFC0B /* RemoteDevices.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteDevices.swift; sourceTree = "<group>"; };
 		CEAC46CEA2B6CAB86A9E1345 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/3DTouchActions.strings; sourceTree = "<group>"; };
@@ -4033,7 +4033,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CE06104A25B5DFBE00044C2D /* MozillaAppServices.framework in Frameworks */,
+				CAA6148725E961B200CA0D45 /* MozillaAppServices.framework in Frameworks */,
 				C820439A2523DC4500740B71 /* libStorage.a in Frameworks */,
 				D09A0CDC1FAA24CC009A0273 /* libAccount.a in Frameworks */,
 			);
@@ -4085,9 +4085,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CE06103625B5DF8C00044C2D /* MozillaAppServices.framework in Frameworks */,
 				C820443825241D3100740B71 /* libSyncTelemetry.a in Frameworks */,
 				C8340C4F24EC69EE00FE91A6 /* libcrypto.a in Frameworks */,
+				CAA6148625E961B100CA0D45 /* MozillaAppServices.framework in Frameworks */,
 				C8340C5024EC69EE00FE91A6 /* libssl.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4104,7 +4104,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CE0D8D1025B5DEE200B76E47 /* MozillaAppServices.framework in Frameworks */,
+				CAA6148525E961B100CA0D45 /* MozillaAppServices.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4815,7 +4815,7 @@
 		7B604FC11C496005006EEEC3 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				CE0D8D0F25B5DEE200B76E47 /* MozillaAppServices.framework */,
+				CAA6148425E961B000CA0D45 /* MozillaAppServices.framework */,
 				C8E18F1F222EDED000E30E52 /* SafariServices.framework */,
 				C8E18F1D222EDE4400E30E52 /* Accelerate.framework */,
 				EBCF403A221CBC5B00B38F28 /* SwiftProtobuf.framework */,
@@ -7127,7 +7127,6 @@
 				"$(SRCROOT)/Carthage/Build/iOS/Fuzi.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/SwiftyJSON.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/SwiftProtobuf.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/MozillaAppServices.framework",
 			);
 			name = "Copy Carthage Dependencies";
 			outputPaths = (
@@ -10622,7 +10621,7 @@
 				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"$(PROJECT_DIR)/Carthage/Build/iOS/Static",
 				);
 				MARKETING_VERSION = "${inherited}";
 				MOZ_BUNDLE_DISPLAY_NAME = Ecosia5;
@@ -10895,7 +10894,7 @@
 				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"$(PROJECT_DIR)/Carthage/Build/iOS/Static",
 				);
 				INFOPLIST_FILE = Client/Info.plist;
 				MARKETING_VERSION = "${inherited}";
@@ -11167,7 +11166,7 @@
 				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"$(PROJECT_DIR)/Carthage/Build/iOS/Static",
 				);
 				INFOPLIST_FILE = Client/Info.plist;
 				MARKETING_VERSION = "${inherited}";
@@ -11456,7 +11455,7 @@
 				CURRENT_PROJECT_VERSION = 9;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"$(PROJECT_DIR)/Carthage/Build/iOS/Static",
 				);
 				INFOPLIST_FILE = Client/Info.plist;
 				MARKETING_VERSION = "${inherited}";
@@ -11485,6 +11484,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "$(inherit)Extensions/Entitlements/Firefox.entitlements";
 				CURRENT_PROJECT_VERSION = 9;
+				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/Carthage/Build/iOS/Static";
 				INFOPLIST_FILE = Extensions/ShareTo/Info.plist;
 				MARKETING_VERSION = "${inherited}";
 				OTHER_SWIFT_FLAGS = "-DMOZ_CHANNEL_RELEASE -DMOZ_TARGET_SHARETO";
@@ -11735,7 +11735,7 @@
 				CURRENT_PROJECT_VERSION = 9;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"$(PROJECT_DIR)/Carthage/Build/iOS/Static",
 				);
 				INFOPLIST_FILE = Client/Info.plist;
 				MARKETING_VERSION = "${inherited}";
@@ -11979,7 +11979,7 @@
 				CURRENT_PROJECT_VERSION = 9;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"$(PROJECT_DIR)/Carthage/Build/iOS/Static",
 				);
 				INFOPLIST_FILE = Client/Info.plist;
 				MARKETING_VERSION = "${inherited}";
@@ -12150,7 +12150,7 @@
 				DEVELOPMENT_TEAM = 43AQ936H96;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"$(PROJECT_DIR)/Carthage/Build/iOS/Static",
 				);
 				MARKETING_VERSION = "${inherited}";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(MOZ_BUNDLE_ID)";
