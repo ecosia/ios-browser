@@ -69,10 +69,7 @@ platform :ios do
       export_method: "app-store",
       configuration: "Ecosia"
     )
-    pilot(
-      skip_waiting_for_build_processing: true, 
-      apple_id: "apple-dev@ecosia.org"
-    )
+    pilot(skip_waiting_for_build_processing: true)
   end 
 
 end
