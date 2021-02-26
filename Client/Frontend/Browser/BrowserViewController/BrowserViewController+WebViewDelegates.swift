@@ -579,10 +579,12 @@ extension BrowserViewController: WKNavigationDelegate {
         decisionHandler(.allow)
 
         // Ecosia: Cookie handling
-        DispatchQueue.main.async { [weak self] in
-            webView.configuration.websiteDataStore.httpCookieStore.getAllCookies { cookies in
-                DispatchQueue.main.async {
-                    self?.tabManager.cookie.received(cookies)
+        if tabManager.selectedTab?.isPrivate == false {
+            DispatchQueue.main.async { [weak self] in
+                webView.configuration.websiteDataStore.httpCookieStore.getAllCookies { cookies in
+                    DispatchQueue.main.async {
+                        self?.tabManager.cookie.received(cookies)
+                    }
                 }
             }
         }
