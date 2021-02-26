@@ -1000,13 +1000,14 @@ class LibraryShortcutView: UIView {
             make.height.equalTo(LibraryShortcutView.iconSize + LibraryShortcutView.spacing)
         }
         title.adjustsFontSizeToFitWidth = true
-        title.minimumScaleFactor = 0.7
+        title.allowsDefaultTighteningForTruncation = true
+        title.minimumScaleFactor = 0.6
         title.lineBreakMode = .byTruncatingTail
         title.font = DynamicFontHelper.defaultHelper.SmallSizeRegularWeightAS
         title.textAlignment = .center
         title.snp.makeConstraints { make in
             make.top.equalTo(button.snp.bottom).offset(0)
-            make.leading.trailing.equalToSuperview()
+            make.leading.trailing.equalToSuperview().inset(2)
         }
         button.imageView?.contentMode = .scaleToFill
         button.contentVerticalAlignment = .fill
@@ -1052,8 +1053,8 @@ class ASLibraryCell: UICollectionViewCell, Themeable {
             let view = LibraryShortcutView()
             view.button.setImage(item.image, for: .normal)
             view.title.text = item.title
-            let words = view.title.text?.components(separatedBy: NSCharacterSet.whitespacesAndNewlines).count
-            view.title.numberOfLines = words == 1 ? 1 :2
+            let words = view.title.text?.components(separatedBy: NSCharacterSet.whitespacesAndNewlines.union(.punctuationCharacters)).count
+            view.title.numberOfLines = words == 1 ? 1 : 2
             // view.button.backgroundColor = item.color
             view.button.setTitleColor(UIColor.theme.homePanel.topSiteDomain, for: .normal)
             view.accessibilityLabel = item.title
