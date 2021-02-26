@@ -71,7 +71,7 @@ platform :ios do
     )
     pilot(
       skip_waiting_for_build_processing: true, 
-      apple_id: "apple-dev@ecosia.org"
+      apple_id: "1541358670"
     )
   end 
 
