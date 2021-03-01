@@ -481,6 +481,7 @@
 		CE06103625B5DF8C00044C2D /* MozillaAppServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE0D8D0F25B5DEE200B76E47 /* MozillaAppServices.framework */; };
 		CE06104A25B5DFBE00044C2D /* MozillaAppServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE0D8D0F25B5DEE200B76E47 /* MozillaAppServices.framework */; };
 		CE0D8D1025B5DEE200B76E47 /* MozillaAppServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE0D8D0F25B5DEE200B76E47 /* MozillaAppServices.framework */; };
+		CE4C3DC425ED41E90049E9BF /* FeedbackCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE4C3DC325ED41E90049E9BF /* FeedbackCard.swift */; };
 		CE7F11941F3CEEC800ABFC0B /* RemoteDevices.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7F115E1F3CCEF900ABFC0B /* RemoteDevices.swift */; };
 		CEFA977E1FAA6B490016F365 /* SyncContentSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA977D1FAA6B490016F365 /* SyncContentSettingsViewController.swift */; };
 		D006F2E32283307B0004D3AB /* KIF.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7B604F981C494F74006EEEC3 /* KIF.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -3269,6 +3270,7 @@
 		CDB3BE8624746787009320EE /* FirefoxAccountSignInViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirefoxAccountSignInViewController.swift; sourceTree = "<group>"; };
 		CDF4403FBD53453987C9B8CB /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/ClearHistoryConfirm.strings; sourceTree = "<group>"; };
 		CE0D8D0F25B5DEE200B76E47 /* MozillaAppServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MozillaAppServices.framework; path = Carthage/Build/iOS/MozillaAppServices.framework; sourceTree = "<group>"; };
+		CE4C3DC325ED41E90049E9BF /* FeedbackCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackCard.swift; sourceTree = "<group>"; };
 		CE664A9AB0ACFC6960CD6E81 /* pt-PT */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-PT"; path = "pt-PT.lproj/HistoryPanel.strings"; sourceTree = "<group>"; };
 		CE7F115E1F3CCEF900ABFC0B /* RemoteDevices.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteDevices.swift; sourceTree = "<group>"; };
 		CEAC46CEA2B6CAB86A9E1345 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/3DTouchActions.strings; sourceTree = "<group>"; };
@@ -6054,10 +6056,11 @@
 		F84B22211A09122500AAB793 /* Home */ = {
 			isa = PBXGroup;
 			children = (
-				74821F8D1DAD8F1300EEEA72 /* FirefoxHomeHighlightCell.swift */,
-				3BB50E1F1D627539004B33DF /* FirefoxHomeViewController.swift */,
 				2386E4E524F8358E0072EF17 /* DefaultBrowserCard.swift */,
+				CE4C3DC325ED41E90049E9BF /* FeedbackCard.swift */,
+				74821F8D1DAD8F1300EEEA72 /* FirefoxHomeHighlightCell.swift */,
 				3BB50E101D6274CD004B33DF /* FirefoxHomeTopSitesCell.swift */,
+				3BB50E1F1D627539004B33DF /* FirefoxHomeViewController.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -7843,6 +7846,7 @@
 				C4E3984C1D21F2FD004E89BA /* TabTrayButtonExtensions.swift in Sources */,
 				D3FEC38D1AC4B42F00494F45 /* AutocompleteTextField.swift in Sources */,
 				EBE26B57220C959D00D1D99A /* BrowserViewController+TabToolbarDelegate.swift in Sources */,
+				CE4C3DC425ED41E90049E9BF /* FeedbackCard.swift in Sources */,
 				E68AEDB01B18F81A00133D99 /* SwipeAnimator.swift in Sources */,
 				3BF56D271CDBBE1F00AC4D75 /* SimpleToast.swift in Sources */,
 				EBB89504219398E500EB91A0 /* TrackingProtectionPageStats.swift in Sources */,

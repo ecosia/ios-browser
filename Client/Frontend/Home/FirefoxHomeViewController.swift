@@ -147,6 +147,12 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
         card.backgroundColor = UIColor.theme.homePanel.topSitesBackground
         return card
     }()
+    
+    lazy var feedbackCard: FeedbackCard = {
+        let card = FeedbackCard()
+        card.backgroundColor = UIColor.theme.homePanel.topSitesBackground
+        return card
+    }()
 
     var pocketStories: [PocketStory] = []
 
@@ -235,6 +241,7 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
 
     func applyTheme() {
         defaultBrowserCard.applyTheme()
+        feedbackCard.applyTheme()
         collectionView?.backgroundColor = UIColor.theme.homePanel.topSitesBackground
         self.view.backgroundColor = UIColor.theme.homePanel.topSitesBackground
         topSiteCell.collectionView.reloadData()
