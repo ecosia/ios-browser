@@ -12,7 +12,7 @@ class FeedbackCard: UIView {
     public var dismissClosure: (() -> Void)?
     lazy var title: UILabel = {
         let title = UILabel()
-        title.text = String.DefaultBrowserCardTitle
+        title.text = "Help us improve our new app"
         title.numberOfLines = 0
         title.lineBreakMode = .byWordWrapping
         title.font = UIFont.systemFont(ofSize: 20, weight: .bold)
@@ -127,7 +127,7 @@ class FeedbackCard: UIView {
     
     @objc private func dismissCard() {
         self.dismissClosure?()
-        UserDefaults.standard.set(true, forKey: "DidDismissDefaultBrowserCard")
+        UserDefaults.standard.set(true, forKey: "DidDismissFeedbackCard")
         TelemetryWrapper.gleanRecordEvent(category: .action, method: .tap, object: .dismissDefaultBrowserCard)
         LeanPlumClient.shared.track(event: .dismissDefaultBrowserCard)
     }
