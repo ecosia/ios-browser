@@ -7,6 +7,7 @@
 import SnapKit
 import Storage
 import Shared
+import Core
 
 class FeedbackCard: UIView {
     public var dismissClosure: (() -> Void)?
@@ -131,7 +132,7 @@ class FeedbackCard: UIView {
     }
     
     @objc private func openSurvey() {
-        UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: [:])
+        UIApplication.shared.open(Environment.current.betaFeedback, options: [:])
         UserDefaults.standard.set(true, forKey: "DidDismissFeedbackCard")
     }
     
