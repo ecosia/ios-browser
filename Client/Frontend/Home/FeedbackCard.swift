@@ -122,20 +122,17 @@ class FeedbackCard: UIView {
     
     private func setupButtons() {
         closeButton.addTarget(self, action: #selector(dismissCard), for: .touchUpInside)
-        settingsButton.addTarget(self, action: #selector(showSettings), for: .touchUpInside)
+        settingsButton.addTarget(self, action: #selector(openSurvey), for: .touchUpInside)
     }
     
     @objc private func dismissCard() {
         self.dismissClosure?()
         UserDefaults.standard.set(true, forKey: "DidDismissFeedbackCard")
-        TelemetryWrapper.gleanRecordEvent(category: .action, method: .tap, object: .dismissDefaultBrowserCard)
-        LeanPlumClient.shared.track(event: .dismissDefaultBrowserCard)
     }
     
-    @objc private func showSettings() {
+    @objc private func openSurvey() {
         UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: [:])
-        TelemetryWrapper.gleanRecordEvent(category: .action, method: .tap, object: .goToSettingsDefaultBrowserCard)
-        LeanPlumClient.shared.track(event: .goToSettingsDefaultBrowserCard)
+        UserDefaults.standard.set(true, forKey: "DidDismissFeedbackCard")
     }
     
     func applyTheme() {
