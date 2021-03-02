@@ -442,20 +442,24 @@ class Tab: NSObject {
             if let url = request.url, let syncedReaderModeURL = url.decodeReaderModeURL, let localReaderModeURL = syncedReaderModeURL.encodeReaderModeURL(WebServer.sharedInstance.baseReaderModeURL()) {
                 let readerModeRequest = PrivilegedRequest(url: localReaderModeURL) as URLRequest
                 lastRequest = readerModeRequest
-                completion?(webView.load(readerModeRequest))
+                let navigation = webView.load(readerModeRequest)
+                completion?(navigation)
             }
             lastRequest = request
             if let url = request.url, url.isFileURL, request.isPrivileged {
-                completion?(webView.loadFileURL(url, allowingReadAccessTo: url))
+                let navigation = webView.loadFileURL(url, allowingReadAccessTo: url)
+                completion?(navigation)
             }
 
             // Ecosia: inject cookie
             if !isPrivate, let cookie = browserViewController?.tabManager.cookie {
                 webView.configuration.websiteDataStore.httpCookieStore.setCookie(cookie.value) {
-                    completion?(webView.load(request))
+                    let navigation = webView.load(request)
+                    completion?(navigation)
                 }
             } else {
-                completion?(webView.load(request))
+                let navigation = webView.load(request)
+                completion?(navigation)
             }
         }
     }
