@@ -9,6 +9,7 @@ import SDWebImage
 import XCGLogger
 import SyncTelemetry
 import SnapKit
+import Core
 
 private let log = Logger.browserLogger
 
@@ -180,8 +181,8 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
         self.collectionView?.register(ASFooterView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "Footer")
         collectionView?.keyboardDismissMode = .onDrag
         
-        if !UserDefaults.standard.bool(forKey: "DidDismissFeedbackCard") {
-            self.view.addSubview(feedbackCard)
+        if User.shared.showsFeedbackPromo {
+            view.addSubview(feedbackCard)
             feedbackCard.snp.makeConstraints { make in
                 make.top.equalToSuperview()
                 make.bottom.equalTo(collectionView.snp.top)

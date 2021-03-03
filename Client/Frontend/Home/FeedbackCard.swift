@@ -127,13 +127,13 @@ class FeedbackCard: UIView {
     }
     
     @objc private func dismissCard() {
-        self.dismissClosure?()
-        UserDefaults.standard.set(true, forKey: "DidDismissFeedbackCard")
+        dismissClosure?()
+        User.shared.hideFeedbackPromo()
     }
     
     @objc private func openSurvey() {
         UIApplication.shared.open(Environment.current.betaFeedback, options: [:])
-        UserDefaults.standard.set(true, forKey: "DidDismissFeedbackCard")
+        User.shared.hideFeedbackPromo()
     }
     
     func applyTheme() {
