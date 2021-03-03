@@ -181,7 +181,7 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
         self.collectionView?.register(ASFooterView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "Footer")
         collectionView?.keyboardDismissMode = .onDrag
         
-        if User.shared.showsFeedbackPromo {
+        if true || User.shared.showsFeedbackPromo {
             view.addSubview(feedbackCard)
             feedbackCard.snp.makeConstraints { make in
                 make.top.equalToSuperview()
