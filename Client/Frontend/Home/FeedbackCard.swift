@@ -133,7 +133,7 @@ final class FeedbackCard: UIView {
     
     @objc private func openSurvey() {
         UIApplication.shared.open(Environment.current.betaFeedback, options: [:])
-        User.shared.hideFeedbackPromo()
+        dismissCard()
     }
     
     func applyTheme() {

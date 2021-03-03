@@ -607,6 +607,18 @@ class ToggleNewTabToolbarButton: HiddenSetting {
     }
 }
 
+final class PushBackInstallation: HiddenSetting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Push back installation by 3 days (needs restart).", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        User.shared.install.map {
+            User.shared.install = Calendar.current.date(byAdding: .day, value: -3, to: $0)
+        }
+    }
+}
+
 // Show the current version of Firefox
 class VersionSetting: Setting {
     unowned let settings: SettingsTableViewController
