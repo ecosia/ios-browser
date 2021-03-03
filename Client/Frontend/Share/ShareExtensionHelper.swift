@@ -4,7 +4,10 @@
 
 import Foundation
 import Shared
+import CoreServices
+/* Ecosia: remove One Password Extension
 import OnePasswordExtension
+*/
 
 private let log = Logger.browserLogger
 
@@ -52,7 +55,9 @@ class ShareExtensionHelper: NSObject {
         // This needs to be ready by the time the share menu has been displayed and
         // activityViewController(activityViewController:, activityType:) is called,
         // which is after the user taps the button. So a million cycles away.
+        /* Ecosia: remove One Password Extension
         findLoginExtensionItem()
+        */
 
         activityViewController.completionWithItemsHandler = { activityType, completed, returnedItems, activityError in
             if !completed {
@@ -65,11 +70,13 @@ class ShareExtensionHelper: NSObject {
                 UIPasteboard.general.urls = [url]
             }
 
+            /* Ecosia: remove One Password Extension
             if self.isPasswordManager(activityType: activityType) {
                 if let logins = returnedItems {
                     self.fillPasswords(logins as [AnyObject])
                 }
             }
+            */
 
             completionHandler(completed, activityType)
         }
@@ -124,6 +131,7 @@ extension ShareExtensionHelper: UIActivityItemSource {
     }
 }
 
+/* Ecosia: remove One Password Extension
 private extension ShareExtensionHelper {
     func findLoginExtensionItem() {
         guard let selectedWebView = selectedTab?.webView else {
@@ -154,3 +162,4 @@ private extension ShareExtensionHelper {
         })
     }
 }
+*/
