@@ -5060,6 +5060,7 @@
 				CA6BFAAB25778CAB0026DFFF /* UI */,
 				CA4DDE2825430DF800966CF2 /* Fake */,
 				CA6BFC022577AA520026DFFF /* UserDefaults.swift */,
+				CE4C3DC325ED41E90049E9BF /* FeedbackCard.swift */,
 				CAA246A6257A715D00D84AD9 /* EcosiaSettings.swift */,
 				CAA246D0257A725100D84AD9 /* markets.json */,
 			);
@@ -6053,7 +6054,6 @@
 			isa = PBXGroup;
 			children = (
 				2386E4E524F8358E0072EF17 /* DefaultBrowserCard.swift */,
-				CE4C3DC325ED41E90049E9BF /* FeedbackCard.swift */,
 				74821F8D1DAD8F1300EEEA72 /* FirefoxHomeHighlightCell.swift */,
 				3BB50E101D6274CD004B33DF /* FirefoxHomeTopSitesCell.swift */,
 				3BB50E1F1D627539004B33DF /* FirefoxHomeViewController.swift */,
