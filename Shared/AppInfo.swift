@@ -26,6 +26,13 @@ open class AppInfo {
     }
 
     public static var appVersion: String {
+        /* Ecosia: hardcode FX version, needs to change with every upgrade
+        return applicationBundle.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
+        */
+        return "29.0"
+    }
+
+    public static var ecosiaAppVersion: String {
         return applicationBundle.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
     }
 
