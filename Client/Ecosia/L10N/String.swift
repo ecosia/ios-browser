@@ -51,5 +51,8 @@ extension String {
         case weUseTheProfit = "We use the profit from your searches to plant trees where they are needed most"
         case websitesWillAlwaysOpen = "Websites will always open with Ecosia, planting even more trees"
         case youNeedAround45 = "You need around 45 searches to plant a tree. Keep going!"
+        case helpUsImprove = "Help us improve our new app"
+        case letUsKnowWhat = "Let us know what you like, dislike, and want to see in the future."
+        case shareYourFeedback = "Share your feedback"
     }
 }

@@ -9,11 +9,11 @@ import Storage
 import Shared
 import Core
 
-class FeedbackCard: UIView {
+final class FeedbackCard: UIView {
     public var dismissClosure: (() -> Void)?
     lazy var title: UILabel = {
         let title = UILabel()
-        title.text = "Help us improve our new app"
+        title.text = .localized(.helpUsImprove)
         title.numberOfLines = 0
         title.lineBreakMode = .byWordWrapping
         title.font = UIFont.systemFont(ofSize: 20, weight: .bold)
@@ -22,16 +22,16 @@ class FeedbackCard: UIView {
     }()
     lazy var descriptionText: UILabel = {
         let descriptionText = UILabel()
-        descriptionText.text = .localized(.websitesWillAlwaysOpen)
+        descriptionText.text = .localized(.letUsKnowWhat)
         descriptionText.numberOfLines = 0
         descriptionText.lineBreakMode = .byWordWrapping
         descriptionText.font = UIFont.systemFont(ofSize: 15, weight: .regular)
         descriptionText.textColor = UIColor.theme.defaultBrowserCard.textColor
         return descriptionText
     }()
-    lazy var settingsButton: UIButton = {
+    lazy var surveyButton: UIButton = {
         let button = UIButton()
-        button.setTitle(String.DefaultBrowserCardButton, for: .normal)
+        button.setTitle(.localized(.shareYourFeedback), for: .normal)
         button.backgroundColor = UIColor.Photon.Blue50
         button.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
         button.titleLabel?.textAlignment = .center
@@ -67,7 +67,7 @@ class FeedbackCard: UIView {
         topView.addSubview(labelView)
         topView.addSubview(image)
         
-        background.addSubview(settingsButton)
+        background.addSubview(surveyButton)
         background.addSubview(topView)
         background.addSubview(closeButton)
         
@@ -104,10 +104,10 @@ class FeedbackCard: UIView {
         labelView.snp.makeConstraints { make in
             make.right.equalTo(closeButton.snp.right)
             make.width.lessThanOrEqualTo(223)
-            make.bottom.equalTo(settingsButton.snp.top).offset(-16)
+            make.bottom.equalTo(surveyButton.snp.top).offset(-16)
             make.top.equalToSuperview().offset(30)
         }
-        settingsButton.snp.makeConstraints { make in
+        surveyButton.snp.makeConstraints { make in
             make.top.equalTo(topView.snp.bottom).offset(16)
             make.bottom.right.equalToSuperview().offset(-16).priority(.high)
             make.left.equalToSuperview().offset(16)
@@ -123,7 +123,7 @@ class FeedbackCard: UIView {
     
     private func setupButtons() {
         closeButton.addTarget(self, action: #selector(dismissCard), for: .touchUpInside)
-        settingsButton.addTarget(self, action: #selector(openSurvey), for: .touchUpInside)
+        surveyButton.addTarget(self, action: #selector(openSurvey), for: .touchUpInside)
     }
     
     @objc private func dismissCard() {
