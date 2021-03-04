@@ -102,3 +102,6 @@ Client/Assets/*.js.LICENSE.txt
 # bundler
 vendor/bundle
 .bundle/config
+
+# Glean 
+sdk_generator.sh
