@@ -1,0 +1,39 @@
+name: UnitTests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: bootstrap MOZ App Services
+      run: ./carthage_bootstrap_moz_services.sh
+    - name: Restore ruby gem cache
+      uses: actions/cache@v1
+      with:
+        path: vendor/bundle
+        key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+        restore-keys: ${{ runner.os }}-gem-
+    - name: Install
+      run: bundle check || bundle install
+    - name: Clean Packages
+      run: xcodebuild -scheme Ecosia -project Client.xcodeproj clean
+    - name: install node modules
+      run: npm install
+    - name: run node modules
+      run: npm run build
+    - name: clone translations
+      run: git clone https://github.com/mozilla-mobile/ios-l10n-scripts.git || exit 1
+    - name: import locales
+      run: ./ios-l10n-scripts/import-locales-firefox.sh --release
+    - name: setup content blocking scripts
+      run: (cd content-blocker-lib-ios/ContentBlockerGen && swift run)
+    - name: Run unit tests
+      run: bundle exec fastlane scan
