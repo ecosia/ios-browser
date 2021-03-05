@@ -13,10 +13,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: "Carthage Bootstrap"
-      uses: devbotsxyz/carthage-bootstrap@v1
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
+    - name: bootstrap MOZ App Services
+      run: ./carthage_bootstrap_moz_services.sh
     - name: Restore ruby gem cache
       uses: actions/cache@v1
       with:
