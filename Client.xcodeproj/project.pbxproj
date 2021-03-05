@@ -12507,7 +12507,7 @@
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
 				kind = exactVersion;
-				version = 4.2.4;
+				version = 4.3.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
