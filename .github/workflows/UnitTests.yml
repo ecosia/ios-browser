@@ -42,10 +42,13 @@ jobs:
         action: bootstrap application-services --platform iOS --cache-builds
       env:
         GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - name: Clean Packages
-      run: xcodebuild -scheme Ecosia -project Client.xcodeproj clean
+    - name: Fix Up Private Github URLs
+        # Add github token to all private repo URLs 
+        run: find . -type f \( -name '*.pbxproj' -o -name 'Package.swift' -o -name 'Package.resolved' \) -exec sed -i '' "s/https:\/\/github.com\/${GITHUB_REPOSITORY_OWNER}/https:\/\/${GITHUB_ACCESS_TOKEN}@github.com\/${GITHUB_REPOSITORY_OWNER}/g" {} \;
       env:
         GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Clean Packages
+      run: xcodebuild -scheme Ecosia -project Client.xcodeproj clean
     - name: clone translations
       run: git clone https://github.com/mozilla-mobile/ios-l10n-scripts.git || exit 1
     - name: import locales
