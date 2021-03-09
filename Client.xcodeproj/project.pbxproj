@@ -479,6 +479,7 @@
 		CDF54E989E0BC7BF172D71BD /* Shared.strings in Resources */ = {isa = PBXBuildFile; fileRef = 064741F8AE308A64808E6265 /* Shared.strings */; };
 		CE06103625B5DF8C00044C2D /* MozillaAppServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE0D8D0F25B5DEE200B76E47 /* MozillaAppServices.framework */; };
 		CE06104A25B5DFBE00044C2D /* MozillaAppServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE0D8D0F25B5DEE200B76E47 /* MozillaAppServices.framework */; };
+		CE0AB93425F7C2B400333656 /* SnowplowTracker in Frameworks */ = {isa = PBXBuildFile; productRef = CE0AB93325F7C2B400333656 /* SnowplowTracker */; };
 		CE0D8D1025B5DEE200B76E47 /* MozillaAppServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE0D8D0F25B5DEE200B76E47 /* MozillaAppServices.framework */; };
 		CE4C3DC425ED41E90049E9BF /* FeedbackCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE4C3DC325ED41E90049E9BF /* FeedbackCard.swift */; };
 		CE7F11941F3CEEC800ABFC0B /* RemoteDevices.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7F115E1F3CCEF900ABFC0B /* RemoteDevices.swift */; };
@@ -4061,6 +4062,7 @@
 			files = (
 				C82043852523DBF600740B71 /* Sync.framework in Frameworks */,
 				C877037A25222F30006E38EB /* Shared.framework in Frameworks */,
+				CE0AB93425F7C2B400333656 /* SnowplowTracker in Frameworks */,
 				C8E18F20222EDED000E30E52 /* SafariServices.framework in Frameworks */,
 				C8E18F1E222EDE4500E30E52 /* Accelerate.framework in Frameworks */,
 				E6231C051B90A472005ABB0D /* libxml2.2.tbd in Frameworks */,
@@ -6472,6 +6474,7 @@
 			name = Client;
 			packageProductDependencies = (
 				CA57FD1C25666AAD00BC0800 /* Core */,
+				CE0AB93325F7C2B400333656 /* SnowplowTracker */,
 			);
 			productName = Client;
 			productReference = F84B21BE1A090F8100AAB793 /* Client.app */;
@@ -6799,6 +6802,7 @@
 			mainGroup = F84B21B51A090F8100AAB793;
 			packageReferences = (
 				CA57FD1B25666AAD00BC0800 /* XCRemoteSwiftPackageReference "ios-core" */,
+				CE0AB93225F7C2B400333656 /* XCRemoteSwiftPackageReference "snowplow-objc-tracker" */,
 			);
 			productRefGroup = F84B21BF1A090F8100AAB793 /* Products */;
 			projectDirPath = "";
@@ -12510,6 +12514,14 @@
 				version = 4.3.0;
 			};
 		};
+		CE0AB93225F7C2B400333656 /* XCRemoteSwiftPackageReference "snowplow-objc-tracker" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/snowplow/snowplow-objc-tracker.git";
+			requirement = {
+				kind = exactVersion;
+				version = 1.6.2;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -12522,6 +12534,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CA57FD1B25666AAD00BC0800 /* XCRemoteSwiftPackageReference "ios-core" */;
 			productName = Core;
+		};
+		CE0AB93325F7C2B400333656 /* SnowplowTracker */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CE0AB93225F7C2B400333656 /* XCRemoteSwiftPackageReference "snowplow-objc-tracker" */;
+			productName = SnowplowTracker;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
