@@ -45,7 +45,7 @@ jobs:
     - name: Fix Up Private Github URLs
       run: find . -type f \( -name '*.pbxproj' -o -name 'Package.swift' -o -name 'Package.resolved' \) -exec sed -i '' "s/https:\/\/github.com\/${GITHUB_REPOSITORY_OWNER}/https:\/\/${GITHUB_ACCESS_TOKEN}@github.com\/${GITHUB_REPOSITORY_OWNER}/g" {} \;
       env:
-        GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_ACCESS_TOKEN: ${{ secrets.IOS_CORE_TOKEN }}
     - name: Clean Packages
       run: xcodebuild -scheme Ecosia -project Client.xcodeproj clean
     - name: clone translations
