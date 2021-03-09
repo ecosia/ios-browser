@@ -2,7 +2,7 @@ name: UnitTests
 
 on:
   push:
-    branches: [ main ]
+    branches: [ fix-unit-tests-2 ]
   pull_request:
     branches: [ main ]
 
@@ -16,6 +16,8 @@ jobs:
     - uses: olejnjak/carthage-workaround@v1
       with:
         action: bootstrap application-services --platform iOS --cache-builds
+      env:
+        GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Restore ruby gem cache
       uses: actions/cache@v1
       with:
