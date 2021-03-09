@@ -13,6 +13,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: carthage workaround
+      run: ./carthage_config.sh
     - name: "Carthage Bootstrap"
       uses: devbotsxyz/carthage-bootstrap@main
       with:
