@@ -43,8 +43,7 @@ jobs:
       env:
         GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Fix Up Private Github URLs
-        # Add github token to all private repo URLs 
-        run: find . -type f \( -name '*.pbxproj' -o -name 'Package.swift' -o -name 'Package.resolved' \) -exec sed -i '' "s/https:\/\/github.com\/${GITHUB_REPOSITORY_OWNER}/https:\/\/${GITHUB_ACCESS_TOKEN}@github.com\/${GITHUB_REPOSITORY_OWNER}/g" {} \;
+      run: find . -type f \( -name '*.pbxproj' -o -name 'Package.swift' -o -name 'Package.resolved' \) -exec sed -i '' "s/https:\/\/github.com\/${GITHUB_REPOSITORY_OWNER}/https:\/\/${GITHUB_ACCESS_TOKEN}@github.com\/${GITHUB_REPOSITORY_OWNER}/g" {} \;
       env:
         GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Clean Packages
