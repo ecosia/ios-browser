@@ -13,8 +13,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: bootstrap MOZ App Services
-      run: ./carthage_bootstrap_moz_services.sh
+    - uses: olejnjak/carthage-workaround@v1
+      with:
+        action: bootstrap application-services --platform iOS --cache-builds
     - name: Restore ruby gem cache
       uses: actions/cache@v1
       with:
