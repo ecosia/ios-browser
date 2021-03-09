@@ -94,6 +94,10 @@ enum NavigationPath {
 
         if urlString.starts(with: "\(scheme)://deep-link"), let deepURL = components.valueForQuery("url"), let link = DeepLink(urlString: deepURL.lowercased()) {
             self = .deepLink(link)
+            /*
+             Ecosia
+             */
+            Analytics.shared.deeplink()
         } else if urlString.starts(with: "\(scheme)://fxa-signin"), components.valueForQuery("signin") != nil {
             self = .fxa(params: FxALaunchParams(query: url.getQuery()))
         } else if urlString.starts(with: "\(scheme)://open-url") {

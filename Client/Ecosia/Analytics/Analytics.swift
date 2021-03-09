@@ -172,12 +172,11 @@ final class Analytics {
         })
     }
     
-    func deeplink(_ navigation: Navigation, fromWidget: Bool) {
+    func deeplink() {
         tracker.track(SPStructured.build {
             $0.setCategory(Category.external.rawValue)
             $0.setAction(Action.receive.rawValue)
-            $0.setLabel(fromWidget ? "deeplink_widget" : "deeplink")
-            $0.setProperty(navigation.property)
+            $0.setLabel("deeplink")
         })
     }
     
