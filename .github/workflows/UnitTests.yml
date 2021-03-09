@@ -18,7 +18,7 @@ jobs:
     - name: "Carthage Bootstrap"
       uses: devbotsxyz/carthage-bootstrap@main
       env: 
-        XCODE_XCCONFIG_FILE: $XCODE_XCCONFIG_FILE
+        XCODE_XCCONFIG_FILE: ${{ env.xcode_xcconfig_file }}
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         platform: ios
