@@ -13,25 +13,36 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - uses: ruby/setup-ruby@v1
+      with:
+        bundler-cache: true
+    - uses: actions/cache@v2
+      id: cache-npm
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+    - name: install node modules
+      if: steps.cache-npm.outputs.cache-hit != 'true'
+      run: npm install
+    - name: run node modules
+      run: npm run build
+    - uses: actions/cache@v2
+      id: cache-carthage
+      with:
+        path: Carthage
+        key: ${{ runner.os }}-carthage-${{ hashFiles('**/Cartfile.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-carthage-
     - uses: olejnjak/carthage-workaround@v1
+      if: steps.cache-carthage.outputs.cache-hit != 'true'
       with:
         action: bootstrap application-services --platform iOS --cache-builds
       env:
         GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - name: Restore ruby gem cache
-      uses: actions/cache@v1
-      with:
-        path: vendor/bundle
-        key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
-        restore-keys: ${{ runner.os }}-gem-
-    - name: Install
-      run: bundle check || bundle install
     - name: Clean Packages
       run: xcodebuild -scheme Ecosia -project Client.xcodeproj clean
-    - name: install node modules
-      run: npm install
-    - name: run node modules
-      run: npm run build
     - name: clone translations
       run: git clone https://github.com/mozilla-mobile/ios-l10n-scripts.git || exit 1
     - name: import locales
