@@ -13,9 +13,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - uses: olejnjak/carthage-workaround@v1
+    - name: "Carthage Bootstrap"
+      uses: devbotsxyz/carthage-bootstrap@main
       with:
-        action: bootstrap application-services --platform iOS --cache-builds
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        platform: ios
+        application-services:
     - name: Restore ruby gem cache
       uses: actions/cache@v1
       with:
