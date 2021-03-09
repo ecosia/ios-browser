@@ -273,6 +273,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
             }
         }
 
+        /*
+         Ecosia
+         */
         Analytics.shared.open(.launch)
         
         return shouldPerformAdditionalDelegateHandling
