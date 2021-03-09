@@ -1,9 +1,9 @@
 GIT
-  remote: git@github.com:danger/danger.git
-  revision: d1a4372728904a1cd9f6a7b938e8af519552795e
+  remote: https://github.com/danger/danger.git
+  revision: 2d57b08cf97e7791e553700a3884fcc3c762a2bb
   branch: master
   specs:
-    danger (8.2.0)
+    danger (8.2.2)
       claide (~> 1.0)
       claide-plugins (>= 0.9.2)
       colored2 (~> 3.1)
@@ -15,17 +15,12 @@ GIT
       kramdown-parser-gfm (~> 1.0)
       no_proxy_fix
       octokit (~> 4.7)
-      terminal-table (~> 1)
+      terminal-table (>= 1, < 4)
 
 GEM
   remote: https://rubygems.org/
   specs:
     CFPropertyList (3.0.3)
-    activesupport (4.2.11.1)
-      i18n (~> 0.7)
-      minitest (~> 5.1)
-      thread_safe (~> 0.3, >= 0.3.4)
-      tzinfo (~> 1.1)
     addressable (2.7.0)
       public_suffix (>= 2.0.2, < 5.0)
     artifactory (3.0.15)
@@ -52,12 +47,10 @@ GEM
       cork
       nap
       open4 (~> 1.3)
-    clamp (1.3.1)
     colored (1.2)
     colored2 (3.1.2)
     commander-fastlane (4.4.6)
       highline (~> 1.7.2)
-    concurrent-ruby (1.1.5)
     cork (0.3.0)
       colored2 (~> 3.1)
     danger-swiftlint (0.24.4)
@@ -125,7 +118,7 @@ GEM
       xcpretty-travis-formatter (>= 0.0.3)
     fastlane-plugin-appcenter (1.11.0)
     gh_inspector (1.1.3)
-    git (1.7.0)
+    git (1.8.1)
       rchardet (~> 1.8)
     google-api-client (0.38.0)
       addressable (~> 2.5, >= 2.5.1)
@@ -174,8 +167,6 @@ GEM
     http-cookie (1.0.3)
       domain_name (~> 0.5)
     httpclient (2.8.3)
-    i18n (0.9.5)
-      concurrent-ruby (~> 1.0)
     jmespath (1.4.0)
     json (2.5.1)
     jwt (2.2.2)
@@ -186,17 +177,13 @@ GEM
     memoist (0.16.2)
     mini_magick (4.11.0)
     mini_mime (1.0.2)
-    mini_portile2 (2.4.0)
-    minitest (5.14.0)
     multi_json (1.15.0)
     multipart-post (2.0.0)
     nanaimo (0.3.0)
     nap (1.1.0)
     naturally (2.2.1)
     no_proxy_fix (0.1.2)
-    nokogiri (1.10.7)
-      mini_portile2 (~> 2.4.0)
-    octokit (4.19.0)
+    octokit (4.20.0)
       faraday (>= 0.9)
       sawyer (~> 0.8.0, >= 0.5.3)
     open4 (1.3.4)
@@ -227,23 +214,14 @@ GEM
       CFPropertyList
       naturally
     slack-notifier (2.3.2)
-    slather (2.4.7)
-      CFPropertyList (>= 2.2, < 4)
-      activesupport (>= 4.0.2, < 5)
-      clamp (~> 1.3)
-      nokogiri (~> 1.8)
-      xcodeproj (~> 1.7)
     terminal-notifier (2.0.0)
     terminal-table (1.8.0)
       unicode-display_width (~> 1.1, >= 1.1.1)
     thor (0.20.3)
-    thread_safe (0.3.6)
     tty-cursor (0.7.1)
     tty-screen (0.8.1)
     tty-spinner (0.9.3)
       tty-cursor (~> 0.7)
-    tzinfo (1.2.6)
-      thread_safe (~> 0.1)
     uber (0.1.0)
     unf (0.1.4)
       unf_ext
@@ -270,7 +248,6 @@ DEPENDENCIES
   danger-swiftlint
   fastlane
   fastlane-plugin-appcenter
-  slather
 
 BUNDLED WITH
    2.1.4
