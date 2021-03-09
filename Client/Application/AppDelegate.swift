@@ -273,6 +273,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
             }
         }
 
+        Analytics.shared.open(.launch)
+        
         return shouldPerformAdditionalDelegateHandling
     }
 
