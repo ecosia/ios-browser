@@ -44,6 +44,8 @@ jobs:
         GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Clean Packages
       run: xcodebuild -scheme Ecosia -project Client.xcodeproj clean
+      env:
+        GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: clone translations
       run: git clone https://github.com/mozilla-mobile/ios-l10n-scripts.git || exit 1
     - name: import locales
