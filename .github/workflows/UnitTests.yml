@@ -17,10 +17,11 @@ jobs:
       run: ./carthage_config.sh
     - name: "Carthage Bootstrap"
       uses: devbotsxyz/carthage-bootstrap@main
+      env: 
+        XCODE_XCCONFIG_FILE: ${{ XCODE_XCCONFIG_FILE }}
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         platform: ios
-        application-services:
     - name: Restore ruby gem cache
       uses: actions/cache@v1
       with:
