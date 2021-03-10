@@ -2012,6 +2012,9 @@ extension BrowserViewController {
     func presentIntroViewController(_ alwaysShow: Bool = false) {
         // Ecosia:
         if alwaysShow || User.shared.firstTime {
+            if User.shared.firstTime {
+                Analytics.shared.install()
+            }
             let welcome = Welcome()
             introVCPresentHelper(introViewController: welcome)
 
