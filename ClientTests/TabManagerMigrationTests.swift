@@ -17,7 +17,7 @@ class MigrationTests: TabManagerTests {
             XCTAssertEqual(self.manager.normalTabs.count, 2, "There should be 2 normal tabs")
             expectation.fulfill()
         }
-        wait(for: [expectation], timeout: 2)
+        wait(for: [expectation], timeout: 4)
     }
 
 }
