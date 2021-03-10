@@ -22,7 +22,7 @@ jobs:
     - name: install pip modules
       if: steps.cache-pip.outputs.cache-hit != 'true'
       run: |
-         python3.7 -m pip install virtualenv
+         python3 -m pip install virtualenv
     - uses: ruby/setup-ruby@v1
       with:
         ruby-version: 2.7
