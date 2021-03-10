@@ -72,7 +72,7 @@ class TabManagerStoreTests: XCTestCase {
             XCTAssertEqual(self.manager.testTabCountOnDisk(), 2)
             e.fulfill()
         }
-        waitForExpectations(timeout: 2, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
 
         // Add 2 more
         for _ in 0..<2 {
@@ -84,7 +84,7 @@ class TabManagerStoreTests: XCTestCase {
             XCTAssertEqual(self.manager.testTabCountOnDisk(), 4)
             e.fulfill()
         }
-        waitForExpectations(timeout: 2, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
 
         // Remove all tabs, and add just 1 tab
         manager.removeAll()
@@ -95,7 +95,7 @@ class TabManagerStoreTests: XCTestCase {
             XCTAssertEqual(self.manager.testTabCountOnDisk(), 1)
             e.fulfill()
         }
-        waitForExpectations(timeout: 2, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
 }
 
