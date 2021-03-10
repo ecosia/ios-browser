@@ -219,6 +219,10 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
                     make.bottom.left.right.equalToSuperview()
                 }
             }
+            /*
+             Ecosia
+             */
+            Analytics.shared.defaultBrowser(.view)
         }
         self.view.backgroundColor = UIColor.theme.homePanel.topSitesBackground
         self.profile.panelDataObservers.activityStream.delegate = self
