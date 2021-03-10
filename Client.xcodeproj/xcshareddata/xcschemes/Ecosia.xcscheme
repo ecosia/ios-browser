@@ -176,6 +176,9 @@
                   Identifier = "SearchEnginesTests">
                </Test>
                <Test
+                  Identifier = "TabManagerStoreTests/testAddedTabsAreStored()">
+               </Test>
+               <Test
                   Identifier = "TestFavicons/testFaviconFetcherParse()">
                </Test>
             </SkippedTests>
