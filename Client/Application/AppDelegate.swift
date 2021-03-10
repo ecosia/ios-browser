@@ -460,6 +460,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
         // is that this method is only invoked whenever the application is entering the foreground where as
         // `applicationDidBecomeActive` will get called whenever the Touch ID authentication overlay disappears.
         self.updateAuthenticationInfo()
+        /*
+         Ecosia
+         */
+        Analytics.shared.open(.resume)
         Goodall.shared.refresh()
     }
 
