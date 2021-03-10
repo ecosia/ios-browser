@@ -949,7 +949,7 @@ class TrayToolbar: UIView, Themeable, PrivateModeUI {
 
     lazy var addTabButton: UIButton = {
         let button = UIButton()
-        button.setTitle(.localized(.new), for: .normal)
+        button.setImage(UIImage.templateImageNamed("nav-add"), for: .normal)
         button.accessibilityLabel = NSLocalizedString("Add Tab", comment: "Accessibility label for the Add Tab button in the Tab Tray.")
         button.accessibilityIdentifier = "TabTrayController.addTabButton"
         return button
@@ -957,7 +957,7 @@ class TrayToolbar: UIView, Themeable, PrivateModeUI {
 
     lazy var deleteButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage.templateImageNamed("action_delete"), for: .normal)
+        button.setTitle(.localized(.closeAll), for: .normal)
         button.accessibilityLabel = Strings.TabTrayDeleteMenuButtonAccessibilityLabel
         button.accessibilityIdentifier = "TabTrayController.removeTabsButton"
         return button
@@ -972,7 +972,7 @@ class TrayToolbar: UIView, Themeable, PrivateModeUI {
 
         var buttonToCenter: UIButton?
         addSubview(deleteButton)
-        buttonToCenter = deleteButton
+        buttonToCenter = addTabButton
 
         maskButton.accessibilityIdentifier = "TabTrayController.maskButton"
 
@@ -982,11 +982,11 @@ class TrayToolbar: UIView, Themeable, PrivateModeUI {
             make.size.equalTo(toolbarButtonSize)
         }
 
-        addTabButton.snp.makeConstraints { make in
+        deleteButton.snp.makeConstraints { make in
             make.top.equalTo(self)
             make.trailingMargin.equalTo(self).offset(-sideOffset)
             make.height.equalTo(toolbarButtonSize.height)
-            make.leading.greaterThanOrEqualTo(deleteButton.snp.trailing).offset(sideOffset)
+            make.leading.greaterThanOrEqualTo(addTabButton.snp.trailing).offset(sideOffset)
         }
 
         addSubview(maskButton)
@@ -1013,7 +1013,7 @@ class TrayToolbar: UIView, Themeable, PrivateModeUI {
         [addTabButton, deleteButton, maskButton].forEach {
             $0.tintColor = UIColor.theme.tabTray.toolbarButtonTint
         }
-        addTabButton.setTitleColor(UIColor.theme.tabTray.toolbarButtonTint, for: .normal)
+        deleteButton.setTitleColor(UIColor.theme.tabTray.toolbarButtonTint, for: .normal)
         backgroundColor = UIColor.theme.tabTray.toolbar
         maskButton.offTint = UIColor.theme.tabTray.privateModeButtonOffTint
         maskButton.onTint = UIColor.theme.tabTray.privateModeButtonOnTint
