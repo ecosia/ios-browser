@@ -2,7 +2,7 @@ name: UnitTests
 
 on:
   push:
-    branches: [ fix-unit-tests-2 ]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
 
