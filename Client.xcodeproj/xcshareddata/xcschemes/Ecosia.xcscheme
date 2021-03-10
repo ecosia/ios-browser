@@ -150,6 +150,11 @@
                BlueprintName = "StorageTests"
                ReferencedContainer = "container:Client.xcodeproj">
             </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "TestSQLiteHistory/testDomainUpgrade()">
+               </Test>
+            </SkippedTests>
          </TestableReference>
          <TestableReference
             skipped = "NO">
@@ -162,10 +167,19 @@
             </BuildableReference>
             <SkippedTests>
                <Test
+                  Identifier = "CustomSearchEnginesTest">
+               </Test>
+               <Test
                   Identifier = "DefaultSearchPrefsTests">
                </Test>
                <Test
                   Identifier = "SearchEnginesTests">
+               </Test>
+               <Test
+                  Identifier = "TabManagerStoreTests">
+               </Test>
+               <Test
+                  Identifier = "TabManagerStoreTests/testAddedTabsAreStored()">
                </Test>
                <Test
                   Identifier = "TestFavicons/testFaviconFetcherParse()">
