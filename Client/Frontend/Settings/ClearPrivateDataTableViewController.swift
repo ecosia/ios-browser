@@ -152,6 +152,11 @@ class ClearPrivateDataTableViewController: ThemedTableViewController {
                         // Disable the Clear Private Data button after it's clicked.
                         self.clearButtonEnabled = false
                         self.tableView.deselectRow(at: indexPath, animated: true)
+                        
+                        /*
+                         Ecosia
+                         */
+                        Analytics.shared.reset()
                 }
             }
             if self.toggles[HistoryClearableIndex] && profile.hasAccount() {
