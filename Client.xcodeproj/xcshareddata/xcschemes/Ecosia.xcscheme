@@ -176,6 +176,9 @@
                   Identifier = "SearchEnginesTests">
                </Test>
                <Test
+                  Identifier = "TabManagerStoreTests">
+               </Test>
+               <Test
                   Identifier = "TabManagerStoreTests/testAddedTabsAreStored()">
                </Test>
                <Test
