@@ -70,7 +70,10 @@ final class MarketsController: UIViewController, UITableViewDataSource, UITableV
         User.shared.marketCode = Markets.all[didSelectRowAt.row].id
         table.reloadData()
         
-        // TODO Analytics.shared.market(User.shared.marketCode.rawValue)
+        /*
+         Ecosia
+         */
+        Analytics.shared.market(User.shared.marketCode.rawValue)
         Goodall.shared.refresh()
     }
 }
