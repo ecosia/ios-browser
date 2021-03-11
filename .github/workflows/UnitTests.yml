@@ -43,6 +43,10 @@ jobs:
         GITHUB_ACCESS_TOKEN: ${{ secrets.IOS_CORE_TOKEN }}
     - name: clean packages
       run: xcodebuild -scheme Ecosia -project Client.xcodeproj clean
+    - name: clone translations
+      run: git clone https://github.com/mozilla-mobile/ios-l10n-scripts.git || exit 1
+    - name: import locales
+      run: ./ios-l10n-scripts/import-locales-firefox.sh --release
     - name: setup content blocking scripts
       run: (cd content-blocker-lib-ios/ContentBlockerGen && swift run)
     - name: run unit tests
