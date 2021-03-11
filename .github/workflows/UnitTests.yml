@@ -39,7 +39,7 @@ jobs:
           ${{ runner.os }}-node-
     - name: install node modules
       if: steps.cache-npm.outputs.cache-hit != 'true'
-      run: npm install
+      run: npm ci
     - name: run node modules
       run: npm run build
     - name: restore carthage cache 
