@@ -1,9 +1,9 @@
 GIT
   remote: https://github.com/danger/danger.git
-  revision: 2d57b08cf97e7791e553700a3884fcc3c762a2bb
+  revision: eca19719d3e585fe1cc46bc5377f9aa955ebf609
   branch: master
   specs:
-    danger (8.2.2)
+    danger (8.2.3)
       claide (~> 1.0)
       claide-plugins (>= 0.9.2)
       colored2 (~> 3.1)
@@ -53,7 +53,7 @@ GEM
       highline (~> 1.7.2)
     cork (0.3.0)
       colored2 (~> 3.1)
-    danger-swiftlint (0.24.4)
+    danger-swiftlint (0.24.5)
       danger
       rake (> 10)
       thor (~> 0.19)

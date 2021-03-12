@@ -3,7 +3,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/. 
 opt_out_usage
 
-fastlane_version "2.162.0"
+fastlane_version "2.178.0"
 
 default_platform :ios
 
