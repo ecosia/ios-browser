@@ -156,6 +156,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     private var hasAppeared: Bool = false
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        Analytics.shared.screen(.home)
         guard hasAppeared else { return hasAppeared = true }
         collectionView.reloadSections([Section.info.rawValue])
     }
