@@ -227,6 +227,8 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
             self.tableView.endUpdates()
             self.updateEmptyPanelState()
 
+            Analytics.shared.history(.delete)
+            
             if let cell = self.clearHistoryCell {
                 AdditionalHistoryActionRow.setStyle(enabled: !self.groupedSites.isEmpty, forCell: cell)
             }
@@ -279,6 +281,7 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
          (Strings.ClearHistoryMenuOptionTodayAndYesterday, 48)].forEach {
             (name, time) in
             let action = UIAlertAction(title: name, style: .destructive) { _ in
+                Analytics.shared.history(.delete_all)
                 remove(hoursAgo: time)
             }
             alert.addAction(action)
@@ -470,6 +473,7 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
 
         if let site = siteForIndexPath(indexPath), let url = URL(string: site.url) {
             if let libraryPanelDelegate = libraryPanelDelegate {
+                Analytics.shared.history(.open)
                 libraryPanelDelegate.libraryPanel(didSelectURL: url, visitType: VisitType.typed)
             }
             return
