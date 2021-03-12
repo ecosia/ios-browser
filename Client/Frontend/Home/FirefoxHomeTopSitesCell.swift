@@ -136,7 +136,7 @@ class TopSiteItemCell: UICollectionViewCell, Themeable {
 
         /* Ecosia: use html title for top sites */
         if !site.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            titleLabel.text = site.title
+            titleLabel.text = site.title.trimmingCharacters(in: .whitespacesAndNewlines)
         }
         else if let provider = site.metadata?.providerName {
             titleLabel.text = provider.lowercased()
