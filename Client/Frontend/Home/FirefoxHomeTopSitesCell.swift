@@ -134,7 +134,11 @@ class TopSiteItemCell: UICollectionViewCell, Themeable {
     func configureWithTopSiteItem(_ site: Site) {
         url = site.tileURL
 
-        if let provider = site.metadata?.providerName {
+        /* Ecosia: use html title for top sites */
+        if !site.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            titleLabel.text = site.title
+        }
+        else if let provider = site.metadata?.providerName {
             titleLabel.text = provider.lowercased()
         } else {
             titleLabel.text = site.tileURL.shortDisplayString
