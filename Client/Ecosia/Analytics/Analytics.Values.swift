@@ -111,4 +111,11 @@ extension Analytics {
         menu,
         new_tab
     }
+
+    enum Migration: String {
+        case
+        tabs,
+        favourites,
+        history
+    }
 }

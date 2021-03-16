@@ -15,6 +15,7 @@ final class EcosiaFavourites {
             return
         }
 
+        let start = Date()
         let favImport = DispatchGroup()
         var errors = [MaybeErrorType]()
         var guids = [GUID]()
@@ -37,6 +38,9 @@ final class EcosiaFavourites {
         }
 
         favImport.notify(queue: .main) {
+            let duration = Date().timeIntervalSince(start)
+            Analytics.shared.migrated(.favourites, in: duration)
+
             if errors.count > 0 {
                 finished(.failure(.init(reasons: errors)))
             } else {

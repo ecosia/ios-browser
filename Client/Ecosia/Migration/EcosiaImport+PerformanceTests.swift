@@ -103,8 +103,6 @@ extension EcosiaImport {
 
     func testAllSequentiallyV1(history: Int, favorites: Int, tabs: Int, finished: @escaping (Migration) -> ()) {
         let before = Date()
-
-
         testHistoryHighLevel(num: history) { (migration) in
             self.testFavorites(num: favorites) { (migration) in
                 self.testTabs(num: tabs) { (migration) in
@@ -117,8 +115,6 @@ extension EcosiaImport {
 
     func testAllSequentiallyV2(history: Int, favorites: Int, tabs: Int, finished: @escaping (Migration) -> ()) {
         let before = Date()
-
-
         testHistoryLowLevel(num: history) { (migration) in
             self.testFavorites(num: favorites) { (migration) in
                 self.testTabs(num: tabs) { (migration) in

@@ -68,6 +68,7 @@ final class EcosiaHistory {
             return
         }
 
+        let start = Date()
         let data = prepare(history: historyItems)
         guard let history = profile.history as? SQLiteHistory else { return }
 
@@ -76,6 +77,9 @@ final class EcosiaHistory {
             >>> { history.storeVisits(data.visits) }
 
         success.uponQueue(.main) { (result) in
+            let duration = Date().timeIntervalSince(start)
+            Analytics.shared.migrated(.history, in: duration)
+
             switch result {
             case .success:
                 finished(.success(Void()))

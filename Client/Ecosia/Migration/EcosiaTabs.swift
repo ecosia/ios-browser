@@ -14,12 +14,16 @@ final class EcosiaTabs {
             return
         }
 
+        let start = Date()
         let tabs = urls.map {
             tabManager.addTab(URLRequest(url: $0), flushToDisk: false, zombie: false)
         }
 
         let success = tabManager.storeChanges()
         success.uponQueue(.main) { result in
+            let duration = Date().timeIntervalSince(start)
+            Analytics.shared.migrated(.tabs, in: duration)
+
             switch result {
             case .success:
                 finished(.success(tabs))
