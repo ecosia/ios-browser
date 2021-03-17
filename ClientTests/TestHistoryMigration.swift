@@ -35,4 +35,13 @@ class TestHistoryMigration: TestHistory {
         XCTAssert(data.visits.count == 4)
     }
 
+    func testImportFailureDescription() {
+        let singleFailure = EcosiaImport.Failure(reasons: ["Reason 1"])
+        XCTAssertEqual(singleFailure.description, "Reason 1")
+
+        let fourFailures = EcosiaImport.Failure(reasons: ["Reason 1", "Reason 2", "Reason 3", "Reason 4"])
+        let cappedDescription = fourFailures.description
+        XCTAssertEqual(cappedDescription, "Reason 1 / Reason 2 / Reason 3")
+    }
+
 }
