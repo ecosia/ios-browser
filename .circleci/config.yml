@@ -49,7 +49,7 @@ jobs:
           name: Build and deploy to Testflight
           command: bundle exec fastlane testflight_live
 
-build-testflight-deploy-beta:
+  build-testflight-deploy-beta:
     environment:
       CI: true
     macos:
