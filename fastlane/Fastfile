@@ -57,10 +57,28 @@ platform :ios do
     )
   end
   
-  desc "Testflight build"
-  lane :testflight do
+  desc "Testflight build for Beta Channel"
+  lane :testflight_beta do
     match(
       app_identifier: ['com.ecosia.ecosiaapp.firefox', 'com.ecosia.ecosiaapp.firefox.searchWidget', 'com.ecosia.ecosiaapp.firefox.WidgetKit', 'com.ecosia.ecosiaapp.firefox.ShareTo'], 
+      type: 'appstore',
+      readonly: true
+    )
+    gym(
+      scheme: "Ecosia",
+      export_method: "app-store",
+      configuration: "EcosiaBeta"
+    )
+    pilot(
+      skip_waiting_for_build_processing: true, 
+      apple_id: "1541358670"
+    )
+  end
+
+  desc "Testflight build for Live Channel"
+  lane :testflight_live do
+    match(
+      app_identifier: ['com.ecosia.ecosiaapp', 'com.ecosia.ecosiaapp.searchWidget', 'com.ecosia.ecosiaapp.WidgetKit', 'com.ecosia.ecosiaapp.ShareTo'], 
       type: 'appstore',
       readonly: true
     )
@@ -71,7 +89,7 @@ platform :ios do
     )
     pilot(
       skip_waiting_for_build_processing: true, 
-      apple_id: "1541358670"
+      apple_id: "670881887"
     )
   end 
 

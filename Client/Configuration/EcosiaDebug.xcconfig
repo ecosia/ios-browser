@@ -6,8 +6,8 @@
 #include "Debug.xcconfig"
 
 INFOPLIST_FILE = Client/Info.plist
-MOZ_BUNDLE_DISPLAY_NAME = Ecosia Beta
-MOZ_BUNDLE_ID = com.ecosia.ecosiaapp.firefox
+MOZ_BUNDLE_DISPLAY_NAME = Ecosia
+MOZ_BUNDLE_ID = com.ecosia.ecosiaapp
 INCLUDE_SETTINGS_BUNDLE = YES
 LEANPLUM_ENVIRONMENT = development
 MOZ_TODAY_WIDGET_SEARCH_DISPLAY_NAME = Ecosia - Search

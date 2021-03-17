@@ -2,7 +2,7 @@ git_url("git@github.com:ecosia/IosSearchSigning.git")
 
 type("development") # The default type, can be: appstore, adhoc, enterprise or development
 
-app_identifier(["com.ecosia.ecosiaapp.firefox", "com.ecosia.ecosiaapp.firefox.searchWidget", "com.ecosia.ecosiaapp.firefox.WidgetKit", "com.ecosia.ecosiaapp.firefox.ShareTo"])
+app_identifier(["com.ecosia.ecosiaapp.firefox", "com.ecosia.ecosiaapp.firefox.searchWidget", "com.ecosia.ecosiaapp.firefox.WidgetKit", "com.ecosia.ecosiaapp.firefox.ShareTo", "com.ecosia.ecosiaapp", "com.ecosia.ecosiaapp.searchWidget", "com.ecosia.ecosiaapp.WidgetKit", "com.ecosia.ecosiaapp.ShareTo"])
 username("apple-dev@ecosia.org") # Your Apple Developer Portal username
 git_branch("main")
 
