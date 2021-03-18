@@ -540,7 +540,7 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
             }
         } else {
             tableView.alwaysBounceVertical = true
-            tableView.tableFooterView = nil
+            tableView.tableFooterView = .init()
         }
     }
 
