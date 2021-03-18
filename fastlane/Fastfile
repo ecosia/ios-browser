@@ -42,7 +42,7 @@ platform :ios do
       scheme: "Ecosia",
       project: "Client.xcodeproj",
       export_method: "ad-hoc",
-      configuration: "EcosiaBeta",
+      configuration: "EcosiaAppCenter",
       export_options: {iCloudContainerEnvironment: 'Development'}
     )
     appcenter_upload(

@@ -10923,7 +10923,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "$(MOZ_BUNDLE_ID)";
 				PRODUCT_MODULE_NAME = Client;
 				PRODUCT_NAME = Client;
-				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc com.ecosia.ecosiaapp.firefox";
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.ecosia.ecosiaapp.firefox";
 				SKIP_INSTALL = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/Client/Client-Bridging-Header.h";
 			};
@@ -10951,7 +10951,7 @@
 				MARKETING_VERSION = "${inherited}";
 				OTHER_SWIFT_FLAGS = "-DMOZ_CHANNEL_RELEASE -DMOZ_TARGET_SHARETO";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(MOZ_BUNDLE_ID).$(PRODUCT_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc com.ecosia.ecosiaapp.firefox.ShareTo";
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.ecosia.ecosiaapp.firefox.ShareTo";
 				SKIP_INSTALL = NO;
 			};
 			name = EcosiaBeta;
@@ -10967,7 +10967,7 @@
 				OTHER_SWIFT_FLAGS = "-DMOZ_CHANNEL_RELEASE -DMOZ_TARGET_TODAY";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(MOZ_BUNDLE_ID).searchWidget";
 				PRODUCT_NAME = Today;
-				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc com.ecosia.ecosiaapp.firefox.searchWidget";
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.ecosia.ecosiaapp.firefox.searchWidget";
 				SKIP_INSTALL = NO;
 			};
 			name = EcosiaBeta;
@@ -10982,7 +10982,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = "${inherited}";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(MOZ_BUNDLE_ID).WidgetKit";
-				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc com.ecosia.ecosiaapp.firefox.WidgetKit";
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.ecosia.ecosiaapp.firefox.WidgetKit";
 				SKIP_INSTALL = NO;
 			};
 			name = EcosiaBeta;
@@ -11171,6 +11171,278 @@
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Client.app/Client";
 			};
 			name = EcosiaBeta;
+		};
+		CA63D699260397DB007F972E /* EcosiaAppCenter */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CA32552425487C1C0024B48D /* EcosiaBeta.xcconfig */;
+			buildSettings = {
+				MARKETING_VERSION = 5.0.0;
+			};
+			name = EcosiaAppCenter;
+		};
+		CA63D69A260397DB007F972E /* EcosiaAppCenter */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon_Ecosia;
+				CURRENT_PROJECT_VERSION = 12;
+				DEVELOPMENT_TEAM = 33YMRSYD2L;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
+				INFOPLIST_FILE = Client/Info.plist;
+				MARKETING_VERSION = "${inherited}";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(MOZ_BUNDLE_ID)";
+				PRODUCT_MODULE_NAME = Client;
+				PRODUCT_NAME = Client;
+				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc com.ecosia.ecosiaapp.firefox";
+				SKIP_INSTALL = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/Client/Client-Bridging-Header.h";
+			};
+			name = EcosiaAppCenter;
+		};
+		CA63D69B260397DB007F972E /* EcosiaAppCenter */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "$(inherit)Extensions/Entitlements/Firefox.entitlements";
+				INFOPLIST_FILE = Extensions/NotificationService/Info.plist;
+				OTHER_SWIFT_FLAGS = "-DMOZ_CHANNEL_RELEASE -DMOZ_TARGET_NOTIFICATIONSERVICE";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(MOZ_BUNDLE_ID).$(PRODUCT_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "BR Firefox NotificationService App Store";
+				SKIP_INSTALL = NO;
+			};
+			name = EcosiaAppCenter;
+		};
+		CA63D69C260397DB007F972E /* EcosiaAppCenter */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "$(inherit)Extensions/Entitlements/EcosiaBeta.entitlements";
+				CURRENT_PROJECT_VERSION = 12;
+				DEVELOPMENT_TEAM = 33YMRSYD2L;
+				INFOPLIST_FILE = Extensions/ShareTo/Info.plist;
+				MARKETING_VERSION = "${inherited}";
+				OTHER_SWIFT_FLAGS = "-DMOZ_CHANNEL_RELEASE -DMOZ_TARGET_SHARETO";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(MOZ_BUNDLE_ID).$(PRODUCT_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc com.ecosia.ecosiaapp.firefox.ShareTo";
+				SKIP_INSTALL = NO;
+			};
+			name = EcosiaAppCenter;
+		};
+		CA63D69D260397DB007F972E /* EcosiaAppCenter */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "$(inherit)Extensions/Entitlements/EcosiaBeta.entitlements";
+				CURRENT_PROJECT_VERSION = 12;
+				DEVELOPMENT_TEAM = 33YMRSYD2L;
+				INFOPLIST_FILE = Extensions/Today/Info.plist;
+				MARKETING_VERSION = "${inherited}";
+				OTHER_SWIFT_FLAGS = "-DMOZ_CHANNEL_RELEASE -DMOZ_TARGET_TODAY";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(MOZ_BUNDLE_ID).searchWidget";
+				PRODUCT_NAME = Today;
+				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc com.ecosia.ecosiaapp.firefox.searchWidget";
+				SKIP_INSTALL = NO;
+			};
+			name = EcosiaAppCenter;
+		};
+		CA63D69E260397DB007F972E /* EcosiaAppCenter */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Extensions/Entitlements/EcosiaBeta.entitlements;
+				CURRENT_PROJECT_VERSION = 12;
+				DEVELOPMENT_TEAM = 33YMRSYD2L;
+				INFOPLIST_FILE = WidgetKit/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = "${inherited}";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(MOZ_BUNDLE_ID).WidgetKit";
+				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc com.ecosia.ecosiaapp.firefox.WidgetKit";
+				SKIP_INSTALL = NO;
+			};
+			name = EcosiaAppCenter;
+		};
+		CA63D69F260397DB007F972E /* EcosiaAppCenter */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "";
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 33YMRSYD2L;
+				ENABLE_TESTABILITY = YES;
+				INFOPLIST_FILE = "Shared/Supporting Files/Info.plist";
+				SWIFT_OBJC_BRIDGING_HEADER = "$SRCROOT/Shared/Shared-Bridging-Header.h";
+			};
+			name = EcosiaAppCenter;
+		};
+		CA63D6A0260397DB007F972E /* EcosiaAppCenter */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEFINES_MODULE = YES;
+				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS/Static",
+				);
+				INFOPLIST_FILE = Storage/Info.plist;
+				SWIFT_OBJC_BRIDGING_HEADER = "$SRCROOT/Storage/Storage-Bridging-Header.h";
+			};
+			name = EcosiaAppCenter;
+		};
+		CA63D6A1260397DB007F972E /* EcosiaAppCenter */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				DEFINES_MODULE = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS/Static",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)\"",
+					"\"$(SDKROOT)/usr/include/libxml2\"",
+					"\"$(BUILD_DIR)/Release$(EFFECTIVE_PLATFORM_NAME)/include/**\"",
+					"ThirdParty/ecec/include/**",
+					FxA/FxA/include,
+				);
+				INFOPLIST_FILE = Account/Info.plist;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/FxA/FxA/lib",
+				);
+				SWIFT_OBJC_BRIDGING_HEADER = "$SRCROOT/Account/Account-Bridging-Header.h";
+			};
+			name = EcosiaAppCenter;
+		};
+		CA63D6A2260397DB007F972E /* EcosiaAppCenter */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 33YMRSYD2L;
+				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS/Static",
+				);
+				INFOPLIST_FILE = Sync/Info.plist;
+				SWIFT_OBJC_BRIDGING_HEADER = "$SRCROOT/Sync/Sync-Bridging-Header.h";
+			};
+			name = EcosiaAppCenter;
+		};
+		CA63D6A3260397DB007F972E /* EcosiaAppCenter */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = SyncTelemetry/Info.plist;
+			};
+			name = EcosiaAppCenter;
+		};
+		CA63D6A4260397DB007F972E /* EcosiaAppCenter */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				INFOPLIST_FILE = ClientTests/Info.plist;
+				PRODUCT_NAME = ClientTests;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Client.app/Client";
+			};
+			name = EcosiaAppCenter;
+		};
+		CA63D6A5260397DB007F972E /* EcosiaAppCenter */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "";
+			};
+			name = EcosiaAppCenter;
+		};
+		CA63D6A6260397DB007F972E /* EcosiaAppCenter */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				INFOPLIST_FILE = StorageTests/Info.plist;
+				SWIFT_OBJC_BRIDGING_HEADER = "$SRCROOT/Storage/Storage-Bridging-Header.h";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Client.app/Client";
+			};
+			name = EcosiaAppCenter;
+		};
+		CA63D6A7260397DB007F972E /* EcosiaAppCenter */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				INFOPLIST_FILE = AccountTests/Info.plist;
+				SWIFT_OBJC_BRIDGING_HEADER = "$SRCROOT/Account/Account-Bridging-Header.h";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Client.app/Client";
+			};
+			name = EcosiaAppCenter;
+		};
+		CA63D6A8260397DB007F972E /* EcosiaAppCenter */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "";
+				INFOPLIST_FILE = SyncTests/Info.plist;
+				SWIFT_OBJC_BRIDGING_HEADER = "$SRCROOT/SyncTests/SyncTests-Bridging-Header.h";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Client.app/Client";
+			};
+			name = EcosiaAppCenter;
+		};
+		CA63D6A9260397DB007F972E /* EcosiaAppCenter */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "";
+				INFOPLIST_FILE = SharedTests/Info.plist;
+				SWIFT_OBJC_BRIDGING_HEADER = "$SRCROOT/Shared/Shared-Bridging-Header.h";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Client.app/Client";
+			};
+			name = EcosiaAppCenter;
+		};
+		CA63D6AA260397DB007F972E /* EcosiaAppCenter */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "";
+				PRODUCT_NAME = L10nSnapshotTests;
+				TEST_TARGET_NAME = Client;
+				USES_XCTRUNNER = YES;
+			};
+			name = EcosiaAppCenter;
+		};
+		CA63D6AB260397DB007F972E /* EcosiaAppCenter */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "";
+				PRODUCT_NAME = MarketingUITests;
+			};
+			name = EcosiaAppCenter;
+		};
+		CA63D6AC260397DB007F972E /* EcosiaAppCenter */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "";
+				INFOPLIST_FILE = XCUITests/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "Bitrise Firefox iOS Dev - XCUI Tests";
+				TEST_TARGET_NAME = Client;
+			};
+			name = EcosiaAppCenter;
+		};
+		CA63D6AD260397DB007F972E /* EcosiaAppCenter */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "";
+				INFOPLIST_FILE = StoragePerfTests/Info.plist;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Client.app/Client";
+			};
+			name = EcosiaAppCenter;
+		};
+		CA63D6AE260397DB007F972E /* EcosiaAppCenter */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "";
+				INFOPLIST_FILE = SyncTelemetryTests/Info.plist;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Client.app/Client";
+			};
+			name = EcosiaAppCenter;
 		};
 		CAFA91332578DBE10086E6AE /* Ecosia */ = {
 			isa = XCBuildConfiguration;
@@ -12220,6 +12492,7 @@
 				4354D3E224EEEEC5001184F6 /* Fennec_Enterprise */,
 				4354D3E324EEEEC5001184F6 /* Firefox */,
 				CA32553D25487C9E0024B48D /* EcosiaBeta */,
+				CA63D69E260397DB007F972E /* EcosiaAppCenter */,
 				CAFA91382578DBE10086E6AE /* Ecosia */,
 				4354D3E424EEEEC5001184F6 /* FirefoxBeta */,
 			);
@@ -12234,6 +12507,7 @@
 				E6DCC20E1DCBB6F100CEC4B7 /* Fennec_Enterprise */,
 				E448FCA81AEE7A6000869B6C /* Firefox */,
 				CA32554125487C9E0024B48D /* EcosiaBeta */,
+				CA63D6A2260397DB007F972E /* EcosiaAppCenter */,
 				CAFA913C2578DBE10086E6AE /* Ecosia */,
 				E6FCC4361C40562400DF6113 /* FirefoxBeta */,
 			);
@@ -12248,6 +12522,7 @@
 				E6DCC2151DCBB6F100CEC4B7 /* Fennec_Enterprise */,
 				E448FCA91AEE7A6000869B6C /* Firefox */,
 				CA32554725487C9E0024B48D /* EcosiaBeta */,
+				CA63D6A8260397DB007F972E /* EcosiaAppCenter */,
 				CAFA91422578DBE10086E6AE /* Ecosia */,
 				E6FCC4371C40562400DF6113 /* FirefoxBeta */,
 			);
@@ -12262,6 +12537,7 @@
 				E6DCC20B1DCBB6F100CEC4B7 /* Fennec_Enterprise */,
 				E448FCA31AEE7A6000869B6C /* Firefox */,
 				CA32553E25487C9E0024B48D /* EcosiaBeta */,
+				CA63D69F260397DB007F972E /* EcosiaAppCenter */,
 				CAFA91392578DBE10086E6AE /* Ecosia */,
 				E6FCC4311C40562400DF6113 /* FirefoxBeta */,
 			);
@@ -12276,6 +12552,7 @@
 				E6DCC20D1DCBB6F100CEC4B7 /* Fennec_Enterprise */,
 				E448FCA61AEE7A6000869B6C /* Firefox */,
 				CA32554025487C9E0024B48D /* EcosiaBeta */,
+				CA63D6A1260397DB007F972E /* EcosiaAppCenter */,
 				CAFA913B2578DBE10086E6AE /* Ecosia */,
 				E6FCC4341C40562400DF6113 /* FirefoxBeta */,
 			);
@@ -12290,6 +12567,7 @@
 				E6DCC2141DCBB6F100CEC4B7 /* Fennec_Enterprise */,
 				E448FCA71AEE7A6000869B6C /* Firefox */,
 				CA32554625487C9E0024B48D /* EcosiaBeta */,
+				CA63D6A7260397DB007F972E /* EcosiaAppCenter */,
 				CAFA91412578DBE10086E6AE /* Ecosia */,
 				E6FCC4351C40562400DF6113 /* FirefoxBeta */,
 			);
@@ -12304,6 +12582,7 @@
 				E6DCC20C1DCBB6F100CEC4B7 /* Fennec_Enterprise */,
 				E448FCA41AEE7A6000869B6C /* Firefox */,
 				CA32553F25487C9E0024B48D /* EcosiaBeta */,
+				CA63D6A0260397DB007F972E /* EcosiaAppCenter */,
 				CAFA913A2578DBE10086E6AE /* Ecosia */,
 				E6FCC4321C40562400DF6113 /* FirefoxBeta */,
 			);
@@ -12318,6 +12597,7 @@
 				E6DCC2131DCBB6F100CEC4B7 /* Fennec_Enterprise */,
 				E448FCA51AEE7A6000869B6C /* Firefox */,
 				CA32554525487C9E0024B48D /* EcosiaBeta */,
+				CA63D6A6260397DB007F972E /* EcosiaAppCenter */,
 				CAFA91402578DBE10086E6AE /* Ecosia */,
 				E6FCC4331C40562400DF6113 /* FirefoxBeta */,
 			);
@@ -12332,6 +12612,7 @@
 				E6DCC2091DCBB6F100CEC4B7 /* Fennec_Enterprise */,
 				39409A411C90E68300DAE683 /* Firefox */,
 				CA32553C25487C9E0024B48D /* EcosiaBeta */,
+				CA63D69D260397DB007F972E /* EcosiaAppCenter */,
 				CAFA91372578DBE10086E6AE /* Ecosia */,
 				39409A421C90E68300DAE683 /* FirefoxBeta */,
 			);
@@ -12345,6 +12626,7 @@
 				CA051B8125399DAB0096D30F /* EcosiaDebug */,
 				397848E51ED86605004C0C0B /* Firefox */,
 				CA32553A25487C9E0024B48D /* EcosiaBeta */,
+				CA63D69B260397DB007F972E /* EcosiaAppCenter */,
 				CAFA91352578DBE10086E6AE /* Ecosia */,
 				397848E61ED86605004C0C0B /* FirefoxBeta */,
 				3958DAB01ED98DCB0054AA27 /* Fennec_Enterprise */,
@@ -12360,6 +12642,7 @@
 				E6DCC21B1DCBB6F100CEC4B7 /* Fennec_Enterprise */,
 				3B43E3D81D95C48E00BBA9DB /* Firefox */,
 				CA32554C25487C9E0024B48D /* EcosiaBeta */,
+				CA63D6AD260397DB007F972E /* EcosiaAppCenter */,
 				CAFA91472578DBE10086E6AE /* Ecosia */,
 				3B43E3D91D95C48E00BBA9DB /* FirefoxBeta */,
 			);
@@ -12374,6 +12657,7 @@
 				E6DCC21A1DCBB6F100CEC4B7 /* Fennec_Enterprise */,
 				3BFE4B0F1D342FB900DDF53F /* Firefox */,
 				CA32554B25487C9E0024B48D /* EcosiaBeta */,
+				CA63D6AC260397DB007F972E /* EcosiaAppCenter */,
 				CAFA91462578DBE10086E6AE /* Ecosia */,
 				3BFE4B101D342FB900DDF53F /* FirefoxBeta */,
 			);
@@ -12389,6 +12673,7 @@
 				D39FA1691A83E0EC00EE869C /* Release */,
 				E448FCA21AEE7A6000869B6C /* Firefox */,
 				CA32554425487C9E0024B48D /* EcosiaBeta */,
+				CA63D6A5260397DB007F972E /* EcosiaAppCenter */,
 				CAFA913F2578DBE10086E6AE /* Ecosia */,
 				E6FCC42F1C40562400DF6113 /* FirefoxBeta */,
 			);
@@ -12403,6 +12688,7 @@
 				E6DCC2181DCBB6F100CEC4B7 /* Fennec_Enterprise */,
 				E601384D1C89EAE600DF9756 /* Firefox */,
 				CA32554925487C9E0024B48D /* EcosiaBeta */,
+				CA63D6AA260397DB007F972E /* EcosiaAppCenter */,
 				CAFA91442578DBE10086E6AE /* Ecosia */,
 				E601384E1C89EAE600DF9756 /* FirefoxBeta */,
 			);
@@ -12417,6 +12703,7 @@
 				E6DCC2191DCBB6F100CEC4B7 /* Fennec_Enterprise */,
 				E60138521C89EAE600DF9756 /* Firefox */,
 				CA32554A25487C9E0024B48D /* EcosiaBeta */,
+				CA63D6AB260397DB007F972E /* EcosiaAppCenter */,
 				CAFA91452578DBE10086E6AE /* Ecosia */,
 				E60138531C89EAE600DF9756 /* FirefoxBeta */,
 			);
@@ -12431,6 +12718,7 @@
 				E69DB08E1E97DEAA008A67E6 /* Fennec_Enterprise */,
 				E69DB08F1E97DEAA008A67E6 /* Firefox */,
 				CA32554225487C9E0024B48D /* EcosiaBeta */,
+				CA63D6A3260397DB007F972E /* EcosiaAppCenter */,
 				CAFA913D2578DBE10086E6AE /* Ecosia */,
 				E69DB0901E97DEAA008A67E6 /* FirefoxBeta */,
 			);
@@ -12445,6 +12733,7 @@
 				E69DB0941E97DEAA008A67E6 /* Fennec_Enterprise */,
 				E69DB0951E97DEAA008A67E6 /* Firefox */,
 				CA32554D25487C9E0024B48D /* EcosiaBeta */,
+				CA63D6AE260397DB007F972E /* EcosiaAppCenter */,
 				CAFA91482578DBE10086E6AE /* Ecosia */,
 				E69DB0961E97DEAA008A67E6 /* FirefoxBeta */,
 			);
@@ -12459,6 +12748,7 @@
 				E6DCC2171DCBB6F100CEC4B7 /* Fennec_Enterprise */,
 				E6F965171B2F1CF20034B023 /* Firefox */,
 				CA32554825487C9E0024B48D /* EcosiaBeta */,
+				CA63D6A9260397DB007F972E /* EcosiaAppCenter */,
 				CAFA91432578DBE10086E6AE /* Ecosia */,
 				E6FCC43A1C40562400DF6113 /* FirefoxBeta */,
 			);
@@ -12473,6 +12763,7 @@
 				E6DCC2051DCBB6F100CEC4B7 /* Fennec_Enterprise */,
 				E448FC9D1AEE7A6000869B6C /* Firefox */,
 				CA32553825487C9E0024B48D /* EcosiaBeta */,
+				CA63D699260397DB007F972E /* EcosiaAppCenter */,
 				CAFA91332578DBE10086E6AE /* Ecosia */,
 				E6FCC4291C40562400DF6113 /* FirefoxBeta */,
 			);
@@ -12487,6 +12778,7 @@
 				E6DCC2061DCBB6F100CEC4B7 /* Fennec_Enterprise */,
 				E448FC9E1AEE7A6000869B6C /* Firefox */,
 				CA32553925487C9E0024B48D /* EcosiaBeta */,
+				CA63D69A260397DB007F972E /* EcosiaAppCenter */,
 				CAFA91342578DBE10086E6AE /* Ecosia */,
 				E6FCC42A1C40562400DF6113 /* FirefoxBeta */,
 			);
@@ -12501,6 +12793,7 @@
 				E6DCC2101DCBB6F100CEC4B7 /* Fennec_Enterprise */,
 				E448FC9F1AEE7A6000869B6C /* Firefox */,
 				CA32554325487C9E0024B48D /* EcosiaBeta */,
+				CA63D6A4260397DB007F972E /* EcosiaAppCenter */,
 				CAFA913E2578DBE10086E6AE /* Ecosia */,
 				E6FCC42B1C40562400DF6113 /* FirefoxBeta */,
 			);
@@ -12515,6 +12808,7 @@
 				E6DCC2081DCBB6F100CEC4B7 /* Fennec_Enterprise */,
 				E448FCA01AEE7A6000869B6C /* Firefox */,
 				CA32553B25487C9E0024B48D /* EcosiaBeta */,
+				CA63D69C260397DB007F972E /* EcosiaAppCenter */,
 				CAFA91362578DBE10086E6AE /* Ecosia */,
 				E6FCC42D1C40562400DF6113 /* FirefoxBeta */,
 			);

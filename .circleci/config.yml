@@ -171,4 +171,3 @@ workflows:
             branches:
               only: 
                 - /^.*main.*/
-                - /^.*fix-appcenter.*/
