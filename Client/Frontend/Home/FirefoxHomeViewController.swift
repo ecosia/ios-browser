@@ -469,7 +469,7 @@ extension FirefoxHomeViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         switch Section(section) {
         case .treeCounter:
-            return Section(section).headerHeight
+            return inOverlayMode ? .zero : Section(section).headerHeight
         case .topSites:
             return topSitesManager.content.isEmpty ? .zero : Section(section).headerHeight
         case .libraryShortcuts:
