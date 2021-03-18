@@ -28,8 +28,6 @@ jobs:
       with:
         path: Carthage
         key: ${{ runner.os }}-carthage-${{ hashFiles('**/Cartfile.resolved') }}
-        restore-keys: |
-          ${{ runner.os }}-carthage-
     - name: bootstrap apllication services 
       uses: olejnjak/carthage-workaround@v1
       if: steps.cache-carthage.outputs.cache-hit != 'true'
