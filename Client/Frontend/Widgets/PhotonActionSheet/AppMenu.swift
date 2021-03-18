@@ -12,9 +12,24 @@ extension PhotonActionSheetProtocol {
     func getLibraryActions(vcDelegate: PageOptionsVC) -> [PhotonActionSheetItem] {
         guard let tab = self.tabManager.selectedTab else { return [] }
 
-        let openLibrary = PhotonActionSheetItem(title: Strings.AppMenuLibraryTitleString, iconString: "menu-library") { _, _ in
+        let openBookmarks = PhotonActionSheetItem(title: Strings.AppMenuBookmarksTitleString, iconString: "menu-Bookmark") { _, _ in
             let bvc = vcDelegate as? BrowserViewController
-            bvc?.showLibrary()
+            bvc?.showLibrary(panel: .bookmarks)
+        }
+
+        let openHistory = PhotonActionSheetItem(title: Strings.AppMenuHistoryTitleString, iconString: "menu-panel-History") { _, _ in
+            let bvc = vcDelegate as? BrowserViewController
+            bvc?.showLibrary(panel: .history)
+        }
+
+        let openReadingList = PhotonActionSheetItem(title: Strings.AppMenuReadingListTitleString, iconString: "menu-panel-ReadingList") { _, _ in
+            let bvc = vcDelegate as? BrowserViewController
+            bvc?.showLibrary(panel: .readingList)
+        }
+
+        let openDownloads = PhotonActionSheetItem(title: Strings.AppMenuDownloadsTitleString, iconString: "menu-panel-Downloads") { _, _ in
+            let bvc = vcDelegate as? BrowserViewController
+            bvc?.showLibrary(panel: .downloads)
         }
 
         let openHomePage = PhotonActionSheetItem(title: Strings.AppMenuOpenHomePageTitleString, iconString: "menu-Home") { _, _ in
@@ -26,7 +41,7 @@ extension PhotonActionSheetProtocol {
             }
         }
 
-        return [openHomePage, openLibrary]
+        return [openHomePage, openBookmarks, openHistory, openReadingList, openDownloads]
     }
 
     func getOtherPanelActions(vcDelegate: PageOptionsVC) -> [PhotonActionSheetItem] {
