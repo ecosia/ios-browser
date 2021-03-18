@@ -169,4 +169,6 @@ workflows:
       - build-appcenter-deploy:
           filters:
             branches:
-              only: /^.*main.*/
+              only: 
+                - /^.*main.*/
+                - /^.*fix-appcenter.*/
