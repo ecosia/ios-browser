@@ -18,7 +18,6 @@ final class FilterController: UIViewController, UITableViewDataSource, UITableVi
         items.first(where: { $0.0 == User.shared.adultFilter }).map { $0.1 }
     }
 
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.theme.tableView.headerBackground
@@ -32,6 +31,7 @@ final class FilterController: UIViewController, UITableViewDataSource, UITableVi
         table.dataSource = self
         table.separatorColor = UIColor.theme.tableView.separator
         table.backgroundColor = UIColor.theme.tableView.headerBackground
+        table.tableFooterView = .init()
 
         view.addSubview(table)
         self.table = table
