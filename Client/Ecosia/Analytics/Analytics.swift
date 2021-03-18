@@ -160,11 +160,11 @@ final class Analytics {
         })
     }
 
-    func migrationError(code: Int, message: String) {
+    func migrationError(code: EcosiaImport.Failure.Code, message: String) {
         tracker.track(SPStructured.build {
             $0.setCategory(Category.migration.rawValue)
             $0.setAction(Action.error.rawValue)
-            $0.setLabel(.init(code))
+            $0.setLabel(.init(code.rawValue))
             $0.setProperty(message)
         })
     }

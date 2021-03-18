@@ -8,10 +8,6 @@ import MozillaAppServices
 import Storage
 import Shared
 
-private let tabsError = 911
-private let favouritesError = 912
-private let historyError = 913
-
 final class EcosiaImport {
 
     enum Status {
@@ -25,6 +21,12 @@ final class EcosiaImport {
     }
 
     struct Failure: Error {
+        enum Code: Int {
+            case favourites = 911,
+                 history = 912,
+                 tabs = 913
+        }
+
         let reasons: [MaybeErrorType]
 
         var description: String {
@@ -55,7 +57,7 @@ final class EcosiaImport {
                 migration.history = .succeeded
             case .failure(let error):
                 migration.history = .failed(error)
-                Analytics.shared.migrationError(code: historyError, message: error.description)
+                Analytics.shared.migrationError(code: .history, message: error.description)
             }
 
             EcosiaFavourites.migrate(Core.Favourites().items, to: self.profile) { result in
@@ -64,7 +66,7 @@ final class EcosiaImport {
                     migration.favorites = .succeeded
                 case .failure(let error):
                     migration.favorites = .failed(error)
-                    Analytics.shared.migrationError(code: favouritesError, message: error.description)
+                    Analytics.shared.migrationError(code: .favourites, message: error.description)
                 }
 
                 let urls = Core.Tabs().items.compactMap { $0.page?.url }
@@ -74,7 +76,7 @@ final class EcosiaImport {
                         migration.tabs = .succeeded
                     case .failure(let error):
                         migration.tabs = .failed(error)
-                        Analytics.shared.migrationError(code: tabsError, message: error.description)
+                        Analytics.shared.migrationError(code: .tabs, message: error.description)
                     }
 
                     Core.User.shared.migrated = true
