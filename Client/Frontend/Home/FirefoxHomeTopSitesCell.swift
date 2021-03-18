@@ -148,9 +148,9 @@ class TopSiteItemCell: UICollectionViewCell, Themeable {
         if let _ = site as? PinnedSite {
             contentView.addSubview(pinImageView)
             pinImageView.snp.makeConstraints { make in
-                make.right.equalTo(self.titleLabel.snp.left)
+                make.right.equalTo(self.imageView.snp.left).offset(-TopSiteCellUX.PinIconSize/2.0)
                 make.size.equalTo(TopSiteCellUX.PinIconSize)
-                make.centerY.equalTo(self.titleLabel.snp.centerY)
+                make.centerY.equalTo(self.imageView.snp.centerY)
             }
             titleLabel.snp.updateConstraints { make in
                 make.left.equalTo(contentView).offset(TopSiteCellUX.PinIconSize)
