@@ -347,8 +347,10 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
         if let site = siteForIndexPath(indexPath), let cell = cell as? TwoLineTableViewCell {
             cell.setLines(site.title, detailText: site.url)
 
+            /* Ecosia: remove border for site icons
             cell.imageView?.layer.borderColor = HistoryPanelUX.IconBorderColor.cgColor
             cell.imageView?.layer.borderWidth = HistoryPanelUX.IconBorderWidth
+            */
             cell.imageView?.contentMode = .center
             cell.imageView?.setImageAndBackground(forIcon: site.icon, website: site.tileURL) { [weak cell] in
                 cell?.imageView?.image = cell?.imageView?.image?.createScaled(CGSize(width: HistoryPanelUX.IconSize, height: HistoryPanelUX.IconSize))
