@@ -54,7 +54,8 @@ extension Analytics {
         view,
         open,
         receive,
-        error
+        error,
+        completed
         
         enum Activity: String {
             case

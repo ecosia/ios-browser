@@ -261,10 +261,11 @@ final class Analytics {
     }
 
     func migrated(_ migration: Migration, in seconds: TimeInterval) {
-        tracker.track(SPTiming.build({
-            $0.setCategory("migration")
-            $0.setVariable(migration.rawValue)
-            $0.setTiming(Int(seconds * 1000))
+        tracker.track(SPStructured.build({
+            $0.setCategory(Category.migration.rawValue)
+            $0.setAction(Action.completed.rawValue)
+            $0.setLabel(migration.rawValue)
+            $0.setValue(seconds * 1000)
         }))
     }
 }
