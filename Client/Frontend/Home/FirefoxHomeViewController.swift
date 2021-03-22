@@ -162,6 +162,7 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
         super.init(collectionViewLayout: flowLayout)
         self.collectionView?.delegate = self
         self.collectionView?.dataSource = self
+        self.collectionView?.alwaysBounceVertical = true
 
         collectionView?.addGestureRecognizer(longPressRecognizer)
 
