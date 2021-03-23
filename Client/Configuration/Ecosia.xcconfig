@@ -5,7 +5,7 @@
 #include "Common.xcconfig"
 #include "Release.xcconfig"
 
-MOZ_BUNDLE_DISPLAY_NAME = Ecosia Beta
+MOZ_BUNDLE_DISPLAY_NAME = Ecosia
 MOZ_BUNDLE_ID = com.ecosia.ecosiaapp
 CODE_SIGN_ENTITLEMENTS = Client/Entitlements/Ecosia.entitlements
 OTHER_SWIFT_FLAGS = $(OTHER_SWIFT_FLAGS_common) -DMOZ_CHANNEL_RELEASE
