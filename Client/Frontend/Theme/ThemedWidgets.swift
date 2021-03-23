@@ -165,7 +165,7 @@ class ThemedHeaderFooterViewBordersHelper: Themeable {
     func initBorders(view: UITableViewHeaderFooterView) {
         view.contentView.addSubview(topBorder)
         view.contentView.addSubview(bottomBorder)
-
+        
         topBorder.snp.makeConstraints { make in
             make.left.right.top.equalTo(view.contentView)
             make.height.equalTo(0.25)

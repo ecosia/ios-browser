@@ -18,6 +18,14 @@ private struct BookmarksPanelUX {
     static let RowFlashDelay: TimeInterval = 0.4
 }
 
+private var disclosureIndicator: UIImageView {
+    let disclosureIndicator = UIImageView()
+    disclosureIndicator.image = UIImage(named: "menu-Disclosure")?.withRenderingMode(.alwaysTemplate)
+    disclosureIndicator.tintColor = UIColor.theme.tableView.accessoryViewTint
+    disclosureIndicator.sizeToFit()
+    return disclosureIndicator
+}
+
 let LocalizedRootBookmarkFolderStrings = [
     BookmarkRoots.MenuFolderGUID: Strings.BookmarksFolderTitleMenu,
     BookmarkRoots.ToolbarFolderGUID: Strings.BookmarksFolderTitleToolbar,
@@ -393,8 +401,9 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel {
 
             cell.imageView?.image = ThemeManager.instance.currentName == .dark ? bookmarkFolderIconDark : bookmarkFolderIconNormal
             cell.imageView?.contentMode = .center
-            cell.accessoryType = .disclosureIndicator
-            cell.editingAccessoryType = .disclosureIndicator
+            cell.accessoryType = .none
+            cell.editingAccessoryType = .none
+            cell.accessoryView = disclosureIndicator
             return cell
         case let bookmarkItem as BookmarkItem:
             let cell = tableView.dequeueReusableCell(withIdentifier: BookmarkNodeCellIdentifier, for: indexPath)
@@ -419,6 +428,7 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel {
                 cell.setNeedsLayout()
             }
 
+            cell.accessoryView = nil
             cell.accessoryType = .none
             cell.editingAccessoryType = .disclosureIndicator
             return cell
