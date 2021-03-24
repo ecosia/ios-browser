@@ -12822,8 +12822,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				kind = exactVersion;
-				version = 4.3.0;
+				branch = "MOB-929-detect-ecosia-urls";
+				kind = branch;
 			};
 		};
 		CE0AB93225F7C2B400333656 /* XCRemoteSwiftPackageReference "snowplow-objc-tracker" */ = {

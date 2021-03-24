@@ -697,7 +697,7 @@ extension BrowserViewController: WKNavigationDelegate {
                 }
             }
 
-            if User.shared.searched, let url = webView.url,
+            if !User.shared.searched, let url = webView.url,
                url.isEcosia, url.path.hasPrefix("/search") {
 
                 User.shared.searched = true
