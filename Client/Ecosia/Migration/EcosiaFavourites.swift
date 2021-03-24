@@ -15,6 +15,11 @@ final class EcosiaFavourites {
             return
         }
 
+        if let error = profile.places.reopenIfClosed() {
+            finished(.failure(.init(reasons: [error])))
+            return
+        }
+
         let start = Date()
         let favImport = DispatchGroup()
         var errors = [MaybeErrorType]()
