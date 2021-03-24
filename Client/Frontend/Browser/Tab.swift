@@ -8,6 +8,7 @@ import Storage
 import Shared
 import SwiftyJSON
 import XCGLogger
+import Core
 
 fileprivate var debugTabCount = 0
 
@@ -451,8 +452,12 @@ class Tab: NSObject {
                 completion?(navigation)
             }
 
-            // Ecosia: inject cookie
+            // Ecosia: inject cookie and analytics id
             if !isPrivate, let cookie = browserViewController?.tabManager.cookie {
+                var request = request
+                if let url = request.url, url.isEcosia {
+                    request.url = url.addQuery(name: "_sp", value: User.shared.analyticsId.uuidString)
+                }
                 webView.configuration.websiteDataStore.httpCookieStore.setCookie(cookie.value) {
                     let navigation = webView.load(request)
                     completion?(navigation)
