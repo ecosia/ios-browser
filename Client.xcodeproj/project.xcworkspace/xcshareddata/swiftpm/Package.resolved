@@ -14,9 +14,9 @@
         "package": "Core",
         "repositoryURL": "https://github.com/ecosia/ios-core.git",
         "state": {
-          "branch": "MOB-929-detect-ecosia-urls",
-          "revision": "d57cda0c8be928491418cb626d6cd971f56cc44d",
-          "version": null
+          "branch": null,
+          "revision": "95fd1b7a9fe22af8d06754d8143f485edb79b4bb",
+          "version": "4.3.1"
         }
       },
       {
