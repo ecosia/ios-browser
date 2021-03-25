@@ -6,6 +6,7 @@ import Foundation
 import WebKit
 import Shared
 import UIKit
+import Core
 
 private let log = Logger.browserLogger
 
@@ -694,6 +695,12 @@ extension BrowserViewController: WKNavigationDelegate {
                         tab.consecutiveCrashes = 0
                     }
                 }
+            }
+
+            if User.shared.searched, let url = webView.url,
+               url.isEcosia, url.path.hasPrefix("/search") {
+
+                User.shared.searched = true
             }
         }
     }
