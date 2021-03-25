@@ -345,11 +345,7 @@ class URLBarView: UIView {
 
             self.multiStateButton.snp.remakeConstraints { make in
                 if self.toolbarIsShowing {
-                    if self.topTabsIsShowing {
-                        make.trailing.equalTo(self.libraryButton.snp.leading)
-                    } else {
-                        make.trailing.equalTo(self.addNewTabButton.snp.leading)
-                    }
+                    make.trailing.equalTo(self.addNewTabButton.snp.leading)
                 } else {
                     make.trailing.equalTo(self.safeArea.trailing)
                 }
