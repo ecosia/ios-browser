@@ -456,7 +456,7 @@ class Tab: NSObject {
             if !isPrivate, let cookie = browserViewController?.tabManager.cookie {
                 var request = request
                 if let url = request.url, url.isEcosia {
-                    request.url = url.addQuery(name: "_sp", value: User.shared.analyticsId.uuidString)
+                    request.url = url.ecosified()
                 }
                 webView.configuration.websiteDataStore.httpCookieStore.setCookie(cookie.value) {
                     let navigation = webView.load(request)
