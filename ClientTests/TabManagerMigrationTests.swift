@@ -10,8 +10,6 @@ class EcosiaTabMigrationTests: TabManagerStoreTests {
 
     func testEcosiaImportTabs() {
         try? FileManager.default.removeItem(at: FileManager.pages)
-        try? FileManager.default.removeItem(at: FileManager.snapshots)
-        Core.User.shared.migrated = false
 
         let urls = [URL(string: "https://ecosia.org")!,
                     URL(string: "https://guacamole.com")!]
@@ -22,8 +20,9 @@ class EcosiaTabMigrationTests: TabManagerStoreTests {
         let expectation = XCTestExpectation()
         PageStore.queue.async {
             DispatchQueue.main.async {
-                _ = self.manager.store.restoreStartupTabs(clearPrivateTabs: false, tabManager: self.manager)
-                XCTAssertEqual(self.manager.normalTabs.count, 2, "There should be 2 normal tabs")
+                XCTAssertEqual(self.manager.testCountRestoredTabs(), 2)
+                // clean up
+                try? FileManager.default.removeItem(at: FileManager.pages)
                 expectation.fulfill()
             }
         }

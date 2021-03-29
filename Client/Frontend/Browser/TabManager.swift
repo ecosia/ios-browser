@@ -44,8 +44,7 @@ extension TabManager: TabEventHandler {
 class TabManager: NSObject {
     fileprivate var delegates = [WeakTabManagerDelegate]()
     fileprivate let tabEventHandlers: [TabEventHandler]
-    /* Ecosia: expose store for migration testing*/
-    let store: TabManagerStore
+    fileprivate let store: TabManagerStore
     fileprivate let profile: Profile
     lazy var cookie: Cookie = Cookie()
 
