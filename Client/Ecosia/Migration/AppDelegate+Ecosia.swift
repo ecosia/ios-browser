@@ -20,9 +20,9 @@ extension AppDelegate {
                 NSLog(error.localizedDescription)
             }
             
-            if case .initial = migration.favorites,
-               case .initial = migration.tabs,
-               case .initial = migration.history {
+            if case .succeeded = migration.favorites,
+               case .succeeded = migration.tabs,
+               case .succeeded = migration.history {
                 Analytics.shared.migration(true)
             } else {
                 Analytics.shared.migration(false)
