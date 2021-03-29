@@ -260,6 +260,13 @@ final class Analytics {
         })
     }
 
+    func migration(_ success: Bool) {
+        tracker.track(SPStructured.build({
+            $0.setCategory(Category.migration.rawValue)
+            $0.setAction(success ? Action.success.rawValue : Action.error.rawValue)
+        }))
+    }
+    
     func migrated(_ migration: Migration, in seconds: TimeInterval) {
         tracker.track(SPStructured.build({
             $0.setCategory(Category.migration.rawValue)
