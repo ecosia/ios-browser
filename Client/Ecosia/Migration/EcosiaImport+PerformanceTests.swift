@@ -44,25 +44,12 @@ extension EcosiaImport {
 
     }
 
-    func testTabs(num: Int, finished: @escaping (Migration) -> ()) {
-        let urls: [URL] = (0..<num).map { _ in
-            let tld = randomString(length: 10)
-            return URL(string: "https://\(tld).org")!
+    static func createTabs(num: Int) -> [Core.Tab] {
+       return (0..<num).map { i in
+            let url = URL(string: "https://www.google.com/search?q=\(i)")!
+            let page = Page(url: url, title: "Title URL \(i)")
+            return Core.Tab(page: page)
         }
-
-        let before = Date()
-        EcosiaTabs.migrate(urls, to: tabManager) { (result) in
-            switch result {
-            case .success(let guids):
-                assert(guids.count == num)
-                let after = Date().timeIntervalSince(before)
-                NSLog("ECOSIA: Time to migrate \(num) Tabs: \(after) s")
-            case .failure:
-                break
-            }
-            finished(Migration())
-        }
-
     }
 
     func testHistoryHighLevel(num: Int, finished: @escaping (Migration) -> ()) {
@@ -105,10 +92,8 @@ extension EcosiaImport {
         let before = Date()
         testHistoryHighLevel(num: history) { (migration) in
             self.testFavorites(num: favorites) { (migration) in
-                self.testTabs(num: tabs) { (migration) in
-                    let after = Date().timeIntervalSince(before)
-                    NSLog("ECOSIA: Total time: \(after) s")
-                }
+                let after = Date().timeIntervalSince(before)
+                NSLog("ECOSIA: Total time: \(after) s")
             }
         }
     }
@@ -117,10 +102,8 @@ extension EcosiaImport {
         let before = Date()
         testHistoryLowLevel(num: history) { (migration) in
             self.testFavorites(num: favorites) { (migration) in
-                self.testTabs(num: tabs) { (migration) in
-                    let after = Date().timeIntervalSince(before)
-                    NSLog("ECOSIA: Total time: \(after) s")
-                }
+                let after = Date().timeIntervalSince(before)
+                NSLog("ECOSIA: Total time: \(after) s")
             }
         }
     }

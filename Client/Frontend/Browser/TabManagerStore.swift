@@ -6,6 +6,7 @@ import Foundation
 import Storage
 import Shared
 import XCGLogger
+import Core
 
 private let log = Logger.browserLogger
 class TabManagerStore {
@@ -16,7 +17,12 @@ class TabManagerStore {
     fileprivate var writeOperation = DispatchWorkItem {}
 
     // Init this at startup with the tabs on disk, and then on each save, update the in-memory tab state.
-    fileprivate lazy var archivedStartupTabs = {
+    fileprivate lazy var archivedStartupTabs: [SavedTab] = {
+        /* Ecosia: restore from Ecosia Tabs the first time */
+        if Core.User.shared.migrated != true {
+            return migrateToSavedTabs(from: Core.Tabs().items) ?? []
+        }
+
         return SiteArchiver.tabsToRestore(tabsStateArchivePath: tabsStateArchivePath())
     }()
 
@@ -147,5 +153,34 @@ extension TabManagerStore {
     func testTabCountOnDisk() -> Int {
         assert(AppConstants.IsRunningTest)
         return SiteArchiver.tabsToRestore(tabsStateArchivePath: tabsStateArchivePath()).count
+    }
+}
+
+// Ecosia: import tabs
+extension TabManagerStore {
+
+    fileprivate func migrateToSavedTabs(from tabs: [Core.Tab]) -> [SavedTab]? {
+        var savedTabs = [SavedTab]()
+        var savedUUIDs = Set<String>()
+
+        var currentTabID: UUID?
+        if let pos = Core.Tabs().current, pos < tabs.count {
+            currentTabID = tabs[pos].id
+        }
+
+        for tab in tabs {
+            guard let page = tab.page,
+                  let savedTab = SavedTab(screenshotUUID: tab.id, isSelected: currentTabID == tab.id, title: tab.page?.title, isPrivate: false, faviconURL: nil, url: tab.page?.url, sessionData: .init(currentPage: 0, urls: [page.url], lastUsedTime: Date.now())) else  { continue }
+
+            savedTabs.append(savedTab)
+
+            if let data = tab.snapshot, let image = UIImage(data: data) {
+                savedUUIDs.insert(tab.id.uuidString)
+                imageStore?.put(tab.id.uuidString, image: image)
+            }
+        }
+        // Clean up any screenshots that are no longer associated with a tab.
+        _ = imageStore?.clearExcluding(savedUUIDs)
+        return savedTabs.isEmpty ? nil : savedTabs
     }
 }

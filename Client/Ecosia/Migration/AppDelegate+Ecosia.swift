@@ -3,6 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import UIKit
+import Core
 
 extension AppDelegate {
     func migrateEcosiaContents() {
@@ -10,16 +11,6 @@ extension AppDelegate {
 
         let ecosiaImport = EcosiaImport(profile: profile, tabManager: self.tabManager)
         ecosiaImport.migrate { migration in
-            if case let .failed(error) = migration.favorites {
-                NSLog(error.localizedDescription)
-            }
-            if case let .failed(error) = migration.tabs {
-                NSLog(error.localizedDescription)
-            }
-            if case let .failed(error) = migration.history {
-                NSLog(error.localizedDescription)
-            }
-            
             if case .succeeded = migration.favorites,
                case .succeeded = migration.tabs,
                case .succeeded = migration.history {
@@ -27,6 +18,9 @@ extension AppDelegate {
             } else {
                 Analytics.shared.migration(false)
             }
+
+            // Clean up
+            Core.User.shared.migrated = true
         }
     }
 }

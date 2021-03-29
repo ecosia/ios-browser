@@ -461,7 +461,6 @@
 		CAA2F3F3257A79C700EBAD38 /* FilterController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA2F3F2257A79C700EBAD38 /* FilterController.swift */; };
 		CAA2F430257A990C00EBAD38 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = CAA2F42F257A990C00EBAD38 /* Core */; };
 		CAA3B7E62497DCB60094E3C1 /* LoginDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA3B7E52497DCB60094E3C1 /* LoginDataSource.swift */; };
-		CAAD533F2541B68C002501A5 /* EcosiaTabs.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAAD533E2541B68C002501A5 /* EcosiaTabs.swift */; };
 		CAAD53542541B6A1002501A5 /* EcosiaHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAAD53532541B6A1002501A5 /* EcosiaHistory.swift */; };
 		CAAED1EF25810C7B0048199C /* NewsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAAED1ED25810C7A0048199C /* NewsController.swift */; };
 		CAAED1F025810C7B0048199C /* NewsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAAED1EE25810C7A0048199C /* NewsCell.swift */; };
@@ -3233,7 +3232,6 @@
 		CAA246D0257A725100D84AD9 /* markets.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = markets.json; sourceTree = "<group>"; };
 		CAA2F3F2257A79C700EBAD38 /* FilterController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterController.swift; sourceTree = "<group>"; };
 		CAA3B7E52497DCB60094E3C1 /* LoginDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginDataSource.swift; sourceTree = "<group>"; };
-		CAAD533E2541B68C002501A5 /* EcosiaTabs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaTabs.swift; sourceTree = "<group>"; };
 		CAAD53532541B6A1002501A5 /* EcosiaHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaHistory.swift; sourceTree = "<group>"; };
 		CAAED1ED25810C7A0048199C /* NewsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewsController.swift; sourceTree = "<group>"; };
 		CAAED1EE25810C7A0048199C /* NewsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewsCell.swift; sourceTree = "<group>"; };
@@ -5122,7 +5120,6 @@
 				CA051BEE2539B25B0096D30F /* EcosiaImport.swift */,
 				CA08B86E255EE8B6005CA6A4 /* EcosiaImport+PerformanceTests.swift */,
 				CA708BB925407C59007265AC /* EcosiaFavourites.swift */,
-				CAAD533E2541B68C002501A5 /* EcosiaTabs.swift */,
 				CAAD53532541B6A1002501A5 /* EcosiaHistory.swift */,
 				CA4DDDFB2542D51600966CF2 /* AppDelegate+Ecosia.swift */,
 			);
@@ -7909,7 +7906,6 @@
 				EB98550124226EF70040F24B /* AppDelegate+SyncSentTabs.swift in Sources */,
 				744ED5611DBFEB8D00A2B5BE /* MailtoLinkHandler.swift in Sources */,
 				59A68E0B4ABBF55E14819668 /* BookmarksPanel.swift in Sources */,
-				CAAD533F2541B68C002501A5 /* EcosiaTabs.swift in Sources */,
 				D04D1B862097859B0074B35F /* DownloadToast.swift in Sources */,
 				884CA7492344A301002E4711 /* TextContentDetector.swift in Sources */,
 				7B844E3D1BBDDB9D00E733A2 /* ChevronView.swift in Sources */,
@@ -12822,8 +12818,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				kind = exactVersion;
-				version = 4.3.2;
+				branch = "tweak-tab-migration";
+				kind = branch;
 			};
 		};
 		CE0AB93225F7C2B400333656 /* XCRemoteSwiftPackageReference "snowplow-objc-tracker" */ = {
