@@ -14,8 +14,8 @@
         "package": "Core",
         "repositoryURL": "https://github.com/ecosia/ios-core.git",
         "state": {
-          "branch": "tweak-tab-migration",
-          "revision": "d01b0ec2f004212b5a7a17789c8156baf850b300",
+          "branch": "main",
+          "revision": "f878fdf616ad6fa92407bc8707c0c21851385e5b",
           "version": null
         }
       },
