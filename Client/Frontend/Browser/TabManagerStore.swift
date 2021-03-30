@@ -170,7 +170,15 @@ extension TabManagerStore {
 
         for tab in tabs {
             guard let page = tab.page,
-                  let savedTab = SavedTab(screenshotUUID: tab.id, isSelected: currentTabID == tab.id, title: tab.page?.title, isPrivate: false, faviconURL: nil, url: tab.page?.url, sessionData: .init(currentPage: 0, urls: [page.url], lastUsedTime: Date.now())) else  { continue }
+                  let savedTab = SavedTab(screenshotUUID: tab.id,
+                                          isSelected: currentTabID == tab.id,
+                                          title: tab.page?.title,
+                                          isPrivate: false,
+                                          faviconURL: nil,
+                                          url: tab.page?.url,
+                                          sessionData: .init(currentPage: 0,
+                                                             urls: [page.url],
+                                                             lastUsedTime: Date.now())) else  { continue }
 
             savedTabs.append(savedTab)
 
