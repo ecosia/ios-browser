@@ -20,7 +20,7 @@ class TabManagerStore {
     fileprivate lazy var archivedStartupTabs: [SavedTab] = {
         /* Ecosia: restore from Ecosia Tabs the first time */
         if Core.User.shared.migrated != true {
-            return migrateToSavedTabs(from: Core.Tabs().items) ?? []
+            return migrateToSavedTabs(from: Core.Tabs()) ?? []
         }
 
         return SiteArchiver.tabsToRestore(tabsStateArchivePath: tabsStateArchivePath())
@@ -159,16 +159,16 @@ extension TabManagerStore {
 // Ecosia: import tabs
 extension TabManagerStore {
 
-    fileprivate func migrateToSavedTabs(from tabs: [Core.Tab]) -> [SavedTab]? {
+    fileprivate func migrateToSavedTabs(from tabs: Core.Tabs) -> [SavedTab]? {
         var savedTabs = [SavedTab]()
         var savedUUIDs = Set<String>()
 
         var currentTabID: UUID?
-        if let pos = Core.Tabs().current, pos < tabs.count {
-            currentTabID = tabs[pos].id
+        if let pos = tabs.current, pos < tabs.items.count {
+            currentTabID = tabs.items[pos].id
         }
 
-        for tab in tabs {
+        for tab in tabs.items {
             guard let page = tab.page,
                   let savedTab = SavedTab(screenshotUUID: tab.id,
                                           isSelected: currentTabID == tab.id,
