@@ -10,17 +10,23 @@ extension AppDelegate {
         guard EcosiaImport.isNeeded, let profile = profile else { return }
 
         let ecosiaImport = EcosiaImport(profile: profile, tabManager: self.tabManager)
-        ecosiaImport.migrate { migration in
+        ecosiaImport.migrate { [weak self] migration in
             if case .succeeded = migration.favorites,
                case .succeeded = migration.tabs,
                case .succeeded = migration.history {
+                self?.cleanUp()
                 Analytics.shared.migration(true)
             } else {
                 Analytics.shared.migration(false)
             }
-
-            // Clean up
+            
             Core.User.shared.migrated = true
         }
+    }
+    
+    private func cleanUp() {
+        History().deleteAll()
+        Favourites().items = []
+        Tabs().clear()
     }
 }
