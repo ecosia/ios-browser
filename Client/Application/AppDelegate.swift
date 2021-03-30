@@ -192,7 +192,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
         if let profile = self.profile {
             return profile
         }
-        let p = BrowserProfile(localName: "profile", syncDelegate: application.syncDelegate)
+        /* Ecosia: have a clean profile if migration has not succeeded */
+        let needsMigration = User.shared.migrated != true
+        let p = BrowserProfile(localName: "profile", syncDelegate: application.syncDelegate, clear: needsMigration)
         self.profile = p
         return p
     }

@@ -10,6 +10,7 @@ class EcosiaTabMigrationTests: TabManagerStoreTests {
 
     func testEcosiaImportTabs() {
         try? FileManager.default.removeItem(at: FileManager.pages)
+        Core.User.shared.migrated = false
 
         let urls = [URL(string: "https://ecosia.org")!,
                     URL(string: "https://guacamole.com")!]
