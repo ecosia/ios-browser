@@ -12,25 +12,6 @@ extension EcosiaImport {
       return String((0..<length).map{ _ in letters.randomElement()! })
     }
 
-    static func mockHistory(days: Int, visits: Int) -> [(Date, Core.Page)]  {
-        let topSiteUrls = FaviconFetcher.getTopSiteURLs()
-
-        let items: [(Date, Core.Page)] = (0..<days).map { day in
-            let now = Date()
-            let oneDay = 24 * 60 * 60
-
-            // visit a hundred domains per day
-            let visitsPerDay: [(Date, Page)] = (0..<visits).map { visit in
-                let url = URL(string: topSiteUrls.randomElement()!)!
-                let page = Page(url: url, title: url.host ?? url.absoluteString)
-                return (Date(timeInterval: -Double(day * oneDay + visit), since: now), page)
-            }
-            // visit that tld for 100 times
-            return visitsPerDay
-        }.reduce([], +)
-        return items
-    }
-
     func testFavorites(num: Int, finished: @escaping (Migration) -> ()) {
         let favs: [Page] = (0..<num).map { _ in
             let tld = EcosiaImport.randomString(length: 10)
@@ -88,6 +69,29 @@ extension EcosiaImport {
         }
     }
 
+}
+#endif
+
+extension EcosiaImport {
+    static func mockHistory(days: Int, visits: Int) -> [(Date, Core.Page)]  {
+        let topSiteUrls = FaviconFetcher.getTopSiteURLs()
+
+        let items: [(Date, Core.Page)] = (0..<days).map { day in
+            let now = Date()
+            let oneDay = 24 * 60 * 60
+
+            // visit a hundred domains per day
+            let visitsPerDay: [(Date, Page)] = (0..<visits).map { visit in
+                let url = URL(string: topSiteUrls.randomElement()!)!
+                let page = Page(url: url, title: url.host ?? url.absoluteString)
+                return (Date(timeInterval: -Double(day * oneDay + visit), since: now), page)
+            }
+            // visit that tld for 100 times
+            return visitsPerDay
+        }.reduce([], +)
+        return items
+    }
+
     static func createMigrationData() {
 
         //clean core
@@ -109,7 +113,6 @@ extension EcosiaImport {
 
         Core.User.shared.migrated = false
     }
-
 }
 
 extension FaviconFetcher {
@@ -128,4 +131,3 @@ extension FaviconFetcher {
         return decoded.compactMap({$0.url})
     }
 }
-#endif
