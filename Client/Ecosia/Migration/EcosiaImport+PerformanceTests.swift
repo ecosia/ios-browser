@@ -92,12 +92,8 @@ extension EcosiaImport {
 
     static func createMigrationData() {
 
-        //clean core
         let history = Core.History()
-        history.deleteAll()
-
         let favs = Core.Favourites()
-        favs.items = []
 
         let items = mockHistory(days: 100, visits: 50) // 100 TLDs
         history.setItems(items)
