@@ -26,7 +26,7 @@ final class EcosiaHistory {
     static func migrate(_ historyItems: [(Date, Core.Page)], to profile: Profile, progress: ((Double) -> ())? = nil, finished: @escaping (Result<Void, EcosiaImport.Failure>) -> ()){
 
         guard !historyItems.isEmpty else {
-            finished(.success(Void()))
+            finished(.success(()))
             return
         }
 
@@ -59,7 +59,7 @@ final class EcosiaHistory {
 
             switch result {
             case .success:
-                finished(.success(Void()))
+                finished(.success(()))
             case .failure(let error):
                 finished(.failure(.init(reasons: [error])))
             }

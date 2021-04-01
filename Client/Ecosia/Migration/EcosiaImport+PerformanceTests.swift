@@ -91,12 +91,11 @@ extension EcosiaImport {
     }
 
     static func createMigrationData() {
-
         let history = Core.History()
         let favs = Core.Favourites()
 
         let items = mockHistory(days: 100, visits: 50) // 100 TLDs
-        history.setItems(items)
+        history.items = items
 
         let topSiteUrls = FaviconFetcher.getTopSiteURLs()
 
@@ -118,7 +117,6 @@ extension FaviconFetcher {
         do {
             decoded = try decoder.decode([BundledIcon].self, from: file)
         } catch {
-            print(error)
             assert(false)
             return []
         }
