@@ -59,7 +59,7 @@ open class FaviconFetcher: NSObject, XMLParserDelegate {
 
     lazy internal var urlSession: URLSession = makeURLSession(userAgent: FaviconFetcher.userAgent, configuration: URLSessionConfiguration.default, timeout: 5)
 
-    private struct BundledIcon: Codable {
+    struct BundledIcon: Codable {
         var title: String
         var url: String?
         var image_url: String

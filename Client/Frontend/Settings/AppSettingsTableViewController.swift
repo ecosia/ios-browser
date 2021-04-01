@@ -156,7 +156,8 @@ class AppSettingsTableViewController: SettingsTableViewController {
                 ClearOnboardingABVariables(settings: self),
                 ToggleNewTabToolbarButton(settings: self)
  */
-                PushBackInstallation(settings: self)
+                PushBackInstallation(settings: self),
+                CreateMigrationData(settings: self)
             ])]
 
         return settings

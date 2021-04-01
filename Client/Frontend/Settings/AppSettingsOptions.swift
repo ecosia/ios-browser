@@ -619,6 +619,24 @@ final class PushBackInstallation: HiddenSetting {
     }
 }
 
+final class CreateMigrationData: HiddenSetting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Create migration data. (needs restart)", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        EcosiaImport.createMigrationData()
+
+        let alertTitle = "Data created. Restart App to trigger fresh migration."
+        let alert = AlertController(title: alertTitle, message: nil, preferredStyle: .alert)
+        navigationController?.topViewController?.present(alert, animated: true) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                alert.dismiss(animated: true)
+            }
+        }
+    }
+}
+
 // Show the current version of Firefox
 class VersionSetting: Setting {
     unowned let settings: SettingsTableViewController
