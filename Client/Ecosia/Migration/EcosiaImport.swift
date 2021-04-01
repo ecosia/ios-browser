@@ -43,6 +43,8 @@ final class EcosiaImport {
 
     private let migration = Migration()
     private var finished: ((Migration) -> ())?
+    private var progress: ((Double) -> ())?
+
 
     init(profile: Profile, tabManager: TabManager) {
         self.profile = profile
@@ -53,23 +55,35 @@ final class EcosiaImport {
         Core.User.shared.migrated != true && !AppConstants.IsRunningTest
     }
 
-    func migrate(finished: @escaping (Migration) -> ()) {
+    private var tabsProgress = 0.0 { didSet { progress?(totalProgress) } }
+    private var favsProgress = 0.0 { didSet { progress?(totalProgress) } }
+    private var historyProgress = 0.0 { didSet { progress?(totalProgress) } }
+
+    private var totalProgress: Double {
+        return (tabsProgress + favsProgress + historyProgress) / 3.0
+    }
+
+    func migrate(progress: ((Double) -> ())? = nil, finished: @escaping (Migration) -> ()) {
         self.finished = finished
+        self.progress = progress
 
         // Tab migration is triggered by Browser setup in parallel, so it can be it has finished before we get here
         let ecosiaTabs = Core.Tabs().items
         if tabManager.normalTabs.count == ecosiaTabs.count || ecosiaTabs.isEmpty {
             migration.tabs = .succeeded
             Analytics.shared.migrated(.tabs, in: Date().timeIntervalSince(tabMigrationStart))
+            self.tabsProgress = 1.0
         } else {
             migrationGroup.enter()
             waitForTabs = true
             tabManager.addDelegate(self)
         }
 
-        // Migrate in order for performance reasons -> History, Favorites, Tabs
+        // Migrate in order for performance reasons -> first history, then favorites
         migrationGroup.enter()
-        EcosiaHistory.migrateLowLevel(Core.History().items, to: profile) { result in
+        EcosiaHistory.migrate(Core.History().items, to: profile, progress: { historyProgress in
+            self.historyProgress = historyProgress
+        }) { result in
             switch result {
             case .success:
                 self.migration.history = .succeeded
@@ -77,8 +91,11 @@ final class EcosiaImport {
                 self.migration.history = .failed(error)
                 Analytics.shared.migrationError(code: .history, message: error.description)
             }
+            self.historyProgress = 1.0
 
-            EcosiaFavourites.migrate(Core.Favourites().items, to: self.profile) { result in
+            EcosiaFavourites.migrate(Core.Favourites().items, to: self.profile, progress: { favsProgress in
+                self.favsProgress = favsProgress
+            }) { result in
                 switch result {
                 case .success:
                     self.migration.favorites = .succeeded
@@ -86,6 +103,7 @@ final class EcosiaImport {
                     self.migration.favorites = .failed(error)
                     Analytics.shared.migrationError(code: .favourites, message: error.description)
                 }
+                self.favsProgress = 1.0
 
                 if self.waitForTabs {
                     // give tab migration 5 more seconds after rest has finished
@@ -94,14 +112,15 @@ final class EcosiaImport {
                         self.migrationGroup.leave()
                     }
                 }
-
                 self.migrationGroup.leave()
             }
         }
 
         migrationGroup.notify(queue: .main) {
+            self.progress?(1.0)
             self.finished?(self.migration)
             self.finished = nil
+            self.progress = nil
         }
 
     }
@@ -121,6 +140,7 @@ extension EcosiaImport: TabManagerDelegate {
             Analytics.shared.migrationError(code: .tabs, message: message)
         }
 
+        self.tabsProgress = 1.0
         Analytics.shared.migrated(.tabs, in: Date().timeIntervalSince(tabMigrationStart))
         migrationGroup.leave()
     }

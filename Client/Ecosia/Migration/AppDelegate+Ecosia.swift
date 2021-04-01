@@ -10,7 +10,9 @@ extension AppDelegate {
         guard EcosiaImport.isNeeded, let profile = profile else { return }
 
         let ecosiaImport = EcosiaImport(profile: profile, tabManager: self.tabManager)
-        ecosiaImport.migrate { [weak self] migration in
+        ecosiaImport.migrate(progress: { progress in
+            print("progress: \(progress) ")
+        }){ [weak self] migration in
             if case .succeeded = migration.favorites,
                case .succeeded = migration.tabs,
                case .succeeded = migration.history {

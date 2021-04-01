@@ -8,7 +8,7 @@ import MozillaAppServices
 import Shared
 
 final class EcosiaFavourites {
-    static func migrate(_ favourites: [Page], to profile: Profile, finished: @escaping (Result<[GUID], EcosiaImport.Failure>) -> ()){
+    static func migrate(_ favourites: [Page], to profile: Profile, progress: ((Double) -> ())? = nil, finished: @escaping (Result<[GUID], EcosiaImport.Failure>) -> ()){
 
         guard !favourites.isEmpty else {
             finished(.success([]))
@@ -25,7 +25,7 @@ final class EcosiaFavourites {
         var errors = [MaybeErrorType]()
         var guids = [GUID]()
 
-        for page in favourites {
+        for (i, page) in favourites.enumerated() {
 
             favImport.enter()
 
@@ -35,6 +35,10 @@ final class EcosiaFavourites {
                 switch guid {
                 case .success(let guid):
                     guids.append(guid)
+                    // only report progress of every 20th bookmark as it's quick
+                    if i % 20 == 0 {
+                        progress?(Double(i) / Double(favourites.count))
+                    }
                 case .failure(let error):
                     errors.append(error)
                 }

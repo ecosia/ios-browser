@@ -22,63 +22,40 @@ final class EcosiaHistory {
         let site: Site
     }
 
-    static func migrateHighLevel(_ historyItems: [(Date, Core.Page)], to profile: Profile, finished: @escaping (Result<[SiteVisit], EcosiaImport.Failure>) -> ()){
-
-        guard !historyItems.isEmpty else {
-            finished(.success([]))
-            return
-        }
-
-        var errors = [MaybeErrorType]()
-        var visits = [SiteVisit]()
-        let group = DispatchGroup()
-
-        for entry in historyItems {
-            group.enter()
-
-            let site = Site(url: entry.1.url.absoluteString, title: entry.1.title)
-            let visit = SiteVisit(site: site, date: entry.0.toMicrosecondTimestamp())
-
-            let success = profile.history.addLocalVisit(visit)
-            success.uponQueue(.main) { result in
-                switch result {
-                case .success:
-                    visits.append(visit)
-                case .failure(let error):
-                    errors.append(error)
-                }
-                group.leave()
-            }
-        }
-
-        group.notify(queue: .main) {
-            if errors.count > 0 {
-                finished(.failure(.init(reasons: errors)))
-            } else {
-                finished(.success(visits))
-            }
-        }
-    }
-
-
-    static func migrateLowLevel(_ historyItems: [(Date, Core.Page)], to profile: Profile, finished: @escaping (Result<Void, EcosiaImport.Failure>) -> ()){
+    static var start: Date?
+    static func migrate(_ historyItems: [(Date, Core.Page)], to profile: Profile, progress: ((Double) -> ())? = nil, finished: @escaping (Result<Void, EcosiaImport.Failure>) -> ()){
 
         guard !historyItems.isEmpty else {
             finished(.success(Void()))
             return
         }
 
-        let start = Date()
-        let data = prepare(history: historyItems)
+        start = Date()
+        DispatchQueue.global(qos: .userInitiated).async {
+            let data = prepare(history: historyItems, progress: progress)
+
+            DispatchQueue.main.async {
+                insertData(data, to: profile, finished: finished)
+            }
+        }
+    }
+
+    static func insertData(_ data: EcosiaHistory.Data, to profile: Profile, finished: @escaping (Result<Void, EcosiaImport.Failure>) -> ()){
+
         guard let history = profile.history as? SQLiteHistory else { return }
 
-        let success = history.storeDomains(data.domains)
+        let success = history.clearHistory()
+            >>> { history.storeDomains(data.domains) }
             >>> { history.storeSites(data.sites) }
             >>> { history.storeVisits(data.visits) }
 
         success.uponQueue(.main) { (result) in
-            let duration = Date().timeIntervalSince(start)
+            let duration = Date().timeIntervalSince(start ?? Date())
             Analytics.shared.migrated(.history, in: duration)
+
+            // make UI update
+            history.setTopSitesNeedsInvalidation()
+            profile.panelDataObservers.activityStream.refreshIfNeeded(forceTopSites: true)
 
             switch result {
             case .success:
@@ -87,15 +64,16 @@ final class EcosiaHistory {
                 finished(.failure(.init(reasons: [error])))
             }
         }
+
     }
 
-    static func prepare(history: [(Date, Core.Page)]) -> EcosiaHistory.Data {
+    static func prepare(history: [(Date, Core.Page)], progress: ((Double) -> ())? = nil) -> EcosiaHistory.Data {
         // extract distinct domains
         var domains = [String: Int]() //unique per domain e.g. ecosia.org + domain_id
         var sites = [Site: Int]() // unique per url e.g. ecosia.org/search?q=foo + domain_id
         var visits = [(SiteVisit, Int)]() // all visitis + site_id
 
-        for item in history {
+        for (i, item) in history.enumerated() {
             guard let domain = item.1.url.normalizedHost, !isIgnoredURL(domain) else { continue }
             var domainIndex: Int
             if let index = domains[domain] {
@@ -117,6 +95,14 @@ final class EcosiaHistory {
             // add all visits
             let visit = SiteVisit(site: site, date: item.0.toMicrosecondTimestamp())
             visits.append((visit, site.id!))
+
+            // only report every 50th entry to not over-report
+            if i % 50 == 0 {
+                DispatchQueue.main.async {
+                    progress?(Double(i)/Double(history.count))
+                }
+            }
+
         }
         return .init(domains: domains, sites: sites, visits: visits)
     }
