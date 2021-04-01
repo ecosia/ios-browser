@@ -74,7 +74,7 @@ extension EcosiaImport {
 
 extension EcosiaImport {
     static func mockHistory(days: Int, visits: Int) -> [(Date, Core.Page)]  {
-        let topSiteUrls = FaviconFetcher.getTopSiteURLs()
+        let topSiteUrls = getTopSiteURLs()
 
         let items: [(Date, Core.Page)] = (0..<days).map { day in
             let now = Date()
@@ -97,7 +97,7 @@ extension EcosiaImport {
         let items = mockHistory(days: 100, visits: 50) // 100 TLDs
         history.items = items
 
-        let topSiteUrls = FaviconFetcher.getTopSiteURLs()
+        let topSiteUrls = getTopSiteURLs()
 
         favs.items = (0...1000).map({ _ in
             let url = URL(string: topSiteUrls.randomElement()!)!
@@ -106,20 +106,11 @@ extension EcosiaImport {
 
         Core.User.shared.migrated = false
     }
-}
 
-extension FaviconFetcher {
     class func getTopSiteURLs() -> [String] {
         let filePath = Bundle.main.path(forResource: "top_sites", ofType: "json")
         let file = try! Data(contentsOf: URL(fileURLWithPath: filePath!))
-        let decoder = JSONDecoder()
-        var decoded = [BundledIcon]()
-        do {
-            decoded = try decoder.decode([BundledIcon].self, from: file)
-        } catch {
-            assert(false)
-            return []
-        }
+        let decoded = try! JSONDecoder().decode([FaviconFetcher.BundledIcon].self, from: file)
         return decoded.compactMap({$0.url})
     }
 }
