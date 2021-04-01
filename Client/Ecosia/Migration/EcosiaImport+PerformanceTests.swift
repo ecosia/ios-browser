@@ -80,13 +80,11 @@ extension EcosiaImport {
             let now = Date()
             let oneDay = 24 * 60 * 60
 
-            // visit a hundred domains per day
             let visitsPerDay: [(Date, Page)] = (0..<visits).map { visit in
                 let url = URL(string: topSiteUrls.randomElement()!)!
                 let page = Page(url: url, title: url.host ?? url.absoluteString)
                 return (Date(timeInterval: -Double(day * oneDay + visit), since: now), page)
             }
-            // visit that tld for 100 times
             return visitsPerDay
         }.reduce([], +)
         return items
