@@ -15,7 +15,7 @@ class TestHistoryMigration: TestHistory {
 
         withTestProfile { profile in
             let items = [(Date(), Core.Page(url: url, title: "Ecosia"))]
-            EcosiaHistory.migrateLowLevel(items, to: profile) { _ in }
+            EcosiaHistory.migrate(items, to: profile) { _ in }
             self.checkVisits(profile.history, url: url.absoluteString)
         }
     }
