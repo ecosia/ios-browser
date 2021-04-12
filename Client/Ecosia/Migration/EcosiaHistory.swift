@@ -33,6 +33,10 @@ final class EcosiaHistory {
         start = Date()
         DispatchQueue.global(qos: .userInitiated).async {
             let data = prepare(history: historyItems, progress: progress)
+            guard !profile.isShutdown else {
+                finished(.failure(.init(reasons: [NSError(domain: "shutdown", code: 0)])))
+                return
+            }
 
             DispatchQueue.main.async {
                 insertData(data, to: profile, finished: finished)
