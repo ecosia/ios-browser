@@ -71,10 +71,22 @@ final class LoadingScreen: UIViewController {
                 self?.dismiss(animated: true)
             } else {
                 Analytics.shared.migration(false)
+                self?.showError()
             }
             
             Core.User.shared.migrated = true
         }
+    }
+    
+    private func showError() {
+        let alert = UIAlertController(title: .localized(.weHitAGlitch),
+                                      message: .localized(.weAreMomentarilyUnable),
+                                      preferredStyle: .alert)
+        alert.addAction(.init(title: .localized(.continueMessage), style: .default) { [weak self] _ in
+            self?.dismiss(animated: true)
+        })
+        
+        present(alert, animated: true)
     }
     
     private func cleanUp() {
@@ -82,5 +94,4 @@ final class LoadingScreen: UIViewController {
         Favourites().items = []
         Tabs().clear()
     }
-    
 }

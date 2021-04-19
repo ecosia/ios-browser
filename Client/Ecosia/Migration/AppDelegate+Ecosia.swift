@@ -7,7 +7,7 @@ import Core
 
 extension AppDelegate {
     func migrateEcosiaContents() {
-        guard /*EcosiaImport.isNeeded,*/ let profile = profile else { return }
+        guard EcosiaImport.isNeeded, let profile = profile else { return }
         window?.rootViewController?.present(LoadingScreen(profile: profile, tabManager: tabManager), animated: false)
     }
 }
