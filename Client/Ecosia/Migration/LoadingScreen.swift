@@ -15,6 +15,7 @@ final class LoadingScreen: UIViewController {
         self.tabManager = tabManager
         super.init(nibName: nil, bundle: nil)
         modalPresentationStyle = .fullScreen
+        modalTransitionStyle = .crossDissolve
     }
     
     override func viewDidLoad() {
@@ -64,8 +65,10 @@ final class LoadingScreen: UIViewController {
             if case .succeeded = migration.favorites,
                case .succeeded = migration.tabs,
                case .succeeded = migration.history {
-                self?.cleanUp()
+                
                 Analytics.shared.migration(true)
+                self?.cleanUp()
+                self?.dismiss(animated: true)
             } else {
                 Analytics.shared.migration(false)
             }
@@ -79,4 +82,5 @@ final class LoadingScreen: UIViewController {
         Favourites().items = []
         Tabs().clear()
     }
+    
 }
