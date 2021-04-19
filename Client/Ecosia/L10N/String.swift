@@ -55,5 +55,6 @@ extension String {
         case helpUsImprove = "Help us improve our new app"
         case letUsKnowWhat = "Let us know what you like, dislike, and want to see in the future."
         case shareYourFeedback = "Share your feedback"
+        case sitTightWeAre = "Sit tight, we are getting ready for you…"
     }
 }

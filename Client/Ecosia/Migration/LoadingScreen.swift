@@ -7,6 +7,7 @@ import Core
 final class LoadingScreen: UIViewController {
     private weak var profile: Profile!
     private weak var tabManager: TabManager!
+    private weak var progress: UIProgressView!
     
     required init?(coder: NSCoder) { nil }
     init(profile: Profile, tabManager: TabManager) {
@@ -18,11 +19,47 @@ final class LoadingScreen: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
         
+        let logo = UIImageView(image: UIImage(named: "loadingLogoDark"))
+        logo.translatesAutoresizingMaskIntoConstraints = false
+        logo.clipsToBounds = true
+        logo.contentMode = .center
+        view.addSubview(logo)
+        
+        let progress = UIProgressView()
+        progress.translatesAutoresizingMaskIntoConstraints = false
+        progress.progressTintColor = UIColor.theme.ecosia.primaryBrand
+        view.addSubview(progress)
+        self.progress = progress
+        
+        let message = UILabel()
+        message.translatesAutoresizingMaskIntoConstraints = false
+        message.text = .localized(.sitTightWeAre)
+        message.font = .preferredFont(forTextStyle: .footnote)
+        message.numberOfLines = 0
+        message.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        message.textColor = UIColor.theme.ecosia.primaryText
+        view.addSubview(message)
+        
+        logo.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        logo.bottomAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        
+        progress.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        progress.topAnchor.constraint(equalTo: logo.bottomAnchor, constant: 24).isActive = true
+        progress.widthAnchor.constraint(equalToConstant: 173).isActive = true
+        progress.heightAnchor.constraint(equalToConstant: 3).isActive = true
+        
+        message.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        message.topAnchor.constraint(equalTo: progress.bottomAnchor, constant: 25).isActive = true
+        message.widthAnchor.constraint(lessThanOrEqualToConstant: 280).isActive = true
+        
+        migrate()
+    }
+    
+    private func migrate() {
         let ecosiaImport = EcosiaImport(profile: profile, tabManager: tabManager)
-        ecosiaImport.migrate(progress: { progress in
-            print("progress: \(progress) ")
+        ecosiaImport.migrate(progress: { [weak self] progress in
+            self?.progress.setProgress(.init(progress), animated: true)
         }){ [weak self] migration in
             if case .succeeded = migration.favorites,
                case .succeeded = migration.tabs,
