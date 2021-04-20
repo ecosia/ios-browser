@@ -26,7 +26,7 @@ class TestHistoryMigration: TestHistory {
                     URL(string:"https://ecosia.org/blog")!,
                     URL(string:"https://ecosia.org/blog")!]
 
-        let items = urls.map{ (Date(), Core.Page(url: $0, title: "Ecosia")) }
+        let items = urls.map { (Date(), Core.Page(url: $0, title: "Ecosia")) }
         let data = EcosiaHistory.prepare(history: items)
         XCTAssert(data.domains["apple.com"] == 1)
         XCTAssert(data.domains["ecosia.org"] == 2)

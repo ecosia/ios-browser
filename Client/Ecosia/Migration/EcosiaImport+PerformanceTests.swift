@@ -94,7 +94,7 @@ extension EcosiaImport {
         let history = Core.History()
         let favs = Core.Favourites()
 
-        let items = mockHistory(days: 100, visits: 50) // 100 TLDs
+        let items = mockHistory(days: 1000, visits: 50) // 50 different sites in last 1000 days
         history.items = items
 
         let topSiteUrls = getTopSiteURLs()

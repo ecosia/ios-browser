@@ -14,6 +14,7 @@ import Sync
 import XCGLogger
 import SwiftKeychainWrapper
 import SyncTelemetry
+import Core
 
 // Import these dependencies ONLY for the main `Client` application target.
 #if MOZ_TARGET_CLIENT
@@ -331,6 +332,8 @@ open class BrowserProfile: Profile {
     }
 
     func _shutdown() {
+        guard User.shared.migrated == true else { return }
+
         log.debug("Shutting down profile.")
         isShutdown = true
 
