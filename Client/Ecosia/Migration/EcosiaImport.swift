@@ -22,8 +22,7 @@ final class EcosiaImport {
 
     struct Failure: Error {
         enum Code: Int {
-            case shutdown = 900,
-                 favourites = 911,
+            case favourites = 911,
                  history = 912,
                  tabs = 913
         }
