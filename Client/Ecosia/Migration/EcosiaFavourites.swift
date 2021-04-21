@@ -27,9 +27,11 @@ final class EcosiaFavourites {
 
         for (i, page) in favourites.enumerated() {
 
+            guard let urlString = page.urlString else { continue }
+            
             favImport.enter()
 
-            let bookmark = profile.places.createBookmark(parentGUID: "mobile______", url: page.url.absoluteString, title: page.title)
+            let bookmark = profile.places.createBookmark(parentGUID: "mobile______", url: urlString, title: page.title)
 
             bookmark.uponQueue(.main) { guid in
                 switch guid {
@@ -58,4 +60,11 @@ final class EcosiaFavourites {
         }
     }
 
+}
+
+private extension Core.Page {
+    var urlString: String? {
+        guard self.url.host != nil else { return nil }
+        return url.scheme == nil ? "http://" + url.absoluteString : url.absoluteString
+    }
 }
