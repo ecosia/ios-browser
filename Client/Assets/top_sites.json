@@ -359,6 +359,13 @@
     "domain": "ebay.com"
   },
   {
+    "title": "ecosia",
+    "url": "https://ecosia.org/",
+    "image_url": "ecosia-org.png",
+    "background_color": "#ffffff",
+    "domain": "ecosia.org"
+  },
+  {
     "title": "espn.go",
     "url": "http://espn.go.com",
     "image_url": "espn-go-com.png",

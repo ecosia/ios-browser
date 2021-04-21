@@ -41,7 +41,7 @@ open class DefaultSuggestedSites {
                 imageUrl: "asset://suggestedsites_ecosia",
                 faviconUrl: "asset://defaultFavicon",
                 trackingId: 0,
-                title: NSLocalizedString("Ecosia", comment: "Tile title for Ecosia")
+                title: NSLocalizedString("Ecosia Blog", comment: "Tile title for Ecosia")
             ),
             SuggestedSiteData(
                 url: "https://www.wikipedia.org/",
@@ -50,16 +50,7 @@ open class DefaultSuggestedSites {
                 faviconUrl: "asset://defaultFavicon",
                 trackingId: 629,
                 title: NSLocalizedString("Wikipedia", comment: "Tile title for Wikipedia")
-            ),
-            SuggestedSiteData(
-                url: "https://mobile.twitter.com/",
-                bgColor: "0x55acee",
-                imageUrl: "asset://suggestedsites_twitter",
-                faviconUrl: "asset://defaultFavicon",
-                trackingId: 628,
-                title: NSLocalizedString("Twitter", comment: "Tile title for Twitter")
             )
-
         ]
     ]
 }
