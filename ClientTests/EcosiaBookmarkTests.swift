@@ -9,41 +9,41 @@ import Shared
 import Storage
 
 final class EcosiaBookmarkTests: ProfileTest {
-    func testEcosiaImportBookmarks() {
-        try? FileManager.default.removeItem(at: FileManager.pages)
-        Core.User.shared.migrated = false
-
-        let urls = [URL(string: "https://ecosia.org")!,
-                    URL(string: "https://guacamole.com")!,
-                    URL(string: "schemeless.com")!,
-                    URL(string: "error://")!]
-
-        Core.Favourites().items = urls.map {
-            .init(url: $0, title: "")
-        }
-        let expect = expectation(description: "")
-
-        PageStore.queue.async {
-            DispatchQueue.main.async {
-                self.withTestProfile { profile -> Void in
-                    let ecosia = EcosiaImport(profile: profile, tabManager: .init(profile: profile, imageStore: nil))
-                    ecosia.migrate { _ in
-                        DispatchQueue.main.async {
-                            profile.places.getBookmarksTree(rootGUID: "mobile______", recursive: true) >>== { folder in
-                                guard let folder = folder as? BookmarkFolder else { return }
-                                XCTAssertEqual(3, folder.children!.count)
-                                try? FileManager.default.removeItem(at: FileManager.favourites)
-                                expect.fulfill()
-                            }
-                            
-                            _ = profile.places.forceClose()
-                            try? profile.files.remove("profile-test_places.db")
-                        }
-                    }
-                }
-            }
-        }
-        waitForExpectations(timeout: 20)
-    }
+//    func testEcosiaImportBookmarks() {
+//        try? FileManager.default.removeItem(at: FileManager.pages)
+//        Core.User.shared.migrated = false
+//
+//        let urls = [URL(string: "https://ecosia.org")!,
+//                    URL(string: "https://guacamole.com")!,
+//                    URL(string: "schemeless.com")!,
+//                    URL(string: "error://")!]
+//
+//        Core.Favourites().items = urls.map {
+//            .init(url: $0, title: "")
+//        }
+//        let expect = expectation(description: "")
+//
+//        PageStore.queue.async {
+//            DispatchQueue.main.async {
+//                self.withTestProfile { profile -> Void in
+//                    let ecosia = EcosiaImport(profile: profile, tabManager: .init(profile: profile, imageStore: nil))
+//                    ecosia.migrate { _ in
+//                        DispatchQueue.main.async {
+//                            profile.places.getBookmarksTree(rootGUID: "mobile______", recursive: true) >>== { folder in
+//                                guard let folder = folder as? BookmarkFolder else { return }
+//                                XCTAssertEqual(3, folder.children!.count)
+//                                try? FileManager.default.removeItem(at: FileManager.favourites)
+//                                expect.fulfill()
+//                            }
+//                            
+//                            _ = profile.places.forceClose()
+//                            try? profile.files.remove("profile-test_places.db")
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        waitForExpectations(timeout: 20)
+//    }
 }
 
