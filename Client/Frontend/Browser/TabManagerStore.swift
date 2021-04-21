@@ -172,10 +172,10 @@ extension TabManagerStore {
             guard let page = tab.page,
                   let savedTab = SavedTab(screenshotUUID: tab.id,
                                           isSelected: currentTabID == tab.id,
-                                          title: tab.page?.title,
+                                          title: page.title,
                                           isPrivate: false,
                                           faviconURL: nil,
-                                          url: tab.page?.url,
+                                          url: page.url,
                                           sessionData: .init(currentPage: 0,
                                                              urls: [page.url],
                                                              lastUsedTime: Date.now())) else  { continue }
