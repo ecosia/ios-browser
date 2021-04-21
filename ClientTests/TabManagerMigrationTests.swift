@@ -6,8 +6,7 @@ import XCTest
 @testable import Client
 @testable import Core
 
-class EcosiaTabMigrationTests: TabManagerStoreTests {
-
+final class EcosiaTabMigrationTests: TabManagerStoreTests {
     func testEcosiaImportTabs() {
         try? FileManager.default.removeItem(at: FileManager.pages)
         Core.User.shared.migrated = false
