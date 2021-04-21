@@ -729,6 +729,7 @@ class YourRightsSetting: Setting {
 }
 
 // Opens the on-boarding screen again
+/* Ecosia: deactivated Intro setting
 class ShowIntroductionSetting: Setting {
     let profile: Profile
 
@@ -745,6 +746,7 @@ class ShowIntroductionSetting: Setting {
         })
     }
 }
+*/
 
 class SendFeedbackSetting: Setting {
     override var title: NSAttributedString? {

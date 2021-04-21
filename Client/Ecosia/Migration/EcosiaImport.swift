@@ -51,10 +51,6 @@ final class EcosiaImport {
         self.tabManager = tabManager
     }
 
-    static var isNeeded: Bool {
-        Core.User.shared.migrated != true && !AppConstants.IsRunningTest
-    }
-
     private var tabsProgress = 0.0 { didSet { progress?(totalProgress) } }
     private var favsProgress = 0.0 { didSet { progress?(totalProgress) } }
     private var historyProgress = 0.0 { didSet { progress?(totalProgress) } }

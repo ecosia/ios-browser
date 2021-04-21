@@ -141,10 +141,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
 
         RustFirefoxAccounts.startup(prefs: profile.prefs).uponQueue(.main) { _ in
             print("RustFirefoxAccounts started")
-
-            DispatchQueue.main.async { [weak self] in
-                self?.migrateEcosiaContents()
-            }
         }
         log.info("startApplication end")
         return true

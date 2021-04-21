@@ -558,11 +558,14 @@ class BrowserViewController: UIViewController {
         // On iPhone, if we are about to show the On-Boarding, blank out the tab so that it does
         // not flash before we present. This change of alpha also participates in the animation when
         // the intro view is dismissed.
-        /* Ecosia: deactivate FF intro
+
         if UIDevice.current.userInterfaceIdiom == .phone {
-            self.view.alpha = (profile.prefs.intForKey(PrefsKeys.IntroSeen) != nil) ? 1.0 : 0.0
+            // Ecosia: on phone blank screen if intro or migration is shown
+            self.view.alpha = (User.shared.firstTime || User.shared.migrated != true) ? 0.0 : 1.0
+        } else {
+            // on iPad only blank out for migration, not first time
+            self.view.alpha = (!User.shared.firstTime && User.shared.migrated != true) ? 0.0 : 1.0
         }
-        */
 
         if !displayedRestoreTabsAlert && !cleanlyBackgrounded() && crashedLastLaunch() {
             displayedRestoreTabsAlert = true
@@ -603,7 +606,7 @@ class BrowserViewController: UIViewController {
     }
 
     override func viewDidAppear(_ animated: Bool) {
-        presentIntroViewController()
+        presentIntroIfNeeded()
         // Ecosia: presentETPCoverSheetViewController()
         // Ecosia: presentUpdateViewController()
         screenshotHelper.viewIsVisible = true
@@ -2011,17 +2014,17 @@ extension BrowserViewController: UIAdaptivePresentationControllerDelegate {
 }
 
 extension BrowserViewController {
-    func presentIntroViewController(_ alwaysShow: Bool = false) {
-        // Ecosia:
-        if alwaysShow || User.shared.firstTime {
-            if User.shared.firstTime {
-                Analytics.shared.install()
-            }
+    func presentIntroIfNeeded() {
+        if User.shared.firstTime {
+            Analytics.shared.install()
             let welcome = Welcome()
             introVCPresentHelper(introViewController: welcome)
 
             self.profile.prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
             User.shared.firstTime = false
+            User.shared.migrated = true
+        } else if User.shared.migrated != true {
+            present(LoadingScreen(profile: profile, tabManager: tabManager), animated: true)
         }
     }
     
@@ -2495,6 +2498,8 @@ extension BrowserViewController: Themeable {
             $0.applyTheme()
             urlBar.locationView.tabDidChangeContentBlocking($0)
         }
+
+        navigationController?.view.backgroundColor = UIColor.theme.browser.background
         
         guard let contentScript = self.tabManager.selectedTab?.getContentScript(name: ReaderMode.name()) else { return }
         appyThemeForPreferences(profile.prefs, contentScript: contentScript)
