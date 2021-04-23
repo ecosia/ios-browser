@@ -173,6 +173,9 @@
                   Identifier = "DefaultSearchPrefsTests">
                </Test>
                <Test
+                  Identifier = "EcosiaBookmarkTests">
+               </Test>
+               <Test
                   Identifier = "SearchEnginesTests">
                </Test>
                <Test
