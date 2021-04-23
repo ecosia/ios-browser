@@ -62,9 +62,9 @@ final class EcosiaFavourites {
 
 }
 
-private extension Core.Page {
+extension Core.Page {
     var urlString: String? {
-        guard self.url.host != nil else { return nil }
+        guard !(url.host == nil && url.scheme != nil) else { return nil }
         return url.scheme == nil ? "http://" + url.absoluteString : url.absoluteString
     }
 }

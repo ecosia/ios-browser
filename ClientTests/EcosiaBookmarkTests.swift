@@ -12,15 +12,16 @@ final class EcosiaBookmarkTests: ProfileTest {
     func testEcosiaImportBookmarks() {
         try? FileManager.default.removeItem(at: FileManager.pages)
         Core.User.shared.migrated = false
-
-        let urls = [URL(string: "https://ecosia.org")!,
-                    URL(string: "https://guacamole.com")!,
-                    URL(string: "schemeless.com")!,
-                    URL(string: "error://")!]
-
-        Core.Favourites().items = urls.map {
-            .init(url: $0, title: "")
-        }
+        Core.Favourites().items = ["https://ecosia.org",
+                                   "https://www.guacamole.com",
+                                   "schemeless.com",
+                                   "error://"]
+                                    .map {
+                                        URL(string: $0)!
+                                    }
+                                    .map {
+                                        .init(url: $0, title: "")
+                                    }
         let expect = expectation(description: "")
 
         PageStore.queue.async {
@@ -44,6 +45,13 @@ final class EcosiaBookmarkTests: ProfileTest {
             }
         }
         waitForExpectations(timeout: 20)
+    }
+    
+    func testURLString() {
+        XCTAssertEqual("https://ecosia.org", Core.Page(url: URL(string: "https://ecosia.org")!, title: "").urlString)
+        XCTAssertEqual("https://www.guacamole.com", Core.Page(url: URL(string: "https://www.guacamole.com")!, title: "").urlString)
+        XCTAssertEqual("http://schemeless.com", Core.Page(url: URL(string: "schemeless.com")!, title: "").urlString)
+        XCTAssertNil(Core.Page(url: URL(string: "error://")!, title: "").urlString)
     }
 }
 
