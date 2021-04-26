@@ -230,6 +230,14 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
 
         applyTheme()
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        if true {
+            present(WelcomeScreen(), animated: true)
+        }
+    }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
