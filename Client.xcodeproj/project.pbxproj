@@ -12826,8 +12826,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = main;
-				kind = branch;
+				kind = exactVersion;
+				version = 4.3.3;
 			};
 		};
 		CE0AB93225F7C2B400333656 /* XCRemoteSwiftPackageReference "snowplow-objc-tracker" */ = {
