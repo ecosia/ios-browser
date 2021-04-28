@@ -169,7 +169,7 @@ class HomePanelColor {
     var topSiteDomain: UIColor { return UIColor.Photon.Grey60 }
     var topSitesGradientStart:  UIColor { return UIColor.white }
     var topSitesGradientEnd:  UIColor { return UIColor(rgb: 0xf8f8f8) }
-    var topSitesBackground: UIColor { return UIColor.white }
+    var topSitesBackground: UIColor { return defaultBackground }
 
     var activityStreamHeaderText: UIColor { return UIColor.Photon.Grey50 }
     var activityStreamCellTitle: UIColor { return UIColor.Photon.Grey60 }
