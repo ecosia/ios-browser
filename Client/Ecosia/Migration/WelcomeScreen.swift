@@ -23,6 +23,32 @@ final class WelcomeScreen: UIViewController {
         base.layer.cornerRadius = 8
         view.addSubview(base)
         
+        let icon = UIImageView(image: UIImage(named: "ecosiaIllustrationSingleTree"))
+        icon.translatesAutoresizingMaskIntoConstraints = false
+        icon.clipsToBounds = true
+        icon.contentMode = .center
+        base.addSubview(icon)
+        
+        let title = UILabel()
+        title.translatesAutoresizingMaskIntoConstraints = false
+        title.textAlignment = .center
+        title.text = .localized(.sitTightWeAre)
+        title.font = .systemFont(ofSize: UIFont.preferredFont(forTextStyle: .title3).pointSize, weight: .bold)
+        title.numberOfLines = 0
+        title.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        title.textColor = UIColor.theme.ecosia.cardText
+        view.addSubview(title)
+        
+        let subtitle = UILabel()
+        subtitle.translatesAutoresizingMaskIntoConstraints = false
+        subtitle.textAlignment = .center
+        subtitle.text = .localized(.sitTightWeAre)
+        subtitle.font = .preferredFont(forTextStyle: .footnote)
+        subtitle.numberOfLines = 0
+        subtitle.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        subtitle.textColor = UIColor.theme.ecosia.cardText
+        view.addSubview(subtitle)
+        
         base.heightAnchor.constraint(equalToConstant: 300).isActive = true
         base.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
         base.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
@@ -33,5 +59,18 @@ final class WelcomeScreen: UIViewController {
         let width = base.widthAnchor.constraint(equalToConstant: 360)
         width.priority = .defaultLow
         width.isActive = true
+        
+        icon.topAnchor.constraint(equalTo: base.topAnchor, constant: 24).isActive = true
+        icon.centerXAnchor.constraint(equalTo: base.centerXAnchor).isActive = true
+        
+        title.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        title.topAnchor.constraint(equalTo: icon.bottomAnchor, constant: 24).isActive = true
+        title.leftAnchor.constraint(greaterThanOrEqualTo: base.leftAnchor, constant: 16).isActive = true
+        title.rightAnchor.constraint(lessThanOrEqualTo: base.rightAnchor, constant: -16).isActive = true
+        
+        subtitle.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        subtitle.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 8).isActive = true
+        subtitle.leftAnchor.constraint(greaterThanOrEqualTo: base.leftAnchor, constant: 16).isActive = true
+        subtitle.rightAnchor.constraint(lessThanOrEqualTo: base.rightAnchor, constant: -16).isActive = true
     }
 }
