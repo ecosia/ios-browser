@@ -385,8 +385,13 @@ extension BrowserViewController: WKNavigationDelegate {
         // iOS will always say yes.
 
         if isAppleMapsURL(url) {
-            UIApplication.shared.open(url, options: [:])
-            decisionHandler(.cancel)
+            UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { couldOpen in
+                if couldOpen {
+                    decisionHandler(.cancel)
+                } else {
+                    decisionHandler(.allow)
+                }
+            }
             return
         }
 

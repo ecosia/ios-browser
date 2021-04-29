@@ -271,7 +271,10 @@ class Tab: NSObject {
             }
 
             // Night mode enables this by toggling WKWebView.isOpaque, otherwise this has no effect.
-            webView.backgroundColor = .black
+            /* Ecosia: isOpaque is set to false to have effect for initial backgroundColor*/
+            webView.isOpaque = false
+            webView.backgroundColor = UIColor.theme.browser.background
+
 
             // Turning off masking allows the web content to flow outside of the scrollView's frame
             // which allows the content appear beneath the toolbars in the BrowserViewController
@@ -685,6 +688,7 @@ class TabWebView: WKWebView, MenuHelperInterface {
             let backgroundColor = ThemeManager.instance.current.browser.background.hexString
             evaluateJavascriptInDefaultContentWorld("document.documentElement.style.backgroundColor = '\(backgroundColor)';")
         }
+        backgroundColor = UIColor.theme.browser.background
         window?.backgroundColor = UIColor.theme.browser.background
     }
 

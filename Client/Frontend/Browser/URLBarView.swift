@@ -181,6 +181,23 @@ class URLBarView: UIView {
             } else {
                 line.isHidden = false
             }
+            /* Ecosia: update visibility of reload/multi-state button */
+            if !inOverlayMode {
+                setNeedsUpdateConstraints()
+            }
+        }
+    }
+
+    /* Ecosia: Special Logic for Reload/Cancel-Button */
+    private var showMultiStateButton: Bool {
+        if let url = currentURL {
+            if let internalURL = InternalURL(url), internalURL.isAboutHomeURL {
+                return false
+            } else {
+                return true
+            }
+        } else {
+            return false
         }
     }
 
@@ -333,7 +350,8 @@ class URLBarView: UIView {
                     make.trailing.equalTo(self.multiStateButton.snp.leading).offset(-URLBarViewUX.Padding)
                 } else {
                     // Otherwise, left align the location view
-                    make.leading.trailing.equalTo(self).inset(UIEdgeInsets(top: 0, left: URLBarViewUX.LocationLeftPadding-1, bottom: 0, right: URLBarViewUX.ButtonHeight))
+                    let rightPadding = showMultiStateButton ? URLBarViewUX.ButtonHeight : URLBarViewUX.Padding
+                    make.leading.trailing.equalTo(self).inset(UIEdgeInsets(top: 0, left: URLBarViewUX.LocationLeftPadding-1, bottom: 0, right: rightPadding))
                 }
                 make.height.equalTo(URLBarViewUX.LocationHeight+2)
                 make.centerY.equalTo(self)

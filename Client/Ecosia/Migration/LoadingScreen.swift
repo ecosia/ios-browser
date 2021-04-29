@@ -20,8 +20,9 @@ final class LoadingScreen: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        let logo = UIImageView(image: UIImage(named: "loadingLogoDark"))
+        view.backgroundColor = UIColor.theme.homePanel.topSitesBackground
+
+        let logo = UIImageView(image: UIImage(themed: "ecosiaLogo"))
         logo.translatesAutoresizingMaskIntoConstraints = false
         logo.clipsToBounds = true
         logo.contentMode = .center
