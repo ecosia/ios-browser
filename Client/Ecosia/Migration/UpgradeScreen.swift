@@ -4,7 +4,7 @@
 import UIKit
 import Core
 
-final class WelcomeScreen: UIViewController {
+final class UpgradeScreen: UIViewController {
     required init?(coder: NSCoder) { nil }
     init() {
         super.init(nibName: nil, bundle: nil)
@@ -14,9 +14,7 @@ final class WelcomeScreen: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = ThemeManager.instance.currentName == .dark
-            ? UIColor.Photon.Grey90.withAlphaComponent(0.8)
-            : UIColor.Photon.Grey70.withAlphaComponent(0.4)
+        view.backgroundColor = UIColor.theme.ecosia.welcomeScreenBackground
         
         let base = UIView()
         base.translatesAutoresizingMaskIntoConstraints = false

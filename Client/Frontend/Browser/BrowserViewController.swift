@@ -2025,6 +2025,8 @@ extension BrowserViewController {
             User.shared.migrated = true
         } else if User.shared.migrated != true {
             present(LoadingScreen(profile: profile, tabManager: tabManager), animated: true)
+        } else if User.shared.showsWelcomeScreen {
+            present(UpgradeScreen(), animated: true)
         }
     }
     

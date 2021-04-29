@@ -50,8 +50,8 @@ class EcosiaTheme {
 
     var banner: UIColor { return UIColor(named: "banner")!}
     var underlineGrey: UIColor { return UIColor(named: "underlineGrey")! }
-    
     var cardText: UIColor { UIColor(named: "cardText")!}
+    var welcomeScreenBackground: UIColor { UIColor.Photon.Grey70.withAlphaComponent(0.4) }
 }
 
 final class DarkEcosiaTheme: EcosiaTheme {
@@ -67,8 +67,8 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var banner: UIColor { return UIColor(named: "bannerDark")!}
     override var underlineGrey: UIColor { return UIColor(named: "underlineGreyDark")! }
     override var hoverBackgroundColor: UIColor { UIColor.Photon.Grey90 }
-    
     override var cardText: UIColor { UIColor(named: "cardTextDark")!}
+    override var welcomeScreenBackground: UIColor { UIColor.Photon.Grey90.withAlphaComponent(0.8) }
 }
 
 extension UIImage {

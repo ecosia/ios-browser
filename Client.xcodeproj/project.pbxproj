@@ -479,7 +479,7 @@
 		CE0AB93425F7C2B400333656 /* SnowplowTracker in Frameworks */ = {isa = PBXBuildFile; productRef = CE0AB93325F7C2B400333656 /* SnowplowTracker */; };
 		CE0AB94A25F7C42600333656 /* Analytics.Values.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE0AB94925F7C42600333656 /* Analytics.Values.swift */; };
 		CE0AB97225F7C43100333656 /* Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE0AB97125F7C43100333656 /* Analytics.swift */; };
-		CE0C911D2636F6AB00EF757F /* WelcomeScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE0C911C2636F6AB00EF757F /* WelcomeScreen.swift */; };
+		CE0C911D2636F6AB00EF757F /* UpgradeScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE0C911C2636F6AB00EF757F /* UpgradeScreen.swift */; };
 		CE0D8D1025B5DEE200B76E47 /* MozillaAppServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE0D8D0F25B5DEE200B76E47 /* MozillaAppServices.framework */; };
 		CE4C3DC425ED41E90049E9BF /* FeedbackCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE4C3DC325ED41E90049E9BF /* FeedbackCard.swift */; };
 		CE7728DC26288B300084C771 /* LoadingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7728DB26288B300084C771 /* LoadingScreen.swift */; };
@@ -3271,7 +3271,7 @@
 		CDF4403FBD53453987C9B8CB /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/ClearHistoryConfirm.strings; sourceTree = "<group>"; };
 		CE0AB94925F7C42600333656 /* Analytics.Values.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analytics.Values.swift; sourceTree = "<group>"; };
 		CE0AB97125F7C43100333656 /* Analytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analytics.swift; sourceTree = "<group>"; };
-		CE0C911C2636F6AB00EF757F /* WelcomeScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeScreen.swift; sourceTree = "<group>"; };
+		CE0C911C2636F6AB00EF757F /* UpgradeScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpgradeScreen.swift; sourceTree = "<group>"; };
 		CE0D8D0F25B5DEE200B76E47 /* MozillaAppServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MozillaAppServices.framework; path = Carthage/Build/iOS/MozillaAppServices.framework; sourceTree = "<group>"; };
 		CE4C3DC325ED41E90049E9BF /* FeedbackCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackCard.swift; sourceTree = "<group>"; };
 		CE664A9AB0ACFC6960CD6E81 /* pt-PT */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-PT"; path = "pt-PT.lproj/HistoryPanel.strings"; sourceTree = "<group>"; };
@@ -5124,7 +5124,7 @@
 				CA051BEE2539B25B0096D30F /* EcosiaImport.swift */,
 				CA08B86E255EE8B6005CA6A4 /* EcosiaImport+PerformanceTests.swift */,
 				CE7728DB26288B300084C771 /* LoadingScreen.swift */,
-				CE0C911C2636F6AB00EF757F /* WelcomeScreen.swift */,
+				CE0C911C2636F6AB00EF757F /* UpgradeScreen.swift */,
 			);
 			path = Migration;
 			sourceTree = "<group>";
@@ -7707,7 +7707,7 @@
 				048B4C7D24A53EA8001B56E8 /* TodayViewModel.swift in Sources */,
 				43446CEA2412066500F5C643 /* UIViewControllerExtension.swift in Sources */,
 				D301AAEE1A3A55B70078DD1D /* TabTrayControllerV1.swift in Sources */,
-				CE0C911D2636F6AB00EF757F /* WelcomeScreen.swift in Sources */,
+				CE0C911D2636F6AB00EF757F /* UpgradeScreen.swift in Sources */,
 				EB9A179B20E69A7F00B12184 /* ThemeManager.swift in Sources */,
 				434F97F424196B4300812FDF /* OnboardingUserResearch.swift in Sources */,
 				EBFDB790211C83A5005CCA2F /* BrowserViewController+FindInPage.swift in Sources */,
