@@ -12,7 +12,7 @@ private struct TopSiteCellUX {
     static let TitleFont = DynamicFontHelper.defaultHelper.SmallSizeRegularWeightAS
     static let SelectedOverlayColor = UIColor(white: 0.0, alpha: 0.25)
     static let CellCornerRadius: CGFloat = 4
-    static let TitleOffset: CGFloat = 5
+    static let TitleOffset: CGFloat = 4
     static let OverlayColor = UIColor(white: 0.0, alpha: 0.25)
     static let IconSize: CGFloat = 40
     static let BorderColor = UIColor(white: 0, alpha: 0.1)
@@ -47,6 +47,10 @@ class TopSiteItemCell: UICollectionViewCell, Themeable {
         titleLabel.textAlignment = .center
         titleLabel.font = TopSiteCellUX.TitleFont
         titleLabel.numberOfLines = 2
+        titleLabel.adjustsFontSizeToFitWidth = true
+        titleLabel.allowsDefaultTighteningForTruncation = true
+        titleLabel.minimumScaleFactor = 0.8
+        titleLabel.lineBreakMode = .byTruncatingTail
         return titleLabel
     }()
 
