@@ -234,7 +234,7 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        if true {
+        if User.shared.showsWelcomeScreen {
             present(WelcomeScreen(), animated: true)
         }
     }

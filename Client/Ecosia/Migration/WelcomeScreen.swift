@@ -14,7 +14,9 @@ final class WelcomeScreen: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor.Photon.Grey70.withAlphaComponent(0.4)
+        view.backgroundColor = ThemeManager.instance.currentName == .dark
+            ? UIColor.Photon.Grey90.withAlphaComponent(0.8)
+            : UIColor.Photon.Grey70.withAlphaComponent(0.4)
         
         let base = UIView()
         base.translatesAutoresizingMaskIntoConstraints = false
@@ -51,7 +53,7 @@ final class WelcomeScreen: UIViewController {
         
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.backgroundColor = .systemBlue
+        button.backgroundColor = UIColor.Photon.Blue50
         button.layer.cornerRadius = 8
         button.clipsToBounds = true
         button.setTitle(.localized(.takeALook), for: [])
@@ -91,6 +93,7 @@ final class WelcomeScreen: UIViewController {
     }
     
     @objc private func takeALook() {
+        User.shared.hideWelcomeScreen()
         dismiss(animated: true)
     }
 }
