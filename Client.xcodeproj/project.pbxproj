@@ -438,7 +438,6 @@
 		CA4DDE5125430FA700966CF2 /* FakeSentry.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4DDE2925430E2400966CF2 /* FakeSentry.swift */; };
 		CA4DDE792543159400966CF2 /* FakeLeanplum.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4DDE782543159400966CF2 /* FakeLeanplum.swift */; };
 		CA520E7A24913C1B00CCAB48 /* LoginListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA520E7924913C1B00CCAB48 /* LoginListViewModel.swift */; };
-		CA57FD1D25666AAD00BC0800 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = CA57FD1C25666AAD00BC0800 /* Core */; };
 		CA6BFAAE25778CBA0026DFFF /* Welcome.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA6BFAAC25778CB90026DFFF /* Welcome.swift */; };
 		CA6BFAC425778D2C0026DFFF /* Colours.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CA6BFAC325778D2C0026DFFF /* Colours.xcassets */; };
 		CA6BFAD925778D4E0026DFFF /* EcosiaTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA6BFAD825778D4E0026DFFF /* EcosiaTheme.swift */; };
@@ -458,7 +457,6 @@
 		CAA246BC257A723F00D84AD9 /* MarketsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA246BB257A723F00D84AD9 /* MarketsController.swift */; };
 		CAA246D1257A725100D84AD9 /* markets.json in Resources */ = {isa = PBXBuildFile; fileRef = CAA246D0257A725100D84AD9 /* markets.json */; };
 		CAA2F3F3257A79C700EBAD38 /* FilterController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA2F3F2257A79C700EBAD38 /* FilterController.swift */; };
-		CAA2F430257A990C00EBAD38 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = CAA2F42F257A990C00EBAD38 /* Core */; };
 		CAA3B7E62497DCB60094E3C1 /* LoginDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA3B7E52497DCB60094E3C1 /* LoginDataSource.swift */; };
 		CAAD53542541B6A1002501A5 /* EcosiaHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAAD53532541B6A1002501A5 /* EcosiaHistory.swift */; };
 		CAAED1EF25810C7B0048199C /* NewsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAAED1ED25810C7A0048199C /* NewsController.swift */; };
@@ -466,6 +464,7 @@
 		CAAED206258130050048199C /* BrowserViewController+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAAED205258130050048199C /* BrowserViewController+Ecosia.swift */; };
 		CAB6D0062565292400638310 /* TabManagerMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB6D0052565292400638310 /* TabManagerMigrationTests.swift */; };
 		CAB6D04125652A4800638310 /* TestHistoryMigration.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB6D04025652A4800638310 /* TestHistoryMigration.swift */; };
+		CABD6CA6263AC2E600F5877D /* Core in Frameworks */ = {isa = PBXBuildFile; platformFilter = ios; productRef = CABD6CA5263AC2E600F5877D /* Core */; };
 		CAC458F1249429C20042561A /* LoginListSelectionHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC458F0249429C20042561A /* LoginListSelectionHelper.swift */; };
 		CAFA9220257919040086E6AE /* EcosiaHome.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFA921F257919040086E6AE /* EcosiaHome.swift */; };
 		CAFA9235257919250086E6AE /* EcosiaNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFA9234257919250086E6AE /* EcosiaNavigation.swift */; };
@@ -479,7 +478,6 @@
 		CE0AB93425F7C2B400333656 /* SnowplowTracker in Frameworks */ = {isa = PBXBuildFile; productRef = CE0AB93325F7C2B400333656 /* SnowplowTracker */; };
 		CE0AB94A25F7C42600333656 /* Analytics.Values.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE0AB94925F7C42600333656 /* Analytics.Values.swift */; };
 		CE0AB97225F7C43100333656 /* Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE0AB97125F7C43100333656 /* Analytics.swift */; };
-		CE0C911D2636F6AB00EF757F /* UpgradeScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE0C911C2636F6AB00EF757F /* UpgradeScreen.swift */; };
 		CE0D8D1025B5DEE200B76E47 /* MozillaAppServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE0D8D0F25B5DEE200B76E47 /* MozillaAppServices.framework */; };
 		CE4C3DC425ED41E90049E9BF /* FeedbackCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE4C3DC325ED41E90049E9BF /* FeedbackCard.swift */; };
 		CE7728DC26288B300084C771 /* LoadingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7728DB26288B300084C771 /* LoadingScreen.swift */; };
@@ -3271,7 +3269,6 @@
 		CDF4403FBD53453987C9B8CB /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/ClearHistoryConfirm.strings; sourceTree = "<group>"; };
 		CE0AB94925F7C42600333656 /* Analytics.Values.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analytics.Values.swift; sourceTree = "<group>"; };
 		CE0AB97125F7C43100333656 /* Analytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analytics.swift; sourceTree = "<group>"; };
-		CE0C911C2636F6AB00EF757F /* UpgradeScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpgradeScreen.swift; sourceTree = "<group>"; };
 		CE0D8D0F25B5DEE200B76E47 /* MozillaAppServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MozillaAppServices.framework; path = Carthage/Build/iOS/MozillaAppServices.framework; sourceTree = "<group>"; };
 		CE4C3DC325ED41E90049E9BF /* FeedbackCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackCard.swift; sourceTree = "<group>"; };
 		CE664A9AB0ACFC6960CD6E81 /* pt-PT */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-PT"; path = "pt-PT.lproj/HistoryPanel.strings"; sourceTree = "<group>"; };
@@ -4058,6 +4055,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CABD6CA6263AC2E600F5877D /* Core in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4072,7 +4070,6 @@
 				C8E18F1E222EDE4500E30E52 /* Accelerate.framework in Frameworks */,
 				E6231C051B90A472005ABB0D /* libxml2.2.tbd in Frameworks */,
 				EBCF403B221CBC5B00B38F28 /* SwiftProtobuf.framework in Frameworks */,
-				CA57FD1D25666AAD00BC0800 /* Core in Frameworks */,
 				E6231C011B90A44F005ABB0D /* libz.tbd in Frameworks */,
 				E4B3348A1BBF23F9004E2BFF /* AdSupport.framework in Frameworks */,
 				3BA9A0231D2C208C00BD418C /* Fuzi.framework in Frameworks */,
@@ -4219,7 +4216,6 @@
 				3BA9A0321D2C2C0500BD418C /* Fuzi.framework in Frameworks */,
 				0B75AEA91AC20FB20015E5DC /* ImageIO.framework in Frameworks */,
 				7B604F9D1C495143006EEEC3 /* SDWebImage.framework in Frameworks */,
-				CAA2F430257A990C00EBAD38 /* Core in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5124,7 +5120,6 @@
 				CA051BEE2539B25B0096D30F /* EcosiaImport.swift */,
 				CA08B86E255EE8B6005CA6A4 /* EcosiaImport+PerformanceTests.swift */,
 				CE7728DB26288B300084C771 /* LoadingScreen.swift */,
-				CE0C911C2636F6AB00EF757F /* UpgradeScreen.swift */,
 			);
 			path = Migration;
 			sourceTree = "<group>";
@@ -6201,6 +6196,9 @@
 			dependencies = (
 			);
 			name = Shared;
+			packageProductDependencies = (
+				CABD6CA5263AC2E600F5877D /* Core */,
+			);
 			productName = Shared;
 			productReference = 288A2D861AB8B3260023ABC3 /* Shared.framework */;
 			productType = "com.apple.product-type.framework";
@@ -6490,7 +6488,6 @@
 			);
 			name = Client;
 			packageProductDependencies = (
-				CA57FD1C25666AAD00BC0800 /* Core */,
 				CE0AB93325F7C2B400333656 /* SnowplowTracker */,
 			);
 			productName = Client;
@@ -6533,7 +6530,6 @@
 			);
 			name = ShareTo;
 			packageProductDependencies = (
-				CAA2F42F257A990C00EBAD38 /* Core */,
 			);
 			productName = ShareToFirefox;
 			productReference = F84B22491A0920C600AAB793 /* ShareTo.appex */;
@@ -7707,7 +7703,6 @@
 				048B4C7D24A53EA8001B56E8 /* TodayViewModel.swift in Sources */,
 				43446CEA2412066500F5C643 /* UIViewControllerExtension.swift in Sources */,
 				D301AAEE1A3A55B70078DD1D /* TabTrayControllerV1.swift in Sources */,
-				CE0C911D2636F6AB00EF757F /* UpgradeScreen.swift in Sources */,
 				EB9A179B20E69A7F00B12184 /* ThemeManager.swift in Sources */,
 				434F97F424196B4300812FDF /* OnboardingUserResearch.swift in Sources */,
 				EBFDB790211C83A5005CCA2F /* BrowserViewController+FindInPage.swift in Sources */,
@@ -12823,7 +12818,7 @@
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
 				kind = exactVersion;
-				version = 4.3.3;
+				version = 4.3.4;
 			};
 		};
 		CE0AB93225F7C2B400333656 /* XCRemoteSwiftPackageReference "snowplow-objc-tracker" */ = {
@@ -12837,12 +12832,7 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		CA57FD1C25666AAD00BC0800 /* Core */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = CA57FD1B25666AAD00BC0800 /* XCRemoteSwiftPackageReference "ios-core" */;
-			productName = Core;
-		};
-		CAA2F42F257A990C00EBAD38 /* Core */ = {
+		CABD6CA5263AC2E600F5877D /* Core */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = CA57FD1B25666AAD00BC0800 /* XCRemoteSwiftPackageReference "ios-core" */;
 			productName = Core;

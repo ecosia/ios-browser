@@ -3,6 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import Foundation
+import Core
 
 open class DefaultSuggestedSites {
     public static let urlMap = [
@@ -36,20 +37,36 @@ open class DefaultSuggestedSites {
     public static let sites = [
         "default": [
             SuggestedSiteData(
-                url: "https://blog.ecosia.org/",
+                url: Environment.current.blog.absoluteString,
+                bgColor: "0x000000",
+                imageUrl: "asset://suggestedsites_ecosiablog",
+                faviconUrl: "asset://defaultFavicon",
+                trackingId: 0,
+                title: NSLocalizedString("Blog", tableName: "Ecosia", comment: "")
+            ),
+            SuggestedSiteData(
+                url: Environment.current.financialReports.absoluteString,
+                bgColor: "0x000000",
+                imageUrl: "asset://suggestedsites_ecosiafin",
+                faviconUrl: "asset://defaultFavicon",
+                trackingId: 0,
+                title: NSLocalizedString("Financial reports", tableName: "Ecosia", comment: "")
+            ),
+            SuggestedSiteData(
+                url: Environment.current.shop.absoluteString,
+                bgColor: "0x000000",
+                imageUrl: "asset://suggestedsites_ecosiashop",
+                faviconUrl: "asset://defaultFavicon",
+                trackingId: 0,
+                title: NSLocalizedString("Shop", tableName: "Ecosia", comment: "")
+            ),
+            SuggestedSiteData(
+                url: Environment.current.howEcosiaWorks.absoluteString,
                 bgColor: "0x000000",
                 imageUrl: "asset://suggestedsites_ecosia",
                 faviconUrl: "asset://defaultFavicon",
-                trackingId: 0,
-                title: NSLocalizedString("Ecosia Blog", comment: "Tile title for Ecosia")
-            ),
-            SuggestedSiteData(
-                url: "https://www.wikipedia.org/",
-                bgColor: "0x000000",
-                imageUrl: "asset://suggestedsites_wikipedia",
-                faviconUrl: "asset://defaultFavicon",
                 trackingId: 629,
-                title: NSLocalizedString("Wikipedia", comment: "Tile title for Wikipedia")
+                title: NSLocalizedString("How Ecosia works", tableName: "Ecosia", comment: "")
             )
         ]
     ]

@@ -360,10 +360,59 @@
   },
   {
     "title": "ecosia",
-    "url": "https://ecosia.org/",
+    "url": "https://ecosia.org",
     "image_url": "ecosia-org.png",
     "background_color": "#ffffff",
     "domain": "ecosia.org"
+  },
+  {
+    "title": "ecosiablog",
+    "url": "https://blog.ecosia.org",
+    "image_url": "blog-ecosia-org.png",
+    "background_color": "#ffffff",
+    "domain": "blog.ecosia.org"
+  },
+  {
+    "title": "ecosiablog",
+    "url": "https://de.blog.ecosia.org",
+    "image_url": "blog-ecosia-org.png",
+    "background_color": "#ffffff",
+    "domain": "de.blog.ecosia.org"
+  },
+  {
+    "title": "ecosiablog",
+    "url": "https://fr.blog.ecosia.org",
+    "image_url": "blog-ecosia-org.png",
+    "background_color": "#ffffff",
+    "domain": "fr.blog.ecosia.org"
+  },
+  {
+    "title": "ecosiashop",
+    "url": "https://ecosiashop.com",
+    "image_url": "ecosiashop-com.png",
+    "background_color": "#ffffff",
+    "domain": "ecosiashop.com"
+  },
+  {
+    "title": "ecosiafin",
+    "url": "https://blog.ecosia.org/ecosia-financial-reports-tree-planting-receipts",
+    "image_url": "ecosiafin-org.png",
+    "background_color": "#ffffff",
+    "domain": "blog.ecosia.org/ecosia-financial-reports-tree-planting-receipts/"
+  },
+  {
+    "title": "ecosiafin",
+    "url": "https://de.blog.ecosia.org/ecosia-finanzberichte-baumplanzbelege",
+    "image_url": "ecosiafin-org.png",
+    "background_color": "#ffffff",
+    "domain": "de.blog.ecosia.org/ecosia-finanzberichte-baumplanzbelege/"
+  },
+  {
+    "title": "ecosiafin",
+    "url": "https://fr.blog.ecosia.org/rapports-financiers-recus-de-plantations-arbres",
+    "image_url": "ecosiafin-org.png",
+    "background_color": "#ffffff",
+    "domain": "fr.blog.ecosia.org/rapports-financiers-recus-de-plantations-arbres/"
   },
   {
     "title": "espn.go",

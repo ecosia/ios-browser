@@ -51,7 +51,8 @@ open class FaviconFetcher: NSObject, XMLParserDelegate {
             return icon
         }
         let fullURL = url.absoluteDisplayString.remove("\(url.scheme ?? "")://")
-        if let name = url.baseDomain, let icon = bundledIcons[name] ?? bundledIcons[fullURL] {
+        /* Ecosia: fetch icon via fullURL first*/
+        if let name = url.baseDomain, let icon = bundledIcons[fullURL] ?? bundledIcons[name] {
             return icon
         }
         return nil
