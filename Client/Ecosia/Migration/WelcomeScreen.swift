@@ -32,7 +32,7 @@ final class WelcomeScreen: UIViewController {
         let title = UILabel()
         title.translatesAutoresizingMaskIntoConstraints = false
         title.textAlignment = .center
-        title.text = .localized(.sitTightWeAre)
+        title.text = .localized(.welcomeToTheNewEcosia)
         title.font = .systemFont(ofSize: UIFont.preferredFont(forTextStyle: .title3).pointSize, weight: .bold)
         title.numberOfLines = 0
         title.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
@@ -42,7 +42,7 @@ final class WelcomeScreen: UIViewController {
         let subtitle = UILabel()
         subtitle.translatesAutoresizingMaskIntoConstraints = false
         subtitle.textAlignment = .center
-        subtitle.text = .localized(.sitTightWeAre)
+        subtitle.text = .localized(.weHaveDoneSome)
         subtitle.font = .preferredFont(forTextStyle: .footnote)
         subtitle.numberOfLines = 0
         subtitle.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
@@ -54,7 +54,7 @@ final class WelcomeScreen: UIViewController {
         button.backgroundColor = .systemBlue
         button.layer.cornerRadius = 8
         button.clipsToBounds = true
-        button.setTitle(.localized(.sitTightWeAre), for: [])
+        button.setTitle(.localized(.takeALook), for: [])
         button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: UIFont.preferredFont(forTextStyle: .callout).pointSize, weight: .medium)
         button.addTarget(self, action: #selector(takeALook), for: .touchUpInside)

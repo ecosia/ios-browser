@@ -59,5 +59,8 @@ extension String {
         case weHitAGlitch = "We hit a glitch"
         case weAreMomentarilyUnable = "We are momentarily unable to load all of your settings."
         case continueMessage = "Continue"
+        case welcomeToTheNewEcosia = "Welcome to the new Ecosia app!"
+        case weHaveDoneSome = "We've done some re-arranging to make it easier for you to browse the web and plant trees with Ecosia."
+        case takeALook = "Take a look"
     }
 }
