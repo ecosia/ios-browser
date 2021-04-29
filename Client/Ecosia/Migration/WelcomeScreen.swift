@@ -49,7 +49,18 @@ final class WelcomeScreen: UIViewController {
         subtitle.textColor = UIColor.theme.ecosia.cardText
         view.addSubview(subtitle)
         
-        base.heightAnchor.constraint(equalToConstant: 300).isActive = true
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.backgroundColor = .systemBlue
+        button.layer.cornerRadius = 8
+        button.clipsToBounds = true
+        button.setTitle(.localized(.sitTightWeAre), for: [])
+        button.setTitleColor(.white, for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: UIFont.preferredFont(forTextStyle: .callout).pointSize, weight: .medium)
+        button.addTarget(self, action: #selector(takeALook), for: .touchUpInside)
+        view.addSubview(button)
+        
+        base.bottomAnchor.constraint(equalTo: button.bottomAnchor, constant: 16).isActive = true
         base.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
         base.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         base.leftAnchor.constraint(greaterThanOrEqualTo: view.leftAnchor, constant: 16).isActive = true
@@ -72,5 +83,14 @@ final class WelcomeScreen: UIViewController {
         subtitle.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 8).isActive = true
         subtitle.leftAnchor.constraint(greaterThanOrEqualTo: base.leftAnchor, constant: 16).isActive = true
         subtitle.rightAnchor.constraint(lessThanOrEqualTo: base.rightAnchor, constant: -16).isActive = true
+        
+        button.topAnchor.constraint(equalTo: subtitle.bottomAnchor, constant: 24).isActive = true
+        button.leftAnchor.constraint(equalTo: base.leftAnchor, constant: 16).isActive = true
+        button.rightAnchor.constraint(equalTo: base.rightAnchor, constant: -16).isActive = true
+        button.heightAnchor.constraint(equalToConstant: 44).isActive = true
+    }
+    
+    @objc private func takeALook() {
+        dismiss(animated: true)
     }
 }
