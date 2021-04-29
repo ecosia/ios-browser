@@ -155,6 +155,8 @@
 		<key>UIImageName</key>
 		<string>ecosiaLogoLaunch</string>
 	</dict>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>
