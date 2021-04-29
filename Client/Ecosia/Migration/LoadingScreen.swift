@@ -41,6 +41,7 @@ final class LoadingScreen: UIViewController {
         message.numberOfLines = 0
         message.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         message.textColor = UIColor.theme.ecosia.primaryText
+        message.textAlignment = .center
         view.addSubview(message)
         
         logo.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
