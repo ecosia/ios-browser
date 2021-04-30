@@ -175,7 +175,7 @@ username = ...
 Pulling translation from the web
 
 ```bash
-tx pull -af
+tx pull -afs
 ```
 
 Test and commit the new translations. There exists schemes for testing other languages in the simulator.
@@ -189,7 +189,7 @@ Test and commit the new translations. There exists schemes for testing other lan
 3. Push it to Transifex
 
 ```bash
-tx pull -s
+tx pull -afs
 tx push -s
 ```
 
