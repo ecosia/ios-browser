@@ -153,7 +153,6 @@ private extension BrowserToTrayAnimator {
         // Take a snapshot of the collection view to perform the scaling/alpha effect
         let tabCollectionViewSnapshot = tabTray.collectionView.snapshotView(afterScreenUpdates: true)!
         tabCollectionViewSnapshot.frame = tabTray.collectionView.frame
-        tabCollectionViewSnapshot.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
         tabCollectionViewSnapshot.alpha = 1.0
         tabTray.view.insertSubview(tabCollectionViewSnapshot, belowSubview: tabTray.toolbar)
 
