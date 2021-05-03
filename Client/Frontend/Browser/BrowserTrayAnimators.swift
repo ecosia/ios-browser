@@ -21,6 +21,7 @@ class TrayToBrowserAnimator: NSObject, UIViewControllerAnimatedTransitioning {
 private extension TrayToBrowserAnimator {
     func transitionFromTray(_ tabTray: TabTrayControllerV1, toBrowser bvc: BrowserViewController, usingContext transitionContext: UIViewControllerContextTransitioning) {
         let container = transitionContext.containerView
+        container.backgroundColor = UIColor.theme.tabTray.background
         guard let selectedTab = bvc.tabManager.selectedTab else { return }
 
         let tabManager = bvc.tabManager
@@ -75,7 +76,6 @@ private extension TrayToBrowserAnimator {
             cell.title.transform = CGAffineTransform(translationX: 0, y: -cell.title.frame.height)
             bvc.tabTrayDidDismiss(tabTray)
             tabTray.toolbar.transform = CGAffineTransform(translationX: 0, y: UIConstants.BottomToolbarHeight)
-            tabCollectionViewSnapshot.transform = CGAffineTransform(scaleX: 0.9, y: 0.9) 
         }
 
         if UIAccessibility.isReduceMotionEnabled {
@@ -92,7 +92,6 @@ private extension TrayToBrowserAnimator {
             }
             UIApplication.shared.windows.first?.backgroundColor = UIColor.theme.tabTray.background
             tabTray.navigationController?.setNeedsStatusBarAppearanceUpdate()
-            tabCollectionViewSnapshot.alpha = 0
             tabTray.statusBarBG.alpha = 0
             tabTray.searchBarHolder.alpha = 0
         }, completion: { finished in
@@ -154,8 +153,8 @@ private extension BrowserToTrayAnimator {
         // Take a snapshot of the collection view to perform the scaling/alpha effect
         let tabCollectionViewSnapshot = tabTray.collectionView.snapshotView(afterScreenUpdates: true)!
         tabCollectionViewSnapshot.frame = tabTray.collectionView.frame
-        tabCollectionViewSnapshot.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
-        tabCollectionViewSnapshot.alpha = 0
+        tabCollectionViewSnapshot.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
+        tabCollectionViewSnapshot.alpha = 1.0
         tabTray.view.insertSubview(tabCollectionViewSnapshot, belowSubview: tabTray.toolbar)
 
         if let toast = bvc.clipboardBarDisplayHandler?.clipboardToast {
@@ -185,7 +184,6 @@ private extension BrowserToTrayAnimator {
         // To work around this, we dispatch the setting of collection view to hidden after the screen update is completed.
 
         DispatchQueue.main.async {
-            tabTray.collectionView.isHidden = true
             let finalFrame = calculateCollapsedCellFrameUsingCollectionView(tabTray.collectionView,
                 atIndex: scrollToIndex)
             tabTray.toolbar.transform = CGAffineTransform(translationX: 0, y: UIConstants.BottomToolbarHeight)
@@ -232,6 +230,7 @@ private extension BrowserToTrayAnimator {
                 bvc.toggleSnackBarVisibility(show: true)
                 toggleWebViewVisibility(true, usingTabManager: bvc.tabManager)
                 bvc.firefoxHomeViewController?.view.isHidden = false
+                bvc.firefoxHomeViewController?.view.alpha = 0.0
 
                 resetTransformsForViews([bvc.header, bvc.readerModeBar, bvc.footer])
                 bvc.urlBar.isTransitioning = false

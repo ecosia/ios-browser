@@ -742,6 +742,8 @@ class BrowserViewController: UIViewController {
             firefoxHomeViewController.homePanelDelegate = self
             // Ecosia: hide logo in overlay mode
             firefoxHomeViewController.inOverlayMode = !inline
+            firefoxHomeViewController.loadViewIfNeeded()
+            firefoxHomeViewController.view.alpha = 0
             self.firefoxHomeViewController = firefoxHomeViewController
             addChild(firefoxHomeViewController)
             view.addSubview(firefoxHomeViewController.view)
