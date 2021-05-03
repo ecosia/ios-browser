@@ -1039,7 +1039,7 @@ class LibraryShortcutView: UIView {
         title.textAlignment = .center
         title.snp.makeConstraints { make in
             make.top.equalTo(button.snp.bottom).offset(0)
-            make.leading.trailing.equalToSuperview().inset(2)
+            make.leading.trailing.equalToSuperview().inset(2).priority(.high)
         }
         button.imageView?.contentMode = .scaleToFill
         button.contentVerticalAlignment = .fill
