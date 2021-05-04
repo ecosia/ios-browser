@@ -1344,6 +1344,7 @@ extension BrowserViewController: URLBarDelegate {
 
         let actionMenuPresenter: (URL, Tab, UIView, UIPopoverArrowDirection) -> Void  = { (url, tab, view, _) in
             self.presentActivityViewController(url, tab: tab, sourceView: view, sourceRect: view.bounds, arrowDirection: .up)
+            Analytics.shared.browser(.start, label: .shareContent)
         }
 
         let findInPageAction = {
@@ -2212,6 +2213,7 @@ extension BrowserViewController: ContextMenuHelperDelegate {
             let addTab = { (rURL: URL, isPrivate: Bool) in
                     let tab = self.tabManager.addTab(URLRequest(url: rURL as URL), afterTab: currentTab, isPrivate: isPrivate)
                     LeanPlumClient.shared.track(event: .openedNewTab, withParameters: ["Source": "Long Press Context Menu"])
+                    Analytics.shared.browser(.add, label: .newTab, property: .menu)
                     guard !self.topTabsVisible else {
                         return
                     }
@@ -2240,6 +2242,7 @@ extension BrowserViewController: ContextMenuHelperDelegate {
                 self.addBookmark(url: url.absoluteString, title: elements.title)
                 SimpleToast().showAlertWithText(Strings.AppMenuAddBookmarkConfirmMessage, bottomContainer: self.webViewContainer)
                 TelemetryWrapper.recordEvent(category: .action, method: .add, object: .bookmark, value: .contextMenu)
+                Analytics.shared.browser(.add, label: .favourites, property: .menu)
             }
             actionSheetController.addAction(bookmarkAction, accessibilityIdentifier: "linkContextMenu.bookmarkLink")
 
@@ -2470,6 +2473,7 @@ extension BrowserViewController: TabTrayDelegate {
         let tabState = tab.tabState
         addBookmark(url: url, title: tabState.title, favicon: tabState.favicon)
         TelemetryWrapper.recordEvent(category: .action, method: .add, object: .bookmark, value: .tabTray)
+        Analytics.shared.browser(.add, label: .favourites, property: .toolbar)
     }
 
     func tabTrayDidAddToReadingList(_ tab: Tab) -> ReadingListItem? {

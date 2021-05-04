@@ -59,6 +59,13 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
                     return "treeCounter"
                 }
             }
+
+            var label: Analytics.Label.Navigation {
+                switch self {
+                case .treeCount:
+                    return .counter
+                }
+            }
         }
 
         enum Explore: Int, CaseIterable {
@@ -106,6 +113,21 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
                     return Environment.current.faq
                 case .shop:
                     return Environment.current.shop
+                }
+            }
+
+            var label: Analytics.Label.Navigation {
+                switch self {
+                case .info:
+                    return .howEcosiaWorks
+                case .finance:
+                    return .financialReports
+                case .trees:
+                    return .projects
+                case .faq:
+                    return .faq
+                case .shop:
+                    return .shop
                 }
             }
         }
@@ -156,7 +178,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     private var hasAppeared: Bool = false
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        Analytics.shared.screen(.home)
+        Analytics.shared.navigation(.view, label: .home)
         guard hasAppeared else { return hasAppeared = true }
         collectionView.reloadSections([Section.info.rawValue])
     }
@@ -222,14 +244,19 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         case .info:
             if indexPath.row == 0 {
                 delegate?.ecosiaHome(didSelectURL: Environment.current.aboutCounter)
+                Analytics.shared.navigation(.open, label: .counter)
                 dismiss(animated: true, completion: nil)
             }
         case .news:
             delegate?.ecosiaHome(didSelectURL: items[indexPath.row].targetUrl)
+            Analytics.shared.navigationOpenNews(items[indexPath.row].trackingName)
             dismiss(animated: true, completion: nil)
         case .explore:
             Section.Explore(rawValue: indexPath.row)
-                .map { delegate?.ecosiaHome(didSelectURL: $0.url) }
+                .map {
+                    delegate?.ecosiaHome(didSelectURL: $0.url)
+                    Analytics.shared.navigation(.open, label: $0.label)
+                }
             dismiss(animated: true, completion: nil)
         default:
             break
@@ -297,6 +324,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     @objc private func allNews() {
         let news = NewsController(items: items, delegate: delegate)
         navigationController?.pushViewController(news, animated: true)
+        Analytics.shared.navigation(.open, label: .news)
     }
 
     func applyTheme() {

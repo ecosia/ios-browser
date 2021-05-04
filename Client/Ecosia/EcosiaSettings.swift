@@ -101,6 +101,7 @@ class EcosiaPrivacyPolicySetting: Setting {
 
     override func onClick(_ navigationController: UINavigationController?) {
         setUpAndPushSettingsContentViewController(navigationController, self.url)
+        Analytics.shared.navigation(.open, label: .privacy)
     }
 }
 
@@ -134,6 +135,7 @@ class EcosiaSendFeedbackSetting: Setting {
         _ = URL(string: mailURL).map {
             UIApplication.shared.open($0, options: [:], completionHandler: nil)
         }
+        Analytics.shared.navigation(.open, label: .sendFeedback)
     }
 }
 
@@ -148,5 +150,6 @@ class EcosiaTermsSetting: Setting {
 
     override func onClick(_ navigationController: UINavigationController?) {
         setUpAndPushSettingsContentViewController(navigationController, self.url)
+        Analytics.shared.navigation(.open, label: .terms)
     }
 }

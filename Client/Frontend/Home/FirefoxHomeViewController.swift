@@ -728,14 +728,17 @@ extension FirefoxHomeViewController: DataObserverDelegate {
 extension FirefoxHomeViewController {
     @objc func openBookmarks() {
         homePanelDelegate?.homePanelDidRequestToOpenLibrary(panel: .bookmarks)
+        Analytics.shared.browser(.open, label: .favourites, property: .home)
     }
 
     @objc func openHistory() {
         homePanelDelegate?.homePanelDidRequestToOpenLibrary(panel: .history)
+        Analytics.shared.browser(.open, label: .history, property: .home)
     }
 
     @objc func openSyncedTabs() {
         homePanelDelegate?.homePanelDidRequestToOpenLibrary(panel: .syncedTabs)
+        Analytics.shared.browser(.open, label: .tabs, property: .home)
     }
 
     @objc func openReadingList() {
@@ -785,6 +788,7 @@ extension FirefoxHomeViewController: HomePanelContextMenu {
             self.homePanelDelegate?.homePanelDidRequestToOpenInNewTab(siteURL, isPrivate: false)
             let source = ["Source": "Activity Stream Long Press Context Menu"]
             LeanPlumClient.shared.track(event: .openedNewTab, withParameters: source)
+            Analytics.shared.browser(.open, label: .newTab, property: .menu)
         }
 
         let openInNewPrivateTabAction = PhotonActionSheetItem(title: Strings.OpenInNewPrivateTabContextMenuTitle, iconString: "quick_action_new_private_tab") { _, _ in
@@ -800,6 +804,7 @@ extension FirefoxHomeViewController: HomePanelContextMenu {
                 }
 
                 TelemetryWrapper.recordEvent(category: .action, method: .delete, object: .bookmark, value: .activityStream)
+                Analytics.shared.browser(.delete, label: .favourites, property: .home)
             })
         } else {
             bookmarkAction = PhotonActionSheetItem(title: Strings.BookmarkContextMenuTitle, iconString: "action_bookmark", handler: { _, _ in
@@ -817,6 +822,7 @@ extension FirefoxHomeViewController: HomePanelContextMenu {
                 self.profile.panelDataObservers.activityStream.refreshIfNeeded(forceTopSites: true)
                 LeanPlumClient.shared.track(event: .savedBookmark)
                 TelemetryWrapper.recordEvent(category: .action, method: .add, object: .bookmark, value: .activityStream)
+                Analytics.shared.browser(.add, label: .favourites, property: .home)
             })
         }
 

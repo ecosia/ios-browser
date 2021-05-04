@@ -5,47 +5,36 @@ extension Analytics {
         case
         activity,
         browser,
-        navigation,
         external,
-        onboarding,
-        migration
+        migration,
+        navigation,
+        onboarding
     }
     
     enum Label {
-        enum Screen: String {
+        enum Navigation: String {
             case
             home,
             projects,
-            news,
-            more
-        }
-        
-        enum Features: String {
-            case
-            favourites,
-            history,
-            tabs,
-            settings
-        }
-        
-        enum More: String {
-            case
             counter,
-            how_ecosia_works,
-            financial_reports,
+            howEcosiaWorks = "how_ecosia_works",
+            financialReports = "financial_reports",
             shop,
             faq,
-            settings,
-            send_feedback,
+            news,
             privacy,
+            sendFeedback = "send_feedback",
             terms
         }
         
-        enum Onboarding: String {
+        enum Browser: String {
             case
-            intro,
-            callout_ads,
-            callout_counter
+            newTab = "new_tab",
+            favourites,
+            history,
+            tabs,
+            settings,
+            shareContent = "share_content"
         }
     }
     
@@ -64,43 +53,18 @@ extension Analytics {
             resume
         }
         
-        enum Share: String {
-            case
-            start,
-            complete,
-            send_to_files
-        }
-        
-        enum Favourites: String {
+        enum Browser: String {
             case
             add,
             open,
             edit,
-            delete
-        }
-        
-        enum History: String {
-            case
-            open,
             delete,
-            delete_all
+            delete_all = "delete_all",
+            start,
+            complete,
+            sendToFiles = "send_to_files"
         }
-        
-        enum Tabs: String {
-            case
-            add,
-            open,
-            delete,
-            delete_all
-        }
-        
-        enum Onboarding: String {
-            case
-            view,
-            close,
-            finish
-        }
-        
+
         enum Promo: String {
             case
             view,
@@ -113,7 +77,7 @@ extension Analytics {
         case
         home,
         menu,
-        new_tab
+        toolbar
     }
 
     enum Migration: String {

@@ -368,7 +368,7 @@ class TabTrayControllerV1: UIViewController {
             return
         }
         openNewTab()
-        Analytics.shared.tabs(.add)
+        Analytics.shared.browser(.open, label: .newTab, property: .toolbar)
     }
 
     func openNewTab(_ request: URLRequest? = nil) {
@@ -494,7 +494,7 @@ extension TabTrayControllerV1 {
     }
 
     func closeTabsForCurrentTray() {
-        Analytics.shared.tabs(.delete_all)
+        Analytics.shared.browser(.delete_all, label: .tabs)
         
         tabDisplayManager.hideDisplayedTabs() {
             self.tabManager.removeTabsWithUndoToast(self.tabDisplayManager.dataStore.compactMap { $0 })
@@ -558,7 +558,7 @@ extension TabTrayControllerV1 {
 
 extension TabTrayControllerV1: TabSelectionDelegate {
     func didSelectTabAtIndex(_ index: Int) {
-        Analytics.shared.tabs(.open)
+        Analytics.shared.browser(.open, label: .tabs)
         if let tab = tabDisplayManager.dataStore.at(index) {
             tabManager.selectTab(tab)
             dismissTabTray()
@@ -1217,7 +1217,7 @@ class TabCell: UICollectionViewCell {
 
     @objc func close() {
         delegate?.tabCellDidClose(self)
-        Analytics.shared.tabs(.delete)
+        Analytics.shared.browser(.delete, label: .tabs)
     }
 }
 
