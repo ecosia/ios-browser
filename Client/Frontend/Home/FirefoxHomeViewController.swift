@@ -351,11 +351,7 @@ extension FirefoxHomeViewController {
                 insets += FirefoxHomeUX.MinimumInsets + safeAreaInsets
                 
                 // Ecosia
-                if UIDevice.current.userInterfaceIdiom == .phone {
-                    if UIApplication.shared.statusBarOrientation.isLandscape {
-                        insets += frameWidth / 4
-                    }
-                } else {
+                if UIDevice.current.userInterfaceIdiom == .phone || UIApplication.shared.statusBarOrientation.isLandscape {
                     insets += frameWidth / 4
                 }
                 
@@ -985,12 +981,7 @@ class ASHeaderView: UICollectionReusableView {
     var titleInsets: CGFloat {
         get {
             // Ecosia
-            
-            if UIDevice.current.userInterfaceIdiom == .phone {
-                if UIApplication.shared.statusBarOrientation.isLandscape {
-                    return FirefoxHomeUX.MinimumInsets + (self.frame.size.width / 4)
-                }
-            } else {
+            if UIDevice.current.userInterfaceIdiom == .pad || UIApplication.shared.statusBarOrientation.isLandscape {
                 return FirefoxHomeUX.MinimumInsets + (self.frame.size.width / 4)
             }
             
