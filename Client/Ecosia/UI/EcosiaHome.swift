@@ -48,7 +48,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
                 return "treeCounter"
             }
 
-            var label: Analytics.Label.Navigation? {
+            var label: Analytics.Label.Navigation {
                 return .counter
             }
         }
