@@ -33,36 +33,23 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
             case treeCount
 
             var title: String {
-                switch self {
-                case .treeCount:
-                    return .localized(.mySearches)
-                }
+                return .localized(.mySearches)
             }
 
             var subTitle: String? {
-                if self == .treeCount {
-                    return "\(User.shared.treeCount)"
-                }
-                return nil
+                return "\(User.shared.treeCount)"
             }
 
             var description: String? {
-                switch self {
-                case .treeCount:
-                    return .localized(.youNeedAround45)
-                }
+                return .localized(.youNeedAround45)
             }
 
             var image: String {
-                switch self {
-                case .treeCount:
-                    return "treeCounter"
-                }
+                return "treeCounter"
             }
 
             var label: Analytics.Label.Navigation? {
-                if self == .treeCount { return .counter }
-                return nil
+                return .counter
             }
         }
 
