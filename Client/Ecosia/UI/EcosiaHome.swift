@@ -60,11 +60,9 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
                 }
             }
 
-            var label: Analytics.Label.Navigation {
-                switch self {
-                case .treeCount:
-                    return .counter
-                }
+            var label: Analytics.Label.Navigation? {
+                if self == .treeCount { return .counter }
+                return nil
             }
         }
 

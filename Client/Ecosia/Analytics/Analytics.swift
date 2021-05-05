@@ -42,8 +42,8 @@ final class Analytics {
             $0.setCategory(Category.browser.rawValue)
             $0.setAction(action.rawValue)
             $0.setLabel(label.rawValue)
+            $0.setProperty(property?.rawValue)
         })
-
     }
 
     func navigation(_ action: Action, label: Label.Navigation) {
