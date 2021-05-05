@@ -349,6 +349,16 @@ extension FirefoxHomeViewController {
                 let window = UIApplication.shared.keyWindow
                 let safeAreaInsets = window?.safeAreaInsets.left ?? 0
                 insets += FirefoxHomeUX.MinimumInsets + safeAreaInsets
+                
+                // Ecosia
+                if UIDevice.current.userInterfaceIdiom == .phone {
+                    if UIApplication.shared.statusBarOrientation.isLandscape {
+                        insets += frameWidth / 4
+                    }
+                } else {
+                    insets += frameWidth / 4
+                }
+                
                 return insets
             case .treeCounter:
                 insets += FirefoxHomeUX.TopSitesInsets
