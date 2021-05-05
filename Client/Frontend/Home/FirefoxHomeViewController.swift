@@ -978,6 +978,16 @@ class ASHeaderView: UICollectionReusableView {
 
     var titleInsets: CGFloat {
         get {
+            // Ecosia
+            
+            if UIDevice.current.userInterfaceIdiom == .phone {
+                if UIApplication.shared.statusBarOrientation.isLandscape {
+                    return FirefoxHomeUX.MinimumInsets + (self.frame.size.width / 4)
+                }
+            } else {
+                return FirefoxHomeUX.MinimumInsets + (self.frame.size.width / 4)
+            }
+            
             return UIScreen.main.bounds.size.width == self.frame.size.width && UIDevice.current.userInterfaceIdiom == .pad ? FirefoxHomeHeaderViewUX.Insets : FirefoxHomeUX.MinimumInsets
         }
     }
