@@ -323,6 +323,7 @@ class TabManager: NSObject {
         }
 
         storeChanges()
+        Analytics.shared.browser(.edit, label: .tabs)
     }
 
     func configureTab(_ tab: Tab, request: URLRequest?, afterTab parent: Tab? = nil, flushToDisk: Bool, zombie: Bool, isPopup: Bool = false) {
@@ -419,6 +420,7 @@ class TabManager: NSObject {
             object: .tab,
             value: tab.isPrivate ? .privateTab : .normalTab
         )
+        Analytics.shared.browser(.delete, label: .tabs)
     }
 
     private func updateIndexAfterRemovalOf(_ tab: Tab, deletedIndex: Int) {

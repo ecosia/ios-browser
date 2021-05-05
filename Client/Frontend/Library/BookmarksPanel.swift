@@ -211,6 +211,7 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel {
         self.tableView.setEditing(true, animated: true)
         self.navigationItem.leftBarButtonItem = self.newBarButtonItem
         self.navigationItem.rightBarButtonItem = self.doneBarButtonItem
+        Analytics.shared.browser(.edit, label: .favourites)
     }
     
     fileprivate func disableEditMode() {
@@ -507,6 +508,7 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel {
         let delete = UITableViewRowAction(style: .default, title: Strings.BookmarksPanelDeleteTableAction, handler: { (action, indexPath) in
             self.deleteBookmarkNodeAtIndexPath(indexPath)
             TelemetryWrapper.recordEvent(category: .action, method: .delete, object: .bookmark, value: .bookmarksPanel, extras: ["gesture": "swipe"])
+            Analytics.shared.browser(.delete, label: .favourites)
         })
 
         return [delete]

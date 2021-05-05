@@ -29,134 +29,46 @@ final class Analytics {
         }
     }
     
-    func open(_ action: Action.Activity) {
+    func activity(_ action: Action.Activity) {
         tracker.track(SPStructured.build {
             $0.setCategory(Category.activity.rawValue)
             $0.setAction(action.rawValue)
             $0.setLabel("inapp")
         })
     }
-    
-    func screen(_ label: Label.Screen) {
+
+    func browser(_ action: Action.Browser, label: Label.Browser, property: Property? = nil) {
+        tracker.track(SPStructured.build {
+            $0.setCategory(Category.browser.rawValue)
+            $0.setAction(action.rawValue)
+            $0.setLabel(label.rawValue)
+            $0.setProperty(property?.rawValue)
+        })
+    }
+
+    func navigation(_ action: Action, label: Label.Navigation) {
         tracker.track(SPStructured.build {
             $0.setCategory(Category.navigation.rawValue)
-            $0.setAction(Action.view.rawValue)
+            $0.setAction(action.rawValue)
             $0.setLabel(label.rawValue)
         })
     }
-    
-    func newTab(_ origin: Property) {
+
+    func navigationOpenNews(_ id: String) {
         tracker.track(SPStructured.build {
-            $0.setCategory(Category.browser.rawValue)
+            $0.setCategory(Category.navigation.rawValue)
             $0.setAction(Action.open.rawValue)
-            $0.setLabel("new_tab")
-            $0.setProperty(origin.rawValue)
+            $0.setLabel(Label.Navigation.news.rawValue)
+            $0.setProperty(id)
         })
     }
     
-    func features(_ label: Label.Features, origin: Property) {
-        tracker.track(SPStructured.build {
-            $0.setCategory(Category.browser.rawValue)
-            $0.setAction(Action.open.rawValue)
-            $0.setLabel(label.rawValue)
-            $0.setProperty(origin.rawValue)
-        })
-    }
-    
-    func market(_ new: String) {
+    func navigationChangeMarket(_ new: String) {
         tracker.track(SPStructured.build {
             $0.setCategory(Category.navigation.rawValue)
             $0.setAction("change")
             $0.setLabel("market")
             $0.setProperty(new)
-        })
-    }
-    
-    func more(_ label: Label.More) {
-        tracker.track(SPStructured.build {
-            $0.setCategory(Category.navigation.rawValue)
-            $0.setAction(Action.open.rawValue)
-            $0.setLabel(label.rawValue)
-        })
-    }
-    
-    func shareApp(_ action: Action.Share) {
-        tracker.track(SPStructured.build {
-            $0.setCategory(Category.navigation.rawValue)
-            $0.setAction(action.rawValue)
-            $0.setLabel("share_app")
-        })
-    }
-    
-    func shareContent(_ action: Action.Share) {
-        tracker.track(SPStructured.build {
-            $0.setCategory(Category.browser.rawValue)
-            $0.setAction(action.rawValue)
-            $0.setLabel("share_content")
-        })
-    }
-
-    func favourites(_ action: Action.Favourites) {
-        tracker.track(SPStructured.build {
-            $0.setCategory(Category.browser.rawValue)
-            $0.setAction(action.rawValue)
-            $0.setLabel("favourites")
-        })
-    }
-    
-    func history(_ action: Action.History) {
-        tracker.track(SPStructured.build {
-            $0.setCategory(Category.browser.rawValue)
-            $0.setAction(action.rawValue)
-            $0.setLabel("history")
-        })
-    }
-    
-    func tabs(_ action: Action.Tabs) {
-        tracker.track(SPStructured.build {
-            $0.setCategory(Category.browser.rawValue)
-            $0.setAction(action.rawValue)
-            $0.setLabel("tabs")
-        })
-    }
-    
-    func news(_ id: String) {
-        tracker.track(SPStructured.build {
-            $0.setCategory(Category.navigation.rawValue)
-            $0.setAction(Action.open.rawValue)
-            $0.setLabel("news")
-            $0.setProperty(id)
-        })
-    }
-
-    func urlError(_ urlError: Error) {
-        if let urlError = urlError as? URLError {
-            switch urlError.code {
-            case .networkConnectionLost,
-                 .notConnectedToInternet,
-                 .dnsLookupFailed,
-                 .resourceUnavailable,
-                 .unsupportedURL,
-                 .cannotFindHost,
-                 .cannotConnectToHost,
-                 .timedOut,
-                 .secureConnectionFailed,
-                 .serverCertificateUntrusted:
-                browserError(code: urlError.code.rawValue)
-            default:
-                break
-            }
-        } else if (urlError as NSError).code == 101 { //urlCantBeShown
-            browserError(code: 101)
-        }
-    }
-    
-    func browserError(code: Int) {
-        tracker.track(SPStructured.build {
-            $0.setCategory(Category.browser.rawValue)
-            $0.setAction(Action.receive.rawValue)
-            $0.setLabel("error")
-            $0.setProperty(.init(code))
         })
     }
 
@@ -166,40 +78,6 @@ final class Analytics {
             $0.setAction(Action.error.rawValue)
             $0.setLabel(.init(code.rawValue))
             $0.setProperty(message)
-        })
-    }
-    
-    func openOrganiser(_ feature: Label.Features) {
-        tracker.track(SPStructured.build {
-            $0.setCategory(Category.browser.rawValue)
-            $0.setAction(Action.open.rawValue)
-            $0.setLabel(feature.rawValue)
-            $0.setProperty(Property.menu.rawValue)
-        })
-    }
-    
-    func onboarding(view label: Label.Onboarding) {
-        tracker.track(SPStructured.build {
-            $0.setCategory(Category.onboarding.rawValue)
-            $0.setAction(Action.Onboarding.view.rawValue)
-            $0.setLabel(label.rawValue)
-        })
-    }
-    
-    func onboarding(close label: Label.Onboarding) {
-        tracker.track(SPStructured.build {
-            $0.setCategory(Category.onboarding.rawValue)
-            $0.setAction(Action.Onboarding.close.rawValue)
-            $0.setLabel(label.rawValue)
-        })
-    }
-    
-    func openInSafari() {
-        tracker.track(SPStructured.build {
-            $0.setCategory(Category.browser.rawValue)
-            $0.setAction(Action.open.rawValue)
-            $0.setLabel("safari")
-            $0.setProperty(Property.menu.rawValue)
         })
     }
     
@@ -219,13 +97,6 @@ final class Analytics {
         })
     }
     
-    func onboardingFinish() {
-        tracker.track(SPStructured.build {
-            $0.setCategory(Category.onboarding.rawValue)
-            $0.setAction(Action.Onboarding.finish.rawValue)
-        })
-    }
-    
     func reset() {
         User.shared.analyticsId = .init()
         
@@ -242,16 +113,7 @@ final class Analytics {
             $0.setProperty("home")
         })
     }
-    
-    func betaPromo(_ action: Action.Promo) {
-        tracker.track(SPStructured.build {
-            $0.setCategory(Category.external.rawValue)
-            $0.setAction(action.rawValue)
-            $0.setLabel("research_promo")
-            $0.setProperty("home")
-        })
-    }
-    
+
     func defaultBrowserSettings() {
         tracker.track(SPStructured.build {
             $0.setCategory(Category.browser.rawValue)
@@ -274,20 +136,5 @@ final class Analytics {
             $0.setLabel(migration.rawValue)
             $0.setValue(seconds * 1000)
         }))
-    }
-}
-
-private extension Navigation {
-    var property: String {
-        switch self {
-        case let .organiser(organiser):
-            return organiser.rawValue
-        case .tabAnimated:
-            return "search"
-        case .news:
-            return "news"
-        default:
-            return "home"
-        }
     }
 }

@@ -15,11 +15,13 @@ extension PhotonActionSheetProtocol {
         let openBookmarks = PhotonActionSheetItem(title: Strings.AppMenuBookmarksTitleString, iconString: "menu-Bookmark") { _, _ in
             let bvc = vcDelegate as? BrowserViewController
             bvc?.showLibrary(panel: .bookmarks)
+            Analytics.shared.browser(.open, label: .favourites, property: .menu)
         }
 
         let openHistory = PhotonActionSheetItem(title: Strings.AppMenuHistoryTitleString, iconString: "menu-panel-History") { _, _ in
             let bvc = vcDelegate as? BrowserViewController
             bvc?.showLibrary(panel: .history)
+            Analytics.shared.browser(.open, label: .history, property: .menu)
         }
 
         let openReadingList = PhotonActionSheetItem(title: Strings.AppMenuReadingListTitleString, iconString: "menu-panel-ReadingList") { _, _ in
@@ -94,6 +96,7 @@ extension PhotonActionSheetProtocol {
             DispatchQueue.main.async {
                 vcDelegate.present(controller, animated: true, completion: nil)
             }
+            Analytics.shared.browser(.open, label: .settings, property: .menu)
         }
         items.append(openSettings)
 

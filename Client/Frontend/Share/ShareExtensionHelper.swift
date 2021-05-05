@@ -77,6 +77,9 @@ class ShareExtensionHelper: NSObject {
                 }
             }
             */
+            if completed {
+                Analytics.shared.browser(.complete, label: .shareContent)
+            }
 
             completionHandler(completed, activityType)
         }
