@@ -309,8 +309,20 @@ class HorizontalFlowLayout: UICollectionViewLayout {
         // The left over space is then devided evenly into (n + 1) parts to figure out how much space should be inbetween a cell
         let insets = ASHorizontalScrollCellUX.MinimumInsets
 
+        // Ecosia
+        let itemWidth: CGFloat
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            if UIApplication.shared.statusBarOrientation.isLandscape {
+                itemWidth = width / 2
+            } else {
+                itemWidth = width
+            }
+        } else {
+            itemWidth = width / 2
+        }
+        
         var estimatedItemSize = itemSize
-        estimatedItemSize.width = floor((width - (CGFloat(horizontalItemsCount + 1) * insets)) / CGFloat(horizontalItemsCount))
+        estimatedItemSize.width = floor((itemWidth - (CGFloat(horizontalItemsCount + 1) * insets)) / CGFloat(horizontalItemsCount))
         estimatedItemSize.height = estimatedItemSize.width + TopSiteCellUX.TitleHeight
 
         //calculate our estimates.
