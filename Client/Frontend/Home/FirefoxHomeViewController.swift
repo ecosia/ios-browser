@@ -351,7 +351,7 @@ extension FirefoxHomeViewController {
                 insets += FirefoxHomeUX.MinimumInsets + safeAreaInsets
                 
                 // Ecosia
-                if UIDevice.current.userInterfaceIdiom == .phone || UIApplication.shared.statusBarOrientation.isLandscape {
+                if UIDevice.current.userInterfaceIdiom == .pad || UIApplication.shared.statusBarOrientation.isLandscape {
                     insets += frameWidth / 4
                 }
                 
