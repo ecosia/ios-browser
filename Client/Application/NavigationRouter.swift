@@ -111,10 +111,6 @@ enum NavigationPath {
             if (urlString.starts(with: "http:") ||  urlString.starts(with: "https:") && UserDefaults.standard.bool(forKey: "OpenedAsDefaultBrowser")) {
                 TelemetryWrapper.gleanRecordEvent(category: .action, method: .open, object: .asDefaultBrowser)
                 UserDefaults.standard.set(true, forKey: "OpenedAsDefaultBrowser")
-                /*
-                 Ecosia
-                 */
-                Analytics.shared.defaultBrowser()
             }
         } else if urlString.starts(with: "\(scheme)://open-text") {
             let text = components.valueForQuery("text")
@@ -140,6 +136,7 @@ enum NavigationPath {
             // Use the last browsing mode the user was in
             let isPrivate = UserDefaults.standard.bool(forKey: "wasLastSessionPrivate")
             self = .url(webURL: url, isPrivate: isPrivate)
+            Analytics.shared.defaultBrowser()
         } else {
             return nil
         }
