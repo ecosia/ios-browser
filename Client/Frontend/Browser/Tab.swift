@@ -122,6 +122,14 @@ class Tab: NSObject {
             if let _url = url, let internalUrl = InternalURL(_url), internalUrl.isAuthorized {
                 url = URL(string: internalUrl.stripAuthorization)
             }
+
+            /* Ecosia: backgroundColor of WKWebview is only taken if isOpaque is `false`
+               -> should be false for empty URLs, internal URLs (like NTP) and nightMode */
+            guard let url = url else {
+                webView?.isOpaque = false
+                return
+            }
+            webView?.isOpaque = !(nightMode || InternalURL.isValid(url: url))
         }
     }
     var mimeType: String?
