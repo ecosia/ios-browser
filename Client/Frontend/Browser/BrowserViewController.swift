@@ -2026,6 +2026,7 @@ extension BrowserViewController {
             self.profile.prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
             User.shared.firstTime = false
             User.shared.migrated = true
+            User.shared.hideWelcomeScreen()
         } else if User.shared.migrated != true {
             present(LoadingScreen(profile: profile, tabManager: tabManager), animated: true)
         } else if User.shared.showsWelcomeScreen {
