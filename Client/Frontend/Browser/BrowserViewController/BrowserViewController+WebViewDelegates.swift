@@ -703,12 +703,6 @@ extension BrowserViewController: WKNavigationDelegate {
                     }
                 }
             }
-
-            if !User.shared.searched, let url = webView.url,
-               url.isEcosia, url.path.hasPrefix(URL.search) {
-
-                User.shared.searched = true
-            }
         }
     }
 }
