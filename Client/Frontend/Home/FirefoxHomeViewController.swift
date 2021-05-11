@@ -348,11 +348,11 @@ extension FirefoxHomeViewController {
             case .libraryShortcuts, .topSites:
                 let window = UIApplication.shared.keyWindow
                 let safeAreaInsets = window?.safeAreaInsets.left ?? 0
-                insets += FirefoxHomeUX.MinimumInsets + safeAreaInsets
+                insets += FirefoxHomeHeaderViewUX.Insets + safeAreaInsets
                 
-                // Ecosia
-                if UIDevice.current.userInterfaceIdiom == .pad || UIApplication.shared.statusBarOrientation.isLandscape {
-                    insets += frameWidth / 4
+                // Ecosia: center layout in landscape
+                if UIApplication.shared.statusBarOrientation.isLandscape {
+                    insets = frameWidth / 4
                 }
                 
                 return insets
@@ -979,14 +979,8 @@ class ASHeaderView: UICollectionReusableView {
     var rightConstraint: Constraint?
 
     var titleInsets: CGFloat {
-        get {
-            // Ecosia
-            if UIDevice.current.userInterfaceIdiom == .pad || UIApplication.shared.statusBarOrientation.isLandscape {
-                return FirefoxHomeUX.MinimumInsets + (self.frame.size.width / 4)
-            }
-            
-            return UIScreen.main.bounds.size.width == self.frame.size.width && UIDevice.current.userInterfaceIdiom == .pad ? FirefoxHomeHeaderViewUX.Insets : FirefoxHomeUX.MinimumInsets
-        }
+        // Ecosia: synchronize titleInsets for header and sectionInsets
+        return FirefoxHomeViewController.Section.topSites.sectionInsets(self.traitCollection, frameWidth: UIScreen.main.bounds.width)
     }
 
     override func prepareForReuse() {
@@ -1013,8 +1007,8 @@ class ASHeaderView: UICollectionReusableView {
         moreButton.setContentCompressionResistancePriority(.required, for: .horizontal)
         */
         titleLabel.snp.makeConstraints { make in
-            self.leftConstraint = make.leading.equalTo(self.safeArea.leading).inset(titleInsets).constraint
-            self.rightConstraint = make.trailing.equalTo(self.safeArea.trailing).inset(-titleInsets).constraint
+            self.leftConstraint = make.leading.equalTo(self.snp.leading).inset(titleInsets).constraint
+            self.rightConstraint = make.trailing.equalTo(self.snp.trailing).inset(-titleInsets).priority(.high).constraint
             make.top.greaterThanOrEqualTo(self.snp.top)
             make.bottom.equalToSuperview().offset(-6)
         }
