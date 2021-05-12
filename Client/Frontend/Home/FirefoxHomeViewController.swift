@@ -339,7 +339,7 @@ extension FirefoxHomeViewController {
          */
         func sectionInsets(_ traits: UITraitCollection, frameWidth: CGFloat) -> CGFloat {
             var currentTraits = traits
-            if (traits.horizontalSizeClass == .regular && UIScreen.main.bounds.size.width != frameWidth) || UIDevice.current.userInterfaceIdiom == .phone {
+            if (traits.horizontalSizeClass == .regular && UIApplication.shared.statusBarOrientation.isPortrait) || UIDevice.current.userInterfaceIdiom == .phone {
                 currentTraits = UITraitCollection(horizontalSizeClass: .compact)
             }
             var insets = FirefoxHomeUX.sectionInsetsForSizeClass[currentTraits.horizontalSizeClass]
@@ -350,8 +350,8 @@ extension FirefoxHomeViewController {
                 let safeAreaInsets = window?.safeAreaInsets.left ?? 0
                 insets += FirefoxHomeHeaderViewUX.Insets + safeAreaInsets
                 
-                // Ecosia: center layout in landscape
-                if UIApplication.shared.statusBarOrientation.isLandscape {
+                /* Ecosia: center layout in landscape for iPhone */
+                if UIApplication.shared.statusBarOrientation.isLandscape, UIDevice.current.userInterfaceIdiom == .phone {
                     insets = frameWidth / 4
                 }
                 

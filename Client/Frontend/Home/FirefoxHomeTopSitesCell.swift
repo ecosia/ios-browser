@@ -440,17 +440,13 @@ class ASHorizontalScrollCellManager: NSObject, UICollectionViewDelegate, UIColle
     }
 
     func numberOfHorizontalItems() -> Int {
-        /* Ecosia
         guard let traits = currentTraits else {
             return 0
         }
         let isLandscape = UIApplication.shared.statusBarOrientation.isLandscape
+        /* Ecosia: always have 4 items in 2 rows on iPhone */
         if UIDevice.current.userInterfaceIdiom == .phone {
-            if isLandscape {
-                return 8
-            } else {
-                return 4
-            }
+            return 4
         }
         // On iPad
         // The number of items in a row is equal to the number of highlights in a row * 2
@@ -459,8 +455,6 @@ class ASHorizontalScrollCellManager: NSObject, UICollectionViewDelegate, UIColle
             numItems = numItems - 1
         }
         return numItems * 2
-         */
-        4
     }
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {
