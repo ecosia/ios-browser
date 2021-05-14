@@ -1900,7 +1900,8 @@ extension BrowserViewController: TabManagerDelegate {
             }
         }
 
-        updateTabCountUsingTabManager(tabManager)
+        // Ecosia: stop animating tab's icon when launching
+        updateTabCountUsingTabManager(tabManager, animated: false)
 
         removeAllBars()
         if let bars = selected?.bars {
