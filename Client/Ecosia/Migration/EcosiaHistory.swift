@@ -11,7 +11,7 @@ final class EcosiaHistory {
 
     struct Data {
         let domains: [String: Int]
-        let sites: [Site: Int]
+        let sites: [(Site, Int)]
         let visits: [(SiteVisit, Int)]
     }
 
@@ -74,11 +74,12 @@ final class EcosiaHistory {
     static func prepare(history: [(Date, Core.Page)], progress: ((Double) -> ())? = nil) -> EcosiaHistory.Data {
         // extract distinct domains
         var domains = [String: Int]() //unique per domain e.g. ecosia.org + domain_id
-        var sites = [Site: Int]() // unique per url e.g. ecosia.org/search?q=foo + domain_id
+        var mappedSites = [String: (Site, Int)]() // unique per url, e.g. ecosia.org/search?q=foo + domain_id
         var visits = [(SiteVisit, Int)]() // all visitis + site_id
 
         for (i, item) in history.enumerated() {
-            guard let domain = item.1.url.normalizedHost, !isIgnoredURL(domain) else { continue }
+            let url = item.1.url
+            guard let domain = url.normalizedHost, !isIgnoredURL(domain) else { continue }
             var domainIndex: Int
             if let index = domains[domain] {
                 domainIndex = index
@@ -87,18 +88,19 @@ final class EcosiaHistory {
                 domains[domain] = domainIndex
             }
 
-            var site: Site
-            if let match = sites.first(where: { $0.key.url == item.1.url.absoluteString }) {
-                site = match.key
+            var mappedSite: (Site, Int)
+            if let match = mappedSites[url.absoluteString] {
+                mappedSite = match
             } else {
-                site = Site(url: item.1.url.absoluteString, title: item.1.title)
-                site.id = sites.count + 1
-                sites[site] = domainIndex
+                let site = Site(url: url.absoluteString, title: item.1.title)
+                site.id = mappedSites.count + 1
+                mappedSite = (site, domainIndex)
+                mappedSites[url.absoluteString] = mappedSite
             }
 
             // add all visits
-            let visit = SiteVisit(site: site, date: item.0.toMicrosecondTimestamp())
-            visits.append((visit, site.id!))
+            let visit = SiteVisit(site: mappedSite.0, date: item.0.toMicrosecondTimestamp())
+            visits.append((visit, mappedSite.1))
 
             // only report every 50th entry to not over-report
             if i % 50 == 0 {
@@ -108,6 +110,6 @@ final class EcosiaHistory {
             }
 
         }
-        return .init(domains: domains, sites: sites, visits: visits)
+        return .init(domains: domains, sites: Array(mappedSites.values), visits: visits)
     }
 }

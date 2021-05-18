@@ -31,6 +31,10 @@ class TestHistoryMigration: TestHistory {
         XCTAssert(data.domains["apple.com"] == 1)
         XCTAssert(data.domains["ecosia.org"] == 2)
         XCTAssert(data.domains.count == 2)
+        XCTAssert(data.sites[0].1 == 1)
+        XCTAssert(data.sites[1].1 == 2)
+        XCTAssert(data.sites[2].1 == 2)
+
         XCTAssert(data.sites.count == 3)
         XCTAssert(data.visits.count == 4)
     }

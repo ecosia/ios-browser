@@ -1049,11 +1049,11 @@ extension SQLiteHistory {
         return db.bulkInsert(TableDomains, op: .InsertOrIgnore, columns: ["domain", "id"], values: domainArgs)
     }
 
-    public func storeSites(_ sites: [Site: Int]) -> Success {
+    public func storeSites(_ sites: [(Site, Int)]) -> Success {
         let now = Date.now()
 
         let args = sites.map({ site in
-            [site.key.id!, Bytes.generateGUID(), site.key.url, site.key.title, now, 0, 0, site.value]
+            [site.0.id!, Bytes.generateGUID(), site.0.url, site.0.title, now, 0, 0, site.1]
         })
 
         let columns = ["id", "guid", "url", "title", "local_modified", "is_deleted", "should_upload", "domain_id"]
