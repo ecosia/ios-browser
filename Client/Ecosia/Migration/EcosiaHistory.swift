@@ -100,7 +100,7 @@ final class EcosiaHistory {
 
             // add all visits
             let visit = SiteVisit(site: mappedSite.0, date: item.0.toMicrosecondTimestamp())
-            visits.append((visit, mappedSite.1))
+            visits.append((visit, mappedSite.0.id!))
 
             // only report every 50th entry to not over-report
             if i % 50 == 0 {
