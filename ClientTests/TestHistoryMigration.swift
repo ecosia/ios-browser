@@ -24,19 +24,27 @@ class TestHistoryMigration: TestHistory {
         let urls = [URL(string:"https://apple.com")!,
                     URL(string:"https://ecosia.org")!,
                     URL(string:"https://ecosia.org/blog")!,
-                    URL(string:"https://ecosia.org/blog")!]
+                    URL(string:"https://ecosia.org/blog")!,
+                    URL(string:"https://www.ecosia.org/blog")!]
 
         let items = urls.map { (Date(), Core.Page(url: $0, title: "Ecosia")) }
         let data = EcosiaHistory.prepare(history: items)
+        XCTAssert(data.domains.count == 2)
         XCTAssert(data.domains["apple.com"] == 1)
         XCTAssert(data.domains["ecosia.org"] == 2)
-        XCTAssert(data.domains.count == 2)
-        XCTAssert(data.sites[0].1 == 1)
-        XCTAssert(data.sites[1].1 == 2)
-        XCTAssert(data.sites[2].1 == 2)
 
-        XCTAssert(data.sites.count == 3)
-        XCTAssert(data.visits.count == 4)
+        XCTAssert(data.sites.count == 4)
+        XCTAssert(data.sites.first(where: {$0.0.url == "https://apple.com" })!.1 == 1)
+        XCTAssert(data.sites.first(where: {$0.0.url == "https://ecosia.org" })!.1 == 2)
+        XCTAssert(data.sites.first(where: {$0.0.url == "https://ecosia.org/blog" })!.1 == 2)
+        XCTAssert(data.sites.first(where: {$0.0.url == "https://www.ecosia.org/blog" })!.1 == 2)
+
+        XCTAssert(data.visits.count == 5)
+        XCTAssert(data.visits[0].1 == 1)
+        XCTAssert(data.visits[1].1 == 2)
+        XCTAssert(data.visits[2].1 == 3)
+        XCTAssert(data.visits[3].1 == 3)
+        XCTAssert(data.visits[4].1 == 4)
     }
 
     func testImportFailureDescription() {
