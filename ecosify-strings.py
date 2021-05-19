@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import os
 import glob 
+import re
 
 def _valid_directory(arg, parser):
     if os.path.isdir(arg):
@@ -31,14 +32,22 @@ def ecosify_translations(file_path):
             return
     
     newlines = []
+    brandnames = ['firefoxen', 'firefoxu', 'firefoxe', 'firefoxban', 'firefoksie', 'firefox', 'mozilla']
 
     for line in lines:
         parts = line.split('=')
         if len(parts) > 1:
             value = parts[1]
-            value = value.replace('Firefox', 'Ecosia')
-            value = value.replace('Mozilla', 'Ecosia')
+
+            for name in brandnames:
+                value = re.sub(name, 'Ecosia', value, flags=re.IGNORECASE)
+            
             newlines.append(parts[0] + '=' + value)
+        elif line.strip().endswith(';'):
+            # some translation values break lines and are ophaned -> we need to replace values there too
+            for name in brandnames:
+                line = re.sub(name, 'Ecosia', line, flags=re.IGNORECASE)
+            newlines.append(line)
         else:
             newlines.append(line)
 
