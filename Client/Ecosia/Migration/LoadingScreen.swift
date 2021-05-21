@@ -60,12 +60,11 @@ final class LoadingScreen: UIViewController {
     }
     
     private func migrate() {
-        let ecosiaImport = EcosiaImport(profile: profile, tabManager: tabManager)
+        let ecosiaImport = EcosiaImport(profile: profile)
         ecosiaImport.migrate(progress: { [weak self] progress in
             self?.progress.setProgress(.init(progress), animated: true)
         }){ [weak self] migration in
             if case .succeeded = migration.favorites,
-               case .succeeded = migration.tabs,
                case .succeeded = migration.history {
                 
                 Analytics.shared.migration(true)

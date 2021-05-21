@@ -27,7 +27,7 @@ final class EcosiaBookmarkTests: ProfileTest {
         PageStore.queue.async {
             DispatchQueue.main.async {
                 self.withTestProfile { profile -> Void in
-                    let ecosia = EcosiaImport(profile: profile, tabManager: .init(profile: profile, imageStore: nil))
+                    let ecosia = EcosiaImport(profile: profile)
                     ecosia.migrate { _ in
                         DispatchQueue.main.async {
                             profile.places.getBookmarksTree(rootGUID: "mobile______", recursive: true) >>== { folder in
