@@ -1145,6 +1145,15 @@ class OpenWithSetting: Setting {
         }
         return NSAttributedString(string: "")
     }
+    
+    override func onConfigureCell(_ cell: UITableViewCell) {
+        super.onConfigureCell(cell)
+        cell.detailTextLabel?.numberOfLines = 2
+        cell.detailTextLabel?.adjustsFontSizeToFitWidth = true
+        cell.detailTextLabel?.minimumScaleFactor = 0.8
+        cell.detailTextLabel?.allowsDefaultTighteningForTruncation = true
+        cell.textLabel?.numberOfLines = 2
+    }
 
     override var style: UITableViewCell.CellStyle { return .value1 }
 
@@ -1211,6 +1220,12 @@ class ThemeSetting: Setting {
 
     override func onClick(_ navigationController: UINavigationController?) {
         navigationController?.pushViewController(ThemeSettingsController(), animated: true)
+    }
+
+    override func onConfigureCell(_ cell: UITableViewCell) {
+        super.onConfigureCell(cell)
+        cell.detailTextLabel?.numberOfLines = 1
+        cell.textLabel?.numberOfLines = 1
     }
 }
 

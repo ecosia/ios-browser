@@ -30,6 +30,15 @@ class SearchAreaSetting: Setting {
     override func onClick(_ navigationController: UINavigationController?) {
         navigationController?.pushViewController(MarketsController(), animated: true)
     }
+
+    override func onConfigureCell(_ cell: UITableViewCell) {
+        super.onConfigureCell(cell)
+        cell.detailTextLabel?.numberOfLines = 2
+        cell.detailTextLabel?.adjustsFontSizeToFitWidth = true
+        cell.detailTextLabel?.minimumScaleFactor = 0.8
+        cell.detailTextLabel?.allowsDefaultTighteningForTruncation = true
+        cell.textLabel?.numberOfLines = 2
+    }
 }
 
 class SafeSearchSettings: Setting {
@@ -48,6 +57,13 @@ class SafeSearchSettings: Setting {
     override func onClick(_ navigationController: UINavigationController?) {
         navigationController?.pushViewController(FilterController(), animated: true)
     }
+
+    override func onConfigureCell(_ cell: UITableViewCell) {
+        super.onConfigureCell(cell)
+        cell.detailTextLabel?.numberOfLines = 2
+        cell.textLabel?.numberOfLines = 2
+    }
+
 }
 
 class AutoCompleteSettings: BoolSetting {
