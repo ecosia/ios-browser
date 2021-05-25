@@ -9,7 +9,6 @@ import Storage
 
 private struct TopSiteCellUX {
     static let TitleHeight: CGFloat = 24
-    static let TitleFont = DynamicFontHelper.defaultHelper.SmallSizeRegularWeightAS
     static let SelectedOverlayColor = UIColor(white: 0.0, alpha: 0.25)
     static let CellCornerRadius: CGFloat = 4
     static let TitleOffset: CGFloat = 4
