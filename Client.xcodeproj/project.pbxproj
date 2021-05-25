@@ -316,7 +316,6 @@
 		745DAB301CDAAFAA00D44181 /* RecentlyClosedTabsPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 745DAB2F1CDAAFAA00D44181 /* RecentlyClosedTabsPanel.swift */; };
 		745DAB3F1CDAB09E00D44181 /* HistoryBackButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 745DAB3E1CDAB09E00D44181 /* HistoryBackButton.swift */; };
 		7479B4EF1C5306A200DF000B /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7479B4ED1C5306A200DF000B /* Reachability.swift */; };
-		74821F8E1DAD8F1400EEEA72 /* FirefoxHomeHighlightCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74821F8D1DAD8F1300EEEA72 /* FirefoxHomeHighlightCell.swift */; };
 		74821FC51DB56A2500EEEA72 /* OpenWithSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74821FC41DB56A2500EEEA72 /* OpenWithSettingsViewController.swift */; };
 		74821FFE1DB6D3AC00EEEA72 /* MailSchemes.plist in Resources */ = {isa = PBXBuildFile; fileRef = 74821FFD1DB6D3AC00EEEA72 /* MailSchemes.plist */; };
 		7482205C1DBAB56300EEEA72 /* MailProviders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7482205B1DBAB56300EEEA72 /* MailProviders.swift */; };
@@ -438,6 +437,7 @@
 		CA4DDE5125430FA700966CF2 /* FakeSentry.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4DDE2925430E2400966CF2 /* FakeSentry.swift */; };
 		CA4DDE792543159400966CF2 /* FakeLeanplum.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4DDE782543159400966CF2 /* FakeLeanplum.swift */; };
 		CA520E7A24913C1B00CCAB48 /* LoginListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA520E7924913C1B00CCAB48 /* LoginListViewModel.swift */; };
+		CA5E9D51265D068600836DE9 /* SnapKit+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA5E9D50265D068600836DE9 /* SnapKit+Ecosia.swift */; };
 		CA6BFAAE25778CBA0026DFFF /* Welcome.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA6BFAAC25778CB90026DFFF /* Welcome.swift */; };
 		CA6BFAC425778D2C0026DFFF /* Colours.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CA6BFAC325778D2C0026DFFF /* Colours.xcassets */; };
 		CA6BFAD925778D4E0026DFFF /* EcosiaTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA6BFAD825778D4E0026DFFF /* EcosiaTheme.swift */; };
@@ -2336,7 +2336,6 @@
 		745DAB3E1CDAB09E00D44181 /* HistoryBackButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HistoryBackButton.swift; sourceTree = "<group>"; };
 		746A4ABB9E5EC9BCACD9A3BB /* ne-NP */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "ne-NP"; path = "ne-NP.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		7479B4ED1C5306A200DF000B /* Reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Reachability.swift; path = ThirdParty/Reachability.swift; sourceTree = "<group>"; };
-		74821F8D1DAD8F1300EEEA72 /* FirefoxHomeHighlightCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FirefoxHomeHighlightCell.swift; path = ../Widgets/FirefoxHomeHighlightCell.swift; sourceTree = "<group>"; };
 		74821FC41DB56A2500EEEA72 /* OpenWithSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenWithSettingsViewController.swift; sourceTree = "<group>"; };
 		74821FFD1DB6D3AC00EEEA72 /* MailSchemes.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = MailSchemes.plist; sourceTree = "<group>"; };
 		7482205B1DBAB56300EEEA72 /* MailProviders.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MailProviders.swift; sourceTree = "<group>"; };
@@ -3205,6 +3204,7 @@
 		CA4DDE2925430E2400966CF2 /* FakeSentry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeSentry.swift; sourceTree = "<group>"; };
 		CA4DDE782543159400966CF2 /* FakeLeanplum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeLeanplum.swift; sourceTree = "<group>"; };
 		CA520E7924913C1B00CCAB48 /* LoginListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginListViewModel.swift; sourceTree = "<group>"; };
+		CA5E9D50265D068600836DE9 /* SnapKit+Ecosia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SnapKit+Ecosia.swift"; sourceTree = "<group>"; };
 		CA6BFAAC25778CB90026DFFF /* Welcome.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Welcome.swift; sourceTree = "<group>"; };
 		CA6BFAC325778D2C0026DFFF /* Colours.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colours.xcassets; sourceTree = "<group>"; };
 		CA6BFAD825778D4E0026DFFF /* EcosiaTheme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EcosiaTheme.swift; sourceTree = "<group>"; };
@@ -5099,6 +5099,7 @@
 				CAA2F3F2257A79C700EBAD38 /* FilterController.swift */,
 				CAAED1EE25810C7A0048199C /* NewsCell.swift */,
 				CAAED1ED25810C7A0048199C /* NewsController.swift */,
+				CA5E9D50265D068600836DE9 /* SnapKit+Ecosia.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -6071,7 +6072,6 @@
 			isa = PBXGroup;
 			children = (
 				2386E4E524F8358E0072EF17 /* DefaultBrowserCard.swift */,
-				74821F8D1DAD8F1300EEEA72 /* FirefoxHomeHighlightCell.swift */,
 				3BB50E101D6274CD004B33DF /* FirefoxHomeTopSitesCell.swift */,
 				3BB50E1F1D627539004B33DF /* FirefoxHomeViewController.swift */,
 			);
@@ -7756,7 +7756,6 @@
 				74821FC51DB56A2500EEEA72 /* OpenWithSettingsViewController.swift in Sources */,
 				D3B6923D1B9F9444004B87A4 /* FindInPageBar.swift in Sources */,
 				2F44FC721A9E840300FD20CC /* SettingsNavigationController.swift in Sources */,
-				74821F8E1DAD8F1400EEEA72 /* FirefoxHomeHighlightCell.swift in Sources */,
 				E69E06BA1C76173D00D0F926 /* RequirePasscodeIntervalViewController.swift in Sources */,
 				D0E89A2920910917001CE5C7 /* DownloadsPanel.swift in Sources */,
 				D3BA7E0E1B0E934F00153782 /* ContextMenuHelper.swift in Sources */,
@@ -7871,6 +7870,7 @@
 				D31F95E91AC226CB005C9F3B /* ScreenshotHelper.swift in Sources */,
 				28EADE5D1AFC3A78007FB2FB /* UIImageViewExtensions.swift in Sources */,
 				435D7CC32461EFDD0043ACB9 /* IntroScreenSyncViewV2.swift in Sources */,
+				CA5E9D51265D068600836DE9 /* SnapKit+Ecosia.swift in Sources */,
 				4334145724C6378B001541F3 /* IntroScreenWelcomeViewV1.swift in Sources */,
 				D3968F251A38FE8500CEFD3B /* TabManager.swift in Sources */,
 				C4E398601D22C409004E89BA /* TopTabsLayout.swift in Sources */,

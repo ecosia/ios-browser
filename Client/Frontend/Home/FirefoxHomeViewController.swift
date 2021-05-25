@@ -17,11 +17,11 @@ private let log = Logger.browserLogger
 struct FirefoxHomeUX {
     static let rowSpacing: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 30 : 20
     static let highlightCellHeight: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 250 : 200
-    static let sectionInsetsForSizeClass = UXSizeClasses(compact: 0, regular: 101, other: 20)
+    static let sectionInsetsForSizeClass = UXSizeClasses(compact: 0, regular: 101, other: 16)
     static let numberOfItemsPerRowForSizeClassIpad = UXSizeClasses(compact: 3, regular: 4, other: 2)
     static let SectionInsetsForIpad: CGFloat = 101
-    static let SectionInsetsForIphone: CGFloat = 20
-    static let MinimumInsets: CGFloat = 20
+    static let SectionInsetsForIphone: CGFloat = 16
+    static let MinimumInsets: CGFloat = 16
     static let TopSitesInsets: CGFloat = 6
     static let LibraryShortcutsHeight: CGFloat = 100
     static let LibraryShortcutsMaxWidth: CGFloat = 350
@@ -284,7 +284,7 @@ extension FirefoxHomeViewController {
             case .treeCounter:
                 return CGSize(width: 50, height: 30)
             case .topSites:
-                return CGSize(width: 50, height: 42)
+                return CGSize(width: 50, height: 54)
             case .libraryShortcuts:
                 return CGSize(width: 50, height: 10)
             }
@@ -440,10 +440,8 @@ extension FirefoxHomeViewController: UICollectionViewDelegateFlowLayout {
         case .treeCounter:
             return cellSize
         case .libraryShortcuts:
-            let numberofshortcuts: CGFloat = 4
-            let titleSpacing: CGFloat = 10
             let width = min(FirefoxHomeUX.LibraryShortcutsMaxWidth, cellSize.width)
-            return CGSize(width: width, height: (width / numberofshortcuts) + titleSpacing)
+            return CGSize(width: width, height: FirefoxHomeUX.LibraryShortcutsHeight)
         }
     }
 
@@ -547,13 +545,6 @@ extension FirefoxHomeViewController {
         topSiteCell.setNeedsLayout()
         topSiteCell.collectionView.reloadData()
         return cell
-    }
-
-    func configurePocketItemCell(_ cell: UICollectionViewCell, forIndexPath indexPath: IndexPath) -> UICollectionViewCell {
-        let pocketStory = pocketStories[indexPath.row]
-        let pocketItemCell = cell as! FirefoxHomeHighlightCell
-        pocketItemCell.configureWithPocketStory(pocketStory)
-        return pocketItemCell
     }
 
 }
@@ -983,8 +974,8 @@ class ASHeaderView: UICollectionReusableView {
         titleLabel.snp.makeConstraints { make in
             self.leftConstraint = make.leading.equalTo(self.snp.leading).inset(titleInsets).constraint
             self.rightConstraint = make.trailing.equalTo(self.snp.trailing).inset(-titleInsets).priority(.high).constraint
-            make.top.greaterThanOrEqualTo(self.snp.top)
-            make.bottom.equalToSuperview().offset(-6)
+            make.top.equalTo(self.snp.top).inset(32)
+            make.bottom.lessThanOrEqualToSuperview()
         }
     }
 
@@ -1018,13 +1009,15 @@ class LibraryShortcutView: UIView {
         }
         title.adjustsFontSizeToFitWidth = true
         title.allowsDefaultTighteningForTruncation = true
-        title.minimumScaleFactor = 0.6
+        title.minimumScaleFactor = 0.7
         title.lineBreakMode = .byTruncatingTail
-        title.font = DynamicFontHelper.defaultHelper.SmallSizeRegularWeightAS
+        title.font = .preferredFont(forTextStyle: .footnote)
         title.textAlignment = .center
+        title.numberOfLines = 2
         title.snp.makeConstraints { make in
             make.top.equalTo(button.snp.bottom).offset(0)
-            make.leading.trailing.equalToSuperview().inset(2).priority(.high)
+            make.leading.trailing.equalToSuperview().inset(2).priority(.veryHigh)
+            make.bottom.lessThanOrEqualToSuperview()
         }
         button.imageView?.contentMode = .scaleToFill
         button.contentVerticalAlignment = .fill
@@ -1073,7 +1066,7 @@ class ASLibraryCell: UICollectionViewCell, Themeable {
             let words = view.title.text?.components(separatedBy: NSCharacterSet.whitespacesAndNewlines.union(.punctuationCharacters)).count
             view.title.numberOfLines = words == 1 ? 1 : 2
             // view.button.backgroundColor = item.color
-            view.button.setTitleColor(UIColor.theme.homePanel.topSiteDomain, for: .normal)
+            view.button.setTitleColor(UIColor.theme.ecosia.highContrastText, for: .normal)
             view.accessibilityLabel = item.title
             mainView.addArrangedSubview(view)
             libraryButtons.append(view)
@@ -1086,7 +1079,7 @@ class ASLibraryCell: UICollectionViewCell, Themeable {
 
     func applyTheme() {
         libraryButtons.forEach { button in
-            button.title.textColor = UIColor.theme.homePanel.activityStreamCellTitle
+            button.title.textColor = UIColor.theme.ecosia.highContrastText
         }
     }
 

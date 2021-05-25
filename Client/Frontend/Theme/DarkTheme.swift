@@ -96,11 +96,6 @@ fileprivate class DarkHomePanelColor: HomePanelColor {
     override var bookmarkCurrentFolderText: UIColor { return UIColor.Photon.White100 }
     override var bookmarkBackNavCellBackground: UIColor { return UIColor.Photon.Grey70 }
     
-    override var activityStreamHeaderText: UIColor { return UIColor.Photon.Grey30 }
-    override var activityStreamCellTitle: UIColor { return UIColor.Photon.Grey10 }
-    override var activityStreamCellDescription: UIColor { return UIColor.Photon.Grey30 }
-
-    override var topSiteDomain: UIColor { return defaultTextAndTint }
     override var topSitesGradientStart:  UIColor { return defaultBackground }
     override var topSitesGradientEnd:  UIColor { return UIColor(rgb: 0x212104) }
     override var topSitesBackground: UIColor { return defaultBackground }

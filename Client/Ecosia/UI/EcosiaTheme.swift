@@ -39,7 +39,7 @@ class EcosiaTheme {
 
     var primaryText: UIColor { UIColor(named: "primaryText")! }
     var secondaryText: UIColor { UIColor(named: "secondaryText")! }
-    var highContrastText: UIColor { .black }
+    var highContrastText: UIColor { UIColor.Photon.Grey90 }
 
     var highlightedBackground: UIColor { UIColor(named: "highlightedBackground")!}
     var highlightedBorder: UIColor { UIColor(named: "highlightedBorder")!}

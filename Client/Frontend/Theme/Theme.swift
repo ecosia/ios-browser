@@ -166,14 +166,9 @@ class HomePanelColor {
     
     var siteTableHeaderBorder: UIColor { return UIColor.Photon.Grey30.withAlphaComponent(0.8) }
 
-    var topSiteDomain: UIColor { return UIColor.Photon.Grey60 }
     var topSitesGradientStart:  UIColor { return UIColor.white }
     var topSitesGradientEnd:  UIColor { return UIColor(rgb: 0xf8f8f8) }
     var topSitesBackground: UIColor { return defaultBackground }
-
-    var activityStreamHeaderText: UIColor { return UIColor.Photon.Grey50 }
-    var activityStreamCellTitle: UIColor { return UIColor.Photon.Grey60 }
-    var activityStreamCellDescription: UIColor { return UIColor.Photon.Grey60 }
 
     var readingListActive: UIColor { return defaultTextAndTint }
     var readingListDimmed: UIColor { return UIColor.Photon.Grey40 }
