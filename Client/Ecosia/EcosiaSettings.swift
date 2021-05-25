@@ -63,7 +63,6 @@ class SafeSearchSettings: Setting {
         cell.detailTextLabel?.numberOfLines = 2
         cell.textLabel?.numberOfLines = 2
     }
-
 }
 
 class AutoCompleteSettings: BoolSetting {
