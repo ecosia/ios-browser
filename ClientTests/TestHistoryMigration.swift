@@ -56,4 +56,29 @@ class TestHistoryMigration: TestHistory {
         XCTAssertEqual(cappedDescription, "Reason 1 / Reason 2 / Reason 3")
     }
 
+
+    func testEcosiaHistoryCap() {
+        let urls = [URL(string:"https://apple.com")!,
+                    URL(string:"https://ecosia.org")!,
+                    URL(string:"https://ecosia.org/blog")!,
+                    URL(string:"https://ecosia.org/blog")!,
+                    URL(string:"https://www.ecosia.org/blog")!]
+
+        var items: [(Date, Core.Page)] = []
+        for (i, url) in urls.enumerated() {
+            let item = (Date(timeIntervalSinceNow: Double(-i * 24 * 60 * 60)), Core.Page(url: url, title: "Ecosia"))
+            items.append(item)
+        }
+
+        let lastDay = EcosiaHistory.cap(items, for: 1)
+        XCTAssert(lastDay.count == 1)
+        XCTAssert(lastDay.first!.1.url.absoluteString == "https://apple.com")
+
+        let last2Days = EcosiaHistory.cap(items, for: 2)
+        XCTAssert(last2Days.count == 2)
+
+        let allDays = EcosiaHistory.cap(items, for: 5)
+        XCTAssert(allDays.count == 5)
+    }
+
 }

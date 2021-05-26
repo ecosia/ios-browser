@@ -72,15 +72,6 @@ final class Analytics {
         })
     }
 
-    func migrationError(in migration: Migration, message: String) {
-        tracker.track(SPStructured.build {
-            $0.setCategory(Category.migration.rawValue)
-            $0.setAction(Action.error.rawValue)
-            $0.setLabel(migration.rawValue)
-            $0.setProperty(message)
-        })
-    }
-    
     func deeplink() {
         tracker.track(SPStructured.build {
             $0.setCategory(Category.external.rawValue)
@@ -126,6 +117,24 @@ final class Analytics {
         tracker.track(SPStructured.build({
             $0.setCategory(Category.migration.rawValue)
             $0.setAction(success ? Action.success.rawValue : Action.error.rawValue)
+        }))
+    }
+
+    func migrationError(in migration: Migration, message: String) {
+        tracker.track(SPStructured.build {
+            $0.setCategory(Category.migration.rawValue)
+            $0.setAction(Action.error.rawValue)
+            $0.setLabel(migration.rawValue)
+            $0.setProperty(message)
+        })
+    }
+
+    func migrationRetryHistory(_ success: Bool) {
+        tracker.track(SPStructured.build({
+            $0.setCategory(Category.migration.rawValue)
+            $0.setAction(Action.retry.rawValue)
+            $0.setLabel(Migration.history.rawValue)
+            $0.setProperty(success ? Action.success.rawValue : Action.error.rawValue)
         }))
     }
     

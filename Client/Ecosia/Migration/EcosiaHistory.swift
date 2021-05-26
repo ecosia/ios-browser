@@ -23,23 +23,43 @@ final class EcosiaHistory {
     }
 
     static var start: Date?
-    static func migrate(_ historyItems: [(Date, Core.Page)], to profile: Profile, progress: ((Double) -> ())? = nil, finished: @escaping (Result<Void, EcosiaImport.Failure>) -> ()){
+
+    static func migrate(_ historyItems: [(Date, Core.Page)], to profile: Profile, lessDays: Int? = nil, progress: ((Double) -> ())? = nil, finished: @escaping (Result<Void, EcosiaImport.Failure>) -> ()){
 
         guard !historyItems.isEmpty else {
             finished(.success(()))
             return
         }
 
+        var items = historyItems
+        if let lessDays = lessDays {
+            items = cap(historyItems, for: lessDays)
+        }
+        
         start = Date()
         DispatchQueue.global(qos: .userInitiated).async {
-            let data = prepare(history: historyItems, progress: progress)
+            let data = prepare(history: items, progress: progress)
             guard !profile.isShutdown else {
                 finished(.failure(.init(reasons: ["Database is shutdown"])))
                 return
             }
 
             DispatchQueue.main.async {
-                insertData(data, to: profile, finished: finished)
+                insertData(data, to: profile) { firstTry in
+                    if case .failure = firstTry, lessDays == nil {
+                        // try again with last 30 days
+                        migrate(items, to: profile, lessDays: 30) { secondTry in
+                            finished(secondTry)
+                            if case .success = secondTry {
+                                Analytics.shared.migrationRetryHistory(true)
+                            } else {
+                                Analytics.shared.migrationRetryHistory(false)
+                            }
+                        }
+                    } else {
+                        finished(firstTry)
+                    }
+                }
             }
         }
     }
@@ -111,5 +131,9 @@ final class EcosiaHistory {
 
         }
         return .init(domains: domains, sites: Array(mappedSites.values), visits: visits)
+    }
+
+    static func cap(_ items: [(Date, Core.Page)], for days: Int) -> [(Date, Core.Page)] {
+        return items.filter({ $0.0.timeIntervalSinceNow > Double(-days * 24 * 60 * 60) })
     }
 }
