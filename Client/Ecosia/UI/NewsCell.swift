@@ -92,7 +92,7 @@ final class NewsCell: UICollectionViewCell, Themeable {
         }
     }
     
-    func configure(_ item: NotificationModel, images: Images) {
+    func configure(_ item: NewsModel, images: Images) {
         imageUrl = item.imageUrl
         image.image = nil
         title.text = item.text.replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression)

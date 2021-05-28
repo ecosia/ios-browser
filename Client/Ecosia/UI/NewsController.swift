@@ -8,15 +8,15 @@ import UIKit
 final class NewsController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource,
     UICollectionViewDelegateFlowLayout, Themeable {
     private weak var collection: UICollectionView!
-    private var items = [NotificationModel]()
+    private var items = [NewsModel]()
     private let images = Images(.init(configuration: .ephemeral))
-    private let notifications = Notifications(.main)
+    private let news = News()
     private let identifier = "news"
     var delegate: EcosiaHomeDelegate?
 
     required init?(coder: NSCoder) { nil }
 
-    init(items: [NotificationModel], delegate: EcosiaHomeDelegate?) {
+    init(items: [NewsModel], delegate: EcosiaHomeDelegate?) {
         super.init(nibName: nil, bundle: nil)
         self.delegate = delegate
         self.items = items
@@ -47,13 +47,13 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        notifications.subscribe(self) { [weak self] in
+        news.subscribe(self) { [weak self] in
             self?.items = $0
             self?.collection.reloadData()
         }
 
         if items.isEmpty {
-            notifications.load(session: .shared)
+            news.load(session: .shared)
         }
 
         applyTheme()
@@ -61,7 +61,7 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        //TODO: Analytics.shared.screen(.news)
+        Analytics.shared.navigation(.view, label: .news)
     }
     
     override func viewWillTransition(to: CGSize, with: UIViewControllerTransitionCoordinator) {
@@ -92,7 +92,7 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
         let item = items[didSelectItemAt.row]
         delegate?.ecosiaHome(didSelectURL: item.targetUrl)
         dismiss(animated: true, completion: nil)
-        // TODO: Analytics.shared.news(item.trackingName)
+        Analytics.shared.navigationOpenNews(item.trackingName)
     }
 
     func applyTheme() {

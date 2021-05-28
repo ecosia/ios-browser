@@ -119,9 +119,9 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     }
 
     var delegate: EcosiaHomeDelegate?
-    private var items = [NotificationModel]()
+    private var items = [NewsModel]()
     private let images = Images(.init(configuration: .ephemeral))
-    private let notifications = Notifications(.main)
+    private let news = News()
 
     convenience init(delegate: EcosiaHomeDelegate?) {
         let layout = UICollectionViewFlowLayout()
@@ -150,19 +150,16 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         collectionView.contentInsetAdjustmentBehavior = .always
         applyTheme()
 
-        notifications.subscribe(self) { [weak self] in
+        news.subscribe(self) { [weak self] in
             self?.items = $0
             self?.collectionView.reloadSections([Section.news.rawValue, Section.info.rawValue])
-        }
-        
-        Goodall.shared.loading.notify(queue: .main) { [weak self] in
-            self?.notifications.load(session: .shared)
         }
     }
 
     private var hasAppeared: Bool = false
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        news.load(session: .shared)
         Analytics.shared.navigation(.view, label: .home)
         guard hasAppeared else { return hasAppeared = true }
         collectionView.reloadSections([Section.info.rawValue])
