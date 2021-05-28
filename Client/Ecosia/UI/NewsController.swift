@@ -51,14 +51,14 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
             self?.items = $0
             self?.collection.reloadData()
         }
-
-        if items.isEmpty {
-            news.load(session: .shared)
-        }
-
         applyTheme()
     }
-    
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        news.load(session: .shared)
+    }
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         Analytics.shared.navigation(.view, label: .news)
