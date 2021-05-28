@@ -14,9 +14,9 @@
         "package": "Core",
         "repositoryURL": "https://github.com/ecosia/ios-core.git",
         "state": {
-          "branch": null,
-          "revision": "c609907ebc56524016b1a17c49eeb25b5b44016c",
-          "version": "5.0.1"
+          "branch": "tweak-news",
+          "revision": "6f49082450681a3dd01ab3542d812b28f8bdcf6d",
+          "version": null
         }
       },
       {
