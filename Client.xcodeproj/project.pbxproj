@@ -12821,7 +12821,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = "tweak-news";
+				branch = main;
 				kind = branch;
 			};
 		};
