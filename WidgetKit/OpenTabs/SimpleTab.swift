@@ -4,7 +4,7 @@
 
 import Shared
 
-let userDefaults = UserDefaults(suiteName: AppInfo.sharedContainerIdentifier)!
+fileprivate let userDefaults = UserDefaults(suiteName: AppInfo.sharedContainerIdentifier)!
 
 struct SimpleTab: Hashable, Codable {
     var title: String?
@@ -13,6 +13,9 @@ struct SimpleTab: Hashable, Codable {
     var faviconURL: String?
     var isPrivate: Bool = false
     var uuid: String = ""
+    var imageKey: String {
+        return url?.baseDomain ?? ""
+    }
 }
 
 extension SimpleTab {
