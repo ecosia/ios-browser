@@ -482,6 +482,7 @@
 		CE0D8D1025B5DEE200B76E47 /* MozillaAppServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE0D8D0F25B5DEE200B76E47 /* MozillaAppServices.framework */; };
 		CE7728DC26288B300084C771 /* LoadingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7728DB26288B300084C771 /* LoadingScreen.swift */; };
 		CE7F11941F3CEEC800ABFC0B /* RemoteDevices.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7F115E1F3CCEF900ABFC0B /* RemoteDevices.swift */; };
+		CE83EAEB26655D350036E468 /* SimpleTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE83EAEA26655D340036E468 /* SimpleTab.swift */; };
 		CECCC7222632C1D600D971E4 /* EcosiaBookmarkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECCC7212632C1D600D971E4 /* EcosiaBookmarkTests.swift */; };
 		CEFA977E1FAA6B490016F365 /* SyncContentSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA977D1FAA6B490016F365 /* SyncContentSettingsViewController.swift */; };
 		D006F2E32283307B0004D3AB /* KIF.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7B604F981C494F74006EEEC3 /* KIF.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -3275,6 +3276,7 @@
 		CE664A9AB0ACFC6960CD6E81 /* pt-PT */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-PT"; path = "pt-PT.lproj/HistoryPanel.strings"; sourceTree = "<group>"; };
 		CE7728DB26288B300084C771 /* LoadingScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingScreen.swift; sourceTree = "<group>"; };
 		CE7F115E1F3CCEF900ABFC0B /* RemoteDevices.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteDevices.swift; sourceTree = "<group>"; };
+		CE83EAEA26655D340036E468 /* SimpleTab.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleTab.swift; sourceTree = "<group>"; };
 		CEAC46CEA2B6CAB86A9E1345 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/3DTouchActions.strings; sourceTree = "<group>"; };
 		CECCC7212632C1D600D971E4 /* EcosiaBookmarkTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EcosiaBookmarkTests.swift; sourceTree = "<group>"; };
 		CEEB4EC881354939F3402DAE /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Menu.strings; sourceTree = "<group>"; };
@@ -4262,6 +4264,7 @@
 		1DA3CE5B24EEE71B00422BB2 /* OpenTabs */ = {
 			isa = PBXGroup;
 			children = (
+				CE83EAEA26655D340036E468 /* SimpleTab.swift */,
 				1DA3CE5C24EEE73100422BB2 /* OpenTabsWidget.swift */,
 				1D06AE6924FEE8D6000B092B /* TabProvider.swift */,
 			);
@@ -7218,6 +7221,7 @@
 				43118D07251A9CD100F24376 /* SavedTab.swift in Sources */,
 				4392FB48252EC50400AD3D23 /* InternalSchemeHandler.swift in Sources */,
 				1DF42682251BDB3A0086386A /* FaviconFetcher.swift in Sources */,
+				CE83EAEB26655D350036E468 /* SimpleTab.swift in Sources */,
 				1DDAD13E24F0651C007623C8 /* TopSitesWidget.swift in Sources */,
 				43BA967D2512D15900EB6134 /* Strings.swift in Sources */,
 				4392FB20252EC49D00AD3D23 /* SessionData.swift in Sources */,
