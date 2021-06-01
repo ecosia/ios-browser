@@ -23,7 +23,7 @@ class TabManagerStore {
             return migrateToSavedTabs(from: Core.Tabs()) ?? []
         }
 
-        return SiteArchiver.tabsToRestore(tabsStateArchivePath: tabsStateArchivePath())
+        return SiteArchiver.tabsToRestore(tabsStateArchivePath: tabsStateArchivePath()).0
     }()
 
     init(imageStore: DiskImageStore?, _ fileManager: FileManager = FileManager.default) {
