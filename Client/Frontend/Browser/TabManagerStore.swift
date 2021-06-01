@@ -36,7 +36,7 @@ class TabManagerStore {
     }
 
     var hasTabsToRestoreAtStartup: Bool {
-        return archivedStartupTabs.0.count > 0
+        return archivedStartupTabs.count > 0
     }
 
     fileprivate func tabsStateArchivePath() -> String? {
@@ -111,7 +111,7 @@ class TabManagerStore {
     }
 
     func restoreStartupTabs(clearPrivateTabs: Bool, tabManager: TabManager) -> Tab? {
-        let selectedTab = restoreTabs(savedTabs: archivedStartupTabs.0, clearPrivateTabs: clearPrivateTabs, tabManager: tabManager)
+        let selectedTab = restoreTabs(savedTabs: archivedStartupTabs, clearPrivateTabs: clearPrivateTabs, tabManager: tabManager)
         return selectedTab
     }
 
@@ -182,7 +182,7 @@ extension TabManagerStore {
                                           url: page.url,
                                           sessionData: .init(currentPage: 0,
                                                              urls: [page.url],
-                                                             lastUsedTime: Date.now())) else  { continue }
+                                                             lastUsedTime: Date.now()), uuid: tab.id.uuidString) else  { continue }
 
             savedTabs.append(savedTab)
 
