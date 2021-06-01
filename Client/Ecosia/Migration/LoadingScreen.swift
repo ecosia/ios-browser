@@ -60,6 +60,12 @@ final class LoadingScreen: UIViewController {
     }
     
     private func migrate() {
+        guard !skip() else { return }
+
+        NSSetUncaughtExceptionHandler { exception in
+            EcosiaImport.Exception(reason: exception.reason ?? "Unknown").save()
+        }
+
         let ecosiaImport = EcosiaImport(profile: profile)
         ecosiaImport.migrate(progress: { [weak self] progress in
             self?.progress.setProgress(.init(progress), animated: true)
@@ -76,7 +82,23 @@ final class LoadingScreen: UIViewController {
             }
             
             Core.User.shared.migrated = true
+            NSSetUncaughtExceptionHandler(nil)
         }
+    }
+
+    private func skip() -> Bool {
+        if let exception = EcosiaImport.Exception.load() {
+            Analytics.shared.migrationError(in: .exception, message: exception.reason)
+            Core.User.shared.migrated = true
+            EcosiaImport.Exception.clear()
+            cleanUp()
+
+            DispatchQueue.main.async { [weak self] in
+                self?.showError()
+            }
+            return true
+        }
+        return false
     }
     
     private func showError() {

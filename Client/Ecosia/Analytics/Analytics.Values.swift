@@ -85,6 +85,7 @@ extension Analytics {
         case
         tabs,
         favourites,
-        history
+        history,
+        exception
     }
 }

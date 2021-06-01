@@ -28,6 +28,24 @@ final class EcosiaImport {
         }
     }
 
+    struct Exception: Codable {
+        let reason: String
+
+        private static let path = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("migration.ecosia")
+
+        static func load() -> Exception? {
+            try? JSONDecoder().decode(Exception.self, from: .init(contentsOf: path))
+        }
+
+        func save() {
+            try? JSONEncoder().encode(self).write(to: Self.path, options: .atomic)
+        }
+
+        static func clear() {
+            try? FileManager.default.removeItem(at: path)
+        }
+    }
+
     let profile: Profile
 
     private var progress: ((Double) -> ())?
