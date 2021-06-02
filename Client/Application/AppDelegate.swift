@@ -165,7 +165,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
 
     func applicationWillTerminate(_ application: UIApplication) {
         // We have only five seconds here, so let's hope this doesn't take too long.
-        profile?._shutdown()
+        profile?._shutdown(force: true)
 
         // Allow deinitializers to close our database connections.
         profile = nil
@@ -237,6 +237,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
             LeanPlumClient.shared.set(enabled: true)
         }
 
+        /* Ecosia: deactivate MZ background sync
         if #available(iOS 13.0, *) {
             BGTaskScheduler.shared.register(forTaskWithIdentifier: "org.mozilla.ios.sync.part1", using: DispatchQueue.global()) { task in
                 guard self.profile?.hasSyncableAccount() ?? false else {
@@ -270,6 +271,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
                 }
             }
         }
+        */
         Analytics.shared.activity(.launch)
         
         return shouldPerformAdditionalDelegateHandling
@@ -394,12 +396,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
         singleShotTimer.resume()
         shutdownWebServer = singleShotTimer
 
+        /* Ecosia: deactivate MZ background sync
         if #available(iOS 13.0, *) {
             scheduleBGSync(application: application)
         } else {
             syncOnDidEnterBackground(application: application)
         }
-        
+        */
+        shutdownProfileWhenNotActive(application)
         tabManager.preserveTabs()
     }
     
@@ -413,6 +417,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
         }
     }
 
+    /* Ecosia: deactivate MZ background sync
     fileprivate func syncOnDidEnterBackground(application: UIApplication) {
         guard let profile = self.profile else {
             return
@@ -439,6 +444,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
             application.endBackgroundTask(taskId)
         }
     }
+    */
 
     fileprivate func shutdownProfileWhenNotActive(_ application: UIApplication) {
         // Only shutdown the profile if we are not in the foreground
@@ -446,7 +452,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
             return
         }
 
-        profile?._shutdown()
+        profile?._shutdown(force: false)
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
@@ -568,6 +574,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
         completionHandler(handledShortCutItem)
     }
 
+    /* Ecosia: deactivate MZ background processing
     @available(iOS 13.0, *)
     private func scheduleBGSync(application: UIApplication) {
         if profile?.syncManager.isSyncing ?? false {
@@ -596,6 +603,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
             }
         }
     }
+    */
 }
 
 // MARK: - Root View Controller Animations

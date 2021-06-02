@@ -59,12 +59,20 @@ final class LoadingScreen: UIViewController {
         migrate()
     }
     
+    private var backgroundTaskID: UIBackgroundTaskIdentifier?
     private func migrate() {
         guard !skip() else { return }
 
         NSSetUncaughtExceptionHandler { exception in
             EcosiaImport.Exception(reason: exception.reason ?? "Unknown").save()
         }
+
+        backgroundTaskID = UIApplication.shared.beginBackgroundTask(withName: "Migration", expirationHandler: {
+            UIApplication.shared.endBackgroundTask(self.backgroundTaskID!)
+            self.backgroundTaskID = .invalid
+            // force shutting down profile to avoid crash by system
+            self.profile._shutdown(force: true)
+        })
 
         let ecosiaImport = EcosiaImport(profile: profile)
         ecosiaImport.migrate(progress: { [weak self] progress in
@@ -83,6 +91,14 @@ final class LoadingScreen: UIViewController {
             
             Core.User.shared.migrated = true
             NSSetUncaughtExceptionHandler(nil)
+
+            if let id = self?.backgroundTaskID {
+                UIApplication.shared.endBackgroundTask(id)
+            }
+
+            if UIApplication.shared.applicationState != .active {
+                self?.profile._shutdown(force: false)
+            }
         }
     }
 

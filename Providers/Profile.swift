@@ -115,7 +115,7 @@ protocol Profile: AnyObject {
 
     /// WARNING: Only to be called as part of the app lifecycle from the AppDelegate
     /// or from App Extension code.
-    func _shutdown()
+    func _shutdown(force: Bool)
 
     /// WARNING: Only to be called as part of the app lifecycle from the AppDelegate
     /// or from App Extension code.
@@ -331,8 +331,8 @@ open class BrowserProfile: Profile {
         _ = places.reopenIfClosed()
     }
 
-    func _shutdown() {
-        guard User.shared.migrated == true else { return }
+    func _shutdown(force: Bool = false) {
+        guard User.shared.migrated == true || force else { return }
 
         log.debug("Shutting down profile.")
         isShutdown = true
