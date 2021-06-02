@@ -37,6 +37,7 @@ extension String {
         case relevantResults = "Relevant results based on past searches"
         case safeSearch = "Safe search"
         case search = "Search"
+        case searchAndPlant = "Search the web to plant trees..."
         case searchRegion = "Search region"
         case sendFeedback = "Send feedback"
         case shop = "Shop"
