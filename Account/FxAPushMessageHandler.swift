@@ -30,7 +30,9 @@ extension FxAPushMessageHandler {
     /// Accepts the raw Push message from Autopush.
     /// This method then decrypts it according to the content-encoding (aes128gcm or aesgcm)
     /// and then effects changes on the logged in account.
+    /*
     @discardableResult func handle(userInfo: [AnyHashable: Any]) -> PushMessageResult {
+
         let keychain = KeychainWrapper.sharedAppContainerKeychain
         guard let pushReg = keychain.object(forKey: KeychainKey.fxaPushRegistration) as? PushRegistration else {
             return deferMaybe(PushMessageError.accountError)
@@ -127,8 +129,10 @@ extension FxAPushMessageHandler {
                 }
             }
         }
+
         return deferred
     }
+    */
 }
 
 enum PushMessageType: String {
