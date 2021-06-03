@@ -5,7 +5,7 @@ jobs:
     environment:
       CI: true
     macos:
-      xcode: "12.4.0"
+      xcode: "12.5.0"
     steps:
       - checkout
       - run:
@@ -53,7 +53,7 @@ jobs:
     environment:
       CI: true
     macos:
-      xcode: "12.4.0"
+      xcode: "12.5.0"
     steps:
       - checkout
       - run:
@@ -101,7 +101,7 @@ jobs:
     environment:
       CI: true
     macos:
-      xcode: "12.4.0"
+      xcode: "12.5.0"
     steps:
       - checkout
       - run:
@@ -171,3 +171,4 @@ workflows:
             branches:
               only: 
                 - /^.*main.*/
+                - /^.*experimental.*/
