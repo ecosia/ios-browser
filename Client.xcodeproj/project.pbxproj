@@ -11013,6 +11013,7 @@
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				ENABLE_TESTABILITY = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				INFOPLIST_FILE = "Shared/Supporting Files/Info.plist";
 				SWIFT_OBJC_BRIDGING_HEADER = "$SRCROOT/Shared/Shared-Bridging-Header.h";
 			};
@@ -11286,6 +11287,7 @@
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				ENABLE_TESTABILITY = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				INFOPLIST_FILE = "Shared/Supporting Files/Info.plist";
 				SWIFT_OBJC_BRIDGING_HEADER = "$SRCROOT/Shared/Shared-Bridging-Header.h";
 			};
@@ -11559,6 +11561,7 @@
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				ENABLE_TESTABILITY = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				INFOPLIST_FILE = "Shared/Supporting Files/Info.plist";
 				SWIFT_OBJC_BRIDGING_HEADER = "$SRCROOT/Shared/Shared-Bridging-Header.h";
 			};
