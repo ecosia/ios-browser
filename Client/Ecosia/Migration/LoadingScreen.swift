@@ -20,7 +20,7 @@ final class LoadingScreen: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor.theme.homePanel.topSitesBackground
+        view.backgroundColor = UIColor.theme.ecosia.primaryBackground
 
         let logo = UIImageView(image: UIImage(themed: "ecosiaLogo"))
         logo.translatesAutoresizingMaskIntoConstraints = false

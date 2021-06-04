@@ -145,7 +145,7 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
 
     lazy var defaultBrowserCard: DefaultBrowserCard = {
         let card = DefaultBrowserCard()
-        card.backgroundColor = UIColor.theme.homePanel.topSitesBackground
+        card.backgroundColor = UIColor.theme.ecosia.primaryBackground
         return card
     }()
 
@@ -200,7 +200,7 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
              */
             Analytics.shared.defaultBrowser(.view)
         }
-        self.view.backgroundColor = UIColor.theme.homePanel.topSitesBackground
+        self.view.backgroundColor = UIColor.theme.ecosia.primaryBackground
         self.profile.panelDataObservers.activityStream.delegate = self
 
         applyTheme()
@@ -241,8 +241,8 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
 
     func applyTheme() {
         defaultBrowserCard.applyTheme()
-        collectionView?.backgroundColor = UIColor.theme.homePanel.topSitesBackground
-        self.view.backgroundColor = UIColor.theme.homePanel.topSitesBackground
+        collectionView?.backgroundColor = UIColor.theme.ecosia.primaryBackground
+        self.view.backgroundColor = UIColor.theme.ecosia.primaryBackground
         topSiteCell.collectionView.reloadData()
         if let collectionView = self.collectionView, collectionView.numberOfSections > 0, collectionView.numberOfItems(inSection: 0) > 0 {
             collectionView.reloadData()

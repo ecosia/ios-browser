@@ -143,6 +143,6 @@ class DefaultBrowserCard: UIView {
         title.textColor = UIColor.theme.defaultBrowserCard.textColor
         descriptionText.textColor = UIColor.theme.defaultBrowserCard.textColor
         closeButton.imageView?.tintColor = UIColor.theme.defaultBrowserCard.textColor
-        backgroundColor = UIColor.theme.homePanel.topSitesBackground
+        backgroundColor = UIColor.theme.ecosia.primaryBackground
     }
 }

@@ -50,7 +50,7 @@ class LibraryViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor.theme.browser.background
+        view.backgroundColor = UIColor.theme.ecosia.primaryBackground
         self.edgesForExtendedLayout = []
 
         view.addSubview(buttonContainerView)
@@ -204,8 +204,8 @@ extension LibraryViewController: Themeable {
         panelDescriptors.forEach { item in
             (item.viewController as? Themeable)?.applyTheme()
         }
-        buttonContainerView.backgroundColor = UIColor.theme.homePanel.toolbarBackground
-        view.backgroundColor = UIColor.theme.homePanel.toolbarBackground
+        buttonContainerView.backgroundColor = UIColor.theme.ecosia.barBackground
+        view.backgroundColor = UIColor.theme.ecosia.barBackground
         buttonTintColor = UIColor.theme.homePanel.toolbarTint
         buttonSelectedTintColor = UIColor.theme.homePanel.toolbarHighlight
         updateButtonTints()

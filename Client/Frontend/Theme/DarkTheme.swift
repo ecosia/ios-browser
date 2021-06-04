@@ -5,17 +5,17 @@
 import Foundation
 
 // Convenience reference to these normal mode colors which are used in a few color classes.
-fileprivate let defaultBackground = UIColor.Photon.Grey80
+fileprivate let defaultBackground = UIColor.Photon.Grey90
 fileprivate let defaultSeparator = UIColor.Photon.Grey60
 fileprivate let defaultTextAndTint = UIColor.Photon.Grey10
 
 fileprivate class DarkTableViewColor: TableViewColor {
-    override var rowBackground: UIColor { return UIColor.Photon.Grey70 }
+    override var rowBackground: UIColor { return UIColor.Photon.Grey80 }
     override var rowText: UIColor { return defaultTextAndTint }
     override var rowDetailText: UIColor { return UIColor.Photon.Grey30 }
     override var disabledRowText: UIColor { return UIColor.Photon.Grey40 }
     override var separator: UIColor { return UIColor.Photon.Grey60 }
-    override var headerBackground: UIColor { return UIColor.Photon.Grey80 }
+    override var headerBackground: UIColor { return UIColor.Photon.Grey90 }
     override var headerTextLight: UIColor { return UIColor.Photon.Grey30 }
     override var headerTextDark: UIColor { return UIColor.Photon.Grey30 }
     override var syncText: UIColor { return defaultTextAndTint }
@@ -53,7 +53,6 @@ fileprivate class DarkTabTrayColor: TabTrayColor {
     override var tabTitleBlur: UIBlurEffect.Style { return UIBlurEffect.Style.dark }
     override var background: UIColor { return UIColor.Photon.Grey90 }
     override var cellBackground: UIColor { return defaultBackground }
-    override var toolbar: UIColor { return UIColor.Photon.Grey80 }
     override var toolbarButtonTint: UIColor { return defaultTextAndTint }
     override var cellCloseButton: UIColor { return defaultTextAndTint }
     override var cellTitleBackground: UIColor { return UIColor.Photon.Grey70 }
@@ -81,7 +80,6 @@ fileprivate class DarkTextFieldColor: TextFieldColor {
 }
 
 fileprivate class DarkHomePanelColor: HomePanelColor {
-    override var toolbarBackground: UIColor { return defaultBackground }
     override var toolbarHighlight: UIColor { return UIColor.theme.ecosia.primaryToolbar }
     override var toolbarTint: UIColor { return UIColor.Photon.Grey30 }
     override var panelBackground: UIColor { return UIColor.Photon.Grey90 }
@@ -96,10 +94,6 @@ fileprivate class DarkHomePanelColor: HomePanelColor {
     override var bookmarkCurrentFolderText: UIColor { return UIColor.Photon.White100 }
     override var bookmarkBackNavCellBackground: UIColor { return UIColor.Photon.Grey70 }
     
-    override var topSitesGradientStart:  UIColor { return defaultBackground }
-    override var topSitesGradientEnd:  UIColor { return UIColor(rgb: 0x212104) }
-    override var topSitesBackground: UIColor { return defaultBackground }
-
     override var downloadedFileIcon: UIColor { return UIColor.Photon.Grey30 }
 
     override var historyHeaderIconsBackground: UIColor { return UIColor.clear }
