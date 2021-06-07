@@ -20,8 +20,8 @@ struct UX {
     static let rowInset: CGFloat = 16
     static let pageInfoRowLeftInset = UX.rowInset + 6
     static let pageInfoLineSpacing: CGFloat = 2
-    static let doneLabelFont = UIFont.boldSystemFont(ofSize: 17)
-    static let baseFont = UIFont.systemFont(ofSize: 15)
+    static let doneLabelFont = UIFont.preferredFont(forTextStyle: .body)
+    static let baseFont = UIFont.preferredFont(forTextStyle: .body)
 
     static let navBarLandscapeShrinkage = 10 // iOS automatically shrinks nav bar in compact landscape
     static let numberOfActionRows = 4 // Ecosia: hide send to device // One more row than this for the page info row.
