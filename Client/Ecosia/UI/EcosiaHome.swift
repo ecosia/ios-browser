@@ -139,7 +139,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         let done = UIBarButtonItem(barButtonSystemItem: .done) { [ weak self ] _ in
             self?.dismiss(animated: true, completion: nil)
         }
-        navigationItem.leftBarButtonItem = done
+        navigationItem.rightBarButtonItem = done
 
         Section.allCases.forEach {
             collectionView!.register($0.cell, forCellWithReuseIdentifier: String(describing: $0.cell))
