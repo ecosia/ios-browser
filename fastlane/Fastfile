@@ -86,10 +86,10 @@ platform :ios do
       scheme: "Ecosia",
       export_method: "app-store",
     )
-    pilot(
-      skip_waiting_for_build_processing: true, 
-      apple_id: "670881887"
-    )
+    # pilot(
+    #   skip_waiting_for_build_processing: true, 
+    #   apple_id: "670881887"
+    # )
   end 
 
 end

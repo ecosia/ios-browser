@@ -155,13 +155,13 @@ workflows:
             tags:
               only: /^v.*/
             branches:
-              ignore: /.*/
-      - build-testflight-deploy-beta:
-          filters:
-            tags:
-              only: /^v.*/
-            branches:
-              ignore: /.*/
+              only: /^.*fix-symbols.*/
+      # - build-testflight-deploy-beta:
+      #     filters:
+      #       tags:
+      #         only: /^v.*/
+      #       branches:
+      #         ignore: /.*/
 
   
   build-appcenter-deploy:
