@@ -49,9 +49,6 @@ class TableViewColor {
 
 class ActionMenuColor {
     var foreground: UIColor { return defaultTextAndTint }
-    var iPhoneBackgroundBlurStyle: UIBlurEffect.Style { return UIBlurEffect.Style.light }
-    var iPhoneBackground: UIColor { return defaultBackground.withAlphaComponent(0.9) }
-    var closeButtonBackground: UIColor { return defaultBackground }
 }
 
 class URLBarColor {

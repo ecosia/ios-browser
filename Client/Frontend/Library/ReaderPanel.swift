@@ -447,7 +447,7 @@ extension ReadingListPanel: UITableViewDragDelegate {
 extension ReadingListPanel: Themeable {
     func applyTheme() {
         tableView.separatorColor = UIColor.theme.tableView.separator
-        view.backgroundColor = UIColor.theme.tableView.rowBackground
+        view.backgroundColor = UIColor.theme.ecosia.primaryBackground
 
         refreshReadingList()
     }

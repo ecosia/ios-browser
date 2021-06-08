@@ -39,6 +39,8 @@ class EcosiaTheme {
     var barBackground: UIColor { .white }
     var barSeparator: UIColor { UIColor.Photon.Grey20 }
 
+    var modalBackground: UIColor { .white }
+
     var primaryText: UIColor { UIColor(named: "primaryText")! }
     var secondaryText: UIColor { UIColor(named: "secondaryText")! }
     var highContrastText: UIColor { UIColor.Photon.Grey90 }
@@ -63,6 +65,7 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var primaryBackground: UIColor { UIColor.Photon.Grey90 }
     override var barBackground: UIColor { UIColor.Photon.Grey80 }
     override var barSeparator: UIColor { UIColor.Photon.Grey60 }
+    override var modalBackground: UIColor { UIColor.Photon.Grey70 }
 
 
     override var primaryText: UIColor { UIColor(named: "primaryTextDark")! }
