@@ -915,7 +915,7 @@ class ASHeaderView: UICollectionReusableView {
         let titleLabel = UILabel()
         titleLabel.text = self.title
         titleLabel.textColor = UIColor.theme.ecosia.highContrastText
-        titleLabel.font = DynamicFontHelper.defaultHelper.LargeSizeMediumFontAS
+        titleLabel.font = .preferredFont(forTextStyle: .headline)
         titleLabel.minimumScaleFactor = 0.6
         titleLabel.numberOfLines = 1
         titleLabel.adjustsFontSizeToFitWidth = true

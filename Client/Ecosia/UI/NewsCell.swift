@@ -44,13 +44,13 @@ final class NewsCell: UICollectionViewCell, Themeable {
         title.translatesAutoresizingMaskIntoConstraints = false
         title.numberOfLines = 4
         title.lineBreakMode = .byTruncatingTail
-        title.font = .preferredFont(forTextStyle: .footnote)
+        title.font = .preferredFont(forTextStyle: .subheadline)
         contentView.addSubview(title)
         self.title = title
         
         let date = UILabel()
         date.translatesAutoresizingMaskIntoConstraints = false
-        date.font = .preferredFont(forTextStyle: .caption1)
+        date.font = .preferredFont(forTextStyle: .subheadline)
         contentView.addSubview(date)
         self.date = date
         
@@ -71,8 +71,8 @@ final class NewsCell: UICollectionViewCell, Themeable {
         border.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
         border.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
         border.heightAnchor.constraint(equalToConstant: 1).isActive = true
-        
-        image.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 0).isActive = true
+
+        image.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 16).isActive = true
         title.rightAnchor.constraint(lessThanOrEqualTo: safeAreaLayoutGuide.rightAnchor, constant: -14).isActive = true
         date.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor, constant: -14).isActive = true
         border.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 0).isActive = true
@@ -128,9 +128,9 @@ final class NewsCell: UICollectionViewCell, Themeable {
     }
 
     func applyTheme() {
-        backgroundColor = UIColor.theme.ecosia.primaryBackground
+        backgroundColor = UIColor.theme.ecosia.highlightedBackground
         border?.backgroundColor = UIColor.theme.ecosia.underlineGrey
-        title?.textColor = UIColor.theme.ecosia.primaryText
+        title?.textColor = UIColor.theme.ecosia.highContrastText
         date?.textColor = UIColor.theme.ecosia.secondaryText
     }
 }
@@ -140,7 +140,7 @@ final class NewsButtonCell: UICollectionReusableView {
         let button = UIButton()
         button.setTitleColor(UIColor.theme.ecosia.primaryButton, for: .normal)
         button.setTitleColor(UIColor.Photon.Grey50, for: .highlighted)
-        button.titleLabel?.font = DynamicFontHelper.defaultHelper.DeviceFontMedium
+        button.titleLabel?.font = .preferredFont(forTextStyle: .body)
         return button
     }()
 

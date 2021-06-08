@@ -42,10 +42,10 @@ class EcosiaTheme {
     var modalBackground: UIColor { .white }
 
     var primaryText: UIColor { UIColor(named: "primaryText")! }
-    var secondaryText: UIColor { UIColor(named: "secondaryText")! }
+    var secondaryText: UIColor { UIColor.Photon.Grey50 }
     var highContrastText: UIColor { UIColor.Photon.Grey90 }
 
-    var highlightedBackground: UIColor { UIColor(named: "highlightedBackground")!}
+    var highlightedBackground: UIColor { .white }
     var highlightedBorder: UIColor { UIColor(named: "highlightedBorder")!}
     var hoverBackgroundColor: UIColor { UIColor.Photon.Grey20 }
 
@@ -69,8 +69,8 @@ final class DarkEcosiaTheme: EcosiaTheme {
 
 
     override var primaryText: UIColor { UIColor(named: "primaryTextDark")! }
-    override var secondaryText: UIColor { return UIColor(named: "secondaryTextDark")! }
-    override var highlightedBackground: UIColor { UIColor(named: "highlightedBackgroundDark")! }
+    override var secondaryText: UIColor { .white }
+    override var highlightedBackground: UIColor { UIColor.Photon.Grey70 }
 
     override var banner: UIColor { return UIColor(named: "bannerDark")!}
     override var underlineGrey: UIColor { return UIColor(named: "underlineGreyDark")! }

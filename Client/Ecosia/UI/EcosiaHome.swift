@@ -256,7 +256,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         case .info:
             return CGSize(width: view.bounds.width - 2 * margin, height: 140)
         case .news:
-            return CGSize(width: view.bounds.width - 2 * margin, height: 130)
+            return CGSize(width: view.bounds.width, height: 130)
         case .explore:
 
             var width = (view.bounds.width - 2 * margin - 16)/2.0
