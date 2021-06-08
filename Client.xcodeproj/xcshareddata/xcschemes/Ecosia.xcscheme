@@ -258,7 +258,7 @@
       buildConfiguration = "EcosiaDebug">
    </AnalyzeAction>
    <ArchiveAction
-      buildConfiguration = "EcosiaBeta"
+      buildConfiguration = "Ecosia"
       revealArchiveInOrganizer = "YES">
       <PreActions>
          <ExecutionAction
