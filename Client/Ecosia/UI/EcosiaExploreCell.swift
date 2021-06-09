@@ -35,10 +35,9 @@ final class EcosiaExploreCell: UICollectionViewCell, Themeable {
         contentView.addSubview(title)
         title.font = .preferredFont(forTextStyle: .subheadline)
         title.textAlignment = .center
-        title.numberOfLines = 2
+        title.numberOfLines = 1
         title.translatesAutoresizingMaskIntoConstraints = false
-        title.minimumScaleFactor = 0.5
-        title.adjustsFontSizeToFitWidth = true
+        title.allowsDefaultTighteningForTruncation = true
 
         image = UIImageView()
         image.contentMode = .scaleAspectFit

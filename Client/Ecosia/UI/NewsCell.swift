@@ -51,6 +51,8 @@ final class NewsCell: UICollectionViewCell, Themeable {
         let date = UILabel()
         date.translatesAutoresizingMaskIntoConstraints = false
         date.font = .preferredFont(forTextStyle: .subheadline)
+        date.numberOfLines = 1
+        date.setContentCompressionResistancePriority(.required, for: .vertical)
         contentView.addSubview(date)
         self.date = date
         
@@ -65,6 +67,7 @@ final class NewsCell: UICollectionViewCell, Themeable {
         
         title.leftAnchor.constraint(equalTo: image.rightAnchor, constant: 15).isActive = true
         title.topAnchor.constraint(equalTo: image.topAnchor, constant: 3).isActive = true
+        title.bottomAnchor.constraint(lessThanOrEqualTo: date.topAnchor, constant: 0).isActive = true
         
         date.bottomAnchor.constraint(equalTo: border.topAnchor, constant: -16).isActive = true
         
@@ -118,7 +121,7 @@ final class NewsCell: UICollectionViewCell, Themeable {
     }
     
     private func hover() {
-        backgroundColor = isSelected || isHighlighted ? UIColor.theme.ecosia.hoverBackgroundColor : UIColor.theme.ecosia.primaryBackground
+        backgroundColor = isSelected || isHighlighted ? UIColor.theme.ecosia.hoverBackgroundColor : UIColor.theme.ecosia.highlightedBackground
     }
 
     override func prepareForReuse() {
