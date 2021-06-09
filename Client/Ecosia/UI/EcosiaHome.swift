@@ -148,6 +148,9 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         collectionView.register(NewsButtonCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "Footer")
         collectionView.delegate = self
         collectionView.contentInsetAdjustmentBehavior = .always
+
+        NotificationCenter.default.addObserver(self, selector: #selector(updateLayout), name: UIDevice.orientationDidChangeNotification, object: nil)
+
         applyTheme()
 
         news.subscribe(self) { [weak self] in
@@ -159,7 +162,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     private var hasAppeared: Bool = false
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        news.load(session: .shared)
+        news.load(session: .shared, force: items.isEmpty)
         Analytics.shared.navigation(.view, label: .home)
         guard hasAppeared else { return hasAppeared = true }
         collectionView.reloadSections([Section.info.rawValue])
@@ -314,5 +317,9 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         view.backgroundColor = UIColor.theme.ecosia.primaryBackground
         collectionView.backgroundColor = UIColor.theme.ecosia.primaryBackground
         navigationItem.leftBarButtonItem?.tintColor = UIColor.theme.ecosia.primaryToolbar
+    }
+
+    @objc func updateLayout() {
+        collectionView.collectionViewLayout.invalidateLayout()
     }
 }
