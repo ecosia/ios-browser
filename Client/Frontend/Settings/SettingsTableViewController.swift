@@ -97,7 +97,6 @@ class Setting: NSObject {
         cell.selectedBackgroundView = backgroundView
         
         // So that the separator line goes all the way to the left edge.
-        cell.separatorInset = .zero
         if let cell = cell as? ThemedTableViewCell {
             cell.applyTheme()
         }
