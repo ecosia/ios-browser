@@ -63,5 +63,7 @@ extension String {
         case welcomeToTheNewEcosia = "Welcome to the new Ecosia app!"
         case weHaveDoneSome = "We've done some re-arranging to make it easier for you to browse the web and plant trees with Ecosia."
         case takeALook = "Take a look"
+        case setAsDefaultBrowser = "Set Ecosia as default browser"
+        case linksFromWebsites = "Links from websites, emails or messages will automatically open in Ecosia."
     }
 }
