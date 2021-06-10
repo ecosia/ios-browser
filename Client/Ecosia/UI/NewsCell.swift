@@ -78,7 +78,7 @@ final class NewsCell: UICollectionViewCell, Themeable {
         image.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 16).isActive = true
         title.rightAnchor.constraint(lessThanOrEqualTo: safeAreaLayoutGuide.rightAnchor, constant: -14).isActive = true
         date.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor, constant: -14).isActive = true
-        border.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 0).isActive = true
+        border.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 16).isActive = true
 
         applyTheme()
     }
