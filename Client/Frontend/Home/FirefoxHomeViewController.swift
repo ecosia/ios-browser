@@ -255,7 +255,14 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
 
     var inOverlayMode = false {
         didSet {
-            if isViewLoaded { collectionView.reloadSections([0]) }
+            if isViewLoaded {
+                collectionView.reloadSections([0])
+
+                /* Ecosia: dismiss default browser promo for searchbar focus*/
+                if #available(iOS 14.0, *), inOverlayMode, !UserDefaults.standard.bool(forKey: "DidDismissDefaultBrowserCard") {
+                    defaultBrowserCard.dismissClosure?()
+                }
+            }
         }
     }
 
