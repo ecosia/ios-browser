@@ -150,7 +150,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         collectionView.contentInsetAdjustmentBehavior = .always
         applyTheme()
 
-        news.subscribe(self) { [weak self] in
+        news.subscribeAndReceive(self) { [weak self] in
             self?.items = $0
             self?.collectionView.reloadSections([Section.news.rawValue, Section.info.rawValue])
         }
