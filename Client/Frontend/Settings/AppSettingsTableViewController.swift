@@ -95,7 +95,7 @@ class AppSettingsTableViewController: SettingsTableViewController {
          */
         
         if #available(iOS 14.0, *) {
-            settings += [.init(title: nil, footerTitle: nil, children: [
+            settings += [.init(title: nil, footerTitle: .localized(.linksFromWebsites), children: [
                 DefaultBrowserSetting(settings: self)
             ])]
         }
