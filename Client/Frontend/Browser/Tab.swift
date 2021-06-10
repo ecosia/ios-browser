@@ -465,10 +465,10 @@ class Tab: NSObject {
             }
 
             // Ecosia: inject cookie and analytics id
-            if !isPrivate, let cookie = browserViewController?.tabManager.cookie {
+            if !isPrivate {
                 var request = request
                 request.url = request.url?.ecosified
-                webView.configuration.websiteDataStore.httpCookieStore.setCookie(cookie.value) {
+                webView.configuration.websiteDataStore.httpCookieStore.setCookie(Cookie.value) {
                     let navigation = webView.load(request)
                     completion?(navigation)
                 }
@@ -489,7 +489,18 @@ class Tab: NSObject {
             webView?.replaceLocation(with: page)
             return
         }
-        
+
+        // Ecosia: Cookie inject before reload
+        if !isPrivate {
+            webView?.configuration.websiteDataStore.httpCookieStore.setCookie(Cookie.value) { [weak self] in
+                self?.reloadOrRestore()
+            }
+        } else {
+            reloadOrRestore()
+        }
+    }
+
+    private func reloadOrRestore() {
         if let _ = webView?.reloadFromOrigin() {
             print("reloaded zombified tab from origin")
             return
