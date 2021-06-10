@@ -36,12 +36,16 @@ class EcosiaTheme {
     var secondaryBrand: UIColor { UIColor.Photon.Grey60 }
 
     var primaryBackground: UIColor { .white }
+    var barBackground: UIColor { .white }
+    var barSeparator: UIColor { UIColor.Photon.Grey20 }
+
+    var modalBackground: UIColor { .white }
 
     var primaryText: UIColor { UIColor(named: "primaryText")! }
-    var secondaryText: UIColor { UIColor(named: "secondaryText")! }
+    var secondaryText: UIColor { UIColor.Photon.Grey50 }
     var highContrastText: UIColor { UIColor.Photon.Grey90 }
 
-    var highlightedBackground: UIColor { UIColor(named: "highlightedBackground")!}
+    var highlightedBackground: UIColor { .white }
     var highlightedBorder: UIColor { UIColor(named: "highlightedBorder")!}
     var hoverBackgroundColor: UIColor { UIColor.Photon.Grey20 }
 
@@ -58,11 +62,15 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var highContrastText: UIColor { .white }
     override var primaryBrand: UIColor { UIColor(named: "primaryBrandDark")!}
     override var secondaryBrand: UIColor { .white }
-    override var primaryBackground: UIColor { UIColor.Photon.Grey70 }
+    override var primaryBackground: UIColor { UIColor.Photon.Grey90 }
+    override var barBackground: UIColor { UIColor.Photon.Grey80 }
+    override var barSeparator: UIColor { UIColor.Photon.Grey60 }
+    override var modalBackground: UIColor { UIColor.Photon.Grey70 }
+
 
     override var primaryText: UIColor { UIColor(named: "primaryTextDark")! }
-    override var secondaryText: UIColor { return UIColor(named: "secondaryTextDark")! }
-    override var highlightedBackground: UIColor { UIColor(named: "highlightedBackgroundDark")! }
+    override var secondaryText: UIColor { .white }
+    override var highlightedBackground: UIColor { UIColor.Photon.Grey70 }
 
     override var banner: UIColor { return UIColor(named: "bannerDark")!}
     override var underlineGrey: UIColor { return UIColor(named: "underlineGreyDark")! }

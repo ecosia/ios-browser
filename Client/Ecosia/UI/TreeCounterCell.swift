@@ -76,10 +76,7 @@ final class TreeCounterCell: UICollectionViewCell, Themeable {
                 counter.text = formatter.string(from: .init(value: count))
             })
         }
-
-        treeCounter.update(session: .shared) {
-            UserDefaults.statistics = try? JSONEncoder().encode($0)
-        }
+        treeCounter.update(session: .shared) { _ in }
     }
 
     func applyTheme() {

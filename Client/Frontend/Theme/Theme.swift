@@ -49,9 +49,6 @@ class TableViewColor {
 
 class ActionMenuColor {
     var foreground: UIColor { return defaultTextAndTint }
-    var iPhoneBackgroundBlurStyle: UIBlurEffect.Style { return UIBlurEffect.Style.light }
-    var iPhoneBackground: UIColor { return defaultBackground.withAlphaComponent(0.9) }
-    var closeButtonBackground: UIColor { return defaultBackground }
 }
 
 class URLBarColor {
@@ -109,7 +106,6 @@ class TabTrayColor {
     var tabTitleBlur: UIBlurEffect.Style { return UIBlurEffect.Style.extraLight }
     var background: UIColor { return UIColor.Photon.Grey80 }
     var cellBackground: UIColor { return defaultBackground }
-    var toolbar: UIColor { return defaultBackground }
     var toolbarButtonTint: UIColor { return defaultTextAndTint }
     var privateModeLearnMore: UIColor { return UIColor.theme.ecosia.secondaryBrand }
     var privateModePurple: UIColor { return UIColor.theme.ecosia.secondaryBrand }
@@ -147,7 +143,6 @@ class TextFieldColor {
 }
 
 class HomePanelColor {
-    var toolbarBackground: UIColor { return defaultBackground }
     var toolbarHighlight: UIColor { return UIColor.theme.ecosia.primaryBrand }
     var toolbarTint: UIColor { return UIColor.Photon.Grey50 }
 
@@ -165,10 +160,6 @@ class HomePanelColor {
     var bookmarkBackNavCellBackground: UIColor { return UIColor.clear }
     
     var siteTableHeaderBorder: UIColor { return UIColor.Photon.Grey30.withAlphaComponent(0.8) }
-
-    var topSitesGradientStart:  UIColor { return UIColor.white }
-    var topSitesGradientEnd:  UIColor { return UIColor(rgb: 0xf8f8f8) }
-    var topSitesBackground: UIColor { return defaultBackground }
 
     var readingListActive: UIColor { return defaultTextAndTint }
     var readingListDimmed: UIColor { return UIColor.Photon.Grey40 }

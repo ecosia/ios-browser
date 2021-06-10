@@ -450,7 +450,6 @@
 		CA6BFB4325778E2B0026DFFF /* Ecosia.strings in Resources */ = {isa = PBXBuildFile; fileRef = CA6BFB4525778E2B0026DFFF /* Ecosia.strings */; };
 		CA6BFB7225778EDA0026DFFF /* Ecosia.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CA6BFB7125778EDA0026DFFF /* Ecosia.xcassets */; };
 		CA6BFBEE2577A7740026DFFF /* TreeCounterCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA6BFBED2577A7740026DFFF /* TreeCounterCell.swift */; };
-		CA6BFC032577AA520026DFFF /* UserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA6BFC022577AA520026DFFF /* UserDefaults.swift */; };
 		CA708BBA25407C59007265AC /* EcosiaFavourites.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA708BB925407C59007265AC /* EcosiaFavourites.swift */; };
 		CA77ABFD24773C92005079F9 /* BreachAlertsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA77ABF424772D98005079F9 /* BreachAlertsManager.swift */; };
 		CA7BD568248189E800A0A61B /* BreachAlertsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA7BD564248185B500A0A61B /* BreachAlertsTests.swift */; };
@@ -3223,7 +3222,6 @@
 		CA6BFB5D25778E4E0026DFFF /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Ecosia.strings; sourceTree = "<group>"; };
 		CA6BFB7125778EDA0026DFFF /* Ecosia.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Ecosia.xcassets; sourceTree = "<group>"; };
 		CA6BFBED2577A7740026DFFF /* TreeCounterCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreeCounterCell.swift; sourceTree = "<group>"; };
-		CA6BFC022577AA520026DFFF /* UserDefaults.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserDefaults.swift; sourceTree = "<group>"; };
 		CA708BB925407C59007265AC /* EcosiaFavourites.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaFavourites.swift; sourceTree = "<group>"; };
 		CA734AC9B9629155033B810B /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Search.strings; sourceTree = "<group>"; };
 		CA774043B34B7F86DA31B93A /* br */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = br; path = br.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -5074,7 +5072,6 @@
 			children = (
 				CAA246D0257A725100D84AD9 /* markets.json */,
 				CAA246A6257A715D00D84AD9 /* EcosiaSettings.swift */,
-				CA6BFC022577AA520026DFFF /* UserDefaults.swift */,
 				CE0AB94825F7C41200333656 /* Analytics */,
 				CA4DDE2825430DF800966CF2 /* Fake */,
 				CA6BFAED25778DF70026DFFF /* L10N */,
@@ -7930,7 +7927,6 @@
 				884CA7492344A301002E4711 /* TextContentDetector.swift in Sources */,
 				7B844E3D1BBDDB9D00E733A2 /* ChevronView.swift in Sources */,
 				43A5643823CD1E1C00B6857D /* UpdateViewController.swift in Sources */,
-				CA6BFC032577AA520026DFFF /* UserDefaults.swift in Sources */,
 				CAA246A7257A715D00D84AD9 /* EcosiaSettings.swift in Sources */,
 				E4C358551AF144BA00299F7E /* FSReadingList.m in Sources */,
 				E692E3291C46E62D009D1240 /* AuthenticationSettingsViewController.swift in Sources */,

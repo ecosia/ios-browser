@@ -40,7 +40,9 @@ final class EcosiaHistory {
         DispatchQueue.global(qos: .userInitiated).async {
             let data = prepare(history: items, progress: progress)
             guard !profile.isShutdown else {
-                finished(.failure(.init(reasons: ["Database is shutdown"])))
+                DispatchQueue.main.async {
+                    finished(.failure(.init(reasons: ["Database is shutdown"])))
+                }
                 return
             }
 

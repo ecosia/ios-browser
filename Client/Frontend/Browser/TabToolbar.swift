@@ -386,12 +386,12 @@ extension TabToolbar: TabToolbarProtocol {
 
 extension TabToolbar: Themeable, PrivateModeUI {
     func applyTheme() {
-        backgroundColor = UIColor.theme.browser.background
+        backgroundColor = UIColor.theme.ecosia.barBackground
         helper?.setTheme(forButtons: actionButtons)
 
-        privateModeBadge.badge.tintBackground(color: UIColor.theme.browser.background)
-        appMenuBadge.badge.tintBackground(color: UIColor.theme.browser.background)
-        warningMenuBadge.badge.tintBackground(color: UIColor.theme.browser.background)
+        privateModeBadge.badge.tintBackground(color: UIColor.theme.ecosia.barBackground)
+        appMenuBadge.badge.tintBackground(color: UIColor.theme.ecosia.barBackground)
+        warningMenuBadge.badge.tintBackground(color: UIColor.theme.ecosia.barBackground)
     }
 
     func applyUIMode(isPrivate: Bool) {

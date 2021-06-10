@@ -23,7 +23,7 @@ class PrivateModeButton: ToggleButton, PrivateModeUI {
     func applyUIMode(isPrivate: Bool) {
         isSelected = isPrivate
 
-        let color = isPrivate ? ThemeManager.instance.current.tabTray.toolbar : ThemeManager.instance.current.tabTray.toolbarButtonTint
+        let color = isPrivate ? ThemeManager.instance.current.ecosia.barBackground : ThemeManager.instance.current.tabTray.toolbarButtonTint
         setTitleColor(color, for: .normal)
         accessibilityValue = isSelected ? PrivateModeStrings.toggleAccessibilityValueOn : PrivateModeStrings.toggleAccessibilityValueOff
     }

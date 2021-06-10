@@ -37,7 +37,7 @@ final class EcosiaInfoCell: UICollectionViewCell, Themeable {
 
         title = UILabel()
         contentView.addSubview(title)
-        title.font = DynamicFontHelper.defaultHelper.DefaultStandardFont
+        title.font = .preferredFont(forTextStyle: .body)
         title.numberOfLines = 1
         title.translatesAutoresizingMaskIntoConstraints = false
         title.setContentHuggingPriority(.required, for: .vertical)
@@ -55,12 +55,12 @@ final class EcosiaInfoCell: UICollectionViewCell, Themeable {
         contentView.addSubview(stack)
 
         subtitle = UILabel()
-        subtitle.font = DynamicFontHelper.defaultHelper.DeviceFontMediumBold
+        subtitle.font = .preferredFont(forTextStyle: .headline)
         stack.addArrangedSubview(subtitle)
 
         desc = UILabel()
         desc.numberOfLines = 0
-        desc.font = .preferredFont(forTextStyle: .footnote)
+        desc.font = .preferredFont(forTextStyle: .subheadline)
         desc.adjustsFontSizeToFitWidth = true
         desc.minimumScaleFactor = 0.8
         stack.addArrangedSubview(desc)
@@ -120,9 +120,9 @@ final class EcosiaInfoCell: UICollectionViewCell, Themeable {
     }
 
     func applyTheme() {
-        title.textColor = UIColor.theme.ecosia.primaryText
+        title.textColor = UIColor.theme.ecosia.highContrastText
         subtitle.textColor = UIColor.theme.ecosia.primaryBrand
-        desc.textColor = UIColor.theme.ecosia.primaryText
+        desc.textColor = UIColor.theme.ecosia.highContrastText
         outline.elevate()
     }
 

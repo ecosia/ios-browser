@@ -82,16 +82,8 @@ class PhotonActionSheet: UIViewController, UITableViewDelegate, UITableViewDataS
         view.addSubview(tableView)
         view.accessibilityIdentifier = "Action Sheet"
 
-        tableView.backgroundColor = .clear
+        tableView.backgroundColor = UIColor.theme.ecosia.modalBackground
 
-        // In a popover the popover provides the blur background
-        // Not using a background color allows the view to style correctly with the popover arrow
-        if self.popoverPresentationController == nil {
-            let blurEffect = UIBlurEffect(style: UIColor.theme.actionMenu.iPhoneBackgroundBlurStyle)
-            let blurEffectView = UIVisualEffectView(effect: blurEffect)
-            tableView.backgroundView = blurEffectView
-        }
-        
         let width = min(self.view.frame.size.width, PhotonActionSheetUX.MaxWidth) - (PhotonActionSheetUX.Padding * 2)
 
         if style == .bottom {
@@ -124,34 +116,15 @@ class PhotonActionSheet: UIViewController, UITableViewDelegate, UITableViewDataS
 
         NotificationCenter.default.addObserver(self, selector: #selector(stopRotateSyncIcon), name: .ProfileDidFinishSyncing, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(stopRotateSyncIcon), name: .ProfileDidStartSyncing, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(reduceTransparencyChanged), name: UIAccessibility.reduceTransparencyStatusDidChangeNotification, object: nil)
-    }
-
-    @objc func reduceTransparencyChanged() {
-        // If the user toggles transparency settings, re-apply the theme to also toggle the blur effect.
-        applyTheme()
     }
 
     func applyTheme() {
         if style == .popover {
             view.backgroundColor = UIColor.theme.browser.background.withAlphaComponent(0.7)
-        } else {
-            tableView.backgroundView?.backgroundColor = UIColor.theme.actionMenu.iPhoneBackground
         }
-
-        // Apply or remove the background blur effect
-        if let visualEffectView = tableView.backgroundView as? UIVisualEffectView {
-            if UIAccessibility.isReduceTransparencyEnabled {
-                // Remove the visual effect and the background alpha
-                visualEffectView.effect = nil
-                tableView.backgroundView?.backgroundColor = UIColor.theme.actionMenu.iPhoneBackground.withAlphaComponent(1.0)
-            } else {
-                visualEffectView.effect = UIBlurEffect(style: UIColor.theme.actionMenu.iPhoneBackgroundBlurStyle)
-            }
-        }
-
+        tableView.backgroundColor = UIColor.theme.ecosia.modalBackground
         tintColor = UIColor.theme.actionMenu.foreground
-        closeButton.backgroundColor = UIColor.theme.actionMenu.closeButtonBackground
+        closeButton.backgroundColor = UIColor.theme.ecosia.modalBackground
 
         tableView.reloadData()
     }

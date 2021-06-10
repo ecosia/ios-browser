@@ -178,12 +178,12 @@ class TabTrayControllerV1: UIViewController {
 
         searchBarHolder.addSubview(roundedSearchBarHolder)
         searchBarHolder.addSubview(searchBar)
-        searchBarHolder.backgroundColor = UIColor.theme.tabTray.toolbar
+        searchBarHolder.backgroundColor = UIColor.theme.ecosia.barBackground
         [webViewContainerBackdrop, collectionView, toolbar, searchBarHolder, cancelButton].forEach { view.addSubview($0) }
         makeConstraints()
 
         // The statusBar needs a background color
-        statusBarBG.backgroundColor = UIColor.theme.tabTray.toolbar
+        statusBarBG.backgroundColor = UIColor.theme.ecosia.barBackground
         view.addSubview(statusBarBG)
         statusBarBG.snp.makeConstraints { make in
             make.leading.trailing.top.equalTo(self.view)
@@ -1018,7 +1018,7 @@ class TrayToolbar: UIView, Themeable, PrivateModeUI {
             $0.tintColor = UIColor.theme.tabTray.toolbarButtonTint
         }
         deleteButton.setTitleColor(UIColor.theme.tabTray.toolbarButtonTint, for: .normal)
-        backgroundColor = UIColor.theme.tabTray.toolbar
+        backgroundColor = UIColor.theme.ecosia.barBackground
         maskButton.offTint = UIColor.theme.tabTray.privateModeButtonOffTint
         maskButton.onTint = UIColor.theme.tabTray.privateModeButtonOnTint
         maskButton.applyTheme()

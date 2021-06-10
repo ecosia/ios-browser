@@ -29,9 +29,10 @@ class ThemedNavigationController: UINavigationController {
 
 extension ThemedNavigationController: Themeable {
     func applyTheme() {
-        navigationBar.barTintColor = UIColor.theme.tableView.headerBackground
+        navigationBar.barTintColor = UIColor.theme.ecosia.barBackground
+        navigationBar.isTranslucent = false
         navigationBar.tintColor = UIColor.theme.general.controlTint
-        navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.headerTextDark]
+        navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.theme.ecosia.highContrastText]
         setNeedsStatusBarAppearanceUpdate()
         viewControllers.forEach {
             ($0 as? Themeable)?.applyTheme()

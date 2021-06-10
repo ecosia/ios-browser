@@ -148,9 +148,12 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         collectionView.register(NewsButtonCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "Footer")
         collectionView.delegate = self
         collectionView.contentInsetAdjustmentBehavior = .always
+
+        NotificationCenter.default.addObserver(self, selector: #selector(updateLayout), name: UIDevice.orientationDidChangeNotification, object: nil)
+
         applyTheme()
 
-        news.subscribe(self) { [weak self] in
+        news.subscribeAndReceive(self) { [weak self] in
             self?.items = $0
             self?.collectionView.reloadSections([Section.news.rawValue, Section.info.rawValue])
         }
@@ -159,7 +162,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     private var hasAppeared: Bool = false
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        news.load(session: .shared)
+        news.load(session: .shared, force: items.isEmpty)
         Analytics.shared.navigation(.view, label: .home)
         guard hasAppeared else { return hasAppeared = true }
         collectionView.reloadSections([Section.info.rawValue])
@@ -256,7 +259,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         case .info:
             return CGSize(width: view.bounds.width - 2 * margin, height: 140)
         case .news:
-            return CGSize(width: view.bounds.width - 2 * margin, height: 130)
+            return CGSize(width: view.bounds.width, height: 130)
         case .explore:
 
             var width = (view.bounds.width - 2 * margin - 16)/2.0
@@ -314,5 +317,9 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         view.backgroundColor = UIColor.theme.ecosia.primaryBackground
         collectionView.backgroundColor = UIColor.theme.ecosia.primaryBackground
         navigationItem.leftBarButtonItem?.tintColor = UIColor.theme.ecosia.primaryToolbar
+    }
+
+    @objc func updateLayout() {
+        collectionView.collectionViewLayout.invalidateLayout()
     }
 }

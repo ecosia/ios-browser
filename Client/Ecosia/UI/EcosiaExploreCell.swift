@@ -33,12 +33,11 @@ final class EcosiaExploreCell: UICollectionViewCell, Themeable {
 
         title = UILabel()
         contentView.addSubview(title)
-        title.font = DynamicFontHelper.defaultHelper.DeviceFontMedium
+        title.font = .preferredFont(forTextStyle: .subheadline)
         title.textAlignment = .center
-        title.numberOfLines = 2
+        title.numberOfLines = 1
         title.translatesAutoresizingMaskIntoConstraints = false
-        title.minimumScaleFactor = 0.5
-        title.adjustsFontSizeToFitWidth = true
+        title.allowsDefaultTighteningForTruncation = true
 
         image = UIImageView()
         image.contentMode = .scaleAspectFit
@@ -96,7 +95,7 @@ final class EcosiaExploreCell: UICollectionViewCell, Themeable {
     }
 
     func applyTheme() {
-        title.textColor = UIColor.theme.ecosia.primaryText
+        title.textColor = UIColor.theme.ecosia.highContrastText
         outline.elevate()
     }
 }
