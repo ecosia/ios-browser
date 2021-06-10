@@ -12847,7 +12847,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = main;
+				branch = "static-cookie";
 				kind = branch;
 			};
 		};

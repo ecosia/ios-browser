@@ -588,10 +588,10 @@ extension BrowserViewController: WKNavigationDelegate {
 
         // Ecosia: Cookie handling
         if tabManager.selectedTab?.isPrivate == false {
-            DispatchQueue.main.async { [weak self] in
+            DispatchQueue.main.async { 
                 webView.configuration.websiteDataStore.httpCookieStore.getAllCookies { cookies in
                     DispatchQueue.main.async {
-                        self?.tabManager.cookie.received(cookies)
+                        Cookie.received(cookies)
                     }
                 }
             }
