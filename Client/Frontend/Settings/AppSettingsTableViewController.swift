@@ -5,6 +5,7 @@
 import UIKit
 import Shared
 import Account
+import Core
 
 /// App Settings Screen (triggered by tapping the 'Gear' in the Tab Tray Controller)
 class AppSettingsTableViewController: SettingsTableViewController {
@@ -95,7 +96,7 @@ class AppSettingsTableViewController: SettingsTableViewController {
          */
         
         if #available(iOS 14.0, *) {
-            settings += [.init(title: nil, footerTitle: .localized(.linksFromWebsites), children: [
+            settings += [.init(title: nil, footerTitle: .init(string: .localized(.linksFromWebsites)), children: [
                 DefaultBrowserSetting(settings: self)
             ])]
         }
