@@ -48,6 +48,8 @@ class TopSiteItemCell: UICollectionViewCell, Themeable {
         titleLabel.numberOfLines = 2
         titleLabel.allowsDefaultTighteningForTruncation = true
         titleLabel.lineBreakMode = .byTruncatingTail
+        titleLabel.adjustsFontSizeToFitWidth = true
+        titleLabel.minimumScaleFactor = 0.9
         return titleLabel
     }()
 
@@ -145,6 +147,8 @@ class TopSiteItemCell: UICollectionViewCell, Themeable {
         } else {
             titleLabel.text = site.tileURL.shortDisplayString
         }
+        let words = titleLabel.text?.components(separatedBy: .whitespacesAndNewlines).count ?? 0
+        titleLabel.numberOfLines = min(max(words, 1), 2)
 
         // If its a pinned site add a bullet point to the front
         if let _ = site as? PinnedSite {

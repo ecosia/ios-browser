@@ -54,7 +54,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         }
 
         enum Explore: Int, CaseIterable {
-            case info, finance, trees, faq, shop
+            case info, finance, trees, faq, shop, privacy
 
             var title: String {
                 switch self {
@@ -68,6 +68,8 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
                     return .localized(.faq)
                 case .shop:
                     return .localized(.shop)
+                case .privacy:
+                    return .localized(.privacy)
                 }
             }
 
@@ -83,6 +85,8 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
                     return "faqIcon"
                 case .shop:
                     return "shopIcon"
+                case .privacy:
+                    return "tigerIncognito"
                 }
             }
 
@@ -98,6 +102,8 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
                     return Environment.current.faq
                 case .shop:
                     return Environment.current.shop
+                case .privacy:
+                    return Environment.current.privacy
                 }
             }
 
@@ -113,6 +119,8 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
                     return .faq
                 case .shop:
                     return .shop
+                case .privacy:
+                    return .privacy
                 }
             }
         }

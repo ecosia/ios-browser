@@ -53,12 +53,12 @@ open class DefaultSuggestedSites {
                 title: NSLocalizedString("Financial reports", tableName: "Ecosia", comment: "")
             ),
             SuggestedSiteData(
-                url: Environment.current.shop.absoluteString,
+                url: Environment.current.privacy.absoluteString,
                 bgColor: "0x000000",
-                imageUrl: "asset://suggestedsites_ecosiashop",
+                imageUrl: "asset://suggestedsites_ecosiablog",
                 faviconUrl: "asset://defaultFavicon",
                 trackingId: 0,
-                title: NSLocalizedString("Shop", tableName: "Ecosia", comment: "")
+                title: NSLocalizedString("Privacy", tableName: "Ecosia", comment: "")
             ),
             SuggestedSiteData(
                 url: Environment.current.howEcosiaWorks.absoluteString,
