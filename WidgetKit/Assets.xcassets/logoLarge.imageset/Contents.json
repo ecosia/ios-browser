@@ -1,6 +1,16 @@
 {
   "images" : [
     {
+      "filename" : "logoMainEcosiaLight.pdf",
+      "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
       "filename" : "logoMainEcosiaDark.pdf",
       "idiom" : "universal"
     }

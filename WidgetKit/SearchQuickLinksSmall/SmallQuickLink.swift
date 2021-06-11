@@ -79,7 +79,7 @@ struct Bar: View {
                 .frame(height: 50)
             HStack {
                 Image(systemName: "magnifyingglass")
-                    .foregroundColor(.white)
+                    .foregroundColor(.init("widgetText"))
                     .padding(.leading)
                 Spacer()
             }

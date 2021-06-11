@@ -63,6 +63,15 @@ enum QuickLink: Int {
         }
     }
 
+    public var textColor: Color {
+        switch self {
+        case .search:
+            return .white
+        default:
+            return .init("widgetText")
+        }
+    }
+
     /* Ecosia: deactivate Siri Intents
     static func from(_ configuration: QuickLinkSelectionIntent) -> Self {
         switch configuration.selectedLink {

@@ -71,19 +71,22 @@ struct ImageButtonWithLabel: View {
                     HStack(alignment: .top) {
                         VStack(alignment: .leading){
                                 Text(link.label)
-                                    .font(.headline)
+                                    .font(.subheadline)
                                     .minimumScaleFactor(0.75)
                                     .layoutPriority(1000)
+                                    .foregroundColor(link.textColor)
                         }
                         Spacer()
                         if link == .search && isSmall {
                             Image("search-button")
                                 .scaledToFit()
                                 .frame(height: 24.0)
+                                .foregroundColor(link.textColor)
                         } else {
                             Image(link.imageName)
                                 .scaledToFit()
                                 .frame(height: 24.0)
+                                .foregroundColor(link.textColor)
                         }
                     }
                     if isSmall {
@@ -92,6 +95,7 @@ struct ImageButtonWithLabel: View {
                             Image("faviconFox")
                                 .scaledToFit()
                                 .frame(height: 24.0)
+                                .foregroundColor(link.textColor)
                         }
                     }
                 }
