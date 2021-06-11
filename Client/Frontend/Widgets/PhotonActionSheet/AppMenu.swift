@@ -57,7 +57,7 @@ extension PhotonActionSheetProtocol {
         items.append(noImageMode)
 
         let nightModeEnabled = NightModeHelper.isActivated(profile.prefs)
-        let nightMode = PhotonActionSheetItem(title: Strings.AppMenuNightMode, iconString: "menu-NightMode", isEnabled: nightModeEnabled, accessory: .Switch) { _, _ in
+        let nightMode = PhotonActionSheetItem(title: .localized(.forceDarkMode), text: .localized(.invertColors), iconString: "menu-NightMode", isEnabled: nightModeEnabled, accessory: .Switch) { _, _ in
             NightModeHelper.toggle(self.profile.prefs, tabManager: self.tabManager)
             // If we've enabled night mode and the theme is normal, enable dark theme
             if NightModeHelper.isActivated(self.profile.prefs), ThemeManager.instance.currentName == .normal {
