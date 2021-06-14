@@ -67,5 +67,6 @@ extension String {
         case takeALook = "Take a look"
         case setAsDefaultBrowser = "Set Ecosia as default browser"
         case linksFromWebsites = "Links from websites, emails or messages will automatically open in Ecosia."
+        case showTopSites = "Show Top Sites"
     }
 }

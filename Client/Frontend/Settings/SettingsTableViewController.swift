@@ -234,6 +234,7 @@ class BoolSetting: Setting {
     // These methods allow a subclass to control how the pref is saved
     func displayBool(_ control: UISwitch) {
         guard let key = prefKey else {
+            control.isOn = defaultValue
             return
         }
         control.isOn = prefs.boolForKey(key) ?? defaultValue

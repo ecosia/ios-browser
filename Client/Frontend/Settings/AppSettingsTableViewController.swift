@@ -48,6 +48,9 @@ class AppSettingsTableViewController: SettingsTableViewController {
             ThemeSetting(settings: self),
             BoolSetting(prefs: prefs, prefKey: PrefsKeys.KeyBlockPopups, defaultValue: true,
                         titleText: NSLocalizedString("Block Pop-up Windows", comment: "Block pop-up windows setting")),
+            BoolSetting(prefs: prefs, defaultValue: true, titleText: .localized(.showTopSites)) { _ in
+                
+            }
            ]
 
         /* Ecosia: remove Siri settings
@@ -70,7 +73,7 @@ class AppSettingsTableViewController: SettingsTableViewController {
         // There is nothing to show in the Customize section if we don't include the compact tab layout
         // setting on iPad. When more options are added that work on both device types, this logic can
         // be changed.
-
+        
         generalSettings += [
             BoolSetting(prefs: prefs, prefKey: "showClipboardBar", defaultValue: false,
                         titleText: Strings.SettingsOfferClipboardBarTitle,
