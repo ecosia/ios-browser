@@ -152,10 +152,10 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         Section.allCases.forEach {
             collectionView!.register($0.cell, forCellWithReuseIdentifier: String(describing: $0.cell))
         }
-        collectionView.register(ASHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "Header")
+        collectionView.register(NewsHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "Header")
         collectionView.register(NewsButtonCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "Footer")
         collectionView.delegate = self
-        collectionView.contentInsetAdjustmentBehavior = .always
+        collectionView.contentInsetAdjustmentBehavior = .scrollableAxes
 
         NotificationCenter.default.addObserver(self, selector: #selector(updateLayout), name: UIDevice.orientationDidChangeNotification, object: nil)
 
@@ -206,7 +206,8 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
             Section.Explore(rawValue: indexPath.row).map { exploreCell.display($0) }
         case .news:
             let cell = cell as! NewsCell
-            cell.configure(items[indexPath.row], images: images)
+            let itemCount = self.collectionView(collectionView, numberOfItemsInSection: Section.news.rawValue)
+            cell.configure(items[indexPath.row], images: images, positions: .derive(row: indexPath.row, items: itemCount))
         }
 
         return cell
@@ -218,8 +219,8 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
 
         switch kind {
         case UICollectionView.elementKindSectionHeader:
-            let view = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "Header", for: indexPath) as! ASHeaderView
-            view.title = section.sectionTitle
+            let view = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "Header", for: indexPath) as! NewsHeader
+            view.titleLabel.text = section.sectionTitle
             return view
         case UICollectionView.elementKindSectionFooter:
             let view = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "Footer", for: indexPath) as! NewsButtonCell
@@ -259,7 +260,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let section = Section(rawValue: indexPath.section)!
 
-        let margin = max(16, collectionView.adjustedContentInset.left)
+        let margin = max(16, collectionView.safeAreaInsets.left)
 
         switch section {
         case .logo:
@@ -281,7 +282,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         case .logo:
             return .zero
         case .explore, .news:
-            return CGSize(width: view.bounds.width - 32, height: 60)
+            return CGSize(width: view.bounds.width - 32, height: 70)
         case .info:
             return CGSize(width: view.bounds.width - 32, height: 24)
 
@@ -311,6 +312,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        guard let section = Section(rawValue: section), section == .explore else { return .zero }
         return .init(top: 0, left: 16, bottom: 0, right: 16)
     }
 
@@ -329,5 +331,10 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
 
     @objc func updateLayout() {
         collectionView.collectionViewLayout.invalidateLayout()
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        applyTheme()
     }
 }

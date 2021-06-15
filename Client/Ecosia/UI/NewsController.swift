@@ -28,7 +28,7 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
         let flow = UICollectionViewFlowLayout()
         flow.minimumInteritemSpacing = 0
         flow.minimumLineSpacing = 0
-        flow.sectionInset = .init(top: 0, left: 16, bottom: 0, right: 16)
+        flow.sectionInset = .init(top: 0, left: 0, bottom: 0, right: 0)
         flow.headerReferenceSize.height = 100
 
         let indicator = UIActivityIndicatorView(style: .gray)
@@ -38,9 +38,9 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
         collection.delegate = self
         collection.dataSource = self
         collection.register(NewsCell.self, forCellWithReuseIdentifier: identifier)
-        collection.register(NewsHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: identifier)
+        collection.register(NewsSubHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: identifier)
         collection.backgroundView = indicator
-        collection.contentInsetAdjustmentBehavior = .always
+        collection.contentInsetAdjustmentBehavior = .scrollableAxes
         self.collection = collection
         view = collection
     }
@@ -79,13 +79,12 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
     
     func collectionView(_: UICollectionView, cellForItemAt: IndexPath) -> UICollectionViewCell {
         let cell = collection.dequeueReusableCell(withReuseIdentifier: identifier, for: cellForItemAt) as! NewsCell
-        cell.configure(items[cellForItemAt.row], images: images)
+        cell.configure(items[cellForItemAt.row], images: images, positions: .derive(row: cellForItemAt.item, items: items.count))
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, layout: UICollectionViewLayout, sizeForItemAt: IndexPath) -> CGSize {
-        let margin = max(32, (collectionView.adjustedContentInset.left + collection.adjustedContentInset.right))
-        return .init(width: collection.bounds.width - margin, height: 131)
+        return .init(width: collection.bounds.width, height: 130)
     }
     
     func collectionView(_: UICollectionView, didSelectItemAt: IndexPath) {
@@ -99,9 +98,14 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
         collection.reloadData()
         collection.backgroundColor = UIColor.theme.ecosia.primaryBackground
     }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        applyTheme()
+    }
 }
 
-private final class NewsHeader: UICollectionReusableView, Themeable {
+private final class NewsSubHeader: UICollectionReusableView, Themeable {
     private weak var subtitle: UILabel!
     required init?(coder: NSCoder) { nil }
 

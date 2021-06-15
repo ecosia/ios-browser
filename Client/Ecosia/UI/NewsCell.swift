@@ -6,22 +6,43 @@ import Core
 import UIKit
 
 final class NewsCell: UICollectionViewCell, Themeable {
+    struct Positions: OptionSet {
+        static let top = Positions(rawValue: 1)
+        static let bottom = Positions(rawValue: 1 << 1)
+        let rawValue: Int8
+
+        static func derive(row: Int, items: Int) -> Positions {
+            var pos = Positions()
+            if row == 0 { pos.insert(.top) }
+            if row == items - 1 { pos.insert(.bottom) }
+            return pos
+        }
+    }
+
     private var imageUrl: URL?
     private weak var image: UIImageView!
     private weak var title: UILabel!
     private weak var date: UILabel!
-    private weak var border: UIView!
-    
+    private weak var topBorder: UIView!
+    private weak var bottomBorder: UIView!
+    private weak var bottomLeft: NSLayoutConstraint!
+
     required init?(coder: NSCoder) { nil }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        let border = UIView()
-        border.translatesAutoresizingMaskIntoConstraints = false
-        border.isUserInteractionEnabled = false
-        contentView.addSubview(border)
-        self.border = border
+        let top = UIView()
+        top.translatesAutoresizingMaskIntoConstraints = false
+        top.isUserInteractionEnabled = false
+        contentView.addSubview(top)
+        self.topBorder = top
+
+        let bottom = UIView()
+        bottom.translatesAutoresizingMaskIntoConstraints = false
+        bottom.isUserInteractionEnabled = false
+        contentView.addSubview(bottom)
+        self.bottomBorder = bottom
         
         let placeholder = UIImageView()
         placeholder.translatesAutoresizingMaskIntoConstraints = false
@@ -52,6 +73,7 @@ final class NewsCell: UICollectionViewCell, Themeable {
         date.translatesAutoresizingMaskIntoConstraints = false
         date.font = .preferredFont(forTextStyle: .subheadline)
         date.numberOfLines = 1
+        date.textAlignment = .left
         date.setContentCompressionResistancePriority(.required, for: .vertical)
         contentView.addSubview(date)
         self.date = date
@@ -68,18 +90,26 @@ final class NewsCell: UICollectionViewCell, Themeable {
         title.leftAnchor.constraint(equalTo: image.rightAnchor, constant: 15).isActive = true
         title.topAnchor.constraint(equalTo: image.topAnchor, constant: 3).isActive = true
         title.bottomAnchor.constraint(lessThanOrEqualTo: date.topAnchor, constant: 0).isActive = true
-        
-        date.bottomAnchor.constraint(equalTo: border.topAnchor, constant: -16).isActive = true
-        
-        border.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
-        border.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
-        border.heightAnchor.constraint(equalToConstant: 1).isActive = true
+
+        date.leftAnchor.constraint(equalTo: title.leftAnchor).isActive = true
+        date.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16).isActive = true
+
+        bottom.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
+        bottom.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+        bottom.heightAnchor.constraint(equalToConstant: 1).isActive = true
+
+        top.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
+        top.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
+        top.topAnchor.constraint(equalTo: topAnchor).isActive = true
+        top.heightAnchor.constraint(equalToConstant: 1).isActive = true
 
         image.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 16).isActive = true
-        title.rightAnchor.constraint(lessThanOrEqualTo: safeAreaLayoutGuide.rightAnchor, constant: -14).isActive = true
-        date.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor, constant: -14).isActive = true
-        border.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 16).isActive = true
-
+        title.rightAnchor.constraint(lessThanOrEqualTo: safeAreaLayoutGuide.rightAnchor, constant: -16).isActive = true
+        date.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor, constant: -16).isActive = true
+        let bottomLeft = bottom.leftAnchor.constraint(equalTo: leftAnchor, constant: 16)
+        bottomLeft.priority = .defaultHigh
+        bottomLeft.isActive = true
+        self.bottomLeft = bottomLeft
         applyTheme()
     }
     
@@ -95,7 +125,7 @@ final class NewsCell: UICollectionViewCell, Themeable {
         }
     }
     
-    func configure(_ item: NewsModel, images: Images) {
+    func configure(_ item: NewsModel, images: Images, positions: Positions) {
         imageUrl = item.imageUrl
         image.image = nil
         title.text = item.text.replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression)
@@ -111,6 +141,10 @@ final class NewsCell: UICollectionViewCell, Themeable {
             guard self?.imageUrl == $0.url else { return }
             self?.updateImage($0.data)
         }
+
+        topBorder.isHidden = !positions.contains(.top)
+        bottomLeft.constant = positions.contains(.bottom) ? 0 : 16
+        bottomBorder.setNeedsLayout()
     }
     
     private func updateImage(_ data: Data) {
@@ -127,12 +161,12 @@ final class NewsCell: UICollectionViewCell, Themeable {
     override func prepareForReuse() {
         super.prepareForReuse()
         applyTheme()
-
     }
 
     func applyTheme() {
         backgroundColor = UIColor.theme.ecosia.highlightedBackground
-        border?.backgroundColor = UIColor.theme.ecosia.underlineGrey
+        bottomBorder?.backgroundColor = UIColor.theme.ecosia.underlineGrey
+        topBorder?.backgroundColor = UIColor.theme.ecosia.underlineGrey
         title?.textColor = UIColor.theme.ecosia.highContrastText
         date?.textColor = UIColor.theme.ecosia.secondaryText
     }
@@ -166,5 +200,45 @@ final class NewsButtonCell: UICollectionReusableView {
         super.prepareForReuse()
         moreButton.setTitleColor(UIColor.theme.ecosia.primaryButton, for: .normal)
         moreButton.setTitleColor(UIColor.Photon.Grey50, for: .highlighted)
+    }
+}
+
+class NewsHeader: UICollectionReusableView, Themeable {
+    lazy var titleLabel: UILabel = {
+        let titleLabel = UILabel()
+        titleLabel.textColor = UIColor.theme.ecosia.highContrastText
+        titleLabel.font = .preferredFont(forTextStyle: .headline)
+        titleLabel.numberOfLines = 1
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        return titleLabel
+    }()
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        commonInit()
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        commonInit()
+    }
+
+    private func commonInit() {
+        addSubview(titleLabel)
+
+        titleLabel.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 16).isActive = true
+        titleLabel.trailingAnchor.constraint(lessThanOrEqualTo: safeAreaLayoutGuide.trailingAnchor, constant: -16).isActive = true
+        titleLabel.topAnchor.constraint(greaterThanOrEqualTo: topAnchor).isActive = true
+        titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16).isActive = true
+        titleLabel.setContentHuggingPriority(.defaultHigh, for: .vertical)
+    }
+
+    func applyTheme() {
+        titleLabel.textColor = UIColor.theme.ecosia.highContrastText
+    }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        applyTheme()
     }
 }

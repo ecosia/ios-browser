@@ -69,7 +69,7 @@ final class DarkEcosiaTheme: EcosiaTheme {
 
 
     override var primaryText: UIColor { UIColor(named: "primaryTextDark")! }
-    override var secondaryText: UIColor { .white }
+    override var secondaryText: UIColor { UIColor.Photon.Grey30 }
     override var highlightedBackground: UIColor { UIColor.Photon.Grey70 }
 
     override var banner: UIColor { return UIColor(named: "bannerDark")!}
