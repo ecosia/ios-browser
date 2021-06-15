@@ -48,8 +48,8 @@ class AppSettingsTableViewController: SettingsTableViewController {
             ThemeSetting(settings: self),
             BoolSetting(prefs: prefs, prefKey: PrefsKeys.KeyBlockPopups, defaultValue: true,
                         titleText: NSLocalizedString("Block Pop-up Windows", comment: "Block pop-up windows setting")),
-            BoolSetting(prefs: prefs, defaultValue: true, titleText: .localized(.showTopSites)) { _ in
-                
+            BoolSetting(prefs: prefs, defaultValue: Core.User.shared.topSites ?? true, titleText: .localized(.showTopSites)) {
+                Core.User.shared.topSites = $0
             }
            ]
 
