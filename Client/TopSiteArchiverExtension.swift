@@ -16,7 +16,7 @@ extension SiteArchiver {
             return [TopSite]()
         }
         
-
+        unarchiver.requiresSecureCoding = false
         unarchiver.setClass(TopSite.self, forClassName: "Client.TopSite")
         
         unarchiver.decodingFailurePolicy = .setErrorAndReturn

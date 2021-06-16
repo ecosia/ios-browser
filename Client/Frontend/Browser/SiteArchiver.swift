@@ -19,6 +19,7 @@ struct SiteArchiver {
             return ([SavedTab](), simpleTabsDict)
         }
 
+        unarchiver.requiresSecureCoding = false
         unarchiver.setClass(SavedTab.self, forClassName: "Client.SavedTab")
         unarchiver.setClass(SessionData.self, forClassName: "Client.SessionData")
         unarchiver.decodingFailurePolicy = .setErrorAndReturn
