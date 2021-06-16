@@ -23,7 +23,7 @@ final class EcosiaNavigation: UINavigationController, Themeable {
         viewControllers.forEach { ($0 as? Themeable)?.applyTheme() }
 
         navigationBar.backgroundColor = UIColor.theme.ecosia.primaryBackground
-        navigationBar.tintColor = UIColor.theme.ecosia.secondaryBrand
+        navigationBar.tintColor = UIColor.theme.ecosia.primaryBrand
         navigationBar.titleTextAttributes = [
             NSAttributedString.Key.foregroundColor: UIColor.theme.ecosia.secondaryBrand
         ]
