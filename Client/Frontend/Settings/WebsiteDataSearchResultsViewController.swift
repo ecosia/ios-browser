@@ -7,7 +7,7 @@ import SnapKit
 import Shared
 import WebKit
 
-protocol WebsiteDataSearchResultsViewControllerDelegate: class {
+protocol WebsiteDataSearchResultsViewControllerDelegate: AnyObject {
     func websiteDataSearchResultsViewController(_ viewController: WebsiteDataSearchResultsViewController, didDeleteRecord record: WKWebsiteDataRecord)
 }
 

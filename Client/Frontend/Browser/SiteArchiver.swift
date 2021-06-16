@@ -14,11 +14,11 @@ struct SiteArchiver {
         
         guard let tabStateArchivePath = tabsStateArchivePath,
               FileManager.default.fileExists(atPath: tabStateArchivePath),
-              let tabData = try? Data(contentsOf: URL(fileURLWithPath: tabStateArchivePath)) else {
+              let tabData = try? Data(contentsOf: URL(fileURLWithPath: tabStateArchivePath)),
+              let unarchiver = try? NSKeyedUnarchiver(forReadingFrom: tabData) else {
             return ([SavedTab](), simpleTabsDict)
         }
 
-        let unarchiver = try NSKeyedUnarchiver(forReadingWith: tabData)
         unarchiver.setClass(SavedTab.self, forClassName: "Client.SavedTab")
         unarchiver.setClass(SessionData.self, forClassName: "Client.SessionData")
         unarchiver.decodingFailurePolicy = .setErrorAndReturn

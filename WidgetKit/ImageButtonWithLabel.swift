@@ -92,7 +92,7 @@ struct ImageButtonWithLabel: View {
                     if isSmall {
                         HStack(alignment: .bottom){
                             Spacer()
-                            Image("faviconFox")
+                            Image("openEcosia")
                                 .scaledToFit()
                                 .frame(height: 24.0)
                                 .foregroundColor(link.textColor)

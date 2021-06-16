@@ -432,7 +432,6 @@ extension FirefoxHomeViewController: UICollectionViewDelegateFlowLayout {
 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         self.longPressRecognizer.isEnabled = false
-        selectItemAtIndex(indexPath.item, inSection: Section(indexPath.section))
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -687,20 +686,6 @@ extension FirefoxHomeViewController: DataObserverDelegate {
         }
     }
 
-    func selectItemAtIndex(_ index: Int, inSection section: Section) {
-        let site: Site?
-        switch section {
-        case .treeCounter:
-            return
-        case .topSites:
-            return
-        case .libraryShortcuts:
-            return
-        }
-        if let site = site {
-            showSiteWithURLHandler(URL(string: site.url)!)
-        }
-    }
 }
 
 extension FirefoxHomeViewController {

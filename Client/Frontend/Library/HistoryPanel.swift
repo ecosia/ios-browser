@@ -236,7 +236,7 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
     }
 
     func pinToTopSites(_ site: Site) {
-        _ = profile.history.addPinnedTopSite(site).uponQueue(.main) { result in
+        profile.history.addPinnedTopSite(site).uponQueue(.main) { result in
             if result.isSuccess {
                 SimpleToast().showAlertWithText(Strings.AppMenuAddPinToTopSitesConfirmMessage, bottomContainer: self.view)
             }

@@ -62,19 +62,12 @@ extension BrowserViewController: TabToolbarDelegate, PhotonActionSheetProtocol {
     }
 
     func tabToolbarDidPressMenu(_ tabToolbar: TabToolbarProtocol, button: UIButton) {
-        var whatsNewAction: PhotonActionSheetItem?
         let showBadgeForWhatsNew = shouldShowWhatsNew()
         if showBadgeForWhatsNew {
             // Set the version number of the app, so the What's new will stop showing
             profile.prefs.setString(AppInfo.appVersion, forKey: LatestAppVersionProfileKey)
             // Redraw the toolbar so the badge hides from the appMenu button.
             updateToolbarStateForTraitCollection(view.traitCollection)
-        }
-        whatsNewAction = PhotonActionSheetItem(title: Strings.WhatsNewString, iconString: "whatsnew", isEnabled: showBadgeForWhatsNew, badgeIconNamed: "menuBadge") { _, _ in
-            if let whatsNewTopic = AppInfo.whatsNewTopic, let whatsNewURL = SupportUtils.URLForTopic(whatsNewTopic) {
-                TelemetryWrapper.recordEvent(category: .action, method: .open, object: .whatsNew)
-                self.openURLInNewTab(whatsNewURL)
-            }
         }
 
         // ensure that any keyboards or spinners are dismissed before presenting the menu
@@ -109,13 +102,6 @@ extension BrowserViewController: TabToolbarDelegate, PhotonActionSheetProtocol {
         actions.append(getLibraryActions(vcDelegate: self))
         actions.append(getOtherPanelActions(vcDelegate: self))
 
-        /* Ecosia: disable what's new
-        if let whatsNewAction = whatsNewAction, var lastGroup = actions.last, lastGroup.count > 1 {
-            lastGroup.insert(whatsNewAction, at: lastGroup.count - 1)
-            actions.removeLast()
-            actions.append(lastGroup)
-        }
-         */
         // force a modal if the menu is being displayed in compact split screen
         let shouldSuppress = !topTabsVisible && UIDevice.current.userInterfaceIdiom == .pad
         presentSheetWith(actions: actions, on: self, from: button, suppressPopover: shouldSuppress)

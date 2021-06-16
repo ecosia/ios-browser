@@ -299,7 +299,7 @@ class ShareViewController: UIViewController {
         navigationItem.titleView = UIImageView(image: UIImage(named: "Icon-Small"))
         navigationItem.titleView?.contentMode = .scaleAspectFit
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: Strings.SendToCancelButton, style: .plain, target: self, action: #selector(finish))
-        navigationItem.leftBarButtonItem?.tintColor = UIColor(named: "primaryBrand")!
+        navigationItem.leftBarButtonItem?.tintColor = UIColor(named: "primaryAction")!
         navigationController?.navigationBar.barTintColor = Theme.defaultBackground.color
     }
 
