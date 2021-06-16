@@ -174,6 +174,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         Analytics.shared.navigation(.view, label: .home)
         guard hasAppeared else { return hasAppeared = true }
         collectionView.reloadSections([Section.info.rawValue])
+        updateBarAppearance()
     }
 
     // MARK: UICollectionViewDataSource
@@ -316,6 +317,36 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         return .init(top: 0, left: 16, bottom: 0, right: 16)
     }
 
+    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        showSeparator = scrollView.contentOffset.y + scrollView.adjustedContentInset.top <= 12
+    }
+
+    private var showSeparator = false {
+        didSet {
+            if showSeparator != oldValue {
+                updateBarAppearance()
+            }
+        }
+    }
+
+    private func updateBarAppearance() {
+        guard #available(iOS 13, *), let appearance = navigationController?.navigationBar.standardAppearance else { return }
+
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = UIColor.theme.ecosia.primaryBackground
+        appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.theme.ecosia.highContrastText]
+
+        if showSeparator {
+            appearance.shadowColor = nil
+            appearance.shadowImage = nil
+        } else {
+            appearance.shadowColor = UIColor.theme.ecosia.barSeparator
+            appearance.shadowImage = UIImage()
+        }
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.navigationBar.setNeedsDisplay()
+    }
+
     @objc private func allNews() {
         let news = NewsController(items: items, delegate: delegate)
         navigationController?.pushViewController(news, animated: true)
@@ -327,6 +358,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         view.backgroundColor = UIColor.theme.ecosia.primaryBackground
         collectionView.backgroundColor = UIColor.theme.ecosia.primaryBackground
         navigationItem.leftBarButtonItem?.tintColor = UIColor.theme.ecosia.primaryToolbar
+        updateBarAppearance()
     }
 
     @objc func updateLayout() {
