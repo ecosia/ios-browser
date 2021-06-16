@@ -7,7 +7,7 @@ import Shared
 import SnapKit
 
 struct DownloadToastUX {
-    static let ToastBackgroundColor = UIColor.theme.ecosia.primaryButton
+    static let ToastBackgroundColor = UIColor.theme.ecosia.primaryBrand
     static let ToastProgressColor = UIColor.Photon.Blue50
 }
 

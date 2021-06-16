@@ -50,7 +50,7 @@ class EcosiaTheme {
     var hoverBackgroundColor: UIColor { UIColor.Photon.Grey20 }
 
     var primaryToolbar: UIColor { UIColor(named: "primaryToolbar")!}
-    var primaryButton: UIColor { UIColor(named: "primaryButton")! }
+    var primaryButton: UIColor { UIColor.Photon.Blue50 }
 
     var banner: UIColor { return UIColor(named: "banner")!}
     var underlineGrey: UIColor { return UIColor(named: "underlineGrey")! }

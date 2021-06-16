@@ -29,7 +29,6 @@ class DefaultBrowserCard: UIView {
     lazy var settingsButton: UIButton = {
         let button = UIButton()
         button.setTitle(String.DefaultBrowserCardButton, for: .normal)
-        button.backgroundColor = UIColor.Photon.Blue50
         button.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
         button.titleLabel?.textAlignment = .center
         button.layer.cornerRadius = 8
@@ -144,5 +143,6 @@ class DefaultBrowserCard: UIView {
         descriptionText.textColor = UIColor.theme.defaultBrowserCard.textColor
         closeButton.imageView?.tintColor = UIColor.theme.defaultBrowserCard.textColor
         backgroundColor = UIColor.theme.ecosia.primaryBackground
+        settingsButton.backgroundColor = UIColor.theme.ecosia.primaryButton
     }
 }
