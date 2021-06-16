@@ -49,7 +49,7 @@ final class Welcome: UIViewController {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle(.localized(.getStarted), for: [])
-        button.setBackgroundColor(UIColor.theme.ecosia.primaryButton, forState: .normal)
+        button.backgroundColor = UIColor.theme.ecosia.primaryButton
         button.setTitleColor(.white, for: .normal)
         button.setTitleColor(.init(white: 1, alpha: 0.3), for: .highlighted)
         button.titleLabel!.font = .preferredFont(forTextStyle: .headline)
