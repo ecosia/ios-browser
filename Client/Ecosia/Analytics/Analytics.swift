@@ -147,12 +147,12 @@ final class Analytics {
         }))
     }
     
-    func open(topSite: String) {
+    func open(topSite: Property.TopSite) {
         tracker.track(SPStructured.build {
             $0.setCategory(Category.browser.rawValue)
             $0.setAction(Action.open.rawValue)
             $0.setLabel("top_sites")
-            $0.setProperty(topSite)
+            $0.setProperty(topSite.rawValue)
         })
     }
 }
