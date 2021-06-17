@@ -1014,9 +1014,7 @@ class LibraryShortcutView: UIView {
             make.width.equalTo(LibraryShortcutView.iconSize + LibraryShortcutView.spacing)
             make.height.equalTo(LibraryShortcutView.iconSize + LibraryShortcutView.spacing)
         }
-        title.adjustsFontSizeToFitWidth = true
         title.allowsDefaultTighteningForTruncation = true
-        title.minimumScaleFactor = 0.9
         title.lineBreakMode = .byTruncatingTail
         title.font = .preferredFont(forTextStyle: .footnote)
         title.textAlignment = .center
@@ -1024,8 +1022,9 @@ class LibraryShortcutView: UIView {
         title.setContentHuggingPriority(.required, for: .vertical)
         title.snp.makeConstraints { make in
             make.top.equalTo(button.snp.bottom).offset(0)
+            let maxHeight = title.font.pointSize * 2.6
             make.leading.trailing.equalToSuperview().inset(2).priority(.veryHigh)
-            make.bottom.lessThanOrEqualToSuperview()
+            make.height.lessThanOrEqualTo(maxHeight)
         }
         button.imageView?.contentMode = .scaleToFill
         button.contentVerticalAlignment = .fill
@@ -1071,7 +1070,7 @@ class ASLibraryCell: UICollectionViewCell, Themeable {
             let view = LibraryShortcutView()
             view.button.setImage(item.image, for: .normal)
             view.title.text = item.title
-            let words = view.title.text?.components(separatedBy: NSCharacterSet.whitespacesAndNewlines.union(.punctuationCharacters)).count
+            let words = view.title.text?.components(separatedBy: NSCharacterSet.whitespacesAndNewlines).count
             view.title.numberOfLines = words == 1 ? 1 : 2
             // view.button.backgroundColor = item.color
             view.button.setTitleColor(UIColor.theme.ecosia.highContrastText, for: .normal)
