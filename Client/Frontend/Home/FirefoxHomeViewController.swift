@@ -491,11 +491,14 @@ extension FirefoxHomeViewController: UICollectionViewDelegateFlowLayout {
         let visitType = VisitType.bookmark
         
         switch url.absoluteString {
-        case Environment.current.blog.absoluteString,
-             Environment.current.financialReports.absoluteString,
-             Environment.current.privacy.absoluteString,
-             Environment.current.howEcosiaWorks.absoluteString:
-            Analytics.shared.open(topSite: url.absoluteString)
+        case Environment.current.blog.absoluteString:
+            Analytics.shared.open(topSite: .blog)
+        case Environment.current.financialReports.absoluteString:
+            Analytics.shared.open(topSite: .financialReports)
+        case Environment.current.privacy.absoluteString:
+            Analytics.shared.open(topSite: .privacy)
+        case Environment.current.howEcosiaWorks.absoluteString:
+            Analytics.shared.open(topSite: .howEcosiaWorks)
         default:
             break
         }
