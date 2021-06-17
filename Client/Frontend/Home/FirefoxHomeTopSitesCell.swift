@@ -50,6 +50,8 @@ class TopSiteItemCell: UICollectionViewCell, Themeable {
         titleLabel.lineBreakMode = .byTruncatingTail
         titleLabel.adjustsFontSizeToFitWidth = true
         titleLabel.minimumScaleFactor = 0.9
+        titleLabel.setContentHuggingPriority(.required, for: .vertical)
+        
         return titleLabel
     }()
 

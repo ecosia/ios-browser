@@ -1016,11 +1016,12 @@ class LibraryShortcutView: UIView {
         }
         title.adjustsFontSizeToFitWidth = true
         title.allowsDefaultTighteningForTruncation = true
-        title.minimumScaleFactor = 0.7
+        title.minimumScaleFactor = 0.9
         title.lineBreakMode = .byTruncatingTail
         title.font = .preferredFont(forTextStyle: .footnote)
         title.textAlignment = .center
         title.numberOfLines = 2
+        title.setContentHuggingPriority(.required, for: .vertical)
         title.snp.makeConstraints { make in
             make.top.equalTo(button.snp.bottom).offset(0)
             make.leading.trailing.equalToSuperview().inset(2).priority(.veryHigh)
