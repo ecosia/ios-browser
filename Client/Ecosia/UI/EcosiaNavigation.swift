@@ -44,5 +44,4 @@ final class EcosiaNavigation: UINavigationController, Themeable {
             return ThemeManager.instance.current.isDark ? .lightContent : .default
         }
     }
-
 }
