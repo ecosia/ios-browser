@@ -82,7 +82,7 @@ class PhotonActionSheet: UIViewController, UITableViewDelegate, UITableViewDataS
         view.addSubview(tableView)
         view.accessibilityIdentifier = "Action Sheet"
 
-        tableView.backgroundColor = UIColor.theme.ecosia.modalBackground
+        tableView.backgroundColor = UIColor.theme.ecosia.actionSheetBackground
 
         let width = min(self.view.frame.size.width, PhotonActionSheetUX.MaxWidth) - (PhotonActionSheetUX.Padding * 2)
 
@@ -122,9 +122,9 @@ class PhotonActionSheet: UIViewController, UITableViewDelegate, UITableViewDataS
         if style == .popover {
             view.backgroundColor = UIColor.theme.browser.background.withAlphaComponent(0.7)
         }
-        tableView.backgroundColor = UIColor.theme.ecosia.modalBackground
+        tableView.backgroundColor = UIColor.theme.ecosia.actionSheetBackground
         tintColor = UIColor.theme.actionMenu.foreground
-        closeButton.backgroundColor = UIColor.theme.ecosia.modalBackground
+        closeButton.backgroundColor = UIColor.theme.ecosia.actionSheetBackground
 
         tableView.reloadData()
     }

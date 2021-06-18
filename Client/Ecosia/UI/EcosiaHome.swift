@@ -333,7 +333,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         guard #available(iOS 13, *), let appearance = navigationController?.navigationBar.standardAppearance else { return }
 
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = UIColor.theme.ecosia.primaryBackground
+        appearance.backgroundColor = UIColor.theme.ecosia.modalBackground
         appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.theme.ecosia.highContrastText]
 
         if showSeparator {
@@ -355,8 +355,8 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
 
     func applyTheme() {
         collectionView.reloadData()
-        view.backgroundColor = UIColor.theme.ecosia.primaryBackground
-        collectionView.backgroundColor = UIColor.theme.ecosia.primaryBackground
+        view.backgroundColor = UIColor.theme.ecosia.modalBackground
+        collectionView.backgroundColor = UIColor.theme.ecosia.modalBackground
         navigationItem.leftBarButtonItem?.tintColor = UIColor.theme.ecosia.primaryToolbar
         updateBarAppearance()
     }

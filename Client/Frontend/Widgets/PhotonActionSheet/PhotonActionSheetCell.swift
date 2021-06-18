@@ -245,7 +245,7 @@ class PhotonActionSheetCell: UITableViewCell {
             badgeOverlay?.layout(onButton: statusIcon)
             badgeOverlay?.show(true)
             // Custom dark theme tint needed here, it is overkill to create a '.theme' color just for this.
-            let color = ThemeManager.instance.currentName == .dark ? UIColor(white: 0.3, alpha: 1): UIColor.theme.ecosia.modalBackground
+            let color = ThemeManager.instance.currentName == .dark ? UIColor(white: 0.3, alpha: 1): UIColor.theme.ecosia.actionSheetBackground
             badgeOverlay?.badge.tintBackground(color: color)
         }
 
