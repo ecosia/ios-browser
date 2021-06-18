@@ -6,30 +6,30 @@ import SnapKit
 import Storage
 import Shared
 
-class DefaultBrowserCard: UIView {
+class DefaultBrowserCard: UICollectionViewCell {
     public var dismissClosure: (() -> Void)?
     lazy var title: UILabel = {
         let title = UILabel()
-        title.text = String.DefaultBrowserCardTitle
+        title.text = .localized(.makeEcosiaYourDefault)
         title.numberOfLines = 0
         title.lineBreakMode = .byWordWrapping
-        title.font = UIFont.systemFont(ofSize: 20, weight: .bold)
-        title.textColor = UIColor.theme.defaultBrowserCard.textColor
+        title.font = .preferredFont(forTextStyle: .title3)
         return title
     }()
     lazy var descriptionText: UILabel = {
         let descriptionText = UILabel()
         descriptionText.text = .localized(.websitesWillAlwaysOpen)
         descriptionText.numberOfLines = 0
-        descriptionText.lineBreakMode = .byWordWrapping
-        descriptionText.font = UIFont.systemFont(ofSize: 15, weight: .regular)
-        descriptionText.textColor = UIColor.theme.defaultBrowserCard.textColor
+        descriptionText.font = .preferredFont(forTextStyle: .subheadline)
+        descriptionText.adjustsFontSizeToFitWidth = true
+        descriptionText.minimumScaleFactor = 0.8
+        descriptionText.allowsDefaultTighteningForTruncation = true
         return descriptionText
     }()
     lazy var settingsButton: UIButton = {
         let button = UIButton()
         button.setTitle(String.DefaultBrowserCardButton, for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
+        button.titleLabel?.font = .preferredFont(forTextStyle: .body)
         button.titleLabel?.textAlignment = .center
         button.layer.cornerRadius = 8
         button.layer.masksToBounds = true
@@ -43,14 +43,11 @@ class DefaultBrowserCard: UIView {
     lazy var closeButton: UIButton = {
         let closeButton = UIButton()
         closeButton.setImage(UIImage(named: "nav-stop")?.withRenderingMode(.alwaysTemplate), for: .normal)
-        closeButton.imageView?.tintColor = UIColor.theme.defaultBrowserCard.textColor
         return closeButton
     }()
     lazy var background: UIView = {
         let background = UIView()
-        background.backgroundColor = UIColor.theme.defaultBrowserCard.backgroundColor
-        background.layer.cornerRadius = 12
-        background.layer.masksToBounds = true
+        background.layer.cornerRadius = 10
         return background
     }()
     
@@ -75,6 +72,7 @@ class DefaultBrowserCard: UIView {
         
         setupConstraints()
         setupButtons()
+        applyTheme()
     }
     
     required init(coder: NSCoder) {
@@ -83,37 +81,34 @@ class DefaultBrowserCard: UIView {
     
     private func setupConstraints() {
         background.snp.makeConstraints { make in
-            make.top.left.equalToSuperview().offset(20)
-            make.right.bottom.equalToSuperview().offset(-20).priority(.high)
-            make.height.greaterThanOrEqualTo(210).priority(.high)
+            make.left.right.bottom.equalToSuperview()
+            make.top.equalToSuperview().inset(16)
         }
+        
         topView.snp.makeConstraints { make in
-            make.top.equalToSuperview()
-            make.height.greaterThanOrEqualTo(114)
+            make.top.left.right.equalToSuperview()
         }
+
         image.snp.makeConstraints { make in
-            make.left.equalToSuperview().offset(18)
-            make.right.equalTo(labelView.snp.left).offset(-18)
-            make.height.width.equalTo(64)
-            make.top.equalToSuperview().offset(45)
+            make.left.equalToSuperview().offset(24)
+            make.right.equalTo(labelView.snp.left).offset(-16)
+            make.height.width.equalTo(48)
+            make.top.equalToSuperview().offset(24)
         }
         labelView.snp.makeConstraints { make in
-            make.right.equalTo(closeButton.snp.right)
-            make.width.lessThanOrEqualTo(223)
+            make.right.equalToSuperview().offset(-36)
             make.bottom.equalTo(settingsButton.snp.top).offset(-16)
-            make.top.equalToSuperview().offset(30)
+            make.top.equalToSuperview().offset(24)
         }
         settingsButton.snp.makeConstraints { make in
             make.top.equalTo(topView.snp.bottom).offset(16)
-            make.bottom.right.equalToSuperview().offset(-16).priority(.high)
-            make.left.equalToSuperview().offset(16)
-            make.width.equalTo(303)
+            make.bottom.left.right.equalToSuperview().inset(16)
             make.height.equalTo(44)
         }
         closeButton.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(15)
-            make.right.equalToSuperview().offset(-15)
-            make.height.width.equalTo(15)
+            make.centerY.equalTo(image.snp.top)
+            make.right.equalToSuperview().offset(-18)
+            make.height.width.equalTo(16)
         }
     }
     
@@ -123,26 +118,39 @@ class DefaultBrowserCard: UIView {
     }
     
     @objc private func dismissCard() {
-        self.dismissClosure?()
         UserDefaults.standard.set(true, forKey: "DidDismissDefaultBrowserCard")
-        TelemetryWrapper.gleanRecordEvent(category: .action, method: .tap, object: .dismissDefaultBrowserCard)
-        LeanPlumClient.shared.track(event: .dismissDefaultBrowserCard)
         Analytics.shared.defaultBrowser(.close)
+        self.dismissClosure?()
     }
     
     @objc private func showSettings() {
         UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: [:])
-        TelemetryWrapper.gleanRecordEvent(category: .action, method: .tap, object: .goToSettingsDefaultBrowserCard)
-        LeanPlumClient.shared.track(event: .goToSettingsDefaultBrowserCard)
         Analytics.shared.defaultBrowser(.click)
     }
     
     func applyTheme() {
         background.backgroundColor = UIColor.theme.defaultBrowserCard.backgroundColor
-        title.textColor = UIColor.theme.defaultBrowserCard.textColor
-        descriptionText.textColor = UIColor.theme.defaultBrowserCard.textColor
-        closeButton.imageView?.tintColor = UIColor.theme.defaultBrowserCard.textColor
+        title.textColor = UIColor.theme.ecosia.highContrastText
+        descriptionText.textColor = UIColor.theme.ecosia.secondaryText
+        closeButton.imageView?.tintColor = UIColor.theme.ecosia.highContrastText
         backgroundColor = UIColor.theme.ecosia.primaryBackground
         settingsButton.backgroundColor = UIColor.theme.ecosia.primaryButton
+        applyShadow()
+    }
+
+    func applyShadow() {
+        if !ThemeManager.instance.current.isDark {
+            background.layer.shadowRadius = 3
+            background.layer.shadowOffset = .init(width: 0, height: 1)
+            background.layer.shadowColor = UIColor.black.cgColor
+            background.layer.shadowOpacity = 0.15
+        } else {
+            background.layer.shadowOpacity = 0
+        }
+    }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        applyTheme()
     }
 }

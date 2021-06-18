@@ -26,6 +26,7 @@ extension String {
         case howEcosiaWorks = "How Ecosia works"
         case invertColors = "Invert website colors"
         case keepUpToDate = "Keep up to date with the latest news from our projects and more"
+        case makeEcosiaYourDefault = "Make Ecosia your default"
         case moderate = "Moderate"
         case more = "More"
         case mySearches = "My searches"

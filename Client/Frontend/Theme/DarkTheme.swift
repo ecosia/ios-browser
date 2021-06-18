@@ -114,7 +114,7 @@ fileprivate class DarkGeneralColor: GeneralColor {
 }
 
 class DarkDefaultBrowserCardColor: DefaultBrowserCardColor {
-    override var backgroundColor: UIColor { return UIColor.Photon.Grey60 }
+    override var backgroundColor: UIColor { return UIColor.Photon.Grey70 }
     override var textColor: UIColor { return UIColor.white }
 }
 
