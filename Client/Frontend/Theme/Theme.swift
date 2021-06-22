@@ -191,7 +191,7 @@ class GeneralColor {
 }
 
 class DefaultBrowserCardColor {
-    var backgroundColor: UIColor { return UIColor.Photon.Grey30 }
+    var backgroundColor: UIColor { return UIColor.Photon.Grey10 }
     var textColor: UIColor { return UIColor.black }
 }
 

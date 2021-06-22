@@ -8,6 +8,7 @@ final class EcosiaNavigation: UINavigationController, Themeable {
 
     convenience init(delegate: EcosiaHomeDelegate?) {
         self.init(rootViewController: EcosiaHome(delegate: delegate))
+        modalPresentationCapturesStatusBarAppearance = true
     }
 
     override func viewDidLoad() {
@@ -22,8 +23,8 @@ final class EcosiaNavigation: UINavigationController, Themeable {
     func applyTheme() {
         viewControllers.forEach { ($0 as? Themeable)?.applyTheme() }
 
-        navigationBar.backgroundColor = UIColor.theme.ecosia.primaryBackground
-        navigationBar.tintColor = UIColor.theme.ecosia.secondaryBrand
+        navigationBar.backgroundColor = UIColor.theme.ecosia.modalBackground
+        navigationBar.tintColor = UIColor.theme.ecosia.primaryBrand
         navigationBar.titleTextAttributes = [
             NSAttributedString.Key.foregroundColor: UIColor.theme.ecosia.secondaryBrand
         ]
@@ -34,5 +35,13 @@ final class EcosiaNavigation: UINavigationController, Themeable {
 
     @objc private func displayThemeChanged(notification: Notification) {
         applyTheme()
+    }
+
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        if #available(iOS 13.0, *) {
+            return ThemeManager.instance.current.isDark ? .lightContent : .darkContent
+        } else {
+            return ThemeManager.instance.current.isDark ? .lightContent : .default
+        }
     }
 }

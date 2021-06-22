@@ -79,6 +79,14 @@ extension Analytics {
         home,
         menu,
         toolbar
+        
+        enum TopSite: String {
+            case
+            blog,
+            privacy,
+            financialReports = "financial_reports",
+            howEcosiaWorks = "how_ecosia_works"
+        }
     }
 
     enum Migration: String {

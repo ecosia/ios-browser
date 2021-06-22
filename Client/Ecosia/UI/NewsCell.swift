@@ -175,7 +175,7 @@ final class NewsCell: UICollectionViewCell, Themeable {
 final class NewsButtonCell: UICollectionReusableView {
     lazy var moreButton: UIButton = {
         let button = UIButton()
-        button.setTitleColor(UIColor.theme.ecosia.primaryButton, for: .normal)
+        button.setTitleColor(UIColor.theme.ecosia.primaryBrand, for: .normal)
         button.setTitleColor(UIColor.Photon.Grey50, for: .highlighted)
         button.titleLabel?.font = .preferredFont(forTextStyle: .body)
         return button
@@ -198,7 +198,7 @@ final class NewsButtonCell: UICollectionReusableView {
 
     override func prepareForReuse() {
         super.prepareForReuse()
-        moreButton.setTitleColor(UIColor.theme.ecosia.primaryButton, for: .normal)
+        moreButton.setTitleColor(UIColor.theme.ecosia.primaryBrand, for: .normal)
         moreButton.setTitleColor(UIColor.Photon.Grey50, for: .highlighted)
     }
 }

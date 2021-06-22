@@ -48,8 +48,7 @@ class TopSiteItemCell: UICollectionViewCell, Themeable {
         titleLabel.numberOfLines = 2
         titleLabel.allowsDefaultTighteningForTruncation = true
         titleLabel.lineBreakMode = .byTruncatingTail
-        titleLabel.adjustsFontSizeToFitWidth = true
-        titleLabel.minimumScaleFactor = 0.9
+        titleLabel.setContentHuggingPriority(.required, for: .vertical)
         return titleLabel
     }()
 
@@ -94,7 +93,8 @@ class TopSiteItemCell: UICollectionViewCell, Themeable {
             make.left.equalTo(contentView).offset(TopSiteCellUX.TitleOffset)
             make.right.equalTo(contentView).offset(-TopSiteCellUX.TitleOffset)
             make.top.equalTo(faviconBG.snp.bottom).offset(8)
-            make.bottom.lessThanOrEqualTo(contentView)
+            let maxHeight = titleLabel.font.pointSize * (CGFloat(titleLabel.numberOfLines) + 0.6) + 8
+            make.height.lessThanOrEqualTo(maxHeight)
         }
 
         imageView.snp.makeConstraints { make in
@@ -149,6 +149,10 @@ class TopSiteItemCell: UICollectionViewCell, Themeable {
         }
         let words = titleLabel.text?.components(separatedBy: .whitespacesAndNewlines).count ?? 0
         titleLabel.numberOfLines = min(max(words, 1), 2)
+        titleLabel.snp.updateConstraints { make in
+            let maxHeight = titleLabel.font.pointSize * (CGFloat(titleLabel.numberOfLines) + 0.6) + 8
+            make.height.lessThanOrEqualTo(maxHeight)
+        }
 
         // If its a pinned site add a bullet point to the front
         if let _ = site as? PinnedSite {

@@ -74,6 +74,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
         self.window = UIWindow(frame: UIScreen.main.bounds)
         self.window?.backgroundColor = UIColor.theme.browser.background
 
+        NotificationCenter.default.addObserver(self, selector: #selector(displayThemeChanged), name: .DisplayThemeChanged, object: nil)
+
         // If the 'Save logs to Files app on next launch' toggle
         // is turned on in the Settings app, copy over old logs.
         if DebugSettingsBundleOptions.saveLogsToDocuments {
@@ -604,6 +606,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
         }
     }
     */
+
+    @objc private func displayThemeChanged(notification: Notification) {
+        self.window?.backgroundColor = UIColor.theme.browser.background
+    }
 }
 
 // MARK: - Root View Controller Animations

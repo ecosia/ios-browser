@@ -96,7 +96,7 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
 
     func applyTheme() {
         collection.reloadData()
-        collection.backgroundColor = UIColor.theme.ecosia.primaryBackground
+        collection.backgroundColor = UIColor.theme.ecosia.modalBackground
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -135,7 +135,7 @@ private final class NewsSubHeader: UICollectionReusableView, Themeable {
     }
 
     func applyTheme() {
-        backgroundColor = UIColor.theme.ecosia.primaryBackground
+        backgroundColor = UIColor.theme.ecosia.modalBackground
         subtitle.textColor = UIColor.theme.ecosia.secondaryText
     }
 }

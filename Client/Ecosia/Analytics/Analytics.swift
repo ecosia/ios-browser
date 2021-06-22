@@ -146,4 +146,13 @@ final class Analytics {
             $0.setValue(seconds * 1000)
         }))
     }
+    
+    func open(topSite: Property.TopSite) {
+        tracker.track(SPStructured.build {
+            $0.setCategory(Category.browser.rawValue)
+            $0.setAction(Action.open.rawValue)
+            $0.setLabel("top_sites")
+            $0.setProperty(topSite.rawValue)
+        })
+    }
 }
