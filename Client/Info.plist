@@ -81,7 +81,7 @@
 		<true/>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>To take and upload a photo to a website</string>
+	<string>To take and upload a photo to a website.</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Firefox requires Face ID to access your saved logins.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
