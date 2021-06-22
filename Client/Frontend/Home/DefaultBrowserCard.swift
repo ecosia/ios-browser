@@ -14,6 +14,7 @@ class DefaultBrowserCard: UICollectionViewCell {
         title.numberOfLines = 0
         title.lineBreakMode = .byWordWrapping
         title.font = .preferredFont(forTextStyle: .title3)
+        title.setContentHuggingPriority(.required, for: .vertical)
         return title
     }()
     lazy var descriptionText: UILabel = {
@@ -65,6 +66,7 @@ class DefaultBrowserCard: UICollectionViewCell {
         background.addSubview(closeButton)
         
         labelView.axis = .vertical
+        labelView.alignment = .leading
         labelView.addArrangedSubview(title)
         labelView.addArrangedSubview(descriptionText)
         
