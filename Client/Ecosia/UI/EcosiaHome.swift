@@ -335,6 +335,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         appearance.configureWithOpaqueBackground()
         appearance.backgroundColor = UIColor.theme.ecosia.modalBackground
         appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.theme.ecosia.highContrastText]
+        appearance.titleTextAttributes = [.foregroundColor: UIColor.theme.ecosia.highContrastText]
 
         if showSeparator {
             appearance.shadowColor = nil
