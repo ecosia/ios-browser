@@ -171,5 +171,4 @@ workflows:
             branches:
               only: 
                 - /^.*main.*/
-                - /^.*xcode-12-5.*/
-                
+                                
