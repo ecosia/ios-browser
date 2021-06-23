@@ -723,7 +723,7 @@ class BrowserViewController: UIViewController {
         // Remake constraints even if we're already showing the home controller.
         // The home controller may change sizes if we tap the URL bar while on about:home.
         firefoxHomeViewController?.view.snp.remakeConstraints { make in
-            make.top.equalTo(self.urlBar.snp.bottom)
+            make.top.equalTo(self.urlBar.snp.top)
             make.left.right.equalTo(self.view)
             if self.homePanelIsInline {
                 make.bottom.equalTo(self.toolbar?.snp.top ?? self.view.snp.bottom)
@@ -749,7 +749,7 @@ class BrowserViewController: UIViewController {
     fileprivate func showFirefoxHome(inline: Bool) {
         homePanelIsInline = inline
         if self.firefoxHomeViewController == nil {
-            let firefoxHomeViewController = FirefoxHomeViewController(profile: profile)
+            let firefoxHomeViewController = FirefoxHomeViewController(profile: profile, delegate: self)
             firefoxHomeViewController.homePanelDelegate = self
             // Ecosia: hide logo in overlay mode
             firefoxHomeViewController.inOverlayMode = !inline
@@ -759,6 +759,7 @@ class BrowserViewController: UIViewController {
             addChild(firefoxHomeViewController)
             view.addSubview(firefoxHomeViewController.view)
             firefoxHomeViewController.didMove(toParent: self)
+            view.bringSubviewToFront(header)
         }
 
         firefoxHomeViewController?.applyTheme()
@@ -2619,5 +2620,23 @@ extension BrowserViewController {
 //        }
         
         return (UIApplication.shared.delegate as! AppDelegate).browserViewController
+    }
+}
+
+extension BrowserViewController: FirefoxHomeViewControllerDelegate {
+    func home(_ home: FirefoxHomeViewController, didScroll searchPos: CGFloat, offset: CGFloat) {
+
+        guard !urlBar.inOverlayMode == false else {
+            urlBar.alpha = 1
+            return
+        }
+
+        let dy = max(0, offset-searchPos)
+        let alpha = min(1.0, dy/8)
+
+        urlBar.alpha = alpha
+
+        print("offset: \(offset)")
+        print("search: \(searchPos)")
     }
 }
