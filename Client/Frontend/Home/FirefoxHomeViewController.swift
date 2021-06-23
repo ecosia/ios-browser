@@ -123,6 +123,8 @@ extension HomePanelContextMenu {
 
 protocol FirefoxHomeViewControllerDelegate: AnyObject {
     func home(_ home: FirefoxHomeViewController, didScroll contentOffset: CGFloat, offset: CGFloat)
+    func homeDidTapSearchButton(_ home: FirefoxHomeViewController)
+    func home(_ home: FirefoxHomeViewController, willBegin drag: CGPoint)
 }
 
 class FirefoxHomeViewController: UICollectionViewController, HomePanel {
@@ -132,6 +134,8 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
     fileprivate let pocketAPI = Pocket()
     fileprivate let flowLayout = UICollectionViewFlowLayout()
     fileprivate weak var searchbarCell: UICollectionViewCell?
+    fileprivate weak var topSitesCell: UICollectionViewCell?
+    fileprivate weak var libraryCell: UICollectionViewCell?
 
     fileprivate lazy var topSitesManager: ASHorizontalScrollCellManager = {
         let manager = ASHorizontalScrollCellManager()
@@ -235,7 +239,19 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
     var inOverlayMode = false {
         didSet {
             if isViewLoaded {
-//                collectionView.reloadSections([0, 1])
+                if inOverlayMode && !oldValue {
+//                    collectionView.reloadData()
+
+                    UIView.animate(withDuration: 0.1) {
+                        self.collectionView.contentOffset = .init(x: 0, y: self.searchbarCell?.frame.minY ?? 0)
+                    }
+
+                } else if oldValue && !inOverlayMode && !collectionView.isDragging {
+//                    collectionView.reloadData()
+                    UIView.animate(withDuration: 0.1) {
+                        self.collectionView.contentOffset = .zero
+                    }
+                }
             }
         }
     }
@@ -255,6 +271,7 @@ extension FirefoxHomeViewController {
         case search
         case libraryShortcuts
         case topSites
+        case emptySpace
 
         var title: String? {
             switch self {
@@ -265,7 +282,7 @@ extension FirefoxHomeViewController {
 
         var headerHeight: CGSize {
             switch self {
-            case .promo, .search:
+            case .promo, .search, .emptySpace:
                 return .zero
             case .treeCounter:
                 return CGSize(width: 50, height: 30)
@@ -283,6 +300,8 @@ extension FirefoxHomeViewController {
             case .treeCounter: return 130
             case .topSites: return 0 //calculated dynamically
             case .libraryShortcuts: return FirefoxHomeUX.LibraryShortcutsHeight
+            case .emptySpace:
+                return .nan // will be calculated outside of enum
             }
         }
 
@@ -313,6 +332,8 @@ extension FirefoxHomeViewController {
             case .treeCounter:
                 insets += FirefoxHomeUX.TopSitesInsets
                 return insets
+            case .emptySpace:
+                return 0
             }
         }
 
@@ -329,6 +350,7 @@ extension FirefoxHomeViewController {
             case .search: return "SearchbarCell"
             case .treeCounter: return "TreeCounterCell"
             case .libraryShortcuts: return  "LibraryShortcutsCell"
+            case .emptySpace: return "EmptyCell"
             }
         }
 
@@ -339,6 +361,7 @@ extension FirefoxHomeViewController {
             case .topSites: return ASHorizontalScrollCell.self
             case .treeCounter: return TreeCounterCell.self
             case .libraryShortcuts: return ASLibraryCell.self
+            case .emptySpace: return EmptyCell.self
             }
         }
 
@@ -386,12 +409,18 @@ extension FirefoxHomeViewController: UICollectionViewDelegateFlowLayout {
         case .libraryShortcuts:
             let width = min(FirefoxHomeUX.LibraryShortcutsMaxWidth, cellSize.width)
             return CGSize(width: width, height: FirefoxHomeUX.LibraryShortcutsHeight)
+        case .emptySpace:
+            let offset = libraryCell?.frame.minY ?? 0
+            let barHeight = searchbarCell?.frame.height ?? 0
+            let filledHeight = User.shared.topSites == false ? libraryCell?.frame.maxY : topSitesCell?.frame.maxY
+            let height = collectionView.frame.height - (filledHeight ?? 0) + offset - barHeight - 44
+            return .init(width: cellSize.width, height: max(0, height))
         }
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         switch Section(section) {
-        case .promo, .search:
+        case .promo, .search, .emptySpace:
             return .zero
         case .treeCounter:
             return Section(section).headerHeight
@@ -422,6 +451,12 @@ extension FirefoxHomeViewController: UICollectionViewDelegateFlowLayout {
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         guard let searchbarCell = searchbarCell else { return }
         delegate?.home(self, didScroll: searchbarCell.frame.minY, offset: scrollView.contentOffset.y)
+    }
+
+    override func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        let velocity = scrollView.panGestureRecognizer.velocity(in: scrollView.superview)
+        delegate?.home(self, willBegin: velocity)
+
     }
 
     fileprivate func showSiteWithURLHandler(_ url: URL) {
@@ -464,7 +499,7 @@ extension FirefoxHomeViewController {
             return showPromo ? 1 : 0
         case .topSites:
             return (topSitesManager.content.isEmpty || User.shared.topSites == false) ? 0 : 1
-        case .treeCounter, .search:
+        case .treeCounter, .search, .emptySpace:
             return 1
         case .libraryShortcuts:
             // disable the libary shortcuts on the ipad
@@ -485,15 +520,19 @@ extension FirefoxHomeViewController {
             }
             return cell
         case .topSites:
-            return configureTopSitesCell(cell, forIndexPath: indexPath)
+            let topSitesCell = configureTopSitesCell(cell, forIndexPath: indexPath)
+            self.topSitesCell = topSitesCell
+            return topSitesCell
         case .search:
             (cell as? SearchbarCell)?.delegate = self
             searchbarCell = cell
             return cell
-        case .treeCounter:
+        case .treeCounter, .emptySpace:
             return cell
         case .libraryShortcuts:
-            return configureLibraryShortcutsCell(cell, forIndexPath: indexPath)
+            let libraryCell = configureLibraryShortcutsCell(cell, forIndexPath: indexPath)
+            self.libraryCell = libraryCell
+            return libraryCell
         }
     }
 
@@ -1041,6 +1080,6 @@ class ASLibraryCell: UICollectionViewCell, Themeable {
 
 extension FirefoxHomeViewController: SearchbarCellDelegate {
     func searchbarCellPressed(_ cell: SearchbarCell) {
-        //TODO:
+        delegate?.homeDidTapSearchButton(self)
     }
 }

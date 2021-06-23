@@ -725,11 +725,12 @@ class BrowserViewController: UIViewController {
         firefoxHomeViewController?.view.snp.remakeConstraints { make in
             make.top.equalTo(self.urlBar.snp.top)
             make.left.right.equalTo(self.view)
-            if self.homePanelIsInline {
-                make.bottom.equalTo(self.toolbar?.snp.top ?? self.view.snp.bottom)
-            } else {
+//            if self.homePanelIsInline {
+//                make.bottom.equalTo(self.toolbar?.snp.top ?? self.view.snp.bottom)
+//            } else {
                 make.bottom.equalTo(self.view.snp.bottom)
-            }
+//            }
+//            make.height.equalTo(600)
         }
 
         alertStackView.snp.remakeConstraints { make in
@@ -760,6 +761,7 @@ class BrowserViewController: UIViewController {
             view.addSubview(firefoxHomeViewController.view)
             firefoxHomeViewController.didMove(toParent: self)
             view.bringSubviewToFront(header)
+            view.bringSubviewToFront(footer)
         }
 
         firefoxHomeViewController?.applyTheme()
@@ -2626,17 +2628,25 @@ extension BrowserViewController {
 extension BrowserViewController: FirefoxHomeViewControllerDelegate {
     func home(_ home: FirefoxHomeViewController, didScroll searchPos: CGFloat, offset: CGFloat) {
 
-        guard !urlBar.inOverlayMode == false else {
-            urlBar.alpha = 1
+        guard !urlBar.inOverlayMode else {
+            header.alpha = 1
             return
         }
 
-        let dy = max(0, offset-searchPos)
-        let alpha = min(1.0, dy/8)
+        let dy = max(0, offset + 10 - searchPos)
+        let alpha = min(1.0, dy/20)
 
-        urlBar.alpha = alpha
+        header.alpha = alpha
 
         print("offset: \(offset)")
         print("search: \(searchPos)")
+    }
+
+    func homeDidTapSearchButton(_ home: FirefoxHomeViewController) {
+        focusLocationTextField(forTab: tabManager.selectedTab)
+    }
+
+    func home(_ home: FirefoxHomeViewController, willBegin drag: CGPoint) {
+        urlBar.leaveOverlayMode(didCancel: true)
     }
 }
