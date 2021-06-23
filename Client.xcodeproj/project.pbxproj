@@ -438,6 +438,7 @@
 		CAA2F3F3257A79C700EBAD38 /* FilterController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA2F3F2257A79C700EBAD38 /* FilterController.swift */; };
 		CAA3B7E62497DCB60094E3C1 /* LoginDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA3B7E52497DCB60094E3C1 /* LoginDataSource.swift */; };
 		CAAB66B9268327000024105C /* SearchbarCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAAB66B8268326FF0024105C /* SearchbarCell.swift */; };
+		CAAB66BB268369C20024105C /* EmptyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAAB66BA268369C20024105C /* EmptyCell.swift */; };
 		CAAD53542541B6A1002501A5 /* EcosiaHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAAD53532541B6A1002501A5 /* EcosiaHistory.swift */; };
 		CAAED1EF25810C7B0048199C /* NewsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAAED1ED25810C7A0048199C /* NewsController.swift */; };
 		CAAED1F025810C7B0048199C /* NewsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAAED1EE25810C7A0048199C /* NewsCell.swift */; };
@@ -3185,6 +3186,7 @@
 		CAA2F3F2257A79C700EBAD38 /* FilterController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterController.swift; sourceTree = "<group>"; };
 		CAA3B7E52497DCB60094E3C1 /* LoginDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginDataSource.swift; sourceTree = "<group>"; };
 		CAAB66B8268326FF0024105C /* SearchbarCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchbarCell.swift; sourceTree = "<group>"; };
+		CAAB66BA268369C20024105C /* EmptyCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyCell.swift; sourceTree = "<group>"; };
 		CAAD53532541B6A1002501A5 /* EcosiaHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaHistory.swift; sourceTree = "<group>"; };
 		CAAED1ED25810C7A0048199C /* NewsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewsController.swift; sourceTree = "<group>"; };
 		CAAED1EE25810C7A0048199C /* NewsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewsCell.swift; sourceTree = "<group>"; };
@@ -5044,6 +5046,7 @@
 			isa = PBXGroup;
 			children = (
 				CAAB66B8268326FF0024105C /* SearchbarCell.swift */,
+				CAAB66BA268369C20024105C /* EmptyCell.swift */,
 			);
 			path = NTP;
 			sourceTree = "<group>";
@@ -7772,6 +7775,7 @@
 				E68E7ADA1CAC207400FDCA76 /* ChangePasscodeViewController.swift in Sources */,
 				E640E85E1C73A45A00C5F072 /* PasscodeEntryViewController.swift in Sources */,
 				D0625C98208E87F10081F3B2 /* DownloadQueue.swift in Sources */,
+				CAAB66BB268369C20024105C /* EmptyCell.swift in Sources */,
 				8D8251811F4DE67F00780643 /* AdvancedAccountSettingViewController.swift in Sources */,
 				E633E2DA1C21EAF8001FFF6C /* LoginDetailViewController.swift in Sources */,
 				59A68B280D62462B85CF57A4 /* HistoryPanel.swift in Sources */,
