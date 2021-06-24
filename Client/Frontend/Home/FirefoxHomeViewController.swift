@@ -197,6 +197,13 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
         reloadAll()
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if inOverlayMode {
+            self.collectionView.contentOffset = .init(x: 0, y: self.searchbarCell?.frame.minY ?? 0)
+        }
+    }
+
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
     }
@@ -242,15 +249,16 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
                 if inOverlayMode && !oldValue {
 //                    collectionView.reloadData()
 
-                    UIView.animate(withDuration: 0.1) {
+                    UIView.animate(withDuration: 0.3, delay: 0, options: [.beginFromCurrentState], animations: {
                         self.collectionView.contentOffset = .init(x: 0, y: self.searchbarCell?.frame.minY ?? 0)
-                    }
+                    })
+
 
                 } else if oldValue && !inOverlayMode && !collectionView.isDragging {
 //                    collectionView.reloadData()
-                    UIView.animate(withDuration: 0.1) {
+                    UIView.animate(withDuration: 0.3, delay: 0, options: [.beginFromCurrentState], animations: {
                         self.collectionView.contentOffset = .zero
-                    }
+                    })
                 }
             }
         }
