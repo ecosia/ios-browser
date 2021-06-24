@@ -761,6 +761,7 @@ class BrowserViewController: UIViewController {
             view.addSubview(firefoxHomeViewController.view)
             firefoxHomeViewController.didMove(toParent: self)
             view.bringSubviewToFront(header)
+            header.alpha = urlBar.inOverlayMode ? 1.0 : 0.0
             view.bringSubviewToFront(footer)
         }
 
@@ -782,6 +783,8 @@ class BrowserViewController: UIViewController {
     }
 
     fileprivate func hideFirefoxHome() {
+        header.alpha = 1
+
         guard let firefoxHomeViewController = self.firefoxHomeViewController else {
             return
         }
@@ -2633,8 +2636,8 @@ extension BrowserViewController: FirefoxHomeViewControllerDelegate {
             return
         }
 
-        let dy = max(0, offset + 10 - searchPos)
-        let alpha = min(1.0, dy/20)
+        let dy = max(0, offset + 4 - searchPos)
+        let alpha = min(1.0, dy/4)
 
         header.alpha = alpha
 
@@ -2643,7 +2646,7 @@ extension BrowserViewController: FirefoxHomeViewControllerDelegate {
     }
 
     func homeDidTapSearchButton(_ home: FirefoxHomeViewController) {
-        focusLocationTextField(forTab: tabManager.selectedTab)
+        urlBar.tabLocationViewDidTapLocation(self.urlBar.locationView)
     }
 
     func home(_ home: FirefoxHomeViewController, willBegin drag: CGPoint) {
