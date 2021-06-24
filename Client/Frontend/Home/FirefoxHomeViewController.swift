@@ -421,7 +421,8 @@ extension FirefoxHomeViewController: UICollectionViewDelegateFlowLayout {
             let offset = libraryCell?.frame.minY ?? 0
             let barHeight = searchbarCell?.frame.height ?? 0
             let filledHeight = User.shared.topSites == false ? libraryCell?.frame.maxY : topSitesCell?.frame.maxY
-            let height = collectionView.frame.height - (filledHeight ?? 0) + offset - barHeight - 44
+            let toolbarOffset: CGFloat = (UIDevice.current.userInterfaceIdiom == .phone && UIDevice.current.orientation.isPortrait) ? 44 : 0
+            let height = collectionView.frame.height - (filledHeight ?? 0) + offset - barHeight - toolbarOffset
             return .init(width: cellSize.width, height: max(0, height))
         }
     }
