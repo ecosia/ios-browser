@@ -2631,7 +2631,8 @@ extension BrowserViewController {
 extension BrowserViewController: FirefoxHomeViewControllerDelegate {
     func home(_ home: FirefoxHomeViewController, didScroll searchPos: CGFloat, offset: CGFloat) {
 
-        guard !urlBar.inOverlayMode else {
+        guard !urlBar.inOverlayMode,
+              (urlBar.currentURL.flatMap({ InternalURL($0)?.isAboutHomeURL }) ?? false || urlBar.currentURL == nil) else {
             header.alpha = 1
             return
         }
