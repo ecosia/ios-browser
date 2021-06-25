@@ -9,7 +9,6 @@ final class TreeCounterCell: UICollectionViewCell, Themeable {
 
     private let treeCounter = TreeCounter()
     private weak var descriptionLabel: UILabel!
-    private weak var logo: UIImageView!
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -23,13 +22,6 @@ final class TreeCounterCell: UICollectionViewCell, Themeable {
     private func setup() {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
-
-        let logo = UIImageView(image: UIImage(themed: "ecosiaLogo"))
-        logo.translatesAutoresizingMaskIntoConstraints = false
-        logo.clipsToBounds = true
-        logo.contentMode = .scaleAspectFit
-        contentView.addSubview(logo)
-        self.logo = logo
 
         let counter = UILabel()
         counter.translatesAutoresizingMaskIntoConstraints = false
@@ -51,15 +43,7 @@ final class TreeCounterCell: UICollectionViewCell, Themeable {
         contentView.addSubview(descriptionLabel)
         self.descriptionLabel = descriptionLabel
 
-        logo.bottomAnchor.constraint(equalTo: counter.topAnchor, constant: -10).isActive = true
-        logo.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
-        logo.heightAnchor.constraint(equalTo: logo.widthAnchor, multiplier: 0.71).isActive = true
-        logo.widthAnchor.constraint(lessThanOrEqualToConstant: 95).isActive = true
-        logo.widthAnchor.constraint(lessThanOrEqualTo: contentView.widthAnchor, multiplier: 0.33).isActive = true
-        let logoWidth = logo.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.33)
-        logoWidth.priority = .defaultHigh
-        logoWidth.isActive = true
-
+        counter.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10).isActive = true
         counter.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
 
         descriptionLabel.topAnchor.constraint(equalTo: counter.bottomAnchor, constant: 2).isActive = true
@@ -82,7 +66,6 @@ final class TreeCounterCell: UICollectionViewCell, Themeable {
 
     func applyTheme() {
         descriptionLabel?.textColor = UIColor.theme.ecosia.highContrastText
-        logo.image = UIImage(themed: "ecosiaLogo")
     }
 
     override func prepareForReuse() {
