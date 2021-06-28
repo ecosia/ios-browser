@@ -69,7 +69,7 @@ fileprivate class DarkTopTabsColor: TopTabsColor {
 }
 
 fileprivate class DarkTextFieldColor: TextFieldColor {
-    override var background: UIColor { return UIColor.Photon.Grey60 }
+    override var background: UIColor { return UIColor.Photon.Grey80 }
     override var backgroundInOverlay: UIColor { return self.background }
 
     override var textAndTint: UIColor { return defaultTextAndTint }
