@@ -7,7 +7,6 @@ import UIKit
 class EmptyCell: UICollectionViewCell, Themeable {
     func applyTheme() {
         contentView.backgroundColor = UIColor.theme.ecosia.primaryBackground
-        contentView.backgroundColor = .systemRed
     }
 
     override func prepareForReuse() {
