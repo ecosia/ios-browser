@@ -94,7 +94,7 @@ class TabLocationView: UIView {
 
     lazy var placeholder: NSAttributedString = {
         let placeholderText = String.localized(.searchAndPlant)
-        return NSAttributedString(string: placeholderText, attributes: [NSAttributedString.Key.foregroundColor: UIColor.Photon.Grey50])
+        return NSAttributedString(string: placeholderText, attributes: [.foregroundColor: UIColor.theme.ecosia.textfieldPlaceholder])
     }()
 
     lazy var urlTextField: UITextField = {

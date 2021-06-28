@@ -200,7 +200,7 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if inOverlayMode {
-            self.collectionView.contentOffset = .init(x: 0, y: self.searchbarCell?.frame.minY ?? 0)
+            self.collectionView.contentOffset = .init(x: 0, y: (self.libraryCell?.frame.minY ?? 0) - 56)
         }
     }
 
@@ -291,10 +291,8 @@ extension FirefoxHomeViewController {
 
         var headerHeight: CGSize {
             switch self {
-            case .promo, .emptySpace, .treeCounter:
+            case .promo, .emptySpace, .treeCounter, .search:
                 return .zero
-            case .search:
-                return CGSize(width: 50, height: 16)
             case .logo:
                 return CGSize(width: 50, height: 30)
             case .topSites:
@@ -308,8 +306,9 @@ extension FirefoxHomeViewController {
             switch self {
             case .promo: return 230
             case .logo: return 130
-            case .search: return UIFontDescriptor.preferredFontDescriptor(withTextStyle: .body).pointSize + 20 + 16
-            case .treeCounter: return 70 //TODO: make dynamic
+            case .search: return UIFontDescriptor.preferredFontDescriptor(withTextStyle: .body).pointSize + 25 + 16
+            case .treeCounter:
+                return 30 + UIFontDescriptor.preferredFontDescriptor(withTextStyle: .subheadline).pointSize + 2 + 16 //TODO: make dynamic
             case .topSites: return 0 //calculated dynamically
             case .libraryShortcuts: return FirefoxHomeUX.LibraryShortcutsHeight
             case .emptySpace:
@@ -424,10 +423,10 @@ extension FirefoxHomeViewController: UICollectionViewDelegateFlowLayout {
             let width = min(FirefoxHomeUX.LibraryShortcutsMaxWidth, cellSize.width)
             return CGSize(width: width, height: FirefoxHomeUX.LibraryShortcutsHeight)
         case .emptySpace:
-            let offset = libraryCell?.frame.minY ?? 0
-            let barHeight = searchbarCell?.frame.height ?? 0
+            let offset = (libraryCell?.frame.minY ?? 0) + Section.libraryShortcuts.headerHeight.height
+            let barHeight: CGFloat = 56
             let filledHeight = User.shared.topSites == false ? libraryCell?.frame.maxY : topSitesCell?.frame.maxY
-            let toolbarOffset: CGFloat = (UIDevice.current.userInterfaceIdiom == .phone && UIDevice.current.orientation.isPortrait) ? 44 : 0
+            let toolbarOffset: CGFloat = (UIDevice.current.userInterfaceIdiom == .phone && UIDevice.current.orientation.isPortrait) ? 46 : 0
             let height = collectionView.frame.height - (filledHeight ?? 0) + offset - barHeight - toolbarOffset
             return .init(width: cellSize.width, height: max(0, height))
         }

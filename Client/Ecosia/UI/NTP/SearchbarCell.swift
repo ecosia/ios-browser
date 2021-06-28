@@ -27,7 +27,6 @@ class SearchbarCell: UICollectionViewCell, Themeable {
         let search = SearchButton(type: .custom)
         search.translatesAutoresizingMaskIntoConstraints = false
         search.layer.cornerRadius = 10
-        search.layer.borderWidth = 1
         search.titleEdgeInsets.left = 40
         search.titleEdgeInsets.right = 8
         search.setTitle(.localized(.searchAndPlant), for: .normal)
@@ -55,9 +54,8 @@ class SearchbarCell: UICollectionViewCell, Themeable {
     }
 
     func applyTheme() {
-        search.backgroundColor = UIColor.theme.ecosia.barBackground
-        search.layer.borderColor = UIColor.theme.ecosia.highlightedBorder.cgColor
-        search.setTitleColor(UIColor.theme.ecosia.highContrastText, for: .normal)
+        search.backgroundColor = UIColor.theme.textField.backgroundInOverlay
+        search.setTitleColor(UIColor.theme.ecosia.textfieldPlaceholder, for: .normal)
     }
 
     override func prepareForReuse() {
