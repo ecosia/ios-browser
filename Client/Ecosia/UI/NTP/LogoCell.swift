@@ -29,7 +29,7 @@ final class LogoCell: UICollectionViewCell, Themeable {
         contentView.addSubview(logo)
         self.logo = logo
 
-        logo.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10).isActive = true
+        logo.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16).isActive = true
         logo.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
         logo.heightAnchor.constraint(equalTo: logo.widthAnchor, multiplier: 0.71).isActive = true
         logo.widthAnchor.constraint(lessThanOrEqualToConstant: 95).isActive = true

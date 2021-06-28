@@ -42,7 +42,7 @@ final class TreeCounterCell: UICollectionViewCell, Themeable {
         contentView.addSubview(descriptionLabel)
         self.descriptionLabel = descriptionLabel
 
-        counter.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10).isActive = true
+        counter.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16).isActive = true
         counter.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
 
         descriptionLabel.topAnchor.constraint(equalTo: counter.bottomAnchor, constant: 2).isActive = true
@@ -51,9 +51,6 @@ final class TreeCounterCell: UICollectionViewCell, Themeable {
         descriptionLabel.rightAnchor.constraint(lessThanOrEqualTo: contentView.rightAnchor, constant: -20).isActive = true
 
         descriptionLabel.bottomAnchor.constraint(greaterThanOrEqualTo: contentView.bottomAnchor).isActive = true
-        let descriptionBottom = descriptionLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
-        descriptionBottom.priority = .defaultLow
-        descriptionBottom.isActive = true
 
         treeCounter.subscribe(self) { count in
             UIView.transition(with: counter, duration: 0.65, options: .transitionCrossDissolve, animations: {

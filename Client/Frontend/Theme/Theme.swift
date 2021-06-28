@@ -25,7 +25,7 @@ enum BuiltinThemeName: String {
 // Convenience reference to these normal mode colors which are used in a few color classes.
 fileprivate let defaultBackground = UIColor.Photon.Grey10
 fileprivate let defaultSeparator = UIColor.Photon.Grey30
-fileprivate let defaultTextAndTint = UIColor.Photon.Grey80 
+fileprivate let defaultTextAndTint = UIColor.Photon.Grey90 
 
 class TableViewColor {
     var rowBackground: UIColor { return UIColor.Photon.White100 }
@@ -136,8 +136,8 @@ class TopTabsColor {
 }
 
 class TextFieldColor {
-    var background: UIColor { return UIColor.Photon.Grey25 }
-    var backgroundInOverlay: UIColor { return UIColor.Photon.Grey25 }
+    var background: UIColor { return UIColor.Photon.Grey20 }
+    var backgroundInOverlay: UIColor { return UIColor.Photon.Grey20 }
     var textAndTint: UIColor { return defaultTextAndTint }
     var separator: UIColor { return .white }
 }
