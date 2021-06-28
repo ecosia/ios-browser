@@ -250,7 +250,7 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
 //                    collectionView.reloadData()
 
                     UIView.animate(withDuration: 0.3, delay: 0, options: [.beginFromCurrentState], animations: {
-                        self.collectionView.contentOffset = .init(x: 0, y: self.searchbarCell?.frame.minY ?? 0)
+                        self.collectionView.contentOffset = .init(x: 0, y: (self.libraryCell?.frame.minY ?? 0) - 56)
                     })
 
 
@@ -276,8 +276,8 @@ extension FirefoxHomeViewController {
     enum Section: Int, CaseIterable {
         case promo
         case logo
-        case treeCounter
         case search
+        case treeCounter
         case libraryShortcuts
         case topSites
         case emptySpace
