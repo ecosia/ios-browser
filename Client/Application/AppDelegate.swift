@@ -526,13 +526,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
 
     func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
         let bvc = BrowserViewController.foregroundBVC()
-        if #available(iOS 12.0, *) {
-            if userActivity.activityType == SiriShortcuts.activityType.openURL.rawValue {
-                bvc.openBlankNewTab(focusLocationField: false)
-                return true
-            }
-        }
-
+        
         // If the `NSUserActivity` has a `webpageURL`, it is either a deep link or an old history item
         // reached via a "Spotlight" search before we began indexing visited pages via CoreSpotlight.
         if let url = userActivity.webpageURL {

@@ -92,7 +92,6 @@
 	<string>This lets you save photos.</string>
 	<key>NSUserActivityTypes</key>
 	<array>
-		<string>QuickLinkSelectionIntent</string>
 		<string>org.mozilla.ios.firefox.browsing</string>
 	</array>
 	<key>PocketEnvironmentAPIKey</key>

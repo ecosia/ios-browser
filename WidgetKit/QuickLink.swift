@@ -72,20 +72,4 @@ enum QuickLink: Int {
         }
     }
 
-    /* Ecosia: deactivate Siri Intents
-    static func from(_ configuration: QuickLinkSelectionIntent) -> Self {
-        switch configuration.selectedLink {
-        case .search:
-            return .search
-        case .privateSearch:
-            return .privateSearch
-        case .closePrivateTabs:
-            return .closePrivateTabs
-        case .copiedLink:
-            return .copiedLink
-        default:
-            return .search
-        }
-    }
-    */
 }

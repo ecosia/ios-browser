@@ -1086,27 +1086,6 @@ class HomeSetting: Setting {
     }
 }
 
-@available(iOS 12.0, *)
-class SiriPageSetting: Setting {
-    let profile: Profile
-
-    override var accessoryView: UIImageView? { return disclosureIndicator }
-
-    override var accessibilityIdentifier: String? { return "SiriSettings" }
-
-    init(settings: SettingsTableViewController) {
-        self.profile = settings.profile
-
-        super.init(title: NSAttributedString(string: Strings.SettingsSiriSectionName, attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText]))
-    }
-
-    override func onClick(_ navigationController: UINavigationController?) {
-        let viewController = SiriSettingsViewController(prefs: profile.prefs)
-        viewController.profile = profile
-        navigationController?.pushViewController(viewController, animated: true)
-    }
-}
-
 @available(iOS 14.0, *)
 class DefaultBrowserSetting: Setting {
     let profile: Profile

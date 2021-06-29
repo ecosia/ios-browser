@@ -53,12 +53,6 @@ class AppSettingsTableViewController: SettingsTableViewController {
             }
            ]
 
-        /* Ecosia: remove Siri settings
-        if #available(iOS 12.0, *) {
-            generalSettings.append(SiriPageSetting(settings: self))
-        }
-        */
-
         /* Ecosia: deactivate china settings
         let accountChinaSyncSetting: [Setting]
         if !AppInfo.isChinaEdition {
