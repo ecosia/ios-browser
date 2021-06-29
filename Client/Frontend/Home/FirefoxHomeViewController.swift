@@ -274,6 +274,7 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
 // MARK: -  Section management
 extension FirefoxHomeViewController {
     enum Section: Int, CaseIterable {
+        case personalCounter
         case promo
         case logo
         case search
@@ -291,19 +292,20 @@ extension FirefoxHomeViewController {
 
         var headerHeight: CGSize {
             switch self {
-            case .promo, .emptySpace, .treeCounter, .search:
-                return .zero
             case .logo:
                 return CGSize(width: 50, height: 30)
             case .topSites:
                 return CGSize(width: 50, height: 54)
             case .libraryShortcuts:
                 return CGSize(width: 50, height: 10)
+            default:
+                return .zero
             }
         }
 
         func cellHeight(_ traits: UITraitCollection, width: CGFloat) -> CGFloat {
             switch self {
+            case .personalCounter: return UIFontDescriptor.preferredFontDescriptor(withTextStyle: .body).pointSize + 30
             case .promo: return 230
             case .logo: return 130
             case .search: return UIFontDescriptor.preferredFontDescriptor(withTextStyle: .body).pointSize + 25 + 16
@@ -329,7 +331,7 @@ extension FirefoxHomeViewController {
             var insets = FirefoxHomeUX.sectionInsetsForSizeClass[currentTraits.horizontalSizeClass]
 
             switch self {
-            case .libraryShortcuts, .topSites, .promo, .search:
+            case .libraryShortcuts, .topSites, .promo, .search, .personalCounter:
                 let window = UIApplication.shared.keyWindow
                 let safeAreaInsets = window?.safeAreaInsets.left ?? 0
                 insets += FirefoxHomeHeaderViewUX.Insets + safeAreaInsets
@@ -355,19 +357,12 @@ extension FirefoxHomeViewController {
         }
 
         var cellIdentifier: String {
-            switch self {
-            case .promo: return "DefaultBrowserCard"
-            case .logo: return "LogoCell"
-            case .topSites: return "TopSiteCell"
-            case .search: return "SearchbarCell"
-            case .treeCounter: return "TreeCounterCell"
-            case .libraryShortcuts: return  "LibraryShortcutsCell"
-            case .emptySpace: return "EmptyCell"
-            }
+            return "\(cellType)"
         }
 
         var cellType: UICollectionViewCell.Type {
             switch self {
+            case .personalCounter: return PersonalCounterCell.self
             case .promo: return DefaultBrowserCard.self
             case .logo: return LogoCell.self
             case .search: return SearchbarCell.self
@@ -412,13 +407,13 @@ extension FirefoxHomeViewController: UICollectionViewDelegateFlowLayout {
         let cellSize = Section(indexPath.section).cellSize(for: self.traitCollection, frameWidth: self.view.frame.width)
 
         switch Section(indexPath.section) {
+        case .treeCounter, .promo, .search, .logo, .personalCounter:
+            return cellSize
         case .topSites:
             // Create a temporary cell so we can calculate the height.
             let layout = topSiteCell.collectionView.collectionViewLayout as! HorizontalFlowLayout
             let estimatedLayout = layout.calculateLayout(for: CGSize(width: cellSize.width, height: 0))
             return CGSize(width: cellSize.width, height: estimatedLayout.size.height)
-        case .treeCounter, .promo, .search, .logo:
-            return cellSize
         case .libraryShortcuts:
             let width = min(FirefoxHomeUX.LibraryShortcutsMaxWidth, cellSize.width)
             return CGSize(width: width, height: FirefoxHomeUX.LibraryShortcutsHeight)
@@ -434,7 +429,7 @@ extension FirefoxHomeViewController: UICollectionViewDelegateFlowLayout {
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         switch Section(section) {
-        case .promo, .emptySpace, .logo:
+        case .promo, .emptySpace, .logo, .personalCounter:
             return .zero
         case .treeCounter, .search:
             return Section(section).headerHeight
@@ -509,6 +504,8 @@ extension FirefoxHomeViewController {
             numItems = numItems - 1
         }
         switch Section(section) {
+        case .personalCounter:
+            return 1
         case .promo:
             return showPromo ? 1 : 0
         case .topSites:
@@ -541,7 +538,7 @@ extension FirefoxHomeViewController {
             (cell as? SearchbarCell)?.delegate = self
             searchbarCell = cell
             return cell
-        case .treeCounter, .emptySpace, .logo:
+        case .treeCounter, .emptySpace, .logo, .personalCounter:
             return cell
         case .libraryShortcuts:
             let libraryCell = configureLibraryShortcutsCell(cell, forIndexPath: indexPath)
