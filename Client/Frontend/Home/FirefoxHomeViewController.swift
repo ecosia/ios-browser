@@ -125,6 +125,7 @@ protocol FirefoxHomeViewControllerDelegate: AnyObject {
     func home(_ home: FirefoxHomeViewController, didScroll contentOffset: CGFloat, offset: CGFloat)
     func homeDidTapSearchButton(_ home: FirefoxHomeViewController)
     func home(_ home: FirefoxHomeViewController, willBegin drag: CGPoint)
+    func homeDidPressPersonalCounter(_ home: FirefoxHomeViewController)
 }
 
 class FirefoxHomeViewController: UICollectionViewController, HomePanel {
@@ -134,8 +135,10 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
     fileprivate let pocketAPI = Pocket()
     fileprivate let flowLayout = UICollectionViewFlowLayout()
     fileprivate weak var searchbarCell: UICollectionViewCell?
-    fileprivate weak var topSitesCell: UICollectionViewCell?
     fileprivate weak var libraryCell: UICollectionViewCell?
+    fileprivate weak var topSitesCell: UICollectionViewCell? {
+        didSet { collectionView.collectionViewLayout.invalidateLayout() }
+    }
 
     fileprivate lazy var topSitesManager: ASHorizontalScrollCellManager = {
         let manager = ASHorizontalScrollCellManager()
@@ -199,13 +202,11 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        if inOverlayMode {
-            self.collectionView.contentOffset = .init(x: 0, y: (self.libraryCell?.frame.minY ?? 0) - 56)
+        if inOverlayMode, let cell = libraryCell {
+            collectionView.contentOffset = .init(x: 0, y: cell.frame.minY - 56)
+        } else {
+            collectionView.collectionViewLayout.invalidateLayout()
         }
-    }
-
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -274,8 +275,8 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
 // MARK: -  Section management
 extension FirefoxHomeViewController {
     enum Section: Int, CaseIterable {
-        case personalCounter
         case promo
+        case personalCounter
         case logo
         case search
         case treeCounter
@@ -305,9 +306,9 @@ extension FirefoxHomeViewController {
 
         func cellHeight(_ traits: UITraitCollection, width: CGFloat) -> CGFloat {
             switch self {
-            case .personalCounter: return UIFontDescriptor.preferredFontDescriptor(withTextStyle: .body).pointSize + 30
+            case .personalCounter: return UIFontDescriptor.preferredFontDescriptor(withTextStyle: .subheadline).pointSize + 28 + 32
             case .promo: return 230
-            case .logo: return 130
+            case .logo: return 100
             case .search: return UIFontDescriptor.preferredFontDescriptor(withTextStyle: .body).pointSize + 25 + 16
             case .treeCounter:
                 return 30 + UIFontDescriptor.preferredFontDescriptor(withTextStyle: .subheadline).pointSize + 2 + 16 //TODO: make dynamic
@@ -401,6 +402,14 @@ extension FirefoxHomeViewController: UICollectionViewDelegateFlowLayout {
 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         self.longPressRecognizer.isEnabled = false
+
+        switch Section(rawValue: indexPath.section) {
+        case .personalCounter:
+            delegate?.homeDidPressPersonalCounter(self)
+            collectionView.deselectItem(at: indexPath, animated: true)
+        default:
+            break
+        }
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
