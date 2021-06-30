@@ -154,7 +154,7 @@ class URLBarView: UIView {
 
     var appMenuButton = ToolbarButton()
     var libraryButton = ToolbarButton()
-    var addNewTabButton = ToolbarButton()
+    var addNewTabButton = AddNewTabButton(style: .plain)
 
     var forwardButton = ToolbarButton()
     var multiStateButton = ToolbarButton()
@@ -225,7 +225,6 @@ class URLBarView: UIView {
          libraryButton, appMenuButton, addNewTabButton, forwardButton, backButton, multiStateButton, ecosiaButton, locationContainer].forEach {
             addSubview($0)
         }
-
         privateModeBadge.add(toParent: self)
         appMenuBadge.add(toParent: self)
         warningMenuBadge.add(toParent: self)
@@ -371,6 +370,9 @@ class URLBarView: UIView {
                 make.size.equalTo(URLBarViewUX.ButtonHeight).priority(.high)
             }
         }
+
+        let hideButton = (inOverlayMode || !showMultiStateButton) && !toolbarIsShowing
+        multiStateButton.alpha = hideButton ? 0 : 1
     }
 
     @objc func showQRScanner() {
@@ -540,7 +542,6 @@ class URLBarView: UIView {
         forwardButton.isHidden = !toolbarIsShowing
         backButton.isHidden = !toolbarIsShowing
         tabsButton.isHidden = !toolbarIsShowing || topTabsIsShowing
-        multiStateButton.isHidden = false
         ecosiaButton.isHidden = !toolbarIsShowing
     }
 
@@ -588,7 +589,6 @@ class URLBarView: UIView {
         forwardButton.isHidden = !toolbarIsShowing || inOverlayMode
         backButton.isHidden = !toolbarIsShowing || inOverlayMode
         tabsButton.isHidden = !toolbarIsShowing || inOverlayMode || topTabsIsShowing
-        multiStateButton.isHidden = inOverlayMode
         ecosiaButton.isHidden = !toolbarIsShowing || inOverlayMode
 
 

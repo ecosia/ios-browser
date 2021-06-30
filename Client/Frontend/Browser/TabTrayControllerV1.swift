@@ -1111,7 +1111,7 @@ class TabCell: UICollectionViewCell {
         title.contentView.addSubview(self.favicon)
 
         title.snp.makeConstraints { (make) in
-            make.top.left.right.equalTo(backgroundHolder)
+            make.top.left.right.equalTo(backgroundHolder).priority(.veryHigh)
             make.height.equalTo(TabTrayControllerUX.TextBoxHeight)
         }
 
