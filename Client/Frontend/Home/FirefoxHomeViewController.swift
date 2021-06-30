@@ -25,6 +25,10 @@ struct FirefoxHomeUX {
     static let TopSitesInsets: CGFloat = 6
     static let LibraryShortcutsHeight: CGFloat = 100
     static let LibraryShortcutsMaxWidth: CGFloat = 350
+    static let SearchBarHeight: CGFloat = 56
+    static var ToolbarHeight: CGFloat {
+        (UIDevice.current.userInterfaceIdiom == .phone && UIDevice.current.orientation.isPortrait) ? 46 : 0
+    }
 }
 /*
  Size classes are the way Apple requires us to specify our UI.
@@ -203,7 +207,7 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if inOverlayMode, let cell = libraryCell {
-            collectionView.contentOffset = .init(x: 0, y: cell.frame.minY - 56)
+            collectionView.contentOffset = .init(x: 0, y: cell.frame.minY - FirefoxHomeUX.SearchBarHeight)
         } else {
             collectionView.collectionViewLayout.invalidateLayout()
         }
@@ -246,21 +250,15 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
 
     var inOverlayMode = false {
         didSet {
-            if isViewLoaded {
-                if inOverlayMode && !oldValue {
-//                    collectionView.reloadData()
-
-                    UIView.animate(withDuration: 0.3, delay: 0, options: [.beginFromCurrentState], animations: {
-                        self.collectionView.contentOffset = .init(x: 0, y: (self.libraryCell?.frame.minY ?? 0) - 56)
-                    })
-
-
-                } else if oldValue && !inOverlayMode && !collectionView.isDragging {
-//                    collectionView.reloadData()
-                    UIView.animate(withDuration: 0.3, delay: 0, options: [.beginFromCurrentState], animations: {
-                        self.collectionView.contentOffset = .zero
-                    })
-                }
+            guard isViewLoaded else { return }
+            if inOverlayMode && !oldValue, let libraryCell = libraryCell {
+                UIView.animate(withDuration: 0.3, delay: 0, options: [.beginFromCurrentState], animations: { [weak self] in
+                    self?.collectionView.contentOffset = .init(x: 0, y: libraryCell.frame.minY - FirefoxHomeUX.SearchBarHeight)
+                })
+            } else if oldValue && !inOverlayMode && !collectionView.isDragging {
+                UIView.animate(withDuration: 0.3, delay: 0, options: [.beginFromCurrentState], animations: { [weak self] in
+                    self?.collectionView.contentOffset = .zero
+                })
             }
         }
     }
@@ -427,11 +425,11 @@ extension FirefoxHomeViewController: UICollectionViewDelegateFlowLayout {
             let width = min(FirefoxHomeUX.LibraryShortcutsMaxWidth, cellSize.width)
             return CGSize(width: width, height: FirefoxHomeUX.LibraryShortcutsHeight)
         case .emptySpace:
-            let offset = (libraryCell?.frame.minY ?? 0) + Section.libraryShortcuts.headerHeight.height
-            let barHeight: CGFloat = 56
-            let filledHeight = User.shared.topSites == false ? libraryCell?.frame.maxY : topSitesCell?.frame.maxY
-            let toolbarOffset: CGFloat = (UIDevice.current.userInterfaceIdiom == .phone && UIDevice.current.orientation.isPortrait) ? 46 : 0
-            let height = collectionView.frame.height - (filledHeight ?? 0) + offset - barHeight - toolbarOffset
+            guard let libraryCell = libraryCell else { return .zero }
+            let offset = libraryCell.frame.minY + Section.libraryShortcuts.headerHeight.height
+            let barHeight: CGFloat = FirefoxHomeUX.SearchBarHeight
+            let filledHeight = User.shared.topSites == false ? libraryCell.frame.maxY : topSitesCell?.frame.maxY
+            let height = collectionView.frame.height - (filledHeight ?? 0) + offset - barHeight - FirefoxHomeUX.ToolbarHeight
             return .init(width: cellSize.width, height: max(0, height))
         }
     }
