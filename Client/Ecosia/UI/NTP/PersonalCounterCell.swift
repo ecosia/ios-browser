@@ -7,7 +7,7 @@ import Core
 
 final class PersonalCounterCell: UICollectionViewCell, Themeable {
 
-    private let treeCounter = TreeCounter()
+    private let personalCounter = PersonalCounter()
     private weak var stack: UIStackView!
     private weak var background: UIView!
     private weak var image: UIImageView!
@@ -43,7 +43,7 @@ final class PersonalCounterCell: UICollectionViewCell, Themeable {
         contentView.addSubview(stack)
         self.stack = stack
 
-        let image = UIImageView()
+        let image = UIImageView(image: .init(named: "personalCounter"))
         image.translatesAutoresizingMaskIntoConstraints = false
         image.contentMode = .scaleAspectFit
         image.setContentHuggingPriority(.required, for: .horizontal)
@@ -54,14 +54,14 @@ final class PersonalCounterCell: UICollectionViewCell, Themeable {
         let counterLabel = UILabel()
         counterLabel.translatesAutoresizingMaskIntoConstraints = false
         counterLabel.textColor = UIColor.theme.ecosia.highContrastText
-        counterLabel.font = .preferredFont(forTextStyle: .body)
+        counterLabel.font = .preferredFont(forTextStyle: .subheadline)
         counterLabel.setContentHuggingPriority(.required, for: .horizontal)
         counterLabel.setContentHuggingPriority(.defaultLow, for: .vertical)
         stack.addArrangedSubview(counterLabel)
         self.counterLabel = counterLabel
 
-        background.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
-        background.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
+        background.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16).isActive = true
+        background.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16).isActive = true
         background.rightAnchor.constraint(equalTo: contentView.rightAnchor).isActive = true
         background.leftAnchor.constraint(equalTo: stack.leftAnchor, constant: -16).isActive = true
 
@@ -73,20 +73,37 @@ final class PersonalCounterCell: UICollectionViewCell, Themeable {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
 
-        treeCounter.subscribe(self) { count in
+        personalCounter.subscribeAndReceive(self) { count in
             counterLabel.text = formatter.string(from: .init(value: count))
         }
-        treeCounter.update(session: .shared) { _ in }
+
+        applyTheme()
     }
 
     func applyTheme() {
-        image.image = UIImage(named: "personalCounter")
+        background.backgroundColor = (isHighlighted || isSelected) ? UIColor.theme.ecosia.personalCounterSelection  : UIColor.theme.ecosia.primaryBackground
+
         background.layer.borderColor = UIColor.theme.ecosia.personalCounterBorder.cgColor
         counterLabel?.textColor = UIColor.theme.ecosia.highContrastText
     }
 
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        applyTheme()
+    override var isHighlighted: Bool {
+        set {
+            super.isHighlighted = newValue
+            applyTheme()
+        }
+        get {
+            return super.isHighlighted
+        }
+    }
+
+    override var isSelected: Bool {
+        set {
+            super.isSelected = newValue
+            applyTheme()
+        }
+        get {
+            return super.isSelected
+        }
     }
 }

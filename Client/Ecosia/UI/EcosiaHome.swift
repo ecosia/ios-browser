@@ -131,6 +131,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     private var items = [NewsModel]()
     private let images = Images(.init(configuration: .ephemeral))
     private let news = News()
+    private let personalCounter = PersonalCounter()
 
     convenience init(delegate: EcosiaHomeDelegate?) {
         let layout = UICollectionViewFlowLayout()
@@ -164,7 +165,11 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
 
         news.subscribeAndReceive(self) { [weak self] in
             self?.items = $0
-            self?.collectionView.reloadSections([Section.news.rawValue, Section.info.rawValue])
+            self?.collectionView.reloadSections([Section.news.rawValue])
+        }
+
+        personalCounter.subscribeAndReceive(self)  { [weak self] _ in
+            self?.collectionView.reloadSections([Section.info.rawValue])
         }
     }
 
@@ -174,7 +179,6 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         news.load(session: .shared, force: items.isEmpty)
         Analytics.shared.navigation(.view, label: .home)
         guard hasAppeared else { return hasAppeared = true }
-        collectionView.reloadSections([Section.info.rawValue])
         updateBarAppearance()
     }
 
