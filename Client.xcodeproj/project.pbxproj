@@ -450,6 +450,7 @@
 		CAB6D04125652A4800638310 /* TestHistoryMigration.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB6D04025652A4800638310 /* TestHistoryMigration.swift */; };
 		CABD6CA6263AC2E600F5877D /* Core in Frameworks */ = {isa = PBXBuildFile; platformFilter = ios; productRef = CABD6CA5263AC2E600F5877D /* Core */; };
 		CAC458F1249429C20042561A /* LoginListSelectionHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC458F0249429C20042561A /* LoginListSelectionHelper.swift */; };
+		CAE253D2268CA29F00308DEA /* BrowserViewController+FirefoxHomeViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAE253D1268CA29F00308DEA /* BrowserViewController+FirefoxHomeViewControllerDelegate.swift */; };
 		CAFA9220257919040086E6AE /* EcosiaHome.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFA921F257919040086E6AE /* EcosiaHome.swift */; };
 		CAFA9235257919250086E6AE /* EcosiaNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFA9234257919250086E6AE /* EcosiaNavigation.swift */; };
 		CAFA924A25791A6E0086E6AE /* EcosiaInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFA924925791A6E0086E6AE /* EcosiaInfoCell.swift */; };
@@ -3202,6 +3203,7 @@
 		CAB7414DA1BA84F4CD08A8F8 /* kk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = kk; path = kk.lproj/ClearPrivateDataConfirm.strings; sourceTree = "<group>"; };
 		CAC3CD28260248B6000FFAF4 /* EcosiaBeta.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = EcosiaBeta.entitlements; sourceTree = "<group>"; };
 		CAC458F0249429C20042561A /* LoginListSelectionHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginListSelectionHelper.swift; sourceTree = "<group>"; };
+		CAE253D1268CA29F00308DEA /* BrowserViewController+FirefoxHomeViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BrowserViewController+FirefoxHomeViewControllerDelegate.swift"; sourceTree = "<group>"; };
 		CAFA91492578DC040086E6AE /* Ecosia.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Ecosia.xcconfig; path = Configuration/Ecosia.xcconfig; sourceTree = "<group>"; };
 		CAFA91F6257905820086E6AE /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Ecosia.strings; sourceTree = "<group>"; };
 		CAFA91F7257905930086E6AE /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Ecosia.strings; sourceTree = "<group>"; };
@@ -4987,6 +4989,7 @@
 				C8F457A91F1FDD9B000CB895 /* BrowserViewController+KeyCommands.swift */,
 				D0C95EF5201A55A800E4E51C /* BrowserViewController+UIDropInteractionDelegate.swift */,
 				C8F457A71F1FD75A000CB895 /* BrowserViewController+WebViewDelegates.swift */,
+				CAE253D1268CA29F00308DEA /* BrowserViewController+FirefoxHomeViewControllerDelegate.swift */,
 			);
 			path = BrowserViewController;
 			sourceTree = "<group>";
@@ -7594,6 +7597,7 @@
 				C892DA0D22D39A980080F1F7 /* TrackingProtectionMenu.swift in Sources */,
 				C817B34D1FC609500086018E /* UIScrollViewSwizzled.swift in Sources */,
 				39F819C61FD70F5D009E31E4 /* TabEventHandlers.swift in Sources */,
+				CAE253D2268CA29F00308DEA /* BrowserViewController+FirefoxHomeViewControllerDelegate.swift in Sources */,
 				E65607611C08B4E200534B02 /* SearchInputView.swift in Sources */,
 				FA6B2AC21D41F02D00429414 /* Punycode.swift in Sources */,
 				43446CEA2412066500F5C643 /* UIViewControllerExtension.swift in Sources */,
