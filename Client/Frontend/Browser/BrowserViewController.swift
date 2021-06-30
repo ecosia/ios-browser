@@ -2650,6 +2650,11 @@ extension BrowserViewController: FirefoxHomeViewControllerDelegate {
     }
 
     func home(_ home: FirefoxHomeViewController, willBegin drag: CGPoint) {
+        guard urlBar.inOverlayMode else { return }
         urlBar.leaveOverlayMode(didCancel: true)
+    }
+
+    func homeDidPressPersonalCounter(_ home: FirefoxHomeViewController) {
+        present(ecosiaNavigation, animated: true, completion: nil)
     }
 }
