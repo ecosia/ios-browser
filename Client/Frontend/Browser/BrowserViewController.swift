@@ -2626,35 +2626,3 @@ extension BrowserViewController {
         return (UIApplication.shared.delegate as! AppDelegate).browserViewController
     }
 }
-
-extension BrowserViewController: FirefoxHomeViewControllerDelegate {
-    func home(_ home: FirefoxHomeViewController, didScroll searchPos: CGFloat, offset: CGFloat) {
-
-        guard !urlBar.inOverlayMode,
-              (urlBar.currentURL.flatMap({ InternalURL($0)?.isAboutHomeURL }) ?? false || urlBar.currentURL == nil) else {
-            header.alpha = 1
-            return
-        }
-
-        let dy = max(0, offset + 4 - searchPos)
-        let alpha = min(1.0, dy/4)
-
-        header.alpha = alpha
-
-        print("offset: \(offset)")
-        print("search: \(searchPos)")
-    }
-
-    func homeDidTapSearchButton(_ home: FirefoxHomeViewController) {
-        urlBar.tabLocationViewDidTapLocation(self.urlBar.locationView)
-    }
-
-    func home(_ home: FirefoxHomeViewController, willBegin drag: CGPoint) {
-        guard urlBar.inOverlayMode else { return }
-        urlBar.leaveOverlayMode(didCancel: true)
-    }
-
-    func homeDidPressPersonalCounter(_ home: FirefoxHomeViewController) {
-        present(ecosiaNavigation, animated: true, completion: nil)
-    }
-}
