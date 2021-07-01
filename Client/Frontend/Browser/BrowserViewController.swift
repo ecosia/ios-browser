@@ -1655,10 +1655,10 @@ extension BrowserViewController: TabDelegate {
         tab.addContentScript(readerMode, name: ReaderMode.name())
 
         // only add the logins helper if the tab is not a private browsing tab
-        if !tab.isPrivate {
-            let logins = LoginsHelper(tab: tab, profile: profile)
-            tab.addContentScript(logins, name: LoginsHelper.name())
-        }
+//        if !tab.isPrivate {
+//            let logins = LoginsHelper(tab: tab, profile: profile)
+//            tab.addContentScript(logins, name: LoginsHelper.name())
+//        }
 
         let contextMenuHelper = ContextMenuHelper(tab: tab)
         contextMenuHelper.delegate = self

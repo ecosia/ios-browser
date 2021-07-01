@@ -102,7 +102,7 @@ protocol Profile: AnyObject {
     var metadata: Metadata { get }
     var recommendations: HistoryRecommendations { get }
     var favicons: Favicons { get }
-    var logins: RustLogins { get }
+//    var logins: RustLogins { get }
     var certStore: CertStore { get }
     var recentlyClosedTabs: ClosedTabsStore { get }
     var panelDataObservers: PanelDataObservers { get }
@@ -241,32 +241,32 @@ open class BrowserProfile: Profile {
         // }
 
         // Set up logging from Rust.
-        if !RustLog.shared.tryEnable({ (level, tag, message) -> Bool in
-            let logString = "[RUST][\(tag ?? "no-tag")] \(message)"
-
-            switch level {
-            case .trace:
-                if Logger.logPII {
-                    log.verbose(logString)
-                }
-            case .debug:
-                log.debug(logString)
-            case .info:
-                log.info(logString)
-            case .warn:
-                log.warning(logString)
-            case .error:
-                Sentry.shared.sendWithStacktrace(message: logString, tag: .rustLog, severity: .error)
-                log.error(logString)
-            }
-
-            return true
-        }) {
-            log.error("ERROR: Unable to enable logging from Rust")
-        }
+//        if !RustLog.shared.tryEnable({ (level, tag, message) -> Bool in
+//            let logString = "[RUST][\(tag ?? "no-tag")] \(message)"
+//
+//            switch level {
+//            case .trace:
+//                if Logger.logPII {
+//                    log.verbose(logString)
+//                }
+//            case .debug:
+//                log.debug(logString)
+//            case .info:
+//                log.info(logString)
+//            case .warn:
+//                log.warning(logString)
+//            case .error:
+//                Sentry.shared.sendWithStacktrace(message: logString, tag: .rustLog, severity: .error)
+//                log.error(logString)
+//            }
+//
+//            return true
+//        }) {
+//            log.error("ERROR: Unable to enable logging from Rust")
+//        }
 
         // By default, filter logging from Rust below `.info` level.
-        try? RustLog.shared.setLevelFilter(filter: .info)
+//        try? RustLog.shared.setLevelFilter(filter: .info)
 
         // This has to happen prior to the databases being opened, because opening them can trigger
         // events to which the SyncManager listens.
@@ -327,7 +327,7 @@ open class BrowserProfile: Profile {
 //        }
 
         db.reopenIfClosed()
-        _ = logins.reopenIfClosed()
+//        _ = logins.reopenIfClosed()
 //        _ = places.reopenIfClosed()
     }
 
@@ -338,7 +338,7 @@ open class BrowserProfile: Profile {
         isShutdown = true
 
         db.forceClose()
-        _ = logins.forceClose()
+//        _ = logins.forceClose()
 //        _ = places.forceClose()
     }
 
@@ -526,19 +526,19 @@ open class BrowserProfile: Profile {
         return deferred
     }
 
-    lazy var logins: RustLogins = {
-        let databasePath = URL(fileURLWithPath: (try! files.getAndEnsureDirectory()), isDirectory: true).appendingPathComponent("logins.db").path
-
-        let salt: String
-        if let val = keychain.string(forKey: loginsSaltKeychainKey) {
-            salt = val
-        } else {
-            salt = RustLogins.setupPlaintextHeaderAndGetSalt(databasePath: databasePath, encryptionKey: loginsKey)
-            keychain.set(salt, forKey: loginsSaltKeychainKey, withAccessibility: .afterFirstUnlock)
-        }
-
-        return RustLogins(databasePath: databasePath, encryptionKey: loginsKey, salt: salt)
-    }()
+//    lazy var logins: RustLogins = {
+//        let databasePath = URL(fileURLWithPath: (try! files.getAndEnsureDirectory()), isDirectory: true).appendingPathComponent("logins.db").path
+//
+//        let salt: String
+//        if let val = keychain.string(forKey: loginsSaltKeychainKey) {
+//            salt = val
+//        } else {
+//            salt = RustLogins.setupPlaintextHeaderAndGetSalt(databasePath: databasePath, encryptionKey: loginsKey)
+//            keychain.set(salt, forKey: loginsSaltKeychainKey, withAccessibility: .afterFirstUnlock)
+//        }
+//
+//        return RustLogins(databasePath: databasePath, encryptionKey: loginsKey, salt: salt)
+//    }()
 
     func hasAccount() -> Bool {
 //        return rustFxA.hasAccount()

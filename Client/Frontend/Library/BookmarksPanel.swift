@@ -26,12 +26,12 @@ private var disclosureIndicator: UIImageView {
     return disclosureIndicator
 }
 
-let LocalizedRootBookmarkFolderStrings = [
-    BookmarkRoots.MenuFolderGUID: Strings.BookmarksFolderTitleMenu,
-    BookmarkRoots.ToolbarFolderGUID: Strings.BookmarksFolderTitleToolbar,
-    BookmarkRoots.UnfiledFolderGUID: Strings.BookmarksFolderTitleUnsorted,
-    BookmarkRoots.MobileFolderGUID: Strings.BookmarksFolderTitleMobile
-]
+//let LocalizedRootBookmarkFolderStrings = [
+//    BookmarkRoots.MenuFolderGUID: Strings.BookmarksFolderTitleMenu,
+//    BookmarkRoots.ToolbarFolderGUID: Strings.BookmarksFolderTitleToolbar,
+//    BookmarkRoots.UnfiledFolderGUID: Strings.BookmarksFolderTitleUnsorted,
+//    BookmarkRoots.MobileFolderGUID: Strings.BookmarksFolderTitleMobile
+//]
 
 fileprivate class SeparatorTableViewCell: OneLineTableViewCell {
     override func applyTheme() {
@@ -49,8 +49,6 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel {
 
     var libraryPanelDelegate: LibraryPanelDelegate?
 
-    let bookmarkFolderGUID: GUID
-
     var editBarButtonItem: UIBarButtonItem!
     var doneBarButtonItem: UIBarButtonItem!
     var newBarButtonItem: UIBarButtonItem!
@@ -60,8 +58,7 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel {
     fileprivate lazy var bookmarkFolderIconNormal = UIImage(named: "bookmarkFolder")?.createScaled(BookmarksPanelUX.FolderIconSize).tinted(withColor: UIColor.Photon.Grey90)
     fileprivate lazy var bookmarkFolderIconDark = UIImage(named: "bookmarkFolder")?.createScaled(BookmarksPanelUX.FolderIconSize).tinted(withColor: UIColor.Photon.Grey10)
 
-    init(profile: Profile, bookmarkFolderGUID: GUID = BookmarkRoots.MobileFolderGUID) {
-        self.bookmarkFolderGUID = bookmarkFolderGUID
+    override init(profile: Profile) {
 
         super.init(profile: profile)
 
@@ -136,9 +133,7 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel {
             self.present(sheet, animated: true)
         }
 
-        if bookmarkFolderGUID != BookmarkRoots.RootGUID {
-            navigationItem.rightBarButtonItem = editBarButtonItem
-        }
+        navigationItem.rightBarButtonItem = editBarButtonItem
     }
 
     override func viewDidAppear(_ animated: Bool) {

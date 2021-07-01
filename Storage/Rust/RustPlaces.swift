@@ -5,8 +5,6 @@
 import Foundation
 import Shared
 
-@_exported import MozillaAppServices
-
 private let log = Logger.syncLogger
 
 public class RustPlaces {

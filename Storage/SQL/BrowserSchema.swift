@@ -138,6 +138,15 @@ private let AllTablesIndicesTriggersAndViews: [String] = AllViews + AllTriggers 
 
 private let log = Logger.syncLogger
 
+public enum BookmarkNodeType : Int32 {
+
+    case bookmark
+
+    case folder
+
+    case separator
+}
+
 /**
  * The monolithic class that manages the inter-related history etc. tables.
  * We rely on SQLiteHistory having initialized the favicon table first.
@@ -211,25 +220,25 @@ open class BrowserSchema: Schema {
         let status = 2 // "new"
 
         let localArgs: Args = [
-            0, BookmarkRoots.RootGUID, type, now, BookmarkRoots.RootGUID, status, now,
-            1, BookmarkRoots.MobileFolderGUID, type, now, BookmarkRoots.RootGUID, status, now,
-            2, BookmarkRoots.MenuFolderGUID, type, now, BookmarkRoots.RootGUID, status, now,
-            3, BookmarkRoots.ToolbarFolderGUID, type, now, BookmarkRoots.RootGUID, status, now,
-            4, BookmarkRoots.UnfiledFolderGUID, type, now, BookmarkRoots.RootGUID, status, now,
+//            0, BookmarkRoots.RootGUID, type, now, BookmarkRoots.RootGUID, status, now,
+//            1, BookmarkRoots.MobileFolderGUID, type, now, BookmarkRoots.RootGUID, status, now,
+//            2, BookmarkRoots.MenuFolderGUID, type, now, BookmarkRoots.RootGUID, status, now,
+//            3, BookmarkRoots.ToolbarFolderGUID, type, now, BookmarkRoots.RootGUID, status, now,
+//            4, BookmarkRoots.UnfiledFolderGUID, type, now, BookmarkRoots.RootGUID, status, now,
         ]
 
         // Compute these args using the sequence in RootChildren, rather than hard-coding.
         var idx = 0
         var structureArgs = Args()
         let rootChildren: [GUID] = [
-            BookmarkRoots.MenuFolderGUID,
-            BookmarkRoots.ToolbarFolderGUID,
-            BookmarkRoots.UnfiledFolderGUID,
-            BookmarkRoots.MobileFolderGUID,
+//            BookmarkRoots.MenuFolderGUID,
+//            BookmarkRoots.ToolbarFolderGUID,
+//            BookmarkRoots.UnfiledFolderGUID,
+//            BookmarkRoots.MobileFolderGUID,
         ]
         structureArgs.reserveCapacity(rootChildren.count * 3)
         rootChildren.forEach { guid in
-            structureArgs.append(BookmarkRoots.RootGUID)
+//            structureArgs.append(BookmarkRoots.RootGUID)
             structureArgs.append(guid)
             structureArgs.append(idx)
             idx += 1
@@ -929,12 +938,13 @@ open class BrowserSchema: Schema {
     }
 
     public func update(_ db: SQLiteDBConnection, from: Int) -> Bool {
+
         let to = self.version
         if from == to {
             log.debug("Skipping update from \(from) to \(to).")
             return true
         }
-
+        /*
         if from == 0 {
 
             // If we're upgrading from `0`, it is likely that we have not yet switched
@@ -1420,7 +1430,7 @@ open class BrowserSchema: Schema {
                 return false
             }
         }
-
+        */
         return true
     }
 

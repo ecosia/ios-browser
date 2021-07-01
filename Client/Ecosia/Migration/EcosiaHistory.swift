@@ -39,12 +39,12 @@ final class EcosiaHistory {
         start = Date()
         DispatchQueue.global(qos: .userInitiated).async {
             let data = prepare(history: items, progress: progress)
-            guard !profile.isShutdown else {
-                DispatchQueue.main.async {
-                    finished(.failure(.init(reasons: ["Database is shutdown"])))
-                }
-                return
-            }
+//            guard !profile.isShutdown else {
+//                DispatchQueue.main.async {
+//                    finished(.failure(.init(reasons: ["Database is shutdown"])))
+//                }
+//                return
+//            }
 
             DispatchQueue.main.async {
                 insertData(data, to: profile) { firstTry in

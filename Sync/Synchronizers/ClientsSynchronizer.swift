@@ -7,6 +7,7 @@ import Shared
 import Storage
 import XCGLogger
 import SwiftyJSON
+import UIKit
 
 private let log = Logger.syncLogger
 let ClientsStorageVersion = 1

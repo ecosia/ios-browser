@@ -17,9 +17,9 @@ class LoginsHelper: TabContentScript {
     fileprivate var snackBar: SnackBar?
 
     // Exposed for mocking purposes
-    var logins: RustLogins {
-        return profile.logins
-    }
+//    var logins: RustLogins {
+//        return profile.logins
+//    }
 
     class func name() -> String {
         return "LoginsHelper"
@@ -59,34 +59,34 @@ class LoginsHelper: TabContentScript {
         return realm
     }
 
-    func loginRecordFromScript(_ script: [String: Any], url: URL) -> Login? {
-        guard let username = script["username"] as? String,
-            let password = script["password"] as? String,
-            let origin = getOrigin(url.absoluteString) else {
-            return nil
-        }
-
-        var dict: [String: Any] = [
-            "hostname": origin,
-            "username": username,
-            "password": password
-        ]
-
-        if let string = script["formSubmitUrl"] as? String,
-            let formSubmitUrl = getOrigin(string) {
-            dict["formSubmitUrl"] = formSubmitUrl
-        }
-
-        if let passwordField = script["passwordField"] as? String {
-            dict["passwordField"] = passwordField
-        }
-
-        if let usernameField = script["usernameField"] as? String {
-            dict["usernameField"] = usernameField
-        }
-
-        return Login(fromJSONDict: dict)
-    }
+//    func loginRecordFromScript(_ script: [String: Any], url: URL) -> LoginRecord? {
+//        guard let username = script["username"] as? String,
+//            let password = script["password"] as? String,
+//            let origin = getOrigin(url.absoluteString) else {
+//            return nil
+//        }
+//
+//        var dict: [String: Any] = [
+//            "hostname": origin,
+//            "username": username,
+//            "password": password
+//        ]
+//
+//        if let string = script["formSubmitURL"] as? String,
+//            let formSubmitURL = getOrigin(string) {
+//            dict["formSubmitURL"] = formSubmitURL
+//        }
+//
+//        if let passwordField = script["passwordField"] as? String {
+//            dict["passwordField"] = passwordField
+//        }
+//
+//        if let usernameField = script["usernameField"] as? String {
+//            dict["usernameField"] = usernameField
+//        }
+//
+//        return LoginRecord(fromJSONDict: dict)
+//    }
 
     func userContentController(_ userContentController: WKUserContentController, didReceiveScriptMessage message: WKScriptMessage) {
         guard let res = message.body as? [String: Any],

@@ -832,48 +832,48 @@ class SearchSetting: Setting {
     }
 }
 
-class LoginsSetting: Setting {
-    let profile: Profile
-    var tabManager: TabManager!
-    weak var navigationController: UINavigationController?
-    weak var settings: AppSettingsTableViewController?
-
-    override var accessoryView: UIImageView? { return disclosureIndicator }
-
-    override var accessibilityIdentifier: String? { return "Logins" }
-
-    init(settings: SettingsTableViewController, delegate: SettingsDelegate?) {
-        self.profile = settings.profile
-        self.tabManager = settings.tabManager
-        self.navigationController = settings.navigationController
-        self.settings = settings as? AppSettingsTableViewController
-        
-        super.init(title: NSAttributedString(string: Strings.LoginsAndPasswordsTitle, attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText]),
-                   delegate: delegate)
-    }
-
-    func deselectRow () {
-        if let selectedRow = self.settings?.tableView.indexPathForSelectedRow {
-            self.settings?.tableView.deselectRow(at: selectedRow, animated: true)
-        }
-    }
-
-    override func onClick(_: UINavigationController?) {
-        deselectRow()
-        
-        guard let navController = navigationController else { return }
-        let navigationHandler: ((_ url: URL?) -> Void) = { url in
-            guard let url = url else { return }
-            UIApplication.shared.keyWindow?.rootViewController?.dismiss(animated: true, completion: nil)
-            self.delegate?.settingsOpenURLInNewTab(url)
-        }
-        LoginListViewController.create(authenticateInNavigationController: navController, profile: profile, settingsDelegate: BrowserViewController.foregroundBVC(), webpageNavigationHandler: navigationHandler).uponQueue(.main) { loginsVC in
-            guard let loginsVC = loginsVC else { return }
-            LeanPlumClient.shared.track(event: .openedLogins)
-            navController.pushViewController(loginsVC, animated: true)
-        }
-    }
-}
+//class LoginsSetting: Setting {
+//    let profile: Profile
+//    var tabManager: TabManager!
+//    weak var navigationController: UINavigationController?
+//    weak var settings: AppSettingsTableViewController?
+//
+//    override var accessoryView: UIImageView? { return disclosureIndicator }
+//
+//    override var accessibilityIdentifier: String? { return "Logins" }
+//
+//    init(settings: SettingsTableViewController, delegate: SettingsDelegate?) {
+//        self.profile = settings.profile
+//        self.tabManager = settings.tabManager
+//        self.navigationController = settings.navigationController
+//        self.settings = settings as? AppSettingsTableViewController
+//        
+//        super.init(title: NSAttributedString(string: Strings.LoginsAndPasswordsTitle, attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText]),
+//                   delegate: delegate)
+//    }
+//
+//    func deselectRow () {
+//        if let selectedRow = self.settings?.tableView.indexPathForSelectedRow {
+//            self.settings?.tableView.deselectRow(at: selectedRow, animated: true)
+//        }
+//    }
+//
+//    override func onClick(_: UINavigationController?) {
+//        deselectRow()
+//        
+//        guard let navController = navigationController else { return }
+//        let navigationHandler: ((_ url: URL?) -> Void) = { url in
+//            guard let url = url else { return }
+//            UIApplication.shared.keyWindow?.rootViewController?.dismiss(animated: true, completion: nil)
+//            self.delegate?.settingsOpenURLInNewTab(url)
+//        }
+//        LoginListViewController.create(authenticateInNavigationController: navController, profile: profile, settingsDelegate: BrowserViewController.foregroundBVC(), webpageNavigationHandler: navigationHandler).uponQueue(.main) { loginsVC in
+//            guard let loginsVC = loginsVC else { return }
+//            LeanPlumClient.shared.track(event: .openedLogins)
+//            navController.pushViewController(loginsVC, animated: true)
+//        }
+//    }
+//}
 
 class TouchIDPasscodeSetting: Setting {
     let profile: Profile
