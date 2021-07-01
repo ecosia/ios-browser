@@ -196,3 +196,18 @@ tx push -s
 #### Via Transifex Web-Interface
 
 You can update source file in transifex [here](https://www.transifex.com/ecosia/ecosia-ios-search-app/ecosiastrings/). Then once those have been translated you can pull them using the above commands and commit them.
+
+### Update Mozilla Strings (if needed)
+
+```bash
+# clone the repo
+git clone https://github.com/mozilla-mobile/ios-l10n-scripts.git
+# run the script in project-dir
+./ios-l10n-scripts/import-locales-firefox.sh --release
+```
+
+```bash
+# brand all the files as they contain the term 'Firefox' a lot
+python3 ecosify-strings.py Client
+python3 ecosify-strings.py Extensions
+```

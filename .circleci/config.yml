@@ -31,18 +31,6 @@ jobs:
           name: npm run build
           command: npm run build
       - run:
-          name: clone translations
-          command: git clone https://github.com/mozilla-mobile/ios-l10n-scripts.git || exit 1
-      - run: 
-          name: import locales
-          command: ./ios-l10n-scripts/import-locales-firefox.sh --release
-      - run: 
-          name: brand Client strings
-          command: python3 ecosify-strings.py Client
-      - run: 
-          name: brand Extension strings
-          command: python3 ecosify-strings.py Extensions
-      - run:
           name: setup content blocking scripts
           command: (cd content-blocker-lib-ios/ContentBlockerGen && swift run)
       - run:
@@ -79,18 +67,6 @@ jobs:
           name: npm run build
           command: npm run build
       - run:
-          name: clone translations
-          command: git clone https://github.com/mozilla-mobile/ios-l10n-scripts.git || exit 1
-      - run: 
-          name: import locales
-          command: ./ios-l10n-scripts/import-locales-firefox.sh --release
-      - run: 
-          name: brand Client strings
-          command: python3 ecosify-strings.py Client
-      - run: 
-          name: brand Extension strings
-          command: python3 ecosify-strings.py Extensions
-      - run:
           name: setup content blocking scripts
           command: (cd content-blocker-lib-ios/ContentBlockerGen && swift run)
       - run:
@@ -126,18 +102,6 @@ jobs:
       - run:
           name: npm run build
           command: npm run build
-      - run:
-          name: clone translations
-          command: git clone https://github.com/mozilla-mobile/ios-l10n-scripts.git || exit 1
-      - run: 
-          name: import locales
-          command: ./ios-l10n-scripts/import-locales-firefox.sh --release
-      - run: 
-          name: brand Client strings
-          command: python3 ecosify-strings.py Client
-      - run: 
-          name: brand Extension strings
-          command: python3 ecosify-strings.py Extensions
       - run:
           name: setup content blocking scripts
           command: (cd content-blocker-lib-ios/ContentBlockerGen && swift run)
