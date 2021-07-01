@@ -243,56 +243,56 @@ public protocol SyncPingFailureFormattable {
 public struct SyncPing: SyncTelemetryPing {
     public private(set) var payload: JSON
 
-    static func pingFields(prefs: Prefs, why: SyncPingReason) -> Deferred<Maybe<(token: TokenServerToken, fields: [String: Any])>> {
+//    static func pingFields(prefs: Prefs, why: SyncPingReason) -> Deferred<Maybe<(token: TokenServerToken, fields: [String: Any])>> {
         // Grab our token so we can use the hashed_fxa_uid and clientGUID from our scratchpad for
         // our ping's identifiers
-        return RustFirefoxAccounts.shared.syncAuthState.token(Date.now(), canBeExpired: false) >>== { (token, kSync) in
-            let scratchpadPrefs = prefs.branch("sync.scratchpad")
-            guard let scratchpad = Scratchpad.restoreFromPrefs(scratchpadPrefs, syncKeyBundle: KeyBundle.fromKSync(kSync)) else {
-                return deferMaybe(SyncPingError.failedToRestoreScratchpad)
-            }
+//        return RustFirefoxAccounts.shared.syncAuthState.token(Date.now(), canBeExpired: false) >>== { (token, kSync) in
+//            let scratchpadPrefs = prefs.branch("sync.scratchpad")
+//            guard let scratchpad = Scratchpad.restoreFromPrefs(scratchpadPrefs, syncKeyBundle: KeyBundle.fromKSync(kSync)) else {
+//                return deferMaybe(SyncPingError.failedToRestoreScratchpad)
+//            }
+//
+//            let ping: [String: Any] = pingCommonData(
+//                why: why,
+//                hashedUID: token.hashedFxAUID,
+//                hashedDeviceID: (scratchpad.clientGUID + token.hashedFxAUID).sha256.hexEncodedString
+//            )
+//
+//            return deferMaybe((token, ping))
+//        }
+//    }
 
-            let ping: [String: Any] = pingCommonData(
-                why: why,
-                hashedUID: token.hashedFxAUID,
-                hashedDeviceID: (scratchpad.clientGUID + token.hashedFxAUID).sha256.hexEncodedString
-            )
+//    public static func from(result: SyncOperationResult,
+//                            remoteClientsAndTabs: RemoteClientsAndTabs,
+//                            prefs: Prefs,
+//                            why: SyncPingReason) -> Deferred<Maybe<SyncPing>> {
+//        return pingFields(prefs: prefs, why: why) >>== { (token, fields) in
+//            var ping = fields
+//
+//            // TODO: We don't cache our sync pings so if it fails, it fails. Once we add
+//            // some kind of caching we'll want to make sure we don't dump the events if
+//            // the ping has failed.
+//            let events = Event.takeAll(fromPrefs: prefs).map { $0.toArray() }
+//            ping["events"] = events
+//
+//            return dictionaryFrom(result: result, storage: remoteClientsAndTabs, token: token) >>== { syncDict in
+//                // TODO: Split the sync ping metadata from storing a single sync.
+//                ping["syncs"] = [syncDict]
+//                return deferMaybe(SyncPing(payload: JSON(ping)))
+//            }
+//        }
+//    }
 
-            return deferMaybe((token, ping))
-        }
-    }
-
-    public static func from(result: SyncOperationResult,
-                            remoteClientsAndTabs: RemoteClientsAndTabs,
-                            prefs: Prefs,
-                            why: SyncPingReason) -> Deferred<Maybe<SyncPing>> {
-        return pingFields(prefs: prefs, why: why) >>== { (token, fields) in
-            var ping = fields
-
-            // TODO: We don't cache our sync pings so if it fails, it fails. Once we add
-            // some kind of caching we'll want to make sure we don't dump the events if
-            // the ping has failed.
-            let events = Event.takeAll(fromPrefs: prefs).map { $0.toArray() }
-            ping["events"] = events
-
-            return dictionaryFrom(result: result, storage: remoteClientsAndTabs, token: token) >>== { syncDict in
-                // TODO: Split the sync ping metadata from storing a single sync.
-                ping["syncs"] = [syncDict]
-                return deferMaybe(SyncPing(payload: JSON(ping)))
-            }
-        }
-    }
-
-    public static func fromQueuedEvents(prefs: Prefs, why: SyncPingReason) -> Deferred<Maybe<SyncPing>> {
-        if !Event.hasQueuedEvents(inPrefs: prefs) {
-            return deferMaybe(SyncPingError.emptyPing)
-        }
-        return pingFields(prefs: prefs, why: why) >>== { (_, fields) in
-            var ping = fields
-            ping["events"] = Event.takeAll(fromPrefs: prefs).map { $0.toArray() }
-            return deferMaybe(SyncPing(payload: JSON(ping)))
-        }
-    }
+//    public static func fromQueuedEvents(prefs: Prefs, why: SyncPingReason) -> Deferred<Maybe<SyncPing>> {
+//        if !Event.hasQueuedEvents(inPrefs: prefs) {
+//            return deferMaybe(SyncPingError.emptyPing)
+//        }
+//        return pingFields(prefs: prefs, why: why) >>== { (_, fields) in
+//            var ping = fields
+//            ping["events"] = Event.takeAll(fromPrefs: prefs).map { $0.toArray() }
+//            return deferMaybe(SyncPing(payload: JSON(ping)))
+//        }
+//    }
 
     static func pingCommonData(why: SyncPingReason, hashedUID: String, hashedDeviceID: String) -> [String: Any] {
          return [

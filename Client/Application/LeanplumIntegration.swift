@@ -244,11 +244,11 @@ class LeanPlumClient {
             self.recordSyncedClients(with: self.profile)
         })
 
-        NotificationCenter.default.addObserver(forName: .FirefoxAccountChanged, object: nil, queue: .main) { _ in
-            if !RustFirefoxAccounts.shared.hasAccount() {
-                LeanPlumClient.shared.set(attributes: [LPAttributeKey.signedInSync: false])
-            }
-        }
+//        NotificationCenter.default.addObserver(forName: .FirefoxAccountChanged, object: nil, queue: .main) { _ in
+//            if !RustFirefoxAccounts.shared.hasAccount() {
+//                LeanPlumClient.shared.set(attributes: [LPAttributeKey.signedInSync: false])
+//            }
+//        }
     }
 
     // Events

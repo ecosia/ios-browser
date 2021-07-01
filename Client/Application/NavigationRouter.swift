@@ -4,7 +4,7 @@
 
 import Foundation
 import Shared
-import MozillaAppServices
+//import MozillaAppServices
 
 struct FxALaunchParams {
     var query: [String: String]
@@ -183,7 +183,7 @@ enum NavigationPath {
     }
 
     private static func handleFxA(params: FxALaunchParams, with bvc: BrowserViewController) {
-        bvc.presentSignInViewController(params)
+//        bvc.presentSignInViewController(params)
     }
 
     private static func handleClosePrivateTabs(with bvc: BrowserViewController, tray: TabTrayControllerV1) {
@@ -196,7 +196,7 @@ enum NavigationPath {
     }
 
     private static func handleGlean(url: URL) {
-        Glean.shared.handleCustomUrl(url: url)
+//        Glean.shared.handleCustomUrl(url: url)
     }
 
     private static func handleHomePanel(panel: HomePanelPath, with bvc: BrowserViewController) {
@@ -269,8 +269,9 @@ enum NavigationPath {
             viewController.tabManager = tabManager
             controller.pushViewController(viewController, animated: true)
         case .fxa:
-            let viewController = bvc.getSignInOrFxASettingsVC(flowType: .emailLoginFlow, referringPage: .settings)
-            controller.pushViewController(viewController, animated: true)
+            break
+//            let viewController = bvc.getSignInOrFxASettingsVC(flowType: .emailLoginFlow, referringPage: .settings)
+//            controller.pushViewController(viewController, animated: true)
         case .theme:
             controller.pushViewController(ThemeSettingsController(), animated: true)
         }

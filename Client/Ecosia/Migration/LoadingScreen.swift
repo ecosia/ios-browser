@@ -130,7 +130,7 @@ final class LoadingScreen: UIViewController {
     
     private func cleanUp() {
         History().deleteAll()
-        Favourites().items = []
+        Favourites().clear()
         Tabs().clear()
     }
 }

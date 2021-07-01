@@ -2,13 +2,13 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-import MozillaAppServices
+//import MozillaAppServices
 import Shared
 //import Telemetry
 
 class TelemetryWrapper {
     let legacyTelemetry = Telemetry.default
-    let glean = Glean.shared
+//    let glean = Glean.shared
 
     // Boolean flag to temporarily remember if we crashed during the
     // last run of the app. We cannot simply use `Sentry.crashedLastLaunch`

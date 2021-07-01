@@ -4,7 +4,6 @@
 
 import Foundation
 import Core
-import MozillaAppServices
 import Storage
 import Shared
 

@@ -5,7 +5,6 @@
 import WebKit
 import Foundation
 import Account
-import MozillaAppServices
 import Shared
 import SwiftKeychainWrapper
 
@@ -59,7 +58,7 @@ class FxAWebViewModel {
 
         // If accountMigrationFailed then the app menu has a caution icon,
         // and at this point the user has taken sufficient action to clear the caution.
-        profile.rustFxA.accountMigrationFailed = false
+//        profile.rustFxA.accountMigrationFailed = false
     }
 
     var onDismissController: (() -> Void)?
@@ -69,38 +68,38 @@ class FxAWebViewModel {
     }
 
     func setupFirstPage(completion: @escaping ((URLRequest, TelemetryWrapper.EventMethod?) -> Void)) {
-        profile.rustFxA.accountManager.uponQueue(.main) { accountManager in
-            accountManager.getManageAccountURL(entrypoint: "ios_settings_manage") { [weak self] result in
-                guard let self = self else { return }
-
-                // Handle authentication with either the QR code login flow, email login flow, or settings page flow
-                switch self.pageType {
-                case .emailLoginFlow:
-                    accountManager.beginAuthentication(entrypoint: "emailLoginFlow") { [weak self] result in
-                        guard let self = self else { return }
-
-                        if case .success(let url) = result {
-                            self.baseURL = url
-                            completion(self.makeRequest(url), .emailLogin)
-                        }
-                    }
-                case let .qrCode(url):
-                    accountManager.beginPairingAuthentication(pairingUrl: url, entrypoint: "qrCode") { [weak self] result in
-                        guard let self = self else { return }
-
-                        if case .success(let url) = result {
-                            self.baseURL = url
-                            completion(self.makeRequest(url), .qrPairing)
-                        }
-                    }
-                case .settingsPage:
-                    if case .success(let url) = result {
-                        self.baseURL = url
-                        completion(self.makeRequest(url), nil)
-                    }
-                }
-            }
-        }
+//        profile.rustFxA.accountManager.uponQueue(.main) { accountManager in
+//            accountManager.getManageAccountURL(entrypoint: "ios_settings_manage") { [weak self] result in
+//                guard let self = self else { return }
+//
+//                // Handle authentication with either the QR code login flow, email login flow, or settings page flow
+//                switch self.pageType {
+//                case .emailLoginFlow:
+//                    accountManager.beginAuthentication(entrypoint: "emailLoginFlow") { [weak self] result in
+//                        guard let self = self else { return }
+//
+//                        if case .success(let url) = result {
+//                            self.baseURL = url
+//                            completion(self.makeRequest(url), .emailLogin)
+//                        }
+//                    }
+//                case let .qrCode(url):
+//                    accountManager.beginPairingAuthentication(pairingUrl: url, entrypoint: "qrCode") { [weak self] result in
+//                        guard let self = self else { return }
+//
+//                        if case .success(let url) = result {
+//                            self.baseURL = url
+//                            completion(self.makeRequest(url), .qrPairing)
+//                        }
+//                    }
+//                case .settingsPage:
+//                    if case .success(let url) = result {
+//                        self.baseURL = url
+//                        completion(self.makeRequest(url), nil)
+//                    }
+//                }
+//            }
+//        }
     }
     
     private func makeRequest(_ url: URL) -> URLRequest {
@@ -161,9 +160,10 @@ extension FxAWebViewModel {
                 profile.removeAccount()
                 onDismissController?()
             case .profileChanged:
-                profile.rustFxA.accountManager.peek()?.refreshProfile(ignoreCache: true)
-                // dismiss keyboard after changing profile in order to see notification view
-                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                break
+//                profile.rustFxA.accountManager.peek()?.refreshProfile(ignoreCache: true)
+//                // dismiss keyboard after changing profile in order to see notification view
+//                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
             }
         }
     }
@@ -187,36 +187,36 @@ extension FxAWebViewModel {
 
     /// Respond to the webpage session status notification by either passing signed in user info (for settings), or by passing CWTS setup info (in case the user is signing up for an account). This latter case is also used for the sign-in state.
     private func onSessionStatus(id: Int, webView: WKWebView) {
-        guard let fxa = profile.rustFxA.accountManager.peek() else { return }
-        let cmd = "fxaccounts:fxa_status"
-        let typeId = "account_updates"
-        let data: String
-        switch pageType {
-            case .settingsPage:
-                // Both email and uid are required at this time to properly link the FxA settings session
-                let email = fxa.accountProfile()?.email ?? ""
-                let uid = fxa.accountProfile()?.uid ?? ""
-                let token = (try? fxa.getSessionToken().get()) ?? ""
-                data = """
-                {
-                    capabilities: {},
-                    signedInUser: {
-                        sessionToken: "\(token)",
-                        email: "\(email)",
-                        uid: "\(uid)",
-                        verified: true,
-                    }
-                }
-                """
-            case .emailLoginFlow, .qrCode:
-                data = """
-                    { capabilities:
-                        { choose_what_to_sync: true, engines: ["bookmarks", "history", "tabs", "passwords"] },
-                    }
-                """
-        }
-
-        runJS(webView: webView, typeId: typeId, messageId: id, command: cmd, data: data)
+//        guard let fxa = profile.rustFxA.accountManager.peek() else { return }
+//        let cmd = "fxaccounts:fxa_status"
+//        let typeId = "account_updates"
+//        let data: String
+//        switch pageType {
+//            case .settingsPage:
+//                // Both email and uid are required at this time to properly link the FxA settings session
+//                let email = fxa.accountProfile()?.email ?? ""
+//                let uid = fxa.accountProfile()?.uid ?? ""
+//                let token = (try? fxa.getSessionToken().get()) ?? ""
+//                data = """
+//                {
+//                    capabilities: {},
+//                    signedInUser: {
+//                        sessionToken: "\(token)",
+//                        email: "\(email)",
+//                        uid: "\(uid)",
+//                        verified: true,
+//                    }
+//                }
+//                """
+//            case .emailLoginFlow, .qrCode:
+//                data = """
+//                    { capabilities:
+//                        { choose_what_to_sync: true, engines: ["bookmarks", "history", "tabs", "passwords"] },
+//                    }
+//                """
+//        }
+//
+//        runJS(webView: webView, typeId: typeId, messageId: id, command: cmd, data: data)
     }
 
     private func onLogin(data: Any, webView: WKWebView) {
@@ -237,46 +237,46 @@ extension FxAWebViewModel {
         }
         LeanPlumClient.shared.set(attributes: [LPAttributeKey.signedInSync: true])
         
-        let auth = FxaAuthData(code: code, state: state, actionQueryParam: "signin")
-        profile.rustFxA.accountManager.peek()?.finishAuthentication(authData: auth) { _ in
-            self.profile.syncManager.onAddedAccount()
-            
-            // ask for push notification
-            KeychainWrapper.sharedAppContainerKeychain.removeObject(forKey: KeychainKey.apnsToken, withAccessibility: .afterFirstUnlock)
-            let center = UNUserNotificationCenter.current()
-            center.requestAuthorization(options: [.alert, .badge, .sound]) { (granted, error) in
-                guard error == nil else {
-                    return
-                }
-                if granted {
-                    NotificationCenter.default.post(name: .RegisterForPushNotifications, object: nil)
-                }
-            }
-        }
+//        let auth = FxaAuthData(code: code, state: state, actionQueryParam: "signin")
+//        profile.rustFxA.accountManager.peek()?.finishAuthentication(authData: auth) { _ in
+//            self.profile.syncManager.onAddedAccount()
+//            
+//            // ask for push notification
+//            KeychainWrapper.sharedAppContainerKeychain.removeObject(forKey: KeychainKey.apnsToken, withAccessibility: .afterFirstUnlock)
+//            let center = UNUserNotificationCenter.current()
+//            center.requestAuthorization(options: [.alert, .badge, .sound]) { (granted, error) in
+//                guard error == nil else {
+//                    return
+//                }
+//                if granted {
+//                    NotificationCenter.default.post(name: .RegisterForPushNotifications, object: nil)
+//                }
+//            }
+//        }
         
         onDismissController?()
     }
     
     private func onPasswordChange(data: Any, webView: WKWebView) {
-        guard let data = data as? [String: Any], let sessionToken = data["sessionToken"] as? String else {
-            return
-        }
-        
-        profile.rustFxA.accountManager.peek()?.handlePasswordChanged(newSessionToken: sessionToken) {
-            NotificationCenter.default.post(name: .RegisterForPushNotifications, object: nil)
-        }
+//        guard let data = data as? [String: Any], let sessionToken = data["sessionToken"] as? String else {
+//            return
+//        }
+//
+//        profile.rustFxA.accountManager.peek()?.handlePasswordChanged(newSessionToken: sessionToken) {
+//            NotificationCenter.default.post(name: .RegisterForPushNotifications, object: nil)
+//        }
     }
     
     func shouldAllowRedirectAfterLogIn(basedOn navigationURL: URL?) -> WKNavigationActionPolicy {
         // Cancel navigation that happens after login to an account, which is when a redirect to `redirectURL` happens.
         // The app handles this event fully in native UI.
-        let redirectUrl = RustFirefoxAccounts.redirectURL
-        if let navigationURL = navigationURL {
-            let expectedRedirectURL = URL(string: redirectUrl)!
-            if navigationURL.scheme == expectedRedirectURL.scheme && navigationURL.host == expectedRedirectURL.host && navigationURL.path == expectedRedirectURL.path {
-                return .cancel
-            }
-        }
+//        let redirectUrl = RustFirefoxAccounts.redirectURL
+//        if let navigationURL = navigationURL {
+//            let expectedRedirectURL = URL(string: redirectUrl)!
+//            if navigationURL.scheme == expectedRedirectURL.scheme && navigationURL.host == expectedRedirectURL.host && navigationURL.path == expectedRedirectURL.path {
+//                return .cancel
+//            }
+//        }
         return .allow
     }
 }

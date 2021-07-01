@@ -99,10 +99,10 @@ extension EcosiaImport {
 
         let topSiteUrls = getTopSiteURLs()
 
-        favs.items = (0...1000).map({ _ in
-            let url = URL(string: topSiteUrls.randomElement()!)!
-            return Page(url: url, title: url.host ?? url.absoluteString)
-        })
+//        favs.items = (0...1000).map({ _ in
+//            let url = URL(string: topSiteUrls.randomElement()!)!
+//            return Page(url: url, title: url.host ?? url.absoluteString)
+//        })
 
         Core.User.shared.migrated = false
     }

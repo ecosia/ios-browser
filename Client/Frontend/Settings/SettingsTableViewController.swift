@@ -544,9 +544,9 @@ class AccountSetting: Setting {
 
     override func onConfigureCell(_ cell: UITableViewCell) {
         super.onConfigureCell(cell)
-        if settings.profile.rustFxA.userProfile != nil {
-            cell.selectionStyle = .none
-        }
+//        if settings.profile.rustFxA.userProfile != nil {
+//            cell.selectionStyle = .none
+//        }
     }
 
     override var accessoryType: UITableViewCell.AccessoryType { return .none }

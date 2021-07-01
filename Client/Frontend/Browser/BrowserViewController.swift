@@ -15,7 +15,7 @@ import MobileCoreServices
 import SDWebImage
 import SwiftyJSON
 //import Telemetry
-import MozillaAppServices
+//import MozillaAppServices
 //import Sentry
 import Core
 
@@ -235,13 +235,13 @@ class BrowserViewController: UIViewController {
     @objc fileprivate func appMenuBadgeUpdate() {
         let hideImagesOn = NoImageModeHelper.isActivated(profile.prefs)
         let showWhatsNew = shouldShowWhatsNew() && !(AppInfo.whatsNewTopic?.isEmpty ?? true)
-        let actionNeeded = RustFirefoxAccounts.shared.isActionNeeded
-        let showWarningBadge = actionNeeded 
-        let showMenuBadge = showWarningBadge ? false : hideImagesOn || showWhatsNew
+//        let actionNeeded = RustFirefoxAccounts.shared.isActionNeeded
+//        let showWarningBadge = actionNeeded
+        let showMenuBadge = hideImagesOn || showWhatsNew
 
-        urlBar.warningMenuBadge(setVisible: showWarningBadge)
+//        urlBar.warningMenuBadge(setVisible: showWarningBadge)
         urlBar.appMenuBadge(setVisible: showMenuBadge)
-        toolbar?.warningMenuBadge(setVisible: showWarningBadge)
+//        toolbar?.warningMenuBadge(setVisible: showWarningBadge)
         toolbar?.appMenuBadge(setVisible: showMenuBadge)
     }
 
@@ -915,8 +915,10 @@ class BrowserViewController: UIViewController {
             title = url
         }
 
-        let shareItem = ShareItem(url: url, title: title, favicon: favicon)
-        profile.places.createBookmark(parentGUID: "mobile______", url: shareItem.url, title: shareItem.title)
+        guard let url = URL(string: url) else { return }
+
+        let shareItem = ShareItem(url: url.absoluteString, title: title, favicon: favicon)
+        profile.places.add(.init(url: url, title: title))
 
         var userData = [QuickActions.TabURLKey: shareItem.url]
         if let title = shareItem.title {
@@ -1396,14 +1398,13 @@ extension BrowserViewController: URLBarDelegate {
             }
         }
 
-        let deferredBookmarkStatus: Deferred<Maybe<Bool>> = fetchBookmarkStatus(for: urlString)
         let deferredPinnedTopSiteStatus: Deferred<Maybe<Bool>> = fetchPinnedTopSiteStatus(for: urlString)
 
         // Wait for both the bookmark status and the pinned status
-        deferredBookmarkStatus.both(deferredPinnedTopSiteStatus).uponQueue(.main) {
+        deferredPinnedTopSiteStatus.uponQueue(.main) { pinned in
             let shouldShowNewTabButton = self.profile.prefs.boolForKey(PrefsKeys.ShowNewTabToolbarButton) ?? (self.newTabUserResearch?.newTabState ?? false)
-            let isBookmarked = $0.successValue ?? false
-            let isPinned = $1.successValue ?? false
+            let isBookmarked = self.profile.places.isBookmarked(urlString)
+            let isPinned = pinned.successValue ?? false
             let pageActions = self.getTabActions(tab: tab, buttonView: button, presentShareMenu: actionMenuPresenter,
                                                  findInPage: findInPageAction, presentableVC: self, isBookmarked: isBookmarked,
                                                  isPinned: isPinned, shouldShowNewTabButton: shouldShowNewTabButton, success: successCallback)
@@ -1574,21 +1575,21 @@ extension BrowserViewController: URLBarDelegate {
         let possibleKeyword = String(trimmedText[..<possibleKeywordQuerySeparatorSpace])
         let possibleQuery = String(trimmedText[trimmedText.index(after: possibleKeywordQuerySeparatorSpace)...])
 
-        profile.places.getBookmarkURLForKeyword(keyword: possibleKeyword).uponQueue(.main) { result in
 
-            if var urlString = result.successValue ?? "",
-                let escapedQuery = possibleQuery.addingPercentEncoding(withAllowedCharacters: NSCharacterSet.urlQueryAllowed),
-                let range = urlString.range(of: "%s") {
-                urlString.replaceSubrange(range, with: escapedQuery)
+        let url = profile.places.search(possibleKeyword)?.url.absoluteString
 
-                if let url = URL(string: urlString) {
-                    self.finishEditingAndSubmit(url, visitType: VisitType.typed, forTab: currentTab)
-                    return
-                }
+        if var urlString = url,
+           let escapedQuery = possibleQuery.addingPercentEncoding(withAllowedCharacters: NSCharacterSet.urlQueryAllowed),
+           let range = urlString.range(of: "%s") {
+            urlString.replaceSubrange(range, with: escapedQuery)
+
+            if let url = URL(string: urlString) {
+                self.finishEditingAndSubmit(url, visitType: VisitType.typed, forTab: currentTab)
+                return
             }
-
-            self.submitSearchText(text, forTab: currentTab)
         }
+
+        self.submitSearchText(text, forTab: currentTab)
     }
 
     fileprivate func submitSearchText(_ text: String, forTab tab: Tab) {
@@ -1761,13 +1762,13 @@ extension BrowserViewController: TabDelegate {
 
 extension BrowserViewController: LibraryPanelDelegate {
     func libraryPanelDidRequestToSignIn() {
-        let fxaParams = FxALaunchParams(query: ["entrypoint": "homepanel"])
-        presentSignInViewController(fxaParams) // TODO UX Right now the flow for sign in and create account is the same
+//        let fxaParams = FxALaunchParams(query: ["entrypoint": "homepanel"])
+//        presentSignInViewController(fxaParams) // TODO UX Right now the flow for sign in and create account is the same
     }
 
     func libraryPanelDidRequestToCreateAccount() {
-        let fxaParams = FxALaunchParams(query: ["entrypoint": "homepanel"])
-        presentSignInViewController(fxaParams) // TODO UX Right now the flow for sign in and create account is the same
+//        let fxaParams = FxALaunchParams(query: ["entrypoint": "homepanel"])
+//        presentSignInViewController(fxaParams) // TODO UX Right now the flow for sign in and create account is the same
     }
 
     func libraryPanel(didSelectURL url: URL, visitType: VisitType) {
@@ -2167,10 +2168,10 @@ extension BrowserViewController {
                 if self.navigationController?.viewControllers.count ?? 0 > 1 {
                     _ = self.navigationController?.popToRootViewController(animated: true)
                 }
-                if let flow = fxaLoginFlow {
-                    let fxaParams = FxALaunchParams(query: ["entrypoint": "firstrun"])
-                    self.presentSignInViewController(fxaParams, flowType: flow, referringPage: .onboarding)
-                }
+//                if let flow = fxaLoginFlow {
+//                    let fxaParams = FxALaunchParams(query: ["entrypoint": "firstrun"])
+//                    self.presentSignInViewController(fxaParams, flowType: flow, referringPage: .onboarding)
+//                }
             }
         }
         self.introVCPresentHelper(introViewController: introViewController)
@@ -2197,37 +2198,37 @@ extension BrowserViewController {
     ///     - deepLinkParams: FxALaunchParams from deeplink query
     ///     - flowType: FxAPageType is used to determine if email login, qr code login, or user settings page should be presented
     ///     - referringPage: ReferringPage enum is used to handle telemetry events correctly for the view event and the FxA sign in tap events, need to know which route we took to get to them
-    func getSignInOrFxASettingsVC(_ deepLinkParams: FxALaunchParams? = nil, flowType: FxAPageType, referringPage: ReferringPage) -> UIViewController {
-        // Show the settings page if we have already signed in. If we haven't then show the signin page
-        let parentType: FxASignInParentType
-        let object: TelemetryWrapper.EventObject
-        guard profile.hasSyncableAccount() else {
-            switch referringPage {
-            case .appMenu, .none:
-                parentType = .appMenu
-                object = .appMenu
-            case .onboarding:
-                parentType = .onboarding
-                object = .onboarding
-            case .settings:
-                parentType = .settings
-                object = .settings
-            }
+//    func getSignInOrFxASettingsVC(_ deepLinkParams: FxALaunchParams? = nil, flowType: FxAPageType, referringPage: ReferringPage) -> UIViewController {
+//        // Show the settings page if we have already signed in. If we haven't then show the signin page
+//        let parentType: FxASignInParentType
+//        let object: TelemetryWrapper.EventObject
+//        guard profile.hasSyncableAccount() else {
+//            switch referringPage {
+//            case .appMenu, .none:
+//                parentType = .appMenu
+//                object = .appMenu
+//            case .onboarding:
+//                parentType = .onboarding
+//                object = .onboarding
+//            case .settings:
+//                parentType = .settings
+//                object = .settings
+//            }
+//
+//            let signInVC = FirefoxAccountSignInViewController(profile: profile, parentType: parentType, deepLinkParams: deepLinkParams)
+//            TelemetryWrapper.recordEvent(category: .firefoxAccount, method: .view, object: object)
+//            return signInVC
+//        }
+//
+//        let settingsTableViewController = SyncContentSettingsViewController()
+//        settingsTableViewController.profile = profile
+//        return settingsTableViewController
+//    }
 
-            let signInVC = FirefoxAccountSignInViewController(profile: profile, parentType: parentType, deepLinkParams: deepLinkParams)
-            TelemetryWrapper.recordEvent(category: .firefoxAccount, method: .view, object: object)
-            return signInVC
-        }
-
-        let settingsTableViewController = SyncContentSettingsViewController()
-        settingsTableViewController.profile = profile
-        return settingsTableViewController
-    }
-
-    func presentSignInViewController(_ fxaOptions: FxALaunchParams? = nil, flowType: FxAPageType = .emailLoginFlow, referringPage: ReferringPage = .none) {
-        let vcToPresent = getSignInOrFxASettingsVC(fxaOptions, flowType: flowType, referringPage: referringPage)
-        presentThemedViewController(navItemLocation: .Left, navItemText: .Close, vcBeingPresented: vcToPresent, topTabsVisible: UIDevice.current.userInterfaceIdiom == .pad)
-    }
+//    func presentSignInViewController(_ fxaOptions: FxALaunchParams? = nil, flowType: FxAPageType = .emailLoginFlow, referringPage: ReferringPage = .none) {
+//        let vcToPresent = getSignInOrFxASettingsVC(fxaOptions, flowType: flowType, referringPage: referringPage)
+//        presentThemedViewController(navItemLocation: .Left, navItemText: .Close, vcBeingPresented: vcToPresent, topTabsVisible: UIDevice.current.userInterfaceIdiom == .pad)
+//    }
 
     @objc func dismissSignInViewController() {
         self.dismiss(animated: true, completion: nil)

@@ -7,6 +7,7 @@ import SnapKit
 import Shared
 import Storage
 import Account
+import Core
 
 extension UIStackView {
     func addBackground(color: UIColor) {
@@ -107,7 +108,7 @@ class ShareViewController: UIViewController {
         }
 
         let profile = BrowserProfile(localName: "profile")
-        RustFirefoxAccounts.startup(prefs: profile.prefs).uponQueue(.main) { _ in }
+//        RustFirefoxAccounts.startup(prefs: profile.prefs).uponQueue(.main) { _ in }
     }
 
     private func setupRows() {
@@ -336,15 +337,10 @@ extension ShareViewController {
         gesture.isEnabled = false
         animateToActionDoneView(withTitle: Strings.ShareBookmarkThisPageDone)
 
-        if let shareItem = shareItem, case .shareItem(let item) = shareItem {
+        if let shareItem = shareItem, case .shareItem(let item) = shareItem, let url = URL(string: item.url), let title = item.title {
             let profile = BrowserProfile(localName: "profile")
-            profile._reopen()
-            _ = profile.places.createBookmark(parentGUID: BookmarkRoots.MobileFolderGUID, url: item.url, title: item.title).value // Intentionally block thread with database call.
-            profile._shutdown()
-
-            addAppExtensionTelemetryEvent(forMethod: "bookmark-this-page")
+            profile.places.add(.init(url: url, title: title))
         }
-
         finish()
     }
 
@@ -371,15 +367,15 @@ extension ShareViewController {
 
         gesture.isEnabled = false
         view.isUserInteractionEnabled = false
-        RustFirefoxAccounts.shared.accountManager.uponQueue(.main) { _ in
-            self.view.isUserInteractionEnabled = true
-            self.sendToDevice = SendToDevice()
-            guard let sendToDevice = self.sendToDevice else { return }
-            sendToDevice.sharedItem = item
-            sendToDevice.delegate = self.delegate
-            let vc = sendToDevice.initialViewController()
-            self.navigationController?.pushViewController(vc, animated: true)
-        }
+//        RustFirefoxAccounts.shared.accountManager.uponQueue(.main) { _ in
+//            self.view.isUserInteractionEnabled = true
+//            self.sendToDevice = SendToDevice()
+//            guard let sendToDevice = self.sendToDevice else { return }
+//            sendToDevice.sharedItem = item
+//            sendToDevice.delegate = self.delegate
+//            let vc = sendToDevice.initialViewController()
+//            self.navigationController?.pushViewController(vc, animated: true)
+//        }
     }
 
     func openFirefox(withUrl url: String, isSearch: Bool) {

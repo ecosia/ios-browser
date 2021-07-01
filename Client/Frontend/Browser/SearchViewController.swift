@@ -5,7 +5,7 @@
 import UIKit
 import Shared
 import Storage
-import MozillaAppServices
+//import MozillaAppServices
 //import Telemetry
 
 private enum SearchListSection: Int {

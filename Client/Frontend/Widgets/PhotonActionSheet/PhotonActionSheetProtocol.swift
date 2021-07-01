@@ -41,10 +41,6 @@ extension PhotonActionSheetProtocol {
 
     typealias PageOptionsVC = QRCodeViewControllerDelegate & SettingsDelegate & PresentingModalViewControllerDelegate & UIViewController
 
-    func fetchBookmarkStatus(for url: String) -> Deferred<Maybe<Bool>> {
-        return profile.places.isBookmarked(url: url)
-    }
-
     func fetchPinnedTopSiteStatus(for url: String) -> Deferred<Maybe<Bool>> {
         return self.profile.history.isPinnedTopSite(url)
     }

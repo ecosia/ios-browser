@@ -141,9 +141,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
         self.updateAuthenticationInfo()
         SystemUtils.onFirstRun()
 
-        RustFirefoxAccounts.startup(prefs: profile.prefs).uponQueue(.main) { _ in
-            print("RustFirefoxAccounts started")
-        }
+//        RustFirefoxAccounts.startup(prefs: profile.prefs).uponQueue(.main) { _ in
+//            print("RustFirefoxAccounts started")
+//        }
         log.info("startApplication end")
         return true
     }
@@ -316,11 +316,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
         if let profile = self.profile {
             profile._reopen()
 
-            if profile.prefs.boolForKey(PendingAccountDisconnectedKey) ?? false {
-                profile.removeAccount()
-            }
+//            if profile.prefs.boolForKey(PendingAccountDisconnectedKey) ?? false {
+//                profile.removeAccount()
+//            }
 
-            profile.syncManager.applicationDidBecomeActive()
+//            profile.syncManager.applicationDidBecomeActive()
 
             setUpWebServer(profile)
         }

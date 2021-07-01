@@ -44,14 +44,14 @@ class FirefoxAccountSignInViewController: UIViewController {
 
         let placeholder = "firefox.com/pair"
 
-        RustFirefoxAccounts.shared.accountManager.uponQueue(.main) { manager in
-            manager.getPairingAuthorityURL { result in
-                guard let url = try? result.get(), let host = url.host else { return }
-                let shortUrl = host + url.path // "firefox.com" + "/pair"
-                let msg = Strings.FxASignin_QRInstructions.replaceFirstOccurrence(of: placeholder, with: shortUrl)
-                label.attributedText = msg.attributedText(boldString: shortUrl, font: DynamicFontHelper().MediumSizeRegularWeightAS)
-            }
-        }
+//        RustFirefoxAccounts.shared.accountManager.uponQueue(.main) { manager in
+//            manager.getPairingAuthorityURL { result in
+//                guard let url = try? result.get(), let host = url.host else { return }
+//                let shortUrl = host + url.path // "firefox.com" + "/pair"
+//                let msg = Strings.FxASignin_QRInstructions.replaceFirstOccurrence(of: placeholder, with: shortUrl)
+//                label.attributedText = msg.attributedText(boldString: shortUrl, font: DynamicFontHelper().MediumSizeRegularWeightAS)
+//            }
+//        }
 
         return label
     }()

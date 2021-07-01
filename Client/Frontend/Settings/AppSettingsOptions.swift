@@ -7,7 +7,7 @@ import Shared
 import Account
 import SwiftKeychainWrapper
 import LocalAuthentication
-import MozillaAppServices
+//import MozillaAppServices
 import Core
 
 // This file contains all of the settings available in the main settings screen of the app.
@@ -296,76 +296,76 @@ class SyncNowSetting: WithAccountSetting {
 }
 
 // Sync setting that shows the current Firefox Account status.
-class AccountStatusSetting: WithAccountSetting {
-    override init(settings: SettingsTableViewController) {
-        super.init(settings: settings)
-        NotificationCenter.default.addObserver(self, selector: #selector(updateAccount), name: .FirefoxAccountProfileChanged, object: nil)
-    }
-
-    @objc func updateAccount(notification: Notification) {
-        DispatchQueue.main.async {
-            self.settings.tableView.reloadData()
-        }
-    }
-
-    override var accessoryView: UIImageView? {
-        return disclosureIndicator
-    }
-
-    override var title: NSAttributedString? {
-        if let displayName = RustFirefoxAccounts.shared.userProfile?.displayName {
-            return NSAttributedString(string: displayName, attributes: [NSAttributedString.Key.font: DynamicFontHelper.defaultHelper.DefaultStandardFontBold, NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.syncText])
-        }
-
-        if let email = RustFirefoxAccounts.shared.userProfile?.email {
-            return NSAttributedString(string: email, attributes: [NSAttributedString.Key.font: DynamicFontHelper.defaultHelper.DefaultStandardFontBold, NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.syncText])
-        }
-
-        return nil
-    }
-
-    override var status: NSAttributedString? {
-        if RustFirefoxAccounts.shared.isActionNeeded {
-            let string = Strings.FxAAccountVerifyPassword
-            let orange = UIColor.theme.tableView.warningText
-            let range = NSRange(location: 0, length: string.count)
-            let attrs = [NSAttributedString.Key.foregroundColor: orange]
-            let res = NSMutableAttributedString(string: string)
-            res.setAttributes(attrs, range: range)
-            return res
-        }
-        return nil
-    }
-
-    override func onClick(_ navigationController: UINavigationController?) {
-        guard !profile.rustFxA.accountNeedsReauth() else {
-            let vc = FirefoxAccountSignInViewController(profile: profile, parentType: .settings, deepLinkParams: nil)
-            TelemetryWrapper.recordEvent(category: .firefoxAccount, method: .view, object: .settings)
-            navigationController?.pushViewController(vc, animated: true)
-            return
-        }
-
-        let viewController = SyncContentSettingsViewController()
-        viewController.profile = profile
-        navigationController?.pushViewController(viewController, animated: true)
-    }
-
-    override func onConfigureCell(_ cell: UITableViewCell) {
-        super.onConfigureCell(cell)
-        if let imageView = cell.imageView {
-            imageView.subviews.forEach({ $0.removeFromSuperview() })
-            imageView.frame = CGRect(width: 30, height: 30)
-            imageView.layer.cornerRadius = (imageView.frame.height) / 2
-            imageView.layer.masksToBounds = true
-
-            imageView.image = UIImage(named: "placeholder-avatar")!.createScaled(CGSize(width: 30, height: 30))
-
-            RustFirefoxAccounts.shared.avatar?.image.uponQueue(.main) { image in
-                imageView.image = image.createScaled(CGSize(width: 30, height: 30))
-            }
-        }
-    }
-}
+//class AccountStatusSetting: WithAccountSetting {
+//    override init(settings: SettingsTableViewController) {
+//        super.init(settings: settings)
+//        NotificationCenter.default.addObserver(self, selector: #selector(updateAccount), name: .FirefoxAccountProfileChanged, object: nil)
+//    }
+//
+//    @objc func updateAccount(notification: Notification) {
+//        DispatchQueue.main.async {
+//            self.settings.tableView.reloadData()
+//        }
+//    }
+//
+//    override var accessoryView: UIImageView? {
+//        return disclosureIndicator
+//    }
+//
+//    override var title: NSAttributedString? {
+//        if let displayName = RustFirefoxAccounts.shared.userProfile?.displayName {
+//            return NSAttributedString(string: displayName, attributes: [NSAttributedString.Key.font: DynamicFontHelper.defaultHelper.DefaultStandardFontBold, NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.syncText])
+//        }
+//
+//        if let email = RustFirefoxAccounts.shared.userProfile?.email {
+//            return NSAttributedString(string: email, attributes: [NSAttributedString.Key.font: DynamicFontHelper.defaultHelper.DefaultStandardFontBold, NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.syncText])
+//        }
+//
+//        return nil
+//    }
+//
+//    override var status: NSAttributedString? {
+//        if RustFirefoxAccounts.shared.isActionNeeded {
+//            let string = Strings.FxAAccountVerifyPassword
+//            let orange = UIColor.theme.tableView.warningText
+//            let range = NSRange(location: 0, length: string.count)
+//            let attrs = [NSAttributedString.Key.foregroundColor: orange]
+//            let res = NSMutableAttributedString(string: string)
+//            res.setAttributes(attrs, range: range)
+//            return res
+//        }
+//        return nil
+//    }
+//
+//    override func onClick(_ navigationController: UINavigationController?) {
+//        guard !profile.rustFxA.accountNeedsReauth() else {
+//            let vc = FirefoxAccountSignInViewController(profile: profile, parentType: .settings, deepLinkParams: nil)
+//            TelemetryWrapper.recordEvent(category: .firefoxAccount, method: .view, object: .settings)
+//            navigationController?.pushViewController(vc, animated: true)
+//            return
+//        }
+//
+//        let viewController = SyncContentSettingsViewController()
+//        viewController.profile = profile
+//        navigationController?.pushViewController(viewController, animated: true)
+//    }
+//
+//    override func onConfigureCell(_ cell: UITableViewCell) {
+//        super.onConfigureCell(cell)
+//        if let imageView = cell.imageView {
+//            imageView.subviews.forEach({ $0.removeFromSuperview() })
+//            imageView.frame = CGRect(width: 30, height: 30)
+//            imageView.layer.cornerRadius = (imageView.frame.height) / 2
+//            imageView.layer.masksToBounds = true
+//
+//            imageView.image = UIImage(named: "placeholder-avatar")!.createScaled(CGSize(width: 30, height: 30))
+//
+//            RustFirefoxAccounts.shared.avatar?.image.uponQueue(.main) { image in
+//                imageView.image = image.createScaled(CGSize(width: 30, height: 30))
+//            }
+//        }
+//    }
+//}
 
 class DeleteExportedDataSetting: HiddenSetting {
     override var title: NSAttributedString? {
@@ -482,16 +482,16 @@ class SlowTheDatabase: HiddenSetting {
     }
 }
 
-class ForgetSyncAuthStateDebugSetting: HiddenSetting {
-    override var title: NSAttributedString? {
-        return NSAttributedString(string: "Debug: forget Sync auth state", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
-    }
-
-    override func onClick(_ navigationController: UINavigationController?) {
-        settings.profile.rustFxA.syncAuthState.invalidate()
-        settings.tableView.reloadData()
-    }
-}
+//class ForgetSyncAuthStateDebugSetting: HiddenSetting {
+//    override var title: NSAttributedString? {
+//        return NSAttributedString(string: "Debug: forget Sync auth state", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
+//    }
+//
+//    override func onClick(_ navigationController: UINavigationController?) {
+//        settings.profile.rustFxA.syncAuthState.invalidate()
+//        settings.tableView.reloadData()
+//    }
+//}
 
 class SentryIDSetting: HiddenSetting {
     let deviceAppHash = UserDefaults(suiteName: AppInfo.sharedContainerIdentifier)?.string(forKey: "SentryDeviceAppHash") ?? "0000000000000000000000000000000000000000"
@@ -777,7 +777,7 @@ class SendAnonymousUsageDataSetting: BoolSetting {
             settingDidChange: {
                 LeanPlumClient.shared.set(attributes: [LPAttributeKey.telemetryOptIn: $0])
                 LeanPlumClient.shared.set(enabled: $0)
-                Glean.shared.setUploadEnabled($0)
+//                Glean.shared.setUploadEnabled($0)
             }
         )
     }
@@ -967,63 +967,63 @@ class PrivacyPolicySetting: Setting {
     }
 }
 
-class ChinaSyncServiceSetting: Setting {
-    override var accessoryType: UITableViewCell.AccessoryType { return .none }
-    var prefs: Prefs { return profile.prefs }
-    let prefKey = PrefsKeys.KeyEnableChinaSyncService
-    let profile: Profile
-    let settings: UIViewController
-
-    override var hidden: Bool { return !AppInfo.isChinaEdition }
-
-    override var title: NSAttributedString? {
-        return NSAttributedString(string: "本地同步服务", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
-    }
-
-    override var status: NSAttributedString? {
-        return NSAttributedString(string: "禁用后使用全球服务同步数据", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.headerTextLight])
-    }
-
-    init(settings: SettingsTableViewController) {
-        self.profile = settings.profile
-        self.settings = settings
-    }
-
-    override func onConfigureCell(_ cell: UITableViewCell) {
-        super.onConfigureCell(cell)
-        let control = UISwitchThemed()
-        control.onTintColor = UIColor.theme.tableView.controlTint
-        control.addTarget(self, action: #selector(switchValueChanged), for: .valueChanged)
-        control.isOn = prefs.boolForKey(prefKey) ?? AppInfo.isChinaEdition
-        cell.accessoryView = control
-        cell.selectionStyle = .none
-    }
-
-    @objc func switchValueChanged(_ toggle: UISwitch) {
-        TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .chinaServerSwitch)
-        guard profile.rustFxA.hasAccount() else {
-            prefs.setObject(toggle.isOn, forKey: prefKey)
-            RustFirefoxAccounts.reconfig(prefs: profile.prefs)
-            return
-        }
-
-        // Show confirmation dialog for the user to sign out of FxA
-
-        let msg = "更改此设置后，再次登录您的帐户" // "Sign-in again to your account after changing this setting"
-        let alert = UIAlertController(title: "", message: msg, preferredStyle: .alert)
-        let ok = UIAlertAction(title: Strings.OKString, style: .default) { _ in
-            self.prefs.setObject(toggle.isOn, forKey: self.prefKey)
-            self.profile.removeAccount()
-            RustFirefoxAccounts.reconfig(prefs: self.profile.prefs)
-        }
-        let cancel = UIAlertAction(title: Strings.CancelString, style: .default) { _ in
-            toggle.setOn(!toggle.isOn, animated: true)
-        }
-        alert.addAction(ok)
-        alert.addAction(cancel)
-        settings.present(alert, animated: true)
-    }
-}
+//class ChinaSyncServiceSetting: Setting {
+//    override var accessoryType: UITableViewCell.AccessoryType { return .none }
+//    var prefs: Prefs { return profile.prefs }
+//    let prefKey = PrefsKeys.KeyEnableChinaSyncService
+//    let profile: Profile
+//    let settings: UIViewController
+//
+//    override var hidden: Bool { return !AppInfo.isChinaEdition }
+//
+//    override var title: NSAttributedString? {
+//        return NSAttributedString(string: "本地同步服务", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
+//    }
+//
+//    override var status: NSAttributedString? {
+//        return NSAttributedString(string: "禁用后使用全球服务同步数据", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.headerTextLight])
+//    }
+//
+//    init(settings: SettingsTableViewController) {
+//        self.profile = settings.profile
+//        self.settings = settings
+//    }
+//
+//    override func onConfigureCell(_ cell: UITableViewCell) {
+//        super.onConfigureCell(cell)
+//        let control = UISwitchThemed()
+//        control.onTintColor = UIColor.theme.tableView.controlTint
+//        control.addTarget(self, action: #selector(switchValueChanged), for: .valueChanged)
+//        control.isOn = prefs.boolForKey(prefKey) ?? AppInfo.isChinaEdition
+//        cell.accessoryView = control
+//        cell.selectionStyle = .none
+//    }
+//
+//    @objc func switchValueChanged(_ toggle: UISwitch) {
+//        TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .chinaServerSwitch)
+//        guard profile.rustFxA.hasAccount() else {
+//            prefs.setObject(toggle.isOn, forKey: prefKey)
+//            RustFirefoxAccounts.reconfig(prefs: profile.prefs)
+//            return
+//        }
+//
+//        // Show confirmation dialog for the user to sign out of FxA
+//
+//        let msg = "更改此设置后，再次登录您的帐户" // "Sign-in again to your account after changing this setting"
+//        let alert = UIAlertController(title: "", message: msg, preferredStyle: .alert)
+//        let ok = UIAlertAction(title: Strings.OKString, style: .default) { _ in
+//            self.prefs.setObject(toggle.isOn, forKey: self.prefKey)
+//            self.profile.removeAccount()
+//            RustFirefoxAccounts.reconfig(prefs: self.profile.prefs)
+//        }
+//        let cancel = UIAlertAction(title: Strings.CancelString, style: .default) { _ in
+//            toggle.setOn(!toggle.isOn, animated: true)
+//        }
+//        alert.addAction(ok)
+//        alert.addAction(cancel)
+//        settings.present(alert, animated: true)
+//    }
+//}
 
 class NewTabPageSetting: Setting {
     let profile: Profile

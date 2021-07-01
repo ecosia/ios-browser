@@ -84,14 +84,9 @@ extension PhotonActionSheetProtocol {
 
         let removeBookmark = PhotonActionSheetItem(title: Strings.AppMenuRemoveBookmarkTitleString, iconString: "menu-Bookmark-Remove") { _, _ in
             guard let url = tab.url?.displayURL else { return }
-
-            self.profile.places.deleteBookmarksWithURL(url: url.absoluteString).uponQueue(.main) { result in
-                if result.isSuccess {
-                    success(Strings.AppMenuRemoveBookmarkConfirmMessage, .removeBookmark)
-                }
-            }
-
-            TelemetryWrapper.recordEvent(category: .action, method: .delete, object: .bookmark, value: .pageActionMenu)
+            guard let index = profile.places.items.firstIndex(where: { $0.url == url }) else { return }
+            profile.places.remove(at: index)
+            success(Strings.AppMenuRemoveBookmarkConfirmMessage, .removeBookmark)
         }
 
         let pinToTopSites = PhotonActionSheetItem(title: Strings.PinTopsiteActionTitle, iconString: "action_pin") { _, _ in

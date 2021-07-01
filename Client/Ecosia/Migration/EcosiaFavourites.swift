@@ -4,7 +4,7 @@
 
 import Foundation
 import Core
-import MozillaAppServices
+//import MozillaAppServices
 import Shared
 
 final class EcosiaFavourites {
@@ -15,10 +15,10 @@ final class EcosiaFavourites {
             return
         }
 
-        if let error = profile.places.reopenIfClosed() {
-            finished(.failure(.init(reasons: [error])))
-            return
-        }
+//        if let error = profile.places.reopenIfClosed() {
+//            finished(.failure(.init(reasons: [error])))
+//            return
+//        }
 
         let start = Date()
         let favImport = DispatchGroup()
@@ -29,23 +29,23 @@ final class EcosiaFavourites {
 
             guard let urlString = page.urlString else { continue }
             
-            favImport.enter()
-
-            let bookmark = profile.places.createBookmark(parentGUID: "mobile______", url: urlString, title: page.title)
-
-            bookmark.uponQueue(.main) { guid in
-                switch guid {
-                case .success(let guid):
-                    guids.append(guid)
-                    // only report progress of every 20th bookmark as it's quick
-                    if i % 20 == 0 {
-                        progress?(Double(i) / Double(favourites.count))
-                    }
-                case .failure(let error):
-                    errors.append(error)
-                }
-                favImport.leave()
-            }
+//            favImport.enter()
+//
+//            let bookmark = profile.places.createBookmark(parentGUID: "mobile______", url: urlString, title: page.title)
+//
+//            bookmark.uponQueue(.main) { guid in
+//                switch guid {
+//                case .success(let guid):
+//                    guids.append(guid)
+//                    // only report progress of every 20th bookmark as it's quick
+//                    if i % 20 == 0 {
+//                        progress?(Double(i) / Double(favourites.count))
+//                    }
+//                case .failure(let error):
+//                    errors.append(error)
+//                }
+//                favImport.leave()
+//            }
         }
 
         favImport.notify(queue: .main) {

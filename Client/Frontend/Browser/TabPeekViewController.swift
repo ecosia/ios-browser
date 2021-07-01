@@ -174,9 +174,7 @@ class TabPeekViewController: UIViewController, WKNavigationDelegate {
             return
         }
 
-        browserProfile.places.isBookmarked(url: displayURL) >>== { isBookmarked in
-            self.isBookmarked = isBookmarked
-        }
+        self.isBookmarked = browserProfile.places.isBookmarked(displayURL)
 
         browserProfile.remoteClientsAndTabs.getClientGUIDs().uponQueue(.main) {
             guard let clientGUIDs = $0.successValue else {
