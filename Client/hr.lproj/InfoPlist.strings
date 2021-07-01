@@ -1,0 +1,14 @@
+"NSCameraUsageDescription" = "Ovo vam omogućava slikanje i prijenos fotografija.";
+
+"NSLocationWhenInUseUsageDescription" = "Web stranice koje posjećuješ mogu zatražiti tvoju lokaciju.";
+
+"NSMicrophoneUsageDescription" = "Ovo vam omogućava snimanje i prijenos videa.";
+
+"NSPhotoLibraryAddUsageDescription" = "Ovo vam omogućava spremanje fotografija.";
+
+"ShortcutItemTitleNewPrivateTab" = "Nova privatna kartica";
+
+"ShortcutItemTitleNewTab" = "Nova kartica";
+
+"ShortcutItemTitleQRCode" = "Skeniraj QR kod";
+

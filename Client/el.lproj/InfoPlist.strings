@@ -1,0 +1,14 @@
+"NSCameraUsageDescription" = "Επιτρέπει τη λήψη και μεταφόρτωση φωτογραφιών.";
+
+"NSLocationWhenInUseUsageDescription" = "Οι ιστοσελίδες που επισκέπτεστε ίσως απαιτήσουν την τοποθεσία σας.";
+
+"NSMicrophoneUsageDescription" = "Επιτρέπει τη λήψη και μεταφόρτωση βίντεο.";
+
+"NSPhotoLibraryAddUsageDescription" = "Αυτό σάς επιτρέπει να αποθηκεύετε φωτογραφίες.";
+
+"ShortcutItemTitleNewPrivateTab" = "Νέα ιδιωτική καρτέλα";
+
+"ShortcutItemTitleNewTab" = "Νέα καρτέλα";
+
+"ShortcutItemTitleQRCode" = "Σάρωση κωδικού QR";
+

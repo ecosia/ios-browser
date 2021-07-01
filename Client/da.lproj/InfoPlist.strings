@@ -1,0 +1,14 @@
+"NSCameraUsageDescription" = "Dette lader dig tage og uploade fotos.";
+
+"NSLocationWhenInUseUsageDescription" = "Websteder du besøger kan bede om din position.";
+
+"NSMicrophoneUsageDescription" = "Dette lader dig tage og uploade videoer.";
+
+"NSPhotoLibraryAddUsageDescription" = "Lader dig gemme fotos.";
+
+"ShortcutItemTitleNewPrivateTab" = "Nyt privat faneblad";
+
+"ShortcutItemTitleNewTab" = "Nyt faneblad";
+
+"ShortcutItemTitleQRCode" = "Skan QR-kode";
+

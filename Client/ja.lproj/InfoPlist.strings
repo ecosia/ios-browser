@@ -1,0 +1,14 @@
+"NSCameraUsageDescription" = "写真を撮影してアップロードできます。";
+
+"NSLocationWhenInUseUsageDescription" = "訪れたウェブサイトがあなたの位置情報を要求しています。";
+
+"NSMicrophoneUsageDescription" = "動画を撮影してアップロードできます。";
+
+"NSPhotoLibraryAddUsageDescription" = "これにより写真を保存できます。";
+
+"ShortcutItemTitleNewPrivateTab" = "新規プライベートタブ";
+
+"ShortcutItemTitleNewTab" = "新規タブ";
+
+"ShortcutItemTitleQRCode" = "QR コードをスキャン";
+

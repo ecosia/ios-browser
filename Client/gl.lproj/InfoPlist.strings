@@ -1,0 +1,14 @@
+"NSCameraUsageDescription" = "Isto permítelle facer fotos e subilas.";
+
+"NSLocationWhenInUseUsageDescription" = "Os sitios web que visita poden solicitar a súa localización.";
+
+"NSMicrophoneUsageDescription" = "Isto permítelle facer vídeos e subilos.";
+
+"NSPhotoLibraryAddUsageDescription" = "Isto permítelle gardar fotos.";
+
+"ShortcutItemTitleNewPrivateTab" = "Nova lapela privada";
+
+"ShortcutItemTitleNewTab" = "Nova lapela";
+
+"ShortcutItemTitleQRCode" = "Examinar código QR";
+

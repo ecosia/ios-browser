@@ -1,0 +1,14 @@
+"NSCameraUsageDescription" = "Điều này cho phép bạn chụp và tải hình ảnh lên.";
+
+"NSLocationWhenInUseUsageDescription" = "Trang web bạn truy cập có thể yêu cầu vị trí của bạn.";
+
+"NSMicrophoneUsageDescription" = "Điều này cho phép bạn quay và tải video lên.";
+
+"NSPhotoLibraryAddUsageDescription" = "Điều này cho phép bạn lưu ảnh.";
+
+"ShortcutItemTitleNewPrivateTab" = "Thẻ riêng tư mới";
+
+"ShortcutItemTitleNewTab" = "Thẻ mới";
+
+"ShortcutItemTitleQRCode" = "Quét mã QR";
+
