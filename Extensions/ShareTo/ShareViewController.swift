@@ -265,7 +265,7 @@ class ShareViewController: UIViewController {
     private func makeActionDoneRow(addTo parent: UIStackView) -> (row: UIStackView, label: UILabel) {
         let stackView = UIStackView()
         stackView.axis = .horizontal
-        stackView.addBackground(color: UIColor(named: "primaryBrand")!)
+        stackView.addBackground(color: UIColor(named: "primaryAction")!)
         stackView.rightLeftEdges(inset: UX.rowInset)
         parent.addArrangedSubview(stackView)
 
