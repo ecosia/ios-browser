@@ -304,7 +304,7 @@ extension FirefoxHomeViewController {
 
         func cellHeight(_ traits: UITraitCollection, width: CGFloat) -> CGFloat {
             switch self {
-            case .personalCounter: return UIFontDescriptor.preferredFontDescriptor(withTextStyle: .subheadline).pointSize + 28 + 32
+            case .personalCounter: return UIFontDescriptor.preferredFontDescriptor(withTextStyle: .caption2).pointSize + 28 + 32
             case .promo: return 230
             case .logo: return 100
             case .search: return UIFontDescriptor.preferredFontDescriptor(withTextStyle: .body).pointSize + 25 + 16
