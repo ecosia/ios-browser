@@ -179,6 +179,9 @@
                   Identifier = "EcosiaBookmarkTests/testNewProfileClearsExistingAuthenticationInfo()">
                </Test>
                <Test
+                  Identifier = "EcosiaTabMigrationTests/testEcosiaImportTabs()">
+               </Test>
+               <Test
                   Identifier = "SearchEnginesTests">
                </Test>
                <Test
