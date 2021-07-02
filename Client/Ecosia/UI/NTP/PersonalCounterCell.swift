@@ -26,7 +26,6 @@ final class PersonalCounterCell: UICollectionViewCell, Themeable {
 
         let background = UIView()
         background.layer.borderWidth = 1
-        background.layer.cornerRadius = 20
         background.setContentHuggingPriority(.defaultLow, for: .horizontal)
         background.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(background)
@@ -37,7 +36,7 @@ final class PersonalCounterCell: UICollectionViewCell, Themeable {
         stack.axis = .horizontal
         stack.distribution = .fill
         stack.alignment = .center
-        stack.spacing = 0
+        stack.spacing = 2
         stack.setContentHuggingPriority(.required, for: .horizontal)
         stack.backgroundColor = .clear
         contentView.addSubview(stack)
@@ -54,7 +53,8 @@ final class PersonalCounterCell: UICollectionViewCell, Themeable {
         let counterLabel = UILabel()
         counterLabel.translatesAutoresizingMaskIntoConstraints = false
         counterLabel.textColor = UIColor.theme.ecosia.highContrastText
-        counterLabel.font = .preferredFont(forTextStyle: .subheadline)
+        counterLabel.font = .preferredFont(forTextStyle: .caption2)
+        counterLabel.adjustsFontForContentSizeCategory = true
         counterLabel.setContentHuggingPriority(.required, for: .horizontal)
         counterLabel.setContentHuggingPriority(.defaultLow, for: .vertical)
         stack.addArrangedSubview(counterLabel)
@@ -85,6 +85,11 @@ final class PersonalCounterCell: UICollectionViewCell, Themeable {
 
         background.layer.borderColor = UIColor.theme.ecosia.personalCounterBorder.cgColor
         counterLabel?.textColor = UIColor.theme.ecosia.highContrastText
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        background.layer.cornerRadius = (bounds.height - 32) / 2.0
     }
 
     override var isHighlighted: Bool {
