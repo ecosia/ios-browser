@@ -29,7 +29,6 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
         flow.minimumInteritemSpacing = 0
         flow.minimumLineSpacing = 0
         flow.sectionInset = .init(top: 0, left: 0, bottom: 0, right: 0)
-        flow.headerReferenceSize.height = 100
 
         let indicator = UIActivityIndicatorView(style: .gray)
         indicator.startAnimating()
@@ -86,6 +85,11 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
     func collectionView(_ collectionView: UICollectionView, layout: UICollectionViewLayout, sizeForItemAt: IndexPath) -> CGSize {
         return .init(width: collection.bounds.width, height: 130)
     }
+
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        let height = UIFontDescriptor.preferredFontDescriptor(withTextStyle: .body).pointSize * 3 + 30
+        return .init(width: collection.bounds.width, height: height)
+    }
     
     func collectionView(_: UICollectionView, didSelectItemAt: IndexPath) {
         let item = items[didSelectItemAt.row]
@@ -115,16 +119,18 @@ private final class NewsSubHeader: UICollectionReusableView, Themeable {
 
         let subtitle = UILabel()
         subtitle.translatesAutoresizingMaskIntoConstraints = false
-        subtitle.font = .preferredFont(forTextStyle: .title3)
+        subtitle.font = .preferredFont(forTextStyle: .body)
+        subtitle.adjustsFontForContentSizeCategory = true
+        subtitle.setContentHuggingPriority(.required, for: .vertical)
         subtitle.numberOfLines = 0
         subtitle.text = .localized(.keepUpToDate)
         addSubview(subtitle)
         self.subtitle = subtitle
         
-        subtitle.topAnchor.constraint(equalTo: topAnchor, constant: 16).isActive = true
+        subtitle.topAnchor.constraint(equalTo: topAnchor, constant: 0).isActive = true
         subtitle.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 16).isActive = true
         subtitle.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor, constant: -16).isActive = true
-        subtitle.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10).isActive = true
+        subtitle.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: -10).isActive = true
 
         applyTheme()
     }

@@ -38,6 +38,7 @@ final class EcosiaInfoCell: UICollectionViewCell, Themeable {
         title = UILabel()
         contentView.addSubview(title)
         title.font = .preferredFont(forTextStyle: .body)
+        title.adjustsFontForContentSizeCategory = true
         title.numberOfLines = 1
         title.translatesAutoresizingMaskIntoConstraints = false
         title.setContentHuggingPriority(.required, for: .vertical)
@@ -56,11 +57,13 @@ final class EcosiaInfoCell: UICollectionViewCell, Themeable {
 
         subtitle = UILabel()
         subtitle.font = .preferredFont(forTextStyle: .headline)
+        subtitle.adjustsFontForContentSizeCategory = true
         stack.addArrangedSubview(subtitle)
 
         desc = UILabel()
         desc.numberOfLines = 0
         desc.font = .preferredFont(forTextStyle: .subheadline)
+        desc.adjustsFontForContentSizeCategory = true
         desc.adjustsFontSizeToFitWidth = true
         desc.minimumScaleFactor = 0.8
         stack.addArrangedSubview(desc)

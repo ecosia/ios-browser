@@ -66,12 +66,14 @@ final class NewsCell: UICollectionViewCell, Themeable {
         title.numberOfLines = 4
         title.lineBreakMode = .byTruncatingTail
         title.font = .preferredFont(forTextStyle: .subheadline)
+        title.adjustsFontForContentSizeCategory = true
         contentView.addSubview(title)
         self.title = title
         
         let date = UILabel()
         date.translatesAutoresizingMaskIntoConstraints = false
         date.font = .preferredFont(forTextStyle: .subheadline)
+        date.adjustsFontForContentSizeCategory = true
         date.numberOfLines = 1
         date.textAlignment = .left
         date.setContentCompressionResistancePriority(.required, for: .vertical)
@@ -178,6 +180,7 @@ final class NewsButtonCell: UICollectionReusableView {
         button.setTitleColor(UIColor.theme.ecosia.primaryBrand, for: .normal)
         button.setTitleColor(UIColor.Photon.Grey50, for: .highlighted)
         button.titleLabel?.font = .preferredFont(forTextStyle: .body)
+        button.titleLabel?.adjustsFontForContentSizeCategory = true
         return button
     }()
 
@@ -208,6 +211,7 @@ class NewsHeader: UICollectionReusableView, Themeable {
         let titleLabel = UILabel()
         titleLabel.textColor = UIColor.theme.ecosia.highContrastText
         titleLabel.font = .preferredFont(forTextStyle: .headline)
+        titleLabel.adjustsFontForContentSizeCategory = true
         titleLabel.numberOfLines = 1
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         return titleLabel

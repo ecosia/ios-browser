@@ -45,6 +45,7 @@ final class TreeCounterCell: UICollectionViewCell, Themeable {
         descriptionLabel.text = .localized(.treesPlantedWithEcosia)
         descriptionLabel.textColor = UIColor.theme.ecosia.highContrastText
         descriptionLabel.font = .preferredFont(forTextStyle: .subheadline)
+        descriptionLabel.adjustsFontForContentSizeCategory = true
         descriptionLabel.numberOfLines = 0
         descriptionLabel.textAlignment = .center
         contentView.addSubview(descriptionLabel)

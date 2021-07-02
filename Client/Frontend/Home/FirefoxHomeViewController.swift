@@ -870,6 +870,7 @@ class ASHeaderView: UICollectionReusableView {
         titleLabel.text = self.title
         titleLabel.textColor = UIColor.theme.ecosia.highContrastText
         titleLabel.font = .preferredFont(forTextStyle: .headline)
+        titleLabel.adjustsFontForContentSizeCategory = true
         titleLabel.minimumScaleFactor = 0.6
         titleLabel.numberOfLines = 1
         titleLabel.adjustsFontSizeToFitWidth = true
@@ -964,6 +965,7 @@ class LibraryShortcutView: UIView {
         title.allowsDefaultTighteningForTruncation = true
         title.lineBreakMode = .byTruncatingTail
         title.font = .preferredFont(forTextStyle: .footnote)
+        title.adjustsFontForContentSizeCategory = true
         title.textAlignment = .center
         title.numberOfLines = 2
         title.setContentHuggingPriority(.required, for: .vertical)

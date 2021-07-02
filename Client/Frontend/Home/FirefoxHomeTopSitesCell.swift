@@ -45,6 +45,7 @@ class TopSiteItemCell: UICollectionViewCell, Themeable {
         titleLabel.layer.masksToBounds = true
         titleLabel.textAlignment = .center
         titleLabel.font = .preferredFont(forTextStyle: .footnote)
+        titleLabel.adjustsFontForContentSizeCategory = true
         titleLabel.numberOfLines = 2
         titleLabel.allowsDefaultTighteningForTruncation = true
         titleLabel.lineBreakMode = .byTruncatingTail

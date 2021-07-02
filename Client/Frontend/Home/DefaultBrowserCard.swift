@@ -14,6 +14,7 @@ class DefaultBrowserCard: UICollectionViewCell {
         title.numberOfLines = 0
         title.lineBreakMode = .byWordWrapping
         title.font = .preferredFont(forTextStyle: .title3)
+        title.adjustsFontForContentSizeCategory = true
         title.setContentHuggingPriority(.required, for: .vertical)
         return title
     }()
@@ -22,6 +23,7 @@ class DefaultBrowserCard: UICollectionViewCell {
         descriptionText.text = .localized(.websitesWillAlwaysOpen)
         descriptionText.numberOfLines = 0
         descriptionText.font = .preferredFont(forTextStyle: .subheadline)
+        descriptionText.adjustsFontForContentSizeCategory = true
         descriptionText.adjustsFontSizeToFitWidth = true
         descriptionText.minimumScaleFactor = 0.8
         descriptionText.allowsDefaultTighteningForTruncation = true
@@ -32,6 +34,7 @@ class DefaultBrowserCard: UICollectionViewCell {
         button.setTitle(String.DefaultBrowserCardButton, for: .normal)
         button.titleLabel?.font = .preferredFont(forTextStyle: .body)
         button.titleLabel?.textAlignment = .center
+        button.titleLabel?.adjustsFontForContentSizeCategory = true
         button.layer.cornerRadius = 8
         button.layer.masksToBounds = true
         return button

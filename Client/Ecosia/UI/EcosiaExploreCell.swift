@@ -34,6 +34,7 @@ final class EcosiaExploreCell: UICollectionViewCell, Themeable {
         title = UILabel()
         contentView.addSubview(title)
         title.font = .preferredFont(forTextStyle: .subheadline)
+        title.adjustsFontForContentSizeCategory = true
         title.textAlignment = .center
         title.numberOfLines = 1
         title.translatesAutoresizingMaskIntoConstraints = false
