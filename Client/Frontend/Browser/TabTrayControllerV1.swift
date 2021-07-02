@@ -951,8 +951,8 @@ extension TabTrayControllerV1: UIAdaptivePresentationControllerDelegate, UIPopov
 class TrayToolbar: UIView, Themeable, PrivateModeUI {
     fileprivate let toolbarButtonSize = CGSize(width: 44, height: 44)
 
-    lazy var addTabButton: UIButton = {
-        let button = UIButton()
+    lazy var addTabButton: AddNewTabButton = {
+        let button = AddNewTabButton(style: .circle)
         button.setImage(UIImage.templateImageNamed("nav-add"), for: .normal)
         button.accessibilityLabel = NSLocalizedString("Add Tab", comment: "Accessibility label for the Add Tab button in the Tab Tray.")
         button.accessibilityIdentifier = "TabTrayController.addTabButton"
