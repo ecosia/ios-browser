@@ -336,7 +336,11 @@ extension BrowserViewController: WKNavigationDelegate {
     // method.
 
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
-        guard let url = navigationAction.request.url, url.policy == .allow, let tab = tabManager[webView] else {
+        guard
+            let url = navigationAction.request.url,
+            url.policy == .allow,
+            let tab = tabManager[webView]
+        else {
             decisionHandler(.cancel)
             return
         }
