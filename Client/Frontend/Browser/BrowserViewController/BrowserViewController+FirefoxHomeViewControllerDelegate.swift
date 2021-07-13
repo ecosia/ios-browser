@@ -13,9 +13,7 @@ extension BrowserViewController: FirefoxHomeViewControllerDelegate {
             header.alpha = 1
             return
         }
-
-        let dy = max(0, offset + 4 - searchPos)
-        let alpha = min(1.0, dy/4)
+        let alpha: CGFloat = searchPos <= offset ? 1 : 0
         header.alpha = alpha
     }
 
