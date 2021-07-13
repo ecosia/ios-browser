@@ -105,7 +105,7 @@ class TabLocationView: UIView {
         urlTextField.attributedPlaceholder = self.placeholder
         urlTextField.accessibilityIdentifier = "url"
         urlTextField.accessibilityActionsSource = self
-        urlTextField.font = UIConstants.DefaultChromeFont
+        urlTextField.font = .preferredFont(forTextStyle: .body)
         urlTextField.backgroundColor = .clear
         urlTextField.accessibilityLabel = "Address Bar"
 

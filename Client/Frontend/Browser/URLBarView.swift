@@ -14,7 +14,7 @@ private struct URLBarViewUX {
     static let LocationHeight: CGFloat = 40
     static let ButtonHeight: CGFloat = 44
     static let LocationContentOffset: CGFloat = 8
-    static let TextFieldCornerRadius: CGFloat = 8
+    static let TextFieldCornerRadius: CGFloat = 10
     static let TextFieldBorderWidth: CGFloat = 0
     static let TextFieldBorderWidthSelected: CGFloat = 4
     static let ProgressBarHeight: CGFloat = 3
@@ -395,7 +395,7 @@ class URLBarView: UIView {
         locationTextField.returnKeyType = .go
         locationTextField.clearButtonMode = .whileEditing
         locationTextField.textAlignment = .left
-        locationTextField.font = UIConstants.DefaultChromeFont
+        locationTextField.font = .preferredFont(forTextStyle: .body)
         locationTextField.accessibilityIdentifier = "address"
         locationTextField.accessibilityLabel = NSLocalizedString("Address and Search", comment: "Accessibility label for address and search field, both words (Address, Search) are therefore nouns.")
         locationTextField.attributedPlaceholder = self.locationView.placeholder
@@ -854,7 +854,7 @@ extension URLBarView: PrivateModeUI {
 class TabLocationContainerView: UIView {
 
     private struct LocationContainerUX {
-        static let CornerRadius: CGFloat = 8
+        static let CornerRadius: CGFloat = 10
     }
 
     override init(frame: CGRect) {
@@ -921,7 +921,7 @@ class ToolbarTextField: AutocompleteTextField {
 extension ToolbarTextField: Themeable {
     func applyTheme() {
         backgroundColor = UIColor.theme.textField.backgroundInOverlay
-        textColor = UIColor.theme.textField.textAndTint
+        textColor = UIColor.theme.ecosia.textfieldPlaceholder
         clearButtonTintColor = textColor
         tintColor = AutocompleteTextField.textSelectionColor.textFieldMode
     }
