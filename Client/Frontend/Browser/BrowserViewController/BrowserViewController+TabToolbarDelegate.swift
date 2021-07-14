@@ -99,6 +99,7 @@ extension BrowserViewController: TabToolbarDelegate, PhotonActionSheetProtocol {
         }
         */
 
+        actions.append(getNavigationalActions(vcDelegate: self))
         actions.append(getLibraryActions(vcDelegate: self))
         actions.append(getOtherPanelActions(vcDelegate: self))
 

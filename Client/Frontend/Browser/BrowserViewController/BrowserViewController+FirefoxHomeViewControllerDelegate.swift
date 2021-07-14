@@ -36,6 +36,10 @@ extension BrowserViewController: FirefoxHomeViewControllerDelegate {
     }
 
     func homeDidPressPersonalCounter(_ home: FirefoxHomeViewController) {
+        presentEcosiaWorld()
+    }
+
+    func presentEcosiaWorld() {
         present(ecosiaNavigation, animated: true, completion: nil)
     }
 }
