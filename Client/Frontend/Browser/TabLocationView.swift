@@ -92,10 +92,10 @@ class TabLocationView: UIView {
         }
     }
 
-    lazy var placeholder: NSAttributedString = {
+    var placeholder: NSAttributedString {
         let placeholderText = String.localized(.searchAndPlant)
         return NSAttributedString(string: placeholderText, attributes: [.foregroundColor: UIColor.theme.ecosia.textfieldPlaceholder])
-    }()
+    }
 
     lazy var urlTextField: UITextField = {
         let urlTextField = DisplayTextField()
@@ -401,6 +401,7 @@ extension TabLocationView: Themeable {
     func applyTheme() {
         backgroundColor = UIColor.theme.textField.background
         urlTextField.textColor = UIColor.theme.textField.textAndTint
+        urlTextField.attributedPlaceholder = self.placeholder
         readerModeButton.selectedTintColor = UIColor.theme.urlbar.readerModeButtonSelected
         readerModeButton.unselectedTintColor = UIColor.theme.urlbar.readerModeButtonUnselected
         
