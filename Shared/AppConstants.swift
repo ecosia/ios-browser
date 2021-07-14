@@ -22,7 +22,7 @@ public enum AppBuildChannel: String {
 public enum KVOConstants: String {
     case loading = "loading"
     case estimatedProgress = "estimatedProgress"
-    case URL = "URL"
+    case URL = "url"
     case title = "title"
     case canGoBack = "canGoBack"
     case canGoForward = "canGoForward"
