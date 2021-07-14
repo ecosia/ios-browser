@@ -9,6 +9,8 @@ final class TreeCounterCell: UICollectionViewCell, Themeable {
 
     private let treeCounter = TreeCounter()
     private weak var descriptionLabel: UILabel!
+    private weak var counter: UILabel!
+
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -31,6 +33,7 @@ final class TreeCounterCell: UICollectionViewCell, Themeable {
                 [.featureSettings: [[UIFontDescriptor.FeatureKey.featureIdentifier: kNumberSpacingType,
                                      .typeIdentifier: kMonospacedNumbersSelector]]]), size: 0)
         contentView.addSubview(counter)
+        self.counter = counter
 
         let descriptionLabel = UILabel()
         descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -62,6 +65,7 @@ final class TreeCounterCell: UICollectionViewCell, Themeable {
     }
 
     func applyTheme() {
+        counter?.textColor = UIColor.theme.ecosia.primaryBrand
         descriptionLabel?.textColor = UIColor.theme.ecosia.highContrastText
     }
 
