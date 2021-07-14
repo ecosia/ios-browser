@@ -723,7 +723,11 @@ class BrowserViewController: UIViewController {
         // Remake constraints even if we're already showing the home controller.
         // The home controller may change sizes if we tap the URL bar while on about:home.
         firefoxHomeViewController?.view.snp.remakeConstraints { make in
-            make.top.equalTo(self.urlBar.snp.top)
+            if UIDevice.current.userInterfaceIdiom == .pad {
+                make.top.equalTo(header.snp.bottom)
+            } else {
+                make.top.equalTo(self.urlBar.snp.top)
+            }
             make.left.right.equalTo(self.view)
             make.bottom.equalTo(self.view.safeArea.bottom)
         }

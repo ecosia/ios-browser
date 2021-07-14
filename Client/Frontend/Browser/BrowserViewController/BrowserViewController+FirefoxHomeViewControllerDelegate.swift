@@ -9,7 +9,7 @@ extension BrowserViewController: FirefoxHomeViewControllerDelegate {
     // for iPhone we hide the whole header, for iPad only the urlbar
     var scrollOverlay: UIView {
         if UIDevice.current.userInterfaceIdiom == .pad {
-            return urlBar
+            return urlBar.locationContainer
         } else {
             return header
         }
