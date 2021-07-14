@@ -26,6 +26,9 @@ struct FirefoxHomeUX {
     static let LibraryShortcutsHeight: CGFloat = 100
     static let LibraryShortcutsMaxWidth: CGFloat = 350
     static let SearchBarHeight: CGFloat = 56
+    static var ScrollSearchBarOffset: CGFloat {
+        (UIDevice.current.userInterfaceIdiom == .phone) ? SearchBarHeight : 0
+    }
     static var ToolbarHeight: CGFloat {
         (UIDevice.current.userInterfaceIdiom == .phone && UIDevice.current.orientation.isPortrait) ? 46 : 0
     }
@@ -208,7 +211,7 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if inOverlayMode, let cell = libraryCell ?? treeCounterCell {
-            collectionView.contentOffset = .init(x: 0, y: cell.frame.minY - FirefoxHomeUX.SearchBarHeight)
+            collectionView.contentOffset = .init(x: 0, y: cell.frame.minY - FirefoxHomeUX.ScrollSearchBarOffset)
         } else {
             collectionView.collectionViewLayout.invalidateLayout()
         }
@@ -254,7 +257,7 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
             guard isViewLoaded else { return }
             if inOverlayMode && !oldValue, let cell = libraryCell ?? treeCounterCell {
                 UIView.animate(withDuration: 0.3, delay: 0, options: [.beginFromCurrentState], animations: { [weak self] in
-                    self?.collectionView.contentOffset = .init(x: 0, y: cell.frame.minY - FirefoxHomeUX.SearchBarHeight)
+                    self?.collectionView.contentOffset = .init(x: 0, y: cell.frame.minY - FirefoxHomeUX.ScrollSearchBarOffset)
                 })
             } else if oldValue && !inOverlayMode && !collectionView.isDragging {
                 UIView.animate(withDuration: 0.3, delay: 0, options: [.beginFromCurrentState], animations: { [weak self] in
@@ -428,9 +431,8 @@ extension FirefoxHomeViewController: UICollectionViewDelegateFlowLayout {
         case .emptySpace:
             guard let cell = libraryCell ?? treeCounterCell else { return .zero }
             let offset = cell.frame.minY
-            let barHeight: CGFloat = FirefoxHomeUX.SearchBarHeight
             let filledHeight = User.shared.topSites == false ? cell.frame.maxY : topSitesCell?.frame.maxY
-            let height = collectionView.frame.height - (filledHeight ?? 0) + offset - barHeight
+            let height = collectionView.frame.height - (filledHeight ?? 0) + offset - FirefoxHomeUX.ScrollSearchBarOffset
             return .init(width: cellSize.width, height: max(0, height))
         }
     }
