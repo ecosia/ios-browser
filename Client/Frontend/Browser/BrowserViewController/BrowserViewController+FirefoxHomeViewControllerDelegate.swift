@@ -10,11 +10,11 @@ extension BrowserViewController: FirefoxHomeViewControllerDelegate {
 
         guard !urlBar.inOverlayMode,
               (urlBar.currentURL.flatMap({ InternalURL($0)?.isAboutHomeURL }) ?? false || urlBar.currentURL == nil) else {
-            header.alpha = 1
+            urlBar.alpha = 1
             return
         }
         let alpha: CGFloat = searchPos <= offset ? 1 : 0
-        header.alpha = alpha
+        urlBar.alpha = alpha
     }
 
     func homeDidTapSearchButton(_ home: FirefoxHomeViewController) {
