@@ -29,6 +29,7 @@ extension String {
         case makeEcosiaYourDefault = "Make Ecosia your default"
         case moderate = "Moderate"
         case more = "More"
+        case myImpact = "My Impact"
         case mySearches = "My searches"
         case new = "New"
         case off = "Off"
