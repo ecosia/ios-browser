@@ -416,6 +416,7 @@ class BrowserViewController: UIViewController {
         urlBar.delegate = self
         urlBar.tabToolbarDelegate = self
         header = urlBarTopTabsContainer
+        header.isUserInteractionEnabled = false
         urlBarTopTabsContainer.addSubview(urlBar)
         urlBarTopTabsContainer.addSubview(topTabsContainer)
         view.addSubview(header)
@@ -724,12 +725,7 @@ class BrowserViewController: UIViewController {
         firefoxHomeViewController?.view.snp.remakeConstraints { make in
             make.top.equalTo(self.urlBar.snp.top)
             make.left.right.equalTo(self.view)
-//            if self.homePanelIsInline {
-//                make.bottom.equalTo(self.toolbar?.snp.top ?? self.view.snp.bottom)
-//            } else {
-                make.bottom.equalTo(self.view.snp.bottom)
-//            }
-//            make.height.equalTo(600)
+            make.bottom.equalTo(self.view.safeArea.bottom)
         }
 
         alertStackView.snp.remakeConstraints { make in
@@ -760,7 +756,7 @@ class BrowserViewController: UIViewController {
             view.addSubview(firefoxHomeViewController.view)
             firefoxHomeViewController.didMove(toParent: self)
             view.bringSubviewToFront(header)
-            header.alpha = urlBar.inOverlayMode ? 1.0 : 0.0
+            urlBar.alpha = urlBar.inOverlayMode ? 1.0 : 0.0
             view.bringSubviewToFront(footer)
         }
 
@@ -782,7 +778,7 @@ class BrowserViewController: UIViewController {
     }
 
     fileprivate func hideFirefoxHome() {
-        header.alpha = 1
+        urlBar.alpha = 1
 
         guard let firefoxHomeViewController = self.firefoxHomeViewController else {
             return

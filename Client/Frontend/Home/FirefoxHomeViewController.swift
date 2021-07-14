@@ -139,6 +139,7 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
     fileprivate let pocketAPI = Pocket()
     fileprivate let flowLayout = UICollectionViewFlowLayout()
     fileprivate weak var searchbarCell: UICollectionViewCell?
+    fileprivate weak var treeCounterCell: UICollectionViewCell?
     fileprivate weak var libraryCell: UICollectionViewCell?
     fileprivate weak var topSitesCell: UICollectionViewCell? {
         didSet { collectionView.collectionViewLayout.invalidateLayout() }
@@ -206,7 +207,7 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        if inOverlayMode, let cell = libraryCell {
+        if inOverlayMode, let cell = libraryCell ?? treeCounterCell {
             collectionView.contentOffset = .init(x: 0, y: cell.frame.minY - FirefoxHomeUX.SearchBarHeight)
         } else {
             collectionView.collectionViewLayout.invalidateLayout()
@@ -251,9 +252,9 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
     var inOverlayMode = false {
         didSet {
             guard isViewLoaded else { return }
-            if inOverlayMode && !oldValue, let libraryCell = libraryCell {
+            if inOverlayMode && !oldValue, let cell = libraryCell ?? treeCounterCell {
                 UIView.animate(withDuration: 0.3, delay: 0, options: [.beginFromCurrentState], animations: { [weak self] in
-                    self?.collectionView.contentOffset = .init(x: 0, y: libraryCell.frame.minY - FirefoxHomeUX.SearchBarHeight)
+                    self?.collectionView.contentOffset = .init(x: 0, y: cell.frame.minY - FirefoxHomeUX.SearchBarHeight)
                 })
             } else if oldValue && !inOverlayMode && !collectionView.isDragging {
                 UIView.animate(withDuration: 0.3, delay: 0, options: [.beginFromCurrentState], animations: { [weak self] in
@@ -425,11 +426,11 @@ extension FirefoxHomeViewController: UICollectionViewDelegateFlowLayout {
             let width = min(FirefoxHomeUX.LibraryShortcutsMaxWidth, cellSize.width)
             return CGSize(width: width, height: FirefoxHomeUX.LibraryShortcutsHeight)
         case .emptySpace:
-            guard let libraryCell = libraryCell else { return .zero }
-            let offset = libraryCell.frame.minY + Section.libraryShortcuts.headerHeight.height
+            guard let cell = libraryCell ?? treeCounterCell else { return .zero }
+            let offset = cell.frame.minY
             let barHeight: CGFloat = FirefoxHomeUX.SearchBarHeight
-            let filledHeight = User.shared.topSites == false ? libraryCell.frame.maxY : topSitesCell?.frame.maxY
-            let height = collectionView.frame.height - (filledHeight ?? 0) + offset - barHeight - FirefoxHomeUX.ToolbarHeight
+            let filledHeight = User.shared.topSites == false ? cell.frame.maxY : topSitesCell?.frame.maxY
+            let height = collectionView.frame.height - (filledHeight ?? 0) + offset - barHeight
             return .init(width: cellSize.width, height: max(0, height))
         }
     }
@@ -545,7 +546,10 @@ extension FirefoxHomeViewController {
             (cell as? SearchbarCell)?.delegate = self
             searchbarCell = cell
             return cell
-        case .treeCounter, .emptySpace, .logo, .personalCounter:
+        case .emptySpace, .logo, .personalCounter:
+            return cell
+        case .treeCounter:
+            treeCounterCell = cell
             return cell
         case .libraryShortcuts:
             let libraryCell = configureLibraryShortcutsCell(cell, forIndexPath: indexPath)
