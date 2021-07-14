@@ -416,7 +416,7 @@ class BrowserViewController: UIViewController {
         urlBar.delegate = self
         urlBar.tabToolbarDelegate = self
         header = urlBarTopTabsContainer
-        header.isUserInteractionEnabled = false
+        scrollOverlay.alpha = 0
         urlBarTopTabsContainer.addSubview(urlBar)
         urlBarTopTabsContainer.addSubview(topTabsContainer)
         view.addSubview(header)
@@ -756,7 +756,7 @@ class BrowserViewController: UIViewController {
             view.addSubview(firefoxHomeViewController.view)
             firefoxHomeViewController.didMove(toParent: self)
             view.bringSubviewToFront(header)
-            urlBar.alpha = urlBar.inOverlayMode ? 1.0 : 0.0
+            scrollOverlay.alpha = urlBar.inOverlayMode ? 1.0 : 0.0
             view.bringSubviewToFront(footer)
         }
 
@@ -778,7 +778,7 @@ class BrowserViewController: UIViewController {
     }
 
     fileprivate func hideFirefoxHome() {
-        urlBar.alpha = 1
+        scrollOverlay.alpha = 1
 
         guard let firefoxHomeViewController = self.firefoxHomeViewController else {
             return
