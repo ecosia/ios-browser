@@ -71,7 +71,7 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var barSeparator: UIColor { UIColor.Photon.Grey60 }
     override var actionSheetBackground: UIColor { UIColor.Photon.Grey70 }
     override var modalBackground: UIColor { UIColor.Photon.Grey80 }
-    override var textfieldPlaceholder: UIColor { UIColor.Photon.Grey40 }
+    override var textfieldPlaceholder: UIColor { UIColor.Photon.Grey20 }
     override var personalCounterBorder: UIColor { UIColor.Photon.Grey60 }
     override var personalCounterSelection: UIColor { UIColor.Photon.Grey60 }
 

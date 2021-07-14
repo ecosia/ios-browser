@@ -6,15 +6,24 @@ import UIKit
 import Shared
 
 extension BrowserViewController: FirefoxHomeViewControllerDelegate {
+    // for iPhone we hide the whole header, for iPad only the urlbar
+    var scrollOverlay: UIView {
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            return urlBar
+        } else {
+            return header
+        }
+    }
+
     func home(_ home: FirefoxHomeViewController, didScroll searchPos: CGFloat, offset: CGFloat) {
 
         guard !urlBar.inOverlayMode,
               (urlBar.currentURL.flatMap({ InternalURL($0)?.isAboutHomeURL }) ?? false || urlBar.currentURL == nil) else {
-            urlBar.alpha = 1
+            scrollOverlay.alpha = 1
             return
         }
         let alpha: CGFloat = searchPos <= offset ? 1 : 0
-        urlBar.alpha = alpha
+        scrollOverlay.alpha = alpha
     }
 
     func homeDidTapSearchButton(_ home: FirefoxHomeViewController) {
