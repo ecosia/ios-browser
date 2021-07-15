@@ -8,7 +8,7 @@ protocol SearchbarCellDelegate: AnyObject {
     func searchbarCellPressed(_ cell: SearchbarCell)
 }
 
-class SearchbarCell: UICollectionViewCell, Themeable {
+final class SearchbarCell: UICollectionViewCell, Themeable {
     private weak var search: UIButton!
     private weak var image: UIImageView!
     weak var delegate: SearchbarCellDelegate?
