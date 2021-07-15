@@ -139,7 +139,6 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
     weak var homePanelDelegate: HomePanelDelegate?
     weak var delegate: FirefoxHomeViewControllerDelegate?
     fileprivate let profile: Profile
-    fileprivate let pocketAPI = Pocket()
     fileprivate let flowLayout = UICollectionViewFlowLayout()
     fileprivate weak var searchbarCell: UICollectionViewCell?
     fileprivate weak var treeCounterCell: UICollectionViewCell?
@@ -163,8 +162,6 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
         customCell.delegate = self.topSitesManager
         return customCell
     }()
-
-    var pocketStories: [PocketStory] = []
 
     init(profile: Profile, delegate: FirefoxHomeViewControllerDelegate?) {
         self.profile = profile
@@ -615,31 +612,9 @@ extension FirefoxHomeViewController: DataObserverDelegate {
                 self.showSiteWithURLHandler(url as URL)
             }
 
-            self.getPocketSites().uponQueue(.main) { _ in
-                if !self.pocketStories.isEmpty {
-                    self.collectionView?.reloadData()
-                }
-            }
             // Refresh the AS data in the background so we'll have fresh data next time we show.
             self.profile.panelDataObservers.activityStream.refreshIfNeeded(forceTopSites: false)
         }
-    }
-
-    func getPocketSites() -> Success {
-        let showPocket = (profile.prefs.boolForKey(PrefsKeys.ASPocketStoriesVisible) ?? Pocket.IslocaleSupported(Locale.current.identifier))
-        guard showPocket else {
-            self.pocketStories = []
-            return succeed()
-        }
-
-        return pocketAPI.globalFeed(items: 10).bindQueue(.main) { pStory in
-            self.pocketStories = pStory
-            return succeed()
-        }
-    }
-
-    @objc func showMorePocketStories() {
-        showSiteWithURLHandler(Pocket.MoreStoriesURL)
     }
 
     // Invoked by the ActivityStreamDataObserver when highlights/top sites invalidation is complete.
