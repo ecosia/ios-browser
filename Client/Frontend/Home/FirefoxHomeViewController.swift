@@ -423,8 +423,7 @@ extension FirefoxHomeViewController: UICollectionViewDelegateFlowLayout {
             let estimatedLayout = layout.calculateLayout(for: CGSize(width: cellSize.width, height: 0))
             return CGSize(width: cellSize.width, height: estimatedLayout.size.height)
         case .libraryShortcuts:
-            let width = min(FirefoxHomeUX.LibraryShortcutsMaxWidth, cellSize.width)
-            return CGSize(width: width, height: FirefoxHomeUX.LibraryShortcutsHeight)
+            return CGSize(width: cellSize.width, height: FirefoxHomeUX.LibraryShortcutsHeight)
         case .emptySpace:
             guard let cell = libraryCell ?? treeCounterCell else { return .zero }
             let offset = cell.frame.minY
@@ -987,7 +986,7 @@ class ASHeaderView: UICollectionReusableView {
 
 class LibraryShortcutView: UIView {
     static let spacing: CGFloat = 16
-    static let iconSize: CGFloat = 42
+    static let iconSize: CGFloat = 48
 
     var button = UIButton()
     var title = UILabel()
