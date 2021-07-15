@@ -33,10 +33,23 @@ extension ThemedNavigationController: Themeable {
         navigationBar.isTranslucent = false
         navigationBar.tintColor = UIColor.theme.general.controlTint
         navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.theme.ecosia.highContrastText]
+        navigationBar.shadowImage = nil
+        navigationBar.setBackgroundImage(UIImage(), for: .default)
+        navigationBar.shadowImage = UIImage()
         setNeedsStatusBarAppearanceUpdate()
         viewControllers.forEach {
             ($0 as? Themeable)?.applyTheme()
         }
+        
+        let separator = UIView()
+        separator.backgroundColor = UIColor.theme.ecosia.barSeparator
+        separator.translatesAutoresizingMaskIntoConstraints = false
+        navigationBar.addSubview(separator)
+        
+        separator.bottomAnchor.constraint(equalTo: navigationBar.bottomAnchor).isActive = true
+        separator.leftAnchor.constraint(equalTo: navigationBar.leftAnchor).isActive = true
+        separator.rightAnchor.constraint(equalTo: navigationBar.rightAnchor).isActive = true
+        separator.heightAnchor.constraint(equalToConstant: 1).isActive = true
     }
 }
 
