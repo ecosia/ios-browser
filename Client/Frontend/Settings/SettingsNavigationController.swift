@@ -6,7 +6,8 @@ import UIKit
 
 class ThemedNavigationController: UINavigationController {
     var presentingModalViewControllerDelegate: PresentingModalViewControllerDelegate?
-
+    private weak var separator: UIView?
+    
     @objc func done() {
         if let delegate = presentingModalViewControllerDelegate {
             delegate.dismissPresentedModalViewController(self, animated: true)
@@ -23,17 +24,18 @@ class ThemedNavigationController: UINavigationController {
         super.viewDidLoad()
         modalPresentationStyle = .formSheet
         modalPresentationCapturesStatusBarAppearance = true
-        applyTheme()
         
         let separator = UIView()
-        separator.backgroundColor = UIColor.theme.ecosia.barSeparator
         separator.translatesAutoresizingMaskIntoConstraints = false
+        self.separator = separator
         navigationBar.addSubview(separator)
         
         separator.bottomAnchor.constraint(equalTo: navigationBar.bottomAnchor).isActive = true
         separator.leftAnchor.constraint(equalTo: navigationBar.leftAnchor).isActive = true
         separator.rightAnchor.constraint(equalTo: navigationBar.rightAnchor).isActive = true
         separator.heightAnchor.constraint(equalToConstant: 1).isActive = true
+        
+        applyTheme()
     }
 }
 
@@ -50,6 +52,7 @@ extension ThemedNavigationController: Themeable {
         viewControllers.forEach {
             ($0 as? Themeable)?.applyTheme()
         }
+        separator?.backgroundColor = UIColor.theme.ecosia.barSeparator
     }
 }
 
