@@ -598,7 +598,7 @@ extension FirefoxHomeViewController: DataObserverDelegate {
             
             self.topSitesManager.currentTraits = self.view.traitCollection
             
-            let numRows = max(self.profile.prefs.intForKey(PrefsKeys.NumberOfTopSiteRows) ?? TopSitesRowCountSettingsController.defaultNumberOfRows, 1)
+            let numRows = self.topSitesManager.numberOfRows
             
             let maxItems = Int(numRows) * self.topSitesManager.numberOfHorizontalItems()
             
