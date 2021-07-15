@@ -436,7 +436,9 @@ class ASHorizontalScrollCellManager: NSObject, UICollectionViewDelegate, UIColle
     // The current traits that define the parent ViewController. Used to determine how many rows/columns should be created.
     var currentTraits: UITraitCollection?
 
-    var numberOfRows: Int = 2
+    var numberOfRows: Int {
+        return UIDevice.current.userInterfaceIdiom == .pad ? 2 : 1
+    }
 
     // Size classes define how many items to show per row/column.
     func numberOfVerticalItems() -> Int {
