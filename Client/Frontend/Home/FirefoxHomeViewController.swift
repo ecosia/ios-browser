@@ -444,7 +444,13 @@ extension FirefoxHomeViewController: UICollectionViewDelegateFlowLayout {
         case .treeCounter, .search:
             return Section(section).headerHeight
         case .topSites:
-            return topSitesManager.content.isEmpty ? .zero : Section(section).headerHeight
+            if topSitesManager.content.isEmpty ||
+                User.shared.topSites == false ||
+                UIDevice.current.userInterfaceIdiom == .phone {
+                return .zero
+            } else {
+                return Section.topSites.headerHeight
+            }
         case .libraryShortcuts:
             return UIDevice.current.userInterfaceIdiom == .pad ? CGSize.zero : Section(section).headerHeight
         }
