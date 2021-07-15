@@ -1634,7 +1634,7 @@ extension BrowserViewController: URLBarDelegate {
 extension BrowserViewController: TabDelegate {
 
     func tab(_ tab: Tab, didCreateWebView webView: WKWebView) {
-        webView.frame = webViewContainer.frame
+        webView.frame = webViewContainer?.frame ?? .init()
         // Observers that live as long as the tab. Make sure these are all cleared in willDeleteWebView below!
         KVOs.forEach { webView.addObserver(self, forKeyPath: $0.rawValue, options: .new, context: nil) }
         webView.scrollView.addObserver(self.scrollController, forKeyPath: KVOConstants.contentSize.rawValue, options: .new, context: nil)
