@@ -12785,7 +12785,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = "personal-counter-publisher";
+				branch = main;
 				kind = branch;
 			};
 		};
