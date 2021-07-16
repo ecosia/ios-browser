@@ -4,14 +4,12 @@
 
 import UIKit
 
-protocol EcosiaInfoCellModel {
-    var title: String { get }
-    var subTitle: String? { get }
-    var description: String? { get }
-    var image: String { get }
+struct EcosiaInfoCellModel {
+    var title: String
+    var subTitle: String?
+    var description: String?
+    var image: String
 }
-
-extension EcosiaHome.Section.Info: EcosiaInfoCellModel {}
 
 final class EcosiaInfoCell: UICollectionViewCell, Themeable {
     override init(frame: CGRect) {

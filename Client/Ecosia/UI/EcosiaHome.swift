@@ -30,30 +30,6 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
             return nil
         }
 
-        enum Info: Int, CaseIterable {
-            case treeCount
-
-            var title: String {
-                return .localized(.mySearches)
-            }
-
-            var subTitle: String? {
-                return "\(User.shared.treeCount)"
-            }
-
-            var description: String? {
-                return .localized(.youNeedAround45)
-            }
-
-            var image: String {
-                return "treeCounter"
-            }
-
-            var label: Analytics.Label.Navigation {
-                return .counter
-            }
-        }
-
         enum Explore: Int, CaseIterable {
             case info, finance, trees, faq, shop, privacy
 
@@ -190,7 +166,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         switch Section(rawValue: section)! {
         case .logo, .counter: return 1
-        case .info: return Section.Info.allCases.count
+        case .info: return 1
         case .explore: return Section.Explore.allCases.count
         case .news: return min(3, items.count)
         }
@@ -206,7 +182,11 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
             break
         case .info:
             let infoCell = cell as! EcosiaInfoCell
-            Section.Info(rawValue: indexPath.row).map { infoCell.display($0) }
+            let info = EcosiaInfoCellModel(title: .localized(.mySearches),
+                                           subTitle: "\(personalCounter.state!)",
+                                           description: .localized(.youNeedAround45),
+                                           image: "treeCounter")
+            infoCell.display(info)
         case .explore:
             let exploreCell = cell as! EcosiaExploreCell
             Section.Explore(rawValue: indexPath.row).map { exploreCell.display($0) }
