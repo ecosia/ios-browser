@@ -310,7 +310,7 @@ extension FirefoxHomeViewController {
             case .logo: return 100
             case .search: return UIFontDescriptor.preferredFontDescriptor(withTextStyle: .body).pointSize + 25 + 16
             case .treeCounter:
-                return 30 + UIFontDescriptor.preferredFontDescriptor(withTextStyle: .subheadline).pointSize + 2 + 16 //TODO: make dynamic
+                return UIFontDescriptor.preferredFontDescriptor(withTextStyle: .subheadline).pointSize + 2 + 16 + 30
             case .topSites: return 0 //calculated dynamically
             case .libraryShortcuts: return FirefoxHomeUX.LibraryShortcutsHeight
             case .emptySpace:
@@ -477,7 +477,6 @@ extension FirefoxHomeViewController: UICollectionViewDelegateFlowLayout {
     override func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         let velocity = scrollView.panGestureRecognizer.velocity(in: scrollView.superview)
         delegate?.home(self, willBegin: velocity)
-
     }
 
     fileprivate func showSiteWithURLHandler(_ url: URL) {

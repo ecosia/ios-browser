@@ -25,7 +25,6 @@ extension PhotonActionSheetProtocol {
         return [openHomePage, myImpact]
     }
 
-
     //Returns a list of actions which is used to build a menu
     //OpenURL is a closure that can open a given URL in some view controller. It is up to the class using the menu to know how to open it
     func getLibraryActions(vcDelegate: PageOptionsVC) -> [PhotonActionSheetItem] {
