@@ -1010,7 +1010,8 @@ class TrayToolbar: UIView, Themeable, PrivateModeUI {
     }
 
     func applyUIMode(isPrivate: Bool) {
-        maskButton.applyUIMode(isPrivate: isPrivate)
+        maskButton.isSelected = isPrivate
+        maskButton.applyUIMode(isPrivate: false)
     }
 
     func applyTheme() {

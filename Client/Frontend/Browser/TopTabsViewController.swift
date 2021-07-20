@@ -237,7 +237,8 @@ extension TopTabsViewController: Themeable, PrivateModeUI {
 
         privateModeButton.onTint = UIColor.theme.topTabs.privateModeButtonOnTint
         privateModeButton.offTint = UIColor.theme.topTabs.privateModeButtonOffTint
-        privateModeButton.applyUIMode(isPrivate: tabDisplayManager.isPrivate)
+        privateModeButton.isSelected = isPrivate
+        privateModeButton.applyUIMode(isPrivate: true)
     }
 
     func applyTheme() {
