@@ -25,7 +25,7 @@ class PrivateModeButton: ToggleButton, PrivateModeUI {
             ? ThemeManager.instance.current.ecosia.barBackground
             : isPrivate
                 ? UIColor.Photon.White100
-                : ThemeManager.instance.current.ecosia.primaryText
+                : UIColor.theme.tabTray.toolbarButtonTint
         
         setTitleColor(color, for: .normal)
         accessibilityValue = isSelected ? PrivateModeStrings.toggleAccessibilityValueOn : PrivateModeStrings.toggleAccessibilityValueOff
