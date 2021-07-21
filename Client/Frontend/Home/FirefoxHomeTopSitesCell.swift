@@ -13,8 +13,8 @@ private struct TopSiteCellUX {
     static let CellCornerRadius: CGFloat = 4
     static let TitleOffset: CGFloat = 4
     static let OverlayColor = UIColor(white: 0.0, alpha: 0.25)
-    static let IconSize: CGFloat = 40
-    static let BorderColor = UIColor(white: 0, alpha: 0.1)
+    static let IconSize: CGFloat = 48
+    static let BorderColor = UIColor.Photon.Grey30
     static let BorderWidth: CGFloat = 0.5
     static let PinIconSize: CGFloat = 12
     static let PinColor = UIColor.Photon.Grey60
@@ -55,12 +55,10 @@ class TopSiteItemCell: UICollectionViewCell, Themeable {
 
     lazy private var faviconBG: UIView = {
         let view = UIView()
-        view.layer.cornerRadius = TopSiteCellUX.CellCornerRadius
         view.layer.borderWidth = TopSiteCellUX.BorderWidth
-        view.layer.shadowRadius = 3
-        view.layer.shadowOffset = .init(width: 0, height: 1)
-        view.layer.shadowColor = UIColor.theme.ecosia.primaryBackground.cgColor
-        view.layer.shadowOpacity = 0.15
+        view.layer.borderColor = TopSiteCellUX.BorderColor.cgColor
+        view.clipsToBounds = true
+        view.layer.masksToBounds = true
         return view
     }()
 
@@ -108,7 +106,7 @@ class TopSiteItemCell: UICollectionViewCell, Themeable {
         }
 
         faviconBG.snp.makeConstraints { make in
-            make.size.equalTo(TopSiteCellUX.IconSize + 2)
+            make.size.equalTo(TopSiteCellUX.IconSize)
             make.top.equalTo(contentView).offset(TopSiteCellUX.FavIconInset)
             make.centerX.equalTo(contentView)
         }
@@ -119,6 +117,7 @@ class TopSiteItemCell: UICollectionViewCell, Themeable {
     override func layoutSubviews() {
         super.layoutSubviews()
         titleBorder.frame = CGRect(x: 0, y: frame.height - TopSiteCellUX.TitleHeight -  TopSiteCellUX.BorderWidth, width: frame.width, height: TopSiteCellUX.BorderWidth)
+        faviconBG.layer.cornerRadius = faviconBG.bounds.width / 2.0
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -436,7 +435,9 @@ class ASHorizontalScrollCellManager: NSObject, UICollectionViewDelegate, UIColle
     // The current traits that define the parent ViewController. Used to determine how many rows/columns should be created.
     var currentTraits: UITraitCollection?
 
-    var numberOfRows: Int = 2
+    var numberOfRows: Int {
+        return UIDevice.current.userInterfaceIdiom == .pad ? 2 : 1
+    }
 
     // Size classes define how many items to show per row/column.
     func numberOfVerticalItems() -> Int {

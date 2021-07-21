@@ -25,6 +25,13 @@ struct FirefoxHomeUX {
     static let TopSitesInsets: CGFloat = 6
     static let LibraryShortcutsHeight: CGFloat = 100
     static let LibraryShortcutsMaxWidth: CGFloat = 350
+    static let SearchBarHeight: CGFloat = 56
+    static var ScrollSearchBarOffset: CGFloat {
+        (UIDevice.current.userInterfaceIdiom == .phone) ? SearchBarHeight : 0
+    }
+    static var ToolbarHeight: CGFloat {
+        (UIDevice.current.userInterfaceIdiom == .phone && UIDevice.current.orientation.isPortrait) ? 46 : 0
+    }
 }
 /*
  Size classes are the way Apple requires us to specify our UI.
@@ -121,11 +128,24 @@ extension HomePanelContextMenu {
     }
 }
 
+protocol FirefoxHomeViewControllerDelegate: AnyObject {
+    func home(_ home: FirefoxHomeViewController, didScroll contentOffset: CGFloat, offset: CGFloat)
+    func homeDidTapSearchButton(_ home: FirefoxHomeViewController)
+    func home(_ home: FirefoxHomeViewController, willBegin drag: CGPoint)
+    func homeDidPressPersonalCounter(_ home: FirefoxHomeViewController)
+}
+
 class FirefoxHomeViewController: UICollectionViewController, HomePanel {
     weak var homePanelDelegate: HomePanelDelegate?
+    weak var delegate: FirefoxHomeViewControllerDelegate?
     fileprivate let profile: Profile
-    fileprivate let pocketAPI = Pocket()
     fileprivate let flowLayout = UICollectionViewFlowLayout()
+    fileprivate weak var searchbarCell: UICollectionViewCell?
+    fileprivate weak var treeCounterCell: UICollectionViewCell?
+    fileprivate weak var libraryCell: UICollectionViewCell?
+    fileprivate weak var topSitesCell: UICollectionViewCell? {
+        didSet { collectionView.collectionViewLayout.invalidateLayout() }
+    }
 
     fileprivate lazy var topSitesManager: ASHorizontalScrollCellManager = {
         let manager = ASHorizontalScrollCellManager()
@@ -143,10 +163,9 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
         return customCell
     }()
 
-    var pocketStories: [PocketStory] = []
-
-    init(profile: Profile) {
+    init(profile: Profile, delegate: FirefoxHomeViewControllerDelegate?) {
         self.profile = profile
+        self.delegate = delegate
         super.init(collectionViewLayout: flowLayout)
         self.collectionView?.delegate = self
         self.collectionView?.dataSource = self
@@ -167,6 +186,7 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
 
         Section.allCases.forEach { self.collectionView?.register(Section($0.rawValue).cellType, forCellWithReuseIdentifier: Section($0.rawValue).cellIdentifier) }
         self.collectionView?.register(ASHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "Header")
+        self.collectionView?.register(UICollectionReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "EmptyHeader")
         self.collectionView?.register(ASFooterView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "Footer")
         collectionView?.keyboardDismissMode = .onDrag
 
@@ -185,8 +205,13 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
         reloadAll()
     }
 
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if inOverlayMode, let cell = libraryCell ?? treeCounterCell {
+            collectionView.contentOffset = .init(x: 0, y: cell.frame.minY - FirefoxHomeUX.ScrollSearchBarOffset)
+        } else {
+            collectionView.collectionViewLayout.invalidateLayout()
+        }
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -226,8 +251,15 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
 
     var inOverlayMode = false {
         didSet {
-            if isViewLoaded {
-                collectionView.reloadSections([0, 1])
+            guard isViewLoaded else { return }
+            if inOverlayMode && !oldValue, let cell = libraryCell ?? treeCounterCell {
+                UIView.animate(withDuration: 0.3, delay: 0, options: [.beginFromCurrentState], animations: { [weak self] in
+                    self?.collectionView.contentOffset = .init(x: 0, y: cell.frame.minY - FirefoxHomeUX.ScrollSearchBarOffset)
+                })
+            } else if oldValue && !inOverlayMode && !collectionView.isDragging {
+                UIView.animate(withDuration: 0.3, delay: 0, options: [.beginFromCurrentState], animations: { [weak self] in
+                    self?.collectionView.contentOffset = .zero
+                })
             }
         }
     }
@@ -243,37 +275,46 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
 extension FirefoxHomeViewController {
     enum Section: Int, CaseIterable {
         case promo
+        case personalCounter
+        case logo
+        case search
         case treeCounter
         case libraryShortcuts
         case topSites
+        case emptySpace
 
         var title: String? {
             switch self {
-            case .treeCounter, .promo: return nil
             case .topSites: return Strings.ASTopSitesTitle
-            case .libraryShortcuts: return nil
+            default: return nil
             }
         }
 
         var headerHeight: CGSize {
             switch self {
-            case .promo:
-                return .zero
-            case .treeCounter:
+            case .logo:
                 return CGSize(width: 50, height: 30)
             case .topSites:
                 return CGSize(width: 50, height: 54)
             case .libraryShortcuts:
                 return CGSize(width: 50, height: 10)
+            default:
+                return .zero
             }
         }
 
         func cellHeight(_ traits: UITraitCollection, width: CGFloat) -> CGFloat {
             switch self {
+            case .personalCounter: return UIFontDescriptor.preferredFontDescriptor(withTextStyle: .caption2).pointSize + 28 + 32
             case .promo: return 230
-            case .treeCounter: return 130
+            case .logo: return 100
+            case .search: return UIFontDescriptor.preferredFontDescriptor(withTextStyle: .body).pointSize + 25 + 16
+            case .treeCounter:
+                return UIFontDescriptor.preferredFontDescriptor(withTextStyle: .subheadline).pointSize + 2 + 16 + 30
             case .topSites: return 0 //calculated dynamically
             case .libraryShortcuts: return FirefoxHomeUX.LibraryShortcutsHeight
+            case .emptySpace:
+                return .nan // will be calculated outside of enum
             }
         }
 
@@ -290,7 +331,7 @@ extension FirefoxHomeViewController {
             var insets = FirefoxHomeUX.sectionInsetsForSizeClass[currentTraits.horizontalSizeClass]
 
             switch self {
-            case .libraryShortcuts, .topSites, .promo:
+            case .libraryShortcuts, .topSites, .promo, .search, .personalCounter:
                 let window = UIApplication.shared.keyWindow
                 let safeAreaInsets = window?.safeAreaInsets.left ?? 0
                 insets += FirefoxHomeHeaderViewUX.Insets + safeAreaInsets
@@ -301,52 +342,34 @@ extension FirefoxHomeViewController {
                 }
                 
                 return insets
-            case .treeCounter:
+            case .treeCounter, .logo:
                 insets += FirefoxHomeUX.TopSitesInsets
                 return insets
-            }
-        }
-
-        func numberOfItemsForRow(_ traits: UITraitCollection) -> CGFloat {
-            switch self {
-            case .topSites, .libraryShortcuts, .promo:
-                return 1
-            case .treeCounter:
-                return 1
+            case .emptySpace:
+                return 0
             }
         }
 
         func cellSize(for traits: UITraitCollection, frameWidth: CGFloat) -> CGSize {
             let height = cellHeight(traits, width: frameWidth)
             let inset = sectionInsets(traits, frameWidth: frameWidth) * 2
-
-            switch self {
-            case .topSites, .libraryShortcuts, .treeCounter, .promo:
-                return CGSize(width: frameWidth - inset, height: height)
-            }
-        }
-
-        var headerView: UIView? {
-            let view = ASHeaderView()
-            view.title = title
-            return view
+            return CGSize(width: frameWidth - inset, height: height)
         }
 
         var cellIdentifier: String {
-            switch self {
-            case .promo: return "DefaultBrowserCard"
-            case .topSites: return "TopSiteCell"
-            case .treeCounter: return "TreeCounterCell"
-            case .libraryShortcuts: return  "LibraryShortcutsCell"
-            }
+            return "\(cellType)"
         }
 
         var cellType: UICollectionViewCell.Type {
             switch self {
+            case .personalCounter: return PersonalCounterCell.self
             case .promo: return DefaultBrowserCard.self
+            case .logo: return LogoCell.self
+            case .search: return SearchbarCell.self
             case .topSites: return ASHorizontalScrollCell.self
             case .treeCounter: return TreeCounterCell.self
             case .libraryShortcuts: return ASLibraryCell.self
+            case .emptySpace: return EmptyCell.self
             }
         }
 
@@ -364,52 +387,66 @@ extension FirefoxHomeViewController {
 extension FirefoxHomeViewController: UICollectionViewDelegateFlowLayout {
 
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        switch kind {
-        case UICollectionView.elementKindSectionHeader:
-            let view = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "Header", for: indexPath) as! ASHeaderView
-            let title = Section(indexPath.section).title
-            switch Section(indexPath.section) {
-            case .topSites:
-                view.title = title
-                view.titleLabel.accessibilityIdentifier = "topSitesTitle"
-                return view
-            case .treeCounter, .promo, .libraryShortcuts:
-                return view
-            }
-        default:
-            return UICollectionReusableView()
+
+        guard kind == UICollectionView.elementKindSectionHeader, Section(indexPath.section) == .topSites else {
+            return collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "EmptyHeader", for: indexPath)
         }
+
+        let view = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "Header", for: indexPath) as! ASHeaderView
+        let title = Section(indexPath.section).title
+        view.title = title
+        view.titleLabel.accessibilityIdentifier = "topSitesTitle"
+        return view
     }
 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         self.longPressRecognizer.isEnabled = false
+
+        switch Section(rawValue: indexPath.section) {
+        case .personalCounter:
+            delegate?.homeDidPressPersonalCounter(self)
+            collectionView.deselectItem(at: indexPath, animated: true)
+        default:
+            break
+        }
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let cellSize = Section(indexPath.section).cellSize(for: self.traitCollection, frameWidth: self.view.frame.width)
 
         switch Section(indexPath.section) {
+        case .treeCounter, .promo, .search, .logo, .personalCounter:
+            return cellSize
         case .topSites:
             // Create a temporary cell so we can calculate the height.
             let layout = topSiteCell.collectionView.collectionViewLayout as! HorizontalFlowLayout
             let estimatedLayout = layout.calculateLayout(for: CGSize(width: cellSize.width, height: 0))
             return CGSize(width: cellSize.width, height: estimatedLayout.size.height)
-        case .treeCounter, .promo:
-            return cellSize
         case .libraryShortcuts:
-            let width = min(FirefoxHomeUX.LibraryShortcutsMaxWidth, cellSize.width)
-            return CGSize(width: width, height: FirefoxHomeUX.LibraryShortcutsHeight)
+            return CGSize(width: cellSize.width, height: FirefoxHomeUX.LibraryShortcutsHeight)
+        case .emptySpace:
+            guard let cell = libraryCell ?? treeCounterCell else { return .zero }
+            let offset = cell.frame.minY
+            let filledHeight = User.shared.topSites == false ? cell.frame.maxY : topSitesCell?.frame.maxY
+            let height = collectionView.frame.height - (filledHeight ?? 0) + offset - FirefoxHomeUX.ScrollSearchBarOffset
+            return .init(width: cellSize.width, height: max(0, height))
         }
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         switch Section(section) {
-        case .promo:
+        case .promo, .emptySpace, .logo, .personalCounter:
             return .zero
-        case .treeCounter:
-            return inOverlayMode ? .zero : Section(section).headerHeight
+        case .treeCounter, .search:
+            return Section(section).headerHeight
         case .topSites:
-            return topSitesManager.content.isEmpty ? .zero : Section(section).headerHeight
+            if topSitesManager.content.isEmpty ||
+                User.shared.topSites == false ||
+                UIDevice.current.userInterfaceIdiom == .phone {
+                return .zero
+            } else {
+                return Section.topSites.headerHeight
+            }
         case .libraryShortcuts:
             return UIDevice.current.userInterfaceIdiom == .pad ? CGSize.zero : Section(section).headerHeight
         }
@@ -430,6 +467,16 @@ extension FirefoxHomeViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         let insets = Section(section).sectionInsets(self.traitCollection, frameWidth: self.view.frame.width)
         return UIEdgeInsets(top: 0, left: insets, bottom: 0, right: insets)
+    }
+
+    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        guard let searchbarCell = searchbarCell else { return }
+        delegate?.home(self, didScroll: searchbarCell.frame.minY, offset: scrollView.contentOffset.y)
+    }
+
+    override func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        let velocity = scrollView.panGestureRecognizer.velocity(in: scrollView.superview)
+        delegate?.home(self, willBegin: velocity)
     }
 
     fileprivate func showSiteWithURLHandler(_ url: URL) {
@@ -456,7 +503,7 @@ extension FirefoxHomeViewController: UICollectionViewDelegateFlowLayout {
 extension FirefoxHomeViewController {
 
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
-        User.shared.topSites == false ? 3 : 4
+        Section.allCases.count
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -468,12 +515,14 @@ extension FirefoxHomeViewController {
             numItems = numItems - 1
         }
         switch Section(section) {
+        case .personalCounter:
+            return 1
         case .promo:
-            return !inOverlayMode && showPromo ? 1 : 0
+            return showPromo ? 1 : 0
         case .topSites:
-            return topSitesManager.content.isEmpty ? 0 : 1
-        case .treeCounter:
-            return inOverlayMode ? 0 : 1
+            return (topSitesManager.content.isEmpty || User.shared.topSites == false) ? 0 : 1
+        case .treeCounter, .search, .emptySpace, .logo:
+            return 1
         case .libraryShortcuts:
             // disable the libary shortcuts on the ipad
             return UIDevice.current.userInterfaceIdiom == .pad ? 0 : 1
@@ -493,11 +542,22 @@ extension FirefoxHomeViewController {
             }
             return cell
         case .topSites:
-            return configureTopSitesCell(cell, forIndexPath: indexPath)
+            let topSitesCell = configureTopSitesCell(cell, forIndexPath: indexPath)
+            self.topSitesCell = topSitesCell
+            return topSitesCell
+        case .search:
+            (cell as? SearchbarCell)?.delegate = self
+            searchbarCell = cell
+            return cell
+        case .emptySpace, .logo, .personalCounter:
+            return cell
         case .treeCounter:
+            treeCounterCell = cell
             return cell
         case .libraryShortcuts:
-            return configureLibraryShortcutsCell(cell, forIndexPath: indexPath)
+            let libraryCell = configureLibraryShortcutsCell(cell, forIndexPath: indexPath)
+            self.libraryCell = libraryCell
+            return libraryCell
         }
     }
 
@@ -539,7 +599,7 @@ extension FirefoxHomeViewController: DataObserverDelegate {
             
             self.topSitesManager.currentTraits = self.view.traitCollection
             
-            let numRows = max(self.profile.prefs.intForKey(PrefsKeys.NumberOfTopSiteRows) ?? TopSitesRowCountSettingsController.defaultNumberOfRows, 1)
+            let numRows = self.topSitesManager.numberOfRows
             
             let maxItems = Int(numRows) * self.topSitesManager.numberOfHorizontalItems()
             
@@ -550,31 +610,9 @@ extension FirefoxHomeViewController: DataObserverDelegate {
                 self.showSiteWithURLHandler(url as URL)
             }
 
-            self.getPocketSites().uponQueue(.main) { _ in
-                if !self.pocketStories.isEmpty {
-                    self.collectionView?.reloadData()
-                }
-            }
             // Refresh the AS data in the background so we'll have fresh data next time we show.
             self.profile.panelDataObservers.activityStream.refreshIfNeeded(forceTopSites: false)
         }
-    }
-
-    func getPocketSites() -> Success {
-        let showPocket = (profile.prefs.boolForKey(PrefsKeys.ASPocketStoriesVisible) ?? Pocket.IslocaleSupported(Locale.current.identifier))
-        guard showPocket else {
-            self.pocketStories = []
-            return succeed()
-        }
-
-        return pocketAPI.globalFeed(items: 10).bindQueue(.main) { pStory in
-            self.pocketStories = pStory
-            return succeed()
-        }
-    }
-
-    @objc func showMorePocketStories() {
-        showSiteWithURLHandler(Pocket.MoreStoriesURL)
     }
 
     // Invoked by the ActivityStreamDataObserver when highlights/top sites invalidation is complete.
@@ -947,7 +985,7 @@ class ASHeaderView: UICollectionReusableView {
 
 class LibraryShortcutView: UIView {
     static let spacing: CGFloat = 16
-    static let iconSize: CGFloat = 42
+    static let iconSize: CGFloat = 48
 
     var button = UIButton()
     var title = UILabel()
@@ -1042,5 +1080,11 @@ class ASLibraryCell: UICollectionViewCell, Themeable {
     override func prepareForReuse() {
         super.prepareForReuse()
         applyTheme()
+    }
+}
+
+extension FirefoxHomeViewController: SearchbarCellDelegate {
+    func searchbarCellPressed(_ cell: SearchbarCell) {
+        delegate?.homeDidTapSearchButton(self)
     }
 }

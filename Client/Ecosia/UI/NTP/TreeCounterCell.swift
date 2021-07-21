@@ -9,7 +9,8 @@ final class TreeCounterCell: UICollectionViewCell, Themeable {
 
     private let treeCounter = TreeCounter()
     private weak var descriptionLabel: UILabel!
-    private weak var logo: UIImageView!
+    private weak var counter: UILabel!
+
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -24,13 +25,6 @@ final class TreeCounterCell: UICollectionViewCell, Themeable {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
 
-        let logo = UIImageView(image: UIImage(themed: "ecosiaLogo"))
-        logo.translatesAutoresizingMaskIntoConstraints = false
-        logo.clipsToBounds = true
-        logo.contentMode = .scaleAspectFit
-        contentView.addSubview(logo)
-        self.logo = logo
-
         let counter = UILabel()
         counter.translatesAutoresizingMaskIntoConstraints = false
         counter.textColor = UIColor.theme.ecosia.primaryBrand
@@ -39,6 +33,7 @@ final class TreeCounterCell: UICollectionViewCell, Themeable {
                 [.featureSettings: [[UIFontDescriptor.FeatureKey.featureIdentifier: kNumberSpacingType,
                                      .typeIdentifier: kMonospacedNumbersSelector]]]), size: 0)
         contentView.addSubview(counter)
+        self.counter = counter
 
         let descriptionLabel = UILabel()
         descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -51,15 +46,7 @@ final class TreeCounterCell: UICollectionViewCell, Themeable {
         contentView.addSubview(descriptionLabel)
         self.descriptionLabel = descriptionLabel
 
-        logo.bottomAnchor.constraint(equalTo: counter.topAnchor, constant: -10).isActive = true
-        logo.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
-        logo.heightAnchor.constraint(equalTo: logo.widthAnchor, multiplier: 0.71).isActive = true
-        logo.widthAnchor.constraint(lessThanOrEqualToConstant: 95).isActive = true
-        logo.widthAnchor.constraint(lessThanOrEqualTo: contentView.widthAnchor, multiplier: 0.33).isActive = true
-        let logoWidth = logo.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.33)
-        logoWidth.priority = .defaultHigh
-        logoWidth.isActive = true
-
+        counter.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16).isActive = true
         counter.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
 
         descriptionLabel.topAnchor.constraint(equalTo: counter.bottomAnchor, constant: 2).isActive = true
@@ -68,9 +55,6 @@ final class TreeCounterCell: UICollectionViewCell, Themeable {
         descriptionLabel.rightAnchor.constraint(lessThanOrEqualTo: contentView.rightAnchor, constant: -20).isActive = true
 
         descriptionLabel.bottomAnchor.constraint(greaterThanOrEqualTo: contentView.bottomAnchor).isActive = true
-        let descriptionBottom = descriptionLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
-        descriptionBottom.priority = .defaultLow
-        descriptionBottom.isActive = true
 
         treeCounter.subscribe(self) { count in
             UIView.transition(with: counter, duration: 0.65, options: .transitionCrossDissolve, animations: {
@@ -81,8 +65,8 @@ final class TreeCounterCell: UICollectionViewCell, Themeable {
     }
 
     func applyTheme() {
+        counter?.textColor = UIColor.theme.ecosia.primaryBrand
         descriptionLabel?.textColor = UIColor.theme.ecosia.highContrastText
-        logo.image = UIImage(themed: "ecosiaLogo")
     }
 
     override func prepareForReuse() {

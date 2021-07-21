@@ -8,7 +8,7 @@ import Shared
 
 protocol TabToolbarProtocol: AnyObject {
     var tabToolbarDelegate: TabToolbarDelegate? { get set }
-    var addNewTabButton: ToolbarButton { get }
+    var addNewTabButton: AddNewTabButton { get }
     var tabsButton: TabsButton { get }
     var appMenuButton: ToolbarButton { get }
     var libraryButton: ToolbarButton { get }
@@ -205,7 +205,7 @@ open class TabToolbarHelper: NSObject {
     }
 }
 
-class ToolbarButton: UIButton {
+class ToolbarButton: UIButton, Themeable {
     var selectedTintColor: UIColor!
     var unselectedTintColor: UIColor!
     var disabledTintColor = UIColor.Photon.Grey50
@@ -248,9 +248,7 @@ class ToolbarButton: UIButton {
             separatorLine?.isHidden = isHidden
         }
     }
-}
 
-extension ToolbarButton: Themeable {
     func applyTheme() {
         selectedTintColor = UIColor.theme.toolbarButton.selectedTint
         disabledTintColor = UIColor.theme.toolbarButton.disabledTint
@@ -264,7 +262,7 @@ class TabToolbar: UIView {
     weak var tabToolbarDelegate: TabToolbarDelegate?
 
     let tabsButton = TabsButton()
-    let addNewTabButton = ToolbarButton()
+    let addNewTabButton = AddNewTabButton(style: .circle)
     let appMenuButton = ToolbarButton()
     let libraryButton = ToolbarButton()
     let forwardButton = ToolbarButton()

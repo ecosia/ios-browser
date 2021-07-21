@@ -12,11 +12,12 @@ protocol EcosiaHomeDelegate: AnyObject {
 final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlowLayout, Themeable {
 
     enum Section: Int, CaseIterable {
-        case logo, info, news, explore
+        case logo, counter, info, news, explore
 
         var cell: AnyClass {
             switch self {
-            case .logo: return TreeCounterCell.self
+            case .logo: return LogoCell.self
+            case .counter: return TreeCounterCell.self
             case .info: return EcosiaInfoCell.self
             case .explore: return EcosiaExploreCell.self
             case .news: return NewsCell.self
@@ -27,30 +28,6 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
             if self == .explore { return .localized(.exploreEcosia) }
             if self == .news { return .localized(.stories) }
             return nil
-        }
-
-        enum Info: Int, CaseIterable {
-            case treeCount
-
-            var title: String {
-                return .localized(.mySearches)
-            }
-
-            var subTitle: String? {
-                return "\(User.shared.treeCount)"
-            }
-
-            var description: String? {
-                return .localized(.youNeedAround45)
-            }
-
-            var image: String {
-                return "treeCounter"
-            }
-
-            var label: Analytics.Label.Navigation {
-                return .counter
-            }
         }
 
         enum Explore: Int, CaseIterable {
@@ -130,6 +107,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     private var items = [NewsModel]()
     private let images = Images(.init(configuration: .ephemeral))
     private let news = News()
+    private let personalCounter = PersonalCounter()
 
     convenience init(delegate: EcosiaHomeDelegate?) {
         let layout = UICollectionViewFlowLayout()
@@ -163,7 +141,11 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
 
         news.subscribeAndReceive(self) { [weak self] in
             self?.items = $0
-            self?.collectionView.reloadSections([Section.news.rawValue, Section.info.rawValue])
+            self?.collectionView.reloadSections([Section.news.rawValue])
+        }
+
+        personalCounter.subscribeAndReceive(self)  { [weak self] _ in
+            self?.collectionView.reloadSections([Section.info.rawValue])
         }
     }
 
@@ -173,7 +155,6 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         news.load(session: .shared, force: items.isEmpty)
         Analytics.shared.navigation(.view, label: .home)
         guard hasAppeared else { return hasAppeared = true }
-        collectionView.reloadSections([Section.info.rawValue])
         updateBarAppearance()
     }
 
@@ -184,8 +165,8 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         switch Section(rawValue: section)! {
-        case .logo: return 1
-        case .info: return Section.Info.allCases.count
+        case .logo, .counter: return 1
+        case .info: return 1
         case .explore: return Section.Explore.allCases.count
         case .news: return min(3, items.count)
         }
@@ -197,11 +178,15 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: section.cell), for: indexPath)
 
         switch  section {
-        case .logo:
+        case .logo, .counter:
             break
         case .info:
             let infoCell = cell as! EcosiaInfoCell
-            Section.Info(rawValue: indexPath.row).map { infoCell.display($0) }
+            let info = EcosiaInfoCellModel(title: .localized(.mySearches),
+                                           subTitle: "\(personalCounter.state!)",
+                                           description: .localized(.youNeedAround45),
+                                           image: "treeCounter")
+            infoCell.display(info)
         case .explore:
             let exploreCell = cell as! EcosiaExploreCell
             Section.Explore(rawValue: indexPath.row).map { exploreCell.display($0) }
@@ -265,7 +250,9 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
 
         switch section {
         case .logo:
-            return CGSize(width: view.bounds.width - 2 * margin, height: 150)
+            return CGSize(width: view.bounds.width - 2 * margin, height: 100)
+        case .counter:
+            return CGSize(width: view.bounds.width - 2 * margin, height: 70)
         case .info:
             return CGSize(width: view.bounds.width - 2 * margin, height: 140)
         case .news:
@@ -280,7 +267,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         switch Section(rawValue: section)! {
-        case .logo:
+        case .logo, .counter:
             return .zero
         case .explore, .news:
             return CGSize(width: view.bounds.width - 32, height: 70)

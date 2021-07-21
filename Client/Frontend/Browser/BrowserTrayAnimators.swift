@@ -290,18 +290,19 @@ private func calculateCollapsedCellFrameUsingCollectionView(_ collectionView: UI
 }
 
 private func calculateExpandedCellFrameFromBVC(_ bvc: BrowserViewController) -> CGRect {
-    var frame = bvc.webViewContainer.frame
 
-    // If we're navigating to a home panel and we were expecting to show the toolbar, add more height to end frame since
-    // there is no toolbar for home panels
-    if !bvc.shouldShowFooterForTraitCollection(bvc.traitCollection) {
-        return frame
+    let showsToolbar = bvc.shouldShowFooterForTraitCollection(bvc.traitCollection)
+    var isNTP = bvc.tabManager.selectedTab?.url == nil
+    if let url = bvc.tabManager.selectedTab?.url, let internalPage = InternalURL(url), internalPage.isAboutURL {
+        isNTP = true
     }
 
-    if let url = bvc.tabManager.selectedTab?.url, bvc.toolbar == nil, let internalPage = InternalURL(url), internalPage.isAboutURL {
-        frame.size.height += UIConstants.BottomToolbarHeight
-    }
+    let topInset: CGFloat = isNTP ? 0 : bvc.urlBar.bounds.height
+    let bottomInset: CGFloat = showsToolbar ? UIConstants.ToolbarHeight : 0
 
+    let frame = bvc.view.frame
+        .inset(by: bvc.view.safeAreaInsets)
+        .inset(by: .init(top: topInset, left: 0, bottom: bottomInset, right: 0))
     return frame
 }
 

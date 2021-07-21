@@ -251,7 +251,6 @@ class BrowserViewController: UIViewController {
 
         urlBar.topTabsIsShowing = showTopTabs
         urlBar.setShowToolbar(!showToolbar)
-        toolbar?.addNewTabButton.isHidden = showToolbar
         toolbar?.removeFromSuperview()
         toolbar?.tabToolbarDelegate = nil
         toolbar = nil
@@ -262,7 +261,7 @@ class BrowserViewController: UIViewController {
             toolbar?.tabToolbarDelegate = self
             toolbar?.applyUIMode(isPrivate: tabManager.selectedTab?.isPrivate ?? false)
             toolbar?.applyTheme()
-            toolbar?.addNewTabButton.isHidden = true
+            toolbar?.ecosiaButton.isHidden = true
             updateTabCountUsingTabManager(self.tabManager)
         }
 
@@ -417,6 +416,7 @@ class BrowserViewController: UIViewController {
         urlBar.delegate = self
         urlBar.tabToolbarDelegate = self
         header = urlBarTopTabsContainer
+        scrollOverlay.alpha = 0
         urlBarTopTabsContainer.addSubview(urlBar)
         urlBarTopTabsContainer.addSubview(topTabsContainer)
         view.addSubview(header)
@@ -723,13 +723,13 @@ class BrowserViewController: UIViewController {
         // Remake constraints even if we're already showing the home controller.
         // The home controller may change sizes if we tap the URL bar while on about:home.
         firefoxHomeViewController?.view.snp.remakeConstraints { make in
-            make.top.equalTo(self.urlBar.snp.bottom)
-            make.left.right.equalTo(self.view)
-            if self.homePanelIsInline {
-                make.bottom.equalTo(self.toolbar?.snp.top ?? self.view.snp.bottom)
+            if UIDevice.current.userInterfaceIdiom == .pad {
+                make.top.equalTo(header.snp.bottom)
             } else {
-                make.bottom.equalTo(self.view.snp.bottom)
+                make.top.equalTo(self.urlBar.snp.top)
             }
+            make.left.right.equalTo(self.view)
+            make.bottom.equalTo(self.view.safeArea.bottom)
         }
 
         alertStackView.snp.remakeConstraints { make in
@@ -749,7 +749,7 @@ class BrowserViewController: UIViewController {
     fileprivate func showFirefoxHome(inline: Bool) {
         homePanelIsInline = inline
         if self.firefoxHomeViewController == nil {
-            let firefoxHomeViewController = FirefoxHomeViewController(profile: profile)
+            let firefoxHomeViewController = FirefoxHomeViewController(profile: profile, delegate: self)
             firefoxHomeViewController.homePanelDelegate = self
             // Ecosia: hide logo in overlay mode
             firefoxHomeViewController.inOverlayMode = !inline
@@ -759,6 +759,9 @@ class BrowserViewController: UIViewController {
             addChild(firefoxHomeViewController)
             view.addSubview(firefoxHomeViewController.view)
             firefoxHomeViewController.didMove(toParent: self)
+            view.bringSubviewToFront(header)
+            scrollOverlay.alpha = urlBar.inOverlayMode ? 1.0 : 0.0
+            view.bringSubviewToFront(footer)
         }
 
         firefoxHomeViewController?.applyTheme()
@@ -779,6 +782,8 @@ class BrowserViewController: UIViewController {
     }
 
     fileprivate func hideFirefoxHome() {
+        scrollOverlay.alpha = 1
+
         guard let firefoxHomeViewController = self.firefoxHomeViewController else {
             return
         }

@@ -14,7 +14,7 @@ private struct URLBarViewUX {
     static let LocationHeight: CGFloat = 40
     static let ButtonHeight: CGFloat = 44
     static let LocationContentOffset: CGFloat = 8
-    static let TextFieldCornerRadius: CGFloat = 8
+    static let TextFieldCornerRadius: CGFloat = 10
     static let TextFieldBorderWidth: CGFloat = 0
     static let TextFieldBorderWidthSelected: CGFloat = 4
     static let ProgressBarHeight: CGFloat = 3
@@ -154,7 +154,7 @@ class URLBarView: UIView {
 
     var appMenuButton = ToolbarButton()
     var libraryButton = ToolbarButton()
-    var addNewTabButton = ToolbarButton()
+    var addNewTabButton = AddNewTabButton(style: .plain)
 
     var forwardButton = ToolbarButton()
     var multiStateButton = ToolbarButton()
@@ -225,7 +225,6 @@ class URLBarView: UIView {
          libraryButton, appMenuButton, addNewTabButton, forwardButton, backButton, multiStateButton, ecosiaButton, locationContainer].forEach {
             addSubview($0)
         }
-
         privateModeBadge.add(toParent: self)
         appMenuBadge.add(toParent: self)
         warningMenuBadge.add(toParent: self)
@@ -350,8 +349,8 @@ class URLBarView: UIView {
                     make.trailing.equalTo(self.multiStateButton.snp.leading).offset(-URLBarViewUX.Padding)
                 } else {
                     // Otherwise, left align the location view
-                    let rightPadding = showMultiStateButton ? URLBarViewUX.ButtonHeight : URLBarViewUX.Padding
-                    make.leading.trailing.equalTo(self).inset(UIEdgeInsets(top: 0, left: URLBarViewUX.LocationLeftPadding-1, bottom: 0, right: rightPadding))
+                    let rightPadding = showMultiStateButton ? URLBarViewUX.ButtonHeight : 16
+                    make.leading.trailing.equalTo(self).inset(UIEdgeInsets(top: 0, left: 16, bottom: 0, right: rightPadding))
                 }
                 make.height.equalTo(URLBarViewUX.LocationHeight+2)
                 make.centerY.equalTo(self)
@@ -371,6 +370,9 @@ class URLBarView: UIView {
                 make.size.equalTo(URLBarViewUX.ButtonHeight).priority(.high)
             }
         }
+
+        let hideButton = (inOverlayMode || !showMultiStateButton) && !toolbarIsShowing
+        multiStateButton.alpha = hideButton ? 0 : 1
     }
 
     @objc func showQRScanner() {
@@ -393,7 +395,7 @@ class URLBarView: UIView {
         locationTextField.returnKeyType = .go
         locationTextField.clearButtonMode = .whileEditing
         locationTextField.textAlignment = .left
-        locationTextField.font = UIConstants.DefaultChromeFont
+        locationTextField.font = .preferredFont(forTextStyle: .body)
         locationTextField.accessibilityIdentifier = "address"
         locationTextField.accessibilityLabel = NSLocalizedString("Address and Search", comment: "Accessibility label for address and search field, both words (Address, Search) are therefore nouns.")
         locationTextField.attributedPlaceholder = self.locationView.placeholder
@@ -540,7 +542,6 @@ class URLBarView: UIView {
         forwardButton.isHidden = !toolbarIsShowing
         backButton.isHidden = !toolbarIsShowing
         tabsButton.isHidden = !toolbarIsShowing || topTabsIsShowing
-        multiStateButton.isHidden = false
         ecosiaButton.isHidden = !toolbarIsShowing
     }
 
@@ -555,7 +556,7 @@ class URLBarView: UIView {
         addNewTabButton.alpha = inOverlayMode ? 0 : 1
         forwardButton.alpha = inOverlayMode ? 0 : 1
         backButton.alpha = inOverlayMode ? 0 : 1
-        multiStateButton.alpha = inOverlayMode ? 0 : 1
+        multiStateButton.alpha = inOverlayMode || didCancel ? 0 : 1
         ecosiaButton.alpha = inOverlayMode ? 0 : 1
 
         let borderColor = inOverlayMode ? locationActiveBorderColor : locationBorderColor
@@ -588,7 +589,6 @@ class URLBarView: UIView {
         forwardButton.isHidden = !toolbarIsShowing || inOverlayMode
         backButton.isHidden = !toolbarIsShowing || inOverlayMode
         tabsButton.isHidden = !toolbarIsShowing || inOverlayMode || topTabsIsShowing
-        multiStateButton.isHidden = inOverlayMode
         ecosiaButton.isHidden = !toolbarIsShowing || inOverlayMode
 
 
@@ -854,7 +854,7 @@ extension URLBarView: PrivateModeUI {
 class TabLocationContainerView: UIView {
 
     private struct LocationContainerUX {
-        static let CornerRadius: CGFloat = 8
+        static let CornerRadius: CGFloat = 10
     }
 
     override init(frame: CGRect) {
@@ -921,7 +921,7 @@ class ToolbarTextField: AutocompleteTextField {
 extension ToolbarTextField: Themeable {
     func applyTheme() {
         backgroundColor = UIColor.theme.textField.backgroundInOverlay
-        textColor = UIColor.theme.textField.textAndTint
+        textColor = UIColor.theme.ecosia.highContrastText
         clearButtonTintColor = textColor
         tintColor = AutocompleteTextField.textSelectionColor.textFieldMode
     }

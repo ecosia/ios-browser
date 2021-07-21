@@ -7,10 +7,27 @@ import Account
 
 extension PhotonActionSheetProtocol {
 
+    func getNavigationalActions(vcDelegate: PageOptionsVC) -> [PhotonActionSheetItem] {
+        guard let tab = self.tabManager.selectedTab else { return [] }
+        let openHomePage = PhotonActionSheetItem(title: Strings.AppMenuOpenHomePageTitleString, iconString: "menu-Home") { _, _ in
+            let page = NewTabAccessors.getHomePage(self.profile.prefs)
+            if page == .homePage, let homePageURL = HomeButtonHomePageAccessors.getHomePage(self.profile.prefs) {
+                tab.loadRequest(PrivilegedRequest(url: homePageURL) as URLRequest)
+            } else if let homePanelURL = page.url {
+                tab.loadRequest(PrivilegedRequest(url: homePanelURL) as URLRequest)
+            }
+        }
+
+        let myImpact = PhotonActionSheetItem(title: .localized(.myImpact), iconString: "myImpact") { _, _ in
+            (vcDelegate as? BrowserViewController)?.presentEcosiaWorld()
+        }
+
+        return [openHomePage, myImpact]
+    }
+
     //Returns a list of actions which is used to build a menu
     //OpenURL is a closure that can open a given URL in some view controller. It is up to the class using the menu to know how to open it
     func getLibraryActions(vcDelegate: PageOptionsVC) -> [PhotonActionSheetItem] {
-        guard let tab = self.tabManager.selectedTab else { return [] }
 
         let openBookmarks = PhotonActionSheetItem(title: Strings.AppMenuBookmarksTitleString, iconString: "menu-Bookmark") { _, _ in
             let bvc = vcDelegate as? BrowserViewController
@@ -34,16 +51,7 @@ extension PhotonActionSheetProtocol {
             bvc?.showLibrary(panel: .downloads)
         }
 
-        let openHomePage = PhotonActionSheetItem(title: Strings.AppMenuOpenHomePageTitleString, iconString: "menu-Home") { _, _ in
-            let page = NewTabAccessors.getHomePage(self.profile.prefs)
-            if page == .homePage, let homePageURL = HomeButtonHomePageAccessors.getHomePage(self.profile.prefs) {
-                tab.loadRequest(PrivilegedRequest(url: homePageURL) as URLRequest)
-            } else if let homePanelURL = page.url {
-                tab.loadRequest(PrivilegedRequest(url: homePanelURL) as URLRequest)
-            }
-        }
-
-        return [openHomePage, openBookmarks, openHistory, openReadingList, openDownloads]
+        return [openBookmarks, openHistory, openReadingList, openDownloads]
     }
 
     func getOtherPanelActions(vcDelegate: PageOptionsVC) -> [PhotonActionSheetItem] {
