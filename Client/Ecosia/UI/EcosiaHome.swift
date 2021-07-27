@@ -156,6 +156,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         Analytics.shared.navigation(.view, label: .home)
         guard hasAppeared else { return hasAppeared = true }
         updateBarAppearance()
+        collectionView.scrollRectToVisible(.init(x: 0, y: 0, width: 1, height: 1), animated: false)
     }
 
     // MARK: UICollectionViewDataSource
