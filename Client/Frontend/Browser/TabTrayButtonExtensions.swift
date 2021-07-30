@@ -21,14 +21,20 @@ class PrivateModeButton: ToggleButton, PrivateModeUI {
     }
 
     func applyUIMode(isPrivate: Bool) {
-        let color = isSelected
-            ? ThemeManager.instance.current.ecosia.barBackground
-            : isPrivate
-                ? UIColor.Photon.White100
+        let color = isPrivate
+            ? UIColor.white
+            : isSelected
+                ? UIColor.theme.ecosia.barBackground
                 : UIColor.theme.tabTray.toolbarButtonTint
         
         setTitleColor(color, for: .normal)
         accessibilityValue = isSelected ? PrivateModeStrings.toggleAccessibilityValueOn : PrivateModeStrings.toggleAccessibilityValueOff
+        
+        backgroundLayer.backgroundColor = isSelected
+            ? isPrivate
+                ? UIColor.Photon.Grey70.cgColor
+                : UIColor.theme.ecosia.privateButtonBackground.cgColor
+            : UIColor.clear.cgColor
     }
 
     override var intrinsicContentSize: CGSize {

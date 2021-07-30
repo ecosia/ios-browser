@@ -93,7 +93,7 @@ class ToggleButton: UIButton, Themeable {
         return circle
     }()
 
-    lazy fileprivate var backgroundLayer: CALayer = {
+    lazy var backgroundLayer: CALayer = {
         let backgroundLayer = CALayer()
         backgroundLayer.backgroundColor = UX.BackgroundColor.cgColor
         backgroundLayer.mask = self.maskShapeLayer

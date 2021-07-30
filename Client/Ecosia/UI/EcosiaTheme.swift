@@ -55,6 +55,7 @@ class EcosiaTheme {
     var textfieldPlaceholder: UIColor { UIColor.Photon.Grey50 }
     var personalCounterBorder: UIColor { UIColor.Photon.Grey30 }
     var personalCounterSelection: UIColor { UIColor.Photon.Grey20 }
+    var privateButtonBackground: UIColor { UIColor.Photon.Grey70 }
 
     var banner: UIColor { return UIColor(named: "banner")!}
     var underlineGrey: UIColor { return UIColor(named: "underlineGrey")! }
@@ -74,7 +75,7 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var textfieldPlaceholder: UIColor { UIColor.Photon.Grey20 }
     override var personalCounterBorder: UIColor { UIColor.Photon.Grey60 }
     override var personalCounterSelection: UIColor { UIColor.Photon.Grey60 }
-
+    override var privateButtonBackground: UIColor { .white }
 
     override var primaryText: UIColor { UIColor(named: "primaryTextDark")! }
     override var secondaryText: UIColor { UIColor.Photon.Grey30 }
