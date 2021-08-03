@@ -57,6 +57,7 @@ class TopSiteItemCell: UICollectionViewCell, Themeable {
         let view = UIView()
         view.layer.borderWidth = TopSiteCellUX.BorderWidth
         view.layer.borderColor = TopSiteCellUX.BorderColor.cgColor
+        view.layer.cornerRadius = TopSiteCellUX.IconSize / 2.0
         view.clipsToBounds = true
         view.layer.masksToBounds = true
         return view
@@ -66,11 +67,6 @@ class TopSiteItemCell: UICollectionViewCell, Themeable {
         let selectedOverlay = UIView()
         selectedOverlay.isHidden = true
         return selectedOverlay
-    }()
-
-    lazy var titleBorder: CALayer = {
-        let border = CALayer()
-        return border
     }()
 
     override var isSelected: Bool {
@@ -112,12 +108,6 @@ class TopSiteItemCell: UICollectionViewCell, Themeable {
         }
         faviconBG.widthAnchor.constraint(equalTo: faviconBG.heightAnchor, multiplier: 1.0).isActive = true
 
-    }
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        titleBorder.frame = CGRect(x: 0, y: frame.height - TopSiteCellUX.TitleHeight -  TopSiteCellUX.BorderWidth, width: frame.width, height: TopSiteCellUX.BorderWidth)
-        faviconBG.layer.cornerRadius = faviconBG.bounds.width / 2.0
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -190,7 +180,6 @@ class TopSiteItemCell: UICollectionViewCell, Themeable {
         imageView.tintColor = TopSiteCellUX.PinColor
         faviconBG.layer.borderColor = TopSiteCellUX.BorderColor.cgColor
         selectedOverlay.backgroundColor = TopSiteCellUX.OverlayColor
-        titleBorder.backgroundColor = TopSiteCellUX.BorderColor.cgColor
         titleLabel.backgroundColor = UIColor.clear
         titleLabel.textColor = UIColor.theme.ecosia.highContrastText
     }
