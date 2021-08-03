@@ -1950,7 +1950,8 @@ extension BrowserViewController: TabManagerDelegate {
             self.urlBar.updateProgressBar(Float(selected?.estimatedProgress ?? 0))
         }
 
-        if let readerMode = selected?.getContentScript(name: ReaderMode.name()) as? ReaderMode {
+        let isAboutHomeURL = selected?.url.flatMap { InternalURL($0)?.isAboutHomeURL } ?? false
+        if !isAboutHomeURL, let readerMode = selected?.getContentScript(name: ReaderMode.name()) as? ReaderMode {
             urlBar.updateReaderModeState(readerMode.state)
             if readerMode.state == .active {
                 showReaderModeBar(animated: false)
