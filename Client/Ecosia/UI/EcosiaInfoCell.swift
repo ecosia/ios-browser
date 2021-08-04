@@ -26,6 +26,7 @@ final class EcosiaInfoCell: UICollectionViewCell, Themeable {
     var image: UIImageView!
     var desc: UILabel!
     var outline: UIView!
+    var model: EcosiaInfoCellModel?
 
     private func setup() {
         outline = UIView()
@@ -100,8 +101,9 @@ final class EcosiaInfoCell: UICollectionViewCell, Themeable {
         title.text = model.title
         subtitle.text = model.subTitle
         subtitle.isHidden = model.subTitle == nil
-        image.image = UIImage(named: model.image)
+        image.image = UIImage(themed: model.image)
         desc.text = model.description
+        self.model = model
     }
 
     override var isSelected: Bool {
@@ -124,6 +126,7 @@ final class EcosiaInfoCell: UICollectionViewCell, Themeable {
         title.textColor = UIColor.theme.ecosia.highContrastText
         subtitle.textColor = UIColor.theme.ecosia.primaryBrand
         desc.textColor = UIColor.theme.ecosia.highContrastText
+        model.map({ image.image = UIImage(themed: $0.image) })
         outline.elevate()
     }
 
