@@ -12,12 +12,11 @@ protocol EcosiaHomeDelegate: AnyObject {
 final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlowLayout, Themeable {
 
     enum Section: Int, CaseIterable {
-        case logo, counter, info, news, explore
+        case logo, info, news, explore
 
         var cell: AnyClass {
             switch self {
             case .logo: return LogoCell.self
-            case .counter: return TreeCounterCell.self
             case .info: return EcosiaInfoCell.self
             case .explore: return EcosiaExploreCell.self
             case .news: return NewsCell.self
@@ -166,7 +165,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         switch Section(rawValue: section)! {
-        case .logo, .counter: return 1
+        case .logo: return 1
         case .info: return 1
         case .explore: return Section.Explore.allCases.count
         case .news: return min(3, items.count)
@@ -179,7 +178,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: section.cell), for: indexPath)
 
         switch  section {
-        case .logo, .counter:
+        case .logo:
             break
         case .info:
             let infoCell = cell as! EcosiaInfoCell
@@ -252,8 +251,6 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         switch section {
         case .logo:
             return CGSize(width: view.bounds.width - 2 * margin, height: 100)
-        case .counter:
-            return CGSize(width: view.bounds.width - 2 * margin, height: 70)
         case .info:
             return CGSize(width: view.bounds.width - 2 * margin, height: 140)
         case .news:
@@ -268,7 +265,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         switch Section(rawValue: section)! {
-        case .logo, .counter:
+        case .logo:
             return .zero
         case .explore, .news:
             return CGSize(width: view.bounds.width - 32, height: 70)

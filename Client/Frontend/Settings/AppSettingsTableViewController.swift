@@ -157,7 +157,8 @@ class AppSettingsTableViewController: SettingsTableViewController {
                 ToggleNewTabToolbarButton(settings: self)
  */
                 PushBackInstallation(settings: self),
-                CreateMigrationData(settings: self)
+                CreateMigrationData(settings: self),
+                AddReferral(settings: self)
             ])]
 
         return settings

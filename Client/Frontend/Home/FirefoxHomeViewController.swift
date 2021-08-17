@@ -139,9 +139,10 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
     weak var homePanelDelegate: HomePanelDelegate?
     weak var delegate: FirefoxHomeViewControllerDelegate?
     fileprivate let profile: Profile
+    fileprivate let personalCounter = PersonalCounter()
     fileprivate let flowLayout = UICollectionViewFlowLayout()
     fileprivate weak var searchbarCell: UICollectionViewCell?
-    fileprivate weak var treeCounterCell: UICollectionViewCell?
+    fileprivate weak var impactCell: UICollectionViewCell?
     fileprivate weak var libraryCell: UICollectionViewCell?
     fileprivate weak var topSitesCell: UICollectionViewCell? {
         didSet { collectionView.collectionViewLayout.invalidateLayout() }
@@ -198,6 +199,11 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
         if showPromo {
             Analytics.shared.defaultBrowser(.view)
         }
+
+        personalCounter.subscribeAndReceive(self) { [weak self] count in
+            guard let self = self, let impactCell = self.impactCell as? ImpactCell else { return }
+            impactCell.display(self.impactCellModel)
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -207,7 +213,7 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        if inOverlayMode, let cell = libraryCell ?? treeCounterCell {
+        if inOverlayMode, let cell = libraryCell ?? impactCell {
             collectionView.contentOffset = .init(x: 0, y: cell.frame.minY - FirefoxHomeUX.ScrollSearchBarOffset)
         } else {
             collectionView.collectionViewLayout.invalidateLayout()
@@ -252,7 +258,7 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
     var inOverlayMode = false {
         didSet {
             guard isViewLoaded else { return }
-            if inOverlayMode && !oldValue, let cell = libraryCell ?? treeCounterCell {
+            if inOverlayMode && !oldValue, let cell = libraryCell ?? impactCell {
                 UIView.animate(withDuration: 0.3, delay: 0, options: [.beginFromCurrentState], animations: { [weak self] in
                     self?.collectionView.contentOffset = .init(x: 0, y: cell.frame.minY - FirefoxHomeUX.ScrollSearchBarOffset)
                 })
@@ -275,12 +281,11 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
 extension FirefoxHomeViewController {
     enum Section: Int, CaseIterable {
         case promo
-        case personalCounter
         case logo
         case search
-        case treeCounter
         case libraryShortcuts
         case topSites
+        case impact
         case emptySpace
 
         var title: String? {
@@ -305,12 +310,10 @@ extension FirefoxHomeViewController {
 
         func cellHeight(_ traits: UITraitCollection, width: CGFloat) -> CGFloat {
             switch self {
-            case .personalCounter: return UIFontDescriptor.preferredFontDescriptor(withTextStyle: .caption2).pointSize + 28 + 32
+            case .impact: return .nan
             case .promo: return 230
             case .logo: return 100
             case .search: return UIFontDescriptor.preferredFontDescriptor(withTextStyle: .body).pointSize + 25 + 16
-            case .treeCounter:
-                return UIFontDescriptor.preferredFontDescriptor(withTextStyle: .subheadline).pointSize + 2 + 16 + 30
             case .topSites: return 0 //calculated dynamically
             case .libraryShortcuts: return FirefoxHomeUX.LibraryShortcutsHeight
             case .emptySpace:
@@ -331,7 +334,7 @@ extension FirefoxHomeViewController {
             var insets = FirefoxHomeUX.sectionInsetsForSizeClass[currentTraits.horizontalSizeClass]
 
             switch self {
-            case .libraryShortcuts, .topSites, .promo, .search, .personalCounter:
+            case .libraryShortcuts, .topSites, .promo, .search, .impact:
                 let window = UIApplication.shared.keyWindow
                 let safeAreaInsets = window?.safeAreaInsets.left ?? 0
                 insets += FirefoxHomeHeaderViewUX.Insets + safeAreaInsets
@@ -342,7 +345,7 @@ extension FirefoxHomeViewController {
                 }
                 
                 return insets
-            case .treeCounter, .logo:
+            case .logo:
                 insets += FirefoxHomeUX.TopSitesInsets
                 return insets
             case .emptySpace:
@@ -362,12 +365,11 @@ extension FirefoxHomeViewController {
 
         var cellType: UICollectionViewCell.Type {
             switch self {
-            case .personalCounter: return PersonalCounterCell.self
+            case .impact: return ImpactCell.self
             case .promo: return DefaultBrowserCard.self
             case .logo: return LogoCell.self
             case .search: return SearchbarCell.self
             case .topSites: return ASHorizontalScrollCell.self
-            case .treeCounter: return TreeCounterCell.self
             case .libraryShortcuts: return ASLibraryCell.self
             case .emptySpace: return EmptyCell.self
             }
@@ -403,7 +405,7 @@ extension FirefoxHomeViewController: UICollectionViewDelegateFlowLayout {
         self.longPressRecognizer.isEnabled = false
 
         switch Section(rawValue: indexPath.section) {
-        case .personalCounter:
+        case .impact:
             delegate?.homeDidPressPersonalCounter(self)
             collectionView.deselectItem(at: indexPath, animated: true)
         default:
@@ -415,8 +417,13 @@ extension FirefoxHomeViewController: UICollectionViewDelegateFlowLayout {
         let cellSize = Section(indexPath.section).cellSize(for: self.traitCollection, frameWidth: self.view.frame.width)
 
         switch Section(indexPath.section) {
-        case .treeCounter, .promo, .search, .logo, .personalCounter:
+        case .promo, .search, .logo:
             return cellSize
+        case .impact:
+            let fakeHeight: CGFloat = User.shared.referrals?.isNew == true ? 190 : 112
+            let offset: CGFloat = User.shared.referrals?.isNew == true ? 50 : 0
+            let height = UIFontDescriptor.preferredFontDescriptor(withTextStyle: .caption2).pointSize + 28 + 32 + 100 + offset
+            return .init(width: cellSize.width, height: fakeHeight + 32)
         case .topSites:
             // Create a temporary cell so we can calculate the height.
             let layout = topSiteCell.collectionView.collectionViewLayout as! HorizontalFlowLayout
@@ -425,19 +432,19 @@ extension FirefoxHomeViewController: UICollectionViewDelegateFlowLayout {
         case .libraryShortcuts:
             return CGSize(width: cellSize.width, height: FirefoxHomeUX.LibraryShortcutsHeight)
         case .emptySpace:
-            guard let cell = libraryCell ?? treeCounterCell else { return .zero }
-            let offset = cell.frame.minY
-            let filledHeight = User.shared.topSites == false ? cell.frame.maxY : topSitesCell?.frame.maxY
-            let height = collectionView.frame.height - (filledHeight ?? 0) + offset - FirefoxHomeUX.ScrollSearchBarOffset
+            guard let topCell = libraryCell ?? impactCell, let bottomCell = impactCell else { return .zero }
+            let offset = topCell.frame.minY
+            let filledHeight = bottomCell.frame.maxY
+            let height = collectionView.frame.height - filledHeight + offset - FirefoxHomeUX.ScrollSearchBarOffset
             return .init(width: cellSize.width, height: max(0, height))
         }
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         switch Section(section) {
-        case .promo, .emptySpace, .logo, .personalCounter:
+        case .promo, .emptySpace, .logo, .impact:
             return .zero
-        case .treeCounter, .search:
+        case .search:
             return Section(section).headerHeight
         case .topSites:
             if topSitesManager.content.isEmpty ||
@@ -515,13 +522,13 @@ extension FirefoxHomeViewController {
             numItems = numItems - 1
         }
         switch Section(section) {
-        case .personalCounter:
+        case .impact:
             return 1
         case .promo:
             return showPromo ? 1 : 0
         case .topSites:
             return (topSitesManager.content.isEmpty || User.shared.topSites == false) ? 0 : 1
-        case .treeCounter, .search, .emptySpace, .logo:
+        case .search, .emptySpace, .logo:
             return 1
         case .libraryShortcuts:
             // disable the libary shortcuts on the ipad
@@ -549,10 +556,12 @@ extension FirefoxHomeViewController {
             (cell as? SearchbarCell)?.delegate = self
             searchbarCell = cell
             return cell
-        case .emptySpace, .logo, .personalCounter:
+        case .emptySpace, .logo:
             return cell
-        case .treeCounter:
-            treeCounterCell = cell
+        case .impact:
+            impactCell = cell
+            (impactCell as? ImpactCell)?.display(impactCellModel)
+            (impactCell as? ImpactCell)?.delegate = self
             return cell
         case .libraryShortcuts:
             let libraryCell = configureLibraryShortcutsCell(cell, forIndexPath: indexPath)
@@ -1086,5 +1095,30 @@ class ASLibraryCell: UICollectionViewCell, Themeable {
 extension FirefoxHomeViewController: SearchbarCellDelegate {
     func searchbarCellPressed(_ cell: SearchbarCell) {
         delegate?.homeDidTapSearchButton(self)
+    }
+}
+
+extension FirefoxHomeViewController: ImpactCellDelegate {
+    fileprivate var impactCellModel: ImpactCellModel {
+        var spotlight: ImpactCellModel.Spotlight?
+        if let referrals = User.shared.referrals, referrals.isNew {
+            let diff = referrals.referred - referrals.knownReferred
+            spotlight = ImpactCellModel.Spotlight(headline: "You received \(diff * Referrals.treesPerReferred) trees", description: "A friend installed Ecosia using your code, tap on your counter to invite more friends.")
+        }
+        return .init(spotlight: spotlight, trees: User.shared.impact)
+    }
+
+    func impactCellDidTapSpotlight(_ cell: ImpactCell) {
+
+        User.shared.referrals?.acknowledge()
+
+        UIView.animate(withDuration: 0.3, animations: {
+            cell.display(self.impactCellModel)
+            self.collectionView.collectionViewLayout.invalidateLayout()
+        }) { _ in
+            self.collectionView.collectionViewLayout.invalidateLayout()
+        }
+        // leave overlay mode if it was active
+        delegate?.home(self, willBegin: .zero)
     }
 }
