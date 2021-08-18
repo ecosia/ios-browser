@@ -123,7 +123,7 @@ final class ImpactCell: UICollectionViewCell, Themeable {
     }
 
     var spotlightViews: [UIView] {
-        return [spotlightBackground]
+        return [spotlightBackground, spotlightStack]
     }
 
     // MARK: UI
@@ -150,7 +150,6 @@ final class ImpactCell: UICollectionViewCell, Themeable {
         self.spotlightStack = spotlightStack
 
         let spotlightHeadline = UILabel()
-        spotlightHeadline.text = "You received 2 trees"
         spotlightTopLine.addArrangedSubview(spotlightHeadline)
         spotlightHeadline.setContentCompressionResistancePriority(.required, for: .vertical)
         spotlightHeadline.font = .preferredFont(forTextStyle: .subheadline).bold()
@@ -163,7 +162,6 @@ final class ImpactCell: UICollectionViewCell, Themeable {
         self.spotlightClose = spotlightClose
 
         let spotlightDescription = UILabel()
-        spotlightDescription.text = "A friend installed Ecosia and you received 2 trees."
         spotlightDescription.numberOfLines = 2
         spotlightDescription.font = .preferredFont(forTextStyle: .subheadline)
         spotlightDescription.adjustsFontForContentSizeCategory = true
@@ -226,7 +224,7 @@ final class ImpactCell: UICollectionViewCell, Themeable {
         self.personalCount = personalCount
 
         let personalCountTrees = UILabel()
-        personalCountTrees.text = "Trees"
+        personalCountTrees.text = .localized(.trees).capitalized
         personalCountTrees.translatesAutoresizingMaskIntoConstraints = false
         personalCountTrees.font = .preferredFont(forTextStyle: .headline)
         personalCountTrees.adjustsFontForContentSizeCategory = true
@@ -236,7 +234,7 @@ final class ImpactCell: UICollectionViewCell, Themeable {
         self.personalCountTrees = personalCountTrees
 
         let impactOverviewLabel = UILabel()
-        impactOverviewLabel.text = "Estimated impact"
+        impactOverviewLabel.text = .localized(.estimatedImpact)
         impactOverviewLabel.translatesAutoresizingMaskIntoConstraints = false
         impactOverviewLabel.font = .preferredFont(forTextStyle: .subheadline)
         impactOverviewLabel.setContentCompressionResistancePriority(.required, for: .vertical)

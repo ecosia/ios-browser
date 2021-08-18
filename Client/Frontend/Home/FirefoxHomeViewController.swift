@@ -1103,7 +1103,8 @@ extension FirefoxHomeViewController: ImpactCellDelegate {
         var spotlight: ImpactCellModel.Spotlight?
         if let referrals = User.shared.referrals, referrals.isNew {
             let diff = referrals.referred - referrals.knownReferred
-            spotlight = ImpactCellModel.Spotlight(headline: "You received \(diff * Referrals.treesPerReferred) trees", description: "A friend installed Ecosia using your code, tap on your counter to invite more friends.")
+            let headline = String(format: .localized(.treesReceived), "\(diff * Referrals.treesPerReferred)")
+            spotlight = ImpactCellModel.Spotlight(headline: headline, description: .localized(.treesReceivedDescription))
         }
         return .init(spotlight: spotlight, trees: User.shared.impact)
     }
