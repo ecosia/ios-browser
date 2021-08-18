@@ -12,12 +12,12 @@ protocol EcosiaHomeDelegate: AnyObject {
 final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlowLayout, Themeable {
 
     enum Section: Int, CaseIterable {
-        case logo, info, news, explore
+        case info, multiply, news, explore
 
         var cell: AnyClass {
             switch self {
-            case .logo: return LogoCell.self
             case .info: return EcosiaInfoCell.self
+            case .multiply: return MultiplyImpactCell.self
             case .explore: return EcosiaExploreCell.self
             case .news: return NewsCell.self
             }
@@ -113,9 +113,9 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         layout.scrollDirection = .vertical
         layout.minimumInteritemSpacing = 16
         self.init(collectionViewLayout: layout)
-
+        self.title = .localized(.myImpact).capitalized
         self.delegate = delegate
-        navigationItem.largeTitleDisplayMode = .never
+        navigationItem.largeTitleDisplayMode = .always
     }
 
     override func viewDidLoad() {
@@ -129,6 +129,9 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         Section.allCases.forEach {
             collectionView!.register($0.cell, forCellWithReuseIdentifier: String(describing: $0.cell))
         }
+        collectionView!.register(MultiplyImpactCell.self, forCellWithReuseIdentifier: "MultiplyImpactCell")
+
+
         collectionView.register(NewsHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "Header")
         collectionView.register(NewsButtonCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "Footer")
         collectionView.delegate = self
@@ -165,8 +168,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         switch Section(rawValue: section)! {
-        case .logo: return 1
-        case .info: return 1
+        case .info, .multiply: return 1
         case .explore: return Section.Explore.allCases.count
         case .news: return min(3, items.count)
         }
@@ -178,15 +180,17 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: section.cell), for: indexPath)
 
         switch  section {
-        case .logo:
-            break
         case .info:
-            let infoCell = cell as! EcosiaInfoCell
-            let info = EcosiaInfoCellModel(title: .localized(.mySearches),
-                                           subTitle: "\(personalCounter.state!)",
-                                           description: .localized(.youNeedAround45),
-                                           image: "treeCounter")
-            infoCell.display(info)
+            if indexPath.row == 0 {
+                let infoCell = cell as! EcosiaInfoCell
+                let info = EcosiaInfoCellModel(title: .localized(.mySearches),
+                                               subTitle: "\(personalCounter.state!)",
+                                               description: .localized(.youNeedAround45),
+                                               image: "treeCounter")
+                infoCell.display(info)
+            }
+        case .multiply:
+            break
         case .explore:
             let exploreCell = cell as! EcosiaExploreCell
             Section.Explore(rawValue: indexPath.row).map { exploreCell.display($0) }
@@ -249,10 +253,10 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         let margin = max(16, collectionView.safeAreaInsets.left)
 
         switch section {
-        case .logo:
-            return CGSize(width: view.bounds.width - 2 * margin, height: 100)
         case .info:
             return CGSize(width: view.bounds.width - 2 * margin, height: 140)
+        case .multiply:
+            return CGSize(width: view.bounds.width - 2 * margin, height: 60)
         case .news:
             return CGSize(width: view.bounds.width, height: 130)
         case .explore:
@@ -265,8 +269,8 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         switch Section(rawValue: section)! {
-        case .logo:
-            return .zero
+        case .multiply:
+            return CGSize(width: view.bounds.width - 32, height: 8)
         case .explore, .news:
             return CGSize(width: view.bounds.width - 32, height: 70)
         case .info:
