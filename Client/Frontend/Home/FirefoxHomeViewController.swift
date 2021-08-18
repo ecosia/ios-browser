@@ -213,7 +213,7 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        if inOverlayMode, let cell = libraryCell ?? impactCell {
+        if inOverlayMode, let cell = libraryCell ?? (User.shared.topSites == false ? impactCell:  topSitesCell) {
             collectionView.contentOffset = .init(x: 0, y: cell.frame.minY - FirefoxHomeUX.ScrollSearchBarOffset)
         } else {
             collectionView.collectionViewLayout.invalidateLayout()
@@ -258,7 +258,7 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
     var inOverlayMode = false {
         didSet {
             guard isViewLoaded else { return }
-            if inOverlayMode && !oldValue, let cell = libraryCell ?? impactCell {
+            if inOverlayMode && !oldValue, let cell = libraryCell ?? (User.shared.topSites == false ? impactCell:  topSitesCell) {
                 UIView.animate(withDuration: 0.3, delay: 0, options: [.beginFromCurrentState], animations: { [weak self] in
                     self?.collectionView.contentOffset = .init(x: 0, y: cell.frame.minY - FirefoxHomeUX.ScrollSearchBarOffset)
                 })
@@ -432,7 +432,8 @@ extension FirefoxHomeViewController: UICollectionViewDelegateFlowLayout {
         case .libraryShortcuts:
             return CGSize(width: cellSize.width, height: FirefoxHomeUX.LibraryShortcutsHeight)
         case .emptySpace:
-            guard let topCell = libraryCell ?? impactCell, let bottomCell = impactCell else { return .zero }
+            guard let topCell = libraryCell ?? (User.shared.topSites == false ? impactCell: topSitesCell),
+                  let bottomCell = impactCell else { return .zero }
             let offset = topCell.frame.minY
             let filledHeight = bottomCell.frame.maxY
             let height = collectionView.frame.height - filledHeight + offset - FirefoxHomeUX.ScrollSearchBarOffset
