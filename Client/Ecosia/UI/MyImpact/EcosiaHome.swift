@@ -16,7 +16,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
 
         var cell: AnyClass {
             switch self {
-            case .info: return EcosiaInfoCell.self
+            case .info: return MyImpactCell.self
             case .multiply: return MultiplyImpactCell.self
             case .explore: return EcosiaExploreCell.self
             case .news: return NewsCell.self
@@ -107,6 +107,15 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     private let images = Images(.init(configuration: .ephemeral))
     private let news = News()
     private let personalCounter = PersonalCounter()
+    var impactModel: MyImpcactCellModel {
+        let top = MyImpactStackViewModel(title: "\(User.shared.impact) \(String.localized(.trees).capitalized)", boldTitle: true, subtitle: .localized(.estimatedTrees), imageName: "personalCounter", action: .collapse(.localized(.myImpactDescription), .localized(.learnMore)))
+        let middle = MyImpactStackViewModel(title: "\(User.shared.searchImpact) \(String.localized(.trees))", boldTitle: false, subtitle: String(format: .localized(.searches), "\(personalCounter.state!)"), imageName: "impactSearch", action: nil)
+
+        let bottom = MyImpactStackViewModel(title: "\(User.shared.referralImpact) \(String.localized(.trees))", boldTitle: false, subtitle: String(format: .localized(.referrals), "\(User.shared.referralCount)"), imageName: "impactReferrals", action: nil)
+
+        let info = MyImpcactCellModel(top: top, middle: middle, bottom: bottom)
+        return info
+    }
 
     convenience init(delegate: EcosiaHomeDelegate?) {
         let layout = UICollectionViewFlowLayout()
@@ -159,6 +168,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         guard hasAppeared else { return hasAppeared = true }
         updateBarAppearance()
         collectionView.scrollRectToVisible(.init(x: 0, y: 0, width: 1, height: 1), animated: false)
+        collectionView.reloadSections([Section.info.rawValue])
     }
 
     // MARK: UICollectionViewDataSource
@@ -181,14 +191,8 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
 
         switch  section {
         case .info:
-            if indexPath.row == 0 {
-                let infoCell = cell as! EcosiaInfoCell
-                let info = EcosiaInfoCellModel(title: .localized(.mySearches),
-                                               subTitle: "\(personalCounter.state!)",
-                                               description: .localized(.youNeedAround45),
-                                               image: "treeCounter")
-                infoCell.display(info)
-            }
+            let infoCell = cell as! MyImpactCell
+            infoCell.display(impactModel)
         case .multiply:
             break
         case .explore:
@@ -254,9 +258,9 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
 
         switch section {
         case .info:
-            return CGSize(width: view.bounds.width - 2 * margin, height: 140)
+            return CGSize(width: view.bounds.width - 2 * margin, height: 226)
         case .multiply:
-            return CGSize(width: view.bounds.width - 2 * margin, height: 60)
+            return CGSize(width: view.bounds.width - 2 * margin, height: 56)
         case .news:
             return CGSize(width: view.bounds.width, height: 130)
         case .explore:

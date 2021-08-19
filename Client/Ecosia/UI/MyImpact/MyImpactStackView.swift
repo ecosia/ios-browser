@@ -10,11 +10,16 @@ protocol MyImpactStackDelegate: AnyObject {
 
 struct MyImpactStackViewModel {
     let title: String
-    let titleAction: Bool
     let boldTitle: Bool
     let subtitle: String?
     let imageName: String
-    let actionName: String?
+
+    let action: Action?
+
+    enum Action {
+        case tap(String), collapse(String, String)
+    }
+
 }
 
 class MyImpactStackView: UIStackView, Themeable {
@@ -22,10 +27,13 @@ class MyImpactStackView: UIStackView, Themeable {
     weak var delegate: MyImpactStackDelegate?
 
     private weak var titleLabel: UILabel!
-    private weak var titleButton: UIButton!
     private weak var subtitleLabel: UILabel!
-    private weak var actionLabel: UILabel!
+    private weak var actionButton: UIButton!
     private weak var imageView: UIImageView!
+    private weak var callout: UIView!
+    private weak var calloutStack: UIStackView!
+    private weak var calloutLabel: UILabel!
+    private weak var calloutButton: UIButton!
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -62,25 +70,11 @@ class MyImpactStackView: UIStackView, Themeable {
         labelStack.distribution = .fill
         addArrangedSubview(labelStack)
 
-        let headlineStack = UIStackView()
-        headlineStack.axis = .horizontal
-        headlineStack.spacing = 8
-        labelStack.addArrangedSubview(headlineStack)
-
         let titleLabel = UILabel()
         titleLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
         titleLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
-        headlineStack.addArrangedSubview(titleLabel)
+        labelStack.addArrangedSubview(titleLabel)
         self.titleLabel = titleLabel
-
-        let titleButton = UIButton(type: .infoLight)
-        headlineStack.addArrangedSubview(titleButton)
-        titleButton.addTarget(self, action: #selector(titleActionTapped), for: .primaryActionTriggered)
-        self.titleButton = titleButton
-
-        let emptyView = UIView()
-        emptyView.setContentHuggingPriority(.fittingSizeLevel, for: .horizontal)
-        headlineStack.addArrangedSubview(emptyView)
 
         let subtitleLabel = UILabel()
         subtitleLabel.font = .preferredFont(forTextStyle: .subheadline)
@@ -88,11 +82,13 @@ class MyImpactStackView: UIStackView, Themeable {
         labelStack.addArrangedSubview(subtitleLabel)
         self.subtitleLabel = subtitleLabel
 
-        let actionLabel = UILabel()
-        actionLabel.font = .preferredFont(forTextStyle: .subheadline)
-        actionLabel.setContentHuggingPriority(.required, for: .horizontal)
-        addArrangedSubview(actionLabel)
-        self.actionLabel = actionLabel
+        let actionButton = UIButton(type: .custom)
+        actionButton.titleLabel?.font = .preferredFont(forTextStyle: .subheadline)
+        actionButton.setContentHuggingPriority(.required, for: .horizontal)
+        actionButton.setContentCompressionResistancePriority(.required, for: .horizontal)
+        actionButton.addTarget(self, action: #selector(actionTapped), for: .primaryActionTriggered)
+        addArrangedSubview(actionButton)
+        self.actionButton = actionButton
     }
 
     func display(_ model: MyImpactStackViewModel) {
@@ -102,10 +98,22 @@ class MyImpactStackView: UIStackView, Themeable {
         subtitleLabel.isHidden = model.subtitle == nil
 
         imageView.image = UIImage(themed: model.imageName)
-        actionLabel.text = model.actionName
-        actionLabel.isHidden = model.actionName == nil
-        titleButton.isHidden = !model.titleAction
 
+        if let action = model.action {
+            actionButton.isHidden = false
+
+            switch action {
+            case .tap(let title):
+                actionButton.setTitle(title, for: .normal)
+                actionButton.setImage(nil, for: .normal)
+            case .collapse(let description, let actionTitle):
+                actionButton.setTitle(nil, for: .normal)
+                actionButton.setImage(.init(themed: "impactDown"), for: .normal)
+                actionButton.imageView?.contentMode = .scaleAspectFit
+            }
+        } else {
+            actionButton.isHidden = true
+        }
         applyTheme()
     }
 
@@ -116,11 +124,11 @@ class MyImpactStackView: UIStackView, Themeable {
         titleLabel.font = .preferredFont(forTextStyle: style)
         titleLabel.textColor = UIColor.theme.ecosia.highContrastText
         subtitleLabel.textColor = UIColor.theme.ecosia.secondaryText
-        actionLabel.textColor = UIColor.theme.ecosia.primaryBrand
+        actionButton.setTitleColor(UIColor.theme.ecosia.primaryBrand, for: .normal)
         imageView.image = UIImage(themed: model.imageName)
     }
 
-    @objc func titleActionTapped() {
+    @objc func actionTapped() {
         delegate?.impactStackTitleAction(self)
     }
 }

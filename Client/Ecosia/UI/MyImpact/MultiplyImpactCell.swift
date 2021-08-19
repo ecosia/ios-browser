@@ -16,7 +16,7 @@ final class MultiplyImpactCell: UICollectionViewCell, Themeable {
 
     weak var stack: MyImpactStackView!
     weak var outline: UIView!
-    var model: EcosiaInfoCellModel?
+    var model: MyImpcactCellModel?
 
     private func setup() {
         let outline = UIView()
@@ -42,7 +42,7 @@ final class MultiplyImpactCell: UICollectionViewCell, Themeable {
 
         applyTheme()
 
-        stack.display(.init(title: "Multiply impact", titleAction: false, boldTitle: false, subtitle: nil, imageName: "impactMultiply", actionName: "Invite friends"))
+        stack.display(.init(title: .localized(.multiplyImpact), boldTitle: false, subtitle: nil, imageName: "impactMultiply", action: .tap(.localized(.inviteFriends))))
     }
 
     override var isSelected: Bool {
