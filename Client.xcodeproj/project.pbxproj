@@ -409,6 +409,7 @@
 		CA24B52224ABD7D40093848C /* LoginsListViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA24B52024ABD7D40093848C /* LoginsListViewModelTests.swift */; };
 		CA24B53924ABFE250093848C /* LoginsListSelectionHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA24B53824ABFE250093848C /* LoginsListSelectionHelperTests.swift */; };
 		CA24B53B24ABFE5D0093848C /* LoginsListDataSourceHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA24B53A24ABFE5D0093848C /* LoginsListDataSourceHelperTests.swift */; };
+		CA315CDA26D3E33100698791 /* UIImageViewAlignedSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA315CD926D3E33100698791 /* UIImageViewAlignedSwift.framework */; };
 		CA4ADEC1268B06EA00CE1C88 /* PersonalCounterCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4ADEC0268B06EA00CE1C88 /* PersonalCounterCell.swift */; };
 		CA4DDE5125430FA700966CF2 /* FakeSentry.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4DDE2925430E2400966CF2 /* FakeSentry.swift */; };
 		CA4DDE792543159400966CF2 /* FakeLeanplum.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4DDE782543159400966CF2 /* FakeLeanplum.swift */; };
@@ -573,7 +574,6 @@
 		D8BA178F206D477C0023AC00 /* DeferredTestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8BA1783206D3FB70023AC00 /* DeferredTestUtils.swift */; };
 		D8BA1790206D47830023AC00 /* DeferredTestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8BA1783206D3FB70023AC00 /* DeferredTestUtils.swift */; };
 		D8BA1791206D47A80023AC00 /* DeferredTestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8BA1783206D3FB70023AC00 /* DeferredTestUtils.swift */; };
-		D8C75DF3207584C400BB8AD0 /* UIImageViewAligned.m in Sources */ = {isa = PBXBuildFile; fileRef = D8C75DF2207584C300BB8AD0 /* UIImageViewAligned.m */; };
 		D8D33A7D1FBD080300A20A28 /* SnapKitExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8D33A7C1FBD080300A20A28 /* SnapKitExtensions.swift */; };
 		D8EFFA0C1FF5B1FA001D3A09 /* NavigationRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8EFFA0B1FF5B1FA001D3A09 /* NavigationRouter.swift */; };
 		D8EFFA261FF702A8001D3A09 /* NavigationRouterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8EFFA251FF702A8001D3A09 /* NavigationRouterTests.swift */; };
@@ -3132,6 +3132,7 @@
 		CA24B52024ABD7D40093848C /* LoginsListViewModelTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginsListViewModelTests.swift; sourceTree = "<group>"; };
 		CA24B53824ABFE250093848C /* LoginsListSelectionHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginsListSelectionHelperTests.swift; sourceTree = "<group>"; };
 		CA24B53A24ABFE5D0093848C /* LoginsListDataSourceHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginsListDataSourceHelperTests.swift; sourceTree = "<group>"; };
+		CA315CD926D3E33100698791 /* UIImageViewAlignedSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIImageViewAlignedSwift.framework; path = Carthage/Build/iOS/UIImageViewAlignedSwift.framework; sourceTree = "<group>"; };
 		CA32540125485C700024B48D /* Ecosia.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Ecosia.entitlements; sourceTree = "<group>"; };
 		CA32552425487C1C0024B48D /* EcosiaBeta.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = EcosiaBeta.xcconfig; path = Configuration/EcosiaBeta.xcconfig; sourceTree = "<group>"; };
 		CA4ACE4824C8C91500F55894 /* BreachAlertsDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreachAlertsDetailView.swift; sourceTree = "<group>"; };
@@ -3412,8 +3413,6 @@
 		D8AA923321A602DC002605C0 /* HomePageSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePageSettingViewController.swift; sourceTree = "<group>"; };
 		D8BA1783206D3FB70023AC00 /* DeferredTestUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DeferredTestUtils.swift; path = SharedTests/DeferredTestUtils.swift; sourceTree = "<group>"; };
 		D8BA1788206D405D0023AC00 /* Mocking.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Mocking.swift; path = SyncTests/Mocking.swift; sourceTree = "<group>"; };
-		D8C75DE9207584C300BB8AD0 /* UIImageViewAligned.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIImageViewAligned.h; path = ThirdParty/UIImageViewAligned/UIImageViewAligned.h; sourceTree = SOURCE_ROOT; };
-		D8C75DF2207584C300BB8AD0 /* UIImageViewAligned.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UIImageViewAligned.m; path = ThirdParty/UIImageViewAligned/UIImageViewAligned.m; sourceTree = SOURCE_ROOT; };
 		D8CC48B392E763B26CEB6599 /* gl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = gl; path = gl.lproj/Storage.strings; sourceTree = "<group>"; };
 		D8D33A7C1FBD080300A20A28 /* SnapKitExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SnapKitExtensions.swift; path = Extensions/SnapKitExtensions.swift; sourceTree = "<group>"; };
 		D8D6402F9194C22260233DE8 /* bs */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = bs; path = bs.lproj/AuthenticationManager.strings; sourceTree = "<group>"; };
@@ -3998,6 +3997,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CA315CDA26D3E33100698791 /* UIImageViewAlignedSwift.framework in Frameworks */,
 				C82043852523DBF600740B71 /* Sync.framework in Frameworks */,
 				C877037A25222F30006E38EB /* Shared.framework in Frameworks */,
 				CE0AB93425F7C2B400333656 /* SnowplowTracker in Frameworks */,
@@ -4170,16 +4170,6 @@
 			path = SearchQuickLinksMedium;
 			sourceTree = "<group>";
 		};
-		0B1C05D41A798B1F004C78B0 /* UIImageViewAligned */ = {
-			isa = PBXGroup;
-			children = (
-				D8C75DE9207584C300BB8AD0 /* UIImageViewAligned.h */,
-				D8C75DF2207584C300BB8AD0 /* UIImageViewAligned.m */,
-			);
-			name = UIImageViewAligned;
-			path = ThirdParty/UIImageViewAligned;
-			sourceTree = "<group>";
-		};
 		1DA3CE5B24EEE71B00422BB2 /* OpenTabs */ = {
 			isa = PBXGroup;
 			children = (
@@ -4330,7 +4320,6 @@
 				D8FDEB54220CFE970069A582 /* UIImage+ImageEffects.h */,
 				D8FDEB55220CFE970069A582 /* UIImage+ImageEffects.m */,
 				288A2D7E1AB8B2AD0023ABC3 /* Result */,
-				0B1C05D41A798B1F004C78B0 /* UIImageViewAligned */,
 				3B6889C41D66950E002AC85E /* UIImageColors.swift */,
 				7479B4ED1C5306A200DF000B /* Reachability.swift */,
 			);
@@ -4722,6 +4711,7 @@
 		7B604FC11C496005006EEEC3 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CA315CD926D3E33100698791 /* UIImageViewAlignedSwift.framework */,
 				CE0D8D0F25B5DEE200B76E47 /* MozillaAppServices.framework */,
 				C8E18F1F222EDED000E30E52 /* SafariServices.framework */,
 				C8E18F1D222EDE4400E30E52 /* Accelerate.framework */,
@@ -7018,6 +7008,7 @@
 				"$(SRCROOT)/Carthage/Build/iOS/Fuzi.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/SwiftyJSON.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/SwiftProtobuf.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/UIImageViewAlignedSwift.framework",
 			);
 			name = "Copy Carthage Dependencies";
 			outputPaths = (
@@ -7643,7 +7634,6 @@
 				CA6BFB0525778E060026DFFF /* String.swift in Sources */,
 				F84B22041A0910F600AAB793 /* AppDelegate.swift in Sources */,
 				CAA246BC257A723F00D84AD9 /* MarketsController.swift in Sources */,
-				D8C75DF3207584C400BB8AD0 /* UIImageViewAligned.m in Sources */,
 				E653422D1C5944F90039DD9E /* BrowserPrompts.swift in Sources */,
 				2FDE87FE1ABB3817005317B1 /* RemoteTabsPanel.swift in Sources */,
 				39DD030D1CD53E1900BC09B3 /* HomePageHelper.swift in Sources */,

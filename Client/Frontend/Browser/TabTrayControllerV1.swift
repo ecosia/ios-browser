@@ -6,6 +6,7 @@ import UIKit
 import SnapKit
 import Storage
 import Shared
+import UIImageViewAlignedSwift
 
 struct TabTrayControllerUX {
     static let CornerRadius = CGFloat(6.0)
