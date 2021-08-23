@@ -1111,15 +1111,13 @@ extension FirefoxHomeViewController: ImpactCellDelegate {
     }
 
     func impactCellDidTapSpotlight(_ cell: ImpactCell) {
-
         User.shared.referrals?.acknowledge()
 
         UIView.animate(withDuration: 0.3, animations: {
             cell.display(self.impactCellModel)
             self.collectionView.collectionViewLayout.invalidateLayout()
-        }) { _ in
-            self.collectionView.collectionViewLayout.invalidateLayout()
-        }
+        }) 
+
         // leave overlay mode if it was active
         delegate?.home(self, willBegin: .zero)
     }

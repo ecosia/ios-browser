@@ -12,6 +12,10 @@ extension String {
     static func localized(_ string: String) -> String {
         NSLocalizedString(string, tableName: "Ecosia", comment: "")
     }
+
+    static func localizedPlural(_ forKey: Key, num: Int) -> String {
+        return String(format: NSLocalizedString(forKey.rawValue, tableName: "Plurals", comment: ""), num)
+    }
     
     enum Key: String {
         case autocomplete = "Autocomplete"
@@ -25,6 +29,7 @@ extension String {
         case financialReports = "Financial reports"
         case forceDarkMode = "Force Dark Mode"
         case getStarted = "Get started"
+        case giftTrees = "Gift 2 trees, earn 2 trees"
         case howEcosiaWorks = "How Ecosia works"
         case invertColors = "Invert website colors"
         case inviteFriends = "Invite friends"
@@ -45,10 +50,10 @@ extension String {
         case privateTab = "Private"
         case privateEmpty = "Ecosia won’t remember the pages you visited, your search history or your autofill information once you close a tab. Your searches still contribute to trees."
         case relevantResults = "Relevant results based on past searches"
-        case referrals = "%@ referrals"
+        case referrals = "%d referral(s)"
         case safeSearch = "Safe search"
         case search = "Search"
-        case searches = "%@ searches"
+        case searches = "%d search(es)"
         case searchAndPlant = "Search the web to plant trees..."
         case searchRegion = "Search region"
         case sendFeedback = "Send feedback"
@@ -56,9 +61,11 @@ extension String {
         case shownUnderSearchField = "Shown under the search field"
         case stories = "Stories"
         case strict = "Strict"
+        case tapCounter = "Tap your tree counter to share Ecosia with friends and plant more trees"
         case terms = "Terms and conditions"
         case today = "Today"
-        case trees = "TREES"
+        case totalEcosiaTrees = "Total Ecosia trees"
+        case trees = "%d tree(s)"
         case treesPlantedWithEcosia = "TREES PLANTED WITH ECOSIA"
         case treesReceived = "You received %@ trees"
         case treesReceivedDescription = "A friend installed Ecosia using your code, tap on your counter to invite more friends."

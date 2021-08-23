@@ -427,6 +427,7 @@
 		CA6BFB0525778E060026DFFF /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA6BFAFA25778E050026DFFF /* String.swift */; };
 		CA6BFB4325778E2B0026DFFF /* Ecosia.strings in Resources */ = {isa = PBXBuildFile; fileRef = CA6BFB4525778E2B0026DFFF /* Ecosia.strings */; };
 		CA6BFB7225778EDA0026DFFF /* Ecosia.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CA6BFB7125778EDA0026DFFF /* Ecosia.xcassets */; };
+		CA6FA5BD26D3B6EA00C68319 /* Plurals.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = CA6FA5BF26D3B6EA00C68319 /* Plurals.stringsdict */; };
 		CA708BBA25407C59007265AC /* EcosiaFavourites.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA708BB925407C59007265AC /* EcosiaFavourites.swift */; };
 		CA77ABFD24773C92005079F9 /* BreachAlertsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA77ABF424772D98005079F9 /* BreachAlertsManager.swift */; };
 		CA7BD568248189E800A0A61B /* BreachAlertsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA7BD564248185B500A0A61B /* BreachAlertsTests.swift */; };
@@ -3151,7 +3152,6 @@
 		CA051BEE2539B25B0096D30F /* EcosiaImport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaImport.swift; sourceTree = "<group>"; };
 		CA05558226CD4C4700126D0F /* MultiplyImpactCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultiplyImpactCell.swift; sourceTree = "<group>"; };
 		CA05558426CD4EEA00126D0F /* MyImpactStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyImpactStackView.swift; sourceTree = "<group>"; };
-		CA05558626CE44E000126D0F /* ios-core */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "ios-core"; path = "../ios-core"; sourceTree = "<group>"; };
 		CA06A597268C721A00E9AC4F /* AddNewTabButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddNewTabButton.swift; sourceTree = "<group>"; };
 		CA089C1926CAB56E001686DF /* UIFont+Ecosia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+Ecosia.swift"; sourceTree = "<group>"; };
 		CA08B86E255EE8B6005CA6A4 /* EcosiaImport+PerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EcosiaImport+PerformanceTests.swift"; sourceTree = "<group>"; };
@@ -3177,6 +3177,12 @@
 		CA6BFB5B25778E3E0026DFFF /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Ecosia.strings; sourceTree = "<group>"; };
 		CA6BFB5D25778E4E0026DFFF /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Ecosia.strings; sourceTree = "<group>"; };
 		CA6BFB7125778EDA0026DFFF /* Ecosia.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Ecosia.xcassets; sourceTree = "<group>"; };
+		CA6FA5BE26D3B6EA00C68319 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = en; path = en.lproj/Plurals.stringsdict; sourceTree = "<group>"; };
+		CA6FA5C026D3B6F600C68319 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = de; path = de.lproj/Plurals.stringsdict; sourceTree = "<group>"; };
+		CA6FA5C126D3C32200C68319 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = nl; path = nl.lproj/Plurals.stringsdict; sourceTree = "<group>"; };
+		CA6FA5C226D3C32700C68319 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = fr; path = fr.lproj/Plurals.stringsdict; sourceTree = "<group>"; };
+		CA6FA5C326D3C32F00C68319 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = it; path = it.lproj/Plurals.stringsdict; sourceTree = "<group>"; };
+		CA6FA5C426D3C34200C68319 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = es; path = es.lproj/Plurals.stringsdict; sourceTree = "<group>"; };
 		CA708BB925407C59007265AC /* EcosiaFavourites.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaFavourites.swift; sourceTree = "<group>"; };
 		CA734AC9B9629155033B810B /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Search.strings; sourceTree = "<group>"; };
 		CA774043B34B7F86DA31B93A /* br */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = br; path = br.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -5056,6 +5062,7 @@
 				CA809D0025CC39FC003060CC /* Scripts */,
 				CA6BFAFA25778E050026DFFF /* String.swift */,
 				CA6BFB4525778E2B0026DFFF /* Ecosia.strings */,
+				CA6FA5BF26D3B6EA00C68319 /* Plurals.stringsdict */,
 			);
 			path = L10N;
 			sourceTree = "<group>";
@@ -5772,7 +5779,6 @@
 		F84B21B51A090F8100AAB793 = {
 			isa = PBXGroup;
 			children = (
-				CA05558626CE44E000126D0F /* ios-core */,
 				3E82980124BE4C31000A59FF /* FxATelemetryUtils.swift */,
 				C8E2E80623D20FB3005AACE6 /* RustFxA */,
 				E6C191D41E38F7B7000A213B /* Cartfile */,
@@ -6936,6 +6942,7 @@
 				23BEA767251A99ED00A014BF /* NewYorkMedium-Bold.otf in Resources */,
 				3BC659591E5BA505006D560F /* top_sites.json in Resources */,
 				CA6BFB7225778EDA0026DFFF /* Ecosia.xcassets in Resources */,
+				CA6FA5BD26D3B6EA00C68319 /* Plurals.stringsdict in Resources */,
 				43446CE7240D9F3000F5C643 /* ETP.xcassets in Resources */,
 				C8399D9522DE5E6200EFA5CA /* disconnect-block-social.json in Resources */,
 				E4CD9F541A71506400318571 /* Reader.html in Resources */,
@@ -10007,6 +10014,19 @@
 				CAFA91F7257905930086E6AE /* fr */,
 			);
 			name = Ecosia.strings;
+			sourceTree = "<group>";
+		};
+		CA6FA5BF26D3B6EA00C68319 /* Plurals.stringsdict */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CA6FA5BE26D3B6EA00C68319 /* en */,
+				CA6FA5C026D3B6F600C68319 /* de */,
+				CA6FA5C126D3C32200C68319 /* nl */,
+				CA6FA5C226D3C32700C68319 /* fr */,
+				CA6FA5C326D3C32F00C68319 /* it */,
+				CA6FA5C426D3C34200C68319 /* es */,
+			);
+			name = Plurals.stringsdict;
 			sourceTree = "<group>";
 		};
 		F0D8481DAC1E6378ABF1565A /* ClearPrivateDataConfirm.strings */ = {

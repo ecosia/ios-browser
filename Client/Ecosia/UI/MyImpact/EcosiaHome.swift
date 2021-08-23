@@ -108,10 +108,11 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     private let news = News()
     private let personalCounter = PersonalCounter()
     var impactModel: MyImpcactCellModel {
-        let top = MyImpactStackViewModel(title: "\(User.shared.impact) \(String.localized(.trees).capitalized)", boldTitle: true, subtitle: .localized(.estimatedTrees), imageName: "personalCounter", action: .collapse(.localized(.myImpactDescription), .localized(.learnMore)))
-        let middle = MyImpactStackViewModel(title: "\(User.shared.searchImpact) \(String.localized(.trees))", boldTitle: false, subtitle: String(format: .localized(.searches), "\(personalCounter.state!)"), imageName: "impactSearch", action: nil)
+        let top = MyImpactStackViewModel(title: .localizedPlural(.trees, num: User.shared.impact).capitalized, boldTitle: true, subtitle: .localized(.estimatedTrees), imageName: "personalCounter", action: .collapse(.localized(.myImpactDescription), .localized(.learnMore)))
 
-        let bottom = MyImpactStackViewModel(title: "\(User.shared.referralImpact) \(String.localized(.trees))", boldTitle: false, subtitle: String(format: .localized(.referrals), "\(User.shared.referralCount)"), imageName: "impactReferrals", action: nil)
+        let middle = MyImpactStackViewModel(title: .localizedPlural(.trees, num: User.shared.searchImpact), boldTitle: false, subtitle: .localizedPlural(.searches, num: personalCounter.state!), imageName: "impactSearch", action: nil)
+
+        let bottom = MyImpactStackViewModel(title: .localizedPlural(.trees, num: User.shared.referralImpact), boldTitle: false, subtitle: .localizedPlural(.referrals, num: User.shared.referralCount), imageName: "impactReferrals", action: nil)
 
         let info = MyImpcactCellModel(top: top, middle: middle, bottom: bottom)
         return info

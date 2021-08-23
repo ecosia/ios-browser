@@ -49,7 +49,6 @@ final class ImpactCell: UICollectionViewCell, Themeable {
     private weak var arrowImage: UIImageView!
     private weak var personalCountStack: UIStackView!
     private weak var personalCount: UILabel!
-    private weak var personalCountTrees: UILabel!
     private weak var impactOverviewLabel: UILabel!
 
     private weak var personalCountDescription: UILabel!
@@ -99,10 +98,6 @@ final class ImpactCell: UICollectionViewCell, Themeable {
             })
         }
         treeCounter.update(session: .shared) { _ in }
-    }
-
-    deinit {
-
     }
 
     func display(_ model: ImpactCellModel) {
@@ -223,18 +218,8 @@ final class ImpactCell: UICollectionViewCell, Themeable {
         personalCountStack.addArrangedSubview(personalCount)
         self.personalCount = personalCount
 
-        let personalCountTrees = UILabel()
-        personalCountTrees.text = .localized(.trees).capitalized
-        personalCountTrees.translatesAutoresizingMaskIntoConstraints = false
-        personalCountTrees.font = .preferredFont(forTextStyle: .headline)
-        personalCountTrees.adjustsFontForContentSizeCategory = true
-        personalCountTrees.setContentHuggingPriority(.defaultLow, for: .horizontal)
-        personalCountTrees.setContentHuggingPriority(.defaultLow, for: .vertical)
-        personalCountStack.addArrangedSubview(personalCountTrees)
-        self.personalCountTrees = personalCountTrees
-
         let impactOverviewLabel = UILabel()
-        impactOverviewLabel.text = .localized(.estimatedImpact)
+        impactOverviewLabel.text = .localized(.estimatedTrees)
         impactOverviewLabel.translatesAutoresizingMaskIntoConstraints = false
         impactOverviewLabel.font = .preferredFont(forTextStyle: .subheadline)
         impactOverviewLabel.setContentCompressionResistancePriority(.required, for: .vertical)
@@ -255,6 +240,7 @@ final class ImpactCell: UICollectionViewCell, Themeable {
 
         let globalCountStack = UIStackView()
         globalCountStack.axis = .horizontal
+        globalCountStack.distribution = .fillProportionally
         globalCountStack.spacing = 4
         globalCountStack.translatesAutoresizingMaskIntoConstraints = false
         globalCountBackground.addSubview(globalCountStack)
@@ -264,16 +250,18 @@ final class ImpactCell: UICollectionViewCell, Themeable {
         globalCount.translatesAutoresizingMaskIntoConstraints = false
         globalCount.font = .preferredFont(forTextStyle: .subheadline).bold().monospace()
         globalCount.setContentCompressionResistancePriority(.required, for: .horizontal)
-        globalCount.setContentHuggingPriority(.required, for: .horizontal)
+        globalCount.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        globalCount.textAlignment = .right
 
         globalCountStack.addArrangedSubview(globalCount)
         self.globalCount = globalCount
 
         let globalCountDescription = UILabel()
         globalCountDescription.translatesAutoresizingMaskIntoConstraints = false
-        globalCountDescription.text = .localized(.treesPlantedWithEcosia)
+        globalCountDescription.text = .localized(.totalEcosiaTrees)
         globalCountDescription.font = .preferredFont(forTextStyle: .subheadline)
         globalCountDescription.adjustsFontForContentSizeCategory = true
+        globalCountDescription.setContentHuggingPriority(.defaultLow, for: .horizontal)
         globalCountStack.addArrangedSubview(globalCountDescription)
         self.globalCountDescription = globalCountDescription
     }
@@ -319,14 +307,13 @@ final class ImpactCell: UICollectionViewCell, Themeable {
 
         spotlightBackground.backgroundColor = .clear
         impactBackground.backgroundColor = UIColor.theme.ecosia.primaryBackground
-        globalCountBackground.backgroundColor = UIColor.theme.ecosia.lightBackground
+        globalCountBackground.backgroundColor = UIColor.theme.ecosia.treeCountBackground
 
         background.layer.borderColor = UIColor.theme.ecosia.personalCounterBorder.cgColor
         impactBackground.layer.borderColor = UIColor.theme.ecosia.personalCounterBorder.cgColor
 
-        globalCountDescription.textColor = UIColor.theme.ecosia.highContrastText
-        globalCount.textColor = UIColor.theme.ecosia.highContrastText
-        personalCountTrees.textColor = UIColor.theme.ecosia.highContrastText
+        globalCountDescription.textColor = UIColor.theme.ecosia.treeCountText
+        globalCount.textColor = UIColor.theme.ecosia.treeCountText
         personalCount.textColor = UIColor.theme.ecosia.highContrastText
 
         impactOverviewLabel.textColor = UIColor.theme.ecosia.secondaryText
