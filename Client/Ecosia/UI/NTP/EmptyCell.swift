@@ -5,6 +5,38 @@
 import UIKit
 
 class EmptyCell: UICollectionViewCell, Themeable {
+    let view = UIView()
+    var widthConstraint: NSLayoutConstraint!
+    var heightConstraint: NSLayoutConstraint!
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+
+        view.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(view)
+
+        view.rightAnchor.constraint(equalTo: contentView.rightAnchor).isActive = true
+        view.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
+        view.leftAnchor.constraint(equalTo: contentView.leftAnchor).isActive = true
+        view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
+
+        view.backgroundColor = .systemRed
+
+        let width = view.widthAnchor.constraint(equalToConstant: frame.width)
+        width.priority = .init(999)
+        width.isActive = true
+        self.widthConstraint = width
+
+        let height = view.heightAnchor.constraint(equalToConstant: frame.height)
+        height.priority = .init(999)
+        height.isActive = true
+        self.heightConstraint = height
+    }
+
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
+
     func applyTheme() {
         contentView.backgroundColor = UIColor.theme.ecosia.primaryBackground
     }

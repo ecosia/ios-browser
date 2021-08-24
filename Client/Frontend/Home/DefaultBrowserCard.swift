@@ -24,8 +24,6 @@ class DefaultBrowserCard: UICollectionViewCell {
         descriptionText.numberOfLines = 0
         descriptionText.font = .preferredFont(forTextStyle: .subheadline)
         descriptionText.adjustsFontForContentSizeCategory = true
-        descriptionText.adjustsFontSizeToFitWidth = true
-        descriptionText.minimumScaleFactor = 0.8
         descriptionText.allowsDefaultTighteningForTruncation = true
         return descriptionText
     }()
@@ -54,26 +52,24 @@ class DefaultBrowserCard: UICollectionViewCell {
         background.layer.cornerRadius = 10
         return background
     }()
-    
-    private var topView = UIView()
+    weak var widthConstraint: NSLayoutConstraint!
     private var labelView = UIStackView()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        topView.addSubview(labelView)
-        topView.addSubview(image)
-        
+        background.addSubview(labelView)
+        background.addSubview(image)
         background.addSubview(settingsButton)
-        background.addSubview(topView)
         background.addSubview(closeButton)
         
         labelView.axis = .vertical
         labelView.alignment = .leading
+        labelView.spacing = 4
         labelView.addArrangedSubview(title)
         labelView.addArrangedSubview(descriptionText)
         
-        addSubview(background)
+        contentView.addSubview(background)
         
         setupConstraints()
         setupButtons()
@@ -90,24 +86,21 @@ class DefaultBrowserCard: UICollectionViewCell {
             make.top.equalToSuperview().inset(16)
         }
         
-        topView.snp.makeConstraints { make in
-            make.top.left.right.equalToSuperview()
-        }
-
         image.snp.makeConstraints { make in
             make.left.equalToSuperview().offset(24)
             make.right.equalTo(labelView.snp.left).offset(-16)
-            make.height.width.equalTo(48)
+            make.height.width.equalTo(48).priority(.veryHigh)
             make.top.equalToSuperview().offset(24)
         }
         labelView.snp.makeConstraints { make in
-            make.right.equalToSuperview().offset(-36)
+            make.right.equalToSuperview().offset(-36).priority(.veryHigh)
             make.bottom.equalTo(settingsButton.snp.top).offset(-16)
             make.top.equalToSuperview().offset(24)
         }
         settingsButton.snp.makeConstraints { make in
-            make.top.equalTo(topView.snp.bottom).offset(16)
-            make.bottom.left.right.equalToSuperview().inset(16)
+            make.top.equalTo(labelView.snp.bottom).offset(16)
+            make.left.right.equalToSuperview().inset(16)
+            make.bottom.equalToSuperview().inset(16).priority(.veryHigh)
             make.height.equalTo(44)
         }
         closeButton.snp.makeConstraints { make in
@@ -115,6 +108,11 @@ class DefaultBrowserCard: UICollectionViewCell {
             make.right.equalToSuperview().offset(-18)
             make.height.width.equalTo(16)
         }
+
+        let widthConstraint = background.widthAnchor.constraint(equalToConstant: 200)
+        widthConstraint.priority = .defaultHigh
+        widthConstraint.isActive = true
+        self.widthConstraint = widthConstraint
     }
     
     private func setupButtons() {

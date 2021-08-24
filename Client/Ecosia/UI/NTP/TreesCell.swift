@@ -5,8 +5,9 @@
 import UIKit
 import Core
 
-struct ImpactCellModel {
+struct TreesCellModel {
     var spotlight: Spotlight?
+    var description: String?
     let trees: Int
 
     struct Spotlight {
@@ -15,13 +16,13 @@ struct ImpactCellModel {
     }
 }
 
-protocol ImpactCellDelegate: AnyObject {
-    func impactCellDidTapSpotlight(_ cell: ImpactCell)
+protocol TreesCellDelegate: AnyObject {
+    func treesCellDidTapSpotlight(_ cell: TreesCell)
 }
 
-final class ImpactCell: UICollectionViewCell, Themeable {
+final class TreesCell: UICollectionViewCell, Themeable {
 
-    private (set) var model: ImpactCellModel?
+    private (set) var model: TreesCellModel?
     private let treeCounter = TreeCounter()
     lazy var formatter: NumberFormatter = {
         let formatter = NumberFormatter()
@@ -29,10 +30,12 @@ final class ImpactCell: UICollectionViewCell, Themeable {
         return formatter
     }()
 
-    weak var delegate: ImpactCellDelegate?
+    weak var delegate: TreesCellDelegate?
 
     private weak var background: UIView!
     private weak var container: UIStackView!
+    var widthConstraint: NSLayoutConstraint!
+
 
     private weak var spotlightBackground: UIView!
     private weak var spotlightStack: UIStackView!
@@ -46,7 +49,6 @@ final class ImpactCell: UICollectionViewCell, Themeable {
     private weak var personalImpactStack: UIStackView!
     private weak var personalImpactLabelStack: UIStackView!
     private weak var treeImage: UIImageView!
-    private weak var arrowImage: UIImageView!
     private weak var personalCountStack: UIStackView!
     private weak var personalCount: UILabel!
     private weak var impactOverviewLabel: UILabel!
@@ -65,6 +67,7 @@ final class ImpactCell: UICollectionViewCell, Themeable {
 
     required init?(coder: NSCoder) {
         super.init(coder: coder)
+        setup()
     }
 
     private func setup() {
@@ -100,7 +103,7 @@ final class ImpactCell: UICollectionViewCell, Themeable {
         treeCounter.update(session: .shared) { _ in }
     }
 
-    func display(_ model: ImpactCellModel) {
+    func display(_ model: TreesCellModel) {
         self.model = model
 
         personalCount.text = "\(model.trees)"
@@ -110,11 +113,21 @@ final class ImpactCell: UICollectionViewCell, Themeable {
             spotlightHeadline.text = spotlight.headline
             spotlightDescription.text = spotlight.description
         }
+
+        if let description = model.description {
+            globalCount.isHidden = true
+            globalCountDescription.text = description
+            globalCountDescription.textAlignment = .center
+        } else {
+            globalCount.isHidden = false
+            globalCountDescription.text = .localized(.totalEcosiaTrees)
+            globalCountDescription.textAlignment = .left
+        }
         applyTheme()
     }
 
     @objc func spotlightTapped() {
-        delegate?.impactCellDidTapSpotlight(self)
+        delegate?.treesCellDidTapSpotlight(self)
     }
 
     var spotlightViews: [UIView] {
@@ -126,7 +139,6 @@ final class ImpactCell: UICollectionViewCell, Themeable {
         let spotlightBackground = UIView()
         spotlightBackground.translatesAutoresizingMaskIntoConstraints = false
         spotlightBackground.layer.cornerRadius = 8
-        spotlightBackground.setContentHuggingPriority(.required, for: .vertical)
         container.addArrangedSubview(spotlightBackground)
         self.spotlightBackground = spotlightBackground
 
@@ -135,7 +147,7 @@ final class ImpactCell: UICollectionViewCell, Themeable {
         let spotlightStack = UIStackView()
         spotlightStack.axis = .vertical
         spotlightStack.translatesAutoresizingMaskIntoConstraints = false
-        spotlightStack.spacing = 2
+        spotlightStack.spacing = 0
         spotlightBackground.addSubview(spotlightStack)
         self.spotlightStack = spotlightStack
 
@@ -147,17 +159,20 @@ final class ImpactCell: UICollectionViewCell, Themeable {
         let spotlightHeadline = UILabel()
         spotlightTopLine.addArrangedSubview(spotlightHeadline)
         spotlightHeadline.setContentCompressionResistancePriority(.required, for: .vertical)
+        spotlightHeadline.setContentHuggingPriority(.defaultLow, for: .horizontal)
+
         spotlightHeadline.font = .preferredFont(forTextStyle: .subheadline).bold()
         spotlightHeadline.adjustsFontForContentSizeCategory = true
         self.spotlightHeadline = spotlightHeadline
 
         let spotlightClose = UIImageView(image: .init(named: "close-medium")?.withRenderingMode(.alwaysTemplate))
-        spotlightClose.contentMode = .scaleAspectFill
+        spotlightClose.contentMode = .scaleAspectFit
+        spotlightClose.setContentHuggingPriority(.required, for: .horizontal)
         spotlightTopLine.addArrangedSubview(spotlightClose)
         self.spotlightClose = spotlightClose
 
         let spotlightDescription = UILabel()
-        spotlightDescription.numberOfLines = 2
+        spotlightDescription.numberOfLines = 0
         spotlightDescription.font = .preferredFont(forTextStyle: .subheadline)
         spotlightDescription.adjustsFontForContentSizeCategory = true
         spotlightDescription.setContentCompressionResistancePriority(.required, for: .vertical)
@@ -205,7 +220,7 @@ final class ImpactCell: UICollectionViewCell, Themeable {
 
         let personalCountStack = UIStackView()
         personalCountStack.axis = .horizontal
-        personalCountStack.spacing = 4
+        personalCountStack.spacing = 0
         personalCountStack.translatesAutoresizingMaskIntoConstraints = false
         personalImpactLabelStack.addArrangedSubview(personalCountStack)
 
@@ -213,7 +228,7 @@ final class ImpactCell: UICollectionViewCell, Themeable {
         personalCount.translatesAutoresizingMaskIntoConstraints = false
         personalCount.font = .preferredFont(forTextStyle: .headline)
         personalCount.adjustsFontForContentSizeCategory = true
-        personalCount.setContentHuggingPriority(.required, for: .horizontal)
+        personalCount.setContentHuggingPriority(.defaultLow, for: .horizontal)
         personalCount.setContentHuggingPriority(.defaultLow, for: .vertical)
         personalCountStack.addArrangedSubview(personalCount)
         self.personalCount = personalCount
@@ -227,11 +242,6 @@ final class ImpactCell: UICollectionViewCell, Themeable {
         personalImpactLabelStack.addArrangedSubview(impactOverviewLabel)
         self.impactOverviewLabel = impactOverviewLabel
 
-        let arrowImage = UIImageView(image: .init(named: "forwardChevron")?.withRenderingMode(.alwaysTemplate))
-        arrowImage.contentMode = .scaleAspectFit
-        personalImpactStack.addArrangedSubview(arrowImage)
-        self.arrowImage = arrowImage
-
         let globalCountBackground = UIView()
         globalCountBackground.translatesAutoresizingMaskIntoConstraints = false
         globalCountBackground.layer.cornerRadius = 8
@@ -240,7 +250,7 @@ final class ImpactCell: UICollectionViewCell, Themeable {
 
         let globalCountStack = UIStackView()
         globalCountStack.axis = .horizontal
-        globalCountStack.distribution = .fillProportionally
+        globalCountStack.distribution = .fillEqually
         globalCountStack.spacing = 4
         globalCountStack.translatesAutoresizingMaskIntoConstraints = false
         globalCountBackground.addSubview(globalCountStack)
@@ -248,9 +258,9 @@ final class ImpactCell: UICollectionViewCell, Themeable {
 
         let globalCount = UILabel()
         globalCount.translatesAutoresizingMaskIntoConstraints = false
-        globalCount.font = .preferredFont(forTextStyle: .subheadline).bold().monospace()
         globalCount.setContentCompressionResistancePriority(.required, for: .horizontal)
         globalCount.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        globalCount.font = .preferredFont(forTextStyle: .subheadline).bold().monospace()
         globalCount.textAlignment = .right
 
         globalCountStack.addArrangedSubview(globalCount)
@@ -262,6 +272,7 @@ final class ImpactCell: UICollectionViewCell, Themeable {
         globalCountDescription.font = .preferredFont(forTextStyle: .subheadline)
         globalCountDescription.adjustsFontForContentSizeCategory = true
         globalCountDescription.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        globalCountDescription.numberOfLines = 0
         globalCountStack.addArrangedSubview(globalCountDescription)
         self.globalCountDescription = globalCountDescription
     }
@@ -269,8 +280,19 @@ final class ImpactCell: UICollectionViewCell, Themeable {
     private func addConstraints() {
         // Constraints for stack views to their backgrounds
         background.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16).isActive = true
-        background.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16).isActive = true
-        background.rightAnchor.constraint(equalTo: contentView.rightAnchor).isActive = true
+        let bottom = background.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16)
+        bottom.priority = .defaultHigh
+        bottom.isActive = true
+
+        let right = background.rightAnchor.constraint(equalTo: contentView.rightAnchor)
+        right.priority = .defaultHigh
+        right.isActive = true
+
+        let width = background.widthAnchor.constraint(equalToConstant: bounds.width)
+        width.priority = .init(999)
+        width.isActive = true
+        self.widthConstraint = width
+
         background.leftAnchor.constraint(equalTo: contentView.leftAnchor).isActive = true
 
         container.rightAnchor.constraint(equalTo: background.rightAnchor).isActive = true
@@ -283,18 +305,19 @@ final class ImpactCell: UICollectionViewCell, Themeable {
         spotlightStack.leftAnchor.constraint(equalTo: spotlightBackground.leftAnchor, constant: 12).isActive = true
         spotlightStack.bottomAnchor.constraint(equalTo: spotlightBackground.bottomAnchor, constant: -8).isActive = true
 
-        impactStack.rightAnchor.constraint(equalTo: impactBackground.rightAnchor, constant: -16).isActive = true
+        impactStack.rightAnchor.constraint(equalTo: impactBackground.rightAnchor, constant: -8).isActive = true
         impactStack.topAnchor.constraint(equalTo: impactBackground.topAnchor, constant: 16).isActive = true
-        impactStack.leftAnchor.constraint(equalTo: impactBackground.leftAnchor, constant: 16).isActive = true
-        impactStack.bottomAnchor.constraint(equalTo: impactBackground.bottomAnchor, constant: -16).isActive = true
+        impactStack.leftAnchor.constraint(equalTo: impactBackground.leftAnchor, constant: 8).isActive = true
+        impactStack.bottomAnchor.constraint(equalTo: impactBackground.bottomAnchor, constant: -8).isActive = true
 
         globalCountStack.rightAnchor.constraint(equalTo: globalCountBackground.rightAnchor, constant: -8).isActive = true
         globalCountStack.topAnchor.constraint(equalTo: globalCountBackground.topAnchor, constant: 8).isActive = true
         globalCountStack.leftAnchor.constraint(equalTo: globalCountBackground.leftAnchor, constant: 8).isActive = true
         globalCountStack.bottomAnchor.constraint(equalTo: globalCountBackground.bottomAnchor, constant: -8).isActive = true
 
-        treeImage.widthAnchor.constraint(equalToConstant: 30).isActive = true
-        arrowImage.widthAnchor.constraint(equalToConstant: 8).isActive = true
+        treeImage.widthAnchor.constraint(equalToConstant: 52).isActive = true
+        treeImage.heightAnchor.constraint(equalToConstant: 52).isActive = true
+        spotlightClose.widthAnchor.constraint(equalToConstant: 16).isActive = true
     }
 
     func applyTheme() {
@@ -305,8 +328,9 @@ final class ImpactCell: UICollectionViewCell, Themeable {
             background.backgroundColor = UIColor.theme.ecosia.primaryBackground
         }
 
+        impactBackground.backgroundColor = (isHighlighted || isSelected) ? UIColor.theme.ecosia.hoverBackgroundColor : UIColor.theme.ecosia.primaryBackground
+
         spotlightBackground.backgroundColor = .clear
-        impactBackground.backgroundColor = UIColor.theme.ecosia.primaryBackground
         globalCountBackground.backgroundColor = UIColor.theme.ecosia.treeCountBackground
 
         background.layer.borderColor = UIColor.theme.ecosia.personalCounterBorder.cgColor
@@ -322,14 +346,9 @@ final class ImpactCell: UICollectionViewCell, Themeable {
         spotlightDescription.textColor = .white
 
         spotlightClose.tintColor = .white
-        arrowImage.tintColor = UIColor.theme.ecosia.secondaryText
     }
 
     // MARK: Overrides
-    override func layoutSubviews() {
-        super.layoutSubviews()
-    }
-
     override var isHighlighted: Bool {
         set {
             super.isHighlighted = newValue

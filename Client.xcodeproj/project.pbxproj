@@ -415,7 +415,7 @@
 		CA24B53924ABFE250093848C /* LoginsListSelectionHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA24B53824ABFE250093848C /* LoginsListSelectionHelperTests.swift */; };
 		CA24B53B24ABFE5D0093848C /* LoginsListDataSourceHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA24B53A24ABFE5D0093848C /* LoginsListDataSourceHelperTests.swift */; };
 		CA4ACE4924C8C91600F55894 /* BreachAlertsDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4ACE4824C8C91500F55894 /* BreachAlertsDetailView.swift */; };
-		CA4ADEC1268B06EA00CE1C88 /* ImpactCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4ADEC0268B06EA00CE1C88 /* ImpactCell.swift */; };
+		CA4ADEC1268B06EA00CE1C88 /* TreesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4ADEC0268B06EA00CE1C88 /* TreesCell.swift */; };
 		CA4DDE5125430FA700966CF2 /* FakeSentry.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4DDE2925430E2400966CF2 /* FakeSentry.swift */; };
 		CA4DDE792543159400966CF2 /* FakeLeanplum.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4DDE782543159400966CF2 /* FakeLeanplum.swift */; };
 		CA520E7A24913C1B00CCAB48 /* LoginListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA520E7924913C1B00CCAB48 /* LoginListViewModel.swift */; };
@@ -3162,7 +3162,7 @@
 		CA32540125485C700024B48D /* Ecosia.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Ecosia.entitlements; sourceTree = "<group>"; };
 		CA32552425487C1C0024B48D /* EcosiaBeta.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = EcosiaBeta.xcconfig; path = Configuration/EcosiaBeta.xcconfig; sourceTree = "<group>"; };
 		CA4ACE4824C8C91500F55894 /* BreachAlertsDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreachAlertsDetailView.swift; sourceTree = "<group>"; };
-		CA4ADEC0268B06EA00CE1C88 /* ImpactCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImpactCell.swift; sourceTree = "<group>"; };
+		CA4ADEC0268B06EA00CE1C88 /* TreesCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TreesCell.swift; sourceTree = "<group>"; };
 		CA4DDE2925430E2400966CF2 /* FakeSentry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeSentry.swift; sourceTree = "<group>"; };
 		CA4DDE782543159400966CF2 /* FakeLeanplum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeLeanplum.swift; sourceTree = "<group>"; };
 		CA520E7924913C1B00CCAB48 /* LoginListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginListViewModel.swift; sourceTree = "<group>"; };
@@ -5070,10 +5070,10 @@
 		CAAB66B7268326B80024105C /* NTP */ = {
 			isa = PBXGroup;
 			children = (
-				CAAB66BA268369C20024105C /* EmptyCell.swift */,
 				CA5A01802686059B00623A21 /* LogoCell.swift */,
-				CA4ADEC0268B06EA00CE1C88 /* ImpactCell.swift */,
 				CAAB66B8268326FF0024105C /* SearchbarCell.swift */,
+				CAAB66BA268369C20024105C /* EmptyCell.swift */,
+				CA4ADEC0268B06EA00CE1C88 /* TreesCell.swift */,
 			);
 			path = NTP;
 			sourceTree = "<group>";
@@ -7701,7 +7701,7 @@
 				CA7FC7D324A6A9B70012F347 /* LoginListDataSourceHelper.swift in Sources */,
 				CA520E7A24913C1B00CCAB48 /* LoginListViewModel.swift in Sources */,
 				E65075521E37F6D1006961AC /* UIViewExtensions.swift in Sources */,
-				CA4ADEC1268B06EA00CE1C88 /* ImpactCell.swift in Sources */,
+				CA4ADEC1268B06EA00CE1C88 /* TreesCell.swift in Sources */,
 				C8F457A81F1FD75A000CB895 /* BrowserViewController+WebViewDelegates.swift in Sources */,
 				CA4DDE792543159400966CF2 /* FakeLeanplum.swift in Sources */,
 				E6927EC01C7B6FB800D03F75 /* ErrorToast.swift in Sources */,
