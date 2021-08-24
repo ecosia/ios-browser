@@ -1857,6 +1857,11 @@ extension BrowserViewController: TabManagerDelegate {
     func tabManager(_ tabManager: TabManager, didSelectedTabChange selected: Tab?, previous: Tab?, isRestoring: Bool) {
         libraryDrawerViewController?.close(immediately: true)
 
+        // Ecosia: fix crash when this is called but view is not loaded yet
+        if !isViewLoaded {
+            loadViewIfNeeded()
+        }
+
         // Reset the scroll position for the ActivityStreamPanel so that it
         // is always presented scrolled to the top when switching tabs.
         if !isRestoring, selected != previous,
