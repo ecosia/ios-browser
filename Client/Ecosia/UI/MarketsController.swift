@@ -55,6 +55,7 @@ final class MarketsController: ThemedTableViewController {
         User.shared.marketCode = Markets.all[didSelectRowAt.row].id
         tableView.reloadData()
         Analytics.shared.navigationChangeMarket(User.shared.marketCode.rawValue)
-        Goodall.shared.refresh()
+        // Temporary deactivate Goodall
+        // Goodall.shared.refresh()
     }
 }
