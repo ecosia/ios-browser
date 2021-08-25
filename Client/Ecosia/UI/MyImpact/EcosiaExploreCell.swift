@@ -25,6 +25,8 @@ final class EcosiaExploreCell: UICollectionViewCell, Themeable {
     var image: UIImageView!
     var outline: UIView!
 
+    var widthConstraint: NSLayoutConstraint!
+
     private func setup() {
         outline = UIView()
         contentView.addSubview(outline)
@@ -36,7 +38,7 @@ final class EcosiaExploreCell: UICollectionViewCell, Themeable {
         title.font = .preferredFont(forTextStyle: .subheadline)
         title.adjustsFontForContentSizeCategory = true
         title.textAlignment = .center
-        title.numberOfLines = 1
+        title.numberOfLines = 0
         title.translatesAutoresizingMaskIntoConstraints = false
         title.allowsDefaultTighteningForTruncation = true
 
@@ -50,10 +52,15 @@ final class EcosiaExploreCell: UICollectionViewCell, Themeable {
         outline.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
         outline.widthAnchor.constraint(equalTo: outline.heightAnchor, multiplier: 1).isActive = true
 
+        let widthConstraint = outline.widthAnchor.constraint(equalToConstant: 100)
+        widthConstraint.priority = .defaultHigh
+        widthConstraint.isActive = true
+        self.widthConstraint = widthConstraint
+
         title.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16).isActive = true
         title.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16).isActive = true
         title.topAnchor.constraint(equalTo: outline.bottomAnchor, constant: 8).isActive = true
-        title.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: 0).isActive = true
+        title.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8).isActive = true
 
         image.centerXAnchor.constraint(equalTo: outline.centerXAnchor).isActive = true
         image.centerYAnchor.constraint(equalTo: outline.centerYAnchor).isActive = true

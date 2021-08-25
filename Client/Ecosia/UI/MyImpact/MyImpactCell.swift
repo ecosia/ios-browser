@@ -10,6 +10,10 @@ struct MyImpcactCellModel {
     var bottom: MyImpactStackViewModel
 }
 
+protocol MyImpactCellDelegate: AnyObject {
+    func impactCellTriggerAction(_ action: MyImpactStackViewModel.Action)
+}
+
 final class MyImpactCell: UICollectionViewCell, Themeable {
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -20,6 +24,7 @@ final class MyImpactCell: UICollectionViewCell, Themeable {
         super.init(coder: coder)
     }
 
+    weak var widthConstraint: NSLayoutConstraint!
     weak var container: UIStackView!
     weak var topStack: MyImpactStackView!
     weak var middleStack: MyImpactStackView!
@@ -27,7 +32,8 @@ final class MyImpactCell: UICollectionViewCell, Themeable {
     weak var outline: UIView!
     weak var separator: UIView!
 
-    var model: MyImpcactCellModel?
+    private (set) var model: MyImpcactCellModel?
+    weak var delegate: MyImpactCellDelegate?
 
     private func setup() {
         let outline = UIView()
@@ -48,6 +54,11 @@ final class MyImpactCell: UICollectionViewCell, Themeable {
         outline.rightAnchor.constraint(equalTo: contentView.rightAnchor).isActive = true
         outline.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
         outline.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
+
+        let widthConstraint = outline.widthAnchor.constraint(equalToConstant: 100)
+        widthConstraint.priority = .defaultHigh
+        widthConstraint.isActive = true
+        self.widthConstraint = widthConstraint
 
         container.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16).isActive = true
         container.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -16).isActive = true
@@ -117,6 +128,11 @@ final class MyImpactCell: UICollectionViewCell, Themeable {
 extension MyImpactCell: MyImpactStackDelegate {
     func impactStackTitleAction(_ stack: MyImpactStackView) {
         guard let action = stack.model.action else { return }
+        delegate?.impactCellTriggerAction(action)
+    }
 
+    func impactStackTitleCallout(_ stack: MyImpactStackView) {
+        guard let action = stack.model.action else { return }
+        delegate?.impactCellTriggerAction(action)
     }
 }

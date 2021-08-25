@@ -17,6 +17,8 @@ final class MultiplyImpactCell: UICollectionViewCell, Themeable {
     weak var stack: MyImpactStackView!
     weak var outline: UIView!
     var model: MyImpcactCellModel?
+    var widthConstraint: NSLayoutConstraint!
+
 
     private func setup() {
         let outline = UIView()
@@ -29,6 +31,11 @@ final class MultiplyImpactCell: UICollectionViewCell, Themeable {
         outline.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
         outline.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
         outline.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
+
+        let widthConstraint = outline.widthAnchor.constraint(equalToConstant: 100)
+        widthConstraint.priority = .defaultHigh
+        widthConstraint.isActive = true
+        self.widthConstraint = widthConstraint
 
         let stack = MyImpactStackView()
         stack.translatesAutoresizingMaskIntoConstraints = false
