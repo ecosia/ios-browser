@@ -23,12 +23,12 @@ class EmptyCell: UICollectionViewCell, Themeable {
         view.backgroundColor = .systemRed
 
         let width = view.widthAnchor.constraint(equalToConstant: frame.width)
-        width.priority = .init(999)
+        width.priority = .defaultHigh
         width.isActive = true
         self.widthConstraint = width
 
         let height = view.heightAnchor.constraint(equalToConstant: frame.height)
-        height.priority = .init(999)
+        height.priority = .defaultHigh
         height.isActive = true
         self.heightConstraint = height
     }

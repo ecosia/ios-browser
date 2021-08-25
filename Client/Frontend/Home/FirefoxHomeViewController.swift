@@ -140,13 +140,13 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
     weak var delegate: FirefoxHomeViewControllerDelegate?
     fileprivate let profile: Profile
     fileprivate let personalCounter = PersonalCounter()
-    fileprivate let flowLayout = UICollectionViewFlowLayout()
+    fileprivate let flowLayout = NTPLayout()
     fileprivate weak var searchbarCell: UICollectionViewCell?
     fileprivate weak var emptyCell: EmptyCell?
     fileprivate weak var impactCell: UICollectionViewCell?
     fileprivate weak var libraryCell: UICollectionViewCell?
     fileprivate weak var topSitesCell: UICollectionViewCell? {
-        didSet { collectionView.collectionViewLayout.invalidateLayout() }
+        didSet { self.invalidateLayout() }
     }
 
     fileprivate lazy var topSitesManager: ASHorizontalScrollCellManager = {
@@ -218,7 +218,7 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
         if inOverlayMode, let cell = libraryCell ?? (User.shared.topSites == false ? impactCell:  topSitesCell) {
             collectionView.contentOffset = .init(x: 0, y: cell.frame.minY - FirefoxHomeUX.ScrollSearchBarOffset)
         } else {
-            updateEmptyCellHeight()
+            self.invalidateLayout()
         }
     }
 
@@ -229,7 +229,7 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
             if let _ = self.presentedViewController as? PhotonActionSheet {
                 self.presentedViewController?.dismiss(animated: true, completion: nil)
             }
-            self.collectionViewLayout.invalidateLayout()
+            self.invalidateLayout()
             self.collectionView?.reloadData()
         }, completion: { _ in
             // Workaround: label positions are not correct without additional reload
@@ -542,31 +542,9 @@ extension FirefoxHomeViewController {
 //        }
     }
 
-    var emptyCellHeight: CGFloat {
-        var offset: CGFloat = 0
-        var filledHeight: CGFloat = 0
-        if let attr = collectionViewLayout.layoutAttributesForItem(at: IndexPath(item: 0, section: Section.libraryShortcuts.rawValue)) {
-            offset = attr.frame.minY
-        }
-
-        if let attr = collectionViewLayout.layoutAttributesForItem(at: IndexPath(item: 0, section: Section.impact.rawValue)) {
-            filledHeight = attr.frame.maxY
-        }
-
-        guard let topCell = libraryCell ?? (User.shared.topSites == false ? impactCell: topSitesCell),
-              let bottomCell = impactCell else {
-            return 0
-        }
-//        let offset = topCell.frame.minY
-//        let filledHeight = bottomCell.frame.maxY
-        let height = collectionView.frame.height - filledHeight + offset - FirefoxHomeUX.ScrollSearchBarOffset
-        debugPrint("Empty Height: \(height)")
-        return height
-    }
-
-    func updateEmptyCellHeight() {
-        collectionView.collectionViewLayout.invalidateLayout()
-        collectionView.reloadSections([Section.emptySpace.rawValue])
+    func invalidateLayout() {
+//        emptyCell?.heightConstraint.constant = flowLayout.emptyHeight
+        flowLayout.invalidateLayout()
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -597,7 +575,7 @@ extension FirefoxHomeViewController {
             let emptyCell = cell as! EmptyCell
             self.emptyCell = emptyCell
             emptyCell.widthConstraint.constant = cellSize.width
-            emptyCell.heightConstraint.constant = emptyCellHeight
+            emptyCell.heightConstraint.constant = 100
             return emptyCell
         case .logo:
             return cell
@@ -1179,9 +1157,9 @@ extension FirefoxHomeViewController: TreesCellDelegate {
 
         UIView.animate(withDuration: 0.3, animations: {
             cell.display(self.treesCellModel)
-            self.updateEmptyCellHeight()
+            self.invalidateLayout()
         }) { _ in
-            self.updateEmptyCellHeight()
+            self.invalidateLayout()
         }
 
         // leave overlay mode if it was active

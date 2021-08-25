@@ -261,6 +261,7 @@ final class TreesCell: UICollectionViewCell, Themeable {
         globalCount.setContentCompressionResistancePriority(.required, for: .horizontal)
         globalCount.setContentHuggingPriority(.defaultLow, for: .horizontal)
         globalCount.font = .preferredFont(forTextStyle: .subheadline).bold().monospace()
+        globalCount.adjustsFontForContentSizeCategory = true
         globalCount.textAlignment = .right
 
         globalCountStack.addArrangedSubview(globalCount)

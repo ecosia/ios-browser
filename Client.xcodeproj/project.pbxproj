@@ -421,6 +421,7 @@
 		CA520E7A24913C1B00CCAB48 /* LoginListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA520E7924913C1B00CCAB48 /* LoginListViewModel.swift */; };
 		CA5A01812686059C00623A21 /* LogoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA5A01802686059B00623A21 /* LogoCell.swift */; };
 		CA5E9D51265D068600836DE9 /* SnapKit+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA5E9D50265D068600836DE9 /* SnapKit+Ecosia.swift */; };
+		CA6178E026D6185A006A21B7 /* NTPLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA6178DF26D6185A006A21B7 /* NTPLayout.swift */; };
 		CA6BFAAE25778CBA0026DFFF /* Welcome.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA6BFAAC25778CB90026DFFF /* Welcome.swift */; };
 		CA6BFAC425778D2C0026DFFF /* Colours.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CA6BFAC325778D2C0026DFFF /* Colours.xcassets */; };
 		CA6BFAD925778D4E0026DFFF /* EcosiaTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA6BFAD825778D4E0026DFFF /* EcosiaTheme.swift */; };
@@ -3168,6 +3169,7 @@
 		CA520E7924913C1B00CCAB48 /* LoginListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginListViewModel.swift; sourceTree = "<group>"; };
 		CA5A01802686059B00623A21 /* LogoCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogoCell.swift; sourceTree = "<group>"; };
 		CA5E9D50265D068600836DE9 /* SnapKit+Ecosia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SnapKit+Ecosia.swift"; sourceTree = "<group>"; };
+		CA6178DF26D6185A006A21B7 /* NTPLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPLayout.swift; sourceTree = "<group>"; };
 		CA6BFAAC25778CB90026DFFF /* Welcome.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Welcome.swift; sourceTree = "<group>"; };
 		CA6BFAC325778D2C0026DFFF /* Colours.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colours.xcassets; sourceTree = "<group>"; };
 		CA6BFAD825778D4E0026DFFF /* EcosiaTheme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EcosiaTheme.swift; sourceTree = "<group>"; };
@@ -5074,6 +5076,7 @@
 				CAAB66B8268326FF0024105C /* SearchbarCell.swift */,
 				CAAB66BA268369C20024105C /* EmptyCell.swift */,
 				CA4ADEC0268B06EA00CE1C88 /* TreesCell.swift */,
+				CA6178DF26D6185A006A21B7 /* NTPLayout.swift */,
 			);
 			path = NTP;
 			sourceTree = "<group>";
@@ -7693,6 +7696,7 @@
 				D04CD74B216CF86B004FF5B0 /* DevicePickerViewController.swift in Sources */,
 				E63ED8E11BFD25580097D08E /* LoginListViewController.swift in Sources */,
 				D0625CA8208FC47A0081F3B2 /* BrowserViewController+DownloadQueueDelegate.swift in Sources */,
+				CA6178E026D6185A006A21B7 /* NTPLayout.swift in Sources */,
 				2F44FCC71A9E8CF500FD20CC /* SearchSettingsTableViewController.swift in Sources */,
 				39A359E41BFCCE94006B9E87 /* UserActivityHandler.swift in Sources */,
 				D88FDAAF1F4E2BA000FD9709 /* PhotonActionSheetAnimator.swift in Sources */,
