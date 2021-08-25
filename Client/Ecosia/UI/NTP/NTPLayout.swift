@@ -6,37 +6,32 @@ import UIKit
 
 class NTPLayout: UICollectionViewFlowLayout {
 
-    private var emptyHeight: CGFloat = 0
     private var totalHeight: CGFloat = 0
 
     override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
         guard let attr = super.layoutAttributesForElements(in: rect) else { return nil}
 
-        var libMinY: CGFloat = 0
+        var searchMaxY: CGFloat = 0
         var impactMaxY: CGFloat = 0
 
-        // find lib cell
-        if let impact = attr.first(where: { $0.representedElementCategory == .cell && $0.indexPath.section == FirefoxHomeViewController.Section.libraryShortcuts.rawValue  }) {
-
-            libMinY = impact.frame.minY
-            debugPrint("libMinY: \(libMinY)")
+        // find search cell
+        if let search = attr.first(where: { $0.representedElementCategory == .cell && $0.indexPath.section == FirefoxHomeViewController.Section.search.rawValue  }) {
+            searchMaxY = search.frame.maxY
         }
 
         // find impact cell
         if let impact = attr.first(where: { $0.representedElementCategory == .cell && $0.indexPath.section == FirefoxHomeViewController.Section.impact.rawValue  }) {
-
             impactMaxY = impact.frame.maxY
-            debugPrint("impactMaxY: \(impactMaxY)")
         }
 
-        // find empty cell
+        // find and update empty cell
         if let emptyIndex = attr.firstIndex(where: { $0.representedElementCategory == .cell && $0.indexPath.section == FirefoxHomeViewController.Section.emptySpace.rawValue  }) {
 
             let frameHeight = collectionView?.frame.height ?? 0
-            let height = frameHeight - impactMaxY + libMinY - FirefoxHomeUX.ScrollSearchBarOffset
-            emptyHeight = max(0, height)
-            debugPrint("Empty Height: \(height)")
+            var height = frameHeight - impactMaxY + searchMaxY - FirefoxHomeUX.ScrollSearchBarOffset
+            height = max(0, height)
 
+            // update frame
             let element = attr[emptyIndex]
             element.frame = .init(origin: element.frame.origin, size: .init(width: element.frame.width, height: height))
             totalHeight = element.frame.maxY

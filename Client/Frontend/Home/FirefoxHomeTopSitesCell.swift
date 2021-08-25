@@ -226,6 +226,9 @@ private struct ASHorizontalScrollCellUX {
  */
 class ASHorizontalScrollCell: UICollectionViewCell {
 
+    var heightConstraint: NSLayoutConstraint!
+    var widthConstraint: NSLayoutConstraint!
+
     lazy var collectionView: UICollectionView = {
         let layout  = HorizontalFlowLayout()
         layout.itemSize = ASHorizontalScrollCellUX.TopSiteItemSize
@@ -254,6 +257,16 @@ class ASHorizontalScrollCell: UICollectionViewCell {
         collectionView.snp.makeConstraints { make in
             make.edges.equalTo(contentView.safeArea.edges)
         }
+
+        let heightConstraint = collectionView.heightAnchor.constraint(equalToConstant: 100)
+        heightConstraint.priority = .defaultHigh
+        heightConstraint.isActive = true
+        self.heightConstraint = heightConstraint
+
+        let widthConstraint = collectionView.widthAnchor.constraint(equalToConstant: 100)
+        widthConstraint.priority = .defaultHigh
+        widthConstraint.isActive = true
+        self.widthConstraint = widthConstraint
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -306,7 +319,7 @@ class HorizontalFlowLayout: UICollectionViewLayout {
 
         var estimatedItemSize = itemSize
         estimatedItemSize.width = floor((width - (CGFloat(horizontalItemsCount + 1) * insets)) / CGFloat(horizontalItemsCount))
-        estimatedItemSize.height = estimatedItemSize.width + TopSiteCellUX.TitleHeight
+        estimatedItemSize.height = estimatedItemSize.width + UIFont.preferredFont(forTextStyle: .footnote).pointSize * 2
 
         //calculate our estimates.
         let rows = CGFloat(ceil(Double(Float(cellCount)/Float(horizontalItemsCount))))

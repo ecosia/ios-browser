@@ -20,8 +20,6 @@ class EmptyCell: UICollectionViewCell, Themeable {
         view.leftAnchor.constraint(equalTo: contentView.leftAnchor).isActive = true
         view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
 
-        view.backgroundColor = .systemRed
-
         let width = view.widthAnchor.constraint(equalToConstant: frame.width)
         width.priority = .defaultHigh
         width.isActive = true

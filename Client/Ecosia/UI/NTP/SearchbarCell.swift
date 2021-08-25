@@ -33,6 +33,7 @@ final class SearchbarCell: UICollectionViewCell, Themeable {
         search.setTitle(.localized(.searchAndPlant), for: .normal)
         search.titleLabel?.lineBreakMode = .byTruncatingTail
         search.titleLabel?.font = .preferredFont(forTextStyle: .body)
+        search.titleLabel?.adjustsFontForContentSizeCategory = true
         search.contentHorizontalAlignment = .left
         self.search = search
         applyTheme()
