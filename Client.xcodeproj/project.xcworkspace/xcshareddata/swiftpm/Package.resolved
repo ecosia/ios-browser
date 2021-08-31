@@ -11,6 +11,24 @@
         }
       },
       {
+        "package": "Fuzi",
+        "repositoryURL": "https://github.com/cezheng/Fuzi",
+        "state": {
+          "branch": null,
+          "revision": "f08c8323da21e985f3772610753bcfc652c2103f",
+          "version": "3.1.3"
+        }
+      },
+      {
+        "package": "GCDWebServer",
+        "repositoryURL": "https://github.com/nostradani/GCDWebServer",
+        "state": {
+          "branch": "master",
+          "revision": "14f9eedb296c5b71fec971d8256ef3bfc20a2245",
+          "version": null
+        }
+      },
+      {
         "package": "Core",
         "repositoryURL": "https://github.com/ecosia/ios-core.git",
         "state": {
@@ -20,12 +38,57 @@
         }
       },
       {
+        "package": "SDWebImage",
+        "repositoryURL": "https://github.com/SDWebImage/SDWebImage",
+        "state": {
+          "branch": null,
+          "revision": "76dd4b49110b8624317fc128e7fa0d8a252018bc",
+          "version": "5.11.1"
+        }
+      },
+      {
+        "package": "SnapKit",
+        "repositoryURL": "https://github.com/SnapKit/SnapKit",
+        "state": {
+          "branch": null,
+          "revision": "d458564516e5676af9c70b4f4b2a9178294f1bc6",
+          "version": "5.0.1"
+        }
+      },
+      {
         "package": "SnowplowTracker",
         "repositoryURL": "https://github.com/snowplow/snowplow-objc-tracker.git",
         "state": {
           "branch": null,
           "revision": "2cf806e834a75ce801c46f0182f23b481655762b",
           "version": "2.2.1"
+        }
+      },
+      {
+        "package": "SwiftKeychainWrapper",
+        "repositoryURL": "https://github.com/jrendel/SwiftKeychainWrapper",
+        "state": {
+          "branch": null,
+          "revision": "185a3165346a03767101c4f62e9a545a0fe0530f",
+          "version": "4.0.1"
+        }
+      },
+      {
+        "package": "SwiftyJSON",
+        "repositoryURL": "https://github.com/SwiftyJSON/SwiftyJSON",
+        "state": {
+          "branch": null,
+          "revision": "b3dcd7dbd0d488e1a7077cb33b00f2083e382f07",
+          "version": "5.0.1"
+        }
+      },
+      {
+        "package": "XCGLogger",
+        "repositoryURL": "https://github.com/DaveWoodCom/XCGLogger",
+        "state": {
+          "branch": null,
+          "revision": "a9c4667b247928a29bdd41be2ec2c8d304215a54",
+          "version": "7.0.1"
         }
       }
     ]

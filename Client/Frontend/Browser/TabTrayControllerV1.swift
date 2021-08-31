@@ -6,7 +6,6 @@ import UIKit
 import SnapKit
 import Storage
 import Shared
-import UIImageViewAlignedSwift
 
 struct TabTrayControllerUX {
     static let CornerRadius = CGFloat(6.0)
@@ -1048,13 +1047,11 @@ class TabCell: UICollectionViewCell {
         return view
     }()
 
-    let screenshotView: UIImageViewAligned = {
-        let view = UIImageViewAligned()
+    let screenshotView: UIImageView = {
+        let view = UIImageView()
         view.contentMode = .scaleAspectFill
         view.clipsToBounds = true
         view.isUserInteractionEnabled = false
-        view.alignLeft = true
-        view.alignTop = true
         view.backgroundColor = UIColor.theme.browser.background
         return view
     }()
