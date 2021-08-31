@@ -4,7 +4,6 @@
 
 import Foundation
 import Shared
-import Account
 import SwiftKeychainWrapper
 import LocalAuthentication
 //import MozillaAppServices
@@ -38,262 +37,262 @@ class HiddenSetting: Setting {
 }
 
 // Sync setting for connecting a Firefox Account.  Shown when we don't have an account.
-class ConnectSetting: WithoutAccountSetting {
-    override var accessoryView: UIImageView? { return disclosureIndicator }
+//class ConnectSetting: WithoutAccountSetting {
+//    override var accessoryView: UIImageView? { return disclosureIndicator }
+//
+//    override var title: NSAttributedString? {
+//        return NSAttributedString(string: Strings.FxASignInToSync, attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
+//    }
+//
+//    override var accessibilityIdentifier: String? { return "SignInToSync" }
+//
+//    override func onClick(_ navigationController: UINavigationController?) {
+////        let viewController = FirefoxAccountSignInViewController(profile: profile, parentType: .settings, deepLinkParams: nil)
+////        TelemetryWrapper.recordEvent(category: .firefoxAccount, method: .view, object: .settings)
+////        navigationController?.pushViewController(viewController, animated: true)
+//    }
+//
+//    override func onConfigureCell(_ cell: UITableViewCell) {
+//        super.onConfigureCell(cell)
+//        cell.imageView?.image = UIImage.templateImageNamed("FxA-Default")
+//        cell.imageView?.tintColor = UIColor.theme.tableView.disabledRowText
+//        cell.imageView?.layer.cornerRadius = (cell.imageView?.frame.size.width)! / 2
+//        cell.imageView?.layer.masksToBounds = true
+//    }
+//}
 
-    override var title: NSAttributedString? {
-        return NSAttributedString(string: Strings.FxASignInToSync, attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
-    }
-
-    override var accessibilityIdentifier: String? { return "SignInToSync" }
-
-    override func onClick(_ navigationController: UINavigationController?) {
-        let viewController = FirefoxAccountSignInViewController(profile: profile, parentType: .settings, deepLinkParams: nil)
-        TelemetryWrapper.recordEvent(category: .firefoxAccount, method: .view, object: .settings)
-        navigationController?.pushViewController(viewController, animated: true)
-    }
-
-    override func onConfigureCell(_ cell: UITableViewCell) {
-        super.onConfigureCell(cell)
-        cell.imageView?.image = UIImage.templateImageNamed("FxA-Default")
-        cell.imageView?.tintColor = UIColor.theme.tableView.disabledRowText
-        cell.imageView?.layer.cornerRadius = (cell.imageView?.frame.size.width)! / 2
-        cell.imageView?.layer.masksToBounds = true
-    }
-}
-
-class SyncNowSetting: WithAccountSetting {
-    let imageView = UIImageView(frame: CGRect(width: 30, height: 30))
-    let syncIconWrapper = UIImage.createWithColor(CGSize(width: 30, height: 30), color: UIColor.clear)
-    let syncBlueIcon = UIImage(named: "FxA-Sync-Blue")?.createScaled(CGSize(width: 20, height: 20))
-    let syncIcon: UIImage? = {
-        let image = UIImage(named: "FxA-Sync")?.createScaled(CGSize(width: 20, height: 20))
-        return ThemeManager.instance.currentName == .dark ? image?.tinted(withColor: .white) : image
-    }()
-
-    // Animation used to rotate the Sync icon 360 degrees while syncing is in progress.
-    let continuousRotateAnimation = CABasicAnimation(keyPath: "transform.rotation")
-
-    override init(settings: SettingsTableViewController) {
-        super.init(settings: settings)
-        NotificationCenter.default.addObserver(self, selector: #selector(stopRotateSyncIcon), name: .ProfileDidFinishSyncing, object: nil)
-    }
-
-    fileprivate lazy var timestampFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        return formatter
-    }()
-
-    fileprivate var syncNowTitle: NSAttributedString {
-        if !DeviceInfo.hasConnectivity() {
-            return NSAttributedString(
-                string: Strings.FxANoInternetConnection,
-                attributes: [
-                    NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.errorText,
-                    NSAttributedString.Key.font: DynamicFontHelper.defaultHelper.DefaultMediumFont
-                ]
-            )
-        }
-
-        return NSAttributedString(
-            string: Strings.FxASyncNow,
-            attributes: [
-                NSAttributedString.Key.foregroundColor: self.enabled ? UIColor.theme.tableView.syncText : UIColor.theme.tableView.headerTextLight,
-                NSAttributedString.Key.font: DynamicFontHelper.defaultHelper.DefaultStandardFont
-            ]
-        )
-    }
-
-    fileprivate let syncingTitle = NSAttributedString(string: Strings.SyncingMessageWithEllipsis, attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.syncText, NSAttributedString.Key.font: UIFont.systemFont(ofSize: DynamicFontHelper.defaultHelper.DefaultStandardFontSize, weight: UIFont.Weight.regular)])
-
-    func startRotateSyncIcon() {
-        DispatchQueue.main.async {
-            self.imageView.layer.add(self.continuousRotateAnimation, forKey: "rotateKey")
-        }
-    }
-
-    @objc func stopRotateSyncIcon() {
-        DispatchQueue.main.async {
-            self.imageView.layer.removeAllAnimations()
-        }
-    }
-
-    override var accessoryType: UITableViewCell.AccessoryType { return .none }
-
-    override var image: UIImage? {
-        guard let syncStatus = profile.syncManager.syncDisplayState else {
-            return syncIcon
-        }
-
-        switch syncStatus {
-        case .inProgress:
-            return syncBlueIcon
-        default:
-            return syncIcon
-        }
-    }
-
-    override var title: NSAttributedString? {
-        guard let syncStatus = profile.syncManager.syncDisplayState else {
-            return syncNowTitle
-        }
-
-        switch syncStatus {
-        case .bad(let message):
-            guard let message = message else { return syncNowTitle }
-            return NSAttributedString(string: message, attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.errorText, NSAttributedString.Key.font: DynamicFontHelper.defaultHelper.DefaultStandardFont])
-        case .warning(let message):
-            return  NSAttributedString(string: message, attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.warningText, NSAttributedString.Key.font: DynamicFontHelper.defaultHelper.DefaultStandardFont])
-        case .inProgress:
-            return syncingTitle
-        default:
-            return syncNowTitle
-        }
-    }
-
-    override var status: NSAttributedString? {
-        guard let timestamp = profile.syncManager.lastSyncFinishTime else {
-            return nil
-        }
-
-        let formattedLabel = timestampFormatter.string(from: Date.fromTimestamp(timestamp))
-        let attributedString = NSMutableAttributedString(string: formattedLabel)
-        let attributes = [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.headerTextLight, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 12, weight: UIFont.Weight.regular)]
-        let range = NSRange(location: 0, length: attributedString.length)
-        attributedString.setAttributes(attributes, range: range)
-        return attributedString
-    }
-
-    override var hidden: Bool { return !enabled }
-
-    override var enabled: Bool {
-        get {
-            if !DeviceInfo.hasConnectivity() {
-                return false
-            }
-
-            return profile.hasSyncableAccount()
-        }
-        set {
-        }
-    }
-
-    fileprivate lazy var troubleshootButton: UIButton = {
-        let troubleshootButton = UIButton(type: .roundedRect)
-        troubleshootButton.setTitle(Strings.FirefoxSyncTroubleshootTitle, for: .normal)
-        troubleshootButton.addTarget(self, action: #selector(self.troubleshoot), for: .touchUpInside)
-        troubleshootButton.tintColor = UIColor.theme.tableView.rowActionAccessory
-        troubleshootButton.titleLabel?.font = DynamicFontHelper.defaultHelper.DefaultSmallFont
-        troubleshootButton.sizeToFit()
-        return troubleshootButton
-    }()
-
-    fileprivate lazy var warningIcon: UIImageView = {
-        let imageView = UIImageView(image: UIImage(named: "AmberCaution"))
-        imageView.sizeToFit()
-        return imageView
-    }()
-
-    fileprivate lazy var errorIcon: UIImageView = {
-        let imageView = UIImageView(image: UIImage(named: "RedCaution"))
-        imageView.sizeToFit()
-        return imageView
-    }()
-
-    fileprivate let syncSUMOURL = SupportUtils.URLForTopic("sync-status-ios")
-
-    @objc fileprivate func troubleshoot() {
-        let viewController = SettingsContentViewController()
-        viewController.url = syncSUMOURL
-        settings.navigationController?.pushViewController(viewController, animated: true)
-    }
-
-    override func onConfigureCell(_ cell: UITableViewCell) {
-        cell.textLabel?.attributedText = title
-        cell.textLabel?.numberOfLines = 0
-        cell.textLabel?.lineBreakMode = .byWordWrapping
-        if let syncStatus = profile.syncManager.syncDisplayState {
-            switch syncStatus {
-            case .bad(let message):
-                if let _ = message {
-                    // add the red warning symbol
-                    // add a link to the MANA page
-                    cell.detailTextLabel?.attributedText = nil
-                    cell.accessoryView = troubleshootButton
-                    addIcon(errorIcon, toCell: cell)
-                } else {
-                    cell.detailTextLabel?.attributedText = status
-                    cell.accessoryView = nil
-                }
-            case .warning(_):
-                // add the amber warning symbol
-                // add a link to the MANA page
-                cell.detailTextLabel?.attributedText = nil
-                cell.accessoryView = troubleshootButton
-                addIcon(warningIcon, toCell: cell)
-            case .good:
-                cell.detailTextLabel?.attributedText = status
-                fallthrough
-            default:
-                cell.accessoryView = nil
-            }
-        } else {
-            cell.accessoryView = nil
-        }
-        cell.accessoryType = accessoryType
-        cell.isUserInteractionEnabled = !profile.syncManager.isSyncing && DeviceInfo.hasConnectivity()
-
-        // Animation that loops continously until stopped
-        continuousRotateAnimation.fromValue = 0.0
-        continuousRotateAnimation.toValue = CGFloat(Double.pi)
-        continuousRotateAnimation.isRemovedOnCompletion = true
-        continuousRotateAnimation.duration = 0.5
-        continuousRotateAnimation.repeatCount = .infinity
-
-        // To ensure sync icon is aligned properly with user's avatar, an image is created with proper
-        // dimensions and color, then the scaled sync icon is added as a subview.
-        imageView.contentMode = .center
-        imageView.image = image
-
-        cell.imageView?.subviews.forEach({ $0.removeFromSuperview() })
-        cell.imageView?.image = syncIconWrapper
-        cell.imageView?.addSubview(imageView)
-
-        if let syncStatus = profile.syncManager.syncDisplayState {
-            switch syncStatus {
-            case .inProgress:
-                self.startRotateSyncIcon()
-            default:
-                self.stopRotateSyncIcon()
-            }
-        }
-    }
-
-    fileprivate func addIcon(_ image: UIImageView, toCell cell: UITableViewCell) {
-        cell.contentView.addSubview(image)
-
-        cell.textLabel?.snp.updateConstraints { make in
-            make.leading.equalTo(image.snp.trailing).offset(5)
-            make.trailing.lessThanOrEqualTo(cell.contentView)
-            make.centerY.equalTo(cell.contentView)
-        }
-
-        image.snp.makeConstraints { make in
-            make.leading.equalTo(cell.contentView).offset(17)
-            make.top.equalTo(cell.textLabel!).offset(2)
-        }
-    }
-
-    override func onClick(_ navigationController: UINavigationController?) {
-        if !DeviceInfo.hasConnectivity() {
-            return
-        }
-
-        NotificationCenter.default.post(name: .UserInitiatedSyncManually, object: nil)
-        profile.syncManager.syncEverything(why: .syncNow)
-    }
-}
+//class SyncNowSetting: WithAccountSetting {
+//    let imageView = UIImageView(frame: CGRect(width: 30, height: 30))
+//    let syncIconWrapper = UIImage.createWithColor(CGSize(width: 30, height: 30), color: UIColor.clear)
+//    let syncBlueIcon = UIImage(named: "FxA-Sync-Blue")?.createScaled(CGSize(width: 20, height: 20))
+//    let syncIcon: UIImage? = {
+//        let image = UIImage(named: "FxA-Sync")?.createScaled(CGSize(width: 20, height: 20))
+//        return ThemeManager.instance.currentName == .dark ? image?.tinted(withColor: .white) : image
+//    }()
+//
+//    // Animation used to rotate the Sync icon 360 degrees while syncing is in progress.
+//    let continuousRotateAnimation = CABasicAnimation(keyPath: "transform.rotation")
+//
+//    override init(settings: SettingsTableViewController) {
+//        super.init(settings: settings)
+//        NotificationCenter.default.addObserver(self, selector: #selector(stopRotateSyncIcon), name: .ProfileDidFinishSyncing, object: nil)
+//    }
+//
+//    fileprivate lazy var timestampFormatter: DateFormatter = {
+//        let formatter = DateFormatter()
+//        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+//        return formatter
+//    }()
+//
+//    fileprivate var syncNowTitle: NSAttributedString {
+//        if !DeviceInfo.hasConnectivity() {
+//            return NSAttributedString(
+//                string: Strings.FxANoInternetConnection,
+//                attributes: [
+//                    NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.errorText,
+//                    NSAttributedString.Key.font: DynamicFontHelper.defaultHelper.DefaultMediumFont
+//                ]
+//            )
+//        }
+//
+//        return NSAttributedString(
+//            string: Strings.FxASyncNow,
+//            attributes: [
+//                NSAttributedString.Key.foregroundColor: self.enabled ? UIColor.theme.tableView.syncText : UIColor.theme.tableView.headerTextLight,
+//                NSAttributedString.Key.font: DynamicFontHelper.defaultHelper.DefaultStandardFont
+//            ]
+//        )
+//    }
+//
+//    fileprivate let syncingTitle = NSAttributedString(string: Strings.SyncingMessageWithEllipsis, attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.syncText, NSAttributedString.Key.font: UIFont.systemFont(ofSize: DynamicFontHelper.defaultHelper.DefaultStandardFontSize, weight: UIFont.Weight.regular)])
+//
+//    func startRotateSyncIcon() {
+//        DispatchQueue.main.async {
+//            self.imageView.layer.add(self.continuousRotateAnimation, forKey: "rotateKey")
+//        }
+//    }
+//
+//    @objc func stopRotateSyncIcon() {
+//        DispatchQueue.main.async {
+//            self.imageView.layer.removeAllAnimations()
+//        }
+//    }
+//
+//    override var accessoryType: UITableViewCell.AccessoryType { return .none }
+//
+//    override var image: UIImage? {
+//        guard let syncStatus = profile.syncManager.syncDisplayState else {
+//            return syncIcon
+//        }
+//
+//        switch syncStatus {
+//        case .inProgress:
+//            return syncBlueIcon
+//        default:
+//            return syncIcon
+//        }
+//    }
+//
+//    override var title: NSAttributedString? {
+//        guard let syncStatus = profile.syncManager.syncDisplayState else {
+//            return syncNowTitle
+//        }
+//
+//        switch syncStatus {
+//        case .bad(let message):
+//            guard let message = message else { return syncNowTitle }
+//            return NSAttributedString(string: message, attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.errorText, NSAttributedString.Key.font: DynamicFontHelper.defaultHelper.DefaultStandardFont])
+//        case .warning(let message):
+//            return  NSAttributedString(string: message, attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.warningText, NSAttributedString.Key.font: DynamicFontHelper.defaultHelper.DefaultStandardFont])
+//        case .inProgress:
+//            return syncingTitle
+//        default:
+//            return syncNowTitle
+//        }
+//    }
+//
+//    override var status: NSAttributedString? {
+//        guard let timestamp = profile.syncManager.lastSyncFinishTime else {
+//            return nil
+//        }
+//
+//        let formattedLabel = timestampFormatter.string(from: Date.fromTimestamp(timestamp))
+//        let attributedString = NSMutableAttributedString(string: formattedLabel)
+//        let attributes = [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.headerTextLight, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 12, weight: UIFont.Weight.regular)]
+//        let range = NSRange(location: 0, length: attributedString.length)
+//        attributedString.setAttributes(attributes, range: range)
+//        return attributedString
+//    }
+//
+//    override var hidden: Bool { return !enabled }
+//
+//    override var enabled: Bool {
+//        get {
+//            if !DeviceInfo.hasConnectivity() {
+//                return false
+//            }
+//
+//            return profile.hasSyncableAccount()
+//        }
+//        set {
+//        }
+//    }
+//
+//    fileprivate lazy var troubleshootButton: UIButton = {
+//        let troubleshootButton = UIButton(type: .roundedRect)
+//        troubleshootButton.setTitle(Strings.FirefoxSyncTroubleshootTitle, for: .normal)
+//        troubleshootButton.addTarget(self, action: #selector(self.troubleshoot), for: .touchUpInside)
+//        troubleshootButton.tintColor = UIColor.theme.tableView.rowActionAccessory
+//        troubleshootButton.titleLabel?.font = DynamicFontHelper.defaultHelper.DefaultSmallFont
+//        troubleshootButton.sizeToFit()
+//        return troubleshootButton
+//    }()
+//
+//    fileprivate lazy var warningIcon: UIImageView = {
+//        let imageView = UIImageView(image: UIImage(named: "AmberCaution"))
+//        imageView.sizeToFit()
+//        return imageView
+//    }()
+//
+//    fileprivate lazy var errorIcon: UIImageView = {
+//        let imageView = UIImageView(image: UIImage(named: "RedCaution"))
+//        imageView.sizeToFit()
+//        return imageView
+//    }()
+//
+//    fileprivate let syncSUMOURL = SupportUtils.URLForTopic("sync-status-ios")
+//
+//    @objc fileprivate func troubleshoot() {
+//        let viewController = SettingsContentViewController()
+//        viewController.url = syncSUMOURL
+//        settings.navigationController?.pushViewController(viewController, animated: true)
+//    }
+//
+//    override func onConfigureCell(_ cell: UITableViewCell) {
+//        cell.textLabel?.attributedText = title
+//        cell.textLabel?.numberOfLines = 0
+//        cell.textLabel?.lineBreakMode = .byWordWrapping
+//        if let syncStatus = profile.syncManager.syncDisplayState {
+//            switch syncStatus {
+//            case .bad(let message):
+//                if let _ = message {
+//                    // add the red warning symbol
+//                    // add a link to the MANA page
+//                    cell.detailTextLabel?.attributedText = nil
+//                    cell.accessoryView = troubleshootButton
+//                    addIcon(errorIcon, toCell: cell)
+//                } else {
+//                    cell.detailTextLabel?.attributedText = status
+//                    cell.accessoryView = nil
+//                }
+//            case .warning(_):
+//                // add the amber warning symbol
+//                // add a link to the MANA page
+//                cell.detailTextLabel?.attributedText = nil
+//                cell.accessoryView = troubleshootButton
+//                addIcon(warningIcon, toCell: cell)
+//            case .good:
+//                cell.detailTextLabel?.attributedText = status
+//                fallthrough
+//            default:
+//                cell.accessoryView = nil
+//            }
+//        } else {
+//            cell.accessoryView = nil
+//        }
+//        cell.accessoryType = accessoryType
+//        cell.isUserInteractionEnabled = !profile.syncManager.isSyncing && DeviceInfo.hasConnectivity()
+//
+//        // Animation that loops continously until stopped
+//        continuousRotateAnimation.fromValue = 0.0
+//        continuousRotateAnimation.toValue = CGFloat(Double.pi)
+//        continuousRotateAnimation.isRemovedOnCompletion = true
+//        continuousRotateAnimation.duration = 0.5
+//        continuousRotateAnimation.repeatCount = .infinity
+//
+//        // To ensure sync icon is aligned properly with user's avatar, an image is created with proper
+//        // dimensions and color, then the scaled sync icon is added as a subview.
+//        imageView.contentMode = .center
+//        imageView.image = image
+//
+//        cell.imageView?.subviews.forEach({ $0.removeFromSuperview() })
+//        cell.imageView?.image = syncIconWrapper
+//        cell.imageView?.addSubview(imageView)
+//
+//        if let syncStatus = profile.syncManager.syncDisplayState {
+//            switch syncStatus {
+//            case .inProgress:
+//                self.startRotateSyncIcon()
+//            default:
+//                self.stopRotateSyncIcon()
+//            }
+//        }
+//    }
+//
+//    fileprivate func addIcon(_ image: UIImageView, toCell cell: UITableViewCell) {
+//        cell.contentView.addSubview(image)
+//
+//        cell.textLabel?.snp.updateConstraints { make in
+//            make.leading.equalTo(image.snp.trailing).offset(5)
+//            make.trailing.lessThanOrEqualTo(cell.contentView)
+//            make.centerY.equalTo(cell.contentView)
+//        }
+//
+//        image.snp.makeConstraints { make in
+//            make.leading.equalTo(cell.contentView).offset(17)
+//            make.top.equalTo(cell.textLabel!).offset(2)
+//        }
+//    }
+//
+//    override func onClick(_ navigationController: UINavigationController?) {
+//        if !DeviceInfo.hasConnectivity() {
+//            return
+//        }
+//
+//        NotificationCenter.default.post(name: .UserInitiatedSyncManually, object: nil)
+//        profile.syncManager.syncEverything(why: .syncNow)
+//    }
+//}
 
 // Sync setting that shows the current Firefox Account status.
 //class AccountStatusSetting: WithAccountSetting {
@@ -1148,32 +1147,32 @@ class OpenWithSetting: Setting {
     }
 }
 
-class AdvancedAccountSetting: HiddenSetting {
-    let profile: Profile
-
-    override var accessoryView: UIImageView? { return disclosureIndicator }
-
-    override var accessibilityIdentifier: String? { return "AdvancedAccount.Setting" }
-
-    override var title: NSAttributedString? {
-        return NSAttributedString(string: Strings.SettingsAdvancedAccountTitle, attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
-    }
-
-    override init(settings: SettingsTableViewController) {
-        self.profile = settings.profile
-        super.init(settings: settings)
-    }
-
-    override func onClick(_ navigationController: UINavigationController?) {
-        let viewController = AdvancedAccountSettingViewController()
-        viewController.profile = profile
-        navigationController?.pushViewController(viewController, animated: true)
-    }
-
-    override var hidden: Bool {
-        return !ShowDebugSettings || profile.hasAccount()
-    }
-}
+//class AdvancedAccountSetting: HiddenSetting {
+//    let profile: Profile
+//
+//    override var accessoryView: UIImageView? { return disclosureIndicator }
+//
+//    override var accessibilityIdentifier: String? { return "AdvancedAccount.Setting" }
+//
+//    override var title: NSAttributedString? {
+//        return NSAttributedString(string: Strings.SettingsAdvancedAccountTitle, attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
+//    }
+//
+//    override init(settings: SettingsTableViewController) {
+//        self.profile = settings.profile
+//        super.init(settings: settings)
+//    }
+//
+//    override func onClick(_ navigationController: UINavigationController?) {
+//        let viewController = AdvancedAccountSettingViewController()
+//        viewController.profile = profile
+//        navigationController?.pushViewController(viewController, animated: true)
+//    }
+//
+//    override var hidden: Bool {
+//        return !ShowDebugSettings || profile.hasAccount()
+//    }
+//}
 
 class ThemeSetting: Setting {
     let profile: Profile

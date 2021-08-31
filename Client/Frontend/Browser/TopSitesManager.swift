@@ -6,7 +6,6 @@ import Foundation
 import Shared
 import UIKit
 import Storage
-import SyncTelemetry
 
 struct TopSitesHandler {
     static func getTopSites(profile: Profile) -> Deferred<[Site]> {      

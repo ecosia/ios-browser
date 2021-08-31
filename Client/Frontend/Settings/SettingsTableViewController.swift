@@ -2,7 +2,6 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-import Account
 import Shared
 import UIKit
 
@@ -528,37 +527,37 @@ class ButtonSetting: Setting {
 
 // A helper class for prefs that deal with sync. Handles reloading the tableView data if changes to
 // the fxAccount happen.
-class AccountSetting: Setting {
-    unowned var settings: SettingsTableViewController
+//class AccountSetting: Setting {
+//    unowned var settings: SettingsTableViewController
+//
+//    var profile: Profile {
+//        return settings.profile
+//    }
+//
+//    override var title: NSAttributedString? { return nil }
+//
+//    init(settings: SettingsTableViewController) {
+//        self.settings = settings
+//        super.init(title: nil)
+//    }
+//
+//    override func onConfigureCell(_ cell: UITableViewCell) {
+//        super.onConfigureCell(cell)
+////        if settings.profile.rustFxA.userProfile != nil {
+////            cell.selectionStyle = .none
+////        }
+//    }
+//
+//    override var accessoryType: UITableViewCell.AccessoryType { return .none }
+//}
 
-    var profile: Profile {
-        return settings.profile
-    }
-
-    override var title: NSAttributedString? { return nil }
-
-    init(settings: SettingsTableViewController) {
-        self.settings = settings
-        super.init(title: nil)
-    }
-
-    override func onConfigureCell(_ cell: UITableViewCell) {
-        super.onConfigureCell(cell)
-//        if settings.profile.rustFxA.userProfile != nil {
-//            cell.selectionStyle = .none
-//        }
-    }
-
-    override var accessoryType: UITableViewCell.AccessoryType { return .none }
-}
-
-class WithAccountSetting: AccountSetting {
-    override var hidden: Bool { return !profile.hasAccount() }
-}
-
-class WithoutAccountSetting: AccountSetting {
-    override var hidden: Bool { return profile.hasAccount() }
-}
+//class WithAccountSetting: AccountSetting {
+//    override var hidden: Bool { return !profile.hasAccount() }
+//}
+//
+//class WithoutAccountSetting: AccountSetting {
+//    override var hidden: Bool { return profile.hasAccount() }
+//}
 
 @objc
 protocol SettingsDelegate: AnyObject {

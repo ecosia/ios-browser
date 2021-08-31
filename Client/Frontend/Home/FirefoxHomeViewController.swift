@@ -7,7 +7,6 @@ import UIKit
 import Storage
 import SDWebImage
 import XCGLogger
-import SyncTelemetry
 import SnapKit
 import Core
 

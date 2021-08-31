@@ -4,6 +4,13 @@
 
 import Shared
 
+struct ViewControllerConsts {
+    struct PreferredSize {
+        static let IntroViewController = CGSize(width: 375, height: 667)
+        static let UpdateViewController = CGSize(width: 375, height: 667)
+    }
+}
+
 enum NavigationItemLocation {
     case Left
     case Right

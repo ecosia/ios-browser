@@ -7,13 +7,10 @@
 // application (i.e. App Extensions). Introducing new dependencies here
 // may have unintended negative consequences for App Extensions such as
 // increased startup times which may lead to termination by the OS.
-import Account
 import Shared
 import Storage
-import Sync
 import XCGLogger
 import SwiftKeychainWrapper
-import SyncTelemetry
 import Core
 
 // Import these dependencies ONLY for the main `Client` application target.
@@ -25,34 +22,7 @@ private let log = Logger.syncLogger
 
 public let ProfileRemoteTabsSyncDelay: TimeInterval = 0.1
 
-public protocol SyncManager {
-    var isSyncing: Bool { get }
-    var lastSyncFinishTime: Timestamp? { get set }
-    var syncDisplayState: SyncDisplayState? { get }
 
-    func hasSyncedHistory() -> Deferred<Maybe<Bool>>
-    func hasSyncedLogins() -> Deferred<Maybe<Bool>>
-
-    func syncClients() -> SyncResult
-    func syncClientsThenTabs() -> SyncResult
-    func syncHistory() -> SyncResult
-    func syncLogins() -> SyncResult
-    func syncBookmarks() -> SyncResult
-    @discardableResult func syncEverything(why: SyncReason) -> Success
-    func syncNamedCollections(why: SyncReason, names: [String]) -> Success
-
-    // The simplest possible approach.
-    func beginTimedSyncs()
-    func endTimedSyncs()
-    func applicationDidEnterBackground()
-    func applicationDidBecomeActive()
-
-    func onNewProfile()
-    @discardableResult func onRemovedAccount() -> Success
-    @discardableResult func onAddedAccount() -> Success
-}
-
-typealias SyncFunction = (SyncDelegate, Prefs, Ready, SyncReason) -> SyncResult
 
 class ProfileFileAccessor: FileAccessor {
     convenience init(profile: Profile) {
@@ -76,18 +46,6 @@ class ProfileFileAccessor: FileAccessor {
     }
 }
 
-class CommandStoringSyncDelegate: SyncDelegate {
-    let profile: Profile
-
-    init(profile: Profile) {
-        self.profile = profile
-    }
-
-    public func displaySentTab(for url: URL, title: String, from deviceName: String?) {
-        let item = ShareItem(url: url.absoluteString, title: title, favicon: nil)
-        _ = self.profile.queue.addToQueue(item)
-    }
-}
 
 /**
  * A Profile manages access to the user's data.
@@ -126,29 +84,24 @@ protocol Profile: AnyObject {
     func localName() -> String
 
     // Do we have an account at all?
-    func hasAccount() -> Bool
+//    func hasAccount() -> Bool
 
     // Do we have an account that (as far as we know) is in a syncable state?
-    func hasSyncableAccount() -> Bool
+//    func hasSyncableAccount() -> Bool
 
 //    var rustFxA: RustFirefoxAccounts { get }
 
-    func removeAccount()
+//    func removeAccount()
 
-    func getClients() -> Deferred<Maybe<[RemoteClient]>>
-    func getCachedClients()-> Deferred<Maybe<[RemoteClient]>>
-    func getClientsAndTabs() -> Deferred<Maybe<[ClientAndTabs]>>
-    func getCachedClientsAndTabs() -> Deferred<Maybe<[ClientAndTabs]>>
+//    func getClientsAndTabs() -> Deferred<Maybe<[ClientAndTabs]>>
+//    func getCachedClientsAndTabs() -> Deferred<Maybe<[ClientAndTabs]>>
 
     func cleanupHistoryIfNeeded()
-
-    func sendQueuedSyncEvents()
 
     @discardableResult func storeTabs(_ tabs: [RemoteTab]) -> Deferred<Maybe<Int>>
 
     func sendItem(_ item: ShareItem, toDevices devices: [RemoteDevice]) -> Success
 
-    var syncManager: SyncManager! { get }
 }
 
 fileprivate let PrefKeyClientID = "PrefKeyClientID"
@@ -174,7 +127,6 @@ open class BrowserProfile: Profile {
 
     let db: BrowserDB
     let readingListDB: BrowserDB
-    var syncManager: SyncManager!
 
     private let loginsSaltKeychainKey = "sqlcipher.key.logins.salt"
     private let loginsUnlockKeychainKey = "sqlcipher.key.logins.db"
@@ -189,8 +141,6 @@ open class BrowserProfile: Profile {
         return secret
     }()
 
-    var syncDelegate: SyncDelegate?
-
     /**
      * N.B., BrowserProfile is used from our extensions, often via a pattern like
      *
@@ -203,12 +153,11 @@ open class BrowserProfile: Profile {
      * A SyncDelegate can be provided in this initializer, or once the profile is initialized.
      * However, if we provide it here, it's assumed that we're initializing it from the application.
      */
-    init(localName: String, syncDelegate: SyncDelegate? = nil, clear: Bool = false) {
+    init(localName: String, clear: Bool = false) {
         log.debug("Initing profile \(localName) on thread \(Thread.current).")
         self.name = localName
         self.files = ProfileFileAccessor(localName: localName)
         self.keychain = KeychainWrapper.sharedAppContainerKeychain
-        self.syncDelegate = syncDelegate
 
         if clear {
             do {
@@ -380,7 +329,7 @@ open class BrowserProfile: Profile {
 
     deinit {
         log.debug("Deiniting profile \(self.localName()).")
-        self.syncManager.endTimedSyncs()
+//        self.syncManager.endTimedSyncs()
     }
 
     func localName() -> String {
@@ -456,23 +405,23 @@ open class BrowserProfile: Profile {
         return ClosedTabsStore(prefs: self.prefs)
     }()
 
-    open func getSyncDelegate() -> SyncDelegate {
-        return syncDelegate ?? CommandStoringSyncDelegate(profile: self)
-    }
-
-    public func getClients() -> Deferred<Maybe<[RemoteClient]>> {
-        return self.syncManager.syncClients()
-           >>> { self.remoteClientsAndTabs.getClients() }
-    }
-
-    public func getCachedClients()-> Deferred<Maybe<[RemoteClient]>> {
-        return self.remoteClientsAndTabs.getClients()
-    }
-
-    public func getClientsAndTabs() -> Deferred<Maybe<[ClientAndTabs]>> {
-        return self.syncManager.syncClientsThenTabs()
-           >>> { self.remoteClientsAndTabs.getClientsAndTabs() }
-    }
+//    open func getSyncDelegate() -> SyncDelegate {
+//        return syncDelegate ?? CommandStoringSyncDelegate(profile: self)
+//    }
+//
+//    public func getClients() -> Deferred<Maybe<[RemoteClient]>> {
+//        return self.syncManager.syncClients()
+//           >>> { self.remoteClientsAndTabs.getClients() }
+//    }
+//
+//    public func getCachedClients()-> Deferred<Maybe<[RemoteClient]>> {
+//        return self.remoteClientsAndTabs.getClients()
+//    }
+//
+//    public func getClientsAndTabs() -> Deferred<Maybe<[ClientAndTabs]>> {
+//        return self.syncManager.syncClientsThenTabs()
+//           >>> { self.remoteClientsAndTabs.getClientsAndTabs() }
+//    }
 
     public func getCachedClientsAndTabs() -> Deferred<Maybe<[ClientAndTabs]>> {
         return self.remoteClientsAndTabs.getClientsAndTabs()

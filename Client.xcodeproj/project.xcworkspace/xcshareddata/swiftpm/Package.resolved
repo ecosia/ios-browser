@@ -2,15 +2,6 @@
   "object": {
     "pins": [
       {
-        "package": "FMDB",
-        "repositoryURL": "https://github.com/ccgus/fmdb",
-        "state": {
-          "branch": null,
-          "revision": "61e51fde7f7aab6554f30ab061cc588b28a97d04",
-          "version": "2.7.7"
-        }
-      },
-      {
         "package": "Fuzi",
         "repositoryURL": "https://github.com/cezheng/Fuzi",
         "state": {
@@ -53,15 +44,6 @@
           "branch": null,
           "revision": "d458564516e5676af9c70b4f4b2a9178294f1bc6",
           "version": "5.0.1"
-        }
-      },
-      {
-        "package": "SnowplowTracker",
-        "repositoryURL": "https://github.com/snowplow/snowplow-objc-tracker.git",
-        "state": {
-          "branch": null,
-          "revision": "2cf806e834a75ce801c46f0182f23b481655762b",
-          "version": "2.2.1"
         }
       },
       {

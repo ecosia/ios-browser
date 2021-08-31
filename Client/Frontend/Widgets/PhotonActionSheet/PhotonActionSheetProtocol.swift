@@ -25,10 +25,10 @@ extension PhotonActionSheetProtocol {
         sheet.modalPresentationStyle = style
         sheet.photonTransitionDelegate = PhotonActionSheetAnimator()
 
-        if profile.hasSyncableAccount() {
-            // the sync manager is only needed when we have a logged in user with sync in a good state
-            sheet.syncManager = profile.syncManager // the syncmanager is used to display the sync button in the browser menu
-        }
+//        if profile.hasSyncableAccount() {
+//            // the sync manager is only needed when we have a logged in user with sync in a good state
+////            sheet.syncManager = profile.syncManager // the syncmanager is used to display the sync button in the browser menu
+//        }
 
         if let popoverVC = sheet.popoverPresentationController, sheet.modalPresentationStyle == .popover {
             popoverVC.delegate = viewController

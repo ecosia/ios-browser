@@ -10,7 +10,6 @@ import Shared
 import Storage
 import SnapKit
 import XCGLogger
-import Account
 import MobileCoreServices
 import SDWebImage
 import SwiftyJSON
@@ -2148,34 +2147,34 @@ extension BrowserViewController {
         return false
     }
     
-    private func onboardingUserResearchHelper(_ alwaysShow: Bool = false) {
-        if alwaysShow {
-            showProperIntroVC()
-            return
-        }
-        // Setup user research closure and observer to fetch the updated LP Variables
-        onboardingUserResearch?.updatedLPVariable =  {
-            self.showProperIntroVC()
-        }
-        onboardingUserResearch?.lpVariableObserver()
-    }
+//    private func onboardingUserResearchHelper(_ alwaysShow: Bool = false) {
+//        if alwaysShow {
+//            showProperIntroVC()
+//            return
+//        }
+//        // Setup user research closure and observer to fetch the updated LP Variables
+//        onboardingUserResearch?.updatedLPVariable =  {
+//            self.showProperIntroVC()
+//        }
+//        onboardingUserResearch?.lpVariableObserver()
+//    }
     
-    private func showProperIntroVC() {
-        let introViewController = IntroViewControllerV2()
-        introViewController.didFinishClosure = { controller, fxaLoginFlow in
-            self.profile.prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
-            controller.dismiss(animated: true) {
-                if self.navigationController?.viewControllers.count ?? 0 > 1 {
-                    _ = self.navigationController?.popToRootViewController(animated: true)
-                }
-//                if let flow = fxaLoginFlow {
-//                    let fxaParams = FxALaunchParams(query: ["entrypoint": "firstrun"])
-//                    self.presentSignInViewController(fxaParams, flowType: flow, referringPage: .onboarding)
+//    private func showProperIntroVC() {
+//        let introViewController = IntroViewControllerV2()
+//        introViewController.didFinishClosure = { controller, fxaLoginFlow in
+//            self.profile.prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
+//            controller.dismiss(animated: true) {
+//                if self.navigationController?.viewControllers.count ?? 0 > 1 {
+//                    _ = self.navigationController?.popToRootViewController(animated: true)
 //                }
-            }
-        }
-        self.introVCPresentHelper(introViewController: introViewController)
-    }
+////                if let flow = fxaLoginFlow {
+////                    let fxaParams = FxALaunchParams(query: ["entrypoint": "firstrun"])
+////                    self.presentSignInViewController(fxaParams, flowType: flow, referringPage: .onboarding)
+////                }
+//            }
+//        }
+//        self.introVCPresentHelper(introViewController: introViewController)
+//    }
     
     private func introVCPresentHelper(introViewController: UIViewController) {
         // On iPad we present it modally in a controller
@@ -2556,32 +2555,32 @@ extension BrowserViewController: TopTabsDelegate {
     }
 }
 
-extension BrowserViewController: DevicePickerViewControllerDelegate, InstructionsViewControllerDelegate {
-    func instructionsViewControllerDidClose(_ instructionsViewController: InstructionsViewController) {
-        self.popToBVC()
-    }
-
-    func devicePickerViewControllerDidCancel(_ devicePickerViewController: DevicePickerViewController) {
-        self.popToBVC()
-    }
-
-    func devicePickerViewController(_ devicePickerViewController: DevicePickerViewController, didPickDevices devices: [RemoteDevice]) {
-        guard let tab = tabManager.selectedTab, let url = tab.canonicalURL?.displayURL?.absoluteString else { return }
-        let shareItem = ShareItem(url: url, title: tab.title, favicon: tab.displayFavicon)
-        guard shareItem.isShareable else {
-            let alert = UIAlertController(title: Strings.SendToErrorTitle, message: Strings.SendToErrorMessage, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: Strings.SendToErrorOKButton, style: .default) { _ in self.popToBVC()})
-            present(alert, animated: true, completion: nil)
-            return
-        }
-        profile.sendItem(shareItem, toDevices: devices).uponQueue(.main) { _ in
-            self.popToBVC()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                SimpleToast().showAlertWithText(Strings.AppMenuTabSentConfirmMessage, bottomContainer: self.webViewContainer)
-            }
-        }
-    }
-}
+//extension BrowserViewController: DevicePickerViewControllerDelegate, InstructionsViewControllerDelegate {
+//    func instructionsViewControllerDidClose(_ instructionsViewController: InstructionsViewController) {
+//        self.popToBVC()
+//    }
+//
+//    func devicePickerViewControllerDidCancel(_ devicePickerViewController: DevicePickerViewController) {
+//        self.popToBVC()
+//    }
+//
+//    func devicePickerViewController(_ devicePickerViewController: DevicePickerViewController, didPickDevices devices: [RemoteDevice]) {
+//        guard let tab = tabManager.selectedTab, let url = tab.canonicalURL?.displayURL?.absoluteString else { return }
+//        let shareItem = ShareItem(url: url, title: tab.title, favicon: tab.displayFavicon)
+//        guard shareItem.isShareable else {
+//            let alert = UIAlertController(title: Strings.SendToErrorTitle, message: Strings.SendToErrorMessage, preferredStyle: .alert)
+//            alert.addAction(UIAlertAction(title: Strings.SendToErrorOKButton, style: .default) { _ in self.popToBVC()})
+//            present(alert, animated: true, completion: nil)
+//            return
+//        }
+//        profile.sendItem(shareItem, toDevices: devices).uponQueue(.main) { _ in
+//            self.popToBVC()
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+//                SimpleToast().showAlertWithText(Strings.AppMenuTabSentConfirmMessage, bottomContainer: self.webViewContainer)
+//            }
+//        }
+//    }
+//}
 
 // MARK: - reopen last closed tab
 

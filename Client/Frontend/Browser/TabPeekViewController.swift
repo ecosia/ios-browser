@@ -163,7 +163,7 @@ class TabPeekViewController: UIViewController, WKNavigationDelegate {
         clonedWebView.load(URLRequest(url: url))
     }
 
-    func setState(withProfile browserProfile: BrowserProfile, clientPickerDelegate: DevicePickerViewControllerDelegate) {
+    func setState(withProfile browserProfile: BrowserProfile) {
         assert(Thread.current.isMainThread)
 
         guard let tab = self.tab else {
@@ -176,22 +176,22 @@ class TabPeekViewController: UIViewController, WKNavigationDelegate {
 
         self.isBookmarked = browserProfile.places.isBookmarked(displayURL)
 
-        browserProfile.remoteClientsAndTabs.getClientGUIDs().uponQueue(.main) {
-            guard let clientGUIDs = $0.successValue else {
-                return
-            }
-
-            self.hasRemoteClients = !clientGUIDs.isEmpty
-            let clientPickerController = DevicePickerViewController()
-            clientPickerController.pickerDelegate = clientPickerDelegate
-            clientPickerController.profile = browserProfile
-            clientPickerController.profileNeedsShutdown = false
-            if let url = tab.url?.absoluteString {
-                clientPickerController.shareItem = ShareItem(url: url, title: tab.title, favicon: nil)
-            }
-
-            self.fxaDevicePicker = UINavigationController(rootViewController: clientPickerController)
-        }
+//        browserProfile.remoteClientsAndTabs.getClientGUIDs().uponQueue(.main) {
+//            guard let clientGUIDs = $0.successValue else {
+//                return
+//            }
+//
+//            self.hasRemoteClients = !clientGUIDs.isEmpty
+//            let clientPickerController = DevicePickerViewController()
+//            clientPickerController.pickerDelegate = clientPickerDelegate
+//            clientPickerController.profile = browserProfile
+//            clientPickerController.profileNeedsShutdown = false
+//            if let url = tab.url?.absoluteString {
+//                clientPickerController.shareItem = ShareItem(url: url, title: tab.title, favicon: nil)
+//            }
+//
+//            self.fxaDevicePicker = UINavigationController(rootViewController: clientPickerController)
+//        }
 
         let result = browserProfile.readingList.getRecordWithURL(displayURL).value.successValue
 

@@ -6,7 +6,7 @@ import Foundation
 import AdSupport
 import Shared
 //import Leanplum
-import Account
+//import Account
 
 private let LPAppIdKey = "LeanplumAppId"
 private let LPProductionKeyKey = "LeanplumProductionKey"
@@ -210,9 +210,9 @@ class LeanPlumClient {
             LPAttributeKey.mailtoIsDefault: mailtoIsDefault(),
             LPAttributeKey.focusInstalled: focusInstalled(),
             LPAttributeKey.klarInstalled: klarInstalled(),
-            LPAttributeKey.pocketInstalled: pocketInstalled(),
-            LPAttributeKey.signedInSync: profile?.hasAccount() ?? false,
-            LPAttributeKey.fxaAccountVerified: profile?.hasSyncableAccount() ?? false
+            LPAttributeKey.pocketInstalled: pocketInstalled()
+//            LPAttributeKey.signedInSync: profile?.hasAccount() ?? false,
+//            LPAttributeKey.fxaAccountVerified: profile?.hasSyncableAccount() ?? false
         ]
 
         self.setupCustomTemplates()

@@ -9,13 +9,9 @@ import XCGLogger
 import MessageUI
 import SDWebImage
 import SwiftKeychainWrapper
-import SyncTelemetry
 import LocalAuthentication
-import SyncTelemetry
-import Sync
 import CoreSpotlight
 import UserNotifications
-import Account
 import WidgetKit
 import Core
 
@@ -192,7 +188,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
         }
         /* Ecosia: have a clean profile if migration has not succeeded */
         let needsMigration = User.shared.migrated != true
-        let p = BrowserProfile(localName: "profile", syncDelegate: application.syncDelegate, clear: needsMigration)
+        let p = BrowserProfile(localName: "profile", clear: needsMigration)
         self.profile = p
         return p
     }

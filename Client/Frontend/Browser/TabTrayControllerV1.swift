@@ -665,7 +665,7 @@ extension TabTrayControllerV1: UIViewControllerPreviewingDelegate {
         }
         let tabVC = TabPeekViewController(tab: tab, delegate: self)
         if let browserProfile = profile as? BrowserProfile {
-            tabVC.setState(withProfile: browserProfile, clientPickerDelegate: self)
+            tabVC.setState(withProfile: browserProfile)
         }
         previewingContext.sourceRect = self.view.convert(cell.frame, from: collectionView)
 
@@ -926,18 +926,18 @@ fileprivate class EmptyPrivateTabsView: UIView {
     }
 }
 
-extension TabTrayControllerV1: DevicePickerViewControllerDelegate {
-    func devicePickerViewController(_ devicePickerViewController: DevicePickerViewController, didPickDevices devices: [RemoteDevice]) {
-        if let item = devicePickerViewController.shareItem {
-            _ = self.profile.sendItem(item, toDevices: devices)
-        }
-        devicePickerViewController.dismiss(animated: true, completion: nil)
-    }
-
-    func devicePickerViewControllerDidCancel(_ devicePickerViewController: DevicePickerViewController) {
-        devicePickerViewController.dismiss(animated: true, completion: nil)
-    }
-}
+//extension TabTrayControllerV1: DevicePickerViewControllerDelegate {
+//    func devicePickerViewController(_ devicePickerViewController: DevicePickerViewController, didPickDevices devices: [RemoteDevice]) {
+//        if let item = devicePickerViewController.shareItem {
+//            _ = self.profile.sendItem(item, toDevices: devices)
+//        }
+//        devicePickerViewController.dismiss(animated: true, completion: nil)
+//    }
+//
+//    func devicePickerViewControllerDidCancel(_ devicePickerViewController: DevicePickerViewController) {
+//        devicePickerViewController.dismiss(animated: true, completion: nil)
+//    }
+//}
 
 extension TabTrayControllerV1: UIAdaptivePresentationControllerDelegate, UIPopoverPresentationControllerDelegate {
     // Returning None here makes sure that the Popover is actually presented as a Popover and
