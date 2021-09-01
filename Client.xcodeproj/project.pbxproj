@@ -2876,6 +2876,7 @@
 		CA520E7924913C1B00CCAB48 /* LoginListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginListViewModel.swift; sourceTree = "<group>"; };
 		CA5A01802686059B00623A21 /* LogoCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogoCell.swift; sourceTree = "<group>"; };
 		CA5E9D50265D068600836DE9 /* SnapKit+Ecosia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SnapKit+Ecosia.swift"; sourceTree = "<group>"; };
+		CA6B160426DF5CE600C70451 /* EcosiaCatalyst.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = EcosiaCatalyst.entitlements; sourceTree = "<group>"; };
 		CA6BFAAC25778CB90026DFFF /* Welcome.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Welcome.swift; sourceTree = "<group>"; };
 		CA6BFAC325778D2C0026DFFF /* Colours.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colours.xcassets; sourceTree = "<group>"; };
 		CA6BFAD825778D4E0026DFFF /* EcosiaTheme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EcosiaTheme.swift; sourceTree = "<group>"; };
@@ -5158,6 +5159,7 @@
 			children = (
 				CA051BC62539A1C50096D30F /* Ecosia.entitlements */,
 				CAC3CD28260248B6000FFAF4 /* EcosiaBeta.entitlements */,
+				CA6B160426DF5CE600C70451 /* EcosiaCatalyst.entitlements */,
 				E6F738761EB7A97500B50143 /* FirefoxApplication.entitlements */,
 				E6F738751EB7A97100B50143 /* FirefoxBetaApplication.entitlements */,
 				E6F738741EB7A8D300B50143 /* FennecApplication.entitlements */,
@@ -6000,9 +6002,7 @@
 					};
 					F84B21BD1A090F8100AAB793 = {
 						CreatedOnToolsVersion = 6.1;
-						DevelopmentTeam = 43AQ936H96;
 						LastSwiftMigration = 1000;
-						ProvisioningStyle = Manual;
 						SystemCapabilities = {
 							com.apple.ApplicationGroups.iOS = {
 								enabled = 1;
@@ -9460,7 +9460,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon_Ecosia;
+				CODE_SIGN_ENTITLEMENTS = Client/Entitlements/EcosiaCatalyst.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = "${inherited}";
 				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -9474,8 +9477,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "$(MOZ_BUNDLE_ID)";
 				PRODUCT_MODULE_NAME = Client;
 				PRODUCT_NAME = Client;
-				PROVISIONING_PROFILE_SPECIFIER = "match Development com.ecosia.ecosiaapp";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "Mac Catalyst Development App";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SKIP_INSTALL = NO;
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = BUDDYBUILD;
