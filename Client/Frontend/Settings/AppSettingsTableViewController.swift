@@ -158,7 +158,8 @@ class AppSettingsTableViewController: SettingsTableViewController {
  */
                 PushBackInstallation(settings: self),
                 CreateMigrationData(settings: self),
-                AddReferral(settings: self)
+                AddReferral(settings: self),
+                AddClaim(settings: self)
             ])]
 
         return settings

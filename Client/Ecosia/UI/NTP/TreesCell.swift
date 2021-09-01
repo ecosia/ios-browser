@@ -5,17 +5,6 @@
 import UIKit
 import Core
 
-struct TreesCellModel {
-    var spotlight: Spotlight?
-    var description: String?
-    let trees: Int
-
-    struct Spotlight {
-        let headline: String
-        let description: String
-    }
-}
-
 protocol TreesCellDelegate: AnyObject {
     func treesCellDidTapSpotlight(_ cell: TreesCell)
 }
@@ -52,8 +41,6 @@ final class TreesCell: UICollectionViewCell, Themeable {
     private weak var personalCountStack: UIStackView!
     private weak var personalCount: UILabel!
     private weak var impactOverviewLabel: UILabel!
-
-    private weak var personalCountDescription: UILabel!
 
     private weak var globalCountBackground: UIView!
     private weak var globalCountStack: UIStackView!
@@ -106,7 +93,9 @@ final class TreesCell: UICollectionViewCell, Themeable {
     func display(_ model: TreesCellModel) {
         self.model = model
 
-        personalCount.text = "\(model.trees)"
+        personalCount.text = model.title
+        impactOverviewLabel.text = model.subtitle
+
         spotlightViews.forEach { $0.isHidden = model.spotlight == nil }
 
         if let spotlight = model.spotlight {
@@ -114,7 +103,7 @@ final class TreesCell: UICollectionViewCell, Themeable {
             spotlightDescription.text = spotlight.description
         }
 
-        if let description = model.description {
+        if let description = model.highlight {
             globalCount.isHidden = true
             globalCountDescription.text = description
             globalCountDescription.textAlignment = .center
@@ -234,7 +223,6 @@ final class TreesCell: UICollectionViewCell, Themeable {
         self.personalCount = personalCount
 
         let impactOverviewLabel = UILabel()
-        impactOverviewLabel.text = .localized(.estimatedTrees)
         impactOverviewLabel.translatesAutoresizingMaskIntoConstraints = false
         impactOverviewLabel.font = .preferredFont(forTextStyle: .subheadline)
         impactOverviewLabel.setContentCompressionResistancePriority(.required, for: .vertical)

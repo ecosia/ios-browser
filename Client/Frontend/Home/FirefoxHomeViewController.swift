@@ -396,6 +396,7 @@ extension FirefoxHomeViewController: UICollectionViewDelegateFlowLayout {
         case .impact:
             delegate?.homeDidPressPersonalCounter(self)
             collectionView.deselectItem(at: indexPath, animated: true)
+            User.shared.referrals?.acknowledge()
         default:
             break
         }
@@ -1041,17 +1042,48 @@ extension FirefoxHomeViewController: SearchbarCellDelegate {
 }
 
 extension FirefoxHomeViewController: TreesCellDelegate {
-    fileprivate var treesCellModel: TreesCellModel {
-        var spotlight: TreesCellModel.Spotlight?
-        var description: String?
-        if let referrals = User.shared.referrals, referrals.isNew {
-            let diff = referrals.referred - referrals.knownReferred
-            let headline = String(format: .localized(.treesReceived), "\(diff * Referrals.treesPerReferred)")
-            spotlight = TreesCellModel.Spotlight(headline: headline, description: .localized(.treesReceivedDescription))
 
-            description = .localized(.referralAccepted)
+    fileprivate var spotlight: TreesCellModel.Spotlight? {
+        return nil //TODO
+    }
+
+    fileprivate var treesCellModel: TreesCellModel {
+
+        if personalCounter.state == 0 && User.shared.referralImpact == 0 {
+            return .newUser
         }
-        return .init(spotlight: spotlight, description: description, trees: User.shared.impact)
+
+        guard let referrals = User.shared.referrals else {
+            return .init(title: "\(User.shared.impact)",
+                          subtitle: .localized(.myTrees),
+                          highlight: nil,
+                          spotlight: spotlight )
+        }
+
+        if referrals.isNewClaim {
+            return .init(title: "\(User.shared.impact)",
+                         subtitle: .localized(.myTrees),
+                         highlight: .localized(.keepGoing),
+                         spotlight: spotlight )
+        }
+
+        if referrals.isNewReferral {
+            let diff = referrals.referred - referrals.knownReferred
+
+            let highlight: String
+            if diff <= 1 {
+                highlight = .localized(.referralAccepted)
+            } else {
+                highlight = .init(format: .localized(.referralsAccepted), "\(diff)", "\(diff)")
+            }
+            return .init(title: "\(User.shared.impact)", subtitle: .localized(.myTrees), highlight: highlight, spotlight: spotlight)
+        }
+
+        // default
+        return .init(title: "\(User.shared.impact)",
+                     subtitle: .localized(.myTrees),
+                     highlight: nil,
+                     spotlight: spotlight )
     }
 
     func treesCellDidTapSpotlight(_ cell: TreesCell) {
