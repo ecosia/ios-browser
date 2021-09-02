@@ -230,7 +230,7 @@ final class NewsButtonCell: UICollectionReusableView {
     }
 }
 
-class NewsHeader: UICollectionReusableView, Themeable {
+class NewsHeaderCell: UICollectionViewCell, Themeable {
     lazy var titleLabel: UILabel = {
         let titleLabel = UILabel()
         titleLabel.textColor = UIColor.theme.ecosia.highContrastText
@@ -240,6 +240,8 @@ class NewsHeader: UICollectionReusableView, Themeable {
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         return titleLabel
     }()
+
+    weak var widthConstraint: NSLayoutConstraint!
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -252,15 +254,20 @@ class NewsHeader: UICollectionReusableView, Themeable {
     }
 
     private func commonInit() {
-        addSubview(titleLabel)
+        contentView.addSubview(titleLabel)
 
-        let top = titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 16)
-        top.priority = .defaultHigh
+        let top = titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 32)
+        top.priority = .init(999)
         top.isActive = true
 
-        titleLabel.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 16).isActive = true
-        titleLabel.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -16).isActive = true
-        titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8).isActive = true
+        titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
+        titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
+        titleLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16).isActive = true
+
+        let widthConstraint = titleLabel.widthAnchor.constraint(equalToConstant: 100)
+        widthConstraint.priority = .defaultHigh
+        widthConstraint.isActive = true
+        self.widthConstraint = widthConstraint
     }
 
     func applyTheme() {

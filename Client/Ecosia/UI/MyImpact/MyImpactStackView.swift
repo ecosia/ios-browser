@@ -4,9 +4,8 @@
 
 import UIKit
 
-protocol MyImpactStackDelegate: AnyObject {
-    func impactStackTitleAction(_ stack: MyImpactStackView)
-    func impactStackTitleCallout(_ stack: MyImpactStackView)
+@objc protocol MyImpactStackViewModelResize: AnyObject {
+    @objc func resizeStack(sender: MyImpactStackView)
 }
 
 struct MyImpactStackViewModel {
@@ -15,17 +14,30 @@ struct MyImpactStackViewModel {
     let subtitle: String?
     let imageName: String
 
-    var action: Action?
+    var callout: Callout?
 
-    enum Action {
-        case tap(String), collapse(String, String, Bool)
+    struct Callout {
+        var action: Action
+        var collapsed: Bool = true
     }
 
+    enum Action {
+        case tap(text: String, action: Selector)
+        case collapse(text: String, button: String, action: Selector)
+
+        var selector: Selector {
+            switch self {
+            case .tap(_, let action):
+                return action
+            case .collapse(_ , _, let action):
+                return action
+            }
+        }
+    }
 }
 
 class MyImpactStackView: UIStackView, Themeable {
     var model: MyImpactStackViewModel!
-    weak var delegate: MyImpactStackDelegate?
 
     private weak var topStack: UIStackView!
     private weak var titleLabel: UILabel!
@@ -147,32 +159,34 @@ class MyImpactStackView: UIStackView, Themeable {
 
         imageView.image = UIImage(themed: model.imageName)
 
-        if let action = model.action {
-            display(action)
+        if let callout = model.callout {
+            display(callout)
         } else {
             actionButton.isHidden = true
         }
         applyTheme()
     }
 
-    func display(_ action: MyImpactStackViewModel.Action) {
+    func display(_ callout: MyImpactStackViewModel.Callout) {
         actionButton.isHidden = false
 
-        switch action {
-        case .tap(let title):
-            actionButton.setTitle(title, for: .normal)
+        switch callout.action {
+        case .tap(let text, _):
+            actionButton.setTitle(text, for: .normal)
             actionButton.setImage(nil, for: .normal)
-        case .collapse(let description, let actionTitle, let collapsed):
+        case .collapse(let text, let button, _):
             actionButton.setTitle(nil, for: .normal)
+
+            let collapsed = callout.collapsed != false
 
             let image: UIImage = collapsed ? .init(themed: "impactDown")! : .init(themed: "impactUp")!
             actionButton.setImage(image, for: .normal)
             actionButton.imageView?.contentMode = .scaleAspectFit
 
             calloutStack.isHidden = collapsed
-            callout.isHidden = collapsed
-            calloutButton.setTitle(actionTitle, for: .normal)
-            calloutLabel.text = description
+            self.callout.isHidden = collapsed
+            calloutButton.setTitle(button, for: .normal)
+            calloutLabel.text = text
         }
     }
 
@@ -191,19 +205,26 @@ class MyImpactStackView: UIStackView, Themeable {
     }
 
     @objc func actionTapped() {
-        guard let action = model.action else { return }
+        guard let callout = model.callout else { return }
 
-        switch action {
-        case .tap:
-            delegate?.impactStackTitleAction(self)
-        case .collapse(let description, let title, let collapse):
-            delegate?.impactStackTitleAction(self)
-            self.model.action = .collapse(description, title, !collapse)
-            display(self.model)
+        switch callout.action {
+        case .tap(_, let selector):
+            if let target = target(forAction: selector, withSender: self) as? UIResponder {
+                target.perform(selector)
+            }
+        case .collapse:
+            let selector = #selector(MyImpactStackViewModelResize.resizeStack)
+            if let target = target(forAction: selector, withSender: self) as? UIResponder {
+                target.perform(selector, with: self)
+            }
         }
     }
 
     @objc func calloutTapped() {
-        delegate?.impactStackTitleCallout(self)
+        guard let callout = model.callout else { return }
+        let selector = callout.action.selector
+        if let target = target(forAction: selector, withSender: self) as? UIResponder {
+            target.perform(selector)
+        }
     }
 }

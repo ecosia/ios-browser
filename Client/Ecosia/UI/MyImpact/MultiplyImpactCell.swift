@@ -29,8 +29,8 @@ final class MultiplyImpactCell: UICollectionViewCell, Themeable {
 
         outline.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
         outline.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
-        outline.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
-        outline.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
+        outline.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 4).isActive = true
+        outline.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -4).isActive = true
 
         let widthConstraint = outline.widthAnchor.constraint(equalToConstant: 100)
         widthConstraint.priority = .defaultHigh
@@ -48,8 +48,6 @@ final class MultiplyImpactCell: UICollectionViewCell, Themeable {
         stack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -12).isActive = true
 
         applyTheme()
-
-        stack.display(.init(title: .localized(.multiplyImpact), boldTitle: false, subtitle: nil, imageName: "impactMultiply", action: .tap(.localized(.inviteFriends))))
     }
 
     override var isSelected: Bool {

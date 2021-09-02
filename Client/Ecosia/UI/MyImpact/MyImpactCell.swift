@@ -10,10 +10,6 @@ struct MyImpcactCellModel {
     var bottom: MyImpactStackViewModel
 }
 
-protocol MyImpactCellDelegate: AnyObject {
-    func impactCellTriggerAction(_ action: MyImpactStackViewModel.Action)
-}
-
 final class MyImpactCell: UICollectionViewCell, Themeable {
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -33,7 +29,6 @@ final class MyImpactCell: UICollectionViewCell, Themeable {
     weak var separator: UIView!
 
     private (set) var model: MyImpcactCellModel?
-    weak var delegate: MyImpactCellDelegate?
 
     private func setup() {
         let outline = UIView()
@@ -52,8 +47,8 @@ final class MyImpactCell: UICollectionViewCell, Themeable {
 
         outline.leftAnchor.constraint(equalTo: contentView.leftAnchor).isActive = true
         outline.rightAnchor.constraint(equalTo: contentView.rightAnchor).isActive = true
-        outline.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
-        outline.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
+        outline.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12).isActive = true
+        outline.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -4).isActive = true
 
         let widthConstraint = outline.widthAnchor.constraint(equalToConstant: 100)
         widthConstraint.priority = .defaultHigh
@@ -66,7 +61,6 @@ final class MyImpactCell: UICollectionViewCell, Themeable {
         container.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20).isActive = true
 
         let topStack = MyImpactStackView()
-        topStack.delegate = self
         container.addArrangedSubview(topStack)
         self.topStack = topStack
 
@@ -78,12 +72,10 @@ final class MyImpactCell: UICollectionViewCell, Themeable {
         self.separator = separator
 
         let middleStack = MyImpactStackView()
-        middleStack.delegate = self
         container.addArrangedSubview(middleStack)
         self.middleStack = middleStack
 
         let bottomStack = MyImpactStackView()
-        bottomStack.delegate = self
         container.addArrangedSubview(bottomStack)
         self.bottomStack = bottomStack
 
@@ -122,17 +114,5 @@ final class MyImpactCell: UICollectionViewCell, Themeable {
     override func prepareForReuse() {
         super.prepareForReuse()
         applyTheme()
-    }
-}
-
-extension MyImpactCell: MyImpactStackDelegate {
-    func impactStackTitleAction(_ stack: MyImpactStackView) {
-        guard let action = stack.model.action else { return }
-        delegate?.impactCellTriggerAction(action)
-    }
-
-    func impactStackTitleCallout(_ stack: MyImpactStackView) {
-        guard let action = stack.model.action else { return }
-        delegate?.impactCellTriggerAction(action)
     }
 }
