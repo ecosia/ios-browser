@@ -10,7 +10,7 @@ import UIKit
 
 struct MyImpactStackViewModel {
     let title: String
-    let boldTitle: Bool
+    let highlight: Bool
     let subtitle: String?
     let imageName: String
 
@@ -48,6 +48,7 @@ class MyImpactStackView: UIStackView, Themeable {
     private weak var calloutStack: UIStackView!
     private weak var calloutLabel: UILabel!
     private weak var calloutButton: UIButton!
+    private weak var imageWidthConstraint: NSLayoutConstraint!
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -80,7 +81,10 @@ class MyImpactStackView: UIStackView, Themeable {
         imageView.leftAnchor.constraint(equalTo: imageBackground.leftAnchor).isActive = true
         imageView.rightAnchor.constraint(equalTo: imageBackground.rightAnchor).isActive = true
         imageView.bottomAnchor.constraint(equalTo: imageBackground.bottomAnchor).isActive = true
-        imageView.widthAnchor.constraint(equalToConstant: 32).isActive = true
+        let imageWidthConstraint = imageView.widthAnchor.constraint(equalToConstant: 32)
+        imageWidthConstraint.priority = .defaultHigh
+        imageWidthConstraint.isActive = true
+        self.imageWidthConstraint = imageWidthConstraint
         topStack.addArrangedSubview(imageBackground)
 
         let labelStack = UIStackView()
@@ -193,7 +197,8 @@ class MyImpactStackView: UIStackView, Themeable {
     func applyTheme() {
         guard let model = model else { return }
 
-        let style: UIFont.TextStyle = model.boldTitle ? .headline : .subheadline
+        let style: UIFont.TextStyle = model.highlight ? .headline : .subheadline
+        imageWidthConstraint.constant = model.highlight ? 52 : 32
         titleLabel.font = .preferredFont(forTextStyle: style)
         titleLabel.textColor = UIColor.theme.ecosia.highContrastText
         subtitleLabel.textColor = UIColor.theme.ecosia.secondaryText

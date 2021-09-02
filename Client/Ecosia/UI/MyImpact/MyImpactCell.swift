@@ -57,7 +57,7 @@ final class MyImpactCell: UICollectionViewCell, Themeable {
 
         container.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16).isActive = true
         container.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -16).isActive = true
-        container.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 20).isActive = true
+        container.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 30).isActive = true
         container.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20).isActive = true
 
         let topStack = MyImpactStackView()

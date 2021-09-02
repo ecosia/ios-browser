@@ -110,11 +110,11 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
 
     lazy var impactModel: MyImpcactCellModel = {
         let callout = MyImpactStackViewModel.Callout(action: .collapse(text: .localized(.myImpactDescription), button: .localized(.learnMore), action: #selector(learnMore)))
-        let top = MyImpactStackViewModel(title: .localizedPlural(.treesPlural, num: User.shared.impact).capitalized, boldTitle: true, subtitle: .localized(.estimatedTrees), imageName: "personalCounter", callout: callout)
+        let top = MyImpactStackViewModel(title: "\(User.shared.impact)", highlight: true, subtitle: .localized(.myTrees), imageName: "personalCounter", callout: callout)
 
-        let middle = MyImpactStackViewModel(title: .localizedPlural(.treesPlural, num: User.shared.searchImpact), boldTitle: false, subtitle: .localizedPlural(.searches, num: personalCounter.state!), imageName: "impactSearch", callout: nil)
+        let middle = MyImpactStackViewModel(title: .localizedPlural(.treesPlural, num: User.shared.searchImpact), highlight: false, subtitle: .localizedPlural(.searches, num: personalCounter.state!), imageName: "impactSearch", callout: nil)
 
-        let bottom = MyImpactStackViewModel(title: .localizedPlural(.treesPlural, num: User.shared.referralImpact), boldTitle: false, subtitle: .localizedPlural(.referrals, num: User.shared.referralCount), imageName: "impactReferrals", callout: nil)
+        let bottom = MyImpactStackViewModel(title: .localizedPlural(.treesPlural, num: User.shared.referralImpact), highlight: false, subtitle: .localizedPlural(.referrals, num: User.shared.referralCount), imageName: "impactReferrals", callout: nil)
 
         let info = MyImpcactCellModel(top: top, middle: middle, bottom: bottom)
         return info
@@ -142,7 +142,6 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         Section.allCases.forEach {
             collectionView!.register($0.cell, forCellWithReuseIdentifier: String(describing: $0.cell))
         }
-        collectionView!.register(MultiplyImpactCell.self, forCellWithReuseIdentifier: "MultiplyImpactCell")
         collectionView!.register(NewsHeaderCell.self, forCellWithReuseIdentifier: "NewsHeaderCell")
         collectionView.register(NewsButtonCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "Footer")
         collectionView.delegate = self
@@ -202,7 +201,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
             let multiplyCell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: section.cell), for: indexPath) as! MultiplyImpactCell
             multiplyCell.widthConstraint.constant = collectionView.bounds.width - 2 * margin
             let model = MyImpactStackViewModel(title: .localized(.multiplyImpact),
-                                               boldTitle: false,
+                                               highlight: false,
                                                subtitle: nil,
                                                imageName: "impactMultiply",
                                                callout: .init(action: .tap(text: .localized(.inviteFriends), action: #selector(inviteFriends))))
@@ -380,7 +379,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     }
 
     @objc func inviteFriends() {
-
+        // entry point to Referral Screen
     }
 
     @objc func learnMore() {

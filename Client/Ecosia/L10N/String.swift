@@ -73,7 +73,6 @@ extension String {
         case treesPlural = "%d tree(s)"
         case trees = "TREES"
         case treesPlantedWithEcosia = "TREES PLANTED WITH ECOSIA"
-        case treesReceived = "You received 1 tree"
         case treesReceivedDescription = "A friend installed Ecosia using your code, tap on your counter to invite more friends."
         case useTheseCompanies = "Start using these green companies to plant more trees and become more sustainable"
         case version = "Version %@"
