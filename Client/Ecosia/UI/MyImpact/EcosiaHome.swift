@@ -9,16 +9,15 @@ protocol EcosiaHomeDelegate: AnyObject {
     func ecosiaHome(didSelectURL url: URL)
 }
 
-final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlowLayout, Themeable {
+final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlowLayout, Themeable, MyImpactStackViewModelResize {
 
     enum Section: Int, CaseIterable {
-        case logo, counter, info, news, explore
+        case impact, multiply, news, explore
 
         var cell: AnyClass {
             switch self {
-            case .logo: return LogoCell.self
-            case .counter: return TreeCounterCell.self
-            case .info: return EcosiaInfoCell.self
+            case .impact: return MyImpactCell.self
+            case .multiply: return MultiplyImpactCell.self
             case .explore: return EcosiaExploreCell.self
             case .news: return NewsCell.self
             }
@@ -109,14 +108,39 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     private let news = News()
     private let personalCounter = PersonalCounter()
 
+    lazy var impactModel: MyImpcactCellModel = {
+        let callout = MyImpactStackViewModel.Callout(action: .collapse(text: .localized(.myImpactDescription),
+                                                                       button: .localized(.learnMore),
+                                                                       selector: #selector(learnMore)))
+        let top = MyImpactStackViewModel(title: "\(User.shared.impact)",
+                                         highlight: true, subtitle: .localized(.myTrees),
+                                         imageName: "personalCounter",
+                                         callout: callout)
+
+        let middle = MyImpactStackViewModel(title: .localizedPlural(.treesPlural, num: User.shared.searchImpact),
+                                            highlight: false,
+                                            subtitle: .localizedPlural(.searches, num: personalCounter.state!),
+                                            imageName: "impactSearch",
+                                            callout: nil)
+
+        let bottom = MyImpactStackViewModel(title: .localizedPlural(.treesPlural, num: User.shared.referralImpact),
+                                            highlight: false,
+                                            subtitle: .localizedPlural(.referrals, num: User.shared.referralCount),
+                                            imageName: "impactReferrals",
+                                            callout: nil)
+
+        return MyImpcactCellModel(top: top, middle: middle, bottom: bottom)
+    }()
+
     convenience init(delegate: EcosiaHomeDelegate?) {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
         layout.minimumInteritemSpacing = 16
+        layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
         self.init(collectionViewLayout: layout)
-
+        self.title = .localized(.myImpact).capitalized
         self.delegate = delegate
-        navigationItem.largeTitleDisplayMode = .never
+        navigationItem.largeTitleDisplayMode = .always
     }
 
     override func viewDidLoad() {
@@ -130,7 +154,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         Section.allCases.forEach {
             collectionView!.register($0.cell, forCellWithReuseIdentifier: String(describing: $0.cell))
         }
-        collectionView.register(NewsHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "Header")
+        collectionView!.register(NewsHeaderCell.self, forCellWithReuseIdentifier: "NewsHeaderCell")
         collectionView.register(NewsButtonCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "Footer")
         collectionView.delegate = self
         collectionView.contentInsetAdjustmentBehavior = .scrollableAxes
@@ -145,7 +169,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         }
 
         personalCounter.subscribeAndReceive(self)  { [weak self] _ in
-            self?.collectionView.reloadSections([Section.info.rawValue])
+            self?.collectionView.reloadSections([Section.impact.rawValue])
         }
     }
 
@@ -157,6 +181,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         guard hasAppeared else { return hasAppeared = true }
         updateBarAppearance()
         collectionView.scrollRectToVisible(.init(x: 0, y: 0, width: 1, height: 1), animated: false)
+        collectionView.reloadSections([Section.impact.rawValue])
     }
 
     // MARK: UICollectionViewDataSource
@@ -166,49 +191,67 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         switch Section(rawValue: section)! {
-        case .logo, .counter: return 1
-        case .info: return 1
-        case .explore: return Section.Explore.allCases.count
-        case .news: return min(3, items.count)
+        case .impact: return 1
+        case .multiply: return 1
+        case .explore: return Section.Explore.allCases.count + 1 // header
+        case .news: return min(3, items.count) + 1 // header
         }
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 
         let section = Section(rawValue: indexPath.section)!
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: section.cell), for: indexPath)
+        let margin = max(16, collectionView.safeAreaInsets.left)
 
         switch  section {
-        case .logo, .counter:
-            break
-        case .info:
-            let infoCell = cell as! EcosiaInfoCell
-            let info = EcosiaInfoCellModel(title: .localized(.mySearches),
-                                           subTitle: "\(personalCounter.state!)",
-                                           description: .localized(.youNeedAround45),
-                                           image: "treeCounter")
-            infoCell.display(info)
+        case .impact:
+            let infoCell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: section.cell), for: indexPath) as! MyImpactCell
+            infoCell.widthConstraint.constant = collectionView.bounds.width - 2 * margin
+            infoCell.display(impactModel)
+            return infoCell
+        case .multiply:
+            let multiplyCell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: section.cell), for: indexPath) as! MultiplyImpactCell
+            multiplyCell.widthConstraint.constant = collectionView.bounds.width - 2 * margin
+            let model = MyImpactStackViewModel(title: .localized(.multiplyImpact),
+                                               highlight: false,
+                                               subtitle: nil,
+                                               imageName: "impactMultiply",
+                                               callout: .init(action: .tap(text: .localized(.inviteFriends), action: #selector(inviteFriends))))
+            multiplyCell.stack.display(model)
+            return multiplyCell
         case .explore:
-            let exploreCell = cell as! EcosiaExploreCell
-            Section.Explore(rawValue: indexPath.row).map { exploreCell.display($0) }
+            if indexPath.row == 0 {
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "NewsHeaderCell", for: indexPath) as! NewsHeaderCell
+                cell.titleLabel.text = section.sectionTitle
+                cell.widthConstraint.constant = collectionView.bounds.width - 2 * margin
+                return cell
+            } else {
+                let exploreCell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: section.cell), for: indexPath) as! EcosiaExploreCell
+                var width = (view.bounds.width - 2 * margin - 16)/2.0
+                width = min(width, 180)
+                exploreCell.widthConstraint.constant = width
+                Section.Explore(rawValue: indexPath.row - 1).map { exploreCell.display($0) }
+                return exploreCell
+            }
         case .news:
-            let cell = cell as! NewsCell
-            let itemCount = self.collectionView(collectionView, numberOfItemsInSection: Section.news.rawValue)
-            cell.configure(items[indexPath.row], images: images, positions: .derive(row: indexPath.row, items: itemCount))
+            if indexPath.row == 0 {
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "NewsHeaderCell", for: indexPath) as! NewsHeaderCell
+                cell.titleLabel.text = section.sectionTitle
+                cell.widthConstraint.constant = collectionView.bounds.width - 2 * margin
+                return cell
+            } else {
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: section.cell), for: indexPath) as! NewsCell
+                let itemCount = self.collectionView(collectionView, numberOfItemsInSection: Section.news.rawValue) - 1
+                cell.configure(items[indexPath.row - 1], images: images, positions: .derive(row: indexPath.row - 1, items: itemCount))
+                cell.widthConstraint.constant = collectionView.bounds.width
+                return cell
+            }
         }
-
-        return cell
     }
 
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
 
-        guard let section = Section(rawValue: indexPath.section) else { return  UICollectionReusableView() }
-
         switch kind {
-        case UICollectionView.elementKindSectionHeader:
-            let view = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "Header", for: indexPath) as! NewsHeader
-            view.titleLabel.text = section.sectionTitle
-            return view
         case UICollectionView.elementKindSectionFooter:
             let view = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "Footer", for: indexPath) as! NewsButtonCell
             view.moreButton.setTitle(.localized(.more), for: .normal)
@@ -220,9 +263,13 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     }
 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        defer {
+            collectionView.deselectItem(at: indexPath, animated: true)
+        }
+
         let section = Section(rawValue: indexPath.section)!
         switch section {
-        case .info:
+        case .impact:
             if indexPath.row == 0 {
                 delegate?.ecosiaHome(didSelectURL: Environment.current.aboutCounter)
                 Analytics.shared.navigation(.open, label: .counter)
@@ -246,16 +293,13 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let section = Section(rawValue: indexPath.section)!
-
         let margin = max(16, collectionView.safeAreaInsets.left)
 
         switch section {
-        case .logo:
-            return CGSize(width: view.bounds.width - 2 * margin, height: 100)
-        case .counter:
-            return CGSize(width: view.bounds.width - 2 * margin, height: 70)
-        case .info:
-            return CGSize(width: view.bounds.width - 2 * margin, height: 140)
+        case .impact:
+            return CGSize(width: view.bounds.width - 2 * margin, height: 226)
+        case .multiply:
+            return CGSize(width: view.bounds.width - 2 * margin, height: 56)
         case .news:
             return CGSize(width: view.bounds.width, height: 130)
         case .explore:
@@ -263,18 +307,6 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
             var width = (view.bounds.width - 2 * margin - 16)/2.0
             width = min(width, 180)
             return CGSize(width: width, height: width + 32)
-        }
-    }
-
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        switch Section(rawValue: section)! {
-        case .logo, .counter:
-            return .zero
-        case .explore, .news:
-            return CGSize(width: view.bounds.width - 32, height: 70)
-        case .info:
-            return CGSize(width: view.bounds.width - 32, height: 24)
-
         }
     }
 
@@ -286,7 +318,6 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         default:
             return .zero
         }
-
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
@@ -357,5 +388,25 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         applyTheme()
+    }
+
+    @objc func inviteFriends() {
+        // entry point to Referral Screen
+    }
+
+    @objc func learnMore() {
+        delegate?.ecosiaHome(didSelectURL: Environment.current.aboutCounter)
+        Analytics.shared.navigation(.open, label: .counter)
+        dismiss(animated: true, completion: nil)
+    }
+
+    @objc func resizeStack(sender: MyImpactStackView) {
+        guard let model = sender.model, let collapsed = model.callout?.collapsed else { return }
+        impactModel.top.callout?.collapsed = !collapsed
+
+        UIView.animate(withDuration: 0.3) {
+            self.collectionView.reloadItems(at: [IndexPath(item: 0, section: Section.impact.rawValue)])
+            self.collectionViewLayout.invalidateLayout()
+        }
     }
 }

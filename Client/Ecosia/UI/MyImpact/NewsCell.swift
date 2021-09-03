@@ -20,17 +20,32 @@ final class NewsCell: UICollectionViewCell, Themeable {
     }
 
     private var imageUrl: URL?
+    private weak var container: UIView!
     private weak var image: UIImageView!
     private weak var title: UILabel!
     private weak var date: UILabel!
     private weak var topBorder: UIView!
     private weak var bottomBorder: UIView!
     private weak var bottomLeft: NSLayoutConstraint!
+    weak var widthConstraint: NSLayoutConstraint!
 
     required init?(coder: NSCoder) { nil }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        let container = UIView()
+        container.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(container)
+
+        container.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
+        container.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
+        container.leftAnchor.constraint(equalTo: contentView.leftAnchor).isActive = true
+        container.rightAnchor.constraint(equalTo: contentView.rightAnchor).isActive = true
+
+        let widthConstraint = container.widthAnchor.constraint(equalToConstant: 100)
+        widthConstraint.priority = .init(999)
+        widthConstraint.isActive = true
+        self.widthConstraint = widthConstraint
 
         let top = UIView()
         top.translatesAutoresizingMaskIntoConstraints = false
@@ -63,9 +78,10 @@ final class NewsCell: UICollectionViewCell, Themeable {
         
         let title = UILabel()
         title.translatesAutoresizingMaskIntoConstraints = false
-        title.numberOfLines = 4
+        title.numberOfLines = 0
         title.lineBreakMode = .byTruncatingTail
         title.font = .preferredFont(forTextStyle: .subheadline)
+        title.setContentHuggingPriority(.defaultHigh, for: .vertical)
         title.adjustsFontForContentSizeCategory = true
         contentView.addSubview(title)
         self.title = title
@@ -77,6 +93,8 @@ final class NewsCell: UICollectionViewCell, Themeable {
         date.numberOfLines = 1
         date.textAlignment = .left
         date.setContentCompressionResistancePriority(.required, for: .vertical)
+        date.setContentHuggingPriority(.defaultHigh, for: .vertical)
+
         contentView.addSubview(date)
         self.date = date
         
@@ -85,30 +103,36 @@ final class NewsCell: UICollectionViewCell, Themeable {
         placeholder.leftAnchor.constraint(equalTo: image.leftAnchor).isActive = true
         placeholder.rightAnchor.constraint(equalTo: image.rightAnchor).isActive = true
         
-        image.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+        image.leftAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leftAnchor, constant: 16).isActive = true
+        image.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
         image.widthAnchor.constraint(equalToConstant: 96).isActive = true
         image.heightAnchor.constraint(equalTo: image.widthAnchor).isActive = true
-        
+        image.topAnchor.constraint(greaterThanOrEqualTo: contentView.topAnchor, constant: 16).isActive = true
+        image.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: -16).isActive = true
+
         title.leftAnchor.constraint(equalTo: image.rightAnchor, constant: 15).isActive = true
-        title.topAnchor.constraint(equalTo: image.topAnchor, constant: 3).isActive = true
+        title.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16).isActive = true
         title.bottomAnchor.constraint(lessThanOrEqualTo: date.topAnchor, constant: 0).isActive = true
 
-        date.leftAnchor.constraint(equalTo: title.leftAnchor).isActive = true
-        date.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16).isActive = true
+        let squeeze = title.bottomAnchor.constraint(equalTo: date.topAnchor, constant: 0)
+        squeeze.priority = .init(700)
+        squeeze.isActive = true
 
-        bottom.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
-        bottom.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+        date.leftAnchor.constraint(equalTo: title.leftAnchor).isActive = true
+        date.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16).isActive = true
+
+        bottom.rightAnchor.constraint(equalTo: contentView.rightAnchor).isActive = true
+        bottom.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
         bottom.heightAnchor.constraint(equalToConstant: 1).isActive = true
 
-        top.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
-        top.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
-        top.topAnchor.constraint(equalTo: topAnchor).isActive = true
+        top.leftAnchor.constraint(equalTo: contentView.leftAnchor).isActive = true
+        top.rightAnchor.constraint(equalTo: contentView.rightAnchor).isActive = true
+        top.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
         top.heightAnchor.constraint(equalToConstant: 1).isActive = true
 
-        image.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 16).isActive = true
-        title.rightAnchor.constraint(lessThanOrEqualTo: safeAreaLayoutGuide.rightAnchor, constant: -16).isActive = true
-        date.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor, constant: -16).isActive = true
-        let bottomLeft = bottom.leftAnchor.constraint(equalTo: leftAnchor, constant: 16)
+        title.rightAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.rightAnchor, constant: -16).isActive = true
+        date.rightAnchor.constraint(equalTo: title.rightAnchor).isActive = true
+        let bottomLeft = bottom.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16)
         bottomLeft.priority = .defaultHigh
         bottomLeft.isActive = true
         self.bottomLeft = bottomLeft
@@ -206,16 +230,18 @@ final class NewsButtonCell: UICollectionReusableView {
     }
 }
 
-class NewsHeader: UICollectionReusableView, Themeable {
+class NewsHeaderCell: UICollectionViewCell, Themeable {
     lazy var titleLabel: UILabel = {
         let titleLabel = UILabel()
         titleLabel.textColor = UIColor.theme.ecosia.highContrastText
         titleLabel.font = .preferredFont(forTextStyle: .headline)
         titleLabel.adjustsFontForContentSizeCategory = true
-        titleLabel.numberOfLines = 1
+        titleLabel.numberOfLines = 0
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         return titleLabel
     }()
+
+    weak var widthConstraint: NSLayoutConstraint!
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -228,13 +254,20 @@ class NewsHeader: UICollectionReusableView, Themeable {
     }
 
     private func commonInit() {
-        addSubview(titleLabel)
+        contentView.addSubview(titleLabel)
 
-        titleLabel.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 16).isActive = true
-        titleLabel.trailingAnchor.constraint(lessThanOrEqualTo: safeAreaLayoutGuide.trailingAnchor, constant: -16).isActive = true
-        titleLabel.topAnchor.constraint(greaterThanOrEqualTo: topAnchor).isActive = true
-        titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16).isActive = true
-        titleLabel.setContentHuggingPriority(.defaultHigh, for: .vertical)
+        let top = titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 32)
+        top.priority = .init(999)
+        top.isActive = true
+
+        titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
+        titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
+        titleLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16).isActive = true
+
+        let widthConstraint = titleLabel.widthAnchor.constraint(equalToConstant: 100)
+        widthConstraint.priority = .defaultHigh
+        widthConstraint.isActive = true
+        self.widthConstraint = widthConstraint
     }
 
     func applyTheme() {

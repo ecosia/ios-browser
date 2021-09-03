@@ -11,6 +11,7 @@ protocol SearchbarCellDelegate: AnyObject {
 final class SearchbarCell: UICollectionViewCell, Themeable {
     private weak var search: UIButton!
     private weak var image: UIImageView!
+    weak var widthConstraint: NSLayoutConstraint!
     weak var delegate: SearchbarCellDelegate?
 
     override init(frame: CGRect) {
@@ -32,6 +33,7 @@ final class SearchbarCell: UICollectionViewCell, Themeable {
         search.setTitle(.localized(.searchAndPlant), for: .normal)
         search.titleLabel?.lineBreakMode = .byTruncatingTail
         search.titleLabel?.font = .preferredFont(forTextStyle: .body)
+        search.titleLabel?.adjustsFontForContentSizeCategory = true
         search.contentHorizontalAlignment = .left
         self.search = search
         applyTheme()
@@ -39,10 +41,19 @@ final class SearchbarCell: UICollectionViewCell, Themeable {
         search.addTarget(self, action: #selector(tapped), for: .touchUpInside)
 
         contentView.addSubview(search)
-        search.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8).isActive = true
-        search.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8).isActive = true
+        search.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10).isActive = true
+        search.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10).isActive = true
         search.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 0).isActive = true
         search.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: 0).isActive = true
+
+        let height = search.heightAnchor.constraint(equalToConstant: 42)
+        height.priority = .defaultHigh
+        height.isActive = true
+
+        let widthConstraint = search.widthAnchor.constraint(equalToConstant: 100)
+        widthConstraint.priority = .defaultHigh
+        widthConstraint.isActive = true
+        self.widthConstraint = widthConstraint
 
         let image = UIImageView(image: .init(named: "quickSearch"))
         image.translatesAutoresizingMaskIntoConstraints = false
