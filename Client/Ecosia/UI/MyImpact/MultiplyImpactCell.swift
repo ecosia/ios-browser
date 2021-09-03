@@ -19,7 +19,6 @@ final class MultiplyImpactCell: UICollectionViewCell, Themeable {
     var model: MyImpcactCellModel?
     var widthConstraint: NSLayoutConstraint!
 
-
     private func setup() {
         let outline = UIView()
         contentView.addSubview(outline)

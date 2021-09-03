@@ -109,15 +109,27 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     private let personalCounter = PersonalCounter()
 
     lazy var impactModel: MyImpcactCellModel = {
-        let callout = MyImpactStackViewModel.Callout(action: .collapse(text: .localized(.myImpactDescription), button: .localized(.learnMore), action: #selector(learnMore)))
-        let top = MyImpactStackViewModel(title: "\(User.shared.impact)", highlight: true, subtitle: .localized(.myTrees), imageName: "personalCounter", callout: callout)
+        let callout = MyImpactStackViewModel.Callout(action: .collapse(text: .localized(.myImpactDescription),
+                                                                       button: .localized(.learnMore),
+                                                                       selector: #selector(learnMore)))
+        let top = MyImpactStackViewModel(title: "\(User.shared.impact)",
+                                         highlight: true, subtitle: .localized(.myTrees),
+                                         imageName: "personalCounter",
+                                         callout: callout)
 
-        let middle = MyImpactStackViewModel(title: .localizedPlural(.treesPlural, num: User.shared.searchImpact), highlight: false, subtitle: .localizedPlural(.searches, num: personalCounter.state!), imageName: "impactSearch", callout: nil)
+        let middle = MyImpactStackViewModel(title: .localizedPlural(.treesPlural, num: User.shared.searchImpact),
+                                            highlight: false,
+                                            subtitle: .localizedPlural(.searches, num: personalCounter.state!),
+                                            imageName: "impactSearch",
+                                            callout: nil)
 
-        let bottom = MyImpactStackViewModel(title: .localizedPlural(.treesPlural, num: User.shared.referralImpact), highlight: false, subtitle: .localizedPlural(.referrals, num: User.shared.referralCount), imageName: "impactReferrals", callout: nil)
+        let bottom = MyImpactStackViewModel(title: .localizedPlural(.treesPlural, num: User.shared.referralImpact),
+                                            highlight: false,
+                                            subtitle: .localizedPlural(.referrals, num: User.shared.referralCount),
+                                            imageName: "impactReferrals",
+                                            callout: nil)
 
-        let info = MyImpcactCellModel(top: top, middle: middle, bottom: bottom)
-        return info
+        return MyImpcactCellModel(top: top, middle: middle, bottom: bottom)
     }()
 
     convenience init(delegate: EcosiaHomeDelegate?) {
@@ -395,10 +407,6 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         UIView.animate(withDuration: 0.3) {
             self.collectionView.reloadItems(at: [IndexPath(item: 0, section: Section.impact.rawValue)])
             self.collectionViewLayout.invalidateLayout()
-        } completion: { _ in
-            //self.collectionView.reloadSections([Section.news.rawValue])
         }
-
-
     }
 }

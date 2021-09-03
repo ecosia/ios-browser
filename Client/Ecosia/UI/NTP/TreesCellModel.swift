@@ -24,8 +24,4 @@ extension TreesCellModel {
                      highlight: nil,
                      spotlight: nil)
     }
-
-
-
 }
-

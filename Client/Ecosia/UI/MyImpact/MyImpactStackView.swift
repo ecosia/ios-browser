@@ -23,14 +23,12 @@ struct MyImpactStackViewModel {
 
     enum Action {
         case tap(text: String, action: Selector)
-        case collapse(text: String, button: String, action: Selector)
+        case collapse(text: String, button: String, selector: Selector)
 
         var selector: Selector {
             switch self {
-            case .tap(_, let action):
-                return action
-            case .collapse(_ , _, let action):
-                return action
+            case .tap(_, let selector), .collapse(_ , _, let selector):
+                return selector
             }
         }
     }
