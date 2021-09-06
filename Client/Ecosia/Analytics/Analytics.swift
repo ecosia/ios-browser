@@ -3,11 +3,8 @@ import SnowplowTracker
 import Core
 
 final class Analytics {
-    static let shared = Analytics()
-    private let tracker: TrackerController
-
-    private init() {
-        tracker = Snowplow
+    private static var tracker: TrackerController {
+        Snowplow
             .createTracker(namespace: "ios_sp",
                            network: .init(endpoint: Environment.current.snowplow),
                            configurations: [TrackerConfiguration()
@@ -16,6 +13,13 @@ final class Analytics {
                                                 .geoLocationContext(true),
                                             SubjectConfiguration()
                                                 .userId(User.shared.analyticsId.uuidString)])
+    }
+    
+    static let shared = Analytics()
+    private let tracker: TrackerController
+
+    private init() {
+        tracker = Self.tracker
     }
     
     func install() {
@@ -85,10 +89,7 @@ final class Analytics {
     
     func reset() {
         User.shared.analyticsId = .init()
-        
-        guard let subject = SPSubject(platformContext: true, andGeoContext: true) else { return }
-        subject.setUserId(User.shared.analyticsId.uuidString)
-        tracker.setSubject(subject)
+        tracker = Self.tracker
     }
     
     func defaultBrowser(_ action: Action.Promo) {
