@@ -28,6 +28,11 @@ final class Analytics {
                                   payload: ["app_v": Bundle.version as NSObject]))
     }
     
+    func reset() {
+        User.shared.analyticsId = .init()
+        tracker = Self.tracker
+    }
+    
     func activity(_ action: Action.Activity) {
         tracker
             .track(Structured(category: Category.activity.rawValue,
@@ -67,66 +72,54 @@ final class Analytics {
     }
 
     func deeplink() {
-        tracker.track(Structured.build {
-            $0.setCategory(Category.external.rawValue)
-            $0.setAction(Action.receive.rawValue)
-            $0.setLabel("deeplink")
-        })
+        tracker
+            .track(Structured(category: Category.external.rawValue,
+                              action: Action.receive.rawValue)
+                    .label("deeplink"))
     }
     
     func defaultBrowser() {
-        tracker.track(Structured.build {
-            $0.setCategory(Category.external.rawValue)
-            $0.setAction(Action.receive.rawValue)
-            $0.setLabel("default_browser_deeplink")
-        })
-    }
-    
-    func reset() {
-        User.shared.analyticsId = .init()
-        tracker = Self.tracker
+        tracker
+            .track(Structured(category: Category.external.rawValue,
+                              action: Action.receive.rawValue)
+                    .label("default_browser_deeplink"))
     }
     
     func defaultBrowser(_ action: Action.Promo) {
-        tracker.track(Structured.build {
-            $0.setCategory(Category.browser.rawValue)
-            $0.setAction(action.rawValue)
-            $0.setLabel("default_browser_promo")
-            $0.setProperty("home")
-        })
+        tracker
+            .track(Structured(category: Category.browser.rawValue,
+                              action: action.rawValue)
+                    .label("default_browser_promo")
+                    .property("home"))
     }
 
     func defaultBrowserSettings() {
-        tracker.track(Structured.build {
-            $0.setCategory(Category.browser.rawValue)
-            $0.setAction(Action.open.rawValue)
-            $0.setLabel("default_browser_settings")
-        })
+        tracker
+            .track(Structured(category: Category.browser.rawValue,
+                              action: Action.open.rawValue)
+                    .label("default_browser_settings"))
     }
 
     func migration(_ success: Bool) {
-        tracker.track(Structured.build({
-            $0.setCategory(Category.migration.rawValue)
-            $0.setAction(success ? Action.success.rawValue : Action.error.rawValue)
-        }))
+        tracker
+            .track(Structured(category: Category.migration.rawValue,
+                              action: success ? Action.success.rawValue : Action.error.rawValue))
     }
 
     func migrationError(in migration: Migration, message: String) {
-        tracker.track(Structured.build {
-            $0.setCategory(Category.migration.rawValue)
-            $0.setAction(Action.error.rawValue)
-            $0.setLabel(migration.rawValue)
-            $0.setProperty(message)
-        })
+        tracker
+            .track(Structured(category: Category.migration.rawValue,
+                              action: Action.error.rawValue)
+                    .label(migration.rawValue)
+                    .property(message))
     }
 
     func migrationRetryHistory(_ success: Bool) {
-        tracker.track(Structured.build({
-            $0.setCategory(Category.migration.rawValue)
-            $0.setAction(Action.retry.rawValue)
-            $0.setLabel(Migration.history.rawValue)
-            $0.setProperty(success ? Action.success.rawValue : Action.error.rawValue)
-        }))
+        tracker
+            .track(Structured(category: Category.migration.rawValue,
+                              action: Action.retry.rawValue)
+                    .label(Migration.history.rawValue)
+                    .property(success ? Action.success.rawValue : Action.error.rawValue))
     }
     
     func migrated(_ migration: Migration, in seconds: TimeInterval) {
@@ -138,11 +131,10 @@ final class Analytics {
     }
     
     func open(topSite: Property.TopSite) {
-        tracker.track(Structured.build {
-            $0.setCategory(Category.browser.rawValue)
-            $0.setAction(Action.open.rawValue)
-            $0.setLabel("top_sites")
-            $0.setProperty(topSite.rawValue)
-        })
+        tracker
+            .track(Structured(category: Category.browser.rawValue,
+                              action: Action.open.rawValue)
+                    .label("top_sites")
+                    .property(topSite.rawValue))
     }
 }
