@@ -16,7 +16,7 @@ final class Analytics {
     }
     
     static let shared = Analytics()
-    private let tracker: TrackerController
+    private(set) var tracker: TrackerController
 
     private init() {
         tracker = Self.tracker
@@ -135,12 +135,11 @@ final class Analytics {
     }
     
     func migrated(_ migration: Migration, in seconds: TimeInterval) {
-        tracker.track(Structured.build({
-            $0.setCategory(Category.migration.rawValue)
-            $0.setAction(Action.completed.rawValue)
-            $0.setLabel(migration.rawValue)
-            $0.setValue(seconds * 1000)
-        }))
+        tracker
+            .track(Structured(category: Category.migration.rawValue,
+                              action: Action.completed.rawValue)
+                    .label(migration.rawValue)
+                    .value(.init(value: seconds * 1000)))
     }
     
     func open(topSite: Property.TopSite) {
