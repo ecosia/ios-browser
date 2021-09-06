@@ -12781,7 +12781,7 @@
 			repositoryURL = "https://github.com/snowplow/snowplow-objc-tracker.git";
 			requirement = {
 				kind = exactVersion;
-				version = 1.6.2;
+				version = 2.2.2;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
