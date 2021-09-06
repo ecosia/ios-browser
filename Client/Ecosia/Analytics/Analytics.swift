@@ -19,11 +19,9 @@ final class Analytics {
     }
     
     func install() {
-        SPSelfDescribingJson(schema: "iglu:org.ecosia/ios_install_event/jsonschema/1-0-0", andData: ["app_v": Bundle.version] as NSObject).map { data in
-            tracker.track(SPUnstructured.build {
-                $0.setEventData(data)
-            })
-        }
+        tracker
+            .track(SelfDescribing(schema: "iglu:com.snowplowanalytics.snowplow/link_click/jsonschema/1-0-1",
+                                  payload: ["app_v": Bundle.version as NSObject]))
     }
     
     func activity(_ action: Action.Activity) {
