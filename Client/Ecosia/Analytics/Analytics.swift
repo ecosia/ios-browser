@@ -29,46 +29,41 @@ final class Analytics {
     }
     
     func activity(_ action: Action.Activity) {
-        tracker.track(Structured.build {
-            $0.setCategory(Category.activity.rawValue)
-            $0.setAction(action.rawValue)
-            $0.setLabel("inapp")
-        })
+        tracker
+            .track(Structured(category: Category.activity.rawValue,
+                              action: action.rawValue)
+                    .label("inapp"))
     }
 
     func browser(_ action: Action.Browser, label: Label.Browser, property: Property? = nil) {
-        tracker.track(Structured.build {
-            $0.setCategory(Category.browser.rawValue)
-            $0.setAction(action.rawValue)
-            $0.setLabel(label.rawValue)
-            $0.setProperty(property?.rawValue)
-        })
+        tracker
+            .track(Structured(category: Category.browser.rawValue,
+                              action: action.rawValue)
+                    .label(label.rawValue)
+                    .property(property?.rawValue))
     }
 
     func navigation(_ action: Action, label: Label.Navigation) {
-        tracker.track(Structured.build {
-            $0.setCategory(Category.navigation.rawValue)
-            $0.setAction(action.rawValue)
-            $0.setLabel(label.rawValue)
-        })
+        tracker
+            .track(Structured(category: Category.navigation.rawValue,
+                              action: action.rawValue)
+                    .label(label.rawValue))
     }
 
     func navigationOpenNews(_ id: String) {
-        tracker.track(Structured.build {
-            $0.setCategory(Category.navigation.rawValue)
-            $0.setAction(Action.open.rawValue)
-            $0.setLabel(Label.Navigation.news.rawValue)
-            $0.setProperty(id)
-        })
+        tracker
+            .track(Structured(category: Category.navigation.rawValue,
+                              action: Action.open.rawValue)
+                    .label(Label.Navigation.news.rawValue)
+                    .property(id))
     }
     
     func navigationChangeMarket(_ new: String) {
-        tracker.track(Structured.build {
-            $0.setCategory(Category.navigation.rawValue)
-            $0.setAction("change")
-            $0.setLabel("market")
-            $0.setProperty(new)
-        })
+        tracker
+            .track(Structured(category: Category.navigation.rawValue,
+                              action: "change")
+                    .label("market")
+                    .property(new))
     }
 
     func deeplink() {
