@@ -463,7 +463,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
         // `applicationDidBecomeActive` will get called whenever the Touch ID authentication overlay disappears.
         self.updateAuthenticationInfo()
         Analytics.shared.activity(.resume)
-        Goodall.shared.refresh()
+        // Temporary deactivate Goodall
+        // Goodall.shared.refresh()
     }
 
     fileprivate func updateAuthenticationInfo() {
