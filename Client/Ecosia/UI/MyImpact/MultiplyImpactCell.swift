@@ -4,7 +4,7 @@
 
 import UIKit
 
-final class MultiplyImpactCell: UICollectionViewCell, Themeable {
+final class MultiplyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()

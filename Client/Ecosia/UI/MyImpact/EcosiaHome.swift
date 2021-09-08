@@ -133,7 +133,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     }()
 
     convenience init(delegate: EcosiaHomeDelegate?) {
-        let layout = UICollectionViewFlowLayout()
+        let layout = EcosiaHomeLayout()
         layout.scrollDirection = .vertical
         layout.minimumInteritemSpacing = 16
         layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize

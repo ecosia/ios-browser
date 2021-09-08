@@ -230,7 +230,7 @@ final class NewsButtonCell: UICollectionReusableView {
     }
 }
 
-class NewsHeaderCell: UICollectionViewCell, Themeable {
+class NewsHeaderCell: UICollectionViewCell, AutoSizingCell ,Themeable {
     lazy var titleLabel: UILabel = {
         let titleLabel = UILabel()
         titleLabel.textColor = UIColor.theme.ecosia.highContrastText

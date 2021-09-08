@@ -10,7 +10,7 @@ struct MyImpcactCellModel {
     var bottom: MyImpactStackViewModel
 }
 
-final class MyImpactCell: UICollectionViewCell, Themeable {
+final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
