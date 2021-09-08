@@ -16,7 +16,7 @@ final class MultiplyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable 
 
     weak var stack: MyImpactStackView!
     weak var outline: UIView!
-    var model: MyImpcactCellModel?
+    var model: MyImpactCellModel?
     private var widthConstraint: NSLayoutConstraint!
 
     private func setup() {

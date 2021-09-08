@@ -140,6 +140,7 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
     weak var delegate: FirefoxHomeViewControllerDelegate?
     fileprivate let profile: Profile
     fileprivate let personalCounter = PersonalCounter()
+    fileprivate let referralCounter = ReferralCounter()
     fileprivate let flowLayout = NTPLayout()
     fileprivate weak var searchbarCell: UICollectionViewCell?
     fileprivate weak var emptyCell: EmptyCell?
@@ -196,7 +197,12 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
             Analytics.shared.defaultBrowser(.view)
         }
 
-        personalCounter.subscribeAndReceive(self) { [weak self] count in
+        personalCounter.subscribeAndReceive(self) { [weak self] _ in
+            guard let self = self, let impactCell = self.impactCell as? TreesCell else { return }
+            impactCell.display(self.treesCellModel)
+        }
+
+        referralCounter.subscribeAndReceive(self) { [weak self] _ in
             guard let self = self, let impactCell = self.impactCell as? TreesCell else { return }
             impactCell.display(self.treesCellModel)
         }
@@ -205,6 +211,7 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         reloadAll()
+        referralCounter.refresh()
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -1065,7 +1072,7 @@ extension FirefoxHomeViewController: TreesCellDelegate {
         }
 
         if User.shared.referrals.isNewReferral {
-            let diff = User.shared.referrals.referred - User.shared.referrals.knownReferred
+            let diff = User.shared.referrals.claims - User.shared.referrals.knownReferred
 
             let highlight: String
             if diff <= 1 {

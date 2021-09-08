@@ -625,7 +625,7 @@ final class AddReferral: HiddenSetting {
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
-        User.shared.referrals.referred += 1
+        User.shared.referrals.claims += 1
 
         let alertTitle = "Referral count increased by one."
         let alert = AlertController(title: alertTitle, message: "Open NTP to see spotlight", preferredStyle: .alert)

@@ -107,8 +107,13 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     private let images = Images(.init(configuration: .ephemeral))
     private let news = News()
     private let personalCounter = PersonalCounter()
+    private let referralCounter = ReferralCounter()
 
-    lazy var impactModel: MyImpcactCellModel = {
+    lazy var impactModel: MyImpactCellModel = {
+        return refreshImpactModel()
+    }()
+
+    private func refreshImpactModel() -> MyImpactCellModel {
         let callout = MyImpactStackViewModel.Callout(action: .collapse(text: .localized(.myImpactDescription),
                                                                        button: .localized(.learnMore),
                                                                        selector: #selector(learnMore)))
@@ -129,8 +134,8 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
                                             imageName: "impactReferrals",
                                             callout: nil)
 
-        return MyImpcactCellModel(top: top, middle: middle, bottom: bottom)
-    }()
+        return MyImpactCellModel(top: top, middle: middle, bottom: bottom)
+    }
 
     convenience init(delegate: EcosiaHomeDelegate?) {
         let layout = EcosiaHomeLayout()
@@ -171,8 +176,24 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         }
 
         personalCounter.subscribe(self)  { [weak self] _ in
-            self?.collectionView.reloadSections([Section.impact.rawValue])
+            guard let self = self else { return }
+            self.impactModel = self.refreshImpactModel()
+            self.collectionView.reloadSections([Section.impact.rawValue])
         }
+
+        referralCounter.subscribe(self)  { [weak self] _ in
+            guard let self = self else { return }
+            self.impactModel = self.refreshImpactModel()
+            self.collectionView.reloadSections([Section.impact.rawValue])
+        }
+
+        referralCounter.claim(referrer: "MANGO-vvdQXB") {[weak self] result in
+            guard let self = self else { return }
+            self.impactModel = self.refreshImpactModel()
+            self.collectionView.reloadSections([Section.impact.rawValue])
+
+        }
+
     }
 
     private var hasAppeared: Bool = false

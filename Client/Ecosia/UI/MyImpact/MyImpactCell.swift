@@ -4,7 +4,7 @@
 
 import UIKit
 
-struct MyImpcactCellModel {
+struct MyImpactCellModel {
     var top: MyImpactStackViewModel
     var middle: MyImpactStackViewModel
     var bottom: MyImpactStackViewModel
@@ -28,7 +28,7 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
     weak var outline: UIView!
     weak var separator: UIView!
 
-    private (set) var model: MyImpcactCellModel?
+    private (set) var model: MyImpactCellModel?
 
     private func setup() {
         let outline = UIView()
@@ -82,7 +82,7 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
         applyTheme()
     }
 
-    func display(_ model: MyImpcactCellModel) {
+    func display(_ model: MyImpactCellModel) {
         self.model = model
 
         topStack.display(model.top)
