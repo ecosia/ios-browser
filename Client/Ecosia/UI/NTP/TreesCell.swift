@@ -38,7 +38,6 @@ final class TreesCell: UICollectionViewCell, Themeable {
     private weak var personalImpactStack: UIStackView!
     private weak var personalImpactLabelStack: UIStackView!
     private weak var treeImage: UIImageView!
-    private weak var personalCountStack: UIStackView!
     private weak var personalCount: UILabel!
     private weak var impactOverviewLabel: UILabel!
 
@@ -207,25 +206,21 @@ final class TreesCell: UICollectionViewCell, Themeable {
         personalImpactStack.addArrangedSubview(personalImpactLabelStack)
         self.personalImpactLabelStack = personalImpactLabelStack
 
-        let personalCountStack = UIStackView()
-        personalCountStack.axis = .horizontal
-        personalCountStack.spacing = 0
-        personalCountStack.translatesAutoresizingMaskIntoConstraints = false
-        personalImpactLabelStack.addArrangedSubview(personalCountStack)
-
         let personalCount = UILabel()
         personalCount.translatesAutoresizingMaskIntoConstraints = false
         personalCount.font = .preferredFont(forTextStyle: .headline)
         personalCount.adjustsFontForContentSizeCategory = true
         personalCount.setContentHuggingPriority(.defaultLow, for: .horizontal)
-        personalCount.setContentHuggingPriority(.defaultLow, for: .vertical)
-        personalCountStack.addArrangedSubview(personalCount)
+        personalCount.setContentCompressionResistancePriority(.required, for: .vertical)
+        personalCount.setContentHuggingPriority(.init(751), for: .vertical) // to counter ambiguity
+        personalImpactLabelStack.addArrangedSubview(personalCount)
         self.personalCount = personalCount
 
         let impactOverviewLabel = UILabel()
         impactOverviewLabel.translatesAutoresizingMaskIntoConstraints = false
         impactOverviewLabel.font = .preferredFont(forTextStyle: .subheadline)
         impactOverviewLabel.setContentCompressionResistancePriority(.required, for: .vertical)
+        impactOverviewLabel.setContentHuggingPriority(.defaultHigh, for: .vertical)
         impactOverviewLabel.adjustsFontForContentSizeCategory = true
         personalImpactLabelStack.addArrangedSubview(impactOverviewLabel)
         self.impactOverviewLabel = impactOverviewLabel

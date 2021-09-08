@@ -625,11 +625,7 @@ final class AddReferral: HiddenSetting {
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
-        if User.shared.referrals == nil {
-            User.shared.referrals = .init(referrer: "MANGO19")
-        }
-
-        User.shared.referrals?.referred += 1
+        User.shared.referrals.referred += 1
 
         let alertTitle = "Referral count increased by one."
         let alert = AlertController(title: alertTitle, message: "Open NTP to see spotlight", preferredStyle: .alert)
@@ -647,15 +643,11 @@ final class AddClaim: HiddenSetting {
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
-        if User.shared.referrals == nil {
-            User.shared.referrals = .init(referrer: "MANGO19")
-        }
-
-        User.shared.referrals?.isClaimed = true
-        User.shared.referrals?.isNewClaim = true
+        User.shared.referrals.isClaimed = true
+        User.shared.referrals.isNewClaim = true
 
         let alertTitle = "User got referred."
-        let alert = AlertController(title: alertTitle, message: "Open NTP to see spotlight", preferredStyle: .alert)
+        let alert = AlertController(title: alertTitle, message: "Open NTP to see claim", preferredStyle: .alert)
         navigationController?.topViewController?.present(alert, animated: true) {
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                 alert.dismiss(animated: true)

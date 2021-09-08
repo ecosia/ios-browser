@@ -16,12 +16,3 @@ struct TreesCellModel {
         let description: String
     }
 }
-
-extension TreesCellModel {
-    static var newUser: TreesCellModel {
-        return .init(title: .localizedPlural(.treesPlural, num: 0),
-                     subtitle: .localized(.startPlanting),
-                     highlight: nil,
-                     spotlight: nil)
-    }
-}

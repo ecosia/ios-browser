@@ -396,7 +396,7 @@ extension FirefoxHomeViewController: UICollectionViewDelegateFlowLayout {
         case .impact:
             delegate?.homeDidPressPersonalCounter(self)
             collectionView.deselectItem(at: indexPath, animated: true)
-            User.shared.referrals?.acknowledge()
+            User.shared.referrals.acknowledge()
         default:
             break
         }
@@ -1044,31 +1044,28 @@ extension FirefoxHomeViewController: SearchbarCellDelegate {
 extension FirefoxHomeViewController: TreesCellDelegate {
 
     fileprivate var spotlight: TreesCellModel.Spotlight? {
-        return nil //TODO
+        guard User.shared.showsReferralSpotlight else { return nil }
+        return .init(headline: .localized(.helpPlanting), description: .localized(.togetherWeCan))
     }
 
     fileprivate var treesCellModel: TreesCellModel {
 
-        if personalCounter.state == 0 && User.shared.referralImpact == 0 {
-            return .newUser
+        if personalCounter.state == 0 && User.shared.referrals.impact == 0 {
+            return .init(title: .localizedPlural(.treesPlural, num: 0),
+                         subtitle: .localized(.startPlanting),
+                         highlight: nil,
+                         spotlight: spotlight)
         }
 
-        guard let referrals = User.shared.referrals else {
-            return .init(title: "\(User.shared.impact)",
-                          subtitle: .localized(.myTrees),
-                          highlight: nil,
-                          spotlight: spotlight )
-        }
-
-        if referrals.isNewClaim {
+        if User.shared.referrals.isNewClaim {
             return .init(title: "\(User.shared.impact)",
                          subtitle: .localized(.myTrees),
                          highlight: .localized(.keepGoing),
                          spotlight: spotlight )
         }
 
-        if referrals.isNewReferral {
-            let diff = referrals.referred - referrals.knownReferred
+        if User.shared.referrals.isNewReferral {
+            let diff = User.shared.referrals.referred - User.shared.referrals.knownReferred
 
             let highlight: String
             if diff <= 1 {
@@ -1087,7 +1084,7 @@ extension FirefoxHomeViewController: TreesCellDelegate {
     }
 
     func treesCellDidTapSpotlight(_ cell: TreesCell) {
-        User.shared.referrals?.acknowledge()
+        User.shared.hideReferralSpotlight()
 
         UIView.animate(withDuration: 0.3, animations: {
             cell.display(self.treesCellModel)

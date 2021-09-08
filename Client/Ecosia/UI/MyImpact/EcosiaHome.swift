@@ -123,9 +123,9 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
                                             imageName: "impactSearch",
                                             callout: nil)
 
-        let bottom = MyImpactStackViewModel(title: .localizedPlural(.treesPlural, num: User.shared.referralImpact),
+        let bottom = MyImpactStackViewModel(title: .localizedPlural(.treesPlural, num: User.shared.referrals.impact),
                                             highlight: false,
-                                            subtitle: .localizedPlural(.referrals, num: User.shared.referralCount),
+                                            subtitle: .localizedPlural(.referrals, num: User.shared.referrals.count),
                                             imageName: "impactReferrals",
                                             callout: nil)
 
