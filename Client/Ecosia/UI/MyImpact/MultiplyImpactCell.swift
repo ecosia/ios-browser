@@ -17,7 +17,7 @@ final class MultiplyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable 
     weak var stack: MyImpactStackView!
     weak var outline: UIView!
     var model: MyImpcactCellModel?
-    var widthConstraint: NSLayoutConstraint!
+    private var widthConstraint: NSLayoutConstraint!
 
     private func setup() {
         let outline = UIView()
@@ -68,6 +68,11 @@ final class MultiplyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable 
     func applyTheme() {
         stack.applyTheme()
         outline.elevate()
+    }
+
+    func setWidth(_ width: CGFloat) {
+        let margin = max(16, safeAreaInsets.left)
+        widthConstraint.constant = width - 2 * margin
     }
 
     override func prepareForReuse() {

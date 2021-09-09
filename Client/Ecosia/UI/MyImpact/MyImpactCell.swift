@@ -20,7 +20,7 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
         super.init(coder: coder)
     }
 
-    weak var widthConstraint: NSLayoutConstraint!
+    private weak var widthConstraint: NSLayoutConstraint!
     weak var container: UIStackView!
     weak var topStack: MyImpactStackView!
     weak var middleStack: MyImpactStackView!
@@ -109,6 +109,11 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
     func applyTheme() {
         [topStack, middleStack, bottomStack].forEach({ $0?.applyTheme() })
         outline.elevate()
+    }
+
+    func setWidth(_ width: CGFloat) {
+        let margin = max(16, safeAreaInsets.left)
+        widthConstraint.constant = width - 2 * margin
     }
 
     override func prepareForReuse() {

@@ -11,7 +11,7 @@ protocol EcosiaExploreCellModel {
 
 extension EcosiaHome.Section.Explore: EcosiaExploreCellModel {}
 
-final class EcosiaExploreCell: UICollectionViewCell, Themeable {
+final class EcosiaExploreCell: UICollectionViewCell, Themeable, AutoSizingCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
@@ -25,7 +25,7 @@ final class EcosiaExploreCell: UICollectionViewCell, Themeable {
     var image: UIImageView!
     var outline: UIView!
 
-    var widthConstraint: NSLayoutConstraint!
+    private weak var widthConstraint: NSLayoutConstraint!
 
     private func setup() {
         outline = UIView()
@@ -100,6 +100,13 @@ final class EcosiaExploreCell: UICollectionViewCell, Themeable {
     override func prepareForReuse() {
         super.prepareForReuse()
         applyTheme()
+    }
+
+    func setWidth(_ width: CGFloat) {
+        let margin = max(16, safeAreaInsets.left)
+        var width = (width - 2 * margin - 16)/2.0
+        width = min(width, 180)
+        widthConstraint.constant = width
     }
 
     func applyTheme() {

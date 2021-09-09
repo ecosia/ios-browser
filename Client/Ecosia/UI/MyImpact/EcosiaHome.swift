@@ -201,17 +201,16 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 
         let section = Section(rawValue: indexPath.section)!
-        let margin = max(16, collectionView.safeAreaInsets.left)
 
         switch  section {
         case .impact:
             let infoCell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: section.cell), for: indexPath) as! MyImpactCell
-            infoCell.widthConstraint.constant = collectionView.bounds.width - 2 * margin
+            infoCell.setWidth(collectionView.bounds.width)
             infoCell.display(impactModel)
             return infoCell
         case .multiply:
             let multiplyCell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: section.cell), for: indexPath) as! MultiplyImpactCell
-            multiplyCell.widthConstraint.constant = collectionView.bounds.width - 2 * margin
+            multiplyCell.setWidth(collectionView.bounds.width)
             let model = MyImpactStackViewModel(title: .localized(.multiplyImpact),
                                                highlight: false,
                                                subtitle: nil,
@@ -223,13 +222,11 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
             if indexPath.row == 0 {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "NewsHeaderCell", for: indexPath) as! NewsHeaderCell
                 cell.titleLabel.text = section.sectionTitle
-                cell.widthConstraint.constant = collectionView.bounds.width - 2 * margin
+                cell.setWidth(collectionView.bounds.width)
                 return cell
             } else {
                 let exploreCell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: section.cell), for: indexPath) as! EcosiaExploreCell
-                var width = (view.bounds.width - 2 * margin - 16)/2.0
-                width = min(width, 180)
-                exploreCell.widthConstraint.constant = width
+                exploreCell.setWidth(collectionView.bounds.width)
                 Section.Explore(rawValue: indexPath.row - 1).map { exploreCell.display($0) }
                 return exploreCell
             }
@@ -237,13 +234,13 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
             if indexPath.row == 0 {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "NewsHeaderCell", for: indexPath) as! NewsHeaderCell
                 cell.titleLabel.text = section.sectionTitle
-                cell.widthConstraint.constant = collectionView.bounds.width - 2 * margin
+                cell.setWidth(collectionView.bounds.width)
                 return cell
             } else {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: section.cell), for: indexPath) as! NewsCell
                 let itemCount = self.collectionView(collectionView, numberOfItemsInSection: Section.news.rawValue) - 1
                 cell.configure(items[indexPath.row - 1], images: images, positions: .derive(row: indexPath.row - 1, items: itemCount))
-                cell.widthConstraint.constant = collectionView.bounds.width
+                cell.setWidth(collectionView.bounds.width)
                 return cell
             }
         }

@@ -5,7 +5,7 @@
 import Core
 import UIKit
 
-final class NewsCell: UICollectionViewCell, Themeable {
+final class NewsCell: UICollectionViewCell, Themeable, AutoSizingCell {
     struct Positions: OptionSet {
         static let top = Positions(rawValue: 1)
         static let bottom = Positions(rawValue: 1 << 1)
@@ -27,7 +27,7 @@ final class NewsCell: UICollectionViewCell, Themeable {
     private weak var topBorder: UIView!
     private weak var bottomBorder: UIView!
     private weak var bottomLeft: NSLayoutConstraint!
-    weak var widthConstraint: NSLayoutConstraint!
+    private weak var widthConstraint: NSLayoutConstraint!
 
     required init?(coder: NSCoder) { nil }
     
@@ -189,6 +189,11 @@ final class NewsCell: UICollectionViewCell, Themeable {
         applyTheme()
     }
 
+    func setWidth(_ width: CGFloat) {
+        widthConstraint.constant = width
+    }
+
+
     func applyTheme() {
         backgroundColor = UIColor.theme.ecosia.highlightedBackground
         bottomBorder?.backgroundColor = UIColor.theme.ecosia.underlineGrey
@@ -241,7 +246,7 @@ class NewsHeaderCell: UICollectionViewCell, AutoSizingCell ,Themeable {
         return titleLabel
     }()
 
-    weak var widthConstraint: NSLayoutConstraint!
+   private  weak var widthConstraint: NSLayoutConstraint!
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -272,6 +277,11 @@ class NewsHeaderCell: UICollectionViewCell, AutoSizingCell ,Themeable {
 
     func applyTheme() {
         titleLabel.textColor = UIColor.theme.ecosia.highContrastText
+    }
+
+    func setWidth(_ width: CGFloat) {
+        let margin = max(16, safeAreaInsets.left)
+        widthConstraint.constant = width - 2 * margin
     }
 
     override func prepareForReuse() {
