@@ -107,7 +107,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     private let images = Images(.init(configuration: .ephemeral))
     private let news = News()
     private let personalCounter = PersonalCounter()
-    private let referralCounter = ReferralCounter()
+    private let referrals = Referrals()
 
     lazy var impactModel: MyImpactCellModel = {
         return refreshImpactModel()
@@ -181,19 +181,11 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
             self.collectionView.reloadSections([Section.impact.rawValue])
         }
 
-        referralCounter.subscribe(self)  { [weak self] _ in
+        referrals.subscribe(self)  { [weak self] _ in
             guard let self = self else { return }
             self.impactModel = self.refreshImpactModel()
             self.collectionView.reloadSections([Section.impact.rawValue])
         }
-
-        referralCounter.claim(referrer: "MANGO-vvdQXB") {[weak self] result in
-            guard let self = self else { return }
-            self.impactModel = self.refreshImpactModel()
-            self.collectionView.reloadSections([Section.impact.rawValue])
-
-        }
-
     }
 
     private var hasAppeared: Bool = false

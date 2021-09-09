@@ -140,7 +140,7 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
     weak var delegate: FirefoxHomeViewControllerDelegate?
     fileprivate let profile: Profile
     fileprivate let personalCounter = PersonalCounter()
-    fileprivate let referralCounter = ReferralCounter()
+    fileprivate let referrals = Referrals()
     fileprivate let flowLayout = NTPLayout()
     fileprivate weak var searchbarCell: UICollectionViewCell?
     fileprivate weak var emptyCell: EmptyCell?
@@ -197,12 +197,12 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
             Analytics.shared.defaultBrowser(.view)
         }
 
-        personalCounter.subscribeAndReceive(self) { [weak self] _ in
+        personalCounter.subscribe(self) { [weak self] _ in
             guard let self = self, let impactCell = self.impactCell as? TreesCell else { return }
             impactCell.display(self.treesCellModel)
         }
 
-        referralCounter.subscribeAndReceive(self) { [weak self] _ in
+        referrals.subscribe(self) { [weak self] _ in
             guard let self = self, let impactCell = self.impactCell as? TreesCell else { return }
             impactCell.display(self.treesCellModel)
         }
@@ -211,7 +211,7 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         reloadAll()
-        referralCounter.refresh()
+        referrals.refresh()
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -403,7 +403,7 @@ extension FirefoxHomeViewController: UICollectionViewDelegateFlowLayout {
         case .impact:
             delegate?.homeDidPressPersonalCounter(self)
             collectionView.deselectItem(at: indexPath, animated: true)
-            User.shared.referrals.acknowledge()
+            User.shared.referrals.accept()
         default:
             break
         }
@@ -1071,14 +1071,12 @@ extension FirefoxHomeViewController: TreesCellDelegate {
                          spotlight: spotlight )
         }
 
-        if User.shared.referrals.isNewReferral {
-            let diff = User.shared.referrals.claims - User.shared.referrals.knownReferred
-
+        if User.shared.referrals.newClaims > 0 {
             let highlight: String
-            if diff <= 1 {
+            if User.shared.referrals.newClaims <= 1 {
                 highlight = .localized(.referralAccepted)
             } else {
-                highlight = .init(format: .localized(.referralsAccepted), "\(diff)", "\(diff)")
+                highlight = .init(format: .localized(.referralsAccepted), "\(User.shared.referrals.newClaims)", "\(User.shared.referrals.newClaims)")
             }
             return .init(title: "\(User.shared.impact)", subtitle: .localized(.myTrees), highlight: highlight, spotlight: spotlight)
         }
