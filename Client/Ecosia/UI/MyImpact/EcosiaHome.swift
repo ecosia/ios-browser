@@ -286,8 +286,8 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
                     Analytics.shared.navigation(.open, label: $0.label)
                 }
             dismiss(animated: true, completion: nil)
-        default:
-            break
+        case .multiply:
+            navigationController?.pushViewController(MultiplayImpact(), animated: true)
         }
     }
 
