@@ -40,9 +40,10 @@ class EcosiaTheme {
     var barSeparator: UIColor { UIColor.Photon.Grey20 }
     var treeCountText: UIColor { UIColor(named: "emerald")! }
     var treeCountBackground: UIColor { UIColor(rgb: 0xE2F7F1) }
-    var impactBackground: UIColor { UIColor.Photon.Grey10}
-
-
+    var impactBackground: UIColor { UIColor.Photon.Grey10 }
+    var impactMultiplyCardBackground: UIColor { .white }
+    var impactMultiplyCardBorder: UIColor { .Photon.Grey20 }
+    
     var actionSheetBackground: UIColor { .white }
     var modalBackground: UIColor { .white }
 
@@ -74,7 +75,9 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var primaryBackground: UIColor { UIColor.Photon.Grey90 }
     override var treeCountText: UIColor { .white }
     override var treeCountBackground: UIColor { UIColor.Photon.Grey80 }
-    override var impactBackground: UIColor { UIColor.Photon.Grey60}
+    override var impactBackground: UIColor { UIColor.Photon.Grey60 }
+    override var impactMultiplyCardBackground: UIColor { .Photon.Grey70 }
+    override var impactMultiplyCardBorder: UIColor { .Photon.Grey60 }
 
     override var barBackground: UIColor { UIColor.Photon.Grey80 }
     override var barSeparator: UIColor { UIColor.Photon.Grey60 }

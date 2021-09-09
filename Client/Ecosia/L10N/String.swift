@@ -92,5 +92,9 @@ extension String {
         case setAsDefaultBrowser = "Set Ecosia as default browser"
         case linksFromWebsites = "Links from websites, emails or messages will automatically open in Ecosia."
         case showTopSites = "Show Top Sites"
+        case sharingEcosia = "Sharing Ecosia"
+        case everyTimeYouInvite = "Every time you invite a friend, you’ll each help plant 1 trees and multiply your impact."
+        case invite3Friends = "Invite 3 friend"
+        case plant3Trees = "Plant 3 trees"
     }
 }
