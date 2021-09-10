@@ -8,11 +8,15 @@ final class LoadingScreen: UIViewController {
     private weak var profile: Profile!
     private weak var tabManager: TabManager!
     private weak var progress: UIProgressView!
+    private var referralCode: String?
+
+    let loadingGroup = DispatchGroup()
     
     required init?(coder: NSCoder) { nil }
-    init(profile: Profile, tabManager: TabManager) {
+    init(profile: Profile, tabManager: TabManager, referralCode: String? = nil) {
         self.profile = profile
         self.tabManager = tabManager
+        self.referralCode = referralCode
         super.init(nibName: nil, bundle: nil)
         modalPresentationStyle = .fullScreen
         modalTransitionStyle = .crossDissolve
@@ -55,10 +59,23 @@ final class LoadingScreen: UIViewController {
         message.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         message.topAnchor.constraint(equalTo: progress.bottomAnchor, constant: 25).isActive = true
         message.widthAnchor.constraint(lessThanOrEqualToConstant: 280).isActive = true
-        
-        migrate()
+
+        if User.shared.migrated != true {
+            loadingGroup.enter()
+            migrate()
+        }
+
+        if let code = referralCode {
+            loadingGroup.enter()
+            claimReferral(code)
+        }
+
+        loadingGroup.notify(queue: .main) { [weak self] in
+            self?.dismiss(animated: true)
+        }
     }
-    
+
+    // MARK: migration
     private var backgroundTaskID: UIBackgroundTaskIdentifier?
     private func migrate() {
         guard !skip() else { return }
@@ -83,7 +100,7 @@ final class LoadingScreen: UIViewController {
                 
                 Analytics.shared.migration(true)
                 self?.cleanUp()
-                self?.dismiss(animated: true)
+                self?.loadingGroup.leave()
             } else {
                 Analytics.shared.migration(false)
                 self?.showError()
@@ -122,7 +139,7 @@ final class LoadingScreen: UIViewController {
                                       message: .localized(.weAreMomentarilyUnable),
                                       preferredStyle: .alert)
         alert.addAction(.init(title: .localized(.continueMessage), style: .default) { [weak self] _ in
-            self?.dismiss(animated: true)
+            self?.loadingGroup.leave()
         })
         
         present(alert, animated: true)
@@ -132,5 +149,55 @@ final class LoadingScreen: UIViewController {
         History().deleteAll()
         Favourites().items = []
         Tabs().clear()
+    }
+
+    // MARK: Referrals
+    var referrals: Referrals?
+    private func claimReferral(_ code: String) {
+        self.referrals = Referrals()
+        referrals?.claim(referrer: code) { [weak self] result in
+            User.shared.referrals.pendingClaim = nil
+
+            switch result {
+            case .success:
+                self?.loadingGroup.leave()
+            case .failure(let error):
+                self?.showReferralError(error)
+            }
+        }
+    }
+
+    private func showReferralError(_ error: Referrals.Error) {
+        let alert = UIAlertController(title: error.title,
+                                      message: error.message,
+                                      preferredStyle: .alert)
+        alert.addAction(.init(title: .localized(.continueMessage), style: .cancel) { [weak self] _ in
+            self?.loadingGroup.leave()
+        })
+        alert.addAction(.init(title: "Retry", style: .default) { [weak self] _ in
+            guard let code = self?.referralCode else { return }
+            self?.claimReferral(code)
+        })
+        present(alert, animated: true)
+    }
+}
+
+extension Referrals.Error {
+    var title: String {
+        switch self {
+        case .badRequest:
+            return "Invalid referral link!"
+        case .noConnection:
+            return "Network error!"
+        }
+    }
+
+    var message: String {
+        switch self {
+        case .badRequest:
+            return "Your referral link is wrong or not valid for you. Please check it and try again."
+        case .noConnection:
+            return "We couldn't verify your link. Please check your internet connection and try again."
+        }
     }
 }

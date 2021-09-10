@@ -1123,6 +1123,14 @@ class BrowserViewController: UIViewController {
         }
     }
 
+    func openBlankNewTabAndClaimReferral(code: String) {
+        User.shared.referrals.pendingClaim = code
+        popToBVC()
+        openURLInNewTab(nil, isPrivate: false)
+        // Intro logic will trigger claiming referral
+        presentIntroIfNeeded()
+    }
+
     func openSearchNewTab(isPrivate: Bool = false, _ text: String) {
         popToBVC()
         let engine = profile.searchEngines.defaultEngine
@@ -2078,6 +2086,8 @@ extension BrowserViewController {
             present(LoadingScreen(profile: profile, tabManager: tabManager), animated: true)
         } else if User.shared.showsWelcomeScreen {
             present(UpgradeScreen(), animated: true)
+        } else if let pendingClaim = User.shared.referrals.pendingClaim {
+            present(LoadingScreen(profile: profile, tabManager: tabManager, referralCode: pendingClaim), animated: true)
         }
     }
     
