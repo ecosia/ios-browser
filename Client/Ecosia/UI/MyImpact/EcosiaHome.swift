@@ -287,7 +287,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
                 }
             dismiss(animated: true, completion: nil)
         case .multiply:
-            navigationController?.pushViewController(MultiplayImpact(), animated: true)
+            navigationController?.pushViewController(MultiplyImpact(), animated: true)
         }
     }
 

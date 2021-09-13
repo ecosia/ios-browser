@@ -4,7 +4,7 @@
 
 import UIKit
 
-final class MultiplayImpact: UIViewController, Themeable {
+final class MultiplyImpact: UIViewController, Themeable {
     private weak var subtitle: UILabel?
     private weak var card: UIView?
     private weak var cardIcon: UIImageView?
