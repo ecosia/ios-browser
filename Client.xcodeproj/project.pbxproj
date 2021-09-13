@@ -469,6 +469,7 @@
 		CE0D8D1025B5DEE200B76E47 /* MozillaAppServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE0D8D0F25B5DEE200B76E47 /* MozillaAppServices.framework */; };
 		CE7728DC26288B300084C771 /* LoadingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7728DB26288B300084C771 /* LoadingScreen.swift */; };
 		CE7F11941F3CEEC800ABFC0B /* RemoteDevices.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7F115E1F3CCEF900ABFC0B /* RemoteDevices.swift */; };
+		CE9AEE0726EFA9CA00181C96 /* MultiplyImpactStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9AEE0626EFA9CA00181C96 /* MultiplyImpactStep.swift */; };
 		CEC685B326B82DA600FA4CA5 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7B2142FC1E5E055000CDD3FC /* InfoPlist.strings */; };
 		CECCC7222632C1D600D971E4 /* EcosiaBookmarkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECCC7212632C1D600D971E4 /* EcosiaBookmarkTests.swift */; };
 		CEF49E7A26EA3B10008C9EC5 /* MultiplayImpact.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF49E7926EA3B10008C9EC5 /* MultiplayImpact.swift */; };
@@ -3249,6 +3250,7 @@
 		CE664A9AB0ACFC6960CD6E81 /* pt-PT */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-PT"; path = "pt-PT.lproj/HistoryPanel.strings"; sourceTree = "<group>"; };
 		CE7728DB26288B300084C771 /* LoadingScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingScreen.swift; sourceTree = "<group>"; };
 		CE7F115E1F3CCEF900ABFC0B /* RemoteDevices.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteDevices.swift; sourceTree = "<group>"; };
+		CE9AEE0626EFA9CA00181C96 /* MultiplyImpactStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiplyImpactStep.swift; sourceTree = "<group>"; };
 		CEAC46CEA2B6CAB86A9E1345 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/3DTouchActions.strings; sourceTree = "<group>"; };
 		CECCC7212632C1D600D971E4 /* EcosiaBookmarkTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EcosiaBookmarkTests.swift; sourceTree = "<group>"; };
 		CEEB4EC881354939F3402DAE /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Menu.strings; sourceTree = "<group>"; };
@@ -5008,15 +5010,16 @@
 		CA05558126CD4B4B00126D0F /* MyImpact */ = {
 			isa = PBXGroup;
 			children = (
+				CAFA925E25791A810086E6AE /* EcosiaExploreCell.swift */,
 				CAFA921F257919040086E6AE /* EcosiaHome.swift */,
 				CAFA9234257919250086E6AE /* EcosiaNavigation.swift */,
-				CAFA925E25791A810086E6AE /* EcosiaExploreCell.swift */,
+				CEF49E7926EA3B10008C9EC5 /* MultiplayImpact.swift */,
+				CA05558226CD4C4700126D0F /* MultiplyImpactCell.swift */,
+				CE9AEE0626EFA9CA00181C96 /* MultiplyImpactStep.swift */,
+				CAFA924925791A6E0086E6AE /* MyImpactCell.swift */,
+				CA05558426CD4EEA00126D0F /* MyImpactStackView.swift */,
 				CAAED1EE25810C7A0048199C /* NewsCell.swift */,
 				CAAED1ED25810C7A0048199C /* NewsController.swift */,
-				CAFA924925791A6E0086E6AE /* MyImpactCell.swift */,
-				CA05558226CD4C4700126D0F /* MultiplyImpactCell.swift */,
-				CA05558426CD4EEA00126D0F /* MyImpactStackView.swift */,
-				CEF49E7926EA3B10008C9EC5 /* MultiplayImpact.swift */,
 			);
 			path = MyImpact;
 			sourceTree = "<group>";
@@ -7628,6 +7631,7 @@
 				CE0AB94A25F7C42600333656 /* Analytics.Values.swift in Sources */,
 				E4CD9E911A6897FB00318571 /* ReaderMode.swift in Sources */,
 				E68E7ADE1CAC208A00FDCA76 /* RemovePasscodeViewController.swift in Sources */,
+				CE9AEE0726EFA9CA00181C96 /* MultiplyImpactStep.swift in Sources */,
 				74C027451B2A348C001B1E88 /* SessionData.swift in Sources */,
 				274A36CC239EB99400A21587 /* LibraryPanelContextMenu.swift in Sources */,
 				D314E7F71A37B98700426A76 /* TabToolbar.swift in Sources */,
