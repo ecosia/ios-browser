@@ -78,7 +78,7 @@ final class MultiplayImpact: UIViewController, Themeable {
         
         let flowTitle = UILabel()
         flowTitle.translatesAutoresizingMaskIntoConstraints = false
-        flowTitle.text = .localized(.inviteAFriend)
+        flowTitle.text = .localized(.invitingAFriend)
         flowTitle.font = .systemFont(ofSize: UIFont.preferredFont(forTextStyle: .footnote).pointSize, weight: .semibold)
         scroll.addSubview(flowTitle)
         self.flowTitle = flowTitle
