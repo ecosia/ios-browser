@@ -76,7 +76,12 @@ final class MultiplayImpact: UIViewController, Themeable {
         learnMore.addTarget(self, action: #selector(self.learnMore), for: .touchUpInside)
         card.addSubview(learnMore)
         
-        
+        let flowTitle = UILabel()
+        flowTitle.translatesAutoresizingMaskIntoConstraints = false
+        flowTitle.text = .localized(.inviteAFriend)
+        flowTitle.font = .systemFont(ofSize: UIFont.preferredFont(forTextStyle: .footnote).pointSize, weight: .semibold)
+        scroll.addSubview(flowTitle)
+        self.flowTitle = flowTitle
         
         scroll.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
         scroll.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
@@ -107,6 +112,9 @@ final class MultiplayImpact: UIViewController, Themeable {
         learnMore.centerYAnchor.constraint(equalTo: card.centerYAnchor).isActive = true
         learnMore.rightAnchor.constraint(equalTo: card.rightAnchor, constant: -16).isActive = true
         
+        flowTitle.topAnchor.constraint(equalTo: card.bottomAnchor, constant: 23).isActive = true
+        flowTitle.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 16).isActive = true
+        
         let cardHeight = card.heightAnchor.constraint(equalToConstant: 0)
         cardHeight.priority = .defaultLow
         cardHeight.isActive = true
@@ -127,6 +135,7 @@ final class MultiplayImpact: UIViewController, Themeable {
         cardIcon?.image = UIImage(themed: "impactReferrals")
         cardTitle?.textColor = .theme.ecosia.highContrastText
         cardSubtitle?.textColor = .theme.ecosia.secondaryText
+        flowTitle?.textColor = .theme.ecosia.secondaryText
     }
     
     @objc private func learnMore() {
