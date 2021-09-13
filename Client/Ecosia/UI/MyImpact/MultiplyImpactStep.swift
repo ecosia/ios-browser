@@ -45,11 +45,11 @@ final class MultiplyImpactStep: UIView, Themeable {
         
         titleLabel.topAnchor.constraint(equalTo: topAnchor).isActive = true
         titleLabel.leftAnchor.constraint(equalTo: indicator.rightAnchor, constant: 12).isActive = true
-        titleLabel.rightAnchor.constraint(lessThanOrEqualTo: leftAnchor, constant: -12).isActive = true
+        titleLabel.rightAnchor.constraint(lessThanOrEqualTo: rightAnchor, constant: -12).isActive = true
         
         subtitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor).isActive = true
         subtitleLabel.leftAnchor.constraint(equalTo: indicator.rightAnchor, constant: 12).isActive = true
-        subtitleLabel.rightAnchor.constraint(lessThanOrEqualTo: indicator.leftAnchor, constant: -12).isActive = true
+        subtitleLabel.rightAnchor.constraint(lessThanOrEqualTo: rightAnchor, constant: -12).isActive = true
     }
     
     func applyTheme() {

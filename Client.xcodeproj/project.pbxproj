@@ -470,6 +470,7 @@
 		CE7728DC26288B300084C771 /* LoadingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7728DB26288B300084C771 /* LoadingScreen.swift */; };
 		CE7F11941F3CEEC800ABFC0B /* RemoteDevices.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7F115E1F3CCEF900ABFC0B /* RemoteDevices.swift */; };
 		CE9AEE0726EFA9CA00181C96 /* MultiplyImpactStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9AEE0626EFA9CA00181C96 /* MultiplyImpactStep.swift */; };
+		CE9AEE0926EFB19100181C96 /* MultiplyImpactDash.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9AEE0826EFB19100181C96 /* MultiplyImpactDash.swift */; };
 		CEC685B326B82DA600FA4CA5 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7B2142FC1E5E055000CDD3FC /* InfoPlist.strings */; };
 		CECCC7222632C1D600D971E4 /* EcosiaBookmarkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECCC7212632C1D600D971E4 /* EcosiaBookmarkTests.swift */; };
 		CEF49E7A26EA3B10008C9EC5 /* MultiplyImpact.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF49E7926EA3B10008C9EC5 /* MultiplyImpact.swift */; };
@@ -3251,6 +3252,7 @@
 		CE7728DB26288B300084C771 /* LoadingScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingScreen.swift; sourceTree = "<group>"; };
 		CE7F115E1F3CCEF900ABFC0B /* RemoteDevices.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteDevices.swift; sourceTree = "<group>"; };
 		CE9AEE0626EFA9CA00181C96 /* MultiplyImpactStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiplyImpactStep.swift; sourceTree = "<group>"; };
+		CE9AEE0826EFB19100181C96 /* MultiplyImpactDash.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiplyImpactDash.swift; sourceTree = "<group>"; };
 		CEAC46CEA2B6CAB86A9E1345 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/3DTouchActions.strings; sourceTree = "<group>"; };
 		CECCC7212632C1D600D971E4 /* EcosiaBookmarkTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EcosiaBookmarkTests.swift; sourceTree = "<group>"; };
 		CEEB4EC881354939F3402DAE /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Menu.strings; sourceTree = "<group>"; };
@@ -5016,6 +5018,7 @@
 				CA05558226CD4C4700126D0F /* MultiplyImpactCell.swift */,
 				CEF49E7926EA3B10008C9EC5 /* MultiplyImpact.swift */,
 				CE9AEE0626EFA9CA00181C96 /* MultiplyImpactStep.swift */,
+				CE9AEE0826EFB19100181C96 /* MultiplyImpactDash.swift */,
 				CAFA924925791A6E0086E6AE /* MyImpactCell.swift */,
 				CA05558426CD4EEA00126D0F /* MyImpactStackView.swift */,
 				CAAED1EE25810C7A0048199C /* NewsCell.swift */,
@@ -7835,6 +7838,7 @@
 				CA6BFAD925778D4E0026DFFF /* EcosiaTheme.swift in Sources */,
 				EBB89506219398E500EB91A0 /* TabContentBlocker.swift in Sources */,
 				D3E8EF101B97BE69001900FB /* ClearPrivateDataTableViewController.swift in Sources */,
+				CE9AEE0926EFB19100181C96 /* MultiplyImpactDash.swift in Sources */,
 				C8F457AA1F1FDD9B000CB895 /* BrowserViewController+KeyCommands.swift in Sources */,
 				59A68FD5260B8D520F890F4A /* ReaderPanel.swift in Sources */,
 				E40FAB0C1A7ABB77009CB80D /* WebServer.swift in Sources */,

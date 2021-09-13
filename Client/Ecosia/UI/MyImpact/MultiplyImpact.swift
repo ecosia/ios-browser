@@ -11,6 +11,9 @@ final class MultiplyImpact: UIViewController, Themeable {
     private weak var cardTitle: UILabel?
     private weak var cardSubtitle: UILabel?
     private weak var flowTitle: UILabel?
+    private weak var firstStep: MultiplyImpactStep?
+    private weak var secondStep: MultiplyImpactStep?
+    private weak var thirdStep: MultiplyImpactStep?
     
     required init?(coder: NSCoder) { nil }
     init() {
@@ -83,6 +86,21 @@ final class MultiplyImpact: UIViewController, Themeable {
         scroll.addSubview(flowTitle)
         self.flowTitle = flowTitle
         
+        let dash = MultiplyImpactDash()
+        scroll.addSubview(dash)
+        
+        let firstStep = MultiplyImpactStep(title: .localized(.autocomplete), subtitle: .localized(.autocomplete))
+        scroll.addSubview(firstStep)
+        self.firstStep = firstStep
+        
+        let secondStep = MultiplyImpactStep(title: .localized(.autocomplete), subtitle: .localized(.autocomplete))
+        scroll.addSubview(secondStep)
+        self.secondStep = secondStep
+        
+        let thirdStep = MultiplyImpactStep(title: .localized(.autocomplete), subtitle: .localized(.autocomplete))
+        scroll.addSubview(thirdStep)
+        self.thirdStep = thirdStep
+        
         scroll.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
         scroll.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
         scroll.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor).isActive = true
@@ -115,11 +133,30 @@ final class MultiplyImpact: UIViewController, Themeable {
         flowTitle.topAnchor.constraint(equalTo: card.bottomAnchor, constant: 23).isActive = true
         flowTitle.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 16).isActive = true
         
+        dash.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 16).isActive = true
+        dash.topAnchor.constraint(equalTo: firstStep.topAnchor, constant: 17).isActive = true
+        dash.bottomAnchor.constraint(equalTo: thirdStep.topAnchor, constant: 5).isActive = true
+        dash.widthAnchor.constraint(equalToConstant: 12).isActive = true
+        
+        firstStep.topAnchor.constraint(equalTo: flowTitle.bottomAnchor, constant: 12).isActive = true
+        firstStep.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor).isActive = true
+        firstStep.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor).isActive = true
+        
+        secondStep.topAnchor.constraint(equalTo: firstStep.bottomAnchor, constant: 20).isActive = true
+        secondStep.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor).isActive = true
+        secondStep.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor).isActive = true
+        
+        thirdStep.topAnchor.constraint(equalTo: secondStep.bottomAnchor, constant: 20).isActive = true
+        thirdStep.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor).isActive = true
+        thirdStep.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor).isActive = true
+        
         let cardHeight = card.heightAnchor.constraint(equalToConstant: 0)
         cardHeight.priority = .defaultLow
         cardHeight.isActive = true
         
         applyTheme()
+        
+        scroll.layoutIfNeeded()
     }
     
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -136,6 +173,10 @@ final class MultiplyImpact: UIViewController, Themeable {
         cardTitle?.textColor = .theme.ecosia.highContrastText
         cardSubtitle?.textColor = .theme.ecosia.secondaryText
         flowTitle?.textColor = .theme.ecosia.secondaryText
+        
+        firstStep?.applyTheme()
+        secondStep?.applyTheme()
+        thirdStep?.applyTheme()
     }
     
     @objc private func learnMore() {
