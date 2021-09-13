@@ -7,8 +7,10 @@ import UIKit
 final class MultiplayImpact: UIViewController, Themeable {
     private weak var subtitle: UILabel?
     private weak var card: UIView?
-    private weak var cardTitle: UILabel?
     private weak var cardIcon: UIImageView?
+    private weak var cardTitle: UILabel?
+    private weak var cardSubtitle: UILabel?
+    private weak var flowTitle: UILabel?
     
     required init?(coder: NSCoder) { nil }
     init() {
@@ -52,10 +54,29 @@ final class MultiplayImpact: UIViewController, Themeable {
         cardTitle.translatesAutoresizingMaskIntoConstraints = false
         cardTitle.numberOfLines = 0
         cardTitle.text = .localized(.invite3Friends)
-        cardTitle.font = .preferredFont(forTextStyle: .body)
+        cardTitle.font = .preferredFont(forTextStyle: .subheadline)
         cardTitle.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         card.addSubview(cardTitle)
         self.cardTitle = cardTitle
+        
+        let cardSubtitle = UILabel()
+        cardSubtitle.translatesAutoresizingMaskIntoConstraints = false
+        cardSubtitle.numberOfLines = 0
+        cardSubtitle.text = .localizedPlural(.treesPlural, num: 5)
+        cardSubtitle.font = .preferredFont(forTextStyle: .subheadline)
+        cardSubtitle.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        card.addSubview(cardSubtitle)
+        self.cardSubtitle = cardSubtitle
+        
+        let learnMore = UIButton()
+        learnMore.translatesAutoresizingMaskIntoConstraints = false
+        learnMore.setTitle(.localized(.learnMore), for: .normal)
+        learnMore.setTitleColor(.Photon.Teal50, for: .normal)
+        learnMore.titleLabel!.font = .preferredFont(forTextStyle: .footnote)
+        learnMore.addTarget(self, action: #selector(self.learnMore), for: .touchUpInside)
+        card.addSubview(learnMore)
+        
+        
         
         scroll.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
         scroll.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
@@ -70,10 +91,31 @@ final class MultiplayImpact: UIViewController, Themeable {
         card.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 16).isActive = true
         card.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -16).isActive = true
         card.bottomAnchor.constraint(greaterThanOrEqualTo: cardIcon.bottomAnchor, constant: 17).isActive = true
+        card.bottomAnchor.constraint(greaterThanOrEqualTo: cardSubtitle.bottomAnchor, constant: 12).isActive = true
         
         cardIcon.topAnchor.constraint(equalTo: card.topAnchor, constant: 17).isActive = true
         cardIcon.leftAnchor.constraint(equalTo: card.leftAnchor, constant: 16).isActive = true
         
+        cardTitle.topAnchor.constraint(equalTo: card.topAnchor, constant: 12).isActive = true
+        cardTitle.leftAnchor.constraint(equalTo: cardIcon.rightAnchor, constant: 12).isActive = true
+        cardTitle.rightAnchor.constraint(lessThanOrEqualTo: learnMore.leftAnchor, constant: -5).isActive = true
+        
+        cardSubtitle.topAnchor.constraint(equalTo: cardTitle.bottomAnchor).isActive = true
+        cardSubtitle.leftAnchor.constraint(equalTo: cardIcon.rightAnchor, constant: 12).isActive = true
+        cardSubtitle.rightAnchor.constraint(lessThanOrEqualTo: learnMore.leftAnchor, constant: -5).isActive = true
+        
+        learnMore.centerYAnchor.constraint(equalTo: card.centerYAnchor).isActive = true
+        learnMore.rightAnchor.constraint(equalTo: card.rightAnchor, constant: -16).isActive = true
+        
+        let cardHeight = card.heightAnchor.constraint(equalToConstant: 0)
+        cardHeight.priority = .defaultLow
+        cardHeight.isActive = true
+        
+        applyTheme()
+    }
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
         applyTheme()
     }
     
@@ -81,13 +123,13 @@ final class MultiplayImpact: UIViewController, Themeable {
         view.backgroundColor = .theme.ecosia.modalBackground
         subtitle?.textColor = .theme.ecosia.secondaryText
         card?.backgroundColor = .theme.ecosia.impactMultiplyCardBackground
-        cardTitle?.textColor = .theme.ecosia.secondaryText
         card?.layer.borderColor = UIColor.theme.ecosia.impactMultiplyCardBorder.cgColor
         cardIcon?.image = UIImage(themed: "impactReferrals")
+        cardTitle?.textColor = .theme.ecosia.highContrastText
+        cardSubtitle?.textColor = .theme.ecosia.secondaryText
     }
     
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-        applyTheme()
+    @objc private func learnMore() {
+        
     }
 }
