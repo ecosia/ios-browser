@@ -29,22 +29,24 @@ final class MultiplyImpact: UIViewController, Themeable {
         scroll.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(scroll)
         
+        let content = UIView()
+        content.translatesAutoresizingMaskIntoConstraints = false
+        scroll.addSubview(content)
+        
         let subtitle = UILabel()
         subtitle.translatesAutoresizingMaskIntoConstraints = false
         subtitle.numberOfLines = 0
         subtitle.text = .localized(.everyTimeYouInvite)
-        self.subtitle = subtitle
-        
         subtitle.font = .preferredFont(forTextStyle: .body)
         subtitle.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-        scroll.addSubview(subtitle)
+        content.addSubview(subtitle)
+        self.subtitle = subtitle
         
         let card = UIView()
         card.translatesAutoresizingMaskIntoConstraints = false
-        card.isUserInteractionEnabled = false
         card.layer.cornerRadius = 8
         card.layer.borderWidth = 1
-        scroll.addSubview(card)
+        content.addSubview(card)
         self.card = card
         
         let cardIcon = UIImageView()
@@ -84,23 +86,23 @@ final class MultiplyImpact: UIViewController, Themeable {
         flowTitle.translatesAutoresizingMaskIntoConstraints = false
         flowTitle.text = .localized(.invitingAFriend)
         flowTitle.font = .systemFont(ofSize: UIFont.preferredFont(forTextStyle: .footnote).pointSize, weight: .semibold)
-        scroll.addSubview(flowTitle)
+        content.addSubview(flowTitle)
         self.flowTitle = flowTitle
         
         let dash = MultiplyImpactDash()
-        scroll.addSubview(dash)
+        content.addSubview(dash)
         self.dash = dash
         
         let firstStep = MultiplyImpactStep(title: .localized(.autocomplete), subtitle: .localized(.autocomplete))
-        scroll.addSubview(firstStep)
+        content.addSubview(firstStep)
         self.firstStep = firstStep
         
         let secondStep = MultiplyImpactStep(title: .localized(.autocomplete), subtitle: .localized(.autocomplete))
-        scroll.addSubview(secondStep)
+        content.addSubview(secondStep)
         self.secondStep = secondStep
         
         let thirdStep = MultiplyImpactStep(title: .localized(.autocomplete), subtitle: .localized(.autocomplete))
-        scroll.addSubview(thirdStep)
+        content.addSubview(thirdStep)
         self.thirdStep = thirdStep
         
         let inviteFriends = UIButton()
@@ -112,20 +114,27 @@ final class MultiplyImpact: UIViewController, Themeable {
         inviteFriends.layer.cornerRadius = 14
         inviteFriends.backgroundColor = .theme.ecosia.primaryBrand
         inviteFriends.addTarget(self, action: #selector(self.inviteFriends), for: .touchUpInside)
-        scroll.addSubview(inviteFriends)
+        content.addSubview(inviteFriends)
         
         scroll.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
-        scroll.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
         scroll.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor).isActive = true
         scroll.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor).isActive = true
+        scroll.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
         
-        subtitle.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8).isActive = true
-        subtitle.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 16).isActive = true
-        subtitle.rightAnchor.constraint(lessThanOrEqualTo: view.safeAreaLayoutGuide.rightAnchor, constant: -16).isActive = true
+        content.topAnchor.constraint(equalTo: scroll.topAnchor).isActive = true
+        content.leftAnchor.constraint(equalTo: scroll.leftAnchor).isActive = true
+        content.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor).isActive = true
+        content.rightAnchor.constraint(equalTo: scroll.rightAnchor).isActive = true
+        content.bottomAnchor.constraint(greaterThanOrEqualTo: scroll.bottomAnchor).isActive = true
+        content.bottomAnchor.constraint(equalTo: inviteFriends.bottomAnchor, constant: 16).isActive = true
+        
+        subtitle.topAnchor.constraint(equalTo: content.topAnchor, constant: 8).isActive = true
+        subtitle.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 16).isActive = true
+        subtitle.rightAnchor.constraint(lessThanOrEqualTo: content.rightAnchor, constant: -16).isActive = true
         
         card.topAnchor.constraint(equalTo: subtitle.bottomAnchor, constant: 16).isActive = true
-        card.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 16).isActive = true
-        card.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -16).isActive = true
+        card.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 16).isActive = true
+        card.rightAnchor.constraint(equalTo: content.rightAnchor, constant: -16).isActive = true
         card.bottomAnchor.constraint(greaterThanOrEqualTo: cardIcon.bottomAnchor, constant: 17).isActive = true
         card.bottomAnchor.constraint(greaterThanOrEqualTo: cardSubtitle.bottomAnchor, constant: 12).isActive = true
         
@@ -144,29 +153,33 @@ final class MultiplyImpact: UIViewController, Themeable {
         learnMore.rightAnchor.constraint(equalTo: card.rightAnchor, constant: -16).isActive = true
         
         flowTitle.topAnchor.constraint(equalTo: card.bottomAnchor, constant: 23).isActive = true
-        flowTitle.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 16).isActive = true
+        flowTitle.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 16).isActive = true
         
-        dash.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 16).isActive = true
+        dash.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 16).isActive = true
         dash.topAnchor.constraint(equalTo: firstStep.topAnchor, constant: 17).isActive = true
         dash.bottomAnchor.constraint(equalTo: thirdStep.topAnchor, constant: 5).isActive = true
         dash.widthAnchor.constraint(equalToConstant: 12).isActive = true
         
         firstStep.topAnchor.constraint(equalTo: flowTitle.bottomAnchor, constant: 12).isActive = true
-        firstStep.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor).isActive = true
-        firstStep.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor).isActive = true
+        firstStep.leftAnchor.constraint(equalTo: content.leftAnchor).isActive = true
+        firstStep.rightAnchor.constraint(equalTo: content.rightAnchor).isActive = true
         
         secondStep.topAnchor.constraint(equalTo: firstStep.bottomAnchor, constant: 20).isActive = true
-        secondStep.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor).isActive = true
-        secondStep.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor).isActive = true
+        secondStep.leftAnchor.constraint(equalTo: content.leftAnchor).isActive = true
+        secondStep.rightAnchor.constraint(equalTo: content.rightAnchor).isActive = true
         
         thirdStep.topAnchor.constraint(equalTo: secondStep.bottomAnchor, constant: 20).isActive = true
-        thirdStep.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor).isActive = true
-        thirdStep.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor).isActive = true
+        thirdStep.leftAnchor.constraint(equalTo: content.leftAnchor).isActive = true
+        thirdStep.rightAnchor.constraint(equalTo: content.rightAnchor).isActive = true
         
-        inviteFriends.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 16).isActive = true
-        inviteFriends.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -16).isActive = true
-        inviteFriends.bottomAnchor.constraint(greaterThanOrEqualTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16).isActive = true
+        inviteFriends.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 16).isActive = true
+        inviteFriends.rightAnchor.constraint(equalTo: content.rightAnchor, constant: -16).isActive = true
         inviteFriends.heightAnchor.constraint(equalToConstant: 44).isActive = true
+        inviteFriends.topAnchor.constraint(greaterThanOrEqualTo: thirdStep.bottomAnchor, constant: 16).isActive = true
+        
+        let contentHeight = content.heightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.heightAnchor)
+        contentHeight.priority = .defaultLow
+        contentHeight.isActive = true
         
         let cardHeight = card.heightAnchor.constraint(equalToConstant: 0)
         cardHeight.priority = .defaultHigh
@@ -203,10 +216,10 @@ final class MultiplyImpact: UIViewController, Themeable {
     }
     
     @objc private func learnMore() {
-        
+        print("learn")
     }
     
     @objc private func inviteFriends() {
-        
+        print("invite")
     }
 }
