@@ -156,8 +156,8 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         Section.allCases.forEach {
             collectionView!.register($0.cell, forCellWithReuseIdentifier: String(describing: $0.cell))
         }
-        collectionView!.register(NewsHeaderCell.self, forCellWithReuseIdentifier: "NewsHeaderCell")
-        collectionView.register(NewsButtonCell.self, forCellWithReuseIdentifier: "NewsFooterCell")
+        collectionView!.register(HeaderCell.self, forCellWithReuseIdentifier: .init(describing: HeaderCell.self))
+        collectionView.register(MoreButtonCell.self, forCellWithReuseIdentifier: .init(describing: MoreButtonCell.self))
         collectionView.delegate = self
         collectionView.contentInsetAdjustmentBehavior = .scrollableAxes
 
@@ -222,7 +222,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
             return multiplyCell
         case .explore:
             if indexPath.row == 0 {
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "NewsHeaderCell", for: indexPath) as! NewsHeaderCell
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: .init(describing: HeaderCell.self), for: indexPath) as! HeaderCell
                 cell.titleLabel.text = section.sectionTitle
                 cell.setWidth(collectionView.bounds.width, insets: collectionView.safeAreaInsets)
                 return cell
@@ -234,12 +234,12 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
             }
         case .news:
             if indexPath.row == 0 {
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "NewsHeaderCell", for: indexPath) as! NewsHeaderCell
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: .init(describing: HeaderCell.self), for: indexPath) as! HeaderCell
                 cell.titleLabel.text = section.sectionTitle
                 cell.setWidth(collectionView.bounds.width, insets: collectionView.safeAreaInsets)
                 return cell
             } else if indexPath.row == self.collectionView(collectionView, numberOfItemsInSection: Section.news.rawValue) - 1 {
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "NewsFooterCell", for: indexPath) as! NewsButtonCell
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: .init(describing: MoreButtonCell.self), for: indexPath) as! MoreButtonCell
                 cell.moreButton.setTitle(.localized(.more), for: .normal)
                 cell.moreButton.addTarget(self, action: #selector(allNews), for: .primaryActionTriggered)
                 cell.setWidth(collectionView.bounds.width, insets: collectionView.safeAreaInsets)
@@ -316,7 +316,6 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         guard let section = Section(rawValue: section), section == .explore else { return .zero }
-
         return .init(top: 0, left: max(collectionView.safeAreaInsets.left, 16), bottom: 0, right: max(collectionView.safeAreaInsets.right, 16))
     }
 

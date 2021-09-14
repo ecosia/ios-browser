@@ -102,17 +102,21 @@ final class EcosiaExploreCell: UICollectionViewCell, Themeable, AutoSizingCell {
         applyTheme()
     }
 
-    func setWidth(_ width: CGFloat, insets: UIEdgeInsets) {
-        let margin: CGFloat = 16
-        let left = max(margin, insets.left)
-        let right = max(margin, insets.right)
-
-        var horizontalItems: CGFloat = traitCollection.userInterfaceIdiom == .pad ? 3 : 2
+    private var horizontalItems: Int {
+        var horizontalItems = traitCollection.userInterfaceIdiom == .pad ? 3 : 2
 
         let isLandscape = UIDevice.current.orientation == .landscapeLeft || UIDevice.current.orientation == .landscapeRight
         if isLandscape && traitCollection.userInterfaceIdiom == .phone {
             horizontalItems = 4
         }
+        return horizontalItems
+    }
+
+    func setWidth(_ width: CGFloat, insets: UIEdgeInsets) {
+        let horizontalItems = CGFloat(self.horizontalItems)
+        let margin: CGFloat = 16
+        let left = max(margin, insets.left)
+        let right = max(margin, insets.right)
         let width = floor((width - (horizontalItems - 1) * margin - left - right) / horizontalItems)
         widthConstraint.constant = width
     }
