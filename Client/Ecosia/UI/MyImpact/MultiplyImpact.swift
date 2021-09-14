@@ -11,6 +11,7 @@ final class MultiplyImpact: UIViewController, Themeable {
     private weak var cardTitle: UILabel?
     private weak var cardSubtitle: UILabel?
     private weak var flowTitle: UILabel?
+    private weak var dash: MultiplyImpactDash?
     private weak var firstStep: MultiplyImpactStep?
     private weak var secondStep: MultiplyImpactStep?
     private weak var thirdStep: MultiplyImpactStep?
@@ -88,6 +89,7 @@ final class MultiplyImpact: UIViewController, Themeable {
         
         let dash = MultiplyImpactDash()
         scroll.addSubview(dash)
+        self.dash = dash
         
         let firstStep = MultiplyImpactStep(title: .localized(.autocomplete), subtitle: .localized(.autocomplete))
         scroll.addSubview(firstStep)
@@ -174,6 +176,7 @@ final class MultiplyImpact: UIViewController, Themeable {
         cardSubtitle?.textColor = .theme.ecosia.secondaryText
         flowTitle?.textColor = .theme.ecosia.secondaryText
         
+        dash?.applyTheme()
         firstStep?.applyTheme()
         secondStep?.applyTheme()
         thirdStep?.applyTheme()

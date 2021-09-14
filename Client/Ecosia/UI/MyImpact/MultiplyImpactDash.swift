@@ -1,6 +1,6 @@
 import UIKit
 
-final class MultiplyImpactDash: UIView {
+final class MultiplyImpactDash: UIView, Themeable {
     private weak var dash: CAShapeLayer?
 
     required init?(coder: NSCoder) { nil }
@@ -13,7 +13,6 @@ final class MultiplyImpactDash: UIView {
         dash.backgroundColor = UIColor.clear.cgColor
         dash.lineWidth = 2
         dash.lineDashPattern = [4, 4]
-        dash.strokeColor = UIColor.Photon.Grey20.cgColor
         layer.addSublayer(dash)
         self.dash = dash
     }
@@ -26,5 +25,9 @@ final class MultiplyImpactDash: UIView {
             $0.addLine(to: .init(x: 6, y: frame.height))
             return $0
         } (CGMutablePath())
+    }
+    
+    func applyTheme() {
+        dash?.strokeColor = UIColor.theme.ecosia.barSeparator.cgColor
     }
 }

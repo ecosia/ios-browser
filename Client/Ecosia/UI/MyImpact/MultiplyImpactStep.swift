@@ -1,6 +1,7 @@
 import UIKit
 
 final class MultiplyImpactStep: UIView, Themeable {
+    private weak var indicator: UIView?
     private weak var titleLabel: UILabel?
     private weak var subtitleLabel: UILabel?
     
@@ -13,10 +14,10 @@ final class MultiplyImpactStep: UIView, Themeable {
         let indicator = UIView()
         indicator.translatesAutoresizingMaskIntoConstraints = false
         indicator.isUserInteractionEnabled = false
-        indicator.backgroundColor = .Photon.Grey20
         indicator.clipsToBounds = true
         indicator.layer.cornerRadius = 6
         addSubview(indicator)
+        self.indicator = indicator
         
         let titleLabel = UILabel()
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -53,6 +54,7 @@ final class MultiplyImpactStep: UIView, Themeable {
     }
     
     func applyTheme() {
+        indicator?.backgroundColor = .theme.ecosia.barSeparator
         titleLabel?.textColor = .theme.ecosia.highContrastText
         subtitleLabel?.textColor = .theme.ecosia.secondaryText
     }
