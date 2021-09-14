@@ -103,6 +103,17 @@ final class MultiplyImpact: UIViewController, Themeable {
         scroll.addSubview(thirdStep)
         self.thirdStep = thirdStep
         
+        let inviteFriends = UIButton()
+        inviteFriends.translatesAutoresizingMaskIntoConstraints = false
+        inviteFriends.setTitle(.localized(.autocomplete), for: [])
+        inviteFriends.setTitleColor(.white, for: .normal)
+        inviteFriends.setTitleColor(.white.withAlphaComponent(0.3), for: .highlighted)
+        inviteFriends.titleLabel!.font = .preferredFont(forTextStyle: .callout)
+        inviteFriends.layer.cornerRadius = 14
+        inviteFriends.backgroundColor = .theme.ecosia.primaryBrand
+        inviteFriends.addTarget(self, action: #selector(self.inviteFriends), for: .touchUpInside)
+        scroll.addSubview(inviteFriends)
+        
         scroll.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
         scroll.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
         scroll.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor).isActive = true
@@ -152,9 +163,18 @@ final class MultiplyImpact: UIViewController, Themeable {
         thirdStep.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor).isActive = true
         thirdStep.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor).isActive = true
         
+        inviteFriends.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 16).isActive = true
+        inviteFriends.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -16).isActive = true
+        inviteFriends.bottomAnchor.constraint(greaterThanOrEqualTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16).isActive = true
+        inviteFriends.heightAnchor.constraint(equalToConstant: 44).isActive = true
+        
         let cardHeight = card.heightAnchor.constraint(equalToConstant: 0)
-        cardHeight.priority = .defaultLow
+        cardHeight.priority = .defaultHigh
         cardHeight.isActive = true
+        
+        let inviteFriendsTop = inviteFriends.topAnchor.constraint(equalTo: thirdStep.bottomAnchor, constant: 16)
+        inviteFriendsTop.priority = .defaultLow
+        inviteFriendsTop.isActive = true
         
         applyTheme()
         
@@ -183,6 +203,10 @@ final class MultiplyImpact: UIViewController, Themeable {
     }
     
     @objc private func learnMore() {
+        
+    }
+    
+    @objc private func inviteFriends() {
         
     }
 }
