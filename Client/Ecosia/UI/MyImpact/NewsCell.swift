@@ -189,7 +189,7 @@ final class NewsCell: UICollectionViewCell, Themeable, AutoSizingCell {
         applyTheme()
     }
 
-    func setWidth(_ width: CGFloat) {
+    func setWidth(_ width: CGFloat, insets: UIEdgeInsets) {
         widthConstraint.constant = width
     }
 
@@ -203,7 +203,7 @@ final class NewsCell: UICollectionViewCell, Themeable, AutoSizingCell {
     }
 }
 
-final class NewsButtonCell: UICollectionReusableView {
+final class NewsButtonCell: UICollectionViewCell, AutoSizingCell {
     lazy var moreButton: UIButton = {
         let button = UIButton()
         button.setTitleColor(UIColor.theme.ecosia.primaryBrand, for: .normal)
@@ -213,15 +213,22 @@ final class NewsButtonCell: UICollectionReusableView {
         return button
     }()
 
+    private weak var widthConstraint: NSLayoutConstraint!
+
     override init(frame: CGRect) {
         super.init(frame: frame)
-        addSubview(moreButton)
+        contentView.addSubview(moreButton)
 
         moreButton.translatesAutoresizingMaskIntoConstraints = false
-        moreButton.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
-        moreButton.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
-        moreButton.topAnchor.constraint(equalTo: topAnchor).isActive = true
-        moreButton.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+        moreButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
+        moreButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
+        moreButton.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
+        moreButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
+
+        let widthConstraint = moreButton.widthAnchor.constraint(equalToConstant: 100)
+        widthConstraint.priority = .defaultHigh
+        widthConstraint.isActive = true
+        self.widthConstraint = widthConstraint
     }
 
     required init?(coder: NSCoder) {
@@ -232,6 +239,10 @@ final class NewsButtonCell: UICollectionReusableView {
         super.prepareForReuse()
         moreButton.setTitleColor(UIColor.theme.ecosia.primaryBrand, for: .normal)
         moreButton.setTitleColor(UIColor.Photon.Grey50, for: .highlighted)
+    }
+
+    func setWidth(_ width: CGFloat, insets: UIEdgeInsets) {
+        widthConstraint.constant = width
     }
 }
 
@@ -279,8 +290,8 @@ class NewsHeaderCell: UICollectionViewCell, AutoSizingCell ,Themeable {
         titleLabel.textColor = UIColor.theme.ecosia.highContrastText
     }
 
-    func setWidth(_ width: CGFloat) {
-        let margin = max(16, safeAreaInsets.left)
+    func setWidth(_ width: CGFloat, insets: UIEdgeInsets) {
+        let margin = max(max(16, insets.left), insets.right)
         widthConstraint.constant = width - 2 * margin
     }
 

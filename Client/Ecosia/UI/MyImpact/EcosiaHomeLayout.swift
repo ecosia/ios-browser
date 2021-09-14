@@ -5,7 +5,7 @@
 import UIKit
 
 protocol AutoSizingCell: UICollectionViewCell {
-    func setWidth(_ width: CGFloat)
+    func setWidth(_ width: CGFloat, insets: UIEdgeInsets)
 }
 
 class EcosiaHomeLayout: UICollectionViewFlowLayout {
@@ -15,7 +15,7 @@ class EcosiaHomeLayout: UICollectionViewFlowLayout {
         if widthChanged {
             let cells = collectionView?.visibleCells.compactMap({ $0 as? AutoSizingCell })
             cells?.forEach({ cell in
-                cell.setWidth(newBounds.width)
+                cell.setWidth(newBounds.width, insets: collectionView?.safeAreaInsets ?? .zero)
                 cell.setNeedsLayout()
             })
         }

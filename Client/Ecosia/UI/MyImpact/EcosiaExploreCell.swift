@@ -47,13 +47,13 @@ final class EcosiaExploreCell: UICollectionViewCell, Themeable, AutoSizingCell {
         image.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(image)
 
-        outline.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 0).isActive = true
-        outline.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: 0).isActive = true
+        outline.leadingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leadingAnchor, constant: 0).isActive = true
+        outline.trailingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.trailingAnchor, constant: 0).isActive = true
         outline.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
         outline.widthAnchor.constraint(equalTo: outline.heightAnchor, multiplier: 1).isActive = true
 
         let widthConstraint = outline.widthAnchor.constraint(equalToConstant: 100)
-        widthConstraint.priority = .defaultHigh
+        widthConstraint.priority = .init(999)
         widthConstraint.isActive = true
         self.widthConstraint = widthConstraint
 
@@ -102,10 +102,18 @@ final class EcosiaExploreCell: UICollectionViewCell, Themeable, AutoSizingCell {
         applyTheme()
     }
 
-    func setWidth(_ width: CGFloat) {
-        let margin = max(16, safeAreaInsets.left)
-        var width = (width - 2 * margin - 16)/2.0
-        width = min(width, 180)
+    func setWidth(_ width: CGFloat, insets: UIEdgeInsets) {
+        let margin: CGFloat = 16
+        let left = max(margin, insets.left)
+        let right = max(margin, insets.right)
+
+        var horizontalItems: CGFloat = traitCollection.userInterfaceIdiom == .pad ? 3 : 2
+
+        let isLandscape = UIDevice.current.orientation == .landscapeLeft || UIDevice.current.orientation == .landscapeRight
+        if isLandscape && traitCollection.userInterfaceIdiom == .phone {
+            horizontalItems = 4
+        }
+        let width = floor((width - (horizontalItems - 1) * margin - left - right) / horizontalItems)
         widthConstraint.constant = width
     }
 

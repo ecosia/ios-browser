@@ -111,8 +111,8 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
         outline.elevate()
     }
 
-    func setWidth(_ width: CGFloat) {
-        let margin = max(16, safeAreaInsets.left)
+    func setWidth(_ width: CGFloat, insets: UIEdgeInsets) {
+        let margin = max(max(16, insets.left), insets.right)
         widthConstraint.constant = width - 2 * margin
     }
 
