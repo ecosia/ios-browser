@@ -185,13 +185,7 @@ final class MultiplyImpact: UIViewController, Themeable {
         cardHeight.priority = .defaultHigh
         cardHeight.isActive = true
         
-        let inviteFriendsTop = inviteFriends.topAnchor.constraint(equalTo: thirdStep.bottomAnchor, constant: 16)
-        inviteFriendsTop.priority = .defaultLow
-        inviteFriendsTop.isActive = true
-        
         applyTheme()
-        
-        scroll.layoutIfNeeded()
     }
     
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
