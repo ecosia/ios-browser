@@ -137,4 +137,8 @@ final class Analytics {
                     .label("top_sites")
                     .property(topSite.rawValue))
     }
+    
+    func referral() {
+        
+    }
 }
