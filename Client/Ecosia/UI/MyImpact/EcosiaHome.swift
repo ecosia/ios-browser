@@ -133,10 +133,12 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     }()
 
     convenience init(delegate: EcosiaHomeDelegate?) {
-        let layout = UICollectionViewFlowLayout()
+        let layout = EcosiaHomeLayout()
         layout.scrollDirection = .vertical
         layout.minimumInteritemSpacing = 16
         layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
+        layout.footerReferenceSize = .zero
+        layout.headerReferenceSize = .zero
         self.init(collectionViewLayout: layout)
         self.title = .localized(.myImpact).capitalized
         self.delegate = delegate
@@ -154,8 +156,8 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         Section.allCases.forEach {
             collectionView!.register($0.cell, forCellWithReuseIdentifier: String(describing: $0.cell))
         }
-        collectionView!.register(NewsHeaderCell.self, forCellWithReuseIdentifier: "NewsHeaderCell")
-        collectionView.register(NewsButtonCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "Footer")
+        collectionView!.register(HeaderCell.self, forCellWithReuseIdentifier: .init(describing: HeaderCell.self))
+        collectionView.register(MoreButtonCell.self, forCellWithReuseIdentifier: .init(describing: MoreButtonCell.self))
         collectionView.delegate = self
         collectionView.contentInsetAdjustmentBehavior = .scrollableAxes
 
@@ -168,7 +170,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
             self?.collectionView.reloadSections([Section.news.rawValue])
         }
 
-        personalCounter.subscribeAndReceive(self)  { [weak self] _ in
+        personalCounter.subscribe(self)  { [weak self] _ in
             self?.collectionView.reloadSections([Section.impact.rawValue])
         }
     }
@@ -181,7 +183,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         guard hasAppeared else { return hasAppeared = true }
         updateBarAppearance()
         collectionView.scrollRectToVisible(.init(x: 0, y: 0, width: 1, height: 1), animated: false)
-        collectionView.reloadSections([Section.impact.rawValue])
+        collectionView.reloadData()
     }
 
     // MARK: UICollectionViewDataSource
@@ -194,24 +196,23 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         case .impact: return 1
         case .multiply: return 1
         case .explore: return Section.Explore.allCases.count + 1 // header
-        case .news: return min(3, items.count) + 1 // header
+        case .news: return min(3, items.count) + 2 // header and footer
         }
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 
         let section = Section(rawValue: indexPath.section)!
-        let margin = max(16, collectionView.safeAreaInsets.left)
 
         switch  section {
         case .impact:
             let infoCell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: section.cell), for: indexPath) as! MyImpactCell
-            infoCell.widthConstraint.constant = collectionView.bounds.width - 2 * margin
+            infoCell.setWidth(collectionView.bounds.width, insets: collectionView.safeAreaInsets)
             infoCell.display(impactModel)
             return infoCell
         case .multiply:
             let multiplyCell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: section.cell), for: indexPath) as! MultiplyImpactCell
-            multiplyCell.widthConstraint.constant = collectionView.bounds.width - 2 * margin
+            multiplyCell.setWidth(collectionView.bounds.width, insets: collectionView.safeAreaInsets)
             let model = MyImpactStackViewModel(title: .localized(.multiplyImpact),
                                                highlight: false,
                                                subtitle: nil,
@@ -221,44 +222,35 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
             return multiplyCell
         case .explore:
             if indexPath.row == 0 {
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "NewsHeaderCell", for: indexPath) as! NewsHeaderCell
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: .init(describing: HeaderCell.self), for: indexPath) as! HeaderCell
                 cell.titleLabel.text = section.sectionTitle
-                cell.widthConstraint.constant = collectionView.bounds.width - 2 * margin
+                cell.setWidth(collectionView.bounds.width, insets: collectionView.safeAreaInsets)
                 return cell
             } else {
                 let exploreCell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: section.cell), for: indexPath) as! EcosiaExploreCell
-                var width = (view.bounds.width - 2 * margin - 16)/2.0
-                width = min(width, 180)
-                exploreCell.widthConstraint.constant = width
+                exploreCell.setWidth(collectionView.bounds.width, insets: collectionView.safeAreaInsets)
                 Section.Explore(rawValue: indexPath.row - 1).map { exploreCell.display($0) }
                 return exploreCell
             }
         case .news:
             if indexPath.row == 0 {
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "NewsHeaderCell", for: indexPath) as! NewsHeaderCell
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: .init(describing: HeaderCell.self), for: indexPath) as! HeaderCell
                 cell.titleLabel.text = section.sectionTitle
-                cell.widthConstraint.constant = collectionView.bounds.width - 2 * margin
+                cell.setWidth(collectionView.bounds.width, insets: collectionView.safeAreaInsets)
+                return cell
+            } else if indexPath.row == self.collectionView(collectionView, numberOfItemsInSection: Section.news.rawValue) - 1 {
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: .init(describing: MoreButtonCell.self), for: indexPath) as! MoreButtonCell
+                cell.moreButton.setTitle(.localized(.more), for: .normal)
+                cell.moreButton.addTarget(self, action: #selector(allNews), for: .primaryActionTriggered)
+                cell.setWidth(collectionView.bounds.width, insets: collectionView.safeAreaInsets)
                 return cell
             } else {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: section.cell), for: indexPath) as! NewsCell
-                let itemCount = self.collectionView(collectionView, numberOfItemsInSection: Section.news.rawValue) - 1
+                let itemCount = self.collectionView(collectionView, numberOfItemsInSection: Section.news.rawValue) - 2
                 cell.configure(items[indexPath.row - 1], images: images, positions: .derive(row: indexPath.row - 1, items: itemCount))
-                cell.widthConstraint.constant = collectionView.bounds.width
+                cell.setWidth(collectionView.bounds.width, insets: collectionView.safeAreaInsets)
                 return cell
             }
-        }
-    }
-
-    override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-
-        switch kind {
-        case UICollectionView.elementKindSectionFooter:
-            let view = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "Footer", for: indexPath) as! NewsButtonCell
-            view.moreButton.setTitle(.localized(.more), for: .normal)
-            view.moreButton.addTarget(self, action: #selector(allNews), for: .touchUpInside)
-            return view
-        default:
-            return UICollectionReusableView()
         }
     }
 
@@ -276,8 +268,10 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
                 dismiss(animated: true, completion: nil)
             }
         case .news:
-            delegate?.ecosiaHome(didSelectURL: items[indexPath.row].targetUrl)
-            Analytics.shared.navigationOpenNews(items[indexPath.row].trackingName)
+            let index = indexPath.row - 1
+            guard index >= 0, items.count > index else { return }
+            delegate?.ecosiaHome(didSelectURL: items[index].targetUrl)
+            Analytics.shared.navigationOpenNews(items[index].trackingName)
             dismiss(animated: true, completion: nil)
         case .explore:
             Section.Explore(rawValue: indexPath.row)
@@ -303,20 +297,9 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         case .news:
             return CGSize(width: view.bounds.width, height: 130)
         case .explore:
-
             var width = (view.bounds.width - 2 * margin - 16)/2.0
             width = min(width, 180)
             return CGSize(width: width, height: width + 32)
-        }
-    }
-
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
-
-        switch Section(rawValue: section)! {
-        case .news:
-            return CGSize(width: view.bounds.width - 32, height: 36)
-        default:
-            return .zero
         }
     }
 
@@ -333,7 +316,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         guard let section = Section(rawValue: section), section == .explore else { return .zero }
-        return .init(top: 0, left: 16, bottom: 0, right: 16)
+        return .init(top: 0, left: max(collectionView.safeAreaInsets.left, 16), bottom: 0, right: max(collectionView.safeAreaInsets.right, 16))
     }
 
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {

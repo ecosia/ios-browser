@@ -11,7 +11,7 @@ protocol EcosiaExploreCellModel {
 
 extension EcosiaHome.Section.Explore: EcosiaExploreCellModel {}
 
-final class EcosiaExploreCell: UICollectionViewCell, Themeable {
+final class EcosiaExploreCell: UICollectionViewCell, Themeable, AutoSizingCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
@@ -25,7 +25,7 @@ final class EcosiaExploreCell: UICollectionViewCell, Themeable {
     var image: UIImageView!
     var outline: UIView!
 
-    var widthConstraint: NSLayoutConstraint!
+    private weak var widthConstraint: NSLayoutConstraint!
 
     private func setup() {
         outline = UIView()
@@ -47,13 +47,13 @@ final class EcosiaExploreCell: UICollectionViewCell, Themeable {
         image.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(image)
 
-        outline.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 0).isActive = true
-        outline.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: 0).isActive = true
+        outline.leadingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leadingAnchor, constant: 0).isActive = true
+        outline.trailingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.trailingAnchor, constant: 0).isActive = true
         outline.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
         outline.widthAnchor.constraint(equalTo: outline.heightAnchor, multiplier: 1).isActive = true
 
         let widthConstraint = outline.widthAnchor.constraint(equalToConstant: 100)
-        widthConstraint.priority = .defaultHigh
+        widthConstraint.priority = .init(999)
         widthConstraint.isActive = true
         self.widthConstraint = widthConstraint
 
@@ -100,6 +100,25 @@ final class EcosiaExploreCell: UICollectionViewCell, Themeable {
     override func prepareForReuse() {
         super.prepareForReuse()
         applyTheme()
+    }
+
+    private var horizontalItems: Int {
+        var horizontalItems = traitCollection.userInterfaceIdiom == .pad ? 3 : 2
+
+        let isLandscape = UIDevice.current.orientation == .landscapeLeft || UIDevice.current.orientation == .landscapeRight
+        if isLandscape && traitCollection.userInterfaceIdiom == .phone {
+            horizontalItems = 4
+        }
+        return horizontalItems
+    }
+
+    func setWidth(_ width: CGFloat, insets: UIEdgeInsets) {
+        let horizontalItems = CGFloat(self.horizontalItems)
+        let margin: CGFloat = 16
+        let left = max(margin, insets.left)
+        let right = max(margin, insets.right)
+        let width = floor((width - (horizontalItems - 1) * margin - left - right) / horizontalItems)
+        widthConstraint.constant = width
     }
 
     func applyTheme() {

@@ -411,9 +411,11 @@
 		CA06A598268C721A00E9AC4F /* AddNewTabButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA06A597268C721A00E9AC4F /* AddNewTabButton.swift */; };
 		CA089C1A26CAB56E001686DF /* UIFont+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA089C1926CAB56E001686DF /* UIFont+Ecosia.swift */; };
 		CA08B86F255EE8B6005CA6A4 /* EcosiaImport+PerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA08B86E255EE8B6005CA6A4 /* EcosiaImport+PerformanceTests.swift */; };
+		CA15677926F0D70600DAEB2D /* EcosiaHomeCells.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA15677826F0D70600DAEB2D /* EcosiaHomeCells.swift */; };
 		CA24B52224ABD7D40093848C /* LoginsListViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA24B52024ABD7D40093848C /* LoginsListViewModelTests.swift */; };
 		CA24B53924ABFE250093848C /* LoginsListSelectionHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA24B53824ABFE250093848C /* LoginsListSelectionHelperTests.swift */; };
 		CA24B53B24ABFE5D0093848C /* LoginsListDataSourceHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA24B53A24ABFE5D0093848C /* LoginsListDataSourceHelperTests.swift */; };
+		CA31D8E826E8CE930004FF64 /* EcosiaHomeLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA31D8E726E8CE930004FF64 /* EcosiaHomeLayout.swift */; };
 		CA4ACE4924C8C91600F55894 /* BreachAlertsDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4ACE4824C8C91500F55894 /* BreachAlertsDetailView.swift */; };
 		CA4ADEC1268B06EA00CE1C88 /* TreesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4ADEC0268B06EA00CE1C88 /* TreesCell.swift */; };
 		CA4DDE5125430FA700966CF2 /* FakeSentry.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4DDE2925430E2400966CF2 /* FakeSentry.swift */; };
@@ -3159,10 +3161,12 @@
 		CA06A597268C721A00E9AC4F /* AddNewTabButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddNewTabButton.swift; sourceTree = "<group>"; };
 		CA089C1926CAB56E001686DF /* UIFont+Ecosia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+Ecosia.swift"; sourceTree = "<group>"; };
 		CA08B86E255EE8B6005CA6A4 /* EcosiaImport+PerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EcosiaImport+PerformanceTests.swift"; sourceTree = "<group>"; };
+		CA15677826F0D70600DAEB2D /* EcosiaHomeCells.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaHomeCells.swift; sourceTree = "<group>"; };
 		CA21D47C2602542E002EC808 /* EcosiaBeta.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = EcosiaBeta.entitlements; sourceTree = "<group>"; };
 		CA24B52024ABD7D40093848C /* LoginsListViewModelTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginsListViewModelTests.swift; sourceTree = "<group>"; };
 		CA24B53824ABFE250093848C /* LoginsListSelectionHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginsListSelectionHelperTests.swift; sourceTree = "<group>"; };
 		CA24B53A24ABFE5D0093848C /* LoginsListDataSourceHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginsListDataSourceHelperTests.swift; sourceTree = "<group>"; };
+		CA31D8E726E8CE930004FF64 /* EcosiaHomeLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaHomeLayout.swift; sourceTree = "<group>"; };
 		CA32540125485C700024B48D /* Ecosia.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Ecosia.entitlements; sourceTree = "<group>"; };
 		CA32552425487C1C0024B48D /* EcosiaBeta.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = EcosiaBeta.xcconfig; path = Configuration/EcosiaBeta.xcconfig; sourceTree = "<group>"; };
 		CA4ACE4824C8C91500F55894 /* BreachAlertsDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreachAlertsDetailView.swift; sourceTree = "<group>"; };
@@ -5015,6 +5019,12 @@
 				CAFA925E25791A810086E6AE /* EcosiaExploreCell.swift */,
 				CAFA921F257919040086E6AE /* EcosiaHome.swift */,
 				CAFA9234257919250086E6AE /* EcosiaNavigation.swift */,
+				CA31D8E726E8CE930004FF64 /* EcosiaHomeLayout.swift */,
+				CAFA925E25791A810086E6AE /* EcosiaExploreCell.swift */,
+				CA15677826F0D70600DAEB2D /* EcosiaHomeCells.swift */,
+				CAAED1EE25810C7A0048199C /* NewsCell.swift */,
+				CAAED1ED25810C7A0048199C /* NewsController.swift */,
+				CAFA924925791A6E0086E6AE /* MyImpactCell.swift */,
 				CA05558226CD4C4700126D0F /* MultiplyImpactCell.swift */,
 				CEF49E7926EA3B10008C9EC5 /* MultiplyImpact.swift */,
 				CE9AEE0626EFA9CA00181C96 /* MultiplyImpactStep.swift */,
@@ -7629,6 +7639,7 @@
 				7482205C1DBAB56300EEEA72 /* MailProviders.swift in Sources */,
 				CAAED1EF25810C7B0048199C /* NewsController.swift in Sources */,
 				C40046FA1CF8E0B200B08303 /* BackForwardListAnimator.swift in Sources */,
+				CA15677926F0D70600DAEB2D /* EcosiaHomeCells.swift in Sources */,
 				DD31E0FB1B382B520077078A /* TabPrintPageRenderer.swift in Sources */,
 				D81E45131F82C56D004EFFBA /* NewTabContentSettingsViewController.swift in Sources */,
 				CE0AB94A25F7C42600333656 /* Analytics.Values.swift in Sources */,
@@ -7669,6 +7680,7 @@
 				E69E06BA1C76173D00D0F926 /* RequirePasscodeIntervalViewController.swift in Sources */,
 				D0E89A2920910917001CE5C7 /* DownloadsPanel.swift in Sources */,
 				D3BA7E0E1B0E934F00153782 /* ContextMenuHelper.swift in Sources */,
+				CA31D8E826E8CE930004FF64 /* EcosiaHomeLayout.swift in Sources */,
 				E660BE061BB0666D009AC090 /* InnerStrokedView.swift in Sources */,
 				0BB5B30B1AC0AD1F0052877D /* LoginsHelper.swift in Sources */,
 				E69E06C91C76198000D0F926 /* AuthenticationManagerConstants.swift in Sources */,
@@ -12839,7 +12851,7 @@
 			repositoryURL = "https://github.com/snowplow/snowplow-objc-tracker.git";
 			requirement = {
 				kind = exactVersion;
-				version = 1.6.2;
+				version = 2.2.2;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

@@ -4,7 +4,7 @@
 
 import UIKit
 
-final class MultiplyImpactCell: UICollectionViewCell, Themeable {
+final class MultiplyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
@@ -17,7 +17,7 @@ final class MultiplyImpactCell: UICollectionViewCell, Themeable {
     weak var stack: MyImpactStackView!
     weak var outline: UIView!
     var model: MyImpcactCellModel?
-    var widthConstraint: NSLayoutConstraint!
+    private var widthConstraint: NSLayoutConstraint!
 
     private func setup() {
         let outline = UIView()
@@ -68,6 +68,11 @@ final class MultiplyImpactCell: UICollectionViewCell, Themeable {
     func applyTheme() {
         stack.applyTheme()
         outline.elevate()
+    }
+
+    func setWidth(_ width: CGFloat, insets: UIEdgeInsets) {
+        let margin = max(max(16, insets.left), insets.right)
+        widthConstraint.constant = width - 2 * margin
     }
 
     override func prepareForReuse() {
