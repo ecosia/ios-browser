@@ -1052,10 +1052,16 @@ extension FirefoxHomeViewController: TreesCellDelegate {
 
     fileprivate var spotlight: TreesCellModel.Spotlight? {
         guard User.shared.showsReferralSpotlight else { return nil }
-        return .init(headline: .localized(.helpPlanting), description: .localized(.togetherWeCan))
+        return .init(headline: .localized(.inviteFriendsSpotlight), description: .localized(.togetherWeCan))
     }
 
     fileprivate var treesCellModel: TreesCellModel {
+        guard Goodall.shared.variant(for: .referrals) == "test" else {
+            return .init(title: .localizedPlural(.searches, num: personalCounter.state!),
+                         subtitle: .localized(.viewMyImpact),
+                         highlight: nil,
+                         spotlight: nil)
+        }
 
         if personalCounter.state == 0 && User.shared.referrals.impact == 0 {
             return .init(title: .localizedPlural(.treesPlural, num: 0),

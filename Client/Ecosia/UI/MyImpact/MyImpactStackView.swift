@@ -104,6 +104,7 @@ class MyImpactStackView: UIStackView, Themeable {
         subtitleLabel.adjustsFontForContentSizeCategory = true
         subtitleLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
         subtitleLabel.setContentHuggingPriority(.defaultHigh, for: .vertical)
+        subtitleLabel.numberOfLines = 0
         labelStack.addArrangedSubview(subtitleLabel)
         self.subtitleLabel = subtitleLabel
 
