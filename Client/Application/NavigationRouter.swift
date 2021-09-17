@@ -55,7 +55,7 @@ enum DeepLink {
             self = .homePanel(link)
         } else if component == "default-browser", let link = DefaultBrowserPath(rawValue: String(componentPath)) {
             self = .defaultBrowser(link)
-        } else if component == "trees" {
+        } else if component == "join" {
             self = .referral(String(componentPath))
         } else {
             return nil
@@ -96,7 +96,7 @@ enum NavigationPath {
             return nil
         }
 
-        if urlString.starts(with: "ecosia://deep-link/trees"), let link = DeepLink(urlString: url.path) {
+        if urlString.starts(with: "ecosia://join"), let link = DeepLink(urlString: url.normalizedHostAndPath ?? "") {
             self = .deepLink(link)
             Analytics.shared.deeplink()
         } else if urlString.starts(with: "\(scheme)://deep-link"), let deepURL = components.valueForQuery("url"), let link = DeepLink(urlString: deepURL.lowercased()) {
