@@ -186,18 +186,18 @@ extension Referrals.Error {
     var title: String {
         switch self {
         case .badRequest:
-            return "Invalid referral link!"
+            return .localized(.invalidReferralLink)
         case .noConnection:
-            return "Network error!"
+            return .localized(.networkError)
         }
     }
 
     var message: String {
         switch self {
         case .badRequest:
-            return "Your referral link is wrong or not valid for you. Please check it and try again."
+            return .localized(.invalidReferralLinkMessage)
         case .noConnection:
-            return "We couldn't verify your link. Please check your internet connection and try again."
+            return .localized(.noConnectionMessage)
         }
     }
 }
