@@ -183,7 +183,7 @@ enum NavigationPath {
         case .defaultBrowser(let path):
             NavigationPath.handleDefaultBrowser(path: path)
         case .referral(let code):
-            NavigationPath.handleReferral(code: code, with: bvc)
+            bvc.openBlankNewTabAndClaimReferral(code: code)
         }
     }
 
@@ -213,10 +213,6 @@ enum NavigationPath {
         case .topSites: bvc.openURLInNewTab(HomePanelType.topSites.internalUrl)
         case .newPrivateTab: bvc.openBlankNewTab(focusLocationField: false, isPrivate: true)
         }
-    }
-
-    private static func handleReferral(code: String, with bvc: BrowserViewController) {
-        bvc.openBlankNewTabAndClaimReferral(code: code)
     }
 
     private static func handleURL(url: URL?, isPrivate: Bool, with bvc: BrowserViewController) {
