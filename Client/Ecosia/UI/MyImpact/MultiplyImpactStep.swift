@@ -29,6 +29,7 @@ final class MultiplyImpactStep: UIView, Themeable {
         titleLabel.text = title
         titleLabel.font = .preferredFont(forTextStyle: .subheadline)
         titleLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        titleLabel.adjustsFontForContentSizeCategory = true
         addSubview(titleLabel)
         self.titleLabel = titleLabel
         
@@ -38,6 +39,7 @@ final class MultiplyImpactStep: UIView, Themeable {
         subtitleLabel.text = subtitle
         subtitleLabel.font = .preferredFont(forTextStyle: .subheadline)
         subtitleLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        subtitleLabel.adjustsFontForContentSizeCategory = true
         addSubview(subtitleLabel)
         self.subtitleLabel = subtitleLabel
         

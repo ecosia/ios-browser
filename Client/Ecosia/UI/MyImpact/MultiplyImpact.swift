@@ -42,6 +42,7 @@ final class MultiplyImpact: UIViewController, Themeable {
         subtitle.text = .localized(.everyTimeYouInvite)
         subtitle.font = .preferredFont(forTextStyle: .body)
         subtitle.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        subtitle.adjustsFontForContentSizeCategory = true
         content.addSubview(subtitle)
         self.subtitle = subtitle
         
@@ -65,6 +66,7 @@ final class MultiplyImpact: UIViewController, Themeable {
         cardTitle.text = .localizedPlural(.successfulInvites, num: User.shared.referrals.count)
         cardTitle.font = .preferredFont(forTextStyle: .subheadline)
         cardTitle.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        cardTitle.adjustsFontForContentSizeCategory = true
         card.addSubview(cardTitle)
         self.cardTitle = cardTitle
         
@@ -74,6 +76,7 @@ final class MultiplyImpact: UIViewController, Themeable {
         cardSubtitle.text = .localizedPlural(.treesPlural, num: User.shared.referrals.count)
         cardSubtitle.font = .preferredFont(forTextStyle: .subheadline)
         cardSubtitle.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        cardSubtitle.adjustsFontForContentSizeCategory = true
         card.addSubview(cardSubtitle)
         self.cardSubtitle = cardSubtitle
         
@@ -82,6 +85,7 @@ final class MultiplyImpact: UIViewController, Themeable {
         learnMore.setTitle(.localized(.learnMore), for: .normal)
         learnMore.setTitleColor(.theme.ecosia.primaryBrand, for: .normal)
         learnMore.titleLabel!.font = .preferredFont(forTextStyle: .callout)
+        learnMore.titleLabel!.adjustsFontForContentSizeCategory = true
         learnMore.addTarget(self, action: #selector(self.learnMore), for: .touchUpInside)
         card.addSubview(learnMore)
         
@@ -89,6 +93,7 @@ final class MultiplyImpact: UIViewController, Themeable {
         flowTitle.translatesAutoresizingMaskIntoConstraints = false
         flowTitle.text = .localized(.invitingAFriend)
         flowTitle.font = .systemFont(ofSize: UIFont.preferredFont(forTextStyle: .footnote).pointSize, weight: .semibold)
+        flowTitle.adjustsFontForContentSizeCategory = true
         content.addSubview(flowTitle)
         self.flowTitle = flowTitle
         
@@ -114,6 +119,7 @@ final class MultiplyImpact: UIViewController, Themeable {
         inviteFriends.setTitleColor(.white, for: .normal)
         inviteFriends.setTitleColor(.white.withAlphaComponent(0.3), for: .highlighted)
         inviteFriends.titleLabel!.font = .preferredFont(forTextStyle: .callout)
+        inviteFriends.titleLabel!.adjustsFontForContentSizeCategory = true
         inviteFriends.layer.cornerRadius = 14
         inviteFriends.backgroundColor = .theme.ecosia.primaryBrand
         inviteFriends.addTarget(self, action: #selector(self.inviteFriends), for: .touchUpInside)
