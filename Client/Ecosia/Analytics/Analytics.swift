@@ -137,4 +137,18 @@ final class Analytics {
                     .label("top_sites")
                     .property(topSite.rawValue))
     }
+    
+    func openInvitations() {
+        tracker
+            .track(Structured(category: Category.invitations.rawValue,
+                              action: Action.view.rawValue)
+                    .label("invite_screen"))
+    }
+    
+    func sendInvite() {
+        tracker
+            .track(Structured(category: Category.invitations.rawValue,
+                              action: Action.send.rawValue)
+                    .label("invite"))
+    }
 }

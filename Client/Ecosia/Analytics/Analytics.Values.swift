@@ -8,7 +8,8 @@ extension Analytics {
         external,
         migration,
         navigation,
-        onboarding
+        onboarding,
+        invitations
     }
     
     enum Label {
@@ -46,7 +47,8 @@ extension Analytics {
         error,
         completed,
         success,
-        retry
+        retry,
+        send
         
         enum Activity: String {
             case

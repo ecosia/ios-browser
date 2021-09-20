@@ -471,8 +471,11 @@
 		CE0D8D1025B5DEE200B76E47 /* MozillaAppServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE0D8D0F25B5DEE200B76E47 /* MozillaAppServices.framework */; };
 		CE7728DC26288B300084C771 /* LoadingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7728DB26288B300084C771 /* LoadingScreen.swift */; };
 		CE7F11941F3CEEC800ABFC0B /* RemoteDevices.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7F115E1F3CCEF900ABFC0B /* RemoteDevices.swift */; };
+		CE9AEE0726EFA9CA00181C96 /* MultiplyImpactStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9AEE0626EFA9CA00181C96 /* MultiplyImpactStep.swift */; };
+		CE9AEE0926EFB19100181C96 /* MultiplyImpactDash.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9AEE0826EFB19100181C96 /* MultiplyImpactDash.swift */; };
 		CEC685B326B82DA600FA4CA5 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7B2142FC1E5E055000CDD3FC /* InfoPlist.strings */; };
 		CECCC7222632C1D600D971E4 /* EcosiaBookmarkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECCC7212632C1D600D971E4 /* EcosiaBookmarkTests.swift */; };
+		CEF49E7A26EA3B10008C9EC5 /* MultiplyImpact.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF49E7926EA3B10008C9EC5 /* MultiplyImpact.swift */; };
 		CEFA977E1FAA6B490016F365 /* SyncContentSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA977D1FAA6B490016F365 /* SyncContentSettingsViewController.swift */; };
 		D006F2E32283307B0004D3AB /* KIF.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7B604F981C494F74006EEEC3 /* KIF.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D01017F5219CB6BD009CBB5A /* DownloadContentScript.swift in Sources */ = {isa = PBXBuildFile; fileRef = D01017F4219CB6BD009CBB5A /* DownloadContentScript.swift */; };
@@ -3252,9 +3255,12 @@
 		CE664A9AB0ACFC6960CD6E81 /* pt-PT */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-PT"; path = "pt-PT.lproj/HistoryPanel.strings"; sourceTree = "<group>"; };
 		CE7728DB26288B300084C771 /* LoadingScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingScreen.swift; sourceTree = "<group>"; };
 		CE7F115E1F3CCEF900ABFC0B /* RemoteDevices.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteDevices.swift; sourceTree = "<group>"; };
+		CE9AEE0626EFA9CA00181C96 /* MultiplyImpactStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiplyImpactStep.swift; sourceTree = "<group>"; };
+		CE9AEE0826EFB19100181C96 /* MultiplyImpactDash.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiplyImpactDash.swift; sourceTree = "<group>"; };
 		CEAC46CEA2B6CAB86A9E1345 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/3DTouchActions.strings; sourceTree = "<group>"; };
 		CECCC7212632C1D600D971E4 /* EcosiaBookmarkTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EcosiaBookmarkTests.swift; sourceTree = "<group>"; };
 		CEEB4EC881354939F3402DAE /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Menu.strings; sourceTree = "<group>"; };
+		CEF49E7926EA3B10008C9EC5 /* MultiplyImpact.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiplyImpact.swift; sourceTree = "<group>"; };
 		CEFA977D1FAA6B490016F365 /* SyncContentSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncContentSettingsViewController.swift; sourceTree = "<group>"; };
 		CF0B41FFA07D1B6CF873F714 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/Menu.strings; sourceTree = "<group>"; };
 		CF0F4F069550FD074420FA3F /* tzm */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tzm; path = tzm.lproj/PrivateBrowsing.strings; sourceTree = "<group>"; };
@@ -5010,6 +5016,7 @@
 		CA05558126CD4B4B00126D0F /* MyImpact */ = {
 			isa = PBXGroup;
 			children = (
+				CAFA925E25791A810086E6AE /* EcosiaExploreCell.swift */,
 				CAFA921F257919040086E6AE /* EcosiaHome.swift */,
 				CAFA9234257919250086E6AE /* EcosiaNavigation.swift */,
 				CA31D8E726E8CE930004FF64 /* EcosiaHomeLayout.swift */,
@@ -5019,7 +5026,13 @@
 				CAAED1ED25810C7A0048199C /* NewsController.swift */,
 				CAFA924925791A6E0086E6AE /* MyImpactCell.swift */,
 				CA05558226CD4C4700126D0F /* MultiplyImpactCell.swift */,
+				CEF49E7926EA3B10008C9EC5 /* MultiplyImpact.swift */,
+				CE9AEE0626EFA9CA00181C96 /* MultiplyImpactStep.swift */,
+				CE9AEE0826EFB19100181C96 /* MultiplyImpactDash.swift */,
+				CAFA924925791A6E0086E6AE /* MyImpactCell.swift */,
 				CA05558426CD4EEA00126D0F /* MyImpactStackView.swift */,
+				CAAED1EE25810C7A0048199C /* NewsCell.swift */,
+				CAAED1ED25810C7A0048199C /* NewsController.swift */,
 			);
 			path = MyImpact;
 			sourceTree = "<group>";
@@ -7632,10 +7645,12 @@
 				CE0AB94A25F7C42600333656 /* Analytics.Values.swift in Sources */,
 				E4CD9E911A6897FB00318571 /* ReaderMode.swift in Sources */,
 				E68E7ADE1CAC208A00FDCA76 /* RemovePasscodeViewController.swift in Sources */,
+				CE9AEE0726EFA9CA00181C96 /* MultiplyImpactStep.swift in Sources */,
 				74C027451B2A348C001B1E88 /* SessionData.swift in Sources */,
 				274A36CC239EB99400A21587 /* LibraryPanelContextMenu.swift in Sources */,
 				D314E7F71A37B98700426A76 /* TabToolbar.swift in Sources */,
 				CEFA977E1FAA6B490016F365 /* SyncContentSettingsViewController.swift in Sources */,
+				CEF49E7A26EA3B10008C9EC5 /* MultiplyImpact.swift in Sources */,
 				2386E4E624F8358E0072EF17 /* DefaultBrowserCard.swift in Sources */,
 				E60D03181D511398002FE3F6 /* SyncStatusResolver.swift in Sources */,
 				435D660723D7962C0046EFA2 /* UpdateCoverSheetTableViewCell.swift in Sources */,
@@ -7835,6 +7850,7 @@
 				CA6BFAD925778D4E0026DFFF /* EcosiaTheme.swift in Sources */,
 				EBB89506219398E500EB91A0 /* TabContentBlocker.swift in Sources */,
 				D3E8EF101B97BE69001900FB /* ClearPrivateDataTableViewController.swift in Sources */,
+				CE9AEE0926EFB19100181C96 /* MultiplyImpactDash.swift in Sources */,
 				C8F457AA1F1FDD9B000CB895 /* BrowserViewController+KeyCommands.swift in Sources */,
 				59A68FD5260B8D520F890F4A /* ReaderPanel.swift in Sources */,
 				E40FAB0C1A7ABB77009CB80D /* WebServer.swift in Sources */,

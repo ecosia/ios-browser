@@ -50,5 +50,10 @@
 			<string>%d referencias</string>
 		</dict>
 	</dict>
+    <key>%d successful invite(s)</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@invites@</string>
+    </dict>
 </dict>
 </plist>
