@@ -619,6 +619,32 @@ final class PushBackInstallation: HiddenSetting {
     }
 }
 
+final class ToggleReferrals: HiddenSetting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Toggle Referrals", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
+    }
+
+    override var status: NSAttributedString? {
+        let isOn = Goodall.shared.variant(for: .referrals) == "test"
+        return NSAttributedString(string: isOn ? "On" : "Off", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
+    }
+
+
+    override func onClick(_ navigationController: UINavigationController?) {
+
+        let isOn = Goodall.shared.variant(for: .referrals) == "test"
+        Goodall.shared.turn(.referrals, on: !isOn)
+
+        let alertTitle = "Referrals toggled to: "
+        let alert = AlertController(title: alertTitle, message: !isOn ? "ON" : "OFF", preferredStyle: .alert)
+        navigationController?.topViewController?.present(alert, animated: true) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                alert.dismiss(animated: true)
+            }
+        }
+    }
+}
+
 final class AddReferral: HiddenSetting {
     override var title: NSAttributedString? {
         return NSAttributedString(string: "Debug: Add Referral", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])

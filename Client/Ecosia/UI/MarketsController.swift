@@ -56,6 +56,6 @@ final class MarketsController: ThemedTableViewController {
         tableView.reloadData()
         Analytics.shared.navigationChangeMarket(User.shared.marketCode.rawValue)
         // Temporary deactivate Goodall
-        // Goodall.shared.refresh()
+        Goodall.shared.refresh(force: true)
     }
 }

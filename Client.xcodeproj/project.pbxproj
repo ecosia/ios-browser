@@ -5016,15 +5016,11 @@
 		CA05558126CD4B4B00126D0F /* MyImpact */ = {
 			isa = PBXGroup;
 			children = (
-				CAFA925E25791A810086E6AE /* EcosiaExploreCell.swift */,
 				CAFA921F257919040086E6AE /* EcosiaHome.swift */,
 				CAFA9234257919250086E6AE /* EcosiaNavigation.swift */,
 				CA31D8E726E8CE930004FF64 /* EcosiaHomeLayout.swift */,
 				CAFA925E25791A810086E6AE /* EcosiaExploreCell.swift */,
 				CA15677826F0D70600DAEB2D /* EcosiaHomeCells.swift */,
-				CAAED1EE25810C7A0048199C /* NewsCell.swift */,
-				CAAED1ED25810C7A0048199C /* NewsController.swift */,
-				CAFA924925791A6E0086E6AE /* MyImpactCell.swift */,
 				CA05558226CD4C4700126D0F /* MultiplyImpactCell.swift */,
 				CEF49E7926EA3B10008C9EC5 /* MultiplyImpact.swift */,
 				CE9AEE0626EFA9CA00181C96 /* MultiplyImpactStep.swift */,

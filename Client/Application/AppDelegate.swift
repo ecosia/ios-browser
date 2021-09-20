@@ -464,7 +464,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
         self.updateAuthenticationInfo()
         Analytics.shared.activity(.resume)
         // Temporary deactivate Goodall
-        // Goodall.shared.refresh()
+        Goodall.shared.refresh()
     }
 
     fileprivate func updateAuthenticationInfo() {
