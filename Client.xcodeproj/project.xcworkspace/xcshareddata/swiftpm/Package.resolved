@@ -14,8 +14,8 @@
         "package": "Core",
         "repositoryURL": "https://github.com/ecosia/ios-core.git",
         "state": {
-          "branch": "referrals-backend",
-          "revision": "78697a214c5adacd16af7fc4df5b8c3760932bb5",
+          "branch": "main",
+          "revision": "5b2ad2831343a584725bd563bebb4cedc9ca8bf8",
           "version": null
         }
       },
