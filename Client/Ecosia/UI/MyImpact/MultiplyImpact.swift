@@ -3,6 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import UIKit
+import Core
 
 final class MultiplyImpact: UIViewController, Themeable {
     private weak var subtitle: UILabel?
@@ -61,7 +62,7 @@ final class MultiplyImpact: UIViewController, Themeable {
         let cardTitle = UILabel()
         cardTitle.translatesAutoresizingMaskIntoConstraints = false
         cardTitle.numberOfLines = 0
-        cardTitle.text = .localizedPlural(.successfulInvites, num: 5)
+        cardTitle.text = .localizedPlural(.successfulInvites, num: User.shared.referrals.count)
         cardTitle.font = .preferredFont(forTextStyle: .subheadline)
         cardTitle.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         card.addSubview(cardTitle)
@@ -70,7 +71,7 @@ final class MultiplyImpact: UIViewController, Themeable {
         let cardSubtitle = UILabel()
         cardSubtitle.translatesAutoresizingMaskIntoConstraints = false
         cardSubtitle.numberOfLines = 0
-        cardSubtitle.text = .localizedPlural(.treesPlural, num: 5)
+        cardSubtitle.text = .localizedPlural(.treesPlural, num: User.shared.referrals.count)
         cardSubtitle.font = .preferredFont(forTextStyle: .subheadline)
         cardSubtitle.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         card.addSubview(cardSubtitle)
