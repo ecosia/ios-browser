@@ -74,7 +74,7 @@ extension String {
         case tapCounter = "Tap your tree counter to share Ecosia with friends and plant more trees"
         case terms = "Terms and conditions"
         case today = "Today"
-        case togetherWeCan = "Together, we can refores our planet. Tap your counter to spread the word!"
+        case togetherWeCan = "Together, we can reforest our planet. Tap your counter to spread the word!"
         case totalEcosiaTrees = "Total Ecosia trees"
         case treesPlural = "%d tree(s)"
         case trees = "TREES"
