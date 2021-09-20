@@ -92,10 +92,15 @@ extension String {
         case setAsDefaultBrowser = "Set Ecosia as default browser"
         case linksFromWebsites = "Links from websites, emails or messages will automatically open in Ecosia."
         case showTopSites = "Show Top Sites"
-        case sharingEcosia = "Sharing Ecosia"
-        case everyTimeYouInvite = "Every time you invite a friend, you’ll each help plant 1 trees and multiply your impact."
-        case invite3Friends = "Invite 3 friend"
+        case everyTimeYouInvite = "Every time a friend accepts your invitation, you’ll contribute to plant extra trees."
+        case successfulInvites = "%d successful invite(s)"
         case plant3Trees = "Plant 3 trees"
         case invitingAFriend = "Inviting a friend"
+        case shareYourInvitation = "Share your invitation link"
+        case viaEmailText = "via email, text message or social media"
+        case yourFriendOpens = "Your friend opens your link"
+        case afterInstallingTheApp = "after installing the app on an iPhone"
+        case eachOfYouContribute = "Each of you contributes to planting a tree"
+        case forEverySuccessful = "for every successful friend invite"
     }
 }

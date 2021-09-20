@@ -25,7 +25,7 @@ final class MultiplyImpact: UIViewController, Themeable {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = .localized(.sharingEcosia)
+        title = .localized(.inviteFriends)
         
         let scroll = UIScrollView()
         scroll.translatesAutoresizingMaskIntoConstraints = false
@@ -61,7 +61,7 @@ final class MultiplyImpact: UIViewController, Themeable {
         let cardTitle = UILabel()
         cardTitle.translatesAutoresizingMaskIntoConstraints = false
         cardTitle.numberOfLines = 0
-        cardTitle.text = .localized(.invite3Friends)
+        cardTitle.text = .localizedPlural(.successfulInvites, num: 5)
         cardTitle.font = .preferredFont(forTextStyle: .subheadline)
         cardTitle.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         card.addSubview(cardTitle)
@@ -79,8 +79,8 @@ final class MultiplyImpact: UIViewController, Themeable {
         let learnMore = UIButton()
         learnMore.translatesAutoresizingMaskIntoConstraints = false
         learnMore.setTitle(.localized(.learnMore), for: .normal)
-        learnMore.setTitleColor(.Photon.Teal50, for: .normal)
-        learnMore.titleLabel!.font = .preferredFont(forTextStyle: .body)
+        learnMore.setTitleColor(.theme.ecosia.primaryBrand, for: .normal)
+        learnMore.titleLabel!.font = .preferredFont(forTextStyle: .callout)
         learnMore.addTarget(self, action: #selector(self.learnMore), for: .touchUpInside)
         card.addSubview(learnMore)
         
@@ -95,21 +95,21 @@ final class MultiplyImpact: UIViewController, Themeable {
         content.addSubview(dash)
         self.dash = dash
         
-        let firstStep = MultiplyImpactStep(title: .localized(.autocomplete), subtitle: .localized(.autocomplete))
+        let firstStep = MultiplyImpactStep(title: .localized(.shareYourInvitation), subtitle: .localized(.viaEmailText))
         content.addSubview(firstStep)
         self.firstStep = firstStep
         
-        let secondStep = MultiplyImpactStep(title: .localized(.autocomplete), subtitle: .localized(.autocomplete))
+        let secondStep = MultiplyImpactStep(title: .localized(.yourFriendOpens), subtitle: .localized(.afterInstallingTheApp))
         content.addSubview(secondStep)
         self.secondStep = secondStep
         
-        let thirdStep = MultiplyImpactStep(title: .localized(.autocomplete), subtitle: .localized(.autocomplete))
+        let thirdStep = MultiplyImpactStep(title: .localized(.eachOfYouContribute), subtitle: .localized(.forEverySuccessful))
         content.addSubview(thirdStep)
         self.thirdStep = thirdStep
         
         let inviteFriends = UIButton()
         inviteFriends.translatesAutoresizingMaskIntoConstraints = false
-        inviteFriends.setTitle(.localized(.autocomplete), for: [])
+        inviteFriends.setTitle(.localized(.inviteFriends), for: [])
         inviteFriends.setTitleColor(.white, for: .normal)
         inviteFriends.setTitleColor(.white.withAlphaComponent(0.3), for: .highlighted)
         inviteFriends.titleLabel!.font = .preferredFont(forTextStyle: .callout)
