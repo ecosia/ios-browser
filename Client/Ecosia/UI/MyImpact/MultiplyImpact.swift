@@ -15,10 +15,12 @@ final class MultiplyImpact: UIViewController, Themeable {
     private weak var firstStep: MultiplyImpactStep?
     private weak var secondStep: MultiplyImpactStep?
     private weak var thirdStep: MultiplyImpactStep?
+    private weak var delegate: EcosiaHomeDelegate?
     
     required init?(coder: NSCoder) { nil }
-    init() {
+    init(delegate: EcosiaHomeDelegate?) {
         super.init(nibName: nil, bundle: nil)
+        self.delegate = delegate
     }
     
     override func viewDidLoad() {
@@ -78,7 +80,7 @@ final class MultiplyImpact: UIViewController, Themeable {
         learnMore.translatesAutoresizingMaskIntoConstraints = false
         learnMore.setTitle(.localized(.learnMore), for: .normal)
         learnMore.setTitleColor(.Photon.Teal50, for: .normal)
-        learnMore.titleLabel!.font = .preferredFont(forTextStyle: .footnote)
+        learnMore.titleLabel!.font = .preferredFont(forTextStyle: .body)
         learnMore.addTarget(self, action: #selector(self.learnMore), for: .touchUpInside)
         card.addSubview(learnMore)
         
@@ -188,6 +190,11 @@ final class MultiplyImpact: UIViewController, Themeable {
         applyTheme()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        Analytics.shared.openInvitations()
+    }
+    
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         applyTheme()
@@ -210,10 +217,11 @@ final class MultiplyImpact: UIViewController, Themeable {
     }
     
     @objc private func learnMore() {
-        print("learn")
+        delegate?.ecosiaHome(didSelectURL: URL(string: "https://ecosia.zendesk.com/hc/en-us/articles/4406431901714-How-does-inviting-friends-to-Ecosia-work-")!)
+        dismiss(animated: true)
     }
     
     @objc private func inviteFriends() {
-        print("invite")
+        Analytics.shared.sendInvite()
     }
 }
