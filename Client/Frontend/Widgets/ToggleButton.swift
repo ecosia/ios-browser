@@ -28,9 +28,9 @@ class ToggleButton: UIButton, Themeable {
         if selected {
             var rect = CGRect(size: bounds.size).inset(by: UX.Insets)
             // Fix crash for negative rect size
-            guard rect.height > 0, rect.width > 0 else { return }
             rect.center = maskShapeLayer.position
             let corner = floor(rect.size.height / 2.0)
+            guard rect.size.height > 0, rect.size.width > 0, corner > 0 else { return }
             path.addRoundedRect(in: rect, cornerWidth: corner, cornerHeight: corner)
         } else {
             path.addRoundedRect(in: CGRect(origin: maskShapeLayer.position, size: .zero), cornerWidth: 0, cornerHeight: 0)
