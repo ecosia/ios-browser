@@ -319,7 +319,7 @@ class HorizontalFlowLayout: UICollectionViewLayout {
 
         var estimatedItemSize = itemSize
         estimatedItemSize.width = floor((width - (CGFloat(horizontalItemsCount + 1) * insets)) / CGFloat(horizontalItemsCount))
-        estimatedItemSize.height = estimatedItemSize.width + UIFont.preferredFont(forTextStyle: .footnote).pointSize * 2
+        estimatedItemSize.height = TopSiteCellUX.IconSize + TopSiteCellUX.FavIconInset + 8 + UIFont.preferredFont(forTextStyle: .footnote).pointSize * 3
 
         //calculate our estimates.
         let rows = CGFloat(ceil(Double(Float(cellCount)/Float(horizontalItemsCount))))

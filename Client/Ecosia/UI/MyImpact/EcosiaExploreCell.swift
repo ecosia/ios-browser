@@ -103,7 +103,7 @@ final class EcosiaExploreCell: UICollectionViewCell, Themeable, AutoSizingCell {
     }
 
     private var horizontalItems: Int {
-        var horizontalItems = traitCollection.userInterfaceIdiom == .pad ? 3 : 2
+        var horizontalItems = traitCollection.horizontalSizeClass == .compact ? 2 : 3
 
         let isLandscape = UIDevice.current.orientation == .landscapeLeft || UIDevice.current.orientation == .landscapeRight
         if isLandscape && traitCollection.userInterfaceIdiom == .phone {

@@ -326,7 +326,8 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         case .news:
             return CGSize(width: view.bounds.width, height: 130)
         case .explore:
-            var width = (view.bounds.width - 2 * margin - 16)/2.0
+            let horizontalItems: CGFloat = traitCollection.horizontalSizeClass == .compact ? 2 : 3
+            var width = (view.bounds.width - (horizontalItems + 1) * margin) / horizontalItems
             width = min(width, 180)
             return CGSize(width: width, height: width + 32)
         }
@@ -397,8 +398,13 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         collectionView.collectionViewLayout.invalidateLayout()
     }
 
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        updateLayout()
+    }
+
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
+        updateLayout()
         applyTheme()
     }
 
