@@ -334,7 +334,7 @@ extension FirefoxHomeViewController {
             case .libraryShortcuts, .topSites, .promo, .search, .personalCounter:
                 let window = UIApplication.shared.keyWindow
                 let safeAreaInsets = window?.safeAreaInsets.left ?? 0
-                insets += FirefoxHomeHeaderViewUX.Insets + safeAreaInsets
+                insets += FirefoxHomeUX.MinimumInsets + safeAreaInsets
                 
                 /* Ecosia: center layout in landscape for iPhone */
                 if UIApplication.shared.statusBarOrientation.isLandscape, UIDevice.current.userInterfaceIdiom == .phone {
