@@ -373,7 +373,7 @@ class URLBarView: UIView {
             }
         }
 
-        let hideButton = (inOverlayMode || !showMultiStateButton) && !toolbarIsShowing
+        let hideButton = !multiStateButton.isEnabled || ((inOverlayMode || !showMultiStateButton) && !toolbarIsShowing)
         multiStateButton.alpha = hideButton ? 0 : 1
     }
 
