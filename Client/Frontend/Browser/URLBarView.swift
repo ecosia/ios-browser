@@ -362,7 +362,9 @@ class URLBarView: UIView {
 
             self.multiStateButton.snp.remakeConstraints { make in
                 if self.toolbarIsShowing {
-                    make.trailing.equalTo(self.addNewTabButton.snp.leading)
+                    make.trailing.equalTo(UIDevice.current.userInterfaceIdiom == .pad
+                                            ? self.libraryButton.snp.leading
+                                            : self.addNewTabButton.snp.leading)
                 } else {
                     make.trailing.equalTo(self.safeArea.trailing)
                 }
@@ -371,7 +373,7 @@ class URLBarView: UIView {
             }
         }
 
-        let hideButton = (inOverlayMode || !showMultiStateButton) && !toolbarIsShowing
+        let hideButton = !multiStateButton.isEnabled || ((inOverlayMode || !showMultiStateButton) && !toolbarIsShowing)
         multiStateButton.alpha = hideButton ? 0 : 1
     }
 
@@ -536,7 +538,7 @@ class URLBarView: UIView {
         cancelButton.isHidden = false
         showQRScannerButton.isHidden = false
         progressBar.isHidden = false
-        addNewTabButton.isHidden = !toolbarIsShowing || !topTabsIsShowing
+        addNewTabButton.isHidden = UIDevice.current.userInterfaceIdiom == .pad || !toolbarIsShowing || !topTabsIsShowing
         appMenuButton.isHidden = !toolbarIsShowing
         libraryButton.isHidden = !toolbarIsShowing || !topTabsIsShowing
         forwardButton.isHidden = !toolbarIsShowing
@@ -583,7 +585,7 @@ class URLBarView: UIView {
         cancelButton.isHidden = !inOverlayMode
         showQRScannerButton.isHidden = !inOverlayMode
         progressBar.isHidden = inOverlayMode
-        addNewTabButton.isHidden = !toolbarIsShowing || inOverlayMode
+        addNewTabButton.isHidden = UIDevice.current.userInterfaceIdiom == .pad || !toolbarIsShowing || inOverlayMode
         appMenuButton.isHidden = !toolbarIsShowing || inOverlayMode
         libraryButton.isHidden = !toolbarIsShowing || inOverlayMode || !topTabsIsShowing
         forwardButton.isHidden = !toolbarIsShowing || inOverlayMode
