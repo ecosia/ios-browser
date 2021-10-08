@@ -57,7 +57,13 @@ extension BrowserViewController: TabToolbarDelegate, PhotonActionSheetProtocol {
     
     func tabToolbarDidPressAddNewTab(_ tabToolbar: TabToolbarProtocol, button: UIButton) {
         let isPrivate = tabManager.selectedTab?.isPrivate ?? false
-        tabManager.selectTab(tabManager.addTab(nil, isPrivate: isPrivate))
+        showTabTray()
+        
+        DispatchQueue
+            .main
+            .asyncAfter(deadline: .now() + 0.6) { [weak self] in
+                self?.tabManager.selectTab(self?.tabManager.addTab(nil, isPrivate: isPrivate))
+            }
     }
 
     func tabToolbarDidPressMenu(_ tabToolbar: TabToolbarProtocol, button: UIButton) {
