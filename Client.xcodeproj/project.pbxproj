@@ -3216,6 +3216,7 @@
 		CAB6D0052565292400638310 /* TabManagerMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabManagerMigrationTests.swift; sourceTree = "<group>"; };
 		CAB6D04025652A4800638310 /* TestHistoryMigration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestHistoryMigration.swift; sourceTree = "<group>"; };
 		CAB7414DA1BA84F4CD08A8F8 /* kk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = kk; path = kk.lproj/ClearPrivateDataConfirm.strings; sourceTree = "<group>"; };
+		CAC323402715BF4800AF9651 /* Common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Common.xcconfig; path = Configuration/Common.xcconfig; sourceTree = "<group>"; };
 		CAC3CD28260248B6000FFAF4 /* EcosiaBeta.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = EcosiaBeta.entitlements; sourceTree = "<group>"; };
 		CAC458F0249429C20042561A /* LoginListSelectionHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginListSelectionHelper.swift; sourceTree = "<group>"; };
 		CADFBF9C26DFC6B300F6D925 /* TreesCellModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreesCellModel.swift; sourceTree = "<group>"; };
@@ -5497,6 +5498,7 @@
 		E60961841B62B7E100DD640F /* Configuration */ = {
 			isa = PBXGroup;
 			children = (
+				CAC323402715BF4800AF9651 /* Common.xcconfig */,
 				CA051BAD25399FB60096D30F /* EcosiaDebug.xcconfig */,
 				CA32552425487C1C0024B48D /* EcosiaBeta.xcconfig */,
 				CAFA91492578DC040086E6AE /* Ecosia.xcconfig */,
