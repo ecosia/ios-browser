@@ -31,7 +31,7 @@ jobs:
         path: Carthage
         key: ${{ runner.os }}-carthage-${{ hashFiles('**/Cartfile.resolved') }}
     - name: bootstrap apllication services 
-      uses: olejnjak/carthage-workaround@v1
+      uses: olejnjak/carthage-workaround@v3
       if: steps.cache-carthage.outputs.cache-hit != 'true'
       with:
         action: bootstrap application-services --platform iOS --cache-builds
