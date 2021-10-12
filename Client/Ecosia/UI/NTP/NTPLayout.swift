@@ -33,8 +33,7 @@ class NTPLayout: UICollectionViewFlowLayout {
 
             // update frame
             let element = attr[emptyIndex]
-            element.frame = .init(origin: element.frame.origin, size: .init(width: element.frame.width, height: height))
-            totalHeight = element.frame.maxY
+            totalHeight = element.frame.origin.y + height
         }
         return attr
     }
