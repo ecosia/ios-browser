@@ -32,7 +32,7 @@ final class MultiplyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable 
         outline.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -4).isActive = true
 
         let widthConstraint = outline.widthAnchor.constraint(equalToConstant: 100)
-        widthConstraint.priority = .defaultHigh
+        widthConstraint.priority = .init(rawValue: 999)
         widthConstraint.isActive = true
         self.widthConstraint = widthConstraint
 

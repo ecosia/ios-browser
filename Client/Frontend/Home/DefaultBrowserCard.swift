@@ -110,7 +110,7 @@ class DefaultBrowserCard: UICollectionViewCell {
         }
 
         let widthConstraint = background.widthAnchor.constraint(equalToConstant: 200)
-        widthConstraint.priority = .defaultHigh
+        widthConstraint.priority = .init(rawValue: 999)
         widthConstraint.isActive = true
         self.widthConstraint = widthConstraint
     }

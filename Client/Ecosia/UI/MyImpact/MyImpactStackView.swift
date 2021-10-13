@@ -93,8 +93,9 @@ class MyImpactStackView: UIStackView, Themeable {
         topStack.addArrangedSubview(labelStack)
 
         let titleLabel = UILabel()
+        titleLabel.numberOfLines = 0
         titleLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
-        titleLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
+        titleLabel.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
         titleLabel.setContentHuggingPriority(.defaultHigh, for: .vertical)
         labelStack.addArrangedSubview(titleLabel)
         self.titleLabel = titleLabel

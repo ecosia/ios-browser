@@ -135,6 +135,5 @@ workflows:
             branches:
               only: 
                 - /^.*main.*/
-                - /^.*ios-15-base-sdk.*/
 
                                 
