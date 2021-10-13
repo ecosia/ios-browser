@@ -10,7 +10,7 @@ jobs:
   test:
     runs-on: macos-11
     env:
-      DEVELOPER_DIR: /Applications/Xcode_12.5.1.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_13.0.0.app/Contents/Developer
 
     steps:
     - uses: actions/checkout@v2
@@ -31,7 +31,7 @@ jobs:
         path: Carthage
         key: ${{ runner.os }}-carthage-${{ hashFiles('**/Cartfile.resolved') }}
     - name: bootstrap apllication services 
-      uses: olejnjak/carthage-workaround@v1
+      uses: olejnjak/carthage-workaround@v3
       if: steps.cache-carthage.outputs.cache-hit != 'true'
       with:
         action: bootstrap application-services --platform iOS --cache-builds
