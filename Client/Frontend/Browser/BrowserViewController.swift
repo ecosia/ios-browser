@@ -1914,6 +1914,8 @@ extension BrowserViewController: TabManagerDelegate {
             animation.fromValue = CATransform3DMakeScale(0.6, 0.6, 1)
             animation.timingFunction = .init(name: .easeInEaseOut)
             firefoxHomeViewController?.view.layer.add(animation, forKey: "scale")
+            
+            webViewContainerBackdrop.alpha = 0
 
             // This is a terrible workaround for a bad iOS 12 bug where PDF
             // content disappears any time the view controller changes (i.e.
