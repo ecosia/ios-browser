@@ -1910,7 +1910,8 @@ extension BrowserViewController: TabManagerDelegate {
             }
             
             webView.isHidden = true
-            webViewContainerBackdrop.alpha = 0
+            webViewContainerBackdrop.alpha = 1
+            webViewContainerBackdrop.backgroundColor = UIColor.theme.ecosia.primaryBackground
             navigationController?.view.backgroundColor = UIColor.theme.browser.background
             
             let animation = CABasicAnimation(keyPath: "transform")
@@ -1919,9 +1920,12 @@ extension BrowserViewController: TabManagerDelegate {
             animation.timingFunction = .init(name: .easeInEaseOut)
             firefoxHomeViewController?.view.layer.add(animation, forKey: "scale")
 
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) { [weak webView] in
-                webView?.isHidden = false
-            }
+            DispatchQueue
+                .main
+                .asyncAfter(deadline: .now() + 0.35) { [weak webView, weak webViewContainerBackdrop] in
+                    webView?.isHidden = false
+                    webViewContainerBackdrop?.alpha = 0
+                }
             
             // This is a terrible workaround for a bad iOS 12 bug where PDF
             // content disappears any time the view controller changes (i.e.
