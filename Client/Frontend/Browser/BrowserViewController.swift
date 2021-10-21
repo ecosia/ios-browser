@@ -1909,6 +1909,7 @@ extension BrowserViewController: TabManagerDelegate {
                 make.left.right.top.bottom.equalTo(self.webViewContainer)
             }
             
+            webView.isHidden = true
             webViewContainerBackdrop.alpha = 0
             navigationController?.view.backgroundColor = UIColor.theme.browser.background
             
@@ -1916,10 +1917,12 @@ extension BrowserViewController: TabManagerDelegate {
             animation.duration = 0.35
             animation.fromValue = CATransform3DMakeScale(0.6, 0.6, 1)
             animation.timingFunction = .init(name: .easeInEaseOut)
-            
-            webView.layer.add(animation, forKey: "scale")
             firefoxHomeViewController?.view.layer.add(animation, forKey: "scale")
 
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) { [weak webView] in
+                webView?.isHidden = false
+            }
+            
             // This is a terrible workaround for a bad iOS 12 bug where PDF
             // content disappears any time the view controller changes (i.e.
             // the user taps on the tabs tray). It seems the only way to get
