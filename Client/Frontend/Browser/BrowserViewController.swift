@@ -2545,9 +2545,11 @@ extension BrowserViewController: Themeable {
 
         let tabs = tabManager.tabs
         tabs.forEach {
-            $0.applyTheme()
             urlBar.locationView.tabDidChangeContentBlocking($0)
         }
+
+        // Ecosia: only apply theme for selected tab
+        tabManager.selectedTab?.applyTheme()
 
         navigationController?.view.backgroundColor = UIColor.theme.browser.background
         
