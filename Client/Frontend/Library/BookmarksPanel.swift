@@ -444,7 +444,7 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel {
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         guard section == BookmarksSection.recent.rawValue, !recentBookmarks.isEmpty,
             let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: BookmarkSectionHeaderIdentifier) as? SiteTableViewHeader else {
-            return nil
+            return EmptyHeader()
         }
 
         headerView.titleLabel.text = Strings.RecentlyBookmarkedTitle
@@ -463,7 +463,7 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel {
     }
 
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return section == BookmarksSection.recent.rawValue && !recentBookmarks.isEmpty ? UITableView.automaticDimension : 0
+        UITableView.automaticDimension
     }
 
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {

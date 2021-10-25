@@ -475,6 +475,7 @@
 		CE9AEE0926EFB19100181C96 /* MultiplyImpactDash.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9AEE0826EFB19100181C96 /* MultiplyImpactDash.swift */; };
 		CEC685B326B82DA600FA4CA5 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7B2142FC1E5E055000CDD3FC /* InfoPlist.strings */; };
 		CECCC7222632C1D600D971E4 /* EcosiaBookmarkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECCC7212632C1D600D971E4 /* EcosiaBookmarkTests.swift */; };
+		CED09BE52727000800D38C2C /* EmptyHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED09BE42727000800D38C2C /* EmptyHeader.swift */; };
 		CEF49E7A26EA3B10008C9EC5 /* MultiplyImpact.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF49E7926EA3B10008C9EC5 /* MultiplyImpact.swift */; };
 		CEFA977E1FAA6B490016F365 /* SyncContentSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA977D1FAA6B490016F365 /* SyncContentSettingsViewController.swift */; };
 		D006F2E32283307B0004D3AB /* KIF.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7B604F981C494F74006EEEC3 /* KIF.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -3260,6 +3261,7 @@
 		CE9AEE0826EFB19100181C96 /* MultiplyImpactDash.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiplyImpactDash.swift; sourceTree = "<group>"; };
 		CEAC46CEA2B6CAB86A9E1345 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/3DTouchActions.strings; sourceTree = "<group>"; };
 		CECCC7212632C1D600D971E4 /* EcosiaBookmarkTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EcosiaBookmarkTests.swift; sourceTree = "<group>"; };
+		CED09BE42727000800D38C2C /* EmptyHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyHeader.swift; sourceTree = "<group>"; };
 		CEEB4EC881354939F3402DAE /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Menu.strings; sourceTree = "<group>"; };
 		CEF49E7926EA3B10008C9EC5 /* MultiplyImpact.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiplyImpact.swift; sourceTree = "<group>"; };
 		CEFA977D1FAA6B490016F365 /* SyncContentSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncContentSettingsViewController.swift; sourceTree = "<group>"; };
@@ -5058,6 +5060,7 @@
 				CAA2F3F2257A79C700EBAD38 /* FilterController.swift */,
 				CA5E9D50265D068600836DE9 /* SnapKit+Ecosia.swift */,
 				CA089C1926CAB56E001686DF /* UIFont+Ecosia.swift */,
+				CED09BE42727000800D38C2C /* EmptyHeader.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -7620,6 +7623,7 @@
 				C892DA0D22D39A980080F1F7 /* TrackingProtectionMenu.swift in Sources */,
 				C817B34D1FC609500086018E /* UIScrollViewSwizzled.swift in Sources */,
 				39F819C61FD70F5D009E31E4 /* TabEventHandlers.swift in Sources */,
+				CED09BE52727000800D38C2C /* EmptyHeader.swift in Sources */,
 				CAE253D2268CA29F00308DEA /* BrowserViewController+FirefoxHomeViewControllerDelegate.swift in Sources */,
 				E65607611C08B4E200534B02 /* SearchInputView.swift in Sources */,
 				FA6B2AC21D41F02D00429414 /* Punycode.swift in Sources */,
