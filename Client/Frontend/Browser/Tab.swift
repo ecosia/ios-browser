@@ -626,7 +626,10 @@ class Tab: NSObject {
     }
 
     func applyTheme() {
-        UITextField.appearance().keyboardAppearance = isPrivate ? .dark : (ThemeManager.instance.currentName == .dark ? .dark : .light)
+        let appearance: UIKeyboardAppearance = isPrivate ? .dark : (ThemeManager.instance.currentName == .dark ? .dark : .light)
+        if appearance != UITextField.appearance().keyboardAppearance {
+            UITextField.appearance().keyboardAppearance = appearance
+        }
     }
 }
 
