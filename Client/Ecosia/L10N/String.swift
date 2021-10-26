@@ -106,5 +106,7 @@ extension String {
         case afterInstallingTheApp = "after installing the app on an iPhone"
         case eachOfYouContribute = "Each of you contributes to planting a tree"
         case forEverySuccessful = "for every successful friend invite"
+        case noBookmarks = "No bookmarks"
+        case yourBookmarkWill = "Your bookmark will show up here"
     }
 }

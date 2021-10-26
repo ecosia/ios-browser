@@ -445,7 +445,7 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel {
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         guard section == BookmarksSection.recent.rawValue, !recentBookmarks.isEmpty,
             let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: BookmarkSectionHeaderIdentifier) as? SiteTableViewHeader else {
-            return EmptyHeader(reuseIdentifier: BookmarkEmptyIdentifier)
+                return EmptyHeader(reuseIdentifier: BookmarkEmptyIdentifier, icon: "bookmarksEmpty", title: .localized(.noBookmarks), subtitle: .localized(.yourBookmarkWill))
         }
 
         headerView.titleLabel.text = Strings.RecentlyBookmarkedTitle
