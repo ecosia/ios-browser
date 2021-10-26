@@ -12,6 +12,7 @@ private let log = Logger.browserLogger
 private let BookmarkNodeCellIdentifier = "BookmarkNodeCellIdentifier"
 private let BookmarkSeparatorCellIdentifier = "BookmarkSeparatorCellIdentifier"
 private let BookmarkSectionHeaderIdentifier = "BookmarkSectionHeaderIdentifier"
+private let BookmarkEmptyIdentifier = "BookmarkEmptyIdentifier"
 
 private struct BookmarksPanelUX {
     static let FolderIconSize = CGSize(width: 20, height: 20)
@@ -444,7 +445,7 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel {
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         guard section == BookmarksSection.recent.rawValue, !recentBookmarks.isEmpty,
             let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: BookmarkSectionHeaderIdentifier) as? SiteTableViewHeader else {
-            return EmptyHeader()
+            return EmptyHeader(reuseIdentifier: BookmarkEmptyIdentifier)
         }
 
         headerView.titleLabel.text = Strings.RecentlyBookmarkedTitle
@@ -455,7 +456,7 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel {
     }
 
     override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
-        guard let headerView = view as? ThemedTableSectionHeaderFooterView else {
+        guard let headerView = view as? Themeable else {
             return
         }
 

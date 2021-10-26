@@ -4,11 +4,27 @@
 
 import UIKit
 
-final class EmptyHeader: UICollectionReusableView {
+final class EmptyHeader: UITableViewHeaderFooterView, Themeable {
     required init?(coder: NSCoder) { nil }
     
-    init() {
-        super.init(frame: .zero)
-
+    override init(reuseIdentifier: String?) {
+        super.init(reuseIdentifier: reuseIdentifier)
+    }
+    
+    func applyTheme() {
+        
+//        view.backgroundColor = .theme.ecosia.modalBackground
+//        subtitle?.textColor = .theme.ecosia.secondaryText
+//        card?.backgroundColor = .theme.ecosia.impactMultiplyCardBackground
+//        card?.layer.borderColor = UIColor.theme.ecosia.impactMultiplyCardBorder.cgColor
+//        cardIcon?.image = UIImage(themed: "impactReferrals")
+//        cardTitle?.textColor = .theme.ecosia.highContrastText
+//        cardSubtitle?.textColor = .theme.ecosia.secondaryText
+//        flowTitle?.textColor = .theme.ecosia.secondaryText
+//
+//        dash?.applyTheme()
+//        firstStep?.applyTheme()
+//        secondStep?.applyTheme()
+//        thirdStep?.applyTheme()
     }
 }
