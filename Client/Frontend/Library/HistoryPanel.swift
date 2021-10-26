@@ -88,6 +88,7 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
     }
 
     lazy var emptyStateOverlayView: UIView = createEmptyStateOverlayView()
+    lazy var emptyHeader = EmptyHeader(reuseIdentifier: "", icon: "bookmarksEmpty", title: .localized(.noBookmarks), subtitle: .localized(.yourBookmarkWill))
 
     lazy var longPressRecognizer: UILongPressGestureRecognizer = {
         return UILongPressGestureRecognizer(target: self, action: #selector(onLongPressGestureRecognized))
@@ -537,9 +538,10 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
     // MARK: - Empty State
     func updateEmptyPanelState() {
         if groupedSites.isEmpty {
-            if emptyStateOverlayView.superview == nil {
-                tableView.tableFooterView = emptyStateOverlayView
+            if emptyHeader.superview == nil {
+                tableView.tableFooterView = emptyHeader
             }
+            emptyHeader.applyTheme()
         } else {
             tableView.alwaysBounceVertical = true
             tableView.tableFooterView = .init()
