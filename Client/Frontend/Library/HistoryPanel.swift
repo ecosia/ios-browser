@@ -87,8 +87,7 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
         return profile.recentlyClosedTabs.tabs.count > 0
     }
 
-    lazy var emptyStateOverlayView: UIView = createEmptyStateOverlayView()
-    lazy var emptyHeader = EmptyHeader(reuseIdentifier: "", icon: "bookmarksEmpty", title: .localized(.noBookmarks), subtitle: .localized(.yourBookmarkWill))
+    lazy var emptyStateOverlayView = EmptyHeader(reuseIdentifier: "", icon: "bookmarksEmpty", title: .localized(.noBookmarks), subtitle: .localized(.yourBookmarkWill))
 
     lazy var longPressRecognizer: UILongPressGestureRecognizer = {
         return UILongPressGestureRecognizer(target: self, action: #selector(onLongPressGestureRecognized))
@@ -373,11 +372,6 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
             break
         case .DynamicFontChanged:
             reloadData()
-
-            if emptyStateOverlayView.superview != nil {
-                emptyStateOverlayView.removeFromSuperview()
-            }
-            emptyStateOverlayView = createEmptyStateOverlayView()
             resyncHistory()
             break
         case .DatabaseWasReopened:
@@ -538,10 +532,10 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
     // MARK: - Empty State
     func updateEmptyPanelState() {
         if groupedSites.isEmpty {
-            if emptyHeader.superview == nil {
-                tableView.tableFooterView = emptyHeader
+            if emptyStateOverlayView.superview == nil {
+                tableView.tableFooterView = emptyStateOverlayView
             }
-            emptyHeader.applyTheme()
+            emptyStateOverlayView.applyTheme()
         } else {
             tableView.alwaysBounceVertical = true
             tableView.tableFooterView = .init()
@@ -583,9 +577,7 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
     }
 
     override func applyTheme() {
-        emptyStateOverlayView.removeFromSuperview()
-        emptyStateOverlayView = createEmptyStateOverlayView()
-        updateEmptyPanelState()
+        emptyStateOverlayView.applyTheme()
 
         super.applyTheme()
     }
