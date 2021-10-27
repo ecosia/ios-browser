@@ -108,5 +108,6 @@ extension String {
         case forEverySuccessful = "for every successful friend invite"
         case noBookmarks = "No bookmarks"
         case yourBookmarkWill = "Your bookmark will show up here"
+        case addArticlesTo = "Add articles to your Reading list"
     }
 }

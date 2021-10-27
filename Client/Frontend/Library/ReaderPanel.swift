@@ -261,13 +261,13 @@ class ReadingListPanel: UITableViewController, LibraryPanel {
 
         let welcomeLabel = UILabel()
         overlayView.addSubview(welcomeLabel)
-        welcomeLabel.text = NSLocalizedString("Welcome to your Reading List", comment: "See http://mzl.la/1LXbDOL")
+        welcomeLabel.text = .localized(.addArticlesTo)
         welcomeLabel.textAlignment = .center
-        welcomeLabel.font = DynamicFontHelper.defaultHelper.DeviceFontSmallBold
+        welcomeLabel.font = .systemFont(ofSize: UIFont.preferredFont(forTextStyle: .subheadline).pointSize, weight: .semibold)
         welcomeLabel.adjustsFontSizeToFitWidth = true
         welcomeLabel.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.top.equalToSuperview().offset(UIDevice.current.orientation.isLandscape ? 16 : 150)
+            make.top.equalToSuperview().offset(32)
             make.width.equalTo(ReadingListPanelUX.WelcomeScreenItemWidth + ReadingListPanelUX.WelcomeScreenCircleSpacer + ReadingListPanelUX.WelcomeScreenCircleWidth)
         }
 
@@ -277,7 +277,7 @@ class ReadingListPanel: UITableViewController, LibraryPanel {
         readerModeLabel.font = DynamicFontHelper.defaultHelper.DeviceFontSmallLight
         readerModeLabel.numberOfLines = 0
         readerModeLabel.snp.makeConstraints { make in
-            make.top.equalTo(welcomeLabel.snp.bottom).offset(ReadingListPanelUX.WelcomeScreenPadding)
+            make.top.equalTo(welcomeLabel.snp.bottom).offset(24)
             make.leading.equalTo(welcomeLabel.snp.leading)
             make.width.equalTo(ReadingListPanelUX.WelcomeScreenItemWidth)
         }
