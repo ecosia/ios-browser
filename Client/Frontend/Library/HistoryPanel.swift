@@ -316,7 +316,7 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
         cell.textLabel?.text = Strings.HistoryPanelClearHistoryButtonTitle
         cell.detailTextLabel?.text = ""
         cell.imageView?.image = UIImage.templateImageNamed("forget")
-        cell.imageView?.tintColor = HistoryPanelUX.actionIconColor
+        cell.imageView?.tintColor = .theme.general.destructiveRed
         cell.imageView?.backgroundColor = UIColor.theme.homePanel.historyHeaderIconsBackground
         cell.accessibilityIdentifier = "HistoryPanel.clearHistory"
 
