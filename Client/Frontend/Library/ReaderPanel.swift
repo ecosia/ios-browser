@@ -283,8 +283,8 @@ class ReadingListPanel: UITableViewController, LibraryPanel {
             make.width.equalTo(ReadingListPanelUX.WelcomeScreenItemWidth)
         }
 
-        let readerModeImageView = UIImageView(image: UIImage(named: "ReaderModeCircle")?.withRenderingMode(.alwaysTemplate))
-        readerModeImageView.tintColor = .theme.ecosia.secondaryText
+        let readerModeImageView = UIImageView()
+        readerModeImageView.image = .init(themed: "articles")
         overlayView.addSubview(readerModeImageView)
         readerModeImageView.snp.makeConstraints { make in
             make.centerY.equalTo(readerModeLabel)
@@ -303,8 +303,8 @@ class ReadingListPanel: UITableViewController, LibraryPanel {
 
         }
 
-        let readingListImageView = UIImageView(image: UIImage(named: "AddToReadingListCircle")?.withRenderingMode(.alwaysTemplate))
-        readingListImageView.tintColor = .theme.ecosia.secondaryText
+        let readingListImageView = UIImageView()
+        readingListImageView.image = .init(themed: "savePages")
         overlayView.addSubview(readingListImageView)
         readingListImageView.snp.makeConstraints { make in
             make.centerY.equalTo(readingListLabel)
