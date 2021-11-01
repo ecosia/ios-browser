@@ -12,9 +12,9 @@ final class EmptyHeader: UITableViewHeaderFooterView, Themeable {
     
     required init?(coder: NSCoder) { nil }
     
-    init(reuseIdentifier: String, icon: String, title: String, subtitle: String) {
+    init(icon: String, title: String, subtitle: String) {
         self.icon = icon
-        super.init(reuseIdentifier: reuseIdentifier)
+        super.init(reuseIdentifier: "EmptyHeader")
         
         let image = UIImageView()
         image.translatesAutoresizingMaskIntoConstraints = false

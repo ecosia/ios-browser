@@ -49,7 +49,7 @@ class DownloadsPanel: UIViewController, UITableViewDelegate, UITableViewDataSour
 
     private let events: [Notification.Name] = [.FileDidDownload, .PrivateDataClearedDownloadedFiles, .DynamicFontChanged]
 
-    private lazy var emptyStateOverlayView = EmptyHeader(reuseIdentifier: "", icon: "bookmarksEmpty", title: .localized(.noBookmarks), subtitle: .localized(.yourBookmarkWill))
+    private lazy var emptyStateOverlayView = EmptyHeader(icon: "bookmarksEmpty", title: .localized(.noBookmarks), subtitle: .localized(.yourBookmarkWill))
 
     private var groupedDownloadedFiles = DateGroupedTableData<DownloadedFile>()
     private var fileExtensionIcons: [String: UIImage] = [:]
