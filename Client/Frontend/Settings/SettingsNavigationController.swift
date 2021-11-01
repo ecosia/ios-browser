@@ -41,17 +41,30 @@ class ThemedNavigationController: UINavigationController {
 
 extension ThemedNavigationController: Themeable {
     func applyTheme() {
-        navigationBar.barTintColor = UIColor.theme.ecosia.barBackground
-        navigationBar.isTranslucent = false
-        navigationBar.tintColor = UIColor.theme.general.controlTint
-        navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.theme.ecosia.highContrastText]
-        navigationBar.shadowImage = nil
-        navigationBar.setBackgroundImage(UIImage(), for: .default)
-        navigationBar.shadowImage = UIImage()
-        setNeedsStatusBarAppearanceUpdate()
+        if #available(iOS 13, *) {
+            let appearance = navigationBar.standardAppearance
+            appearance.configureWithOpaqueBackground()
+            appearance.backgroundColor = UIColor.theme.ecosia.barBackground
+            appearance.titleTextAttributes = [.foregroundColor: UIColor.theme.ecosia.highContrastText]
+            appearance.shadowImage = nil
+            appearance.shadowColor = nil
+            navigationBar.standardAppearance = appearance
+            navigationBar.scrollEdgeAppearance = appearance
+        } else {
+            navigationBar.barTintColor = UIColor.theme.ecosia.barBackground
+            navigationBar.isTranslucent = false
+            navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.theme.ecosia.highContrastText]
+            navigationBar.setBackgroundImage(UIImage(), for: .default)
+            navigationBar.shadowImage = UIImage()
+        }
+
         viewControllers.forEach {
             ($0 as? Themeable)?.applyTheme()
         }
+
+        navigationBar.setNeedsDisplay()
+        setNeedsStatusBarAppearanceUpdate()
+        navigationBar.tintColor = UIColor.theme.general.controlTint
         separator?.backgroundColor = UIColor.theme.tableView.separator
     }
 }
