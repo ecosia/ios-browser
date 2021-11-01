@@ -262,6 +262,7 @@ class ReadingListPanel: UITableViewController, LibraryPanel {
         let welcomeLabel = UILabel()
         overlayView.addSubview(welcomeLabel)
         welcomeLabel.text = .localized(.addArticlesTo)
+        welcomeLabel.textColor = .theme.ecosia.primaryText
         welcomeLabel.textAlignment = .center
         welcomeLabel.font = .systemFont(ofSize: UIFont.preferredFont(forTextStyle: .subheadline).pointSize, weight: .semibold)
         welcomeLabel.adjustsFontSizeToFitWidth = true
@@ -283,7 +284,7 @@ class ReadingListPanel: UITableViewController, LibraryPanel {
         }
 
         let readerModeImageView = UIImageView(image: UIImage(named: "ReaderModeCircle")?.withRenderingMode(.alwaysTemplate))
-        readerModeImageView.tintColor = UIColor.Photon.Grey40
+        readerModeImageView.tintColor = .theme.ecosia.secondaryText
         overlayView.addSubview(readerModeImageView)
         readerModeImageView.snp.makeConstraints { make in
             make.centerY.equalTo(readerModeLabel)
@@ -303,15 +304,15 @@ class ReadingListPanel: UITableViewController, LibraryPanel {
         }
 
         let readingListImageView = UIImageView(image: UIImage(named: "AddToReadingListCircle")?.withRenderingMode(.alwaysTemplate))
-        readingListImageView.tintColor = UIColor.Photon.Grey40
+        readingListImageView.tintColor = .theme.ecosia.secondaryText
         overlayView.addSubview(readingListImageView)
         readingListImageView.snp.makeConstraints { make in
             make.centerY.equalTo(readingListLabel)
             make.trailing.equalTo(welcomeLabel.snp.trailing)
         }
 
-        [welcomeLabel, readerModeLabel, readingListLabel].forEach {
-            $0.textColor = UIColor.theme.homePanel.welcomeScreenText
+        [readerModeLabel, readingListLabel].forEach {
+            $0.textColor = .theme.ecosia.secondaryText
         }
 
         return overlayView
