@@ -111,5 +111,7 @@ extension String {
         case addArticlesTo = "Add articles to your Reading list"
         case noHistory = "No history"
         case websitesYouHave = "Websites you’ve recently visited will show up here"
+        case noDownloads = "No downloads"
+        case yourDownloadFiles = "Your download files will show up here"
     }
 }
