@@ -257,7 +257,7 @@ class ReadingListPanel: UITableViewController, LibraryPanel {
     }
 
     fileprivate func createEmptyStateOverview() -> UIView {
-        let overlayView = UIView(frame: tableView.bounds)
+        let overlayView = UIView(frame: .zero)
 
         let welcomeLabel = UILabel()
         overlayView.addSubview(welcomeLabel)
