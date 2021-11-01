@@ -109,5 +109,7 @@ extension String {
         case noBookmarks = "No bookmarks"
         case yourBookmarkWill = "Your bookmark will show up here"
         case addArticlesTo = "Add articles to your Reading list"
+        case noHistory = "No history"
+        case websitesYouHave = "Websites you’ve recently visited will show up here"
     }
 }

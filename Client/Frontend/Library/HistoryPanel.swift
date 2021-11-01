@@ -87,7 +87,7 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
         return profile.recentlyClosedTabs.tabs.count > 0
     }
 
-    lazy var emptyStateOverlayView = EmptyHeader(icon: "bookmarksEmpty", title: .localized(.noBookmarks), subtitle: .localized(.yourBookmarkWill))
+    lazy var emptyStateOverlayView = EmptyHeader(icon: "historyEmpty", title: .localized(.noHistory), subtitle: .localized(.websitesYouHave))
 
     lazy var longPressRecognizer: UILongPressGestureRecognizer = {
         return UILongPressGestureRecognizer(target: self, action: #selector(onLongPressGestureRecognized))
