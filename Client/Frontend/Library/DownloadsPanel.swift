@@ -49,7 +49,7 @@ class DownloadsPanel: UIViewController, UITableViewDelegate, UITableViewDataSour
 
     private let events: [Notification.Name] = [.FileDidDownload, .PrivateDataClearedDownloadedFiles, .DynamicFontChanged]
 
-    private lazy var emptyStateOverlayView: UIView = self.createEmptyStateOverlayView()
+    private lazy var emptyStateOverlayView = EmptyHeader(icon: "downloadsEmpty", title: .localized(.noDownloads), subtitle: .localized(.yourDownloadFiles))
 
     private var groupedDownloadedFiles = DateGroupedTableData<DownloadedFile>()
     private var fileExtensionIcons: [String: UIImage] = [:]
@@ -104,13 +104,7 @@ class DownloadsPanel: UIViewController, UITableViewDelegate, UITableViewDataSour
             self.reloadData()
 
             switch notification.name {
-            case .FileDidDownload, .PrivateDataClearedDownloadedFiles:
-                break
-            case .DynamicFontChanged:
-                if self.emptyStateOverlayView.superview != nil {
-                    self.emptyStateOverlayView.removeFromSuperview()
-                }
-                self.emptyStateOverlayView = self.createEmptyStateOverlayView()
+            case .FileDidDownload, .PrivateDataClearedDownloadedFiles, .DynamicFontChanged:
                 break
             default:
                 // no need to do anything at all
@@ -228,14 +222,11 @@ class DownloadsPanel: UIViewController, UITableViewDelegate, UITableViewDataSour
     private func updateEmptyPanelState() {
         if groupedDownloadedFiles.isEmpty {
             if emptyStateOverlayView.superview == nil {
-                view.addSubview(emptyStateOverlayView)
-                view.bringSubviewToFront(emptyStateOverlayView)
-                emptyStateOverlayView.snp.makeConstraints { make in
-                    make.edges.equalTo(self.tableView)
-                }
+                tableView.tableHeaderView = emptyStateOverlayView
+                emptyStateOverlayView.applyTheme()
             }
         } else {
-            emptyStateOverlayView.removeFromSuperview()
+            tableView.tableHeaderView = nil
         }
     }
 
@@ -404,11 +395,8 @@ class DownloadsPanel: UIViewController, UITableViewDelegate, UITableViewDataSour
 
 extension DownloadsPanel: Themeable {
     func applyTheme() {
-        emptyStateOverlayView.removeFromSuperview()
-        emptyStateOverlayView = createEmptyStateOverlayView()
+        emptyStateOverlayView.applyTheme()
         updateEmptyPanelState()
-
-        tableView.backgroundColor = UIColor.theme.tableView.rowBackground
         tableView.separatorColor = UIColor.theme.tableView.separator
 
         reloadData()

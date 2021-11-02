@@ -63,6 +63,8 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel {
 
     fileprivate lazy var bookmarkFolderIconNormal = UIImage(named: "bookmarkFolder")?.createScaled(BookmarksPanelUX.FolderIconSize).tinted(withColor: UIColor.Photon.Grey90)
     fileprivate lazy var bookmarkFolderIconDark = UIImage(named: "bookmarkFolder")?.createScaled(BookmarksPanelUX.FolderIconSize).tinted(withColor: UIColor.Photon.Grey10)
+    
+    private lazy var emptyHeader = EmptyHeader(icon: "bookmarksEmpty", title: .localized(.noBookmarks), subtitle: .localized(.yourBookmarkWill))
 
     init(profile: Profile, bookmarkFolderGUID: GUID = BookmarkRoots.MobileFolderGUID) {
         self.bookmarkFolderGUID = bookmarkFolderGUID
@@ -164,6 +166,7 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel {
 
     override func applyTheme() {
         super.applyTheme()
+        emptyHeader.applyTheme()
 
         if let current = navigationController?.visibleViewController as? Themeable, current !== self {
             current.applyTheme()
@@ -203,6 +206,13 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel {
                 DispatchQueue.main.asyncAfter(deadline: .now() + BookmarksPanelUX.RowFlashDelay) {
                     self.flashRow(at: lastIndexPath)
                 }
+            }
+            
+            if self.recentBookmarks.isEmpty && self.bookmarkNodes.isEmpty {
+                self.tableView.tableHeaderView = self.emptyHeader
+                self.emptyHeader.applyTheme()
+            } else {
+                self.tableView.tableHeaderView = nil
             }
         }
     }
