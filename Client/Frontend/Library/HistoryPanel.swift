@@ -87,7 +87,7 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
         return profile.recentlyClosedTabs.tabs.count > 0
     }
 
-    lazy var emptyStateOverlayView: UIView = createEmptyStateOverlayView()
+    lazy var emptyStateOverlayView = EmptyHeader(icon: "historyEmpty", title: .localized(.noHistory), subtitle: .localized(.websitesYouHave))
 
     lazy var longPressRecognizer: UILongPressGestureRecognizer = {
         return UILongPressGestureRecognizer(target: self, action: #selector(onLongPressGestureRecognized))
@@ -316,7 +316,7 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
         cell.textLabel?.text = Strings.HistoryPanelClearHistoryButtonTitle
         cell.detailTextLabel?.text = ""
         cell.imageView?.image = UIImage.templateImageNamed("forget")
-        cell.imageView?.tintColor = HistoryPanelUX.actionIconColor
+        cell.imageView?.tintColor = .theme.general.destructiveRed
         cell.imageView?.backgroundColor = UIColor.theme.homePanel.historyHeaderIconsBackground
         cell.accessibilityIdentifier = "HistoryPanel.clearHistory"
 
@@ -372,11 +372,6 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
             break
         case .DynamicFontChanged:
             reloadData()
-
-            if emptyStateOverlayView.superview != nil {
-                emptyStateOverlayView.removeFromSuperview()
-            }
-            emptyStateOverlayView = createEmptyStateOverlayView()
             resyncHistory()
             break
         case .DatabaseWasReopened:
@@ -540,6 +535,7 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
             if emptyStateOverlayView.superview == nil {
                 tableView.tableFooterView = emptyStateOverlayView
             }
+            emptyStateOverlayView.applyTheme()
         } else {
             tableView.alwaysBounceVertical = true
             tableView.tableFooterView = .init()
@@ -581,9 +577,7 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
     }
 
     override func applyTheme() {
-        emptyStateOverlayView.removeFromSuperview()
-        emptyStateOverlayView = createEmptyStateOverlayView()
-        updateEmptyPanelState()
+        emptyStateOverlayView.applyTheme()
 
         super.applyTheme()
     }

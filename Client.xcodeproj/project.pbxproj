@@ -466,6 +466,7 @@
 		CE7F11941F3CEEC800ABFC0B /* RemoteDevices.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7F115E1F3CCEF900ABFC0B /* RemoteDevices.swift */; };
 		CEC685B326B82DA600FA4CA5 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7B2142FC1E5E055000CDD3FC /* InfoPlist.strings */; };
 		CECCC7222632C1D600D971E4 /* EcosiaBookmarkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECCC7212632C1D600D971E4 /* EcosiaBookmarkTests.swift */; };
+		CED09BE52727000800D38C2C /* EmptyHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED09BE42727000800D38C2C /* EmptyHeader.swift */; };
 		CEFA977E1FAA6B490016F365 /* SyncContentSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA977D1FAA6B490016F365 /* SyncContentSettingsViewController.swift */; };
 		D006F2E32283307B0004D3AB /* KIF.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7B604F981C494F74006EEEC3 /* KIF.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D01017F5219CB6BD009CBB5A /* DownloadContentScript.swift in Sources */ = {isa = PBXBuildFile; fileRef = D01017F4219CB6BD009CBB5A /* DownloadContentScript.swift */; };
@@ -3236,6 +3237,7 @@
 		CE7F115E1F3CCEF900ABFC0B /* RemoteDevices.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteDevices.swift; sourceTree = "<group>"; };
 		CEAC46CEA2B6CAB86A9E1345 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/3DTouchActions.strings; sourceTree = "<group>"; };
 		CECCC7212632C1D600D971E4 /* EcosiaBookmarkTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EcosiaBookmarkTests.swift; sourceTree = "<group>"; };
+		CED09BE42727000800D38C2C /* EmptyHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyHeader.swift; sourceTree = "<group>"; };
 		CEEB4EC881354939F3402DAE /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Menu.strings; sourceTree = "<group>"; };
 		CEFA977D1FAA6B490016F365 /* SyncContentSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncContentSettingsViewController.swift; sourceTree = "<group>"; };
 		CF0B41FFA07D1B6CF873F714 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/Menu.strings; sourceTree = "<group>"; };
@@ -5017,6 +5019,7 @@
 				CAAED1EE25810C7A0048199C /* NewsCell.swift */,
 				CAAED1ED25810C7A0048199C /* NewsController.swift */,
 				CA5E9D50265D068600836DE9 /* SnapKit+Ecosia.swift */,
+				CED09BE42727000800D38C2C /* EmptyHeader.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -7576,6 +7579,7 @@
 				C892DA0D22D39A980080F1F7 /* TrackingProtectionMenu.swift in Sources */,
 				C817B34D1FC609500086018E /* UIScrollViewSwizzled.swift in Sources */,
 				39F819C61FD70F5D009E31E4 /* TabEventHandlers.swift in Sources */,
+				CED09BE52727000800D38C2C /* EmptyHeader.swift in Sources */,
 				CAE253D2268CA29F00308DEA /* BrowserViewController+FirefoxHomeViewControllerDelegate.swift in Sources */,
 				E65607611C08B4E200534B02 /* SearchInputView.swift in Sources */,
 				FA6B2AC21D41F02D00429414 /* Punycode.swift in Sources */,
