@@ -316,7 +316,6 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
         cell.textLabel?.text = Strings.HistoryPanelClearHistoryButtonTitle
         cell.detailTextLabel?.text = ""
         cell.imageView?.image = UIImage.templateImageNamed("forget")
-        cell.imageView?.tintColor = .theme.general.destructiveRed
         cell.imageView?.backgroundColor = UIColor.theme.homePanel.historyHeaderIconsBackground
         cell.accessibilityIdentifier = "HistoryPanel.clearHistory"
 
@@ -326,6 +325,7 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
                 isEmpty = false
             }
         }
+        cell.imageView?.tintColor = isEmpty ? HistoryPanelUX.actionIconColor : .theme.general.destructiveRed
         AdditionalHistoryActionRow.setStyle(enabled: !isEmpty, forCell: cell)
 
         return cell
