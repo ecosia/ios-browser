@@ -124,6 +124,8 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
         } else if !profile.hasSyncableAccount() && refreshControl != nil {
             removeRefreshControl()
         }
+        
+        (navigationController as? ThemedNavigationController)?.applyTheme()
     }
 
     // MARK: - Refreshing TableView
@@ -168,7 +170,6 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
                 }
 
                 self.tableView.reloadData()
-                self.updateEmptyPanelState()
 
                 if let cell = self.clearHistoryCell {
                     AdditionalHistoryActionRow.setStyle(enabled: !self.groupedSites.isEmpty, forCell: cell)
@@ -223,7 +224,6 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
             self.groupedSites.remove(site)
             self.tableView.deleteRows(at: [indexPath], with: .right)
             self.tableView.endUpdates()
-            self.updateEmptyPanelState()
 
             Analytics.shared.browser(.delete, label: .history)
             
@@ -538,6 +538,7 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
 
     override func applyTheme() {
         tableView.reloadData()
+        view.backgroundColor = UIColor.theme.ecosia.primaryBackground
 
         super.applyTheme()
     }

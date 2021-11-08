@@ -398,6 +398,7 @@ extension DownloadsPanel: Themeable {
         emptyStateOverlayView.applyTheme()
         updateEmptyPanelState()
         tableView.separatorColor = UIColor.theme.tableView.separator
+        tableView.backgroundColor = UIColor.theme.ecosia.primaryBackground
 
         reloadData()
     }
