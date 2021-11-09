@@ -84,6 +84,11 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        (navigationController as? ThemedNavigationController)?.applyTheme()
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -167,6 +172,7 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel {
     override func applyTheme() {
         super.applyTheme()
         emptyHeader.applyTheme()
+        view.backgroundColor = UIColor.theme.ecosia.primaryBackground
 
         if let current = navigationController?.visibleViewController as? Themeable, current !== self {
             current.applyTheme()
