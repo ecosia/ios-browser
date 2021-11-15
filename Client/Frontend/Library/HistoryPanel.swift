@@ -482,6 +482,12 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
             header.contentView.backgroundColor = UIColor.theme.tableView.headerBackground
         }
     }
+    
+    func tableView(_ tableView: UITableView, willDisplayFooterView view: UIView, forSection section: Int) {
+        if let footer = view as? UITableViewHeaderFooterView {
+            footer.contentView.backgroundColor = UIColor.theme.ecosia.primaryBackground
+        }
+    }
 
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         // First section is for recently closed and its header has no view.
@@ -520,6 +526,10 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
         return super.tableView(tableView, heightForHeaderInSection: section)
     }
 
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        section == 0 && groupedSites.isEmpty ? 250 : 0
+    }
+    
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         // Intentionally blank. Required to use UITableViewRowActions
     }
