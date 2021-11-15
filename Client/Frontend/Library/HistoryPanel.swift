@@ -493,6 +493,9 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
         if let header = view as? UITableViewHeaderFooterView {
             header.textLabel?.textColor = UIColor.theme.tableView.headerTextDark
             header.contentView.backgroundColor = UIColor.theme.tableView.headerBackground
+            if #available(iOS 14.0, *) {
+                header.backgroundConfiguration?.backgroundColor = UIColor.theme.tableView.headerBackground
+            }
         }
     }
     
