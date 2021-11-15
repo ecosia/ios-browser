@@ -15,7 +15,7 @@ final class EmptyHeader: UITableViewHeaderFooterView, Themeable {
     init(icon: String, title: String, subtitle: String) {
         self.icon = icon
         super.init(reuseIdentifier: "EmptyHeader")
-        frame.size.height = 150
+        frame.size.height = 170
         
         let image = UIImageView()
         image.translatesAutoresizingMaskIntoConstraints = false
