@@ -238,7 +238,6 @@ class ReadingListPanel: UITableViewController, LibraryPanel {
     }
 
     func refreshReadingList() {
-        let prevNumberOfRecords = records?.count
         tableView.tableHeaderView = nil
 
         if let newRecords = profile.readingList.getAvailableRecords().value.successValue {
