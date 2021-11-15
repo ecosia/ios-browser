@@ -245,17 +245,12 @@ class ReadingListPanel: UITableViewController, LibraryPanel {
             records = newRecords
 
             if records?.count == 0 {
-                tableView.isScrollEnabled = false
                 tableView.tableHeaderView = createEmptyStateOverview()
-            } else {
-                if prevNumberOfRecords == 0 {
-                    tableView.isScrollEnabled = true
-                }
             }
             self.tableView.reloadData()
         }
     }
-
+    
     fileprivate func createEmptyStateOverview() -> UIView {
         let overlayView = UIView(frame: .zero)
 
