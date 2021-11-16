@@ -24,6 +24,8 @@ private class FetchInProgressError: MaybeErrorType {
 
 @objcMembers
 class HistoryPanel: SiteTableViewController, LibraryPanel {
+    private lazy var emptyHeader = EmptyHeader(icon: "historyEmpty", title: .localized(.noHistory), subtitle: .localized(.websitesYouHave))
+    
     enum Section: Int {
         // Showing showing recently closed, and clearing recent history are action rows of this type.
         case additionalHistoryActions
@@ -174,7 +176,13 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
                 if let cell = self.clearHistoryCell {
                     AdditionalHistoryActionRow.setStyle(enabled: !self.groupedSites.isEmpty, forCell: cell)
                 }
-
+                
+                if self.groupedSites.isEmpty {
+                    self.tableView.tableFooterView = self.emptyHeader
+                    self.emptyHeader.applyTheme()
+                } else {
+                    self.tableView.tableFooterView = nil
+                }
             }
         }
     }
@@ -197,7 +205,7 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
             return deferMaybe(result)
         }
     }
-
+    
     func resyncHistory() {
         profile.syncManager.syncHistory().uponQueue(.main) { syncResult in
             self.endRefreshing()
@@ -400,6 +408,9 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
 
     // MARK: - UITableViewDataSource
     func numberOfSections(in tableView: UITableView) -> Int {
+        if groupedSites.isEmpty {
+            return 1
+        }
         return Section.count
     }
 
@@ -480,6 +491,9 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
         if let header = view as? UITableViewHeaderFooterView {
             header.textLabel?.textColor = UIColor.theme.tableView.headerTextDark
             header.contentView.backgroundColor = UIColor.theme.tableView.headerBackground
+            if #available(iOS 14.0, *) {
+                header.backgroundConfiguration?.backgroundColor = UIColor.theme.tableView.headerBackground
+            }
         }
     }
     
@@ -502,15 +516,6 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
 
         return super.tableView(tableView, viewForHeaderInSection: section)
     }
-    
-    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        if section == 0 && groupedSites.isEmpty {
-            let footer = EmptyHeader(icon: "historyEmpty", title: .localized(.noHistory), subtitle: .localized(.websitesYouHave))
-            footer.applyTheme()
-            return footer
-        }
-        return nil
-    }
 
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         // First section is for recently closed and its header has no height.
@@ -522,14 +527,10 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
         guard groupedSites.numberOfItemsForSection(section - 1) > 0 else {
             return 0
         }
-
+        
         return super.tableView(tableView, heightForHeaderInSection: section)
     }
     
-    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        section == 0 && groupedSites.isEmpty ? UITableView.automaticDimension : 0
-    }
-
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         // Intentionally blank. Required to use UITableViewRowActions
     }
@@ -547,10 +548,11 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
     }
 
     override func applyTheme() {
-        tableView.reloadData()
-        view.backgroundColor = UIColor.theme.ecosia.primaryBackground
-
         super.applyTheme()
+        tableView.reloadData()
+        emptyHeader.applyTheme()
+        view.backgroundColor = UIColor.theme.ecosia.primaryBackground
+        tableView.backgroundColor = UIColor.theme.ecosia.primaryBackground
     }
 }
 
