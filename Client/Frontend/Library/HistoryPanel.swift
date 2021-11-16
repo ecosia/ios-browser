@@ -206,7 +206,6 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
         }
     }
     
-    
 
     func resyncHistory() {
         profile.syncManager.syncHistory().uponQueue(.main) { syncResult in
