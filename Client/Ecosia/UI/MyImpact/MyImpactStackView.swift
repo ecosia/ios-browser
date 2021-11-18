@@ -9,10 +9,10 @@ import UIKit
 }
 
 struct MyImpactStackViewModel {
-    let title: String
+    let title: String?
     let highlight: Bool
     let subtitle: String?
-    let imageName: String
+    let imageName: String?
 
     var callout: Callout?
 
@@ -39,14 +39,16 @@ class MyImpactStackView: UIStackView, Themeable {
 
     private weak var topStack: UIStackView!
     private weak var titleLabel: UILabel!
-    private weak var subtitleLabel: UILabel!
+    weak var subtitleLabel: UILabel!
     private weak var actionButton: UIButton!
     private weak var imageView: UIImageView!
+    private weak var imageBackgroundView: UIView!
     private weak var callout: UIView!
     private weak var calloutStack: UIStackView!
     private weak var calloutLabel: UILabel!
     private weak var calloutButton: UIButton!
     private weak var imageWidthConstraint: NSLayoutConstraint!
+    private weak var imageHeightConstraint: NSLayoutConstraint!
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -68,28 +70,36 @@ class MyImpactStackView: UIStackView, Themeable {
 
         addArrangedSubview(topStack)
 
-        let imageBackground = UIView()
+        let imageBackgroundView = UIView()
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageBackground.addSubview(imageView)
+        imageBackgroundView.addSubview(imageView)
+        self.imageBackgroundView = imageBackgroundView
         self.imageView = imageView
 
-        imageView.topAnchor.constraint(equalTo: imageBackground.topAnchor).isActive = true
-        imageView.leftAnchor.constraint(equalTo: imageBackground.leftAnchor).isActive = true
-        imageView.rightAnchor.constraint(equalTo: imageBackground.rightAnchor).isActive = true
-        imageView.bottomAnchor.constraint(equalTo: imageBackground.bottomAnchor).isActive = true
+        imageView.topAnchor.constraint(greaterThanOrEqualTo: imageBackgroundView.topAnchor).isActive = true
+        imageView.leftAnchor.constraint(equalTo: imageBackgroundView.leftAnchor).isActive = true
+        imageView.rightAnchor.constraint(equalTo: imageBackgroundView.rightAnchor).isActive = true
+        imageView.bottomAnchor.constraint(lessThanOrEqualTo: imageBackgroundView.bottomAnchor).isActive = true
+        imageView.centerYAnchor.constraint(equalTo: imageBackgroundView.centerYAnchor).isActive = true
+
         let imageWidthConstraint = imageView.widthAnchor.constraint(equalToConstant: 32)
         imageWidthConstraint.priority = .defaultHigh
         imageWidthConstraint.isActive = true
         self.imageWidthConstraint = imageWidthConstraint
-        topStack.addArrangedSubview(imageBackground)
+
+        let imageHeightConstraint = imageView.heightAnchor.constraint(equalToConstant: 32)
+        imageHeightConstraint.priority = .defaultHigh
+        imageHeightConstraint.isActive = true
+        self.imageHeightConstraint = imageHeightConstraint
+
+        topStack.addArrangedSubview(imageBackgroundView)
 
         let labelStack = UIStackView()
         labelStack.axis = .vertical
-        labelStack.distribution = .fill
+        labelStack.distribution = .fillEqually
         labelStack.spacing = 2
-        labelStack.distribution = .fill
         topStack.addArrangedSubview(labelStack)
 
         let titleLabel = UILabel()
@@ -158,10 +168,18 @@ class MyImpactStackView: UIStackView, Themeable {
     func display(_ model: MyImpactStackViewModel) {
         self.model = model
         titleLabel.text = model.title
+        titleLabel.isHidden = model.title == nil
         subtitleLabel.text = model.subtitle
         subtitleLabel.isHidden = model.subtitle == nil
 
-        imageView.image = UIImage(themed: model.imageName)
+        if let imageName = model.imageName {
+            imageView.isHidden = false
+            imageBackgroundView.isHidden = false
+            imageView.image = UIImage(themed: imageName)
+        } else {
+            imageView.isHidden = true
+            imageBackgroundView.isHidden = true
+        }
 
         if let callout = model.callout {
             display(callout)
@@ -197,16 +215,18 @@ class MyImpactStackView: UIStackView, Themeable {
     func applyTheme() {
         guard let model = model else { return }
 
-        let style: UIFont.TextStyle = model.highlight ? .headline : .subheadline
-        imageWidthConstraint.constant = model.highlight ? 52 : 32
-        titleLabel.font = .preferredFont(forTextStyle: style)
+        let style: UIFont.TextStyle = model.highlight ? .headline : .body
+        titleLabel.font = UIFont.preferredFont(forTextStyle: style)
+        imageWidthConstraint.constant = model.highlight ? 74 : 32
+        imageHeightConstraint.constant = model.highlight ? 52 : 32
+
         titleLabel.textColor = UIColor.theme.ecosia.highContrastText
         subtitleLabel.textColor = UIColor.theme.ecosia.secondaryText
         callout.backgroundColor = UIColor.theme.ecosia.impactBackground
         calloutLabel.textColor = UIColor.theme.ecosia.highContrastText
         calloutButton.setTitleColor(UIColor.theme.ecosia.primaryBrand, for: .normal)
         actionButton.setTitleColor(UIColor.theme.ecosia.primaryBrand, for: .normal)
-        imageView.image = UIImage(themed: model.imageName)
+        model.imageName.map { imageView.image = UIImage(themed: $0) }
     }
 
     @objc func actionTapped() {

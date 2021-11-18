@@ -40,7 +40,7 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
         let container = UIStackView()
         container.distribution = .fill
         container.axis = .vertical
-        container.spacing = 12
+        container.spacing = 20
         container.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(container)
         self.container = container
@@ -66,7 +66,6 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
 
         let separator = UIView()
         separator.translatesAutoresizingMaskIntoConstraints = false
-        separator.backgroundColor = UIColor.theme.ecosia.barSeparator
         separator.heightAnchor.constraint(equalToConstant: 1).isActive = true
         container.addArrangedSubview(separator)
         self.separator = separator
@@ -127,7 +126,11 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
 
     func applyTheme() {
         [topStack, middleStack, bottomStack].forEach({ $0?.applyTheme() })
-        outline.elevate()
+
+        outline.layer.borderWidth = ThemeManager.instance.current.isDark ? 0 : 1
+        outline.backgroundColor = UIColor.theme.ecosia.highlightedBackground
+        outline.layer.borderColor = UIColor.theme.ecosia.highlightedBorder.cgColor
+        separator.backgroundColor = UIColor.theme.ecosia.barSeparator
     }
 
     func setWidth(_ width: CGFloat, insets: UIEdgeInsets) {

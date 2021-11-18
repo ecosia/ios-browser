@@ -244,12 +244,12 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         case .multiply:
             let multiplyCell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: section.cell), for: indexPath) as! MultiplyImpactCell
             multiplyCell.setWidth(collectionView.bounds.width, insets: collectionView.safeAreaInsets)
-            let model = MyImpactStackViewModel(title: .localized(.multiplyImpact),
+            let model = MyImpactStackViewModel(title: nil,
                                                highlight: false,
-                                               subtitle: nil,
-                                               imageName: "impactMultiply",
+                                               subtitle: .localized(.multiplyImpact),
+                                               imageName: nil,
                                                callout: .init(action: .tap(text: .localized(.inviteFriends), action: #selector(inviteFriends))))
-            multiplyCell.stack.display(model)
+            multiplyCell.display(model)
             return multiplyCell
         case .explore:
             if indexPath.row == 0 {
@@ -409,7 +409,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     }
 
     @objc func inviteFriends() {
-        // entry point to Referral Screen
+        navigationController?.pushViewController(MultiplyImpact(delegate: delegate), animated: true)
     }
 
     @objc func learnMore() {

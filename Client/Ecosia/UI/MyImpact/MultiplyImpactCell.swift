@@ -14,9 +14,8 @@ final class MultiplyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable 
         super.init(coder: coder)
     }
 
-    weak var stack: MyImpactStackView!
-    weak var outline: UIView!
-    var model: MyImpactCellModel?
+    private weak var stack: MyImpactStackView!
+    private weak var outline: UIView!
     private var widthConstraint: NSLayoutConstraint!
 
     private func setup() {
@@ -43,8 +42,8 @@ final class MultiplyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable 
 
         stack.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16).isActive = true
         stack.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -16).isActive = true
-        stack.topAnchor.constraint(equalTo: contentView.topAnchor,constant: 12).isActive = true
-        stack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -12).isActive = true
+        stack.topAnchor.constraint(equalTo: contentView.topAnchor,constant: 18).isActive = true
+        stack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -18).isActive = true
 
         applyTheme()
     }
@@ -65,9 +64,18 @@ final class MultiplyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable 
         outline.backgroundColor = isSelected || isHighlighted ? UIColor.theme.ecosia.hoverBackgroundColor : UIColor.theme.ecosia.highlightedBackground
     }
 
+    func display(_ model: MyImpactStackViewModel) {
+        stack.display(model)
+        applyTheme()
+    }
+
     func applyTheme() {
         stack.applyTheme()
-        outline.elevate()
+        stack.subtitleLabel.textColor = UIColor.theme.ecosia.highContrastText
+
+        outline.layer.borderWidth = ThemeManager.instance.current.isDark ? 0 : 1
+        outline.backgroundColor = UIColor.theme.ecosia.highlightedBackground
+        outline.layer.borderColor = UIColor.theme.ecosia.highlightedBorder.cgColor
     }
 
     func setWidth(_ width: CGFloat, insets: UIEdgeInsets) {
