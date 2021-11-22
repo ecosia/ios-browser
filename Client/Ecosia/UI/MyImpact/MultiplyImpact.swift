@@ -120,8 +120,8 @@ final class MultiplyImpact: UIViewController, Themeable {
         inviteFriends.setTitleColor(.white.withAlphaComponent(0.3), for: .highlighted)
         inviteFriends.titleLabel!.font = .preferredFont(forTextStyle: .callout)
         inviteFriends.titleLabel!.adjustsFontForContentSizeCategory = true
-        inviteFriends.layer.cornerRadius = 14
-        inviteFriends.backgroundColor = .theme.ecosia.primaryBrand
+        inviteFriends.layer.cornerRadius = 10
+        inviteFriends.backgroundColor = UIColor(named: "primaryBrand")!
         inviteFriends.addTarget(self, action: #selector(self.inviteFriends), for: .touchUpInside)
         content.addSubview(inviteFriends)
         
