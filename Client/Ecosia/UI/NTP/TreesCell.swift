@@ -16,6 +16,8 @@ final class TreesCell: UICollectionViewCell, Themeable {
     lazy var formatter: NumberFormatter = {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
+        formatter.groupingSeparator = ","
+        formatter.usesGroupingSeparator = true
         return formatter
     }()
 
@@ -191,7 +193,7 @@ final class TreesCell: UICollectionViewCell, Themeable {
         impactStack.addArrangedSubview(personalImpactStack)
         self.personalImpactStack = personalImpactStack
 
-        let treeImage = UIImageView(image: .init(named: "personalCounter"))
+        let treeImage = UIImageView()
         treeImage.translatesAutoresizingMaskIntoConstraints = false
         treeImage.contentMode = .scaleAspectFit
         treeImage.setContentHuggingPriority(.defaultLow, for: .horizontal)
@@ -233,7 +235,7 @@ final class TreesCell: UICollectionViewCell, Themeable {
 
         let globalCountStack = UIStackView()
         globalCountStack.axis = .horizontal
-        globalCountStack.distribution = .fillEqually
+        globalCountStack.distribution = .fillProportionally
         globalCountStack.spacing = 4
         globalCountStack.translatesAutoresizingMaskIntoConstraints = false
         globalCountBackground.addSubview(globalCountStack)
@@ -251,12 +253,14 @@ final class TreesCell: UICollectionViewCell, Themeable {
         self.globalCount = globalCount
 
         let globalCountDescription = UILabel()
+        globalCountDescription.textAlignment = .left
         globalCountDescription.translatesAutoresizingMaskIntoConstraints = false
         globalCountDescription.text = .localized(.totalEcosiaTrees)
         globalCountDescription.font = .preferredFont(forTextStyle: .subheadline)
         globalCountDescription.adjustsFontForContentSizeCategory = true
         globalCountDescription.setContentHuggingPriority(.defaultLow, for: .horizontal)
         globalCountDescription.numberOfLines = 0
+        globalCountDescription.textAlignment = .left
         globalCountStack.addArrangedSubview(globalCountDescription)
         self.globalCountDescription = globalCountDescription
     }
@@ -299,7 +303,7 @@ final class TreesCell: UICollectionViewCell, Themeable {
         globalCountStack.leftAnchor.constraint(equalTo: globalCountBackground.leftAnchor, constant: 8).isActive = true
         globalCountStack.bottomAnchor.constraint(equalTo: globalCountBackground.bottomAnchor, constant: -8).isActive = true
 
-        treeImage.widthAnchor.constraint(equalToConstant: 52).isActive = true
+        treeImage.widthAnchor.constraint(equalToConstant: 74).isActive = true
         treeImage.heightAnchor.constraint(equalToConstant: 52).isActive = true
         spotlightClose.widthAnchor.constraint(equalToConstant: 16).isActive = true
     }
@@ -312,7 +316,7 @@ final class TreesCell: UICollectionViewCell, Themeable {
             background.backgroundColor = UIColor.theme.ecosia.primaryBackground
         }
 
-        impactBackground.backgroundColor = (isHighlighted || isSelected) ? UIColor.theme.ecosia.hoverBackgroundColor : UIColor.theme.ecosia.primaryBackground
+        impactBackground.backgroundColor = (isHighlighted || isSelected) ? UIColor.theme.ecosia.hoverBackgroundColor : UIColor.theme.ecosia.ntpImpactBackground
 
         spotlightBackground.backgroundColor = .clear
         globalCountBackground.backgroundColor = UIColor.theme.ecosia.treeCountBackground
@@ -330,6 +334,8 @@ final class TreesCell: UICollectionViewCell, Themeable {
         spotlightDescription.textColor = .white
 
         spotlightClose.tintColor = .white
+
+        treeImage.image = UIImage(themed: "personalCounter")
     }
 
     // MARK: Overrides
