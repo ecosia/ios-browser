@@ -7,7 +7,7 @@ import Core
 
 final class MultiplyImpact: UIViewController, Themeable {
     private weak var subtitle: UILabel?
-    private weak var card: UIView?
+    private weak var card: UIButton?
     private weak var cardIcon: UIImageView?
     private weak var cardTitle: UILabel?
     private weak var cardSubtitle: UILabel?
@@ -46,10 +46,11 @@ final class MultiplyImpact: UIViewController, Themeable {
         content.addSubview(subtitle)
         self.subtitle = subtitle
         
-        let card = UIView()
+        let card = UIButton()
         card.translatesAutoresizingMaskIntoConstraints = false
         card.layer.cornerRadius = 8
         card.layer.borderWidth = 1
+        card.addTarget(self, action: #selector(self.learnMore), for: .touchUpInside)
         content.addSubview(card)
         self.card = card
         
@@ -80,13 +81,12 @@ final class MultiplyImpact: UIViewController, Themeable {
         card.addSubview(cardSubtitle)
         self.cardSubtitle = cardSubtitle
         
-        let learnMore = UIButton()
+        let learnMore = UILabel()
         learnMore.translatesAutoresizingMaskIntoConstraints = false
-        learnMore.setTitle(.localized(.learnMore), for: .normal)
-        learnMore.setTitleColor(.theme.ecosia.primaryBrand, for: .normal)
-        learnMore.titleLabel!.font = .preferredFont(forTextStyle: .callout)
-        learnMore.titleLabel!.adjustsFontForContentSizeCategory = true
-        learnMore.addTarget(self, action: #selector(self.learnMore), for: .touchUpInside)
+        learnMore.text = .localized(.learnMore)
+        learnMore.textColor = .theme.ecosia.primaryBrand
+        learnMore.font = .preferredFont(forTextStyle: .callout)
+        learnMore.adjustsFontForContentSizeCategory = true
         card.addSubview(learnMore)
         
         let flowTitle = UILabel()
@@ -120,8 +120,8 @@ final class MultiplyImpact: UIViewController, Themeable {
         inviteFriends.setTitleColor(.white.withAlphaComponent(0.3), for: .highlighted)
         inviteFriends.titleLabel!.font = .preferredFont(forTextStyle: .callout)
         inviteFriends.titleLabel!.adjustsFontForContentSizeCategory = true
-        inviteFriends.layer.cornerRadius = 14
-        inviteFriends.backgroundColor = .theme.ecosia.primaryBrand
+        inviteFriends.layer.cornerRadius = 10
+        inviteFriends.backgroundColor = UIColor(named: "primaryBrand")!
         inviteFriends.addTarget(self, action: #selector(self.inviteFriends), for: .touchUpInside)
         content.addSubview(inviteFriends)
         
