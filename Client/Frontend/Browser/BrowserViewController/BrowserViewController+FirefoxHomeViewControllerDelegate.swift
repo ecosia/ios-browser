@@ -35,11 +35,11 @@ extension BrowserViewController: FirefoxHomeViewControllerDelegate {
         urlBar.leaveOverlayMode(didCancel: true)
     }
 
-    func homeDidPressPersonalCounter(_ home: FirefoxHomeViewController) {
-        presentEcosiaWorld()
+    func homeDidPressPersonalCounter(_ home: FirefoxHomeViewController, completion: (() -> Void)? = nil) {
+        presentEcosiaWorld(completion)
     }
 
-    func presentEcosiaWorld() {
-        present(ecosiaNavigation, animated: true, completion: nil)
+    func presentEcosiaWorld(_ completion: (() -> Void)? = nil) {
+        present(ecosiaNavigation, animated: true, completion: completion)
     }
 }
