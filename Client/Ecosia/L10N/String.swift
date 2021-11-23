@@ -34,7 +34,7 @@ extension String {
         case invalidReferralLinkMessage = "Your referral link is wrong or not valid for you. Please check it and try again."
         case invertColors = "Invert website colors"
         case inviteFriends = "Invite friends"
-        case inviteFriendsSpotlight = "Invite friends to plant even more trees"
+        case inviteFriendsSpotlight = "Help plant trees by inviting friends"
         case keepUpToDate = "Keep up to date with the latest news from our projects and more"
         case keepGoing = "Keep going by browsing the web with Ecosia and sharing the app with friends!"
         case learnMore = "Learn more"

@@ -132,7 +132,7 @@ protocol FirefoxHomeViewControllerDelegate: AnyObject {
     func home(_ home: FirefoxHomeViewController, didScroll contentOffset: CGFloat, offset: CGFloat)
     func homeDidTapSearchButton(_ home: FirefoxHomeViewController)
     func home(_ home: FirefoxHomeViewController, willBegin drag: CGPoint)
-    func homeDidPressPersonalCounter(_ home: FirefoxHomeViewController)
+    func homeDidPressPersonalCounter(_ home: FirefoxHomeViewController, completion: (() -> Void)?)
 }
 
 class FirefoxHomeViewController: UICollectionViewController, HomePanel {
@@ -198,13 +198,13 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel {
         }
 
         personalCounter.subscribe(self) { [weak self] _ in
-            guard let self = self, let impactCell = self.impactCell as? TreesCell else { return }
-            impactCell.display(self.treesCellModel)
+            guard let self = self else { return }
+            self.updateTreesCell()
         }
 
         referrals.subscribe(self) { [weak self] _ in
-            guard let self = self, let impactCell = self.impactCell as? TreesCell else { return }
-            impactCell.display(self.treesCellModel)
+            guard let self = self else { return }
+            self.updateTreesCell()
         }
     }
 
@@ -401,9 +401,15 @@ extension FirefoxHomeViewController: UICollectionViewDelegateFlowLayout {
 
         switch Section(rawValue: indexPath.section) {
         case .impact:
-            delegate?.homeDidPressPersonalCounter(self)
+            delegate?.homeDidPressPersonalCounter(self, completion: { [weak self] in
+                self?.updateTreesCell()
+            })
             collectionView.deselectItem(at: indexPath, animated: true)
             User.shared.referrals.accept()
+
+            if User.shared.showsReferralSpotlight {
+                User.shared.hideReferralSpotlight()
+            }
         default:
             break
         }
@@ -1049,6 +1055,12 @@ extension FirefoxHomeViewController: SearchbarCellDelegate {
 }
 
 extension FirefoxHomeViewController: TreesCellDelegate {
+
+    fileprivate func updateTreesCell() {
+        guard let impactCell = impactCell as? TreesCell else { return }
+        impactCell.display(treesCellModel)
+        flowLayout.invalidateLayout()
+    }
 
     fileprivate var spotlight: TreesCellModel.Spotlight? {
         guard User.shared.showsReferralSpotlight else { return nil }
