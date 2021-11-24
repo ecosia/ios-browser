@@ -7,7 +7,7 @@ import Core
 
 final class MultiplyImpact: UIViewController, Themeable {
     private weak var subtitle: UILabel?
-    private weak var card: UIButton?
+    private weak var card: UIControl?
     private weak var cardIcon: UIImageView?
     private weak var cardTitle: UILabel?
     private weak var cardSubtitle: UILabel?
@@ -46,17 +46,20 @@ final class MultiplyImpact: UIViewController, Themeable {
         content.addSubview(subtitle)
         self.subtitle = subtitle
         
-        let card = UIButton()
+        let card = UIControl()
         card.translatesAutoresizingMaskIntoConstraints = false
         card.layer.cornerRadius = 8
         card.layer.borderWidth = 1
+        card.addTarget(self, action: #selector(highlight), for: .touchDown)
+        card.addTarget(self, action: #selector(clear), for: .touchUpInside)
+        card.addTarget(self, action: #selector(clear), for: .touchUpOutside)
+        card.addTarget(self, action: #selector(clear), for: .touchCancel)
         card.addTarget(self, action: #selector(self.learnMore), for: .touchUpInside)
         content.addSubview(card)
         self.card = card
         
         let cardIcon = UIImageView()
         cardIcon.translatesAutoresizingMaskIntoConstraints = false
-        cardIcon.clipsToBounds = true
         cardIcon.contentMode = .center
         card.addSubview(cardIcon)
         self.cardIcon = cardIcon
@@ -225,10 +228,19 @@ final class MultiplyImpact: UIViewController, Themeable {
     
     @objc private func learnMore() {
         delegate?.ecosiaHome(didSelectURL: URL(string: "https://ecosia.zendesk.com/hc/en-us/articles/4406431901714-How-does-inviting-friends-to-Ecosia-work-")!)
+        clear()
         dismiss(animated: true)
     }
     
     @objc private func inviteFriends() {
         Analytics.shared.sendInvite()
+    }
+    
+    @objc private func highlight() {
+        card?.backgroundColor = .theme.ecosia.hoverBackgroundColor
+    }
+    
+    @objc private func clear() {
+        card?.backgroundColor = .theme.ecosia.impactMultiplyCardBackground
     }
 }
