@@ -1109,14 +1109,11 @@ extension FirefoxHomeViewController: TreesCellDelegate {
     func treesCellDidTapSpotlight(_ cell: TreesCell) {
         User.shared.hideReferralSpotlight()
 
-        UIView.animate(withDuration: 0.3, animations: {
-            cell.display(self.treesCellModel)
-            self.flowLayout.invalidateLayout()
-        }) { _ in
-            self.flowLayout.invalidateLayout()
+        collectionView.performBatchUpdates {
+            UIView.animate(withDuration: 0.3) {
+                cell.display(self.treesCellModel)
+            }
         }
-
-        // leave overlay mode if it was active
         delegate?.home(self, willBegin: .zero)
     }
 }

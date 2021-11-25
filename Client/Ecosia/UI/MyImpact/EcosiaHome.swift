@@ -419,12 +419,16 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     }
 
     @objc func resizeStack(sender: MyImpactStackView) {
-        guard let model = sender.model, let collapsed = model.callout?.collapsed else { return }
-        impactModel.top?.callout?.collapsed = !collapsed
+        guard let model = sender.model, let collapsed = model.callout?.collapsed,
+              let cell = collectionView.cellForItem(at: IndexPath(item: 0, section: Section.impact.rawValue)) as? MyImpactCell  else { return }
 
-        UIView.animate(withDuration: 0.3) {
-            self.collectionView.reloadItems(at: [IndexPath(item: 0, section: Section.impact.rawValue)])
-            self.collectionViewLayout.invalidateLayout()
+        impactModel.top?.callout?.collapsed = !collapsed
+        let updatedModel = impactModel
+
+        collectionView.performBatchUpdates {
+            UIView.animate(withDuration: 0.3) {
+                cell.display(updatedModel)
+            }
         }
     }
 }

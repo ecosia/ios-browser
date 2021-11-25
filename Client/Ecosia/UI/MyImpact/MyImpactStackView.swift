@@ -67,7 +67,9 @@ class MyImpactStackView: UIStackView, Themeable {
         let topStack = UIStackView()
         topStack.spacing = 8
         topStack.axis = .horizontal
-
+        topStack.alignment = .center
+        topStack.translatesAutoresizingMaskIntoConstraints = false
+        topStack.setContentCompressionResistancePriority(.required, for: .vertical)
         addArrangedSubview(topStack)
 
         let imageBackgroundView = UIView()
@@ -75,14 +77,14 @@ class MyImpactStackView: UIStackView, Themeable {
         imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageBackgroundView.addSubview(imageView)
+        imageBackgroundView.setContentCompressionResistancePriority(.required, for: .vertical)
         self.imageBackgroundView = imageBackgroundView
         self.imageView = imageView
 
-        imageView.topAnchor.constraint(greaterThanOrEqualTo: imageBackgroundView.topAnchor).isActive = true
         imageView.leftAnchor.constraint(equalTo: imageBackgroundView.leftAnchor).isActive = true
         imageView.rightAnchor.constraint(equalTo: imageBackgroundView.rightAnchor).isActive = true
-        imageView.bottomAnchor.constraint(lessThanOrEqualTo: imageBackgroundView.bottomAnchor).isActive = true
         imageView.centerYAnchor.constraint(equalTo: imageBackgroundView.centerYAnchor).isActive = true
+        imageView.setContentCompressionResistancePriority(.required, for: .vertical)
 
         let imageWidthConstraint = imageView.widthAnchor.constraint(equalToConstant: 32)
         imageWidthConstraint.priority = .defaultHigh
@@ -100,12 +102,14 @@ class MyImpactStackView: UIStackView, Themeable {
         labelStack.axis = .vertical
         labelStack.distribution = .fillEqually
         labelStack.spacing = 2
+        labelStack.setContentCompressionResistancePriority(.required, for: .vertical)
         topStack.addArrangedSubview(labelStack)
 
         let titleLabel = UILabel()
         titleLabel.numberOfLines = 0
         titleLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
         titleLabel.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+        titleLabel.setContentCompressionResistancePriority(.required, for: .vertical)
         titleLabel.setContentHuggingPriority(.defaultHigh, for: .vertical)
         labelStack.addArrangedSubview(titleLabel)
         self.titleLabel = titleLabel
@@ -115,6 +119,7 @@ class MyImpactStackView: UIStackView, Themeable {
         subtitleLabel.adjustsFontForContentSizeCategory = true
         subtitleLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
         subtitleLabel.setContentHuggingPriority(.defaultHigh, for: .vertical)
+        subtitleLabel.setContentCompressionResistancePriority(.required, for: .vertical)
         subtitleLabel.numberOfLines = 0
         labelStack.addArrangedSubview(subtitleLabel)
         self.subtitleLabel = subtitleLabel
@@ -130,6 +135,7 @@ class MyImpactStackView: UIStackView, Themeable {
         self.actionButton = actionButton
 
         let callout = UIView()
+        callout.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
         addArrangedSubview(callout)
         callout.isHidden = true
         callout.layer.cornerRadius = 8
@@ -142,6 +148,7 @@ class MyImpactStackView: UIStackView, Themeable {
         calloutStack.spacing = 8
         callout.addSubview(calloutStack)
         calloutStack.isHidden = true
+        calloutStack.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
         self.calloutStack = calloutStack
 
         calloutStack.topAnchor.constraint(equalTo: callout.topAnchor, constant: 12).isActive = true
@@ -153,6 +160,8 @@ class MyImpactStackView: UIStackView, Themeable {
         calloutLabel.font = .preferredFont(forTextStyle: .footnote)
         calloutLabel.adjustsFontForContentSizeCategory = true
         calloutLabel.numberOfLines = 0
+        calloutLabel.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
+        calloutLabel.lineBreakMode = .byClipping
         calloutStack.addArrangedSubview(calloutLabel)
         self.calloutLabel = calloutLabel
 
@@ -160,6 +169,7 @@ class MyImpactStackView: UIStackView, Themeable {
         calloutButton.titleLabel?.font = .preferredFont(forTextStyle: .footnote)
         calloutButton.titleLabel?.adjustsFontForContentSizeCategory = true
         calloutButton.setContentHuggingPriority(.defaultHigh, for: .vertical)
+        calloutButton.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
         calloutButton.addTarget(self, action: #selector(calloutTapped), for: .primaryActionTriggered)
         calloutStack.addArrangedSubview(calloutButton)
         self.calloutButton = calloutButton
@@ -200,11 +210,10 @@ class MyImpactStackView: UIStackView, Themeable {
             actionButton.setTitle(nil, for: .normal)
 
             let collapsed = callout.collapsed != false
-
-            let image: UIImage = collapsed ? .init(themed: "impactDown")! : .init(themed: "impactUp")!
+            let image: UIImage = .init(themed: "impactDown")!
             actionButton.setImage(image, for: .normal)
             actionButton.imageView?.contentMode = .scaleAspectFit
-
+            actionButton.transform = collapsed ? .identity : .init(rotationAngle: Double.pi - 0.00001)
             calloutStack.isHidden = collapsed
             self.callout.isHidden = collapsed
             calloutButton.setTitle(button, for: .normal)
