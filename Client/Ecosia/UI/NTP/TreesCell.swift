@@ -29,8 +29,8 @@ final class TreesCell: UICollectionViewCell, Themeable {
 
 
     private weak var spotlightBackground: UIView!
+    private weak var spotlightContainerStack: UIStackView!
     private weak var spotlightStack: UIStackView!
-    private weak var spotlightTopLine: UIStackView!
     private weak var spotlightHeadline: UILabel!
     private weak var spotlightDescription: UILabel!
     private weak var spotlightClose: UIImageView!
@@ -121,7 +121,7 @@ final class TreesCell: UICollectionViewCell, Themeable {
     }
 
     var spotlightViews: [UIView] {
-        return [spotlightBackground, spotlightStack]
+        return [spotlightBackground, spotlightContainerStack]
     }
 
     // MARK: UI
@@ -134,32 +134,29 @@ final class TreesCell: UICollectionViewCell, Themeable {
 
         spotlightBackground.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(spotlightTapped)))
 
+        let spotlightContainerStack = UIStackView()
+        spotlightContainerStack.axis = .horizontal
+        spotlightContainerStack.alignment = .leading
+        spotlightContainerStack.translatesAutoresizingMaskIntoConstraints = false
+        spotlightBackground.addSubview(spotlightContainerStack)
+        self.spotlightContainerStack = spotlightContainerStack
+
         let spotlightStack = UIStackView()
         spotlightStack.axis = .vertical
         spotlightStack.translatesAutoresizingMaskIntoConstraints = false
         spotlightStack.spacing = 0
-        spotlightBackground.addSubview(spotlightStack)
-        self.spotlightStack = spotlightStack
-
-        let spotlightTopLine = UIStackView()
-        spotlightTopLine.axis = .horizontal
-        spotlightStack.addArrangedSubview(spotlightTopLine)
+        spotlightContainerStack.addArrangedSubview(spotlightStack)
         self.spotlightStack = spotlightStack
 
         let spotlightHeadline = UILabel()
-        spotlightTopLine.addArrangedSubview(spotlightHeadline)
+        spotlightStack.addArrangedSubview(spotlightHeadline)
         spotlightHeadline.setContentCompressionResistancePriority(.required, for: .vertical)
         spotlightHeadline.setContentHuggingPriority(.defaultLow, for: .horizontal)
 
         spotlightHeadline.font = .preferredFont(forTextStyle: .subheadline).bold()
         spotlightHeadline.adjustsFontForContentSizeCategory = true
+        spotlightHeadline.numberOfLines = 0
         self.spotlightHeadline = spotlightHeadline
-
-        let spotlightClose = UIImageView(image: .init(named: "close-medium")?.withRenderingMode(.alwaysTemplate))
-        spotlightClose.contentMode = .scaleAspectFit
-        spotlightClose.setContentHuggingPriority(.required, for: .horizontal)
-        spotlightTopLine.addArrangedSubview(spotlightClose)
-        self.spotlightClose = spotlightClose
 
         let spotlightDescription = UILabel()
         spotlightDescription.numberOfLines = 0
@@ -168,6 +165,12 @@ final class TreesCell: UICollectionViewCell, Themeable {
         spotlightDescription.setContentCompressionResistancePriority(.required, for: .vertical)
         spotlightStack.addArrangedSubview(spotlightDescription)
         self.spotlightDescription = spotlightDescription
+
+        let spotlightClose = UIImageView(image: .init(named: "close-medium")?.withRenderingMode(.alwaysTemplate))
+        spotlightClose.contentMode = .scaleAspectFit
+        spotlightClose.setContentHuggingPriority(.required, for: .horizontal)
+        spotlightContainerStack.addArrangedSubview(spotlightClose)
+        self.spotlightClose = spotlightClose
     }
 
     private func addImpact() {
@@ -288,10 +291,10 @@ final class TreesCell: UICollectionViewCell, Themeable {
         container.leftAnchor.constraint(equalTo: background.leftAnchor).isActive = true
         container.bottomAnchor.constraint(equalTo: background.bottomAnchor).isActive = true
 
-        spotlightStack.rightAnchor.constraint(equalTo: spotlightBackground.rightAnchor, constant: -12).isActive = true
-        spotlightStack.topAnchor.constraint(equalTo: spotlightBackground.topAnchor, constant: 8).isActive = true
-        spotlightStack.leftAnchor.constraint(equalTo: spotlightBackground.leftAnchor, constant: 12).isActive = true
-        spotlightStack.bottomAnchor.constraint(equalTo: spotlightBackground.bottomAnchor, constant: -8).isActive = true
+        spotlightContainerStack.rightAnchor.constraint(equalTo: spotlightBackground.rightAnchor, constant: -12).isActive = true
+        spotlightContainerStack.topAnchor.constraint(equalTo: spotlightBackground.topAnchor, constant: 8).isActive = true
+        spotlightContainerStack.leftAnchor.constraint(equalTo: spotlightBackground.leftAnchor, constant: 12).isActive = true
+        spotlightContainerStack.bottomAnchor.constraint(equalTo: spotlightBackground.bottomAnchor, constant: -8).isActive = true
 
         impactStack.rightAnchor.constraint(equalTo: impactBackground.rightAnchor, constant: -8).isActive = true
         impactStack.topAnchor.constraint(equalTo: impactBackground.topAnchor, constant: 16).isActive = true
