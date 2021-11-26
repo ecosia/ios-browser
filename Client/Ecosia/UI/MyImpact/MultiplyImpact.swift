@@ -232,8 +232,19 @@ final class MultiplyImpact: UIViewController, Themeable {
         dismiss(animated: true)
     }
     
-    @objc private func inviteFriends() {
-        Analytics.shared.sendInvite()
+    @objc private func inviteFriends(_ button: UIButton) {
+        #warning("Invite link not defined yet")
+        let inviteLink = Environment.current.referralClaims
+        
+        let share = UIActivityViewController(activityItems: [inviteLink], applicationActivities: nil)
+        share.popoverPresentationController?.sourceView = button
+        share.completionWithItemsHandler = { _, completed, _, _ in
+            if completed {
+                Analytics.shared.sendInvite()
+            }
+        }
+        
+        present(share, animated: true)
     }
     
     @objc private func highlight() {
