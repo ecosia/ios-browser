@@ -233,8 +233,10 @@ final class MultiplyImpact: UIViewController, Themeable {
     }
     
     @objc private func inviteFriends(_ button: UIButton) {
-        #warning("Invite link not defined yet")
-        let inviteLink = Environment.current.referralClaims
+        guard
+            let code = User.shared.referrals.code,
+            let inviteLink = URL(string: "ecosia://join/" + code)
+        else { return }
         
         let share = UIActivityViewController(activityItems: [inviteLink], applicationActivities: nil)
         share.popoverPresentationController?.sourceView = button
