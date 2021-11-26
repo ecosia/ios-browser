@@ -232,8 +232,18 @@ final class MultiplyImpact: UIViewController, Themeable {
         dismiss(animated: true)
     }
     
-    @objc private func inviteFriends() {
-        Analytics.shared.sendInvite()
+    @objc private func inviteFriends(_ button: UIButton) {
+        guard let message = inviteMessage else { return }
+        
+        let share = UIActivityViewController(activityItems: [message], applicationActivities: nil)
+        share.popoverPresentationController?.sourceView = button
+        share.completionWithItemsHandler = { _, completed, _, _ in
+            if completed {
+                Analytics.shared.sendInvite()
+            }
+        }
+        
+        present(share, animated: true)
     }
     
     @objc private func highlight() {
@@ -242,5 +252,23 @@ final class MultiplyImpact: UIViewController, Themeable {
     
     @objc private func clear() {
         card?.backgroundColor = .theme.ecosia.impactMultiplyCardBackground
+    }
+    
+    private var inviteMessage: String? {
+        guard let link = inviteLink else { return nil }
+        
+        return """
+🌳🔗 \(String.localized(.heyThereWantToPlant))
+\(String.localized(.downloadEcosiaOn))
+\(String.localized(.clickMyInvitation)) \(link)
+\(String.localized(.letsDoThis)) 😊
+
+https://apps.apple.com/us/app/ecosia/id670881887
+"""
+    }
+    
+    private var inviteLink: String? {
+        guard let code = User.shared.referrals.code else { return nil }
+        return "ecosia://join/" + code
     }
 }

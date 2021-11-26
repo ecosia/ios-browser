@@ -113,5 +113,9 @@ extension String {
         case websitesYouHave = "Websites you’ve recently visited will show up here"
         case noDownloads = "No downloads"
         case yourDownloadFiles = "Your download files will show up here"
+        case heyThereWantToPlant = "Hey there, want to plant trees with me? If you get the app, each of us will contribute to planting extra trees with Ecosia!"
+        case downloadEcosiaOn = "(1) Download Ecosia on your iPhone for free"
+        case clickMyInvitation = "(2) Click my invitation link so we plant extra trees each:"
+        case letsDoThis = "Let's do this"
     }
 }
