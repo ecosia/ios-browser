@@ -1076,7 +1076,7 @@ extension FirefoxHomeViewController: TreesCellDelegate {
         }
 
         if personalCounter.state == 0 && User.shared.referrals.impact == 0 {
-            return .init(title: .localizedPlural(.treesPlural, num: 0),
+            return .init(title: "0",
                          subtitle: .localized(.startPlanting),
                          highlight: nil,
                          spotlight: spotlight)

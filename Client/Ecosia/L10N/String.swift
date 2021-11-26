@@ -68,7 +68,7 @@ extension String {
         case sendFeedback = "Send feedback"
         case shop = "Shop"
         case shownUnderSearchField = "Shown under the search field"
-        case startPlanting = "Start your tree planting journey"
+        case startPlanting = "Plant your first tree"
         case stories = "Stories"
         case strict = "Strict"
         case tapCounter = "Tap your tree counter to share Ecosia with friends and plant more trees"
