@@ -174,7 +174,7 @@ final class LoadingScreen: UIViewController {
         alert.addAction(.init(title: .localized(.continueMessage), style: .cancel) { [weak self] _ in
             self?.loadingGroup.leave()
         })
-        alert.addAction(.init(title: "Retry", style: .default) { [weak self] _ in
+        alert.addAction(.init(title: .localized(.retryMessage), style: .default) { [weak self] _ in
             guard let code = self?.referralCode else { return }
             self?.claimReferral(code)
         })

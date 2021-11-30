@@ -12,6 +12,7 @@ final class MultiplyImpact: UIViewController, Themeable {
     private weak var cardTitle: UILabel?
     private weak var cardSubtitle: UILabel?
     private weak var flowTitle: UILabel?
+    private weak var inviteButton: UIButton!
     private weak var dash: MultiplyImpactDash?
     private weak var firstStep: MultiplyImpactStep?
     private weak var secondStep: MultiplyImpactStep?
@@ -127,6 +128,7 @@ final class MultiplyImpact: UIViewController, Themeable {
         inviteFriends.backgroundColor = UIColor(named: "primaryBrand")!
         inviteFriends.addTarget(self, action: #selector(self.inviteFriends), for: .touchUpInside)
         content.addSubview(inviteFriends)
+        self.inviteButton = inviteFriends
         
         scroll.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
         scroll.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor).isActive = true
@@ -232,20 +234,43 @@ final class MultiplyImpact: UIViewController, Themeable {
         dismiss(animated: true)
     }
     
-    @objc private func inviteFriends(_ button: UIButton) {
-        guard let message = inviteMessage else { return }
-        
+    @objc private func inviteFriends() {
+        guard let message = inviteMessage else {
+            let referrals = Referrals()
+            referrals.refresh { error in
+                if let error = error {
+                    self.showReferralError(error)
+                } else {
+                    self.share(message: self.inviteMessage!)
+                }
+            }
+            return
+        }
+        share(message: message)
+    }
+
+    private func share(message: String) {
         let share = UIActivityViewController(activityItems: [message], applicationActivities: nil)
-        share.popoverPresentationController?.sourceView = button
+        share.popoverPresentationController?.sourceView = inviteButton
         share.completionWithItemsHandler = { _, completed, _, _ in
             if completed {
                 Analytics.shared.sendInvite()
             }
         }
-        
         present(share, animated: true)
     }
-    
+
+    private func showReferralError(_ error: Referrals.Error) {
+        let alert = UIAlertController(title: error.title,
+                                      message: error.message,
+                                      preferredStyle: .alert)
+        alert.addAction(.init(title: .localized(.continueMessage), style: .cancel))
+        alert.addAction(.init(title: .localized(.retryMessage), style: .default) { [weak self] _ in
+            self?.inviteFriends()
+        })
+        present(alert, animated: true)
+    }
+
     @objc private func highlight() {
         card?.backgroundColor = .theme.ecosia.hoverBackgroundColor
     }
@@ -259,11 +284,14 @@ final class MultiplyImpact: UIViewController, Themeable {
         
         return """
 🌳🔗 \(String.localized(.heyThereWantToPlant))
-\(String.localized(.downloadEcosiaOn))
-\(String.localized(.clickMyInvitation)) \(link)
-\(String.localized(.letsDoThis)) 😊
 
+\(String.localized(.downloadEcosiaOn))
 https://apps.apple.com/us/app/ecosia/id670881887
+
+\(String.localized(.clickMyInvitation))
+\(link)
+
+\(String.localized(.letsDoThis)) 😊
 """
     }
     
