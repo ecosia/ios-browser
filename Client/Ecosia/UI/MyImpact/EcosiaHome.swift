@@ -12,11 +12,12 @@ protocol EcosiaHomeDelegate: AnyObject {
 final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlowLayout, Themeable, MyImpactStackViewModelResize {
 
     enum Section: Int, CaseIterable {
-        case impact, multiply, news, explore
+        case impact, legacyImpact, multiply, news, explore
 
         var cell: AnyClass {
             switch self {
             case .impact: return MyImpactCell.self
+            case .legacyImpact: return TreesCell.self
             case .multiply: return MultiplyImpactCell.self
             case .explore: return EcosiaExploreCell.self
             case .news: return NewsCell.self
@@ -114,21 +115,8 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     }()
 
     private func refreshImpactModel() -> MyImpactCellModel {
-        if Goodall.shared.variant(for: .referrals) == "test" {
-            return referralImpactCellModel
-        } else {
-            return searchImpactCellModel
-        }
+        return referralImpactCellModel
     }
-
-    private var searchImpactCellModel: MyImpactCellModel {
-        let top = MyImpactStackViewModel(title: .localizedPlural(.searches, num: personalCounter.state!),
-                                         highlight: true, subtitle: .localized(.onAverageItTakes),
-                                         imageName: "personalCounter",
-                                         callout: nil)
-        return MyImpactCellModel(top: top, middle: nil, bottom: nil)
-    }
-
 
     private var referralImpactCellModel: MyImpactCellModel {
         let callout = MyImpactStackViewModel.Callout(action: .collapse(text: .localized(.myImpactDescription),
@@ -152,6 +140,13 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
                                             callout: nil)
 
         return MyImpactCellModel(top: top, middle: middle, bottom: bottom)
+    }
+
+    fileprivate var treesCellModel: TreesCellModel {
+        return .init(title: .localizedPlural(.searches, num: personalCounter.state!),
+                     subtitle: .localized(.onAverageItTakes),
+                     highlight: nil,
+                     spotlight: nil)
     }
 
     convenience init(delegate: EcosiaHomeDelegate?) {
@@ -195,7 +190,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         personalCounter.subscribe(self)  { [weak self] _ in
             guard let self = self else { return }
             self.impactModel = self.refreshImpactModel()
-            self.collectionView.reloadSections([Section.impact.rawValue])
+            self.collectionView.reloadSections([Section.impact.rawValue, Section.legacyImpact.rawValue])
         }
 
         referrals.subscribe(self)  { [weak self] _ in
@@ -224,7 +219,8 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         switch Section(rawValue: section)! {
-        case .impact: return 1
+        case .impact: return Goodall.shared.variant(for: .referrals) == "test" ? 1 : 0
+        case .legacyImpact: return Goodall.shared.variant(for: .referrals) == "test" ? 0 : 1
         case .multiply: return Goodall.shared.variant(for: .referrals) == "test" ? 1 : 0
         case .explore: return Section.Explore.allCases.count + 1 // header
         case .news: return min(3, items.count) + 2 // header and footer
@@ -241,6 +237,13 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
             infoCell.setWidth(collectionView.bounds.width, insets: collectionView.safeAreaInsets)
             infoCell.display(impactModel)
             return infoCell
+
+        case .legacyImpact:
+            let treesCell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: section.cell), for: indexPath) as! TreesCell
+            treesCell.display(treesCellModel)
+            treesCell.setWidth(collectionView.bounds.width, insets: collectionView.safeAreaInsets)
+            return treesCell
+
         case .multiply:
             let multiplyCell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: section.cell), for: indexPath) as! MultiplyImpactCell
             multiplyCell.setWidth(collectionView.bounds.width, insets: collectionView.safeAreaInsets)
@@ -296,6 +299,9 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
             if let stack = (collectionView.cellForItem(at: indexPath) as? MyImpactCell)?.topStack {
                 resizeStack(sender: stack)
             }
+        case .legacyImpact:
+            delegate?.ecosiaHome(didSelectURL: Environment.current.aboutCounter)
+            dismiss(animated: true, completion: nil)
         case .news:
             let index = indexPath.row - 1
             guard index >= 0, items.count > index else { return }
@@ -319,7 +325,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         let margin = max(16, collectionView.safeAreaInsets.left)
 
         switch section {
-        case .impact:
+        case .impact, .legacyImpact:
             return CGSize(width: view.bounds.width - 2 * margin, height: 226)
         case .multiply:
             return CGSize(width: view.bounds.width - 2 * margin, height: 56)

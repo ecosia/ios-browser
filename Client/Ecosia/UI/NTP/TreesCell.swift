@@ -227,6 +227,7 @@ final class TreesCell: UICollectionViewCell, Themeable {
         impactOverviewLabel.setContentCompressionResistancePriority(.required, for: .vertical)
         impactOverviewLabel.setContentHuggingPriority(.defaultHigh, for: .vertical)
         impactOverviewLabel.adjustsFontForContentSizeCategory = true
+        impactOverviewLabel.numberOfLines = 0
         personalImpactLabelStack.addArrangedSubview(impactOverviewLabel)
         self.impactOverviewLabel = impactOverviewLabel
 
@@ -307,7 +308,7 @@ final class TreesCell: UICollectionViewCell, Themeable {
         globalCountStack.bottomAnchor.constraint(equalTo: globalCountBackground.bottomAnchor, constant: -8).isActive = true
 
         treeImage.widthAnchor.constraint(equalToConstant: 74).isActive = true
-        treeImage.heightAnchor.constraint(equalToConstant: 52).isActive = true
+        treeImage.heightAnchor.constraint(greaterThanOrEqualToConstant: 52).isActive = true
         spotlightClose.widthAnchor.constraint(equalToConstant: 16).isActive = true
     }
 
@@ -339,6 +340,11 @@ final class TreesCell: UICollectionViewCell, Themeable {
         spotlightClose.tintColor = .white
 
         treeImage.image = UIImage(themed: "personalCounter")
+    }
+
+    func setWidth(_ width: CGFloat, insets: UIEdgeInsets) {
+        let margin = max(max(16, insets.left), insets.right)
+        widthConstraint.constant = width - 2 * margin
     }
 
     // MARK: Overrides
