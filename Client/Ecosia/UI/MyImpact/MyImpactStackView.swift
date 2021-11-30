@@ -22,15 +22,8 @@ struct MyImpactStackViewModel {
     }
 
     enum Action {
-        case tap(text: String, action: Selector)
+        case tap(text: String)
         case collapse(text: String, button: String, selector: Selector)
-
-        var selector: Selector {
-            switch self {
-            case .tap(_, let selector), .collapse(_ , _, let selector):
-                return selector
-            }
-        }
     }
 }
 
@@ -203,11 +196,13 @@ class MyImpactStackView: UIStackView, Themeable {
         actionButton.isHidden = false
 
         switch callout.action {
-        case .tap(let text, _):
+        case .tap(let text):
             actionButton.setTitle(text, for: .normal)
             actionButton.setImage(nil, for: .normal)
+            actionButton.isUserInteractionEnabled = false
         case .collapse(let text, let button, _):
             actionButton.setTitle(nil, for: .normal)
+            actionButton.isUserInteractionEnabled = true
 
             let collapsed = callout.collapsed != false
             let image: UIImage = .init(themed: "impactDown")!
@@ -242,10 +237,8 @@ class MyImpactStackView: UIStackView, Themeable {
         guard let callout = model.callout else { return }
 
         switch callout.action {
-        case .tap(_, let selector):
-            if let target = target(forAction: selector, withSender: self) as? UIResponder {
-                target.perform(selector)
-            }
+        case .tap:
+            break
         case .collapse:
             let selector = #selector(MyImpactStackViewModelResize.resizeStack)
             if let target = target(forAction: selector, withSender: self) as? UIResponder {
@@ -256,9 +249,11 @@ class MyImpactStackView: UIStackView, Themeable {
 
     @objc func calloutTapped() {
         guard let callout = model.callout else { return }
-        let selector = callout.action.selector
-        if let target = target(forAction: selector, withSender: self) as? UIResponder {
-            target.perform(selector)
+
+        if case .collapse(_, _, let selector) = callout.action {
+            if let target = target(forAction: selector, withSender: self) as? UIResponder {
+                target.perform(selector)
+            }
         }
     }
 }

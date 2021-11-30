@@ -248,7 +248,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
                                                highlight: false,
                                                subtitle: .localized(.multiplyImpact),
                                                imageName: nil,
-                                               callout: .init(action: .tap(text: .localized(.inviteFriends), action: #selector(inviteFriends))))
+                                               callout: .init(action: .tap(text: .localized(.inviteFriends))))
             multiplyCell.display(model)
             return multiplyCell
         case .explore:
