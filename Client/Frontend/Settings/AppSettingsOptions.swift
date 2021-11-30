@@ -641,6 +641,44 @@ final class ToggleReferrals: HiddenSetting {
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                 alert.dismiss(animated: true)
             }
+            self.settings.tableView.reloadData()
+        }
+    }
+}
+
+final class CreateReferralCode: HiddenSetting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Referral Code \(User.shared.referrals.code ?? "-")", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
+    }
+
+    override var status: NSAttributedString? {
+        return .init(string: "Toggle to create or erase code")
+    }
+
+
+    override func onClick(_ navigationController: UINavigationController?) {
+
+        if User.shared.referrals.code == nil {
+            User.shared.referrals.code = "TEST123"
+
+            let alertTitle = "Code created"
+            let alert = AlertController(title: alertTitle, message: User.shared.referrals.code, preferredStyle: .alert)
+            navigationController?.topViewController?.present(alert, animated: true) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                    alert.dismiss(animated: true)
+                }
+                self.settings.tableView.reloadData()
+            }
+        } else {
+            User.shared.referrals.code = nil
+
+            let alert = AlertController(title: "Code erased!", message: "Reopen app to create new one", preferredStyle: .alert)
+            navigationController?.topViewController?.present(alert, animated: true) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                    alert.dismiss(animated: true)
+                }
+                self.settings.tableView.reloadData()
+            }
         }
     }
 }
