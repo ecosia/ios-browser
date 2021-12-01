@@ -3,7 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import Foundation
-import Sentry
+//import Sentry
 import Shared
 
 // This extension is for WidgetKit to fetch top sites
@@ -11,11 +11,12 @@ extension SiteArchiver {
     static func fetchTopSitesForWidget(topSiteArchivePath: String?) -> [TopSite] {
         guard let topSiteArchivePath = topSiteArchivePath,
               FileManager.default.fileExists(atPath: topSiteArchivePath),
-              let tabData = try? Data(contentsOf: URL(fileURLWithPath: topSiteArchivePath)) else {
+              let tabData = try? Data(contentsOf: URL(fileURLWithPath: topSiteArchivePath)),
+              let unarchiver = try? NSKeyedUnarchiver(forReadingFrom: tabData) else {
             return [TopSite]()
         }
         
-        let unarchiver = NSKeyedUnarchiver(forReadingWith: tabData)
+        unarchiver.requiresSecureCoding = false
         unarchiver.setClass(TopSite.self, forClassName: "Client.TopSite")
         
         unarchiver.decodingFailurePolicy = .setErrorAndReturn

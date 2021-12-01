@@ -6,6 +6,7 @@ import Foundation
 import WebKit
 import Shared
 import UIKit
+import Core
 
 private let log = Logger.browserLogger
 
@@ -123,6 +124,7 @@ extension BrowserViewController: WKUIDelegate {
             let addTab = { (rURL: URL, isPrivate: Bool) in
                 let tab = self.tabManager.addTab(URLRequest(url: rURL as URL), afterTab: currentTab, isPrivate: isPrivate)
                 LeanPlumClient.shared.track(event: .openedNewTab, withParameters: ["Source": "Long Press Context Menu"])
+                Analytics.shared.browser(.add, label: .newTab, property: .menu)
                 guard !self.topTabsVisible else {
                     return
                 }
@@ -166,6 +168,7 @@ extension BrowserViewController: WKUIDelegate {
                 self.addBookmark(url: url.absoluteString, title: elements.title)
                 SimpleToast().showAlertWithText(Strings.AppMenuAddBookmarkConfirmMessage, bottomContainer: self.webViewContainer)
                 TelemetryWrapper.recordEvent(category: .action, method: .add, object: .bookmark, value: .contextMenu)
+                Analytics.shared.browser(.add, label: .favourites, property: .menu)
             })
 
             actions.append(UIAction(title: Strings.ContextMenuDownloadLink, image: UIImage.templateImageNamed("menu-panel-Downloads"), identifier: UIAction.Identifier("linkContextMenu.download")) {_ in
@@ -333,7 +336,11 @@ extension BrowserViewController: WKNavigationDelegate {
     // method.
 
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
-        guard let url = navigationAction.request.url, let tab = tabManager[webView] else {
+        guard
+            let url = navigationAction.request.url,
+            url.policy == .allow,
+            let tab = tabManager[webView]
+        else {
             decisionHandler(.cancel)
             return
         }
@@ -384,8 +391,13 @@ extension BrowserViewController: WKNavigationDelegate {
         // iOS will always say yes.
 
         if isAppleMapsURL(url) {
-            UIApplication.shared.open(url, options: [:])
-            decisionHandler(.cancel)
+            UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { couldOpen in
+                if couldOpen {
+                    decisionHandler(.cancel)
+                } else {
+                    decisionHandler(.allow)
+                }
+            }
             return
         }
 
@@ -577,6 +589,17 @@ extension BrowserViewController: WKNavigationDelegate {
         // If none of our helpers are responsible for handling this response,
         // just let the webview handle it as normal.
         decisionHandler(.allow)
+
+        // Ecosia: Cookie handling
+        if tabManager.selectedTab?.isPrivate == false {
+            DispatchQueue.main.async { 
+                webView.configuration.websiteDataStore.httpCookieStore.getAllCookies { cookies in
+                    DispatchQueue.main.async {
+                        Cookie.received(cookies)
+                    }
+                }
+            }
+        }
     }
 
     /// Invoked when an error occurs while starting to load data for the main frame.

@@ -7,16 +7,8 @@ import Account
 
 extension PhotonActionSheetProtocol {
 
-    //Returns a list of actions which is used to build a menu
-    //OpenURL is a closure that can open a given URL in some view controller. It is up to the class using the menu to know how to open it
-    func getLibraryActions(vcDelegate: PageOptionsVC) -> [PhotonActionSheetItem] {
+    func getNavigationalActions(vcDelegate: PageOptionsVC) -> [PhotonActionSheetItem] {
         guard let tab = self.tabManager.selectedTab else { return [] }
-
-        let openLibrary = PhotonActionSheetItem(title: Strings.AppMenuLibraryTitleString, iconString: "menu-library") { _, _ in
-            let bvc = vcDelegate as? BrowserViewController
-            bvc?.showLibrary()
-        }
-
         let openHomePage = PhotonActionSheetItem(title: Strings.AppMenuOpenHomePageTitleString, iconString: "menu-Home") { _, _ in
             let page = NewTabAccessors.getHomePage(self.profile.prefs)
             if page == .homePage, let homePageURL = HomeButtonHomePageAccessors.getHomePage(self.profile.prefs) {
@@ -26,7 +18,40 @@ extension PhotonActionSheetProtocol {
             }
         }
 
-        return [openHomePage, openLibrary]
+        let myImpact = PhotonActionSheetItem(title: .localized(.myImpact), iconString: "myImpact") { _, _ in
+            (vcDelegate as? BrowserViewController)?.presentEcosiaWorld()
+        }
+
+        return [openHomePage, myImpact]
+    }
+
+    //Returns a list of actions which is used to build a menu
+    //OpenURL is a closure that can open a given URL in some view controller. It is up to the class using the menu to know how to open it
+    func getLibraryActions(vcDelegate: PageOptionsVC) -> [PhotonActionSheetItem] {
+
+        let openBookmarks = PhotonActionSheetItem(title: Strings.AppMenuBookmarksTitleString, iconString: "menu-Bookmark") { _, _ in
+            let bvc = vcDelegate as? BrowserViewController
+            bvc?.showLibrary(panel: .bookmarks)
+            Analytics.shared.browser(.open, label: .favourites, property: .menu)
+        }
+
+        let openHistory = PhotonActionSheetItem(title: Strings.AppMenuHistoryTitleString, iconString: "menu-panel-History") { _, _ in
+            let bvc = vcDelegate as? BrowserViewController
+            bvc?.showLibrary(panel: .history)
+            Analytics.shared.browser(.open, label: .history, property: .menu)
+        }
+
+        let openReadingList = PhotonActionSheetItem(title: Strings.AppMenuReadingListTitleString, iconString: "menu-panel-ReadingList") { _, _ in
+            let bvc = vcDelegate as? BrowserViewController
+            bvc?.showLibrary(panel: .readingList)
+        }
+
+        let openDownloads = PhotonActionSheetItem(title: Strings.AppMenuDownloadsTitleString, iconString: "menu-panel-Downloads") { _, _ in
+            let bvc = vcDelegate as? BrowserViewController
+            bvc?.showLibrary(panel: .downloads)
+        }
+
+        return [openBookmarks, openHistory, openReadingList, openDownloads]
     }
 
     func getOtherPanelActions(vcDelegate: PageOptionsVC) -> [PhotonActionSheetItem] {
@@ -40,7 +65,7 @@ extension PhotonActionSheetProtocol {
         items.append(noImageMode)
 
         let nightModeEnabled = NightModeHelper.isActivated(profile.prefs)
-        let nightMode = PhotonActionSheetItem(title: Strings.AppMenuNightMode, iconString: "menu-NightMode", isEnabled: nightModeEnabled, accessory: .Switch) { _, _ in
+        let nightMode = PhotonActionSheetItem(title: .localized(.forceDarkMode), text: .localized(.invertColors), iconString: "menu-NightMode", isEnabled: nightModeEnabled, accessory: .Switch) { _, _ in
             NightModeHelper.toggle(self.profile.prefs, tabManager: self.tabManager)
             // If we've enabled night mode and the theme is normal, enable dark theme
             if NightModeHelper.isActivated(self.profile.prefs), ThemeManager.instance.currentName == .normal {
@@ -49,8 +74,14 @@ extension PhotonActionSheetProtocol {
             }
             // If we've disabled night mode and dark theme was activated by it then disable dark theme
             if !NightModeHelper.isActivated(self.profile.prefs), NightModeHelper.hasEnabledDarkTheme(self.profile.prefs), ThemeManager.instance.currentName == .dark {
-                ThemeManager.instance.current = NormalTheme()
-                NightModeHelper.setEnabledDarkTheme(self.profile.prefs, darkTheme: false)
+
+                //Ecosia: set to system theme if that was on
+                if #available(iOS 12.0, *), let traitEnv = self as? UITraitEnvironment, ThemeManager.instance.systemThemeIsOn {
+                    ThemeManager.instance.current = traitEnv.traitCollection.userInterfaceStyle == .dark ? DarkTheme() : NormalTheme()
+                } else {
+                    ThemeManager.instance.current = NormalTheme()
+                    NightModeHelper.setEnabledDarkTheme(self.profile.prefs, darkTheme: false)
+                }
             }
         }
         items.append(nightMode)
@@ -73,6 +104,7 @@ extension PhotonActionSheetProtocol {
             DispatchQueue.main.async {
                 vcDelegate.present(controller, animated: true, completion: nil)
             }
+            Analytics.shared.browser(.open, label: .settings, property: .menu)
         }
         items.append(openSettings)
 

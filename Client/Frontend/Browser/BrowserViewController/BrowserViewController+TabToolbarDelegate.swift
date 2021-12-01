@@ -58,11 +58,9 @@ extension BrowserViewController: TabToolbarDelegate, PhotonActionSheetProtocol {
     func tabToolbarDidPressAddNewTab(_ tabToolbar: TabToolbarProtocol, button: UIButton) {
         let isPrivate = tabManager.selectedTab?.isPrivate ?? false
         tabManager.selectTab(tabManager.addTab(nil, isPrivate: isPrivate))
-        focusLocationTextField(forTab: tabManager.selectedTab)
     }
 
     func tabToolbarDidPressMenu(_ tabToolbar: TabToolbarProtocol, button: UIButton) {
-        var whatsNewAction: PhotonActionSheetItem?
         let showBadgeForWhatsNew = shouldShowWhatsNew()
         if showBadgeForWhatsNew {
             // Set the version number of the app, so the What's new will stop showing
@@ -70,18 +68,13 @@ extension BrowserViewController: TabToolbarDelegate, PhotonActionSheetProtocol {
             // Redraw the toolbar so the badge hides from the appMenu button.
             updateToolbarStateForTraitCollection(view.traitCollection)
         }
-        whatsNewAction = PhotonActionSheetItem(title: Strings.WhatsNewString, iconString: "whatsnew", isEnabled: showBadgeForWhatsNew, badgeIconNamed: "menuBadge") { _, _ in
-            if let whatsNewTopic = AppInfo.whatsNewTopic, let whatsNewURL = SupportUtils.URLForTopic(whatsNewTopic) {
-                TelemetryWrapper.recordEvent(category: .action, method: .open, object: .whatsNew)
-                self.openURLInNewTab(whatsNewURL)
-            }
-        }
 
         // ensure that any keyboards or spinners are dismissed before presenting the menu
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
         libraryDrawerViewController?.close(immediately: true)
         var actions: [[PhotonActionSheetItem]] = []
 
+        /* Ecosia: don't show optional actions
         let syncAction = syncMenuButton(showFxA: presentSignInViewController)
         let isLoginsButtonShowing = LoginListViewController.shouldShowAppMenuShortcut(forPrefs: profile.prefs)
         let viewLogins: PhotonActionSheetItem? = !isLoginsButtonShowing ? nil :
@@ -103,15 +96,11 @@ extension BrowserViewController: TabToolbarDelegate, PhotonActionSheetProtocol {
         if !optionalActions.isEmpty {
             actions.append(optionalActions)
         }
+        */
 
+        actions.append(getNavigationalActions(vcDelegate: self))
         actions.append(getLibraryActions(vcDelegate: self))
         actions.append(getOtherPanelActions(vcDelegate: self))
-
-        if let whatsNewAction = whatsNewAction, var lastGroup = actions.last, lastGroup.count > 1 {
-            lastGroup.insert(whatsNewAction, at: lastGroup.count - 1)
-            actions.removeLast()
-            actions.append(lastGroup)
-        }
 
         // force a modal if the menu is being displayed in compact split screen
         let shouldSuppress = !topTabsVisible && UIDevice.current.userInterfaceIdiom == .pad
@@ -121,6 +110,7 @@ extension BrowserViewController: TabToolbarDelegate, PhotonActionSheetProtocol {
     func tabToolbarDidPressTabs(_ tabToolbar: TabToolbarProtocol, button: UIButton) {
         showTabTray()
         TelemetryWrapper.recordEvent(category: .action, method: .press, object: .tabToolbar, value: .tabView)
+        Analytics.shared.browser(.open, label: .tabs, property: .home)
     }
 
     func getTabToolbarLongPressActionsForModeSwitching() -> [PhotonActionSheetItem] {
@@ -197,6 +187,10 @@ extension BrowserViewController: TabToolbarDelegate, PhotonActionSheetProtocol {
 
     func tabToolbarDidPressSearch(_ tabToolbar: TabToolbarProtocol, button: UIButton) {
         focusLocationTextField(forTab: tabManager.selectedTab)
+    }
+
+    func tabToolbarDidPressEcosia(_ tabToolbar: TabToolbarProtocol, button: UIButton) {
+        present(ecosiaNavigation, animated: true, completion: nil)
     }
 }
 

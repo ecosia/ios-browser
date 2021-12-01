@@ -1,0 +1,14 @@
+"NSCameraUsageDescription" = "Esto te permite de fer fotos y de puyar-las.";
+
+"NSLocationWhenInUseUsageDescription" = "Los puestos web que vesites pueden solicitar conoixer lo tuyo plazamiento.";
+
+"NSMicrophoneUsageDescription" = "Esto te permitede fer y puyar videos.";
+
+"NSPhotoLibraryAddUsageDescription" = "Esto te permite d'alzar fotos.";
+
+"ShortcutItemTitleNewPrivateTab" = "Nueva pestanya privada";
+
+"ShortcutItemTitleNewTab" = "Nueva pestanya";
+
+"ShortcutItemTitleQRCode" = "Escaniar codigo QR";
+

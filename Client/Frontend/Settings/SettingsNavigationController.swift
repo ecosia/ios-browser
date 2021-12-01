@@ -6,7 +6,8 @@ import UIKit
 
 class ThemedNavigationController: UINavigationController {
     var presentingModalViewControllerDelegate: PresentingModalViewControllerDelegate?
-
+    private weak var separator: UIView?
+    
     @objc func done() {
         if let delegate = presentingModalViewControllerDelegate {
             delegate.dismissPresentedModalViewController(self, animated: true)
@@ -23,19 +24,48 @@ class ThemedNavigationController: UINavigationController {
         super.viewDidLoad()
         modalPresentationStyle = .formSheet
         modalPresentationCapturesStatusBarAppearance = true
+        
+        let separator = UIView()
+        separator.translatesAutoresizingMaskIntoConstraints = false
+        self.separator = separator
+        navigationBar.addSubview(separator)
+        
+        separator.bottomAnchor.constraint(equalTo: navigationBar.bottomAnchor).isActive = true
+        separator.leftAnchor.constraint(equalTo: navigationBar.leftAnchor).isActive = true
+        separator.rightAnchor.constraint(equalTo: navigationBar.rightAnchor).isActive = true
+        separator.heightAnchor.constraint(equalToConstant: 0.5).isActive = true
+        
         applyTheme()
     }
 }
 
 extension ThemedNavigationController: Themeable {
     func applyTheme() {
-        navigationBar.barTintColor = UIColor.theme.tableView.headerBackground
-        navigationBar.tintColor = UIColor.theme.general.controlTint
-        navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.headerTextDark]
-        setNeedsStatusBarAppearanceUpdate()
+        if #available(iOS 13, *) {
+            let appearance = navigationBar.standardAppearance
+            appearance.configureWithOpaqueBackground()
+            appearance.backgroundColor = UIColor.theme.ecosia.barBackground
+            appearance.titleTextAttributes = [.foregroundColor: UIColor.theme.ecosia.highContrastText]
+            appearance.shadowImage = nil
+            appearance.shadowColor = nil
+            navigationBar.standardAppearance = appearance
+            navigationBar.scrollEdgeAppearance = appearance
+        } else {
+            navigationBar.barTintColor = UIColor.theme.ecosia.barBackground
+            navigationBar.isTranslucent = false
+            navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.theme.ecosia.highContrastText]
+            navigationBar.setBackgroundImage(UIImage(), for: .default)
+            navigationBar.shadowImage = UIImage()
+        }
+
         viewControllers.forEach {
             ($0 as? Themeable)?.applyTheme()
         }
+
+        navigationBar.setNeedsDisplay()
+        setNeedsStatusBarAppearanceUpdate()
+        navigationBar.tintColor = UIColor.theme.general.controlTint
+        separator?.backgroundColor = UIColor.theme.tableView.separator
     }
 }
 

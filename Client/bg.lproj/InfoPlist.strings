@@ -1,0 +1,14 @@
+"NSCameraUsageDescription" = "От тук може да правите и качвате снимки.";
+
+"NSLocationWhenInUseUsageDescription" = "Страниците, които посещавате може да поискат вашето местоположение.";
+
+"NSMicrophoneUsageDescription" = "От тук може да заснемате и качвате видео.";
+
+"NSPhotoLibraryAddUsageDescription" = "От тук може да запазвате снимки.";
+
+"ShortcutItemTitleNewPrivateTab" = "Нов поверителен раздел";
+
+"ShortcutItemTitleNewTab" = "Нов раздел";
+
+"ShortcutItemTitleQRCode" = "Сканиране на QR код";
+

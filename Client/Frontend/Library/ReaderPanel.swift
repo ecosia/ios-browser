@@ -238,36 +238,31 @@ class ReadingListPanel: UITableViewController, LibraryPanel {
     }
 
     func refreshReadingList() {
-        let prevNumberOfRecords = records?.count
         tableView.tableHeaderView = nil
 
         if let newRecords = profile.readingList.getAvailableRecords().value.successValue {
             records = newRecords
 
             if records?.count == 0 {
-                tableView.isScrollEnabled = false
                 tableView.tableHeaderView = createEmptyStateOverview()
-            } else {
-                if prevNumberOfRecords == 0 {
-                    tableView.isScrollEnabled = true
-                }
             }
             self.tableView.reloadData()
         }
     }
-
+    
     fileprivate func createEmptyStateOverview() -> UIView {
-        let overlayView = UIView(frame: tableView.bounds)
+        let overlayView = UIView(frame: .zero)
 
         let welcomeLabel = UILabel()
         overlayView.addSubview(welcomeLabel)
-        welcomeLabel.text = NSLocalizedString("Welcome to your Reading List", comment: "See http://mzl.la/1LXbDOL")
+        welcomeLabel.text = .localized(.addArticlesTo)
+        welcomeLabel.textColor = .theme.ecosia.primaryText
         welcomeLabel.textAlignment = .center
-        welcomeLabel.font = DynamicFontHelper.defaultHelper.DeviceFontSmallBold
+        welcomeLabel.font = .systemFont(ofSize: UIFont.preferredFont(forTextStyle: .subheadline).pointSize, weight: .semibold)
         welcomeLabel.adjustsFontSizeToFitWidth = true
         welcomeLabel.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.top.equalToSuperview().offset(UIDevice.current.orientation.isLandscape ? 16 : 150)
+            make.top.equalToSuperview().offset(32)
             make.width.equalTo(ReadingListPanelUX.WelcomeScreenItemWidth + ReadingListPanelUX.WelcomeScreenCircleSpacer + ReadingListPanelUX.WelcomeScreenCircleWidth)
         }
 
@@ -277,12 +272,13 @@ class ReadingListPanel: UITableViewController, LibraryPanel {
         readerModeLabel.font = DynamicFontHelper.defaultHelper.DeviceFontSmallLight
         readerModeLabel.numberOfLines = 0
         readerModeLabel.snp.makeConstraints { make in
-            make.top.equalTo(welcomeLabel.snp.bottom).offset(ReadingListPanelUX.WelcomeScreenPadding)
+            make.top.equalTo(welcomeLabel.snp.bottom).offset(24)
             make.leading.equalTo(welcomeLabel.snp.leading)
             make.width.equalTo(ReadingListPanelUX.WelcomeScreenItemWidth)
         }
 
-        let readerModeImageView = UIImageView(image: UIImage(named: "ReaderModeCircle"))
+        let readerModeImageView = UIImageView()
+        readerModeImageView.image = .init(themed: "articles")
         overlayView.addSubview(readerModeImageView)
         readerModeImageView.snp.makeConstraints { make in
             make.centerY.equalTo(readerModeLabel)
@@ -301,15 +297,16 @@ class ReadingListPanel: UITableViewController, LibraryPanel {
 
         }
 
-        let readingListImageView = UIImageView(image: UIImage(named: "AddToReadingListCircle"))
+        let readingListImageView = UIImageView()
+        readingListImageView.image = .init(themed: "savePages")
         overlayView.addSubview(readingListImageView)
         readingListImageView.snp.makeConstraints { make in
             make.centerY.equalTo(readingListLabel)
             make.trailing.equalTo(welcomeLabel.snp.trailing)
         }
 
-        [welcomeLabel, readerModeLabel, readingListLabel].forEach {
-            $0.textColor = UIColor.theme.homePanel.welcomeScreenText
+        [readerModeLabel, readingListLabel].forEach {
+            $0.textColor = .theme.ecosia.secondaryText
         }
 
         return overlayView
@@ -445,7 +442,7 @@ extension ReadingListPanel: UITableViewDragDelegate {
 extension ReadingListPanel: Themeable {
     func applyTheme() {
         tableView.separatorColor = UIColor.theme.tableView.separator
-        view.backgroundColor = UIColor.theme.tableView.rowBackground
+        view.backgroundColor = UIColor.theme.ecosia.primaryBackground
 
         refreshReadingList()
     }

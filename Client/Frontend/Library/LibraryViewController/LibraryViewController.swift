@@ -32,6 +32,11 @@ class LibraryViewController: UIViewController {
 
     fileprivate var controllerContainerView = UIView()
     fileprivate var buttons: [LibraryPanelButton] = []
+    fileprivate lazy var topSeparator: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.theme.ecosia.barSeparator
+        return view
+    }()
 
     fileprivate var buttonTintColor: UIColor?
     fileprivate var buttonSelectedTintColor: UIColor?
@@ -50,11 +55,12 @@ class LibraryViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor.theme.browser.background
+        view.backgroundColor = UIColor.theme.ecosia.primaryBackground
         self.edgesForExtendedLayout = []
 
         view.addSubview(buttonContainerView)
         view.addSubview(controllerContainerView)
+        view.addSubview(topSeparator)
 
         buttonContainerView.snp.makeConstraints { make in
             make.bottom.equalTo(self.view.safeArea.bottom)
@@ -65,6 +71,12 @@ class LibraryViewController: UIViewController {
         controllerContainerView.snp.makeConstraints { make in
             make.leading.trailing.top.equalTo(self.view)
             make.bottom.equalTo(buttonContainerView.snp.top)
+        }
+
+        topSeparator.snp.makeConstraints { make in
+            make.leading.trailing.equalTo(self.view)
+            make.bottom.equalTo(buttonContainerView.snp.top)
+            make.height.equalTo(1.0)
         }
 
         updateButtons()
@@ -204,8 +216,9 @@ extension LibraryViewController: Themeable {
         panelDescriptors.forEach { item in
             (item.viewController as? Themeable)?.applyTheme()
         }
-        buttonContainerView.backgroundColor = UIColor.theme.homePanel.toolbarBackground
-        view.backgroundColor = UIColor.theme.homePanel.toolbarBackground
+        buttonContainerView.backgroundColor = UIColor.theme.ecosia.barBackground
+        topSeparator.backgroundColor = UIColor.theme.ecosia.barSeparator
+        view.backgroundColor = UIColor.theme.ecosia.barBackground
         buttonTintColor = UIColor.theme.homePanel.toolbarTint
         buttonSelectedTintColor = UIColor.theme.homePanel.toolbarHighlight
         updateButtonTints()

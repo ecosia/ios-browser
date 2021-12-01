@@ -8,17 +8,17 @@ import SDWebImage
 import Storage
 
 private struct TopSiteCellUX {
-    static let TitleHeight: CGFloat = 20
-    static let TitleFont = DynamicFontHelper.defaultHelper.SmallSizeRegularWeightAS
+    static let TitleHeight: CGFloat = 24
     static let SelectedOverlayColor = UIColor(white: 0.0, alpha: 0.25)
     static let CellCornerRadius: CGFloat = 4
-    static let TitleOffset: CGFloat = 5
+    static let TitleOffset: CGFloat = 4
     static let OverlayColor = UIColor(white: 0.0, alpha: 0.25)
-    static let IconSizePercent: CGFloat = 0.8
-    static let BorderColor = UIColor(white: 0, alpha: 0.1)
+    static let IconSize: CGFloat = 48
+    static let BorderColor = UIColor.Photon.Grey30
     static let BorderWidth: CGFloat = 0.5
     static let PinIconSize: CGFloat = 12
     static let PinColor = UIColor.Photon.Grey60
+    static let FavIconInset: CGFloat = 18
 }
 
 /*
@@ -44,15 +44,22 @@ class TopSiteItemCell: UICollectionViewCell, Themeable {
         let titleLabel = UILabel()
         titleLabel.layer.masksToBounds = true
         titleLabel.textAlignment = .center
-        titleLabel.font = TopSiteCellUX.TitleFont
+        titleLabel.font = .preferredFont(forTextStyle: .footnote)
+        titleLabel.adjustsFontForContentSizeCategory = true
+        titleLabel.numberOfLines = 2
+        titleLabel.allowsDefaultTighteningForTruncation = true
+        titleLabel.lineBreakMode = .byTruncatingTail
+        titleLabel.setContentHuggingPriority(.required, for: .vertical)
         return titleLabel
     }()
 
     lazy private var faviconBG: UIView = {
         let view = UIView()
-        view.layer.cornerRadius = TopSiteCellUX.CellCornerRadius
-        view.layer.masksToBounds = true
         view.layer.borderWidth = TopSiteCellUX.BorderWidth
+        view.layer.borderColor = TopSiteCellUX.BorderColor.cgColor
+        view.layer.cornerRadius = TopSiteCellUX.IconSize / 2.0
+        view.clipsToBounds = true
+        view.layer.masksToBounds = true
         return view
     }()
 
@@ -60,11 +67,6 @@ class TopSiteItemCell: UICollectionViewCell, Themeable {
         let selectedOverlay = UIView()
         selectedOverlay.isHidden = true
         return selectedOverlay
-    }()
-
-    lazy var titleBorder: CALayer = {
-        let border = CALayer()
-        return border
     }()
 
     override var isSelected: Bool {
@@ -85,12 +87,13 @@ class TopSiteItemCell: UICollectionViewCell, Themeable {
         titleLabel.snp.makeConstraints { make in
             make.left.equalTo(contentView).offset(TopSiteCellUX.TitleOffset)
             make.right.equalTo(contentView).offset(-TopSiteCellUX.TitleOffset)
-            make.height.equalTo(TopSiteCellUX.TitleHeight)
-            make.bottom.equalTo(contentView)
+            make.top.equalTo(faviconBG.snp.bottom).offset(8)
+            let maxHeight = titleLabel.font.pointSize * (CGFloat(titleLabel.numberOfLines) + 0.6) + 8
+            make.height.lessThanOrEqualTo(maxHeight)
         }
 
         imageView.snp.makeConstraints { make in
-            make.size.equalTo(floor(frame.width * TopSiteCellUX.IconSizePercent))
+            make.size.equalTo(TopSiteCellUX.IconSize)
             make.center.equalTo(faviconBG)
         }
 
@@ -99,14 +102,12 @@ class TopSiteItemCell: UICollectionViewCell, Themeable {
         }
 
         faviconBG.snp.makeConstraints { make in
-            make.top.left.right.equalTo(contentView)
-            make.bottom.equalTo(contentView).inset(TopSiteCellUX.TitleHeight)
+            make.size.equalTo(TopSiteCellUX.IconSize)
+            make.top.equalTo(contentView).offset(TopSiteCellUX.FavIconInset)
+            make.centerX.equalTo(contentView)
         }
-    }
+        faviconBG.widthAnchor.constraint(equalTo: faviconBG.heightAnchor, multiplier: 1.0).isActive = true
 
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        titleBorder.frame = CGRect(x: 0, y: frame.height - TopSiteCellUX.TitleHeight -  TopSiteCellUX.BorderWidth, width: frame.width, height: TopSiteCellUX.BorderWidth)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -127,19 +128,29 @@ class TopSiteItemCell: UICollectionViewCell, Themeable {
     func configureWithTopSiteItem(_ site: Site) {
         url = site.tileURL
 
-        if let provider = site.metadata?.providerName {
+        /* Ecosia: use html title for top sites */
+        if !site.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            titleLabel.text = site.title.trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+        else if let provider = site.metadata?.providerName {
             titleLabel.text = provider.lowercased()
         } else {
             titleLabel.text = site.tileURL.shortDisplayString
+        }
+        let words = titleLabel.text?.components(separatedBy: .whitespacesAndNewlines).count ?? 0
+        titleLabel.numberOfLines = min(max(words, 1), 2)
+        titleLabel.snp.updateConstraints { make in
+            let maxHeight = titleLabel.font.pointSize * (CGFloat(titleLabel.numberOfLines) + 0.6) + 8
+            make.height.lessThanOrEqualTo(maxHeight)
         }
 
         // If its a pinned site add a bullet point to the front
         if let _ = site as? PinnedSite {
             contentView.addSubview(pinImageView)
             pinImageView.snp.makeConstraints { make in
-                make.right.equalTo(self.titleLabel.snp.left)
+                make.right.equalTo(self.imageView.snp.left).offset(-TopSiteCellUX.PinIconSize/2.0)
                 make.size.equalTo(TopSiteCellUX.PinIconSize)
-                make.centerY.equalTo(self.titleLabel.snp.centerY)
+                make.centerY.equalTo(self.imageView.snp.centerY)
             }
             titleLabel.snp.updateConstraints { make in
                 make.left.equalTo(contentView).offset(TopSiteCellUX.PinIconSize)
@@ -154,12 +165,8 @@ class TopSiteItemCell: UICollectionViewCell, Themeable {
         faviconBG.backgroundColor = .clear
         self.imageView.setFaviconOrDefaultIcon(forSite: site) { [weak self] in
             self?.imageView.snp.remakeConstraints { make in
-                guard let faviconBG = self?.faviconBG , let frame = self?.frame else { return }
-                if self?.imageView.backgroundColor == nil {
-                    make.size.equalTo(frame.width)
-                } else {
-                    make.size.equalTo(floor(frame.width * TopSiteCellUX.IconSizePercent))
-                }
+                guard let faviconBG = self?.faviconBG else { return }
+                make.size.equalTo(TopSiteCellUX.IconSize)
                 make.center.equalTo(faviconBG)
             }
 
@@ -173,9 +180,8 @@ class TopSiteItemCell: UICollectionViewCell, Themeable {
         imageView.tintColor = TopSiteCellUX.PinColor
         faviconBG.layer.borderColor = TopSiteCellUX.BorderColor.cgColor
         selectedOverlay.backgroundColor = TopSiteCellUX.OverlayColor
-        titleBorder.backgroundColor = TopSiteCellUX.BorderColor.cgColor
         titleLabel.backgroundColor = UIColor.clear
-        titleLabel.textColor = UIColor.theme.homePanel.topSiteDomain
+        titleLabel.textColor = UIColor.theme.ecosia.highContrastText
     }
 }
 
@@ -184,9 +190,21 @@ class EmptyTopsiteDecorationCell: UICollectionReusableView {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.layer.cornerRadius = TopSiteCellUX.CellCornerRadius
-        self.layer.borderWidth = TopSiteCellUX.BorderWidth
-        self.layer.borderColor = TopSiteCellUX.BorderColor.cgColor
+
+        /* Ecosia: hide border
+        let view = UIView()
+        view.layer.cornerRadius = TopSiteCellUX.CellCornerRadius
+        view.layer.borderWidth = TopSiteCellUX.BorderWidth
+        view.layer.borderColor = TopSiteCellUX.BorderColor.cgColor
+        addSubview(view)
+
+        view.snp.makeConstraints { make in
+            make.top.equalTo(self).offset(TopSiteCellUX.FavIconInset)
+            make.left.equalTo(self).offset(TopSiteCellUX.FavIconInset)
+            make.right.equalTo(self).offset(-TopSiteCellUX.FavIconInset)
+        }
+        view.widthAnchor.constraint(equalTo: view.heightAnchor, multiplier: 1.0).isActive = true
+        */
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -198,15 +216,18 @@ private struct ASHorizontalScrollCellUX {
     static let TopSiteCellIdentifier = "TopSiteItemCell"
     static let TopSiteEmptyCellIdentifier = "TopSiteItemEmptyCell"
 
-    static let TopSiteItemSize = CGSize(width: 75, height: 75)
+    static let TopSiteItemSize = CGSize(width: 80, height: 90)
     static let BackgroundColor = UIColor.Photon.White100
-    static let MinimumInsets: CGFloat = 14
+    static let MinimumInsets: CGFloat = 0
 }
 
 /*
  The View that describes the topSite cell that appears in the tableView.
  */
 class ASHorizontalScrollCell: UICollectionViewCell {
+
+    var heightConstraint: NSLayoutConstraint!
+    var widthConstraint: NSLayoutConstraint!
 
     lazy var collectionView: UICollectionView = {
         let layout  = HorizontalFlowLayout()
@@ -236,6 +257,16 @@ class ASHorizontalScrollCell: UICollectionViewCell {
         collectionView.snp.makeConstraints { make in
             make.edges.equalTo(contentView.safeArea.edges)
         }
+
+        let heightConstraint = collectionView.heightAnchor.constraint(equalToConstant: 100)
+        heightConstraint.priority = .defaultHigh
+        heightConstraint.isActive = true
+        self.heightConstraint = heightConstraint
+
+        let widthConstraint = collectionView.widthAnchor.constraint(equalToConstant: 100)
+        widthConstraint.priority = .defaultHigh
+        widthConstraint.isActive = true
+        self.widthConstraint = widthConstraint
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -288,7 +319,7 @@ class HorizontalFlowLayout: UICollectionViewLayout {
 
         var estimatedItemSize = itemSize
         estimatedItemSize.width = floor((width - (CGFloat(horizontalItemsCount + 1) * insets)) / CGFloat(horizontalItemsCount))
-        estimatedItemSize.height = estimatedItemSize.width + TopSiteCellUX.TitleHeight
+        estimatedItemSize.height = TopSiteCellUX.IconSize + TopSiteCellUX.FavIconInset + 8 + UIFont.preferredFont(forTextStyle: .footnote).pointSize * 3
 
         //calculate our estimates.
         let rows = CGFloat(ceil(Double(Float(cellCount)/Float(horizontalItemsCount))))
@@ -374,7 +405,7 @@ class HorizontalFlowLayout: UICollectionViewLayout {
         var frame = CGRect.zero
         frame.origin.x = CGFloat(columnPosition) * (itemSize.width + insets.left) + insets.left
         frame.origin.y = CGFloat(rowPosition) * (itemSize.height + insets.top)
-
+        
         frame.size = itemSize
         attr.frame = frame
         return attr
@@ -406,7 +437,9 @@ class ASHorizontalScrollCellManager: NSObject, UICollectionViewDelegate, UIColle
     // The current traits that define the parent ViewController. Used to determine how many rows/columns should be created.
     var currentTraits: UITraitCollection?
 
-    var numberOfRows: Int = 2
+    var numberOfRows: Int {
+        return UIDevice.current.userInterfaceIdiom == .pad ? 2 : 1
+    }
 
     // Size classes define how many items to show per row/column.
     func numberOfVerticalItems() -> Int {
@@ -421,12 +454,9 @@ class ASHorizontalScrollCellManager: NSObject, UICollectionViewDelegate, UIColle
             return 0
         }
         let isLandscape = UIApplication.shared.statusBarOrientation.isLandscape
+        /* Ecosia: always have 4 items in 2 rows on iPhone */
         if UIDevice.current.userInterfaceIdiom == .phone {
-            if isLandscape {
-                return 8
-            } else {
-                return 4
-            }
+            return 4
         }
         // On iPad
         // The number of items in a row is equal to the number of highlights in a row * 2

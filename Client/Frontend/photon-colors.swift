@@ -35,7 +35,7 @@ extension UIColor {
         static let Blue90 = UIColor(rgb: 0x000f40)
 
         static let Teal50 = UIColor(rgb: 0x00feff)
-        static let Teal60 = UIColor(rgb: 0x00c8d7)
+        static let Teal60 = UIColor(rgb: 0x267a82)
         static let Teal70 = UIColor(rgb: 0x008ea4)
         static let Teal80 = UIColor(rgb: 0x005a71)
         static let Teal90 = UIColor(rgb: 0x002d3e)

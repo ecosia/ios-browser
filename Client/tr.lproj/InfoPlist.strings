@@ -1,0 +1,14 @@
+"NSCameraUsageDescription" = "Fotoğraf çekmenizi ve yüklemenizi sağlar.";
+
+"NSLocationWhenInUseUsageDescription" = "Ziyaret ettiğiniz web siteleri konumunuzu isteyebilir.";
+
+"NSMicrophoneUsageDescription" = "Video çekmenizi ve yüklemenizi sağlar.";
+
+"NSPhotoLibraryAddUsageDescription" = "Fotoğraf kaydetmenize olanak sağlar.";
+
+"ShortcutItemTitleNewPrivateTab" = "Yeni gizli sekme";
+
+"ShortcutItemTitleNewTab" = "Yeni sekme";
+
+"ShortcutItemTitleQRCode" = "QR kodu tara";
+

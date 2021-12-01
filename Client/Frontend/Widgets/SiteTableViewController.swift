@@ -191,16 +191,19 @@ class SiteTableViewController: UIViewController, UITableViewDelegate, UITableVie
     }
 
     func applyTheme() {
-        navigationController?.navigationBar.barTintColor = UIColor.theme.tableView.headerBackground
+        navigationController?.navigationBar.barTintColor = UIColor.theme.ecosia.barBackground
         navigationController?.navigationBar.tintColor = UIColor.theme.general.controlTint
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.headerTextDark]
         setNeedsStatusBarAppearanceUpdate()
 
-        tableView.backgroundColor = UIColor.theme.tableView.rowBackground
+        tableView.backgroundColor = UIColor.theme.ecosia.primaryBackground
         tableView.separatorColor = UIColor.theme.tableView.separator
+        tableView.visibleCells.forEach({ ($0 as? Themeable)?.applyTheme() })
         if let rows = tableView.indexPathsForVisibleRows {
-            tableView.reloadRows(at: rows, with: .none)
-            tableView.reloadSections(IndexSet(rows.map { $0.section }), with: .none)
+            IndexSet(rows.map { $0.section }).forEach {
+                (tableView.headerView(forSection: $0) as? Themeable)?.applyTheme()
+                (tableView.footerView(forSection: $0) as? Themeable)?.applyTheme()
+            }
         }
     }
 }

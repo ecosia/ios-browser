@@ -41,7 +41,6 @@ DerivedData
 /provisioning-profiles
 /assets
 #build tools
-/fastlane/Appfile
 /fastlane/Snapfile
 /fastlane/SnapshotHelper.swift
 /fastlane/frames
@@ -95,6 +94,13 @@ Client/Assets/MainFrameAtDocumentEnd.js
 Client/Assets/*.js.LICENSE.txt
 
 # L10n
-*.strings
 /firefoxios-l10n
 /ios-l10n-scripts
+
+
+# bundler
+vendor/bundle
+.bundle/config
+
+# Glean 
+sdk_generator.sh

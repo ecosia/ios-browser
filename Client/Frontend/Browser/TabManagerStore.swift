@@ -6,6 +6,7 @@ import Foundation
 import Storage
 import Shared
 import XCGLogger
+import Core
 
 private let log = Logger.browserLogger
 class TabManagerStore {
@@ -16,8 +17,13 @@ class TabManagerStore {
     fileprivate var writeOperation = DispatchWorkItem {}
 
     // Init this at startup with the tabs on disk, and then on each save, update the in-memory tab state.
-    fileprivate lazy var archivedStartupTabs = {
-        return SiteArchiver.tabsToRestore(tabsStateArchivePath: tabsStateArchivePath())
+    fileprivate lazy var archivedStartupTabs: [SavedTab] = {
+        /* Ecosia: restore from Ecosia Tabs the first time */
+        if Core.User.shared.migrated != true {
+            return migrateToSavedTabs(from: Core.Tabs()) ?? []
+        }
+
+        return SiteArchiver.tabsToRestore(tabsStateArchivePath: tabsStateArchivePath()).0
     }()
 
     init(imageStore: DiskImageStore?, _ fileManager: FileManager = FileManager.default) {
@@ -48,6 +54,7 @@ class TabManagerStore {
         var savedTabs = [SavedTab]()
         var savedUUIDs = Set<String>()
         for tab in tabs {
+            tab.tabUUID = tab.tabUUID.isEmpty ? UUID().uuidString : tab.tabUUID
             if let savedTab = SavedTab(tab: tab, isSelected: tab == selectedTab) {
                 savedTabs.append(savedTab)
                 if let screenshot = tab.screenshot,
@@ -82,11 +89,15 @@ class TabManagerStore {
 
         archiver.encode(savedTabs, forKey: "tabs")
         archiver.finishEncoding()
+        
+        let simpleTabs = SimpleTab.convertToSimpleTabs(savedTabs)
+        
 
         let result = Success()
         writeOperation = DispatchWorkItem {
             let written = tabStateData.write(toFile: path, atomically: true)
             
+            SimpleTab.saveSimpleTab(tabs: simpleTabs)
             // Ignore write failure (could be restoring).
             log.debug("PreserveTabs write ok: \(written), bytes: \(tabStateData.length)")
             result.fill(Maybe(success: ()))
@@ -122,7 +133,6 @@ class TabManagerStore {
             // Provide an empty request to prevent a new tab from loading the home screen
             var tab = tabManager.addTab(flushToDisk: false, zombie: true, isPrivate: savedTab.isPrivate)
             tab = savedTab.configureSavedTabUsing(tab, imageStore: imageStore)
-
             if savedTab.isSelected {
                 tabToSelect = tab
             }
@@ -146,6 +156,43 @@ class TabManagerStore {
 extension TabManagerStore {
     func testTabCountOnDisk() -> Int {
         assert(AppConstants.IsRunningTest)
-        return SiteArchiver.tabsToRestore(tabsStateArchivePath: tabsStateArchivePath()).count
+        return SiteArchiver.tabsToRestore(tabsStateArchivePath: tabsStateArchivePath()).0.count
+    }
+}
+
+// Ecosia: import tabs
+extension TabManagerStore {
+
+    fileprivate func migrateToSavedTabs(from tabs: Core.Tabs) -> [SavedTab]? {
+        var savedTabs = [SavedTab]()
+        var savedUUIDs = Set<String>()
+
+        var currentTabID: UUID?
+        if let pos = tabs.current, pos < tabs.items.count {
+            currentTabID = tabs.items[pos].id
+        }
+
+        for tab in tabs.items {
+            guard let page = tab.page,
+                  let savedTab = SavedTab(screenshotUUID: tab.id,
+                                          isSelected: currentTabID == tab.id,
+                                          title: page.title,
+                                          isPrivate: false,
+                                          faviconURL: nil,
+                                          url: page.url,
+                                          sessionData: .init(currentPage: 0,
+                                                             urls: [page.url],
+                                                             lastUsedTime: Date.now()), uuid: tab.id.uuidString) else  { continue }
+
+            savedTabs.append(savedTab)
+
+            if let data = tab.snapshot, let image = UIImage(data: data) {
+                savedUUIDs.insert(tab.id.uuidString)
+                imageStore?.put(tab.id.uuidString, image: image)
+            }
+        }
+        // Clean up any screenshots that are no longer associated with a tab.
+        _ = imageStore?.clearExcluding(savedUUIDs)
+        return savedTabs.isEmpty ? nil : savedTabs
     }
 }

@@ -1,0 +1,14 @@
+"NSCameraUsageDescription" = "สิ่งนี้ช่วยให้คุณถ่ายและอัปโหลดรูปถ่าย";
+
+"NSLocationWhenInUseUsageDescription" = "เว็บไซต์ที่คุณเยี่ยมชมอาจขอตำแหน่งที่ตั้งของคุณ";
+
+"NSMicrophoneUsageDescription" = "สิ่งนี้ช่วยให้คุณถ่ายและอัปโหลดวิดีโอ";
+
+"NSPhotoLibraryAddUsageDescription" = "สิ่งนี้ช่วยให้คุณบันทึกรูปถ่าย";
+
+"ShortcutItemTitleNewPrivateTab" = "แท็บส่วนตัวใหม่";
+
+"ShortcutItemTitleNewTab" = "แท็บใหม่";
+
+"ShortcutItemTitleQRCode" = "สแกนรหัส QR";
+

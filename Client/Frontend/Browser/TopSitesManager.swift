@@ -24,23 +24,27 @@ struct TopSitesHandler {
                 return URL(string: site.url)?.normalizedHost ?? ""
             }
 
+            /* Ecosia: Merge default sites including path to keep blog.ecosia.org + blog.ecosia.org/financial-results */
+            let unionOnURLAndPath = { (site: Site) -> String in
+                return URL(string: site.url)?.normalizedHostAndPath ?? ""
+            }
+
             // Fetch the default sites
             let defaultSites = defaultTopSites(profile)
             // create PinnedSite objects. used by the view layer to tell topsites apart
             let pinnedSites: [Site] = pinned.map({ PinnedSite(site: $0) })
 
-            // Merge default topsites with a user's topsites.
-            let mergedSites = mySites.union(defaultSites, f: unionOnURL)
-            // Merge pinnedSites with sites from the previous step
-            let allSites = pinnedSites.union(mergedSites, f: unionOnURL)
+            // Merge pinned sites with a user's topsites.
+            let mergedSites = pinnedSites.union(mySites, f: unionOnURL)
+            // Merge default sites into mergedSites
+            let allSites = mergedSites.union(defaultSites, f: unionOnURLAndPath)
 
-            // Favour topsites from defaultSites as they have better favicons. But keep PinnedSites
+            /* Ecosia: Favour default sites over top sites as they have better icons and texts. But keep PinnedSites */
             let newSites = allSites.map { site -> Site in
                 if let _ = site as? PinnedSite {
                     return site
                 }
-                let domain = URL(string: site.url)?.shortDisplayString
-                return defaultSites.find { $0.title.lowercased() == domain } ?? site
+                return defaultSites.first(where: { $0.url.asURL?.normalizedHostAndPath == site.url.asURL?.normalizedHostAndPath }) ?? site
             }
             
             deferred.fill(newSites)

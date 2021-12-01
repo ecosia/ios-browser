@@ -21,6 +21,7 @@ class TrayToBrowserAnimator: NSObject, UIViewControllerAnimatedTransitioning {
 private extension TrayToBrowserAnimator {
     func transitionFromTray(_ tabTray: TabTrayControllerV1, toBrowser bvc: BrowserViewController, usingContext transitionContext: UIViewControllerContextTransitioning) {
         let container = transitionContext.containerView
+        container.backgroundColor = UIColor.theme.tabTray.background
         guard let selectedTab = bvc.tabManager.selectedTab else { return }
 
         let tabManager = bvc.tabManager
@@ -75,7 +76,6 @@ private extension TrayToBrowserAnimator {
             cell.title.transform = CGAffineTransform(translationX: 0, y: -cell.title.frame.height)
             bvc.tabTrayDidDismiss(tabTray)
             tabTray.toolbar.transform = CGAffineTransform(translationX: 0, y: UIConstants.BottomToolbarHeight)
-            tabCollectionViewSnapshot.transform = CGAffineTransform(scaleX: 0.9, y: 0.9) 
         }
 
         if UIAccessibility.isReduceMotionEnabled {
@@ -90,9 +90,8 @@ private extension TrayToBrowserAnimator {
             if !UIAccessibility.isReduceMotionEnabled {
                 frameResizeClosure()
             }
-            UIApplication.shared.windows.first?.backgroundColor = UIColor.theme.browser.background
+            UIApplication.shared.windows.first?.backgroundColor = UIColor.theme.tabTray.background
             tabTray.navigationController?.setNeedsStatusBarAppearanceUpdate()
-            tabCollectionViewSnapshot.alpha = 0
             tabTray.statusBarBG.alpha = 0
             tabTray.searchBarHolder.alpha = 0
         }, completion: { finished in
@@ -154,8 +153,7 @@ private extension BrowserToTrayAnimator {
         // Take a snapshot of the collection view to perform the scaling/alpha effect
         let tabCollectionViewSnapshot = tabTray.collectionView.snapshotView(afterScreenUpdates: true)!
         tabCollectionViewSnapshot.frame = tabTray.collectionView.frame
-        tabCollectionViewSnapshot.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
-        tabCollectionViewSnapshot.alpha = 0
+        tabCollectionViewSnapshot.alpha = 1.0
         tabTray.view.insertSubview(tabCollectionViewSnapshot, belowSubview: tabTray.toolbar)
 
         if let toast = bvc.clipboardBarDisplayHandler?.clipboardToast {
@@ -185,7 +183,6 @@ private extension BrowserToTrayAnimator {
         // To work around this, we dispatch the setting of collection view to hidden after the screen update is completed.
 
         DispatchQueue.main.async {
-            tabTray.collectionView.isHidden = true
             let finalFrame = calculateCollapsedCellFrameUsingCollectionView(tabTray.collectionView,
                 atIndex: scrollToIndex)
             tabTray.toolbar.transform = CGAffineTransform(translationX: 0, y: UIConstants.BottomToolbarHeight)
@@ -232,6 +229,7 @@ private extension BrowserToTrayAnimator {
                 bvc.toggleSnackBarVisibility(show: true)
                 toggleWebViewVisibility(true, usingTabManager: bvc.tabManager)
                 bvc.firefoxHomeViewController?.view.isHidden = false
+                bvc.firefoxHomeViewController?.view.alpha = 0.0
 
                 resetTransformsForViews([bvc.header, bvc.readerModeBar, bvc.footer])
                 bvc.urlBar.isTransitioning = false
@@ -292,18 +290,19 @@ private func calculateCollapsedCellFrameUsingCollectionView(_ collectionView: UI
 }
 
 private func calculateExpandedCellFrameFromBVC(_ bvc: BrowserViewController) -> CGRect {
-    var frame = bvc.webViewContainer.frame
 
-    // If we're navigating to a home panel and we were expecting to show the toolbar, add more height to end frame since
-    // there is no toolbar for home panels
-    if !bvc.shouldShowFooterForTraitCollection(bvc.traitCollection) {
-        return frame
+    let showsToolbar = bvc.shouldShowFooterForTraitCollection(bvc.traitCollection)
+    var isNTP = bvc.tabManager.selectedTab?.url == nil
+    if let url = bvc.tabManager.selectedTab?.url, let internalPage = InternalURL(url), internalPage.isAboutURL {
+        isNTP = true
     }
 
-    if let url = bvc.tabManager.selectedTab?.url, bvc.toolbar == nil, let internalPage = InternalURL(url), internalPage.isAboutURL {
-        frame.size.height += UIConstants.BottomToolbarHeight
-    }
+    let topInset: CGFloat = isNTP ? 0 : bvc.urlBar.bounds.height
+    let bottomInset: CGFloat = showsToolbar ? UIConstants.ToolbarHeight : 0
 
+    let frame = bvc.view.frame
+        .inset(by: bvc.view.safeAreaInsets)
+        .inset(by: .init(top: topInset, left: 0, bottom: bottomInset, right: 0))
     return frame
 }
 

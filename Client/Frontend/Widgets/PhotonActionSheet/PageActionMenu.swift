@@ -79,6 +79,7 @@ extension PhotonActionSheetProtocol {
             bvc.addBookmark(url: url.absoluteString, title: tab.title, favicon: tab.displayFavicon)
             TelemetryWrapper.recordEvent(category: .action, method: .add, object: .bookmark, value: .pageActionMenu)
             success(Strings.AppMenuAddBookmarkConfirmMessage, .bookmarkPage)
+            Analytics.shared.browser(.add, label: .favourites, property: .menu)
         }
 
         let removeBookmark = PhotonActionSheetItem(title: Strings.AppMenuRemoveBookmarkTitleString, iconString: "menu-Bookmark-Remove") { _, _ in
@@ -124,6 +125,7 @@ extension PhotonActionSheetProtocol {
             }
         }
 
+        /* Ecosia: remove send to device
         let sendToDevice = PhotonActionSheetItem(title: Strings.SendToDeviceTitle, iconString: "menu-Send-to-Device") { _, _ in
             guard let bvc = presentableVC as? PresentableVC & InstructionsViewControllerDelegate & DevicePickerViewControllerDelegate else { return }
             if !self.profile.hasAccount() {
@@ -143,6 +145,7 @@ extension PhotonActionSheetProtocol {
             navigationController.modalPresentationStyle = .formSheet
             bvc.present(navigationController, animated: true, completion: nil)
         }
+        */
 
         let sharePage = PhotonActionSheetItem(title: Strings.AppMenuSharePageTitleString, iconString: "action_share") { _, _ in
             guard let url = tab.canonicalURL?.displayURL else { return }
@@ -204,7 +207,8 @@ extension PhotonActionSheetProtocol {
             }
         }
 
-        mainActions.append(contentsOf: [sendToDevice, copyURL])
+        //Ecosia: remove send to device
+        mainActions.append(contentsOf: [copyURL])
 
         let pinAction = (isPinned ? removeTopSitesPin : pinToTopSites)
         var commonActions = [toggleDesktopSite, pinAction]

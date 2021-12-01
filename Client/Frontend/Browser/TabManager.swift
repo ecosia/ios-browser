@@ -7,6 +7,7 @@ import WebKit
 import Storage
 import Shared
 import XCGLogger
+import Core
 
 private let log = Logger.browserLogger
 
@@ -321,6 +322,7 @@ class TabManager: NSObject {
         }
 
         storeChanges()
+        Analytics.shared.browser(.edit, label: .tabs)
     }
 
     func configureTab(_ tab: Tab, request: URLRequest?, afterTab parent: Tab? = nil, flushToDisk: Bool, zombie: Bool, isPopup: Bool = false) {
@@ -417,6 +419,7 @@ class TabManager: NSObject {
             object: .tab,
             value: tab.isPrivate ? .privateTab : .normalTab
         )
+        Analytics.shared.browser(.delete, label: .tabs)
     }
 
     private func updateIndexAfterRemovalOf(_ tab: Tab, deletedIndex: Int) {
@@ -569,6 +572,14 @@ class TabManager: NSObject {
         assert(Thread.isMainThread)
         return tabs.filter({ $0.webView?.url == url }).first
     }
+    
+    func getTabForUUID(uuid: String) -> Tab? {
+        assert(Thread.isMainThread)
+        let filterdTabs = tabs.filter { tab -> Bool in
+            tab.tabUUID == uuid
+        }
+        return filterdTabs.first
+    }
 
     @objc func prefsDidChange() {
         DispatchQueue.main.async {
@@ -610,7 +621,7 @@ extension TabManager {
         return store.hasTabsToRestoreAtStartup
     }
 
-    func restoreTabs() {
+    func restoreTabs(_ forced: Bool = false) {
         defer {
             // Always make sure there is a single normal tab.
             if normalTabs.isEmpty {
@@ -621,21 +632,21 @@ extension TabManager {
             }
         }
         
-        guard count == 0, !AppConstants.IsRunningTest, !DebugSettingsBundleOptions.skipSessionRestore, store.hasTabsToRestoreAtStartup else {
+        guard forced || count == 0, !AppConstants.IsRunningTest, !DebugSettingsBundleOptions.skipSessionRestore, store.hasTabsToRestoreAtStartup else {
             return
         }
 
-        var tabToSelect = store.restoreStartupTabs(clearPrivateTabs: shouldClearPrivateTabs(), tabManager: self)
+        var tabToSelect = profile.isShutdown ? nil : store.restoreStartupTabs(clearPrivateTabs: shouldClearPrivateTabs(), tabManager: self)
         let wasLastSessionPrivate = UserDefaults.standard.bool(forKey: "wasLastSessionPrivate")
         if wasLastSessionPrivate, !(tabToSelect?.isPrivate ?? false) {
             tabToSelect = addTab(isPrivate: true)
         }
 
+        selectTab(tabToSelect)
+        
         for delegate in self.delegates {
             delegate.get()?.tabManagerDidRestoreTabs(self)
         }
-
-        selectTab(tabToSelect)
     }
 }
 

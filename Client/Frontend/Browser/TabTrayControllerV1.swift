@@ -165,7 +165,7 @@ class TabTrayControllerV1: UIViewController {
         view.accessibilityLabel = NSLocalizedString("Tabs Tray", comment: "Accessibility label for the Tabs Tray view.")
         
         webViewContainerBackdrop = UIView()
-        webViewContainerBackdrop.backgroundColor = UIColor.Photon.Ink90
+        webViewContainerBackdrop.backgroundColor = UIColor.Photon.Grey80
         webViewContainerBackdrop.alpha = 0
 
         collectionView.alwaysBounceVertical = true
@@ -178,12 +178,12 @@ class TabTrayControllerV1: UIViewController {
 
         searchBarHolder.addSubview(roundedSearchBarHolder)
         searchBarHolder.addSubview(searchBar)
-        searchBarHolder.backgroundColor = UIColor.theme.tabTray.toolbar
+        searchBarHolder.backgroundColor = UIColor.theme.ecosia.barBackground
         [webViewContainerBackdrop, collectionView, toolbar, searchBarHolder, cancelButton].forEach { view.addSubview($0) }
         makeConstraints()
 
         // The statusBar needs a background color
-        statusBarBG.backgroundColor = UIColor.theme.tabTray.toolbar
+        statusBarBG.backgroundColor = UIColor.theme.ecosia.barBackground
         view.addSubview(statusBarBG)
         statusBarBG.snp.makeConstraints { make in
             make.leading.trailing.top.equalTo(self.view)
@@ -368,6 +368,7 @@ class TabTrayControllerV1: UIViewController {
             return
         }
         openNewTab()
+        Analytics.shared.browser(.open, label: .newTab, property: .toolbar)
     }
 
     func openNewTab(_ request: URLRequest? = nil) {
@@ -493,6 +494,8 @@ extension TabTrayControllerV1 {
     }
 
     func closeTabsForCurrentTray() {
+        Analytics.shared.browser(.delete_all, label: .tabs)
+        
         tabDisplayManager.hideDisplayedTabs() {
             self.tabManager.removeTabsWithUndoToast(self.tabDisplayManager.dataStore.compactMap { $0 })
             if self.tabDisplayManager.isPrivate {
@@ -555,6 +558,7 @@ extension TabTrayControllerV1 {
 
 extension TabTrayControllerV1: TabSelectionDelegate {
     func didSelectTabAtIndex(_ index: Int) {
+        Analytics.shared.browser(.open, label: .tabs)
         if let tab = tabDisplayManager.dataStore.at(index) {
             tabManager.selectTab(tab)
             dismissTabTray()
@@ -858,7 +862,7 @@ private struct EmptyPrivateTabsViewUX {
 fileprivate class EmptyPrivateTabsView: UIView {
     fileprivate lazy var titleLabel: UILabel = {
         let label = UILabel()
-        label.textColor = UIColor.Photon.White100
+        label.textColor = UIColor.theme.tabTray.privateEmptyText
         label.font = EmptyPrivateTabsViewUX.TitleFont
         label.textAlignment = .center
         return label
@@ -866,7 +870,7 @@ fileprivate class EmptyPrivateTabsView: UIView {
 
     fileprivate var descriptionLabel: UILabel = {
         let label = UILabel()
-        label.textColor = UIColor.Photon.White100
+        label.textColor = UIColor.theme.tabTray.privateEmptyText
         label.font = EmptyPrivateTabsViewUX.DescriptionFont
         label.textAlignment = .center
         label.numberOfLines = 0
@@ -885,7 +889,7 @@ fileprivate class EmptyPrivateTabsView: UIView {
     }()
 
     fileprivate var iconImageView: UIImageView = {
-        let imageView = UIImageView(image: UIImage.templateImageNamed("largePrivateMask"))
+        let imageView = UIImageView(image: UIImage(named: "tigerIncognito"))
         imageView.tintColor = UIColor.Photon.Grey60
         return imageView
     }()
@@ -895,32 +899,24 @@ fileprivate class EmptyPrivateTabsView: UIView {
 
         titleLabel.text =  NSLocalizedString("Private Browsing",
             tableName: "PrivateBrowsing", comment: "Title displayed for when there are no open tabs while in private mode")
-        descriptionLabel.text = NSLocalizedString("Firefox won’t remember any of your history or cookies, but new bookmarks will be saved.",
-            tableName: "PrivateBrowsing", comment: "Description text displayed when there are no open tabs while in private mode")
+        descriptionLabel.text = .localized(.privateEmpty)
 
         addSubview(titleLabel)
         addSubview(descriptionLabel)
         addSubview(iconImageView)
-        addSubview(learnMoreButton)
 
         titleLabel.snp.makeConstraints { make in
             make.center.equalTo(self)
         }
 
         iconImageView.snp.makeConstraints { make in
-            make.bottom.equalTo(titleLabel.snp.top)
+            make.bottom.equalTo(titleLabel.snp.top).offset(-25)
             make.height.width.equalTo(120)
             make.centerX.equalTo(self)
         }
 
         descriptionLabel.snp.makeConstraints { make in
             make.top.equalTo(titleLabel.snp.bottom).offset(EmptyPrivateTabsViewUX.TextMargin)
-            make.centerX.equalTo(self)
-        }
-
-        learnMoreButton.snp.makeConstraints { (make) -> Void in
-            make.top.equalTo(descriptionLabel.snp.bottom).offset(EmptyPrivateTabsViewUX.LearnMoreMargin).priority(10)
-            make.bottom.lessThanOrEqualTo(self).offset(-EmptyPrivateTabsViewUX.MinBottomMargin).priority(1000)
             make.centerX.equalTo(self)
         }
     }
@@ -955,8 +951,8 @@ extension TabTrayControllerV1: UIAdaptivePresentationControllerDelegate, UIPopov
 class TrayToolbar: UIView, Themeable, PrivateModeUI {
     fileprivate let toolbarButtonSize = CGSize(width: 44, height: 44)
 
-    lazy var addTabButton: UIButton = {
-        let button = UIButton()
+    lazy var addTabButton: AddNewTabButton = {
+        let button = AddNewTabButton(style: .circle)
         button.setImage(UIImage.templateImageNamed("nav-add"), for: .normal)
         button.accessibilityLabel = NSLocalizedString("Add Tab", comment: "Accessibility label for the Add Tab button in the Tab Tray.")
         button.accessibilityIdentifier = "TabTrayController.addTabButton"
@@ -965,14 +961,14 @@ class TrayToolbar: UIView, Themeable, PrivateModeUI {
 
     lazy var deleteButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage.templateImageNamed("action_delete"), for: .normal)
+        button.setTitle(.localized(.closeAll), for: .normal)
         button.accessibilityLabel = Strings.TabTrayDeleteMenuButtonAccessibilityLabel
         button.accessibilityIdentifier = "TabTrayController.removeTabsButton"
         return button
     }()
 
     lazy var maskButton = PrivateModeButton()
-    fileprivate let sideOffset: CGFloat = 32
+    fileprivate let sideOffset: CGFloat = 16
 
     fileprivate override init(frame: CGRect) {
         super.init(frame: frame)
@@ -980,7 +976,7 @@ class TrayToolbar: UIView, Themeable, PrivateModeUI {
 
         var buttonToCenter: UIButton?
         addSubview(deleteButton)
-        buttonToCenter = deleteButton
+        buttonToCenter = addTabButton
 
         maskButton.accessibilityIdentifier = "TabTrayController.maskButton"
 
@@ -990,17 +986,19 @@ class TrayToolbar: UIView, Themeable, PrivateModeUI {
             make.size.equalTo(toolbarButtonSize)
         }
 
-        addTabButton.snp.makeConstraints { make in
+        deleteButton.snp.makeConstraints { make in
             make.top.equalTo(self)
-            make.trailing.equalTo(self).offset(-sideOffset)
-            make.size.equalTo(toolbarButtonSize)
+            make.trailingMargin.equalTo(self).offset(-sideOffset)
+            make.height.equalTo(toolbarButtonSize.height)
+            make.leading.greaterThanOrEqualTo(addTabButton.snp.trailing).offset(sideOffset)
         }
 
         addSubview(maskButton)
         maskButton.snp.makeConstraints { make in
             make.top.equalTo(self)
-            make.leading.equalTo(self).offset(sideOffset)
-            make.size.equalTo(toolbarButtonSize)
+            make.leadingMargin.equalTo(self).offset(sideOffset/2.0)
+            make.height.equalTo(toolbarButtonSize.height)
+            make.trailing.lessThanOrEqualTo(deleteButton.snp.leading).offset(-sideOffset)
         }
 
         applyTheme()
@@ -1012,16 +1010,19 @@ class TrayToolbar: UIView, Themeable, PrivateModeUI {
     }
 
     func applyUIMode(isPrivate: Bool) {
-        maskButton.applyUIMode(isPrivate: isPrivate)
+        maskButton.isSelected = isPrivate
+        maskButton.applyUIMode(isPrivate: false)
     }
 
     func applyTheme() {
-        [addTabButton, deleteButton].forEach {
+        [addTabButton, deleteButton, maskButton].forEach {
             $0.tintColor = UIColor.theme.tabTray.toolbarButtonTint
         }
-        backgroundColor = UIColor.theme.tabTray.toolbar
+        deleteButton.setTitleColor(UIColor.theme.tabTray.toolbarButtonTint, for: .normal)
+        backgroundColor = UIColor.theme.ecosia.barBackground
         maskButton.offTint = UIColor.theme.tabTray.privateModeButtonOffTint
         maskButton.onTint = UIColor.theme.tabTray.privateModeButtonOnTint
+        maskButton.applyTheme()
     }
 }
 
@@ -1046,13 +1047,11 @@ class TabCell: UICollectionViewCell {
         return view
     }()
 
-    let screenshotView: UIImageViewAligned = {
-        let view = UIImageViewAligned()
+    let screenshotView: UIImageView = {
+        let view = UIImageView()
         view.contentMode = .scaleAspectFill
         view.clipsToBounds = true
         view.isUserInteractionEnabled = false
-        view.alignLeft = true
-        view.alignTop = true
         view.backgroundColor = UIColor.theme.browser.background
         return view
     }()
@@ -1111,7 +1110,7 @@ class TabCell: UICollectionViewCell {
         title.contentView.addSubview(self.favicon)
 
         title.snp.makeConstraints { (make) in
-            make.top.left.right.equalTo(backgroundHolder)
+            make.top.left.right.equalTo(backgroundHolder).priority(.veryHigh)
             make.height.equalTo(TabTrayControllerUX.TextBoxHeight)
         }
 
@@ -1135,7 +1134,7 @@ class TabCell: UICollectionViewCell {
 
     func setTabSelected(_ isPrivate: Bool) {
         // This creates a border around a tabcell. Using the shadow craetes a border _outside_ of the tab frame.
-        layer.shadowColor = (isPrivate ? UIColor.theme.tabTray.privateModePurple : UIConstants.SystemBlueColor).cgColor
+        layer.shadowColor = (isPrivate ? UIColor.theme.tabTray.privateModePurple : UIColor.theme.ecosia.primaryBrand).cgColor
         layer.shadowOpacity = 1
         layer.shadowRadius = 0 // A 0 radius creates a solid border instead of a gradient blur
         layer.masksToBounds = false
@@ -1217,6 +1216,7 @@ class TabCell: UICollectionViewCell {
 
     @objc func close() {
         delegate?.tabCellDidClose(self)
+        Analytics.shared.browser(.delete, label: .tabs)
     }
 }
 

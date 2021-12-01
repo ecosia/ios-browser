@@ -1,0 +1,14 @@
+"NSCameraUsageDescription" = "Hiermit können Sie Fotos machen und hochladen.";
+
+"NSLocationWhenInUseUsageDescription" = "Von Ihnen besuchte Websites können Ihren Standort abfragen.";
+
+"NSMicrophoneUsageDescription" = "Hiermit können Sie Videos aufnehmen und hochladen.";
+
+"NSPhotoLibraryAddUsageDescription" = "Damit können Sie Fotos speichern.";
+
+"ShortcutItemTitleNewPrivateTab" = "Neuer privater Tab";
+
+"ShortcutItemTitleNewTab" = "Neuer Tab";
+
+"ShortcutItemTitleQRCode" = "QR-Code scannen";
+

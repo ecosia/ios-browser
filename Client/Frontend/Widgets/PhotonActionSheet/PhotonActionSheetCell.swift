@@ -10,7 +10,7 @@ import Shared
 // This file is the cells used for the PhotonActionSheet table view.
 
 private struct PhotonActionSheetCellUX {
-    static let LabelColor = UIConstants.SystemBlueColor
+    static let LabelColor = UIColor.theme.ecosia.primaryBrand
     static let BorderWidth = CGFloat(0.5)
     static let CellSideOffset = 20
     static let TitleLabelOffset = 10
@@ -50,14 +50,14 @@ class PhotonActionSheetCell: UITableViewCell {
     lazy var titleLabel: UILabel = {
         let label = createLabel()
         label.numberOfLines = 4
-        label.font = DynamicFontHelper.defaultHelper.LargeSizeRegularWeightAS
+        label.font = .preferredFont(forTextStyle: .body)
         return label
     }()
 
     lazy var subtitleLabel: UILabel = {
         let label = createLabel()
         label.numberOfLines = 0
-        label.font = DynamicFontHelper.defaultHelper.SmallSizeRegularWeightAS
+        label.font = .preferredFont(forTextStyle: .subheadline)
         return label
     }()
 
@@ -174,7 +174,7 @@ class PhotonActionSheetCell: UITableViewCell {
 
     func configure(with action: PhotonActionSheetItem, syncManager: SyncManager? = nil) {
         titleLabel.text = action.title
-        titleLabel.textColor = UIColor.theme.tableView.rowText
+        titleLabel.textColor = UIColor.theme.ecosia.highContrastText
         titleLabel.textColor = action.accessory == .Text ? titleLabel.textColor.withAlphaComponent(0.6) : titleLabel.textColor
         titleLabel.adjustsFontSizeToFitWidth = false
         titleLabel.numberOfLines = 2
@@ -182,10 +182,10 @@ class PhotonActionSheetCell: UITableViewCell {
         titleLabel.minimumScaleFactor = 0.5
 
         subtitleLabel.text = action.text
-        subtitleLabel.textColor = UIColor.theme.tableView.rowText
+        subtitleLabel.textColor = UIColor.theme.ecosia.secondaryText
         subtitleLabel.isHidden = action.text == nil
         subtitleLabel.numberOfLines = 0
-        titleLabel.font = action.bold ? DynamicFontHelper.defaultHelper.DeviceFontLargeBold : DynamicFontHelper.defaultHelper.LargeSizeRegularWeightAS
+        titleLabel.font = action.bold ? .preferredFont(forTextStyle: .headline) : .preferredFont(forTextStyle: .body)
         accessibilityIdentifier = action.iconString ?? action.accessibilityId
         accessibilityLabel = action.title
         selectionStyle = action.tapHandler != nil ? .default : .none
@@ -245,13 +245,13 @@ class PhotonActionSheetCell: UITableViewCell {
             badgeOverlay?.layout(onButton: statusIcon)
             badgeOverlay?.show(true)
             // Custom dark theme tint needed here, it is overkill to create a '.theme' color just for this.
-            let color = ThemeManager.instance.currentName == .dark ? UIColor(white: 0.3, alpha: 1): UIColor.theme.actionMenu.closeButtonBackground
+            let color = ThemeManager.instance.currentName == .dark ? UIColor(white: 0.3, alpha: 1): UIColor.theme.ecosia.actionSheetBackground
             badgeOverlay?.badge.tintBackground(color: color)
         }
 
         switch action.accessory {
         case .Text:
-            disclosureLabel.font = action.bold ? DynamicFontHelper.defaultHelper.DeviceFontLargeBold : DynamicFontHelper.defaultHelper.LargeSizeRegularWeightAS
+            disclosureLabel.font = action.bold ? .preferredFont(forTextStyle: .headline) : .preferredFont(forTextStyle: .body)
             disclosureLabel.text = action.accessoryText
             disclosureLabel.textColor = titleLabel.textColor
             stackView.addArrangedSubview(disclosureLabel)

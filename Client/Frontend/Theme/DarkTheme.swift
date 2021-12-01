@@ -5,17 +5,17 @@
 import Foundation
 
 // Convenience reference to these normal mode colors which are used in a few color classes.
-fileprivate let defaultBackground = UIColor.Photon.Grey80
+fileprivate let defaultBackground = UIColor.Photon.Grey90
 fileprivate let defaultSeparator = UIColor.Photon.Grey60
-fileprivate let defaultTextAndTint = UIColor.Photon.Grey10
+fileprivate let defaultTextAndTint = UIColor.white
 
 fileprivate class DarkTableViewColor: TableViewColor {
-    override var rowBackground: UIColor { return UIColor.Photon.Grey70 }
+    override var rowBackground: UIColor { return UIColor.Photon.Grey80 }
     override var rowText: UIColor { return defaultTextAndTint }
     override var rowDetailText: UIColor { return UIColor.Photon.Grey30 }
     override var disabledRowText: UIColor { return UIColor.Photon.Grey40 }
     override var separator: UIColor { return UIColor.Photon.Grey60 }
-    override var headerBackground: UIColor { return UIColor.Photon.Grey80 }
+    override var headerBackground: UIColor { return UIColor.Photon.Grey90 }
     override var headerTextLight: UIColor { return UIColor.Photon.Grey30 }
     override var headerTextDark: UIColor { return UIColor.Photon.Grey30 }
     override var syncText: UIColor { return defaultTextAndTint }
@@ -25,9 +25,6 @@ fileprivate class DarkTableViewColor: TableViewColor {
 
 fileprivate class DarkActionMenuColor: ActionMenuColor {
     override var foreground: UIColor { return UIColor.Photon.White100 }
-    override var iPhoneBackgroundBlurStyle: UIBlurEffect.Style { return UIBlurEffect.Style.dark }
-    override var iPhoneBackground: UIColor { return defaultBackground.withAlphaComponent(0.9) }
-    override var closeButtonBackground: UIColor { return defaultBackground }
 }
 
 fileprivate class DarkURLBarColor: URLBarColor {
@@ -53,7 +50,6 @@ fileprivate class DarkTabTrayColor: TabTrayColor {
     override var tabTitleBlur: UIBlurEffect.Style { return UIBlurEffect.Style.dark }
     override var background: UIColor { return UIColor.Photon.Grey90 }
     override var cellBackground: UIColor { return defaultBackground }
-    override var toolbar: UIColor { return UIColor.Photon.Grey80 }
     override var toolbarButtonTint: UIColor { return defaultTextAndTint }
     override var cellCloseButton: UIColor { return defaultTextAndTint }
     override var cellTitleBackground: UIColor { return UIColor.Photon.Grey70 }
@@ -73,16 +69,15 @@ fileprivate class DarkTopTabsColor: TopTabsColor {
 }
 
 fileprivate class DarkTextFieldColor: TextFieldColor {
-    override var background: UIColor { return UIColor.Photon.Grey60 }
-    override var backgroundInOverlay: UIColor { return self.background }
+    override var background: UIColor { return UIColor.Photon.Grey70 }
+    override var backgroundInOverlay: UIColor { return UIColor.Photon.Grey70 }
 
     override var textAndTint: UIColor { return defaultTextAndTint }
     override var separator: UIColor { return super.separator.withAlphaComponent(0.3) }
 }
 
 fileprivate class DarkHomePanelColor: HomePanelColor {
-    override var toolbarBackground: UIColor { return defaultBackground }
-    override var toolbarHighlight: UIColor { return UIColor.Photon.Blue40 }
+    override var toolbarHighlight: UIColor { return UIColor.theme.ecosia.primaryToolbar }
     override var toolbarTint: UIColor { return UIColor.Photon.Grey30 }
     override var panelBackground: UIColor { return UIColor.Photon.Grey90 }
     override var separator: UIColor { return defaultSeparator }
@@ -96,15 +91,6 @@ fileprivate class DarkHomePanelColor: HomePanelColor {
     override var bookmarkCurrentFolderText: UIColor { return UIColor.Photon.White100 }
     override var bookmarkBackNavCellBackground: UIColor { return UIColor.Photon.Grey70 }
     
-    override var activityStreamHeaderText: UIColor { return UIColor.Photon.Grey30 }
-    override var activityStreamCellTitle: UIColor { return UIColor.Photon.Grey20 }
-    override var activityStreamCellDescription: UIColor { return UIColor.Photon.Grey30 }
-
-    override var topSiteDomain: UIColor { return defaultTextAndTint }
-    override var topSitesGradientStart:  UIColor { return UIColor(rgb: 0x29282d) }
-    override var topSitesGradientEnd:  UIColor { return UIColor(rgb: 0x212104) }
-    override var topSitesBackground: UIColor { return UIColor(rgb: 0x29282d) }
-
     override var downloadedFileIcon: UIColor { return UIColor.Photon.Grey30 }
 
     override var historyHeaderIconsBackground: UIColor { return UIColor.clear }
@@ -128,7 +114,7 @@ fileprivate class DarkGeneralColor: GeneralColor {
 }
 
 class DarkDefaultBrowserCardColor: DefaultBrowserCardColor {
-    override var backgroundColor: UIColor { return UIColor.Photon.Grey60 }
+    override var backgroundColor: UIColor { return UIColor.Photon.Grey70 }
     override var textColor: UIColor { return UIColor.white }
 }
 
@@ -146,4 +132,5 @@ class DarkTheme: NormalTheme {
     override var general: GeneralColor { return DarkGeneralColor() }
     override var actionMenu: ActionMenuColor { return DarkActionMenuColor() }
     override var defaultBrowserCard: DefaultBrowserCardColor { return DarkDefaultBrowserCardColor() }
+    override var ecosia: EcosiaTheme { DarkEcosiaTheme() }
 }

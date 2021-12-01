@@ -1,0 +1,14 @@
+"NSCameraUsageDescription" = "Näin voit ottaa ja ladata kuvia.";
+
+"NSLocationWhenInUseUsageDescription" = "Vierailemasi sivustot voivat kysyä lupaa sijaintiisi.";
+
+"NSMicrophoneUsageDescription" = "Näin voit ottaa ja ladata videoita.";
+
+"NSPhotoLibraryAddUsageDescription" = "Näin voit tallentaa kuvia.";
+
+"ShortcutItemTitleNewPrivateTab" = "Uusi yksityinen välilehti";
+
+"ShortcutItemTitleNewTab" = "Uusi välilehti";
+
+"ShortcutItemTitleQRCode" = "Skannaa QR-koodi";
+

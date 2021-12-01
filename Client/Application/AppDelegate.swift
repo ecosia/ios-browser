@@ -17,6 +17,7 @@ import CoreSpotlight
 import UserNotifications
 import Account
 import WidgetKit
+import Core
 
 #if canImport(BackgroundTasks)
  import BackgroundTasks
@@ -72,6 +73,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
 
         self.window = UIWindow(frame: UIScreen.main.bounds)
         self.window?.backgroundColor = UIColor.theme.browser.background
+
+        NotificationCenter.default.addObserver(self, selector: #selector(displayThemeChanged), name: .DisplayThemeChanged, object: nil)
 
         // If the 'Save logs to Files app on next launch' toggle
         // is turned on in the Settings app, copy over old logs.
@@ -164,7 +167,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
 
     func applicationWillTerminate(_ application: UIApplication) {
         // We have only five seconds here, so let's hope this doesn't take too long.
-        profile?._shutdown()
+        profile?._shutdown(force: true)
 
         // Allow deinitializers to close our database connections.
         profile = nil
@@ -187,7 +190,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
         if let profile = self.profile {
             return profile
         }
-        let p = BrowserProfile(localName: "profile", syncDelegate: application.syncDelegate)
+        /* Ecosia: have a clean profile if migration has not succeeded */
+        let needsMigration = User.shared.migrated != true
+        let p = BrowserProfile(localName: "profile", syncDelegate: application.syncDelegate, clear: needsMigration)
         self.profile = p
         return p
     }
@@ -219,7 +224,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
         // that is an iOS bug or not.
         AutocompleteTextField.appearance().semanticContentAttribute = .forceLeftToRight
 
+        /* Ecosia: deactivate Push
         pushNotificationSetup()
+        */
 
         // Leanplum user research variable setup for onboarding research
         _ = OnboardingUserResearch()
@@ -232,6 +239,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
             LeanPlumClient.shared.set(enabled: true)
         }
 
+        /* Ecosia: deactivate MZ background sync
         if #available(iOS 13.0, *) {
             BGTaskScheduler.shared.register(forTaskWithIdentifier: "org.mozilla.ios.sync.part1", using: DispatchQueue.global()) { task in
                 guard self.profile?.hasSyncableAccount() ?? false else {
@@ -265,7 +273,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
                 }
             }
         }
-
+        */
+        Analytics.shared.activity(.launch)
+        
         return shouldPerformAdditionalDelegateHandling
     }
 
@@ -388,12 +398,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
         singleShotTimer.resume()
         shutdownWebServer = singleShotTimer
 
+        /* Ecosia: deactivate MZ background sync
         if #available(iOS 13.0, *) {
             scheduleBGSync(application: application)
         } else {
             syncOnDidEnterBackground(application: application)
         }
-        
+        */
+        shutdownProfileWhenNotActive(application)
         tabManager.preserveTabs()
     }
     
@@ -407,6 +419,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
         }
     }
 
+    /* Ecosia: deactivate MZ background sync
     fileprivate func syncOnDidEnterBackground(application: UIApplication) {
         guard let profile = self.profile else {
             return
@@ -433,6 +446,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
             application.endBackgroundTask(taskId)
         }
     }
+    */
 
     fileprivate func shutdownProfileWhenNotActive(_ application: UIApplication) {
         // Only shutdown the profile if we are not in the foreground
@@ -440,7 +454,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
             return
         }
 
-        profile?._shutdown()
+        profile?._shutdown(force: false)
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
@@ -448,6 +462,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
         // is that this method is only invoked whenever the application is entering the foreground where as
         // `applicationDidBecomeActive` will get called whenever the Touch ID authentication overlay disappears.
         self.updateAuthenticationInfo()
+        Analytics.shared.activity(.resume)
+        // Temporary deactivate Goodall
+        Goodall.shared.refresh()
     }
 
     fileprivate func updateAuthenticationInfo() {
@@ -510,13 +527,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
 
     func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
         let bvc = BrowserViewController.foregroundBVC()
-        if #available(iOS 12.0, *) {
-            if userActivity.activityType == SiriShortcuts.activityType.openURL.rawValue {
-                bvc.openBlankNewTab(focusLocationField: false)
-                return true
-            }
-        }
-
+        
         // If the `NSUserActivity` has a `webpageURL`, it is either a deep link or an old history item
         // reached via a "Spotlight" search before we began indexing visited pages via CoreSpotlight.
         if let url = userActivity.webpageURL {
@@ -560,6 +571,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
         completionHandler(handledShortCutItem)
     }
 
+    /* Ecosia: deactivate MZ background processing
     @available(iOS 13.0, *)
     private func scheduleBGSync(application: UIApplication) {
         if profile?.syncManager.isSyncing ?? false {
@@ -587,6 +599,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
                 NSLog(error.localizedDescription)
             }
         }
+    }
+    */
+
+    @objc private func displayThemeChanged(notification: Notification) {
+        self.window?.backgroundColor = UIColor.theme.browser.background
     }
 }
 

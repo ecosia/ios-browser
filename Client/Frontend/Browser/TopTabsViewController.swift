@@ -137,7 +137,7 @@ class TopTabsViewController: UIViewController {
         privateModeButton.snp.makeConstraints { make in
             make.centerY.equalTo(view)
             make.leading.equalTo(view).offset(10)
-            make.size.equalTo(view.snp.height)
+            make.height.equalTo(view.snp.height)
         }
         topTabFader.snp.makeConstraints { make in
             make.top.bottom.equalTo(view)
@@ -176,6 +176,7 @@ class TopTabsViewController: UIViewController {
     @objc func newTabTapped() {
         self.delegate?.topTabsDidPressNewTab(self.tabDisplayManager.isPrivate)
         LeanPlumClient.shared.track(event: .openedNewTab, withParameters: ["Source": "Add tab button in the URL Bar on iPad"])
+        Analytics.shared.browser(.add, label: .newTab, property: .toolbar)
     }
 
     @objc func togglePrivateModeTapped() {
@@ -236,7 +237,8 @@ extension TopTabsViewController: Themeable, PrivateModeUI {
 
         privateModeButton.onTint = UIColor.theme.topTabs.privateModeButtonOnTint
         privateModeButton.offTint = UIColor.theme.topTabs.privateModeButtonOffTint
-        privateModeButton.applyUIMode(isPrivate: tabDisplayManager.isPrivate)
+        privateModeButton.isSelected = isPrivate
+        privateModeButton.applyUIMode(isPrivate: true)
     }
 
     func applyTheme() {

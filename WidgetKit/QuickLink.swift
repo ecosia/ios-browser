@@ -14,7 +14,7 @@ enum QuickLink: Int {
     public var imageName: String {
         switch self {
         case .search:
-            return "faviconFox"
+            return "openEcosia"
         case .privateSearch:
             return "smallPrivateMask"
         case .copiedLink:
@@ -53,28 +53,23 @@ enum QuickLink: Int {
     public var backgroundColors: [Color] {
         switch self {
         case .search:
-            return [Color("searchButtonColorTwo"), Color("searchButtonColorOne")]
+            return [Color("ecosiaBrand")]
         case .privateSearch:
-            return [Color("privateGradientThree"), Color("privateGradientTwo"),Color("privateGradientOne")]
+            return [Color("Bar")]
         case .copiedLink:
-            return [Color("goToCopiedLinkSolid")]
+            return [Color("Bar")]
         case .closePrivateTabs:
-            return [Color("privateGradientThree"), Color("privateGradientTwo"),Color("privateGradientOne")]
+            return [Color("Bar")]
         }
     }
 
-    static func from(_ configuration: QuickLinkSelectionIntent) -> Self {
-        switch configuration.selectedLink {
+    public var textColor: Color {
+        switch self {
         case .search:
-            return .search
-        case .privateSearch:
-            return .privateSearch
-        case .closePrivateTabs:
-            return .closePrivateTabs
-        case .copiedLink:
-            return .copiedLink
+            return .white
         default:
-            return .search
+            return .init("widgetText")
         }
     }
+
 }

@@ -1,0 +1,14 @@
+"NSCameraUsageDescription" = "Toto vám umožní pořizovat a nahrávat fotografie.";
+
+"NSLocationWhenInUseUsageDescription" = "Servery, které navštěvujete, mohou chtít znát vaše umístění.";
+
+"NSMicrophoneUsageDescription" = "Toto vám umožní pořizovat a nahrávat videa.";
+
+"NSPhotoLibraryAddUsageDescription" = "Toto vám umožní ukládat fotografie.";
+
+"ShortcutItemTitleNewPrivateTab" = "Nový anonymní panel";
+
+"ShortcutItemTitleNewTab" = "Nový panel";
+
+"ShortcutItemTitleQRCode" = "Skenovat QR kód";
+
