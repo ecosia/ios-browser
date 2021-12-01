@@ -409,6 +409,7 @@ extension FirefoxHomeViewController: UICollectionViewDelegateFlowLayout {
 
             if User.shared.showsReferralSpotlight {
                 User.shared.hideReferralSpotlight()
+                Analytics.shared.openInvitePromo()
             }
         default:
             break

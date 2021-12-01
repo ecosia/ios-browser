@@ -161,6 +161,7 @@ final class LoadingScreen: UIViewController {
             switch result {
             case .success:
                 self?.loadingGroup.leave()
+                Analytics.shared.inviteClaimSuccess()
             case .failure(let error):
                 self?.showReferralError(error)
             }
