@@ -151,4 +151,17 @@ final class Analytics {
                               action: Action.send.rawValue)
                     .label("invite"))
     }
+
+    func openInvitePromo() {
+        tracker
+            .track(Structured(category: Category.invitations.rawValue,
+                              action: Action.open.rawValue)
+                    .label("promo"))
+    }
+
+    func inviteClaimSuccess() {
+        tracker
+            .track(Structured(category: Category.invitations.rawValue,
+                              action: Action.claim.rawValue))
+    }
 }
