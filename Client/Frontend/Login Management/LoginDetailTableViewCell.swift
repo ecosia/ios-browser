@@ -70,9 +70,9 @@ class LoginDetailTableViewCell: ThemedTableViewCell {
     override var accessibilityLabel: String? {
         get {
             if descriptionLabel.isSecureTextEntry {
-                return highlightedLabel.text ?? ""
+                return ""
             } else {
-                return "\(highlightedLabel.text ?? ""), \(descriptionLabel.text ?? "")"
+                return descriptionLabel.text
             }
         }
         set {
@@ -105,16 +105,6 @@ class LoginDetailTableViewCell: ThemedTableViewCell {
         didSet {
             guard isEditingFieldData != oldValue else { return }
             descriptionLabel.isUserInteractionEnabled = isEditingFieldData
-            highlightedLabel.textColor = isEditingFieldData ? UIColor.theme.tableView.headerTextLight: LoginTableViewCellUX.highlightedLabelTextColor
-        }
-    }
-
-    var highlightedLabelTitle: String? {
-        get {
-            return highlightedLabel.text
-        }
-        set(newTitle) {
-            highlightedLabel.text = newTitle
         }
     }
 
@@ -122,7 +112,6 @@ class LoginDetailTableViewCell: ThemedTableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         selectionStyle = .none
 
-        labelContainer.addSubview(highlightedLabel)
         labelContainer.addSubview(descriptionLabel)
         contentView.addSubview(labelContainer)
 
@@ -165,6 +154,9 @@ class LoginDetailTableViewCell: ThemedTableViewCell {
     override func applyTheme() {
         super.applyTheme()
         descriptionLabel.textColor = UIColor.theme.tableView.rowText
+        if let text = attributedPlaceholder?.string {
+            attributedPlaceholder = NSAttributedString(string: text, attributes: [.foregroundColor: UIColor.theme.ecosia.secondaryText])
+        }
     }
 }
 

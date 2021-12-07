@@ -7,9 +7,9 @@ import Storage
 import Shared
 
 struct GridTabTrayControllerUX {
-    static let CornerRadius = CGFloat(6.0)
+    static let CornerRadius = CGFloat(10.0)
     static let TextBoxHeight = CGFloat(32.0)
-    static let NavigationToolbarHeight = CGFloat(44)
+    static let NavigationToolbarHeight = CGFloat(0) // Ecosia: hide Toolbar
     static let FaviconSize = CGFloat(20)
     static let Margin = CGFloat(15)
     static let ToolbarButtonOffset = CGFloat(10.0)
@@ -271,6 +271,7 @@ class GridTabViewController: UIViewController, TabTrayViewDelegate {
         if tabDisplayManager.isDragging {
             return
         }
+        Analytics.shared.browser(.open, label: .newTab, property: .toolbar)
 
         // Ensure Firefox home page is refreshed if privacy mode was changed
         if tabManager.selectedTab?.isPrivate != isPrivate {
@@ -409,6 +410,7 @@ extension GridTabViewController {
 
 extension GridTabViewController: TabSelectionDelegate {
     func didSelectTabAtIndex(_ index: Int) {
+        Analytics.shared.browser(.open, label: .tabs)
         if let tab = tabDisplayManager.dataStore.at(index) {
             if tab.isFxHomeTab {
                 notificationCenter.post(name: .TabsTrayDidSelectHomeTab)
@@ -546,7 +548,7 @@ extension GridTabViewController {
 
 // MARK: - Toolbar Actions
 extension GridTabViewController {
-    func performToolbarAction(_ action: TabTrayViewAction, sender: UIBarButtonItem) {
+    func performToolbarAction(_ action: TabTrayViewAction, sender: Any) {
         switch action {
         case .addTab:
             didTapToolbarAddTab()
@@ -562,7 +564,7 @@ extension GridTabViewController {
         openNewTab(isPrivate: tabDisplayManager.isPrivate)
     }
 
-    func didTapToolbarDelete(_ sender: UIBarButtonItem) {
+    func didTapToolbarDelete(_ sender: Any) {
         if tabDisplayManager.isDragging {
             return
         }
@@ -577,6 +579,7 @@ extension GridTabViewController {
                                            handler: nil),
                              accessibilityIdentifier: AccessibilityIdentifiers.TabTray.deleteCancelButton)
         controller.popoverPresentationController?.barButtonItem = sender
+        controller.view.tintColor = UIColor.theme.ecosia.information
         present(controller, animated: true, completion: nil)
     }
 }
@@ -755,6 +758,19 @@ private class TabLayoutDelegate: NSObject, UICollectionViewDelegateFlowLayout, U
         }
 
         return UIContextMenuConfiguration(identifier: nil, previewProvider: { return tabVC }, actionProvider: tabVC.contextActions(defaultActions:))
+	}
+    
+	// Ecosia: separator logic
+    fileprivate var showSeparator = false {
+        didSet {
+            if showSeparator != oldValue {
+                (tabSelectionDelegate as? Themeable)?.applyTheme()
+            }
+        }
+    }
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        showSeparator = scrollView.contentOffset.y + scrollView.adjustedContentInset.top > 12
     }
 }
 

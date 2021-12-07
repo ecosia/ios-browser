@@ -120,8 +120,10 @@ class ShareViewController: UIViewController {
             makeActionRow(addTo: stackView, label: .ShareLoadInBackground, imageName: "menu-Show-Tabs", action: #selector(actionLoadInBackground), hasNavigation: false)
             makeActionRow(addTo: stackView, label: .ShareBookmarkThisPage, imageName: "AddToBookmarks", action: #selector(actionBookmarkThisPage), hasNavigation: false)
             makeActionRow(addTo: stackView, label: .ShareAddToReadingList, imageName: "AddToReadingList", action: #selector(actionAddToReadingList), hasNavigation: false)
+            /* Ecosia: remove Send to device
             makeSeparator(addTo: stackView)
             makeActionRow(addTo: stackView, label: .ShareSendToDevice, imageName: "menu-Send-to-Device", action: #selector(actionSendToDevice), hasNavigation: true)
+            */
         } else {
             pageInfoRowUrlLabel?.removeFromSuperview()
             makeActionRow(addTo: stackView, label: .ShareSearchInFirefox, imageName: "quickSearch", action: #selector(actionSearchInFirefox), hasNavigation: false)
@@ -266,7 +268,8 @@ class ShareViewController: UIViewController {
         let stackView = UIStackView()
         stackView.axis = .horizontal
         stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.addBackground(color: ShareTheme.doneLabelBackground.color)
+        stackView.spacing = 8
+        stackView.addBackground(color: UIColor(named: "doneBackground")!)
         stackView.rightLeftEdges(inset: UX.rowInset)
         parent.addArrangedSubview(stackView)
         stackView.heightAnchor.constraint(equalToConstant: CGFloat(UX.pageInfoRowHeight)).isActive = true
@@ -274,15 +277,15 @@ class ShareViewController: UIViewController {
         let label = UILabel()
         label.font = UX.doneLabelFont
         label.handleLongLabels()
+        label.textColor = ShareTheme.doneRowText.color
 
-        let checkmark = UILabel()
-        checkmark.text = "✓"
-        checkmark.font = UIFont.boldSystemFont(ofSize: 22)
+        let checkmark = UIImageView()
+        checkmark.image = UIImage(named: "doneCheckmark")
+        checkmark.contentMode = .scaleAspectFit
         checkmark.translatesAutoresizingMaskIntoConstraints = false
 
-        [label, checkmark].forEach {
+        [checkmark, label].forEach {
             stackView.addArrangedSubview($0)
-            $0.textColor = .white
         }
 
         checkmark.widthAnchor.constraint(equalToConstant: 20).isActive = true
@@ -317,6 +320,11 @@ class ShareViewController: UIViewController {
             stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
          ])
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        setupNavBar()
     }
 }
 
@@ -394,9 +402,9 @@ extension ShareViewController {
        func firefoxUrl(_ url: String) -> String {
             let encoded = url.addingPercentEncoding(withAllowedCharacters: NSCharacterSet.alphanumerics) ?? ""
             if isSearch {
-                return "firefox://open-text?text=\(encoded)"
+                return "ecosia://open-text?text=\(encoded)"
             }
-            return "firefox://open-url?url=\(encoded)"
+            return "ecosia://open-url?url=\(encoded)"
         }
 
         guard let url = URL(string: firefoxUrl(url)) else { return }

@@ -12,8 +12,10 @@ class PrivateModeButton: ToggleButton, NotificationThemeable, PrivateModeUI {
         super.init(frame: frame)
         accessibilityLabel = .TabTrayToggleAccessibilityLabel
         accessibilityHint = .TabTrayToggleAccessibilityHint
-        let maskImage = UIImage(named: ImageIdentifiers.privateMaskSmall)?.withRenderingMode(.alwaysTemplate)
-        setImage(maskImage, for: [])
+        setTitle(.localized(.privateTab), for: .normal)
+        setTitleColor(ThemeManager.instance.current.tabTray.tabTitleText, for: .normal)
+        titleLabel?.font = .preferredFont(forTextStyle: .body)
+        titleLabel?.adjustsFontForContentSizeCategory = true
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -21,17 +23,17 @@ class PrivateModeButton: ToggleButton, NotificationThemeable, PrivateModeUI {
     }
 
     func applyUIMode(isPrivate: Bool) {
-        isSelected = isPrivate
-
-        tintColor = isPrivate ? onTint : offTint
-        imageView?.tintColor = tintColor
-
+        // isPrivate == isSelected
+        let color = isPrivate
+        ? UIColor.theme.ecosia.primaryBackground
+        : UIColor.theme.ecosia.primaryText
+        
+        setTitleColor(color, for: .normal)
         accessibilityValue = isSelected ? .TabTrayToggleAccessibilityValueOn : .TabTrayToggleAccessibilityValueOff
-    }
-
-    func applyTheme() {
-        tintColor = isSelected ? onTint : offTint
-        imageView?.tintColor = tintColor
+        
+        backgroundLayer.backgroundColor = isPrivate
+            ? UIColor.theme.ecosia.privateButtonBackground.cgColor
+            : UIColor.clear.cgColor
     }
 }
 

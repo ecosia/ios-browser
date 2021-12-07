@@ -6,8 +6,10 @@ import Shared
 import UIKit
 
 struct DownloadToastUX {
-    static let ToastBackgroundColor = UIColor.Photon.Blue40
-    static let ToastProgressColor = UIColor.Photon.Blue50
+    static var ToastBackgroundColor: UIColor { .theme.ecosia.quarternaryBackground }
+    static var ToastProgressColor: UIColor { .theme.ecosia.highlightedBackground }
+    static let YMargin = CGFloat(12)
+    static let XMargin = CGFloat(16)
 }
 
 class DownloadToast: Toast {
@@ -68,10 +70,13 @@ class DownloadToast: Toast {
 
         self.addSubview(createView(download.filename, descriptionText: self.descriptionText))
 
-        NSLayoutConstraint.activate([
-            toastView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            toastView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            toastView.heightAnchor.constraint(equalTo: heightAnchor),
+		// Ecosia: Tweak Toast Displaying // TODO: convert from SnapKit 
+        self.toastView.snp.makeConstraints { make in
+            make.bottom.equalTo(self).offset(-DownloadToastUX.YMargin)
+            make.left.equalTo(self).offset(DownloadToastUX.XMargin)
+            make.right.equalTo(self).offset(-DownloadToastUX.XMargin)
+            self.animationConstraint = make.top.equalTo(self).offset(ButtonToastUX.ToastHeight - DownloadToastUX.YMargin).constraint
+        }
 
             heightAnchor.constraint(equalToConstant: ButtonToastUX.ToastHeight)
         ])
@@ -115,24 +120,29 @@ class DownloadToast: Toast {
         }
 
         let icon = UIImageView(image: UIImage.templateImageNamed("download"))
-        icon.tintColor = UIColor.Photon.White100
+        icon.tintColor = UIColor.theme.ecosia.quarternaryBackground
+        icon.backgroundColor = UIColor.theme.ecosia.toastImageTint
+        icon.layer.cornerRadius = 12
+        icon.layer.masksToBounds = true
         horizontalStackView.addArrangedSubview(icon)
 
         let labelStackView = UIStackView()
         labelStackView.axis = .vertical
         labelStackView.alignment = .leading
 
+        labelStackView.addArrangedSubview(UIView())
+
         let label = UILabel()
-        label.textColor = UIColor.Photon.White100
-        label.font = ButtonToastUX.ToastLabelFont
+        label.textColor = UIColor.theme.ecosia.primaryTextInverted
+        label.font = .preferredFont(forTextStyle: .body).bold()
         label.text = labelText
         label.lineBreakMode = .byWordWrapping
         label.numberOfLines = 1
         label.adjustsFontSizeToFitWidth = true
         labelStackView.addArrangedSubview(label)
 
-        descriptionLabel.textColor = UIColor.Photon.White100
-        descriptionLabel.font = ButtonToastUX.ToastDescriptionFont
+        descriptionLabel.textColor = UIColor.theme.ecosia.primaryTextInverted
+        descriptionLabel.font = .preferredFont(forTextStyle: .caption1)
         descriptionLabel.text = descriptionText
         descriptionLabel.lineBreakMode = .byTruncatingTail
         labelStackView.addArrangedSubview(descriptionLabel)
@@ -140,7 +150,7 @@ class DownloadToast: Toast {
         horizontalStackView.addArrangedSubview(labelStackView)
 
         let cancel = UIImageView(image: UIImage.templateImageNamed("close-medium"))
-        cancel.tintColor = UIColor.Photon.White100
+        cancel.tintColor = .theme.ecosia.primaryTextInverted
         cancel.isUserInteractionEnabled = true
         cancel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(buttonPressed)))
         horizontalStackView.addArrangedSubview(cancel)

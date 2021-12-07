@@ -16,13 +16,13 @@ class Toast: UIView {
 
     lazy var gestureRecognizer: UITapGestureRecognizer = {
         let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTap))
-        gestureRecognizer.cancelsTouchesInView = false
         return gestureRecognizer
     }()
 
     lazy var toastView: UIView = .build { view in
         view.backgroundColor = SimpleToastUX.ToastDefaultColor
-    }
+        view.layer.cornerRadius = 10
+        view.layer.masksToBounds = true
 
     override func didMoveToSuperview() {
         super.didMoveToSuperview()
@@ -65,16 +65,13 @@ class Toast: UIView {
         dismissed = true
         superview?.removeGestureRecognizer(gestureRecognizer)
 
-        UIView.animate(
-            withDuration: SimpleToastUX.ToastAnimationDuration,
-            animations: {
-                self.animationConstraint?.constant = SimpleToastUX.ToastHeight
-                self.layoutIfNeeded()
-            }) { finished in
-                self.removeFromSuperview()
-                if !buttonPressed {
-                    self.completionHandler?(false)
-                }
+        UIView.animate(withDuration: SimpleToastUX.ToastAnimationDuration, animations: {
+            self.animationConstraint?.update(offset: SimpleToastUX.ToastHeight + SimpleToastUX.Offset)
+            self.layoutIfNeeded()
+        }) { finished in
+            self.removeFromSuperview()
+            if !buttonPressed {
+                self.completionHandler?(false)
             }
     }
 

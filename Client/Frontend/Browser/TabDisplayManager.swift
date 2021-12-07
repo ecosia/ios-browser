@@ -86,7 +86,10 @@ class TabDisplayManager: NSObject, FeatureFlaggable {
     var tabDisplayOrder: TabDisplayOrder = TabDisplayOrder()
 
     var shouldEnableGroupedTabs: Bool {
+        /* Ecosia: disable Grouped Tabs
         return featureFlags.isFeatureEnabled(.tabTrayGroups, checking: .buildAndUser)
+        */
+        return false
     }
 
     var shouldEnableInactiveTabs: Bool {

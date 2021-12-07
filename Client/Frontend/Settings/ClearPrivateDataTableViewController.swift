@@ -57,14 +57,23 @@ class ClearPrivateDataTableViewController: ThemedTableViewController {
 
     fileprivate var clearButtonEnabled = true {
         didSet {
-            clearButton?.textLabel?.textColor = clearButtonEnabled ? UIColor.theme.general.destructiveRed : UIColor.theme.tableView.disabledRowText
+            clearButton?.textLabel?.textColor = clearButtonEnabled ? .Light.State.warning: .theme.tableView.disabledRowText
         }
     }
-
+    
+    required init?(coder: NSCoder) {
+        nil
+    }
+    
+    init() {
+        super.init(style: .insetGrouped)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         title = .SettingsDataManagementTitle
+        navigationItem.largeTitleDisplayMode = .never
 
         tableView.register(ThemedTableSectionHeaderFooterView.self,
                            forHeaderFooterViewReuseIdentifier: ThemedTableSectionHeaderFooterView.cellIdentifier)
@@ -94,7 +103,7 @@ class ClearPrivateDataTableViewController: ThemedTableViewController {
             assert(indexPath.section == SectionButton)
             cell.textLabel?.text = .SettingsClearPrivateDataClearButton
             cell.textLabel?.textAlignment = .center
-            cell.textLabel?.textColor = UIColor.theme.general.destructiveRed
+            cell.textLabel?.textColor = .Light.State.warning
             cell.accessibilityTraits = UIAccessibilityTraits.button
             cell.accessibilityIdentifier = "ClearPrivateData"
             clearButton = cell
@@ -153,6 +162,11 @@ class ClearPrivateDataTableViewController: ThemedTableViewController {
                         // Disable the Clear Private Data button after it's clicked.
                         self.clearButtonEnabled = false
                         self.tableView.deselectRow(at: indexPath, animated: true)
+                        
+                        /*
+                         Ecosia
+                         */
+                        Analytics.shared.reset()
                 }
             }
 

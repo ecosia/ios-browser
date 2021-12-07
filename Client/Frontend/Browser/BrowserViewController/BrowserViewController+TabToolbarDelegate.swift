@@ -73,8 +73,7 @@ extension BrowserViewController: TabToolbarDelegate, PhotonActionSheetProtocol {
 
     func tabToolbarDidPressAddNewTab(_ tabToolbar: TabToolbarProtocol, button: UIButton) {
         let isPrivate = tabManager.selectedTab?.isPrivate ?? false
-        tabManager.selectTab(tabManager.addTab(nil, isPrivate: isPrivate))
-        focusLocationTextField(forTab: tabManager.selectedTab)
+        openBlankNewTab(focusLocationField: false, isPrivate: isPrivate)
     }
 
     func tabToolbarDidPressMenu(_ tabToolbar: TabToolbarProtocol, button: UIButton) {
@@ -99,6 +98,7 @@ extension BrowserViewController: TabToolbarDelegate, PhotonActionSheetProtocol {
     func tabToolbarDidPressTabs(_ tabToolbar: TabToolbarProtocol, button: UIButton) {
         showTabTray()
         TelemetryWrapper.recordEvent(category: .action, method: .press, object: .tabToolbar, value: .tabView)
+        Analytics.shared.browser(.open, label: .tabs, property: .home)
     }
 
     func getTabToolbarLongPressActionsForModeSwitching() -> [PhotonRowActions] {

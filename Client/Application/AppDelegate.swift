@@ -6,6 +6,7 @@ import Shared
 import Storage
 import CoreSpotlight
 import SDWebImage
+import Core
 
 let LatestAppVersionProfileKey = "latestAppVersion"
 
@@ -135,7 +136,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         singleShotTimer.resume()
         shutdownWebServer = singleShotTimer
+        /* Ecosia: deactivate MZ background sync
         backgroundSyncUtil?.scheduleSyncOnAppBackground()
+        */
         tabManager.preserveTabs()
 
         // send glean telemetry and clear cache
@@ -268,5 +271,11 @@ extension AppDelegate {
         rootViewController = navigationController
 
         window!.rootViewController = rootViewController
+    }
+}
+
+extension AppDelegate: WelcomeDelegate {
+    func welcomeDidFinish(_ welcome: Welcome) {
+        rootViewController.setViewControllers([browserViewController], animated: true)
     }
 }

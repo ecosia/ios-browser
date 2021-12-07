@@ -158,6 +158,7 @@ class TopTabsColor {
 class TextFieldColor {
     var background: UIColor { return UIColor.Photon.LightGrey20 }
     var backgroundInOverlay: UIColor { return UIColor.Photon.LightGrey20 }
+    var backgroundInCell: UIColor { return .Light.Background.primary }
     var textAndTint: UIColor { return defaultTextAndTint }
     var separator: UIColor { return .white }
 }
@@ -268,6 +269,7 @@ protocol LegacyTheme {
     var homeTabBanner: HomeTabBannerColor { get }
     var onboarding: OnboardingColor { get }
     var remotePanel: RemoteTabTrayColor { get }
+    var ecosia: EcosiaTheme { get }
 }
 
 class NormalTheme: LegacyTheme {
@@ -289,4 +291,5 @@ class NormalTheme: LegacyTheme {
     var homeTabBanner: HomeTabBannerColor { return HomeTabBannerColor() }
     var onboarding: OnboardingColor { return OnboardingColor() }
     var remotePanel: RemoteTabTrayColor { return RemoteTabTrayColor() }
+    var ecosia: EcosiaTheme { return EcosiaTheme() }
 }

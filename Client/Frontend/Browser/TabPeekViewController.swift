@@ -59,7 +59,7 @@ class TabPeekViewController: UIViewController, WKNavigationDelegate {
                 actions.append(UIPreviewAction(title: .TabPeekCopyUrl, style: .default) {[weak self] previewAction, viewController in
                     guard let wself = self, let url = wself.tab?.canonicalURL else { return }
                     UIPasteboard.general.url = url
-                    SimpleToast().showAlertWithText(.AppMenu.AppMenuCopyURLConfirmMessage, bottomContainer: wself.view)
+                    SimpleToast().showAlertWithText(.AppMenuCopyURLConfirmMessage, image: "menu-Copy-Link", bottomContainer: wself.view)
                 })
             }
         }
@@ -92,7 +92,7 @@ class TabPeekViewController: UIViewController, WKNavigationDelegate {
             actions.append(UIAction(title: .TabPeekCopyUrl, image: UIImage.templateImageNamed(ImageIdentifiers.copyLink), identifier: nil) { [weak self] _ in
                 guard let wself = self, let url = wself.tab?.canonicalURL else { return }
                 UIPasteboard.general.url = url
-                SimpleToast().showAlertWithText(.AppMenu.AppMenuCopyURLConfirmMessage, bottomContainer: wself.view)
+                SimpleToast().showAlertWithText(.AppMenuCopyURLConfirmMessage, image: "menu-Copy-Link", bottomContainer: wself.view)
             })
         }
         actions.append(UIAction(title: .TabPeekCloseTab, image: UIImage.templateImageNamed("menu-CloseTabs"), identifier: nil) { [weak self] _ in
