@@ -113,7 +113,7 @@ extension BrowserViewController: TabToolbarDelegate, PhotonActionSheetProtocol {
             }
         }
         */
-        
+        let ecosiaSection = getNavigationalActions(vcDelegate: self)
         let section0 = getLibraryActions(vcDelegate: self)
         let section1 = getOtherPanelActions(vcDelegate: self)
         let section2 = getSettingsAction(vcDelegate: self)
@@ -128,7 +128,7 @@ extension BrowserViewController: TabToolbarDelegate, PhotonActionSheetProtocol {
             section1.append(whatsNewAction)
         }
         */
-        actions.append(contentsOf: [section0, section1, section2])
+        actions.append(contentsOf: [ecosiaSection, section0, section1 + section2])
 
         presentSheetWith(actions: actions, on: self, from: button)
     }
