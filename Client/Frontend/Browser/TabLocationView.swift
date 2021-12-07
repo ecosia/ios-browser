@@ -82,9 +82,10 @@ class TabLocationView: UIView {
         }
     }
 
-    lazy var placeholder: NSAttributedString = {
-        return NSAttributedString(string: .TabLocationURLPlaceholder, attributes: [NSAttributedString.Key.foregroundColor: UIColor.Photon.Grey50])
-    }()
+    var placeholder: NSAttributedString {
+        let placeholderText = String.localized(.searchAndPlant)
+        return NSAttributedString(string: placeholderText, attributes: [.foregroundColor: UIColor.theme.ecosia.textfieldPlaceholder])
+    }
 
     lazy var urlTextField: UITextField = {
         let urlTextField = DisplayTextField()
@@ -94,7 +95,7 @@ class TabLocationView: UIView {
         urlTextField.attributedPlaceholder = self.placeholder
         urlTextField.accessibilityIdentifier = "url"
         urlTextField.accessibilityActionsSource = self
-        urlTextField.font = UIConstants.DefaultChromeFont
+        urlTextField.font = .preferredFont(forTextStyle: .body)
         urlTextField.backgroundColor = .clear
         urlTextField.accessibilityLabel = "Address Bar"
         urlTextField.font = UIFont.preferredFont(forTextStyle: .body)
@@ -203,11 +204,11 @@ class TabLocationView: UIView {
 
         trackingProtectionButton.snp.makeConstraints { make in
             make.width.equalTo(TabLocationViewUX.TPIconSize)
-            make.height.equalTo(TabLocationViewUX.ButtonSize)
+            make.height.equalTo(TabLocationViewUX.ButtonSize).priority(.high)
         }
 
         pageOptionsButton.snp.makeConstraints { make in
-            make.size.equalTo(TabLocationViewUX.ButtonSize)
+            make.size.equalTo(TabLocationViewUX.ButtonSize).priority(.high)
         }
 
         separatorLineForPageOptions.snp.makeConstraints { make in
@@ -217,12 +218,12 @@ class TabLocationView: UIView {
 
         readerModeButton.snp.makeConstraints { make in
             make.width.equalTo(TabLocationViewUX.ReaderModeButtonWidth)
-            make.height.equalTo(TabLocationViewUX.ButtonSize)
+            make.height.equalTo(TabLocationViewUX.ButtonSize).priority(.high)
         }
 
         reloadButton.snp.makeConstraints { make in
             make.width.equalTo(TabLocationViewUX.ReaderModeButtonWidth)
-            make.height.equalTo(TabLocationViewUX.ButtonSize)
+            make.height.equalTo(TabLocationViewUX.ButtonSize).priority(.high)
         }
 
         // Setup UIDragInteraction to handle dragging the location
@@ -358,6 +359,7 @@ extension TabLocationView: AccessibilityActionsSource {
 extension TabLocationView: Themeable {
     func applyTheme() {
         urlTextField.textColor = UIColor.theme.textField.textAndTint
+        urlTextField.attributedPlaceholder = self.placeholder
         readerModeButton.selectedTintColor = UIColor.theme.urlbar.readerModeButtonSelected
         readerModeButton.unselectedTintColor = UIColor.theme.urlbar.readerModeButtonUnselected
         

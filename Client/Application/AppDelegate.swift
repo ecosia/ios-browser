@@ -16,6 +16,7 @@ import Sync
 import CoreSpotlight
 import UserNotifications
 import Account
+import Core
 
 #if canImport(BackgroundTasks)
  import BackgroundTasks
@@ -70,6 +71,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
         self.launchOptions = launchOptions
 
         self.window = UIWindow(frame: UIScreen.main.bounds)
+
+        NotificationCenter.default.addObserver(self, selector: #selector(displayThemeChanged), name: .DisplayThemeChanged, object: nil)
 
         // If the 'Save logs to Files app on next launch' toggle
         // is turned on in the Settings app, copy over old logs.
@@ -168,7 +171,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
 
     func applicationWillTerminate(_ application: UIApplication) {
         // We have only five seconds here, so let's hope this doesn't take too long.
-        profile?._shutdown()
+        profile?._shutdown(force: true)
 
         // Allow deinitializers to close our database connections.
         profile = nil
@@ -191,7 +194,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
         if let profile = self.profile {
             return profile
         }
-        let p = BrowserProfile(localName: "profile", syncDelegate: application.syncDelegate)
+        /* Ecosia: have a clean profile if migration has not succeeded */
+        let needsMigration = User.shared.migrated != true
+        let p = BrowserProfile(localName: "profile", syncDelegate: application.syncDelegate, clear: needsMigration)
         self.profile = p
         return p
     }
@@ -223,7 +228,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
         // that is an iOS bug or not.
         AutocompleteTextField.appearance().semanticContentAttribute = .forceLeftToRight
 
+        /* Ecosia: deactivate Push
         pushNotificationSetup()
+        */
 
         // user research variable setup for Chron tabs user research
         _ = ChronTabsUserResearch()
@@ -251,6 +258,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
             }
         }
 
+        /* Ecosia: deactivate MZ background sync
         
         BGTaskScheduler.shared.register(forTaskWithIdentifier: "org.mozilla.ios.sync.part1", using: DispatchQueue.global()) { task in
             guard self.profile?.hasSyncableAccount() ?? false else {
@@ -283,8 +291,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
                 task.setTaskCompleted(success: true)
             }
         }
+        */
         updateSessionCount()
-
+        Analytics.shared.activity(.launch)
         return shouldPerformAdditionalDelegateHandling
     }
 
@@ -414,8 +423,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
         singleShotTimer.resume()
         shutdownWebServer = singleShotTimer
 
+        /* Ecosia: deactivate MZ background sync
         scheduleBGSync(application: application)
-
+        */
         tabManager.preserveTabs()
     }
 
@@ -434,7 +444,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
             return
         }
 
-        profile?._shutdown()
+        profile?._shutdown(force: false)
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
@@ -442,6 +452,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
         // is that this method is only invoked whenever the application is entering the foreground where as
         // `applicationDidBecomeActive` will get called whenever the Touch ID authentication overlay disappears.
         self.updateAuthenticationInfo()
+        Analytics.shared.activity(.resume)
+        // Temporary deactivate Goodall
+        Goodall.shared.refresh()
     }
 
     fileprivate func updateAuthenticationInfo() {
@@ -552,6 +565,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
         completionHandler(handledShortCutItem)
     }
 
+    /* Ecosia: deactivate MZ background processing
     private func scheduleBGSync(application: UIApplication) {
         if profile?.syncManager.isSyncing ?? false {
             // If syncing, create a bg task because _shutdown() is blocking and might take a few seconds to complete
@@ -578,6 +592,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
                 NSLog(error.localizedDescription)
             }
         }
+    }
+    */
+
+    @objc private func displayThemeChanged(notification: Notification) {
+        self.window?.backgroundColor = UIColor.theme.browser.background
     }
 }
 

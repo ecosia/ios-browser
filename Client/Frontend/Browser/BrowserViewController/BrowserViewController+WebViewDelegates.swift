@@ -6,6 +6,7 @@ import Foundation
 import WebKit
 import Shared
 import UIKit
+import Core
 
 private let log = Logger.browserLogger
 
@@ -136,6 +137,7 @@ extension BrowserViewController: WKUIDelegate {
                     }
                 }
                 let tab = self.tabManager.addTab(URLRequest(url: rURL as URL), afterTab: currentTab, isPrivate: isPrivate)
+                Analytics.shared.browser(.add, label: .newTab, property: .menu)
                 
                 // Record Observation for Search Term Groups
                 let searchTerm = currentTab.tabGroupData.tabAssociatedSearchTerm
@@ -186,6 +188,7 @@ extension BrowserViewController: WKUIDelegate {
             actions.append(UIAction(title: Strings.ContextMenuBookmarkLink, image: UIImage.templateImageNamed("menu-Bookmark"), identifier: UIAction.Identifier("linkContextMenu.bookmarkLink")) { _ in
                 self.addBookmark(url: url.absoluteString, title: elements.title)
                 TelemetryWrapper.recordEvent(category: .action, method: .add, object: .bookmark, value: .contextMenu)
+                Analytics.shared.browser(.add, label: .favourites, property: .menu)
             })
 
             actions.append(UIAction(title: Strings.ContextMenuDownloadLink, image: UIImage.templateImageNamed("menu-panel-Downloads"), identifier: UIAction.Identifier("linkContextMenu.download")) {_ in
@@ -353,7 +356,11 @@ extension BrowserViewController: WKNavigationDelegate {
     // method.
 
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
-        guard let url = navigationAction.request.url, let tab = tabManager[webView] else {
+        guard
+            let url = navigationAction.request.url,
+            url.policy == .allow,
+            let tab = tabManager[webView]
+        else {
             decisionHandler(.cancel)
             return
         }
@@ -407,6 +414,21 @@ extension BrowserViewController: WKNavigationDelegate {
         //            }
         //            return
         //        }
+
+        // Second special case are a set of URLs that look like regular http links, but should be handed over to iOS
+        // instead of being loaded in the webview. Note that there is no point in calling canOpenURL() here, because
+        // iOS will always say yes.
+
+        if isAppleMapsURL(url) {
+            UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { couldOpen in
+                if couldOpen {
+                    decisionHandler(.cancel)
+                } else {
+                    decisionHandler(.allow)
+                }
+            }
+            return
+        }
 
         if isStoreURL(url) {
             decisionHandler(.cancel)
@@ -593,6 +615,17 @@ extension BrowserViewController: WKNavigationDelegate {
         // If none of our helpers are responsible for handling this response,
         // just let the webview handle it as normal.
         decisionHandler(.allow)
+
+        // Ecosia: Cookie handling
+        if tabManager.selectedTab?.isPrivate == false {
+            DispatchQueue.main.async { 
+                webView.configuration.websiteDataStore.httpCookieStore.getAllCookies { cookies in
+                    DispatchQueue.main.async {
+                        Cookie.received(cookies)
+                    }
+                }
+            }
+        }
     }
 
     /// Invoked when an error occurs while starting to load data for the main frame.

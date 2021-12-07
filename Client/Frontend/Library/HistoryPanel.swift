@@ -24,6 +24,8 @@ private class FetchInProgressError: MaybeErrorType {
 
 @objcMembers
 class HistoryPanel: SiteTableViewController, LibraryPanel {
+    private lazy var emptyHeader = EmptyHeader(icon: "historyEmpty", title: .localized(.noHistory), subtitle: .localized(.websitesYouHave))
+    
     enum Section: Int {
         // Showing showing recently closed, and clearing recent history are action rows of this type.
         case additionalHistoryActions
@@ -88,8 +90,6 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
         return profile.recentlyClosedTabs.tabs.count > 0
     }
 
-    lazy var emptyStateOverlayView: UIView = createEmptyStateOverlayView()
-
     lazy var longPressRecognizer: UILongPressGestureRecognizer = {
         return UILongPressGestureRecognizer(target: self, action: #selector(onLongPressGestureRecognized))
     }()
@@ -128,6 +128,8 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
         } else if !profile.hasSyncableAccount() && refreshControl != nil {
             removeRefreshControl()
         }
+        
+        (navigationController as? ThemedNavigationController)?.applyTheme()
     }
 
     // MARK: - Refreshing TableView
@@ -172,12 +174,17 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
                 }
 
                 self.tableView.reloadData()
-                self.updateEmptyPanelState()
 
                 if let cell = self.clearHistoryCell {
                     AdditionalHistoryActionRow.setStyle(enabled: !self.groupedSites.isEmpty, forCell: cell)
                 }
-
+                
+                if self.groupedSites.isEmpty {
+                    self.tableView.tableFooterView = self.emptyHeader
+                    self.emptyHeader.applyTheme()
+                } else {
+                    self.tableView.tableFooterView = nil
+                }
             }
         }
     }
@@ -200,7 +207,7 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
             return deferMaybe(result)
         }
     }
-
+    
     func resyncHistory() {
         profile.syncManager.syncHistory().uponQueue(.main) { syncResult in
             self.endRefreshing()
@@ -227,8 +234,9 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
             self.groupedSites.remove(site)
             self.tableView.deleteRows(at: [indexPath], with: .right)
             self.tableView.endUpdates()
-            self.updateEmptyPanelState()
 
+            Analytics.shared.browser(.delete, label: .history)
+            
             if let cell = self.clearHistoryCell {
                 AdditionalHistoryActionRow.setStyle(enabled: !self.groupedSites.isEmpty, forCell: cell)
             }
@@ -282,6 +290,7 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
          (Strings.ClearHistoryMenuOptionTodayAndYesterday, 48)].forEach {
             (name, time) in
             let action = UIAlertAction(title: name, style: .destructive) { _ in
+                Analytics.shared.browser(.delete_all, label: .history)
                 remove(hoursAgo: time)
             }
             alert.addAction(action)
@@ -325,6 +334,7 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
                 isEmpty = false
             }
         }
+        cell.imageView?.tintColor = isEmpty ? HistoryPanelUX.actionIconColor : .theme.general.destructiveRed
         AdditionalHistoryActionRow.setStyle(enabled: !isEmpty, forCell: cell)
 
         return cell
@@ -347,8 +357,10 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
             cell.titleLabel.isHidden = site.title.isEmpty ? true : false
             cell.descriptionLabel.isHidden = false
             cell.descriptionLabel.text = site.url
+            /* Ecosia: remove border for site icons
             cell.leftImageView.layer.borderColor = HistoryPanelUX.IconBorderColor.cgColor
             cell.leftImageView.layer.borderWidth = HistoryPanelUX.IconBorderWidth
+            */
             cell.leftImageView.contentMode = .center
             cell.leftImageView.setImageAndBackground(forIcon: site.icon, website: site.tileURL) { [weak cell] in
                 cell?.leftImageView.image = cell?.leftImageView.image?.createScaled(CGSize(width: HistoryPanelUX.IconSize, height: HistoryPanelUX.IconSize))
@@ -370,11 +382,6 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
             break
         case .DynamicFontChanged:
             reloadData()
-
-            if emptyStateOverlayView.superview != nil {
-                emptyStateOverlayView.removeFromSuperview()
-            }
-            emptyStateOverlayView = createEmptyStateOverlayView()
             resyncHistory()
             break
         case .DatabaseWasReopened:
@@ -405,6 +412,9 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
 
     // MARK: - UITableViewDataSource
     func numberOfSections(in tableView: UITableView) -> Int {
+        if groupedSites.isEmpty {
+            return 1
+        }
         return Section.count
     }
 
@@ -473,6 +483,7 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
 
         if let site = siteForIndexPath(indexPath), let url = URL(string: site.url) {
             if let libraryPanelDelegate = libraryPanelDelegate {
+                Analytics.shared.browser(.open, label: .history)
                 libraryPanelDelegate.libraryPanel(didSelectURL: url, visitType: VisitType.typed)
             }
             return
@@ -483,7 +494,16 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
     override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
         if let header = view as? UITableViewHeaderFooterView {
             header.textLabel?.textColor = UIColor.theme.tableView.headerTextDark
-            header.contentView.backgroundColor = UIColor.theme.tableView.selectedBackground
+            header.contentView.backgroundColor = UIColor.theme.tableView.headerBackground
+            if #available(iOS 14.0, *) {
+                header.backgroundConfiguration?.backgroundColor = UIColor.theme.tableView.headerBackground
+            }
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplayFooterView view: UIView, forSection section: Int) {
+        if let footer = view as? UITableViewHeaderFooterView {
+            footer.contentView.backgroundColor = UIColor.theme.ecosia.primaryBackground
         }
     }
 
@@ -511,10 +531,10 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
         guard groupedSites.numberOfItemsForSection(section - 1) > 0 else {
             return 0
         }
-
+        
         return super.tableView(tableView, heightForHeaderInSection: section)
     }
-
+    
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         // Intentionally blank. Required to use UITableViewRowActions
     }
@@ -531,58 +551,12 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
         return [delete]
     }
 
-    // MARK: - Empty State
-    func updateEmptyPanelState() {
-        if groupedSites.isEmpty {
-            if emptyStateOverlayView.superview == nil {
-                tableView.tableFooterView = emptyStateOverlayView
-            }
-        } else {
-            tableView.alwaysBounceVertical = true
-            tableView.tableFooterView = nil
-        }
-    }
-
-    func createEmptyStateOverlayView() -> UIView {
-        let overlayView = UIView()
-
-        // overlayView becomes the footer view, and for unknown reason, setting the bgcolor is ignored.
-        // Create an explicit view for setting the color.
-        let bgColor = UIView()
-        bgColor.backgroundColor = UIColor.theme.homePanel.panelBackground
-        overlayView.addSubview(bgColor)
-        bgColor.snp.makeConstraints { make in
-            // Height behaves oddly: equalToSuperview fails in this case, as does setting top.equalToSuperview(), simply setting this to ample height works.
-            make.height.equalTo(UIScreen.main.bounds.height)
-            make.width.equalToSuperview()
-        }
-
-        let welcomeLabel = UILabel()
-        overlayView.addSubview(welcomeLabel)
-        welcomeLabel.text = Strings.HistoryPanelEmptyStateTitle
-        welcomeLabel.textAlignment = .center
-        welcomeLabel.font = DynamicFontHelper.defaultHelper.DeviceFontLight
-        welcomeLabel.textColor = UIColor.theme.homePanel.welcomeScreenText
-        welcomeLabel.numberOfLines = 0
-        welcomeLabel.adjustsFontSizeToFitWidth = true
-
-        welcomeLabel.snp.makeConstraints { make in
-            make.centerX.equalTo(overlayView)
-            // Sets proper top constraint for iPhone 6 in portait and for iPad.
-            make.centerY.equalTo(overlayView).offset(LibraryPanelUX.EmptyTabContentOffset).priority(100)
-            // Sets proper top constraint for iPhone 4, 5 in portrait.
-            make.top.greaterThanOrEqualTo(overlayView).offset(50)
-            make.width.equalTo(HistoryPanelUX.WelcomeScreenItemWidth)
-        }
-        return overlayView
-    }
-
     override func applyTheme() {
-        emptyStateOverlayView.removeFromSuperview()
-        emptyStateOverlayView = createEmptyStateOverlayView()
-        updateEmptyPanelState()
-
         super.applyTheme()
+        tableView.reloadData()
+        emptyHeader.applyTheme()
+        view.backgroundColor = UIColor.theme.ecosia.primaryBackground
+        tableView.backgroundColor = UIColor.theme.ecosia.primaryBackground
     }
 }
 

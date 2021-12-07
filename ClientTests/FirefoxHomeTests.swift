@@ -16,7 +16,7 @@ class FirefoxHomeTests: XCTestCase {
     override func setUp() {
         super.setUp()
         self.profile = MockProfile()
-        self.vc = FirefoxHomeViewController(profile: self.profile)
+        self.vc = FirefoxHomeViewController(profile: self.profile, delegate: nil)
     }
 
     override func tearDown() {

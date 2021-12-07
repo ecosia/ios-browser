@@ -140,6 +140,7 @@ enum Experiments {
 
     /// The `NimbusApi` object. This is the entry point to do anything with the Nimbus SDK on device.
     public static var shared: NimbusApi = {
+        /* Ecosia: deactivate Nimbus SDK
         guard FeatureFlagsManager.shared.isFeatureActiveForBuild(.nimbus) else {
             return NimbusDisabled.shared
         }
@@ -182,6 +183,8 @@ enum Experiments {
             log.error("Nimbus errored during create")
             return NimbusDisabled.shared
         }
+        */
+        return NimbusDisabled.shared
     }()
 
     /// A convenience method to initialize the `NimbusApi` object at startup.

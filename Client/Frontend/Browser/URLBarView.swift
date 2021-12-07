@@ -7,14 +7,14 @@ import SnapKit
 
 private struct URLBarViewUX {
     static let TextFieldBorderColor = UIColor.Photon.Grey40
-    static let TextFieldActiveBorderColor = UIColor.Photon.Blue40
+    static let TextFieldActiveBorderColor = UIColor.theme.ecosia.primaryBrand
 
     static let LocationLeftPadding: CGFloat = 8
     static let Padding: CGFloat = 10
     static let LocationHeight: CGFloat = 40
     static let ButtonHeight: CGFloat = 44
     static let LocationContentOffset: CGFloat = 8
-    static let TextFieldCornerRadius: CGFloat = 8
+    static let TextFieldCornerRadius: CGFloat = 10
     static let TextFieldBorderWidth: CGFloat = 0
     static let TextFieldBorderWidthSelected: CGFloat = 4
     static let ProgressBarHeight: CGFloat = 3
@@ -125,6 +125,8 @@ class URLBarView: UIView {
         cancelButton.setImage(UIImage.templateImageNamed("goBack"), for: .normal)
         cancelButton.accessibilityIdentifier = "urlBar-cancel"
         cancelButton.accessibilityLabel = Strings.BackTitle
+        cancelButton.setContentCompressionResistancePriority(.required, for: .horizontal)
+        cancelButton.setContentHuggingPriority(.defaultLow, for: .horizontal)
         cancelButton.addTarget(self, action: #selector(didClickCancel), for: .touchUpInside)
         cancelButton.alpha = 0
         return cancelButton
@@ -151,6 +153,7 @@ class URLBarView: UIView {
         return button
     }()
 
+    /* Ecosia: deactivate search image icon
     fileprivate lazy var searchIconImageView: UIImageView = {
         let searchIconImageView = UIImageView()
         searchIconImageView.isAccessibilityElement = true
@@ -159,13 +162,16 @@ class URLBarView: UIView {
         searchIconImageView.clipsToBounds = true
         return searchIconImageView
     }()
+    */
     
     var appMenuButton = ToolbarButton()
     var bookmarksButton = ToolbarButton()
     var homeButton = ToolbarButton()
-    var addNewTabButton = ToolbarButton()
+    var addNewTabButton = AddNewTabButton()
     var forwardButton = ToolbarButton()
     var multiStateButton = ToolbarButton()
+    var ecosiaButton = ToolbarButton()
+
 
     var backButton: ToolbarButton = {
         let backButton = ToolbarButton()
@@ -173,7 +179,7 @@ class URLBarView: UIView {
         return backButton
     }()
 
-    lazy var actionButtons: [Themeable & UIButton] = [self.tabsButton, self.homeButton, self.bookmarksButton, self.appMenuButton, self.addNewTabButton,  self.forwardButton, self.backButton, self.multiStateButton]
+    lazy var actionButtons: [Themeable & UIButton] = [self.ecosiaButton, self.tabsButton, self.homeButton, self.bookmarksButton, self.appMenuButton, self.addNewTabButton,  self.forwardButton, self.backButton, self.multiStateButton]
 
     var currentURL: URL? {
         get {
@@ -187,6 +193,23 @@ class URLBarView: UIView {
             } else {
                 line.isHidden = false
             }
+            /* Ecosia: update visibility of reload/multi-state button */
+            if !inOverlayMode {
+                setNeedsUpdateConstraints()
+            }
+        }
+    }
+
+    /* Ecosia: Special Logic for Reload/Cancel-Button */
+    private var showMultiStateButton: Bool {
+        if let url = currentURL {
+            if let internalURL = InternalURL(url), internalURL.isAboutHomeURL {
+                return false
+            } else {
+                return true
+            }
+        } else {
+            return false
         }
     }
 
@@ -207,9 +230,12 @@ class URLBarView: UIView {
         super.init(coder: aDecoder)
         commonInit()
     }
+
     func updateSearchEngineImage() {
+        /* Ecosia: deactivate search image
         guard let profile = profile else { return }
         self.searchIconImageView.image = profile.searchEngines.defaultEngine.image
+        */
     }
 
     fileprivate func commonInit() {
@@ -219,10 +245,12 @@ class URLBarView: UIView {
          homeButton, bookmarksButton, appMenuButton, addNewTabButton, forwardButton, backButton, multiStateButton, locationContainer].forEach {
             addSubview($0)
         }
+		addSubview(ecosiaButton)		
 
+        /* Ecosia: remove search icon
         addSubview(searchIconImageView)
         updateSearchEngineImage()
-        
+        */
         privateModeBadge.add(toParent: self)
         appMenuBadge.add(toParent: self)
         warningMenuBadge.add(toParent: self)
@@ -259,21 +287,22 @@ class URLBarView: UIView {
         cancelButton.snp.makeConstraints { make in
             make.leading.equalTo(self.safeArea.leading)
             make.centerY.equalTo(self.locationContainer)
-            make.size.equalTo(URLBarViewUX.ButtonHeight)
+            make.size.equalTo(URLBarViewUX.ButtonHeight).priority(.required)
         }
 
         backButton.snp.makeConstraints { make in
             make.leading.equalTo(self.safeArea.leading).offset(URLBarViewUX.Padding)
             make.centerY.equalTo(self)
-            make.size.equalTo(URLBarViewUX.ButtonHeight)
+            make.size.equalTo(URLBarViewUX.ButtonHeight).priority(.high)
         }
 
         forwardButton.snp.makeConstraints { make in
             make.leading.equalTo(self.backButton.snp.trailing)
             make.centerY.equalTo(self)
-            make.size.equalTo(URLBarViewUX.ButtonHeight)
+            make.size.equalTo(URLBarViewUX.ButtonHeight).priority(.high)
         }
-        
+
+        /* Ecosia: deactivate search icon
         searchIconImageView.snp.remakeConstraints { make in
             let heightMin = URLBarViewUX.LocationHeight + (URLBarViewUX.TextFieldBorderWidthSelected * 2)
             make.height.greaterThanOrEqualTo(heightMin)
@@ -281,11 +310,12 @@ class URLBarView: UIView {
             make.leading.equalTo(self.cancelButton.snp.trailing).offset(URLBarViewUX.LocationLeftPadding)
             make.width.equalTo(URLBarViewUX.SearchIconImageWidth)
         }
+        */
 
-        multiStateButton.snp.makeConstraints { make in
+        ecosiaButton.snp.makeConstraints { make in
             make.leading.equalTo(self.forwardButton.snp.trailing)
             make.centerY.equalTo(self)
-            make.size.equalTo(URLBarViewUX.ButtonHeight)
+            make.size.equalTo(URLBarViewUX.ButtonHeight).priority(.high)
         }
 
         homeButton.snp.makeConstraints { make in
@@ -297,31 +327,37 @@ class URLBarView: UIView {
         bookmarksButton.snp.makeConstraints { make in
             make.trailing.equalTo(self.appMenuButton.snp.leading)
             make.centerY.equalTo(self)
-            make.size.equalTo(URLBarViewUX.ButtonHeight)
+            make.size.equalTo(URLBarViewUX.ButtonHeight).priority(.high)
         }
 
         appMenuButton.snp.makeConstraints { make in
             make.trailing.equalTo(self.safeArea.trailing).offset(-URLBarViewUX.Padding)
             make.centerY.equalTo(self)
-            make.size.equalTo(URLBarViewUX.ButtonHeight)
+            make.size.equalTo(URLBarViewUX.ButtonHeight).priority(.high)
         }
         
         addNewTabButton.snp.makeConstraints { make in
             make.trailing.equalTo(self.tabsButton.snp.leading)
             make.centerY.equalTo(self)
-            make.size.equalTo(URLBarViewUX.ButtonHeight)
+            make.size.equalTo(URLBarViewUX.ButtonHeight).priority(.high)
         }
 
         tabsButton.snp.makeConstraints { make in
             make.trailing.equalTo(self.appMenuButton.snp.leading)
             make.centerY.equalTo(self)
-            make.size.equalTo(URLBarViewUX.ButtonHeight)
+            make.size.equalTo(URLBarViewUX.ButtonHeight).priority(.high)
         }
 
         showQRScannerButton.snp.makeConstraints { make in
+            make.trailing.equalTo(self.safeArea.trailing).offset(-URLBarViewUX.Padding)
+            make.centerY.equalTo(self.locationContainer)
+            make.size.equalTo(URLBarViewUX.ButtonHeight).priority(.high)
+        }
+
+        multiStateButton.snp.makeConstraints { make in
             make.trailing.equalTo(self.safeArea.trailing)
             make.centerY.equalTo(self.locationContainer)
-            make.size.equalTo(URLBarViewUX.ButtonHeight)
+            make.size.equalTo(URLBarViewUX.ButtonHeight).priority(.high)
         }
         
         privateModeBadge.layout(onButton: tabsButton)
@@ -332,37 +368,34 @@ class URLBarView: UIView {
     override func updateConstraints() {
         super.updateConstraints()
         if inOverlayMode {
-            searchIconImageView.alpha = 1
+            // Ecosia: searchIconImageView.alpha = 1
             // In overlay mode, we always show the location view full width
             self.locationContainer.layer.borderWidth = URLBarViewUX.TextFieldBorderWidthSelected
             self.locationContainer.snp.remakeConstraints { make in
                 let heightMin = URLBarViewUX.LocationHeight + (URLBarViewUX.TextFieldBorderWidthSelected * 2)
                 make.height.greaterThanOrEqualTo(heightMin)
-                make.trailing.equalTo(self.showQRScannerButton.snp.leading)
+                make.trailing.equalTo(self.showQRScannerButton.snp.leading).offset(-URLBarViewUX.Padding)
                 make.leading.equalTo(self.cancelButton.snp.trailing)
                 make.centerY.equalTo(self)
             }
             self.locationView.snp.remakeConstraints { make in
                 make.top.bottom.right.equalTo(self.locationContainer).inset(UIEdgeInsets(equalInset: URLBarViewUX.TextFieldBorderWidthSelected))
-                make.leading.equalTo(self.searchIconImageView.snp.trailing)
+                make.leading.equalTo(self.cancelButton.snp.trailing).offset(URLBarViewUX.LocationLeftPadding)
             }
             self.locationTextField?.snp.remakeConstraints { make in
                 make.edges.equalTo(self.locationView).inset(UIEdgeInsets(top: 0, left: URLBarViewUX.LocationLeftPadding, bottom: 0, right: URLBarViewUX.LocationLeftPadding))
             }
         } else {
-            searchIconImageView.alpha = 0
+            // Ecosia: searchIconImageView.alpha = 0
             self.locationContainer.snp.remakeConstraints { make in
                 if self.toolbarIsShowing {
                     // If we are showing a toolbar, show the text field next to the forward button
-                    make.leading.equalTo(self.multiStateButton.snp.trailing).offset(URLBarViewUX.Padding)
-                    if self.topTabsIsShowing {
-                        make.trailing.equalTo(self.homeButton.snp.leading).offset(-URLBarViewUX.Padding)
-                    } else {
-                        make.trailing.equalTo(self.addNewTabButton.snp.leading).offset(-URLBarViewUX.Padding)
-                    }
+                    make.leading.equalTo(self.ecosiaButton.snp.trailing).offset(URLBarViewUX.Padding)
+                    make.trailing.equalTo(self.multiStateButton.snp.leading).offset(-URLBarViewUX.Padding)
                 } else {
                     // Otherwise, left align the location view
-                    make.leading.trailing.equalTo(self).inset(UIEdgeInsets(top: 0, left: URLBarViewUX.LocationLeftPadding-1, bottom: 0, right: URLBarViewUX.LocationLeftPadding-1))
+                    let rightPadding = showMultiStateButton ? URLBarViewUX.ButtonHeight : 16
+                    make.leading.trailing.equalTo(self).inset(UIEdgeInsets(top: 0, left: 16, bottom: 0, right: rightPadding))
                 }
                 make.height.greaterThanOrEqualTo(URLBarViewUX.LocationHeight+2)
                 make.centerY.equalTo(self)
@@ -371,8 +404,20 @@ class URLBarView: UIView {
             self.locationView.snp.remakeConstraints { make in
                 make.edges.equalTo(self.locationContainer).inset(UIEdgeInsets(equalInset: URLBarViewUX.TextFieldBorderWidth))
             }
+
+            self.multiStateButton.snp.remakeConstraints { make in
+                if self.toolbarIsShowing {
+                    make.trailing.equalTo(self.addNewTabButton.snp.leading)
+                } else {
+                    make.trailing.equalTo(self.safeArea.trailing)
+                }
+                make.centerY.equalTo(self.locationContainer)
+                make.size.equalTo(URLBarViewUX.ButtonHeight).priority(.high)
+            }
         }
 
+        let hideButton = !multiStateButton.isEnabled || ((inOverlayMode || !showMultiStateButton) && !toolbarIsShowing)
+        multiStateButton.alpha = hideButton ? 0 : 1
     }
 
     @objc func showQRScanner() {
@@ -521,7 +566,7 @@ class URLBarView: UIView {
     func prepareOverlayAnimation() {
         // Make sure everything is showing during the transition (we'll hide it afterwards).
         bringSubviewToFront(self.locationContainer)
-        bringSubviewToFront(self.searchIconImageView)
+        //Ecosia: bringSubviewToFront(self.searchIconImageView)
         cancelButton.isHidden = false
         showQRScannerButton.isHidden = false
         progressBar.isHidden = false
@@ -532,7 +577,7 @@ class URLBarView: UIView {
         forwardButton.isHidden = !toolbarIsShowing
         backButton.isHidden = !toolbarIsShowing
         tabsButton.isHidden = !toolbarIsShowing || topTabsIsShowing
-        multiStateButton.isHidden = !toolbarIsShowing
+        ecosiaButton.isHidden = !toolbarIsShowing
     }
 
     func transitionToOverlay(_ didCancel: Bool = false) {
@@ -547,7 +592,8 @@ class URLBarView: UIView {
         addNewTabButton.alpha = inOverlayMode ? 0 : 1
         forwardButton.alpha = inOverlayMode ? 0 : 1
         backButton.alpha = inOverlayMode ? 0 : 1
-        multiStateButton.alpha = inOverlayMode ? 0 : 1
+        multiStateButton.alpha = inOverlayMode || didCancel ? 0 : 1
+        ecosiaButton.alpha = inOverlayMode ? 0 : 1
 
         let borderColor = inOverlayMode ? locationActiveBorderColor : locationBorderColor
         locationContainer.layer.borderColor = borderColor.cgColor
@@ -579,7 +625,8 @@ class URLBarView: UIView {
         forwardButton.isHidden = !toolbarIsShowing || inOverlayMode
         backButton.isHidden = !toolbarIsShowing || inOverlayMode
         tabsButton.isHidden = !toolbarIsShowing || inOverlayMode || topTabsIsShowing
-        multiStateButton.isHidden = !toolbarIsShowing || inOverlayMode
+        ecosiaButton.isHidden = !toolbarIsShowing || inOverlayMode
+
 
         // badge isHidden is tied to private mode on/off, use alpha to hide in this case
         [privateModeBadge, appMenuBadge, warningMenuBadge].forEach {
@@ -672,7 +719,7 @@ extension URLBarView: TabToolbarProtocol {
                 return [locationTextField, cancelButton]
             } else {
                 if toolbarIsShowing {
-                    return [backButton, forwardButton, multiStateButton, locationView, tabsButton, homeButton, bookmarksButton, appMenuButton, addNewTabButton, progressBar]
+                    return [ecosiaButton, backButton, forwardButton, multiStateButton, locationView, tabsButton, homeButton, bookmarksButton, appMenuButton, addNewTabButton, progressBar]
                 } else {
                     return [locationView, progressBar]
                 }
@@ -808,7 +855,7 @@ extension URLBarView: Themeable {
 
         cancelTintColor = UIColor.theme.browser.tint
         showQRButtonTintColor = UIColor.theme.browser.tint
-        backgroundColor = UIColor.theme.browser.background
+        backgroundColor = UIColor.theme.ecosia.barBackground
         line.backgroundColor = UIColor.theme.browser.urlBarDivider
 
         locationBorderColor = UIColor.theme.urlbar.border
@@ -840,7 +887,7 @@ extension URLBarView: PrivateModeUI {
 class TabLocationContainerView: UIView {
 
     private struct LocationContainerUX {
-        static let CornerRadius: CGFloat = 8
+        static let CornerRadius: CGFloat = 10
     }
 
     override init(frame: CGRect) {
@@ -907,7 +954,7 @@ class ToolbarTextField: AutocompleteTextField {
 extension ToolbarTextField: Themeable {
     func applyTheme() {
         backgroundColor = UIColor.theme.textField.backgroundInOverlay
-        textColor = UIColor.theme.textField.textAndTint
+        textColor = UIColor.theme.ecosia.highContrastText
         clearButtonTintColor = textColor
         tintColor = AutocompleteTextField.textSelectionColor.textFieldMode
     }

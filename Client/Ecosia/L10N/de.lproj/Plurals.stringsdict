@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>%d tree(s)</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@trees@</string>
+		<key>trees</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%d Baum </string>
+			<key>other</key>
+			<string>%d Bäume</string>
+		</dict>
+	</dict>
+	<key>%d search(es)</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@searches@</string>
+		<key>searches</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%d Suchanfrage </string>
+			<key>other</key>
+			<string>%d Suchanfragen</string>
+		</dict>
+	</dict>
+	<key>%d referral(s)</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@referrals@</string>
+		<key>referrals</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%d Verweis </string>
+			<key>other</key>
+			<string>%d Verweise</string>
+		</dict>
+	</dict>
+    <key>%d successful invite(s)</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@invites@</string>
+        <key>invites</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>d</string>
+            <key>one</key>
+            <string>%d erfolgreiche Einaldungen</string>
+            <key>other</key>
+            <string>%d erfolgreiche Einladung </string>
+        </dict>
+    </dict>
+</dict>
+</plist>

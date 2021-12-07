@@ -87,6 +87,7 @@ extension PhotonActionSheetProtocol {
             }
             bvc.addBookmark(url: url.absoluteString, title: tab.title, favicon: tab.displayFavicon)
             TelemetryWrapper.recordEvent(category: .action, method: .add, object: .bookmark, value: .pageActionMenu)
+            Analytics.shared.browser(.add, label: .favourites, property: .menu)
         }
 
         let removeBookmark = PhotonActionSheetItem(title: Strings.AppMenuRemoveBookmarkTitleString, iconString: "menu-Bookmark-Remove") { _,_  in
@@ -134,6 +135,7 @@ extension PhotonActionSheetProtocol {
             TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .removePinnedSite)
         }
 
+        /* Ecosia: remove send to device
         let sendToDevice = PhotonActionSheetItem(title: Strings.SendLinkToDeviceTitle, iconString: "menu-Send-to-Device") { _,_  in
             guard let bvc = presentableVC as? PresentableVC & InstructionsViewControllerDelegate & DevicePickerViewControllerDelegate else { return }
             if !self.profile.hasAccount() {
@@ -154,6 +156,7 @@ extension PhotonActionSheetProtocol {
             TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .sendToDevice)
             bvc.present(navigationController, animated: true, completion: nil)
         }
+        */
 
         let sharePage = PhotonActionSheetItem(title: Strings.ShareContextMenuTitle, iconString: "action_share") { _,_  in
             guard let url = tab.canonicalURL?.displayURL else { return }
@@ -195,7 +198,8 @@ extension PhotonActionSheetProtocol {
             section1.insert((isBookmarked ? removeBookmark : bookmarkPage), at: 0)
         }
 
-        section3.insert(contentsOf: [copyURL, sendToDevice], at: 0)
+        //Ecosia: remove send to device
+        section3.insert(contentsOf: [copyURL], at: 0)
 
         // Disable find in page and report site issue if document is pdf.
         if tab.mimeType != MIMEType.PDF {

@@ -8,6 +8,7 @@ import Account
 import SwiftKeychainWrapper
 import LocalAuthentication
 import MozillaAppServices
+import Core
 
 // This file contains all of the settings available in the main settings screen of the app.
 
@@ -630,6 +631,137 @@ class ResetJumpBackInContextualHint: HiddenSetting {
     }
 }
 
+final class PushBackInstallation: HiddenSetting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Push back installation by 3 days (needs restart).", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        User.shared.install.map {
+            User.shared.install = Calendar.current.date(byAdding: .day, value: -3, to: $0)
+        }
+    }
+}
+
+final class ToggleReferrals: HiddenSetting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Toggle Referrals", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
+    }
+
+    override var status: NSAttributedString? {
+        let isOn = Goodall.shared.variant(for: .referrals) == "test"
+        return NSAttributedString(string: isOn ? "On" : "Off", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
+    }
+
+
+    override func onClick(_ navigationController: UINavigationController?) {
+
+        let isOn = Goodall.shared.variant(for: .referrals) == "test"
+        Goodall.shared.turn(.referrals, on: !isOn)
+
+        let alertTitle = "Referrals toggled to: "
+        let alert = AlertController(title: alertTitle, message: !isOn ? "ON" : "OFF", preferredStyle: .alert)
+        navigationController?.topViewController?.present(alert, animated: true) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                alert.dismiss(animated: true)
+            }
+            self.settings.tableView.reloadData()
+        }
+    }
+}
+
+final class CreateReferralCode: HiddenSetting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Referral Code \(User.shared.referrals.code ?? "-")", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
+    }
+
+    override var status: NSAttributedString? {
+        return .init(string: "Toggle to create or erase code")
+    }
+
+
+    override func onClick(_ navigationController: UINavigationController?) {
+
+        if User.shared.referrals.code == nil {
+            User.shared.referrals.code = "TEST123"
+
+            let alertTitle = "Code created"
+            let alert = AlertController(title: alertTitle, message: User.shared.referrals.code, preferredStyle: .alert)
+            navigationController?.topViewController?.present(alert, animated: true) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                    alert.dismiss(animated: true)
+                }
+                self.settings.tableView.reloadData()
+            }
+        } else {
+            User.shared.referrals.code = nil
+
+            let alert = AlertController(title: "Code erased!", message: "Reopen app to create new one", preferredStyle: .alert)
+            navigationController?.topViewController?.present(alert, animated: true) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                    alert.dismiss(animated: true)
+                }
+                self.settings.tableView.reloadData()
+            }
+        }
+    }
+}
+
+final class AddReferral: HiddenSetting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Add Referral", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        User.shared.referrals.claims += 1
+
+        let alertTitle = "Referral count increased by one."
+        let alert = AlertController(title: alertTitle, message: "Open NTP to see spotlight", preferredStyle: .alert)
+        navigationController?.topViewController?.present(alert, animated: true) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                alert.dismiss(animated: true)
+            }
+        }
+    }
+}
+
+final class AddClaim: HiddenSetting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Add Referral Claim", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        User.shared.referrals.isClaimed = true
+        User.shared.referrals.isNewClaim = true
+
+        let alertTitle = "User got referred."
+        let alert = AlertController(title: alertTitle, message: "Open NTP to see claim", preferredStyle: .alert)
+        navigationController?.topViewController?.present(alert, animated: true) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                alert.dismiss(animated: true)
+            }
+        }
+    }
+}
+
+final class CreateMigrationData: HiddenSetting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Create migration data. (needs restart)", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        EcosiaImport.createMigrationData()
+
+        let alertTitle = "Data created. Restart App to trigger fresh migration."
+        let alert = AlertController(title: alertTitle, message: nil, preferredStyle: .alert)
+        navigationController?.topViewController?.present(alert, animated: true) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                alert.dismiss(animated: true)
+            }
+        }
+    }
+}
+
 // Show the current version of Firefox
 class VersionSetting: Setting {
     unowned let settings: SettingsTableViewController
@@ -642,7 +774,7 @@ class VersionSetting: Setting {
     }
 
     override var title: NSAttributedString? {
-        return NSAttributedString(string: "\(AppName.longName) \(VersionSetting.appVersion) (\(VersionSetting.appBuildNumber))", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
+        return NSAttributedString(string: .init(format: .localized(.version), Bundle.version) + " (\(Environment.current))", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
     }
 
     public static var appVersion: String {
@@ -722,6 +854,7 @@ class YourRightsSetting: Setting {
 }
 
 // Opens the on-boarding screen again
+/* Ecosia: deactivated Intro setting
 class ShowIntroductionSetting: Setting {
     let profile: Profile
 
@@ -738,6 +871,7 @@ class ShowIntroductionSetting: Setting {
         })
     }
 }
+*/
 
 class SendFeedbackSetting: Setting {
     override var title: NSAttributedString? {
@@ -1145,12 +1279,13 @@ class DefaultBrowserSetting: Setting {
     override var accessibilityIdentifier: String? { return "DefaultBrowserSettings" }
 
     init() {
-        super.init(title: NSAttributedString(string: String.DefaultBrowserMenuItem, attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowActionAccessory]))
+        super.init(title: .init(string: .localized(.setAsDefaultBrowser), attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText]))
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
         TelemetryWrapper.gleanRecordEvent(category: .action, method: .open, object: .settingsMenuSetAsDefaultBrowser)
         UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: [:])
+        Analytics.shared.defaultBrowserSettings()
     }
 }
 
@@ -1172,6 +1307,15 @@ class OpenWithSetting: Setting {
             return NSAttributedString(string: (mailProvider?["name"] as? String) ?? "")
         }
         return NSAttributedString(string: "")
+    }
+    
+    override func onConfigureCell(_ cell: UITableViewCell) {
+        super.onConfigureCell(cell)
+        cell.detailTextLabel?.numberOfLines = 2
+        cell.detailTextLabel?.adjustsFontSizeToFitWidth = true
+        cell.detailTextLabel?.minimumScaleFactor = 0.8
+        cell.detailTextLabel?.allowsDefaultTighteningForTruncation = true
+        cell.textLabel?.numberOfLines = 2
     }
 
     override var style: UITableViewCell.CellStyle { return .value1 }
@@ -1239,5 +1383,11 @@ class ThemeSetting: Setting {
 
     override func onClick(_ navigationController: UINavigationController?) {
         navigationController?.pushViewController(ThemeSettingsController(), animated: true)
+    }
+
+    override func onConfigureCell(_ cell: UITableViewCell) {
+        super.onConfigureCell(cell)
+        cell.detailTextLabel?.numberOfLines = 1
+        cell.textLabel?.numberOfLines = 1
     }
 }

@@ -224,50 +224,78 @@ class ReadingListPanel: UITableViewController, LibraryPanel {
     }
 
     func refreshReadingList() {
-        let prevNumberOfRecords = records?.count
         tableView.tableHeaderView = nil
 
         if let newRecords = profile.readingList.getAvailableRecords().value.successValue {
             records = newRecords
 
             if records?.count == 0 {
-                tableView.isScrollEnabled = false
-                tableView.tableHeaderView = emptyStateView
-            } else {
-                if prevNumberOfRecords == 0 {
-                    tableView.isScrollEnabled = true
-                }
+                tableView.tableHeaderView = createEmptyStateOverview()
             }
             self.tableView.reloadData()
         }
     }
     
-    private lazy var emptyStateView: UIView = .build { view in
-        let welcomeLabel: UILabel = .build { label in
-            label.text = .ReaderPanelWelcome
-            label.textAlignment = .center
-            label.font = DynamicFontHelper.defaultHelper.DeviceFontSmallBold
-            label.adjustsFontSizeToFitWidth = true
-            label.textColor = .label
+    fileprivate func createEmptyStateOverview() -> UIView {
+        let overlayView = UIView(frame: .zero)
+
+        let welcomeLabel = UILabel()
+        overlayView.addSubview(welcomeLabel)
+        welcomeLabel.text = .localized(.addArticlesTo)
+        welcomeLabel.textColor = .theme.ecosia.primaryText
+        welcomeLabel.textAlignment = .center
+        welcomeLabel.font = .systemFont(ofSize: UIFont.preferredFont(forTextStyle: .subheadline).pointSize, weight: .semibold)
+        welcomeLabel.adjustsFontSizeToFitWidth = true
+        welcomeLabel.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalToSuperview().offset(32)
+            make.width.equalTo(ReadingListPanelUX.WelcomeScreenItemWidth + ReadingListPanelUX.WelcomeScreenCircleSpacer + ReadingListPanelUX.WelcomeScreenCircleWidth)
         }
-        let readerModeLabel: UILabel = .build { label in
-            label.text = .ReaderPanelReadingModeDescription
-            label.font = DynamicFontHelper.defaultHelper.DeviceFontSmallLight
-            label.numberOfLines = 0
-            label.textColor = .label
+
+        let readerModeLabel = UILabel()
+        overlayView.addSubview(readerModeLabel)
+        readerModeLabel.text = NSLocalizedString("Open articles in Reader View by tapping the book icon when it appears in the title bar.", comment: "See http://mzl.la/1LXbDOL")
+        readerModeLabel.font = DynamicFontHelper.defaultHelper.DeviceFontSmallLight
+        readerModeLabel.numberOfLines = 0
+        readerModeLabel.snp.makeConstraints { make in
+            make.top.equalTo(welcomeLabel.snp.bottom).offset(24)
+            make.leading.equalTo(welcomeLabel.snp.leading)
+            make.width.equalTo(ReadingListPanelUX.WelcomeScreenItemWidth)
         }
-        let readerModeImageView: UIImageView = .build { imageView in
-            imageView.image = UIImage(named: "ReaderModeCircle")
+
+        let readerModeImageView = UIImageView()
+        readerModeImageView.image = .init(themed: "articles")
+        overlayView.addSubview(readerModeImageView)
+        readerModeImageView.snp.makeConstraints { make in
+            make.centerY.equalTo(readerModeLabel)
+            make.trailing.equalTo(welcomeLabel.snp.trailing)
         }
-        let readingListLabel: UILabel = .build { label in
-            label.text = .ReaderPanelReadingListDescription
-            label.font = DynamicFontHelper.defaultHelper.DeviceFontSmallLight
-            label.numberOfLines = 0
-            label.textColor = .label
+
+        let readingListLabel = UILabel()
+        overlayView.addSubview(readingListLabel)
+        readingListLabel.text = NSLocalizedString("Save pages to your Reading List by tapping the book plus icon in the Reader View controls.", comment: "See http://mzl.la/1LXbDOL")
+        readingListLabel.font = DynamicFontHelper.defaultHelper.DeviceFontSmallLight
+        readingListLabel.numberOfLines = 0
+        readingListLabel.snp.makeConstraints { make in
+            make.top.equalTo(readerModeLabel.snp.bottom).offset(ReadingListPanelUX.WelcomeScreenPadding)
+            make.leading.equalTo(welcomeLabel.snp.leading)
+            make.width.equalTo(ReadingListPanelUX.WelcomeScreenItemWidth)
+
         }
-        let readingListImageView: UIImageView = .build { imageView in
-            imageView.image = UIImage(named: "AddToReadingListCircle")
+
+        let readingListImageView = UIImageView()
+        readingListImageView.image = .init(themed: "savePages")
+        overlayView.addSubview(readingListImageView)
+        readingListImageView.snp.makeConstraints { make in
+            make.centerY.equalTo(readingListLabel)
+            make.trailing.equalTo(welcomeLabel.snp.trailing)
         }
+
+        [readerModeLabel, readingListLabel].forEach {
+            $0.textColor = .theme.ecosia.secondaryText
+        }
+
+		return overlayView
         
         view.addSubviews(welcomeLabel, readerModeLabel, readerModeImageView, readingListLabel, readingListImageView)
         
@@ -421,7 +449,7 @@ extension ReadingListPanel: UITableViewDragDelegate {
 extension ReadingListPanel: Themeable {
     func applyTheme() {
         tableView.separatorColor = UIColor.theme.tableView.separator
-        view.backgroundColor = UIColor.theme.tableView.rowBackground
+        view.backgroundColor = UIColor.theme.ecosia.primaryBackground
         tableView.backgroundColor = UIColor.theme.homePanel.panelBackground
         refreshReadingList()
     }

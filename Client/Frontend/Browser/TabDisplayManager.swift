@@ -98,16 +98,22 @@ class TabDisplayManager: NSObject, FeatureFlagsProtocol {
     var tabDisplayOrder: TabDisplayOrder = TabDisplayOrder()
 
     var shouldEnableGroupedTabs: Bool {
+        /* Ecosia: disable Grouped Tabs
         guard featureFlags.isFeatureActiveForBuild(.groupedTabs),
               featureFlags.userPreferenceFor(.groupedTabs) == UserFeaturePreference.enabled
         else { return false }
         return true
+        */
+        return false
     }
 
     var shouldEnableInactiveTabs: Bool {
+        /* Ecosia disable inactive tabs feature
         guard featureFlags.isFeatureActiveForBuild(.inactiveTabs) else { return false }
 
         return inactiveNimbusExperimentStatus ? inactiveNimbusExperimentStatus : profile.prefs.boolForKey(PrefsKeys.KeyEnableInactiveTabs) ?? false
+        */
+        return false
     }
 
     var orderedTabs: [Tab] {

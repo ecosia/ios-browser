@@ -72,9 +72,10 @@ struct ImageButtonWithLabel: View {
                         VStack(alignment: .leading){
                             if isSmall {
                                 Text(link.label)
-                                    .font(.headline)
+                                    .font(.subheadline)
                                     .minimumScaleFactor(0.75)
                                     .layoutPriority(1000)
+                                    .foregroundColor(link.textColor)
                             } else {
                                 Text(link.label)
                                     .font(.footnote)
@@ -88,18 +89,21 @@ struct ImageButtonWithLabel: View {
                             Image("search-button")
                                 .scaledToFit()
                                 .frame(height: 24.0)
+                                .foregroundColor(link.textColor)
                         } else {
                             Image(link.imageName)
                                 .scaledToFit()
                                 .frame(height: 24.0)
+                                .foregroundColor(link.textColor)
                         }
                     }
                     if isSmall {
                         HStack(alignment: .bottom){
                             Spacer()
-                            Image("faviconFox")
+                            Image("openEcosia")
                                 .scaledToFit()
                                 .frame(height: 24.0)
+                                .foregroundColor(link.textColor)
                         }
                     }
                 }

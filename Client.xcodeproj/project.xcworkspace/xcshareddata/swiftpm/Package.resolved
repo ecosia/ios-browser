@@ -1,0 +1,34 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "FMDB",
+        "repositoryURL": "https://github.com/ccgus/fmdb",
+        "state": {
+          "branch": null,
+          "revision": "61e51fde7f7aab6554f30ab061cc588b28a97d04",
+          "version": "2.7.7"
+        }
+      },
+      {
+        "package": "Core",
+        "repositoryURL": "https://github.com/ecosia/ios-core.git",
+        "state": {
+          "branch": "main",
+          "revision": "7904c4584533700ebdd23c35c0a86af06c8a1333",
+          "version": null
+        }
+      },
+      {
+        "package": "SnowplowTracker",
+        "repositoryURL": "https://github.com/snowplow/snowplow-objc-tracker.git",
+        "state": {
+          "branch": null,
+          "revision": "805dfc4aab4fd23c417677a5198a8860998f7f5a",
+          "version": "2.2.2"
+        }
+      }
+    ]
+  },
+  "version": 1
+}

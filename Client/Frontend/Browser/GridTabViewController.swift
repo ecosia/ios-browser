@@ -301,6 +301,7 @@ class GridTabViewController: UIViewController, TabTrayViewDelegate {
         if tabDisplayManager.isDragging {
             return
         }
+        Analytics.shared.browser(.open, label: .newTab, property: .toolbar)
 
         tabManager.selectTab(tabManager.addTab(request, isPrivate: isPrivate))
     }
@@ -420,6 +421,7 @@ extension GridTabViewController {
 
 extension GridTabViewController: TabSelectionDelegate {
     func didSelectTabAtIndex(_ index: Int) {
+        Analytics.shared.browser(.open, label: .tabs)
         if let tab = tabDisplayManager.dataStore.at(index) {
             tabManager.selectTab(tab)
             dismissTabTray()
@@ -847,7 +849,7 @@ class TabCell: UICollectionViewCell {
         title.contentView.addSubview(self.favicon)
 
         title.snp.makeConstraints { (make) in
-            make.top.left.right.equalTo(backgroundHolder)
+            make.top.left.right.equalTo(backgroundHolder).priority(.veryHigh)
             make.height.equalTo(GridTabTrayControllerUX.TextBoxHeight)
         }
 
@@ -877,7 +879,7 @@ class TabCell: UICollectionViewCell {
 
     func setTabSelected(_ isPrivate: Bool) {
         // This creates a border around a tabcell. Using the shadow craetes a border _outside_ of the tab frame.
-        layer.shadowColor = (isPrivate ? UIColor.theme.tabTray.privateModePurple : UIConstants.SystemBlueColor).cgColor
+        layer.shadowColor = (isPrivate ? UIColor.theme.tabTray.privateModePurple : UIColor.theme.ecosia.primaryBrand).cgColor
         layer.shadowOpacity = 1
         layer.shadowRadius = 0 // A 0 radius creates a solid border instead of a gradient blur
         layer.masksToBounds = false
@@ -957,6 +959,7 @@ class TabCell: UICollectionViewCell {
 
     @objc func close() {
         delegate?.tabCellDidClose(self)
+        Analytics.shared.browser(.delete, label: .tabs)
     }
 }
 

@@ -43,6 +43,7 @@ enum DeepLink {
     case settings(SettingsPage)
     case homePanel(HomePanelPath)
     case defaultBrowser(DefaultBrowserPath)
+    case referral(String)
     init?(urlString: String) {
         let paths = urlString.split(separator: "/")
         guard let component = paths[safe: 0], let componentPath = paths[safe: 1] else {
@@ -54,6 +55,8 @@ enum DeepLink {
             self = .homePanel(link)
         } else if component == "default-browser", let link = DefaultBrowserPath(rawValue: String(componentPath)) {
             self = .defaultBrowser(link)
+        } else if component == "join" {
+            self = .referral(String(componentPath))
         } else {
             return nil
         }
@@ -110,7 +113,11 @@ enum NavigationPath {
 
         let isOurScheme = [URL.mozPublicScheme, URL.mozInternalScheme].contains(scheme)
         if isOurScheme, let host = components.host?.lowercased(), !host.isEmpty {
-            if host == "deep-link", let deepURL = components.valueForQuery("url"), let link = DeepLink(urlString: deepURL.lowercased()) {
+            // Ecosia TODO: Referall deeplink
+            if host == "join", let link = DeepLink(urlString: url.normalizedHostAndPath ?? "") {
+                self = .deepLink(link)
+                Analytics.shared.deeplink()
+            } else if host == "deep-link", let deepURL = components.valueForQuery("url"), let link = DeepLink(urlString: deepURL.lowercased()) {
                 self = .deepLink(link)
             } else if host == "fxa-signin", components.valueForQuery("signin") != nil {
                 self = .fxa(params: FxALaunchParams(query: url.getQuery()))
@@ -131,6 +138,7 @@ enum NavigationPath {
             // Use the last browsing mode the user was in
             let isPrivate = UserDefaults.standard.bool(forKey: "wasLastSessionPrivate")
             self = .url(webURL: url, isPrivate: isPrivate)
+            Analytics.shared.defaultBrowser()
         } else {
             return nil
         }
@@ -164,6 +172,8 @@ enum NavigationPath {
             NavigationPath.handleSettings(settings: settingsPath, with: rootVC, baseSettingsVC: settingsTableViewController, and: bvc)
         case .defaultBrowser(let path):
             NavigationPath.handleDefaultBrowser(path: path)
+        case .referral(let code):
+            bvc.openBlankNewTabAndClaimReferral(code: code)
         }
     }
 

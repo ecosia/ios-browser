@@ -107,7 +107,6 @@ class Setting: NSObject {
         cell.selectedBackgroundView = backgroundView
 
         // So that the separator line goes all the way to the left edge.
-        cell.separatorInset = .zero
         if let cell = cell as? ThemedTableViewCell {
             cell.applyTheme()
         }
@@ -225,7 +224,7 @@ class BoolSetting: Setting, FeatureFlagsProtocol {
         super.onConfigureCell(cell)
 
         let control = UISwitchThemed()
-        control.onTintColor = UIConstants.SystemBlueColor
+        control.onTintColor = UIColor.theme.ecosia.primaryToolbar
         control.addTarget(self, action: #selector(switchValueChanged), for: .valueChanged)
         control.accessibilityIdentifier = prefKey
 
@@ -489,7 +488,7 @@ class CheckmarkSetting: Setting {
             cell.indentationLevel = 1
 
             cell.accessoryType = .detailButton
-            cell.tintColor = UIColor.theme.tableView.rowActionAccessory // Sets accessory color only
+            cell.tintColor = UIColor.theme.tableView.accessoryViewTint // Sets accessory color only
 
             let checkColor = isChecked() ? UIColor.theme.tableView.rowActionAccessory : UIColor.clear
             let check = UILabel(frame: CGRect(x: 20, y: 10, width: 24, height: 20))

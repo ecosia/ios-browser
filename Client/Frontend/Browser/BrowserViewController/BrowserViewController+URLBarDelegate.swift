@@ -4,7 +4,7 @@
 
 import Shared
 import Storage
-import Telemetry
+// Ecosia: import Telemetry
 
 protocol OnViewDismissable: AnyObject {
     var onViewDismissed: (() -> Void)? { get set }
@@ -78,6 +78,7 @@ extension BrowserViewController: URLBarDelegate, FeatureFlagsProtocol {
     }
 
     private func shouldShowChronTabs() -> Bool {
+        /* Ecosia: deactivate chron tabs feature
         var shouldShowChronTabs = false // default don't show
         let chronDebugValue = profile.prefs.boolForKey(PrefsKeys.ChronTabsPrefKey)
         let chronLPValue = chronTabsUserResearch?.chronTabsState ?? false
@@ -100,6 +101,8 @@ extension BrowserViewController: URLBarDelegate, FeatureFlagsProtocol {
         }
 
         return shouldShowChronTabs
+        */
+        return false
     }
 
     func urlBarDidPressReload(_ urlBar: URLBarView) {
@@ -118,6 +121,7 @@ extension BrowserViewController: URLBarDelegate, FeatureFlagsProtocol {
 
         let actionMenuPresenter: (URL, Tab, UIView, UIPopoverArrowDirection) -> Void  = { (url, tab, view, _) in
             self.presentActivityViewController(url, tab: tab, sourceView: view, sourceRect: view.bounds, arrowDirection: .up)
+            Analytics.shared.browser(.start, label: .shareContent)
         }
 
         let findInPageAction = {
@@ -381,6 +385,7 @@ extension BrowserViewController: URLBarDelegate, FeatureFlagsProtocol {
     }
 
     func urlBarDidEnterOverlayMode(_ urlBar: URLBarView) {
+        firefoxHomeViewController?.inOverlayMode = true
         libraryDrawerViewController?.close()
         urlBar.updateSearchEngineImage()
         guard let profile = profile as? BrowserProfile else {
@@ -399,6 +404,7 @@ extension BrowserViewController: URLBarDelegate, FeatureFlagsProtocol {
     }
 
     func urlBarDidLeaveOverlayMode(_ urlBar: URLBarView) {
+        firefoxHomeViewController?.inOverlayMode = false
         destroySearchController()
         updateInContentHomePanel(tabManager.selectedTab?.url as URL?)
     }

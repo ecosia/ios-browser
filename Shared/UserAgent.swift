@@ -97,10 +97,12 @@ public enum UserAgentPlatform {
 public struct CustomUserAgentConstant {
     private static let defaultMobileUA = UserAgentBuilder.defaultMobileUserAgent().userAgent()
     private static let customDesktopUA = UserAgentBuilder.defaultDesktopUserAgent().clone(extensions: "Version/\(AppInfo.appVersion) \(UserAgent.uaBitSafari)")
+    private static let ecosiaMobileUA = UserAgentBuilder.ecosiaMobileUserAgent().userAgent()
+
     public static let mobileUserAgent = [
         "paypal.com": defaultMobileUA,
-        "yahoo.com": defaultMobileUA ]
-
+        "yahoo.com": defaultMobileUA,
+        "ecosia.org": ecosiaMobileUA ]
 }
 
 public struct UserAgentBuilder {
@@ -135,10 +137,14 @@ public struct UserAgentBuilder {
     }
 
     public static func defaultMobileUserAgent() -> UserAgentBuilder {
-        return UserAgentBuilder(product: UserAgent.product, systemInfo: "(\(UIDevice.current.model); CPU iPhone OS \(UIDevice.current.systemVersion.replacingOccurrences(of: ".", with: "_")) like Mac OS X)", platform: UserAgent.platform, platformDetails: UserAgent.platformDetails, extensions: "FxiOS/\(AppInfo.appVersion)  \(UserAgent.uaBitMobile) \(UserAgent.uaBitSafari)")
+        return UserAgentBuilder(product: UserAgent.product, systemInfo: "(\(UIDevice.current.model); CPU iPhone OS \(UIDevice.current.systemVersion.replacingOccurrences(of: ".", with: "_")) like Mac OS X)", platform: UserAgent.platform, platformDetails: UserAgent.platformDetails, extensions: "\(UserAgent.uaBitMobile) \(UserAgent.uaBitSafari)")
     }
 
     public static func defaultDesktopUserAgent() -> UserAgentBuilder {
         return UserAgentBuilder(product: UserAgent.product, systemInfo: "(Macintosh; Intel Mac OS X 10.15)", platform: UserAgent.platform, platformDetails: UserAgent.platformDetails, extensions: "FxiOS/\(AppInfo.appVersion) \(UserAgent.uaBitSafari)")
+    }
+
+    public static func ecosiaMobileUserAgent() -> UserAgentBuilder {
+        return UserAgentBuilder(product: UserAgent.product, systemInfo: "(\(UIDevice.current.model); CPU iPhone OS \(UIDevice.current.systemVersion.replacingOccurrences(of: ".", with: "_")) like Mac OS X)", platform: UserAgent.platform, platformDetails: UserAgent.platformDetails, extensions: "\(UserAgent.uaBitMobile) \(UserAgent.uaBitSafari) (Ecosia ios@\(AppInfo.ecosiaAppVersion).\(AppInfo.buildNumber))")
     }
 }

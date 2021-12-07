@@ -11,59 +11,44 @@ import SyncTelemetry
 import SnapKit
 
 class LibraryShortcutView: UIView {
-    lazy var button: UIButton = {
-        let button = UIButton()
-        button.imageView?.layer.masksToBounds = true
-        button.layer.cornerRadius = 8
-        button.layer.borderColor = UIColor(white: 0.0, alpha: 0.1).cgColor
-        button.layer.borderWidth = 0.5
-        button.layer.shadowOffset = CGSize(width: 0, height: 2)
-        button.layer.shadowRadius = 6
-        return button
-    }()
+    static let spacing: CGFloat = 16
+    static let iconSize: CGFloat = 48
 
-    lazy var titleLabel: UILabel = {
-        let titleLabel = UILabel()
-        titleLabel.textAlignment = .center
-        titleLabel.lineBreakMode = .byWordWrapping
-        titleLabel.font = UIFont.preferredFont(forTextStyle: .caption1)
-        titleLabel.preferredMaxLayoutWidth = 70
-        return titleLabel
-    }()
+    var button = UIButton()
+    var title = UILabel()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-
         addSubview(button)
-        addSubview(titleLabel)
-
-        self.snp.makeConstraints { make in
-            make.width.greaterThanOrEqualTo(60)
-            make.height.equalTo(90)
-        }
-
+        addSubview(title)
         button.snp.makeConstraints { make in
-            make.size.equalTo(60)
+            make.top.equalToSuperview().offset(LibraryShortcutView.spacing/2.0)
             make.centerX.equalToSuperview()
-            make.top.equalToSuperview()
+            make.width.equalTo(LibraryShortcutView.iconSize + LibraryShortcutView.spacing)
+            make.height.equalTo(LibraryShortcutView.iconSize + LibraryShortcutView.spacing)
         }
-
-        titleLabel.snp.makeConstraints { make in
-            make.top.equalTo(button.snp.bottom).offset(8)
-            make.leading.trailing.centerX.equalToSuperview()
+        title.allowsDefaultTighteningForTruncation = true
+        title.lineBreakMode = .byTruncatingTail
+        title.font = .preferredFont(forTextStyle: .footnote)
+        title.adjustsFontForContentSizeCategory = true
+        title.textAlignment = .center
+        title.numberOfLines = 2
+        title.setContentHuggingPriority(.required, for: .vertical)
+        title.snp.makeConstraints { make in
+            make.top.equalTo(button.snp.bottom).offset(0)
+            let maxHeight = title.font.pointSize * 2.6
+            make.leading.trailing.equalToSuperview().inset(2).priority(.veryHigh)
+            make.height.lessThanOrEqualTo(maxHeight)
         }
+        button.imageView?.contentMode = .scaleToFill
+        button.contentVerticalAlignment = .fill
+        button.contentHorizontalAlignment = .fill
+        button.imageEdgeInsets = UIEdgeInsets(equalInset: LibraryShortcutView.spacing/2.0)
+        button.tintColor = .white
     }
 
     required init(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func layoutSubviews() {
-        button.imageView?.snp.remakeConstraints { make in
-            make.size.equalTo(22)
-            make.center.equalToSuperview()
-        }
-
-        super.layoutSubviews()
-    }
 }

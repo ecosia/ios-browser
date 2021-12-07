@@ -14,9 +14,8 @@ import Account
 import MobileCoreServices
 import SDWebImage
 import SwiftyJSON
-import Telemetry
 import MozillaAppServices
-import Sentry
+import Core
 
 private let KVOs: [KVOConstants] = [
     .estimatedProgress,
@@ -136,6 +135,10 @@ class BrowserViewController: UIViewController {
 
     fileprivate var shouldShowIntroScreen: Bool { profile.prefs.intForKey(PrefsKeys.IntroSeen) == nil }
 
+    lazy var ecosiaNavigation: EcosiaNavigation = {
+        return EcosiaNavigation(delegate: self)
+    }()
+
     init(profile: Profile, tabManager: TabManager) {
         self.profile = profile
         self.tabManager = tabManager
@@ -239,7 +242,6 @@ class BrowserViewController: UIViewController {
 
         urlBar.topTabsIsShowing = showTopTabs
         urlBar.setShowToolbar(!showToolbar)
-        toolbar?.addNewTabButton.isHidden = showToolbar
         toolbar?.removeFromSuperview()
         toolbar?.tabToolbarDelegate = nil
         toolbar = nil
@@ -250,8 +252,7 @@ class BrowserViewController: UIViewController {
             toolbar?.tabToolbarDelegate = self
             toolbar?.applyUIMode(isPrivate: tabManager.selectedTab?.isPrivate ?? false)
             toolbar?.applyTheme()
-            toolbar?.addNewTabButton.isHidden = true
-            toolbar?.updateMiddleButtonState(currentMiddleButtonState ?? .search)
+            toolbar?.ecosiaButton.isHidden = true
             updateTabCountUsingTabManager(self.tabManager)
         }
 
@@ -390,7 +391,7 @@ class BrowserViewController: UIViewController {
         KeyboardHelper.defaultHelper.addDelegate(self)
 
         webViewContainerBackdrop = UIView()
-        webViewContainerBackdrop.backgroundColor = UIColor.Photon.Ink90
+        webViewContainerBackdrop.backgroundColor = UIColor.Photon.Grey90
         webViewContainerBackdrop.alpha = 0
         view.addSubview(webViewContainerBackdrop)
 
@@ -412,6 +413,7 @@ class BrowserViewController: UIViewController {
         urlBar.delegate = self
         urlBar.tabToolbarDelegate = self
         header = urlBarTopTabsContainer
+        scrollOverlay.alpha = 0
         urlBarTopTabsContainer.addSubview(urlBar)
         urlBarTopTabsContainer.addSubview(topTabsContainer)
         view.addSubview(header)
@@ -569,8 +571,13 @@ class BrowserViewController: UIViewController {
         // On iPhone, if we are about to show the On-Boarding, blank out the tab so that it does
         // not flash before we present. This change of alpha also participates in the animation when
         // the intro view is dismissed.
+
         if UIDevice.current.userInterfaceIdiom == .phone {
-            self.view.alpha = (profile.prefs.intForKey(PrefsKeys.IntroSeen) != nil) ? 1.0 : 0.0
+            // Ecosia: on phone blank screen if intro or migration is shown
+            self.view.alpha = (User.shared.firstTime || User.shared.migrated != true) ? 0.0 : 1.0
+        } else {
+            // on iPad only blank out for migration, not first time
+            self.view.alpha = (!User.shared.firstTime && User.shared.migrated != true) ? 0.0 : 1.0
         }
 
         if !displayedRestoreTabsAlert && !cleanlyBackgrounded() && crashedLastLaunch() {
@@ -617,8 +624,8 @@ class BrowserViewController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         presentIntroViewController()
-        presentDBOnboardingViewController()
-        presentUpdateViewController()
+        // Ecosia: presentETPCoverSheetViewController()
+        // Ecosia: presentUpdateViewController()
         screenshotHelper.viewIsVisible = true
         screenshotHelper.takePendingScreenshots(tabManager.tabs)
 
@@ -637,11 +644,14 @@ class BrowserViewController: UIViewController {
     // upgrade, downgrades are not possible, so we can show the What's New page.
 
     func shouldShowWhatsNew() -> Bool {
+        /* Ecosia: don't show what's new
         guard let latestMajorAppVersion = profile.prefs.stringForKey(LatestAppVersionProfileKey)?.components(separatedBy: ".").first else {
             return false // Clean install, never show What's New
         }
 
         return latestMajorAppVersion != AppInfo.majorAppVersion && DeviceInfo.hasConnectivity()
+        */
+        return false
     }
 
     fileprivate func showQueuedAlertIfAvailable() {
@@ -720,13 +730,13 @@ class BrowserViewController: UIViewController {
         // Remake constraints even if we're already showing the home controller.
         // The home controller may change sizes if we tap the URL bar while on about:home.
         firefoxHomeViewController?.view.snp.remakeConstraints { make in
-            make.top.equalTo(self.urlBar.snp.bottom)
-            make.left.right.equalTo(self.view)
-            if self.homePanelIsInline {
-                make.bottom.equalTo(self.toolbar?.snp.top ?? self.view.snp.bottom)
+            if UIDevice.current.userInterfaceIdiom == .pad {
+                make.top.equalTo(header.snp.bottom)
             } else {
-                make.bottom.equalTo(self.view.snp.bottom)
+                make.top.equalTo(self.urlBar.snp.top)
             }
+            make.left.right.equalTo(self.view)
+            make.bottom.equalTo(self.view.safeArea.bottom)
         }
 
         alertStackView.snp.remakeConstraints { make in
@@ -746,17 +756,20 @@ class BrowserViewController: UIViewController {
     func showFirefoxHome(inline: Bool) {
         homePanelIsInline = inline
         if self.firefoxHomeViewController == nil {
-            // Firefox home page tracking i.e. being shown from awesomebar vs bottom right hamburger menu
-            let trackingValue: TelemetryWrapper.EventValue = homePanelIsInline ? .openHomeFromPhotonMenuButton : .openHomeFromAwesomebar
-            TelemetryWrapper.recordEvent(category: .action, method: .open, object: .firefoxHomepage, value: trackingValue, extras: nil)
-
-            let firefoxHomeViewController = FirefoxHomeViewController(profile: profile)
+            let firefoxHomeViewController = FirefoxHomeViewController(profile: profile, delegate: self)
             firefoxHomeViewController.homePanelDelegate = self
             firefoxHomeViewController.libraryPanelDelegate = self
+			// Ecosia TODO: tweak animation
+            firefoxHomeViewController.inOverlayMode = !inline
+            firefoxHomeViewController.loadViewIfNeeded()
+            firefoxHomeViewController.view.alpha = 0
             self.firefoxHomeViewController = firefoxHomeViewController
             addChild(firefoxHomeViewController)
             view.addSubview(firefoxHomeViewController.view)
             firefoxHomeViewController.didMove(toParent: self)
+            view.bringSubviewToFront(header)
+            scrollOverlay.alpha = urlBar.inOverlayMode ? 1.0 : 0.0
+            view.bringSubviewToFront(footer)
         }
 
         firefoxHomeViewController?.applyTheme()
@@ -777,6 +790,8 @@ class BrowserViewController: UIViewController {
     }
 
     fileprivate func hideFirefoxHome() {
+        scrollOverlay.alpha = 1
+
         guard let firefoxHomeViewController = self.firefoxHomeViewController else {
             return
         }
@@ -916,8 +931,11 @@ class BrowserViewController: UIViewController {
         urlBar.currentURL = url
         urlBar.leaveOverlayMode()
 
-        if let nav = tab.loadRequest(URLRequest(url: url)) {
-            self.recordNavigationInTab(tab, navigation: nav, visitType: visitType)
+        // Ecosia: change cookie handling
+        tab.loadRequest(URLRequest(url: url)) { [weak self] (nav) in
+            if let nav = nav {
+                self?.recordNavigationInTab(tab, navigation: nav, visitType: visitType)
+            }
         }
     }
 
@@ -1015,7 +1033,7 @@ class BrowserViewController: UIViewController {
         if toolbar != nil {
             urlBar.locationView.reloadButton.reloadButtonState = isLoading ? .stop : .reload
         }
-        currentMiddleButtonState = state
+        // Ecosia: currentMiddleButtonState = state
     }
 
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
@@ -1109,13 +1127,15 @@ class BrowserViewController: UIViewController {
     /// Updates the URL bar text and button states.
     /// Call this whenever the page URL changes.
     fileprivate func updateURLBarDisplayURL(_ tab: Tab) {
-        if tab == tabManager.selectedTab, let displayUrl = tab.url?.displayURL, urlBar.currentURL != displayUrl {
+        guard let urlBar = urlBar else { return }
+        
+		if tab == tabManager.selectedTab, let displayUrl = tab.url?.displayURL, urlBar.currentURL != displayUrl {
             tab.updateTimerAndObserving(state: .tabNavigatedToDifferentUrl, nextUrl: displayUrl.absoluteString)
         }
         urlBar.currentURL = tab.url?.displayURL
         urlBar.locationView.tabDidChangeContentBlocking(tab)
         let isPage = tab.url?.displayURL?.isWebPage() ?? false
-        navigationToolbar.updatePageStatus(isPage)
+        urlBar.updatePageStatus(isPage)
     }
 
     // MARK: Opening New Tabs
@@ -1133,6 +1153,19 @@ class BrowserViewController: UIViewController {
         }
         popToBVC()
         if let tab = tabManager.getTabForURL(url) {
+            tabManager.selectTab(tab)
+        } else {
+            openURLInNewTab(url, isPrivate: isPrivate)
+        }
+    }
+    
+    func switchToTabForWidgetURLOrOpen(_ url: URL, uuid: String,  isPrivate: Bool = false) {
+        guard !isCrashAlertShowing else {
+            urlFromAnotherApp = UrlToOpenModel(url: url, isPrivate: isPrivate)
+            return
+        }
+        popToBVC()
+        if let tab = tabManager.getTabForUUID(uuid: uuid) {
             tabManager.selectTab(tab)
         } else {
             openURLInNewTab(url, isPrivate: isPrivate)
@@ -1191,6 +1224,15 @@ class BrowserViewController: UIViewController {
         }
     }
 
+    // Ecosia: Handle Referral
+    func openBlankNewTabAndClaimReferral(code: String) {
+        User.shared.referrals.pendingClaim = code
+        popToBVC()
+        openURLInNewTab(nil, isPrivate: false)
+        // Intro logic will trigger claiming referral
+        presentIntroViewController()
+    }
+
     func openSearchNewTab(isPrivate: Bool = false, _ text: String) {
         popToBVC()
         let engine = profile.searchEngines.defaultEngine
@@ -1213,8 +1255,8 @@ class BrowserViewController: UIViewController {
         currentViewController.dismiss(animated: true, completion: nil)
         if currentViewController != self {
             _ = self.navigationController?.popViewController(animated: true)
-        } else if urlBar.inOverlayMode {
-            urlBar.didClickCancel()
+        } else if urlBar?.inOverlayMode == true {
+            urlBar?.didClickCancel()
         }
     }
 
@@ -1325,10 +1367,22 @@ class BrowserViewController: UIViewController {
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
 
-        if self.traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection), ThemeManager.instance.systemThemeIsOn {
-            let userInterfaceStyle = traitCollection.userInterfaceStyle
-            ThemeManager.instance.current = userInterfaceStyle == .dark ? DarkTheme() : NormalTheme()
+        // Ecosia: fix cutting of toolbar
+        if previousTraitCollection?.verticalSizeClass == .compact {
+            view.setNeedsUpdateConstraints()
         }
+        
+        guard #available(iOS 13.0, *) else { return }
+
+        let colorHasChanged = traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection)
+        let shouldStayDark = ThemeManager.instance.current.isDark && NightModeHelper.isActivated(profile.prefs)
+        // Ecosia: Do not change theme if it was dark before night mode already
+        guard colorHasChanged,
+              !shouldStayDark,
+              ThemeManager.instance.systemThemeIsOn else { return }
+
+        let userInterfaceStyle = traitCollection.userInterfaceStyle
+        ThemeManager.instance.current = userInterfaceStyle == .dark ? DarkTheme() : NormalTheme()
     }
 }
 
@@ -1407,7 +1461,7 @@ extension BrowserViewController {
 extension BrowserViewController: TabDelegate {
 
     func tab(_ tab: Tab, didCreateWebView webView: WKWebView) {
-        webView.frame = webViewContainer.frame
+        webView.frame = webViewContainer?.frame ?? .init()
         // Observers that live as long as the tab. Make sure these are all cleared in willDeleteWebView below!
         KVOs.forEach { webView.addObserver(self, forKeyPath: $0.rawValue, options: .new, context: nil) }
         webView.scrollView.addObserver(self.scrollController, forKeyPath: KVOConstants.contentSize.rawValue, options: .new, context: nil)
@@ -1680,6 +1734,11 @@ extension BrowserViewController: TabManagerDelegate {
     func tabManager(_ tabManager: TabManager, didSelectedTabChange selected: Tab?, previous: Tab?, isRestoring: Bool) {
         libraryDrawerViewController?.close(immediately: true)
 
+        // Ecosia: fix crash when this is called but view is not loaded yet
+        if !isViewLoaded {
+            loadViewIfNeeded()
+        }
+
         // Reset the scroll position for the ActivityStreamPanel so that it
         // is always presented scrolled to the top when switching tabs.
         if !isRestoring, selected != previous,
@@ -1718,7 +1777,25 @@ extension BrowserViewController: TabManagerDelegate {
             webView.snp.makeConstraints { make in
                 make.left.right.top.bottom.equalTo(self.webViewContainer)
             }
+            
+            webView.isHidden = true
+            webViewContainerBackdrop.alpha = 1
+            webViewContainerBackdrop.backgroundColor = UIColor.theme.ecosia.primaryBackground
+            navigationController?.view.backgroundColor = UIColor.theme.browser.background
+            
+            let animation = CABasicAnimation(keyPath: "transform")
+            animation.duration = 0.35
+            animation.fromValue = CATransform3DMakeScale(0.6, 0.6, 1)
+            animation.timingFunction = .init(name: .easeInEaseOut)
+            firefoxHomeViewController?.view.layer.add(animation, forKey: "scale")
 
+            DispatchQueue
+                .main
+                .asyncAfter(deadline: .now() + 0.35) { [weak webView, weak webViewContainerBackdrop] in
+                    webView?.isHidden = false
+                    webViewContainerBackdrop?.alpha = 0
+                }
+            
             // This is a terrible workaround for a bad iOS 12 bug where PDF
             // content disappears any time the view controller changes (i.e.
             // the user taps on the tabs tray). It seems the only way to get
@@ -1754,7 +1831,8 @@ extension BrowserViewController: TabManagerDelegate {
             }
         }
 
-        updateTabCountUsingTabManager(tabManager)
+        // Ecosia: stop animating tab's icon when launching
+        updateTabCountUsingTabManager(tabManager, animated: false)
 
         removeAllBars()
         if let bars = selected?.bars {
@@ -1771,7 +1849,8 @@ extension BrowserViewController: TabManagerDelegate {
             self.urlBar.updateProgressBar(Float(selected?.estimatedProgress ?? 0))
         }
 
-        if let readerMode = selected?.getContentScript(name: ReaderMode.name()) as? ReaderMode {
+        let isAboutHomeURL = selected?.url.flatMap { InternalURL($0)?.isAboutHomeURL } ?? false
+        if !isAboutHomeURL, let readerMode = selected?.getContentScript(name: ReaderMode.name()) as? ReaderMode {
             urlBar.updateReaderModeState(readerMode.state)
             if readerMode.state == .active {
                 showReaderModeBar(animated: false)
@@ -1880,8 +1959,22 @@ extension BrowserViewController: UIAdaptivePresentationControllerDelegate {
 
 extension BrowserViewController {
     func presentIntroViewController(_ alwaysShow: Bool = false) {
-        if alwaysShow || shouldShowIntroScreen {
-            showProperIntroVC()
+		// Ecosia: custom intro handling
+        if User.shared.firstTime {
+            Analytics.shared.install()
+            let welcome = Welcome()
+            introVCPresentHelper(introViewController: welcome)
+
+            self.profile.prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
+            User.shared.firstTime = false
+            User.shared.migrated = true
+            User.shared.hideWelcomeScreen()
+        } else if User.shared.migrated != true {
+            present(LoadingScreen(profile: profile, tabManager: tabManager), animated: true)
+        } else if User.shared.showsWelcomeScreen {
+            present(UpgradeScreen(), animated: true)
+        } else if let pendingClaim = User.shared.referrals.pendingClaim {
+            present(LoadingScreen(profile: profile, tabManager: tabManager, referralCode: pendingClaim), animated: true)
         }
     }
 
@@ -1938,7 +2031,7 @@ extension BrowserViewController {
             dBOnboardingViewController.modalPresentationStyle = .popover
         }
         dBOnboardingViewController.viewModel.goToSettings = {
-            self.firefoxHomeViewController?.dismissDefaultBrowserCard()
+            // Ecosia: self.firefoxHomeViewController?.dismissDefaultBrowserCard()
             dBOnboardingViewController.dismiss(animated: true) {
                 UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: [:])
             }
@@ -2046,6 +2139,7 @@ extension BrowserViewController: ContextMenuHelperDelegate {
 
             let addTab = { (rURL: URL, isPrivate: Bool) in
                     let tab = self.tabManager.addTab(URLRequest(url: rURL as URL), afterTab: currentTab, isPrivate: isPrivate)
+                    Analytics.shared.browser(.add, label: .newTab, property: .menu)
                     guard !self.topTabsVisible else {
                         return
                     }
@@ -2073,6 +2167,7 @@ extension BrowserViewController: ContextMenuHelperDelegate {
             let bookmarkAction = UIAlertAction(title: Strings.ContextMenuBookmarkLink, style: .default) { _ in
                 self.addBookmark(url: url.absoluteString, title: elements.title)
                 TelemetryWrapper.recordEvent(category: .action, method: .add, object: .bookmark, value: .contextMenu)
+                Analytics.shared.browser(.add, label: .favourites, property: .menu)
             }
             actionSheetController.addAction(bookmarkAction, accessibilityIdentifier: "linkContextMenu.bookmarkLink")
 
@@ -2275,6 +2370,7 @@ extension BrowserViewController: TabTrayDelegate {
         let tabState = tab.tabState
         addBookmark(url: url, title: tabState.title, favicon: tabState.favicon)
         TelemetryWrapper.recordEvent(category: .action, method: .add, object: .bookmark, value: .tabTray)
+        Analytics.shared.browser(.add, label: .favourites, property: .toolbar)
     }
 
     func tabTrayDidAddToReadingList(_ tab: Tab) -> ReadingListItem? {
@@ -2305,7 +2401,6 @@ extension BrowserViewController: Themeable {
 
         let tabs = tabManager.tabs
         tabs.forEach {
-            $0.applyTheme()
             urlBar.locationView.tabDidChangeContentBlocking($0)
         }
 

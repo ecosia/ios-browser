@@ -25,6 +25,11 @@ class LibraryViewController: UIViewController {
     // Views
     fileprivate var controllerContainerView: UIView = .build { view in }
     fileprivate var buttons: [LibraryPanelButton] = []
+    fileprivate lazy var topSeparator: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.theme.ecosia.barSeparator
+        return view
+    }()
 
     // UI Elements
     lazy var librarySegmentControl: UISegmentedControl = {

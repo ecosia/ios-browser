@@ -7,6 +7,7 @@ import WebKit
 import Storage
 import Shared
 import XCGLogger
+import Core
 
 private let log = Logger.browserLogger
 
@@ -363,6 +364,7 @@ class TabManager: NSObject, FeatureFlagsProtocol {
         }
 
         storeChanges()
+        Analytics.shared.browser(.edit, label: .tabs)
     }
 
     func configureTab(_ tab: Tab, request: URLRequest?, afterTab parent: Tab? = nil, flushToDisk: Bool, zombie: Bool, isPopup: Bool = false) {
@@ -460,6 +462,7 @@ class TabManager: NSObject, FeatureFlagsProtocol {
             object: .tab,
             value: tab.isPrivate ? .privateTab : .normalTab
         )
+        Analytics.shared.browser(.delete, label: .tabs)
     }
 
     private func updateIndexAfterRemovalOf(_ tab: Tab, deletedIndex: Int) {
@@ -692,7 +695,7 @@ extension TabManager {
             return
         }
 
-        var tabToSelect = store.restoreStartupTabs(clearPrivateTabs: shouldClearPrivateTabs(), tabManager: self)
+        var tabToSelect = profile.isShutdown ? nil : store.restoreStartupTabs(clearPrivateTabs: shouldClearPrivateTabs(), tabManager: self)
         let wasLastSessionPrivate = UserDefaults.standard.bool(forKey: "wasLastSessionPrivate")
         if wasLastSessionPrivate, !(tabToSelect?.isPrivate ?? false) {
             tabToSelect = addTab(isPrivate: true)

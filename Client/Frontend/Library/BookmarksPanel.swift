@@ -18,6 +18,14 @@ private struct BookmarksPanelUX {
     static let RowFlashDelay: TimeInterval = 0.4
 }
 
+private var disclosureIndicator: UIImageView {
+    let disclosureIndicator = UIImageView()
+    disclosureIndicator.image = UIImage(named: "menu-Disclosure")?.withRenderingMode(.alwaysTemplate)
+    disclosureIndicator.tintColor = UIColor.theme.tableView.accessoryViewTint
+    disclosureIndicator.sizeToFit()
+    return disclosureIndicator
+}
+
 let LocalizedRootBookmarkFolderStrings = [
     BookmarkRoots.MenuFolderGUID: Strings.BookmarksFolderTitleMenu,
     BookmarkRoots.ToolbarFolderGUID: Strings.BookmarksFolderTitleToolbar,
@@ -51,8 +59,10 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel {
 
     fileprivate lazy var bookmarkFolderIconNormal = UIImage(named: "bookmarkFolder")?.createScaled(BookmarksPanelUX.FolderIconSize).tinted(withColor: UIColor.Photon.Grey90)
     fileprivate lazy var bookmarkFolderIconDark = UIImage(named: "bookmarkFolder")?.createScaled(BookmarksPanelUX.FolderIconSize).tinted(withColor: UIColor.Photon.Grey10)
+    
+    private lazy var emptyHeader = EmptyHeader(icon: "bookmarksEmpty", title: .localized(.noBookmarks), subtitle: .localized(.yourBookmarkWill))
 
-    init(profile: Profile, bookmarkFolderGUID: GUID = BookmarkRoots.RootGUID) {
+    init(profile: Profile, bookmarkFolderGUID: GUID = BookmarkRoots.MobileFolderGUID) {
         self.bookmarkFolderGUID = bookmarkFolderGUID
 
         super.init(profile: profile)
@@ -69,6 +79,11 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel {
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        (navigationController as? ThemedNavigationController)?.applyTheme()
     }
 
     override func viewDidLoad() {
@@ -139,6 +154,8 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel {
 
     override func applyTheme() {
         super.applyTheme()
+        emptyHeader.applyTheme()
+        view.backgroundColor = UIColor.theme.ecosia.primaryBackground
 
         if let current = navigationController?.visibleViewController as? Themeable, current !== self {
             current.applyTheme()
@@ -179,11 +196,19 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel {
                     self.flashRow(at: lastIndexPath)
                 }
             }
+            
+            if self.recentBookmarks.isEmpty && self.bookmarkNodes.isEmpty {
+                self.tableView.tableHeaderView = self.emptyHeader
+                self.emptyHeader.applyTheme()
+            } else {
+                self.tableView.tableHeaderView = nil
+            }
         }
     }
 
     func enableEditMode() {
         self.tableView.setEditing(true, animated: true)
+        Analytics.shared.browser(.edit, label: .favourites)
     }
     
     func disableEditMode() {
@@ -387,6 +412,7 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel {
                 cell.setNeedsLayout()
             }
 
+            cell.accessoryView = nil
             cell.accessoryType = .none
             cell.editingAccessoryType = .disclosureIndicator
             return cell
@@ -465,6 +491,7 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel {
         let delete = UITableViewRowAction(style: .default, title: Strings.BookmarksPanelDeleteTableAction, handler: { (action, indexPath) in
             self.deleteBookmarkNodeAtIndexPath(indexPath)
             TelemetryWrapper.recordEvent(category: .action, method: .delete, object: .bookmark, value: .bookmarksPanel, extras: ["gesture": "swipe"])
+            Analytics.shared.browser(.delete, label: .favourites)
         })
 
         return [delete]

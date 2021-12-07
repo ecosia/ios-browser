@@ -4,6 +4,7 @@
 
 import UIKit
 import Shared
+import Core
 
 enum AppSettingsDeeplinkOption {
     case contentBlocker
@@ -61,21 +62,16 @@ class AppSettingsTableViewController: SettingsTableViewController, FeatureFlagsP
 
         let prefs = profile.prefs
         var generalSettings: [Setting] = [
-            SearchSetting(settings: self),
-            NewTabPageSetting(settings: self),
-            HomeSetting(settings: self),
             OpenWithSetting(settings: self),
             ThemeSetting(settings: self),
             BoolSetting(prefs: prefs, prefKey: PrefsKeys.KeyBlockPopups, defaultValue: true,
                         titleText: .AppSettingsBlockPopups),
+            BoolSetting(prefs: prefs, defaultValue: Core.User.shared.topSites ?? true, titleText: .localized(.showTopSites)) {
+                Core.User.shared.topSites = $0
+            }
            ]
 
-        generalSettings.insert(SiriPageSetting(settings: self), at: 5)
-
-        if featureFlags.isFeatureActiveForBuild(.groupedTabs) || featureFlags.isFeatureActiveForBuild(.inactiveTabs) {
-            generalSettings.insert(TabsSetting(), at: 3)
-        }
-
+        /* Ecosia: deactivate china settings
         let accountChinaSyncSetting: [Setting]
         if !AppInfo.isChinaEdition {
             accountChinaSyncSetting = []
@@ -85,10 +81,11 @@ class AppSettingsTableViewController: SettingsTableViewController, FeatureFlagsP
                 ChinaSyncServiceSetting(settings: self)
             ]
         }
+        */
         // There is nothing to show in the Customize section if we don't include the compact tab layout
         // setting on iPad. When more options are added that work on both device types, this logic can
         // be changed.
-
+        
         generalSettings += [
             BoolSetting(prefs: prefs, prefKey: "showClipboardBar", defaultValue: false,
                         titleText: Strings.SettingsOfferClipboardBarTitle,
@@ -104,6 +101,7 @@ class AppSettingsTableViewController: SettingsTableViewController, FeatureFlagsP
             ]
         }
 
+        /* Ecosia: Deactivate account settings
         let accountSectionTitle = NSAttributedString(string: Strings.FxAFirefoxAccount)
 
         let footerText = !profile.hasAccount() ? NSAttributedString(string: Strings.FxASyncUsageDetails) : nil
@@ -116,6 +114,22 @@ class AppSettingsTableViewController: SettingsTableViewController, FeatureFlagsP
                 AccountStatusSetting(settings: self),
                 SyncNowSetting(settings: self)
             ] + accountChinaSyncSetting )]
+         */
+        
+        if #available(iOS 14.0, *) {
+            settings += [.init(title: nil, footerTitle: .init(string: .localized(.linksFromWebsites)), children: [
+                DefaultBrowserSetting()
+            ])]
+        }
+
+        let searchSettings: [Setting] = [
+            SearchAreaSetting(settings: self),
+            SafeSearchSettings(settings: self),
+            AutoCompleteSettings(prefs: prefs),
+            PersonalSearchSettings(prefs: prefs)
+        ]
+        
+        settings += [ SettingSection(title: NSAttributedString(string: .localized(.search)), footerTitle: nil, children: searchSettings)]
 
         settings += [ SettingSection(title: NSAttributedString(string: Strings.SettingsGeneralSectionTitle), children: generalSettings)]
 
@@ -136,22 +150,24 @@ class AppSettingsTableViewController: SettingsTableViewController, FeatureFlagsP
         privacySettings.append(ContentBlockerSetting(settings: self))
 
         privacySettings += [
-            PrivacyPolicySetting()
+            EcosiaPrivacyPolicySetting(),
+            EcosiaTermsSetting()
         ]
 
         settings += [
             SettingSection(title: NSAttributedString(string: .AppSettingsPrivacyTitle), children: privacySettings),
             SettingSection(title: NSAttributedString(string: .AppSettingsSupport), children: [
-                ShowIntroductionSetting(settings: self),
-                SendFeedbackSetting(),
-                SendAnonymousUsageDataSetting(prefs: prefs, delegate: settingsDelegate),
-                StudiesToggleSetting(prefs: prefs, delegate: settingsDelegate),
-                OpenSupportPageSetting(delegate: settingsDelegate),
+                // Ecosia: ShowIntroductionSetting(settings: self),
+                EcosiaSendFeedbackSetting(),
+                // Ecosia: SendAnonymousUsageDataSetting(prefs: prefs, delegate: settingsDelegate)
+                // Ecosia: StudiesToggleSetting(prefs: prefs, delegate: settingsDelegate),
+                // Ecosia: OpenSupportPageSetting(delegate: settingsDelegate),
             ]),
             SettingSection(title: NSAttributedString(string: .AppSettingsAbout), children: [
                 VersionSetting(settings: self),
                 LicenseAndAcknowledgementsSetting(),
-                YourRightsSetting(),
+                /* Ecosia: deactivate MOZ debug settings
+				YourRightsSetting(),
                 ExportBrowserDataSetting(settings: self),
                 ExportLogDataSetting(settings: self),
                 DeleteExportedDataSetting(settings: self),
@@ -166,6 +182,13 @@ class AppSettingsTableViewController: SettingsTableViewController, FeatureFlagsP
                 ToggleInactiveTabs(settings: self),
                 ResetJumpBackInContextualHint(settings: self),
                 ExperimentsSettings(settings: self)
+ */
+                PushBackInstallation(settings: self),
+                ToggleReferrals(settings: self),
+                CreateReferralCode(settings: self),
+                AddReferral(settings: self),
+                AddClaim(settings: self),
+                CreateMigrationData(settings: self),
             ])]
 
         return settings

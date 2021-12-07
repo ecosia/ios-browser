@@ -15,6 +15,7 @@ import XCGLogger
 import SwiftKeychainWrapper
 import SyncTelemetry
 import AuthenticationServices
+import Core
 
 // Import these dependencies ONLY for the main `Client` application target.
 #if MOZ_TARGET_CLIENT
@@ -115,7 +116,7 @@ protocol Profile: AnyObject {
 
     /// WARNING: Only to be called as part of the app lifecycle from the AppDelegate
     /// or from App Extension code.
-    func _shutdown()
+    func _shutdown(force: Bool)
 
     /// WARNING: Only to be called as part of the app lifecycle from the AppDelegate
     /// or from App Extension code.
@@ -388,7 +389,9 @@ open class BrowserProfile: Profile {
         _ = places.reopenIfClosed()
     }
 
-    func _shutdown() {
+    func _shutdown(force: Bool = false) {
+        guard User.shared.migrated == true || force else { return }
+
         log.debug("Shutting down profile.")
         isShutdown = true
 

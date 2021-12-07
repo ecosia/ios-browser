@@ -6,6 +6,7 @@ import Foundation
 import Storage
 import Shared
 import XCGLogger
+import Core
 
 private let log = Logger.browserLogger
 class TabManagerStore: FeatureFlagsProtocol {
@@ -17,8 +18,13 @@ class TabManagerStore: FeatureFlagsProtocol {
     fileprivate var writeOperation = DispatchWorkItem {}
 
     // Init this at startup with the tabs on disk, and then on each save, update the in-memory tab state.
-    fileprivate lazy var archivedStartupTabs = {
-        return SiteArchiver.tabsToRestore(tabsStateArchivePath: tabsStateArchivePath())
+    fileprivate lazy var archivedStartupTabs: [SavedTab] = {
+        /* Ecosia: restore from Ecosia Tabs the first time */
+        if Core.User.shared.migrated != true {
+            return migrateToSavedTabs(from: Core.Tabs()) ?? []
+        }
+
+        return SiteArchiver.tabsToRestore(tabsStateArchivePath: tabsStateArchivePath()).0
     }()
 
     init(imageStore: DiskImageStore?, _ fileManager: FileManager = FileManager.default, prefs: Prefs) {
@@ -62,7 +68,7 @@ class TabManagerStore: FeatureFlagsProtocol {
     }
 
     var hasTabsToRestoreAtStartup: Bool {
-        return archivedStartupTabs.0.count > 0
+        return archivedStartupTabs.count > 0
     }
 
     fileprivate func tabsStateArchivePath() -> String? {
@@ -142,7 +148,7 @@ class TabManagerStore: FeatureFlagsProtocol {
     }
 
     func restoreStartupTabs(clearPrivateTabs: Bool, tabManager: TabManager) -> Tab? {
-        let selectedTab = restoreTabs(savedTabs: archivedStartupTabs.0, clearPrivateTabs: clearPrivateTabs, tabManager: tabManager)
+        let selectedTab = restoreTabs(savedTabs: archivedStartupTabs, clearPrivateTabs: clearPrivateTabs, tabManager: tabManager)
         return selectedTab
     }
 
@@ -222,6 +228,45 @@ extension TabManagerStore {
     func testTabCountOnDisk() -> Int {
         assert(AppConstants.IsRunningTest)
         return SiteArchiver.tabsToRestore(tabsStateArchivePath: tabsStateArchivePath()).0.count
+    }
+}
+
+// Ecosia: import tabs
+extension TabManagerStore {
+
+    fileprivate func migrateToSavedTabs(from tabs: Core.Tabs) -> [SavedTab]? {
+        var savedTabs = [SavedTab]()
+        var savedUUIDs = Set<String>()
+
+        var currentTabID: UUID?
+        if let pos = tabs.current, pos < tabs.items.count {
+            currentTabID = tabs.items[pos].id
+        }
+
+        for tab in tabs.items {
+            guard let page = tab.page else { continue }
+            let sessionData = SessionData(currentPage: 0, urls: [page.url], lastUsedTime: Date.now())
+            guard let savedTab = SavedTab(screenshotUUID: tab.id,
+                                          isSelected: currentTabID == tab.id,
+                                          title: page.title,
+                                          isPrivate: false,
+                                          faviconURL: nil,
+                                          url: page.url,
+                                          sessionData: sessionData,
+                                          uuid: tab.id.uuidString,
+                                          tabGroupData: nil,
+                                          createdAt: sessionData.lastUsedTime) else  { continue }
+
+            savedTabs.append(savedTab)
+
+            if let data = tab.snapshot, let image = UIImage(data: data) {
+                savedUUIDs.insert(tab.id.uuidString)
+                imageStore?.put(tab.id.uuidString, image: image)
+            }
+        }
+        // Clean up any screenshots that are no longer associated with a tab.
+        _ = imageStore?.clearExcluding(savedUUIDs)
+        return savedTabs.isEmpty ? nil : savedTabs
     }
 }
 

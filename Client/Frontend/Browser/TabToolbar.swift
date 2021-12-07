@@ -8,7 +8,7 @@ import Shared
 
 protocol TabToolbarProtocol: AnyObject {
     var tabToolbarDelegate: TabToolbarDelegate? { get set }
-    var addNewTabButton: ToolbarButton { get }
+    var addNewTabButton: AddNewTabButton { get }
     var tabsButton: TabsButton { get }
     var appMenuButton: ToolbarButton { get }
     var bookmarksButton: ToolbarButton { get }
@@ -16,6 +16,7 @@ protocol TabToolbarProtocol: AnyObject {
     var forwardButton: ToolbarButton { get }
     var backButton: ToolbarButton { get }
     var multiStateButton: ToolbarButton { get }
+    var ecosiaButton: ToolbarButton { get }
     var actionButtons: [Themeable & UIButton] { get }
 
     func updateBackStatus(_ canGoBack: Bool)
@@ -42,6 +43,7 @@ protocol TabToolbarDelegate: AnyObject {
     func tabToolbarDidLongPressTabs(_ tabToolbar: TabToolbarProtocol, button: UIButton)
     func tabToolbarDidPressSearch(_ tabToolbar: TabToolbarProtocol, button: UIButton)
     func tabToolbarDidPressAddNewTab(_ tabToolbar: TabToolbarProtocol, button: UIButton)
+    func tabToolbarDidPressEcosia(_ tabToolbar: TabToolbarProtocol, button: UIButton)
 }
 
 enum MiddleButtonState {
@@ -116,6 +118,10 @@ open class TabToolbarHelper: NSObject {
         toolbar.multiStateButton.addGestureRecognizer(longPressMultiStateButton)
 
         toolbar.multiStateButton.addTarget(self, action: #selector(didPressMultiStateButton), for: .touchUpInside)
+
+        toolbar.ecosiaButton.setImage(UIImage(named: "ecosiaIconToolbar"), for: .normal)
+        toolbar.ecosiaButton.accessibilityLabel = String.localized(.exploreEcosia)
+        toolbar.ecosiaButton.addTarget(self, action: #selector(didPressEcosiaButton), for: .touchUpInside)
 
         toolbar.tabsButton.addTarget(self, action: #selector(didClickTabs), for: .touchUpInside)
         let longPressGestureTabsButton = UILongPressGestureRecognizer(target: self, action: #selector(didLongPressTabs))
@@ -207,6 +213,10 @@ open class TabToolbarHelper: NSObject {
         }
     }
     
+    func didPressEcosiaButton() {
+        toolbar.tabToolbarDelegate?.tabToolbarDidPressEcosia(toolbar, button: toolbar.ecosiaButton)
+    }
+
     func didLongPressMultiStateButton(_ recognizer: UILongPressGestureRecognizer) {
         switch middleButtonState {
         case .search:
@@ -219,7 +229,7 @@ open class TabToolbarHelper: NSObject {
     }
 }
 
-class ToolbarButton: UIButton {
+class ToolbarButton: UIButton, Themeable {
     var selectedTintColor: UIColor!
     var unselectedTintColor: UIColor!
     var disabledTintColor = UIColor.Photon.Grey50
@@ -262,9 +272,7 @@ class ToolbarButton: UIButton {
             separatorLine?.isHidden = isHidden
         }
     }
-}
 
-extension ToolbarButton: Themeable {
     func applyTheme() {
         selectedTintColor = UIColor.theme.toolbarButton.selectedTint
         disabledTintColor = UIColor.theme.toolbarButton.disabledTint
@@ -278,12 +286,13 @@ class TabToolbar: UIView {
     weak var tabToolbarDelegate: TabToolbarDelegate?
 
     let tabsButton = TabsButton()
-    let addNewTabButton = ToolbarButton()
+    let addNewTabButton = AddNewTabButton(style: .circle)
     let appMenuButton = ToolbarButton()
     let bookmarksButton = ToolbarButton()
     let forwardButton = ToolbarButton()
     let backButton = ToolbarButton()
     let multiStateButton = ToolbarButton()
+    let ecosiaButton = ToolbarButton()
     let actionButtons: [Themeable & UIButton]
 
     fileprivate let privateModeBadge = BadgeWithBackdrop(imageName: "privateModeBadge", backdropCircleColor: UIColor.Defaults.MobilePrivatePurple)
@@ -294,7 +303,7 @@ class TabToolbar: UIView {
     private let contentView = UIStackView()
 
     fileprivate override init(frame: CGRect) {
-        actionButtons = [backButton, forwardButton, multiStateButton, addNewTabButton, tabsButton, appMenuButton]
+        actionButtons = [backButton, forwardButton, ecosiaButton, addNewTabButton, tabsButton, appMenuButton]
         super.init(frame: frame)
         setupAccessibility()
 
@@ -325,7 +334,7 @@ class TabToolbar: UIView {
     private func setupAccessibility() {
         backButton.accessibilityIdentifier = "TabToolbar.backButton"
         forwardButton.accessibilityIdentifier = "TabToolbar.forwardButton"
-        multiStateButton.accessibilityIdentifier = "TabToolbar.multiStateButton"
+        ecosiaButton.accessibilityIdentifier = "TabToolbar.ecosiaButton"
         tabsButton.accessibilityIdentifier = "TabToolbar.tabsButton"
         addNewTabButton.accessibilityIdentifier = "TabToolbar.addNewTabButton"
         appMenuButton.accessibilityIdentifier = "TabToolbar.menuButton"
@@ -392,12 +401,12 @@ extension TabToolbar: TabToolbarProtocol {
 
 extension TabToolbar: Themeable, PrivateModeUI {
     func applyTheme() {
-        backgroundColor = UIColor.theme.browser.background
+        backgroundColor = UIColor.theme.ecosia.barBackground
         helper?.setTheme(forButtons: actionButtons)
 
-        privateModeBadge.badge.tintBackground(color: UIColor.theme.browser.background)
-        appMenuBadge.badge.tintBackground(color: UIColor.theme.browser.background)
-        warningMenuBadge.badge.tintBackground(color: UIColor.theme.browser.background)
+        privateModeBadge.badge.tintBackground(color: UIColor.theme.ecosia.barBackground)
+        appMenuBadge.badge.tintBackground(color: UIColor.theme.ecosia.barBackground)
+        warningMenuBadge.badge.tintBackground(color: UIColor.theme.ecosia.barBackground)
     }
 
     func applyUIMode(isPrivate: Bool) {

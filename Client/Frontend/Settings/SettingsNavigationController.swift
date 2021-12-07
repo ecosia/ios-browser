@@ -6,7 +6,8 @@ import UIKit
 
 class ThemedNavigationController: DismissableNavigationViewController {
     var presentingModalViewControllerDelegate: PresentingModalViewControllerDelegate?
-
+    private weak var separator: UIView?
+    
     @objc func done() {
         if let delegate = presentingModalViewControllerDelegate {
             delegate.dismissPresentedModalViewController(self, animated: true)
@@ -23,6 +24,17 @@ class ThemedNavigationController: DismissableNavigationViewController {
         super.viewDidLoad()
         modalPresentationStyle = .overFullScreen
         modalPresentationCapturesStatusBarAppearance = true
+        
+        let separator = UIView()
+        separator.translatesAutoresizingMaskIntoConstraints = false
+        self.separator = separator
+        navigationBar.addSubview(separator)
+        
+        separator.bottomAnchor.constraint(equalTo: navigationBar.bottomAnchor).isActive = true
+        separator.leftAnchor.constraint(equalTo: navigationBar.leftAnchor).isActive = true
+        separator.rightAnchor.constraint(equalTo: navigationBar.rightAnchor).isActive = true
+        separator.heightAnchor.constraint(equalToConstant: 0.5).isActive = true
+        
         applyTheme()
     }
 }
@@ -30,10 +42,11 @@ class ThemedNavigationController: DismissableNavigationViewController {
 extension ThemedNavigationController: Themeable {
     private func setupNavigationBarAppearance() {
         let standardAppearance = UINavigationBarAppearance()
-        standardAppearance.configureWithDefaultBackground()
-        standardAppearance.backgroundColor = UIColor.theme.tableView.headerBackground
-        standardAppearance.titleTextAttributes = [.foregroundColor: UIColor.theme.tableView.headerTextDark]
-        
+            standardAppearance.configureWithOpaqueBackground()
+            standardAppearance.backgroundColor = UIColor.theme.ecosia.barBackground
+            standardAppearance.titleTextAttributes = [.foregroundColor: UIColor.theme.ecosia.highContrastText]
+            standardAppearance.shadowImage = nil
+            standardAppearance.shadowColor = nil
         navigationBar.standardAppearance = standardAppearance
         navigationBar.compactAppearance = standardAppearance
         navigationBar.scrollEdgeAppearance = standardAppearance
@@ -48,6 +61,11 @@ extension ThemedNavigationController: Themeable {
         viewControllers.forEach {
             ($0 as? Themeable)?.applyTheme()
         }
+
+        navigationBar.setNeedsDisplay()
+        setNeedsStatusBarAppearanceUpdate()
+        navigationBar.tintColor = UIColor.theme.general.controlTint
+        separator?.backgroundColor = UIColor.theme.tableView.separator
     }
 }
 
