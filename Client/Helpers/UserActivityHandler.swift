@@ -9,7 +9,7 @@ import CoreSpotlight
 import MobileCoreServices
 import WebKit
 
-private let browsingActivityType: String = "org.mozilla.ios.firefox.browsing"
+private let browsingActivityType: String = "com.ecosia.ecosiaapp.browsing"
 
 private let searchableIndex = CSSearchableIndex.default()
 

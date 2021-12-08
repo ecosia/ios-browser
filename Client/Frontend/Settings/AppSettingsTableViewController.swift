@@ -64,6 +64,7 @@ class AppSettingsTableViewController: SettingsTableViewController, FeatureFlagsP
         var generalSettings: [Setting] = [
             OpenWithSetting(settings: self),
             ThemeSetting(settings: self),
+            SiriPageSetting(settings: self),
             BoolSetting(prefs: prefs, prefKey: PrefsKeys.KeyBlockPopups, defaultValue: true,
                         titleText: .AppSettingsBlockPopups),
             BoolSetting(prefs: prefs, defaultValue: Core.User.shared.topSites ?? true, titleText: .localized(.showTopSites)) {
@@ -95,12 +96,12 @@ class AppSettingsTableViewController: SettingsTableViewController, FeatureFlagsP
                         statusText: Strings.SettingsShowLinkPreviewsStatus)
         ]
 
+
         if #available(iOS 14.0, *) {
             settings += [
-                SettingSection(footerTitle: NSAttributedString(string: String.DefaultBrowserCardDescription), children: [DefaultBrowserSetting()])
+                SettingSection(footerTitle: .init(string: .localized(.linksFromWebsites)), children: [DefaultBrowserSetting()])
             ]
         }
-
         /* Ecosia: Deactivate account settings
         let accountSectionTitle = NSAttributedString(string: Strings.FxAFirefoxAccount)
 
@@ -115,12 +116,6 @@ class AppSettingsTableViewController: SettingsTableViewController, FeatureFlagsP
                 SyncNowSetting(settings: self)
             ] + accountChinaSyncSetting )]
          */
-        
-        if #available(iOS 14.0, *) {
-            settings += [.init(title: nil, footerTitle: .init(string: .localized(.linksFromWebsites)), children: [
-                DefaultBrowserSetting()
-            ])]
-        }
 
         let searchSettings: [Setting] = [
             SearchAreaSetting(settings: self),
