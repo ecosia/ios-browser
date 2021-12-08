@@ -3151,6 +3151,8 @@
 		CA24B52024ABD7D40093848C /* LoginsListViewModelTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginsListViewModelTests.swift; sourceTree = "<group>"; };
 		CA24B53824ABFE250093848C /* LoginsListSelectionHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginsListSelectionHelperTests.swift; sourceTree = "<group>"; };
 		CA24B53A24ABFE5D0093848C /* LoginsListDataSourceHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginsListDataSourceHelperTests.swift; sourceTree = "<group>"; };
+		CA2548882760E589009C2DD2 /* CredentialProviderEcosia.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CredentialProviderEcosia.entitlements; sourceTree = "<group>"; };
+		CA25488A2760E7BD009C2DD2 /* CredentialProviderEcosiaDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CredentialProviderEcosiaDebug.entitlements; sourceTree = "<group>"; };
 		CA31D8E726E8CE930004FF64 /* EcosiaHomeLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaHomeLayout.swift; sourceTree = "<group>"; };
 		CA32540125485C700024B48D /* Ecosia.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Ecosia.entitlements; sourceTree = "<group>"; };
 		CA32552425487C1C0024B48D /* EcosiaBeta.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = EcosiaBeta.xcconfig; path = Configuration/EcosiaBeta.xcconfig; sourceTree = "<group>"; };
@@ -6208,6 +6210,8 @@
 				6025B110267B6EE100F59F6B /* CredentialWelcomeViewController.swift */,
 				F80DF7402703BC8E00E4C37D /* CredentialPasscodeRequirementViewController.swift */,
 				F8324A0E2649A188007E4BFA /* Info.plist */,
+				CA25488A2760E7BD009C2DD2 /* CredentialProviderEcosiaDebug.entitlements */,
+				CA2548882760E589009C2DD2 /* CredentialProviderEcosia.entitlements */,
 				F8324A0F2649A188007E4BFA /* CredentialProvider.entitlements */,
 				437475CB26DD1E5B00DF2822 /* CredentialProviderFirefox.entitlements */,
 				C893075C265501EE00A1DB2F /* CredentialAssets.xcassets */,
@@ -12006,13 +12010,20 @@
 		CA7E7B5D27591520005D1E47 /* EcosiaDebug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = CredentialProvider/CredentialProviderEcosiaDebug.entitlements;
+				DEVELOPMENT_TEAM = 33YMRSYD2L;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ecosia.ecosiaapp.$(PRODUCT_NAME)";
 				PRODUCT_NAME = CredentialProvider;
+				PROVISIONING_PROFILE_SPECIFIER = "Develop Credential Provider";
 			};
 			name = EcosiaDebug;
 		};
 		CA7E7B5E27591520005D1E47 /* EcosiaBeta */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = CredentialProvider/CredentialProviderEcosia.entitlements;
+				DEVELOPMENT_TEAM = 33YMRSYD2L;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ecosia.ecosiaapp.firefox.$(PRODUCT_NAME)";
 				PRODUCT_NAME = CredentialProvider;
 			};
 			name = EcosiaBeta;
@@ -12020,6 +12031,9 @@
 		CA7E7B5F27591520005D1E47 /* EcosiaAppCenter */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = CredentialProvider/CredentialProviderEcosia.entitlements;
+				DEVELOPMENT_TEAM = 33YMRSYD2L;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ecosia.ecosiaapp.firefox.$(PRODUCT_NAME)";
 				PRODUCT_NAME = CredentialProvider;
 			};
 			name = EcosiaAppCenter;
@@ -12027,6 +12041,9 @@
 		CA7E7B6027591520005D1E47 /* Ecosia */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = CredentialProvider/CredentialProviderEcosia.entitlements;
+				DEVELOPMENT_TEAM = 33YMRSYD2L;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ecosia.ecosiaapp.CredentialProvider;
 				PRODUCT_NAME = CredentialProvider;
 			};
 			name = Ecosia;
@@ -13176,7 +13193,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_ENTITLEMENTS = CredentialProvider/CredentialProviderFennec.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 43AQ936H96;
