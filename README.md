@@ -210,4 +210,5 @@ git clone https://github.com/mozilla-mobile/ios-l10n-scripts.git
 # brand all the files as they contain the term 'Firefox' a lot
 python3 ecosify-strings.py Client
 python3 ecosify-strings.py Extensions
+python3 ecosify-strings.py Shared
 ```

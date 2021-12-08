@@ -26,7 +26,7 @@
 "Intro.Slides.Firefox.Account.Sync.Title" = "उपकरणहरू बीच फायरफक्स सिंक गर्नुहोस्";
 
 /* Description for the 'Mail' panel in the First Run tour. */
-"Intro.Slides.Mail.Description" = "कुनै पनि इमेल एप प्रयोग गर्नुहोस् - मेल मात्र हैन - Firefox को साथमा ।";
+"Intro.Slides.Mail.Description" = "कुनै पनि इमेल एप प्रयोग गर्नुहोस् - मेल मात्र हैन - Ecosia को साथमा ।";
 
 /* Title for the fourth panel 'Mail' in the First Run tour. */
 "Intro.Slides.Mail.Title" = "तपाईँले मेलहरू पाउनु भएको छ … विकल्पहरू";
@@ -59,7 +59,7 @@
 "Intro.Slides.Welcome.Description.v2" = "छिटो, निजी, र तपाईंको पक्षमा ।";
 
 /* Title for the first panel 'Welcome' in the First Run tour. */
-"Intro.Slides.Welcome.Title.v2" = "Firefoxमा स्वागत छ";
+"Intro.Slides.Welcome.Title.v2" = "Ecosiaमा स्वागत छ";
 
 /* See http://mzl.la/1T8gxwo */
 "Start Browsing" = "ब्राउजिङ्ग सुरु गर्नुहोस";

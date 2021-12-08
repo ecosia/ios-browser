@@ -8,7 +8,7 @@
 "Intro.Slides.Button.SignUp" = "Skráðu þig";
 
 /* Description for the 'Mail' panel in the First Run tour. */
-"Intro.Slides.Mail.Description" = "Nota hvaða tölvupóstforrit - ekki aðeins Mail - í Firefox.";
+"Intro.Slides.Mail.Description" = "Nota hvaða tölvupóstforrit - ekki aðeins Mail - í Ecosia.";
 
 /* Title for the fourth panel 'Mail' in the First Run tour. */
 "Intro.Slides.Mail.Title" = "Þú hefur fengið póst... valkosti";
@@ -35,7 +35,7 @@
 "Intro.Slides.Welcome.Description.v2" = "Hraður, persónulegur og með þér í liði.";
 
 /* Title for the first panel 'Welcome' in the First Run tour. */
-"Intro.Slides.Welcome.Title.v2" = "Verið velkomin í Firefox";
+"Intro.Slides.Welcome.Title.v2" = "Verið velkomin í Ecosia";
 
 /* See http://mzl.la/1T8gxwo */
 "Start Browsing" = "Fara að vafra";

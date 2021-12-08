@@ -270,7 +270,7 @@
 "ContextMenu.ShareLinkButtonTitle" = "שיתוף קישור";
 
 /* Contextual hints are little popups that appear for the users informing them of new features. This one talks about the more personalized home feature. */
-"ContextualHints.Homepage.PersonalizedHome" = "כעת קל יותר להמשיך מהמקום שבו הפסקת, במסך הבית של Firefox המותאם אישית שלך. ניתן למצוא את הלשוניות האחרונות, הסימניות ותוצאות החיפוש שלך.";
+"ContextualHints.Homepage.PersonalizedHome" = "כעת קל יותר להמשיך מהמקום שבו הפסקת, במסך הבית של Ecosia המותאם אישית שלך. ניתן למצוא את הלשוניות האחרונות, הסימניות ותוצאות החיפוש שלך.";
 
 /* Contextual hints are little popups that appear for the users informing them of new features. This one is the call to action for the inactive tabs contextual popup.
    Contextual hints are little popups that appear for the users informing them of new features. This one talks about the inactive tabs feature. */
@@ -339,7 +339,7 @@
 "Downloads.CancelDialog.Title" = "ביטול הורדה";
 
 /* The message displayed to a user when they try and perform the download of an asset that Firefox cannot currently handle. */
-"Downloads.Error.Message" = "הורדות אינן נתמכות בשלב זה ב־Firefox.";
+"Downloads.Error.Message" = "הורדות אינן נתמכות בשלב זה ב־Ecosia.";
 
 /* The label text in the Download Cancelled toast for showing confirmation that the download was cancelled. */
 "Downloads.Toast.Cancelled.LabelText" = "ההורדה בוטלה";
@@ -384,7 +384,7 @@
 "ErrorPages.AdvancedWarning2.Text" = "יתכן כי מדובר בהגדרות לקויות או בתוקף. ניתן להמשיך אם הסיכון האפשרי מקובל עליך.";
 
 /* Warning text on the certificate error page */
-"ErrorPages.CertWarning.Description" = "הבעלים של %@ הגדיר את האתר באופן לקוי. כדי להגן על המידע שלך מפני גניבה Firefox מנע את החיבור לאתר זה.";
+"ErrorPages.CertWarning.Description" = "הבעלים של %@ הגדיר את האתר באופן לקוי. כדי להגן על המידע שלך מפני גניבה Ecosia מנע את החיבור לאתר זה.";
 
 /* Title on the certificate error page */
 "ErrorPages.CertWarning.Title" = "חיבור זה אינו בטוח";
@@ -405,7 +405,7 @@
 "Facebook" = "Facebook";
 
 /* Title for firefox about:home page in tab history list */
-"Firefox.HomePage.Title" = "דף הבית של Firefox";
+"Firefox.HomePage.Title" = "דף הבית של Ecosia";
 
 /* A button at bottom of the Firefox homepage that, when clicked, takes users straight to the settings options, where they can customize the Firefox Home page */
 "FirefoxHome.CustomizeHomeButton.Title" = "התאמה אישית של מסך הבית";
@@ -420,13 +420,13 @@
 "FxA.AccountVerificationRequired" = "נדרש אימות חשבון";
 
 /* Message explaining that user needs to check email for Firefox Account verfication link. */
-"FxA.AccountVerificationRequiredSurface" = "עליך לאמת את %@. נא לבדוק אם הגיעו אליך הודעות דוא״ל חדשות לצורך איתור קישור האימות מ־Firefox.";
+"FxA.AccountVerificationRequiredSurface" = "עליך לאמת את %@. נא לבדוק אם הגיעו אליך הודעות דוא״ל חדשות לצורך איתור קישור האימות מ־Ecosia.";
 
 /* Button label to connect another device to Sync */
 "FxA.ConnectAnotherDevice" = "חיבור מכשיר נוסף";
 
 /* Settings section title for Firefox Account */
-"FxA.FirefoxAccount" = "חשבון Firefox";
+"FxA.FirefoxAccount" = "חשבון Ecosia";
 
 /* Button label to go to Firefox Account settings */
 "FxA.ManageAccount" = "ניהול חשבון ומכשירים";
@@ -438,13 +438,13 @@
 "FxA.OpenSyncPreferences" = "פתיחת העדפות Sync";
 
 /* Instructions shown on qr code scanning view */
-"fxa.qr-scanning-view.instructions" = "יש לסרוק את קוד ה־QR המוצג ב־firefox.com/pair";
+"fxa.qr-scanning-view.instructions" = "יש לסרוק את קוד ה־QR המוצג ב־Ecosia.com/pair";
 
 /* Remove button is displayed on firefox account page under certain scenarios where user would like to remove their account. */
 "FxA.RemoveAccount" = "הסרה";
 
 /* Description string for alert view that gets presented when user tries to remove an account. */
-"FxA.RemoveAccountAlertMessage" = "יש להסיר את חשבון ה־Firefox שלך המשוייך למכשיר זה כדי להתחבר כמשתמש אחר.";
+"FxA.RemoveAccountAlertMessage" = "יש להסיר את חשבון ה־Ecosia שלך המשוייך למכשיר זה כדי להתחבר כמשתמש אחר.";
 
 /* Remove account alert is the final confirmation before user removes their firefox account */
 "FxA.RemoveAccountAlertTitle" = "הסרת חשבון";
@@ -456,13 +456,13 @@
 "fxa.signin.camera-signin" = "התחברות באמצעות המצלמה שלך";
 
 /* FxA sign in create account label. */
-"fxa.signin.create-account-pt-1" = "סנכרון Firefox בין מכשירים באמצעות חשבון.";
+"fxa.signin.create-account-pt-1" = "סנכרון Ecosia בין מכשירים באמצעות חשבון.";
 
 /* FxA sign in create account label. This will be linked to the site to create an account. */
-"fxa.signin.create-account-pt-2" = "יצירת חשבון Firefox.";
+"fxa.signin.create-account-pt-2" = "יצירת חשבון Ecosia.";
 
 /* FxA sign in view qr code instructions */
-"fxa.signin.qr-link-instruction" = "במחשב שלך יש לפתוח את Firefox ולעבור לכתובת firefox.com/pair";
+"fxa.signin.qr-link-instruction" = "במחשב שלך יש לפתוח את Ecosia ולעבור לכתובת Ecosia.com/pair";
 
 /* FxA sign in view qr code scan button */
 "fxa.signin.ready-to-scan" = "מוכן לסריקה";
@@ -486,7 +486,7 @@
 "FxA.TakeYourWebWithYou" = "קחו את הרשת עמכם";
 
 /* Title of a notification displayed when another device has connected to FxA. %@ refers to the name of the newly connected device. */
-"FxAPush_DeviceConnected_body" = "‏Firefox Sync התחבר ל־%@";
+"FxAPush_DeviceConnected_body" = "‏Ecosia Sync התחבר ל־%@";
 
 /* Title of a notification displayed when another device has connected to FxA. */
 "FxAPush_DeviceConnected_title" = "‏Sync מחובר";
@@ -495,7 +495,7 @@
 "FxAPush_DeviceDisconnected_body" = "‏%@ נותק בהצלחה.";
 
 /* Body of a notification displayed when this device has been disconnected from FxA by another device. */
-"FxAPush_DeviceDisconnected_ThisDevice_body" = "מכשיר זה נותק בהצלחה מ־Firefox Sync.";
+"FxAPush_DeviceDisconnected_ThisDevice_body" = "מכשיר זה נותק בהצלחה מ־Ecosia Sync.";
 
 /* Title of a notification displayed when this device has been disconnected by another device. */
 "FxAPush_DeviceDisconnected_ThisDevice_title" = "‏Sync מנותק";
@@ -504,7 +504,7 @@
 "FxAPush_DeviceDisconnected_title" = "‏Sync מנותק";
 
 /* Body of a notification displayed when unnamed device has been disconnected from FxA. */
-"FxAPush_DeviceDisconnected_UnknownDevice_body" = "נותק מכשיר מ־Firefox Sync";
+"FxAPush_DeviceDisconnected_UnknownDevice_body" = "נותק מכשיר מ־Ecosia Sync";
 
 /* A re-worded offer about Sync, displayed when the Sync home panel is empty, that emphasizes one-way data transfer, not syncing. */
 "Get your open tabs, bookmarks, and passwords from your other devices." = "קבלת הלשוניות הפתוחות, הסימניות והססמאות שלך מההתקנים האחרים שלך.";
@@ -552,7 +552,7 @@
 "HistoryPanel.EmptySyncedTabsPanelTabSyncDisabledState.Description" = "יש להפעיל סנכרון לשוניות כדי לצפות ברשימת הלשוניות שלך ממכשירים אחרים.";
 
 /* Title for the empty synced tabs state in the History Panel */
-"HistoryPanel.EmptySyncedTabsState.Title" = "Firefox Sync";
+"HistoryPanel.EmptySyncedTabsState.Title" = "Ecosia Sync";
 
 /* Title for the Back to History button in the History Panel */
 "HistoryPanel.HistoryBackButton.Title" = "היסטוריה";
@@ -642,7 +642,7 @@
 "InactiveTabs.TabTray.AutoClosePrompt.ButtonTitle" = "הפעלת סגירה אוטומטית";
 
 /* In the Tabs Tray, in the Inactive Tabs section, a prompt may come up about auto-closing tabs. This string describes what happens if you elect to turn on this option. */
-"InactiveTabs.TabTray.AutoClosePrompt.Content" = "‏Firefox יסגור לשוניות שלא נצפו במהלך החודש האחרון.";
+"InactiveTabs.TabTray.AutoClosePrompt.Content" = "‏Ecosia יסגור לשוניות שלא נצפו במהלך החודש האחרון.";
 
 /* In the Tabs Tray, in the Inactive Tabs section, a prompt may come up about auto-closing tabs. This is the title of that Auto Close prompt */
 "InactiveTabs.TabTray.AutoClosePrompt.Title" = "לסגור באופן אוטומטי לאחר חודש אחד?";
@@ -726,7 +726,7 @@
 "LoginsList.LoginsListSearchPlaceholder" = "סינון";
 
 /* Label shown when there are no logins to list */
-"LoginsList.NoLoginsFound.Description" = "כניסות שמורות תופענה כאן. גאם שמרת את הכניסות שלך ב־Firefox על מכשיר אחר, יש להתחבר לחשבון ה־Firefox שלך.";
+"LoginsList.NoLoginsFound.Description" = "כניסות שמורות תופענה כאן. גאם שמרת את הכניסות שלך ב־Ecosia על מכשיר אחר, יש להתחבר לחשבון ה־Ecosia שלך.";
 
 /* Label shown when there are no logins saved */
 "LoginsList.NoLoginsFound.Title" = "לא נמצאו כניסות";
@@ -750,7 +750,7 @@
 "LoginsList.Title" = "כניסות שמורות";
 
 /* Restore Tabs Prompt Description */
-"Looks like Firefox crashed previously. Would you like to restore your tabs?" = "נראה ש־Firefox קרס לאחרונה. האם ברצונך לשחזר את הלשוניות שלך?";
+"Looks like Firefox crashed previously. Would you like to restore your tabs?" = "נראה ש־Ecosia קרס לאחרונה. האם ברצונך לשחזר את הלשוניות שלך?";
 
 /* Name for Mark as read button in reader mode
    Title for the button that marks a reading list item as read */
@@ -857,7 +857,7 @@
 "Menu.TrackingProtection.Details.Verifier" = "אומת על־ידי %@";
 
 /* Message in menu when no trackers blocked. */
-"Menu.TrackingProtection.NoTrackersBlockedTitle" = "לא זוהו רכיבי מעקב המוכרים ל־Firefox בדף זה.";
+"Menu.TrackingProtection.NoTrackersBlockedTitle" = "לא זוהו רכיבי מעקב המוכרים ל־Ecosia בדף זה.";
 
 /* The title for tracking protection settings */
 "Menu.TrackingProtection.ProtectionSettings.Title" = "הגדרות הגנה";
@@ -872,7 +872,7 @@
 "Menu.TrackingProtectionBlockedSocial.Title" = "רכיבי מעקב של מדיה חברתית";
 
 /* Description of the Tracking protection menu when TP is blocking parts of the page */
-"Menu.TrackingProtectionBlocking.Description" = "‏Firefox חוסם חלקים מהדף שעשויים לעקוב אחר הגלישה שלך.";
+"Menu.TrackingProtectionBlocking.Description" = "‏Ecosia חוסם חלקים מהדף שעשויים לעקוב אחר הגלישה שלך.";
 
 /* The description of the Tracking Protection menu item when tracking is enabled */
 "Menu.TrackingProtectionBlockingDisabled.Description" = "חסימת רכיבי מעקב מקוונים";
@@ -979,10 +979,10 @@
 
 /* On the onboarding card, letting users know what's new in this version of Firefox, this is the title for the Jump Back In bullet point on the card
    The title for the new onboarding card letting users know what is new in Firefox iOS */
-"Onboarding.WhatsNew.Title" = "מה חדש ב־Firefox";
+"Onboarding.WhatsNew.Title" = "מה חדש ב־Ecosia";
 
 /* Title for prompt displayed to user after the app crashes */
-"Oops! Firefox crashed" = "אבוי! Firefox קרס";
+"Oops! Firefox crashed" = "אבוי! Ecosia קרס";
 
 /* See http://mzl.la/1LXbDOL */
 "Open articles in Reader View by tapping the book icon when it appears in the title bar." = "ניתן לפתוח מאמרים בתצוגת קריאה על־ידי נגיעה בסמל הספר כאשר הוא מופיע בשורת הכותרת.";
@@ -994,7 +994,7 @@
 "Open Tabs" = "פתיחת לשוניות";
 
 /* The message displayed to a user when they try to open a URL that cannot be handled by Firefox, or any external app. */
-"OpenURL.Error.Message" = "דפדפן Firefox אינו יכול לפתוח דף זה מאחר שהוא כולל כתובת שאינה חוקית.";
+"OpenURL.Error.Message" = "דפדפן Ecosia אינו יכול לפתוח דף זה מאחר שהוא כולל כתובת שאינה חוקית.";
 
 /* Title of the message shown when the user attempts to navigate to an invalid link. */
 "OpenURL.Error.Title" = "לא ניתן לפתוח דף";
@@ -1009,19 +1009,19 @@
 "Password" = "ססמה";
 
 /* Error message shown in the remote tabs panel */
-"PasswordAutoFill.NoPasswordsFoundTitle" = "אין לך פרטי גישה שסונכרנו מחשבון ה־Firefox שלך";
+"PasswordAutoFill.NoPasswordsFoundTitle" = "אין לך פרטי גישה שסונכרנו מחשבון ה־Ecosia שלך";
 
 /* Header for the list of credentials table */
 "PasswordAutoFill.PasswordsListTitle" = "פרטי גישה זמינים:";
 
 /* Title of the extension that shows firefox passwords */
-"PasswordAutoFill.SectionTitle" = "פרטי גישה של Firefox";
+"PasswordAutoFill.SectionTitle" = "פרטי גישה של Ecosia";
 
 /* See http://mzl.la/1G7uHo7 */
 "PhotoLibrary.FirefoxWouldLikeAccessMessage" = "תכונה זו מאפשרת לך לשמור תמונות בסליל המצלמה שלך.";
 
 /* See http://mzl.la/1G7uHo7 */
-"PhotoLibrary.FirefoxWouldLikeAccessTitle" = "ל־Firefox יש צורך בגישה לתמונות שלך";
+"PhotoLibrary.FirefoxWouldLikeAccessTitle" = "ל־Ecosia יש צורך בגישה לתמונות שלך";
 
 /* Button for closing the menu action sheet */
 "PhotonMenu.close" = "סגירה";
@@ -1102,7 +1102,7 @@
 "ScanQRCode.InvalidDataError.Message" = "הנתונים שגויים";
 
 /* Text of the prompt user to setup the camera authorization. */
-"ScanQRCode.PermissionError.Message" = "נא לאפשר ל־Firefox לקבל גישה למצלמת המכשיר שלך בהגדרות -> פרטיות -> מצלמה.";
+"ScanQRCode.PermissionError.Message" = "נא לאפשר ל־Ecosia לקבל גישה למצלמת המכשיר שלך בהגדרות -> פרטיות -> מצלמה.";
 
 /* Title for the QR code scanner view. */
 "ScanQRCode.View.Title" = "סריקת קוד QR";
@@ -1158,7 +1158,7 @@
 "Secure connection" = "חיבור מאובטח";
 
 /* Message displayed in the crash dialog above the buttons used to select when sending reports */
-"Send a crash report so Mozilla can fix the problem?" = "האם לשלוח דיווח קריסה אל Mozilla כדי לסייע בתיקון הבעיה?";
+"Send a crash report so Mozilla can fix the problem?" = "האם לשלוח דיווח קריסה אל Ecosia כדי לסייע בתיקון הבעיה?";
 
 /* Menu item in settings used to open input.mozilla.org where people can submit feedback */
 "Send Feedback" = "שליחת משוב";
@@ -1186,19 +1186,19 @@
 "SendTo.NavBar.Title" = "שליחת לשונית";
 
 /* Error message shown in the remote tabs panel */
-"SendTo.NoDevicesFound.Message" = "אין לך מכשירים אחרים המחוברים לחשבון Firefox זה הזמינים לסנכרון.";
+"SendTo.NoDevicesFound.Message" = "אין לך מכשירים אחרים המחוברים לחשבון Ecosia זה הזמינים לסנכרון.";
 
 /* See http://mzl.la/1ISlXnU */
-"SendTo.NotSignedIn.Message" = "נא לפתוח את Firefox, לעבור אל ההגדרות ולהתחבר, כדי להמשיך.";
+"SendTo.NotSignedIn.Message" = "נא לפתוח את Ecosia, לעבור אל ההגדרות ולהתחבר, כדי להמשיך.";
 
 /* See http://mzl.la/1ISlXnU */
-"SendTo.NotSignedIn.Title" = "לא מחובר לחשבון Firefox.";
+"SendTo.NotSignedIn.Title" = "לא מחובר לחשבון Ecosia.";
 
 /* Navigation bar button to Send the current page to a device */
 "SendTo.SendAction.Text" = "שליחה";
 
 /* The text for the button on the Send to Device page if you are not signed in to Firefox Accounts. */
-"SendTo.SignIn.Button" = "כניסה אל Firefox";
+"SendTo.SignIn.Button" = "כניסה אל Ecosia";
 
 /* Body of notification shown when the device is sent one or more tabs from an unnamed device. */
 "SentTab_TabArrivingNotification_NoDevice_body" = "התקבלה לשונית חדשה ממכשיר אחר.";
@@ -1222,7 +1222,7 @@
 "SentTab.NoTabArrivingNotification.body" = "יש לגעת כדי להתחיל";
 
 /* Title of notification received after a spurious message from FxA has been received. */
-"SentTab.NoTabArrivingNotification.title" = "Firefox Sync";
+"SentTab.NoTabArrivingNotification.title" = "Ecosia Sync";
 
 /* Label for an action used to view one or more tabs from a notification. */
 "SentTab.ViewAction.title" = "הצגה";
@@ -1285,7 +1285,7 @@
 "Settings.DataManagement.Title" = "ניהול נתונים";
 
 /* Body of the alert when prompting the user asking to disconnect. */
-"Settings.Disconnect.Body" = "‏Firefox יפסיק להסתנכרן עם החשבון שלך, אבל לא ימחק את נתוני הגלישה שלך ממכשיר זה.";
+"Settings.Disconnect.Body" = "‏Ecosia יפסיק להסתנכרן עם החשבון שלך, אבל לא ימחק את נתוני הגלישה שלך ממכשיר זה.";
 
 /* Button displayed at the bottom of settings page allowing users to Disconnect from FxA */
 "Settings.Disconnect.Button" = "התנתקות";
@@ -1358,13 +1358,13 @@
 "Settings.FxA.Sync.SectionName" = "הגדרות סנכרון";
 
 /* Title displayed in header of the FxA settings panel. */
-"Settings.FxA.Title" = "חשבון Firefox";
+"Settings.FxA.Title" = "חשבון Ecosia";
 
 /* General settings section title */
 "Settings.General.SectionName" = "כללי";
 
 /* In the settings menu, on the Firefox homepage customization section, this is the description below the section, describing what the options in the section are for. */
-"Settings.Home.Option.Description" = "בחירת התוכן שיופיע במסך הבית של Firefox.";
+"Settings.Home.Option.Description" = "בחירת התוכן שיופיע במסך הבית של Ecosia.";
 
 /* In the settings menu, in the Firefox homepage customization section, this is the title for the option that allows users to toggle the Jump Back In section on homepage on or off */
 "Settings.Home.Option.JumpBackIn" = "המשך גלישה";
@@ -1391,7 +1391,7 @@
 "Settings.Home.Option.StartAtHome.Always" = "מסך הבית";
 
 /* In the settings menu, in the Start at Home customization options, this is text that appears below the section, describing what the section settings do. */
-"Settings.Home.Option.StartAtHome.Description" = "בחירת התוכן שיוצג בפניך עם חזרה ל־Firefox.";
+"Settings.Home.Option.StartAtHome.Description" = "בחירת התוכן שיוצג בפניך עם חזרה ל־Ecosia.";
 
 /* In the settings menu, on the Start at Home homepage customization option, this allows users to set this setting to return to the last tab they were on, every time they open up Firefox */
 "Settings.Home.Option.StartAtHome.Never" = "הלשונית האחרונה";
@@ -1400,7 +1400,7 @@
 "Settings.Home.Option.StartAtHome.Title" = "מסך הפתיחה";
 
 /* In the settings menu, this is the title of the Firefox Homepage customization settings section */
-"Settings.Home.Option.Title" = "מסך הבית של Firefox";
+"Settings.Home.Option.Title" = "מסך הבית של Ecosia";
 
 /* Button in settings to clear the home page. */
 "Settings.HomePage.Clear.Button" = "ניקוי";
@@ -1451,10 +1451,10 @@
 "Settings.NewTab.Option.CustomizeFooter2" = "אתרים ששמרת או ביקרת בהם";
 
 /* The title for the section to customize top sites in the new tab settings page. */
-"Settings.NewTab.Option.CustomizeTitle" = "התאמה אישית למסך הבית של Firefox";
+"Settings.NewTab.Option.CustomizeTitle" = "התאמה אישית למסך הבית של Ecosia";
 
 /* Option in settings to show Firefox Home when you open a new tab */
-"Settings.NewTab.Option.FirefoxHome" = "מסך הבית של Firefox";
+"Settings.NewTab.Option.FirefoxHome" = "מסך הבית של Ecosia";
 
 /* Option in the settings to turn off recent bookmarks in the Highlights section */
 "Settings.NewTab.Option.HighlightsBookmarks" = "סימניות אחרונות";
@@ -1493,7 +1493,7 @@
 "Settings.NewTab.TopSectionNameFooter" = "בחירה של מה ייטען בעת פתיחת לשונית חדשה";
 
 /* Description displayed under the ”Offer to Open Copied Link” option. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349 */
-"Settings.OfferClipboardBar.Status" = "בעת פתיחת Firefox";
+"Settings.OfferClipboardBar.Status" = "בעת פתיחת Ecosia";
 
 /* Title of setting to enable the Go to Copied URL feature. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349 */
 "Settings.OfferClipboardBar.Title" = "הצעה לפתיחת קישורים מועתקים";
@@ -1517,7 +1517,7 @@
 "Settings.SendUsage.Link" = "מידע נוסף.";
 
 /* A short description that explains why mozilla collects usage data. */
-"Settings.SendUsage.Message" = "הגישה של Mozilla היא לאסוף רק מה שנדרש לצורך שיפור Firefox לטובת הכלל.";
+"Settings.SendUsage.Message" = "הגישה של Ecosia היא לאסוף רק מה שנדרש לצורך שיפור Ecosia לטובת הכלל.";
 
 /* The title for the setting to send usage data. */
 "Settings.SendUsage.Title" = "שליחת נתוני שימוש";
@@ -1535,7 +1535,7 @@
 "Settings.Siri.OpenTabShortcut" = "פתיחת לשונית חדשה";
 
 /* The description that describes what siri shortcuts are */
-"Settings.Siri.SectionDescription" = "ניתן להשתמש בקיצורי דרך של Siri כדי לפתוח במהירות את Firefox באמצעות Siri";
+"Settings.Siri.SectionDescription" = "ניתן להשתמש בקיצורי דרך של Siri כדי לפתוח במהירות את Ecosia באמצעות Siri";
 
 /* The option that takes you to the siri shortcuts settings page */
 "Settings.Siri.SectionName" = "קיצורי דרך של Siri";
@@ -1559,7 +1559,7 @@
 "Settings.Studies.Toggle.Link" = "מידע נוסף.";
 
 /* A short description that explains that Mozilla is running studies */
-"Settings.Studies.Toggle.Message" = "‏Firefox עשוי להתקין ולהריץ מחקרים מדי פעם בפעם.";
+"Settings.Studies.Toggle.Message" = "‏Ecosia עשוי להתקין ולהריץ מחקרים מדי פעם בפעם.";
 
 /* Toggled OFF to opt-out of studies */
 "Settings.Studies.Toggle.Off" = "כבוי";
@@ -1592,7 +1592,7 @@
 "Settings.TrackingProtection.Alert.Title" = "לתשומת לבך!";
 
 /* Header description for tracking protection options section where Basic/Strict block list can be selected */
-"Settings.TrackingProtection.BlockListsHeader" = "באפשרותך לבחור באיזו רשימה Firefox ישתמש כדי לחסום רכיבים העשויים לעקוב אחר פעילות הגלישה שלך.";
+"Settings.TrackingProtection.BlockListsHeader" = "באפשרותך לבחור באיזו רשימה Ecosia ישתמש כדי לחסום רכיבים העשויים לעקוב אחר פעילות הגלישה שלך.";
 
 /* Explanation of basic mode. */
 "Settings.TrackingProtection.Info.BasicTitle" = "מאוזן בין הגנה לביצועים.";
@@ -1703,16 +1703,16 @@
 "ShareExtension.LoadInBackgroundAction.Title" = "טעינה ברקע";
 
 /* Share extension label shown after user has performed 'Load in Background' action. */
-"ShareExtension.LoadInBackgroundActionDone.Title" = "בטעינה ב־Firefox";
+"ShareExtension.LoadInBackgroundActionDone.Title" = "בטעינה ב־Ecosia";
 
 /* Action label on share extension to immediately open page in Firefox. */
-"ShareExtension.OpenInFirefoxAction.Title" = "פתיחה ב־Firefox";
+"ShareExtension.OpenInFirefoxAction.Title" = "פתיחה ב־Ecosia";
 
 /* Action label on share extension to immediately open page in Firefox in private mode. */
 "ShareExtension.OpenInPrivateModeAction.Title" = "פתיחה במצב פרטי";
 
 /* Action label on share extension to search for the selected text in Firefox. */
-"ShareExtension.SeachInFirefoxAction.Title" = "חיפוש ב־Firefox";
+"ShareExtension.SeachInFirefoxAction.Title" = "חיפוש ב־Ecosia";
 
 /* Label for show search suggestions setting. */
 "Show Search Suggestions" = "הצגת הצעות חיפוש";
@@ -1749,7 +1749,7 @@
 "Sync.FirstTimeMessage.Label" = "הסנכרון הראשון שלך עשוי לקחת זמן מה";
 
 /* String displayed on Sign In to Sync page that allows the user to create a new account. */
-"Sync.NoAccount.Description" = "אין לך חשבון? באפשרותך ליצור אחד כדי לסנכרן את Firefox בין מכשירים.";
+"Sync.NoAccount.Description" = "אין לך חשבון? באפשרותך ליצור אחד כדי לסנכרן את Ecosia בין מכשירים.";
 
 /* Message displayed when the user's account is syncing with no ellipsis */
 "Sync.Syncing.Label" = "סנכרון";
@@ -1929,13 +1929,13 @@
 "UIMenuItem.PasteGo" = "הדבקה ומעבר";
 
 /* Search in New Tab Text selection menu item */
-"UIMenuItem.SearchWithFirefox" = "חיפוש עם Firefox";
+"UIMenuItem.SearchWithFirefox" = "חיפוש עם Ecosia";
 
 /* Accessibility label for unread article in reading list. It's a past participle - functions as an adjective. */
 "unread" = "לא נקרא";
 
 /* Text message in the settings table view */
-"Upgrade Firefox to connect" = "עליך לשדרג את Firefox כדי להתחבר";
+"Upgrade Firefox to connect" = "עליך לשדרג את Ecosia כדי להתחבר";
 
 /* Debug option */
 "Use stage servers" = "שימוש בשרתי בדיקות";
@@ -1968,7 +1968,7 @@
 "Yesterday" = "אתמול";
 
 /* Error message in the remote tabs panel */
-"You don’t have any tabs open in Firefox on your other devices." = "אין לך לשוניות פתוחות ב־Firefox על שאר המכשירים שלך.";
+"You don’t have any tabs open in Firefox on your other devices." = "אין לך לשוניות פתוחות ב־Ecosia על שאר המכשירים שלך.";
 
 /* Your Rights settings section title */
 "Your Rights" = "הזכויות שלך";

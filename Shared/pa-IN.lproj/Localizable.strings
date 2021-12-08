@@ -270,7 +270,7 @@
 "ContextMenu.ShareLinkButtonTitle" = "ਲਿੰਕ ਸਾਂਝਾ ਕਰੋ";
 
 /* Contextual hints are little popups that appear for the users informing them of new features. This one talks about the more personalized home feature. */
-"ContextualHints.Homepage.PersonalizedHome" = "ਤੁਹਾਡੇ ਆਪਣੇ ਬਣਾਏ Firefox ਮੁੱਖ-ਸਫ਼ੇ ਨੇ ਹੁਣ ਜਿੱਥੇ ਤੁਸੀਂ ਛੱਡ ਕੇ ਗਏ ਸੀ, ਉਥੋਂ ਹੀ ਸ਼ੁਰੂ ਕਰਨਾ ਸੌਖਾ ਬਣਾ ਦਿੱਤਾ ਹੈ। ਆਪਣੀਆਂ ਸੱਜਰੀਆਂ ਟੈਬਾਂ, ਬੁੱਕਮਾਰਕ ਅਤੇ ਖੋਜ ਨਤੀਜੇ ਲੱਭੋ।";
+"ContextualHints.Homepage.PersonalizedHome" = "ਤੁਹਾਡੇ ਆਪਣੇ ਬਣਾਏ Ecosia ਮੁੱਖ-ਸਫ਼ੇ ਨੇ ਹੁਣ ਜਿੱਥੇ ਤੁਸੀਂ ਛੱਡ ਕੇ ਗਏ ਸੀ, ਉਥੋਂ ਹੀ ਸ਼ੁਰੂ ਕਰਨਾ ਸੌਖਾ ਬਣਾ ਦਿੱਤਾ ਹੈ। ਆਪਣੀਆਂ ਸੱਜਰੀਆਂ ਟੈਬਾਂ, ਬੁੱਕਮਾਰਕ ਅਤੇ ਖੋਜ ਨਤੀਜੇ ਲੱਭੋ।";
 
 /* Contextual hints are little popups that appear for the users informing them of new features. This one is the call to action for the inactive tabs contextual popup.
    Contextual hints are little popups that appear for the users informing them of new features. This one talks about the inactive tabs feature. */
@@ -441,7 +441,7 @@
 "FxA.OpenSyncPreferences" = "ਸਿੰਕ ਪਸੰਦਾਂ ਨੂੰ ਖੋਲ੍ਹੋ";
 
 /* Instructions shown on qr code scanning view */
-"fxa.qr-scanning-view.instructions" = "firefox.com/pair 'ਤੇ ਦਿਖਾਏ ਗਏ QR ਕੋਡ ਨੂੰ ਸਕੈਨ ਕਰੋ";
+"fxa.qr-scanning-view.instructions" = "Ecosia.com/pair 'ਤੇ ਦਿਖਾਏ ਗਏ QR ਕੋਡ ਨੂੰ ਸਕੈਨ ਕਰੋ";
 
 /* Remove button is displayed on firefox account page under certain scenarios where user would like to remove their account. */
 "FxA.RemoveAccount" = "ਹਟਾਓ";
@@ -459,13 +459,13 @@
 "fxa.signin.camera-signin" = "ਆਪਣੇ ਕੈਮਰੇ ਨਾਲ ਸਾਈਨ ਇਨ ਕਰੋ";
 
 /* FxA sign in create account label. */
-"fxa.signin.create-account-pt-1" = "ਖਾਤੇ ਨਾਲ ਡਿਵਾਇਸਾਂ ਦਰਮਿਆਨ Firefox ਨੂੰ ਸਿੰਕ ਕਰੋ।";
+"fxa.signin.create-account-pt-1" = "ਖਾਤੇ ਨਾਲ ਡਿਵਾਇਸਾਂ ਦਰਮਿਆਨ Ecosia ਨੂੰ ਸਿੰਕ ਕਰੋ।";
 
 /* FxA sign in create account label. This will be linked to the site to create an account. */
-"fxa.signin.create-account-pt-2" = "Firefox ਖਾਤਾ ਬਣਾਓ।";
+"fxa.signin.create-account-pt-2" = "Ecosia ਖਾਤਾ ਬਣਾਓ।";
 
 /* FxA sign in view qr code instructions */
-"fxa.signin.qr-link-instruction" = "ਆਪਣੇ ਕੰਪਿਊਟਰ ਉੱਤੇ ਫਾਇਰਫਾਕਸ ਖੋਲ੍ਹੋ ਅਤੇ firefox.com/pair ਉੱਤੇ ਜਾਓ";
+"fxa.signin.qr-link-instruction" = "ਆਪਣੇ ਕੰਪਿਊਟਰ ਉੱਤੇ ਫਾਇਰਫਾਕਸ ਖੋਲ੍ਹੋ ਅਤੇ Ecosia.com/pair ਉੱਤੇ ਜਾਓ";
 
 /* FxA sign in view qr code scan button */
 "fxa.signin.ready-to-scan" = "ਸਕੈਨ ਕਰਨ ਲਈ ਤਿਆਰ";
@@ -645,7 +645,7 @@
 "InactiveTabs.TabTray.AutoClosePrompt.ButtonTitle" = "ਆਪੇ ਬੰਦ ਕਰਨਾ ਚਾਲੂ ਕਰੋ";
 
 /* In the Tabs Tray, in the Inactive Tabs section, a prompt may come up about auto-closing tabs. This string describes what happens if you elect to turn on this option. */
-"InactiveTabs.TabTray.AutoClosePrompt.Content" = "Firefox ਉਹਨਾਂ ਟੈਬਾਂ ਨੂੰ ਬੰਦ ਕਰ ਦੇਵੇਗਾ, ਜਿਨਾਂ ਨੂੰ ਤੁਸੀਂ ਪਿਛਲੇ ਮਹੀਨੇ ਭਰ ਤੋਂ ਨਹੀਂ ਵੇਖਿਆ ਹੈ।";
+"InactiveTabs.TabTray.AutoClosePrompt.Content" = "Ecosia ਉਹਨਾਂ ਟੈਬਾਂ ਨੂੰ ਬੰਦ ਕਰ ਦੇਵੇਗਾ, ਜਿਨਾਂ ਨੂੰ ਤੁਸੀਂ ਪਿਛਲੇ ਮਹੀਨੇ ਭਰ ਤੋਂ ਨਹੀਂ ਵੇਖਿਆ ਹੈ।";
 
 /* In the Tabs Tray, in the Inactive Tabs section, a prompt may come up about auto-closing tabs. This is the title of that Auto Close prompt */
 "InactiveTabs.TabTray.AutoClosePrompt.Title" = "ਇੱਕ ਮਹੀਨੇ ਬਾਅਦ ਆਪੇ ਬੰਦ ਕਰਨਾ ਹੈ?";
@@ -729,7 +729,7 @@
 "LoginsList.LoginsListSearchPlaceholder" = "ਫਿਲਟਰ";
 
 /* Label shown when there are no logins to list */
-"LoginsList.NoLoginsFound.Description" = "ਸੰਭਾਲੇ ਹੋਏ ਲਾਗਇਨ ਇੱਥੇ ਵੇਖਾਏ ਜਾਣਗੇ। ਜੇ ਤੁਸੀਂ ਆਪਣੇ ਲਾਗਇਨ ਵੱਖਰੇ ਡਿਵਾਈਸ ਉੱਤੇ Firefox ਵਿੱਚ ਸੰਭਾਲੇ ਹਨ ਤਾਂ ਆਪਣੇ Firefox ਖਾਤੇ ਵਿੱਚ ਸਾਈਨ ਇਨ ਕਰੋ।";
+"LoginsList.NoLoginsFound.Description" = "ਸੰਭਾਲੇ ਹੋਏ ਲਾਗਇਨ ਇੱਥੇ ਵੇਖਾਏ ਜਾਣਗੇ। ਜੇ ਤੁਸੀਂ ਆਪਣੇ ਲਾਗਇਨ ਵੱਖਰੇ ਡਿਵਾਈਸ ਉੱਤੇ Ecosia ਵਿੱਚ ਸੰਭਾਲੇ ਹਨ ਤਾਂ ਆਪਣੇ Ecosia ਖਾਤੇ ਵਿੱਚ ਸਾਈਨ ਇਨ ਕਰੋ।";
 
 /* Label shown when there are no logins saved */
 "LoginsList.NoLoginsFound.Title" = "ਕੋਈ ਲਾਗਇਨ ਨਹੀਂ ਲੱਭਿਆ";
@@ -797,10 +797,10 @@
 "Menu.EnhancedTrackingProtectionOn.Title" = "ਇਸ ਸਾਈਟ ਲਈ ਵਾਧਾ ਕੀਤੀ ਟਰੈਕਿੰਗ ਸੁਰੱਖਿਆ ਚਾਲੂ ਹੈ।";
 
 /* Description for having standard ETP protection with ITP offered in iOS14+ */
-"Menu.EnhancedTrackingProtectionStandardWithITP.Title" = "Firefox ਸਾਈਟਾਂ ਵਿਚਲੇ ਟਰੈਕਰਾਂ, ਸਮਾਜਿਕ ਟਰੈਕਰਾਂ, ਕ੍ਰਿਪਟੋਮਾਈਨਰਾਂ ਅਤੇ ਫਿੰਗਰਪਰਿੰਟਰਾਂ ਉੱਤੇ ਪਾਬੰਦੀ ਲਾਉਂਦਾ ਹੈ।";
+"Menu.EnhancedTrackingProtectionStandardWithITP.Title" = "Ecosia ਸਾਈਟਾਂ ਵਿਚਲੇ ਟਰੈਕਰਾਂ, ਸਮਾਜਿਕ ਟਰੈਕਰਾਂ, ਕ੍ਰਿਪਟੋਮਾਈਨਰਾਂ ਅਤੇ ਫਿੰਗਰਪਰਿੰਟਰਾਂ ਉੱਤੇ ਪਾਬੰਦੀ ਲਾਉਂਦਾ ਹੈ।";
 
 /* Description for having strict ETP protection with ITP offered in iOS14+ */
-"Menu.EnhancedTrackingProtectionStrictWithITP.Title" = "Firefox ਸਾਈਟਾਂ ਵਿਚਲੇ ਟਰੈਕਰਾਂ, ਸਮਾਜਿਕ ਟਰੈਕਰਾਂ, ਕ੍ਰਿਪਟੋਮਾਈਨਰਾਂ, ਫਿੰਗਰਪਰਿੰਟਰਾਂ ਅਤੇ ਟਰੈਕ ਕਰਨ ਵਾਲੀ ਸਮੱਗਰੀ ਉੱਤੇ ਪਾਬੰਦੀ ਲਾਉਂਦਾ ਹੈ।";
+"Menu.EnhancedTrackingProtectionStrictWithITP.Title" = "Ecosia ਸਾਈਟਾਂ ਵਿਚਲੇ ਟਰੈਕਰਾਂ, ਸਮਾਜਿਕ ਟਰੈਕਰਾਂ, ਕ੍ਰਿਪਟੋਮਾਈਨਰਾਂ, ਫਿੰਗਰਪਰਿੰਟਰਾਂ ਅਤੇ ਟਰੈਕ ਕਰਨ ਵਾਲੀ ਸਮੱਗਰੀ ਉੱਤੇ ਪਾਬੰਦੀ ਲਾਉਂਦਾ ਹੈ।";
 
 /* Label for the button, displayed in the menu, takes you to to History screen when pressed. */
 "Menu.History.Label" = "ਅਤੀਤ";
@@ -866,7 +866,7 @@
 "Menu.TrackingProtection.Details.Verifier" = "%@ ਵਲੋਂ ਤਸਦੀਕ ਕੀਤਾ";
 
 /* Message in menu when no trackers blocked. */
-"Menu.TrackingProtection.NoTrackersBlockedTitle" = "Firefox ਵਲੋਂ ਜਾਣੇ ਕੋਈ ਵੀ ਟਰੈਕਰ ਇਸ ਸਫੇ ਉੱਤੇ ਖੋਜੇ ਨਹੀਂ ਗਏ ਹਨ।";
+"Menu.TrackingProtection.NoTrackersBlockedTitle" = "Ecosia ਵਲੋਂ ਜਾਣੇ ਕੋਈ ਵੀ ਟਰੈਕਰ ਇਸ ਸਫੇ ਉੱਤੇ ਖੋਜੇ ਨਹੀਂ ਗਏ ਹਨ।";
 
 /* The title for tracking protection settings */
 "Menu.TrackingProtection.ProtectionSettings.Title" = "ਸੁਰੱਖਿਆ ਸੈਟਿੰਗਾਂ";
@@ -1006,7 +1006,7 @@
 
 /* On the onboarding card, letting users know what's new in this version of Firefox, this is the title for the Jump Back In bullet point on the card
    The title for the new onboarding card letting users know what is new in Firefox iOS */
-"Onboarding.WhatsNew.Title" = "Firefox ਵਿੱਚ ਨਵਾਂ ਕੀ ਹੈ";
+"Onboarding.WhatsNew.Title" = "Ecosia ਵਿੱਚ ਨਵਾਂ ਕੀ ਹੈ";
 
 /* Title for prompt displayed to user after the app crashes */
 "Oops! Firefox crashed" = "ਓਹ ਹੋ! ਫਾਇਰਫਾਕਸ ਕਰੈਸ਼ ਹੋ ਗਿਆ";
@@ -1225,7 +1225,7 @@
 "SendTo.SendAction.Text" = "ਭੇਜੋ";
 
 /* The text for the button on the Send to Device page if you are not signed in to Firefox Accounts. */
-"SendTo.SignIn.Button" = "Firefox ‘ਚ ਸਾਇਨ ਇਨ ਕਰੋ";
+"SendTo.SignIn.Button" = "Ecosia ‘ਚ ਸਾਇਨ ਇਨ ਕਰੋ";
 
 /* Body of notification shown when the device is sent one or more tabs from an unnamed device. */
 "SentTab_TabArrivingNotification_NoDevice_body" = "ਹੋਰ ਡਿਵਾਈਸ ਤੋਂ ਨਵੀਂ ਟੈਬ ਆਈ ਹੈ।";
@@ -1391,7 +1391,7 @@
 "Settings.General.SectionName" = "ਆਮ";
 
 /* In the settings menu, on the Firefox homepage customization section, this is the description below the section, describing what the options in the section are for. */
-"Settings.Home.Option.Description" = "Firefox ਮੁ਼ੱਖ ਸਫ਼ੇ ਉੱਤੇ ਵੇਖਣ ਲਈ ਸਮੱਗਰੀ ਚੁਣੋ।";
+"Settings.Home.Option.Description" = "Ecosia ਮੁ਼ੱਖ ਸਫ਼ੇ ਉੱਤੇ ਵੇਖਣ ਲਈ ਸਮੱਗਰੀ ਚੁਣੋ।";
 
 /* In the settings menu, in the Firefox homepage customization section, this is the title for the option that allows users to toggle the Jump Back In section on homepage on or off */
 "Settings.Home.Option.JumpBackIn" = "ਪਿੱਛੇ ਜਾਓ";
@@ -1418,7 +1418,7 @@
 "Settings.Home.Option.StartAtHome.Always" = "ਮੁੱਖ-ਸਫ਼ਾ";
 
 /* In the settings menu, in the Start at Home customization options, this is text that appears below the section, describing what the section settings do. */
-"Settings.Home.Option.StartAtHome.Description" = "ਜਦੋਂ ਤੁਸੀਂ Firefox ਉੱਤੇ ਪਰਤੋ ਤਾਂ ਤੁਸੀਂ ਜੋ ਵੇਖਣਾ ਚਾਹੋਗੇ, ਉਹ ਚੁਣੋ।";
+"Settings.Home.Option.StartAtHome.Description" = "ਜਦੋਂ ਤੁਸੀਂ Ecosia ਉੱਤੇ ਪਰਤੋ ਤਾਂ ਤੁਸੀਂ ਜੋ ਵੇਖਣਾ ਚਾਹੋਗੇ, ਉਹ ਚੁਣੋ।";
 
 /* In the settings menu, on the Start at Home homepage customization option, this allows users to set this setting to return to the last tab they were on, every time they open up Firefox */
 "Settings.Home.Option.StartAtHome.Never" = "ਪਿਛਲੀ ਟੈਬ";
@@ -1427,7 +1427,7 @@
 "Settings.Home.Option.StartAtHome.Title" = "ਸਕਰੀਨ ਖੋਲ੍ਹੀ ਜਾ ਰਹੀ ਹੈ";
 
 /* In the settings menu, this is the title of the Firefox Homepage customization settings section */
-"Settings.Home.Option.Title" = "Firefox ਮੁੱਖ-ਸਫ਼ਾ";
+"Settings.Home.Option.Title" = "Ecosia ਮੁੱਖ-ਸਫ਼ਾ";
 
 /* Button in settings to clear the home page. */
 "Settings.HomePage.Clear.Button" = "ਸਾਫ਼ ਕਰੋ";
@@ -1589,7 +1589,7 @@
 "Settings.Studies.Toggle.Link" = "ਹੋਰ ਜਾਣੋ।";
 
 /* A short description that explains that Mozilla is running studies */
-"Settings.Studies.Toggle.Message" = " Firefox ਸਮੇਂ ਸਮੇਂ ਉੱਤੇ ਅਧਿਐਨ ਇੰਸਟਾਲ ਅਤੇ ਚਲਾ ਸਕਦਾ ਹੈ।";
+"Settings.Studies.Toggle.Message" = " Ecosia ਸਮੇਂ ਸਮੇਂ ਉੱਤੇ ਅਧਿਐਨ ਇੰਸਟਾਲ ਅਤੇ ਚਲਾ ਸਕਦਾ ਹੈ।";
 
 /* Toggled OFF to opt-out of studies */
 "Settings.Studies.Toggle.Off" = "ਬੰਦ";
@@ -1779,7 +1779,7 @@
 "Sync.FirstTimeMessage.Label" = "ਤੁਹਾਡੇ ਪਹਿਲੇ ਸਿੰਕ ਕਰਨ ਨੂੰ ਕੁਝ ਸਮਾਂ ਲੱਗ ਸਕਦਾ ਹੈ";
 
 /* String displayed on Sign In to Sync page that allows the user to create a new account. */
-"Sync.NoAccount.Description" = "ਖਾਤਾ ਨਹੀਂ ਹੈ? ਡਿਵਾਈਸਾਂ ਵਿਚਾਲੇ Firefox ਨੂੰ ਸਿੰਕ ਕਰਨ ਲਈ ਖਾਤਾ ਬਣਾਓ।";
+"Sync.NoAccount.Description" = "ਖਾਤਾ ਨਹੀਂ ਹੈ? ਡਿਵਾਈਸਾਂ ਵਿਚਾਲੇ Ecosia ਨੂੰ ਸਿੰਕ ਕਰਨ ਲਈ ਖਾਤਾ ਬਣਾਓ।";
 
 /* Message displayed when the user's account is syncing with no ellipsis */
 "Sync.Syncing.Label" = "ਸਿੰਕ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ";
