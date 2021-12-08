@@ -325,8 +325,11 @@ final class TreesCell: UICollectionViewCell, Themeable {
         spotlightBackground.backgroundColor = .clear
         globalCountBackground.backgroundColor = UIColor.theme.ecosia.treeCountBackground
 
+        let borderWidth: CGFloat = ThemeManager.instance.current.isDark ? 0 : 1
         background.layer.borderColor = UIColor.theme.ecosia.personalCounterBorder.cgColor
+        background.layer.borderWidth = borderWidth
         impactBackground.layer.borderColor = UIColor.theme.ecosia.personalCounterBorder.cgColor
+        impactBackground.layer.borderWidth = borderWidth
 
         globalCountDescription.textColor = UIColor.theme.ecosia.treeCountText
         globalCount.textColor = UIColor.theme.ecosia.treeCountText
