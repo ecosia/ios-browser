@@ -14,21 +14,15 @@ struct MyImpactStackViewModel {
     let subtitle: String?
     let imageName: String?
 
-    var callout: Callout?
-
-    struct Callout {
-        var action: Action
-        var collapsed: Bool = true
-    }
-
     enum Action {
         case tap(text: String)
-        case collapse(text: String, button: String, selector: Selector)
+        case arrow(collapsed: Bool)
     }
 }
 
 class MyImpactStackView: UIStackView, Themeable {
     var model: MyImpactStackViewModel!
+    var action: MyImpactStackViewModel.Action?
 
     private weak var topStack: UIStackView!
     private weak var titleLabel: UILabel!
@@ -36,10 +30,6 @@ class MyImpactStackView: UIStackView, Themeable {
     private weak var actionButton: UIButton!
     private weak var imageView: UIImageView!
     private weak var imageBackgroundView: UIView!
-    private weak var callout: UIView!
-    private weak var calloutStack: UIStackView!
-    private weak var calloutLabel: UILabel!
-    private weak var calloutButton: UIButton!
     private weak var imageWidthConstraint: NSLayoutConstraint!
     private weak var imageHeightConstraint: NSLayoutConstraint!
 
@@ -126,50 +116,11 @@ class MyImpactStackView: UIStackView, Themeable {
         actionButton.addTarget(self, action: #selector(actionTapped), for: .primaryActionTriggered)
         topStack.addArrangedSubview(actionButton)
         self.actionButton = actionButton
-
-        let callout = UIView()
-        callout.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
-        addArrangedSubview(callout)
-        callout.isHidden = true
-        callout.layer.cornerRadius = 8
-        self.callout = callout
-
-        let calloutStack = UIStackView()
-        calloutStack.translatesAutoresizingMaskIntoConstraints = false
-        calloutStack.axis = .vertical
-        calloutStack.alignment = .leading
-        calloutStack.spacing = 8
-        callout.addSubview(calloutStack)
-        calloutStack.isHidden = true
-        calloutStack.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
-        self.calloutStack = calloutStack
-
-        calloutStack.topAnchor.constraint(equalTo: callout.topAnchor, constant: 12).isActive = true
-        calloutStack.leftAnchor.constraint(equalTo: callout.leftAnchor, constant: 12).isActive = true
-        calloutStack.rightAnchor.constraint(equalTo: callout.rightAnchor, constant: -12).isActive = true
-        calloutStack.bottomAnchor.constraint(equalTo: callout.bottomAnchor, constant: -12).isActive = true
-
-        let calloutLabel = UILabel()
-        calloutLabel.font = .preferredFont(forTextStyle: .footnote)
-        calloutLabel.adjustsFontForContentSizeCategory = true
-        calloutLabel.numberOfLines = 0
-        calloutLabel.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
-        calloutLabel.lineBreakMode = .byClipping
-        calloutStack.addArrangedSubview(calloutLabel)
-        self.calloutLabel = calloutLabel
-
-        let calloutButton = UIButton(type: .custom)
-        calloutButton.titleLabel?.font = .preferredFont(forTextStyle: .footnote)
-        calloutButton.titleLabel?.adjustsFontForContentSizeCategory = true
-        calloutButton.setContentHuggingPriority(.defaultHigh, for: .vertical)
-        calloutButton.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
-        calloutButton.addTarget(self, action: #selector(calloutTapped), for: .primaryActionTriggered)
-        calloutStack.addArrangedSubview(calloutButton)
-        self.calloutButton = calloutButton
     }
 
-    func display(_ model: MyImpactStackViewModel) {
+    func display(_ model: MyImpactStackViewModel, action: MyImpactStackViewModel.Action? = nil) {
         self.model = model
+        self.action = action
         titleLabel.text = model.title
         titleLabel.isHidden = model.title == nil
         subtitleLabel.text = model.subtitle
@@ -184,35 +135,30 @@ class MyImpactStackView: UIStackView, Themeable {
             imageBackgroundView.isHidden = true
         }
 
-        if let callout = model.callout {
-            display(callout)
+        if let action = action {
+            display(action)
         } else {
             actionButton.isHidden = true
         }
         applyTheme()
     }
 
-    func display(_ callout: MyImpactStackViewModel.Callout) {
+    func display(_ action: MyImpactStackViewModel.Action) {
         actionButton.isHidden = false
 
-        switch callout.action {
+        switch action {
         case .tap(let text):
             actionButton.setTitle(text, for: .normal)
             actionButton.setImage(nil, for: .normal)
             actionButton.isUserInteractionEnabled = false
-        case .collapse(let text, let button, _):
+        case .arrow(let collapsed):
             actionButton.setTitle(nil, for: .normal)
             actionButton.isUserInteractionEnabled = true
 
-            let collapsed = callout.collapsed != false
             let image: UIImage = .init(themed: "impactDown")!
             actionButton.setImage(image, for: .normal)
             actionButton.imageView?.contentMode = .scaleAspectFit
             actionButton.transform = collapsed ? .identity : .init(rotationAngle: Double.pi - 0.00001)
-            calloutStack.isHidden = collapsed
-            self.callout.isHidden = collapsed
-            calloutButton.setTitle(button, for: .normal)
-            calloutLabel.text = text
         }
     }
 
@@ -226,33 +172,20 @@ class MyImpactStackView: UIStackView, Themeable {
 
         titleLabel.textColor = UIColor.theme.ecosia.highContrastText
         subtitleLabel.textColor = UIColor.theme.ecosia.secondaryText
-        callout.backgroundColor = UIColor.theme.ecosia.impactBackground
-        calloutLabel.textColor = UIColor.theme.ecosia.highContrastText
-        calloutButton.setTitleColor(UIColor.theme.ecosia.primaryBrand, for: .normal)
         actionButton.setTitleColor(UIColor.theme.ecosia.primaryBrand, for: .normal)
         model.imageName.map { imageView.image = UIImage(themed: $0) }
     }
 
     @objc func actionTapped() {
-        guard let callout = model.callout else { return }
+        guard let action = action else { return }
 
-        switch callout.action {
+        switch action {
         case .tap:
             break
-        case .collapse:
+        case .arrow:
             let selector = #selector(MyImpactStackViewModelResize.resizeStack)
             if let target = target(forAction: selector, withSender: self) as? UIResponder {
                 target.perform(selector, with: self)
-            }
-        }
-    }
-
-    @objc func calloutTapped() {
-        guard let callout = model.callout else { return }
-
-        if case .collapse(_, _, let selector) = callout.action {
-            if let target = target(forAction: selector, withSender: self) as? UIResponder {
-                target.perform(selector)
             }
         }
     }

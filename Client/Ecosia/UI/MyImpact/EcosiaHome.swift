@@ -119,27 +119,25 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     }
 
     private var referralImpactCellModel: MyImpactCellModel {
-        let callout = MyImpactStackViewModel.Callout(action: .collapse(text: .localized(.myImpactDescription),
-                                                                       button: .localized(.learnMore),
-                                                                       selector: #selector(learnMore)))
+        let callout = MyImpactCellModel.Callout(text: .localized(.myImpactDescription),
+                                                button: .localized(.learnMore),
+                                                selector: #selector(learnMore),
+                                                collapsed: true)
         let top = MyImpactStackViewModel(title: "\(User.shared.impact)",
                                          highlight: true, subtitle: .localized(.myTrees),
-                                         imageName: "personalCounter",
-                                         callout: callout)
+                                         imageName: "personalCounter")
 
         let middle = MyImpactStackViewModel(title: .localizedPlural(.treesPlural, num: User.shared.searchImpact),
                                             highlight: false,
                                             subtitle: .localizedPlural(.searches, num: personalCounter.state!),
-                                            imageName: "impactSearch",
-                                            callout: nil)
+                                            imageName: "impactSearch")
 
         let bottom = MyImpactStackViewModel(title: .localizedPlural(.treesPlural, num: User.shared.referrals.impact),
                                             highlight: false,
                                             subtitle: .localizedPlural(.referrals, num: User.shared.referrals.count),
-                                            imageName: "impactReferrals",
-                                            callout: nil)
+                                            imageName: "impactReferrals")
 
-        return MyImpactCellModel(top: top, middle: middle, bottom: bottom)
+        return MyImpactCellModel(top: top, middle: middle, bottom: bottom, callout: callout)
     }
 
     fileprivate var treesCellModel: TreesCellModel {
@@ -250,9 +248,8 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
             let model = MyImpactStackViewModel(title: nil,
                                                highlight: false,
                                                subtitle: .localized(.multiplyImpact),
-                                               imageName: nil,
-                                               callout: .init(action: .tap(text: .localized(.inviteFriends))))
-            multiplyCell.display(model)
+                                               imageName: nil)
+            multiplyCell.display(model, action: .tap(text: .localized(.inviteFriends)))
             return multiplyCell
         case .explore:
             if indexPath.row == 0 {
@@ -425,10 +422,10 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     }
 
     @objc func resizeStack(sender: MyImpactStackView) {
-        guard let model = sender.model, let collapsed = model.callout?.collapsed,
+        guard let action = sender.action, case .arrow(let collapsed) = action,
               let cell = collectionView.cellForItem(at: IndexPath(item: 0, section: Section.impact.rawValue)) as? MyImpactCell  else { return }
 
-        impactModel.top?.callout?.collapsed = !collapsed
+        impactModel.callout.collapsed = !collapsed
         let updatedModel = impactModel
 
         collectionView.performBatchUpdates {
