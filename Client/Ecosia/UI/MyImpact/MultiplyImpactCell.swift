@@ -64,8 +64,8 @@ final class MultiplyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable 
         outline.backgroundColor = isSelected || isHighlighted ? UIColor.theme.ecosia.hoverBackgroundColor : UIColor.theme.ecosia.highlightedBackground
     }
 
-    func display(_ model: MyImpactStackViewModel) {
-        stack.display(model)
+    func display(_ model: MyImpactStackViewModel, action: MyImpactStackViewModel.Action?) {
+        stack.display(model, action: action)
         applyTheme()
     }
 
