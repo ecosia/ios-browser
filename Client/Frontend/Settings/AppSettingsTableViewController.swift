@@ -67,7 +67,7 @@ class AppSettingsTableViewController: SettingsTableViewController, FeatureFlagsP
             SiriPageSetting(settings: self),
             BoolSetting(prefs: prefs, prefKey: PrefsKeys.KeyBlockPopups, defaultValue: true,
                         titleText: .AppSettingsBlockPopups),
-            BoolSetting(prefs: prefs, defaultValue: Core.User.shared.topSites ?? true, titleText: .localized(.showTopSites)) {
+            BoolSetting(prefs: prefs, prefKey: "", defaultValue: Core.User.shared.topSites ?? true, titleText: .localized(.showTopSites)) {
                 Core.User.shared.topSites = $0
             }
            ]
