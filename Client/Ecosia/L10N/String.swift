@@ -116,7 +116,7 @@ extension String {
         case yourDownloadFiles = "Your download files will show up here"
         case heyThereWantToPlant = "Hey there, want to plant trees with me? If you get the app, each of us will contribute to planting trees with Ecosia!"
         case downloadEcosiaOn = "(1) Download Ecosia on your iPhone for free"
-        case clickMyInvitation = "(2) Click my invitation link so we plant trees together:"
+        case clickMyInvitation = "(2) Click my invitation link so we can plant trees together:"
         case letsDoThis = "Let's do this"
     }
 }
