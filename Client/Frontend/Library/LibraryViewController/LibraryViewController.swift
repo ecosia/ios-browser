@@ -182,7 +182,7 @@ class LibraryViewController: UIViewController {
         switch viewModel.currentPanelState {
         case .bookmarks(state: let subState):
             if subState == .mainView {
-                navigationController?.setToolbarHidden(true, animated: true)
+                navigationController?.setToolbarHidden(false, animated: true) // Ecosia: show edit func in mainView
             } else {
                 navigationController?.setToolbarHidden(false, animated: true)
             }
@@ -374,7 +374,7 @@ class LibraryViewController: UIViewController {
     fileprivate func bottomRightButtonSetup() {
         switch viewModel.currentPanelState {
         case .bookmarks(state: let subState):
-            if subState == .inFolder {
+            if subState == .inFolder || subState == .mainView { // Ecosia: show edit func in mainView
                 bottomRightButton.title = Strings.BookmarksEdit
             } else if subState == .inFolderEditMode {
                 bottomRightButton.title = String.AppSettingsDone
@@ -454,7 +454,7 @@ class LibraryViewController: UIViewController {
     fileprivate func rightButtonBookmarkActions(for state: LibraryPanelSubState) {
         guard let panel = children.first as? UINavigationController else { return }
         switch state {
-        case .inFolder:
+        case .inFolder, .mainView: // Ecosia: show edit func in mainView
             guard let bookmarksPanel = panel.viewControllers.last as? BookmarksPanel else { return }
             viewModel.currentPanelState = .bookmarks(state: .inFolderEditMode)
             bookmarksPanel.enableEditMode()
