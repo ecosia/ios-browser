@@ -240,7 +240,7 @@ private struct ASHorizontalScrollCellUX {
 /*
  The View that describes the topSite cell that appears in the tableView.
  */
-class ASHorizontalScrollCell: UICollectionViewCell {
+class ASHorizontalScrollCell: UICollectionViewCell, Themeable {
 
     var heightConstraint: NSLayoutConstraint!
     var widthConstraint: NSLayoutConstraint!
@@ -287,6 +287,12 @@ class ASHorizontalScrollCell: UICollectionViewCell {
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    func applyTheme() {
+        collectionView.visibleCells.forEach {
+            ($0 as? Themeable)?.applyTheme()
+        }
     }
 }
 /*

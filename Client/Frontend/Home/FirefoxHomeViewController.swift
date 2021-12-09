@@ -414,8 +414,9 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel, FeatureF
     func applyTheme() {
         collectionView?.backgroundColor = UIColor.theme.ecosia.primaryBackground
         self.view.backgroundColor = UIColor.theme.ecosia.primaryBackground
-        topSiteCell.collectionView.reloadData()
-        collectionView.reloadData()
+        collectionView.visibleCells.forEach({
+            ($0 as? Themeable)?.applyTheme()
+        })
     }
 
     func scrollToTop(animated: Bool = false) {
