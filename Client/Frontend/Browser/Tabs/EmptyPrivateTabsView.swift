@@ -30,7 +30,7 @@ class EmptyPrivateTabsView: UIView {
         label.textAlignment = .center
         label.numberOfLines = 0
         label.preferredMaxLayoutWidth = EmptyPrivateTabsViewUX.MaxDescriptionWidth
-        label.text = .TabTrayPrivateBrowsingDescription
+        label.text = .localized(.privateEmpty)
     }
     let learnMoreButton: UIButton = .build { button in
         button.setTitle( .PrivateBrowsingLearnMore, for: [])
@@ -38,7 +38,7 @@ class EmptyPrivateTabsView: UIView {
         button.titleLabel?.font = EmptyPrivateTabsViewUX.LearnMoreFont
     }
     let iconImageView: UIImageView = .build { imageView in
-        imageView.image = UIImage.templateImageNamed("largePrivateMask")
+        imageView.image = UIImage(named: "tigerIncognito")
         imageView.tintColor = UIColor.Photon.Grey60
     }
 
@@ -46,8 +46,7 @@ class EmptyPrivateTabsView: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
-        addSubviews(iconImageView, titleLabel, descriptionLabel, learnMoreButton)
+        addSubviews(iconImageView, titleLabel, descriptionLabel)
         
         NSLayoutConstraint.activate([
             iconImageView.centerYAnchor.constraint(equalTo: centerYAnchor, constant: -70),
@@ -55,14 +54,15 @@ class EmptyPrivateTabsView: UIView {
             iconImageView.widthAnchor.constraint(equalToConstant: 120),
             iconImageView.heightAnchor.constraint(equalToConstant: 120),
             
-            titleLabel.topAnchor.constraint(equalTo: iconImageView.bottomAnchor, constant: 0),
+            titleLabel.topAnchor.constraint(equalTo: iconImageView.bottomAnchor, constant: 24),
             titleLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
             
             descriptionLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: CGFloat(EmptyPrivateTabsViewUX.TextMargin)),
             descriptionLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
-            
+            /* Ecosia
             learnMoreButton.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: CGFloat(EmptyPrivateTabsViewUX.LearnMoreMargin)),
             learnMoreButton.centerXAnchor.constraint(equalTo: centerXAnchor),
+            */
         ])
 
         applyTheme()
@@ -81,7 +81,8 @@ class EmptyPrivateTabsView: UIView {
 
 extension EmptyPrivateTabsView: Themeable {
     @objc func applyTheme() {
-        titleLabel.textColor = UIColor.theme.tabTray.tabTitleText
-        descriptionLabel.textColor = UIColor.theme.tabTray.tabTitleText
+        backgroundColor = UIColor.theme.ecosia.primaryBackground
+        titleLabel.textColor = UIColor.theme.ecosia.highContrastText
+        descriptionLabel.textColor = UIColor.theme.ecosia.primaryText
     }
 }
