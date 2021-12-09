@@ -6,7 +6,7 @@ import SnapKit
 import Storage
 import Shared
 
-class DefaultBrowserCard: UICollectionViewCell {
+class DefaultBrowserCard: UICollectionViewCell, Themeable {
     public var dismissClosure: (() -> Void)?
     lazy var title: UILabel = {
         let title = UILabel()
