@@ -315,7 +315,7 @@ final class TreesCell: UICollectionViewCell, Themeable {
     func applyTheme() {
         let isSpotlight = model?.spotlight != nil
         if isSpotlight {
-            background.backgroundColor = (isHighlighted || isSelected) ? UIColor.theme.ecosia.primaryBrand  : UIColor.Photon.Teal60
+            background.backgroundColor = (isHighlighted || isSelected) ? UIColor.theme.ecosia.primaryBrand  : UIColor.theme.ecosia.teal60
         } else {
             background.backgroundColor = UIColor.theme.ecosia.primaryBackground
         }

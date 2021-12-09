@@ -67,6 +67,8 @@ class EcosiaTheme {
     var underlineGrey: UIColor { return UIColor(named: "underlineGrey")! }
     var cardText: UIColor { UIColor(named: "cardText")!}
     var welcomeScreenBackground: UIColor { UIColor.Photon.Grey70.withAlphaComponent(0.4) }
+
+    var teal60: UIColor { UIColor(rgb: 0x267A82) }
 }
 
 final class DarkEcosiaTheme: EcosiaTheme {
