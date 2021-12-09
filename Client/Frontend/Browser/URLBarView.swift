@@ -200,19 +200,6 @@ class URLBarView: UIView {
         }
     }
 
-    /* Ecosia: Special Logic for Reload/Cancel-Button */
-    private var showMultiStateButton: Bool {
-        if let url = currentURL {
-            if let internalURL = InternalURL(url), internalURL.isAboutHomeURL {
-                return false
-            } else {
-                return true
-            }
-        } else {
-            return false
-        }
-    }
-
     var profile: Profile? = nil
     
     fileprivate let privateModeBadge = BadgeWithBackdrop(imageName: "privateModeBadge", backdropCircleColor: UIColor.Defaults.MobilePrivatePurple)
@@ -394,7 +381,7 @@ class URLBarView: UIView {
                     make.trailing.equalTo(self.multiStateButton.snp.leading).offset(-URLBarViewUX.Padding)
                 } else {
                     // Otherwise, left align the location view
-                    let rightPadding = showMultiStateButton ? URLBarViewUX.ButtonHeight : 16
+                    let rightPadding = toolbarIsShowing ? URLBarViewUX.ButtonHeight : 16
                     make.leading.trailing.equalTo(self).inset(UIEdgeInsets(top: 0, left: 16, bottom: 0, right: rightPadding))
                 }
                 make.height.greaterThanOrEqualTo(URLBarViewUX.LocationHeight+2)
@@ -415,9 +402,6 @@ class URLBarView: UIView {
                 make.size.equalTo(URLBarViewUX.ButtonHeight).priority(.high)
             }
         }
-
-        let hideButton = !multiStateButton.isEnabled || ((inOverlayMode || !showMultiStateButton) && !toolbarIsShowing)
-        multiStateButton.alpha = hideButton ? 0 : 1
     }
 
     @objc func showQRScanner() {
@@ -578,6 +562,7 @@ class URLBarView: UIView {
         backButton.isHidden = !toolbarIsShowing
         tabsButton.isHidden = !toolbarIsShowing || topTabsIsShowing
         ecosiaButton.isHidden = !toolbarIsShowing
+        multiStateButton.isHidden = !toolbarIsShowing
     }
 
     func transitionToOverlay(_ didCancel: Bool = false) {
@@ -592,8 +577,8 @@ class URLBarView: UIView {
         addNewTabButton.alpha = inOverlayMode ? 0 : 1
         forwardButton.alpha = inOverlayMode ? 0 : 1
         backButton.alpha = inOverlayMode ? 0 : 1
-        multiStateButton.alpha = inOverlayMode || didCancel ? 0 : 1
         ecosiaButton.alpha = inOverlayMode ? 0 : 1
+        multiStateButton.alpha = inOverlayMode ? 0 : 1
 
         let borderColor = inOverlayMode ? locationActiveBorderColor : locationBorderColor
         locationContainer.layer.borderColor = borderColor.cgColor
@@ -626,7 +611,7 @@ class URLBarView: UIView {
         backButton.isHidden = !toolbarIsShowing || inOverlayMode
         tabsButton.isHidden = !toolbarIsShowing || inOverlayMode || topTabsIsShowing
         ecosiaButton.isHidden = !toolbarIsShowing || inOverlayMode
-
+        multiStateButton.isHidden = !toolbarIsShowing || inOverlayMode
 
         // badge isHidden is tied to private mode on/off, use alpha to hide in this case
         [privateModeBadge, appMenuBadge, warningMenuBadge].forEach {
