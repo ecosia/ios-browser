@@ -75,6 +75,7 @@ class LibraryPanelViewStateTests: XCTestCase {
         XCTAssertEqual(actualState, expectedState, "The library panel view did not correctly enter the .inFolderEditMode state for bookmarks from the .itemEditMode state")
     }
 
+    /* Ecosia: deactivate test as it's possible to move from .mainView to .inFolderEditMode
     func testStateOnBookmarkPanelFollowStateProgressionMovingIntoStates() {
         panelState?.currentState = .bookmarks(state: .inFolderEditMode)
         var actualState = panelState?.currentState
@@ -89,6 +90,7 @@ class LibraryPanelViewStateTests: XCTestCase {
         XCTAssertEqual(actualState, expectedState, "The library panel view did not correctly enter the .inFolderEditMode state for bookmarks")
         XCTAssertNotEqual(actualState, wrongState, "Attempting to move to the wrong state did not fail!")
     }
+    */
 
     func testStateOnBookmarkPanelFollowsStateProgressionMovingOutOfStates() {
         // Go to last state

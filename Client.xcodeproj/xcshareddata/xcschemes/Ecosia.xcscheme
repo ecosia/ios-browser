@@ -182,6 +182,9 @@
                   Identifier = "EcosiaTabMigrationTests/testEcosiaImportTabs()">
                </Test>
                <Test
+                  Identifier = "NimbusIntegrationTests">
+               </Test>
+               <Test
                   Identifier = "SearchEnginesTests">
                </Test>
                <Test

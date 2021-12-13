@@ -60,6 +60,16 @@ class MockToolbarButton: ToolbarButton {
     }
 }
 
+class MockAddNewTabButton: AddNewTabButton {
+    init() {
+        super.init(frame: .zero)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
 class MockTabToolbar: TabToolbarProtocol {
     var tabToolbarDelegate: TabToolbarDelegate? {
         get { return nil }
@@ -77,8 +87,8 @@ class MockTabToolbar: TabToolbarProtocol {
     var _bookmarksButton = MockToolbarButton()
     var bookmarksButton: ToolbarButton { get { _bookmarksButton } }
     
-    var _addNewTabButton = MockToolbarButton()
-    var addNewTabButton: ToolbarButton { get { _addNewTabButton } }
+    var _addNewTabButton = MockAddNewTabButton()
+    var addNewTabButton: AddNewTabButton { get { _addNewTabButton } }
     
     var _homeButton = MockToolbarButton()
     var homeButton: ToolbarButton { get { _homeButton } }

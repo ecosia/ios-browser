@@ -368,6 +368,8 @@ func == (lhs: DeepLink, rhs: DeepLink) -> Bool {
         return lhs == rhs
     case let (.defaultBrowser(lhs), .defaultBrowser(rhs)):
         return lhs == rhs
+    case let (.referral(lhs), .referral(rhs)):
+        return lhs == rhs
     default:
         return false
     }
