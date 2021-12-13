@@ -255,7 +255,6 @@
 		4345441D26D2E52600D5EEAA /* SearchTermGroupsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4345441C26D2E52600D5EEAA /* SearchTermGroupsManager.swift */; };
 		435222C125882E3800FCA5B6 /* WidgetKitTopSiteModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 435222C025882E3800FCA5B6 /* WidgetKitTopSiteModel.swift */; };
 		435222C225882E3800FCA5B6 /* WidgetKitTopSiteModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 435222C025882E3800FCA5B6 /* WidgetKitTopSiteModel.swift */; };
-		4357697525B733CC0017B210 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
 		435D660323D793DF0046EFA2 /* UpdateModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 435D660223D793DF0046EFA2 /* UpdateModel.swift */; };
 		435D660523D794B90046EFA2 /* UpdateViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 435D660423D794B90046EFA2 /* UpdateViewModel.swift */; };
 		435D660723D7962C0046EFA2 /* UpdateCoverSheetTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 435D660623D7962C0046EFA2 /* UpdateCoverSheetTableViewCell.swift */; };
@@ -277,7 +276,6 @@
 		43AB6FA425DC53D30016B015 /* ASHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43AB6F9E25DC53D20016B015 /* ASHeaderView.swift */; };
 		43AB6FA525DC53D30016B015 /* ASLibraryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43AB6F9F25DC53D30016B015 /* ASLibraryCell.swift */; };
 		43AB6FA625DC53D30016B015 /* LibraryShortcutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43AB6FA025DC53D30016B015 /* LibraryShortcutView.swift */; };
-		43AB6FA725DC53D30016B015 /* PanelDataObservers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43AB6FA125DC53D30016B015 /* PanelDataObservers.swift */; };
 		43B137F223A181A200CB7FA0 /* NSUserDefaultsPrefs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43B137F123A181A200CB7FA0 /* NSUserDefaultsPrefs.swift */; };
 		43C5A09B2555DF8100BA37AD /* BottomSheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43C5A0992555DF8100BA37AD /* BottomSheetViewController.swift */; };
 		43DDB96A240994370058A068 /* ETPCoverSheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43DDB969240994360058A068 /* ETPCoverSheetViewController.swift */; };
@@ -435,7 +433,7 @@
 		C877037A25222F30006E38EB /* Shared.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288A2D861AB8B3260023ABC3 /* Shared.framework */; };
 		C877039625222FDC006E38EB /* Shared.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288A2D861AB8B3260023ABC3 /* Shared.framework */; };
 		C877039725222FE6006E38EB /* Shared.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288A2D861AB8B3260023ABC3 /* Shared.framework */; };
-		C87703D225223EA5006E38EB /* Shared.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 288A2D861AB8B3260023ABC3 /* Shared.framework */; };
+		C87703D225223EA5006E38EB /* Shared.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 288A2D861AB8B3260023ABC3 /* Shared.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		C87DF8FE267246340097E707 /* PasscodeEntryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E640E85D1C73A45A00C5F072 /* PasscodeEntryViewController.swift */; };
 		C87DF9122672463D0097E707 /* BasePasscodeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6108FF81C84E91C005D25E8 /* BasePasscodeViewController.swift */; };
 		C87DF9262672464F0097E707 /* PasscodeViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = E640E8691C73A47C00C5F072 /* PasscodeViews.swift */; };
@@ -3152,7 +3150,7 @@
 		CA24B53824ABFE250093848C /* LoginsListSelectionHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginsListSelectionHelperTests.swift; sourceTree = "<group>"; };
 		CA24B53A24ABFE5D0093848C /* LoginsListDataSourceHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginsListDataSourceHelperTests.swift; sourceTree = "<group>"; };
 		CA2548882760E589009C2DD2 /* CredentialProviderEcosia.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CredentialProviderEcosia.entitlements; sourceTree = "<group>"; };
-		CA25488A2760E7BD009C2DD2 /* CredentialProviderEcosiaDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CredentialProviderEcosiaDebug.entitlements; sourceTree = "<group>"; };
+		CA25488A2760E7BD009C2DD2 /* CredentialProviderEcosiaBeta.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CredentialProviderEcosiaBeta.entitlements; sourceTree = "<group>"; };
 		CA31D8E726E8CE930004FF64 /* EcosiaHomeLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaHomeLayout.swift; sourceTree = "<group>"; };
 		CA32540125485C700024B48D /* Ecosia.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Ecosia.entitlements; sourceTree = "<group>"; };
 		CA32552425487C1C0024B48D /* EcosiaBeta.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = EcosiaBeta.xcconfig; path = Configuration/EcosiaBeta.xcconfig; sourceTree = "<group>"; };
@@ -3210,8 +3208,8 @@
 		CAB6D04025652A4800638310 /* TestHistoryMigration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestHistoryMigration.swift; sourceTree = "<group>"; };
 		CAB7414DA1BA84F4CD08A8F8 /* kk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = kk; path = kk.lproj/ClearPrivateDataConfirm.strings; sourceTree = "<group>"; };
 		CAC323402715BF4800AF9651 /* Common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Common.xcconfig; path = Configuration/Common.xcconfig; sourceTree = "<group>"; };
-		CAC3CD28260248B6000FFAF4 /* EcosiaBeta.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = EcosiaBeta.entitlements; sourceTree = "<group>"; };
 		CAC458F0249429C20042561A /* LoginListSelectionHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginListSelectionHelper.swift; sourceTree = "<group>"; };
+		CAC6EF042763AD3A00710720 /* EcosiaBeta.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = EcosiaBeta.entitlements; sourceTree = "<group>"; };
 		CADFBF9C26DFC6B300F6D925 /* TreesCellModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreesCellModel.swift; sourceTree = "<group>"; };
 		CAE253D1268CA29F00308DEA /* BrowserViewController+FirefoxHomeViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BrowserViewController+FirefoxHomeViewControllerDelegate.swift"; sourceTree = "<group>"; };
 		CAFA91492578DC040086E6AE /* Ecosia.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Ecosia.xcconfig; path = Configuration/Ecosia.xcconfig; sourceTree = "<group>"; };
@@ -4272,7 +4270,6 @@
 				F8324A7C2649A5A5007E4BFA /* AuthenticationServices.framework in Frameworks */,
 				E6231C051B90A472005ABB0D /* libxml2.2.tbd in Frameworks */,
 				EBCF403B221CBC5B00B38F28 /* SwiftProtobuf.framework in Frameworks */,
-				4357697525B733CC0017B210 /* (null) in Frameworks */,
 				E6231C011B90A44F005ABB0D /* libz.tbd in Frameworks */,
 				E4B3348A1BBF23F9004E2BFF /* AdSupport.framework in Frameworks */,
 				3BA9A0231D2C208C00BD418C /* Fuzi.framework in Frameworks */,
@@ -5994,8 +5991,8 @@
 		E689C6FF1E0C716F008BAADB /* Entitlements */ = {
 			isa = PBXGroup;
 			children = (
+				CAC6EF042763AD3A00710720 /* EcosiaBeta.entitlements */,
 				CA051BC62539A1C50096D30F /* Ecosia.entitlements */,
-				CAC3CD28260248B6000FFAF4 /* EcosiaBeta.entitlements */,
 				E6F738761EB7A97500B50143 /* FirefoxApplication.entitlements */,
 				E6F738751EB7A97100B50143 /* FirefoxBetaApplication.entitlements */,
 				E6F738741EB7A8D300B50143 /* FennecApplication.entitlements */,
@@ -6210,7 +6207,7 @@
 				6025B110267B6EE100F59F6B /* CredentialWelcomeViewController.swift */,
 				F80DF7402703BC8E00E4C37D /* CredentialPasscodeRequirementViewController.swift */,
 				F8324A0E2649A188007E4BFA /* Info.plist */,
-				CA25488A2760E7BD009C2DD2 /* CredentialProviderEcosiaDebug.entitlements */,
+				CA25488A2760E7BD009C2DD2 /* CredentialProviderEcosiaBeta.entitlements */,
 				CA2548882760E589009C2DD2 /* CredentialProviderEcosia.entitlements */,
 				F8324A0F2649A188007E4BFA /* CredentialProvider.entitlements */,
 				437475CB26DD1E5B00DF2822 /* CredentialProviderFirefox.entitlements */,
@@ -6958,7 +6955,7 @@
 				DefaultBuildSystemTypeForWorkspace = Latest;
 				LastSwiftMigration = 0700;
 				LastSwiftUpdateCheck = 1240;
-				LastUpgradeCheck = 1020;
+				LastUpgradeCheck = 1310;
 				ORGANIZATIONNAME = Mozilla;
 				TargetAttributes = {
 					047F9B2624E1FE1C00CD7DF7 = {
@@ -8197,7 +8194,6 @@
 				43AB6FA625DC53D30016B015 /* LibraryShortcutView.swift in Sources */,
 				2F44FC721A9E840300FD20CC /* SettingsNavigationController.swift in Sources */,
 				23F2C36A244E463C00FA4496 /* TabTrayV2ViewModel.swift in Sources */,
-				43AB6FA725DC53D30016B015 /* PanelDataObservers.swift in Sources */,
 				E69E06BA1C76173D00D0F926 /* RequirePasscodeIntervalViewController.swift in Sources */,
 				D0E89A2920910917001CE5C7 /* DownloadsPanel.swift in Sources */,
 				DA3A4FE9254A781A00C4A9C9 /* TabTableViewHeader.swift in Sources */,
@@ -10865,7 +10861,7 @@
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CODE_SIGN_ENTITLEMENTS = "";
-				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
@@ -11168,7 +11164,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MARKETING_VERSION = 5.4.0;
+				MARKETING_VERSION = 6.0.0;
 			};
 			name = EcosiaDebug;
 		};
@@ -11181,6 +11177,7 @@
 				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				EXCLUDED_SOURCE_FILE_NAMES = CredentialProvider.appex;
 				INFOPLIST_FILE = Client/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -11244,7 +11241,7 @@
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CODE_SIGN_ENTITLEMENTS = "";
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
@@ -11467,7 +11464,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MARKETING_VERSION = 5.4.0;
+				MARKETING_VERSION = 6.0.0;
 			};
 			name = EcosiaBeta;
 		};
@@ -11475,13 +11472,16 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon_Ecosia;
+				CODE_SIGN_ENTITLEMENTS = Client/Entitlements/EcosiaBeta.entitlements;
 				CURRENT_PROJECT_VERSION = "${inherited}";
 				DEVELOPMENT_TEAM = 33YMRSYD2L;
+				EXCLUDED_SOURCE_FILE_NAMES = CredentialProvider.appex;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				INFOPLIST_FILE = Client/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = "${inherited}";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(MOZ_BUNDLE_ID)";
 				PRODUCT_MODULE_NAME = Client;
@@ -11752,7 +11752,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MARKETING_VERSION = 5.4.0;
+				MARKETING_VERSION = 6.0.0;
 			};
 			name = EcosiaAppCenter;
 		};
@@ -11767,6 +11767,7 @@
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				INFOPLIST_FILE = Client/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = "${inherited}";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(MOZ_BUNDLE_ID)";
 				PRODUCT_MODULE_NAME = Client;
@@ -12010,8 +12011,14 @@
 		CA7E7B5D27591520005D1E47 /* EcosiaDebug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = CredentialProvider/CredentialProviderEcosiaDebug.entitlements;
+				CODE_SIGN_ENTITLEMENTS = CredentialProvider/CredentialProviderEcosia.entitlements;
 				DEVELOPMENT_TEAM = 33YMRSYD2L;
+				INFOPLIST_FILE = CredentialProvider/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ecosia.ecosiaapp.$(PRODUCT_NAME)";
 				PRODUCT_NAME = CredentialProvider;
 				PROVISIONING_PROFILE_SPECIFIER = "Develop Credential Provider";
@@ -12021,10 +12028,18 @@
 		CA7E7B5E27591520005D1E47 /* EcosiaBeta */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = CredentialProvider/CredentialProviderEcosia.entitlements;
+				CODE_SIGN_ENTITLEMENTS = CredentialProvider/CredentialProviderEcosiaBeta.entitlements;
+				COPY_PHASE_STRIP = NO;
 				DEVELOPMENT_TEAM = 33YMRSYD2L;
+				INFOPLIST_FILE = CredentialProvider/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ecosia.ecosiaapp.firefox.$(PRODUCT_NAME)";
 				PRODUCT_NAME = CredentialProvider;
+				PROVISIONING_PROFILE_SPECIFIER = "Ecosia Beta Credential Provider AppStore";
 			};
 			name = EcosiaBeta;
 		};
@@ -12033,6 +12048,12 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = CredentialProvider/CredentialProviderEcosia.entitlements;
 				DEVELOPMENT_TEAM = 33YMRSYD2L;
+				INFOPLIST_FILE = CredentialProvider/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ecosia.ecosiaapp.firefox.$(PRODUCT_NAME)";
 				PRODUCT_NAME = CredentialProvider;
 			};
@@ -12043,6 +12064,12 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = CredentialProvider/CredentialProviderEcosia.entitlements;
 				DEVELOPMENT_TEAM = 33YMRSYD2L;
+				INFOPLIST_FILE = CredentialProvider/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ecosia.ecosiaapp.CredentialProvider;
 				PRODUCT_NAME = CredentialProvider;
 			};
@@ -12078,7 +12105,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MARKETING_VERSION = 5.4.0;
+				MARKETING_VERSION = 6.0.0;
 			};
 			name = Ecosia;
 		};
@@ -12093,6 +12120,7 @@
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				INFOPLIST_FILE = Client/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = "${inherited}";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(MOZ_BUNDLE_ID)";
 				PRODUCT_MODULE_NAME = Client;
@@ -12381,7 +12409,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MARKETING_VERSION = 5.4.0;
+				MARKETING_VERSION = 6.0.0;
 			};
 			name = Firefox;
 		};
@@ -12395,6 +12423,7 @@
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				INFOPLIST_FILE = Client/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = "${inherited}";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(MOZ_BUNDLE_ID)";
 				PRODUCT_MODULE_NAME = Client;
@@ -12689,7 +12718,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MARKETING_VERSION = 5.4.0;
+				MARKETING_VERSION = 6.0.0;
 			};
 			name = Fennec_Enterprise;
 		};
@@ -12703,6 +12732,7 @@
 				DEVELOPMENT_TEAM = "";
 				EXCLUDED_SOURCE_FILE_NAMES = CredentialProvider.appex;
 				INFOPLIST_FILE = Client/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -12739,7 +12769,7 @@
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CODE_SIGN_ENTITLEMENTS = "";
-				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
@@ -12967,7 +12997,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MARKETING_VERSION = 5.4.0;
+				MARKETING_VERSION = 6.0.0;
 			};
 			name = FirefoxBeta;
 		};
@@ -12980,6 +13010,7 @@
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = 43AQ936H96;
 				INFOPLIST_FILE = Client/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -13034,7 +13065,7 @@
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CODE_SIGN_ENTITLEMENTS = "";
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
@@ -13121,7 +13152,7 @@
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CODE_SIGN_ENTITLEMENTS = "";
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
@@ -13477,7 +13508,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MARKETING_VERSION = 5.4.0;
+				MARKETING_VERSION = 6.0.0;
 			};
 			name = Fennec;
 		};
@@ -13489,6 +13520,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 43AQ936H96;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
