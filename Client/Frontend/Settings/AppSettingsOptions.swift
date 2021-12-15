@@ -649,14 +649,14 @@ final class ToggleReferrals: HiddenSetting {
     }
 
     override var status: NSAttributedString? {
-        let isOn = Goodall.shared.variant(for: .referrals) == "test"
+        let isOn = Referrals.isEnabled
         return NSAttributedString(string: isOn ? "On" : "Off", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
     }
 
 
     override func onClick(_ navigationController: UINavigationController?) {
 
-        let isOn = Goodall.shared.variant(for: .referrals) == "test"
+        let isOn = Referrals.isEnabled
         Goodall.shared.turn(.referrals, on: !isOn)
 
         let alertTitle = "Referrals toggled to: "
