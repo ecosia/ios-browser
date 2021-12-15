@@ -584,7 +584,7 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
                 let appendButton = UIButton(type: .roundedRect)
                 appendButton.setImage(UIImage(named: SearchViewControllerUX.SearchAppendImage)?.withRenderingMode(.alwaysTemplate), for: .normal)
                 appendButton.addTarget(self, action: #selector(append(_ :)), for: .touchUpInside)
-                appendButton.tintColor = ThemeManager.instance.currentName == .dark ? UIColor.white : UIColor.black
+                appendButton.tintColor = ThemeManager.instance.currentName == .dark ? UIColor.Photon.Grey30 : UIColor.Photon.Grey50
                 appendButton.sizeToFit()
                 oneLineCell.accessoryView = indexPath.row > 0 ? appendButton : nil
                 cell = oneLineCell

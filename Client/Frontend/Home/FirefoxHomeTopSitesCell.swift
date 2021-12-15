@@ -15,7 +15,8 @@ private struct TopSiteCellUX {
     static let OverlayColor = UIColor(white: 0.0, alpha: 0.25)
     static let IconCornerRadius: CGFloat = 4
     static let BackgroundSize = CGSize(width: 60, height: 60)
-    static let IconSize: CGFloat = 48
+    static let IconBackgroundSize: CGFloat = 48
+    static let IconSize: CGFloat = 28
     static let BorderColor = UIColor.Photon.Grey30
     static let BorderWidth: CGFloat = 0.5
     static let PinIconSize: CGFloat = 12
@@ -42,6 +43,7 @@ class TopSiteItemCell: UICollectionViewCell, Themeable {
     lazy var pinImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage.templateImageNamed("pin_small")
+        imageView.tintColor = UIColor.theme.homePanel.topSitePin
         return imageView
     }()
 
@@ -61,7 +63,7 @@ class TopSiteItemCell: UICollectionViewCell, Themeable {
         let view = UIView()
         view.layer.borderWidth = TopSiteCellUX.BorderWidth
         view.layer.borderColor = TopSiteCellUX.BorderColor.cgColor
-        view.layer.cornerRadius = TopSiteCellUX.IconSize / 2.0
+        view.layer.cornerRadius = TopSiteCellUX.IconBackgroundSize / 2.0
         view.clipsToBounds = true
         view.layer.masksToBounds = true
         return view
@@ -113,7 +115,7 @@ class TopSiteItemCell: UICollectionViewCell, Themeable {
         }
 
         faviconBG.snp.makeConstraints { make in
-            make.size.equalTo(TopSiteCellUX.IconSize)
+            make.size.equalTo(TopSiteCellUX.IconBackgroundSize)
             make.top.equalTo(contentView).offset(TopSiteCellUX.FavIconInset)
             make.centerX.equalTo(contentView)
         }
@@ -159,7 +161,7 @@ class TopSiteItemCell: UICollectionViewCell, Themeable {
         if let _ = site as? PinnedSite {
             titleWrapper.addSubview(pinImageView)
             pinImageView.snp.makeConstraints { make in
-                make.right.equalTo(self.imageView.snp.left).offset(-TopSiteCellUX.PinIconSize/2.0)
+                make.right.equalTo(self.faviconBG.snp.left).offset(-4)
                 make.size.equalTo(TopSiteCellUX.PinIconSize)
                 make.centerY.equalTo(self.imageView.snp.centerY)
             }
@@ -195,6 +197,7 @@ class TopSiteItemCell: UICollectionViewCell, Themeable {
         pinImageView.tintColor = UIColor.theme.homePanel.topSitePin
         faviconBG.backgroundColor = UIColor.theme.homePanel.shortcutBackground
         faviconBG.layer.borderColor = TopSiteCellUX.BorderColor.cgColor
+        faviconBG.layer.borderWidth = ThemeManager.instance.current.isDark ? 0 : TopSiteCellUX.BorderWidth
         faviconBG.layer.shadowColor = UIColor.theme.homePanel.shortcutShadowColor
         faviconBG.layer.shadowOpacity = UIColor.theme.homePanel.shortcutShadowOpacity
         selectedOverlay.backgroundColor = TopSiteCellUX.OverlayColor

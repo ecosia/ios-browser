@@ -16,7 +16,7 @@ private struct URLBarViewUX {
     static let LocationContentOffset: CGFloat = 8
     static let TextFieldCornerRadius: CGFloat = 10
     static let TextFieldBorderWidth: CGFloat = 0
-    static let TextFieldBorderWidthSelected: CGFloat = 4
+    static let TextFieldBorderWidthSelected: CGFloat = 3
     static let ProgressBarHeight: CGFloat = 3
     static let SearchIconImageWidth: CGFloat = 30
     static let TabsButtonRotationOffset: CGFloat = 1.5
@@ -188,11 +188,14 @@ class URLBarView: UIView {
 
         set(newURL) {
             locationView.url = newURL
+            /* Ecosia: alway show line independent of home
             if let url = newURL, InternalURL(url)?.isAboutHomeURL ?? false {
                 line.isHidden = true
             } else {
                 line.isHidden = false
             }
+            */
+
             /* Ecosia: update visibility of reload/multi-state button */
             if !inOverlayMode {
                 setNeedsUpdateConstraints()
@@ -584,7 +587,6 @@ class URLBarView: UIView {
         locationContainer.layer.borderColor = borderColor.cgColor
 
         if inOverlayMode {
-            line.isHidden = inOverlayMode
             // Make the editable text field span the entire URL bar, covering the lock and reader icons.
             locationTextField?.snp.remakeConstraints { make in
                 make.edges.equalTo(self.locationView)
@@ -595,6 +597,7 @@ class URLBarView: UIView {
                 make.edges.equalTo(self.locationView.urlTextField)
             }
         }
+        line.isHidden = inOverlayMode
     }
 
     func updateViewsForOverlayModeAndToolbarChanges() {

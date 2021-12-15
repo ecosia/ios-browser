@@ -117,7 +117,7 @@ fileprivate class DarkHomePanelColor: HomePanelColor {
     override var activityStreamCellDescription: UIColor { return UIColor.Photon.LightGrey50 }
 
     override var topSiteDomain: UIColor { return UIColor.Photon.LightGrey05 }
-    override var topSitePin: UIColor { return UIColor.Photon.LightGrey05 }
+    override var topSitePin: UIColor { return UIColor.theme.ecosia.primaryBrand }
     override var topSitesBackground: UIColor { return UIColor.Photon.DarkGrey60 }
 
     override var shortcutBackground: UIColor { return UIColor.Photon.DarkGrey30 }
