@@ -12,11 +12,9 @@ protocol TabToolbarProtocol: AnyObject {
     var tabsButton: TabsButton { get }
     var appMenuButton: ToolbarButton { get }
     var bookmarksButton: ToolbarButton { get }
-    var homeButton: ToolbarButton { get }
     var forwardButton: ToolbarButton { get }
     var backButton: ToolbarButton { get }
     var multiStateButton: ToolbarButton { get }
-    var ecosiaButton: ToolbarButton { get }
     var actionButtons: [Themeable & UIButton] { get }
 
     func updateBackStatus(_ canGoBack: Bool)
@@ -119,10 +117,6 @@ open class TabToolbarHelper: NSObject {
 
         toolbar.multiStateButton.addTarget(self, action: #selector(didPressMultiStateButton), for: .touchUpInside)
 
-        toolbar.ecosiaButton.setImage(UIImage(named: "ecosiaIconToolbar"), for: .normal)
-        toolbar.ecosiaButton.accessibilityLabel = String.localized(.exploreEcosia)
-        toolbar.ecosiaButton.addTarget(self, action: #selector(didPressEcosiaButton), for: .touchUpInside)
-
         toolbar.tabsButton.addTarget(self, action: #selector(didClickTabs), for: .touchUpInside)
         let longPressGestureTabsButton = UILongPressGestureRecognizer(target: self, action: #selector(didLongPressTabs))
         toolbar.tabsButton.addGestureRecognizer(longPressGestureTabsButton)
@@ -138,11 +132,13 @@ open class TabToolbarHelper: NSObject {
         toolbar.appMenuButton.addTarget(self, action: #selector(didClickMenu), for: .touchUpInside)
         toolbar.appMenuButton.accessibilityIdentifier = "TabToolbar.menuButton"
 
+        /* Ecosia: hide home button
         toolbar.homeButton.contentMode = .center
         toolbar.homeButton.setImage(UIImage.templateImageNamed("menu-Home"), for: .normal)
         toolbar.homeButton.accessibilityLabel = Strings.AppMenuButtonAccessibilityLabel
         toolbar.homeButton.addTarget(self, action: #selector(didClickHome), for: .touchUpInside)
         toolbar.homeButton.accessibilityIdentifier = "TabToolbar.homeButton"
+        */
 
         toolbar.bookmarksButton.contentMode = .center
         toolbar.bookmarksButton.setImage(UIImage.templateImageNamed("menu-panel-Bookmarks"), for: .normal)
@@ -213,10 +209,6 @@ open class TabToolbarHelper: NSObject {
         }
     }
     
-    func didPressEcosiaButton() {
-        toolbar.tabToolbarDelegate?.tabToolbarDidPressEcosia(toolbar, button: toolbar.ecosiaButton)
-    }
-
     func didLongPressMultiStateButton(_ recognizer: UILongPressGestureRecognizer) {
         switch middleButtonState {
         case .search:

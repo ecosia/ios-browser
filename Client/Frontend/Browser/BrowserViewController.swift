@@ -1030,9 +1030,7 @@ class BrowserViewController: UIViewController {
             }
         }
         navigationToolbar.updateMiddleButtonState(state)
-        if toolbar != nil {
-            urlBar.locationView.reloadButton.reloadButtonState = isLoading ? .stop : .reload
-        }
+        urlBar.locationView.reloadButton.reloadButtonState = isLoading ? .stop : .reload
         // Ecosia: currentMiddleButtonState = state
     }
 

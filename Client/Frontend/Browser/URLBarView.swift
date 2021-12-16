@@ -79,8 +79,8 @@ class URLBarView: UIView {
         }
     }
 
-    var toolbarIsShowing = false
-    var topTabsIsShowing = false
+    var toolbarIsShowing = false // true for iPad and iPhone Landscape
+    var topTabsIsShowing = false // true for iPad
 
     var locationTextField: ToolbarTextField?
 
@@ -166,12 +166,9 @@ class URLBarView: UIView {
     
     var appMenuButton = ToolbarButton()
     var bookmarksButton = ToolbarButton()
-    var homeButton = ToolbarButton()
-    var addNewTabButton = AddNewTabButton()
+    var addNewTabButton = AddNewTabButton(style: .plain)
     var forwardButton = ToolbarButton()
     var multiStateButton = ToolbarButton()
-    var ecosiaButton = ToolbarButton()
-
 
     var backButton: ToolbarButton = {
         let backButton = ToolbarButton()
@@ -179,7 +176,7 @@ class URLBarView: UIView {
         return backButton
     }()
 
-    lazy var actionButtons: [Themeable & UIButton] = [self.ecosiaButton, self.tabsButton, self.homeButton, self.bookmarksButton, self.appMenuButton, self.addNewTabButton,  self.forwardButton, self.backButton, self.multiStateButton]
+    lazy var actionButtons: [Themeable & UIButton] = [self.tabsButton, self.bookmarksButton, self.appMenuButton, self.addNewTabButton,  self.forwardButton, self.backButton, self.multiStateButton]
 
     var currentURL: URL? {
         get {
@@ -232,10 +229,9 @@ class URLBarView: UIView {
         locationContainer.addSubview(locationView)
         
         [scrollToTopButton, line, tabsButton, progressBar, cancelButton, showQRScannerButton,
-         homeButton, bookmarksButton, appMenuButton, addNewTabButton, forwardButton, backButton, multiStateButton, locationContainer].forEach {
+         bookmarksButton, appMenuButton, addNewTabButton, forwardButton, backButton, multiStateButton, locationContainer].forEach {
             addSubview($0)
         }
-		addSubview(ecosiaButton)		
 
         /* Ecosia: remove search icon
         addSubview(searchIconImageView)
@@ -302,17 +298,13 @@ class URLBarView: UIView {
         }
         */
 
-        ecosiaButton.snp.makeConstraints { make in
-            make.leading.equalTo(self.forwardButton.snp.trailing)
-            make.centerY.equalTo(self)
-            make.size.equalTo(URLBarViewUX.ButtonHeight).priority(.high)
-        }
-
+        /* Ecosia: deactivate home button icon
         homeButton.snp.makeConstraints { make in
             make.trailing.equalTo(self.bookmarksButton.snp.leading)
             make.centerY.equalTo(self)
             make.size.equalTo(URLBarViewUX.ButtonHeight)
         }
+        */
 
         bookmarksButton.snp.makeConstraints { make in
             make.trailing.equalTo(self.appMenuButton.snp.leading)
@@ -380,8 +372,12 @@ class URLBarView: UIView {
             self.locationContainer.snp.remakeConstraints { make in
                 if self.toolbarIsShowing {
                     // If we are showing a toolbar, show the text field next to the forward button
-                    make.leading.equalTo(self.ecosiaButton.snp.trailing).offset(URLBarViewUX.Padding)
-                    make.trailing.equalTo(self.multiStateButton.snp.leading).offset(-URLBarViewUX.Padding)
+                    make.leading.equalTo(self.forwardButton.snp.trailing).offset(URLBarViewUX.Padding)
+                    if topTabsIsShowing {
+                        make.trailing.equalTo(self.bookmarksButton.snp.leading).offset(-URLBarViewUX.Padding)
+                    } else {
+                        make.trailing.equalTo(self.addNewTabButton.snp.leading).offset(-URLBarViewUX.Padding)
+                    }
                 } else {
                     // Otherwise, left align the location view
                     let rightPadding = toolbarIsShowing ? URLBarViewUX.ButtonHeight : 16
@@ -559,13 +555,11 @@ class URLBarView: UIView {
         progressBar.isHidden = false
         addNewTabButton.isHidden = !toolbarIsShowing || topTabsIsShowing
         appMenuButton.isHidden = !toolbarIsShowing
-        homeButton.isHidden = !toolbarIsShowing || !topTabsIsShowing
         bookmarksButton.isHidden = !toolbarIsShowing || !topTabsIsShowing
         forwardButton.isHidden = !toolbarIsShowing
         backButton.isHidden = !toolbarIsShowing
         tabsButton.isHidden = !toolbarIsShowing || topTabsIsShowing
-        ecosiaButton.isHidden = !toolbarIsShowing
-        multiStateButton.isHidden = !toolbarIsShowing
+        multiStateButton.isHidden = true // Ecosia: always hide multi state button
     }
 
     func transitionToOverlay(_ didCancel: Bool = false) {
@@ -575,13 +569,11 @@ class URLBarView: UIView {
         progressBar.alpha = inOverlayMode || didCancel ? 0 : 1
         tabsButton.alpha = inOverlayMode ? 0 : 1
         appMenuButton.alpha = inOverlayMode ? 0 : 1
-        homeButton.alpha = inOverlayMode ? 0 : 1
         bookmarksButton.alpha = inOverlayMode ? 0 : 1
         addNewTabButton.alpha = inOverlayMode ? 0 : 1
         forwardButton.alpha = inOverlayMode ? 0 : 1
         backButton.alpha = inOverlayMode ? 0 : 1
-        ecosiaButton.alpha = inOverlayMode ? 0 : 1
-        multiStateButton.alpha = inOverlayMode ? 0 : 1
+        multiStateButton.alpha = 0 // Ecosia: always hide multi state button
 
         let borderColor = inOverlayMode ? locationActiveBorderColor : locationBorderColor
         locationContainer.layer.borderColor = borderColor.cgColor
@@ -613,8 +605,7 @@ class URLBarView: UIView {
         forwardButton.isHidden = !toolbarIsShowing || inOverlayMode
         backButton.isHidden = !toolbarIsShowing || inOverlayMode
         tabsButton.isHidden = !toolbarIsShowing || inOverlayMode || topTabsIsShowing
-        ecosiaButton.isHidden = !toolbarIsShowing || inOverlayMode
-        multiStateButton.isHidden = !toolbarIsShowing || inOverlayMode
+        multiStateButton.isHidden = true // Ecosia: always multi state button
 
         // badge isHidden is tied to private mode on/off, use alpha to hide in this case
         [privateModeBadge, appMenuBadge, warningMenuBadge].forEach {
@@ -707,7 +698,7 @@ extension URLBarView: TabToolbarProtocol {
                 return [locationTextField, cancelButton]
             } else {
                 if toolbarIsShowing {
-                    return [ecosiaButton, backButton, forwardButton, multiStateButton, locationView, tabsButton, homeButton, bookmarksButton, appMenuButton, addNewTabButton, progressBar]
+                    return [backButton, forwardButton, multiStateButton, locationView, tabsButton, bookmarksButton, appMenuButton, addNewTabButton, progressBar]
                 } else {
                     return [locationView, progressBar]
                 }
