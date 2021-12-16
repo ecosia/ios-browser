@@ -271,7 +271,7 @@ final class TreesCell: UICollectionViewCell, Themeable {
 
     private func addConstraints() {
         // Constraints for stack views to their backgrounds
-        background.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16).isActive = true
+        background.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 32).isActive = true
         let bottom = background.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16)
         bottom.priority = .defaultHigh
         bottom.isActive = true

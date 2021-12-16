@@ -49,7 +49,7 @@ class ASHeaderView: UICollectionReusableView {
 
     var titleInsets: CGFloat {
         get {
-            return UIScreen.main.bounds.size.width == self.frame.size.width && UIDevice.current.userInterfaceIdiom == .pad ? FirefoxHomeHeaderViewUX.Insets : FirefoxHomeUX.MinimumInsets
+            return max((bounds.size.width - 520) / 2.0, FirefoxHomeUX.MinimumInsets)
         }
     }
 

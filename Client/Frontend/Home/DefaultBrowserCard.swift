@@ -136,7 +136,7 @@ class DefaultBrowserCard: UICollectionViewCell, Themeable {
         descriptionText.textColor = UIColor.theme.ecosia.secondaryText
         closeButton.imageView?.tintColor = UIColor.theme.ecosia.highContrastText
         backgroundColor = UIColor.theme.ecosia.primaryBackground
-        settingsButton.backgroundColor = UIColor.theme.ecosia.primaryButton
+        settingsButton.backgroundColor = UIColor.theme.ecosia.primaryBrand
         applyShadow()
     }
 

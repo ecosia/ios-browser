@@ -17,7 +17,7 @@ private let log = Logger.browserLogger
 struct FirefoxHomeUX {
     static let highlightCellHeight: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 250 : 200
     static let sectionInsetsForSizeClass = UXSizeClasses(compact: 0, regular: 101, other: 16)
-    static let numberOfItemsPerRowForSizeClassIpad = UXSizeClasses(compact: 3, regular: 4, other: 2)
+    static let numberOfItemsPerRowForSizeClassIpad = UXSizeClasses(compact: 4, regular: 6, other: 2)
     static let spacingBetweenSections: CGFloat = 24
     static let SectionInsetsForIpad: CGFloat = 101
     static let MinimumInsets: CGFloat = 16
@@ -609,7 +609,22 @@ extension FirefoxHomeViewController {
         func cellSize(for traits: UITraitCollection, frameWidth: CGFloat) -> CGSize {
             let height = cellHeight(traits, width: frameWidth)
             let inset = sectionInsets(traits, frameWidth: frameWidth) * 2
-            return CGSize(width: frameWidth - inset, height: height)
+            let width = maxWidth(for: traits, frameWidth: (frameWidth - inset))
+            return CGSize(width: width, height: height)
+        }
+
+        func maxWidth(for traits: UITraitCollection, frameWidth: CGFloat) -> CGFloat {
+            var width = frameWidth
+            if traits.userInterfaceIdiom == .pad {
+                let maxWidth: CGFloat = UIApplication.shared.statusBarOrientation.isPortrait ? 375 : 520
+                switch self {
+                case .logo, .promo, .search, .libraryShortcuts:
+                    width = min(375, width)
+                default:
+                    width = min(520, width)
+                }
+            }
+            return width
         }
 
         var headerView: UIView? {
@@ -654,6 +669,7 @@ extension FirefoxHomeViewController: UICollectionViewDelegateFlowLayout {
         let title = Section(indexPath.section).title
         view.title = title
         view.titleLabel.accessibilityIdentifier = "topSitesTitle"
+        view.remakeConstraint(type: .normal)
         return view
     }
 
@@ -701,7 +717,12 @@ extension FirefoxHomeViewController: UICollectionViewDelegateFlowLayout {
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        let insets = Section(section).sectionInsets(self.traitCollection, frameWidth: self.view.frame.width)
+        var insets = Section(section).sectionInsets(self.traitCollection, frameWidth: self.view.frame.width)
+
+//        if traitCollection.userInterfaceIdiom == .pad {
+//            let maxWidth = Section(section).maxWidth(for: traitCollection, frameWidth: view.frame.width)
+//            insets = max(insets, (view.frame.width - maxWidth)/2.0)
+//        }
         return UIEdgeInsets(top: 0, left: insets, bottom: 0, right: insets)
     }
 
@@ -751,7 +772,7 @@ extension FirefoxHomeViewController {
         case .impact, .logo, .search, .emptySpace:
             return 1
         case .libraryShortcuts:
-            return UIDevice.current.userInterfaceIdiom == .pad ? 0 : 1
+            return 1
         case .promo:
             return showPromo ? 1 : 0
         case .topSites:
@@ -892,9 +913,7 @@ extension FirefoxHomeViewController: DataObserverDelegate {
 
             self.topSitesManager.currentTraits = self.view.traitCollection
 
-            // Ecosia TODO: check
-            //let numRows = self.topSitesManager.numberOfRows
-            let numRows = 1
+            let numRows = self.traitCollection.userInterfaceIdiom == .pad ? 2 : 1
 
             let maxItems = Int(numRows) * self.topSitesManager.numberOfHorizontalItems()
 

@@ -211,7 +211,7 @@ class EmptyTopsiteDecorationCell: UICollectionReusableView {
 
     lazy private var emptyBG: UIView = {
         let view = UIView()
-        view.layer.cornerRadius = TopSiteCellUX.CellCornerRadius
+        view.layer.cornerRadius = TopSiteCellUX.IconBackgroundSize/2.0
         view.layer.borderWidth = TopSiteCellUX.BorderWidth
         view.layer.borderColor = TopSiteCellUX.BorderColor.cgColor
         return view
@@ -221,8 +221,9 @@ class EmptyTopsiteDecorationCell: UICollectionReusableView {
         super.init(frame: frame)
         addSubview(emptyBG)
         emptyBG.snp.makeConstraints { make in
-            make.top.centerX.equalToSuperview()
-            make.size.equalTo(TopSiteCellUX.BackgroundSize)
+            make.size.equalTo(TopSiteCellUX.IconBackgroundSize)
+            make.top.equalTo(self).offset(TopSiteCellUX.FavIconInset)
+            make.centerX.equalTo(self)
         }
     }
 
@@ -463,18 +464,13 @@ class ASHorizontalScrollCellManager: NSObject, UICollectionViewDelegate, UIColle
         guard let traits = currentTraits else {
             return 0
         }
-        let isLandscape = UIApplication.shared.statusBarOrientation.isLandscape
-        /* Ecosia: always have 4 items in 2 rows on iPhone */
+        /* Ecosia: always have 4 items in 1 row on iPhone */
         if UIDevice.current.userInterfaceIdiom == .phone {
             return 4
+        } else {
+            let numItems = Int(FirefoxHomeUX.numberOfItemsPerRowForSizeClassIpad[traits.horizontalSizeClass])
+            return numItems
         }
-        // On iPad
-        // The number of items in a row is equal to the number of highlights in a row * 2
-        var numItems = Int(FirefoxHomeUX.numberOfItemsPerRowForSizeClassIpad[traits.horizontalSizeClass])
-        if UIApplication.shared.statusBarOrientation.isPortrait || (traits.horizontalSizeClass == .compact && isLandscape) {
-            numItems = numItems - 1
-        }
-        return numItems * 2
     }
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {
