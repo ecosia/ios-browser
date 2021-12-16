@@ -25,8 +25,8 @@ protocol LibraryPanelDelegate: AnyObject {
 enum LibraryPanelType: Int, CaseIterable {
     case bookmarks = 0
     case history = 1
-    case downloads = 2
-    case readingList = 3
+    case readingList = 2
+    case downloads = 3
     
     var title: String {
         switch self {
@@ -102,20 +102,20 @@ class LibraryPanels {
 
         LibraryPanelDescriptor(
             makeViewController: { profile in
-                return DownloadsPanel(profile: profile)
-            },
-            profile: profile,
-            imageName: "Downloads",
-            accessibilityLabel: .LibraryPanelDownloadsAccessibilityLabel,
-            accessibilityIdentifier: "LibraryPanels.Downloads"),
-
-        LibraryPanelDescriptor(
-            makeViewController: { profile in
                 return ReadingListPanel(profile: profile)
             },
             profile: profile,
             imageName: "ReadingList",
             accessibilityLabel: .LibraryPanelReadingListAccessibilityLabel,
-            accessibilityIdentifier: "LibraryPanels.ReadingList")
+            accessibilityIdentifier: "LibraryPanels.ReadingList"),
+        // Ecosia: change sequence
+        LibraryPanelDescriptor(
+            makeViewController: { profile in
+                return DownloadsPanel(profile: profile)
+            },
+            profile: profile,
+            imageName: "Downloads",
+            accessibilityLabel: .LibraryPanelDownloadsAccessibilityLabel,
+            accessibilityIdentifier: "LibraryPanels.Downloads")
     ]
 }

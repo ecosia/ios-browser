@@ -247,10 +247,10 @@ class LibraryViewController: UIViewController {
             selectedPanel = .history
             TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .libraryPanel, value: .historyPanel)
         case 2:
-            selectedPanel = .downloads
+            selectedPanel = .readingList
             TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .libraryPanel, value: .downloadsPanel)
         case 3:
-            selectedPanel = .readingList
+            selectedPanel = .downloads
             TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .libraryPanel, value: .readingListPanel)
         default:
             return
