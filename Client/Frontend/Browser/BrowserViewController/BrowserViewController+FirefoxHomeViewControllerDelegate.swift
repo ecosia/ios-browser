@@ -40,6 +40,7 @@ extension BrowserViewController: FirefoxHomeViewControllerDelegate {
     }
 
     func presentEcosiaWorld(_ completion: (() -> Void)? = nil) {
+        ecosiaNavigation.popToRootViewController(animated: false)
         present(ecosiaNavigation, animated: true, completion: completion)
     }
 }
