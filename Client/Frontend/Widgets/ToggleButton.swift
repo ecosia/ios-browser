@@ -12,7 +12,7 @@ private struct UX {
     static let ShowDuration: TimeInterval = 0.4
     static let HideDuration: TimeInterval = 0.2
 
-    static let Insets: UIEdgeInsets = .init(top: 6, left: 0, bottom: 6, right: 0)
+    static let Insets: UIEdgeInsets = .init(top: 6, left: -4, bottom: 6, right: -4)
 }
 
 class ToggleButton: UIButton, Themeable {

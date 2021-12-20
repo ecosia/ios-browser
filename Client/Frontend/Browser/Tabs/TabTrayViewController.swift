@@ -23,8 +23,7 @@ class TabTrayViewController: UIViewController {
     
     // Buttons & Menus
     lazy var deleteButton: UIBarButtonItem = {
-        let button = UIBarButtonItem(image: UIImage.templateImageNamed("action_delete"),
-                                     style: .plain,
+        let button = UIBarButtonItem(title: .localized(.closeAll), style: .plain,
                                      target: self,
                                      action: #selector(didTapDeleteTabs(_:)))
         button.accessibilityIdentifier = "closeAllTabsButtonTabTray"
@@ -35,6 +34,13 @@ class TabTrayViewController: UIViewController {
         let button = UIBarButtonItem(customView: NewTabButton(target: self, selector: #selector(didTapAddTab(_:))))
         button.accessibilityIdentifier = "newTabButtonTabTray"
         return button
+    }()
+
+    lazy var maskButton = PrivateModeButton()
+    lazy var maskButtonItem: UIBarButtonItem  = {
+        maskButton.addTarget(self, action: #selector(togglePrivateMode), for: .primaryActionTriggered)
+        let item = UIBarButtonItem(customView: maskButton)
+        return item
     }()
 
     lazy var doneButton: UIBarButtonItem = {
@@ -90,7 +96,7 @@ class TabTrayViewController: UIViewController {
     }()
 
     lazy var bottomToolbarItems: [UIBarButtonItem] = {
-        return [deleteButton, flexibleSpace, newTabButton]
+        return [maskButtonItem, flexibleSpace, newTabButton, flexibleSpace, deleteButton]
     }()
 
     lazy var bottomToolbarItemsForSync: [UIBarButtonItem] = {
@@ -123,6 +129,7 @@ class TabTrayViewController: UIViewController {
                                           // Ecosia: remove sync: UIImage(named: "synced_devices")!])
     }()
 
+    /* Ecosia: hide navigation Toolbar
     // Toolbars
     lazy var navigationToolbar: UIToolbar = {
         let toolbar = UIToolbar()
@@ -131,6 +138,7 @@ class TabTrayViewController: UIViewController {
         toolbar.isTranslucent = false
         return toolbar
     }()
+    */
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
@@ -203,13 +211,14 @@ class TabTrayViewController: UIViewController {
     }
 
     fileprivate func iPhoneViewSetup() {
+        /* Ecosia: hide navigationToolbar
         view.addSubview(navigationToolbar)
 
         navigationToolbar.snp.makeConstraints { make in
             make.left.right.equalTo(view)
             make.top.equalTo(view.safeArea.top)
         }
-
+        */
         navigationMenu.snp.makeConstraints { make in
             make.width.lessThanOrEqualTo(343)
             make.height.equalTo(ChronologicalTabsControllerUX.navigationMenuHeight)
@@ -248,6 +257,18 @@ class TabTrayViewController: UIViewController {
         }
     }
 
+    // Ecosia: custom private mode UI
+    @objc func togglePrivateMode() {
+        guard let grid = viewModel.tabTrayView as? GridTabViewController else { return }
+        switchBetweenLocalPanels(withPrivateMode: !grid.tabDisplayManager.isPrivate)
+    }
+
+    fileprivate func updateMaskButton() {
+        guard let grid = viewModel.tabTrayView as? GridTabViewController else { return }
+        maskButton.isSelected = grid.tabDisplayManager.isPrivate
+        maskButton.applyUIMode(isPrivate: false)
+    }
+
     fileprivate func switchBetweenLocalPanels(withPrivateMode privateMode: Bool) {
         if children.first != viewModel.tabTrayView {
             hideCurrentPanel()
@@ -256,13 +277,17 @@ class TabTrayViewController: UIViewController {
         updateToolbarItems(forSyncTabs: viewModel.profile.hasSyncableAccount())
         viewModel.tabTrayView.didTogglePrivateMode(privateMode)
         updatePrivateUIState()
+
+        // Ecosia: update private button
+        maskButton.isSelected = privateMode
+        maskButton.applyUIMode(isPrivate: false)
     }
 
     fileprivate func showPanel(_ panel: UIViewController) {
         addChild(panel)
         panel.beginAppearanceTransition(true, animated: true)
         view.addSubview(panel.view)
-        view.bringSubviewToFront(navigationToolbar)
+        //Ecosia: view.bringSubviewToFront(navigationToolbar)
         let topEdgeInset = shouldUseiPadSetup ? 0 : GridTabTrayControllerUX.NavigationToolbarHeight
         panel.additionalSafeAreaInsets = UIEdgeInsets(top: topEdgeInset, left: 0, bottom: 0, right: 0)
         panel.endAppearanceTransition()
@@ -271,6 +296,7 @@ class TabTrayViewController: UIViewController {
         }
         panel.didMove(toParent: self)
         updateTitle()
+        updateMaskButton()
     }
 
     fileprivate func hideCurrentPanel() {
@@ -344,8 +370,8 @@ extension TabTrayViewController: Themeable {
      @objc func applyTheme() {
          overrideUserInterfaceStyle =  ThemeManager.instance.userInterfaceStyle
          view.backgroundColor = UIColor.theme.tabTray.background
-         navigationToolbar.barTintColor = UIColor.theme.tabTray.toolbar
-         navigationToolbar.tintColor = UIColor.theme.tabTray.toolbarButtonTint
+         //Ecosia: navigationToolbar.barTintColor = UIColor.theme.tabTray.toolbar
+         //Ecosia: navigationToolbar.tintColor = UIColor.theme.tabTray.toolbarButtonTint
          let theme = BuiltinThemeName(rawValue: ThemeManager.instance.current.name) ?? .normal
          if theme == .dark {
              navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
