@@ -4,6 +4,7 @@
 
 import Shared
 import Storage
+import SafariServices
 
 enum ButtonToastAction {
     case share
@@ -184,11 +185,25 @@ extension PhotonActionSheetProtocol {
                 success(Strings.AppMenuCopyURLConfirmMessage, .copyUrl)
             }
         }
+
+        let openInSafari = PhotonActionSheetItem(title: .localized(.openInSafari), iconString: "safari") { _,_ in
+            if let url = tab.canonicalURL?.displayURL {
+
+                if let vc = self as? UIViewController {
+                    let config = SFSafariViewController.Configuration()
+                    config.entersReaderIfAvailable = false
+                    config.barCollapsingEnabled = false
+                    let safari = SFSafariViewController(url: url, configuration: config)
+                    safari.dismissButtonStyle = .close
+                    vc.present(safari, animated: true, completion: nil)
+                }
+            }
+        }
         
         let pinAction = (isPinned ? removeFromShortcuts : addToShortcuts)
         var section1 = [pinAction]
         var section2 = [toggleDesktopSite]
-        var section3 = [sharePage]
+        var section3 = [sharePage, openInSafari]
 
         // Disable bookmarking and reading list if the URL is too long.
         if !tab.urlIsTooLong {

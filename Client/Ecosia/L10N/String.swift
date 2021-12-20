@@ -53,6 +53,7 @@ extension String {
         case noConnectionMessage = "We couldn't verify your link. Please check your internet connection and try again."
         case off = "Off"
         case onAverageItTakes = "On average it takes around 45 searches to plant a tree"
+        case openInSafari = "Open In Safari"
         case personalizedResults = "Personalized results"
         case plantTreesWhile = "Plant trees while you browse the web"
         case privacy = "Privacy"
