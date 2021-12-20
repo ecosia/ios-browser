@@ -118,7 +118,7 @@ class TabTrayViewController: UIViewController {
     }()
 
     lazy var iPhoneNavigationMenuIdentifiers: UISegmentedControl = {
-        return UISegmentedControl(items: [UIImage(named: "nav-tabcounter")!.overlayWith(image: countLabel),
+        return UISegmentedControl(items: [UIImage(systemName: "square")!.overlayWith(image: countLabel),
                                           UIImage(named: "smallPrivateMaskDark")!])
                                           // Ecosia: remove sync: UIImage(named: "synced_devices")!])
     }()
@@ -309,7 +309,7 @@ class TabTrayViewController: UIViewController {
             updateButtonTitle(notification)
         case .TabClosed:
             countLabel.text = viewModel.normalTabsCount
-            iPhoneNavigationMenuIdentifiers.setImage(UIImage(named: "nav-tabcounter")!.overlayWith(image: countLabel), forSegmentAt: 0)
+            iPhoneNavigationMenuIdentifiers.setImage(UIImage(systemName: "square")!.overlayWith(image: countLabel), forSegmentAt: 0)
         default:
             break
         }
