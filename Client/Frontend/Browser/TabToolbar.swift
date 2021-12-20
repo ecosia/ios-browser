@@ -254,8 +254,12 @@ class ToolbarButton: UIButton, Themeable {
     }
 
     override var tintColor: UIColor! {
-        didSet {
-            self.imageView?.tintColor = self.tintColor
+        set {
+            self.imageView?.tintColor = newValue
+            super.tintColor = newValue
+        }
+        get {
+            super.tintColor
         }
     }
 

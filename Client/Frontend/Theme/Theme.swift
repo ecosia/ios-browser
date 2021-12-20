@@ -77,9 +77,9 @@ class URLBarColor {
     }
 
     var readerModeButtonSelected: UIColor { return UIColor.theme.ecosia.primaryBrand }
-    var readerModeButtonUnselected: UIColor { return UIColor.Photon.Grey50 }
+    var readerModeButtonUnselected: UIColor { return UIColor.theme.ecosia.secondaryText }
     var pageOptionsSelected: UIColor { return readerModeButtonSelected }
-    var pageOptionsUnselected: UIColor { return UIColor.theme.browser.tint }
+    var pageOptionsUnselected: UIColor { return readerModeButtonUnselected }
 }
 
 class BrowserColor {
@@ -128,7 +128,7 @@ class EnhancedTrackingProtectionMenuColor {
     var background: UIColor { return UIColor.Photon.Grey12 }
     var horizontalLine: UIColor { return UIColor.Photon.Grey75A39 }
     var sectionColor: UIColor { return .white }
-    var switchAndButtonTint: UIColor { return UIColor.Photon.Blue50 }
+    var switchAndButtonTint: UIColor { return UIColor.theme.ecosia.primaryBrand }
     var subtextColor: UIColor { return UIColor.Photon.Grey75A60}
 }
 

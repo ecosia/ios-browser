@@ -139,7 +139,7 @@ class TabLocationView: UIView {
         let reloadButton = StatefulButton(frame: .zero, state: .disabled)
         reloadButton.addTarget(self, action: #selector(tapReloadButton), for: .touchUpInside)
         reloadButton.addGestureRecognizer(UILongPressGestureRecognizer(target: self, action: #selector(longPressReloadButton)))
-        reloadButton.tintColor = UIColor.Photon.Grey50
+        reloadButton.tintColor = UIColor.theme.ecosia.secondaryText
         reloadButton.imageView?.contentMode = .scaleAspectFit
         reloadButton.contentHorizontalAlignment = .left
         reloadButton.accessibilityLabel = .TabLocationReloadAccessibilityLabel
@@ -362,13 +362,13 @@ extension TabLocationView: Themeable {
         urlTextField.attributedPlaceholder = self.placeholder
         readerModeButton.selectedTintColor = UIColor.theme.urlbar.readerModeButtonSelected
         readerModeButton.unselectedTintColor = UIColor.theme.urlbar.readerModeButtonUnselected
-        
+        readerModeButton.readerModeState = readerModeButton.readerModeState // force update
         pageOptionsButton.selectedTintColor = UIColor.theme.urlbar.pageOptionsSelected
         pageOptionsButton.unselectedTintColor = UIColor.theme.urlbar.pageOptionsUnselected
         pageOptionsButton.tintColor = pageOptionsButton.unselectedTintColor
         separatorLineForPageOptions.backgroundColor = UIColor.Photon.Grey40
-
-        trackingProtectionButton.tintColor = pageOptionsButton.tintColor
+        reloadButton.tintColor = UIColor.theme.urlbar.readerModeButtonUnselected
+        trackingProtectionButton.tintColor = UIColor.theme.ecosia.primaryBrand
 
         let color = ThemeManager.instance.currentName == .dark ? UIColor(white: 0.3, alpha: 0.6): UIColor.theme.textField.background
         menuBadge.badge.tintBackground(color: color)
@@ -456,7 +456,8 @@ class ReaderModeButton: UIButton {
     override init(frame: CGRect) {
         super.init(frame: frame)
         adjustsImageWhenHighlighted = false
-        setImage(UIImage.templateImageNamed("reader"), for: .normal)
+        setImage(UIImage(systemName: "doc.plaintext"), for: .normal)
+        setImage(.init(systemName: "doc.plaintext.fill"), for: .selected)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -476,8 +477,12 @@ class ReaderModeButton: UIButton {
     }
 
     override var tintColor: UIColor! {
-        didSet {
-            self.imageView?.tintColor = self.tintColor
+        set {
+            imageView?.tintColor = newValue
+            super.tintColor = newValue
+        }
+        get {
+            super.tintColor
         }
     }
 
