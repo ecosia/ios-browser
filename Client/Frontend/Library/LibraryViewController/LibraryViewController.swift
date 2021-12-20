@@ -496,10 +496,10 @@ extension LibraryViewController: Themeable {
 
         view.backgroundColor = UIColor.theme.homePanel.panelBackground
         navigationController?.navigationBar.barTintColor = UIColor.theme.tabTray.toolbar
-        navigationController?.navigationBar.tintColor = .systemBlue
+        navigationController?.navigationBar.tintColor = UIColor.theme.ecosia.primaryBrand
         navigationController?.navigationBar.backgroundColor = UIColor.theme.tabTray.toolbar
         navigationController?.toolbar.barTintColor = UIColor.theme.tabTray.toolbar
-        navigationController?.toolbar.tintColor = .systemBlue
+        navigationController?.toolbar.tintColor = UIColor.theme.ecosia.primaryBrand
         navigationToolbar.barTintColor = UIColor.theme.tabTray.toolbar
         navigationToolbar.tintColor = UIColor.theme.tabTray.toolbarButtonTint
         navigationToolbar.isTranslucent = false
@@ -510,6 +510,10 @@ extension LibraryViewController: Themeable {
         } else {
             navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
         }
+
+        librarySegmentControl.setTitleTextAttributes([.foregroundColor: UIColor.theme.ecosia.secondaryText], for: .normal)
+        librarySegmentControl.setTitleTextAttributes([.foregroundColor: UIColor.theme.ecosia.highContrastText], for: .selected)
+
         setNeedsStatusBarAppearanceUpdate()
     }
 }

@@ -166,10 +166,8 @@ class PhotonActionSheet: UIViewController, UITableViewDelegate, UITableViewDataS
         tableView.isScrollEnabled = true
         tableView.showsVerticalScrollIndicator = false
         tableView.layer.cornerRadius = PhotonActionSheetUX.CornerRadius
-        // Don't show separators on ETP menu
-        if title != nil {
-            tableView.separatorStyle = .none
-        }
+        // Ecosia: never show separators
+        tableView.separatorStyle = .none
         tableView.separatorColor = UIColor.clear
         tableView.separatorInset = .zero
         tableView.cellLayoutMarginsFollowReadableWidth = false
@@ -295,9 +293,11 @@ class PhotonActionSheet: UIViewController, UITableViewDelegate, UITableViewDataS
         cell.configure(with: action)
         
         // For menus other than ETP, don't show top and bottom separator lines
+        /* Ecosia: don't show separators
         if (title == nil) {
             cell.bottomBorder.isHidden = !(indexPath != [tableView.numberOfSections - 1, tableView.numberOfRows(inSection: tableView.numberOfSections - 1) - 1])
         }
+        */
         return cell
     }
 

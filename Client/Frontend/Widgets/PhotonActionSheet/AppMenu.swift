@@ -9,7 +9,7 @@ extension PhotonActionSheetProtocol {
 
     func getNavigationalActions(vcDelegate: PageOptionsVC) -> [PhotonActionSheetItem] {
         guard let tab = self.tabManager.selectedTab else { return [] }
-        let openHomePage = PhotonActionSheetItem(title: Strings.AppMenuOpenHomePageTitleString, iconString: "menu-Home") { _, _ in
+        let openHomePage = PhotonActionSheetItem(title: .localized(.home), iconString: "menu-Home") { _, _ in
             let page = NewTabAccessors.getHomePage(self.profile.prefs)
             if page == .homePage, let homePageURL = HomeButtonHomePageAccessors.getHomePage(self.profile.prefs) {
                 tab.loadRequest(PrivilegedRequest(url: homePageURL) as URLRequest)
@@ -45,7 +45,7 @@ extension PhotonActionSheetProtocol {
             bvc?.showLibrary(panel: .readingList)
         }
 
-        return [bookmarks, history, downloads, readingList]
+        return [bookmarks, history, readingList, downloads]
     }
     
     // Not part of AppMenu, but left for future use. 
@@ -118,8 +118,8 @@ extension PhotonActionSheetProtocol {
         items.append(noImageMode)
 
         let nightModeEnabled = NightModeHelper.isActivated(profile.prefs)
-        let nightModeTitle = nightModeEnabled ? Strings.AppMenuTurnOffNightMode : String.localized(.forceDarkMode) //Ecosia TODO: add string to deactivate night mode
-        let nightMode = PhotonActionSheetItem(title: nightModeTitle, iconString: "menu-NightMode", isEnabled: nightModeEnabled) { _, _ in
+        let nightModeTitle = nightModeEnabled ? String.localized(.turnOffDarkMode) : String.localized(.forceDarkMode) 
+        let nightMode = PhotonActionSheetItem(title: nightModeTitle, text: .localized(.invertColors), iconString: "menu-NightMode", isEnabled: nightModeEnabled) { _, _ in
             NightModeHelper.toggle(self.profile.prefs, tabManager: self.tabManager)
 
             if nightModeEnabled {

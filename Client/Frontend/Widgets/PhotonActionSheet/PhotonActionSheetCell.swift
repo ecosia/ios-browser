@@ -155,8 +155,8 @@ class PhotonActionSheetCell: UITableViewCell {
         textStackView.alignment = .leading
         textStackView.axis = .vertical
 
-        stackView.addArrangedSubview(textStackView)
         stackView.addArrangedSubview(statusIcon)
+        stackView.addArrangedSubview(textStackView)
         contentView.addSubview(stackView)
 
         statusIcon.snp.makeConstraints { make in
