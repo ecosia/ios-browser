@@ -38,7 +38,6 @@ class EmptyPrivateTabsView: UIView {
         button.titleLabel?.font = EmptyPrivateTabsViewUX.LearnMoreFont
     }
     let iconImageView: UIImageView = .build { imageView in
-        imageView.image = UIImage(named: "tigerIncognito")
         imageView.tintColor = UIColor.Photon.Grey60
     }
 
@@ -84,5 +83,6 @@ extension EmptyPrivateTabsView: Themeable {
         backgroundColor = UIColor.theme.ecosia.primaryBackground
         titleLabel.textColor = UIColor.theme.ecosia.highContrastText
         descriptionLabel.textColor = UIColor.theme.ecosia.primaryText
+        iconImageView.image = UIImage(themed: "tigerIncognito")
     }
 }

@@ -5,6 +5,7 @@
 import SnapKit
 import Shared
 import Storage
+import UIKit
 
 enum TabTrayViewAction {
     case addTab
@@ -31,7 +32,7 @@ class TabTrayViewController: UIViewController {
     }()
 
     lazy var newTabButton: UIBarButtonItem = {
-        let button = UIBarButtonItem(customView: NewTabButton(target: self, selector: #selector(didTapAddTab(_:))))
+        let button = UIBarButtonItem(image: UIImage(systemName: "plus"), style: .plain, target: self, action: #selector(didTapAddTab(_:)))
         button.accessibilityIdentifier = "newTabButtonTabTray"
         return button
     }()
