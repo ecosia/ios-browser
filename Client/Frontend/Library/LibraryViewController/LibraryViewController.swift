@@ -498,7 +498,15 @@ extension LibraryViewController: Themeable {
         navigationController?.navigationBar.barTintColor = UIColor.theme.tabTray.toolbar
         navigationController?.navigationBar.tintColor = UIColor.theme.ecosia.primaryBrand
         navigationController?.navigationBar.backgroundColor = UIColor.theme.tabTray.toolbar
-        navigationController?.toolbar.barTintColor = UIColor.theme.tabTray.toolbar
+
+        let appearance = UIToolbarAppearance()
+        appearance.configureWithDefaultBackground()
+        appearance.backgroundColor = UIColor.theme.tabTray.toolbar
+        navigationController?.toolbar.standardAppearance = appearance
+        if #available(iOS 15.0, *) {
+            navigationController?.toolbar.scrollEdgeAppearance = appearance
+        }
+
         navigationController?.toolbar.tintColor = UIColor.theme.ecosia.primaryBrand
         navigationToolbar.barTintColor = UIColor.theme.tabTray.toolbar
         navigationToolbar.tintColor = UIColor.theme.tabTray.toolbarButtonTint
