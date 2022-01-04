@@ -107,10 +107,10 @@ final class LoadingBarColor {
 class TabTrayColor {
     var tabTitleText: UIColor { return UIColor.black }
     var tabTitleBlur: UIBlurEffect.Style { return UIBlurEffect.Style.extraLight }
-    var background: UIColor { return UIColor.Photon.LightGrey30 }
-    var screenshotBackground: UIColor { return UIColor.Photon.Grey10 }
-    var cellBackground: UIColor { return defaultBackground }
-    var toolbar: UIColor { return defaultBackground }
+    var background: UIColor { return UIColor.Photon.Grey10 }
+    var screenshotBackground: UIColor { return UIColor.white }
+    var cellBackground: UIColor { return UIColor.white }
+    var toolbar: UIColor { return UIColor.white }
     var toolbarButtonTint: UIColor { return defaultTextAndTint }
     var privateModeLearnMore: UIColor { return UIColor.theme.ecosia.secondaryBrand }
     var privateModePurple: UIColor { return UIColor.theme.ecosia.secondaryBrand }

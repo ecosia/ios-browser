@@ -502,6 +502,7 @@ extension LibraryViewController: Themeable {
         let appearance = UIToolbarAppearance()
         appearance.configureWithDefaultBackground()
         appearance.backgroundColor = UIColor.theme.tabTray.toolbar
+        appearance.shadowColor = UIColor.theme.ecosia.barSeparator
         navigationController?.toolbar.standardAppearance = appearance
         if #available(iOS 15.0, *) {
             navigationController?.toolbar.scrollEdgeAppearance = appearance

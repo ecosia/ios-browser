@@ -180,6 +180,7 @@ class GridTabViewController: UIViewController, TabTrayViewDelegate {
         collectionView.dragInteractionEnabled = true
         collectionView.dragDelegate = tabDisplayManager
         collectionView.dropDelegate = tabDisplayManager
+        collectionView.contentInset.top = -2 * GridTabTrayControllerUX.Margin
 
         [webViewContainerBackdrop, collectionView].forEach { view.addSubview($0) }
         makeConstraints()
@@ -924,9 +925,12 @@ class TabCell: UICollectionViewCell {
         if selected {
             setTabSelected(tab.isPrivate)
         } else {
-            layer.shadowOffset = .zero
+            // Ecosia: custom shadow for unselected cells
+            layer.shadowOffset = .init(width: 0, height: 2)
             layer.shadowPath = nil
-            layer.shadowOpacity = 0
+            layer.shadowOpacity = 0.1
+            layer.shadowColor = UIColor.Photon.Grey90.cgColor
+            layer.shadowRadius = 8
         }
         screenshotView.image = tab.screenshot
     }
