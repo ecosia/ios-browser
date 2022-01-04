@@ -17,8 +17,8 @@ private struct TopSiteCellUX {
     static let BackgroundSize = CGSize(width: 60, height: 60)
     static let IconBackgroundSize: CGFloat = 48
     static let IconSize: CGFloat = 28
-    static let BorderColor = UIColor.Photon.Grey30
-    static let BorderWidth: CGFloat = 0.5
+    static let BorderColor = UIColor.Photon.Grey20
+    static let BorderWidth: CGFloat = 1
     static let PinIconSize: CGFloat = 12
     static let PinColor = UIColor.Photon.Grey60
     static let FavIconInset: CGFloat = 18
