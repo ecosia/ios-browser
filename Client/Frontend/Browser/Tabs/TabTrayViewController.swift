@@ -220,6 +220,8 @@ class TabTrayViewController: UIViewController {
             make.top.equalTo(view.safeArea.top)
         }
         */
+        navigationItem.rightBarButtonItem = doneButton
+
         navigationMenu.snp.makeConstraints { make in
             make.width.lessThanOrEqualTo(343)
             make.height.equalTo(ChronologicalTabsControllerUX.navigationMenuHeight)
@@ -380,6 +382,11 @@ extension TabTrayViewController: Themeable {
              navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
          }
          viewModel.syncedTabsController.applyTheme()
+
+         // Ecosia
+         if traitCollection.userInterfaceIdiom == .phone {
+             navigationController?.navigationBar.tintColor = UIColor.theme.ecosia.primaryBrand
+         }
      }
  }
 
