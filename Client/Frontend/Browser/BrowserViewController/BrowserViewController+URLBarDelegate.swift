@@ -406,7 +406,8 @@ extension BrowserViewController: URLBarDelegate, FeatureFlagsProtocol {
     func urlBarDidLeaveOverlayMode(_ urlBar: URLBarView) {
         firefoxHomeViewController?.inOverlayMode = false
         destroySearchController()
-        updateInContentHomePanel(tabManager.selectedTab?.url as URL?)
+        // Ecosia: fix slow hiding of ntp when network is slow
+        updateInContentHomePanel(urlBar.currentURL ?? tabManager.selectedTab?.url)
     }
 
     func urlBarDidBeginDragInteraction(_ urlBar: URLBarView) {
