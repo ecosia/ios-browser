@@ -36,8 +36,8 @@ class LibraryViewController: UIViewController {
         var librarySegmentControl: UISegmentedControl
         librarySegmentControl = UISegmentedControl(items: [UIImage(named: "library-bookmark")!,
                                                            UIImage(named: "library-history")!,
-                                                           UIImage(named: "library-downloads")!,
-                                                           UIImage(named: "library-readinglist")!])
+                                                           UIImage(named: "library-readinglist")!,
+                                                           UIImage(named: "library-downloads")!])
         librarySegmentControl.accessibilityIdentifier = "librarySegmentControl"
         librarySegmentControl.selectedSegmentIndex = 1
         librarySegmentControl.addTarget(self, action: #selector(panelChanged), for: .valueChanged)
