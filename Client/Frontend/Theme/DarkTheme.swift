@@ -38,7 +38,7 @@ fileprivate class DarkURLBarColor: URLBarColor {
     }
 
     override func activeBorder(_ isPrivate: Bool) -> UIColor {
-        return !isPrivate ? UIColor.Photon.Blue20A40 : UIColor.Defaults.MobilePrivatePurple
+        return !isPrivate ? UIColor.theme.ecosia.primaryBrand : UIColor.Defaults.MobilePrivatePurple
     }
 }
 
@@ -89,6 +89,8 @@ fileprivate class DarkTopTabsColor: TopTabsColor {
 fileprivate class DarkTextFieldColor: TextFieldColor {
     override var background: UIColor { return UIColor.Photon.Grey70 }
     override var backgroundInOverlay: UIColor { return UIColor.Photon.Grey70 }
+    override var backgroundInCell: UIColor { return UIColor.Photon.Grey80 }
+
 
     override var textAndTint: UIColor { return defaultTextAndTint }
     override var separator: UIColor { return super.separator.withAlphaComponent(0.3) }
@@ -120,7 +122,7 @@ fileprivate class DarkHomePanelColor: HomePanelColor {
     override var topSitePin: UIColor { return UIColor.theme.ecosia.primaryBrand }
     override var topSitesBackground: UIColor { return UIColor.Photon.DarkGrey60 }
 
-    override var shortcutBackground: UIColor { return UIColor.Photon.DarkGrey30 }
+    override var shortcutBackground: UIColor { return UIColor.Photon.Grey80 }
     override var shortcutShadowColor: CGColor { return UIColor(red: 0.11, green: 0.11, blue: 0.13, alpha: 1.0).cgColor }
     override var shortcutShadowOpacity: Float { return 0.5 }
     

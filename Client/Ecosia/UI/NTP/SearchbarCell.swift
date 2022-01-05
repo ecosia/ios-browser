@@ -65,7 +65,7 @@ final class SearchbarCell: UICollectionViewCell, Themeable {
     }
 
     func applyTheme() {
-        search.backgroundColor = UIColor.theme.textField.backgroundInOverlay
+        search.backgroundColor = UIColor.theme.textField.backgroundInCell
         search.setTitleColor(UIColor.theme.ecosia.textfieldPlaceholder, for: .normal)
     }
 
