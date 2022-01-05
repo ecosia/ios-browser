@@ -503,7 +503,7 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
     
     func tableView(_ tableView: UITableView, willDisplayFooterView view: UIView, forSection section: Int) {
         if let footer = view as? UITableViewHeaderFooterView {
-            footer.contentView.backgroundColor = UIColor.theme.ecosia.primaryBackground
+            footer.contentView.backgroundColor = UIColor.theme.homePanel.panelBackground
         }
     }
 
@@ -555,8 +555,8 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
         super.applyTheme()
         tableView.reloadData()
         emptyHeader.applyTheme()
-        view.backgroundColor = UIColor.theme.ecosia.primaryBackground
-        tableView.backgroundColor = UIColor.theme.ecosia.primaryBackground
+        view.backgroundColor = UIColor.theme.homePanel.panelBackground
+        tableView.backgroundColor = UIColor.theme.homePanel.panelBackground
     }
 }
 

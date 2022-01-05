@@ -155,7 +155,7 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel {
     override func applyTheme() {
         super.applyTheme()
         emptyHeader.applyTheme()
-        view.backgroundColor = UIColor.theme.ecosia.primaryBackground
+        view.backgroundColor = UIColor.theme.homePanel.panelBackground
 
         if let current = navigationController?.visibleViewController as? Themeable, current !== self {
             current.applyTheme()
