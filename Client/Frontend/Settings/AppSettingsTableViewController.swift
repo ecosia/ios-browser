@@ -184,6 +184,7 @@ class AppSettingsTableViewController: SettingsTableViewController, FeatureFlagsP
                 AddReferral(settings: self),
                 AddClaim(settings: self),
                 CreateMigrationData(settings: self),
+                AutofocusSearchbar(prefs: prefs)
             ])]
 
         return settings

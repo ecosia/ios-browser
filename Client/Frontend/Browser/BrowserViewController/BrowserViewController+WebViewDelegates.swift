@@ -714,7 +714,9 @@ extension BrowserViewController: WKNavigationDelegate {
         self.scrollController.resetZoomState()
 
         if tabManager.selectedTab === tab {
-            updateUIForReaderHomeStateForTab(tab, focusUrlBar: true)
+            // Ecosia: flaggable autofocus
+            let focus = profile.prefs.boolForKey(PrefsKeys.AutofocusSearch) ?? false
+            updateUIForReaderHomeStateForTab(tab, focusUrlBar: focus)
         }
     }
 

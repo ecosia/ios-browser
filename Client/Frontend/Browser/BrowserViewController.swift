@@ -1776,23 +1776,31 @@ extension BrowserViewController: TabManagerDelegate {
                 make.left.right.top.bottom.equalTo(self.webViewContainer)
             }
             
-            webView.isHidden = true
-            webViewContainerBackdrop.alpha = 1
             webViewContainerBackdrop.backgroundColor = UIColor.theme.ecosia.primaryBackground
             navigationController?.view.backgroundColor = UIColor.theme.browser.background
-            
-            let animation = CABasicAnimation(keyPath: "transform")
-            animation.duration = 0.35
-            animation.fromValue = CATransform3DMakeScale(0.6, 0.6, 1)
-            animation.timingFunction = .init(name: .easeInEaseOut)
-            firefoxHomeViewController?.view.layer.add(animation, forKey: "scale")
 
-            DispatchQueue
-                .main
-                .asyncAfter(deadline: .now() + 0.35) { [weak webView, weak webViewContainerBackdrop] in
-                    webView?.isHidden = false
-                    webViewContainerBackdrop?.alpha = 0
-                }
+            // Ecosia: animate open new tab when open new tab from new tab page
+            if selected != previous,
+               previous?.isURLStartingPage == true,
+               selected?.isURLStartingPage == true,
+               presentedViewController == nil {
+
+                webView.isHidden = true
+                webViewContainerBackdrop.alpha = 1
+
+                let animation = CABasicAnimation(keyPath: "transform")
+                animation.duration = 0.35
+                animation.fromValue = CATransform3DMakeScale(0.6, 0.6, 1)
+                animation.timingFunction = .init(name: .easeInEaseOut)
+                firefoxHomeViewController?.view.layer.add(animation, forKey: "scale")
+
+                DispatchQueue
+                    .main
+                    .asyncAfter(deadline: .now() + 0.35) { [weak webView, weak webViewContainerBackdrop] in
+                        webView?.isHidden = false
+                        webViewContainerBackdrop?.alpha = 0
+                    }
+            }
             
             // This is a terrible workaround for a bad iOS 12 bug where PDF
             // content disappears any time the view controller changes (i.e.
@@ -1863,7 +1871,9 @@ extension BrowserViewController: TabManagerDelegate {
             topTabsDidChangeTab()
         }
 
-        updateInContentHomePanel(selected?.url as URL?, focusUrlBar: true)
+        // Ecosia: flaggable autofocus
+        let focus = profile.prefs.boolForKey(PrefsKeys.AutofocusSearch) ?? false
+        updateInContentHomePanel(selected?.url as URL?, focusUrlBar: focus)
 
         if let tab = selected, NewTabAccessors.getNewTabPage(self.profile.prefs) == .blankPage {
             if tab.url == nil, !tab.restoring {

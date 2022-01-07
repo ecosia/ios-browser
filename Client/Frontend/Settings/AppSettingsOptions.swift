@@ -762,6 +762,20 @@ final class CreateMigrationData: HiddenSetting {
     }
 }
 
+class AutofocusSearchbar: BoolSetting {
+    convenience init(prefs: Prefs) {
+        self.init(prefs: prefs, prefKey: PrefsKeys.AutofocusSearch, defaultValue: false,
+                  titleText: "Debug: Autofocus Searchbar",
+                  statusText: nil, settingDidChange: { value in
+            prefs.setBool(value, forKey: PrefsKeys.AutofocusSearch)
+        })
+    }
+
+    override var hidden: Bool {
+        return !ShowDebugSettings
+    }
+}
+
 // Show the current version of Firefox
 class VersionSetting: Setting {
     unowned let settings: SettingsTableViewController
