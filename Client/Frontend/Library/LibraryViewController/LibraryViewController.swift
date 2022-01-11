@@ -342,7 +342,7 @@ class LibraryViewController: UIViewController {
             topLeftButton.image = UIImage.templateImageNamed("goBack")
             navigationItem.leftBarButtonItem = topLeftButton
         case .bookmarks(state: .itemEditMode):
-            topLeftButton.image = UIImage.templateImageNamed("nav-stop")
+            topLeftButton.image = UIImage.templateImageNamed("goBack")
             navigationItem.leftBarButtonItem = topLeftButton
         default:
             navigationItem.leftBarButtonItem = nil
