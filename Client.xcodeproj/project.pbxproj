@@ -11780,6 +11780,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon_Ecosia;
 				CURRENT_PROJECT_VERSION = "${inherited}";
 				DEVELOPMENT_TEAM = 33YMRSYD2L;
+				EXCLUDED_SOURCE_FILE_NAMES = CredentialProvider.appex;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
@@ -12133,6 +12134,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon_Ecosia;
 				CURRENT_PROJECT_VERSION = "${inherited}";
 				DEVELOPMENT_TEAM = 33YMRSYD2L;
+				EXCLUDED_SOURCE_FILE_NAMES = CredentialProvider.appex;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
