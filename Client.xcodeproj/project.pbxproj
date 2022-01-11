@@ -12065,7 +12065,7 @@
 		CA7E7B5F27591520005D1E47 /* EcosiaAppCenter */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = CredentialProvider/CredentialProviderEcosia.entitlements;
+				CODE_SIGN_ENTITLEMENTS = CredentialProvider/CredentialProviderEcosiaBeta.entitlements;
 				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				INFOPLIST_FILE = CredentialProvider/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -12075,6 +12075,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ecosia.ecosiaapp.firefox.$(PRODUCT_NAME)";
 				PRODUCT_NAME = CredentialProvider;
+				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc com.ecosia.ecosiaapp.firefox.CredentialProvider";
 			};
 			name = EcosiaAppCenter;
 		};
