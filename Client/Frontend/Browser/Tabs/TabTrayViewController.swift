@@ -269,7 +269,7 @@ class TabTrayViewController: UIViewController {
     fileprivate func updateMaskButton() {
         guard let grid = viewModel.tabTrayView as? GridTabViewController else { return }
         maskButton.isSelected = grid.tabDisplayManager.isPrivate
-        maskButton.applyUIMode(isPrivate: !grid.tabDisplayManager.isPrivate)
+        maskButton.applyUIMode(isPrivate: grid.tabDisplayManager.isPrivate)
     }
 
     fileprivate func switchBetweenLocalPanels(withPrivateMode privateMode: Bool) {
