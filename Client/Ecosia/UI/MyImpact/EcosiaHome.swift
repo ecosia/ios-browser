@@ -323,7 +323,9 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
 
         switch section {
         case .impact, .legacyImpact:
-            return CGSize(width: view.bounds.width - 2 * margin, height: 226)
+            let dynamicTypeResize = max(UIFont.preferredFont(forTextStyle: .body).pointSize - 17, 0) * 7
+            return CGSize(width: view.bounds.width - 2 * margin,
+                          height: 226 + dynamicTypeResize)
         case .multiply:
             return CGSize(width: view.bounds.width - 2 * margin, height: 56)
         case .news:
