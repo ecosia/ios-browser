@@ -269,7 +269,7 @@ class TabTrayViewController: UIViewController {
     fileprivate func updateMaskButton() {
         guard let grid = viewModel.tabTrayView as? GridTabViewController else { return }
         maskButton.isSelected = grid.tabDisplayManager.isPrivate
-        maskButton.applyUIMode(isPrivate: false)
+        maskButton.applyUIMode(isPrivate: !grid.tabDisplayManager.isPrivate)
     }
 
     fileprivate func switchBetweenLocalPanels(withPrivateMode privateMode: Bool) {
@@ -282,8 +282,8 @@ class TabTrayViewController: UIViewController {
         updatePrivateUIState()
 
         // Ecosia: update private button
-        maskButton.isSelected = privateMode
-        maskButton.applyUIMode(isPrivate: false)
+        maskButton.setSelected(privateMode, animated: true)
+        maskButton.applyUIMode(isPrivate: privateMode)
     }
 
     fileprivate func showPanel(_ panel: UIViewController) {
@@ -387,6 +387,7 @@ extension TabTrayViewController: Themeable {
          if traitCollection.userInterfaceIdiom == .phone {
              navigationController?.navigationBar.tintColor = UIColor.theme.ecosia.primaryBrand
          }
+         maskButton.applyUIMode(isPrivate: maskButton.isSelected)
      }
  }
 
