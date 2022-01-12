@@ -136,6 +136,5 @@ workflows:
               only: 
                 - /^.*main.*/
                 - /^.*main-39.*/
-                - /^.*jeh-MOB-1200-add-ci-to-39.*/
 
                                 
