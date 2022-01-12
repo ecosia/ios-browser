@@ -12092,7 +12092,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ecosia.ecosiaapp.CredentialProvider;
 				PRODUCT_NAME = CredentialProvider;
-				PROVISIONING_PROFILE_SPECIFIER = "Ecosia iOS Credential Provider Extension";
+				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc com.ecosia.ecosiaapp.CredentialProvider";
 			};
 			name = Ecosia;
 		};
