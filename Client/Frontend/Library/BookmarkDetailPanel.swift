@@ -412,7 +412,9 @@ class BookmarkDetailPanel: SiteTableViewController {
 
     override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
         let header = view as? SiteTableViewHeader
-        header?.showBorder(for: .top, section != 0)
+        header?.showBorder(for: .top, false)
+        header?.showBorder(for: .bottom, true)
+        header?.contentView.backgroundColor = UIColor.theme.tableView.headerBackground
     }
 }
 
