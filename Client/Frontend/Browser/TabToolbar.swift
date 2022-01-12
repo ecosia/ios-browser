@@ -401,6 +401,8 @@ extension TabToolbar: Themeable, PrivateModeUI {
         helper?.setTheme(forButtons: actionButtons)
 
         privateModeBadge.badge.tintBackground(color: UIColor.theme.ecosia.barBackground)
+        privateModeBadge.backdrop.backgroundColor = UIColor.theme.ecosia.personalCounterSelection
+        privateModeBadge.backdrop.alpha = 1
         appMenuBadge.badge.tintBackground(color: UIColor.theme.ecosia.barBackground)
         warningMenuBadge.badge.tintBackground(color: UIColor.theme.ecosia.barBackground)
     }

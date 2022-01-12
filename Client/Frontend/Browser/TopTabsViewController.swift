@@ -262,6 +262,7 @@ extension TopTabsViewController: Themeable, PrivateModeUI {
         privateModeButton.onTint = UIColor.theme.topTabs.privateModeButtonOnTint
         privateModeButton.offTint = UIColor.theme.topTabs.privateModeButtonOffTint
         privateModeButton.applyTheme()
+        privateModeButton.applyUIMode(isPrivate: topTabDisplayManager.isPrivate)
         newTab.tintColor = UIColor.theme.topTabs.buttonTint
         collectionView.backgroundColor = view.backgroundColor
         (collectionView.visibleCells as? [TopTabCell])?.forEach { $0.applyTheme() }
