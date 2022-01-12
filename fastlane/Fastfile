@@ -34,7 +34,7 @@ platform :ios do
   desc "Deploy to MS App-Center"
   lane :appcenter do
     match(
-      app_identifier: ['com.ecosia.ecosiaapp.firefox', 'com.ecosia.ecosiaapp.firefox.searchWidget', 'com.ecosia.ecosiaapp.firefox.WidgetKit', 'com.ecosia.ecosiaapp.firefox.ShareTo'], 
+      app_identifier: ['com.ecosia.ecosiaapp.firefox', 'com.ecosia.ecosiaapp.firefox.searchWidget', 'com.ecosia.ecosiaapp.firefox.WidgetKit', 'com.ecosia.ecosiaapp.firefox.ShareTo', 'com.ecosia.ecosiaapp.firefox.CredentialProvider'], 
       type: "adhoc",
       readonly: true
     )
