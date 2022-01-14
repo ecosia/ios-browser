@@ -926,6 +926,7 @@ extension FirefoxHomeViewController: DataObserverDelegate {
                     pinnedSites += 1
                 }
             }
+            /* Ecosia: remove pinned Google topsite
             // Special case: Adding Google topsite
             let googleTopSite = GoogleTopSiteHelper(prefs: self.profile.prefs)
             if !googleTopSite.isHidden, let gSite = googleTopSite.suggestedSiteData() {
@@ -940,11 +941,12 @@ extension FirefoxHomeViewController: DataObserverDelegate {
                     googleTopSite.hasAdded = true
                 }
             }
+            */
             self.topSitesManager.content = sites
             self.topSitesManager.urlPressedHandler = { [unowned self] site, indexPath in
                 self.longPressRecognizer.isEnabled = false
                 guard let url = site.url.asURL else { return }
-                let isGoogleTopSiteUrl = url.absoluteString == GoogleTopSiteConstants.usUrl || url.absoluteString == GoogleTopSiteConstants.rowUrl
+                // Ecosia: let isGoogleTopSiteUrl = url.absoluteString == GoogleTopSiteConstants.usUrl || url.absoluteString == GoogleTopSiteConstants.rowUrl
                 self.topSiteTracking(site: site, position: indexPath.item)
                 self.showSiteWithURLHandler(url as URL)
             }

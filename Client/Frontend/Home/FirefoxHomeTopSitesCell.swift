@@ -239,6 +239,7 @@ private struct ASHorizontalScrollCellUX {
     static let TopSiteItemSize = CGSize(width: 80, height: 90)
     static let MinimumInsets: CGFloat = 0
     static let VerticalInsets: CGFloat = 16
+    static let MaxWidth: CGFloat = 120
 }
 
 /*
@@ -338,7 +339,8 @@ class HorizontalFlowLayout: UICollectionViewLayout {
         }
 
         let horizontalItemsCount = maxHorizontalItemsCount(width: width) // 8
-        let estimatedItemSize = itemSize
+        var estimatedItemSize = itemSize
+        estimatedItemSize.width = min(width/Double(horizontalItemsCount), ASHorizontalScrollCellUX.MaxWidth)
 
         //calculate our estimates.
         let rows = CGFloat(ceil(Double(Float(cellCount)/Float(horizontalItemsCount))))
