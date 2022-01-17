@@ -45,9 +45,9 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d Verweis </string>
+			<string>%d Empfehlung </string>
 			<key>other</key>
-			<string>%d Verweise</string>
+			<string>%d Empfehlungen</string>
 		</dict>
 	</dict>
     <key>%d successful invite(s)</key>
@@ -61,9 +61,9 @@
             <key>NSStringFormatValueTypeKey</key>
             <string>d</string>
             <key>one</key>
-            <string>%d erfolgreiche Einaldungen</string>
+            <string>%d erfolgreiche Einladung</string>
             <key>other</key>
-            <string>%d erfolgreiche Einladung </string>
+            <string>%d erfolgreiche Einladungen</string>
         </dict>
     </dict>
 </dict>
