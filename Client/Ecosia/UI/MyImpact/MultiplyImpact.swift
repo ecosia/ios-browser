@@ -81,6 +81,7 @@ final class MultiplyImpact: UIViewController, Themeable {
         cardSubtitle.text = .localizedPlural(.treesPlural, num: User.shared.referrals.count)
         cardSubtitle.font = .preferredFont(forTextStyle: .subheadline)
         cardSubtitle.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        cardSubtitle.setContentCompressionResistancePriority(.required, for: .vertical)
         cardSubtitle.adjustsFontForContentSizeCategory = true
         card.addSubview(cardSubtitle)
         self.cardSubtitle = cardSubtitle
@@ -152,8 +153,9 @@ final class MultiplyImpact: UIViewController, Themeable {
         card.bottomAnchor.constraint(greaterThanOrEqualTo: cardIcon.bottomAnchor, constant: 17).isActive = true
         card.bottomAnchor.constraint(greaterThanOrEqualTo: cardSubtitle.bottomAnchor, constant: 12).isActive = true
         
-        cardIcon.topAnchor.constraint(equalTo: card.topAnchor, constant: 17).isActive = true
+        cardIcon.topAnchor.constraint(greaterThanOrEqualTo: card.topAnchor, constant: 17).isActive = true
         cardIcon.leftAnchor.constraint(equalTo: card.leftAnchor, constant: 16).isActive = true
+        cardIcon.centerYAnchor.constraint(equalTo: card.centerYAnchor).isActive = true
         
         cardTitle.topAnchor.constraint(equalTo: card.topAnchor, constant: 12).isActive = true
         cardTitle.leftAnchor.constraint(equalTo: cardIcon.rightAnchor, constant: 12).isActive = true

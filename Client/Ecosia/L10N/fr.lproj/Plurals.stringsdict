@@ -61,7 +61,7 @@
             <key>NSStringFormatValueTypeKey</key>
             <string>d</string>
             <key>one</key>
-            <string>%d invitations réussies</string>
+            <string>%d invitation réussie</string>
             <key>other</key>
             <string>%d invitations réussies</string>
         </dict>
