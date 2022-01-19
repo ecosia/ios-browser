@@ -293,7 +293,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
         }
         */
         updateSessionCount()
+
+        // Ecosia
         Analytics.shared.activity(.launch)
+        Goodall.shared.refresh()
+
         return shouldPerformAdditionalDelegateHandling
     }
 

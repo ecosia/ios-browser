@@ -1298,7 +1298,7 @@ extension FirefoxHomeViewController: TreesCellDelegate {
     }
 
     fileprivate var treesCellModel: TreesCellModel {
-        guard Referrals.isEnabled else {
+        guard Referrals.isActive else {
             return .init(title: .localizedPlural(.searches, num: personalCounter.state!),
                          subtitle: .localized(.viewMyImpact),
                          highlight: nil,
