@@ -637,8 +637,8 @@ final class PushBackInstallation: HiddenSetting {
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
-        User.shared.install.map {
-            User.shared.install = Calendar.current.date(byAdding: .day, value: -3, to: $0)
+        Calendar.current.date(byAdding: .day, value: -3, to: User.shared.install).map {
+            User.shared.install = $0
         }
     }
 }
