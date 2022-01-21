@@ -28,7 +28,7 @@ extension String {
         case faq = "FAQ"
         case financialReports = "Financial reports"
         case forceDarkMode = "Force Dark Mode"
-        case turnOffDarkMode = "Turn Off Dark Mode"
+        case turnOffDarkMode = "Turn off Dark Mode"
         case getStarted = "Get started"
         case home = "Home"
         case howEcosiaWorks = "How Ecosia works"
