@@ -81,6 +81,7 @@ struct ImageButtonWithLabel: View {
                                     .font(.footnote)
                                     .minimumScaleFactor(0.75)
                                     .layoutPriority(1000)
+                                    .foregroundColor(link.textColor)
                             }
                                 
                         }
