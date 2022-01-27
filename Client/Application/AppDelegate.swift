@@ -521,8 +521,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
 
     func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
         let bvc = BrowserViewController.foregroundBVC()
-        if userActivity.activityType == SiriShortcuts.activityType.openURL.rawValue {
-            bvc.openBlankNewTab(focusLocationField: false)
+        if userActivity.activityType == NSUserActivityTypeBrowsingWeb, let url = userActivity.webpageURL {
+            bvc.switchToTabForURLOrOpen(url)
             return true
         }
 

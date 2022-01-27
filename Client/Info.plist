@@ -97,14 +97,15 @@
 	<array>
 		<string>QuickActionIntent</string>
 		<string>QuickLinkSelectionIntent</string>
+		<string>SearchEcosiaIntent</string>
 		<string>com.ecosia.ecosiaapp.browsing</string>
 	</array>
+	<key>NimbusURL</key>
+	<string>$(NIMBUS_URL)</string>
 	<key>PocketEnvironmentAPIKey</key>
 	<string>$(POCKET_API_KEY)</string>
 	<key>SentryDSN</key>
 	<string>$(SENTRY_DSN)</string>
-	<key>NimbusURL</key>
-	<string>$(NIMBUS_URL)</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>NewYorkMedium-Bold.otf</string>
