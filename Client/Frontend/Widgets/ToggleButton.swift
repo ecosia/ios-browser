@@ -43,7 +43,7 @@ class ToggleButton: UIButton, Themeable {
     fileprivate func animateSelection(_ selected: Bool) {
         var endFrame = CGRect(size: bounds.size).inset(by: UX.Insets)
         endFrame.center = maskShapeLayer.position
-        let corner = floor(endFrame.size.height / 2.0)
+        let corner = max(floor(endFrame.size.height / 2.0), 0)
 
         if selected {
             let animation = CAKeyframeAnimation(keyPath: "path")
