@@ -69,6 +69,7 @@ class EcosiaTheme {
     var welcomeScreenBackground: UIColor { UIColor.Photon.Grey70.withAlphaComponent(0.4) }
 
     var teal60: UIColor { UIColor(rgb: 0x267A82) }
+    var segmentSelectedText: UIColor { UIColor(named: "primaryText")! }
 }
 
 final class DarkEcosiaTheme: EcosiaTheme {
@@ -101,6 +102,7 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var hoverBackgroundColor: UIColor { UIColor.Photon.Grey90 }
     override var cardText: UIColor { UIColor(named: "cardTextDark")!}
     override var welcomeScreenBackground: UIColor { UIColor.Photon.Grey90.withAlphaComponent(0.8) }
+    override var segmentSelectedText: UIColor { UIColor.Photon.Grey90 }
 }
 
 extension UIImage {
