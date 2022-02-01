@@ -388,6 +388,13 @@ extension TabTrayViewController: Themeable {
              navigationController?.navigationBar.tintColor = UIColor.theme.ecosia.primaryBrand
          }
          maskButton.applyUIMode(isPrivate: maskButton.isSelected)
+
+         if shouldUseiPadSetup {
+             navigationItem.leftBarButtonItem?.tintColor = UIColor.theme.ecosia.primaryBrand
+             navigationItem.rightBarButtonItem?.tintColor = UIColor.theme.ecosia.primaryBrand
+             navigationMenu.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.theme.ecosia.primaryText], for: .normal)
+             navigationMenu.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.theme.ecosia.segmentSelectedText], for: .selected)
+         }
      }
  }
 
