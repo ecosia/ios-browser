@@ -75,8 +75,8 @@ fileprivate class DarkEnhancedTrackingProtectionMenuColor: EnhancedTrackingProte
 }
 
 fileprivate class DarkTopTabsColor: TopTabsColor {
-    override var background: UIColor { UIColor.Photon.DarkGrey80 }
-    override var tabBackgroundSelected: UIColor { return UIColor.Photon.DarkGrey30 }
+    override var background: UIColor { UIColor.Photon.DarkGrey90 }
+    override var tabBackgroundSelected: UIColor { return UIColor.Photon.Grey80 }
     override var tabBackgroundUnselected: UIColor { return UIColor.Photon.Grey80 }
     override var tabForegroundSelected: UIColor { return UIColor.Photon.Grey10 }
     override var tabForegroundUnselected: UIColor { return UIColor.Photon.Grey40 }
