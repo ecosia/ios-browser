@@ -1783,6 +1783,8 @@ extension BrowserViewController: TabManagerDelegate {
             if selected != previous,
                previous?.isURLStartingPage == true,
                selected?.isURLStartingPage == true,
+               let createdTime = selected?.firstCreatedTime,
+               createdTime + 100 > Date.now(), // Hotfix: if tab was created in last 100 ms we consider it as new
                presentedViewController == nil {
 
                 webView.isHidden = true
