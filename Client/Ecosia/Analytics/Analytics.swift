@@ -144,12 +144,28 @@ final class Analytics {
                               action: Action.view.rawValue)
                     .label("invite_screen"))
     }
+
+    func startInvite() {
+        tracker
+            .track(Structured(category: Category.invitations.rawValue,
+                              action: Action.click.rawValue)
+                    .label("invite"))
+    }
     
     func sendInvite() {
         tracker
             .track(Structured(category: Category.invitations.rawValue,
                               action: Action.send.rawValue)
                     .label("invite"))
+    }
+
+    func showInvitePromo() {
+        func openInvitePromo() {
+            tracker
+                .track(Structured(category: Category.invitations.rawValue,
+                                  action: Action.view.rawValue)
+                        .label("promo"))
+        }
     }
 
     func openInvitePromo() {

@@ -260,6 +260,8 @@ final class MultiplyImpact: UIViewController, Themeable {
             }
         }
         present(share, animated: true)
+
+        Analytics.shared.startInvite()
     }
 
     private func showReferralError(_ error: Referrals.Error) {

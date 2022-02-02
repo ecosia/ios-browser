@@ -49,7 +49,8 @@ extension Analytics {
         success,
         retry,
         send,
-        claim
+        claim,
+        click
         
         enum Activity: String {
             case

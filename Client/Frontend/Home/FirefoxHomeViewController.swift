@@ -356,6 +356,10 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel, FeatureF
         super.viewWillAppear(animated)
         reloadAll()
         referrals.refresh()
+
+        if User.shared.showsReferralSpotlight {
+            Analytics.shared.showInvitePromo()
+        }
     }
 
     override func viewDidAppear(_ animated: Bool) {
