@@ -1,0 +1,10 @@
+"6.0.0" = "
+This new version includes some design and functionality changes:
+- Tabs are now organised in a modal overlay
+- Leaner icons
+- Autocomplete search terms
+- You can ask Siri to open a new tab. Enable via > Settings > Siri Shortcuts > Open a New Tab
+- Bug fixes and performance improvements
+- New popover design for context menus
+
+We are always working hard to make Ecosia better for you. Send any questions or feedback to our team at iosapp@ecosia.org, we love hearing from you!";
