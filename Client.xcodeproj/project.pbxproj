@@ -12038,7 +12038,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ecosia.ecosiaapp.$(PRODUCT_NAME)";
 				PRODUCT_NAME = CredentialProvider;
-				PROVISIONING_PROFILE_SPECIFIER = "Develop Credential Provider";
+				PROVISIONING_PROFILE_SPECIFIER = "match Development com.ecosia.ecosiaapp.CredentialProvider";
 			};
 			name = EcosiaDebug;
 		};
@@ -12056,7 +12056,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ecosia.ecosiaapp.firefox.$(PRODUCT_NAME)";
 				PRODUCT_NAME = CredentialProvider;
-				PROVISIONING_PROFILE_SPECIFIER = "Ecosia Beta Credential Provider AppStore";
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.ecosia.ecosiaapp.firefox.CredentialProvider";
 			};
 			name = EcosiaBeta;
 		};
