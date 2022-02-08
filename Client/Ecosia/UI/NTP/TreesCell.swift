@@ -320,10 +320,12 @@ final class TreesCell: UICollectionViewCell, Themeable {
             background.backgroundColor = UIColor.theme.ecosia.primaryBackground
         }
 
-        impactBackground.backgroundColor = (isHighlighted || isSelected) ? UIColor.theme.ecosia.hoverBackgroundColor : UIColor.theme.ecosia.ntpImpactBackground
+        let backgroundColor = model?.appearance == .ntp ? UIColor.theme.ecosia.ntpImpactBackground : UIColor.theme.ecosia.highlightedBackground
+        impactBackground.backgroundColor = (isHighlighted || isSelected) ? UIColor.theme.ecosia.hoverBackgroundColor : backgroundColor
 
         spotlightBackground.backgroundColor = .clear
-        globalCountBackground.backgroundColor = UIColor.theme.ecosia.treeCountBackground
+        let treeCountBackground = model?.appearance == .ntp ? UIColor.theme.ecosia.treeCountBackground : UIColor.theme.ecosia.impactTreeCountBackground
+        globalCountBackground.backgroundColor = treeCountBackground
 
         let borderWidth: CGFloat = ThemeManager.instance.current.isDark ? 0 : 1
         background.layer.borderColor = UIColor.theme.ecosia.personalCounterBorder.cgColor
