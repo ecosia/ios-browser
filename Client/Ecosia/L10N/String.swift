@@ -40,6 +40,8 @@ extension String {
         case keepUpToDate = "Keep up to date with the latest news from our projects and more"
         case keepGoing = "Keep going by browsing the web with Ecosia and sharing the app with friends!"
         case learnMore = "Learn more"
+        case linkAlreadyUsedTitle = "Link already used"
+        case linkAlreadyUsedMessage = "You can only use an invitation link once."
         case makeEcosiaYourDefault = "Make Ecosia your default"
         case moderate = "Moderate"
         case more = "More"

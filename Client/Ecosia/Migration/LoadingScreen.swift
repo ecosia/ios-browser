@@ -186,8 +186,10 @@ final class LoadingScreen: UIViewController {
 extension Referrals.Error {
     var title: String {
         switch self {
-        case .badRequest:
+        case .badRequest, .invalidCode, .genericError:
             return .localized(.invalidReferralLink)
+        case .alreadyUsed:
+            return .localized(.linkAlreadyUsedTitle)
         case .noConnection:
             return .localized(.networkError)
         }
@@ -195,8 +197,10 @@ extension Referrals.Error {
 
     var message: String {
         switch self {
-        case .badRequest:
+        case .badRequest, .invalidCode, .genericError:
             return .localized(.invalidReferralLinkMessage)
+        case .alreadyUsed:
+            return .localized(.linkAlreadyUsedMessage)
         case .noConnection:
             return .localized(.noConnectionMessage)
         }
