@@ -143,6 +143,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     fileprivate var treesCellModel: TreesCellModel {
         return .init(title: .localizedPlural(.searches, num: personalCounter.state!),
                      subtitle: .localized(.onAverageItTakes),
+                     appearance: .impact,
                      highlight: nil,
                      spotlight: nil)
     }
