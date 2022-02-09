@@ -307,7 +307,9 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
             Analytics.shared.navigationOpenNews(items[index].trackingName)
             dismiss(animated: true, completion: nil)
         case .explore:
-            Section.Explore(rawValue: indexPath.row)
+            // Index is off by one as first cell is the header
+            guard indexPath.row > 0 else { return }
+            Section.Explore(rawValue: indexPath.row - 1)
                 .map {
                     delegate?.ecosiaHome(didSelectURL: $0.url)
                     Analytics.shared.navigation(.open, label: $0.label)
