@@ -419,6 +419,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
 
     @objc func inviteFriends() {
         navigationController?.pushViewController(MultiplyImpact(delegate: delegate), animated: true)
+        referrals.refresh()
     }
 
     @objc func learnMore() {
