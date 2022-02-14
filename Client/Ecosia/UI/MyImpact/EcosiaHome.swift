@@ -317,6 +317,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
             dismiss(animated: true, completion: nil)
         case .multiply:
             navigationController?.pushViewController(MultiplyImpact(delegate: delegate), animated: true)
+            referrals.refresh()
         }
     }
 
