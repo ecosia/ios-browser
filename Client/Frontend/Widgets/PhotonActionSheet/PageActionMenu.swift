@@ -186,24 +186,24 @@ extension PhotonActionSheetProtocol {
             }
         }
 
-        let openInSafari = PhotonActionSheetItem(title: .localized(.openInSafari), iconString: "safari") { _,_ in
-            if let url = tab.canonicalURL?.displayURL {
-
-                if let vc = self as? UIViewController {
-                    let config = SFSafariViewController.Configuration()
-                    config.entersReaderIfAvailable = false
-                    config.barCollapsingEnabled = false
-                    let safari = SFSafariViewController(url: url, configuration: config)
-                    safari.dismissButtonStyle = .close
-                    vc.present(safari, animated: true, completion: nil)
-                }
-            }
-        }
-        
         let pinAction = (isPinned ? removeFromShortcuts : addToShortcuts)
         var section1 = [pinAction]
         var section2 = [toggleDesktopSite]
-        var section3 = [sharePage, openInSafari]
+        var section3 = [sharePage]
+
+        if let url = tab.canonicalURL?.displayURL, ["http", "https"].contains(url.scheme) {
+            let openInSafari = PhotonActionSheetItem(title: .localized(.openInSafari), iconString: "safari") { _,_ in
+
+                guard let vc = self as? UIViewController else { return }
+                let config = SFSafariViewController.Configuration()
+                config.entersReaderIfAvailable = false
+                config.barCollapsingEnabled = false
+                let safari = SFSafariViewController(url: url, configuration: config)
+                safari.dismissButtonStyle = .close
+                vc.present(safari, animated: true, completion: nil)
+            }
+            section3.append(openInSafari)
+        }
 
         // Disable bookmarking and reading list if the URL is too long.
         if !tab.urlIsTooLong {
