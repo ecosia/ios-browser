@@ -10,8 +10,6 @@ import Shared
 extension Referrals {
     static var isEnabledForBuild: Bool {
         switch AppConstants.BuildChannel {
-        case .release:
-            return false
         default:
             return true
         }
