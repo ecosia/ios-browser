@@ -230,10 +230,17 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
                 self.reloadData()
                 return
             }
-            self.tableView.beginUpdates()
+
             self.groupedSites.remove(site)
-            self.tableView.deleteRows(at: [indexPath], with: .right)
-            self.tableView.endUpdates()
+
+            // Ecosia: Crashfix, reload whole table if last item in section is deleted
+            if self.groupedSites.numberOfItemsForSection(indexPath.section - 1) > 0 {
+                self.tableView.beginUpdates()
+                self.tableView.deleteRows(at: [indexPath], with: .right)
+                self.tableView.endUpdates()
+            } else {
+                self.reloadData()
+            }
 
             Analytics.shared.browser(.delete, label: .history)
             
