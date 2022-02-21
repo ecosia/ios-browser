@@ -212,10 +212,5 @@ extension BrowserViewController: TabToolbarDelegate, PhotonActionSheetProtocol {
     func tabToolbarDidPressSearch(_ tabToolbar: TabToolbarProtocol, button: UIButton) {
         focusLocationTextField(forTab: tabManager.selectedTab)
     }
-
-    func tabToolbarDidPressEcosia(_ tabToolbar: TabToolbarProtocol, button: UIButton) {
-        ecosiaNavigation.popToRootViewController(animated: false)
-        present(ecosiaNavigation, animated: true, completion: nil)
-    }
 }
 

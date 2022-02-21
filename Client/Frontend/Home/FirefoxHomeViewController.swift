@@ -351,14 +351,15 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel, FeatureF
             self.updateTreesCell()
         }
         
-        if Referrals.isActive {
-            referrals.startSilentRefresh()
-        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         reloadAll()
+
+        if Referrals.isActive {
+            referrals.refresh()
+        }
 
         if User.shared.showsReferralSpotlight {
             Analytics.shared.showInvitePromo()

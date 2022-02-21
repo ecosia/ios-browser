@@ -204,6 +204,11 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         super.viewWillAppear(animated)
         news.load(session: .shared, force: items.isEmpty)
         Analytics.shared.navigation(.view, label: .home)
+
+        if Referrals.isActive {
+            referrals.refresh(force: true)
+        }
+
         guard hasAppeared else { return hasAppeared = true }
         updateBarAppearance()
         impactModel = refreshImpactModel()
@@ -317,7 +322,6 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
             dismiss(animated: true, completion: nil)
         case .multiply:
             navigationController?.pushViewController(MultiplyImpact(delegate: delegate), animated: true)
-            referrals.refresh()
         }
     }
 
@@ -419,7 +423,6 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
 
     @objc func inviteFriends() {
         navigationController?.pushViewController(MultiplyImpact(delegate: delegate), animated: true)
-        referrals.refresh()
     }
 
     @objc func learnMore() {
