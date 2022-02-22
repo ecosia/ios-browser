@@ -20,6 +20,9 @@ final class Analytics {
 
     private init() {
         tracker = Self.tracker
+        tracker.screenViewAutotracking = false
+        tracker.lifecycleAutotracking = false
+        tracker.installAutotracking = false
     }
     
     func install() {
