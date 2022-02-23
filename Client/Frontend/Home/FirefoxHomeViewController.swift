@@ -357,7 +357,7 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel, FeatureF
         super.viewWillAppear(animated)
         reloadAll()
 
-        if Referrals.isActive {
+        if Referrals.isEnabled {
             referrals.refresh()
         }
 
@@ -1306,7 +1306,7 @@ extension FirefoxHomeViewController: TreesCellDelegate {
     }
 
     fileprivate var treesCellModel: TreesCellModel {
-        guard Referrals.isActive else {
+        guard Referrals.isEnabled else {
             return .init(title: .localizedPlural(.searches, num: personalCounter.state!),
                          subtitle: .localized(.viewMyImpact),
                          appearance: .ntp,

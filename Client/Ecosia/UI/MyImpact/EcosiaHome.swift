@@ -205,7 +205,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         news.load(session: .shared, force: items.isEmpty)
         Analytics.shared.navigation(.view, label: .home)
 
-        if Referrals.isActive {
+        if Referrals.isEnabled {
             referrals.refresh(force: true)
         }
 
@@ -223,9 +223,9 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         switch Section(rawValue: section)! {
-        case .impact: return Referrals.isActive ? 1 : 0
-        case .legacyImpact: return Referrals.isActive ? 0 : 1
-        case .multiply: return Referrals.isActive ? 1 : 0
+        case .impact: return Referrals.isEnabled ? 1 : 0
+        case .legacyImpact: return Referrals.isEnabled ? 0 : 1
+        case .multiply: return Referrals.isEnabled ? 1 : 0
         case .explore: return Section.Explore.allCases.count + 1 // header
         case .news: return min(3, items.count) + 2 // header and footer
         }
