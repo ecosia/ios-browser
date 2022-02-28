@@ -135,9 +135,11 @@ class BrowserViewController: UIViewController {
 
     fileprivate var shouldShowIntroScreen: Bool { profile.prefs.intForKey(PrefsKeys.IntroSeen) == nil }
 
+    // Ecosia
     lazy var ecosiaNavigation: EcosiaNavigation = {
-        return EcosiaNavigation(delegate: self)
+        return EcosiaNavigation(delegate: self, referrals: referrals)
     }()
+    let referrals = Referrals()
 
     init(profile: Profile, tabManager: TabManager) {
         self.profile = profile
@@ -756,7 +758,7 @@ class BrowserViewController: UIViewController {
     func showFirefoxHome(inline: Bool) {
         homePanelIsInline = inline
         if self.firefoxHomeViewController == nil {
-            let firefoxHomeViewController = FirefoxHomeViewController(profile: profile, delegate: self)
+            let firefoxHomeViewController = FirefoxHomeViewController(profile: profile, delegate: self, referrals: referrals)
             firefoxHomeViewController.homePanelDelegate = self
             firefoxHomeViewController.libraryPanelDelegate = self
 			// Ecosia TODO: tweak animation
@@ -1980,11 +1982,11 @@ extension BrowserViewController {
             User.shared.migrated = true
             User.shared.hideWelcomeScreen()
         } else if User.shared.migrated != true {
-            present(LoadingScreen(profile: profile, tabManager: tabManager), animated: true)
+            present(LoadingScreen(profile: profile, tabManager: tabManager, referrals: referrals), animated: true)
         } else if User.shared.showsWelcomeScreen {
             present(UpgradeScreen(), animated: true)
         } else if let pendingClaim = User.shared.referrals.pendingClaim {
-            present(LoadingScreen(profile: profile, tabManager: tabManager, referralCode: pendingClaim), animated: true)
+            present(LoadingScreen(profile: profile, tabManager: tabManager, referrals: referrals, referralCode: pendingClaim), animated: true)
         }
     }
 

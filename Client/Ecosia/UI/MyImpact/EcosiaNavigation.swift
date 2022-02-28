@@ -3,11 +3,12 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import UIKit
+import Core
 
 final class EcosiaNavigation: UINavigationController, Themeable {
 
-    convenience init(delegate: EcosiaHomeDelegate?) {
-        self.init(rootViewController: EcosiaHome(delegate: delegate))
+    convenience init(delegate: EcosiaHomeDelegate?, referrals: Referrals) {
+        self.init(rootViewController: EcosiaHome(delegate: delegate, referrals: referrals))
         modalPresentationCapturesStatusBarAppearance = true
     }
 
