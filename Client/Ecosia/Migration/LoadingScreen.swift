@@ -67,7 +67,7 @@ final class LoadingScreen: UIViewController {
             migrate()
         }
 
-        if Referrals.isEnabled, let code = referralCode {
+        if let code = referralCode {
             loadingGroup.enter()
             claimReferral(code)
         }

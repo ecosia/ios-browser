@@ -1985,7 +1985,7 @@ extension BrowserViewController {
             present(LoadingScreen(profile: profile, tabManager: tabManager, referrals: referrals), animated: true)
         } else if User.shared.showsWelcomeScreen {
             present(UpgradeScreen(), animated: true)
-        } else if Referrals.isEnabled, let pendingClaim = User.shared.referrals.pendingClaim {
+        } else if let pendingClaim = User.shared.referrals.pendingClaim {
             present(LoadingScreen(profile: profile, tabManager: tabManager, referrals: referrals, referralCode: pendingClaim), animated: true)
         }
     }

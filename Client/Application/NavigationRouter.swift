@@ -174,9 +174,7 @@ enum NavigationPath {
         case .defaultBrowser(let path):
             NavigationPath.handleDefaultBrowser(path: path)
         case .referral(let code):
-            if Referrals.isEnabled {
-                bvc.openBlankNewTabAndClaimReferral(code: code)
-            }
+            bvc.openBlankNewTabAndClaimReferral(code: code)
         }
     }
 
