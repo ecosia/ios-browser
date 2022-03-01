@@ -8,6 +8,7 @@ import XCTest
 import Shared
 import Storage
 import SyncTelemetry
+import Core
 
 class FirefoxHomeTests: XCTestCase {
     var profile: MockProfile!
@@ -16,7 +17,7 @@ class FirefoxHomeTests: XCTestCase {
     override func setUp() {
         super.setUp()
         self.profile = MockProfile()
-        self.vc = FirefoxHomeViewController(profile: self.profile, delegate: nil)
+        self.vc = FirefoxHomeViewController(profile: self.profile, delegate: nil, referrals: Referrals())
     }
 
     override func tearDown() {
