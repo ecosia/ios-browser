@@ -43,7 +43,7 @@ class NavigationRouterTests: XCTestCase {
         XCTAssertEqual(NavigationPath(url: URL(string: "\(appScheme)://deep-link?url=/default-browser/system-settings")!), NavigationPath.deepLink(DeepLink.defaultBrowser(.systemSettings)))
         XCTAssertEqual(NavigationPath(url: URL(string: "\(appScheme)://deep-link?url=/homepanel/badbad")!), nil)
         // Ecosia: Test referral deeplink
-        XCTAssertEqual(NavigationPath(url: URL(string: "\(appScheme)://join/BAOBAB123")!), NavigationPath.deepLink(DeepLink.referral("BAOBAB123")))
+        XCTAssertEqual(NavigationPath(url: URL(string: "\(appScheme)://invite/BAOBAB123")!), NavigationPath.deepLink(DeepLink.referral("BAOBAB123")))
     }
 
     func testFxALinks() {
