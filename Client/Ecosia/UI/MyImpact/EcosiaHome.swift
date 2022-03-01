@@ -108,7 +108,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     private let images = Images(.init(configuration: .ephemeral))
     private let news = News()
     private let personalCounter = PersonalCounter()
-    private let referrals = Referrals()
+    private weak var referrals: Referrals!
 
     lazy var impactModel: MyImpactCellModel = {
         return refreshImpactModel()
@@ -148,7 +148,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
                      spotlight: nil)
     }
 
-    convenience init(delegate: EcosiaHomeDelegate?) {
+    convenience init(delegate: EcosiaHomeDelegate?, referrals: Referrals) {
         let layout = EcosiaHomeLayout()
         layout.scrollDirection = .vertical
         layout.minimumInteritemSpacing = 16
@@ -158,6 +158,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         self.init(collectionViewLayout: layout)
         self.title = .localized(.myImpact).capitalized
         self.delegate = delegate
+        self.referrals = referrals
         navigationItem.largeTitleDisplayMode = .always
     }
 
@@ -321,7 +322,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
                 }
             dismiss(animated: true, completion: nil)
         case .multiply:
-            navigationController?.pushViewController(MultiplyImpact(delegate: delegate), animated: true)
+            navigationController?.pushViewController(MultiplyImpact(delegate: delegate, referrals: referrals), animated: true)
         }
     }
 
@@ -422,7 +423,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     }
 
     @objc func inviteFriends() {
-        navigationController?.pushViewController(MultiplyImpact(delegate: delegate), animated: true)
+        navigationController?.pushViewController(MultiplyImpact(delegate: delegate, referrals: referrals), animated: true)
     }
 
     @objc func learnMore() {

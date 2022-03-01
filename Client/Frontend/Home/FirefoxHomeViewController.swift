@@ -167,7 +167,7 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel, FeatureF
     fileprivate var didRoate = false
     fileprivate let profile: Profile
     fileprivate let personalCounter = PersonalCounter()
-    fileprivate let referrals = Referrals()
+    fileprivate weak var referrals: Referrals!
     fileprivate let flowLayout = NTPLayout()
     fileprivate weak var searchbarCell: UICollectionViewCell?
     fileprivate weak var emptyCell: EmptyCell?
@@ -265,9 +265,10 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel, FeatureF
     */
 
     // MARK: - Initializers
-    init(profile: Profile, delegate: FirefoxHomeViewControllerDelegate?) {
+    init(profile: Profile, delegate: FirefoxHomeViewControllerDelegate?, referrals: Referrals) {
         self.profile = profile
         self.delegate = delegate
+        self.referrals = referrals
         super.init(collectionViewLayout: flowLayout)
         self.collectionView?.delegate = self
         self.collectionView?.dataSource = self

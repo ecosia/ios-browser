@@ -8,14 +8,16 @@ final class LoadingScreen: UIViewController {
     private weak var profile: Profile!
     private weak var tabManager: TabManager!
     private weak var progress: UIProgressView!
+    private weak var referrals: Referrals!
     private var referralCode: String?
 
     let loadingGroup = DispatchGroup()
     
     required init?(coder: NSCoder) { nil }
-    init(profile: Profile, tabManager: TabManager, referralCode: String? = nil) {
+    init(profile: Profile, tabManager: TabManager, referrals: Referrals, referralCode: String? = nil) {
         self.profile = profile
         self.tabManager = tabManager
+        self.referrals = referrals
         self.referralCode = referralCode
         super.init(nibName: nil, bundle: nil)
         modalPresentationStyle = .fullScreen
@@ -152,10 +154,8 @@ final class LoadingScreen: UIViewController {
     }
 
     // MARK: Referrals
-    var referrals: Referrals?
     private func claimReferral(_ code: String) {
-        self.referrals = Referrals()
-        referrals?.claim(referrer: code) { [weak self] result in
+        referrals.claim(referrer: code) { [weak self] result in
             User.shared.referrals.pendingClaim = nil
 
             switch result {
