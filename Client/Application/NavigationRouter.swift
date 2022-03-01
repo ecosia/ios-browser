@@ -5,6 +5,7 @@
 import Foundation
 import Shared
 import MozillaAppServices
+import Core
 
 struct FxALaunchParams {
     var query: [String: String]
@@ -173,7 +174,9 @@ enum NavigationPath {
         case .defaultBrowser(let path):
             NavigationPath.handleDefaultBrowser(path: path)
         case .referral(let code):
-            bvc.openBlankNewTabAndClaimReferral(code: code)
+            if Referrals.isEnabled {
+                bvc.openBlankNewTabAndClaimReferral(code: code)
+            }
         }
     }
 
