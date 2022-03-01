@@ -82,7 +82,7 @@ final class TreesCell: UICollectionViewCell, Themeable {
         applyTheme()
 
         treeCounter.subscribe(self) { [weak self] count in
-            guard let self = self else { return }
+            guard let self = self, self.model?.highlight == nil else { return }
 
             UIView.transition(with: self.globalCount, duration: 0.65, options: .transitionCrossDissolve, animations: {
                 self.globalCount.text = self.formatter.string(from: .init(value: count))
@@ -105,11 +105,10 @@ final class TreesCell: UICollectionViewCell, Themeable {
         }
 
         if let description = model.highlight {
-            globalCount.isHidden = true
+            globalCount.text = ""
             globalCountDescription.text = description
             globalCountDescription.textAlignment = .center
         } else {
-            globalCount.isHidden = false
             globalCountDescription.text = .localized(.totalEcosiaTrees)
             globalCountDescription.textAlignment = .left
         }
