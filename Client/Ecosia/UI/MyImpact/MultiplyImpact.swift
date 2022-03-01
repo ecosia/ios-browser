@@ -18,7 +18,7 @@ final class MultiplyImpact: UIViewController, Themeable {
     private weak var secondStep: MultiplyImpactStep?
     private weak var thirdStep: MultiplyImpactStep?
     private weak var delegate: EcosiaHomeDelegate?
-    private let referrals: Referrals
+    private weak var referrals: Referrals!
     
     required init?(coder: NSCoder) { nil }
     init(delegate: EcosiaHomeDelegate?, referrals: Referrals) {

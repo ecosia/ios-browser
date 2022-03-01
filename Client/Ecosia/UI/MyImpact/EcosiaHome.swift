@@ -108,7 +108,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     private let images = Images(.init(configuration: .ephemeral))
     private let news = News()
     private let personalCounter = PersonalCounter()
-    private var referrals: Referrals!
+    private weak var referrals: Referrals!
 
     lazy var impactModel: MyImpactCellModel = {
         return refreshImpactModel()

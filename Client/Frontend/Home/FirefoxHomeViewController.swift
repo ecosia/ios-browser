@@ -167,7 +167,7 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel, FeatureF
     fileprivate var didRoate = false
     fileprivate let profile: Profile
     fileprivate let personalCounter = PersonalCounter()
-    fileprivate let referrals: Referrals
+    fileprivate weak var referrals: Referrals!
     fileprivate let flowLayout = NTPLayout()
     fileprivate weak var searchbarCell: UICollectionViewCell?
     fileprivate weak var emptyCell: EmptyCell?

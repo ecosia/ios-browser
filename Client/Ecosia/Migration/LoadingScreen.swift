@@ -8,7 +8,7 @@ final class LoadingScreen: UIViewController {
     private weak var profile: Profile!
     private weak var tabManager: TabManager!
     private weak var progress: UIProgressView!
-    private let referrals: Referrals
+    private weak var referrals: Referrals!
     private var referralCode: String?
 
     let loadingGroup = DispatchGroup()
