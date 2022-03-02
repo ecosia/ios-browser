@@ -302,6 +302,6 @@ https://apps.apple.com/app/apple-store/id670881887?pt=2188920&ct=referrals&mt=8
     
     private var inviteLink: String? {
         guard let code = User.shared.referrals.code else { return nil }
-        return "ecosia://join/" + code
+        return "ecosia://\(Referrals.host)/" + code
     }
 }
