@@ -56,7 +56,7 @@ enum DeepLink {
             self = .homePanel(link)
         } else if component == "default-browser", let link = DefaultBrowserPath(rawValue: String(componentPath)) {
             self = .defaultBrowser(link)
-        } else if component == "invite" {
+        } else if component == Referrals.host {
             self = .referral(String(componentPath))
         } else {
             return nil
@@ -115,7 +115,7 @@ enum NavigationPath {
         let isOurScheme = [URL.mozPublicScheme, URL.mozInternalScheme].contains(scheme)
         if isOurScheme, let host = components.host?.lowercased(), !host.isEmpty {
             // Ecosia TODO: Referall deeplink
-            if host == "invite", let link = DeepLink(urlString: url.normalizedHostAndPath ?? "") {
+            if host == Referrals.host, let link = DeepLink(urlString: url.normalizedHostAndPath ?? "") {
                 self = .deepLink(link)
                 Analytics.shared.deeplink()
             } else if host == "deep-link", let deepURL = components.valueForQuery("url"), let link = DeepLink(urlString: deepURL.lowercased()) {
