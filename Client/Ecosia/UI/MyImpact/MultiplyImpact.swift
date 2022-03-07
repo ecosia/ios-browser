@@ -70,7 +70,7 @@ final class MultiplyImpact: UIViewController, Themeable {
         let cardTitle = UILabel()
         cardTitle.translatesAutoresizingMaskIntoConstraints = false
         cardTitle.numberOfLines = 0
-        cardTitle.text = .localizedPlural(.successfulInvites, num: User.shared.referrals.count)
+        cardTitle.text = .localizedPlural(.successfulReferrals, num: User.shared.referrals.count)
         cardTitle.font = .preferredFont(forTextStyle: .subheadline)
         cardTitle.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         cardTitle.adjustsFontForContentSizeCategory = true

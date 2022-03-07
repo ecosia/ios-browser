@@ -50,21 +50,21 @@
 			<string>%d références</string>
 		</dict>
 	</dict>
-    <key>%d successful invite(s)</key>
-    <dict>
-        <key>NSStringLocalizedFormatKey</key>
-        <string>%#@invites@</string>
-        <key>invites</key>
-        <dict>
-            <key>NSStringFormatSpecTypeKey</key>
-            <string>NSStringPluralRuleType</string>
-            <key>NSStringFormatValueTypeKey</key>
-            <string>d</string>
-            <key>one</key>
-            <string>%d invitation réussie</string>
-            <key>other</key>
-            <string>%d invitations réussies</string>
-        </dict>
-    </dict>
+	<key>%d successful referral(s)</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@referrals@</string>
+		<key>referrals</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%d référence réussie</string>
+			<key>other</key>
+			<string>%d références réussies</string>
+		</dict>
+	</dict>
 </dict>
 </plist>
