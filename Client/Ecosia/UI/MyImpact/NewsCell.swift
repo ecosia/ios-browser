@@ -155,13 +155,7 @@ final class NewsCell: UICollectionViewCell, Themeable, AutoSizingCell {
         imageUrl = item.imageUrl
         image.image = nil
         title.text = item.text.replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression)
-        
-        if #available(iOS 13.0, *) {
-            date.text = RelativeDateTimeFormatter().localizedString(for: item.publishDate, relativeTo: .init())
-        } else {
-            let count = Calendar.current.dateComponents([.day], from: item.publishDate, to: .init()).day!
-            date.text = count == 0 ? .localized(.today) : .init(format: .localized(.daysAgo), "\(count)")
-        }
+        date.text = RelativeDateTimeFormatter().localizedString(for: item.publishDate, relativeTo: .init())
         
         images.load(self, url: item.imageUrl) { [weak self] in
             guard self?.imageUrl == $0.url else { return }
