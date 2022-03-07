@@ -1291,9 +1291,14 @@ class SiriPageSetting: Setting {
 @available(iOS 14.0, *)
 class DefaultBrowserSetting: Setting {
     override var accessibilityIdentifier: String? { return "DefaultBrowserSettings" }
-
+    
     init() {
         super.init(title: .init(string: .localized(.setAsDefaultBrowser), attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText]))
+    }
+    
+    override func onConfigureCell(_ cell: UITableViewCell) {
+        super.onConfigureCell(cell)
+        cell.imageView?.image = .init(named: "defaultBrowser")
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
