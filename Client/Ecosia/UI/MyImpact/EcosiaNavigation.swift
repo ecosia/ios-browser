@@ -39,10 +39,6 @@ final class EcosiaNavigation: UINavigationController, Themeable {
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        if #available(iOS 13.0, *) {
-            return ThemeManager.instance.current.isDark ? .lightContent : .darkContent
-        } else {
-            return ThemeManager.instance.current.isDark ? .lightContent : .default
-        }
+        ThemeManager.instance.current.isDark ? .lightContent : .darkContent
     }
 }

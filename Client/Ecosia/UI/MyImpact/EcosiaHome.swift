@@ -376,7 +376,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     }
 
     private func updateBarAppearance() {
-        guard #available(iOS 13, *), let appearance = navigationController?.navigationBar.standardAppearance else { return }
+        guard let appearance = navigationController?.navigationBar.standardAppearance else { return }
 
         appearance.configureWithOpaqueBackground()
         appearance.backgroundColor = UIColor.theme.ecosia.modalBackground
