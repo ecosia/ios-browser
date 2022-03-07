@@ -104,7 +104,7 @@ extension String {
         case linksFromWebsites = "Links from websites, emails or messages will automatically open in Ecosia."
         case showTopSites = "Show Top Sites"
         case everyTimeYouInvite = "Every time a friend accepts your invitation, you’ll contribute to plant extra trees."
-        case successfulInvites = "%d successful invite(s)"
+        case successfulReferrals = "%d successful referral(s)"
         case invitingAFriend = "Inviting a friend"
         case shareYourInvitation = "Share your invitation link"
         case viaEmailText = "via email, text message or social media"
