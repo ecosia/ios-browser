@@ -84,7 +84,7 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var ntpImpactBackground: UIColor { UIColor.Photon.Grey80}
     override var impactBackground: UIColor { UIColor.Photon.Grey60 }
     override var impactMultiplyCardBackground: UIColor { .Photon.Grey70 }
-    override var impactMultiplyCardBorder: UIColor { .Photon.Grey60 }
+    override var impactMultiplyCardBorder: UIColor { .clear }
 
     override var barBackground: UIColor { UIColor.Photon.Grey80 }
     override var barSeparator: UIColor { UIColor.Photon.Grey60 }
