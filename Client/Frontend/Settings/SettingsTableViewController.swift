@@ -627,6 +627,9 @@ class SettingsTableViewController: ThemedTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        // Ecosia
+        navigationItem.largeTitleDisplayMode = .always
+        
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: Identifier)
         tableView.register(ThemedTableSectionHeaderFooterView.self, forHeaderFooterViewReuseIdentifier: SectionHeaderIdentifier)
         tableView.tableFooterView = UIView(frame: CGRect(width: view.frame.width, height: 30))

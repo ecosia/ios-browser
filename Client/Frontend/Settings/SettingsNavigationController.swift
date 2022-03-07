@@ -50,6 +50,10 @@ extension ThemedNavigationController: Themeable {
         navigationBar.standardAppearance = standardAppearance
         navigationBar.compactAppearance = standardAppearance
         navigationBar.scrollEdgeAppearance = standardAppearance
+        
+        // Ecosia
+        navigationBar.prefersLargeTitles = true
+        
         if #available(iOS 15.0, *) {
             navigationBar.compactScrollEdgeAppearance = standardAppearance
         }
