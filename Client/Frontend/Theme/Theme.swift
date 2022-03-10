@@ -32,8 +32,8 @@ class TableViewColor {
     var rowText: UIColor { return UIColor.Photon.Grey90 }
     var rowDetailText: UIColor { return UIColor.Photon.Grey60 }
     var disabledRowText: UIColor { return UIColor.Photon.Grey40 }
-    var separator: UIColor { return defaultSeparator }
-    var headerBackground: UIColor { return defaultBackground }
+    var separator: UIColor { .Light.border }
+    var headerBackground: UIColor { .Light.Background.tertiary }
     // Used for table headers in Settings and Photon menus
     var headerTextLight: UIColor { return UIColor.Photon.Grey50 }
     // Used for table headers in home panel tables

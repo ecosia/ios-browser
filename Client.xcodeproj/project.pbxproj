@@ -536,6 +536,8 @@
 		CE0AB94A25F7C42600333656 /* Analytics.Values.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE0AB94925F7C42600333656 /* Analytics.Values.swift */; };
 		CE0AB97225F7C43100333656 /* Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE0AB97125F7C43100333656 /* Analytics.swift */; };
 		CE0C911D2636F6AB00EF757F /* UpgradeScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE0C911C2636F6AB00EF757F /* UpgradeScreen.swift */; };
+		CE42163F27DA493D0069E311 /* SemanticColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE42163E27DA493D0069E311 /* SemanticColor.swift */; };
+		CE42164027DA4BDA0069E311 /* SemanticColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE42163E27DA493D0069E311 /* SemanticColor.swift */; };
 		CE7728DC26288B300084C771 /* LoadingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7728DB26288B300084C771 /* LoadingScreen.swift */; };
 		CE7F11941F3CEEC800ABFC0B /* RemoteDevices.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7F115E1F3CCEF900ABFC0B /* RemoteDevices.swift */; };
 		CE9AEE0726EFA9CA00181C96 /* MultiplyImpactStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9AEE0626EFA9CA00181C96 /* MultiplyImpactStep.swift */; };
@@ -3248,6 +3250,7 @@
 		CE0AB97125F7C43100333656 /* Analytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analytics.swift; sourceTree = "<group>"; };
 		CE0C911C2636F6AB00EF757F /* UpgradeScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpgradeScreen.swift; sourceTree = "<group>"; };
 		CE0D8D0F25B5DEE200B76E47 /* MozillaAppServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MozillaAppServices.framework; path = Carthage/Build/iOS/MozillaAppServices.framework; sourceTree = "<group>"; };
+		CE42163E27DA493D0069E311 /* SemanticColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SemanticColor.swift; sourceTree = "<group>"; };
 		CE664A9AB0ACFC6960CD6E81 /* pt-PT */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-PT"; path = "pt-PT.lproj/HistoryPanel.strings"; sourceTree = "<group>"; };
 		CE7728DB26288B300084C771 /* LoadingScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingScreen.swift; sourceTree = "<group>"; };
 		CE7F115E1F3CCEF900ABFC0B /* RemoteDevices.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteDevices.swift; sourceTree = "<group>"; };
@@ -5435,6 +5438,7 @@
 				CA5E9D50265D068600836DE9 /* SnapKit+Ecosia.swift */,
 				CA089C1926CAB56E001686DF /* UIFont+Ecosia.swift */,
 				CED09BE42727000800D38C2C /* EmptyHeader.swift */,
+				CE42163E27DA493D0069E311 /* SemanticColor.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -8058,6 +8062,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6025B10C267B6BEA00F59F6B /* LoginRecordExtension.swift in Sources */,
+				CE42164027DA4BDA0069E311 /* SemanticColor.swift in Sources */,
 				C8CE38BB265E71FE0009B09E /* ItemListCell.swift in Sources */,
 				F8324A0A2649A188007E4BFA /* CredentialProviderViewController.swift in Sources */,
 				C87DF9B2267246AA0097E707 /* AppAuthenticator.swift in Sources */,
@@ -8253,6 +8258,7 @@
 				CA7E7B6327591BD1005D1E47 /* QuickLinkSelection.intentdefinition in Sources */,
 				D88FDAAF1F4E2BA000FD9709 /* PhotonActionSheetAnimator.swift in Sources */,
 				CA7E7B6E275A33B3005D1E47 /* PocketFeed.swift in Sources */,
+				CE42163F27DA493D0069E311 /* SemanticColor.swift in Sources */,
 				C83432FE26BAD30D00ABAAA6 /* EnhancedTrackingProtectionDetailsVC.swift in Sources */,
 				E698FFDA1B4AADF40001F623 /* TabScrollController.swift in Sources */,
 				D34510881ACF415700EC27F0 /* SearchLoader.swift in Sources */,
