@@ -15,6 +15,15 @@ enum AppSettingsDeeplinkOption {
 class AppSettingsTableViewController: SettingsTableViewController, FeatureFlagsProtocol {
     var deeplinkTo: AppSettingsDeeplinkOption?
 
+    // Ecosia make inset grouped
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
+    
+    init() {
+        super.init(style: .insetGrouped)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
