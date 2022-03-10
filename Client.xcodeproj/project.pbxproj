@@ -537,6 +537,7 @@
 		CE0AB97225F7C43100333656 /* Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE0AB97125F7C43100333656 /* Analytics.swift */; };
 		CE0C911D2636F6AB00EF757F /* UpgradeScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE0C911C2636F6AB00EF757F /* UpgradeScreen.swift */; };
 		CE42163F27DA493D0069E311 /* SemanticColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE42163E27DA493D0069E311 /* SemanticColor.swift */; };
+		CE42164027DA4BDA0069E311 /* SemanticColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE42163E27DA493D0069E311 /* SemanticColor.swift */; };
 		CE7728DC26288B300084C771 /* LoadingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7728DB26288B300084C771 /* LoadingScreen.swift */; };
 		CE7F11941F3CEEC800ABFC0B /* RemoteDevices.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7F115E1F3CCEF900ABFC0B /* RemoteDevices.swift */; };
 		CE9AEE0726EFA9CA00181C96 /* MultiplyImpactStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9AEE0626EFA9CA00181C96 /* MultiplyImpactStep.swift */; };
@@ -8061,6 +8062,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6025B10C267B6BEA00F59F6B /* LoginRecordExtension.swift in Sources */,
+				CE42164027DA4BDA0069E311 /* SemanticColor.swift in Sources */,
 				C8CE38BB265E71FE0009B09E /* ItemListCell.swift in Sources */,
 				F8324A0A2649A188007E4BFA /* CredentialProviderViewController.swift in Sources */,
 				C87DF9B2267246AA0097E707 /* AppAuthenticator.swift in Sources */,
