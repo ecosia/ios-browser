@@ -163,12 +163,10 @@ final class Analytics {
     }
 
     func showInvitePromo() {
-        func openInvitePromo() {
-            tracker
-                .track(Structured(category: Category.invitations.rawValue,
-                                  action: Action.view.rawValue)
-                        .label("promo"))
-        }
+        tracker
+            .track(Structured(category: Category.invitations.rawValue,
+                              action: Action.view.rawValue)
+                    .label("promo"))
     }
 
     func openInvitePromo() {
