@@ -45,7 +45,7 @@ extension String {
         case makeEcosiaYourDefault = "Make Ecosia your default"
         case moderate = "Moderate"
         case more = "More"
-        case multiplyImpact = "Multipy impact"
+        case multiplyImpact = "Multiply impact"
         case myImpact = "My Impact"
         case myImpactDescription = "This is the estimated number of trees you have contributed to planting by using Ecosia."
         case mySearches = "My searches"
