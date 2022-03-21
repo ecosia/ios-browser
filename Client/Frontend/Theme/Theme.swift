@@ -222,7 +222,7 @@ class GeneralColor {
     var destructiveRed: UIColor { return UIColor.Photon.Red50 }
     var separator: UIColor { return defaultSeparator }
     var settingsTextPlaceholder: UIColor { return UIColor.Photon.Grey40 }
-    var controlTint: UIColor { return UIColor.theme.ecosia.primaryBrand }
+    var controlTint: UIColor { .Light.Button.primary }
     var switchToggle: UIColor { return UIColor.Photon.Grey90A40 }
 }
 
