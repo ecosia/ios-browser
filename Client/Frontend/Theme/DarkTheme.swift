@@ -152,6 +152,7 @@ fileprivate class DarkGeneralColor: GeneralColor {
     override var faviconBackground: UIColor { return UIColor.Photon.White100 }
     override var passcodeDot: UIColor { return UIColor.Photon.Grey40 }
     override var switchToggle: UIColor { return UIColor.Photon.Grey40 }
+    override var controlTint: UIColor { .Dark.Button.primary }
 }
 
 class DarkDefaultBrowserCardColor: DefaultBrowserCardColor {
