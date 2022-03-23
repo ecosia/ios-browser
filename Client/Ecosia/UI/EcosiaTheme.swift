@@ -52,6 +52,7 @@ class EcosiaTheme {
     var primaryText: UIColor { UIColor(named: "primaryText")! }
     var secondaryText: UIColor { UIColor.Photon.Grey50 }
     var highContrastText: UIColor { UIColor.Photon.Grey90 }
+    var navigationBarText: UIColor { .Light.Text.primary }
 
     var highlightedBackground: UIColor { .white }
     var highlightedBorder: UIColor { UIColor(named: "highlightedBorder")!}
@@ -98,6 +99,7 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var primaryText: UIColor { UIColor(named: "primaryTextDark")! }
     override var secondaryText: UIColor { UIColor.Photon.Grey30 }
     override var highlightedBackground: UIColor { UIColor.Photon.Grey70 }
+    override var navigationBarText: UIColor { .Dark.Text.primary }
 
     override var banner: UIColor { return UIColor(named: "bannerDark")!}
     override var underlineGrey: UIColor { return UIColor(named: "underlineGreyDark")! }
