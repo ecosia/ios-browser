@@ -29,7 +29,7 @@ fileprivate let defaultTextAndTint = UIColor.Photon.Grey90
 
 class TableViewColor {
     var rowBackground: UIColor { return UIColor.Photon.White100 }
-    var rowText: UIColor { return UIColor.Photon.Grey90 }
+    var rowText: UIColor { .Light.Text.primary }
     var rowDetailText: UIColor { return UIColor.Photon.Grey60 }
     var disabledRowText: UIColor { return UIColor.Photon.Grey40 }
     var separator: UIColor { .Light.border }
