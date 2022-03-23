@@ -43,7 +43,7 @@ extension ThemedNavigationController: Themeable {
     private func setupNavigationBarAppearance() {
         let standardAppearance = UINavigationBarAppearance()
             standardAppearance.configureWithOpaqueBackground()
-            standardAppearance.backgroundColor = UIColor.theme.ecosia.barBackground
+            standardAppearance.backgroundColor = UIColor.theme.tableView.headerBackground
             standardAppearance.titleTextAttributes = [.foregroundColor: UIColor.theme.ecosia.navigationBarText]
             standardAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.theme.ecosia.navigationBarText]
             standardAppearance.shadowImage = nil
