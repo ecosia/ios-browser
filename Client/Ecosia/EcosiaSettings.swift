@@ -28,7 +28,7 @@ class SearchAreaSetting: Setting {
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
-        navigationController?.pushViewController(MarketsController(), animated: true)
+        navigationController?.pushViewController(MarketsController(style: .insetGrouped), animated: true)
     }
 
     override func onConfigureCell(_ cell: UITableViewCell) {
