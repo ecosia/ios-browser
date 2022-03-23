@@ -24,6 +24,7 @@ final class MarketsController: ThemedTableViewController {
         super.viewDidLoad()
         view.backgroundColor = UIColor.theme.ecosia.primaryBackground
         navigationItem.title = .localized(.searchRegion)
+        navigationItem.largeTitleDisplayMode = .never
     }
     
     override func viewWillAppear(_ animated: Bool) {
