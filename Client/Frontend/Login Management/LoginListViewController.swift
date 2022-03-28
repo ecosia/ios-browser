@@ -100,7 +100,7 @@ class LoginListViewController: SensitiveViewController {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = Strings.LoginsAndPasswordsTitle
@@ -179,12 +179,14 @@ class LoginListViewController: SensitiveViewController {
         selectionButton.backgroundColor = UIColor.theme.general.highlightBlue
 
         let isDarkTheme = ThemeManager.instance.currentName == .dark
-        var searchTextField = searchController.searchBar.searchTextField
+        let searchTextField = searchController.searchBar.searchTextField
         
         // Theme the search text field (Dark / Light)
         if isDarkTheme {
+            searchTextField.backgroundColor = .Dark.Background.secondary
             searchTextField.defaultTextAttributes[NSAttributedString.Key.foregroundColor] = UIColor.white
         } else {
+            searchTextField.backgroundColor = .Light.Background.primary
             searchTextField.defaultTextAttributes[NSAttributedString.Key.foregroundColor] = UIColor.black
         }
         // Theme the glass icon next to the search text field
