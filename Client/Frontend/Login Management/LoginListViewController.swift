@@ -36,7 +36,7 @@ class LoginListViewController: SensitiveViewController {
     fileprivate var deleteAlert: UIAlertController?
     fileprivate var selectionButtonHeightConstraint: Constraint?
     fileprivate var selectedIndexPaths = [IndexPath]()
-    fileprivate let tableView = UITableView()
+    fileprivate let tableView = UITableView(frame: .zero, style: .insetGrouped)
 
     weak var settingsDelegate: SettingsDelegate?
     var shownFromAppMenu: Bool = false
@@ -104,6 +104,8 @@ class LoginListViewController: SensitiveViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = Strings.LoginsAndPasswordsTitle
+        navigationItem.largeTitleDisplayMode = .never
+        
         tableView.register(ThemedTableViewCell.self, forCellReuseIdentifier: CellReuseIdentifier)
         tableView.register(ThemedTableSectionHeaderFooterView.self, forHeaderFooterViewReuseIdentifier: SectionHeaderId)
 
