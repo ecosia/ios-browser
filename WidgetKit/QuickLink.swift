@@ -66,22 +66,31 @@ enum QuickLink: Int {
     public var backgroundColors: [Color] {
         switch self {
         case .search:
-            return [Color("ecosiaBrand")]
+            return [Color("PrimaryBrand")]
         case .privateSearch:
-            return [Color("Bar")]
+            return [Color("TertiaryBackground")]
         case .copiedLink:
-            return [Color("Bar")]
+            return [Color("TertiaryBackground")]
         case .closePrivateTabs:
-            return [Color("Bar")]
+            return [Color("TertiaryBackground")]
         }
     }
 
     public var textColor: Color {
         switch self {
         	case .search:
-            return .white
+            return .init("PrimaryBackground")
         default:
-            return .init("widgetText")
+            return .init("PrimaryText")
+        }
+    }
+
+    public var iconColor: Color {
+        switch self {
+            case .search:
+            return .init("PrimaryBackground")
+        default:
+            return .init("SecondaryIcon")
         }
     }
 

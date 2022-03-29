@@ -72,13 +72,13 @@ struct ImageButtonWithLabel: View {
                         VStack(alignment: .leading){
                             if isSmall {
                                 Text(link.label)
-                                    .font(.subheadline)
+                                    .font(.footnote)
                                     .minimumScaleFactor(0.75)
                                     .layoutPriority(1000)
                                     .foregroundColor(link.textColor)
                             } else {
                                 Text(link.label)
-                                    .font(.footnote)
+                                    .font(.subheadline)
                                     .minimumScaleFactor(0.75)
                                     .layoutPriority(1000)
                                     .foregroundColor(link.textColor)
@@ -90,12 +90,12 @@ struct ImageButtonWithLabel: View {
                             Image("search-button")
                                 .scaledToFit()
                                 .frame(height: 24.0)
-                                .foregroundColor(link.textColor)
+                                .foregroundColor(link.iconColor)
                         } else {
                             Image(link.imageName)
                                 .scaledToFit()
                                 .frame(height: 24.0)
-                                .foregroundColor(link.textColor)
+                                .foregroundColor(link.iconColor)
                         }
                     }
                     if isSmall {
@@ -104,7 +104,7 @@ struct ImageButtonWithLabel: View {
                             Image("openEcosia")
                                 .scaledToFit()
                                 .frame(height: 24.0)
-                                .foregroundColor(link.textColor)
+                                .foregroundColor(link.iconColor)
                         }
                     }
                 }
