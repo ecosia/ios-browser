@@ -112,6 +112,7 @@ class WebsiteDataManagementViewController: UIViewController, UITableViewDataSour
     override func viewDidLoad() {
         super.viewDidLoad()
         title = Strings.SettingsWebsiteDataTitle
+        navigationItem.largeTitleDisplayMode = .never
         navigationController?.setToolbarHidden(true, animated: false)
 
         tableView = UITableView(frame: .zero, style: .insetGrouped)
