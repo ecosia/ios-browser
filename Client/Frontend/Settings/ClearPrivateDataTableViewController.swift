@@ -58,15 +58,24 @@ class ClearPrivateDataTableViewController: ThemedTableViewController {
 
     fileprivate var clearButtonEnabled = true {
         didSet {
-            clearButton?.textLabel?.textColor = clearButtonEnabled ? UIColor.theme.general.destructiveRed : UIColor.theme.tableView.disabledRowText
+            clearButton?.textLabel?.textColor = clearButtonEnabled ? .Light.State.warning: .theme.tableView.disabledRowText
         }
     }
-
+    
+    required init?(coder: NSCoder) {
+        nil
+    }
+    
+    init() {
+        super.init(style: .insetGrouped)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         title = Strings.SettingsDataManagementTitle
-
+        navigationItem.largeTitleDisplayMode = .never
+        
         tableView.register(ThemedTableSectionHeaderFooterView.self, forHeaderFooterViewReuseIdentifier: SectionHeaderFooterIdentifier)
 
         let footer = ThemedTableSectionHeaderFooterView(frame: CGRect(width: tableView.bounds.width, height: SettingsUX.TableViewHeaderFooterHeight))
@@ -94,7 +103,7 @@ class ClearPrivateDataTableViewController: ThemedTableViewController {
             assert(indexPath.section == SectionButton)
             cell.textLabel?.text = Strings.SettingsClearPrivateDataClearButton
             cell.textLabel?.textAlignment = .center
-            cell.textLabel?.textColor = UIColor.theme.general.destructiveRed
+            cell.textLabel?.textColor = .Light.State.warning
             cell.accessibilityTraits = UIAccessibilityTraits.button
             cell.accessibilityIdentifier = "ClearPrivateData"
             clearButton = cell
