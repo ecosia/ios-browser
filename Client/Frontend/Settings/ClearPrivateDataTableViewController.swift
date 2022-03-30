@@ -103,7 +103,7 @@ class ClearPrivateDataTableViewController: ThemedTableViewController {
             assert(indexPath.section == SectionButton)
             cell.textLabel?.text = Strings.SettingsClearPrivateDataClearButton
             cell.textLabel?.textAlignment = .center
-            cell.textLabel?.textColor = UIColor.theme.general.destructiveRed
+            cell.textLabel?.textColor = .Light.State.warning
             cell.accessibilityTraits = UIAccessibilityTraits.button
             cell.accessibilityIdentifier = "ClearPrivateData"
             clearButton = cell
