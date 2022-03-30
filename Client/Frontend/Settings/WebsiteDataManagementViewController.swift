@@ -108,13 +108,13 @@ class WebsiteDataManagementViewController: UIViewController, UITableViewDataSour
     let theme = BuiltinThemeName(rawValue: ThemeManager.instance.current.name) ?? .normal
 
     private lazy var searchResultsViewController = WebsiteDataSearchResultsViewController(viewModel: viewModel)
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         title = Strings.SettingsWebsiteDataTitle
         navigationController?.setToolbarHidden(true, animated: false)
 
-        tableView = UITableView()
+        tableView = UITableView(frame: .zero, style: .insetGrouped)
         tableView.dataSource = self
         tableView.delegate = self
         tableView.separatorColor = UIColor.theme.tableView.separator
