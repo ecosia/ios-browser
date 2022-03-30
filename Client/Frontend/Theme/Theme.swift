@@ -28,7 +28,7 @@ fileprivate let defaultSeparator = UIColor.Photon.Grey30
 fileprivate let defaultTextAndTint = UIColor.Photon.Grey90 
 
 class TableViewColor {
-    var rowBackground: UIColor { return UIColor.Photon.White100 }
+    var rowBackground: UIColor { return .Light.Background.primary }
     var rowText: UIColor { .Light.Text.primary }
     var rowDetailText: UIColor { return UIColor.Photon.Grey60 }
     var disabledRowText: UIColor { return UIColor.Photon.Grey40 }
@@ -110,7 +110,7 @@ class TabTrayColor {
     var background: UIColor { return UIColor.Photon.Grey10 }
     var screenshotBackground: UIColor { return UIColor.white }
     var cellBackground: UIColor { return UIColor.white }
-    var toolbar: UIColor { return UIColor.white }
+    var toolbar: UIColor { .Light.Background.primary }
     var toolbarButtonTint: UIColor { return defaultTextAndTint }
     var privateModeLearnMore: UIColor { return UIColor.theme.ecosia.secondaryBrand }
     var privateModePurple: UIColor { return UIColor.theme.ecosia.secondaryBrand }
@@ -162,7 +162,7 @@ class HomePanelColor {
     var toolbarHighlight: UIColor { return UIColor.theme.ecosia.primaryBrand }
     var toolbarTint: UIColor { return UIColor.Photon.Grey50 }
     var topSiteHeaderTitle: UIColor { return .black }
-    var panelBackground: UIColor { return UIColor.Photon.White100 }
+    var panelBackground: UIColor { return .Light.Background.tertiary }
 
     var separator: UIColor { return defaultSeparator }
     var border: UIColor { return UIColor.Photon.Grey60 }

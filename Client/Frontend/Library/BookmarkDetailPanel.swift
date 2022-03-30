@@ -174,7 +174,7 @@ class BookmarkDetailPanel: SiteTableViewController {
             current.applyTheme()
         }
 
-        tableView.backgroundColor = UIColor.theme.tableView.headerBackground
+        tableView.backgroundColor = UIColor.theme.homePanel.panelBackground
     }
 
     override func reloadData() {
@@ -342,7 +342,7 @@ class BookmarkDetailPanel: SiteTableViewController {
                 cell.isUserInteractionEnabled = true
             }
 
-            cell.leftImageView.image = UIImage(named: "bookmarkFolder")?.createScaled(BookmarkDetailPanelUX.FolderIconSize)
+            cell.leftImageView.image = UIImage(named: "bookmarkFolder")?.createScaled(BookmarkDetailPanelUX.FolderIconSize).withRenderingMode(.alwaysTemplate)
             cell.leftImageView.contentMode = .center
             cell.indentationWidth = BookmarkDetailPanelUX.IndentationWidth
 
@@ -410,11 +410,15 @@ class BookmarkDetailPanel: SiteTableViewController {
         return BookmarkDetailPanelUX.FieldRowHeight
     }
 
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 0
+    }
+
     override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
         let header = view as? SiteTableViewHeader
         header?.showBorder(for: .top, false)
         header?.showBorder(for: .bottom, true)
-        header?.contentView.backgroundColor = UIColor.theme.tableView.headerBackground
+        header?.contentView.backgroundColor = UIColor.theme.homePanel.panelBackground
     }
 }
 

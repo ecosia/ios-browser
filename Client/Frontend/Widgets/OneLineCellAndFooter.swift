@@ -127,12 +127,14 @@ class OneLineTableViewCell: UITableViewCell, Themeable {
         let theme = BuiltinThemeName(rawValue: ThemeManager.instance.current.name) ?? .normal
         selectedView.backgroundColor = UIColor.theme.tableView.selectedBackground
         if theme == .dark {
-            self.backgroundColor = UIColor.Photon.Grey80
-            self.titleLabel.textColor = .white
+            self.backgroundColor = .Dark.Background.tertiary
+            self.titleLabel.textColor = .Dark.Text.primary
         } else {
-            self.backgroundColor = .white
-            self.titleLabel.textColor = .black
+            self.backgroundColor = .Light.Background.primary
+            self.titleLabel.textColor = .Light.Text.primary
         }
+        leftImageView.tintColor = UIColor.theme.ecosia.primaryText
+        tintColor = UIColor.theme.ecosia.primaryButton
     }
     
     override func prepareForReuse() {
@@ -203,9 +205,8 @@ class OneLineFooterView: UITableViewHeaderFooterView, Themeable {
     }
 
     func applyTheme() {
-        let theme = BuiltinThemeName(rawValue: ThemeManager.instance.current.name) ?? .normal
         self.containerView.backgroundColor = UIColor.theme.tableView.selectedBackground
-        self.titleLabel.textColor =  theme == .dark ? .white : .black
+        self.titleLabel.textColor =  UIColor.theme.ecosia.primaryText
         bordersHelper.applyTheme()
     }
     

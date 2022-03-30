@@ -70,7 +70,7 @@ class TextFieldTableViewCell: UITableViewCell, Themeable {
 
     func applyTheme() {
         backgroundColor = UIColor.theme.tableView.rowBackground
-        titleLabel.textColor = TextFieldTableViewCellUX.TitleLabelTextColor
+        titleLabel.textColor = UIColor.theme.ecosia.secondaryText
         textField.textColor = UIColor.theme.tableView.rowText
     }
 }

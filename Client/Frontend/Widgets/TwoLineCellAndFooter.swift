@@ -126,13 +126,13 @@ class TwoLineImageOverlayCell: UITableViewCell, Themeable {
     func applyTheme() {
         let theme = BuiltinThemeName(rawValue: ThemeManager.instance.current.name) ?? .normal
         if theme == .dark {
-            self.backgroundColor = UIColor.Photon.Grey80
-            self.titleLabel.textColor = .white
-            self.descriptionLabel.textColor = UIColor.Photon.Grey40
+            self.backgroundColor = .Dark.Background.tertiary
+            self.titleLabel.textColor = .Dark.Text.primary
+            self.descriptionLabel.textColor = .Dark.Text.secondary
         } else {
-            self.backgroundColor = .white
-            self.titleLabel.textColor = .black
-            self.descriptionLabel.textColor = UIColor.Photon.DarkGrey05
+            self.backgroundColor = .Light.Background.primary
+            self.titleLabel.textColor = .Light.Text.primary
+            self.descriptionLabel.textColor = .Light.Text.secondary
         }
     }
     
