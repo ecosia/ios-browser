@@ -166,8 +166,11 @@ class WebsiteDataManagementViewController: UIViewController, UITableViewDataSour
         searchController.searchBar.delegate = self
 
         if theme == .dark {
-            searchController.searchBar.barStyle = .black
+            searchController.searchBar.searchTextField.backgroundColor = .Dark.Background.secondary
+        } else {
+            searchController.searchBar.searchTextField.backgroundColor = .Light.Background.primary
         }
+        
         navigationItem.searchController = searchController
         self.searchController = searchController
 
