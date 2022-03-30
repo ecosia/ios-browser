@@ -61,7 +61,15 @@ class ClearPrivateDataTableViewController: ThemedTableViewController {
             clearButton?.textLabel?.textColor = clearButtonEnabled ? UIColor.theme.general.destructiveRed : UIColor.theme.tableView.disabledRowText
         }
     }
-
+    
+    required init?(coder: NSCoder) {
+        nil
+    }
+    
+    init() {
+        super.init(style: .insetGrouped)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
