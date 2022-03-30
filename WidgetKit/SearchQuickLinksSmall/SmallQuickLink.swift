@@ -42,11 +42,12 @@ struct SmallQuickLinkView : View {
                 .aspectRatio(contentMode: .fit)
                 .frame(height: 59)
                 .padding(.bottom, 5)
+                .padding(.horizontal, 16)
                 .widgetURL(entry.link.smallWidgetUrl)
             Bar()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color("backgroundColor"))
+        .background(Color("PrimaryBackground"))
     }
 }
 
@@ -77,11 +78,11 @@ struct Bar: View {
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 25)
-                .fill(Color("Bar"))
+                .fill(Color("TertiaryBackground"))
                 .frame(height: 50)
             HStack {
-                Image(systemName: "magnifyingglass")
-                    .foregroundColor(.init("widgetText"))
+                Image("openEcosia")
+                    .foregroundColor(.init("PrimaryBrand"))
                     .padding(.leading)
                 Spacer()
             }

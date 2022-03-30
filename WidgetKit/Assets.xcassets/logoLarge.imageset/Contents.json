@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "logoMainEcosiaLight.pdf",
+      "filename" : "Logo.pdf",
       "idiom" : "universal"
     },
     {
@@ -11,7 +11,7 @@
           "value" : "dark"
         }
       ],
-      "filename" : "logoMainEcosiaDark.pdf",
+      "filename" : "Logo-1.pdf",
       "idiom" : "universal"
     }
   ],

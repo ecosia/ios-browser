@@ -31,7 +31,7 @@ struct TopSitesView: View {
                 (entry.favicons[site.imageKey])!.resizable().frame(width: 60, height: 60).mask(maskShape)
             } else {
                 Rectangle()
-                    .fill(Color("Bar"))
+                    .fill(Color("TertiaryBackground"))
                     .frame(width: 60, height: 60)
             }
         }
@@ -43,7 +43,7 @@ struct TopSitesView: View {
     
     var emptySquare: some View {
         maskShape
-            .fill(Color("Bar"))
+            .fill(Color("TertiaryBackground"))
             .frame(width: 60, height: 60)
             .background(Color.clear).frame(maxWidth: .infinity)
     }
@@ -91,7 +91,7 @@ struct TopSitesView: View {
             }.padding([.bottom, .horizontal])
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background((Color("backgroundColor")))
+        .background((Color("PrimaryBackground")))
     }
     
     private func linkToContainingApp(_ urlSuffix: String = "", query: String) -> URL {

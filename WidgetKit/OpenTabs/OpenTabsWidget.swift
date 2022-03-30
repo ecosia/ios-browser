@@ -35,12 +35,12 @@ struct OpenTabsView: View {
                         (entry.favicons[tab.imageKey])!.resizable().frame(width: 16, height: 16)
                     } else {
                         Image("placeholderFavicon")
-                            .foregroundColor(.init("widgetText"))
+                            .foregroundColor(.init("PrimaryText"))
                             .frame(width: 16, height: 16)
                     }
                     
                     Text(tab.title!)
-                        .foregroundColor(.init("widgetText"))
+                        .foregroundColor(.init("PrimaryText"))
                         .multilineTextAlignment(.leading)
                         .lineLimit(1)
                         .font(.system(size: 15, weight: .regular, design: .default))
@@ -48,7 +48,7 @@ struct OpenTabsView: View {
             }
             
             Rectangle()
-                .fill(Color("separator"))
+                .fill(Color("Border"))
                 .frame(height: 1.0)
                 .padding(.leading, 45)
                 .padding(.trailing, 16)
@@ -57,8 +57,8 @@ struct OpenTabsView: View {
     
     var openFirefoxButton: some View {
         HStack(alignment: .center, spacing: 15) {
-            Image("openFirefox").foregroundColor(.init("widgetText"))
-            Text(String.OpenFirefoxLabel).foregroundColor(.init("widgetText")).lineLimit(1).font(.system(size: 13, weight: .semibold, design: .default))
+            Image("openFirefox").foregroundColor(.init("PrimaryText"))
+            Text(String.OpenFirefoxLabel).foregroundColor(.init("PrimaryText")).lineLimit(1).font(.system(size: 13, weight: .semibold, design: .default))
             Spacer()
         }.padding([.horizontal])
     }
@@ -78,11 +78,11 @@ struct OpenTabsView: View {
                     Text(String.NoOpenTabsLabel)
                     HStack {
                         Spacer()
-                        Image("openFirefox").foregroundColor(.init("widgetText"))
-                        Text(String.OpenFirefoxLabel).foregroundColor(.init("widgetText")).lineLimit(1).font(.system(size: 13, weight: .semibold, design: .default))
+                        Image("openFirefox").foregroundColor(.init("PrimaryText"))
+                        Text(String.OpenFirefoxLabel).foregroundColor(.init("PrimaryText")).lineLimit(1).font(.system(size: 13, weight: .semibold, design: .default))
                         Spacer()
                     }.padding(10)
-                }.foregroundColor(.init("widgetText"))
+                }.foregroundColor(.init("PrimaryText"))
             } else {
                 VStack(spacing: 8) {
                     ForEach(entry.tabs.suffix(numberOfTabsToDisplay), id: \.self) { tab in
@@ -91,9 +91,9 @@ struct OpenTabsView: View {
                     
                     if (entry.tabs.count > numberOfTabsToDisplay) {
                         HStack(alignment: .center, spacing: 15) {
-                            Image("openFirefox").foregroundColor(.init("widgetText")).frame(width: 16, height: 16)
+                            Image("openFirefox").foregroundColor(.init("PrimaryText")).frame(width: 16, height: 16)
                             Text(String.localizedStringWithFormat(String.MoreTabsLabel, (entry.tabs.count - numberOfTabsToDisplay)))
-                                .foregroundColor(.init("widgetText")).lineLimit(1).font(.system(size: 13, weight: .semibold, design: .default))
+                                .foregroundColor(.init("PrimaryText")).lineLimit(1).font(.system(size: 13, weight: .semibold, design: .default))
                             Spacer()
                         }.padding([.horizontal])
                     } else {
@@ -105,7 +105,7 @@ struct OpenTabsView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background((Color("backgroundColor")))
+        .background((Color("PrimaryBackground")))
     }
     
     private func linkToContainingApp(_ urlSuffix: String = "", query: String) -> URL {
