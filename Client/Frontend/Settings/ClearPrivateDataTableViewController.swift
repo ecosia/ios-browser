@@ -74,7 +74,8 @@ class ClearPrivateDataTableViewController: ThemedTableViewController {
         super.viewDidLoad()
 
         title = Strings.SettingsDataManagementTitle
-
+        navigationItem.largeTitleDisplayMode = .never
+        
         tableView.register(ThemedTableSectionHeaderFooterView.self, forHeaderFooterViewReuseIdentifier: SectionHeaderFooterIdentifier)
 
         let footer = ThemedTableSectionHeaderFooterView(frame: CGRect(width: tableView.bounds.width, height: SettingsUX.TableViewHeaderFooterHeight))
