@@ -140,6 +140,8 @@ class OneLineTableViewCell: UITableViewCell, Themeable {
     override func prepareForReuse() {
         super.prepareForReuse()
         self.selectionStyle = .default
+        self.accessoryView = nil
+        self.accessoryType = .none
         separatorInset = UIEdgeInsets(top: 0, left: TwoLineCellUX.ImageSize + 2 * TwoLineCellUX.BorderViewMargin, bottom: 0, right: 0)
         applyTheme()
     }

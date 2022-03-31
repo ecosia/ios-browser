@@ -74,6 +74,8 @@ class EcosiaTheme {
     var teal60: UIColor { UIColor(rgb: 0x267A82) }
     var segmentSelectedText: UIColor { UIColor(named: "primaryText")! }
     var segmentBackground: UIColor { .Light.Background.secondary }
+    var warning: UIColor { .Light.State.warning }
+    var information: UIColor { .Light.State.information }
 }
 
 final class DarkEcosiaTheme: EcosiaTheme {
@@ -116,6 +118,8 @@ final class DarkEcosiaTheme: EcosiaTheme {
 
     override var segmentSelectedText: UIColor { UIColor.Photon.Grey90 }
     override var segmentBackground: UIColor { .Dark.Background.tertiary }
+    override var warning: UIColor { .Dark.State.warning }
+    override var information: UIColor { .Dark.State.information }
 }
 
 extension UIImage {

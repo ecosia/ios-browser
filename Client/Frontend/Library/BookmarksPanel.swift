@@ -37,7 +37,7 @@ fileprivate class SeparatorTableViewCell: OneLineTableViewCell {
     override func applyTheme() {
         super.applyTheme()
 
-        backgroundColor = UIColor.theme.tableView.headerBackground
+        backgroundColor = UIColor.theme.homePanel.panelBackground
     }
 }
 

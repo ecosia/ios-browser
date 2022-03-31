@@ -61,11 +61,13 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
             if enabled {
                 cell.titleLabel.alpha = 1.0
                 cell.leftImageView.alpha = 1.0
+                cell.accessoryView?.tintColor.map({ cell.accessoryView?.tintColor = $0.withAlphaComponent(1.0) })
                 cell.selectionStyle = .default
                 cell.isUserInteractionEnabled = true
             } else {
                 cell.titleLabel.alpha = 0.5
                 cell.leftImageView.alpha = 0.5
+                cell.accessoryView?.tintColor.map({ cell.accessoryView?.tintColor = $0.withAlphaComponent(0.5) })
                 cell.selectionStyle = .none
                 cell.isUserInteractionEnabled = false
             }
@@ -312,6 +314,7 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
         }))
         let cancelAction = UIAlertAction(title: Strings.CancelString, style: .cancel)
         alert.addAction(cancelAction)
+        alert.view.tintColor = UIColor.theme.ecosia.information
         present(alert, animated: true)
     }
 
@@ -330,11 +333,12 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
     func configureClearHistory(_ cell: OneLineTableViewCell, for indexPath: IndexPath) -> OneLineTableViewCell {
         clearHistoryCell = cell
         cell.titleLabel.text = Strings.HistoryPanelClearHistoryButtonTitle
+        cell.titleLabel.textColor = UIColor.theme.ecosia.warning
         cell.leftImageView.image = UIImage.templateImageNamed("forget")
-        cell.leftImageView.tintColor = UIColor.theme.browser.tint
         cell.leftImageView.backgroundColor = UIColor.theme.homePanel.historyHeaderIconsBackground
         cell.accessibilityIdentifier = "HistoryPanel.clearHistory"
 
+        /* Ecosia: ignore empty logic here
         var isEmpty = true
         for i in Section.today.rawValue..<tableView.numberOfSections {
             if tableView.numberOfRows(inSection: i) > 0 {
@@ -343,16 +347,19 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
         }
         cell.imageView?.tintColor = isEmpty ? HistoryPanelUX.actionIconColor : .theme.general.destructiveRed
         AdditionalHistoryActionRow.setStyle(enabled: !isEmpty, forCell: cell)
-
+         */
+        cell.leftImageView.tintColor = UIColor.theme.ecosia.warning
         return cell
     }
 
     func configureRecentlyClosed(_ cell: OneLineTableViewCell, for indexPath: IndexPath) -> OneLineTableViewCell {
-        cell.accessoryType = .disclosureIndicator
+        cell.accessoryView = UIImageView(image: UIImage(systemName: "chevron.right"))
+        cell.accessoryView?.tintColor = UIColor.theme.ecosia.primaryText
+
         cell.titleLabel.text = Strings.RecentlyClosedTabsButtonTitle
+        cell.titleLabel.textColor = .theme.ecosia.primaryText
         cell.leftImageView.image = UIImage.templateImageNamed("recently_closed")
-        cell.leftImageView.tintColor = UIColor.theme.browser.tint
-        cell.leftImageView.backgroundColor = UIColor.theme.homePanel.historyHeaderIconsBackground
+        cell.leftImageView.tintColor = UIColor.theme.ecosia.primaryText
         AdditionalHistoryActionRow.setStyle(enabled: hasRecentlyClosed, forCell: cell)
         cell.accessibilityIdentifier = "HistoryPanel.recentlyClosedCell"
         return cell
@@ -500,10 +507,10 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
 
     override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
         if let header = view as? UITableViewHeaderFooterView {
-            header.textLabel?.textColor = UIColor.theme.tableView.headerTextDark
-            header.contentView.backgroundColor = UIColor.theme.tableView.headerBackground
+            header.textLabel?.textColor = UIColor.theme.ecosia.secondaryText
+            header.contentView.backgroundColor = UIColor.theme.homePanel.panelBackground
             if #available(iOS 14.0, *) {
-                header.backgroundConfiguration?.backgroundColor = UIColor.theme.tableView.headerBackground
+                header.backgroundConfiguration?.backgroundColor = UIColor.theme.homePanel.panelBackground
             }
         }
     }
@@ -545,7 +552,7 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         // Intentionally blank. Required to use UITableViewRowActions
     }
-
+    /* Ecosia: use newer API for table swipe actions
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
         if indexPath.section == Section.additionalHistoryActions.rawValue {
             return []
@@ -557,6 +564,18 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
         })
         return [delete]
     }
+    */
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        if indexPath.section == Section.additionalHistoryActions.rawValue {
+            return nil
+        }
+        let action = UIContextualAction(style: .destructive, title: Strings.HistoryPanelDelete) { _, _, _ in
+            self.removeHistoryForURLAtIndexPath(indexPath: indexPath)
+        }
+        action.backgroundColor = .Light.State.warning
+        return UISwipeActionsConfiguration(actions: [action])
+    }
+
 
     override func applyTheme() {
         super.applyTheme()

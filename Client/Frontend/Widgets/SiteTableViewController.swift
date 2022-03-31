@@ -51,8 +51,8 @@ class SiteTableViewHeader: UITableViewHeaderFooterView, Themeable {
     }
 
     func applyTheme() {
-        titleLabel.textColor = UIColor.theme.tableView.headerTextDark
-        contentView.backgroundColor = UIColor.theme.tableView.selectedBackground
+        titleLabel.textColor = UIColor.theme.ecosia.secondaryText
+        contentView.backgroundColor = UIColor.theme.homePanel.panelBackground
         bordersHelper.applyTheme()
     }
 
@@ -61,8 +61,8 @@ class SiteTableViewHeader: UITableViewHeaderFooterView, Themeable {
     }
 
     func setDefaultBordersValues() {
-        bordersHelper.showBorder(for: .top, true)
-        bordersHelper.showBorder(for: .bottom, true)
+        bordersHelper.showBorder(for: .top, false)
+        bordersHelper.showBorder(for: .bottom, false)
     }
 }
 
@@ -176,8 +176,8 @@ class SiteTableViewController: UIViewController, UITableViewDelegate, UITableVie
 
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
         if let header = view as? UITableViewHeaderFooterView {
-            header.textLabel?.textColor = UIColor.theme.tableView.headerTextDark
-            header.contentView.backgroundColor = UIColor.theme.tableView.headerBackground
+            header.textLabel?.textColor = UIColor.theme.ecosia.secondaryText
+            header.contentView.backgroundColor = UIColor.theme.homePanel.panelBackground
         }
     }
 

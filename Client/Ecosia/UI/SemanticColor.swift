@@ -23,6 +23,7 @@ extension UIColor {
 
         struct State {
             static let warning = UIColor(red: 0.992, green: 0.259, blue: 0.337, alpha: 1)
+            static let information = UIColor(red: 0, green: 0.494, blue: 0.659, alpha: 1)
         }
         
         static let border = UIColor(red: 0.871, green: 0.871, blue: 0.851, alpha: 1)
@@ -42,6 +43,11 @@ extension UIColor {
         struct Text {
             static let primary = UIColor.white
             static let secondary = UIColor(red: 0.871, green: 0.871, blue: 0.851, alpha: 1)
+        }
+
+        public struct State {
+            static let warning = UIColor(red: 1.0, green: 0.541, blue: 0.549, alpha: 1)
+            static let information = UIColor(red: 0.589, green: 0.839, blue: 0.973, alpha: 1)
         }
         
         static let border = UIColor(red: 0.35, green: 0.35, blue: 0.35, alpha: 1)
