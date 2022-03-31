@@ -120,7 +120,17 @@ class AddCredentialViewController: UIViewController {
 
 // MARK: - UITableViewDataSource
 extension AddCredentialViewController: UITableViewDataSource {
-
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        switch AddCredentialField(rawValue: section)! {
+        case .usernameItem:
+            return .LoginDetailUsername
+        case .passwordItem:
+            return .LoginDetailPassword
+        case .websiteItem:
+            return .LoginDetailWebsite
+        }
+    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch AddCredentialField(rawValue: indexPath.row)! {
 
@@ -173,8 +183,12 @@ extension AddCredentialViewController: UITableViewDataSource {
         return cell
     }
 
+    func numberOfSections(in tableView: UITableView) -> Int {
+        3
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 3
+        1
     }
 }
 
