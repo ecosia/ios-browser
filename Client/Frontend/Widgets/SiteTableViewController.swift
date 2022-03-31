@@ -77,19 +77,20 @@ class SiteTableViewController: UIViewController, UITableViewDelegate, UITableVie
     let profile: Profile
 
     var data: Cursor<Site> = Cursor<Site>(status: .success, msg: "No data set")
-    lazy var tableView: UITableView = .build { [weak self] table in
-        guard let self = self else { return }
+    lazy var tableView: UITableView = {
+        let table = UITableView(frame: .zero, style: .insetGrouped)
         table.delegate = self
         table.dataSource = self
         table.register(TwoLineImageOverlayCell.self, forCellReuseIdentifier: self.CellIdentifier)
         table.register(OneLineTableViewCell.self, forCellReuseIdentifier: self.OneLineCellIdentifier)
         table.register(SiteTableViewHeader.self, forHeaderFooterViewReuseIdentifier: self.HeaderIdentifier)
-        table.layoutMargins = .zero
+        // Ecosia: table.layoutMargins = .zero
         table.keyboardDismissMode = .onDrag
         table.accessibilityIdentifier = "SiteTable"
         table.cellLayoutMarginsFollowReadableWidth = false
         table.estimatedRowHeight = SiteTableViewControllerUX.RowHeight
         table.setEditing(false, animated: false)
+        table.contentInset.top = 24
         
         if let _ = self as? HomePanelContextMenu {
             table.dragDelegate = self
@@ -97,7 +98,8 @@ class SiteTableViewController: UIViewController, UITableViewDelegate, UITableVie
         
         // Set an empty footer to prevent empty cells from appearing in the list.
         table.tableFooterView = UIView()
-    }
+        return table
+    }()
 
     private override init(nibName: String?, bundle: Bundle?) {
         fatalError("init(coder:) has not been implemented")
@@ -198,7 +200,7 @@ class SiteTableViewController: UIViewController, UITableViewDelegate, UITableVie
         setNeedsStatusBarAppearanceUpdate()
 
         tableView.backgroundColor = UIColor.theme.homePanel.panelBackground
-        tableView.separatorColor = UIColor.theme.tableView.separator
+        tableView.separatorColor = UIColor.theme.ecosia.border
         tableView.visibleCells.forEach({ ($0 as? Themeable)?.applyTheme() })
         if let rows = tableView.indexPathsForVisibleRows {
             IndexSet(rows.map { $0.section }).forEach {

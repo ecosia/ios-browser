@@ -10,7 +10,7 @@ fileprivate let defaultSeparator = UIColor.Photon.Grey60
 fileprivate let defaultTextAndTint = UIColor.white
 
 fileprivate class DarkTableViewColor: TableViewColor {
-    override var rowBackground: UIColor { return UIColor.Photon.Grey80 }
+    override var rowBackground: UIColor { return .Dark.Background.tertiary }
     override var rowText: UIColor { .Dark.Text.primary }
     override var rowDetailText: UIColor { return UIColor.Photon.Grey30 }
     override var disabledRowText: UIColor { return UIColor.Photon.Grey40 }
@@ -58,7 +58,7 @@ fileprivate class DarkTabTrayColor: TabTrayColor {
     override var background: UIColor { return UIColor.Photon.Grey80 }
     override var screenshotBackground: UIColor { return UIColor.Photon.DarkGrey30 }
     override var cellBackground: UIColor { return defaultBackground }
-    override var toolbar: UIColor { return UIColor.Photon.Grey80 }
+    override var toolbar: UIColor { .Dark.Background.secondary }
     override var toolbarButtonTint: UIColor { return defaultTextAndTint }
     override var cellCloseButton: UIColor { return defaultTextAndTint }
     override var cellTitleBackground: UIColor { return UIColor.Photon.Grey70 }
@@ -101,7 +101,7 @@ fileprivate class DarkHomePanelColor: HomePanelColor {
     override var toolbarHighlight: UIColor { return UIColor.theme.ecosia.primaryToolbar }
     override var toolbarTint: UIColor { return UIColor.Photon.Grey30 }
     override var topSiteHeaderTitle: UIColor { return UIColor.Photon.White100 }
-    override var panelBackground: UIColor { return UIColor.Photon.Grey80 }
+    override var panelBackground: UIColor { return .Dark.Background.secondary }
     override var separator: UIColor { return defaultSeparator }
     override var border: UIColor { return UIColor.Photon.Grey60 }
     override var buttonContainerBorder: UIColor { return separator }

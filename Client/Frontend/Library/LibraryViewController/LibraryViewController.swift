@@ -491,13 +491,17 @@ extension LibraryViewController: Themeable {
         // There is an ANNOYING bar in the nav bar above the segment control. These are the
         // UIBarBackgroundShadowViews. We must set them to be clear images in order to
         // have a seamless nav bar, if embedding the segmented control.
-        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
-        navigationController?.navigationBar.shadowImage = UIImage()
+        let navAppearance = UINavigationBarAppearance()
+        navAppearance.configureWithOpaqueBackground()
+        navAppearance.backgroundColor = UIColor.theme.homePanel.panelBackground
+        navAppearance.shadowImage = UIImage()
+        navAppearance.shadowColor = .clear
+        navAppearance.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.theme.ecosia.primaryText]
+        navigationController?.navigationBar.standardAppearance = navAppearance
+        navigationController?.navigationBar.scrollEdgeAppearance = navAppearance
+        navigationController?.navigationBar.tintColor = UIColor.theme.ecosia.primaryButton
 
         view.backgroundColor = UIColor.theme.homePanel.panelBackground
-        navigationController?.navigationBar.barTintColor = UIColor.theme.tabTray.toolbar
-        navigationController?.navigationBar.tintColor = UIColor.theme.ecosia.primaryBrand
-        navigationController?.navigationBar.backgroundColor = UIColor.theme.tabTray.toolbar
 
         let appearance = UIToolbarAppearance()
         appearance.configureWithDefaultBackground()
@@ -507,21 +511,17 @@ extension LibraryViewController: Themeable {
         if #available(iOS 15.0, *) {
             navigationController?.toolbar.scrollEdgeAppearance = appearance
         }
+        navigationController?.toolbar.tintColor = UIColor.theme.ecosia.primaryButton
 
-        navigationController?.toolbar.tintColor = UIColor.theme.ecosia.primaryBrand
-        navigationToolbar.barTintColor = UIColor.theme.tabTray.toolbar
-        navigationToolbar.tintColor = UIColor.theme.tabTray.toolbarButtonTint
+        navigationToolbar.barTintColor = UIColor.theme.homePanel.panelBackground
+        navigationToolbar.tintColor = UIColor.theme.ecosia.primaryButton
         navigationToolbar.isTranslucent = false
+        navigationToolbar.setShadowImage(UIImage(), forToolbarPosition: .any)
 
-        let theme = BuiltinThemeName(rawValue: ThemeManager.instance.current.name) ?? .normal
-        if theme == .dark {
-            navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
-        } else {
-            navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
-        }
-
-        librarySegmentControl.setTitleTextAttributes([.foregroundColor: UIColor.theme.ecosia.secondaryText], for: .normal)
-        librarySegmentControl.setTitleTextAttributes([.foregroundColor: UIColor.theme.ecosia.highContrastText], for: .selected)
+        librarySegmentControl.setTitleTextAttributes([.foregroundColor: UIColor.theme.ecosia.primaryText], for: .normal)
+        librarySegmentControl.setTitleTextAttributes([.foregroundColor: UIColor.Light.Text.primary], for: .selected)
+        librarySegmentControl.selectedSegmentTintColor = .Light.Background.primary
+        librarySegmentControl.backgroundColor = UIColor.theme.ecosia.segmentBackground
 
         setNeedsStatusBarAppearanceUpdate()
     }

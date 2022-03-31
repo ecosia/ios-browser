@@ -240,8 +240,8 @@ class ThemedHeaderFooterViewBordersHelper: Themeable {
     }
 
     func applyTheme() {
-        topBorder.backgroundColor = UIColor.theme.tableView.separator
-        bottomBorder.backgroundColor = UIColor.theme.tableView.separator
+        topBorder.backgroundColor = UIColor.theme.ecosia.border
+        bottomBorder.backgroundColor = UIColor.theme.ecosia.border
     }
 }
 

@@ -483,6 +483,7 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel {
         bookmarkNodes.insert(bookmarkNode, at: destinationIndexPath.row)
     }
 
+    /* Ecosia: use newer APIs for tableview contextual actions
     func tableView(_ tableView: UITableView, editingStyleForRowAtIndexPath indexPath: IndexPath) -> UITableViewCell.EditingStyle {
         return .delete
     }
@@ -496,6 +497,16 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel {
 
         return [delete]
     }
+    */
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let action = UIContextualAction(style: .destructive, title: Strings.BookmarksPanelDeleteTableAction) { _, _, _ in
+            self.deleteBookmarkNodeAtIndexPath(indexPath)
+            Analytics.shared.browser(.delete, label: .favourites)
+        }
+        action.backgroundColor = .Light.State.warning
+        return UISwipeActionsConfiguration(actions: [action])
+    }
+
 }
 
 // MARK: LibraryPanelContextMenu
