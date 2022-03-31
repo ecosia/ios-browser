@@ -43,6 +43,10 @@ extension UIColor {
             static let primary = UIColor.white
             static let secondary = UIColor(red: 0.871, green: 0.871, blue: 0.851, alpha: 1)
         }
+
+        public struct State {
+            public static let warning = UIColor(red: 1.0, green: 0.541, blue: 0.549, alpha: 1)
+        }
         
         static let border = UIColor(red: 0.35, green: 0.35, blue: 0.35, alpha: 1)
     }
