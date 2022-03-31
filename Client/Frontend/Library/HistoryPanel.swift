@@ -314,6 +314,7 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
         }))
         let cancelAction = UIAlertAction(title: Strings.CancelString, style: .cancel)
         alert.addAction(cancelAction)
+        alert.view.tintColor = UIColor.theme.ecosia.information
         present(alert, animated: true)
     }
 
@@ -506,10 +507,10 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
 
     override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
         if let header = view as? UITableViewHeaderFooterView {
-            header.textLabel?.textColor = UIColor.theme.tableView.headerTextDark
-            header.contentView.backgroundColor = UIColor.theme.tableView.headerBackground
+            header.textLabel?.textColor = UIColor.theme.ecosia.secondaryText
+            header.contentView.backgroundColor = UIColor.theme.homePanel.panelBackground
             if #available(iOS 14.0, *) {
-                header.backgroundConfiguration?.backgroundColor = UIColor.theme.tableView.headerBackground
+                header.backgroundConfiguration?.backgroundColor = UIColor.theme.homePanel.panelBackground
             }
         }
     }
