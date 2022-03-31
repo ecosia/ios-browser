@@ -500,14 +500,11 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel {
     */
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let action = UIContextualAction(style: .destructive, title: Strings.BookmarksPanelDeleteTableAction) { _, _, _ in
-
             self.deleteBookmarkNodeAtIndexPath(indexPath)
             Analytics.shared.browser(.delete, label: .favourites)
         }
         action.backgroundColor = .Light.State.warning
-
-        let config = UISwipeActionsConfiguration(actions: [action])
-        return config
+        return UISwipeActionsConfiguration(actions: [action])
     }
 
 }
