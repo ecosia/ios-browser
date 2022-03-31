@@ -56,6 +56,9 @@ class AddCredentialViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        cancelButton.tintColor = .theme.general.controlTint
+        saveButton.tintColor = .theme.general.controlTint
+        
         navigationItem.rightBarButtonItem = saveButton
         navigationItem.leftBarButtonItem = cancelButton
 
