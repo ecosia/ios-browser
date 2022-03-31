@@ -84,7 +84,7 @@ class SiteTableViewController: UIViewController, UITableViewDelegate, UITableVie
         table.register(TwoLineImageOverlayCell.self, forCellReuseIdentifier: self.CellIdentifier)
         table.register(OneLineTableViewCell.self, forCellReuseIdentifier: self.OneLineCellIdentifier)
         table.register(SiteTableViewHeader.self, forHeaderFooterViewReuseIdentifier: self.HeaderIdentifier)
-        //table.layoutMargins = UIEdgeInsets(top: 24, left: 16, bottom: 16, right: 16)
+        // Ecosia: table.layoutMargins = .zero
         table.keyboardDismissMode = .onDrag
         table.accessibilityIdentifier = "SiteTable"
         table.cellLayoutMarginsFollowReadableWidth = false
