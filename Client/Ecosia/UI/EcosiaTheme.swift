@@ -77,13 +77,13 @@ class EcosiaTheme {
 }
 
 final class DarkEcosiaTheme: EcosiaTheme {
-    override var highContrastText: UIColor { .white }
     override var primaryBrand: UIColor { UIColor(named: "primaryBrandDark")!}
     override var secondaryBrand: UIColor { .white }
     override var border: UIColor { .Dark.border }
-    override var segmentBackground: UIColor { .Dark.Background.tertiary }
 
     override var primaryBackground: UIColor { .Dark.Background.primary }
+    override var barBackground: UIColor { UIColor.Photon.Grey80 }
+    override var barSeparator: UIColor { UIColor.Photon.Grey60 }
     override var treeCountText: UIColor { .white }
     override var treeCountBackground: UIColor { UIColor.Photon.Grey70 }
     override var impactTreeCountBackground: UIColor { UIColor.Photon.Grey80 }
@@ -92,28 +92,30 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var impactMultiplyCardBackground: UIColor { .Photon.Grey70 }
     override var impactMultiplyCardBorder: UIColor { .clear }
 
-    override var barBackground: UIColor { UIColor.Photon.Grey80 }
-    override var barSeparator: UIColor { UIColor.Photon.Grey60 }
     override var actionSheetBackground: UIColor { UIColor.Photon.Grey70 }
     override var modalBackground: UIColor { UIColor.Photon.Grey80 }
+
+    override var primaryText: UIColor { .Dark.Text.primary}
+    override var secondaryText: UIColor { .Dark.Text.secondary }
+    override var highContrastText: UIColor { .white }
+    override var navigationBarText: UIColor { .Dark.Text.primary }
+
+    override var highlightedBackground: UIColor { UIColor.Photon.Grey70 }
+    override var hoverBackgroundColor: UIColor { UIColor.Photon.Grey90 }
+
+    override var primaryButton: UIColor { .Dark.Button.primary }
     override var textfieldPlaceholder: UIColor { UIColor.Photon.Grey40 }
     override var personalCounterBorder: UIColor { UIColor.Photon.Grey60 }
     override var personalCounterSelection: UIColor { UIColor.Photon.Grey60 }
     override var privateButtonBackground: UIColor { .white }
 
-    override var primaryText: UIColor { .Dark.Text.primary}
-    override var secondaryText: UIColor { .Dark.Text.secondary }
-    override var primaryButton: UIColor { .Dark.Button.primary }
-
-    override var highlightedBackground: UIColor { UIColor.Photon.Grey70 }
-    override var navigationBarText: UIColor { .Dark.Text.primary }
-
     override var banner: UIColor { return UIColor(named: "bannerDark")!}
     override var underlineGrey: UIColor { return UIColor(named: "underlineGreyDark")! }
-    override var hoverBackgroundColor: UIColor { UIColor.Photon.Grey90 }
     override var cardText: UIColor { UIColor(named: "cardTextDark")!}
     override var welcomeScreenBackground: UIColor { UIColor.Photon.Grey90.withAlphaComponent(0.8) }
+
     override var segmentSelectedText: UIColor { UIColor.Photon.Grey90 }
+    override var segmentBackground: UIColor { .Dark.Background.tertiary }
 }
 
 extension UIImage {
