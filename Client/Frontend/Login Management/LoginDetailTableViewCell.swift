@@ -59,13 +59,14 @@ class LoginDetailTableViewCell: ThemedTableViewCell {
     // Exposing this label as internal/public causes the Xcode 7.2.1 compiler optimizer to
     // produce a EX_BAD_ACCESS error when dequeuing the cell. For now, this label is made private
     // and the text property is exposed using a get/set property below.
-//    fileprivate lazy var highlightedLabel: UILabel = {
-//        let label = UILabel()
-//        label.font = LoginTableViewCellUX.highlightedLabelFont
-//        label.textColor = LoginTableViewCellUX.highlightedLabelTextColor
-//        label.numberOfLines = 1
-//        return label
-//    }()
+    /* Ecosia
+     fileprivate lazy var highlightedLabel: UILabel = {
+        let label = UILabel()
+        label.font = LoginTableViewCellUX.highlightedLabelFont
+        label.textColor = LoginTableViewCellUX.highlightedLabelTextColor
+        label.numberOfLines = 1
+        return label
+    }()*/
 
     /// Override the default accessibility label since it won't include the description by default
     /// since it's a UITextField acting as a label.
