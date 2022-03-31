@@ -19,7 +19,7 @@ enum AddCredentialField: Int {
 class AddCredentialViewController: UIViewController {
     
     fileprivate lazy var tableView: UITableView = {
-        let tableView = UITableView()
+        let tableView = UITableView(frame: .zero, style: .insetGrouped)
         tableView.separatorColor = UIColor.theme.tableView.separator
         tableView.backgroundColor = UIColor.theme.tableView.headerBackground
         tableView.accessibilityIdentifier = "Add Credential"
