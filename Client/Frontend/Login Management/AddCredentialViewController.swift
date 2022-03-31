@@ -132,11 +132,10 @@ extension AddCredentialViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        switch AddCredentialField(rawValue: indexPath.row)! {
+        switch AddCredentialField(rawValue: indexPath.section)! {
 
         case .usernameItem:
             let loginCell = cell(forIndexPath: indexPath)
-            loginCell.highlightedLabelTitle = .LoginDetailUsername
             loginCell.descriptionLabel.keyboardType = .emailAddress
             loginCell.descriptionLabel.returnKeyType = .next
             loginCell.isEditingFieldData = true
@@ -146,7 +145,6 @@ extension AddCredentialViewController: UITableViewDataSource {
 
         case .passwordItem:
             let loginCell = cell(forIndexPath: indexPath)
-            loginCell.highlightedLabelTitle = .LoginDetailPassword
             loginCell.descriptionLabel.returnKeyType = .default
             loginCell.displayDescriptionAsPassword = true
             loginCell.isEditingFieldData = true
@@ -156,7 +154,6 @@ extension AddCredentialViewController: UITableViewDataSource {
 
         case .websiteItem:
             let loginCell = cell(forIndexPath: indexPath)
-            loginCell.highlightedLabelTitle = .LoginDetailWebsite
             websiteField = loginCell.descriptionLabel
             loginCell.placeholder = "https://www.example.com"
             websiteField?.accessibilityIdentifier = "websiteField"

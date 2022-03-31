@@ -21,7 +21,7 @@ enum InfoItem: Int {
 }
 
 struct LoginDetailUX {
-    static let InfoRowHeight: CGFloat = 58
+    static let InfoRowHeight: CGFloat = 48
     static let DeleteRowHeight: CGFloat = 44
     static let SeparatorHeight: CGFloat = 84
 }
@@ -161,7 +161,6 @@ extension LoginDetailViewController: UITableViewDataSource {
 
         case .usernameItem:
             let loginCell = cell(forIndexPath: indexPath)
-            loginCell.highlightedLabelTitle = .LoginDetailUsername
             loginCell.descriptionLabel.text = login.username
             loginCell.descriptionLabel.keyboardType = .emailAddress
             loginCell.descriptionLabel.returnKeyType = .next
@@ -172,7 +171,6 @@ extension LoginDetailViewController: UITableViewDataSource {
 
         case .passwordItem:
             let loginCell = cell(forIndexPath: indexPath)
-            loginCell.highlightedLabelTitle = .LoginDetailPassword
             loginCell.descriptionLabel.text = login.password
             loginCell.descriptionLabel.returnKeyType = .default
             loginCell.displayDescriptionAsPassword = true
@@ -183,7 +181,6 @@ extension LoginDetailViewController: UITableViewDataSource {
 
         case .websiteItem:
             let loginCell = cell(forIndexPath: indexPath)
-            loginCell.highlightedLabelTitle = .LoginDetailWebsite
             loginCell.descriptionLabel.text = login.hostname
             websiteField = loginCell.descriptionLabel
             websiteField?.accessibilityIdentifier = "websiteField"
