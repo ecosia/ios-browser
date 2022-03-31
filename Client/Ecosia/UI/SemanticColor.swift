@@ -25,10 +25,6 @@ extension UIColor {
             static let warning = UIColor(red: 0.992, green: 0.259, blue: 0.337, alpha: 1)
         }
         
-        struct State {
-            static let warning = UIColor(red: 0.992, green: 0.259, blue: 0.337, alpha: 1)
-        }
-        
         static let border = UIColor(red: 0.871, green: 0.871, blue: 0.851, alpha: 1)
     }
     
