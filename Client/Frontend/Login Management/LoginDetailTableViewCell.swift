@@ -59,22 +59,23 @@ class LoginDetailTableViewCell: ThemedTableViewCell {
     // Exposing this label as internal/public causes the Xcode 7.2.1 compiler optimizer to
     // produce a EX_BAD_ACCESS error when dequeuing the cell. For now, this label is made private
     // and the text property is exposed using a get/set property below.
-    fileprivate lazy var highlightedLabel: UILabel = {
+    /* Ecosia
+     fileprivate lazy var highlightedLabel: UILabel = {
         let label = UILabel()
         label.font = LoginTableViewCellUX.highlightedLabelFont
         label.textColor = LoginTableViewCellUX.highlightedLabelTextColor
         label.numberOfLines = 1
         return label
-    }()
+    }()*/
 
     /// Override the default accessibility label since it won't include the description by default
     /// since it's a UITextField acting as a label.
     override var accessibilityLabel: String? {
         get {
             if descriptionLabel.isSecureTextEntry {
-                return highlightedLabel.text ?? ""
+                return ""
             } else {
-                return "\(highlightedLabel.text ?? ""), \(descriptionLabel.text ?? "")"
+                return descriptionLabel.text
             }
         }
         set {
@@ -109,16 +110,6 @@ class LoginDetailTableViewCell: ThemedTableViewCell {
         didSet {
             guard isEditingFieldData != oldValue else { return }
             descriptionLabel.isUserInteractionEnabled = isEditingFieldData
-            highlightedLabel.textColor = isEditingFieldData ? UIColor.theme.tableView.headerTextLight: LoginTableViewCellUX.highlightedLabelTextColor
-        }
-    }
-
-    var highlightedLabelTitle: String? {
-        get {
-            return highlightedLabel.text
-        }
-        set(newTitle) {
-            highlightedLabel.text = newTitle
         }
     }
 
@@ -126,7 +117,6 @@ class LoginDetailTableViewCell: ThemedTableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         selectionStyle = .none
 
-        labelContainer.addSubview(highlightedLabel)
         labelContainer.addSubview(descriptionLabel)
         contentView.addSubview(labelContainer)
 
@@ -153,15 +143,8 @@ class LoginDetailTableViewCell: ThemedTableViewCell {
             make.leading.equalTo(contentView).offset(LoginTableViewCellUX.HorizontalMargin)
         }
 
-        highlightedLabel.snp.remakeConstraints { make in
-            make.leading.top.equalTo(labelContainer)
-            make.bottom.equalTo(descriptionLabel.snp.top)
-            make.width.equalTo(labelContainer)
-        }
-
         descriptionLabel.snp.remakeConstraints { make in
-            make.leading.bottom.equalTo(labelContainer)
-            make.top.equalTo(highlightedLabel.snp.bottom)
+            make.leading.top.bottom.equalTo(labelContainer)
             make.width.equalTo(labelContainer)
         }
 
@@ -199,7 +182,6 @@ extension LoginDetailTableViewCell: MenuHelperInterface {
 extension LoginDetailTableViewCell {
     func updateCellWithLogin(_ login: LoginRecord) {
         descriptionLabel.text = login.hostname
-        highlightedLabel.text = login.username
     }
 }
 
