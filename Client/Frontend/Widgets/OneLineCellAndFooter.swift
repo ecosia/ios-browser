@@ -71,7 +71,7 @@ class OneLineTableViewCell: UITableViewCell, Themeable {
         bringSubviewToFront(containerView)
         
         containerView.snp.makeConstraints { make in
-            make.height.equalTo(44)
+            make.height.equalTo(44).priority(.veryHigh)
             make.top.bottom.equalToSuperview()
             make.leading.equalToSuperview()
             make.trailing.equalTo(accessoryView?.snp.leading ?? contentView.snp.trailing)
