@@ -12,8 +12,8 @@ private let log = Logger.browserLogger
 private struct ReadingListTableViewCellUX {
     static let RowHeight: CGFloat = 86
 
-    static let ReadIndicatorWidth: CGFloat = 12  // image width
-    static let ReadIndicatorHeight: CGFloat = 12 // image height
+    static let ReadIndicatorWidth: CGFloat = 20  // image width
+    static let ReadIndicatorHeight: CGFloat = 20 // image height
     static let ReadIndicatorLeftOffset: CGFloat = 18
     static let ReadAccessibilitySpeechPitch: Float = 0.7 // 1.0 default, 0.0 lowest, 2.0 highest
 
@@ -61,9 +61,11 @@ class ReadingListTableViewCell: UITableViewCell, Themeable {
 
     var unread: Bool = true {
         didSet {
-            readStatusImageView.image = UIImage(named: unread ? "MarkAsRead" : "MarkAsUnread")
-            titleLabel.textColor = unread ? UIColor.theme.homePanel.readingListActive : UIColor.theme.homePanel.readingListDimmed
-            hostnameLabel.textColor = unread ? UIColor.theme.homePanel.readingListActive : UIColor.theme.homePanel.readingListDimmed
+            readStatusImageView.image = UIImage(systemName: unread ? "circle" : "checkmark.circle.fill")
+            let alpha = unread ? 1.0 : 0.5
+            readStatusImageView.tintColor = UIColor.theme.ecosia.secondaryText.withAlphaComponent(alpha)
+            titleLabel.textColor = UIColor.theme.ecosia.primaryText.withAlphaComponent(alpha)
+            hostnameLabel.textColor = UIColor.theme.ecosia.secondaryText.withAlphaComponent(alpha)
             updateAccessibilityLabel()
         }
     }
@@ -73,11 +75,13 @@ class ReadingListTableViewCell: UITableViewCell, Themeable {
     }
     let titleLabel: UILabel = .build { label in 
         label.numberOfLines = 2
-        label.font = DynamicFontHelper.defaultHelper.DeviceFont
+        label.font = .preferredFont(forTextStyle: .body)
+        label.adjustsFontForContentSizeCategory = true
     }
     let hostnameLabel: UILabel = .build { label in
         label.numberOfLines = 1
-        label.font = DynamicFontHelper.defaultHelper.DeviceFontSmallLight
+        label.font = .preferredFont(forTextStyle: .footnote)
+        label.adjustsFontForContentSizeCategory = true
     }
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -113,8 +117,16 @@ class ReadingListTableViewCell: UITableViewCell, Themeable {
     }
 
     func applyTheme() {
-        titleLabel.textColor = UIColor.theme.homePanel.readingListActive
-        hostnameLabel.textColor = UIColor.theme.homePanel.readingListActive
+        titleLabel.textColor = UIColor.theme.ecosia.primaryText
+        hostnameLabel.textColor = UIColor.theme.ecosia.secondaryText
+        readStatusImageView.tintColor = UIColor.theme.ecosia.secondaryText
+
+        let theme = BuiltinThemeName(rawValue: ThemeManager.instance.current.name) ?? .normal
+        if theme == .dark {
+            self.backgroundColor = .Dark.Background.tertiary
+        } else {
+            self.backgroundColor = .Light.Background.primary
+        }
     }
 
     override func prepareForReuse() {
@@ -172,7 +184,7 @@ class ReadingListPanel: UITableViewController, LibraryPanel {
 
     init(profile: Profile) {
         self.profile = profile
-        super.init(nibName: nil, bundle: nil)
+        super.init(style: .insetGrouped)
 
         [ Notification.Name.FirefoxAccountChanged,
           Notification.Name.DynamicFontChanged,
@@ -259,16 +271,17 @@ class ReadingListPanel: UITableViewController, LibraryPanel {
         readerModeLabel.numberOfLines = 0
         readerModeLabel.snp.makeConstraints { make in
             make.top.equalTo(welcomeLabel.snp.bottom).offset(24)
-            make.leading.equalTo(welcomeLabel.snp.leading)
-            make.width.equalTo(ReadingListPanelUX.WelcomeScreenItemWidth)
+            make.trailing.equalTo(welcomeLabel.snp.trailing).offset(24)
         }
 
         let readerModeImageView = UIImageView()
         readerModeImageView.image = .init(themed: "articles")
         overlayView.addSubview(readerModeImageView)
         readerModeImageView.snp.makeConstraints { make in
+            make.leading.equalTo(welcomeLabel.snp.leading).offset(-24)
             make.centerY.equalTo(readerModeLabel)
-            make.trailing.equalTo(welcomeLabel.snp.trailing)
+            make.trailing.equalTo(readerModeLabel.snp.leading).offset(-16)
+            make.size.equalTo(24)
         }
 
         let readingListLabel = UILabel()
@@ -277,18 +290,18 @@ class ReadingListPanel: UITableViewController, LibraryPanel {
         readingListLabel.font = DynamicFontHelper.defaultHelper.DeviceFontSmallLight
         readingListLabel.numberOfLines = 0
         readingListLabel.snp.makeConstraints { make in
+            make.leading.equalTo(readerModeLabel.snp.leading)
             make.top.equalTo(readerModeLabel.snp.bottom).offset(ReadingListPanelUX.WelcomeScreenPadding)
-            make.leading.equalTo(welcomeLabel.snp.leading)
-            make.width.equalTo(ReadingListPanelUX.WelcomeScreenItemWidth)
-
+            make.trailing.equalTo(readerModeLabel.snp.trailing)
         }
 
         let readingListImageView = UIImageView()
         readingListImageView.image = .init(themed: "savePages")
         overlayView.addSubview(readingListImageView)
         readingListImageView.snp.makeConstraints { make in
+            make.leading.equalTo(readerModeImageView.snp.leading)
             make.centerY.equalTo(readingListLabel)
-            make.trailing.equalTo(welcomeLabel.snp.trailing)
+            make.size.equalTo(24)
         }
 
         [readerModeLabel, readingListLabel].forEach {
@@ -296,7 +309,8 @@ class ReadingListPanel: UITableViewController, LibraryPanel {
         }
 
 		return overlayView
-        
+
+        /* Ecosia: custom empty view
         view.addSubviews(welcomeLabel, readerModeLabel, readerModeImageView, readingListLabel, readingListImageView)
         
         NSLayoutConstraint.activate([
@@ -318,6 +332,7 @@ class ReadingListPanel: UITableViewController, LibraryPanel {
             readingListImageView.centerYAnchor.constraint(equalTo: readingListLabel.centerYAnchor),
             readingListImageView.trailingAnchor.constraint(equalTo: welcomeLabel.trailingAnchor)
         ])
+        */
     }
 
     @objc fileprivate func longPress(_ longPressGestureRecognizer: UILongPressGestureRecognizer) {

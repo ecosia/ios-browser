@@ -283,13 +283,14 @@ class DownloadsPanel: UIViewController, UITableViewDelegate, UITableViewDataSour
         return configureDownloadedFile(cell, for: indexPath)
     }
 
+    /* Ecosia
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
         if let header = view as? UITableViewHeaderFooterView {
-            header.textLabel?.textColor = UIColor.theme.tableView.headerTextDark
-            header.contentView.backgroundColor = UIColor.theme.tableView.selectedBackground //UIColor.theme.tableView.headerBackground
+            header.textLabel?.textColor = UIColor.theme.ecosia.secondaryText
+            header.contentView.backgroundColor = UIColor.theme.homePanel.panelBackground
         }
     }
-
+    */
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         guard groupedDownloadedFiles.numberOfItemsForSection(section) > 0 else { return 0 }
 
@@ -315,6 +316,7 @@ class DownloadsPanel: UIViewController, UITableViewDelegate, UITableViewDataSour
         }
 
         header?.showBorder(for: .top, !isFirstSection(section))
+        header?.textLabel?.text = header?.textLabel?.text?.uppercased()
 
         return header
     }
@@ -370,6 +372,7 @@ class DownloadsPanel: UIViewController, UITableViewDelegate, UITableViewDataSour
         // Intentionally blank. Required to use UITableViewRowActions
     }
 
+    /* Ecosia: user newer API for swipe actions
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
         let deleteTitle = Strings.DownloadsPanelDeleteTitle
         let shareTitle = Strings.DownloadsPanelShareTitle
@@ -394,6 +397,31 @@ class DownloadsPanel: UIViewController, UITableViewDelegate, UITableViewDataSour
         share.backgroundColor = view.tintColor
         return [delete, share]
     }
+     */
+
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let delete = UIContextualAction(style: .destructive, title: Strings.DownloadsPanelDeleteTitle) { _, _, _ in
+            if let downloadedFile = self.downloadedFileForIndexPath(indexPath) {
+                if self.deleteDownloadedFile(downloadedFile) {
+                    self.tableView.beginUpdates()
+                    self.groupedDownloadedFiles.remove(downloadedFile)
+                    self.tableView.deleteRows(at: [indexPath], with: .right)
+                    self.tableView.endUpdates()
+                    self.updateEmptyPanelState()
+                }
+            }
+        }
+        delete.backgroundColor = .Light.State.warning
+
+        let share = UIContextualAction(style: .normal, title: Strings.DownloadsPanelShareTitle) { _, _, _ in
+            if let downloadedFile = self.downloadedFileForIndexPath(indexPath) {
+                self.shareDownloadedFile(downloadedFile, indexPath: indexPath)
+            }
+        }
+        share.backgroundColor = .Light.State.information
+        return UISwipeActionsConfiguration(actions: [delete, share])
+    }
+
     // MARK: - UIDocumentInteractionControllerDelegate
 
     func documentInteractionControllerViewControllerForPreview(_ controller: UIDocumentInteractionController) -> UIViewController {

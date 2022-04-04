@@ -14,8 +14,9 @@ struct SiteTableViewControllerUX {
 
 class SiteTableViewHeader: UITableViewHeaderFooterView, Themeable {
     let titleLabel: UILabel = .build { label in
-        label.font = DynamicFontHelper.defaultHelper.DeviceFontMediumBold
-        label.textColor = UIColor.theme.tableView.headerTextDark
+        label.font = .preferredFont(forTextStyle: .caption1)
+        label.adjustsFontForContentSizeCategory = true
+        label.textColor = UIColor.theme.ecosia.secondaryText
     }
     fileprivate let bordersHelper = ThemedHeaderFooterViewBordersHelper()
 
