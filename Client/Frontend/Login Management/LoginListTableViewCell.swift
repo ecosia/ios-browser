@@ -87,12 +87,12 @@ class LoginListTableViewCell: ThemedTableViewCell {
             make.left.equalTo(contentView).inset(self.inset.left)
         }
         self.hostnameLabel.snp.remakeConstraints { make in
-            make.bottom.equalTo(self.contentStack.snp.centerY)
+            make.bottom.equalTo(self.contentStack.snp.centerY).offset(2)
             make.leading.equalToSuperview()
             make.trailing.lessThanOrEqualTo(self.textStack.snp.trailing)
         }
         self.usernameLabel.snp.remakeConstraints { make in
-            make.top.equalTo(self.contentStack.snp.centerY)
+            make.top.equalTo(self.contentStack.snp.centerY).offset(-2)
         }
         self.breachAlertImageView.snp.remakeConstraints { make in
             make.width.height.equalTo(breachAlertSize)

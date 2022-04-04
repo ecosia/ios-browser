@@ -22,6 +22,7 @@ enum InfoItem: Int {
 
 struct LoginDetailUX {
     static let InfoRowHeight: CGFloat = 48
+    static let WebsiteRowHeight: CGFloat = 64
     static let DeleteRowHeight: CGFloat = 44
     static let SeparatorHeight: CGFloat = 84
 }
@@ -268,7 +269,9 @@ extension LoginDetailViewController: UITableViewDelegate {
         case .breachItem:
             guard let _ = self.breach else { return 0 }
             return UITableView.automaticDimension
-        case .usernameItem, .passwordItem, .websiteItem:
+        case .usernameItem, .passwordItem:
+            return LoginDetailUX.WebsiteRowHeight
+        case .websiteItem:
             return LoginDetailUX.InfoRowHeight
         case .lastModifiedSeparator:
             return LoginDetailUX.SeparatorHeight
