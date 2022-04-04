@@ -375,23 +375,18 @@ extension TabTrayViewController: Themeable {
          view.backgroundColor = UIColor.theme.tabTray.background
          //Ecosia: navigationToolbar.barTintColor = UIColor.theme.tabTray.toolbar
          //Ecosia: navigationToolbar.tintColor = UIColor.theme.tabTray.toolbarButtonTint
-         let theme = BuiltinThemeName(rawValue: ThemeManager.instance.current.name) ?? .normal
-         if theme == .dark {
-             navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
-         } else {
-             navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
-         }
+         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.theme.ecosia.primaryText]
          viewModel.syncedTabsController.applyTheme()
 
          // Ecosia
          if traitCollection.userInterfaceIdiom == .phone {
-             navigationController?.navigationBar.tintColor = UIColor.theme.ecosia.primaryBrand
+             navigationController?.navigationBar.tintColor = UIColor.theme.ecosia.primaryButton
          }
          maskButton.applyUIMode(isPrivate: maskButton.isSelected)
 
          if shouldUseiPadSetup {
-             navigationItem.leftBarButtonItem?.tintColor = UIColor.theme.ecosia.primaryBrand
-             navigationItem.rightBarButtonItem?.tintColor = UIColor.theme.ecosia.primaryBrand
+             navigationItem.leftBarButtonItem?.tintColor = UIColor.theme.ecosia.primaryButton
+             navigationItem.rightBarButtonItem?.tintColor = UIColor.theme.ecosia.primaryButton
              navigationMenu.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.theme.ecosia.primaryText], for: .normal)
              navigationMenu.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.theme.ecosia.segmentSelectedText], for: .selected)
          }

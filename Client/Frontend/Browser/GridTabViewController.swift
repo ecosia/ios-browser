@@ -737,6 +737,19 @@ fileprivate class TabLayoutDelegate: NSObject, UICollectionViewDelegateFlowLayou
     @objc func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         tabSelectionDelegate?.didSelectTabAtIndex(indexPath.row)
     }
+
+    // Ecosia: separator logic
+    fileprivate var showSeparator = false {
+        didSet {
+            if showSeparator != oldValue {
+                (tabSelectionDelegate as? Themeable)?.applyTheme()
+            }
+        }
+    }
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        showSeparator = scrollView.contentOffset.y + scrollView.adjustedContentInset.top > 12
+    }
 }
 
 extension GridTabViewController: DevicePickerViewControllerDelegate {
@@ -971,10 +984,12 @@ extension GridTabViewController: Themeable {
 
     @objc func applyTheme() {
         webViewContainerBackdrop.backgroundColor = UIColor.Photon.Ink90
-        collectionView.backgroundColor = UIColor.theme.tabTray.background
+        collectionView.backgroundColor = UIColor.theme.homePanel.panelBackground
         let indexPath = IndexPath(row: 0, section: 1)
         if let cell = collectionView.cellForItem(at: indexPath) as? InactiveTabCell {
             cell.applyTheme()
         }
+        // show/hide separator
+        navigationController?.navigationBar.scrollEdgeAppearance?.shadowColor = tabLayoutDelegate.showSeparator ? UIColor.theme.ecosia.border : nil
     }
 }
