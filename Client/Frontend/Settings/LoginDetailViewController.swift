@@ -7,12 +7,18 @@ import Storage
 import Shared
 import SwiftKeychainWrapper
 
-private let breachItem = IndexPath(row: 0, section: 0)
-private let websiteItem = IndexPath(row: 0, section: 1)
-private let usernameItem = IndexPath(row: 1, section: 1)
-private let passwordItem = IndexPath(row: 2, section: 1)
-private let lastModifiedSeparator = IndexPath(row: 0, section: 2)
-private let deleteItem = IndexPath(row: 0, section: 3)
+enum InfoItem: Int {
+    case breachItem = 0
+    case websiteItem
+    case usernameItem
+    case passwordItem
+    case lastModifiedSeparator
+    case deleteItem
+
+    var indexPath: IndexPath {
+        return IndexPath(row: 0, section: rawValue)
+    }
+}
 
 struct LoginDetailUX {
     static let InfoRowHeight: CGFloat = 48
@@ -111,16 +117,16 @@ class LoginDetailViewController: SensitiveViewController {
         // draws its own separators. The last item in the list draws its seperator full width.
 
         // Prevent seperators from showing by pushing them off screen by the width of the cell
-        let itemsToHideSeperators = [passwordItem, lastModifiedSeparator]
+        let itemsToHideSeperators: [InfoItem] = [.passwordItem, .lastModifiedSeparator]
         itemsToHideSeperators.forEach { item in
-            let cell = tableView.cellForRow(at: item)
+            let cell = tableView.cellForRow(at: IndexPath(row: item.rawValue, section: 0))
             cell?.separatorInset = UIEdgeInsets(top: 0, left: cell?.bounds.width ?? 0, bottom: 0, right: 0)
         }
 
         // Rows to display full width seperator
-        let itemsToShowFullWidthSeperator = [deleteItem]
+        let itemsToShowFullWidthSeperator: [InfoItem] = [.deleteItem]
         itemsToShowFullWidthSeperator.forEach { item in
-            let cell = tableView.cellForRow(at: item)
+            let cell = tableView.cellForRow(at: IndexPath(row: item.rawValue, section: 0))
             cell?.separatorInset = .zero
             cell?.layoutMargins = .zero
             cell?.preservesSuperviewLayoutMargins = false
@@ -132,8 +138,8 @@ class LoginDetailViewController: SensitiveViewController {
 extension LoginDetailViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        switch indexPath {
-        case breachItem:
+        switch InfoItem(rawValue: indexPath.section)! {
+        case .breachItem:
             let breachCell = cell(forIndexPath: indexPath)
             guard let breach = self.breach else { return breachCell }
             breachCell.isHidden = false
@@ -154,7 +160,7 @@ extension LoginDetailViewController: UITableViewDataSource {
 
             return breachCell
 
-        case usernameItem:
+        case .usernameItem:
             let loginCell = cell(forIndexPath: indexPath)
             loginCell.descriptionLabel.text = login.username
             loginCell.descriptionLabel.keyboardType = .emailAddress
@@ -164,7 +170,7 @@ extension LoginDetailViewController: UITableViewDataSource {
             usernameField?.accessibilityIdentifier = "usernameField"
             return loginCell
 
-        case passwordItem:
+        case .passwordItem:
             let loginCell = cell(forIndexPath: indexPath)
             loginCell.descriptionLabel.text = login.password
             loginCell.descriptionLabel.returnKeyType = .default
@@ -174,7 +180,7 @@ extension LoginDetailViewController: UITableViewDataSource {
             passwordField?.accessibilityIdentifier = "passwordField"
             return loginCell
 
-        case websiteItem:
+        case .websiteItem:
             let loginCell = cell(forIndexPath: indexPath)
             loginCell.descriptionLabel.text = login.hostname
             websiteField = loginCell.descriptionLabel
@@ -185,7 +191,7 @@ extension LoginDetailViewController: UITableViewDataSource {
             }
             return loginCell
 
-        case lastModifiedSeparator:
+        case .lastModifiedSeparator:
             let cell = CenteredDetailCell(style: .subtitle, reuseIdentifier: nil)
             let created: String = .LoginDetailCreatedAt
             let lastModified: String = .LoginDetailModifiedAt
@@ -199,7 +205,7 @@ extension LoginDetailViewController: UITableViewDataSource {
             cell.backgroundColor = view.backgroundColor
             return cell
 
-        default:
+        case .deleteItem:
             let deleteCell = cell(forIndexPath: indexPath)
             deleteCell.textLabel?.text = .LoginDetailDelete
             deleteCell.textLabel?.textAlignment = .center
@@ -226,20 +232,21 @@ extension LoginDetailViewController: UITableViewDataSource {
         }
         return cell
     }
-    
-    func numberOfSections(in tableView: UITableView) -> Int {
-        4
-    }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        section == 1 ? 3 : 1
+        return 1
+    }
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        6
     }
 }
 
 // MARK: - UITableViewDelegate
 extension LoginDetailViewController: UITableViewDelegate {
     private func showMenuOnSingleTap(forIndexPath indexPath: IndexPath) {
-        if ![passwordItem, websiteItem, usernameItem].contains(indexPath) {
+        guard let item = InfoItem(rawValue: indexPath.section) else { return }
+        if ![InfoItem.passwordItem, InfoItem.websiteItem, InfoItem.usernameItem].contains(item) {
             return
         }
 
@@ -253,7 +260,7 @@ extension LoginDetailViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath == deleteItem {
+        if indexPath == InfoItem.deleteItem.indexPath {
             deleteLogin()
         } else if !isEditingFieldData {
             showMenuOnSingleTap(forIndexPath: indexPath)
@@ -262,25 +269,39 @@ extension LoginDetailViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        switch indexPath {
-        case breachItem:
+        switch InfoItem(rawValue: indexPath.section)! {
+        case .breachItem:
             guard let _ = self.breach else { return 0 }
             return UITableView.automaticDimension
-        case usernameItem, passwordItem, websiteItem:
+        case .usernameItem, .passwordItem, .websiteItem:
             return LoginDetailUX.InfoRowHeight
-        case lastModifiedSeparator:
+        case .lastModifiedSeparator:
             return LoginDetailUX.SeparatorHeight
-        default:
+        case .deleteItem:
             return LoginDetailUX.DeleteRowHeight
         }
     }
     
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        0
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        switch InfoItem(rawValue: section)! {
+        case .usernameItem:
+            return .LoginDetailUsername
+        case .passwordItem:
+            return .LoginDetailPassword
+        case .websiteItem:
+            return .LoginDetailWebsite
+        default:
+            return nil
+        }
     }
     
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        nil
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        switch InfoItem(rawValue: section)! {
+        case .usernameItem, .passwordItem, .websiteItem:
+            return UITableView.automaticDimension
+        default:
+            return 0
+        }
     }
 }
 
@@ -342,7 +363,7 @@ extension LoginDetailViewController {
 
     @objc func edit() {
         isEditingFieldData = true
-        guard let cell = tableView.cellForRow(at: usernameItem) as? LoginDetailTableViewCell else { return }
+        guard let cell = tableView.cellForRow(at: InfoItem.usernameItem.indexPath) as? LoginDetailTableViewCell else { return }
         cell.descriptionLabel.becomeFirstResponder()
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(doneEditing))
     }
@@ -387,22 +408,26 @@ extension LoginDetailViewController: LoginDetailTableViewCellDelegate {
     func textFieldDidChange(_ cell: LoginDetailTableViewCell) { }
     
     func canPeform(action: Selector, for cell: LoginDetailTableViewCell) -> Bool {
-        guard let item = tableView.indexPath(for: cell) else { return false }
+        guard let item = infoItemForCell(cell) else { return false }
         
         switch item {
-        case websiteItem:
+        case .websiteItem:
             // Menu actions for Website
             return action == MenuHelper.SelectorCopy || action == MenuHelper.SelectorOpenAndFill
-        case usernameItem:
+        case .usernameItem:
             // Menu actions for Username
             return action == MenuHelper.SelectorCopy
-        case passwordItem:
+        case .passwordItem:
             // Menu actions for password
             let showRevealOption = cell.descriptionLabel.isSecureTextEntry ? (action == MenuHelper.SelectorReveal) : (action == MenuHelper.SelectorHide)
             return action == MenuHelper.SelectorCopy || showRevealOption
         default:
             return false
         }
+    }
+    
+    fileprivate func cellForItem(_ item: InfoItem) -> LoginDetailTableViewCell? {
+        return tableView.cellForRow(at: item.indexPath) as? LoginDetailTableViewCell
     }
 
     func didSelectOpenAndFillForCell(_ cell: LoginDetailTableViewCell) {
@@ -416,13 +441,21 @@ extension LoginDetailViewController: LoginDetailTableViewCellDelegate {
     }
 
     func shouldReturnAfterEditingDescription(_ cell: LoginDetailTableViewCell) -> Bool {
-        let usernameCell = tableView.cellForRow(at: usernameItem) as? LoginDetailTableViewCell
-        let passwordCell = tableView.cellForRow(at: passwordItem) as? LoginDetailTableViewCell
+        let usernameCell = cellForItem(.usernameItem)
+        let passwordCell = cellForItem(.passwordItem)
 
         if cell == usernameCell {
             passwordCell?.descriptionLabel.becomeFirstResponder()
         }
 
         return false
+    }
+
+    func infoItemForCell(_ cell: LoginDetailTableViewCell) -> InfoItem? {
+        if let index = tableView.indexPath(for: cell),
+            let item = InfoItem(rawValue: index.section) {
+            return item
+        }
+        return nil
     }
 }
