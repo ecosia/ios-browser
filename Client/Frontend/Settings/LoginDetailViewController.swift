@@ -16,12 +16,13 @@ enum InfoItem: Int {
     case deleteItem
 
     var indexPath: IndexPath {
-        return IndexPath(row: rawValue, section: 0)
+        return IndexPath(row: 0, section: rawValue)
     }
 }
 
 struct LoginDetailUX {
     static let InfoRowHeight: CGFloat = 48
+    static let WebsiteRowHeight: CGFloat = 64
     static let DeleteRowHeight: CGFloat = 44
     static let SeparatorHeight: CGFloat = 84
 }
@@ -37,7 +38,7 @@ fileprivate class CenteredDetailCell: ThemedTableViewCell {
 
 class LoginDetailViewController: SensitiveViewController {
     fileprivate let profile: Profile
-    fileprivate let tableView = UITableView()
+    fileprivate let tableView = UITableView(frame: .zero, style: .insetGrouped)
     fileprivate weak var websiteField: UITextField?
     fileprivate weak var usernameField: UITextField?
     fileprivate weak var passwordField: UITextField?
@@ -137,7 +138,7 @@ class LoginDetailViewController: SensitiveViewController {
 extension LoginDetailViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        switch InfoItem(rawValue: indexPath.row)! {
+        switch InfoItem(rawValue: indexPath.section)! {
         case .breachItem:
             let breachCell = cell(forIndexPath: indexPath)
             guard let breach = self.breach else { return breachCell }
@@ -233,14 +234,18 @@ extension LoginDetailViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 6
+        return 1
+    }
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        6
     }
 }
 
 // MARK: - UITableViewDelegate
 extension LoginDetailViewController: UITableViewDelegate {
     private func showMenuOnSingleTap(forIndexPath indexPath: IndexPath) {
-        guard let item = InfoItem(rawValue: indexPath.row) else { return }
+        guard let item = InfoItem(rawValue: indexPath.section) else { return }
         if ![InfoItem.passwordItem, InfoItem.websiteItem, InfoItem.usernameItem].contains(item) {
             return
         }
@@ -264,7 +269,7 @@ extension LoginDetailViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        switch InfoItem(rawValue: indexPath.row)! {
+        switch InfoItem(rawValue: indexPath.section)! {
         case .breachItem:
             guard let _ = self.breach else { return 0 }
             return UITableView.automaticDimension
@@ -274,6 +279,28 @@ extension LoginDetailViewController: UITableViewDelegate {
             return LoginDetailUX.SeparatorHeight
         case .deleteItem:
             return LoginDetailUX.DeleteRowHeight
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        switch InfoItem(rawValue: section)! {
+        case .usernameItem:
+            return .LoginDetailUsername
+        case .passwordItem:
+            return .LoginDetailPassword
+        case .websiteItem:
+            return .LoginDetailWebsite
+        default:
+            return nil
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        switch InfoItem(rawValue: section)! {
+        case .usernameItem, .passwordItem, .websiteItem:
+            return UITableView.automaticDimension
+        default:
+            return 0
         }
     }
 }
@@ -426,7 +453,7 @@ extension LoginDetailViewController: LoginDetailTableViewCellDelegate {
 
     func infoItemForCell(_ cell: LoginDetailTableViewCell) -> InfoItem? {
         if let index = tableView.indexPath(for: cell),
-            let item = InfoItem(rawValue: index.row) {
+            let item = InfoItem(rawValue: index.section) {
             return item
         }
         return nil

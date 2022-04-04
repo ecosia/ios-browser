@@ -386,7 +386,7 @@ extension LoginListViewController: UITableViewDelegate {
         if indexPath.section == LoginsSettingsSection, searchController.isActive || tableView.isEditing {
             return 0
         }
-        return UITableView.automaticDimension
+        return indexPath.section == 0 ? UITableView.automaticDimension : LoginDetailUX.WebsiteRowHeight
     }
 
     func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
