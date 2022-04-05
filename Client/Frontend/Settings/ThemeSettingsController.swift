@@ -39,7 +39,7 @@ class ThemeSettingsController: ThemedTableViewController {
     private var shouldHideSystemThemeSection = false
 
     init() {
-        super.init(style: .grouped)
+        super.init(style: .insetGrouped)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -48,6 +48,7 @@ class ThemeSettingsController: ThemedTableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationItem.largeTitleDisplayMode = .never
         title = Strings.SettingsDisplayThemeTitle
         tableView.accessibilityIdentifier = "DisplayTheme.Setting.Options"
         tableView.backgroundColor = UIColor.theme.tableView.headerBackground
