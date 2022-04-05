@@ -155,6 +155,11 @@ class ContentBlockerSettingViewController: SettingsTableViewController {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        navigationItem.largeTitleDisplayMode = .never
+    }
 
     override func generateSettings() -> [SettingSection] {
         let strengthSetting: [CheckmarkSetting] = BlockingStrength.allOptions.map { option in
