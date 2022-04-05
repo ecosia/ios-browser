@@ -27,6 +27,7 @@ class AddNewTabButton: ToolbarButton {
     }
 
     private func setup() {
+        setImage(UIImage(systemName: "plus"), for: .normal)
         circle.isUserInteractionEnabled = false
         addSubview(circle)
         sendSubviewToBack(circle)
@@ -42,7 +43,9 @@ class AddNewTabButton: ToolbarButton {
     }
 
     override func applyTheme() {
-        super.applyTheme()
-        circle.backgroundColor = UIColor.theme.ecosia.personalCounterSelection
+        circle.backgroundColor = UIColor.theme.ecosia.tertiaryBackground
+        tintColor = UIColor.theme.ecosia.primaryButton
+        selectedTintColor = UIColor.theme.ecosia.primaryButtonActive
+        unselectedTintColor = UIColor.theme.ecosia.primaryButton
     }
 }

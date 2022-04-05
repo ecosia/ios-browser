@@ -31,10 +31,14 @@ class TabTrayViewController: UIViewController {
         return button
     }()
 
+    lazy var addNewTabButton = AddNewTabButton(style: .circle)
     lazy var newTabButton: UIBarButtonItem = {
-        let button = UIBarButtonItem(image: UIImage(systemName: "plus"), style: .plain, target: self, action: #selector(didTapAddTab(_:)))
-        button.accessibilityIdentifier = "newTabButtonTabTray"
-        return button
+        NSLayoutConstraint(item: addNewTabButton, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 50).isActive = true
+        NSLayoutConstraint(item: addNewTabButton, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 50).isActive = true
+        addNewTabButton.addTarget(self, action: #selector(didTapAddTab(_:)), for: .primaryActionTriggered)
+        let buttonItem = UIBarButtonItem(customView: addNewTabButton)
+        buttonItem.accessibilityIdentifier = "newTabButtonTabTray"
+        return buttonItem
     }()
 
     lazy var maskButton = PrivateModeButton()
@@ -383,6 +387,7 @@ extension TabTrayViewController: Themeable {
              navigationController?.navigationBar.tintColor = UIColor.theme.ecosia.primaryButton
          }
          maskButton.applyUIMode(isPrivate: maskButton.isSelected)
+         addNewTabButton.applyTheme()
 
          if shouldUseiPadSetup {
              navigationItem.leftBarButtonItem?.tintColor = UIColor.theme.ecosia.primaryButton

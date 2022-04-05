@@ -564,7 +564,8 @@ class Tab: NSObject {
         }
 
         guard let lastTitle = lastTitle, !lastTitle.isEmpty else {
-            return self.url?.displayURL?.absoluteString ??  ""
+            // Ecosia: fix empty title bug
+            return self.url?.displayURL?.absoluteString ?? Strings.AppMenuOpenHomePageTitleString
         }
 
         return lastTitle

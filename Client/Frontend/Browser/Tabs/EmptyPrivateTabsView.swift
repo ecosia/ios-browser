@@ -80,9 +80,9 @@ class EmptyPrivateTabsView: UIView {
 
 extension EmptyPrivateTabsView: Themeable {
     @objc func applyTheme() {
-        backgroundColor = UIColor.theme.ecosia.primaryBackground
-        titleLabel.textColor = UIColor.theme.ecosia.highContrastText
-        descriptionLabel.textColor = UIColor.theme.ecosia.primaryText
+        backgroundColor = UIColor.theme.homePanel.panelBackground
+        titleLabel.textColor = UIColor.theme.ecosia.primaryText
+        descriptionLabel.textColor = UIColor.theme.ecosia.secondaryText
         iconImageView.image = UIImage(themed: "tigerIncognito")
     }
 }
