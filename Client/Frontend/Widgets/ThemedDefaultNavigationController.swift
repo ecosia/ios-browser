@@ -16,9 +16,9 @@ extension ThemedDefaultNavigationController: Themeable {
     private func setupNavigationBarAppearance() {
         let standardAppearance = UINavigationBarAppearance()
         standardAppearance.configureWithDefaultBackground()
-        standardAppearance.backgroundColor = UIColor.theme.tabTray.toolbar
-        standardAppearance.shadowColor = UIColor.theme.ecosia.barSeparator
-        standardAppearance.titleTextAttributes = [.foregroundColor: UIColor.theme.ecosia.highContrastText]
+        standardAppearance.backgroundColor = UIColor.theme.homePanel.panelBackground
+        standardAppearance.titleTextAttributes = [.foregroundColor: UIColor.theme.ecosia.primaryText]
+        standardAppearance.shadowColor = nil
 
         navigationBar.standardAppearance = standardAppearance
         navigationBar.compactAppearance = standardAppearance
@@ -26,12 +26,12 @@ extension ThemedDefaultNavigationController: Themeable {
         if #available(iOS 15.0, *) {
             navigationBar.compactScrollEdgeAppearance = standardAppearance
         }
-        navigationBar.tintColor = UIColor.theme.tabTray.toolbarButtonTint
+        navigationBar.tintColor = UIColor.theme.ecosia.primaryButton
     }
     
     private func setupToolBarAppearance() {
         let standardAppearance = UIToolbarAppearance()
-        standardAppearance.configureWithDefaultBackground()
+        standardAppearance.configureWithOpaqueBackground()
         standardAppearance.backgroundColor = UIColor.theme.tabTray.toolbar
         standardAppearance.shadowColor = UIColor.theme.ecosia.barSeparator
 

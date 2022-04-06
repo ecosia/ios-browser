@@ -615,9 +615,10 @@ extension GridTabViewController {
         }
 
         let controller = AlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        controller.addAction(UIAlertAction(title: Strings.AppMenuCloseAllTabsTitleString, style: .default, handler: { _ in self.closeTabsForCurrentTray() }), accessibilityIdentifier: "TabTrayController.deleteButton.closeAll")
+        controller.addAction(UIAlertAction(title: Strings.AppMenuCloseAllTabsTitleString, style: .destructive, handler: { _ in self.closeTabsForCurrentTray() }), accessibilityIdentifier: "TabTrayController.deleteButton.closeAll")
         controller.addAction(UIAlertAction(title: .TabTrayCloseAllTabsPromptCancel, style: .cancel, handler: nil), accessibilityIdentifier: "TabTrayController.deleteButton.cancel")
         controller.popoverPresentationController?.barButtonItem = sender
+        controller.view.tintColor = UIColor.theme.ecosia.information
         present(controller, animated: true, completion: nil)
     }
 }
@@ -737,6 +738,19 @@ fileprivate class TabLayoutDelegate: NSObject, UICollectionViewDelegateFlowLayou
     @objc func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         tabSelectionDelegate?.didSelectTabAtIndex(indexPath.row)
     }
+
+    // Ecosia: separator logic
+    fileprivate var showSeparator = false {
+        didSet {
+            if showSeparator != oldValue {
+                (tabSelectionDelegate as? Themeable)?.applyTheme()
+            }
+        }
+    }
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        showSeparator = scrollView.contentOffset.y + scrollView.adjustedContentInset.top > 12
+    }
 }
 
 extension GridTabViewController: DevicePickerViewControllerDelegate {
@@ -764,7 +778,7 @@ protocol TabCellDelegate: AnyObject {
     func tabCellDidClose(_ cell: TabCell)
 }
 
-class TabCell: UICollectionViewCell {
+class TabCell: UICollectionViewCell, Themeable {
     enum Style {
         case light
         case dark
@@ -777,7 +791,6 @@ class TabCell: UICollectionViewCell {
         let view = UIView()
         view.layer.cornerRadius = GridTabTrayControllerUX.CornerRadius
         view.clipsToBounds = true
-        view.backgroundColor = UIColor.theme.tabTray.cellBackground
         return view
     }()
 
@@ -786,7 +799,6 @@ class TabCell: UICollectionViewCell {
         view.contentMode = .scaleAspectFill
         view.clipsToBounds = true
         view.isUserInteractionEnabled = false
-        view.backgroundColor = UIColor.theme.tabTray.screenshotBackground
         return view
     }()
     
@@ -795,8 +807,7 @@ class TabCell: UICollectionViewCell {
         let label = UILabel()
         label.isUserInteractionEnabled = false
         label.numberOfLines = 1
-        label.font = DynamicFontHelper.defaultHelper.DefaultSmallFontBold
-        label.textColor = UIColor.theme.tabTray.tabTitleText
+        label.font = .preferredFont(forTextStyle: .footnote).bold()
         return label
     }()
 
@@ -813,18 +824,21 @@ class TabCell: UICollectionViewCell {
         button.setImage(UIImage.templateImageNamed("tab_close"), for: [])
         button.imageView?.contentMode = .scaleAspectFit
         button.contentMode = .center
-        button.tintColor = UIColor.theme.tabTray.cellCloseButton
         button.imageEdgeInsets = UIEdgeInsets(equalInset: GridTabTrayControllerUX.CloseButtonEdgeInset)
         return button
     }()
 
-    var title = UIVisualEffectView(effect: UIBlurEffect(style: UIColor.theme.tabTray.tabTitleBlur))
+    let title = UIView()
     var animator: SwipeAnimator?
 
     weak var delegate: TabCellDelegate?
 
     // Changes depending on whether we're full-screen or not.
     var margin = CGFloat(0)
+
+    // Ecosia: Branding
+    private var isActive = false
+    private var isPrivate = false
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -845,9 +859,9 @@ class TabCell: UICollectionViewCell {
         ]
 
         backgroundHolder.addSubview(title)
-        title.contentView.addSubview(self.closeButton)
-        title.contentView.addSubview(self.titleText)
-        title.contentView.addSubview(self.favicon)
+        title.addSubview(self.closeButton)
+        title.addSubview(self.titleText)
+        title.addSubview(self.favicon)
 
         title.snp.makeConstraints { (make) in
             make.top.left.right.equalTo(backgroundHolder).priority(.veryHigh)
@@ -855,7 +869,7 @@ class TabCell: UICollectionViewCell {
         }
 
         favicon.snp.makeConstraints { make in
-            make.leading.equalTo(title.contentView).offset(6)
+            make.leading.equalTo(title).offset(6)
             make.top.equalTo((GridTabTrayControllerUX.TextBoxHeight - GridTabTrayControllerUX.FaviconSize) / 2)
             make.size.equalTo(GridTabTrayControllerUX.FaviconSize)
         }
@@ -863,21 +877,22 @@ class TabCell: UICollectionViewCell {
         titleText.snp.makeConstraints { (make) in
             make.leading.equalTo(favicon.snp.trailing).offset(6)
             make.trailing.equalTo(closeButton.snp.leading).offset(-6)
-            make.centerY.equalTo(title.contentView)
+            make.centerY.equalTo(title)
         }
 
         closeButton.snp.makeConstraints { make in
             make.size.equalTo(GridTabTrayControllerUX.CloseButtonSize)
-            make.centerY.trailing.equalTo(title.contentView)
+            make.centerY.trailing.equalTo(title)
         }
 
         screenshotView.snp.makeConstraints { make in
-            make.top.equalToSuperview()
+            make.top.equalTo(title.snp.bottom)
             make.left.right.equalTo(backgroundHolder)
             make.bottom.equalTo(backgroundHolder.snp.bottom)
         }
     }
 
+    /* Ecosia: unused method
     func setTabSelected(_ isPrivate: Bool) {
         // This creates a border around a tabcell. Using the shadow craetes a border _outside_ of the tab frame.
         layer.shadowColor = (isPrivate ? UIColor.theme.tabTray.privateModePurple : UIColor.theme.ecosia.primaryBrand).cgColor
@@ -889,6 +904,7 @@ class TabCell: UICollectionViewCell {
         let shadowPath = CGRect(width: layer.frame.width + (TabCell.BorderWidth * 2), height: layer.frame.height + (TabCell.BorderWidth * 2))
         layer.shadowPath = UIBezierPath(roundedRect: shadowPath, cornerRadius: GridTabTrayControllerUX.CornerRadius+TabCell.BorderWidth).cgPath
     }
+     */
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -896,8 +912,12 @@ class TabCell: UICollectionViewCell {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        let shadowPath = CGRect(width: layer.frame.width + (TabCell.BorderWidth * 2), height: layer.frame.height + (TabCell.BorderWidth * 2))
-        layer.shadowPath = UIBezierPath(roundedRect: shadowPath, cornerRadius: GridTabTrayControllerUX.CornerRadius+TabCell.BorderWidth).cgPath
+        if isActive {
+            let shadowPath = CGRect(width: layer.frame.width + (TabCell.BorderWidth * 2), height: layer.frame.height + (TabCell.BorderWidth * 2))
+            layer.shadowPath = UIBezierPath(roundedRect: shadowPath, cornerRadius: GridTabTrayControllerUX.CornerRadius+TabCell.BorderWidth).cgPath
+        } else {
+            layer.shadowPath = nil
+        }
     }
 
     func configureWith(tab: Tab, is selected: Bool) {
@@ -920,19 +940,12 @@ class TabCell: UICollectionViewCell {
             favicon.sd_setImage(with: url, placeholderImage: UIImage(named: "defaultFavicon"), options: [], completed: nil)
         } else {
             favicon.image = UIImage(named: "defaultFavicon")
-            favicon.tintColor = UIColor.theme.tabTray.faviconTint
         }
-        if selected {
-            setTabSelected(tab.isPrivate)
-        } else {
-            // Ecosia: custom shadow for unselected cells
-            layer.shadowOffset = .init(width: 0, height: 2)
-            layer.shadowPath = nil
-            layer.shadowOpacity = 0.1
-            layer.shadowColor = UIColor.Photon.Grey90.cgColor
-            layer.shadowRadius = 8
-        }
+
         screenshotView.image = tab.screenshot
+        isActive = selected
+        isPrivate = tab.isPrivate
+        applyTheme()
     }
 
     override func prepareForReuse() {
@@ -940,11 +953,13 @@ class TabCell: UICollectionViewCell {
         super.prepareForReuse()
         backgroundHolder.transform = .identity
         backgroundHolder.alpha = 1
-        self.titleText.font = DynamicFontHelper.defaultHelper.DefaultSmallFontBold
         layer.shadowOffset = .zero
         layer.shadowPath = nil
         layer.shadowOpacity = 0
         isHidden = false
+        isActive = false
+        isPrivate = false
+        applyTheme()
     }
 
     override func accessibilityScroll(_ direction: UIAccessibilityScrollDirection) -> Bool {
@@ -965,16 +980,52 @@ class TabCell: UICollectionViewCell {
         delegate?.tabCellDidClose(self)
         Analytics.shared.browser(.delete, label: .tabs)
     }
+
+    // Ecosia: branding
+    func applyTheme() {
+        backgroundHolder.backgroundColor = UIColor.theme.tabTray.cellBackground
+        screenshotView.backgroundColor = UIColor.theme.tabTray.screenshotBackground
+
+        let activeBGColor = isPrivate ? UIColor.theme.ecosia.tabSelectedPrivateBackground : UIColor.theme.ecosia.tabSelectedBackground
+        title.backgroundColor = isActive ? activeBGColor : UIColor.theme.ecosia.tabBackground
+
+        titleText.textColor = isActive ? UIColor.theme.ecosia.primaryTextInverted : UIColor.theme.ecosia.primaryText
+        favicon.tintColor = isActive ? UIColor.theme.ecosia.primaryTextInverted : UIColor.theme.ecosia.primaryText
+        closeButton.tintColor = isActive ? UIColor.theme.ecosia.primaryTextInverted : UIColor.theme.ecosia.primaryText
+
+        if isActive {
+            // This creates a border around a tabcell. Using the shadow craetes a border _outside_ of the tab frame.
+            layer.masksToBounds = false
+            layer.shadowOpacity = 1
+            layer.shadowRadius = 0 // A 0 radius creates a solid border instead of a gradient blur
+            // create a frame that is "BorderWidth" size bigger than the cell
+            layer.shadowOffset = CGSize(width: -TabCell.BorderWidth, height: -TabCell.BorderWidth)
+            layer.shadowColor = activeBGColor.cgColor
+        } else if ThemeManager.instance.current.isDark  {
+            layer.masksToBounds = true
+            layer.shadowOpacity = 0
+            layer.shadowOffset = .zero
+        } else {
+            layer.masksToBounds = false
+            layer.shadowOffset = .init(width: 0, height: 1)
+            layer.shadowOpacity = 1.0
+            layer.shadowColor = UIColor(white: 0.059, alpha: 0.18).cgColor
+            layer.shadowRadius = 2
+        }
+    }
 }
 
 extension GridTabViewController: Themeable {
 
     @objc func applyTheme() {
         webViewContainerBackdrop.backgroundColor = UIColor.Photon.Ink90
-        collectionView.backgroundColor = UIColor.theme.tabTray.background
+        collectionView.backgroundColor = UIColor.theme.homePanel.panelBackground
         let indexPath = IndexPath(row: 0, section: 1)
         if let cell = collectionView.cellForItem(at: indexPath) as? InactiveTabCell {
             cell.applyTheme()
         }
+        // show/hide separator
+        navigationController?.navigationBar.scrollEdgeAppearance?.shadowColor = tabLayoutDelegate.showSeparator ? UIColor.theme.ecosia.border : nil
+        collectionView.visibleCells.forEach({ ($0 as? Themeable)?.applyTheme() })
     }
 }

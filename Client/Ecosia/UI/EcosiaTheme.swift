@@ -37,6 +37,7 @@ class EcosiaTheme {
     var border: UIColor { .Light.border }
 
     var primaryBackground: UIColor { .Light.Background.primary }
+    var tertiaryBackground: UIColor { .Light.Background.tertiary }
     var barBackground: UIColor { .white }
     var barSeparator: UIColor { UIColor.Photon.Grey20 }
     var treeCountText: UIColor { UIColor(named: "emerald")! }
@@ -51,6 +52,7 @@ class EcosiaTheme {
     var modalBackground: UIColor { .white }
 
     var primaryText: UIColor { .Light.Text.primary }
+    var primaryTextInverted: UIColor { .Dark.Text.primary }
     var secondaryText: UIColor { .Light.Text.secondary }
     var highContrastText: UIColor { UIColor.Photon.Grey90 }
     var navigationBarText: UIColor { .Light.Text.primary }
@@ -61,6 +63,7 @@ class EcosiaTheme {
 
     var primaryToolbar: UIColor { UIColor(named: "primaryToolbar")!}
     var primaryButton: UIColor { .Light.Button.primary }
+    var primaryButtonActive: UIColor { .Light.Button.primaryActive }
     var textfieldPlaceholder: UIColor { UIColor.Photon.Grey60 }
     var personalCounterBorder: UIColor { UIColor.Photon.Grey20 }
     var personalCounterSelection: UIColor { UIColor.Photon.Grey20 }
@@ -76,6 +79,10 @@ class EcosiaTheme {
     var segmentBackground: UIColor { .Light.Background.secondary }
     var warning: UIColor { .Light.State.warning }
     var information: UIColor { .Light.State.information }
+
+    var tabBackground: UIColor { .Light.Background.primary }
+    var tabSelectedBackground: UIColor { .Light.Button.primary }
+    var tabSelectedPrivateBackground: UIColor { .Dark.Background.secondary }
 }
 
 final class DarkEcosiaTheme: EcosiaTheme {
@@ -84,6 +91,7 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var border: UIColor { .Dark.border }
 
     override var primaryBackground: UIColor { .Dark.Background.primary }
+    override var tertiaryBackground: UIColor { .Dark.Background.tertiary }
     override var barBackground: UIColor { UIColor.Photon.Grey80 }
     override var barSeparator: UIColor { UIColor.Photon.Grey60 }
     override var treeCountText: UIColor { .white }
@@ -98,6 +106,7 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var modalBackground: UIColor { UIColor.Photon.Grey80 }
 
     override var primaryText: UIColor { .Dark.Text.primary}
+    override var primaryTextInverted: UIColor { .Light.Text.primary }
     override var secondaryText: UIColor { .Dark.Text.secondary }
     override var highContrastText: UIColor { .white }
     override var navigationBarText: UIColor { .Dark.Text.primary }
@@ -106,6 +115,8 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var hoverBackgroundColor: UIColor { UIColor.Photon.Grey90 }
 
     override var primaryButton: UIColor { .Dark.Button.primary }
+    override var primaryButtonActive: UIColor { .Dark.Button.primaryActive }
+
     override var textfieldPlaceholder: UIColor { UIColor.Photon.Grey40 }
     override var personalCounterBorder: UIColor { UIColor.Photon.Grey60 }
     override var personalCounterSelection: UIColor { UIColor.Photon.Grey60 }
@@ -120,6 +131,10 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var segmentBackground: UIColor { .Dark.Background.tertiary }
     override var warning: UIColor { .Dark.State.warning }
     override var information: UIColor { .Dark.State.information }
+
+    override var tabBackground: UIColor { .Dark.Background.tertiary }
+    override var tabSelectedBackground: UIColor { .Dark.Button.primary }
+    override var tabSelectedPrivateBackground: UIColor { .white}
 }
 
 extension UIImage {
