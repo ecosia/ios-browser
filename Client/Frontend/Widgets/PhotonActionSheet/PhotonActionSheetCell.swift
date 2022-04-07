@@ -189,7 +189,7 @@ class PhotonActionSheetCell: UITableViewCell {
     
     func configure(with action: PhotonActionSheetItem) {
         titleLabel.text = action.title
-        titleLabel.textColor = UIColor.theme.ecosia.highContrastText
+        titleLabel.textColor = UIColor.theme.ecosia.primaryText
         titleLabel.textColor = action.accessory == .Text ? titleLabel.textColor.withAlphaComponent(0.6) : titleLabel.textColor
         titleLabel.adjustsFontSizeToFitWidth = false
         titleLabel.numberOfLines = 0

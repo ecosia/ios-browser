@@ -6,6 +6,7 @@ import Foundation
 import Storage
 import SnapKit
 import Shared
+import UIKit
 
 // This file is main table view used for the action sheet
 
@@ -132,7 +133,7 @@ class PhotonActionSheet: UIViewController, UITableViewDelegate, UITableViewDataS
             view.backgroundColor = UIColor.theme.browser.background.withAlphaComponent(0.7)
         }
         tableView.backgroundColor = UIColor.theme.ecosia.actionSheetBackground
-        tintColor = UIColor.theme.actionMenu.foreground
+        tintColor = UIColor.theme.ecosia.primaryText
         closeButton.backgroundColor = UIColor.theme.actionMenu.closeButtonBackground
         tableView.headerView(forSection: 0)?.backgroundColor = UIColor.Photon.DarkGrey05
         
@@ -289,7 +290,7 @@ class PhotonActionSheet: UIViewController, UITableViewDelegate, UITableViewDataS
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: PhotonActionSheetUX.CellName, for: indexPath) as! PhotonActionSheetCell
         let action = actions[indexPath.section][indexPath.row]
-        cell.tintColor = self.tintColor
+        cell.tintColor = UIColor.theme.ecosia.secondaryText
         cell.configure(with: action)
         
         // For menus other than ETP, don't show top and bottom separator lines

@@ -76,7 +76,7 @@ extension PhotonActionSheetProtocol {
         // Get the title and icon for this feature from nimbus.
         // We need to provide defaults if Nimbus doesn't provide them.
         let title = variables.getText("settings-title") ?? Strings.AppMenuSettingsTitleString
-        let icon = variables.getString("settings-icon") ?? "menu-Settings"
+        let icon = "menu-Settings"
 
         let openSettings = PhotonActionSheetItem(title: title, iconString: icon) { _, _ in
             let settingsTableViewController = AppSettingsTableViewController()

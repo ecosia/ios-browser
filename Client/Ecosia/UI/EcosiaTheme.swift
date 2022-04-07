@@ -48,7 +48,7 @@ class EcosiaTheme {
     var impactMultiplyCardBackground: UIColor { .white }
     var impactMultiplyCardBorder: UIColor { .Photon.Grey20 }
     
-    var actionSheetBackground: UIColor { .white }
+    var actionSheetBackground: UIColor { .Light.Background.primary }
     var modalBackground: UIColor { .white }
 
     var primaryText: UIColor { .Light.Text.primary }
@@ -102,7 +102,7 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var impactMultiplyCardBackground: UIColor { .Photon.Grey70 }
     override var impactMultiplyCardBorder: UIColor { .clear }
 
-    override var actionSheetBackground: UIColor { UIColor.Photon.Grey70 }
+    override var actionSheetBackground: UIColor { .Dark.Background.secondary }
     override var modalBackground: UIColor { UIColor.Photon.Grey80 }
 
     override var primaryText: UIColor { .Dark.Text.primary}
