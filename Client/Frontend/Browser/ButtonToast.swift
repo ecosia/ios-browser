@@ -4,16 +4,18 @@
 
 import Foundation
 import SnapKit
+import UIKit
 
 struct ButtonToastUX {
-    static let ToastHeight: CGFloat = 55.0
-    static let ToastPadding: CGFloat = 15.0
-    static let ToastButtonPadding: CGFloat = 10.0
+    static let ToastHeight: CGFloat = 55.0 + ToastOffset
+    static let ToastOffset: CGFloat = 12
+    static let ToastPadding: CGFloat = 16.0
+    static let ToastButtonPadding: CGFloat = 16.0
     static let ToastDelay = DispatchTimeInterval.milliseconds(900)
     static let ToastButtonBorderRadius: CGFloat = 5
     static let ToastButtonBorderWidth: CGFloat = 1
-    static let ToastLabelFont = UIFont.systemFont(ofSize: 15, weight: .semibold)
-    static let ToastDescriptionFont = UIFont.systemFont(ofSize: 13)
+    static let ToastLabelFont = UIFont.preferredFont(forTextStyle: .body)
+    static let ToastDescriptionFont = UIFont.preferredFont(forTextStyle: .caption1)
     
     struct ToastButtonPaddedView {
         static let WidthOffset: CGFloat = 20.0
@@ -31,7 +33,7 @@ class ButtonToast: Toast {
         }
     }
 
-    init(labelText: String, descriptionText: String? = nil, imageName: String? = nil, buttonText: String? = nil, backgroundColor: UIColor = SimpleToastUX.ToastDefaultColor, textAlignment: NSTextAlignment = .left, completion: ((_ buttonPressed: Bool) -> Void)? = nil) {
+    init(labelText: String, descriptionText: String? = nil, imageName: String? = nil, buttonText: String? = nil, textAlignment: NSTextAlignment = .left, completion: ((_ buttonPressed: Bool) -> Void)? = nil) {
         super.init(frame: .zero)
 
         self.completionHandler = completion
@@ -40,7 +42,7 @@ class ButtonToast: Toast {
         let createdToastView = createView(labelText, descriptionText: descriptionText, imageName: imageName, buttonText: buttonText, textAlignment: textAlignment)
         self.addSubview(createdToastView)
 
-        self.toastView.backgroundColor = backgroundColor
+        self.toastView.backgroundColor = .clear
 
         self.toastView.snp.makeConstraints { make in
             make.left.right.height.equalTo(self)
@@ -61,10 +63,13 @@ class ButtonToast: Toast {
         horizontalStackView.axis = .horizontal
         horizontalStackView.alignment = .center
         horizontalStackView.spacing = ButtonToastUX.ToastPadding
+        horizontalStackView.layer.cornerRadius = 10
+        horizontalStackView.backgroundColor = SimpleToastUX.ToastDefaultColor
 
         if let imageName = imageName {
             let icon = UIImageView(image: UIImage.templateImageNamed(imageName))
-            icon.tintColor = UIColor.Photon.White100
+            icon.tintColor = UIColor.theme.ecosia.toastImageTint
+            horizontalStackView.addArrangedSubview(UIView())
             horizontalStackView.addArrangedSubview(icon)
         }
         
@@ -74,8 +79,8 @@ class ButtonToast: Toast {
 
         let label = UILabel()
         label.textAlignment = textAlignment
-        label.textColor = UIColor.Photon.White100
-        label.font = ButtonToastUX.ToastLabelFont
+        label.textColor = UIColor.theme.ecosia.primaryTextInverted
+        label.font = UIFont.preferredFont(forTextStyle: .body)
         label.text = labelText
         label.lineBreakMode = .byWordWrapping
         label.numberOfLines = 0
@@ -89,14 +94,16 @@ class ButtonToast: Toast {
 
             descriptionLabel = UILabel()
             descriptionLabel?.textAlignment = textAlignment
-            descriptionLabel?.textColor = UIColor.Photon.White100
-            descriptionLabel?.font = ButtonToastUX.ToastDescriptionFont
+            descriptionLabel?.textColor = UIColor.theme.ecosia.primaryTextInverted
+            descriptionLabel?.font = UIFont.preferredFont(forTextStyle: .caption1)
             descriptionLabel?.text = descriptionText
             descriptionLabel?.lineBreakMode = .byTruncatingTail
             labelStackView.addArrangedSubview(descriptionLabel!)
         }
 
+        horizontalStackView.addArrangedSubview(UIView())
         horizontalStackView.addArrangedSubview(labelStackView)
+        horizontalStackView.addArrangedSubview(UIView())
         setupPaddedButton(stackView: horizontalStackView, buttonText: buttonText)
         toastView.addSubview(horizontalStackView)
 
@@ -116,17 +123,18 @@ class ButtonToast: Toast {
         
         horizontalStackView.snp.makeConstraints { make in
             make.left.equalTo(toastView.snp.left).offset(ButtonToastUX.ToastPadding)
-            make.right.equalTo(toastView.snp.right)
-            make.bottom.equalTo(toastView.safeArea.bottom)
+            make.right.equalTo(toastView.snp.right).offset(-ButtonToastUX.ToastPadding)
+            make.bottom.equalTo(toastView.safeArea.bottom).offset(-ButtonToastUX.ToastOffset)
             make.top.equalTo(toastView.snp.top)
-            make.height.equalTo(ButtonToastUX.ToastHeight)
+            make.height.equalTo(ButtonToastUX.ToastHeight - ButtonToastUX.ToastOffset)
         }
         return toastView
     }
     
     func setupPaddedButton(stackView: UIStackView, buttonText: String?) {
         guard let buttonText = buttonText else { return }
-            
+
+        /* Ecosia: branding
         let paddedView = UIView()
         paddedView.translatesAutoresizingMaskIntoConstraints = false
         stackView.addArrangedSubview(paddedView)
@@ -134,33 +142,37 @@ class ButtonToast: Toast {
             make.top.equalTo(stackView.snp.top).offset(ButtonToastUX.ToastButtonPaddedView.TopOffset)
             make.bottom.equalTo(stackView.snp.bottom).offset(ButtonToastUX.ToastButtonPaddedView.BottomOffset)
         }
+         */
         
-        let roundedButton = HighlightableButton()
+        let roundedButton = UIButton()
         roundedButton.translatesAutoresizingMaskIntoConstraints = false
+        /* Ecosia: branding
         roundedButton.layer.cornerRadius = ButtonToastUX.ToastButtonBorderRadius
         roundedButton.layer.borderWidth = ButtonToastUX.ToastButtonBorderWidth
         roundedButton.layer.borderColor = UIColor.Photon.White100.cgColor
+         */
         roundedButton.setTitle(buttonText, for: [])
-        roundedButton.setTitleColor(toastView.backgroundColor, for: .highlighted)
-        roundedButton.titleLabel?.font = SimpleToastUX.ToastFont
+        roundedButton.setTitleColor(UIColor.theme.ecosia.primaryTextInverted, for: .normal)
+        roundedButton.titleLabel?.font = UIFont.preferredFont(forTextStyle: .body).bold()
         roundedButton.titleLabel?.numberOfLines = 1
         roundedButton.titleLabel?.lineBreakMode = .byClipping
         roundedButton.titleLabel?.adjustsFontSizeToFitWidth = true
         roundedButton.titleLabel?.minimumScaleFactor = 0.1
-        paddedView.addSubview(roundedButton)
+        stackView.addArrangedSubview(roundedButton)
         roundedButton.snp.makeConstraints { make in
-            make.height.equalTo(roundedButton.titleLabel!.intrinsicContentSize.height + 2 * ButtonToastUX.ToastButtonPadding)
+            //make.height.equalTo(roundedButton.titleLabel!.intrinsicContentSize.height + 2 * ButtonToastUX.ToastButtonPadding)
             make.width.equalTo(roundedButton.titleLabel!.intrinsicContentSize.width + 2 * ButtonToastUX.ToastButtonPadding)
-            make.centerY.centerX.equalToSuperview()
+            //make.centerY.centerX.equalToSuperview()
         }
-        roundedButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(buttonPressed)))
-        
+        roundedButton.addTarget(self, action: #selector(buttonPressed), for: .primaryActionTriggered)
+        /* Ecosia: branding
         paddedView.snp.makeConstraints { make in
             make.top.equalTo(stackView.snp.top)
             make.bottom.equalTo(stackView.snp.bottom)
             make.width.equalTo(roundedButton.snp.width).offset(ButtonToastUX.ToastButtonPaddedView.WidthOffset)
         }
         paddedView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(buttonPressed)))
+         */
     }
 
     override func showToast(viewController: UIViewController? = nil, delay: DispatchTimeInterval = SimpleToastUX.ToastDelayBefore, duration: DispatchTimeInterval? = SimpleToastUX.ToastDismissAfter, makeConstraints: @escaping (SnapKit.ConstraintMaker) -> Swift.Void) {

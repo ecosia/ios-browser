@@ -22,6 +22,8 @@ class Toast: UIView {
     lazy var toastView: UIView = {
         let toastView = UIView()
         toastView.backgroundColor = SimpleToastUX.ToastDefaultColor
+        toastView.layer.cornerRadius = 10
+        toastView.layer.masksToBounds = true
         return toastView
     }()
 
@@ -59,7 +61,7 @@ class Toast: UIView {
         superview?.removeGestureRecognizer(gestureRecognizer)
 
         UIView.animate(withDuration: SimpleToastUX.ToastAnimationDuration, animations: {
-            self.animationConstraint?.update(offset: SimpleToastUX.ToastHeight)
+            self.animationConstraint?.update(offset: SimpleToastUX.ToastHeight + SimpleToastUX.Offset)
             self.layoutIfNeeded()
         }) { finished in
             self.removeFromSuperview()

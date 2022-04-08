@@ -38,6 +38,7 @@ class EcosiaTheme {
 
     var primaryBackground: UIColor { .Light.Background.primary }
     var tertiaryBackground: UIColor { .Light.Background.tertiary }
+    var quarternaryBackground: UIColor { .Light.Background.quarternary }
     var barBackground: UIColor { .white }
     var barSeparator: UIColor { UIColor.Photon.Grey20 }
     var treeCountText: UIColor { UIColor(named: "emerald")! }
@@ -83,6 +84,8 @@ class EcosiaTheme {
     var tabBackground: UIColor { .Light.Background.primary }
     var tabSelectedBackground: UIColor { .Light.Button.primary }
     var tabSelectedPrivateBackground: UIColor { .Dark.Background.secondary }
+
+    var toastImageTint: UIColor { .init(red: 0.847, green: 1, blue: 0.502, alpha: 1) }
 }
 
 final class DarkEcosiaTheme: EcosiaTheme {
@@ -92,6 +95,7 @@ final class DarkEcosiaTheme: EcosiaTheme {
 
     override var primaryBackground: UIColor { .Dark.Background.primary }
     override var tertiaryBackground: UIColor { .Dark.Background.tertiary }
+    override var quarternaryBackground: UIColor { .Dark.Background.quarternary }
     override var barBackground: UIColor { UIColor.Photon.Grey80 }
     override var barSeparator: UIColor { UIColor.Photon.Grey60 }
     override var treeCountText: UIColor { .white }
@@ -135,6 +139,8 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var tabBackground: UIColor { .Dark.Background.tertiary }
     override var tabSelectedBackground: UIColor { .Dark.Button.primary }
     override var tabSelectedPrivateBackground: UIColor { .white}
+
+    override var toastImageTint: UIColor { .init(red: 0.153, green: 0.322, blue: 0.263, alpha: 1) }
 }
 
 extension UIImage {
