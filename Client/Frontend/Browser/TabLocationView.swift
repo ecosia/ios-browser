@@ -84,7 +84,7 @@ class TabLocationView: UIView {
 
     var placeholder: NSAttributedString {
         let placeholderText = String.localized(.searchAndPlant)
-        return NSAttributedString(string: placeholderText, attributes: [.foregroundColor: UIColor.theme.ecosia.textfieldPlaceholder])
+        return NSAttributedString(string: placeholderText, attributes: [.foregroundColor: UIColor.theme.ecosia.secondaryText])
     }
 
     lazy var urlTextField: UITextField = {
@@ -114,7 +114,6 @@ class TabLocationView: UIView {
         let trackingProtectionButton = UIButton()
         trackingProtectionButton.setImage(UIImage.templateImageNamed("lock_verified"), for: .normal)
         trackingProtectionButton.addTarget(self, action: #selector(didPressTPShieldButton(_:)), for: .touchUpInside)
-        trackingProtectionButton.tintColor = UIColor.Photon.Grey50
         trackingProtectionButton.imageView?.contentMode = .scaleAspectFill
         trackingProtectionButton.clipsToBounds = false
         trackingProtectionButton.accessibilityIdentifier = "TabLocationView.trackingProtectionButton"
@@ -368,7 +367,7 @@ extension TabLocationView: Themeable {
         pageOptionsButton.tintColor = pageOptionsButton.unselectedTintColor
         separatorLineForPageOptions.backgroundColor = UIColor.Photon.Grey40
         reloadButton.tintColor = UIColor.theme.urlbar.readerModeButtonUnselected
-        trackingProtectionButton.tintColor = UIColor.theme.ecosia.primaryBrand
+        trackingProtectionButton.tintColor = UIColor.theme.ecosia.primaryButton
 
         let color = ThemeManager.instance.currentName == .dark ? UIColor(white: 0.3, alpha: 0.6): UIColor.theme.textField.background
         menuBadge.badge.tintBackground(color: color)
@@ -386,7 +385,7 @@ extension TabLocationView: TabEventHandler {
         trackingProtectionButton.alpha = 1.0
 
         var lockImage: UIImage
-        let imageID = ThemeManager.instance.currentName == .dark ? "lock_blocked_dark" : "lock_blocked"
+        let imageID = "lock_blocked"
         if !(tab.webView?.hasOnlySecureContent ?? false) && !tab.isURLStartingPage {
             lockImage = UIImage(imageLiteralResourceName: imageID)
 
@@ -525,7 +524,9 @@ private class DisplayTextField: UITextField {
         return false
     }
 
+    /* Ecosia: rebranding
     override func textRect(forBounds bounds: CGRect) -> CGRect {
         return bounds.insetBy(dx: TabLocationViewUX.Spacing, dy: 0)
     }
+     */
 }

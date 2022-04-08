@@ -55,11 +55,11 @@ class ActionMenuColor {
 }
 
 class URLBarColor {
-    var border: UIColor { return UIColor.Photon.Grey90A10 }
+    // var border: UIColor { return UIColor.Photon.Grey90A10 }
     func activeBorder(_ isPrivate: Bool) -> UIColor { 
-        return !isPrivate ? UIColor.theme.ecosia.primaryBrand : UIColor.Defaults.MobilePrivatePurple
+        return !isPrivate ? UIColor.theme.ecosia.primaryButton : UIColor.theme.ecosia.secondaryText
     }
-    var tint: UIColor { return UIColor.theme.ecosia.primaryBrand }
+    var tint: UIColor { return UIColor.theme.ecosia.primaryButton }
 
     // This text selection color is used in two ways:
     // 1) <UILabel>.background = textSelectionHighlight.withAlphaComponent(textSelectionHighlightAlpha)
@@ -69,14 +69,14 @@ class URLBarColor {
     typealias TextSelectionHighlight = (labelMode: UIColor, textFieldMode: UIColor?)
     func textSelectionHighlight(_ isPrivate: Bool) -> TextSelectionHighlight {
         if isPrivate {
-            let color = UIColor.Defaults.MobilePrivatePurple
+            let color = UIColor.theme.ecosia.secondaryText
             return (labelMode: color.withAlphaComponent(0.25), textFieldMode: color)
         } else {
             return (labelMode: UIColor.Defaults.iOSTextHighlightBlue, textFieldMode: nil)
         }
     }
 
-    var readerModeButtonSelected: UIColor { return UIColor.theme.ecosia.primaryBrand }
+    var readerModeButtonSelected: UIColor { return UIColor.theme.ecosia.primaryButton }
     var readerModeButtonUnselected: UIColor { return UIColor.theme.ecosia.secondaryText }
     var pageOptionsSelected: UIColor { return readerModeButtonSelected }
     var pageOptionsUnselected: UIColor { return readerModeButtonUnselected }
@@ -90,7 +90,7 @@ class BrowserColor {
 
 // The back/forward/refresh/menu button (bottom toolbar)
 class ToolbarButtonColor {
-    var selectedTint: UIColor { return UIColor.theme.ecosia.primaryBrand }
+    var selectedTint: UIColor { return UIColor.theme.ecosia.primaryButton }
     var disabledTint: UIColor { return UIColor.Photon.Grey30 }
 }
 
@@ -150,9 +150,9 @@ class TopTabsColor {
 }
 
 class TextFieldColor {
-    var background: UIColor { return UIColor.Photon.Grey20 }
-    var backgroundInOverlay: UIColor { return UIColor.Photon.Grey20 }
-    var backgroundInCell: UIColor { return UIColor.Photon.Grey20 }
+    var background: UIColor { return .Light.Background.primary }
+    var backgroundInOverlay: UIColor { return .Light.Background.primary }
+    var backgroundInCell: UIColor { return .Light.Background.primary }
     var textAndTint: UIColor { return defaultTextAndTint }
     var separator: UIColor { return .white }
 }

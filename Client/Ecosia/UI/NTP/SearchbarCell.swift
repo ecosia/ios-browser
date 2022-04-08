@@ -27,16 +27,15 @@ final class SearchbarCell: UICollectionViewCell, Themeable {
     private func setup() {
         let search = SearchButton(type: .custom)
         search.translatesAutoresizingMaskIntoConstraints = false
-        search.layer.cornerRadius = 10
-        search.titleEdgeInsets.left = 40
-        search.titleEdgeInsets.right = 8
+        search.layer.cornerRadius = 20
+        search.titleEdgeInsets.left = 44
+        search.titleEdgeInsets.right = 12
         search.setTitle(.localized(.searchAndPlant), for: .normal)
         search.titleLabel?.lineBreakMode = .byTruncatingTail
         search.titleLabel?.font = .preferredFont(forTextStyle: .body)
         search.titleLabel?.adjustsFontForContentSizeCategory = true
         search.contentHorizontalAlignment = .left
         self.search = search
-        applyTheme()
 
         search.addTarget(self, action: #selector(tapped), for: .touchUpInside)
 
@@ -60,13 +59,32 @@ final class SearchbarCell: UICollectionViewCell, Themeable {
         contentView.addSubview(image)
         self.image = image
 
-        image.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16).isActive = true
+        image.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12).isActive = true
         image.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
+        image.heightAnchor.constraint(equalToConstant: 24).isActive = true
+        image.widthAnchor.constraint(equalToConstant: 24).isActive = true
+        image.contentMode = .scaleAspectFit
+
+        applyTheme()
     }
 
     func applyTheme() {
         search.backgroundColor = UIColor.theme.textField.backgroundInCell
-        search.setTitleColor(UIColor.theme.ecosia.textfieldPlaceholder, for: .normal)
+        search.setTitleColor(UIColor.theme.ecosia.secondaryText, for: .normal)
+        image.tintColor = UIColor.theme.ecosia.textfieldIconTint
+
+        search.layer.borderColor = UIColor.theme.ecosia.border.cgColor
+        search.layer.borderWidth = 1
+
+        if ThemeManager.instance.current.isDark {
+            search.layer.shadowOpacity = 0
+        } else {
+            search.layer.shadowOpacity = 1
+            search.layer.shadowColor = UIColor(red: 0.059, green: 0.059, blue: 0.059, alpha: 0.18).cgColor
+            search.layer.shadowOpacity = 1
+            search.layer.shadowRadius = 2
+            search.layer.shadowOffset = CGSize(width: 0, height: 1)
+        }
     }
 
     override func prepareForReuse() {

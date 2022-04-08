@@ -65,7 +65,8 @@ class EcosiaTheme {
     var primaryToolbar: UIColor { UIColor(named: "primaryToolbar")!}
     var primaryButton: UIColor { .Light.Button.primary }
     var primaryButtonActive: UIColor { .Light.Button.primaryActive }
-    var textfieldPlaceholder: UIColor { UIColor.Photon.Grey60 }
+    var textfieldPlaceholder: UIColor { .Light.Text.secondary }
+    var textfieldIconTint: UIColor { .Light.Button.primary }
     var personalCounterBorder: UIColor { UIColor.Photon.Grey20 }
     var personalCounterSelection: UIColor { UIColor.Photon.Grey20 }
     var privateButtonBackground: UIColor { UIColor.Photon.Grey70 }
@@ -121,7 +122,9 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var primaryButton: UIColor { .Dark.Button.primary }
     override var primaryButtonActive: UIColor { .Dark.Button.primaryActive }
 
-    override var textfieldPlaceholder: UIColor { UIColor.Photon.Grey40 }
+    override var textfieldPlaceholder: UIColor { .Dark.Text.secondary }
+    override var textfieldIconTint: UIColor { .Dark.Text.secondary }
+
     override var personalCounterBorder: UIColor { UIColor.Photon.Grey60 }
     override var personalCounterSelection: UIColor { UIColor.Photon.Grey60 }
     override var privateButtonBackground: UIColor { .white }

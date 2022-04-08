@@ -38,7 +38,7 @@ fileprivate class DarkURLBarColor: URLBarColor {
     }
 
     override func activeBorder(_ isPrivate: Bool) -> UIColor {
-        return !isPrivate ? UIColor.theme.ecosia.primaryBrand : UIColor.Defaults.MobilePrivatePurple
+        return !isPrivate ? UIColor.theme.ecosia.primaryButton : UIColor.Defaults.MobilePrivatePurple
     }
 }
 
@@ -87,9 +87,9 @@ fileprivate class DarkTopTabsColor: TopTabsColor {
 }
 
 fileprivate class DarkTextFieldColor: TextFieldColor {
-    override var background: UIColor { return UIColor.Photon.Grey70 }
-    override var backgroundInOverlay: UIColor { return UIColor.Photon.Grey70 }
-    override var backgroundInCell: UIColor { return UIColor.Photon.Grey80 }
+    override var background: UIColor { return .Dark.Background.secondary }
+    override var backgroundInOverlay: UIColor { return .Dark.Background.secondary }
+    override var backgroundInCell: UIColor { return .Dark.Background.secondary }
 
 
     override var textAndTint: UIColor { return defaultTextAndTint }
@@ -119,7 +119,7 @@ fileprivate class DarkHomePanelColor: HomePanelColor {
     override var activityStreamCellDescription: UIColor { return UIColor.Photon.LightGrey50 }
 
     override var topSiteDomain: UIColor { return UIColor.Photon.LightGrey05 }
-    override var topSitePin: UIColor { return UIColor.theme.ecosia.primaryBrand }
+    override var topSitePin: UIColor { return UIColor.theme.ecosia.primaryButton }
     override var topSitesBackground: UIColor { return UIColor.Photon.DarkGrey60 }
 
     override var shortcutBackground: UIColor { return UIColor.Photon.Grey80 }
