@@ -961,6 +961,7 @@ class BrowserViewController: UIViewController {
 
     private func showBookmarksToast() {
         let toast = ButtonToast(labelText: Strings.AppMenuAddBookmarkConfirmMessage,
+                                imageName: "bookmarksEmpty", 
                                 buttonText: Strings.BookmarksEdit,
                                 textAlignment: .left) { isButtonTapped in
             isButtonTapped ? self.openBookmarkEditPanel() : nil
@@ -983,8 +984,7 @@ class BrowserViewController: UIViewController {
                                                        bookmarkNode: bookmarkNode,
                                                        parentBookmarkFolder: bookmarkFolder,
                                                        presentedFromToast: true)
-            let controller: DismissableNavigationViewController
-            controller = DismissableNavigationViewController(rootViewController: detailController)
+            let controller = ThemedDefaultNavigationController(rootViewController: detailController)
             self.present(controller, animated: true, completion: nil)
         }
     }

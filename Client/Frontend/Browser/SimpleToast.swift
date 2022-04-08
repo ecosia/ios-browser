@@ -4,12 +4,15 @@
 
 import Foundation
 import Shared
+import UIKit
 
 struct SimpleToastUX {
     static let ToastHeight = BottomToolbarHeight
+    static let Offset = CGFloat(12)
+    static let Margin = CGFloat(16)
     static let ToastAnimationDuration = 0.5
-    static let ToastDefaultColor = UIColor.theme.ecosia.primaryBrand
-    static let ToastFont = UIFont.systemFont(ofSize: 15)
+    static var ToastDefaultColor: UIColor { UIColor.theme.ecosia.quarternaryBackground }
+    static let ToastFont = UIFont.preferredFont(forTextStyle: .body)
     static let ToastDismissAfter = DispatchTimeInterval.milliseconds(4500) // 4.5 seconds.
     static let ToastDelayBefore = DispatchTimeInterval.milliseconds(0) // 0 seconds
     static let ToastPrivateModeDelayBefore = DispatchTimeInterval.milliseconds(750)
@@ -20,19 +23,22 @@ struct SimpleToast {
     func showAlertWithText(_ text: String, bottomContainer: UIView) {
         let toast = self.createView()
         toast.text = text
+        toast.layer.cornerRadius = 10
+        toast.layer.masksToBounds = true
+
         bottomContainer.addSubview(toast)
         toast.snp.makeConstraints { (make) in
-            make.width.equalTo(bottomContainer)
-            make.left.equalTo(bottomContainer)
+            make.left.equalTo(bottomContainer).offset(SimpleToastUX.Margin)
+            make.right.equalTo(bottomContainer).offset(-SimpleToastUX.Margin)
             make.height.equalTo(SimpleToastUX.ToastHeight)
-            make.bottom.equalTo(bottomContainer)
+            make.bottom.equalTo(bottomContainer).offset(-SimpleToastUX.Offset)
         }
         animate(toast)
     }
 
     fileprivate func createView() -> UILabel {
         let toast = UILabel()
-        toast.textColor = UIColor.Photon.White100
+        toast.textColor = UIColor.theme.ecosia.primaryTextInverted
         toast.backgroundColor = SimpleToastUX.ToastDefaultColor
         toast.font = SimpleToastUX.ToastFont
         toast.textAlignment = .center
@@ -40,11 +46,11 @@ struct SimpleToast {
     }
 
     fileprivate func dismiss(_ toast: UIView) {
+        var frame = toast.frame
+        frame.origin.y = frame.origin.y + SimpleToastUX.ToastHeight + SimpleToastUX.Offset
+
         UIView.animate(withDuration: SimpleToastUX.ToastAnimationDuration,
             animations: {
-                var frame = toast.frame
-                frame.origin.y = frame.origin.y + SimpleToastUX.ToastHeight
-                frame.size.height = 0
                 toast.frame = frame
             },
             completion: { finished in
@@ -54,12 +60,17 @@ struct SimpleToast {
     }
 
     fileprivate func animate(_ toast: UIView) {
+        var start = toast.frame
+        start.origin.y = SimpleToastUX.ToastHeight + SimpleToastUX.Offset
+        start.size.height = SimpleToastUX.ToastHeight
+        toast.frame = start
+
+        var end = toast.frame
+        end.origin.y = end.origin.y - SimpleToastUX.ToastHeight - SimpleToastUX.Offset
+
         UIView.animate(withDuration: SimpleToastUX.ToastAnimationDuration,
             animations: {
-                var frame = toast.frame
-                frame.origin.y = frame.origin.y - SimpleToastUX.ToastHeight
-                frame.size.height = SimpleToastUX.ToastHeight
-                toast.frame = frame
+                toast.frame = end
             },
             completion: { finished in
                 let dispatchTime = DispatchTime.now() + SimpleToastUX.ToastDismissAfter

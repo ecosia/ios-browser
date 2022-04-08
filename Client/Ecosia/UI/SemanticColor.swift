@@ -10,6 +10,7 @@ extension UIColor {
             static let primary = UIColor.white
             static let secondary = UIColor(red: 0.973, green: 0.973, blue: 0.965, alpha: 1)
             static let tertiary = UIColor(red: 0.941, green: 0.941, blue: 0.922, alpha: 1)
+            static let quarternary = UIColor(red: 0.153, green: 0.322, blue: 0.263, alpha: 1)
         }
         
         struct Button {
@@ -35,6 +36,7 @@ extension UIColor {
             static let primary = UIColor(red: 0.1, green: 0.1, blue: 0.1, alpha: 1)
             static let secondary = UIColor(red: 0.2, green: 0.2, blue: 0.2, alpha: 1)
             static let tertiary = UIColor(red: 0.298, green: 0.298, blue: 0.298, alpha: 1)
+            static let quarternary = UIColor(red: 0.686, green: 0.914, blue: 0.69, alpha: 1)
         }
         
         struct Button {
