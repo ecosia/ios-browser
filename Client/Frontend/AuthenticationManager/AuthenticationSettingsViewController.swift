@@ -223,6 +223,7 @@ class TouchIDSetting: Setting {
 class AuthenticationSettingsViewController: SettingsTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationItem.largeTitleDisplayMode = .never
         updateTitleForTouchIDState()
 
         let notificationCenter = NotificationCenter.default
