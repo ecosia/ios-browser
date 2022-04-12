@@ -23,8 +23,9 @@ final class FilterController: UIViewController, UITableViewDataSource, UITableVi
         view.backgroundColor = UIColor.theme.tableView.headerBackground
 
         navigationItem.title = .localized(.safeSearch)
+        navigationItem.largeTitleDisplayMode = .never
         
-        let table = UITableView()
+        let table = UITableView(frame: .zero, style: .insetGrouped)
         table.translatesAutoresizingMaskIntoConstraints = false
         table.tintColor = UIColor.theme.ecosia.primaryBrand
         table.delegate = self
