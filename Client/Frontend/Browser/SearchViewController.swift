@@ -89,7 +89,7 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
         self.isPrivate = isPrivate
         self.tabManager = tabManager
         self.experimental = Experiments.shared.getVariables(featureId: .search).getVariables("awesome-bar")
-        super.init(profile: profile)
+        super.init(profile: profile, style: .plain)
         
         if #available(iOS 15.0, *) {
             tableView.sectionHeaderTopPadding = 0
@@ -579,14 +579,15 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
                 oneLineCell.leftImageView.contentMode = .center
                 oneLineCell.leftImageView.layer.borderWidth = 0
                 oneLineCell.leftImageView.image = UIImage(named: SearchViewControllerUX.SearchImage)
-                oneLineCell.leftImageView.tintColor = ThemeManager.instance.currentName == .dark ? UIColor.white : UIColor.black
+                oneLineCell.leftImageView.tintColor = UIColor.theme.ecosia.primaryButton
                 oneLineCell.leftImageView.backgroundColor = nil
                 let appendButton = UIButton(type: .roundedRect)
                 appendButton.setImage(UIImage(named: SearchViewControllerUX.SearchAppendImage)?.withRenderingMode(.alwaysTemplate), for: .normal)
                 appendButton.addTarget(self, action: #selector(append(_ :)), for: .touchUpInside)
-                appendButton.tintColor = ThemeManager.instance.currentName == .dark ? UIColor.Photon.Grey30 : UIColor.Photon.Grey50
+                appendButton.tintColor = UIColor.theme.ecosia.secondaryText
                 appendButton.sizeToFit()
                 oneLineCell.accessoryView = indexPath.row > 0 ? appendButton : nil
+                oneLineCell.backgroundColor = UIColor.theme.ecosia.autocompleteBackground
                 cell = oneLineCell
             }
         case .openedTabs:
@@ -596,13 +597,14 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
                 twoLineCell.titleLabel.text = openedTab.title ?? openedTab.lastTitle
                 twoLineCell.descriptionLabel.text = String.SearchSuggestionCellSwitchToTabLabel
                 twoLineCell.leftOverlayImageView.image = openAndSyncTabBadge
-                twoLineCell.leftImageView.layer.borderColor = SearchViewControllerUX.IconBorderColor.cgColor
+                twoLineCell.leftImageView.layer.borderColor = UIColor.theme.ecosia.border.cgColor
                 twoLineCell.leftImageView.layer.borderWidth = SearchViewControllerUX.IconBorderWidth
                 twoLineCell.leftImageView.contentMode = .center
                 twoLineCell.leftImageView.setImageAndBackground(forIcon: openedTab.displayFavicon, website: openedTab.url) { [weak twoLineCell] in
                     twoLineCell?.leftImageView.image = twoLineCell?.leftImageView.image?.createScaled(CGSize(width: SearchViewControllerUX.IconSize, height: SearchViewControllerUX.IconSize))
                 }
                 twoLineCell.accessoryView = nil
+                twoLineCell.backgroundColor = UIColor.theme.ecosia.autocompleteBackground
                 cell = twoLineCell
             }
         case .remoteTabs:
@@ -619,6 +621,7 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
                 twoLineCell.leftImageView.setImageAndBackground(forIcon: nil, website: remoteTab.URL) { [weak twoLineCell] in
                     twoLineCell?.leftImageView.image = twoLineCell?.leftImageView.image?.createScaled(CGSize(width: SearchViewControllerUX.IconSize, height: SearchViewControllerUX.IconSize))
                 }
+                twoLineCell.backgroundColor = UIColor.theme.ecosia.autocompleteBackground
                 twoLineCell.accessoryView = nil
                 cell = twoLineCell
             }
@@ -636,6 +639,7 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
                 twoLineCell.leftImageView.setImageAndBackground(forIcon: site.icon, website: site.tileURL) { [weak twoLineCell] in
                     twoLineCell?.leftImageView.image = twoLineCell?.leftImageView.image?.createScaled(CGSize(width: SearchViewControllerUX.IconSize, height: SearchViewControllerUX.IconSize))
                 }
+                twoLineCell.backgroundColor = UIColor.theme.ecosia.autocompleteBackground
                 twoLineCell.accessoryView = nil
                 cell = twoLineCell
             }

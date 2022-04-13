@@ -58,7 +58,7 @@ class EcosiaTheme {
     var highContrastText: UIColor { UIColor.Photon.Grey90 }
     var navigationBarText: UIColor { .Light.Text.primary }
 
-    var highlightedBackground: UIColor { .white }
+    var highlightedBackground: UIColor { .Light.Background.highlighted }
     var highlightedBorder: UIColor { UIColor(named: "highlightedBorder")!}
     var hoverBackgroundColor: UIColor { UIColor.Photon.Grey20 }
 
@@ -87,6 +87,7 @@ class EcosiaTheme {
     var tabSelectedPrivateBackground: UIColor { .Dark.Background.secondary }
 
     var toastImageTint: UIColor { .init(red: 0.847, green: 1, blue: 0.502, alpha: 1) }
+    var autocompleteBackground: UIColor { .Light.Background.primary }
 }
 
 final class DarkEcosiaTheme: EcosiaTheme {
@@ -116,7 +117,7 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var highContrastText: UIColor { .white }
     override var navigationBarText: UIColor { .Dark.Text.primary }
 
-    override var highlightedBackground: UIColor { UIColor.Photon.Grey70 }
+    override var highlightedBackground: UIColor { .Dark.Background.highlighted }
     override var hoverBackgroundColor: UIColor { UIColor.Photon.Grey90 }
 
     override var primaryButton: UIColor { .Dark.Button.primary }
@@ -144,6 +145,8 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var tabSelectedPrivateBackground: UIColor { .white}
 
     override var toastImageTint: UIColor { .init(red: 0.153, green: 0.322, blue: 0.263, alpha: 1) }
+    override var autocompleteBackground: UIColor { .Dark.Background.secondary }
+
 }
 
 extension UIImage {

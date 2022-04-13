@@ -57,7 +57,7 @@ class ActionMenuColor {
 class URLBarColor {
     // var border: UIColor { return UIColor.Photon.Grey90A10 }
     func activeBorder(_ isPrivate: Bool) -> UIColor { 
-        return !isPrivate ? UIColor.theme.ecosia.primaryButton : UIColor.theme.ecosia.secondaryText
+        return !isPrivate ? UIColor.theme.ecosia.primaryButton : UIColor.theme.ecosia.primaryText
     }
     var tint: UIColor { return UIColor.theme.ecosia.primaryButton }
 
@@ -68,12 +68,8 @@ class URLBarColor {
     // When the text is in edit mode (tapping URL bar second time), this is assigned to the to set the selection (and cursor) color. The color is assigned directly to the tintColor.
     typealias TextSelectionHighlight = (labelMode: UIColor, textFieldMode: UIColor?)
     func textSelectionHighlight(_ isPrivate: Bool) -> TextSelectionHighlight {
-        if isPrivate {
-            let color = UIColor.theme.ecosia.secondaryText
-            return (labelMode: color.withAlphaComponent(0.25), textFieldMode: color)
-        } else {
-            return (labelMode: UIColor.Defaults.iOSTextHighlightBlue, textFieldMode: nil)
-        }
+        let color = UIColor(red: 0, green: 0.495, blue: 0.66, alpha: 1) //Blue-50
+        return (labelMode:color.withAlphaComponent(0.25) , textFieldMode: color)
     }
 
     var readerModeButtonSelected: UIColor { return UIColor.theme.ecosia.primaryButton }
@@ -90,17 +86,17 @@ class BrowserColor {
 
 // The back/forward/refresh/menu button (bottom toolbar)
 class ToolbarButtonColor {
-    var selectedTint: UIColor { return UIColor.theme.ecosia.primaryButton }
+    var selectedTint: UIColor { return UIColor.theme.ecosia.primaryBrand }
     var disabledTint: UIColor { return UIColor.Photon.Grey30 }
 }
 
 final class LoadingBarColor {
     func start(_ isPrivate: Bool) -> UIColor {
-        UIColor.theme.ecosia.primaryBrand
+        UIColor.theme.ecosia.highlightedBackground
     }
 
     func end(_ isPrivate: Bool) -> UIColor {
-        UIColor.theme.ecosia.primaryBrand
+        UIColor.theme.ecosia.highlightedBackground
     }
 }
 

@@ -4,6 +4,7 @@
 
 import Shared
 import SnapKit
+import UIKit
 
 private struct URLBarViewUX {
     static let TextFieldBorderColor = UIColor.Photon.Grey40
@@ -75,6 +76,7 @@ class URLBarView: UIView {
                 // Cancel any pending/in-progress animations related to the progress bar
                 self.progressBar.setProgress(1, animated: false)
                 self.progressBar.alpha = 0.0
+                self.progressBar.isHidden = true
             }
         }
     }
@@ -95,6 +97,8 @@ class URLBarView: UIView {
         locationView.layer.cornerRadius = URLBarViewUX.TextFieldCornerRadius
         locationView.translatesAutoresizingMaskIntoConstraints = false
         locationView.delegate = self
+        locationView.layer.masksToBounds = true
+        locationView.clipsToBounds = true
         return locationView
     }()
 
@@ -116,7 +120,11 @@ class URLBarView: UIView {
 
     fileprivate lazy var progressBar: GradientProgressBar = {
         let progressBar = GradientProgressBar()
-        progressBar.clipsToBounds = false
+        progressBar.layer.cornerRadius = URLBarViewUX.TextFieldCornerRadius
+        progressBar.clipsToBounds = true
+        progressBar.layer.masksToBounds = true
+        progressBar.isHidden = true
+        progressBar.alpha = 0
         return progressBar
     }()
 
@@ -199,6 +207,7 @@ class URLBarView: UIView {
         }
     }
 
+    var isPrivate = false
     var isHome: Bool {
         guard let url = currentURL else { return true }
         return InternalURL(url)?.isAboutHomeURL == true
@@ -224,7 +233,11 @@ class URLBarView: UIView {
 
     func updateSearchEngineImage() {
         if inOverlayMode {
-            searchIconImageView.image = .init(themed: "searchLogo")
+            if isPrivate {
+                searchIconImageView.image = .init(named: "searchShield")
+            } else {
+                searchIconImageView.image = .init(themed: "searchLogo")
+            }
         } else {
             searchIconImageView.image = .init(named: "quickSearch")
         }
@@ -233,12 +246,13 @@ class URLBarView: UIView {
 
     fileprivate func commonInit() {
         locationContainer.addSubview(locationView)
-        
-        [scrollToTopButton, line, tabsButton, progressBar, cancelButton, showQRScannerButton,
+        [scrollToTopButton, line, tabsButton, cancelButton, showQRScannerButton,
          bookmarksButton, appMenuButton, addNewTabButton, forwardButton, backButton, multiStateButton, locationContainer].forEach {
             addSubview($0)
         }
 
+        locationView.addSubview(progressBar)
+        locationView.sendSubviewToBack(progressBar)
         addSubview(searchIconImageView)
         updateSearchEngineImage()
 
@@ -266,9 +280,9 @@ class URLBarView: UIView {
         }
 
         progressBar.snp.makeConstraints { make in
-            make.top.equalTo(self.snp.bottom).inset(URLBarViewUX.ProgressBarHeight / 2)
-            make.height.equalTo(URLBarViewUX.ProgressBarHeight)
-            make.left.right.equalTo(self)
+            make.top.left.right.bottom.equalTo(locationView)
+            //make.height.equalTo(URLBarViewUX.ProgressBarHeight)
+            //make.left.right.equalTo(self)
         }
 
         locationView.snp.makeConstraints { make in
@@ -485,6 +499,7 @@ class URLBarView: UIView {
 
     func hideProgressBar() {
         progressBar.isHidden = true
+        progressBar.alpha = 0
         progressBar.setProgress(0, animated: false)
     }
 
@@ -562,7 +577,7 @@ class URLBarView: UIView {
         bringSubviewToFront(self.searchIconImageView)
         cancelButton.isHidden = false
         showQRScannerButton.isHidden = false
-        progressBar.isHidden = false
+        // progressBar.isHidden = false
         addNewTabButton.isHidden = !toolbarIsShowing || topTabsIsShowing
         appMenuButton.isHidden = !toolbarIsShowing
         bookmarksButton.isHidden = !toolbarIsShowing || !topTabsIsShowing
@@ -608,7 +623,7 @@ class URLBarView: UIView {
 
         cancelButton.isHidden = !inOverlayMode
         showQRScannerButton.isHidden = !inOverlayMode
-        progressBar.isHidden = inOverlayMode
+        progressBar.isHidden = inOverlayMode || isHome
         addNewTabButton.isHidden = !toolbarIsShowing || topTabsIsShowing || inOverlayMode
         appMenuButton.isHidden = !toolbarIsShowing || inOverlayMode
         bookmarksButton.isHidden = !toolbarIsShowing || inOverlayMode || !topTabsIsShowing
@@ -847,13 +862,17 @@ extension URLBarView: Themeable {
         line.backgroundColor = UIColor.theme.browser.urlBarDivider
 
         locationBorderColor = UIColor.theme.ecosia.border
-        locationView.backgroundColor = inOverlayMode ? UIColor.theme.textField.backgroundInOverlay : UIColor.theme.textField.background
+        locationView.backgroundColor = inOverlayMode ? UIColor.theme.textField.backgroundInOverlay : isHome ? UIColor.theme.textField.background : UIColor.theme.ecosia.tertiaryBackground
+        progressBar.backgroundColor = UIColor.theme.ecosia.tertiaryBackground
+        progressBar.setGradientColors(startColor: UIColor.theme.loadingBar.start(isPrivate), endColor: UIColor.theme.loadingBar.end(isPrivate))
+
         locationContainer.backgroundColor = UIColor.theme.textField.background
 
         privateModeBadge.badge.tintBackground(color: UIColor.theme.browser.background)
         appMenuBadge.badge.tintBackground(color: UIColor.theme.browser.background)
         warningMenuBadge.badge.tintBackground(color: UIColor.theme.browser.background)
-        searchIconImageView.tintColor = UIColor.theme.ecosia.textfieldIconTint
+        searchIconImageView.tintColor = isPrivate ? UIColor.theme.ecosia.primaryText : UIColor.theme.ecosia.primaryButton
+
 
         if ThemeManager.instance.current.isDark {
             locationContainer.layer.shadowOpacity = 0
@@ -869,14 +888,14 @@ extension URLBarView: Themeable {
 
 extension URLBarView: PrivateModeUI {
     func applyUIMode(isPrivate: Bool) {
+        self.isPrivate = isPrivate
+
         if UIDevice.current.userInterfaceIdiom != .pad {
             privateModeBadge.show(isPrivate)
         }
         
         locationActiveBorderColor = UIColor.theme.urlbar.activeBorder(isPrivate)
-        progressBar.setGradientColors(startColor: UIColor.theme.loadingBar.start(isPrivate), endColor: UIColor.theme.loadingBar.end(isPrivate))
         ToolbarTextField.applyUIMode(isPrivate: isPrivate)
-
         applyTheme()
     }
 }
@@ -954,12 +973,12 @@ extension ToolbarTextField: Themeable {
     func applyTheme() {
         backgroundColor = UIColor.theme.textField.backgroundInOverlay
         textColor = UIColor.theme.ecosia.primaryText
-        clearButtonTintColor = textColor
+        clearButtonTintColor = UIColor.theme.ecosia.secondaryText
         tintColor = AutocompleteTextField.textSelectionColor.textFieldMode
     }
 
     // ToolbarTextField is created on-demand, so the textSelectionColor is a static prop for use when created
     static func applyUIMode(isPrivate: Bool) {
-       textSelectionColor = UIColor.theme.urlbar.textSelectionHighlight(isPrivate)
+        textSelectionColor = UIColor.theme.urlbar.textSelectionHighlight(isPrivate)
     }
 }
