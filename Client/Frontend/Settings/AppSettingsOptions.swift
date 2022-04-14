@@ -1069,7 +1069,7 @@ class TouchIDPasscodeSetting: Setting {
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
-        let viewController = AuthenticationSettingsViewController()
+        let viewController = AuthenticationSettingsViewController(style: .insetGrouped)
         viewController.profile = profile
         navigationController?.pushViewController(viewController, animated: true)
     }
