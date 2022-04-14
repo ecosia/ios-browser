@@ -4,6 +4,7 @@
 
 import Foundation
 import Shared
+import UIKit
 
 class TopTabCell: UICollectionViewCell, Themeable {
 
@@ -12,12 +13,7 @@ class TopTabCell: UICollectionViewCell, Themeable {
 
     var selectedTab = false {
         didSet {
-            backgroundColor = .clear
-            titleText.textColor = UIColor.theme.topTabs.tabForegroundSelected
-            closeButton.tintColor = UIColor.theme.topTabs.closeButtonSelectedTab
-            closeButton.backgroundColor = backgroundColor
-            closeButton.layer.shadowColor = backgroundColor?.cgColor
-            selectedBackground.isHidden = !selectedTab
+            applyTheme()
         }
     }
 
@@ -134,7 +130,6 @@ class TopTabCell: UICollectionViewCell, Themeable {
             }
         } else {
             self.favicon.image = UIImage(named: "defaultFavicon")
-            self.favicon.tintColor = UIColor.theme.tabTray.faviconTint
             self.favicon.contentMode = .scaleAspectFit
             self.favicon.backgroundColor = .clear
         }
@@ -153,7 +148,16 @@ class TopTabCell: UICollectionViewCell, Themeable {
     }
 
     func applyTheme() {
-        selectedBackground.backgroundColor = UIColor.theme.topTabs.tabBackgroundSelected
+        selectedBackground.backgroundColor = UIColor.theme.ecosia.primaryButton
+
+        backgroundColor = .clear
+        let tint = selectedTab ? UIColor.theme.ecosia.primaryTextInverted : UIColor.theme.ecosia.primaryText
+        titleText.textColor = tint
+        closeButton.tintColor = tint
+        favicon.tintColor = tint
+        closeButton.backgroundColor = backgroundColor
+        closeButton.layer.shadowColor = backgroundColor?.cgColor
+        selectedBackground.isHidden = !selectedTab
     }
 }
 

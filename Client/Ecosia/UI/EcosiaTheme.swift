@@ -77,7 +77,7 @@ class EcosiaTheme {
     var welcomeScreenBackground: UIColor { UIColor.Photon.Grey70.withAlphaComponent(0.4) }
 
     var teal60: UIColor { UIColor(rgb: 0x267A82) }
-    var segmentSelectedText: UIColor { UIColor(named: "primaryText")! }
+    var segmentSelectedText: UIColor { .Light.Text.primary }
     var segmentBackground: UIColor { .Light.Background.secondary }
     var warning: UIColor { .Light.State.warning }
     var information: UIColor { .Light.State.information }

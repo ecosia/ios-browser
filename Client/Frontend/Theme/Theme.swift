@@ -23,9 +23,9 @@ enum BuiltinThemeName: String {
 }
 
 // Convenience reference to these normal mode colors which are used in a few color classes.
-fileprivate let defaultBackground = UIColor.Photon.Grey10
-fileprivate let defaultSeparator = UIColor.Photon.Grey30
-fileprivate let defaultTextAndTint = UIColor.Photon.Grey90 
+fileprivate let defaultBackground = UIColor.Light.Background.primary
+fileprivate let defaultSeparator = UIColor.Light.border
+fileprivate let defaultTextAndTint = UIColor.Light.Text.primary
 
 class TableViewColor {
     var rowBackground: UIColor { return .Light.Background.primary }
@@ -129,7 +129,7 @@ class EnhancedTrackingProtectionMenuColor {
 }
 
 class TopTabsColor {
-    var background: UIColor { return UIColor.Photon.LightGrey20 }
+    var background: UIColor { return .Light.Background.primary }
     var tabBackgroundSelected: UIColor { return UIColor.Photon.Grey10 }
     var tabBackgroundUnselected: UIColor { return UIColor.Photon.Grey80 }
     var tabForegroundSelected: UIColor { return UIColor.Photon.Grey90 }

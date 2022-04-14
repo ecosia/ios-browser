@@ -161,7 +161,7 @@ class URLBarView: UIView {
         return button
     }()
 
-    fileprivate lazy var searchIconImageView: UIImageView = {
+    lazy var searchIconImageView: UIImageView = {
         let searchIconImageView = UIImageView()
         searchIconImageView.contentMode = .scaleAspectFit
         searchIconImageView.layer.cornerRadius = 12
@@ -857,7 +857,7 @@ extension URLBarView: Themeable {
 
         cancelTintColor = UIColor.theme.browser.tint
         showQRButtonTintColor = UIColor.theme.browser.tint
-        backgroundColor = UIColor.theme.ecosia.barBackground
+        backgroundColor = UIColor.theme.textField.background
         line.backgroundColor = UIColor.theme.browser.urlBarDivider
 
         locationBorderColor = UIColor.theme.ecosia.border

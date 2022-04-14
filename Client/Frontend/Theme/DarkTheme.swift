@@ -5,9 +5,9 @@
 import UIKit
 
 // Convenience reference to these normal mode colors which are used in a few color classes.
-fileprivate let defaultBackground = UIColor.Photon.Grey90
-fileprivate let defaultSeparator = UIColor.Photon.Grey60
-fileprivate let defaultTextAndTint = UIColor.white
+fileprivate let defaultBackground = UIColor.Dark.Background.primary
+fileprivate let defaultSeparator = UIColor.Dark.border
+fileprivate let defaultTextAndTint = UIColor.Dark.Text.primary
 
 fileprivate class DarkTableViewColor: TableViewColor {
     override var rowBackground: UIColor { return .Dark.Background.tertiary }
@@ -74,7 +74,7 @@ fileprivate class DarkEnhancedTrackingProtectionMenuColor: EnhancedTrackingProte
 }
 
 fileprivate class DarkTopTabsColor: TopTabsColor {
-    override var background: UIColor { UIColor.Photon.DarkGrey90 }
+    override var background: UIColor { .Dark.Background.secondary }
     override var tabBackgroundSelected: UIColor { return UIColor.Photon.Grey80 }
     override var tabBackgroundUnselected: UIColor { return UIColor.Photon.Grey80 }
     override var tabForegroundSelected: UIColor { return UIColor.Photon.Grey10 }
