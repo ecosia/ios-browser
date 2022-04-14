@@ -4,21 +4,22 @@
 
 import Shared
 import SnapKit
+import UIKit
 
 private struct URLBarViewUX {
     static let TextFieldBorderColor = UIColor.Photon.Grey40
-    static let TextFieldActiveBorderColor = UIColor.theme.ecosia.primaryBrand
+    static var TextFieldActiveBorderColor: UIColor { UIColor.theme.ecosia.primaryButton }
 
     static let LocationLeftPadding: CGFloat = 8
     static let Padding: CGFloat = 10
     static let LocationHeight: CGFloat = 40
     static let ButtonHeight: CGFloat = 44
     static let LocationContentOffset: CGFloat = 8
-    static let TextFieldCornerRadius: CGFloat = 10
-    static let TextFieldBorderWidth: CGFloat = 0
-    static let TextFieldBorderWidthSelected: CGFloat = 3
+    static let TextFieldCornerRadius: CGFloat = 22
+    static let TextFieldBorderWidth: CGFloat = 1
+    static let TextFieldBorderWidthSelected: CGFloat = 2
     static let ProgressBarHeight: CGFloat = 3
-    static let SearchIconImageWidth: CGFloat = 30
+    static let SearchIconImageWidth: CGFloat = 24
     static let TabsButtonRotationOffset: CGFloat = 1.5
     static let TabsButtonHeight: CGFloat = 18.0
     static let ToolbarButtonInsets = UIEdgeInsets(equalInset: Padding)
@@ -75,6 +76,7 @@ class URLBarView: UIView {
                 // Cancel any pending/in-progress animations related to the progress bar
                 self.progressBar.setProgress(1, animated: false)
                 self.progressBar.alpha = 0.0
+                self.progressBar.isHidden = true
             }
         }
     }
@@ -95,6 +97,8 @@ class URLBarView: UIView {
         locationView.layer.cornerRadius = URLBarViewUX.TextFieldCornerRadius
         locationView.translatesAutoresizingMaskIntoConstraints = false
         locationView.delegate = self
+        locationView.layer.masksToBounds = true
+        locationView.clipsToBounds = true
         return locationView
     }()
 
@@ -116,7 +120,11 @@ class URLBarView: UIView {
 
     fileprivate lazy var progressBar: GradientProgressBar = {
         let progressBar = GradientProgressBar()
-        progressBar.clipsToBounds = false
+        progressBar.layer.cornerRadius = URLBarViewUX.TextFieldCornerRadius
+        progressBar.clipsToBounds = true
+        progressBar.layer.masksToBounds = true
+        progressBar.isHidden = true
+        progressBar.alpha = 0
         return progressBar
     }()
 
@@ -153,16 +161,15 @@ class URLBarView: UIView {
         return button
     }()
 
-    /* Ecosia: deactivate search image icon
-    fileprivate lazy var searchIconImageView: UIImageView = {
+    lazy var searchIconImageView: UIImageView = {
         let searchIconImageView = UIImageView()
-        searchIconImageView.isAccessibilityElement = true
         searchIconImageView.contentMode = .scaleAspectFit
-        searchIconImageView.layer.cornerRadius = 5
+        searchIconImageView.layer.cornerRadius = 12
         searchIconImageView.clipsToBounds = true
+        searchIconImageView.image = UIImage(named: "searchLogo")
         return searchIconImageView
     }()
-    */
+
     
     var appMenuButton = ToolbarButton()
     var bookmarksButton = ToolbarButton()
@@ -200,6 +207,12 @@ class URLBarView: UIView {
         }
     }
 
+    var isPrivate = false
+    var isHome: Bool {
+        guard let url = currentURL else { return true }
+        return InternalURL(url)?.isAboutHomeURL == true
+    }
+
     var profile: Profile? = nil
     
     fileprivate let privateModeBadge = BadgeWithBackdrop(imageName: "privateModeBadge", backdropCircleColor: UIColor.Defaults.MobilePrivatePurple)
@@ -219,24 +232,30 @@ class URLBarView: UIView {
     }
 
     func updateSearchEngineImage() {
-        /* Ecosia: deactivate search image
-        guard let profile = profile else { return }
-        self.searchIconImageView.image = profile.searchEngines.defaultEngine.image
-        */
+        if inOverlayMode {
+            if isPrivate {
+                searchIconImageView.image = .init(named: "searchShield")
+            } else {
+                searchIconImageView.image = .init(themed: "searchLogo")
+            }
+        } else {
+            searchIconImageView.image = .init(named: "quickSearch")
+        }
+        searchIconImageView.isHidden = !isHome && !inOverlayMode
     }
 
     fileprivate func commonInit() {
         locationContainer.addSubview(locationView)
-        
-        [scrollToTopButton, line, tabsButton, progressBar, cancelButton, showQRScannerButton,
+        [scrollToTopButton, line, tabsButton, cancelButton, showQRScannerButton,
          bookmarksButton, appMenuButton, addNewTabButton, forwardButton, backButton, multiStateButton, locationContainer].forEach {
             addSubview($0)
         }
 
-        /* Ecosia: remove search icon
+        locationView.addSubview(progressBar)
+        locationView.sendSubviewToBack(progressBar)
         addSubview(searchIconImageView)
         updateSearchEngineImage()
-        */
+
         privateModeBadge.add(toParent: self)
         appMenuBadge.add(toParent: self)
         warningMenuBadge.add(toParent: self)
@@ -261,13 +280,12 @@ class URLBarView: UIView {
         }
 
         progressBar.snp.makeConstraints { make in
-            make.top.equalTo(self.snp.bottom).inset(URLBarViewUX.ProgressBarHeight / 2)
-            make.height.equalTo(URLBarViewUX.ProgressBarHeight)
-            make.left.right.equalTo(self)
+            make.edges.equalTo(locationView)
         }
 
         locationView.snp.makeConstraints { make in
-            make.edges.equalTo(self.locationContainer)
+            make.top.bottom.trailing.equalTo(self.locationContainer)
+            make.leading.equalTo(searchIconImageView.snp.trailing)
         }
 
         cancelButton.snp.makeConstraints { make in
@@ -288,15 +306,12 @@ class URLBarView: UIView {
             make.size.equalTo(URLBarViewUX.ButtonHeight).priority(.high)
         }
 
-        /* Ecosia: deactivate search icon
-        searchIconImageView.snp.remakeConstraints { make in
-            let heightMin = URLBarViewUX.LocationHeight + (URLBarViewUX.TextFieldBorderWidthSelected * 2)
-            make.height.greaterThanOrEqualTo(heightMin)
+        searchIconImageView.snp.makeConstraints { make in
             make.centerY.equalTo(self)
-            make.leading.equalTo(self.cancelButton.snp.trailing).offset(URLBarViewUX.LocationLeftPadding)
-            make.width.equalTo(URLBarViewUX.SearchIconImageWidth)
+            make.leading.equalTo(locationContainer.snp.leading).offset(12)
+            make.size.equalTo(URLBarViewUX.SearchIconImageWidth)
         }
-        */
+
 
         /* Ecosia: deactivate home button icon
         homeButton.snp.makeConstraints { make in
@@ -362,10 +377,10 @@ class URLBarView: UIView {
             }
             self.locationView.snp.remakeConstraints { make in
                 make.top.bottom.right.equalTo(self.locationContainer).inset(UIEdgeInsets(equalInset: URLBarViewUX.TextFieldBorderWidthSelected))
-                make.leading.equalTo(self.cancelButton.snp.trailing).offset(URLBarViewUX.LocationLeftPadding)
+                make.leading.equalTo(searchIconImageView.snp.trailing).offset(8)
             }
             self.locationTextField?.snp.remakeConstraints { make in
-                make.edges.equalTo(self.locationView).inset(UIEdgeInsets(top: 0, left: URLBarViewUX.LocationLeftPadding, bottom: 0, right: URLBarViewUX.LocationLeftPadding))
+                make.edges.equalTo(self.locationView).inset(UIEdgeInsets(top: 0, left: 0, bottom: 0, right: URLBarViewUX.LocationLeftPadding))
             }
         } else {
             // Ecosia: searchIconImageView.alpha = 0
@@ -387,8 +402,14 @@ class URLBarView: UIView {
                 make.centerY.equalTo(self)
             }
             self.locationContainer.layer.borderWidth = URLBarViewUX.TextFieldBorderWidth
+
             self.locationView.snp.remakeConstraints { make in
-                make.edges.equalTo(self.locationContainer).inset(UIEdgeInsets(equalInset: URLBarViewUX.TextFieldBorderWidth))
+                make.top.bottom.trailing.equalTo(self.locationContainer).inset(UIEdgeInsets(equalInset: URLBarViewUX.TextFieldBorderWidth))
+                if isHome {
+                    make.leading.equalTo(searchIconImageView.snp.trailing).offset(8)
+                } else {
+                    make.leading.equalTo(self.locationContainer)
+                }
             }
 
             self.multiStateButton.snp.remakeConstraints { make in
@@ -401,6 +422,7 @@ class URLBarView: UIView {
                 make.size.equalTo(URLBarViewUX.ButtonHeight).priority(.high)
             }
         }
+        updateSearchEngineImage()
     }
 
     @objc func showQRScanner() {
@@ -468,13 +490,14 @@ class URLBarView: UIView {
     }
 
     func updateProgressBar(_ progress: Float) {
-        progressBar.alpha = 1
-        progressBar.isHidden = false
+        progressBar.isHidden = inOverlayMode || isHome
+        progressBar.alpha = inOverlayMode || isHome ? 0 : 1
         progressBar.setProgress(progress, animated: !isTransitioning)
     }
 
     func hideProgressBar() {
         progressBar.isHidden = true
+        progressBar.alpha = 0
         progressBar.setProgress(0, animated: false)
     }
 
@@ -549,7 +572,7 @@ class URLBarView: UIView {
     func prepareOverlayAnimation() {
         // Make sure everything is showing during the transition (we'll hide it afterwards).
         bringSubviewToFront(self.locationContainer)
-        //Ecosia: bringSubviewToFront(self.searchIconImageView)
+        bringSubviewToFront(self.searchIconImageView)
         cancelButton.isHidden = false
         showQRScannerButton.isHidden = false
         progressBar.isHidden = false
@@ -566,7 +589,8 @@ class URLBarView: UIView {
         locationView.contentView.alpha = inOverlayMode ? 0 : 1
         cancelButton.alpha = inOverlayMode ? 1 : 0
         showQRScannerButton.alpha = inOverlayMode ? 1 : 0
-        progressBar.alpha = inOverlayMode || didCancel ? 0 : 1
+        progressBar.alpha = inOverlayMode || didCancel || isHome ? 0 : 1
+        progressBar.isHidden = inOverlayMode || didCancel
         tabsButton.alpha = inOverlayMode ? 0 : 1
         appMenuButton.alpha = inOverlayMode ? 0 : 1
         bookmarksButton.alpha = inOverlayMode ? 0 : 1
@@ -598,7 +622,7 @@ class URLBarView: UIView {
 
         cancelButton.isHidden = !inOverlayMode
         showQRScannerButton.isHidden = !inOverlayMode
-        progressBar.isHidden = inOverlayMode
+        progressBar.isHidden = inOverlayMode || isHome
         addNewTabButton.isHidden = !toolbarIsShowing || topTabsIsShowing || inOverlayMode
         appMenuButton.isHidden = !toolbarIsShowing || inOverlayMode
         bookmarksButton.isHidden = !toolbarIsShowing || inOverlayMode || !topTabsIsShowing
@@ -612,7 +636,6 @@ class URLBarView: UIView {
             $0.badge.alpha = (!toolbarIsShowing || inOverlayMode) ? 0 : 1
             $0.backdrop.alpha = (!toolbarIsShowing || inOverlayMode) ? 0 : BadgeWithBackdrop.backdropAlpha
         }
-        
     }
 
     func animateToOverlayState(overlayMode overlay: Bool, didCancel cancel: Bool = false) {
@@ -834,29 +857,44 @@ extension URLBarView: Themeable {
 
         cancelTintColor = UIColor.theme.browser.tint
         showQRButtonTintColor = UIColor.theme.browser.tint
-        backgroundColor = UIColor.theme.ecosia.barBackground
+        backgroundColor = UIColor.theme.textField.background
         line.backgroundColor = UIColor.theme.browser.urlBarDivider
 
-        locationBorderColor = UIColor.theme.urlbar.border
-        locationView.backgroundColor = inOverlayMode ? UIColor.theme.textField.backgroundInOverlay : UIColor.theme.textField.background
+        locationBorderColor = UIColor.theme.ecosia.border
+        locationView.backgroundColor = inOverlayMode ? UIColor.theme.textField.backgroundInOverlay : isHome ? UIColor.theme.textField.background : UIColor.theme.ecosia.tertiaryBackground
+        progressBar.backgroundColor = UIColor.theme.ecosia.tertiaryBackground
+        progressBar.setGradientColors(startColor: UIColor.theme.loadingBar.start(isPrivate), endColor: UIColor.theme.loadingBar.end(isPrivate))
+
         locationContainer.backgroundColor = UIColor.theme.textField.background
 
         privateModeBadge.badge.tintBackground(color: UIColor.theme.browser.background)
         appMenuBadge.badge.tintBackground(color: UIColor.theme.browser.background)
         warningMenuBadge.badge.tintBackground(color: UIColor.theme.browser.background)
+        searchIconImageView.tintColor = isPrivate ? UIColor.theme.ecosia.primaryText : UIColor.theme.ecosia.primaryButton
+
+
+        if ThemeManager.instance.current.isDark {
+            locationContainer.layer.shadowOpacity = 0
+        } else {
+            locationContainer.layer.shadowOpacity = 1
+            locationContainer.layer.shadowColor = UIColor(red: 0.059, green: 0.059, blue: 0.059, alpha: 0.18).cgColor
+            locationContainer.layer.shadowOpacity = 1
+            locationContainer.layer.shadowRadius = 2
+            locationContainer.layer.shadowOffset = CGSize(width: 0, height: 1)
+        }
     }
 }
 
 extension URLBarView: PrivateModeUI {
     func applyUIMode(isPrivate: Bool) {
+        self.isPrivate = isPrivate
+
         if UIDevice.current.userInterfaceIdiom != .pad {
             privateModeBadge.show(isPrivate)
         }
         
         locationActiveBorderColor = UIColor.theme.urlbar.activeBorder(isPrivate)
-        progressBar.setGradientColors(startColor: UIColor.theme.loadingBar.start(isPrivate), endColor: UIColor.theme.loadingBar.end(isPrivate))
         ToolbarTextField.applyUIMode(isPrivate: isPrivate)
-
         applyTheme()
     }
 }
@@ -866,7 +904,7 @@ extension URLBarView: PrivateModeUI {
 class TabLocationContainerView: UIView {
 
     private struct LocationContainerUX {
-        static let CornerRadius: CGFloat = 10
+        static let CornerRadius: CGFloat = 22
     }
 
     override init(frame: CGRect) {
@@ -933,13 +971,13 @@ class ToolbarTextField: AutocompleteTextField {
 extension ToolbarTextField: Themeable {
     func applyTheme() {
         backgroundColor = UIColor.theme.textField.backgroundInOverlay
-        textColor = UIColor.theme.ecosia.highContrastText
-        clearButtonTintColor = textColor
+        textColor = UIColor.theme.ecosia.primaryText
+        clearButtonTintColor = UIColor.theme.ecosia.secondaryText
         tintColor = AutocompleteTextField.textSelectionColor.textFieldMode
     }
 
     // ToolbarTextField is created on-demand, so the textSelectionColor is a static prop for use when created
     static func applyUIMode(isPrivate: Bool) {
-       textSelectionColor = UIColor.theme.urlbar.textSelectionHighlight(isPrivate)
+        textSelectionColor = UIColor.theme.urlbar.textSelectionHighlight(isPrivate)
     }
 }

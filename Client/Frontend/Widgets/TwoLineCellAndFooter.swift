@@ -32,6 +32,7 @@ class TwoLineImageOverlayCell: UITableViewCell, Themeable {
         let imgView = UIImageView()
         imgView.contentMode = .scaleAspectFit
         imgView.clipsToBounds = true
+        imgView.layer.cornerRadius = 11
         return imgView
     }()
 
@@ -127,13 +128,12 @@ class TwoLineImageOverlayCell: UITableViewCell, Themeable {
         let theme = BuiltinThemeName(rawValue: ThemeManager.instance.current.name) ?? .normal
         if theme == .dark {
             self.backgroundColor = .Dark.Background.tertiary
-            self.titleLabel.textColor = .Dark.Text.primary
-            self.descriptionLabel.textColor = .Dark.Text.secondary
         } else {
             self.backgroundColor = .Light.Background.primary
-            self.titleLabel.textColor = .Light.Text.primary
-            self.descriptionLabel.textColor = .Light.Text.secondary
         }
+        titleLabel.textColor = UIColor.theme.ecosia.primaryText
+        descriptionLabel.textColor = UIColor.theme.ecosia.secondaryText
+        leftOverlayImageView.tintColor = UIColor.theme.ecosia.primaryButton
     }
     
     override func prepareForReuse() {

@@ -5,9 +5,9 @@
 import UIKit
 
 // Convenience reference to these normal mode colors which are used in a few color classes.
-fileprivate let defaultBackground = UIColor.Photon.Grey90
-fileprivate let defaultSeparator = UIColor.Photon.Grey60
-fileprivate let defaultTextAndTint = UIColor.white
+fileprivate let defaultBackground = UIColor.Dark.Background.primary
+fileprivate let defaultSeparator = UIColor.Dark.border
+fileprivate let defaultTextAndTint = UIColor.Dark.Text.primary
 
 fileprivate class DarkTableViewColor: TableViewColor {
     override var rowBackground: UIColor { return .Dark.Background.tertiary }
@@ -32,13 +32,12 @@ fileprivate class DarkActionMenuColor: ActionMenuColor {
 
 fileprivate class DarkURLBarColor: URLBarColor {
     override func textSelectionHighlight(_ isPrivate: Bool) -> TextSelectionHighlight {
-        let color = isPrivate ? UIColor.Defaults.MobilePrivatePurple : UIColor(rgb: 0x3d89cc)
+        let color = UIColor(red: 0, green: 0.495, blue: 0.66, alpha: 1) //Blue-50
         return (labelMode: color.withAlphaComponent(0.25), textFieldMode: color)
-
     }
 
     override func activeBorder(_ isPrivate: Bool) -> UIColor {
-        return !isPrivate ? UIColor.theme.ecosia.primaryBrand : UIColor.Defaults.MobilePrivatePurple
+        return !isPrivate ? UIColor.theme.ecosia.primaryButton : UIColor.theme.ecosia.primaryText
     }
 }
 
@@ -75,7 +74,7 @@ fileprivate class DarkEnhancedTrackingProtectionMenuColor: EnhancedTrackingProte
 }
 
 fileprivate class DarkTopTabsColor: TopTabsColor {
-    override var background: UIColor { UIColor.Photon.DarkGrey90 }
+    override var background: UIColor { .Dark.Background.secondary }
     override var tabBackgroundSelected: UIColor { return UIColor.Photon.Grey80 }
     override var tabBackgroundUnselected: UIColor { return UIColor.Photon.Grey80 }
     override var tabForegroundSelected: UIColor { return UIColor.Photon.Grey10 }
@@ -87,9 +86,9 @@ fileprivate class DarkTopTabsColor: TopTabsColor {
 }
 
 fileprivate class DarkTextFieldColor: TextFieldColor {
-    override var background: UIColor { return UIColor.Photon.Grey70 }
-    override var backgroundInOverlay: UIColor { return UIColor.Photon.Grey70 }
-    override var backgroundInCell: UIColor { return UIColor.Photon.Grey80 }
+    override var background: UIColor { return .Dark.Background.secondary }
+    override var backgroundInOverlay: UIColor { return .Dark.Background.secondary }
+    override var backgroundInCell: UIColor { return .Dark.Background.secondary }
 
 
     override var textAndTint: UIColor { return defaultTextAndTint }
@@ -119,7 +118,7 @@ fileprivate class DarkHomePanelColor: HomePanelColor {
     override var activityStreamCellDescription: UIColor { return UIColor.Photon.LightGrey50 }
 
     override var topSiteDomain: UIColor { return UIColor.Photon.LightGrey05 }
-    override var topSitePin: UIColor { return UIColor.theme.ecosia.primaryBrand }
+    override var topSitePin: UIColor { return UIColor.theme.ecosia.primaryButton }
     override var topSitesBackground: UIColor { return UIColor.Photon.DarkGrey60 }
 
     override var shortcutBackground: UIColor { return UIColor.Photon.Grey80 }

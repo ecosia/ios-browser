@@ -97,7 +97,7 @@ class HistoryPanel: SiteTableViewController, LibraryPanel {
     }()
 
     // MARK: - Lifecycle
-    override init(profile: Profile) {
+    init(profile: Profile) {
         super.init(profile: profile)
 
         [ Notification.Name.FirefoxAccountChanged,

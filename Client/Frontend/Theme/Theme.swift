@@ -23,9 +23,9 @@ enum BuiltinThemeName: String {
 }
 
 // Convenience reference to these normal mode colors which are used in a few color classes.
-fileprivate let defaultBackground = UIColor.Photon.Grey10
-fileprivate let defaultSeparator = UIColor.Photon.Grey30
-fileprivate let defaultTextAndTint = UIColor.Photon.Grey90 
+fileprivate let defaultBackground = UIColor.Light.Background.primary
+fileprivate let defaultSeparator = UIColor.Light.border
+fileprivate let defaultTextAndTint = UIColor.Light.Text.primary
 
 class TableViewColor {
     var rowBackground: UIColor { return .Light.Background.primary }
@@ -55,11 +55,11 @@ class ActionMenuColor {
 }
 
 class URLBarColor {
-    var border: UIColor { return UIColor.Photon.Grey90A10 }
+    // var border: UIColor { return UIColor.Photon.Grey90A10 }
     func activeBorder(_ isPrivate: Bool) -> UIColor { 
-        return !isPrivate ? UIColor.theme.ecosia.primaryBrand : UIColor.Defaults.MobilePrivatePurple
+        return !isPrivate ? UIColor.theme.ecosia.primaryButton : UIColor.theme.ecosia.primaryText
     }
-    var tint: UIColor { return UIColor.theme.ecosia.primaryBrand }
+    var tint: UIColor { return UIColor.theme.ecosia.primaryButton }
 
     // This text selection color is used in two ways:
     // 1) <UILabel>.background = textSelectionHighlight.withAlphaComponent(textSelectionHighlightAlpha)
@@ -68,15 +68,11 @@ class URLBarColor {
     // When the text is in edit mode (tapping URL bar second time), this is assigned to the to set the selection (and cursor) color. The color is assigned directly to the tintColor.
     typealias TextSelectionHighlight = (labelMode: UIColor, textFieldMode: UIColor?)
     func textSelectionHighlight(_ isPrivate: Bool) -> TextSelectionHighlight {
-        if isPrivate {
-            let color = UIColor.Defaults.MobilePrivatePurple
-            return (labelMode: color.withAlphaComponent(0.25), textFieldMode: color)
-        } else {
-            return (labelMode: UIColor.Defaults.iOSTextHighlightBlue, textFieldMode: nil)
-        }
+        let color = UIColor(red: 0, green: 0.495, blue: 0.66, alpha: 1) //Blue-50
+        return (labelMode:color.withAlphaComponent(0.25) , textFieldMode: color)
     }
 
-    var readerModeButtonSelected: UIColor { return UIColor.theme.ecosia.primaryBrand }
+    var readerModeButtonSelected: UIColor { return UIColor.theme.ecosia.primaryButton }
     var readerModeButtonUnselected: UIColor { return UIColor.theme.ecosia.secondaryText }
     var pageOptionsSelected: UIColor { return readerModeButtonSelected }
     var pageOptionsUnselected: UIColor { return readerModeButtonUnselected }
@@ -96,11 +92,11 @@ class ToolbarButtonColor {
 
 final class LoadingBarColor {
     func start(_ isPrivate: Bool) -> UIColor {
-        UIColor.theme.ecosia.primaryBrand
+        UIColor.theme.ecosia.highlightedBackground
     }
 
     func end(_ isPrivate: Bool) -> UIColor {
-        UIColor.theme.ecosia.primaryBrand
+        UIColor.theme.ecosia.highlightedBackground
     }
 }
 
@@ -133,7 +129,7 @@ class EnhancedTrackingProtectionMenuColor {
 }
 
 class TopTabsColor {
-    var background: UIColor { return UIColor.Photon.LightGrey20 }
+    var background: UIColor { return .Light.Background.primary }
     var tabBackgroundSelected: UIColor { return UIColor.Photon.Grey10 }
     var tabBackgroundUnselected: UIColor { return UIColor.Photon.Grey80 }
     var tabForegroundSelected: UIColor { return UIColor.Photon.Grey90 }
@@ -150,9 +146,9 @@ class TopTabsColor {
 }
 
 class TextFieldColor {
-    var background: UIColor { return UIColor.Photon.Grey20 }
-    var backgroundInOverlay: UIColor { return UIColor.Photon.Grey20 }
-    var backgroundInCell: UIColor { return UIColor.Photon.Grey20 }
+    var background: UIColor { return .Light.Background.primary }
+    var backgroundInOverlay: UIColor { return .Light.Background.primary }
+    var backgroundInCell: UIColor { return .Light.Background.primary }
     var textAndTint: UIColor { return defaultTextAndTint }
     var separator: UIColor { return .white }
 }

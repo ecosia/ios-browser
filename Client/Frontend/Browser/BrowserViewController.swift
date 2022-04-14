@@ -415,7 +415,7 @@ class BrowserViewController: UIViewController {
         urlBar.delegate = self
         urlBar.tabToolbarDelegate = self
         header = urlBarTopTabsContainer
-        scrollOverlay.alpha = 0
+        scrollOverlays.forEach { $0.alpha = 0 }
         urlBarTopTabsContainer.addSubview(urlBar)
         urlBarTopTabsContainer.addSubview(topTabsContainer)
         view.addSubview(header)
@@ -515,7 +515,7 @@ class BrowserViewController: UIViewController {
         // Make sure that we have a height to actually base our calculations on
         guard urlBar.locationContainer.bounds.height != 0 else { return }
         let locationViewHeight = urlBar.locationView.bounds.height
-        let heightWithPadding = locationViewHeight + 10
+        let heightWithPadding = locationViewHeight + 20
 
         // We have to deactivate the original constraint, and remake the constraint
         // or else funky conflicts happen
@@ -770,7 +770,7 @@ class BrowserViewController: UIViewController {
             view.addSubview(firefoxHomeViewController.view)
             firefoxHomeViewController.didMove(toParent: self)
             view.bringSubviewToFront(header)
-            scrollOverlay.alpha = urlBar.inOverlayMode ? 1.0 : 0.0
+            scrollOverlays.forEach { $0.alpha = urlBar.inOverlayMode ? 1.0 : 0.0 }
             view.bringSubviewToFront(footer)
         }
 
@@ -792,7 +792,7 @@ class BrowserViewController: UIViewController {
     }
 
     fileprivate func hideFirefoxHome() {
-        scrollOverlay.alpha = 1
+        scrollOverlays.forEach { $0.alpha = 1 }
 
         guard let firefoxHomeViewController = self.firefoxHomeViewController else {
             return

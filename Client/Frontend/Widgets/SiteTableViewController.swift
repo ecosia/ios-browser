@@ -76,10 +76,12 @@ class SiteTableViewController: UIViewController, UITableViewDelegate, UITableVie
     let OneLineCellIdentifier = "OneLineCellIdentifier"
     let HeaderIdentifier = "HeaderIdentifier"
     let profile: Profile
+    // Ecosia: Branding
+    let style: UITableView.Style
 
     var data: Cursor<Site> = Cursor<Site>(status: .success, msg: "No data set")
     lazy var tableView: UITableView = {
-        let table = UITableView(frame: .zero, style: .insetGrouped)
+        let table = UITableView(frame: .zero, style: self.style)
         table.delegate = self
         table.dataSource = self
         table.register(TwoLineImageOverlayCell.self, forCellReuseIdentifier: self.CellIdentifier)
@@ -91,8 +93,9 @@ class SiteTableViewController: UIViewController, UITableViewDelegate, UITableVie
         table.cellLayoutMarginsFollowReadableWidth = false
         table.estimatedRowHeight = SiteTableViewControllerUX.RowHeight
         table.setEditing(false, animated: false)
-        table.contentInset.top = 24
-        
+        if style == .insetGrouped {
+            table.contentInset.top = 24
+        }
         if let _ = self as? HomePanelContextMenu {
             table.dragDelegate = self
         }
@@ -106,8 +109,9 @@ class SiteTableViewController: UIViewController, UITableViewDelegate, UITableVie
         fatalError("init(coder:) has not been implemented")
     }
 
-    init(profile: Profile) {
+    init(profile: Profile, style: UITableView.Style = .insetGrouped) {
         self.profile = profile
+        self.style = style
         super.init(nibName: nil, bundle: nil)
         applyTheme()
     }
