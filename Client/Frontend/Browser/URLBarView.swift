@@ -280,9 +280,7 @@ class URLBarView: UIView {
         }
 
         progressBar.snp.makeConstraints { make in
-            make.top.left.right.bottom.equalTo(locationView)
-            //make.height.equalTo(URLBarViewUX.ProgressBarHeight)
-            //make.left.right.equalTo(self)
+            make.edges.equalTo(locationView)
         }
 
         locationView.snp.makeConstraints { make in
@@ -492,8 +490,8 @@ class URLBarView: UIView {
     }
 
     func updateProgressBar(_ progress: Float) {
-        progressBar.alpha = 1
-        progressBar.isHidden = false
+        progressBar.isHidden = inOverlayMode || isHome
+        progressBar.alpha = inOverlayMode || isHome ? 0 : 1
         progressBar.setProgress(progress, animated: !isTransitioning)
     }
 
@@ -577,7 +575,7 @@ class URLBarView: UIView {
         bringSubviewToFront(self.searchIconImageView)
         cancelButton.isHidden = false
         showQRScannerButton.isHidden = false
-        // progressBar.isHidden = false
+        progressBar.isHidden = false
         addNewTabButton.isHidden = !toolbarIsShowing || topTabsIsShowing
         appMenuButton.isHidden = !toolbarIsShowing
         bookmarksButton.isHidden = !toolbarIsShowing || !topTabsIsShowing
@@ -591,7 +589,8 @@ class URLBarView: UIView {
         locationView.contentView.alpha = inOverlayMode ? 0 : 1
         cancelButton.alpha = inOverlayMode ? 1 : 0
         showQRScannerButton.alpha = inOverlayMode ? 1 : 0
-        progressBar.alpha = inOverlayMode || didCancel ? 0 : 1
+        progressBar.alpha = inOverlayMode || didCancel || isHome ? 0 : 1
+        progressBar.isHidden = inOverlayMode || didCancel
         tabsButton.alpha = inOverlayMode ? 0 : 1
         appMenuButton.alpha = inOverlayMode ? 0 : 1
         bookmarksButton.alpha = inOverlayMode ? 0 : 1

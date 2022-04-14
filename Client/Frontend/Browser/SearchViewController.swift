@@ -102,8 +102,10 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
 
     override func viewDidLoad() {
         view.backgroundColor = UIColor.theme.homePanel.panelBackground
+        /* Ecosia: deactivate blur
         let blur = UIVisualEffectView(effect: UIBlurEffect(style: .light))
         view.addSubview(blur)
+         */
 
         super.viewDidLoad()
         getCachedTabs()
@@ -131,9 +133,11 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
         layoutSearchEngineScrollViewContent()
         */
 
+        /* Ecosia: deactivate blur
         blur.snp.makeConstraints { make in
             make.edges.equalTo(self.view)
         }
+        */
     
         /* Ecosia: deactivate search engine customization
         searchEngineContainerView.snp.makeConstraints { make in
