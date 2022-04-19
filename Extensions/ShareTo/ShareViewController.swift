@@ -265,7 +265,8 @@ class ShareViewController: UIViewController {
     private func makeActionDoneRow(addTo parent: UIStackView) -> (row: UIStackView, label: UILabel) {
         let stackView = UIStackView()
         stackView.axis = .horizontal
-        stackView.addBackground(color: UIColor(named: "primaryAction")!)
+        stackView.spacing = 8
+        stackView.addBackground(color: UIColor(named: "doneBackground")!)
         stackView.rightLeftEdges(inset: UX.rowInset)
         parent.addArrangedSubview(stackView)
 
@@ -276,27 +277,35 @@ class ShareViewController: UIViewController {
         let label = UILabel()
         label.font = UX.doneLabelFont
         label.handleLongLabels()
+        label.textColor = Theme.doneRowText.color
 
-        let checkmark = UILabel()
-        checkmark.text = "✓"
-        checkmark.font = UIFont.boldSystemFont(ofSize: 22)
+        let checkmark = UIImageView()
+        checkmark.image = UIImage(named: "doneCheckmark")
+        checkmark.contentMode = .scaleAspectFit
 
-        [label, checkmark].forEach {
+        [checkmark, label].forEach {
             stackView.addArrangedSubview($0)
-            $0.textColor = .white
         }
 
         checkmark.snp.makeConstraints { make in
-            make.width.equalTo(20)
+            make.width.equalTo(24)
         }
 
         return (stackView, label)
     }
 
     private func setupNavBar() {
+
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = Theme.defaultBackground.color
+        appearance.shadowColor = .clear
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.navigationBar.scrollEdgeAppearance = appearance
         navigationController?.navigationBar.isTranslucent = false
         navigationController?.navigationBar.setValue(true, forKey: "hidesShadow") // hide separator line
-        navigationItem.titleView = UIImageView(image: UIImage(named: "Icon-Small"))
+        let imageName = traitCollection.userInterfaceStyle == .light ? "Icon-Small" : "Icon-SmallDark"
+        navigationItem.titleView = UIImageView(image: UIImage(named: imageName))
         navigationItem.titleView?.contentMode = .scaleAspectFit
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: Strings.SendToCancelButton, style: .plain, target: self, action: #selector(finish))
         navigationItem.leftBarButtonItem?.tintColor = UIColor(named: "primaryAction")!
@@ -311,6 +320,11 @@ class ShareViewController: UIViewController {
         stackView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        setupNavBar()
     }
 }
 

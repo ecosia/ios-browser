@@ -35,7 +35,8 @@ public struct ModernColor {
 
 struct Theme {
     static let defaultBackground = ModernColor(dark: UIColor.Photon.Grey80, light: .white)
-    static let doneLabelBackground = ModernColor(dark: UIColor.Photon.Teal50, light: UIColor.Photon.Teal50)
-    static let separator = ModernColor(dark: UIColor.Photon.Grey10, light: UIColor.Photon.Grey30)
+    static let doneLabelBackground = ModernColor(dark: UIColor(rgb: 0x5DD25E), light: UIColor(rgb: 0x008009))
+    static let separator = ModernColor(dark: UIColor.Photon.Grey50, light: UIColor.Photon.Grey30)
     static let actionRowTextAndIcon = ModernColor(dark: .white, light: UIColor.Photon.Grey80)
+    static let doneRowText = ModernColor(dark: UIColor.Photon.Grey80, light: .white)
 }
