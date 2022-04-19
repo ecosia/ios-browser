@@ -6,7 +6,6 @@ import UIKit
 
 class ThemedNavigationController: DismissableNavigationViewController {
     var presentingModalViewControllerDelegate: PresentingModalViewControllerDelegate?
-    private weak var separator: UIView?
     
     @objc func done() {
         if let delegate = presentingModalViewControllerDelegate {
@@ -25,16 +24,6 @@ class ThemedNavigationController: DismissableNavigationViewController {
         modalPresentationStyle = .overFullScreen
         modalPresentationCapturesStatusBarAppearance = true
         
-        let separator = UIView()
-        separator.translatesAutoresizingMaskIntoConstraints = false
-        self.separator = separator
-        navigationBar.addSubview(separator)
-        
-        separator.bottomAnchor.constraint(equalTo: navigationBar.bottomAnchor).isActive = true
-        separator.leftAnchor.constraint(equalTo: navigationBar.leftAnchor).isActive = true
-        separator.rightAnchor.constraint(equalTo: navigationBar.rightAnchor).isActive = true
-        separator.heightAnchor.constraint(equalToConstant: 0.5).isActive = true
-        
         applyTheme()
     }
 }
@@ -46,7 +35,7 @@ extension ThemedNavigationController: Themeable {
             standardAppearance.backgroundColor = UIColor.theme.tableView.headerBackground
             standardAppearance.titleTextAttributes = [.foregroundColor: UIColor.theme.ecosia.navigationBarText]
             standardAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.theme.ecosia.navigationBarText]
-            standardAppearance.shadowImage = nil
+            standardAppearance.shadowImage = .init()
             standardAppearance.shadowColor = nil
         navigationBar.standardAppearance = standardAppearance
         navigationBar.compactAppearance = standardAppearance
@@ -60,6 +49,7 @@ extension ThemedNavigationController: Themeable {
         }
         navigationBar.tintColor = UIColor.theme.general.controlTint
     }
+    
     func applyTheme() {
         setupNavigationBarAppearance()
         setNeedsStatusBarAppearanceUpdate()
@@ -70,7 +60,6 @@ extension ThemedNavigationController: Themeable {
         navigationBar.setNeedsDisplay()
         setNeedsStatusBarAppearanceUpdate()
         navigationBar.tintColor = UIColor.theme.general.controlTint
-        separator?.backgroundColor = UIColor.theme.tableView.separator
     }
 }
 
