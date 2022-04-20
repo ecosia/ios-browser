@@ -611,14 +611,11 @@ class Tab: NSObject {
             }
 
             // Ecosia: inject cookie and analytics id
-            if !isPrivate {
-                var request = request
-                request.url = request.url?.ecosified
-                webView.configuration.websiteDataStore.httpCookieStore.setCookie(Cookie.value) {
-                    let navigation = webView.load(request)
-                    completion?(navigation)
-                }
-            } else {
+            var request = request
+            request.url = request.url?.ecosified
+
+            let cookie: HTTPCookie = isPrivate ? Cookie.search : Cookie.standard
+            webView.configuration.websiteDataStore.httpCookieStore.setCookie(cookie) {
                 let navigation = webView.load(request)
                 completion?(navigation)
             }
@@ -637,12 +634,9 @@ class Tab: NSObject {
         }
 
         // Ecosia: Cookie inject before reload
-        if !isPrivate {
-            webView?.configuration.websiteDataStore.httpCookieStore.setCookie(Cookie.value) { [weak self] in
-                self?.reloadOrRestore()
-            }
-        } else {
-            reloadOrRestore()
+        let cookie: HTTPCookie = isPrivate ? Cookie.search : Cookie.standard
+        webView?.configuration.websiteDataStore.httpCookieStore.setCookie(cookie) { [weak self] in
+            self?.reloadOrRestore()
         }
     }
 
