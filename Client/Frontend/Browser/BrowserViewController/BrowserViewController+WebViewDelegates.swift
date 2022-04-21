@@ -616,7 +616,7 @@ extension BrowserViewController: WKNavigationDelegate {
         // just let the webview handle it as normal.
         decisionHandler(.allow)
 
-        // Ecosia: Cookie handling
+        // Ecosia: Cookie handling / only read cookie for not private mode
         if tabManager.selectedTab?.isPrivate == false {
             DispatchQueue.main.async { 
                 webView.configuration.websiteDataStore.httpCookieStore.getAllCookies { cookies in
