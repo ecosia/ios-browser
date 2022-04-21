@@ -73,9 +73,9 @@ class EnhancedTrackingProtectionMenuVC: UIViewController {
         button.imageView?.contentMode = .scaleAspectFit
     }
 
-    private let horizontalLine: UIView = .build { line in
-        line.backgroundColor = UIColor.theme.etpMenu.horizontalLine
-    }
+//    private let horizontalLine: UIView = .build { line in
+//        line.backgroundColor = UIColor.theme.etpMenu.horizontalLine
+//    }
 
     // Connection Info view
     private let connectionView = ETPSectionView(frame: .zero)
@@ -198,7 +198,7 @@ class EnhancedTrackingProtectionMenuVC: UIViewController {
     }
 
     private func setupHeaderView() {
-        headerContainer.addSubviews(heroImage, siteDomainLabel, closeButton, horizontalLine)
+        headerContainer.addSubviews(heroImage, siteDomainLabel, closeButton/*, horizontalLine */)
         view.addSubview(headerContainer)
 
         var headerConstraints = [
@@ -219,11 +219,11 @@ class EnhancedTrackingProtectionMenuVC: UIViewController {
             closeButton.heightAnchor.constraint(equalToConstant: ETPMenuUX.UX.closeButtonSize),
             closeButton.widthAnchor.constraint(equalToConstant: ETPMenuUX.UX.closeButtonSize),
 
-            horizontalLine.leadingAnchor.constraint(equalTo: headerContainer.leadingAnchor),
-            horizontalLine.trailingAnchor.constraint(equalTo: headerContainer.trailingAnchor),
-            horizontalLine.topAnchor.constraint(equalTo: heroImage.bottomAnchor, constant: ETPMenuUX.UX.Line.distanceFromHeroImage),
-            horizontalLine.heightAnchor.constraint(equalToConstant: ETPMenuUX.UX.Line.height),
-            headerContainer.bottomAnchor.constraint(equalTo: horizontalLine.bottomAnchor)
+//            horizontalLine.leadingAnchor.constraint(equalTo: headerContainer.leadingAnchor),
+//            horizontalLine.trailingAnchor.constraint(equalTo: headerContainer.trailingAnchor),
+//            horizontalLine.topAnchor.constraint(equalTo: heroImage.bottomAnchor, constant: ETPMenuUX.UX.Line.distanceFromHeroImage),
+//            horizontalLine.heightAnchor.constraint(equalToConstant: ETPMenuUX.UX.Line.height),
+            headerContainer.bottomAnchor.constraint(equalTo: heroImage.bottomAnchor)
         ]
 
         if asPopover {
