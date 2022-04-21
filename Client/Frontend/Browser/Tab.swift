@@ -614,7 +614,7 @@ class Tab: NSObject {
             var request = request
             request.url = request.url?.ecosified
 
-            let cookie: HTTPCookie = isPrivate ? Cookie.search : Cookie.standard
+            let cookie: HTTPCookie = isPrivate ? Cookie.incognito : Cookie.standard
             webView.configuration.websiteDataStore.httpCookieStore.setCookie(cookie) {
                 let navigation = webView.load(request)
                 completion?(navigation)
@@ -634,7 +634,7 @@ class Tab: NSObject {
         }
 
         // Ecosia: Cookie inject before reload
-        let cookie: HTTPCookie = isPrivate ? Cookie.search : Cookie.standard
+        let cookie: HTTPCookie = isPrivate ? Cookie.incognito : Cookie.standard
         webView?.configuration.websiteDataStore.httpCookieStore.setCookie(cookie) { [weak self] in
             self?.reloadOrRestore()
         }
