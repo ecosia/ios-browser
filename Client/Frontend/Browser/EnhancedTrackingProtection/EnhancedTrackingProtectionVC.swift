@@ -441,7 +441,7 @@ extension EnhancedTrackingProtectionMenuVC: PresentingModalViewControllerDelegat
 extension EnhancedTrackingProtectionMenuVC: Themeable {
     @objc func applyTheme() {
         overrideUserInterfaceStyle =  ThemeManager.instance.userInterfaceStyle
-        view.backgroundColor = UIColor.theme.etpMenu.background
+        view.backgroundColor = UIColor.theme.ecosia.trackingSheetBackground
         connectionView.backgroundColor = UIColor.theme.etpMenu.sectionColor
         connectionImage.image = viewModel.connectionStatusImage
         connectionDetailArrow.tintColor = UIColor.theme.etpMenu.defaultImageTints

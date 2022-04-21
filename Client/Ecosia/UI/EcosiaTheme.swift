@@ -44,10 +44,11 @@ class EcosiaTheme {
     var treeCountText: UIColor { UIColor(named: "emerald")! }
     var treeCountBackground: UIColor { UIColor(rgb: 0xE2F7F1) }
     var impactTreeCountBackground: UIColor { treeCountBackground }
-    var ntpImpactBackground: UIColor { .white}
+    var ntpImpactBackground: UIColor { .white }
     var impactBackground: UIColor { UIColor.Photon.Grey10 }
     var impactMultiplyCardBackground: UIColor { .white }
     var impactMultiplyCardBorder: UIColor { .Photon.Grey20 }
+    var trackingSheetBackground: UIColor { .Light.Background.tertiary }
     
     var actionSheetBackground: UIColor { .Light.Background.primary }
     var modalBackground: UIColor { .white }
@@ -107,6 +108,7 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var impactBackground: UIColor { UIColor.Photon.Grey60 }
     override var impactMultiplyCardBackground: UIColor { .Photon.Grey70 }
     override var impactMultiplyCardBorder: UIColor { .clear }
+    override var trackingSheetBackground: UIColor { .Dark.Background.secondary }
 
     override var actionSheetBackground: UIColor { .Dark.Background.secondary }
     override var modalBackground: UIColor { UIColor.Photon.Grey80 }
