@@ -14,6 +14,10 @@ class EnhancedTrackingProtectionMenuVM {
     var onOpenSettingsTapped: (() -> Void)?
 
     var websiteTitle: String {
+        return tab.title ?? ""
+    }
+    
+    var websiteDomain: String {
         return tab.url?.baseDomain ?? ""
     }
 

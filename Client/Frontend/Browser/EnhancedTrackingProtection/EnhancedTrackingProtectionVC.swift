@@ -61,8 +61,8 @@ class EnhancedTrackingProtectionMenuVC: UIViewController {
     }
 
     private let siteDomainLabel: UILabel = .build { label in
-        label.font = ETPMenuUX.Fonts.websiteTitle
-        label.numberOfLines = 0
+//        label.font = ETPMenuUX.Fonts.websiteTitle
+        label.numberOfLines = 2
     }
 
     private var closeButton: UIButton = .build { button in
@@ -341,7 +341,20 @@ class EnhancedTrackingProtectionMenuVC: UIViewController {
             heroImage.tintColor = UIColor.theme.etpMenu.defaultImageTints
         }
 
-        siteDomainLabel.text = viewModel.websiteTitle
+        siteDomainLabel.attributedText = { mutable, style in
+            style.lineBreakMode = .byTruncatingTail
+            
+            mutable.append(.init(string: viewModel.websiteTitle, attributes: [
+                .foregroundColor: UIColor.theme.ecosia.primaryText,
+                .font: UIFont.preferredFont(forTextStyle: .body),
+                .paragraphStyle: style]))
+            mutable.append(.init(string: "\n"))
+            mutable.append(.init(string: viewModel.websiteDomain, attributes: [
+                .foregroundColor: UIColor.theme.ecosia.secondaryText,
+                .font: UIFont.preferredFont(forTextStyle: .footnote),
+                .paragraphStyle: style]))
+            return mutable
+        } (NSMutableAttributedString(), NSMutableParagraphStyle())
 
         connectionLabel.text = viewModel.connectionStatusString
         connectionImage.image = viewModel.connectionStatusImage
