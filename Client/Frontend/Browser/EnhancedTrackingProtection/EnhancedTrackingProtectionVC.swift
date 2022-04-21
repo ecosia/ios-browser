@@ -66,11 +66,11 @@ class EnhancedTrackingProtectionMenuVC: UIViewController {
     }
 
     private var closeButton: UIButton = .build { button in
-        button.backgroundColor = .Photon.LightGrey50
-        button.layer.cornerRadius = 0.5 * ETPMenuUX.UX.closeButtonSize
-        button.clipsToBounds = true
-        button.setImage(UIImage(named: "close-medium"), for: .normal)
-        button.imageView?.contentMode = .scaleAspectFit
+//        button.backgroundColor = .Photon.LightGrey50
+//        button.layer.cornerRadius = 0.5 * ETPMenuUX.UX.closeButtonSize
+//        button.clipsToBounds = true
+        button.setImage(UIImage(named: "xmark"), for: .normal)
+//        button.imageView?.contentMode = .scaleAspectFit
     }
 
 //    private let horizontalLine: UIView = .build { line in
@@ -454,6 +454,7 @@ extension EnhancedTrackingProtectionMenuVC: Themeable {
         toggleStatusLabel.textColor = UIColor.theme.etpMenu.subtextColor
         protectionView.backgroundColor = UIColor.theme.etpMenu.sectionColor
         protectionButton.setTitleColor(UIColor.theme.etpMenu.switchAndButtonTint, for: .normal)
+        closeButton.imageView?.tintColor = UIColor.theme.ecosia.primaryIcon
         setNeedsStatusBarAppearanceUpdate()
      }
  }
