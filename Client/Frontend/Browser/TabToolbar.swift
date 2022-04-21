@@ -120,7 +120,7 @@ open class TabToolbarHelper: NSObject {
         let longPressGestureTabsButton = UILongPressGestureRecognizer(target: self, action: #selector(didLongPressTabs))
         toolbar.tabsButton.addGestureRecognizer(longPressGestureTabsButton)
 
-        toolbar.addNewTabButton.setImage(UIImage.templateImageNamed("menu-NewTab"), for: .normal)
+        toolbar.addNewTabButton.setImage(UIImage(named: "search"), for: .normal)
         toolbar.addNewTabButton.accessibilityLabel = Strings.AddTabAccessibilityLabel
         toolbar.addNewTabButton.addTarget(self, action: #selector(didClickAddNewTab), for: .touchUpInside)
         toolbar.addNewTabButton.accessibilityIdentifier = "TabToolbar.addNewTabButton"
@@ -191,7 +191,7 @@ open class TabToolbarHelper: NSObject {
     
     func didClickAddNewTab() {
         TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .addNewTabButton)
-        toolbar.tabToolbarDelegate?.tabToolbarDidPressAddNewTab(toolbar, button: toolbar.addNewTabButton)
+        toolbar.tabToolbarDelegate?.tabToolbarDidPressSearch(toolbar, button: toolbar.addNewTabButton)
     }
 
     func didPressMultiStateButton() {
