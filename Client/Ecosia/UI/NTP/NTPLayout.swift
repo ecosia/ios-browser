@@ -22,6 +22,14 @@ class NTPLayout: UICollectionViewFlowLayout {
         // find impact cell
         if let impact = attr.first(where: { $0.representedElementCategory == .cell && $0.indexPath.section == FirefoxHomeViewController.Section.impact.rawValue  }) {
             impactMaxY = impact.frame.maxY
+
+            // find counter overlay cell
+            if let tooltip = attr.first(where: { $0.representedElementCategory == .supplementaryView && $0.indexPath.section == FirefoxHomeViewController.Section.impact.rawValue }) {
+                tooltip.frame = impact.frame
+                let height = UIFont.preferredFont(forTextStyle: .callout).pointSize * 3.2 + 24 + 8
+                tooltip.frame.size.height = height
+                tooltip.frame.origin.y -= (height - 32)
+            }
         }
 
         // find and update empty cell

@@ -479,6 +479,7 @@
 		CA24B53924ABFE250093848C /* LoginsListSelectionHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA24B53824ABFE250093848C /* LoginsListSelectionHelperTests.swift */; };
 		CA24B53B24ABFE5D0093848C /* LoginsListDataSourceHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA24B53A24ABFE5D0093848C /* LoginsListDataSourceHelperTests.swift */; };
 		CA31D8E826E8CE930004FF64 /* EcosiaHomeLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA31D8E726E8CE930004FF64 /* EcosiaHomeLayout.swift */; };
+		CA3D3C412812914300534B1B /* NTPTooltip.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA3D3C402812914300534B1B /* NTPTooltip.swift */; };
 		CA4ACE4924C8C91600F55894 /* BreachAlertsDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4ACE4824C8C91500F55894 /* BreachAlertsDetailView.swift */; };
 		CA4ADEC1268B06EA00CE1C88 /* TreesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4ADEC0268B06EA00CE1C88 /* TreesCell.swift */; };
 		CA4DDE5125430FA700966CF2 /* FakeSentry.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4DDE2925430E2400966CF2 /* FakeSentry.swift */; };
@@ -3158,6 +3159,7 @@
 		CA31D8E726E8CE930004FF64 /* EcosiaHomeLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaHomeLayout.swift; sourceTree = "<group>"; };
 		CA32540125485C700024B48D /* Ecosia.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Ecosia.entitlements; sourceTree = "<group>"; };
 		CA32552425487C1C0024B48D /* EcosiaBeta.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = EcosiaBeta.xcconfig; path = Configuration/EcosiaBeta.xcconfig; sourceTree = "<group>"; };
+		CA3D3C402812914300534B1B /* NTPTooltip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPTooltip.swift; sourceTree = "<group>"; };
 		CA4ACE4824C8C91500F55894 /* BreachAlertsDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreachAlertsDetailView.swift; sourceTree = "<group>"; };
 		CA4ADEC0268B06EA00CE1C88 /* TreesCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TreesCell.swift; sourceTree = "<group>"; };
 		CA4DDE2925430E2400966CF2 /* FakeSentry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeSentry.swift; sourceTree = "<group>"; };
@@ -5464,6 +5466,7 @@
 				CA4ADEC0268B06EA00CE1C88 /* TreesCell.swift */,
 				CADFBF9C26DFC6B300F6D925 /* TreesCellModel.swift */,
 				CA6178DF26D6185A006A21B7 /* NTPLayout.swift */,
+				CA3D3C402812914300534B1B /* NTPTooltip.swift */,
 			);
 			path = NTP;
 			sourceTree = "<group>";
@@ -8396,6 +8399,7 @@
 				E4A961181AC041C40069AD6F /* ReadabilityService.swift in Sources */,
 				D3BE7B261B054D4400641031 /* main.swift in Sources */,
 				CADFBF9D26DFC6B300F6D925 /* TreesCellModel.swift in Sources */,
+				CA3D3C412812914300534B1B /* NTPTooltip.swift in Sources */,
 				EB8A0A77206ABCE000A9859A /* WebPagesForTesting.swift in Sources */,
 				D3A9949C1A3686BD008AD1AC /* BrowserViewController.swift in Sources */,
 				E6CF28E71CB43B7900151AB3 /* SensitiveViewController.swift in Sources */,

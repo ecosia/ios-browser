@@ -88,6 +88,7 @@ class EcosiaTheme {
 
     var toastImageTint: UIColor { .init(red: 0.847, green: 1, blue: 0.502, alpha: 1) }
     var autocompleteBackground: UIColor { .Light.Background.primary }
+    var tooltipBackground: UIColor { .Light.Background.quarternary }
 }
 
 final class DarkEcosiaTheme: EcosiaTheme {
