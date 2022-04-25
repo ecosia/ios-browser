@@ -341,21 +341,6 @@ class EnhancedTrackingProtectionMenuVC: UIViewController {
             heroImage.tintColor = UIColor.theme.etpMenu.defaultImageTints
         }
 
-        siteDomainLabel.attributedText = { mutable, style in
-            style.lineBreakMode = .byTruncatingTail
-            
-            mutable.append(.init(string: viewModel.websiteTitle, attributes: [
-                .foregroundColor: UIColor.theme.ecosia.primaryText,
-                .font: UIFont.preferredFont(forTextStyle: .body),
-                .paragraphStyle: style]))
-            mutable.append(.init(string: "\n"))
-            mutable.append(.init(string: viewModel.websiteDomain, attributes: [
-                .foregroundColor: UIColor.theme.ecosia.secondaryText,
-                .font: UIFont.preferredFont(forTextStyle: .footnote),
-                .paragraphStyle: style]))
-            return mutable
-        } (NSMutableAttributedString(), NSMutableParagraphStyle())
-
         connectionLabel.text = viewModel.connectionStatusString
         connectionImage.image = viewModel.connectionStatusImage
 
@@ -442,6 +427,22 @@ extension EnhancedTrackingProtectionMenuVC: Themeable {
     @objc func applyTheme() {
         overrideUserInterfaceStyle =  ThemeManager.instance.userInterfaceStyle
         view.backgroundColor = UIColor.theme.ecosia.trackingSheetBackground
+        
+        siteDomainLabel.attributedText = { mutable, style in
+            style.lineBreakMode = .byTruncatingTail
+            
+            mutable.append(.init(string: viewModel.websiteTitle, attributes: [
+                .foregroundColor: UIColor.theme.ecosia.primaryText,
+                .font: UIFont.preferredFont(forTextStyle: .body),
+                .paragraphStyle: style]))
+            mutable.append(.init(string: "\n"))
+            mutable.append(.init(string: viewModel.websiteDomain, attributes: [
+                .foregroundColor: UIColor.theme.ecosia.secondaryText,
+                .font: UIFont.preferredFont(forTextStyle: .footnote),
+                .paragraphStyle: style]))
+            return mutable
+        } (NSMutableAttributedString(), NSMutableParagraphStyle())
+        
         connectionView.backgroundColor = UIColor.theme.etpMenu.sectionColor
         connectionImage.image = viewModel.connectionStatusImage
         connectionDetailArrow.tintColor = UIColor.theme.etpMenu.defaultImageTints
@@ -449,11 +450,11 @@ extension EnhancedTrackingProtectionMenuVC: Themeable {
             connectionImage.tintColor = UIColor.theme.etpMenu.defaultImageTints
         }
         toggleView.backgroundColor = UIColor.theme.etpMenu.sectionColor
-        toggleSwitch.tintColor = UIColor.theme.etpMenu.switchAndButtonTint
-        toggleSwitch.onTintColor = UIColor.theme.etpMenu.switchAndButtonTint
+        toggleSwitch.tintColor = UIColor.theme.ecosia.primaryButton
+        toggleSwitch.onTintColor = UIColor.theme.ecosia.primaryButton
         toggleStatusLabel.textColor = UIColor.theme.etpMenu.subtextColor
         protectionView.backgroundColor = UIColor.theme.etpMenu.sectionColor
-        protectionButton.setTitleColor(UIColor.theme.etpMenu.switchAndButtonTint, for: .normal)
+        protectionButton.setTitleColor(UIColor.theme.ecosia.primaryButton, for: .normal)
         closeButton.imageView?.tintColor = UIColor.theme.ecosia.primaryIcon
         setNeedsStatusBarAppearanceUpdate()
      }
