@@ -11,6 +11,7 @@ class EnhancedTrackingProtectionDetailsVC: UIViewController {
 
     private let siteTitleLabel: UILabel = .build { label in
         label.font = ETPMenuUX.Fonts.websiteTitle
+        label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
     }
 
     private var closeButton: UIButton = .build { button in
@@ -100,6 +101,8 @@ class EnhancedTrackingProtectionDetailsVC: UIViewController {
         view.addSubview(connectionView)
 
         NSLayoutConstraint.activate([
+            siteTitleLabel.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: 16),
+            siteTitleLabel.trailingAnchor.constraint(lessThanOrEqualTo: closeButton.leadingAnchor, constant: -16),
             siteTitleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             siteTitleLabel.centerYAnchor.constraint(equalTo: closeButton.centerYAnchor),
 
