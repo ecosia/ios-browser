@@ -450,12 +450,12 @@ extension EnhancedTrackingProtectionMenuVC: Themeable {
             connectionImage.tintColor = UIColor.theme.etpMenu.defaultImageTints
         }
         toggleView.backgroundColor = UIColor.theme.etpMenu.sectionColor
-        toggleSwitch.tintColor = UIColor.theme.ecosia.primaryButton
-        toggleSwitch.onTintColor = UIColor.theme.ecosia.primaryButton
+        toggleSwitch.tintColor = .theme.ecosia.primaryButton
+        toggleSwitch.onTintColor = .theme.ecosia.primaryButton
         toggleStatusLabel.textColor = UIColor.theme.etpMenu.subtextColor
         protectionView.backgroundColor = UIColor.theme.etpMenu.sectionColor
-        protectionButton.setTitleColor(UIColor.theme.ecosia.primaryButton, for: .normal)
-        closeButton.imageView?.tintColor = UIColor.theme.ecosia.primaryIcon
+        protectionButton.setTitleColor(.theme.ecosia.primaryButton, for: .normal)
+        closeButton.imageView?.tintColor = .theme.ecosia.primaryIcon
         setNeedsStatusBarAppearanceUpdate()
      }
  }
