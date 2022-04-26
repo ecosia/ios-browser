@@ -3,6 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import Foundation
+import UIKit
 
 class EnhancedTrackingProtectionDetailsVC: UIViewController {
 
@@ -10,6 +11,7 @@ class EnhancedTrackingProtectionDetailsVC: UIViewController {
 
     private let siteTitleLabel: UILabel = .build { label in
         label.font = ETPMenuUX.Fonts.websiteTitle
+        label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
     }
 
     private var closeButton: UIButton = .build { button in
@@ -17,7 +19,7 @@ class EnhancedTrackingProtectionDetailsVC: UIViewController {
         button.clipsToBounds = true
         button.setTitle(.AppSettingsDone, for: .normal)
         button.titleLabel?.font = ETPMenuUX.Fonts.viewTitleLabels
-        button.setTitleColor(.systemBlue, for: .normal)
+//        button.setTitleColor(.systemBlue, for: .normal)
     }
 
     private let siteInfoSection = ETPSectionView(frame: .zero)
@@ -99,6 +101,8 @@ class EnhancedTrackingProtectionDetailsVC: UIViewController {
         view.addSubview(connectionView)
 
         NSLayoutConstraint.activate([
+            siteTitleLabel.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: 16),
+            siteTitleLabel.trailingAnchor.constraint(lessThanOrEqualTo: closeButton.leadingAnchor, constant: -16),
             siteTitleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             siteTitleLabel.centerYAnchor.constraint(equalTo: closeButton.centerYAnchor),
 
@@ -188,6 +192,7 @@ extension EnhancedTrackingProtectionDetailsVC: Themeable {
             connectionImage.tintColor = UIColor.theme.etpMenu.defaultImageTints
         }
         connectionVerifierLabel.textColor = UIColor.theme.etpMenu.subtextColor
+        closeButton.setTitleColor(.theme.ecosia.primaryButton, for: .normal)
         setNeedsStatusBarAppearanceUpdate()
     }
 }

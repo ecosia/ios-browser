@@ -14,6 +14,10 @@ class EnhancedTrackingProtectionMenuVM {
     var onOpenSettingsTapped: (() -> Void)?
 
     var websiteTitle: String {
+        return tab.title ?? ""
+    }
+    
+    var websiteDomain: String {
         return tab.url?.baseDomain ?? ""
     }
 
@@ -28,7 +32,7 @@ class EnhancedTrackingProtectionMenuVM {
 
     var connectionStatusImage: UIImage {
         let insecureImageString = "lock_blocked"
-        let image = connectionSecure ? UIImage(imageLiteralResourceName: "lock_verified").withRenderingMode(.alwaysTemplate) : UIImage(imageLiteralResourceName: insecureImageString)
+        let image = connectionSecure ? UIImage(themed: "secureLock")! : UIImage(imageLiteralResourceName: insecureImageString)
         return image
     }
 
@@ -62,7 +66,7 @@ class EnhancedTrackingProtectionMenuVM {
 
     func getDetailsViewModel(withCachedImage cachedImage: UIImage?) -> EnhancedTrackingProtectionDetailsVM {
         let verifier = String(format: Strings.TPDetailsVerifiedBy, "EXAMPLE VERIFIER")
-        return EnhancedTrackingProtectionDetailsVM(topLevelDomain: websiteTitle,
+        return EnhancedTrackingProtectionDetailsVM(topLevelDomain: websiteDomain,
                                                    title: tab.displayTitle,
                                                    image: cachedImage ?? UIImage(imageLiteralResourceName: "defaulFavicon"),
                                                    URL: tab.url?.absoluteDisplayString ?? websiteTitle,

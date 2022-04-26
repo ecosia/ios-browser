@@ -61,21 +61,24 @@ class EnhancedTrackingProtectionMenuVC: UIViewController {
     }
 
     private let siteDomainLabel: UILabel = .build { label in
-        label.font = ETPMenuUX.Fonts.websiteTitle
-        label.numberOfLines = 0
+//        label.font = ETPMenuUX.Fonts.websiteTitle
+        label.numberOfLines = 2
     }
 
     private var closeButton: UIButton = .build { button in
+        /*
         button.backgroundColor = .Photon.LightGrey50
         button.layer.cornerRadius = 0.5 * ETPMenuUX.UX.closeButtonSize
-        button.clipsToBounds = true
-        button.setImage(UIImage(named: "close-medium"), for: .normal)
-        button.imageView?.contentMode = .scaleAspectFit
+        button.clipsToBounds = true*/
+        button.setImage(UIImage(named: "xmark"), for: .normal)
+//        button.imageView?.contentMode = .scaleAspectFit
     }
 
+    /*
     private let horizontalLine: UIView = .build { line in
         line.backgroundColor = UIColor.theme.etpMenu.horizontalLine
     }
+     */
 
     // Connection Info view
     private let connectionView = ETPSectionView(frame: .zero)
@@ -198,7 +201,7 @@ class EnhancedTrackingProtectionMenuVC: UIViewController {
     }
 
     private func setupHeaderView() {
-        headerContainer.addSubviews(heroImage, siteDomainLabel, closeButton, horizontalLine)
+        headerContainer.addSubviews(heroImage, siteDomainLabel, closeButton/*, horizontalLine */)
         view.addSubview(headerContainer)
 
         var headerConstraints = [
@@ -219,11 +222,12 @@ class EnhancedTrackingProtectionMenuVC: UIViewController {
             closeButton.heightAnchor.constraint(equalToConstant: ETPMenuUX.UX.closeButtonSize),
             closeButton.widthAnchor.constraint(equalToConstant: ETPMenuUX.UX.closeButtonSize),
 
+            /*
             horizontalLine.leadingAnchor.constraint(equalTo: headerContainer.leadingAnchor),
             horizontalLine.trailingAnchor.constraint(equalTo: headerContainer.trailingAnchor),
             horizontalLine.topAnchor.constraint(equalTo: heroImage.bottomAnchor, constant: ETPMenuUX.UX.Line.distanceFromHeroImage),
-            horizontalLine.heightAnchor.constraint(equalToConstant: ETPMenuUX.UX.Line.height),
-            headerContainer.bottomAnchor.constraint(equalTo: horizontalLine.bottomAnchor)
+            horizontalLine.heightAnchor.constraint(equalToConstant: ETPMenuUX.UX.Line.height),*/
+            headerContainer.bottomAnchor.constraint(equalTo: heroImage.bottomAnchor)
         ]
 
         if asPopover {
@@ -341,8 +345,6 @@ class EnhancedTrackingProtectionMenuVC: UIViewController {
             heroImage.tintColor = UIColor.theme.etpMenu.defaultImageTints
         }
 
-        siteDomainLabel.text = viewModel.websiteTitle
-
         connectionLabel.text = viewModel.connectionStatusString
         connectionImage.image = viewModel.connectionStatusImage
 
@@ -428,7 +430,23 @@ extension EnhancedTrackingProtectionMenuVC: PresentingModalViewControllerDelegat
 extension EnhancedTrackingProtectionMenuVC: Themeable {
     @objc func applyTheme() {
         overrideUserInterfaceStyle =  ThemeManager.instance.userInterfaceStyle
-        view.backgroundColor = UIColor.theme.etpMenu.background
+        view.backgroundColor = UIColor.theme.ecosia.trackingSheetBackground
+        
+        siteDomainLabel.attributedText = { mutable, style in
+            style.lineBreakMode = .byTruncatingTail
+            
+            mutable.append(.init(string: viewModel.websiteTitle, attributes: [
+                .foregroundColor: UIColor.theme.ecosia.primaryText,
+                .font: UIFont.preferredFont(forTextStyle: .body),
+                .paragraphStyle: style]))
+            mutable.append(.init(string: "\n"))
+            mutable.append(.init(string: viewModel.websiteDomain, attributes: [
+                .foregroundColor: UIColor.theme.ecosia.secondaryText,
+                .font: UIFont.preferredFont(forTextStyle: .footnote),
+                .paragraphStyle: style]))
+            return mutable
+        } (NSMutableAttributedString(), NSMutableParagraphStyle())
+        
         connectionView.backgroundColor = UIColor.theme.etpMenu.sectionColor
         connectionImage.image = viewModel.connectionStatusImage
         connectionDetailArrow.tintColor = UIColor.theme.etpMenu.defaultImageTints
@@ -436,11 +454,12 @@ extension EnhancedTrackingProtectionMenuVC: Themeable {
             connectionImage.tintColor = UIColor.theme.etpMenu.defaultImageTints
         }
         toggleView.backgroundColor = UIColor.theme.etpMenu.sectionColor
-        toggleSwitch.tintColor = UIColor.theme.etpMenu.switchAndButtonTint
-        toggleSwitch.onTintColor = UIColor.theme.etpMenu.switchAndButtonTint
+        toggleSwitch.tintColor = .theme.ecosia.primaryButton
+        toggleSwitch.onTintColor = .theme.ecosia.primaryButton
         toggleStatusLabel.textColor = UIColor.theme.etpMenu.subtextColor
         protectionView.backgroundColor = UIColor.theme.etpMenu.sectionColor
-        protectionButton.setTitleColor(UIColor.theme.etpMenu.switchAndButtonTint, for: .normal)
+        protectionButton.setTitleColor(.theme.ecosia.primaryButton, for: .normal)
+        closeButton.imageView?.tintColor = .theme.ecosia.primaryIcon
         setNeedsStatusBarAppearanceUpdate()
      }
  }

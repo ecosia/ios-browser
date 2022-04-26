@@ -44,10 +44,11 @@ class EcosiaTheme {
     var treeCountText: UIColor { UIColor(named: "emerald")! }
     var treeCountBackground: UIColor { UIColor(rgb: 0xE2F7F1) }
     var impactTreeCountBackground: UIColor { treeCountBackground }
-    var ntpImpactBackground: UIColor { .white}
+    var ntpImpactBackground: UIColor { .white }
     var impactBackground: UIColor { UIColor.Photon.Grey10 }
     var impactMultiplyCardBackground: UIColor { .white }
     var impactMultiplyCardBorder: UIColor { .Photon.Grey20 }
+    var trackingSheetBackground: UIColor { .Light.Background.tertiary }
     
     var actionSheetBackground: UIColor { .Light.Background.primary }
     var modalBackground: UIColor { .white }
@@ -58,6 +59,8 @@ class EcosiaTheme {
     var highContrastText: UIColor { UIColor.Photon.Grey90 }
     var navigationBarText: UIColor { .Light.Text.primary }
 
+    var primaryIcon: UIColor { .Light.Icon.primary }
+    
     var highlightedBackground: UIColor { .Light.Background.highlighted }
     var highlightedBorder: UIColor { UIColor(named: "highlightedBorder")!}
     var hoverBackgroundColor: UIColor { UIColor.Photon.Grey20 }
@@ -107,6 +110,7 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var impactBackground: UIColor { UIColor.Photon.Grey60 }
     override var impactMultiplyCardBackground: UIColor { .Photon.Grey70 }
     override var impactMultiplyCardBorder: UIColor { .clear }
+    override var trackingSheetBackground: UIColor { .Dark.Background.secondary }
 
     override var actionSheetBackground: UIColor { .Dark.Background.secondary }
     override var modalBackground: UIColor { UIColor.Photon.Grey80 }
@@ -117,6 +121,8 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var highContrastText: UIColor { .white }
     override var navigationBarText: UIColor { .Dark.Text.primary }
 
+    override var primaryIcon: UIColor { .Dark.Icon.primary }
+    
     override var highlightedBackground: UIColor { .Dark.Background.highlighted }
     override var hoverBackgroundColor: UIColor { UIColor.Photon.Grey90 }
 
