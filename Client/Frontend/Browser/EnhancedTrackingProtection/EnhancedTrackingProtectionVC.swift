@@ -66,16 +66,19 @@ class EnhancedTrackingProtectionMenuVC: UIViewController {
     }
 
     private var closeButton: UIButton = .build { button in
-//        button.backgroundColor = .Photon.LightGrey50
-//        button.layer.cornerRadius = 0.5 * ETPMenuUX.UX.closeButtonSize
-//        button.clipsToBounds = true
+        /*
+        button.backgroundColor = .Photon.LightGrey50
+        button.layer.cornerRadius = 0.5 * ETPMenuUX.UX.closeButtonSize
+        button.clipsToBounds = true*/
         button.setImage(UIImage(named: "xmark"), for: .normal)
 //        button.imageView?.contentMode = .scaleAspectFit
     }
 
-//    private let horizontalLine: UIView = .build { line in
-//        line.backgroundColor = UIColor.theme.etpMenu.horizontalLine
-//    }
+    /*
+    private let horizontalLine: UIView = .build { line in
+        line.backgroundColor = UIColor.theme.etpMenu.horizontalLine
+    }
+     */
 
     // Connection Info view
     private let connectionView = ETPSectionView(frame: .zero)
@@ -219,10 +222,11 @@ class EnhancedTrackingProtectionMenuVC: UIViewController {
             closeButton.heightAnchor.constraint(equalToConstant: ETPMenuUX.UX.closeButtonSize),
             closeButton.widthAnchor.constraint(equalToConstant: ETPMenuUX.UX.closeButtonSize),
 
-//            horizontalLine.leadingAnchor.constraint(equalTo: headerContainer.leadingAnchor),
-//            horizontalLine.trailingAnchor.constraint(equalTo: headerContainer.trailingAnchor),
-//            horizontalLine.topAnchor.constraint(equalTo: heroImage.bottomAnchor, constant: ETPMenuUX.UX.Line.distanceFromHeroImage),
-//            horizontalLine.heightAnchor.constraint(equalToConstant: ETPMenuUX.UX.Line.height),
+            /*
+            horizontalLine.leadingAnchor.constraint(equalTo: headerContainer.leadingAnchor),
+            horizontalLine.trailingAnchor.constraint(equalTo: headerContainer.trailingAnchor),
+            horizontalLine.topAnchor.constraint(equalTo: heroImage.bottomAnchor, constant: ETPMenuUX.UX.Line.distanceFromHeroImage),
+            horizontalLine.heightAnchor.constraint(equalToConstant: ETPMenuUX.UX.Line.height),*/
             headerContainer.bottomAnchor.constraint(equalTo: heroImage.bottomAnchor)
         ]
 
