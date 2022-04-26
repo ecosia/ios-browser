@@ -14,7 +14,7 @@ final class UpgradeScreen: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor.theme.ecosia.welcomeScreenBackground
+        view.backgroundColor = UIColor.theme.ecosia.modalOverlayBackground
         
         let base = UIView()
         base.translatesAutoresizingMaskIntoConstraints = false

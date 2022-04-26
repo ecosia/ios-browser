@@ -16,7 +16,7 @@ extension UIColor {
         
         struct Button {
             static let primary = UIColor(red: 0, green: 0.5, blue: 0.033, alpha: 1)
-            static let primaryActive = UIColor(red: 0.153, green: 0.322, blue: 0.263, alpha: 1)
+            static let primaryActive = UIColor(rgb: 0x006600)
         }
         
         struct Text {
@@ -43,7 +43,7 @@ extension UIColor {
         
         struct Button {
             static let primary = UIColor(red: 0.365, green: 0.824, blue: 0.369, alpha: 1)
-            static let primaryActive = UIColor(red: 0.686, green: 0.914, blue: 0.69, alpha: 1)
+            static let primaryActive = UIColor(rgb: 0x008009)
         }
         
         struct Text {

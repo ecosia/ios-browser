@@ -1988,6 +1988,11 @@ extension BrowserViewController {
             present(UpgradeScreen(), animated: true)
         } else if let pendingClaim = User.shared.referrals.pendingClaim {
             present(LoadingScreen(profile: profile, tabManager: tabManager, referrals: referrals, referralCode: pendingClaim), animated: true)
+        } else if !User.shared.hasSeenIntro {
+            let intro = NTPIntroViewController()
+            intro.modalPresentationStyle = .overFullScreen
+            intro.modalTransitionStyle = .crossDissolve
+            present(intro, animated: true)
         }
     }
 

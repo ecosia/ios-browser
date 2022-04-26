@@ -515,6 +515,7 @@
 		CAA246D1257A725100D84AD9 /* markets.json in Resources */ = {isa = PBXBuildFile; fileRef = CAA246D0257A725100D84AD9 /* markets.json */; };
 		CAA2F3F3257A79C700EBAD38 /* FilterController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA2F3F2257A79C700EBAD38 /* FilterController.swift */; };
 		CAA3B7E62497DCB60094E3C1 /* LoginDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA3B7E52497DCB60094E3C1 /* LoginDataSource.swift */; };
+		CAA6FD0928182EFA006314E1 /* NTPIntroViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA6FD0828182EFA006314E1 /* NTPIntroViewController.swift */; };
 		CAAB66B9268327000024105C /* SearchbarCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAAB66B8268326FF0024105C /* SearchbarCell.swift */; };
 		CAAB66BB268369C20024105C /* EmptyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAAB66BA268369C20024105C /* EmptyCell.swift */; };
 		CAAD53542541B6A1002501A5 /* EcosiaHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAAD53532541B6A1002501A5 /* EcosiaHistory.swift */; };
@@ -3210,6 +3211,7 @@
 		CAA246D0257A725100D84AD9 /* markets.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = markets.json; sourceTree = "<group>"; };
 		CAA2F3F2257A79C700EBAD38 /* FilterController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterController.swift; sourceTree = "<group>"; };
 		CAA3B7E52497DCB60094E3C1 /* LoginDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginDataSource.swift; sourceTree = "<group>"; };
+		CAA6FD0828182EFA006314E1 /* NTPIntroViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPIntroViewController.swift; sourceTree = "<group>"; };
 		CAAB66B8268326FF0024105C /* SearchbarCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchbarCell.swift; sourceTree = "<group>"; };
 		CAAB66BA268369C20024105C /* EmptyCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyCell.swift; sourceTree = "<group>"; };
 		CAAD53532541B6A1002501A5 /* EcosiaHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaHistory.swift; sourceTree = "<group>"; };
@@ -5467,6 +5469,7 @@
 				CADFBF9C26DFC6B300F6D925 /* TreesCellModel.swift */,
 				CA6178DF26D6185A006A21B7 /* NTPLayout.swift */,
 				CA3D3C402812914300534B1B /* NTPTooltip.swift */,
+				CAA6FD0828182EFA006314E1 /* NTPIntroViewController.swift */,
 			);
 			path = NTP;
 			sourceTree = "<group>";
@@ -8188,6 +8191,7 @@
 				CE0AB94A25F7C42600333656 /* Analytics.Values.swift in Sources */,
 				E4CD9E911A6897FB00318571 /* ReaderMode.swift in Sources */,
 				E68E7ADE1CAC208A00FDCA76 /* RemovePasscodeViewController.swift in Sources */,
+				CAA6FD0928182EFA006314E1 /* NTPIntroViewController.swift in Sources */,
 				962F394A2672D57A006BDA2A /* RecentItemsHelper.swift in Sources */,
 				CE9AEE0726EFA9CA00181C96 /* MultiplyImpactStep.swift in Sources */,
 				74C027451B2A348C001B1E88 /* SessionData.swift in Sources */,
