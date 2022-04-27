@@ -8,7 +8,7 @@ protocol NTPTooltipDelegate: AnyObject {
     func ntpTooltipTapped(_ tooltip: NTPTooltip)
 }
 
-class NTPTooltip: UICollectionReusableView, Themeable {
+final class NTPTooltip: UICollectionReusableView, Themeable {
     static let key = String(describing: self)
     private weak var textLabel: UILabel!
     private weak var tail: UIImageView!

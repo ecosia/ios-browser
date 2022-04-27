@@ -4,7 +4,7 @@
 
 import UIKit
 
-class NTPIntroViewController: UIViewController, Themeable {
+final class NTPIntroViewController: UIViewController, Themeable {
     weak var scrollView: UIScrollView!
     weak var content: UIView!
     weak var image: UIImageView!
