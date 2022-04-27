@@ -123,5 +123,8 @@ extension String {
         case downloadEcosiaOn = "(1) Download Ecosia on your iPhone for free"
         case clickMyInvitation = "(2) Click my invitation link so we can plant trees together:"
         case letsDoThis = "Let's do this"
+        case seeWhatsNew = "See what's new"
+        case ecosiaNewLook = "Ecosia has a new look, and you can now easily see your progress and how many trees you’ve helped plant."
+        case discoverEcosia = "Discover the new Ecosia"
     }
 }

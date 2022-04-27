@@ -57,7 +57,7 @@ class NTPIntroViewController: UIViewController, Themeable {
         waves.setContentCompressionResistancePriority(.required, for: .vertical)
 
         let headline = UILabel()
-        headline.text = "Discover the new Ecosia"
+        headline.text = .localized(.discoverEcosia)
         headline.translatesAutoresizingMaskIntoConstraints = false
         headline.font = .preferredFont(forTextStyle: .headline).bold()
         headline.adjustsFontForContentSizeCategory = true
@@ -72,7 +72,7 @@ class NTPIntroViewController: UIViewController, Themeable {
         headline.setContentCompressionResistancePriority(.required, for: .vertical)
 
         let text = UILabel()
-        text.text = "Ecosia has a new look, and you can now easily see your progress and how many trees you’ve helped plant."
+        text.text = .localized(.ecosiaNewLook)
         text.translatesAutoresizingMaskIntoConstraints = false
         text.font = .preferredFont(forTextStyle: .subheadline)
         text.adjustsFontForContentSizeCategory = true
@@ -90,7 +90,7 @@ class NTPIntroViewController: UIViewController, Themeable {
         let cta = EcosiaPrimaryButton()
         cta.contentEdgeInsets = .init(top: 0, left: 16, bottom: 0, right: 16)
         cta.translatesAutoresizingMaskIntoConstraints = false
-        cta.setTitle("See what's new", for: .normal)
+        cta.setTitle(.localized(.seeWhatsNew), for: .normal)
         cta.titleLabel?.font = .preferredFont(forTextStyle: .callout)
         cta.titleLabel?.adjustsFontForContentSizeCategory = true
         cta.layer.cornerRadius = 25
