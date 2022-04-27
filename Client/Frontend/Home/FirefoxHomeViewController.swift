@@ -380,7 +380,7 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel, FeatureF
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         timer?.invalidate()
-        User.shared.seenRebrandIntro = true
+        User.shared.hideRebrandIntro()
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -725,7 +725,7 @@ extension FirefoxHomeViewController: UICollectionViewDelegateFlowLayout {
             }
         case .impact:
             // Ecosia: minimal height to trigger whether header tooltip is shown
-            return User.shared.seenRebrandIntro ? .zero : .init(width: 200, height: 1)
+            return User.shared.showsRebrandIntro ? .init(width: 200, height: 1) : .zero
         default:
             return .zero
         }
@@ -1382,7 +1382,7 @@ extension FirefoxHomeViewController: NTPTooltipDelegate {
         UIView.animate(withDuration: 0.3) {
             tooltip.alpha = 0
         } completion: { _ in
-            User.shared.seenRebrandIntro = true
+            User.shared.hideRebrandIntro()
         }
     }
 }
