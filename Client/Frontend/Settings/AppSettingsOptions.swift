@@ -649,12 +649,12 @@ final class ToggleBrandRefreshIntro: HiddenSetting {
     }
 
     override var status: NSAttributedString? {
-        let isOn = User.shared.hasSeenIntro
+        let isOn = User.shared.seenRebrandIntro
         return NSAttributedString(string: isOn ? "True" : "False", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
-        User.shared.hasSeenIntro = !User.shared.hasSeenIntro
+        User.shared.seenRebrandIntro = !User.shared.seenRebrandIntro
         settings.tableView.reloadData()
     }
 }

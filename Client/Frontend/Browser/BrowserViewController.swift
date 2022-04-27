@@ -1980,7 +1980,7 @@ extension BrowserViewController {
             self.profile.prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
             User.shared.firstTime = false
             User.shared.migrated = true
-            User.shared.hasSeenIntro = true
+            User.shared.seenRebrandIntro = true
             User.shared.hideWelcomeScreen()
         } else if User.shared.migrated != true {
             present(LoadingScreen(profile: profile, tabManager: tabManager, referrals: referrals), animated: true)
@@ -1988,7 +1988,7 @@ extension BrowserViewController {
             present(UpgradeScreen(), animated: true)
         } else if let pendingClaim = User.shared.referrals.pendingClaim {
             present(LoadingScreen(profile: profile, tabManager: tabManager, referrals: referrals, referralCode: pendingClaim), animated: true)
-        } else if !User.shared.hasSeenIntro {
+        } else if !User.shared.seenRebrandIntro {
             let intro = NTPIntroViewController()
             intro.modalPresentationStyle = .overFullScreen
             intro.modalTransitionStyle = .crossDissolve

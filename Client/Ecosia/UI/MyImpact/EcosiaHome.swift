@@ -210,7 +210,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
             referrals.refresh(force: true)
         }
         
-        User.shared.hasSeenIntro = true
+        User.shared.seenRebrandIntro = true
 
         guard hasAppeared else { return hasAppeared = true }
         updateBarAppearance()

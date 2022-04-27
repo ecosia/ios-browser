@@ -683,9 +683,9 @@ extension TabManager {
     func restoreTabs(_ forced: Bool = false) {
         defer {
             // Always make sure there is a single normal tab.
-            if normalTabs.isEmpty || !User.shared.hasSeenIntro {
+            if normalTabs.isEmpty || !User.shared.seenRebrandIntro {
                 let tab = addTab()
-                if selectedTab == nil || !User.shared.hasSeenIntro {
+                if selectedTab == nil || !User.shared.seenRebrandIntro {
                     selectTab(tab)
                 }
             }
