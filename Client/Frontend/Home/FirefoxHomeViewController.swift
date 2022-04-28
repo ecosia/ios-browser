@@ -680,7 +680,7 @@ extension FirefoxHomeViewController: UICollectionViewDelegateFlowLayout {
 
         if section == .impact {
             let tooltip = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: NTPTooltip.key, for: indexPath) as! NTPTooltip
-            tooltip.setText("Track your progress and get insights about your impact")
+            tooltip.setText(.localized(.trackYourProgress))
             tooltip.delegate = self
             return tooltip
         }
