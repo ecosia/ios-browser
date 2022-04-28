@@ -479,6 +479,7 @@
 		CA24B53924ABFE250093848C /* LoginsListSelectionHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA24B53824ABFE250093848C /* LoginsListSelectionHelperTests.swift */; };
 		CA24B53B24ABFE5D0093848C /* LoginsListDataSourceHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA24B53A24ABFE5D0093848C /* LoginsListDataSourceHelperTests.swift */; };
 		CA31D8E826E8CE930004FF64 /* EcosiaHomeLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA31D8E726E8CE930004FF64 /* EcosiaHomeLayout.swift */; };
+		CA3D3C412812914300534B1B /* NTPTooltip.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA3D3C402812914300534B1B /* NTPTooltip.swift */; };
 		CA4ACE4924C8C91600F55894 /* BreachAlertsDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4ACE4824C8C91500F55894 /* BreachAlertsDetailView.swift */; };
 		CA4ADEC1268B06EA00CE1C88 /* TreesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4ADEC0268B06EA00CE1C88 /* TreesCell.swift */; };
 		CA4DDE5125430FA700966CF2 /* FakeSentry.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4DDE2925430E2400966CF2 /* FakeSentry.swift */; };
@@ -514,6 +515,7 @@
 		CAA246D1257A725100D84AD9 /* markets.json in Resources */ = {isa = PBXBuildFile; fileRef = CAA246D0257A725100D84AD9 /* markets.json */; };
 		CAA2F3F3257A79C700EBAD38 /* FilterController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA2F3F2257A79C700EBAD38 /* FilterController.swift */; };
 		CAA3B7E62497DCB60094E3C1 /* LoginDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA3B7E52497DCB60094E3C1 /* LoginDataSource.swift */; };
+		CAA6FD0928182EFA006314E1 /* NTPIntroViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA6FD0828182EFA006314E1 /* NTPIntroViewController.swift */; };
 		CAAB66B9268327000024105C /* SearchbarCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAAB66B8268326FF0024105C /* SearchbarCell.swift */; };
 		CAAB66BB268369C20024105C /* EmptyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAAB66BA268369C20024105C /* EmptyCell.swift */; };
 		CAAD53542541B6A1002501A5 /* EcosiaHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAAD53532541B6A1002501A5 /* EcosiaHistory.swift */; };
@@ -535,7 +537,6 @@
 		CE0AB93425F7C2B400333656 /* SnowplowTracker in Frameworks */ = {isa = PBXBuildFile; productRef = CE0AB93325F7C2B400333656 /* SnowplowTracker */; };
 		CE0AB94A25F7C42600333656 /* Analytics.Values.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE0AB94925F7C42600333656 /* Analytics.Values.swift */; };
 		CE0AB97225F7C43100333656 /* Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE0AB97125F7C43100333656 /* Analytics.swift */; };
-		CE0C911D2636F6AB00EF757F /* UpgradeScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE0C911C2636F6AB00EF757F /* UpgradeScreen.swift */; };
 		CE42163F27DA493D0069E311 /* SemanticColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE42163E27DA493D0069E311 /* SemanticColor.swift */; };
 		CE42164027DA4BDA0069E311 /* SemanticColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE42163E27DA493D0069E311 /* SemanticColor.swift */; };
 		CE7728DC26288B300084C771 /* LoadingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7728DB26288B300084C771 /* LoadingScreen.swift */; };
@@ -3158,6 +3159,7 @@
 		CA31D8E726E8CE930004FF64 /* EcosiaHomeLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaHomeLayout.swift; sourceTree = "<group>"; };
 		CA32540125485C700024B48D /* Ecosia.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Ecosia.entitlements; sourceTree = "<group>"; };
 		CA32552425487C1C0024B48D /* EcosiaBeta.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = EcosiaBeta.xcconfig; path = Configuration/EcosiaBeta.xcconfig; sourceTree = "<group>"; };
+		CA3D3C402812914300534B1B /* NTPTooltip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPTooltip.swift; sourceTree = "<group>"; };
 		CA4ACE4824C8C91500F55894 /* BreachAlertsDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreachAlertsDetailView.swift; sourceTree = "<group>"; };
 		CA4ADEC0268B06EA00CE1C88 /* TreesCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TreesCell.swift; sourceTree = "<group>"; };
 		CA4DDE2925430E2400966CF2 /* FakeSentry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeSentry.swift; sourceTree = "<group>"; };
@@ -3208,6 +3210,7 @@
 		CAA246D0257A725100D84AD9 /* markets.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = markets.json; sourceTree = "<group>"; };
 		CAA2F3F2257A79C700EBAD38 /* FilterController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterController.swift; sourceTree = "<group>"; };
 		CAA3B7E52497DCB60094E3C1 /* LoginDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginDataSource.swift; sourceTree = "<group>"; };
+		CAA6FD0828182EFA006314E1 /* NTPIntroViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPIntroViewController.swift; sourceTree = "<group>"; };
 		CAAB66B8268326FF0024105C /* SearchbarCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchbarCell.swift; sourceTree = "<group>"; };
 		CAAB66BA268369C20024105C /* EmptyCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyCell.swift; sourceTree = "<group>"; };
 		CAAD53532541B6A1002501A5 /* EcosiaHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaHistory.swift; sourceTree = "<group>"; };
@@ -3248,7 +3251,6 @@
 		CDF4403FBD53453987C9B8CB /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/ClearHistoryConfirm.strings; sourceTree = "<group>"; };
 		CE0AB94925F7C42600333656 /* Analytics.Values.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analytics.Values.swift; sourceTree = "<group>"; };
 		CE0AB97125F7C43100333656 /* Analytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analytics.swift; sourceTree = "<group>"; };
-		CE0C911C2636F6AB00EF757F /* UpgradeScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpgradeScreen.swift; sourceTree = "<group>"; };
 		CE0D8D0F25B5DEE200B76E47 /* MozillaAppServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MozillaAppServices.framework; path = Carthage/Build/iOS/MozillaAppServices.framework; sourceTree = "<group>"; };
 		CE42163E27DA493D0069E311 /* SemanticColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SemanticColor.swift; sourceTree = "<group>"; };
 		CE664A9AB0ACFC6960CD6E81 /* pt-PT */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-PT"; path = "pt-PT.lproj/HistoryPanel.strings"; sourceTree = "<group>"; };
@@ -5464,6 +5466,8 @@
 				CA4ADEC0268B06EA00CE1C88 /* TreesCell.swift */,
 				CADFBF9C26DFC6B300F6D925 /* TreesCellModel.swift */,
 				CA6178DF26D6185A006A21B7 /* NTPLayout.swift */,
+				CA3D3C402812914300534B1B /* NTPTooltip.swift */,
+				CAA6FD0828182EFA006314E1 /* NTPIntroViewController.swift */,
 			);
 			path = NTP;
 			sourceTree = "<group>";
@@ -5476,7 +5480,6 @@
 				CA051BEE2539B25B0096D30F /* EcosiaImport.swift */,
 				CA08B86E255EE8B6005CA6A4 /* EcosiaImport+PerformanceTests.swift */,
 				CE7728DB26288B300084C771 /* LoadingScreen.swift */,
-				CE0C911C2636F6AB00EF757F /* UpgradeScreen.swift */,
 			);
 			path = Migration;
 			sourceTree = "<group>";
@@ -8162,7 +8165,6 @@
 				96F627002669B0D100C82340 /* FxHomeRecentlySavedCollectionCell.swift in Sources */,
 				43446CEA2412066500F5C643 /* UIViewControllerExtension.swift in Sources */,
 				D301AAEE1A3A55B70078DD1D /* GridTabViewController.swift in Sources */,
-				CE0C911D2636F6AB00EF757F /* UpgradeScreen.swift in Sources */,
 				EB9A179B20E69A7F00B12184 /* ThemeManager.swift in Sources */,
 				EBFDB790211C83A5005CCA2F /* BrowserViewController+FindInPage.swift in Sources */,
 				C8A012F126AB07D70096A7A7 /* FxHomeJumpBackInViewModel.swift in Sources */,
@@ -8185,6 +8187,7 @@
 				CE0AB94A25F7C42600333656 /* Analytics.Values.swift in Sources */,
 				E4CD9E911A6897FB00318571 /* ReaderMode.swift in Sources */,
 				E68E7ADE1CAC208A00FDCA76 /* RemovePasscodeViewController.swift in Sources */,
+				CAA6FD0928182EFA006314E1 /* NTPIntroViewController.swift in Sources */,
 				962F394A2672D57A006BDA2A /* RecentItemsHelper.swift in Sources */,
 				CE9AEE0726EFA9CA00181C96 /* MultiplyImpactStep.swift in Sources */,
 				74C027451B2A348C001B1E88 /* SessionData.swift in Sources */,
@@ -8396,6 +8399,7 @@
 				E4A961181AC041C40069AD6F /* ReadabilityService.swift in Sources */,
 				D3BE7B261B054D4400641031 /* main.swift in Sources */,
 				CADFBF9D26DFC6B300F6D925 /* TreesCellModel.swift in Sources */,
+				CA3D3C412812914300534B1B /* NTPTooltip.swift in Sources */,
 				EB8A0A77206ABCE000A9859A /* WebPagesForTesting.swift in Sources */,
 				D3A9949C1A3686BD008AD1AC /* BrowserViewController.swift in Sources */,
 				E6CF28E71CB43B7900151AB3 /* SensitiveViewController.swift in Sources */,

@@ -297,6 +297,7 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel, FeatureF
 
         Section.allCases.forEach { collectionView.register($0.cellType, forCellWithReuseIdentifier: $0.cellIdentifier) }
         self.collectionView?.register(ASHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "Header")
+        self.collectionView?.register(NTPTooltip.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: NTPTooltip.key)
         collectionView?.keyboardDismissMode = .onDrag
         (collectionView?.collectionViewLayout as? UICollectionViewFlowLayout)?.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
 
@@ -379,6 +380,7 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel, FeatureF
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         timer?.invalidate()
+        User.shared.hideRebrandIntro()
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -674,6 +676,15 @@ extension FirefoxHomeViewController: UICollectionViewDelegateFlowLayout {
     
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
 
+        let section = Section(rawValue: indexPath.section)
+
+        if section == .impact {
+            let tooltip = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: NTPTooltip.key, for: indexPath) as! NTPTooltip
+            tooltip.setText("Track your progress and get insights about your impact")
+            tooltip.delegate = self
+            return tooltip
+        }
+
         let view = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "Header", for: indexPath) as! ASHeaderView
         let title = Section(indexPath.section).title
         view.title = title
@@ -712,6 +723,9 @@ extension FirefoxHomeViewController: UICollectionViewDelegateFlowLayout {
             } else {
                 return Section.topSites.headerHeight
             }
+        case .impact:
+            // Ecosia: minimal height to trigger whether header tooltip is shown
+            return User.shared.showsRebrandIntro ? .init(width: 200, height: 1) : .zero
         default:
             return .zero
         }
@@ -1287,6 +1301,8 @@ extension FirefoxHomeViewController: UIPopoverPresentationControllerDelegate {
     }
 }
 
+// MARK: - Ecosia Additions
+
 extension FirefoxHomeViewController: SearchbarCellDelegate {
     func searchbarCellPressed(_ cell: SearchbarCell) {
         delegate?.homeDidTapSearchButton(self)
@@ -1358,5 +1374,15 @@ extension FirefoxHomeViewController: TreesCellDelegate {
             }
         }
         delegate?.home(self, willBegin: .zero)
+    }
+}
+
+extension FirefoxHomeViewController: NTPTooltipDelegate {
+    func ntpTooltipTapped(_ tooltip: NTPTooltip) {
+        UIView.animate(withDuration: 0.3) {
+            tooltip.alpha = 0
+        } completion: { _ in
+            User.shared.hideRebrandIntro()
+        }
     }
 }

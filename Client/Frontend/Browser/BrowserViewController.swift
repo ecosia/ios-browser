@@ -1980,13 +1980,16 @@ extension BrowserViewController {
             self.profile.prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
             User.shared.firstTime = false
             User.shared.migrated = true
-            User.shared.hideWelcomeScreen()
+            User.shared.hideRebrandIntro()
         } else if User.shared.migrated != true {
             present(LoadingScreen(profile: profile, tabManager: tabManager, referrals: referrals), animated: true)
-        } else if User.shared.showsWelcomeScreen {
-            present(UpgradeScreen(), animated: true)
         } else if let pendingClaim = User.shared.referrals.pendingClaim {
             present(LoadingScreen(profile: profile, tabManager: tabManager, referrals: referrals, referralCode: pendingClaim), animated: true)
+        } else if User.shared.showsRebrandIntro {
+            let intro = NTPIntroViewController()
+            intro.modalPresentationStyle = .overFullScreen
+            intro.modalTransitionStyle = .crossDissolve
+            present(intro, animated: true)
         }
     }
 

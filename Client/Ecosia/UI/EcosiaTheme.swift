@@ -46,6 +46,7 @@ class EcosiaTheme {
     var impactTreeCountBackground: UIColor { treeCountBackground }
     var ntpImpactBackground: UIColor { .white }
     var impactBackground: UIColor { UIColor.Photon.Grey10 }
+    var ntpIntroBackground: UIColor { .Light.Background.primary }
     var impactMultiplyCardBackground: UIColor { .white }
     var impactMultiplyCardBorder: UIColor { .Photon.Grey20 }
     var trackingSheetBackground: UIColor { .Light.Background.tertiary }
@@ -77,7 +78,7 @@ class EcosiaTheme {
     var banner: UIColor { return UIColor(named: "banner")!}
     var underlineGrey: UIColor { return UIColor(named: "underlineGrey")! }
     var cardText: UIColor { UIColor(named: "cardText")!}
-    var welcomeScreenBackground: UIColor { UIColor.Photon.Grey70.withAlphaComponent(0.4) }
+    var modalOverlayBackground: UIColor { UIColor(rgb: 0x333333).withAlphaComponent(0.4) }
 
     var teal60: UIColor { UIColor(rgb: 0x267A82) }
     var segmentSelectedText: UIColor { .Light.Text.primary }
@@ -91,6 +92,7 @@ class EcosiaTheme {
 
     var toastImageTint: UIColor { .init(red: 0.847, green: 1, blue: 0.502, alpha: 1) }
     var autocompleteBackground: UIColor { .Light.Background.primary }
+    var tooltipBackground: UIColor { .Light.Background.quarternary }
 }
 
 final class DarkEcosiaTheme: EcosiaTheme {
@@ -107,6 +109,8 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var treeCountBackground: UIColor { UIColor.Photon.Grey70 }
     override var impactTreeCountBackground: UIColor { UIColor.Photon.Grey80 }
     override var ntpImpactBackground: UIColor { UIColor.Photon.Grey80}
+    override var ntpIntroBackground: UIColor { .Dark.Background.tertiary }
+
     override var impactBackground: UIColor { UIColor.Photon.Grey60 }
     override var impactMultiplyCardBackground: UIColor { .Photon.Grey70 }
     override var impactMultiplyCardBorder: UIColor { .clear }
@@ -139,7 +143,7 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var banner: UIColor { return UIColor(named: "bannerDark")!}
     override var underlineGrey: UIColor { return UIColor(named: "underlineGreyDark")! }
     override var cardText: UIColor { UIColor(named: "cardTextDark")!}
-    override var welcomeScreenBackground: UIColor { UIColor.Photon.Grey90.withAlphaComponent(0.8) }
+    override var modalOverlayBackground: UIColor { UIColor(rgb: 0x333333).withAlphaComponent(0.6) }
 
     override var segmentSelectedText: UIColor { UIColor.Photon.Grey90 }
     override var segmentBackground: UIColor { .Dark.Background.tertiary }
@@ -166,5 +170,31 @@ extension DynamicFontHelper {
     var LargeSizeMediumFontAS: UIFont {
         let size = min(DeviceFontSize + 3, 18)
         return UIFont.systemFont(ofSize: size, weight: .medium)
+    }
+}
+
+class EcosiaPrimaryButton: UIButton {
+    override var isSelected: Bool {
+        set {
+            super.isSelected = newValue
+            update()
+        }
+        get {
+            return super.isSelected
+        }
+    }
+
+    override var isHighlighted: Bool {
+        set {
+            super.isHighlighted = newValue
+            update()
+        }
+        get {
+            return super.isHighlighted
+        }
+    }
+
+    private func update() {
+        backgroundColor = (isSelected || isHighlighted) ? .theme.ecosia.primaryButtonActive : .theme.ecosia.primaryButton
     }
 }

@@ -683,9 +683,10 @@ extension TabManager {
     func restoreTabs(_ forced: Bool = false) {
         defer {
             // Always make sure there is a single normal tab.
-            if normalTabs.isEmpty {
+            // Ecosia: this logic makes us start on NTP if user should see rebrand intro
+            if normalTabs.isEmpty || User.shared.showsRebrandIntro {
                 let tab = addTab()
-                if selectedTab == nil {
+                if selectedTab == nil || User.shared.showsRebrandIntro {
                     selectTab(tab)
                 }
             }

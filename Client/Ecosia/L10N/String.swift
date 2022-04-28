@@ -97,9 +97,6 @@ extension String {
         case weAreMomentarilyUnable = "We are momentarily unable to load all of your settings."
         case continueMessage = "Continue"
         case retryMessage = "Retry"
-        case welcomeToTheNewEcosia = "Welcome to the new Ecosia app!"
-        case weHaveDoneSome = "We've done some re-arranging to make it easier for you to browse the web and plant trees with Ecosia."
-        case takeALook = "Take a look"
         case setAsDefaultBrowser = "Set Ecosia as default browser"
         case linksFromWebsites = "Links from websites, emails or messages will automatically open in Ecosia."
         case showTopSites = "Show Top Sites"
@@ -123,5 +120,8 @@ extension String {
         case downloadEcosiaOn = "(1) Download Ecosia on your iPhone for free"
         case clickMyInvitation = "(2) Click my invitation link so we can plant trees together:"
         case letsDoThis = "Let's do this"
+        case seeWhatsNew = "See what's new"
+        case ecosiaNewLook = "Ecosia has a new look, and you can now easily see your progress and how many trees you’ve helped plant."
+        case discoverEcosia = "Discover the new Ecosia"
     }
 }
