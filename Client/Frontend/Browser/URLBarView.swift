@@ -449,7 +449,6 @@ class URLBarView: UIView {
         locationTextField.textAlignment = .left
         locationTextField.accessibilityIdentifier = "address"
         locationTextField.accessibilityLabel = .URLBarLocationAccessibilityLabel
-        locationTextField.attributedPlaceholder = self.locationView.placeholder
         locationContainer.addSubview(locationTextField)
         // Disable dragging urls on iPhones because it conflicts with editing the text
         if UIDevice.current.userInterfaceIdiom != .pad {
@@ -457,7 +456,6 @@ class URLBarView: UIView {
         }
 
         locationTextField.applyTheme()
-        locationTextField.backgroundColor = UIColor.theme.textField.backgroundInOverlay
     }
 
     override func becomeFirstResponder() -> Bool {
@@ -850,6 +848,7 @@ extension URLBarView: Themeable {
     func applyTheme() {
         locationView.applyTheme()
         locationTextField?.applyTheme()
+        locationTextField?.attributedPlaceholder = self.locationView.placeholder
 
         actionButtons.forEach { $0.applyTheme() }
         tabsButton.applyTheme()
@@ -872,15 +871,18 @@ extension URLBarView: Themeable {
         warningMenuBadge.badge.tintBackground(color: UIColor.theme.browser.background)
         searchIconImageView.tintColor = isPrivate ? UIColor.theme.ecosia.primaryText : UIColor.theme.ecosia.primaryButton
 
+        locationActiveBorderColor = UIColor.theme.urlbar.activeBorder(isPrivate)
+        ToolbarTextField.applyUIMode(isPrivate: isPrivate)
 
-        if ThemeManager.instance.current.isDark {
-            locationContainer.layer.shadowOpacity = 0
-        } else {
+        // shadow only for NTP light mode
+        if !ThemeManager.instance.current.isDark && isHome {
             locationContainer.layer.shadowOpacity = 1
             locationContainer.layer.shadowColor = UIColor(red: 0.059, green: 0.059, blue: 0.059, alpha: 0.18).cgColor
             locationContainer.layer.shadowOpacity = 1
             locationContainer.layer.shadowRadius = 2
             locationContainer.layer.shadowOffset = CGSize(width: 0, height: 1)
+        } else {
+            locationContainer.layer.shadowOpacity = 0
         }
     }
 }
@@ -892,9 +894,6 @@ extension URLBarView: PrivateModeUI {
         if UIDevice.current.userInterfaceIdiom != .pad {
             privateModeBadge.show(isPrivate)
         }
-        
-        locationActiveBorderColor = UIColor.theme.urlbar.activeBorder(isPrivate)
-        ToolbarTextField.applyUIMode(isPrivate: isPrivate)
         applyTheme()
     }
 }

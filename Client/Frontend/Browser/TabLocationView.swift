@@ -455,8 +455,8 @@ class ReaderModeButton: UIButton {
     override init(frame: CGRect) {
         super.init(frame: frame)
         adjustsImageWhenHighlighted = false
-        setImage(UIImage(systemName: "doc.plaintext"), for: .normal)
-        setImage(.init(systemName: "doc.plaintext.fill"), for: .selected)
+        setImage(.init(named: "ReaderModeAvailable"), for: .normal)
+        setImage(.init(named: "ReaderModeActive"), for: .selected)
     }
 
     required init?(coder aDecoder: NSCoder) {
