@@ -537,7 +537,7 @@ extension BookmarksPanel: LibraryPanelContextMenu {
         let pinTopSite = PhotonActionSheetItem(title: Strings.AddToShortcutsActionTitle, iconString: "action_pin", handler: { _, _ in
             self.profile.history.addPinnedTopSite(site).uponQueue(.main) { result in
                 if result.isSuccess {
-                    SimpleToast().showAlertWithText(Strings.AppMenuAddPinToShortcutsConfirmMessage, bottomContainer: self.view)
+                    SimpleToast().showAlertWithText(Strings.AppMenuAddPinToShortcutsConfirmMessage, image: "action_pin", bottomContainer: self.view)
                 }
             }
         })

@@ -9,8 +9,8 @@ import UIKit
 struct ButtonToastUX {
     static let ToastHeight: CGFloat = 55.0 + ToastOffset
     static let ToastOffset: CGFloat = 12
-    static let ToastPadding: CGFloat = 16.0
-    static let ToastButtonPadding: CGFloat = 16.0
+    static let ToastPadding: CGFloat = 12.0
+    static let ToastButtonPadding: CGFloat = 12.0
     static let ToastDelay = DispatchTimeInterval.milliseconds(900)
     static let ToastButtonBorderRadius: CGFloat = 5
     static let ToastButtonBorderWidth: CGFloat = 1
@@ -62,12 +62,14 @@ class ButtonToast: Toast {
         let horizontalStackView = UIStackView()
         horizontalStackView.axis = .horizontal
         horizontalStackView.alignment = .center
+        horizontalStackView.distribution = .fillProportionally
         horizontalStackView.spacing = ButtonToastUX.ToastPadding
         horizontalStackView.layer.cornerRadius = 10
         horizontalStackView.backgroundColor = SimpleToastUX.ToastDefaultColor
 
         if let imageName = imageName {
             let icon = UIImageView(image: UIImage.templateImageNamed(imageName))
+            icon.contentMode = .scaleAspectFit
             icon.tintColor = UIColor.theme.ecosia.toastImageTint
             horizontalStackView.addArrangedSubview(UIView())
             horizontalStackView.addArrangedSubview(icon)
@@ -81,9 +83,10 @@ class ButtonToast: Toast {
         label.textAlignment = textAlignment
         label.textColor = UIColor.theme.ecosia.primaryTextInverted
         label.font = UIFont.preferredFont(forTextStyle: .body)
+        label.adjustsFontForContentSizeCategory = true
         label.text = labelText
         label.lineBreakMode = .byWordWrapping
-        label.numberOfLines = 0
+        label.numberOfLines = 1
         labelStackView.addArrangedSubview(label)
 
         var descriptionLabel: UILabel?

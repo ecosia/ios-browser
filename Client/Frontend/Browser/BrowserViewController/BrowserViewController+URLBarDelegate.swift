@@ -139,8 +139,12 @@ extension BrowserViewController: URLBarDelegate, FeatureFlagsProtocol {
                     isButtonTapped ? self.addBookmark(url: urlString) : nil
                 }
                 self.show(toast: toast)
+            case .addToReadingList:
+                SimpleToast().showAlertWithText(successMessage, image: "reader", bottomContainer: self.webViewContainer)
+            case .pinPage, .removePinPage:
+                SimpleToast().showAlertWithText(successMessage, image: "action_unpin", bottomContainer: self.webViewContainer)
             default:
-                SimpleToast().showAlertWithText(successMessage, bottomContainer: self.webViewContainer)
+                SimpleToast().showAlertWithText(successMessage, image: "check", bottomContainer: self.webViewContainer)
             }
         }
 
@@ -245,7 +249,7 @@ extension BrowserViewController: URLBarDelegate, FeatureFlagsProtocol {
         switch result.value {
         case .success:
             UIAccessibility.post(notification: UIAccessibility.Notification.announcement, argument: String.ReaderModeAddPageSuccessAcessibilityLabel)
-            SimpleToast().showAlertWithText(Strings.ShareAddToReadingListDone, bottomContainer: self.webViewContainer)
+            SimpleToast().showAlertWithText(Strings.ShareAddToReadingListDone, image: "reader", bottomContainer: self.webViewContainer)
         case .failure(let error):
             UIAccessibility.post(notification: UIAccessibility.Notification.announcement, argument: String.ReaderModeAddPageMaybeExistsErrorAccessibilityLabel)
             print("readingList.createRecordWithURL(url: \"\(url.absoluteString)\", ...) failed with error: \(error)")

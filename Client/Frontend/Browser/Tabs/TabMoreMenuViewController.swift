@@ -195,7 +195,7 @@ extension TabMoreMenuViewController: UITableViewDelegate {
             switch indexPath.row {
             case 0:
                 UIPasteboard.general.url = url
-                SimpleToast().showAlertWithText(Strings.AppMenuCopyURLConfirmMessage, bottomContainer: self.view)
+                SimpleToast().showAlertWithText(Strings.AppMenuCopyURLConfirmMessage, image: "menu-Copy-Link", bottomContainer: self.view)
                 dismissMenu()
             case 1:
                 dismissMenu()
