@@ -14,8 +14,8 @@
         "package": "Core",
         "repositoryURL": "https://github.com/ecosia/ios-core.git",
         "state": {
-          "branch": "rebrand-intro-flag",
-          "revision": "d95eca210815a78908cc3121f20beaf3695c6755",
+          "branch": "main",
+          "revision": "54ed461c6d8167eceb1d01c89e839b3068c10c6d",
           "version": null
         }
       },

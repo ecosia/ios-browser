@@ -13950,7 +13950,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = "rebrand-intro-flag";
+				branch = main;
 				kind = branch;
 			};
 		};
