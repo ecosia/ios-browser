@@ -121,7 +121,8 @@ extension String {
         case clickMyInvitation = "(2) Click my invitation link so we can plant trees together:"
         case letsDoThis = "Let's do this"
         case seeWhatsNew = "See what's new"
-        case ecosiaNewLook = "Ecosia has a new look, and you can now easily see your progress and how many trees you’ve helped plant."
+        case ecosiaNewLook = "Ecosia has a new look, and we added an easy way for you to track your trees."
         case discoverEcosia = "Discover the new Ecosia"
+        case trackYourProgress = "Track your progress and get insights about your impact"
     }
 }
