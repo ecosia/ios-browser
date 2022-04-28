@@ -20,9 +20,8 @@ struct SimpleToastUX {
 }
 
 struct SimpleToast {
-    func showAlertWithText(_ text: String, bottomContainer: UIView) {
-        let toast = self.createView()
-        toast.text = text
+    func showAlertWithText(_ text: String, image: String, bottomContainer: UIView) {
+        let toast = self.createView(text: text, image: image)
         toast.layer.cornerRadius = 10
         toast.layer.masksToBounds = true
 
@@ -36,13 +35,32 @@ struct SimpleToast {
         animate(toast)
     }
 
-    fileprivate func createView() -> UILabel {
+    fileprivate func createView(text: String, image: String) -> UIStackView {
+        let stack = UIStackView()
+        stack.axis = .horizontal
+        stack.alignment = .center
+        stack.distribution = .fillProportionally
+        stack.spacing = ButtonToastUX.ToastPadding
+        stack.layer.cornerRadius = 10
+        stack.backgroundColor = SimpleToastUX.ToastDefaultColor
+
         let toast = UILabel()
+        toast.text = text
         toast.textColor = UIColor.theme.ecosia.primaryTextInverted
-        toast.backgroundColor = SimpleToastUX.ToastDefaultColor
         toast.font = SimpleToastUX.ToastFont
-        toast.textAlignment = .center
-        return toast
+        toast.adjustsFontForContentSizeCategory = true
+        toast.textAlignment = .left
+
+        let imageView = UIImageView(image: .init(named: image)?.withRenderingMode(.alwaysTemplate))
+        imageView.tintColor = UIColor.theme.ecosia.toastImageTint
+        imageView.contentMode = .scaleAspectFit
+
+        stack.addArrangedSubview(UIView())
+        stack.addArrangedSubview(imageView)
+        stack.addArrangedSubview(toast)
+        stack.addArrangedSubview(UIView())
+
+        return stack
     }
 
     fileprivate func dismiss(_ toast: UIView) {
