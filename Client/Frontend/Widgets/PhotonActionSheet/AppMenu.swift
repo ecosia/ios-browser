@@ -119,7 +119,7 @@ extension PhotonActionSheetProtocol {
 
         let nightModeEnabled = NightModeHelper.isActivated(profile.prefs)
         let nightModeTitle = nightModeEnabled ? String.localized(.turnOffDarkMode) : String.localized(.forceDarkMode) 
-        let nightMode = PhotonActionSheetItem(title: nightModeTitle, text: .localized(.invertColors), iconString: "menu-NightMode", isEnabled: nightModeEnabled) { _, _ in
+        let nightMode = PhotonActionSheetItem(title: nightModeTitle, text: .localized(.invertColors), iconString: nightModeEnabled ? "menu-NightMode-off" : "menu-NightMode", isEnabled: nightModeEnabled) { _, _ in
             NightModeHelper.toggle(self.profile.prefs, tabManager: self.tabManager)
 
             if nightModeEnabled {
