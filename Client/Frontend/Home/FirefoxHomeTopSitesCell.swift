@@ -60,8 +60,6 @@ class TopSiteItemCell: UICollectionViewCell, Themeable {
 
     lazy private var faviconBG: UIView = {
         let view = UIView()
-        //view.layer.borderWidth = TopSiteCellUX.BorderWidth
-        //view.layer.borderColor = TopSiteCellUX.BorderColor.cgColor
         view.layer.cornerRadius = TopSiteCellUX.IconBackgroundSize / 2.0
         view.clipsToBounds = true
         view.layer.masksToBounds = true
