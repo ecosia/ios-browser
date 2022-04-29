@@ -14,12 +14,12 @@ private struct TopSiteCellUX {
     static let TitleOffset: CGFloat = 4
     static let OverlayColor = UIColor(white: 0.0, alpha: 0.25)
     static let IconCornerRadius: CGFloat = 4
-    static let BackgroundSize = CGSize(width: 60, height: 60)
-    static let IconBackgroundSize: CGFloat = 48
-    static let IconSize: CGFloat = 28
-    static let BorderColor = UIColor.Photon.Grey20
+    static let BackgroundSize = CGSize(width: 52, height: 52)
+    static let IconBackgroundSize: CGFloat = 52
+    static let IconSize: CGFloat = 32
+    static var BorderColor: UIColor { return .theme.ecosia.secondaryButton }
     static let BorderWidth: CGFloat = 1
-    static let PinIconSize: CGFloat = 12
+    static let PinIconSize: CGFloat = 16
     static let PinColor = UIColor.Photon.Grey60
     static let FavIconInset: CGFloat = 18
 }
@@ -43,7 +43,6 @@ class TopSiteItemCell: UICollectionViewCell, Themeable {
     lazy var pinImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage.templateImageNamed("pin_small")
-        imageView.tintColor = UIColor.theme.homePanel.topSitePin
         return imageView
     }()
 
@@ -61,8 +60,8 @@ class TopSiteItemCell: UICollectionViewCell, Themeable {
 
     lazy private var faviconBG: UIView = {
         let view = UIView()
-        view.layer.borderWidth = TopSiteCellUX.BorderWidth
-        view.layer.borderColor = TopSiteCellUX.BorderColor.cgColor
+        //view.layer.borderWidth = TopSiteCellUX.BorderWidth
+        //view.layer.borderColor = TopSiteCellUX.BorderColor.cgColor
         view.layer.cornerRadius = TopSiteCellUX.IconBackgroundSize / 2.0
         view.clipsToBounds = true
         view.layer.masksToBounds = true
@@ -100,7 +99,7 @@ class TopSiteItemCell: UICollectionViewCell, Themeable {
         titleLabel.snp.makeConstraints { make in
             make.left.equalTo(contentView).offset(TopSiteCellUX.TitleOffset)
             make.right.equalTo(contentView).offset(-TopSiteCellUX.TitleOffset)
-            make.top.equalTo(faviconBG.snp.bottom).offset(8)
+            make.top.equalTo(faviconBG.snp.bottom).offset(4)
             let maxHeight = titleLabel.font.pointSize * (CGFloat(titleLabel.numberOfLines) + 0.6) + 8
             make.height.lessThanOrEqualTo(maxHeight)
         }
@@ -159,13 +158,12 @@ class TopSiteItemCell: UICollectionViewCell, Themeable {
 
         // If its a pinned site add a bullet point to the front
         if let _ = site as? PinnedSite {
-            titleWrapper.addSubview(pinImageView)
+            contentView.addSubview(pinImageView)
             pinImageView.snp.makeConstraints { make in
-                make.right.equalTo(self.faviconBG.snp.left).offset(-4)
+                make.top.left.equalTo(self.faviconBG)
                 make.size.equalTo(TopSiteCellUX.PinIconSize)
-                make.centerY.equalTo(self.imageView.snp.centerY)
             }
-            /* Ecosia TODO: check pin site
+            /* Ecosia
             titleLabel.snp.updateConstraints { make in
                 make.leading.equalTo(titleWrapper).offset(TopSiteCellUX.PinIconSize + TopSiteCellUX.TitleOffset)
             }
@@ -195,25 +193,20 @@ class TopSiteItemCell: UICollectionViewCell, Themeable {
 
     func applyTheme() {
         pinImageView.tintColor = UIColor.theme.homePanel.topSitePin
-        faviconBG.backgroundColor = UIColor.theme.homePanel.shortcutBackground
-        faviconBG.layer.borderColor = TopSiteCellUX.BorderColor.cgColor
-        faviconBG.layer.borderWidth = ThemeManager.instance.current.isDark ? 0 : TopSiteCellUX.BorderWidth
-        faviconBG.layer.shadowColor = UIColor.theme.homePanel.shortcutShadowColor
-        faviconBG.layer.shadowOpacity = UIColor.theme.homePanel.shortcutShadowOpacity
+        faviconBG.backgroundColor = .theme.ecosia.secondaryButton
         selectedOverlay.backgroundColor = TopSiteCellUX.OverlayColor
         titleLabel.backgroundColor = UIColor.clear
-        titleLabel.textColor = UIColor.theme.ecosia.highContrastText
+        titleLabel.textColor = UIColor.theme.ecosia.primaryText
     }
 }
 
 // An empty cell to show when a row is incomplete
-class EmptyTopsiteDecorationCell: UICollectionReusableView {
+class EmptyTopsiteDecorationCell: UICollectionReusableView, Themeable {
 
     lazy private var emptyBG: UIView = {
         let view = UIView()
         view.layer.cornerRadius = TopSiteCellUX.IconBackgroundSize/2.0
         view.layer.borderWidth = TopSiteCellUX.BorderWidth
-        view.layer.borderColor = TopSiteCellUX.BorderColor.cgColor
         return view
     }()
 
@@ -225,10 +218,20 @@ class EmptyTopsiteDecorationCell: UICollectionReusableView {
             make.top.equalTo(self).offset(TopSiteCellUX.FavIconInset)
             make.centerX.equalTo(self)
         }
+        applyTheme()
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    func applyTheme () {
+        emptyBG.layer.borderColor = UIColor.theme.ecosia.secondaryButton.cgColor
+    }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        applyTheme()
     }
 }
 

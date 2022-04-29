@@ -789,10 +789,12 @@ class BrowserViewController: UIViewController {
         })
         view.setNeedsUpdateConstraints()
         urlBar.locationView.reloadButton.reloadButtonState = .disabled
+        statusBarOverlay.backgroundColor = urlBar.inOverlayMode ? .theme.textField.background : .theme.ecosia.ntpBackground
     }
 
     fileprivate func hideFirefoxHome() {
         scrollOverlays.forEach { $0.alpha = 1 }
+        statusBarOverlay.backgroundColor = .theme.textField.background
 
         guard let firefoxHomeViewController = self.firefoxHomeViewController else {
             return
@@ -2421,6 +2423,8 @@ extension BrowserViewController: Themeable {
 
         guard let contentScript = self.tabManager.selectedTab?.getContentScript(name: ReaderMode.name()) else { return }
         appyThemeForPreferences(profile.prefs, contentScript: contentScript)
+
+        statusBarOverlay.backgroundColor = firefoxHomeViewController == nil ? .theme.textField.background : .theme.ecosia.ntpBackground
     }
 }
 

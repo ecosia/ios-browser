@@ -54,7 +54,6 @@ class ASLibraryCell: UICollectionViewCell, Themeable {
             let words = view.title.text?.components(separatedBy: NSCharacterSet.whitespacesAndNewlines).count
             view.title.numberOfLines = words == 1 ? 1 : 2
             // view.button.backgroundColor = item.color
-            view.button.setTitleColor(UIColor.theme.ecosia.highContrastText, for: .normal)
             view.accessibilityLabel = item.title
             mainView.addArrangedSubview(view)
             libraryButtons.append(view)
@@ -66,8 +65,10 @@ class ASLibraryCell: UICollectionViewCell, Themeable {
     }
 
     func applyTheme() {
-        libraryButtons.forEach { button in
-            button.title.textColor = UIColor.theme.ecosia.highContrastText
+        libraryButtons.forEach { item in
+            item.title.textColor = .theme.ecosia.primaryText
+            item.button.tintColor = .theme.ecosia.primaryButton
+            item.button.backgroundColor = .theme.ecosia.secondaryButton
         }
     }
 

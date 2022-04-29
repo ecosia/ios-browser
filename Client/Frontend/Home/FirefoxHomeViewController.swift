@@ -423,8 +423,8 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel, FeatureF
     }
 
     func applyTheme() {
-        collectionView?.backgroundColor = UIColor.theme.ecosia.primaryBackground
-        self.view.backgroundColor = UIColor.theme.ecosia.primaryBackground
+        collectionView?.backgroundColor = .theme.ecosia.ntpBackground
+        self.view.backgroundColor = .theme.ecosia.ntpBackground
         collectionView.visibleCells.forEach({
             ($0 as? Themeable)?.applyTheme()
         })

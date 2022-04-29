@@ -104,10 +104,10 @@ final class NTPTooltip: UICollectionReusableView, Themeable {
     }
 
     func applyTheme() {
-        tail.tintColor = UIColor.theme.ecosia.tooltipBackground
-        background.backgroundColor = UIColor.theme.ecosia.tooltipBackground
-        textLabel.textColor = .Dark.Text.primary
-        closeImage.tintColor = .Dark.Text.primary
+        tail.tintColor = UIColor.theme.ecosia.quarternaryBackground
+        background.backgroundColor = UIColor.theme.ecosia.quarternaryBackground
+        textLabel.textColor = .theme.ecosia.primaryTextInverted
+        closeImage.tintColor = .theme.ecosia.primaryTextInverted
     }
 
     @objc func tapped() {

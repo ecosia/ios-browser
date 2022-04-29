@@ -22,26 +22,22 @@ final class LogoCell: UICollectionViewCell, Themeable {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
 
-        let logo = UIImageView(image: UIImage(themed: "ecosiaLogo"))
+        let logo = UIImageView()
         logo.translatesAutoresizingMaskIntoConstraints = false
         logo.clipsToBounds = true
         logo.contentMode = .scaleAspectFit
         contentView.addSubview(logo)
         self.logo = logo
 
-        let bottom = logo.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16)
+        let bottom = logo.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -22)
         bottom.priority = .defaultHigh
         bottom.isActive = true
 
-        logo.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 24).isActive = true
-
+        let height = max(UIScreen.main.bounds.width, UIScreen.main.bounds.height)
+        logo.topAnchor.constraint(equalTo: contentView.topAnchor, constant: (height/10)).isActive = true
         logo.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
-        logo.heightAnchor.constraint(equalTo: logo.widthAnchor, multiplier: 0.71).isActive = true
-        logo.widthAnchor.constraint(lessThanOrEqualToConstant: 95).isActive = true
-        logo.widthAnchor.constraint(lessThanOrEqualTo: contentView.widthAnchor, multiplier: 0.33).isActive = true
-        let logoWidth = logo.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.33)
-        logoWidth.priority = .defaultHigh
-        logoWidth.isActive = true
+        logo.widthAnchor.constraint(equalToConstant: 144).isActive = true
+        applyTheme()
     }
 
     func applyTheme() {

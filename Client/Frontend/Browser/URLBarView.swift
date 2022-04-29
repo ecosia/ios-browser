@@ -869,7 +869,7 @@ extension URLBarView: Themeable {
         privateModeBadge.badge.tintBackground(color: UIColor.theme.browser.background)
         appMenuBadge.badge.tintBackground(color: UIColor.theme.browser.background)
         warningMenuBadge.badge.tintBackground(color: UIColor.theme.browser.background)
-        searchIconImageView.tintColor = isPrivate ? UIColor.theme.ecosia.primaryText : UIColor.theme.ecosia.primaryButton
+        searchIconImageView.tintColor = isPrivate ? UIColor.theme.ecosia.primaryText : UIColor.theme.ecosia.textfieldIconTint
 
         locationActiveBorderColor = UIColor.theme.urlbar.activeBorder(isPrivate)
         ToolbarTextField.applyUIMode(isPrivate: isPrivate)

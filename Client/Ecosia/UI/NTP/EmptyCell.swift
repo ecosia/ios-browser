@@ -36,7 +36,7 @@ class EmptyCell: UICollectionViewCell, Themeable {
     }
 
     func applyTheme() {
-        contentView.backgroundColor = UIColor.theme.ecosia.primaryBackground
+        contentView.backgroundColor = .theme.ecosia.ntpBackground
     }
 
     override func prepareForReuse() {
