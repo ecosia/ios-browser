@@ -5414,6 +5414,14 @@
 			path = Extensions;
 			sourceTree = "<group>";
 		};
+		CA352ABE28215DC300A28168 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				CA6BFAAC25778CB90026DFFF /* Welcome.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
 		CA4DDE2825430DF800966CF2 /* Fake */ = {
 			isa = PBXGroup;
 			children = (
@@ -5428,12 +5436,12 @@
 		CA6BFAAB25778CAB0026DFFF /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				CA352ABE28215DC300A28168 /* Onboarding */,
 				CA05558126CD4B4B00126D0F /* MyImpact */,
 				CAAB66B7268326B80024105C /* NTP */,
 				CA6BFB7125778EDA0026DFFF /* Ecosia.xcassets */,
 				CA6BFAC325778D2C0026DFFF /* Colours.xcassets */,
 				CA6BFAD825778D4E0026DFFF /* EcosiaTheme.swift */,
-				CA6BFAAC25778CB90026DFFF /* Welcome.swift */,
 				CAAED205258130050048199C /* BrowserViewController+Ecosia.swift */,
 				CAA246BB257A723F00D84AD9 /* MarketsController.swift */,
 				CAA2F3F2257A79C700EBAD38 /* FilterController.swift */,

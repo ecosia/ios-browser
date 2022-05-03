@@ -1974,7 +1974,7 @@ extension BrowserViewController: UIAdaptivePresentationControllerDelegate {
 extension BrowserViewController {
     func presentIntroViewController(_ alwaysShow: Bool = false) {
 		// Ecosia: custom intro handling
-        if User.shared.firstTime {
+        if User.shared.firstTime || true {
             Analytics.shared.install()
             let welcome = Welcome()
             introVCPresentHelper(introViewController: welcome)
@@ -2117,7 +2117,7 @@ extension BrowserViewController {
         } else {
             introViewController.modalPresentationStyle = .fullScreen
         }
-        present(introViewController, animated: true) {
+        present(introViewController, animated: false) {
             // On first run (and forced) open up the homepage in the background.
             if let homePageURL = NewTabHomePageAccessors.getHomePage(self.profile.prefs), let tab = self.tabManager.selectedTab, DeviceInfo.hasConnectivity() {
                 tab.loadRequest(URLRequest(url: homePageURL))
