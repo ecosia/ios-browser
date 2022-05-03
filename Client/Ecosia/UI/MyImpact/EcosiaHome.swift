@@ -406,7 +406,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         collectionView.reloadData()
         view.backgroundColor = UIColor.theme.ecosia.modalBackground
         collectionView.backgroundColor = UIColor.theme.ecosia.modalBackground
-        navigationItem.leftBarButtonItem?.tintColor = UIColor.theme.ecosia.primaryToolbar
+        navigationItem.rightBarButtonItem?.tintColor = UIColor.white
         updateBarAppearance()
     }
 

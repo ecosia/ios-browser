@@ -55,7 +55,7 @@ class EcosiaTheme {
     var trackingSheetBackground: UIColor { .Light.Background.tertiary }
     
     var actionSheetBackground: UIColor { .Light.Background.primary }
-    var modalBackground: UIColor { .white }
+    var modalBackground: UIColor { .Light.Background.tertiary }
 
     var primaryText: UIColor { .Light.Text.primary }
     var primaryTextInverted: UIColor { .Dark.Text.primary }
@@ -122,7 +122,7 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var trackingSheetBackground: UIColor { .Dark.Background.secondary }
 
     override var actionSheetBackground: UIColor { .Dark.Background.secondary }
-    override var modalBackground: UIColor { UIColor.Photon.Grey80 }
+    override var modalBackground: UIColor { .Dark.Background.secondary }
 
     override var primaryText: UIColor { .Dark.Text.primary}
     override var primaryTextInverted: UIColor { .Light.Text.primary }
