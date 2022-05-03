@@ -35,6 +35,7 @@ final class SearchbarCell: UICollectionViewCell, Themeable {
         search.titleLabel?.font = .preferredFont(forTextStyle: .body)
         search.titleLabel?.adjustsFontForContentSizeCategory = true
         search.contentHorizontalAlignment = .left
+        search.accessibilityTraits = .searchField
         self.search = search
 
         search.addTarget(self, action: #selector(tapped), for: .touchUpInside)

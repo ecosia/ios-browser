@@ -44,9 +44,12 @@ class EcosiaTheme {
     var treeCountText: UIColor { UIColor(named: "emerald")! }
     var treeCountBackground: UIColor { UIColor(rgb: 0xE2F7F1) }
     var impactTreeCountBackground: UIColor { treeCountBackground }
-    var ntpImpactBackground: UIColor { .white }
     var impactBackground: UIColor { UIColor.Photon.Grey10 }
+
+    var ntpBackground: UIColor { .Light.Background.tertiary }
     var ntpIntroBackground: UIColor { .Light.Background.primary }
+    var ntpImpactBackground: UIColor { .white }
+
     var impactMultiplyCardBackground: UIColor { .white }
     var impactMultiplyCardBorder: UIColor { .Photon.Grey20 }
     var trackingSheetBackground: UIColor { .Light.Background.tertiary }
@@ -69,6 +72,7 @@ class EcosiaTheme {
     var primaryToolbar: UIColor { UIColor(named: "primaryToolbar")!}
     var primaryButton: UIColor { .Light.Button.primary }
     var primaryButtonActive: UIColor { .Light.Button.primaryActive }
+    var secondaryButton: UIColor { .Light.Button.secondary }
     var textfieldPlaceholder: UIColor { .Light.Text.secondary }
     var textfieldIconTint: UIColor { .Light.Button.primary }
     var personalCounterBorder: UIColor { UIColor.Photon.Grey20 }
@@ -92,7 +96,6 @@ class EcosiaTheme {
 
     var toastImageTint: UIColor { .init(red: 0.847, green: 1, blue: 0.502, alpha: 1) }
     var autocompleteBackground: UIColor { .Light.Background.primary }
-    var tooltipBackground: UIColor { .Light.Background.quarternary }
 }
 
 final class DarkEcosiaTheme: EcosiaTheme {
@@ -108,6 +111,8 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var treeCountText: UIColor { .white }
     override var treeCountBackground: UIColor { UIColor.Photon.Grey70 }
     override var impactTreeCountBackground: UIColor { UIColor.Photon.Grey80 }
+
+    override var ntpBackground: UIColor { .Dark.Background.primary }
     override var ntpImpactBackground: UIColor { UIColor.Photon.Grey80}
     override var ntpIntroBackground: UIColor { .Dark.Background.tertiary }
 
@@ -132,6 +137,7 @@ final class DarkEcosiaTheme: EcosiaTheme {
 
     override var primaryButton: UIColor { .Dark.Button.primary }
     override var primaryButtonActive: UIColor { .Dark.Button.primaryActive }
+    override var secondaryButton: UIColor { .Dark.Button.secondary }
 
     override var textfieldPlaceholder: UIColor { .Dark.Text.secondary }
     override var textfieldIconTint: UIColor { .Dark.Text.secondary }

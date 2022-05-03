@@ -11,8 +11,8 @@ import SyncTelemetry
 import SnapKit
 
 class LibraryShortcutView: UIView {
-    static let spacing: CGFloat = 16
-    static let iconSize: CGFloat = 48
+    static let spacing: CGFloat = 14
+    static let iconSize: CGFloat = 52
 
     var button = UIButton()
     var title = UILabel()
@@ -22,10 +22,10 @@ class LibraryShortcutView: UIView {
         addSubview(button)
         addSubview(title)
         button.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(LibraryShortcutView.spacing/2.0)
+            make.top.equalToSuperview().offset(10)
             make.centerX.equalToSuperview()
-            make.width.equalTo(LibraryShortcutView.iconSize + LibraryShortcutView.spacing)
-            make.height.equalTo(LibraryShortcutView.iconSize + LibraryShortcutView.spacing)
+            make.width.equalTo(LibraryShortcutView.iconSize)
+            make.height.equalTo(LibraryShortcutView.iconSize)
         }
         title.allowsDefaultTighteningForTruncation = true
         title.lineBreakMode = .byTruncatingTail
@@ -35,15 +35,16 @@ class LibraryShortcutView: UIView {
         title.numberOfLines = 2
         title.setContentHuggingPriority(.required, for: .vertical)
         title.snp.makeConstraints { make in
-            make.top.equalTo(button.snp.bottom).offset(0)
+            make.top.equalTo(button.snp.bottom).offset(4)
             let maxHeight = title.font.pointSize * 2.6
             make.leading.trailing.equalToSuperview().inset(2).priority(.veryHigh)
             make.height.lessThanOrEqualTo(maxHeight)
         }
         button.imageView?.contentMode = .scaleToFill
+        button.layer.cornerRadius = Self.iconSize/2.0
         button.contentVerticalAlignment = .fill
         button.contentHorizontalAlignment = .fill
-        button.imageEdgeInsets = UIEdgeInsets(equalInset: LibraryShortcutView.spacing/2.0)
+        button.imageEdgeInsets = UIEdgeInsets(equalInset: Self.spacing)
         button.tintColor = .white
     }
 
