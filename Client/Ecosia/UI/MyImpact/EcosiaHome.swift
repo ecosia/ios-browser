@@ -156,7 +156,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         layout.footerReferenceSize = .zero
         layout.headerReferenceSize = .zero
         self.init(collectionViewLayout: layout)
-        self.title = .localized(.myImpact).capitalized
+        self.title = .localized(.yourImpact)
         self.delegate = delegate
         self.referrals = referrals
         navigationItem.largeTitleDisplayMode = .always
