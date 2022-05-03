@@ -108,8 +108,8 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     private let images = Images(.init(configuration: .ephemeral))
     private let news = News()
     private let personalCounter = PersonalCounter()
+    private let background = Background()
     private weak var referrals: Referrals!
-    private weak var background: Background!
 
     lazy var impactModel: MyImpactCellModel = {
         return refreshImpactModel()
@@ -157,19 +157,11 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         layout.footerReferenceSize = .zero
         layout.headerReferenceSize = .zero
         
-        let background = Background()
         self.init(collectionViewLayout: layout)
         self.title = .localized(.yourImpact)
         self.delegate = delegate
         self.referrals = referrals
         navigationItem.largeTitleDisplayMode = .always
-        view.layer.addSublayer(background)
-        self.background = background
-        background.fillColor = UIColor.red.cgColor
-        
-        let a = UIView(frame: .init(width: 300, height: 300))
-        a.backgroundColor = .blue
-        view.insertSubview(a, at: 0)
     }
 
     override func viewDidLoad() {
@@ -208,6 +200,12 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
             self.impactModel = self.refreshImpactModel()
             self.collectionView.reloadSections([Section.impact.rawValue])
         }
+        
+        collectionView.backgroundView = background
+        
+        background.topAnchor.constraint(equalTo: collectionView.topAnchor).isActive = true
+        background.leftAnchor.constraint(equalTo: collectionView.leftAnchor).isActive = true
+        background.rightAnchor.constraint(equalTo: collectionView.rightAnchor).isActive = true
     }
 
     private var hasAppeared: Bool = false
@@ -420,6 +418,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         collectionView.reloadData()
         view.backgroundColor = UIColor.theme.ecosia.modalBackground
         collectionView.backgroundColor = .clear
+        background.backgroundColor = .theme.ecosia.modalHeader
         updateBarAppearance()
     }
 
