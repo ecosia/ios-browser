@@ -109,6 +109,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     private let news = News()
     private let personalCounter = PersonalCounter()
     private weak var referrals: Referrals!
+    private weak var background: Background!
 
     lazy var impactModel: MyImpactCellModel = {
         return refreshImpactModel()
@@ -155,11 +156,20 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
         layout.footerReferenceSize = .zero
         layout.headerReferenceSize = .zero
+        
+        let background = Background()
         self.init(collectionViewLayout: layout)
         self.title = .localized(.yourImpact)
         self.delegate = delegate
         self.referrals = referrals
         navigationItem.largeTitleDisplayMode = .always
+        view.layer.addSublayer(background)
+        self.background = background
+        background.fillColor = UIColor.red.cgColor
+        
+        let a = UIView(frame: .init(width: 300, height: 300))
+        a.backgroundColor = .blue
+        view.insertSubview(a, at: 0)
     }
 
     override func viewDidLoad() {
@@ -381,16 +391,20 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         guard let appearance = navigationController?.navigationBar.standardAppearance else { return }
 
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = UIColor.theme.ecosia.modalBackground
-        appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.theme.ecosia.highContrastText]
-        appearance.titleTextAttributes = [.foregroundColor: UIColor.theme.ecosia.highContrastText]
+        appearance.backgroundColor = .clear
+        appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
+        appearance.titleTextAttributes = [.foregroundColor: UIColor.theme.ecosia.primaryText]
 
         if showSeparator {
+            navigationController?.navigationBar.backgroundColor = .theme.ecosia.modalHeader
             appearance.shadowColor = nil
             appearance.shadowImage = nil
+            navigationItem.rightBarButtonItem?.tintColor = UIColor.white
         } else {
+            navigationController?.navigationBar.backgroundColor = .theme.ecosia.modalBackground
             appearance.shadowColor = UIColor.theme.ecosia.barSeparator
             appearance.shadowImage = UIImage()
+            navigationItem.rightBarButtonItem?.tintColor = UIColor.theme.ecosia.primaryButton
         }
         navigationController?.navigationBar.standardAppearance = appearance
         navigationController?.navigationBar.setNeedsDisplay()
@@ -405,8 +419,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     func applyTheme() {
         collectionView.reloadData()
         view.backgroundColor = UIColor.theme.ecosia.modalBackground
-        collectionView.backgroundColor = UIColor.theme.ecosia.modalBackground
-        navigationItem.rightBarButtonItem?.tintColor = UIColor.white
+        collectionView.backgroundColor = .clear
         updateBarAppearance()
     }
 
