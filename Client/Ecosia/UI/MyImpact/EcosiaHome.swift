@@ -202,10 +202,6 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         }
         
         collectionView.backgroundView = background
-        
-        background.topAnchor.constraint(equalTo: collectionView.topAnchor).isActive = true
-        background.leftAnchor.constraint(equalTo: collectionView.leftAnchor).isActive = true
-        background.rightAnchor.constraint(equalTo: collectionView.rightAnchor).isActive = true
     }
 
     private var hasAppeared: Bool = false
@@ -375,6 +371,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
 
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         showSeparator = scrollView.contentOffset.y + scrollView.adjustedContentInset.top <= 12
+        background.offset = 108 + scrollView.contentOffset.y
     }
 
     private var showSeparator = false {
