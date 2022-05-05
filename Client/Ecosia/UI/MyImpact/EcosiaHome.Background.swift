@@ -35,7 +35,9 @@ extension EcosiaHome {
             path.move(to: .zero)
             path.addLine(to: .init(x: frame.width, y: 0))
             path.addLine(to: .init(x: frame.width, y: y))
-            path.addLine(to: .init(x: 0, y: y))
+            path.addQuadCurve(to: .init(x: frame.width * 0.66, y: y), control: .init(x: frame.width * 0.83, y: y - 20))
+            path.addQuadCurve(to: .init(x: frame.width * 0.33, y: y), control: .init(x: frame.width * 0.5, y: y + 20))
+            path.addQuadCurve(to: .init(x: 0, y: y), control: .init(x: frame.width * 0.17, y: y - 20))
             path.closeSubpath()
             layerMask.path = path
         }
