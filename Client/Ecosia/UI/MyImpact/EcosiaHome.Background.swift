@@ -4,9 +4,18 @@
 
 import UIKit
 
+private let height = CGFloat(308)
+
 extension EcosiaHome {
     final class Background: UIView {
         private weak var layerMask: CAShapeLayer!
+        
+        var inset = CGFloat() {
+            didSet {
+                guard oldValue != inset else { return }
+                update()
+            }
+        }
         
         var offset = CGFloat() {
             didSet {
@@ -30,7 +39,7 @@ extension EcosiaHome {
         }
         
         private func update() {
-            let y = max(min(308 - offset, 308), 0)
+            let y = max(min(height - (inset + offset), height), 0)
             let path = CGMutablePath()
             path.move(to: .zero)
             path.addLine(to: .init(x: frame.width, y: 0))

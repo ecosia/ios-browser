@@ -369,7 +369,8 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
 
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         showSeparator = scrollView.contentOffset.y + scrollView.adjustedContentInset.top <= 12
-        background.offset = 108 + scrollView.contentOffset.y
+        background.inset = max(background.inset, scrollView.adjustedContentInset.top)
+        background.offset = scrollView.contentOffset.y
     }
 
     private var showSeparator = false {
