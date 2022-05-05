@@ -200,8 +200,6 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
             self.impactModel = self.refreshImpactModel()
             self.collectionView.reloadSections([Section.impact.rawValue])
         }
-        
-        collectionView.backgroundView = background
     }
 
     private var hasAppeared: Bool = false
@@ -389,17 +387,17 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         appearance.backgroundColor = .clear
         appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
         appearance.titleTextAttributes = [.foregroundColor: UIColor.theme.ecosia.primaryText]
+        appearance.shadowColor = UIColor.theme.ecosia.impactSeparator
+        appearance.shadowImage = UIImage()
 
         if showSeparator {
             navigationController?.navigationBar.backgroundColor = .theme.ecosia.modalHeader
-            appearance.shadowColor = nil
-            appearance.shadowImage = nil
             navigationItem.rightBarButtonItem?.tintColor = UIColor.white
+            collectionView.backgroundView = background
         } else {
             navigationController?.navigationBar.backgroundColor = .theme.ecosia.modalBackground
-            appearance.shadowColor = UIColor.theme.ecosia.barSeparator
-            appearance.shadowImage = UIImage()
             navigationItem.rightBarButtonItem?.tintColor = UIColor.theme.ecosia.primaryButton
+            collectionView.backgroundView = nil
         }
         navigationController?.navigationBar.standardAppearance = appearance
         navigationController?.navigationBar.setNeedsDisplay()

@@ -45,6 +45,7 @@ class EcosiaTheme {
     var treeCountBackground: UIColor { UIColor(rgb: 0xE2F7F1) }
     var impactTreeCountBackground: UIColor { treeCountBackground }
     var impactBackground: UIColor { UIColor.Photon.Grey10 }
+    var impactSeparator: UIColor { UIColor.Photon.Grey40 }
 
     var ntpBackground: UIColor { .Light.Background.tertiary }
     var ntpIntroBackground: UIColor { .Light.Background.primary }
@@ -112,6 +113,7 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var treeCountText: UIColor { .white }
     override var treeCountBackground: UIColor { UIColor.Photon.Grey70 }
     override var impactTreeCountBackground: UIColor { UIColor.Photon.Grey80 }
+    override var impactSeparator: UIColor { UIColor.Photon.Grey60 }
 
     override var ntpBackground: UIColor { .Dark.Background.primary }
     override var ntpImpactBackground: UIColor { UIColor.Photon.Grey80}
