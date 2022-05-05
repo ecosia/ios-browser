@@ -4,6 +4,10 @@
 
 import UIKit
 
+protocol WelcomeDelegate: AnyObject {
+    func welcomeDidFinish(_ welcome: Welcome)
+}
+
 final class Welcome: UIViewController {
     private weak var logo: UIImageView!
     private weak var background: UIImageView!
@@ -19,9 +23,11 @@ final class Welcome: UIViewController {
     private var stackTopConstraint: NSLayoutConstraint!
 
     private var zoomedOut = false
+    private weak var delegate: WelcomeDelegate?
 
     required init?(coder: NSCoder) { nil }
-    init() {
+    init(delegate: WelcomeDelegate) {
+        self.delegate = delegate
         super.init(nibName: nil, bundle: nil)
         modalPresentationCapturesStatusBarAppearance = true
     }
@@ -41,6 +47,14 @@ final class Welcome: UIViewController {
         addOverlay()
         addBackground()
         addStack()
+    }
+
+    private var didAppear = false
+    override func viewDidAppear(_ animated: Bool) {
+        guard !didAppear else { return }
+        addMask()
+        fadeIn()
+        didAppear = true
     }
 
     private func addOverlay() {
@@ -72,6 +86,7 @@ final class Welcome: UIViewController {
         background.translatesAutoresizingMaskIntoConstraints = false
         background.contentMode = .scaleAspectFill
         view.addSubview(background)
+        background.alpha = 0
         self.background = background
 
         background.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
@@ -118,7 +133,7 @@ final class Welcome: UIViewController {
         label.textColor = .white
         stack.addArrangedSubview(label)
 
-        let cta = UIButton(type: .custom)
+        let cta = UIButton(type: .system)
         cta.backgroundColor = .Light.Button.primary
         cta.setTitle("Get started", for: .normal)
         cta.titleLabel?.font = .preferredFont(forTextStyle: .callout)
@@ -132,14 +147,14 @@ final class Welcome: UIViewController {
         stack.addArrangedSubview(UIView())
         stack.addArrangedSubview(cta)
 
-        let skip = UIButton(type: .custom)
+        let skip = UIButton(type: .system)
         skip.backgroundColor = .clear
         skip.titleLabel?.font = .preferredFont(forTextStyle: .callout)
         skip.titleLabel?.adjustsFontForContentSizeCategory = true
         skip.setTitleColor(.Dark.Text.secondary, for: .normal)
         skip.setTitle("Skip welcome tour", for: .normal)
         skip.heightAnchor.constraint(equalToConstant: 50).isActive = true
-                skip.addTarget(self, action: #selector(skipTour), for: .primaryActionTriggered)
+        skip.addTarget(self, action: #selector(skipTour), for: .primaryActionTriggered)
 
         stack.addArrangedSubview(skip)
 
@@ -167,14 +182,12 @@ final class Welcome: UIViewController {
         self.mask = mask
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        addMask()
-        fadeIn()
-    }
+
 
     // MARK: Animations
     private func fadeIn() {
         UIView.animate(withDuration: 0.2) {
+            self.background.alpha = 1
             self.mask.alpha = 1
         } completion: { _ in
             self.zoomOut()
@@ -231,10 +244,13 @@ final class Welcome: UIViewController {
 
     // MARK: Actions
     @objc func getStarted() {
-
+        let tour = WelcomeTour()
+        tour.modalTransitionStyle = .crossDissolve
+        tour.modalPresentationStyle = .overFullScreen
+        present(tour, animated: true, completion: nil)
     }
 
     @objc func skipTour() {
-
+        delegate?.welcomeDidFinish(self)
     }
 }

@@ -478,6 +478,8 @@
 		CA24B52224ABD7D40093848C /* LoginsListViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA24B52024ABD7D40093848C /* LoginsListViewModelTests.swift */; };
 		CA24B53924ABFE250093848C /* LoginsListSelectionHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA24B53824ABFE250093848C /* LoginsListSelectionHelperTests.swift */; };
 		CA24B53B24ABFE5D0093848C /* LoginsListDataSourceHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA24B53A24ABFE5D0093848C /* LoginsListDataSourceHelperTests.swift */; };
+		CA2BCEE12823DE9700D7961F /* WelcomeTour.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2BCEE02823DE9700D7961F /* WelcomeTour.swift */; };
+		CA2BCEE328240DDF00D7961F /* WelcomeTourPlanet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2BCEE228240DDF00D7961F /* WelcomeTourPlanet.swift */; };
 		CA31D8E826E8CE930004FF64 /* EcosiaHomeLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA31D8E726E8CE930004FF64 /* EcosiaHomeLayout.swift */; };
 		CA3D3C412812914300534B1B /* NTPTooltip.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA3D3C402812914300534B1B /* NTPTooltip.swift */; };
 		CA4ACE4924C8C91600F55894 /* BreachAlertsDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4ACE4824C8C91500F55894 /* BreachAlertsDetailView.swift */; };
@@ -3156,6 +3158,8 @@
 		CA24B53A24ABFE5D0093848C /* LoginsListDataSourceHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginsListDataSourceHelperTests.swift; sourceTree = "<group>"; };
 		CA2548882760E589009C2DD2 /* CredentialProviderEcosia.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CredentialProviderEcosia.entitlements; sourceTree = "<group>"; };
 		CA25488A2760E7BD009C2DD2 /* CredentialProviderEcosiaBeta.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CredentialProviderEcosiaBeta.entitlements; sourceTree = "<group>"; };
+		CA2BCEE02823DE9700D7961F /* WelcomeTour.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeTour.swift; sourceTree = "<group>"; };
+		CA2BCEE228240DDF00D7961F /* WelcomeTourPlanet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeTourPlanet.swift; sourceTree = "<group>"; };
 		CA31D8E726E8CE930004FF64 /* EcosiaHomeLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaHomeLayout.swift; sourceTree = "<group>"; };
 		CA32540125485C700024B48D /* Ecosia.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Ecosia.entitlements; sourceTree = "<group>"; };
 		CA32552425487C1C0024B48D /* EcosiaBeta.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = EcosiaBeta.xcconfig; path = Configuration/EcosiaBeta.xcconfig; sourceTree = "<group>"; };
@@ -5418,6 +5422,8 @@
 			isa = PBXGroup;
 			children = (
 				CA6BFAAC25778CB90026DFFF /* Welcome.swift */,
+				CA2BCEE02823DE9700D7961F /* WelcomeTour.swift */,
+				CA2BCEE228240DDF00D7961F /* WelcomeTourPlanet.swift */,
 			);
 			path = Onboarding;
 			sourceTree = "<group>";
@@ -8341,6 +8347,7 @@
 				E65075511E37F6D1006961AC /* NSURLExtensionsMailTo.swift in Sources */,
 				63306D432110B3CD00F25400 /* TabManagerStore.swift in Sources */,
 				D83822001FC7961D00303C12 /* DispatchQueueExtensions.swift in Sources */,
+				CA2BCEE328240DDF00D7961F /* WelcomeTourPlanet.swift in Sources */,
 				D03F8EB22004014E003C2224 /* FaviconHandler.swift in Sources */,
 				EBC486992195F46B00CDA48D /* InternalSchemeHandler.swift in Sources */,
 				C8656D79270F866700E199EA /* FxHomeCustomizeView.swift in Sources */,
@@ -8435,6 +8442,7 @@
 				7B844E3D1BBDDB9D00E733A2 /* ChevronView.swift in Sources */,
 				43A5643823CD1E1C00B6857D /* UpdateViewController.swift in Sources */,
 				CAA246A7257A715D00D84AD9 /* EcosiaSettings.swift in Sources */,
+				CA2BCEE12823DE9700D7961F /* WelcomeTour.swift in Sources */,
 				437A9B682681256800FB41C1 /* InactiveTabCell.swift in Sources */,
 				439B008B26E6CE2300DFAF14 /* GroupedTabCell.swift in Sources */,
 				E4C358551AF144BA00299F7E /* FSReadingList.m in Sources */,

@@ -96,6 +96,7 @@ class EcosiaTheme {
 
     var toastImageTint: UIColor { .init(red: 0.847, green: 1, blue: 0.502, alpha: 1) }
     var autocompleteBackground: UIColor { .Light.Background.primary }
+    var welcomeBackground: UIColor { .Light.Background.tertiary }
 }
 
 final class DarkEcosiaTheme: EcosiaTheme {
@@ -162,6 +163,8 @@ final class DarkEcosiaTheme: EcosiaTheme {
 
     override var toastImageTint: UIColor { .init(red: 0.153, green: 0.322, blue: 0.263, alpha: 1) }
     override var autocompleteBackground: UIColor { .Dark.Background.secondary }
+    override var welcomeBackground: UIColor { .Dark.Background.secondary }
+
 
 }
 

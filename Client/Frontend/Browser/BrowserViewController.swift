@@ -478,6 +478,10 @@ class BrowserViewController: UIViewController {
         // Setup chron tabs A/B test
         chronTabsUserResearch = ChronTabsUserResearch()
         searchTelemetry = SearchTelemetry()
+
+        if User.shared.firstTime {
+            showFirefoxHome(inline: true)
+        }
     }
 
     fileprivate func setupConstraints() {
@@ -576,10 +580,10 @@ class BrowserViewController: UIViewController {
 
         if UIDevice.current.userInterfaceIdiom == .phone {
             // Ecosia: on phone blank screen if intro or migration is shown
-            self.view.alpha = (User.shared.firstTime || User.shared.migrated != true) ? 0.0 : 1.0
+            self.view.alpha =  (User.shared.migrated != true) ? 0.0 : 1.0
         } else {
             // on iPad only blank out for migration, not first time
-            self.view.alpha = (!User.shared.firstTime && User.shared.migrated != true) ? 0.0 : 1.0
+            self.view.alpha = User.shared.migrated != true ? 0.0 : 1.0
         }
 
         if !displayedRestoreTabsAlert && !cleanlyBackgrounded() && crashedLastLaunch() {
@@ -779,14 +783,22 @@ class BrowserViewController: UIViewController {
         // We have to run this animation, even if the view is already showing
         // because there may be a hide animation running and we want to be sure
         // to override its results.
-        UIView.animate(withDuration: 0.2, animations: { () -> Void in
+
+        if !User.shared.firstTime { // Ecosia: no animation for first start
+            UIView.animate(withDuration: 0.2, animations: { () -> Void in
+                self.firefoxHomeViewController?.view.alpha = 1
+            }, completion: { finished in
+                if finished {
+                    self.webViewContainer.accessibilityElementsHidden = true
+                    UIAccessibility.post(notification: UIAccessibility.Notification.screenChanged, argument: nil)
+                }
+            })
+        } else {
             self.firefoxHomeViewController?.view.alpha = 1
-        }, completion: { finished in
-            if finished {
-                self.webViewContainer.accessibilityElementsHidden = true
-                UIAccessibility.post(notification: UIAccessibility.Notification.screenChanged, argument: nil)
-            }
-        })
+            self.webViewContainer.accessibilityElementsHidden = true
+            UIAccessibility.post(notification: UIAccessibility.Notification.screenChanged, argument: nil)
+        }
+
         view.setNeedsUpdateConstraints()
         urlBar.locationView.reloadButton.reloadButtonState = .disabled
         statusBarOverlay.backgroundColor = urlBar.inOverlayMode ? .theme.textField.background : .theme.ecosia.ntpBackground
@@ -1974,16 +1986,7 @@ extension BrowserViewController: UIAdaptivePresentationControllerDelegate {
 extension BrowserViewController {
     func presentIntroViewController(_ alwaysShow: Bool = false) {
 		// Ecosia: custom intro handling
-        if User.shared.firstTime || true {
-            Analytics.shared.install()
-            let welcome = Welcome()
-            introVCPresentHelper(introViewController: welcome)
-
-            self.profile.prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
-            User.shared.firstTime = false
-            User.shared.migrated = true
-            User.shared.hideRebrandIntro()
-        } else if User.shared.migrated != true {
+        if User.shared.migrated != true {
             present(LoadingScreen(profile: profile, tabManager: tabManager, referrals: referrals), animated: true)
         } else if let pendingClaim = User.shared.referrals.pendingClaim {
             present(LoadingScreen(profile: profile, tabManager: tabManager, referrals: referrals, referralCode: pendingClaim), animated: true)
