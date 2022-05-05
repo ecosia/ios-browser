@@ -166,7 +166,6 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
         applyTheme()
     }
 
-
     func display(_ model: MyImpactCellModel) {
         self.model = model
 
@@ -226,9 +225,7 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
     func applyTheme() {
         [topStack, middleStack, bottomStack].forEach({ $0?.applyTheme() })
 
-        outline.layer.borderWidth = ThemeManager.instance.current.isDark ? 0 : 1
-        outline.backgroundColor = UIColor.theme.ecosia.highlightedBackground
-        outline.layer.borderColor = UIColor.theme.ecosia.highlightedBorder.cgColor
+        outline.backgroundColor = UIColor.theme.ecosia.ecosiaHomeCelBackground
         separator.backgroundColor = UIColor.theme.ecosia.barSeparator
 
         callout.backgroundColor = UIColor.theme.ecosia.impactBackground
