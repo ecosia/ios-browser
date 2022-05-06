@@ -14,9 +14,9 @@ final class WelcomeTour: UIViewController,  Themeable {
         let title: String
         let text: String
         let image: String
-        let content: UIViewController?
+        let content: UIView?
 
-        init(title: String, text: String, image: String, content: UIViewController?) {
+        init(title: String, text: String, image: String, content: UIView?) {
             self.title = title
             self.text = text
             self.image = image
@@ -28,15 +28,15 @@ final class WelcomeTour: UIViewController,  Themeable {
         }
 
         static var profit: Step {
-            return .init(title: "100% of profits for the planet", text: "All our profits go to climate action, including planting trees and generating solar energy.", image: "tour2", content: WelcomeTourPlanet())
+            return .init(title: "100% of profits for the planet", text: "All our profits go to climate action, including planting trees and generating solar energy.", image: "tour2", content: WelcomeTourProfit())
         }
 
         static var action: Step {
-            return .init(title: "Collective action starts here", text: "Join 15 million people growing the right trees in the right places.", image: "tour3", content: WelcomeTourPlanet())
+            return .init(title: "Collective action starts here", text: "Join 15 million people growing the right trees in the right places.", image: "tour3", content: WelcomeTourAction())
         }
 
         static var trees: Step {
-            return .init(title: "We want your trees, not your data", text: "We'll never sell your details to advertisers or create a profile of you.", image: "tour4", content: WelcomeTourPlanet())
+            return .init(title: "We want your trees, not your data", text: "We'll never sell your details to advertisers or create a profile of you.", image: "tour4", content: nil)
         }
 
         static var all: [Step] {
@@ -162,6 +162,7 @@ final class WelcomeTour: UIViewController,  Themeable {
         titleLabel.font = .preferredFont(forTextStyle: .title2).bold()
         titleLabel.adjustsFontForContentSizeCategory = true
         titleLabel.setContentCompressionResistancePriority(.required, for: .vertical)
+        titleLabel.setContentHuggingPriority(.required, for: .vertical)
         labelStack.addArrangedSubview(titleLabel)
         self.titleLabel = titleLabel
 
@@ -170,6 +171,9 @@ final class WelcomeTour: UIViewController,  Themeable {
         textLabel.numberOfLines = 0
         textLabel.font = .preferredFont(forTextStyle: .body)
         textLabel.adjustsFontForContentSizeCategory = true
+        textLabel.setContentCompressionResistancePriority(.required, for: .vertical)
+        textLabel.setContentHuggingPriority(.required, for: .vertical)
+
         labelStack.addArrangedSubview(textLabel)
         self.textLabel = textLabel
 
@@ -190,6 +194,7 @@ final class WelcomeTour: UIViewController,  Themeable {
         let imageView = UIImageView(image: .init(named: "tour1"))
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
         view.insertSubview(imageView, belowSubview: waves)
         self.imageView = imageView
         imageView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
@@ -199,7 +204,6 @@ final class WelcomeTour: UIViewController,  Themeable {
 
         let container = UIView()
         container.translatesAutoresizingMaskIntoConstraints = false
-        container.backgroundColor = .systemRed.withAlphaComponent(0.3)
         view.insertSubview(container, belowSubview: waves)
         self.container = container
 
@@ -243,11 +247,14 @@ final class WelcomeTour: UIViewController,  Themeable {
             self.container.alpha = 0
             self.view.layoutIfNeeded()
         } completion: { _ in
+
+            self.fillContainer(with: step.content)
+            self.ctaButton.setTitle(title, for: .normal)
+
             UIView.animate(withDuration: 0.3) {
                 self.moveLeft()
                 self.titleLabel.text = step.title
                 self.textLabel.text = step.text
-                self.ctaButton.setTitle(title, for: .normal)
                 self.labelStack.alpha = 1
                 self.ctaButton.alpha = 1
                 self.container.alpha = 1
@@ -264,6 +271,20 @@ final class WelcomeTour: UIViewController,  Themeable {
     private func moveLeft() {
         labelLeft.constant = 16
         labelRight.constant = -16
+    }
+
+    private func fillContainer(with content: UIView?) {
+        container.subviews.forEach({ $0.removeFromSuperview() })
+
+        guard let content = content else { return }
+        container.addSubview(content)
+        content.translatesAutoresizingMaskIntoConstraints = false
+        content.leadingAnchor.constraint(equalTo: container.leadingAnchor).isActive = true
+        content.trailingAnchor.constraint(equalTo: container.trailingAnchor).isActive = true
+        content.topAnchor.constraint(equalTo: container.topAnchor).isActive = true
+        content.bottomAnchor.constraint(equalTo: container.bottomAnchor).isActive = true
+        container.setNeedsLayout()
+        container.layoutIfNeeded()
     }
 
     @objc func back() {
@@ -314,6 +335,7 @@ final class WelcomeTour: UIViewController,  Themeable {
         pageControl.currentPageIndicatorTintColor = .theme.ecosia.primaryButton
         ctaButton.backgroundColor = .Light.Button.secondary
         ctaButton.setTitleColor(.Light.Text.primary, for: .normal)
+        container.subviews.forEach({ ($0 as? Themeable)?.applyTheme() })
     }
 
     @objc func themeChanged() {

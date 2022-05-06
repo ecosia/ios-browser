@@ -480,6 +480,8 @@
 		CA24B53B24ABFE5D0093848C /* LoginsListDataSourceHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA24B53A24ABFE5D0093848C /* LoginsListDataSourceHelperTests.swift */; };
 		CA2BCEE12823DE9700D7961F /* WelcomeTour.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2BCEE02823DE9700D7961F /* WelcomeTour.swift */; };
 		CA2BCEE328240DDF00D7961F /* WelcomeTourPlanet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2BCEE228240DDF00D7961F /* WelcomeTourPlanet.swift */; };
+		CA2BCEE828251FEE00D7961F /* WelcomeTourProfit.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2BCEE728251FED00D7961F /* WelcomeTourProfit.swift */; };
+		CA2BCEEA2825200C00D7961F /* WelcomeTourAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2BCEE92825200C00D7961F /* WelcomeTourAction.swift */; };
 		CA31D8E826E8CE930004FF64 /* EcosiaHomeLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA31D8E726E8CE930004FF64 /* EcosiaHomeLayout.swift */; };
 		CA3D3C412812914300534B1B /* NTPTooltip.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA3D3C402812914300534B1B /* NTPTooltip.swift */; };
 		CA4ACE4924C8C91600F55894 /* BreachAlertsDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4ACE4824C8C91500F55894 /* BreachAlertsDetailView.swift */; };
@@ -3160,6 +3162,8 @@
 		CA25488A2760E7BD009C2DD2 /* CredentialProviderEcosiaBeta.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CredentialProviderEcosiaBeta.entitlements; sourceTree = "<group>"; };
 		CA2BCEE02823DE9700D7961F /* WelcomeTour.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeTour.swift; sourceTree = "<group>"; };
 		CA2BCEE228240DDF00D7961F /* WelcomeTourPlanet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeTourPlanet.swift; sourceTree = "<group>"; };
+		CA2BCEE728251FED00D7961F /* WelcomeTourProfit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WelcomeTourProfit.swift; sourceTree = "<group>"; };
+		CA2BCEE92825200C00D7961F /* WelcomeTourAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WelcomeTourAction.swift; sourceTree = "<group>"; };
 		CA31D8E726E8CE930004FF64 /* EcosiaHomeLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaHomeLayout.swift; sourceTree = "<group>"; };
 		CA32540125485C700024B48D /* Ecosia.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Ecosia.entitlements; sourceTree = "<group>"; };
 		CA32552425487C1C0024B48D /* EcosiaBeta.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = EcosiaBeta.xcconfig; path = Configuration/EcosiaBeta.xcconfig; sourceTree = "<group>"; };
@@ -5424,6 +5428,8 @@
 				CA6BFAAC25778CB90026DFFF /* Welcome.swift */,
 				CA2BCEE02823DE9700D7961F /* WelcomeTour.swift */,
 				CA2BCEE228240DDF00D7961F /* WelcomeTourPlanet.swift */,
+				CA2BCEE728251FED00D7961F /* WelcomeTourProfit.swift */,
+				CA2BCEE92825200C00D7961F /* WelcomeTourAction.swift */,
 			);
 			path = Onboarding;
 			sourceTree = "<group>";
@@ -8265,6 +8271,7 @@
 				E64ED8FA1BC55AE300DAF864 /* UIAlertControllerExtensions.swift in Sources */,
 				282DA4731A68C1E700A406E2 /* OpenSearch.swift in Sources */,
 				D04CD74B216CF86B004FF5B0 /* DevicePickerViewController.swift in Sources */,
+				CA2BCEE828251FEE00D7961F /* WelcomeTourProfit.swift in Sources */,
 				E63ED8E11BFD25580097D08E /* LoginListViewController.swift in Sources */,
 				D0625CA8208FC47A0081F3B2 /* BrowserViewController+DownloadQueueDelegate.swift in Sources */,
 				CA6178E026D6185A006A21B7 /* NTPLayout.swift in Sources */,
@@ -8470,6 +8477,7 @@
 				D04CD718215EBD85004FF5B0 /* SettingsLoadingView.swift in Sources */,
 				4390F7FF246DAFBE00570811 /* FirefoxColors.swift in Sources */,
 				D04CD74C216CF86B004FF5B0 /* InstructionsViewController.swift in Sources */,
+				CA2BCEEA2825200C00D7961F /* WelcomeTourAction.swift in Sources */,
 				CAFA925F25791A810086E6AE /* EcosiaExploreCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
