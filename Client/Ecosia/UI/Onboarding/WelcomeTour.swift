@@ -4,6 +4,10 @@
 
 import UIKit
 
+protocol WelcomeTourDelegate: AnyObject {
+    func welcomeTourDidFinish(_ tour: WelcomeTour)
+}
+
 final class WelcomeTour: UIViewController,  Themeable {
 
     final class Step {
@@ -28,11 +32,11 @@ final class WelcomeTour: UIViewController,  Themeable {
         }
 
         static var action: Step {
-            return .init(title: "100% of profits for the planet", text: "All our profits go to climate action, including planting trees and generating solar energy.", image: "tour3", content: WelcomeTourPlanet())
+            return .init(title: "Collective action starts here", text: "Join 15 million people growing the right trees in the right places.", image: "tour3", content: WelcomeTourPlanet())
         }
 
         static var trees: Step {
-            return .init(title: "100% of profits for the planet", text: "All our profits go to climate action, including planting trees and generating solar energy.", image: "tour4", content: WelcomeTourPlanet())
+            return .init(title: "We want your trees, not your data", text: "We'll never sell your details to advertisers or create a profile of you.", image: "tour4", content: WelcomeTourPlanet())
         }
 
         static var all: [Step] {
@@ -59,16 +63,27 @@ final class WelcomeTour: UIViewController,  Themeable {
     // model
     private var steps: [Step]!
     private var current: Step?
+    private weak var delegate: WelcomeTourDelegate?
+
+    init(delegate: WelcomeTourDelegate) {
+        super.init(nibName: nil, bundle: nil)
+        modalPresentationCapturesStatusBarAppearance = true
+        self.delegate = delegate
+        steps = Step.all
+    }
+
+    required init?(coder: NSCoder) { return nil }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        steps = Step.all
-
         addStaticViews()
         addDynamicViews()
         applyTheme()
+
+        NotificationCenter.default.addObserver(self, selector: #selector(themeChanged), name: .DisplayThemeChanged, object: nil)
     }
+
+
 
     private func addStaticViews() {
         let navStack = UIStackView()
@@ -98,7 +113,7 @@ final class WelcomeTour: UIViewController,  Themeable {
 
         let skipButton = UIButton(type: .system)
         skipButton.widthAnchor.constraint(equalToConstant: 74).isActive = true
-        skipButton.addTarget(self, action: #selector(forward), for: .primaryActionTriggered)
+        skipButton.addTarget(self, action: #selector(skip), for: .primaryActionTriggered)
         navStack.addArrangedSubview(skipButton)
         skipButton.setTitle("Skip", for: .normal)
 
@@ -159,7 +174,7 @@ final class WelcomeTour: UIViewController,  Themeable {
         self.textLabel = textLabel
 
         let ctaButton = UIButton(type: .system)
-        cta.setTitle("Continue", for: .normal)
+        ctaButton.setTitle("Continue", for: .normal)
         ctaButton.translatesAutoresizingMaskIntoConstraints = false
         ctaButton.addTarget(self, action: #selector(forward), for: .primaryActionTriggered)
         ctaButton.alpha = 0
@@ -261,10 +276,14 @@ final class WelcomeTour: UIViewController,  Themeable {
 
     @objc func forward() {
         guard !isLastStep() else {
-            dismiss(animated: true, completion: nil)
+            skip()
             return
         }
         display(step: steps[currentIndex + 1])
+    }
+
+    @objc func skip() {
+        delegate?.welcomeTourDidFinish(self)
     }
 
     private var currentIndex: Int {
@@ -293,12 +312,11 @@ final class WelcomeTour: UIViewController,  Themeable {
         backButton.tintColor = .theme.ecosia.primaryButton
         pageControl.pageIndicatorTintColor = .theme.ecosia.secondaryText
         pageControl.currentPageIndicatorTintColor = .theme.ecosia.primaryButton
-        ctaButton.backgroundColor = .theme.ecosia.secondaryButton
-        ctaButton.setTitleColor(.theme.ecosia.primaryText, for: .normal)
+        ctaButton.backgroundColor = .Light.Button.secondary
+        ctaButton.setTitleColor(.Light.Text.primary, for: .normal)
     }
 
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
+    @objc func themeChanged() {
         applyTheme()
     }
 }

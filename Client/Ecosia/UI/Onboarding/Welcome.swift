@@ -30,6 +30,7 @@ final class Welcome: UIViewController {
         self.delegate = delegate
         super.init(nibName: nil, bundle: nil)
         modalPresentationCapturesStatusBarAppearance = true
+        definesPresentationContext = true
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -244,13 +245,25 @@ final class Welcome: UIViewController {
 
     // MARK: Actions
     @objc func getStarted() {
-        let tour = WelcomeTour()
+        let tour = WelcomeTour(delegate: self)
         tour.modalTransitionStyle = .crossDissolve
-        tour.modalPresentationStyle = .overFullScreen
+        tour.modalPresentationStyle = .overCurrentContext
         present(tour, animated: true, completion: nil)
     }
 
     @objc func skipTour() {
         delegate?.welcomeDidFinish(self)
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        ThemeManager.instance.themeChanged(from: previousTraitCollection, to: traitCollection)
+    }
+
+}
+
+extension Welcome: WelcomeTourDelegate {
+    func welcomeTourDidFinish(_ tour: WelcomeTour) {
+        skipTour()
     }
 }

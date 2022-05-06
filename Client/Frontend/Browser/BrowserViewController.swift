@@ -1385,18 +1385,9 @@ class BrowserViewController: UIViewController {
         if previousTraitCollection?.verticalSizeClass == .compact {
             view.setNeedsUpdateConstraints()
         }
-        
-        guard #available(iOS 13.0, *) else { return }
 
-        let colorHasChanged = traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection)
         let shouldStayDark = ThemeManager.instance.current.isDark && NightModeHelper.isActivated(profile.prefs)
-        // Ecosia: Do not change theme if it was dark before night mode already
-        guard colorHasChanged,
-              !shouldStayDark,
-              ThemeManager.instance.systemThemeIsOn else { return }
-
-        let userInterfaceStyle = traitCollection.userInterfaceStyle
-        ThemeManager.instance.current = userInterfaceStyle == .dark ? DarkTheme() : NormalTheme()
+        ThemeManager.instance.themeChanged(from: previousTraitCollection, to: traitCollection, forceDark: shouldStayDark)
     }
 }
 
