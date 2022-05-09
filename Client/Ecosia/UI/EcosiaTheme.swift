@@ -47,6 +47,8 @@ class EcosiaTheme {
     var impactBackground: UIColor { UIColor.Photon.Grey10 }
     var impactSeparator: UIColor { UIColor.Photon.Grey40 }
     var ecosiaHomeCelBackground: UIColor { .Light.Background.primary }
+    var treeCounterProgressTotal: UIColor { .Light.Background.tertiary }
+    var treeCounterProgressCurrent: UIColor { .Light.Brand.primary }
 
     var ntpBackground: UIColor { .Light.Background.tertiary }
     var ntpIntroBackground: UIColor { .Light.Background.primary }
@@ -116,6 +118,8 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var impactTreeCountBackground: UIColor { UIColor.Photon.Grey80 }
     override var impactSeparator: UIColor { UIColor.Photon.Grey60 }
     override var ecosiaHomeCelBackground: UIColor { .Dark.Background.tertiary }
+    override var treeCounterProgressTotal: UIColor { .Dark.Background.secondary }
+    override var treeCounterProgressCurrent: UIColor { .Dark.Brand.primary }
 
     override var ntpBackground: UIColor { .Dark.Background.primary }
     override var ntpImpactBackground: UIColor { UIColor.Photon.Grey80}

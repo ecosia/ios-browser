@@ -48,6 +48,11 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
         let totalProgress = Progress()
         self.totalProgress = totalProgress
         outline.addSubview(totalProgress)
+        
+        let currentProgress = Progress()
+        currentProgress.value = 0.25
+        self.currentProgress = currentProgress
+        outline.addSubview(currentProgress)
 
 //        let container = UIStackView()
 //        container.distribution = .fill
@@ -69,6 +74,9 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
         
         totalProgress.topAnchor.constraint(equalTo: outline.topAnchor, constant: 25).isActive = true
         totalProgress.centerXAnchor.constraint(equalTo: outline.centerXAnchor).isActive = true
+        
+        currentProgress.centerYAnchor.constraint(equalTo: totalProgress.centerYAnchor).isActive = true
+        currentProgress.centerXAnchor.constraint(equalTo: totalProgress.centerXAnchor).isActive = true
 
         applyTheme()
     }
@@ -118,14 +126,9 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
     }
     
     func applyTheme() {
-//        [topStack, middleStack, bottomStack].forEach({ $0?.applyTheme() })
-//
-//        outline.backgroundColor = UIColor.theme.ecosia.ecosiaHomeCelBackground
-//        separator.backgroundColor = UIColor.theme.ecosia.barSeparator
-//
-//        callout.backgroundColor = UIColor.theme.ecosia.impactBackground
-//        calloutLabel.textColor = UIColor.theme.ecosia.highContrastText
-//        calloutButton.setTitleColor(UIColor.theme.ecosia.primaryBrand, for: .normal)
+        outline.backgroundColor = .theme.ecosia.ecosiaHomeCelBackground
+        totalProgress.update(color: .theme.ecosia.treeCounterProgressTotal)
+        currentProgress.update(color: .theme.ecosia.treeCounterProgressCurrent)
     }
     
     override func prepareForReuse() {

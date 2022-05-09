@@ -8,7 +8,7 @@ extension MyImpactCell {
     final class Progress: UIView {
         var value = Double(1) {
             didSet {
-                (layer as! CAShapeLayer).strokeEnd = value
+                (layer as! CAShapeLayer).strokeStart = value
             }
         }
         
