@@ -130,7 +130,6 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
         calloutButton.titleLabel?.adjustsFontForContentSizeCategory = true
         calloutButton.setContentHuggingPriority(.defaultHigh, for: .vertical)
         calloutButton.setContentCompressionResistancePriority(.defaultHigh, for: .vertical)
-        calloutButton.addTarget(self, action: #selector(calloutTapped), for: .primaryActionTriggered)
         calloutStack.addArrangedSubview(calloutButton)
         self.calloutButton = calloutButton
 
@@ -206,22 +205,6 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
         }
     }
 
-    override var isSelected: Bool {
-        didSet {
-            hover()
-        }
-    }
-
-    override var isHighlighted: Bool {
-        didSet {
-            hover()
-        }
-    }
-
-    private func hover() {
-        outline.backgroundColor = isSelected || isHighlighted ? UIColor.theme.ecosia.hoverBackgroundColor : UIColor.theme.ecosia.highlightedBackground
-    }
-
     func applyTheme() {
         [topStack, middleStack, bottomStack].forEach({ $0?.applyTheme() })
 
@@ -241,13 +224,5 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
     override func prepareForReuse() {
         super.prepareForReuse()
         applyTheme()
-    }
-
-    @objc func calloutTapped() {
-        guard let selector = model?.callout.selector else { return }
-
-        if let target = target(forAction: selector, withSender: self) as? UIResponder {
-            target.perform(selector)
-        }
     }
 }
