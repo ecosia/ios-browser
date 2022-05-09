@@ -31,6 +31,7 @@ import UIKit
 final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
     private weak var totalProgress: Progress!
     private weak var currentProgress: Progress!
+    private weak var indicator: Indicator!
     private weak var widthConstraint: NSLayoutConstraint!
     private weak var outline: UIView!
     
@@ -53,6 +54,11 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
         currentProgress.value = 0.75
         self.currentProgress = currentProgress
         outline.addSubview(currentProgress)
+        
+        let indicator = Indicator()
+        indicator.value = 0.75
+        self.indicator = indicator
+        outline.addSubview(indicator)
 
 //        let container = UIStackView()
 //        container.distribution = .fill
@@ -77,6 +83,9 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
         
         currentProgress.centerYAnchor.constraint(equalTo: totalProgress.centerYAnchor).isActive = true
         currentProgress.centerXAnchor.constraint(equalTo: totalProgress.centerXAnchor).isActive = true
+        
+        indicator.centerYAnchor.constraint(equalTo: totalProgress.centerYAnchor).isActive = true
+        indicator.centerXAnchor.constraint(equalTo: totalProgress.centerXAnchor).isActive = true
 
         applyTheme()
     }
@@ -126,9 +135,10 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
     }
     
     func applyTheme() {
-        outline.backgroundColor = .theme.ecosia.ecosiaHomeCelBackground
+        outline.backgroundColor = .theme.ecosia.ecosiaHomeCellBackground
         totalProgress.update(color: .theme.ecosia.treeCounterProgressTotal)
         currentProgress.update(color: .theme.ecosia.treeCounterProgressCurrent)
+        indicator.update(fill: .theme.ecosia.treeCounterProgressCurrent, border: .theme.ecosia.treeCounterProgressBorder)
     }
     
     override func prepareForReuse() {
