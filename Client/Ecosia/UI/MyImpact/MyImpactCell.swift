@@ -49,7 +49,7 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
     private func setup() {
         let outline = UIView()
         contentView.addSubview(outline)
-        outline.layer.cornerRadius = 8
+        outline.layer.cornerRadius = 10
         outline.translatesAutoresizingMaskIntoConstraints = false
         self.outline = outline
 
