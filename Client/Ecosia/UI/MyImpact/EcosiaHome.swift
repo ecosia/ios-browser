@@ -9,7 +9,7 @@ protocol EcosiaHomeDelegate: AnyObject {
     func ecosiaHome(didSelectURL url: URL)
 }
 
-final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlowLayout, Themeable, MyImpactStackViewModelResize {
+final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlowLayout, Themeable {
 
     enum Section: Int, CaseIterable {
         case impact, legacyImpact, multiply, news, explore
@@ -104,42 +104,12 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     }
 
     var delegate: EcosiaHomeDelegate?
+    private weak var referrals: Referrals!
     private var items = [NewsModel]()
     private let images = Images(.init(configuration: .ephemeral))
     private let news = News()
     private let personalCounter = PersonalCounter()
     private let background = Background()
-    private weak var referrals: Referrals!
-
-    lazy var impactModel: MyImpactCellModel = {
-        return refreshImpactModel()
-    }()
-
-    private func refreshImpactModel() -> MyImpactCellModel {
-        return referralImpactCellModel
-    }
-
-    private var referralImpactCellModel: MyImpactCellModel {
-        let callout = MyImpactCellModel.Callout(text: .localized(.myImpactDescription),
-                                                button: .localized(.learnMore),
-                                                selector: #selector(learnMore),
-                                                collapsed: true)
-        let top = MyImpactStackViewModel(title: "\(User.shared.impact)",
-                                         highlight: true, subtitle: .localized(.myTrees),
-                                         imageName: "personalCounter")
-
-        let middle = MyImpactStackViewModel(title: .localizedPlural(.treesPlural, num: User.shared.searchImpact),
-                                            highlight: false,
-                                            subtitle: .localizedPlural(.searches, num: personalCounter.state!),
-                                            imageName: "impactSearch")
-
-        let bottom = MyImpactStackViewModel(title: .localizedPlural(.treesPlural, num: User.shared.referrals.impact),
-                                            highlight: false,
-                                            subtitle: .localizedPlural(.referrals, num: User.shared.referrals.count),
-                                            imageName: "impactReferrals")
-
-        return MyImpactCellModel(top: top, middle: middle, bottom: bottom, callout: callout)
-    }
 
     fileprivate var treesCellModel: TreesCellModel {
         return .init(title: .localizedPlural(.searches, num: personalCounter.state!),
@@ -191,18 +161,17 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
 
         personalCounter.subscribe(self)  { [weak self] _ in
             guard let self = self else { return }
-            self.impactModel = self.refreshImpactModel()
             self.collectionView.reloadSections([Section.impact.rawValue, Section.legacyImpact.rawValue])
         }
 
         referrals.subscribe(self)  { [weak self] _ in
             guard let self = self else { return }
-            self.impactModel = self.refreshImpactModel()
             self.collectionView.reloadSections([Section.impact.rawValue])
         }
     }
 
     private var hasAppeared: Bool = false
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         news.load(session: .shared, force: items.isEmpty)
@@ -216,7 +185,6 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
 
         guard hasAppeared else { return hasAppeared = true }
         updateBarAppearance()
-        impactModel = refreshImpactModel()
         collectionView.scrollRectToVisible(.init(x: 0, y: 0, width: 1, height: 1), animated: false)
         collectionView.reloadData()
     }
@@ -244,7 +212,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         case .impact:
             let infoCell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: section.cell), for: indexPath) as! MyImpactCell
             infoCell.setWidth(collectionView.bounds.width, insets: collectionView.safeAreaInsets)
-            infoCell.display(impactModel)
+            infoCell.update()
             return infoCell
 
         case .legacyImpact:
@@ -304,9 +272,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         let section = Section(rawValue: indexPath.section)!
         switch section {
         case .impact:
-            if let stack = (collectionView.cellForItem(at: indexPath) as? MyImpactCell)?.topStack {
-                resizeStack(sender: stack)
-            }
+            break
         case .legacyImpact:
             delegate?.ecosiaHome(didSelectURL: Environment.current.aboutCounter)
             dismiss(animated: true, completion: nil)
@@ -440,19 +406,5 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         delegate?.ecosiaHome(didSelectURL: Environment.current.aboutCounter)
         Analytics.shared.navigation(.open, label: .counter)
         dismiss(animated: true, completion: nil)
-    }
-
-    @objc func resizeStack(sender: MyImpactStackView) {
-        guard let action = sender.action, case .arrow(let collapsed) = action,
-              let cell = collectionView.cellForItem(at: IndexPath(item: 0, section: Section.impact.rawValue)) as? MyImpactCell  else { return }
-
-        impactModel.callout.collapsed = !collapsed
-        let updatedModel = impactModel
-
-        collectionView.performBatchUpdates {
-            UIView.animate(withDuration: 0.3) {
-                cell.display(updatedModel)
-            }
-        }
     }
 }
