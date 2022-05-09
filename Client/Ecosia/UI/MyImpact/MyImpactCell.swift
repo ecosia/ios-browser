@@ -50,7 +50,7 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
         outline.addSubview(totalProgress)
         
         let currentProgress = Progress()
-        currentProgress.value = 0.25
+        currentProgress.value = 0.75
         self.currentProgress = currentProgress
         outline.addSubview(currentProgress)
 

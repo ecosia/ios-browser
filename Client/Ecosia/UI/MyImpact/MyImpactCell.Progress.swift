@@ -8,7 +8,7 @@ extension MyImpactCell {
     final class Progress: UIView {
         var value = Double(1) {
             didSet {
-                (layer as! CAShapeLayer).strokeStart = value
+                (layer as! CAShapeLayer).strokeEnd = value
             }
         }
         
@@ -20,7 +20,6 @@ extension MyImpactCell {
         
         init() {
             super.init(frame: .zero)
-            
             translatesAutoresizingMaskIntoConstraints = false
             widthAnchor.constraint(equalToConstant: 240).isActive = true
             heightAnchor.constraint(equalToConstant: 150).isActive = true
@@ -33,9 +32,9 @@ extension MyImpactCell {
                 path
                     .addArc(center: .init(x: 120, y: 120),
                             radius: 112,
-                            startAngle: 0.2,
-                            endAngle: .pi - 0.2,
-                            clockwise: true)
+                            startAngle: .pi - 0.2,
+                            endAngle: 0.2,
+                            clockwise: false)
                 return path
             } (CGMutablePath())
         }
