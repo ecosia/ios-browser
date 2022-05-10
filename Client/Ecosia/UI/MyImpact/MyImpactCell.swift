@@ -3,6 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import UIKit
+import Core
 
 /*
  private var referralImpactCellModel: MyImpactCellModel {
@@ -34,6 +35,7 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
     private weak var indicator: Indicator!
     private weak var widthConstraint: NSLayoutConstraint!
     private weak var outline: UIView!
+    private weak var treesCount: UILabel!
     
     required init?(coder: NSCoder) { nil }
     
@@ -59,14 +61,16 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
         indicator.value = 0.75
         self.indicator = indicator
         outline.addSubview(indicator)
-
-//        let container = UIStackView()
-//        container.distribution = .fill
-//        container.axis = .vertical
-//        container.spacing = 20
-//        container.translatesAutoresizingMaskIntoConstraints = false
-//        contentView.addSubview(container)
-//        self.container = container
+        
+        let treesIcon = UIImageView(image: .init(themed: "yourImpact"))
+        treesIcon.translatesAutoresizingMaskIntoConstraints = false
+        outline.addSubview(treesIcon)
+        
+        let treesCount = UILabel()
+        treesCount.translatesAutoresizingMaskIntoConstraints = false
+        treesCount.font = .systemFont(ofSize: UIFont.preferredFont(forTextStyle: .title1).pointSize, weight: .bold)
+        self.treesCount = treesCount
+        outline.addSubview(treesCount)
 
         outline.leftAnchor.constraint(equalTo: contentView.leftAnchor).isActive = true
         outline.rightAnchor.constraint(equalTo: contentView.rightAnchor).isActive = true
@@ -87,10 +91,22 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
         indicator.centerYAnchor.constraint(equalTo: totalProgress.centerYAnchor).isActive = true
         indicator.centerXAnchor.constraint(equalTo: totalProgress.centerXAnchor).isActive = true
 
+        treesIcon.topAnchor.constraint(equalTo: totalProgress.topAnchor, constant: 34).isActive = true
+        treesIcon.centerXAnchor.constraint(equalTo: totalProgress.centerXAnchor).isActive = true
+        
+        treesCount.topAnchor.constraint(equalTo: treesIcon.bottomAnchor, constant: 2).isActive = true
+        treesCount.centerXAnchor.constraint(equalTo: totalProgress.centerXAnchor).isActive = true
+        
         applyTheme()
     }
     
     func update() {
+        if #available(iOS 15.0, *) {
+            treesCount.text = User.shared.impact.formatted()
+        } else {
+            treesCount.text = "\(User.shared.impact)"
+        }
+        
         //
         //        if let top = model.top {
         //            topStack.isHidden = false
@@ -139,6 +155,7 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
         totalProgress.update(color: .theme.ecosia.treeCounterProgressTotal)
         currentProgress.update(color: .theme.ecosia.treeCounterProgressCurrent)
         indicator.update(fill: .theme.ecosia.treeCounterProgressCurrent, border: .theme.ecosia.treeCounterProgressBorder)
+        treesCount.textColor = .theme.ecosia.primaryText
     }
     
     override func prepareForReuse() {
