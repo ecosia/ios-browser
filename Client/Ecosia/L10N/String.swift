@@ -146,5 +146,6 @@ extension String {
         case treesPlantedPlural = "Tree(s) planted"
         case howItWorks = "How it works"
         case friendInvitesPlural = "%d friend invite(s)"
+        case myImpact = "My Impact"
     }
 }
