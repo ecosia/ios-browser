@@ -52,12 +52,14 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
         let treesCount = UILabel()
         treesCount.translatesAutoresizingMaskIntoConstraints = false
         treesCount.font = .preferredFont(forTextStyle: .title1).bold()
+        treesCount.adjustsFontForContentSizeCategory = true
         self.treesCount = treesCount
         outline.addSubview(treesCount)
         
         let treesPlanted = UILabel()
         treesPlanted.translatesAutoresizingMaskIntoConstraints = false
         treesPlanted.font = .preferredFont(forTextStyle: .body)
+        treesPlanted.adjustsFontForContentSizeCategory = true
         self.treesPlanted = treesPlanted
         outline.addSubview(treesPlanted)
         
@@ -69,6 +71,7 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
         let howItWorks = UILabel()
         howItWorks.translatesAutoresizingMaskIntoConstraints = false
         howItWorks.font = .preferredFont(forTextStyle: .callout)
+        howItWorks.adjustsFontForContentSizeCategory = true
         howItWorks.text = .localized(.howItWorks)
         self.howItWorks = howItWorks
         howItWorksButton.addSubview(howItWorks)
@@ -88,12 +91,14 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
         let searches = UILabel()
         searches.translatesAutoresizingMaskIntoConstraints = false
         searches.font = .preferredFont(forTextStyle: .body)
+        searches.adjustsFontForContentSizeCategory = true
         self.searches = searches
         outline.addSubview(searches)
         
         let searchesTrees = UILabel()
         searchesTrees.translatesAutoresizingMaskIntoConstraints = false
         searchesTrees.font = .systemFont(ofSize: UIFont.preferredFont(forTextStyle: .subheadline).pointSize, weight: .semibold)
+        searchesTrees.adjustsFontForContentSizeCategory = true
         self.searchesTrees = searchesTrees
         outline.addSubview(searchesTrees)
         
@@ -112,12 +117,14 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
         let friends = UILabel()
         friends.translatesAutoresizingMaskIntoConstraints = false
         friends.font = .preferredFont(forTextStyle: .body)
+        friends.adjustsFontForContentSizeCategory = true
         self.friends = friends
         outline.addSubview(friends)
         
         let friendsTrees = UILabel()
         friendsTrees.translatesAutoresizingMaskIntoConstraints = false
         friendsTrees.font = .systemFont(ofSize: UIFont.preferredFont(forTextStyle: .subheadline).pointSize, weight: .semibold)
+        friendsTrees.adjustsFontForContentSizeCategory = true
         self.friendsTrees = friendsTrees
         outline.addSubview(friendsTrees)
         
