@@ -4,7 +4,7 @@
 
 import UIKit
 
-class WelcomeTourAction: UIView, Themeable {
+final class WelcomeTourAction: UIView, Themeable {
 
     private weak var stack: UIStackView!
 
@@ -50,7 +50,7 @@ class WelcomeTourAction: UIView, Themeable {
     }
 }
 
-class WelcomeTourActionRow: UIView, Themeable {
+final class WelcomeTourActionRow: UIView, Themeable {
     let image: String
     let title: String
     let text: String

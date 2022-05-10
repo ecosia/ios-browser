@@ -577,15 +577,6 @@ class BrowserViewController: UIViewController {
         // On iPhone, if we are about to show the On-Boarding, blank out the tab so that it does
         // not flash before we present. This change of alpha also participates in the animation when
         // the intro view is dismissed.
-
-        if UIDevice.current.userInterfaceIdiom == .phone {
-            // Ecosia: on phone blank screen if intro or migration is shown
-            self.view.alpha =  (User.shared.migrated != true) ? 0.0 : 1.0
-        } else {
-            // on iPad only blank out for migration, not first time
-            self.view.alpha = User.shared.migrated != true ? 0.0 : 1.0
-        }
-
         if !displayedRestoreTabsAlert && !cleanlyBackgrounded() && crashedLastLaunch() {
             displayedRestoreTabsAlert = true
             showRestoreTabsAlert()
@@ -1977,7 +1968,13 @@ extension BrowserViewController: UIAdaptivePresentationControllerDelegate {
 extension BrowserViewController {
     func presentIntroViewController(_ alwaysShow: Bool = false) {
 		// Ecosia: custom intro handling
-        if User.shared.migrated != true {
+        if User.shared.firstTime {
+            // TODO: show default promo
+            profile.prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
+            User.shared.firstTime = false
+            User.shared.migrated = true
+            User.shared.hideRebrandIntro()
+        } else if User.shared.migrated != true {
             present(LoadingScreen(profile: profile, tabManager: tabManager, referrals: referrals), animated: true)
         } else if let pendingClaim = User.shared.referrals.pendingClaim {
             present(LoadingScreen(profile: profile, tabManager: tabManager, referrals: referrals, referralCode: pendingClaim), animated: true)
@@ -2111,7 +2108,7 @@ extension BrowserViewController {
         } else {
             introViewController.modalPresentationStyle = .fullScreen
         }
-        present(introViewController, animated: false) {
+        present(introViewController, animated: true) {
             // On first run (and forced) open up the homepage in the background.
             if let homePageURL = NewTabHomePageAccessors.getHomePage(self.profile.prefs), let tab = self.tabManager.selectedTab, DeviceInfo.hasConnectivity() {
                 tab.loadRequest(URLRequest(url: homePageURL))

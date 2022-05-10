@@ -154,8 +154,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
 
     // TODO: Move to scene controller for iOS 13
     private func setupRootViewController() {
-        User.shared.firstTime = true
-
         browserViewController = BrowserViewController(profile: self.profile!, tabManager: self.tabManager)
         browserViewController.edgesForExtendedLayout = []
 
@@ -167,16 +165,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
         if User.shared.firstTime {
             rootVC = Welcome(delegate: self)
             Analytics.shared.install()
-            profile!.prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
-            // User.shared.firstTime = false
-            User.shared.migrated = true
-            User.shared.hideRebrandIntro()
         } else {
             rootVC = browserViewController!
         }
 
         let navigationController = UINavigationController(rootViewController: rootVC)
-        //navigationController.delegate = self
+        // Ecosia: navigationController.delegate = self
         navigationController.isNavigationBarHidden = true
         navigationController.edgesForExtendedLayout = UIRectEdge(rawValue: 0)
         rootViewController = navigationController
@@ -618,7 +612,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
         self.window?.backgroundColor = UIColor.theme.browser.background
     }
 }
-/* Remove custom push / pop animators
+/* Ecosia: Remove custom push / pop animators
 // MARK: - Root View Controller Animations
 extension AppDelegate: UINavigationControllerDelegate {
     func navigationController(_ navigationController: UINavigationController, animationControllerFor operation: UINavigationController.Operation, from fromVC: UIViewController, to toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
@@ -671,7 +665,6 @@ extension AppDelegate {
 
 extension AppDelegate: WelcomeDelegate {
     func welcomeDidFinish(_ welcome: Welcome) {
-        //rootViewController.setViewControllers([browserViewController], animated: true)
-        rootViewController.pushViewController(browserViewController, animated: true)
+        rootViewController.setViewControllers([browserViewController], animated: true)
     }
 }

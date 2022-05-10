@@ -110,8 +110,7 @@ private final class Dot: UIVisualEffectView {
         super.init(effect: effect)
         setup()
     }
-
-
+    
     required init?(coder: NSCoder) {  nil }
 
     func setup() {

@@ -4,7 +4,7 @@
 
 import UIKit
 
-class WelcomeTourPlanet: UIView, Themeable {
+final class WelcomeTourPlanet: UIView, Themeable {
     private weak var searchLabel: UILabel!
     private weak var impactLabel: UILabel!
     private weak var treesLabel: UILabel!

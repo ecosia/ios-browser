@@ -188,8 +188,6 @@ final class Welcome: UIViewController {
         self.mask = mask
     }
 
-
-
     // MARK: Animations
     private func fadeIn() {
         UIView.animate(withDuration: 0.2) {
@@ -221,10 +219,7 @@ final class Welcome: UIViewController {
             self.stackTopConstraint.isActive = false
             self.stackBottonConstraint.isActive = true
             self.view.layoutIfNeeded()
-        } completion: { _ in
-
-        }
-
+        } completion: { _ in }
     }
 
     // MARK: Helper
@@ -269,7 +264,6 @@ final class Welcome: UIViewController {
         super.traitCollectionDidChange(previousTraitCollection)
         ThemeManager.instance.themeChanged(from: previousTraitCollection, to: traitCollection)
     }
-
 }
 
 extension Welcome: WelcomeTourDelegate {

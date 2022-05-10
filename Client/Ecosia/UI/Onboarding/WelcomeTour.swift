@@ -11,6 +11,19 @@ protocol WelcomeTourDelegate: AnyObject {
 final class WelcomeTour: UIViewController,  Themeable {
 
     final class Step {
+
+        final class Background {
+            let image: String
+            let darkImage: String?
+            let color: UIColor?
+
+            init(image: String, darkImage: String? = nil, color: UIColor? = nil) {
+                self.image = image
+                self.darkImage = darkImage
+                self.color = color
+            }
+        }
+
         let title: String
         let text: String
         let background: Background
@@ -41,18 +54,6 @@ final class WelcomeTour: UIViewController,  Themeable {
 
         static var all: [Step] {
             return [planet, profit, action, trees]
-        }
-
-        final class Background {
-            let image: String
-            let darkImage: String?
-            let color: UIColor?
-
-            init(image: String, darkImage: String? = nil, color: UIColor? = nil) {
-                self.image = image
-                self.darkImage = darkImage
-                self.color = color
-            }
         }
     }
 
@@ -97,8 +98,6 @@ final class WelcomeTour: UIViewController,  Themeable {
 
         NotificationCenter.default.addObserver(self, selector: #selector(themeChanged), name: .DisplayThemeChanged, object: nil)
     }
-
-
 
     private func addStaticViews() {
         let navStack = UIStackView()
@@ -304,6 +303,7 @@ final class WelcomeTour: UIViewController,  Themeable {
         container.layoutIfNeeded()
     }
 
+    // MARK: Actions
     @objc func back() {
         guard !isFirstStep() else {
             dismiss(animated: true, completion: nil)
@@ -324,6 +324,7 @@ final class WelcomeTour: UIViewController,  Themeable {
         delegate?.welcomeTourDidFinish(self)
     }
 
+    // MARK: Helper
     private var currentIndex: Int {
         guard let current = current else { return 0 }
         let index = steps.firstIndex(where: { $0 === current }) ?? 0
@@ -334,11 +335,9 @@ final class WelcomeTour: UIViewController,  Themeable {
         return currentIndex == 0
     }
 
-
     private func isLastStep() -> Bool {
         return currentIndex + 1 >= steps.count
     }
-
 
     // MARK: Theming
     func applyTheme() {
