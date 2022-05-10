@@ -71,6 +71,9 @@ final class WelcomeTour: UIViewController,  Themeable {
     // references to animated constraints
     private weak var labelLeft: NSLayoutConstraint!
     private weak var labelRight: NSLayoutConstraint!
+    private var margin: CGFloat {
+        return view.traitCollection.userInterfaceIdiom == .phone ? 16 : 112
+    }
 
     // model
     private var steps: [Step]!
@@ -155,12 +158,12 @@ final class WelcomeTour: UIViewController,  Themeable {
         view.addSubview(labelStack)
         self.labelStack = labelStack
 
-        let labelLeft = labelStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 64)
+        let labelLeft = labelStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: margin + 48)
         labelLeft.priority = .init(rawValue: 999)
         labelLeft.isActive = true
         self.labelLeft = labelLeft
 
-        let labelRight = labelStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 32)
+        let labelRight = labelStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -margin + 48)
         labelRight.priority = .init(rawValue: 999)
         labelRight.isActive = true
         self.labelRight = labelRight
@@ -277,13 +280,13 @@ final class WelcomeTour: UIViewController,  Themeable {
     }
 
     private func moveRight() {
-        labelLeft.constant = 64
-        labelRight.constant = 32
+        labelLeft.constant = margin + 48
+        labelRight.constant = -margin + 48
     }
 
     private func moveLeft() {
-        labelLeft.constant = 16
-        labelRight.constant = -16
+        labelLeft.constant = margin
+        labelRight.constant = -margin
     }
 
     private func fillContainer(with content: UIView?) {

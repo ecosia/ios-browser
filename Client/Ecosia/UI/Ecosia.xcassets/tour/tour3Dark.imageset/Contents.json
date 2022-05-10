@@ -5,14 +5,35 @@
       "scale" : "1x"
     },
     {
-      "filename" : "tour3_dark@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "tour3_dark@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
+    },
+    {
+      "idiom" : "iphone",
+      "scale" : "1x"
+    },
+    {
+      "filename" : "tour3_dark@2x.png",
+      "idiom" : "iphone",
+      "scale" : "2x"
+    },
+    {
+      "filename" : "tour3_dark@3x.png",
+      "idiom" : "iphone",
+      "scale" : "3x"
+    },
+    {
+      "idiom" : "ipad",
+      "scale" : "1x"
+    },
+    {
+      "filename" : "Background image.png",
+      "idiom" : "ipad",
+      "scale" : "2x"
     }
   ],
   "info" : {

@@ -10,11 +10,11 @@
       "scale" : "2x"
     },
     {
-      "filename" : "Image3x.png",
       "idiom" : "iphone",
       "scale" : "3x"
     },
     {
+      "filename" : "Image-2.png",
       "idiom" : "ipad",
       "scale" : "1x"
     },

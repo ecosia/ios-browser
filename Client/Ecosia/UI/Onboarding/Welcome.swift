@@ -135,11 +135,11 @@ final class Welcome: UIViewController {
         stack.addArrangedSubview(label)
 
         let cta = UIButton(type: .system)
-        cta.backgroundColor = .Light.Button.primary
+        cta.backgroundColor = .Light.Button.secondary
         cta.setTitle(.localized(.getStarted), for: .normal)
         cta.titleLabel?.font = .preferredFont(forTextStyle: .callout)
         cta.titleLabel?.adjustsFontForContentSizeCategory = true
-        cta.setTitleColor(.Dark.Text.primary, for: .normal)
+        cta.setTitleColor(.Light.Text.primary, for: .normal)
         cta.layer.cornerRadius = 25
         cta.heightAnchor.constraint(equalToConstant: 50).isActive = true
         cta.addTarget(self, action: #selector(getStarted), for: .primaryActionTriggered)
@@ -159,8 +159,13 @@ final class Welcome: UIViewController {
 
         stack.addArrangedSubview(skip)
 
-        stack.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16).isActive = true
-        stack.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16).isActive = true
+        if view.traitCollection.userInterfaceIdiom == .phone {
+            stack.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16).isActive = true
+            stack.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16).isActive = true
+        } else {
+            stack.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+            stack.widthAnchor.constraint(equalToConstant: 544).isActive = true
+        }
         stackTopConstraint = stack.topAnchor.constraint(equalTo: view.bottomAnchor, constant: -16)
         stackTopConstraint.priority = .defaultHigh
         stackTopConstraint.isActive = true
@@ -198,7 +203,7 @@ final class Welcome: UIViewController {
     private func zoomOut() {
         self.zoomedOut = true
 
-        let targetFrame = self.view.bounds.inset(by: .init(equalInset: -2.0 * self.view.bounds.height))
+        let targetFrame = self.view.bounds.inset(by: .init(equalInset: -2.5 * self.view.bounds.height))
         UIView.animate(withDuration: 1.4, delay: 0.8, options: []) {
             self.background.mask?.frame = targetFrame
             self.setNeedsStatusBarAppearanceUpdate()

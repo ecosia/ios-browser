@@ -801,7 +801,7 @@ class BrowserViewController: UIViewController {
 
         view.setNeedsUpdateConstraints()
         urlBar.locationView.reloadButton.reloadButtonState = .disabled
-        statusBarOverlay.backgroundColor = urlBar.inOverlayMode ? .theme.textField.background : .theme.ecosia.ntpBackground
+        statusBarOverlay.backgroundColor = urlBar.inOverlayMode || view.traitCollection.userInterfaceIdiom == .pad ? .theme.textField.background : .theme.ecosia.ntpBackground
     }
 
     fileprivate func hideFirefoxHome() {
@@ -2401,7 +2401,7 @@ extension BrowserViewController: Themeable {
         let ui: [Themeable?] = [urlBar, toolbar, readerModeBar, topTabsViewController, firefoxHomeViewController, searchController, libraryViewController, libraryDrawerViewController, chronTabTrayController]
         ui.forEach { $0?.applyTheme() }
 
-        statusBarOverlay.backgroundColor = shouldShowTopTabsForTraitCollection(traitCollection) ? UIColor.theme.topTabs.background : urlBar.backgroundColor
+        statusBarOverlay.backgroundColor = firefoxHomeViewController == nil || view.traitCollection.userInterfaceIdiom == .pad ? .theme.textField.background : .theme.ecosia.ntpBackground
         setNeedsStatusBarAppearanceUpdate()
 
         (presentedViewController as? Themeable)?.applyTheme()
@@ -2418,7 +2418,6 @@ extension BrowserViewController: Themeable {
         guard let contentScript = self.tabManager.selectedTab?.getContentScript(name: ReaderMode.name()) else { return }
         appyThemeForPreferences(profile.prefs, contentScript: contentScript)
 
-        statusBarOverlay.backgroundColor = firefoxHomeViewController == nil ? .theme.textField.background : .theme.ecosia.ntpBackground
     }
 }
 
