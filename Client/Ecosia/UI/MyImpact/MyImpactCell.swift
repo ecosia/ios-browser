@@ -30,6 +30,7 @@ import Core
  */
 
 final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
+    private(set) weak var howItWorksButton: UIControl!
     private weak var totalProgress: Progress!
     private weak var currentProgress: Progress!
     private weak var indicator: Indicator!
@@ -37,6 +38,7 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
     private weak var outline: UIView!
     private weak var treesCount: UILabel!
     private weak var treesPlanted: UILabel!
+    private weak var howItWorks: UILabel!
     
     required init?(coder: NSCoder) { nil }
     
@@ -65,6 +67,8 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
         
         let treesIcon = UIImageView(image: .init(themed: "yourImpact"))
         treesIcon.translatesAutoresizingMaskIntoConstraints = false
+        treesIcon.contentMode = .center
+        treesIcon.clipsToBounds = true
         outline.addSubview(treesIcon)
         
         let treesCount = UILabel()
@@ -78,6 +82,24 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
         treesPlanted.font = .preferredFont(forTextStyle: .body)
         self.treesPlanted = treesPlanted
         outline.addSubview(treesPlanted)
+        
+        let howItWorksButton = UIControl()
+        howItWorksButton.translatesAutoresizingMaskIntoConstraints = false
+        outline.addSubview(howItWorksButton)
+        self.howItWorksButton = howItWorksButton
+        
+        let howItWorks = UILabel()
+        howItWorks.translatesAutoresizingMaskIntoConstraints = false
+        howItWorks.font = .preferredFont(forTextStyle: .callout)
+        howItWorks.text = .localized(.howItWorks)
+        self.howItWorks = howItWorks
+        howItWorksButton.addSubview(howItWorks)
+        
+        let howItWorksIcon = UIImageView(image: .init(themed: "howItWorks"))
+        howItWorksIcon.translatesAutoresizingMaskIntoConstraints = false
+        howItWorksIcon.contentMode = .center
+        howItWorksIcon.clipsToBounds = true
+        howItWorksButton.addSubview(howItWorksIcon)
 
         outline.leftAnchor.constraint(equalTo: contentView.leftAnchor).isActive = true
         outline.rightAnchor.constraint(equalTo: contentView.rightAnchor).isActive = true
@@ -106,6 +128,17 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
         
         treesPlanted.topAnchor.constraint(equalTo: treesCount.bottomAnchor).isActive = true
         treesPlanted.centerXAnchor.constraint(equalTo: totalProgress.centerXAnchor).isActive = true
+        
+        howItWorksButton.topAnchor.constraint(equalTo: treesPlanted.bottomAnchor).isActive = true
+        howItWorksButton.centerXAnchor.constraint(equalTo: totalProgress.centerXAnchor).isActive = true
+        howItWorksButton.bottomAnchor.constraint(equalTo: howItWorks.bottomAnchor, constant: 6).isActive = true
+        howItWorksButton.rightAnchor.constraint(equalTo: howItWorksIcon.rightAnchor).isActive = true
+        
+        howItWorks.leftAnchor.constraint(equalTo: howItWorksButton.leftAnchor).isActive = true
+        howItWorks.topAnchor.constraint(equalTo: howItWorksButton.topAnchor, constant: 6).isActive = true
+        
+        howItWorksIcon.centerYAnchor.constraint(equalTo: howItWorks.centerYAnchor).isActive = true
+        howItWorksIcon.leftAnchor.constraint(equalTo: howItWorks.rightAnchor, constant: 4).isActive = true
         
         applyTheme()
     }
@@ -169,6 +202,7 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
         indicator.update(fill: .theme.ecosia.treeCounterProgressCurrent, border: .theme.ecosia.treeCounterProgressBorder)
         treesCount.textColor = .theme.ecosia.primaryText
         treesPlanted.textColor = .theme.ecosia.primaryText
+        howItWorks.textColor = .theme.ecosia.primaryButton
     }
     
     override func prepareForReuse() {

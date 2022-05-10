@@ -212,6 +212,8 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         case .impact:
             let infoCell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: section.cell), for: indexPath) as! MyImpactCell
             infoCell.setWidth(collectionView.bounds.width, insets: collectionView.safeAreaInsets)
+            infoCell.howItWorksButton.removeTarget(self, action: nil, for: .touchUpInside)
+            infoCell.howItWorksButton.addTarget(self, action: #selector(learnMore), for: .touchUpInside)
             infoCell.update()
             return infoCell
 
@@ -402,7 +404,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         navigationController?.pushViewController(MultiplyImpact(delegate: delegate, referrals: referrals), animated: true)
     }
 
-    @objc func learnMore() {
+    @objc private func learnMore() {
         delegate?.ecosiaHome(didSelectURL: Environment.current.aboutCounter)
         Analytics.shared.navigation(.open, label: .counter)
         dismiss(animated: true, completion: nil)

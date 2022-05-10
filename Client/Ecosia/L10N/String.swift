@@ -125,5 +125,6 @@ extension String {
         case discoverEcosia = "Discover the new Ecosia"
         case trackYourProgress = "Track your progress and get insights about your impact"
         case treesPlantedPlural = "Tree(s) planted"
+        case howItWorks = "How it works"
     }
 }
