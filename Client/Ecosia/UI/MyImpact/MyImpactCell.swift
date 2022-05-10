@@ -5,30 +5,6 @@
 import UIKit
 import Core
 
-/*
- private var referralImpactCellModel: MyImpactCellModel {
-     let callout = MyImpactCellModel.Callout(text: .localized(.myImpactDescription),
-                                             button: .localized(.learnMore),
-                                             selector: #selector(learnMore),
-                                             collapsed: true)
-     let top = MyImpactStackViewModel(title: "\(User.shared.impact)",
-                                      highlight: true, subtitle: .localized(.myTrees),
-                                      imageName: "personalCounter")
-
-     let middle = MyImpactStackViewModel(title: .localizedPlural(.treesPlural, num: User.shared.searchImpact),
-                                         highlight: false,
-                                         subtitle: .localizedPlural(.searches, num: personalCounter.state!),
-                                         imageName: "impactSearch")
-
-     let bottom = MyImpactStackViewModel(title: .localizedPlural(.treesPlural, num: User.shared.referrals.impact),
-                                         highlight: false,
-                                         subtitle: .localizedPlural(.referrals, num: User.shared.referrals.count),
-                                         imageName: "impactReferrals")
-
-     return MyImpactCellModel(top: top, middle: middle, bottom: bottom, callout: callout)
- }
- */
-
 final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
     private(set) weak var howItWorksButton: UIControl!
     private weak var totalProgress: Progress!
