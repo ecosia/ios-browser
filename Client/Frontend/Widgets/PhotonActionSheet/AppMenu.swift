@@ -18,7 +18,7 @@ extension PhotonActionSheetProtocol {
             }
         }
 
-        let myImpact = PhotonActionSheetItem(title: .localized(.myImpact), iconString: "myImpact") { _, _ in
+        let myImpact = PhotonActionSheetItem(title: .localized(.yourImpact), iconString: "myImpact") { _, _ in
             (vcDelegate as? BrowserViewController)?.presentEcosiaWorld()
         }
 
@@ -62,7 +62,7 @@ extension PhotonActionSheetProtocol {
             TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .home)
         }
 
-        let myImpact = PhotonActionSheetItem(title: .localized(.myImpact), iconString: "myImpact") { _, _ in
+        let myImpact = PhotonActionSheetItem(title: .localized(.yourImpact), iconString: "myImpact") { _, _ in
             (vcDelegate as? BrowserViewController)?.presentEcosiaWorld()
         }
 

@@ -66,5 +66,15 @@
 			<string>%d referencias exitosas</string>
 		</dict>
 	</dict>
+	<key>Tree(s) planted</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@Trees@</string>
+	</dict>
+    <key>%d friend invite(s)</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@friends@</string>
+    </dict>
 </dict>
 </plist>

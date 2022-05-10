@@ -3,63 +3,136 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import UIKit
-
-struct MyImpactCellModel {
-    var top: MyImpactStackViewModel?
-    var middle: MyImpactStackViewModel?
-    var bottom: MyImpactStackViewModel?
-    var callout: Callout
-
-    struct Callout {
-        var text: String
-        var button: String
-        var selector: Selector
-        var collapsed: Bool
-    }
-}
+import Core
 
 final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
+    private(set) weak var howItWorksButton: UIControl!
+    private weak var totalProgress: Progress!
+    private weak var currentProgress: Progress!
+    private weak var indicator: Indicator!
+    private weak var widthConstraint: NSLayoutConstraint!
+    private weak var outline: UIView!
+    private weak var treesCount: UILabel!
+    private weak var treesPlanted: UILabel!
+    private weak var howItWorks: UILabel!
+    private weak var searches: UILabel!
+    private weak var searchesTrees: UILabel!
+    private weak var friends: UILabel!
+    private weak var friendsTrees: UILabel!
+    
+    required init?(coder: NSCoder) { nil }
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setup()
-    }
-
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-    }
-
-    private weak var widthConstraint: NSLayoutConstraint!
-    var container: UIStackView!
-    var topStack: MyImpactStackView!
-    var topContainer: UIView!
-    var calloutContainerConstraint: NSLayoutConstraint!
-    var calloutSeparatorConstraint: NSLayoutConstraint!
-    weak var middleStack: MyImpactStackView!
-    weak var bottomStack: MyImpactStackView!
-    weak var outline: UIView!
-    weak var separator: UIView!
-
-    var callout: UIView!
-    var calloutStack: UIStackView!
-    var calloutLabel: UILabel!
-    var calloutButton: UIButton!
-
-    private (set) var model: MyImpactCellModel?
-
-    private func setup() {
+        
         let outline = UIView()
-        contentView.addSubview(outline)
-        outline.layer.cornerRadius = 8
+        outline.layer.cornerRadius = 10
         outline.translatesAutoresizingMaskIntoConstraints = false
         self.outline = outline
-
-        let container = UIStackView()
-        container.distribution = .fill
-        container.axis = .vertical
-        container.spacing = 20
-        container.translatesAutoresizingMaskIntoConstraints = false
-        contentView.addSubview(container)
-        self.container = container
+        contentView.addSubview(outline)
+        
+        let totalProgress = Progress()
+        self.totalProgress = totalProgress
+        outline.addSubview(totalProgress)
+        
+        let currentProgress = Progress()
+        self.currentProgress = currentProgress
+        outline.addSubview(currentProgress)
+        
+        let indicator = Indicator()
+        self.indicator = indicator
+        outline.addSubview(indicator)
+        
+        let treesIcon = UIImageView(image: .init(themed: "yourImpact"))
+        treesIcon.translatesAutoresizingMaskIntoConstraints = false
+        treesIcon.contentMode = .center
+        treesIcon.clipsToBounds = true
+        outline.addSubview(treesIcon)
+        
+        let treesCount = UILabel()
+        treesCount.translatesAutoresizingMaskIntoConstraints = false
+        treesCount.font = .preferredFont(forTextStyle: .title1).bold()
+        treesCount.adjustsFontForContentSizeCategory = true
+        self.treesCount = treesCount
+        outline.addSubview(treesCount)
+        
+        let treesPlanted = UILabel()
+        treesPlanted.translatesAutoresizingMaskIntoConstraints = false
+        treesPlanted.font = .preferredFont(forTextStyle: .body)
+        treesPlanted.adjustsFontForContentSizeCategory = true
+        self.treesPlanted = treesPlanted
+        outline.addSubview(treesPlanted)
+        
+        let howItWorksButton = UIControl()
+        howItWorksButton.translatesAutoresizingMaskIntoConstraints = false
+        outline.addSubview(howItWorksButton)
+        self.howItWorksButton = howItWorksButton
+        
+        let howItWorks = UILabel()
+        howItWorks.translatesAutoresizingMaskIntoConstraints = false
+        howItWorks.font = .preferredFont(forTextStyle: .callout)
+        howItWorks.adjustsFontForContentSizeCategory = true
+        howItWorks.text = .localized(.howItWorks)
+        self.howItWorks = howItWorks
+        howItWorksButton.addSubview(howItWorks)
+        
+        let howItWorksIcon = UIImageView(image: .init(themed: "howItWorks"))
+        howItWorksIcon.translatesAutoresizingMaskIntoConstraints = false
+        howItWorksIcon.contentMode = .center
+        howItWorksIcon.clipsToBounds = true
+        howItWorksButton.addSubview(howItWorksIcon)
+        
+        let searchesIcon = UIImageView(image: .init(themed: "searches"))
+        searchesIcon.translatesAutoresizingMaskIntoConstraints = false
+        searchesIcon.contentMode = .center
+        searchesIcon.clipsToBounds = true
+        outline.addSubview(searchesIcon)
+        
+        let searches = UILabel()
+        searches.translatesAutoresizingMaskIntoConstraints = false
+        searches.font = .preferredFont(forTextStyle: .body)
+        searches.adjustsFontForContentSizeCategory = true
+        self.searches = searches
+        outline.addSubview(searches)
+        
+        let searchesTrees = UILabel()
+        searchesTrees.translatesAutoresizingMaskIntoConstraints = false
+        searchesTrees.font = .systemFont(ofSize: UIFont.preferredFont(forTextStyle: .subheadline).pointSize, weight: .semibold)
+        searchesTrees.adjustsFontForContentSizeCategory = true
+        self.searchesTrees = searchesTrees
+        outline.addSubview(searchesTrees)
+        
+        let searchesImpact = UIImageView(image: .init(themed: "yourImpact"))
+        searchesImpact.translatesAutoresizingMaskIntoConstraints = false
+        searchesImpact.contentMode = .center
+        searchesImpact.clipsToBounds = true
+        outline.addSubview(searchesImpact)
+        
+        let friendsIcon = UIImageView(image: .init(themed: "friends"))
+        friendsIcon.translatesAutoresizingMaskIntoConstraints = false
+        friendsIcon.contentMode = .center
+        friendsIcon.clipsToBounds = true
+        outline.addSubview(friendsIcon)
+        
+        let friends = UILabel()
+        friends.translatesAutoresizingMaskIntoConstraints = false
+        friends.font = .preferredFont(forTextStyle: .body)
+        friends.adjustsFontForContentSizeCategory = true
+        self.friends = friends
+        outline.addSubview(friends)
+        
+        let friendsTrees = UILabel()
+        friendsTrees.translatesAutoresizingMaskIntoConstraints = false
+        friendsTrees.font = .systemFont(ofSize: UIFont.preferredFont(forTextStyle: .subheadline).pointSize, weight: .semibold)
+        friendsTrees.adjustsFontForContentSizeCategory = true
+        self.friendsTrees = friendsTrees
+        outline.addSubview(friendsTrees)
+        
+        let friendsImpact = UIImageView(image: .init(themed: "yourImpact"))
+        friendsImpact.translatesAutoresizingMaskIntoConstraints = false
+        friendsImpact.contentMode = .center
+        friendsImpact.clipsToBounds = true
+        outline.addSubview(friendsImpact)
 
         outline.leftAnchor.constraint(equalTo: contentView.leftAnchor).isActive = true
         outline.rightAnchor.constraint(equalTo: contentView.rightAnchor).isActive = true
@@ -70,187 +143,104 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
         widthConstraint.priority = .defaultHigh
         widthConstraint.isActive = true
         self.widthConstraint = widthConstraint
+        
+        totalProgress.topAnchor.constraint(equalTo: outline.topAnchor, constant: 25).isActive = true
+        totalProgress.centerXAnchor.constraint(equalTo: outline.centerXAnchor).isActive = true
+        
+        currentProgress.centerYAnchor.constraint(equalTo: totalProgress.centerYAnchor).isActive = true
+        currentProgress.centerXAnchor.constraint(equalTo: totalProgress.centerXAnchor).isActive = true
+        
+        indicator.centerYAnchor.constraint(equalTo: totalProgress.centerYAnchor).isActive = true
+        indicator.centerXAnchor.constraint(equalTo: totalProgress.centerXAnchor).isActive = true
 
-        container.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16).isActive = true
-        container.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -16).isActive = true
-        container.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 30).isActive = true
-        container.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20).isActive = true
-
-        let topContainer = UIView()
-        topContainer.translatesAutoresizingMaskIntoConstraints = false
-
-        let topStack = MyImpactStackView()
-        topStack.setContentHuggingPriority(.required, for: .vertical)
-        topStack.translatesAutoresizingMaskIntoConstraints = false
-        topContainer.addSubview(topStack)
-        self.topStack = topStack
-
-        let separator = UIView()
-        separator.translatesAutoresizingMaskIntoConstraints = false
-        topContainer.addSubview(separator)
-
-        separator.heightAnchor.constraint(equalToConstant: 1).isActive = true
-        separator.topAnchor.constraint(equalTo: topStack.bottomAnchor, constant: 12).isActive = true
-        separator.rightAnchor.constraint(equalTo: topContainer.rightAnchor).isActive = true
-        separator.leftAnchor.constraint(equalTo: topContainer.leftAnchor).isActive = true
-        self.separator = separator
-
-        let callout = UIView()
-        callout.translatesAutoresizingMaskIntoConstraints = false
-        callout.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
-        topContainer.addSubview(callout)
-        callout.layer.cornerRadius = 8
-        self.callout = callout
-
-        let calloutStack = UIStackView()
-        calloutStack.translatesAutoresizingMaskIntoConstraints = false
-        calloutStack.axis = .vertical
-        calloutStack.alignment = .leading
-        calloutStack.spacing = 8
-        callout.addSubview(calloutStack)
-        calloutStack.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
-        self.calloutStack = calloutStack
-
-        calloutStack.topAnchor.constraint(equalTo: callout.topAnchor, constant: 12).isActive = true
-        calloutStack.leftAnchor.constraint(equalTo: callout.leftAnchor, constant: 12).isActive = true
-        calloutStack.rightAnchor.constraint(equalTo: callout.rightAnchor, constant: -12).isActive = true
-        calloutStack.bottomAnchor.constraint(equalTo: callout.bottomAnchor, constant: -12).isActive = true
-
-        let calloutLabel = UILabel()
-        calloutLabel.font = .preferredFont(forTextStyle: .footnote)
-        calloutLabel.adjustsFontForContentSizeCategory = true
-        calloutLabel.numberOfLines = 0
-        calloutLabel.setContentCompressionResistancePriority(.defaultHigh, for: .vertical)
-        calloutLabel.lineBreakMode = .byClipping
-        calloutStack.addArrangedSubview(calloutLabel)
-        self.calloutLabel = calloutLabel
-
-        let calloutButton = UIButton(type: .custom)
-        calloutButton.titleLabel?.font = .preferredFont(forTextStyle: .footnote)
-        calloutButton.titleLabel?.adjustsFontForContentSizeCategory = true
-        calloutButton.setContentHuggingPriority(.defaultHigh, for: .vertical)
-        calloutButton.setContentCompressionResistancePriority(.defaultHigh, for: .vertical)
-        calloutButton.addTarget(self, action: #selector(calloutTapped), for: .primaryActionTriggered)
-        calloutStack.addArrangedSubview(calloutButton)
-        self.calloutButton = calloutButton
-
-        topContainer.topAnchor.constraint(equalTo: topStack.topAnchor).isActive = true
-        topContainer.leftAnchor.constraint(equalTo: topStack.leftAnchor).isActive = true
-        topContainer.rightAnchor.constraint(equalTo: topStack.rightAnchor).isActive = true
-
-        let calloutSeparatorConstraint = topStack.bottomAnchor.constraint(equalTo: separator.bottomAnchor, constant: 12)
-        calloutSeparatorConstraint.priority = .init(999)
-        calloutSeparatorConstraint.isActive = true
-        self.calloutSeparatorConstraint = calloutSeparatorConstraint
-
-        callout.topAnchor.constraint(equalTo: separator.bottomAnchor).isActive = true
-        callout.leftAnchor.constraint(equalTo: topContainer.leftAnchor).isActive = true
-        callout.rightAnchor.constraint(equalTo: topContainer.rightAnchor).isActive = true
-
-        let calloutBottom = callout.bottomAnchor.constraint(equalTo: topContainer.bottomAnchor)
-        calloutBottom.priority = .defaultHigh
-        calloutBottom.isActive = true
-        self.calloutContainerConstraint = calloutBottom
-
-        container.addArrangedSubview(topContainer)
-        self.topContainer = topContainer
-
-        let middleStack = MyImpactStackView()
-        container.addArrangedSubview(middleStack)
-        self.middleStack = middleStack
-
-        let bottomStack = MyImpactStackView()
-        container.addArrangedSubview(bottomStack)
-        self.bottomStack = bottomStack
-
+        treesIcon.topAnchor.constraint(equalTo: totalProgress.topAnchor, constant: 34).isActive = true
+        treesIcon.centerXAnchor.constraint(equalTo: totalProgress.centerXAnchor).isActive = true
+        
+        treesCount.topAnchor.constraint(equalTo: treesIcon.bottomAnchor, constant: 2).isActive = true
+        treesCount.centerXAnchor.constraint(equalTo: totalProgress.centerXAnchor).isActive = true
+        
+        treesPlanted.topAnchor.constraint(equalTo: treesCount.bottomAnchor).isActive = true
+        treesPlanted.centerXAnchor.constraint(equalTo: totalProgress.centerXAnchor).isActive = true
+        
+        howItWorksButton.topAnchor.constraint(equalTo: treesPlanted.bottomAnchor).isActive = true
+        howItWorksButton.centerXAnchor.constraint(equalTo: totalProgress.centerXAnchor).isActive = true
+        howItWorksButton.bottomAnchor.constraint(equalTo: howItWorks.bottomAnchor, constant: 6).isActive = true
+        howItWorksButton.rightAnchor.constraint(equalTo: howItWorksIcon.rightAnchor).isActive = true
+        
+        howItWorks.leftAnchor.constraint(equalTo: howItWorksButton.leftAnchor).isActive = true
+        howItWorks.topAnchor.constraint(equalTo: howItWorksButton.topAnchor, constant: 6).isActive = true
+        
+        howItWorksIcon.centerYAnchor.constraint(equalTo: howItWorks.centerYAnchor).isActive = true
+        howItWorksIcon.leftAnchor.constraint(equalTo: howItWorks.rightAnchor, constant: 4).isActive = true
+        
+        searchesIcon.leftAnchor.constraint(equalTo: outline.leftAnchor, constant: 16).isActive = true
+        searchesIcon.bottomAnchor.constraint(equalTo: friendsIcon.topAnchor, constant: -10).isActive = true
+        
+        searches.leftAnchor.constraint(equalTo: searchesIcon.rightAnchor, constant: 10).isActive = true
+        searches.centerYAnchor.constraint(equalTo: searchesIcon.centerYAnchor).isActive = true
+        
+        searchesTrees.rightAnchor.constraint(equalTo: searchesImpact.leftAnchor, constant: -7).isActive = true
+        searchesTrees.centerYAnchor.constraint(equalTo: searchesIcon.centerYAnchor).isActive = true
+        
+        searchesImpact.rightAnchor.constraint(equalTo: outline.rightAnchor, constant: -19).isActive = true
+        searchesImpact.centerYAnchor.constraint(equalTo: searchesIcon.centerYAnchor).isActive = true
+        
+        friendsIcon.leftAnchor.constraint(equalTo: outline.leftAnchor, constant: 16).isActive = true
+        friendsIcon.bottomAnchor.constraint(equalTo: outline.bottomAnchor, constant: -24).isActive = true
+        
+        friends.leftAnchor.constraint(equalTo: friendsIcon.rightAnchor, constant: 10).isActive = true
+        friends.centerYAnchor.constraint(equalTo: friendsIcon.centerYAnchor).isActive = true
+        
+        friendsTrees.rightAnchor.constraint(equalTo: friendsImpact.leftAnchor, constant: -7).isActive = true
+        friendsTrees.centerYAnchor.constraint(equalTo: friendsIcon.centerYAnchor).isActive = true
+        
+        friendsImpact.rightAnchor.constraint(equalTo: outline.rightAnchor, constant: -19).isActive = true
+        friendsImpact.centerYAnchor.constraint(equalTo: friendsIcon.centerYAnchor).isActive = true
+        
         applyTheme()
     }
-
-
-    func display(_ model: MyImpactCellModel) {
-        self.model = model
-
-        if let top = model.top {
-            topStack.isHidden = false
-            topStack.display(top, action: .arrow(collapsed: model.callout.collapsed))
+    
+    func update(personalCounter: Int) {
+        let progress = .init(personalCounter % 45) / 45.0
+        currentProgress.value = progress
+        indicator.value = progress
+        
+        if #available(iOS 15.0, *) {
+            treesCount.text = User.shared.impact.formatted()
+            searchesTrees.text = User.shared.searchImpact.formatted()
+            friendsTrees.text = User.shared.referrals.impact.formatted()
         } else {
-            topStack.isHidden = true
+            treesCount.text = "\(User.shared.impact)"
+            searchesTrees.text = "\(User.shared.searchImpact)"
+            friendsTrees.text = "\(User.shared.referrals.impact)"
         }
-
-        if let middle = model.middle {
-            middleStack.isHidden = false
-            middleStack.display(middle)
-        } else {
-            middleStack.isHidden = true
-        }
-
-        if let bottom = model.bottom {
-            bottomStack.isHidden = false
-            bottomStack.display(bottom)
-        } else {
-            bottomStack.isHidden = true
-        }
-
-        calloutButton.setTitle(model.callout.button, for: .normal)
-        calloutLabel.text = model.callout.text
-
-        if model.callout.collapsed {
-            calloutSeparatorConstraint.priority = .defaultHigh
-            calloutContainerConstraint.isActive = false
-            callout.alpha = 0
-            separator.alpha = 1
-        } else {
-            calloutSeparatorConstraint.priority = .defaultLow
-            calloutContainerConstraint.isActive = true
-            callout.alpha =  1
-            separator.alpha = 0
-        }
-    }
-
-    override var isSelected: Bool {
-        didSet {
-            hover()
-        }
-    }
-
-    override var isHighlighted: Bool {
-        didSet {
-            hover()
-        }
-    }
-
-    private func hover() {
-        outline.backgroundColor = isSelected || isHighlighted ? UIColor.theme.ecosia.hoverBackgroundColor : UIColor.theme.ecosia.highlightedBackground
-    }
-
-    func applyTheme() {
-        [topStack, middleStack, bottomStack].forEach({ $0?.applyTheme() })
-
-        outline.layer.borderWidth = ThemeManager.instance.current.isDark ? 0 : 1
-        outline.backgroundColor = UIColor.theme.ecosia.highlightedBackground
-        outline.layer.borderColor = UIColor.theme.ecosia.highlightedBorder.cgColor
-        separator.backgroundColor = UIColor.theme.ecosia.barSeparator
-
-        callout.backgroundColor = UIColor.theme.ecosia.impactBackground
-        calloutLabel.textColor = UIColor.theme.ecosia.highContrastText
-        calloutButton.setTitleColor(UIColor.theme.ecosia.primaryBrand, for: .normal)
+        
+        treesPlanted.text = .localizedPlural(.treesPlantedPlural, num: User.shared.impact)
+        searches.text = .localizedPlural(.searches, num: personalCounter)
+        friends.text = .localizedPlural(.friendInvitesPlural, num: User.shared.referrals.count)
     }
 
     func setWidth(_ width: CGFloat, insets: UIEdgeInsets) {
         let margin = max(max(16, insets.left), insets.right)
         widthConstraint.constant = width - 2 * margin
     }
-
+    
+    func applyTheme() {
+        outline.backgroundColor = .theme.ecosia.ecosiaHomeCellBackground
+        totalProgress.update(color: .theme.ecosia.treeCounterProgressTotal)
+        currentProgress.update(color: .theme.ecosia.treeCounterProgressCurrent)
+        indicator.update(fill: .theme.ecosia.treeCounterProgressCurrent, border: .theme.ecosia.treeCounterProgressBorder)
+        treesCount.textColor = .theme.ecosia.primaryText
+        treesPlanted.textColor = .theme.ecosia.primaryText
+        howItWorks.textColor = .theme.ecosia.primaryButton
+        searches.textColor = .theme.ecosia.primaryText
+        searchesTrees.textColor = .theme.ecosia.primaryText
+        friends.textColor = .theme.ecosia.primaryText
+        friendsTrees.textColor = .theme.ecosia.primaryText
+    }
+    
     override func prepareForReuse() {
         super.prepareForReuse()
         applyTheme()
-    }
-
-    @objc func calloutTapped() {
-        guard let selector = model?.callout.selector else { return }
-
-        if let target = target(forAction: selector, withSender: self) as? UIResponder {
-            target.perform(selector)
-        }
     }
 }

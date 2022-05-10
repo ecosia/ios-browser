@@ -45,6 +45,11 @@ class EcosiaTheme {
     var treeCountBackground: UIColor { UIColor(rgb: 0xE2F7F1) }
     var impactTreeCountBackground: UIColor { treeCountBackground }
     var impactBackground: UIColor { UIColor.Photon.Grey10 }
+    var impactSeparator: UIColor { UIColor.Photon.Grey40 }
+    var ecosiaHomeCellBackground: UIColor { .Light.Background.primary }
+    var treeCounterProgressTotal: UIColor { .Light.Background.tertiary }
+    var treeCounterProgressCurrent: UIColor { .Light.Brand.primary }
+    var treeCounterProgressBorder: UIColor { .Light.Background.primary }
 
     var ntpBackground: UIColor { .Light.Background.tertiary }
     var ntpIntroBackground: UIColor { .Light.Background.primary }
@@ -55,7 +60,8 @@ class EcosiaTheme {
     var trackingSheetBackground: UIColor { .Light.Background.tertiary }
     
     var actionSheetBackground: UIColor { .Light.Background.primary }
-    var modalBackground: UIColor { .white }
+    var modalBackground: UIColor { .Light.Background.tertiary }
+    var modalHeader: UIColor { .init(red: 0.153, green: 0.322, blue: 0.263, alpha: 1) }
 
     var primaryText: UIColor { .Light.Text.primary }
     var primaryTextInverted: UIColor { .Dark.Text.primary }
@@ -113,6 +119,11 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var treeCountText: UIColor { .white }
     override var treeCountBackground: UIColor { UIColor.Photon.Grey70 }
     override var impactTreeCountBackground: UIColor { UIColor.Photon.Grey80 }
+    override var impactSeparator: UIColor { UIColor.Photon.Grey60 }
+    override var ecosiaHomeCellBackground: UIColor { .Dark.Background.tertiary }
+    override var treeCounterProgressTotal: UIColor { .Dark.Background.secondary }
+    override var treeCounterProgressCurrent: UIColor { .Dark.Brand.primary }
+    override var treeCounterProgressBorder: UIColor { .Dark.Background.primary }
 
     override var ntpBackground: UIColor { .Dark.Background.primary }
     override var ntpImpactBackground: UIColor { UIColor.Photon.Grey80}
@@ -124,7 +135,8 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var trackingSheetBackground: UIColor { .Dark.Background.secondary }
 
     override var actionSheetBackground: UIColor { .Dark.Background.secondary }
-    override var modalBackground: UIColor { UIColor.Photon.Grey80 }
+    override var modalBackground: UIColor { .Dark.Background.secondary }
+    override var modalHeader: UIColor { .Dark.Background.secondary }
 
     override var primaryText: UIColor { .Dark.Text.primary}
     override var primaryTextInverted: UIColor { .Light.Text.primary }

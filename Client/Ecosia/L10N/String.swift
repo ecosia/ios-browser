@@ -46,7 +46,7 @@ extension String {
         case moderate = "Moderate"
         case more = "More"
         case multiplyImpact = "Multiply impact"
-        case myImpact = "My Impact"
+        case yourImpact = "Your impact"
         case myImpactDescription = "This is the estimated number of trees you have contributed to planting by using Ecosia."
         case mySearches = "My searches"
         case myTrees = "My trees"
@@ -143,5 +143,9 @@ extension String {
         case activeProjects = "Active projects"
         case countries = "Countries"
         case finishTour = "Start Planting"
+        case treesPlantedPlural = "Tree(s) planted"
+        case howItWorks = "How it works"
+        case friendInvitesPlural = "%d friend invite(s)"
+        case myImpact = "My Impact"
     }
 }

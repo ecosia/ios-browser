@@ -9,7 +9,7 @@ protocol EcosiaHomeDelegate: AnyObject {
     func ecosiaHome(didSelectURL url: URL)
 }
 
-final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlowLayout, Themeable, MyImpactStackViewModelResize {
+final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlowLayout, Themeable {
 
     enum Section: Int, CaseIterable {
         case impact, legacyImpact, multiply, news, explore
@@ -104,41 +104,12 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     }
 
     var delegate: EcosiaHomeDelegate?
+    private weak var referrals: Referrals!
     private var items = [NewsModel]()
     private let images = Images(.init(configuration: .ephemeral))
     private let news = News()
     private let personalCounter = PersonalCounter()
-    private weak var referrals: Referrals!
-
-    lazy var impactModel: MyImpactCellModel = {
-        return refreshImpactModel()
-    }()
-
-    private func refreshImpactModel() -> MyImpactCellModel {
-        return referralImpactCellModel
-    }
-
-    private var referralImpactCellModel: MyImpactCellModel {
-        let callout = MyImpactCellModel.Callout(text: .localized(.myImpactDescription),
-                                                button: .localized(.learnMore),
-                                                selector: #selector(learnMore),
-                                                collapsed: true)
-        let top = MyImpactStackViewModel(title: "\(User.shared.impact)",
-                                         highlight: true, subtitle: .localized(.myTrees),
-                                         imageName: "personalCounter")
-
-        let middle = MyImpactStackViewModel(title: .localizedPlural(.treesPlural, num: User.shared.searchImpact),
-                                            highlight: false,
-                                            subtitle: .localizedPlural(.searches, num: personalCounter.state!),
-                                            imageName: "impactSearch")
-
-        let bottom = MyImpactStackViewModel(title: .localizedPlural(.treesPlural, num: User.shared.referrals.impact),
-                                            highlight: false,
-                                            subtitle: .localizedPlural(.referrals, num: User.shared.referrals.count),
-                                            imageName: "impactReferrals")
-
-        return MyImpactCellModel(top: top, middle: middle, bottom: bottom, callout: callout)
-    }
+    private let background = Background()
 
     fileprivate var treesCellModel: TreesCellModel {
         return .init(title: .localizedPlural(.searches, num: personalCounter.state!),
@@ -155,8 +126,9 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
         layout.footerReferenceSize = .zero
         layout.headerReferenceSize = .zero
+        
         self.init(collectionViewLayout: layout)
-        self.title = .localized(.myImpact).capitalized
+        self.title = .localized(.yourImpact)
         self.delegate = delegate
         self.referrals = referrals
         navigationItem.largeTitleDisplayMode = .always
@@ -189,18 +161,17 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
 
         personalCounter.subscribe(self)  { [weak self] _ in
             guard let self = self else { return }
-            self.impactModel = self.refreshImpactModel()
             self.collectionView.reloadSections([Section.impact.rawValue, Section.legacyImpact.rawValue])
         }
 
         referrals.subscribe(self)  { [weak self] _ in
             guard let self = self else { return }
-            self.impactModel = self.refreshImpactModel()
             self.collectionView.reloadSections([Section.impact.rawValue])
         }
     }
 
     private var hasAppeared: Bool = false
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         news.load(session: .shared, force: items.isEmpty)
@@ -214,7 +185,6 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
 
         guard hasAppeared else { return hasAppeared = true }
         updateBarAppearance()
-        impactModel = refreshImpactModel()
         collectionView.scrollRectToVisible(.init(x: 0, y: 0, width: 1, height: 1), animated: false)
         collectionView.reloadData()
     }
@@ -242,7 +212,9 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         case .impact:
             let infoCell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: section.cell), for: indexPath) as! MyImpactCell
             infoCell.setWidth(collectionView.bounds.width, insets: collectionView.safeAreaInsets)
-            infoCell.display(impactModel)
+            infoCell.howItWorksButton.removeTarget(self, action: nil, for: .touchUpInside)
+            infoCell.howItWorksButton.addTarget(self, action: #selector(learnMore), for: .touchUpInside)
+            infoCell.update(personalCounter: personalCounter.state ?? 0)
             return infoCell
 
         case .legacyImpact:
@@ -302,9 +274,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         let section = Section(rawValue: indexPath.section)!
         switch section {
         case .impact:
-            if let stack = (collectionView.cellForItem(at: indexPath) as? MyImpactCell)?.topStack {
-                resizeStack(sender: stack)
-            }
+            break
         case .legacyImpact:
             delegate?.ecosiaHome(didSelectURL: Environment.current.aboutCounter)
             dismiss(animated: true, completion: nil)
@@ -334,9 +304,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
 
         switch section {
         case .impact, .legacyImpact:
-            let dynamicTypeResize = max(UIFont.preferredFont(forTextStyle: .body).pointSize - 17, 0) * 7
-            return CGSize(width: view.bounds.width - 2 * margin,
-                          height: 226 + dynamicTypeResize)
+            return .init(width: view.bounds.width - 2 * margin, height: 290)
         case .multiply:
             return CGSize(width: view.bounds.width - 2 * margin, height: 56)
         case .news:
@@ -367,6 +335,8 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
 
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         showSeparator = scrollView.contentOffset.y + scrollView.adjustedContentInset.top <= 12
+        background.inset = max(background.inset, scrollView.adjustedContentInset.top)
+        background.offset = scrollView.contentOffset.y
     }
 
     private var showSeparator = false {
@@ -381,16 +351,20 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         guard let appearance = navigationController?.navigationBar.standardAppearance else { return }
 
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = UIColor.theme.ecosia.modalBackground
-        appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.theme.ecosia.highContrastText]
-        appearance.titleTextAttributes = [.foregroundColor: UIColor.theme.ecosia.highContrastText]
+        appearance.backgroundColor = .clear
+        appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
+        appearance.titleTextAttributes = [.foregroundColor: UIColor.theme.ecosia.primaryText]
+        appearance.shadowColor = UIColor.theme.ecosia.impactSeparator
+        appearance.shadowImage = UIImage()
 
         if showSeparator {
-            appearance.shadowColor = nil
-            appearance.shadowImage = nil
+            navigationController?.navigationBar.backgroundColor = .theme.ecosia.modalHeader
+            navigationItem.rightBarButtonItem?.tintColor = UIColor.white
+            collectionView.backgroundView = background
         } else {
-            appearance.shadowColor = UIColor.theme.ecosia.barSeparator
-            appearance.shadowImage = UIImage()
+            navigationController?.navigationBar.backgroundColor = .theme.ecosia.modalBackground
+            navigationItem.rightBarButtonItem?.tintColor = UIColor.theme.ecosia.primaryButton
+            collectionView.backgroundView = nil
         }
         navigationController?.navigationBar.standardAppearance = appearance
         navigationController?.navigationBar.setNeedsDisplay()
@@ -405,8 +379,8 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     func applyTheme() {
         collectionView.reloadData()
         view.backgroundColor = UIColor.theme.ecosia.modalBackground
-        collectionView.backgroundColor = UIColor.theme.ecosia.modalBackground
-        navigationItem.leftBarButtonItem?.tintColor = UIColor.theme.ecosia.primaryToolbar
+        collectionView.backgroundColor = .clear
+        background.backgroundColor = .theme.ecosia.modalHeader
         updateBarAppearance()
     }
 
@@ -428,23 +402,9 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         navigationController?.pushViewController(MultiplyImpact(delegate: delegate, referrals: referrals), animated: true)
     }
 
-    @objc func learnMore() {
+    @objc private func learnMore() {
         delegate?.ecosiaHome(didSelectURL: Environment.current.aboutCounter)
         Analytics.shared.navigation(.open, label: .counter)
         dismiss(animated: true, completion: nil)
-    }
-
-    @objc func resizeStack(sender: MyImpactStackView) {
-        guard let action = sender.action, case .arrow(let collapsed) = action,
-              let cell = collectionView.cellForItem(at: IndexPath(item: 0, section: Section.impact.rawValue)) as? MyImpactCell  else { return }
-
-        impactModel.callout.collapsed = !collapsed
-        let updatedModel = impactModel
-
-        collectionView.performBatchUpdates {
-            UIView.animate(withDuration: 0.3) {
-                cell.display(updatedModel)
-            }
-        }
     }
 }
