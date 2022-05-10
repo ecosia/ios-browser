@@ -13,34 +13,46 @@ final class WelcomeTour: UIViewController,  Themeable {
     final class Step {
         let title: String
         let text: String
-        let image: String
+        let background: Background
         let content: UIView?
 
-        init(title: String, text: String, image: String, content: UIView?) {
+        init(title: String, text: String, background: Background, content: UIView?) {
             self.title = title
             self.text = text
-            self.image = image
+            self.background = background
             self.content = content
         }
 
         static var planet: Step {
-            return .init(title: "A better planet with every search", text: "Search the web and plant trees with the fast, free, and full-featured Ecosia browser", image: "tour1", content: WelcomeTourPlanet())
+            return .init(title: "A better planet with every search", text: "Search the web and plant trees with the fast, free, and full-featured Ecosia browser", background: .init(image: "tour1"), content: WelcomeTourPlanet())
         }
 
         static var profit: Step {
-            return .init(title: "100% of profits for the planet", text: "All our profits go to climate action, including planting trees and generating solar energy.", image: "tour2", content: WelcomeTourProfit())
+            return .init(title: "100% of profits for the planet", text: "All our profits go to climate action, including planting trees and generating solar energy.", background: .init(image: "tour2"), content: WelcomeTourProfit())
         }
 
         static var action: Step {
-            return .init(title: "Collective action starts here", text: "Join 15 million people growing the right trees in the right places.", image: "tour3", content: WelcomeTourAction())
+            return .init(title: "Collective action starts here", text: "Join 15 million people growing the right trees in the right places.", background: .init(image: "tour3", darkImage: "tour3Dark", color: UIColor(rgb: 0x668A7A)), content: WelcomeTourAction())
         }
 
         static var trees: Step {
-            return .init(title: "We want your trees, not your data", text: "We'll never sell your details to advertisers or create a profile of you.", image: "tour4", content: nil)
+            return .init(title: "We want your trees, not your data", text: "We'll never sell your details to advertisers or create a profile of you.", background: .init(image: "tour4"), content: nil)
         }
 
         static var all: [Step] {
             return [planet, profit, action, trees]
+        }
+
+        final class Background {
+            let image: String
+            let darkImage: String?
+            let color: UIColor?
+
+            init(image: String, darkImage: String? = nil, color: UIColor? = nil) {
+                self.image = image
+                self.darkImage = darkImage
+                self.color = color
+            }
         }
     }
 
@@ -232,11 +244,12 @@ final class WelcomeTour: UIViewController,  Themeable {
 
         let title = isLastStep() ? "Start planting" : "Continue"
 
+        let image = ThemeManager.instance.current.isDark ? (step.background.darkImage ?? step.background.image) : step.background.image
+
         // Image transition
-        UIView.transition(with: imageView,
-                          duration: 0.3,
-                          options: .transitionCrossDissolve,
-                          animations: { self.imageView.image = UIImage(named: step.image) },
+        UIView.transition(with: imageView, duration: 0.3, options: .transitionCrossDissolve, animations: {
+            self.imageView.image = UIImage(named: image)
+            self.imageView.backgroundColor = step.background.color ?? .clear },
                           completion: nil)
 
         // Move and Fade transition
@@ -277,6 +290,7 @@ final class WelcomeTour: UIViewController,  Themeable {
         container.subviews.forEach({ $0.removeFromSuperview() })
 
         guard let content = content else { return }
+        (content as? Themeable)?.applyTheme()
         container.addSubview(content)
         content.translatesAutoresizingMaskIntoConstraints = false
         content.leadingAnchor.constraint(equalTo: container.leadingAnchor).isActive = true
@@ -336,6 +350,11 @@ final class WelcomeTour: UIViewController,  Themeable {
         ctaButton.backgroundColor = .Light.Button.secondary
         ctaButton.setTitleColor(.Light.Text.primary, for: .normal)
         container.subviews.forEach({ ($0 as? Themeable)?.applyTheme() })
+
+        imageView.backgroundColor = current?.background.color ?? .clear
+        guard let current = current else { return }
+        let image = ThemeManager.instance.current.isDark ? current.background.darkImage ?? current.background.image : current.background.image
+        imageView.image = .init(named: image)
     }
 
     @objc func themeChanged() {
