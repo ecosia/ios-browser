@@ -126,5 +126,6 @@ extension String {
         case trackYourProgress = "Track your progress and get insights about your impact"
         case treesPlantedPlural = "Tree(s) planted"
         case howItWorks = "How it works"
+        case friendInvitesPlural = "%d friend invite(s)"
     }
 }

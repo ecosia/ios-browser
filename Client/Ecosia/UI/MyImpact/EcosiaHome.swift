@@ -214,7 +214,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
             infoCell.setWidth(collectionView.bounds.width, insets: collectionView.safeAreaInsets)
             infoCell.howItWorksButton.removeTarget(self, action: nil, for: .touchUpInside)
             infoCell.howItWorksButton.addTarget(self, action: #selector(learnMore), for: .touchUpInside)
-            infoCell.update()
+            infoCell.update(personalCounter: personalCounter.state ?? 0)
             return infoCell
 
         case .legacyImpact:
@@ -304,9 +304,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
 
         switch section {
         case .impact, .legacyImpact:
-            let dynamicTypeResize = max(UIFont.preferredFont(forTextStyle: .body).pointSize - 17, 0) * 7
-            return CGSize(width: view.bounds.width - 2 * margin,
-                          height: 226 + dynamicTypeResize)
+            return .init(width: view.bounds.width - 2 * margin, height: 290)
         case .multiply:
             return CGSize(width: view.bounds.width - 2 * margin, height: 56)
         case .news:

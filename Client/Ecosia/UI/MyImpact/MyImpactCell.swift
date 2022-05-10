@@ -39,6 +39,10 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
     private weak var treesCount: UILabel!
     private weak var treesPlanted: UILabel!
     private weak var howItWorks: UILabel!
+    private weak var searches: UILabel!
+    private weak var searchesTrees: UILabel!
+    private weak var friends: UILabel!
+    private weak var friendsTrees: UILabel!
     
     required init?(coder: NSCoder) { nil }
     
@@ -56,12 +60,10 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
         outline.addSubview(totalProgress)
         
         let currentProgress = Progress()
-        currentProgress.value = 0.75
         self.currentProgress = currentProgress
         outline.addSubview(currentProgress)
         
         let indicator = Indicator()
-        indicator.value = 0.75
         self.indicator = indicator
         outline.addSubview(indicator)
         
@@ -100,6 +102,54 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
         howItWorksIcon.contentMode = .center
         howItWorksIcon.clipsToBounds = true
         howItWorksButton.addSubview(howItWorksIcon)
+        
+        let searchesIcon = UIImageView(image: .init(themed: "searches"))
+        searchesIcon.translatesAutoresizingMaskIntoConstraints = false
+        searchesIcon.contentMode = .center
+        searchesIcon.clipsToBounds = true
+        outline.addSubview(searchesIcon)
+        
+        let searches = UILabel()
+        searches.translatesAutoresizingMaskIntoConstraints = false
+        searches.font = .preferredFont(forTextStyle: .body)
+        self.searches = searches
+        outline.addSubview(searches)
+        
+        let searchesTrees = UILabel()
+        searchesTrees.translatesAutoresizingMaskIntoConstraints = false
+        searchesTrees.font = .systemFont(ofSize: UIFont.preferredFont(forTextStyle: .subheadline).pointSize, weight: .semibold)
+        self.searchesTrees = searchesTrees
+        outline.addSubview(searchesTrees)
+        
+        let searchesImpact = UIImageView(image: .init(themed: "yourImpact"))
+        searchesImpact.translatesAutoresizingMaskIntoConstraints = false
+        searchesImpact.contentMode = .center
+        searchesImpact.clipsToBounds = true
+        outline.addSubview(searchesImpact)
+        
+        let friendsIcon = UIImageView(image: .init(themed: "friends"))
+        friendsIcon.translatesAutoresizingMaskIntoConstraints = false
+        friendsIcon.contentMode = .center
+        friendsIcon.clipsToBounds = true
+        outline.addSubview(friendsIcon)
+        
+        let friends = UILabel()
+        friends.translatesAutoresizingMaskIntoConstraints = false
+        friends.font = .preferredFont(forTextStyle: .body)
+        self.friends = friends
+        outline.addSubview(friends)
+        
+        let friendsTrees = UILabel()
+        friendsTrees.translatesAutoresizingMaskIntoConstraints = false
+        friendsTrees.font = .systemFont(ofSize: UIFont.preferredFont(forTextStyle: .subheadline).pointSize, weight: .semibold)
+        self.friendsTrees = friendsTrees
+        outline.addSubview(friendsTrees)
+        
+        let friendsImpact = UIImageView(image: .init(themed: "yourImpact"))
+        friendsImpact.translatesAutoresizingMaskIntoConstraints = false
+        friendsImpact.contentMode = .center
+        friendsImpact.clipsToBounds = true
+        outline.addSubview(friendsImpact)
 
         outline.leftAnchor.constraint(equalTo: contentView.leftAnchor).isActive = true
         outline.rightAnchor.constraint(equalTo: contentView.rightAnchor).isActive = true
@@ -140,54 +190,51 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
         howItWorksIcon.centerYAnchor.constraint(equalTo: howItWorks.centerYAnchor).isActive = true
         howItWorksIcon.leftAnchor.constraint(equalTo: howItWorks.rightAnchor, constant: 4).isActive = true
         
+        searchesIcon.leftAnchor.constraint(equalTo: outline.leftAnchor, constant: 16).isActive = true
+        searchesIcon.bottomAnchor.constraint(equalTo: friendsIcon.topAnchor, constant: -10).isActive = true
+        
+        searches.leftAnchor.constraint(equalTo: searchesIcon.rightAnchor, constant: 10).isActive = true
+        searches.centerYAnchor.constraint(equalTo: searchesIcon.centerYAnchor).isActive = true
+        
+        searchesTrees.rightAnchor.constraint(equalTo: searchesImpact.leftAnchor, constant: -7).isActive = true
+        searchesTrees.centerYAnchor.constraint(equalTo: searchesIcon.centerYAnchor).isActive = true
+        
+        searchesImpact.rightAnchor.constraint(equalTo: outline.rightAnchor, constant: -19).isActive = true
+        searchesImpact.centerYAnchor.constraint(equalTo: searchesIcon.centerYAnchor).isActive = true
+        
+        friendsIcon.leftAnchor.constraint(equalTo: outline.leftAnchor, constant: 16).isActive = true
+        friendsIcon.bottomAnchor.constraint(equalTo: outline.bottomAnchor, constant: -24).isActive = true
+        
+        friends.leftAnchor.constraint(equalTo: friendsIcon.rightAnchor, constant: 10).isActive = true
+        friends.centerYAnchor.constraint(equalTo: friendsIcon.centerYAnchor).isActive = true
+        
+        friendsTrees.rightAnchor.constraint(equalTo: friendsImpact.leftAnchor, constant: -7).isActive = true
+        friendsTrees.centerYAnchor.constraint(equalTo: friendsIcon.centerYAnchor).isActive = true
+        
+        friendsImpact.rightAnchor.constraint(equalTo: outline.rightAnchor, constant: -19).isActive = true
+        friendsImpact.centerYAnchor.constraint(equalTo: friendsIcon.centerYAnchor).isActive = true
+        
         applyTheme()
     }
     
-    func update() {
+    func update(personalCounter: Int) {
+        let progress = .init(personalCounter % 45) / 45.0
+        currentProgress.value = progress
+        indicator.value = progress
+        
         if #available(iOS 15.0, *) {
             treesCount.text = User.shared.impact.formatted()
+            searchesTrees.text = User.shared.searchImpact.formatted()
+            friendsTrees.text = User.shared.referrals.impact.formatted()
         } else {
             treesCount.text = "\(User.shared.impact)"
+            searchesTrees.text = "\(User.shared.searchImpact)"
+            friendsTrees.text = "\(User.shared.referrals.impact)"
         }
         
         treesPlanted.text = .localizedPlural(.treesPlantedPlural, num: User.shared.impact)
-        
-        //
-        //        if let top = model.top {
-        //            topStack.isHidden = false
-        //            topStack.display(top, action: .arrow(collapsed: model.callout.collapsed))
-        //        } else {
-        //            topStack.isHidden = true
-        //        }
-        //
-        //        if let middle = model.middle {
-        //            middleStack.isHidden = false
-        //            middleStack.display(middle)
-        //        } else {
-        //            middleStack.isHidden = true
-        //        }
-        //
-        //        if let bottom = model.bottom {
-        //            bottomStack.isHidden = false
-        //            bottomStack.display(bottom)
-        //        } else {
-        //            bottomStack.isHidden = true
-        //        }
-        //
-        //        calloutButton.setTitle(model.callout.button, for: .normal)
-        //        calloutLabel.text = model.callout.text
-        //
-        //        if model.callout.collapsed {
-        //            calloutSeparatorConstraint.priority = .defaultHigh
-        //            calloutContainerConstraint.isActive = false
-        //            callout.alpha = 0
-        //            separator.alpha = 1
-        //        } else {
-        //            calloutSeparatorConstraint.priority = .defaultLow
-        //            calloutContainerConstraint.isActive = true
-        //            callout.alpha =  1
-        //            separator.alpha = 0
-        //        }
+        searches.text = .localizedPlural(.searches, num: personalCounter)
+        friends.text = .localizedPlural(.friendInvitesPlural, num: User.shared.referrals.count)
     }
 
     func setWidth(_ width: CGFloat, insets: UIEdgeInsets) {
@@ -203,6 +250,10 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
         treesCount.textColor = .theme.ecosia.primaryText
         treesPlanted.textColor = .theme.ecosia.primaryText
         howItWorks.textColor = .theme.ecosia.primaryButton
+        searches.textColor = .theme.ecosia.primaryText
+        searchesTrees.textColor = .theme.ecosia.primaryText
+        friends.textColor = .theme.ecosia.primaryText
+        friendsTrees.textColor = .theme.ecosia.primaryText
     }
     
     override func prepareForReuse() {
