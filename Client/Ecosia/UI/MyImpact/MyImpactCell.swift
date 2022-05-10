@@ -36,6 +36,7 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
     private weak var widthConstraint: NSLayoutConstraint!
     private weak var outline: UIView!
     private weak var treesCount: UILabel!
+    private weak var treesPlanted: UILabel!
     
     required init?(coder: NSCoder) { nil }
     
@@ -71,6 +72,12 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
         treesCount.font = .systemFont(ofSize: UIFont.preferredFont(forTextStyle: .title1).pointSize, weight: .bold)
         self.treesCount = treesCount
         outline.addSubview(treesCount)
+        
+        let treesPlanted = UILabel()
+        treesPlanted.translatesAutoresizingMaskIntoConstraints = false
+        treesPlanted.font = .preferredFont(forTextStyle: .body)
+        self.treesPlanted = treesPlanted
+        outline.addSubview(treesPlanted)
 
         outline.leftAnchor.constraint(equalTo: contentView.leftAnchor).isActive = true
         outline.rightAnchor.constraint(equalTo: contentView.rightAnchor).isActive = true
@@ -97,6 +104,9 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
         treesCount.topAnchor.constraint(equalTo: treesIcon.bottomAnchor, constant: 2).isActive = true
         treesCount.centerXAnchor.constraint(equalTo: totalProgress.centerXAnchor).isActive = true
         
+        treesPlanted.topAnchor.constraint(equalTo: treesCount.bottomAnchor).isActive = true
+        treesPlanted.centerXAnchor.constraint(equalTo: totalProgress.centerXAnchor).isActive = true
+        
         applyTheme()
     }
     
@@ -106,6 +116,8 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
         } else {
             treesCount.text = "\(User.shared.impact)"
         }
+        
+        treesPlanted.text = .localizedPlural(.treesPlantedPlural, num: User.shared.impact)
         
         //
         //        if let top = model.top {
@@ -156,6 +168,7 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
         currentProgress.update(color: .theme.ecosia.treeCounterProgressCurrent)
         indicator.update(fill: .theme.ecosia.treeCounterProgressCurrent, border: .theme.ecosia.treeCounterProgressBorder)
         treesCount.textColor = .theme.ecosia.primaryText
+        treesPlanted.textColor = .theme.ecosia.primaryText
     }
     
     override func prepareForReuse() {

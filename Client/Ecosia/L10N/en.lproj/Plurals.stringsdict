@@ -66,5 +66,21 @@
 			<string>%d successful referrals</string>
 		</dict>
 	</dict>
+	<key>Tree(s) planted</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@Trees@</string>
+		<key>Trees</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>Tree planted</string>
+			<key>other</key>
+			<string>Trees planted</string>
+		</dict>
+	</dict>
 </dict>
 </plist>
