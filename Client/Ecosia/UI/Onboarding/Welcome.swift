@@ -136,7 +136,7 @@ final class Welcome: UIViewController {
 
         let cta = UIButton(type: .system)
         cta.backgroundColor = .Light.Button.primary
-        cta.setTitle("Get started", for: .normal)
+        cta.setTitle(.localized(.getStarted), for: .normal)
         cta.titleLabel?.font = .preferredFont(forTextStyle: .callout)
         cta.titleLabel?.adjustsFontForContentSizeCategory = true
         cta.setTitleColor(.Dark.Text.primary, for: .normal)
@@ -153,7 +153,7 @@ final class Welcome: UIViewController {
         skip.titleLabel?.font = .preferredFont(forTextStyle: .callout)
         skip.titleLabel?.adjustsFontForContentSizeCategory = true
         skip.setTitleColor(.Dark.Text.secondary, for: .normal)
-        skip.setTitle("Skip welcome tour", for: .normal)
+        skip.setTitle(.localized(.skipWelcomeTour), for: .normal)
         skip.heightAnchor.constraint(equalToConstant: 50).isActive = true
         skip.addTarget(self, action: #selector(skipTour), for: .primaryActionTriggered)
 
@@ -224,9 +224,14 @@ final class Welcome: UIViewController {
 
     // MARK: Helper
     private var introText: NSAttributedString {
-        let first = NSMutableAttributedString(string: "The simplest way to be ")
-        let middle = NSMutableAttributedString(string: " climate-active every day while ")
-        let end = NSMutableAttributedString(string: " browsing the web")
+        let raw = String.localized(.theSimplestWay)
+        let splits = raw.components(separatedBy: .newlines)
+
+        guard splits.count == 3 else { return NSAttributedString(string: raw) }
+
+        let first = NSMutableAttributedString(string: splits[0])
+        let middle = NSMutableAttributedString(string: splits[1])
+        let end = NSMutableAttributedString(string: splits[2])
 
         let image1Attachment = NSTextAttachment()
         image1Attachment.image = UIImage(named: "splashTree1")

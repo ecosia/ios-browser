@@ -24,19 +24,19 @@ final class WelcomeTour: UIViewController,  Themeable {
         }
 
         static var planet: Step {
-            return .init(title: "A better planet with every search", text: "Search the web and plant trees with the fast, free, and full-featured Ecosia browser", background: .init(image: "tour1"), content: WelcomeTourPlanet())
+            return .init(title: .localized(.aBetterPlanet), text: .localized(.searchTheWeb), background: .init(image: "tour1"), content: WelcomeTourPlanet())
         }
 
         static var profit: Step {
-            return .init(title: "100% of profits for the planet", text: "All our profits go to climate action, including planting trees and generating solar energy.", background: .init(image: "tour2"), content: WelcomeTourProfit())
+            return .init(title: .localized(.hundredPercentOfProfits), text: .localized(.allOurProfitsGo), background: .init(image: "tour2"), content: WelcomeTourProfit())
         }
 
         static var action: Step {
-            return .init(title: "Collective action starts here", text: "Join 15 million people growing the right trees in the right places.", background: .init(image: "tour3", darkImage: "tour3Dark", color: UIColor(rgb: 0x668A7A)), content: WelcomeTourAction())
+            return .init(title: .localized(.collectiveAction), text: .localized(.join15Million), background: .init(image: "tour3", darkImage: "tour3Dark", color: UIColor(rgb: 0x668A7A)), content: WelcomeTourAction())
         }
 
         static var trees: Step {
-            return .init(title: "We want your trees, not your data", text: "We'll never sell your details to advertisers or create a profile of you.", background: .init(image: "tour4"), content: nil)
+            return .init(title: .localized(.weWantTrees), text: .localized(.wellNeverSell), background: .init(image: "tour4"), content: nil)
         }
 
         static var all: [Step] {
@@ -127,7 +127,7 @@ final class WelcomeTour: UIViewController,  Themeable {
         skipButton.widthAnchor.constraint(equalToConstant: 74).isActive = true
         skipButton.addTarget(self, action: #selector(skip), for: .primaryActionTriggered)
         navStack.addArrangedSubview(skipButton)
-        skipButton.setTitle("Skip", for: .normal)
+        skipButton.setTitle(.localized(.skip), for: .normal)
 
         self.skipButton = skipButton
 
@@ -190,7 +190,7 @@ final class WelcomeTour: UIViewController,  Themeable {
         self.textLabel = textLabel
 
         let ctaButton = UIButton(type: .system)
-        ctaButton.setTitle("Continue", for: .normal)
+        ctaButton.setTitle(.localized(.continueMessage), for: .normal)
         ctaButton.translatesAutoresizingMaskIntoConstraints = false
         ctaButton.addTarget(self, action: #selector(forward), for: .primaryActionTriggered)
         ctaButton.alpha = 0
@@ -242,7 +242,7 @@ final class WelcomeTour: UIViewController,  Themeable {
         current = step
         pageControl.currentPage = steps.firstIndex(where: { $0 === step }) ?? 0
 
-        let title = isLastStep() ? "Start planting" : "Continue"
+        let title: String = isLastStep() ? .localized(.finishTour) : .localized(.continueMessage)
 
         let image = ThemeManager.instance.current.isDark ? (step.background.darkImage ?? step.background.image) : step.background.image
 

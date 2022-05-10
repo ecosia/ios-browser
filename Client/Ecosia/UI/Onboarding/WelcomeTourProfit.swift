@@ -29,7 +29,7 @@ final class WelcomeTourProfit: UIView, Themeable {
 
         let beforeLabel = UILabel()
         beforeLabel.translatesAutoresizingMaskIntoConstraints = false
-        beforeLabel.text = "Before ..."
+        beforeLabel.text = .localized(.before)
         beforeLabel.font = .preferredFont(forTextStyle: .body).bold()
         beforeLabel.adjustsFontForContentSizeCategory = true
         beforeContainer.addSubview(beforeLabel)
@@ -76,7 +76,7 @@ final class WelcomeTourProfit: UIView, Themeable {
 
         let afterLabel = UILabel()
         afterLabel.translatesAutoresizingMaskIntoConstraints = false
-        afterLabel.text = "After"
+        afterLabel.text = .localized(.after)
         afterLabel.font = .preferredFont(forTextStyle: .body).bold()
         afterLabel.adjustsFontForContentSizeCategory = true
         stack.addArrangedSubview(afterLabel)

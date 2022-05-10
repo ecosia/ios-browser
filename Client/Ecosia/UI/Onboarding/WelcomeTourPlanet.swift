@@ -28,7 +28,7 @@ class WelcomeTourPlanet: UIView, Themeable {
 
         let searchLabel = UILabel()
         searchLabel.translatesAutoresizingMaskIntoConstraints = false
-        searchLabel.text = "sustainable shoes"
+        searchLabel.text = .localized(.sustainableShoes)
         searchLabel.font = .systemFont(ofSize: 12)
         searchLabel.numberOfLines = 1
         searchLabel.textAlignment = .left
@@ -50,7 +50,7 @@ class WelcomeTourPlanet: UIView, Themeable {
 
         let impactLabel = UILabel()
         impactLabel.translatesAutoresizingMaskIntoConstraints = false
-        impactLabel.text = "Your impact"
+        impactLabel.text = .localized(.myImpact)
         impactLabel.numberOfLines = 1
         impactLabel.textAlignment = .left
         impactLabel.font = .systemFont(ofSize: 10)
@@ -59,7 +59,7 @@ class WelcomeTourPlanet: UIView, Themeable {
 
         let treesLabel = UILabel()
         treesLabel.translatesAutoresizingMaskIntoConstraints = false
-        treesLabel.text = "Trees planted"
+        treesLabel.text = .localized(.treesPlanted)
         treesLabel.numberOfLines = 1
         treesLabel.textAlignment = .left
         treesLabel.font = .boldSystemFont(ofSize: 13)
