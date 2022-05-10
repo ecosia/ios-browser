@@ -5,7 +5,6 @@
 import UIKit
 
 final class NTPIntroViewController: UIViewController, Themeable {
-    weak var scrollView: UIScrollView!
     weak var content: UIView!
     weak var image: UIImageView!
     weak var waves: UIImageView!
@@ -13,85 +12,65 @@ final class NTPIntroViewController: UIViewController, Themeable {
     weak var text: UILabel!
     weak var cta: UIButton!
 
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        traitCollection.userInterfaceIdiom == .pad ? .all : .portrait
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        let scrollView = UIScrollView()
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-        scrollView.contentInsetAdjustmentBehavior = .never
-        view.addSubview(scrollView)
-        self.scrollView = scrollView
-
-        scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        scrollView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-        scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-
-        // this view will hug to the edges to center the content
-        let container = UIView()
-        container.translatesAutoresizingMaskIntoConstraints = false
-        scrollView.addSubview(container)
-
-        container.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor).isActive = true
-        container.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor).isActive = true
-        container.topAnchor.constraint(equalTo: scrollView.topAnchor).isActive = true
-        container.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor).isActive = true
-
-        container.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        container.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        let top = container.topAnchor.constraint(equalTo: view.topAnchor, constant: 0)
-        top.priority = .defaultHigh
-        top.isActive = true
-
-        let bottom = container.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0)
-        bottom.priority = .defaultHigh
-        bottom.isActive = true
 
         let content = UIView()
         content.translatesAutoresizingMaskIntoConstraints = false
         content.layer.cornerRadius = 10
         content.clipsToBounds = true
-        container.addSubview(content)
+        view.addSubview(content)
         self.content = content
 
-        // center inside scrollview
-        content.centerXAnchor.constraint(equalTo: scrollView.contentLayoutGuide.centerXAnchor).isActive = true
-        content.centerYAnchor.constraint(equalTo: scrollView.contentLayoutGuide.centerYAnchor).isActive = true
+        content.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        content.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
 
-        content.widthAnchor.constraint(lessThanOrEqualToConstant: 340).isActive = true
-        content.leadingAnchor.constraint(greaterThanOrEqualTo: container.leadingAnchor, constant: 16).isActive = true
-        content.trailingAnchor.constraint(lessThanOrEqualTo: container.trailingAnchor, constant: -16).isActive = true
-        content.topAnchor.constraint(greaterThanOrEqualTo: container.topAnchor, constant: 16).isActive = true
-        content.bottomAnchor.constraint(lessThanOrEqualTo: container.bottomAnchor, constant: -16).isActive = true
+        if view.traitCollection.userInterfaceIdiom == .pad {
+            content.widthAnchor.constraint(lessThanOrEqualToConstant: 360).isActive = true
+        }
+        content.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: 16).isActive = true
+        content.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -16).isActive = true
+        content.topAnchor.constraint(greaterThanOrEqualTo: view.topAnchor, constant: 16).isActive = true
+        content.bottomAnchor.constraint(lessThanOrEqualTo: view.bottomAnchor, constant: -16).isActive = true
 
         let contentHeight = content.heightAnchor.constraint(equalToConstant: 300)
         contentHeight.priority = .defaultHigh
         contentHeight.isActive = true
 
-        let leftMargin = content.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 16)
+        let leftMargin = content.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16)
         leftMargin.priority = .defaultHigh
         leftMargin.isActive = true
-        let rightMargin = content.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -16)
+        let rightMargin = content.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
         rightMargin.priority = .defaultHigh
         rightMargin.isActive = true
 
         let image = UIImageView(image: .init(named: "ntpIntro"))
-        image.contentMode = .bottom
+        image.contentMode = .scaleAspectFill
+        image.clipsToBounds = true
         image.translatesAutoresizingMaskIntoConstraints = false
         content.addSubview(image)
         self.image = image
 
         let waves = UIImageView(image: .init(named: "ntpIntroWaves"))
         waves.translatesAutoresizingMaskIntoConstraints = false
-        waves.contentMode = .center
+        waves.contentMode = .scaleToFill
         content.addSubview(waves)
         self.waves = waves
 
         image.centerXAnchor.constraint(equalTo: content.centerXAnchor).isActive = true
         image.setContentCompressionResistancePriority(.required, for: .vertical)
         image.topAnchor.constraint(equalTo: content.topAnchor).isActive = true
+        image.leadingAnchor.constraint(equalTo: content.leadingAnchor).isActive = true
+        image.trailingAnchor.constraint(equalTo: content.trailingAnchor).isActive = true
+
         waves.bottomAnchor.constraint(equalTo: image.bottomAnchor).isActive = true
         waves.heightAnchor.constraint(equalToConstant: 34).isActive = true
+        waves.leadingAnchor.constraint(equalTo: content.leadingAnchor).isActive = true
+        waves.trailingAnchor.constraint(equalTo: content.trailingAnchor).isActive = true
         waves.centerXAnchor.constraint(equalTo: content.centerXAnchor).isActive = true
         waves.setContentCompressionResistancePriority(.required, for: .vertical)
 
@@ -140,10 +119,10 @@ final class NTPIntroViewController: UIViewController, Themeable {
         cta.topAnchor.constraint(equalTo: text.bottomAnchor, constant: 24).isActive = true
         cta.heightAnchor.constraint(greaterThanOrEqualToConstant: 50).isActive = true
         cta.bottomAnchor.constraint(equalTo: content.bottomAnchor, constant: -24).isActive = true
-        cta.centerXAnchor.constraint(equalTo: content.centerXAnchor).isActive = true
+        cta.leadingAnchor.constraint(equalTo: content.leadingAnchor, constant: 16).isActive = true
+        cta.trailingAnchor.constraint(equalTo: content.trailingAnchor, constant: -16).isActive = true
+
         cta.setContentHuggingPriority(.required, for: .vertical)
-        cta.setContentCompressionResistancePriority(.required, for: .horizontal)
-        cta.setContentCompressionResistancePriority(.required, for: .vertical)
 
         NotificationCenter.default.addObserver(self, selector: #selector(applyTheme), name: .DisplayThemeChanged, object: nil)
         applyTheme()
