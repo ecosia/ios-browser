@@ -51,7 +51,7 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
         
         let treesCount = UILabel()
         treesCount.translatesAutoresizingMaskIntoConstraints = false
-        treesCount.font = .systemFont(ofSize: UIFont.preferredFont(forTextStyle: .title1).pointSize, weight: .bold)
+        treesCount.font = .preferredFont(forTextStyle: .title1).bold()
         self.treesCount = treesCount
         outline.addSubview(treesCount)
         
