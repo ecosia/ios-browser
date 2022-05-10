@@ -1,9 +1,8 @@
 {
   "images" : [
     {
-      "filename" : "logoMainEcosiaLight.png",
-      "idiom" : "universal",
-      "scale" : "1x"
+      "filename" : "Ecosia logo-2.pdf",
+      "idiom" : "universal"
     },
     {
       "appearances" : [
@@ -12,41 +11,8 @@
           "value" : "dark"
         }
       ],
-      "filename" : "logoMainEcosiaDark.png",
-      "idiom" : "universal",
-      "scale" : "1x"
-    },
-    {
-      "filename" : "logoMainEcosiaLight@2x.png",
-      "idiom" : "universal",
-      "scale" : "2x"
-    },
-    {
-      "appearances" : [
-        {
-          "appearance" : "luminosity",
-          "value" : "dark"
-        }
-      ],
-      "filename" : "logoMainEcosiaDark@2x.png",
-      "idiom" : "universal",
-      "scale" : "2x"
-    },
-    {
-      "filename" : "logoMainEcosiaLight@3x.png",
-      "idiom" : "universal",
-      "scale" : "3x"
-    },
-    {
-      "appearances" : [
-        {
-          "appearance" : "luminosity",
-          "value" : "dark"
-        }
-      ],
-      "filename" : "logoMainEcosiaDark@3x.png",
-      "idiom" : "universal",
-      "scale" : "3x"
+      "filename" : "Ecosia logo.pdf",
+      "idiom" : "universal"
     }
   ],
   "info" : {

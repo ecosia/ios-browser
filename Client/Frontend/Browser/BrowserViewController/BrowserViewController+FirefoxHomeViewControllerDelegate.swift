@@ -21,12 +21,17 @@ extension BrowserViewController: FirefoxHomeViewControllerDelegate {
               (urlBar.currentURL.flatMap({ InternalURL($0)?.isAboutHomeURL }) ?? false || urlBar.currentURL == nil)
         else {
             scrollOverlays.forEach { $0.alpha = 1 }
-            statusBarOverlay.backgroundColor = .theme.textField.background
+            if view.traitCollection.userInterfaceIdiom == .phone {
+                statusBarOverlay.backgroundColor = .theme.textField.background
+            }
             return
         }
         let alpha: CGFloat = searchPos <= offset ? 1 : 0
         scrollOverlays.forEach { $0.alpha = alpha }
-        statusBarOverlay.backgroundColor = alpha > 0  ? .theme.textField.background : .theme.ecosia.ntpBackground
+
+        if view.traitCollection.userInterfaceIdiom == .phone {
+            statusBarOverlay.backgroundColor = alpha > 0  ? .theme.textField.background : .theme.ecosia.ntpBackground
+        }
     }
 
     func homeDidTapSearchButton(_ home: FirefoxHomeViewController) {

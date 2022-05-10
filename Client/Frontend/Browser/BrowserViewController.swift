@@ -478,6 +478,10 @@ class BrowserViewController: UIViewController {
         // Setup chron tabs A/B test
         chronTabsUserResearch = ChronTabsUserResearch()
         searchTelemetry = SearchTelemetry()
+
+        if User.shared.firstTime {
+            showFirefoxHome(inline: true)
+        }
     }
 
     fileprivate func setupConstraints() {
@@ -573,15 +577,6 @@ class BrowserViewController: UIViewController {
         // On iPhone, if we are about to show the On-Boarding, blank out the tab so that it does
         // not flash before we present. This change of alpha also participates in the animation when
         // the intro view is dismissed.
-
-        if UIDevice.current.userInterfaceIdiom == .phone {
-            // Ecosia: on phone blank screen if intro or migration is shown
-            self.view.alpha = (User.shared.firstTime || User.shared.migrated != true) ? 0.0 : 1.0
-        } else {
-            // on iPad only blank out for migration, not first time
-            self.view.alpha = (!User.shared.firstTime && User.shared.migrated != true) ? 0.0 : 1.0
-        }
-
         if !displayedRestoreTabsAlert && !cleanlyBackgrounded() && crashedLastLaunch() {
             displayedRestoreTabsAlert = true
             showRestoreTabsAlert()
@@ -779,17 +774,25 @@ class BrowserViewController: UIViewController {
         // We have to run this animation, even if the view is already showing
         // because there may be a hide animation running and we want to be sure
         // to override its results.
-        UIView.animate(withDuration: 0.2, animations: { () -> Void in
+
+        if !User.shared.firstTime { // Ecosia: no animation for first start
+            UIView.animate(withDuration: 0.2, animations: { () -> Void in
+                self.firefoxHomeViewController?.view.alpha = 1
+            }, completion: { finished in
+                if finished {
+                    self.webViewContainer.accessibilityElementsHidden = true
+                    UIAccessibility.post(notification: UIAccessibility.Notification.screenChanged, argument: nil)
+                }
+            })
+        } else {
             self.firefoxHomeViewController?.view.alpha = 1
-        }, completion: { finished in
-            if finished {
-                self.webViewContainer.accessibilityElementsHidden = true
-                UIAccessibility.post(notification: UIAccessibility.Notification.screenChanged, argument: nil)
-            }
-        })
+            self.webViewContainer.accessibilityElementsHidden = true
+            UIAccessibility.post(notification: UIAccessibility.Notification.screenChanged, argument: nil)
+        }
+
         view.setNeedsUpdateConstraints()
         urlBar.locationView.reloadButton.reloadButtonState = .disabled
-        statusBarOverlay.backgroundColor = urlBar.inOverlayMode ? .theme.textField.background : .theme.ecosia.ntpBackground
+        statusBarOverlay.backgroundColor = urlBar.inOverlayMode || view.traitCollection.userInterfaceIdiom == .pad ? .theme.textField.background : .theme.ecosia.ntpBackground
     }
 
     fileprivate func hideFirefoxHome() {
@@ -1373,18 +1376,9 @@ class BrowserViewController: UIViewController {
         if previousTraitCollection?.verticalSizeClass == .compact {
             view.setNeedsUpdateConstraints()
         }
-        
-        guard #available(iOS 13.0, *) else { return }
 
-        let colorHasChanged = traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection)
         let shouldStayDark = ThemeManager.instance.current.isDark && NightModeHelper.isActivated(profile.prefs)
-        // Ecosia: Do not change theme if it was dark before night mode already
-        guard colorHasChanged,
-              !shouldStayDark,
-              ThemeManager.instance.systemThemeIsOn else { return }
-
-        let userInterfaceStyle = traitCollection.userInterfaceStyle
-        ThemeManager.instance.current = userInterfaceStyle == .dark ? DarkTheme() : NormalTheme()
+        ThemeManager.instance.themeChanged(from: previousTraitCollection, to: traitCollection, forceDark: shouldStayDark)
     }
 }
 
@@ -1975,11 +1969,8 @@ extension BrowserViewController {
     func presentIntroViewController(_ alwaysShow: Bool = false) {
 		// Ecosia: custom intro handling
         if User.shared.firstTime {
-            Analytics.shared.install()
-            let welcome = Welcome()
-            introVCPresentHelper(introViewController: welcome)
-
-            self.profile.prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
+            // TODO: show default promo
+            profile.prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
             User.shared.firstTime = false
             User.shared.migrated = true
             User.shared.hideRebrandIntro()
@@ -2407,7 +2398,7 @@ extension BrowserViewController: Themeable {
         let ui: [Themeable?] = [urlBar, toolbar, readerModeBar, topTabsViewController, firefoxHomeViewController, searchController, libraryViewController, libraryDrawerViewController, chronTabTrayController]
         ui.forEach { $0?.applyTheme() }
 
-        statusBarOverlay.backgroundColor = shouldShowTopTabsForTraitCollection(traitCollection) ? UIColor.theme.topTabs.background : urlBar.backgroundColor
+        statusBarOverlay.backgroundColor = firefoxHomeViewController == nil || view.traitCollection.userInterfaceIdiom == .pad ? .theme.textField.background : .theme.ecosia.ntpBackground
         setNeedsStatusBarAppearanceUpdate()
 
         (presentedViewController as? Themeable)?.applyTheme()
@@ -2424,7 +2415,6 @@ extension BrowserViewController: Themeable {
         guard let contentScript = self.tabManager.selectedTab?.getContentScript(name: ReaderMode.name()) else { return }
         appyThemeForPreferences(profile.prefs, contentScript: contentScript)
 
-        statusBarOverlay.backgroundColor = firefoxHomeViewController == nil ? .theme.textField.background : .theme.ecosia.ntpBackground
     }
 }
 

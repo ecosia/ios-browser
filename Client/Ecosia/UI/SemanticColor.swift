@@ -18,6 +18,7 @@ extension UIColor {
             static let primary = UIColor(red: 0, green: 0.5, blue: 0.033, alpha: 1)
             static let primaryActive = UIColor(rgb: 0x006600)
             static let secondary = UIColor.white
+            static let secondaryActive = UIColor(rgb: 0xF8F8F6)
         }
         
         struct Text {

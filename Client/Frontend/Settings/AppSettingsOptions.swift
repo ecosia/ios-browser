@@ -1314,7 +1314,7 @@ class DefaultBrowserSetting: Setting {
     
     override func onConfigureCell(_ cell: UITableViewCell) {
         super.onConfigureCell(cell)
-        cell.imageView?.image = .init(named: "defaultBrowser")
+        cell.imageView?.image = .init(named: "saplin")
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
