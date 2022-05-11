@@ -50,7 +50,7 @@ final class WelcomeTourPlanet: UIView, Themeable {
 
         let impactLabel = UILabel()
         impactLabel.translatesAutoresizingMaskIntoConstraints = false
-        impactLabel.text = .localized(.myImpact)
+        impactLabel.text = .localized(.yourImpact)
         impactLabel.numberOfLines = 1
         impactLabel.textAlignment = .left
         impactLabel.font = .systemFont(ofSize: 10)
