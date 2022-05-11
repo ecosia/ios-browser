@@ -339,10 +339,6 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel, FeatureF
 
         applyTheme()
 
-        if showPromo {
-            Analytics.shared.defaultBrowser(.view)
-        }
-
         personalCounter.subscribe(self) { [weak self] _ in
             guard let self = self else { return }
             self.updateTreesCell()
@@ -468,11 +464,13 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel, FeatureF
         }
     }
 
+    /* Ecosia: deactivate FF promo
     private var showPromo: Bool {
         guard #available(iOS 14.0, *) else { return false }
         return !UserDefaults.standard.bool(forKey: "DidDismissDefaultBrowserCard")
     }
-
+     */
+    
     func configureItemsForRecentlySaved() {
         profile.places.getRecentBookmarks(limit: 5).uponQueue(.main) { [weak self] result in
             self?.hasRecentBookmarks = false
@@ -548,7 +546,6 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel, FeatureF
 extension FirefoxHomeViewController {
 
     enum Section: Int, CaseIterable {
-        case promo
         case logo
         case search
         case libraryShortcuts
@@ -575,7 +572,6 @@ extension FirefoxHomeViewController {
         func cellHeight(_ traits: UITraitCollection, width: CGFloat) -> CGFloat {
             switch self {
             case .impact: return .nan
-            case .promo: return 230
             case .logo: return 100
             case .search: return UIFontDescriptor.preferredFontDescriptor(withTextStyle: .body).pointSize + 25 + 16
             case .topSites: return 0 //calculated dynamically
@@ -598,7 +594,7 @@ extension FirefoxHomeViewController {
             var insets = FirefoxHomeUX.sectionInsetsForSizeClass[currentTraits.horizontalSizeClass]
 
             switch self {
-            case .libraryShortcuts, .topSites, .promo, .search, .impact:
+            case .libraryShortcuts, .topSites, .search, .impact:
                 let window = UIApplication.shared.keyWindow
                 let safeAreaInsets = window?.safeAreaInsets.left ?? 0
                 insets += FirefoxHomeUX.MinimumInsets + safeAreaInsets
@@ -629,7 +625,7 @@ extension FirefoxHomeViewController {
             if traits.userInterfaceIdiom == .pad {
                 let maxWidth: CGFloat = UIApplication.shared.statusBarOrientation.isPortrait ? 375 : 520
                 switch self {
-                case .logo, .promo, .search, .libraryShortcuts:
+                case .logo, .search, .libraryShortcuts:
                     width = min(375, width)
                 default:
                     width = min(520, width)
@@ -651,7 +647,6 @@ extension FirefoxHomeViewController {
         var cellType: UICollectionViewCell.Type {
             switch self {
             case .impact: return TreesCell.self
-            case .promo: return DefaultBrowserCard.self
             case .logo: return LogoCell.self
             case .search: return SearchbarCell.self
             case .topSites: return ASHorizontalScrollCell.self
@@ -796,8 +791,6 @@ extension FirefoxHomeViewController {
             return 1
         case .libraryShortcuts:
             return 1
-        case .promo:
-            return showPromo ? 1 : 0
         case .topSites:
             return (topSitesManager.content.isEmpty || User.shared.topSites == false) ? 0 : 1
         }
@@ -810,14 +803,6 @@ extension FirefoxHomeViewController {
 
 
         switch Section(indexPath.section) {
-        case .promo:
-            if let card = cell as? DefaultBrowserCard {
-                card.dismissClosure = { [weak self] in
-                    self?.collectionView.reloadSections([0, 1])
-                }
-                card.widthConstraint.constant = cellSize.width
-            }
-            return cell
         case .topSites:
             let topSitesCell = configureTopSitesCell(cell, width: cellSize.width)
             return topSitesCell

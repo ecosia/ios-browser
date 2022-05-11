@@ -1969,9 +1969,13 @@ extension BrowserViewController {
     func presentIntroViewController(_ alwaysShow: Bool = false) {
 		// Ecosia: custom intro handling
         if User.shared.firstTime {
-            // TODO: show default promo
+            let defaultPromo = DefaultBrowser()
+            defaultPromo.modalTransitionStyle = .coverVertical
+            defaultPromo.modalPresentationStyle = .overFullScreen
+            present(defaultPromo, animated: true)
+
             profile.prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
-            User.shared.firstTime = false
+            // User.shared.firstTime = false
             User.shared.migrated = true
             User.shared.hideRebrandIntro()
         } else if User.shared.migrated != true {
