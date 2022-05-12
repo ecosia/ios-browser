@@ -135,6 +135,6 @@ workflows:
             branches:
               only: 
                 - /^.*main.*/
-                - /^.*main-39.*/
+                - /^.*rebrand-ntp.*/
 
                                 
