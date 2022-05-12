@@ -18,20 +18,20 @@ extension MyImpactCell {
         
         required init?(coder: NSCoder) { nil }
         
-        init() {
-            super.init(frame: .zero)
+        init(size: CGSize, lineWidth: CGFloat) {
+            super.init(frame: .init(size: size))
             translatesAutoresizingMaskIntoConstraints = false
-            widthAnchor.constraint(equalToConstant: 240).isActive = true
-            heightAnchor.constraint(equalToConstant: 150).isActive = true
+            widthAnchor.constraint(equalToConstant: size.width).isActive = true
+            heightAnchor.constraint(equalToConstant: size.height).isActive = true
             (layer as! CAShapeLayer).fillColor = UIColor.clear.cgColor
-            (layer as! CAShapeLayer).lineWidth = 8
+            (layer as! CAShapeLayer).lineWidth = lineWidth
             (layer as! CAShapeLayer).lineCap = .round
             layer.masksToBounds = true
             
             (layer as! CAShapeLayer).path = { path in
                 path
-                    .addArc(center: .init(x: 120, y: 120),
-                            radius: 112,
+                    .addArc(center: .init(x: size.width/2, y: size.width/2),
+                            radius: size.width/2 - lineWidth,
                             startAngle: .pi - 0.2,
                             endAngle: 0.2,
                             clockwise: false)

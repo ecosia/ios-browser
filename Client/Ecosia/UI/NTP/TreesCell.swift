@@ -76,6 +76,7 @@ final class TreesCell: UICollectionViewCell, Themeable {
 
         addSpotlight()
         addImpact()
+        addProgress()
         addConstraints()
         applyTheme()
 
@@ -91,6 +92,15 @@ final class TreesCell: UICollectionViewCell, Themeable {
 
     func display(_ model: TreesCellModel) {
         self.model = model
+
+        let progress = .init(model.searches % 45) / 45.0
+        currentProgress.value = progress
+
+        if #available(iOS 15.0, *) {
+            treesCount.text = model.trees.formatted()
+        } else {
+            treesCount.text = "\(model.trees)"
+        }
 
         spotlightViews.forEach { $0.isHidden = model.spotlight == nil }
 
@@ -187,6 +197,8 @@ final class TreesCell: UICollectionViewCell, Themeable {
         personalImpactStack.addArrangedSubview(personalImpactLabelStack)
         self.personalImpactLabelStack = personalImpactLabelStack
 
+        personalImpactLabelStack.addArrangedSubview(UIView())
+
         let yourImpact = UILabel()
         yourImpact.text = .localized(.yourImpact)
         yourImpact.translatesAutoresizingMaskIntoConstraints = false
@@ -251,6 +263,59 @@ final class TreesCell: UICollectionViewCell, Themeable {
         self.globalCount = globalCount
     }
 
+    // MARK: Progress
+    private weak var totalProgress: MyImpactCell.Progress!
+    private weak var currentProgress: MyImpactCell.Progress!
+    private weak var outline: UIView!
+    private weak var treesCount: UILabel!
+    private weak var treesIcon: UIImageView!
+
+    private func addProgress() {
+        let outline = UIView()
+        outline.translatesAutoresizingMaskIntoConstraints = false
+        personalImpactStack.addArrangedSubview(outline)
+        self.outline = outline
+
+        let progressSize = CGSize(width: 80, height: 50)
+
+        let totalProgress = MyImpactCell.Progress(size: progressSize, lineWidth: 3)
+        outline.addSubview(totalProgress)
+        self.totalProgress = totalProgress
+
+        let currentProgress = MyImpactCell.Progress(size: progressSize, lineWidth: 3)
+        outline.addSubview(currentProgress)
+        self.currentProgress = currentProgress
+
+        let treesIcon = UIImageView()
+        treesIcon.translatesAutoresizingMaskIntoConstraints = false
+        treesIcon.contentMode = .center
+        treesIcon.clipsToBounds = true
+        outline.addSubview(treesIcon)
+        self.treesIcon = treesIcon
+
+        let treesCount = UILabel()
+        treesCount.translatesAutoresizingMaskIntoConstraints = false
+        treesCount.font = .preferredFont(forTextStyle: .subheadline).bold()
+        treesCount.adjustsFontForContentSizeCategory = true
+        self.treesCount = treesCount
+        outline.addSubview(treesCount)
+
+        outline.widthAnchor.constraint(equalToConstant: progressSize.width).isActive = true
+        outline.heightAnchor.constraint(equalToConstant: progressSize.height).isActive = true
+
+        totalProgress.topAnchor.constraint(equalTo: outline.topAnchor, constant: 0).isActive = true
+        totalProgress.centerXAnchor.constraint(equalTo: outline.centerXAnchor).isActive = true
+
+        currentProgress.centerYAnchor.constraint(equalTo: totalProgress.centerYAnchor).isActive = true
+        currentProgress.centerXAnchor.constraint(equalTo: totalProgress.centerXAnchor).isActive = true
+
+        treesIcon.topAnchor.constraint(equalTo: totalProgress.topAnchor, constant: 10).isActive = true
+        treesIcon.centerXAnchor.constraint(equalTo: totalProgress.centerXAnchor).isActive = true
+
+        treesCount.topAnchor.constraint(equalTo: treesIcon.bottomAnchor, constant: 2).isActive = true
+        treesCount.centerXAnchor.constraint(equalTo: totalProgress.centerXAnchor).isActive = true
+    }
+
     private func addConstraints() {
         // Constraints for stack views to their backgrounds
         background.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 40).isActive = true
@@ -280,7 +345,7 @@ final class TreesCell: UICollectionViewCell, Themeable {
         spotlightContainerStack.bottomAnchor.constraint(equalTo: spotlightBackground.bottomAnchor, constant: -8).isActive = true
 
         impactStack.rightAnchor.constraint(equalTo: impactBackground.rightAnchor, constant: -16).isActive = true
-        impactStack.topAnchor.constraint(equalTo: impactBackground.topAnchor, constant: 22).isActive = true
+        impactStack.topAnchor.constraint(equalTo: impactBackground.topAnchor, constant: 16).isActive = true
         impactStack.leftAnchor.constraint(equalTo: impactBackground.leftAnchor, constant: 16).isActive = true
         impactStack.bottomAnchor.constraint(equalTo: impactBackground.bottomAnchor, constant: -16).isActive = true
 
@@ -295,10 +360,8 @@ final class TreesCell: UICollectionViewCell, Themeable {
             background.backgroundColor = UIColor.theme.ecosia.primaryBackground
         }
 
-        let backgroundColor: UIColor = model?.appearance == .ntp ? .theme.ecosia.ntpImpactBackground : .theme.ecosia.highlightedBackground
+        let backgroundColor: UIColor = .theme.ecosia.ntpImpactBackground
         impactBackground.backgroundColor = (isHighlighted || isSelected) ? .theme.ecosia.hoverBackgroundColor : backgroundColor
-
-        spotlightBackground.backgroundColor = .clear
 
         globalCountDescription.textColor = .theme.ecosia.secondaryText
         globalCount.textColor = .theme.ecosia.primaryText
@@ -308,8 +371,14 @@ final class TreesCell: UICollectionViewCell, Themeable {
 
         spotlightHeadline.textColor = .white
         spotlightDescription.textColor = .white
-
         spotlightClose.tintColor = .white
+        spotlightBackground.backgroundColor = .clear
+
+        totalProgress.update(color: .theme.ecosia.ntpBackground)
+        currentProgress.update(color: .theme.ecosia.treeCounterProgressCurrent)
+        treesCount.textColor = .theme.ecosia.primaryText
+        treesPlanted.textColor = .theme.ecosia.primaryText
+        treesIcon.image = .init(themed: "yourImpact")
     }
 
     func setWidth(_ width: CGFloat, insets: UIEdgeInsets) {
