@@ -188,6 +188,9 @@
                   Identifier = "SearchEnginesTests">
                </Test>
                <Test
+                  Identifier = "TabEventHandlerTests/testBlankPopupURL()">
+               </Test>
+               <Test
                   Identifier = "TabManagerStoreTests">
                </Test>
                <Test
