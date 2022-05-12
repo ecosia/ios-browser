@@ -659,6 +659,24 @@ final class ToggleBrandRefreshIntro: HiddenSetting {
     }
 }
 
+final class ShowTour: HiddenSetting, WelcomeDelegate {
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Show Intro", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        let welcome = Welcome(delegate: self)
+        welcome.modalPresentationStyle = .fullScreen
+        welcome.modalTransitionStyle = .coverVertical
+        navigationController?.present(welcome, animated: true)
+    }
+
+    func welcomeDidFinish(_ welcome: Welcome) {
+        welcome.dismiss(animated: true, completion: nil)
+    }
+}
+
+
 final class ToggleReferrals: HiddenSetting {
     override var title: NSAttributedString? {
         return NSAttributedString(string: "Debug: Toggle Referrals", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])

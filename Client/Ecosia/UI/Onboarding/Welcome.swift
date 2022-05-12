@@ -202,7 +202,7 @@ final class Welcome: UIViewController {
         self.zoomedOut = true
 
         let targetFrame = self.view.bounds.inset(by: .init(equalInset: -2.5 * self.view.bounds.height))
-        UIView.animate(withDuration: 1.4, delay: 0.8, options: []) {
+        UIView.animate(withDuration: 1.4, delay: 0, options: []) {
             self.background.mask?.frame = targetFrame
             self.setNeedsStatusBarAppearanceUpdate()
         } completion: { _ in
