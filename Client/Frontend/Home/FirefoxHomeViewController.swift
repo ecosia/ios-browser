@@ -307,7 +307,7 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel, FeatureF
         collectionView?.backgroundColor = .clear
         
 		/* Ecosia: Deactivate MOZ Promo
-        if #available(iOS 14.0, *), !UserDefaults.standard.bool(forKey: "DidDismissDefaultBrowserCard") {
+        if #available(iOS 14.0, *), !UserDefaults.standard.bool(forKey: "   ") {
             self.view.addSubview(defaultBrowserCard)
             NSLayoutConstraint.activate([
                 defaultBrowserCard.topAnchor.constraint(equalTo: view.topAnchor),

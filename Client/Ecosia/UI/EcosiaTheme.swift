@@ -32,7 +32,7 @@ extension UIView {
 }
 
 class EcosiaTheme {
-    var primaryBrand: UIColor { UIColor(named: "primaryBrand")!}
+    var primaryBrand: UIColor { .Light.Brand.primary}
     var secondaryBrand: UIColor { UIColor.Photon.Grey60 }
     var border: UIColor { .Light.border }
 
@@ -107,7 +107,7 @@ class EcosiaTheme {
 }
 
 final class DarkEcosiaTheme: EcosiaTheme {
-    override var primaryBrand: UIColor { UIColor(named: "primaryBrandDark")!}
+    override var primaryBrand: UIColor { .Dark.Brand.primary}
     override var secondaryBrand: UIColor { .white }
     override var border: UIColor { .Dark.border }
 
@@ -126,7 +126,7 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var treeCounterProgressBorder: UIColor { .Dark.Background.primary }
 
     override var ntpBackground: UIColor { .Dark.Background.primary }
-    override var ntpImpactBackground: UIColor { UIColor.Photon.Grey80}
+    override var ntpImpactBackground: UIColor { .Dark.Background.secondary}
     override var ntpIntroBackground: UIColor { .Dark.Background.tertiary }
 
     override var impactBackground: UIColor { UIColor.Photon.Grey60 }

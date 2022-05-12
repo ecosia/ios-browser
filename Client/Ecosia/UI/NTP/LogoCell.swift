@@ -22,7 +22,7 @@ final class LogoCell: UICollectionViewCell, Themeable {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
 
-        let logo = UIImageView()
+        let logo = UIImageView(image: .init(named: "ecosiaLogoLaunch")?.withRenderingMode(.alwaysTemplate))
         logo.translatesAutoresizingMaskIntoConstraints = false
         logo.clipsToBounds = true
         logo.contentMode = .scaleAspectFit
@@ -41,7 +41,7 @@ final class LogoCell: UICollectionViewCell, Themeable {
     }
 
     func applyTheme() {
-        logo.image = UIImage(themed: "ecosiaLogo")
+        logo.tintColor = .theme.ecosia.primaryBrand
     }
 
     override func prepareForReuse() {
