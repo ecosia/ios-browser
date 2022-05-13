@@ -1309,25 +1309,15 @@ extension FirefoxHomeViewController: TreesCellDelegate {
 
     fileprivate var treesCellModel: TreesCellModel {
         guard Referrals.isEnabled else {
-            return .init(title: .localizedPlural(.searches, num: personalCounter.state!),
-                         subtitle: .localized(.viewMyImpact),
-                         appearance: .ntp,
-                         highlight: nil,
-                         spotlight: nil)
+            return .init(trees: User.shared.searchImpact, searches: personalCounter.state!, highlight: nil, spotlight: nil)
         }
 
         if personalCounter.state == 0 && User.shared.referrals.impact == 0 {
-            return .init(title: "0",
-                         subtitle: .localized(.startPlanting),
-                         appearance: .ntp,
-                         highlight: nil,
-                         spotlight: spotlight)
+            return .init(trees: User.shared.impact, searches: personalCounter.state!, highlight: nil, spotlight: spotlight)
         }
 
         if User.shared.referrals.isNewClaim {
-            return .init(title: "\(User.shared.impact)",
-                         subtitle: .localized(.myTrees),
-                         appearance: .ntp,
+            return .init(trees: User.shared.impact, searches: personalCounter.state!,
                          highlight: .localized(.keepGoing),
                          spotlight: spotlight )
         }
@@ -1339,13 +1329,11 @@ extension FirefoxHomeViewController: TreesCellDelegate {
             } else {
                 highlight = .init(format: .localized(.referralsAccepted), "\(User.shared.referrals.newClaims)", "\(User.shared.referrals.newClaims)")
             }
-            return .init(title: "\(User.shared.impact)", subtitle: .localized(.myTrees), appearance: .ntp, highlight: highlight, spotlight: spotlight)
+            return .init(trees: User.shared.impact, searches: personalCounter.state!, highlight: highlight, spotlight: spotlight)
         }
 
         // default
-        return .init(title: "\(User.shared.impact)",
-                     subtitle: .localized(.myTrees),
-                     appearance: .ntp,
+        return .init(trees: User.shared.impact, searches: personalCounter.state!,
                      highlight: nil,
                      spotlight: spotlight)
     }

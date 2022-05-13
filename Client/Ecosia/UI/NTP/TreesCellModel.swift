@@ -5,14 +5,8 @@
 import Foundation
 
 struct TreesCellModel {
-    enum Appearance {
-        case ntp, impact
-    }
-
-    let title: String
-    let subtitle: String
-    let appearance: Appearance
-
+    let trees: Int
+    let searches: Int
     let highlight: String?
     var spotlight: Spotlight?
 

@@ -135,6 +135,4 @@ workflows:
             branches:
               only: 
                 - /^.*main.*/
-                - /^.*main-39.*/
-
                                 

@@ -112,11 +112,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     private let background = Background()
 
     fileprivate var treesCellModel: TreesCellModel {
-        return .init(title: .localizedPlural(.searches, num: personalCounter.state!),
-                     subtitle: .localized(.onAverageItTakes),
-                     appearance: .impact,
-                     highlight: nil,
-                     spotlight: nil)
+        return .init(trees: User.shared.searchImpact, searches: personalCounter.state!, highlight: nil, spotlight: nil)
     }
 
     convenience init(delegate: EcosiaHomeDelegate?, referrals: Referrals) {

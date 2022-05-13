@@ -9,8 +9,8 @@ extension MyImpactCell {
         var value = Double() {
             didSet {
                 let guide = CGMutablePath()
-                guide.addArc(center: .init(x: 120, y: 120),
-                             radius: 112,
+                guide.addArc(center: .init(x: bounds.size.width/2, y: bounds.size.width/2),
+                             radius: bounds.size.width/2 - 8,
                              startAngle: .pi - 0.2,
                              endAngle: 0.2 - ((.pi + 0.3) - ((.pi + 0.3) * value)),
                              clockwise: false)
@@ -33,11 +33,11 @@ extension MyImpactCell {
         
         required init?(coder: NSCoder) { nil }
         
-        init() {
-            super.init(frame: .zero)
+        init(size: CGSize) {
+            super.init(frame: .init(size: size))
             translatesAutoresizingMaskIntoConstraints = false
-            widthAnchor.constraint(equalToConstant: 240).isActive = true
-            heightAnchor.constraint(equalToConstant: 150).isActive = true
+            widthAnchor.constraint(equalToConstant: size.width).isActive = true
+            heightAnchor.constraint(equalToConstant: size.height).isActive = true
             (layer as! CAShapeLayer).lineWidth = 2
         }
         

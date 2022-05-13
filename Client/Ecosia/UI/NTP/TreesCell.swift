@@ -39,11 +39,9 @@ final class TreesCell: UICollectionViewCell, Themeable {
     private weak var impactStack: UIStackView!
     private weak var personalImpactStack: UIStackView!
     private weak var personalImpactLabelStack: UIStackView!
-    private weak var treeImage: UIImageView!
-    private weak var personalCount: UILabel!
-    private weak var impactOverviewLabel: UILabel!
+    private weak var yourImpact: UILabel!
+    private weak var treesPlanted: UILabel!
 
-    private weak var globalCountBackground: UIView!
     private weak var globalCountStack: UIStackView!
     private weak var globalCount: UILabel!
     private weak var globalCountDescription: UILabel!
@@ -78,6 +76,7 @@ final class TreesCell: UICollectionViewCell, Themeable {
 
         addSpotlight()
         addImpact()
+        addProgress()
         addConstraints()
         applyTheme()
 
@@ -94,23 +93,20 @@ final class TreesCell: UICollectionViewCell, Themeable {
     func display(_ model: TreesCellModel) {
         self.model = model
 
-        personalCount.text = model.title
-        impactOverviewLabel.text = model.subtitle
+        let progress = .init(model.searches % 45) / 45.0
+        currentProgress.value = progress
+
+        if #available(iOS 15.0, *) {
+            treesCount.text = model.trees.formatted()
+        } else {
+            treesCount.text = "\(model.trees)"
+        }
 
         spotlightViews.forEach { $0.isHidden = model.spotlight == nil }
 
         if let spotlight = model.spotlight {
             spotlightHeadline.text = spotlight.headline
             spotlightDescription.text = spotlight.description
-        }
-
-        if let description = model.highlight {
-            globalCount.text = ""
-            globalCountDescription.text = description
-            globalCountDescription.textAlignment = .center
-        } else {
-            globalCountDescription.text = .localized(.totalEcosiaTrees)
-            globalCountDescription.textAlignment = .left
         }
         applyTheme()
     }
@@ -174,7 +170,6 @@ final class TreesCell: UICollectionViewCell, Themeable {
 
     private func addImpact() {
         let impactBackground = UIView()
-        impactBackground.layer.borderWidth = 1
         impactBackground.setContentHuggingPriority(.defaultLow, for: .horizontal)
         impactBackground.translatesAutoresizingMaskIntoConstraints = false
         impactBackground.layer.cornerRadius = 8
@@ -183,7 +178,7 @@ final class TreesCell: UICollectionViewCell, Themeable {
 
         let impactStack = UIStackView()
         impactStack.axis = .vertical
-        impactStack.spacing = 10
+        impactStack.spacing = 16
         impactStack.translatesAutoresizingMaskIntoConstraints = false
         impactBackground.addSubview(impactStack)
         self.impactStack = impactStack
@@ -195,82 +190,135 @@ final class TreesCell: UICollectionViewCell, Themeable {
         impactStack.addArrangedSubview(personalImpactStack)
         self.personalImpactStack = personalImpactStack
 
-        let treeImage = UIImageView()
-        treeImage.translatesAutoresizingMaskIntoConstraints = false
-        treeImage.contentMode = .scaleAspectFit
-        treeImage.setContentHuggingPriority(.defaultLow, for: .horizontal)
-        treeImage.setContentHuggingPriority(.defaultLow, for: .vertical)
-        personalImpactStack.addArrangedSubview(treeImage)
-        self.treeImage = treeImage
-
         let personalImpactLabelStack = UIStackView()
         personalImpactLabelStack.axis = .vertical
-        personalImpactLabelStack.spacing = 2
+        personalImpactLabelStack.spacing = 4
         personalImpactLabelStack.translatesAutoresizingMaskIntoConstraints = false
         personalImpactStack.addArrangedSubview(personalImpactLabelStack)
         self.personalImpactLabelStack = personalImpactLabelStack
 
-        let personalCount = UILabel()
-        personalCount.translatesAutoresizingMaskIntoConstraints = false
-        personalCount.font = .preferredFont(forTextStyle: .headline)
-        personalCount.adjustsFontForContentSizeCategory = true
-        personalCount.setContentHuggingPriority(.defaultLow, for: .horizontal)
-        personalCount.setContentCompressionResistancePriority(.required, for: .vertical)
-        personalCount.setContentHuggingPriority(.init(751), for: .vertical) // to counter ambiguity
-        personalImpactLabelStack.addArrangedSubview(personalCount)
-        self.personalCount = personalCount
+        personalImpactLabelStack.addArrangedSubview(UIView())
 
-        let impactOverviewLabel = UILabel()
-        impactOverviewLabel.translatesAutoresizingMaskIntoConstraints = false
-        impactOverviewLabel.font = .preferredFont(forTextStyle: .subheadline)
-        impactOverviewLabel.setContentCompressionResistancePriority(.required, for: .vertical)
-        impactOverviewLabel.setContentHuggingPriority(.defaultHigh, for: .vertical)
-        impactOverviewLabel.adjustsFontForContentSizeCategory = true
-        impactOverviewLabel.numberOfLines = 0
-        personalImpactLabelStack.addArrangedSubview(impactOverviewLabel)
-        self.impactOverviewLabel = impactOverviewLabel
+        let yourImpact = UILabel()
+        yourImpact.text = .localized(.yourImpact)
+        yourImpact.translatesAutoresizingMaskIntoConstraints = false
+        yourImpact.font = .preferredFont(forTextStyle: .footnote)
+        yourImpact.adjustsFontForContentSizeCategory = true
+        yourImpact.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        yourImpact.setContentCompressionResistancePriority(.required, for: .vertical)
+        yourImpact.setContentHuggingPriority(.init(751), for: .vertical) // to counter ambiguity
+        personalImpactLabelStack.addArrangedSubview(yourImpact)
+        self.yourImpact = yourImpact
 
-        let globalCountBackground = UIView()
-        globalCountBackground.translatesAutoresizingMaskIntoConstraints = false
-        globalCountBackground.layer.cornerRadius = 8
-        impactStack.addArrangedSubview(globalCountBackground)
-        self.globalCountBackground = globalCountBackground
+        let treesPlanted = UILabel()
+        treesPlanted.text = .localized(.treesPlanted)
+        treesPlanted.translatesAutoresizingMaskIntoConstraints = false
+        treesPlanted.font = .preferredFont(forTextStyle: .title3).bold()
+        treesPlanted.setContentCompressionResistancePriority(.required, for: .vertical)
+        treesPlanted.setContentHuggingPriority(.defaultHigh, for: .vertical)
+        treesPlanted.adjustsFontForContentSizeCategory = true
+        treesPlanted.numberOfLines = 0
+        personalImpactLabelStack.addArrangedSubview(treesPlanted)
+        self.treesPlanted = treesPlanted
 
         let globalCountStack = UIStackView()
-        globalCountStack.axis = .horizontal
-        globalCountStack.distribution = .fillProportionally
+        globalCountStack.axis = .vertical
+        globalCountStack.distribution = .fill
         globalCountStack.spacing = 4
-        globalCountStack.translatesAutoresizingMaskIntoConstraints = false
-        globalCountBackground.addSubview(globalCountStack)
+        impactStack.addArrangedSubview(globalCountStack)
         self.globalCountStack = globalCountStack
-
-        let globalCount = UILabel()
-        globalCount.translatesAutoresizingMaskIntoConstraints = false
-        globalCount.setContentCompressionResistancePriority(.required, for: .horizontal)
-        globalCount.setContentHuggingPriority(.defaultLow, for: .horizontal)
-        globalCount.font = .preferredFont(forTextStyle: .subheadline).bold().monospace()
-        globalCount.adjustsFontForContentSizeCategory = true
-        globalCount.textAlignment = .right
-
-        globalCountStack.addArrangedSubview(globalCount)
-        self.globalCount = globalCount
 
         let globalCountDescription = UILabel()
         globalCountDescription.textAlignment = .left
         globalCountDescription.translatesAutoresizingMaskIntoConstraints = false
-        globalCountDescription.text = .localized(.totalEcosiaTrees)
-        globalCountDescription.font = .preferredFont(forTextStyle: .subheadline)
+        globalCountDescription.text = .localized(.treesPlantedByTheCommunity)
+        globalCountDescription.font = .preferredFont(forTextStyle: .footnote)
         globalCountDescription.adjustsFontForContentSizeCategory = true
         globalCountDescription.setContentHuggingPriority(.defaultLow, for: .horizontal)
         globalCountDescription.numberOfLines = 0
         globalCountDescription.textAlignment = .left
         globalCountStack.addArrangedSubview(globalCountDescription)
         self.globalCountDescription = globalCountDescription
+
+        let globalCountInnerStack = UIStackView()
+        globalCountInnerStack.axis = .horizontal
+        globalCountInnerStack.distribution = .fill
+        globalCountInnerStack.spacing = 4
+        globalCountStack.addArrangedSubview(globalCountInnerStack)
+
+        let treesImage = UIImageView(image: .init(named: "trees"))
+        treesImage.setContentHuggingPriority(.required, for: .horizontal)
+        globalCountInnerStack.addArrangedSubview(treesImage)
+
+        let globalCount = UILabel()
+        globalCount.translatesAutoresizingMaskIntoConstraints = false
+        globalCount.setContentCompressionResistancePriority(.required, for: .horizontal)
+        globalCount.setContentCompressionResistancePriority(.required, for: .vertical)
+        globalCount.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        globalCount.font = .preferredFont(forTextStyle: .subheadline).bold().monospace()
+        globalCount.adjustsFontForContentSizeCategory = true
+        globalCount.textAlignment = .left
+
+        globalCountInnerStack.addArrangedSubview(globalCount)
+        self.globalCount = globalCount
+    }
+
+    // MARK: Progress
+    private weak var totalProgress: MyImpactCell.Progress!
+    private weak var currentProgress: MyImpactCell.Progress!
+    private weak var outline: UIView!
+    private weak var treesCount: UILabel!
+    private weak var treesIcon: UIImageView!
+
+    private func addProgress() {
+        let outline = UIView()
+        outline.translatesAutoresizingMaskIntoConstraints = false
+        personalImpactStack.addArrangedSubview(outline)
+        self.outline = outline
+
+        let progressSize = CGSize(width: 80, height: 50)
+
+        let totalProgress = MyImpactCell.Progress(size: progressSize, lineWidth: 3)
+        outline.addSubview(totalProgress)
+        self.totalProgress = totalProgress
+
+        let currentProgress = MyImpactCell.Progress(size: progressSize, lineWidth: 3)
+        outline.addSubview(currentProgress)
+        self.currentProgress = currentProgress
+
+        let treesIcon = UIImageView()
+        treesIcon.translatesAutoresizingMaskIntoConstraints = false
+        treesIcon.contentMode = .center
+        treesIcon.clipsToBounds = true
+        outline.addSubview(treesIcon)
+        self.treesIcon = treesIcon
+
+        let treesCount = UILabel()
+        treesCount.translatesAutoresizingMaskIntoConstraints = false
+        treesCount.font = .preferredFont(forTextStyle: .subheadline).bold()
+        treesCount.adjustsFontForContentSizeCategory = true
+        self.treesCount = treesCount
+        outline.addSubview(treesCount)
+
+        outline.widthAnchor.constraint(equalToConstant: progressSize.width).isActive = true
+        outline.heightAnchor.constraint(equalToConstant: progressSize.height).isActive = true
+
+        totalProgress.topAnchor.constraint(equalTo: outline.topAnchor, constant: 0).isActive = true
+        totalProgress.centerXAnchor.constraint(equalTo: outline.centerXAnchor).isActive = true
+
+        currentProgress.centerYAnchor.constraint(equalTo: totalProgress.centerYAnchor).isActive = true
+        currentProgress.centerXAnchor.constraint(equalTo: totalProgress.centerXAnchor).isActive = true
+
+        treesIcon.topAnchor.constraint(equalTo: totalProgress.topAnchor, constant: 10).isActive = true
+        treesIcon.centerXAnchor.constraint(equalTo: totalProgress.centerXAnchor).isActive = true
+
+        treesCount.topAnchor.constraint(equalTo: treesIcon.bottomAnchor, constant: 2).isActive = true
+        treesCount.centerXAnchor.constraint(equalTo: totalProgress.centerXAnchor).isActive = true
     }
 
     private func addConstraints() {
         // Constraints for stack views to their backgrounds
-        background.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 32).isActive = true
+        background.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 40).isActive = true
         let bottom = background.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16)
         bottom.priority = .defaultHigh
         bottom.isActive = true
@@ -296,54 +344,41 @@ final class TreesCell: UICollectionViewCell, Themeable {
         spotlightContainerStack.leftAnchor.constraint(equalTo: spotlightBackground.leftAnchor, constant: 12).isActive = true
         spotlightContainerStack.bottomAnchor.constraint(equalTo: spotlightBackground.bottomAnchor, constant: -8).isActive = true
 
-        impactStack.rightAnchor.constraint(equalTo: impactBackground.rightAnchor, constant: -8).isActive = true
+        impactStack.rightAnchor.constraint(equalTo: impactBackground.rightAnchor, constant: -16).isActive = true
         impactStack.topAnchor.constraint(equalTo: impactBackground.topAnchor, constant: 16).isActive = true
-        impactStack.leftAnchor.constraint(equalTo: impactBackground.leftAnchor, constant: 8).isActive = true
-        impactStack.bottomAnchor.constraint(equalTo: impactBackground.bottomAnchor, constant: -8).isActive = true
+        impactStack.leftAnchor.constraint(equalTo: impactBackground.leftAnchor, constant: 16).isActive = true
+        impactStack.bottomAnchor.constraint(equalTo: impactBackground.bottomAnchor, constant: -16).isActive = true
 
-        globalCountStack.rightAnchor.constraint(equalTo: globalCountBackground.rightAnchor, constant: -8).isActive = true
-        globalCountStack.topAnchor.constraint(equalTo: globalCountBackground.topAnchor, constant: 8).isActive = true
-        globalCountStack.leftAnchor.constraint(equalTo: globalCountBackground.leftAnchor, constant: 8).isActive = true
-        globalCountStack.bottomAnchor.constraint(equalTo: globalCountBackground.bottomAnchor, constant: -8).isActive = true
-
-        treeImage.widthAnchor.constraint(equalToConstant: 74).isActive = true
-        treeImage.heightAnchor.constraint(greaterThanOrEqualToConstant: 52).isActive = true
         spotlightClose.widthAnchor.constraint(equalToConstant: 16).isActive = true
     }
 
     func applyTheme() {
         let isSpotlight = model?.spotlight != nil
         if isSpotlight {
-            background.backgroundColor = (isHighlighted || isSelected) ? UIColor.theme.ecosia.primaryBrand  : UIColor.theme.ecosia.teal60
+            background.backgroundColor = (isHighlighted || isSelected) ? .theme.ecosia.primaryBrand  : .theme.ecosia.teal60
         } else {
             background.backgroundColor = UIColor.theme.ecosia.primaryBackground
         }
 
-        let backgroundColor = model?.appearance == .ntp ? UIColor.theme.ecosia.ntpImpactBackground : UIColor.theme.ecosia.highlightedBackground
-        impactBackground.backgroundColor = (isHighlighted || isSelected) ? UIColor.theme.ecosia.hoverBackgroundColor : backgroundColor
+        let backgroundColor: UIColor = .theme.ecosia.ntpImpactBackground
+        impactBackground.backgroundColor = (isHighlighted || isSelected) ? .theme.ecosia.hoverBackgroundColor : backgroundColor
 
-        spotlightBackground.backgroundColor = .clear
-        let treeCountBackground = model?.appearance == .ntp ? UIColor.theme.ecosia.treeCountBackground : UIColor.theme.ecosia.impactTreeCountBackground
-        globalCountBackground.backgroundColor = treeCountBackground
+        globalCountDescription.textColor = .theme.ecosia.secondaryText
+        globalCount.textColor = .theme.ecosia.primaryText
 
-        let borderWidth: CGFloat = ThemeManager.instance.current.isDark ? 0 : 1
-        background.layer.borderColor = UIColor.theme.ecosia.personalCounterBorder.cgColor
-        background.layer.borderWidth = borderWidth
-        impactBackground.layer.borderColor = UIColor.theme.ecosia.personalCounterBorder.cgColor
-        impactBackground.layer.borderWidth = borderWidth
-
-        globalCountDescription.textColor = UIColor.theme.ecosia.treeCountText
-        globalCount.textColor = UIColor.theme.ecosia.treeCountText
-        personalCount.textColor = UIColor.theme.ecosia.highContrastText
-
-        impactOverviewLabel.textColor = UIColor.theme.ecosia.secondaryText
+        yourImpact.textColor = .theme.ecosia.secondaryText
+        treesPlanted.textColor = .theme.ecosia.primaryText
 
         spotlightHeadline.textColor = .white
         spotlightDescription.textColor = .white
-
         spotlightClose.tintColor = .white
+        spotlightBackground.backgroundColor = .clear
 
-        treeImage.image = UIImage(themed: "personalCounter")
+        totalProgress.update(color: .theme.ecosia.ntpBackground)
+        currentProgress.update(color: .theme.ecosia.treeCounterProgressCurrent)
+        treesCount.textColor = .theme.ecosia.primaryText
+        treesPlanted.textColor = .theme.ecosia.primaryText
+        treesIcon.image = .init(themed: "yourImpact")
     }
 
     func setWidth(_ width: CGFloat, insets: UIEdgeInsets) {

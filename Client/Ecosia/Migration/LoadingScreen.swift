@@ -28,7 +28,7 @@ final class LoadingScreen: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = UIColor.theme.ecosia.primaryBackground
 
-        let logo = UIImageView(image: UIImage(themed: "ecosiaLogo"))
+        let logo = UIImageView(image: UIImage(named: "ecosiaLogoLaunch"))
         logo.translatesAutoresizingMaskIntoConstraints = false
         logo.clipsToBounds = true
         logo.contentMode = .center

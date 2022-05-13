@@ -30,16 +30,17 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
         outline.translatesAutoresizingMaskIntoConstraints = false
         self.outline = outline
         contentView.addSubview(outline)
-        
-        let totalProgress = Progress()
+
+        let progressSize = CGSize(width: 240, height: 150)
+        let totalProgress = Progress(size: progressSize, lineWidth: 8)
         self.totalProgress = totalProgress
         outline.addSubview(totalProgress)
         
-        let currentProgress = Progress()
+        let currentProgress = Progress(size: progressSize, lineWidth: 8)
         self.currentProgress = currentProgress
         outline.addSubview(currentProgress)
         
-        let indicator = Indicator()
+        let indicator = Indicator(size: progressSize)
         self.indicator = indicator
         outline.addSubview(indicator)
         
