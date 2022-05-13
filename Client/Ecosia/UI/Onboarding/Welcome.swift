@@ -13,7 +13,7 @@ final class Welcome: UIViewController {
     private weak var background: UIImageView!
     private weak var overlay: UIView!
     private weak var overlayLogo: UIImageView!
-    private var mask: UIImageView!
+    private var maskLayer: CALayer!
     private weak var stack: UIStackView!
 
     private var logoCenterConstraint: NSLayoutConstraint!
@@ -174,40 +174,52 @@ final class Welcome: UIViewController {
     }
 
     func addMask() {
-        let mask = UIImageView(image: .init(named: "splashMask"))
-        mask.translatesAutoresizingMaskIntoConstraints = false
-        // These values were determined by trial and error
-        mask.frame.size.height = 32
-        mask.frame.size.width = view.bounds.width
-        mask.center = logo.center
-        mask.center.x -= 10
-        mask.center.y += 3
-        mask.contentMode = .scaleAspectFit
-        mask.alpha = 0
-        background.mask = mask
-        self.mask = mask
+        let point = CGPoint(x: logo.frame.midX - 26, y: logo.frame.midY - 13)
+        let mask = CGRect(origin: point, size: .init(width: 32, height: 32))
+
+        let layer  = CALayer()
+        layer.contents = UIImage(named: "splashMask")?.cgImage
+        layer.frame = mask
+        layer.opacity = 0
+        layer.contentsGravity = .resizeAspect
+
+        background.layer.mask = layer
+        maskLayer = layer
+        background.alpha = 1.0
     }
 
     // MARK: Animations
     private func fadeIn() {
-        UIView.animate(withDuration: 0.2, delay: 0, options: [.curveEaseIn]) {
-            self.background.alpha = 1
-            self.mask.alpha = 1
-        } completion: { _ in
-            self.zoomOut()
+        maskLayer.opacity = 1
+
+        CATransaction.begin()
+        CATransaction.setAnimationTimingFunction(.init(name: CAMediaTimingFunctionName.easeIn))
+        CATransaction.setCompletionBlock { [weak self] in
+            self?.zoomOut()
         }
+
+        let anim = CABasicAnimation(keyPath: "opacity")
+        anim.fromValue = 0.0
+        anim.toValue = 1.0
+        anim.duration = 0.3
+        maskLayer.add(anim, forKey: "opacity")
+
+        CATransaction.commit()
     }
 
     private func zoomOut() {
-        self.zoomedOut = true
+        zoomedOut = true
 
         let targetFrame = self.view.bounds.inset(by: .init(equalInset: -2.5 * self.view.bounds.height))
-        UIView.animate(withDuration: 1.4, delay: 0, options: [.curveEaseOut]) {
-            self.background.mask?.frame = targetFrame
-            self.setNeedsStatusBarAppearanceUpdate()
-        } completion: { _ in
-            self.showText()
+
+        CATransaction.begin()
+        CATransaction.setAnimationDuration(1.4)
+        CATransaction.setAnimationTimingFunction(.init(name: CAMediaTimingFunctionName.easeInEaseOut))
+        CATransaction.setCompletionBlock { [weak self] in
+            self?.showText()
         }
+        maskLayer.frame = targetFrame
+        CATransaction.commit()
     }
 
     private func showText() {
@@ -219,6 +231,7 @@ final class Welcome: UIViewController {
             self.stackTopConstraint.isActive = false
             self.stackBottonConstraint.isActive = true
             self.view.layoutIfNeeded()
+            self.setNeedsStatusBarAppearanceUpdate()
         } completion: { _ in }
     }
 
