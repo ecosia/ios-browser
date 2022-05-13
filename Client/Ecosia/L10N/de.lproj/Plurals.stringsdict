@@ -70,11 +70,33 @@
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
 		<string>%#@Trees@</string>
+		<key>Trees</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>Gepflanzte Bäume</string>
+			<key>other</key>
+			<string>Gepflanzte Bäume</string>
+		</dict>
 	</dict>
     <key>%d friend invite(s)</key>
     <dict>
         <key>NSStringLocalizedFormatKey</key>
         <string>%#@friends@</string>
+        <key>friends</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>d</string>
+            <key>one</key>
+            <string>%d Einladungen von Freunden</string>
+            <key>other</key>
+            <string>%d Einladungen von Freunden</string>
+        </dict>
     </dict>
 </dict>
 </plist>

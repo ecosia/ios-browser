@@ -190,7 +190,7 @@ final class Welcome: UIViewController {
 
     // MARK: Animations
     private func fadeIn() {
-        UIView.animate(withDuration: 0.2) {
+        UIView.animate(withDuration: 0.2, delay: 0, options: [.curveEaseIn]) {
             self.background.alpha = 1
             self.mask.alpha = 1
         } completion: { _ in
@@ -202,7 +202,7 @@ final class Welcome: UIViewController {
         self.zoomedOut = true
 
         let targetFrame = self.view.bounds.inset(by: .init(equalInset: -2.5 * self.view.bounds.height))
-        UIView.animate(withDuration: 1.4, delay: 0.8, options: []) {
+        UIView.animate(withDuration: 1.4, delay: 0, options: [.curveEaseOut]) {
             self.background.mask?.frame = targetFrame
             self.setNeedsStatusBarAppearanceUpdate()
         } completion: { _ in

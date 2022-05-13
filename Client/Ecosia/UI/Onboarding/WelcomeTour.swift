@@ -103,33 +103,43 @@ final class WelcomeTour: UIViewController,  Themeable {
         let navStack = UIStackView()
         navStack.translatesAutoresizingMaskIntoConstraints = false
         navStack.axis = .horizontal
-        navStack.distribution = .fillProportionally
+        navStack.distribution = .equalCentering
         navStack.alignment = .center
         view.addSubview(navStack)
         self.navStack = navStack
 
         navStack.heightAnchor.constraint(equalToConstant: 44).isActive = true
-        navStack.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor).isActive = true
-        navStack.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor).isActive = true
+        navStack.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16).isActive = true
+        navStack.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16).isActive = true
         navStack.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
 
         let backButton = UIButton.systemButton(with: .init(named: "backChevron")!, target: self, action: #selector(back))
         navStack.addArrangedSubview(backButton)
-        backButton.widthAnchor.constraint(equalToConstant: 74).isActive = true
+        backButton.widthAnchor.constraint(equalToConstant: 44).isActive = true
         navStack.addArrangedSubview(backButton)
         self.backButton = backButton
 
         let pageControl = UIPageControl()
+        pageControl.isUserInteractionEnabled = false
         pageControl.numberOfPages = 4
         pageControl.currentPage = 0
+        pageControl.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        pageControl.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
         navStack.addArrangedSubview(pageControl)
         self.pageControl = pageControl
 
+        let centerControl = pageControl.centerXAnchor.constraint(equalTo: navStack.centerXAnchor)
+        centerControl.priority = .defaultHigh
+        centerControl.isActive = true
+
         let skipButton = UIButton(type: .system)
-        skipButton.widthAnchor.constraint(equalToConstant: 74).isActive = true
+        skipButton.widthAnchor.constraint(greaterThanOrEqualToConstant: 74).isActive = true
         skipButton.addTarget(self, action: #selector(skip), for: .primaryActionTriggered)
+        skipButton.setContentCompressionResistancePriority(.required, for: .horizontal)
         navStack.addArrangedSubview(skipButton)
         skipButton.setTitle(.localized(.skip), for: .normal)
+        skipButton.titleLabel?.font = .preferredFont(forTextStyle: .body)
+        skipButton.titleLabel?.adjustsFontForContentSizeCategory = true
 
         self.skipButton = skipButton
 

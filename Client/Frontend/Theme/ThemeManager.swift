@@ -48,6 +48,9 @@ class ThemeManager {
         systemThemeIsOn = UserDefaults.standard.bool(forKey: ThemeManagerPrefs.systemThemeIsOn.rawValue)
 
         NotificationCenter.default.addObserver(self, selector: #selector(brightnessChanged), name: UIScreen.brightnessDidChangeNotification, object: nil)
+
+        let userInterfaceStyle = UIScreen.main.traitCollection.userInterfaceStyle
+        current = userInterfaceStyle == .dark ? DarkTheme() : NormalTheme()
     }
 
     // UIViewControllers / UINavigationControllers need to have `preferredStatusBarStyle` and call this.
@@ -96,7 +99,7 @@ class ThemeManager {
               systemThemeIsOn else { return }
 
         let userInterfaceStyle = to.userInterfaceStyle
-        ThemeManager.instance.current = userInterfaceStyle == .dark ? DarkTheme() : NormalTheme()
+        current = userInterfaceStyle == .dark ? DarkTheme() : NormalTheme()
     }
 }
 
