@@ -222,10 +222,10 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         case .multiply:
             let multiplyCell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: section.cell), for: indexPath) as! MultiplyImpactCell
             multiplyCell.setWidth(collectionView.bounds.width, insets: collectionView.safeAreaInsets)
-            let model = MyImpactStackViewModel(title: nil,
-                                               highlight: false,
-                                               subtitle: .localized(.multiplyImpact),
-                                               imageName: nil)
+//            let model = MyImpactStackViewModel(title: nil,
+//                                               highlight: false,
+//                                               subtitle: .localized(.multiplyImpact),
+//                                               imageName: nil)
             multiplyCell.display(model, action: .tap(text: .localized(.inviteFriends)))
             return multiplyCell
         case .explore:

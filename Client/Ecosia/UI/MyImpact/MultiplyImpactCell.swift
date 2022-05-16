@@ -5,20 +5,12 @@
 import UIKit
 
 final class MultiplyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setup()
-    }
-
     required init?(coder: NSCoder) {
         super.init(coder: coder)
     }
-
-    private weak var stack: MyImpactStackView!
-    private weak var outline: UIView!
-    private var widthConstraint: NSLayoutConstraint!
-
-    private func setup() {
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         let outline = UIView()
         contentView.addSubview(outline)
         outline.layer.cornerRadius = 8
@@ -47,6 +39,10 @@ final class MultiplyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable 
 
         applyTheme()
     }
+
+    private weak var stack: MyImpactStackView!
+    private weak var outline: UIView!
+    private var widthConstraint: NSLayoutConstraint!
 
     override var isSelected: Bool {
         didSet {
