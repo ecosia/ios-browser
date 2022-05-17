@@ -19,6 +19,7 @@ final class NewsCell: UICollectionViewCell, Themeable, AutoSizingCell {
         }
     }
 
+    private(set) weak var widthConstraint: NSLayoutConstraint!
     private var imageUrl: URL?
     private weak var container: UIView!
     private weak var image: UIImageView!
@@ -27,7 +28,6 @@ final class NewsCell: UICollectionViewCell, Themeable, AutoSizingCell {
     private weak var topBorder: UIView!
     private weak var bottomBorder: UIView!
     private weak var bottomLeft: NSLayoutConstraint!
-    private weak var widthConstraint: NSLayoutConstraint!
 
     required init?(coder: NSCoder) { nil }
     

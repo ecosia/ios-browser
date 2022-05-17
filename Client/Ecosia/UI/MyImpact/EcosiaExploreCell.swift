@@ -24,8 +24,7 @@ final class EcosiaExploreCell: UICollectionViewCell, Themeable, AutoSizingCell {
     var title: UILabel!
     var image: UIImageView!
     var outline: UIView!
-
-    private weak var widthConstraint: NSLayoutConstraint!
+    private(set) weak var widthConstraint: NSLayoutConstraint!
 
     private func setup() {
         outline = UIView()

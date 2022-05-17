@@ -5,9 +5,22 @@
 import UIKit
 
 final class MultiplyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
+    private(set) weak var widthConstraint: NSLayoutConstraint!
+    private weak var outline: UIView!
+
+    override var isSelected: Bool {
+        didSet {
+            hover()
+        }
     }
+
+    override var isHighlighted: Bool {
+        didSet {
+            hover()
+        }
+    }
+    
+    required init?(coder: NSCoder) { super.init(coder: coder) }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -27,56 +40,17 @@ final class MultiplyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable 
         widthConstraint.isActive = true
         self.widthConstraint = widthConstraint
 
-        let stack = MyImpactStackView()
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        contentView.addSubview(stack)
-        self.stack = stack
-
-        stack.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16).isActive = true
-        stack.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -16).isActive = true
-        stack.topAnchor.constraint(equalTo: contentView.topAnchor,constant: 18).isActive = true
-        stack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -18).isActive = true
-
         applyTheme()
-    }
-
-    private weak var stack: MyImpactStackView!
-    private weak var outline: UIView!
-    private var widthConstraint: NSLayoutConstraint!
-
-    override var isSelected: Bool {
-        didSet {
-            hover()
-        }
-    }
-
-    override var isHighlighted: Bool {
-        didSet {
-            hover()
-        }
     }
 
     private func hover() {
         outline.backgroundColor = isSelected || isHighlighted ? UIColor.theme.ecosia.hoverBackgroundColor : UIColor.theme.ecosia.highlightedBackground
     }
 
-    func display(_ model: MyImpactStackViewModel, action: MyImpactStackViewModel.Action?) {
-        stack.display(model, action: action)
-        applyTheme()
-    }
-
     func applyTheme() {
-        stack.applyTheme()
-        stack.subtitleLabel.textColor = UIColor.theme.ecosia.highContrastText
-
         outline.layer.borderWidth = ThemeManager.instance.current.isDark ? 0 : 1
         outline.backgroundColor = UIColor.theme.ecosia.highlightedBackground
         outline.layer.borderColor = UIColor.theme.ecosia.highlightedBorder.cgColor
-    }
-
-    func setWidth(_ width: CGFloat, insets: UIEdgeInsets) {
-        let margin = max(max(16, insets.left), insets.right)
-        widthConstraint.constant = width - 2 * margin
     }
 
     override func prepareForReuse() {

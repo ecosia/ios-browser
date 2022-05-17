@@ -14,7 +14,7 @@ final class MoreButtonCell: UICollectionViewCell, AutoSizingCell {
         return button
     }()
 
-    private weak var widthConstraint: NSLayoutConstraint!
+    private(set) weak var widthConstraint: NSLayoutConstraint!
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -58,7 +58,7 @@ final class HeaderCell: UICollectionViewCell, AutoSizingCell ,Themeable {
         return titleLabel
     }()
 
-   private  weak var widthConstraint: NSLayoutConstraint!
+    private(set) weak var widthConstraint: NSLayoutConstraint!
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -89,11 +89,6 @@ final class HeaderCell: UICollectionViewCell, AutoSizingCell ,Themeable {
 
     func applyTheme() {
         titleLabel.textColor = UIColor.theme.ecosia.highContrastText
-    }
-
-    func setWidth(_ width: CGFloat, insets: UIEdgeInsets) {
-        let margin = max(max(16, insets.left), insets.right)
-        widthConstraint.constant = width - 2 * margin
     }
 
     override func prepareForReuse() {
