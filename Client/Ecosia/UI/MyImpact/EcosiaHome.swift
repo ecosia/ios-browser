@@ -209,7 +209,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         case .impact, .legacyImpact:
             return .init(width: view.bounds.width - 2 * margin, height: 290)
         case .multiply:
-            return CGSize(width: view.bounds.width - 2 * margin, height: 56)
+            return CGSize(width: view.bounds.width - 2 * margin, height: 100)
         case .news:
             return CGSize(width: view.bounds.width, height: 130)
         case .explore:
