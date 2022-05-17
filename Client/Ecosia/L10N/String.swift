@@ -149,5 +149,6 @@ extension String {
         case maybeLater = "Maybe later"
         case openAllLinks = "Open all links with Ecosia to plant more trees"
         case growYourImpact = "Grow your impact with your web searches"
+        case groupYourImpact = "Group your impact"
     }
 }

@@ -4,13 +4,6 @@
 
 import UIKit
 
-protocol EcosiaExploreCellModel {
-    var title: String { get }
-    var image: String { get }
-}
-
-extension EcosiaHome.Section.Explore: EcosiaExploreCellModel {}
-
 final class EcosiaExploreCell: UICollectionViewCell, Themeable, AutoSizingCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -69,7 +62,7 @@ final class EcosiaExploreCell: UICollectionViewCell, Themeable, AutoSizingCell {
         applyTheme()
     }
 
-    func display(_ model: EcosiaExploreCellModel) {
+    func display(_ model: EcosiaHome.Section.Explore) {
         title.text = model.title
         image.image = UIImage(named: model.image)
     }

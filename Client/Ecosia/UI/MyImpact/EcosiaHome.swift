@@ -10,99 +10,6 @@ protocol EcosiaHomeDelegate: AnyObject {
 }
 
 final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlowLayout, Themeable {
-
-    enum Section: Int, CaseIterable {
-        case impact, legacyImpact, multiply, news, explore
-
-        var cell: AnyClass {
-            switch self {
-            case .impact: return MyImpactCell.self
-            case .legacyImpact: return TreesCell.self
-            case .multiply: return MultiplyImpactCell.self
-            case .explore: return EcosiaExploreCell.self
-            case .news: return NewsCell.self
-            }
-        }
-
-        var sectionTitle: String? {
-            if self == .explore { return .localized(.exploreEcosia) }
-            if self == .news { return .localized(.stories) }
-            return nil
-        }
-
-        enum Explore: Int, CaseIterable {
-            case info, finance, trees, faq, shop, privacy
-
-            var title: String {
-                switch self {
-                case .info:
-                    return .localized(.howEcosiaWorks)
-                case .finance:
-                    return .localized(.financialReports)
-                case .trees:
-                    return .localized(.trees)
-                case .faq:
-                    return .localized(.faq)
-                case .shop:
-                    return .localized(.shop)
-                case .privacy:
-                    return .localized(.privacy)
-                }
-            }
-
-            var image: String {
-                switch self {
-                case .info:
-                    return "networkTree"
-                case .finance:
-                    return "reports"
-                case .trees:
-                    return "treesIcon"
-                case .faq:
-                    return "faqIcon"
-                case .shop:
-                    return "shopIcon"
-                case .privacy:
-                    return "tigerIncognito"
-                }
-            }
-
-            var url: URL {
-                switch self {
-                case .info:
-                    return Environment.current.howEcosiaWorks
-                case .finance:
-                    return Environment.current.financialReports
-                case .trees:
-                    return Environment.current.trees
-                case .faq:
-                    return Environment.current.faq
-                case .shop:
-                    return Environment.current.shop
-                case .privacy:
-                    return Environment.current.privacy
-                }
-            }
-
-            var label: Analytics.Label.Navigation {
-                switch self {
-                case .info:
-                    return .howEcosiaWorks
-                case .finance:
-                    return .financialReports
-                case .trees:
-                    return .projects
-                case .faq:
-                    return .faq
-                case .shop:
-                    return .shop
-                case .privacy:
-                    return .privacy
-                }
-            }
-        }
-    }
-
     var delegate: EcosiaHomeDelegate?
     private weak var referrals: Referrals!
     private var items = [NewsModel]()
@@ -187,24 +94,22 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
 
     // MARK: UICollectionViewDataSource
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return Section.allCases.count
+        Section.allCases.count
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         switch Section(rawValue: section)! {
         case .impact: return Referrals.isEnabled ? 1 : 0
         case .legacyImpact: return Referrals.isEnabled ? 0 : 1
-        case .multiply: return Referrals.isEnabled ? 1 : 0
+        case .multiply: return Referrals.isEnabled ? 2 : 0 // with header
         case .explore: return Section.Explore.allCases.count + 1 // header
         case .news: return min(3, items.count) + 2 // header and footer
         }
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-
         let section = Section(rawValue: indexPath.section)!
-
-        switch  section {
+        switch section {
         case .impact:
             let infoCell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: section.cell), for: indexPath) as! MyImpactCell
             infoCell.setWidth(collectionView.bounds.width, insets: collectionView.safeAreaInsets)
@@ -220,9 +125,16 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
             return treesCell
 
         case .multiply:
-            let multiplyCell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: section.cell), for: indexPath) as! MultiplyImpactCell
-            multiplyCell.setWidth(collectionView.bounds.width, insets: collectionView.safeAreaInsets)
-            return multiplyCell
+            if indexPath.row == 0 {
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: .init(describing: HeaderCell.self), for: indexPath) as! HeaderCell
+                cell.titleLabel.text = section.sectionTitle
+                cell.setWidth(collectionView.bounds.width, insets: collectionView.safeAreaInsets)
+                return cell
+            } else {
+                let multiplyCell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: section.cell), for: indexPath) as! MultiplyImpactCell
+                multiplyCell.setWidth(collectionView.bounds.width, insets: collectionView.safeAreaInsets)
+                return multiplyCell
+            }
         case .explore:
             if indexPath.row == 0 {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: .init(describing: HeaderCell.self), for: indexPath) as! HeaderCell
@@ -312,7 +224,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
 
         guard let section = Section(rawValue: section) else { return 0 }
         switch section {
-        case .news:
+        case .multiply, .news:
             return 0
         default:
             return 16
