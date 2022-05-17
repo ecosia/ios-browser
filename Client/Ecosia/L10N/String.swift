@@ -150,5 +150,6 @@ extension String {
         case openAllLinks = "Open all links with Ecosia to plant more trees"
         case growYourImpact = "Grow your impact with your web searches"
         case groupYourImpact = "Group your impact"
+        case getATreeWithEveryFriend = "Get a tree with every friend who joins. They get one too!"
     }
 }
