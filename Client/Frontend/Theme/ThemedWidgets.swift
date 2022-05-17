@@ -4,13 +4,16 @@
 import UIKit
 
 class ThemedTableViewCell: UITableViewCell, Themeable {
-    var detailTextColor = UIColor.theme.tableView.disabledRowText
+    var detailTextColor = UIColor.theme.ecosia.secondaryText
     let style: UITableViewCell.CellStyle
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         self.style = style
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         applyTheme()
+
+        // Ecosia: adjust layout margins
+        contentView.directionalLayoutMargins.leading = 16
     }
 
     required init?(coder aDecoder: NSCoder) {

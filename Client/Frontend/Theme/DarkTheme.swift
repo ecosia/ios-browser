@@ -19,7 +19,7 @@ fileprivate class DarkTableViewColor: TableViewColor {
     override var headerTextLight: UIColor { return UIColor.Photon.Grey30 }
     override var headerTextDark: UIColor { return UIColor.Photon.Grey30 }
     override var syncText: UIColor { return defaultTextAndTint }
-    override var accessoryViewTint: UIColor { return UIColor.Photon.Grey40 }
+    override var accessoryViewTint: UIColor { return .Dark.Text.secondary }
     override var selectedBackground: UIColor { return UIColor.Custom.selectedHighlightDark }
 }
 

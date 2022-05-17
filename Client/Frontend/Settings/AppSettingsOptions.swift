@@ -16,8 +16,9 @@ private var ShowDebugSettings: Bool = false
 private var DebugSettingsClickCount: Int = 0
 
 private var disclosureIndicator: UIImageView {
-    let disclosureIndicator = UIImageView()
-    disclosureIndicator.image = UIImage(named: "menu-Disclosure")?.withRenderingMode(.alwaysTemplate)
+    let config = UIImage.SymbolConfiguration(pointSize: 16)
+    let disclosureIndicator = UIImageView(image: .init(systemName: "chevron.right", withConfiguration: config))
+    disclosureIndicator.contentMode = .center
     disclosureIndicator.tintColor = UIColor.theme.tableView.accessoryViewTint
     disclosureIndicator.sizeToFit()
     return disclosureIndicator
@@ -1250,19 +1251,11 @@ class NewTabPageSetting: Setting {
     }
 }
 
-fileprivate func getDisclosureIndicator() -> UIImageView {
-    let disclosureIndicator = UIImageView()
-    disclosureIndicator.image = UIImage(named: "menu-Disclosure")?.withRenderingMode(.alwaysTemplate)
-    disclosureIndicator.tintColor = UIColor.theme.tableView.accessoryViewTint
-    disclosureIndicator.sizeToFit()
-    return disclosureIndicator
-}
-
 class HomeSetting: Setting {
     let profile: Profile
 
     override var accessoryView: UIImageView {
-        getDisclosureIndicator()
+        disclosureIndicator
     }
 
     override var accessibilityIdentifier: String? { return "Home" }
