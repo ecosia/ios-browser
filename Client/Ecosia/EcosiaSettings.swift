@@ -7,8 +7,9 @@ import Core
 import Shared
 
 private var disclosureIndicator: UIImageView {
-    let disclosureIndicator = UIImageView()
-    disclosureIndicator.image = UIImage(named: "menu-Disclosure")?.withRenderingMode(.alwaysTemplate)
+    let config = UIImage.SymbolConfiguration(pointSize: 16)
+    let disclosureIndicator = UIImageView(image: .init(systemName: "chevron.right", withConfiguration: config))
+    disclosureIndicator.contentMode = .center
     disclosureIndicator.tintColor = UIColor.theme.tableView.accessoryViewTint
     disclosureIndicator.sizeToFit()
     return disclosureIndicator
