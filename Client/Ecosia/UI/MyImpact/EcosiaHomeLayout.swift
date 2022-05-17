@@ -4,20 +4,7 @@
 
 import UIKit
 
-protocol AutoSizingCell: UICollectionViewCell {
-    var widthConstraint: NSLayoutConstraint! { get }
-    
-    func setWidth(_ width: CGFloat, insets: UIEdgeInsets)
-}
-
-extension AutoSizingCell {
-    func setWidth(_ width: CGFloat, insets: UIEdgeInsets) {
-        let margin = max(max(16, insets.left), insets.right)
-        widthConstraint.constant = width - 2 * margin
-    }
-}
-
-class EcosiaHomeLayout: UICollectionViewFlowLayout {
+final class EcosiaHomeLayout: UICollectionViewFlowLayout {
     override func shouldInvalidateLayout(forBoundsChange newBounds: CGRect) -> Bool {
         let widthChanged = newBounds.width != collectionView?.bounds.width
 
