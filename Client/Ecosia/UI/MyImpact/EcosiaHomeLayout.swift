@@ -4,11 +4,7 @@
 
 import UIKit
 
-protocol AutoSizingCell: UICollectionViewCell {
-    func setWidth(_ width: CGFloat, insets: UIEdgeInsets)
-}
-
-class EcosiaHomeLayout: UICollectionViewFlowLayout {
+final class EcosiaHomeLayout: UICollectionViewFlowLayout {
     override func shouldInvalidateLayout(forBoundsChange newBounds: CGRect) -> Bool {
         let widthChanged = newBounds.width != collectionView?.bounds.width
 

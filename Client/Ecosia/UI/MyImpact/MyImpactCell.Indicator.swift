@@ -18,7 +18,7 @@ extension MyImpactCell {
                 (layer as! CAShapeLayer).path = { path in
                     path
                         .addArc(center: guide.currentPoint,
-                                radius: 7,
+                                radius: 9,
                                 startAngle: 0,
                                 endAngle: .pi * 2,
                                 clockwise: false)

@@ -9,8 +9,7 @@ protocol TreesCellDelegate: AnyObject {
     func treesCellDidTapSpotlight(_ cell: TreesCell)
 }
 
-final class TreesCell: UICollectionViewCell, Themeable {
-
+final class TreesCell: UICollectionViewCell, AutoSizingCell, Themeable {
     private (set) var model: TreesCellModel?
     private let treeCounter = TreeCounter()
     lazy var formatter: NumberFormatter = {
@@ -22,11 +21,9 @@ final class TreesCell: UICollectionViewCell, Themeable {
     }()
 
     weak var delegate: TreesCellDelegate?
-
+    private(set) weak var widthConstraint: NSLayoutConstraint!
     private weak var background: UIView!
     private weak var container: UIStackView!
-    var widthConstraint: NSLayoutConstraint!
-
 
     private weak var spotlightBackground: UIView!
     private weak var spotlightContainerStack: UIStackView!
@@ -379,11 +376,6 @@ final class TreesCell: UICollectionViewCell, Themeable {
         treesCount.textColor = .theme.ecosia.primaryText
         treesPlanted.textColor = .theme.ecosia.primaryText
         treesIcon.image = .init(themed: "yourImpact")
-    }
-
-    func setWidth(_ width: CGFloat, insets: UIEdgeInsets) {
-        let margin = max(max(16, insets.left), insets.right)
-        widthConstraint.constant = width - 2 * margin
     }
 
     // MARK: Overrides

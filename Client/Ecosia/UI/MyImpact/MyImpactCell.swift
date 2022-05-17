@@ -6,11 +6,11 @@ import UIKit
 import Core
 
 final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
+    private(set) weak var widthConstraint: NSLayoutConstraint!
     private(set) weak var howItWorksButton: UIControl!
     private weak var totalProgress: Progress!
     private weak var currentProgress: Progress!
     private weak var indicator: Indicator!
-    private weak var widthConstraint: NSLayoutConstraint!
     private weak var outline: UIView!
     private weak var treesCount: UILabel!
     private weak var treesPlanted: UILabel!
@@ -219,11 +219,6 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
         treesPlanted.text = .localizedPlural(.treesPlantedPlural, num: User.shared.impact)
         searches.text = .localizedPlural(.searches, num: personalCounter)
         friends.text = .localizedPlural(.friendInvitesPlural, num: User.shared.referrals.count)
-    }
-
-    func setWidth(_ width: CGFloat, insets: UIEdgeInsets) {
-        let margin = max(max(16, insets.left), insets.right)
-        widthConstraint.constant = width - 2 * margin
     }
     
     func applyTheme() {
