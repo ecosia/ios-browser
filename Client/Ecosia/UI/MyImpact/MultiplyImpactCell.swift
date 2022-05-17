@@ -49,7 +49,7 @@ final class MultiplyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable 
         self.subtitle = subtitle
         outline.addSubview(subtitle)
         
-        let icon = UIImageView(image: .init(themed: "groupYourImpact"))
+        let icon = UIImageView(image: .init(named: "groupYourImpact"))
         icon.translatesAutoresizingMaskIntoConstraints = false
         icon.contentMode = .center
         icon.clipsToBounds = true
