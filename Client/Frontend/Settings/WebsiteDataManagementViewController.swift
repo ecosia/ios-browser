@@ -85,7 +85,7 @@ class WebsiteDataManagementViewModel {
     }
 }
 
-class WebsiteDataManagementViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate {
+class WebsiteDataManagementViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate, Themeable {
     private enum Section: Int {
         case sites = 0
         case showMore = 1
@@ -105,7 +105,7 @@ class WebsiteDataManagementViewController: UIViewController, UITableViewDataSour
     var tableView: UITableView!
     var searchController: UISearchController?
     var showMoreButtonEnabled = true
-    let theme = BuiltinThemeName(rawValue: ThemeManager.instance.current.name) ?? .normal
+    var theme: BuiltinThemeName { BuiltinThemeName(rawValue: ThemeManager.instance.current.name) ?? .normal }
 
     private lazy var searchResultsViewController = WebsiteDataSearchResultsViewController(viewModel: viewModel)
     
@@ -118,8 +118,6 @@ class WebsiteDataManagementViewController: UIViewController, UITableViewDataSour
         tableView = UITableView(frame: .zero, style: .insetGrouped)
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.separatorColor = UIColor.theme.tableView.separator
-        tableView.backgroundColor = UIColor.theme.tableView.headerBackground
         tableView.isEditing = true
         tableView.allowsMultipleSelectionDuringEditing = true
         tableView.allowsSelectionDuringEditing = true
@@ -165,21 +163,31 @@ class WebsiteDataManagementViewController: UIViewController, UITableViewDataSour
         searchController.searchBar.placeholder = Strings.SettingsFilterSitesSearchLabel
         searchController.searchBar.delegate = self
 
-        if theme == .dark {
-            searchController.searchBar.searchTextField.backgroundColor = .Dark.Background.secondary
-        } else {
-            searchController.searchBar.searchTextField.backgroundColor = .Light.Background.primary
-        }
-        
         navigationItem.searchController = searchController
         self.searchController = searchController
 
         definesPresentationContext = true
+
+        applyTheme()
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         unfoldSearchbar()
+    }
+
+    func applyTheme() {
+        tableView.separatorColor = UIColor.theme.tableView.separator
+        tableView.backgroundColor = UIColor.theme.tableView.headerBackground
+        tableView.reloadData()
+        (tableView.tableHeaderView as? Themeable)?.applyTheme()
+        (tableView.tableFooterView as? Themeable)?.applyTheme()
+
+        if theme == .dark {
+            searchController?.searchBar.searchTextField.backgroundColor = .Dark.Background.secondary
+        } else {
+            searchController?.searchBar.searchTextField.backgroundColor = .Light.Background.primary
+        }
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

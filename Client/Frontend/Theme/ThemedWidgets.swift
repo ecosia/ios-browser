@@ -4,7 +4,6 @@
 import UIKit
 
 class ThemedTableViewCell: UITableViewCell, Themeable {
-    var detailTextColor = UIColor.theme.ecosia.secondaryText
     let style: UITableViewCell.CellStyle
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -22,9 +21,14 @@ class ThemedTableViewCell: UITableViewCell, Themeable {
 
     func applyTheme() {
         textLabel?.textColor = UIColor.theme.tableView.rowText
-        detailTextLabel?.textColor = detailTextColor
+        detailTextLabel?.textColor = .theme.ecosia.secondaryText
         backgroundColor = UIColor.theme.tableView.rowBackground
         tintColor = UIColor.theme.general.controlTint
+    }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        applyTheme()
     }
 
     private var textFrame: CGRect?
@@ -113,6 +117,7 @@ class ThemedTableViewController: UITableViewController, Themeable {
         tableView.reloadData()
 
         (tableView.tableHeaderView as? Themeable)?.applyTheme()
+        (tableView.tableFooterView as? Themeable)?.applyTheme()
     }
 }
 

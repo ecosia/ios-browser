@@ -25,6 +25,21 @@ class ThemedNavigationController: DismissableNavigationViewController {
         modalPresentationCapturesStatusBarAppearance = true
         
         applyTheme()
+
+        NotificationCenter.default.addObserver(self, selector: #selector(themeChanged), name: .DisplayThemeChanged, object: nil)
+    }
+
+    @objc func themeChanged() {
+        applyTheme()
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+
+        guard let profile = (UIApplication.shared.delegate as? AppDelegate)?.profile else { return }
+
+        let shouldStayDark = ThemeManager.instance.current.isDark && NightModeHelper.isActivated(profile.prefs)
+        ThemeManager.instance.themeChanged(from: previousTraitCollection, to: traitCollection, forceDark: shouldStayDark)
     }
 }
 

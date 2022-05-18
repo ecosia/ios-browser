@@ -22,7 +22,7 @@ let CellReuseIdentifier = "cell-reuse-id"
 let SectionHeaderId = "section-header-id"
 let LoginsSettingsSection = 0
 
-class LoginListViewController: SensitiveViewController {
+class LoginListViewController: SensitiveViewController, Themeable {
 
     private let viewModel: LoginListViewModel
 
