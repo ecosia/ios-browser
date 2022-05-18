@@ -10,7 +10,7 @@ private let items: [(AdultFilter, String)] = [
     (.moderate, .localized(.moderate)),
     (.off, .localized(.off))]
 
-final class FilterController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+final class FilterController: UIViewController, UITableViewDataSource, UITableViewDelegate, Themeable {
     private weak var table: UITableView!
 
     private let identifier = "filter"
@@ -20,18 +20,14 @@ final class FilterController: UIViewController, UITableViewDataSource, UITableVi
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor.theme.tableView.headerBackground
 
         navigationItem.title = .localized(.safeSearch)
         navigationItem.largeTitleDisplayMode = .never
         
         let table = UITableView(frame: .zero, style: .insetGrouped)
         table.translatesAutoresizingMaskIntoConstraints = false
-        table.tintColor = UIColor.theme.ecosia.primaryBrand
         table.delegate = self
         table.dataSource = self
-        table.separatorColor = UIColor.theme.tableView.separator
-        table.backgroundColor = UIColor.theme.tableView.headerBackground
         table.tableFooterView = .init()
 
         view.addSubview(table)
@@ -42,6 +38,7 @@ final class FilterController: UIViewController, UITableViewDataSource, UITableVi
         table.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
         table.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
 
+        applyTheme()
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -51,7 +48,6 @@ final class FilterController: UIViewController, UITableViewDataSource, UITableVi
     func tableView(_ : UITableView, cellForRowAt: IndexPath) -> UITableViewCell {
         let cell = table.dequeueReusableCell(withIdentifier: identifier) ?? ThemedTableViewCell(style: .default, reuseIdentifier: identifier)
         cell.textLabel!.text = items[cellForRowAt.row].1
-        cell.textLabel!.textColor = UIColor.theme.tableView.rowText
         cell.accessoryType = User.shared.adultFilter == items[cellForRowAt.row].0 ? .checkmark : .none
         return cell
     }
@@ -59,5 +55,16 @@ final class FilterController: UIViewController, UITableViewDataSource, UITableVi
     func tableView(_: UITableView, didSelectRowAt: IndexPath) {
         User.shared.adultFilter = items[didSelectRowAt.row].0
         table.reloadData()
+    }
+
+    func applyTheme() {
+        table.visibleCells.forEach {
+            ($0 as? Themeable)?.applyTheme()
+        }
+
+        view.backgroundColor = UIColor.theme.tableView.headerBackground
+        table.tintColor = UIColor.theme.ecosia.primaryBrand
+        table.separatorColor = UIColor.theme.tableView.separator
+        table.backgroundColor = UIColor.theme.tableView.headerBackground
     }
 }

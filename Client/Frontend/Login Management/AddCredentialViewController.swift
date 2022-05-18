@@ -16,12 +16,10 @@ enum AddCredentialField: Int {
     }
 }
 
-class AddCredentialViewController: UIViewController {
+class AddCredentialViewController: UIViewController, Themeable {
     
     fileprivate lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .insetGrouped)
-        tableView.separatorColor = UIColor.theme.tableView.separator
-        tableView.backgroundColor = UIColor.theme.tableView.headerBackground
         tableView.accessibilityIdentifier = "Add Credential"
         tableView.delegate = self
         tableView.dataSource = self
@@ -56,9 +54,6 @@ class AddCredentialViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        cancelButton.tintColor = .theme.general.controlTint
-        saveButton.tintColor = .theme.general.controlTint
-        
         navigationItem.rightBarButtonItem = saveButton
         navigationItem.leftBarButtonItem = cancelButton
 
@@ -66,6 +61,10 @@ class AddCredentialViewController: UIViewController {
         tableView.snp.makeConstraints { make in
             make.edges.equalTo(self.view)
         }
+
+        applyTheme()
+
+        NotificationCenter.default.addObserver(self, selector: #selector(themeChanged), name: .DisplayThemeChanged, object: nil)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -74,6 +73,20 @@ class AddCredentialViewController: UIViewController {
         // Normally UITableViewControllers handle responding to content inset changes from keyboard events when editing
         // but since we don't use the tableView's editing flag for editing we handle this ourselves.
         KeyboardHelper.defaultHelper.addDelegate(self)
+    }
+
+    func applyTheme() {
+        tableView.separatorColor = UIColor.theme.tableView.separator
+        tableView.backgroundColor = UIColor.theme.tableView.headerBackground
+        tableView.visibleCells.forEach {
+            ($0 as? Themeable)?.applyTheme()
+        }
+        cancelButton.tintColor = .theme.general.controlTint
+        saveButton.tintColor = .theme.general.controlTint
+    }
+
+    @objc func themeChanged() {
+        applyTheme()
     }
     
     @objc func addCredential() {

@@ -644,9 +644,11 @@ class SettingsTableViewController: ThemedTableViewController {
         super.viewWillAppear(animated)
 
         settings = generateSettings()
+        /* Ecosia: disable sync
         NotificationCenter.default.addObserver(self, selector: #selector(syncDidChangeState), name: .ProfileDidStartSyncing, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(syncDidChangeState), name: .ProfileDidFinishSyncing, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(firefoxAccountDidChange), name: .FirefoxAccountChanged, object: nil)
+         */
 
         applyTheme()
     }
@@ -664,9 +666,11 @@ class SettingsTableViewController: ThemedTableViewController {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
 
+        /* Ecosia: deactivate sync
         [Notification.Name.ProfileDidStartSyncing, Notification.Name.ProfileDidFinishSyncing, Notification.Name.FirefoxAccountChanged].forEach { name in
             NotificationCenter.default.removeObserver(self, name: name, object: nil)
         }
+         */
     }
 
     // Override to provide settings in subclasses

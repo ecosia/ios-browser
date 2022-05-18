@@ -22,7 +22,6 @@ final class MarketsController: ThemedTableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor.theme.ecosia.primaryBackground
         navigationItem.title = .localized(.searchRegion)
         navigationItem.largeTitleDisplayMode = .never
     }
@@ -46,7 +45,6 @@ final class MarketsController: ThemedTableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: identifier) ?? ThemedTableViewCell(style: .default, reuseIdentifier: identifier)
         cell.textLabel!.text = Markets.all[cellForRowAt.row].name
-        cell.textLabel!.textColor = UIColor.theme.tableView.rowText
         cell.accessoryType = User.shared.marketCode == Markets.all[cellForRowAt.row].id ? .checkmark : .none
         return cell
     }
@@ -58,5 +56,10 @@ final class MarketsController: ThemedTableViewController {
         Analytics.shared.navigationChangeMarket(User.shared.marketCode.rawValue)
         // Temporary deactivate Goodall
         Goodall.shared.refresh(force: true)
+    }
+
+    override func applyTheme() {
+        super.applyTheme()
+        view.backgroundColor = UIColor.theme.ecosia.primaryBackground
     }
 }
