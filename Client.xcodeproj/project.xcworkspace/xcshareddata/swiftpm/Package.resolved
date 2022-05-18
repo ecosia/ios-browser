@@ -14,8 +14,8 @@
         "package": "Core",
         "repositoryURL": "https://github.com/ecosia/ios-core.git",
         "state": {
-          "branch": "global-counter-singleton",
-          "revision": "c3aeb6d0e0cbb81443104fab54221047b5f0cb66",
+          "branch": "main",
+          "revision": "82b44739489f77122ecbd447f31150aed87f3b67",
           "version": null
         }
       },
