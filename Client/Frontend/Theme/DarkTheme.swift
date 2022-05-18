@@ -10,7 +10,7 @@ fileprivate let defaultSeparator = UIColor.Dark.border
 fileprivate let defaultTextAndTint = UIColor.Dark.Text.primary
 
 fileprivate class DarkTableViewColor: TableViewColor {
-    override var rowBackground: UIColor { return .Dark.Background.tertiary }
+    override var rowBackground: UIColor { return .Dark.Background.secondary }
     override var rowText: UIColor { .Dark.Text.primary }
     override var rowDetailText: UIColor { return UIColor.Photon.Grey30 }
     override var disabledRowText: UIColor { return UIColor.Photon.Grey40 }
