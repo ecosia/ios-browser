@@ -11,7 +11,6 @@ protocol TreesCellDelegate: AnyObject {
 
 final class TreesCell: UICollectionViewCell, AutoSizingCell, Themeable {
     private (set) var model: TreesCellModel?
-    private let treeCounter = TreeCounter()
     lazy var formatter: NumberFormatter = {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
@@ -76,22 +75,13 @@ final class TreesCell: UICollectionViewCell, AutoSizingCell, Themeable {
         addProgress()
         addConstraints()
         applyTheme()
-
-        treeCounter.subscribe(self) { [weak self] count in
-            guard let self = self, self.model?.highlight == nil else { return }
-
-            UIView.transition(with: self.globalCount, duration: 0.65, options: .transitionCrossDissolve, animations: {
-                self.globalCount.text = self.formatter.string(from: .init(value: count))
-            })
-        }
-        treeCounter.update(session: .shared) { _ in }
+        subscribeTreeCounter()
     }
 
     func display(_ model: TreesCellModel) {
         self.model = model
 
-        let progress = .init(model.searches % 45) / 45.0
-        currentProgress.value = progress
+        currentProgress.value = User.shared.progress
 
         if #available(iOS 15.0, *) {
             treesCount.text = model.trees.formatted()
@@ -114,6 +104,17 @@ final class TreesCell: UICollectionViewCell, AutoSizingCell, Themeable {
 
     var spotlightViews: [UIView] {
         return [spotlightBackground, spotlightContainerStack]
+    }
+
+    private func subscribeTreeCounter() {
+        TreeCounter.shared.subscribe(self) { [weak self] count in
+            guard let self = self, self.model?.highlight == nil else { return }
+
+            UIView.transition(with: self.globalCount, duration: 0.65, options: .transitionCrossDissolve, animations: {
+                self.globalCount.text = self.formatter.string(from: .init(value: count))
+            })
+            self.model.map({ self.display($0) })
+        }
     }
 
     // MARK: UI

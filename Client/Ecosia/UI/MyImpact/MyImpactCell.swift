@@ -201,8 +201,7 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
         applyTheme()
     }
     
-    func update(personalCounter: Int) {
-        let progress = .init(personalCounter % 45) / 45.0
+    func update(personalCounter: Int, progress: Double) {
         currentProgress.value = progress
         indicator.value = progress
         
