@@ -188,10 +188,10 @@ final class NewsCell: UICollectionViewCell, Themeable, AutoSizingCell {
     }
 
     func applyTheme() {
-        backgroundColor = UIColor.theme.ecosia.highlightedBackground
+        backgroundColor = UIColor.theme.ecosia.ntpCellBackground
         bottomBorder?.backgroundColor = UIColor.theme.ecosia.barSeparator
         topBorder?.backgroundColor = UIColor.theme.ecosia.barSeparator
-        title?.textColor = UIColor.theme.ecosia.highContrastText
+        title?.textColor = UIColor.theme.ecosia.primaryText
         date?.textColor = UIColor.theme.ecosia.secondaryText
     }
 }

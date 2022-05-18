@@ -79,11 +79,11 @@ final class MultiplyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable 
     }
 
     private func hover() {
-        outline.backgroundColor = isSelected || isHighlighted ? .theme.ecosia.hoverBackgroundColor : .theme.ecosia.ecosiaHomeCellBackground
+        outline.backgroundColor = isSelected || isHighlighted ? .theme.ecosia.hoverBackgroundColor : .theme.ecosia.ntpCellBackground
     }
 
     func applyTheme() {
-        outline.backgroundColor = .theme.ecosia.ecosiaHomeCellBackground
+        outline.backgroundColor = .theme.ecosia.ntpCellBackground
         title.textColor = .theme.ecosia.primaryText
         subtitle.textColor = .theme.ecosia.primaryButton
     }

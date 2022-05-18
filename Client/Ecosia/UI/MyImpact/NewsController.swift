@@ -30,7 +30,7 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
         flow.minimumLineSpacing = 0
         flow.sectionInset = .init(top: 0, left: 0, bottom: 0, right: 0)
 
-        let indicator = UIActivityIndicatorView(style: .gray)
+        let indicator = UIActivityIndicatorView(style: .medium)
         indicator.startAnimating()
         
         let collection = UICollectionView(frame: .zero, collectionViewLayout: flow)
@@ -101,6 +101,14 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
     func applyTheme() {
         collection.reloadData()
         collection.backgroundColor = UIColor.theme.ecosia.modalBackground
+        updateBarAppearance()
+    }
+
+    private func updateBarAppearance() {
+        guard let appearance = navigationController?.navigationBar.standardAppearance else { return }
+        appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.theme.ecosia.primaryText]
+        appearance.titleTextAttributes = [.foregroundColor: UIColor.theme.ecosia.primaryText]
+        navigationController?.navigationBar.standardAppearance = appearance
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
