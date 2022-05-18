@@ -201,9 +201,7 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
         applyTheme()
     }
     
-    func update(personalCounter: Int) {
-        let searchesPerTree = TreeCounter.shared.statistics.searchesPerTree
-        let progress = .init(personalCounter % Int(searchesPerTree)) / searchesPerTree
+    func update(personalCounter: Int, progress: Double) {
         currentProgress.value = progress
         indicator.value = progress
         

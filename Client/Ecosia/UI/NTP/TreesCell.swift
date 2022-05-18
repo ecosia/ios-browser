@@ -84,9 +84,7 @@ final class TreesCell: UICollectionViewCell, Themeable {
     func display(_ model: TreesCellModel) {
         self.model = model
 
-        let searchesPerTree = TreeCounter.shared.statistics.searchesPerTree
-        let progress = Double(model.searches % Int(searchesPerTree)) / searchesPerTree
-        currentProgress.value = progress
+        currentProgress.value = User.shared.progress
 
         if #available(iOS 15.0, *) {
             treesCount.text = model.trees.formatted()

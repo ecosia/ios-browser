@@ -210,7 +210,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
             infoCell.setWidth(collectionView.bounds.width, insets: collectionView.safeAreaInsets)
             infoCell.howItWorksButton.removeTarget(self, action: nil, for: .touchUpInside)
             infoCell.howItWorksButton.addTarget(self, action: #selector(learnMore), for: .touchUpInside)
-            infoCell.update(personalCounter: personalCounter.state ?? 0)
+            infoCell.update(personalCounter: personalCounter.state ?? 0, progress: User.shared.progress)
             return infoCell
 
         case .legacyImpact:
