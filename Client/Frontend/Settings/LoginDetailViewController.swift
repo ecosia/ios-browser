@@ -36,7 +36,7 @@ fileprivate class CenteredDetailCell: ThemedTableViewCell {
     }
 }
 
-class LoginDetailViewController: SensitiveViewController {
+class LoginDetailViewController: SensitiveViewController, Themeable {
     fileprivate let profile: Profile
     fileprivate let tableView = UITableView(frame: .zero, style: .insetGrouped)
     fileprivate weak var websiteField: UITextField?
@@ -90,13 +90,13 @@ class LoginDetailViewController: SensitiveViewController {
             make.edges.equalTo(self.view)
         }
         tableView.estimatedRowHeight = 44.0
+
+        applyTheme()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        tableView.separatorColor = UIColor.theme.tableView.separator
-        tableView.backgroundColor = UIColor.theme.tableView.headerBackground
         tableView.accessibilityIdentifier = "Login Detail List"
         tableView.delegate = self
         tableView.dataSource = self
@@ -130,6 +130,14 @@ class LoginDetailViewController: SensitiveViewController {
             cell?.separatorInset = .zero
             cell?.layoutMargins = .zero
             cell?.preservesSuperviewLayoutMargins = false
+        }
+    }
+
+    func applyTheme() {
+        tableView.separatorColor = UIColor.theme.tableView.separator
+        tableView.backgroundColor = UIColor.theme.tableView.headerBackground
+        tableView.visibleCells.forEach {
+            ($0 as? Themeable)?.applyTheme()
         }
     }
 }
