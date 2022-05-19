@@ -21,13 +21,11 @@ final class NewsCell: UICollectionViewCell, Themeable, AutoSizingCell {
 
     private(set) weak var widthConstraint: NSLayoutConstraint!
     private var imageUrl: URL?
-    private weak var container: UIView!
+    private weak var background: UIView!
     private weak var image: UIImageView!
     private weak var title: UILabel!
     private weak var date: UILabel!
-    private weak var topBorder: UIView!
-    private weak var bottomBorder: UIView!
-    private weak var bottomLeft: NSLayoutConstraint!
+    private weak var border: UIView!
 
     required init?(coder: NSCoder) { nil }
     
@@ -42,22 +40,28 @@ final class NewsCell: UICollectionViewCell, Themeable, AutoSizingCell {
         container.leftAnchor.constraint(equalTo: contentView.leftAnchor).isActive = true
         container.rightAnchor.constraint(equalTo: contentView.rightAnchor).isActive = true
 
-        let widthConstraint = container.widthAnchor.constraint(equalToConstant: 100)
+        let widthConstraint = container.widthAnchor.constraint(equalToConstant: 300)
         widthConstraint.priority = .init(999)
         widthConstraint.isActive = true
         self.widthConstraint = widthConstraint
 
-        let top = UIView()
-        top.translatesAutoresizingMaskIntoConstraints = false
-        top.isUserInteractionEnabled = false
-        contentView.addSubview(top)
-        self.topBorder = top
+        let background = UIView()
+        background.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(background)
+        self.background = background
 
-        let bottom = UIView()
-        bottom.translatesAutoresizingMaskIntoConstraints = false
-        bottom.isUserInteractionEnabled = false
-        contentView.addSubview(bottom)
-        self.bottomBorder = bottom
+        background.leadingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leadingAnchor, constant: 16).isActive = true
+        let trailing = background.trailingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.trailingAnchor, constant: -16)
+        trailing.priority = .init(999)
+        trailing.isActive = true
+        background.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
+        background.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
+
+        let border = UIView()
+        border.translatesAutoresizingMaskIntoConstraints = false
+        border.isUserInteractionEnabled = false
+        background.addSubview(border)
+        self.border = border
         
         let placeholder = UIImageView()
         placeholder.translatesAutoresizingMaskIntoConstraints = false
@@ -65,7 +69,7 @@ final class NewsCell: UICollectionViewCell, Themeable, AutoSizingCell {
         placeholder.clipsToBounds = true
         placeholder.image = UIImage(named: "image_placeholder")!
         placeholder.layer.cornerRadius = 5
-        contentView.addSubview(placeholder)
+        background.addSubview(placeholder)
         
         let image = UIImageView()
         image.translatesAutoresizingMaskIntoConstraints = false
@@ -73,29 +77,28 @@ final class NewsCell: UICollectionViewCell, Themeable, AutoSizingCell {
         image.clipsToBounds = true
         image.alpha = 0
         image.layer.cornerRadius = 5
-        contentView.addSubview(image)
+        background.addSubview(image)
         self.image = image
         
         let title = UILabel()
         title.translatesAutoresizingMaskIntoConstraints = false
         title.numberOfLines = 0
         title.lineBreakMode = .byTruncatingTail
-        title.font = .preferredFont(forTextStyle: .subheadline)
+        title.font = .preferredFont(forTextStyle: .body)
         title.setContentHuggingPriority(.defaultHigh, for: .vertical)
         title.adjustsFontForContentSizeCategory = true
-        contentView.addSubview(title)
+        background.addSubview(title)
         self.title = title
         
         let date = UILabel()
         date.translatesAutoresizingMaskIntoConstraints = false
-        date.font = .preferredFont(forTextStyle: .subheadline)
+        date.font = .preferredFont(forTextStyle: .footnote)
         date.adjustsFontForContentSizeCategory = true
         date.numberOfLines = 1
         date.textAlignment = .left
         date.setContentCompressionResistancePriority(.required, for: .vertical)
         date.setContentHuggingPriority(.defaultHigh, for: .vertical)
-
-        contentView.addSubview(date)
+        background.addSubview(date)
         self.date = date
         
         placeholder.topAnchor.constraint(equalTo: image.topAnchor).isActive = true
@@ -103,39 +106,35 @@ final class NewsCell: UICollectionViewCell, Themeable, AutoSizingCell {
         placeholder.leftAnchor.constraint(equalTo: image.leftAnchor).isActive = true
         placeholder.rightAnchor.constraint(equalTo: image.rightAnchor).isActive = true
         
-        image.leftAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leftAnchor, constant: 16).isActive = true
+        image.rightAnchor.constraint(equalTo: background.rightAnchor, constant: -16).isActive = true
         image.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
-        image.widthAnchor.constraint(equalToConstant: 96).isActive = true
+
+        let imageHeight = image.widthAnchor.constraint(equalToConstant: 80)
+        imageHeight.priority = .init(999)
+        imageHeight.isActive = true
+
         image.heightAnchor.constraint(equalTo: image.widthAnchor).isActive = true
-        image.topAnchor.constraint(greaterThanOrEqualTo: contentView.topAnchor, constant: 16).isActive = true
-        image.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: -16).isActive = true
+        image.topAnchor.constraint(greaterThanOrEqualTo: background.topAnchor, constant: 16).isActive = true
+        image.bottomAnchor.constraint(lessThanOrEqualTo: background.bottomAnchor, constant: -16).isActive = true
 
-        title.leftAnchor.constraint(equalTo: image.rightAnchor, constant: 15).isActive = true
-        title.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16).isActive = true
-        title.bottomAnchor.constraint(lessThanOrEqualTo: date.topAnchor, constant: 0).isActive = true
+        title.leftAnchor.constraint(equalTo: background.leftAnchor, constant: 16).isActive = true
+        title.rightAnchor.constraint(equalTo: image.leftAnchor, constant: -16).isActive = true
+        title.topAnchor.constraint(equalTo: background.topAnchor, constant: 16).isActive = true
+        title.bottomAnchor.constraint(lessThanOrEqualTo: date.topAnchor, constant: -12).isActive = true
 
-        let squeeze = title.bottomAnchor.constraint(equalTo: date.topAnchor, constant: 0)
+        let squeeze = title.bottomAnchor.constraint(equalTo: date.topAnchor, constant: -12)
         squeeze.priority = .init(700)
         squeeze.isActive = true
 
         date.leftAnchor.constraint(equalTo: title.leftAnchor).isActive = true
-        date.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16).isActive = true
-
-        bottom.rightAnchor.constraint(equalTo: contentView.rightAnchor).isActive = true
-        bottom.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
-        bottom.heightAnchor.constraint(equalToConstant: 1).isActive = true
-
-        top.leftAnchor.constraint(equalTo: contentView.leftAnchor).isActive = true
-        top.rightAnchor.constraint(equalTo: contentView.rightAnchor).isActive = true
-        top.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
-        top.heightAnchor.constraint(equalToConstant: 1).isActive = true
-
-        title.rightAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.rightAnchor, constant: -16).isActive = true
+        date.bottomAnchor.constraint(equalTo: background.bottomAnchor, constant: -16).isActive = true
         date.rightAnchor.constraint(equalTo: title.rightAnchor).isActive = true
-        let bottomLeft = bottom.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16)
-        bottomLeft.priority = .defaultHigh
-        bottomLeft.isActive = true
-        self.bottomLeft = bottomLeft
+
+        border.leftAnchor.constraint(equalTo: background.leftAnchor, constant: 16).isActive = true
+        border.rightAnchor.constraint(equalTo: background.rightAnchor, constant: -16).isActive = true
+        border.bottomAnchor.constraint(equalTo: background.bottomAnchor).isActive = true
+        border.heightAnchor.constraint(equalToConstant: 1).isActive = true
+
         applyTheme()
     }
     
@@ -151,8 +150,10 @@ final class NewsCell: UICollectionViewCell, Themeable, AutoSizingCell {
         }
     }
     
+    private var positions = Positions()
     func configure(_ item: NewsModel, images: Images, positions: Positions) {
         imageUrl = item.imageUrl
+        self.positions = positions
         image.image = nil
         title.text = item.text.replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression)
         date.text = RelativeDateTimeFormatter().localizedString(for: item.publishDate, relativeTo: .init())
@@ -162,11 +163,25 @@ final class NewsCell: UICollectionViewCell, Themeable, AutoSizingCell {
             self?.updateImage($0.data)
         }
 
-        topBorder.isHidden = !positions.contains(.top)
-        bottomLeft.constant = positions.contains(.bottom) ? 0 : 16
-        bottomBorder.setNeedsLayout()
+        border.isHidden = positions.contains(.bottom)
     }
-    
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+
+        if positions.contains(.top) {
+            background.addRoundedCorners([.topLeft, .topRight], radius: 10)
+        }
+
+        if positions.contains(.bottom) {
+            background.addRoundedCorners([.bottomLeft, .bottomRight], radius: 10)
+        }
+
+        if positions.isEmpty {
+            background.layer.mask = nil
+        }
+    }
+
     private func updateImage(_ data: Data) {
         image.image = UIImage(data: data)
         UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseInOut, animations: { [weak self] in
@@ -175,7 +190,7 @@ final class NewsCell: UICollectionViewCell, Themeable, AutoSizingCell {
     }
     
     private func hover() {
-        backgroundColor = isSelected || isHighlighted ? UIColor.theme.ecosia.hoverBackgroundColor : UIColor.theme.ecosia.highlightedBackground
+        background.backgroundColor = isSelected || isHighlighted ? UIColor.theme.ecosia.hoverBackgroundColor : UIColor.theme.ecosia.ntpCellBackground
     }
 
     override func prepareForReuse() {
@@ -188,9 +203,8 @@ final class NewsCell: UICollectionViewCell, Themeable, AutoSizingCell {
     }
 
     func applyTheme() {
-        backgroundColor = UIColor.theme.ecosia.ntpCellBackground
-        bottomBorder?.backgroundColor = UIColor.theme.ecosia.barSeparator
-        topBorder?.backgroundColor = UIColor.theme.ecosia.barSeparator
+        background.backgroundColor = UIColor.theme.ecosia.ntpCellBackground
+        border?.backgroundColor = UIColor.theme.ecosia.border
         title?.textColor = UIColor.theme.ecosia.primaryText
         date?.textColor = UIColor.theme.ecosia.secondaryText
     }
