@@ -78,9 +78,7 @@ class AddCredentialViewController: UIViewController, Themeable {
     func applyTheme() {
         tableView.separatorColor = UIColor.theme.tableView.separator
         tableView.backgroundColor = UIColor.theme.tableView.headerBackground
-        tableView.visibleCells.forEach {
-            ($0 as? Themeable)?.applyTheme()
-        }
+        tableView.reloadData()
         cancelButton.tintColor = .theme.general.controlTint
         saveButton.tintColor = .theme.general.controlTint
     }
@@ -143,6 +141,11 @@ extension AddCredentialViewController: UITableViewDataSource {
             return .LoginDetailWebsite
         }
     }
+
+    func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+        guard let header = view as? UITableViewHeaderFooterView else { return }
+        header.textLabel?.textColor = .theme.ecosia.secondaryText
+    }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch AddCredentialField(rawValue: indexPath.section)! {
@@ -168,7 +171,7 @@ extension AddCredentialViewController: UITableViewDataSource {
         case .websiteItem:
             let loginCell = cell(forIndexPath: indexPath)
             websiteField = loginCell.descriptionLabel
-            loginCell.placeholder = "https://www.example.com"
+            loginCell.attributedPlaceholder = NSAttributedString(string: "https://www.example.com", attributes: [.foregroundColor: UIColor.theme.ecosia.secondaryText])
             websiteField?.accessibilityIdentifier = "websiteField"
             websiteField?.keyboardType = .URL
             loginCell.isEditingFieldData = true

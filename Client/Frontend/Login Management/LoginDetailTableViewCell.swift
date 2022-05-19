@@ -95,9 +95,9 @@ class LoginDetailTableViewCell: ThemedTableViewCell {
         return descriptionText.size(withAttributes: attributes)
     }
     
-    var placeholder: String? {
-        get { descriptionLabel.placeholder }
-        set { descriptionLabel.placeholder = newValue }
+    var attributedPlaceholder: NSAttributedString? {
+        get { descriptionLabel.attributedPlaceholder }
+        set { descriptionLabel.attributedPlaceholder = newValue }
     }
 
     var displayDescriptionAsPassword: Bool = false {
@@ -154,6 +154,9 @@ class LoginDetailTableViewCell: ThemedTableViewCell {
     override func applyTheme() {
         super.applyTheme()
         descriptionLabel.textColor = UIColor.theme.tableView.rowText
+        if let text = attributedPlaceholder?.string {
+            attributedPlaceholder = NSAttributedString(string: text, attributes: [.foregroundColor: UIColor.theme.ecosia.secondaryText])
+        }
     }
 }
 
