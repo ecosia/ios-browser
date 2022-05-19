@@ -10,53 +10,6 @@ protocol WelcomeTourDelegate: AnyObject {
 
 final class WelcomeTour: UIViewController,  Themeable {
 
-    final class Step {
-
-        final class Background {
-            let image: String
-            let darkImage: String?
-            let color: UIColor?
-
-            init(image: String, darkImage: String? = nil, color: UIColor? = nil) {
-                self.image = image
-                self.darkImage = darkImage
-                self.color = color
-            }
-        }
-
-        let title: String
-        let text: String
-        let background: Background
-        let content: UIView?
-
-        init(title: String, text: String, background: Background, content: UIView?) {
-            self.title = title
-            self.text = text
-            self.background = background
-            self.content = content
-        }
-
-        static var planet: Step {
-            return .init(title: .localized(.aBetterPlanet), text: .localized(.searchTheWeb), background: .init(image: "tour1"), content: WelcomeTourPlanet())
-        }
-
-        static var profit: Step {
-            return .init(title: .localized(.hundredPercentOfProfits), text: .localized(.allOurProfitsGo), background: .init(image: "tour2"), content: WelcomeTourProfit())
-        }
-
-        static var action: Step {
-            return .init(title: .localized(.collectiveAction), text: .localized(.join15Million), background: .init(image: "tour3", darkImage: "tour3Dark", color: UIColor(rgb: 0x668A7A)), content: WelcomeTourAction())
-        }
-
-        static var trees: Step {
-            return .init(title: .localized(.weWantTrees), text: .localized(.wellNeverSell), background: .init(image: "tour4"), content: nil)
-        }
-
-        static var all: [Step] {
-            return [planet, profit, action, trees]
-        }
-    }
-
     private weak var navStack: UIStackView!
     private weak var labelStack: UIStackView!
     private weak var titleLabel: UILabel!
@@ -206,6 +159,8 @@ final class WelcomeTour: UIViewController,  Themeable {
 
         let ctaButton = UIButton(type: .system)
         ctaButton.setTitle(.localized(.continueMessage), for: .normal)
+        ctaButton.titleLabel?.font = .preferredFont(forTextStyle: .callout)
+        ctaButton.titleLabel?.adjustsFontForContentSizeCategory = true
         ctaButton.translatesAutoresizingMaskIntoConstraints = false
         ctaButton.addTarget(self, action: #selector(forward), for: .primaryActionTriggered)
         ctaButton.alpha = 0
@@ -259,16 +214,20 @@ final class WelcomeTour: UIViewController,  Themeable {
 
         let title: String = isLastStep() ? .localized(.finishTour) : .localized(.continueMessage)
 
-        let image = ThemeManager.instance.current.isDark ? (step.background.darkImage ?? step.background.image) : step.background.image
+        // No image transition and "move right" for first step
+        let duration: CGFloat = isFirstStep() ? 0 : 0.3
 
         // Image transition
-        UIView.transition(with: imageView, duration: 0.3, options: .transitionCrossDissolve, animations: {
-            self.imageView.image = UIImage(named: image)
-            self.imageView.backgroundColor = step.background.color ?? .clear },
-                          completion: nil)
+        UIView.transition(with: imageView, duration: duration, options: .transitionCrossDissolve, animations: {
+            self.imageView.image = UIImage(named: step.background.image)
+            self.imageView.backgroundColor = step.background.color ?? .clear
+            if self.traitCollection.userInterfaceIdiom == .phone {
+                self.imageView.contentMode = step.background.color == nil ? .scaleAspectFill : .scaleAspectFit
+            }
+        })
 
         // Move and Fade transition
-        UIView.animate(withDuration: 0.3) {
+        UIView.animate(withDuration: duration) {
             self.moveRight()
             self.labelStack.alpha = 0
             self.ctaButton.alpha = 0
@@ -360,7 +319,7 @@ final class WelcomeTour: UIViewController,  Themeable {
         textLabel.textColor = .theme.ecosia.secondaryText
         skipButton.tintColor = .theme.ecosia.primaryButton
         backButton.tintColor = .theme.ecosia.primaryButton
-        pageControl.pageIndicatorTintColor = .theme.ecosia.secondaryText
+        pageControl.pageIndicatorTintColor = .theme.ecosia.disabled
         pageControl.currentPageIndicatorTintColor = .theme.ecosia.primaryButton
         ctaButton.backgroundColor = .Light.Button.secondary
         ctaButton.setTitleColor(.Light.Text.primary, for: .normal)
@@ -368,8 +327,7 @@ final class WelcomeTour: UIViewController,  Themeable {
 
         imageView.backgroundColor = current?.background.color ?? .clear
         guard let current = current else { return }
-        let image = ThemeManager.instance.current.isDark ? current.background.darkImage ?? current.background.image : current.background.image
-        imageView.image = .init(named: image)
+        imageView.image = .init(named: current.background.image)
     }
 
     @objc func themeChanged() {

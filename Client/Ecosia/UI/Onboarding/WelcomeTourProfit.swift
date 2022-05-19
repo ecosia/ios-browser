@@ -9,6 +9,7 @@ final class WelcomeTourProfit: UIView, Themeable {
     weak var beforeLabel: UILabel!
     weak var afterContainer: UIView!
     weak var afterLabel: UILabel!
+    weak var treeImage: UIImageView!
 
     init() {
         super.init(frame: .zero)
@@ -71,8 +72,9 @@ final class WelcomeTourProfit: UIView, Themeable {
         stack.topAnchor.constraint(equalTo: afterContainer.topAnchor, constant: 10).isActive = true
         stack.bottomAnchor.constraint(equalTo: afterContainer.bottomAnchor, constant: -10).isActive = true
 
-        let treeImage = UIImageView(image: .init(named: "tourTree"))
+        let treeImage = UIImageView(image: .init(named: "tourTree")?.withRenderingMode(.alwaysTemplate))
         stack.addArrangedSubview(treeImage)
+        self.treeImage = treeImage
 
         let afterLabel = UILabel()
         afterLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -101,6 +103,7 @@ final class WelcomeTourProfit: UIView, Themeable {
         afterContainer.backgroundColor = .theme.ecosia.welcomeBackground
         beforeLabel.textColor = .theme.ecosia.primaryText
         afterLabel.textColor = .theme.ecosia.primaryText
+        treeImage.tintColor = .theme.ecosia.primaryBrand
     }
 }
 

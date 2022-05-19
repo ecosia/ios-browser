@@ -94,8 +94,10 @@ class EcosiaTheme {
     var teal60: UIColor { UIColor(rgb: 0x267A82) }
     var segmentSelectedText: UIColor { .Light.Text.primary }
     var segmentBackground: UIColor { .Light.Background.secondary }
+
     var warning: UIColor { .Light.State.warning }
     var information: UIColor { .Light.State.information }
+    var disabled: UIColor { .Light.State.disabled }
 
     var tabBackground: UIColor { .Light.Background.primary }
     var tabSelectedBackground: UIColor { .Light.Button.primary }
@@ -169,8 +171,10 @@ final class DarkEcosiaTheme: EcosiaTheme {
 
     override var segmentSelectedText: UIColor { UIColor.Photon.Grey90 }
     override var segmentBackground: UIColor { .Dark.Background.tertiary }
+
     override var warning: UIColor { .Dark.State.warning }
     override var information: UIColor { .Dark.State.information }
+    override var disabled: UIColor { .Dark.State.disabled }
 
     override var tabBackground: UIColor { .Dark.Background.tertiary }
     override var tabSelectedBackground: UIColor { .Dark.Button.primary }

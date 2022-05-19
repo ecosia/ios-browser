@@ -498,6 +498,7 @@
 		CA6BFB7225778EDA0026DFFF /* Ecosia.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CA6BFB7125778EDA0026DFFF /* Ecosia.xcassets */; };
 		CA6FA5BD26D3B6EA00C68319 /* Plurals.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = CA6FA5BF26D3B6EA00C68319 /* Plurals.stringsdict */; };
 		CA708BBA25407C59007265AC /* EcosiaFavourites.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA708BB925407C59007265AC /* EcosiaFavourites.swift */; };
+		CA75743B283677BC001074CA /* WelcomeTour.Step.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA75743A283677BC001074CA /* WelcomeTour.Step.swift */; };
 		CA77ABFD24773C92005079F9 /* BreachAlertsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA77ABF424772D98005079F9 /* BreachAlertsManager.swift */; };
 		CA7BD568248189E800A0A61B /* BreachAlertsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA7BD564248185B500A0A61B /* BreachAlertsTests.swift */; };
 		CA7E7B6227591B89005D1E47 /* QuickLinkSelection.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = CA7E7B6127591B89005D1E47 /* QuickLinkSelection.intentdefinition */; };
@@ -3197,6 +3198,7 @@
 		CA6FA5C426D3C34200C68319 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = es; path = es.lproj/Plurals.stringsdict; sourceTree = "<group>"; };
 		CA708BB925407C59007265AC /* EcosiaFavourites.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaFavourites.swift; sourceTree = "<group>"; };
 		CA734AC9B9629155033B810B /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Search.strings; sourceTree = "<group>"; };
+		CA75743A283677BC001074CA /* WelcomeTour.Step.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WelcomeTour.Step.swift; sourceTree = "<group>"; };
 		CA774043B34B7F86DA31B93A /* br */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = br; path = br.lproj/Localizable.strings; sourceTree = "<group>"; };
 		CA77ABF424772D98005079F9 /* BreachAlertsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreachAlertsManager.swift; sourceTree = "<group>"; };
 		CA7BD564248185B500A0A61B /* BreachAlertsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreachAlertsTests.swift; sourceTree = "<group>"; };
@@ -5442,6 +5444,7 @@
 			children = (
 				CA6BFAAC25778CB90026DFFF /* Welcome.swift */,
 				CA2BCEE02823DE9700D7961F /* WelcomeTour.swift */,
+				CA75743A283677BC001074CA /* WelcomeTour.Step.swift */,
 				CA2BCEE228240DDF00D7961F /* WelcomeTourPlanet.swift */,
 				CA2BCEE728251FED00D7961F /* WelcomeTourProfit.swift */,
 				CA2BCEE92825200C00D7961F /* WelcomeTourAction.swift */,
@@ -8171,6 +8174,7 @@
 				F018F84C2719AE8300B9A52D /* ThemedDefaultNavigationController.swift in Sources */,
 				D3B6923F1B9F9A58004B87A4 /* FindInPageHelper.swift in Sources */,
 				39EF4378260CF5A30011E22E /* AppDelegate+Experiments.swift in Sources */,
+				CA75743B283677BC001074CA /* WelcomeTour.Step.swift in Sources */,
 				EB9A179C20E69A7F00B12184 /* DarkTheme.swift in Sources */,
 				CEFBEC4E2833EC050074387A /* EcosiaHome.Section.swift in Sources */,
 				DA52E1DA25F5961F0092204C /* TabTrayViewController.swift in Sources */,

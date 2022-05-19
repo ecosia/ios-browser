@@ -38,7 +38,7 @@ final class Welcome: UIViewController {
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        traitCollection.userInterfaceIdiom == .pad ? .all : .portrait
+        .portrait
     }
 
     // MARK: Views
@@ -210,13 +210,15 @@ final class Welcome: UIViewController {
     private func zoomOut() {
         zoomedOut = true
 
-        let targetFrame = self.view.bounds.inset(by: .init(equalInset: -2.5 * self.view.bounds.height))
+        let height = max(view.bounds.height, view.bounds.width)
+        let targetFrame = self.view.bounds.inset(by: .init(equalInset: -2.5 * height))
 
         CATransaction.begin()
         CATransaction.setAnimationDuration(1.4)
         CATransaction.setAnimationTimingFunction(.init(name: CAMediaTimingFunctionName.easeInEaseOut))
         CATransaction.setCompletionBlock { [weak self] in
             self?.showText()
+            self?.background.layer.mask = nil
         }
         maskLayer.frame = targetFrame
         CATransaction.commit()
