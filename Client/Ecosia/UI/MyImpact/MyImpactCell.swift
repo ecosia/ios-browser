@@ -221,7 +221,7 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
     }
     
     func applyTheme() {
-        outline.backgroundColor = .theme.ecosia.ecosiaHomeCellBackground
+        outline.backgroundColor = .theme.ecosia.ntpCellBackground
         totalProgress.update(color: .theme.ecosia.treeCounterProgressTotal)
         currentProgress.update(color: .theme.ecosia.treeCounterProgressCurrent)
         indicator.update(fill: .theme.ecosia.treeCounterProgressCurrent, border: .theme.ecosia.treeCounterProgressBorder)

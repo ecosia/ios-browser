@@ -46,11 +46,11 @@ class EcosiaTheme {
     var impactTreeCountBackground: UIColor { treeCountBackground }
     var impactBackground: UIColor { UIColor.Photon.Grey10 }
     var impactSeparator: UIColor { UIColor.Photon.Grey40 }
-    var ecosiaHomeCellBackground: UIColor { .Light.Background.primary }
     var treeCounterProgressTotal: UIColor { .Light.Background.tertiary }
     var treeCounterProgressCurrent: UIColor { .Light.Brand.primary }
     var treeCounterProgressBorder: UIColor { .Light.Background.primary }
 
+    var ntpCellBackground: UIColor { .Light.Background.primary }
     var ntpBackground: UIColor { .Light.Background.tertiary }
     var ntpIntroBackground: UIColor { .Light.Background.primary }
     var ntpImpactBackground: UIColor { .white }
@@ -58,6 +58,7 @@ class EcosiaTheme {
     var impactMultiplyCardBackground: UIColor { .white }
     var impactMultiplyCardBorder: UIColor { .Photon.Grey20 }
     var trackingSheetBackground: UIColor { .Light.Background.tertiary }
+    var moreNewsButton: UIColor { .Light.Button.secondary }
     
     var actionSheetBackground: UIColor { .Light.Background.primary }
     var modalBackground: UIColor { .Light.Background.tertiary }
@@ -120,11 +121,11 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var treeCountBackground: UIColor { UIColor.Photon.Grey70 }
     override var impactTreeCountBackground: UIColor { UIColor.Photon.Grey80 }
     override var impactSeparator: UIColor { UIColor.Photon.Grey60 }
-    override var ecosiaHomeCellBackground: UIColor { .Dark.Background.tertiary }
     override var treeCounterProgressTotal: UIColor { .Dark.Background.secondary }
     override var treeCounterProgressCurrent: UIColor { .Dark.Brand.primary }
     override var treeCounterProgressBorder: UIColor { .Dark.Background.primary }
 
+    override var ntpCellBackground: UIColor { .Dark.Background.tertiary }
     override var ntpBackground: UIColor { .Dark.Background.primary }
     override var ntpImpactBackground: UIColor { .Dark.Background.secondary}
     override var ntpIntroBackground: UIColor { .Dark.Background.tertiary }
@@ -133,6 +134,7 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var impactMultiplyCardBackground: UIColor { .Photon.Grey70 }
     override var impactMultiplyCardBorder: UIColor { .clear }
     override var trackingSheetBackground: UIColor { .Dark.Background.secondary }
+    override var moreNewsButton: UIColor { .Dark.Background.tertiary }
 
     override var actionSheetBackground: UIColor { .Dark.Background.secondary }
     override var modalBackground: UIColor { .Dark.Background.secondary }

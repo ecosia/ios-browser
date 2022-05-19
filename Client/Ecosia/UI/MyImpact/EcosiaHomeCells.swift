@@ -7,10 +7,17 @@ import UIKit
 final class MoreButtonCell: UICollectionViewCell, AutoSizingCell {
     lazy var moreButton: UIButton = {
         let button = UIButton()
-        button.setTitleColor(UIColor.theme.ecosia.primaryBrand, for: .normal)
-        button.setTitleColor(UIColor.Photon.Grey50, for: .highlighted)
+        button.setImage(.init(named: "news"), for: .normal)
         button.titleLabel?.font = .preferredFont(forTextStyle: .body)
         button.titleLabel?.adjustsFontForContentSizeCategory = true
+
+        button.contentEdgeInsets.right = 16
+        button.contentEdgeInsets.left = 16
+        button.imageEdgeInsets.left = -8
+
+        button.layer.cornerRadius = 16
+        button.layer.borderWidth = 1
+
         return button
     }()
 
@@ -18,28 +25,48 @@ final class MoreButtonCell: UICollectionViewCell, AutoSizingCell {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        contentView.addSubview(moreButton)
 
-        moreButton.translatesAutoresizingMaskIntoConstraints = false
-        moreButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
-        moreButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
-        moreButton.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
-        moreButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
+        let container = UIView()
+        container.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(container)
 
-        let widthConstraint = moreButton.widthAnchor.constraint(equalToConstant: 100)
+        container.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
+        container.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
+        container.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
+        container.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
+
+        let widthConstraint = container.widthAnchor.constraint(equalToConstant: 300)
         widthConstraint.priority = .defaultHigh
         widthConstraint.isActive = true
         self.widthConstraint = widthConstraint
+
+        contentView.addSubview(moreButton)
+        moreButton.translatesAutoresizingMaskIntoConstraints = false
+        moreButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16).isActive = true
+        moreButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 20).isActive = true
+        moreButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 8).isActive = true
+        moreButton.heightAnchor.constraint(greaterThanOrEqualToConstant: 32).isActive = true
+
+        applyTheme()
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
+    func applyTheme() {
+        moreButton.tintColor = .theme.ecosia.primaryText
+        moreButton.imageView?.tintColor = .theme.ecosia.primaryText
+        moreButton.setTitleColor(.theme.ecosia.primaryText, for: .normal)
+        moreButton.setTitleColor(.theme.ecosia.secondaryText, for: .highlighted)
+        moreButton.setTitleColor(.theme.ecosia.secondaryText, for: .selected)
+        moreButton.backgroundColor = .theme.ecosia.moreNewsButton
+        moreButton.layer.borderColor = UIColor.theme.ecosia.primaryText.cgColor
+    }
+
     override func prepareForReuse() {
         super.prepareForReuse()
-        moreButton.setTitleColor(UIColor.theme.ecosia.primaryBrand, for: .normal)
-        moreButton.setTitleColor(UIColor.Photon.Grey50, for: .highlighted)
+        applyTheme()
     }
 
     func setWidth(_ width: CGFloat, insets: UIEdgeInsets) {

@@ -155,7 +155,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
                 return cell
             } else if indexPath.row == self.collectionView(collectionView, numberOfItemsInSection: Section.news.rawValue) - 1 {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: .init(describing: MoreButtonCell.self), for: indexPath) as! MoreButtonCell
-                cell.moreButton.setTitle(.localized(.more), for: .normal)
+                cell.moreButton.setTitle(.localized(.seeMoreNews), for: .normal)
                 cell.moreButton.addTarget(self, action: #selector(allNews), for: .primaryActionTriggered)
                 cell.setWidth(collectionView.bounds.width, insets: collectionView.safeAreaInsets)
                 return cell
@@ -269,7 +269,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
             navigationItem.rightBarButtonItem?.tintColor = UIColor.theme.ecosia.primaryButton
             collectionView.backgroundView = nil
         }
-        navigationController?.navigationBar.standardAppearance = appearance
+        navigationItem.standardAppearance = appearance
         navigationController?.navigationBar.setNeedsDisplay()
     }
 

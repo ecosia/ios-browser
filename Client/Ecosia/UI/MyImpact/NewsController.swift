@@ -28,9 +28,10 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
         let flow = UICollectionViewFlowLayout()
         flow.minimumInteritemSpacing = 0
         flow.minimumLineSpacing = 0
+        flow.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
         flow.sectionInset = .init(top: 0, left: 0, bottom: 0, right: 0)
 
-        let indicator = UIActivityIndicatorView(style: .gray)
+        let indicator = UIActivityIndicatorView(style: .medium)
         indicator.startAnimating()
         
         let collection = UICollectionView(frame: .zero, collectionViewLayout: flow)
@@ -49,6 +50,7 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
         news.subscribe(self) { [weak self] in
             self?.items = $0
             self?.collection.reloadData()
+            self?.collection.backgroundView = nil
         }
         applyTheme()
     }
@@ -79,6 +81,7 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
     func collectionView(_: UICollectionView, cellForItemAt: IndexPath) -> UICollectionViewCell {
         let cell = collection.dequeueReusableCell(withReuseIdentifier: identifier, for: cellForItemAt) as! NewsCell
         cell.configure(items[cellForItemAt.row], images: images, positions: .derive(row: cellForItemAt.item, items: items.count))
+        cell.setWidth(collection.bounds.width, insets: collection.safeAreaInsets)
         return cell
     }
     
@@ -99,8 +102,27 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
     }
 
     func applyTheme() {
-        collection.reloadData()
+        collection.visibleSupplementaryViews(ofKind: UICollectionView.elementKindSectionHeader).forEach({
+            ($0 as? Themeable)?.applyTheme()
+        })
+        collection.visibleCells.forEach({
+            ($0 as? Themeable)?.applyTheme()
+        })
         collection.backgroundColor = UIColor.theme.ecosia.modalBackground
+        updateBarAppearance()
+
+        if traitCollection.userInterfaceIdiom == .pad {
+            let margin = max((view.bounds.width - 544) / 2.0, 0)
+            additionalSafeAreaInsets = .init(top: 0, left: margin, bottom: 0, right: margin)
+        }
+    }
+
+    private func updateBarAppearance() {
+        guard let appearance = navigationController?.navigationBar.standardAppearance else { return }
+        appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.theme.ecosia.primaryText]
+        appearance.titleTextAttributes = [.foregroundColor: UIColor.theme.ecosia.primaryText]
+        navigationItem.standardAppearance = appearance
+        navigationController?.navigationBar.backgroundColor = .theme.ecosia.modalBackground
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {

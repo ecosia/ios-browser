@@ -44,7 +44,7 @@ extension String {
         case linkAlreadyUsedMessage = "You can only use an invitation link once."
         case makeEcosiaYourDefaultBrowser = "Make Ecosia your default browser"
         case moderate = "Moderate"
-        case more = "More"
+        case seeMoreNews = "See more news"
         case multiplyImpact = "Multiply impact"
         case yourImpact = "Your Impact"
         case myImpactDescription = "This is the estimated number of trees you have contributed to planting by using Ecosia."
