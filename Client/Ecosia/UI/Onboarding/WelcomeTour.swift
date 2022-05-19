@@ -151,7 +151,9 @@ final class WelcomeTour: UIViewController,  Themeable {
 
         waves.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
         waves.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        let wavesBottom = waves.bottomAnchor.constraint(equalTo: view.topAnchor, constant: 251)
+        waves.heightAnchor.constraint(equalToConstant: 37).isActive = true
+        waves.bottomAnchor.constraint(greaterThanOrEqualTo: view.safeAreaLayoutGuide.topAnchor, constant: 208).isActive = true
+        let wavesBottom = waves.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 208)
         wavesBottom.priority = .defaultHigh
         wavesBottom.isActive = true
     }
@@ -178,7 +180,7 @@ final class WelcomeTour: UIViewController,  Themeable {
         self.labelRight = labelRight
 
         labelStack.topAnchor.constraint(equalTo: navStack.bottomAnchor, constant: 24).isActive = true
-        labelStack.bottomAnchor.constraint(equalTo: waves.topAnchor).isActive = true
+        labelStack.bottomAnchor.constraint(lessThanOrEqualTo: waves.topAnchor).isActive = true
 
         let titleLabel = UILabel()
         titleLabel.text = steps.first?.title
@@ -192,9 +194,10 @@ final class WelcomeTour: UIViewController,  Themeable {
 
         let textLabel = UILabel()
         textLabel.text = steps.first?.text
-        textLabel.numberOfLines = 0
+        textLabel.numberOfLines = 3
         textLabel.font = .preferredFont(forTextStyle: .body)
         textLabel.adjustsFontForContentSizeCategory = true
+        textLabel.adjustsFontSizeToFitWidth = true
         textLabel.setContentCompressionResistancePriority(.required, for: .vertical)
         textLabel.setContentHuggingPriority(.required, for: .vertical)
 
