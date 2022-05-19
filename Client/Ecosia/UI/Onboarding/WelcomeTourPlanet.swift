@@ -19,12 +19,14 @@ final class WelcomeTourPlanet: UIView, Themeable {
     required init?(coder: NSCoder) {  nil }
 
     func setup() {
+        let iPadOffset: CGFloat = traitCollection.userInterfaceIdiom == .pad ? 30 : 0
+
         let topImage = UIImageView(image: .init(named: "tourSearch"))
         topImage.translatesAutoresizingMaskIntoConstraints = false
         addSubview(topImage)
 
         topImage.centerXAnchor.constraint(equalTo: centerXAnchor, constant: -25).isActive = true
-        topImage.centerYAnchor.constraint(equalTo: centerYAnchor, constant: -90).isActive = true
+        topImage.centerYAnchor.constraint(equalTo: centerYAnchor, constant: -90 - iPadOffset).isActive = true
 
         let searchLabel = UILabel()
         searchLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -46,7 +48,7 @@ final class WelcomeTourPlanet: UIView, Themeable {
         addSubview(bottomImage)
 
         bottomImage.centerXAnchor.constraint(equalTo: centerXAnchor, constant: 25).isActive = true
-        bottomImage.centerYAnchor.constraint(equalTo: centerYAnchor, constant: 40).isActive = true
+        bottomImage.centerYAnchor.constraint(equalTo: centerYAnchor, constant: 40 + iPadOffset).isActive = true
 
         let impactLabel = UILabel()
         impactLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -85,6 +87,12 @@ final class WelcomeTourPlanet: UIView, Themeable {
         numTreesLabel.trailingAnchor.constraint(equalTo: bottomImage.trailingAnchor, constant: -36).isActive = true
 
         bottomImage.transform = .init(rotationAngle: Double.pi / 40)
+
+        // upscale images for iPad
+        if traitCollection.userInterfaceIdiom == .pad {
+            bottomImage.transform = bottomImage.transform.scaledBy(x: 1.5, y: 1.5)
+            topImage.transform = topImage.transform.scaledBy(x: 1.5, y: 1.5)
+        }
     }
 
     func applyTheme() {

@@ -1,31 +1,15 @@
 {
   "images" : [
     {
-      "idiom" : "iphone",
-      "scale" : "1x"
-    },
-    {
-      "filename" : "MAP2x.png",
-      "idiom" : "iphone",
-      "scale" : "2x"
-    },
-    {
-      "filename" : "MAP3x.png",
-      "idiom" : "iphone",
-      "scale" : "3x"
-    },
-    {
-      "idiom" : "ipad",
-      "scale" : "1x"
-    },
-    {
-      "filename" : "MAP-2.png",
-      "idiom" : "ipad",
-      "scale" : "2x"
+      "filename" : "MAP.pdf",
+      "idiom" : "universal"
     }
   ],
   "info" : {
     "author" : "xcode",
     "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
   }
 }

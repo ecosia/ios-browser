@@ -10,53 +10,6 @@ protocol WelcomeTourDelegate: AnyObject {
 
 final class WelcomeTour: UIViewController,  Themeable {
 
-    final class Step {
-
-        final class Background {
-            let image: String
-            let darkImage: String?
-            let color: UIColor?
-
-            init(image: String, darkImage: String? = nil, color: UIColor? = nil) {
-                self.image = image
-                self.darkImage = darkImage
-                self.color = color
-            }
-        }
-
-        let title: String
-        let text: String
-        let background: Background
-        let content: UIView?
-
-        init(title: String, text: String, background: Background, content: UIView?) {
-            self.title = title
-            self.text = text
-            self.background = background
-            self.content = content
-        }
-
-        static var planet: Step {
-            return .init(title: .localized(.aBetterPlanet), text: .localized(.searchTheWeb), background: .init(image: "tour1"), content: WelcomeTourPlanet())
-        }
-
-        static var profit: Step {
-            return .init(title: .localized(.hundredPercentOfProfits), text: .localized(.allOurProfitsGo), background: .init(image: "tour2"), content: WelcomeTourProfit())
-        }
-
-        static var action: Step {
-            return .init(title: .localized(.collectiveAction), text: .localized(.join15Million), background: .init(image: "tour3", darkImage: "tour3Dark", color: UIColor(rgb: 0x668A7A)), content: WelcomeTourAction())
-        }
-
-        static var trees: Step {
-            return .init(title: .localized(.weWantTrees), text: .localized(.wellNeverSell), background: .init(image: "tour4"), content: nil)
-        }
-
-        static var all: [Step] {
-            return [planet, profit, action, trees]
-        }
-    }
-
     private weak var navStack: UIStackView!
     private weak var labelStack: UIStackView!
     private weak var titleLabel: UILabel!
@@ -151,7 +104,9 @@ final class WelcomeTour: UIViewController,  Themeable {
 
         waves.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
         waves.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        let wavesBottom = waves.bottomAnchor.constraint(equalTo: view.topAnchor, constant: 251)
+        waves.heightAnchor.constraint(equalToConstant: 37).isActive = true
+        waves.bottomAnchor.constraint(greaterThanOrEqualTo: view.safeAreaLayoutGuide.topAnchor, constant: 208).isActive = true
+        let wavesBottom = waves.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 208)
         wavesBottom.priority = .defaultHigh
         wavesBottom.isActive = true
     }
@@ -178,7 +133,7 @@ final class WelcomeTour: UIViewController,  Themeable {
         self.labelRight = labelRight
 
         labelStack.topAnchor.constraint(equalTo: navStack.bottomAnchor, constant: 24).isActive = true
-        labelStack.bottomAnchor.constraint(equalTo: waves.topAnchor).isActive = true
+        labelStack.bottomAnchor.constraint(lessThanOrEqualTo: waves.topAnchor).isActive = true
 
         let titleLabel = UILabel()
         titleLabel.text = steps.first?.title
@@ -192,9 +147,10 @@ final class WelcomeTour: UIViewController,  Themeable {
 
         let textLabel = UILabel()
         textLabel.text = steps.first?.text
-        textLabel.numberOfLines = 0
+        textLabel.numberOfLines = 3
         textLabel.font = .preferredFont(forTextStyle: .body)
         textLabel.adjustsFontForContentSizeCategory = true
+        textLabel.adjustsFontSizeToFitWidth = true
         textLabel.setContentCompressionResistancePriority(.required, for: .vertical)
         textLabel.setContentHuggingPriority(.required, for: .vertical)
 
@@ -203,6 +159,8 @@ final class WelcomeTour: UIViewController,  Themeable {
 
         let ctaButton = UIButton(type: .system)
         ctaButton.setTitle(.localized(.continueMessage), for: .normal)
+        ctaButton.titleLabel?.font = .preferredFont(forTextStyle: .callout)
+        ctaButton.titleLabel?.adjustsFontForContentSizeCategory = true
         ctaButton.translatesAutoresizingMaskIntoConstraints = false
         ctaButton.addTarget(self, action: #selector(forward), for: .primaryActionTriggered)
         ctaButton.alpha = 0
@@ -256,16 +214,20 @@ final class WelcomeTour: UIViewController,  Themeable {
 
         let title: String = isLastStep() ? .localized(.finishTour) : .localized(.continueMessage)
 
-        let image = ThemeManager.instance.current.isDark ? (step.background.darkImage ?? step.background.image) : step.background.image
+        // No image transition and "move right" for first step
+        let duration: CGFloat = isFirstStep() ? 0 : 0.3
 
         // Image transition
-        UIView.transition(with: imageView, duration: 0.3, options: .transitionCrossDissolve, animations: {
-            self.imageView.image = UIImage(named: image)
-            self.imageView.backgroundColor = step.background.color ?? .clear },
-                          completion: nil)
+        UIView.transition(with: imageView, duration: duration, options: .transitionCrossDissolve, animations: {
+            self.imageView.image = UIImage(named: step.background.image)
+            self.imageView.backgroundColor = step.background.color ?? .clear
+            if self.traitCollection.userInterfaceIdiom == .phone {
+                self.imageView.contentMode = step.background.color == nil ? .scaleAspectFill : .scaleAspectFit
+            }
+        })
 
         // Move and Fade transition
-        UIView.animate(withDuration: 0.3) {
+        UIView.animate(withDuration: duration) {
             self.moveRight()
             self.labelStack.alpha = 0
             self.ctaButton.alpha = 0
@@ -357,7 +319,7 @@ final class WelcomeTour: UIViewController,  Themeable {
         textLabel.textColor = .theme.ecosia.secondaryText
         skipButton.tintColor = .theme.ecosia.primaryButton
         backButton.tintColor = .theme.ecosia.primaryButton
-        pageControl.pageIndicatorTintColor = .theme.ecosia.secondaryText
+        pageControl.pageIndicatorTintColor = .theme.ecosia.disabled
         pageControl.currentPageIndicatorTintColor = .theme.ecosia.primaryButton
         ctaButton.backgroundColor = .Light.Button.secondary
         ctaButton.setTitleColor(.Light.Text.primary, for: .normal)
@@ -365,8 +327,7 @@ final class WelcomeTour: UIViewController,  Themeable {
 
         imageView.backgroundColor = current?.background.color ?? .clear
         guard let current = current else { return }
-        let image = ThemeManager.instance.current.isDark ? current.background.darkImage ?? current.background.image : current.background.image
-        imageView.image = .init(named: image)
+        imageView.image = .init(named: current.background.image)
     }
 
     @objc func themeChanged() {

@@ -29,6 +29,7 @@ extension UIColor {
         struct State {
             static let warning = UIColor(red: 0.992, green: 0.259, blue: 0.337, alpha: 1)
             static let information = UIColor(red: 0, green: 0.494, blue: 0.659, alpha: 1)
+            static let disabled = UIColor(rgb: 0xDEDED9)
         }
         
         struct Icon {
@@ -65,6 +66,7 @@ extension UIColor {
         struct State {
             static let warning = UIColor(red: 1.0, green: 0.541, blue: 0.549, alpha: 1)
             static let information = UIColor(red: 0.589, green: 0.839, blue: 0.973, alpha: 1)
+            static let disabled = UIColor(rgb: 0x6C6C6C)
         }
         
         struct Brand {
