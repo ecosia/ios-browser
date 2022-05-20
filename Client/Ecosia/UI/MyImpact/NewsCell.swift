@@ -49,6 +49,7 @@ final class NewsCell: UICollectionViewCell, Themeable, AutoSizingCell {
         background.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(background)
         self.background = background
+        background.layer.cornerRadius = 10
 
         background.leadingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leadingAnchor, constant: 16).isActive = true
         let trailing = background.trailingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.trailingAnchor, constant: -16)
@@ -82,11 +83,12 @@ final class NewsCell: UICollectionViewCell, Themeable, AutoSizingCell {
         
         let title = UILabel()
         title.translatesAutoresizingMaskIntoConstraints = false
-        title.numberOfLines = 0
+        title.numberOfLines = 4
         title.lineBreakMode = .byTruncatingTail
         title.font = .preferredFont(forTextStyle: .body)
         title.setContentHuggingPriority(.defaultHigh, for: .vertical)
         title.adjustsFontForContentSizeCategory = true
+        title.adjustsFontSizeToFitWidth = true
         background.addSubview(title)
         self.title = title
         
@@ -107,14 +109,13 @@ final class NewsCell: UICollectionViewCell, Themeable, AutoSizingCell {
         placeholder.rightAnchor.constraint(equalTo: image.rightAnchor).isActive = true
         
         image.rightAnchor.constraint(equalTo: background.rightAnchor, constant: -16).isActive = true
-        image.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
 
         let imageHeight = image.widthAnchor.constraint(equalToConstant: 80)
         imageHeight.priority = .init(999)
         imageHeight.isActive = true
 
         image.heightAnchor.constraint(equalTo: image.widthAnchor).isActive = true
-        image.topAnchor.constraint(greaterThanOrEqualTo: background.topAnchor, constant: 16).isActive = true
+        image.topAnchor.constraint(equalTo: background.topAnchor, constant: 16).isActive = true
         image.bottomAnchor.constraint(lessThanOrEqualTo: background.bottomAnchor, constant: -16).isActive = true
 
         title.leftAnchor.constraint(equalTo: background.leftAnchor, constant: 16).isActive = true
@@ -150,10 +151,8 @@ final class NewsCell: UICollectionViewCell, Themeable, AutoSizingCell {
         }
     }
     
-    private var positions = Positions()
     func configure(_ item: NewsModel, images: Images, positions: Positions) {
         imageUrl = item.imageUrl
-        self.positions = positions
         image.image = nil
         title.text = item.text.replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression)
         date.text = RelativeDateTimeFormatter().localizedString(for: item.publishDate, relativeTo: .init())
@@ -164,22 +163,19 @@ final class NewsCell: UICollectionViewCell, Themeable, AutoSizingCell {
         }
 
         border.isHidden = positions.contains(.bottom)
-    }
 
-    override func layoutSubviews() {
-        super.layoutSubviews()
-
+        // Masking only specific corners
+        var masked: CACornerMask = []
         if positions.contains(.top) {
-            background.addRoundedCorners([.topLeft, .topRight], radius: 10)
+            masked.formUnion(.layerMinXMinYCorner)
+            masked.formUnion(.layerMaxXMinYCorner)
         }
 
         if positions.contains(.bottom) {
-            background.addRoundedCorners([.bottomLeft, .bottomRight], radius: 10)
+            masked.formUnion(.layerMinXMaxYCorner)
+            masked.formUnion(.layerMaxXMaxYCorner)
         }
-
-        if positions.isEmpty {
-            background.layer.mask = nil
-        }
+        background.layer.maskedCorners = masked
     }
 
     private func updateImage(_ data: Data) {
