@@ -16,7 +16,7 @@ private struct URLBarViewUX {
     static let ButtonHeight: CGFloat = 44
     static let LocationContentOffset: CGFloat = 8
     static let TextFieldCornerRadius: CGFloat = 22
-    static let TextFieldBorderWidth: CGFloat = 1
+    static var TextFieldBorderWidth: CGFloat { ThemeManager.instance.current.isDark ? 1 : 0 }
     static let TextFieldBorderWidthSelected: CGFloat = 2
     static let ProgressBarHeight: CGFloat = 3
     static let SearchIconImageWidth: CGFloat = 24
@@ -401,7 +401,7 @@ class URLBarView: UIView {
                 make.height.greaterThanOrEqualTo(URLBarViewUX.LocationHeight+2)
                 make.centerY.equalTo(self)
             }
-            self.locationContainer.layer.borderWidth = URLBarViewUX.TextFieldBorderWidth
+            self.locationContainer.layer.borderWidth = isHome ? URLBarViewUX.TextFieldBorderWidth : 0
 
             self.locationView.snp.remakeConstraints { make in
                 make.top.bottom.trailing.equalTo(self.locationContainer).inset(UIEdgeInsets(equalInset: URLBarViewUX.TextFieldBorderWidth))
@@ -860,7 +860,7 @@ extension URLBarView: Themeable {
         line.backgroundColor = UIColor.theme.browser.urlBarDivider
 
         locationBorderColor = UIColor.theme.ecosia.border
-        locationView.backgroundColor = inOverlayMode ? UIColor.theme.textField.backgroundInOverlay : isHome ? UIColor.theme.textField.background : UIColor.theme.ecosia.tertiaryBackground
+        locationView.backgroundColor = inOverlayMode || isHome ? UIColor.theme.textField.backgroundInOverlay : UIColor.theme.ecosia.tertiaryBackground
         progressBar.backgroundColor = UIColor.theme.ecosia.tertiaryBackground
         progressBar.setGradientColors(startColor: UIColor.theme.loadingBar.start(isPrivate), endColor: UIColor.theme.loadingBar.end(isPrivate))
 
@@ -884,6 +884,9 @@ extension URLBarView: Themeable {
         } else {
             locationContainer.layer.shadowOpacity = 0
         }
+
+        // Border for dark mode on home
+        locationContainer.layer.borderWidth = isHome ? URLBarViewUX.TextFieldBorderWidth : 0
     }
 }
 
