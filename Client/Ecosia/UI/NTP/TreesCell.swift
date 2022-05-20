@@ -75,7 +75,6 @@ final class TreesCell: UICollectionViewCell, AutoSizingCell, Themeable {
         addProgress()
         addConstraints()
         applyTheme()
-        subscribeTreeCounter()
     }
 
     func display(_ model: TreesCellModel) {
@@ -96,6 +95,7 @@ final class TreesCell: UICollectionViewCell, AutoSizingCell, Themeable {
             spotlightDescription.text = spotlight.description
         }
         applyTheme()
+        updateGlobalCount()
     }
 
     @objc func spotlightTapped() {
@@ -106,7 +106,15 @@ final class TreesCell: UICollectionViewCell, AutoSizingCell, Themeable {
         return [spotlightBackground, spotlightContainerStack]
     }
 
-    private func subscribeTreeCounter() {
+    private func updateGlobalCount() {
+        // don't subscribe and animate for reduced motion
+        guard !UIAccessibility.isReduceMotionEnabled else {
+            TreeCounter.shared.unsubscribe(self)
+            let count = TreeCounter.shared.statistics.treesAt(.init())
+            self.globalCount.text = self.formatter.string(from: .init(value: count))
+            return
+        }
+
         TreeCounter.shared.subscribe(self) { [weak self] count in
             guard let self = self, self.model?.highlight == nil else { return }
 
