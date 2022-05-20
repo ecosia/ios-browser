@@ -13998,7 +13998,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = "access-to-global-count";
+				branch = main;
 				kind = branch;
 			};
 		};
