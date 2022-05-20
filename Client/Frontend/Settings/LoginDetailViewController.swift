@@ -136,9 +136,7 @@ class LoginDetailViewController: SensitiveViewController, Themeable {
     func applyTheme() {
         tableView.separatorColor = UIColor.theme.tableView.separator
         tableView.backgroundColor = UIColor.theme.tableView.headerBackground
-        tableView.visibleCells.forEach {
-            ($0 as? Themeable)?.applyTheme()
-        }
+        tableView.reloadData()
     }
 }
 
@@ -311,6 +309,12 @@ extension LoginDetailViewController: UITableViewDelegate {
             return 0
         }
     }
+
+    func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+        guard let header = view as? UITableViewHeaderFooterView else { return }
+        header.textLabel?.textColor = .theme.ecosia.secondaryText
+    }
+
 }
 
 // MARK: - KeyboardHelperDelegate
