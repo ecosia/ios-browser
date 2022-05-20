@@ -745,7 +745,8 @@ extension FirefoxHomeViewController: UICollectionViewDelegateFlowLayout {
     }
 
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        guard let searchbarCell = searchbarCell else { return }
+        // only tell delegate after cell has layout ( => width != height)
+        guard let searchbarCell = searchbarCell, searchbarCell.bounds.width != searchbarCell.bounds.height else { return }
         delegate?.home(self, didScroll: searchbarCell.frame.minY, offset: scrollView.contentOffset.y)
     }
 
