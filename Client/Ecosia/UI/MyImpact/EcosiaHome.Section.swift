@@ -60,17 +60,17 @@ extension EcosiaHome {
             var image: String {
                 switch self {
                 case .info:
-                    return "networkTree"
+                    return "howEcosiaWorks"
                 case .finance:
-                    return "reports"
+                    return "financialReports"
                 case .trees:
-                    return "treesIcon"
+                    return "treesUpdate"
                 case .faq:
-                    return "faqIcon"
+                    return "faqs"
                 case .shop:
-                    return "shopIcon"
+                    return "ecosiaShop"
                 case .privacy:
-                    return "tigerIncognito"
+                    return "privacy"
                 }
             }
 
