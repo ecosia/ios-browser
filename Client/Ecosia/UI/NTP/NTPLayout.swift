@@ -4,9 +4,14 @@
 
 import UIKit
 
+protocol NTPLayoutHighlightDataSource: AnyObject {
+    func ntpLayoutHighlightText() -> String?
+}
+
 class NTPLayout: UICollectionViewFlowLayout {
 
     private var totalHeight: CGFloat = 0
+    weak var highlightDataSource: NTPLayoutHighlightDataSource?
 
     override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
         guard let attr = super.layoutAttributesForElements(in: rect) else { return nil}
@@ -26,9 +31,13 @@ class NTPLayout: UICollectionViewFlowLayout {
             // find counter overlay cell
             if let tooltip = attr.first(where: { $0.representedElementCategory == .supplementaryView && $0.indexPath.section == FirefoxHomeViewController.Section.impact.rawValue }) {
                 tooltip.frame = impact.frame
-                let height = UIFont.preferredFont(forTextStyle: .callout).pointSize * 3.2 + 24 + 8
-                tooltip.frame.size.height = height
-                tooltip.frame.origin.y -= (height - 32)
+
+                if let text = highlightDataSource?.ntpLayoutHighlightText() {
+                    let font = UIFont.preferredFont(forTextStyle: .callout)
+                    let height = text.heightWithConstrainedWidth(width: impact.bounds.width - 16 - 48, font: font) + 24 + 16
+                    tooltip.frame.size.height = height
+                    tooltip.frame.origin.y -= (height - 32)
+                }
             }
         }
 
@@ -49,5 +58,17 @@ class NTPLayout: UICollectionViewFlowLayout {
     override var collectionViewContentSize: CGSize {
         let size = super.collectionViewContentSize
         return .init(width: size.width, height: totalHeight)
+    }
+
+    override func prepare() {
+        super.prepare()
+    }
+}
+
+extension String {
+    fileprivate func heightWithConstrainedWidth(width: CGFloat, font: UIFont) -> CGFloat {
+        let constraintRect = CGSize(width: width, height: .greatestFiniteMagnitude)
+        let boundingBox = self.boundingRect(with: constraintRect, options: [.usesLineFragmentOrigin, .usesFontLeading], attributes: [NSAttributedString.Key.font: font], context: nil)
+        return boundingBox.height
     }
 }

@@ -5,7 +5,7 @@
 import UIKit
 
 protocol NTPTooltipDelegate: AnyObject {
-    func ntpTooltipTapped(_ tooltip: NTPTooltip)
+    func ntpTooltipTapped(_ tooltip: NTPTooltip?)
 }
 
 final class NTPTooltip: UICollectionReusableView, Themeable {
@@ -39,9 +39,9 @@ final class NTPTooltip: UICollectionReusableView, Themeable {
 
         let stack = UIStackView()
         stack.translatesAutoresizingMaskIntoConstraints = false
-        stack.alignment = .top
+        stack.alignment = .center
         stack.axis = .horizontal
-        stack.spacing = 24
+        stack.spacing = 12
         stack.distribution = .fill
 
         let label = UILabel()
