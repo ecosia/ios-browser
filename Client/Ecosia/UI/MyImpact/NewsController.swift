@@ -90,7 +90,7 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        let height = UIFontDescriptor.preferredFontDescriptor(withTextStyle: .body).pointSize * 3 + 30
+        let height = UIFontDescriptor.preferredFontDescriptor(withTextStyle: .body).pointSize * 2 + 30
         return .init(width: collection.bounds.width, height: height)
     }
     
@@ -143,8 +143,9 @@ private final class NewsSubHeader: UICollectionReusableView, Themeable {
         subtitle.translatesAutoresizingMaskIntoConstraints = false
         subtitle.font = .preferredFont(forTextStyle: .body)
         subtitle.adjustsFontForContentSizeCategory = true
+        subtitle.adjustsFontSizeToFitWidth = true
         subtitle.setContentHuggingPriority(.required, for: .vertical)
-        subtitle.numberOfLines = 0
+        subtitle.numberOfLines = 2
         subtitle.text = .localized(.keepUpToDate)
         addSubview(subtitle)
         self.subtitle = subtitle
