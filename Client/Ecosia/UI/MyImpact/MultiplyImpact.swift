@@ -240,7 +240,7 @@ final class MultiplyImpact: UIViewController, Themeable {
     
     @objc private func inviteFriends() {
         guard let message = inviteMessage else {
-            referrals.refresh { error in
+            referrals.refresh(createCode: true) { error in
                 if let error = error {
                     self.showReferralError(error)
                 } else {
