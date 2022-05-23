@@ -19,7 +19,13 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
     private weak var searchesTrees: UILabel!
     private weak var friends: UILabel!
     private weak var friendsTrees: UILabel!
-    
+    private weak var treesIcon: UIImageView!
+    private weak var howItWorksIcon: UIImageView!
+    private weak var searchesIcon: UIImageView!
+    private weak var searchesImpact: UIImageView!
+    private weak var friendsIcon: UIImageView!
+    private weak var friendsImpact: UIImageView!
+
     required init?(coder: NSCoder) { nil }
     
     override init(frame: CGRect) {
@@ -44,11 +50,12 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
         self.indicator = indicator
         outline.addSubview(indicator)
         
-        let treesIcon = UIImageView(image: .init(themed: "yourImpact"))
+        let treesIcon = UIImageView()
         treesIcon.translatesAutoresizingMaskIntoConstraints = false
         treesIcon.contentMode = .center
         treesIcon.clipsToBounds = true
         outline.addSubview(treesIcon)
+        self.treesIcon = treesIcon
         
         let treesCount = UILabel()
         treesCount.translatesAutoresizingMaskIntoConstraints = false
@@ -77,17 +84,19 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
         self.howItWorks = howItWorks
         howItWorksButton.addSubview(howItWorks)
         
-        let howItWorksIcon = UIImageView(image: .init(themed: "howItWorks"))
+        let howItWorksIcon = UIImageView()
         howItWorksIcon.translatesAutoresizingMaskIntoConstraints = false
         howItWorksIcon.contentMode = .center
         howItWorksIcon.clipsToBounds = true
         howItWorksButton.addSubview(howItWorksIcon)
+        self.howItWorksIcon = howItWorksIcon
         
-        let searchesIcon = UIImageView(image: .init(themed: "searches"))
+        let searchesIcon = UIImageView()
         searchesIcon.translatesAutoresizingMaskIntoConstraints = false
         searchesIcon.contentMode = .center
         searchesIcon.clipsToBounds = true
         outline.addSubview(searchesIcon)
+        self.searchesIcon = searchesIcon
         
         let searches = UILabel()
         searches.translatesAutoresizingMaskIntoConstraints = false
@@ -103,17 +112,19 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
         self.searchesTrees = searchesTrees
         outline.addSubview(searchesTrees)
         
-        let searchesImpact = UIImageView(image: .init(themed: "yourImpact"))
+        let searchesImpact = UIImageView()
         searchesImpact.translatesAutoresizingMaskIntoConstraints = false
         searchesImpact.contentMode = .center
         searchesImpact.clipsToBounds = true
         outline.addSubview(searchesImpact)
-        
-        let friendsIcon = UIImageView(image: .init(themed: "friends"))
+        self.searchesImpact = searchesImpact
+
+        let friendsIcon = UIImageView()
         friendsIcon.translatesAutoresizingMaskIntoConstraints = false
         friendsIcon.contentMode = .center
         friendsIcon.clipsToBounds = true
         outline.addSubview(friendsIcon)
+        self.friendsIcon = friendsIcon
         
         let friends = UILabel()
         friends.translatesAutoresizingMaskIntoConstraints = false
@@ -129,11 +140,12 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
         self.friendsTrees = friendsTrees
         outline.addSubview(friendsTrees)
         
-        let friendsImpact = UIImageView(image: .init(themed: "yourImpact"))
+        let friendsImpact = UIImageView()
         friendsImpact.translatesAutoresizingMaskIntoConstraints = false
         friendsImpact.contentMode = .center
         friendsImpact.clipsToBounds = true
         outline.addSubview(friendsImpact)
+        self.friendsImpact = friendsImpact
 
         outline.leftAnchor.constraint(equalTo: contentView.leftAnchor).isActive = true
         outline.rightAnchor.constraint(equalTo: contentView.rightAnchor).isActive = true
@@ -231,6 +243,13 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
         searchesTrees.textColor = .theme.ecosia.primaryText
         friends.textColor = .theme.ecosia.primaryText
         friendsTrees.textColor = .theme.ecosia.primaryText
+
+        treesIcon.image = .init(themed: "yourImpact")
+        howItWorksIcon.image = .init(themed: "howItWorks")
+        searchesIcon.image = .init(themed: "searches")
+        searchesImpact.image = .init(themed: "yourImpact")
+        friendsIcon.image = .init(themed: "friends")
+        friendsImpact.image = .init(themed: "yourImpact")
     }
     
     override func prepareForReuse() {
