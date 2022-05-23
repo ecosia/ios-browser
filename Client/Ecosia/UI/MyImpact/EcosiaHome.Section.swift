@@ -25,7 +25,7 @@ extension EcosiaHome {
             case .news:
                 return .localized(.stories)
             case .explore:
-                return .localized(.exploreEcosia)
+                return .localized(.aboutEcosia)
             default:
                 return nil
             }
@@ -47,9 +47,9 @@ extension EcosiaHome {
                 case .finance:
                     return .localized(.financialReports)
                 case .trees:
-                    return .localized(.trees)
+                    return .localized(.treesUpdate)
                 case .faq:
-                    return .localized(.faq)
+                    return .localized(.faqs)
                 case .shop:
                     return .localized(.shop)
                 case .privacy:
