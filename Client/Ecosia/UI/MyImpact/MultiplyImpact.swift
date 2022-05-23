@@ -12,10 +12,12 @@ final class MultiplyImpact: UIViewController, Themeable {
     private weak var card: UIControl?
     private weak var cardIcon: UIImageView?
     private weak var cardTitle: UILabel?
-    private weak var cardSubtitle: UILabel?
+    private weak var cardTreeCount: UILabel?
+    private weak var cardTreeIcon: UIImageView?
     private weak var flowTitle: UILabel?
     private weak var inviteButton: UIButton!
     private weak var learnMoreLabel: UILabel?
+    private weak var yourInvites: UILabel?
     private weak var dash: MultiplyImpactDash?
     private weak var firstStep: MultiplyImpactStep?
     private weak var secondStep: MultiplyImpactStep?
@@ -32,8 +34,11 @@ final class MultiplyImpact: UIViewController, Themeable {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = .localized(.inviteFriends)
-        
+        title = .localized(.growingTogether)
+
+        let done = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(doneTapped))
+        navigationItem.rightBarButtonItem = done
+
         let scroll = UIScrollView()
         scroll.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(scroll)
@@ -51,7 +56,7 @@ final class MultiplyImpact: UIViewController, Themeable {
         let subtitle = UILabel()
         subtitle.translatesAutoresizingMaskIntoConstraints = false
         subtitle.numberOfLines = 0
-        subtitle.text = .localized(.everyTimeYouInvite)
+        subtitle.text = .localized(.helpYourFriendsBecome)
         subtitle.font = .preferredFont(forTextStyle: .body)
         subtitle.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         subtitle.adjustsFontForContentSizeCategory = true
@@ -69,20 +74,27 @@ final class MultiplyImpact: UIViewController, Themeable {
         content.addSubview(waves)
         self.waves = waves
 
+        let yourInvites = UILabel()
+        yourInvites.translatesAutoresizingMaskIntoConstraints = false
+        yourInvites.text = .localized(.yourInvites)
+        yourInvites.font = .preferredFont(forTextStyle: .headline).bold()
+        yourInvites.adjustsFontForContentSizeCategory = true
+        content.addSubview(yourInvites)
+
         let card = UIControl()
         card.translatesAutoresizingMaskIntoConstraints = false
-        card.layer.cornerRadius = 8
-        card.layer.borderWidth = 1
+        card.layer.cornerRadius = 10
         card.addTarget(self, action: #selector(highlight), for: .touchDown)
         card.addTarget(self, action: #selector(clear), for: .touchUpInside)
         card.addTarget(self, action: #selector(clear), for: .touchUpOutside)
         card.addTarget(self, action: #selector(clear), for: .touchCancel)
-        card.addTarget(self, action: #selector(self.learnMore), for: .touchUpInside)
+        card.addTarget(self, action: #selector(inviteFriends), for: .touchUpInside)
         content.addSubview(card)
         self.card = card
         
-        let cardIcon = UIImageView()
+        let cardIcon = UIImageView(image: .init(named: "impactReferrals"))
         cardIcon.translatesAutoresizingMaskIntoConstraints = false
+        cardIcon.setContentHuggingPriority(.required, for: .vertical)
         cardIcon.contentMode = .center
         card.addSubview(cardIcon)
         self.cardIcon = cardIcon
@@ -90,24 +102,45 @@ final class MultiplyImpact: UIViewController, Themeable {
         let cardTitle = UILabel()
         cardTitle.translatesAutoresizingMaskIntoConstraints = false
         cardTitle.numberOfLines = 0
-        cardTitle.text = .localizedPlural(.successfulReferrals, num: User.shared.referrals.count)
-        cardTitle.font = .preferredFont(forTextStyle: .subheadline)
+        cardTitle.text = .localizedPlural(.acceptedInvites, num: User.shared.referrals.count)
+        cardTitle.font = .preferredFont(forTextStyle: .body)
         cardTitle.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        cardTitle.setContentHuggingPriority(.defaultLow, for: .horizontal)
         cardTitle.adjustsFontForContentSizeCategory = true
         card.addSubview(cardTitle)
         self.cardTitle = cardTitle
         
-        let cardSubtitle = UILabel()
-        cardSubtitle.translatesAutoresizingMaskIntoConstraints = false
-        cardSubtitle.numberOfLines = 0
-        cardSubtitle.text = .localizedPlural(.treesPlural, num: User.shared.referrals.count)
-        cardSubtitle.font = .preferredFont(forTextStyle: .subheadline)
-        cardSubtitle.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-        cardSubtitle.setContentCompressionResistancePriority(.required, for: .vertical)
-        cardSubtitle.adjustsFontForContentSizeCategory = true
-        card.addSubview(cardSubtitle)
-        self.cardSubtitle = cardSubtitle
-        
+        let cardTreeCount = UILabel()
+        cardTreeCount.translatesAutoresizingMaskIntoConstraints = false
+        cardTreeCount.numberOfLines = 0
+        cardTreeCount.text = "\(User.shared.referrals.impact)"
+        cardTreeCount.font = .preferredFont(forTextStyle: .subheadline).bold()
+        cardTreeCount.setContentCompressionResistancePriority(.required, for: .horizontal)
+        cardTreeCount.setContentCompressionResistancePriority(.required, for: .vertical)
+        cardTreeCount.setContentHuggingPriority(.required, for: .horizontal)
+        cardTreeCount.adjustsFontForContentSizeCategory = true
+        card.addSubview(cardTreeCount)
+        self.cardTreeCount = cardTreeCount
+
+        let cardTreeIcon = UIImageView(image: .init(named: "yourImpact")?.withRenderingMode(.alwaysTemplate))
+        cardTreeIcon.translatesAutoresizingMaskIntoConstraints = false
+        cardTreeIcon.setContentHuggingPriority(.required, for: .horizontal)
+        card.addSubview(cardTreeIcon)
+        self.cardTreeIcon = cardTreeIcon
+
+        let inviteFriends = UIButton()
+        inviteFriends.translatesAutoresizingMaskIntoConstraints = false
+        inviteFriends.setTitle(.localized(.inviteFriends), for: [])
+        inviteFriends.setTitleColor(.white, for: .normal)
+        inviteFriends.setTitleColor(.white.withAlphaComponent(0.3), for: .highlighted)
+        inviteFriends.titleLabel!.font = .preferredFont(forTextStyle: .callout)
+        inviteFriends.titleLabel!.adjustsFontForContentSizeCategory = true
+        inviteFriends.layer.cornerRadius = 22
+        inviteFriends.addTarget(self, action: #selector(self.inviteFriends), for: .touchUpInside)
+        card.addSubview(inviteFriends)
+        self.inviteButton = inviteFriends
+
+        /*
         let learnMore = UILabel()
         learnMore.translatesAutoresizingMaskIntoConstraints = false
         learnMore.text = .localized(.learnMore)
@@ -115,7 +148,8 @@ final class MultiplyImpact: UIViewController, Themeable {
         learnMore.adjustsFontForContentSizeCategory = true
         card.addSubview(learnMore)
         self.learnMoreLabel = learnMore
-        
+        */
+
         let flowTitle = UILabel()
         flowTitle.translatesAutoresizingMaskIntoConstraints = false
         flowTitle.text = .localized(.invitingAFriend)
@@ -140,18 +174,6 @@ final class MultiplyImpact: UIViewController, Themeable {
         content.addSubview(thirdStep)
         self.thirdStep = thirdStep
         
-        let inviteFriends = UIButton()
-        inviteFriends.translatesAutoresizingMaskIntoConstraints = false
-        inviteFriends.setTitle(.localized(.inviteFriends), for: [])
-        inviteFriends.setTitleColor(.white, for: .normal)
-        inviteFriends.setTitleColor(.white.withAlphaComponent(0.3), for: .highlighted)
-        inviteFriends.titleLabel!.font = .preferredFont(forTextStyle: .callout)
-        inviteFriends.titleLabel!.adjustsFontForContentSizeCategory = true
-        inviteFriends.layer.cornerRadius = 10
-        inviteFriends.addTarget(self, action: #selector(self.inviteFriends), for: .touchUpInside)
-        content.addSubview(inviteFriends)
-        self.inviteButton = inviteFriends
-        
         scroll.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
         scroll.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor).isActive = true
         scroll.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor).isActive = true
@@ -162,7 +184,7 @@ final class MultiplyImpact: UIViewController, Themeable {
         content.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor).isActive = true
         content.rightAnchor.constraint(equalTo: scroll.rightAnchor).isActive = true
         content.bottomAnchor.constraint(greaterThanOrEqualTo: scroll.bottomAnchor).isActive = true
-        content.bottomAnchor.constraint(equalTo: inviteFriends.bottomAnchor, constant: 16).isActive = true
+        content.bottomAnchor.constraint(equalTo: thirdStep.bottomAnchor, constant: 16).isActive = true
         
         subtitle.topAnchor.constraint(equalTo: content.topAnchor, constant: 8).isActive = true
         subtitle.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 16).isActive = true
@@ -190,27 +212,33 @@ final class MultiplyImpact: UIViewController, Themeable {
         topBackground.topAnchor.constraint(equalTo: content.topAnchor).isActive = true
         topBackground.bottomAnchor.constraint(equalTo: waves.bottomAnchor).isActive = true
 
-        card.topAnchor.constraint(equalTo: waves.bottomAnchor, constant: 16).isActive = true
+        yourInvites.leadingAnchor.constraint(equalTo: content.leadingAnchor, constant: 16).isActive = true
+        yourInvites.trailingAnchor.constraint(equalTo: content.trailingAnchor, constant: -16).isActive = true
+        yourInvites.topAnchor.constraint(equalTo: waves.bottomAnchor, constant: 16).isActive = true
+
+        card.topAnchor.constraint(equalTo: yourInvites.bottomAnchor, constant: 16).isActive = true
         card.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 16).isActive = true
         card.rightAnchor.constraint(equalTo: content.rightAnchor, constant: -16).isActive = true
-        card.bottomAnchor.constraint(greaterThanOrEqualTo: cardIcon.bottomAnchor, constant: 17).isActive = true
-        card.bottomAnchor.constraint(greaterThanOrEqualTo: cardSubtitle.bottomAnchor, constant: 12).isActive = true
-        
-        cardIcon.topAnchor.constraint(greaterThanOrEqualTo: card.topAnchor, constant: 17).isActive = true
+
+        cardIcon.topAnchor.constraint(equalTo: card.topAnchor, constant: 17).isActive = true
         cardIcon.leftAnchor.constraint(equalTo: card.leftAnchor, constant: 16).isActive = true
-        cardIcon.centerYAnchor.constraint(equalTo: card.centerYAnchor).isActive = true
-        
-        cardTitle.topAnchor.constraint(equalTo: card.topAnchor, constant: 12).isActive = true
+
+        cardTitle.centerYAnchor.constraint(equalTo: cardIcon.centerYAnchor).isActive = true
         cardTitle.leftAnchor.constraint(equalTo: cardIcon.rightAnchor, constant: 12).isActive = true
-        cardTitle.rightAnchor.constraint(lessThanOrEqualTo: learnMore.leftAnchor, constant: -5).isActive = true
-        
-        cardSubtitle.topAnchor.constraint(equalTo: cardTitle.bottomAnchor).isActive = true
-        cardSubtitle.leftAnchor.constraint(equalTo: cardIcon.rightAnchor, constant: 12).isActive = true
-        cardSubtitle.rightAnchor.constraint(lessThanOrEqualTo: learnMore.leftAnchor, constant: -5).isActive = true
-        
-        learnMore.centerYAnchor.constraint(equalTo: card.centerYAnchor).isActive = true
-        learnMore.rightAnchor.constraint(equalTo: card.rightAnchor, constant: -16).isActive = true
-        
+
+        cardTreeCount.leftAnchor.constraint(equalTo: cardTitle.rightAnchor, constant: 12).isActive = true
+        cardTreeCount.centerYAnchor.constraint(equalTo: cardTitle.centerYAnchor).isActive = true
+
+        cardTreeIcon.leftAnchor.constraint(equalTo: cardTreeCount.rightAnchor, constant: 8).isActive = true
+        cardTreeIcon.rightAnchor.constraint(equalTo: card.rightAnchor, constant: -16).isActive = true
+        cardTreeIcon.centerYAnchor.constraint(equalTo: cardTreeCount.centerYAnchor).isActive = true
+
+        inviteFriends.leftAnchor.constraint(equalTo: card.leftAnchor, constant: 16).isActive = true
+        inviteFriends.rightAnchor.constraint(equalTo: card.rightAnchor, constant: -16).isActive = true
+        inviteFriends.heightAnchor.constraint(equalToConstant: 44).isActive = true
+        inviteFriends.topAnchor.constraint(equalTo: cardIcon.bottomAnchor, constant: 20).isActive = true
+        inviteFriends.bottomAnchor.constraint(equalTo: card.bottomAnchor, constant: -16).isActive = true
+
         flowTitle.topAnchor.constraint(equalTo: card.bottomAnchor, constant: 23).isActive = true
         flowTitle.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 16).isActive = true
         
@@ -231,18 +259,9 @@ final class MultiplyImpact: UIViewController, Themeable {
         thirdStep.leftAnchor.constraint(equalTo: content.leftAnchor).isActive = true
         thirdStep.rightAnchor.constraint(equalTo: content.rightAnchor).isActive = true
         
-        inviteFriends.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 16).isActive = true
-        inviteFriends.rightAnchor.constraint(equalTo: content.rightAnchor, constant: -16).isActive = true
-        inviteFriends.heightAnchor.constraint(equalToConstant: 44).isActive = true
-        inviteFriends.topAnchor.constraint(greaterThanOrEqualTo: thirdStep.bottomAnchor, constant: 16).isActive = true
-        
         let contentHeight = content.heightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.heightAnchor)
         contentHeight.priority = .defaultLow
         contentHeight.isActive = true
-        
-        let cardHeight = card.heightAnchor.constraint(equalToConstant: 0)
-        cardHeight.priority = .defaultHigh
-        cardHeight.isActive = true
         
         applyTheme()
     }
@@ -261,16 +280,17 @@ final class MultiplyImpact: UIViewController, Themeable {
         view.backgroundColor = .theme.ecosia.modalBackground
         inviteButton.backgroundColor = .theme.ecosia.primaryBrand
         learnMoreLabel?.textColor = .theme.ecosia.primaryBrand
+        yourInvites?.textColor = .theme.ecosia.primaryText
 
         waves?.tintColor = .theme.ecosia.modalBackground
         topBackground?.backgroundColor = .theme.ecosia.modalHeader
 
         subtitle?.textColor = .Dark.Text.primary
         card?.backgroundColor = .theme.ecosia.impactMultiplyCardBackground
-        card?.layer.borderColor = UIColor.theme.ecosia.impactMultiplyCardBorder.cgColor
-        cardIcon?.image = UIImage(themed: "impactReferrals")
-        cardTitle?.textColor = .theme.ecosia.highContrastText
-        cardSubtitle?.textColor = .theme.ecosia.secondaryText
+        cardIcon?.tintColor = .theme.ecosia.primaryBrand
+        cardTitle?.textColor = .theme.ecosia.primaryText
+        cardTreeCount?.textColor = .theme.ecosia.primaryText
+        cardTreeIcon?.tintColor = .theme.ecosia.primaryBrand
         flowTitle?.textColor = .theme.ecosia.secondaryText
         
         dash?.applyTheme()
@@ -286,7 +306,6 @@ final class MultiplyImpact: UIViewController, Themeable {
         appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.Dark.Text.primary]
         appearance.titleTextAttributes = [.foregroundColor: UIColor.Dark.Text.primary]
         navigationItem.standardAppearance = appearance
-        navigationItem.backBarButtonItem?.tintColor = UIColor.Dark.Text.primary
         navigationController?.navigationBar.backgroundColor = .theme.ecosia.modalHeader
         navigationController?.navigationBar.tintColor = UIColor.Dark.Text.primary
     }
@@ -341,6 +360,10 @@ final class MultiplyImpact: UIViewController, Themeable {
     
     @objc private func clear() {
         card?.backgroundColor = .theme.ecosia.impactMultiplyCardBackground
+    }
+
+    @objc private func doneTapped() {
+        dismiss(animated: true)
     }
     
     private var inviteMessage: String? {

@@ -55,8 +55,7 @@ class EcosiaTheme {
     var ntpIntroBackground: UIColor { .Light.Background.primary }
     var ntpImpactBackground: UIColor { .white }
 
-    var impactMultiplyCardBackground: UIColor { .white }
-    var impactMultiplyCardBorder: UIColor { .Photon.Grey20 }
+    var impactMultiplyCardBackground: UIColor { .Light.Background.primary }
     var trackingSheetBackground: UIColor { .Light.Background.tertiary }
     var moreNewsButton: UIColor { .Light.Button.secondary }
     
@@ -133,8 +132,7 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var ntpIntroBackground: UIColor { .Dark.Background.tertiary }
 
     override var impactBackground: UIColor { UIColor.Photon.Grey60 }
-    override var impactMultiplyCardBackground: UIColor { .Photon.Grey70 }
-    override var impactMultiplyCardBorder: UIColor { .clear }
+    override var impactMultiplyCardBackground: UIColor { .Dark.Background.tertiary }
     override var trackingSheetBackground: UIColor { .Dark.Background.secondary }
     override var moreNewsButton: UIColor { .Dark.Background.tertiary }
 
