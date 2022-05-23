@@ -28,7 +28,7 @@ final class MultiplyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable 
         super.init(frame: frame)
         let outline = UIView()
         contentView.addSubview(outline)
-        outline.layer.cornerRadius = 8
+        outline.layer.cornerRadius = 10
         outline.translatesAutoresizingMaskIntoConstraints = false
         self.outline = outline
         
@@ -70,10 +70,9 @@ final class MultiplyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable 
         icon.rightAnchor.constraint(equalTo: outline.rightAnchor, constant: -16).isActive = true
         icon.centerYAnchor.constraint(equalTo: outline.centerYAnchor).isActive = true
         
-        let widthConstraint = outline.widthAnchor.constraint(equalToConstant: 100)
+        widthConstraint = outline.widthAnchor.constraint(equalToConstant: 100)
         widthConstraint.priority = .init(rawValue: 999)
         widthConstraint.isActive = true
-        self.widthConstraint = widthConstraint
         
         applyTheme()
     }

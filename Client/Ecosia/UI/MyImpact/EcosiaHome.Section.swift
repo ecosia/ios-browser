@@ -25,15 +25,21 @@ extension EcosiaHome {
             case .news:
                 return .localized(.stories)
             case .explore:
-                return .localized(.exploreEcosia)
+                return .localized(.aboutEcosia)
             default:
                 return nil
             }
         }
         
         enum Explore: Int, CaseIterable {
-            case info, finance, trees, faq, shop, privacy
-
+            case
+            info,
+            finance,
+            shop,
+            trees,
+            privacy,
+            faq
+            
             var title: String {
                 switch self {
                 case .info:
@@ -41,9 +47,9 @@ extension EcosiaHome {
                 case .finance:
                     return .localized(.financialReports)
                 case .trees:
-                    return .localized(.trees)
+                    return .localized(.treesUpdate)
                 case .faq:
-                    return .localized(.faq)
+                    return .localized(.faqs)
                 case .shop:
                     return .localized(.shop)
                 case .privacy:
@@ -54,17 +60,17 @@ extension EcosiaHome {
             var image: String {
                 switch self {
                 case .info:
-                    return "networkTree"
+                    return "howEcosiaWorks"
                 case .finance:
-                    return "reports"
+                    return "financialReports"
                 case .trees:
-                    return "treesIcon"
+                    return "treesUpdate"
                 case .faq:
-                    return "faqIcon"
+                    return "faqs"
                 case .shop:
-                    return "shopIcon"
+                    return "ecosiaShop"
                 case .privacy:
-                    return "tigerIncognito"
+                    return "privacy"
                 }
             }
 
@@ -99,6 +105,17 @@ extension EcosiaHome {
                     return .shop
                 case .privacy:
                     return .privacy
+                }
+            }
+            
+            var maskedCorners: CACornerMask {
+                switch self {
+                case .info:
+                    return [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+                case .faq:
+                    return [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+                default:
+                    return []
                 }
             }
         }

@@ -25,7 +25,7 @@ extension String {
         case estimatedImpact = "Estimated impact"
         case estimatedTrees = "Estimated trees"
         case exploreEcosia = "Explore Ecosia"
-        case faq = "FAQ"
+        case faqs = "FAQs"
         case financialReports = "Financial reports"
         case forceDarkMode = "Force Dark Mode"
         case turnOffDarkMode = "Turn off Dark Mode"
@@ -71,7 +71,7 @@ extension String {
         case searchAndPlant = "Search the web to plant trees..."
         case searchRegion = "Search region"
         case sendFeedback = "Send feedback"
-        case shop = "Shop"
+        case shop = "Ecosia shop"
         case shownUnderSearchField = "Shown under the search field"
         case startPlanting = "Plant your first tree"
         case stories = "Stories"
@@ -83,6 +83,7 @@ extension String {
         case totalEcosiaTrees = "Total Ecosia trees"
         case treesPlural = "%d tree(s)"
         case trees = "TREES"
+        case treesUpdate = "Trees update"
         case treesPlantedWithEcosia = "TREES PLANTED WITH ECOSIA"
         case useTheseCompanies = "Start using these green companies to plant more trees and become more sustainable"
         case version = "Version %@"
@@ -151,5 +152,6 @@ extension String {
         case growYourImpact = "Grow your impact with your web searches"
         case groupYourImpact = "Group your impact"
         case getATreeWithEveryFriend = "Get a tree with every friend who joins. They get one too!"
+        case aboutEcosia = "About Ecosia"
     }
 }

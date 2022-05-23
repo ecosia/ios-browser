@@ -5,74 +5,13 @@
 import UIKit
 
 final class EcosiaExploreCell: UICollectionViewCell, Themeable, AutoSizingCell {
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setup()
-    }
-
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-    }
-
-    var title: UILabel!
-    var image: UIImageView!
-    var outline: UIView!
     private(set) weak var widthConstraint: NSLayoutConstraint!
-
-    private func setup() {
-        outline = UIView()
-        contentView.addSubview(outline)
-        outline.layer.cornerRadius = 10
-        outline.translatesAutoresizingMaskIntoConstraints = false
-
-        title = UILabel()
-        contentView.addSubview(title)
-        title.font = .preferredFont(forTextStyle: .subheadline)
-        title.adjustsFontForContentSizeCategory = true
-        title.textAlignment = .center
-        title.numberOfLines = 0
-        title.translatesAutoresizingMaskIntoConstraints = false
-        title.allowsDefaultTighteningForTruncation = true
-
-        image = UIImageView()
-        image.contentMode = .scaleAspectFit
-        image.translatesAutoresizingMaskIntoConstraints = false
-        contentView.addSubview(image)
-
-        outline.leadingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leadingAnchor, constant: 0).isActive = true
-        outline.trailingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.trailingAnchor, constant: 0).isActive = true
-        outline.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
-        outline.widthAnchor.constraint(equalTo: outline.heightAnchor, multiplier: 1).isActive = true
-
-        let widthConstraint = outline.widthAnchor.constraint(equalToConstant: 100)
-        widthConstraint.priority = .init(999)
-        widthConstraint.isActive = true
-        self.widthConstraint = widthConstraint
-
-        title.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16).isActive = true
-        title.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16).isActive = true
-        title.topAnchor.constraint(equalTo: outline.bottomAnchor, constant: 8).isActive = true
-        title.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8).isActive = true
-
-        image.centerXAnchor.constraint(equalTo: outline.centerXAnchor).isActive = true
-        image.centerYAnchor.constraint(equalTo: outline.centerYAnchor).isActive = true
-        image.widthAnchor.constraint(equalToConstant: 100).isActive = true
-        image.heightAnchor.constraint(equalToConstant: 100).isActive = true
-
-        applyTheme()
-    }
-
-    func display(_ model: EcosiaHome.Section.Explore) {
-        title.text = model.title
-        image.image = UIImage(named: model.image)
-    }
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        image.layer.masksToBounds = true
-        image.layer.cornerRadius = image.bounds.size.width/2.0
-    }
-
+    private weak var title: UILabel!
+    private weak var image: UIImageView!
+    private weak var indicator: UIImageView!
+    private weak var outline: UIView!
+    private weak var divider: UIView!
+    
     override var isSelected: Bool {
         didSet {
             hover()
@@ -84,9 +23,85 @@ final class EcosiaExploreCell: UICollectionViewCell, Themeable, AutoSizingCell {
             hover()
         }
     }
+    
+    required init?(coder: NSCoder) { super.init(coder: coder) }
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        
+        let outline = UIView()
+        contentView.addSubview(outline)
+        outline.layer.cornerRadius = 10
+        outline.translatesAutoresizingMaskIntoConstraints = false
+        self.outline = outline
+
+        let image = UIImageView()
+        image.contentMode = .scaleAspectFit
+        image.translatesAutoresizingMaskIntoConstraints = false
+        image.clipsToBounds = true
+        image.contentMode = .center
+        outline.addSubview(image)
+        self.image = image
+        
+        let title = UILabel()
+        title.font = .preferredFont(forTextStyle: .body)
+        title.adjustsFontForContentSizeCategory = true
+        title.textAlignment = .center
+        title.numberOfLines = 0
+        title.translatesAutoresizingMaskIntoConstraints = false
+        title.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        outline.addSubview(title)
+        self.title = title
+
+        let indicator = UIImageView(image: .init(named: "chevronDown"))
+        indicator.contentMode = .scaleAspectFit
+        indicator.translatesAutoresizingMaskIntoConstraints = false
+        indicator.clipsToBounds = true
+        indicator.contentMode = .center
+        outline.addSubview(indicator)
+        self.indicator = indicator
+        
+        let divider = UIView()
+        divider.translatesAutoresizingMaskIntoConstraints = false
+        divider.isUserInteractionEnabled = false
+        outline.addSubview(divider)
+        self.divider = divider
+        
+        outline.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
+        outline.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
+        outline.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
+        outline.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
+
+        image.centerXAnchor.constraint(equalTo: outline.leftAnchor, constant: 38).isActive = true
+        image.centerYAnchor.constraint(equalTo: outline.centerYAnchor).isActive = true
+        
+        title.centerYAnchor.constraint(equalTo: outline.centerYAnchor).isActive = true
+        title.leftAnchor.constraint(equalTo: outline.leftAnchor, constant: 72).isActive = true
+        title.rightAnchor.constraint(lessThanOrEqualTo: indicator.leftAnchor, constant: -5).isActive = true
+        
+        indicator.centerYAnchor.constraint(equalTo: outline.centerYAnchor).isActive = true
+        indicator.rightAnchor.constraint(equalTo: outline.rightAnchor, constant: -16).isActive = true
+        
+        divider.leftAnchor.constraint(equalTo: outline.leftAnchor, constant: 16).isActive = true
+        divider.rightAnchor.constraint(equalTo: outline.rightAnchor, constant: -16).isActive = true
+        divider.bottomAnchor.constraint(equalTo: outline.bottomAnchor).isActive = true
+        divider.heightAnchor.constraint(equalToConstant: 1).isActive = true
+        
+        widthConstraint = outline.widthAnchor.constraint(equalToConstant: 100)
+        widthConstraint.priority = .init(999)
+        widthConstraint.isActive = true
+
+        applyTheme()
+    }
+
+    func display(_ model: EcosiaHome.Section.Explore) {
+        title.text = model.title
+        image.image = UIImage(named: model.image)
+        outline.layer.maskedCorners = model.maskedCorners
+    }
 
     private func hover() {
-        outline.backgroundColor = isSelected || isHighlighted ? UIColor.theme.ecosia.hoverBackgroundColor : UIColor.theme.ecosia.highlightedBackground
+        outline.backgroundColor = isSelected || isHighlighted ? .theme.ecosia.hoverBackgroundColor : .theme.ecosia.ntpCellBackground
     }
 
     override func prepareForReuse() {
@@ -94,27 +109,10 @@ final class EcosiaExploreCell: UICollectionViewCell, Themeable, AutoSizingCell {
         applyTheme()
     }
 
-    private var horizontalItems: Int {
-        var horizontalItems = traitCollection.horizontalSizeClass == .compact ? 2 : 3
-
-        let isLandscape = UIDevice.current.orientation == .landscapeLeft || UIDevice.current.orientation == .landscapeRight
-        if isLandscape && traitCollection.userInterfaceIdiom == .phone {
-            horizontalItems = 4
-        }
-        return horizontalItems
-    }
-
-    func setWidth(_ width: CGFloat, insets: UIEdgeInsets) {
-        let horizontalItems = CGFloat(self.horizontalItems)
-        let margin: CGFloat = 16
-        let left = max(margin, insets.left)
-        let right = max(margin, insets.right)
-        let width = floor((width - (horizontalItems - 1) * margin - left - right) / horizontalItems)
-        widthConstraint.constant = width
-    }
-
     func applyTheme() {
-        title.textColor = UIColor.theme.ecosia.highContrastText
-        outline.elevate()
+        outline.backgroundColor = .theme.ecosia.ntpCellBackground
+        title.textColor = .theme.ecosia.primaryText
+        indicator.tintColor = .theme.ecosia.secondaryText
+        divider.backgroundColor = .theme.ecosia.border
     }
 }

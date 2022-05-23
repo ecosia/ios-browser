@@ -209,14 +209,11 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         case .impact, .legacyImpact:
             return .init(width: view.bounds.width - 2 * margin, height: 290)
         case .multiply:
-            return CGSize(width: view.bounds.width - 2 * margin, height: 100)
+            return .init(width: view.bounds.width - 2 * margin, height: 100)
         case .news:
-            return CGSize(width: view.bounds.width, height: 130)
+            return .init(width: view.bounds.width, height: 130)
         case .explore:
-            let horizontalItems: CGFloat = traitCollection.horizontalSizeClass == .compact ? 2 : 3
-            var width = (view.bounds.width - (horizontalItems + 1) * margin) / horizontalItems
-            width = min(width, 180)
-            return CGSize(width: width, height: width + 32)
+            return .init(width: view.bounds.width - 2 * margin, height: 64)
         }
     }
 
@@ -224,7 +221,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
 
         guard let section = Section(rawValue: section) else { return 0 }
         switch section {
-        case .multiply, .news:
+        case .multiply, .news, .explore:
             return 0
         default:
             return 16
@@ -233,7 +230,10 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         guard let section = Section(rawValue: section), section == .explore else { return .zero }
-        return .init(top: 0, left: max(collectionView.safeAreaInsets.left, 16), bottom: 0, right: max(collectionView.safeAreaInsets.right, 16))
+        return .init(top: 26,
+                     left: max(collectionView.safeAreaInsets.left, 16),
+                     bottom: 26,
+                     right: max(collectionView.safeAreaInsets.right, 16))
     }
 
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
