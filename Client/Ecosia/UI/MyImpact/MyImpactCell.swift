@@ -140,10 +140,9 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
         outline.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12).isActive = true
         outline.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -4).isActive = true
 
-        let widthConstraint = outline.widthAnchor.constraint(equalToConstant: 100)
+        widthConstraint = outline.widthAnchor.constraint(equalToConstant: 100)
         widthConstraint.priority = .defaultHigh
         widthConstraint.isActive = true
-        self.widthConstraint = widthConstraint
         
         totalProgress.topAnchor.constraint(equalTo: outline.topAnchor, constant: 25).isActive = true
         totalProgress.centerXAnchor.constraint(equalTo: outline.centerXAnchor).isActive = true
