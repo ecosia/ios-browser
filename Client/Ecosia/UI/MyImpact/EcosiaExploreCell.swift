@@ -5,19 +5,17 @@
 import UIKit
 
 final class EcosiaExploreCell: UICollectionViewCell, Themeable, AutoSizingCell {
+    private(set) weak var widthConstraint: NSLayoutConstraint!
+    private weak var title: UILabel!
+    private weak var image: UIImageView!
+    private weak var outline: UIView!
+    
+    required init?(coder: NSCoder) { super.init(coder: coder) }
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
     }
-
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-    }
-
-    var title: UILabel!
-    var image: UIImageView!
-    var outline: UIView!
-    private(set) weak var widthConstraint: NSLayoutConstraint!
 
     private func setup() {
         outline = UIView()
@@ -86,31 +84,12 @@ final class EcosiaExploreCell: UICollectionViewCell, Themeable, AutoSizingCell {
     }
 
     private func hover() {
-        outline.backgroundColor = isSelected || isHighlighted ? UIColor.theme.ecosia.hoverBackgroundColor : UIColor.theme.ecosia.highlightedBackground
+        outline.backgroundColor = isSelected || isHighlighted ? .theme.ecosia.hoverBackgroundColor : .theme.ecosia.ntpCellBackground
     }
 
     override func prepareForReuse() {
         super.prepareForReuse()
         applyTheme()
-    }
-
-    private var horizontalItems: Int {
-        var horizontalItems = traitCollection.horizontalSizeClass == .compact ? 2 : 3
-
-        let isLandscape = UIDevice.current.orientation == .landscapeLeft || UIDevice.current.orientation == .landscapeRight
-        if isLandscape && traitCollection.userInterfaceIdiom == .phone {
-            horizontalItems = 4
-        }
-        return horizontalItems
-    }
-
-    func setWidth(_ width: CGFloat, insets: UIEdgeInsets) {
-        let horizontalItems = CGFloat(self.horizontalItems)
-        let margin: CGFloat = 16
-        let left = max(margin, insets.left)
-        let right = max(margin, insets.right)
-        let width = floor((width - (horizontalItems - 1) * margin - left - right) / horizontalItems)
-        widthConstraint.constant = width
     }
 
     func applyTheme() {
