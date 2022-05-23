@@ -11,6 +11,7 @@ final class EcosiaExploreCell: UICollectionViewCell, Themeable, AutoSizingCell {
     private weak var image: UIImageView!
     private weak var indicator: UIImageView!
     private weak var outline: UIView!
+    private weak var divider: UIView!
     
     override var isSelected: Bool {
         didSet {
@@ -61,6 +62,12 @@ final class EcosiaExploreCell: UICollectionViewCell, Themeable, AutoSizingCell {
         outline.addSubview(indicator)
         self.indicator = indicator
         
+        let divider = UIView()
+        divider.translatesAutoresizingMaskIntoConstraints = false
+        divider.isUserInteractionEnabled = false
+        outline.addSubview(divider)
+        self.divider = divider
+        
         outline.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
         outline.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
         outline.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
@@ -75,6 +82,11 @@ final class EcosiaExploreCell: UICollectionViewCell, Themeable, AutoSizingCell {
         
         indicator.centerYAnchor.constraint(equalTo: outline.centerYAnchor).isActive = true
         indicator.rightAnchor.constraint(equalTo: outline.rightAnchor, constant: -16).isActive = true
+        
+        divider.leftAnchor.constraint(equalTo: outline.leftAnchor, constant: 16).isActive = true
+        divider.rightAnchor.constraint(equalTo: outline.rightAnchor, constant: -16).isActive = true
+        divider.bottomAnchor.constraint(equalTo: outline.bottomAnchor).isActive = true
+        divider.heightAnchor.constraint(equalToConstant: 1).isActive = true
         
         widthConstraint = outline.widthAnchor.constraint(equalToConstant: 100)
         widthConstraint.priority = .init(999)
@@ -102,5 +114,6 @@ final class EcosiaExploreCell: UICollectionViewCell, Themeable, AutoSizingCell {
         outline.backgroundColor = .theme.ecosia.ntpCellBackground
         title.textColor = .theme.ecosia.primaryText
         indicator.tintColor = .theme.ecosia.secondaryText
+        divider.backgroundColor = .theme.ecosia.border
     }
 }
