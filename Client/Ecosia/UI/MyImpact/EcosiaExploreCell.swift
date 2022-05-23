@@ -86,6 +86,7 @@ final class EcosiaExploreCell: UICollectionViewCell, Themeable, AutoSizingCell {
     func display(_ model: EcosiaHome.Section.Explore) {
         title.text = model.title
         image.image = UIImage(named: model.image)
+        outline.layer.maskedCorners = model.maskedCorners
     }
 
     private func hover() {

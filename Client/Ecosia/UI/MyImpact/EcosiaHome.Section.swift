@@ -32,8 +32,14 @@ extension EcosiaHome {
         }
         
         enum Explore: Int, CaseIterable {
-            case info, finance, trees, faq, shop, privacy
-
+            case
+            info,
+            finance,
+            shop,
+            trees,
+            privacy,
+            faq
+            
             var title: String {
                 switch self {
                 case .info:
@@ -102,20 +108,14 @@ extension EcosiaHome {
                 }
             }
             
-            var radius: String {
+            var maskedCorners: CACornerMask {
                 switch self {
                 case .info:
-                    return .localized(.howEcosiaWorks)
-                case .finance:
-                    return .localized(.financialReports)
-                case .trees:
-                    return .localized(.trees)
+                    return [.layerMinXMinYCorner, .layerMaxXMinYCorner]
                 case .faq:
-                    return .localized(.faq)
-                case .shop:
-                    return .localized(.shop)
-                case .privacy:
-                    return .localized(.privacy)
+                    return [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+                default:
+                    return []
                 }
             }
         }
