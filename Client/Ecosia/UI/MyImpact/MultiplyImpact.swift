@@ -7,12 +7,15 @@ import Core
 
 final class MultiplyImpact: UIViewController, Themeable {
     private weak var subtitle: UILabel?
+    private weak var topBackground: UIView?
+    private weak var waves: UIImageView?
     private weak var card: UIControl?
     private weak var cardIcon: UIImageView?
     private weak var cardTitle: UILabel?
     private weak var cardSubtitle: UILabel?
     private weak var flowTitle: UILabel?
     private weak var inviteButton: UIButton!
+    private weak var learnMoreLabel: UILabel?
     private weak var dash: MultiplyImpactDash?
     private weak var firstStep: MultiplyImpactStep?
     private weak var secondStep: MultiplyImpactStep?
@@ -38,7 +41,13 @@ final class MultiplyImpact: UIViewController, Themeable {
         let content = UIView()
         content.translatesAutoresizingMaskIntoConstraints = false
         scroll.addSubview(content)
-        
+
+        let topBackground = UIView()
+        topBackground.translatesAutoresizingMaskIntoConstraints = false
+        topBackground.backgroundColor = .theme.ecosia.primaryBrand.withAlphaComponent(0.2)
+        content.addSubview(topBackground)
+        self.topBackground = topBackground
+
         let subtitle = UILabel()
         subtitle.translatesAutoresizingMaskIntoConstraints = false
         subtitle.numberOfLines = 0
@@ -48,7 +57,18 @@ final class MultiplyImpact: UIViewController, Themeable {
         subtitle.adjustsFontForContentSizeCategory = true
         content.addSubview(subtitle)
         self.subtitle = subtitle
-        
+
+        let forest = UIImageView(image: .init(named: "forestIcons"))
+        forest.translatesAutoresizingMaskIntoConstraints = false
+        forest.contentMode = .bottom
+        content.addSubview(forest)
+
+        let waves = UIImageView(image: .init(named: "ntpIntroWaves"))
+        waves.translatesAutoresizingMaskIntoConstraints = false
+        waves.contentMode = .scaleToFill
+        content.addSubview(waves)
+        self.waves = waves
+
         let card = UIControl()
         card.translatesAutoresizingMaskIntoConstraints = false
         card.layer.cornerRadius = 8
@@ -91,10 +111,10 @@ final class MultiplyImpact: UIViewController, Themeable {
         let learnMore = UILabel()
         learnMore.translatesAutoresizingMaskIntoConstraints = false
         learnMore.text = .localized(.learnMore)
-        learnMore.textColor = .theme.ecosia.primaryBrand
         learnMore.font = .preferredFont(forTextStyle: .callout)
         learnMore.adjustsFontForContentSizeCategory = true
         card.addSubview(learnMore)
+        self.learnMoreLabel = learnMore
         
         let flowTitle = UILabel()
         flowTitle.translatesAutoresizingMaskIntoConstraints = false
@@ -128,7 +148,6 @@ final class MultiplyImpact: UIViewController, Themeable {
         inviteFriends.titleLabel!.font = .preferredFont(forTextStyle: .callout)
         inviteFriends.titleLabel!.adjustsFontForContentSizeCategory = true
         inviteFriends.layer.cornerRadius = 10
-        inviteFriends.backgroundColor = UIColor(named: "primaryBrand")!
         inviteFriends.addTarget(self, action: #selector(self.inviteFriends), for: .touchUpInside)
         content.addSubview(inviteFriends)
         self.inviteButton = inviteFriends
@@ -148,8 +167,30 @@ final class MultiplyImpact: UIViewController, Themeable {
         subtitle.topAnchor.constraint(equalTo: content.topAnchor, constant: 8).isActive = true
         subtitle.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 16).isActive = true
         subtitle.rightAnchor.constraint(lessThanOrEqualTo: content.rightAnchor, constant: -16).isActive = true
-        
-        card.topAnchor.constraint(equalTo: subtitle.bottomAnchor, constant: 16).isActive = true
+
+        forest.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        forest.topAnchor.constraint(equalTo: subtitle.bottomAnchor, constant: 24).isActive = true
+
+        if view.traitCollection.userInterfaceIdiom == .pad {
+            forest.widthAnchor.constraint(equalToConstant: 544).isActive = true
+            forest.heightAnchor.constraint(equalToConstant: 135).isActive = true
+            forest.contentMode = .scaleAspectFit
+        } else {
+            forest.leadingAnchor.constraint(equalTo: content.leadingAnchor).isActive = true
+            forest.trailingAnchor.constraint(equalTo: content.trailingAnchor).isActive = true
+        }
+
+        waves.bottomAnchor.constraint(equalTo: forest.bottomAnchor, constant: 16).isActive = true
+        waves.leadingAnchor.constraint(equalTo: content.leadingAnchor).isActive = true
+        waves.trailingAnchor.constraint(equalTo: content.trailingAnchor).isActive = true
+        waves.heightAnchor.constraint(equalToConstant: 34).isActive = true
+
+        topBackground.leadingAnchor.constraint(equalTo: content.leadingAnchor).isActive = true
+        topBackground.trailingAnchor.constraint(equalTo: content.trailingAnchor).isActive = true
+        topBackground.topAnchor.constraint(equalTo: content.topAnchor).isActive = true
+        topBackground.bottomAnchor.constraint(equalTo: waves.bottomAnchor).isActive = true
+
+        card.topAnchor.constraint(equalTo: waves.bottomAnchor, constant: 16).isActive = true
         card.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 16).isActive = true
         card.rightAnchor.constraint(equalTo: content.rightAnchor, constant: -16).isActive = true
         card.bottomAnchor.constraint(greaterThanOrEqualTo: cardIcon.bottomAnchor, constant: 17).isActive = true
@@ -218,7 +259,13 @@ final class MultiplyImpact: UIViewController, Themeable {
     
     func applyTheme() {
         view.backgroundColor = .theme.ecosia.modalBackground
-        subtitle?.textColor = .theme.ecosia.secondaryText
+        inviteButton.backgroundColor = .theme.ecosia.primaryBrand
+        learnMoreLabel?.textColor = .theme.ecosia.primaryBrand
+
+        waves?.tintColor = .theme.ecosia.modalBackground
+        topBackground?.backgroundColor = .theme.ecosia.modalHeader
+
+        subtitle?.textColor = .Dark.Text.primary
         card?.backgroundColor = .theme.ecosia.impactMultiplyCardBackground
         card?.layer.borderColor = UIColor.theme.ecosia.impactMultiplyCardBorder.cgColor
         cardIcon?.image = UIImage(themed: "impactReferrals")
@@ -230,6 +277,18 @@ final class MultiplyImpact: UIViewController, Themeable {
         firstStep?.applyTheme()
         secondStep?.applyTheme()
         thirdStep?.applyTheme()
+
+        updateBarAppearance()
+    }
+
+    private func updateBarAppearance() {
+        guard let appearance = navigationController?.navigationBar.standardAppearance else { return }
+        appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.Dark.Text.primary]
+        appearance.titleTextAttributes = [.foregroundColor: UIColor.Dark.Text.primary]
+        navigationItem.standardAppearance = appearance
+        navigationItem.backBarButtonItem?.tintColor = UIColor.Dark.Text.primary
+        navigationController?.navigationBar.backgroundColor = .theme.ecosia.modalHeader
+        navigationController?.navigationBar.tintColor = UIColor.Dark.Text.primary
     }
     
     @objc private func learnMore() {
