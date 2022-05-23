@@ -221,7 +221,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
 
         guard let section = Section(rawValue: section) else { return 0 }
         switch section {
-        case .multiply, .news:
+        case .multiply, .news, .explore:
             return 0
         default:
             return 16

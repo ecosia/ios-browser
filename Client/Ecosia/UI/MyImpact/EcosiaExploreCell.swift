@@ -98,6 +98,7 @@ final class EcosiaExploreCell: UICollectionViewCell, Themeable, AutoSizingCell {
     }
 
     func applyTheme() {
+        outline.backgroundColor = .theme.ecosia.ntpCellBackground
         title.textColor = .theme.ecosia.primaryText
         indicator.tintColor = .theme.ecosia.secondaryText
     }

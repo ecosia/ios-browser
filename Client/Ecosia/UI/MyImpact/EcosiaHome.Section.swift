@@ -101,6 +101,23 @@ extension EcosiaHome {
                     return .privacy
                 }
             }
+            
+            var radius: String {
+                switch self {
+                case .info:
+                    return .localized(.howEcosiaWorks)
+                case .finance:
+                    return .localized(.financialReports)
+                case .trees:
+                    return .localized(.trees)
+                case .faq:
+                    return .localized(.faq)
+                case .shop:
+                    return .localized(.shop)
+                case .privacy:
+                    return .localized(.privacy)
+                }
+            }
         }
     }
 }
