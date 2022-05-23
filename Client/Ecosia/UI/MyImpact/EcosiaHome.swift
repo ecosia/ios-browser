@@ -232,7 +232,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         guard let section = Section(rawValue: section), section == .explore else { return .zero }
         return .init(top: 26,
                      left: max(collectionView.safeAreaInsets.left, 16),
-                     bottom: 0,
+                     bottom: 26,
                      right: max(collectionView.safeAreaInsets.right, 16))
     }
 
