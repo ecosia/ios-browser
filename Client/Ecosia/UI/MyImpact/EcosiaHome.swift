@@ -233,7 +233,10 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         guard let section = Section(rawValue: section), section == .explore else { return .zero }
-        return .init(top: 0, left: max(collectionView.safeAreaInsets.left, 16), bottom: 0, right: max(collectionView.safeAreaInsets.right, 16))
+        return .init(top: 26,
+                     left: max(collectionView.safeAreaInsets.left, 16),
+                     bottom: 0,
+                     right: max(collectionView.safeAreaInsets.right, 16))
     }
 
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
