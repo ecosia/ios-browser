@@ -23,7 +23,7 @@ struct FirefoxHomeUX {
     static let MinimumInsets: CGFloat = 16
     static let LibraryShortcutsHeight: CGFloat = 100
     static let LibraryShortcutsMaxWidth: CGFloat = 350
-    static let SearchBarHeight: CGFloat = 56
+    static let SearchBarHeight: CGFloat = 60
     static let TopSitesInsets: CGFloat = 6
     static let customizeHomeHeight: CGFloat = 100
     static var ScrollSearchBarOffset: CGFloat {
