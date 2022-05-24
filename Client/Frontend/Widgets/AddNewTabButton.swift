@@ -27,7 +27,8 @@ class AddNewTabButton: ToolbarButton {
     }
 
     private func setup() {
-        setImage(UIImage(systemName: "plus"), for: .normal)
+        let config = UIImage.SymbolConfiguration(pointSize: 16)
+        setImage(UIImage(systemName: "plus", withConfiguration: config), for: .normal)
         circle.isUserInteractionEnabled = false
         addSubview(circle)
         sendSubviewToBack(circle)
