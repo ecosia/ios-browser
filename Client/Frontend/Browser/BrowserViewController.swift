@@ -1138,6 +1138,7 @@ class BrowserViewController: UIViewController {
             tab.updateTimerAndObserving(state: .tabNavigatedToDifferentUrl, nextUrl: displayUrl.absoluteString)
         }
         urlBar.currentURL = tab.url?.displayURL
+        urlBar.applyTheme()
         urlBar.locationView.tabDidChangeContentBlocking(tab)
         let isPage = tab.url?.displayURL?.isWebPage() ?? false
         urlBar.updatePageStatus(isPage)

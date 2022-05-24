@@ -237,39 +237,23 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     }
 
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        showSeparator = scrollView.contentOffset.y + scrollView.adjustedContentInset.top <= 12
         background.inset = max(background.inset, scrollView.adjustedContentInset.top)
         background.offset = scrollView.contentOffset.y
     }
-
-    private var showSeparator = false {
-        didSet {
-            if showSeparator != oldValue {
-                updateBarAppearance()
-            }
-        }
-    }
-
+    
     private func updateBarAppearance() {
-        guard let appearance = navigationController?.navigationBar.standardAppearance else { return }
-
+        let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = .clear
-        appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
-        appearance.titleTextAttributes = [.foregroundColor: UIColor.theme.ecosia.primaryText]
+        appearance.backgroundColor = .theme.ecosia.modalHeader
+        appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.Dark.Text.primary]
+        appearance.titleTextAttributes = [.foregroundColor: UIColor.Dark.Text.primary]
         appearance.shadowColor = UIColor.theme.ecosia.impactSeparator
         appearance.shadowImage = UIImage()
-
-        if showSeparator {
-            navigationController?.navigationBar.backgroundColor = .theme.ecosia.modalHeader
-            navigationItem.rightBarButtonItem?.tintColor = UIColor.white
-            collectionView.backgroundView = background
-        } else {
-            navigationController?.navigationBar.backgroundColor = .theme.ecosia.modalBackground
-            navigationItem.rightBarButtonItem?.tintColor = UIColor.theme.ecosia.primaryButton
-            collectionView.backgroundView = nil
-        }
         navigationItem.standardAppearance = appearance
+
+        navigationController?.navigationBar.backgroundColor = .theme.ecosia.modalHeader
+        navigationController?.navigationBar.tintColor = .Dark.Text.primary
+        collectionView.backgroundView = background
         navigationController?.navigationBar.setNeedsDisplay()
     }
 

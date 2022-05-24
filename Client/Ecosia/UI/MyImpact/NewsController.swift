@@ -121,6 +121,7 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
         guard let appearance = navigationController?.navigationBar.standardAppearance else { return }
         appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.theme.ecosia.primaryText]
         appearance.titleTextAttributes = [.foregroundColor: UIColor.theme.ecosia.primaryText]
+        appearance.backgroundColor = .theme.ecosia.modalBackground
         navigationItem.standardAppearance = appearance
         navigationController?.navigationBar.backgroundColor = .theme.ecosia.modalBackground
         navigationController?.navigationBar.tintColor = .theme.ecosia.primaryBrand
