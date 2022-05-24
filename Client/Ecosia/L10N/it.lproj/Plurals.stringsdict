@@ -56,7 +56,7 @@
 			<string>%d raccomandazioni</string>
 		</dict>
 	</dict>
-	<key>%d accepted invites(s)</key>
+	<key>%d accepted invite(s)</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
 		<string>%#@invites@</string>
