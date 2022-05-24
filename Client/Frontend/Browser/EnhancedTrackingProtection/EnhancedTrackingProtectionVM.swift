@@ -32,7 +32,7 @@ class EnhancedTrackingProtectionMenuVM {
 
     var connectionStatusImage: UIImage {
         let insecureImageString = "lock_blocked"
-        let image = connectionSecure ? UIImage(themed: "secureLock")! : UIImage(imageLiteralResourceName: insecureImageString)
+        let image = connectionSecure ? UIImage(named: "secureLock")! : UIImage(imageLiteralResourceName: insecureImageString)
         return image
     }
 

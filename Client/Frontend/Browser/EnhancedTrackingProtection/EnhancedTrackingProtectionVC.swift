@@ -262,8 +262,8 @@ class EnhancedTrackingProtectionMenuVC: UIViewController {
 
             connectionDetailArrow.trailingAnchor.constraint(equalTo: connectionView.trailingAnchor, constant: -ETPMenuUX.UX.gutterDistance),
             connectionDetailArrow.centerYAnchor.constraint(equalTo: connectionView.centerYAnchor),
-            connectionDetailArrow.heightAnchor.constraint(equalToConstant: 12),
-            connectionDetailArrow.widthAnchor.constraint(equalToConstant: 7),
+            connectionDetailArrow.heightAnchor.constraint(equalToConstant: 24),
+            connectionDetailArrow.widthAnchor.constraint(equalToConstant: 24),
 
             connectionButton.leadingAnchor.constraint(equalTo: connectionView.leadingAnchor),
             connectionButton.topAnchor.constraint(equalTo: connectionView.topAnchor),
@@ -449,6 +449,7 @@ extension EnhancedTrackingProtectionMenuVC: Themeable {
         
         connectionView.backgroundColor = UIColor.theme.etpMenu.sectionColor
         connectionImage.image = viewModel.connectionStatusImage
+        connectionImage.tintColor = .theme.ecosia.primaryBrand
         connectionDetailArrow.tintColor = UIColor.theme.etpMenu.defaultImageTints
         if viewModel.connectionSecure {
             connectionImage.tintColor = UIColor.theme.etpMenu.defaultImageTints

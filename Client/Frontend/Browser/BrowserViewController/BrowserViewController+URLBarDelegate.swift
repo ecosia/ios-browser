@@ -143,6 +143,8 @@ extension BrowserViewController: URLBarDelegate, FeatureFlagsProtocol {
                 SimpleToast().showAlertWithText(successMessage, image: "reader", bottomContainer: self.webViewContainer)
             case .pinPage, .removePinPage:
                 SimpleToast().showAlertWithText(successMessage, image: "action_unpin", bottomContainer: self.webViewContainer)
+            case .copyUrl:
+                SimpleToast().showAlertWithText(successMessage, image: "menu-Copy-Link", bottomContainer: self.webViewContainer)
             default:
                 SimpleToast().showAlertWithText(successMessage, image: "check", bottomContainer: self.webViewContainer)
             }
