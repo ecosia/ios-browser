@@ -56,23 +56,10 @@
 			<string>%d referencias</string>
 		</dict>
 	</dict>
-	<key>%d successful referral(s)</key>
+	<key>%d accepted invites(s)</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
-		<string>%#@referrals@</string>
-		<key>referrals</key>
-		<dict>
-			<key>NSStringFormatSpecTypeKey</key>
-			<string>NSStringPluralRuleType</string>
-			<key>NSStringFormatValueTypeKey</key>
-			<string>d</string>
-			<key>one</key>
-			<string>%d referencia exitosa</string>
-			<key>two</key>
-			<string>%d referencias exitosas</string>
-			<key>other</key>
-			<string>%d referencias exitosas</string>
-		</dict>
+		<string>%#@invites@</string>
 	</dict>
 	<key>Tree(s) planted</key>
 	<dict>
@@ -92,23 +79,23 @@
 			<string>Árboles plantados</string>
 		</dict>
 	</dict>
-    <key>%d friend invite(s)</key>
-    <dict>
-        <key>NSStringLocalizedFormatKey</key>
-        <string>%#@friends@</string>
-        <key>friends</key>
-        <dict>
-            <key>NSStringFormatSpecTypeKey</key>
-            <string>NSStringPluralRuleType</string>
-            <key>NSStringFormatValueTypeKey</key>
-            <string>d</string>
-            <key>one</key>
-            <string>%d invitación para amigos</string>
-            <key>two</key>
-            <string>%d invitaciones para amigos</string>
-            <key>other</key>
-            <string>%d invitaciones para amigos</string>
-        </dict>
-    </dict>
+	<key>%d friend invite(s)</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@friends@</string>
+		<key>friends</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%d invitación para amigos</string>
+			<key>two</key>
+			<string>%d invitaciones para amigos</string>
+			<key>other</key>
+			<string>%d invitaciones para amigos</string>
+		</dict>
+	</dict>
 </dict>
 </plist>

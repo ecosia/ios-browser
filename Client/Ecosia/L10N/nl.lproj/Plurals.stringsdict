@@ -50,21 +50,10 @@
 			<string>%d verwijzingen</string>
 		</dict>
 	</dict>
-	<key>%d successful referral(s)</key>
+	<key>%d accepted invites(s)</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
-		<string>%#@referrals@</string>
-		<key>referrals</key>
-		<dict>
-			<key>NSStringFormatSpecTypeKey</key>
-			<string>NSStringPluralRuleType</string>
-			<key>NSStringFormatValueTypeKey</key>
-			<string>d</string>
-			<key>one</key>
-			<string>%d succesvolle verwijzing</string>
-			<key>other</key>
-			<string>%d succesvolle verwijzingen</string>
-		</dict>
+		<string>%#@invites@</string>
 	</dict>
 	<key>Tree(s) planted</key>
 	<dict>
@@ -82,21 +71,21 @@
 			<string>Bomen geplant</string>
 		</dict>
 	</dict>
-    <key>%d friend invite(s)</key>
-    <dict>
-        <key>NSStringLocalizedFormatKey</key>
-        <string>%#@friends@</string>
-        <key>friends</key>
-        <dict>
-            <key>NSStringFormatSpecTypeKey</key>
-            <string>NSStringPluralRuleType</string>
-            <key>NSStringFormatValueTypeKey</key>
-            <string>d</string>
-            <key>one</key>
-            <string>%d vriend uitgenodigd</string>
-            <key>other</key>
-            <string>%d vrienden uitgenodigd</string>
-        </dict>
-    </dict>
+	<key>%d friend invite(s)</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@friends@</string>
+		<key>friends</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%d vriend uitgenodigd</string>
+			<key>other</key>
+			<string>%d vrienden uitgenodigd</string>
+		</dict>
+	</dict>
 </dict>
 </plist>
