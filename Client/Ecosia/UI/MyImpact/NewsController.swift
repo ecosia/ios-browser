@@ -123,6 +123,7 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
         appearance.titleTextAttributes = [.foregroundColor: UIColor.theme.ecosia.primaryText]
         navigationItem.standardAppearance = appearance
         navigationController?.navigationBar.backgroundColor = .theme.ecosia.modalBackground
+        navigationController?.navigationBar.tintColor = .theme.ecosia.primaryBrand
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {

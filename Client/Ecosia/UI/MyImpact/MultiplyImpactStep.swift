@@ -60,8 +60,8 @@ final class MultiplyImpactStep: UIView, Themeable {
     }
     
     func applyTheme() {
-        indicator?.backgroundColor = .theme.ecosia.barSeparator
-        titleLabel?.textColor = .theme.ecosia.highContrastText
+        indicator?.backgroundColor = .theme.ecosia.secondaryText
+        titleLabel?.textColor = .theme.ecosia.primaryText
         subtitleLabel?.textColor = .theme.ecosia.secondaryText
     }
 }

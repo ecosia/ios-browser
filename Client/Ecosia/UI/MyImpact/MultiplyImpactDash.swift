@@ -32,6 +32,6 @@ final class MultiplyImpactDash: UIView, Themeable {
     }
     
     func applyTheme() {
-        dash?.strokeColor = UIColor.theme.ecosia.barSeparator.cgColor
+        dash?.strokeColor = UIColor.theme.ecosia.secondaryText.cgColor
     }
 }
