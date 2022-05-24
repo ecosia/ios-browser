@@ -17,7 +17,7 @@ extension NTPTooltip {
             case .rebrandIntro:
                 return .localized(.trackYourProgress)
             case .gotClaimed:
-                return .localized(.keepGoing)
+                return .localized(.youveContributed)
             case .successfulInvite:
                 let highlight: String
                 let count = User.shared.referrals.newClaims
