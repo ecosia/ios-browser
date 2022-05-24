@@ -171,7 +171,7 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel, FeatureF
     fileprivate let flowLayout = NTPLayout()
     fileprivate weak var searchbarCell: UICollectionViewCell?
     fileprivate weak var emptyCell: EmptyCell?
-    fileprivate weak var impactCell: UICollectionViewCell?
+    fileprivate weak var impactCell: TreesCell?
     fileprivate var timer: Timer?
     fileprivate var contextualSourceView = UIView()
     var recentlySavedViewModel = FirefoxHomeRecentlySavedViewModel()
@@ -270,6 +270,7 @@ class FirefoxHomeViewController: UICollectionViewController, HomePanel, FeatureF
         self.delegate = delegate
         self.referrals = referrals
         super.init(collectionViewLayout: flowLayout)
+        flowLayout.highlightDataSource = self
         self.collectionView?.delegate = self
         self.collectionView?.dataSource = self
         self.collectionView?.alwaysBounceVertical = true
@@ -673,9 +674,9 @@ extension FirefoxHomeViewController: UICollectionViewDelegateFlowLayout {
 
         let section = Section(rawValue: indexPath.section)
 
-        if section == .impact {
+        if section == .impact, let text = ntpLayoutHighlightText()  {
             let tooltip = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: NTPTooltip.key, for: indexPath) as! NTPTooltip
-            tooltip.setText(.localized(.trackYourProgress))
+            tooltip.setText(text)
             tooltip.delegate = self
             return tooltip
         }
@@ -697,12 +698,7 @@ extension FirefoxHomeViewController: UICollectionViewDelegateFlowLayout {
                 self?.updateTreesCell()
             })
             collectionView.deselectItem(at: indexPath, animated: true)
-            User.shared.referrals.accept()
-
-            if User.shared.showsReferralSpotlight {
-                User.shared.hideReferralSpotlight()
-                Analytics.shared.openInvitePromo()
-            }
+            ntpTooltipTapped(nil)
         default:
             break
         }
@@ -720,7 +716,7 @@ extension FirefoxHomeViewController: UICollectionViewDelegateFlowLayout {
             }
         case .impact:
             // Ecosia: minimal height to trigger whether header tooltip is shown
-            return User.shared.showsRebrandIntro ? .init(width: 200, height: 1) : .zero
+            return ntpLayoutHighlightText() != nil ? .init(width: 200, height: 1) : .zero
         default:
             return .zero
         }
@@ -822,9 +818,8 @@ extension FirefoxHomeViewController {
             return cell
         case .impact:
             guard let impactCell = cell as? TreesCell else {return cell}
-            self.impactCell = cell
+            self.impactCell = impactCell
             impactCell.display(treesCellModel)
-            impactCell.delegate = self
             impactCell.widthConstraint.constant = cellSize.width
             return cell
         case .libraryShortcuts:
@@ -1295,68 +1290,66 @@ extension FirefoxHomeViewController: SearchbarCellDelegate {
     }
 }
 
-extension FirefoxHomeViewController: TreesCellDelegate {
+extension FirefoxHomeViewController {
 
     fileprivate func updateTreesCell() {
-        guard let impactCell = impactCell as? TreesCell else { return }
+        guard let impactCell = impactCell else { return }
         impactCell.display(treesCellModel)
         flowLayout.invalidateLayout()
     }
 
-    fileprivate var spotlight: TreesCellModel.Spotlight? {
-        guard User.shared.showsReferralSpotlight else { return nil }
-        return .init(headline: .localized(.inviteFriendsSpotlight), description: .localized(.togetherWeCan))
-    }
-
     fileprivate var treesCellModel: TreesCellModel {
-        guard Referrals.isEnabled else {
-            return .init(trees: User.shared.searchImpact, searches: personalCounter.state!, highlight: nil, spotlight: nil)
-        }
-
-        if personalCounter.state == 0 && User.shared.referrals.impact == 0 {
-            return .init(trees: User.shared.impact, searches: personalCounter.state!, highlight: nil, spotlight: spotlight)
-        }
-
-        if User.shared.referrals.isNewClaim {
-            return .init(trees: User.shared.impact, searches: personalCounter.state!,
-                         highlight: .localized(.keepGoing),
-                         spotlight: spotlight )
-        }
-
-        if User.shared.referrals.newClaims > 0 {
-            let highlight: String
-            if User.shared.referrals.newClaims <= 1 {
-                highlight = .localized(.referralAccepted)
-            } else {
-                highlight = .init(format: .localized(.referralsAccepted), "\(User.shared.referrals.newClaims)", "\(User.shared.referrals.newClaims)")
-            }
-            return .init(trees: User.shared.impact, searches: personalCounter.state!, highlight: highlight, spotlight: spotlight)
-        }
-
-        // default
-        return .init(trees: User.shared.impact, searches: personalCounter.state!,
-                     highlight: nil,
-                     spotlight: spotlight)
+        let trees = Referrals.isEnabled ? User.shared.impact : User.shared.searchImpact
+        return .init(trees: trees, searches: personalCounter.state!)
     }
 
-    func treesCellDidTapSpotlight(_ cell: TreesCell) {
-        User.shared.hideReferralSpotlight()
-
-        collectionView.performBatchUpdates {
-            UIView.animate(withDuration: 0.3) {
-                cell.display(self.treesCellModel)
-            }
-        }
-        delegate?.home(self, willBegin: .zero)
-    }
 }
 
 extension FirefoxHomeViewController: NTPTooltipDelegate {
-    func ntpTooltipTapped(_ tooltip: NTPTooltip) {
+    func ntpTooltipTapped(_ tooltip: NTPTooltip?) {
+
+        guard let ntpHighlight = ntpHighlight else { return }
+
         UIView.animate(withDuration: 0.3) {
-            tooltip.alpha = 0
+            tooltip?.alpha = 0
         } completion: { _ in
-            User.shared.hideRebrandIntro()
+
+            switch ntpHighlight {
+            case .rebrandIntro:
+                User.shared.hideRebrandIntro()
+            case .gotClaimed, .successfulInvite:
+                User.shared.referrals.accept()
+            case .referralSpotlight:
+                Analytics.shared.openInvitePromo()
+                User.shared.hideReferralSpotlight()
+            }
         }
     }
+}
+
+extension FirefoxHomeViewController: NTPLayoutHighlightDataSource {
+    var ntpHighlight: NTPTooltip.Highlight? {
+        if User.shared.showsRebrandIntro {
+            return .rebrandIntro
+        }
+
+        guard Referrals.isEnabled else { return nil }
+        if User.shared.referrals.isNewClaim {
+            return .gotClaimed
+        }
+
+        if User.shared.referrals.newClaims > 0 {
+            return .successfulInvite
+        }
+
+        if User.shared.showsReferralSpotlight {
+            return .referralSpotlight
+        }
+        return nil
+    }
+
+    func ntpLayoutHighlightText() -> String? {
+        return ntpHighlight?.text
+    }
+
 }

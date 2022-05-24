@@ -5,10 +5,6 @@
 import UIKit
 import Core
 
-protocol TreesCellDelegate: AnyObject {
-    func treesCellDidTapSpotlight(_ cell: TreesCell)
-}
-
 final class TreesCell: UICollectionViewCell, AutoSizingCell, Themeable {
     private (set) var model: TreesCellModel?
     lazy var formatter: NumberFormatter = {
@@ -19,17 +15,9 @@ final class TreesCell: UICollectionViewCell, AutoSizingCell, Themeable {
         return formatter
     }()
 
-    weak var delegate: TreesCellDelegate?
     private(set) weak var widthConstraint: NSLayoutConstraint!
     private weak var background: UIView!
     private weak var container: UIStackView!
-
-    private weak var spotlightBackground: UIView!
-    private weak var spotlightContainerStack: UIStackView!
-    private weak var spotlightStack: UIStackView!
-    private weak var spotlightHeadline: UILabel!
-    private weak var spotlightDescription: UILabel!
-    private weak var spotlightClose: UIImageView!
 
     private weak var impactBackground: UIView!
     private weak var impactStack: UIStackView!
@@ -70,7 +58,6 @@ final class TreesCell: UICollectionViewCell, AutoSizingCell, Themeable {
         contentView.addSubview(container)
         self.container = container
 
-        addSpotlight()
         addImpact()
         addProgress()
         addConstraints()
@@ -88,22 +75,8 @@ final class TreesCell: UICollectionViewCell, AutoSizingCell, Themeable {
             treesCount.text = "\(model.trees)"
         }
 
-        spotlightViews.forEach { $0.isHidden = model.spotlight == nil }
-
-        if let spotlight = model.spotlight {
-            spotlightHeadline.text = spotlight.headline
-            spotlightDescription.text = spotlight.description
-        }
         applyTheme()
         updateGlobalCount()
-    }
-
-    @objc func spotlightTapped() {
-        delegate?.treesCellDidTapSpotlight(self)
-    }
-
-    var spotlightViews: [UIView] {
-        return [spotlightBackground, spotlightContainerStack]
     }
 
     private func updateGlobalCount() {
@@ -116,62 +89,13 @@ final class TreesCell: UICollectionViewCell, AutoSizingCell, Themeable {
         }
 
         TreeCounter.shared.subscribe(self) { [weak self] count in
-            guard let self = self, self.model?.highlight == nil else { return }
+            guard let self = self else { return }
 
             UIView.transition(with: self.globalCount, duration: 0.65, options: .transitionCrossDissolve, animations: {
                 self.globalCount.text = self.formatter.string(from: .init(value: count))
             })
             self.model.map({ self.display($0) })
         }
-    }
-
-    // MARK: UI
-    private func addSpotlight() {
-        let spotlightBackground = UIView()
-        spotlightBackground.translatesAutoresizingMaskIntoConstraints = false
-        spotlightBackground.layer.cornerRadius = 8
-        container.addArrangedSubview(spotlightBackground)
-        self.spotlightBackground = spotlightBackground
-
-        spotlightBackground.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(spotlightTapped)))
-
-        let spotlightContainerStack = UIStackView()
-        spotlightContainerStack.axis = .horizontal
-        spotlightContainerStack.alignment = .leading
-        spotlightContainerStack.translatesAutoresizingMaskIntoConstraints = false
-        spotlightBackground.addSubview(spotlightContainerStack)
-        self.spotlightContainerStack = spotlightContainerStack
-
-        let spotlightStack = UIStackView()
-        spotlightStack.axis = .vertical
-        spotlightStack.translatesAutoresizingMaskIntoConstraints = false
-        spotlightStack.spacing = 0
-        spotlightContainerStack.addArrangedSubview(spotlightStack)
-        self.spotlightStack = spotlightStack
-
-        let spotlightHeadline = UILabel()
-        spotlightStack.addArrangedSubview(spotlightHeadline)
-        spotlightHeadline.setContentCompressionResistancePriority(.required, for: .vertical)
-        spotlightHeadline.setContentHuggingPriority(.defaultLow, for: .horizontal)
-
-        spotlightHeadline.font = .preferredFont(forTextStyle: .subheadline).bold()
-        spotlightHeadline.adjustsFontForContentSizeCategory = true
-        spotlightHeadline.numberOfLines = 0
-        self.spotlightHeadline = spotlightHeadline
-
-        let spotlightDescription = UILabel()
-        spotlightDescription.numberOfLines = 0
-        spotlightDescription.font = .preferredFont(forTextStyle: .subheadline)
-        spotlightDescription.adjustsFontForContentSizeCategory = true
-        spotlightDescription.setContentCompressionResistancePriority(.required, for: .vertical)
-        spotlightStack.addArrangedSubview(spotlightDescription)
-        self.spotlightDescription = spotlightDescription
-
-        let spotlightClose = UIImageView(image: .init(named: "close-medium")?.withRenderingMode(.alwaysTemplate))
-        spotlightClose.contentMode = .scaleAspectFit
-        spotlightClose.setContentHuggingPriority(.required, for: .horizontal)
-        spotlightContainerStack.addArrangedSubview(spotlightClose)
-        self.spotlightClose = spotlightClose
     }
 
     private func addImpact() {
@@ -345,26 +269,15 @@ final class TreesCell: UICollectionViewCell, AutoSizingCell, Themeable {
         container.leftAnchor.constraint(equalTo: background.leftAnchor).isActive = true
         container.bottomAnchor.constraint(equalTo: background.bottomAnchor).isActive = true
 
-        spotlightContainerStack.rightAnchor.constraint(equalTo: spotlightBackground.rightAnchor, constant: -12).isActive = true
-        spotlightContainerStack.topAnchor.constraint(equalTo: spotlightBackground.topAnchor, constant: 8).isActive = true
-        spotlightContainerStack.leftAnchor.constraint(equalTo: spotlightBackground.leftAnchor, constant: 12).isActive = true
-        spotlightContainerStack.bottomAnchor.constraint(equalTo: spotlightBackground.bottomAnchor, constant: -8).isActive = true
-
         impactStack.rightAnchor.constraint(equalTo: impactBackground.rightAnchor, constant: -16).isActive = true
         impactStack.topAnchor.constraint(equalTo: impactBackground.topAnchor, constant: 16).isActive = true
         impactStack.leftAnchor.constraint(equalTo: impactBackground.leftAnchor, constant: 16).isActive = true
         impactStack.bottomAnchor.constraint(equalTo: impactBackground.bottomAnchor, constant: -16).isActive = true
 
-        spotlightClose.widthAnchor.constraint(equalToConstant: 16).isActive = true
     }
 
     func applyTheme() {
-        let isSpotlight = model?.spotlight != nil
-        if isSpotlight {
-            background.backgroundColor = (isHighlighted || isSelected) ? .theme.ecosia.primaryBrand  : .theme.ecosia.teal60
-        } else {
-            background.backgroundColor = UIColor.theme.ecosia.primaryBackground
-        }
+        background.backgroundColor = UIColor.theme.ecosia.primaryBackground
 
         let backgroundColor: UIColor = .theme.ecosia.ntpImpactBackground
         impactBackground.backgroundColor = (isHighlighted || isSelected) ? .theme.ecosia.hoverBackgroundColor : backgroundColor
@@ -374,11 +287,6 @@ final class TreesCell: UICollectionViewCell, AutoSizingCell, Themeable {
 
         yourImpact.textColor = .theme.ecosia.secondaryText
         treesPlanted.textColor = .theme.ecosia.primaryText
-
-        spotlightHeadline.textColor = .white
-        spotlightDescription.textColor = .white
-        spotlightClose.tintColor = .white
-        spotlightBackground.backgroundColor = .clear
 
         totalProgress.update(color: .theme.ecosia.ntpBackground)
         currentProgress.update(color: .theme.ecosia.treeCounterProgressCurrent)

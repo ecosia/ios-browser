@@ -7,11 +7,4 @@ import Foundation
 struct TreesCellModel {
     let trees: Int
     let searches: Int
-    let highlight: String?
-    var spotlight: Spotlight?
-
-    struct Spotlight {
-        let headline: String
-        let description: String
-    }
 }
