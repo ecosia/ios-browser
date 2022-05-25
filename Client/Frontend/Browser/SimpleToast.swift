@@ -39,27 +39,34 @@ struct SimpleToast {
         let stack = UIStackView()
         stack.axis = .horizontal
         stack.alignment = .center
-        stack.distribution = .fillProportionally
-        stack.spacing = ButtonToastUX.ToastPadding
+        stack.distribution = .fill
+        stack.spacing = 8
         stack.layer.cornerRadius = 10
         stack.backgroundColor = SimpleToastUX.ToastDefaultColor
 
         let toast = UILabel()
         toast.text = text
+        toast.numberOfLines = 1
         toast.textColor = UIColor.theme.ecosia.primaryTextInverted
         toast.font = SimpleToastUX.ToastFont
         toast.adjustsFontForContentSizeCategory = true
+        toast.adjustsFontSizeToFitWidth = true
         toast.textAlignment = .left
+        toast.setContentHuggingPriority(.defaultLow, for: .horizontal)
 
         let imageView = UIImageView(image: .init(named: image)?.withRenderingMode(.alwaysTemplate))
         imageView.tintColor = UIColor.theme.ecosia.toastImageTint
         imageView.contentMode = .scaleAspectFit
+        imageView.setContentHuggingPriority(.required, for: .horizontal)
 
-        stack.addArrangedSubview(UIView())
+        let leftSpace = UIView()
+        leftSpace.widthAnchor.constraint(equalToConstant: 8).isActive = true
+        stack.addArrangedSubview(leftSpace)
         stack.addArrangedSubview(imageView)
         stack.addArrangedSubview(toast)
-        stack.addArrangedSubview(UIView())
-
+        let rightSpace = UIView()
+        rightSpace.widthAnchor.constraint(equalToConstant: 8).isActive = true
+        stack.addArrangedSubview(rightSpace)
         return stack
     }
 

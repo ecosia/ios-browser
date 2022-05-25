@@ -7,8 +7,8 @@ import Shared
 import SnapKit
 
 struct DownloadToastUX {
-    static let ToastBackgroundColor = UIColor.theme.ecosia.quarternaryBackground
-    static let ToastProgressColor = UIColor.Photon.Blue50
+    static var ToastBackgroundColor: UIColor { .theme.ecosia.quarternaryBackground }
+    static var ToastProgressColor: UIColor { .theme.ecosia.highlightedBackground }
     static let YMargin = CGFloat(12)
     static let XMargin = CGFloat(16)
 }
@@ -149,7 +149,7 @@ class DownloadToast: Toast {
         horizontalStackView.addArrangedSubview(labelStackView)
 
         let cancel = UIImageView(image: UIImage.templateImageNamed("close-medium"))
-        cancel.tintColor = UIColor.Photon.White100
+        cancel.tintColor = .theme.ecosia.primaryTextInverted
         cancel.isUserInteractionEnabled = true
         cancel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(buttonPressed)))
         horizontalStackView.addArrangedSubview(cancel)
