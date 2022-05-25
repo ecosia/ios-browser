@@ -46,7 +46,7 @@ extension BrowserViewController: URLBarDelegate, FeatureFlagsProtocol {
                 return
             }
             // We're not showing the top tabs; show a toast to quick switch to the fresh new tab.
-            let toast = ButtonToast(labelText: Strings.ContextMenuButtonToastNewTabOpenedLabelText, buttonText: Strings.ContextMenuButtonToastNewTabOpenedButtonText, completion: { buttonPressed in
+            let toast = ButtonToast(labelText: Strings.ContextMenuButtonToastNewTabOpenedLabelText, imageName: "tabs", buttonText: Strings.ContextMenuButtonToastNewTabOpenedButtonText, completion: { buttonPressed in
                 if buttonPressed {
                     self.tabManager.selectTab(tab)
                 }
@@ -135,12 +135,12 @@ extension BrowserViewController: URLBarDelegate, FeatureFlagsProtocol {
         let successCallback: (String, ButtonToastAction) -> Void = { (successMessage, toastAction) in
             switch toastAction {
             case .removeBookmark:
-                let toast = ButtonToast(labelText: successMessage, imageName: "library-bookmark", buttonText: Strings.UndoString, textAlignment: .left) { isButtonTapped in
+                let toast = ButtonToast(labelText: successMessage, imageName: "menu-Bookmark-Remove", buttonText: Strings.UndoString, textAlignment: .left) { isButtonTapped in
                     isButtonTapped ? self.addBookmark(url: urlString) : nil
                 }
                 self.show(toast: toast)
             case .addToReadingList:
-                SimpleToast().showAlertWithText(successMessage, image: "reader", bottomContainer: self.webViewContainer)
+                SimpleToast().showAlertWithText(successMessage, image: "reader-action-bar", bottomContainer: self.webViewContainer)
             case .pinPage, .removePinPage:
                 SimpleToast().showAlertWithText(successMessage, image: "action_unpin", bottomContainer: self.webViewContainer)
             case .copyUrl:

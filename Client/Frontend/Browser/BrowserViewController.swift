@@ -1059,7 +1059,7 @@ class BrowserViewController: UIViewController {
         switch path {
         case .estimatedProgress:
             guard tab === tabManager.selectedTab else { break }
-            if let url = webView.url, !InternalURL.isValid(url: url) {
+            if let url = webView.url, !InternalURL.isValid(url: url), pendingDownloadWebView == nil {
                 urlBar.updateProgressBar(Float(webView.estimatedProgress))
                 setupMiddleButtonStatus(isLoading: true)
             } else {
@@ -1613,7 +1613,7 @@ extension BrowserViewController: LibraryPanelDelegate {
             return
         }
         // We're not showing the top tabs; show a toast to quick switch to the fresh new tab.
-        let toast = ButtonToast(labelText: Strings.ContextMenuButtonToastNewTabOpenedLabelText, buttonText: Strings.ContextMenuButtonToastNewTabOpenedButtonText, completion: { buttonPressed in
+        let toast = ButtonToast(labelText: Strings.ContextMenuButtonToastNewTabOpenedLabelText, imageName: "tabs", buttonText: Strings.ContextMenuButtonToastNewTabOpenedButtonText, completion: { buttonPressed in
             if buttonPressed {
                 self.tabManager.selectTab(tab)
             }
@@ -1656,7 +1656,7 @@ extension BrowserViewController: HomePanelDelegate {
             return
         }
         // We're not showing the top tabs; show a toast to quick switch to the fresh new tab.
-        let toast = ButtonToast(labelText: Strings.ContextMenuButtonToastNewTabOpenedLabelText, buttonText: Strings.ContextMenuButtonToastNewTabOpenedButtonText, completion: { buttonPressed in
+        let toast = ButtonToast(labelText: Strings.ContextMenuButtonToastNewTabOpenedLabelText, imageName: "tabs", buttonText: Strings.ContextMenuButtonToastNewTabOpenedButtonText, completion: { buttonPressed in
             if buttonPressed {
                 self.tabManager.selectTab(tab)
             }
@@ -2157,7 +2157,7 @@ extension BrowserViewController: ContextMenuHelperDelegate {
                         return
                     }
                     // We're not showing the top tabs; show a toast to quick switch to the fresh new tab.
-                    let toast = ButtonToast(labelText: Strings.ContextMenuButtonToastNewTabOpenedLabelText, buttonText: Strings.ContextMenuButtonToastNewTabOpenedButtonText, completion: { buttonPressed in
+                    let toast = ButtonToast(labelText: Strings.ContextMenuButtonToastNewTabOpenedLabelText, imageName: "tabs", buttonText: Strings.ContextMenuButtonToastNewTabOpenedButtonText, completion: { buttonPressed in
                         if buttonPressed {
                             self.tabManager.selectTab(tab)
                         }

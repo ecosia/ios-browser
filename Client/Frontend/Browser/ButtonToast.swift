@@ -8,9 +8,9 @@ import UIKit
 
 struct ButtonToastUX {
     static let ToastHeight: CGFloat = 55.0 + ToastOffset
-    static let ToastOffset: CGFloat = 12
-    static let ToastPadding: CGFloat = 12.0
-    static let ToastButtonPadding: CGFloat = 12.0
+    static let ToastOffset: CGFloat = 16
+    static let ToastPadding: CGFloat = 16.0
+    static let ToastButtonPadding: CGFloat = 16.0
     static let ToastDelay = DispatchTimeInterval.milliseconds(900)
     static let ToastButtonBorderRadius: CGFloat = 5
     static let ToastButtonBorderWidth: CGFloat = 1
@@ -62,8 +62,8 @@ class ButtonToast: Toast {
         let horizontalStackView = UIStackView()
         horizontalStackView.axis = .horizontal
         horizontalStackView.alignment = .center
-        horizontalStackView.distribution = .fillProportionally
-        horizontalStackView.spacing = ButtonToastUX.ToastPadding
+        horizontalStackView.distribution = .fill
+        horizontalStackView.spacing = 8
         horizontalStackView.layer.cornerRadius = 10
         horizontalStackView.backgroundColor = SimpleToastUX.ToastDefaultColor
 
@@ -71,13 +71,17 @@ class ButtonToast: Toast {
             let icon = UIImageView(image: UIImage.templateImageNamed(imageName))
             icon.contentMode = .scaleAspectFit
             icon.tintColor = UIColor.theme.ecosia.toastImageTint
-            horizontalStackView.addArrangedSubview(UIView())
+            icon.setContentHuggingPriority(.required, for: .horizontal)
+            let space = UIView()
+            space.widthAnchor.constraint(equalToConstant: 8).isActive = true
+            horizontalStackView.addArrangedSubview(space)
             horizontalStackView.addArrangedSubview(icon)
         }
         
         let labelStackView = UIStackView()
         labelStackView.axis = .vertical
         labelStackView.alignment = .leading
+        labelStackView.setContentHuggingPriority(.defaultLow, for: .horizontal)
 
         let label = UILabel()
         label.textAlignment = textAlignment
@@ -85,8 +89,9 @@ class ButtonToast: Toast {
         label.font = UIFont.preferredFont(forTextStyle: .body)
         label.adjustsFontForContentSizeCategory = true
         label.text = labelText
-        label.lineBreakMode = .byWordWrapping
+        label.lineBreakMode = .byTruncatingTail
         label.numberOfLines = 1
+        label.setContentHuggingPriority(.defaultLow, for: .horizontal)
         labelStackView.addArrangedSubview(label)
 
         var descriptionLabel: UILabel?
@@ -104,9 +109,7 @@ class ButtonToast: Toast {
             labelStackView.addArrangedSubview(descriptionLabel!)
         }
 
-        horizontalStackView.addArrangedSubview(UIView())
         horizontalStackView.addArrangedSubview(labelStackView)
-        horizontalStackView.addArrangedSubview(UIView())
         setupPaddedButton(stackView: horizontalStackView, buttonText: buttonText)
         toastView.addSubview(horizontalStackView)
 
