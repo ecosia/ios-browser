@@ -396,10 +396,10 @@ final class MultiplyImpact: UIViewController, Themeable {
 \(String.localized(.downloadEcosiaOn))
 https://apps.apple.com/app/apple-store/id670881887?pt=2188920&ct=referrals&mt=8
 
-\(String.localized(.clickMyInvitation))
+\(String.localized(.afterInstalling))
 \(link)
 
-\(String.localized(.letsDoThis)) 😊
+\(String.localized(.letsGrowTogether)) 😊
 """
     }
     
