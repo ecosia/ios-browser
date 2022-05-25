@@ -207,8 +207,8 @@ final class MultiplyImpact: UIViewController, Themeable {
         scroll.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
         
         content.topAnchor.constraint(equalTo: scroll.contentLayoutGuide.topAnchor).isActive = true
-        content.leftAnchor.constraint(equalTo: scroll.contentLayoutGuide.leftAnchor).isActive = true
-        content.rightAnchor.constraint(equalTo: scroll.contentLayoutGuide.rightAnchor).isActive = true
+        content.leftAnchor.constraint(equalTo: scroll.frameLayoutGuide.leftAnchor).isActive = true
+        content.rightAnchor.constraint(equalTo: scroll.frameLayoutGuide.rightAnchor).isActive = true
         content.bottomAnchor.constraint(equalTo: scroll.contentLayoutGuide.bottomAnchor).isActive = true
 
         subtitle.topAnchor.constraint(equalTo: content.topAnchor, constant: 8).isActive = true
@@ -278,10 +278,6 @@ final class MultiplyImpact: UIViewController, Themeable {
         flowStack.topAnchor.constraint(equalTo: flowBackground.topAnchor, constant: 16).isActive = true
         flowStack.bottomAnchor.constraint(equalTo: flowBackground.bottomAnchor, constant: -16).isActive = true
 
-        let contentHeight = content.heightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.heightAnchor)
-        contentHeight.priority = .defaultLow
-        contentHeight.isActive = true
-        
         applyTheme()
     }
     
