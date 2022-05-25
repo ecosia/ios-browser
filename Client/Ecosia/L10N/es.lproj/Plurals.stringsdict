@@ -14,7 +14,7 @@
 			<string>d</string>
 			<key>one</key>
 			<string>%d árbol</string>
-			<key>two</key>
+			<key>many</key>
 			<string>%d árboles</string>
 			<key>other</key>
 			<string>%d árboles</string>
@@ -32,7 +32,7 @@
 			<string>d</string>
 			<key>one</key>
 			<string>%d búsqueda</string>
-			<key>two</key>
+			<key>many</key>
 			<string>%d búsquedas</string>
 			<key>other</key>
 			<string>%d búsquedas</string>
@@ -50,7 +50,7 @@
 			<string>d</string>
 			<key>one</key>
 			<string>%d referencia</string>
-			<key>two</key>
+			<key>many</key>
 			<string>%d referencias</string>
 			<key>other</key>
 			<string>%d referencias</string>
@@ -60,6 +60,19 @@
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
 		<string>%#@invites@</string>
+		<key>invites</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%d aceptó la invitación</string>
+			<key>many</key>
+			<string>%d invitaciones aceptadas</string>
+			<key>other</key>
+			<string>%d invitaciones aceptadas</string>
+		</dict>
 	</dict>
 	<key>Tree(s) planted</key>
 	<dict>
@@ -73,7 +86,7 @@
 			<string>d</string>
 			<key>one</key>
 			<string>Árbol plantado</string>
-			<key>two</key>
+			<key>many</key>
 			<string>Árboles plantados</string>
 			<key>other</key>
 			<string>Árboles plantados</string>
@@ -91,7 +104,7 @@
 			<string>d</string>
 			<key>one</key>
 			<string>%d invitación para amigos</string>
-			<key>two</key>
+			<key>many</key>
 			<string>%d invitaciones para amigos</string>
 			<key>other</key>
 			<string>%d invitaciones para amigos</string>

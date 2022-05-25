@@ -14,14 +14,20 @@ final class MultiplyImpact: UIViewController, Themeable {
     private weak var cardTitle: UILabel?
     private weak var cardTreeCount: UILabel?
     private weak var cardTreeIcon: UIImageView?
-    private weak var flowTitle: UILabel?
     private weak var inviteButton: UIButton!
-    private weak var learnMoreLabel: UILabel?
     private weak var yourInvites: UILabel?
-    private weak var dash: MultiplyImpactDash?
+
+    private weak var learnMoreButton: UIButton?
+
+    private weak var flowTitle: UILabel?
+    private weak var flowBackground: UIView?
+    private weak var flowStack: UIStackView?
+
     private weak var firstStep: MultiplyImpactStep?
     private weak var secondStep: MultiplyImpactStep?
     private weak var thirdStep: MultiplyImpactStep?
+    private weak var fourthStep: MultiplyImpactStep?
+
     private weak var delegate: EcosiaHomeDelegate?
     private weak var referrals: Referrals!
     
@@ -41,6 +47,7 @@ final class MultiplyImpact: UIViewController, Themeable {
 
         let scroll = UIScrollView()
         scroll.translatesAutoresizingMaskIntoConstraints = false
+        scroll.contentInsetAdjustmentBehavior = .scrollableAxes
         view.addSubview(scroll)
         
         let content = UIView()
@@ -140,52 +147,70 @@ final class MultiplyImpact: UIViewController, Themeable {
         card.addSubview(inviteFriends)
         self.inviteButton = inviteFriends
 
-        /*
-        let learnMore = UILabel()
-        learnMore.translatesAutoresizingMaskIntoConstraints = false
-        learnMore.text = .localized(.learnMore)
-        learnMore.font = .preferredFont(forTextStyle: .callout)
-        learnMore.adjustsFontForContentSizeCategory = true
-        card.addSubview(learnMore)
-        self.learnMoreLabel = learnMore
-        */
+        let flowTitleStack = UIStackView()
+        flowTitleStack.translatesAutoresizingMaskIntoConstraints = false
+        flowTitleStack.alignment = .fill
+        flowTitleStack.axis = .horizontal
+        content.addSubview(flowTitleStack)
 
         let flowTitle = UILabel()
         flowTitle.translatesAutoresizingMaskIntoConstraints = false
-        flowTitle.text = .localized(.invitingAFriend)
-        flowTitle.font = .systemFont(ofSize: UIFont.preferredFont(forTextStyle: .footnote).pointSize, weight: .semibold)
+        flowTitle.text = .localized(.howItWorks)
+        flowTitle.font = .preferredFont(forTextStyle: .headline).bold()
         flowTitle.adjustsFontForContentSizeCategory = true
-        content.addSubview(flowTitle)
+        flowTitle.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        flowTitleStack.addArrangedSubview(flowTitle)
         self.flowTitle = flowTitle
-        
-        let dash = MultiplyImpactDash()
-        content.addSubview(dash)
-        self.dash = dash
-        
-        let firstStep = MultiplyImpactStep(title: .localized(.shareYourInvitation), subtitle: .localized(.viaEmailText))
-        content.addSubview(firstStep)
+
+        let learnMoreButton = UIButton(type: .system)
+        learnMoreButton.addTarget(self, action: #selector(learnMore), for: .primaryActionTriggered)
+        learnMoreButton.translatesAutoresizingMaskIntoConstraints = false
+        learnMoreButton.setTitle(.localized(.learnMore), for: .normal)
+        learnMoreButton.titleLabel?.font = .preferredFont(forTextStyle: .callout)
+        learnMoreButton.titleLabel?.adjustsFontForContentSizeCategory = true
+        learnMoreButton.setContentHuggingPriority(.required, for: .horizontal)
+        flowTitleStack.addArrangedSubview(learnMoreButton)
+        self.learnMoreButton = learnMoreButton
+
+        let flowBackground = UIView()
+        flowBackground.translatesAutoresizingMaskIntoConstraints = false
+        flowBackground.layer.cornerRadius = 10
+        content.addSubview(flowBackground)
+        self.flowBackground = flowBackground
+
+        let flowStack = UIStackView()
+        flowStack.translatesAutoresizingMaskIntoConstraints = false
+        flowStack.axis = .vertical
+        flowStack.alignment = .leading
+        flowStack.spacing = 12
+        flowBackground.addSubview(flowStack)
+
+        let firstStep = MultiplyImpactStep(title: .localized(.inviteYourFriends), subtitle: .localized(.sendAnInvite), image: "paperplane")
+        flowStack.addArrangedSubview(firstStep)
         self.firstStep = firstStep
         
-        let secondStep = MultiplyImpactStep(title: .localized(.yourFriendOpens), subtitle: .localized(.afterInstallingTheApp))
-        content.addSubview(secondStep)
+        let secondStep = MultiplyImpactStep(title: .localized(.theyDownloadTheApp), subtitle: .localized(.viaTheAppStore), image: "libraryDownloads")
+        flowStack.addArrangedSubview(secondStep)
         self.secondStep = secondStep
         
-        let thirdStep = MultiplyImpactStep(title: .localized(.eachOfYouContribute), subtitle: .localized(.forEverySuccessful))
-        content.addSubview(thirdStep)
+        let thirdStep = MultiplyImpactStep(title: .localized(.theyOpenYourInviteLink), subtitle: .localized(.yourFriendClicks), image: "menu-Copy-Link")
+        flowStack.addArrangedSubview(thirdStep)
         self.thirdStep = thirdStep
+
+        let fourthStep = MultiplyImpactStep(title: .localized(.eachOfYouHelpsPlant), subtitle: .localized(.whenAFriendUses), image: "myImpact")
+        flowStack.addArrangedSubview(fourthStep)
+        self.fourthStep = fourthStep
         
         scroll.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
         scroll.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor).isActive = true
         scroll.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor).isActive = true
-        scroll.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
+        scroll.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
         
-        content.topAnchor.constraint(equalTo: scroll.topAnchor).isActive = true
-        content.leftAnchor.constraint(equalTo: scroll.leftAnchor).isActive = true
-        content.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor).isActive = true
-        content.rightAnchor.constraint(equalTo: scroll.rightAnchor).isActive = true
-        content.bottomAnchor.constraint(greaterThanOrEqualTo: scroll.bottomAnchor).isActive = true
-        content.bottomAnchor.constraint(equalTo: thirdStep.bottomAnchor, constant: 16).isActive = true
-        
+        content.topAnchor.constraint(equalTo: scroll.contentLayoutGuide.topAnchor).isActive = true
+        content.leftAnchor.constraint(equalTo: scroll.contentLayoutGuide.leftAnchor).isActive = true
+        content.rightAnchor.constraint(equalTo: scroll.contentLayoutGuide.rightAnchor).isActive = true
+        content.bottomAnchor.constraint(equalTo: scroll.contentLayoutGuide.bottomAnchor).isActive = true
+
         subtitle.topAnchor.constraint(equalTo: content.topAnchor, constant: 8).isActive = true
         subtitle.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 16).isActive = true
         subtitle.rightAnchor.constraint(lessThanOrEqualTo: content.rightAnchor, constant: -16).isActive = true
@@ -239,26 +264,20 @@ final class MultiplyImpact: UIViewController, Themeable {
         inviteFriends.topAnchor.constraint(equalTo: cardIcon.bottomAnchor, constant: 20).isActive = true
         inviteFriends.bottomAnchor.constraint(equalTo: card.bottomAnchor, constant: -16).isActive = true
 
-        flowTitle.topAnchor.constraint(equalTo: card.bottomAnchor, constant: 23).isActive = true
-        flowTitle.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 16).isActive = true
-        
-        dash.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 16).isActive = true
-        dash.topAnchor.constraint(equalTo: firstStep.topAnchor, constant: 17).isActive = true
-        dash.bottomAnchor.constraint(equalTo: thirdStep.topAnchor, constant: 5).isActive = true
-        dash.widthAnchor.constraint(equalToConstant: 12).isActive = true
-        
-        firstStep.topAnchor.constraint(equalTo: flowTitle.bottomAnchor, constant: 12).isActive = true
-        firstStep.leftAnchor.constraint(equalTo: content.leftAnchor).isActive = true
-        firstStep.rightAnchor.constraint(equalTo: content.rightAnchor).isActive = true
-        
-        secondStep.topAnchor.constraint(equalTo: firstStep.bottomAnchor, constant: 20).isActive = true
-        secondStep.leftAnchor.constraint(equalTo: content.leftAnchor).isActive = true
-        secondStep.rightAnchor.constraint(equalTo: content.rightAnchor).isActive = true
-        
-        thirdStep.topAnchor.constraint(equalTo: secondStep.bottomAnchor, constant: 20).isActive = true
-        thirdStep.leftAnchor.constraint(equalTo: content.leftAnchor).isActive = true
-        thirdStep.rightAnchor.constraint(equalTo: content.rightAnchor).isActive = true
-        
+        flowTitleStack.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 16).isActive = true
+        flowTitleStack.rightAnchor.constraint(equalTo: content.rightAnchor, constant: -16).isActive = true
+        flowTitleStack.topAnchor.constraint(equalTo: card.bottomAnchor, constant: 36).isActive = true
+
+        flowBackground.topAnchor.constraint(equalTo: flowTitleStack.bottomAnchor,constant: 16).isActive = true
+        flowBackground.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 16).isActive = true
+        flowBackground.rightAnchor.constraint(equalTo: content.rightAnchor, constant: -16).isActive = true
+        flowBackground.bottomAnchor.constraint(equalTo: content.bottomAnchor, constant: -20).isActive = true
+
+        flowStack.leftAnchor.constraint(equalTo: flowBackground.leftAnchor, constant: 16).isActive = true
+        flowStack.rightAnchor.constraint(equalTo: flowBackground.rightAnchor, constant: -16).isActive = true
+        flowStack.topAnchor.constraint(equalTo: flowBackground.topAnchor, constant: 16).isActive = true
+        flowStack.bottomAnchor.constraint(equalTo: flowBackground.bottomAnchor, constant: -16).isActive = true
+
         let contentHeight = content.heightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.heightAnchor)
         contentHeight.priority = .defaultLow
         contentHeight.isActive = true
@@ -279,7 +298,7 @@ final class MultiplyImpact: UIViewController, Themeable {
     func applyTheme() {
         view.backgroundColor = .theme.ecosia.modalBackground
         inviteButton.backgroundColor = .theme.ecosia.primaryBrand
-        learnMoreLabel?.textColor = .theme.ecosia.primaryBrand
+        learnMoreButton?.setTitleColor(.theme.ecosia.primaryBrand, for: .normal)
         yourInvites?.textColor = .theme.ecosia.primaryText
 
         waves?.tintColor = .theme.ecosia.modalBackground
@@ -291,21 +310,27 @@ final class MultiplyImpact: UIViewController, Themeable {
         cardTitle?.textColor = .theme.ecosia.primaryText
         cardTreeCount?.textColor = .theme.ecosia.primaryText
         cardTreeIcon?.tintColor = .theme.ecosia.primaryBrand
-        flowTitle?.textColor = .theme.ecosia.secondaryText
-        
-        dash?.applyTheme()
+        flowTitle?.textColor = .theme.ecosia.primaryText
+
+        flowBackground?.backgroundColor = .theme.ecosia.impactMultiplyCardBackground
+
         firstStep?.applyTheme()
         secondStep?.applyTheme()
         thirdStep?.applyTheme()
+        fourthStep?.applyTheme()
 
         updateBarAppearance()
     }
 
     private func updateBarAppearance() {
-        guard let appearance = navigationController?.navigationBar.standardAppearance else { return }
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
         appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.Dark.Text.primary]
         appearance.titleTextAttributes = [.foregroundColor: UIColor.Dark.Text.primary]
+        appearance.backgroundColor = .theme.ecosia.modalHeader
+        appearance.shadowColor = nil
         navigationItem.standardAppearance = appearance
+        navigationItem.scrollEdgeAppearance = appearance
         navigationController?.navigationBar.backgroundColor = .theme.ecosia.modalHeader
         navigationController?.navigationBar.tintColor = UIColor.Dark.Text.primary
     }
