@@ -68,10 +68,6 @@ final class MoreButtonCell: UICollectionViewCell, AutoSizingCell {
         super.prepareForReuse()
         applyTheme()
     }
-
-    func setWidth(_ width: CGFloat, insets: UIEdgeInsets) {
-        widthConstraint.constant = width
-    }
 }
 
 final class HeaderCell: UICollectionViewCell, AutoSizingCell ,Themeable {
