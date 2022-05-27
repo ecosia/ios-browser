@@ -90,7 +90,11 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        collectionView.align(header: collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionHeader, at: .init(item: 0, section: section)) as? NewsSubHeader)
+        
+        collectionView.align(
+            header: collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionHeader,
+            at: .init(item: 0, section: section)) as? NewsSubHeader)
+        
         return .init(width: 0, height: UIFontDescriptor.preferredFontDescriptor(withTextStyle: .body).pointSize * 2 + 30)
     }
     
@@ -143,7 +147,6 @@ private extension UICollectionView {
         let margin = (bounds.width - ecosiaHomeMaxWidth) / 2
         header?.leftMargin.constant = margin
         header?.rightMargin.constant = -margin
-        print(margin)
     }
 }
 
