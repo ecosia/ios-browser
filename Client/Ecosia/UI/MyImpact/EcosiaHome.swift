@@ -194,19 +194,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let section = Section(rawValue: indexPath.section)!
-        let width = collectionView.maxWidth
-
-        switch section {
-        case .impact, .legacyImpact:
-            return .init(width: width, height: 290)
-        case .multiply:
-            return .init(width: width, height: 100)
-        case .news:
-            return .init(width: width, height: 130)
-        case .explore:
-            return .init(width: width, height: 64)
-        }
+        .init(width: collectionView.maxWidth, height: Section(rawValue: indexPath.section)!.height)
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
@@ -225,10 +213,28 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         let horizontal = (collectionView.bounds.width - collectionView.maxWidth) / 2
         return .init(top: vertical, left: horizontal, bottom: vertical, right: horizontal)
     }
+    
+    func applyTheme() {
+        collectionView.reloadData()
+        view.backgroundColor = UIColor.theme.ecosia.modalBackground
+        collectionView.backgroundColor = .clear
+        background.backgroundColor = .theme.ecosia.modalHeader
+        updateBarAppearance()
+    }
 
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         background.inset = max(background.inset, scrollView.adjustedContentInset.top)
         background.offset = scrollView.contentOffset.y
+    }
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        updateLayout()
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        updateLayout()
+        applyTheme()
     }
     
     private func updateBarAppearance() {
@@ -246,36 +252,18 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         collectionView.backgroundView = background
         navigationController?.navigationBar.setNeedsDisplay()
     }
-
+    
     @objc private func allNews() {
         let news = NewsController(items: items, delegate: delegate)
         navigationController?.pushViewController(news, animated: true)
         Analytics.shared.navigation(.open, label: .news)
     }
 
-    func applyTheme() {
-        collectionView.reloadData()
-        view.backgroundColor = UIColor.theme.ecosia.modalBackground
-        collectionView.backgroundColor = .clear
-        background.backgroundColor = .theme.ecosia.modalHeader
-        updateBarAppearance()
-    }
-
-    @objc func updateLayout() {
+    @objc private func updateLayout() {
         collectionView.collectionViewLayout.invalidateLayout()
     }
 
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        updateLayout()
-    }
-
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-        updateLayout()
-        applyTheme()
-    }
-
-    @objc func inviteFriends() {
+    @objc private func inviteFriends() {
         navigationController?.pushViewController(MultiplyImpact(delegate: delegate, referrals: referrals), animated: true)
     }
 

@@ -81,7 +81,9 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
     func collectionView(_: UICollectionView, cellForItemAt: IndexPath) -> UICollectionViewCell {
         let cell = collection.dequeueReusableCell(withReuseIdentifier: identifier, for: cellForItemAt) as! NewsCell
         cell.configure(items[cellForItemAt.row], images: images, positions: .derive(row: cellForItemAt.item, items: items.count))
-        cell.setWidth(collection.bounds.width, insets: collection.safeAreaInsets)
+        
+        //cell.setWidth(collection.bounds.width, insets: collection.safeAreaInsets)
+        
         return cell
     }
     

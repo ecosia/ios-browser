@@ -25,7 +25,7 @@ final class MoreButtonCell: UICollectionViewCell {
         button.layer.borderWidth = 1
         contentView.addSubview(button)
         
-        button.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16).isActive = true
+        button.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
         button.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 20).isActive = true
         button.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 8).isActive = true
         button.heightAnchor.constraint(greaterThanOrEqualToConstant: 32).isActive = true

@@ -2,6 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+import CoreGraphics
 import Core
 
 extension EcosiaHome {
@@ -28,6 +29,19 @@ extension EcosiaHome {
                 return .localized(.aboutEcosia)
             default:
                 return nil
+            }
+        }
+        
+        var height: CGFloat {
+            switch self {
+            case .impact, .legacyImpact:
+                return 290
+            case .multiply:
+                return 100
+            case .news:
+                return 130
+            case .explore:
+                return 64
             }
         }
         
