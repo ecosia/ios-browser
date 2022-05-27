@@ -207,8 +207,8 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         }
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        let vertical = section == Section.explore.rawValue ? 26 : CGFloat()
+    func collectionView(_ collectionView: UICollectionView, layout: UICollectionViewLayout, insetForSectionAt: Int) -> UIEdgeInsets {
+        let vertical = insetForSectionAt == Section.explore.rawValue ? 26 : CGFloat()
         let horizontal = (collectionView.bounds.width - collectionView.ecosiaHomeMaxWidth) / 2
         return .init(top: vertical, left: horizontal, bottom: vertical, right: horizontal)
     }
