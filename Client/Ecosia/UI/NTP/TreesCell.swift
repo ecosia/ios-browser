@@ -5,8 +5,8 @@
 import UIKit
 import Core
 
-final class TreesCell: UICollectionViewCell, AutoSizingCell, Themeable {
-    private (set) var model: TreesCellModel?
+final class TreesCell: UICollectionViewCell, Themeable {
+    private(set) var model: TreesCellModel?
     lazy var formatter: NumberFormatter = {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal

@@ -4,8 +4,7 @@
 
 import UIKit
 
-final class MultiplyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
-    private(set) weak var widthConstraint: NSLayoutConstraint!
+final class MultiplyImpactCell: UICollectionViewCell, Themeable {
     private weak var title: UILabel!
     private weak var subtitle: UILabel!
     private weak var outline: UIView!
@@ -69,10 +68,6 @@ final class MultiplyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable 
         
         icon.rightAnchor.constraint(equalTo: outline.rightAnchor, constant: -16).isActive = true
         icon.centerYAnchor.constraint(equalTo: outline.centerYAnchor).isActive = true
-        
-        widthConstraint = outline.widthAnchor.constraint(equalToConstant: 100)
-        widthConstraint.priority = .init(rawValue: 999)
-        widthConstraint.isActive = true
         
         applyTheme()
     }
