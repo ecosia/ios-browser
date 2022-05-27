@@ -548,6 +548,7 @@
 		CE42164027DA4BDA0069E311 /* SemanticColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE42163E27DA493D0069E311 /* SemanticColor.swift */; };
 		CE7728DC26288B300084C771 /* LoadingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7728DB26288B300084C771 /* LoadingScreen.swift */; };
 		CE7F11941F3CEEC800ABFC0B /* RemoteDevices.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7F115E1F3CCEF900ABFC0B /* RemoteDevices.swift */; };
+		CE8287442841251C00C42A8A /* UICollectionView+maxWidth.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE8287432841251C00C42A8A /* UICollectionView+maxWidth.swift */; };
 		CE9AEE0726EFA9CA00181C96 /* MultiplyImpactStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9AEE0626EFA9CA00181C96 /* MultiplyImpactStep.swift */; };
 		CE9AEE0926EFB19100181C96 /* MultiplyImpactDash.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9AEE0826EFB19100181C96 /* MultiplyImpactDash.swift */; };
 		CEC685B326B82DA600FA4CA5 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7B2142FC1E5E055000CDD3FC /* InfoPlist.strings */; };
@@ -3273,6 +3274,7 @@
 		CE664A9AB0ACFC6960CD6E81 /* pt-PT */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-PT"; path = "pt-PT.lproj/HistoryPanel.strings"; sourceTree = "<group>"; };
 		CE7728DB26288B300084C771 /* LoadingScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingScreen.swift; sourceTree = "<group>"; };
 		CE7F115E1F3CCEF900ABFC0B /* RemoteDevices.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteDevices.swift; sourceTree = "<group>"; };
+		CE8287432841251C00C42A8A /* UICollectionView+maxWidth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UICollectionView+maxWidth.swift"; sourceTree = "<group>"; };
 		CE9AEE0626EFA9CA00181C96 /* MultiplyImpactStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiplyImpactStep.swift; sourceTree = "<group>"; };
 		CE9AEE0826EFB19100181C96 /* MultiplyImpactDash.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiplyImpactDash.swift; sourceTree = "<group>"; };
 		CECCC7212632C1D600D971E4 /* EcosiaBookmarkTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EcosiaBookmarkTests.swift; sourceTree = "<group>"; };
@@ -5410,6 +5412,7 @@
 		CA05558126CD4B4B00126D0F /* MyImpact */ = {
 			isa = PBXGroup;
 			children = (
+				CE8287432841251C00C42A8A /* UICollectionView+maxWidth.swift */,
 				CAFA921F257919040086E6AE /* EcosiaHome.swift */,
 				CEFBEC4D2833EC050074387A /* EcosiaHome.Section.swift */,
 				CAFA9234257919250086E6AE /* EcosiaNavigation.swift */,
@@ -8264,6 +8267,7 @@
 				23F2C36A244E463C00FA4496 /* TabTrayV2ViewModel.swift in Sources */,
 				E69E06BA1C76173D00D0F926 /* RequirePasscodeIntervalViewController.swift in Sources */,
 				D0E89A2920910917001CE5C7 /* DownloadsPanel.swift in Sources */,
+				CE8287442841251C00C42A8A /* UICollectionView+maxWidth.swift in Sources */,
 				DA3A4FE9254A781A00C4A9C9 /* TabTableViewHeader.swift in Sources */,
 				D3BA7E0E1B0E934F00153782 /* ContextMenuHelper.swift in Sources */,
 				CA31D8E826E8CE930004FF64 /* EcosiaHomeLayout.swift in Sources */,

@@ -5,7 +5,6 @@
 import UIKit
 import Core
 
-
 protocol EcosiaHomeDelegate: AnyObject {
     func ecosiaHome(didSelectURL url: URL)
 }
@@ -194,7 +193,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        .init(width: collectionView.maxWidth, height: Section(rawValue: indexPath.section)!.height)
+        .init(width: collectionView.ecosiaHomeMaxWidth, height: Section(rawValue: indexPath.section)!.height)
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
@@ -210,7 +209,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         let vertical = section == Section.explore.rawValue ? 26 : CGFloat()
-        let horizontal = (collectionView.bounds.width - collectionView.maxWidth) / 2
+        let horizontal = (collectionView.bounds.width - collectionView.ecosiaHomeMaxWidth) / 2
         return .init(top: vertical, left: horizontal, bottom: vertical, right: horizontal)
     }
     
@@ -271,20 +270,5 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         delegate?.ecosiaHome(didSelectURL: Environment.current.aboutCounter)
         Analytics.shared.navigation(.open, label: .counter)
         dismiss(animated: true, completion: nil)
-    }
-}
-
-private extension UICollectionView {
-    var maxWidth: CGFloat {
-        let insets = max(max(safeAreaInsets.left, safeAreaInsets.right), 16) * 2
-        let maxWidth = bounds.width - insets
-        
-        if UIDevice.current.userInterfaceIdiom == .pad {
-            return min(maxWidth, 544)
-        } else if traitCollection.verticalSizeClass == .compact {
-            return min(maxWidth, 375)
-        } else {
-            return maxWidth
-        }
     }
 }
