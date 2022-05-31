@@ -112,7 +112,6 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         switch section {
         case .impact:
             let infoCell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: section.cell), for: indexPath) as! MyImpactCell
-            infoCell.setWidth(collectionView.bounds.width, insets: collectionView.safeAreaInsets)
             infoCell.howItWorksButton.removeTarget(self, action: nil, for: .touchUpInside)
             infoCell.howItWorksButton.addTarget(self, action: #selector(learnMore), for: .touchUpInside)
             infoCell.update(personalCounter: personalCounter.state ?? 0, progress: User.shared.progress)
@@ -121,49 +120,41 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         case .legacyImpact:
             let treesCell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: section.cell), for: indexPath) as! TreesCell
             treesCell.display(treesCellModel)
-            treesCell.setWidth(collectionView.bounds.width, insets: collectionView.safeAreaInsets)
             return treesCell
 
         case .multiply:
             if indexPath.row == 0 {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: .init(describing: HeaderCell.self), for: indexPath) as! HeaderCell
-                cell.titleLabel.text = section.sectionTitle
-                cell.setWidth(collectionView.bounds.width, insets: collectionView.safeAreaInsets)
+                cell.title.text = section.sectionTitle
                 return cell
             } else {
                 let multiplyCell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: section.cell), for: indexPath) as! MultiplyImpactCell
-                multiplyCell.setWidth(collectionView.bounds.width, insets: collectionView.safeAreaInsets)
                 return multiplyCell
             }
         case .explore:
             if indexPath.row == 0 {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: .init(describing: HeaderCell.self), for: indexPath) as! HeaderCell
-                cell.titleLabel.text = section.sectionTitle
-                cell.setWidth(collectionView.bounds.width, insets: collectionView.safeAreaInsets)
+                cell.title.text = section.sectionTitle
                 return cell
             } else {
                 let exploreCell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: section.cell), for: indexPath) as! EcosiaExploreCell
-                exploreCell.setWidth(collectionView.bounds.width, insets: collectionView.safeAreaInsets)
                 Section.Explore(rawValue: indexPath.row - 1).map { exploreCell.display($0) }
                 return exploreCell
             }
         case .news:
             if indexPath.row == 0 {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: .init(describing: HeaderCell.self), for: indexPath) as! HeaderCell
-                cell.titleLabel.text = section.sectionTitle
-                cell.setWidth(collectionView.bounds.width, insets: collectionView.safeAreaInsets)
+                cell.title.text = section.sectionTitle
                 return cell
             } else if indexPath.row == self.collectionView(collectionView, numberOfItemsInSection: Section.news.rawValue) - 1 {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: .init(describing: MoreButtonCell.self), for: indexPath) as! MoreButtonCell
-                cell.moreButton.setTitle(.localized(.seeMoreNews), for: .normal)
-                cell.moreButton.addTarget(self, action: #selector(allNews), for: .primaryActionTriggered)
-                cell.setWidth(collectionView.bounds.width, insets: collectionView.safeAreaInsets)
+                cell.button.setTitle(.localized(.seeMoreNews), for: .normal)
+                cell.button.addTarget(self, action: #selector(allNews), for: .primaryActionTriggered)
                 return cell
             } else {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: section.cell), for: indexPath) as! NewsCell
                 let itemCount = self.collectionView(collectionView, numberOfItemsInSection: Section.news.rawValue) - 2
                 cell.configure(items[indexPath.row - 1], images: images, positions: .derive(row: indexPath.row - 1, items: itemCount))
-                cell.setWidth(collectionView.bounds.width, insets: collectionView.safeAreaInsets)
                 return cell
             }
         }
@@ -202,19 +193,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let section = Section(rawValue: indexPath.section)!
-        let margin = max(16, collectionView.safeAreaInsets.left)
-
-        switch section {
-        case .impact, .legacyImpact:
-            return .init(width: view.bounds.width - 2 * margin, height: 290)
-        case .multiply:
-            return .init(width: view.bounds.width - 2 * margin, height: 100)
-        case .news:
-            return .init(width: view.bounds.width, height: 130)
-        case .explore:
-            return .init(width: view.bounds.width - 2 * margin, height: 64)
-        }
+        .init(width: collectionView.ecosiaHomeMaxWidth, height: Section(rawValue: indexPath.section)!.height)
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
@@ -228,17 +207,33 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         }
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        guard let section = Section(rawValue: section), section == .explore else { return .zero }
-        return .init(top: 26,
-                     left: max(collectionView.safeAreaInsets.left, 16),
-                     bottom: 26,
-                     right: max(collectionView.safeAreaInsets.right, 16))
+    func collectionView(_ collectionView: UICollectionView, layout: UICollectionViewLayout, insetForSectionAt: Int) -> UIEdgeInsets {
+        let vertical = insetForSectionAt == Section.explore.rawValue ? 26 : CGFloat()
+        let horizontal = (collectionView.bounds.width - collectionView.ecosiaHomeMaxWidth) / 2
+        return .init(top: vertical, left: horizontal, bottom: vertical, right: horizontal)
+    }
+    
+    func applyTheme() {
+        collectionView.reloadData()
+        view.backgroundColor = UIColor.theme.ecosia.modalBackground
+        collectionView.backgroundColor = .clear
+        background.backgroundColor = .theme.ecosia.modalHeader
+        updateBarAppearance()
     }
 
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         background.inset = max(background.inset, scrollView.adjustedContentInset.top)
         background.offset = scrollView.contentOffset.y
+    }
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        updateLayout()
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        updateLayout()
+        applyTheme()
     }
     
     private func updateBarAppearance() {
@@ -256,36 +251,18 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         collectionView.backgroundView = background
         navigationController?.navigationBar.setNeedsDisplay()
     }
-
+    
     @objc private func allNews() {
         let news = NewsController(items: items, delegate: delegate)
         navigationController?.pushViewController(news, animated: true)
         Analytics.shared.navigation(.open, label: .news)
     }
 
-    func applyTheme() {
-        collectionView.reloadData()
-        view.backgroundColor = UIColor.theme.ecosia.modalBackground
-        collectionView.backgroundColor = .clear
-        background.backgroundColor = .theme.ecosia.modalHeader
-        updateBarAppearance()
-    }
-
-    @objc func updateLayout() {
+    @objc private func updateLayout() {
         collectionView.collectionViewLayout.invalidateLayout()
     }
 
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        updateLayout()
-    }
-
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-        updateLayout()
-        applyTheme()
-    }
-
-    @objc func inviteFriends() {
+    @objc private func inviteFriends() {
         navigationController?.pushViewController(MultiplyImpact(delegate: delegate, referrals: referrals), animated: true)
     }
 

@@ -543,12 +543,12 @@
 		CE0AB93425F7C2B400333656 /* SnowplowTracker in Frameworks */ = {isa = PBXBuildFile; productRef = CE0AB93325F7C2B400333656 /* SnowplowTracker */; };
 		CE0AB94A25F7C42600333656 /* Analytics.Values.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE0AB94925F7C42600333656 /* Analytics.Values.swift */; };
 		CE0AB97225F7C43100333656 /* Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE0AB97125F7C43100333656 /* Analytics.swift */; };
-		CE112DFA28339D6800AF2395 /* AutoSizingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE112DF928339D6800AF2395 /* AutoSizingCell.swift */; };
 		CE1CFD6628216BDA00CC8830 /* EcosiaHome.Background.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE1CFD6528216BDA00CC8830 /* EcosiaHome.Background.swift */; };
 		CE42163F27DA493D0069E311 /* SemanticColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE42163E27DA493D0069E311 /* SemanticColor.swift */; };
 		CE42164027DA4BDA0069E311 /* SemanticColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE42163E27DA493D0069E311 /* SemanticColor.swift */; };
 		CE7728DC26288B300084C771 /* LoadingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7728DB26288B300084C771 /* LoadingScreen.swift */; };
 		CE7F11941F3CEEC800ABFC0B /* RemoteDevices.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7F115E1F3CCEF900ABFC0B /* RemoteDevices.swift */; };
+		CE8287442841251C00C42A8A /* UICollectionView+maxWidth.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE8287432841251C00C42A8A /* UICollectionView+maxWidth.swift */; };
 		CE9AEE0726EFA9CA00181C96 /* MultiplyImpactStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9AEE0626EFA9CA00181C96 /* MultiplyImpactStep.swift */; };
 		CE9AEE0926EFB19100181C96 /* MultiplyImpactDash.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9AEE0826EFB19100181C96 /* MultiplyImpactDash.swift */; };
 		CEC685B326B82DA600FA4CA5 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7B2142FC1E5E055000CDD3FC /* InfoPlist.strings */; };
@@ -3269,12 +3269,12 @@
 		CE0AB94925F7C42600333656 /* Analytics.Values.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analytics.Values.swift; sourceTree = "<group>"; };
 		CE0AB97125F7C43100333656 /* Analytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analytics.swift; sourceTree = "<group>"; };
 		CE0D8D0F25B5DEE200B76E47 /* MozillaAppServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MozillaAppServices.framework; path = Carthage/Build/iOS/MozillaAppServices.framework; sourceTree = "<group>"; };
-		CE112DF928339D6800AF2395 /* AutoSizingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoSizingCell.swift; sourceTree = "<group>"; };
 		CE1CFD6528216BDA00CC8830 /* EcosiaHome.Background.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaHome.Background.swift; sourceTree = "<group>"; };
 		CE42163E27DA493D0069E311 /* SemanticColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SemanticColor.swift; sourceTree = "<group>"; };
 		CE664A9AB0ACFC6960CD6E81 /* pt-PT */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-PT"; path = "pt-PT.lproj/HistoryPanel.strings"; sourceTree = "<group>"; };
 		CE7728DB26288B300084C771 /* LoadingScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingScreen.swift; sourceTree = "<group>"; };
 		CE7F115E1F3CCEF900ABFC0B /* RemoteDevices.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteDevices.swift; sourceTree = "<group>"; };
+		CE8287432841251C00C42A8A /* UICollectionView+maxWidth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UICollectionView+maxWidth.swift"; sourceTree = "<group>"; };
 		CE9AEE0626EFA9CA00181C96 /* MultiplyImpactStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiplyImpactStep.swift; sourceTree = "<group>"; };
 		CE9AEE0826EFB19100181C96 /* MultiplyImpactDash.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiplyImpactDash.swift; sourceTree = "<group>"; };
 		CECCC7212632C1D600D971E4 /* EcosiaBookmarkTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EcosiaBookmarkTests.swift; sourceTree = "<group>"; };
@@ -5412,6 +5412,7 @@
 		CA05558126CD4B4B00126D0F /* MyImpact */ = {
 			isa = PBXGroup;
 			children = (
+				CE8287432841251C00C42A8A /* UICollectionView+maxWidth.swift */,
 				CAFA921F257919040086E6AE /* EcosiaHome.swift */,
 				CEFBEC4D2833EC050074387A /* EcosiaHome.Section.swift */,
 				CAFA9234257919250086E6AE /* EcosiaNavigation.swift */,
@@ -5429,7 +5430,6 @@
 				CAAED1EE25810C7A0048199C /* NewsCell.swift */,
 				CAAED1ED25810C7A0048199C /* NewsController.swift */,
 				CE1CFD6528216BDA00CC8830 /* EcosiaHome.Background.swift */,
-				CE112DF928339D6800AF2395 /* AutoSizingCell.swift */,
 			);
 			path = MyImpact;
 			sourceTree = "<group>";
@@ -8222,7 +8222,6 @@
 				43C5A09B2555DF8100BA37AD /* BottomSheetViewController.swift in Sources */,
 				0B62EFD21AD63CD100ACB9CD /* Clearables.swift in Sources */,
 				CEF5349828295C3900726474 /* MyImpactCell.Progress.swift in Sources */,
-				CE112DFA28339D6800AF2395 /* AutoSizingCell.swift in Sources */,
 				431C0CA925C890E500395CE4 /* DefaultBrowserOnboardingViewModel.swift in Sources */,
 				7482205C1DBAB56300EEEA72 /* MailProviders.swift in Sources */,
 				CAAED1EF25810C7B0048199C /* NewsController.swift in Sources */,
@@ -8268,6 +8267,7 @@
 				23F2C36A244E463C00FA4496 /* TabTrayV2ViewModel.swift in Sources */,
 				E69E06BA1C76173D00D0F926 /* RequirePasscodeIntervalViewController.swift in Sources */,
 				D0E89A2920910917001CE5C7 /* DownloadsPanel.swift in Sources */,
+				CE8287442841251C00C42A8A /* UICollectionView+maxWidth.swift in Sources */,
 				DA3A4FE9254A781A00C4A9C9 /* TabTableViewHeader.swift in Sources */,
 				D3BA7E0E1B0E934F00153782 /* ContextMenuHelper.swift in Sources */,
 				CA31D8E826E8CE930004FF64 /* EcosiaHomeLayout.swift in Sources */,

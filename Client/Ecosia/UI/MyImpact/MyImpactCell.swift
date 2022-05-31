@@ -5,8 +5,7 @@
 import UIKit
 import Core
 
-final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
-    private(set) weak var widthConstraint: NSLayoutConstraint!
+final class MyImpactCell: UICollectionViewCell, Themeable {
     private(set) weak var howItWorksButton: UIControl!
     private weak var totalProgress: Progress!
     private weak var currentProgress: Progress!
@@ -151,10 +150,6 @@ final class MyImpactCell: UICollectionViewCell, AutoSizingCell, Themeable {
         outline.rightAnchor.constraint(equalTo: contentView.rightAnchor).isActive = true
         outline.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12).isActive = true
         outline.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -4).isActive = true
-
-        widthConstraint = outline.widthAnchor.constraint(equalToConstant: 100)
-        widthConstraint.priority = .defaultHigh
-        widthConstraint.isActive = true
         
         totalProgress.topAnchor.constraint(equalTo: outline.topAnchor, constant: 25).isActive = true
         totalProgress.centerXAnchor.constraint(equalTo: outline.centerXAnchor).isActive = true

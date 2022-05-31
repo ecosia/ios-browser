@@ -5,19 +5,6 @@
 import UIKit
 
 final class EcosiaHomeLayout: UICollectionViewFlowLayout {
-    override func shouldInvalidateLayout(forBoundsChange newBounds: CGRect) -> Bool {
-        let widthChanged = newBounds.width != collectionView?.bounds.width
-
-        if widthChanged {
-            let cells = collectionView?.visibleCells.compactMap({ $0 as? AutoSizingCell })
-            cells?.forEach({ cell in
-                cell.setWidth(newBounds.width, insets: collectionView?.safeAreaInsets ?? .zero)
-                cell.setNeedsLayout()
-            })
-        }
-        return widthChanged
-    }
-
     override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
         let attributes = super.layoutAttributesForElements(in: rect)?.map { $0.copy() } as? [UICollectionViewLayoutAttributes]
         attributes?.reduce([CGFloat: (CGFloat, [UICollectionViewLayoutAttributes])]()) {

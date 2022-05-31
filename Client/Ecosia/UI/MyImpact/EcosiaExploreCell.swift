@@ -4,8 +4,7 @@
 
 import UIKit
 
-final class EcosiaExploreCell: UICollectionViewCell, Themeable, AutoSizingCell {
-    private(set) weak var widthConstraint: NSLayoutConstraint!
+final class EcosiaExploreCell: UICollectionViewCell, Themeable {
     private weak var title: UILabel!
     private weak var image: UIImageView!
     private weak var indicator: UIImageView!
@@ -86,10 +85,6 @@ final class EcosiaExploreCell: UICollectionViewCell, Themeable, AutoSizingCell {
         divider.rightAnchor.constraint(equalTo: outline.rightAnchor, constant: -16).isActive = true
         divider.bottomAnchor.constraint(equalTo: outline.bottomAnchor).isActive = true
         divider.heightAnchor.constraint(equalToConstant: 1).isActive = true
-        
-        widthConstraint = outline.widthAnchor.constraint(equalToConstant: 100)
-        widthConstraint.priority = .init(999)
-        widthConstraint.isActive = true
 
         applyTheme()
     }
