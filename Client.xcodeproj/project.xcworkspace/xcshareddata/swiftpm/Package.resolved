@@ -14,8 +14,8 @@
         "package": "Core",
         "repositoryURL": "https://github.com/ecosia/ios-core.git",
         "state": {
-          "branch": "flag-for-counter-intro",
-          "revision": "e92de7463a51eee560da9626af42d4635e0dd4e6",
+          "branch": "main",
+          "revision": "650f0d6bbc618dcc7c2e0b40db64a997092adcf4",
           "version": null
         }
       },
