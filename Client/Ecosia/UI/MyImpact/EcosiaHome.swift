@@ -13,6 +13,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     var delegate: EcosiaHomeDelegate?
     private weak var referrals: Referrals!
     private var items = [NewsModel]()
+    private var disclosed: IndexPath?
     private let images = Images(.init(configuration: .ephemeral))
     private let news = News()
     private let personalCounter = PersonalCounter()
@@ -181,19 +182,40 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         case .explore:
             // Index is off by one as first cell is the header
             guard indexPath.row > 0 else { return }
-            Section.Explore(rawValue: indexPath.row - 1)
-                .map {
-                    delegate?.ecosiaHome(didSelectURL: $0.url)
-                    Analytics.shared.navigation(.open, label: $0.label)
-                }
-            dismiss(animated: true, completion: nil)
+            
+            guard disclosed != indexPath else {
+                disclosed = nil
+                collectionView.collectionViewLayout.invalidateLayout()
+                return
+            }
+            
+            disclosed = indexPath
+            collectionView.collectionViewLayout.invalidateLayout()
+            collectionView.scrollToItem(at: indexPath, at: .top, animated: true)
+            
+//            Section.Explore(rawValue: indexPath.row - 1)
+//                .map {
+//                    delegate?.ecosiaHome(didSelectURL: $0.url)
+//                    Analytics.shared.navigation(.open, label: $0.label)
+//                }
+//            dismiss(animated: true, completion: nil)
         case .multiply:
             navigationController?.pushViewController(MultiplyImpact(delegate: delegate, referrals: referrals), animated: true)
         }
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        .init(width: collectionView.ecosiaHomeMaxWidth, height: Section(rawValue: indexPath.section)!.height)
+        let section = Section(rawValue: indexPath.section)!
+        let height: CGFloat
+        
+        switch Section(rawValue: indexPath.section)! {
+        case .explore:
+            height = indexPath == disclosed ? 200 : section.height
+        default:
+            height = section.height
+        }
+        
+        return .init(width: collectionView.ecosiaHomeMaxWidth, height: height)
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
