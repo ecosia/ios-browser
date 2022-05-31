@@ -182,16 +182,18 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         case .explore:
             // Index is off by one as first cell is the header
             guard indexPath.row > 0 else { return }
-            
-            guard disclosed != indexPath else {
-                disclosed = nil
-                collectionView.collectionViewLayout.invalidateLayout()
-                return
+
+            collectionView.performBatchUpdates({
+                disclosed = disclosed == indexPath ? nil : indexPath
+                UIView.animate(withDuration: 0.3) {
+                    collectionView.collectionViewLayout.invalidateLayout()
+                }
+            }) {
+                collectionView.scrollToItem(at: indexPath, at: .top, animated: $0)
             }
             
-            disclosed = indexPath
-            collectionView.collectionViewLayout.invalidateLayout()
-            collectionView.scrollToItem(at: indexPath, at: .top, animated: true)
+//            collectionView.collectionViewLayout.invalidateLayout()
+//            collectionView.scrollToItem(at: indexPath, at: .top, animated: true)
             
 //            Section.Explore(rawValue: indexPath.row - 1)
 //                .map {
