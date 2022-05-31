@@ -14,7 +14,7 @@ final class MultiplyImpact: UIViewController, Themeable {
     private weak var cardTitle: UILabel?
     private weak var cardTreeCount: UILabel?
     private weak var cardTreeIcon: UIImageView?
-    private weak var inviteButton: UIButton!
+    private weak var inviteButton: EcosiaPrimaryButton!
     private weak var yourInvites: UILabel?
 
     private weak var learnMoreButton: UIButton?
@@ -87,6 +87,7 @@ final class MultiplyImpact: UIViewController, Themeable {
         yourInvites.font = .preferredFont(forTextStyle: .headline).bold()
         yourInvites.adjustsFontForContentSizeCategory = true
         content.addSubview(yourInvites)
+        self.yourInvites = yourInvites
 
         let card = UIControl()
         card.translatesAutoresizingMaskIntoConstraints = false
@@ -135,11 +136,9 @@ final class MultiplyImpact: UIViewController, Themeable {
         card.addSubview(cardTreeIcon)
         self.cardTreeIcon = cardTreeIcon
 
-        let inviteFriends = UIButton()
+        let inviteFriends = EcosiaPrimaryButton(type: .custom)
         inviteFriends.translatesAutoresizingMaskIntoConstraints = false
         inviteFriends.setTitle(.localized(.inviteFriends), for: [])
-        inviteFriends.setTitleColor(.white, for: .normal)
-        inviteFriends.setTitleColor(.white.withAlphaComponent(0.3), for: .highlighted)
         inviteFriends.titleLabel!.font = .preferredFont(forTextStyle: .callout)
         inviteFriends.titleLabel!.adjustsFontForContentSizeCategory = true
         inviteFriends.layer.cornerRadius = 22
@@ -294,6 +293,9 @@ final class MultiplyImpact: UIViewController, Themeable {
     func applyTheme() {
         view.backgroundColor = .theme.ecosia.modalBackground
         inviteButton.backgroundColor = .theme.ecosia.primaryBrand
+        inviteButton.setTitleColor(.theme.ecosia.primaryTextInverted, for: .normal)
+        inviteButton.setTitleColor(.theme.ecosia.primaryTextInverted, for: .highlighted)
+        inviteButton.setTitleColor(.theme.ecosia.primaryTextInverted, for: .selected)
         learnMoreButton?.setTitleColor(.theme.ecosia.primaryBrand, for: .normal)
         yourInvites?.textColor = .theme.ecosia.primaryText
 
