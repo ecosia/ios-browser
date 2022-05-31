@@ -31,7 +31,7 @@ class TabTrayViewController: UIViewController {
         return button
     }()
 
-    lazy var addNewTabButton = AddNewTabButton(style: .circle)
+    lazy var addNewTabButton = AddNewTabButton(config: .init(hideCircle: false, margin: 2))
     lazy var newTabButton: UIBarButtonItem = {
         NSLayoutConstraint(item: addNewTabButton, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 50).isActive = true
         NSLayoutConstraint(item: addNewTabButton, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 50).isActive = true

@@ -173,7 +173,7 @@ class URLBarView: UIView {
     
     var appMenuButton = ToolbarButton()
     var bookmarksButton = ToolbarButton()
-    var addNewTabButton = AddNewTabButton(style: .plain)
+    var addNewTabButton = AddNewTabButton(config: .init(hideCircle: true, margin: 8))
     var forwardButton = ToolbarButton()
     var multiStateButton = ToolbarButton()
 
