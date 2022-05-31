@@ -5,7 +5,7 @@
       "scale" : "1x"
     },
     {
-      "filename" : "Image2x.png",
+      "filename" : "Image@2x.jpg",
       "idiom" : "iphone",
       "scale" : "2x"
     },
@@ -14,7 +14,7 @@
       "scale" : "3x"
     },
     {
-      "filename" : "Image-2.png",
+      "filename" : "Image_iPad.jpg",
       "idiom" : "ipad",
       "scale" : "1x"
     },

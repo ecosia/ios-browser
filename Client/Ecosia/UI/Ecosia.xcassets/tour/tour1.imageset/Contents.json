@@ -5,12 +5,12 @@
       "scale" : "1x"
     },
     {
-      "filename" : "tour1@2x.png",
+      "filename" : "tour1@2x.jpg",
       "idiom" : "iphone",
       "scale" : "2x"
     },
     {
-      "filename" : "tour1@3x.png",
+      "filename" : "tour1@3x.jpg",
       "idiom" : "iphone",
       "scale" : "3x"
     },
@@ -19,7 +19,7 @@
       "scale" : "1x"
     },
     {
-      "filename" : "15 1.png",
+      "filename" : "tour1_iPad.jpg",
       "idiom" : "ipad",
       "scale" : "2x"
     }
