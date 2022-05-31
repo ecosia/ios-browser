@@ -24,7 +24,7 @@ private class FetchInProgressError: MaybeErrorType {
 
 @objcMembers
 class HistoryPanel: SiteTableViewController, LibraryPanel {
-    private lazy var emptyHeader = EmptyHeader(icon: "historyEmpty", title: .localized(.noHistory), subtitle: .localized(.websitesYouHave))
+    private lazy var emptyHeader = EmptyHeader(icon: "libraryHistory", title: .localized(.noHistory), subtitle: .localized(.websitesYouHave))
     
     enum Section: Int {
         // Showing showing recently closed, and clearing recent history are action rows of this type.
