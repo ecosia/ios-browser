@@ -5,11 +5,17 @@
 import UIKit
 
 class AddNewTabButton: ToolbarButton {
-    enum Style {
-        case plain, circle
+    struct Config {
+        let hideCircle: Bool
+        let margin: CGFloat
+
+        static var standard: Config {
+            return .init(hideCircle: false, margin: 8)
+        }
     }
 
     let circle = UIView()
+    var config: Config = .standard
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -21,14 +27,13 @@ class AddNewTabButton: ToolbarButton {
         setup()
     }
 
-    convenience init(style: Style) {
+    convenience init(config: Config) {
         self.init(frame: .zero)
-        self.circle.isHidden = style != .circle
+        self.config = config
     }
 
     private func setup() {
-        let config = UIImage.SymbolConfiguration(pointSize: 16)
-        setImage(UIImage(systemName: "plus", withConfiguration: config), for: .normal)
+        setImage(UIImage(named: "nav-add"), for: .normal)
         circle.isUserInteractionEnabled = false
         addSubview(circle)
         sendSubviewToBack(circle)
@@ -37,10 +42,11 @@ class AddNewTabButton: ToolbarButton {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        let height = bounds.height - 8
+        let height = bounds.height - config.margin
         circle.bounds = .init(size: .init(width: height, height: height))
         circle.layer.cornerRadius = circle.bounds.height / 2
         circle.center = .init(x: bounds.width/2, y: bounds.height/2)
+        circle.isHidden = config.hideCircle
     }
 
     override func applyTheme() {
