@@ -1,18 +1,27 @@
 {
   "images" : [
     {
-      "idiom" : "universal",
+      "idiom" : "iphone",
       "scale" : "1x"
     },
     {
-      "filename" : "Background image2x.png",
-      "idiom" : "universal",
+      "filename" : "monkey@2x.jpg",
+      "idiom" : "iphone",
       "scale" : "2x"
     },
     {
-      "filename" : "Background image3x.png",
-      "idiom" : "universal",
+      "filename" : "monkey@3x.jpg",
+      "idiom" : "iphone",
       "scale" : "3x"
+    },
+    {
+      "idiom" : "ipad",
+      "scale" : "1x"
+    },
+    {
+      "filename" : "monkey_ipad.jpg",
+      "idiom" : "ipad",
+      "scale" : "2x"
     }
   ],
   "info" : {

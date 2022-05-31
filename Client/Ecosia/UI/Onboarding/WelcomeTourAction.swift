@@ -33,13 +33,13 @@ final class WelcomeTourAction: UIView, Themeable {
         height.priority = .init(rawValue: 500)
         height.isActive = true
 
-        let top = WelcomeTourActionRow(image: "saplin", title: "145M+", text: .localized(.treesPlantedByTheCommunity))
+        let top = WelcomeTourActionRow(image: "trees", title: "145M+", text: .localized(.treesPlantedByTheCommunity))
         stack.addArrangedSubview(top)
 
-        let middle = WelcomeTourActionRow(image: "hands", title: "60+", text: .localized(.activeProjects))
+        let middle = WelcomeTourActionRow(image: "hand", title: "60+", text: .localized(.activeProjects))
         stack.addArrangedSubview(middle)
 
-        let bottom = WelcomeTourActionRow(image: "animals", title: "30+", text: .localized(.countries))
+        let bottom = WelcomeTourActionRow(image: "pins", title: "30+", text: .localized(.countries))
         stack.addArrangedSubview(bottom)
     }
 
