@@ -5,11 +5,27 @@
 import UIKit
 
 final class EcosiaExploreCell: UICollectionViewCell, Themeable {
+    private(set) weak var learnMore: UIButton!
     private weak var title: UILabel!
     private weak var image: UIImageView!
     private weak var indicator: UIImageView!
     private weak var outline: UIView!
     private weak var divider: UIView!
+    private weak var disclosure: UIView!
+    
+    var model: EcosiaHome.Section.Explore? {
+        didSet {
+            guard let model = model, model != oldValue else { return }
+            title.text = model.title
+            image.image = UIImage(named: model.image)
+            outline.layer.maskedCorners = model.maskedCorners
+            divider.isHidden = model == .faq
+        }
+    }
+    
+    var expandedHeight: CGFloat {
+        disclosure.frame.maxY + (model == .faq ? 16 : 0)
+    }
     
     override var isSelected: Bool {
         didSet {
@@ -29,9 +45,10 @@ final class EcosiaExploreCell: UICollectionViewCell, Themeable {
         super.init(frame: frame)
         
         let outline = UIView()
-        contentView.addSubview(outline)
         outline.layer.cornerRadius = 10
         outline.translatesAutoresizingMaskIntoConstraints = false
+        outline.clipsToBounds = true
+        contentView.addSubview(outline)
         self.outline = outline
 
         let image = UIImageView()
@@ -60,6 +77,18 @@ final class EcosiaExploreCell: UICollectionViewCell, Themeable {
         outline.addSubview(indicator)
         self.indicator = indicator
         
+        let disclosure = UIView()
+        disclosure.translatesAutoresizingMaskIntoConstraints = false
+        disclosure.layer.cornerRadius = 10
+        disclosure.backgroundColor = .theme.ecosia.quarternaryBackground
+        outline.addSubview(disclosure)
+        self.disclosure = disclosure
+        
+        let learnMore = UIButton()
+        
+        outline.addSubview(learnMore)
+        self.learnMore = learnMore
+        
         let divider = UIView()
         divider.translatesAutoresizingMaskIntoConstraints = false
         divider.isUserInteractionEnabled = false
@@ -72,14 +101,19 @@ final class EcosiaExploreCell: UICollectionViewCell, Themeable {
         outline.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
 
         image.centerXAnchor.constraint(equalTo: outline.leftAnchor, constant: 38).isActive = true
-        image.centerYAnchor.constraint(equalTo: outline.centerYAnchor).isActive = true
+        image.centerYAnchor.constraint(equalTo: outline.topAnchor, constant: EcosiaHome.Section.explore.height / 2).isActive = true
         
-        title.centerYAnchor.constraint(equalTo: outline.centerYAnchor).isActive = true
+        title.centerYAnchor.constraint(equalTo: image.centerYAnchor).isActive = true
         title.leftAnchor.constraint(equalTo: outline.leftAnchor, constant: 72).isActive = true
         title.rightAnchor.constraint(lessThanOrEqualTo: indicator.leftAnchor, constant: -5).isActive = true
         
-        indicator.centerYAnchor.constraint(equalTo: outline.centerYAnchor).isActive = true
+        indicator.centerYAnchor.constraint(equalTo: image.centerYAnchor).isActive = true
         indicator.rightAnchor.constraint(equalTo: outline.rightAnchor, constant: -16).isActive = true
+        
+        disclosure.topAnchor.constraint(equalTo: outline.topAnchor, constant: EcosiaHome.Section.explore.height).isActive = true
+        disclosure.leftAnchor.constraint(equalTo: outline.leftAnchor, constant: 16).isActive = true
+        disclosure.rightAnchor.constraint(equalTo: outline.rightAnchor, constant: -16).isActive = true
+        disclosure.heightAnchor.constraint(equalToConstant: 136).isActive = true
         
         divider.leftAnchor.constraint(equalTo: outline.leftAnchor, constant: 16).isActive = true
         divider.rightAnchor.constraint(equalTo: outline.rightAnchor, constant: -16).isActive = true
@@ -88,15 +122,10 @@ final class EcosiaExploreCell: UICollectionViewCell, Themeable {
 
         applyTheme()
     }
-
-    func display(_ model: EcosiaHome.Section.Explore) {
-        title.text = model.title
-        image.image = UIImage(named: model.image)
-        outline.layer.maskedCorners = model.maskedCorners
-    }
-
-    private func hover() {
-        outline.backgroundColor = isSelected || isHighlighted ? .theme.ecosia.hoverBackgroundColor : .theme.ecosia.ntpCellBackground
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        divider?.isHidden = model == .faq || frame.height > EcosiaHome.Section.explore.height
     }
 
     override func prepareForReuse() {
@@ -109,5 +138,9 @@ final class EcosiaExploreCell: UICollectionViewCell, Themeable {
         title.textColor = .theme.ecosia.primaryText
         indicator.tintColor = .theme.ecosia.secondaryText
         divider.backgroundColor = .theme.ecosia.border
+    }
+    
+    private func hover() {
+        outline.backgroundColor = isSelected || isHighlighted ? .theme.ecosia.hoverBackgroundColor : .theme.ecosia.ntpCellBackground
     }
 }

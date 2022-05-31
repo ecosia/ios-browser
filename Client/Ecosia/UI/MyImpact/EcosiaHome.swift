@@ -139,7 +139,10 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
                 return cell
             } else {
                 let exploreCell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: section.cell), for: indexPath) as! EcosiaExploreCell
-                Section.Explore(rawValue: indexPath.row - 1).map { exploreCell.display($0) }
+                exploreCell.tag = indexPath.row - 1
+                exploreCell.learnMore.removeTarget(self, action: nil, for: .touchUpInside)
+                exploreCell.learnMore.addTarget(self, action: #selector(explore(button:)), for: .touchUpInside)
+                exploreCell.model = .init(rawValue: indexPath.row - 1)
                 return exploreCell
             }
         case .news:
@@ -191,16 +194,6 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
             }) {
                 collectionView.scrollToItem(at: indexPath, at: .top, animated: $0)
             }
-            
-//            collectionView.collectionViewLayout.invalidateLayout()
-//            collectionView.scrollToItem(at: indexPath, at: .top, animated: true)
-            
-//            Section.Explore(rawValue: indexPath.row - 1)
-//                .map {
-//                    delegate?.ecosiaHome(didSelectURL: $0.url)
-//                    Analytics.shared.navigation(.open, label: $0.label)
-//                }
-//            dismiss(animated: true, completion: nil)
         case .multiply:
             navigationController?.pushViewController(MultiplyImpact(delegate: delegate, referrals: referrals), animated: true)
         }
@@ -212,7 +205,9 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         
         switch Section(rawValue: indexPath.section)! {
         case .explore:
-            height = indexPath == disclosed ? 200 : section.height
+            height = indexPath == disclosed
+            ? (collectionView.cellForItem(at: indexPath) as? EcosiaExploreCell)?.expandedHeight ?? section.height
+            : section.height
         default:
             height = section.height
         }
@@ -293,6 +288,15 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     @objc private func learnMore() {
         delegate?.ecosiaHome(didSelectURL: Environment.current.aboutCounter)
         Analytics.shared.navigation(.open, label: .counter)
+        dismiss(animated: true, completion: nil)
+    }
+    
+    @objc private func explore(button: UIButton) {
+        Section.Explore(rawValue: button.tag)
+            .map {
+                delegate?.ecosiaHome(didSelectURL: $0.url)
+                Analytics.shared.navigation(.open, label: $0.label)
+            }
         dismiss(animated: true, completion: nil)
     }
 }
