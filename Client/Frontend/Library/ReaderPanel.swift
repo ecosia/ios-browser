@@ -267,7 +267,7 @@ class ReadingListPanel: UITableViewController, LibraryPanel {
         let readerModeLabel = UILabel()
         overlayView.addSubview(readerModeLabel)
         readerModeLabel.text = NSLocalizedString("Open articles in Reader View by tapping the book icon when it appears in the title bar.", comment: "See http://mzl.la/1LXbDOL")
-        readerModeLabel.font = DynamicFontHelper.defaultHelper.DeviceFontSmallLight
+        readerModeLabel.font = .preferredFont(forTextStyle: .callout)
         readerModeLabel.numberOfLines = 0
         readerModeLabel.snp.makeConstraints { make in
             make.top.equalTo(welcomeLabel.snp.bottom).offset(24)
@@ -275,7 +275,8 @@ class ReadingListPanel: UITableViewController, LibraryPanel {
         }
 
         let readerModeImageView = UIImageView()
-        readerModeImageView.image = .init(themed: "articles")
+        readerModeImageView.image = .init(named: "readerEmpty")
+        readerModeImageView.tintColor = .theme.ecosia.secondaryText
         overlayView.addSubview(readerModeImageView)
         readerModeImageView.snp.makeConstraints { make in
             make.leading.equalTo(welcomeLabel.snp.leading).offset(-24)
@@ -296,7 +297,8 @@ class ReadingListPanel: UITableViewController, LibraryPanel {
         }
 
         let readingListImageView = UIImageView()
-        readingListImageView.image = .init(themed: "savePages")
+        readingListImageView.image = .init(named: "addToReadingList")
+        readingListImageView.tintColor = .theme.ecosia.secondaryText
         overlayView.addSubview(readingListImageView)
         readingListImageView.snp.makeConstraints { make in
             make.leading.equalTo(readerModeImageView.snp.leading)
