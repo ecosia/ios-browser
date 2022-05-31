@@ -14002,7 +14002,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = main;
+				branch = "flag-for-counter-intro";
 				kind = branch;
 			};
 		};

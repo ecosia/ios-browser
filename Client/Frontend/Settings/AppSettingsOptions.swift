@@ -660,6 +660,22 @@ final class ToggleBrandRefreshIntro: HiddenSetting {
     }
 }
 
+final class ToggleCounterIntro: HiddenSetting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Toggle - Show Counter intro", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
+    }
+
+    override var status: NSAttributedString? {
+        let isOn = User.shared.showsCounterIntro
+        return NSAttributedString(string: isOn ? "True" : "False", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        User.shared.showsCounterIntro ? User.shared.hideCounterIntro() : User.shared.showCounterIntro()
+        settings.tableView.reloadData()
+    }
+}
+
 final class ShowTour: HiddenSetting, WelcomeDelegate {
     override var title: NSAttributedString? {
         return NSAttributedString(string: "Show Intro", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
