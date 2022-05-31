@@ -205,9 +205,16 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         
         switch Section(rawValue: indexPath.section)! {
         case .explore:
-            height = indexPath == disclosed
-            ? (collectionView.cellForItem(at: indexPath) as? EcosiaExploreCell)?.expandedHeight ?? section.height
-            : section.height
+            if indexPath == disclosed {
+                if let cell = collectionView.cellForItem(at: indexPath) as? EcosiaExploreCell {
+                    height = cell.expandedHeight
+                } else {
+                    disclosed = nil
+                    height = section.height
+                }
+            } else {
+                height = section.height
+            }
         default:
             height = section.height
         }

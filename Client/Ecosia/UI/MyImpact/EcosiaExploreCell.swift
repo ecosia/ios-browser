@@ -95,25 +95,19 @@ final class EcosiaExploreCell: UICollectionViewCell, Themeable {
         
         let learnMore = UIButton()
         learnMore.translatesAutoresizingMaskIntoConstraints = false
-        learnMore.titleLabel?.font = .preferredFont(forTextStyle: .callout)
-        learnMore.titleLabel?.adjustsFontForContentSizeCategory = true
+        learnMore.backgroundColor = .white
+        learnMore.layer.cornerRadius = 20
         disclosure.addSubview(learnMore)
         self.learnMore = learnMore
         
-        if #available(iOS 15.0, *) {
-            var configuration = UIButton.Configuration.filled()
-            configuration.cornerStyle = .capsule
-            configuration.baseBackgroundColor = .white
-            configuration.baseForegroundColor = .init(white: 0.1, alpha: 1)
-            configuration.title = .localized(.learnMore)
-            learnMore.configuration = configuration
-        } else {
-            learnMore.layer.cornerRadius = 20
-            learnMore.titleEdgeInsets = .init(top: 0, left: 16, bottom: 0, right: 16)
-            learnMore.backgroundColor = .white
-            learnMore.setTitleColor(.init(white: 0.1, alpha: 1), for: .normal)
-            learnMore.setTitle(.localized(.learnMore), for: [])
-        }
+        let learnMoreLabel = UILabel()
+        learnMoreLabel.isUserInteractionEnabled = false
+        learnMoreLabel.font = .preferredFont(forTextStyle: .callout)
+        learnMoreLabel.adjustsFontForContentSizeCategory = true
+        learnMoreLabel.translatesAutoresizingMaskIntoConstraints = false
+        learnMoreLabel.text = .localized(.learnMore)
+        learnMoreLabel.textColor = .init(white: 0.1, alpha: 1)
+        learnMore.addSubview(learnMoreLabel)
         
         let divider = UIView()
         divider.translatesAutoresizingMaskIntoConstraints = false
@@ -147,7 +141,11 @@ final class EcosiaExploreCell: UICollectionViewCell, Themeable {
         
         learnMore.topAnchor.constraint(equalTo: subtitle.bottomAnchor, constant: 10).isActive = true
         learnMore.leftAnchor.constraint(equalTo: subtitle.leftAnchor).isActive = true
-        learnMore.heightAnchor.constraint(greaterThanOrEqualToConstant: 40).isActive = true
+        learnMore.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        learnMore.rightAnchor.constraint(equalTo: learnMoreLabel.rightAnchor, constant: 16).isActive = true
+        
+        learnMoreLabel.leftAnchor.constraint(equalTo: learnMore.leftAnchor, constant: 16).isActive = true
+        learnMoreLabel.centerYAnchor.constraint(equalTo: learnMore.centerYAnchor).isActive = true
         
         divider.leftAnchor.constraint(equalTo: outline.leftAnchor, constant: 16).isActive = true
         divider.rightAnchor.constraint(equalTo: outline.rightAnchor, constant: -16).isActive = true
