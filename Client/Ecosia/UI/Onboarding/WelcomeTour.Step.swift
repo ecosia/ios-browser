@@ -24,7 +24,7 @@ extension WelcomeTour {
         }
 
         static var profit: Step {
-            return .init(title: .localized(.hundredPercentOfProfits), text: .localized(.allOurProfitsGo), background: .init(image: "tour2"), content: WelcomeTourProfit())
+            return .init(title: .localized(.hundredPercentOfProfits), text: .localized(.weUseAllOurProfits), background: .init(image: "tour2"), content: WelcomeTourProfit())
         }
 
         static var action: Step {
@@ -32,7 +32,7 @@ extension WelcomeTour {
         }
 
         static var trees: Step {
-            return .init(title: .localized(.weWantTrees), text: .localized(.wellNeverSell), background: .init(image: "tour4"), content: nil)
+            return .init(title: .localized(.weWantTrees), text: .localized(.weDontCreateAProfile), background: .init(image: "tour4"), content: nil)
         }
 
         static var all: [Step] {
