@@ -5,7 +5,7 @@
       "scale" : "1x"
     },
     {
-      "filename" : "forest.png",
+      "filename" : "forest@2x.jpg",
       "idiom" : "iphone",
       "scale" : "2x"
     },
@@ -18,7 +18,7 @@
       "scale" : "1x"
     },
     {
-      "filename" : "forest_ipad.png",
+      "filename" : "forest_ipad.jpg",
       "idiom" : "ipad",
       "scale" : "2x"
     }

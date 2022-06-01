@@ -7,14 +7,14 @@ import Core
 
 extension NTPTooltip {
     enum Highlight {
-        case rebrandIntro
+        case counterIntro
         case gotClaimed
         case successfulInvite
         case referralSpotlight
 
         var text: String {
             switch self {
-            case .rebrandIntro:
+            case .counterIntro:
                 return .localized(.trackYourProgress)
             case .gotClaimed:
                 return .localized(.youveContributed)

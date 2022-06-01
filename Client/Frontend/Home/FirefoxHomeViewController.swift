@@ -1315,8 +1315,8 @@ extension FirefoxHomeViewController: NTPTooltipDelegate {
         } completion: { _ in
 
             switch ntpHighlight {
-            case .rebrandIntro:
-                User.shared.hideRebrandIntro()
+            case .counterIntro:
+                User.shared.hideCounterIntro()
             case .gotClaimed, .successfulInvite:
                 User.shared.referrals.accept()
             case .referralSpotlight:
@@ -1329,8 +1329,8 @@ extension FirefoxHomeViewController: NTPTooltipDelegate {
 
 extension FirefoxHomeViewController: NTPLayoutHighlightDataSource {
     var ntpHighlight: NTPTooltip.Highlight? {
-        if User.shared.showsRebrandIntro {
-            return .rebrandIntro
+        if User.shared.showsCounterIntro {
+            return .counterIntro
         }
 
         guard Referrals.isEnabled else { return nil }

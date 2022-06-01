@@ -189,6 +189,7 @@ class AppSettingsTableViewController: SettingsTableViewController, FeatureFlagsP
  */
                 PushBackInstallation(settings: self),
                 ToggleBrandRefreshIntro(settings: self),
+                ToggleCounterIntro(settings: self),
                 ShowTour(settings: self),
                 ToggleReferrals(settings: self),
                 CreateReferralCode(settings: self),

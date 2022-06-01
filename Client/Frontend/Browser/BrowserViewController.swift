@@ -1988,6 +1988,7 @@ extension BrowserViewController {
             intro.modalPresentationStyle = .overFullScreen
             intro.modalTransitionStyle = .crossDissolve
             present(intro, animated: true)
+            User.shared.hideRebrandIntro()
         }
     }
 

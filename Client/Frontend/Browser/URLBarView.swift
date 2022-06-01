@@ -234,7 +234,7 @@ class URLBarView: UIView {
     func updateSearchEngineImage() {
         if inOverlayMode {
             if isPrivate {
-                searchIconImageView.image = .init(named: "searchShield")
+                searchIconImageView.image = .init(named: "privateSearch")
             } else {
                 searchIconImageView.image = .init(themed: "searchLogo")
             }
