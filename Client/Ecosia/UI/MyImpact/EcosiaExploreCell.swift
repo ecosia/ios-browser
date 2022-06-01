@@ -21,7 +21,7 @@ final class EcosiaExploreCell: UICollectionViewCell, Themeable {
             title.text = model.title
             image.image = UIImage(named: model.image)
             outline.layer.maskedCorners = model.maskedCorners
-            subtitle.text = model.title
+            subtitle.text = model.subtitle
             divider.isHidden = model == .faq
         }
     }

@@ -19,7 +19,7 @@ extension EcosiaHome {
             }
         }
 
-        var sectionTitle: String? {
+        var title: String? {
             switch self {
             case .multiply:
                 return .localized(.groupYourImpact)
@@ -55,6 +55,23 @@ extension EcosiaHome {
             faq
             
             var title: String {
+                switch self {
+                case .info:
+                    return .localized(.howEcosiaWorks)
+                case .finance:
+                    return .localized(.financialReports)
+                case .trees:
+                    return .localized(.treesUpdate)
+                case .faq:
+                    return .localized(.faqs)
+                case .shop:
+                    return .localized(.shop)
+                case .privacy:
+                    return .localized(.privacy)
+                }
+            }
+            
+            var subtitle: String {
                 switch self {
                 case .info:
                     return .localized(.howEcosiaWorks)

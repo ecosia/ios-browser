@@ -153,7 +153,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         case .multiply:
             if indexPath.row == 0 {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: .init(describing: HeaderCell.self), for: indexPath) as! HeaderCell
-                cell.title.text = section.sectionTitle
+                cell.title.text = section.title
                 return cell
             } else {
                 let multiplyCell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: section.cell), for: indexPath) as! MultiplyImpactCell
@@ -162,7 +162,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         case .explore:
             if indexPath.row == 0 {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: .init(describing: HeaderCell.self), for: indexPath) as! HeaderCell
-                cell.title.text = section.sectionTitle
+                cell.title.text = section.title
                 return cell
             } else {
                 let exploreCell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: section.cell), for: indexPath) as! EcosiaExploreCell
@@ -175,7 +175,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         case .news:
             if indexPath.row == 0 {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: .init(describing: HeaderCell.self), for: indexPath) as! HeaderCell
-                cell.title.text = section.sectionTitle
+                cell.title.text = section.title
                 return cell
             } else if indexPath.row == self.collectionView(collectionView, numberOfItemsInSection: Section.news.rawValue) - 1 {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: .init(describing: MoreButtonCell.self), for: indexPath) as! MoreButtonCell
