@@ -129,31 +129,31 @@ final class EcosiaExploreCell: UICollectionViewCell, Themeable {
         image.centerYAnchor.constraint(equalTo: outline.topAnchor, constant: EcosiaHome.Section.explore.height / 2).isActive = true
         
         title.centerYAnchor.constraint(equalTo: image.centerYAnchor).isActive = true
-        title.leftAnchor.constraint(equalTo: outline.leftAnchor, constant: 72).isActive = true
-        title.rightAnchor.constraint(lessThanOrEqualTo: indicator.leftAnchor, constant: -5).isActive = true
+        title.leadingAnchor.constraint(equalTo: outline.leadingAnchor, constant: 72).isActive = true
+        title.trailingAnchor.constraint(lessThanOrEqualTo: indicator.leadingAnchor, constant: -5).isActive = true
         
         indicator.centerYAnchor.constraint(equalTo: image.centerYAnchor).isActive = true
-        indicator.rightAnchor.constraint(equalTo: outline.rightAnchor, constant: -16).isActive = true
+        indicator.trailingAnchor.constraint(equalTo: outline.trailingAnchor, constant: -16).isActive = true
         
         disclosure.topAnchor.constraint(equalTo: outline.topAnchor, constant: EcosiaHome.Section.explore.height).isActive = true
-        disclosure.leftAnchor.constraint(equalTo: outline.leftAnchor, constant: 16).isActive = true
-        disclosure.rightAnchor.constraint(equalTo: outline.rightAnchor, constant: -16).isActive = true
+        disclosure.leadingAnchor.constraint(equalTo: outline.leadingAnchor, constant: 16).isActive = true
+        disclosure.trailingAnchor.constraint(equalTo: outline.trailingAnchor, constant: -16).isActive = true
         disclosure.bottomAnchor.constraint(equalTo: learnMore.bottomAnchor, constant: 14).isActive = true
         
         subtitle.topAnchor.constraint(equalTo: disclosure.topAnchor, constant: 12).isActive = true
-        subtitle.leftAnchor.constraint(equalTo: disclosure.leftAnchor, constant: 12).isActive = true
-        subtitle.rightAnchor.constraint(lessThanOrEqualTo: disclosure.rightAnchor, constant: -12).isActive = true
+        subtitle.leadingAnchor.constraint(equalTo: disclosure.leadingAnchor, constant: 12).isActive = true
+        subtitle.trailingAnchor.constraint(lessThanOrEqualTo: disclosure.trailingAnchor, constant: -12).isActive = true
         
         learnMore.topAnchor.constraint(equalTo: subtitle.bottomAnchor, constant: 10).isActive = true
-        learnMore.leftAnchor.constraint(equalTo: subtitle.leftAnchor).isActive = true
+        learnMore.leadingAnchor.constraint(equalTo: subtitle.leadingAnchor).isActive = true
         learnMore.heightAnchor.constraint(equalToConstant: 40).isActive = true
-        learnMore.rightAnchor.constraint(equalTo: learnMoreLabel.rightAnchor, constant: 16).isActive = true
+        learnMore.trailingAnchor.constraint(equalTo: learnMoreLabel.trailingAnchor, constant: 16).isActive = true
         
-        learnMoreLabel.leftAnchor.constraint(equalTo: learnMore.leftAnchor, constant: 16).isActive = true
+        learnMoreLabel.leadingAnchor.constraint(equalTo: learnMore.leadingAnchor, constant: 16).isActive = true
         learnMoreLabel.centerYAnchor.constraint(equalTo: learnMore.centerYAnchor).isActive = true
         
-        divider.leftAnchor.constraint(equalTo: outline.leftAnchor, constant: 16).isActive = true
-        divider.rightAnchor.constraint(equalTo: outline.rightAnchor, constant: -16).isActive = true
+        divider.leadingAnchor.constraint(equalTo: outline.leadingAnchor, constant: 16).isActive = true
+        divider.trailingAnchor.constraint(equalTo: outline.trailingAnchor, constant: -16).isActive = true
         divider.bottomAnchor.constraint(equalTo: outline.bottomAnchor).isActive = true
         divider.heightAnchor.constraint(equalToConstant: 1).isActive = true
 
