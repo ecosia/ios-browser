@@ -334,7 +334,7 @@ final class MultiplyImpact: UIViewController, Themeable {
     }
     
     @objc private func learnMore() {
-        delegate?.ecosiaHome(didSelectURL: URL(string: "https://ecosia.zendesk.com/hc/en-us/articles/4406431901714-How-does-inviting-friends-to-Ecosia-work-")!)
+        delegate?.ecosiaHome(didSelectURL: URL(string: "https://ecosia.helpscoutdocs.com/article/358-refer-a-friend-ios-only")!)
         clear()
         dismiss(animated: true)
     }
