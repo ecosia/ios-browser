@@ -9,7 +9,7 @@ extension UICollectionView {
         let insets = max(max(safeAreaInsets.left, safeAreaInsets.right), 16) * 2
         let maxWidth = bounds.width - insets
         
-        if UIDevice.current.userInterfaceIdiom == .pad {
+        if traitCollection.userInterfaceIdiom == .pad {
             return min(maxWidth, 544)
         } else if traitCollection.verticalSizeClass == .compact {
             return min(maxWidth, 375)
