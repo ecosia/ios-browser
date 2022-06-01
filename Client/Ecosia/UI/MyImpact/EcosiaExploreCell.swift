@@ -90,7 +90,7 @@ final class EcosiaExploreCell: UICollectionViewCell, Themeable {
         subtitle.adjustsFontForContentSizeCategory = true
         subtitle.numberOfLines = 0
         subtitle.translatesAutoresizingMaskIntoConstraints = false
-        subtitle.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        subtitle.setContentCompressionResistancePriority(.init(rawValue: 0), for: .horizontal)
         disclosure.addSubview(subtitle)
         self.subtitle = subtitle
         
@@ -184,7 +184,7 @@ final class EcosiaExploreCell: UICollectionViewCell, Themeable {
     }
     
     @objc private func highlighted() {
-        learnMoreLabel.alpha = 0.3
+        learnMoreLabel.alpha = 0.2
     }
     
     @objc private func unhighlighted() {
