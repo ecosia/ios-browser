@@ -167,8 +167,8 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
             } else {
                 let exploreCell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: section.cell), for: indexPath) as! EcosiaExploreCell
                 exploreCell.tag = indexPath.row - 1
-//                exploreCell.learnMore.removeTarget(self, action: nil, for: .touchUpInside)
-//                exploreCell.learnMore.addTarget(self, action: #selector(explore(button:)), for: .touchUpInside)
+                exploreCell.learnMore.removeTarget(self, action: nil, for: .touchUpInside)
+                exploreCell.learnMore.addTarget(self, action: #selector(explore(button:)), for: .touchUpInside)
                 exploreCell.model = .init(rawValue: indexPath.row - 1)
                 return exploreCell
             }

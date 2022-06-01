@@ -98,9 +98,9 @@ final class EcosiaExploreCell: UICollectionViewCell, Themeable {
         learnMore.translatesAutoresizingMaskIntoConstraints = false
         learnMore.backgroundColor = .white
         learnMore.layer.cornerRadius = 20
-//        learnMore.addTarget(self, action: #selector(highlighted), for: .touchDown)
-//        learnMore.addTarget(self, action: #selector(unhighlighted), for: .touchUpInside)
-//        learnMore.addTarget(self, action: #selector(unhighlighted), for: .touchCancel)
+        learnMore.addTarget(self, action: #selector(highlighted), for: .touchDown)
+        learnMore.addTarget(self, action: #selector(unhighlighted), for: .touchUpInside)
+        learnMore.addTarget(self, action: #selector(unhighlighted), for: .touchCancel)
         disclosure.addSubview(learnMore)
         self.learnMore = learnMore
         
