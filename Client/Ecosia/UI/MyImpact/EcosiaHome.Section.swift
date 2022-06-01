@@ -74,17 +74,17 @@ extension EcosiaHome {
             var subtitle: String {
                 switch self {
                 case .info:
-                    return .localized(.howEcosiaWorks)
+                    return .localized(.learnHowEcosia)
                 case .finance:
-                    return .localized(.financialReports)
+                    return .localized(.seeHowMuchMoney)
                 case .trees:
-                    return .localized(.treesUpdate)
+                    return .localized(.discoverWhereWe)
                 case .faq:
-                    return .localized(.faqs)
+                    return .localized(.findAnswersTo)
                 case .shop:
-                    return .localized(.shop)
+                    return .localized(.buyTShirt)
                 case .privacy:
-                    return .localized(.privacy)
+                    return .localized(.learnHowWe)
                 }
             }
 
