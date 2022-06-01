@@ -13,6 +13,7 @@ final class EcosiaExploreCell: UICollectionViewCell, Themeable {
     private weak var outline: UIView!
     private weak var divider: UIView!
     private weak var disclosure: UIView!
+    private weak var learnMoreLabel: UILabel!
     
     var model: EcosiaHome.Section.Explore? {
         didSet {
@@ -97,6 +98,9 @@ final class EcosiaExploreCell: UICollectionViewCell, Themeable {
         learnMore.translatesAutoresizingMaskIntoConstraints = false
         learnMore.backgroundColor = .white
         learnMore.layer.cornerRadius = 20
+//        learnMore.addTarget(self, action: #selector(highlighted), for: .touchDown)
+//        learnMore.addTarget(self, action: #selector(unhighlighted), for: .touchUpInside)
+//        learnMore.addTarget(self, action: #selector(unhighlighted), for: .touchCancel)
         disclosure.addSubview(learnMore)
         self.learnMore = learnMore
         
@@ -108,6 +112,7 @@ final class EcosiaExploreCell: UICollectionViewCell, Themeable {
         learnMoreLabel.text = .localized(.learnMore)
         learnMoreLabel.textColor = .init(white: 0.1, alpha: 1)
         learnMore.addSubview(learnMoreLabel)
+        self.learnMoreLabel = learnMoreLabel
         
         let divider = UIView()
         divider.translatesAutoresizingMaskIntoConstraints = false
@@ -176,5 +181,13 @@ final class EcosiaExploreCell: UICollectionViewCell, Themeable {
     
     private func hover() {
         outline.backgroundColor = isSelected || isHighlighted ? .theme.ecosia.hoverBackgroundColor : .theme.ecosia.ntpCellBackground
+    }
+    
+    @objc private func highlighted() {
+        learnMoreLabel.alpha = 0.3
+    }
+    
+    @objc private func unhighlighted() {
+        learnMoreLabel.alpha = 1
     }
 }

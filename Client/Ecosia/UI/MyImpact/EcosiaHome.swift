@@ -74,7 +74,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         }
     }
 
-    private var hasAppeared: Bool = false
+    private var disappeared = Date.distantFuture
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -87,10 +87,37 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         
         User.shared.hideRebrandIntro()
 
-        guard hasAppeared else { return hasAppeared = true }
+        if #available(iOS 15, *) {
+            guard
+                let cooldown = Calendar.current.date(byAdding: .second, value: 2, to: disappeared),
+                cooldown < .now
+            else {
+                disappeared = .distantFuture
+                return
+            }
+        } else {
+            guard
+                let cooldown = Calendar.current.date(byAdding: .second, value: 2, to: disappeared),
+                cooldown < .init()
+            else {
+                disappeared = .distantFuture
+                return
+            }
+        }
+        
         updateBarAppearance()
         collectionView.scrollRectToVisible(.init(x: 0, y: 0, width: 1, height: 1), animated: false)
         collectionView.reloadData()
+        disappeared = .distantFuture
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        if #available(iOS 15, *) {
+            disappeared = .now
+        } else {
+            disappeared = .init()
+        }
     }
 
     // MARK: UICollectionViewDataSource
@@ -140,8 +167,8 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
             } else {
                 let exploreCell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: section.cell), for: indexPath) as! EcosiaExploreCell
                 exploreCell.tag = indexPath.row - 1
-                exploreCell.learnMore.removeTarget(self, action: nil, for: .touchUpInside)
-                exploreCell.learnMore.addTarget(self, action: #selector(explore(button:)), for: .touchUpInside)
+//                exploreCell.learnMore.removeTarget(self, action: nil, for: .touchUpInside)
+//                exploreCell.learnMore.addTarget(self, action: #selector(explore(button:)), for: .touchUpInside)
                 exploreCell.model = .init(rawValue: indexPath.row - 1)
                 return exploreCell
             }
