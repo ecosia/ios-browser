@@ -1300,7 +1300,7 @@ extension FirefoxHomeViewController {
 
     fileprivate var treesCellModel: TreesCellModel {
         let trees = Referrals.isEnabled ? User.shared.impact : User.shared.searchImpact
-        return .init(trees: trees, searches: personalCounter.state!)
+        return .init(trees: trees, searches: personalCounter.state!, style: .ntp)
     }
 
 }

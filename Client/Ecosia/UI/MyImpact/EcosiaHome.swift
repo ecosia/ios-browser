@@ -20,7 +20,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     private let background = Background()
 
     fileprivate var treesCellModel: TreesCellModel {
-        return .init(trees: User.shared.searchImpact, searches: personalCounter.state!)
+        return .init(trees: User.shared.searchImpact, searches: personalCounter.state!, style: .impact)
     }
 
     convenience init(delegate: EcosiaHomeDelegate?, referrals: Referrals) {

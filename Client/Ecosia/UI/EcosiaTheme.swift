@@ -44,7 +44,7 @@ class EcosiaTheme {
     var treeCountText: UIColor { UIColor(named: "emerald")! }
     var treeCountBackground: UIColor { UIColor(rgb: 0xE2F7F1) }
     var impactTreeCountBackground: UIColor { treeCountBackground }
-    var impactBackground: UIColor { UIColor.Photon.Grey10 }
+    var impactBackground: UIColor { .Light.Background.primary }
     var impactSeparator: UIColor { UIColor.Photon.Grey40 }
     var treeCounterProgressTotal: UIColor { .Light.Background.tertiary }
     var treeCounterProgressCurrent: UIColor { .Light.Brand.primary }
@@ -121,6 +121,7 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var treeCountText: UIColor { .white }
     override var treeCountBackground: UIColor { UIColor.Photon.Grey70 }
     override var impactTreeCountBackground: UIColor { UIColor.Photon.Grey80 }
+    override var impactBackground: UIColor { .Dark.Background.tertiary }
     override var impactSeparator: UIColor { UIColor.Photon.Grey60 }
     override var treeCounterProgressTotal: UIColor { .Dark.Background.secondary }
     override var treeCounterProgressCurrent: UIColor { .Dark.Brand.primary }
@@ -131,7 +132,6 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var ntpImpactBackground: UIColor { .Dark.Background.secondary}
     override var ntpIntroBackground: UIColor { .Dark.Background.tertiary }
 
-    override var impactBackground: UIColor { UIColor.Photon.Grey60 }
     override var impactMultiplyCardBackground: UIColor { .Dark.Background.tertiary }
     override var trackingSheetBackground: UIColor { .Dark.Background.secondary }
     override var moreNewsButton: UIColor { .Dark.Background.tertiary }
