@@ -10,6 +10,11 @@ final class EcosiaNavigation: UINavigationController, Themeable {
     convenience init(delegate: EcosiaHomeDelegate?, referrals: Referrals) {
         self.init(rootViewController: EcosiaHome(delegate: delegate, referrals: referrals))
         modalPresentationCapturesStatusBarAppearance = true
+
+        if traitCollection.userInterfaceIdiom == .pad {
+            modalPresentationStyle = .formSheet
+            preferredContentSize = .init(width: 544, height: .max)
+        }
     }
 
     override func viewDidLoad() {
