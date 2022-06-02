@@ -5,7 +5,6 @@
 import UIKit
 
 final class DefaultBrowser: UIViewController, Themeable {
-    weak var background: UIView!
     weak var content: UIView!
     weak var image: UIImageView!
     weak var waves: UIImageView!
@@ -16,6 +15,20 @@ final class DefaultBrowser: UIViewController, Themeable {
     weak var arrow2: UIImageView!
     weak var cta: UIButton!
     weak var skip: UIButton!
+
+    convenience init() {
+        self.init(nibName: nil, bundle: nil)
+        if traitCollection.userInterfaceIdiom == .pad {
+            modalPresentationStyle = .formSheet
+            preferredContentSize = .init(width: 544, height: 600)
+        }
+    }
+
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+    }
+
+    required init?(coder: NSCoder) { nil }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         traitCollection.userInterfaceIdiom == .pad ? .all : .portrait
@@ -31,10 +44,6 @@ final class DefaultBrowser: UIViewController, Themeable {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
-        UIView.animate(withDuration: 0.3, delay: 0.15) {
-            self.background.alpha = 1
-        }
         Analytics.shared.defaultBrowser(.view)
     }
 
@@ -44,17 +53,6 @@ final class DefaultBrowser: UIViewController, Themeable {
     }
 
     private func setupViews() {
-        let background = UIView()
-        background.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(background)
-        self.background = background
-
-        background.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        background.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        background.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-        background.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-        background.alpha = 0
-
         let content = UIView()
         content.translatesAutoresizingMaskIntoConstraints = false
         content.layer.cornerRadius = 10
@@ -120,15 +118,8 @@ final class DefaultBrowser: UIViewController, Themeable {
 
         headline.topAnchor.constraint(equalTo: waves.bottomAnchor, constant: 16).isActive = true
         headline.setContentCompressionResistancePriority(.required, for: .vertical)
-
-        if view.traitCollection.userInterfaceIdiom == .phone {
-            headline.leadingAnchor.constraint(equalTo: content.leadingAnchor, constant: 16).isActive = true
-            headline.trailingAnchor.constraint(equalTo: content.trailingAnchor, constant: -16).isActive = true
-        } else {
-            headline.widthAnchor.constraint(equalToConstant: 544).isActive = true
-            headline.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        }
-
+        headline.leadingAnchor.constraint(equalTo: content.leadingAnchor, constant: 16).isActive = true
+        headline.trailingAnchor.constraint(equalTo: content.trailingAnchor, constant: -16).isActive = true
 
         let labelStack = UIStackView()
         labelStack.translatesAutoresizingMaskIntoConstraints = false
@@ -220,7 +211,6 @@ final class DefaultBrowser: UIViewController, Themeable {
 
     @objc func applyTheme() {
         view.backgroundColor = .clear
-        background.backgroundColor = .theme.ecosia.modalOverlayBackground
         headline.textColor = .theme.ecosia.primaryText
         text1.textColor = .theme.ecosia.secondaryText
         text2.textColor = .theme.ecosia.secondaryText

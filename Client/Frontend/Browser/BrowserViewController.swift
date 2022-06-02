@@ -1971,8 +1971,6 @@ extension BrowserViewController {
 		// Ecosia: custom intro handling
         if User.shared.firstTime {
             let defaultPromo = DefaultBrowser()
-            defaultPromo.modalTransitionStyle = .coverVertical
-            defaultPromo.modalPresentationStyle = .overFullScreen
             present(defaultPromo, animated: true)
 
             profile.prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
