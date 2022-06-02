@@ -5,6 +5,11 @@
 import Foundation
 
 struct TreesCellModel {
+    enum Style {
+        case ntp, impact
+    }
+
     let trees: Int
     let searches: Int
+    let style: Style
 }
