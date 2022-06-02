@@ -174,7 +174,7 @@ final class Welcome: UIViewController {
     }
 
     func addMask() {
-        let point = CGPoint(x: logo.frame.midX - 26, y: logo.frame.midY - 13)
+        let point = CGPoint(x: logo.frame.midX - 25, y: logo.frame.midY - 13)
         let mask = CGRect(origin: point, size: .init(width: 32, height: 32))
 
         let layer  = CALayer()
