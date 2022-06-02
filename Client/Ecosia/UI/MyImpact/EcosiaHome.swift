@@ -13,6 +13,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     var delegate: EcosiaHomeDelegate?
     private weak var referrals: Referrals!
     private var items = [NewsModel]()
+    private var disclosed: IndexPath?
     private let images = Images(.init(configuration: .ephemeral))
     private let news = News()
     private let personalCounter = PersonalCounter()
@@ -73,7 +74,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         }
     }
 
-    private var hasAppeared: Bool = false
+    private var disappeared = Date.distantFuture
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -86,10 +87,37 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         
         User.shared.hideRebrandIntro()
 
-        guard hasAppeared else { return hasAppeared = true }
+        if #available(iOS 15, *) {
+            guard
+                let cooldown = Calendar.current.date(byAdding: .second, value: 2, to: disappeared),
+                cooldown < .now
+            else {
+                disappeared = .distantFuture
+                return
+            }
+        } else {
+            guard
+                let cooldown = Calendar.current.date(byAdding: .second, value: 2, to: disappeared),
+                cooldown < .init()
+            else {
+                disappeared = .distantFuture
+                return
+            }
+        }
+        
         updateBarAppearance()
         collectionView.scrollRectToVisible(.init(x: 0, y: 0, width: 1, height: 1), animated: false)
         collectionView.reloadData()
+        disappeared = .distantFuture
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        if #available(iOS 15, *) {
+            disappeared = .now
+        } else {
+            disappeared = .init()
+        }
     }
 
     // MARK: UICollectionViewDataSource
@@ -125,7 +153,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         case .multiply:
             if indexPath.row == 0 {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: .init(describing: HeaderCell.self), for: indexPath) as! HeaderCell
-                cell.title.text = section.sectionTitle
+                cell.title.text = section.title
                 return cell
             } else {
                 let multiplyCell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: section.cell), for: indexPath) as! MultiplyImpactCell
@@ -134,17 +162,20 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         case .explore:
             if indexPath.row == 0 {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: .init(describing: HeaderCell.self), for: indexPath) as! HeaderCell
-                cell.title.text = section.sectionTitle
+                cell.title.text = section.title
                 return cell
             } else {
                 let exploreCell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: section.cell), for: indexPath) as! EcosiaExploreCell
-                Section.Explore(rawValue: indexPath.row - 1).map { exploreCell.display($0) }
+                exploreCell.tag = indexPath.row - 1
+                exploreCell.learnMore.removeTarget(self, action: nil, for: .touchUpInside)
+                exploreCell.learnMore.addTarget(self, action: #selector(explore(button:)), for: .touchUpInside)
+                exploreCell.model = .init(rawValue: indexPath.row - 1)
                 return exploreCell
             }
         case .news:
             if indexPath.row == 0 {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: .init(describing: HeaderCell.self), for: indexPath) as! HeaderCell
-                cell.title.text = section.sectionTitle
+                cell.title.text = section.title
                 return cell
             } else if indexPath.row == self.collectionView(collectionView, numberOfItemsInSection: Section.news.rawValue) - 1 {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: .init(describing: MoreButtonCell.self), for: indexPath) as! MoreButtonCell
@@ -181,19 +212,41 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         case .explore:
             // Index is off by one as first cell is the header
             guard indexPath.row > 0 else { return }
-            Section.Explore(rawValue: indexPath.row - 1)
-                .map {
-                    delegate?.ecosiaHome(didSelectURL: $0.url)
-                    Analytics.shared.navigation(.open, label: $0.label)
+
+            collectionView.performBatchUpdates({
+                disclosed = disclosed == indexPath ? nil : indexPath
+                UIView.animate(withDuration: 0.3) {
+                    collectionView.collectionViewLayout.invalidateLayout()
                 }
-            dismiss(animated: true, completion: nil)
+            }) {
+                collectionView.scrollToItem(at: indexPath, at: .top, animated: $0)
+            }
         case .multiply:
             navigationController?.pushViewController(MultiplyImpact(delegate: delegate, referrals: referrals), animated: true)
         }
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        .init(width: collectionView.ecosiaHomeMaxWidth, height: Section(rawValue: indexPath.section)!.height)
+        let section = Section(rawValue: indexPath.section)!
+        let height: CGFloat
+        
+        switch Section(rawValue: indexPath.section)! {
+        case .explore:
+            if indexPath == disclosed {
+                if let cell = collectionView.cellForItem(at: indexPath) as? EcosiaExploreCell {
+                    height = cell.expandedHeight
+                } else {
+                    disclosed = nil
+                    height = section.height
+                }
+            } else {
+                height = section.height
+            }
+        default:
+            height = section.height
+        }
+        
+        return .init(width: collectionView.ecosiaHomeMaxWidth, height: height)
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
@@ -269,6 +322,15 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     @objc private func learnMore() {
         delegate?.ecosiaHome(didSelectURL: Environment.current.aboutCounter)
         Analytics.shared.navigation(.open, label: .counter)
+        dismiss(animated: true, completion: nil)
+    }
+    
+    @objc private func explore(button: UIButton) {
+        Section.Explore(rawValue: button.tag)
+            .map {
+                delegate?.ecosiaHome(didSelectURL: $0.url)
+                Analytics.shared.navigation(.open, label: $0.label)
+            }
         dismiss(animated: true, completion: nil)
     }
 }
