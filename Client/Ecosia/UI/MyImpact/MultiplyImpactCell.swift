@@ -9,6 +9,10 @@ final class MultiplyImpactCell: UICollectionViewCell, Themeable {
     private weak var subtitle: UILabel!
     private weak var outline: UIView!
 
+    var dynamicHeight: CGFloat {
+        outline.frame.maxY
+    }
+    
     override var isSelected: Bool {
         didSet {
             hover()
@@ -24,19 +28,20 @@ final class MultiplyImpactCell: UICollectionViewCell, Themeable {
     required init?(coder: NSCoder) { super.init(coder: coder) }
     
     override init(frame: CGRect) {
-        super.init(frame: frame)
         let outline = UIView()
+        self.outline = outline
+        
+        super.init(frame: frame)
         contentView.addSubview(outline)
         outline.layer.cornerRadius = 10
         outline.translatesAutoresizingMaskIntoConstraints = false
-        self.outline = outline
         
         let title = UILabel()
         title.translatesAutoresizingMaskIntoConstraints = false
         title.font = .preferredFont(forTextStyle: .body)
         title.adjustsFontForContentSizeCategory = true
         title.numberOfLines = 0
-        title.text = .localized(.getATreeWithEveryFriend)
+        title.text = .localized(.getATreeWithEveryFriend) + .localized(.getATreeWithEveryFriend)
         title.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         self.title = title
         outline.addSubview(title)
