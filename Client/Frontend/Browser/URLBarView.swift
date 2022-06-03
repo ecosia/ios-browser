@@ -875,7 +875,7 @@ extension URLBarView: Themeable {
         ToolbarTextField.applyUIMode(isPrivate: isPrivate)
 
         // shadow only for NTP light mode
-        if !ThemeManager.instance.current.isDark && isHome {
+        if !ThemeManager.instance.current.isDark && isHome && !inOverlayMode {
             locationContainer.layer.shadowOpacity = 1
             locationContainer.layer.shadowColor = UIColor(red: 0.059, green: 0.059, blue: 0.059, alpha: 0.18).cgColor
             locationContainer.layer.shadowOpacity = 1
