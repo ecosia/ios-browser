@@ -59,17 +59,28 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         applyTheme()
 
         news.subscribeAndReceive(self) { [weak self] in
-            self?.items = $0
-            self?.collectionView.reloadSections([Section.news.rawValue])
+            guard
+                let self = self,
+                self.collectionView.numberOfSections > Section.news.rawValue
+            else { return }
+            self.items = $0
+            self.collectionView.reloadSections([Section.news.rawValue])
         }
 
         personalCounter.subscribe(self)  { [weak self] _ in
-            guard let self = self else { return }
+            guard
+                let self = self,
+                self.collectionView.numberOfSections > Section.impact.rawValue,
+                self.collectionView.numberOfSections > Section.legacyImpact.rawValue
+            else { return }
             self.collectionView.reloadSections([Section.impact.rawValue, Section.legacyImpact.rawValue])
         }
 
         referrals.subscribe(self)  { [weak self] _ in
-            guard let self = self else { return }
+            guard
+                let self = self,
+                self.collectionView.numberOfSections > Section.impact.rawValue
+            else { return }
             self.collectionView.reloadSections([Section.impact.rawValue])
         }
     }
