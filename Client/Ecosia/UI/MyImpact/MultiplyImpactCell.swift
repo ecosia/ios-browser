@@ -8,7 +8,7 @@ final class MultiplyImpactCell: UICollectionViewCell, Themeable {
     private weak var title: UILabel!
     private weak var subtitle: UILabel!
     private weak var outline: UIView!
-    
+
     override var isSelected: Bool {
         didSet {
             hover()
@@ -24,13 +24,12 @@ final class MultiplyImpactCell: UICollectionViewCell, Themeable {
     required init?(coder: NSCoder) { super.init(coder: coder) }
     
     override init(frame: CGRect) {
-        let outline = UIView()
-        self.outline = outline
-        
         super.init(frame: frame)
+        let outline = UIView()
         contentView.addSubview(outline)
         outline.layer.cornerRadius = 10
         outline.translatesAutoresizingMaskIntoConstraints = false
+        self.outline = outline
         
         let title = UILabel()
         title.translatesAutoresizingMaskIntoConstraints = false
