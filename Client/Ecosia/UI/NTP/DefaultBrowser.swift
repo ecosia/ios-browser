@@ -21,6 +21,8 @@ final class DefaultBrowser: UIViewController, Themeable {
         if traitCollection.userInterfaceIdiom == .pad {
             modalPresentationStyle = .formSheet
             preferredContentSize = .init(width: 544, height: 600)
+        } else {
+            modalPresentationCapturesStatusBarAppearance = true
         }
     }
 
@@ -32,6 +34,10 @@ final class DefaultBrowser: UIViewController, Themeable {
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         traitCollection.userInterfaceIdiom == .pad ? .all : .portrait
+    }
+
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+       .lightContent
     }
 
     override func viewDidLoad() {
