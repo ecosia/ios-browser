@@ -37,6 +37,7 @@ final class MultiplyImpactCell: UICollectionViewCell, Themeable {
         title.adjustsFontForContentSizeCategory = true
         title.numberOfLines = 0
         title.text = .localized(.getATreeWithEveryFriend)
+        title.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         self.title = title
         outline.addSubview(title)
         
@@ -45,6 +46,8 @@ final class MultiplyImpactCell: UICollectionViewCell, Themeable {
         subtitle.font = .preferredFont(forTextStyle: .callout)
         subtitle.adjustsFontForContentSizeCategory = true
         subtitle.text = .localized(.inviteFriends)
+        subtitle.numberOfLines = 0
+        subtitle.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         self.subtitle = subtitle
         outline.addSubview(subtitle)
         
@@ -61,10 +64,13 @@ final class MultiplyImpactCell: UICollectionViewCell, Themeable {
 
         title.leftAnchor.constraint(equalTo: outline.leftAnchor, constant: 16).isActive = true
         title.topAnchor.constraint(equalTo: outline.topAnchor, constant: 12).isActive = true
+        title.rightAnchor.constraint(lessThanOrEqualTo: icon.leftAnchor, constant: -16).isActive = true
         title.widthAnchor.constraint(lessThanOrEqualToConstant: 220).isActive = true
         
         subtitle.leftAnchor.constraint(equalTo: outline.leftAnchor, constant: 16).isActive = true
         subtitle.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 8).isActive = true
+        subtitle.rightAnchor.constraint(lessThanOrEqualTo: icon.leftAnchor, constant: -16).isActive = true
+        subtitle.widthAnchor.constraint(lessThanOrEqualToConstant: 220).isActive = true
         
         icon.rightAnchor.constraint(equalTo: outline.rightAnchor, constant: -16).isActive = true
         icon.centerYAnchor.constraint(equalTo: outline.centerYAnchor).isActive = true
