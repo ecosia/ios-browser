@@ -11,7 +11,7 @@ struct EmptyPrivateTabsViewUX {
     static let LearnMoreFont = UIFont.systemFont(ofSize: 15, weight: UIFont.Weight.medium)
     static let TextMargin: CGFloat = 18
     static let LearnMoreMargin: CGFloat = 8
-    static let MaxDescriptionWidth: CGFloat = 250
+    static let MaxDescriptionWidth: CGFloat = 300
     static let MinBottomMargin: CGFloat = 10
 }
 
