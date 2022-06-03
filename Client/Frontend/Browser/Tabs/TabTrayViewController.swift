@@ -152,8 +152,8 @@ class TabTrayViewController: UIViewController {
     // Initializers
     init(tabTrayDelegate: TabTrayDelegate? = nil, profile: Profile, showChronTabs: Bool = false, tabToFocus: Tab? = nil) {
         self.viewModel = TabTrayViewModel(tabTrayDelegate: tabTrayDelegate, profile: profile, showChronTabs: showChronTabs, tabToFocus: tabToFocus)
-
         super.init(nibName: nil, bundle: nil)
+        modalPresentationCapturesStatusBarAppearance = true
     }
 
     required init?(coder: NSCoder) {
@@ -186,11 +186,13 @@ class TabTrayViewController: UIViewController {
 
     private func viewSetup() {
         viewModel.syncedTabsController.remotePanelDelegate = self
-        
+
+        /* Ecosia
         if let appWindow = (UIApplication.shared.delegate?.window),
            let window = appWindow as UIWindow? {
             window.backgroundColor = .black
         }
+         */
         
         if shouldUseiPadSetup {
             iPadViewSetup()

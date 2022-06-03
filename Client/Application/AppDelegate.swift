@@ -71,8 +71,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
         self.launchOptions = launchOptions
 
         self.window = UIWindow(frame: UIScreen.main.bounds)
-
-        NotificationCenter.default.addObserver(self, selector: #selector(displayThemeChanged), name: .DisplayThemeChanged, object: nil)
+        self.window?.backgroundColor = .Dark.Background.primary
 
         // If the 'Save logs to Files app on next launch' toggle
         // is turned on in the Settings app, copy over old logs.
@@ -607,11 +606,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
         }
     }
     */
-
-    @objc private func displayThemeChanged(notification: Notification) {
-        self.window?.backgroundColor = UIColor.theme.browser.background
-    }
 }
+     
 /* Ecosia: Remove custom push / pop animators
 // MARK: - Root View Controller Animations
 extension AppDelegate: UINavigationControllerDelegate {

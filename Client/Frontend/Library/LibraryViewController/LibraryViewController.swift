@@ -93,8 +93,8 @@ class LibraryViewController: UIViewController {
     // MARK: - Initializers
     init(profile: Profile) {
         self.viewModel = LibraryViewModel(withProfile: profile)
-
         super.init(nibName: nil, bundle: nil)
+        modalPresentationCapturesStatusBarAppearance = true
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -124,10 +124,12 @@ class LibraryViewController: UIViewController {
     }
 
     private func viewSetup() {
+        /* Ecosia
         if let appWindow = (UIApplication.shared.delegate?.window),
            let window = appWindow as UIWindow? {
             window.backgroundColor = .black
         }
+         */
 
         setToolbarItems(bottomToolbarItemsSingleButton, animated: false)
         navigationItem.rightBarButtonItem = topRightButton
@@ -159,7 +161,7 @@ class LibraryViewController: UIViewController {
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        ThemeManager.instance.statusBarStyle
+        .lightContent
     }
 
     private func setupNotifications() {
