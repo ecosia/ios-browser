@@ -8,10 +8,6 @@ final class MultiplyImpactCell: UICollectionViewCell, Themeable {
     private weak var title: UILabel!
     private weak var subtitle: UILabel!
     private weak var outline: UIView!
-
-    var dynamicHeight: CGFloat {
-        outline.frame.maxY
-    }
     
     override var isSelected: Bool {
         didSet {
@@ -41,7 +37,7 @@ final class MultiplyImpactCell: UICollectionViewCell, Themeable {
         title.font = .preferredFont(forTextStyle: .body)
         title.adjustsFontForContentSizeCategory = true
         title.numberOfLines = 0
-        title.text = .localized(.getATreeWithEveryFriend) + .localized(.getATreeWithEveryFriend)
+        title.text = .localized(.getATreeWithEveryFriend)
         title.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         self.title = title
         outline.addSubview(title)
@@ -66,6 +62,7 @@ final class MultiplyImpactCell: UICollectionViewCell, Themeable {
         outline.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
         outline.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 4).isActive = true
         outline.bottomAnchor.constraint(equalTo: subtitle.bottomAnchor, constant: 12).isActive = true
+        outline.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
 
         title.leftAnchor.constraint(equalTo: outline.leftAnchor, constant: 16).isActive = true
         title.topAnchor.constraint(equalTo: outline.topAnchor, constant: 12).isActive = true

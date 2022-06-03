@@ -198,8 +198,6 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
 
         let section = Section(rawValue: indexPath.section)!
         switch section {
-        case .impact:
-            break
         case .legacyImpact:
             delegate?.ecosiaHome(didSelectURL: Environment.current.aboutCounter)
             dismiss(animated: true, completion: nil)
@@ -223,6 +221,8 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
             }
         case .multiply:
             navigationController?.pushViewController(MultiplyImpact(delegate: delegate, referrals: referrals), animated: true)
+        default:
+            break
         }
     }
 
