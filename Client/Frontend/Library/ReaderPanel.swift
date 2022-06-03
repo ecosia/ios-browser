@@ -256,17 +256,17 @@ class ReadingListPanel: UITableViewController, LibraryPanel {
         welcomeLabel.text = .localized(.addArticlesTo)
         welcomeLabel.textColor = .theme.ecosia.primaryText
         welcomeLabel.textAlignment = .center
-        welcomeLabel.font = .systemFont(ofSize: UIFont.preferredFont(forTextStyle: .subheadline).pointSize, weight: .semibold)
+        welcomeLabel.font = .preferredFont(forTextStyle: .headline).bold()
         welcomeLabel.adjustsFontSizeToFitWidth = true
         welcomeLabel.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.top.equalToSuperview().offset(32)
+            make.top.equalToSuperview().offset(16)
             make.width.equalTo(ReadingListPanelUX.WelcomeScreenItemWidth + ReadingListPanelUX.WelcomeScreenCircleSpacer + ReadingListPanelUX.WelcomeScreenCircleWidth)
         }
 
         let readerModeLabel = UILabel()
         overlayView.addSubview(readerModeLabel)
-        readerModeLabel.text = NSLocalizedString("Open articles in Reader View by tapping the book icon when it appears in the title bar.", comment: "See http://mzl.la/1LXbDOL")
+        readerModeLabel.text = String.ReaderPanelReadingModeDescription
         readerModeLabel.font = .preferredFont(forTextStyle: .callout)
         readerModeLabel.numberOfLines = 0
         readerModeLabel.snp.makeConstraints { make in
@@ -287,8 +287,8 @@ class ReadingListPanel: UITableViewController, LibraryPanel {
 
         let readingListLabel = UILabel()
         overlayView.addSubview(readingListLabel)
-        readingListLabel.text = NSLocalizedString("Save pages to your Reading List by tapping the book plus icon in the Reader View controls.", comment: "See http://mzl.la/1LXbDOL")
-        readingListLabel.font = DynamicFontHelper.defaultHelper.DeviceFontSmallLight
+        readingListLabel.text = String.ReaderPanelReadingListDescription
+        readingListLabel.font = .preferredFont(forTextStyle: .callout)
         readingListLabel.numberOfLines = 0
         readingListLabel.snp.makeConstraints { make in
             make.leading.equalTo(readerModeLabel.snp.leading)
