@@ -56,22 +56,22 @@
 			<string>%d références</string>
 		</dict>
 	</dict>
-	<key>%d accepted invite(s)</key>
+	<key>%d friend(s) joined</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
-		<string>%#@invites@</string>
-		<key>invites</key>
+		<string>%#@friends@</string>
+		<key>friends</key>
 		<dict>
 			<key>NSStringFormatSpecTypeKey</key>
 			<string>NSStringPluralRuleType</string>
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d invitation acceptée</string>
+			<string>%d ami présent</string>
 			<key>many</key>
-			<string>%d invitations acceptées</string>
+			<string>%d amis présents</string>
 			<key>other</key>
-			<string>%d invitation(s) acceptée(s)</string>
+			<string>%d amis présents</string>
 		</dict>
 	</dict>
 	<key>Tree(s) planted</key>
