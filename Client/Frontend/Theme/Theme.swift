@@ -44,7 +44,7 @@ class TableViewColor {
     var errorText: UIColor { return UIColor.Photon.Red50 }
     var warningText: UIColor { return UIColor.Photon.Orange50 }
     var accessoryViewTint: UIColor { return .Light.Text.secondary }
-    var selectedBackground: UIColor { return UIColor.Custom.selectedHighlightLight }
+    var selectedBackground: UIColor { return .theme.ecosia.secondarySelectedBackground }
 }
 
 class ActionMenuColor {
@@ -155,7 +155,6 @@ class TextFieldColor {
 
 class HomePanelColor {
     var toolbarBackground: UIColor { return defaultBackground }
-    var toolbarHighlight: UIColor { return UIColor.theme.ecosia.primaryBrand }
     var toolbarTint: UIColor { return UIColor.Photon.Grey50 }
     var topSiteHeaderTitle: UIColor { return .black }
     var panelBackground: UIColor { return .Light.Background.tertiary }

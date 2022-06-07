@@ -224,7 +224,7 @@ class BoolSetting: Setting, FeatureFlagsProtocol {
         super.onConfigureCell(cell)
 
         let control = UISwitchThemed()
-        control.onTintColor = UIColor.theme.ecosia.primaryToolbar
+        control.onTintColor = .theme.ecosia.primaryBrand
         control.addTarget(self, action: #selector(switchValueChanged), for: .valueChanged)
         control.accessibilityIdentifier = prefKey
 

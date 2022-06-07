@@ -80,7 +80,7 @@ final class MultiplyImpactCell: UICollectionViewCell, Themeable {
     }
 
     private func hover() {
-        outline.backgroundColor = isSelected || isHighlighted ? .theme.ecosia.hoverBackgroundColor : .theme.ecosia.ntpCellBackground
+        outline.backgroundColor = isSelected || isHighlighted ? .theme.ecosia.secondarySelectedBackground : .theme.ecosia.ntpCellBackground
     }
 
     func applyTheme() {

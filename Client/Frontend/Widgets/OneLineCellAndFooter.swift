@@ -125,7 +125,7 @@ class OneLineTableViewCell: UITableViewCell, Themeable {
     
     func applyTheme() {
         let theme = BuiltinThemeName(rawValue: ThemeManager.instance.current.name) ?? .normal
-        selectedView.backgroundColor = UIColor.theme.tableView.selectedBackground
+        selectedView.backgroundColor = .theme.ecosia.secondarySelectedBackground
         if theme == .dark {
             self.backgroundColor = .Dark.Background.tertiary
             self.titleLabel.textColor = .Dark.Text.primary

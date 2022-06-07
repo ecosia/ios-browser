@@ -131,6 +131,7 @@ class TwoLineImageOverlayCell: UITableViewCell, Themeable {
         } else {
             self.backgroundColor = .Light.Background.primary
         }
+        selectedView.backgroundColor = .theme.ecosia.secondarySelectedBackground
         titleLabel.textColor = UIColor.theme.ecosia.primaryText
         descriptionLabel.textColor = UIColor.theme.ecosia.secondaryText
         leftOverlayImageView.tintColor = UIColor.theme.ecosia.primaryButton

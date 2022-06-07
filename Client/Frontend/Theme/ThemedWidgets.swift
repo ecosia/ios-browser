@@ -9,6 +9,7 @@ class ThemedTableViewCell: UITableViewCell, Themeable {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         self.style = style
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        selectedBackgroundView = UIView()
         applyTheme()
 
         // Ecosia: adjust layout margins
@@ -23,6 +24,7 @@ class ThemedTableViewCell: UITableViewCell, Themeable {
         textLabel?.textColor = UIColor.theme.tableView.rowText
         detailTextLabel?.textColor = .theme.ecosia.secondaryText
         backgroundColor = UIColor.theme.tableView.rowBackground
+        selectedBackgroundView?.backgroundColor = .theme.ecosia.primarySelectedBackground
         tintColor = UIColor.theme.general.controlTint
     }
 
