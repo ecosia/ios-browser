@@ -59,7 +59,7 @@ final class HeaderCell: UICollectionViewCell, Themeable {
         self.title = title
         
         super.init(frame: frame)
-        title.textColor = UIColor.theme.ecosia.highContrastText
+        title.textColor = UIColor.theme.ecosia.primaryText
         title.font = .preferredFont(forTextStyle: .headline)
         title.adjustsFontForContentSizeCategory = true
         title.numberOfLines = 0
@@ -77,7 +77,7 @@ final class HeaderCell: UICollectionViewCell, Themeable {
     }
 
     func applyTheme() {
-        title.textColor = .theme.ecosia.highContrastText
+        title.textColor = .theme.ecosia.primaryText
     }
 
     override func prepareForReuse() {

@@ -20,7 +20,7 @@ private struct PhotonActionSheetCellUX {
     static let CornerRadius: CGFloat = 3
 }
 
-class PhotonActionSheetCell: UITableViewCell {
+class PhotonActionSheetCell: UITableViewCell, Themeable {
     static let Padding: CGFloat = 16
     static let HorizontalPadding: CGFloat = 1
     static let topBottomPadding: CGFloat = 10
@@ -96,12 +96,14 @@ class PhotonActionSheetCell: UITableViewCell {
 
     let toggleSwitch = ToggleSwitch()
 
+    /* Ecosia
     lazy var selectedOverlay: UIView = {
         let selectedOverlay = UIView()
         selectedOverlay.backgroundColor = PhotonActionSheetCellUX.SelectedOverlayColor
         selectedOverlay.isHidden = true
         return selectedOverlay
     }()
+     */
 
     lazy var disclosureIndicator: UIImageView = {
         let config = UIImage.SymbolConfiguration(pointSize: 16)
@@ -119,11 +121,13 @@ class PhotonActionSheetCell: UITableViewCell {
         return stackView
     }()
 
+    /* Ecosia
     override var isSelected: Bool {
         didSet {
             self.selectedOverlay.isHidden = !isSelected
         }
     }
+     */
 
     let bottomBorder = UIView()
     
@@ -142,12 +146,8 @@ class PhotonActionSheetCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
         isAccessibilityElement = true
-        contentView.addSubview(selectedOverlay)
         backgroundColor = .clear
-
-        selectedOverlay.snp.makeConstraints { make in
-            make.edges.equalTo(contentView)
-        }
+        selectedBackgroundView = UIView()
 
         // Setup our StackViews
         let textStackView = UIStackView(arrangedSubviews: [titleLabel, subtitleLabel])
@@ -277,5 +277,13 @@ class PhotonActionSheetCell: UITableViewCell {
             break // Do nothing. The rest are not supported yet.
         }
         action.customRender?(titleLabel, contentView)
+
+        applyTheme()
     }
+
+    // Ecosia: Theming
+    func applyTheme() {
+        selectedBackgroundView?.backgroundColor = .theme.ecosia.primarySelectedBackground
+    }
+
 }

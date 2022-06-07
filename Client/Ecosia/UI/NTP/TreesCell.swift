@@ -279,8 +279,9 @@ final class TreesCell: UICollectionViewCell, Themeable {
     func applyTheme() {
         background.backgroundColor = UIColor.theme.ecosia.primaryBackground
 
-        let backgroundColor = model?.style == .ntp ? UIColor.theme.ecosia.ntpImpactBackground : UIColor.theme.ecosia.impactBackground
-        impactBackground.backgroundColor = (isHighlighted || isSelected) ? .theme.ecosia.hoverBackgroundColor : backgroundColor
+        let backgroundColor: UIColor = model?.style == .ntp ? .theme.ecosia.ntpImpactBackground : .theme.ecosia.impactBackground
+        let selectedBackgroundColor: UIColor = model?.style == .ntp ? .theme.ecosia.primarySelectedBackground : .theme.ecosia.secondarySelectedBackground
+        impactBackground.backgroundColor = (isHighlighted || isSelected) ? selectedBackgroundColor : backgroundColor
 
         globalCountDescription.textColor = .theme.ecosia.secondaryText
         globalCount.textColor = .theme.ecosia.primaryText

@@ -10,27 +10,6 @@ extension Theme {
     }
 }
 
-extension UIView {
-    func elevate() {
-        ThemeManager.instance.current.isDark ? elevateDark() : elevateBright()
-    }
-
-    private func elevateBright() {
-        layer.borderWidth = 1
-        backgroundColor = UIColor.theme.ecosia.highlightedBackground
-        layer.shadowRadius = 2
-        layer.shadowOffset = .init(width: 0, height: 1)
-        layer.shadowColor = UIColor.black.cgColor
-        layer.shadowOpacity = 0.15
-        layer.borderColor = UIColor.theme.ecosia.highlightedBorder.cgColor
-    }
-
-    private func elevateDark() {
-        layer.borderWidth = 0
-        backgroundColor = UIColor.theme.ecosia.highlightedBackground
-    }
-}
-
 class EcosiaTheme {
     var primaryBrand: UIColor { .Light.Brand.primary}
     var secondaryBrand: UIColor { UIColor.Photon.Grey60 }
@@ -41,9 +20,6 @@ class EcosiaTheme {
     var quarternaryBackground: UIColor { .Light.Background.quarternary }
     var barBackground: UIColor { .white }
     var barSeparator: UIColor { UIColor.Photon.Grey20 }
-    var treeCountText: UIColor { UIColor(named: "emerald")! }
-    var treeCountBackground: UIColor { UIColor(rgb: 0xE2F7F1) }
-    var impactTreeCountBackground: UIColor { treeCountBackground }
     var impactBackground: UIColor { .Light.Background.primary }
     var impactSeparator: UIColor { UIColor.Photon.Grey40 }
     var treeCounterProgressTotal: UIColor { .Light.Background.tertiary }
@@ -66,31 +42,24 @@ class EcosiaTheme {
     var primaryText: UIColor { .Light.Text.primary }
     var primaryTextInverted: UIColor { .Dark.Text.primary }
     var secondaryText: UIColor { .Light.Text.secondary }
-    var highContrastText: UIColor { UIColor.Photon.Grey90 }
     var navigationBarText: UIColor { .Light.Text.primary }
 
     var primaryIcon: UIColor { .Light.Icon.primary }
     
     var highlightedBackground: UIColor { .Light.Background.highlighted }
-    var highlightedBorder: UIColor { UIColor(named: "highlightedBorder")!}
-    var hoverBackgroundColor: UIColor { UIColor.Photon.Grey20 }
+    var primarySelectedBackground: UIColor { .Light.Background.secondary }
+    var secondarySelectedBackground: UIColor { .Light.Background.secondary }
 
-    var primaryToolbar: UIColor { UIColor(named: "primaryToolbar")!}
     var primaryButton: UIColor { .Light.Button.primary }
     var primaryButtonActive: UIColor { .Light.Button.primaryActive }
     var secondaryButton: UIColor { .Light.Button.secondary }
     var textfieldPlaceholder: UIColor { .Light.Text.secondary }
     var textfieldIconTint: UIColor { .Light.Button.primary }
-    var personalCounterBorder: UIColor { UIColor.Photon.Grey20 }
     var personalCounterSelection: UIColor { UIColor.Photon.Grey20 }
     var privateButtonBackground: UIColor { UIColor.Photon.Grey70 }
 
-    var banner: UIColor { return UIColor(named: "banner")!}
-    var underlineGrey: UIColor { return UIColor(named: "underlineGrey")! }
-    var cardText: UIColor { UIColor(named: "cardText")!}
     var modalOverlayBackground: UIColor { UIColor(rgb: 0x333333).withAlphaComponent(0.4) }
 
-    var teal60: UIColor { UIColor(rgb: 0x267A82) }
     var segmentSelectedText: UIColor { .Light.Text.primary }
     var segmentBackground: UIColor { .Light.Background.secondary }
 
@@ -118,9 +87,6 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var quarternaryBackground: UIColor { .Dark.Background.quarternary }
     override var barBackground: UIColor { UIColor.Photon.Grey80 }
     override var barSeparator: UIColor { UIColor.Photon.Grey60 }
-    override var treeCountText: UIColor { .white }
-    override var treeCountBackground: UIColor { UIColor.Photon.Grey70 }
-    override var impactTreeCountBackground: UIColor { UIColor.Photon.Grey80 }
     override var impactBackground: UIColor { .Dark.Background.tertiary }
     override var impactSeparator: UIColor { UIColor.Photon.Grey60 }
     override var treeCounterProgressTotal: UIColor { .Dark.Background.secondary }
@@ -143,13 +109,14 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var primaryText: UIColor { .Dark.Text.primary}
     override var primaryTextInverted: UIColor { .Light.Text.primary }
     override var secondaryText: UIColor { .Dark.Text.secondary }
-    override var highContrastText: UIColor { .white }
     override var navigationBarText: UIColor { .Dark.Text.primary }
 
     override var primaryIcon: UIColor { .Dark.Icon.primary }
     
     override var highlightedBackground: UIColor { .Dark.Background.highlighted }
-    override var hoverBackgroundColor: UIColor { UIColor.Photon.Grey90 }
+
+    override var primarySelectedBackground: UIColor { .Dark.Background.tertiary }
+    override var secondarySelectedBackground: UIColor { .init(red: 0.227, green: 0.227, blue: 0.227, alpha: 1) }
 
     override var primaryButton: UIColor { .Dark.Button.primary }
     override var primaryButtonActive: UIColor { .Dark.Button.primaryActive }
@@ -158,13 +125,9 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var textfieldPlaceholder: UIColor { .Dark.Text.secondary }
     override var textfieldIconTint: UIColor { .Dark.Text.secondary }
 
-    override var personalCounterBorder: UIColor { UIColor.Photon.Grey60 }
     override var personalCounterSelection: UIColor { UIColor.Photon.Grey60 }
     override var privateButtonBackground: UIColor { .white }
 
-    override var banner: UIColor { return UIColor(named: "bannerDark")!}
-    override var underlineGrey: UIColor { return UIColor(named: "underlineGreyDark")! }
-    override var cardText: UIColor { UIColor(named: "cardTextDark")!}
     override var modalOverlayBackground: UIColor { UIColor(rgb: 0x333333).withAlphaComponent(0.6) }
 
     override var segmentSelectedText: UIColor { UIColor.Photon.Grey90 }

@@ -179,7 +179,7 @@ final class NewsCell: UICollectionViewCell, Themeable {
     }
     
     private func hover() {
-        background.backgroundColor = isSelected || isHighlighted ? UIColor.theme.ecosia.hoverBackgroundColor : UIColor.theme.ecosia.ntpCellBackground
+        background.backgroundColor = isSelected || isHighlighted ? .theme.ecosia.secondarySelectedBackground : .theme.ecosia.ntpCellBackground
     }
 
     override func prepareForReuse() {

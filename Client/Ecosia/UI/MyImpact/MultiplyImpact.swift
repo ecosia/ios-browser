@@ -378,7 +378,7 @@ final class MultiplyImpact: UIViewController, Themeable {
     }
 
     @objc private func highlight() {
-        card?.backgroundColor = .theme.ecosia.hoverBackgroundColor
+        card?.backgroundColor = .theme.ecosia.secondarySelectedBackground
     }
     
     @objc private func clear() {

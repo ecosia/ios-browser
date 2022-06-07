@@ -24,7 +24,7 @@ class PrivateModeButton: ToggleButton, PrivateModeUI {
         // isPrivate == isSelected
         let color = isPrivate
         ? UIColor.theme.ecosia.primaryBackground
-        : UIColor.theme.ecosia.highContrastText
+        : UIColor.theme.ecosia.primaryText
         
         setTitleColor(color, for: .normal)
         accessibilityValue = isSelected ? .TabTrayToggleAccessibilityValueOn : .TabTrayToggleAccessibilityValueOff

@@ -20,7 +20,6 @@ fileprivate class DarkTableViewColor: TableViewColor {
     override var headerTextDark: UIColor { return UIColor.Photon.Grey30 }
     override var syncText: UIColor { return defaultTextAndTint }
     override var accessoryViewTint: UIColor { return .Dark.Text.secondary }
-    override var selectedBackground: UIColor { return UIColor.Custom.selectedHighlightDark }
 }
 
 fileprivate class DarkActionMenuColor: ActionMenuColor {
@@ -97,7 +96,6 @@ fileprivate class DarkTextFieldColor: TextFieldColor {
 
 fileprivate class DarkHomePanelColor: HomePanelColor {
     override var toolbarBackground: UIColor { return defaultBackground }
-    override var toolbarHighlight: UIColor { return UIColor.theme.ecosia.primaryToolbar }
     override var toolbarTint: UIColor { return UIColor.Photon.Grey30 }
     override var topSiteHeaderTitle: UIColor { return UIColor.Photon.White100 }
     override var panelBackground: UIColor { return .Dark.Background.secondary }

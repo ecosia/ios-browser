@@ -60,6 +60,6 @@ final class MarketsController: ThemedTableViewController {
 
     override func applyTheme() {
         super.applyTheme()
-        view.backgroundColor = UIColor.theme.ecosia.primaryBackground
+        view.backgroundColor = UIColor.theme.tableView.headerBackground
     }
 }
