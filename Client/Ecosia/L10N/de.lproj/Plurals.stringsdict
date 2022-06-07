@@ -50,20 +50,20 @@
 			<string>%d Empfehlungen</string>
 		</dict>
 	</dict>
-	<key>%d accepted invite(s)</key>
+	<key>%d friend(s) joined</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
-		<string>%#@invites@</string>
-		<key>invites</key>
+		<string>%#@friends@</string>
+		<key>friends</key>
 		<dict>
 			<key>NSStringFormatSpecTypeKey</key>
 			<string>NSStringPluralRuleType</string>
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%d akzeptierte Einladung</string>
+			<string>%d Freund*in überzeugt</string>
 			<key>other</key>
-			<string>%d akzeptierte Einladungen</string>
+			<string>%d Freund*innen überzeugt</string>
 		</dict>
 	</dict>
 	<key>Tree(s) planted</key>
