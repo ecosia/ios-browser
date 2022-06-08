@@ -46,7 +46,7 @@ extension String {
         case moderate = "Moderate"
         case seeMoreNews = "See more news"
         case multiplyImpact = "Multiply impact"
-        case yourImpact = "Your Impact"
+        case yourImpact = "Your impact"
         case yourInvites = "Your invites"
         case growingTogether = "Growing together"
         case myImpactDescription = "This is the estimated number of trees you have contributed to planting by using Ecosia."
