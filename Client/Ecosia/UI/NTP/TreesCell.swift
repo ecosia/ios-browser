@@ -10,7 +10,6 @@ final class TreesCell: UICollectionViewCell, Themeable {
     lazy var formatter: NumberFormatter = {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
-        formatter.groupingSeparator = ","
         formatter.usesGroupingSeparator = true
         return formatter
     }()

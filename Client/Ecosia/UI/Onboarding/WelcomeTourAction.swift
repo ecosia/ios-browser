@@ -3,11 +3,18 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import UIKit
+import Core
 
 final class WelcomeTourAction: UIView, Themeable {
 
     private weak var stack: UIStackView!
 
+    lazy var formatter: NumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.usesGroupingSeparator = true
+        return formatter
+    }()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -33,7 +40,14 @@ final class WelcomeTourAction: UIView, Themeable {
         height.priority = .init(rawValue: 500)
         height.isActive = true
 
-        let top = WelcomeTourActionRow(image: "trees", title: "145M+", text: .localized(.treesPlantedByTheCommunity))
+        let trees = TreeCounter.shared.statistics.treesAt(.init())
+        let oneMillion = 1000000
+        let millionTrees = trees / oneMillion
+        let multiplesOfFive = millionTrees / 5
+        let capped = multiplesOfFive * 5 * oneMillion
+        let count = formatter.string(from: .init(value: capped)) ?? "150M"
+
+        let top = WelcomeTourActionRow(image: "trees", title: "\(count)+", text: .localized(.treesPlantedByTheCommunity))
         stack.addArrangedSubview(top)
 
         let middle = WelcomeTourActionRow(image: "hand", title: "60+", text: .localized(.activeProjects))
