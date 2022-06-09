@@ -848,8 +848,9 @@ extension URLBarView: Themeable {
     func applyTheme() {
         locationView.applyTheme()
         locationTextField?.applyTheme()
+        let useDarkKeyboard = ThemeManager.instance.current.isDark || isPrivate
+        locationTextField?.keyboardAppearance = useDarkKeyboard ? .dark : .light
         locationTextField?.attributedPlaceholder = self.locationView.placeholder
-
         actionButtons.forEach { $0.applyTheme() }
         tabsButton.applyTheme()
         addNewTabButton.applyTheme()
@@ -885,8 +886,14 @@ extension URLBarView: Themeable {
             locationContainer.layer.shadowOpacity = 0
         }
 
-        // Border for dark mode on home
-        locationContainer.layer.borderWidth = isHome ? URLBarViewUX.TextFieldBorderWidth : 0
+        // Border for dark mode on home or selection state
+        if inOverlayMode {
+            locationContainer.layer.borderWidth = URLBarViewUX.TextFieldBorderWidthSelected
+        } else if isHome {
+            locationContainer.layer.borderWidth = URLBarViewUX.TextFieldBorderWidth
+        } else {
+            locationContainer.layer.borderWidth = 0
+        }
     }
 }
 
