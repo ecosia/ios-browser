@@ -142,7 +142,11 @@ final class EcosiaExploreCell: UICollectionViewCell, Themeable {
         
         subtitle.topAnchor.constraint(equalTo: disclosure.topAnchor, constant: 12).isActive = true
         subtitle.leadingAnchor.constraint(equalTo: disclosure.leadingAnchor, constant: 12).isActive = true
-        subtitle.widthAnchor.constraint(equalToConstant: frame.width - 56).isActive = true
+        subtitle.widthAnchor.constraint(lessThanOrEqualToConstant: frame.width - 56).isActive = true
+        subtitle.trailingAnchor.constraint(lessThanOrEqualTo: disclosure.trailingAnchor, constant: -12).isActive = true
+        let subtitleWidth = subtitle.widthAnchor.constraint(equalToConstant: frame.width - 56)
+        subtitleWidth.priority = .defaultLow
+        subtitleWidth.isActive = true
         
         learnMore.topAnchor.constraint(equalTo: subtitle.bottomAnchor, constant: 10).isActive = true
         learnMore.leadingAnchor.constraint(equalTo: subtitle.leadingAnchor).isActive = true
