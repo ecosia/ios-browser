@@ -37,36 +37,36 @@ open class DefaultSuggestedSites {
     public static let sites = [
         "default": [
             SuggestedSiteData(
-                url: Environment.current.blog.absoluteString,
-                bgColor: "0x000000",
-                imageUrl: "asset://suggestedsites_ecosiablog",
-                faviconUrl: "asset://defaultFavicon",
-                trackingId: 0,
-                title: NSLocalizedString("Blog", tableName: "Ecosia", comment: "")
-            ),
-            SuggestedSiteData(
                 url: Environment.current.financialReports.absoluteString,
                 bgColor: "0x000000",
-                imageUrl: "asset://suggestedsites_ecosiafin",
+                imageUrl: "asset://suggestedsites_ecosia-org",
                 faviconUrl: "asset://defaultFavicon",
                 trackingId: 0,
                 title: NSLocalizedString("Financial reports", tableName: "Ecosia", comment: "")
             ),
             SuggestedSiteData(
+                url: Environment.current.shop.absoluteString,
+                bgColor: "0x000000",
+                imageUrl: "asset://suggestedsites_ecosia-org",
+                faviconUrl: "asset://defaultFavicon",
+                trackingId: 0,
+                title: NSLocalizedString("Ecosia shop", tableName: "Ecosia", comment: "")
+            ),
+            SuggestedSiteData(
                 url: Environment.current.privacy.absoluteString,
                 bgColor: "0x000000",
-                imageUrl: "asset://suggestedsites_ecosiablog",
+                imageUrl: "asset://suggestedsites_ecosia-org",
                 faviconUrl: "asset://defaultFavicon",
                 trackingId: 0,
                 title: NSLocalizedString("Privacy", tableName: "Ecosia", comment: "")
             ),
             SuggestedSiteData(
-                url: Environment.current.howEcosiaWorks.absoluteString,
+                url: Environment.current.blog.absoluteString,
                 bgColor: "0x000000",
-                imageUrl: "asset://suggestedsites_ecosia",
+                imageUrl: "asset://suggestedsites_ecosia-org",
                 faviconUrl: "asset://defaultFavicon",
-                trackingId: 629,
-                title: NSLocalizedString("How Ecosia works", tableName: "Ecosia", comment: "")
+                trackingId: 0,
+                title: NSLocalizedString("Trees update", tableName: "Ecosia", comment: "")
             )
         ]
     ]
