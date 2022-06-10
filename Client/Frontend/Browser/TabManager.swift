@@ -158,7 +158,15 @@ class TabManager: NSObject, FeatureFlagsProtocol {
 
         addNavigationDelegate(self)
 
+        // Ecosia: cookie observing
+        configuration.websiteDataStore.httpCookieStore.add(self)
+
         NotificationCenter.default.addObserver(self, selector: #selector(prefsDidChange), name: UserDefaults.didChangeNotification, object: nil)
+    }
+
+    // Ecosia: Cookie observing
+    deinit {
+        configuration.websiteDataStore.httpCookieStore.remove(self)
     }
 
     func addNavigationDelegate(_ delegate: WKNavigationDelegate) {
@@ -883,6 +891,17 @@ extension TabManager {
     func testClearArchive() {
         assert(AppConstants.IsRunningTest)
         store.clearArchive()
+    }
+}
+
+// Ecosia: Cookie observer
+extension TabManager: WKHTTPCookieStoreObserver {
+    func cookiesDidChange(in cookieStore: WKHTTPCookieStore) {
+        cookieStore.getAllCookies { cookies in
+            DispatchQueue.main.async {
+                Cookie.received(cookies)
+            }
+        }
     }
 }
 
