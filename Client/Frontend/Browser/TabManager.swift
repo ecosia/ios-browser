@@ -257,7 +257,7 @@ class TabManager: NSObject, FeatureFlagsProtocol {
         }
         if let tab = selectedTab {
             TabEvent.post(.didGainFocus, for: tab)
-            tab.applyTheme()
+            // Ecosia: tab.applyTheme()
         }
         TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .tab)
     }

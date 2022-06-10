@@ -775,12 +775,14 @@ class Tab: NSObject {
         }
     }
 
+    /* Ecosia: fix keyboard theming
     func applyTheme() {
         let appearance: UIKeyboardAppearance = isPrivate ? .dark : (ThemeManager.instance.currentName == .dark ? .dark : .light)
         if appearance != UITextField.appearance().keyboardAppearance {
             UITextField.appearance().keyboardAppearance = appearance
         }
     }
+     */
     
     func getProviderForUrl() -> SearchEngine {
         guard let url = self.webView?.url else {
