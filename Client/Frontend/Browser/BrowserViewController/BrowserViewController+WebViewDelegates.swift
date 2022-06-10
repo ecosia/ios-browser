@@ -615,17 +615,6 @@ extension BrowserViewController: WKNavigationDelegate {
         // If none of our helpers are responsible for handling this response,
         // just let the webview handle it as normal.
         decisionHandler(.allow)
-
-        // Ecosia: Cookie handling / only read cookie for not private mode
-        if tabManager.selectedTab?.isPrivate == false {
-            DispatchQueue.main.async { 
-                webView.configuration.websiteDataStore.httpCookieStore.getAllCookies { cookies in
-                    DispatchQueue.main.async {
-                        Cookie.received(cookies)
-                    }
-                }
-            }
-        }
     }
 
     /// Invoked when an error occurs while starting to load data for the main frame.
