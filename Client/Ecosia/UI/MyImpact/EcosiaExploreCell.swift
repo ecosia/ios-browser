@@ -90,7 +90,7 @@ final class EcosiaExploreCell: UICollectionViewCell, Themeable {
         subtitle.adjustsFontForContentSizeCategory = true
         subtitle.numberOfLines = 0
         subtitle.translatesAutoresizingMaskIntoConstraints = false
-        subtitle.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        subtitle.setContentCompressionResistancePriority(.init(rawValue: 0), for: .horizontal)
         disclosure.addSubview(subtitle)
         self.subtitle = subtitle
         
@@ -142,7 +142,7 @@ final class EcosiaExploreCell: UICollectionViewCell, Themeable {
         
         subtitle.topAnchor.constraint(equalTo: disclosure.topAnchor, constant: 12).isActive = true
         subtitle.leadingAnchor.constraint(equalTo: disclosure.leadingAnchor, constant: 12).isActive = true
-//        subtitle.widthAnchor.constraint(equalTo: disclosure.widthAnchor, constant: -24).isActive = true
+        subtitle.widthAnchor.constraint(equalToConstant: frame.width - 56).isActive = true
         
         learnMore.topAnchor.constraint(equalTo: subtitle.bottomAnchor, constant: 10).isActive = true
         learnMore.leadingAnchor.constraint(equalTo: subtitle.leadingAnchor).isActive = true
