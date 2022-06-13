@@ -135,8 +135,7 @@ To update dependencies run:
 
 ```bash
 open Client.xcodeproj
-
-
+```
 
 ## TRANSLATIONS
 
