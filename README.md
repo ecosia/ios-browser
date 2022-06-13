@@ -15,12 +15,14 @@ Ecosia for iOS is based on a fork of the code of "Firefox for iOS". We want to e
 ## Requirements
 
 - OSX
-- Xcode 12.4
+- Xcode 13.0
 - Carthage
 - Node
 - Python3
 - pip
 - virtualenv
+
+### Optional to build MZ App Services
 - gyp
 - ninja
 - rust
@@ -29,24 +31,19 @@ Ecosia for iOS is based on a fork of the code of "Firefox for iOS". We want to e
 - uniffi-bindgen
 - swift-protobuf
 
-This branch works with [Xcode 12.4](https://developer.apple.com/download/more/?=xcode)
+This branch works with [Xcode 13.0](https://developer.apple.com/download/more/?=xcode)
 
-### Install Carthage and Node
+### Install Carthage, Node, VirtualEnv and python3 (mandatory)
 
 ```bash
 brew update
 brew install carthage
 brew install node
+brew install virtualenv
+brew install python3
 ```
 
-### Install python3
-
-Newer versions of macOS come with a compatibility version for python2.7 but it is recommended to upgrade to python3.
-Newer versions of Xcode doesn't come with python anymore.
-Options:
-
-- Instal via brew
-- Download from the [Official site](https://www.python.org/downloads/)
+If you don't plan to build Mozilla App Services, skip to [Getting Started](#Getting-started).
 
 ### Install pip
 
@@ -61,12 +58,6 @@ If there is an error run
 
 ```bash
 sudo python2.7 -m ensurepip --default-pip
-```
-
-### Install virutalenv
-
-```bash
-sudo pip install virtualenv
 ```
 
 ### Install GYP
@@ -109,18 +100,7 @@ Clone the project.
 git clone git clone git@github.com:ecosia/ios-browser.git
 ```
 
-Clone the translation files inside your working dir and run the import script.
-
-```bash
-#change into folder
-cd ios-browser
-#clone the repo
-git clone https://github.com/mozilla-mobile/ios-l10n-scripts.git
-#run the script
-./ios-l10n-scripts/import-locales-firefox.sh --release
-```
-
-Run npm to include the user scripts
+Run npm to include the user javascripts
 
 ```bash
 npm install
@@ -143,13 +123,19 @@ Usually it should work to simply run:
 ./carthage_bootstrap_moz_services.sh
 ```
 
-### Updating dependencies
+### Updating dependencies (not needed on first run)
 
 To update dependencies run:
 
 ```bash
 ./carthage update [optional name] --platform iOS --cache-builds
 ```
+
+### Open the project
+
+```bash
+open Client.xcodeproj
+
 
 ## TRANSLATIONS
 
