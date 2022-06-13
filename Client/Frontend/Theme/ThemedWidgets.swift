@@ -21,7 +21,7 @@ class ThemedTableViewCell: UITableViewCell, Themeable {
     }
 
     func applyTheme() {
-        textLabel?.textColor = UIColor.theme.tableView.rowText
+        textLabel?.textColor = UIColor.theme.ecosia.primaryText
         detailTextLabel?.textColor = .theme.ecosia.secondaryText
         backgroundColor = UIColor.theme.tableView.rowBackground
         selectedBackgroundView?.backgroundColor = .theme.ecosia.primarySelectedBackground
@@ -166,7 +166,7 @@ class ThemedTableSectionHeaderFooterView: UITableViewHeaderFooterView, Themeable
     func applyTheme() {
         bordersHelper.applyTheme()
         contentView.backgroundColor = UIColor.theme.tableView.headerBackground
-        titleLabel.textColor = UIColor.theme.tableView.headerTextLight
+        titleLabel.textColor = UIColor.theme.ecosia.secondaryText
     }
 
     func setupInitialConstraints() {
