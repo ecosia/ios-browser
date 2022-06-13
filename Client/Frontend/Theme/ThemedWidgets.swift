@@ -259,5 +259,6 @@ class UISwitchThemed: UISwitch {
     override func layoutSubviews() {
         super.layoutSubviews()
         onTintColor = UIColor.theme.general.controlTint
+        subviews.first?.subviews.first?.backgroundColor = .theme.ecosia.tertiaryBackground
     }
 }
