@@ -30,14 +30,14 @@ fileprivate let defaultTextAndTint = UIColor.Light.Text.primary
 class TableViewColor {
     var rowBackground: UIColor { return .Light.Background.primary }
     var rowText: UIColor { .Light.Text.primary }
-    var rowDetailText: UIColor { return UIColor.Photon.Grey60 }
+    var rowDetailText: UIColor { return .Light.Text.secondary }
     var disabledRowText: UIColor { return UIColor.Photon.Grey40 }
     var separator: UIColor { .Light.border }
     var headerBackground: UIColor { .Light.Background.tertiary }
     // Used for table headers in Settings and Photon menus
-    var headerTextLight: UIColor { return UIColor.Photon.Grey50 }
+    var headerTextLight: UIColor { return .Light.Text.secondary }
     // Used for table headers in home panel tables
-    var headerTextDark: UIColor { return UIColor.Photon.Grey90 }
+    var headerTextDark: UIColor { return .Light.Text.primary }
     var rowActionAccessory: UIColor { return UIColor.theme.ecosia.primaryBrand }
     var controlTint: UIColor { return rowActionAccessory }
     var syncText: UIColor { return defaultTextAndTint }
