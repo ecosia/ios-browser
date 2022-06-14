@@ -13998,7 +13998,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = "tweak-markets";
+				branch = main;
 				kind = branch;
 			};
 		};

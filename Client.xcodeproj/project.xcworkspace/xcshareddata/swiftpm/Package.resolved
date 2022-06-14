@@ -14,8 +14,8 @@
         "package": "Core",
         "repositoryURL": "https://github.com/ecosia/ios-core.git",
         "state": {
-          "branch": "tweak-markets",
-          "revision": "ff019c75a802fad638602015720c595c86223d89",
+          "branch": "main",
+          "revision": "52b40969b5d6b90bd47dc12922ff411c0eaa8963",
           "version": null
         }
       },
