@@ -13,11 +13,11 @@
   },
   {
     "id" : "fr-be",
-    "name" : "Belgium (fr)"
+    "name" : "Belgium (French)"
   },
   {
     "id" : "nl-be",
-    "name" : "Belgium (nl)"
+    "name" : "Belgium (Dutch)"
   },
   {
     "id" : "pt-br",
@@ -29,11 +29,11 @@
   },
   {
     "id" : "en-ca",
-    "name" : "Canada (en)"
+    "name" : "Canada (English)"
   },
   {
     "id" : "fr-ca",
-    "name" : "Canada (fr)"
+    "name" : "Canada (French)"
   },
   {
     "id" : "es-cl",
@@ -52,8 +52,16 @@
     "name" : "Croatia"
   },
   {
+    "id" : "cz-cz",
+    "name" : "Czech Republic"
+  },
+  {
     "id" : "da-dk",
     "name" : "Denmark"
+  },
+  {
+    "id" : "ee-ee",
+    "name" : "Estonia"
   },
   {
     "id" : "fi-fi",
@@ -66,6 +74,10 @@
   {
     "id" : "de-de",
     "name" : "Germany"
+  },
+  {
+    "id" : "gr-gr",
+    "name" : "Greece"
   },
   {
     "id" : "zh-hk",
@@ -136,16 +148,20 @@
     "name" : "Portugal"
   },
   {
+    "id" : "ro-ro",
+    "name" : "Romania"
+  },
+  {
     "id" : "ru-ru",
     "name" : "Russia"
   },
   {
     "id" : "ar-sa",
-    "name" : "Saudi Arabia (ar)"
+    "name" : "Saudi Arabia (Arabic)"
   },
   {
     "id" : "en-sa",
-    "name" : "Saudi Arabia (en)"
+    "name" : "Saudi Arabia (English)"
   },
   {
     "id" : "en-sg",
@@ -173,11 +189,11 @@
   },
   {
     "id" : "de-ch",
-    "name" : "Switzerland (de)"
+    "name" : "Switzerland (German)"
   },
   {
     "id" : "fr-ch",
-    "name" : "Switzerland (fr)"
+    "name" : "Switzerland (French)"
   },
   {
     "id" : "zh-tw",
@@ -185,11 +201,11 @@
   },
   {
     "id" : "en-th",
-    "name" : "Thailand (en)"
+    "name" : "Thailand (English)"
   },
   {
     "id" : "th-th",
-    "name" : "Thailand (th)"
+    "name" : "Thailand (Thai)"
   },
   {
     "id" : "tr-tr",
@@ -205,11 +221,11 @@
   },
   {
     "id" : "en-us",
-    "name" : "United States (en)"
+    "name" : "United States (English)"
   },
   {
     "id" : "es-us",
-    "name" : "United States (es)"
+    "name" : "United States (Spanish)"
   },
   {
     "id" : "es-ve",
@@ -217,10 +233,14 @@
   },
   {
     "id" : "en-vn",
-    "name" : "Vietnam (en)"
+    "name" : "Vietnam (English)"
   },
   {
     "id" : "vi-vn",
-    "name" : "Vietnam (vi)"
+    "name" : "Vietnam (Vietnamese)"
+  },
+  {
+    "id" : "en-ww",
+    "name" : "All regions"
   }
 ]
