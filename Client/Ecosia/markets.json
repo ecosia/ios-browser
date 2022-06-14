@@ -1,246 +1,260 @@
 [
   {
-    "id" : "es-ar",
-    "name" : "Argentina"
+    "value": "es-ar",
+    "label": "Argentina",
   },
   {
-    "id" : "en-au",
-    "name" : "Australia"
+    "value": "en-au",
+    "label": "Australia",
   },
   {
-    "id" : "de-at",
-    "name" : "Austria"
+    "value": "de-at",
+    "label": "Austria",
   },
   {
-    "id" : "fr-be",
-    "name" : "Belgium (French)"
+    "value": "fr-be",
+    "label": "Belgium (French)",
+    "languageInLabel": "true",
   },
   {
-    "id" : "nl-be",
-    "name" : "Belgium (Dutch)"
+    "value": "nl-be",
+    "label": "Belgium (Dutch)",
+    "languageInLabel": "true",
   },
   {
-    "id" : "pt-br",
-    "name" : "Brazil"
+    "value": "pt-br",
+    "label": "Brazil",
   },
   {
-    "id" : "bg-bg",
-    "name" : "Bulgaria"
+    "value": "bg-bg",
+    "label": "Bulgaria",
   },
   {
-    "id" : "en-ca",
-    "name" : "Canada (English)"
+    "value": "en-ca",
+    "label": "Canada (English)",
+    "languageInLabel": "true",
   },
   {
-    "id" : "fr-ca",
-    "name" : "Canada (French)"
+    "value": "fr-ca",
+    "label": "Canada (French)",
+    "languageInLabel": "true",
   },
   {
-    "id" : "es-cl",
-    "name" : "Chile"
+    "value": "es-cl",
+    "label": "Chile",
   },
   {
-    "id" : "zh-cn",
-    "name" : "China"
+    "value": "zh-cn",
+    "label": "China",
   },
   {
-    "id" : "es-co",
-    "name" : "Colombia"
+    "value": "es-co",
+    "label": "Colombia",
   },
   {
-    "id" : "hr-hr",
-    "name" : "Croatia"
+    "value": "hr-hr",
+    "label": "Croatia",
   },
   {
-    "id" : "cz-cz",
-    "name" : "Czech Republic"
+    "value": "cz-cz",
+    "label": "Czech Republic",
   },
   {
-    "id" : "da-dk",
-    "name" : "Denmark"
+    "value": "da-dk",
+    "label": "Denmark",
   },
   {
-    "id" : "ee-ee",
-    "name" : "Estonia"
+    "value": "ee-ee",
+    "label": "Estonia",
   },
   {
-    "id" : "fi-fi",
-    "name" : "Finland"
+    "value": "fi-fi",
+    "label": "Finland",
   },
   {
-    "id" : "fr-fr",
-    "name" : "France"
+    "value": "fr-fr",
+    "label": "France",
   },
   {
-    "id" : "de-de",
-    "name" : "Germany"
+    "value": "de-de",
+    "label": "Germany",
   },
   {
-    "id" : "gr-gr",
-    "name" : "Greece"
+    "value": "gr-gr",
+    "label": "Greece",
   },
   {
-    "id" : "zh-hk",
-    "name" : "Hong Kong"
+    "value": "zh-hk",
+    "label": "Hong Kong",
   },
   {
-    "id" : "en-in",
-    "name" : "India"
+    "value": "en-in",
+    "label": "India",
   },
   {
-    "id" : "en-id",
-    "name" : "Indonesia"
+    "value": "en-id",
+    "label": "Indonesia",
   },
   {
-    "id" : "en-ie",
-    "name" : "Ireland"
+    "value": "en-ie",
+    "label": "Ireland",
   },
   {
-    "id" : "it-it",
-    "name" : "Italy"
+    "value": "it-it",
+    "label": "Italy",
   },
   {
-    "id" : "ja-jp",
-    "name" : "Japan"
+    "value": "ja-jp",
+    "label": "Japan",
   },
   {
-    "id" : "lv-lv",
-    "name" : "Latvia"
+    "value": "lv-lv",
+    "label": "Latvia",
   },
   {
-    "id" : "lt-lt",
-    "name" : "Lithuania"
+    "value": "lt-lt",
+    "label": "Lithuania",
   },
   {
-    "id" : "en-my",
-    "name" : "Malaysia"
+    "value": "en-my",
+    "label": "Malaysia",
   },
   {
-    "id" : "es-mx",
-    "name" : "Mexico"
+    "value": "es-mx",
+    "label": "Mexico",
   },
   {
-    "id" : "nl-nl",
-    "name" : "Netherlands"
+    "value": "nl-nl",
+    "label": "Netherlands",
   },
   {
-    "id" : "en-nz",
-    "name" : "New Zealand"
+    "value": "en-nz",
+    "label": "New Zealand",
   },
   {
-    "id" : "nb-no",
-    "name" : "Norway"
+    "value": "nb-no",
+    "label": "Norway",
   },
   {
-    "id" : "es-pe",
-    "name" : "Peru"
+    "value": "es-pe",
+    "label": "Peru",
   },
   {
-    "id" : "en-ph",
-    "name" : "Philippines"
+    "value": "en-ph",
+    "label": "Philippines",
   },
   {
-    "id" : "pl-pl",
-    "name" : "Poland"
+    "value": "pl-pl",
+    "label": "Poland",
   },
   {
-    "id" : "pt-pt",
-    "name" : "Portugal"
+    "value": "pt-pt",
+    "label": "Portugal",
   },
   {
-    "id" : "ro-ro",
-    "name" : "Romania"
+    "value": "ro-ro",
+    "label": "Romania",
   },
   {
-    "id" : "ru-ru",
-    "name" : "Russia"
+    "value": "ru-ru",
+    "label": "Russia",
   },
   {
-    "id" : "ar-sa",
-    "name" : "Saudi Arabia (Arabic)"
+    "value": "ar-sa",
+    "label": "Saudi Arabia (Arabic)",
+    "languageInLabel": "true",
   },
   {
-    "id" : "en-sa",
-    "name" : "Saudi Arabia (English)"
+    "value": "en-sa",
+    "label": "Saudi Arabia (English)",
+    "languageInLabel": "true",
   },
   {
-    "id" : "en-sg",
-    "name" : "Singapore"
+    "value": "en-sg",
+    "label": "Singapore",
   },
   {
-    "id" : "sk-sk",
-    "name" : "Slovakia"
+    "value": "sk-sk",
+    "label": "Slovakia",
   },
   {
-    "id" : "en-za",
-    "name" : "South Africa"
+    "value": "en-za",
+    "label": "South Africa",
   },
   {
-    "id" : "ko-kr",
-    "name" : "South Korea"
+    "value": "ko-kr",
+    "label": "South Korea",
   },
   {
-    "id" : "es-es",
-    "name" : "Spain"
+    "value": "es-es",
+    "label": "Spain",
   },
   {
-    "id" : "sv-se",
-    "name" : "Sweden"
+    "value": "sv-se",
+    "label": "Sweden",
   },
   {
-    "id" : "de-ch",
-    "name" : "Switzerland (German)"
+    "value": "de-ch",
+    "label": "Switzerland (German)",
+    "languageInLabel": "true",
   },
   {
-    "id" : "fr-ch",
-    "name" : "Switzerland (French)"
+    "value": "fr-ch",
+    "label": "Switzerland (French)",
+    "languageInLabel": "true",
   },
   {
-    "id" : "zh-tw",
-    "name" : "Taiwan"
+    "value": "zh-tw",
+    "label": "Taiwan",
   },
   {
-    "id" : "en-th",
-    "name" : "Thailand (English)"
+    "value": "en-th",
+    "label": "Thailand (English)",
+    "languageInLabel": "true",
   },
   {
-    "id" : "th-th",
-    "name" : "Thailand (Thai)"
+    "value": "th-th",
+    "label": "Thailand (Thai)",
+    "languageInLabel": "true",
   },
   {
-    "id" : "tr-tr",
-    "name" : "Turkey"
+    "value": "tr-tr",
+    "label": "Turkey",
   },
   {
-    "id" : "uk-ua",
-    "name" : "Ukraine"
+    "value": "uk-ua",
+    "label": "Ukraine",
   },
   {
-    "id" : "en-gb",
-    "name" : "United Kingdom"
+    "value": "en-gb",
+    "label": "United Kingdom",
   },
   {
-    "id" : "en-us",
-    "name" : "United States (English)"
+    "value": "en-us",
+    "label": "United States (English)",
+    "languageInLabel": "true",
   },
   {
-    "id" : "es-us",
-    "name" : "United States (Spanish)"
+    "value": "es-us",
+    "label": "United States (Spanish)",
+    "languageInLabel": "true",
   },
   {
-    "id" : "es-ve",
-    "name" : "Venezuela"
+    "value": "es-ve",
+    "label": "Venezuela",
   },
   {
-    "id" : "en-vn",
-    "name" : "Vietnam (English)"
+    "value": "en-vn",
+    "label": "Vietnam (English)",
+    "languageInLabel": "true",
   },
   {
-    "id" : "vi-vn",
-    "name" : "Vietnam (Vietnamese)"
+    "value": "vi-vn",
+    "label": "Vietnam (Vietnamese)",
+    "languageInLabel": "true",
   },
   {
-    "id" : "en-ww",
-    "name" : "All regions"
-  }
+    "value": "en-ww",
+    "label": "All regions",
+  },
 ]
