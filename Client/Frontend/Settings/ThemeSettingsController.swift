@@ -175,7 +175,7 @@ class ThemeSettingsController: ThemedTableViewController {
             let control = UISwitchThemed()
 
             control.accessibilityIdentifier = "SystemThemeSwitchValue"
-            control.onTintColor = UIColor.theme.tableView.controlTint
+            control.onTintColor = .theme.tableView.controlTint
             control.addTarget(self, action: #selector(systemThemeSwitchValueChanged), for: .valueChanged)
             control.isOn = ThemeManager.instance.systemThemeIsOn
             cell.accessoryView = control
