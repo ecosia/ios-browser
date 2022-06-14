@@ -18,6 +18,7 @@ extension String {
     }
     
     enum Key: String {
+        case allRegions = "All regions"
         case autocomplete = "Autocomplete"
         case closeAll = "Close all"
         case daysAgo = "%@ days ago"
