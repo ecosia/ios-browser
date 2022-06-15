@@ -1329,6 +1329,8 @@ extension FirefoxHomeViewController: NTPTooltipDelegate {
 
 extension FirefoxHomeViewController: NTPLayoutHighlightDataSource {
     var ntpHighlight: NTPTooltip.Highlight? {
+        guard !User.shared.firstTime else { return nil }
+
         if User.shared.showsCounterIntro {
             return .counterIntro
         }
@@ -1350,6 +1352,10 @@ extension FirefoxHomeViewController: NTPLayoutHighlightDataSource {
 
     func ntpLayoutHighlightText() -> String? {
         return ntpHighlight?.text
+    }
+
+    func reloadTooltip() {
+        collectionView.collectionViewLayout.invalidateLayout()
     }
 
 }
