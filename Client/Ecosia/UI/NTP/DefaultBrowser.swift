@@ -4,6 +4,10 @@
 
 import UIKit
 
+protocol DefaultBrowserDelegate: AnyObject {
+    func defaultBrowserDidShow(_ defaultBrowser: DefaultBrowser)
+}
+
 final class DefaultBrowser: UIViewController, Themeable {
     weak var content: UIView!
     weak var image: UIImageView!
@@ -15,9 +19,11 @@ final class DefaultBrowser: UIViewController, Themeable {
     weak var arrow2: UIImageView!
     weak var cta: UIButton!
     weak var skip: UIButton!
+    weak var delegate: DefaultBrowserDelegate?
 
-    convenience init() {
+    convenience init(delegate: DefaultBrowserDelegate) {
         self.init(nibName: nil, bundle: nil)
+        self.delegate = delegate
         if traitCollection.userInterfaceIdiom == .pad {
             modalPresentationStyle = .formSheet
             preferredContentSize = .init(width: 544, height: 600)
@@ -56,6 +62,7 @@ final class DefaultBrowser: UIViewController, Themeable {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         modalTransitionStyle = .crossDissolve
+        self.delegate?.defaultBrowserDidShow(self)
     }
 
     private func setupViews() {
