@@ -253,7 +253,7 @@ class ReadingListPanel: UITableViewController, LibraryPanel {
 
         let welcomeLabel = UILabel()
         overlayView.addSubview(welcomeLabel)
-        welcomeLabel.text = .localized(.addArticlesTo)
+        welcomeLabel.text = .localized(.noArticles)
         welcomeLabel.textColor = .theme.ecosia.primaryText
         welcomeLabel.textAlignment = .center
         welcomeLabel.font = .preferredFont(forTextStyle: .headline).bold()
@@ -266,7 +266,7 @@ class ReadingListPanel: UITableViewController, LibraryPanel {
 
         let readerModeLabel = UILabel()
         overlayView.addSubview(readerModeLabel)
-        readerModeLabel.text = String.ReaderPanelReadingModeDescription
+        readerModeLabel.text = .localized(.openArticlesInReader)
         readerModeLabel.font = .preferredFont(forTextStyle: .callout)
         readerModeLabel.numberOfLines = 0
         readerModeLabel.snp.makeConstraints { make in
@@ -287,7 +287,7 @@ class ReadingListPanel: UITableViewController, LibraryPanel {
 
         let readingListLabel = UILabel()
         overlayView.addSubview(readingListLabel)
-        readingListLabel.text = String.ReaderPanelReadingListDescription
+        readingListLabel.text = .localized(.saveArticlesToReader)
         readingListLabel.font = .preferredFont(forTextStyle: .callout)
         readingListLabel.numberOfLines = 0
         readingListLabel.snp.makeConstraints { make in

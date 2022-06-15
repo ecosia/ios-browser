@@ -65,7 +65,7 @@ class DownloadsPanel: UIViewController, UITableViewDelegate, UITableViewDataSour
 
     private let events: [Notification.Name] = [.FileDidDownload, .PrivateDataClearedDownloadedFiles, .DynamicFontChanged]
 
-    private lazy var emptyStateOverlayView = EmptyHeader(icon: "downloadsEmpty", title: .localized(.noDownloads), subtitle: .localized(.yourDownloadFiles))
+    private lazy var emptyStateOverlayView = EmptyHeader(icon: "downloadsEmpty", title: .localized(.noDownloadsYet), subtitle: .localized(.whenYouDownloadFiles))
 
     private var groupedDownloadedFiles = DateGroupedTableData<DownloadedFile>()
     private var fileExtensionIcons: [String: UIImage] = [:]

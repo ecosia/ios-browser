@@ -519,7 +519,7 @@
 "History" = "History";
 
 /* Title for button in the history panel to clear recent history */
-"HistoryPanel.ClearHistoryButtonTitle" = "Clear Recent History…";
+"HistoryPanel.ClearHistoryButtonTitle" = "Clear recent history…";
 
 /* Option title to clear all browsing history. */
 "HistoryPanel.ClearHistoryMenuOptionEverything" = "Everything";
