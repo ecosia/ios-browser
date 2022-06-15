@@ -14,6 +14,8 @@ class PrivateModeButton: ToggleButton, PrivateModeUI {
         accessibilityHint = .TabTrayToggleAccessibilityHint
         setTitle(.localized(.privateTab), for: .normal)
         setTitleColor(ThemeManager.instance.current.tabTray.tabTitleText, for: .normal)
+        titleLabel?.font = .preferredFont(forTextStyle: .body)
+        titleLabel?.adjustsFontForContentSizeCategory = true
     }
 
     required init?(coder aDecoder: NSCoder) {

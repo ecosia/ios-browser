@@ -24,17 +24,26 @@ class TabTrayViewController: UIViewController {
     
     // Buttons & Menus
     lazy var deleteButton: UIBarButtonItem = {
-        let button = UIBarButtonItem(title: .localized(.closeAll), style: .plain,
-                                     target: self,
-                                     action: #selector(didTapDeleteTabs(_:)))
+        let button = UIButton(type: .system)
+        button.titleLabel?.font = .preferredFont(forTextStyle: .body)
+        button.titleLabel?.adjustsFontForContentSizeCategory = true
         button.accessibilityIdentifier = "closeAllTabsButtonTabTray"
-        return button
+        button.setTitle(.localized(.closeAll), for: .normal)
+        button.addTarget(self, action: #selector(didTapDeleteTabs), for: .primaryActionTriggered)
+        return UIBarButtonItem(customView: button)
     }()
 
     lazy var addNewTabButton = AddNewTabButton(config: .init(hideCircle: false, margin: 2))
     lazy var newTabButton: UIBarButtonItem = {
-        NSLayoutConstraint(item: addNewTabButton, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 50).isActive = true
-        NSLayoutConstraint(item: addNewTabButton, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 50).isActive = true
+        addNewTabButton.translatesAutoresizingMaskIntoConstraints = false
+        let height = addNewTabButton.heightAnchor.constraint(equalToConstant: 50)
+        height.priority = .init(rawValue: 999)
+        height.isActive = true
+
+        let width = addNewTabButton.widthAnchor.constraint(equalToConstant: 50)
+        width.priority = .init(rawValue: 999)
+        width.isActive = true
+
         addNewTabButton.addTarget(self, action: #selector(didTapAddTab(_:)), for: .primaryActionTriggered)
         let buttonItem = UIBarButtonItem(customView: addNewTabButton)
         buttonItem.accessibilityIdentifier = "newTabButtonTabTray"
