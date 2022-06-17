@@ -711,6 +711,8 @@ class SettingsTableViewController: ThemedTableViewController {
         if let setting = section[indexPath.row] {
             let cell = ThemedTableViewCell(style: setting.style, reuseIdentifier: nil)
             setting.onConfigureCell(cell)
+            cell.textLabel?.alpha = setting.enabled ? 1 : 0.5
+            cell.imageView?.alpha = setting.enabled ? 1 : 0.5
             cell.backgroundColor = UIColor.theme.tableView.rowBackground
             return cell
         }
