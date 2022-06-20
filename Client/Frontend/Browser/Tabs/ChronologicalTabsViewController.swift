@@ -132,7 +132,7 @@ class ChronologicalTabsViewController: UIViewController, Themeable, TabTrayViewD
 
 // MARK: - Toolbar Actions
 extension ChronologicalTabsViewController {
-    func performToolbarAction(_ action: TabTrayViewAction, sender: UIBarButtonItem) {
+    func performToolbarAction(_ action: TabTrayViewAction, sender: Any) {
         switch action {
         case .addTab:
             didTapToolbarAddTab()
@@ -147,11 +147,16 @@ extension ChronologicalTabsViewController {
         TelemetryWrapper.recordEvent(category: .action, method: .add, object: .tab, value: viewModel.isInPrivateMode ? .privateTab : .normalTab)
     }
 
-    func didTapToolbarDelete(_ sender: UIBarButtonItem) {
+    func didTapToolbarDelete(_ sender: Any) {
         let controller = AlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         controller.addAction(UIAlertAction(title: Strings.AppMenuCloseAllTabsTitleString, style: .default, handler: { _ in self.viewModel.closeTabsForCurrentTray() }), accessibilityIdentifier: "TabTrayController.deleteButton.closeAll")
         controller.addAction(UIAlertAction(title: Strings.CancelString, style: .cancel, handler: nil), accessibilityIdentifier: "TabTrayController.deleteButton.cancel")
-        controller.popoverPresentationController?.barButtonItem = sender
+        if let item = sender as? UIBarButtonItem {
+            controller.popoverPresentationController?.barButtonItem = item
+        }
+        if let view = sender as? UIView {
+            controller.popoverPresentationController?.sourceView = view
+        }
         present(controller, animated: true, completion: nil)
         TelemetryWrapper.recordEvent(category: .action, method: .deleteAll, object: .tab, value: viewModel.isInPrivateMode ? .privateTab : .normalTab)
     }

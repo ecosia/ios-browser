@@ -51,7 +51,7 @@ class TabTrayViewModel {
 
 // MARK: - Actions
 extension TabTrayViewModel {
-    @objc func didTapDeleteTab(_ sender: UIBarButtonItem) {
+    @objc func didTapDeleteTab(_ sender: Any) {
         tabTrayView.performToolbarAction(.deleteTab, sender: sender)
     }
 

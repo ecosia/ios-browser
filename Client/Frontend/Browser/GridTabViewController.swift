@@ -593,7 +593,7 @@ extension GridTabViewController {
 
 // MARK: - Toolbar Actions
 extension GridTabViewController {
-    func performToolbarAction(_ action: TabTrayViewAction, sender: UIBarButtonItem) {
+    func performToolbarAction(_ action: TabTrayViewAction, sender: Any) {
         switch action {
         case .addTab:
             didTapToolbarAddTab()
@@ -609,7 +609,7 @@ extension GridTabViewController {
         openNewTab(isPrivate: tabDisplayManager.isPrivate)
     }
 
-    func didTapToolbarDelete(_ sender: UIBarButtonItem) {
+    func didTapToolbarDelete(_ sender: Any) {
         if tabDisplayManager.isDragging {
             return
         }
@@ -617,7 +617,12 @@ extension GridTabViewController {
         let controller = AlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         controller.addAction(UIAlertAction(title: Strings.AppMenuCloseAllTabsTitleString, style: .destructive, handler: { _ in self.closeTabsForCurrentTray() }), accessibilityIdentifier: "TabTrayController.deleteButton.closeAll")
         controller.addAction(UIAlertAction(title: .TabTrayCloseAllTabsPromptCancel, style: .cancel, handler: nil), accessibilityIdentifier: "TabTrayController.deleteButton.cancel")
-        controller.popoverPresentationController?.barButtonItem = sender
+        if let view = sender as? UIView {
+            controller.popoverPresentationController?.sourceView = view
+        }
+        if let item = sender as? UIBarButtonItem {
+            controller.popoverPresentationController?.barButtonItem = item
+        }
         controller.view.tintColor = UIColor.theme.ecosia.information
         present(controller, animated: true, completion: nil)
     }
