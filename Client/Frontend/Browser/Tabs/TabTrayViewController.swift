@@ -14,7 +14,7 @@ enum TabTrayViewAction {
 
 protocol TabTrayViewDelegate: UIViewController {
     func didTogglePrivateMode(_ togglePrivateModeOn: Bool)
-    func performToolbarAction(_ action: TabTrayViewAction, sender: UIBarButtonItem)
+    func performToolbarAction(_ action: TabTrayViewAction, sender: Any)
 }
 
 class TabTrayViewController: UIViewController {
@@ -438,7 +438,7 @@ extension TabTrayViewController {
         viewModel.didTapAddTab(sender)
     }
 
-    @objc func didTapDeleteTabs(_ sender: UIBarButtonItem) {
+    @objc func didTapDeleteTabs(_ sender: Any) {
         viewModel.didTapDeleteTab(sender)
     }
 

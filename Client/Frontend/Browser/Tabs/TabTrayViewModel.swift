@@ -51,15 +51,15 @@ class TabTrayViewModel {
 
 // MARK: - Actions
 extension TabTrayViewModel {
-    @objc func didTapDeleteTab(_ sender: UIBarButtonItem) {
+    @objc func didTapDeleteTab(_ sender: Any) {
         tabTrayView.performToolbarAction(.deleteTab, sender: sender)
     }
 
-    @objc func didTapAddTab(_ sender: UIBarButtonItem) {
+    @objc func didTapAddTab(_ sender: Any) {
         tabTrayView.performToolbarAction(.addTab, sender: sender)
     }
 
-    @objc func didTapSyncTabs(_ sender: UIBarButtonItem) {
+    @objc func didTapSyncTabs(_ sender: Any) {
         reloadRemoteTabs()
     }
 }
