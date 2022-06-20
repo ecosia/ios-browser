@@ -125,7 +125,7 @@ To validate that application services can be build locally follow the guide [htt
 Make sure to have XCode 13.0 installed and selected for command line builds
 
 ```bash
-sudo xcode-select --switch /<path-to-XCode-13.0/Xcode-13.0.app
+sudo xcode-select --switch /<path-to-XCode-13.0-folder>/Xcode-13.0.app
 ```
 
 Then fetch Mozilla App Services via the script:
@@ -209,3 +209,6 @@ python3 ecosify-strings.py Client
 python3 ecosify-strings.py Extensions
 python3 ecosify-strings.py Shared
 ```
+## Release 🚀
+
+Follow the instructions from our [confluence page](https://ecosia.atlassian.net/wiki/spaces/MOB/pages/2460680288/How+to+release)
