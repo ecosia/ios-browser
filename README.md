@@ -97,7 +97,12 @@ If building application-services dependency swift-protobuf needs to be installed
 Clone the project.
 
 ```bash
-git clone git clone git@github.com:ecosia/ios-browser.git
+git clone git@github.com:ecosia/ios-browser.git
+```
+
+For the upcoming commands, cd into the checked out folder
+```bash
+cd ios-browser/
 ```
 
 Run npm to include the user javascripts
@@ -110,14 +115,20 @@ npm run build
 Setup content blocking scripts
 
 ```bash
-cd content-blocker-lib-ios/ContentBlockerGen && swift run
+(cd content-blocker-lib-ios/ContentBlockerGen && swift run)
 ```
 
 ### Building Application Services
 
 To validate that application services can be build locally follow the guide [https://github.com/mozilla/application-services/blob/main/docs/building.md#ios-development](https://github.com/mozilla/application-services/blob/main/docs/building.md#ios-development)
 
-Usually it should work to simply run:
+Make sure to have XCode 13.0 installed and selected for command line builds
+
+```bash
+sudo xcode-select --switch /<path-to-XCode-13.0/Xcode-13.0.app
+```
+
+Then fetch Mozilla App Services via the script:
 
 ```bash
 ./carthage_bootstrap_moz_services.sh
