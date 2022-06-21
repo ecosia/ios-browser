@@ -8,7 +8,7 @@ import Storage
 import Shared
 
 struct GridTabTrayControllerUX {
-    static let CornerRadius = CGFloat(6.0)
+    static let CornerRadius = CGFloat(10.0)
     static let TextBoxHeight = CGFloat(32.0)
     static let NavigationToolbarHeight = CGFloat(0) // Ecosia: hide Toolbar
     static let FaviconSize = CGFloat(20)
