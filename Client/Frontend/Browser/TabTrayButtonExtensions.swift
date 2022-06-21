@@ -35,11 +35,6 @@ class PrivateModeButton: ToggleButton, PrivateModeUI {
             ? UIColor.theme.ecosia.privateButtonBackground.cgColor
             : UIColor.clear.cgColor
     }
-
-    override var intrinsicContentSize: CGSize {
-        let size = super.intrinsicContentSize
-        return CGSize(width: size.width + 16, height: size.height)
-    }
 }
 
 extension UIButton {

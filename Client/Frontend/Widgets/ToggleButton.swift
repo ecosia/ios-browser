@@ -12,9 +12,7 @@ private struct UX {
     static let ShowDuration: TimeInterval = 0.4
     static let HideDuration: TimeInterval = 0.2
 
-    static let Insets: UIEdgeInsets = UIDevice.current.userInterfaceIdiom == .phone ?
-        .init(top: 0, left: -4, bottom: 0, right: -4) :
-        .init(top: 6, left: -4, bottom: 6, right: -4)
+    static let Insets = UIEdgeInsets(top: 6, left: 8, bottom: 6, right: 8)
 }
 
 class ToggleButton: UIButton, Themeable {
@@ -28,7 +26,7 @@ class ToggleButton: UIButton, Themeable {
     fileprivate func updateMaskPathForSelectedState(_ selected: Bool) {
         let path = CGMutablePath()
         if selected {
-            var rect = CGRect(size: bounds.size).inset(by: UX.Insets)
+            var rect = CGRect(size: bounds.size)
             // Fix crash for negative rect size
             rect.center = maskShapeLayer.position
             let corner = floor(rect.size.height / 2.0)
@@ -41,7 +39,7 @@ class ToggleButton: UIButton, Themeable {
     }
 
     fileprivate func animateSelection(_ selected: Bool) {
-        var endFrame = CGRect(size: bounds.size).inset(by: UX.Insets)
+        var endFrame = CGRect(size: bounds.size)
         endFrame.center = maskShapeLayer.position
         let corner = max(floor(endFrame.size.height / 2.0), 0)
 
@@ -107,6 +105,7 @@ class ToggleButton: UIButton, Themeable {
     override init(frame: CGRect) {
         super.init(frame: frame)
         contentMode = .redraw
+        contentEdgeInsets = UX.Insets
         insertSubview(backgroundView, belowSubview: imageView!)
     }
 
