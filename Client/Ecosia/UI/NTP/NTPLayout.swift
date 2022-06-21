@@ -36,7 +36,7 @@ class NTPLayout: UICollectionViewFlowLayout {
                     let font = UIFont.preferredFont(forTextStyle: .callout)
                     let height = text.heightWithConstrainedWidth(width: impact.bounds.width - 16 - 48, font: font) + 24 + 16
                     tooltip.frame.size.height = height
-                    tooltip.frame.origin.y -= (height - 32)
+                    tooltip.frame.origin.y -= (height - 40)
                 }
             }
         }
