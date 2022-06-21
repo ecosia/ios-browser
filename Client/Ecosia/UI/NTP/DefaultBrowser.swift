@@ -4,10 +4,12 @@
 
 import UIKit
 
+@available(iOS 14, *)
 protocol DefaultBrowserDelegate: AnyObject {
     func defaultBrowserDidShow(_ defaultBrowser: DefaultBrowser)
 }
 
+@available(iOS 14, *)
 final class DefaultBrowser: UIViewController, Themeable {
     weak var content: UIView!
     weak var image: UIImageView!
