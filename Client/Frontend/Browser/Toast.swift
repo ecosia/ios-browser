@@ -15,7 +15,6 @@ class Toast: UIView {
 
     lazy var gestureRecognizer: UITapGestureRecognizer = {
         let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTap))
-        gestureRecognizer.cancelsTouchesInView = false
         return gestureRecognizer
     }()
 
