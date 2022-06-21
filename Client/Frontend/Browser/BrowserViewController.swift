@@ -1970,9 +1970,12 @@ extension BrowserViewController {
     func presentIntroViewController(_ alwaysShow: Bool = false) {
 		// Ecosia: custom intro handling
         if User.shared.firstTime {
-            let defaultPromo = DefaultBrowser(delegate: self)
-            present(defaultPromo, animated: true)
-
+            if #available(iOS 14, *) {
+                let defaultPromo = DefaultBrowser(delegate: self)
+                present(defaultPromo, animated: true)
+            } else {
+                User.shared.firstTime = false
+            }
             profile.prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
             User.shared.migrated = true
             User.shared.hideRebrandIntro()
@@ -2521,6 +2524,7 @@ extension BrowserViewController {
 
 
 extension BrowserViewController: DefaultBrowserDelegate {
+    @available(iOS 14, *)
     func defaultBrowserDidShow(_ defaultBrowser: DefaultBrowser) {
         User.shared.firstTime = false
         firefoxHomeViewController?.reloadTooltip()
