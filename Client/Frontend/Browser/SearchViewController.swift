@@ -10,7 +10,7 @@ import MozillaAppServices
 
 private enum SearchListSection: Int, CaseIterable {
     case searchSuggestions
-    case remoteTabs
+    // Ecosia: case remoteTabs
     case openedTabs
     case bookmarksAndHistory
 }
@@ -89,7 +89,7 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
         self.isPrivate = isPrivate
         self.tabManager = tabManager
         self.experimental = Experiments.shared.getVariables(featureId: .search).getVariables("awesome-bar")
-        super.init(profile: profile, style: .plain)
+        super.init(profile: profile, style: .insetGrouped)
         
         if #available(iOS 15.0, *) {
             tableView.sectionHeaderTopPadding = 0
@@ -101,7 +101,6 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
     }
 
     override func viewDidLoad() {
-        view.backgroundColor = UIColor.theme.homePanel.panelBackground
         /* Ecosia: deactivate blur
         let blur = UIVisualEffectView(effect: UIBlurEffect(style: .light))
         view.addSubview(blur)
@@ -233,10 +232,11 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
     }
 
     fileprivate func layoutTable() {
+        tableView.contentInsetAdjustmentBehavior = .scrollableAxes
         tableView.snp.remakeConstraints { make in
             make.top.equalTo(self.view.snp.top)
             make.leading.trailing.equalTo(self.view)
-            make.bottom.equalTo(self.view.safeArea.bottom)
+            make.bottom.equalTo(self.view.snp.bottom)
         }
     }
 
@@ -495,9 +495,9 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
         case .openedTabs:
             let tab = self.filteredOpenedTabs[indexPath.row]
             searchDelegate?.searchViewController(self, uuid: tab.tabUUID)
-        case .remoteTabs:
+        /* Ecosia: case .remoteTabs:
             let remoteTab = self.filteredRemoteClientTabs[indexPath.row].tab
-            searchDelegate?.searchViewController(self, didSelectURL: remoteTab.URL, searchTerm: nil)
+            searchDelegate?.searchViewController(self, didSelectURL: remoteTab.URL, searchTerm: nil)*/
         case .bookmarksAndHistory:
             if let site = data[indexPath.row] {
                 if let url = URL(string: site.url) {
@@ -522,6 +522,10 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
         return getCellForSection(twoLineImageOverlayCell, oneLineCell: oneLineTableViewCell, for: SearchListSection(rawValue: indexPath.section)!, indexPath)
     }
 
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        cell.backgroundColor = .theme.ecosia.ntpImpactBackground
+    }
+
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch SearchListSection(rawValue: section)! {
         case .searchSuggestions:
@@ -529,8 +533,8 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
             return count < 4 ? count : 4
         case .openedTabs:
             return filteredOpenedTabs.count
-        case .remoteTabs:
-            return filteredRemoteClientTabs.count
+        /* Ecosia: case .remoteTabs:
+            return filteredRemoteClientTabs.count */
         case .bookmarksAndHistory:
             return data.count
         }
@@ -553,6 +557,8 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
 
     override func applyTheme() {
         super.applyTheme()
+        view.backgroundColor = .theme.ecosia.ntpBackground
+        tableView.backgroundColor = .theme.ecosia.ntpBackground
         reloadData()
     }
 
@@ -600,6 +606,7 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
                 twoLineCell.descriptionLabel.isHidden = false
                 twoLineCell.titleLabel.text = openedTab.title ?? openedTab.lastTitle
                 twoLineCell.descriptionLabel.text = String.SearchSuggestionCellSwitchToTabLabel
+                /* Ecosia:
                 twoLineCell.leftOverlayImageView.image = openAndSyncTabBadge
                 twoLineCell.leftImageView.layer.borderColor = UIColor.theme.ecosia.border.cgColor
                 twoLineCell.leftImageView.layer.borderWidth = SearchViewControllerUX.IconBorderWidth
@@ -608,10 +615,14 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
                     twoLineCell?.leftImageView.image = twoLineCell?.leftImageView.image?.createScaled(CGSize(width: SearchViewControllerUX.IconSize, height: SearchViewControllerUX.IconSize))
                 }
                 twoLineCell.accessoryView = nil
+                 */
+                twoLineCell.leftImageView.contentMode = .center
+                twoLineCell.leftImageView.image = .init(named: "switchTab")
+                twoLineCell.leftImageView.tintColor = .theme.ecosia.secondaryText
                 twoLineCell.backgroundColor = UIColor.theme.ecosia.autocompleteBackground
                 cell = twoLineCell
             }
-        case .remoteTabs:
+        /* Ecosia: case .remoteTabs:
             if self.filteredRemoteClientTabs.count > indexPath.row {
                 let remoteTab = self.filteredRemoteClientTabs[indexPath.row].tab
                 let remoteClient = self.filteredRemoteClientTabs[indexPath.row].client
@@ -628,7 +639,7 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
                 twoLineCell.backgroundColor = UIColor.theme.ecosia.autocompleteBackground
                 twoLineCell.accessoryView = nil
                 cell = twoLineCell
-            }
+            } */
         case .bookmarksAndHistory:
             if let site = data[indexPath.row] {
                 let isBookmark = site.bookmarked ?? false
@@ -636,6 +647,7 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
                 twoLineCell.descriptionLabel.isHidden = false
                 twoLineCell.titleLabel.text = site.title
                 twoLineCell.descriptionLabel.text = site.url
+                /* Ecosia:
                 twoLineCell.leftOverlayImageView.image = isBookmark ? self.bookmarkedBadge : nil
                 twoLineCell.leftImageView.layer.borderColor = SearchViewControllerUX.IconBorderColor.cgColor
                 twoLineCell.leftImageView.layer.borderWidth = SearchViewControllerUX.IconBorderWidth
@@ -643,11 +655,17 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
                 twoLineCell.leftImageView.setImageAndBackground(forIcon: site.icon, website: site.tileURL) { [weak twoLineCell] in
                     twoLineCell?.leftImageView.image = twoLineCell?.leftImageView.image?.createScaled(CGSize(width: SearchViewControllerUX.IconSize, height: SearchViewControllerUX.IconSize))
                 }
+                 */
                 twoLineCell.backgroundColor = UIColor.theme.ecosia.autocompleteBackground
                 twoLineCell.accessoryView = nil
+                let imageName = isBookmark ? "bookmarksEmpty" : "libraryHistory"
+                twoLineCell.leftImageView.contentMode = .center
+                twoLineCell.leftImageView.image = .init(named: imageName)
+                twoLineCell.leftImageView.tintColor = .theme.ecosia.secondaryText
                 cell = twoLineCell
             }
         }
+        //(cell as? Themeable)?.applyTheme()
         return cell
     }
     

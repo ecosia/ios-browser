@@ -27,7 +27,8 @@ class TwoLineImageOverlayCell: UITableViewCell, Themeable {
         imgView.clipsToBounds = true
         return imgView
     }()
-    
+
+    /* Ecosia: design
     var leftOverlayImageView: UIImageView = {
         let imgView = UIImageView()
         imgView.contentMode = .scaleAspectFit
@@ -35,6 +36,7 @@ class TwoLineImageOverlayCell: UITableViewCell, Themeable {
         imgView.layer.cornerRadius = 11
         return imgView
     }()
+     */
 
     var titleLabel: UILabel = {
         let label = UILabel()
@@ -75,7 +77,6 @@ class TwoLineImageOverlayCell: UITableViewCell, Themeable {
         containerView.addSubview(leftImageView)
         containerView.addSubview(midView)
 
-        containerView.addSubview(leftOverlayImageView)
         addSubview(containerView)
         contentView.addSubview(containerView)
         bringSubviewToFront(containerView)
@@ -93,11 +94,12 @@ class TwoLineImageOverlayCell: UITableViewCell, Themeable {
             make.centerY.equalTo(containerView.snp.centerY)
         }
 
+        /* Ecosia
         leftOverlayImageView.snp.makeConstraints { make in
             make.height.width.equalTo(22)
             make.trailing.equalTo(leftImageView).offset(7)
             make.bottom.equalTo(leftImageView).offset(7)
-        }
+        }*/
 
         midView.snp.makeConstraints { make in
             make.height.equalTo(46)
@@ -134,7 +136,6 @@ class TwoLineImageOverlayCell: UITableViewCell, Themeable {
         selectedView.backgroundColor = .theme.ecosia.secondarySelectedBackground
         titleLabel.textColor = UIColor.theme.ecosia.primaryText
         descriptionLabel.textColor = UIColor.theme.ecosia.secondaryText
-        leftOverlayImageView.tintColor = UIColor.theme.ecosia.primaryButton
     }
     
     override func prepareForReuse() {
