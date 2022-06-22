@@ -6,6 +6,8 @@ import UIKit
 import Core
 
 final class TreesCell: UICollectionViewCell, Themeable {
+    static let topMargin = CGFloat(40)
+
     private(set) var model: TreesCellModel?
     lazy var formatter: NumberFormatter = {
         let formatter = NumberFormatter()
@@ -247,7 +249,7 @@ final class TreesCell: UICollectionViewCell, Themeable {
 
     private func addConstraints() {
         // Constraints for stack views to their backgrounds
-        background.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 40).isActive = true
+        background.topAnchor.constraint(equalTo: contentView.topAnchor, constant: Self.topMargin).isActive = true
         let bottom = background.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16)
         bottom.priority = .defaultHigh
         bottom.isActive = true

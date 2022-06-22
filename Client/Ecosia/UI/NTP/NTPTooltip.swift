@@ -10,6 +10,8 @@ protocol NTPTooltipDelegate: AnyObject {
 
 final class NTPTooltip: UICollectionReusableView, Themeable {
     static let key = String(describing: self)
+    static let margin = CGFloat(16)
+    static let containerMargin = CGFloat(12)
     private weak var textLabel: UILabel!
     private weak var tail: UIImageView!
     private weak var closeImage: UIImageView!
@@ -35,7 +37,7 @@ final class NTPTooltip: UICollectionReusableView, Themeable {
         background.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
         background.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
         background.topAnchor.constraint(equalTo: topAnchor).isActive = true
-        background.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16).isActive = true
+        background.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -Self.margin).isActive = true
 
         let stack = UIStackView()
         stack.translatesAutoresizingMaskIntoConstraints = false
@@ -60,12 +62,12 @@ final class NTPTooltip: UICollectionReusableView, Themeable {
         self.closeImage = closeImage
 
         addSubview(stack)
-        stack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16).isActive = true
-        let trailing = stack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16)
+        stack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Self.margin).isActive = true
+        let trailing = stack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -Self.margin)
         trailing.priority = .init(rawValue: 999)
         trailing.isActive = true
-        stack.topAnchor.constraint(equalTo: topAnchor, constant: 12).isActive = true
-        stack.bottomAnchor.constraint(equalTo: background.bottomAnchor, constant: -12).isActive = true
+        stack.topAnchor.constraint(equalTo: topAnchor, constant: Self.containerMargin).isActive = true
+        stack.bottomAnchor.constraint(equalTo: background.bottomAnchor, constant: -Self.containerMargin).isActive = true
 
         let tail = UIImageView(image: .init(named: "tail"))
         tail.translatesAutoresizingMaskIntoConstraints = false
