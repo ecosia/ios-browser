@@ -545,6 +545,7 @@
 		CE1CFD6628216BDA00CC8830 /* EcosiaHome.Background.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE1CFD6528216BDA00CC8830 /* EcosiaHome.Background.swift */; };
 		CE42163F27DA493D0069E311 /* SemanticColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE42163E27DA493D0069E311 /* SemanticColor.swift */; };
 		CE42164027DA4BDA0069E311 /* SemanticColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE42163E27DA493D0069E311 /* SemanticColor.swift */; };
+		CE70D74E28635F5D002DEED5 /* EcosiaError.png in Resources */ = {isa = PBXBuildFile; fileRef = CE70D74D28635F5D002DEED5 /* EcosiaError.png */; };
 		CE7728DC26288B300084C771 /* LoadingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7728DB26288B300084C771 /* LoadingScreen.swift */; };
 		CE7F11941F3CEEC800ABFC0B /* RemoteDevices.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7F115E1F3CCEF900ABFC0B /* RemoteDevices.swift */; };
 		CE8287442841251C00C42A8A /* UICollectionView+maxWidth.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE8287432841251C00C42A8A /* UICollectionView+maxWidth.swift */; };
@@ -3270,6 +3271,7 @@
 		CE1CFD6528216BDA00CC8830 /* EcosiaHome.Background.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaHome.Background.swift; sourceTree = "<group>"; };
 		CE42163E27DA493D0069E311 /* SemanticColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SemanticColor.swift; sourceTree = "<group>"; };
 		CE664A9AB0ACFC6960CD6E81 /* pt-PT */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-PT"; path = "pt-PT.lproj/HistoryPanel.strings"; sourceTree = "<group>"; };
+		CE70D74D28635F5D002DEED5 /* EcosiaError.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = EcosiaError.png; sourceTree = "<group>"; };
 		CE7728DB26288B300084C771 /* LoadingScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingScreen.swift; sourceTree = "<group>"; };
 		CE7F115E1F3CCEF900ABFC0B /* RemoteDevices.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteDevices.swift; sourceTree = "<group>"; };
 		CE8287432841251C00C42A8A /* UICollectionView+maxWidth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UICollectionView+maxWidth.swift"; sourceTree = "<group>"; };
@@ -6460,6 +6462,7 @@
 		F84B21EB1A0910F600AAB793 /* Assets */ = {
 			isa = PBXGroup;
 			children = (
+				CE70D74D28635F5D002DEED5 /* EcosiaError.png */,
 				D0FCF8031FE4772C004A7995 /* AllFramesAtDocumentEnd.js */,
 				D03F8F22200EAC1E003C2224 /* AllFramesAtDocumentStart.js */,
 				D0FCF8041FE4772D004A7995 /* MainFrameAtDocumentEnd.js */,
@@ -7512,6 +7515,7 @@
 				7B4980A81CE363ED0017547C /* Settings.xcassets in Resources */,
 				39F4C0FA2045D87400746155 /* FocusHelper.js in Resources */,
 				E4B7B7861A793CF20022C5E0 /* FiraSans-UltraLight.ttf in Resources */,
+				CE70D74E28635F5D002DEED5 /* EcosiaError.png in Resources */,
 				2F44FB2C1A9D5D8500FD20CC /* Library.xcassets in Resources */,
 				E4B7B77D1A793CF20022C5E0 /* FiraSans-Regular.ttf in Resources */,
 				E4B7B7791A793CF20022C5E0 /* FiraSans-Light.ttf in Resources */,
