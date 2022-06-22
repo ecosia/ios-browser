@@ -665,7 +665,6 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
                 cell = twoLineCell
             }
         }
-        //(cell as? Themeable)?.applyTheme()
         return cell
     }
     
