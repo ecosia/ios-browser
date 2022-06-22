@@ -25,6 +25,7 @@ final class NewsCell: UICollectionViewCell, Themeable {
     private weak var title: UILabel!
     private weak var date: UILabel!
     private weak var border: UIView!
+    private weak var placeholder: UIImageView!
 
     required init?(coder: NSCoder) { nil }
     
@@ -63,7 +64,8 @@ final class NewsCell: UICollectionViewCell, Themeable {
         placeholder.image = UIImage(named: "image_placeholder")!
         placeholder.layer.cornerRadius = 5
         background.addSubview(placeholder)
-        
+        self.placeholder = placeholder
+
         let image = UIImageView()
         image.translatesAutoresizingMaskIntoConstraints = false
         image.contentMode = .scaleAspectFill
@@ -189,6 +191,8 @@ final class NewsCell: UICollectionViewCell, Themeable {
 
     func applyTheme() {
         background.backgroundColor = UIColor.theme.ecosia.ntpCellBackground
+        placeholder.tintColor = .theme.ecosia.primaryIcon
+        placeholder.backgroundColor = .theme.ecosia.newsPlaceholder
         border?.backgroundColor = UIColor.theme.ecosia.border
         title?.textColor = UIColor.theme.ecosia.primaryText
         date?.textColor = UIColor.theme.ecosia.secondaryText
