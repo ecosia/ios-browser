@@ -92,13 +92,19 @@ open class TabToolbarHelper: NSObject {
         self.toolbar = toolbar
         super.init()
 
-        toolbar.backButton.setImage(UIImage(systemName: "arrow.left"), for: .normal)
+        toolbar.backButton.setImage(UIImage(systemName: "arrow.left")?
+                                        .withConfiguration(UIImage.SymbolConfiguration.init(pointSize: 18,
+                                                                                            weight: .medium)),
+                                    for: .normal)
         toolbar.backButton.accessibilityLabel = .TabToolbarBackAccessibilityLabel
         let longPressGestureBackButton = UILongPressGestureRecognizer(target: self, action: #selector(didLongPressBack))
         toolbar.backButton.addGestureRecognizer(longPressGestureBackButton)
         toolbar.backButton.addTarget(self, action: #selector(didClickBack), for: .touchUpInside)
 
-        toolbar.forwardButton.setImage(UIImage(systemName: "arrow.right"), for: .normal)
+        toolbar.forwardButton.setImage(UIImage(systemName: "arrow.right")?
+                                        .withConfiguration(UIImage.SymbolConfiguration.init(pointSize: 18,
+                                                                                            weight: .medium)),
+                                       for: .normal)
         toolbar.forwardButton.accessibilityLabel = .TabToolbarForwardAccessibilityLabel
         let longPressGestureForwardButton = UILongPressGestureRecognizer(target: self, action: #selector(didLongPressForward))
         toolbar.forwardButton.addGestureRecognizer(longPressGestureForwardButton)
