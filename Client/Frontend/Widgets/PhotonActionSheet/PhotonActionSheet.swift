@@ -313,7 +313,7 @@ class PhotonActionSheet: UIViewController, UITableViewDelegate, UITableViewDataS
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         if section == 0 {
             if site != nil {
-                return 130
+                return PhotonActionSheetUX.TitleHeaderSectionHeightWithSite
             } else if title != nil {
                 return PhotonActionSheetUX.TitleHeaderSectionHeight
             } else {

@@ -26,7 +26,7 @@ struct PhotonActionSheetUX {
     static let TablePadding: CGFloat = 6
     static let SeparatorRowHeight: CGFloat = 1
     static let TitleHeaderSectionHeight: CGFloat = 40
-    static let TitleHeaderSectionHeightWithSite: CGFloat = 70
+    static let TitleHeaderSectionHeightWithSite: CGFloat = 130
 }
 
 public enum PresentationStyle {
