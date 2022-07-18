@@ -97,7 +97,6 @@ final class DefaultBrowser: UIViewController, Themeable {
         image.setContentCompressionResistancePriority(.required, for: .vertical)
         image.setContentHuggingPriority(.required, for: .vertical)
 
-
         let forest = UIImageView(image: .init(named: "forestIcons"))
         forest.translatesAutoresizingMaskIntoConstraints = false
         forest.contentMode = .bottom
@@ -128,13 +127,16 @@ final class DefaultBrowser: UIViewController, Themeable {
         headline.font = .preferredFont(forTextStyle: .title3).bold()
         headline.adjustsFontForContentSizeCategory = true
         headline.numberOfLines = 0
+        headline.setContentCompressionResistancePriority(.required, for: .vertical)
         content.addSubview(headline)
         self.headline = headline
 
         headline.topAnchor.constraint(equalTo: waves.bottomAnchor, constant: 16).isActive = true
-        headline.setContentCompressionResistancePriority(.required, for: .vertical)
         headline.leadingAnchor.constraint(equalTo: content.leadingAnchor, constant: 16).isActive = true
         headline.trailingAnchor.constraint(equalTo: content.trailingAnchor, constant: -16).isActive = true
+        let headlineHeight = headline.heightAnchor.constraint(greaterThanOrEqualToConstant: 100)
+        headlineHeight.priority = .defaultLow
+        headlineHeight.isActive = true
 
         let labelStack = UIStackView()
         labelStack.translatesAutoresizingMaskIntoConstraints = false
