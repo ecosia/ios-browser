@@ -167,8 +167,8 @@ final class WelcomeTour: UIViewController,  Themeable {
         view.addSubview(ctaButton)
         self.ctaButton = ctaButton
 
-        ctaButton.layer.cornerRadius = 25
-        ctaButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        ctaButton.layer.cornerRadius = 24
+        ctaButton.heightAnchor.constraint(equalToConstant: 48).isActive = true
         ctaButton.leadingAnchor.constraint(equalTo: labelStack.leadingAnchor).isActive = true
         ctaButton.trailingAnchor.constraint(equalTo: labelStack.trailingAnchor).isActive = true
         ctaButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16).isActive = true
