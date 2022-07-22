@@ -135,7 +135,7 @@ extension BrowserViewController: URLBarDelegate, FeatureFlagsProtocol {
         let successCallback: (String, ButtonToastAction) -> Void = { (successMessage, toastAction) in
             switch toastAction {
             case .removeBookmark:
-                let toast = ButtonToast(labelText: successMessage, imageName: "menu-Bookmark-Remove", buttonText: Strings.UndoString, textAlignment: .left) { isButtonTapped in
+                let toast = ButtonToast(labelText: successMessage, imageName: "bookmarksEmpty", buttonText: Strings.UndoString, textAlignment: .left) { isButtonTapped in
                     isButtonTapped ? self.addBookmark(url: urlString) : nil
                 }
                 self.show(toast: toast)
