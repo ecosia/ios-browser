@@ -174,7 +174,7 @@ final class NewsCell: UICollectionViewCell, Themeable {
     }
 
     private func updateImage(_ data: Data) {
-        image.image = UIImage(data: data)
+        image.image = .init(data: data)
         UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseInOut, animations: { [weak self] in
             self?.image.alpha = 1
         })
@@ -191,7 +191,7 @@ final class NewsCell: UICollectionViewCell, Themeable {
 
     func applyTheme() {
         background.backgroundColor = UIColor.theme.ecosia.ntpCellBackground
-        placeholder.tintColor = .theme.ecosia.primaryIcon
+        placeholder.tintColor = .theme.ecosia.decorativeIcon
         placeholder.backgroundColor = .theme.ecosia.newsPlaceholder
         border?.backgroundColor = UIColor.theme.ecosia.border
         title?.textColor = UIColor.theme.ecosia.primaryText
