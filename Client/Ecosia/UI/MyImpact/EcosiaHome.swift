@@ -203,21 +203,21 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     }
 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        defer {
-            collectionView.deselectItem(at: indexPath, animated: true)
-        }
-
         let section = Section(rawValue: indexPath.section)!
         switch section {
         case .legacyImpact:
             delegate?.ecosiaHome(didSelectURL: Environment.current.aboutCounter)
-            dismiss(animated: true, completion: nil)
+            dismiss(animated: true) { [weak collectionView] in
+                collectionView?.deselectItem(at: indexPath, animated: false)
+            }
         case .news:
             let index = indexPath.row - 1
             guard index >= 0, items.count > index else { return }
             delegate?.ecosiaHome(didSelectURL: items[index].targetUrl)
             Analytics.shared.navigationOpenNews(items[index].trackingName)
-            dismiss(animated: true, completion: nil)
+            dismiss(animated: true) { [weak collectionView] in
+                collectionView?.deselectItem(at: indexPath, animated: false)
+            }
         case .explore:
             // Index is off by one as first cell is the header
             guard indexPath.row > 0 else { return }
@@ -227,11 +227,13 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
                 UIView.animate(withDuration: 0.3) {
                     collectionView.collectionViewLayout.invalidateLayout()
                 }
-            }) {
-                collectionView.scrollToItem(at: indexPath, at: .top, animated: $0)
+            }) { [weak collectionView] in
+                collectionView?.scrollToItem(at: indexPath, at: .top, animated: $0)
+                collectionView?.deselectItem(at: indexPath, animated: false)
             }
         case .multiply:
             navigationController?.pushViewController(MultiplyImpact(delegate: delegate, referrals: referrals), animated: true)
+            collectionView.deselectItem(at: indexPath, animated: false)
         default:
             break
         }
