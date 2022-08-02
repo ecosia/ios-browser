@@ -699,6 +699,7 @@ extension FirefoxHomeViewController: UICollectionViewDelegateFlowLayout {
             })
             collectionView.deselectItem(at: indexPath, animated: true)
             ntpTooltipTapped(nil)
+            Analytics.shared.clickYourImpact(on: .ntp)
         default:
             break
         }

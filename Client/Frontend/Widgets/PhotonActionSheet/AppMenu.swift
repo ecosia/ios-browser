@@ -20,6 +20,7 @@ extension PhotonActionSheetProtocol {
 
         let myImpact = PhotonActionSheetItem(title: .localized(.yourImpact), iconString: "myImpact") { _, _ in
             (vcDelegate as? BrowserViewController)?.presentEcosiaWorld()
+            Analytics.shared.clickYourImpact(on: .browser)
         }
 
         return [openHomePage, myImpact]
@@ -109,9 +110,11 @@ extension PhotonActionSheetProtocol {
         let noImageMode = PhotonActionSheetItem(title: imageModeTitle, iconString: iconString, isEnabled: noImageEnabled) { action,_ in
             NoImageModeHelper.toggle(isEnabled: action.isEnabled, profile: self.profile, tabManager: self.tabManager)
             if noImageEnabled {
-                TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .blockImagesDisabled)
+                Analytics.shared.browser(.disable, label: .blockImages)
+//                TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .blockImagesDisabled)
             } else {
-                TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .blockImagesEnabled)
+                Analytics.shared.browser(.enable, label: .blockImages)
+//                TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .blockImagesEnabled)
             }
         }
 
