@@ -20,6 +20,7 @@ extension PhotonActionSheetProtocol {
 
         let myImpact = PhotonActionSheetItem(title: .localized(.yourImpact), iconString: "myImpact") { _, _ in
             (vcDelegate as? BrowserViewController)?.presentEcosiaWorld()
+            Analytics.shared.clickYourImpact(on: .browser)
         }
 
         return [openHomePage, myImpact]

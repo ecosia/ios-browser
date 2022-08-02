@@ -9,7 +9,8 @@ extension Analytics {
         migration,
         navigation,
         onboarding,
-        invitations
+        invitations,
+        ntp
     }
     
     enum Label {
