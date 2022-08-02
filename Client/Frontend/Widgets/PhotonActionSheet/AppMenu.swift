@@ -109,9 +109,11 @@ extension PhotonActionSheetProtocol {
         let noImageMode = PhotonActionSheetItem(title: imageModeTitle, iconString: iconString, isEnabled: noImageEnabled) { action,_ in
             NoImageModeHelper.toggle(isEnabled: action.isEnabled, profile: self.profile, tabManager: self.tabManager)
             if noImageEnabled {
-                TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .blockImagesDisabled)
+                Analytics.shared.browser(.disable, label: .blockImages)
+//                TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .blockImagesDisabled)
             } else {
-                TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .blockImagesEnabled)
+                Analytics.shared.browser(.enable, label: .blockImages)
+//                TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .blockImagesEnabled)
             }
         }
 

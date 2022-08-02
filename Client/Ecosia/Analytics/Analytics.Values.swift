@@ -30,12 +30,13 @@ extension Analytics {
         
         enum Browser: String {
             case
-            newTab = "new_tab",
             favourites,
             history,
             tabs,
             settings,
-            shareContent = "share_content"
+            newTab = "new_tab",
+            shareContent = "share_content",
+            blockImages = "block_images"
         }
     }
     
@@ -64,9 +65,11 @@ extension Analytics {
             open,
             edit,
             delete,
-            delete_all = "delete_all",
             start,
             complete,
+            enable,
+            disable,
+            delete_all = "delete_all",
             sendToFiles = "send_to_files"
         }
 
