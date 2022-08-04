@@ -168,7 +168,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
             rootVC = browserViewController!
         }
 
-        let navigationController = UINavigationController(rootViewController: rootVC)
+        let navigationController = WelcomeNavigation(rootViewController: rootVC)
         // Ecosia: navigationController.delegate = self
         navigationController.isNavigationBarHidden = true
         navigationController.edgesForExtendedLayout = UIRectEdge(rawValue: 0)
