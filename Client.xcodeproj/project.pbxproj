@@ -14006,7 +14006,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = darkmode;
+				branch = main;
 				kind = branch;
 			};
 		};
