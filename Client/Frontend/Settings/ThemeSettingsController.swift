@@ -124,6 +124,8 @@ class ThemeSettingsController: ThemedTableViewController {
     
         let userInterfaceStyle = traitCollection.userInterfaceStyle
         if control.isOn {
+            // Reset the user interface style to the default before choosing our theme
+            UIApplication.shared.delegate?.window??.overrideUserInterfaceStyle = .unspecified
             ThemeManager.instance.current = userInterfaceStyle == .dark ? DarkTheme() : NormalTheme()
         } else if ThemeManager.instance.automaticBrightnessIsOn {
             ThemeManager.instance.updateCurrentThemeBasedOnScreenBrightness()

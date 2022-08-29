@@ -141,6 +141,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
             }
         }
 
+        NotificationCenter.default.addObserver(forName: .DisplayThemeChanged, object: nil, queue: .main) { (notification) -> Void in
+            if !LegacyThemeManager.instance.systemThemeIsOn {
+                self.window?.overrideUserInterfaceStyle = LegacyThemeManager.instance.userInterfaceStyle
+            } else {
+                self.window?.overrideUserInterfaceStyle = .unspecified
+            }
+        }
+
         self.updateAuthenticationInfo()
         SystemUtils.onFirstRun()
 
@@ -153,6 +161,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
 
     // TODO: Move to scene controller for iOS 13
     private func setupRootViewController() {
+        if !LegacyThemeManager.instance.systemThemeIsOn {
+            self.window?.overrideUserInterfaceStyle = LegacyThemeManager.instance.userInterfaceStyle
+        }
+
         browserViewController = BrowserViewController(profile: self.profile!, tabManager: self.tabManager)
         browserViewController.edgesForExtendedLayout = []
 
@@ -260,7 +272,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
                 InstallType.updateCurrentVersion(version: AppInfo.appVersion)
                 // Profile setup
                 profile.prefs.setString(AppInfo.appVersion, forKey: LatestAppVersionProfileKey)
-                
+
             } else if profile.prefs.boolForKey(PrefsKeys.KeySecondRun) == nil {
                 profile.prefs.setBool(true, forKey: PrefsKeys.KeySecondRun)
             }
