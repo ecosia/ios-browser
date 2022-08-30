@@ -2421,6 +2421,7 @@ extension BrowserViewController: Themeable {
         guard let contentScript = self.tabManager.selectedTab?.getContentScript(name: ReaderMode.name()) else { return }
         appyThemeForPreferences(profile.prefs, contentScript: contentScript)
 
+        overrideUserInterfaceStyle = ThemeManager.instance.userInterfaceStyle
     }
 }
 
