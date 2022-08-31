@@ -181,6 +181,13 @@ final class Analytics {
             .track(Structured(category: Category.invitations.rawValue,
                               action: Action.claim.rawValue))
     }
+
+    func inviteLearnMore() {
+        tracker
+            .track(Structured(category: Category.invitations.rawValue,
+                              action: Action.click.rawValue)
+                    .label("learn_more"))
+    }
     
     func clickYourImpact(on category: Category) {
         tracker

@@ -337,6 +337,7 @@ final class MultiplyImpact: UIViewController, Themeable {
         delegate?.ecosiaHome(didSelectURL: URL(string: "https://ecosia.helpscoutdocs.com/article/358-refer-a-friend-ios-only")!)
         clear()
         dismiss(animated: true)
+        Analytics.shared.inviteLearnMore()
     }
     
     @objc private func inviteFriends() {
