@@ -152,7 +152,10 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         case .impact:
             let infoCell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: section.cell), for: indexPath) as! MyImpactCell
             infoCell.howItWorksButton.removeTarget(self, action: nil, for: .touchUpInside)
-            infoCell.howItWorksButton.addTarget(self, action: #selector(learnMore), for: .touchUpInside)
+            infoCell.howItWorksButton.addTarget(self, action: #selector(learnMore(button:)), for: .touchUpInside)
+            infoCell.howItWorksButton.addTarget(self, action: #selector(learnMoreHoverOn(button:)), for: .touchDown)
+            infoCell.howItWorksButton.addTarget(self, action: #selector(learnMoreHoverOff(button:)), for: .touchUpInside)
+            infoCell.howItWorksButton.addTarget(self, action: #selector(learnMoreHoverOff(button:)), for: .touchCancel)
             infoCell.update(personalCounter: personalCounter.state ?? 0, progress: User.shared.progress)
             return infoCell
 
@@ -332,10 +335,21 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         navigationController?.pushViewController(MultiplyImpact(delegate: delegate, referrals: referrals), animated: true)
     }
 
-    @objc private func learnMore() {
+    @objc private func learnMore(button: UIControl) {
         delegate?.ecosiaHome(didSelectURL: Environment.current.aboutCounter)
         Analytics.shared.navigation(.open, label: .counter)
-        dismiss(animated: true, completion: nil)
+        
+        dismiss(animated: true) { [weak self] in
+            self?.learnMoreHoverOff(button: button)
+        }
+    }
+    
+    @objc private func learnMoreHoverOn(button: UIControl) {
+        button.alpha = 0.5
+    }
+    
+    @objc private func learnMoreHoverOff(button: UIControl) {
+        button.alpha = 1
     }
     
     @objc private func explore(button: UIButton) {
