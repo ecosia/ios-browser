@@ -35,6 +35,7 @@ extension MyImpactCell {
         
         init(size: CGSize) {
             super.init(frame: .init(size: size))
+            isUserInteractionEnabled = false
             translatesAutoresizingMaskIntoConstraints = false
             widthAnchor.constraint(equalToConstant: size.width).isActive = true
             heightAnchor.constraint(equalToConstant: size.height).isActive = true
