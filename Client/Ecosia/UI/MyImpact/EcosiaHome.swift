@@ -154,7 +154,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
             infoCell.howItWorksButton.removeTarget(self, action: nil, for: .touchUpInside)
             infoCell.howItWorksButton.addTarget(self, action: #selector(learnMore(button:)), for: .touchUpInside)
             infoCell.howItWorksButton.addTarget(self, action: #selector(learnMoreHoverOn(button:)), for: .touchDown)
-            infoCell.howItWorksButton.addTarget(self, action: #selector(learnMoreHoverOff(button:)), for: .touchUpInside)
+            infoCell.howItWorksButton.addTarget(self, action: #selector(learnMoreHoverOff(button:)), for: .touchUpOutside)
             infoCell.howItWorksButton.addTarget(self, action: #selector(learnMoreHoverOff(button:)), for: .touchCancel)
             infoCell.update(personalCounter: personalCounter.state ?? 0, progress: User.shared.progress)
             return infoCell
