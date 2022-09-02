@@ -70,25 +70,25 @@ final class MyImpactCell: UICollectionViewCell, Themeable {
         self.treesPlanted = treesPlanted
         outline.addSubview(treesPlanted)
         
-        let howItWorksButton = UIControl()
-        howItWorksButton.translatesAutoresizingMaskIntoConstraints = false
-        outline.addSubview(howItWorksButton)
-        self.howItWorksButton = howItWorksButton
-        
         let howItWorks = UILabel()
         howItWorks.translatesAutoresizingMaskIntoConstraints = false
         howItWorks.font = .preferredFont(forTextStyle: .callout)
         howItWorks.adjustsFontForContentSizeCategory = true
         howItWorks.text = .localized(.howItWorks)
         self.howItWorks = howItWorks
-        howItWorksButton.addSubview(howItWorks)
+        outline.addSubview(howItWorks)
         
         let howItWorksIcon = UIImageView()
         howItWorksIcon.translatesAutoresizingMaskIntoConstraints = false
         howItWorksIcon.contentMode = .center
         howItWorksIcon.clipsToBounds = true
-        howItWorksButton.addSubview(howItWorksIcon)
+        outline.addSubview(howItWorksIcon)
         self.howItWorksIcon = howItWorksIcon
+        
+        let howItWorksButton = UIControl()
+        howItWorksButton.translatesAutoresizingMaskIntoConstraints = false
+        outline.addSubview(howItWorksButton)
+        self.howItWorksButton = howItWorksButton
         
         let searchesIcon = UIImageView()
         searchesIcon.translatesAutoresizingMaskIntoConstraints = false
@@ -169,13 +169,13 @@ final class MyImpactCell: UICollectionViewCell, Themeable {
         treesPlanted.topAnchor.constraint(equalTo: treesCount.bottomAnchor).isActive = true
         treesPlanted.centerXAnchor.constraint(equalTo: totalProgress.centerXAnchor).isActive = true
         
-        howItWorksButton.topAnchor.constraint(equalTo: treesPlanted.bottomAnchor).isActive = true
-        howItWorksButton.centerXAnchor.constraint(equalTo: totalProgress.centerXAnchor).isActive = true
-        howItWorksButton.bottomAnchor.constraint(equalTo: howItWorks.bottomAnchor, constant: 6).isActive = true
-        howItWorksButton.rightAnchor.constraint(equalTo: howItWorksIcon.rightAnchor).isActive = true
+        howItWorksButton.topAnchor.constraint(equalTo: outline.topAnchor).isActive = true
+        howItWorksButton.leftAnchor.constraint(equalTo: outline.leftAnchor).isActive = true
+        howItWorksButton.rightAnchor.constraint(equalTo: outline.rightAnchor).isActive = true
+        howItWorksButton.bottomAnchor.constraint(equalTo: totalProgress.bottomAnchor, constant: 6).isActive = true
         
-        howItWorks.leftAnchor.constraint(equalTo: howItWorksButton.leftAnchor).isActive = true
-        howItWorks.topAnchor.constraint(equalTo: howItWorksButton.topAnchor, constant: 6).isActive = true
+        howItWorks.centerXAnchor.constraint(equalTo: outline.centerXAnchor, constant: -8).isActive = true
+        howItWorks.topAnchor.constraint(equalTo: treesPlanted.bottomAnchor, constant: 6).isActive = true
         
         howItWorksIcon.centerYAnchor.constraint(equalTo: howItWorks.centerYAnchor).isActive = true
         howItWorksIcon.leftAnchor.constraint(equalTo: howItWorks.rightAnchor, constant: 4).isActive = true
