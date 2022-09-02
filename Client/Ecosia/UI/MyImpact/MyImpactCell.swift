@@ -36,24 +36,29 @@ final class MyImpactCell: UICollectionViewCell, Themeable {
         self.outline = outline
         contentView.addSubview(outline)
 
+        let howItWorksButton = UIControl()
+        howItWorksButton.translatesAutoresizingMaskIntoConstraints = false
+        outline.addSubview(howItWorksButton)
+        self.howItWorksButton = howItWorksButton
+        
         let progressSize = CGSize(width: 240, height: 150)
         let totalProgress = Progress(size: progressSize, lineWidth: 8)
         self.totalProgress = totalProgress
-        outline.addSubview(totalProgress)
+        howItWorksButton.addSubview(totalProgress)
         
         let currentProgress = Progress(size: progressSize, lineWidth: 8)
         self.currentProgress = currentProgress
-        outline.addSubview(currentProgress)
+        howItWorksButton.addSubview(currentProgress)
         
         let indicator = Indicator(size: progressSize)
         self.indicator = indicator
-        outline.addSubview(indicator)
+        howItWorksButton.addSubview(indicator)
         
         let treesIcon = UIImageView()
         treesIcon.translatesAutoresizingMaskIntoConstraints = false
         treesIcon.contentMode = .center
         treesIcon.clipsToBounds = true
-        outline.addSubview(treesIcon)
+        howItWorksButton.addSubview(treesIcon)
         self.treesIcon = treesIcon
         
         let treesCount = UILabel()
@@ -61,14 +66,14 @@ final class MyImpactCell: UICollectionViewCell, Themeable {
         treesCount.font = .preferredFont(forTextStyle: .title1).bold()
         treesCount.adjustsFontForContentSizeCategory = true
         self.treesCount = treesCount
-        outline.addSubview(treesCount)
+        howItWorksButton.addSubview(treesCount)
         
         let treesPlanted = UILabel()
         treesPlanted.translatesAutoresizingMaskIntoConstraints = false
         treesPlanted.font = .preferredFont(forTextStyle: .body)
         treesPlanted.adjustsFontForContentSizeCategory = true
         self.treesPlanted = treesPlanted
-        outline.addSubview(treesPlanted)
+        howItWorksButton.addSubview(treesPlanted)
         
         let howItWorks = UILabel()
         howItWorks.translatesAutoresizingMaskIntoConstraints = false
@@ -76,19 +81,14 @@ final class MyImpactCell: UICollectionViewCell, Themeable {
         howItWorks.adjustsFontForContentSizeCategory = true
         howItWorks.text = .localized(.howItWorks)
         self.howItWorks = howItWorks
-        outline.addSubview(howItWorks)
+        howItWorksButton.addSubview(howItWorks)
         
         let howItWorksIcon = UIImageView()
         howItWorksIcon.translatesAutoresizingMaskIntoConstraints = false
         howItWorksIcon.contentMode = .center
         howItWorksIcon.clipsToBounds = true
-        outline.addSubview(howItWorksIcon)
+        howItWorksButton.addSubview(howItWorksIcon)
         self.howItWorksIcon = howItWorksIcon
-        
-        let howItWorksButton = UIControl()
-        howItWorksButton.translatesAutoresizingMaskIntoConstraints = false
-        outline.addSubview(howItWorksButton)
-        self.howItWorksButton = howItWorksButton
         
         let searchesIcon = UIImageView()
         searchesIcon.translatesAutoresizingMaskIntoConstraints = false
