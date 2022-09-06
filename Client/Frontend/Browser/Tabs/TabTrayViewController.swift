@@ -386,7 +386,6 @@ class TabTrayViewController: UIViewController {
 
 extension TabTrayViewController: Themeable {
      @objc func applyTheme() {
-         overrideUserInterfaceStyle =  ThemeManager.instance.userInterfaceStyle
          view.backgroundColor = UIColor.theme.tabTray.background
          //Ecosia: navigationToolbar.barTintColor = UIColor.theme.tabTray.toolbar
          //Ecosia: navigationToolbar.tintColor = UIColor.theme.tabTray.toolbarButtonTint
