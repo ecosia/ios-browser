@@ -18,6 +18,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     private let news = News()
     private let personalCounter = PersonalCounter()
     private let background = Background()
+    private weak var impactCell: MyImpactCell?
 
     fileprivate var treesCellModel: TreesCellModel {
         return .init(trees: User.shared.searchImpact, searches: personalCounter.state!, style: .impact)
@@ -81,7 +82,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
                 let self = self,
                 self.collectionView.numberOfSections > Section.impact.rawValue
             else { return }
-            self.collectionView.reloadSections([Section.impact.rawValue])
+            self.updateImpactCell()
         }
     }
 
@@ -150,14 +151,15 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
         let section = Section(rawValue: indexPath.section)!
         switch section {
         case .impact:
-            let infoCell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: section.cell), for: indexPath) as! MyImpactCell
-            infoCell.howItWorksButton.removeTarget(self, action: nil, for: .touchUpInside)
-            infoCell.howItWorksButton.addTarget(self, action: #selector(learnMore(button:)), for: .touchUpInside)
-            infoCell.howItWorksButton.addTarget(self, action: #selector(learnMoreHoverOn(button:)), for: .touchDown)
-            infoCell.howItWorksButton.addTarget(self, action: #selector(learnMoreHoverOff(button:)), for: .touchUpOutside)
-            infoCell.howItWorksButton.addTarget(self, action: #selector(learnMoreHoverOff(button:)), for: .touchCancel)
-            infoCell.update(personalCounter: personalCounter.state ?? 0, progress: User.shared.progress)
-            return infoCell
+            let impactCell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: section.cell), for: indexPath) as! MyImpactCell
+            impactCell.howItWorksButton.removeTarget(self, action: nil, for: .touchUpInside)
+            impactCell.howItWorksButton.addTarget(self, action: #selector(learnMore(button:)), for: .touchUpInside)
+            impactCell.howItWorksButton.addTarget(self, action: #selector(learnMoreHoverOn(button:)), for: .touchDown)
+            impactCell.howItWorksButton.addTarget(self, action: #selector(learnMoreHoverOff(button:)), for: .touchUpOutside)
+            impactCell.howItWorksButton.addTarget(self, action: #selector(learnMoreHoverOff(button:)), for: .touchCancel)
+            self.impactCell = impactCell
+            updateImpactCell()
+            return impactCell
 
         case .legacyImpact:
             let treesCell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: section.cell), for: indexPath) as! TreesCell
@@ -329,6 +331,13 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
 
     @objc private func updateLayout() {
         collectionView.collectionViewLayout.invalidateLayout()
+    }
+
+    private func updateImpactCell() {
+        guard let impactCell = impactCell else {
+            return
+        }
+        impactCell.update(personalCounter: personalCounter.state ?? 0, progress: User.shared.progress)
     }
 
     @objc private func inviteFriends() {
