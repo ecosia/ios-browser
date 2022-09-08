@@ -37,10 +37,12 @@ class ClearPrivateDataTableViewController: ThemedTableViewController {
             (DownloadedFilesClearable(), false), // Don't clear downloaded files by default
         ]
 
+        /* Ecosia: Disable experiment
         let spotlightConfig = FxNimbus.shared.features.spotlightSearch.value()
         if spotlightConfig.enabled {
             items.append((SpotlightClearable(), false)) // On device only, so don't clear by default.)
         }
+         */
 
         return items
     }()

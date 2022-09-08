@@ -818,8 +818,7 @@ extension BrowserViewController: WKNavigationDelegate {
 
         if tabManager.selectedTab === tab {
             // Ecosia: flaggable autofocus
-            let focus = profile.prefs.boolForKey(PrefsKeys.AutofocusSearch) ?? false
-            updateUIForReaderHomeStateForTab(tab, focusUrlBar: focus)
+            updateUIForReaderHomeStateForTab(tab)
         }
     }
 

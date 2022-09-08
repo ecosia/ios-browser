@@ -460,8 +460,9 @@ class BrowserViewController: UIViewController {
         SearchBarSettingsViewModel.recordLocationTelemetry(for: isBottomSearchBar ? .bottom : .top)
         
 		if User.shared.firstTime {
-            showFirefoxHome(inline: true)
+            showHomepage(inline: true)
         }
+    }
 
     private func setupNotifications() {
         NotificationCenter.default.addObserver(
@@ -2097,8 +2098,7 @@ extension BrowserViewController: TabManagerDelegate {
         }
 
         // Ecosia: flaggable autofocus
-        let focus = profile.prefs.boolForKey(PrefsKeys.AutofocusSearch) ?? false
-        updateInContentHomePanel(selected?.url as URL?, focusUrlBar: focus)
+        updateInContentHomePanel(selected?.url as URL?)
 
         if let tab = selected, NewTabAccessors.getNewTabPage(self.profile.prefs) == .blankPage {
             if tab.url == nil, !tab.isRestoring {

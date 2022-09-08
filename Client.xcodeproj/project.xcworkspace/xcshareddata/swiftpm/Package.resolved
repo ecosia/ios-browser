@@ -63,15 +63,6 @@
       }
     },
     {
-      "identity" : "ios_sdk",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/adjust/ios_sdk.git",
-      "state" : {
-        "revision" : "43c5bb5eb8f77c72da856637dac5c46087c27848",
-        "version" : "4.29.6"
-      }
-    },
-    {
       "identity" : "kif",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kif-framework/KIF.git",

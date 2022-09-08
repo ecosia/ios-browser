@@ -213,6 +213,7 @@ class TelemetryWrapper: TelemetryWrapperProtocol {
         */
     }
     @objc func recordFinishedLaunchingPreferenceMetrics(notification: NSNotification) {
+        /* Ecosia
         guard let profile = self.profile else { return }
         // Pocket stories visible
         if let pocketStoriesVisible = profile.prefs.boolForKey(PrefsKeys.FeatureFlags.ASPocketStories) {
@@ -220,6 +221,7 @@ class TelemetryWrapper: TelemetryWrapperProtocol {
         } else {
             GleanMetrics.FirefoxHomePage.pocketStoriesVisible.set(true)
         }
+         */
     }
 
     // Function for recording metrics that are better recorded when going to background due

@@ -34,11 +34,10 @@ private class CenteredDetailCell: ThemedTableViewCell {
         detailTextLabel?.frame = f
     }
 }
-class LoginDetailViewController: SensitiveViewController, Themeable {
+class LoginDetailViewController: SensitiveViewController, NotificationThemeable {
     private let profile: Profile
-    fileprivate let tableView = UITableView(frame: .zero, style: .insetGrouped)
-    private lazy var tableView: UITableView = .build { [weak self] tableView in
-        guard let self = self else { return }
+    private lazy var tableView: UITableView = {
+        let tableView = UITableView(frame: .zero, style: .insetGrouped)
 
         tableView.separatorColor = UIColor.theme.tableView.separator
         tableView.backgroundColor = UIColor.theme.tableView.headerBackground
@@ -48,7 +47,7 @@ class LoginDetailViewController: SensitiveViewController, Themeable {
 
         // Add empty footer view to prevent separators from being drawn past the last item.
         tableView.tableFooterView = UIView()
-    }
+    } ()
 
     private weak var websiteField: UITextField?
     private weak var usernameField: UITextField?

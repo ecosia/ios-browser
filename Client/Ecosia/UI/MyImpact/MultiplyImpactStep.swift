@@ -4,7 +4,7 @@
 
 import UIKit
 
-final class MultiplyImpactStep: UIView, Themeable {
+final class MultiplyImpactStep: UIView, NotificationThemeable {
     private weak var indicator: UIImageView?
     private weak var titleLabel: UILabel?
     private weak var subtitleLabel: UILabel?

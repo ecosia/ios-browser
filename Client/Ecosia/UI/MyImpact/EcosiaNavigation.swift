@@ -5,7 +5,7 @@
 import UIKit
 import Core
 
-final class EcosiaNavigation: UINavigationController, Themeable {
+final class EcosiaNavigation: UINavigationController, NotificationThemeable {
 
     convenience init(delegate: EcosiaHomeDelegate?, referrals: Referrals) {
         self.init(rootViewController: EcosiaHome(delegate: delegate, referrals: referrals))
@@ -28,7 +28,7 @@ final class EcosiaNavigation: UINavigationController, Themeable {
     }
 
     func applyTheme() {
-        (topViewController as? Themeable)?.applyTheme()
+        (topViewController as? NotificationThemeable)?.applyTheme()
     }
 
     @objc private func displayThemeChanged(notification: Notification) {

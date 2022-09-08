@@ -834,38 +834,6 @@ final class AddClaim: HiddenSetting {
     }
 }
 
-final class CreateMigrationData: HiddenSetting {
-    override var title: NSAttributedString? {
-        return NSAttributedString(string: "Debug: Create migration data. (needs restart)", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
-    }
-
-    override func onClick(_ navigationController: UINavigationController?) {
-        EcosiaImport.createMigrationData()
-
-        let alertTitle = "Data created. Restart App to trigger fresh migration."
-        let alert = AlertController(title: alertTitle, message: nil, preferredStyle: .alert)
-        navigationController?.topViewController?.present(alert, animated: true) {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                alert.dismiss(animated: true)
-            }
-        }
-    }
-}
-
-class AutofocusSearchbar: BoolSetting {
-    convenience init(prefs: Prefs) {
-        self.init(prefs: prefs, prefKey: PrefsKeys.AutofocusSearch, defaultValue: false,
-                  titleText: "Debug: Autofocus Searchbar",
-                  statusText: nil, settingDidChange: { value in
-            prefs.setBool(value, forKey: PrefsKeys.AutofocusSearch)
-        })
-    }
-
-    override var hidden: Bool {
-        return !ShowDebugSettings
-    }
-}
-
 // Show the current version of Firefox
 class VersionSetting: Setting {
     unowned let settings: SettingsTableViewController

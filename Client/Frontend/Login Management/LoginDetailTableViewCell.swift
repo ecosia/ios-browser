@@ -90,9 +90,9 @@ class LoginDetailTableViewCell: ThemedTableViewCell {
         return descriptionText.size(withAttributes: attributes)
     }
 
-    var placeholder: String? {
-        get { descriptionLabel.placeholder }
-        set { descriptionLabel.placeholder = newValue }
+    var attributedPlaceholder: NSAttributedString? {
+        get { descriptionLabel.attributedPlaceholder }
+        set { descriptionLabel.attributedPlaceholder = newValue }
     }
 
     var displayDescriptionAsPassword: Bool = false {
@@ -105,6 +105,15 @@ class LoginDetailTableViewCell: ThemedTableViewCell {
         didSet {
             guard isEditingFieldData != oldValue else { return }
             descriptionLabel.isUserInteractionEnabled = isEditingFieldData
+        }
+    }
+
+    var highlightedLabelTitle: String? {
+        get {
+            return highlightedLabel.text
+        }
+        set(newTitle) {
+            highlightedLabel.text = newTitle
         }
     }
 

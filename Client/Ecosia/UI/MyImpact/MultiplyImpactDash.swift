@@ -4,7 +4,7 @@
 
 import UIKit
 
-final class MultiplyImpactDash: UIView, Themeable {
+final class MultiplyImpactDash: UIView, NotificationThemeable {
     private weak var dash: CAShapeLayer?
 
     required init?(coder: NSCoder) { nil }

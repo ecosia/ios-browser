@@ -15,7 +15,7 @@ private struct UX {
     static let Insets = UIEdgeInsets(top: 6, left: 8, bottom: 6, right: 8)
 }
 
-class ToggleButton: UIButton, Themeable {
+class ToggleButton: UIButton, NotificationThemeable {
     func setSelected(_ selected: Bool, animated: Bool = true) {
         self.isSelected = selected
         if animated {

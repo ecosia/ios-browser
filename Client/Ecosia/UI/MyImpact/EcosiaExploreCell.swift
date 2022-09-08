@@ -4,7 +4,7 @@
 
 import UIKit
 
-final class EcosiaExploreCell: UICollectionViewCell, Themeable {
+final class EcosiaExploreCell: UICollectionViewCell, NotificationThemeable {
     private(set) weak var learnMore: UIButton!
     private weak var title: UILabel!
     private weak var subtitle: UILabel!

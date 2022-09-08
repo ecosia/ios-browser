@@ -38,7 +38,7 @@ class TabManagerStore: FeatureFlaggable {
     }
 
     var hasTabsToRestoreAtStartup: Bool {
-        return !archivedStartupTabs.0.isEmpty
+        return !archivedStartupTabs.isEmpty
     }
 
     fileprivate func tabsStateArchivePath() -> String? {

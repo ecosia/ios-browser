@@ -4,6 +4,7 @@
 
 import Shared
 import UIKit
+import SnapKit
 
 struct DownloadToastUX {
     static var ToastBackgroundColor: UIColor { .theme.ecosia.quarternaryBackground }
@@ -78,11 +79,9 @@ class DownloadToast: Toast {
             self.animationConstraint = make.top.equalTo(self).offset(ButtonToastUX.ToastHeight - DownloadToastUX.YMargin).constraint
         }
 
-            heightAnchor.constraint(equalToConstant: ButtonToastUX.ToastHeight)
-        ])
-
-        animationConstraint = toastView.topAnchor.constraint(equalTo: topAnchor, constant: ButtonToastUX.ToastHeight)
-        animationConstraint?.isActive = true
+        self.snp.makeConstraints { make in
+            make.height.equalTo(ButtonToastUX.ToastHeight)
+        }
     }
 
     required init?(coder aDecoder: NSCoder) {

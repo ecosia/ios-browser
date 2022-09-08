@@ -35,11 +35,16 @@ private struct ReadingListPanelUX {
     // Welcome Screen
     static let WelcomeScreenPadding: CGFloat = 15
     static let WelcomeScreenHorizontalMinPadding: CGFloat = 40
-
+   
     static let WelcomeScreenMaxWidth: CGFloat = 400
     static let WelcomeScreenItemImageWidth: CGFloat = 20
 
     static let WelcomeScreenTopPadding: CGFloat = 120
+
+    static let WelcomeScreenItemWidth = 220
+    static let WelcomeScreenCircleWidth = 40
+    static let WelcomeScreenCircleOffset = 20
+    static let WelcomeScreenCircleSpacer = 10
 }
 
 class ReadingListTableViewCell: UITableViewCell, NotificationThemeable {
@@ -241,6 +246,7 @@ class ReadingListPanel: UITableViewController, LibraryPanel {
     }
 
     func refreshReadingList() {
+        let prevNumberOfRecords = records?.count
         tableView.tableHeaderView = nil
 
         if let newRecords = profile.readingList.getAvailableRecords().value.successValue {

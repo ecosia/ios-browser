@@ -5,15 +5,24 @@
 import UIKit
 
 class ToolbarButton: UIButton {
-
-    // MARK: - Variables
-
     var selectedTintColor: UIColor!
     var unselectedTintColor: UIColor!
     var disabledTintColor = UIColor.Photon.Grey50
 
     // Optionally can associate a separator line that hide/shows along with the button
     weak var separatorLine: UIView?
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        adjustsImageWhenHighlighted = false
+        selectedTintColor = tintColor
+        unselectedTintColor = tintColor
+        imageView?.contentMode = .scaleAspectFit
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     override open var isHighlighted: Bool {
         didSet {
@@ -28,8 +37,12 @@ class ToolbarButton: UIButton {
     }
 
     override var tintColor: UIColor! {
-        didSet {
-            self.imageView?.tintColor = self.tintColor
+        set {
+            self.imageView?.tintColor = newValue
+            super.tintColor = newValue
+        }
+        get {
+            super.tintColor
         }
     }
 
@@ -37,20 +50,6 @@ class ToolbarButton: UIButton {
         didSet {
             separatorLine?.isHidden = isHidden
         }
-    }
-
-    // MARK: - Initializers
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        adjustsImageWhenHighlighted = false
-        selectedTintColor = tintColor
-        unselectedTintColor = tintColor
-        imageView?.contentMode = .scaleAspectFit
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }
 

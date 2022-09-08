@@ -244,11 +244,11 @@ class SiteTableViewController: UIViewController, UITableViewDelegate, UITableVie
 
         tableView.backgroundColor = UIColor.theme.homePanel.panelBackground
         tableView.separatorColor = UIColor.theme.ecosia.border
-        tableView.visibleCells.forEach({ ($0 as? Themeable)?.applyTheme() })
+        tableView.visibleCells.forEach({ ($0 as? NotificationThemeable)?.applyTheme() })
         if let rows = tableView.indexPathsForVisibleRows {
             IndexSet(rows.map { $0.section }).forEach {
-                (tableView.headerView(forSection: $0) as? Themeable)?.applyTheme()
-                (tableView.footerView(forSection: $0) as? Themeable)?.applyTheme()
+                (tableView.headerView(forSection: $0) as? NotificationThemeable)?.applyTheme()
+                (tableView.footerView(forSection: $0) as? NotificationThemeable)?.applyTheme()
             }
         }
     }

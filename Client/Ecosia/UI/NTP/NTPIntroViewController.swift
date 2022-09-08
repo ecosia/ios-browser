@@ -4,7 +4,7 @@
 
 import UIKit
 
-final class NTPIntroViewController: UIViewController, Themeable {
+final class NTPIntroViewController: UIViewController, NotificationThemeable {
     weak var content: UIView!
     weak var image: UIImageView!
     weak var waves: UIImageView!

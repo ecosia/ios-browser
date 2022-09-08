@@ -4,7 +4,7 @@
 
 import UIKit
 
-class PrivateModeButton: ToggleButton, NotificationThemeable, PrivateModeUI {
+class PrivateModeButton: ToggleButton, PrivateModeUI {
     var offTint = UIColor.black
     var onTint = UIColor.black
 
@@ -13,7 +13,7 @@ class PrivateModeButton: ToggleButton, NotificationThemeable, PrivateModeUI {
         accessibilityLabel = .TabTrayToggleAccessibilityLabel
         accessibilityHint = .TabTrayToggleAccessibilityHint
         setTitle(.localized(.privateTab), for: .normal)
-        setTitleColor(ThemeManager.instance.current.tabTray.tabTitleText, for: .normal)
+        setTitleColor(LegacyThemeManager.instance.current.tabTray.tabTitleText, for: .normal)
         titleLabel?.font = .preferredFont(forTextStyle: .body)
         titleLabel?.adjustsFontForContentSizeCategory = true
     }

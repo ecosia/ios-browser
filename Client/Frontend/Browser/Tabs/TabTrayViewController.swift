@@ -183,8 +183,8 @@ class TabTrayViewController: UIViewController {
          tabToFocus: Tab? = nil,
          tabManager: TabManager,
          focusedSegment: TabTrayViewModel.Segment? = nil,
-         and notificationCenter: NotificationProtocol = NotificationCenter.default,
-         with nimbus: FxNimbus = FxNimbus.shared
+         and notificationCenter: NotificationProtocol = NotificationCenter.default
+         // Ecosia // with nimbus: FxNimbus = FxNimbus.shared
     ) {
         self.nimbus = nimbus
         self.notificationCenter = notificationCenter

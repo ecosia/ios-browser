@@ -764,7 +764,7 @@ private class TabLayoutDelegate: NSObject, UICollectionViewDelegateFlowLayout, U
     fileprivate var showSeparator = false {
         didSet {
             if showSeparator != oldValue {
-                (tabSelectionDelegate as? Themeable)?.applyTheme()
+                (tabSelectionDelegate as? NotificationThemeable)?.applyTheme()
             }
         }
     }

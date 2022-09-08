@@ -525,7 +525,7 @@ class HistoryPanel: UIViewController, LibraryPanel, Loggable, NotificationThemea
         return overlayView
     }
 
-    // MARK: - Themeable
+    // MARK: - NotificationThemeable
 
     func applyTheme() {
         updateEmptyPanelState()

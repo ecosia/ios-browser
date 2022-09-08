@@ -5,7 +5,7 @@
 import UIKit
 import Core
 
-final class LogoCell: UICollectionViewCell, Themeable {
+final class LogoCell: UICollectionViewCell, NotificationThemeable {
 
     private weak var logo: UIImageView!
 

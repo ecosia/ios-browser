@@ -47,7 +47,7 @@ class HomepageViewModel: FeatureFlaggable {
         }
     }
 
-    let nimbus: FxNimbus
+    //Ecosia: let nimbus: FxNimbus
     let profile: Profile
     var isZeroSearch: Bool {
         didSet {
@@ -67,7 +67,7 @@ class HomepageViewModel: FeatureFlaggable {
     // Child View models
     private var childViewModels: [HomepageViewModelProtocol]
     var headerViewModel: HomeLogoHeaderViewModel
-    var messageCardViewModel: HomepageMessageCardViewModel
+    // Ecosia: var messageCardViewModel: HomepageMessageCardViewModel
     var topSiteViewModel: TopSitesViewModel
     var recentlySavedViewModel: RecentlySavedCellViewModel
     var jumpBackInViewModel: JumpBackInViewModel
@@ -76,7 +76,7 @@ class HomepageViewModel: FeatureFlaggable {
     var customizeButtonViewModel: CustomizeHomepageSectionViewModel
 
     var shouldDisplayHomeTabBanner: Bool {
-        return messageCardViewModel.shouldDisplayMessageCard
+        return false // Ecoaia: return messageCardViewModel.shouldDisplayMessageCard
     }
 
     // MARK: - Initializers
@@ -84,15 +84,17 @@ class HomepageViewModel: FeatureFlaggable {
          isPrivate: Bool,
          tabManager: TabManagerProtocol,
          urlBar: URLBarViewProtocol,
-         nimbus: FxNimbus = FxNimbus.shared,
+         //Ecosia: remove experiments // nimbus: FxNimbus = FxNimbus.shared,
          isZeroSearch: Bool = false) {
         self.profile = profile
         self.isZeroSearch = isZeroSearch
 
         self.headerViewModel = HomeLogoHeaderViewModel(profile: profile)
+        /* Ecosia
         let messageCardAdaptor = MessageCardDataAdaptorImplementation()
         self.messageCardViewModel = HomepageMessageCardViewModel(dataAdaptor: messageCardAdaptor)
         messageCardAdaptor.delegate = messageCardViewModel
+         */
         self.topSiteViewModel = TopSitesViewModel(profile: profile)
 
         let siteImageHelper = SiteImageHelper(profile: profile)
@@ -128,7 +130,7 @@ class HomepageViewModel: FeatureFlaggable {
 
         self.customizeButtonViewModel = CustomizeHomepageSectionViewModel()
         self.childViewModels = [headerViewModel,
-                                messageCardViewModel,
+                                //Ecosia: messageCardViewModel,
                                 topSiteViewModel,
                                 jumpBackInViewModel,
                                 recentlySavedViewModel,
@@ -137,13 +139,13 @@ class HomepageViewModel: FeatureFlaggable {
                                 customizeButtonViewModel]
         self.isPrivate = isPrivate
 
-        self.nimbus = nimbus
+        //Ecosia: self.nimbus = nimbus
         topSiteViewModel.delegate = self
         historyHighlightsViewModel.delegate = self
         recentlySavedViewModel.delegate = self
         pocketViewModel.delegate = self
         jumpBackInViewModel.delegate = self
-        messageCardViewModel.delegate = self
+        //Ecosia: messageCardViewModel.delegate = self
 
         updateEnabledSections()
     }
@@ -154,7 +156,7 @@ class HomepageViewModel: FeatureFlaggable {
         guard !viewAppeared else { return }
 
         viewAppeared = true
-        nimbus.features.homescreenFeature.recordExposure()
+        //Ecosia: nimbus.features.homescreenFeature.recordExposure()
         TelemetryWrapper.recordEvent(category: .action,
                                      method: .view,
                                      object: .firefoxHomepage,

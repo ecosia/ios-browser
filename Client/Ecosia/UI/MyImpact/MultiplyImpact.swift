@@ -5,7 +5,7 @@
 import UIKit
 import Core
 
-final class MultiplyImpact: UIViewController, Themeable {
+final class MultiplyImpact: UIViewController, NotificationThemeable {
     private weak var subtitle: UILabel?
     private weak var topBackground: UIView?
     private weak var waves: UIImageView?

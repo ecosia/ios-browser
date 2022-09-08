@@ -8,7 +8,7 @@ protocol NTPTooltipDelegate: AnyObject {
     func ntpTooltipTapped(_ tooltip: NTPTooltip?)
 }
 
-final class NTPTooltip: UICollectionReusableView, Themeable {
+final class NTPTooltip: UICollectionReusableView, NotificationThemeable {
     static let key = String(describing: self)
     static let margin = CGFloat(16)
     static let containerMargin = CGFloat(12)

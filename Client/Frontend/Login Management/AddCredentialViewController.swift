@@ -16,7 +16,7 @@ enum AddCredentialField: Int {
     }
 }
 
-class AddCredentialViewController: UIViewController, Themeable {
+class AddCredentialViewController: UIViewController, NotificationThemeable {
     
     fileprivate lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .insetGrouped)

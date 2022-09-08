@@ -52,7 +52,7 @@ class ToolbarTextField: AutocompleteTextField {
     }
 }
 
-extension ToolbarTextField: Themeable {
+extension ToolbarTextField: NotificationThemeable {
     func applyTheme() {
         backgroundColor = UIColor.theme.textField.backgroundInOverlay
         textColor = UIColor.theme.ecosia.primaryText

@@ -9,7 +9,7 @@ protocol EcosiaHomeDelegate: AnyObject {
     func ecosiaHome(didSelectURL url: URL)
 }
 
-final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlowLayout, Themeable {
+final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlowLayout, NotificationThemeable {
     var delegate: EcosiaHomeDelegate?
     private weak var referrals: Referrals!
     private var items = [NewsModel]()

@@ -121,7 +121,7 @@ class PhotonActionSheetSiteHeaderView: UITableViewHeaderFooterView {
         siteImageView.layer.borderColor = PhotonActionSheet.UX.BorderColor.cgColor
         siteImageView.layer.borderWidth = PhotonActionSheet.UX.BorderWidth
         siteImageView.translatesAutoresizingMaskIntoConstraints = false
-        siteImageView.widthAnchor.constraint(equalToConstant: .init(PhotonActionSheetUX.SiteImageViewSize)).isActive = true
+        siteImageView.widthAnchor.constraint(equalToConstant: .init(PhotonActionSheet.UX.SiteImageViewSize)).isActive = true
         siteImageView.heightAnchor.constraint(equalTo: siteImageView.widthAnchor).isActive = true
         return siteImageView
     }()

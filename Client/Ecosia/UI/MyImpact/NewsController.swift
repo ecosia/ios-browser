@@ -6,7 +6,7 @@ import Core
 import UIKit
 
 final class NewsController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource,
-    UICollectionViewDelegateFlowLayout, Themeable {
+    UICollectionViewDelegateFlowLayout, NotificationThemeable {
     private weak var collection: UICollectionView!
     private var items = [NewsModel]()
     private let images = Images(.init(configuration: .ephemeral))
@@ -112,10 +112,10 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
 
     func applyTheme() {
         collection.visibleSupplementaryViews(ofKind: UICollectionView.elementKindSectionHeader).forEach({
-            ($0 as? Themeable)?.applyTheme()
+            ($0 as? NotificationThemeable)?.applyTheme()
         })
         collection.visibleCells.forEach({
-            ($0 as? Themeable)?.applyTheme()
+            ($0 as? NotificationThemeable)?.applyTheme()
         })
         collection.backgroundColor = UIColor.theme.ecosia.modalBackground
         updateBarAppearance()
@@ -150,7 +150,7 @@ private extension UICollectionView {
     }
 }
 
-private final class NewsSubHeader: UICollectionReusableView, Themeable {
+private final class NewsSubHeader: UICollectionReusableView, NotificationThemeable {
     private(set) weak var leftMargin: NSLayoutConstraint!
     private(set) weak var rightMargin: NSLayoutConstraint!
     private weak var subtitle: UILabel!

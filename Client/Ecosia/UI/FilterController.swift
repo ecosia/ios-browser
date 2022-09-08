@@ -10,7 +10,7 @@ private let items: [(AdultFilter, String)] = [
     (.moderate, .localized(.moderate)),
     (.off, .localized(.off))]
 
-final class FilterController: UIViewController, UITableViewDataSource, UITableViewDelegate, Themeable {
+final class FilterController: UIViewController, UITableViewDataSource, UITableViewDelegate, NotificationThemeable {
     private weak var table: UITableView!
 
     private let identifier = "filter"
@@ -59,7 +59,7 @@ final class FilterController: UIViewController, UITableViewDataSource, UITableVi
 
     func applyTheme() {
         table.visibleCells.forEach {
-            ($0 as? Themeable)?.applyTheme()
+            ($0 as? NotificationThemeable)?.applyTheme()
         }
 
         view.backgroundColor = UIColor.theme.tableView.headerBackground

@@ -142,13 +142,13 @@ class TopTabCell: UICollectionViewCell, NotificationThemeable, TabTrayCell, Reus
         selectedBackground.backgroundColor = UIColor.theme.ecosia.primaryButton
 
         backgroundColor = .clear
-        let tint = selectedTab ? UIColor.theme.ecosia.primaryTextInverted : UIColor.theme.ecosia.primaryText
+        let tint = isSelectedTab ? UIColor.theme.ecosia.primaryTextInverted : UIColor.theme.ecosia.primaryText
         titleText.textColor = tint
         closeButton.tintColor = tint
         favicon.tintColor = tint
         closeButton.backgroundColor = backgroundColor
         closeButton.layer.shadowColor = backgroundColor?.cgColor
-        selectedBackground.isHidden = !selectedTab
+        selectedBackground.isHidden = !isSelectedTab
     }
 }
 

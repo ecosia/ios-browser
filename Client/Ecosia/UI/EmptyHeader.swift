@@ -4,7 +4,7 @@
 
 import UIKit
 
-final class EmptyHeader: UITableViewHeaderFooterView, Themeable {
+final class EmptyHeader: UITableViewHeaderFooterView, NotificationThemeable {
     private let icon: String
     private weak var labelTitle: UILabel?
     private weak var labelSubtitle: UILabel?

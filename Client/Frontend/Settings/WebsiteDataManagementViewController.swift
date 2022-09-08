@@ -85,7 +85,7 @@ class WebsiteDataManagementViewModel {
     }
 }
 
-class WebsiteDataManagementViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate, Themeable {
+class WebsiteDataManagementViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate, NotificationThemeable {
     private enum Section: Int {
         case sites = 0
         case showMore = 1
@@ -179,8 +179,8 @@ class WebsiteDataManagementViewController: UIViewController, UITableViewDataSour
         tableView.separatorColor = UIColor.theme.tableView.separator
         tableView.backgroundColor = UIColor.theme.tableView.headerBackground
         tableView.reloadData()
-        (tableView.tableHeaderView as? Themeable)?.applyTheme()
-        (tableView.tableFooterView as? Themeable)?.applyTheme()
+        (tableView.tableHeaderView as? NotificationThemeable)?.applyTheme()
+        (tableView.tableFooterView as? NotificationThemeable)?.applyTheme()
 
         if theme == .dark {
             searchController?.searchBar.searchTextField.backgroundColor = .Dark.Background.secondary

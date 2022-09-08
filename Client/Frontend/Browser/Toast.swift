@@ -4,9 +4,10 @@
 
 import Foundation
 import UIKit
+import SnapKit
 
 class Toast: UIView {
-    var animationConstraint: NSLayoutConstraint?
+    var animationConstraint: Constraint?
     var completionHandler: ((Bool) -> Void)?
     var didDismissWithoutTapHandler: (() -> Void)?
 
@@ -23,6 +24,7 @@ class Toast: UIView {
         view.backgroundColor = SimpleToastUX.ToastDefaultColor
         view.layer.cornerRadius = 10
         view.layer.masksToBounds = true
+    }
 
     override func didMoveToSuperview() {
         super.didMoveToSuperview()
@@ -47,7 +49,7 @@ class Toast: UIView {
             UIView.animate(
                 withDuration: SimpleToastUX.ToastAnimationDuration,
                 animations: {
-                    self.animationConstraint?.constant = 0
+                    self.animationConstraint?.update(offset: 0) // TODO Ecosia: verify
                     self.layoutIfNeeded()
                 }) { finished in
                     if let duration = duration {
@@ -73,6 +75,7 @@ class Toast: UIView {
             if !buttonPressed {
                 self.completionHandler?(false)
             }
+        }
     }
 
     @objc func handleTap(_ gestureRecognizer: UIGestureRecognizer) {

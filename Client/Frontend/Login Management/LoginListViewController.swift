@@ -19,7 +19,7 @@ private extension UITableView {
 let CellReuseIdentifier = "cell-reuse-id"
 let LoginsSettingsSection = 0
 
-class LoginListViewController: SensitiveViewController, Themeable {
+class LoginListViewController: SensitiveViewController, NotificationThemeable {
 
     private let viewModel: LoginListViewModel
 

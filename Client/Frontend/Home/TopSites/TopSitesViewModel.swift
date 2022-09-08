@@ -71,9 +71,11 @@ class TopSitesViewModel {
                                      extras: extras)
 
         // Sponsored tile specific telemetry
+        /* Ecosia
         if let tile = homeTopSite.site as? SponsoredTile {
             SponsoredTileTelemetry.sendClickTelemetry(tile: tile, position: position)
         }
+         */
     }
 
     private func hasSentImpressionForTile(_ homeTopSite: TopSite) -> Bool {

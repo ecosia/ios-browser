@@ -56,16 +56,14 @@ class ButtonToast: Toast {
 
         self.toastView.backgroundColor = .clear
 
-        NSLayoutConstraint.activate([
-            toastView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            toastView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            toastView.heightAnchor.constraint(equalTo: heightAnchor),
-
-            heightAnchor.constraint(greaterThanOrEqualToConstant: ButtonToastUX.ToastHeight)
-        ])
-
-        animationConstraint = toastView.topAnchor.constraint(greaterThanOrEqualTo: topAnchor, constant: ButtonToastUX.ToastHeight)
-        animationConstraint?.isActive = true
+        self.toastView.snp.makeConstraints { make in
+            make.left.right.height.equalTo(self)
+            self.animationConstraint = make.top.greaterThanOrEqualTo(self).offset(ButtonToastUX.ToastHeight).constraint
+        }
+        
+        self.snp.makeConstraints { make in
+            make.height.greaterThanOrEqualTo(ButtonToastUX.ToastHeight)
+        }
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -129,7 +127,7 @@ class ButtonToast: Toast {
         toastView.addSubview(horizontalStackView)
 
         if textAlignment == .center {
-            titleLabel.centerXAnchor.constraint(equalTo: toastView.centerXAnchor).isActive = true
+            label.centerXAnchor.constraint(equalTo: toastView.centerXAnchor).isActive = true
             descriptionLabel?.centerXAnchor.constraint(equalTo: toastView.centerXAnchor).isActive = true
         }
 

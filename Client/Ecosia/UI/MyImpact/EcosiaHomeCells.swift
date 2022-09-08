@@ -49,7 +49,7 @@ final class MoreButtonCell: UICollectionViewCell {
     }
 }
 
-final class HeaderCell: UICollectionViewCell, Themeable {
+final class HeaderCell: UICollectionViewCell, NotificationThemeable {
     private(set) weak var title: UILabel!
     
     required init?(coder aDecoder: NSCoder) { return nil }

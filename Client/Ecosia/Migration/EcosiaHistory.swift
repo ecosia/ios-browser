@@ -81,7 +81,7 @@ final class EcosiaHistory {
 
             // make UI update
             history.setTopSitesNeedsInvalidation()
-            profile.panelDataObservers.activityStream.refreshIfNeeded(forceTopSites: true)
+            // profile.panelDataObservers.activityStream.refreshIfNeeded(forceTopSites: true)
 
             switch result {
             case .success:

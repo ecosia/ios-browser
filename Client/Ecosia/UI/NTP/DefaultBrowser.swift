@@ -10,7 +10,7 @@ protocol DefaultBrowserDelegate: AnyObject {
 }
 
 @available(iOS 14, *)
-final class DefaultBrowser: UIViewController, Themeable {
+final class DefaultBrowser: UIViewController, NotificationThemeable {
     weak var content: UIView!
     weak var image: UIImageView!
     weak var waves: UIImageView!

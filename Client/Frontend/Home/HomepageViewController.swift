@@ -407,11 +407,12 @@ private extension HomepageViewController {
         viewModel.headerViewModel.onTapAction = { [weak self] _ in
             self?.changeHomepageWallpaper()
         }
-
+        /* Ecosia
         // Message card
         viewModel.messageCardViewModel.dismissClosure = { [weak self] in
             self?.reloadView()
         }
+         */
 
         // Top sites
         viewModel.topSiteViewModel.tilePressedHandler = { [weak self] site, isGoogle in

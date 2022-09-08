@@ -8,7 +8,7 @@ protocol WelcomeTourDelegate: AnyObject {
     func welcomeTourDidFinish(_ tour: WelcomeTour)
 }
 
-final class WelcomeTour: UIViewController,  Themeable {
+final class WelcomeTour: UIViewController,  NotificationThemeable {
 
     private weak var navStack: UIStackView!
     private weak var labelStack: UIStackView!
@@ -264,7 +264,7 @@ final class WelcomeTour: UIViewController,  Themeable {
         container.subviews.forEach({ $0.removeFromSuperview() })
 
         guard let content = content else { return }
-        (content as? Themeable)?.applyTheme()
+        (content as? NotificationThemeable)?.applyTheme()
         container.addSubview(content)
         content.translatesAutoresizingMaskIntoConstraints = false
         content.leadingAnchor.constraint(equalTo: container.leadingAnchor).isActive = true
@@ -323,7 +323,7 @@ final class WelcomeTour: UIViewController,  Themeable {
         pageControl.currentPageIndicatorTintColor = .theme.ecosia.primaryButton
         ctaButton.backgroundColor = .Light.Button.secondary
         ctaButton.setTitleColor(.Light.Text.primary, for: .normal)
-        container.subviews.forEach({ ($0 as? Themeable)?.applyTheme() })
+        container.subviews.forEach({ ($0 as? NotificationThemeable)?.applyTheme() })
 
         imageView.backgroundColor = current?.background.color ?? .clear
         guard let current = current else { return }

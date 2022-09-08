@@ -5,7 +5,7 @@
 import UIKit
 import Core
 
-final class MyImpactCell: UICollectionViewCell, Themeable {
+final class MyImpactCell: UICollectionViewCell, NotificationThemeable {
     private(set) weak var howItWorksButton: UIControl!
     private weak var totalProgress: Progress!
     private weak var currentProgress: Progress!

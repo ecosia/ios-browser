@@ -4,7 +4,7 @@
 
 import UIKit
 
-final class WelcomeTourProfit: UIView, Themeable {
+final class WelcomeTourProfit: UIView, NotificationThemeable {
     weak var beforeContainer: UIView!
     weak var beforeLabel: UILabel!
     weak var afterContainer: UIView!

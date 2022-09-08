@@ -126,4 +126,3 @@ extension ShareExtensionHelper: UIActivityItemSource {
         return activityType.lowercased().contains("remoteopeninapplication-bycopy")
     }
 }
-*/

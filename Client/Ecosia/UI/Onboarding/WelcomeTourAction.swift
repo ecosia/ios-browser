@@ -5,7 +5,7 @@
 import UIKit
 import Core
 
-final class WelcomeTourAction: UIView, Themeable {
+final class WelcomeTourAction: UIView, NotificationThemeable {
 
     private weak var stack: UIStackView!
 
@@ -59,12 +59,12 @@ final class WelcomeTourAction: UIView, Themeable {
 
     func applyTheme() {
         stack.arrangedSubviews.forEach { view in
-            (view as? Themeable)?.applyTheme()
+            (view as? NotificationThemeable)?.applyTheme()
         }
     }
 }
 
-final class WelcomeTourActionRow: UIView, Themeable {
+final class WelcomeTourActionRow: UIView, NotificationThemeable {
     let image: String
     let title: String
     let text: String

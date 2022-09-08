@@ -4,7 +4,7 @@
 
 import UIKit
 
-final class MultiplyImpactCell: UICollectionViewCell, Themeable {
+final class MultiplyImpactCell: UICollectionViewCell, NotificationThemeable {
     private weak var title: UILabel!
     private weak var subtitle: UILabel!
     private weak var outline: UIView!
