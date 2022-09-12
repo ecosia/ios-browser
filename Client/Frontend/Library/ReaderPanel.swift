@@ -280,7 +280,7 @@ class ReadingListPanel: UITableViewController, LibraryPanel {
         overlayView.addSubview(readerModeImageView)
         readerModeImageView.snp.makeConstraints { make in
             make.leading.equalTo(welcomeLabel.snp.leading).offset(-24)
-            make.centerY.equalTo(readerModeLabel)
+            make.top.equalTo(readerModeLabel.snp.top)
             make.trailing.equalTo(readerModeLabel.snp.leading).offset(-16)
             make.size.equalTo(24)
         }
@@ -302,7 +302,7 @@ class ReadingListPanel: UITableViewController, LibraryPanel {
         overlayView.addSubview(readingListImageView)
         readingListImageView.snp.makeConstraints { make in
             make.leading.equalTo(readerModeImageView.snp.leading)
-            make.centerY.equalTo(readingListLabel)
+            make.top.equalTo(readingListLabel.snp.top)
             make.size.equalTo(24)
         }
 
