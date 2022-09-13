@@ -543,12 +543,14 @@ class BrowserViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        /* Ecosia: custom onboarding logic
         // On iPhone, if we are about to show the On-Boarding, blank out the tab so that it does
         // not flash before we present. This change of alpha also participates in the animation when
         // the intro view is dismissed.
         if UIDevice.current.userInterfaceIdiom == .phone {
             self.view.alpha = (profile.prefs.intForKey(PrefsKeys.IntroSeen) != nil) ? 1.0 : 0.0
         }
+         */
 
         if !displayedRestoreTabsAlert && crashedLastLaunch() {
             displayedRestoreTabsAlert = true

@@ -265,11 +265,20 @@ extension AppDelegate {
         browserViewController = BrowserViewController(profile: profile, tabManager: tabManager)
         browserViewController.edgesForExtendedLayout = []
 
-        let navigationController = UINavigationController(rootViewController: browserViewController)
+        // Ecosia: custom root logic
+        let rootVC: UIViewController
+
+        if User.shared.firstTime {
+            rootVC = Welcome(delegate: self)
+            Analytics.shared.install()
+        } else {
+            rootVC = browserViewController!
+        }
+
+        let navigationController = UINavigationController(rootViewController: rootVC)
         navigationController.isNavigationBarHidden = true
         navigationController.edgesForExtendedLayout = UIRectEdge(rawValue: 0)
         rootViewController = navigationController
-
         window!.rootViewController = rootViewController
     }
 }
