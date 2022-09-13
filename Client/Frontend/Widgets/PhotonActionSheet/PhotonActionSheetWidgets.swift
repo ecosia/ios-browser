@@ -113,6 +113,15 @@ class PhotonActionSheetSiteHeaderView: UITableViewHeaderFooterView {
         return titleLabel
     }()
 
+    lazy var descriptionLabel: UILabel = {
+        let titleLabel = UILabel()
+        titleLabel.font = .preferredFont(forTextStyle: .footnote)
+        titleLabel.adjustsFontForContentSizeCategory = true
+        titleLabel.textAlignment = .left
+        titleLabel.numberOfLines = 1
+        return titleLabel
+    }()
+
     lazy var siteImageView: UIImageView = {
         let siteImageView = UIImageView()
         siteImageView.contentMode = .center

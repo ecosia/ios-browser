@@ -136,7 +136,8 @@ class SiteTableViewController: UIViewController, UITableViewDelegate, UITableVie
         if #available(iOS 15.0, *) {
             table.sectionHeaderTopPadding = 0
         }
-    }
+        return table
+    }()
 
     private override init(nibName: String?, bundle: Bundle?) {
         fatalError("init(coder:) has not been implemented")

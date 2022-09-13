@@ -195,7 +195,8 @@ extension TabManagerStore {
                                           sessionData: sessionData,
                                           uuid: tab.id.uuidString,
                                           tabGroupData: nil,
-                                          createdAt: sessionData.lastUsedTime) else  { continue }
+                                          createdAt: sessionData.lastUsedTime,
+                                          hasHomeScreenshot: false) else  { continue }
 
             savedTabs.append(savedTab)
 

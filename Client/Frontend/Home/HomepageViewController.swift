@@ -7,6 +7,7 @@ import UIKit
 import Storage
 import SyncTelemetry
 import MozillaAppServices
+import Core
 
 class HomepageViewController: UIViewController, HomePanel, FeatureFlaggable {
 
@@ -31,7 +32,7 @@ class HomepageViewController: UIViewController, HomePanel, FeatureFlaggable {
     private var wallpaperManager: LegacyWallpaperManager
     private lazy var wallpaperView: LegacyWallpaperBackgroundView = .build { _ in }
     private var contextualHintViewController: ContextualHintViewController
-    private var collectionView: UICollectionView! = nil
+    var collectionView: UICollectionView! = nil
 
     // Content stack views contains collection view.
     lazy var contentStackView: UIStackView = .build { stackView in
@@ -47,8 +48,10 @@ class HomepageViewController: UIViewController, HomePanel, FeatureFlaggable {
     init(profile: Profile,
          tabManager: TabManagerProtocol,
          urlBar: URLBarViewProtocol,
-         wallpaperManager: LegacyWallpaperManager = LegacyWallpaperManager()
-    ) {
+         wallpaperManager: LegacyWallpaperManager = LegacyWallpaperManager(),
+         delegate: HomepageViewControllerDelegate?,
+         referrals: Referrals) {
+
         self.urlBar = urlBar
         self.tabManager = tabManager
         self.wallpaperManager = wallpaperManager
@@ -57,6 +60,8 @@ class HomepageViewController: UIViewController, HomePanel, FeatureFlaggable {
                                            isPrivate: isPrivate,
                                            tabManager: tabManager,
                                            urlBar: urlBar)
+        self.delegate = delegate
+        self.referrals = referrals
 
         let contextualViewModel = ContextualHintViewModel(forHintType: .jumpBackIn,
                                                           with: viewModel.profile)
@@ -91,6 +96,7 @@ class HomepageViewController: UIViewController, HomePanel, FeatureFlaggable {
         configureWallpaperView()
         configureContentStackView()
         configureCollectionView()
+        configureEcosiaSetup()
 
         // Delay setting up the view model delegate to ensure the views have been configured first
         viewModel.delegate = self
@@ -160,6 +166,11 @@ class HomepageViewController: UIViewController, HomePanel, FeatureFlaggable {
         collectionView.backgroundColor = .clear
         collectionView.accessibilityIdentifier = a11y.collectionView
         contentStackView.addArrangedSubview(collectionView)
+
+        // Ecosia: TODO
+        (collectionView?.collectionViewLayout as? UICollectionViewFlowLayout)?.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
+        collectionView?.backgroundColor = .clear
+
     }
 
     func configureContentStackView() {
@@ -253,7 +264,11 @@ class HomepageViewController: UIViewController, HomePanel, FeatureFlaggable {
     }
 
     func applyTheme() {
-        view.backgroundColor = UIColor.theme.homePanel.topSitesBackground
+        view.backgroundColor = .theme.ecosia.ntpBackground
+        collectionView?.backgroundColor = .theme.ecosia.ntpBackground
+        collectionView.visibleCells.forEach({
+            ($0 as? NotificationThemeable)?.applyTheme()
+        })
     }
 
     func scrollToTop(animated: Bool = false) {
@@ -347,6 +362,30 @@ class HomepageViewController: UIViewController, HomePanel, FeatureFlaggable {
 
         UIAccessibility.post(notification: .layoutChanged, argument: contextualHintViewController)
     }
+
+    // MARK: Ecosia
+    weak var delegate: HomepageViewControllerDelegate?
+    var inOverlayMode = false {
+        didSet {
+            /* TODO: check if needed
+            guard isViewLoaded else { return }
+            if inOverlayMode && !oldValue, let cell = searchbarCell {
+                UIView.animate(withDuration: 0.3, delay: 0, options: [.beginFromCurrentState], animations: { [weak self] in
+                    self?.collectionView.setContentOffset(.init(x: 0, y: cell.frame.maxY - FirefoxHomeUX.ScrollSearchBarOffset), animated: true)
+                })
+            } else if oldValue && !inOverlayMode && !collectionView.isDragging {
+                UIView.animate(withDuration: 0.3, delay: 0, options: [.beginFromCurrentState], animations: { [weak self] in
+                    self?.collectionView.contentOffset = .zero
+                })
+            }*/
+        }
+    }
+    let personalCounter = PersonalCounter()
+    weak var referrals: Referrals!
+    let flowLayout = NTPLayout()
+    weak var searchbarCell: UICollectionViewCell?
+    weak var emptyCell: EmptyCell?
+    weak var impactCell: TreesCell?
 }
 
 // MARK: - CollectionView Data Source

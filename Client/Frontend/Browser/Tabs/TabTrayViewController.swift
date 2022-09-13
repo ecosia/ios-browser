@@ -183,8 +183,8 @@ class TabTrayViewController: UIViewController {
          tabToFocus: Tab? = nil,
          tabManager: TabManager,
          focusedSegment: TabTrayViewModel.Segment? = nil,
-         and notificationCenter: NotificationProtocol = NotificationCenter.default
-         // Ecosia // with nimbus: FxNimbus = FxNimbus.shared
+         and notificationCenter: NotificationProtocol = NotificationCenter.default,
+         with nimbus: FxNimbus = FxNimbus.shared
     ) {
         self.nimbus = nimbus
         self.notificationCenter = notificationCenter
@@ -226,7 +226,7 @@ class TabTrayViewController: UIViewController {
         super.viewWillAppear(animated)
 
         // We expose the tab tray feature whenever it's going to be seen by the user
-        nimbus.features.tabTrayFeature.recordExposure()
+        // Ecosia // nimbus.features.tabTrayFeature.recordExposure()
 
         if shouldUseiPadSetup() {
             navigationController?.isToolbarHidden = true
@@ -447,7 +447,7 @@ extension TabTrayViewController: NotificationThemeable {
          maskButton.applyUIMode(isPrivate: maskButton.isSelected)
          addNewTabButton.applyTheme()
 
-         if shouldUseiPadSetup {
+         if shouldUseiPadSetup() {
              navigationItem.leftBarButtonItem?.tintColor = UIColor.theme.ecosia.primaryButton
              navigationItem.rightBarButtonItem?.tintColor = UIColor.theme.ecosia.primaryButton
              navigationMenu.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.theme.ecosia.primaryText], for: .normal)

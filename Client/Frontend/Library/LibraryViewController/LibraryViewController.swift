@@ -169,16 +169,16 @@ class LibraryViewController: UIViewController {
     }
 
     @objc func panelChanged() {
-        var eventValue: TelemetryWrapper.EventValue
+        // Ecosia // var eventValue: TelemetryWrapper.EventValue
         var selectedPanel: LibraryPanelType
 
         switch librarySegmentControl.selectedSegmentIndex {
         case 0:
             selectedPanel = .bookmarks
-            eventValue = .bookmarksPanel
+            // Ecosia // eventValue = .bookmarksPanel
         case 1:
             selectedPanel = .history
-            eventValue = .historyPanel
+            // Ecosia // eventValue = .historyPanel
         case 2:
             selectedPanel = .readingList
         case 3:
@@ -188,7 +188,7 @@ class LibraryViewController: UIViewController {
         }
 
         setupOpenPanel(panelType: selectedPanel)
-        TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .libraryPanel, value: eventValue)
+        // Ecosia // TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .libraryPanel, value: eventValue)
     }
 
     func setupOpenPanel(panelType: LibraryPanelType) {
@@ -351,10 +351,10 @@ extension LibraryViewController: NotificationThemeable, Notifiable {
         }
         navigationController?.toolbar.tintColor = UIColor.theme.ecosia.primaryButton
 
-        navigationToolbar.barTintColor = UIColor.theme.homePanel.panelBackground
-        navigationToolbar.tintColor = UIColor.theme.ecosia.primaryButton
-        navigationToolbar.isTranslucent = false
-        navigationToolbar.setShadowImage(UIImage(), forToolbarPosition: .any)
+        segmentControlToolbar.barTintColor = UIColor.theme.homePanel.panelBackground
+        segmentControlToolbar.tintColor = UIColor.theme.ecosia.primaryButton
+        segmentControlToolbar.isTranslucent = false
+        segmentControlToolbar.setShadowImage(UIImage(), forToolbarPosition: .any)
 
         librarySegmentControl.setTitleTextAttributes([.foregroundColor: UIColor.theme.ecosia.primaryText], for: .normal)
         librarySegmentControl.setTitleTextAttributes([.foregroundColor: UIColor.Light.Text.primary], for: .selected)

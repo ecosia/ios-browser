@@ -908,7 +908,7 @@ extension URLBarView: NotificationThemeable {
         locationBorderColor = UIColor.theme.ecosia.border
         locationView.backgroundColor = inOverlayMode || isHome ? UIColor.theme.textField.backgroundInOverlay : UIColor.theme.ecosia.tertiaryBackground
         progressBar.backgroundColor = UIColor.theme.ecosia.tertiaryBackground
-        progressBar.setGradientColors(startColor: UIColor.theme.loadingBar.start(isPrivate), endColor: UIColor.theme.loadingBar.end(isPrivate))
+        progressBar.setGradientColors(startColor: UIColor.theme.ecosia.highlightedBackground, middleColor: UIColor.theme.ecosia.highlightedBackground, endColor: UIColor.theme.ecosia.highlightedBackground)
 
         locationContainer.backgroundColor = UIColor.theme.textField.background
 
@@ -921,7 +921,7 @@ extension URLBarView: NotificationThemeable {
         ToolbarTextField.applyUIMode(isPrivate: isPrivate)
 
         // shadow only for NTP light mode
-        if !ThemeManager.instance.current.isDark && isHome && !inOverlayMode {
+        if !LegacyThemeManager.instance.current.isDark && isHome && !inOverlayMode {
             locationContainer.layer.shadowOpacity = 1
             locationContainer.layer.shadowColor = UIColor(red: 0.059, green: 0.059, blue: 0.059, alpha: 0.18).cgColor
             locationContainer.layer.shadowOpacity = 1

@@ -124,6 +124,7 @@ class TopSitesDataAdaptorImplementation: TopSitesDataAdaptor, FeatureFlaggable {
     }
 
     private func loadContiles() {
+        /* Ecosia: deactivate sponsored tiles
         guard shouldLoadSponsoredTiles else { return }
 
         dispatchGroup.enter()
@@ -133,6 +134,7 @@ class TopSitesDataAdaptorImplementation: TopSitesDataAdaptor, FeatureFlaggable {
             }
             self?.dispatchGroup.leave()
         }
+         */
     }
 
     private func loadTopSites() {

@@ -947,7 +947,9 @@ class BrowserViewController: UIViewController {
         let homepageViewController = HomepageViewController(
             profile: profile,
             tabManager: tabManager,
-            urlBar: urlBar)
+            urlBar: urlBar,
+            delegate: self,
+            referrals: referrals)
         homepageViewController.homePanelDelegate = self
         homepageViewController.libraryPanelDelegate = self
         homepageViewController.browserBarViewDelegate = self
@@ -1149,7 +1151,7 @@ class BrowserViewController: UIViewController {
     }
 
     private func showBookmarksToast() {
-        let toast = ButtonToast(labelText: .AppMenuAddBookmarkConfirmMessage,
+        let toast = ButtonToast(labelText: .AppMenu.AddBookmarkConfirmMessage,
                                 imageName: "menu-Bookmark-Remove", 
                                 buttonText: .BookmarksEdit,
                                 textAlignment: .left) { isButtonTapped in
@@ -1814,7 +1816,7 @@ extension BrowserViewController: LibraryPanelDelegate {
         // If in overlay mode switching doesnt correctly dismiss the homepanels
         guard !topTabsVisible, !self.urlBar.inOverlayMode else { return }
         // We're not showing the top tabs; show a toast to quick switch to the fresh new tab.
-        let toast = ButtonToast(labelText: .ContextMenuButtonToastNewTabOpenedLabelText, imageName: "tabs", buttonText: Strings.ContextMenuButtonToastNewTabOpenedButtonText, completion: { buttonPressed in
+        let toast = ButtonToast(labelText: .ContextMenuButtonToastNewTabOpenedLabelText, imageName: "tabs", buttonText: .ContextMenuButtonToastNewTabOpenedButtonText, completion: { buttonPressed in
             if buttonPressed {
                 self.tabManager.selectTab(tab)
             }
@@ -1869,7 +1871,7 @@ extension BrowserViewController: HomePanelDelegate {
         guard !topTabsVisible else { return }
 
         // We're not showing the top tabs; show a toast to quick switch to the fresh new tab.
-        let toast = ButtonToast(labelText: .ContextMenuButtonToastNewTabOpenedLabelText, imageName: "tabs", buttonText: Strings.ContextMenuButtonToastNewTabOpenedButtonText, completion: { buttonPressed in
+        let toast = ButtonToast(labelText: .ContextMenuButtonToastNewTabOpenedLabelText, imageName: "tabs", buttonText: .ContextMenuButtonToastNewTabOpenedButtonText, completion: { buttonPressed in
             if buttonPressed {
                 self.tabManager.selectTab(tab)
             }
@@ -2019,7 +2021,7 @@ extension BrowserViewController: TabManagerDelegate {
                 animation.duration = 0.35
                 animation.fromValue = CATransform3DMakeScale(0.6, 0.6, 1)
                 animation.timingFunction = .init(name: .easeInEaseOut)
-                firefoxHomeViewController?.view.layer.add(animation, forKey: "scale")
+                homepageViewController?.view.layer.add(animation, forKey: "scale")
 
                 DispatchQueue
                     .main
@@ -2645,7 +2647,7 @@ extension BrowserViewController: NotificationThemeable {
         ui.forEach { $0?.applyTheme() }
 
         statusBarOverlay.backgroundColor = shouldShowTopTabsForTraitCollection(traitCollection) ? UIColor.theme.topTabs.background : urlBar.backgroundColor
-        statusBarOverlay.backgroundColor = firefoxHomeViewController == nil || view.traitCollection.userInterfaceIdiom == .pad ? .theme.textField.background : .theme.ecosia.ntpBackground
+        statusBarOverlay.backgroundColor = homepageViewController == nil || view.traitCollection.userInterfaceIdiom == .pad ? .theme.textField.background : .theme.ecosia.ntpBackground
         keyboardBackdrop?.backgroundColor = UIColor.theme.browser.background
         setNeedsStatusBarAppearanceUpdate()
 
@@ -2716,7 +2718,7 @@ extension BrowserViewController: DevicePickerViewControllerDelegate, Instruction
         profile.sendItem(shareItem, toDevices: devices).uponQueue(.main) { _ in
             self.popToBVC()
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                SimpleToast().showAlertWithText.AppMenuTabSentConfirmMessage, image: "check", bottomContainer: self.webViewContainer)
+                SimpleToast().showAlertWithText(.AppMenu.AppMenuTabSentConfirmMessage, image: "check", bottomContainer: self.webViewContainer)
             }
         }
     }

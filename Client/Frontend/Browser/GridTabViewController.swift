@@ -578,7 +578,13 @@ extension GridTabViewController {
                                            style: .cancel,
                                            handler: nil),
                              accessibilityIdentifier: AccessibilityIdentifiers.TabTray.deleteCancelButton)
-        controller.popoverPresentationController?.barButtonItem = sender
+        // Ecosia: fix crash when sent by button
+        if let view = sender as? UIView {
+            controller.popoverPresentationController?.sourceView = view
+        }
+        if let item = sender as? UIBarButtonItem {
+            controller.popoverPresentationController?.barButtonItem = item
+        }
         controller.view.tintColor = UIColor.theme.ecosia.information
         present(controller, animated: true, completion: nil)
     }

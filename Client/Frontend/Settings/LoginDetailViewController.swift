@@ -47,6 +47,7 @@ class LoginDetailViewController: SensitiveViewController, NotificationThemeable 
 
         // Add empty footer view to prevent separators from being drawn past the last item.
         tableView.tableFooterView = UIView()
+        return tableView
     } ()
 
     private weak var websiteField: UITextField?

@@ -89,7 +89,7 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
 
     var suggestions: [String]? = []
     var savedQuery: String = ""
-    var searchFeature: FeatureHolder<Search>
+    // Ecosia // var searchFeature: FeatureHolder<Search>
     static var userAgent: String?
 
     var hasFirefoxSuggestions: Bool {
@@ -103,11 +103,11 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
     init(profile: Profile,
          viewModel: SearchViewModel,
          tabManager: TabManager,
-         featureConfig: FeatureHolder<Search> = FxNimbus.shared.features.search,
+         // Ecosia // featureConfig: FeatureHolder<Search> = FxNimbus.shared.features.search,
          highlightManager: HistoryHighlightsManagerProtocol = HistoryHighlightsManager()) {
         self.viewModel = viewModel
         self.tabManager = tabManager
-        self.searchFeature = featureConfig
+        // Ecosia // self.searchFeature = featureConfig
         self.highlightManager = highlightManager
         super.init(profile: profile, style: .insetGrouped)
 
@@ -282,7 +282,7 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
             tableView.topAnchor.constraint(equalTo: view.topAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: searchEngineScrollView.topAnchor)
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
 
@@ -433,11 +433,16 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
                 $0 && content.range(of: $1, options: .caseInsensitive) != nil
             }
         }
+        /* Ecosia: hardcode config
         let config = searchFeature.value().awesomeBar
         // Searching within the content will get annoying, so only start searching
         // in content when there are at least one word with more than 3 letters in.
+
         let searchInContent = config.usePageContent
             && searchTerms.find { $0.count >= config.minSearchTerm } != nil
+         */
+        let searchInContent = searchTerms.find { $0.count >= 3 } != nil
+
 
         filteredOpenedTabs = currentTabs.filter { tab in
             guard let url = tab.url ?? tab.sessionData?.urls.last,
@@ -557,10 +562,12 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
             recordSearchListSelectionTelemetry(type: .openedTabs)
             let tab = self.filteredOpenedTabs[indexPath.row]
             searchDelegate?.searchViewController(self, uuid: tab.tabUUID)
-        /* Ecosia: case .remoteTabs:
+        /* Ecosia:
+        case .remoteTabs:
             recordSearchListSelectionTelemetry(type: .remoteTabs)
             let remoteTab = self.filteredRemoteClientTabs[indexPath.row].tab
-            searchDelegate?.searchViewController(self, didSelectURL: remoteTab.URL, searchTerm: nil)*/
+            searchDelegate?.searchViewController(self, didSelectURL: remoteTab.URL, searchTerm: nil)
+         */
         case .bookmarksAndHistory:
             if let site = data[indexPath.row] {
                 recordSearchListSelectionTelemetry(type: .bookmarksAndHistory,
@@ -582,12 +589,16 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
     }
 
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        /* Ecosia
         guard section == SearchListSection.remoteTabs.rawValue,
               hasFirefoxSuggestions else { return 0 }
 
         return UITableView.automaticDimension
+         */
+        return 0
     }
 
+    /* Ecosia: deactivate headers
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         guard section == SearchListSection.remoteTabs.rawValue,
               hasFirefoxSuggestions,
@@ -599,6 +610,7 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
 
         return headerView
     }
+     */
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let twoLineImageOverlayCell = tableView.dequeueReusableCell(withIdentifier: CellIdentifier, for: indexPath) as! TwoLineImageOverlayCell
@@ -805,8 +817,10 @@ private extension SearchViewController {
         switch type {
         case .searchSuggestions:
             extra = TelemetryWrapper.EventValue.searchSuggestion.rawValue
+        /* Ecosia
         case .remoteTabs:
             extra = TelemetryWrapper.EventValue.remoteTab.rawValue
+         */
         case .openedTabs:
             extra = TelemetryWrapper.EventValue.openedTab.rawValue
         case .bookmarksAndHistory:

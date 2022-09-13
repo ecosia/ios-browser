@@ -971,6 +971,7 @@ class SendFeedbackSetting: Setting {
     }
 }
 
+/* Ecosia: disable tracking
 class SendAnonymousUsageDataSetting: BoolSetting {
     init(prefs: Prefs, delegate: SettingsDelegate?) {
         let statusText = NSMutableAttributedString()
@@ -1005,6 +1006,7 @@ class SendAnonymousUsageDataSetting: BoolSetting {
         setUpAndPushSettingsContentViewController(navigationController, self.url)
     }
 }
+*/
 
 class StudiesToggleSetting: BoolSetting {
     init(prefs: Prefs, delegate: SettingsDelegate?) {

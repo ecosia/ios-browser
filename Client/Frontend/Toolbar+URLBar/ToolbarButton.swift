@@ -4,7 +4,7 @@
 
 import UIKit
 
-class ToolbarButton: UIButton {
+class ToolbarButton: UIButton, NotificationThemeable {
     var selectedTintColor: UIColor!
     var unselectedTintColor: UIColor!
     var disabledTintColor = UIColor.Photon.Grey50
@@ -51,11 +51,7 @@ class ToolbarButton: UIButton {
             separatorLine?.isHidden = isHidden
         }
     }
-}
 
-// MARK: - Theme protocols
-
-extension ToolbarButton: NotificationThemeable {
     func applyTheme() {
         selectedTintColor = UIColor.theme.toolbarButton.selectedTint
         disabledTintColor = UIColor.theme.toolbarButton.disabledTint

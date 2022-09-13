@@ -153,6 +153,7 @@ class ButtonToast: Toast {
         paddedView.translatesAutoresizingMaskIntoConstraints = false
         stackView.addArrangedSubview(paddedView)
          */
+        let roundedButton = UIButton()
         roundedButton.translatesAutoresizingMaskIntoConstraints = false
         /* Ecosia: branding
         roundedButton.layer.cornerRadius = ButtonToastUX.ToastButtonBorderRadius

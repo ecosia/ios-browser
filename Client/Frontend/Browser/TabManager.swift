@@ -732,7 +732,7 @@ class TabManager: NSObject, FeatureFlaggable, TabManagerProtocol {
         var toast: ButtonToast?
         let numberOfTabs = recentlyClosedForUndo.count
         if numberOfTabs > 0 {
-            toast = ButtonToast(labelText: String.localizedStringWithFormat(Strings.TabsDeleteAllUndoTitle, numberOfTabs), imageName: "tabs", buttonText: .TabsDeleteAllUndoAction, completion: { buttonPressed in
+            toast = ButtonToast(labelText: String.localizedStringWithFormat(.TabsDeleteAllUndoTitle, numberOfTabs), imageName: "tabs", buttonText: .TabsDeleteAllUndoAction, completion: { buttonPressed in
                 if buttonPressed {
                     self.undoCloseTabs()
                     self.storeChanges()
@@ -891,6 +891,8 @@ extension TabManager {
             tabToSelect = addTab()
         }
 
+        // Ecosia: this logic makes us start on NTP if user should see rebrand intro
+        let startOnNTP = User.shared.showsRebrandIntro || User.shared.firstTime
         if !(startOnNTP) {
             selectTab(tabToSelect)
         }

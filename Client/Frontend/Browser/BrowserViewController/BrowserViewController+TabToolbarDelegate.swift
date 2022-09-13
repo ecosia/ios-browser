@@ -206,7 +206,7 @@ extension BrowserViewController: ToolBarActionMenuDelegate {
             }
             show(toast: toast)
         default:
-            SimpleToast().showAlertWithText(message, bottomContainer: webViewContainer)
+            SimpleToast().showAlertWithText(message, image: "bookmarksEmpty", bottomContainer: webViewContainer)
         }
     }
 

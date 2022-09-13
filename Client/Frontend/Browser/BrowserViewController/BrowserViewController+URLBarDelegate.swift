@@ -46,7 +46,7 @@ extension BrowserViewController: URLBarDelegate {
             // If in overlay mode switching doesnt correctly dismiss the homepanels
             guard !self.topTabsVisible, !self.urlBar.inOverlayMode else { return }
             // We're not showing the top tabs; show a toast to quick switch to the fresh new tab.
-            let toast = ButtonToast(labelText: .ContextMenuButtonToastNewTabOpenedLabelText, imageName: "tabs", buttonText: Strings.ContextMenuButtonToastNewTabOpenedButtonText, completion: { buttonPressed in
+            let toast = ButtonToast(labelText: .ContextMenuButtonToastNewTabOpenedLabelText, imageName: "tabs", buttonText: .ContextMenuButtonToastNewTabOpenedButtonText, completion: { buttonPressed in
                 if buttonPressed {
                     self.tabManager.selectTab(tab)
                 }
@@ -308,7 +308,7 @@ extension BrowserViewController: URLBarDelegate {
     }
 
     func urlBarDidEnterOverlayMode(_ urlBar: URLBarView) {
-        firefoxHomeViewController?.inOverlayMode = true
+        homepageViewController?.inOverlayMode = true
         libraryDrawerViewController?.close()
         urlBar.updateSearchEngineImage()
         guard let profile = profile as? BrowserProfile else { return }
@@ -325,7 +325,7 @@ extension BrowserViewController: URLBarDelegate {
     }
 
     func urlBarDidLeaveOverlayMode(_ urlBar: URLBarView) {
-        firefoxHomeViewController?.inOverlayMode = false
+        homepageViewController?.inOverlayMode = false
         destroySearchController()
         // Ecosia: fix slow hiding of ntp when network is slow
         updateInContentHomePanel(urlBar.currentURL ?? tabManager.selectedTab?.url)

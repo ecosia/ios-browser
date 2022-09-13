@@ -24,7 +24,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     private var shutdownWebServer: DispatchSourceTimer?
     private var webServerUtil: WebServerUtil?
     private var appLaunchUtil: AppLaunchUtil?
-    private var backgroundSyncUtil: BackgroundSyncUtil?
+    // Ecosia: Disable BG sync // private var backgroundSyncUtil: BackgroundSyncUtil?
 
     func application(_ application: UIApplication,
                      willFinishLaunchingWithOptions
@@ -68,7 +68,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window!.makeKeyAndVisible()
         pushNotificationSetup()
         appLaunchUtil?.setUpPostLaunchDependencies()
-        backgroundSyncUtil = BackgroundSyncUtil(profile: profile, application: application)
+        // Ecosia: Disable BG sync //backgroundSyncUtil = BackgroundSyncUtil(profile: profile, application: application)
 
         return true
     }

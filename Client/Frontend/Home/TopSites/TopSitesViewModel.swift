@@ -43,10 +43,11 @@ class TopSitesViewModel {
     }
 
     func tilePressed(site: TopSite, position: Int) {
-        topSitePressTracking(homeTopSite: site, position: position)
+        // Ecosia //topSitePressTracking(homeTopSite: site, position: position)
         tilePressedHandler?(site.site, site.isGoogleURL)
     }
 
+    /* Ecosia: Disable Telemetry
     // MARK: - Telemetry
 
     func sendImpressionTelemetry(_ homeTopSite: TopSite, position: Int) {
@@ -71,11 +72,9 @@ class TopSitesViewModel {
                                      extras: extras)
 
         // Sponsored tile specific telemetry
-        /* Ecosia
         if let tile = homeTopSite.site as? SponsoredTile {
             SponsoredTileTelemetry.sendClickTelemetry(tile: tile, position: position)
         }
-         */
     }
 
     private func hasSentImpressionForTile(_ homeTopSite: TopSite) -> Bool {
@@ -85,6 +84,7 @@ class TopSitesViewModel {
         }
         return true
     }
+     */
 
     // MARK: - Context actions
 
@@ -202,7 +202,7 @@ extension TopSitesViewModel: HomepageSectionHandler {
         if let cell = collectionView.dequeueReusableCell(cellType: TopSiteItemCell.self, for: indexPath),
            let contentItem = topSites[safe: indexPath.row] {
             cell.configure(contentItem, position: indexPath.row)
-            sendImpressionTelemetry(contentItem, position: indexPath.row)
+            // Ecosia // sendImpressionTelemetry(contentItem, position: indexPath.row)
             return cell
 
         } else if let cell = collectionView.dequeueReusableCell(cellType: EmptyTopSiteCell.self, for: indexPath) {
