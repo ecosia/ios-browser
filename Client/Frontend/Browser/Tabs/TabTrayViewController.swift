@@ -30,6 +30,8 @@ class TabTrayViewController: UIViewController {
         button.accessibilityIdentifier = "closeAllTabsButtonTabTray"
         button.setTitle(.localized(.closeAll), for: .normal)
         button.addTarget(self, action: #selector(didTapDeleteTabs), for: .primaryActionTriggered)
+        button.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+        button.sizeToFit()
         return UIBarButtonItem(customView: button)
     }()
 
