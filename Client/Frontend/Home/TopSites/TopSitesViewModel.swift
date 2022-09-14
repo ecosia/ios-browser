@@ -158,11 +158,11 @@ extension TopSitesViewModel: HomepageViewModelProtocol, FeatureFlaggable {
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: item, count: sectionDimension.numberOfTilesPerRow)
         let section = NSCollectionLayoutSection(group: group)
 
-        let leadingInset = HomepageViewModel.UX.topSiteLeadingInset(traitCollection: traitCollection)
+        let insets = sectionType.sectionInsets(traitCollection)
         section.contentInsets = NSDirectionalEdgeInsets(top: 0,
-                                                        leading: leadingInset,
+                                                        leading: insets,
                                                         bottom: HomepageViewModel.UX.spacingBetweenSections - TopSiteItemCell.UX.bottomSpace,
-                                                        trailing: 0)
+                                                        trailing: insets)
 
         return section
     }

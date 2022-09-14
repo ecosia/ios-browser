@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import MozillaAppServices
+import Core
 
 protocol HomepageViewModelDelegate: AnyObject {
     func reloadView()
@@ -49,6 +50,8 @@ class HomepageViewModel: FeatureFlaggable {
 
     //Ecosia: let nimbus: FxNimbus
     let profile: Profile
+    fileprivate let personalCounter = PersonalCounter()
+
     var isZeroSearch: Bool {
         didSet {
             topSiteViewModel.isZeroSearch = isZeroSearch
@@ -69,6 +72,7 @@ class HomepageViewModel: FeatureFlaggable {
     var headerViewModel: HomeLogoHeaderViewModel
     // Ecosia // var messageCardViewModel: HomepageMessageCardViewModel
     var topSiteViewModel: TopSitesViewModel
+    var impactViewModel: HomeMyImpactViewModel
     // Ecosia // var recentlySavedViewModel: RecentlySavedCellViewModel
     // Ecosia // var jumpBackInViewModel: JumpBackInViewModel
     // Ecosia // var historyHighlightsViewModel: HistoryHighlightsViewModel
@@ -89,13 +93,14 @@ class HomepageViewModel: FeatureFlaggable {
         self.profile = profile
         self.isZeroSearch = isZeroSearch
 
-        self.headerViewModel = HomeLogoHeaderViewModel(profile: profile)
+        self.headerViewModel = .init()
         /* Ecosia
         let messageCardAdaptor = MessageCardDataAdaptorImplementation()
         self.messageCardViewModel = HomepageMessageCardViewModel(dataAdaptor: messageCardAdaptor)
         messageCardAdaptor.delegate = messageCardViewModel
          */
         self.topSiteViewModel = TopSitesViewModel(profile: profile)
+        self.impactViewModel = HomeMyImpactViewModel(personalCounter: personalCounter)
 
         /* Ecosia
         let siteImageHelper = SiteImageHelper(profile: profile)
@@ -132,7 +137,8 @@ class HomepageViewModel: FeatureFlaggable {
         self.customizeButtonViewModel = CustomizeHomepageSectionViewModel()
          */
         self.childViewModels = [headerViewModel,
-                                topSiteViewModel]
+                                topSiteViewModel,
+                                impactViewModel]
         self.isPrivate = isPrivate
 
         //Ecosia: self.nimbus = nimbus

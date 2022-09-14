@@ -4,28 +4,30 @@
 
 import Foundation
 import Shared
+import Core
 
-class HomeLogoHeaderViewModel {
-
+class HomeMyImpactViewModel {
     struct UX {
         static let bottomSpacing: CGFloat = 12
     }
 
-    /* Ecosia
-    private let profile: Profile
-    var onTapAction: ((UIButton) -> Void)?
+    private let personalCounter: PersonalCounter
 
-    init(profile: Profile) {
-        self.profile = profile
+    init(personalCounter: PersonalCounter) {
+        self.personalCounter = personalCounter
     }
-     */
+
+    fileprivate var treesCellModel: TreesCellModel {
+        let trees = Referrals.isEnabled ? User.shared.impact : User.shared.searchImpact
+        return .init(trees: trees, searches: personalCounter.state!, style: .ntp)
+    }
 }
 
 // MARK: HomeViewModelProtocol
-extension HomeLogoHeaderViewModel: HomepageViewModelProtocol, FeatureFlaggable {
+extension HomeMyImpactViewModel: HomepageViewModelProtocol {
 
     var sectionType: HomepageSectionType {
-        return .logoHeader
+        return .impact
     }
 
     var headerViewModel: LabelButtonHeaderViewModel {
@@ -43,11 +45,12 @@ extension HomeLogoHeaderViewModel: HomepageViewModelProtocol, FeatureFlaggable {
 
         let section = NSCollectionLayoutSection(group: group)
 
+        let insets = sectionType.sectionInsets(traitCollection)
         section.contentInsets = NSDirectionalEdgeInsets(
             top: 0,
-            leading: 0,
+            leading: insets,
             bottom: UX.bottomSpacing,
-            trailing: 0)
+            trailing: insets)
 
         return section
     }
@@ -57,20 +60,25 @@ extension HomeLogoHeaderViewModel: HomepageViewModelProtocol, FeatureFlaggable {
     }
 
     var isEnabled: Bool {
-        // Ecosia // return featureFlags.isFeatureEnabled(.wallpapers, checking: .buildOnly)
         true
     }
 
     func refreshData(for traitCollection: UITraitCollection,
                      isPortrait: Bool = UIWindow.isPortrait,
                      device: UIUserInterfaceIdiom = UIDevice.current.userInterfaceIdiom) {}
+
 }
 
-extension HomeLogoHeaderViewModel: HomepageSectionHandler {
+extension HomeMyImpactViewModel: HomepageSectionHandler {
 
     func configure(_ cell: UICollectionViewCell, at indexPath: IndexPath) -> UICollectionViewCell {
-        guard let logoHeaderCell = cell as? LogoCell else { return UICollectionViewCell() }
-        // Ecosia // logoHeaderCell.configure(onTapAction: onTapAction)
-        return logoHeaderCell
+        guard let treesCell = cell as? TreesCell else { return UICollectionViewCell() }
+        treesCell.display(treesCellModel)
+        return treesCell
+    }
+
+    func didSelectItem(at indexPath: IndexPath, homePanelDelegate: HomePanelDelegate?, libraryPanelDelegate: LibraryPanelDelegate?) {
+
+
     }
 }

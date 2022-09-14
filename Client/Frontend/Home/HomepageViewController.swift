@@ -447,10 +447,11 @@ private extension HomepageViewController {
     private func setupSectionsAction() {
 
         // Header view
-        viewModel.headerViewModel.onTapAction = { [weak self] _ in
-            // Ecosia //self?.changeHomepageWallpaper()
-        }
         /* Ecosia
+        viewModel.headerViewModel.onTapAction = { [weak self] _ in
+            self?.changeHomepageWallpaper()
+        }
+
         // Message card
         viewModel.messageCardViewModel.dismissClosure = { [weak self] in
             self?.reloadView()

@@ -8,8 +8,8 @@ enum HomepageSectionType: Int, CaseIterable {
     case logoHeader
     //case messageCard
     case topSites
-    case libraryShortcuts
     case impact
+    case libraryShortcuts
     case emptySpace
     /* Ecosia
     case jumpBackIn
@@ -48,5 +48,30 @@ enum HomepageSectionType: Int, CaseIterable {
 
     init(_ section: Int) {
         self.init(rawValue: section)!
+    }
+
+    func sectionInsets(_ traits: UITraitCollection) -> CGFloat {
+        var currentTraits = traits
+        if (traits.horizontalSizeClass == .regular && UIApplication.shared.statusBarOrientation.isPortrait) || UIDevice.current.userInterfaceIdiom == .phone {
+            currentTraits = UITraitCollection(horizontalSizeClass: .compact)
+        }
+        // TODO: move FirefoxHomeUX
+        var insets = FirefoxHomeUX.sectionInsetsForSizeClass[currentTraits.horizontalSizeClass]
+
+        switch self {
+        case .libraryShortcuts, .topSites, .impact:
+            let window = UIApplication.shared.keyWindow
+            let safeAreaInsets = window?.safeAreaInsets.left ?? 0
+            insets += FirefoxHomeUX.MinimumInsets + safeAreaInsets
+
+            /* Ecosia: center layout in landscape for iPhone */
+            if UIApplication.shared.statusBarOrientation.isLandscape, UIDevice.current.userInterfaceIdiom == .phone {
+                insets = UIScreen.main.bounds.width / 4
+            }
+
+            return insets
+        default:
+            return 0
+        }
     }
 }
