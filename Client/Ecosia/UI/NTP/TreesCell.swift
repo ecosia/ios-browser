@@ -5,7 +5,7 @@
 import UIKit
 import Core
 
-final class TreesCell: UICollectionViewCell, NotificationThemeable {
+final class TreesCell: UICollectionViewCell, NotificationThemeable, ReusableCell {
     static let topMargin = CGFloat(40)
 
     private(set) var model: TreesCellModel?

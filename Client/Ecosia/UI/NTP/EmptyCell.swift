@@ -4,7 +4,7 @@
 
 import UIKit
 
-class EmptyCell: UICollectionViewCell, NotificationThemeable {
+class EmptyCell: UICollectionViewCell, NotificationThemeable, ReusableCell {
     let view = UIView()
     var widthConstraint: NSLayoutConstraint!
     var heightConstraint: NSLayoutConstraint!

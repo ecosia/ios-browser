@@ -56,7 +56,8 @@ extension HomeLogoHeaderViewModel: HomepageViewModelProtocol, FeatureFlaggable {
     }
 
     var isEnabled: Bool {
-        return featureFlags.isFeatureEnabled(.wallpapers, checking: .buildOnly)
+        // Ecosia // return featureFlags.isFeatureEnabled(.wallpapers, checking: .buildOnly)
+        true
     }
 
     func refreshData(for traitCollection: UITraitCollection,
@@ -67,8 +68,8 @@ extension HomeLogoHeaderViewModel: HomepageViewModelProtocol, FeatureFlaggable {
 extension HomeLogoHeaderViewModel: HomepageSectionHandler {
 
     func configure(_ cell: UICollectionViewCell, at indexPath: IndexPath) -> UICollectionViewCell {
-        guard let logoHeaderCell = cell as? HomeLogoHeaderCell else { return UICollectionViewCell() }
-        logoHeaderCell.configure(onTapAction: onTapAction)
+        guard let logoHeaderCell = cell as? LogoCell else { return UICollectionViewCell() }
+        // Ecosia // logoHeaderCell.configure(onTapAction: onTapAction)
         return logoHeaderCell
     }
 }

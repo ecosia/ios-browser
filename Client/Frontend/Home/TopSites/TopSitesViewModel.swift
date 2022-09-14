@@ -5,6 +5,7 @@
 import Foundation
 import Shared
 import Storage
+import Core
 
 class TopSitesViewModel {
 
@@ -131,7 +132,7 @@ extension TopSitesViewModel: HomepageViewModelProtocol, FeatureFlaggable {
     }
 
     var isEnabled: Bool {
-        return featureFlags.isFeatureEnabled(.topSites, checking: .buildAndUser)
+        return User.shared.topSites // Ecosia // featureFlags.isFeatureEnabled(.topSites, checking: .buildAndUser)
     }
 
     func numberOfItemsInSection() -> Int {

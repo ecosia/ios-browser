@@ -5,7 +5,7 @@
 import Shared
 import SnapKit
 
-class ASLibraryCell: UICollectionViewCell, Themeable {
+class ASLibraryCell: UICollectionViewCell, NotificationThemeable, ReusableCell {
 
     var mainView = UIStackView()
     weak var widthConstraint: NSLayoutConstraint!
@@ -19,10 +19,10 @@ class ASLibraryCell: UICollectionViewCell, Themeable {
 
     var libraryButtons: [LibraryShortcutView] = []
 
-    let bookmarks = LibraryPanel(title: Strings.AppMenuBookmarksTitleString, image: UIImage(named: "libraryFavorites"), color: UIColor.Photon.Yellow60)
-    let history = LibraryPanel(title: Strings.AppMenuHistoryTitleString, image: UIImage(named: "libraryHistory"), color: UIColor.Photon.Teal60)
-    let readingList = LibraryPanel(title: Strings.AppMenuReadingListTitleString, image: UIImage(named: "libraryReading"), color: UIColor.Photon.Blue60)
-    let downloads = LibraryPanel(title: Strings.AppMenuDownloadsTitleString, image: UIImage(named: "libraryDownloads"), color: UIColor.Photon.Purple60)
+    let bookmarks = LibraryPanel(title: .AppMenu.AppMenuBookmarksTitleString, image: UIImage(named: "libraryFavorites"), color: UIColor.Photon.Yellow60)
+    let history = LibraryPanel(title: .AppMenu.AppMenuHistoryTitleString, image: UIImage(named: "libraryHistory"), color: UIColor.Photon.Teal60)
+    let readingList = LibraryPanel(title: .AppMenu.AppMenuReadingListTitleString, image: UIImage(named: "libraryReading"), color: UIColor.Photon.Blue60)
+    let downloads = LibraryPanel(title: .AppMenu.AppMenuDownloadsTitleString, image: UIImage(named: "libraryDownloads"), color: UIColor.Photon.Purple60)
 
     override init(frame: CGRect) {
         super.init(frame: frame)

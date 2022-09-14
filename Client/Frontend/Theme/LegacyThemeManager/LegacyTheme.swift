@@ -184,7 +184,7 @@ class HomePanelColor {
     var siteTableHeaderBorder: UIColor { return UIColor.Photon.Grey30.withAlphaComponent(0.8) }
 
     var topSiteDomain: UIColor { return UIColor.Photon.DarkGrey90 }
-    var topSitePin: UIColor { return UIColor.Photon.DarkGrey05 }
+    var topSitePin: UIColor { return UIColor.theme.ecosia.primaryButton }
     var topSitesBackground: UIColor { return UIColor.Photon.LightGrey10 }
 
     var shortcutBackground: UIColor { return .white }

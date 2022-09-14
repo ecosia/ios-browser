@@ -126,13 +126,11 @@ class NTPLayout: UICollectionViewFlowLayout {
                 view.title = title
                 return view
             }
-*/
-        /*
+
             var cellIdentifier: String {
                 return "\(cellType)"
             }
-         */
-        /*
+
             var cellType: UICollectionViewCell.Type {
                 switch self {
                 case .impact: return TreesCell.self

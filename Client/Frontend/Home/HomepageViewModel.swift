@@ -52,9 +52,9 @@ class HomepageViewModel: FeatureFlaggable {
     var isZeroSearch: Bool {
         didSet {
             topSiteViewModel.isZeroSearch = isZeroSearch
-            jumpBackInViewModel.isZeroSearch = isZeroSearch
-            recentlySavedViewModel.isZeroSearch = isZeroSearch
-            pocketViewModel.isZeroSearch = isZeroSearch
+            // Ecosia // jumpBackInViewModel.isZeroSearch = isZeroSearch
+            // Ecosia // recentlySavedViewModel.isZeroSearch = isZeroSearch
+            // Ecosia // pocketViewModel.isZeroSearch = isZeroSearch
         }
     }
 
@@ -67,13 +67,13 @@ class HomepageViewModel: FeatureFlaggable {
     // Child View models
     private var childViewModels: [HomepageViewModelProtocol]
     var headerViewModel: HomeLogoHeaderViewModel
-    // Ecosia: var messageCardViewModel: HomepageMessageCardViewModel
+    // Ecosia // var messageCardViewModel: HomepageMessageCardViewModel
     var topSiteViewModel: TopSitesViewModel
-    var recentlySavedViewModel: RecentlySavedCellViewModel
-    var jumpBackInViewModel: JumpBackInViewModel
-    var historyHighlightsViewModel: HistoryHighlightsViewModel
-    var pocketViewModel: PocketViewModel
-    var customizeButtonViewModel: CustomizeHomepageSectionViewModel
+    // Ecosia // var recentlySavedViewModel: RecentlySavedCellViewModel
+    // Ecosia // var jumpBackInViewModel: JumpBackInViewModel
+    // Ecosia // var historyHighlightsViewModel: HistoryHighlightsViewModel
+    // Ecosia // var pocketViewModel: PocketViewModel
+    // Ecosia // var customizeButtonViewModel: CustomizeHomepageSectionViewModel
 
     var shouldDisplayHomeTabBanner: Bool {
         return false // Ecoaia: return messageCardViewModel.shouldDisplayMessageCard
@@ -97,6 +97,7 @@ class HomepageViewModel: FeatureFlaggable {
          */
         self.topSiteViewModel = TopSitesViewModel(profile: profile)
 
+        /* Ecosia
         let siteImageHelper = SiteImageHelper(profile: profile)
         let adaptor = JumpBackInDataAdaptorImplementation(profile: profile,
                                                           tabManager: tabManager,
@@ -129,23 +130,20 @@ class HomepageViewModel: FeatureFlaggable {
         pocketDataAdaptor.delegate = pocketViewModel
 
         self.customizeButtonViewModel = CustomizeHomepageSectionViewModel()
+         */
         self.childViewModels = [headerViewModel,
-                                //Ecosia: messageCardViewModel,
-                                topSiteViewModel,
-                                jumpBackInViewModel,
-                                recentlySavedViewModel,
-                                historyHighlightsViewModel,
-                                pocketViewModel,
-                                customizeButtonViewModel]
+                                topSiteViewModel]
         self.isPrivate = isPrivate
 
         //Ecosia: self.nimbus = nimbus
         topSiteViewModel.delegate = self
+        /* Ecosia
         historyHighlightsViewModel.delegate = self
         recentlySavedViewModel.delegate = self
         pocketViewModel.delegate = self
         jumpBackInViewModel.delegate = self
-        //Ecosia: messageCardViewModel.delegate = self
+        messageCardViewModel.delegate = self
+         */
 
         updateEnabledSections()
     }
