@@ -111,6 +111,7 @@ class SiteTableViewController: UIViewController, UITableViewDelegate, UITableVie
     var data: Cursor<Site> = Cursor<Site>(status: .success, msg: "No data set")
     lazy var tableView: UITableView = {
         let table = UITableView(frame: .zero, style: self.style)
+        table.translatesAutoresizingMaskIntoConstraints = false
         table.delegate = self
         table.dataSource = self
         table.register(TwoLineImageOverlayCell.self, forCellReuseIdentifier: self.CellIdentifier)
