@@ -165,7 +165,7 @@ class TabPeekViewController: UIViewController, WKNavigationDelegate {
         clonedWebView.load(URLRequest(url: url))
     }
 
-    func setState(withProfile browserProfile: BrowserProfile, clientPickerDelegate: DevicePickerViewControllerDelegate) {
+    func setState(withProfile browserProfile: BrowserProfile) {
         assert(Thread.current.isMainThread)
 
         guard let tab = self.tab else { return }
@@ -176,6 +176,7 @@ class TabPeekViewController: UIViewController, WKNavigationDelegate {
             self.isBookmarked = isBookmarked
         }
 
+        /*
         browserProfile.remoteClientsAndTabs.getClientGUIDs().uponQueue(.main) {
             guard let clientGUIDs = $0.successValue else { return }
 
@@ -190,6 +191,7 @@ class TabPeekViewController: UIViewController, WKNavigationDelegate {
 
             self.fxaDevicePicker = UINavigationController(rootViewController: clientPickerController)
         }
+         */
 
         let result = browserProfile.readingList.getRecordWithURL(displayURL).value.successValue
 

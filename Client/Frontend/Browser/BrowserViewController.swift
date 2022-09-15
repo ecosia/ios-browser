@@ -10,7 +10,7 @@ import Shared
 import Storage
 import SnapKit
 import XCGLogger
-import Account
+// import Account
 import MobileCoreServices
 // Ecosia: import Telemetry
 // Ecosia: import Sentry
@@ -263,7 +263,7 @@ class BrowserViewController: UIViewController {
     }
 
     @objc fileprivate func appMenuBadgeUpdate() {
-        let actionNeeded = RustFirefoxAccounts.shared.isActionNeeded
+        let actionNeeded = false // Ecosia // RustFirefoxAccounts.shared.isActionNeeded
         let showWarningBadge = actionNeeded
 
         urlBar.warningMenuBadge(setVisible: showWarningBadge)
@@ -569,7 +569,7 @@ class BrowserViewController: UIViewController {
         super.viewDidAppear(animated)
 
         presentIntroViewController()
-        presentUpdateViewController()
+        // presentUpdateViewController()
         screenshotHelper.viewIsVisible = true
 
         if let toast = self.pendingToast {
@@ -1785,13 +1785,17 @@ extension BrowserViewController: TabDelegate {
 // MARK: - LibraryPanelDelegate
 extension BrowserViewController: LibraryPanelDelegate {
     func libraryPanelDidRequestToSignIn() {
+        /*
         let fxaParams = FxALaunchParams(query: ["entrypoint": "homepanel"])
         presentSignInViewController(fxaParams) // TODO UX Right now the flow for sign in and create account is the same
+         */
     }
 
     func libraryPanelDidRequestToCreateAccount() {
+        /*
         let fxaParams = FxALaunchParams(query: ["entrypoint": "homepanel"])
         presentSignInViewController(fxaParams) // TODO UX Right now the flow for sign in and create account is the same
+         */
     }
 
     func libraryPanel(didSelectURL url: URL, visitType: VisitType) {
@@ -2302,6 +2306,7 @@ extension BrowserViewController {
         present(dBOnboardingViewController, animated: true, completion: nil)
     }
 
+    /*
     func presentUpdateViewController(_ force: Bool = false, animated: Bool = true) {
         let viewModel = UpdateViewModel(profile: profile)
         if viewModel.shouldShowUpdateSheet(force: force) {
@@ -2310,7 +2315,9 @@ extension BrowserViewController {
             }
         }
     }
+     */
 
+    /*
     private func buildUpdateVC(viewModel: UpdateViewModel, animated: Bool = true) {
         let updateViewController = UpdateViewController(viewModel: viewModel)
         updateViewController.didFinishFlow = {
@@ -2331,7 +2338,9 @@ extension BrowserViewController {
             self.setupHomepageOnBackground()
         }
     }
+     */
 
+    /*
     private func showProperIntroVC() {
         let introViewModel = IntroViewModel()
         let introViewController = IntroViewController(viewModel: introViewModel, profile: profile)
@@ -2356,6 +2365,7 @@ extension BrowserViewController {
             self.setupHomepageOnBackground()
         }
     }
+     */
 
     // On first run (and forced) open up the homepage in the background.
     private func setupHomepageOnBackground() {
@@ -2365,6 +2375,7 @@ extension BrowserViewController {
         }
     }
 
+    /*
     func presentSignInViewController(_ fxaOptions: FxALaunchParams? = nil, flowType: FxAPageType = .emailLoginFlow, referringPage: ReferringPage = .none) {
         let vcToPresent = FirefoxAccountSignInViewController.getSignInOrFxASettingsVC(fxaOptions, flowType: flowType, referringPage: referringPage, profile: profile)
         presentThemedViewController(navItemLocation: .Left, navItemText: .Close, vcBeingPresented: vcToPresent, topTabsVisible: UIDevice.current.userInterfaceIdiom == .pad)
@@ -2373,6 +2384,7 @@ extension BrowserViewController {
     @objc func dismissSignInViewController() {
         self.dismiss(animated: true, completion: nil)
     }
+     */
 
 }
 
@@ -2708,6 +2720,7 @@ extension BrowserViewController: TopTabsDelegate {
     }
 }
 
+/*
 extension BrowserViewController: DevicePickerViewControllerDelegate, InstructionsViewControllerDelegate {
     func instructionsViewControllerDidClose(_ instructionsViewController: InstructionsViewController) {
         self.popToBVC()
@@ -2734,6 +2747,7 @@ extension BrowserViewController: DevicePickerViewControllerDelegate, Instruction
         }
     }
 }
+ */
 
 // MARK: - Reopen last closed tab
 

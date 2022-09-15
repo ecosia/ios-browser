@@ -2,7 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0
 
-import Account
+// import Account
 import Shared
 import UIKit
 
@@ -640,6 +640,7 @@ class ButtonSetting: Setting {
 
 // A helper class for prefs that deal with sync. Handles reloading the tableView data if changes to
 // the fxAccount happen.
+/*
 class AccountSetting: Setting {
     unowned var settings: SettingsTableViewController
 
@@ -671,6 +672,7 @@ class WithAccountSetting: AccountSetting {
 class WithoutAccountSetting: AccountSetting {
     override var hidden: Bool { return profile.hasAccount() }
 }
+*/
 
 @objc
 protocol SettingsDelegate: AnyObject {

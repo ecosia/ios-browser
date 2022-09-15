@@ -237,7 +237,7 @@ class TabTrayViewController: UIViewController {
     }
 
     private func viewSetup() {
-        viewModel.syncedTabsController.remotePanelDelegate = self
+        // viewModel.syncedTabsController.remotePanelDelegate = self
 
         /* Ecosia
         if let appWindow = (UIApplication.shared.delegate?.window),
@@ -302,6 +302,7 @@ class TabTrayViewController: UIViewController {
             switchBetweenLocalPanels(withPrivateMode: false)
         case .privateTabs:
             switchBetweenLocalPanels(withPrivateMode: true)
+            /*
         case .syncedTabs:
             TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .libraryPanel, value: .syncPanel, extras: nil)
             if children.first == viewModel.tabTrayView {
@@ -309,6 +310,7 @@ class TabTrayViewController: UIViewController {
                 updateToolbarItems(forSyncTabs: viewModel.profile.hasSyncableAccount())
                 showPanel(viewModel.syncedTabsController)
             }
+             */
         default:
             return
         }
@@ -438,7 +440,7 @@ extension TabTrayViewController: NotificationThemeable {
          //Ecosia: navigationToolbar.barTintColor = UIColor.theme.tabTray.toolbar
          //Ecosia: navigationToolbar.tintColor = UIColor.theme.tabTray.toolbarButtonTint
          navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.theme.ecosia.primaryText]
-         viewModel.syncedTabsController.applyTheme()
+         // viewModel.syncedTabsController.applyTheme()
 
          // Ecosia
          if traitCollection.userInterfaceIdiom == .phone {
@@ -502,6 +504,7 @@ extension TabTrayViewController {
     }
 }
 
+/*
 // MARK: - RemoteTabsPanel : LibraryPanelDelegate
 extension TabTrayViewController: RemotePanelDelegate {
     func remotePanelDidRequestToSignIn() {
@@ -534,3 +537,4 @@ extension TabTrayViewController: RemotePanelDelegate {
         presentThemedViewController(navItemLocation: .Left, navItemText: .Close, vcBeingPresented: controller, topTabsVisible: UIDevice.current.userInterfaceIdiom == .pad)
     }
 }
+ */

@@ -695,6 +695,7 @@ extension HistoryPanel {
     }
 
     private func resyncHistory() {
+        /*
         profile.syncManager.syncHistory().uponQueue(.main) { syncResult in
             self.endRefreshing()
 
@@ -702,6 +703,7 @@ extension HistoryPanel {
                 self.fetchDataAndUpdateLayout(animating: true)
             }
         }
+         */
     }
 }
 
@@ -765,9 +767,10 @@ extension HistoryPanel {
         presentContextMenu(for: indexPath)
     }
 
+    
     @objc private func onRefreshPulled() {
         refreshControl?.beginRefreshing()
-        resyncHistory()
+        // resyncHistory()
     }
 }
 

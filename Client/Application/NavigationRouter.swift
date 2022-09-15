@@ -248,7 +248,7 @@ enum NavigationPath {
     }
 
     private static func handleFxA(params: FxALaunchParams, with bvc: BrowserViewController) {
-        bvc.presentSignInViewController(params)
+        // bvc.presentSignInViewController(params)
     }
 
     private static func handleClosePrivateTabs(with bvc: BrowserViewController) {
@@ -334,8 +334,9 @@ enum NavigationPath {
             viewController.tabManager = tabManager
             controller.pushViewController(viewController, animated: true)
         case .fxa:
-            let viewController = FirefoxAccountSignInViewController.getSignInOrFxASettingsVC(flowType: .emailLoginFlow, referringPage: .settings, profile: bvc.profile)
-            controller.pushViewController(viewController, animated: true)
+            /* let viewController = FirefoxAccountSignInViewController.getSignInOrFxASettingsVC(flowType: .emailLoginFlow, referringPage: .settings, profile: bvc.profile)
+            controller.pushViewController(viewController, animated: true)*/
+            break
         case .theme:
             controller.pushViewController(ThemeSettingsController(), animated: true)
 

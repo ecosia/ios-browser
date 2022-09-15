@@ -7,7 +7,7 @@ import UIKit
 import Storage
 import SDWebImage
 import XCGLogger
-import SyncTelemetry
+// Ecosia // import SyncTelemetry
 import SnapKit
 
 class LibraryShortcutView: UIView {

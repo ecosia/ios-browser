@@ -18,8 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var tabManager: TabManager!
     var receivedURLs = [URL]()
     var orientationLock = UIInterfaceOrientationMask.all
-    lazy var profile: Profile = BrowserProfile(localName: "profile",
-                                               syncDelegate: UIApplication.shared.syncDelegate)
+    lazy var profile: Profile = BrowserProfile(localName: "profile")
     private let log = Logger.browserLogger
     private var shutdownWebServer: DispatchSourceTimer?
     private var webServerUtil: WebServerUtil?
@@ -66,7 +65,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                      launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
         window!.makeKeyAndVisible()
-        pushNotificationSetup()
+        // Ecosia: pushNotificationSetup()
         appLaunchUtil?.setUpPostLaunchDependencies()
         // Ecosia: Disable BG sync //backgroundSyncUtil = BackgroundSyncUtil(profile: profile, application: application)
 
@@ -81,11 +80,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         profile._reopen()
 
+        /*
         if profile.prefs.boolForKey(PendingAccountDisconnectedKey) ?? false {
             profile.removeAccount()
         }
 
         profile.syncManager.applicationDidBecomeActive()
+         */
         webServerUtil?.setUpWebServer()
 
         /// When transitioning to scenes, each scene's BVC needs to resume its file download queue.

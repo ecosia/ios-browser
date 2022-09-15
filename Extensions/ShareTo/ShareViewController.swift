@@ -5,7 +5,7 @@
 import UIKit
 import Shared
 import Storage
-import Account
+// import Account
 
 extension UIStackView {
     func addBackground(color: UIColor) {
@@ -68,7 +68,7 @@ class ShareViewController: UIViewController {
     private var viewsShownDuringDoneAnimation = [UIView]()
     private var stackView: UIStackView!
     private var actionDoneRow: (row: UIStackView, label: UILabel)!
-    private var sendToDevice: SendToDevice?
+    // private var sendToDevice: SendToDevice?
     private var pageInfoHeight: NSLayoutConstraint?
     private var actionRowHeights = [NSLayoutConstraint]()
     private var pageInfoRowTitleLabel: UILabel?
@@ -105,8 +105,8 @@ class ShareViewController: UIViewController {
             self.pageInfoRowTitleLabel?.text = text.quoted
         }
 
-        let profile = BrowserProfile(localName: "profile")
-        RustFirefoxAccounts.startup(prefs: profile.prefs).uponQueue(.main) { _ in }
+        // let profile = BrowserProfile(localName: "profile")
+        // RustFirefoxAccounts.startup(prefs: profile.prefs).uponQueue(.main) { _ in }
     }
 
     private func setupRows() {
@@ -379,6 +379,7 @@ extension ShareViewController {
     }
 
     @objc func actionSendToDevice(gesture: UIGestureRecognizer) {
+        /*
         guard let shareItem = shareItem, case .shareItem(let item) = shareItem else { return }
 
         gesture.isEnabled = false
@@ -392,6 +393,7 @@ extension ShareViewController {
             let vc = sendToDevice.initialViewController()
             self.navigationController?.pushViewController(vc, animated: true)
         }
+         */
     }
 
     func openFirefox(withUrl url: String, isSearch: Bool) {

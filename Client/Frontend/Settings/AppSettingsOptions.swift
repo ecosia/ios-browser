@@ -4,7 +4,7 @@
 
 import Foundation
 import Shared
-import Account
+// import Account
 import LocalAuthentication
 import Core
 
@@ -22,6 +22,7 @@ private var disclosureIndicator: UIImageView {
     return disclosureIndicator
 }
 
+/*
 // MARK: - ConnectSetting
 // Sync setting for connecting a Firefox Account. Shown when we don't have an account.
 class ConnectSetting: WithoutAccountSetting {
@@ -376,6 +377,7 @@ class AccountStatusSetting: WithAccountSetting {
         }
     }
 }
+ */
 
 // MARK: - Hidden Settings
 /// Used for only for debugging purposes. These settings are hidden behind a
@@ -514,6 +516,7 @@ class SlowTheDatabase: HiddenSetting {
     }
 }
 
+/*
 class ForgetSyncAuthStateDebugSetting: HiddenSetting {
     override var title: NSAttributedString? {
         return NSAttributedString(
@@ -526,6 +529,7 @@ class ForgetSyncAuthStateDebugSetting: HiddenSetting {
         settings.tableView.reloadData()
     }
 }
+*/
 
 class SentryIDSetting: HiddenSetting {
     let deviceAppHash = UserDefaults(suiteName: AppInfo.sharedContainerIdentifier)?.string(forKey: "SentryDeviceAppHash") ?? "0000000000000000000000000000000000000000"
@@ -1221,6 +1225,7 @@ class PrivacyPolicySetting: Setting {
     }
 }
 
+/*
 class ChinaSyncServiceSetting: Setting {
     override var accessoryType: UITableViewCell.AccessoryType { return .none }
     var prefs: Prefs { return profile.prefs }
@@ -1278,6 +1283,7 @@ class ChinaSyncServiceSetting: Setting {
         settings.present(alert, animated: true)
     }
 }
+ */
 
 class NewTabPageSetting: Setting {
     let profile: Profile
@@ -1454,6 +1460,7 @@ class OpenWithSetting: Setting {
     }
 }
 
+/*
 class AdvancedAccountSetting: HiddenSetting {
     let profile: Profile
 
@@ -1480,6 +1487,7 @@ class AdvancedAccountSetting: HiddenSetting {
         return !ShowDebugSettings || profile.hasAccount()
     }
 }
+ */
 
 class ThemeSetting: Setting {
     let profile: Profile

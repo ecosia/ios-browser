@@ -5,7 +5,7 @@
 import Foundation
 import Shared
 import Storage
-import Account
+// import Account
 
 class AppLaunchUtil {
 
@@ -75,9 +75,10 @@ class AppLaunchUtil {
 
         SystemUtils.onFirstRun()
 
+        /* Ecosia
         RustFirefoxAccounts.startup(prefs: profile.prefs).uponQueue(.main) { _ in
             print("RustFirefoxAccounts started")
-        }
+        }*/
     }
 
     func setUpPostLaunchDependencies() {

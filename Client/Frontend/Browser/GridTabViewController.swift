@@ -758,9 +758,8 @@ private class TabLayoutDelegate: NSObject, UICollectionViewDelegateFlowLayout, U
         else { return nil }
 
         let tabVC = TabPeekViewController(tab: tab, delegate: tabPeekDelegate)
-        if let browserProfile = tabDisplayManager.profile as? BrowserProfile,
-           let pickerDelegate = tabPeekDelegate as? DevicePickerViewControllerDelegate {
-            tabVC.setState(withProfile: browserProfile, clientPickerDelegate: pickerDelegate)
+        if let browserProfile = tabDisplayManager.profile as? BrowserProfile {
+            tabVC.setState(withProfile: browserProfile)
         }
 
         return UIContextMenuConfiguration(identifier: nil, previewProvider: { return tabVC }, actionProvider: tabVC.contextActions(defaultActions:))
@@ -780,6 +779,7 @@ private class TabLayoutDelegate: NSObject, UICollectionViewDelegateFlowLayout, U
     }
 }
 
+/*
 // MARK: - DevicePickerViewControllerDelegate
 extension GridTabViewController: DevicePickerViewControllerDelegate {
     func devicePickerViewController(_ devicePickerViewController: DevicePickerViewController, didPickDevices devices: [RemoteDevice]) {
@@ -793,6 +793,7 @@ extension GridTabViewController: DevicePickerViewControllerDelegate {
         devicePickerViewController.dismiss(animated: true, completion: nil)
     }
 }
+*/
 
 // MARK: - Presentation Delegates
 extension GridTabViewController: UIAdaptivePresentationControllerDelegate, UIPopoverPresentationControllerDelegate {

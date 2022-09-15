@@ -5,7 +5,7 @@
 import Shared
 import UIKit
 import Storage
-import SyncTelemetry
+// Ecosia // import SyncTelemetry
 import MozillaAppServices
 import Core
 
