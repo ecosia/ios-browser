@@ -6,7 +6,7 @@ import Foundation
 import Shared
 import Core
 
-class HomeMyImpactViewModel {
+class NTPImpactViewModel {
     struct UX {
         static let bottomSpacing: CGFloat = 12
     }
@@ -17,14 +17,14 @@ class HomeMyImpactViewModel {
         self.personalCounter = personalCounter
     }
 
-    fileprivate var treesCellModel: TreesCellModel {
+    fileprivate var treesCellModel: NTPImpactCell.Model {
         let trees = Referrals.isEnabled ? User.shared.impact : User.shared.searchImpact
         return .init(trees: trees, searches: personalCounter.state!, style: .ntp)
     }
 }
 
 // MARK: HomeViewModelProtocol
-extension HomeMyImpactViewModel: HomepageViewModelProtocol {
+extension NTPImpactViewModel: HomepageViewModelProtocol {
 
     var sectionType: HomepageSectionType {
         return .impact
@@ -69,10 +69,10 @@ extension HomeMyImpactViewModel: HomepageViewModelProtocol {
 
 }
 
-extension HomeMyImpactViewModel: HomepageSectionHandler {
+extension NTPImpactViewModel: HomepageSectionHandler {
 
     func configure(_ cell: UICollectionViewCell, at indexPath: IndexPath) -> UICollectionViewCell {
-        guard let treesCell = cell as? TreesCell else { return UICollectionViewCell() }
+        guard let treesCell = cell as? NTPImpactCell else { return UICollectionViewCell() }
         treesCell.display(treesCellModel)
         return treesCell
     }

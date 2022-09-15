@@ -387,7 +387,7 @@ class HomepageViewController: UIViewController, HomePanel, FeatureFlaggable {
     let flowLayout = NTPLayout()
     weak var searchbarCell: UICollectionViewCell?
     weak var emptyCell: EmptyCell?
-    weak var impactCell: TreesCell?
+    weak var impactCell: NTPImpactCell?
 }
 
 // MARK: - CollectionView Data Source

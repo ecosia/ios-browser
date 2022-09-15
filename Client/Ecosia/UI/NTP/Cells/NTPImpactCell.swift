@@ -5,10 +5,11 @@
 import UIKit
 import Core
 
-final class TreesCell: UICollectionViewCell, NotificationThemeable, ReusableCell {
+final class NTPImpactCell: UICollectionViewCell, NotificationThemeable, ReusableCell {
+
     static let topMargin = CGFloat(40)
 
-    private(set) var model: TreesCellModel?
+    private(set) var model: Model?
     lazy var formatter: NumberFormatter = {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
@@ -65,7 +66,7 @@ final class TreesCell: UICollectionViewCell, NotificationThemeable, ReusableCell
         applyTheme()
     }
 
-    func display(_ model: TreesCellModel) {
+    func display(_ model: Model) {
         self.model = model
 
         currentProgress.value = User.shared.progress

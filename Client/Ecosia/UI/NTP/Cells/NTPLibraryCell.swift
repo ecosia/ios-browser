@@ -5,7 +5,7 @@
 import Shared
 import SnapKit
 
-class ASLibraryCell: UICollectionViewCell, NotificationThemeable, ReusableCell {
+class NTPLibraryCell: UICollectionViewCell, NotificationThemeable, ReusableCell {
 
     var mainView = UIStackView()
     weak var widthConstraint: NSLayoutConstraint!

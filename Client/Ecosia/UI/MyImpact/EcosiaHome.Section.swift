@@ -12,7 +12,7 @@ extension EcosiaHome {
         var cell: AnyClass {
             switch self {
             case .impact: return MyImpactCell.self
-            case .legacyImpact: return TreesCell.self
+            case .legacyImpact: return NTPImpactCell.self
             case .multiply: return MultiplyImpactCell.self
             case .explore: return EcosiaExploreCell.self
             case .news: return NewsCell.self

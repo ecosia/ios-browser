@@ -27,22 +27,22 @@ enum HomepageSectionType: Int, CaseIterable {
 
     var cellIdentifier: String {
         switch self {
-        case .logoHeader: return LogoCell.cellIdentifier
+        case .logoHeader: return NTPLogoCell.cellIdentifier
         case .topSites: return "" // Top sites has more than 1 cell type, dequeuing is done through FxHomeSectionHandler protocol
-        case .libraryShortcuts: return ASLibraryCell.cellIdentifier
-        case .impact: return TreesCell.cellIdentifier
-        case .emptySpace: return TreesCell.cellIdentifier
+        case .libraryShortcuts: return NTPLibraryCell.cellIdentifier
+        case .impact: return NTPImpactCell.cellIdentifier
+        case .emptySpace: return NTPImpactCell.cellIdentifier
 
 
          }
     }
 
     static var cellTypes: [ReusableCell.Type] {
-        return [LogoCell.self,
+        return [NTPLogoCell.self,
                 TopSiteItemCell.self,
                 EmptyTopSiteCell.self,
-                ASLibraryCell.self,
-                TreesCell.self,
+                NTPLibraryCell.self,
+                NTPImpactCell.self,
         ]
     }
 

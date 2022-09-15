@@ -69,7 +69,7 @@ extension HomeLogoHeaderViewModel: HomepageViewModelProtocol, FeatureFlaggable {
 extension HomeLogoHeaderViewModel: HomepageSectionHandler {
 
     func configure(_ cell: UICollectionViewCell, at indexPath: IndexPath) -> UICollectionViewCell {
-        guard let logoHeaderCell = cell as? LogoCell else { return UICollectionViewCell() }
+        guard let logoHeaderCell = cell as? NTPLogoCell else { return UICollectionViewCell() }
         // Ecosia // logoHeaderCell.configure(onTapAction: onTapAction)
         return logoHeaderCell
     }

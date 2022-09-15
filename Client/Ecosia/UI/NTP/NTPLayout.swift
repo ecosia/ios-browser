@@ -179,7 +179,7 @@ class NTPLayout: UICollectionViewFlowLayout {
                     let font = UIFont.preferredFont(forTextStyle: .callout)
                     let height = text.heightWithConstrainedWidth(width: impact.bounds.width - 4 * NTPTooltip.margin, font: font) + 2 * NTPTooltip.containerMargin + NTPTooltip.margin
                     tooltip.frame.size.height = height
-                    tooltip.frame.origin.y -= (height - TreesCell.topMargin)
+                    tooltip.frame.origin.y -= (height - NTPImpactCell.topMargin)
                 }
             }
         }

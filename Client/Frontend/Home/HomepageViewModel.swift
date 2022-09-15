@@ -72,7 +72,7 @@ class HomepageViewModel: FeatureFlaggable {
     var headerViewModel: HomeLogoHeaderViewModel
     // Ecosia // var messageCardViewModel: HomepageMessageCardViewModel
     var topSiteViewModel: TopSitesViewModel
-    var impactViewModel: HomeMyImpactViewModel
+    var impactViewModel: NTPImpactViewModel
     // Ecosia // var recentlySavedViewModel: RecentlySavedCellViewModel
     // Ecosia // var jumpBackInViewModel: JumpBackInViewModel
     // Ecosia // var historyHighlightsViewModel: HistoryHighlightsViewModel
@@ -100,7 +100,7 @@ class HomepageViewModel: FeatureFlaggable {
         messageCardAdaptor.delegate = messageCardViewModel
          */
         self.topSiteViewModel = TopSitesViewModel(profile: profile)
-        self.impactViewModel = HomeMyImpactViewModel(personalCounter: personalCounter)
+        self.impactViewModel = NTPImpactViewModel(personalCounter: personalCounter)
 
         /* Ecosia
         let siteImageHelper = SiteImageHelper(profile: profile)

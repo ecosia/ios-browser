@@ -20,7 +20,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     private let background = Background()
     private weak var impactCell: MyImpactCell?
 
-    fileprivate var treesCellModel: TreesCellModel {
+    fileprivate var treesCellModel: NTPImpactCell.Model {
         return .init(trees: User.shared.searchImpact, searches: personalCounter.state!, style: .impact)
     }
 
@@ -162,7 +162,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
             return impactCell
 
         case .legacyImpact:
-            let treesCell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: section.cell), for: indexPath) as! TreesCell
+            let treesCell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: section.cell), for: indexPath) as! NTPImpactCell
             treesCell.display(treesCellModel)
             return treesCell
 
