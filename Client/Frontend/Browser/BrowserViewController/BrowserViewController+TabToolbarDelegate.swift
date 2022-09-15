@@ -183,7 +183,11 @@ extension BrowserViewController: TabToolbarDelegate, PhotonActionSheetProtocol {
     }
 
     func tabToolbarDidPressSearch(_ tabToolbar: TabToolbarProtocol, button: UIButton) {
-        focusLocationTextField(forTab: tabManager.selectedTab)
+        if isBottomSearchBar {
+            tabToolbarDidPressAddNewTab(tabToolbar, button: button)
+        } else {
+            focusLocationTextField(forTab: tabManager.selectedTab)
+        }
     }
 }
 

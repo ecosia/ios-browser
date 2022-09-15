@@ -69,7 +69,7 @@ class MockToolbarButton: ToolbarButton {
     }
 }
 
-class MockAddNewTabButton: AddNewTabButton {
+class MockAddNewTabButton: CircleButton {
     init() {
         super.init(frame: .zero)
     }
@@ -97,7 +97,7 @@ class MockTabToolbar: TabToolbarProtocol {
     var bookmarksButton: ToolbarButton { get { _bookmarksButton } }
     
     var _addNewTabButton = MockAddNewTabButton()
-    var addNewTabButton: AddNewTabButton { get { _addNewTabButton } }
+    var circleButton: CircleButton { get { _addNewTabButton } }
     
     var _homeButton = MockToolbarButton()
     var homeButton: ToolbarButton { get { _homeButton } }

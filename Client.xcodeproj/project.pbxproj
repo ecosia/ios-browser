@@ -750,7 +750,7 @@
 		CA103C7C28C8F53400F7170A /* EcosiaTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4D9C8D28C8D801006AFB5D /* EcosiaTheme.swift */; };
 		CA103C7D28C8F5E900F7170A /* SemanticColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4D9C8828C8D801006AFB5D /* SemanticColor.swift */; };
 		CA103C7E28C8F6A700F7170A /* LegacyDarkTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB9A179920E69A7E00B12184 /* LegacyDarkTheme.swift */; };
-		CA103C8028C8F78E00F7170A /* AddNewTabButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA103C7F28C8F78E00F7170A /* AddNewTabButton.swift */; };
+		CA103C8028C8F78E00F7170A /* CircleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA103C7F28C8F78E00F7170A /* CircleButton.swift */; };
 		CA220A6C28D070FE000E66E6 /* FeatureFlagsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C82A94E6269CB77F00624AA7 /* FeatureFlagsManager.swift */; };
 		CA220A6D28D071C2000E66E6 /* NimbusFlaggableFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8B07A4028199500000AFCE7 /* NimbusFlaggableFeature.swift */; };
 		CA220A6E28D0721B000E66E6 /* NimbusFeatureFlagLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C81B78A3280752A20000C15F /* NimbusFeatureFlagLayer.swift */; };
@@ -3906,7 +3906,7 @@
 		C9F54301B9DAE0BAA03DAA68 /* kk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = kk; path = kk.lproj/HistoryPanel.strings; sourceTree = "<group>"; };
 		C9F84738A8E6E512DBC35ADE /* oc */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = oc; path = oc.lproj/Localizable.strings; sourceTree = "<group>"; };
 		CA03B269247F1D9E00382B62 /* BreachAlertsClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreachAlertsClient.swift; sourceTree = "<group>"; };
-		CA103C7F28C8F78E00F7170A /* AddNewTabButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddNewTabButton.swift; sourceTree = "<group>"; };
+		CA103C7F28C8F78E00F7170A /* CircleButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CircleButton.swift; sourceTree = "<group>"; };
 		CA24B52024ABD7D40093848C /* LoginsListViewModelTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginsListViewModelTests.swift; sourceTree = "<group>"; };
 		CA24B53824ABFE250093848C /* LoginsListSelectionHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginsListSelectionHelperTests.swift; sourceTree = "<group>"; };
 		CA24B53A24ABFE5D0093848C /* LoginsListDataSourceHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginsListDataSourceHelperTests.swift; sourceTree = "<group>"; };
@@ -6905,7 +6905,7 @@
 			children = (
 				CA8BCC3C28D308E30020BC50 /* Cells */,
 				CA506BAD28D1EA080064072B /* LibraryShortcutView.swift */,
-				CA103C7F28C8F78E00F7170A /* AddNewTabButton.swift */,
+				CA103C7F28C8F78E00F7170A /* CircleButton.swift */,
 				CA4D9C9028C8D801006AFB5D /* NTPLayout.swift */,
 				CA4D9C9228C8D801006AFB5D /* DefaultBrowser.swift */,
 				CA4D9C9428C8D801006AFB5D /* NTPIntroViewController.swift */,
@@ -10383,7 +10383,7 @@
 				3BB50E201D627539004B33DF /* HomepageViewController.swift in Sources */,
 				C82A94F3269F68F300624AA7 /* CoreFlaggableFeature.swift in Sources */,
 				F84B22241A09122500AAB793 /* LibraryViewController.swift in Sources */,
-				CA103C8028C8F78E00F7170A /* AddNewTabButton.swift in Sources */,
+				CA103C8028C8F78E00F7170A /* CircleButton.swift in Sources */,
 				39455F771FC83F430088A22C /* TabEventHandler.swift in Sources */,
 				215B458227DA420400E5E800 /* TabMetadataManager.swift in Sources */,
 				E47616C71AB74CA600E7DD25 /* ReaderModeBarView.swift in Sources */,

@@ -4,18 +4,27 @@
 
 import UIKit
 
-class AddNewTabButton: ToolbarButton {
+class CircleButton: ToolbarButton {
     struct Config {
         let hideCircle: Bool
+        let image: String
         let margin: CGFloat
 
-        static var standard: Config {
-            return .init(hideCircle: false, margin: 8)
+        static var search: Config {
+            return .init(hideCircle: false, image: "search", margin: 8)
+        }
+
+        static var newTab: Config {
+            return .init(hideCircle: false, image: "nav-add", margin: 8)
         }
     }
 
     let circle = UIView()
-    var config: Config = .standard
+    var config: Config = .search {
+        didSet {
+            setup()
+        }
+    }
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -33,7 +42,7 @@ class AddNewTabButton: ToolbarButton {
     }
 
     private func setup() {
-        setImage(UIImage(named: "nav-add"), for: .normal)
+        setImage(UIImage(named: config.image), for: .normal)
         circle.isUserInteractionEnabled = false
         addSubview(circle)
         sendSubviewToBack(circle)

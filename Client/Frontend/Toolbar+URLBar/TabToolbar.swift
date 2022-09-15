@@ -9,7 +9,7 @@ class TabToolbar: UIView {
     weak var tabToolbarDelegate: TabToolbarDelegate?
 
     let tabsButton = TabsButton()
-    let addNewTabButton = AddNewTabButton(config: .standard)
+    let circleButton = CircleButton(config: .search)
     let appMenuButton = ToolbarButton()
     let bookmarksButton = ToolbarButton()
     let forwardButton = ToolbarButton()
@@ -26,7 +26,7 @@ class TabToolbar: UIView {
     private let contentView = UIStackView()
 
     fileprivate override init(frame: CGRect) {
-        actionButtons = [backButton, forwardButton, ecosiaButton, addNewTabButton, tabsButton, appMenuButton]
+        actionButtons = [backButton, forwardButton, ecosiaButton, circleButton, tabsButton, appMenuButton]
         super.init(frame: frame)
         setupAccessibility()
 
@@ -59,7 +59,7 @@ class TabToolbar: UIView {
         forwardButton.accessibilityIdentifier = "TabToolbar.forwardButton"
         ecosiaButton.accessibilityIdentifier = "TabToolbar.ecosiaButton"
         tabsButton.accessibilityIdentifier = "TabToolbar.tabsButton"
-        addNewTabButton.accessibilityIdentifier = "TabToolbar.addNewTabButton"
+        circleButton.accessibilityIdentifier = "TabToolbar.circleButton"
         appMenuButton.accessibilityIdentifier = "TabToolbar.menuButton"
         accessibilityNavigationStyle = .combined
         accessibilityLabel = .TabToolbarNavigationToolbarAccessibilityLabel

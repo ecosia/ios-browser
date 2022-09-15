@@ -238,6 +238,7 @@ class BrowserViewController: UIViewController {
 
         isBottomSearchBar = newPositionIsBottom
         updateViewConstraints()
+        toolbar.circleButton.config = isBottomSearchBar ? .newTab : .search
         toolbar.setNeedsDisplay()
         urlBar.updateConstraints()
     }
@@ -276,7 +277,8 @@ class BrowserViewController: UIViewController {
         let hideReloadButton = shouldUseiPadSetup(traitCollection: newCollection)
         urlBar.topTabsIsShowing = showTopTabs
         urlBar.setShowToolbar(!showToolbar, hideReloadButton: hideReloadButton)
-        toolbar.addNewTabButton.isHidden = showToolbar
+        // Ecosia // toolbar.circleButton.isHidden = showToolbar
+        toolbar.circleButton.isHidden = false
 
         if showToolbar {
             toolbar.isHidden = false
@@ -323,6 +325,7 @@ class BrowserViewController: UIViewController {
         }
 
         libraryDrawerViewController?.view.snp.remakeConstraints(constraintsForLibraryDrawerView)
+        toolbar.circleButton.config = isBottomSearchBar ? .newTab : .search
     }
 
     func dismissVisibleMenus() {

@@ -722,7 +722,7 @@ extension TelemetryWrapper {
             GleanMetrics.Tabs.close[privateOrNormal.rawValue].add()
         case (.action, .closeAll, .tab, let privateOrNormal?, _):
             GleanMetrics.Tabs.closeAll[privateOrNormal.rawValue].add()
-        case (.action, .tap, .addNewTabButton, _, _):
+        case (.action, .tap, .circleButton, _, _):
             GleanMetrics.Tabs.newTabPressed.add()
         case (.action, .tap, .tab, _, _):
             GleanMetrics.Tabs.clickTab.record()

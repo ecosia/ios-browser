@@ -7,7 +7,7 @@ import Shared
 
 protocol TabToolbarProtocol: AnyObject {
     var tabToolbarDelegate: TabToolbarDelegate? { get set }
-    var addNewTabButton: AddNewTabButton { get }
+    var circleButton: CircleButton { get }
     var tabsButton: TabsButton { get }
     var appMenuButton: ToolbarButton { get }
     var bookmarksButton: ToolbarButton { get }
@@ -125,10 +125,9 @@ open class TabToolbarHelper: NSObject {
         let longPressGestureTabsButton = UILongPressGestureRecognizer(target: self, action: #selector(didLongPressTabs))
         toolbar.tabsButton.addGestureRecognizer(longPressGestureTabsButton)
 
-        toolbar.addNewTabButton.setImage(UIImage(named: "search"), for: .normal)
-        toolbar.addNewTabButton.accessibilityLabel = .AddTabAccessibilityLabel
-        toolbar.addNewTabButton.addTarget(self, action: #selector(didClickAddNewTab), for: .touchUpInside)
-        toolbar.addNewTabButton.accessibilityIdentifier = "TabToolbar.addNewTabButton"
+        toolbar.circleButton.accessibilityLabel = .AddTabAccessibilityLabel
+        toolbar.circleButton.addTarget(self, action: #selector(didClickAddNewTab), for: .touchUpInside)
+        toolbar.circleButton.accessibilityIdentifier = "TabToolbar.circleButton"
 
         toolbar.appMenuButton.contentMode = .center
         toolbar.appMenuButton.setImage(UIImage.templateImageNamed("nav-menu"), for: .normal)
@@ -200,7 +199,7 @@ open class TabToolbarHelper: NSObject {
 
     func didClickAddNewTab() {
         TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .addNewTabButton)
-        toolbar.tabToolbarDelegate?.tabToolbarDidPressSearch(toolbar, button: toolbar.addNewTabButton)
+        toolbar.tabToolbarDelegate?.tabToolbarDidPressSearch(toolbar, button: toolbar.circleButton)
     }
 
     func didPressMultiStateButton() {
