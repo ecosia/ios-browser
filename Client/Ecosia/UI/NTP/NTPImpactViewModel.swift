@@ -78,7 +78,6 @@ extension NTPImpactViewModel: HomepageSectionHandler {
     }
 
     func didSelectItem(at indexPath: IndexPath, homePanelDelegate: HomePanelDelegate?, libraryPanelDelegate: LibraryPanelDelegate?) {
-
-
+        homePanelDelegate?.homePanelDidRequestToOpenImpact()
     }
 }

@@ -1912,6 +1912,12 @@ extension BrowserViewController: HomePanelDelegate {
     func homePanelDidRequestToOpenSettings(at settingsPage: AppSettingsDeeplinkOption) {
         showSettingsWithDeeplink(to: settingsPage)
     }
+
+    func homePanelDidRequestToOpenImpact() {
+        presentEcosiaWorld { [weak self] in
+            self?.homepageViewController?.updateTreesCell()
+        }
+    }
 }
 
 // MARK: - SearchViewController
