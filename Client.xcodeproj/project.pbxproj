@@ -828,6 +828,7 @@
 		CA8BCC3928D1FBBC0020BC50 /* HistoryHighlightsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA51480275FFEE500266AA0 /* HistoryHighlightsManager.swift */; };
 		CA8BCC3B28D218830020BC50 /* NTPImpactViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA8BCC3A28D218830020BC50 /* NTPImpactViewModel.swift */; };
 		CA8BCC3E28D30A070020BC50 /* NTPImpactCell.Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA8BCC3D28D30A070020BC50 /* NTPImpactCell.Model.swift */; };
+		CA8BCC4028D340AF0020BC50 /* TabCell+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA8BCC3F28D340AF0020BC50 /* TabCell+Ecosia.swift */; };
 		CA90753824929B22005B794D /* NoLoginsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA90753724929B22005B794D /* NoLoginsView.swift */; };
 		CA9A4B6E28D0A252006571DB /* NimbusSearchBarLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C825E9822832A425006CB811 /* NimbusSearchBarLayer.swift */; };
 		CA9A4B7028D0A2C7006571DB /* FakeNimbus.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9A4B6F28D0A2C7006571DB /* FakeNimbus.swift */; };
@@ -3999,6 +4000,7 @@
 		CA8226F224C11DB7008A6F38 /* LoginListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginListTableViewCell.swift; sourceTree = "<group>"; };
 		CA8BCC3A28D218830020BC50 /* NTPImpactViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NTPImpactViewModel.swift; sourceTree = "<group>"; };
 		CA8BCC3D28D30A070020BC50 /* NTPImpactCell.Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPImpactCell.Model.swift; sourceTree = "<group>"; };
+		CA8BCC3F28D340AF0020BC50 /* TabCell+Ecosia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TabCell+Ecosia.swift"; sourceTree = "<group>"; };
 		CA90753724929B22005B794D /* NoLoginsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoLoginsView.swift; sourceTree = "<group>"; };
 		CA9A4B6F28D0A2C7006571DB /* FakeNimbus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeNimbus.swift; sourceTree = "<group>"; };
 		CAA3B7E52497DCB60094E3C1 /* LoginDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginDataSource.swift; sourceTree = "<group>"; };
@@ -7028,6 +7030,7 @@
 				CAEB316628D0B38900ADC9DB /* HomepageViewController+Ecosia.swift */,
 				CA4D9C8A28C8D801006AFB5D /* UIFont+Ecosia.swift */,
 				CA4D9C8B28C8D801006AFB5D /* SnapKit+Ecosia.swift */,
+				CA8BCC3F28D340AF0020BC50 /* TabCell+Ecosia.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -10542,6 +10545,7 @@
 				E4C358551AF144BA00299F7E /* FSReadingList.m in Sources */,
 				8AE1E1CB27B18F560024C45E /* SearchBarSettingsViewController.swift in Sources */,
 				8AD40FC527BADC1F00672675 /* TabToolbarHelper.swift in Sources */,
+				CA8BCC4028D340AF0020BC50 /* TabCell+Ecosia.swift in Sources */,
 				96C11E992864BA2C00840E7C /* ServiceProvider.swift in Sources */,
 				9609F4CA26B57CE800F81493 /* Calendar+Extension.swift in Sources */,
 				E663D5781BB341C4001EF30E /* ToggleButton.swift in Sources */,

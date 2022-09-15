@@ -817,7 +817,11 @@ protocol TabCellDelegate: AnyObject {
 extension GridTabViewController: NotificationThemeable {
     @objc func applyTheme() {
         webViewContainerBackdrop.backgroundColor = UIColor.Photon.Ink90
-        collectionView.backgroundColor = UIColor.theme.tabTray.background
+        collectionView.backgroundColor = UIColor.theme.homePanel.panelBackground
+
+        // show/hide separator
+        navigationController?.navigationBar.scrollEdgeAppearance?.shadowColor = tabLayoutDelegate.showSeparator ? UIColor.theme.ecosia.border : nil
+        collectionView.visibleCells.forEach({ ($0 as? NotificationThemeable)?.applyTheme() })
     }
 }
 
