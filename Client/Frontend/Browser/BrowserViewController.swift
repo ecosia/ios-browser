@@ -2231,9 +2231,9 @@ extension BrowserViewController {
             User.shared.migrated = true
             User.shared.hideRebrandIntro()
         } else if User.shared.migrated != true {
-            present(LoadingScreen(profile: profile, tabManager: tabManager, referrals: referrals), animated: true)
+            present(LoadingScreen(profile: profile, referrals: referrals), animated: true)
         } else if let pendingClaim = User.shared.referrals.pendingClaim {
-            present(LoadingScreen(profile: profile, tabManager: tabManager, referrals: referrals, referralCode: pendingClaim), animated: true)
+            present(LoadingScreen(profile: profile, referrals: referrals, referralCode: pendingClaim), animated: true)
         } else if User.shared.showsRebrandIntro {
             let intro = NTPIntroViewController()
             intro.modalPresentationStyle = .overFullScreen
