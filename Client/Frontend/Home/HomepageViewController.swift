@@ -346,7 +346,6 @@ class HomepageViewController: UIViewController, HomePanel, FeatureFlaggable {
     weak var referrals: Referrals!
     let flowLayout = NTPLayout()
     weak var searchbarCell: UICollectionViewCell?
-    weak var emptyCell: EmptyCell?
     weak var impactCell: NTPImpactCell?
 }
 
@@ -406,19 +405,6 @@ private extension HomepageViewController {
     // Setup all the tap and long press actions on cells in each sections
     private func setupSectionsAction() {
 
-        // Header view
-        /* Ecosia
-        viewModel.headerViewModel.onTapAction = { [weak self] _ in
-            self?.changeHomepageWallpaper()
-        }
-
-        // Message card
-        viewModel.messageCardViewModel.dismissClosure = { [weak self] in
-            self?.reloadView()
-        }
-         */
-
-        // Top sites
         viewModel.topSiteViewModel.tilePressedHandler = { [weak self] site, isGoogle in
             guard let url = site.url.asURL else { return }
             self?.showSiteWithURLHandler(url, isGoogleTopSite: isGoogle)
@@ -428,127 +414,8 @@ private extension HomepageViewController {
             self?.contextMenuHelper.presentContextMenu(for: site, with: sourceView, sectionType: .topSites)
         }
 
-        /* Ecosia
-        // Recently saved
-        viewModel.recentlySavedViewModel.headerButtonAction = { [weak self] button in
-            self?.openBookmarks(button)
-        }
-
-        // Jumpback in
-        viewModel.jumpBackInViewModel.onTapGroup = { [weak self] tab in
-            self?.homePanelDelegate?.homePanelDidRequestToOpenTabTray(withFocusedTab: tab)
-        }
-
-        viewModel.jumpBackInViewModel.headerButtonAction = { [weak self] button in
-            self?.openTabTray(button)
-        }
-
-        viewModel.jumpBackInViewModel.syncedTabsShowAllAction = { [weak self] button in
-            self?.homePanelDelegate?.homePanelDidRequestToOpenTabTray(focusedSegment: .syncedTabs)
-
-            var extras: [String: String]?
-            if let isZeroSearch = self?.viewModel.isZeroSearch {
-                extras = TelemetryWrapper.getOriginExtras(isZeroSearch: isZeroSearch)
-            }
-            TelemetryWrapper.recordEvent(category: .action,
-                                         method: .tap,
-                                         object: .firefoxHomepage,
-                                         value: .jumpBackInSectionSyncedTabShowAll,
-                                         extras: extras)
-        }
-
-        viewModel.jumpBackInViewModel.openSyncedTabAction = { [weak self] tabURL in
-            self?.homePanelDelegate?.homePanelDidRequestToOpenInNewTab(tabURL, isPrivate: false, selectNewTab: true)
-
-            var extras: [String: String]?
-            if let isZeroSearch = self?.viewModel.isZeroSearch {
-                extras = TelemetryWrapper.getOriginExtras(isZeroSearch: isZeroSearch)
-            }
-            TelemetryWrapper.recordEvent(category: .action,
-                                         method: .tap,
-                                         object: .firefoxHomepage,
-                                         value: .jumpBackInSectionSyncedTabOpened,
-                                         extras: extras)
-        }
-
-        // History highlights
-        viewModel.historyHighlightsViewModel.onTapItem = { [weak self] highlight in
-            guard let url = highlight.siteUrl else {
-                self?.openHistoryHighlightsSearchGroup(item: highlight)
-                return
-            }
-
-            self?.homePanelDelegate?.homePanel(didSelectURL: url,
-                                               visitType: .link,
-                                               isGoogleTopSite: false)
-        }
-
-        viewModel.historyHighlightsViewModel.historyHighlightLongPressHandler = { [weak self] (highlightItem, sourceView) in
-            self?.contextMenuHelper.presentContextMenu(for: highlightItem,
-                                                       with: sourceView,
-                                                       sectionType: .historyHighlights)
-        }
-
-        viewModel.historyHighlightsViewModel.headerButtonAction = { [weak self] button in
-            self?.openHistory(button)
-        }
-
-        // Pocket
-        viewModel.pocketViewModel.onTapTileAction = { [weak self] url in
-            self?.showSiteWithURLHandler(url)
-        }
-
-        viewModel.pocketViewModel.onLongPressTileAction = { [weak self] (site, sourceView) in
-            self?.contextMenuHelper.presentContextMenu(for: site, with: sourceView, sectionType: .pocket)
-        }
-
-        viewModel.pocketViewModel.onScroll = { [weak self] cells in
-            guard let window = UIWindow.keyWindow, let self = self else { return }
-            let cells = self.collectionView.visibleCells.filter { $0.reuseIdentifier == PocketStandardCell.cellIdentifier }
-            self.updatePocketCellsWithVisibleRatio(cells: cells, relativeRect: window.bounds)
-        }
-
-        // Customize home
-        viewModel.customizeButtonViewModel.onTapAction = { [weak self] _ in
-            self?.openCustomizeHomeSettings()
-        }
-         */
+        viewModel.libraryViewModel.delegate = self
     }
-
-    /* Ecosia
-    private func openHistoryHighlightsSearchGroup(item: HighlightItem) {
-        guard let groupItem = item.group else { return }
-
-        var groupedSites = [Site]()
-        for item in groupItem {
-            groupedSites.append(buildSite(from: item))
-        }
-        let groupSite = ASGroup<Site>(searchTerm: item.displayTitle, groupedItems: groupedSites, timestamp: Date.now())
-
-        let asGroupListViewModel = SearchGroupedItemsViewModel(asGroup: groupSite, presenter: .recentlyVisited)
-        let asGroupListVC = SearchGroupedItemsViewController(viewModel: asGroupListViewModel, profile: viewModel.profile)
-
-        let dismissableController: DismissableNavigationViewController
-        dismissableController = DismissableNavigationViewController(rootViewController: asGroupListVC)
-
-        self.present(dismissableController, animated: true, completion: nil)
-
-        TelemetryWrapper.recordEvent(category: .action,
-                                     method: .tap,
-                                     object: .firefoxHomepage,
-                                     value: .historyHighlightsGroupOpen,
-                                     extras: nil)
-
-        asGroupListVC.libraryPanelDelegate = libraryPanelDelegate
-    }
-     */
-
-    /* Ecosia
-    private func buildSite(from highlight: HighlightItem) -> Site {
-        let itemURL = highlight.siteUrl?.absoluteString ?? ""
-        return Site(url: itemURL, title: highlight.displayTitle)
-    }
-     */
 
     func openTabTray(_ sender: UIButton) {
         homePanelDelegate?.homePanelDidRequestToOpenTabTray(withFocusedTab: nil)
@@ -586,29 +453,9 @@ private extension HomepageViewController {
         }
     }
 
-    /* Ecosia
-    func openCustomizeHomeSettings() {
-        homePanelDelegate?.homePanelDidRequestToOpenSettings(at: .customizeHomepage)
-        TelemetryWrapper.recordEvent(category: .action,
-                                     method: .tap,
-                                     object: .firefoxHomepage,
-                                     value: .customizeHomepageButton)
-    }
-     */
-
-    func contextualHintPresented() {
-        homePanelDelegate?.homePanelDidPresentContextualHintOf(type: .jumpBackIn)
-    }
-
     func openTabsSettings() {
         homePanelDelegate?.homePanelDidRequestToOpenSettings(at: .customizeTabs)
     }
-
-    /* Ecosia
-    func changeHomepageWallpaper() {
-        wallpaperView.cycleWallpaper()
-    }
-     */
 
     func getPopoverSourceRect(sourceView: UIView?) -> CGRect {
         let cellRect = sourceView?.frame ?? .zero
