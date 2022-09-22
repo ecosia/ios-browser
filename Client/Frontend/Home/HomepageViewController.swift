@@ -31,7 +31,6 @@ class HomepageViewController: UIViewController, HomePanel, FeatureFlaggable {
     private var urlBar: URLBarViewProtocol
     private var wallpaperManager: LegacyWallpaperManager
     private lazy var wallpaperView: LegacyWallpaperBackgroundView = .build { _ in }
-    private var contextualHintViewController: ContextualHintViewController
     var collectionView: UICollectionView! = nil
 
     // Content stack views contains collection view.
@@ -63,9 +62,6 @@ class HomepageViewController: UIViewController, HomePanel, FeatureFlaggable {
         self.delegate = delegate
         self.referrals = referrals
 
-        let contextualViewModel = ContextualHintViewModel(forHintType: .jumpBackIn,
-                                                          with: viewModel.profile)
-        self.contextualHintViewController = ContextualHintViewController(with: contextualViewModel)
         self.contextMenuHelper = HomepageContextMenuHelper(viewModel: viewModel)
         super.init(nibName: nil, bundle: nil)
 
@@ -85,7 +81,6 @@ class HomepageViewController: UIViewController, HomePanel, FeatureFlaggable {
     }
 
     deinit {
-        contextualHintViewController.stopTimer()
         notificationCenter.removeObserver(self)
     }
 
@@ -117,11 +112,6 @@ class HomepageViewController: UIViewController, HomePanel, FeatureFlaggable {
             // display wallpaper UI for now (temporary)
             self?.displayWallpaperSelector()
         }
-    }
-
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        contextualHintViewController.stopTimer()
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -234,7 +224,6 @@ class HomepageViewController: UIViewController, HomePanel, FeatureFlaggable {
     }
 
     func recordHomepageDisappeared() {
-        contextualHintViewController.stopTimer()
         viewModel.recordViewDisappeared()
     }
 
@@ -334,35 +323,6 @@ class HomepageViewController: UIViewController, HomePanel, FeatureFlaggable {
         )
 
         self.present(bottomSheetVC, animated: false, completion: nil)
-    }
-
-    // MARK: - Contextual hint
-    private func prepareJumpBackInContextualHint(onView headerView: LabelButtonHeaderView) {
-        guard contextualHintViewController.shouldPresentHint(),
-              // Ecosia // viewModel.jumpBackInViewModel.isFlagForHintEnabled(),
-              !viewModel.shouldDisplayHomeTabBanner
-        else { return }
-
-        contextualHintViewController.configure(
-            anchor: headerView.titleLabel,
-            withArrowDirection: .down,
-            andDelegate: self,
-            presentedUsing: { self.presentContextualHint() },
-            withActionBeforeAppearing: { self.contextualHintPresented() },
-            andActionForButton: { self.openTabsSettings() })
-    }
-
-    @objc private func presentContextualHint() {
-        guard BrowserViewController.foregroundBVC().searchController == nil,
-              presentedViewController == nil
-        else {
-            contextualHintViewController.stopTimer()
-            return
-        }
-
-        present(contextualHintViewController, animated: true, completion: nil)
-
-        UIAccessibility.post(notification: .layoutChanged, argument: contextualHintViewController)
     }
 
     // MARK: Ecosia
@@ -682,8 +642,6 @@ extension HomepageViewController: UIPopoverPresentationControllerDelegate {
         willRepositionPopoverTo rect: UnsafeMutablePointer<CGRect>,
         in view: AutoreleasingUnsafeMutablePointer<UIView>
     ) {
-        // Do not dismiss if the popover is a CFR
-        if contextualHintViewController.isPresenting { return }
         popoverPresentationController.presentedViewController.dismiss(animated: false, completion: nil)
     }
 
