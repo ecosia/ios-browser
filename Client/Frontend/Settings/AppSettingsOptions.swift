@@ -1336,20 +1336,6 @@ class HomeSetting: Setting {
     }
 }
 
-final class ShortcutsSetting: Setting {
-    override var accessoryView: UIImageView? { return disclosureIndicator }
-    override var accessibilityIdentifier: String? { return "ShortcutsSetting" }
-
-    init() {
-        super.init(title: .init(string: .localized(.shortcuts),
-                                attributes: [.foregroundColor: UIColor.theme.tableView.rowText]))
-    }
-
-    override func onClick(_ navigationController: UINavigationController?) {
-        navigationController?.pushViewController(ShortcutsSettingsViewController(), animated: true)
-    }
-}
-
 class TabsSetting: Setting {
 
     override var accessoryView: UIImageView? { return disclosureIndicator }
