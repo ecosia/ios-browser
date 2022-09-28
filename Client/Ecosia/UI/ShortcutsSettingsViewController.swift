@@ -4,33 +4,24 @@
 
 import Foundation
 import Shared
+import Core
 
 final class ShortcutsSettingsViewController: SettingsTableViewController, FeatureFlaggable {
     required init?(coder aDecoder: NSCoder) { nil }
     init() {
         super.init(style: .insetGrouped)
         self.title = .localized(.shortcuts)
+        print(Core.User.shared.topSites)
     }
 
     override func generateSettings() -> [SettingSection] {
-        var sectionItems = [SettingSection]()
-
-        let inactiveTabsSetting = BoolSetting(with: .inactiveTabs,
-                                              titleText: NSAttributedString(string: .Settings.Tabs.InactiveTabs))
-
-        let tabGroupsSetting = BoolSetting(with: .tabTrayGroups,
-                                           titleText: NSAttributedString(string: .Settings.Tabs.TabGroups))
-
-        if featureFlags.isFeatureEnabled(.inactiveTabs, checking: .buildOnly) {
-            sectionItems.append(SettingSection(title: NSAttributedString(string: .Settings.Tabs.TabsSectionTitle),
-                                               footerTitle: NSAttributedString(string: .Settings.Tabs.InactiveTabsDescription),
-                                               children: [inactiveTabsSetting]))
-        }
-
-        if featureFlags.isFeatureEnabled(.tabTrayGroups, checking: .buildOnly) {
-            sectionItems.append(SettingSection(children: [tabGroupsSetting]))
-        }
-
-        return sectionItems
+        [.init(children: [
+            BoolSetting(prefs: nil,
+                        defaultValue: Core.User.shared.topSites,
+                        attributedTitleText: .init(string: .localized(.shortcuts))) {
+                            print(Core.User.shared.topSites)
+                            Core.User.shared.topSites = $0
+                        }
+        ])]
     }
 }
