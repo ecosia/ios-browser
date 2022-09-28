@@ -174,7 +174,7 @@ class AppSettingsTableViewController: SettingsTableViewController, FeatureFlagga
         var customization: [Setting] = [
             BoolSetting(prefs: prefs,
                         prefKey: "",
-                        defaultValue: Core.User.shared.topSites ?? true,
+                        defaultValue: Core.User.shared.topSites,
                         titleText: .localized(.showTopSites)) {
                             Core.User.shared.topSites = $0
                         }
