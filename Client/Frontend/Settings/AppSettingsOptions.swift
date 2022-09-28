@@ -1346,7 +1346,7 @@ final class ShortcutsSetting: Setting {
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
-        navigationController?.pushViewController(TabsSettingsViewController(), animated: true)
+        navigationController?.pushViewController(ShortcutsSettingsViewController(), animated: true)
     }
 }
 
