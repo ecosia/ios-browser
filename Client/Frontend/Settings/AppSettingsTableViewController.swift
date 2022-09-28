@@ -171,14 +171,7 @@ class AppSettingsTableViewController: SettingsTableViewController, FeatureFlagga
             PersonalSearchSettings(prefs: prefs)
         ]
         
-        var customization: [Setting] = [
-            BoolSetting(prefs: prefs,
-                        prefKey: "",
-                        defaultValue: Core.User.shared.topSites,
-                        titleText: .localized(.showTopSites)) {
-                            Core.User.shared.topSites = $0
-                        }
-        ]
+        var customization: [Setting] = [ShortcutsSetting()]
         
         if tabTrayGroupsAreBuildActive || inactiveTabsAreBuildActive {
             customization += [TabsSetting()]
@@ -188,9 +181,9 @@ class AppSettingsTableViewController: SettingsTableViewController, FeatureFlagga
             customization += [SearchBarSetting(settings: self)]
         }
         
-        settings += [.init(title: NSAttributedString(string: .localized(.search)), children: searchSettings),
-                     .init(title: .init(string: "Customization"), children: customization),
-                     .init(title: NSAttributedString(string: .SettingsGeneralSectionTitle), children: generalSettings)]
+        settings += [.init(title: .init(string: .localized(.search)), children: searchSettings),
+                     .init(title: .init(string: .localized(.customization)), children: customization),
+                     .init(title: .init(string: .SettingsGeneralSectionTitle), children: generalSettings)]
         
         var privacySettings = [Setting]()
         privacySettings.append(LoginsSetting(settings: self, delegate: settingsDelegate))
