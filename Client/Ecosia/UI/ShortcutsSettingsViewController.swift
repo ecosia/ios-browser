@@ -11,7 +11,6 @@ final class ShortcutsSettingsViewController: SettingsTableViewController, Featur
     init() {
         super.init(style: .insetGrouped)
         self.title = .localized(.shortcuts)
-        print(Core.User.shared.topSites)
     }
 
     override func generateSettings() -> [SettingSection] {
@@ -19,7 +18,6 @@ final class ShortcutsSettingsViewController: SettingsTableViewController, Featur
             BoolSetting(prefs: nil,
                         defaultValue: Core.User.shared.topSites,
                         attributedTitleText: .init(string: .localized(.shortcuts))) {
-                            print(Core.User.shared.topSites)
                             Core.User.shared.topSites = $0
                         }
         ])]
