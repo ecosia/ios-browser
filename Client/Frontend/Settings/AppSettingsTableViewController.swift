@@ -188,12 +188,10 @@ class AppSettingsTableViewController: SettingsTableViewController, FeatureFlagga
             customization += [SearchBarSetting(settings: self)]
         }
         
-        settings += [.init(title: .init(string: "Customization"), children: customization)]
+        settings += [.init(title: NSAttributedString(string: .localized(.search)), children: searchSettings),
+                     .init(title: .init(string: "Customization"), children: customization),
+                     .init(title: NSAttributedString(string: .SettingsGeneralSectionTitle), children: generalSettings)]
         
-        settings += [SettingSection(title: NSAttributedString(string: .localized(.search)), footerTitle: nil, children: searchSettings)]
-
-        settings += [SettingSection(title: NSAttributedString(string: .SettingsGeneralSectionTitle), children: generalSettings)]
-
         var privacySettings = [Setting]()
         privacySettings.append(LoginsSetting(settings: self, delegate: settingsDelegate))
 
