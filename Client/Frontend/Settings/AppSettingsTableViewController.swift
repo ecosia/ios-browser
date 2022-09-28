@@ -171,7 +171,7 @@ class AppSettingsTableViewController: SettingsTableViewController, FeatureFlagga
             PersonalSearchSettings(prefs: prefs)
         ]
         
-        var customization: [Setting] = [ShortcutsSetting()]
+        var customization: [Setting] = [HomePageSettingViewController.TopSitesSettings(settings: self)]
         
         if tabTrayGroupsAreBuildActive || inactiveTabsAreBuildActive {
             customization += [TabsSetting()]
