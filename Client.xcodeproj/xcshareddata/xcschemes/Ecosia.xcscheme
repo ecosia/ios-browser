@@ -161,6 +161,9 @@
                   Identifier = "TabManagerTests/testPrivatePreference_togglePBMDeletesPrivate()">
                </Test>
                <Test
+                  Identifier = "TabTrayViewControllerTests">
+               </Test>
+               <Test
                   Identifier = "TestFavicons/testFaviconFetcherParse()">
                </Test>
             </SkippedTests>
