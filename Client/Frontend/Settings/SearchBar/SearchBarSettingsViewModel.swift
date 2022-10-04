@@ -47,7 +47,7 @@ final class SearchBarSettingsViewModel: FeatureFlaggable {
 
     var searchBarPosition: SearchBarPosition {
         guard let position: SearchBarPosition = featureFlags.getCustomState(for: .searchBarPosition) else {
-            return .bottom
+            return .top
         }
 
         return position
