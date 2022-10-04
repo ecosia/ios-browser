@@ -76,7 +76,7 @@ class ContextualHintViewController: UIViewController, OnViewDismissable, Notific
      */
 
     // MARK: - Properties
-    private var viewModel: ContextualHintViewModel
+    private (set) var viewModel: ContextualHintViewModel
 
     private var onViewSummoned: (() -> Void)?
     var onViewDismissed: (() -> Void)?

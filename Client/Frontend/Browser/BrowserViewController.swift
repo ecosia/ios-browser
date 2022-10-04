@@ -575,6 +575,8 @@ class BrowserViewController: UIViewController {
 
     private func prepareURLOnboardingContextualHint() {
         guard contextHintVC.shouldPresentHint()
+                && !User.shared.firstTime
+                && NTPTooltip.highlight(for: .shared) == nil
         else { return }
 
         contextHintVC.configure(
@@ -587,9 +589,7 @@ class BrowserViewController: UIViewController {
     }
 
     private func presentContextualHint() {
-        if User.shared.firstTime { return }
         present(contextHintVC, animated: true)
-
         UIAccessibility.post(notification: .layoutChanged, argument: contextHintVC)
     }
 
@@ -2218,6 +2218,8 @@ extension BrowserViewController {
             profile.prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
             User.shared.migrated = true
             User.shared.hideRebrandIntro()
+            // deactivate searchbar hint for new users
+            contextHintVC.viewModel.markContextualHintPresented()
         } else if User.shared.showsRebrandIntro {
             let intro = NTPIntroViewController()
             intro.modalPresentationStyle = .overFullScreen
