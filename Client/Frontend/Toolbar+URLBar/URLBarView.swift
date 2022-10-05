@@ -661,7 +661,7 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
                 make.edges.equalTo(self.locationView.urlTextField)
             }
         }
-        line.isHidden = inOverlayMode || isBottomSearchBar()
+        line.isHidden = isHome
     }
 
     func updateViewsForOverlayModeAndToolbarChanges() {
@@ -908,7 +908,7 @@ extension URLBarView: NotificationThemeable {
         cancelTintColor = UIColor.theme.browser.tint
         showQRButtonTintColor = UIColor.theme.browser.tint
         backgroundColor = UIColor.theme.textField.background
-        line.backgroundColor = UIColor.theme.browser.urlBarDivider
+        line.backgroundColor = UIColor.theme.ecosia.barSeparator
 
         locationBorderColor = UIColor.theme.ecosia.border
         locationView.backgroundColor = inOverlayMode ? UIColor.theme.textField.backgroundInOverlay : UIColor.theme.ecosia.tertiaryBackground

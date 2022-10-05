@@ -235,6 +235,7 @@ class BrowserViewController: UIViewController {
 
         isBottomSearchBar = newPositionIsBottom
         updateViewConstraints()
+        toolbar.needsSeparation = !isBottomSearchBar
         toolbar.circleButton.config = isBottomSearchBar ? .newTab : .search
         toolbar.setNeedsDisplay()
         urlBar.updateConstraints()
@@ -323,6 +324,7 @@ class BrowserViewController: UIViewController {
 
         libraryDrawerViewController?.view.snp.remakeConstraints(constraintsForLibraryDrawerView)
         toolbar.circleButton.config = isBottomSearchBar ? .newTab : .search
+        toolbar.needsSeparation = !isBottomSearchBar
     }
 
     func dismissVisibleMenus() {
