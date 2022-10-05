@@ -19,7 +19,8 @@ private struct URLBarViewUX {
     static var TextFieldBorderWidth: CGFloat { LegacyThemeManager.instance.current.isDark ? 1 : 0 }
     static let TextFieldBorderWidthSelected: CGFloat = 2
     static let ProgressBarHeight: CGFloat = 3
-    static let SearchIconImageWidth: CGFloat = 24
+    static let SearchIconWidthSmall: CGFloat = 16
+    static let SearchIconWidthMedium: CGFloat = 24
     static let TabsButtonRotationOffset: CGFloat = 1.5
     static let TabsButtonHeight: CGFloat = 18.0
     static let ToolbarButtonInsets = UIEdgeInsets(equalInset: Padding)
@@ -175,8 +176,6 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
     lazy var searchIconImageView: UIImageView = {
         let searchIconImageView = UIImageView()
         searchIconImageView.contentMode = .scaleAspectFit
-        searchIconImageView.layer.cornerRadius = 12
-        searchIconImageView.clipsToBounds = true
         searchIconImageView.image = UIImage(named: "searchLogo")
         return searchIconImageView
     }()
@@ -257,7 +256,7 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
                 searchIconImageView.image = .init(themed: "searchLogo")
             }
         } else {
-            searchIconImageView.image = .init(named: "quickSearch")
+            searchIconImageView.image = .init(named: "search")
         }
         searchIconImageView.isHidden = !isHome && !inOverlayMode
     }
@@ -329,7 +328,7 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
         searchIconImageView.snp.makeConstraints { make in
             make.centerY.equalTo(self)
             make.leading.equalTo(locationContainer.snp.leading).offset(12)
-            make.size.equalTo(URLBarViewUX.SearchIconImageWidth)
+            make.size.equalTo(URLBarViewUX.SearchIconWidthSmall)
         }
 
 
@@ -451,7 +450,7 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
             self.locationView.snp.remakeConstraints { make in
                 make.top.bottom.trailing.equalTo(self.locationContainer)
                 if isHome {
-                    make.leading.equalTo(searchIconImageView.snp.trailing).offset(8)
+                    make.leading.equalTo(searchIconImageView.snp.trailing)
                 } else {
                     make.leading.equalTo(self.locationContainer)
                 }
@@ -467,6 +466,12 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
                 make.size.equalTo(URLBarViewUX.ButtonHeight).priority(.high)
             }
         }
+
+        let width = inOverlayMode ? URLBarViewUX.SearchIconWidthMedium : URLBarViewUX.SearchIconWidthSmall
+        searchIconImageView.snp.updateConstraints { make in
+            make.size.equalTo(width)
+        }
+
         updateSearchEngineImage()
     }
 
