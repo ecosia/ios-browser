@@ -16,7 +16,6 @@ private struct URLBarViewUX {
     static let ButtonHeight: CGFloat = 44
     static let LocationContentOffset: CGFloat = 8
     static let TextFieldCornerRadius: CGFloat = 22
-    static var TextFieldBorderWidth: CGFloat { LegacyThemeManager.instance.current.isDark ? 1 : 0 }
     static let TextFieldBorderWidthSelected: CGFloat = 2
     static let ProgressBarHeight: CGFloat = 3
     static let SearchIconWidthSmall: CGFloat = 16
@@ -445,7 +444,6 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
                 make.height.equalTo(URLBarViewUX.LocationHeight+URLBarViewUX.TextFieldBorderWidthSelected * 2)
                 make.centerY.equalTo(self)
             }
-            self.locationContainer.layer.borderWidth = isHome ? URLBarViewUX.TextFieldBorderWidth : 0
 
             self.locationView.snp.remakeConstraints { make in
                 make.top.bottom.trailing.equalTo(self.locationContainer)
@@ -932,8 +930,6 @@ extension URLBarView: NotificationThemeable {
         // Border for dark mode on home or selection state
         if inOverlayMode {
             locationContainer.layer.borderWidth = URLBarViewUX.TextFieldBorderWidthSelected
-        } else if isHome {
-            locationContainer.layer.borderWidth = URLBarViewUX.TextFieldBorderWidth
         } else {
             locationContainer.layer.borderWidth = 0
         }
