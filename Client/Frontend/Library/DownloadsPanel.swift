@@ -66,6 +66,7 @@ class DownloadsPanel: UIViewController, UITableViewDelegate, UITableViewDataSour
 
         // Set an empty footer to prevent empty cells from appearing in the list.
         tableView.tableFooterView = UIView()
+        tableView.contentInset.top = 32
         return tableView
     }()
 
