@@ -98,12 +98,22 @@ class HistoryPanel: UIViewController, LibraryPanel, Loggable, NotificationThemea
         return button
     }()
 
-    var bottomStackView: BaseAlphaStackView = .build { _ in }
+    var bottomStackView: BaseAlphaStackView = .build { view in
+        view.isClearBackground = true
+    }
+
+    lazy var searchSeparator: UIView = .build { view in
+        view.heightAnchor.constraint(equalToConstant: 1).isActive = true
+    }
 
     lazy var searchbar: UISearchBar = .build { searchbar in
+        searchbar.searchBarStyle = .prominent
         searchbar.searchTextField.placeholder = self.viewModel.searchHistoryPlaceholder
         searchbar.returnKeyType = .go
         searchbar.delegate = self
+        searchbar.searchTextField.layer.cornerRadius = 18
+        searchbar.searchTextField.layer.masksToBounds = true
+        searchbar.backgroundImage = .init()
     }
 
     lazy private var tableView: UITableView = {
@@ -122,6 +132,7 @@ class HistoryPanel: UIViewController, LibraryPanel, Loggable, NotificationThemea
         if #available(iOS 15.0, *) {
             tableView.sectionHeaderTopPadding = 0
         }
+        tableView.contentInset.top = 32
         return tableView
     }()
 
@@ -179,6 +190,7 @@ class HistoryPanel: UIViewController, LibraryPanel, Loggable, NotificationThemea
     private func setupLayout() {
         view.addSubview(tableView)
         view.addSubview(bottomStackView)
+        bottomStackView.addArrangedSubview(searchSeparator)
         bottomStackView.addArrangedSubview(searchbar)
 
         NSLayoutConstraint.activate([
@@ -490,16 +502,20 @@ class HistoryPanel: UIViewController, LibraryPanel, Loggable, NotificationThemea
     func applyTheme() {
         updateEmptyPanelState()
 
-        tableView.backgroundColor = UIColor.theme.homePanel.panelBackground
-        searchbar.backgroundColor = UIColor.theme.textField.backgroundInOverlay
-        let tintColor = UIColor.theme.textField.textAndTint
-        let searchBarImage = UIImage(named: ImageIdentifiers.libraryPanelHistory)?.withRenderingMode(.alwaysTemplate).tinted(withColor: tintColor)
+        tableView.backgroundColor = .theme.homePanel.panelBackground
+        searchbar.barTintColor = tableView.backgroundColor
+        searchbar.tintColor = .theme.ecosia.secondaryText
+        searchbar.searchTextField.backgroundColor = .theme.ecosia.primaryBackground
+        searchSeparator.backgroundColor = .theme.ecosia.border
+
+        let config = UIImage.SymbolConfiguration(scale: .small)
+        let searchBarImage = UIImage(systemName: "magnifying.glass", withConfiguration: config)
         searchbar.setImage(searchBarImage, for: .search, state: .normal)
-        searchbar.tintColor = UIColor.theme.textField.textAndTint
 
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.theme.ecosia.primaryText]
         bottomSearchButton.tintColor = .theme.ecosia.primaryText
         bottomDeleteButton.tintColor = .theme.ecosia.warning
+        bottomStackView.backgroundColor = tableView.backgroundColor
 
         tableView.reloadData()
     }
@@ -593,7 +609,7 @@ extension HistoryPanel: UITableViewDelegate {
             header.collapsibleImageView.isHidden = false
             header.collapsibleImageView.tintColor = .theme.ecosia.secondaryText
             let isCollapsed = viewModel.isSectionCollapsed(sectionIndex: section - 1)
-            header.collapsibleState = isCollapsed ? ExpandButtonState.up : ExpandButtonState.down
+            header.collapsibleState = isCollapsed ? ExpandButtonState.down : ExpandButtonState.up
 
             // Configure tap to collapse/expand section
             header.tag = section
