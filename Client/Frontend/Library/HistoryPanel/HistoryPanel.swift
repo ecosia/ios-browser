@@ -129,15 +129,7 @@ class HistoryPanel: UIViewController, LibraryPanel, Loggable, NotificationThemea
         UILongPressGestureRecognizer(target: self, action: #selector(onLongPressGestureRecognized))
     }()
 
-    lazy var emptyStateOverlayView: UIView = createEmptyStateOverlayView()
-    lazy var welcomeLabel: UILabel = .build { label in
-        label.text = self.viewModel.emptyStateText
-        label.textAlignment = .center
-        label.font = DynamicFontHelper.defaultHelper.DeviceFontLight
-        label.textColor = UIColor.theme.homePanel.welcomeScreenText
-        label.numberOfLines = 0
-        label.adjustsFontSizeToFitWidth = true
-    }
+    private lazy var emptyHeader = EmptyHeader(icon: "libraryHistory", title: .localized(.noHistory), subtitle: .localized(.websitesYouHave))
     var refreshControl: UIRefreshControl?
     var recentlyClosedCell: OneLineTableViewCell?
 
@@ -297,13 +289,6 @@ class HistoryPanel: UIViewController, LibraryPanel, Loggable, NotificationThemea
             if profile.hasSyncableAccount() {
                 resyncHistory()
             }
-            break
-        case .DynamicFontChanged:
-            if emptyStateOverlayView.superview != nil {
-                emptyStateOverlayView.removeFromSuperview()
-            }
-            emptyStateOverlayView = createEmptyStateOverlayView()
-            resyncHistory()
             break
         case .DatabaseWasReopened:
             if let dbName = notification.object as? String, dbName == "browser.db" {
@@ -492,41 +477,12 @@ class HistoryPanel: UIViewController, LibraryPanel, Loggable, NotificationThemea
 
     func updateEmptyPanelState() {
         if viewModel.shouldShowEmptyState(searchText: searchbar.text ?? "") {
-            welcomeLabel.text = viewModel.emptyStateText
-            tableView.tableFooterView = emptyStateOverlayView
+            tableView.tableFooterView = emptyHeader
+            emptyHeader.applyTheme()
         } else {
             tableView.alwaysBounceVertical = true
             tableView.tableFooterView = nil
         }
-    }
-
-    private func createEmptyStateOverlayView() -> UIView {
-        let overlayView = UIView()
-
-        // overlayView becomes the footer view, and for unknown reason, setting the bgcolor is ignored.
-        // Create an explicit view for setting the color.
-        let bgColor: UIView = .build { view in
-            view.backgroundColor = UIColor.theme.homePanel.panelBackground
-        }
-        overlayView.addSubview(bgColor)
-
-        NSLayoutConstraint.activate([
-            bgColor.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.height),
-            bgColor.widthAnchor.constraint(equalTo: overlayView.widthAnchor)
-        ])
-
-        overlayView.addSubview(welcomeLabel)
-
-        let welcomeLabelPriority = UILayoutPriority(100)
-        NSLayoutConstraint.activate([
-            welcomeLabel.centerXAnchor.constraint(equalTo: overlayView.centerXAnchor),
-            welcomeLabel.centerYAnchor.constraint(equalTo: overlayView.centerYAnchor,
-                                                  constant: UX.EmptyTabContentOffset).priority(welcomeLabelPriority),
-            welcomeLabel.topAnchor.constraint(greaterThanOrEqualTo: overlayView.topAnchor,
-                                              constant: 50),
-            welcomeLabel.widthAnchor.constraint(equalToConstant: CGFloat(UX.WelcomeScreenItemWidth))
-        ])
-        return overlayView
     }
 
     // MARK: - NotificationThemeable
