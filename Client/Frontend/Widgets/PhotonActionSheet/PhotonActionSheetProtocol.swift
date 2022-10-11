@@ -20,6 +20,18 @@ extension PhotonActionSheetProtocol {
                           on viewController: PresentableVC,
                           from view: UIView) {
 
+        // Ecosia: custom UX for main menu
+        guard !viewModel.isMainMenu else {
+            let sheet = PageActionMenu(viewModel: viewModel)
+            sheet.modalPresentationStyle = viewModel.modalStyle
+
+            if #available(iOS 15.0, *), let sheet = sheet.sheetPresentationController {
+                sheet.detents = [.medium(), .large()]
+            }
+            viewController.present(sheet, animated: true, completion: nil)
+            return
+        }
+
         let sheet = PhotonActionSheet(viewModel: viewModel)
         sheet.modalPresentationStyle = viewModel.modalStyle
         sheet.photonTransitionDelegate = PhotonActionSheetAnimator()
