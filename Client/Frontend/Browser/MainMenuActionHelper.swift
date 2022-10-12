@@ -600,7 +600,8 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
         let libraryAction = getReadingListLibraryAction()
         if !isHomePage {
             let readingListAction = getReadingListAction()
-            section.append(PhotonRowActions([libraryAction, readingListAction]))
+            section.append(PhotonRowActions(libraryAction))
+            section.append(PhotonRowActions(readingListAction))
         } else {
             section.append(PhotonRowActions(libraryAction))
         }
@@ -655,7 +656,8 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
         var section = [PhotonRowActions]()
 
         if !isHomePage {
-            section.append(PhotonRowActions([getBookmarkLibraryAction(), getBookmarkAction()]))
+            section.append(PhotonRowActions(getBookmarkLibraryAction()))
+            section.append(PhotonRowActions(getBookmarkAction()))
         } else {
             section.append(PhotonRowActions(getBookmarkLibraryAction()))
         }

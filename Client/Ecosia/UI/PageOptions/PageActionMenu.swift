@@ -94,7 +94,7 @@ extension PageActionMenu: UITableViewDataSource, UITableViewDelegate {
         cell.separatorInset.left = UX.Spacing
         cell.backgroundColor = .theme.ecosia.impactMultiplyCardBackground
         let actions = viewModel.actions[indexPath.section][indexPath.row]
-        let item = actions.items.first!
+        let item = actions.item
 
         cell.textLabel?.text = item.currentTitle
         cell.detailTextLabel?.text = item.text
@@ -133,7 +133,7 @@ extension PageActionMenu: UITableViewDataSource, UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let actions = viewModel.actions[indexPath.section][indexPath.row]
-        let item = actions.items.first!
+        let item = actions.item
         dismiss(animated: true) {
             if let handler = item.tapHandler {
                 handler(item)
