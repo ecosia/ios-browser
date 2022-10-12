@@ -38,6 +38,7 @@ class NTPLibraryShortcutView: UIView {
             let maxHeight = title.font.pointSize * 2.6
             make.leading.trailing.equalToSuperview().inset(2).priority(.veryHigh)
             make.height.lessThanOrEqualTo(maxHeight)
+            make.bottom.lessThanOrEqualToSuperview().offset(-8)
         }
         button.imageView?.contentMode = .scaleToFill
         button.layer.cornerRadius = Self.iconSize/2.0

@@ -47,8 +47,8 @@ extension UIColor {
     struct Dark {
         struct Background {
             static let primary = UIColor(red: 0.1, green: 0.1, blue: 0.1, alpha: 1)
-            static let secondary = UIColor(red: 0.2, green: 0.2, blue: 0.2, alpha: 1)
-            static let tertiary = UIColor(red: 0.298, green: 0.298, blue: 0.298, alpha: 1)
+            static let secondary = UIColor(rgb: 0x252525)
+            static let tertiary = UIColor(rgb: 0x333333)
             static let quarternary = UIColor(rgb: 0xAFE9B0)
             static let highlighted = UIColor(rgb: 0x577568)
         }

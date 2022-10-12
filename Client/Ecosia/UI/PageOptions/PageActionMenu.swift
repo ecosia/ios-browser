@@ -8,13 +8,14 @@ class PageActionMenu: UIViewController {
 
     struct UX {
         static let Spacing: CGFloat = 16
-        static let EmptyHeader = "EmptyHeader"
-        static let CellName = "PageActionCell"
+        static let Cell = "Cell"
+        static let Shortcuts = "Shortcuts"
         static let RowHeight: CGFloat = 50
     }
 
     // MARK: - Variables
     private var tableView = UITableView(frame: .zero, style: .insetGrouped)
+    private var knob = UIView()
     let viewModel: PhotonActionSheetViewModel
 
     // MARK: - Init
@@ -36,37 +37,39 @@ class PageActionMenu: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
         view.addSubview(tableView)
-        view.accessibilityIdentifier = "Action Sheet"
-        setupConstraints()
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-
-        applyTheme()
-
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: UX.CellName)
-        tableView.register(UITableViewHeaderFooterView.self, forHeaderFooterViewReuseIdentifier: UX.EmptyHeader)
-        tableView.sectionHeaderHeight = UX.Spacing
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: UX.Cell)
+        tableView.register(PageActionsShortcutsHeader.self, forHeaderFooterViewReuseIdentifier: UX.Shortcuts)
+        tableView.estimatedSectionHeaderHeight = UX.Spacing
         tableView.sectionFooterHeight = 0
-
-        tableView.accessibilityIdentifier = "Context Menu"
         tableView.translatesAutoresizingMaskIntoConstraints = false
+
+        view.addSubview(knob)
+        knob.layer.cornerRadius = 2
+
+        setupConstraints()
+        applyTheme()
     }
+
 
     // MARK: - Setup
 
     private func setupConstraints() {
         tableView.translatesAutoresizingMaskIntoConstraints = false
+        knob.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: view.topAnchor),
             tableView.leftAnchor.constraint(equalTo: view.leftAnchor),
             tableView.rightAnchor.constraint(equalTo: view.rightAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            knob.topAnchor.constraint(equalTo: view.topAnchor, constant: 8),
+            knob.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            knob.widthAnchor.constraint(equalToConstant: 32),
+            knob.heightAnchor.constraint(equalToConstant: 4)
         ])
     }
 
@@ -86,14 +89,10 @@ extension PageActionMenu: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return viewModel.actions[section].count
     }
-
-    func tableView(_ tableView: UITableView, hasFullWidthSeparatorForRowAtIndexPath indexPath: IndexPath) -> Bool {
-        return false
-    }
-
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: UX.CellName, for: indexPath)
-        cell.backgroundColor = .theme.ecosia.ntpImpactBackground
+        let cell = tableView.dequeueReusableCell(withIdentifier: UX.Cell, for: indexPath)
+        cell.separatorInset.left = UX.Spacing
+        cell.backgroundColor = .theme.ecosia.impactMultiplyCardBackground
         let actions = viewModel.actions[indexPath.section][indexPath.row]
         let item = actions.items.first!
 
@@ -105,8 +104,8 @@ extension PageActionMenu: UITableViewDataSource, UITableViewDelegate {
 
 
         if let iconName = item.iconString {
-            cell.imageView?.image = UIImage(named: iconName)
-            //setupActionName(action: item, name: iconName)
+            cell.imageView?.image = UIImage(named: iconName)?.withRenderingMode(.alwaysTemplate)
+            cell.imageView?.tintColor = .theme.ecosia.secondaryText
         } else {
             cell.imageView?.image = nil
         }
@@ -117,8 +116,19 @@ extension PageActionMenu: UITableViewDataSource, UITableViewDelegate {
         return UIView()
     }
 
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        if section == 0 {
+            return UITableView.automaticDimension
+        } else {
+            return UX.Spacing
+        }
+    }
+
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        return UIView()
+        guard section == 0 else { return UIView() }
+
+        let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: UX.Shortcuts) as! PageActionsShortcutsHeader
+        return header
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -137,6 +147,7 @@ extension PageActionMenu: NotificationThemeable {
 
     func applyTheme() {
         tableView.reloadData()
-        tableView.backgroundColor = .theme.ecosia.ntpBackground
+        tableView.backgroundColor = .theme.ecosia.modalBackground
+        knob.backgroundColor = .theme.ecosia.secondaryText
     }
 }
