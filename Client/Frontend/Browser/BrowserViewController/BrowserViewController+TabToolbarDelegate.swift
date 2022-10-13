@@ -88,7 +88,12 @@ extension BrowserViewController: TabToolbarDelegate, PhotonActionSheetProtocol {
         menuHelper.menuActionDelegate = self
 
         menuHelper.getToolbarActions(navigationController: navigationController) { actions in
-            let viewModel = PhotonActionSheetViewModel(actions: actions, modalStyle: .pageSheet, isMainMenu: true, isMainMenuInverted: false)
+
+            let isPhone = self.traitCollection.userInterfaceIdiom == .phone
+            let viewModel = PhotonActionSheetViewModel(actions: actions,
+                                                       modalStyle: isPhone ? .pageSheet : .popover,
+                                                       isMainMenu: true,
+                                                       isMainMenuInverted: false)
             self.presentSheetWith(viewModel: viewModel, on: self, from: button)
         }
         self.menuHelper = menuHelper

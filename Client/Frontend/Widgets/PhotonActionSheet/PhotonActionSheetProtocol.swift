@@ -28,10 +28,26 @@ extension PhotonActionSheetProtocol {
             let sheet = PageActionMenu(viewModel: viewModel, delegate: browser)
             sheet.modalPresentationStyle = viewModel.modalStyle
 
+            // iPhone
             if #available(iOS 15.0, *), let sheet = sheet.sheetPresentationController {
                 sheet.detents = [.medium(), .large()]
             }
-            viewController.present(sheet, animated: true, completion: nil)
+
+            // ipad
+            if let popoverVC = sheet.popoverPresentationController, sheet.modalPresentationStyle == .popover {
+                popoverVC.delegate = viewController
+                popoverVC.sourceView = view
+                popoverVC.sourceRect = view.bounds
+
+                let trait = viewController.traitCollection
+                if viewModel.isMainMenu {
+                    let margins = viewModel.getMainMenuPopOverMargins(trait: trait, view: view, presentedOn: viewController)
+                    popoverVC.popoverLayoutMargins = margins
+                }
+                popoverVC.permittedArrowDirections = viewModel.getPossibleArrowDirections(trait: trait)
+
+                viewController.present(sheet, animated: true, completion: nil)
+            }
             return
         }
 

@@ -56,7 +56,6 @@ class PageActionMenu: UIViewController {
         applyTheme()
     }
 
-
     // MARK: - Setup
 
     private func setupConstraints() {
@@ -75,6 +74,21 @@ class PageActionMenu: UIViewController {
         ])
     }
 
+    private var contentSizeObserver : NSKeyValueObservation?
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        guard traitCollection.userInterfaceIdiom == .pad else { return }
+        contentSizeObserver = tableView.observe(\.contentSize) { [weak self] tableView, _ in
+            self?.preferredContentSize = CGSize(width: 350, height: tableView.contentSize.height)
+        }
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        contentSizeObserver?.invalidate()
+        contentSizeObserver = nil
+    }
 }
 
 // MARK: - UITableViewDataSource, UITableViewDelegate
