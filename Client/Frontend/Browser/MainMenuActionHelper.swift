@@ -561,7 +561,8 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
         return SingleActionViewModel(title: .AppMenu.Share,
                                      iconString: ImageIdentifiers.share) { _ in
 
-            guard let tab = self.selectedTab, let url = tab.canonicalURL?.displayURL else { return }
+            // Ecosia: if we have nothing to share we share ecosia.org
+            guard let tab = self.selectedTab, let url = tab.canonicalURL?.displayURL ?? URL(string: "https://www.ecosia.org") else { return }
 
             TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .sharePageWith)
             if let temporaryDocument = tab.temporaryDocument {
