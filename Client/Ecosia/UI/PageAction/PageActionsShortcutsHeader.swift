@@ -90,7 +90,7 @@ class PageActionsShortcutsHeader: UITableViewHeaderFooterView {
         case 0:
             delegate?.pageOptionsOpenHome()
         case 1:
-            delegate?.pageOptionsOpenHome()
+            delegate?.pageOptionsNewTab()
         case 2:
             delegate?.pageOptionsYourImpact()
         case 3:

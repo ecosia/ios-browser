@@ -540,6 +540,10 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
 
     // MARK: Share
 
+    func getSharingAction() -> PhotonRowActions {
+        isFileURL ? getShareFileAction() : getShareAction()
+    }
+
     private func getShareFileAction() -> PhotonRowActions {
         return SingleActionViewModel(title: .AppMenu.AppMenuSharePageTitleString,
                                      iconString: ImageIdentifiers.share) { _ in

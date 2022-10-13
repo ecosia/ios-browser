@@ -17,11 +17,13 @@ class PageActionMenu: UIViewController {
     private var tableView = UITableView(frame: .zero, style: .insetGrouped)
     private var knob = UIView()
     let viewModel: PhotonActionSheetViewModel
+    weak var delegate: PageActionsShortcutsDelegate?
 
     // MARK: - Init
 
-    init(viewModel: PhotonActionSheetViewModel) {
+    init(viewModel: PhotonActionSheetViewModel, delegate: PageActionsShortcutsDelegate) {
         self.viewModel = viewModel
+        self.delegate = delegate
         super.init(nibName: nil, bundle: nil)
 
         title = viewModel.title
@@ -128,6 +130,7 @@ extension PageActionMenu: UITableViewDataSource, UITableViewDelegate {
         guard section == 0 else { return UIView() }
 
         let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: UX.Shortcuts) as! PageActionsShortcutsHeader
+        header.delegate = delegate
         return header
     }
 

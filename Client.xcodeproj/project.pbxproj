@@ -6357,7 +6357,7 @@
 				CA4D9C9C28C8D801006AFB5D /* MarketsController.swift */,
 				CA4D9C9D28C8D801006AFB5D /* MyImpact */,
 				CA4D9CAF28C8D801006AFB5D /* Onboarding */,
-				CAB544C428F5AE6B00657722 /* PageOptions */,
+				CAB544C428F5AE6B00657722 /* PageAction */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -6492,13 +6492,13 @@
 			path = Ecosia;
 			sourceTree = "<group>";
 		};
-		CAB544C428F5AE6B00657722 /* PageOptions */ = {
+		CAB544C428F5AE6B00657722 /* PageAction */ = {
 			isa = PBXGroup;
 			children = (
 				CAB544C528F5AE6B00657722 /* PageActionMenu.swift */,
 				CAB544C728F6BBFD00657722 /* PageActionsShortcutsHeader.swift */,
 			);
-			path = PageOptions;
+			path = PageAction;
 			sourceTree = "<group>";
 		};
 		CAEB316A28D0BFC000ADC9DB /* Extensions */ = {
@@ -9660,6 +9660,7 @@
 				EB94075320850C9F00702E05 /* photon-colors.swift in Sources */,
 				D38B2D8C1A8D98D90040E6B5 /* OpenSearch.swift in Sources */,
 				8AB8574027D961550075C173 /* DataObserver.swift in Sources */,
+				CA7D2D7D28F839EF00D4B5AE /* BrowserViewController+Ecosia.swift in Sources */,
 				6025B10F267B6C7F00F59F6B /* LoginRecordExtension.swift in Sources */,
 				E418D0D91A251B3200CAE47A /* Profile.swift in Sources */,
 				DDA24A451FD84D630098F159 /* DefaultSearchPrefs.swift in Sources */,

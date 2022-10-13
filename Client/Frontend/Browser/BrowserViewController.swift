@@ -167,6 +167,7 @@ class BrowserViewController: UIViewController {
         return EcosiaNavigation(delegate: self, referrals: referrals)
     }()
     let referrals = Referrals()
+    var menuHelper: MainMenuActionHelper?
 
     init(profile: Profile, tabManager: TabManager) {
         self.profile = profile

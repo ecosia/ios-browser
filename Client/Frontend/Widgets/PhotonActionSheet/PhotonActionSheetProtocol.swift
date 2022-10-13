@@ -22,7 +22,10 @@ extension PhotonActionSheetProtocol {
 
         // Ecosia: custom UX for main menu
         guard !viewModel.isMainMenu else {
-            let sheet = PageActionMenu(viewModel: viewModel)
+
+            // main menu should only be opened from the browser
+            guard let browser = self as? BrowserViewController else { return }
+            let sheet = PageActionMenu(viewModel: viewModel, delegate: browser)
             sheet.modalPresentationStyle = viewModel.modalStyle
 
             if #available(iOS 15.0, *), let sheet = sheet.sheetPresentationController {
