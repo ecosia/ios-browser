@@ -114,7 +114,9 @@ extension PageActionMenu: UITableViewDataSource, UITableViewDelegate {
         let item = actions.item
 
         cell.textLabel?.text = item.currentTitle
+        cell.textLabel?.textColor = .theme.ecosia.primaryText
         cell.detailTextLabel?.text = item.text
+        cell.detailTextLabel?.textColor = .theme.ecosia.secondaryText
 
         cell.accessibilityIdentifier = item.iconString ?? item.accessibilityId
         cell.accessibilityLabel = item.currentTitle

@@ -649,10 +649,9 @@ class BrowserViewController: UIViewController {
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
 
-        if self.traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection), LegacyThemeManager.instance.systemThemeIsOn {
-            let userInterfaceStyle = traitCollection.userInterfaceStyle
-            LegacyThemeManager.instance.current = userInterfaceStyle == .dark ? DarkTheme() : NormalTheme()
-        }
+        // Ecosia: fixing theme changes when night mode is on
+        let shouldStayDark = LegacyThemeManager.instance.current.isDark && NightModeHelper.isActivated(profile.prefs)
+        LegacyThemeManager.instance.themeChanged(from: previousTraitCollection, to: traitCollection, forceDark: shouldStayDark)
 
         setupMiddleButtonStatus(isLoading: false)
     }
