@@ -105,6 +105,7 @@ extension PageActionMenu: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return viewModel.actions[section].count
     }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: UX.Cell, for: indexPath)
         cell.separatorInset.left = UX.Spacing
