@@ -43,7 +43,7 @@ class PageActionMenu: UIViewController {
         view.addSubview(tableView)
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: UX.Cell)
+        tableView.register(PageActionMenuCell.self, forCellReuseIdentifier: UX.Cell)
         tableView.register(PageActionsShortcutsHeader.self, forHeaderFooterViewReuseIdentifier: UX.Shortcuts)
         tableView.estimatedSectionHeaderHeight = UX.Spacing
         tableView.sectionFooterHeight = 0
@@ -121,7 +121,6 @@ extension PageActionMenu: UITableViewDataSource, UITableViewDelegate {
         cell.accessibilityIdentifier = item.iconString ?? item.accessibilityId
         cell.accessibilityLabel = item.currentTitle
 
-
         if let iconName = item.iconString {
             cell.imageView?.image = UIImage(named: iconName)?.withRenderingMode(.alwaysTemplate)
             cell.imageView?.tintColor = .theme.ecosia.secondaryText
@@ -168,6 +167,19 @@ extension PageActionMenu: NotificationThemeable {
     func applyTheme() {
         tableView.reloadData()
         tableView.backgroundColor = .theme.ecosia.modalBackground
+        tableView.separatorColor = .theme.ecosia.border
         knob.backgroundColor = .theme.ecosia.secondaryText
+    }
+}
+
+// MARK: Cell
+
+class PageActionMenuCell: UITableViewCell {
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }

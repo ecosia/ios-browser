@@ -41,7 +41,7 @@ extension UIColor {
             static let primary = UIColor(red: 0, green: 0.5, blue: 0.033, alpha: 1)
         }
         
-        static let border = UIColor(red: 0.871, green: 0.871, blue: 0.851, alpha: 1)
+        static let border = UIColor(rgb: 0xDEDED9)
     }
     
     struct Dark {
@@ -79,7 +79,7 @@ extension UIColor {
             static let decorative = UIColor(red: 0.871, green: 0.871, blue: 0.871, alpha: 1)
         }
         
-        static let border = Grey.fifty
+        static let border = UIColor(rgb: 0x4C4C4C)
     }
 
     struct Grey {

@@ -417,8 +417,8 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
         var items: [PhotonRowActions] = []
 
         let nightModeEnabled = NightModeHelper.isActivated(profile.prefs)
-        let nightModeTitle: String = nightModeEnabled ? .AppMenu.AppMenuTurnOffNightMode : .AppMenu.AppMenuTurnOnNightMode
-        let nightMode = SingleActionViewModel(title: nightModeTitle,
+        let nightModeTitle: String = nightModeEnabled ? .localized(.turnOffDarkMode) : .localized(.forceDarkMode)
+        let nightMode = SingleActionViewModel(title: nightModeTitle, text: .localized(.invertColors),
                                               iconString: ImageIdentifiers.nightMode,
                                               isEnabled: nightModeEnabled) { _ in
             NightModeHelper.toggle(self.profile.prefs, tabManager: self.tabManager)

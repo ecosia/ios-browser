@@ -209,7 +209,7 @@ extension BrowserViewController: ToolBarActionMenuDelegate {
     func showToast(message: String, toastAction: MenuButtonToastAction, url: String?) {
         switch toastAction {
         case .removeBookmark:
-            let toast = ButtonToast(labelText: message, buttonText: .UndoString, textAlignment: .left) { isButtonTapped in
+            let toast = ButtonToast(labelText: message, imageName: "bookmarksEmpty", buttonText: .UndoString, textAlignment: .left) { isButtonTapped in
                 isButtonTapped ? self.addBookmark(url: url ?? "") : nil
             }
             show(toast: toast)
