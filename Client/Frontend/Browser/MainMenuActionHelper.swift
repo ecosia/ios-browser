@@ -7,6 +7,7 @@ import Foundation
 import Shared
 import Storage
 import UIKit
+import SafariServices
 
 protocol ToolBarActionMenuDelegate: AnyObject {
     func updateToolbarState()
@@ -80,12 +81,10 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
     func getToolbarActions(navigationController: UINavigationController?,
                            completion: @escaping ([[PhotonRowActions]]) -> Void) {
         var actions: [[PhotonRowActions]] = []
-        let firstMiscSection = getFirstMiscSection(navigationController)
 
         if isHomePage {
             actions.append(contentsOf: [
                 getLibrarySection(),
-                firstMiscSection,
                 getLastSection()
             ])
 
@@ -96,10 +95,8 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
             // Actions on site page need specific data to be loaded
             updateData(dataLoadingCompletion: {
                 actions.append(contentsOf: [
-                    self.getNewTabSection(),
+                    self.getPageActionsSection(navigationController),
                     self.getLibrarySection(),
-                    firstMiscSection,
-                    self.getSecondMiscSection(),
                     self.getLastSection()
                 ])
 
@@ -187,11 +184,11 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
             let historySection = getHistoryLibraryAction()
             append(to: &section, action: historySection)
 
-            let downloadSection = getDownloadsLibraryAction()
-            append(to: &section, action: downloadSection)
-
             let readingListSection = getReadingListSection()
             append(to: &section, action: readingListSection)
+
+            let downloadSection = getDownloadsLibraryAction()
+            append(to: &section, action: downloadSection)
         }
 
         // let syncAction = syncMenuButton(showFxA: showFXASyncAction)
@@ -203,13 +200,7 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
     private func getFirstMiscSection(_ navigationController: UINavigationController?) -> [PhotonRowActions] {
         var section = [PhotonRowActions]()
 
-        if !isHomePage && !isFileURL {
-            let findInPageAction = getFindInPageAction()
-            append(to: &section, action: findInPageAction)
 
-            let desktopSiteAction = getRequestDesktopSiteAction()
-            append(to: &section, action: desktopSiteAction)
-        }
 
         let nightModeAction = getNightModeAction()
         append(to: &section, action: nightModeAction)
@@ -217,35 +208,39 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
         let passwordsAction = getPasswordAction(navigationController: navigationController)
         append(to: &section, action: passwordsAction)
 
-        if !isHomePage && !isFileURL {
-            let reportSiteIssueAction = getReportSiteIssueAction()
-            append(to: &section, action: reportSiteIssueAction)
-        }
+
 
         return section
     }
 
-    private func getSecondMiscSection() -> [PhotonRowActions] {
+    private func getPageActionsSection(_ navigationController: UINavigationController?) -> [PhotonRowActions] {
         var section = [PhotonRowActions]()
 
-        if isFileURL {
-            let shareFileAction = getShareFileAction()
-            append(to: &section, action: shareFileAction)
+        let bookmarkAction = getBookmarkAction()
+        section.append(.init(bookmarkAction))
 
-        } else {
-            let shortAction = getShortcutAction()
-            append(to: &section, action: shortAction)
+        let readingListAction = getReadingListAction()
+        section.append(.init(readingListAction))
 
-            let copyAction = getCopyAction()
-            append(to: &section, action: copyAction)
+        let shortAction = getShortcutAction()
+        append(to: &section, action: shortAction)
 
-            /*
-            let sendToDeviceAction = getSendToDevice()
-            append(to: &section, action: sendToDeviceAction)
-             */
+        let copyAction = getCopyAction()
+        append(to: &section, action: copyAction)
 
-            let shareAction = getShareAction()
-            append(to: &section, action: shareAction)
+        if !isHomePage && !isFileURL {
+            let findInPageAction = getFindInPageAction()
+            append(to: &section, action: findInPageAction)
+
+            let desktopSiteAction = getRequestDesktopSiteAction()
+            append(to: &section, action: desktopSiteAction)
+
+            let reportSiteIssueAction = getReportSiteIssueAction()
+            append(to: &section, action: reportSiteIssueAction)
+        }
+
+        if let safari = getOpenInSafariAction(navigationController) {
+            section.append(.init(safari))
         }
 
         return section
@@ -254,16 +249,8 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
     private func getLastSection() -> [PhotonRowActions] {
         var section = [PhotonRowActions]()
 
-        if isHomePage {
-            let whatsNewAction = getWhatsNewAction()
-            append(to: &section, action: whatsNewAction)
-
-            let helpAction = getHelpAction()
-            section.append(helpAction)
-
-            let customizeHomePageAction = getCustomizeHomePageAction()
-            append(to: &section, action: customizeHomePageAction)
-        }
+        let nightModeAction = getNightModeAction()
+        section.append(contentsOf: nightModeAction)
 
         let settingsAction = getSettingsAction()
         section.append(settingsAction)
@@ -604,9 +591,7 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
 
         let libraryAction = getReadingListLibraryAction()
         if !isHomePage {
-            let readingListAction = getReadingListAction()
             section.append(PhotonRowActions(libraryAction))
-            section.append(PhotonRowActions(readingListAction))
         } else {
             section.append(PhotonRowActions(libraryAction))
         }
@@ -626,7 +611,7 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
     }
 
     private func getAddReadingListAction() -> SingleActionViewModel {
-        return SingleActionViewModel(title: .AppMenu.AddReadingList,
+        return SingleActionViewModel(title: .AppMenu.AddReadingListAlternateTitle,
                                      alternateTitle: .AppMenu.AddReadingListAlternateTitle,
                                      iconString: ImageIdentifiers.addToReadingList) { _ in
 
@@ -641,7 +626,7 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
     }
 
     private func getRemoveReadingListAction() -> SingleActionViewModel {
-        return SingleActionViewModel(title: .AppMenu.RemoveReadingList,
+        return SingleActionViewModel(title: .AppMenu.RemoveReadingListAlternateTitle,
                                      alternateTitle: .AppMenu.RemoveReadingListAlternateTitle,
                                      iconString: ImageIdentifiers.removeFromReadingList) { _ in
 
@@ -662,7 +647,6 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
 
         if !isHomePage {
             section.append(PhotonRowActions(getBookmarkLibraryAction()))
-            section.append(PhotonRowActions(getBookmarkAction()))
         } else {
             section.append(PhotonRowActions(getBookmarkLibraryAction()))
         }
@@ -682,7 +666,7 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
     }
 
     private func getAddBookmarkAction() -> SingleActionViewModel {
-        return SingleActionViewModel(title: .AppMenu.AddBookmark,
+        return SingleActionViewModel(title: .AppMenu.AddBookmarkAlternateTitle,
                                      alternateTitle: .AppMenu.AddBookmarkAlternateTitle,
                                      iconString: ImageIdentifiers.addToBookmark) { _ in
 
@@ -697,7 +681,7 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
     }
 
     private func getRemoveBookmarkAction() -> SingleActionViewModel {
-        return SingleActionViewModel(title: .AppMenu.RemoveBookmark,
+        return SingleActionViewModel(title: .AppMenu.RemoveBookmarkAlternateTitle,
                                      alternateTitle: .AppMenu.RemoveBookmarkAlternateTitle,
                                      iconString: ImageIdentifiers.removeFromBookmark) { _ in
 
@@ -845,5 +829,25 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
         if let action = action {
             items.append(contentsOf: action)
         }
+    }
+
+    // MARK: - Ecosia Additions
+
+    private func getOpenInSafariAction(_ navigationController: UINavigationController?) -> SingleActionViewModel? {
+
+        guard let url = selectedTab?.canonicalURL?.displayURL,
+                ["http", "https"].contains(url.scheme), let navigationController = navigationController else { return nil }
+
+        let model = SingleActionViewModel(title: .localized(.openInSafari), iconString: "safari") { model in
+
+            let config = SFSafariViewController.Configuration()
+            config.entersReaderIfAvailable = false
+            config.barCollapsingEnabled = false
+            let safari = SFSafariViewController(url: url, configuration: config)
+            safari.dismissButtonStyle = .close
+            navigationController.present(safari, animated: true, completion: nil)
+        }
+
+        return model
     }
 }
