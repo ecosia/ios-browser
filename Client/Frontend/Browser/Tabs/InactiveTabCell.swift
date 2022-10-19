@@ -26,8 +26,8 @@ class InactiveTabCell: UICollectionViewCell, ReusableCell {
 
     struct UX {
         static let HeaderAndRowHeight: CGFloat = 48
-        static let CloseAllTabRowHeight: CGFloat = 88
-        static let RoundedContainerPaddingClosed: CGFloat = 30
+        static let CloseAllTabRowHeight: CGFloat = 48
+        static let RoundedContainerPaddingClosed: CGFloat = 16
         static let RoundedContainerAdditionalPaddingOpened: CGFloat  = 40
         static let InactiveTabTrayWidthPadding: CGFloat = 30
     }
@@ -42,7 +42,7 @@ class InactiveTabCell: UICollectionViewCell, ReusableCell {
     lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .grouped)
         tableView.register(InactiveTabItemCell.self, forCellReuseIdentifier: InactiveTabItemCell.cellIdentifier)
-        tableView.register(CellWithRoundedButton.self, forCellReuseIdentifier: CellWithRoundedButton.cellIdentifier)
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: CellWithRoundedButton.cellIdentifier)
         tableView.register(InactiveTabHeader.self, forHeaderFooterViewReuseIdentifier: InactiveTabHeader.cellIdentifier)
         tableView.allowsMultipleSelectionDuringEditing = false
         tableView.sectionHeaderHeight = 0
@@ -120,9 +120,9 @@ extension InactiveTabCell: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         switch InactiveTabSection(rawValue: indexPath.section) {
         case .inactive, .none:
-            return InactiveTabCell.UX.HeaderAndRowHeight
+            return Self.UX.HeaderAndRowHeight
         case .closeAllTabsButton:
-            return UITableView.automaticDimension
+            return Self.UX.CloseAllTabRowHeight
         }
     }
 
@@ -144,16 +144,13 @@ extension InactiveTabCell: UITableViewDataSource, UITableViewDelegate {
             return cell
 
         case .closeAllTabsButton:
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: CellWithRoundedButton.cellIdentifier,
-                                                           for: indexPath) as? CellWithRoundedButton
-            else {
-                return UITableViewCell()
-            }
-
-            cell.buttonClosure = {
-                self.delegate?.didTapCloseAllTabs()
-            }
-
+            let cell = tableView.dequeueReusableCell(withIdentifier: CellWithRoundedButton.cellIdentifier,
+                                                           for: indexPath)
+            cell.imageView?.image = .init(named: ImageIdentifiers.trashIconMonocrome)
+            cell.imageView?.tintColor = .theme.ecosia.warning
+            cell.textLabel?.text = .TabsTray.InactiveTabs.CloseAllInactiveTabsButton
+            cell.textLabel?.textColor = .theme.ecosia.warning
+            cell.textLabel?.accessibilityIdentifier = AccessibilityIdentifiers.TabTray.inactiveTabDeleteButton
             return cell
         case .none:
             guard let cell = tableView.dequeueReusableCell(withIdentifier: OneLineTableViewCell.cellIdentifier,
@@ -190,7 +187,7 @@ extension InactiveTabCell: UITableViewDataSource, UITableViewDelegate {
                 delegate?.didSelectInactiveTab(tab: tab)
             }
         case .closeAllTabsButton, .none:
-            print("nothing")
+            delegate?.didTapCloseAllTabs()
         }
     }
 
@@ -198,7 +195,7 @@ extension InactiveTabCell: UITableViewDataSource, UITableViewDelegate {
         switch InactiveTabSection(rawValue: section) {
         case .inactive, .none:
             guard let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: InactiveTabHeader.cellIdentifier) as? InactiveTabHeader else { return nil }
-            headerView.state = hasExpanded ? .down : .up
+            headerView.state = hasExpanded ? .up : .down
             headerView.title = String.TabsTrayInactiveTabsSectionTitle
             headerView.accessibilityLabel = hasExpanded ?
                 .TabsTray.InactiveTabs.TabsTrayInactiveTabsSectionOpenedAccessibilityTitle :

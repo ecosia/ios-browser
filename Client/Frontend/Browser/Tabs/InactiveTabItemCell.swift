@@ -27,10 +27,6 @@ class InactiveTabItemCell: UITableViewCell, NotificationThemeable, ReusableCell 
         label.contentMode = .center
     }
 
-    private lazy var bottomSeparatorView: UIView = .build { separatorLine in
-        separatorLine.backgroundColor = UIColor.Photon.LightGrey30
-    }
-
     private var containerViewLeadingConstraint: NSLayoutConstraint!
 
     private lazy var containerView: UIView = .build { _ in }
@@ -63,7 +59,6 @@ class InactiveTabItemCell: UITableViewCell, NotificationThemeable, ReusableCell 
     func initialViewSetup() {
         self.selectionStyle = .default
         midView.addSubview(titleLabel)
-        containerView.addSubviews(bottomSeparatorView)
         containerView.addSubview(leftImageView)
         containerView.addSubview(midView)
 
@@ -101,11 +96,6 @@ class InactiveTabItemCell: UITableViewCell, NotificationThemeable, ReusableCell 
                                                constant: -InactiveTabItemCellModel.UX.LabelTopBottomMargin),
             titleLabel.leadingAnchor.constraint(equalTo: midView.leadingAnchor),
             titleLabel.trailingAnchor.constraint(equalTo: midView.trailingAnchor),
-
-            bottomSeparatorView.heightAnchor.constraint(equalToConstant: InactiveTabItemCellModel.UX.SeparatorHeight),
-            bottomSeparatorView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
-            bottomSeparatorView.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
-            bottomSeparatorView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
         ])
 
         leftImageView.setContentHuggingPriority(.required, for: .vertical)

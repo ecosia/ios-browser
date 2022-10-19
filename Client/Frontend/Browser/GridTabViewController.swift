@@ -700,7 +700,7 @@ private class TabLayoutDelegate: NSObject, UICollectionViewDelegateFlowLayout, U
             return CGSize(width: 0, height: 0)
         }
 
-        let closeAllButtonHeight = InactiveTabCell.UX.CloseAllTabRowHeight
+        let closeAllButtonHeight = InactiveTabCell.UX.CloseAllTabRowHeight + 8
         let headerHeightWithRoundedCorner = InactiveTabCell.UX.HeaderAndRowHeight + InactiveTabCell.UX.RoundedContainerPaddingClosed
         var totalHeight = headerHeightWithRoundedCorner
         let width: CGFloat = collectionView.frame.size.width - InactiveTabCell.UX.InactiveTabTrayWidthPadding
