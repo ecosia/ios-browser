@@ -27,6 +27,7 @@ class InactiveTabCell: UICollectionViewCell, ReusableCell {
     struct UX {
         static let HeaderAndRowHeight: CGFloat = 48
         static let CloseAllTabRowHeight: CGFloat = 48
+        static let CloseAllTabsButtonMargin: CGFloat = 8
         static let RoundedContainerPaddingClosed: CGFloat = 16
         static let RoundedContainerAdditionalPaddingOpened: CGFloat  = 40
         static let InactiveTabTrayWidthPadding: CGFloat = 30
