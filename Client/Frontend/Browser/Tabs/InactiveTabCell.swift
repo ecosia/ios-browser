@@ -58,9 +58,7 @@ class InactiveTabCell: UICollectionViewCell, ReusableCell {
     }()
 
     private var containerView: UIView = .build { view in
-        view.layer.cornerRadius = 13
-        view.layer.borderWidth = 1
-        view.layer.borderColor = UIColor.clear.cgColor
+        view.layer.cornerRadius = 10
     }
 
     // MARK: - Initializers
@@ -151,6 +149,9 @@ extension InactiveTabCell: UITableViewDataSource, UITableViewDelegate {
             cell.textLabel?.text = .TabsTray.InactiveTabs.CloseAllInactiveTabsButton
             cell.textLabel?.textColor = .theme.ecosia.warning
             cell.textLabel?.accessibilityIdentifier = AccessibilityIdentifiers.TabTray.inactiveTabDeleteButton
+            cell.backgroundView?.backgroundColor = .theme.ecosia.impactBackground
+            cell.backgroundColor = .theme.ecosia.impactBackground
+
             return cell
         case .none:
             guard let cell = tableView.dequeueReusableCell(withIdentifier: OneLineTableViewCell.cellIdentifier,
@@ -250,9 +251,6 @@ extension InactiveTabCell: UITableViewDataSource, UITableViewDelegate {
 
         // Post accessibility notification when the section was opened/closed
         UIAccessibility.post(notification: UIAccessibility.Notification.layoutChanged, argument: nil)
-
-// Ecosia
-//        if hasExpanded { delegate?.presentCFR() }
     }
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -277,11 +275,10 @@ extension InactiveTabCell: UITableViewDataSource, UITableViewDelegate {
 
 extension InactiveTabCell: NotificationThemeable {
     @objc func applyTheme() {
-        self.backgroundColor = .clear
-        self.tableView.backgroundColor = .clear
+        backgroundColor = .clear
+        tableView.backgroundColor = .clear
+        containerView.backgroundColor = .theme.ecosia.impactBackground
         tableView.reloadData()
-        let theme = BuiltinThemeName(rawValue: LegacyThemeManager.instance.current.name) ?? .normal
-        containerView.backgroundColor = theme == .normal ? .white : .Photon.DarkGrey50
     }
 }
 

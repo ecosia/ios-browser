@@ -734,7 +734,7 @@ private class TabLayoutDelegate: NSObject, UICollectionViewDelegateFlowLayout, U
                   tabDisplayManager.inactiveViewModel?.inactiveTabs.count ?? 0 > 0
             else { return .zero }
 
-            return UIEdgeInsets(equalInset: GridTabTrayControllerUX.Margin)
+            return UIEdgeInsets(top: 0, left: GridTabTrayControllerUX.Margin, bottom: 0, right: GridTabTrayControllerUX.Margin)
 
         case .groupedTabs:
             guard tabDisplayManager.shouldEnableGroupedTabs,

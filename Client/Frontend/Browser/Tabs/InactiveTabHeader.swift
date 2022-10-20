@@ -85,8 +85,7 @@ class InactiveTabHeader: UITableViewHeaderFooterView, NotificationThemeable, Reu
     }
 
     func applyTheme() {
-        let theme = BuiltinThemeName(rawValue: LegacyThemeManager.instance.current.name) ?? .normal
-        self.titleLabel.textColor = theme == .dark ? .white : .black
+        self.titleLabel.textColor = .theme.ecosia.primaryText
         moreButton.imageView?.tintColor = .theme.ecosia.decorativeIcon
     }
 }
