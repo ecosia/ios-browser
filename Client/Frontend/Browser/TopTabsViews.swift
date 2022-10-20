@@ -84,13 +84,13 @@ class TopTabCell: UICollectionViewCell, NotificationThemeable, TabTrayCell, Reus
         titleText.snp.makeConstraints { make in
             make.centerY.equalTo(self)
             make.height.equalTo(self)
-            make.trailing.equalTo(closeButton.snp.leading).offset(10)
+            make.trailing.equalTo(closeButton.snp.leading).offset(TopTabsUX.TabTitlePadding)
             make.leading.equalTo(favicon.snp.trailing).offset(TopTabsUX.TabTitlePadding)
         }
         closeButton.snp.makeConstraints { make in
             make.centerY.equalTo(self)
             make.height.equalTo(self)
-            make.width.equalTo(38)
+            make.width.equalTo(TopTabsUX.CloseButtonWidth)
             make.trailing.equalTo(self.snp.trailing)
         }
 

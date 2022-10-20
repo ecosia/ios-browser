@@ -9,6 +9,8 @@ import WebKit
 
 struct TopTabsUX {
     static let TopTabsViewHeight: CGFloat = 44
+    static let TopTabsPadding: CGFloat = 6
+    static let CloseButtonWidth: CGFloat = 38
     static let TopTabsBackgroundShadowWidth: CGFloat = 12
     static let MinTabWidth: CGFloat = 76
     static let MaxTabWidth: CGFloat = 220
