@@ -13,7 +13,7 @@ struct TopTabsUX {
     static let MinTabWidth: CGFloat = 76
     static let MaxTabWidth: CGFloat = 220
     static let FaderPading: CGFloat = 8
-    static let SeparatorWidth: CGFloat = 1
+    static let SeparatorWidth: CGFloat = 4
     static let TabNudge: CGFloat = 1 // Nudge the favicon and close button by 1px
     static let TabTitlePadding: CGFloat = 10
     static let AnimationSpeed: TimeInterval = 0.1
@@ -165,7 +165,7 @@ class TopTabsViewController: UIViewController {
         }
         topTabFader.snp.makeConstraints { make in
             make.top.bottom.equalTo(view)
-            make.leading.equalTo(privateModeButton.snp.trailing)
+            make.leading.equalTo(privateModeButton.snp.trailing).offset(8)
             make.trailing.equalTo(newTab.snp.leading)
         }
         collectionView.snp.makeConstraints { make in
