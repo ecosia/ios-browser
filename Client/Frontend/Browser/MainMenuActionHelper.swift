@@ -313,7 +313,7 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
             if let url = tab.url {
                 tab.toggleChangeUserAgent()
                 Tab.ChangeUserAgent.updateDomainList(forUrl: url, isChangedUA: tab.changedUserAgent, isPrivate: tab.isPrivate)
-                Analytics.shared.menuClick(label: "toggle_user_agent")
+                Analytics.shared.menuClick(label: "request_desktop_site")
             }
         }.items
     }
@@ -322,7 +322,7 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
         return SingleActionViewModel(title: .AppMenu.AppMenuCopyLinkTitleString,
                                      iconString: ImageIdentifiers.copyLink) { _ in
 
-            Analytics.shared.menuClick(label: "copy")
+            Analytics.shared.menuClick(label: "copy_link")
             if let url = self.selectedTab?.canonicalURL?.displayURL {
                 UIPasteboard.general.url = url
                 self.delegate?.showToast(message: .AppMenu.AppMenuCopyURLConfirmMessage, toastAction: .copyUrl, url: nil)
@@ -422,11 +422,7 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
                                               isEnabled: nightModeEnabled) { _ in
             NightModeHelper.toggle(self.profile.prefs, tabManager: self.tabManager)
 
-            if nightModeEnabled {
-                Analytics.shared.menuClick(label: "disable_night_mode")
-            } else {
-                Analytics.shared.menuClick(label: "enable_night_mode")
-            }
+            Analytics.shared.menuClick(label: "dark_mode", toggle: !nightModeEnabled)
 
             // If we've enabled night mode and the theme is normal, enable dark theme
             if NightModeHelper.isActivated(self.profile.prefs), LegacyThemeManager.instance.currentName == .normal {
@@ -596,7 +592,7 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
         return SingleActionViewModel(title: .AppMenu.ReadingList,
                                      iconString: ImageIdentifiers.readingList) { _ in
             self.delegate?.showLibrary(panel: .readingList)
-            Analytics.shared.menuClick(label: "readlist")
+            Analytics.shared.menuClick(label: "reading_list")
         }
     }
 
@@ -615,7 +611,7 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
 
             self.profile.readingList.createRecordWithURL(url.absoluteString, title: tab.title ?? "", addedBy: UIDevice.current.name)
             self.delegate?.showToast(message: .AppMenu.AddToReadingListConfirmMessage, toastAction: .addToReadingList, url: nil)
-            Analytics.shared.menuClick(label: "add_readlist")
+            Analytics.shared.menuClick(label: "reading_list", toggle: true)
         }
     }
 
@@ -630,7 +626,7 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
 
             self.profile.readingList.deleteRecord(record, completion: nil)
             self.delegate?.showToast(message: .AppMenu.RemoveFromReadingListConfirmMessage, toastAction: .removeFromReadingList, url: nil)
-            Analytics.shared.menuClick(label: "remove_readlist")
+            Analytics.shared.menuClick(label: "reading_list", toggle: false)
         }
     }
 
@@ -665,7 +661,7 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
 
             // The method in BVC also handles the toast for this use case
             self.delegate?.addBookmark(url: url.absoluteString, title: tab.title, favicon: tab.displayFavicon)
-            Analytics.shared.menuClick(label: "add_bookmark")
+            Analytics.shared.menuClick(label: "bookmark", toggle: true)
         }
     }
 
@@ -682,7 +678,7 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
                 self.removeBookmarkShortcut()
             }
 
-            Analytics.shared.menuClick(label: "remove_bookmark")
+            Analytics.shared.menuClick(label: "bookmark", toggle: false)
         }
     }
 
@@ -711,7 +707,7 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
                 self.delegate?.showToast(message: .AppMenu.AddPinToShortcutsConfirmMessage, toastAction: .pinPage, url: nil)
             }
 
-            Analytics.shared.menuClick(label: "add_shortcut")
+            Analytics.shared.menuClick(label: "shortcut", toggle: true)
         }
     }
 
@@ -732,7 +728,7 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
                     self.delegate?.showToast(message: .AppMenu.RemovePinFromShortcutsConfirmMessage, toastAction: .removePinPage, url: nil)
                 }
             }
-            Analytics.shared.menuClick(label: "remove_shortcut")
+            Analytics.shared.menuClick(label: "shortcut", toggle: false)
         }
     }
 
@@ -835,7 +831,7 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
             let safari = SFSafariViewController(url: url, configuration: config)
             safari.dismissButtonStyle = .close
             navigationController.present(safari, animated: true, completion: nil)
-            Analytics.shared.menuClick(label: "safari")
+            Analytics.shared.menuClick(label: "open_in_safari")
         }
 
         return model

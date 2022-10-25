@@ -95,7 +95,7 @@ class PageActionsShortcutsHeader: UITableViewHeaderFooterView {
             Analytics.shared.menuClick(label: "new_tab")
         case 2:
             delegate?.pageOptionsYourImpact()
-            Analytics.shared.menuClick(label: "impact")
+            Analytics.shared.menuClick(label: "your_impact")
         case 3:
             delegate?.pageOptionsShare()
             Analytics.shared.menuClick(label: "share")
