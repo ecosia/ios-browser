@@ -43,10 +43,11 @@ final class MoreButtonCell: UICollectionReusableView, ReusableCell {
         button.layer.borderColor = UIColor.theme.ecosia.primaryText.cgColor
     }
 
-    override func prepareForReuse() {
-        super.prepareForReuse()
+    override func didMoveToSuperview() {
+        super.didMoveToSuperview()
         applyTheme()
     }
+
 }
 
 final class HeaderCell: UICollectionViewCell, NotificationThemeable {

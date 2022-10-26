@@ -45,7 +45,6 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
             collectionView!.register($0.cell, forCellWithReuseIdentifier: String(describing: $0.cell))
         }
         collectionView!.register(HeaderCell.self, forCellWithReuseIdentifier: .init(describing: HeaderCell.self))
-        collectionView.register(MoreButtonCell.self, forCellWithReuseIdentifier: .init(describing: MoreButtonCell.self))
         collectionView.delegate = self
         collectionView.contentInsetAdjustmentBehavior = .scrollableAxes
 
@@ -226,7 +225,7 @@ final class EcosiaHome: UICollectionViewController, UICollectionViewDelegateFlow
     func collectionView(_ collectionView: UICollectionView, layout: UICollectionViewLayout, insetForSectionAt: Int) -> UIEdgeInsets {
         let vertical = insetForSectionAt == Section.explore.rawValue ? 26 : CGFloat()
         let horizontal = (collectionView.bounds.width - collectionView.ecosiaHomeMaxWidth) / 2
-        return .init(top: vertical, left: horizontal, bottom: vertical, right: horizontal)
+        return .init(top: 0, left: horizontal, bottom: vertical, right: horizontal)
     }
     
     func applyTheme() {

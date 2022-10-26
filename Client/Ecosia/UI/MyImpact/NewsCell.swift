@@ -182,16 +182,11 @@ final class NewsCell: UICollectionViewCell, NotificationThemeable, ReusableCell 
     }
     
     private func hover() {
-        background.backgroundColor = isSelected || isHighlighted ? .theme.ecosia.secondarySelectedBackground : .theme.ecosia.ntpCellBackground
-    }
-
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        applyTheme()
+        background.backgroundColor = isSelected || isHighlighted ? .theme.ecosia.secondarySelectedBackground : .theme.ecosia.ntpImpactBackground
     }
 
     func applyTheme() {
-        background.backgroundColor = UIColor.theme.ecosia.ntpCellBackground
+        background.backgroundColor = UIColor.theme.ecosia.ntpImpactBackground
         placeholder.tintColor = .theme.ecosia.decorativeIcon
         placeholder.backgroundColor = .theme.ecosia.newsPlaceholder
         border?.backgroundColor = UIColor.theme.ecosia.border

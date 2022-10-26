@@ -35,7 +35,8 @@ extension HomepageViewController {
 
     @objc func allNews() {
         let news = NewsController(items: viewModel.newsViewModel.items, delegate: self)
-        navigationController?.present(news, animated: true)
+        let nav = EcosiaNavigation(rootViewController: news)
+        present(nav, animated: true)
         Analytics.shared.navigation(.open, label: .news)
     }
 

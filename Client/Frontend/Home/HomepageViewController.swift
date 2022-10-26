@@ -314,6 +314,7 @@ extension HomepageViewController: UICollectionViewDelegate, UICollectionViewData
             let moreButton = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: MoreButtonCell.cellIdentifier, for: indexPath) as! MoreButtonCell
             moreButton.button.setTitle(.localized(.seeMoreNews), for: .normal)
             moreButton.button.addTarget(self, action: #selector(allNews), for: .primaryActionTriggered)
+            moreButton.applyTheme()
             return moreButton
         }
 
@@ -343,6 +344,10 @@ extension HomepageViewController: UICollectionViewDelegate, UICollectionViewData
         }
 
         return viewModel.configure(collectionView, at: indexPath)
+    }
+
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        (cell as? NotificationThemeable)?.applyTheme()
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
