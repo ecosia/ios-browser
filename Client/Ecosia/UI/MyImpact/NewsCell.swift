@@ -5,7 +5,7 @@
 import Core
 import UIKit
 
-final class NewsCell: UICollectionViewCell, NotificationThemeable {
+final class NewsCell: UICollectionViewCell, NotificationThemeable, ReusableCell {
     struct Positions: OptionSet {
         static let top = Positions(rawValue: 1)
         static let bottom = Positions(rawValue: 1 << 1)
@@ -171,6 +171,7 @@ final class NewsCell: UICollectionViewCell, NotificationThemeable {
             masked.formUnion(.layerMaxXMaxYCorner)
         }
         background.layer.maskedCorners = masked
+        applyTheme()
     }
 
     private func updateImage(_ data: Data) {
