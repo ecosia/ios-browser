@@ -84,6 +84,7 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
 
         if isHomePage {
             actions.append(contentsOf: [
+                getFirstSection(),
                 getLibrarySection(),
                 getLastSection()
             ])
@@ -93,8 +94,11 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
         } else {
 
             // Actions on site page need specific data to be loaded
-            updateData(dataLoadingCompletion: {
+            updateData(dataLoadingCompletion: { [weak self] in
+                guard let self = self else { return }
+                
                 actions.append(contentsOf: [
+                    self.getFirstSection(),
                     self.getPageActionsSection(navigationController),
                     self.getLibrarySection(),
                     self.getLastSection()
@@ -172,6 +176,10 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
         append(to: &section, action: getNewTabAction())
 
         return section
+    }
+    
+    private func getFirstSection() -> [PhotonRowActions] {
+        [.init(getInviteFriendsAction())]
     }
 
     private func getLibrarySection() -> [PhotonRowActions] {
@@ -260,6 +268,21 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
 
     // MARK: - Actions
 
+    private func getInviteFriendsAction() -> SingleActionViewModel {
+        return SingleActionViewModel(title: .AppMenu.AddBookmarkAlternateTitle,
+                                     alternateTitle: .AppMenu.AddBookmarkAlternateTitle,
+                                     iconString: ImageIdentifiers.addToBookmark) { _ in
+
+            guard let tab = self.selectedTab,
+                  let url = tab.canonicalURL?.displayURL
+            else { return }
+
+            // The method in BVC also handles the toast for this use case
+            self.delegate?.addBookmark(url: url.absoluteString, title: tab.title, favicon: tab.displayFavicon)
+            Analytics.shared.menuClick(label: "bookmark", toggle: true)
+        }
+    }
+    
     private func getNewTabAction() -> PhotonRowActions {
         return SingleActionViewModel(title: .AppMenu.NewTab,
                                      iconString: ImageIdentifiers.newTab) { _ in
