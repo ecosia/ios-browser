@@ -127,6 +127,9 @@ extension PageActionMenu: UITableViewDataSource, UITableViewDelegate {
         } else {
             cell.imageView?.image = nil
         }
+        
+        (cell as? PageActionMenuCell)?.isNew(actions.item.isNew)
+        
         return cell
     }
 
@@ -181,5 +184,9 @@ class PageActionMenuCell: UITableViewCell {
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func isNew(_ isNew: Bool) {
+        
     }
 }
