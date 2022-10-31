@@ -179,7 +179,7 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
     }
     
     private func getFirstSection() -> [PhotonRowActions] {
-        [.init(getInviteFriendsAction())]
+        [getInviteFriendsAction()]
     }
 
     private func getLibrarySection() -> [PhotonRowActions] {
@@ -268,19 +268,12 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
 
     // MARK: - Actions
 
-    private func getInviteFriendsAction() -> SingleActionViewModel {
-        return SingleActionViewModel(title: .AppMenu.AddBookmarkAlternateTitle,
-                                     alternateTitle: .AppMenu.AddBookmarkAlternateTitle,
-                                     iconString: ImageIdentifiers.addToBookmark) { _ in
-
-            guard let tab = self.selectedTab,
-                  let url = tab.canonicalURL?.displayURL
-            else { return }
-
-            // The method in BVC also handles the toast for this use case
-            self.delegate?.addBookmark(url: url.absoluteString, title: tab.title, favicon: tab.displayFavicon)
-            Analytics.shared.menuClick(label: "bookmark", toggle: true)
-        }
+    private func getInviteFriendsAction() -> PhotonRowActions {
+        SingleActionViewModel(
+            title: "Invite friends",
+            iconString: "inviteFriends") { _ in
+                
+        }.items
     }
     
     private func getNewTabAction() -> PhotonRowActions {
