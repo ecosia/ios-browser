@@ -271,8 +271,9 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
     private func getInviteFriendsAction() -> PhotonRowActions {
         SingleActionViewModel(
             title: "Invite friends",
-            iconString: "inviteFriends") { _ in
-                
+            iconString: "inviteFriends",
+            isNew: true) { action in
+                action.isNew = false
         }.items
     }
     
