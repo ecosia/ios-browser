@@ -8,7 +8,7 @@ import UIKit
 final class NewsController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource,
     UICollectionViewDelegateFlowLayout, NotificationThemeable {
     private weak var collection: UICollectionView!
-    private var items = [NewsModel]()
+    private var items = [NewsWrapper]()
     private let images = Images(.init(configuration: .ephemeral))
     private let news = News()
     private let identifier = "news"
@@ -16,7 +16,7 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
 
     required init?(coder: NSCoder) { nil }
 
-    init(items: [NewsModel], delegate: EcosiaHomeDelegate?) {
+    init(items: [NewsWrapper], delegate: EcosiaHomeDelegate?) {
         super.init(nibName: nil, bundle: nil)
         self.delegate = delegate
         self.items = items
@@ -47,7 +47,17 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
     override func viewDidLoad() {
         super.viewDidLoad()
         news.subscribe(self) { [weak self] in
-            self?.items = $0
+            self?.items = $0.map { .init(model: $0, promo: nil) }
+
+            if let variant = Goodall.shared.variant(for: .promo) {
+                switch variant {
+                case .control:
+                    self?.items.insert(.init(model: nil, promo: NTPNewsViewModel.treeStore), at: 0)
+                case .test:
+                    self?.items.insert(.init(model: nil, promo: NTPNewsViewModel.treeCard), at: 0)
+                }
+            }
+
             self?.collection.reloadData()
             self?.collection.backgroundView = nil
         }

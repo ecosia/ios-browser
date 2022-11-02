@@ -236,6 +236,7 @@ class AppSettingsTableViewController: SettingsTableViewController, FeatureFlagga
                 OpenFiftyTabsDebugOption(settings: self),
                 ExperimentsSettings(settings: self)
  */
+                // Hidden Debug Settings
                 PushBackInstallation(settings: self),
                 ToggleBrandRefreshIntro(settings: self),
                 ToggleCounterIntro(settings: self),
@@ -243,7 +244,9 @@ class AppSettingsTableViewController: SettingsTableViewController, FeatureFlagga
                 CreateReferralCode(settings: self),
                 AddReferral(settings: self),
                 AddClaim(settings: self),
-                InactiveTabsExpireEarly(settings: self)
+                InactiveTabsExpireEarly(settings: self),
+                ResetFlags(settings: self),
+                PromoFlag(settings: self)
             ])]
 
         return settings

@@ -3601,6 +3601,7 @@
 		CAA6AC4428E470BB00A13DE9 /* EcosiaBookmarkMigrationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EcosiaBookmarkMigrationTests.swift; sourceTree = "<group>"; };
 		CAA6AC4728E4732A00A13DE9 /* EcosiaTabMigrationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EcosiaTabMigrationTests.swift; sourceTree = "<group>"; };
 		CAA6AC4928E473D500A13DE9 /* EcosiaNTPTooltipHighlightTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaNTPTooltipHighlightTests.swift; sourceTree = "<group>"; };
+		CAB3B9FC29115F010091CAEC /* ios-core */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "ios-core"; path = "../ios-core"; sourceTree = "<group>"; };
 		CAB544C528F5AE6B00657722 /* PageActionMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PageActionMenu.swift; sourceTree = "<group>"; };
 		CAB544C728F6BBFD00657722 /* PageActionsShortcutsHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageActionsShortcutsHeader.swift; sourceTree = "<group>"; };
 		CAB7414DA1BA84F4CD08A8F8 /* kk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = kk; path = kk.lproj/ClearPrivateDataConfirm.strings; sourceTree = "<group>"; };
@@ -7392,6 +7393,7 @@
 		F84B21B51A090F8100AAB793 = {
 			isa = PBXGroup;
 			children = (
+				CAB3B9FC29115F010091CAEC /* ios-core */,
 				C8E2E80623D20FB3005AACE6 /* RustFxA */,
 				2FA435FC1ABB83B4008031D1 /* Account */,
 				F84B21C01A090F8100AAB793 /* Client */,
