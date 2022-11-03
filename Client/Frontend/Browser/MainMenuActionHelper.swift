@@ -23,6 +23,7 @@ protocol ToolBarActionMenuDelegate: AnyObject {
     func showMenuPresenter(url: URL, tab: Tab, view: UIView)
     func showFindInPage()
     func showCustomizeHomePage()
+    func showReferrals()
 }
 
 enum MenuButtonToastAction {
@@ -180,9 +181,7 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
     }
     
     private func getFirstSection() -> [PhotonRowActions] {
-        User.shared.referralsEntryPointIsNew
-        ? [getInviteFriendsAction()]
-        : []
+        [getInviteFriendsAction()]
     }
 
     private func getLibrarySection() -> [PhotonRowActions] {
@@ -275,8 +274,10 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
         SingleActionViewModel(
             title: "Invite friends",
             iconString: "inviteFriends",
-            isNew: true) { action in
+            isNew: User.shared.referralsEntryPointIsNew) { [weak self] action in
                 action.isNew = false
+                User.shared.referralsEntryPointUsed()
+                self?.delegate?.showReferrals()
         }.items
     }
     
