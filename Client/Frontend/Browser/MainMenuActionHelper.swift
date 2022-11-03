@@ -272,7 +272,7 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
 
     private func getInviteFriendsAction() -> PhotonRowActions {
         SingleActionViewModel(
-            title: "Invite friends",
+            title: .localized(.inviteFriends),
             iconString: "inviteFriends",
             isNew: User.shared.referralsEntryPointIsNew) { [weak self] action in
                 action.isNew = false

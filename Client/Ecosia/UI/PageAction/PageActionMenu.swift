@@ -234,7 +234,7 @@ class PageActionMenuCell: UITableViewCell {
                 let label = UILabel()
                 label.translatesAutoresizingMaskIntoConstraints = false
                 label.font = .systemFont(ofSize: 12, weight: .semibold)
-                label.text = "New"
+                label.text = .localized(.new)
                 label.textColor = .theme.ecosia.primaryTextInverted
                 badge.addSubviews(label)
                 
