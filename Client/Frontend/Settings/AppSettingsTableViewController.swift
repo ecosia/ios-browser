@@ -246,7 +246,8 @@ class AppSettingsTableViewController: SettingsTableViewController, FeatureFlagga
                 AddClaim(settings: self),
                 InactiveTabsExpireEarly(settings: self),
                 ResetFlags(settings: self),
-                PromoFlag(settings: self)
+                PromoFlag(settings: self),
+                ChangeSearchCount(settings: self)
             ])]
 
         return settings

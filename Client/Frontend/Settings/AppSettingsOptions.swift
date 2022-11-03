@@ -845,6 +845,21 @@ final class PromoFlag: HiddenSetting {
     }
 }
 
+final class ChangeSearchCount: HiddenSetting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Increase search count by 100", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
+    }
+
+    override var status: NSAttributedString? {
+        return NSAttributedString(string: "\(User.shared.treeCount)", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        User.shared.treeCount += 100
+        self.settings.tableView.reloadData()
+    }
+}
+
 class InactiveTabsExpireEarly: BoolSetting {
 
     static let key = "EcosiaInactiveTabsDebugSetting"
