@@ -8,6 +8,7 @@ import Shared
 import Storage
 import UIKit
 import SafariServices
+import Core
 
 protocol ToolBarActionMenuDelegate: AnyObject {
     func updateToolbarState()
@@ -179,7 +180,9 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
     }
     
     private func getFirstSection() -> [PhotonRowActions] {
-        [getInviteFriendsAction()]
+        User.shared.referralsEntryPointIsNew
+        ? [getInviteFriendsAction()]
+        : []
     }
 
     private func getLibrarySection() -> [PhotonRowActions] {
