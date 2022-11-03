@@ -212,6 +212,7 @@ extension PageActionMenu: NotificationThemeable {
 
 class PageActionMenuCell: UITableViewCell {
     private weak var badge: UIView?
+    private weak var badgeLabel: UILabel?
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)
@@ -227,27 +228,30 @@ class PageActionMenuCell: UITableViewCell {
                 let badge = UIView()
                 badge.translatesAutoresizingMaskIntoConstraints = false
                 badge.isUserInteractionEnabled = false
-                badge.backgroundColor = .theme.ecosia.primaryBrand
                 badge.layer.cornerRadius = 10
                 contentView.addSubview(badge)
                 
-                let label = UILabel()
-                label.translatesAutoresizingMaskIntoConstraints = false
-                label.font = .systemFont(ofSize: 12, weight: .semibold)
-                label.text = .localized(.new)
-                label.textColor = .theme.ecosia.primaryTextInverted
-                badge.addSubviews(label)
+                let badgeLabel = UILabel()
+                badgeLabel.translatesAutoresizingMaskIntoConstraints = false
+                badgeLabel.font = .systemFont(ofSize: 12, weight: .semibold)
+                badgeLabel.text = .localized(.new)
+                
+                badge.addSubviews(badgeLabel)
                 
                 badge.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
                 badge.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -16).isActive = true
                 badge.heightAnchor.constraint(equalToConstant: 20).isActive = true
-                badge.leftAnchor.constraint(equalTo: label.leftAnchor, constant: -8).isActive = true
+                badge.leftAnchor.constraint(equalTo: badgeLabel.leftAnchor, constant: -8).isActive = true
                 
-                label.centerYAnchor.constraint(equalTo: badge.centerYAnchor).isActive = true
-                label.rightAnchor.constraint(equalTo: badge.rightAnchor, constant: -8).isActive = true
+                badgeLabel.centerYAnchor.constraint(equalTo: badge.centerYAnchor).isActive = true
+                badgeLabel.rightAnchor.constraint(equalTo: badge.rightAnchor, constant: -8).isActive = true
                 
                 self.badge = badge
+                self.badgeLabel = badgeLabel
             }
+            
+            badge?.backgroundColor = .theme.ecosia.primaryBrand
+            badgeLabel?.textColor = .theme.ecosia.primaryTextInverted
         } else {
             badge?.removeFromSuperview()
         }
