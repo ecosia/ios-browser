@@ -117,7 +117,6 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
     
     func collectionView(_: UICollectionView, viewForSupplementaryElementOfKind kind: String, at: IndexPath) -> UICollectionReusableView {
         let header = collection.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: identifier, for: at)
-        collection.align(header: header as? NewsSubHeader)
         return header
     }
     
@@ -128,26 +127,12 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
     }
 
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        
-        collectionView.align(
-            header: collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionHeader,
-            at: .init(item: 0, section: section)) as? NewsSubHeader)
-        
-        return .init(width: 0, height: UIFontDescriptor.preferredFontDescriptor(withTextStyle: .body).pointSize * 2 + 30)
-    }
-    
     func collectionView(_: UICollectionView, didSelectItemAt: IndexPath) {
         let item = items[didSelectItemAt.row]
         delegate?.ecosiaHome(didSelectURL: item.targetUrl)
         dismiss(animated: true, completion: nil)
         Analytics.shared.navigationOpenNews(item.trackingName)
     }
-    
-//    func collectionView(_ collectionView: UICollectionView, layout: UICollectionViewLayout, insetForSectionAt: Int) -> UIEdgeInsets {
-//        let horizontal = (collectionView.bounds.width - collectionView.ecosiaHomeMaxWidth) / 2
-//        return .init(top: 0, left: horizontal, bottom: 0, right: horizontal)
-//    }
 
     func applyTheme() {
         collection.visibleSupplementaryViews(ofKind: UICollectionView.elementKindSectionHeader).forEach({
@@ -181,45 +166,28 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
     }
 }
 
-private extension UICollectionView {
-    func align(header: NewsSubHeader?) {
-        let margin = (bounds.width - ecosiaHomeMaxWidth) / 2
-        header?.leftMargin.constant = margin
-        header?.rightMargin.constant = -margin
-    }
-}
-
 private final class NewsSubHeader: UICollectionReusableView, NotificationThemeable {
-    private(set) weak var leftMargin: NSLayoutConstraint!
-    private(set) weak var rightMargin: NSLayoutConstraint!
     private weak var subtitle: UILabel!
     
     required init?(coder: NSCoder) { nil }
 
     override init(frame: CGRect) {
-        super.init(frame: .zero)
+        super.init(frame: frame)
         isUserInteractionEnabled = false
 
         let subtitle = UILabel()
         subtitle.translatesAutoresizingMaskIntoConstraints = false
         subtitle.font = .preferredFont(forTextStyle: .body)
         subtitle.adjustsFontForContentSizeCategory = true
-        subtitle.adjustsFontSizeToFitWidth = true
-        subtitle.setContentHuggingPriority(.required, for: .vertical)
-        subtitle.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-        subtitle.numberOfLines = 2
+        subtitle.numberOfLines = 0
         subtitle.text = .localized(.keepUpToDate)
         addSubview(subtitle)
         self.subtitle = subtitle
         
-        subtitle.topAnchor.constraint(equalTo: topAnchor, constant: 0).isActive = true
-        subtitle.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: -10).isActive = true
-        
-        leftMargin = subtitle.leftAnchor.constraint(equalTo: leftAnchor)
-        leftMargin.isActive = true
-        rightMargin = subtitle.rightAnchor.constraint(lessThanOrEqualTo: rightAnchor)
-        rightMargin.isActive = true
-
+        subtitle.topAnchor.constraint(equalTo: topAnchor, constant: 8).isActive = true
+        subtitle.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16).isActive = true
+        subtitle.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
+        subtitle.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
         applyTheme()
     }
 
