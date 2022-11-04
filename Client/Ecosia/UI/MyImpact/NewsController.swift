@@ -25,15 +25,10 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
     }
     
     override func loadView() {
-        let flow = UICollectionViewFlowLayout()
-        flow.minimumInteritemSpacing = 0
-        flow.minimumLineSpacing = 0
-        flow.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
-
         let indicator = UIActivityIndicatorView(style: .medium)
         indicator.startAnimating()
         
-        let collection = UICollectionView(frame: .zero, collectionViewLayout: flow)
+        let collection = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
         collection.delegate = self
         collection.dataSource = self
         collection.register(NewsCell.self, forCellWithReuseIdentifier: identifier)
@@ -42,6 +37,42 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
         collection.contentInsetAdjustmentBehavior = .scrollableAxes
         self.collection = collection
         view = collection
+    }
+
+    func createLayout() -> UICollectionViewLayout {
+
+        let layout = UICollectionViewCompositionalLayout { [weak self]
+            (sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
+
+            guard let self = self else { return nil }
+
+            let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1),
+                                                  heightDimension: .estimated(100))
+            let item = NSCollectionLayoutItem(layoutSize: itemSize)
+
+            let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1),
+                                                   heightDimension: .estimated(100))
+            let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: item, count: 1)
+
+            let section = NSCollectionLayoutSection(group: group)
+
+            let horizontal = (self.collection.bounds.width - self.collection.ecosiaHomeMaxWidth) / 2
+            section.contentInsets = NSDirectionalEdgeInsets(
+                top: 0,
+                leading: horizontal,
+                bottom: 0,
+                trailing: horizontal)
+
+            let size = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
+                                              heightDimension: .estimated(100.0))
+            let header = NSCollectionLayoutBoundarySupplementaryItem(
+                layoutSize: size,
+                elementKind: UICollectionView.elementKindSectionHeader,
+                alignment: .top)
+            section.boundarySupplementaryItems = [header]
+            return section
+        }
+        return layout
     }
     
     override func viewDidLoad() {
@@ -95,10 +126,7 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
         cell.configure(items[cellForItemAt.row], images: images, positions: .derive(row: cellForItemAt.item, items: items.count))
         return cell
     }
-    
-    func collectionView(_ collectionView: UICollectionView, layout: UICollectionViewLayout, sizeForItemAt: IndexPath) -> CGSize {
-        return .init(width: collection.ecosiaHomeMaxWidth, height: 130)
-    }
+
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         
@@ -116,10 +144,10 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
         Analytics.shared.navigationOpenNews(item.trackingName)
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout: UICollectionViewLayout, insetForSectionAt: Int) -> UIEdgeInsets {
-        let horizontal = (collectionView.bounds.width - collectionView.ecosiaHomeMaxWidth) / 2
-        return .init(top: 0, left: horizontal, bottom: 0, right: horizontal)
-    }
+//    func collectionView(_ collectionView: UICollectionView, layout: UICollectionViewLayout, insetForSectionAt: Int) -> UIEdgeInsets {
+//        let horizontal = (collectionView.bounds.width - collectionView.ecosiaHomeMaxWidth) / 2
+//        return .init(top: 0, left: horizontal, bottom: 0, right: horizontal)
+//    }
 
     func applyTheme() {
         collection.visibleSupplementaryViews(ofKind: UICollectionView.elementKindSectionHeader).forEach({
