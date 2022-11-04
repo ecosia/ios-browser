@@ -233,7 +233,8 @@ class PageActionMenuCell: UITableViewCell {
                 
                 let badgeLabel = UILabel()
                 badgeLabel.translatesAutoresizingMaskIntoConstraints = false
-                badgeLabel.font = .systemFont(ofSize: 12, weight: .semibold)
+                badgeLabel.font = .preferredFont(forTextStyle: .footnote).bold()
+                badgeLabel.adjustsFontForContentSizeCategory = true
                 badgeLabel.text = .localized(.new)
                 
                 badge.addSubviews(badgeLabel)
