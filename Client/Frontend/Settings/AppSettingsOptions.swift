@@ -822,9 +822,10 @@ final class ResetFlags: HiddenSetting {
         Goodall.shared.loading.notify(queue: .main) { [weak self] in
 
             self?.settings.tableView.reloadData()
+            NotificationCenter.default.post(name: .HomePanelPrefsChanged, object: nil)
 
             let alertTitle = "New variants assigned."
-            let alert = AlertController(title: alertTitle, message: "see rows in table", preferredStyle: .alert)
+            let alert = AlertController(title: alertTitle, message: "Restart App to see effect in UI.", preferredStyle: .alert)
             navigationController?.topViewController?.present(alert, animated: true) {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                     alert.dismiss(animated: true)
@@ -845,9 +846,9 @@ final class PromoFlag: HiddenSetting {
     }
 }
 
-final class ChangeSearchCount: HiddenSetting {
+final class ResetSearchCount: HiddenSetting {
     override var title: NSAttributedString? {
-        return NSAttributedString(string: "Debug: Increase search count by 100", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
+        return NSAttributedString(string: "Debug: Set search count to 0", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
     }
 
     override var status: NSAttributedString? {
@@ -855,8 +856,25 @@ final class ChangeSearchCount: HiddenSetting {
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
-        User.shared.treeCount += 100
+        User.shared.treeCount = 0
         self.settings.tableView.reloadData()
+        NotificationCenter.default.post(name: .HomePanelPrefsChanged, object: nil)
+    }
+}
+
+final class ChangeSearchCount: HiddenSetting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Increase search count by 10", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
+    }
+
+    override var status: NSAttributedString? {
+        return NSAttributedString(string: "\(User.shared.treeCount)", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        User.shared.treeCount += 10
+        self.settings.tableView.reloadData()
+        NotificationCenter.default.post(name: .HomePanelPrefsChanged, object: nil)
     }
 }
 
@@ -869,7 +887,7 @@ class InactiveTabsExpireEarly: BoolSetting {
             prefs: settings.profile.prefs,
             prefKey: Self.key,
             defaultValue: false,
-            attributedTitleText: NSAttributedString(string: "Inactive tabs expire after 10 seconds"), attributedStatusText: .init(string: "Restart app to see effect"))
+            attributedTitleText: NSAttributedString(string: "Debug: Inactive tabs expire after 10 seconds"), attributedStatusText: .init(string: "Restart app to see effect"))
     }
 
     override var hidden: Bool {

@@ -22,13 +22,8 @@ class NTPNewsViewModel {
             guard let self = self else { return }
             self.items = $0.map({ NewsWrapper(model: $0, promo: nil) })
 
-            if let variant = Goodall.shared.variant(for: .promo) {
-                switch variant {
-                case .control:
-                    self.items.insert(.init(model: nil, promo: Self.treeStore), at: 0)
-                case .test:
-                    self.items.insert(.init(model: nil, promo: Self.treeCard), at: 0)
-                }
+            if let promo = Promo.current(for: .shared, using: .shared) {
+                self.items.insert(.init(model: nil, promo: promo), at: 0)
             }
 
             self.delegate?.reloadView()
@@ -40,26 +35,6 @@ class NTPNewsViewModel {
 
     @objc func localeDidChange() {
         Goodall.shared.refresh(force: true)
-    }
-
-    static var treeStore: Promo {
-        Promo(text: "Buy trees in the Ecosia tree store to delight a friend - or treat yourself",
-              image: "treeStore",
-              icon: "treestore_logo",
-              highlight:nil,
-              description: "Tree store",
-              targetUrl: URL(string: "https://plant.ecosia.org/?utm_source=referral&utm_medium=product&utm_campaign=q4e1_ios_app_ntp")!,
-              trackingName: "ios_tree_store")
-    }
-
-    static var treeCard: Promo {
-        Promo(text: "Plant trees and earn eco-friendly rewards with Treecard",
-              image: "treeCard",
-              icon: "treecard_logo",
-              highlight: "Sponsored" + " ·",
-              description: "Tree card",
-              targetUrl: URL(string: "https://www.treecard.org/ecosia")!,
-              trackingName: "ios_tree_card")
     }
 
 }
@@ -111,7 +86,7 @@ extension NTPNewsViewModel: HomepageViewModelProtocol {
     }
 
     func numberOfItemsInSection() -> Int {
-        let num = Goodall.shared.variant(for: .promo) != nil ? 4 : 3
+        let num = Promo.isEnabled(for: .shared, using: .shared) ? 4 : 3
         return min(num, items.count)
     }
 
@@ -149,7 +124,7 @@ extension NTPNewsViewModel: HomepageSectionHandler {
 
 struct NewsWrapper {
     let model: NewsModel?
-    let promo: Promo?
+    let promo: Core.Promo?
 
     var trackingName: String {
         return model?.trackingName ?? promo!.trackingName
@@ -164,12 +139,34 @@ struct NewsWrapper {
     }
 }
 
-struct Promo {
-    let text: String
-    let image: String
-    let icon: String
-    let highlight: String?
-    let description: String
-    let targetUrl: URL
-    let trackingName: String
+extension Core.Promo {
+    static func current(for user: User, using goodall: Goodall) -> Promo? {
+        guard let variant = Promo.variant(for: .shared, using: .shared) else { return nil }
+        switch variant {
+        case .control:
+            return .treeStore
+        case .test:
+            return .treeCard
+        }
+    }
+
+    static var treeStore: Core.Promo {
+        .init(text: "Buy trees in the Ecosia tree store to delight a friend - or treat yourself",
+              image: "treeStore",
+              icon: "treestore_logo",
+              highlight:nil,
+              description: "Tree store",
+              targetUrl: URL(string: "https://plant.ecosia.org/?utm_source=referral&utm_medium=product&utm_campaign=q4e1_ios_app_ntp")!,
+              trackingName: "ios_tree_store")
+    }
+
+    static var treeCard: Core.Promo {
+        .init(text: "Plant trees and earn eco-friendly rewards with Treecard",
+              image: "treeCard",
+              icon: "treecard_logo",
+              highlight: "Sponsored" + " ·",
+              description: "Tree card",
+              targetUrl: URL(string: "https://www.treecard.org/ecosia")!,
+              trackingName: "ios_tree_card")
+    }
 }

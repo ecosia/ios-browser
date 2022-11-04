@@ -46,16 +46,11 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        news.subscribe(self) { [weak self] in
+        news.subscribeAndReceive(self) { [weak self] in
             self?.items = $0.map { .init(model: $0, promo: nil) }
 
-            if let variant = Goodall.shared.variant(for: .promo) {
-                switch variant {
-                case .control:
-                    self?.items.insert(.init(model: nil, promo: NTPNewsViewModel.treeStore), at: 0)
-                case .test:
-                    self?.items.insert(.init(model: nil, promo: NTPNewsViewModel.treeCard), at: 0)
-                }
+            if let promo = Promo.current(for: .shared, using: .shared) {
+                self?.items.insert(.init(model: nil, promo: promo), at: 0)
             }
 
             self?.collection.reloadData()
