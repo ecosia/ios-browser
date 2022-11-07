@@ -226,35 +226,31 @@ class PageActionMenuCell: UITableViewCell {
         if isNew {
             if badge == nil {
                 let badge = UIView()
-                badge.translatesAutoresizingMaskIntoConstraints = false
                 badge.isUserInteractionEnabled = false
-                badge.layer.cornerRadius = 10
-                contentView.addSubview(badge)
+                accessoryView = badge
                 
                 let badgeLabel = UILabel()
                 badgeLabel.translatesAutoresizingMaskIntoConstraints = false
                 badgeLabel.font = .preferredFont(forTextStyle: .footnote).bold()
                 badgeLabel.adjustsFontForContentSizeCategory = true
                 badgeLabel.text = .localized(.new)
+                badge.addSubview(badgeLabel)
                 
-                badge.addSubviews(badgeLabel)
-                
-                badge.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
-                badge.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -16).isActive = true
-                badge.heightAnchor.constraint(equalToConstant: 20).isActive = true
-                badge.leftAnchor.constraint(equalTo: badgeLabel.leftAnchor, constant: -8).isActive = true
-                
-                badgeLabel.centerYAnchor.constraint(equalTo: badge.centerYAnchor).isActive = true
-                badgeLabel.rightAnchor.constraint(equalTo: badge.rightAnchor, constant: -8).isActive = true
+                badgeLabel.topAnchor.constraint(equalTo: badge.topAnchor, constant: 2.5).isActive = true
+                badgeLabel.leftAnchor.constraint(equalTo: badge.leftAnchor, constant: 8).isActive = true
                 
                 self.badge = badge
                 self.badgeLabel = badgeLabel
             }
             
+            let size = badgeLabel?.sizeThatFits(.init(width: CGFloat.greatestFiniteMagnitude, height: .greatestFiniteMagnitude)) ?? .zero
+            let height = size.height + 5
+            badge?.layer.cornerRadius = height / 2
+            badge?.frame.size = .init(width: size.width + 16, height: height)
             badge?.backgroundColor = .theme.ecosia.primaryBrand
             badgeLabel?.textColor = .theme.ecosia.primaryTextInverted
         } else {
-            badge?.removeFromSuperview()
+            accessoryView = nil
         }
     }
 }
