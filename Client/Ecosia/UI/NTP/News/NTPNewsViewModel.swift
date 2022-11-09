@@ -12,7 +12,7 @@ class NTPNewsViewModel {
     }
 
     private let news = News()
-    private (set) var items = [NewsWrapper]()
+    private (set) var items = [NewsCell.ViewModel]()
     private let images = Images(.init(configuration: .ephemeral))
     private let goodall = Goodall.shared
     weak var delegate: HomepageDataModelDelegate?
@@ -20,7 +20,7 @@ class NTPNewsViewModel {
     init() {
         news.subscribeAndReceive(self) { [weak self] in
             guard let self = self else { return }
-            self.items = $0.map({ NewsWrapper(model: $0, promo: nil) })
+            self.items = $0.map({ NewsCell.ViewModel(model: $0, promo: nil) })
 
             if let promo = Promo.current(for: .shared, using: .shared) {
                 self.items.insert(.init(model: nil, promo: promo), at: 0)
@@ -119,54 +119,5 @@ extension NTPNewsViewModel: HomepageSectionHandler {
         guard index >= 0, items.count > index else { return }
         Analytics.shared.navigationOpenNews(items[index].trackingName)
         homePanelDelegate?.homePanel(didSelectURL: items[index].targetUrl, visitType: .link, isGoogleTopSite: false)
-    }
-}
-
-struct NewsWrapper {
-    let model: NewsModel?
-    let promo: Core.Promo?
-
-    var trackingName: String {
-        return model?.trackingName ?? promo!.trackingName
-    }
-
-    var targetUrl: URL {
-        return model?.targetUrl ?? promo!.targetUrl
-    }
-
-    var text: String {
-        return model?.text ?? promo!.text
-    }
-}
-
-extension Core.Promo {
-    static func current(for user: User, using goodall: Goodall) -> Promo? {
-        guard let variant = Promo.variant(for: .shared, using: .shared) else { return nil }
-        switch variant {
-        case .control:
-            return .treeStore
-        case .test:
-            return .treeCard
-        }
-    }
-
-    static var treeStore: Core.Promo {
-        .init(text: "Buy trees in the Ecosia tree store to delight a friend - or treat yourself",
-              image: "treeStore",
-              icon: "treestore_logo",
-              highlight:nil,
-              description: "Tree store",
-              targetUrl: URL(string: "https://plant.ecosia.org/?utm_source=referral&utm_medium=product&utm_campaign=q4e1_ios_app_ntp")!,
-              trackingName: "ios_tree_store")
-    }
-
-    static var treeCard: Core.Promo {
-        .init(text: "Plant trees and earn eco-friendly rewards with Treecard",
-              image: "treeCard",
-              icon: "treecard_logo",
-              highlight: "Sponsored" + " ·",
-              description: "Tree card",
-              targetUrl: URL(string: "https://www.treecard.org/ecosia")!,
-              trackingName: "ios_tree_card")
     }
 }

@@ -182,7 +182,7 @@ final class NewsCell: UICollectionViewCell, NotificationThemeable, ReusableCell 
         }
     }
     
-    func configure(_ item: NewsWrapper, images: Images, positions: Positions) {
+    func configure(_ item: ViewModel, images: Images, positions: Positions) {
         title.text = item.text.replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression)
 
         if let model = item.model {

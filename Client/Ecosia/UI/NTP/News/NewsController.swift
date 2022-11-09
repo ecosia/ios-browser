@@ -8,7 +8,7 @@ import UIKit
 final class NewsController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource,
     UICollectionViewDelegateFlowLayout, NotificationThemeable {
     private weak var collection: UICollectionView!
-    private var items = [NewsWrapper]()
+    private var items = [NewsCell.ViewModel]()
     private let images = Images(.init(configuration: .ephemeral))
     private let news = News()
     private let identifier = "news"
@@ -16,7 +16,7 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
 
     required init?(coder: NSCoder) { nil }
 
-    init(items: [NewsWrapper], delegate: EcosiaHomeDelegate?) {
+    init(items: [NewsCell.ViewModel], delegate: EcosiaHomeDelegate?) {
         super.init(nibName: nil, bundle: nil)
         self.delegate = delegate
         self.items = items
