@@ -6,11 +6,6 @@ import UIKit
 
 final class EcosiaNavigation: UINavigationController, NotificationThemeable {
 
-    convenience init(delegate: EcosiaHomeDelegate?, referrals: Referrals) {
-        self.init(rootViewController: EcosiaHome(delegate: delegate, referrals: referrals))
-        commonInit()
-    }
-
     override init(rootViewController: UIViewController) {
         super.init(rootViewController: rootViewController)
         commonInit()
