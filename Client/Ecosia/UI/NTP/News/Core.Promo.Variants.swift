@@ -21,7 +21,7 @@ extension Core.Promo {
               image: "treeStore",
               icon: "treestore_logo",
               highlight:nil,
-              description: "Tree store",
+              description: "Tree Store",
               targetUrl: URL(string: "https://plant.ecosia.org/?utm_source=referral&utm_medium=product&utm_campaign=q4e1_ios_app_ntp")!,
               trackingName: "ios_tree_store")
     }
@@ -31,7 +31,7 @@ extension Core.Promo {
               image: "treeCard",
               icon: "treecard_logo",
               highlight: .localized(.sponsored) + " ·",
-              description: "Tree card",
+              description: "Treecard",
               targetUrl: URL(string: "https://www.treecard.org/ecosia")!,
               trackingName: "ios_tree_card")
     }
