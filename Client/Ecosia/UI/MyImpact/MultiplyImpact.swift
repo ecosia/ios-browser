@@ -271,7 +271,7 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
 
         sharingYourLink.leadingAnchor.constraint(equalTo: content.leadingAnchor, constant: 16).isActive = true
         sharingYourLink.trailingAnchor.constraint(equalTo: content.trailingAnchor, constant: -16).isActive = true
-        sharingYourLink.topAnchor.constraint(equalTo: card.bottomAnchor, constant: 36).isActive = true
+        sharingYourLink.topAnchor.constraint(equalTo: card.bottomAnchor, constant: 32).isActive = true
         
         flowTitleStack.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 16).isActive = true
         flowTitleStack.rightAnchor.constraint(equalTo: content.rightAnchor, constant: -16).isActive = true
@@ -307,25 +307,25 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         inviteButton.setTitleColor(.theme.ecosia.primaryTextInverted, for: .highlighted)
         inviteButton.setTitleColor(.theme.ecosia.primaryTextInverted, for: .selected)
         learnMoreButton?.setTitleColor(.theme.ecosia.primaryBrand, for: .normal)
-        yourInvites?.textColor = .theme.ecosia.primaryText
-
         waves?.tintColor = .theme.ecosia.modalBackground
         topBackground?.backgroundColor = .theme.ecosia.modalHeader
-
         subtitle?.textColor = .Dark.Text.primary
-        card?.backgroundColor = .theme.ecosia.impactMultiplyCardBackground
-        cardIcon?.tintColor = .theme.ecosia.primaryBrand
-        cardTitle?.textColor = .theme.ecosia.primaryText
-        cardTreeCount?.textColor = .theme.ecosia.primaryText
-        cardTreeIcon?.tintColor = .theme.ecosia.primaryBrand
-        flowTitle?.textColor = .theme.ecosia.primaryText
 
-        flowBackground?.backgroundColor = .theme.ecosia.impactMultiplyCardBackground
-
-        firstStep?.applyTheme()
-        secondStep?.applyTheme()
-        thirdStep?.applyTheme()
-        fourthStep?.applyTheme()
+        [yourInvites, sharingYourLink, flowTitle, cardTitle, cardTreeCount].forEach {
+            $0?.textColor = .theme.ecosia.primaryText
+        }
+        
+        [card, flowBackground].forEach {
+            $0?.backgroundColor = .theme.ecosia.impactMultiplyCardBackground
+        }
+        
+        [cardIcon, cardTreeIcon].forEach {
+            $0?.tintColor = .theme.ecosia.primaryBrand
+        }
+        
+        [firstStep, secondStep, thirdStep, fourthStep].forEach {
+            $0?.applyTheme()
+        }
 
         updateBarAppearance()
     }
