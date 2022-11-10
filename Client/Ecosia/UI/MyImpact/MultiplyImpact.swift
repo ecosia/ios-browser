@@ -16,6 +16,7 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
     private weak var cardTreeIcon: UIImageView?
     private weak var inviteButton: EcosiaPrimaryButton!
     private weak var yourInvites: UILabel?
+    private weak var sharingYourLink: UILabel?
 
     private weak var learnMoreButton: UIButton?
 
@@ -82,13 +83,10 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         self.waves = waves
 
         let yourInvites = UILabel()
-        yourInvites.translatesAutoresizingMaskIntoConstraints = false
         yourInvites.text = .localized(.yourInvites)
-        yourInvites.font = .preferredFont(forTextStyle: .headline).bold()
-        yourInvites.adjustsFontForContentSizeCategory = true
         content.addSubview(yourInvites)
         self.yourInvites = yourInvites
-
+        
         let card = UIControl()
         card.translatesAutoresizingMaskIntoConstraints = false
         card.layer.cornerRadius = 10
@@ -146,6 +144,11 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         card.addSubview(inviteFriends)
         self.inviteButton = inviteFriends
 
+        let sharingYourLink = UILabel()
+        sharingYourLink.text = "Sharing your link"
+        content.addSubview(sharingYourLink)
+        self.sharingYourLink = sharingYourLink
+        
         let flowTitleStack = UIStackView()
         flowTitleStack.translatesAutoresizingMaskIntoConstraints = false
         flowTitleStack.alignment = .fill
@@ -153,11 +156,7 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         content.addSubview(flowTitleStack)
 
         let flowTitle = UILabel()
-        flowTitle.translatesAutoresizingMaskIntoConstraints = false
         flowTitle.text = .localized(.howItWorks)
-        flowTitle.font = .preferredFont(forTextStyle: .headline).bold()
-        flowTitle.adjustsFontForContentSizeCategory = true
-        flowTitle.setContentHuggingPriority(.defaultLow, for: .horizontal)
         flowTitleStack.addArrangedSubview(flowTitle)
         self.flowTitle = flowTitle
 
@@ -199,6 +198,13 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         let fourthStep = MultiplyImpactStep(title: .localized(.eachOfYouHelpsPlant), subtitle: .localized(.whenAFriendUses), image: "myImpact")
         flowStack.addArrangedSubview(fourthStep)
         self.fourthStep = fourthStep
+        
+        [yourInvites, sharingYourLink, flowTitle].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            $0.font = .preferredFont(forTextStyle: .headline).bold()
+            $0.adjustsFontForContentSizeCategory = true
+            $0.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        }
         
         scroll.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
         scroll.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor).isActive = true
@@ -263,6 +269,10 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         inviteFriends.topAnchor.constraint(equalTo: cardIcon.bottomAnchor, constant: 20).isActive = true
         inviteFriends.bottomAnchor.constraint(equalTo: card.bottomAnchor, constant: -16).isActive = true
 
+        sharingYourLink.leadingAnchor.constraint(equalTo: content.leadingAnchor, constant: 16).isActive = true
+        sharingYourLink.trailingAnchor.constraint(equalTo: content.trailingAnchor, constant: -16).isActive = true
+        sharingYourLink.topAnchor.constraint(equalTo: card.bottomAnchor, constant: 36).isActive = true
+        
         flowTitleStack.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 16).isActive = true
         flowTitleStack.rightAnchor.constraint(equalTo: content.rightAnchor, constant: -16).isActive = true
         flowTitleStack.topAnchor.constraint(equalTo: card.bottomAnchor, constant: 36).isActive = true
