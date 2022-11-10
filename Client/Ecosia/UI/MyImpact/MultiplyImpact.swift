@@ -9,17 +9,19 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
     private weak var subtitle: UILabel?
     private weak var topBackground: UIView?
     private weak var waves: UIImageView?
-    private weak var card: UIControl?
+    private weak var card: UIView?
     private weak var cardIcon: UIImageView?
     private weak var cardTitle: UILabel?
     private weak var cardTreeCount: UILabel?
     private weak var cardTreeIcon: UIImageView?
     private weak var inviteButton: EcosiaPrimaryButton!
     private weak var yourInvites: UILabel?
-    private weak var sharingYourLink: UILabel?
-
+    
     private weak var learnMoreButton: UIButton?
 
+    private weak var sharingYourLink: UILabel?
+    private weak var sharing: UIView?
+    
     private weak var flowTitle: UILabel?
     private weak var flowBackground: UIView?
     private weak var flowStack: UIStackView?
@@ -87,14 +89,10 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         content.addSubview(yourInvites)
         self.yourInvites = yourInvites
         
-        let card = UIControl()
+        let card = UIView()
+        card.isUserInteractionEnabled = false
         card.translatesAutoresizingMaskIntoConstraints = false
         card.layer.cornerRadius = 10
-        card.addTarget(self, action: #selector(highlight), for: .touchDown)
-        card.addTarget(self, action: #selector(clear), for: .touchUpInside)
-        card.addTarget(self, action: #selector(clear), for: .touchUpOutside)
-        card.addTarget(self, action: #selector(clear), for: .touchCancel)
-        card.addTarget(self, action: #selector(inviteFriends), for: .touchUpInside)
         content.addSubview(card)
         self.card = card
         
@@ -144,6 +142,11 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         card.addSubview(inviteFriends)
         self.inviteButton = inviteFriends
 
+        let sharing = UIView()
+        self.sharing = sharing
+        
+        
+        
         let sharingYourLink = UILabel()
         sharingYourLink.text = "Sharing your link"
         content.addSubview(sharingYourLink)
@@ -171,9 +174,6 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         self.learnMoreButton = learnMoreButton
 
         let flowBackground = UIView()
-        flowBackground.translatesAutoresizingMaskIntoConstraints = false
-        flowBackground.layer.cornerRadius = 10
-        content.addSubview(flowBackground)
         self.flowBackground = flowBackground
 
         let flowStack = UIStackView()
@@ -204,6 +204,15 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
             $0.font = .preferredFont(forTextStyle: .headline).bold()
             $0.adjustsFontForContentSizeCategory = true
             $0.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        }
+        
+        [card, sharing, flowBackground].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            $0.layer.cornerRadius = 10
+            content.addSubview($0)
+            
+            $0.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 16).isActive = true
+            $0.rightAnchor.constraint(equalTo: content.rightAnchor, constant: -16).isActive = true
         }
         
         scroll.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
@@ -247,8 +256,6 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         yourInvites.topAnchor.constraint(equalTo: waves.bottomAnchor, constant: 16).isActive = true
 
         card.topAnchor.constraint(equalTo: yourInvites.bottomAnchor, constant: 16).isActive = true
-        card.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 16).isActive = true
-        card.rightAnchor.constraint(equalTo: content.rightAnchor, constant: -16).isActive = true
 
         cardIcon.topAnchor.constraint(equalTo: card.topAnchor, constant: 17).isActive = true
         cardIcon.leftAnchor.constraint(equalTo: card.leftAnchor, constant: 16).isActive = true
@@ -273,13 +280,13 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         sharingYourLink.trailingAnchor.constraint(equalTo: content.trailingAnchor, constant: -16).isActive = true
         sharingYourLink.topAnchor.constraint(equalTo: card.bottomAnchor, constant: 32).isActive = true
         
+        sharing.topAnchor.constraint(equalTo: sharingYourLink.bottomAnchor, constant: 16).isActive = true
+        
         flowTitleStack.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 16).isActive = true
         flowTitleStack.rightAnchor.constraint(equalTo: content.rightAnchor, constant: -16).isActive = true
-        flowTitleStack.topAnchor.constraint(equalTo: card.bottomAnchor, constant: 36).isActive = true
+        flowTitleStack.topAnchor.constraint(equalTo: sharing.bottomAnchor, constant: 36).isActive = true
 
         flowBackground.topAnchor.constraint(equalTo: flowTitleStack.bottomAnchor,constant: 16).isActive = true
-        flowBackground.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 16).isActive = true
-        flowBackground.rightAnchor.constraint(equalTo: content.rightAnchor, constant: -16).isActive = true
         flowBackground.bottomAnchor.constraint(equalTo: content.bottomAnchor, constant: -20).isActive = true
 
         flowStack.leftAnchor.constraint(equalTo: flowBackground.leftAnchor, constant: 16).isActive = true
@@ -315,7 +322,7 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
             $0?.textColor = .theme.ecosia.primaryText
         }
         
-        [card, flowBackground].forEach {
+        [card, sharing, flowBackground].forEach {
             $0?.backgroundColor = .theme.ecosia.impactMultiplyCardBackground
         }
         
@@ -345,7 +352,6 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
     
     @objc private func learnMore() {
         delegate?.ecosiaHome(didSelectURL: URL(string: "https://ecosia.helpscoutdocs.com/article/358-refer-a-friend-ios-only")!)
-        clear()
         dismiss(animated: true)
         Analytics.shared.inviteLearnMore()
     }
@@ -386,14 +392,6 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
             self?.inviteFriends()
         })
         present(alert, animated: true)
-    }
-
-    @objc private func highlight() {
-        card?.backgroundColor = .theme.ecosia.secondarySelectedBackground
-    }
-    
-    @objc private func clear() {
-        card?.backgroundColor = .theme.ecosia.impactMultiplyCardBackground
     }
 
     @objc private func doneTapped() {
