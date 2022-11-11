@@ -52,11 +52,10 @@ class MetadataParserHelper: TabEventHandler {
             NotificationCenter.default.post(name: .OnPageMetadataFetched, object: nil, userInfo: userInfo)
         }
 
-        if url.normalizedHost?.hasPrefix("ecosia") == true {
+        // Ecosia: read local storage value for cookie consent
+        if url.normalizedHost?.hasPrefix("ecosia.org") == true {
             webView.evaluateJavascriptInDefaultContentWorld("localStorage.getItem(\"\(Cookie.consentKey)\")") { result, error in
-                guard error == nil, let consentValue = result as? String else {
-                    return
-                }
+                guard error == nil, let consentValue = result as? String else { return }
                 User.shared.cookieConsentValue = consentValue
             }
         }
