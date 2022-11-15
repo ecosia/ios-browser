@@ -1138,11 +1138,11 @@ class BrowserViewController: UIViewController {
         }
 
         let shareItem = ShareItem(url: url, title: title, favicon: favicon)
-        // Add new mobile bookmark at the top of the list
+        // Ecosia: Add new mobile bookmark at the end of the list
         profile.places.createBookmark(parentGUID: BookmarkRoots.MobileFolderGUID,
                                       url: shareItem.url,
                                       title: shareItem.title,
-                                      position: 0)
+                                      position: nil)
 
         var userData = [QuickActions.TabURLKey: shareItem.url]
         if let title = shareItem.title {

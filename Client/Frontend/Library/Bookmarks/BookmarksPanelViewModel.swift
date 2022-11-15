@@ -61,16 +61,6 @@ class BookmarksPanelViewModel {
         flashLastRowOnNextReload = true
     }
 
-    func moveRow(at sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-        guard let bookmarkNode = bookmarkNodes[safe: sourceIndexPath.row] else {
-            return
-        }
-
-        _ = profile.places.updateBookmarkNode(guid: bookmarkNode.guid, position: UInt32(destinationIndexPath.row))
-
-        bookmarkNodes.remove(at: sourceIndexPath.row)
-        bookmarkNodes.insert(bookmarkNode, at: destinationIndexPath.row)
-    }
 
     // MARK: - Private
 
