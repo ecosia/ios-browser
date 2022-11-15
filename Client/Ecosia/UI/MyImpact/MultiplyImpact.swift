@@ -4,6 +4,8 @@
 
 import UIKit
 import Core
+import UniformTypeIdentifiers
+import MobileCoreServices
 
 final class MultiplyImpact: UIViewController, NotificationThemeable {
     private weak var subtitle: UILabel?
@@ -149,13 +151,18 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         let copyControl = UIControl()
         copyControl.layer.cornerRadius = 10
         copyControl.layer.borderWidth = 1
+        copyControl.addTarget(self, action: #selector(copyCode), for: .touchUpInside)
+        copyControl.addTarget(self, action: #selector(hover), for: .touchDown)
+        copyControl.addTarget(self, action: #selector(unhover), for: .touchUpInside)
+        copyControl.addTarget(self, action: #selector(unhover), for: .touchUpOutside)
+        copyControl.addTarget(self, action: #selector(unhover), for: .touchCancel)
         self.copyControl = copyControl
         
         let copyLink = UILabel()
         copyLink.translatesAutoresizingMaskIntoConstraints = false
         copyLink.adjustsFontForContentSizeCategory = true
         copyLink.font = .preferredFont(forTextStyle: .body)
-        copyLink.text = "ecosia://"
+        copyLink.text = inviteLink ?? "ecosia://invite/"
         copyLink.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         copyLink.numberOfLines = 1
         copyControl.addSubview(copyLink)
@@ -434,6 +441,27 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         delegate?.ecosiaHome(didSelectURL: URL(string: "https://ecosia.helpscoutdocs.com/article/358-refer-a-friend-ios-only")!)
         dismiss(animated: true)
         Analytics.shared.inviteLearnMore()
+    }
+    
+    @objc private func hover() {
+        copyControl?.alpha = 0.3
+    }
+    
+    @objc private func unhover() {
+        copyControl?.alpha = 1
+    }
+    
+    @objc private func copyCode() {
+        unhover()
+        guard let message = inviteMessage else { return }
+        
+        if #available(iOS 14.0, *) {
+            UIPasteboard.general.setValue(message, forPasteboardType: UTType.plainText.identifier)
+        } else {
+            UIPasteboard.general.setValue(message, forPasteboardType: kUTTypePlainText as String)
+        }
+        
+        copyText?.text = "Copied!"
     }
     
     @objc private func inviteFriends() {
