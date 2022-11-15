@@ -63,7 +63,7 @@ extension HomepageViewController: NTPTooltipDelegate {
     }
 
     func reloadTooltip() {
-        collectionView.collectionViewLayout.invalidateLayout()
+        reloadView()
     }
 }
 
