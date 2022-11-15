@@ -14,13 +14,14 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
     private weak var cardTitle: UILabel?
     private weak var cardTreeCount: UILabel?
     private weak var cardTreeIcon: UIImageView?
-    private weak var inviteButton: EcosiaPrimaryButton!
     private weak var yourInvites: UILabel?
     
-    private weak var learnMoreButton: UIButton?
-
     private weak var sharingYourLink: UILabel?
     private weak var sharing: UIView?
+    private weak var copyControl: UIControl?
+    private weak var inviteButton: EcosiaPrimaryButton!
+    
+    private weak var learnMoreButton: UIButton?
     
     private weak var flowTitle: UILabel?
     private weak var flowBackground: UIView?
@@ -132,20 +133,21 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         card.addSubview(cardTreeIcon)
         self.cardTreeIcon = cardTreeIcon
 
+        let sharing = UIView()
+        self.sharing = sharing
+        
+        let copyControl = UIControl()
+        copyControl.layer.cornerRadius = 10
+        copyControl.layer.borderWidth = 1
+        self.copyControl = copyControl
+        
         let inviteFriends = EcosiaPrimaryButton(type: .custom)
-        inviteFriends.translatesAutoresizingMaskIntoConstraints = false
         inviteFriends.setTitle(.localized(.inviteFriends), for: [])
         inviteFriends.titleLabel!.font = .preferredFont(forTextStyle: .callout)
         inviteFriends.titleLabel!.adjustsFontForContentSizeCategory = true
         inviteFriends.layer.cornerRadius = 22
         inviteFriends.addTarget(self, action: #selector(self.inviteFriends), for: .touchUpInside)
-        card.addSubview(inviteFriends)
         self.inviteButton = inviteFriends
-
-        let sharing = UIView()
-        self.sharing = sharing
-        
-        
         
         let sharingYourLink = UILabel()
         sharingYourLink.text = "Sharing your link"
@@ -215,6 +217,15 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
             $0.rightAnchor.constraint(equalTo: content.rightAnchor, constant: -16).isActive = true
         }
         
+        [copyControl, inviteFriends].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            sharing.addSubview($0)
+            
+            $0.leftAnchor.constraint(equalTo: sharing.leftAnchor, constant: 16).isActive = true
+            $0.rightAnchor.constraint(equalTo: sharing.rightAnchor, constant: -16).isActive = true
+            $0.heightAnchor.constraint(equalToConstant: 44).isActive = true
+        }
+        
         scroll.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
         scroll.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor).isActive = true
         scroll.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor).isActive = true
@@ -256,6 +267,7 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         yourInvites.topAnchor.constraint(equalTo: waves.bottomAnchor, constant: 16).isActive = true
 
         card.topAnchor.constraint(equalTo: yourInvites.bottomAnchor, constant: 16).isActive = true
+        card.bottomAnchor.constraint(equalTo: cardIcon.bottomAnchor, constant: 17).isActive = true
 
         cardIcon.topAnchor.constraint(equalTo: card.topAnchor, constant: 17).isActive = true
         cardIcon.leftAnchor.constraint(equalTo: card.leftAnchor, constant: 16).isActive = true
@@ -270,17 +282,16 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         cardTreeIcon.rightAnchor.constraint(equalTo: card.rightAnchor, constant: -16).isActive = true
         cardTreeIcon.centerYAnchor.constraint(equalTo: cardTreeCount.centerYAnchor).isActive = true
 
-        inviteFriends.leftAnchor.constraint(equalTo: card.leftAnchor, constant: 16).isActive = true
-        inviteFriends.rightAnchor.constraint(equalTo: card.rightAnchor, constant: -16).isActive = true
-        inviteFriends.heightAnchor.constraint(equalToConstant: 44).isActive = true
-        inviteFriends.topAnchor.constraint(equalTo: cardIcon.bottomAnchor, constant: 20).isActive = true
-        inviteFriends.bottomAnchor.constraint(equalTo: card.bottomAnchor, constant: -16).isActive = true
-
         sharingYourLink.leadingAnchor.constraint(equalTo: content.leadingAnchor, constant: 16).isActive = true
         sharingYourLink.trailingAnchor.constraint(equalTo: content.trailingAnchor, constant: -16).isActive = true
         sharingYourLink.topAnchor.constraint(equalTo: card.bottomAnchor, constant: 32).isActive = true
         
         sharing.topAnchor.constraint(equalTo: sharingYourLink.bottomAnchor, constant: 16).isActive = true
+        
+        copyControl.topAnchor.constraint(equalTo: sharing.topAnchor, constant: 16).isActive = true
+        
+        inviteFriends.topAnchor.constraint(equalTo: copyControl.bottomAnchor, constant: 20).isActive = true
+        inviteFriends.bottomAnchor.constraint(equalTo: sharing.bottomAnchor, constant: -16).isActive = true
         
         flowTitleStack.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 16).isActive = true
         flowTitleStack.rightAnchor.constraint(equalTo: content.rightAnchor, constant: -16).isActive = true
@@ -317,6 +328,8 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         waves?.tintColor = .theme.ecosia.modalBackground
         topBackground?.backgroundColor = .theme.ecosia.modalHeader
         subtitle?.textColor = .Dark.Text.primary
+        copyControl?.backgroundColor = .theme.ecosia.secondaryBackground
+        copyControl?.layer.borderColor = UIColor.theme.ecosia.border.cgColor
 
         [yourInvites, sharingYourLink, flowTitle, cardTitle, cardTreeCount].forEach {
             $0?.textColor = .theme.ecosia.primaryText
