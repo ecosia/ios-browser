@@ -20,7 +20,7 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
     private weak var sharing: UIView?
     private weak var copyControl: UIControl?
     private weak var copyLink: UILabel?
-    private weak var copyButton: UIButton?
+    private weak var copyText: UILabel?
     private weak var copyDividerLeft: UIView?
     private weak var copyDividerRight: UIView?
     private weak var moreSharingMethods: UILabel?
@@ -161,13 +161,13 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         copyControl.addSubview(copyLink)
         self.copyLink = copyLink
         
-        let copyButton = UIButton()
-        copyButton.translatesAutoresizingMaskIntoConstraints = false
-        copyButton.setTitle("Copy", for: .normal)
-        copyButton.titleLabel?.font = .preferredFont(forTextStyle: .body)
-        copyButton.titleLabel?.adjustsFontForContentSizeCategory = true
-        copyControl.addSubview(copyButton)
-        self.copyButton = copyButton
+        let copyText = UILabel()
+        copyText.translatesAutoresizingMaskIntoConstraints = false
+        copyText.text = "Copy"
+        copyText.font = .preferredFont(forTextStyle: .body)
+        copyText.adjustsFontForContentSizeCategory = true
+        copyControl.addSubview(copyText)
+        self.copyText = copyText
         
         let copyDividerLeft = UIView()
         self.copyDividerLeft = copyDividerLeft
@@ -338,10 +338,10 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         
         copyLink.centerYAnchor.constraint(equalTo: copyControl.centerYAnchor).isActive = true
         copyLink.leftAnchor.constraint(equalTo: copyControl.leftAnchor, constant: 16).isActive = true
-        copyLink.rightAnchor.constraint(lessThanOrEqualTo: copyButton.leftAnchor, constant: -10).isActive = true
+        copyLink.rightAnchor.constraint(lessThanOrEqualTo: copyText.leftAnchor, constant: -10).isActive = true
         
-        copyButton.centerYAnchor.constraint(equalTo: copyControl.centerYAnchor).isActive = true
-        copyButton.rightAnchor.constraint(equalTo: copyControl.rightAnchor, constant: -10).isActive = true
+        copyText.centerYAnchor.constraint(equalTo: copyControl.centerYAnchor).isActive = true
+        copyText.rightAnchor.constraint(equalTo: copyControl.rightAnchor, constant: -12).isActive = true
         
         copyDividerLeft.leftAnchor.constraint(equalTo: copyControl.leftAnchor).isActive = true
         copyDividerLeft.rightAnchor.constraint(equalTo: moreSharingMethods.leftAnchor, constant: -10).isActive = true
@@ -392,7 +392,7 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         copyControl?.backgroundColor = .theme.ecosia.secondaryBackground
         copyControl?.layer.borderColor = UIColor.theme.ecosia.border.cgColor
         moreSharingMethods?.textColor = .theme.ecosia.secondaryText
-        copyButton?.setTitleColor(.theme.ecosia.primaryBrand, for: .normal)
+        copyText?.textColor = .theme.ecosia.primaryBrand
         
         [yourInvites, sharingYourLink, flowTitle, cardTitle, cardTreeCount, copyLink].forEach {
             $0?.textColor = .theme.ecosia.primaryText
