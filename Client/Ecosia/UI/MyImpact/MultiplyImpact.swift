@@ -19,6 +19,8 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
     private weak var sharingYourLink: UILabel?
     private weak var sharing: UIView?
     private weak var copyControl: UIControl?
+    private weak var copyDividerLeft: UIView?
+    private weak var copyDividerRight: UIView?
     private weak var inviteButton: EcosiaPrimaryButton!
     
     private weak var learnMoreButton: UIButton?
@@ -141,6 +143,12 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         copyControl.layer.borderWidth = 1
         self.copyControl = copyControl
         
+        let copyDividerLeft = UIView()
+        self.copyDividerLeft = copyDividerLeft
+        
+        let copyDividerRight = UIView()
+        self.copyDividerRight = copyDividerRight
+        
         let inviteFriends = EcosiaPrimaryButton(type: .custom)
         inviteFriends.setTitle(.localized(.inviteFriends), for: [])
         inviteFriends.titleLabel!.font = .preferredFont(forTextStyle: .callout)
@@ -226,6 +234,15 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
             $0.heightAnchor.constraint(equalToConstant: 44).isActive = true
         }
         
+        [copyDividerLeft, copyDividerRight].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            $0.isUserInteractionEnabled = false
+            sharing.addSubview($0)
+            
+            $0.topAnchor.constraint(equalTo: copyControl.bottomAnchor, constant: 21).isActive = true
+            $0.heightAnchor.constraint(equalToConstant: 1).isActive = true
+        }
+        
         scroll.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
         scroll.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor).isActive = true
         scroll.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor).isActive = true
@@ -290,7 +307,10 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         
         copyControl.topAnchor.constraint(equalTo: sharing.topAnchor, constant: 16).isActive = true
         
-        inviteFriends.topAnchor.constraint(equalTo: copyControl.bottomAnchor, constant: 20).isActive = true
+        copyDividerLeft.leftAnchor.constraint(equalTo: copyControl.leftAnchor).isActive = true
+        copyDividerRight.rightAnchor.constraint(equalTo: copyControl.rightAnchor).isActive = true
+        
+        inviteFriends.topAnchor.constraint(equalTo: copyDividerLeft.bottomAnchor, constant: 21).isActive = true
         inviteFriends.bottomAnchor.constraint(equalTo: sharing.bottomAnchor, constant: -16).isActive = true
         
         flowTitleStack.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 16).isActive = true
@@ -330,7 +350,7 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         subtitle?.textColor = .Dark.Text.primary
         copyControl?.backgroundColor = .theme.ecosia.secondaryBackground
         copyControl?.layer.borderColor = UIColor.theme.ecosia.border.cgColor
-
+        
         [yourInvites, sharingYourLink, flowTitle, cardTitle, cardTreeCount].forEach {
             $0?.textColor = .theme.ecosia.primaryText
         }
@@ -346,7 +366,11 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         [firstStep, secondStep, thirdStep, fourthStep].forEach {
             $0?.applyTheme()
         }
-
+        
+        [copyDividerLeft, copyDividerRight].forEach {
+            $0.backgroundColor = .theme.ecosia.border
+        }
+        
         updateBarAppearance()
     }
 
