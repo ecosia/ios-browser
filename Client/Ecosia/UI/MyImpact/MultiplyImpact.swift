@@ -19,6 +19,8 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
     private weak var sharingYourLink: UILabel?
     private weak var sharing: UIView?
     private weak var copyControl: UIControl?
+    private weak var copyLink: UILabel?
+    private weak var copyButton: UIButton?
     private weak var copyDividerLeft: UIView?
     private weak var copyDividerRight: UIView?
     private weak var moreSharingMethods: UILabel?
@@ -136,6 +138,11 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         card.addSubview(cardTreeIcon)
         self.cardTreeIcon = cardTreeIcon
 
+        let sharingYourLink = UILabel()
+        sharingYourLink.text = "Sharing your link"
+        content.addSubview(sharingYourLink)
+        self.sharingYourLink = sharingYourLink
+        
         let sharing = UIView()
         self.sharing = sharing
         
@@ -143,6 +150,24 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         copyControl.layer.cornerRadius = 10
         copyControl.layer.borderWidth = 1
         self.copyControl = copyControl
+        
+        let copyLink = UILabel()
+        copyLink.translatesAutoresizingMaskIntoConstraints = false
+        copyLink.adjustsFontForContentSizeCategory = true
+        copyLink.font = .preferredFont(forTextStyle: .body)
+        copyLink.text = "ecosia://"
+        copyLink.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        copyLink.numberOfLines = 1
+        copyControl.addSubview(copyLink)
+        self.copyLink = copyLink
+        
+        let copyButton = UIButton()
+        copyButton.translatesAutoresizingMaskIntoConstraints = false
+        copyButton.setTitle("Copy", for: .normal)
+        copyButton.titleLabel?.font = .preferredFont(forTextStyle: .body)
+        copyButton.titleLabel?.adjustsFontForContentSizeCategory = true
+        copyControl.addSubview(copyButton)
+        self.copyButton = copyButton
         
         let copyDividerLeft = UIView()
         self.copyDividerLeft = copyDividerLeft
@@ -165,11 +190,6 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         inviteFriends.layer.cornerRadius = 22
         inviteFriends.addTarget(self, action: #selector(self.inviteFriends), for: .touchUpInside)
         self.inviteButton = inviteFriends
-        
-        let sharingYourLink = UILabel()
-        sharingYourLink.text = "Sharing your link"
-        content.addSubview(sharingYourLink)
-        self.sharingYourLink = sharingYourLink
         
         let flowTitleStack = UIStackView()
         flowTitleStack.translatesAutoresizingMaskIntoConstraints = false
@@ -316,6 +336,13 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         
         copyControl.topAnchor.constraint(equalTo: sharing.topAnchor, constant: 16).isActive = true
         
+        copyLink.centerYAnchor.constraint(equalTo: copyControl.centerYAnchor).isActive = true
+        copyLink.leftAnchor.constraint(equalTo: copyControl.leftAnchor, constant: 16).isActive = true
+        copyLink.rightAnchor.constraint(lessThanOrEqualTo: copyButton.leftAnchor, constant: -10).isActive = true
+        
+        copyButton.centerYAnchor.constraint(equalTo: copyControl.centerYAnchor).isActive = true
+        copyButton.rightAnchor.constraint(equalTo: copyControl.rightAnchor, constant: -10).isActive = true
+        
         copyDividerLeft.leftAnchor.constraint(equalTo: copyControl.leftAnchor).isActive = true
         copyDividerLeft.rightAnchor.constraint(equalTo: moreSharingMethods.leftAnchor, constant: -10).isActive = true
         copyDividerRight.rightAnchor.constraint(equalTo: copyControl.rightAnchor).isActive = true
@@ -365,8 +392,9 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         copyControl?.backgroundColor = .theme.ecosia.secondaryBackground
         copyControl?.layer.borderColor = UIColor.theme.ecosia.border.cgColor
         moreSharingMethods?.textColor = .theme.ecosia.secondaryText
+        copyButton?.setTitleColor(.theme.ecosia.primaryBrand, for: .normal)
         
-        [yourInvites, sharingYourLink, flowTitle, cardTitle, cardTreeCount].forEach {
+        [yourInvites, sharingYourLink, flowTitle, cardTitle, cardTreeCount, copyLink].forEach {
             $0?.textColor = .theme.ecosia.primaryText
         }
         
