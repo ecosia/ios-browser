@@ -172,5 +172,6 @@ extension String {
         case buyTrees = "Buy trees in the Ecosia tree store to delight a friend - or treat yourself"
         case plantTreesAndEarn = "Plant trees and earn eco-friendly rewards with Treecard"
         case sponsored = "Sponsored"
+        case inviteYourFriendsToCheck = "Invite your friends to check out Ecosia. When they join, you both plant an extra tree."
     }
 }

@@ -74,7 +74,7 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         let subtitle = UILabel()
         subtitle.translatesAutoresizingMaskIntoConstraints = false
         subtitle.numberOfLines = 0
-        subtitle.text = .localized(.helpYourFriendsBecome)
+        subtitle.text = .localized(.inviteYourFriendsToCheck)
         subtitle.font = .preferredFont(forTextStyle: .body)
         subtitle.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         subtitle.adjustsFontForContentSizeCategory = true
