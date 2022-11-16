@@ -174,5 +174,9 @@ extension String {
         case plantTreesAndEarn = "Plant trees and earn eco-friendly rewards with Treecard"
         case sponsored = "Sponsored"
         case inviteYourFriendsToCheck = "Invite your friends to check out Ecosia. When they join, you both plant an extra tree."
+        case sharingYourLink = "Sharing your link"
+        case copy = "Copy"
+        case moreSharingMethods = "More sharing methods"
+        case copied = "Copied!"
     }
 }

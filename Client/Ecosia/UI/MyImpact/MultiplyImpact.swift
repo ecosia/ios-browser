@@ -141,7 +141,7 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         self.cardTreeIcon = cardTreeIcon
 
         let sharingYourLink = UILabel()
-        sharingYourLink.text = "Sharing your link"
+        sharingYourLink.text = .localized(.sharingYourLink)
         content.addSubview(sharingYourLink)
         self.sharingYourLink = sharingYourLink
         
@@ -170,7 +170,7 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         
         let copyText = UILabel()
         copyText.translatesAutoresizingMaskIntoConstraints = false
-        copyText.text = "Copy"
+        copyText.text = .localized(.copy)
         copyText.font = .preferredFont(forTextStyle: .body)
         copyText.adjustsFontForContentSizeCategory = true
         copyControl.addSubview(copyText)
@@ -186,7 +186,7 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         moreSharingMethods.translatesAutoresizingMaskIntoConstraints = false
         moreSharingMethods.adjustsFontForContentSizeCategory = true
         moreSharingMethods.font = .systemFont(ofSize: UIFont.preferredFont(forTextStyle: .footnote).pointSize, weight: .semibold)
-        moreSharingMethods.text = "More sharing methods"
+        moreSharingMethods.text = .localized(.moreSharingMethods)
         sharing.addSubview(moreSharingMethods)
         self.moreSharingMethods = moreSharingMethods
         
@@ -461,7 +461,7 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
             UIPasteboard.general.setValue(message, forPasteboardType: kUTTypePlainText as String)
         }
         
-        copyText?.text = "Copied!"
+        copyText?.text = .localized(.copied)
     }
     
     @objc private func inviteFriends() {
