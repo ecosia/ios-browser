@@ -23,7 +23,7 @@ extension Core.Promo {
               highlight:nil,
               description: "Tree Store",
               targetUrl: URL(string: "https://plant.ecosia.org/?utm_source=referral&utm_medium=product&utm_campaign=q4e1_ios_app_ntp")!,
-              trackingName: "treestore")
+              trackingName: Analytics.Label.Navigation.treestore.rawValue)
     }
 
     static var treeCard: Core.Promo {
@@ -33,6 +33,6 @@ extension Core.Promo {
               highlight: .localized(.sponsored) + " ·",
               description: "Treecard",
               targetUrl: URL(string: "https://www.treecard.org/ecosia")!,
-              trackingName: "treecard")
+              trackingName: Analytics.Label.Navigation.treecard.rawValue)
     }
 }
