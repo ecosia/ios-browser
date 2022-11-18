@@ -27,7 +27,7 @@ class NTPNewsViewModel {
 
                 // filter out duplicate tree store item
                 if Promo.variant(for: .shared, using: .shared) == .control {
-                    items = Self.filter(items: items, excluding: "darkmode")
+                    items = Self.filter(items: items, excluding: "TreeStoreBFCM22")
                 }
             }
 
