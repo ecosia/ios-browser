@@ -579,6 +579,12 @@ extension BrowserViewController: WKNavigationDelegate {
             return
         }
 
+        // Ecosia: intercept URL to impact
+        if url.absoluteString.hasPrefix(Environment.current.search.absoluteString), url.absoluteString.hasSuffix(YourImpact.link), navigationAction.navigationType == .linkActivated {
+            presentYourImpact()
+            decisionHandler(.cancel)
+        }
+
         // This is the normal case, opening a http or https url, which we handle by loading them in this WKWebView. We
         // always allow this. Additionally, data URIs are also handled just like normal web pages.
 
