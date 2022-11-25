@@ -479,10 +479,7 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
     }
 
     private func share(message: String) {
-        let subject = "Plant trees with me on Ecosia"
-        let share = UIActivityViewController(activityItems: [subject,
-                                                             SharingMessage(subject: subject,
-                                                                            message: message)],
+        let share = UIActivityViewController(activityItems: [SharingMessage(message: message)],
                                              applicationActivities: nil)
         share.popoverPresentationController?.sourceView = inviteButton
         share.completionWithItemsHandler = { _, completed, _, _ in
@@ -533,11 +530,9 @@ https://apps.apple.com/app/apple-store/id670881887?pt=2188920&ct=referrals&mt=8
 }
 
 private final class SharingMessage: NSObject, UIActivityItemSource {
-    private let subject: String
     private let message: String
 
-    init(subject: String, message: String) {
-        self.subject = subject
+    init(message: String) {
         self.message = message
         super.init()
     }
@@ -551,6 +546,6 @@ private final class SharingMessage: NSObject, UIActivityItemSource {
     }
 
     func activityViewController(_: UIActivityViewController, subjectForActivityType: UIActivity.ActivityType?) -> String {
-        subject
+        "Plant trees with me on Ecosia"
     }
 }
