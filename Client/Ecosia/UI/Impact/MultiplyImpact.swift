@@ -527,3 +527,24 @@ https://apps.apple.com/app/apple-store/id670881887?pt=2188920&ct=referrals&mt=8
         return "ecosia://\(Referrals.host)/" + code
     }
 }
+
+private final class SharingMessage: NSObject, UIActivityItemSource {
+    private let message: String
+
+    init(message: String) {
+        self.message = message
+        super.init()
+    }
+
+    func activityViewControllerPlaceholderItem(_: UIActivityViewController) -> Any {
+        message
+    }
+
+    func activityViewController(_: UIActivityViewController, itemForActivityType: UIActivity.ActivityType?) -> Any? {
+        message
+    }
+
+    func activityViewController(_: UIActivityViewController, subjectForActivityType: UIActivity.ActivityType?) -> String {
+        "subject here"
+    }
+}
