@@ -6,6 +6,7 @@ import UIKit
 import Core
 import UniformTypeIdentifiers
 import MobileCoreServices
+import LinkPresentation
 
 final class MultiplyImpact: UIViewController, NotificationThemeable {
     private weak var subtitle: UILabel?
@@ -545,5 +546,11 @@ private final class SharingMessage: NSObject, UIActivityItemSource {
 
     func activityViewController(_: UIActivityViewController, subjectForActivityType: UIActivity.ActivityType?) -> String {
         .localized(.plantTreesWithMe)
+    }
+    
+    func activityViewControllerLinkMetadata(_ : UIActivityViewController) -> LPLinkMetadata? {
+        let metadata = LPLinkMetadata()
+        metadata.title = .localized(.plantTreesWithMe)
+        return metadata
     }
 }
