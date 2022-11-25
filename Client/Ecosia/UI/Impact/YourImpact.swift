@@ -17,7 +17,6 @@ final class YourImpact: UICollectionViewController, UICollectionViewDelegateFlow
     private let personalCounter = PersonalCounter()
     private let background = Background()
     private weak var impactCell: MyImpactCell?
-    static let link = "your-impact"
 
     convenience init(delegate: YourImpactDelegate?, referrals: Referrals) {
         let layout = YourImpactLayout()
