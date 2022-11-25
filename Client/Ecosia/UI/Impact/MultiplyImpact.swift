@@ -511,15 +511,13 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         guard let link = inviteLink else { return nil }
         
         return """
-🌳🔗 \(String.localized(.heyThereWantToPlant))
+🌳🔗 \(String.localized(.checkThisOut))
 
-\(String.localized(.downloadEcosiaOn))
+\(String.localized(.downloadTheApp))
 https://apps.apple.com/app/apple-store/id670881887?pt=2188920&ct=referrals&mt=8
 
-\(String.localized(.afterInstalling))
+\(String.localized(.useMyInviteLink))
 \(link)
-
-\(String.localized(.letsGrowTogether)) 😊
 """
     }
     
