@@ -511,7 +511,7 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         guard let link = inviteLink else { return nil }
         
         return """
-🌳🔗 \(String.localized(.checkThisOut))
+\(String.localized(.checkThisOut))
 
 \(String.localized(.downloadTheApp))
 https://apps.apple.com/app/apple-store/id670881887?pt=2188920&ct=referrals&mt=8
