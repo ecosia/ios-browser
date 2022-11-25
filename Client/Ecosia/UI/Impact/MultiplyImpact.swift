@@ -546,6 +546,6 @@ private final class SharingMessage: NSObject, UIActivityItemSource {
     }
 
     func activityViewController(_: UIActivityViewController, subjectForActivityType: UIActivity.ActivityType?) -> String {
-        "Plant trees with me on Ecosia"
+        .localized(.plantTreesWithMe)
     }
 }
