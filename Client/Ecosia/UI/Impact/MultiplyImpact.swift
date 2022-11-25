@@ -514,7 +514,7 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
 \(String.localized(.checkThisOut))
 
 \(String.localized(.downloadTheApp))
-https://apps.apple.com/app/apple-store/id670881887?pt=2188920&ct=referrals&mt=8
+https://apple.co/3eFnGJX
 
 \(String.localized(.useMyInviteLink))
 \(link)
