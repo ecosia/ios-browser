@@ -512,7 +512,7 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         guard let link = inviteLink else { return nil }
         
         return """
-\(String.localized(.checkThisOut))
+\(String(format: .localized(.checkThisOut), activeUsers))
 
 \(String.localized(.downloadTheApp))
 https://apple.co/3eFnGJX
@@ -525,6 +525,14 @@ https://apple.co/3eFnGJX
     private var inviteLink: String? {
         guard let code = User.shared.referrals.code else { return nil }
         return "ecosia://\(Referrals.host)/" + code
+    }
+
+    // MARK: Number formatting
+    private var activeUsers: String {
+        let activeUsers = Int(TreeCounter.shared.statistics.activeUsers)
+        let oneMillion = 1000000
+        let million = activeUsers / oneMillion
+        return "\(million)"
     }
 }
 

@@ -124,7 +124,7 @@ extension String {
         case websitesYouHave = "Websites you’ve recently visited will show up here"
         case noDownloadsYet = "No downloads yet"
         case whenYouDownloadFiles = "When you download files they will show up here"
-        case checkThisOut = "Check this out: Ecosia plants trees every time you search the web! 🌳\nJoin me and 20M+ others and start planting today."
+        case checkThisOut = "Check this out: Ecosia plants trees every time you search the web! 🌳\nJoin me and %@+ others and start planting today."
         case downloadTheApp = "1. Download the app:"
         case useMyInviteLink = "2. Use my ✨ invite link ✨ and we will both plant an extra tree 🌳\n(Android coming soon):"
         case seeWhatsNew = "See what's new"
