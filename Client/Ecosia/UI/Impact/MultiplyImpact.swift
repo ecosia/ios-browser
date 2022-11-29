@@ -482,6 +482,7 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         }
         
         copyText?.text = .localized(.copied)
+        Analytics.shared.inviteCopy()
     }
     
     @objc private func inviteFriends() {
