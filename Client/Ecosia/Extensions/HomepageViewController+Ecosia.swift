@@ -29,7 +29,7 @@ extension HomepageViewController {
     }
 
     var treesCellModel: NTPImpactCell.Model {
-        .init(impact: User.shared.impact, searches: personalCounter.state!, trees: TreeCounter.shared.statistics.treesAt(.init()), style: .ntp)
+        .init(impact: User.shared.impact, searches: personalCounter.state!, trees: TreeCounter.shared.statistics.treesAt(.init()))
     }
 
     @objc func allNews() {

@@ -6,15 +6,11 @@ import UIKit
 import Core
 
 final class NTPImpactCell: UICollectionViewCell, NotificationThemeable, ReusableCell {
-    struct Model {
-        enum Style {
-            case ntp, impact
-        }
 
+    struct Model {
         let impact: Int
         let searches: Int
         let trees: Int
-        let style: Style
     }
 
     static let topMargin = CGFloat(10)
@@ -275,8 +271,8 @@ final class NTPImpactCell: UICollectionViewCell, NotificationThemeable, Reusable
     func applyTheme() {
         background.backgroundColor = UIColor.theme.ecosia.primaryBackground
 
-        let backgroundColor: UIColor = model?.style == .ntp ? .theme.ecosia.ntpImpactBackground : .theme.ecosia.impactBackground
-        let selectedBackgroundColor: UIColor = model?.style == .ntp ? .theme.ecosia.primarySelectedBackground : .theme.ecosia.secondarySelectedBackground
+        let backgroundColor: UIColor = .theme.ecosia.ntpImpactBackground
+        let selectedBackgroundColor: UIColor =  .theme.ecosia.primarySelectedBackground
         impactBackground.backgroundColor = (isHighlighted || isSelected) ? selectedBackgroundColor : backgroundColor
 
         globalCountDescription.textColor = .theme.ecosia.secondaryText
