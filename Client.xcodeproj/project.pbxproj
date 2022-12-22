@@ -3595,25 +3595,19 @@
 		CA4D9CB628C8D801006AFB5D /* WelcomeTourProfit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WelcomeTourProfit.swift; sourceTree = "<group>"; };
 		CA4D9CB928C8D801006AFB5D /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Ecosia.strings; sourceTree = "<group>"; };
 		CA4D9CBB28C8D801006AFB5D /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = de; path = de.lproj/Plurals.stringsdict; sourceTree = "<group>"; };
-		CA4D9CBD28C8D801006AFB5D /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/AppStore.strings; sourceTree = "<group>"; };
 		CA4D9CBE28C8D801006AFB5D /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Ecosia.strings; sourceTree = "<group>"; };
 		CA4D9CBF28C8D801006AFB5D /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = en; path = en.lproj/Plurals.stringsdict; sourceTree = "<group>"; };
-		CA4D9CC028C8D801006AFB5D /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/AppStore.strings; sourceTree = "<group>"; };
 		CA4D9CC128C8D801006AFB5D /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Ecosia.strings; sourceTree = "<group>"; };
 		CA4D9CC228C8D801006AFB5D /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = es; path = es.lproj/Plurals.stringsdict; sourceTree = "<group>"; };
-		CA4D9CC328C8D801006AFB5D /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/AppStore.strings; sourceTree = "<group>"; };
 		CA4D9CC428C8D801006AFB5D /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Ecosia.strings; sourceTree = "<group>"; };
 		CA4D9CC528C8D801006AFB5D /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = it; path = it.lproj/Plurals.stringsdict; sourceTree = "<group>"; };
-		CA4D9CC628C8D801006AFB5D /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/AppStore.strings; sourceTree = "<group>"; };
 		CA4D9CC828C8D801006AFB5D /* Clean.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Clean.swift; sourceTree = "<group>"; };
 		CA4D9CC928C8D801006AFB5D /* Validate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Validate.swift; sourceTree = "<group>"; };
 		CA4D9CCA28C8D801006AFB5D /* String.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
 		CA4D9CCB28C8D801006AFB5D /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Ecosia.strings; sourceTree = "<group>"; };
 		CA4D9CCC28C8D801006AFB5D /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = fr; path = fr.lproj/Plurals.stringsdict; sourceTree = "<group>"; };
-		CA4D9CCD28C8D801006AFB5D /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/AppStore.strings; sourceTree = "<group>"; };
 		CA4D9CCE28C8D801006AFB5D /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Ecosia.strings; sourceTree = "<group>"; };
 		CA4D9CCF28C8D801006AFB5D /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = nl; path = nl.lproj/Plurals.stringsdict; sourceTree = "<group>"; };
-		CA4D9CD028C8D801006AFB5D /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/AppStore.strings; sourceTree = "<group>"; };
 		CA4D9CD128C8D801006AFB5D /* EcosiaSettings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EcosiaSettings.swift; sourceTree = "<group>"; };
 		CA4D9CD228C8D801006AFB5D /* markets.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = markets.json; sourceTree = "<group>"; };
 		CA4D9CD428C8D801006AFB5D /* FakeTelemetry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FakeTelemetry.swift; sourceTree = "<group>"; };
@@ -6511,7 +6505,6 @@
 			children = (
 				CA4D9CB828C8D801006AFB5D /* Ecosia.strings */,
 				CA4D9CBA28C8D801006AFB5D /* Plurals.stringsdict */,
-				CA4D9CBC28C8D801006AFB5D /* AppStore.strings */,
 				CA4D9CC728C8D801006AFB5D /* Scripts */,
 				CA4D9CCA28C8D801006AFB5D /* String.swift */,
 			);
@@ -11804,19 +11797,6 @@
 				CA4D9CCF28C8D801006AFB5D /* nl */,
 			);
 			name = Plurals.stringsdict;
-			sourceTree = "<group>";
-		};
-		CA4D9CBC28C8D801006AFB5D /* AppStore.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				CA4D9CBD28C8D801006AFB5D /* de */,
-				CA4D9CC028C8D801006AFB5D /* en */,
-				CA4D9CC328C8D801006AFB5D /* es */,
-				CA4D9CC628C8D801006AFB5D /* it */,
-				CA4D9CCD28C8D801006AFB5D /* fr */,
-				CA4D9CD028C8D801006AFB5D /* nl */,
-			);
-			name = AppStore.strings;
 			sourceTree = "<group>";
 		};
 		D58A202725C9D96400105D25 /* BookmarkPanel.strings */ = {
