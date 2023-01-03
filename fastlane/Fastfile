@@ -42,6 +42,9 @@ platform :ios do
       type: "adhoc",
       readonly: true
     )
+    increment_build_number(
+      build_number: $CIRCLE_BUILD_NUM
+    )
     gym(
       scheme: "Ecosia",
       project: project,
