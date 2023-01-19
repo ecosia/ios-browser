@@ -568,13 +568,10 @@ class Tab: NSObject {
                 completion?(navigation)
             }
 
+            // Ecosia: inject cookie and analytics id
             var request = request
-            if !isPrivate {
-                // Ecosia: add analytics to url
-                request.url = request.url?.ecosified
-            }
+            request.url = request.url?.ecosified
 
-            // Ecosia: inject cookie
             let cookie: HTTPCookie = isPrivate ? Cookie.incognito : Cookie.standard
             webView.configuration.websiteDataStore.httpCookieStore.setCookie(cookie) {
                 let navigation = webView.load(request)
