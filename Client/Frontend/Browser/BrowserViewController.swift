@@ -2225,23 +2225,30 @@ extension BrowserViewController {
             || User.shared.referrals.pendingClaim != nil {
             present(LoadingScreen(profile: profile, referrals: referrals, referralCode: User.shared.referrals.pendingClaim), animated: true)
         } else if User.shared.firstTime {
-            if #available(iOS 14, *) {
-                let defaultPromo = DefaultBrowser(delegate: self)
-                present(defaultPromo, animated: true)
-            } else {
-                User.shared.firstTime = false
-            }
-            profile.prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
             User.shared.migrated = true
             User.shared.hideRebrandIntro()
             // deactivate searchbar hint for new users
             contextHintVC.viewModel.markContextualHintPresented()
+            presentDefaultBrowserPromoIfNeeded()
         } else if User.shared.showsRebrandIntro {
             let intro = NTPIntroViewController()
             intro.modalPresentationStyle = .overFullScreen
             intro.modalTransitionStyle = .crossDissolve
             present(intro, animated: true)
             User.shared.hideRebrandIntro()
+        } else {
+            presentDefaultBrowserPromoIfNeeded()
+        }
+    }
+
+    func presentDefaultBrowserPromoIfNeeded() {
+        if shouldShowIntroScreen && Unleash.getRequiredSearches() <= User.shared.treeCount  {
+            if #available(iOS 14, *) {
+                let defaultPromo = DefaultBrowser(delegate: self)
+                present(defaultPromo, animated: true)
+            } else {
+                profile.prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
+            }
         }
     }
 
