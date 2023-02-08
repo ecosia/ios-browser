@@ -70,6 +70,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Ecosia: Disable BG sync //backgroundSyncUtil = BackgroundSyncUtil(profile: profile, application: application)
         // Ecosia: lifecycle tracking
         Analytics.shared.activity(.launch)
+
+        if let clientId = Bundle.main.infoDictionary?["CF_ACCESS_CLIENT_ID"] as? String {
+            debugPrint(clientId)
+        }
+
         return true
     }
 
@@ -113,6 +118,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
             self.profile.cleanupHistoryIfNeeded()
             self.browserViewController.ratingPromptManager.updateData()
+        }
+
+        // Ecosia: start experimentation
+        Task {
+            do {
+                try await _ = Unleash.start(env: .staging)
+            } catch {
+                debugPrint(error)
+            }
         }
     }
 

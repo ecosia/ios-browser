@@ -111,3 +111,7 @@ vendor/bundle
 
 # transifex
 /tx
+
+# Staging token
+env-vars.sh
+Staging.xcconfig
