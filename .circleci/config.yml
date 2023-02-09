@@ -76,6 +76,9 @@ jobs:
           name: verify github
           command: for ip in $(dig @8.8.8.8 github.com +short); do ssh-keyscan github.com,$ip; ssh-keyscan $ip; done 2>/dev/null >> ~/.ssh/known_hosts
       - run:
+          name: extract Staging XCConfig
+          command: echo "$STAGING_XCCONFIG" | base64 --decode > Client/Configuration/Staging.xcconfig
+      - run:
           name: clean packages
           command: xcodebuild -scheme Ecosia -project Client.xcodeproj clean
       - run:
@@ -111,4 +114,6 @@ workflows:
             branches:
               only: 
                 - /^.*main.*/
+                - /^.*MOB-1705-default-browser-experiment.*/
+
                                 

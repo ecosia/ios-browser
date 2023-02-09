@@ -44,6 +44,10 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>CF_ACCESS_CLIENT_ID</key>
+	<string>$(CF_ACCESS_CLIENT_ID)</string>
+	<key>CF_ACCESS_CLIENT_SECRET</key>
+	<string>$(CF_ACCESS_CLIENT_SECRET)</string>
 	<key>INIntentsSupported</key>
 	<array>
 		<string>QuickActionIntent</string>
@@ -206,9 +210,5 @@
 			<string></string>
 		</dict>
 	</array>
-	<key>CF_ACCESS_CLIENT_ID</key>
-	<string>$(CF_ACCESS_CLIENT_ID)</string>
-	<key>CF_ACCESS_CLIENT_SECRET</key>
-	<string>$(CF_ACCESS_CLIENT_SECRET)</string>
 </dict>
 </plist>

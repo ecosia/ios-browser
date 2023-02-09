@@ -938,6 +938,12 @@ class BrowserViewController: UIViewController {
 
         // Make sure reload button is hidden on homepage
         urlBar.locationView.reloadButton.reloadButtonState = .disabled
+
+        DispatchQueue.main.async {
+            if !User.shared.firstTime {
+                self.presentDefaultBrowserPromoIfNeeded()
+            }
+        }
     }
 
     /// Once the homepage is created, browserViewController keeps a reference to it, never setting it to nil during
@@ -2221,27 +2227,33 @@ extension BrowserViewController: UIAdaptivePresentationControllerDelegate {
 
 extension BrowserViewController {
     func presentIntroViewController(_ alwaysShow: Bool = false) {
-        if (User.shared.migrated != true && !User.shared.firstTime)
-            || User.shared.referrals.pendingClaim != nil {
+        if showLoadingScreen(for: .shared) {
             present(LoadingScreen(profile: profile, referrals: referrals, referralCode: User.shared.referrals.pendingClaim), animated: true)
         } else if User.shared.firstTime {
+            User.shared.firstTime = false
             User.shared.migrated = true
             User.shared.hideRebrandIntro()
             // deactivate searchbar hint for new users
             contextHintVC.viewModel.markContextualHintPresented()
-            presentDefaultBrowserPromoIfNeeded()
         } else if User.shared.showsRebrandIntro {
             let intro = NTPIntroViewController()
             intro.modalPresentationStyle = .overFullScreen
             intro.modalTransitionStyle = .crossDissolve
             present(intro, animated: true)
             User.shared.hideRebrandIntro()
-        } else {
-            presentDefaultBrowserPromoIfNeeded()
         }
+        presentDefaultBrowserPromoIfNeeded()
+    }
+
+    private func showLoadingScreen(for user: User) -> Bool {
+        (user.migrated != true && !user.firstTime)
+            || user.referrals.pendingClaim != nil
     }
 
     func presentDefaultBrowserPromoIfNeeded() {
+        guard !showLoadingScreen(for: .shared),
+              !User.shared.showsRebrandIntro else { return }
+
         if shouldShowIntroScreen && Unleash.getRequiredSearches() <= User.shared.treeCount  {
             if #available(iOS 14, *) {
                 let defaultPromo = DefaultBrowser(delegate: self)
