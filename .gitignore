@@ -113,5 +113,4 @@ vendor/bundle
 /tx
 
 # Staging token
-env-vars.sh
 Staging.xcconfig

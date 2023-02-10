@@ -71,10 +71,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Ecosia: lifecycle tracking
         Analytics.shared.activity(.launch)
 
-        if let clientId = Bundle.main.infoDictionary?["CF_ACCESS_CLIENT_ID"] as? String {
-            debugPrint(clientId)
-        }
-
         return true
     }
 
@@ -121,13 +117,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         // Ecosia: start experimentation
-        Task {
-            do {
-                try await _ = Unleash.start(env: .staging)
-            } catch {
-                debugPrint(error)
-            }
-        }
+        startExperimentation()
     }
 
     func applicationWillResignActive(_ application: UIApplication) {

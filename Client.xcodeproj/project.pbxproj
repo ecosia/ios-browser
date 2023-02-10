@@ -667,6 +667,7 @@
 		CAB544C828F6BBFD00657722 /* PageActionsShortcutsHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB544C728F6BBFD00657722 /* PageActionsShortcutsHeader.swift */; };
 		CAC458F1249429C20042561A /* LoginListSelectionHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC458F0249429C20042561A /* LoginListSelectionHelper.swift */; };
 		CACF090629951001007451D9 /* Unleash.DefaultBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CACF090529951001007451D9 /* Unleash.DefaultBrowser.swift */; };
+		CACF090829964085007451D9 /* AppDelegate.Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = CACF090729964085007451D9 /* AppDelegate.Ecosia.swift */; };
 		CACF7CF628D9E72900A996A4 /* MockProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 281B2BE91ADF4D90002917DC /* MockProfile.swift */; };
 		CACF7D0C28DB3BAF00A996A4 /* FakeSentry.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4D9CD728C8D801006AFB5D /* FakeSentry.swift */; };
 		CACF7D0D28DB3D5D00A996A4 /* EcosiaImport.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4D9CDB28C8D801006AFB5D /* EcosiaImport.swift */; };
@@ -3641,6 +3642,7 @@
 		CAB7414DA1BA84F4CD08A8F8 /* kk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = kk; path = kk.lproj/ClearPrivateDataConfirm.strings; sourceTree = "<group>"; };
 		CAC458F0249429C20042561A /* LoginListSelectionHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginListSelectionHelper.swift; sourceTree = "<group>"; };
 		CACF090529951001007451D9 /* Unleash.DefaultBrowser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Unleash.DefaultBrowser.swift; sourceTree = "<group>"; };
+		CACF090729964085007451D9 /* AppDelegate.Ecosia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.Ecosia.swift; sourceTree = "<group>"; };
 		CACF7D1028DC553B00A996A4 /* NTPLibaryViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NTPLibaryViewModel.swift; sourceTree = "<group>"; };
 		CAEB316628D0B38900ADC9DB /* HomepageViewController+Ecosia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HomepageViewController+Ecosia.swift"; sourceTree = "<group>"; };
 		CAF35AE2292E7CBF002EF660 /* ImpactHeaderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpactHeaderCell.swift; sourceTree = "<group>"; };
@@ -6573,6 +6575,7 @@
 				CA4D9C8B28C8D801006AFB5D /* SnapKit+Ecosia.swift */,
 				CA8BCC3F28D340AF0020BC50 /* TabCell+Ecosia.swift */,
 				CACF090529951001007451D9 /* Unleash.DefaultBrowser.swift */,
+				CACF090729964085007451D9 /* AppDelegate.Ecosia.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -9188,6 +9191,7 @@
 				8A93080B27C01AD60052167D /* SingleActionViewModel.swift in Sources */,
 				8A7368AD27924AAF005D7704 /* CanRemoveQuickActionBookmark.swift in Sources */,
 				EBA3B2CD2268F27500728BDB /* PhotonActionSheetWidgets.swift in Sources */,
+				CACF090829964085007451D9 /* AppDelegate.Ecosia.swift in Sources */,
 				CA4D9D1C28C8D801006AFB5D /* LoadingScreen.swift in Sources */,
 				C8D0D6F2281C182D00AFAED9 /* FeatureFlagUserPrefsMigrationUtility.swift in Sources */,
 				D3C3696E1CC6B78800348A61 /* LocalRequestHelper.swift in Sources */,
@@ -12924,8 +12928,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CA8BCC4128D352630020BC50 /* EcosiaBeta.xcconfig */;
 			buildSettings = {
-				CURRENT_PROJECT_VERSION = 71;
-				MARKETING_VERSION = 8.2.0;
+				CURRENT_PROJECT_VERSION = 75;
+				MARKETING_VERSION = 8.1.5;
 				OTHER_LDFLAGS = "$(inherited)";
 				VALIDATE_WORKSPACE = YES;
 			};
@@ -13295,8 +13299,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CA8BCC4228D352640020BC50 /* Ecosia.xcconfig */;
 			buildSettings = {
-				CURRENT_PROJECT_VERSION = 71;
-				MARKETING_VERSION = 8.2.0;
+				CURRENT_PROJECT_VERSION = 75;
+				MARKETING_VERSION = 8.1.5;
 				OTHER_LDFLAGS = "$(inherited)";
 				VALIDATE_WORKSPACE = YES;
 			};
@@ -13491,8 +13495,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CA8BCC4128D352630020BC50 /* EcosiaBeta.xcconfig */;
 			buildSettings = {
-				CURRENT_PROJECT_VERSION = 71;
-				MARKETING_VERSION = 8.2.0;
+				CURRENT_PROJECT_VERSION = 75;
+				MARKETING_VERSION = 8.1.5;
 				OTHER_LDFLAGS = "$(inherited)";
 				VALIDATE_WORKSPACE = YES;
 			};
@@ -13618,8 +13622,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CA8BCC4328D352640020BC50 /* EcosiaDebug.xcconfig */;
 			buildSettings = {
-				CURRENT_PROJECT_VERSION = 71;
-				MARKETING_VERSION = 8.2.0;
+				CURRENT_PROJECT_VERSION = 75;
+				MARKETING_VERSION = 8.1.5;
 				OTHER_LDFLAGS = "$(inherited)";
 				VALIDATE_WORKSPACE = YES;
 			};
