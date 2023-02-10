@@ -114,6 +114,4 @@ workflows:
             branches:
               only: 
                 - /^.*main.*/
-                - /^.*MOB-1705-default-browser-experiment.*/
-
                                 
