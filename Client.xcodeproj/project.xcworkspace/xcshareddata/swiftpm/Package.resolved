@@ -58,8 +58,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ecosia/ios-core.git",
       "state" : {
-        "branch" : "unleashed-goodall",
-        "revision" : "cf9c705149f9245845e64223ad051360004596b0"
+        "branch" : "main",
+        "revision" : "de43cdeee37c3094427a18ac1422db6be6055104"
       }
     },
     {

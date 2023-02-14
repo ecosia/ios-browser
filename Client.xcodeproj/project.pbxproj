@@ -14034,7 +14034,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = "unleashed-goodall";
+				branch = main;
 				kind = branch;
 			};
 		};
