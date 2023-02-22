@@ -939,10 +939,10 @@ class BrowserViewController: UIViewController {
         // Make sure reload button is hidden on homepage
         urlBar.locationView.reloadButton.reloadButtonState = .disabled
 
+        // Ecosia: show Default Browser promo if needed
+        guard inline, !User.shared.firstTime else { return }
         DispatchQueue.main.async {
-            if !User.shared.firstTime {
-                self.presentDefaultBrowserPromoIfNeeded()
-            }
+            self.presentDefaultBrowserPromoIfNeeded()
         }
     }
 
