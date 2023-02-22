@@ -14,10 +14,11 @@ extension Unleash {
 
     static func getRequiredSearches(for variant: Variant) -> Int {
         switch variant.name {
+        case "control": return 0
         case "test1": return 5
         case "test2": return 25
         case "test3": return 50
-        default: return 0
+        default: return .max
         }
     }
 }
