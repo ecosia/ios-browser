@@ -2251,7 +2251,10 @@ extension BrowserViewController {
     }
 
     func presentDefaultBrowserPromoIfNeeded() {
-        guard !showLoadingScreen(for: .shared),
+        let isHome = tabManager.selectedTab?.url.flatMap { InternalURL($0)?.isAboutHomeURL } ?? false
+
+        guard isHome,
+              !showLoadingScreen(for: .shared),
               !User.shared.showsRebrandIntro else { return }
 
         if shouldShowIntroScreen && Unleash.minPromoSearches() <= User.shared.treeCount  {
