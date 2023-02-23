@@ -890,6 +890,7 @@ class BrowserViewController: UIViewController {
         }
     }
 
+    /* Ecosia: unused method
     func resetBrowserChrome() {
         // animate and reset transform for tab chrome
         urlBar.updateAlphaForSubviews(1)
@@ -901,6 +902,7 @@ class BrowserViewController: UIViewController {
 
         statusBarOverlay.isHidden = false
     }
+     */
 
     /// Show the home page
     /// - Parameter inline: Inline is true when the homepage is created from the tab tray, a long press
@@ -917,6 +919,15 @@ class BrowserViewController: UIViewController {
 
         homepageViewController?.view.layer.removeAllAnimations()
         view.setNeedsUpdateConstraints()
+
+        // Ecosia: show Default Browser promo if needed
+        // Workaround for time of experiment
+        // -> artificial delay of 0.3s to wait for animations and dismissals to finish
+        if inline, !User.shared.firstTime {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                self.presentDefaultBrowserPromoIfNeeded()
+            }
+        }
 
         // Return early if the home page is already showing
         guard homepageViewController?.view.alpha != 1 else { return }
@@ -938,12 +949,6 @@ class BrowserViewController: UIViewController {
 
         // Make sure reload button is hidden on homepage
         urlBar.locationView.reloadButton.reloadButtonState = .disabled
-
-        // Ecosia: show Default Browser promo if needed
-        guard inline, !User.shared.firstTime else { return }
-        DispatchQueue.main.async {
-            self.presentDefaultBrowserPromoIfNeeded()
-        }
     }
 
     /// Once the homepage is created, browserViewController keeps a reference to it, never setting it to nil during
@@ -2254,6 +2259,7 @@ extension BrowserViewController {
         let isHome = tabManager.selectedTab?.url.flatMap { InternalURL($0)?.isAboutHomeURL } ?? false
 
         guard isHome,
+              presentedViewController == nil,
               !showLoadingScreen(for: .shared),
               !User.shared.showsRebrandIntro else { return }
 
@@ -2579,7 +2585,10 @@ extension BrowserViewController: TabTrayDelegate {
     // This function animates and resets the tab chrome transforms when
     // the tab tray dismisses.
     func tabTrayDidDismiss(_ tabTray: GridTabViewController) {
-        resetBrowserChrome()
+        // Ecosia: resetBrowserChrome()
+
+        // Ecosia: check if promo needs display
+        presentDefaultBrowserPromoIfNeeded()
     }
 
     func tabTrayDidAddTab(_ tabTray: GridTabViewController, tab: Tab) {}
