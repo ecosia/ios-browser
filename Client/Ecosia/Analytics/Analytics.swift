@@ -40,10 +40,9 @@ final class Analytics {
         let variant = Unleash.getVariant(toggle).name
         guard variant != "disabled" else { return nil }
 
-        let dataContext: [String: String] = [toggle.rawValue: variant]
-        let dict: [String: AnyHashable] = [abTestRoot: dataContext]
-        let context = SelfDescribingJson(schema: abTestSchema, andDictionary: dict)
-        return context
+        let variantContext: [String: String] = [toggle.rawValue: variant]
+        let abTestContext: [String: AnyHashable] = [abTestRoot: variantContext]
+        return SelfDescribingJson(schema: abTestSchema, andDictionary: abTestContext)
     }
     
     func install() {
