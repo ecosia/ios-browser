@@ -41,8 +41,8 @@ final class Analytics {
         guard variant != "disabled" else { return nil }
 
         let dataContext: [String: String] = [toggle.rawValue: variant]
-        let dict: [String: AnyHashable] = [Analytics.abTestRoot: dataContext]
-        let context = SelfDescribingJson(schema: Analytics.abTestSchema, andDictionary: dict)
+        let dict: [String: AnyHashable] = [abTestRoot: dataContext]
+        let context = SelfDescribingJson(schema: abTestSchema, andDictionary: dict)
         return context
     }
     
