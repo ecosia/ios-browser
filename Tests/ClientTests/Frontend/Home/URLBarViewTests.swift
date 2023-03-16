@@ -56,10 +56,7 @@ class URLBarViewTests: XCTestCase {
         
         XCTAssertTrue(sut.urlBar.searchIconImageView.image?.pngData() == UIImage(named: ImageIdentifiers.newPrivateTab)?.pngData())
     }
-
-    
 }
-
 
 extension URLBarViewTests {
     
