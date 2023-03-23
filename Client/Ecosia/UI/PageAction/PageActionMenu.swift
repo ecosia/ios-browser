@@ -141,28 +141,7 @@ extension PageActionMenu: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: UX.Cell, for: indexPath)
-        cell.separatorInset.left = UX.Spacing
-        cell.backgroundColor = .theme.ecosia.impactMultiplyCardBackground
-        let actions = viewModel.actions[indexPath.section][indexPath.row]
-        let item = actions.item
-
-        cell.textLabel?.text = item.currentTitle
-        cell.textLabel?.textColor = .theme.ecosia.primaryText
-        cell.detailTextLabel?.text = item.text
-        cell.detailTextLabel?.textColor = .theme.ecosia.secondaryText
-
-        cell.accessibilityIdentifier = item.iconString ?? item.accessibilityId
-        cell.accessibilityLabel = item.currentTitle
-
-        if let iconName = item.iconString {
-            cell.imageView?.image = UIImage(named: iconName)?.withRenderingMode(.alwaysTemplate)
-            cell.imageView?.tintColor = .theme.ecosia.secondaryText
-        } else {
-            cell.imageView?.image = nil
-        }
-        
-        (cell as? PageActionMenuCell)?.isNew(actions.item.isNew)
-        
+        (cell as? PageActionMenuCell)?.configure(with: viewModel, at: indexPath)
         return cell
     }
 

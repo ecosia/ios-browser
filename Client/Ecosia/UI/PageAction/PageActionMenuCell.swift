@@ -16,8 +16,39 @@ final class PageActionMenuCell: UITableViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+}
+
+extension PageActionMenuCell {
     
-    func isNew(_ isNew: Bool) {
+    func configure(with viewModel: PhotonActionSheetViewModel, at indexPath: IndexPath) {
+        
+        separatorInset.left = PageActionMenu.UX.Spacing
+        backgroundColor = .theme.ecosia.impactMultiplyCardBackground
+        let actions = viewModel.actions[indexPath.section][indexPath.row]
+        let item = actions.item
+
+        textLabel?.text = item.currentTitle
+        textLabel?.textColor = .theme.ecosia.primaryText
+        detailTextLabel?.text = item.text
+        detailTextLabel?.textColor = .theme.ecosia.secondaryText
+
+        accessibilityIdentifier = item.iconString ?? item.accessibilityId
+        accessibilityLabel = item.currentTitle
+
+        if let iconName = item.iconString {
+            imageView?.image = UIImage(named: iconName)?.withRenderingMode(.alwaysTemplate)
+            imageView?.tintColor = .theme.ecosia.secondaryText
+        } else {
+            imageView?.image = nil
+        }
+        
+        isNew(actions.item.isNew)
+    }
+}
+
+extension PageActionMenuCell {
+    
+    private func isNew(_ isNew: Bool) {
         if isNew {
             if badge == nil {
                 let badge = UIView()
