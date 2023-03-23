@@ -6,14 +6,17 @@ import UIKit
 
 class PageActionMenu: UIViewController, UIGestureRecognizerDelegate {
 
+    // MARK: - UX
+
     struct UX {
-        static let Spacing: CGFloat = 16
-        static let Cell = "Cell"
-        static let Shortcuts = "Shortcuts"
-        static let RowHeight: CGFloat = 50
+        static let spacing: CGFloat = 16
+        static let estimatedSectionHeaderHeight: CGFloat = 16
+        static let shortcuts = "Shortcuts"
+        static let rowHeight: CGFloat = 50
     }
 
     // MARK: - Variables
+    
     private var tableView = UITableView(frame: .zero, style: .insetGrouped)
     private var knob = UIView()
     let viewModel: PhotonActionSheetViewModel
@@ -28,7 +31,7 @@ class PageActionMenu: UIViewController, UIGestureRecognizerDelegate {
 
         title = viewModel.title
         modalPresentationStyle = viewModel.modalStyle
-        tableView.estimatedRowHeight = UX.RowHeight
+        tableView.estimatedRowHeight = UX.rowHeight
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -43,9 +46,9 @@ class PageActionMenu: UIViewController, UIGestureRecognizerDelegate {
         view.addSubview(tableView)
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.register(PageActionMenuCell.self, forCellReuseIdentifier: UX.Cell)
-        tableView.register(PageActionsShortcutsHeader.self, forHeaderFooterViewReuseIdentifier: UX.Shortcuts)
-        tableView.estimatedSectionHeaderHeight = UX.Spacing
+        tableView.register(PageActionMenuCell.self, forCellReuseIdentifier: PageActionMenuCell.UX.cellIdentifier)
+        tableView.register(PageActionsShortcutsHeader.self, forHeaderFooterViewReuseIdentifier: UX.shortcuts)
+        tableView.estimatedSectionHeaderHeight = UX.estimatedSectionHeaderHeight
         tableView.sectionFooterHeight = 0
         tableView.translatesAutoresizingMaskIntoConstraints = false
 
@@ -140,7 +143,7 @@ extension PageActionMenu: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: UX.Cell, for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: PageActionMenuCell.UX.cellIdentifier, for: indexPath)
         (cell as? PageActionMenuCell)?.configure(with: viewModel, at: indexPath)
         return cell
     }
@@ -153,14 +156,14 @@ extension PageActionMenu: UITableViewDataSource, UITableViewDelegate {
         if section == 0 {
             return UITableView.automaticDimension
         } else {
-            return UX.Spacing
+            return UX.spacing
         }
     }
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         guard section == 0 else { return UIView() }
 
-        let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: UX.Shortcuts) as! PageActionsShortcutsHeader
+        let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: UX.shortcuts) as! PageActionsShortcutsHeader
         header.delegate = delegate
         return header
     }

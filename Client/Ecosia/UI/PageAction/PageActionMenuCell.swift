@@ -6,6 +6,10 @@ import UIKit
 
 final class PageActionMenuCell: UITableViewCell {
     
+    struct UX {
+        static let cellIdentifier = String(describing: PageActionMenuCell.self)
+    }
+    
     private weak var badge: UIView?
     private weak var badgeLabel: UILabel?
     
@@ -22,7 +26,7 @@ extension PageActionMenuCell {
     
     func configure(with viewModel: PhotonActionSheetViewModel, at indexPath: IndexPath) {
         
-        separatorInset.left = PageActionMenu.UX.Spacing
+        separatorInset.left = PageActionMenu.UX.spacing
         backgroundColor = .theme.ecosia.impactMultiplyCardBackground
         let actions = viewModel.actions[indexPath.section][indexPath.row]
         let item = actions.item
