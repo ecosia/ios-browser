@@ -4,7 +4,7 @@
 
 import UIKit
 
-class PageActionMenu: UIViewController, UIGestureRecognizerDelegate {
+final class PageActionMenu: UIViewController, UIGestureRecognizerDelegate {
 
     // MARK: - UX
 
@@ -19,8 +19,18 @@ class PageActionMenu: UIViewController, UIGestureRecognizerDelegate {
     
     private var tableView = UITableView(frame: .zero, style: .insetGrouped)
     private var knob = UIView()
-    let viewModel: PhotonActionSheetViewModel
-    weak var delegate: PageActionsShortcutsDelegate?
+    private var contentSizeObserver : NSKeyValueObservation?
+    private lazy var swipeDown: UISwipeGestureRecognizer = {
+        let swipeDown = UISwipeGestureRecognizer(target: self, action: #selector(close))
+        swipeDown.direction = .down
+        swipeDown.isEnabled = false
+        swipeDown.delegate = self
+        view.addGestureRecognizer(swipeDown)
+        return swipeDown
+    }()
+    
+    private let viewModel: PhotonActionSheetViewModel
+    private weak var delegate: PageActionsShortcutsDelegate?
 
     // MARK: - Init
 
@@ -31,7 +41,6 @@ class PageActionMenu: UIViewController, UIGestureRecognizerDelegate {
 
         title = viewModel.title
         modalPresentationStyle = viewModel.modalStyle
-        tableView.estimatedRowHeight = UX.rowHeight
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -42,46 +51,15 @@ class PageActionMenu: UIViewController, UIGestureRecognizerDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        view.addSubview(tableView)
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.register(PageActionMenuCell.self, forCellReuseIdentifier: PageActionMenuCell.UX.cellIdentifier)
-        tableView.register(PageActionsShortcutsHeader.self, forHeaderFooterViewReuseIdentifier: UX.shortcuts)
-        tableView.estimatedSectionHeaderHeight = UX.estimatedSectionHeaderHeight
-        tableView.sectionFooterHeight = 0
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-
-        view.addSubview(knob)
-        knob.layer.cornerRadius = 2
-
+        setupTableView()
+        setupKnob()
         setupConstraints()
         applyTheme()
     }
 
-    // MARK: - Setup
-
-    private func setupConstraints() {
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        knob.translatesAutoresizingMaskIntoConstraints = false
-
-        NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.topAnchor),
-            tableView.leftAnchor.constraint(equalTo: view.leftAnchor),
-            tableView.rightAnchor.constraint(equalTo: view.rightAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            knob.topAnchor.constraint(equalTo: view.topAnchor, constant: 8),
-            knob.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            knob.widthAnchor.constraint(equalToConstant: 32),
-            knob.heightAnchor.constraint(equalToConstant: 4)
-        ])
-    }
-
-    private var contentSizeObserver : NSKeyValueObservation?
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         checkSwipeDown()
-
         guard traitCollection.userInterfaceIdiom == .pad else { return }
         contentSizeObserver = tableView.observe(\.contentSize) { [weak self] tableView, _ in
             self?.preferredContentSize = CGSize(width: 350, height: tableView.contentSize.height)
@@ -93,17 +71,26 @@ class PageActionMenu: UIViewController, UIGestureRecognizerDelegate {
         contentSizeObserver?.invalidate()
         contentSizeObserver = nil
     }
+}
 
-    // MARK: Swipe down to close in iPhone Landscape
-    lazy var swipeDown: UISwipeGestureRecognizer = {
-        let swipeDown = UISwipeGestureRecognizer(target: self, action: #selector(close))
-        swipeDown.direction = .down
-        swipeDown.isEnabled = false
-        swipeDown.delegate = self
-        view.addGestureRecognizer(swipeDown)
-        return swipeDown
-    }()
+// MARK: Swipe down to close in iPhone Landscape
 
+extension PageActionMenu {
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        checkSwipeDown()
+    }
+
+    @objc func close() {
+        dismiss(animated: true, completion: nil)
+    }
+}
+
+// MARK: - Gestures
+
+extension PageActionMenu {
+    
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         guard gestureRecognizer === swipeDown else { return false }
         return tableView.contentOffset.y <= 0
@@ -116,18 +103,47 @@ class PageActionMenu: UIViewController, UIGestureRecognizerDelegate {
 
         swipeDown.isEnabled = orientation.isLandscape
     }
+}
 
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-        checkSwipeDown()
+// MARK: - Setup PageActionMenu
+
+extension PageActionMenu {
+        
+    private func setupTableView() {
+        view.addSubview(tableView)
+        tableView.estimatedRowHeight = UX.rowHeight
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.register(PageActionMenuCell.self, forCellReuseIdentifier: PageActionMenuCell.UX.cellIdentifier)
+        tableView.register(PageActionsShortcutsHeader.self, forHeaderFooterViewReuseIdentifier: UX.shortcuts)
+        tableView.estimatedSectionHeaderHeight = UX.estimatedSectionHeaderHeight
+        tableView.sectionFooterHeight = 0
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+    }
+    
+    private func setupKnob() {
+        view.addSubview(knob)
+        knob.translatesAutoresizingMaskIntoConstraints = false
+        knob.layer.cornerRadius = 2
     }
 
-    @objc func close() {
-        dismiss(animated: true, completion: nil)
+    private func setupConstraints() {
+        NSLayoutConstraint.activate([
+            tableView.topAnchor.constraint(equalTo: view.topAnchor),
+            tableView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            tableView.rightAnchor.constraint(equalTo: view.rightAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            knob.topAnchor.constraint(equalTo: view.topAnchor, constant: 8),
+            knob.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            knob.widthAnchor.constraint(equalToConstant: 32),
+            knob.heightAnchor.constraint(equalToConstant: 4)
+        ])
     }
 }
 
 // MARK: - UITableViewDataSource, UITableViewDelegate
+
 extension PageActionMenu: UITableViewDataSource, UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -180,6 +196,7 @@ extension PageActionMenu: UITableViewDataSource, UITableViewDelegate {
 }
 
 // MARK: - NotificationThemeable
+
 extension PageActionMenu: NotificationThemeable {
 
     func applyTheme() {
