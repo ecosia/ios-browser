@@ -26,7 +26,6 @@ extension PageActionMenuCell {
     
     func configure(with viewModel: PhotonActionSheetViewModel, at indexPath: IndexPath) {
         
-        separatorInset.left = PageActionMenu.UX.spacing
         backgroundColor = .theme.ecosia.impactMultiplyCardBackground
         let actions = viewModel.actions[indexPath.section][indexPath.row]
         let item = actions.item
