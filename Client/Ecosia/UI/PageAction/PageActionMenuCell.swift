@@ -18,6 +18,9 @@ final class PageActionMenuCell: UITableViewCell {
         /// The cell's left / right padding
         static let padding: CGFloat = 16.0
         
+        /// The separator height of the `PageActionMenuCell`'s `separatorView`
+        static let separatorHeight: CGFloat = 1.0
+        
         /// This `enum` serves the purpose of checking the cells' position
         /// within a section
         enum Position {
@@ -34,9 +37,14 @@ final class PageActionMenuCell: UITableViewCell {
     
     private weak var badge: UIView?
     private weak var badgeLabel: UILabel?
+    private var separatorView: UIView?
     
     /// The cell's position, starting from `middle` as preferred value
     private var position: UX.Position = .middle
+    
+    /// The eligible cell positions within the Table View
+    /// to add the separator view
+    private let separatorCellsPositions: [UX.Position] = [.middle, .first]
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)
@@ -50,6 +58,13 @@ final class PageActionMenuCell: UITableViewCell {
         super.layoutSubviews()
         adjustPadding()
         setTableViewCellCorners()
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        separatorView = nil
+        textLabel?.text = nil
+        imageView?.image = nil
     }
 }
 
@@ -111,6 +126,25 @@ extension PageActionMenuCell {
         layer.mask = nil
     }
     
+    /// Adds the custom separator view
+    private func addCustomGroupedStyleLikeSeparator() {
+        
+        if separatorView == nil {
+            separatorView = UIView()
+        }
+                
+        guard let separatorView else { return }
+        
+        separatorView.translatesAutoresizingMaskIntoConstraints = false
+        separatorView.backgroundColor = .theme.ecosia.border
+        
+        contentView.addSubview(separatorView)
+        
+        separatorView.heightAnchor.constraint(equalToConstant: UX.separatorHeight).isActive = true
+        separatorView.widthAnchor.constraint(equalToConstant: contentView.frame.width).isActive = true
+        separatorView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -UX.separatorHeight).isActive = true
+        separatorView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
+    }
 }
 
 extension PageActionMenuCell {
@@ -125,15 +159,15 @@ extension PageActionMenuCell {
         backgroundColor = .theme.ecosia.impactMultiplyCardBackground
         let actions = viewModel.actions[indexPath.section][indexPath.row]
         let item = actions.item
-
+        
         textLabel?.text = item.currentTitle
         textLabel?.textColor = .theme.ecosia.primaryText
         detailTextLabel?.text = item.text
         detailTextLabel?.textColor = .theme.ecosia.secondaryText
-
+        
         accessibilityIdentifier = item.iconString ?? item.accessibilityId
         accessibilityLabel = item.currentTitle
-
+        
         if let iconName = item.iconString {
             imageView?.image = UIImage(named: iconName)?.withRenderingMode(.alwaysTemplate)
             imageView?.tintColor = .theme.ecosia.secondaryText
@@ -142,6 +176,12 @@ extension PageActionMenuCell {
         }
         
         isNew(actions.item.isNew)
+
+        if separatorCellsPositions.contains(position) {
+            addCustomGroupedStyleLikeSeparator()
+        } else {
+            separatorView?.removeFromSuperview()
+        }
     }
 }
 
