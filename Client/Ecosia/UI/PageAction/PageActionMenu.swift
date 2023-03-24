@@ -17,7 +17,7 @@ final class PageActionMenu: UIViewController, UIGestureRecognizerDelegate {
 
     // MARK: - Variables
     
-    private var tableView = UITableView(frame: .zero, style: .insetGrouped)
+    private var tableView = UITableView(frame: .zero, style: .plain)
     private var knob = UIView()
     private var contentSizeObserver : NSKeyValueObservation?
     private lazy var swipeDown: UISwipeGestureRecognizer = {
