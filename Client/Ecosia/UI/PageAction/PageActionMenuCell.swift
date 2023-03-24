@@ -7,11 +7,36 @@ import UIKit
 final class PageActionMenuCell: UITableViewCell {
     
     struct UX {
+        
+        /// The cell's identifier
         static let cellIdentifier = String(describing: PageActionMenuCell.self)
+        
+        /// The corner radius to apply to the cells
+        /// depending on their position
+        static let cornerRadius: CGFloat = 10.0
+        
+        /// The cell's left / right padding
+        static let padding: CGFloat = 16.0
+        
+        /// This `enum` serves the purpose of checking the cells' position
+        /// within a section
+        enum Position {
+            /// Only one cell is rendered within a section
+            case solo
+            /// The cell is the first of its section
+            case first
+            /// The cell is between the first and last of its section
+            case middle
+            /// The cell is the last of its section
+            case last
+        }
     }
     
     private weak var badge: UIView?
     private weak var badgeLabel: UILabel?
+    
+    /// The cell's position, starting from `middle` as preferred value
+    private var position: UX.Position = .middle
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)
@@ -20,10 +45,80 @@ final class PageActionMenuCell: UITableViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        adjustPadding()
+        setTableViewCellCorners()
+    }
 }
 
 extension PageActionMenuCell {
     
+    /// Determines the TableView Cell's position based at a given Index Path
+    ///
+    /// - Parameters:
+    ///    - indexPath: The Table View's index path
+    ///    - actions: The array of `PhotonRowActions` utilized as Data Source
+    func determineTableViewCellPositionAt(_ indexPath: IndexPath, forActions actions: [[PhotonRowActions]]) {
+        
+        if actions[indexPath.section].count == 1 {
+            position = .solo
+        } else if indexPath.row == 0 {
+            position = .first
+        } else if (indexPath.row == actions[indexPath.section].count - 1) {
+            position = .last
+        } else {
+            position = .middle
+        }
+    }
+    
+}
+extension PageActionMenuCell {
+    
+    /// Sets the left/right padding of the Table View Cell's content view
+    private func adjustPadding() {
+        let frameWithPadding = CGRect(x: UX.padding,
+                                      y: frame.minY,
+                                      width: superview!.frame.width - (UX.padding * 2),
+                                      height: frame.height)
+        frame = frameWithPadding
+        let insets = NSDirectionalEdgeInsets(top: 0,
+                                             leading: UX.padding,
+                                             bottom: 0,
+                                             trailing: UX.padding)
+        contentView.directionalLayoutMargins = insets
+    }
+    
+    /// Sets the table view cell's corners based on the `position`
+    private func setTableViewCellCorners() {
+        switch position {
+        case .solo: addRoundedCorners(.allCorners, radius: UX.cornerRadius)
+        case .first: addRoundedCorners([.topLeft, .topRight], radius: UX.cornerRadius)
+        case .last: addRoundedCorners([.bottomLeft, .bottomRight], radius: UX.cornerRadius)
+        default: noCornerMask()
+        }
+    }
+}
+
+extension PageActionMenuCell {
+    
+    /// Reset the Corner Mask of a given `UIView` (`PageActionMenuCell`)
+    ///
+    /// To move into a different `UIView` extension
+    private func noCornerMask() {
+        layer.mask = nil
+    }
+    
+}
+
+extension PageActionMenuCell {
+    
+    /// Configures the TableView's cell
+    ///
+    /// - Parameters:
+    ///   - viewModel: The`PhotonActionSheetViewModel`'s View Model
+    ///   - indexPath: The TableView's index path
     func configure(with viewModel: PhotonActionSheetViewModel, at indexPath: IndexPath) {
         
         backgroundColor = .theme.ecosia.impactMultiplyCardBackground
@@ -51,6 +146,10 @@ extension PageActionMenuCell {
 
 extension PageActionMenuCell {
     
+    /// Creates the TableView Cell's `badge` based on a condition
+    ///
+    /// - Parameters:
+    ///    - isNew: A boolean value based on which we create the `badge` view
     private func isNew(_ isNew: Bool) {
         if isNew {
             if badge == nil {

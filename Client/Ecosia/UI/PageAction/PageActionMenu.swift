@@ -159,8 +159,9 @@ extension PageActionMenu: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: PageActionMenuCell.UX.cellIdentifier, for: indexPath)
-        (cell as? PageActionMenuCell)?.configure(with: viewModel, at: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: PageActionMenuCell.UX.cellIdentifier, for: indexPath) as! PageActionMenuCell
+        cell.determineTableViewCellPositionAt(indexPath, forActions: viewModel.actions)
+        cell.configure(with: viewModel, at: indexPath)
         return cell
     }
 
