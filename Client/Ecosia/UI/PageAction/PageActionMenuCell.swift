@@ -105,7 +105,8 @@ extension PageActionMenuCell {
     
     /// Reset the Corner Mask of a given `UIView` (`PageActionMenuCell`)
     ///
-    /// To move into a different `UIView` extension
+    /// Perhaps moved into a different `UIView` extension
+    /// Although we use this function purely to solve this Table View Cell's UI behaviour
     private func noCornerMask() {
         layer.mask = nil
     }
