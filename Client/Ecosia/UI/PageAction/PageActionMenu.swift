@@ -119,6 +119,7 @@ extension PageActionMenu {
         tableView.register(PageActionsShortcutsHeader.self, forHeaderFooterViewReuseIdentifier: UX.shortcuts)
         tableView.estimatedSectionHeaderHeight = UX.estimatedSectionHeaderHeight
         tableView.sectionFooterHeight = 0
+        tableView.separatorStyle = .none
         tableView.translatesAutoresizingMaskIntoConstraints = false
     }
     
