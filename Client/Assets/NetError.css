@@ -82,36 +82,12 @@ button {
 }
 
 #errorPageContainer {
-    /* If the page is greater than 550px center the content.
-     * This number should be kept in sync with the media query for tablets below */
-    max-width: 550px;
-    margin: 0 auto;
     -webkit-transform: translateY(127px);
     padding-bottom: 10px;
-
     min-height: calc(100% - 127px - 10px);
     display: flex;
     flex-direction: column;
-}
-
-/* On large screen devices (hopefully a 7+ inch tablet, we already center content (see #errorPageContainer above).
- Apply tablet specific styles here */
-@media (min-width: 550px) {
-    #errorTitle,
-    #errorShortDescText {
-        width: 50%;
-    }
-
-    button {
-        position: absolute;
-        top: -0.5em;
-        right: 0px;
-        bottom: auto;
-        padding-left: 5%;
-        padding-right: 5%;
-        min-width: 40%;
-        width: auto;
-    }
+    align-items: center;
 }
 
 #errorLongContent {
@@ -124,11 +100,9 @@ button {
     margin-bottom: 78px;
 }
 
-#errorImage {
-    display: inline-block;
-    text-align: center;
-}
-
 #errorImage img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
     width: 50%;
 }
