@@ -94,9 +94,12 @@ extension PageActionMenuCell {
     
     /// Sets the left/right padding of the Table View Cell's content view
     private func adjustPadding() {
+        
+        guard let superview else { return }
+        
         let frameWithPadding = CGRect(x: UX.padding,
                                       y: frame.minY,
-                                      width: superview!.frame.width - (UX.padding * 2),
+                                      width: superview.frame.width - (UX.padding * 2),
                                       height: frame.height)
         frame = frameWithPadding
         let insets = NSDirectionalEdgeInsets(top: 0,
