@@ -89,6 +89,7 @@ extension PageActionMenuCell {
     }
     
 }
+
 extension PageActionMenuCell {
     
     /// Sets the left/right padding of the Table View Cell's content view
