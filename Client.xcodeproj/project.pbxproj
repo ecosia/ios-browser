@@ -13954,8 +13954,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
 			requirement = {
-				kind = exactVersion;
-				version = 7.2.2;
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.2.2;
 			};
 		};
 		433F87CC2788EAB600693368 /* XCRemoteSwiftPackageReference "GCDWebServer" */ = {
