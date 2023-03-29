@@ -8164,11 +8164,11 @@
 			buildRules = (
 			);
 			dependencies = (
-				288A2D9C1AB8B3260023ABC3 /* PBXTargetDependency */,
 				F84B22521A0920C600AAB793 /* PBXTargetDependency */,
 				047F9B3124E1FE1F00CD7DF7 /* PBXTargetDependency */,
 				4368F88227966EA50013419B /* PBXTargetDependency */,
 				4326A3DF2849C34C00550F73 /* PBXTargetDependency */,
+				288A2D9C1AB8B3260023ABC3 /* PBXTargetDependency */,
 			);
 			name = Client;
 			packageProductDependencies = (
@@ -12939,6 +12939,7 @@
 				CURRENT_PROJECT_VERSION = 75;
 				MARKETING_VERSION = 8.1.5;
 				OTHER_LDFLAGS = "$(inherited)";
+				SWIFT_VERSION = 5.0;
 				VALIDATE_WORKSPACE = YES;
 			};
 			name = AppCenter;
@@ -13310,6 +13311,7 @@
 				CURRENT_PROJECT_VERSION = 75;
 				MARKETING_VERSION = 8.1.5;
 				OTHER_LDFLAGS = "$(inherited)";
+				SWIFT_VERSION = 5.0;
 				VALIDATE_WORKSPACE = YES;
 			};
 			name = Release;
@@ -13506,6 +13508,7 @@
 				CURRENT_PROJECT_VERSION = 75;
 				MARKETING_VERSION = 8.1.5;
 				OTHER_LDFLAGS = "$(inherited)";
+				SWIFT_VERSION = 5.0;
 				VALIDATE_WORKSPACE = YES;
 			};
 			name = Beta;
@@ -13633,6 +13636,7 @@
 				CURRENT_PROJECT_VERSION = 75;
 				MARKETING_VERSION = 8.1.5;
 				OTHER_LDFLAGS = "$(inherited)";
+				SWIFT_VERSION = 5.0;
 				VALIDATE_WORKSPACE = YES;
 			};
 			name = Debug;
