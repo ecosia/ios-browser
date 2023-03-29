@@ -8,7 +8,6 @@ final class PageActionMenuCell: UITableViewCell {
     
     struct UX {
         
-        /// The cell's identifier
         static let cellIdentifier = String(describing: PageActionMenuCell.self)
         
         /// The corner radius to apply to the cells
