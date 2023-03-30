@@ -74,7 +74,8 @@ extension PageActionMenuCell {
     /// - Parameters:
     ///    - indexPath: The Table View's index path
     ///    - actions: The array of `PhotonRowActions` utilized as Data Source
-    func determineTableViewCellPositionAt(_ indexPath: IndexPath, forActions actions: [[PhotonRowActions]]) {
+    @discardableResult
+    func determineTableViewCellPositionAt(_ indexPath: IndexPath, forActions actions: [[PhotonRowActions]]) -> UX.Position {
         
         if actions[indexPath.section].count == 1 {
             position = .solo
@@ -85,6 +86,8 @@ extension PageActionMenuCell {
         } else {
             position = .middle
         }
+        
+        return position
     }
     
 }
