@@ -52,7 +52,7 @@ class TopSitesDimensionImplementation: TopSitesDimension {
                              numberOfRows: Int,
                              interface: TopSitesUIInterface
     ) -> TopSitesSectionDimension {
-        let numberOfTilesPerRow = getNumberOfTilesPerRow(for: interface)
+        let numberOfTilesPerRow = getNumberOfTilesPerRow(for: interface, sites: sites)
         let numberOfRows = getNumberOfRows(for: sites,
                                            numberOfRows: numberOfRows,
                                            numberOfTilesPerRow: numberOfTilesPerRow)
@@ -79,7 +79,12 @@ class TopSitesDimensionImplementation: TopSitesDimension {
 
     //Ecosia: The design decided to have 4 tiles per row by default.
     /// Get the number of tiles per row the user will see. This depends on the UI interface the user has.
-    /// - Parameter interface: Tile number is based on layout, this param contains the parameters needed to computer the tile number
+    /// For `sites` less than 4 in a `horizontalSizeClass` of type `regular`
+    /// we check whether the `sites` are 4 maximum so the layout of the upper section containing `NTPLibraryCell`
+    /// will remain vertically aligned, providing a more consistent layout.
+    /// - Parameters:
+    ///   - interface: Tile number is based on layout, this param contains the parameters needed to computer the tile number
+    ///   - sites: The number of available `TopSite`s on a NTP we need to show
     /// - Returns: The number of tiles per row the user will see
     private func getNumberOfTilesPerRow(for interface: TopSitesUIInterface) -> Int {
         return 4
