@@ -50,6 +50,14 @@ This branch works with [Xcode 14.2](https://developer.apple.com/download/more/?=
 
 #### Troubleshooting
 
+##### Emulation support software not installed when running on Rosetta simulator
+
+*Build error:* `iPhone 14 Pro supports emulating this architecture, but the emuluation support software is not installed`
+
+*Reason:* Rosetta 2 needs to be installed
+
+*Fix:* Open an app that needs Rosetta and you will be requested to install it. See [this link](https://support.apple.com/en-us/HT211861).
+
 ##### Missing content-blocker-lib-ios files
 *Build error:* `content-blocker-lib-ios/Lists/some-file.json: No such file or directory`
 
