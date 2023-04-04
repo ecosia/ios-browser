@@ -40,12 +40,24 @@ This branch works with [Xcode 14.2](https://developer.apple.com/download/more/?=
     cd ios-browser
     sh ./bootstrap.sh
     ```
+    - If you run into a problem related to `content-blocker-lib-ios`, check the troubleshooting section [here](#missing-content-blocker-lib-ios-files).
 
-1. Open the project
+2. Open the project
 
     ```bash
     open Client.xcodeproj
     ```
+
+#### Troubleshooting
+
+##### Missing content-blocker-lib-ios files
+*Build error:* `content-blocker-lib-ios/Lists/some-file.json: No such file or directory`
+
+*Reason:* If you get this error while building the project, probably something went wrong when running the `content_blocker_update.sh` script (which also runs as a step in `bootstrap.sh`).
+
+In case the error was due to `xcrun: error: unable to lookup item 'PlatformPath'`, you might have the incorrect xcode sdk path. You can check it by running `xcrun --show-sdk-path --sdk macosx`, if it shows `/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk` it is incorrect.
+
+*Fix:* Switch the default SDK location by running `sudo xcode-select -switch /Applications/Xcode.app/Contents/Developer`.
 
 ### CI/CD
 
