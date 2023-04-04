@@ -90,61 +90,94 @@ final class MyImpactCell: UICollectionViewCell, NotificationThemeable {
         howItWorksButton.addSubview(howItWorksIcon)
         self.howItWorksIcon = howItWorksIcon
         
+        let searchesStackView = UIStackView()
+        searchesStackView.translatesAutoresizingMaskIntoConstraints = false
+        searchesStackView.axis = .horizontal
+        searchesStackView.distribution = .fill
+        searchesStackView.alignment = .center
+        searchesStackView.spacing = 8.0
+        
         let searchesIcon = UIImageView()
         searchesIcon.translatesAutoresizingMaskIntoConstraints = false
         searchesIcon.contentMode = .center
         searchesIcon.clipsToBounds = true
-        outline.addSubview(searchesIcon)
+        searchesIcon.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        searchesIcon.setContentHuggingPriority(.defaultHigh, for: .vertical)
         self.searchesIcon = searchesIcon
-        
+                
         let searches = UILabel()
         searches.translatesAutoresizingMaskIntoConstraints = false
         searches.font = .preferredFont(forTextStyle: .body)
         searches.adjustsFontForContentSizeCategory = true
+        searches.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         self.searches = searches
-        outline.addSubview(searches)
         
         let searchesTrees = UILabel()
         searchesTrees.translatesAutoresizingMaskIntoConstraints = false
         searchesTrees.font = .systemFont(ofSize: UIFont.preferredFont(forTextStyle: .subheadline).pointSize, weight: .semibold)
         searchesTrees.adjustsFontForContentSizeCategory = true
         self.searchesTrees = searchesTrees
-        outline.addSubview(searchesTrees)
         
         let searchesImpact = UIImageView()
         searchesImpact.translatesAutoresizingMaskIntoConstraints = false
         searchesImpact.contentMode = .center
         searchesImpact.clipsToBounds = true
-        outline.addSubview(searchesImpact)
         self.searchesImpact = searchesImpact
+        
+        searchesStackView.addArrangedSubview(self.searchesIcon)
+        searchesStackView.addArrangedSubview(self.searches)
+        searchesStackView.addArrangedSubview(self.searchesTrees)
+        searchesStackView.addArrangedSubview(self.searchesImpact)
+        
+        let friendsStackView = UIStackView()
+        friendsStackView.translatesAutoresizingMaskIntoConstraints = false
+        friendsStackView.axis = .horizontal
+        friendsStackView.distribution = .fill
+        friendsStackView.alignment = .center
+        friendsStackView.spacing = 8.0
 
         let friendsIcon = UIImageView()
         friendsIcon.translatesAutoresizingMaskIntoConstraints = false
         friendsIcon.contentMode = .center
         friendsIcon.clipsToBounds = true
-        outline.addSubview(friendsIcon)
+        friendsIcon.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        friendsIcon.setContentHuggingPriority(.defaultHigh, for: .vertical)
         self.friendsIcon = friendsIcon
         
         let friends = UILabel()
         friends.translatesAutoresizingMaskIntoConstraints = false
         friends.font = .preferredFont(forTextStyle: .body)
         friends.adjustsFontForContentSizeCategory = true
+        friends.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        friends.numberOfLines = 2
         self.friends = friends
-        outline.addSubview(friends)
         
         let friendsTrees = UILabel()
         friendsTrees.translatesAutoresizingMaskIntoConstraints = false
         friendsTrees.font = .systemFont(ofSize: UIFont.preferredFont(forTextStyle: .subheadline).pointSize, weight: .semibold)
         friendsTrees.adjustsFontForContentSizeCategory = true
         self.friendsTrees = friendsTrees
-        outline.addSubview(friendsTrees)
         
         let friendsImpact = UIImageView()
         friendsImpact.translatesAutoresizingMaskIntoConstraints = false
         friendsImpact.contentMode = .center
         friendsImpact.clipsToBounds = true
-        outline.addSubview(friendsImpact)
         self.friendsImpact = friendsImpact
+        
+        friendsStackView.addArrangedSubview(self.friendsIcon)
+        friendsStackView.addArrangedSubview(self.friends)
+        friendsStackView.addArrangedSubview(self.friendsTrees)
+        friendsStackView.addArrangedSubview(self.friendsImpact)
+        
+        let searchAndFriendsStackView = UIStackView()
+        searchAndFriendsStackView.translatesAutoresizingMaskIntoConstraints = false
+        searchAndFriendsStackView.alignment = .fill
+        searchAndFriendsStackView.axis = .vertical
+        searchAndFriendsStackView.spacing = UIStackView.spacingUseDefault
+
+        searchAndFriendsStackView.addArrangedSubview(searchesStackView)
+        searchAndFriendsStackView.addArrangedSubview(friendsStackView)
+        outline.addSubview(searchAndFriendsStackView)
 
         outline.leftAnchor.constraint(equalTo: contentView.leftAnchor).isActive = true
         outline.rightAnchor.constraint(equalTo: contentView.rightAnchor).isActive = true
@@ -179,31 +212,12 @@ final class MyImpactCell: UICollectionViewCell, NotificationThemeable {
         
         howItWorksIcon.centerYAnchor.constraint(equalTo: howItWorks.centerYAnchor).isActive = true
         howItWorksIcon.leftAnchor.constraint(equalTo: howItWorks.rightAnchor, constant: 4).isActive = true
-        
-        searchesIcon.leftAnchor.constraint(equalTo: outline.leftAnchor, constant: 16).isActive = true
-        searchesIcon.bottomAnchor.constraint(equalTo: friendsIcon.topAnchor, constant: -10).isActive = true
-        
-        searches.leftAnchor.constraint(equalTo: searchesIcon.rightAnchor, constant: 10).isActive = true
-        searches.centerYAnchor.constraint(equalTo: searchesIcon.centerYAnchor).isActive = true
-        
-        searchesTrees.rightAnchor.constraint(equalTo: searchesImpact.leftAnchor, constant: -7).isActive = true
-        searchesTrees.centerYAnchor.constraint(equalTo: searchesIcon.centerYAnchor).isActive = true
-        
-        searchesImpact.rightAnchor.constraint(equalTo: outline.rightAnchor, constant: -19).isActive = true
-        searchesImpact.centerYAnchor.constraint(equalTo: searchesIcon.centerYAnchor).isActive = true
-        
-        friendsIcon.leftAnchor.constraint(equalTo: outline.leftAnchor, constant: 16).isActive = true
-        friendsIcon.bottomAnchor.constraint(equalTo: outline.bottomAnchor, constant: -24).isActive = true
-        
-        friends.leftAnchor.constraint(equalTo: friendsIcon.rightAnchor, constant: 10).isActive = true
-        friends.centerYAnchor.constraint(equalTo: friendsIcon.centerYAnchor).isActive = true
-        
-        friendsTrees.rightAnchor.constraint(equalTo: friendsImpact.leftAnchor, constant: -7).isActive = true
-        friendsTrees.centerYAnchor.constraint(equalTo: friendsIcon.centerYAnchor).isActive = true
-        
-        friendsImpact.rightAnchor.constraint(equalTo: outline.rightAnchor, constant: -19).isActive = true
-        friendsImpact.centerYAnchor.constraint(equalTo: friendsIcon.centerYAnchor).isActive = true
-        
+
+        searchAndFriendsStackView.leftAnchor.constraint(equalTo: outline.leftAnchor, constant: 16).isActive = true
+        searchAndFriendsStackView.rightAnchor.constraint(equalTo: outline.rightAnchor, constant: -16).isActive = true
+        searchAndFriendsStackView.topAnchor.constraint(equalTo: totalProgress.bottomAnchor, constant: 12).isActive = true
+        searchAndFriendsStackView.bottomAnchor.constraint(equalTo: outline.bottomAnchor, constant: -24).isActive = true
+                        
         applyTheme()
     }
     
