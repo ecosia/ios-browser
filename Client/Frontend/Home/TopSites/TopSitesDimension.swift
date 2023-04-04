@@ -52,7 +52,7 @@ class TopSitesDimensionImplementation: TopSitesDimension {
                              numberOfRows: Int,
                              interface: TopSitesUIInterface
     ) -> TopSitesSectionDimension {
-        let numberOfTilesPerRow = getNumberOfTilesPerRow(for: interface, sites: sites)
+        let numberOfTilesPerRow = getNumberOfTilesPerRow(for: interface)
         let numberOfRows = getNumberOfRows(for: sites,
                                            numberOfRows: numberOfRows,
                                            numberOfTilesPerRow: numberOfTilesPerRow)
@@ -78,24 +78,13 @@ class TopSitesDimensionImplementation: TopSitesDimension {
     }
 
     /// Get the number of tiles per row the user will see. This depends on the UI interface the user has.
-    /// For `sites` less than 4 in a `horizontalSizeClass` of type `regular`
-    /// we check whether the `sites` are 4 maximum so the layout of the upper section containing `NTPLibraryCell`
-    /// will remain vertically aligned, providing a more consistent layout.
-    /// - Parameters:
-    ///   - interface: Tile number is based on layout, this param contains the parameters needed to computer the tile number
-    ///   - sites: The number of available `TopSite`s on a NTP we need to show
+    /// - Parameter interface: Tile number is based on layout, this param contains the parameters needed to computer the tile number
     /// - Returns: The number of tiles per row the user will see
-    private func getNumberOfTilesPerRow(for interface: TopSitesUIInterface, sites: [TopSite]) -> Int {
-        let defaultNumberOfTiles = 4
-        let expectedNumberOfTilesForRegularHorizontalSizeClass = 6
-        let isRegularHorizontalSizeClass = interface.horizontalSizeClass == .regular
-        let hasMoreThanDefaultNumberOfTiles = sites.count > defaultNumberOfTiles
-        
-        if isRegularHorizontalSizeClass &&
-            hasMoreThanDefaultNumberOfTiles {
-            return expectedNumberOfTilesForRegularHorizontalSizeClass
+    private func getNumberOfTilesPerRow(for interface: TopSitesUIInterface) -> Int {
+        if interface.horizontalSizeClass == .regular {
+            return 6
         } else {
-            return defaultNumberOfTiles
+            return 4
         }
     }
 }
