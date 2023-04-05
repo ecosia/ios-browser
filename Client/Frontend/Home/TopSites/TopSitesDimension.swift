@@ -78,16 +78,10 @@ class TopSitesDimensionImplementation: TopSitesDimension {
     }
 
     //Ecosia: The design decided to have 4 tiles per row by default.
-    //Commenting the logic based on the interface and return 4.
     /// Get the number of tiles per row the user will see. This depends on the UI interface the user has.
     /// - Parameter interface: Tile number is based on layout, this param contains the parameters needed to computer the tile number
     /// - Returns: The number of tiles per row the user will see
     private func getNumberOfTilesPerRow(for interface: TopSitesUIInterface) -> Int {
-        // Ecosia if interface.horizontalSizeClass == .regular {
-        // Ecosia     return 6
-        // Ecosia } else {
-        // Ecosia     return 4
-        // Ecosia }
         return 4
     }
 }
