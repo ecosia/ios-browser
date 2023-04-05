@@ -42,7 +42,7 @@ This branch works with [Xcode 14.2](https://developer.apple.com/download/more/?=
     ```
     - If you run into a problem related to `content-blocker-lib-ios`, check the troubleshooting section [here](#missing-content-blocker-lib-ios-files).
 
-2. Open the project
+1. Open the project
 
     ```bash
     open Client.xcodeproj
