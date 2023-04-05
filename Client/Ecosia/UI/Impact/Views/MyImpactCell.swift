@@ -180,8 +180,7 @@ extension MyImpactCell {
         
         treesPlanted.text = .localizedPlural(.treesPlantedPlural, num: User.shared.impact)
         searchesLabel.text = .localizedPlural(.searches, num: personalCounter)
-        //        friends.text = .localizedPlural(.friendInvitesPlural, num: User.shared.referrals.count)
-        friendsLabel.text = "0 Lorem Ipsum ist ein einfacher Demo-Text für die Print- und Schriftindustrie. Lorem Ipsum ist in der Industrie bereits der Standard Demo-Text seit 1500"
+        friendsLabel.text = .localizedPlural(.friendInvitesPlural, num: User.shared.referrals.count)
     }
     
 }
