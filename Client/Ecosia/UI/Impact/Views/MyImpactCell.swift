@@ -96,7 +96,8 @@ final class MyImpactCell: UICollectionViewCell, NotificationThemeable {
         searchesStackView.distribution = .fill
         searchesStackView.alignment = .center
         searchesStackView.spacing = 8.0
-        
+        searchesStackView.setContentHuggingPriority(.defaultLow, for: .horizontal)
+
         let searchesIcon = UIImageView()
         searchesIcon.translatesAutoresizingMaskIntoConstraints = false
         searchesIcon.contentMode = .center
@@ -116,12 +117,16 @@ final class MyImpactCell: UICollectionViewCell, NotificationThemeable {
         searchesTrees.translatesAutoresizingMaskIntoConstraints = false
         searchesTrees.font = .systemFont(ofSize: UIFont.preferredFont(forTextStyle: .subheadline).pointSize, weight: .semibold)
         searchesTrees.adjustsFontForContentSizeCategory = true
+        searchesTrees.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        searchesTrees.setContentHuggingPriority(.defaultHigh, for: .vertical)
         self.searchesTrees = searchesTrees
         
         let searchesImpact = UIImageView()
         searchesImpact.translatesAutoresizingMaskIntoConstraints = false
         searchesImpact.contentMode = .center
         searchesImpact.clipsToBounds = true
+        searchesImpact.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        searchesImpact.setContentHuggingPriority(.defaultHigh, for: .vertical)
         self.searchesImpact = searchesImpact
         
         searchesStackView.addArrangedSubview(self.searchesIcon)
@@ -135,6 +140,7 @@ final class MyImpactCell: UICollectionViewCell, NotificationThemeable {
         friendsStackView.distribution = .fill
         friendsStackView.alignment = .center
         friendsStackView.spacing = 8.0
+        friendsStackView.setContentHuggingPriority(.defaultLow, for: .horizontal)
 
         let friendsIcon = UIImageView()
         friendsIcon.translatesAutoresizingMaskIntoConstraints = false
@@ -156,12 +162,16 @@ final class MyImpactCell: UICollectionViewCell, NotificationThemeable {
         friendsTrees.translatesAutoresizingMaskIntoConstraints = false
         friendsTrees.font = .systemFont(ofSize: UIFont.preferredFont(forTextStyle: .subheadline).pointSize, weight: .semibold)
         friendsTrees.adjustsFontForContentSizeCategory = true
+        friendsTrees.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        friendsTrees.setContentHuggingPriority(.defaultHigh, for: .vertical)
         self.friendsTrees = friendsTrees
         
         let friendsImpact = UIImageView()
         friendsImpact.translatesAutoresizingMaskIntoConstraints = false
         friendsImpact.contentMode = .center
         friendsImpact.clipsToBounds = true
+        friendsImpact.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        friendsImpact.setContentHuggingPriority(.defaultHigh, for: .vertical)
         self.friendsImpact = friendsImpact
         
         friendsStackView.addArrangedSubview(self.friendsIcon)
@@ -174,15 +184,16 @@ final class MyImpactCell: UICollectionViewCell, NotificationThemeable {
         searchAndFriendsStackView.alignment = .fill
         searchAndFriendsStackView.axis = .vertical
         searchAndFriendsStackView.spacing = UIStackView.spacingUseDefault
+        searchAndFriendsStackView.setContentHuggingPriority(.defaultLow, for: .horizontal)
 
         searchAndFriendsStackView.addArrangedSubview(searchesStackView)
         searchAndFriendsStackView.addArrangedSubview(friendsStackView)
         outline.addSubview(searchAndFriendsStackView)
 
-        outline.leftAnchor.constraint(equalTo: contentView.leftAnchor).isActive = true
-        outline.rightAnchor.constraint(equalTo: contentView.rightAnchor).isActive = true
-        outline.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12).isActive = true
-        outline.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -4).isActive = true
+        outline.leadingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leadingAnchor).isActive = true
+        outline.trailingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.trailingAnchor).isActive = true
+        outline.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
+        outline.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
         
         totalProgress.topAnchor.constraint(equalTo: outline.topAnchor, constant: 25).isActive = true
         totalProgress.centerXAnchor.constraint(equalTo: outline.centerXAnchor).isActive = true
