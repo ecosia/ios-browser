@@ -193,7 +193,7 @@ final class MyImpactCell: UICollectionViewCell, NotificationThemeable {
         outline.trailingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.trailingAnchor).isActive = true
         outline.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
         outline.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
-        outline.widthAnchor.constraint(equalTo: widthAnchor).isActive = true
+        outline.widthAnchor.constraint(equalToConstant: frame.width).isActive = true
         
         totalProgress.topAnchor.constraint(equalTo: outline.topAnchor, constant: 25).isActive = true
         totalProgress.centerXAnchor.constraint(equalTo: outline.centerXAnchor).isActive = true
