@@ -155,6 +155,7 @@ final class MyImpactCell: UICollectionViewCell, NotificationThemeable {
         friends.font = .preferredFont(forTextStyle: .body)
         friends.adjustsFontForContentSizeCategory = true
         friends.numberOfLines = 2
+        friends.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         self.friends = friends
         
         let friendsTrees = UILabel()
