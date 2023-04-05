@@ -96,7 +96,6 @@ final class MyImpactCell: UICollectionViewCell, NotificationThemeable {
         searchesStackView.distribution = .fill
         searchesStackView.alignment = .center
         searchesStackView.spacing = 8.0
-        searchesStackView.setContentHuggingPriority(.defaultLow, for: .horizontal)
 
         let searchesIcon = UIImageView()
         searchesIcon.translatesAutoresizingMaskIntoConstraints = false
@@ -110,7 +109,8 @@ final class MyImpactCell: UICollectionViewCell, NotificationThemeable {
         searches.translatesAutoresizingMaskIntoConstraints = false
         searches.font = .preferredFont(forTextStyle: .body)
         searches.adjustsFontForContentSizeCategory = true
-        searches.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        searches.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        searches.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
         self.searches = searches
         
         let searchesTrees = UILabel()
@@ -154,7 +154,6 @@ final class MyImpactCell: UICollectionViewCell, NotificationThemeable {
         friends.translatesAutoresizingMaskIntoConstraints = false
         friends.font = .preferredFont(forTextStyle: .body)
         friends.adjustsFontForContentSizeCategory = true
-        friends.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         friends.numberOfLines = 2
         self.friends = friends
         
@@ -184,8 +183,7 @@ final class MyImpactCell: UICollectionViewCell, NotificationThemeable {
         searchAndFriendsStackView.alignment = .fill
         searchAndFriendsStackView.axis = .vertical
         searchAndFriendsStackView.spacing = UIStackView.spacingUseDefault
-        searchAndFriendsStackView.setContentHuggingPriority(.defaultLow, for: .horizontal)
-
+        
         searchAndFriendsStackView.addArrangedSubview(searchesStackView)
         searchAndFriendsStackView.addArrangedSubview(friendsStackView)
         outline.addSubview(searchAndFriendsStackView)
@@ -224,8 +222,8 @@ final class MyImpactCell: UICollectionViewCell, NotificationThemeable {
         howItWorksIcon.centerYAnchor.constraint(equalTo: howItWorks.centerYAnchor).isActive = true
         howItWorksIcon.leftAnchor.constraint(equalTo: howItWorks.rightAnchor, constant: 4).isActive = true
 
-        searchAndFriendsStackView.leftAnchor.constraint(equalTo: outline.leftAnchor, constant: 16).isActive = true
-        searchAndFriendsStackView.rightAnchor.constraint(equalTo: outline.rightAnchor, constant: -16).isActive = true
+        searchAndFriendsStackView.leadingAnchor.constraint(equalTo: outline.leadingAnchor, constant: 16).isActive = true
+        searchAndFriendsStackView.trailingAnchor.constraint(equalTo: outline.trailingAnchor, constant: -16).isActive = true
         searchAndFriendsStackView.topAnchor.constraint(equalTo: totalProgress.bottomAnchor, constant: 12).isActive = true
         searchAndFriendsStackView.bottomAnchor.constraint(equalTo: outline.bottomAnchor, constant: -24).isActive = true
                         
@@ -245,7 +243,7 @@ final class MyImpactCell: UICollectionViewCell, NotificationThemeable {
             searchesTrees.text = "\(User.shared.searchImpact)"
             friendsTrees.text = "\(User.shared.referrals.impact)"
         }
-        
+
         treesPlanted.text = .localizedPlural(.treesPlantedPlural, num: User.shared.impact)
         searches.text = .localizedPlural(.searches, num: personalCounter)
         friends.text = .localizedPlural(.friendInvitesPlural, num: User.shared.referrals.count)
