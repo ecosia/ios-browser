@@ -125,7 +125,7 @@ extension MyImpactCell {
         self.searchesLabel = searchesLabel
         
         let searchesTreesLabel = makeSearchesTreesLabel()
-        self.searchesTreesLabel = searchesLabel
+        self.searchesTreesLabel = searchesTreesLabel
 
         let searchesImpactIcon = makeSearchesImpactIcon()
         self.searchesImpactIcon = searchesImpactIcon

@@ -96,8 +96,7 @@ extension MyImpactCell {
         searches.translatesAutoresizingMaskIntoConstraints = false
         searches.font = .preferredFont(forTextStyle: .body)
         searches.adjustsFontForContentSizeCategory = true
-        searches.setContentHuggingPriority(.defaultLow, for: .horizontal)
-        searches.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+        searches.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         return searches
     }
     
