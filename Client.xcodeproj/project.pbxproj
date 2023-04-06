@@ -104,6 +104,7 @@
 		28E08C991AF44EF9009BA2FA /* SQLiteHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FCAE2551ABB531100877008 /* SQLiteHistory.swift */; };
 		28E08C9A1AF44F00009BA2FA /* BrowserSchema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 282915E51AF1A7920006EEB5 /* BrowserSchema.swift */; };
 		28EADE5D1AFC3A78007FB2FB /* UIImageView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28EADE381AFC3898007FB2FB /* UIImageView+Extension.swift */; };
+		2C1D049B29DDDC8E00ED43BA /* MyImpactCell+ViewFactories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C1D049A29DDDC8E00ED43BA /* MyImpactCell+ViewFactories.swift */; };
 		2C28F96C201B2D4C00ABA8A5 /* MailAppSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C28F96B201B2D4C00ABA8A5 /* MailAppSettingsTests.swift */; };
 		2C2A5EF41E68469500F02659 /* PrivateBrowsingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A5EF31E68469500F02659 /* PrivateBrowsingTest.swift */; };
 		2C2A91291FA2410D002E36BD /* HistoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A91281FA2410D002E36BD /* HistoryTests.swift */; };
@@ -1701,6 +1702,7 @@
 		2B31494CBFF9DF6FA41953B2 /* ses */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ses; path = ses.lproj/FindInPage.strings; sourceTree = "<group>"; };
 		2BAA411FAF1D49B9990A7720 /* sat-Olck */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "sat-Olck"; path = "sat-Olck.lproj/Shared.strings"; sourceTree = "<group>"; };
 		2BAB4A40A318F5A577488909 /* mr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = mr; path = mr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		2C1D049A29DDDC8E00ED43BA /* MyImpactCell+ViewFactories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MyImpactCell+ViewFactories.swift"; sourceTree = "<group>"; };
 		2C26401D9CCB8C2671EA2431 /* ta */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ta; path = ta.lproj/3DTouchActions.strings; sourceTree = "<group>"; };
 		2C28F96B201B2D4C00ABA8A5 /* MailAppSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailAppSettingsTests.swift; sourceTree = "<group>"; };
 		2C2A5EF31E68469500F02659 /* PrivateBrowsingTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PrivateBrowsingTest.swift; sourceTree = "<group>"; };
@@ -6572,6 +6574,7 @@
 				CA4D9CAA28C8D801006AFB5D /* MyImpactCell.Indicator.swift */,
 				CA4D9CA128C8D801006AFB5D /* MyImpactCell.Progress.swift */,
 				CA4D9CAD28C8D801006AFB5D /* MyImpactCell.swift */,
+				2C1D049A29DDDC8E00ED43BA /* MyImpactCell+ViewFactories.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -9258,6 +9261,7 @@
 				F85C7F0E2711C556004BDBA4 /* SettingsViewController.swift in Sources */,
 				74C027451B2A348C001B1E88 /* SessionData.swift in Sources */,
 				C84266752728462900382274 /* AccessibilityIdentifiers.swift in Sources */,
+				2C1D049B29DDDC8E00ED43BA /* MyImpactCell+ViewFactories.swift in Sources */,
 				E1877A81286E0EFD00F5BDF2 /* WebViewNavigationHandler.swift in Sources */,
 				274A36CC239EB99400A21587 /* LibraryPanelContextMenu.swift in Sources */,
 				D314E7F71A37B98700426A76 /* TabToolbar.swift in Sources */,
