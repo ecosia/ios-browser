@@ -7,6 +7,8 @@ import Core
 
 final class MyImpactCell: UICollectionViewCell {
     
+    // MARK: - UX
+
     struct UX {
         
         enum Outline {
@@ -37,6 +39,8 @@ final class MyImpactCell: UICollectionViewCell {
         }
     }
     
+    // MARK: - Properties
+    
     private(set) weak var howItWorksButton: UIControl!
     private weak var totalProgress: Progress!
     private weak var currentProgress: Progress!
@@ -57,6 +61,8 @@ final class MyImpactCell: UICollectionViewCell {
     private weak var friendsImpactIcon: UIImageView!
     private weak var searchAndYourFriendsImpactContainerView: UIView!
     
+    // MARK: - Init
+
     required init?(coder: NSCoder) { nil }
     
     override init(frame: CGRect) {
@@ -65,7 +71,9 @@ final class MyImpactCell: UICollectionViewCell {
         setupConstraints()
         applyTheme()
     }
-            
+    
+    // MARK: - Reuse
+    
     override func prepareForReuse() {
         super.prepareForReuse()
         applyTheme()
@@ -74,6 +82,8 @@ final class MyImpactCell: UICollectionViewCell {
 
 extension MyImpactCell {
     
+    // MARK: - View Setup
+
     private func setupView() {
         
         let outline = makeOutline()
@@ -164,6 +174,8 @@ extension MyImpactCell {
 
 extension MyImpactCell {
     
+    // MARK: - View update helper
+
     func update(personalCounter: Int, progress: Double) {
         currentProgress.value = progress
         indicator.value = progress
@@ -187,6 +199,8 @@ extension MyImpactCell {
 
 extension MyImpactCell: NotificationThemeable {
     
+    // MARK: - Theme
+
     func applyTheme() {
         outline.backgroundColor = .theme.ecosia.ntpCellBackground
         totalProgress.update(color: .theme.ecosia.treeCounterProgressTotal)
@@ -210,6 +224,8 @@ extension MyImpactCell: NotificationThemeable {
 }
 
 extension MyImpactCell {
+    
+    // MARK: - Constraint helper
     
     private func setupConstraints() {
         

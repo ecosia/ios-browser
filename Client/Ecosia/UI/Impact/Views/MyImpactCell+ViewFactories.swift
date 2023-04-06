@@ -5,7 +5,9 @@
 import Foundation
 
 extension MyImpactCell {
-    
+
+    // MARK: - Outline and Progress View components
+
     func makeOutline() -> UIView {
         let outline = UIView()
         outline.layer.cornerRadius = UX.Outline.cornerRadius
@@ -69,7 +71,10 @@ extension MyImpactCell {
     }    
 }
 
+
 extension MyImpactCell {
+    
+    // MARK: - Search section container view and components
     
     func makeYourSearchesContainerStackView() -> UIStackView {
         let searchesStackView = UIStackView()
@@ -123,6 +128,8 @@ extension MyImpactCell {
 
 extension MyImpactCell {
     
+    // MARK: - Friends section container view and components
+
     func makeFriendsImpactContainerStackView() -> UIStackView {
         let friendsImpactContainerStackView = UIStackView()
         friendsImpactContainerStackView.translatesAutoresizingMaskIntoConstraints = false
@@ -175,6 +182,8 @@ extension MyImpactCell {
 }
 
 extension MyImpactCell {
+    
+    // MARK: - Friends and Friends container view
     
     func makeSearchAndYourFriendsImpactContainerStackView() -> UIStackView {
         let searchAndFriendsStackView = UIStackView()
