@@ -121,6 +121,7 @@
 		2CA16FDE1E5F089100332277 /* SearchTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CA16FDD1E5F089100332277 /* SearchTest.swift */; };
 		2CA2040629D4954F006848DE /* EcosiaPageActionMenuCellTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CA2040529D4954F006848DE /* EcosiaPageActionMenuCellTests.swift */; };
 		2CB1A65A1FDEA8B60084E96D /* NewTabSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB1A6591FDEA8B60084E96D /* NewTabSettings.swift */; };
+		2CB3BEDA29E03ED700C1951F /* MozillaAppServices in Frameworks */ = {isa = PBXBuildFile; productRef = 2CB3BED929E03ED700C1951F /* MozillaAppServices */; };
 		2CB56E3F1E926BFB00AF7586 /* ToolbarTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB56E3E1E926BFB00AF7586 /* ToolbarTest.swift */; };
 		2CC1B3F01E9B861400814EEC /* DomainAutocompleteTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC1B3EF1E9B861400814EEC /* DomainAutocompleteTest.swift */; };
 		2CCB296720A99C9500121DD8 /* SaveLoginsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCB296620A99C9500121DD8 /* SaveLoginsTests.swift */; };
@@ -260,7 +261,6 @@
 		4392FB5C252EC51E00AD3D23 /* PrivilegedRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D31CF65B1CC1959A001D0BD0 /* PrivilegedRequest.swift */; };
 		439B008B26E6CE2300DFAF14 /* GroupedTabCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 439B008A26E6CE2100DFAF14 /* GroupedTabCell.swift */; };
 		43A5643923CD1E1C00B6857D /* Update.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 43A5643623CD1E1B00B6857D /* Update.xcassets */; };
-		43A878FC27AB498E0071C372 /* MozillaAppServices in Frameworks */ = {isa = PBXBuildFile; productRef = 43A878FB27AB498E0071C372 /* MozillaAppServices */; };
 		43A878FD27AB4A110071C372 /* RustMozillaAppServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43BE578A278BA4D900491291 /* RustMozillaAppServices.framework */; };
 		43A878FE27AC39D30071C372 /* RustMozillaAppServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43BE578A278BA4D900491291 /* RustMozillaAppServices.framework */; };
 		43AB6FA225DC53D30016B015 /* GoogleTopSiteManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43AB6F9C25DC53D20016B015 /* GoogleTopSiteManager.swift */; };
@@ -4852,7 +4852,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				43A878FC27AB498E0071C372 /* MozillaAppServices in Frameworks */,
+				2CB3BEDA29E03ED700C1951F /* MozillaAppServices in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8075,7 +8075,7 @@
 			);
 			name = RustMozillaAppServices;
 			packageProductDependencies = (
-				43A878FB27AB498E0071C372 /* MozillaAppServices */,
+				2CB3BED929E03ED700C1951F /* MozillaAppServices */,
 			);
 			productName = Shared;
 			productReference = 43BE578A278BA4D900491291 /* RustMozillaAppServices.framework */;
@@ -8182,7 +8182,6 @@
 			name = Client;
 			packageProductDependencies = (
 				433F87CD2788EAB600693368 /* GCDWebServers */,
-				435C85EF2788F4D00072B526 /* Glean */,
 				96C11E952863985E00840E7C /* Dip */,
 				CA103C7628C8DEA600F7170A /* SnowplowTracker */,
 			);
@@ -8459,7 +8458,6 @@
 				1BDA1F8827113852006B2FAB /* XCRemoteSwiftPackageReference "swift-protobuf" */,
 				433F87CC2788EAB600693368 /* XCRemoteSwiftPackageReference "GCDWebServer" */,
 				433F87D12788EF5B00693368 /* XCRemoteSwiftPackageReference "KIF" */,
-				433F87D62788F34500693368 /* XCRemoteSwiftPackageReference "rust-components-swift" */,
 				435C85EE2788F4D00072B526 /* XCRemoteSwiftPackageReference "glean-swift" */,
 				4368F83B279669690013419B /* XCRemoteSwiftPackageReference "SnapKit" */,
 				4368F86C27966E770013419B /* XCRemoteSwiftPackageReference "SDWebImage" */,
@@ -8470,6 +8468,7 @@
 				96C11E942863985E00840E7C /* XCRemoteSwiftPackageReference "Dip" */,
 				CA103C7228C8DE7D00F7170A /* XCRemoteSwiftPackageReference "ios-core" */,
 				CA103C7528C8DEA600F7170A /* XCRemoteSwiftPackageReference "snowplow-objc-tracker" */,
+				2CB3BED829E03ED700C1951F /* XCRemoteSwiftPackageReference "rust-components-swift" */,
 			);
 			productRefGroup = F84B21BF1A090F8100AAB793 /* Products */;
 			projectDirPath = "";
@@ -13966,6 +13965,14 @@
 				version = 1.18.0;
 			};
 		};
+		2CB3BED829E03ED700C1951F /* XCRemoteSwiftPackageReference "rust-components-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ecosia/rust-components-swift.git";
+			requirement = {
+				branch = "MOB-1785_glean_dependency_check";
+				kind = branch;
+			};
+		};
 		4326A3C22849B8E500550F73 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
@@ -13988,14 +13995,6 @@
 			requirement = {
 				kind = exactVersion;
 				version = 3.8.6;
-			};
-		};
-		433F87D62788F34500693368 /* XCRemoteSwiftPackageReference "rust-components-swift" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/mozilla/rust-components-swift.git";
-			requirement = {
-				kind = exactVersion;
-				version = 96.1.3;
 			};
 		};
 		435C85EE2788F4D00072B526 /* XCRemoteSwiftPackageReference "glean-swift" */ = {
@@ -14088,6 +14087,11 @@
 			package = 1BDA1F8327113788006B2FAB /* XCRemoteSwiftPackageReference "SwiftyJSON" */;
 			productName = SwiftyJSON;
 		};
+		2CB3BED929E03ED700C1951F /* MozillaAppServices */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2CB3BED829E03ED700C1951F /* XCRemoteSwiftPackageReference "rust-components-swift" */;
+			productName = MozillaAppServices;
+		};
 		4302EDBD2819D6640070D373 /* SwiftyJSON */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 1BDA1F8327113788006B2FAB /* XCRemoteSwiftPackageReference "SwiftyJSON" */;
@@ -14127,11 +14131,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 4368F86C27966E770013419B /* XCRemoteSwiftPackageReference "SDWebImage" */;
 			productName = SDWebImage;
-		};
-		43A878FB27AB498E0071C372 /* MozillaAppServices */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 433F87D62788F34500693368 /* XCRemoteSwiftPackageReference "rust-components-swift" */;
-			productName = MozillaAppServices;
 		};
 		43AFC0DB279678A80039DDF4 /* XCGLogger */ = {
 			isa = XCSwiftPackageProductDependency;

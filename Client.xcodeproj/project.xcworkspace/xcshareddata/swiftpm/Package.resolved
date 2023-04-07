@@ -92,10 +92,10 @@
     {
       "identity" : "rust-components-swift",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/mozilla/rust-components-swift.git",
+      "location" : "https://github.com/ecosia/rust-components-swift.git",
       "state" : {
-        "revision" : "90a4bb34e6205d25fa6f67a04f71d9a6f31a91f4",
-        "version" : "96.1.3"
+        "branch" : "MOB-1785_glean_dependency_check",
+        "revision" : "c337aa6355087c04d43ab92ecf3d1ee0caa90ac4"
       }
     },
     {
