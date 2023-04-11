@@ -6,7 +6,7 @@ import Foundation
 import Shared
 import Storage
 import XCGLogger
-import Glean
+// Ecosia: import Glean
 
 private let log = Logger.browserLogger
 
