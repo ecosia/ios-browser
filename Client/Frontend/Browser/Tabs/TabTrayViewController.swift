@@ -43,6 +43,8 @@ class TabTrayViewController: UIViewController {
         button.titleLabel?.adjustsFontForContentSizeCategory = true
         button.accessibilityIdentifier = "closeAllTabsButtonTabTray"
         button.setTitle(.localized(.closeAll), for: .normal)
+        // Ecosia: Change close all button title color
+        button.setTitleColor(.theme.ecosia.warning, for: .normal)
         button.addTarget(self, action: #selector(didTapDeleteTabs), for: .primaryActionTriggered)
         button.accessibilityLabel = .AppMenu.Toolbar.TabTrayDeleteMenuButtonAccessibilityLabel
         return UIBarButtonItem(customView: button)
