@@ -5,7 +5,7 @@
 import Foundation
 import Adjust
 import Shared
-import Glean
+//Ecosia: import Glean
 
 private let log = Logger.browserLogger
 
