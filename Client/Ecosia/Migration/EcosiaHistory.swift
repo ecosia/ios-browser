@@ -26,6 +26,7 @@ final class EcosiaHistory {
 
     static func migrate(_ historyItems: [(Date, Core.Page)], to profile: Profile, lessDays: Int? = nil, progress: ((Double) -> ())? = nil, finished: @escaping (Result<Void, EcosiaImport.Failure>) -> ()){
 
+        /*
         guard !historyItems.isEmpty else {
             finished(.success(()))
             return
@@ -64,6 +65,7 @@ final class EcosiaHistory {
                 }
             }
         }
+         */
     }
 
     static func insertData(_ data: EcosiaHistory.Data, to profile: Profile, finished: @escaping (Result<Void, EcosiaImport.Failure>) -> ()){
