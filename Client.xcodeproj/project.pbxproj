@@ -235,7 +235,6 @@
 		434E733725EED32E006D3BDE /* BrowserViewController+URLBarDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 434E733625EED32E006D3BDE /* BrowserViewController+URLBarDelegate.swift */; };
 		435222C125882E3800FCA5B6 /* WidgetKitTopSiteModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 435222C025882E3800FCA5B6 /* WidgetKitTopSiteModel.swift */; };
 		435222C225882E3800FCA5B6 /* WidgetKitTopSiteModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 435222C025882E3800FCA5B6 /* WidgetKitTopSiteModel.swift */; };
-		435C85F02788F4D00072B526 /* Glean in Frameworks */ = {isa = PBXBuildFile; productRef = 435C85EF2788F4D00072B526 /* Glean */; };
 		435D660323D793DF0046EFA2 /* OnboardingInfoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 435D660223D793DF0046EFA2 /* OnboardingInfoModel.swift */; };
 		435D660523D794B90046EFA2 /* UpdateViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 435D660423D794B90046EFA2 /* UpdateViewModel.swift */; };
 		435E34B3254A6A6000406D92 /* TimeConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = E650758F1E37F7AB006961AC /* TimeConstants.swift */; };
@@ -4763,7 +4762,6 @@
 				E6231C051B90A472005ABB0D /* libxml2.2.tbd in Frameworks */,
 				E6231C011B90A44F005ABB0D /* libz.tbd in Frameworks */,
 				0B8E0FF41A932BD500161DC3 /* ImageIO.framework in Frameworks */,
-				435C85F02788F4D00072B526 /* Glean in Frameworks */,
 				433F87CE2788EAB600693368 /* GCDWebServers in Frameworks */,
 				7B8A47F61D01D3B400C07734 /* PassKit.framework in Frameworks */,
 				43AFC117279699530039DDF4 /* XCGLogger.framework in Frameworks */,
@@ -8071,7 +8069,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				CA8BCC5228D35F290020BC50 /* PBXTargetDependency */,
 			);
 			name = RustMozillaAppServices;
 			packageProductDependencies = (
@@ -8458,7 +8455,6 @@
 				1BDA1F8827113852006B2FAB /* XCRemoteSwiftPackageReference "swift-protobuf" */,
 				433F87CC2788EAB600693368 /* XCRemoteSwiftPackageReference "GCDWebServer" */,
 				433F87D12788EF5B00693368 /* XCRemoteSwiftPackageReference "KIF" */,
-				435C85EE2788F4D00072B526 /* XCRemoteSwiftPackageReference "glean-swift" */,
 				4368F83B279669690013419B /* XCRemoteSwiftPackageReference "SnapKit" */,
 				4368F86C27966E770013419B /* XCRemoteSwiftPackageReference "SDWebImage" */,
 				43AFC0CA2796788B0039DDF4 /* XCRemoteSwiftPackageReference "XCGLogger" */,
@@ -9846,10 +9842,6 @@
 			isa = PBXTargetDependency;
 			target = F84B21BD1A090F8100AAB793 /* Client */;
 			targetProxy = 7BEB645C1C7346100092C02E /* PBXContainerItemProxy */;
-		};
-		CA8BCC5228D35F290020BC50 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			productRef = CA8BCC5128D35F290020BC50 /* Glean */;
 		};
 		CA8BCC5528D365A80020BC50 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -13997,14 +13989,6 @@
 				version = 3.8.6;
 			};
 		};
-		435C85EE2788F4D00072B526 /* XCRemoteSwiftPackageReference "glean-swift" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/mozilla/glean-swift";
-			requirement = {
-				kind = exactVersion;
-				version = 51.8.3;
-			};
-		};
 		4368F83B279669690013419B /* XCRemoteSwiftPackageReference "SnapKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
@@ -14117,11 +14101,6 @@
 			package = 433F87D12788EF5B00693368 /* XCRemoteSwiftPackageReference "KIF" */;
 			productName = KIF;
 		};
-		435C85EF2788F4D00072B526 /* Glean */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 435C85EE2788F4D00072B526 /* XCRemoteSwiftPackageReference "glean-swift" */;
-			productName = Glean;
-		};
 		4368F84C2796698A0013419B /* SnapKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 4368F83B279669690013419B /* XCRemoteSwiftPackageReference "SnapKit" */;
@@ -14165,11 +14144,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CA103C7228C8DE7D00F7170A /* XCRemoteSwiftPackageReference "ios-core" */;
 			productName = Core;
-		};
-		CA8BCC5128D35F290020BC50 /* Glean */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 435C85EE2788F4D00072B526 /* XCRemoteSwiftPackageReference "glean-swift" */;
-			productName = Glean;
 		};
 		D433852B27ABC8150069DD33 /* MappaMundi */ = {
 			isa = XCSwiftPackageProductDependency;
