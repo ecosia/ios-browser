@@ -23,10 +23,14 @@ final class EcosiaHistory {
     }
 
     static var start: Date?
+    
+    /// Errors related to the `profile.isShutdown` property.
+    struct DataBaseShutdownError: MaybeErrorType {
+        public let description: String
+    }
 
     static func migrate(_ historyItems: [(Date, Core.Page)], to profile: Profile, lessDays: Int? = nil, progress: ((Double) -> ())? = nil, finished: @escaping (Result<Void, EcosiaImport.Failure>) -> ()){
 
-        /*
         guard !historyItems.isEmpty else {
             finished(.success(()))
             return
@@ -42,7 +46,7 @@ final class EcosiaHistory {
             let data = prepare(history: items, progress: progress)
             guard !profile.isShutdown else {
                 DispatchQueue.main.async {
-                    finished(.failure(.init(reasons: ["Database is shutdown"])))
+                    finished(.failure(.init(reasons: [DataBaseShutdownError(description: "Database is shutdown")])))
                 }
                 return
             }
@@ -65,7 +69,6 @@ final class EcosiaHistory {
                 }
             }
         }
-         */
     }
 
     static func insertData(_ data: EcosiaHistory.Data, to profile: Profile, finished: @escaping (Result<Void, EcosiaImport.Failure>) -> ()){
