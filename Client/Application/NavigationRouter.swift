@@ -4,7 +4,7 @@
 
 import Foundation
 import Shared
-// Ecosia: import Glean
+// Ecosia: remove Glean dependency // import Glean
 import Core
 
 struct FxALaunchParams {

@@ -4,7 +4,7 @@
 
 import Foundation
 import Adjust
-//Ecosia: import Glean
+// Ecosia: remove Glean dependency // import Glean
 
 protocol AdjustTelemetryData {
     var campaign: String? { get set }

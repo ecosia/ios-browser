@@ -3,7 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
-//Ecosia: import Glean
+// Ecosia: remove Glean dependency // import Glean
 import SDWebImage
 
 // TODO: This file and all its methods should be removed once we are ready to remove SDWebImage from our app

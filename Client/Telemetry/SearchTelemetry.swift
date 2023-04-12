@@ -4,7 +4,7 @@
 
 import Foundation
 import WebKit
-//Ecosia: import Glean
+// Ecosia: remove Glean dependency // import Glean
 
 // Search Partner Codes
 // https://docs.google.com/spreadsheets/d/1HMm9UXjfJv-uHhGU1pJlbP4ILkdpSD9w_Fd-3yOd8oY/
@@ -39,31 +39,31 @@ class SearchTelemetry {
 
     // sap: directly from search access point
     func trackSAP() {
-        GleanMetrics.Search.inContent["\(provider).in-content.sap.\(code)"].add()
+        // Ecosia: remove Glean dependency // GleanMetrics.Search.inContent["\(provider).in-content.sap.\(code)"].add()
     }
 
     // sap-follow-on: user continues to search from an existing sap search
     func trackSAPFollowOn() {
-        GleanMetrics.Search.inContent["\(provider).in-content.sap-follow-on.\(code)"].add()
+        // Ecosia: remove Glean dependency // GleanMetrics.Search.inContent["\(provider).in-content.sap-follow-on.\(code)"].add()
     }
 
     // organic: search that didn't come from a SAP
     func trackOrganic() {
-        GleanMetrics.Search.inContent["\(provider).organic.none"].add()
+        // Ecosia: remove Glean dependency // GleanMetrics.Search.inContent["\(provider).organic.none"].add()
     }
 
     // MARK: Google Top Site SAP
 
     // Note: This tracks google top site tile tap which opens a google search page
     func trackGoogleTopSiteTap() {
-        GleanMetrics.Search.googleTopsitePressed["\(SearchEngine.google).\(code)"].add()
+        // Ecosia: remove Glean dependency // GleanMetrics.Search.googleTopsitePressed["\(SearchEngine.google).\(code)"].add()
     }
 
     // Note: This tracks SAP follow-on search. Also, the first search that the user performs is considered
     // a follow-on where OQ query item in google url is present but has no data in it
     // Flow: User taps google top site tile -> google page opens -> user types item to search in the page
     func trackGoogleTopSiteFollowOn() {
-        GleanMetrics.Search.inContent["\(SearchEngine.google).in-content.google-topsite-follow-on.\(code)"].add()
+        // Ecosia: remove Glean dependency // GleanMetrics.Search.inContent["\(SearchEngine.google).in-content.google-topsite-follow-on.\(code)"].add()
     }
 
     // MARK: Track Regular and Follow-on SAP from Tab and TopSite
