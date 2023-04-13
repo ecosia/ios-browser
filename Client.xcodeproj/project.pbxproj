@@ -206,7 +206,6 @@
 		43118D07251A9CD100F24376 /* SavedTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63306D3821103EAE00F25400 /* SavedTab.swift */; };
 		43162A2F2492DB7800F91658 /* EmptyPrivateTabsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43162A2E2492DB7800F91658 /* EmptyPrivateTabsView.swift */; };
 		43175DB626B8774D00C41C31 /* Ads.js in Resources */ = {isa = PBXBuildFile; fileRef = 43175DB526B8774D00C41C31 /* Ads.js */; };
-		43175DB826B87D2C00C41C31 /* AdsTelemetryHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43175DB726B87D2C00C41C31 /* AdsTelemetryHelper.swift */; };
 		431C0CA925C890E500395CE4 /* DefaultBrowserOnboardingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 431C0CA825C890E500395CE4 /* DefaultBrowserOnboardingViewModel.swift */; };
 		431C0D1E25C9DC4D00395CE4 /* DefaultBrowserOnboardingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 431C0D1D25C9DC4D00395CE4 /* DefaultBrowserOnboardingTests.swift */; };
 		4326A3C42849B8E500550F73 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 4326A3C32849B8E500550F73 /* Kingfisher */; };
@@ -1996,7 +1995,6 @@
 		430CCB8C28B39CC400532285 /* he */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = he; path = he.lproj/ToolbarLocation.strings; sourceTree = "<group>"; };
 		43162A2E2492DB7800F91658 /* EmptyPrivateTabsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyPrivateTabsView.swift; sourceTree = "<group>"; };
 		43175DB526B8774D00C41C31 /* Ads.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = Ads.js; sourceTree = "<group>"; };
-		43175DB726B87D2C00C41C31 /* AdsTelemetryHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdsTelemetryHelper.swift; sourceTree = "<group>"; };
 		431C0CA825C890E500395CE4 /* DefaultBrowserOnboardingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultBrowserOnboardingViewModel.swift; sourceTree = "<group>"; };
 		431C0D1D25C9DC4D00395CE4 /* DefaultBrowserOnboardingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultBrowserOnboardingTests.swift; sourceTree = "<group>"; };
 		431CFA4328B39F0200093D6D /* ses */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ses; path = ses.lproj/BookmarkPanel.strings; sourceTree = "<group>"; };
@@ -7309,7 +7307,6 @@
 		E69DB0B91E97E301008A67E6 /* Telemetry */ = {
 			isa = PBXGroup;
 			children = (
-				43175DB726B87D2C00C41C31 /* AdsTelemetryHelper.swift */,
 				43F7952425795F69005AEE40 /* SearchTelemetry.swift */,
 				8A04136828258DF600D20B10 /* SponsoredTileTelemetry.swift */,
 				EBF47E6F1F7979DF00899189 /* TelemetryWrapper.swift */,
@@ -9583,7 +9580,6 @@
 				E663D5781BB341C4001EF30E /* ToggleButton.swift in Sources */,
 				EBA3B2D22268F57E00728BDB /* BadgeIcon.swift in Sources */,
 				96EB6C3C27D82AEA00A9D159 /* HistoryPanel+ContextMenuExtensions.swift in Sources */,
-				43175DB826B87D2C00C41C31 /* AdsTelemetryHelper.swift in Sources */,
 				CA4D9CF328C8D801006AFB5D /* FilterController.swift in Sources */,
 				43DDB96A240994370058A068 /* ETPCoverSheetViewController.swift in Sources */,
 				217AEF7828480844004EED37 /* ResizableButton.swift in Sources */,
