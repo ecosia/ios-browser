@@ -33,7 +33,7 @@ extension TelemetryWrapperProtocol {
 class TelemetryWrapper: TelemetryWrapperProtocol {
     static let shared = TelemetryWrapper()
     let legacyTelemetry = Telemetry.default
-    // Ecosia: let glean = Glean.shared
+    // Ecosia: remove Glean dependency // let glean = Glean.shared
     
     // Boolean flag to temporarily remember if we crashed during the
     // last run of the app. We cannot simply use `Sentry.crashedLastLaunch`

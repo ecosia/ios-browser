@@ -17,8 +17,8 @@ class ContextMenuHelperTests: XCTestCase {
 
         FeatureFlagsManager.shared.initializeDeveloperFeatures(with: profile)
 
-        // Ecosia: Glean.shared.resetGlean(clearStores: true)
-        // Ecosia: Glean.shared.enableTestingMode()
+        // Ecosia: remove Glean dependency // Glean.shared.resetGlean(clearStores: true)
+        // Ecosia: remove Glean dependency // Glean.shared.enableTestingMode()
     }
 
     override func tearDown() {
