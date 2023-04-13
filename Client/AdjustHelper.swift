@@ -5,7 +5,7 @@
 import Foundation
 import Adjust
 import Shared
-// Ecosia: remove Glean dependency // import Glean
+import Glean
 
 private let log = Logger.browserLogger
 
