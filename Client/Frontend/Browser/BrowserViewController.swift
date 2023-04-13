@@ -62,7 +62,7 @@ class BrowserViewController: UIViewController {
     var statusBarOverlay: UIView = UIView()
     var searchController: SearchViewController?
     var screenshotHelper: ScreenshotHelper!
-    var searchTelemetry: SearchTelemetry?
+    // Ecosia: removing SearchTelemetry // var searchTelemetry: SearchTelemetry?
     var searchLoader: SearchLoader?
     var findInPageBar: FindInPageBar?
     lazy var mailtoLinkHandler = MailtoLinkHandler()
@@ -458,7 +458,7 @@ class BrowserViewController: UIViewController {
             LegacyThemeManager.instance.current = userInterfaceStyle == .dark ? DarkTheme() : NormalTheme()
         }
 
-        searchTelemetry = SearchTelemetry()
+        // Ecosia: removing SearchTelemetry // searchTelemetry = SearchTelemetry()
 
         // Awesomebar Location Telemetry
         SearchBarSettingsViewModel.recordLocationTelemetry(for: isBottomSearchBar ? .bottom : .top)
@@ -1865,7 +1865,7 @@ extension BrowserViewController: HomePanelDelegate {
         guard let tab = tabManager.selectedTab else { return }
         if isGoogleTopSite {
             tab.urlType = .googleTopSite
-            searchTelemetry?.shouldSetGoogleTopSiteSearch = true
+            // Ecosia: removing SearchTelemetry // searchTelemetry?.shouldSetGoogleTopSiteSearch = true
         }
 
         // Handle keyboard shortcuts from homepage with url selection (ex: Cmd + Tap on Link; which is a cell in this case)
@@ -1946,7 +1946,7 @@ extension BrowserViewController: SearchViewControllerDelegate {
                                       searchUrl: url.absoluteString,
                                       nextReferralUrl: "")
         tab.metadataManager?.updateTimerAndObserving(state: .navSearchLoaded, searchData: searchData, isPrivate: tab.isPrivate)
-        searchTelemetry?.shouldSetUrlTypeSearch = true
+        // Ecosia: removing SearchTelemetry // searchTelemetry?.shouldSetUrlTypeSearch = true
         finishEditingAndSubmit(url, visitType: VisitType.typed, forTab: tab)
     }
 
