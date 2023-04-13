@@ -12,13 +12,13 @@ final class LockButton: UIButton {
     var unselectedTintColor: UIColor!
     var disabledTintColor: UIColor!
 
-    override open var isHighlighted: Bool {
+    override public var isHighlighted: Bool {
         didSet {
             self.tintColor = isHighlighted ? selectedTintColor : unselectedTintColor
         }
     }
 
-    override open var isEnabled: Bool {
+    override public var isEnabled: Bool {
         didSet {
             self.tintColor = isEnabled ? unselectedTintColor : disabledTintColor
         }
