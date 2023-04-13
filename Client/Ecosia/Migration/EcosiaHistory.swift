@@ -23,8 +23,10 @@ final class EcosiaHistory {
     }
     
     /// Errors related to the `profile.isShutdown` property.
-    struct DataBaseShutdownError: MaybeErrorType {
-        public let description: String
+    private class DataBaseShutdownError: MaybeErrorType {
+        internal var description: String {
+            return "Database is shutdown"
+        }
     }
 
     static var start: Date?
@@ -46,7 +48,7 @@ final class EcosiaHistory {
             let data = prepare(history: items, progress: progress)
             guard !profile.isShutdown else {
                 DispatchQueue.main.async {
-                    finished(.failure(.init(reasons: [DataBaseShutdownError(description: "Database is shutdown")])))
+                    finished(.failure(.init(reasons: [DataBaseShutdownError()])))
                 }
                 return
             }
