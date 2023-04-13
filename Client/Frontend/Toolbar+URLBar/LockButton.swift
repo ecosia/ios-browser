@@ -4,7 +4,7 @@
 
 import Foundation
 
-class LockButton: UIButton {
+final class LockButton: UIButton {
 
     // MARK: - Variables
 
