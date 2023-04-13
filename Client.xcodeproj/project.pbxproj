@@ -2676,7 +2676,6 @@
 		8A0017C028A3FF6100FEFC8B /* MessageCardDataAdaptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCardDataAdaptor.swift; sourceTree = "<group>"; };
 		8A01891B275E9C2A00923EFE /* ClearHistorySheetProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClearHistorySheetProvider.swift; sourceTree = "<group>"; };
 		8A03294D288F1F0800AD9B89 /* TopSitesDimension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopSitesDimension.swift; sourceTree = "<group>"; };
-		8A04136828258DF600D20B10 /* SponsoredTileTelemetry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SponsoredTileTelemetry.swift; sourceTree = "<group>"; };
 		8A05123827D17EC3009930CC /* LegacyWallpaperStorageUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LegacyWallpaperStorageUtility.swift; sourceTree = "<group>"; };
 		8A05811B28B56B8400FD8D46 /* gu-IN */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "gu-IN"; path = "gu-IN.lproj/WidgetIntents.strings"; sourceTree = "<group>"; };
 		8A05811D28B56BB000FD8D46 /* ga */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ga; path = ga.lproj/WidgetIntents.strings; sourceTree = "<group>"; };
@@ -7305,7 +7304,6 @@
 		E69DB0B91E97E301008A67E6 /* Telemetry */ = {
 			isa = PBXGroup;
 			children = (
-				8A04136828258DF600D20B10 /* SponsoredTileTelemetry.swift */,
 				EBF47E6F1F7979DF00899189 /* TelemetryWrapper.swift */,
 				8AD08D1427E9198E00B8E907 /* TabsQuantityTelemetry.swift */,
 			);
