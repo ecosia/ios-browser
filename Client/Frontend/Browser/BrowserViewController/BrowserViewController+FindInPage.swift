@@ -26,9 +26,10 @@ extension BrowserViewController {
             self.view.layoutIfNeeded()
         })
 
+        /* Ecosia: Custom FindInPage UI
         findInPageBar.snp.makeConstraints { make in
             make.height.equalTo(UIConstants.ToolbarHeight)
-        }
+        }*/
 
         updateViewConstraints()
 
