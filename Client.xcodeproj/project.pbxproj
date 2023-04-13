@@ -13933,8 +13933,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/rust-components-swift.git";
 			requirement = {
-				branch = 91.6.3_Glean_dependency_removed;
-				kind = branch;
+				kind = exactVersion;
+				version = 91.6.4;
 			};
 		};
 		4326A3C22849B8E500550F73 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
