@@ -2348,7 +2348,6 @@
 		6025B108267B6BB300F59F6B /* SelectPasswordCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectPasswordCell.swift; sourceTree = "<group>"; };
 		6025B10B267B6BEA00F59F6B /* LoginRecordExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginRecordExtension.swift; sourceTree = "<group>"; };
 		6025B110267B6EE100F59F6B /* CredentialWelcomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CredentialWelcomeViewController.swift; sourceTree = "<group>"; };
-		602A2BA427F6298600C3CB78 /* Metrics.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Metrics.swift; path = Generated/Metrics.swift; sourceTree = "<group>"; };
 		604B4E078B7907FA2595345D /* lt */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = lt; path = lt.lproj/Shared.strings; sourceTree = "<group>"; };
 		605D466193C1DA0CDACFA4AC /* ast */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ast; path = ast.lproj/Intro.strings; sourceTree = "<group>"; };
 		6075454195BAE1F144470192 /* bn */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = bn; path = bn.lproj/Search.strings; sourceTree = "<group>"; };
@@ -7286,7 +7285,6 @@
 		E69DB0B31E97E0E4008A67E6 /* Telemetry */ = {
 			isa = PBXGroup;
 			children = (
-				602A2BA427F6298600C3CB78 /* Metrics.swift */,
 				EBA31D7C1F79996E0055463D /* SyncTelemetryUtils.swift */,
 			);
 			name = Telemetry;
