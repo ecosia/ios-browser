@@ -77,6 +77,7 @@ class BookmarksPanelViewModel: NSObject {
         self.documentPickerPresentingViewController = viewController
         self.onImportDoneHandler = onDone
         let documentPicker = UIDocumentPickerViewController(documentTypes: ["public.html"], in: .open)
+        documentPicker.allowsMultipleSelection = false
         documentPicker.delegate = self
         viewController.present(documentPicker, animated: true)
     }
@@ -173,11 +174,20 @@ extension BookmarksPanelViewModel: UIDocumentPickerDelegate {
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         guard
             let firstHtmlUrl = urls.first,
-            let viewController = documentPickerPresentingViewController
+            let viewController = documentPickerPresentingViewController,
+            firstHtmlUrl.startAccessingSecurityScopedResource()
         else { return }
-        
+        handlePickedUrl(firstHtmlUrl, in: viewController)
+    }
+    
+    func handlePickedUrl(_ url: URL, in viewController: UIViewController) {
         Task {
-            try await bookmarksExchange.import(from: firstHtmlUrl, in: viewController)
+            do {
+                try await bookmarksExchange.import(from: url, in: viewController)
+            } catch {
+                debugPrint(#function, error)
+            }
+            
             onImportDoneHandler?()
         }
     }
