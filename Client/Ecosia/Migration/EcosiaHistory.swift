@@ -21,14 +21,14 @@ final class EcosiaHistory {
         let date: Date
         let site: Site
     }
-
-    static var start: Date?
     
     /// Errors related to the `profile.isShutdown` property.
     struct DataBaseShutdownError: MaybeErrorType {
         public let description: String
     }
 
+    static var start: Date?
+    
     static func migrate(_ historyItems: [(Date, Core.Page)], to profile: Profile, lessDays: Int? = nil, progress: ((Double) -> ())? = nil, finished: @escaping (Result<Void, EcosiaImport.Failure>) -> ()){
 
         guard !historyItems.isEmpty else {
