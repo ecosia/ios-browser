@@ -12948,8 +12948,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CA8BCC4128D352630020BC50 /* EcosiaBeta.xcconfig */;
 			buildSettings = {
-				CURRENT_PROJECT_VERSION = 75;
-				MARKETING_VERSION = 8.1.5;
+				CURRENT_PROJECT_VERSION = 76;
+				MARKETING_VERSION = 8.1.6;
 				OTHER_LDFLAGS = "$(inherited)";
 				SWIFT_VERSION = 5.0;
 				VALIDATE_WORKSPACE = YES;
@@ -13320,8 +13320,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CA8BCC4228D352640020BC50 /* Ecosia.xcconfig */;
 			buildSettings = {
-				CURRENT_PROJECT_VERSION = 75;
-				MARKETING_VERSION = 8.1.5;
+				CURRENT_PROJECT_VERSION = 76;
+				MARKETING_VERSION = 8.1.6;
 				OTHER_LDFLAGS = "$(inherited)";
 				SWIFT_VERSION = 5.0;
 				VALIDATE_WORKSPACE = YES;
@@ -13517,8 +13517,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CA8BCC4128D352630020BC50 /* EcosiaBeta.xcconfig */;
 			buildSettings = {
-				CURRENT_PROJECT_VERSION = 75;
-				MARKETING_VERSION = 8.1.5;
+				CURRENT_PROJECT_VERSION = 76;
+				MARKETING_VERSION = 8.1.6;
 				OTHER_LDFLAGS = "$(inherited)";
 				SWIFT_VERSION = 5.0;
 				VALIDATE_WORKSPACE = YES;
@@ -13645,8 +13645,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CA8BCC4328D352640020BC50 /* EcosiaDebug.xcconfig */;
 			buildSettings = {
-				CURRENT_PROJECT_VERSION = 75;
-				MARKETING_VERSION = 8.1.5;
+				CURRENT_PROJECT_VERSION = 76;
+				MARKETING_VERSION = 8.1.6;
 				OTHER_LDFLAGS = "$(inherited)";
 				SWIFT_VERSION = 5.0;
 				VALIDATE_WORKSPACE = YES;
