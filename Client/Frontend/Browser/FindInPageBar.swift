@@ -81,7 +81,7 @@ class FindInPageBar: UIView {
         searchText.addTarget(self, action: #selector(didTextChange), for: .editingChanged)
         searchText.textColor = .theme.ecosia.primaryText
         searchText.font = .preferredFont(forTextStyle: .body)
-        searchText.placeholder = "Find in page" // TODO: Get text from localized strings
+        searchText.placeholder = .localized(.findInPage)
         searchText.autocapitalizationType = .none
         searchText.autocorrectionType = .no
         searchText.inputAssistantItem.leadingBarButtonGroups = []
@@ -116,7 +116,7 @@ class FindInPageBar: UIView {
         addSubview(nextButton)
 
         let closeButton = UIButton()
-        closeButton.setTitle("Done", for: .normal) // TODO: Get text from localized strings
+        closeButton.setTitle(.localized(.done), for: .normal)
         closeButton.setTitleColor(.theme.ecosia.primaryButton, for: .normal)
         closeButton.accessibilityLabel = .FindInPageDoneAccessibilityLabel
         closeButton.addTarget(self, action: #selector(didPressClose), for: .touchUpInside)
