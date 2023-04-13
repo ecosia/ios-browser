@@ -17,7 +17,8 @@ class TabToolbar: UIView {
     let multiStateButton = ToolbarButton()
     let actionButtons: [NotificationThemeable & UIButton]
 
-    fileprivate let privateModeBadge = BadgeWithBackdrop(imageName: "privateModeBadge", backdropCircleColor: UIColor.Defaults.MobilePrivatePurple)
+    // Ecosia: Remove private mode badge
+    // fileprivate let privateModeBadge = BadgeWithBackdrop(imageName: "privateModeBadge", backdropCircleColor: UIColor.Defaults.MobilePrivatePurple)
     fileprivate let appMenuBadge = BadgeWithBackdrop(imageName: "menuBadge")
     fileprivate let warningMenuBadge = BadgeWithBackdrop(imageName: "menuWarning", imageMask: "warning-mask")
 
@@ -33,7 +34,8 @@ class TabToolbar: UIView {
         helper = TabToolbarHelper(toolbar: self)
         addButtons(actionButtons)
 
-        privateModeBadge.add(toParent: contentView)
+        // Ecosia: Remove private mode badge
+        // privateModeBadge.add(toParent: contentView)
         appMenuBadge.add(toParent: contentView)
         warningMenuBadge.add(toParent: contentView)
 
@@ -42,7 +44,8 @@ class TabToolbar: UIView {
     }
 
     override func updateConstraints() {
-        privateModeBadge.layout(onButton: tabsButton)
+        // Ecosia: Remove private mode badge
+        // privateModeBadge.layout(onButton: tabsButton)
         appMenuBadge.layout(onButton: appMenuButton)
         warningMenuBadge.layout(onButton: appMenuButton)
 
@@ -97,7 +100,8 @@ extension TabToolbar: TabToolbarProtocol {
     var homeButton: ToolbarButton { multiStateButton }
 
     func privateModeBadge(visible: Bool) {
-        privateModeBadge.show(visible)
+        // Ecosia: Remove private mode badge
+        // privateModeBadge.show(visible)
     }
 
     func warningMenuBadge(setVisible: Bool) {
@@ -131,15 +135,17 @@ extension TabToolbar: NotificationThemeable, PrivateModeUI {
     func applyTheme() {
         backgroundColor = UIColor.theme.ecosia.barBackground
         helper?.setTheme(forButtons: actionButtons)
-
+        
+        /* Ecosia: Remove private mode badge
         privateModeBadge.badge.tintBackground(color: UIColor.theme.ecosia.barBackground)
         privateModeBadge.backdrop.backgroundColor = UIColor.theme.ecosia.personalCounterSelection
-        privateModeBadge.backdrop.alpha = 1
+        privateModeBadge.backdrop.alpha = 1*/
         appMenuBadge.badge.tintBackground(color: UIColor.theme.ecosia.barBackground)
         warningMenuBadge.badge.tintBackground(color: UIColor.theme.ecosia.barBackground)
     }
 
     func applyUIMode(isPrivate: Bool) {
-        privateModeBadge(visible: isPrivate)
+        // Ecosia: Remove private mode badge
+        // privateModeBadge(visible: isPrivate)
     }
 }
