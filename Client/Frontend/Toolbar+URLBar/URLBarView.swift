@@ -232,7 +232,8 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
 
     var profile: Profile
 
-    fileprivate let privateModeBadge = BadgeWithBackdrop(imageName: "privateModeBadge", backdropCircleColor: UIColor.Defaults.MobilePrivatePurple)
+    // Ecosia: Remove private mode badge
+    // fileprivate let privateModeBadge = BadgeWithBackdrop(imageName: "privateModeBadge", backdropCircleColor: UIColor.Defaults.MobilePrivatePurple)
     fileprivate let appMenuBadge = BadgeWithBackdrop(imageName: "menuBadge")
     fileprivate let warningMenuBadge = BadgeWithBackdrop(imageName: "menuWarning", imageMask: "warning-mask")
 
@@ -279,7 +280,8 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
         addSubview(searchIconImageView)
         updateSearchEngineImage()
 
-        privateModeBadge.add(toParent: self)
+        // Ecosia: Remove private mode badge
+        // privateModeBadge.add(toParent: self)
         appMenuBadge.add(toParent: self)
         warningMenuBadge.add(toParent: self)
 
@@ -375,7 +377,8 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
             make.size.equalTo(URLBarViewUX.ButtonHeight).priority(.high)
         }
 
-        privateModeBadge.layout(onButton: tabsButton)
+        // Ecosia: Remove private mode badge
+        // privateModeBadge.layout(onButton: tabsButton)
         appMenuBadge.layout(onButton: appMenuButton)
         warningMenuBadge.layout(onButton: appMenuButton)
     }
@@ -679,8 +682,9 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
         tabsButton.isHidden = !toolbarIsShowing || inOverlayMode || topTabsIsShowing
         multiStateButton.isHidden = true // Ecosia: always multi state button
 
+        // Ecosia: Remove private mode badge
         // badge isHidden is tied to private mode on/off, use alpha to hide in this case
-        [privateModeBadge, appMenuBadge, warningMenuBadge].forEach {
+        [appMenuBadge, warningMenuBadge].forEach {
             $0.badge.alpha = (!toolbarIsShowing || inOverlayMode) ? 0 : 1
             $0.backdrop.alpha = (!toolbarIsShowing || inOverlayMode) ? 0 : BadgeWithBackdrop.backdropAlpha
         }
@@ -726,11 +730,12 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
 }
 
 extension URLBarView: TabToolbarProtocol {
-    func privateModeBadge(visible: Bool) {
+    /* Ecosia: Remove private mode badge
+     func privateModeBadge(visible: Bool) {
         if UIDevice.current.userInterfaceIdiom != .pad {
             privateModeBadge.show(visible)
         }
-    }
+    }*/
 
     func appMenuBadge(setVisible: Bool) {
         // Warning badges should take priority over the standard badge
@@ -916,7 +921,8 @@ extension URLBarView: NotificationThemeable {
 
         locationContainer.backgroundColor = locationView.backgroundColor
 
-        privateModeBadge.badge.tintBackground(color: UIColor.theme.browser.background)
+        // Ecosia: Remove private mode badge
+        // privateModeBadge.badge.tintBackground(color: UIColor.theme.browser.background)
         appMenuBadge.badge.tintBackground(color: UIColor.theme.browser.background)
         warningMenuBadge.badge.tintBackground(color: UIColor.theme.browser.background)
         searchIconImageView.tintColor = isPrivate ? UIColor.theme.ecosia.primaryText : UIColor.theme.ecosia.textfieldIconTint
@@ -940,9 +946,10 @@ extension URLBarView: PrivateModeUI {
     func applyUIMode(isPrivate: Bool) {
         self.isPrivate = isPrivate
 
+        /* Ecosia: Remove private mode badge
         if UIDevice.current.userInterfaceIdiom != .pad {
             privateModeBadge.show(isPrivate)
-        }
+        }*/
         applyTheme()
     }
 }

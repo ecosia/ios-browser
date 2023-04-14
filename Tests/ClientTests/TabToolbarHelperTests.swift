@@ -140,9 +140,10 @@ class MockTabToolbar: TabToolbarProtocol {
 
     }
 
+    /* Ecosia: Remove private mode badge
     func privateModeBadge(visible: Bool) {
 
-    }
+    }*/
 
     func appMenuBadge(setVisible: Bool) {
 

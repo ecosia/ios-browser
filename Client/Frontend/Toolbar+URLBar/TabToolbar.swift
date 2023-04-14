@@ -99,10 +99,10 @@ class TabToolbar: UIView {
 extension TabToolbar: TabToolbarProtocol {
     var homeButton: ToolbarButton { multiStateButton }
 
+    /* Ecosia: Remove private mode badge
     func privateModeBadge(visible: Bool) {
-        // Ecosia: Remove private mode badge
-        // privateModeBadge.show(visible)
-    }
+        privateModeBadge.show(visible)
+    }*/
 
     func warningMenuBadge(setVisible: Bool) {
         // Disable other menu badges before showing the warning.
