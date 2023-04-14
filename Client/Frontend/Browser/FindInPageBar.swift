@@ -24,10 +24,13 @@ protocol FindInPageBarDelegate: AnyObject {
 
 class FindInPageBar: UIView {
     weak var delegate: FindInPageBarDelegate?
+    fileprivate let searchView = UIView()
     fileprivate let searchText = UITextField()
     fileprivate let matchCountView = UILabel()
     fileprivate let previousButton = UIButton()
     fileprivate let nextButton = UIButton()
+    fileprivate let closeButton = UIButton()
+    fileprivate let topBorder = UIView()
 
     private static let savedTextKey = "findInPageSavedTextKey"
     // Ecosia: Custom FindInPage UI
@@ -69,63 +72,8 @@ class FindInPageBar: UIView {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-
-        // Ecosia: Custom FindInPage UI
-        backgroundColor = .theme.ecosia.secondaryBackground
         
-        let searchView = UIView()
-        searchView.backgroundColor = .theme.ecosia.tertiaryBackground
-        searchView.layer.cornerRadius = (barHeight - 2*searchViewTopBottomSpacing)/2
-        addSubview(searchView)
-
-        searchText.addTarget(self, action: #selector(didTextChange), for: .editingChanged)
-        searchText.textColor = .theme.ecosia.primaryText
-        searchText.font = .preferredFont(forTextStyle: .body)
-        searchText.placeholder = .localized(.findInPage)
-        searchText.autocapitalizationType = .none
-        searchText.autocorrectionType = .no
-        searchText.inputAssistantItem.leadingBarButtonGroups = []
-        searchText.inputAssistantItem.trailingBarButtonGroups = []
-        searchText.enablesReturnKeyAutomatically = true
-        searchText.returnKeyType = .search
-        searchText.accessibilityIdentifier = "FindInPage.searchField"
-        searchText.delegate = self
-        searchView.addSubview(searchText)
-
-        matchCountView.textColor = .theme.ecosia.secondaryText
-        matchCountView.font = .preferredFont(forTextStyle: .footnote)
-        matchCountView.textAlignment = .right
-        matchCountView.isHidden = true
-        matchCountView.accessibilityIdentifier = "FindInPage.matchCount"
-        searchView.addSubview(matchCountView)
-        
-        previousButton.setImage(UIImage(named: "find_previous")?.withRenderingMode(.alwaysTemplate), for: .normal)
-        previousButton.tintColor = .theme.ecosia.primaryIcon
-        previousButton.isEnabled = false
-        previousButton.accessibilityLabel = .FindInPagePreviousAccessibilityLabel
-        previousButton.addTarget(self, action: #selector(didFindPrevious), for: .touchUpInside)
-        previousButton.accessibilityIdentifier = "FindInPage.find_previous"
-        addSubview(previousButton)
-
-        nextButton.setImage(UIImage(named: "find_next")?.withRenderingMode(.alwaysTemplate), for: .normal)
-        nextButton.tintColor = .theme.ecosia.primaryIcon
-        nextButton.isEnabled = false
-        nextButton.accessibilityLabel = .FindInPageNextAccessibilityLabel
-        nextButton.addTarget(self, action: #selector(didFindNext), for: .touchUpInside)
-        nextButton.accessibilityIdentifier = "FindInPage.find_next"
-        addSubview(nextButton)
-
-        let closeButton = UIButton()
-        closeButton.setTitle(.localized(.done), for: .normal)
-        closeButton.setTitleColor(.theme.ecosia.primaryButton, for: .normal)
-        closeButton.accessibilityLabel = .FindInPageDoneAccessibilityLabel
-        closeButton.addTarget(self, action: #selector(didPressClose), for: .touchUpInside)
-        closeButton.accessibilityIdentifier = "FindInPage.close"
-        addSubview(closeButton)
-
-        let topBorder = UIView()
-        topBorder.backgroundColor = .theme.ecosia.border
-        addSubview(topBorder)
+        setupViews()
 
         self.snp.makeConstraints { make in
             make.height.equalTo(barHeight)
@@ -172,10 +120,73 @@ class FindInPageBar: UIView {
             make.height.equalTo(1)
             make.left.right.top.equalToSuperview()
         }
+        
+        // Ecosia: Make custom UI response to display theme change
+        NotificationCenter.default.addObserver(self, selector: #selector(setupViews), name: .DisplayThemeChanged, object: nil)
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    // Ecosia: Custom FindInPage UI
+    @objc private func setupViews() {
+        backgroundColor = .theme.ecosia.secondaryBackground
+        
+        searchView.backgroundColor = .theme.ecosia.tertiaryBackground
+        searchView.layer.cornerRadius = (barHeight - 2*searchViewTopBottomSpacing)/2
+        addSubview(searchView)
+
+        searchText.addTarget(self, action: #selector(didTextChange), for: .editingChanged)
+        searchText.textColor = .theme.ecosia.primaryText
+        searchText.font = .preferredFont(forTextStyle: .body)
+        searchText.placeholder = .localized(.findInPage)
+        searchText.autocapitalizationType = .none
+        searchText.autocorrectionType = .no
+        searchText.inputAssistantItem.leadingBarButtonGroups = []
+        searchText.inputAssistantItem.trailingBarButtonGroups = []
+        searchText.enablesReturnKeyAutomatically = true
+        searchText.returnKeyType = .search
+        searchText.accessibilityIdentifier = "FindInPage.searchField"
+        searchText.delegate = self
+        searchView.addSubview(searchText)
+
+        matchCountView.textColor = .theme.ecosia.secondaryText
+        matchCountView.font = .preferredFont(forTextStyle: .footnote)
+        matchCountView.textAlignment = .right
+        matchCountView.isHidden = true
+        matchCountView.accessibilityIdentifier = "FindInPage.matchCount"
+        searchView.addSubview(matchCountView)
+        
+        previousButton.setImage(UIImage(named: "find_previous")?.withRenderingMode(.alwaysTemplate), for: .normal)
+        previousButton.tintColor = .theme.ecosia.primaryIcon
+        previousButton.isEnabled = false
+        previousButton.accessibilityLabel = .FindInPagePreviousAccessibilityLabel
+        previousButton.addTarget(self, action: #selector(didFindPrevious), for: .touchUpInside)
+        previousButton.accessibilityIdentifier = "FindInPage.find_previous"
+        addSubview(previousButton)
+
+        nextButton.setImage(UIImage(named: "find_next")?.withRenderingMode(.alwaysTemplate), for: .normal)
+        nextButton.tintColor = .theme.ecosia.primaryIcon
+        nextButton.isEnabled = false
+        nextButton.accessibilityLabel = .FindInPageNextAccessibilityLabel
+        nextButton.addTarget(self, action: #selector(didFindNext), for: .touchUpInside)
+        nextButton.accessibilityIdentifier = "FindInPage.find_next"
+        addSubview(nextButton)
+
+        closeButton.setTitle(.localized(.done), for: .normal)
+        closeButton.setTitleColor(.theme.ecosia.primaryButton, for: .normal)
+        closeButton.accessibilityLabel = .FindInPageDoneAccessibilityLabel
+        closeButton.addTarget(self, action: #selector(didPressClose), for: .touchUpInside)
+        closeButton.accessibilityIdentifier = "FindInPage.close"
+        addSubview(closeButton)
+
+        topBorder.backgroundColor = .theme.ecosia.border
+        addSubview(topBorder)
     }
 
     @discardableResult override func becomeFirstResponder() -> Bool {
