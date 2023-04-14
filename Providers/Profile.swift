@@ -10,9 +10,8 @@
 // Ecosia // import Account
 import Shared
 import Storage
-// Ecosia // import Sync
-import XCGLogger
-// Ecosia // import SyncTelemetry
+// Ecosia: // import Sync
+// Ecosia: // import SyncTelemetry
 import AuthenticationServices
 import Core
 

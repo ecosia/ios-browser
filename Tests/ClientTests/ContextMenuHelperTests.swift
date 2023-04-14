@@ -2,7 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
-import Glean
+// Ecosia: remove Glean dependency // import Glean
 import XCTest
 
 @testable import Client
@@ -17,8 +17,8 @@ class ContextMenuHelperTests: XCTestCase {
 
         FeatureFlagsManager.shared.initializeDeveloperFeatures(with: profile)
 
-        Glean.shared.resetGlean(clearStores: true)
-        Glean.shared.enableTestingMode()
+        // Ecosia: remove Glean dependency // Glean.shared.resetGlean(clearStores: true)
+        // Ecosia: remove Glean dependency // Glean.shared.enableTestingMode()
     }
 
     override func tearDown() {

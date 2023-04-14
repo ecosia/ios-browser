@@ -7,6 +7,7 @@ import XCTest
 import Foundation
 import Storage
 import Core
+import Shared
 
 class EcosiaHistoryMigrationTests: TestHistory {
 
@@ -48,10 +49,11 @@ class EcosiaHistoryMigrationTests: TestHistory {
     }
 
     func testImportFailureDescription() {
-        let singleFailure = EcosiaImport.Failure(reasons: ["Reason 1"])
+                
+        let singleFailure = EcosiaImport.Failure(reasons: makeMaybeErrorReasonsArray(1))
         XCTAssertEqual(singleFailure.description, "Reason 1")
 
-        let fourFailures = EcosiaImport.Failure(reasons: ["Reason 1", "Reason 2", "Reason 3", "Reason 4"])
+        let fourFailures = EcosiaImport.Failure(reasons: makeMaybeErrorReasonsArray(4))
         let cappedDescription = fourFailures.description
         XCTAssertEqual(cappedDescription, "Reason 1 / Reason 2 / Reason 3")
     }
@@ -81,4 +83,15 @@ class EcosiaHistoryMigrationTests: TestHistory {
         XCTAssert(allDays.count == 5)
     }
 
+}
+
+extension EcosiaHistoryMigrationTests {
+    
+    struct ReasonErrorTest: MaybeErrorType {
+        public let description: String
+    }
+    
+    func makeMaybeErrorReasonsArray(_ numberOfReasons: Int) -> [MaybeErrorType] {
+        Array(1...numberOfReasons).map { ReasonErrorTest(description: "Reason \($0)")}
+    }
 }

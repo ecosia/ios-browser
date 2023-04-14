@@ -290,8 +290,8 @@ extension BrowserViewController: URLBarDelegate {
         if let searchURL = engine.searchURLForQuery(text) {
             // We couldn't find a matching search keyword, so do a search query.
             Telemetry.default.recordSearch(location: .actionBar, searchEngine: engine.engineID ?? "other")
-            GleanMetrics.Search.counts["\(engine.engineID ?? "custom").\(SearchesMeasurement.SearchLocation.actionBar.rawValue)"].add()
-            searchTelemetry?.shouldSetUrlTypeSearch = true
+            // Ecosia: remove Glean dependency // GleanMetrics.Search.counts["\(engine.engineID ?? "custom").\(SearchesMeasurement.SearchLocation.actionBar.rawValue)"].add()
+            // Ecosia: removing SearchTelemetry // searchTelemetry?.shouldSetUrlTypeSearch = true
 
             let searchData = TabGroupData(searchTerm: text,
                                           searchUrl: searchURL.absoluteString,

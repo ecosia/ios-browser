@@ -46,7 +46,7 @@ final class EcosiaImport {
         }
     }
 
-    let profile: Profile
+    private let profile: Profile
 
     private var progress: ((Double) -> ())?
 

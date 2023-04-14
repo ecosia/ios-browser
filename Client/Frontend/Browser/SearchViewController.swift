@@ -5,7 +5,7 @@
 import UIKit
 import Shared
 import Storage
-//Ecosia: import Glean
+// Ecosia: remove Glean dependency // import Glean
 //Ecosia: import Telemetry
 
 private enum SearchListSection: Int, CaseIterable {
