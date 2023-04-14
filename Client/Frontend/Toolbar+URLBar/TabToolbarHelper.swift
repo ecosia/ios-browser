@@ -21,7 +21,8 @@ protocol TabToolbarProtocol: AnyObject {
     func updateMiddleButtonState(_ state: MiddleButtonState)
     func updatePageStatus(_ isWebPage: Bool)
     func updateTabCount(_ count: Int, animated: Bool)
-    func privateModeBadge(visible: Bool)
+    // Ecosia: Remove private mode badge
+    // func privateModeBadge(visible: Bool)
     func warningMenuBadge(setVisible: Bool)
 }
 
