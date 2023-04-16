@@ -82,7 +82,7 @@ class TabLocationView: UIView {
         }
     }
 
-    private(set) lazy var trackingProtectionButton: LockButton = .build { trackingProtectionButton in
+    private(set) lazy var trackingProtectionButton: LockerButton = .build { trackingProtectionButton in
         trackingProtectionButton.addTarget(self, action: #selector(self.didPressTPShieldButton(_:)), for: .touchUpInside)
         trackingProtectionButton.clipsToBounds = false
         trackingProtectionButton.accessibilityIdentifier = AccessibilityIdentifiers.Toolbar.trackingProtection
@@ -311,7 +311,6 @@ extension TabLocationView: NotificationThemeable {
         urlTextField.tintColor = .theme.ecosia.information
         urlTextField.attributedPlaceholder = placeholder
         readerModeButton.applyTheme()
-        trackingProtectionButton.applyTheme()
         reloadButton.tintColor = .theme.ecosia.secondaryText
 
         let color = LegacyThemeManager.instance.currentName == .dark ? UIColor(white: 0.3, alpha: 0.6): UIColor.theme.textField.background
@@ -329,8 +328,26 @@ extension TabLocationView: TabEventHandler {
         guard let blocker = tab.contentBlocker else { return }
         trackingProtectionButton.alpha = 1.0
         
-        let isTrackingProtectionEnabled = tab.webView?.hasOnlySecureContent == false || blocker.status == .safelisted
-        trackingProtectionButton.isHighlighted = isTrackingProtectionEnabled
+        let isSecureConnection = tab.webView?.hasOnlySecureContent == true
+        let isTrackingProtectionEnabled = blocker.status == .blocking
+        let isSecureConnectionWithoutTrackingProtectionEnabled = isSecureConnection && !isTrackingProtectionEnabled
+        
+        if isTrackingProtectionEnabled {
+            trackingProtectionButton.updateState(.lockedEnhanced)
+            return
+        }
+        
+        if isSecureConnectionWithoutTrackingProtectionEnabled {
+            trackingProtectionButton.updateState(.locked)
+            return
+        }
+        
+        if !isSecureConnection {
+            trackingProtectionButton.updateState(.unavailable)
+            return
+        }
+        
+        trackingProtectionButton.updateState(.unlocked)
     }
 
     func tabDidGainFocus(_ tab: Tab) {

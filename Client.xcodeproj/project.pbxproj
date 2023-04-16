@@ -433,7 +433,7 @@
 		8AD40FCF27BADC6B00672675 /* URLTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD40FCE27BADC6A00672675 /* URLTextField.swift */; };
 		8AD40FD127BADCBA00672675 /* ToolbarButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD40FD027BADCBA00672675 /* ToolbarButton.swift */; };
 		8AD40FD327BB068F00672675 /* MainMenuActionHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD40FD227BB068F00672675 /* MainMenuActionHelper.swift */; };
-		8AD40FD527BB1C1000672675 /* LockButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD40FD427BB1C1000672675 /* LockButton.swift */; };
+		8AD40FD527BB1C1000672675 /* LockerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD40FD427BB1C1000672675 /* LockerButton.swift */; };
 		8AD5702F27AB4DEA005BFDC8 /* UIStackView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5702E27AB4DEA005BFDC8 /* UIStackView+Extension.swift */; };
 		8ADED7EC27691351009C19E6 /* CalendarExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ADED7EB27691351009C19E6 /* CalendarExtensionsTests.swift */; };
 		8ADED7EE276A7750009C19E6 /* CumulativeDaysOfUseCounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ADED7ED276A7750009C19E6 /* CumulativeDaysOfUseCounter.swift */; };
@@ -2808,7 +2808,7 @@
 		8AD40FCE27BADC6A00672675 /* URLTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = URLTextField.swift; sourceTree = "<group>"; };
 		8AD40FD027BADCBA00672675 /* ToolbarButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToolbarButton.swift; sourceTree = "<group>"; };
 		8AD40FD227BB068F00672675 /* MainMenuActionHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenuActionHelper.swift; sourceTree = "<group>"; };
-		8AD40FD427BB1C1000672675 /* LockButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockButton.swift; sourceTree = "<group>"; };
+		8AD40FD427BB1C1000672675 /* LockerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerButton.swift; sourceTree = "<group>"; };
 		8AD440CBBF202B15E74E186D /* ur */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ur; path = ur.lproj/Search.strings; sourceTree = "<group>"; };
 		8AD5702E27AB4DEA005BFDC8 /* UIStackView+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIStackView+Extension.swift"; sourceTree = "<group>"; };
 		8ADAFAC528AEBF6300FFEBE3 /* HomeLogoHeaderViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeLogoHeaderViewModelTests.swift; sourceTree = "<group>"; };
@@ -5761,7 +5761,7 @@
 		8AD40FB727BAD1D600672675 /* Toolbar+URLBar */ = {
 			isa = PBXGroup;
 			children = (
-				8AD40FD427BB1C1000672675 /* LockButton.swift */,
+				8AD40FD427BB1C1000672675 /* LockerButton.swift */,
 				8AD40FC827BADC4B00672675 /* ReaderModeButton.swift */,
 				8AD40FC927BADC4B00672675 /* StatefulButton.swift */,
 				E4CD9F2C1A6DC91200318571 /* TabLocationView.swift */,
@@ -9163,7 +9163,7 @@
 				1DFE57FF27BAE3150025DE58 /* HomepageSectionType.swift in Sources */,
 				CA4D9D0628C8D801006AFB5D /* WelcomeTourPlanet.swift in Sources */,
 				E4CD9F6D1A77DD2800318571 /* ReaderModeStyleViewController.swift in Sources */,
-				8AD40FD527BB1C1000672675 /* LockButton.swift in Sources */,
+				8AD40FD527BB1C1000672675 /* LockerButton.swift in Sources */,
 				E571EE772875694C0051D9AA /* MockPocketSponsoredStoriesProvider.swift in Sources */,
 				2109478928AFD24C00B73D44 /* OnboardingViewControllerProtocol.swift in Sources */,
 				D0FCF7F51FE45842004A7995 /* UserScriptManager.swift in Sources */,
