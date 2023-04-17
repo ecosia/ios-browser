@@ -79,6 +79,9 @@ class EcosiaFindInPageBar: UIView {
     private static let barHeight: CGFloat = 60
     private static let searchViewTopBottomSpacing: CGFloat = 8
 
+    static var retrieveSavedText: String? {
+        return UserDefaults.standard.object(forKey: EcosiaFindInPageBar.savedTextKey) as? String
+    }
     var currentResult = 0 {
         didSet {
             if totalResults > 500 {
@@ -133,6 +136,11 @@ class EcosiaFindInPageBar: UIView {
     
     deinit {
         NotificationCenter.default.removeObserver(self)
+    }
+    
+    @discardableResult override func becomeFirstResponder() -> Bool {
+        searchTextField.becomeFirstResponder()
+        return super.becomeFirstResponder()
     }
     
     @objc private func applyTheme() {
@@ -194,36 +202,27 @@ class EcosiaFindInPageBar: UIView {
         }
     }
 
-    @discardableResult override func becomeFirstResponder() -> Bool {
-        searchTextField.becomeFirstResponder()
-        return super.becomeFirstResponder()
-    }
-
-    @objc fileprivate func didFindPrevious(_ sender: UIButton) {
+    @objc private func didFindPrevious(_ sender: UIButton) {
         delegate?.findInPage(self, didFindPreviousWithText: searchTextField.text ?? "")
     }
 
-    @objc fileprivate func didFindNext(_ sender: UIButton) {
+    @objc private func didFindNext(_ sender: UIButton) {
         delegate?.findInPage(self, didFindNextWithText: searchTextField.text ?? "")
     }
 
-    @objc fileprivate func didTextChange(_ sender: UITextField) {
+    @objc private func didTextChange(_ sender: UITextField) {
         matchCountLabel.isHidden = searchTextField.text?.trimmingCharacters(in: .whitespaces).isEmpty ?? true
         saveSearchText(searchTextField.text)
         delegate?.findInPage(self, didTextChange: searchTextField.text ?? "")
     }
 
-    @objc fileprivate func didPressClose(_ sender: UIButton) {
+    @objc private func didPressClose(_ sender: UIButton) {
         delegate?.findInPageDidPressClose(self)
     }
 
     private func saveSearchText(_ searchText: String?) {
         guard let text = searchText, !text.isEmpty else { return }
         UserDefaults.standard.set(text, forKey: EcosiaFindInPageBar.savedTextKey)
-    }
-
-    static var retrieveSavedText: String? {
-        return UserDefaults.standard.object(forKey: EcosiaFindInPageBar.savedTextKey) as? String
     }
 }
 
