@@ -64,7 +64,8 @@ class BrowserViewController: UIViewController {
     var screenshotHelper: ScreenshotHelper!
     // Ecosia: removing SearchTelemetry // var searchTelemetry: SearchTelemetry?
     var searchLoader: SearchLoader?
-    var findInPageBar: FindInPageBar?
+    // Ecosia: Custom UI for FindInPageBar
+    var findInPageBar: EcosiaFindInPageBar?
     lazy var mailtoLinkHandler = MailtoLinkHandler()
     var urlFromAnotherApp: UrlToOpenModel?
     var isCrashAlertShowing: Bool = false
