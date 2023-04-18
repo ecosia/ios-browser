@@ -32,9 +32,7 @@ jobs:
       id: restore-content-blocker-cache
       uses: actions/cache/restore@v3
       with:
-        paths: 
-          - content-blocker-lib-ios/
-          - shavar-prod-lists/
+        path: [content-blocker-lib-ios/, shavar-prod-lists/]
         key: ${{ runner.os }}-content-blocker-cache-${{ hashFiles('content_blocker_commit_sha.txt') }}
 
     - name: Run content blocker scripts
@@ -49,9 +47,7 @@ jobs:
       if: steps.restore-spm-cache.outputs.cache-hit != 'true'
       uses: actions/cache/save@v3
       with:
-        paths: 
-          - content-blocker-lib-ios/
-          - shavar-prod-lists/
+        path: [content-blocker-lib-ios/, shavar-prod-lists/]
         key: ${{ runner.os }}-content-blocker-cache-${{ hashFiles('content_blocker_commit_sha.txt') }}
 
     - name: Fix-up private Github URLs
