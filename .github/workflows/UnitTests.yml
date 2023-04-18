@@ -23,11 +23,11 @@ jobs:
       with:
         ruby-version: 2.7
         bundler-cache: true
-    - name: Run content blocking scripts
+    - name: Install npm
       uses: bahmutov/npm-install@v1.6.0
+    - name: Run content blocking scripts
       run: ./content_blocker_update.sh
-    - name: Check Swift Package Manager cache
-      uses: actions/cache@v3
+    - uses: actions/cache@v3
       with:
         path: .build
         key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
