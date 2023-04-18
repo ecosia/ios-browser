@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  test:
+  run-unit-tests:
     runs-on: macos-latest
     env:
       DEVELOPER_DIR: /Applications/Xcode_14.2.0.app/Contents/Developer
