@@ -30,8 +30,6 @@ jobs:
         GITHUB_ACCESS_TOKEN: ${{ secrets.IOS_CORE_TOKEN }}
     - name: Create empty Staging xcconfig
       run: touch Client/Configuration/Staging.xcconfig
-    - name: clean packages
-      run: xcodebuild -scheme Ecosia -project Client.xcodeproj clean
     - name: run unit tests
       run: bundle exec fastlane scan
     - name: Publish Test Report
