@@ -27,20 +27,24 @@ jobs:
       uses: bahmutov/npm-install@v1.6.0
     - name: Run content blocking scripts
       run: ./content_blocker_update.sh
-    - uses: actions/cache@v3
-      with:
-        path: .build
-        key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
-        restore-keys: |
-          ${{ runner.os }}-spm-
     - name: Fix-up private Github URLs
       run: find . -type f \( -name '*.pbxproj' -o -name 'Package.swift' -o -name 'Package.resolved' \) -exec sed -i '' "s/https:\/\/github.com\/${GITHUB_REPOSITORY_OWNER}/https:\/\/${GITHUB_ACCESS_TOKEN}@github.com\/${GITHUB_REPOSITORY_OWNER}/g" {} \;
       env:
         GITHUB_ACCESS_TOKEN: ${{ secrets.IOS_CORE_TOKEN }}
     - name: Create empty Staging xcconfig
       run: touch Client/Configuration/Staging.xcconfig
+    - name: Restore SPM Cache
+      uses: actions/cache/restore@v3
+      with:
+        path: SourcePackages/
+        key: ${{ runner.os }}spm-cache-
     - name: Run Unit Tests
       run: bundle exec fastlane scan
+    - name: Save SPM Cache
+      uses: actions/cache/save@v3
+      with:
+        path: SourcePackages/
+        key: ${{ runner.os }}spm-cache-{{ hashFiles 'Client.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved' }}
     - name: Publish Test Report
       if: always()
       uses: mikepenz/action-junit-report@v2
