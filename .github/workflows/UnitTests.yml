@@ -26,7 +26,7 @@ jobs:
     - name: Install npm
       uses: bahmutov/npm-install@v1.6.0
     - name: Restore Content Blocker Cache
-            id: restore-content-blocker-cache
+      id: restore-content-blocker-cache
       uses: actions/cache/restore@v3
       with:
         path: content-blocker-lib-ios/
@@ -54,7 +54,7 @@ jobs:
       uses: actions/cache/restore@v3
       with:
         path: SourcePackages/
-        key: ${{ runner.os }}spm-cache-
+        key: ${{ runner.os }}-spm-cache-
     - name: Run Unit Tests
       run: bundle exec fastlane scan
     - name: Save SPM Cache
@@ -62,7 +62,7 @@ jobs:
       uses: actions/cache/save@v3
       with:
         path: SourcePackages/
-        key: ${{ runner.os }}spm-cache-{{ hashFiles 'Client.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved' }}
+        key: ${{ runner.os }}-spm-cache-{{ hashFiles 'Client.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved' }}
     - name: Publish Test Report
       if: always()
       uses: mikepenz/action-junit-report@v2
