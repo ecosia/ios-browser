@@ -33,7 +33,7 @@ jobs:
       uses: actions/cache/restore@v3
       with:
         path: content-blocker-lib-ios/
-        key: ${{ runner.os }}-content-blocker-cache-
+        key: ${{ runner.os }}-content-blocker-cache-${{ hashFiles('content_blocker_commit_sha.txt') }}
 
     - name: Run content blocker scripts
       if: steps.restore-content-blocker-cache.outputs.cache-hit != 'true'
@@ -63,7 +63,7 @@ jobs:
       uses: actions/cache/restore@v3
       with:
         path: SourcePackages/
-        key: ${{ runner.os }}-spm-cache-
+        key: ${{ runner.os }}-spm-cache-${{ hashFiles('Client.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
 
     - name: Run Unit Tests
       run: bundle exec fastlane scan
