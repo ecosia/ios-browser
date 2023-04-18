@@ -7,7 +7,8 @@
 
 # Update commit hash when you need to update shavar prod list
 # Note: we can update this to use a tag / branch in future
-SHAVAR_COMMIT_HASH="3910527004252af3aa9dd701566a2cb3b78e5c3a"
+input="content_blocker_commit_sha.txt"
+SHAVAR_COMMIT_HASH=$(cat "$input")
 
 # Install Node.js dependencies and build user scripts
 npm install

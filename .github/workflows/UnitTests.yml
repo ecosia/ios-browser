@@ -25,8 +25,24 @@ jobs:
         bundler-cache: true
     - name: Install npm
       uses: bahmutov/npm-install@v1.6.0
-    - name: Run content blocking scripts
+    - name: Restore Content Blocker Cache
+            id: restore-content-blocker-cache
+      uses: actions/cache/restore@v3
+      with:
+        path: content-blocker-lib-ios/
+        key: ${{ runner.os }}-content-blocker-cache-
+    - name: Run content blocker scripts
+      if: steps.restore-content-blocker-cache.outputs.cache-hit != 'true'
       run: ./content_blocker_update.sh
+    - name: Compile content blocker lib
+      if: steps.restore-content-blocker-cache.outputs.cache-hit == 'true'
+      run: (cd content-blocker-lib-ios/ContentBlockerGen && swift run)
+    - name: Save Content Blocker Cache
+      if: steps.restore-spm-cache.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v3
+      with:
+        path: content-blocker-lib-ios/
+        key: ${{ runner.os }}-content-blocker-cache-{{ hashFiles 'content_blocker_commit_sha.txt' }}
     - name: Fix-up private Github URLs
       run: find . -type f \( -name '*.pbxproj' -o -name 'Package.swift' -o -name 'Package.resolved' \) -exec sed -i '' "s/https:\/\/github.com\/${GITHUB_REPOSITORY_OWNER}/https:\/\/${GITHUB_ACCESS_TOKEN}@github.com\/${GITHUB_REPOSITORY_OWNER}/g" {} \;
       env:
