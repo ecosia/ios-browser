@@ -25,6 +25,7 @@ jobs:
       with:
         ruby-version: 2.7
         bundler-cache: true
+        
     - name: Install npm
       uses: bahmutov/npm-install@v1.6.0
 
