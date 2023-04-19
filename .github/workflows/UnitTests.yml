@@ -35,6 +35,9 @@ jobs:
         path: |
           content-blocker-lib-ios/
           shavar-prod-lists/
+          Client/Assets/AllFramesAtDocument*.js
+          Client/Assets/MainFrameAtDocument*.js
+          Client/Assets/*.js.LICENSE.txt
         key: ${{ runner.os }}-content-blocker-cache-${{ hashFiles('content_blocker_commit_sha.txt') }}
 
     - name: Run content blocker scripts
@@ -52,6 +55,9 @@ jobs:
         path: |
           content-blocker-lib-ios/
           shavar-prod-lists/
+          Client/Assets/AllFramesAtDocument*.js
+          Client/Assets/MainFrameAtDocument*.js
+          Client/Assets/*.js.LICENSE.txt
         key: ${{ runner.os }}-content-blocker-cache-${{ hashFiles('content_blocker_commit_sha.txt') }}
 
     - name: Fix-up private Github URLs
