@@ -24,7 +24,7 @@ class BookmarksPanelViewModel: NSObject {
     private var flashLastRowOnNextReload = false
     private let bookmarksExchange: BookmarksExchangable
     private var documentPickerPresentingViewController: UIViewController?
-    private var onImportDoneHandler: (() -> Void)?
+    private var onImportDoneHandler: ((URL, Error?) -> Void)?
     
     /// Error case at the moment is setting data to nil and showing nothing
     private func setErrorCase() {
@@ -73,7 +73,7 @@ class BookmarksPanelViewModel: NSObject {
         try await bookmarksExchange.export(bookmarks: bookmarks, in: viewController)
     }
     
-    func bookmarkImportSelected(in viewController: UIViewController, onDone: @escaping () -> Void) {
+    func bookmarkImportSelected(in viewController: UIViewController, onDone: @escaping (URL, Error?) -> Void) {
         self.documentPickerPresentingViewController = viewController
         self.onImportDoneHandler = onDone
         let documentPicker = UIDocumentPickerViewController(documentTypes: ["public.html"], in: .open)
@@ -174,21 +174,20 @@ extension BookmarksPanelViewModel: UIDocumentPickerDelegate {
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         guard
             let firstHtmlUrl = urls.first,
-            let viewController = documentPickerPresentingViewController,
-            firstHtmlUrl.startAccessingSecurityScopedResource()
+            let viewController = documentPickerPresentingViewController
         else { return }
         handlePickedUrl(firstHtmlUrl, in: viewController)
     }
     
     func handlePickedUrl(_ url: URL, in viewController: UIViewController) {
+        guard url.startAccessingSecurityScopedResource() else { return }
         Task {
             do {
                 try await bookmarksExchange.import(from: url, in: viewController)
+                Task { @MainActor in onImportDoneHandler?(url, nil) }
             } catch {
-                debugPrint(#function, error)
+                Task { @MainActor in onImportDoneHandler?(url, error) }
             }
-            
-            onImportDoneHandler?()
         }
     }
 }

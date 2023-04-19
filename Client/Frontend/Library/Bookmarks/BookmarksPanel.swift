@@ -586,8 +586,20 @@ extension BookmarksPanel {
     }
     
     func importBookmarksActionHandler(_ action: UIAlertAction) {
-        viewModel.bookmarkImportSelected(in: self) { [weak self] in
-            self?.reloadData()
+        viewModel.bookmarkImportSelected(in: self) { [weak self] url, error in
+            guard let error = error else {
+                self?.reloadData()
+                return
+            }
+            
+            let alert = UIAlertController(title: "Import failed", message: error.localizedDescription, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+            let retryAction = UIAlertAction(title: "Retry", style: .default) { [weak self] _ in
+                guard let self = self else { return }
+                self.viewModel.handlePickedUrl(url, in: self)
+            }
+            alert.addAction(retryAction)
+            self?.present(alert, animated: true)
         }
     }
 
