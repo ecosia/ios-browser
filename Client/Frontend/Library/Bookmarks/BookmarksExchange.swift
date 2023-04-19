@@ -92,9 +92,9 @@ class BookmarksExchange: BookmarksExchangable {
         _ bookmarks: [Core.BookmarkItem],
         viewController: UIViewController,
         toast: SimpleToast
-    ) async throws {        
+    ) async throws {
         /// create folder with date by import
-        let importGuid = try await createFolder(parentGUID: "mobile______", title: "Imported at \(dateFormatter.string(from: Date()))")
+        let importGuid = try await createFolder(parentGUID: "mobile______", title: "Imported Bookmarks (\(dateFormatter.string(from: Date())))")
         
         try await processBookmarks(bookmarks, parentGUID: importGuid)
         
