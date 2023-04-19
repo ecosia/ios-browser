@@ -5,7 +5,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-# Update commit hash when you need to update shavar prod list
+# Update commit hash in the "content_blocker_commit_sha.txt" file  when you need to update shavar prod list
 # Note: we can update this to use a tag / branch in future
 input="content_blocker_commit_sha.txt"
 SHAVAR_COMMIT_HASH=$(cat "$input")
