@@ -577,12 +577,11 @@ extension BookmarksPanel {
     }
     
     func showMoreDialog() {
+        let importAction = UIAlertAction(title: "Import Bookmarks", style: .default, handler: importBookmarksActionHandler)
+        let exportAction = UIAlertAction(title: "Export Bookmarks", style: .default, handler: exportBookmarksActionHandler)
+        exportAction.isEnabled = !viewModel.bookmarkNodes.isEmpty
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        [
-            UIAlertAction(title: "Import Bookmarks", style: .default, handler: importBookmarksActionHandler),
-            UIAlertAction(title: "Export Bookmarks", style: .default, handler: exportBookmarksActionHandler),
-            UIAlertAction(title: "Cancel", style: .cancel)
-        ].forEach(alert.addAction)
+        [importAction, exportAction, UIAlertAction(title: "Cancel", style: .cancel)].forEach(alert.addAction)
         present(alert, animated: true)
     }
     
