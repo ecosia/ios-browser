@@ -577,16 +577,22 @@ extension BookmarksPanel {
     }
     
     func showMoreDialog() {
+        moreButton.isEnabled = false
         let importAction = UIAlertAction(title: "Import Bookmarks", style: .default, handler: importBookmarksActionHandler)
         let exportAction = UIAlertAction(title: "Export Bookmarks", style: .default, handler: exportBookmarksActionHandler)
         exportAction.isEnabled = !viewModel.bookmarkNodes.isEmpty
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { [weak self] _ in
+            self?.moreButton.isEnabled = true
+        }
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        [importAction, exportAction, UIAlertAction(title: "Cancel", style: .cancel)].forEach(alert.addAction)
+        [importAction, exportAction, cancelAction].forEach(alert.addAction)
         present(alert, animated: true)
     }
     
     func importBookmarksActionHandler(_ action: UIAlertAction) {
         viewModel.bookmarkImportSelected(in: self) { [weak self] url, error in
+            self?.moreButton.isEnabled = true
+            
             guard let error = error else {
                 self?.reloadData()
                 return
@@ -595,7 +601,7 @@ extension BookmarksPanel {
             let alert = UIAlertController(title: "Import failed", message: error.localizedDescription, preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
             let retryAction = UIAlertAction(title: "Retry", style: .default) { [weak self] _ in
-                guard let self = self else { return }
+                guard let self = self, let url = url else { return }
                 self.viewModel.handlePickedUrl(url, in: self)
             }
             alert.addAction(retryAction)
@@ -605,7 +611,9 @@ extension BookmarksPanel {
 
     func exportBookmarksActionHandler(_ action: UIAlertAction) {
         Task { @MainActor in
-            try await viewModel.bookmarkExportSelected(in: self)
+            try await viewModel.bookmarkExportSelected(in: self) { [weak self] in
+                self?.moreButton.isEnabled = true
+            }
         }
     }
 

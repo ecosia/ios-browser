@@ -24,7 +24,8 @@ class BookmarksPanelViewModel: NSObject {
     private var flashLastRowOnNextReload = false
     private let bookmarksExchange: BookmarksExchangable
     private var documentPickerPresentingViewController: UIViewController?
-    private var onImportDoneHandler: ((URL, Error?) -> Void)?
+    private var onImportDoneHandler: ((URL?, Error?) -> Void)?
+    private var onExportDoneHandler: (() -> Void)?
     
     /// Error case at the moment is setting data to nil and showing nothing
     private func setErrorCase() {
@@ -68,12 +69,14 @@ class BookmarksPanelViewModel: NSObject {
         flashLastRowOnNextReload = true
     }
     
-    func bookmarkExportSelected(in viewController: UIViewController) async throws {
+    func bookmarkExportSelected(in viewController: UIViewController, onDone: @escaping () -> Void) async throws {
+        self.onExportDoneHandler = onDone
         let bookmarks = try await getBookmarksForExport()
         try await bookmarksExchange.export(bookmarks: bookmarks, in: viewController)
+        Task { @MainActor in self.onExportDoneHandler?() }
     }
     
-    func bookmarkImportSelected(in viewController: UIViewController, onDone: @escaping (URL, Error?) -> Void) {
+    func bookmarkImportSelected(in viewController: UIViewController, onDone: @escaping (URL?, Error?) -> Void) {
         self.documentPickerPresentingViewController = viewController
         self.onImportDoneHandler = onDone
         let documentPicker = UIDocumentPickerViewController(documentTypes: ["public.html"], in: .open)
@@ -171,6 +174,10 @@ class BookmarksPanelViewModel: NSObject {
 }
 
 extension BookmarksPanelViewModel: UIDocumentPickerDelegate {
+    func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
+        self.onImportDoneHandler?(nil, nil)
+    }
+
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         guard
             let firstHtmlUrl = urls.first,
