@@ -22,6 +22,7 @@ class TestSQLiteReadingList: XCTestCase {
 
     override func tearDown() {
         super.tearDown()
+        self.db.vacuum()
     }
 
     func testCreateRecord() {
