@@ -26,8 +26,6 @@ class SimpleToast {
     
     private var toastView: UIView?
     private var dismissAfter: DispatchTimeInterval?
-
-    var onShown: (() -> Void)?
     
     @discardableResult
     func showAlertWithText(
@@ -131,7 +129,7 @@ class SimpleToast {
                 toast.frame = end
             },
             completion: { [weak self] finished in
-            self?.onShown?()
+
             guard let dismissAfter = self?.dismissAfter else { return }
                 let dispatchTime = DispatchTime.now() + dismissAfter
 

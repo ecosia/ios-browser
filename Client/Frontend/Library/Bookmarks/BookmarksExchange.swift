@@ -34,22 +34,6 @@ class BookmarksExchange: BookmarksExchangable {
         
         let toast = SimpleToast()
         
-        toast.onShown = { [weak viewController] in
-            Task { [weak viewController] in
-                let serializer = BookmarkSerializer()
-                
-                let htmlExport = try await serializer.serializeBookmarks(bookmarks)
-                
-                let exportedBooksmarksUrl = FileManager.default.temporaryDirectory.appendingPathComponent("Bookmarks.html")
-                try htmlExport.data(using: .utf8)?.write(to: exportedBooksmarksUrl)
-
-                let activityViewController = UIActivityViewController(activityItems: [exportedBooksmarksUrl], applicationActivities: nil)
-                viewController?.present(activityViewController, animated: true) {
-                    toast.dismiss()
-                }
-            }
-        }
-        
         toast.showAlertWithText(
             "Exporting Bookmarks…",
             image: .view(activityIndicator),
@@ -57,6 +41,19 @@ class BookmarksExchange: BookmarksExchangable {
             dismissAfter: nil,
             bottomInset: view.layoutMargins.bottom
         )
+        
+        let serializer = BookmarkSerializer()
+        
+        let htmlExport = try await serializer.serializeBookmarks(bookmarks)
+        
+        let exportedBooksmarksUrl = FileManager.default.temporaryDirectory.appendingPathComponent("Bookmarks.html")
+        try htmlExport.data(using: .utf8)?.write(to: exportedBooksmarksUrl)
+
+        let activityViewController = UIActivityViewController(activityItems: [exportedBooksmarksUrl], applicationActivities: nil)
+        
+        viewController.present(activityViewController, animated: true) {
+            toast.dismiss()
+        }
     }
     
     @MainActor
@@ -69,10 +66,6 @@ class BookmarksExchange: BookmarksExchangable {
         
         let toast = SimpleToast()
 
-//        toast.onShown = { [weak viewController] in
-//
-//        }
-                
         toast.showAlertWithText(
             "Importing Bookmarks…",
             image: .view(activityIndicator),
