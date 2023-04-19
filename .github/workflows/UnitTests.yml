@@ -25,7 +25,7 @@ jobs:
       with:
         ruby-version: 2.7
         bundler-cache: true
-        
+
     - name: Install npm
       uses: bahmutov/npm-install@v1.6.0
 
@@ -44,10 +44,6 @@ jobs:
     - name: Run content blocker scripts
       if: steps.restore-content-blocker-cache.outputs.cache-hit != 'true'
       run: ./content_blocker_update.sh
-
-    - name: Compile content blocker lib
-      if: steps.restore-content-blocker-cache.outputs.cache-hit == 'true'
-      run: (cd content-blocker-lib-ios/ContentBlockerGen && swift run)
 
     - name: Save Content Blocker Cache
       if: steps.restore-spm-cache.outputs.cache-hit != 'true'
