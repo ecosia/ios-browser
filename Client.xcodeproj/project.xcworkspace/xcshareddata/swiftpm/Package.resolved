@@ -45,15 +45,6 @@
       }
     },
     {
-      "identity" : "glean-swift",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/mozilla/glean-swift",
-      "state" : {
-        "revision" : "b2f10c97dcc18c219f7488b22214e962fa9f33e3",
-        "version" : "51.8.3"
-      }
-    },
-    {
       "identity" : "ios-core",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ecosia/ios-core.git",
@@ -92,10 +83,10 @@
     {
       "identity" : "rust-components-swift",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/mozilla/rust-components-swift.git",
+      "location" : "https://github.com/ecosia/rust-components-swift.git",
       "state" : {
-        "revision" : "90a4bb34e6205d25fa6f67a04f71d9a6f31a91f4",
-        "version" : "96.1.3"
+        "revision" : "d47f96d936e27b6ed8f370a5423448a4e9f16b33",
+        "version" : "91.6.4"
       }
     },
     {

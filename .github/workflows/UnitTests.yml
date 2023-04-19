@@ -23,7 +23,7 @@ jobs:
         ruby-version: 2.7
         bundler-cache: true
     - uses: bahmutov/npm-install@v1.6.0
-    - run: ./content_blocker_update.sh
+    - run: ./bootstrap.sh --force
     - name: fix up private Github URLs
       run: find . -type f \( -name '*.pbxproj' -o -name 'Package.swift' -o -name 'Package.resolved' \) -exec sed -i '' "s/https:\/\/github.com\/${GITHUB_REPOSITORY_OWNER}/https:\/\/${GITHUB_ACCESS_TOKEN}@github.com\/${GITHUB_REPOSITORY_OWNER}/g" {} \;
       env:

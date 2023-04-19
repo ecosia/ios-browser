@@ -772,6 +772,7 @@ class Tab: NSObject {
     }
      */
     
+    /* Ecosia: removing SearchTelemetry
     func getProviderForUrl() -> SearchEngine {
         guard let url = self.webView?.url else {
             return .none
@@ -783,6 +784,7 @@ class Tab: NSObject {
         }
         return .none
     }
+     */
 
     func updateFaviconCache() {
         guard let displayFavicon = displayFavicon?.url,

@@ -153,7 +153,7 @@ extension BrowserViewController: WKUIDelegate {
                        currentTab.adsTelemetryUrlList.contains(adUrl),
                        !currentTab.adsProviderName.isEmpty {
 
-                        AdsTelemetryHelper.trackAdsClickedOnPage(providerName: currentTab.adsProviderName)
+                        // Ecosia: removing Telemetry Helper // AdsTelemetryHelper.trackAdsClickedOnPage(providerName: currentTab.adsProviderName)
                         currentTab.adsTelemetryUrlList.removeAll()
                         currentTab.adsTelemetryRedirectUrlList.removeAll()
                         currentTab.adsProviderName = ""
@@ -458,6 +458,7 @@ extension BrowserViewController: WKNavigationDelegate {
             return
         }
 
+        /* Ecosia: removing Telemetry Helper
         if tab == tabManager.selectedTab,
            navigationAction.navigationType == .linkActivated,
            !tab.adsTelemetryUrlList.isEmpty {
@@ -470,6 +471,7 @@ extension BrowserViewController: WKNavigationDelegate {
                 tab.adsProviderName = ""
             }
         }
+         */
 
         if InternalURL.isValid(url: url) {
             if navigationAction.navigationType != .backForward, navigationAction.isInternalUnprivileged {
@@ -795,7 +797,7 @@ extension BrowserViewController: WKNavigationDelegate {
               let metadataManager = tab.metadataManager
         else { return }
 
-        searchTelemetry?.trackTabAndTopSiteSAP(tab, webView: webView)
+        // Ecosia: removing SearchTelemetry // searchTelemetry?.trackTabAndTopSiteSAP(tab, webView: webView)
         tab.url = webView.url
 
         // Only update search term data with valid search term data
@@ -809,7 +811,7 @@ extension BrowserViewController: WKNavigationDelegate {
                let lastRedirectHost = tab.adsTelemetryRedirectUrlList.last?.host,
                lastRedirectHost != startingRedirectHost {
 
-                AdsTelemetryHelper.trackAdsClickedOnPage(providerName: tab.adsProviderName)
+                // Ecosia: removing Telemetry Helper // AdsTelemetryHelper.trackAdsClickedOnPage(providerName: tab.adsProviderName)
                 tab.adsTelemetryUrlList.removeAll()
                 tab.adsTelemetryRedirectUrlList.removeAll()
                 tab.adsProviderName = ""
