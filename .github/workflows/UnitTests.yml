@@ -80,7 +80,7 @@ jobs:
       uses: actions/upload-artifact@master
       id: save_derived_data_path
       with:
-        name: save_derived_data_path
+        name: derived_data_path
         path: /var/tmp/derived_data_path.txt
         if-no-files-found: error
 
@@ -91,7 +91,7 @@ jobs:
     - name: Zip derived data
       env:
         SCAN_DERIVED_DATA_PATH: ${{ steps.get_derived_data_path.outputs.derived_data_path_from_file }}
-      run: zip derived_data.zip $SCAN_DERIVED_DATA_PATH
+      run: zip derived_data.zip $SCAN_DERIVED_DATA_PATH/*
 
     - name: Upload derived data
       uses: actions/upload-artifact@master
