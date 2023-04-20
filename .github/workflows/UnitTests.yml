@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build-for-testing:
+  build_for_testing:
     runs-on: macos-latest
     name: Build App
     env:
@@ -74,13 +74,13 @@ jobs:
         key: ${{ runner.os }}-spm-cache-${{ hashFiles('Client.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
 
     - name: Build for testing
-      run: bundle exec fastlane build_and_export_derived_data_path
+      run: bundle exec fastlane run_tests --build_for_testing=true
     
     - name: Upload derived data
       uses: actions/upload-artifact@master
       with:
         name: derived-data
-        path: ${{env.TEMP_DERIVED_DATA_PATH}}
+        path: ${{env.SCAN_DERIVED_DATA_PATH}}
 
     - name: Save SPM Cache
       if: steps.restore-spm-cache.outputs.cache-hit != 'true'
@@ -96,12 +96,16 @@ jobs:
         report_paths: '**/test_output/xml/report.junit'
         github_token: ${{ secrets.GITHUB_TOKEN }}
 
-  execute-shared-tests:
-    needs: build-for-testing
+    outputs:
+      derived_data_folder_path: ${{env.SCAN_DERIVED_DATA_PATH}}
+
+  execute_shared_tests:
+    needs: build_for_testing
     runs-on: macos-latest
     name: Test Shared module if needed
     env:
       DEVELOPER_DIR: /Applications/Xcode_14.2.0.app/Contents/Developer
+      DERIVED_DATA_PATH: ${{ needs.build_for_testing.outputs.derived_data_folder_path }}
 
     steps:
     - name: Checkout
@@ -110,7 +114,7 @@ jobs:
     - uses: actions/download-artifact@master
       with:
         name: derived-data
-        path: ${{env.TEMP_DERIVED_DATA_PATH}}
+        path: ${{env.DERIVED_DATA_PATH}}
 
     - name: Run shared tests
-      run: bundle exec fastlane scan --derived_data_path=$TEMP_DERIVED_DATA_PATH --test_without_building=true --testplan=SharedTestPlan
+      run: bundle exec fastlane scan --derived_data_path=$DERIVED_DATA_PATH --test_without_building=true --testplan=SharedTestPlan
