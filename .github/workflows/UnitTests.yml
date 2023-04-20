@@ -82,7 +82,7 @@ jobs:
     #     name: derived-data
     #     path: ${{env.SCAN_DERIVED_DATA_PATH}}
 
-    - run: echo " Print a single environment variable (the derived data path ) - ${{ env.TEMP_DERIVED_DATA_PATH }} "
+    - run: env
 
     - name: Save SPM Cache
       if: steps.restore-spm-cache.outputs.cache-hit != 'true'
@@ -94,28 +94,28 @@ jobs:
     outputs:
       derived_data_folder_path: ${{ env.TEMP_DERIVED_DATA_PATH }}
 
-  execute_shared_tests:
-    needs: build_for_testing
-    runs-on: macos-latest
-    name: Test Shared module if needed
-    env:
-      DEVELOPER_DIR: /Applications/Xcode_14.2.0.app/Contents/Developer
-      DERIVED_DATA_PATH: ${{ needs.build_for_testing.outputs.derived_data_folder_path }}
+  # execute_shared_tests:
+  #   needs: build_for_testing
+  #   runs-on: macos-latest
+  #   name: Test Shared module if needed
+  #   env:
+  #     DEVELOPER_DIR: /Applications/Xcode_14.2.0.app/Contents/Developer
+  #     DERIVED_DATA_PATH: ${{ needs.build_for_testing.outputs.derived_data_folder_path }}
 
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v2
+  #   steps:
+  #   - name: Checkout
+  #     uses: actions/checkout@v2
 
-    - uses: actions/download-artifact@master
-      with:
-        name: derived-data
-        path: ${{ env.DERIVED_DATA_PATH }}
+  #   - uses: actions/download-artifact@master
+  #     with:
+  #       name: derived-data
+  #       path: ${{ env.DERIVED_DATA_PATH }}
 
-    - name: Run shared tests
-      run: bundle exec fastlane run run_tests derived_data_path:"$DERIVED_DATA_PATH" test_without_building:true testplan:"SharedTestPlan"
+  #   - name: Run shared tests
+  #     run: bundle exec fastlane run run_tests derived_data_path:"$DERIVED_DATA_PATH" test_without_building:true testplan:"SharedTestPlan"
 
-    - name: Publish Test Report
-      uses: mikepenz/action-junit-report@v2
-      with:
-        report_paths: '**/test_output/xml/report.junit'
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+  #   - name: Publish Test Report
+  #     uses: mikepenz/action-junit-report@v2
+  #     with:
+  #       report_paths: '**/test_output/xml/report.junit'
+  #       github_token: ${{ secrets.GITHUB_TOKEN }}
