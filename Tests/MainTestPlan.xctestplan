@@ -26,6 +26,23 @@
         "identifier" : "F84B21D21A090F8100AAB793",
         "name" : "ClientTests"
       }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Client.xcodeproj",
+        "identifier" : "E6F9650B1B2F1CF20034B023",
+        "name" : "SharedTests"
+      }
+    },
+    {
+      "skippedTests" : [
+        "RustLoginsTests\/testUpdateLogin()"
+      ],
+      "target" : {
+        "containerPath" : "container:Client.xcodeproj",
+        "identifier" : "2FCAE2231ABB51F800877008",
+        "name" : "StorageTests"
+      }
     }
   ],
   "version" : 1

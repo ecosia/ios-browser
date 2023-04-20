@@ -128,6 +128,7 @@
 		2CAAE9A029F13F64004A9F62 /* SharedTestPlan.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 2CAAE99D29F13F64004A9F62 /* SharedTestPlan.xctestplan */; };
 		2CAAE9A129F13F64004A9F62 /* ClientTestPlan.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 2CAAE99E29F13F64004A9F62 /* ClientTestPlan.xctestplan */; };
 		2CAAE9A229F13F64004A9F62 /* StorageTestPlan.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 2CAAE99F29F13F64004A9F62 /* StorageTestPlan.xctestplan */; };
+		2CAAE9A429F14021004A9F62 /* MainTestPlan.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 2CAAE9A329F14021004A9F62 /* MainTestPlan.xctestplan */; };
 		2CB1A65A1FDEA8B60084E96D /* NewTabSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB1A6591FDEA8B60084E96D /* NewTabSettings.swift */; };
 		2CB3BEDA29E03ED700C1951F /* MozillaAppServices in Frameworks */ = {isa = PBXBuildFile; productRef = 2CB3BED929E03ED700C1951F /* MozillaAppServices */; };
 		2CB56E3F1E926BFB00AF7586 /* ToolbarTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB56E3E1E926BFB00AF7586 /* ToolbarTest.swift */; };
@@ -1727,6 +1728,7 @@
 		2CAAE99D29F13F64004A9F62 /* SharedTestPlan.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SharedTestPlan.xctestplan; sourceTree = "<group>"; };
 		2CAAE99E29F13F64004A9F62 /* ClientTestPlan.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ClientTestPlan.xctestplan; sourceTree = "<group>"; };
 		2CAAE99F29F13F64004A9F62 /* StorageTestPlan.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = StorageTestPlan.xctestplan; sourceTree = "<group>"; };
+		2CAAE9A329F14021004A9F62 /* MainTestPlan.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MainTestPlan.xctestplan; sourceTree = "<group>"; };
 		2CAE4511992E91A32AB7D7C7 /* th */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = th; path = th.lproj/Today.strings; sourceTree = "<group>"; };
 		2CB1A6591FDEA8B60084E96D /* NewTabSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTabSettings.swift; sourceTree = "<group>"; };
 		2CB56E3E1E926BFB00AF7586 /* ToolbarTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToolbarTest.swift; sourceTree = "<group>"; };
@@ -6991,6 +6993,7 @@
 		E15A8B2B286CFD48004BB2B8 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				2CAAE9A329F14021004A9F62 /* MainTestPlan.xctestplan */,
 				2CAAE99E29F13F64004A9F62 /* ClientTestPlan.xctestplan */,
 				2CAAE99D29F13F64004A9F62 /* SharedTestPlan.xctestplan */,
 				2CAAE99F29F13F64004A9F62 /* StorageTestPlan.xctestplan */,
@@ -8640,6 +8643,7 @@
 				E4A961381AC06FA50069AD6F /* ReaderViewLoading.html in Resources */,
 				EBE7635820ADCB7600E27F2D /* SendTo.xcassets in Resources */,
 				E4ECCDAE1AB131770005E717 /* FiraSans-Medium.ttf in Resources */,
+				2CAAE9A429F14021004A9F62 /* MainTestPlan.xctestplan in Resources */,
 				C8954A4C2729AD31001C7283 /* FxColours.xcassets in Resources */,
 				8AEE62C92756BA34003207D1 /* LoginsHelper.js in Resources */,
 				EBC9D38922D4D56F0011D881 /* disconnect-block-cookies-advertising.json in Resources */,
