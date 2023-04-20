@@ -93,6 +93,17 @@ platform :ios do
       apple_id: "670881887",
       itc_provider: "33YMRSYD2L"
     )
-  end 
+  end
+
+  desc "Builds and exports the output of the shared value SCAN_DERIVED_DATA_PATH into an ENV VAR"
+  lane :build_and_export_derived_data_path do
+
+    run_tests(
+      build_for_testing: true
+    )
+
+    ENV["TEMP_DERIVED_DATA_PATH"] = lane_context[SharedValues:SCAN_DERIVED_DATA_PATH]
+
+  end
 
 end
