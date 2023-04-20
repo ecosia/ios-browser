@@ -104,7 +104,7 @@ platform :ios do
       build_for_testing: true
     )
 
-    ENV["TEMP_DERIVED_DATA_PATH"] = lane_context[SharedValues:SCAN_DERIVED_DATA_PATH]
+    ENV["TEMP_DERIVED_DATA_PATH"] = lane_context[SharedValues::SCAN_DERIVED_DATA_PATH]
 
   end
 
