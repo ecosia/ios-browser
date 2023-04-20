@@ -88,11 +88,16 @@ jobs:
       id: get_derived_data_path
       run: echo ::set-output name=derived_data_path_from_file::$(cat /var/tmp/derived_data_path.txt)
 
+    - name: Zip derived data
+      env:
+        SCAN_DERIVED_DATA_PATH: ${{ steps.get_derived_data_path.outputs.derived_data_path_from_file }}
+      run: zip derived_data.zip $SCAN_DERIVED_DATA_PATH
+
     - name: Upload derived data
       uses: actions/upload-artifact@master
       with:
         name: derived_data
-        path: ${{ steps.get_derived_data_path.outputs.derived_data_path_from_file }}
+        path: derived_data.zip
 
     - name: Save SPM Cache
       if: steps.restore-spm-cache.outputs.cache-hit != 'true'
@@ -126,7 +131,12 @@ jobs:
       uses: actions/download-artifact@master
       with:
         name: derived_data
-        path: ${{ steps.get_derived_data_path.outputs.derived_data_path_from_file }}
+        path: derived_data.zip
+
+    - name: unzip artifact for deployment
+      env:
+        SCAN_DERIVED_DATA_PATH: ${{ steps.get_derived_data_path.outputs.derived_data_path_from_file }}
+      run: unzip derived_data.zip -d $SCAN_DERIVED_DATA_PATH
 
     - name: Run shared tests
       env:
