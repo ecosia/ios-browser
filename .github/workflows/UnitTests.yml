@@ -81,7 +81,7 @@ jobs:
       id: save_derived_data_path
       with:
         name: save_derived_data_path
-        path: /var/tmp/save_derived_data_path.txt
+        path: /var/tmp/derived_data_path.txt
         if-no-files-found: error
 
     - name: Get derived data path from txt file
