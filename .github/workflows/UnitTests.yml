@@ -88,14 +88,7 @@ jobs:
       with:
         path: SourcePackages/
         key: ${{ runner.os }}-spm-cache-${{ hashFiles('Client.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
-        
-    - name: Publish Test Report
-      if: always()
-      uses: mikepenz/action-junit-report@v2
-      with:
-        report_paths: '**/test_output/xml/report.junit'
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-
+    
     outputs:
       derived_data_folder_path: ${{env.SCAN_DERIVED_DATA_PATH}}
 
@@ -118,3 +111,9 @@ jobs:
 
     - name: Run shared tests
       run: bundle exec fastlane run run_tests derived_data_path:"$DERIVED_DATA_PATH" test_without_building:true testplan:"SharedTestPlan"
+
+    - name: Publish Test Report
+      uses: mikepenz/action-junit-report@v2
+      with:
+        report_paths: '**/test_output/xml/report.junit'
+        github_token: ${{ secrets.GITHUB_TOKEN }}
