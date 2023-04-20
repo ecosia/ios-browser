@@ -104,8 +104,20 @@ platform :ios do
       build_for_testing: true
     )
 
-    ENV["TEMP_DERIVED_DATA_PATH"] = lane_context[SharedValues::SCAN_DERIVED_DATA_PATH]
+    save_derived_data_path(derived_data_path: lane_context[SharedValues::SCAN_DERIVED_DATA_PATH])
     
+  end
+
+  desc 'Store the derived data path into a file'
+  private_lane :save_derived_data_path do |options|
+
+    derived_data_path_to_save = options[:derived_data_path]
+    derived_data_path_file = "/var/tmp/derived_data_path.txt"
+
+    UI.message("Saving #{derived_data_path_to_save} into #{derived_data_path_file}")
+
+    File.open(derived_data_path_file, 'w') { |file| file.write(options[:derived_data_path]) }
+
   end
 
 end
