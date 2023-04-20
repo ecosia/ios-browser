@@ -74,7 +74,7 @@ jobs:
         key: ${{ runner.os }}-spm-cache-${{ hashFiles('Client.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
 
     - name: Build for testing
-      run: bundle exec fastlane run run_tests build_for_testing:true
+      run: bundle exec fastlane build_and_export_derived_data_path
     
     # - name: Upload derived data
     #   uses: actions/upload-artifact@master
@@ -82,8 +82,7 @@ jobs:
     #     name: derived-data
     #     path: ${{env.SCAN_DERIVED_DATA_PATH}}
 
-    - run: echo " Print a single environment variable (the derived data path ) - ${{env.SCAN_DERIVED_DATA_PATH}} "
-    - run: bundle exec fastlane run lane_context
+    - run: echo " Print a single environment variable (the derived data path ) - ${{env.TEMP_DERIVED_DATA_PATH}} "
 
     - name: Save SPM Cache
       if: steps.restore-spm-cache.outputs.cache-hit != 'true'
@@ -93,7 +92,7 @@ jobs:
         key: ${{ runner.os }}-spm-cache-${{ hashFiles('Client.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
     
     outputs:
-      derived_data_folder_path: ${{env.SCAN_DERIVED_DATA_PATH}}
+      derived_data_folder_path: ${{env.TEMP_DERIVED_DATA_PATH}}
 
   execute_shared_tests:
     needs: build_for_testing
