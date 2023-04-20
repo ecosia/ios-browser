@@ -82,6 +82,9 @@ jobs:
         name: derived-data
         path: ${{env.SCAN_DERIVED_DATA_PATH}}
 
+    - run: echo " Print a single environment variable (the derived data path ) - ${{env.SCAN_DERIVED_DATA_PATH}} "
+    - run: fastlane run lane_context
+
     - name: Save SPM Cache
       if: steps.restore-spm-cache.outputs.cache-hit != 'true'
       uses: actions/cache/save@v3
