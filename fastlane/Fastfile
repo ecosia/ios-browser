@@ -104,13 +104,8 @@ platform :ios do
       build_for_testing: true
     )
 
-    print "Printing derived data path via lane context: #{lane_context[SharedValues::SCAN_DERIVED_DATA_PATH]}"
-
     ENV["TEMP_DERIVED_DATA_PATH"] = lane_context[SharedValues::SCAN_DERIVED_DATA_PATH]
-
-    print "Printing derived data path via env var: #{ENV["TEMP_DERIVED_DATA_PATH"]}"
-
-
+    
   end
 
 end

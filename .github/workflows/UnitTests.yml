@@ -82,7 +82,7 @@ jobs:
     #     name: derived-data
     #     path: ${{env.SCAN_DERIVED_DATA_PATH}}
 
-    - run: echo " Print a single environment variable (the derived data path ) - ${{env.TEMP_DERIVED_DATA_PATH}} "
+    - run: echo " Print a single environment variable (the derived data path ) - ${{ env.TEMP_DERIVED_DATA_PATH }} "
 
     - name: Save SPM Cache
       if: steps.restore-spm-cache.outputs.cache-hit != 'true'
@@ -92,7 +92,7 @@ jobs:
         key: ${{ runner.os }}-spm-cache-${{ hashFiles('Client.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
     
     outputs:
-      derived_data_folder_path: ${{env.TEMP_DERIVED_DATA_PATH}}
+      derived_data_folder_path: ${{ env.TEMP_DERIVED_DATA_PATH }}
 
   execute_shared_tests:
     needs: build_for_testing
@@ -109,7 +109,7 @@ jobs:
     - uses: actions/download-artifact@master
       with:
         name: derived-data
-        path: ${{env.DERIVED_DATA_PATH}}
+        path: ${{ env.DERIVED_DATA_PATH }}
 
     - name: Run shared tests
       run: bundle exec fastlane run run_tests derived_data_path:"$DERIVED_DATA_PATH" test_without_building:true testplan:"SharedTestPlan"
