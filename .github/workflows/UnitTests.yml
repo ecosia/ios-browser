@@ -74,7 +74,7 @@ jobs:
         key: ${{ runner.os }}-spm-cache-${{ hashFiles('Client.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
 
     - name: Build for testing
-      run: bundle exec fastlane run_tests --build_for_testing=true
+      run: bundle exec fastlane run run_tests build_for_testing:true
     
     - name: Upload derived data
       uses: actions/upload-artifact@master
@@ -117,4 +117,4 @@ jobs:
         path: ${{env.DERIVED_DATA_PATH}}
 
     - name: Run shared tests
-      run: bundle exec fastlane scan --derived_data_path=$DERIVED_DATA_PATH --test_without_building=true --testplan=SharedTestPlan
+      run: bundle exec fastlane run run_tests derived_data_path:"$DERIVED_DATA_PATH" test_without_building:true testplan:"SharedTestPlan"
