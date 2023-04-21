@@ -7,6 +7,8 @@ import Shared
 
 protocol TabToolbarProtocol: AnyObject {
     var tabToolbarDelegate: TabToolbarDelegate? { get set }
+    
+    // Ecosia: Change addNewTabButton to configurable CircleButton
     var circleButton: CircleButton { get }
     var tabsButton: TabsButton { get }
     var appMenuButton: ToolbarButton { get }
@@ -126,9 +128,7 @@ open class TabToolbarHelper: NSObject {
         let longPressGestureTabsButton = UILongPressGestureRecognizer(target: self, action: #selector(didLongPressTabs))
         toolbar.tabsButton.addGestureRecognizer(longPressGestureTabsButton)
 
-        toolbar.circleButton.accessibilityLabel = .AddTabAccessibilityLabel
-        toolbar.circleButton.addTarget(self, action: #selector(didClickAddNewTab), for: .touchUpInside)
-        toolbar.circleButton.accessibilityIdentifier = "TabToolbar.circleButton"
+        toolbar.circleButton.addTarget(self, action: #selector(didClickCircleButton), for: .touchUpInside)
 
         toolbar.appMenuButton.contentMode = .center
         toolbar.appMenuButton.setImage(UIImage.templateImageNamed("nav-menu"), for: .normal)
@@ -198,9 +198,16 @@ open class TabToolbarHelper: NSObject {
         toolbar.tabToolbarDelegate?.tabToolbarDidPressBookmarks(toolbar, button: toolbar.appMenuButton)
     }
 
-    func didClickAddNewTab() {
-        TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .addNewTabButton)
-        toolbar.tabToolbarDelegate?.tabToolbarDidPressSearch(toolbar, button: toolbar.circleButton)
+    // Ecosia: Change addNewTabButton to configurable CircleButton
+    func didClickCircleButton() {
+        switch toolbar.circleButton.config {
+        case .search:
+            TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .startSearchButton)
+            toolbar.tabToolbarDelegate?.tabToolbarDidPressSearch(toolbar, button: toolbar.circleButton)
+        case .newTab:
+            TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .addNewTabButton)
+            toolbar.tabToolbarDelegate?.tabToolbarDidPressAddNewTab(toolbar, button: toolbar.circleButton)
+        }
     }
 
     func didPressMultiStateButton() {

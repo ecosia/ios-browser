@@ -182,7 +182,8 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
     var appMenuButton = ToolbarButton()
     var bookmarksButton = ToolbarButton()
     var homeButton = ToolbarButton()
-    var circleButton = CircleButton(config: .init(hideCircle: true, image: "nav-add", margin: 8))
+    // Ecosia: Change addNewTabButton to configurable CircleButton
+    var circleButton = CircleButton(config: .newTab)
     var forwardButton = ToolbarButton()
     var multiStateButton = ToolbarButton()
 

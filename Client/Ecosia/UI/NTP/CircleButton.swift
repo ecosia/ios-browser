@@ -3,19 +3,30 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import UIKit
+import Shared
 
 class CircleButton: ToolbarButton {
-    struct Config {
-        let hideCircle: Bool
-        let image: String
-        let margin: CGFloat
-
-        static var search: Config {
-            return .init(hideCircle: false, image: "search", margin: 8)
+    enum Config {
+        case search
+        case newTab
+        
+        var image: String {
+            switch self {
+            case .search: return "search"
+            case .newTab: return "nav-add"
+            }
         }
-
-        static var newTab: Config {
-            return .init(hideCircle: true, image: "nav-add", margin: 8)
+        var hideCircle: Bool {
+            switch self {
+            case .search: return false
+            case .newTab: return true
+            }
+        }
+        var accessibilityLabel: String {
+            switch self {
+            case .search: return .TabToolbarSearchAccessibilityLabel
+            case .newTab: return .TabToolbarNewTabAccessibilityLabel
+            }
         }
     }
 
@@ -25,6 +36,7 @@ class CircleButton: ToolbarButton {
             setup()
         }
     }
+    var margin: CGFloat = 8
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -36,7 +48,7 @@ class CircleButton: ToolbarButton {
         setup()
     }
 
-    convenience init(config: Config) {
+    convenience init(config: Config, margin: CGFloat = 8) {
         self.init(frame: .zero)
         self.config = config
         setup()
@@ -48,11 +60,13 @@ class CircleButton: ToolbarButton {
         addSubview(circle)
         sendSubviewToBack(circle)
         applyTheme()
+        accessibilityLabel = config.accessibilityLabel
+        accessibilityIdentifier = "TabToolbar.circleButton"
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        let height = bounds.height - config.margin
+        let height = bounds.height - margin
         circle.bounds = .init(size: .init(width: height, height: height))
         circle.layer.cornerRadius = circle.bounds.height / 2
         circle.center = .init(x: bounds.width/2, y: bounds.height/2)
