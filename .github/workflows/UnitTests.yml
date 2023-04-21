@@ -110,18 +110,11 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Install pip modules
-      run: |
-         python3 -m pip install virtualenv
-
     - name: Install gems
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: 2.7
         bundler-cache: true
-
-    - name: Install npm
-      uses: bahmutov/npm-install@v1.6.0
 
     - name: Fix-up private Github URLs
       run: find . -type f \( -name '*.pbxproj' -o -name 'Package.swift' -o -name 'Package.resolved' \) -exec sed -i '' "s/https:\/\/github.com\/${GITHUB_REPOSITORY_OWNER}/https:\/\/${GITHUB_ACCESS_TOKEN}@github.com\/${GITHUB_REPOSITORY_OWNER}/g" {} \;
@@ -144,7 +137,7 @@ jobs:
       with:
         path: SourcePackages/
         key: ${{ runner.os }}-spm-cache-${{ hashFiles('Client.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
-
+        
     - name: Restore Content Blocker Cache
       id: restore-content-blocker-cache
       uses: actions/cache/restore@v3
@@ -156,22 +149,7 @@ jobs:
           Client/Assets/MainFrameAtDocument*.js
           Client/Assets/*.js.LICENSE.txt
         key: ${{ runner.os }}-content-blocker-cache-${{ hashFiles('content_blocker_commit_sha.txt') }}
-
-    - name: Run content blocker scripts
-      if: steps.restore-content-blocker-cache.outputs.cache-hit != 'true'
-      run: ./content_blocker_update.sh
-
-    - name: Save Content Blocker Cache
-      if: steps.restore-spm-cache.outputs.cache-hit != 'true'
-      uses: actions/cache/save@v3
-      with:
-        path: |
-          content-blocker-lib-ios/
-          shavar-prod-lists/
-          Client/Assets/AllFramesAtDocument*.js
-          Client/Assets/MainFrameAtDocument*.js
-          Client/Assets/*.js.LICENSE.txt
-        key: ${{ runner.os }}-content-blocker-cache-${{ hashFiles('content_blocker_commit_sha.txt') }}
+        fail-on-cache-miss: true
 
     - name: Restore derived data Cache
       id: restore-derived-data-cache
@@ -179,7 +157,8 @@ jobs:
       with:
         path: ${{ steps.get_derived_data_path.outputs.derived_data_path_from_file }}
         key: ${{ runner.os }}-derived-data-cache-${{ github.run_id }}
-
+        fail-on-cache-miss: true
+        
     - name: Run shared tests
       env:
         SCAN_DERIVED_DATA_PATH: ${{ steps.get_derived_data_path.outputs.derived_data_path_from_file }}
