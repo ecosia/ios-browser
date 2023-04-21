@@ -99,8 +99,31 @@ jobs:
         path: SourcePackages/
         key: ${{ runner.os }}-spm-cache-${{ hashFiles('Client.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
 
-  execute_shared_tests:
+  evaluate_tests_to_execute:
     needs: build_for_testing
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    outputs:
+      shared_module_changed: ${{ steps.filter.outputs.shared_module_changed }}
+      storage_module_changed: ${{ steps.filter.outputs.storage_module_changed }}
+      client_target_changed: ${{ steps.filter.outputs.client_target_changed }}
+
+    steps:
+    - uses: dorny/paths-filter@v2
+      id: filter
+      with:
+        filters: |
+          shared_module_changed:
+            - 'Shared/**'
+          storage_module_changed:
+            - 'Storage/**'   
+          client_target_changed:
+            - 'Client/**'
+
+  execute_shared_tests:
+    needs: evaluate_tests_to_execute
+    if: ${{ needs.evaluate_tests_to_execute.outputs.shared_module_changed == 'true' }}
     runs-on: macos-latest
     name: Test Shared module if needed
     env:
