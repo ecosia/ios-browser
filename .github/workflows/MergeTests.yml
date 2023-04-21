@@ -192,3 +192,147 @@ jobs:
       with:
         report_paths: '**/test_output/xml/report.junit'
         github_token: ${{ secrets.GITHUB_TOKEN }}
+
+  execute_storage_tests:
+    needs: evaluate_tests_to_execute
+    if: ${{ needs.evaluate_tests_to_execute.outputs.storage_module_changed == 'true' }}
+    runs-on: macos-latest
+    name: Test Shared module if needed
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_14.2.0.app/Contents/Developer
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Install gems
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 2.7
+        bundler-cache: true
+
+    - name: Fix-up private Github URLs
+      run: find . -type f \( -name '*.pbxproj' -o -name 'Package.swift' -o -name 'Package.resolved' \) -exec sed -i '' "s/https:\/\/github.com\/${GITHUB_REPOSITORY_OWNER}/https:\/\/${GITHUB_ACCESS_TOKEN}@github.com\/${GITHUB_REPOSITORY_OWNER}/g" {} \;
+      env:
+        GITHUB_ACCESS_TOKEN: ${{ secrets.IOS_CORE_TOKEN }}
+
+    - name: Retrive derived data path from txt file
+      uses: actions/download-artifact@master
+      with:
+        name: derived_data_path
+        path: /var/tmp/
+
+    - name: Get derived data path from txt file
+      id: get_derived_data_path
+      run: echo ::set-output name=derived_data_path_from_file::$(cat /var/tmp/derived_data_path.txt)
+
+    - name: Restore SPM Cache
+      id: restore-spm-cache
+      uses: actions/cache/restore@v3
+      with:
+        path: SourcePackages/
+        key: ${{ runner.os }}-spm-cache-${{ hashFiles('Client.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
+        
+    - name: Restore Content Blocker Cache
+      id: restore-content-blocker-cache
+      uses: actions/cache/restore@v3
+      with:
+        path: |
+          content-blocker-lib-ios/
+          shavar-prod-lists/
+          Client/Assets/AllFramesAtDocument*.js
+          Client/Assets/MainFrameAtDocument*.js
+          Client/Assets/*.js.LICENSE.txt
+        key: ${{ runner.os }}-content-blocker-cache-${{ hashFiles('content_blocker_commit_sha.txt') }}
+        fail-on-cache-miss: true
+
+    - name: Restore derived data Cache
+      id: restore-derived-data-cache
+      uses: actions/cache/restore@v3
+      with:
+        path: ${{ steps.get_derived_data_path.outputs.derived_data_path_from_file }}
+        key: ${{ runner.os }}-derived-data-cache-${{ github.run_id }}
+        fail-on-cache-miss: true
+        
+    - name: Run shared tests
+      env:
+        SCAN_DERIVED_DATA_PATH: ${{ steps.get_derived_data_path.outputs.derived_data_path_from_file }}
+      run: bundle exec fastlane run run_tests derived_data_path:"$SCAN_DERIVED_DATA_PATH" test_without_building:true testplan:"StorageTestPlan"
+
+    - name: Publish Test Report
+      uses: mikepenz/action-junit-report@v2
+      with:
+        report_paths: '**/test_output/xml/report.junit'
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+
+  execute_client_tests:
+    needs: evaluate_tests_to_execute
+    if: ${{ needs.evaluate_tests_to_execute.outputs.client_target_changed == 'true' }}
+    runs-on: macos-latest
+    name: Test Shared module if needed
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_14.2.0.app/Contents/Developer
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Install gems
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 2.7
+        bundler-cache: true
+
+    - name: Fix-up private Github URLs
+      run: find . -type f \( -name '*.pbxproj' -o -name 'Package.swift' -o -name 'Package.resolved' \) -exec sed -i '' "s/https:\/\/github.com\/${GITHUB_REPOSITORY_OWNER}/https:\/\/${GITHUB_ACCESS_TOKEN}@github.com\/${GITHUB_REPOSITORY_OWNER}/g" {} \;
+      env:
+        GITHUB_ACCESS_TOKEN: ${{ secrets.IOS_CORE_TOKEN }}
+
+    - name: Retrive derived data path from txt file
+      uses: actions/download-artifact@master
+      with:
+        name: derived_data_path
+        path: /var/tmp/
+
+    - name: Get derived data path from txt file
+      id: get_derived_data_path
+      run: echo ::set-output name=derived_data_path_from_file::$(cat /var/tmp/derived_data_path.txt)
+
+    - name: Restore SPM Cache
+      id: restore-spm-cache
+      uses: actions/cache/restore@v3
+      with:
+        path: SourcePackages/
+        key: ${{ runner.os }}-spm-cache-${{ hashFiles('Client.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
+        
+    - name: Restore Content Blocker Cache
+      id: restore-content-blocker-cache
+      uses: actions/cache/restore@v3
+      with:
+        path: |
+          content-blocker-lib-ios/
+          shavar-prod-lists/
+          Client/Assets/AllFramesAtDocument*.js
+          Client/Assets/MainFrameAtDocument*.js
+          Client/Assets/*.js.LICENSE.txt
+        key: ${{ runner.os }}-content-blocker-cache-${{ hashFiles('content_blocker_commit_sha.txt') }}
+        fail-on-cache-miss: true
+
+    - name: Restore derived data Cache
+      id: restore-derived-data-cache
+      uses: actions/cache/restore@v3
+      with:
+        path: ${{ steps.get_derived_data_path.outputs.derived_data_path_from_file }}
+        key: ${{ runner.os }}-derived-data-cache-${{ github.run_id }}
+        fail-on-cache-miss: true
+        
+    - name: Run shared tests
+      env:
+        SCAN_DERIVED_DATA_PATH: ${{ steps.get_derived_data_path.outputs.derived_data_path_from_file }}
+      run: bundle exec fastlane run run_tests derived_data_path:"$SCAN_DERIVED_DATA_PATH" test_without_building:true testplan:"ClientTestPlan"
+
+    - name: Publish Test Report
+      uses: mikepenz/action-junit-report@v2
+      with:
+        report_paths: '**/test_output/xml/report.junit'
+        github_token: ${{ secrets.GITHUB_TOKEN }}
