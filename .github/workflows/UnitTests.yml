@@ -134,7 +134,7 @@ jobs:
         key: ${{ runner.os }}-spm-cache-${{ hashFiles('Client.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
 
     - name: Restore derived data Cache
-      id: restore-spm-cache
+      id: restore-derived-data-cache
       uses: actions/cache/restore@v3
       with:
         path: ${{ steps.get_derived_data_path.outputs.derived_data_path_from_file }}
