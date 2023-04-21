@@ -123,11 +123,11 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Retrieve derived data path from txt file artifact
-      uses: actions/download-artifact@master
+    - name: Install gems
+      uses: ruby/setup-ruby@v1
       with:
-        name: derived_data_path
-        path: /var/tmp
+        ruby-version: 2.7
+        bundler-cache: true
 
     - name: Get derived data path from txt file
       id: get_derived_data_path
@@ -137,8 +137,9 @@ jobs:
       id: restore-spm-cache
       uses: actions/cache/restore@v3
       with:
-        path: /var/tmp/derived_data
+        path: ${{ steps.get_derived_data_path.outputs.derived_data_path_from_file }}
         key: ${{ runner.os }}-derived-data-cache-${{ github.run_id }}
+        fail-on-cache-miss: false
 
     # - name: Retrive derived data
     #   uses: actions/download-artifact@master
@@ -148,12 +149,12 @@ jobs:
 
     # - name: unzip artifact for deployment
     #   env:
-    #     SCAN_DERIVED_DATA_PATH: ${{ steps.get_derived_data_path.outputs.derived_data_path_from_file }}
+    #     SCAN_DERIVED_DATA_PATH: /var/tmp/derived_data/unzipped
     #   run: unzip /var/tmp/derived_data/derived_data.zip -d $SCAN_DERIVED_DATA_PATH
 
     - name: Run shared tests
       env:
-        SCAN_DERIVED_DATA_PATH: /var/tmp/derived_data
+        SCAN_DERIVED_DATA_PATH: ${{ steps.get_derived_data_path.outputs.derived_data_path_from_file }}
       run: bundle exec fastlane run run_tests derived_data_path:"$SCAN_DERIVED_DATA_PATH" test_without_building:true testplan:"SharedTestPlan"
 
     - name: Publish Test Report
