@@ -91,13 +91,13 @@ jobs:
     - name: Zip derived data
       env:
         SCAN_DERIVED_DATA_PATH: ${{ steps.get_derived_data_path.outputs.derived_data_path_from_file }}
-      run: zip derived_data.zip $SCAN_DERIVED_DATA_PATH/*
+      run: zip -r derived_data.zip $SCAN_DERIVED_DATA_PATH
 
     - name: Upload derived data
       uses: actions/upload-artifact@master
       with:
         name: derived_data
-        path: derived_data.zip
+        path: /var/tmp/derived_data/derived_data.zip
 
     - name: Save SPM Cache
       if: steps.restore-spm-cache.outputs.cache-hit != 'true'
@@ -131,12 +131,12 @@ jobs:
       uses: actions/download-artifact@master
       with:
         name: derived_data
-        path: derived_data.zip
+        path: /var/tmp/derived_data
 
     - name: unzip artifact for deployment
       env:
         SCAN_DERIVED_DATA_PATH: ${{ steps.get_derived_data_path.outputs.derived_data_path_from_file }}
-      run: unzip derived_data.zip -d $SCAN_DERIVED_DATA_PATH
+      run: unzip /var/tmp/derived_data/derived_data.zip -d $SCAN_DERIVED_DATA_PATH
 
     - name: Run shared tests
       env:
