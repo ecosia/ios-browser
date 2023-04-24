@@ -102,6 +102,7 @@ jobs:
   evaluate_tests_to_execute:
     needs: build_for_testing
     runs-on: ubuntu-latest
+    name: Evaluate tests to execute
     permissions:
       pull-requests: read
     outputs:
