@@ -105,7 +105,7 @@
 		28E08C9A1AF44F00009BA2FA /* BrowserSchema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 282915E51AF1A7920006EEB5 /* BrowserSchema.swift */; };
 		28EADE5D1AFC3A78007FB2FB /* UIImageView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28EADE381AFC3898007FB2FB /* UIImageView+Extension.swift */; };
 		2AC54D3129DC50CE0034FA2E /* BookmarksExchange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AC54D3029DC50CE0034FA2E /* BookmarksExchange.swift */; };
-		2AF2723A29F2C54A004CA46F /* EmptyBookmarksHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AF2723929F2C54A004CA46F /* EmptyBookmarksHeader.swift */; };
+		2AF2723A29F2C54A004CA46F /* EmptyBookmarksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AF2723929F2C54A004CA46F /* EmptyBookmarksView.swift */; };
 		2C1D049B29DDDC8E00ED43BA /* MyImpactCell+ViewFactories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C1D049A29DDDC8E00ED43BA /* MyImpactCell+ViewFactories.swift */; };
 		2C28F96C201B2D4C00ABA8A5 /* MailAppSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C28F96B201B2D4C00ABA8A5 /* MailAppSettingsTests.swift */; };
 		2C2A5EF41E68469500F02659 /* PrivateBrowsingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A5EF31E68469500F02659 /* PrivateBrowsingTest.swift */; };
@@ -1696,7 +1696,7 @@
 		2AA943B2B505224956D1B5CD /* el */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = el; path = el.lproj/Localizable.strings; sourceTree = "<group>"; };
 		2ABD4C8DA1B0527B9F88E597 /* jv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = jv; path = jv.lproj/ErrorPages.strings; sourceTree = "<group>"; };
 		2AC54D3029DC50CE0034FA2E /* BookmarksExchange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookmarksExchange.swift; sourceTree = "<group>"; };
-		2AF2723929F2C54A004CA46F /* EmptyBookmarksHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyBookmarksHeader.swift; sourceTree = "<group>"; };
+		2AF2723929F2C54A004CA46F /* EmptyBookmarksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyBookmarksView.swift; sourceTree = "<group>"; };
 		2B0842AE830BF873B368CEBB /* gu-IN */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "gu-IN"; path = "gu-IN.lproj/ClearPrivateDataConfirm.strings"; sourceTree = "<group>"; };
 		2B1541FDB7ED1BC183797233 /* dsb */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = dsb; path = dsb.lproj/Localizable.strings; sourceTree = "<group>"; };
 		2B31494CBFF9DF6FA41953B2 /* ses */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ses; path = ses.lproj/FindInPage.strings; sourceTree = "<group>"; };
@@ -6385,7 +6385,7 @@
 				CA4D9C8C28C8D801006AFB5D /* Ecosia.xcassets */,
 				CA4D9C8D28C8D801006AFB5D /* EcosiaTheme.swift */,
 				CA4D9C8E28C8D801006AFB5D /* EmptyHeader.swift */,
-				2AF2723929F2C54A004CA46F /* EmptyBookmarksHeader.swift */,
+				2AF2723929F2C54A004CA46F /* EmptyBookmarksView.swift */,
 				CA4D9C8F28C8D801006AFB5D /* NTP */,
 				CA4D9C9A28C8D801006AFB5D /* Colours.xcassets */,
 				CA4D9C9B28C8D801006AFB5D /* FilterController.swift */,
@@ -9219,7 +9219,7 @@
 				3BB50E111D6274CD004B33DF /* TopSiteItemCell.swift in Sources */,
 				1DF4266E251BC46D0086386A /* FaviconFetcher+Non-Bundled.swift in Sources */,
 				0B62EFD21AD63CD100ACB9CD /* Clearables.swift in Sources */,
-				2AF2723A29F2C54A004CA46F /* EmptyBookmarksHeader.swift in Sources */,
+				2AF2723A29F2C54A004CA46F /* EmptyBookmarksView.swift in Sources */,
 				431C0CA925C890E500395CE4 /* DefaultBrowserOnboardingViewModel.swift in Sources */,
 				8A05123927D17EC3009930CC /* LegacyWallpaperStorageUtility.swift in Sources */,
 				DFACBF81277B916B003D5F41 /* ConfigurableGradientView.swift in Sources */,

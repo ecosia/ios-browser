@@ -134,7 +134,7 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel, CanRemoveQuickActio
     }
     
     private func updateEmptyViewBottomMargin() {
-        (tableView.backgroundView as? EmptyBookmarksHeader)?.bottomMarginConstraint?.constant = -(navigationController?.toolbar.bounds.size.height ?? 0)
+        (tableView.backgroundView as? EmptyBookmarksView)?.bottomMarginConstraint?.constant = -(navigationController?.toolbar.bounds.size.height ?? 0)
     }
 
     override func applyTheme() {
@@ -161,7 +161,7 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel, CanRemoveQuickActio
 
     private func updateEmptyView() {
         if viewModel.bookmarkNodes.isEmpty {
-            tableView.backgroundView = EmptyBookmarksHeader(initialBottomMargin: -(navigationController?.toolbar.bounds.size.height ?? 0))
+            tableView.backgroundView = EmptyBookmarksView(initialBottomMargin: -(navigationController?.toolbar.bounds.size.height ?? 0))
         } else {
             tableView.backgroundView = nil
         }
