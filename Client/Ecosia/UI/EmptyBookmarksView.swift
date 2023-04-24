@@ -29,6 +29,7 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
     private let learnMoreButton: UIButton = {
        let button = UIButton()
         button.setTitle("Learn more", for: .normal)
+        button.setContentCompressionResistancePriority(.required, for: .horizontal)
         return button
     }()
     
@@ -41,7 +42,7 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
             forContentPadding: UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10),
             imageTitlePadding: 0
         )
-        button.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+        button.setContentCompressionResistancePriority(.required, for: .horizontal)
         return button
     }()
     
@@ -92,13 +93,14 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
         containerStackView.addArrangedSubview(buttonStackViewSpacer)
 
         let buttonsStackView = UIStackView(arrangedSubviews: [
-            createSpacerView(width: 36),
+            createSpacerView(width: 32),
             learnMoreButton,
+            createSpacerView(width: 6),
             importBookmarksButton,
-            createSpacerView(width: 36)
+            createSpacerView(width: 32)
         ])
         buttonsStackView.axis = .horizontal
-        buttonsStackView.distribution = .fill
+        buttonsStackView.distribution = .equalCentering
         containerStackView.addArrangedSubview(buttonsStackView)
         
         // setup buttons
@@ -161,7 +163,9 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
     func applyTheme() {
         importBookmarksButton.layer.borderColor = UIColor.theme.ecosia.primaryText.cgColor
         learnMoreButton.setTitleColor(.theme.ecosia.primaryText, for: .normal)
+        learnMoreButton.titleLabel?.font = UIFontMetrics(forTextStyle: .callout).scaledFont(for: .systemFont(ofSize: 16))
         importBookmarksButton.setTitleColor(.theme.ecosia.primaryText, for: .normal)
+        importBookmarksButton.titleLabel?.font = UIFontMetrics(forTextStyle: .callout).scaledFont(for: .systemFont(ofSize: 16))
         titleLabel.textColor = .theme.ecosia.primaryText
     }
 }

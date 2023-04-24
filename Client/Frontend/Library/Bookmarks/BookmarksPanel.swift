@@ -184,7 +184,11 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel, CanRemoveQuickActio
     }
     
     private func emptyViewLearnMoreTap() {
-        assertionFailure("Not yet implemented")
+        // todo: the url needs to be adjusted / updated
+        libraryPanelDelegate?.libraryPanel(
+            didSelectURLString: "https://ecosia.helpscoutdocs.com/search?query=Bookmark",
+            visitType: .link
+        )
     }
     
     private func emptyViewImportBookmarksTap() {
