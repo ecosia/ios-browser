@@ -8,7 +8,7 @@ final class EmptyBookmarksHeader: UIView, NotificationThemeable {
 
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        setup()
+        setup(0)
     }
     
     private let titleLabel: UILabel = {
@@ -27,10 +27,10 @@ final class EmptyBookmarksHeader: UIView, NotificationThemeable {
     }()
     
     var bottomMarginConstraint: NSLayoutConstraint?
-    
-    init() {
+
+    init(initialBottomMargin: CGFloat) {
         super.init(frame: .zero)
-        setup()
+        setup(initialBottomMargin)
 //        self.icon = icon
 //        super.init(reuseIdentifier: "EmptyHeader")
 //        frame.size.height = 170
@@ -76,10 +76,10 @@ final class EmptyBookmarksHeader: UIView, NotificationThemeable {
 //        labelSubtitle.widthAnchor.constraint(lessThanOrEqualToConstant: 180).isActive = true
     }
     
-    private func setup() {
+    private func setup(_ initialBottomMargin: CGFloat) {
         addSubview(containerStackView)
         
-        bottomMarginConstraint = containerStackView.centerYAnchor.constraint(equalTo: centerYAnchor, constant: 0)
+        bottomMarginConstraint = containerStackView.centerYAnchor.constraint(equalTo: centerYAnchor, constant: initialBottomMargin)
         
         NSLayoutConstraint.activate([
             containerStackView.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
@@ -100,6 +100,7 @@ final class EmptyBookmarksHeader: UIView, NotificationThemeable {
         addSection(imageNamed: "bookmarksEmpty", text: "Tap the bookmark icon when you find a page you want to save")
         addSection(imageNamed: "downloadsEmpty", text: "You can also import bookmarks:\n1. Export your bookmarks from another browser.\n2. Tap on the link below to import the file with your bookmarks.")
 
+        applyTheme()
     }
     
     private func addSection(imageNamed: String, text: String) {

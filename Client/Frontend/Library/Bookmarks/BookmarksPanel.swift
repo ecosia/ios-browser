@@ -82,9 +82,6 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel, CanRemoveQuickActio
         return button
     }()
 
-    private lazy var emptyHeader = EmptyBookmarksHeader()
-//        EmptyHeader(icon: "bookmarksEmpty", title: .localized(.noBookmarksYet), subtitle: .localized(.AddYourFavoritePages))
-
     // MARK: - Init
 
     init(viewModel: BookmarksPanelViewModel,
@@ -131,11 +128,7 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel, CanRemoveQuickActio
         }
                 
     }
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        updateEmptyViewBottomMargin()
-    }
-    
+
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         updateEmptyViewBottomMargin()
     }
@@ -146,8 +139,6 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel, CanRemoveQuickActio
 
     override func applyTheme() {
         super.applyTheme()
-        emptyHeader.applyTheme()
-
         if let current = navigationController?.visibleViewController as? NotificationThemeable, current !== self {
             current.applyTheme()
         }
@@ -170,11 +161,8 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel, CanRemoveQuickActio
 
     private func updateEmptyView() {
         if viewModel.bookmarkNodes.isEmpty {
-//            tableView.tableHeaderView = emptyHeader
-            tableView.backgroundView = EmptyBookmarksHeader()
-            emptyHeader.applyTheme()
+            tableView.backgroundView = EmptyBookmarksHeader(initialBottomMargin: -(navigationController?.toolbar.bounds.size.height ?? 0))
         } else {
-//            tableView.tableHeaderView = nil
             tableView.backgroundView = nil
         }
     }
