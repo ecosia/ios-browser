@@ -161,7 +161,11 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel, CanRemoveQuickActio
 
     private func updateEmptyView() {
         if viewModel.bookmarkNodes.isEmpty {
-            tableView.backgroundView = EmptyBookmarksView(initialBottomMargin: -(navigationController?.toolbar.bounds.size.height ?? 0))
+            tableView.backgroundView = EmptyBookmarksView(
+                initialBottomMargin: -(navigationController?.toolbar.bounds.size.height ?? 0),
+                learnMoreHandler: emptyViewLearnMoreTap,
+                importBookmarksHandler: emptyViewImportBookmarksTap
+            )
         } else {
             tableView.backgroundView = nil
         }
@@ -177,6 +181,14 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel, CanRemoveQuickActio
         let sheet = PhotonActionSheet(viewModel: viewModel)
         sheet.modalTransitionStyle = .crossDissolve
         present(sheet, animated: true)
+    }
+    
+    private func emptyViewLearnMoreTap() {
+        assertionFailure("Not yet implemented")
+    }
+    
+    private func emptyViewImportBookmarksTap() {
+        importBookmarksActionHandler()
     }
 
     private func getNewBookmarkAction() -> PhotonRowActions {
@@ -582,8 +594,8 @@ extension BookmarksPanel {
     
     func showMoreDialog() {
         moreButton.isEnabled = false
-        let importAction = UIAlertAction(title: "Import Bookmarks", style: .default, handler: importBookmarksActionHandler)
-        let exportAction = UIAlertAction(title: "Export Bookmarks", style: .default, handler: exportBookmarksActionHandler)
+        let importAction = UIAlertAction(title: "Import Bookmarks", style: .default, handler: { [weak self] _ in self?.importBookmarksActionHandler() })
+        let exportAction = UIAlertAction(title: "Export Bookmarks", style: .default, handler: { [weak self] _ in self?.exportBookmarksActionHandler() })
         exportAction.isEnabled = !viewModel.bookmarkNodes.isEmpty
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { [weak self] _ in
             self?.moreButton.isEnabled = true
@@ -593,7 +605,7 @@ extension BookmarksPanel {
         present(alert, animated: true)
     }
     
-    func importBookmarksActionHandler(_ action: UIAlertAction) {
+    func importBookmarksActionHandler() {
         viewModel.bookmarkImportSelected(in: self) { [weak self] url, error in
             self?.moreButton.isEnabled = true
             
@@ -613,7 +625,7 @@ extension BookmarksPanel {
         }
     }
 
-    func exportBookmarksActionHandler(_ action: UIAlertAction) {
+    func exportBookmarksActionHandler() {
         Task { @MainActor in
             try await viewModel.bookmarkExportSelected(in: self) { [weak self] in
                 self?.moreButton.isEnabled = true

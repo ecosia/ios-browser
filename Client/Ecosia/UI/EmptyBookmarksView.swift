@@ -7,8 +7,8 @@ import UIKit
 final class EmptyBookmarksView: UIView, NotificationThemeable {
 
     required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        setup(0)
+        assertionFailure("This view is only supposed to be instantiated programmatically")
+        return nil
     }
     
     private let titleLabel: UILabel = {
@@ -26,9 +26,37 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
         return stackView
     }()
     
+    private let learnMoreButton: UIButton = {
+       let button = UIButton()
+        button.setTitle("Learn more", for: .normal)
+        return button
+    }()
+    
+    private let importBookmarksButton: UIButton = {
+       let button = UIButton()
+        button.setTitle("Import bookmarks", for: .normal)
+        button.layer.borderWidth = 1
+        button.layer.cornerRadius = 22
+        button.setInsets(
+            forContentPadding: UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10),
+            imageTitlePadding: 0
+        )
+        button.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+        return button
+    }()
+    
+    private let learnMoreHandler: () -> Void
+    private let importBookmarksHandler: () -> Void
+    
     var bottomMarginConstraint: NSLayoutConstraint?
 
-    init(initialBottomMargin: CGFloat) {
+    init(
+        initialBottomMargin: CGFloat,
+        learnMoreHandler: @escaping () -> Void,
+        importBookmarksHandler: @escaping () -> Void
+    ) {
+        self.learnMoreHandler = learnMoreHandler
+        self.importBookmarksHandler = importBookmarksHandler
         super.init(frame: .zero)
         setup(initialBottomMargin)
     }
@@ -56,6 +84,26 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
         
         addSection(imageNamed: "bookmarkAdd", text: "Tap the bookmark icon when you find a page you want to save")
         addSection(imageNamed: "exportShare", text: "You can also import bookmarks:\n1. Export your bookmarks from another browser.\n2. Tap on the link below to import the file with your bookmarks.")
+        
+        let buttonStackViewSpacer = UIView.build {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            $0.heightAnchor.constraint(equalToConstant: 12).isActive = true
+        }
+        containerStackView.addArrangedSubview(buttonStackViewSpacer)
+
+        let buttonsStackView = UIStackView(arrangedSubviews: [
+            createSpacerView(width: 36),
+            learnMoreButton,
+            importBookmarksButton,
+            createSpacerView(width: 36)
+        ])
+        buttonsStackView.axis = .horizontal
+        buttonsStackView.distribution = .fill
+        containerStackView.addArrangedSubview(buttonsStackView)
+        
+        // setup buttons
+        learnMoreButton.addTarget(self, action: #selector(onLearnMoreTapped), for: .touchUpInside)
+        importBookmarksButton.addTarget(self, action: #selector(onImportTapped), for: .touchUpInside)
 
         applyTheme()
     }
@@ -94,7 +142,26 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
         containerStackView.addArrangedSubview(sectionEndSpacer)
     }
     
+    private func createSpacerView(width: CGFloat) -> UIView {
+        UIView.build {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            $0.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+            $0.widthAnchor.constraint(equalToConstant: 36).isActive = true
+        }
+    }
+    
+    @objc private func onLearnMoreTapped() {
+        learnMoreHandler()
+    }
+    
+    @objc private func onImportTapped() {
+        importBookmarksHandler()
+    }
+    
     func applyTheme() {
+        importBookmarksButton.layer.borderColor = UIColor.theme.ecosia.primaryText.cgColor
+        learnMoreButton.setTitleColor(.theme.ecosia.primaryText, for: .normal)
+        importBookmarksButton.setTitleColor(.theme.ecosia.primaryText, for: .normal)
         titleLabel.textColor = .theme.ecosia.primaryText
     }
 }
