@@ -5,7 +5,7 @@
 import UIKit
 import Shared
 
-final class CircleButton: ToolbarButton {
+class CircleButton: ToolbarButton {
     enum Config {
         case search
         case newTab
