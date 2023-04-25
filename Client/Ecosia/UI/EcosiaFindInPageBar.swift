@@ -15,11 +15,21 @@ protocol EcosiaFindInPageBarDelegate: AnyObject {
 /// Ecosia's custom UI for FindInPageBar.
 ///
 /// You can find the Firefox original view in Client/Frontend/Browser/FindInPageBar (removed from Target since no longer used)
-class EcosiaFindInPageBar: UIView {
+final class EcosiaFindInPageBar: UIView {
+    private struct UX {
+        static let barHeight: CGFloat = 60
+        static let searchViewTopBottomSpacing: CGFloat = 8
+        static let searchViewLeadingOffset = 16
+        static let searchTextFieldLeadingOffset = 16
+        static let previousButtonLeadingOffset = 14
+        static let nextButtonLeadingOffset = 29
+        static let closeButtonLeadingTrailingSpacing = 14
+        static let topBorderHeight = 1
+    }
     
     private lazy var searchView: UIView = {
         let view = UIView()
-        view.layer.cornerRadius = (EcosiaFindInPageBar.barHeight - 2*EcosiaFindInPageBar.searchViewTopBottomSpacing)/2
+        view.layer.cornerRadius = (UX.barHeight - 2*UX.searchViewTopBottomSpacing)/2
         return view
     }()
     private lazy var searchTextField: UITextField = {
@@ -33,7 +43,7 @@ class EcosiaFindInPageBar: UIView {
         textField.inputAssistantItem.trailingBarButtonGroups = []
         textField.enablesReturnKeyAutomatically = true
         textField.returnKeyType = .search
-        textField.accessibilityIdentifier = "FindInPage.searchField"
+        textField.accessibilityIdentifier = AccessibilityIdentifiers.Ecosia.FindInPage.searchField
         textField.delegate = self
         return textField
     }()
@@ -42,25 +52,25 @@ class EcosiaFindInPageBar: UIView {
         label.font = .preferredFont(forTextStyle: .footnote)
         label.textAlignment = .right
         label.isHidden = true
-        label.accessibilityIdentifier = "FindInPage.matchCount"
+        label.accessibilityIdentifier = AccessibilityIdentifiers.Ecosia.FindInPage.matchCount
         return label
     }()
     private lazy var previousButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(named: "find_previous")?.withRenderingMode(.alwaysTemplate), for: .normal)
+        button.setImage(UIImage.templateImageNamed("find_previous"), for: .normal)
         button.isEnabled = false
         button.accessibilityLabel = .FindInPagePreviousAccessibilityLabel
         button.addTarget(self, action: #selector(didFindPrevious), for: .touchUpInside)
-        button.accessibilityIdentifier = "FindInPage.find_previous"
+        button.accessibilityIdentifier = AccessibilityIdentifiers.Ecosia.FindInPage.findPrevious
         return button
     }()
     private lazy var nextButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(named: "find_next")?.withRenderingMode(.alwaysTemplate), for: .normal)
+        button.setImage(UIImage.templateImageNamed("find_next"), for: .normal)
         button.isEnabled = false
         button.accessibilityLabel = .FindInPageNextAccessibilityLabel
         button.addTarget(self, action: #selector(didFindNext), for: .touchUpInside)
-        button.accessibilityIdentifier = "FindInPage.find_next"
+        button.accessibilityIdentifier = AccessibilityIdentifiers.Ecosia.FindInPage.findNext
         return button
     }()
     private lazy var closeButton: UIButton = {
@@ -68,7 +78,7 @@ class EcosiaFindInPageBar: UIView {
         button.setTitle(.localized(.done), for: .normal)
         button.accessibilityLabel = .FindInPageDoneAccessibilityLabel
         button.addTarget(self, action: #selector(didPressClose), for: .touchUpInside)
-        button.accessibilityIdentifier = "FindInPage.close"
+        button.accessibilityIdentifier = AccessibilityIdentifiers.Ecosia.FindInPage.findClose
         return button
     }()
     private lazy var topBorder = UIView()
@@ -76,9 +86,6 @@ class EcosiaFindInPageBar: UIView {
     weak var delegate: EcosiaFindInPageBarDelegate?
 
     private static let savedTextKey = "findInPageSavedTextKey"
-    private static let barHeight: CGFloat = 60
-    private static let searchViewTopBottomSpacing: CGFloat = 8
-
     static var retrieveSavedText: String? {
         return UserDefaults.standard.object(forKey: EcosiaFindInPageBar.savedTextKey) as? String
     }
@@ -156,17 +163,17 @@ class EcosiaFindInPageBar: UIView {
     
     private func setupConstraints() {
         self.snp.makeConstraints { make in
-            make.height.equalTo(EcosiaFindInPageBar.barHeight)
+            make.height.equalTo(UX.barHeight)
         }
         
         searchView.snp.makeConstraints { make in
-            make.leading.equalToSuperview().offset(16)
-            make.top.equalToSuperview().offset(EcosiaFindInPageBar.searchViewTopBottomSpacing)
-            make.bottom.equalToSuperview().inset(EcosiaFindInPageBar.searchViewTopBottomSpacing)
+            make.leading.equalToSuperview().offset(UX.searchViewLeadingOffset)
+            make.top.equalToSuperview().offset(UX.searchViewTopBottomSpacing)
+            make.bottom.equalToSuperview().inset(UX.searchViewTopBottomSpacing)
         }
         
         searchTextField.snp.makeConstraints { make in
-            make.leading.equalToSuperview().offset(16)
+            make.leading.equalToSuperview().offset(UX.searchTextFieldLeadingOffset)
             make.centerY.equalToSuperview()
         }
         searchTextField.setContentHuggingPriority(.defaultLow, for: .horizontal)
@@ -181,23 +188,23 @@ class EcosiaFindInPageBar: UIView {
         matchCountLabel.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
 
         previousButton.snp.makeConstraints { make in
-            make.leading.equalTo(searchView.snp.trailing).offset(14)
+            make.leading.equalTo(searchView.snp.trailing).offset(UX.previousButtonLeadingOffset)
             make.centerY.equalToSuperview()
         }
 
         nextButton.snp.makeConstraints { make in
-            make.leading.equalTo(previousButton.snp.trailing).offset(29)
+            make.leading.equalTo(previousButton.snp.trailing).offset(UX.nextButtonLeadingOffset)
             make.centerY.equalToSuperview()
         }
 
         closeButton.snp.makeConstraints { make in
-            make.leading.equalTo(nextButton.snp.trailing).offset(14)
-            make.trailing.equalToSuperview().inset(14)
+            make.leading.equalTo(nextButton.snp.trailing).offset(UX.closeButtonLeadingTrailingSpacing)
+            make.trailing.equalToSuperview().inset(UX.closeButtonLeadingTrailingSpacing)
             make.trailing.centerY.equalToSuperview()
         }
 
         topBorder.snp.makeConstraints { make in
-            make.height.equalTo(1)
+            make.height.equalTo(UX.topBorderHeight)
             make.left.right.top.equalToSuperview()
         }
     }
