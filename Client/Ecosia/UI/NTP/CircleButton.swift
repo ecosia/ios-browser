@@ -5,7 +5,7 @@
 import UIKit
 import Shared
 
-class CircleButton: ToolbarButton {
+final class CircleButton: ToolbarButton {
     enum Config {
         case search
         case newTab
@@ -16,7 +16,7 @@ class CircleButton: ToolbarButton {
             case .newTab: return "nav-add"
             }
         }
-        var hideCircle: Bool {
+        var shouldHideCircle: Bool {
             switch self {
             case .search: return false
             case .newTab: return true
@@ -36,7 +36,7 @@ class CircleButton: ToolbarButton {
             setup()
         }
     }
-    var margin: CGFloat = 8
+    private var margin: CGFloat = 8
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -51,6 +51,7 @@ class CircleButton: ToolbarButton {
     convenience init(config: Config, margin: CGFloat = 8) {
         self.init(frame: .zero)
         self.config = config
+        self.margin = margin
         setup()
     }
 
@@ -61,7 +62,7 @@ class CircleButton: ToolbarButton {
         sendSubviewToBack(circle)
         applyTheme()
         accessibilityLabel = config.accessibilityLabel
-        accessibilityIdentifier = "TabToolbar.circleButton"
+        accessibilityIdentifier = AccessibilityIdentifiers.Ecosia.TabToolbar.circleButton
     }
 
     override func layoutSubviews() {
@@ -70,12 +71,12 @@ class CircleButton: ToolbarButton {
         circle.bounds = .init(size: .init(width: height, height: height))
         circle.layer.cornerRadius = circle.bounds.height / 2
         circle.center = .init(x: bounds.width/2, y: bounds.height/2)
-        circle.isHidden = config.hideCircle
+        circle.isHidden = config.shouldHideCircle
     }
 
     override func applyTheme() {
         circle.backgroundColor = UIColor.theme.ecosia.tertiaryBackground
-        tintColor = config.hideCircle ? .theme.ecosia.primaryText : .theme.ecosia.primaryButton
+        tintColor = config.shouldHideCircle ? .theme.ecosia.primaryText : .theme.ecosia.primaryButton
         selectedTintColor = UIColor.theme.ecosia.primaryButtonActive
         unselectedTintColor = tintColor
     }

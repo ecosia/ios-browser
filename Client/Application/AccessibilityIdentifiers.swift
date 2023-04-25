@@ -201,4 +201,13 @@ public struct AccessibilityIdentifiers {
             static let bottomSetting = "BottomSearchBar"
         }
     }
+    
+    // Ecosia: Custom accessibility identifiers
+    struct Ecosia {
+        static let logo = "ecosia-logo"
+        
+        struct TabToolbar {
+            static let circleButton = "TabToolbar.circleButton"
+        }
+    }
 }

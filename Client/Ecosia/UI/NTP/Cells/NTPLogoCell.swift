@@ -29,7 +29,7 @@ final class NTPLogoCell: UICollectionViewCell, ReusableCell, NotificationThemeab
         logo.clipsToBounds = true
         logo.contentMode = .scaleAspectFit
         logo.isAccessibilityElement = true
-        logo.accessibilityIdentifier = "ecosia-logo"
+        logo.accessibilityIdentifier = AccessibilityIdentifiers.Ecosia.logo
         logo.accessibilityLabel = .localized(.ecosiaLogoAccessibilityLabel)
         contentView.addSubview(logo)
         self.logo = logo

@@ -106,7 +106,7 @@ final class Welcome: UIViewController {
         logo.contentMode = .scaleAspectFit
         logo.tintColor = .white
         logo.isAccessibilityElement = true
-        logo.accessibilityIdentifier = "ecosia-logo"
+        logo.accessibilityIdentifier = AccessibilityIdentifiers.Ecosia.logo
         logo.accessibilityLabel = .localized(.ecosiaLogoAccessibilityLabel)
         background.addSubview(logo)
         self.logo = logo
