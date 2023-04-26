@@ -81,6 +81,8 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel, CanRemoveQuickActio
         button.accessibilityIdentifier = AccessibilityIdentifiers.LibraryPanels.bottomRightButton
         return button
     }()
+    
+    private lazy var emptyHeader = EmptyHeader(icon: "bookmarksEmpty", title: .localized(.noBookmarksYet), subtitle: .localized(.AddYourFavoritePages))
 
     // MARK: - Init
 
@@ -160,13 +162,19 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel, CanRemoveQuickActio
     }
 
     private func updateEmptyView() {
-        if viewModel.bookmarkNodes.isEmpty {
+        switch (viewModel.isRootNode, viewModel.bookmarkNodes.isEmpty) {
+        case (true, true): // is first level, no bookmarks -> show explainative empty view
+            tableView.tableHeaderView = nil
             tableView.backgroundView = EmptyBookmarksView(
                 initialBottomMargin: -(navigationController?.toolbar.bounds.size.height ?? 0),
                 learnMoreHandler: emptyViewLearnMoreTap,
                 importBookmarksHandler: emptyViewImportBookmarksTap
             )
-        } else {
+        case (false, true): // is folder which is empty -> show "old" empty view
+            tableView.tableHeaderView = emptyHeader
+            tableView.backgroundView = nil
+        case (_, false): // got bookmarks, don't show any empty view
+            tableView.tableHeaderView = nil
             tableView.backgroundView = nil
         }
     }
