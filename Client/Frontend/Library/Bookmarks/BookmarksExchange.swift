@@ -5,9 +5,10 @@
 import Foundation
 import Core
 import Shared
+import Storage
 
 protocol BookmarksExchangable {
-    func export(bookmarks: [BookmarkItem], in viewController: UIViewController, barButtonItem: UIBarButtonItem) async throws
+    func export(bookmarks: [Core.BookmarkItem], in viewController: UIViewController, barButtonItem: UIBarButtonItem) async throws
     func `import`(from url: URL, in viewController: UIViewController) async throws
 }
 
@@ -25,7 +26,7 @@ class BookmarksExchange: BookmarksExchangable {
     }
     
     @MainActor
-    func export(bookmarks: [BookmarkItem], in viewController: UIViewController, barButtonItem: UIBarButtonItem) async throws {
+    func export(bookmarks: [Core.BookmarkItem], in viewController: UIViewController, barButtonItem: UIBarButtonItem) async throws {
         guard let view = viewController.view else { return }
         
         let activityIndicator = UIActivityIndicatorView(style: .medium)
@@ -93,11 +94,17 @@ class BookmarksExchange: BookmarksExchangable {
         toast: SimpleToast
     ) async throws {
         /// create folder with date by import
-        let importGuid = try await createFolder(
-            parentGUID: "mobile______",
-            title: .init(format: .localized(.importedBookmarkFolderName), dateFormatter.string(from: Date()))
-        )
+        let importGuid: GUID
         
+        if await hasBookmarks() {
+            importGuid = try await createFolder(
+               parentGUID: "mobile______",
+               title: .init(format: .localized(.importedBookmarkFolderName), dateFormatter.string(from: Date()))
+           )
+        } else {
+            importGuid = "mobile______"
+        }
+                
         try await processBookmarks(bookmarks, parentGUID: importGuid)
         
         await showImportSuccess(using: toast, in: viewController.view)
@@ -113,6 +120,20 @@ class BookmarksExchange: BookmarksExchangable {
             bottomContainer: view,
             bottomInset: view.layoutMargins.bottom
         )
+    }
+    
+    private func hasBookmarks() async -> Bool {
+        await withCheckedContinuation { continuation in
+            profile.places.getBookmark(guid: "mobile______").uponQueue(DispatchQueue.main) { result in
+                guard let bookmarkNode = result.successValue,
+                      let bookmarkFolder = bookmarkNode as? BookmarkFolderData
+                else {
+                    continuation.resume(with: .success(false))
+                    return
+                }
+                continuation.resume(with: .success(bookmarkFolder.isNonEmptyFolder))
+            }
+        }
     }
     
     private func processBookmarks(_ bookmarks: [Core.BookmarkItem], parentGUID: GUID) async throws {
