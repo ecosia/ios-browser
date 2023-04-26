@@ -25,7 +25,7 @@ class BookmarksPanelViewModel: NSObject {
     private let bookmarksExchange: BookmarksExchangable
     private var documentPickerPresentingViewController: UIViewController?
     private var onImportDoneHandler: ((URL?, Error?) -> Void)?
-    private var onExportDoneHandler: (() -> Void)?
+    private var onExportDoneHandler: ((Error?) -> Void)?
     
     /// Error case at the moment is setting data to nil and showing nothing
     private func setErrorCase() {
@@ -69,11 +69,17 @@ class BookmarksPanelViewModel: NSObject {
         flashLastRowOnNextReload = true
     }
     
-    func bookmarkExportSelected(in viewController: UIViewController, onDone: @escaping () -> Void) async throws {
-        self.onExportDoneHandler = onDone
-        let bookmarks = try await getBookmarksForExport()
-        try await bookmarksExchange.export(bookmarks: bookmarks, in: viewController)
-        Task { @MainActor in self.onExportDoneHandler?() }
+    func bookmarkExportSelected(in viewController: UIViewController, onDone: @escaping (Error?) -> Void) {
+        Task {
+            self.onExportDoneHandler = onDone
+            do {
+                let bookmarks = try await getBookmarksForExport()
+                try await bookmarksExchange.export(bookmarks: bookmarks, in: viewController)
+                await notifyExportDone(nil)
+            } catch {
+                await notifyExportDone(error)
+            }
+        }
     }
     
     func bookmarkImportSelected(in viewController: UIViewController, onDone: @escaping (URL?, Error?) -> Void) {
@@ -122,6 +128,11 @@ class BookmarksPanelViewModel: NSObject {
         }
         assertionFailure("This should not happen")
         return nil
+    }
+    
+    @MainActor
+    private func notifyExportDone(_ error: Error?) {
+        onExportDoneHandler?(error)
     }
     
     private func setupMobileFolderData(completion: @escaping () -> Void) {

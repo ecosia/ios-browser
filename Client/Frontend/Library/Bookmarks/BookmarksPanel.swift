@@ -630,10 +630,21 @@ extension BookmarksPanel {
     }
 
     func exportBookmarksActionHandler() {
-        Task { @MainActor in
-            try await viewModel.bookmarkExportSelected(in: self) { [weak self] in
-                self?.moreButton.isEnabled = true
+        viewModel.bookmarkExportSelected(in: self) { [weak self] error in
+            self?.moreButton.isEnabled = true
+            
+            guard let error = error else {
+                self?.reloadData()
+                return
             }
+            
+            let alert = UIAlertController(title: .localized(.bookmarksExportFailedTitle), message: error.localizedDescription, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: .CancelString, style: .cancel))
+            let retryAction = UIAlertAction(title: .localized(.retryMessage), style: .default) { [weak self] _ in
+                self?.exportBookmarksActionHandler()
+            }
+            alert.addAction(retryAction)
+            self?.present(alert, animated: true)
         }
     }
 
