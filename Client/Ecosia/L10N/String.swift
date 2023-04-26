@@ -192,5 +192,7 @@ extension String {
         case bookmarksExportFailedTitle = "Exporting failed"
         case bookmarksPanelMore = "More"
         case bookmarksImported = "Bookmarks imported"
+        case bookmarksEmptyViewItem0 = "Tap the bookmark icon when you find a page you want to save"
+        case bookmarksEmptyViewItem1 = "You can also import bookmarks:\n1. Export your bookmarks from another browser.\n2. Tap on the link below to import the file with your bookmarks."
     }
 }

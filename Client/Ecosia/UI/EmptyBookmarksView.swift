@@ -28,14 +28,14 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
     
     private let learnMoreButton: UIButton = {
        let button = UIButton()
-        button.setTitle("Learn more", for: .normal)
+        button.setTitle(.localized(.learnMore), for: .normal)
         button.setContentCompressionResistancePriority(.required, for: .horizontal)
         return button
     }()
     
     private let importBookmarksButton: UIButton = {
        let button = UIButton()
-        button.setTitle("Import bookmarks", for: .normal)
+        button.setTitle(.localized(.importBookmarks), for: .normal)
         button.layer.borderWidth = 1
         button.layer.cornerRadius = 22
         button.setInsets(
@@ -83,8 +83,8 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
         }
         containerStackView.addArrangedSubview(spacerOne)
         
-        addSection(imageNamed: "bookmarkAdd", text: "Tap the bookmark icon when you find a page you want to save")
-        addSection(imageNamed: "exportShare", text: "You can also import bookmarks:\n1. Export your bookmarks from another browser.\n2. Tap on the link below to import the file with your bookmarks.")
+        addSection(imageNamed: "bookmarkAdd", text: .localized(.bookmarksEmptyViewItem0))
+        addSection(imageNamed: "exportShare", text: .localized(.bookmarksEmptyViewItem1))
         
         let buttonStackViewSpacer = UIView.build {
             $0.translatesAutoresizingMaskIntoConstraints = false
