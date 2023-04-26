@@ -35,7 +35,7 @@ class BookmarksExchange: BookmarksExchangable {
         let toast = SimpleToast()
         
         toast.showAlertWithText(
-            "Exporting Bookmarks…",
+            .localized(.exportingBookmarks),
             image: .view(activityIndicator),
             bottomContainer: view,
             dismissAfter: nil,
@@ -67,7 +67,7 @@ class BookmarksExchange: BookmarksExchangable {
         let toast = SimpleToast()
 
         toast.showAlertWithText(
-            "Importing Bookmarks…",
+            .localized(.importingBookmarks),
             image: .view(activityIndicator),
             bottomContainer: view,
             dismissAfter: nil,
@@ -87,7 +87,10 @@ class BookmarksExchange: BookmarksExchangable {
         toast: SimpleToast
     ) async throws {
         /// create folder with date by import
-        let importGuid = try await createFolder(parentGUID: "mobile______", title: "Imported Bookmarks (\(dateFormatter.string(from: Date())))")
+        let importGuid = try await createFolder(
+            parentGUID: "mobile______",
+            title: .init(format: .localized(.importedBookmarkFolderName), dateFormatter.string(from: Date()))
+        )
         
         try await processBookmarks(bookmarks, parentGUID: importGuid)
         

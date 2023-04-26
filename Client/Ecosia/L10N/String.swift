@@ -179,5 +179,13 @@ extension String {
         case moreSharingMethods = "More sharing methods"
         case copied = "Copied!"
         case plantTreesWithMe = "Plant trees with me on Ecosia"
+        case exportBookmarks = "Export Bookmarks"
+        case importBookmarks = "Import Bookmarks"
+        case exportingBookmarks = "Exporting Bookmarks…"
+        case importingBookmarks = "Importing Bookmarks…"
+        case importedBookmarkFolderName = "Imported Bookmarks (%@)"
+        case bookmarkImportHelpscoutURL = "https://ecosia.helpscoutdocs.com/search?query=Bookmark"
+        case bookmarksImportFailedTitle = "Import failed"
+        case bookmarksPanelMore = "More"
     }
 }

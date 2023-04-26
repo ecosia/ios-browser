@@ -68,7 +68,7 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel, CanRemoveQuickActio
     }()
     
     private lazy var moreButton: UIBarButtonItem = {
-        let button = UIBarButtonItem(title: "More",
+        let button = UIBarButtonItem(title: .localized(.bookmarksPanelMore),
                                      style: .plain,
                                      target: self,
                                      action: #selector(showMoreDialog))
@@ -186,7 +186,7 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel, CanRemoveQuickActio
     private func emptyViewLearnMoreTap() {
         // todo: the url needs to be adjusted / updated
         libraryPanelDelegate?.libraryPanel(
-            didSelectURLString: "https://ecosia.helpscoutdocs.com/search?query=Bookmark",
+            didSelectURLString: .localized(.bookmarkImportHelpscoutURL),
             visitType: .link
         )
     }
@@ -598,10 +598,10 @@ extension BookmarksPanel {
     
     func showMoreDialog() {
         moreButton.isEnabled = false
-        let importAction = UIAlertAction(title: "Import Bookmarks", style: .default, handler: { [weak self] _ in self?.importBookmarksActionHandler() })
-        let exportAction = UIAlertAction(title: "Export Bookmarks", style: .default, handler: { [weak self] _ in self?.exportBookmarksActionHandler() })
+        let importAction = UIAlertAction(title: .localized(.importBookmarks), style: .default, handler: { [weak self] _ in self?.importBookmarksActionHandler() })
+        let exportAction = UIAlertAction(title: .localized(.exportBookmarks), style: .default, handler: { [weak self] _ in self?.exportBookmarksActionHandler() })
         exportAction.isEnabled = !viewModel.bookmarkNodes.isEmpty
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { [weak self] _ in
+        let cancelAction = UIAlertAction(title: .CancelString, style: .cancel) { [weak self] _ in
             self?.moreButton.isEnabled = true
         }
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
@@ -618,9 +618,9 @@ extension BookmarksPanel {
                 return
             }
             
-            let alert = UIAlertController(title: "Import failed", message: error.localizedDescription, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-            let retryAction = UIAlertAction(title: "Retry", style: .default) { [weak self] _ in
+            let alert = UIAlertController(title: .localized(.bookmarksImportFailedTitle), message: error.localizedDescription, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: .CancelString, style: .cancel))
+            let retryAction = UIAlertAction(title: .localized(.retryMessage), style: .default) { [weak self] _ in
                 guard let self = self, let url = url else { return }
                 self.viewModel.handlePickedUrl(url, in: self)
             }
