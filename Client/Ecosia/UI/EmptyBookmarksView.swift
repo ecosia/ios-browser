@@ -148,7 +148,7 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
         UIView.build {
             $0.translatesAutoresizingMaskIntoConstraints = false
             $0.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
-            $0.widthAnchor.constraint(equalToConstant: 36).isActive = true
+            $0.widthAnchor.constraint(equalToConstant: width).isActive = true
         }
     }
     

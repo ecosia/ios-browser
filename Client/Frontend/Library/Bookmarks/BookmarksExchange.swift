@@ -61,7 +61,7 @@ class BookmarksExchange: BookmarksExchangable {
         guard let view = viewController.view else { return }
         
         let activityIndicator = UIActivityIndicatorView(style: .medium)
-        activityIndicator.color = UIColor.theme.ecosia.primaryBrand
+        activityIndicator.color = .init(named: "splashLogoTint")
         activityIndicator.startAnimating()
         
         let toast = SimpleToast()
