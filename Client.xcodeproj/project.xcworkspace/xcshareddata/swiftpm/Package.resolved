@@ -49,8 +49,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ecosia/ios-core.git",
       "state" : {
-        "branch" : "MOB-1759_BookmarkParser",
-        "revision" : "c85e712cecd35a18f01619c45c226b66bb08a20c"
+        "branch" : "main",
+        "revision" : "402b461bb4ac488317ca24cf5ff2b104303eee5b"
       }
     },
     {
