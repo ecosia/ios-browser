@@ -18,7 +18,8 @@ extension BrowserViewController {
     }
 
     private func setupFindInPage() {
-        let findInPageBar = FindInPageBar()
+        // Ecosia: Custom UI for FindInPageBar
+        let findInPageBar = EcosiaFindInPageBar()
         self.findInPageBar = findInPageBar
         findInPageBar.delegate = self
 
@@ -26,9 +27,10 @@ extension BrowserViewController {
             self.view.layoutIfNeeded()
         })
 
+        /* Ecosia: Custom UI for FindInPageBar
         findInPageBar.snp.makeConstraints { make in
             make.height.equalTo(UIConstants.ToolbarHeight)
-        }
+        }*/
 
         updateViewConstraints()
 
@@ -40,7 +42,7 @@ extension BrowserViewController {
         findInPageBar.layoutIfNeeded()
     }
 
-    private func removeFindInPage(_ findInPageBar: FindInPageBar, tab: Tab? = nil) {
+    private func removeFindInPage(_ findInPageBar: EcosiaFindInPageBar, tab: Tab? = nil) {
         findInPageBar.endEditing(true)
         let tab = tab ?? tabManager.selectedTab
         guard let webView = tab?.webView else { return }
@@ -51,22 +53,22 @@ extension BrowserViewController {
     }
 }
 
-extension BrowserViewController: FindInPageBarDelegate, FindInPageHelperDelegate {
-    func findInPage(_ findInPage: FindInPageBar, didTextChange text: String) {
+extension BrowserViewController: EcosiaFindInPageBarDelegate, FindInPageHelperDelegate {
+    func findInPage(_ findInPage: EcosiaFindInPageBar, didTextChange text: String) {
         find(text, function: "find")
     }
 
-    func findInPage(_ findInPage: FindInPageBar, didFindNextWithText text: String) {
+    func findInPage(_ findInPage: EcosiaFindInPageBar, didFindNextWithText text: String) {
         findInPageBar?.endEditing(true)
         find(text, function: "findNext")
     }
 
-    func findInPage(_ findInPage: FindInPageBar, didFindPreviousWithText text: String) {
+    func findInPage(_ findInPage: EcosiaFindInPageBar, didFindPreviousWithText text: String) {
         findInPageBar?.endEditing(true)
         find(text, function: "findPrevious")
     }
 
-    func findInPageDidPressClose(_ findInPage: FindInPageBar) {
+    func findInPageDidPressClose(_ findInPage: EcosiaFindInPageBar) {
         updateFindInPageVisibility(visible: false)
     }
 

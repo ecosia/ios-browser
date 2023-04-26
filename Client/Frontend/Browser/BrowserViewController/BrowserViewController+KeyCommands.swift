@@ -89,7 +89,8 @@ extension BrowserViewController {
     }
 
     @objc private func findInPageAgainKeyCommand() {
-        findInPage(withText: FindInPageBar.retrieveSavedText ?? "")
+        // Ecosia: Custom UI for FindInPageBar
+        findInPage(withText: EcosiaFindInPageBar.retrieveSavedText ?? "")
     }
 
     private func findInPage(withText text: String) {
