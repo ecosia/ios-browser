@@ -128,13 +128,13 @@ class SimpleToast {
             animations: {
                 toast.frame = end
             },
-            completion: { [weak self] finished in
+            completion: { finished in
 
-            guard let dismissAfter = self?.dismissAfter else { return }
+            guard let dismissAfter = self.dismissAfter else { return }
                 let dispatchTime = DispatchTime.now() + dismissAfter
 
                 DispatchQueue.main.asyncAfter(deadline: dispatchTime, execute: {
-                    self?.dismiss(toast)
+                    self.dismiss(toast)
                 })
             }
         )

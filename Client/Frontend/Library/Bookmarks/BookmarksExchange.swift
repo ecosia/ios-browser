@@ -78,7 +78,12 @@ class BookmarksExchange: BookmarksExchangable {
         let parser = try BookmarkParser(html: html)
         let bookmarks = try await parser.parseBookmarks()
         
-        try await self.importBookmarks(bookmarks, viewController: viewController, toast: toast)
+        do {
+            try await importBookmarks(bookmarks, viewController: viewController, toast: toast)
+        } catch {
+            toast.dismiss()
+            throw error
+        }
     }
     
     private func importBookmarks(
@@ -94,9 +99,19 @@ class BookmarksExchange: BookmarksExchangable {
         
         try await processBookmarks(bookmarks, parentGUID: importGuid)
         
-        DispatchQueue.main.async {
-            toast.dismiss()
-        }
+        await showImportSuccess(using: toast, in: viewController.view)
+    }
+    
+    @MainActor
+    private func showImportSuccess(using toast: SimpleToast, in view: UIView) async {
+        toast.dismiss()
+        
+        SimpleToast().showAlertWithText(
+            .localized(.bookmarksImported),
+            image: .named("bookmarkSuccess"),
+            bottomContainer: view,
+            bottomInset: view.layoutMargins.bottom
+        )
     }
     
     private func processBookmarks(_ bookmarks: [Core.BookmarkItem], parentGUID: GUID) async throws {

@@ -187,5 +187,6 @@ extension String {
         case bookmarkImportHelpscoutURL = "https://ecosia.helpscoutdocs.com/search?query=Bookmark"
         case bookmarksImportFailedTitle = "Import failed"
         case bookmarksPanelMore = "More"
+        case bookmarksImported = "Bookmarks imported"
     }
 }
