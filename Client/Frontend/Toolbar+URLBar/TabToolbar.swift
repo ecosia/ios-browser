@@ -9,6 +9,7 @@ class TabToolbar: UIView {
     weak var tabToolbarDelegate: TabToolbarDelegate?
 
     let tabsButton = TabsButton()
+    // Ecosia: Change addNewTabButton to configurable CircleButton
     let circleButton = CircleButton(config: .search)
     let appMenuButton = ToolbarButton()
     let bookmarksButton = ToolbarButton()

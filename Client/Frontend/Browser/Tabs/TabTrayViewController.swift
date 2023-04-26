@@ -50,7 +50,7 @@ class TabTrayViewController: UIViewController {
         return UIBarButtonItem(customView: button)
     }()
 
-    lazy var addNewTabButton = CircleButton(config: .init(hideCircle: true, image: "nav-add", margin: 2))
+    lazy var addNewTabButton = CircleButton(config: .newTab, margin: 2)
     lazy var newTabButton: UIBarButtonItem = {
         addNewTabButton.translatesAutoresizingMaskIntoConstraints = false
         let height = addNewTabButton.heightAnchor.constraint(equalToConstant: 50)
