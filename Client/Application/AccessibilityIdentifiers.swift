@@ -209,5 +209,13 @@ public struct AccessibilityIdentifiers {
         struct TabToolbar {
             static let circleButton = "TabToolbar.circleButton"
         }
+        
+        struct FindInPage {
+            static let searchField = "FindInPage.searchField"
+            static let matchCount = "FindInPage.matchCount"
+            static let findPrevious = "FindInPage.find_previous"
+            static let findNext = "FindInPage.find_next"
+            static let findClose = "FindInPage.close"
+        }
     }
 }
