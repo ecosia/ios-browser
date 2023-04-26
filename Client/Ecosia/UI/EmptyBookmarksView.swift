@@ -37,7 +37,7 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
        let button = UIButton()
         button.setTitle(.localized(.importBookmarks), for: .normal)
         button.layer.borderWidth = 1
-        button.layer.cornerRadius = 22
+        button.layer.cornerRadius = 20
         button.setInsets(
             forContentPadding: UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10),
             imageTitlePadding: 0

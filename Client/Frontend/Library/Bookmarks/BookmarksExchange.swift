@@ -98,11 +98,11 @@ class BookmarksExchange: BookmarksExchangable {
         
         if await hasBookmarks() {
             importGuid = try await createFolder(
-               parentGUID: "mobile______",
+                parentGUID: .mobileBookmarksGUID,
                title: .init(format: .localized(.importedBookmarkFolderName), dateFormatter.string(from: Date()))
            )
         } else {
-            importGuid = "mobile______"
+            importGuid = .mobileBookmarksGUID
         }
                 
         try await processBookmarks(bookmarks, parentGUID: importGuid)
@@ -124,7 +124,7 @@ class BookmarksExchange: BookmarksExchangable {
     
     private func hasBookmarks() async -> Bool {
         await withCheckedContinuation { continuation in
-            profile.places.getBookmark(guid: "mobile______").uponQueue(DispatchQueue.main) { result in
+            profile.places.getBookmark(guid: .mobileBookmarksGUID).uponQueue(DispatchQueue.main) { result in
                 guard let bookmarkNode = result.successValue,
                       let bookmarkFolder = bookmarkNode as? BookmarkFolderData
                 else {
@@ -179,4 +179,8 @@ private extension BookmarksExchange {
                 }
         }
     }
+}
+
+extension GUID {
+    static let mobileBookmarksGUID = "mobile______"
 }
