@@ -74,11 +74,11 @@ class BookmarksExchange: BookmarksExchangable {
             bottomInset: view.layoutMargins.bottom
         )
 
-        let html = try String(contentsOf: url)
-        let parser = try BookmarkParser(html: html)
-        let bookmarks = try await parser.parseBookmarks()
-        
+
         do {
+            let html = try String(contentsOf: url)
+            let parser = try BookmarkParser(html: html)
+            let bookmarks = try await parser.parseBookmarks()
             try await importBookmarks(bookmarks, viewController: viewController, toast: toast)
         } catch {
             toast.dismiss()
