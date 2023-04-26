@@ -67,7 +67,7 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel, CanRemoveQuickActio
         return button
     }()
     
-    private lazy var moreButton: UIBarButtonItem = {
+    lazy var moreButton: UIBarButtonItem = {
         let button = UIBarButtonItem(title: .localized(.bookmarksPanelMore),
                                      style: .plain,
                                      target: self,
@@ -613,6 +613,7 @@ extension BookmarksPanel {
             self?.moreButton.isEnabled = true
         }
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        alert.popoverPresentationController?.barButtonItem = moreButton
         [importAction, exportAction, cancelAction].forEach(alert.addAction)
         present(alert, animated: true)
     }

@@ -116,6 +116,10 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
         sectionStackView.axis = .horizontal
         sectionStackView.alignment = .top
         
+        if traitCollection.userInterfaceIdiom == .pad {
+            sectionStackView.addArrangedSubview(createSpacerView(width: 36))
+        }
+        
         let sectionIcon = UIImageView()
         sectionIcon.tintColor = .theme.ecosia.secondaryText
         sectionIcon.contentMode = .scaleAspectFit
@@ -134,6 +138,10 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
         sectionLabel.textColor = .theme.ecosia.secondaryText
         sectionLabel.text = text
         sectionStackView.addArrangedSubview(sectionLabel)
+        
+        if traitCollection.userInterfaceIdiom == .pad {
+            sectionStackView.addArrangedSubview(createSpacerView(width: 36))
+        }
                 
         containerStackView.addArrangedSubview(sectionStackView)
         

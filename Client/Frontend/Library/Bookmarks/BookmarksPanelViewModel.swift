@@ -69,12 +69,12 @@ class BookmarksPanelViewModel: NSObject {
         flashLastRowOnNextReload = true
     }
     
-    func bookmarkExportSelected(in viewController: UIViewController, onDone: @escaping (Error?) -> Void) {
+    func bookmarkExportSelected(in viewController: BookmarksPanel, onDone: @escaping (Error?) -> Void) {
         Task {
             self.onExportDoneHandler = onDone
             do {
                 let bookmarks = try await getBookmarksForExport()
-                try await bookmarksExchange.export(bookmarks: bookmarks, in: viewController)
+                try await bookmarksExchange.export(bookmarks: bookmarks, in: viewController, barButtonItem: viewController.moreButton)
                 await notifyExportDone(nil)
             } catch {
                 await notifyExportDone(error)

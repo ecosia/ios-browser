@@ -7,7 +7,7 @@ import Core
 import Shared
 
 protocol BookmarksExchangable {
-    func export(bookmarks: [BookmarkItem], in viewController: UIViewController) async throws
+    func export(bookmarks: [BookmarkItem], in viewController: UIViewController, barButtonItem: UIBarButtonItem) async throws
     func `import`(from url: URL, in viewController: UIViewController) async throws
 }
 
@@ -25,7 +25,7 @@ class BookmarksExchange: BookmarksExchangable {
     }
     
     @MainActor
-    func export(bookmarks: [BookmarkItem], in viewController: UIViewController) async throws {
+    func export(bookmarks: [BookmarkItem], in viewController: UIViewController, barButtonItem: UIBarButtonItem) async throws {
         guard let view = viewController.view else { return }
         
         let activityIndicator = UIActivityIndicatorView(style: .medium)
@@ -50,6 +50,7 @@ class BookmarksExchange: BookmarksExchangable {
         try htmlExport.data(using: .utf8)?.write(to: exportedBooksmarksUrl)
 
         let activityViewController = UIActivityViewController(activityItems: [exportedBooksmarksUrl], applicationActivities: nil)
+        activityViewController.popoverPresentationController?.barButtonItem = barButtonItem
         
         viewController.present(activityViewController, animated: true) {
             toast.dismiss()
