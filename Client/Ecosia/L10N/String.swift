@@ -179,6 +179,7 @@ extension String {
         case moreSharingMethods = "More sharing methods"
         case copied = "Copied!"
         case plantTreesWithMe = "Plant trees with me on Ecosia"
+        case ecosiaLogoAccessibilityLabel = "Ecosia logo"
         case done = "Done"
         case findInPage = "Find in page"
         case exportBookmarks = "Export Bookmarks"

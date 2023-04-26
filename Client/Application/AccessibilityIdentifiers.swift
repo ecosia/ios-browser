@@ -204,6 +204,12 @@ public struct AccessibilityIdentifiers {
     
     // Ecosia: Custom accessibility identifiers
     struct Ecosia {
+        static let logo = "ecosia-logo"
+        
+        struct TabToolbar {
+            static let circleButton = "TabToolbar.circleButton"
+        }
+        
         struct FindInPage {
             static let searchField = "FindInPage.searchField"
             static let matchCount = "FindInPage.matchCount"
@@ -211,6 +217,5 @@ public struct AccessibilityIdentifiers {
             static let findNext = "FindInPage.find_next"
             static let findClose = "FindInPage.close"
         }
-        
     }
 }
