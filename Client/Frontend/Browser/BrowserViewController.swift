@@ -1067,6 +1067,7 @@ class BrowserViewController: UIViewController {
         switch panel {
         case .bookmarks:
             Analytics.shared.browser(.open, label: .favourites, property: .home)
+            User.shared.hideBookmarksNewBadge()
         case .history:
             Analytics.shared.browser(.open, label: .history, property: .home)
         case .readingList, .downloads, .none:

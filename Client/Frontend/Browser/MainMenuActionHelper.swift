@@ -670,7 +670,8 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
 
     private func getBookmarkLibraryAction() -> SingleActionViewModel {
         return SingleActionViewModel(title: .AppMenu.Bookmarks,
-                                     iconString: ImageIdentifiers.bookmarks) { _ in
+                                     iconString: ImageIdentifiers.bookmarks,
+                                     isNew: User.shared.showsBookmarksNewBadge) { _ in
             self.delegate?.showLibrary(panel: .bookmarks)
             Analytics.shared.menuClick("bookmarks")
         }
