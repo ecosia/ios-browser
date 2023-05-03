@@ -5133,6 +5133,14 @@
 			name = Extensions;
 			sourceTree = "<group>";
 		};
+		2C5850022A02903F009D7703 /* Experiments */ = {
+			isa = PBXGroup;
+			children = (
+				2C5850002A02879A009D7703 /* UnleashBingExperiment.swift */,
+			);
+			path = Experiments;
+			sourceTree = "<group>";
+		};
 		2F44FC551A9E83E200FD20CC /* Settings */ = {
 			isa = PBXGroup;
 			children = (
@@ -6364,7 +6372,7 @@
 		CA4D9C8628C8D801006AFB5D /* Ecosia */ = {
 			isa = PBXGroup;
 			children = (
-				2C5850002A02879A009D7703 /* UnleashBingExperiment.swift */,
+				2C5850022A02903F009D7703 /* Experiments */,
 				CA4D9CDE28C8D801006AFB5D /* Analytics */,
 				CAEB316A28D0BFC000ADC9DB /* Extensions */,
 				CA4D9CD328C8D801006AFB5D /* Fake */,
