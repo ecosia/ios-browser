@@ -301,7 +301,7 @@ extension BrowserViewController: URLBarDelegate {
             if BingSearchExperiment.isEnabled(),
                let bingSearchURL = BingSearchExperiment.makeBingSearchURLFromURL(searchURL) {
                 searchURL = bingSearchURL
-//                BingSearchExperiment.trackAnalytics()
+                BingSearchExperiment.trackAnalytics()
 //                BingSearchExperiment.incrementCounter()
             }
             
