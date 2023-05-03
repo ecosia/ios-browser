@@ -10,7 +10,7 @@ struct BingSearchExperiment {
     private init() {}
     
     static func incrementCounter() {
-        Core.BingSearchExperimentCounter.increment()
+        BingSearchExperimentCounter.increment()
     }
     
     static func isEnabled() -> Bool {
