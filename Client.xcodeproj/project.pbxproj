@@ -14442,7 +14442,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = main;
+				branch = "MOB-1807_route_traffic_to_bing_ab_test";
 				kind = branch;
 			};
 		};
