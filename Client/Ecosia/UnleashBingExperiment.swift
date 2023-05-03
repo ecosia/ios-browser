@@ -5,21 +5,26 @@
 import Foundation
 import Core
 
-struct BingSearchExperimentCounter {
+struct BingSearchExperiment {
     
     private init() {}
     
-    static func increment() {
+    static func incrementCounter() {
         Core.BingSearchExperimentCounter.increment()
     }
-}
-
-extension URL {
+    
+    static func isEnabled() -> Bool {
+        Unleash.isEnabled(.bingSearch)
+    }
     
     static func makeBingSearchURLFromURL(_ sourceURL: URL) -> URL? {
         let baseDomain = sourceURL.normalizedHost ?? URL.domain
         let bingDomain = "bing.com"
         let bingFullURLString = sourceURL.absoluteString.replacingOccurrences(of: baseDomain, with: bingDomain)
         return URL(string: bingFullURLString)
+    }
+    
+    static func trackAnalytics() {
+        Analytics.shared.userSearchViaBingABTest()
     }
 }
