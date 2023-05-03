@@ -302,7 +302,7 @@ extension BrowserViewController: URLBarDelegate {
                let bingSearchURL = BingSearchExperiment.makeBingSearchURLFromURL(searchURL) {
                 searchURL = bingSearchURL
                 BingSearchExperiment.trackAnalytics()
-//                BingSearchExperiment.incrementCounter()
+                BingSearchExperiment.incrementCounter()
             }
             
             // We couldn't find a matching search keyword, so do a search query.
