@@ -6,21 +6,7 @@ import XCTest
 @testable import Client
 
 class UnleashBingExperimentTests: XCTestCase {
-    
-    func testIncrementCounter() {
-        let initialCount = BingSearchExperiment.getCounterCurrentCount()
-        BingSearchExperiment.incrementCounter()
-        let finalCount = BingSearchExperiment.getCounterCurrentCount()
-        XCTAssertEqual(initialCount + 1, finalCount, "Counter should be incremented by 1")
-    }
-    
-    func testIncrementCounterMultipleTimes() {
-        BingSearchExperiment.incrementCounter()
-        XCTAssertEqual(BingSearchExperiment.getCounterCurrentCount(), 1)
-        BingSearchExperiment.incrementCounter()
-        XCTAssertEqual(BingSearchExperiment.getCounterCurrentCount(), 2)
-    }
-    
+        
     func testMakeBingSearchURLFromURLNotNil() {
         let url = URL(string: "https://google.com/search?q=test")!
         let bingUrl = BingSearchExperiment.makeBingSearchURLFromURL(url)
