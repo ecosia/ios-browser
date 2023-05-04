@@ -13,6 +13,10 @@ struct BingSearchExperiment {
         BingSearchExperimentCounter.increment()
     }
     
+    static func getCounterCurrentCount() -> Int {
+        BingSearchExperimentCounter.read()
+    }
+    
     static func isEnabled() -> Bool {
         Unleash.isEnabled(.bingSearch)
     }
