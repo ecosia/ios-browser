@@ -12,7 +12,6 @@ extension AppDelegate {
         Task {
             do {
                 let env: Environment = AppConstants.BuildChannel == .release ? .production : .staging
-                Environment.current = env
                 try await _ = Unleash.start(env: env)
             } catch {
                 debugPrint(error)
