@@ -15,9 +15,9 @@ Ecosia for iOS is based on a fork of the code of "Firefox for iOS". We want to e
 ## Building
 
 -----------------
-This branch works with [Xcode 14.2](https://developer.apple.com/download/more/?=xcode)
+This branch works with [Xcode 14.3](https://developer.apple.com/download/more/?=xcode)
 
-:construction: **Note**: For building on **Apple Silicon** for Simulator you need to enable **Rosetta** for now.
+:construction: **Note**: For building on **Apple Silicon**, make sure you have selected _the Rosetta-based Simulators_ from Xcode list of devices.
 
 1. Install the latest [Xcode developer tools](https://developer.apple.com/download/applications/) from Apple.
 1. Install, [Brew](https://brew.sh), Node, and a Python3 virtualenv for localization scripts:
