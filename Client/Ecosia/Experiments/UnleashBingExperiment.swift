@@ -18,10 +18,9 @@ struct BingSearchExperiment {
     }
     
     static func makeBingSearchURLFromURL(_ sourceURL: URL) -> URL? {
-        let baseDomain = sourceURL.normalizedHost ?? URL.domain
-        let bingDomain = "bing.com"
-        let bingFullURLString = sourceURL.absoluteString.replacingOccurrences(of: baseDomain, with: bingDomain)
-        return URL(string: bingFullURLString)
+        var urlComponents = URLComponents(url: sourceURL.absoluteURL, resolvingAgainstBaseURL: false)
+        urlComponents?.host = "bing.com"
+        return urlComponents?.url
     }
     
     static func trackAnalytics() {
