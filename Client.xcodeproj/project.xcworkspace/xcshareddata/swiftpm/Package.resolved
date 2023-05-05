@@ -50,7 +50,7 @@
       "location" : "https://github.com/ecosia/ios-core.git",
       "state" : {
         "branch" : "main",
-        "revision" : "8b5863e04a9a0235b00fc7741d6f7bcfc4015cf9"
+        "revision" : "9376d929013ba247ec8d401693fe76c1675dc77b"
       }
     },
     {
@@ -123,6 +123,15 @@
       "state" : {
         "revision" : "7e2c5f3cbbeea68e004915e3a8961e20bd11d824",
         "version" : "1.18.0"
+      }
+    },
+    {
+      "identity" : "swiftsoup",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/scinfu/SwiftSoup",
+      "state" : {
+        "branch" : "2.5.3",
+        "revision" : "f707b8680cddb96dc1855632340a572ef37bbb98"
       }
     },
     {
