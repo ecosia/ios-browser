@@ -36,7 +36,6 @@ final class EcosiaFindInPageBar: UIView {
         let textField = UITextField()
         textField.addTarget(self, action: #selector(didTextChange), for: .editingChanged)
         textField.font = .preferredFont(forTextStyle: .body)
-        textField.placeholder = .localized(.findInPage)
         textField.autocapitalizationType = .none
         textField.autocorrectionType = .no
         textField.inputAssistantItem.leadingBarButtonGroups = []
@@ -154,6 +153,8 @@ final class EcosiaFindInPageBar: UIView {
         backgroundColor = .theme.ecosia.secondaryBackground
         searchView.backgroundColor = .theme.ecosia.tertiaryBackground
         searchTextField.textColor = .theme.ecosia.primaryText
+        searchTextField.attributedPlaceholder = .init(string: .localized(.findInPage),
+                                                      attributes: [.foregroundColor: UIColor.theme.ecosia.secondaryText])
         matchCountLabel.textColor = .theme.ecosia.secondaryText
         previousButton.tintColor = .theme.ecosia.primaryIcon
         nextButton.tintColor = .theme.ecosia.primaryIcon
