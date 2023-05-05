@@ -91,3 +91,16 @@ extension HomepageViewController: YourImpactDelegate {
         homePanelDelegate?.homePanel(didSelectURL: url, visitType: .link, isGoogleTopSite: false)
     }
 }
+
+extension HomepageViewController: NTPBookmarkNudgeViewDelegate {
+    func nudgeCellOpenBookmarks() {
+        homePanelDelegate?.homePanelDidRequestToOpenLibrary(panel: .bookmarks)
+        User.shared.hideBookmarksImportExportTooltip()
+        reloadView()
+    }
+    
+    func nudgeCellDismiss() {
+        User.shared.hideBookmarksImportExportTooltip()
+        reloadView()
+    }
+}

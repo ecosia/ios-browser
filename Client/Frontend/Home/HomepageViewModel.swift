@@ -70,6 +70,7 @@ class HomepageViewModel: FeatureFlaggable, NTPLayoutHighlightDataSource {
     // Child View models
     private var childViewModels: [HomepageViewModelProtocol]
     var headerViewModel: HomeLogoHeaderViewModel
+    var bookmarkNudgeViewModel: NTPBookmarkNudgeViewModel
     var libraryViewModel: NTPLibraryViewModel
     var topSiteViewModel: TopSitesViewModel
     var impactViewModel: NTPImpactViewModel
@@ -91,10 +92,12 @@ class HomepageViewModel: FeatureFlaggable, NTPLayoutHighlightDataSource {
 
         self.headerViewModel = .init()
         self.libraryViewModel = NTPLibraryViewModel()
+        self.bookmarkNudgeViewModel = NTPBookmarkNudgeViewModel()
         self.topSiteViewModel = TopSitesViewModel(profile: profile)
         self.impactViewModel = NTPImpactViewModel(personalCounter: personalCounter)
         self.newsViewModel = NTPNewsViewModel()
         self.childViewModels = [headerViewModel,
+                                bookmarkNudgeViewModel,
                                 libraryViewModel,
                                 topSiteViewModel,
                                 impactViewModel,

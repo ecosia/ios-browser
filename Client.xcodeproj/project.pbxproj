@@ -105,6 +105,8 @@
 		28E08C991AF44EF9009BA2FA /* SQLiteHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FCAE2551ABB531100877008 /* SQLiteHistory.swift */; };
 		28E08C9A1AF44F00009BA2FA /* BrowserSchema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 282915E51AF1A7920006EEB5 /* BrowserSchema.swift */; };
 		28EADE5D1AFC3A78007FB2FB /* UIImageView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28EADE381AFC3898007FB2FB /* UIImageView+Extension.swift */; };
+		2A97D3842A03CA3100FD3FA0 /* NTPBookmarkNudgeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A97D3832A03CA3100FD3FA0 /* NTPBookmarkNudgeCell.swift */; };
+		2A97D3862A03CDC300FD3FA0 /* NTPBookmarkNudgeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A97D3852A03CDC300FD3FA0 /* NTPBookmarkNudgeViewModel.swift */; };
 		2AC54D3129DC50CE0034FA2E /* BookmarksExchange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AC54D3029DC50CE0034FA2E /* BookmarksExchange.swift */; };
 		2AF2723A29F2C54A004CA46F /* EmptyBookmarksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AF2723929F2C54A004CA46F /* EmptyBookmarksView.swift */; };
 		2C1D049B29DDDC8E00ED43BA /* MyImpactCell+ViewFactories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C1D049A29DDDC8E00ED43BA /* MyImpactCell+ViewFactories.swift */; };
@@ -1685,6 +1687,7 @@
 		29A2457FAA8EDADE25A80207 /* co */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = co; path = co.lproj/Shared.strings; sourceTree = "<group>"; };
 		29ED4DACABA3094D30B848F3 /* km */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = km; path = km.lproj/Localizable.strings; sourceTree = "<group>"; };
 		29FB4395A5BF436325131EBC /* es-CL */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-CL"; path = "es-CL.lproj/FindInPage.strings"; sourceTree = "<group>"; };
+		2A03BBDB29FA61E40052C420 /* ios-core */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "ios-core"; path = "../ios-core"; sourceTree = "<group>"; };
 		2A0E484BAB078E39F10F8F2C /* anp */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = anp; path = anp.lproj/ErrorPages.strings; sourceTree = "<group>"; };
 		2A124FACA303C85C43934C4D /* es-AR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-AR"; path = "es-AR.lproj/ErrorPages.strings"; sourceTree = "<group>"; };
 		2A204351BC93B98D6B58BECF /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -1694,6 +1697,8 @@
 		2A4C4EDA8A7CAAAA8CCA80CD /* vi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = vi; path = vi.lproj/AuthenticationManager.strings; sourceTree = "<group>"; };
 		2A5A40D78F386CBD3170D073 /* ia */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ia; path = ia.lproj/Storage.strings; sourceTree = "<group>"; };
 		2A874B029FBA8C728218EB48 /* da */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = da; path = da.lproj/Storage.strings; sourceTree = "<group>"; };
+		2A97D3832A03CA3100FD3FA0 /* NTPBookmarkNudgeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPBookmarkNudgeCell.swift; sourceTree = "<group>"; };
+		2A97D3852A03CDC300FD3FA0 /* NTPBookmarkNudgeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPBookmarkNudgeViewModel.swift; sourceTree = "<group>"; };
 		2AA943B2B505224956D1B5CD /* el */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = el; path = el.lproj/Localizable.strings; sourceTree = "<group>"; };
 		2ABD4C8DA1B0527B9F88E597 /* jv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = jv; path = jv.lproj/ErrorPages.strings; sourceTree = "<group>"; };
 		2AC54D3029DC50CE0034FA2E /* BookmarksExchange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookmarksExchange.swift; sourceTree = "<group>"; };
@@ -6413,6 +6418,7 @@
 				CA506BAD28D1EA080064072B /* NTPLibraryShortcutView.swift */,
 				CA4D9C9828C8D801006AFB5D /* NTPTooltip.Highlight.swift */,
 				CA4D9C9728C8D801006AFB5D /* NTPTooltip.swift */,
+				2A97D3852A03CDC300FD3FA0 /* NTPBookmarkNudgeViewModel.swift */,
 			);
 			path = NTP;
 			sourceTree = "<group>";
@@ -6516,6 +6522,7 @@
 				CA4D9C9928C8D801006AFB5D /* NTPLogoCell.swift */,
 				CA506BA928D1E96E0064072B /* NTPLibraryCell.swift */,
 				CA4D9C9528C8D801006AFB5D /* NTPImpactCell.swift */,
+				2A97D3832A03CA3100FD3FA0 /* NTPBookmarkNudgeCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -7458,6 +7465,7 @@
 		F84B21B51A090F8100AAB793 = {
 			isa = PBXGroup;
 			children = (
+				2A03BBDB29FA61E40052C420 /* ios-core */,
 				C8E2E80623D20FB3005AACE6 /* RustFxA */,
 				2FA435FC1ABB83B4008031D1 /* Account */,
 				F84B21C01A090F8100AAB793 /* Client */,
@@ -9173,6 +9181,7 @@
 				E19B38B528A42EBC00D8C541 /* WallpaperCellViewModel.swift in Sources */,
 				8A5BD95C2878AA74000FE773 /* PinnedSite.swift in Sources */,
 				CA220A6E28D0721B000E66E6 /* NimbusFeatureFlagLayer.swift in Sources */,
+				2A97D3842A03CA3100FD3FA0 /* NTPBookmarkNudgeCell.swift in Sources */,
 				D3B6923F1B9F9A58004B87A4 /* FindInPageHelper.swift in Sources */,
 				F85C7F122721048E004BDBA4 /* Layout.swift in Sources */,
 				CA4D9CFA28C8D801006AFB5D /* NewsCell.swift in Sources */,
@@ -9507,6 +9516,7 @@
 				D3A9949D1A3686BD008AD1AC /* Tab.swift in Sources */,
 				8AD40FD127BADCBA00672675 /* ToolbarButton.swift in Sources */,
 				A93067E81D0FE18E00C49C6E /* NightModeHelper.swift in Sources */,
+				2A97D3862A03CDC300FD3FA0 /* NTPBookmarkNudgeViewModel.swift in Sources */,
 				8A35497227BD672700534A65 /* ToggleSwitch.swift in Sources */,
 				213B67A627CE682B000542F5 /* StartAtHomeHelper.swift in Sources */,
 				E10A1F752863BC51001EEA80 /* InactiveTabItemCell.swift in Sources */,
@@ -14438,7 +14448,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = main;
+				branch = "MOB-1774_Bookmarks_New_Badge";
 				kind = branch;
 			};
 		};
