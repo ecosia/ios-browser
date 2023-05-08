@@ -111,6 +111,8 @@
 		2C2A91291FA2410D002E36BD /* HistoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A91281FA2410D002E36BD /* HistoryTests.swift */; };
 		2C31A7A91E8BFB2200DAC646 /* ReaderViewUITest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C31A7A81E8BFB2200DAC646 /* ReaderViewUITest.swift */; };
 		2C31A8471E8D447F00DAC646 /* HomePageSettingsUITest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C31A8461E8D447F00DAC646 /* HomePageSettingsUITest.swift */; };
+		2C3357E22A09227100E76A48 /* AppInfo+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3357E02A09227100E76A48 /* AppInfo+Ecosia.swift */; };
+		2C3357E32A09227100E76A48 /* DeviceInfo+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3357E12A09227100E76A48 /* DeviceInfo+Ecosia.swift */; };
 		2C3406C81E719F00000FD889 /* SettingsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3406C71E719F00000FD889 /* SettingsTest.swift */; };
 		2C3518BB29C34A0500D03ECD /* URLBarViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3518BA29C34A0500D03ECD /* URLBarViewTests.swift */; };
 		2C473BD0209778900008C853 /* DownloadFilesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C473BCF209778900008C853 /* DownloadFilesTests.swift */; };
@@ -1709,6 +1711,8 @@
 		2C31A7A81E8BFB2200DAC646 /* ReaderViewUITest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReaderViewUITest.swift; sourceTree = "<group>"; };
 		2C31A8461E8D447F00DAC646 /* HomePageSettingsUITest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomePageSettingsUITest.swift; sourceTree = "<group>"; };
 		2C33410CB7E921A125379D7C /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
+		2C3357E02A09227100E76A48 /* AppInfo+Ecosia.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AppInfo+Ecosia.swift"; sourceTree = "<group>"; };
+		2C3357E12A09227100E76A48 /* DeviceInfo+Ecosia.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DeviceInfo+Ecosia.swift"; sourceTree = "<group>"; };
 		2C3406C71E719F00000FD889 /* SettingsTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsTest.swift; sourceTree = "<group>"; };
 		2C3518BA29C34A0500D03ECD /* URLBarViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLBarViewTests.swift; sourceTree = "<group>"; };
 		2C473BCF209778900008C853 /* DownloadFilesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadFilesTests.swift; sourceTree = "<group>"; };
@@ -6585,6 +6589,8 @@
 		CAEB316A28D0BFC000ADC9DB /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				2C3357E02A09227100E76A48 /* AppInfo+Ecosia.swift */,
+				2C3357E12A09227100E76A48 /* DeviceInfo+Ecosia.swift */,
 				CA4D9C8928C8D801006AFB5D /* BrowserViewController+Ecosia.swift */,
 				CAEB316628D0B38900ADC9DB /* HomepageViewController+Ecosia.swift */,
 				CA4D9C8A28C8D801006AFB5D /* UIFont+Ecosia.swift */,
@@ -9166,6 +9172,7 @@
 				C84655E62887398700861B4A /* WallpaperCollection.swift in Sources */,
 				DFB2610B277CA7D300DDDD38 /* LegacyWallpaperSettingsViewController.swift in Sources */,
 				CACF090629951001007451D9 /* Unleash.DefaultBrowser.swift in Sources */,
+				2C3357E32A09227100E76A48 /* DeviceInfo+Ecosia.swift in Sources */,
 				EBF47E701F7979DF00899189 /* TelemetryWrapper.swift in Sources */,
 				CA4D9CE628C8D801006AFB5D /* EcosiaTheme.swift in Sources */,
 				8AD40FCF27BADC6B00672675 /* URLTextField.swift in Sources */,
@@ -9592,6 +9599,7 @@
 				E4C358551AF144BA00299F7E /* FSReadingList.m in Sources */,
 				8AE1E1CB27B18F560024C45E /* SearchBarSettingsViewController.swift in Sources */,
 				8AD40FC527BADC1F00672675 /* TabToolbarHelper.swift in Sources */,
+				2C3357E22A09227100E76A48 /* AppInfo+Ecosia.swift in Sources */,
 				CA1453C1290943270000957F /* NTPNewsViewModel.swift in Sources */,
 				CA8BCC4028D340AF0020BC50 /* TabCell+Ecosia.swift in Sources */,
 				96C11E992864BA2C00840E7C /* ServiceProvider.swift in Sources */,
