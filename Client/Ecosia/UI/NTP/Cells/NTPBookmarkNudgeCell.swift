@@ -30,8 +30,6 @@ final class NTPBookmarkNudgeCell: UICollectionViewCell, NotificationThemeable, R
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(UIImage(named: "xmark"), for: .normal)
-//        button.contentVerticalAlignment = .fill
-//        button.contentHorizontalAlignment = .fill
         button.imageView?.contentMode = .scaleAspectFill
         button.tintColor = .theme.ecosia.primaryText
         button.imageEdgeInsets = UIEdgeInsets(equalInset: 10)

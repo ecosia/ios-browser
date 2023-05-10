@@ -7,6 +7,7 @@ import UIKit
 protocol NTPTooltipDelegate: AnyObject {
     func ntpTooltipTapped(_ tooltip: NTPTooltip?)
     func ntpTooltipCloseTapped(_ tooltip: NTPTooltip?)
+    func ntpTooltipLinkTapped(_ tooltip: NTPTooltip?)
     func reloadTooltip()
 }
 
@@ -38,7 +39,6 @@ final class NTPTooltip: UICollectionReusableView, NotificationThemeable {
         button.isHidden = true
         return button
     }()
-    private var linkHandler: (() -> Void)?
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -139,8 +139,7 @@ final class NTPTooltip: UICollectionReusableView, NotificationThemeable {
         linkButton.isHidden = true
     }
     
-    func setLink(_ text: String, action: @escaping () -> Void) {
-        linkHandler = action
+    func setLink(_ text: String) {
         let titleString = NSMutableAttributedString(string: text)
         titleString.addAttribute(
           .underlineStyle,
@@ -181,7 +180,7 @@ final class NTPTooltip: UICollectionReusableView, NotificationThemeable {
     }
     
     @objc private func linkButtonTapped() {
-        linkHandler?()
+        delegate?.ntpTooltipLinkTapped(self)
     }
 
     override func prepareForReuse() {

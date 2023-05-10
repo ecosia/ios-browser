@@ -132,7 +132,9 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel, CanRemoveQuickActio
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        showBookmarksTooltip()
+        if User.shared.showsBookmarksImportExportTooltip {
+            showBookmarksTooltip()
+        }
     }
     
     private func showBookmarksTooltip() {
@@ -141,14 +143,7 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel, CanRemoveQuickActio
         bookmarksTooltip.delegate = self
         bookmarksTooltip.alpha = 0.0
         view.addSubview(self.bookmarksTooltip)
-        
-        bookmarksTooltip.setLink("Learn more") { [weak self] in
-            self?.libraryPanelDelegate?.libraryPanel(
-                didSelectURLString: .localized(.bookmarkImportHelpscoutURL),
-                visitType: .link
-            )
-        }
-        
+
         NSLayoutConstraint.activate([
             bookmarksTooltip.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             bookmarksTooltip.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
@@ -161,6 +156,8 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel, CanRemoveQuickActio
     }
     
     private func hideBookmarksTooltip() {
+        User.shared.hideBookmarksImportExportTooltip()
+        
         guard bookmarksTooltip.superview != nil else { return }
         bookmarksTooltip.delegate = nil
         
@@ -177,7 +174,6 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel, CanRemoveQuickActio
         if self.state == .bookmarks(state: .inFolderEditMode) {
             self.tableView.setEditing(true, animated: true)
         }
-                
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -654,6 +650,7 @@ extension BookmarksPanel {
     }
     
     func showMoreDialog() {
+        hideBookmarksTooltip()
         moreButton.isEnabled = false
         let importAction = UIAlertAction(title: .localized(.importBookmarks), style: .default, handler: { [weak self] _ in self?.importBookmarksActionHandler() })
         let exportAction = UIAlertAction(title: .localized(.exportBookmarks), style: .default, handler: { [weak self] _ in self?.exportBookmarksActionHandler() })
@@ -777,10 +774,17 @@ extension BookmarksPanel: NTPTooltipDelegate {
     }
     
     func ntpTooltipTapped(_ tooltip: NTPTooltip?) {
-        // no-op
+        hideBookmarksTooltip()
     }
     
     func ntpTooltipCloseTapped(_ tooltip: NTPTooltip?) {
         hideBookmarksTooltip()
+    }
+    
+    func ntpTooltipLinkTapped(_ tooltip: NTPTooltip?) {
+        libraryPanelDelegate?.libraryPanel(
+            didSelectURLString: .localized(.bookmarkImportHelpscoutURL),
+            visitType: .link
+        )
     }
 }

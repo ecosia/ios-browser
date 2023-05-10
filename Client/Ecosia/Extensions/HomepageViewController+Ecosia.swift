@@ -69,6 +69,10 @@ extension HomepageViewController: NTPTooltipDelegate {
     func ntpTooltipCloseTapped(_ tooltip: NTPTooltip?) {
         // no-op
     }
+    
+    func ntpTooltipLinkTapped(_ tooltip: NTPTooltip?) {
+        // no-op
+    }
 }
 
 extension HomepageViewController: NTPLibraryDelegate {
@@ -99,12 +103,12 @@ extension HomepageViewController: YourImpactDelegate {
 extension HomepageViewController: NTPBookmarkNudgeViewDelegate {
     func nudgeCellOpenBookmarks() {
         homePanelDelegate?.homePanelDidRequestToOpenLibrary(panel: .bookmarks)
-        User.shared.hideBookmarksImportExportTooltip()
+        User.shared.hideBookmarksNTPNudgeCard()
         reloadView()
     }
     
     func nudgeCellDismiss() {
-        User.shared.hideBookmarksImportExportTooltip()
+        User.shared.hideBookmarksNTPNudgeCard()
         reloadView()
     }
 }
