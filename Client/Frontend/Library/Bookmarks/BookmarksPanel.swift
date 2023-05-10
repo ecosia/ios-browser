@@ -83,7 +83,14 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel, CanRemoveQuickActio
     }()
     
     private lazy var emptyHeader = EmptyHeader(icon: "bookmarksEmpty", title: .localized(.noBookmarksYet), subtitle: .localized(.AddYourFavoritePages))
-
+    
+    private let bookmarksTooltip: NTPTooltip = {
+        let tooltip = NTPTooltip()
+        tooltip.tailPosition = .leading
+        tooltip.setText("Tap here to import bookmarks from other browsers.")
+        return tooltip
+    }()
+    
     // MARK: - Init
 
     init(viewModel: BookmarksPanelViewModel,
@@ -120,6 +127,48 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel, CanRemoveQuickActio
         tableView.allowsSelectionDuringEditing = true
         tableView.backgroundColor = UIColor.theme.homePanel.panelBackground
         tableView.contentInset.top = 32
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        showBookmarksTooltip()
+    }
+    
+    private func showBookmarksTooltip() {
+        guard bookmarksTooltip.superview == nil else { return }
+        
+        bookmarksTooltip.delegate = self
+        bookmarksTooltip.alpha = 0.0
+        view.addSubview(self.bookmarksTooltip)
+        
+        bookmarksTooltip.setLink("Learn more") { [weak self] in
+            self?.libraryPanelDelegate?.libraryPanel(
+                didSelectURLString: .localized(.bookmarkImportHelpscoutURL),
+                visitType: .link
+            )
+        }
+        
+        NSLayoutConstraint.activate([
+            bookmarksTooltip.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            bookmarksTooltip.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            bookmarksTooltip.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -((navigationController?.toolbar.bounds.size.height ?? 0) + 32))
+        ])
+        
+        UIView.animate(withDuration: 0.3) {
+            self.bookmarksTooltip.alpha = 1.0
+        }
+    }
+    
+    private func hideBookmarksTooltip() {
+        guard bookmarksTooltip.superview != nil else { return }
+        bookmarksTooltip.delegate = nil
+        
+        UIView.animate(withDuration: 0.3, animations: {
+            self.bookmarksTooltip.alpha = 0.0
+        }) { _ in
+            self.bookmarksTooltip.removeFromSuperview()
+        }
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -719,5 +768,19 @@ extension BookmarksPanel {
 extension BookmarksPanel: UIDocumentInteractionControllerDelegate {
     func documentInteractionControllerViewControllerForPreview(_ controller: UIDocumentInteractionController) -> UIViewController {
         self
+    }
+}
+
+extension BookmarksPanel: NTPTooltipDelegate {
+    func reloadTooltip() {
+        // no-op
+    }
+    
+    func ntpTooltipTapped(_ tooltip: NTPTooltip?) {
+        // no-op
+    }
+    
+    func ntpTooltipCloseTapped(_ tooltip: NTPTooltip?) {
+        hideBookmarksTooltip()
     }
 }
