@@ -562,7 +562,25 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
             let engine = searchEngines.defaultEngine
             guard let suggestions = suggestions else { return }
             guard let suggestion = suggestions[safe: indexPath.row] else { return }
-            if let url = engine.searchURLForQuery(suggestion) {
+            
+            /*
+             Ecosia: Bing Search Experiment
+             revert `url` from `var` to `let`
+             when the Bing experiment will be removed
+             */
+            if var url = engine.searchURLForQuery(suggestion) {
+                
+                /*
+                 Ecosia: Bing Search Experiment
+                 remove this if block when the Bing experiment will be removed
+                 */
+                if BingSearchExperiment.isEnabled(),
+                   let bingSearchURL = BingSearchExperiment.makeBingSearchURLFromURL(url) {
+                    url = bingSearchURL
+                    BingSearchExperiment.trackAnalytics()
+                    BingSearchExperiment.incrementCounter()
+                }
+                
                 searchDelegate?.searchViewController(self, didSelectURL: url, searchTerm: suggestion)
             }
         case .openedTabs:

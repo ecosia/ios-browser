@@ -121,6 +121,19 @@ final class Analytics {
 
         tracker.track(event)
     }
+    
+    func userSearchViaBingABTest() {
+        let event = Structured(category: Category.abTest.rawValue,
+                              action: "user_search")
+            .label("search_key")
+
+        // add A/B Test context
+        if let context = Self.getTestContext(from: .bingSearch) {
+            event.contexts.add(context)
+        }
+
+        tracker.track(event)
+    }
 
     func defaultBrowserSettings() {
         tracker

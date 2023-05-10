@@ -4,6 +4,7 @@ extension Analytics {
     enum Category: String {
         case
         activity,
+        abTest = "ab_Test",
         browser,
         external,
         migration,
