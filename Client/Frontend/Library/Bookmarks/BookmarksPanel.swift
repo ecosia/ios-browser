@@ -87,7 +87,8 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel, CanRemoveQuickActio
     private let bookmarksTooltip: NTPTooltip = {
         let tooltip = NTPTooltip()
         tooltip.tailPosition = .leading
-        tooltip.setText("Tap here to import bookmarks from other browsers.")
+        tooltip.setText(.localized(.bookmarksToolTipText))
+        tooltip.setLink(.localized(.learnMore))
         return tooltip
     }()
     

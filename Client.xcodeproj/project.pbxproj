@@ -1689,7 +1689,6 @@
 		29A2457FAA8EDADE25A80207 /* co */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = co; path = co.lproj/Shared.strings; sourceTree = "<group>"; };
 		29ED4DACABA3094D30B848F3 /* km */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = km; path = km.lproj/Localizable.strings; sourceTree = "<group>"; };
 		29FB4395A5BF436325131EBC /* es-CL */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-CL"; path = "es-CL.lproj/FindInPage.strings"; sourceTree = "<group>"; };
-		2A03BBDB29FA61E40052C420 /* ios-core */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "ios-core"; path = "../ios-core"; sourceTree = "<group>"; };
 		2A0E484BAB078E39F10F8F2C /* anp */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = anp; path = anp.lproj/ErrorPages.strings; sourceTree = "<group>"; };
 		2A124FACA303C85C43934C4D /* es-AR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-AR"; path = "es-AR.lproj/ErrorPages.strings"; sourceTree = "<group>"; };
 		2A204351BC93B98D6B58BECF /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -7487,7 +7486,6 @@
 		F84B21B51A090F8100AAB793 = {
 			isa = PBXGroup;
 			children = (
-				2A03BBDB29FA61E40052C420 /* ios-core */,
 				C8E2E80623D20FB3005AACE6 /* RustFxA */,
 				2FA435FC1ABB83B4008031D1 /* Account */,
 				F84B21C01A090F8100AAB793 /* Client */,
