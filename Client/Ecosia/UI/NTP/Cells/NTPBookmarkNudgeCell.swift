@@ -42,6 +42,7 @@ final class NTPBookmarkNudgeCell: UICollectionViewCell, NotificationThemeable, R
         label.setContentHuggingPriority(.required, for: .vertical)
         label.setContentCompressionResistancePriority(.required, for: .vertical)
         label.text = "You can now import bookmarks from other browsers to Ecosia."
+        label.text = .localized(.bookmarksNtpNudgeCardDescription)
         label.numberOfLines = 0
         return label
     }()
@@ -52,7 +53,7 @@ final class NTPBookmarkNudgeCell: UICollectionViewCell, NotificationThemeable, R
         button.layer.cornerRadius = 15
         button.layer.borderWidth = 1
         button.layer.borderColor = UIColor.theme.ecosia.primaryText.cgColor
-        button.setTitle("Open bookmarks", for: .normal)
+        button.setTitle(.localized(.bookmarksNtpNudgeCardButtonTitle), for: .normal)
         button.setTitleColor(.theme.ecosia.primaryText, for: .normal)
         button.titleLabel?.font = UIFontMetrics(forTextStyle: .callout).scaledFont(for: .systemFont(ofSize: 16))
         button.contentEdgeInsets = UIEdgeInsets(horizontal: 12)

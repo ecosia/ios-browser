@@ -194,6 +194,8 @@ extension String {
         case bookmarksImported = "Bookmarks imported"
         case bookmarksEmptyViewItem0 = "Tap the bookmark icon when you find a page you want to save"
         case bookmarksEmptyViewItem1 = "You can also import bookmarks:\n1. Export your bookmarks from another browser.\n2. Tap on the link below to import the file with your bookmarks."
+        case bookmarksNtpNudgeCardDescription = "You can now import bookmarks from other browsers to Ecosia."
+        case bookmarksNtpNudgeCardButtonTitle = "Open bookmarks"
         case bookmarksToolTipText = "Tap here to import bookmarks from other browsers."
     }
 }
