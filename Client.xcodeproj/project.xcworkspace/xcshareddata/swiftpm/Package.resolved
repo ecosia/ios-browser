@@ -49,8 +49,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ecosia/ios-core.git",
       "state" : {
-        "branch" : "MOB-1774_Bookmarks_New_Badge",
-        "revision" : "a12b8a3878b59390223753f0c6822380166f0c8c"
+        "branch" : "main",
+        "revision" : "d211925eb4b60dc4929bd6f5db470fcda8eaface"
       }
     },
     {

@@ -14470,7 +14470,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = "MOB-1774_Bookmarks_New_Badge";
+				branch = main;
 				kind = branch;
 			};
 		};
