@@ -41,7 +41,6 @@ final class NTPBookmarkNudgeCell: UICollectionViewCell, NotificationThemeable, R
         label.translatesAutoresizingMaskIntoConstraints = false
         label.setContentHuggingPriority(.required, for: .vertical)
         label.setContentCompressionResistancePriority(.required, for: .vertical)
-        label.text = "You can now import bookmarks from other browsers to Ecosia."
         label.text = .localized(.bookmarksNtpNudgeCardDescription)
         label.numberOfLines = 0
         return label
@@ -89,7 +88,7 @@ final class NTPBookmarkNudgeCell: UICollectionViewCell, NotificationThemeable, R
         
         NSLayoutConstraint.activate([
             backgroundCard.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            backgroundCard.topAnchor.constraint(equalTo: contentView.topAnchor),
+            backgroundCard.topAnchor.constraint(equalTo: contentView.topAnchor, constant: UX.insetMargin),
             backgroundCard.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
 
             badge.heightAnchor.constraint(equalToConstant: UX.badgeHeight).priority(.required),
@@ -115,7 +114,7 @@ final class NTPBookmarkNudgeCell: UICollectionViewCell, NotificationThemeable, R
             icon.widthAnchor.constraint(equalToConstant: 64).priority(.required),
             icon.heightAnchor.constraint(equalToConstant: 64).priority(.required),
             
-            backgroundCard.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+            backgroundCard.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -UX.insetMargin)
         ])
         
         closeButton.addTarget(self, action: #selector(handleClose), for: .touchUpInside)
