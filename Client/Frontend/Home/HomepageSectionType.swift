@@ -55,7 +55,7 @@ extension HomepageSectionType {
         var insets: CGFloat = traits.horizontalSizeClass == .regular ? 100 : 0
 
         switch self {
-        case .libraryShortcuts, .topSites, .impact, .news:
+        case .libraryShortcuts, .topSites, .impact, .news, .bookmarkNudge:
             guard let window = UIApplication.shared.windows.first(where: \.isKeyWindow) else { return MinimumInsets
             }
             let safeAreaInsets = window.safeAreaInsets.left

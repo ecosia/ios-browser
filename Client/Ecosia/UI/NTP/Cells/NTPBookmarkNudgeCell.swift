@@ -87,9 +87,9 @@ final class NTPBookmarkNudgeCell: UICollectionViewCell, NotificationThemeable, R
         backgroundCard.addSubview(icon)
         
         NSLayoutConstraint.activate([
-            backgroundCard.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: UX.insetMargin),
-            backgroundCard.topAnchor.constraint(equalTo: contentView.topAnchor, constant: UX.insetMargin),
-            backgroundCard.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -UX.insetMargin),
+            backgroundCard.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            backgroundCard.topAnchor.constraint(equalTo: contentView.topAnchor),
+            backgroundCard.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
 
             badge.heightAnchor.constraint(equalToConstant: UX.badgeHeight).priority(.required),
             badge.topAnchor.constraint(equalTo: backgroundCard.topAnchor, constant: UX.insetMargin),
@@ -114,7 +114,7 @@ final class NTPBookmarkNudgeCell: UICollectionViewCell, NotificationThemeable, R
             icon.widthAnchor.constraint(equalToConstant: 64).priority(.required),
             icon.heightAnchor.constraint(equalToConstant: 64).priority(.required),
             
-            backgroundCard.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -UX.insetMargin)
+            backgroundCard.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
         
         closeButton.addTarget(self, action: #selector(handleClose), for: .touchUpInside)
