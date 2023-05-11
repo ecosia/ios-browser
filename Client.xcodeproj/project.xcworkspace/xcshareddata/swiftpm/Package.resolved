@@ -49,8 +49,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ecosia/ios-core.git",
       "state" : {
-        "branch" : "MOB-1794-subtask-1798-cloudflare-session-endpoint",
-        "revision" : "5e827378b5145fd99e70687a646238fddb8ac8c2"
+        "branch" : "main",
+        "revision" : "9376d929013ba247ec8d401693fe76c1675dc77b"
       }
     },
     {
