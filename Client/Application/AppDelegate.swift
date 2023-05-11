@@ -116,11 +116,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             self.browserViewController.ratingPromptManager.updateData()
         }
 
-        // Ecosia: fetch Feature Management config
-        fetchFeatureFeatureManagementConfigIfNeeded()
-        
-        // Ecosia: send session to MMP
-        sendMMPSession()
+        // Ecosia
+        FeatureManagement.fetchConfiguration()
+        MMP.sendSession()
     }
 
     func applicationWillResignActive(_ application: UIApplication) {

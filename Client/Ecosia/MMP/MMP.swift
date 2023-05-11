@@ -6,23 +6,11 @@ import Foundation
 import Core
 import Shared
 
-extension AppDelegate {
-
-    func fetchFeatureFeatureManagementConfigIfNeeded() {
-        Task {
-            do {
-                let env: Environment = AppConstants.BuildChannel == .release ? .production : .staging
-                try await _ = Unleash.start(env: env)
-            } catch {
-                debugPrint(error)
-            }
-        }
-    }
-}
-
-extension AppDelegate {
+struct MMP {
     
-    func sendMMPSession() {
+    private init() {}
+    
+    static func sendSession() {
         Task {
             do {
                 let appDeviceInfo = AppDeviceInfo(identifier: UUID().uuidString,
