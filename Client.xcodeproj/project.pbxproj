@@ -113,6 +113,8 @@
 		2C31A8471E8D447F00DAC646 /* HomePageSettingsUITest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C31A8461E8D447F00DAC646 /* HomePageSettingsUITest.swift */; };
 		2C3357E22A09227100E76A48 /* AppInfo+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3357E02A09227100E76A48 /* AppInfo+Ecosia.swift */; };
 		2C3357E32A09227100E76A48 /* DeviceInfo+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3357E12A09227100E76A48 /* DeviceInfo+Ecosia.swift */; };
+		2C3357E62A0D094900E76A48 /* SingularSessionParametersMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3357E52A0D094900E76A48 /* SingularSessionParametersMapper.swift */; };
+		2C3357EA2A0D102C00E76A48 /* AppDeviceInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3357E92A0D102C00E76A48 /* AppDeviceInfo.swift */; };
 		2C3406C81E719F00000FD889 /* SettingsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3406C71E719F00000FD889 /* SettingsTest.swift */; };
 		2C3518BB29C34A0500D03ECD /* URLBarViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3518BA29C34A0500D03ECD /* URLBarViewTests.swift */; };
 		2C473BD0209778900008C853 /* DownloadFilesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C473BCF209778900008C853 /* DownloadFilesTests.swift */; };
@@ -1713,6 +1715,8 @@
 		2C33410CB7E921A125379D7C /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
 		2C3357E02A09227100E76A48 /* AppInfo+Ecosia.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AppInfo+Ecosia.swift"; sourceTree = "<group>"; };
 		2C3357E12A09227100E76A48 /* DeviceInfo+Ecosia.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DeviceInfo+Ecosia.swift"; sourceTree = "<group>"; };
+		2C3357E52A0D094900E76A48 /* SingularSessionParametersMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingularSessionParametersMapper.swift; sourceTree = "<group>"; };
+		2C3357E92A0D102C00E76A48 /* AppDeviceInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDeviceInfo.swift; sourceTree = "<group>"; };
 		2C3406C71E719F00000FD889 /* SettingsTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsTest.swift; sourceTree = "<group>"; };
 		2C3518BA29C34A0500D03ECD /* URLBarViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLBarViewTests.swift; sourceTree = "<group>"; };
 		2C473BCF209778900008C853 /* DownloadFilesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadFilesTests.swift; sourceTree = "<group>"; };
@@ -5139,6 +5143,15 @@
 			name = Extensions;
 			sourceTree = "<group>";
 		};
+		2C3357E42A0D092A00E76A48 /* MobileMeasurementPartner */ = {
+			isa = PBXGroup;
+			children = (
+				2C3357E52A0D094900E76A48 /* SingularSessionParametersMapper.swift */,
+				2C3357E92A0D102C00E76A48 /* AppDeviceInfo.swift */,
+			);
+			path = MobileMeasurementPartner;
+			sourceTree = "<group>";
+		};
 		2C5850022A02903F009D7703 /* Experiments */ = {
 			isa = PBXGroup;
 			children = (
@@ -6386,6 +6399,7 @@
 		CA4D9C8628C8D801006AFB5D /* Ecosia */ = {
 			isa = PBXGroup;
 			children = (
+				2C3357E42A0D092A00E76A48 /* MobileMeasurementPartner */,
 				2C5850022A02903F009D7703 /* Experiments */,
 				CA4D9CDE28C8D801006AFB5D /* Analytics */,
 				CAEB316A28D0BFC000ADC9DB /* Extensions */,
@@ -9408,6 +9422,7 @@
 				D0E55C4F1FB4FD23006DC274 /* FormPostHelper.swift in Sources */,
 				E118B9292862674E00C84831 /* InactiveTabItemCellModel.swift in Sources */,
 				E650754E1E37F6AE006961AC /* CGRect+Extension.swift in Sources */,
+				2C3357EA2A0D102C00E76A48 /* AppDeviceInfo.swift in Sources */,
 				8AE1E1D227B1ADC40024C45E /* TopBottomInterchangeable.swift in Sources */,
 				C8B0F5F4283B7CCE007AE65D /* PocketProvider.swift in Sources */,
 				D3972BF41C22412B00035B87 /* TitleActivityItemProvider.swift in Sources */,
@@ -9483,6 +9498,7 @@
 				1DA3CE5F24EEE7C600422BB2 /* SiteArchiver.swift in Sources */,
 				CAB544C628F5AE6B00657722 /* PageActionMenu.swift in Sources */,
 				D04D1B92209790B60074B35F /* Toast.swift in Sources */,
+				2C3357E62A0D094900E76A48 /* SingularSessionParametersMapper.swift in Sources */,
 				127773B229E98F75008A6A64 /* EcosiaFindInPageBar.swift in Sources */,
 				8AD5702F27AB4DEA005BFDC8 /* UIStackView+Extension.swift in Sources */,
 				CA4D9CF728C8D801006AFB5D /* NewsController.swift in Sources */,
