@@ -8,7 +8,7 @@ import Shared
 
 extension AppDelegate {
 
-    func startExperimentation() {
+    func fetchFeatureFeatureManagementConfigIfNeeded() {
         Task {
             do {
                 let env: Environment = AppConstants.BuildChannel == .release ? .production : .staging
@@ -22,7 +22,7 @@ extension AppDelegate {
 
 extension AppDelegate {
     
-    func sendAppAndDeviceInfoToMobileMeasurementPlatformService() {
+    func sendMMPSession() {
         Task {
             do {
                 let appDeviceInfo = AppDeviceInfo(identifier: UUID().uuidString,

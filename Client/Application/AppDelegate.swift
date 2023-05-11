@@ -116,9 +116,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             self.browserViewController.ratingPromptManager.updateData()
         }
 
-        // Ecosia: start experimentation
-        startExperimentation()
-        sendAppAndDeviceInfoToMobileMeasurementPlatformService()
+        // Ecosia: fetch Feature Management config
+        fetchFeatureFeatureManagementConfigIfNeeded()
+        
+        // Ecosia: send session to MMP
+        sendMMPSession()
     }
 
     func applicationWillResignActive(_ application: UIApplication) {
