@@ -18,5 +18,31 @@ extension AppDelegate {
             }
         }
     }
+}
 
+extension AppDelegate {
+    
+    func sendAppAndDeviceInfoToMobileMeasurementPlatformService() {
+        Task {
+            do {
+                let appDeviceInfo = AppDeviceInfo(identifier: UUID().uuidString,
+                                                  platform: DeviceInfo.platform,
+                                                  bundleId: AppInfo.bundleIdentifier,
+                                                  osVersion: DeviceInfo.osVersionNumber,
+                                                  deviceManufacturer: DeviceInfo.manufacturer,
+                                                  deviceModel: DeviceInfo.deviceModelName,
+                                                  locale: DeviceInfo.currentLocale,
+                                                  deviceBuildVersion: DeviceInfo.osBuildNumber,
+                                                  appVersion: AppInfo.appVersion,
+                                                  installReceipt: AppInfo.installReceipt,
+                                                  installTime: NSDate().timeIntervalSince1970,
+                                                  updateTime: NSDate().timeIntervalSince1970)
+                let parameters = SingularSessionParametersMapper.map(appDeviceInfo)
+                let env: Environment = AppConstants.BuildChannel == .release ? .production : .staging
+                try await Singular.sendSessionInfo(sessionParameters: parameters, env: env)
+            } catch {
+                debugPrint(error)
+            }
+        }
+    }
 }

@@ -118,6 +118,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         // Ecosia: start experimentation
         startExperimentation()
+        sendAppAndDeviceInfoToMobileMeasurementPlatformService()
     }
 
     func applicationWillResignActive(_ application: UIApplication) {
