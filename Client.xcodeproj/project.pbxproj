@@ -14490,7 +14490,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = "MOB-1794-subtask-1798-cloudflare-session-endpoint";
+				branch = main;
 				kind = branch;
 			};
 		};
