@@ -9,13 +9,10 @@ extension AppInfo {
     
     public static var installReceipt: String? {
         
-        let receiptURL = Bundle.main.appStoreReceiptURL
-        
-        if let receiptURL = receiptURL, let receiptData = try? Data(contentsOf: receiptURL) {
-            return receiptData.base64EncodedString(options: [])
-            
+        guard let receiptURL = Bundle.main.appStoreReceiptURL, let receiptData = try? Data(contentsOf: receiptURL) else {
+            return nil
         }
         
-        return nil
+        return receiptData.base64EncodedString(options: [])
     }
 }
