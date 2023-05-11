@@ -67,8 +67,8 @@ class LibraryViewModelTests: XCTestCase {
 
         let toolbarItems = panel.bottomToolbarItems
         // We need to account for the flexibleSpace item
-        XCTAssertEqual(toolbarItems.count, 2, "Expected Edit button and flexibleSpace")
-        XCTAssertEqual(toolbarItems[1].title, "Edit")
+        XCTAssertEqual(toolbarItems.count, 3, "Expected Edit button and flexibleSpace")
+        XCTAssertEqual(toolbarItems[2].title, "Edit")
     }
 
     func testBookmarksButtons_SubFolder() {
@@ -131,7 +131,7 @@ class LibraryViewModelTests: XCTestCase {
         XCTAssertEqual(sut.currentPanelState, .bookmarks(state: .mainView))
         let toolbarItems = panel.bottomToolbarItems
         // We need to account for the flexibleSpace item
-        XCTAssertEqual(toolbarItems.count, 2, "Expected Edit button and flexibleSpace")
+        XCTAssertEqual(toolbarItems.count, 3, "Expected Edit button and flexibleSpace")
     }
 
     func testBookmarksBack_ForInFolder() {
@@ -147,7 +147,7 @@ class LibraryViewModelTests: XCTestCase {
         XCTAssertEqual(sut.currentPanelState, .bookmarks(state: .mainView))
         let toolbarItems = panel.bottomToolbarItems
         // We need to account for the flexibleSpace item
-        XCTAssertEqual(toolbarItems.count, 2, "Expected Edit button and flexibleSpace")
+        XCTAssertEqual(toolbarItems.count, 3, "Expected Edit button and flexibleSpace")
     }
 
     func testBookmarksBack_ForItemEditMode() {
