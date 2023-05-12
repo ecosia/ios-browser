@@ -9,12 +9,11 @@ import Shared
 struct MMP {
     
     private init() {}
-    
+        
     static func sendSession() {
         Task {
             do {
-                let appDeviceInfo = AppDeviceInfo(identifier: UUID().uuidString,
-                                                  platform: DeviceInfo.platform,
+                let appDeviceInfo = AppDeviceInfo(platform: DeviceInfo.platform,
                                                   bundleId: AppInfo.bundleIdentifier,
                                                   osVersion: DeviceInfo.osVersionNumber,
                                                   deviceManufacturer: DeviceInfo.manufacturer,
