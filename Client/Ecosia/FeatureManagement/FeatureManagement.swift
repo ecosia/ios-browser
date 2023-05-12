@@ -3,12 +3,14 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
-import Core
 import Shared
+import Core
 
-extension AppDelegate {
-
-    func startExperimentation() {
+struct FeatureManagement {
+    
+    private init() {}
+    
+    static func fetchConfiguration() {
         Task {
             do {
                 let env: Environment = AppConstants.BuildChannel == .release ? .production : .staging
@@ -17,6 +19,5 @@ extension AppDelegate {
                 debugPrint(error)
             }
         }
-    }
-
+    }    
 }
