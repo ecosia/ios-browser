@@ -65,14 +65,6 @@ extension HomepageViewController: NTPTooltipDelegate {
     func reloadTooltip() {
         reloadView()
     }
-    
-    func ntpTooltipCloseTapped(_ tooltip: NTPTooltip?) {
-        // no-op
-    }
-    
-    func ntpTooltipLinkTapped(_ tooltip: NTPTooltip?) {
-        // no-op
-    }
 }
 
 extension HomepageViewController: NTPLibraryDelegate {

@@ -107,6 +107,7 @@
 		28EADE5D1AFC3A78007FB2FB /* UIImageView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28EADE381AFC3898007FB2FB /* UIImageView+Extension.swift */; };
 		2A97D3842A03CA3100FD3FA0 /* NTPBookmarkNudgeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A97D3832A03CA3100FD3FA0 /* NTPBookmarkNudgeCell.swift */; };
 		2A97D3862A03CDC300FD3FA0 /* NTPBookmarkNudgeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A97D3852A03CDC300FD3FA0 /* NTPBookmarkNudgeViewModel.swift */; };
+		2ABCCCAE2A139CE8005D0C5B /* NTPTooltipDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ABCCCAD2A139CE8005D0C5B /* NTPTooltipDelegate.swift */; };
 		2AC54D3129DC50CE0034FA2E /* BookmarksExchange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AC54D3029DC50CE0034FA2E /* BookmarksExchange.swift */; };
 		2AF2723A29F2C54A004CA46F /* EmptyBookmarksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AF2723929F2C54A004CA46F /* EmptyBookmarksView.swift */; };
 		2C1D049B29DDDC8E00ED43BA /* MyImpactCell+ViewFactories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C1D049A29DDDC8E00ED43BA /* MyImpactCell+ViewFactories.swift */; };
@@ -1704,6 +1705,7 @@
 		2A97D3832A03CA3100FD3FA0 /* NTPBookmarkNudgeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPBookmarkNudgeCell.swift; sourceTree = "<group>"; };
 		2A97D3852A03CDC300FD3FA0 /* NTPBookmarkNudgeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPBookmarkNudgeViewModel.swift; sourceTree = "<group>"; };
 		2AA943B2B505224956D1B5CD /* el */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = el; path = el.lproj/Localizable.strings; sourceTree = "<group>"; };
+		2ABCCCAD2A139CE8005D0C5B /* NTPTooltipDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPTooltipDelegate.swift; sourceTree = "<group>"; };
 		2ABD4C8DA1B0527B9F88E597 /* jv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = jv; path = jv.lproj/ErrorPages.strings; sourceTree = "<group>"; };
 		2AC54D3029DC50CE0034FA2E /* BookmarksExchange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookmarksExchange.swift; sourceTree = "<group>"; };
 		2AF2723929F2C54A004CA46F /* EmptyBookmarksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyBookmarksView.swift; sourceTree = "<group>"; };
@@ -6462,6 +6464,7 @@
 				CA506BAD28D1EA080064072B /* NTPLibraryShortcutView.swift */,
 				CA4D9C9828C8D801006AFB5D /* NTPTooltip.Highlight.swift */,
 				CA4D9C9728C8D801006AFB5D /* NTPTooltip.swift */,
+				2ABCCCAD2A139CE8005D0C5B /* NTPTooltipDelegate.swift */,
 				2A97D3852A03CDC300FD3FA0 /* NTPBookmarkNudgeViewModel.swift */,
 			);
 			path = NTP;
@@ -9599,6 +9602,7 @@
 				C8656D75270F834600E199EA /* FlaggableFeatureOptions.swift in Sources */,
 				23A50958253F782E008FEBD9 /* NewTabButton.swift in Sources */,
 				D3C744CD1A687D6C004CE85D /* URIFixup.swift in Sources */,
+				2ABCCCAE2A139CE8005D0C5B /* NTPTooltipDelegate.swift in Sources */,
 				CA4D9CFC28C8D801006AFB5D /* MultiplyImpactDash.swift in Sources */,
 				E12BD0AC28AC37F00029AAF0 /* UIColor+Extension.swift in Sources */,
 				E4A961181AC041C40069AD6F /* ReadabilityService.swift in Sources */,

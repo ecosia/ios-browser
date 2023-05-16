@@ -4,13 +4,6 @@
 
 import UIKit
 
-protocol NTPTooltipDelegate: AnyObject {
-    func ntpTooltipTapped(_ tooltip: NTPTooltip?)
-    func ntpTooltipCloseTapped(_ tooltip: NTPTooltip?)
-    func ntpTooltipLinkTapped(_ tooltip: NTPTooltip?)
-    func reloadTooltip()
-}
-
 final class NTPTooltip: UICollectionReusableView, NotificationThemeable {
     enum TailPosition {
         case leading, center, trailing

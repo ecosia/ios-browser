@@ -770,10 +770,6 @@ extension BookmarksPanel: UIDocumentInteractionControllerDelegate {
 }
 
 extension BookmarksPanel: NTPTooltipDelegate {
-    func reloadTooltip() {
-        // no-op
-    }
-    
     func ntpTooltipTapped(_ tooltip: NTPTooltip?) {
         hideBookmarksTooltip()
     }
