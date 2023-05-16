@@ -99,7 +99,6 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
         addSection(imageNamed: "exportShare", text: .localized(.bookmarksEmptyViewItem1))
         
         let buttonStackViewSpacer = UIView.build {
-            $0.translatesAutoresizingMaskIntoConstraints = false
             $0.heightAnchor.constraint(equalToConstant: UX.TitleSpacerHeight / 2).isActive = true
         }
         containerStackView.addArrangedSubview(buttonStackViewSpacer)
@@ -166,7 +165,6 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
     
     private func createSpacerView(width: CGFloat) -> UIView {
         UIView.build {
-            $0.translatesAutoresizingMaskIntoConstraints = false
             $0.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
             $0.widthAnchor.constraint(equalToConstant: width).isActive = true
         }
