@@ -202,10 +202,15 @@ extension BookmarksPanelViewModel: UIDocumentPickerDelegate {
         Task {
             do {
                 try await bookmarksExchange.import(from: url, in: viewController)
-                Task { @MainActor in onImportDoneHandler?(url, nil) }
+                await notifyImportDone(url, nil)
             } catch {
-                Task { @MainActor in onImportDoneHandler?(url, error) }
+                await notifyImportDone(url, error)
             }
         }
+    }
+    
+    @MainActor
+    private func notifyImportDone(_ url: URL, _ error: Error?) {
+        onImportDoneHandler?(url, error)
     }
 }
