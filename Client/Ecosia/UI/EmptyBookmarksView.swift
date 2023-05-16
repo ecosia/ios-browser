@@ -5,12 +5,29 @@
 import UIKit
 
 final class EmptyBookmarksView: UIView, NotificationThemeable {
+    
+    private enum UX {
+        static let TitleLabelFont = UIFontMetrics(forTextStyle: .body).scaledFont(for: .systemFont(ofSize: 17, weight: .semibold))
+        static let SectionLabelFont = UIFontMetrics(forTextStyle: .callout).scaledFont(for: .systemFont(ofSize: 16))
+        static let LearnMoreButtonLabelFont = UIFontMetrics(forTextStyle: .callout).scaledFont(for: .systemFont(ofSize: 16))
+        static let ImportButtonLabelFont = UIFontMetrics(forTextStyle: .callout).scaledFont(for: .systemFont(ofSize: 16))
+        static let ImportButtonPaddingInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+        static let LayoutMargingsInset: CGFloat = 12
+        static let ImportButtonBorderWidth: CGFloat = 1
+        static let ImportButtonCornerRadius: CGFloat = 20
+        static let TitleSpacerHeight: CGFloat = 24
+        static let SurroundingSpacerWidth: CGFloat = 32
+        static let InBetweenSpacerWidth: CGFloat = 6
+        static let SectionSpacerWidth: CGFloat = 36
+        static let SectionIconLabelSpacerWidth: CGFloat = 24
+        static let SectionEndSpacerHeight: CGFloat = 16
+    }
 
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.text = .localized(.noBookmarksYet)
         label.textAlignment = .center
-        label.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: .systemFont(ofSize: 17, weight: .semibold))
+        label.font = UX.TitleLabelFont
         return label
     }()
     
@@ -31,10 +48,10 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
     private let importBookmarksButton: UIButton = {
        let button = UIButton()
         button.setTitle(.localized(.importBookmarks), for: .normal)
-        button.layer.borderWidth = 1
-        button.layer.cornerRadius = 20
+        button.layer.borderWidth = UX.ImportButtonBorderWidth
+        button.layer.cornerRadius = UX.ImportButtonCornerRadius
         button.setInsets(
-            forContentPadding: UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10),
+            forContentPadding: UX.ImportButtonPaddingInset,
             imageTitlePadding: 0
         )
         button.setContentCompressionResistancePriority(.required, for: .horizontal)
@@ -68,8 +85,8 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
         bottomMarginConstraint = containerStackView.centerYAnchor.constraint(equalTo: centerYAnchor, constant: initialBottomMargin)
         
         NSLayoutConstraint.activate([
-            containerStackView.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor, constant: 12),
-            containerStackView.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor, constant: -12),
+            containerStackView.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor, constant: UX.LayoutMargingsInset),
+            containerStackView.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor, constant: -UX.LayoutMargingsInset),
             bottomMarginConstraint,
             containerStackView.centerXAnchor.constraint(equalTo: centerXAnchor),
         ].compactMap { $0 })
@@ -79,7 +96,7 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
         
         // space between title and first section
         let spacerOne = UIView.build {
-            $0.heightAnchor.constraint(equalToConstant: 24).isActive = true
+            $0.heightAnchor.constraint(equalToConstant: UX.TitleSpacerHeight).isActive = true
         }
         containerStackView.addArrangedSubview(spacerOne)
         
@@ -88,16 +105,16 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
         
         let buttonStackViewSpacer = UIView.build {
             $0.translatesAutoresizingMaskIntoConstraints = false
-            $0.heightAnchor.constraint(equalToConstant: 12).isActive = true
+            $0.heightAnchor.constraint(equalToConstant: UX.TitleSpacerHeight / 2).isActive = true
         }
         containerStackView.addArrangedSubview(buttonStackViewSpacer)
 
         let buttonsStackView = UIStackView(arrangedSubviews: [
-            createSpacerView(width: 32),
+            createSpacerView(width: UX.SurroundingSpacerWidth),
             learnMoreButton,
-            createSpacerView(width: 6),
+            createSpacerView(width: UX.InBetweenSpacerWidth),
             importBookmarksButton,
-            createSpacerView(width: 32)
+            createSpacerView(width: UX.SurroundingSpacerWidth)
         ])
         buttonsStackView.axis = .horizontal
         buttonsStackView.distribution = .equalCentering
@@ -117,7 +134,7 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
         sectionStackView.alignment = .top
         
         if traitCollection.userInterfaceIdiom == .pad {
-            sectionStackView.addArrangedSubview(createSpacerView(width: 36))
+            sectionStackView.addArrangedSubview(createSpacerView(width: UX.SectionSpacerWidth))
         }
         
         let sectionIcon = UIImageView()
@@ -128,25 +145,25 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
         sectionStackView.addArrangedSubview(sectionIcon)
         
         let sectionOneIconLabelSpacer = UIView.build {
-            $0.widthAnchor.constraint(equalToConstant: 24).isActive = true
+            $0.widthAnchor.constraint(equalToConstant: UX.SectionIconLabelSpacerWidth).isActive = true
         }
         sectionStackView.addArrangedSubview(sectionOneIconLabelSpacer)
         
         let sectionLabel = UILabel()
-        sectionLabel.font = UIFontMetrics(forTextStyle: .callout).scaledFont(for: .systemFont(ofSize: 16))
+        sectionLabel.font = UX.SectionLabelFont
         sectionLabel.numberOfLines = 0
         sectionLabel.textColor = .theme.ecosia.secondaryText
         sectionLabel.text = text
         sectionStackView.addArrangedSubview(sectionLabel)
         
         if traitCollection.userInterfaceIdiom == .pad {
-            sectionStackView.addArrangedSubview(createSpacerView(width: 36))
+            sectionStackView.addArrangedSubview(createSpacerView(width: UX.SectionSpacerWidth))
         }
                 
         containerStackView.addArrangedSubview(sectionStackView)
         
         let sectionEndSpacer = UIView.build {
-            $0.heightAnchor.constraint(equalToConstant: 16).isActive = true
+            $0.heightAnchor.constraint(equalToConstant: UX.SectionEndSpacerHeight).isActive = true
         }
         
         containerStackView.addArrangedSubview(sectionEndSpacer)
@@ -171,9 +188,9 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
     func applyTheme() {
         importBookmarksButton.layer.borderColor = UIColor.theme.ecosia.primaryText.cgColor
         learnMoreButton.setTitleColor(.theme.ecosia.primaryText, for: .normal)
-        learnMoreButton.titleLabel?.font = UIFontMetrics(forTextStyle: .callout).scaledFont(for: .systemFont(ofSize: 16))
+        learnMoreButton.titleLabel?.font = UX.LearnMoreButtonLabelFont
         importBookmarksButton.setTitleColor(.theme.ecosia.primaryText, for: .normal)
-        importBookmarksButton.titleLabel?.font = UIFontMetrics(forTextStyle: .callout).scaledFont(for: .systemFont(ofSize: 16))
+        importBookmarksButton.titleLabel?.font = UX.ImportButtonLabelFont
         titleLabel.textColor = .theme.ecosia.primaryText
     }
 }
