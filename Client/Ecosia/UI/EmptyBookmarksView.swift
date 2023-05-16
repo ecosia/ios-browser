@@ -119,6 +119,8 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
         importBookmarksButton.addTarget(self, action: #selector(onImportTapped), for: .touchUpInside)
 
         applyTheme()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(applyTheme), name: .DisplayThemeChanged, object: nil)
     }
     
     private func addSection(imageNamed: String, text: String) {
@@ -178,12 +180,28 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
         delegate?.emptyBookmarksViewImportBookmarksTapped(self)
     }
     
-    func applyTheme() {
+    @objc func applyTheme() {
         importBookmarksButton.layer.borderColor = UIColor.theme.ecosia.primaryText.cgColor
         learnMoreButton.setTitleColor(.theme.ecosia.primaryText, for: .normal)
         learnMoreButton.titleLabel?.font = UX.LearnMoreButtonLabelFont
         importBookmarksButton.setTitleColor(.theme.ecosia.primaryText, for: .normal)
         importBookmarksButton.titleLabel?.font = UX.ImportButtonLabelFont
         titleLabel.textColor = .theme.ecosia.primaryText
+        containerStackView.arrangedSubviews
+            .compactMap { ($0 as? UIStackView)?.arrangedSubviews }
+            .reduce([UIView](), { partialResult, subViews in
+                var finalResult = partialResult
+                finalResult.append(contentsOf: subViews)
+                return finalResult
+            })
+            .forEach {
+                switch $0 {
+                case let label as UILabel:
+                    label.textColor = .theme.ecosia.primaryText
+                default:
+                    $0.tintColor = .theme.ecosia.primaryText
+                    break
+                }
+            }
     }
 }
