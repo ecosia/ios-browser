@@ -58,8 +58,7 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
         return button
     }()
     
-    private let learnMoreHandler: () -> Void
-    private let importBookmarksHandler: () -> Void
+    weak var delegate: EmptyBookmarksViewDelegate?
     
     var bottomMarginConstraint: NSLayoutConstraint?
     
@@ -69,12 +68,8 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
     }
 
     init(
-        initialBottomMargin: CGFloat,
-        learnMoreHandler: @escaping () -> Void,
-        importBookmarksHandler: @escaping () -> Void
+        initialBottomMargin: CGFloat
     ) {
-        self.learnMoreHandler = learnMoreHandler
-        self.importBookmarksHandler = importBookmarksHandler
         super.init(frame: .zero)
         setup(initialBottomMargin)
     }
@@ -178,11 +173,11 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
     }
     
     @objc private func onLearnMoreTapped() {
-        learnMoreHandler()
+        delegate?.emptyBookmarksViewLearnMoreTapped(self)
     }
     
     @objc private func onImportTapped() {
-        importBookmarksHandler()
+        delegate?.emptyBookmarksViewImportBookmarksTapped(self)
     }
     
     func applyTheme() {

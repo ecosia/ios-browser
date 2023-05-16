@@ -108,6 +108,7 @@
 		2A97D3842A03CA3100FD3FA0 /* NTPBookmarkNudgeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A97D3832A03CA3100FD3FA0 /* NTPBookmarkNudgeCell.swift */; };
 		2A97D3862A03CDC300FD3FA0 /* NTPBookmarkNudgeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A97D3852A03CDC300FD3FA0 /* NTPBookmarkNudgeViewModel.swift */; };
 		2ABCCCAE2A139CE8005D0C5B /* NTPTooltipDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ABCCCAD2A139CE8005D0C5B /* NTPTooltipDelegate.swift */; };
+		2ABCCCB02A13A399005D0C5B /* EmptyBookmarksViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ABCCCAF2A13A399005D0C5B /* EmptyBookmarksViewDelegate.swift */; };
 		2AC54D3129DC50CE0034FA2E /* BookmarksExchange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AC54D3029DC50CE0034FA2E /* BookmarksExchange.swift */; };
 		2AF2723A29F2C54A004CA46F /* EmptyBookmarksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AF2723929F2C54A004CA46F /* EmptyBookmarksView.swift */; };
 		2C1D049B29DDDC8E00ED43BA /* MyImpactCell+ViewFactories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C1D049A29DDDC8E00ED43BA /* MyImpactCell+ViewFactories.swift */; };
@@ -1706,6 +1707,7 @@
 		2A97D3852A03CDC300FD3FA0 /* NTPBookmarkNudgeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPBookmarkNudgeViewModel.swift; sourceTree = "<group>"; };
 		2AA943B2B505224956D1B5CD /* el */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = el; path = el.lproj/Localizable.strings; sourceTree = "<group>"; };
 		2ABCCCAD2A139CE8005D0C5B /* NTPTooltipDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPTooltipDelegate.swift; sourceTree = "<group>"; };
+		2ABCCCAF2A13A399005D0C5B /* EmptyBookmarksViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyBookmarksViewDelegate.swift; sourceTree = "<group>"; };
 		2ABD4C8DA1B0527B9F88E597 /* jv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = jv; path = jv.lproj/ErrorPages.strings; sourceTree = "<group>"; };
 		2AC54D3029DC50CE0034FA2E /* BookmarksExchange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookmarksExchange.swift; sourceTree = "<group>"; };
 		2AF2723929F2C54A004CA46F /* EmptyBookmarksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyBookmarksView.swift; sourceTree = "<group>"; };
@@ -6438,6 +6440,7 @@
 				CA4D9C8D28C8D801006AFB5D /* EcosiaTheme.swift */,
 				CA4D9C8E28C8D801006AFB5D /* EmptyHeader.swift */,
 				2AF2723929F2C54A004CA46F /* EmptyBookmarksView.swift */,
+				2ABCCCAF2A13A399005D0C5B /* EmptyBookmarksViewDelegate.swift */,
 				CA4D9C8F28C8D801006AFB5D /* NTP */,
 				CA4D9C9A28C8D801006AFB5D /* Colours.xcassets */,
 				CA4D9C9B28C8D801006AFB5D /* FilterController.swift */,
@@ -9449,6 +9452,7 @@
 				C8B0F5F4283B7CCE007AE65D /* PocketProvider.swift in Sources */,
 				D3972BF41C22412B00035B87 /* TitleActivityItemProvider.swift in Sources */,
 				D38A1BEE1A9FA2CA00F6A386 /* SiteTableViewController.swift in Sources */,
+				2ABCCCB02A13A399005D0C5B /* EmptyBookmarksViewDelegate.swift in Sources */,
 				7BA0601B1C0F4DE200DFADB6 /* TabPeekViewController.swift in Sources */,
 				D51EA5BA26406A0000334331 /* ExperimentsBranchesViewController.swift in Sources */,
 				CA4D9D0A28C8D801006AFB5D /* WelcomeTour.swift in Sources */,
