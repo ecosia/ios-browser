@@ -6,11 +6,6 @@ import UIKit
 
 final class EmptyBookmarksView: UIView, NotificationThemeable {
 
-    required init?(coder: NSCoder) {
-        assertionFailure("This view is only supposed to be instantiated programmatically")
-        return nil
-    }
-    
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.text = .localized(.noBookmarksYet)
@@ -50,6 +45,11 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
     private let importBookmarksHandler: () -> Void
     
     var bottomMarginConstraint: NSLayoutConstraint?
+    
+    required init?(coder: NSCoder) {
+        assertionFailure("This view is only supposed to be instantiated programmatically")
+        return nil
+    }
 
     init(
         initialBottomMargin: CGFloat,
