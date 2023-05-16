@@ -25,7 +25,6 @@ final class NTPBookmarkNudgeCell: UICollectionViewCell, NotificationThemeable, R
     private let backgroundCard: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .theme.ecosia.primaryBackground
         view.layer.cornerRadius = UX.BackgroundCardCornerRadius
         return view
     }()
@@ -41,7 +40,6 @@ final class NTPBookmarkNudgeCell: UICollectionViewCell, NotificationThemeable, R
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(UIImage(named: "xmark"), for: .normal)
         button.imageView?.contentMode = .scaleAspectFill
-        button.tintColor = .theme.ecosia.primaryText
         button.imageEdgeInsets = UIEdgeInsets(equalInset: UX.CloseButtonImageInset)
         return button
     }()
@@ -61,9 +59,7 @@ final class NTPBookmarkNudgeCell: UICollectionViewCell, NotificationThemeable, R
         button.translatesAutoresizingMaskIntoConstraints = false
         button.layer.cornerRadius = UX.OpenBookmarksButtonCornerRadius
         button.layer.borderWidth = UX.OpenBookmarksButtonBorderWidth
-        button.layer.borderColor = UIColor.theme.ecosia.primaryText.cgColor
         button.setTitle(.localized(.bookmarksNtpNudgeCardButtonTitle), for: .normal)
-        button.setTitleColor(.theme.ecosia.primaryText, for: .normal)
         button.titleLabel?.font = UX.OpenBookmarksButtonTitleFont
         button.contentEdgeInsets = UIEdgeInsets(horizontal: UX.OpenBookmarksButtonTitleInset)
         return button
@@ -129,9 +125,18 @@ final class NTPBookmarkNudgeCell: UICollectionViewCell, NotificationThemeable, R
         
         closeButton.addTarget(self, action: #selector(handleClose), for: .touchUpInside)
         openBookmarksButton.addTarget(self, action: #selector(handleOpenBookmarks), for: .touchUpInside)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(applyTheme), name: .DisplayThemeChanged, object: nil)
     }
     
-    func applyTheme() {}
+    @objc func applyTheme() {
+        backgroundCard.backgroundColor = .theme.ecosia.primaryBackground
+        openBookmarksButton.setTitleColor(.theme.ecosia.primaryText, for: .normal)
+        openBookmarksButton.layer.borderColor = UIColor.theme.ecosia.primaryText.cgColor
+        closeButton.tintColor = .theme.ecosia.primaryText
+
+        badge.applyTheme()
+    }
     
     override func preferredLayoutAttributesFitting(_ layoutAttributes: UICollectionViewLayoutAttributes) -> UICollectionViewLayoutAttributes {
             let targetSize = CGSize(width: layoutAttributes.frame.width, height: 0)
@@ -148,8 +153,8 @@ final class NTPBookmarkNudgeCell: UICollectionViewCell, NotificationThemeable, R
     }
 }
 
-private class NTPBookmarkNudgeCellBadge: UIView {
-    
+private final class NTPBookmarkNudgeCellBadge: UIView, NotificationThemeable {
+
     private enum UX {
         static let LabelInsetX: CGFloat = 8
         static let LabelInsetY: CGFloat = 2.5
@@ -157,6 +162,15 @@ private class NTPBookmarkNudgeCellBadge: UIView {
         static let HeightInset: CGFloat = 5
         static let WidthInset: CGFloat = 16
     }
+    
+    private let badgeLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = .preferredFont(forTextStyle: .footnote).bold()
+        label.adjustsFontForContentSizeCategory = true
+        label.text = .localized(.new)
+        return label
+    }()
 
     init() {
         super.init(frame: .zero)
@@ -171,17 +185,10 @@ private class NTPBookmarkNudgeCellBadge: UIView {
     private func setup() {
         isUserInteractionEnabled = false
         
-        let badgeLabel = UILabel()
-        badgeLabel.translatesAutoresizingMaskIntoConstraints = false
-        badgeLabel.font = .preferredFont(forTextStyle: .footnote).bold()
-        badgeLabel.adjustsFontForContentSizeCategory = true
-        badgeLabel.text = .localized(.new)
         addSubview(badgeLabel)
 
         let size = badgeLabel.sizeThatFits(.init(width: CGFloat.greatestFiniteMagnitude, height: .greatestFiniteMagnitude))
         frame.size = .init(width: size.width + UX.WidthInset, height: size.height + UX.HeightInset)
-        backgroundColor = .theme.ecosia.primaryBrand
-        badgeLabel.textColor = .theme.ecosia.primaryTextInverted
         layer.cornerRadius = UX.CornerRadius
         
         NSLayoutConstraint.activate([
@@ -190,5 +197,12 @@ private class NTPBookmarkNudgeCellBadge: UIView {
             badgeLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -UX.LabelInsetX),
             badgeLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -UX.LabelInsetY)
         ])
+        
+        applyTheme()
+    }
+    
+    func applyTheme() {
+        backgroundColor = .theme.ecosia.primaryBrand
+        badgeLabel.textColor = .theme.ecosia.primaryTextInverted
     }
 }
