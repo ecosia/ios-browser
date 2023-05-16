@@ -132,7 +132,7 @@ final class NTPTooltip: UICollectionReusableView, NotificationThemeable {
         linkButton.isHidden = true
     }
     
-    func setLink(_ text: String) {
+    func setLinkTitle(_ text: String) {
         let titleString = NSMutableAttributedString(string: text)
         titleString.addAttribute(
           .underlineStyle,

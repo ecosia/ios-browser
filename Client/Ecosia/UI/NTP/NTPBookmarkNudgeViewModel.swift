@@ -6,19 +6,13 @@ import Foundation
 import Shared
 import Core
 
-protocol NTPBookmarkNudgeViewDelegate: AnyObject {
-    func nudgeCellOpenBookmarks()
-    func nudgeCellDismiss()
-}
-
-class NTPBookmarkNudgeViewModel {
+final class NTPBookmarkNudgeViewModel {
     struct UX {
         static let bottomSpacing: CGFloat = 8
     }
     
     weak var delegate: NTPBookmarkNudgeViewDelegate?
 }
-
 
 // MARK: NTPBookmarkNudgeViewModel
 extension NTPBookmarkNudgeViewModel: HomepageViewModelProtocol {

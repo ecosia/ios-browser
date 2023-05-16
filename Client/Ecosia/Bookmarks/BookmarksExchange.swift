@@ -12,7 +12,7 @@ protocol BookmarksExchangable {
     func `import`(from url: URL, in viewController: UIViewController) async throws
 }
 
-class BookmarksExchange: BookmarksExchangable {
+final class BookmarksExchange: BookmarksExchangable {
     private let profile: Profile
     private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -75,7 +75,6 @@ class BookmarksExchange: BookmarksExchangable {
             dismissAfter: nil,
             bottomInset: view.layoutMargins.bottom
         )
-
 
         do {
             let html = try String(contentsOf: url)

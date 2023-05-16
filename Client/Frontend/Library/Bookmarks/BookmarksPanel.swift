@@ -89,7 +89,7 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel, CanRemoveQuickActio
         let tooltip = NTPTooltip()
         tooltip.tailPosition = .leading
         tooltip.setText(.localized(.bookmarksToolTipText))
-        tooltip.setLink(.localized(.learnMore))
+        tooltip.setLinkTitle(.localized(.learnMore))
         return tooltip
     }()
     
@@ -639,7 +639,7 @@ extension BookmarksPanel {
         }
     }
     
-    func showMoreDialog() {
+    @objc private func showMoreDialog() {
         hideBookmarksTooltip()
         moreButton.isEnabled = false
         let importAction = UIAlertAction(title: .localized(.importBookmarks), style: .default, handler: { [weak self] _ in self?.importBookmarksActionHandler() })

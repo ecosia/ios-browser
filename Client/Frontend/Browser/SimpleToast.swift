@@ -6,7 +6,7 @@ import Foundation
 import Shared
 import UIKit
 
-struct SimpleToastUX {
+enum SimpleToastUX {
     static let ToastHeight = BottomToolbarHeight
     static let Offset = CGFloat(12)
     static let Margin = CGFloat(16)
@@ -19,7 +19,7 @@ struct SimpleToastUX {
     static let BottomToolbarHeight = CGFloat(45)
 }
 
-class SimpleToast {
+final class SimpleToast {
     enum AccessoryImage {
         case named(String), view(UIView)
     }
@@ -28,6 +28,7 @@ class SimpleToast {
     private var dismissAfter: DispatchTimeInterval?
     
     @discardableResult
+    // Ecosia: Migrated to be able to customize the accessory image shown, as well as bottom inset
     func showAlertWithText(
         _ text: String,
         image: AccessoryImage,

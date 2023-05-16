@@ -1067,6 +1067,7 @@ class BrowserViewController: UIViewController {
         switch panel {
         case .bookmarks:
             Analytics.shared.browser(.open, label: .favourites, property: .home)
+            // Ecosia: Set "New"-Badge for Bookmarks entry to hidden once the user visited the bookmarks
             User.shared.hideBookmarksNewBadge()
         case .history:
             Analytics.shared.browser(.open, label: .history, property: .home)
