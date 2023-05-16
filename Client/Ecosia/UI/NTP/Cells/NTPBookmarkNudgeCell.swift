@@ -8,15 +8,25 @@ import Core
 final class NTPBookmarkNudgeCell: UICollectionViewCell, NotificationThemeable, ReusableCell {
     
     private enum UX {
-        static let insetMargin: CGFloat = 16
-        static let badgeHeight: CGFloat = 20
+        static let BackgroundCardCornerRadius: CGFloat = 8
+        static let CloseButtonImageInset: CGFloat = 10
+        static let OpenBookmarksButtonTitleFont = UIFontMetrics(forTextStyle: .callout).scaledFont(for: .systemFont(ofSize: 16))
+        static let OpenBookmarksButtonTitleInset: CGFloat = 12
+        static let OpenBookmarksButtonCornerRadius: CGFloat = 15
+        static let OpenBookmarksButtonBorderWidth: CGFloat = 1
+        static let OpenBookmarksButtonHeight: CGFloat = 32
+        static let CloseButtonDimensions: CGFloat = 44
+        static let IconDimensions: CGFloat = 64
+        static let InsetMargin: CGFloat = 16
+        static let BadgeHeight: CGFloat = 20
+        
     }
     
     private let backgroundCard: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = .theme.ecosia.primaryBackground
-        view.layer.cornerRadius = 8
+        view.layer.cornerRadius = UX.BackgroundCardCornerRadius
         return view
     }()
     
@@ -32,7 +42,7 @@ final class NTPBookmarkNudgeCell: UICollectionViewCell, NotificationThemeable, R
         button.setImage(UIImage(named: "xmark"), for: .normal)
         button.imageView?.contentMode = .scaleAspectFill
         button.tintColor = .theme.ecosia.primaryText
-        button.imageEdgeInsets = UIEdgeInsets(equalInset: 10)
+        button.imageEdgeInsets = UIEdgeInsets(equalInset: UX.CloseButtonImageInset)
         return button
     }()
     
@@ -49,13 +59,13 @@ final class NTPBookmarkNudgeCell: UICollectionViewCell, NotificationThemeable, R
     private let openBookmarksButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.layer.cornerRadius = 15
-        button.layer.borderWidth = 1
+        button.layer.cornerRadius = UX.OpenBookmarksButtonCornerRadius
+        button.layer.borderWidth = UX.OpenBookmarksButtonBorderWidth
         button.layer.borderColor = UIColor.theme.ecosia.primaryText.cgColor
         button.setTitle(.localized(.bookmarksNtpNudgeCardButtonTitle), for: .normal)
         button.setTitleColor(.theme.ecosia.primaryText, for: .normal)
-        button.titleLabel?.font = UIFontMetrics(forTextStyle: .callout).scaledFont(for: .systemFont(ofSize: 16))
-        button.contentEdgeInsets = UIEdgeInsets(horizontal: 12)
+        button.titleLabel?.font = UX.OpenBookmarksButtonTitleFont
+        button.contentEdgeInsets = UIEdgeInsets(horizontal: UX.OpenBookmarksButtonTitleInset)
         return button
     }()
      
@@ -88,33 +98,33 @@ final class NTPBookmarkNudgeCell: UICollectionViewCell, NotificationThemeable, R
         
         NSLayoutConstraint.activate([
             backgroundCard.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            backgroundCard.topAnchor.constraint(equalTo: contentView.topAnchor, constant: UX.insetMargin),
+            backgroundCard.topAnchor.constraint(equalTo: contentView.topAnchor, constant: UX.InsetMargin),
             backgroundCard.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
 
-            badge.heightAnchor.constraint(equalToConstant: UX.badgeHeight).priority(.required),
-            badge.topAnchor.constraint(equalTo: backgroundCard.topAnchor, constant: UX.insetMargin),
-            badge.leadingAnchor.constraint(equalTo: backgroundCard.leadingAnchor, constant: UX.insetMargin),
+            badge.heightAnchor.constraint(equalToConstant: UX.BadgeHeight).priority(.required),
+            badge.topAnchor.constraint(equalTo: backgroundCard.topAnchor, constant: UX.InsetMargin),
+            badge.leadingAnchor.constraint(equalTo: backgroundCard.leadingAnchor, constant: UX.InsetMargin),
             
-            closeButton.widthAnchor.constraint(equalToConstant: 44),
-            closeButton.heightAnchor.constraint(equalToConstant: 44),
+            closeButton.widthAnchor.constraint(equalToConstant: UX.CloseButtonDimensions),
+            closeButton.heightAnchor.constraint(equalToConstant: UX.CloseButtonDimensions),
             closeButton.trailingAnchor.constraint(equalTo: backgroundCard.trailingAnchor),
             closeButton.topAnchor.constraint(equalTo: backgroundCard.topAnchor),
             
-            descriptionLabel.topAnchor.constraint(equalTo: badge.bottomAnchor, constant: UX.insetMargin / 2),
-            descriptionLabel.leadingAnchor.constraint(equalTo: backgroundCard.leadingAnchor, constant: UX.insetMargin),
-            descriptionLabel.trailingAnchor.constraint(equalTo: icon.leadingAnchor, constant: -UX.insetMargin),
+            descriptionLabel.topAnchor.constraint(equalTo: badge.bottomAnchor, constant: UX.InsetMargin / 2),
+            descriptionLabel.leadingAnchor.constraint(equalTo: backgroundCard.leadingAnchor, constant: UX.InsetMargin),
+            descriptionLabel.trailingAnchor.constraint(equalTo: icon.leadingAnchor, constant: -UX.InsetMargin),
             
-            openBookmarksButton.heightAnchor.constraint(equalToConstant: 32).priority(.required),
-            openBookmarksButton.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: UX.insetMargin),
-            openBookmarksButton.leadingAnchor.constraint(equalTo: backgroundCard.leadingAnchor, constant: UX.insetMargin),
-            openBookmarksButton.bottomAnchor.constraint(equalTo: backgroundCard.bottomAnchor, constant: -UX.insetMargin),
+            openBookmarksButton.heightAnchor.constraint(equalToConstant: UX.OpenBookmarksButtonHeight).priority(.required),
+            openBookmarksButton.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: UX.InsetMargin),
+            openBookmarksButton.leadingAnchor.constraint(equalTo: backgroundCard.leadingAnchor, constant: UX.InsetMargin),
+            openBookmarksButton.bottomAnchor.constraint(equalTo: backgroundCard.bottomAnchor, constant: -UX.InsetMargin),
             
-            icon.trailingAnchor.constraint(equalTo: backgroundCard.trailingAnchor, constant: -UX.insetMargin),
+            icon.trailingAnchor.constraint(equalTo: backgroundCard.trailingAnchor, constant: -UX.InsetMargin),
             icon.bottomAnchor.constraint(equalTo: openBookmarksButton.bottomAnchor, constant: 0),
-            icon.widthAnchor.constraint(equalToConstant: 64).priority(.required),
-            icon.heightAnchor.constraint(equalToConstant: 64).priority(.required),
+            icon.widthAnchor.constraint(equalToConstant: UX.IconDimensions).priority(.required),
+            icon.heightAnchor.constraint(equalToConstant: UX.IconDimensions).priority(.required),
             
-            backgroundCard.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -UX.insetMargin)
+            backgroundCard.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -UX.InsetMargin)
         ])
         
         closeButton.addTarget(self, action: #selector(handleClose), for: .touchUpInside)
@@ -141,8 +151,11 @@ final class NTPBookmarkNudgeCell: UICollectionViewCell, NotificationThemeable, R
 private class NTPBookmarkNudgeCellBadge: UIView {
     
     private enum UX {
-        static let labelInsetX: CGFloat = 8
-        static let labelInsetY: CGFloat = 2.5
+        static let LabelInsetX: CGFloat = 8
+        static let LabelInsetY: CGFloat = 2.5
+        static let CornerRadius: CGFloat = 10
+        static let HeightInset: CGFloat = 5
+        static let WidthInset: CGFloat = 16
     }
 
     init() {
@@ -166,17 +179,16 @@ private class NTPBookmarkNudgeCellBadge: UIView {
         addSubview(badgeLabel)
 
         let size = badgeLabel.sizeThatFits(.init(width: CGFloat.greatestFiniteMagnitude, height: .greatestFiniteMagnitude))
-        let height = size.height + 5
-        frame.size = .init(width: size.width + 16, height: height)
+        frame.size = .init(width: size.width + UX.WidthInset, height: size.height + UX.HeightInset)
         backgroundColor = .theme.ecosia.primaryBrand
         badgeLabel.textColor = .theme.ecosia.primaryTextInverted
-        layer.cornerRadius = 10
+        layer.cornerRadius = UX.CornerRadius
         
         NSLayoutConstraint.activate([
-            badgeLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: UX.labelInsetX),
-            badgeLabel.topAnchor.constraint(equalTo: topAnchor, constant: UX.labelInsetY),
-            badgeLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -UX.labelInsetX),
-            badgeLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -UX.labelInsetY)
+            badgeLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: UX.LabelInsetX),
+            badgeLabel.topAnchor.constraint(equalTo: topAnchor, constant: UX.LabelInsetY),
+            badgeLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -UX.LabelInsetX),
+            badgeLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -UX.LabelInsetY)
         ])
     }
 }
