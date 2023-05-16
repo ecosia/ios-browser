@@ -21,6 +21,7 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel, CanRemoveQuickActio
     struct UX {
         static let FolderIconSize = CGSize(width: 24, height: 24)
         static let RowFlashDelay: TimeInterval = 0.4
+        static let BookmarksHelpScoutUrlString = "https://ecosia.helpscoutdocs.com/article/458-import-export-bookmarks"
     }
 
     // MARK: - Properties
@@ -240,7 +241,7 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel, CanRemoveQuickActio
     private func emptyViewLearnMoreTap() {
         // todo: the url needs to be adjusted / updated
         libraryPanelDelegate?.libraryPanel(
-            didSelectURLString: .localized(.bookmarkImportHelpscoutURL),
+            didSelectURLString: UX.BookmarksHelpScoutUrlString,
             visitType: .link
         )
     }
@@ -780,7 +781,7 @@ extension BookmarksPanel: NTPTooltipDelegate {
     
     func ntpTooltipLinkTapped(_ tooltip: NTPTooltip?) {
         libraryPanelDelegate?.libraryPanel(
-            didSelectURLString: .localized(.bookmarkImportHelpscoutURL),
+            didSelectURLString: UX.BookmarksHelpScoutUrlString,
             visitType: .link
         )
     }

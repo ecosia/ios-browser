@@ -187,7 +187,6 @@ extension String {
         case exportingBookmarks = "Exporting Bookmarks…"
         case importingBookmarks = "Importing Bookmarks…"
         case importedBookmarkFolderName = "Imported Bookmarks (%@)"
-        case bookmarkImportHelpscoutURL = "https://ecosia.helpscoutdocs.com/search?query=Bookmark"
         case bookmarksImportFailedTitle = "Import failed"
         case bookmarksExportFailedTitle = "Exporting failed"
         case bookmarksPanelMore = "More"
