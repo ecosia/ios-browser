@@ -40,7 +40,7 @@ jobs:
 
     - name: Get derived data path from txt file
       id: get_derived_data_path
-      run: echo "derived_data_path_from_file=$(cat /var/tmp/derived_data_path.txt)" >> $GITHUB_OUTPUT
+      run: echo ::set-output name=derived_data_path_from_file::$(cat /var/tmp/derived_data_path.txt)
 
     - name: Restore SPM Cache
       id: restore-spm-cache
