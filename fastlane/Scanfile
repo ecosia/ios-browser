@@ -1,5 +1,5 @@
 scheme("Ecosia")
-configuration("Beta")
+configuration("BetaDebug")
 project("Client.xcodeproj")
 device("iPhone 14")
 output_types("junit")
