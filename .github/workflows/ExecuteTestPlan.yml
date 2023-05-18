@@ -66,7 +66,7 @@ jobs:
       id: restore-derived-data-cache
       uses: actions/cache/restore@v3
       with:
-        path: ${{ steps.get_derived_data_path.outputs.derived_data_path_from_file }}
+        path: ${{ env.derived_data_path_from_file }}
         key: ${{ runner.os }}-derived-data-cache-${{ github.run_id }}
         fail-on-cache-miss: true
 
