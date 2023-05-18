@@ -6,7 +6,7 @@ on:
 
 jobs:
   build_for_testing:
-    uses: ./.github/workflows//BuildForTesting.yml
+    uses: ./.github/workflows/BuildForTesting.yml
     with:
       developer-dir: /Applications/Xcode_14.2.0.app/Contents/Developer
     secrets: inherit
