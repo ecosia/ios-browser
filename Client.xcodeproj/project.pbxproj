@@ -13946,6 +13946,7 @@
 				PRODUCT_NAME = Client;
 				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.ecosia.ecosiaapp.firefox";
 				SKIP_INSTALL = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/Client/Client-Bridging-Header.h";
 				VALIDATE_WORKSPACE = YES;
 			};
