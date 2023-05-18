@@ -16,7 +16,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Install pip modules
       run: |
@@ -92,7 +92,7 @@ jobs:
 
     - name: Get derived data path from txt file
       id: get_derived_data_path
-      run: echo ::set-output name=derived_data_path_from_file::$(cat /var/tmp/derived_data_path.txt)
+      run: echo "derived_data_path_from_file=(cat /var/tmp/derived_data_path.txt)" >> $GITHUB_OUTPUT
 
     - name: Save derived data cache
       uses: actions/cache/save@v3
