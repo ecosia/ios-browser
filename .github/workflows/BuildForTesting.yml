@@ -74,6 +74,11 @@ jobs:
         path: SourcePackages/
         key: ${{ runner.os }}-spm-cache-${{ hashFiles('Client.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
 
+    - name: Update Xcode settings
+      run: |
+        defaults write com.apple.Xcode PBXNumberOfParallelBuildSubtasks 4
+        defaults write com.apple.dt.Xcode BuildSystemScheduleInherentlyParallelCommandsExclusively -bool YES
+
     - name: Build for testing
       run: bundle exec fastlane build_and_export_derived_data_path
 
