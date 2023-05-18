@@ -10,6 +10,7 @@ on:
 
 jobs:
   build_for_testing:
+    name: Build app for testing
     uses: ./.github/workflows/BuildForTesting.yml
     with:
       developer-dir: /Applications/Xcode_14.2.0.app/Contents/Developer
