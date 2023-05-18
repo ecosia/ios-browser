@@ -76,7 +76,7 @@ jobs:
 
     - name: Update Xcode settings
       run: |
-        defaults write com.apple.Xcode PBXNumberOfParallelBuildSubtasks 4
+        defaults write com.apple.Xcode PBXNumberOfParallelBuildSubtasks 8
         defaults write com.apple.dt.Xcode BuildSystemScheduleInherentlyParallelCommandsExclusively -bool YES
 
     - name: Build for testing
