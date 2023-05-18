@@ -101,7 +101,7 @@ jobs:
     - name: Save derived data cache
       uses: actions/cache/save@v3
       with:
-        path: ${{ env.derived_data_path_from_file }}
+        path: ${{ steps.get_derived_data_path.outputs.derived_data_path_from_file }}
         key: ${{ runner.os }}-derived-data-cache-${{ github.run_id }}
 
     - name: Save SPM Cache
