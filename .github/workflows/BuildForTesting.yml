@@ -74,14 +74,14 @@ jobs:
         path: SourcePackages/
         key: ${{ runner.os }}-spm-cache-${{ hashFiles('Client.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
 
-    - name: Install SPM
-      if: steps.restore-spm-cache.outputs.cache-hit == 'false'
-      run: bundle exec fastlane spm build_path:"SourcePackages/"
-
     - name: Update Xcode settings
       run: |
         defaults write com.apple.Xcode PBXNumberOfParallelBuildSubtasks 8
         defaults write com.apple.dt.Xcode BuildSystemScheduleInherentlyParallelCommandsExclusively -bool YES
+
+    - name: Install SPM
+      if: steps.restore-spm-cache.outputs.cache-hit == 'false'
+      run: bundle exec fastlane spm build_path:"SourcePackages/"
 
     - name: Build for testing
       run: bundle exec fastlane build_and_export_derived_data_path
