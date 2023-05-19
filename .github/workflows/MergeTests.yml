@@ -18,6 +18,7 @@ jobs:
 
   build_for_testing:
     name: Build app for testing
+    needs: prepare_environment
     uses: ./.github/workflows/BuildForTesting.yml
     with:
       developer-dir: /Applications/Xcode_14.2.0.app/Contents/Developer
