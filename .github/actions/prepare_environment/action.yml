@@ -15,10 +15,10 @@ runs:
       env:
         GITHUB_ACCESS_TOKEN: ${{ inputs.core-token }}
 
-    - name: Install pip modules
-      shell: bash
-      run: |
-        python3 -m pip install virtualenv
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        cache: 'pip'
 
     - name: Install gems
       uses: ruby/setup-ruby@v1
