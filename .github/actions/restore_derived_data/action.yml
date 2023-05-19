@@ -12,7 +12,9 @@ runs:
     - name: Add current main commit SHA environment variable
       shell: bash
       run: |
-        echo $(bash  $GITHUB_WORKSPACE/Scripts/CI/nearest_main_commit_SHA.sh) > /var/tmp/nearest_main_commit_sha.txt
+        echo $GITHUB_WORKSPACE
+        echo $(bash $GITHUB_WORKSPACE/Scripts/CI/nearest_main_commit_SHA.sh) > /var/tmp/nearest_main_commit_sha.txt
+        cat /var/tmp/nearest_main_commit_sha.txt
 
     - name: Restore derived data main branch cache
       uses: actions/cache/restore@v3
