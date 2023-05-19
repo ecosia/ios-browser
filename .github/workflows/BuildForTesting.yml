@@ -7,7 +7,7 @@ on:
             required: true
             type: string
 
-jobs:
+jobs:    
   build_for_testing:
     runs-on: macos-latest
     name: Build App
@@ -15,96 +15,17 @@ jobs:
       DEVELOPER_DIR: ${{ inputs.developer-dir }}
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-
-    - name: Install pip modules
-      run: |
-          python3 -m pip install virtualenv
-
-    - name: Install gems
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: 2.7
-        bundler-cache: true
-
-    - name: Install npm
-      uses: bahmutov/npm-install@v1
-
-    - name: Restore Content Blocker Cache
-      id: restore-content-blocker-cache
-      uses: actions/cache/restore@v3
-      with:
-        path: |
-          content-blocker-lib-ios/
-          shavar-prod-lists/
-          Client/Assets/AllFramesAtDocument*.js
-          Client/Assets/MainFrameAtDocument*.js
-          Client/Assets/*.js.LICENSE.txt
-        key: ${{ runner.os }}-content-blocker-cache-${{ hashFiles('content_blocker_commit_sha.txt') }}
-
-    - name: Run content blocker scripts
-      if: steps.restore-content-blocker-cache.outputs.cache-hit != 'true'
-      run: ./content_blocker_update.sh
-
-    - name: Save Content Blocker Cache
-      if: steps.restore-content-blocker-cache.outputs.cache-hit != 'true'
-      uses: actions/cache/save@v3
-      with:
-        path: |
-          content-blocker-lib-ios/
-          shavar-prod-lists/
-          Client/Assets/AllFramesAtDocument*.js
-          Client/Assets/MainFrameAtDocument*.js
-          Client/Assets/*.js.LICENSE.txt
-        key: ${{ runner.os }}-content-blocker-cache-${{ hashFiles('content_blocker_commit_sha.txt') }}
-
-    - name: Fix-up private Github URLs
-      run: find . -type f \( -name '*.pbxproj' -o -name 'Package.swift' -o -name 'Package.resolved' \) -exec sed -i '' "s/https:\/\/github.com\/${GITHUB_REPOSITORY_OWNER}/https:\/\/${GITHUB_ACCESS_TOKEN}@github.com\/${GITHUB_REPOSITORY_OWNER}/g" {} \;
-      env:
-        GITHUB_ACCESS_TOKEN: ${{ secrets.IOS_CORE_TOKEN }}
-
-    - name: Create empty Staging xcconfig
-      run: touch Client/Configuration/Staging.xcconfig
-
-    - name: Restore SPM Cache
-      id: restore-spm-cache
-      uses: actions/cache/restore@v3
-      with:
-        path: SourcePackages/
-        key: ${{ runner.os }}-spm-cache-${{ hashFiles('Client.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
-
-    - name: Update Xcode settings
-      run: |
-        defaults write com.apple.Xcode PBXNumberOfParallelBuildSubtasks 8
-        defaults write com.apple.dt.Xcode BuildSystemScheduleInherentlyParallelCommandsExclusively -bool YES
-
-    - name: Install SPM
-      if: steps.restore-spm-cache.outputs.cache-hit == 'false'
-      run: bundle exec fastlane spm build_path:"SourcePackages/"
-
+  
     - name: Build for testing
       run: bundle exec fastlane build_and_export_derived_data_path
 
-    - name: Save derived data path into a txt file artifact
-      uses: actions/upload-artifact@master
-      id: save_derived_data_path
-      with:
-        name: derived_data_path
-        path: /var/tmp/derived_data_path.txt
-        if-no-files-found: error
-
-    - name: Get derived data path from txt file
-      id: get_derived_data_path
-      run: echo ::set-output name=derived_data_path_from_file::$(cat /var/tmp/derived_data_path.txt)
-
-    - name: Save derived data cache
+    - name: Update derived data cache
       uses: actions/cache/save@v3
       with:
         path: ${{ steps.get_derived_data_path.outputs.derived_data_path_from_file }}
         key: ${{ runner.os }}-derived-data-cache-${{ github.run_id }}
 
-    - name: Save SPM Cache
+    - name: Save SPM Cache if needed
       if: steps.restore-spm-cache.outputs.cache-hit == 'false'
       uses: actions/cache/save@v3
       with:

@@ -9,6 +9,13 @@ on:
     branches: [ main ]
 
 jobs:
+  prepare_environment:
+    name: Prepare environment
+    uses: ./.github/workflows/PrepareEnvironment.yml
+    with:
+      developer-dir: /Applications/Xcode_14.2.0.app/Contents/Developer
+    secrets: inherit
+
   build_for_testing:
     name: Build app for testing
     uses: ./.github/workflows/BuildForTesting.yml
