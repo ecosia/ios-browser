@@ -75,23 +75,20 @@ jobs:
                 Client/Assets/*.js.LICENSE.txt
             key: ${{ runner.os }}-content-blocker-cache-${{ hashFiles('content_blocker_commit_sha.txt') }}
 
-        - name: Retrive derived data path from txt file
-          uses: actions/download-artifact@master
-          with:
-            name: derived_data_path
-            path: /var/tmp/
-
         - name: Get derived data path from txt file
           id: get_derived_data_path
           run: echo ::set-output name=derived_data_path_from_file::$(cat /var/tmp/derived_data_path.txt)
+
+        - name: Add current develop commit SHA environment variable
+          run: |
+            echo $(git show --format="%H" --no-patch) > /tmp/current_dev_commit_sha
 
         - name: Restore derived data Cache
           id: restore-derived-data-cache
           uses: actions/cache/restore@v3
           with:
             path: ${{ steps.get_derived_data_path.outputs.derived_data_path_from_file }}
-            key: ${{ runner.os }}-derived-data-cache-${{ github.run_id }}
-            fail-on-cache-miss: true
+            key: ${{ runner.os }}-derived-data-cache-${{ hashFiles('/tmp/current_dev_commit_sha.txt') }}
 
         - name: Create empty Staging xcconfig
           run: touch Client/Configuration/Staging.xcconfig
