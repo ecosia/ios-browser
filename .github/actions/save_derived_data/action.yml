@@ -8,6 +8,7 @@ runs:
     - name: Add current main commit SHA environment variable
       shell: bash
       run: |
+        pwd
         echo $(bash $GITHUB_WORKSPACE/Scripts/CI/nearest_main_commit_SHA.sh) > /var/tmp/nearest_main_commit_sha.txt
 
     - name: Tar derived data
