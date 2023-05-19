@@ -12,7 +12,7 @@ runs:
     - name: Add current main commit SHA environment variable
       shell: bash
       run: |
-        echo $(bash /Users/runner/work/ios-browser/ios-browser/Scripts/CI/nearest_main_commit_SHA.sh) > /var/tmp/nearest_main_commit_sha.txt
+        echo $(git log --decorate | grep 'commit' | grep 'origin/main' | head -n 1 | awk '{ print $2 }' | tr -d "\n") > /var/tmp/nearest_main_commit_sha.txt
 
     - name: Tar derived data
       shell: bash
