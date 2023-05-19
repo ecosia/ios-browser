@@ -6,7 +6,7 @@ on:
 
 jobs:
   build_for_testing:
-    uses: ./.github/workflows/BuildForTesting.yml
+    uses: ./.github/workflows/build_for_testing.yml
     with:
       developer-dir: /Applications/Xcode_14.2.0.app/Contents/Developer
     secrets: inherit
@@ -14,7 +14,7 @@ jobs:
   execute_regression_tests:
     name: Execure regression tests
     needs: build_for_testing
-    uses: ./.github/workflows/ExecuteTestPlan.yml
+    uses: ./.github/workflows/execute_test_plan.yml
     with:
       test-plan: MaindTestPlan
       developer-dir: /Applications/Xcode_14.2.0.app/Contents/Developer

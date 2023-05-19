@@ -9,17 +9,10 @@ on:
     branches: [ main ]
 
 jobs:
-  prepare_environment:
-    name: Prepare environment
-    uses: ./.github/workflows/PrepareEnvironment.yml
-    with:
-      developer-dir: /Applications/Xcode_14.2.0.app/Contents/Developer
-    secrets: inherit
 
   build_for_testing:
     name: Build app for testing
-    needs: prepare_environment
-    uses: ./.github/workflows/BuildForTesting.yml
+    uses: ./.github/workflows/build_for_testing.yml
     with:
       developer-dir: /Applications/Xcode_14.2.0.app/Contents/Developer
     secrets: inherit
@@ -51,7 +44,7 @@ jobs:
     name: Test shared module if needed
     needs: evaluate_tests_to_execute
     if: ${{ needs.evaluate_tests_to_execute.outputs.shared_module_changed == 'true' }}
-    uses: ./.github/workflows/ExecuteTestPlan.yml
+    uses: ./.github/workflows/execute_test_plan.yml
     with:
       test-plan: SharedTestPlan
       developer-dir: /Applications/Xcode_14.2.0.app/Contents/Developer
@@ -61,7 +54,7 @@ jobs:
     name: Test storage module if needed
     needs: evaluate_tests_to_execute
     if: ${{ needs.evaluate_tests_to_execute.outputs.storage_module_changed == 'true' }}
-    uses: ./.github/workflows/ExecuteTestPlan.yml
+    uses: ./.github/workflows/execute_test_plan.yml
     with:
       test-plan: StorageTestPlan
       developer-dir: /Applications/Xcode_14.2.0.app/Contents/Developer
@@ -71,7 +64,7 @@ jobs:
     name: Test client module if needed
     needs: evaluate_tests_to_execute
     if: ${{ needs.evaluate_tests_to_execute.outputs.client_target_changed == 'true' }}
-    uses: ./.github/workflows/ExecuteTestPlan.yml
+    uses: ./.github/workflows/execute_test_plan.yml
     with:
       test-plan: ClientTestPlan
       developer-dir: /Applications/Xcode_14.2.0.app/Contents/Developer

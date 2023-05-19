@@ -12,22 +12,20 @@ on:
     
 jobs:
 
-  prepare_environment:
-    name: Prepare environment
-    uses: ./.github/workflows/PrepareEnvironment.yml
-    with:
-      developer-dir: ${{ inputs.developer-dir }}
-    secrets: inherit
-
   execute_test_plan:
     runs-on: macos-latest
     name: Test ${{ inputs.test-plan }} module if needed
-    needs: prepare_environment
     env:
       DEVELOPER_DIR: ${{ inputs.developer-dir }}
 
     steps:
-      
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Prepare environment
+        uses: ./.github/actions/prepare_environment.yml
+
       - name: Run ${{ inputs.test-plan }} tests
         env:
           SCAN_DERIVED_DATA_PATH: ${{ steps.get_derived_data_path.outputs.derived_data_path_from_file }}
