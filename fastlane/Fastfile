@@ -7,10 +7,12 @@ fastlane_version "2.210.0"
 
 default_platform :ios
 
-import_build_tools(
-  url: 'git@github.com:mozilla/firefox-ios-build-tools.git',
-  clone_folder: "../build-tools",
-)
+if ENV['IS_CIRCLECI']
+  import_build_tools(
+    url: 'git@github.com:mozilla/firefox-ios-build-tools.git',
+    clone_folder: "../build-tools",
+  )
+end
 
 #move all the build tools to the right places
 #clone_folder = "../../build-tools"
@@ -93,6 +95,27 @@ platform :ios do
       apple_id: "670881887",
       itc_provider: "33YMRSYD2L"
     )
-  end 
+  end
+
+  desc "Builds the app"
+  lane :build do
+
+    run_tests(
+      build_for_testing: true
+    )
+    
+  end
+
+  desc 'Store the derived data path into a file'
+  private_lane :save_derived_data_path do |options|
+
+    derived_data_path_to_save = options[:derived_data_path]
+    derived_data_path_file = "/var/tmp/derived_data_path.txt"
+
+    UI.message("Saving #{derived_data_path_to_save} into #{derived_data_path_file}")
+
+    File.open(derived_data_path_file, 'w') { |file| file.write(options[:derived_data_path]) }
+
+  end
 
 end

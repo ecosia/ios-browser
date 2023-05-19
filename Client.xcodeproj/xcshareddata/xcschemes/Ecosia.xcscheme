@@ -98,6 +98,21 @@
             ReferencedContainer = "container:Client.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
+      <TestPlans>
+         <TestPlanReference
+            reference = "container:Tests/ClientTestPlan.xctestplan">
+         </TestPlanReference>
+         <TestPlanReference
+            reference = "container:Tests/SharedTestPlan.xctestplan">
+         </TestPlanReference>
+         <TestPlanReference
+            reference = "container:Tests/StorageTestPlan.xctestplan">
+         </TestPlanReference>
+         <TestPlanReference
+            reference = "container:Tests/MainTestPlan.xctestplan"
+            default = "YES">
+         </TestPlanReference>
+      </TestPlans>
       <Testables>
          <TestableReference
             skipped = "NO">
@@ -172,7 +187,9 @@
             </SkippedTests>
          </TestableReference>
          <TestableReference
-            skipped = "NO">
+            skipped = "NO"
+            parallelizable = "YES"
+            testExecutionOrdering = "random">
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "E6F9650B1B2F1CF20034B023"
