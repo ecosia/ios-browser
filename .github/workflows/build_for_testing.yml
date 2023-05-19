@@ -21,6 +21,8 @@ jobs:
 
       - name: Prepare environment
         uses: ./.github/actions/prepare_environment
+        with:
+          core-token: ${{ secrets.IOS_CORE_TOKEN }}
 
       - name: Build for testing
         run: bundle exec fastlane build_and_export_derived_data_path

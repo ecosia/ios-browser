@@ -25,6 +25,9 @@ jobs:
 
       - name: Prepare environment
         uses: ./.github/actions/prepare_environment
+        with:
+          core-token: ${{ secrets.IOS_CORE_TOKEN }}
+
 
       - name: Run ${{ inputs.test-plan }} tests
         env:
