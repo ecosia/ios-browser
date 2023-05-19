@@ -16,6 +16,7 @@ runs:
         GITHUB_ACCESS_TOKEN: ${{ inputs.core-token }}
 
     - name: Install pip modules
+      shell: bash
       run: |
         python3 -m pip install virtualenv
 
