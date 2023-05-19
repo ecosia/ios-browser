@@ -17,6 +17,7 @@ runs:
       shell: bash
       run: |
         echo $(git log --decorate | grep 'commit' | grep 'origin/main' | head -n 1 | awk '{ print $2 }' | tr -d "\n") > /var/tmp/nearest_main_commit_sha.txt
+        cat /var/tmp/nearest_main_commit_sha.txt
 
     - name: Restore derived data main branch cache
       uses: actions/cache/restore@v3
