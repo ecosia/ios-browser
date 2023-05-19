@@ -5,10 +5,13 @@ runs:
   using: "composite"
   steps:
 
+    - name: Set root project env var
+      run: echo "ROOT_PROJECT=${{ github.workspace }}" >> $GITHUB_ENV
+
     - name: Add current main commit SHA environment variable
       shell: bash
       run: |
-        echo $(bash ${{ vars.GITHUB_WORKSPACE }}/Scripts/CI/nearest_main_commit_SHA.sh) > /var/tmp/nearest_main_commit_sha.txt
+        echo $(bash $ROOT_PROJECT/Scripts/CI/nearest_main_commit_SHA.sh) > /var/tmp/nearest_main_commit_sha.txt
 
     - name: Tar derived data
       shell: bash
