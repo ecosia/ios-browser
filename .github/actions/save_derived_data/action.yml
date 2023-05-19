@@ -1,0 +1,21 @@
+name: 'Cache Derived data'
+description: 'This action contains all the logic needed to cache the derived data'
+
+runs:
+  using: "composite"
+  steps:
+
+    - name: Add current main commit SHA environment variable
+      shell: bash
+      run: |
+        echo $(bash Scripts/CI/nearest_main_commit_SHA.sh) > /var/tmp/nearest_main_commit_sha.txt
+
+    - name: Tar derived data
+      shell: bash
+      run: mkdir -p DerivedData && tar cfPp DerivedData/dd.tar --format posix ~/Library/Developer/Xcode/DerivedData/
+
+    - name: Cache derived data main branch
+      uses: actions/cache/save@v3
+      with:
+        path: DerivedData/
+        key: ${{ runner.os }}-derived-data-cache-${{ hashFiles('/var/tmp/nearest_main_commit_sha.txt') }}

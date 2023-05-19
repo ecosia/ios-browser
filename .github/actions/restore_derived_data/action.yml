@@ -1,0 +1,25 @@
+name: 'Restore Derived data'
+description: 'This action contains all the logic needed to restore the derived data cache'
+
+runs:
+  using: "composite"
+  steps:
+
+    - name: Git Fetch
+      shell: bash
+      run: git fetch --no-tags
+
+    - name: Add current main commit SHA environment variable
+      shell: bash
+      run: |
+        echo $(bash Scripts/CI/nearest_main_commit_SHA.sh) > /var/tmp/nearest_main_commit_sha.txt
+
+    - name: Restore derived data main branch cache
+      uses: actions/cache/restore@v3
+      with:
+        path: DerivedData/
+        key: ${{ runner.os }}-derived-data-cache-${{ hashFiles('/var/tmp/nearest_main_commit_sha.txt') }}
+
+    - name: Untar derived data main brach
+      shell: bash
+      run: if [ -f DerivedData/dd.tar ]; then tar xvPpf DerivedData/dd.tar; else echo "No cache file"; fi

@@ -28,7 +28,6 @@ jobs:
         with:
           core-token: ${{ secrets.IOS_CORE_TOKEN }}
 
-
       - name: Run ${{ inputs.test-plan }} tests
         env:
           SCAN_DERIVED_DATA_PATH: ${{ steps.get_derived_data_path.outputs.derived_data_path_from_file }}

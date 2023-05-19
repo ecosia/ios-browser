@@ -41,6 +41,13 @@ runs:
       if: steps.restore-spm-cache.outputs.cache-hit == 'false'
       run: bundle exec fastlane spm build_path:"SourcePackages/"
 
+    - name: Save SPM Cache if needed
+      if: steps.restore-spm-cache.outputs.cache-hit == 'false'
+      uses: actions/cache/save@v3
+      with:
+        path: SourcePackages/
+        key: ${{ runner.os }}-spm-cache-${{ hashFiles('Client.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}  
+
     - name: Restore Content Blocker Cache
       id: restore-content-blocker-cache
       uses: actions/cache/restore@v3
@@ -70,17 +77,8 @@ runs:
             Client/Assets/*.js.LICENSE.txt
         key: ${{ runner.os }}-content-blocker-cache-${{ hashFiles('content_blocker_commit_sha.txt') }}
 
-    - name: Add current develop commit SHA environment variable
-      shell: bash
-      run: |
-        echo $(git show --format="%H" --no-patch) > /var/tmp/current_dev_commit_sha.txt
-
     - name: Restore derived data Cache
-      id: restore-derived-data-cache
-      uses: actions/cache/restore@v3
-      with:
-        path: DerivedData/
-        key: ${{ runner.os }}-derived-data-cache-${{ hashFiles('/var/tmp/current_dev_commit_sha.txt') }}
+      uses: ./.github/actions/restore_derived_data
 
     - name: Create empty Staging xcconfig
       shell: bash
