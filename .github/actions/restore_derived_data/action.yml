@@ -7,7 +7,7 @@ runs:
 
     - name: Git Fetch
       shell: bash
-      run: git fetch --no-tags
+      run: git fetch origin main --no-tags
 
     - name: Add current main commit SHA environment variable
       shell: bash
