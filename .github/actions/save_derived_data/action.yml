@@ -5,15 +5,6 @@ runs:
   using: "composite"
   steps:
 
-    - name: Set root project env var
-      shell: bash
-      run: echo "ROOT_PROJECT=${{ github.workspace }}" >> $GITHUB_ENV
-
-    - name: Add current main commit SHA environment variable
-      shell: bash
-      run: |
-        echo $(git log --decorate | grep 'commit' | grep 'origin/main' | head -n 1 | awk '{ print $2 }' | tr -d "\n") > /var/tmp/nearest_main_commit_sha.txt
-
     - name: Tar derived data
       shell: bash
       run: mkdir -p DerivedData && tar cfPp DerivedData/dd.tar --format posix ~/Library/Developer/Xcode/DerivedData/
@@ -22,4 +13,4 @@ runs:
       uses: actions/cache/save@v3
       with:
         path: DerivedData/
-        key: ${{ runner.os }}-derived-data-cache-${{ hashFiles('/var/tmp/nearest_main_commit_sha.txt') }}
+        key: ${{ runner.os }}-derived-data-cache-${{ github.ref_name }}
