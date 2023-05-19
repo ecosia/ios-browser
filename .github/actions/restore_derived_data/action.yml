@@ -10,6 +10,7 @@ runs:
       run: git fetch origin main --no-tags
 
     - name: Set root project env var
+      shell: bash
       run: echo "ROOT_PROJECT=${{ github.workspace }}" >> $GITHUB_ENV
 
     - name: Add current main commit SHA environment variable
