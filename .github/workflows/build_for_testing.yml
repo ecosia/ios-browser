@@ -25,7 +25,7 @@ jobs:
           core-token: ${{ secrets.IOS_CORE_TOKEN }}
 
       - name: Build for testing
-        run: bundle exec fastlane build_and_export_derived_data_path
+        run: bundle exec fastlane build
 
       - name: Update derived data cache
         uses: ./.github/actions/save_derived_data

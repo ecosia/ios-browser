@@ -97,14 +97,12 @@ platform :ios do
     )
   end
 
-  desc "Builds and exports the output of the shared value SCAN_DERIVED_DATA_PATH into an ENV VAR"
-  lane :build_and_export_derived_data_path do
+  desc "Builds the app"
+  lane :build do
 
     run_tests(
       build_for_testing: true
     )
-
-    save_derived_data_path(derived_data_path: lane_context[SharedValues::SCAN_DERIVED_DATA_PATH])
     
   end
 
