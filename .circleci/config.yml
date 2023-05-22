@@ -97,7 +97,7 @@ workflows:
       - build-testflight-deploy:
           filters:
             branches:
-              only: - /^.*main.*/
+              only: /^.*main.*/
             paths:
               only:
                 - "fastlane/VERSION"
