@@ -75,7 +75,7 @@ workflows:
             branches:
               only:
                 - /^.*main.*/
-          name: Check version update
+          name: Determine if a release deploy is needed
           config-path: .circleci/deploy-release.yml
           mapping: |
             fastlane/VERSION deploy-release true
