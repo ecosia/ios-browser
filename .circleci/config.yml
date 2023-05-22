@@ -71,7 +71,7 @@ workflows:
   build-testflight-deploy:
     jobs:
       - path-filtering/filter:
-          config-path: .circleci/deploy-live.yml
+          config-path: .circleci/deploy-release.yml
           mapping: |
             fastlane/VERSION deploy-release true
       - build-testflight-deploy-beta:

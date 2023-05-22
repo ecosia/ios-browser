@@ -1,5 +1,10 @@
 version: 2.1
 
+executors:
+  base:
+    macos:
+      xcode: "14.2.0"
+
 parameters:
   deploy-release:
     type: boolean
@@ -7,10 +12,9 @@ parameters:
     
 jobs:
   build-testflight-deploy:
+    executor: base
     environment:
       CI: true
-    macos:
-      xcode: "14.2.0"
     resource_class: macos.x86.medium.gen2
     steps:
       - checkout
