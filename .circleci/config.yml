@@ -93,12 +93,15 @@ workflows:
 
   build-testflight-deploy:
     jobs:
+    
       - build-testflight-deploy:
           filters:
-            tags:
-              only: /^v.*/
             branches:
-              ignore: /.*/
+              only: - /^.*main.*/
+            paths:
+              only:
+                - "fastlane/VERSION"
+
       - build-testflight-deploy-beta:
           filters:
             tags:
