@@ -99,8 +99,7 @@ workflows:
             branches:
               only: /^.*main.*/
             paths:
-              only:
-                - "fastlane/VERSION"
+              only: "fastlane/VERSION"
 
       - build-testflight-deploy-beta:
           filters:
