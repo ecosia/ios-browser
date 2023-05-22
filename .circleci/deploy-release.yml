@@ -40,7 +40,6 @@ jobs:
               
 workflows:
   deploy-release:
-    when: 
-        - << pipeline.parameters.deploy-release >>
+    when:  << pipeline.parameters.deploy-release >>
     jobs:
       - build-testflight-deploy
