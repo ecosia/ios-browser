@@ -71,6 +71,7 @@ workflows:
   build-testflight-deploy:
     jobs:
       - path-filtering/filter:
+          name: Check version update
           config-path: .circleci/deploy-release.yml
           mapping: |
             fastlane/VERSION deploy-release true
