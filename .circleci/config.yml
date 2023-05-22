@@ -71,6 +71,10 @@ workflows:
   build-testflight-deploy:
     jobs:
       - path-filtering/filter:
+          filters:
+            branches:
+              only:
+                - /^.*main.*/
           name: Check version update
           config-path: .circleci/deploy-release.yml
           mapping: |
