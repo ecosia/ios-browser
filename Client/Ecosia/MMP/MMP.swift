@@ -24,8 +24,10 @@ struct MMP {
                                                   installReceipt: AppInfo.installReceipt,
                                                   installTime: NSDate().timeIntervalSince1970,
                                                   updateTime: NSDate().timeIntervalSince1970)
-                let env: Environment = AppConstants.BuildChannel == .release ? .production : .staging
-                try await Singular.sendSessionInfo(appDeviceInfo: appDeviceInfo, env: env)
+                
+                // TODO: Include skan after it is verified with tests
+                let mmpProvider: MMPProvider = Singular(includeSKAN: false)
+                try await mmpProvider.sendSessionInfo(appDeviceInfo: appDeviceInfo)
             } catch {
                 debugPrint(error)
             }
