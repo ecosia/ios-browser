@@ -24,7 +24,7 @@ struct MMP {
                                                   installReceipt: AppInfo.installReceipt,
                                                   installTime: NSDate().timeIntervalSince1970,
                                                   updateTime: NSDate().timeIntervalSince1970)
-                try await Singular.sendSessionInfo(appDeviceInfo: appDeviceInfo, env: Environment.current)
+                try await Singular.sendSessionInfo(appDeviceInfo: appDeviceInfo, env: .current)
             } catch {
                 debugPrint(error)
             }

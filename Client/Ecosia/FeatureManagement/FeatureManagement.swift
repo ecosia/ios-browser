@@ -13,7 +13,7 @@ struct FeatureManagement {
     static func fetchConfiguration() {
         Task {
             do {
-                try await _ = Unleash.start(env: Environment.current)
+                try await _ = Unleash.start(env: .current)
             } catch {
                 debugPrint(error)
             }
