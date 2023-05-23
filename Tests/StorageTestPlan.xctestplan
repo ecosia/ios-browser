@@ -1,0 +1,27 @@
+{
+  "configurations" : [
+    {
+      "id" : "47D2FCAD-AC90-4E1C-BC4B-2B62F2EEC5E5",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false
+  },
+  "testTargets" : [
+    {
+      "skippedTests" : [
+        "RustLoginsTests\/testUpdateLogin()"
+      ],
+      "target" : {
+        "containerPath" : "container:Client.xcodeproj",
+        "identifier" : "2FCAE2231ABB51F800877008",
+        "name" : "StorageTests"
+      }
+    }
+  ],
+  "version" : 1
+}
