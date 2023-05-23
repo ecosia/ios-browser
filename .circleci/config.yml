@@ -1,33 +1,8 @@
-version: 2
+version: 2.1
+
+setup: true
 
 jobs:
-  build-testflight-deploy:
-    environment:
-      CI: true
-    macos:
-      xcode: "14.2.0"
-    resource_class: macos.x86.medium.gen2
-    steps:
-      - checkout
-      - restore_cache:
-          key: 1-gems-{{ checksum "Gemfile.lock" }}
-      - run: bundle check || bundle install --path vendor/bundle
-      - save_cache:
-          key: 1-gems-{{ checksum "Gemfile.lock" }}
-          paths:
-            - vendor/bundle
-      - run:
-          name: verify github
-          command: for ip in $(dig @8.8.8.8 github.com +short); do ssh-keyscan github.com,$ip; ssh-keyscan $ip; done 2>/dev/null >> ~/.ssh/known_hosts
-      - run:
-          name: clean packages
-          command: xcodebuild -scheme Ecosia -project Client.xcodeproj clean
-      - run:
-          name: setup content blocking scripts
-          command: ./content_blocker_update.sh
-      - run:
-          name: Build and deploy to Testflight
-          command: bundle exec fastlane testflight_live
 
   build-testflight-deploy-beta:
     environment:
@@ -88,24 +63,28 @@ jobs:
           name: Build and deploy to AppCenter
           command: bundle exec fastlane appcenter
 
+orbs:
+  path-filtering: circleci/path-filtering@0.1.1
+
 workflows:
-  version: 2
 
   build-testflight-deploy:
     jobs:
-      - build-testflight-deploy:
+      - path-filtering/filter:
           filters:
-            tags:
-              only: /^v.*/
             branches:
-              ignore: /.*/
+              only:
+                - /^.*main.*/
+          name: Determine if a release deploy is needed
+          config-path: .circleci/deploy-release.yml
+          mapping: |
+            fastlane/VERSION deploy-release true
       - build-testflight-deploy-beta:
           filters:
             tags:
               only: /^beta.*/
             branches:
               ignore: /.*/
-
   
   build-appcenter-deploy:
     jobs:
