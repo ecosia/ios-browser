@@ -39,7 +39,7 @@ runs:
     - name: Install SPM if cache not found
       shell: bash
       if: steps.restore-spm-cache.outputs.cache-hit != 'true'
-      run: bundle exec fastlane run run_tests skip_build:true
+      run: xcodebuild -resolvePackageDependencies -clonedSourcePackagesDirPath "SourcePackages/"
 
     - name: Save SPM Cache if needed
       if: steps.restore-spm-cache.outputs.cache-hit != 'true'
