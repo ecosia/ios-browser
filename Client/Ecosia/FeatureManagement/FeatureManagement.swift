@@ -13,8 +13,7 @@ struct FeatureManagement {
     static func fetchConfiguration() {
         Task {
             do {
-                let env: Environment = AppConstants.BuildChannel == .release ? .production : .staging
-                try await _ = Unleash.start(env: env)
+                try await _ = Unleash.start(env: Environment.current)
             } catch {
                 debugPrint(error)
             }
