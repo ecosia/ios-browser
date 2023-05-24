@@ -190,7 +190,7 @@ final class UnleashDefaultBrowserSetting: HiddenSetting {
     override func onClick(_ navigationController: UINavigationController?) {
         Task {
             do {
-                _ = try await Unleash.reset(env: .staging)
+                _ = try await Unleash.reset(env: .current)
             } catch {
                 debugPrint(error)
             }
