@@ -75,17 +75,19 @@ workflows:
             branches:
               only:
                 - /^.*main.*/
-          name: Determine if a release deploy is needed
+          name: Deploy release version over Testflight if VERSION file updated
           config-path: .circleci/deploy-release.yml
           mapping: |
             fastlane/VERSION deploy-release true
       - build-testflight-deploy-beta:
+          name: Deploy beta version over Testflight
           filters:
             tags:
               only: /^beta.*/
             branches:
               ignore: /.*/
       - build-appcenter-deploy:
+          name: Deploy ad-hoc version over AppCenter
           filters:
             branches:
               only: 
