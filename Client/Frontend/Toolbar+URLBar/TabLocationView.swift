@@ -82,7 +82,7 @@ class TabLocationView: UIView {
         }
     }
 
-    private(set) lazy var trackingProtectionButton: LockerButton = .build { trackingProtectionButton in
+    private(set) lazy var trackingProtectionButton: ConnectionButton = .build { trackingProtectionButton in
         trackingProtectionButton.addTarget(self, action: #selector(self.didPressTPShieldButton(_:)), for: .touchUpInside)
         trackingProtectionButton.clipsToBounds = false
         trackingProtectionButton.accessibilityIdentifier = AccessibilityIdentifiers.Toolbar.trackingProtection
@@ -242,9 +242,6 @@ class TabLocationView: UIView {
 
 // MARK: - Private
 private extension TabLocationView {
-    var isTrackingProtectionHidden: Bool {
-        !["https", "http"].contains(url?.scheme ?? "")
-    }
 
     func setReaderModeState(_ newReaderModeState: ReaderModeState) {
         let wasHidden = readerModeButton.isHidden
@@ -318,44 +315,21 @@ extension TabLocationView: NotificationThemeable {
     }
 }
 
+// MARK: - Tracking Protection Button Helpers
+extension TabLocationView {
+    
+    private var isTrackingProtectionHidden: Bool {
+        trackingProtectionButton.evaluateNeedingVisbilityForURLScheme(urlScheme: url?.scheme)
+    }
+}
+
 extension TabLocationView: TabEventHandler {
     
     func tab(_ tab: Tab, didChangeURL url: URL) {
-
-    }
-    
-    func tabDidChangeContentBlocking(_ tab: Tab) {
-        updateBlockerStatus(forTab: tab)
-    }
-
-    private func updateBlockerStatus(forTab tab: Tab) {
-        assertIsMainThread("UI changes must be on the main thread")
-        guard let blocker = tab.contentBlocker else { return }
-        trackingProtectionButton.alpha = 1.0
-        
-        let isSecureConnection = tab.webView?.hasOnlySecureContent == true
-        let isTrackingProtectionEnabled = blocker.status == .blocking
-        let isSecureConnectionWithoutTrackingProtectionEnabled = isSecureConnection && !isTrackingProtectionEnabled
-        
-        if isTrackingProtectionEnabled {
-            trackingProtectionButton.updateState(.lockedEnhanced)
+        guard url.isWebPage() else {
             return
         }
-        
-        if isSecureConnectionWithoutTrackingProtectionEnabled {
-            trackingProtectionButton.updateState(.locked)
-            return
-        }
-        
-        if !isSecureConnection {
-            trackingProtectionButton.updateState(.unavailable)
-            return
-        }
-        
-        trackingProtectionButton.updateState(.unlocked)
-    }
-
-    func tabDidGainFocus(_ tab: Tab) {
-        updateBlockerStatus(forTab: tab)
+        let status: WebsiteConnectionTypeStatus = url.isHTTPS ? .secure : .unsecure
+        trackingProtectionButton.updateAppearanceForStatus(status)
     }
 }

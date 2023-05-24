@@ -377,6 +377,10 @@ extension URL {
         let schemes = includeDataURIs ? ["http", "https", "data"] : ["http", "https"]
         return scheme.map { schemes.contains($0) } ?? false
     }
+    
+    public var isHTTPS: Bool {
+        scheme == "https"
+    }
 
     public var isIPv6: Bool {
         return host?.contains(":") ?? false
