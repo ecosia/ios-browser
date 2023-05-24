@@ -1,0 +1,21 @@
+name: Regression Tests
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build_for_testing:
+    uses: ./.github/workflows/build_for_testing.yml
+    with:
+      developer-dir: /Applications/Xcode_14.2.0.app/Contents/Developer
+    secrets: inherit
+
+  execute_regression_tests:
+    name: Execute regression tests
+    needs: build_for_testing
+    uses: ./.github/workflows/execute_test_plan.yml
+    with:
+      test-plan: MaindTestPlan
+      developer-dir: /Applications/Xcode_14.2.0.app/Contents/Developer
+    secrets: inherit

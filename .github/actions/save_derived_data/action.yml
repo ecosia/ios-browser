@@ -1,0 +1,16 @@
+name: 'Cache Derived data'
+description: 'This action contains all the logic needed to cache the derived data'
+
+runs:
+  using: "composite"
+  steps:
+
+    - name: Tar derived data
+      shell: bash
+      run: mkdir -p DerivedData && tar cfPp DerivedData/dd.tar --format posix ~/Library/Developer/Xcode/DerivedData/
+
+    - name: Cache derived data main branch
+      uses: actions/cache/save@v3
+      with:
+        path: DerivedData/
+        key: ${{ runner.os }}-derived-data-cache-${{ github.ref_name }}

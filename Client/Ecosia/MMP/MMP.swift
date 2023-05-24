@@ -24,8 +24,7 @@ struct MMP {
                                                   installReceipt: AppInfo.installReceipt,
                                                   installTime: NSDate().timeIntervalSince1970,
                                                   updateTime: NSDate().timeIntervalSince1970)
-                let env: Environment = AppConstants.BuildChannel == .release ? .production : .staging
-                try await Singular.sendSessionInfo(appDeviceInfo: appDeviceInfo, env: env)
+                try await Singular.sendSessionInfo(appDeviceInfo: appDeviceInfo, env: .current)
             } catch {
                 debugPrint(error)
             }

@@ -1,0 +1,71 @@
+name: Merge Unit Tests
+
+on:
+  pull_request:
+    paths:
+      - 'Client/**'
+      - 'Shared/**'
+      - 'Storage/**'
+    branches: [ main ]
+
+jobs:
+
+  build_for_testing:
+    name: Build app for testing
+    uses: ./.github/workflows/build_for_testing.yml
+    with:
+      developer-dir: /Applications/Xcode_14.2.0.app/Contents/Developer
+    secrets: inherit
+
+  evaluate_tests_to_execute:
+    needs: build_for_testing
+    runs-on: ubuntu-latest
+    name: Evaluate tests to execute
+    permissions:
+      pull-requests: read
+    outputs:
+      shared_module_changed: ${{ steps.filter.outputs.shared_module_changed }}
+      storage_module_changed: ${{ steps.filter.outputs.storage_module_changed }}
+      client_target_changed: ${{ steps.filter.outputs.client_target_changed }}
+
+    steps:
+    - uses: dorny/paths-filter@v2
+      id: filter
+      with:
+        filters: |
+          shared_module_changed:
+            - 'Shared/**'
+          storage_module_changed:
+            - 'Storage/**'   
+          client_target_changed:
+            - 'Client/**'
+
+  execute_shared_tests:
+    name: Test shared module if needed
+    needs: evaluate_tests_to_execute
+    if: ${{ needs.evaluate_tests_to_execute.outputs.shared_module_changed == 'true' }}
+    uses: ./.github/workflows/execute_test_plan.yml
+    with:
+      test-plan: SharedTestPlan
+      developer-dir: /Applications/Xcode_14.2.0.app/Contents/Developer
+    secrets: inherit
+
+  execute_storage_tests:
+    name: Test storage module if needed
+    needs: evaluate_tests_to_execute
+    if: ${{ needs.evaluate_tests_to_execute.outputs.storage_module_changed == 'true' }}
+    uses: ./.github/workflows/execute_test_plan.yml
+    with:
+      test-plan: StorageTestPlan
+      developer-dir: /Applications/Xcode_14.2.0.app/Contents/Developer
+    secrets: inherit
+  
+  execute_client_tests:
+    name: Test client module if needed
+    needs: evaluate_tests_to_execute
+    if: ${{ needs.evaluate_tests_to_execute.outputs.client_target_changed == 'true' }}
+    uses: ./.github/workflows/execute_test_plan.yml
+    with:
+      test-plan: ClientTestPlan
+      developer-dir: /Applications/Xcode_14.2.0.app/Contents/Developer
+    secrets: inherit

@@ -1,0 +1,32 @@
+{
+  "configurations" : [
+    {
+      "id" : "47D2FCAD-AC90-4E1C-BC4B-2B62F2EEC5E5",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false
+  },
+  "testTargets" : [
+    {
+      "skippedTests" : [
+        "ETPCoverSheetTests",
+        "TabManagerTests\/testDeleteSelectedTab()",
+        "TabManagerTests\/testPrivatePreference_togglePBMDeletesPrivate()",
+        "TestFavicons\/testFaviconFetcherParse()",
+        "VersionSettingTests",
+        "VersionSettingTests\/testCopyAppVersion()"
+      ],
+      "target" : {
+        "containerPath" : "container:Client.xcodeproj",
+        "identifier" : "F84B21D21A090F8100AAB793",
+        "name" : "ClientTests"
+      }
+    }
+  ],
+  "version" : 1
+}

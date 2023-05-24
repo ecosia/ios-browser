@@ -48,6 +48,9 @@ DerivedData
 /fastlane/scripts
 /fastlane/templates
 
+# Temporary folder for CI SPM Caching
+SourcePackages/
+
 # content blocking lists
 content-blocker-lib-ios/Lists/*
 

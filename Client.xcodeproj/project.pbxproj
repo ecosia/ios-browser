@@ -132,6 +132,10 @@
 		2C9C9FF72A03C7CF0038A3DD /* UnleashBingExperimentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9C9FF62A03C7CF0038A3DD /* UnleashBingExperimentTests.swift */; };
 		2CA16FDE1E5F089100332277 /* SearchTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CA16FDD1E5F089100332277 /* SearchTest.swift */; };
 		2CA2040629D4954F006848DE /* EcosiaPageActionMenuCellTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CA2040529D4954F006848DE /* EcosiaPageActionMenuCellTests.swift */; };
+		2CAAE9A029F13F64004A9F62 /* SharedTestPlan.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 2CAAE99D29F13F64004A9F62 /* SharedTestPlan.xctestplan */; };
+		2CAAE9A129F13F64004A9F62 /* ClientTestPlan.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 2CAAE99E29F13F64004A9F62 /* ClientTestPlan.xctestplan */; };
+		2CAAE9A229F13F64004A9F62 /* StorageTestPlan.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 2CAAE99F29F13F64004A9F62 /* StorageTestPlan.xctestplan */; };
+		2CAAE9A429F14021004A9F62 /* MainTestPlan.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 2CAAE9A329F14021004A9F62 /* MainTestPlan.xctestplan */; };
 		2CB1A65A1FDEA8B60084E96D /* NewTabSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB1A6591FDEA8B60084E96D /* NewTabSettings.swift */; };
 		2CB3BEDA29E03ED700C1951F /* MozillaAppServices in Frameworks */ = {isa = PBXBuildFile; productRef = 2CB3BED929E03ED700C1951F /* MozillaAppServices */; };
 		2CB56E3F1E926BFB00AF7586 /* ToolbarTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB56E3E1E926BFB00AF7586 /* ToolbarTest.swift */; };
@@ -878,14 +882,6 @@
 		E1AEC178286E0CF500062E29 /* HomepageViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AEC171286E0CF500062E29 /* HomepageViewControllerTests.swift */; };
 		E1AEC179286E0CF500062E29 /* FirefoxHomeViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AEC172286E0CF500062E29 /* FirefoxHomeViewModelTests.swift */; };
 		E1AEC17A286E0CF500062E29 /* WebViewNavigationHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AEC175286E0CF500062E29 /* WebViewNavigationHandlerTests.swift */; };
-		E1AF3560286DE5F800960045 /* Smoketest3.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = E1AF3558286DE5F600960045 /* Smoketest3.xctestplan */; };
-		E1AF3561286DE5F800960045 /* Smoketest4.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = E1AF3559286DE5F600960045 /* Smoketest4.xctestplan */; };
-		E1AF3562286DE5F800960045 /* Smoketest2.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = E1AF355A286DE5F600960045 /* Smoketest2.xctestplan */; };
-		E1AF3563286DE5F800960045 /* Fennec_Enterprise_XCUITests.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = E1AF355B286DE5F600960045 /* Fennec_Enterprise_XCUITests.xctestplan */; };
-		E1AF3564286DE5F800960045 /* SyncIntegrationTestPlan.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = E1AF355C286DE5F600960045 /* SyncIntegrationTestPlan.xctestplan */; };
-		E1AF3565286DE5F800960045 /* UnitTest.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = E1AF355D286DE5F700960045 /* UnitTest.xctestplan */; };
-		E1AF3566286DE5F800960045 /* SmokeXCUITests.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = E1AF355E286DE5F700960045 /* SmokeXCUITests.xctestplan */; };
-		E1AF3567286DE5F800960045 /* PerformanceTestPlan.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = E1AF355F286DE5F700960045 /* PerformanceTestPlan.xctestplan */; };
 		E1D8BC7A21FF7A0000B100BD /* TPStatsBlocklistsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D8BC7921FF7A0000B100BD /* TPStatsBlocklistsTests.swift */; };
 		E402000A1E6493C800B45AFF /* LaunchArguments.swift in Sources */ = {isa = PBXBuildFile; fileRef = E65075861E37F7AB006961AC /* LaunchArguments.swift */; };
 		E40AFC541DD0E93300DA5651 /* L10nPermissionStringsSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E40AFC531DD0E93300DA5651 /* L10nPermissionStringsSnapshotTests.swift */; };
@@ -1743,6 +1739,10 @@
 		2C9C9FF62A03C7CF0038A3DD /* UnleashBingExperimentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnleashBingExperimentTests.swift; sourceTree = "<group>"; };
 		2CA16FDD1E5F089100332277 /* SearchTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchTest.swift; sourceTree = "<group>"; };
 		2CA2040529D4954F006848DE /* EcosiaPageActionMenuCellTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaPageActionMenuCellTests.swift; sourceTree = "<group>"; };
+		2CAAE99D29F13F64004A9F62 /* SharedTestPlan.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SharedTestPlan.xctestplan; sourceTree = "<group>"; };
+		2CAAE99E29F13F64004A9F62 /* ClientTestPlan.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ClientTestPlan.xctestplan; sourceTree = "<group>"; };
+		2CAAE99F29F13F64004A9F62 /* StorageTestPlan.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = StorageTestPlan.xctestplan; sourceTree = "<group>"; };
+		2CAAE9A329F14021004A9F62 /* MainTestPlan.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MainTestPlan.xctestplan; sourceTree = "<group>"; };
 		2CAE4511992E91A32AB7D7C7 /* th */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = th; path = th.lproj/Today.strings; sourceTree = "<group>"; };
 		2CB1A6591FDEA8B60084E96D /* NewTabSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTabSettings.swift; sourceTree = "<group>"; };
 		2CB56E3E1E926BFB00AF7586 /* ToolbarTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToolbarTest.swift; sourceTree = "<group>"; };
@@ -4301,14 +4301,6 @@
 		E1AEC171286E0CF500062E29 /* HomepageViewControllerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomepageViewControllerTests.swift; sourceTree = "<group>"; };
 		E1AEC172286E0CF500062E29 /* FirefoxHomeViewModelTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FirefoxHomeViewModelTests.swift; sourceTree = "<group>"; };
 		E1AEC175286E0CF500062E29 /* WebViewNavigationHandlerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebViewNavigationHandlerTests.swift; sourceTree = "<group>"; };
-		E1AF3558286DE5F600960045 /* Smoketest3.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Smoketest3.xctestplan; sourceTree = "<group>"; };
-		E1AF3559286DE5F600960045 /* Smoketest4.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Smoketest4.xctestplan; sourceTree = "<group>"; };
-		E1AF355A286DE5F600960045 /* Smoketest2.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Smoketest2.xctestplan; sourceTree = "<group>"; };
-		E1AF355B286DE5F600960045 /* Fennec_Enterprise_XCUITests.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Fennec_Enterprise_XCUITests.xctestplan; sourceTree = "<group>"; };
-		E1AF355C286DE5F600960045 /* SyncIntegrationTestPlan.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SyncIntegrationTestPlan.xctestplan; sourceTree = "<group>"; };
-		E1AF355D286DE5F700960045 /* UnitTest.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UnitTest.xctestplan; sourceTree = "<group>"; };
-		E1AF355E286DE5F700960045 /* SmokeXCUITests.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SmokeXCUITests.xctestplan; sourceTree = "<group>"; };
-		E1AF355F286DE5F700960045 /* PerformanceTestPlan.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PerformanceTestPlan.xctestplan; sourceTree = "<group>"; };
 		E1B8412CB5BD748F7D81B41E /* oc */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = oc; path = oc.lproj/ErrorPages.strings; sourceTree = "<group>"; };
 		E1BE455FA65078F46476F88F /* th */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = th; path = th.lproj/AuthenticationManager.strings; sourceTree = "<group>"; };
 		E1D0406692C3B058BF50AA81 /* sat-Olck */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "sat-Olck"; path = "sat-Olck.lproj/PrivateBrowsing.strings"; sourceTree = "<group>"; };
@@ -7030,14 +7022,10 @@
 		E15A8B2B286CFD48004BB2B8 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				E1AF355B286DE5F600960045 /* Fennec_Enterprise_XCUITests.xctestplan */,
-				E1AF355F286DE5F700960045 /* PerformanceTestPlan.xctestplan */,
-				E1AF355A286DE5F600960045 /* Smoketest2.xctestplan */,
-				E1AF3558286DE5F600960045 /* Smoketest3.xctestplan */,
-				E1AF3559286DE5F600960045 /* Smoketest4.xctestplan */,
-				E1AF355E286DE5F700960045 /* SmokeXCUITests.xctestplan */,
-				E1AF355C286DE5F600960045 /* SyncIntegrationTestPlan.xctestplan */,
-				E1AF355D286DE5F700960045 /* UnitTest.xctestplan */,
+				2CAAE9A329F14021004A9F62 /* MainTestPlan.xctestplan */,
+				2CAAE99E29F13F64004A9F62 /* ClientTestPlan.xctestplan */,
+				2CAAE99D29F13F64004A9F62 /* SharedTestPlan.xctestplan */,
+				2CAAE99F29F13F64004A9F62 /* StorageTestPlan.xctestplan */,
 				2FA4360B1ABB83B4008031D1 /* AccountTests */,
 				F84B21D61A090F8100AAB793 /* ClientTests */,
 				E6F9650D1B2F1CF20034B023 /* SharedTests */,
@@ -8220,7 +8208,7 @@
 				F84B22531A0920C600AAB793 /* Embed App Extensions */,
 				E6639F191BF11E3A002D0853 /* Conditionally Add Settings Bundle */,
 				E6B09CD31C74EEDB00C63FA1 /* Copy Frameworks */,
-				4368F81027955AE80013419B /* ShellScript */,
+				4368F81027955AE80013419B /* Check Moved Frameworks */,
 			);
 			buildRules = (
 			);
@@ -8636,6 +8624,7 @@
 				F84B220B1A0910F600AAB793 /* Images.xcassets in Resources */,
 				F35B8D2B1D6380EA008E3D61 /* SessionRestore.html in Resources */,
 				CA4D9CE528C8D801006AFB5D /* Ecosia.xcassets in Resources */,
+				2CAAE9A129F13F64004A9F62 /* ClientTestPlan.xctestplan in Resources */,
 				CA4D9D1428C8D801006AFB5D /* markets.json in Resources */,
 				CA4D9CF228C8D801006AFB5D /* Colours.xcassets in Resources */,
 				7B42406E1CA04CAC009B5C28 /* Menu.xcassets in Resources */,
@@ -8648,19 +8637,15 @@
 				E4CD9F541A71506400318571 /* Reader.html in Resources */,
 				CA4D9D0E28C8D801006AFB5D /* Plurals.stringsdict in Resources */,
 				CA4D9D0D28C8D801006AFB5D /* Ecosia.strings in Resources */,
-				E1AF3563286DE5F800960045 /* Fennec_Enterprise_XCUITests.xctestplan in Resources */,
-				E1AF3567286DE5F800960045 /* PerformanceTestPlan.xctestplan in Resources */,
 				23BEA76A251A99ED00A014BF /* NewYorkMedium-RegularItalic.otf in Resources */,
 				7B2142FE1E5E055000CDD3FC /* InfoPlist.strings in Resources */,
 				E69922171B94E3EF007C480D /* Licenses.html in Resources */,
-				E1AF3560286DE5F800960045 /* Smoketest3.xctestplan in Resources */,
 				E4CD9F5B1A71506C00318571 /* Reader.css in Resources */,
 				D0FCF8061FE4772D004A7995 /* AllFramesAtDocumentEnd.js in Resources */,
 				EBC9D38622D4D56F0011D881 /* disconnect-block-cookies-analytics.json in Resources */,
 				D37524871C6E8B5A00A5F6C2 /* topdomains.txt in Resources */,
 				7B4980A81CE363ED0017547C /* Settings.xcassets in Resources */,
 				39F4C0FA2045D87400746155 /* FocusHelper.js in Resources */,
-				E1AF3562286DE5F800960045 /* Smoketest2.xctestplan in Resources */,
 				E4B7B7861A793CF20022C5E0 /* FiraSans-UltraLight.ttf in Resources */,
 				2F44FB2C1A9D5D8500FD20CC /* Library.xcassets in Resources */,
 				E4B7B77D1A793CF20022C5E0 /* FiraSans-Regular.ttf in Resources */,
@@ -8675,20 +8660,19 @@
 				EBC9D38822D4D56F0011D881 /* disconnect-block-cookies-social.json in Resources */,
 				D308EE561CBF0BF5006843F2 /* CertError.css in Resources */,
 				C8399D9122DE5E5200EFA5CA /* disconnect-block-advertising.json in Resources */,
-				E1AF3566286DE5F800960045 /* SmokeXCUITests.xctestplan in Resources */,
 				43A5643923CD1E1C00B6857D /* Update.xcassets in Resources */,
 				C8399D9322DE5E5B00EFA5CA /* disconnect-block-analytics.json in Resources */,
-				E1AF3561286DE5F800960045 /* Smoketest4.xctestplan in Resources */,
 				EB84945722D4FA8A0004C2E2 /* disconnect-block-fingerprinting.json in Resources */,
 				E4B7B7681A793CF20022C5E0 /* FiraSans-Bold.ttf in Resources */,
+				2CAAE9A029F13F64004A9F62 /* SharedTestPlan.xctestplan in Resources */,
 				E4B7B7781A793CF20022C5E0 /* FiraSans-Italic.ttf in Resources */,
 				0BA1E00E1B03FB0B007675AF /* NetError.html in Resources */,
+				2CAAE9A229F13F64004A9F62 /* StorageTestPlan.xctestplan in Resources */,
 				23BEA768251A99ED00A014BF /* NewYorkMedium-BoldItalic.otf in Resources */,
 				E4A961381AC06FA50069AD6F /* ReaderViewLoading.html in Resources */,
 				EBE7635820ADCB7600E27F2D /* SendTo.xcassets in Resources */,
-				E1AF3565286DE5F800960045 /* UnitTest.xctestplan in Resources */,
-				E1AF3564286DE5F800960045 /* SyncIntegrationTestPlan.xctestplan in Resources */,
 				E4ECCDAE1AB131770005E717 /* FiraSans-Medium.ttf in Resources */,
+				2CAAE9A429F14021004A9F62 /* MainTestPlan.xctestplan in Resources */,
 				C8954A4C2729AD31001C7283 /* FxColours.xcassets in Resources */,
 				8AEE62C92756BA34003207D1 /* LoginsHelper.js in Resources */,
 				EBC9D38922D4D56F0011D881 /* disconnect-block-cookies-advertising.json in Resources */,
@@ -8775,7 +8759,7 @@
 			shellPath = /bin/sh;
 			shellScript = "cd \"${CONFIGURATION_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/\"\nif [[ -d \"Frameworks\" ]]; then \n    rm -fr Frameworks\nfi\n";
 		};
-		4368F81027955AE80013419B /* ShellScript */ = {
+		4368F81027955AE80013419B /* Check Moved Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -8785,6 +8769,7 @@
 			);
 			inputPaths = (
 			);
+			name = "Check Moved Frameworks";
 			outputFileListPaths = (
 			);
 			outputPaths = (
@@ -13020,9 +13005,12 @@
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = "${inherited}";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				"DEBUG_INFORMATION_FORMAT[sdk=iphonesimulator*]" = dwarf;
 				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 33YMRSYD2L;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
+				GCC_OPTIMIZATION_LEVEL = fast;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -13041,6 +13029,7 @@
 				SKIP_INSTALL = NO;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/Client/Client-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				VALIDATE_WORKSPACE = YES;
 			};
 			name = BetaDebug;
@@ -13800,6 +13789,7 @@
 				PRODUCT_NAME = Client;
 				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.ecosia.ecosiaapp";
 				SKIP_INSTALL = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/Client/Client-Bridging-Header.h";
 				VALIDATE_WORKSPACE = YES;
 			};
@@ -13997,6 +13987,7 @@
 				PRODUCT_NAME = Client;
 				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.ecosia.ecosiaapp.firefox";
 				SKIP_INSTALL = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/Client/Client-Bridging-Header.h";
 				VALIDATE_WORKSPACE = YES;
 			};
@@ -14109,6 +14100,8 @@
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = "${inherited}";
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				"DEBUG_INFORMATION_FORMAT[sdk=iphonesimulator*]" = dwarf;
 				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -14121,6 +14114,7 @@
 					"-ObjC",
 					"-lxml2",
 				);
+				OTHER_SWIFT_FLAGS = "$(OTHER_SWIFT_FLAGS_common) -DMOZ_CHANNEL_FENNEC -Onone";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(MOZ_BUNDLE_ID)";
 				PRODUCT_MODULE_NAME = Client;
 				PRODUCT_NAME = Client;
