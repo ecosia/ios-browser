@@ -319,6 +319,11 @@ extension TabLocationView: NotificationThemeable {
 }
 
 extension TabLocationView: TabEventHandler {
+    
+    func tab(_ tab: Tab, didChangeURL url: URL) {
+
+    }
+    
     func tabDidChangeContentBlocking(_ tab: Tab) {
         updateBlockerStatus(forTab: tab)
     }
