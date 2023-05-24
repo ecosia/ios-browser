@@ -1572,6 +1572,7 @@ class BrowserViewController: UIViewController {
                 webView.evaluateJavascriptInDefaultContentWorld("\(ReaderModeNamespace).checkReadability()")
             }
 
+            urlBar.locationView.tab(tab, didChangeURL: url)
             TabEvent.post(.didChangeURL(url), for: tab)
         }
 
