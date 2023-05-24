@@ -68,7 +68,7 @@ orbs:
 
 workflows:
 
-  build-testflight-deploy:
+  build-and-upload-to-delivery-platforms:
     jobs:
       - path-filtering/filter:
           filters:
@@ -85,12 +85,8 @@ workflows:
               only: /^beta.*/
             branches:
               ignore: /.*/
-  
-  build-appcenter-deploy:
-    jobs:
       - build-appcenter-deploy:
           filters:
             branches:
               only: 
-                - /^.*main.*/
-                                
+                - /^.*main.*/                                
