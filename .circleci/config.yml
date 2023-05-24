@@ -92,3 +92,4 @@ workflows:
             branches:
               only: 
                 - /^.*main.*/                                
+                - MOB-1759_Implement_Bookmark_Export_Import
