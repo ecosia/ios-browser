@@ -173,6 +173,7 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
     }
     
     @objc private func onLearnMoreTapped() {
+        Analytics.shared.bookmarksEmptyLearnMoreClicked()
         delegate?.emptyBookmarksViewLearnMoreTapped(self)
     }
     

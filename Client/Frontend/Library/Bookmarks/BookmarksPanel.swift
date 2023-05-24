@@ -655,6 +655,7 @@ extension BookmarksPanel {
     }
     
     func importBookmarksActionHandler() {
+        Analytics.shared.bookmarksPerformImportExport(.import)
         viewModel.bookmarkImportSelected(in: self) { [weak self] url, error in
             self?.moreButton.isEnabled = true
             
@@ -675,6 +676,7 @@ extension BookmarksPanel {
     }
 
     func exportBookmarksActionHandler() {
+        Analytics.shared.bookmarksPerformImportExport(.export)
         viewModel.bookmarkExportSelected(in: self) { [weak self] error in
             self?.moreButton.isEnabled = true
             

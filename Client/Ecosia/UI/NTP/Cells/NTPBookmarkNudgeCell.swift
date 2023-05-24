@@ -145,10 +145,12 @@ final class NTPBookmarkNudgeCell: UICollectionViewCell, NotificationThemeable, R
     }
     
     @objc private func handleOpenBookmarks() {
+        Analytics.shared.bookmarksNtp(action: .click)
         openBookmarksHandler?()
     }
     
     @objc private func handleClose() {
+        Analytics.shared.bookmarksNtp(action: .close)
         closeHandler?()
     }
 }

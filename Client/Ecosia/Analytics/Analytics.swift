@@ -265,4 +265,34 @@ final class Analytics {
         tracker.track(event)
     }
 
+    func bookmarksPerformImportExport(_ property: Property.Bookmarks) {
+        let event = Structured(category: Category.bookmarks.rawValue,
+                               action: Action.click.rawValue)
+            .label(Label.Bookmarks.importFunctionality.rawValue)
+            .property(property.rawValue)
+        tracker.track(event)
+    }
+
+    func bookmarksEmptyLearnMoreClicked() {
+        let event = Structured(category: Category.bookmarks.rawValue,
+                               action: Action.click.rawValue)
+            .label(Label.Bookmarks.learnMore.rawValue)
+            .property(Property.Bookmarks.emptyState.rawValue)
+        tracker.track(event)
+    }
+    
+    func bookmarksNtp(action: Action.Promo) {
+        let event = Structured(category: Category.bookmarks.rawValue,
+                               action: action.rawValue)
+            .label(Label.Bookmarks.bookmarksPromo.rawValue)
+        tracker.track(event)
+    }
+    
+    func bookmarksImportEnded(_ property: Property.Bookmarks) {
+        let event = Structured(category: Category.bookmarks.rawValue,
+                               action: Action.Bookmarks.import.rawValue)
+            .label(Label.Bookmarks.import.rawValue)
+            .property(property.rawValue)
+        tracker.track(event)
+    }
 }

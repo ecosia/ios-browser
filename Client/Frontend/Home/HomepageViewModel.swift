@@ -118,7 +118,11 @@ class HomepageViewModel: FeatureFlaggable, NTPLayoutHighlightDataSource {
         if NTPTooltip.highlight(for: .shared, isInPromoTest: Unleash.isInPromoTest()) == .referralSpotlight {
             Analytics.shared.showInvitePromo()
         }
-
+        
+        if User.shared.showsBookmarksNTPNudgeCard {
+            Analytics.shared.bookmarksNtp(action: .view)
+        }
+        
         impactViewModel.startCounter()
     }
 

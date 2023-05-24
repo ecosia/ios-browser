@@ -81,7 +81,9 @@ final class BookmarksExchange: BookmarksExchangable {
             let parser = try BookmarkParser(html: html)
             let bookmarks = try await parser.parseBookmarks()
             try await importBookmarks(bookmarks, viewController: viewController, toast: toast)
+            Analytics.shared.bookmarksImportEnded(.success)
         } catch {
+            Analytics.shared.bookmarksImportEnded(.error)
             toast.dismiss()
             throw error
         }

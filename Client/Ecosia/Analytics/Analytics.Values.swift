@@ -14,7 +14,8 @@ extension Analytics {
         ntp,
         menu,
         menuStatus = "menu_status",
-        settings
+        settings,
+        bookmarks
     }
     
     enum Label {
@@ -44,6 +45,14 @@ extension Analytics {
             newTab = "new_tab",
             blockImages = "block_images",
             searchbar = "searchbar"
+        }
+        
+        enum Bookmarks: String {
+            case
+            importFunctionality = "import_functionality",
+            learnMore = "learn_more",
+            bookmarksPromo = "bookmarks_promo",
+            `import`
         }
     }
     
@@ -82,6 +91,11 @@ extension Analytics {
             click,
             close
         }
+        
+        enum Bookmarks: String {
+            case
+            `import`
+        }
     }
     
     enum Property: String {
@@ -96,6 +110,15 @@ extension Analytics {
             privacy,
             financialReports = "financial_reports",
             howEcosiaWorks = "how_ecosia_works"
+        }
+        
+        enum Bookmarks: String {
+            case
+            `import`,
+            export,
+            emptyState = "empty_state",
+            success,
+            error
         }
     }
 
