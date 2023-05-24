@@ -49,22 +49,22 @@ extension LockerButton {
     }
     
     private func updateButtonImageAccordingToStatus() {
-        let lockerLockedImage = UIImage.templateImageNamed("lock_verified")
-        let lockerUnlockedImage = UIImage.templateImageNamed("lock_blocked")
-        let lockerUnavailableImage = UIImage.init(imageLiteralResourceName: "lock_blocked_dark")
-
-        switch lockerStatus {
-        case .locked:
-            setImage(lockerLockedImage, for: .normal)
-            imageView?.tintColor = .theme.ecosia.disabled
-        case .lockedEnhanced:
-            setImage(lockerLockedImage, for: .normal)
-            imageView?.tintColor = .theme.ecosia.primaryButtonActive
-        case .unlocked:
-            setImage(lockerUnlockedImage, for: .normal)
-            imageView?.tintColor = .theme.ecosia.disabled
-        case .unavailable:
-            setImage(lockerUnavailableImage, for: .normal)
-        }
+//        let lockerLockedImage = UIImage.templateImageNamed("lock_verified")
+//        let lockerUnlockedImage = UIImage.templateImageNamed("lock_blocked")
+//        let lockerUnavailableImage = UIImage.init(imageLiteralResourceName: "lock_blocked_dark")
+//
+//        switch lockerStatus {
+//        case .locked:
+//            setImage(lockerLockedImage, for: .normal)
+//            imageView?.tintColor = .theme.ecosia.disabled
+//        case .lockedEnhanced:
+//            setImage(lockerLockedImage, for: .normal)
+//            imageView?.tintColor = .theme.ecosia.primaryButtonActive
+//        case .unlocked:
+//            setImage(lockerUnlockedImage, for: .normal)
+//            imageView?.tintColor = .theme.ecosia.disabled
+//        case .unavailable:
+//            setImage(lockerUnavailableImage, for: .normal)
+//        }
     }
 }
