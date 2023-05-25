@@ -21,12 +21,9 @@ struct MMP {
                                                   locale: DeviceInfo.currentLocale,
                                                   deviceBuildVersion: DeviceInfo.osBuildNumber,
                                                   appVersion: AppInfo.appVersion,
-                                                  installReceipt: AppInfo.installReceipt,
-                                                  installTime: NSDate().timeIntervalSince1970,
-                                                  updateTime: NSDate().timeIntervalSince1970)
+                                                  installReceipt: AppInfo.installReceipt)
                 
-                // TODO: Include skan after it is verified with tests
-                let mmpProvider: MMPProvider = Singular(includeSKAN: false)
+                let mmpProvider: MMPProvider = Singular(includeSKAN: true)
                 try await mmpProvider.sendSessionInfo(appDeviceInfo: appDeviceInfo)
             } catch {
                 debugPrint(error)
