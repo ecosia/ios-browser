@@ -97,11 +97,11 @@ final class SimpleToast {
     
     func dismiss() {
         DispatchQueue.main.async {
-            self.toastView.map(self.dismiss)
+            self.toastView.map(self.hideViewAnimated)
         }
     }
 
-    fileprivate func dismiss(_ toast: UIView) {
+    fileprivate func hideViewAnimated(_ toast: UIView) {
         var frame = toast.frame
         frame.origin.y = frame.origin.y + SimpleToastUX.ToastHeight + SimpleToastUX.Offset
 
@@ -135,7 +135,7 @@ final class SimpleToast {
                 let dispatchTime = DispatchTime.now() + dismissAfter
 
                 DispatchQueue.main.asyncAfter(deadline: dispatchTime, execute: {
-                    self.dismiss(toast)
+                    self.hideViewAnimated(toast)
                 })
             }
         )

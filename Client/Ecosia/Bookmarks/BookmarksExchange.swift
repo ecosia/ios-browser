@@ -9,10 +9,15 @@ import Storage
 
 protocol BookmarksExchangable {
     func export(bookmarks: [Core.BookmarkItem], in viewController: UIViewController, barButtonItem: UIBarButtonItem) async throws
-    func `import`(from url: URL, in viewController: UIViewController) async throws
+    func `import`(from fileURL: URL, in viewController: UIViewController) async throws
 }
 
 final class BookmarksExchange: BookmarksExchangable {
+    
+    enum Error: Swift.Error {
+        case couldNotReadData
+    }
+    
     private let profile: Profile
     private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -59,7 +64,7 @@ final class BookmarksExchange: BookmarksExchangable {
     }
     
     @MainActor
-    func `import`(from url: URL, in viewController: UIViewController) async throws {
+    func `import`(from fileURL: URL, in viewController: UIViewController) async throws {
         guard let view = viewController.view else { return }
         
         let activityIndicator = UIActivityIndicatorView(style: .medium)
@@ -77,7 +82,8 @@ final class BookmarksExchange: BookmarksExchangable {
         )
 
         do {
-            let html = try String(contentsOf: url)
+            let (data, _) = try await URLSession.shared.data(from: fileURL)
+            guard let html = String(data: data, encoding: .utf8) else { throw Error.couldNotReadData }
             let parser = try BookmarkParser(html: html)
             let bookmarks = try await parser.parseBookmarks()
             try await importBookmarks(bookmarks, viewController: viewController, toast: toast)

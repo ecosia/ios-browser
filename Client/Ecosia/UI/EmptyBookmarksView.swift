@@ -28,6 +28,7 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
         label.text = .localized(.noBookmarksYet)
         label.textAlignment = .center
         label.font = UX.TitleLabelFont
+        label.adjustsFontForContentSizeCategory = true
         return label
     }()
     
@@ -150,6 +151,7 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
         sectionLabel.numberOfLines = 0
         sectionLabel.textColor = .theme.ecosia.secondaryText
         sectionLabel.text = text
+        sectionLabel.adjustsFontForContentSizeCategory = true
         sectionStackView.addArrangedSubview(sectionLabel)
         
         if traitCollection.userInterfaceIdiom == .pad {
