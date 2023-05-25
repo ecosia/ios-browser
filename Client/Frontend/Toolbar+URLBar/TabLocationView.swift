@@ -319,7 +319,7 @@ extension TabLocationView: NotificationThemeable {
 extension TabLocationView {
     
     private var isTrackingProtectionHidden: Bool {
-        trackingProtectionButton.evaluateNeedingVisbilityForURLScheme(urlScheme: url?.scheme)
+        trackingProtectionButton.evaluateNeedingVisbilityForURLScheme(url?.scheme)
     }
 }
 

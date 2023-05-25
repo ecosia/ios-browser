@@ -38,7 +38,7 @@ extension ConnectionButton {
         updateButtonImageAccordingToStatus(status)
     }
     
-    func evaluateNeedingVisbilityForURLScheme(urlScheme: String?) -> Bool {
+    func evaluateNeedingVisbilityForURLScheme(_ urlScheme: String?) -> Bool {
         !["https", "http"].contains(urlScheme ?? "")
     }
 }
