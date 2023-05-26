@@ -8,7 +8,6 @@ import Shared
 final class ConnectionButton: UIButton {
         
     // MARK: - Initializers
-
     override init(frame: CGRect) {
         super.init(frame: frame)
         configureView()
