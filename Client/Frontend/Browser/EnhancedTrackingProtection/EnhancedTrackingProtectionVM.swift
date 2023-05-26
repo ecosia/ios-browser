@@ -31,6 +31,7 @@ class EnhancedTrackingProtectionMenuVM {
     }
 
     var connectionStatusImage: UIImage {
+        // Ecosia: Update with UIImages from Ecoisa's asset
         let connectionStatus: WebsiteConnectionTypeStatus = connectionSecure ? .secure : .unsecure
         return ConnectionStatusImage.getForStatus(status: connectionStatus)!
     }
