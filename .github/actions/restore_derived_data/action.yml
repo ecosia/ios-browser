@@ -5,11 +5,17 @@ runs:
   using: "composite"
   steps:
 
+    - name: Get Derived Data cache expiration Date
+      shell: bash
+      id: check-derived-data-cache-date
+      run: |
+        echo "::set-output name=date::$(/bin/date -d '5 days ago' +'%Y-%m-%d')"
+
     - name: Restore derived data main branch cache
       uses: actions/cache/restore@v3
       with:
         path: DerivedData/
-        key: ${{ runner.os }}-derived-data-cache-${{ github.ref_name }}
+        key: ${{ runner.os }}-derived-data-cache-${{ steps.check-derived-data-cache-date.outputs.date }}
 
     - name: Untar derived data main brach
       shell: bash
