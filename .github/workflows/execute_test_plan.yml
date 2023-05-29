@@ -31,7 +31,7 @@ jobs:
       - name: Run ${{ inputs.test-plan }} tests
         env:
           SCAN_DERIVED_DATA_PATH: ${{ steps.get_derived_data_path.outputs.derived_data_path_from_file }}
-        run: bundle exec fastlane run run_tests derived_data_path:"DerivedData/" test_without_building:true skip_package_dependencies_resolution:true testplan:"${{ inputs.test-plan }}"
+        run: bundle exec fastlane run run_tests derived_data_path:"BuildDerivedData/" test_without_building:true skip_package_dependencies_resolution:true testplan:"${{ inputs.test-plan }}"
 
       - name: Publish Test Report
         uses: mikepenz/action-junit-report@v3.7.6
