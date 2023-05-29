@@ -9,17 +9,20 @@ final class MainCoordinator: Coordinator {
 
     var childCoordinators = [Coordinator]()
     var navigationController: UINavigationController
+    var browserViewController: BrowserViewController!
+    weak var welcomeDelegate: WelcomeDelegate?
     
     private var profile: Profile
     private var tabManager: TabManager
-    var browserViewController: BrowserViewController!
 
     init(navigationController: UINavigationController,
          profile: Profile,
-         tabManager: TabManager) {
+         tabManager: TabManager,
+         welcomeDelegate: WelcomeDelegate?) {
         self.navigationController = navigationController
         self.profile = profile
         self.tabManager = tabManager
+        self.welcomeDelegate = welcomeDelegate
     }
 
     func start() {
@@ -30,17 +33,11 @@ final class MainCoordinator: Coordinator {
         let rootVC: UIViewController
 
         if User.shared.firstTime {
-            rootVC = Welcome(delegate: self)
+            rootVC = Welcome(delegate: welcomeDelegate)
         } else {
             rootVC = browserViewController
         }
 
         navigationController.pushViewController(rootVC, animated: false)
-    }
-}
-
-extension MainCoordinator: WelcomeDelegate {
-    func welcomeDidFinish(_ welcome: Welcome) {
-        navigationController.setViewControllers([browserViewController], animated: true)
     }
 }

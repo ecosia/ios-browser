@@ -26,7 +26,7 @@ final class Welcome: UIViewController {
     private weak var delegate: WelcomeDelegate?
 
     required init?(coder: NSCoder) { nil }
-    init(delegate: WelcomeDelegate) {
+    init(delegate: WelcomeDelegate?) {
         self.delegate = delegate
         super.init(nibName: nil, bundle: nil)
         modalPresentationCapturesStatusBarAppearance = true

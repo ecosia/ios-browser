@@ -4,6 +4,9 @@
 
 import UIKit
 
+// Ecosia: moving the last version profile key
+public let LatestAppVersionProfileKey = "latestAppVersion"
+
 public enum AppName: String, CustomStringConvertible {
     case shortName = "Firefox"
 
