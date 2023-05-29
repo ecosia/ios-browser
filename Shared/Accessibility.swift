@@ -4,6 +4,7 @@
 
 import UIKit
 
+// Test workflow trigger comment
 
 public protocol AccessibilityActionsSource: AnyObject {
     func accessibilityCustomActionsForView(_ view: UIView) -> [UIAccessibilityCustomAction]?
