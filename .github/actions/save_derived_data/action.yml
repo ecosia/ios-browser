@@ -22,7 +22,7 @@ runs:
     - name: Tar derived data
       if: steps.restore-derived-data-cache.outputs.cache-hit != 'true'
       shell: bash
-      run: mkdir -p DerivedData && tar cfPp DerivedData/dd.tar --format posix ~/Library/Developer/Xcode/DerivedData/
+      run: mkdir -p DerivedData && tar cfPp DerivedData/dd.tar --format posix BuildDerivedData/
 
     - name: Get today date
       if: steps.restore-derived-data-cache.outputs.cache-hit != 'true'
