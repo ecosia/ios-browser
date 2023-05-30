@@ -16,6 +16,6 @@ jobs:
     needs: build_for_testing
     uses: ./.github/workflows/execute_test_plan.yml
     with:
-      test-plan: MaindTestPlan
+      test-plan: MainTestPlan
       developer-dir: /Applications/Xcode_14.2.0.app/Contents/Developer
     secrets: inherit
