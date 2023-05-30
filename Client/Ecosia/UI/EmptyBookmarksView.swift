@@ -48,7 +48,7 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
     
     private let importBookmarksButton: UIButton = {
        let button = UIButton()
-        button.setTitle(.localized(.importBookmarks), for: .normal)
+        button.setTitle(.localized(.importBookmarksEmptyView), for: .normal)
         button.layer.borderWidth = UX.ImportButtonBorderWidth
         button.layer.cornerRadius = UX.ImportButtonCornerRadius
         button.setInsets(
