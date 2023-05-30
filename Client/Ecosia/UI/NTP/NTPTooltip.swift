@@ -134,13 +134,8 @@ final class NTPTooltip: UICollectionReusableView, NotificationThemeable {
     
     func setLinkTitle(_ text: String) {
         let titleString = NSMutableAttributedString(string: text)
-        titleString.addAttribute(
-          .underlineStyle,
-          value: NSUnderlineStyle.single.rawValue,
-          range: NSRange(location: 0, length: text.count)
-        )
         titleString.addAttributes([
-            .underlineStyle: NSUnderlineStyle.single.rawValue,
+            .font: UIFont.preferredFont(forTextStyle: .callout).bold(),
             .foregroundColor: UIColor.theme.ecosia.primaryTextInverted
         ], range: NSRange(location: 0, length: text.count))
         linkButton.setAttributedTitle(titleString, for: .normal)
