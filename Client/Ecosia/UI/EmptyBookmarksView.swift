@@ -200,9 +200,9 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
             .forEach {
                 switch $0 {
                 case let label as UILabel:
-                    label.textColor = .theme.ecosia.primaryText
+                    label.textColor = .theme.ecosia.secondaryText
                 default:
-                    $0.tintColor = .theme.ecosia.primaryText
+                    $0.tintColor = .theme.ecosia.secondaryText
                     break
                 }
             }
