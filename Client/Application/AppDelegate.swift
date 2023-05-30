@@ -31,7 +31,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         log.info("startApplication begin")
 
         self.window = UIWindow(frame: UIScreen.main.bounds)
-
+        window?.tintColor = .theme.ecosia.primaryBrand
+        
         appLaunchUtil = AppLaunchUtil(profile: profile)
         appLaunchUtil?.setUpPreLaunchDependencies()
 
