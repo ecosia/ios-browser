@@ -13,7 +13,11 @@ struct MMP {
     static func sendSession() {
         Task {
             do {
-                let appDeviceInfo = AppDeviceInfo(platform: DeviceInfo.platform,
+                
+                /// We are hardcoding `iOS` as per the platform parameter
+                /// as `Singular` MMP doesn't currently support others like `iPadOS`
+                /// We don't want to modify the `DeviceInfo.platform` as other services may need the correct one.
+                let appDeviceInfo = AppDeviceInfo(platform: "iOS",
                                                   bundleId: AppInfo.bundleIdentifier,
                                                   osVersion: DeviceInfo.osVersionNumber,
                                                   deviceManufacturer: DeviceInfo.manufacturer,
