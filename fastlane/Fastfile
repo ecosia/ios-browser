@@ -127,6 +127,7 @@ platform :ios do
   lane :build do
 
     run_tests(
+      derived_data_path: "BuildDerivedData",
       build_for_testing: true
     )
     

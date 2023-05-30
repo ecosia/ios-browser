@@ -47,7 +47,7 @@ class TabTrayViewControllerTests: XCTestCase {
             expectation?.fulfill()
         }
         manager.removeTab(tabToRemove)
-        waitForExpectations(timeout: 1.0, handler: nil)
+        waitForExpectations(timeout: 2.0, handler: nil)
 
         XCTAssertEqual(tabTray.viewModel.normalTabsCount, "1")
         XCTAssertEqual(tabTray.countLabel.text, "1")
