@@ -17,8 +17,7 @@ final class ThirdPartyServicesAppDelegate: AppDelegateLeaf {
     }
     
     func applicationDidEnterBackground(_ application: UIApplication) {
-        
-        // send glean telemetry and clear cache
+        // Clear Cache
         // we do this to remove any disk cache
         // that the app might have built over the
         // time which is taking up un-necessary space

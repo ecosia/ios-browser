@@ -30,7 +30,6 @@ extension TopSiteWidgetAppDelegate {
         if #available(iOS 14.0, *) {
             let topSitesProvider = TopSitesProviderImplementation(browserHistoryFetcher: profile.history,
                                                                   prefs: profile.prefs)
-
             TopSitesWidgetManager(topSitesProvider: topSitesProvider).writeWidgetKitTopSites()
         }
     }

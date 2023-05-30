@@ -56,9 +56,6 @@ final class UserActivityRestoringAppDelegate: AppDelegateLeaf {
                 return true
             }
         }
-
         return false
     }
-
-    
 }
