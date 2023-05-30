@@ -5216,7 +5216,7 @@
 		2CFA48D42A24FFA9003ED013 /* AppDelegate */ = {
 			isa = PBXGroup;
 			children = (
-				2CFA48D72A2503A8003ED013 /* Leafs */,
+				2CFA48D72A2503A8003ED013 /* Leaves */,
 				2CFA48D22A24FF45003ED013 /* EcosiaAppDelegate.swift */,
 				2CFA48FA2A2506C7003ED013 /* CompositeAppDelegate.swift */,
 				2CFA48FC2A25070E003ED013 /* AppDelegateFactory.swift */,
@@ -5224,7 +5224,7 @@
 			path = AppDelegate;
 			sourceTree = "<group>";
 		};
-		2CFA48D72A2503A8003ED013 /* Leafs */ = {
+		2CFA48D72A2503A8003ED013 /* Leaves */ = {
 			isa = PBXGroup;
 			children = (
 				2CFA48ED2A25066A003ED013 /* AnalyticsAppDelegate.swift */,
@@ -5243,7 +5243,7 @@
 				2C5B06EC2A262B1D00AE260E /* OpenUrlAppDelegate.swift */,
 				2C5B06EE2A262BBF00AE260E /* UserActivityRestoringAppDelegate.swift */,
 			);
-			path = Leafs;
+			path = Leaves;
 			sourceTree = "<group>";
 		};
 		2F44FC551A9E83E200FD20CC /* Settings */ = {
