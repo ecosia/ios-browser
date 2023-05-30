@@ -46,12 +46,12 @@ final class CompositeAppDelegate: AppDelegateType {
     }
     
     func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
-        appDelegates.forEach { _ = $0.application?(application, continue: userActivity, restorationHandler: restorationHandler) }
-        return true
+        let userActivityRestoringAppDelegate = appDelegates.first(where: { $0 is UserActivityRestoringAppDelegate })
+        return userActivityRestoringAppDelegate?.application?(application, continue: userActivity, restorationHandler: restorationHandler) ?? false
     }
     
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
-        appDelegates.forEach { _ = $0.application?(app, open: url, options: options) }
-        return true
+        let openUrlAppDelegate = appDelegates.first(where: { $0 is OpenUrlAppDelegate })
+        return openUrlAppDelegate?.application?(app, open: url, options: options) ?? false
     }
 }

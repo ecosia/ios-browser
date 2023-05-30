@@ -21,13 +21,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication,
                      willFinishLaunchingWithOptions
                      launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        appDelegate.application?(application, willFinishLaunchingWithOptions: launchOptions) ?? false
+        appDelegate.application?(application, willFinishLaunchingWithOptions: launchOptions) ?? true
     }
 
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions
                      launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        appDelegate.application?(application, didFinishLaunchingWithOptions: launchOptions) ?? false
+        appDelegate.application?(application, didFinishLaunchingWithOptions: launchOptions) ?? true
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {

@@ -21,23 +21,5 @@ final class TelemetryAppDelegate: AppDelegateLeaf {
     func applicationDidEnterBackground(_ application: UIApplication) {
         TelemetryWrapper.recordEvent(category: .action, method: .background, object: .app)
         TabsQuantityTelemetry.trackTabsQuantity(tabManager: tabManager)
-    }
-    
-    func application(_ application: UIApplication,
-                     open url: URL,
-                     options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
-        
-        guard let routerpath = NavigationPath(url: url) else { return false }
-
-        if let _ = profile.prefs.boolForKey(PrefsKeys.AppExtensionTelemetryOpenUrl) {
-            profile.prefs.removeObjectForKey(PrefsKeys.AppExtensionTelemetryOpenUrl)
-            var object = TelemetryWrapper.EventObject.url
-            if case .text = routerpath {
-                object = .searchText
-            }
-            TelemetryWrapper.recordEvent(category: .appExtensionAction, method: .applicationOpenUrl, object: object)
-        }
-
-        return true
-    }
+    }    
 }

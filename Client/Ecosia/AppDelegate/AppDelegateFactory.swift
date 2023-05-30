@@ -22,6 +22,8 @@ enum AppDelegateFactory {
                                           window: window,
                                           tabManager: tabManager,
                                           coordinator: coordinator),
+            UserActivityRestoringAppDelegate(browserViewController: coordinator?.browserViewController),
+            OpenUrlAppDelegate(profile: profile, browserViewController: coordinator?.browserViewController),
             ThemeUpdatesAppDelegate(window: window),
             OrientationLockAppDelegate(orientationLock: orientationLock),
             TopSiteWidgetAppDelegate(profile: profile),

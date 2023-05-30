@@ -120,6 +120,8 @@
 		2C4A07DC20246EAD0083E320 /* DragAndDropTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4A07DB20246EAD0083E320 /* DragAndDropTests.swift */; };
 		2C4B6BF320349EB800A009C2 /* FirstRunTourTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4B6BF220349EB800A009C2 /* FirstRunTourTests.swift */; };
 		2C5850012A02879A009D7703 /* UnleashBingExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5850002A02879A009D7703 /* UnleashBingExperiment.swift */; };
+		2C5B06ED2A262B1E00AE260E /* OpenUrlAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5B06EC2A262B1D00AE260E /* OpenUrlAppDelegate.swift */; };
+		2C5B06EF2A262BBF00AE260E /* UserActivityRestoringAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5B06EE2A262BBF00AE260E /* UserActivityRestoringAppDelegate.swift */; };
 		2C8C07771E7800EA00DC1237 /* FindInPageTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C8C07761E7800EA00DC1237 /* FindInPageTest.swift */; };
 		2C97EC711E72C80E0092EC18 /* TopTabsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C97EC701E72C80E0092EC18 /* TopTabsTest.swift */; };
 		2C9C9FF72A03C7CF0038A3DD /* UnleashBingExperimentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9C9FF62A03C7CF0038A3DD /* UnleashBingExperimentTests.swift */; };
@@ -1734,6 +1736,8 @@
 		2C4A07DB20246EAD0083E320 /* DragAndDropTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragAndDropTests.swift; sourceTree = "<group>"; };
 		2C4B6BF220349EB800A009C2 /* FirstRunTourTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstRunTourTests.swift; sourceTree = "<group>"; };
 		2C5850002A02879A009D7703 /* UnleashBingExperiment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnleashBingExperiment.swift; sourceTree = "<group>"; };
+		2C5B06EC2A262B1D00AE260E /* OpenUrlAppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenUrlAppDelegate.swift; sourceTree = "<group>"; };
+		2C5B06EE2A262BBF00AE260E /* UserActivityRestoringAppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserActivityRestoringAppDelegate.swift; sourceTree = "<group>"; };
 		2C6045859589979C43AF09E0 /* jv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = jv; path = jv.lproj/ClearPrivateDataConfirm.strings; sourceTree = "<group>"; };
 		2C6E44099EACF7BE5438CEB6 /* ca */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ca; path = ca.lproj/Today.strings; sourceTree = "<group>"; };
 		2C8C07761E7800EA00DC1237 /* FindInPageTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FindInPageTest.swift; sourceTree = "<group>"; };
@@ -5236,6 +5240,8 @@
 				2CFA49002A250CF1003ED013 /* ProfileBehaviorAppDelegate.swift */,
 				2CFA49022A250ED7003ED013 /* TelemetryAppDelegate.swift */,
 				2CFA49062A251393003ED013 /* ThirdPartyServicesAppDelegate.swift */,
+				2C5B06EC2A262B1D00AE260E /* OpenUrlAppDelegate.swift */,
+				2C5B06EE2A262BBF00AE260E /* UserActivityRestoringAppDelegate.swift */,
 			);
 			path = Leafs;
 			sourceTree = "<group>";
@@ -9231,6 +9237,7 @@
 				F85C7F0F271DD154004BDBA4 /* AppAuthenticator.swift in Sources */,
 				D029A04920A62DB0001DB72F /* TemporaryDocument.swift in Sources */,
 				CA9A4B7028D0A2C7006571DB /* FakeNimbus.swift in Sources */,
+				2C5B06ED2A262B1E00AE260E /* OpenUrlAppDelegate.swift in Sources */,
 				C8BA0E7627F20B8E00DD8214 /* HistoryDeletionUtility.swift in Sources */,
 				EBB895332193FFF400EB91A0 /* ContentBlockerSettingViewController.swift in Sources */,
 				E692E3371C46E86A009D1240 /* AppSettingsOptions.swift in Sources */,
@@ -9307,6 +9314,7 @@
 				C45F44691D087DB600CB7EF0 /* TopTabsViewController.swift in Sources */,
 				DFACDFAF274D4D6D00A94EEC /* ReusableCell.swift in Sources */,
 				1D0BA05C24F46A0400D731B5 /* TopSitesProvider.swift in Sources */,
+				2C5B06EF2A262BBF00AE260E /* UserActivityRestoringAppDelegate.swift in Sources */,
 				0BF0DB941A8545800039F300 /* URLBarView.swift in Sources */,
 				D01017F5219CB6BD009CBB5A /* DownloadContentScript.swift in Sources */,
 				D5D052EF2645ACBF00759F85 /* View.swift in Sources */,
