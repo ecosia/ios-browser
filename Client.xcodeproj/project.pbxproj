@@ -5139,6 +5139,15 @@
 			name = Extensions;
 			sourceTree = "<group>";
 		};
+		2C1AF2622A27A7D9003970E0 /* Toolbar+URLBar */ = {
+			isa = PBXGroup;
+			children = (
+				2CFA48C62A1E75C1003ED013 /* ConnectionStatusImage.swift */,
+				2CFA48C82A1E7650003ED013 /* ConnectionStatusImage+WebsiteConnectionTypeStatus.swift */,
+			);
+			path = "Toolbar+URLBar";
+			sourceTree = "<group>";
+		};
 		2C3357E42A0D092A00E76A48 /* MMP */ = {
 			isa = PBXGroup;
 			children = (
@@ -5778,8 +5787,6 @@
 				8AD40FC627BADC3400672675 /* ToolbarTextField.swift */,
 				0BF0DB931A8545800039F300 /* URLBarView.swift */,
 				8AD40FCE27BADC6A00672675 /* URLTextField.swift */,
-				2CFA48C62A1E75C1003ED013 /* ConnectionStatusImage.swift */,
-				2CFA48C82A1E7650003ED013 /* ConnectionStatusImage+WebsiteConnectionTypeStatus.swift */,
 			);
 			path = "Toolbar+URLBar";
 			sourceTree = "<group>";
@@ -6618,6 +6625,7 @@
 				CA8BCC3F28D340AF0020BC50 /* TabCell+Ecosia.swift */,
 				CACF090529951001007451D9 /* Unleash.DefaultBrowser.swift */,
 				2CE63B2729C8DA8200047121 /* ErrorPageHandler+Ecosia.swift */,
+				2C1AF2622A27A7D9003970E0 /* Toolbar+URLBar */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
