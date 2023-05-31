@@ -1571,7 +1571,11 @@ class BrowserViewController: UIViewController {
                 tab.readabilityResult = nil
                 webView.evaluateJavascriptInDefaultContentWorld("\(ReaderModeNamespace).checkReadability()")
             }
-
+            
+            /*
+             Ecosia: Triggering the `didChangeURL` event manually as one above
+             for `tabDidChangeContentBlocking` event
+             */
             urlBar.locationView.tab(tab, didChangeURL: url)
             TabEvent.post(.didChangeURL(url), for: tab)
         }
