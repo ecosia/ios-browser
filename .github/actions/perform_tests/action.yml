@@ -1,0 +1,31 @@
+name: 'Perform Tests'
+description: 'This action contains all the usual steps needed to perform the unit tests'
+
+inputs:
+  needs-shared-tests:
+    description: 'Flag to determine whether the action needs to perform the Shared's module tests'
+    required: true
+  needs-storage-tests:
+    description: 'Flag to determine whether the action needs to perform the Storage's module tests'
+    required: true
+  needs-client-tests:
+    description: 'Flag to determine whether the action needs to perform the Client's module tests'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Run Shared tests if needed
+      shell: bash
+      if: inputs.needs-shared-tests == 'true'
+      run: bundle exec fastlane run run_tests derived_data_path:"BuildDerivedData/" test_without_building:true testplan:"SharedTestPlan"
+    
+    - name: Run Storage tests if needed
+      shell: bash
+      if: inputs.needs-storage-tests == 'true'
+      run: bundle exec fastlane run run_tests derived_data_path:"BuildDerivedData/" test_without_building:true testplan:"StorageTestPlan"
+    
+    - name: Run Client tests if needed
+      shell: bash
+      if: inputs.needs-client-tests == 'true'
+      run: bundle exec fastlane run run_tests derived_data_path:"BuildDerivedData/" test_without_building:true testplan:"ClientTestPlan"

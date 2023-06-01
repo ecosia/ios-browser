@@ -4,7 +4,6 @@ description: 'This action contains all the logic needed to restore the derived d
 runs:
   using: "composite"
   steps:
-
     - name: Get Derived Data cache expiration Date
       shell: bash
       id: check-derived-data-cache-date

@@ -9,63 +9,43 @@ on:
     branches: [ main ]
 
 jobs:
-
-  build_for_testing:
-    name: Build app for testing
-    uses: ./.github/workflows/build_for_testing.yml
-    with:
-      developer-dir: /Applications/Xcode_14.2.0.app/Contents/Developer
-    secrets: inherit
-
-  evaluate_tests_to_execute:
-    needs: build_for_testing
-    runs-on: ubuntu-latest
-    name: Evaluate tests to execute
+  execute_merge_tests:
+    runs-on: macos-latest
+    name: Execute Merge Tests
     permissions:
       pull-requests: read
-    outputs:
-      shared_module_changed: ${{ steps.filter.outputs.shared_module_changed }}
-      storage_module_changed: ${{ steps.filter.outputs.storage_module_changed }}
-      client_target_changed: ${{ steps.filter.outputs.client_target_changed }}
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_14.2.0.app/Contents/Developer
 
     steps:
-    - uses: dorny/paths-filter@v2
-      id: filter
-      with:
-        filters: |
-          shared_module_changed:
-            - 'Shared/**'
-          storage_module_changed:
-            - 'Storage/**'   
-          client_target_changed:
-            - 'Client/**'
+      - name: Checkout
+        uses: actions/checkout@v3
 
-  execute_shared_tests:
-    name: Test shared module if needed
-    needs: evaluate_tests_to_execute
-    if: ${{ needs.evaluate_tests_to_execute.outputs.shared_module_changed == 'true' }}
-    uses: ./.github/workflows/execute_test_plan.yml
-    with:
-      test-plan: SharedTestPlan
-      developer-dir: /Applications/Xcode_14.2.0.app/Contents/Developer
-    secrets: inherit
+      - name: Prepare environment
+        uses: ./.github/actions/prepare_environment
+        with:
+          core-token: ${{ secrets.IOS_CORE_TOKEN }}
 
-  execute_storage_tests:
-    name: Test storage module if needed
-    needs: evaluate_tests_to_execute
-    if: ${{ needs.evaluate_tests_to_execute.outputs.storage_module_changed == 'true' }}
-    uses: ./.github/workflows/execute_test_plan.yml
-    with:
-      test-plan: StorageTestPlan
-      developer-dir: /Applications/Xcode_14.2.0.app/Contents/Developer
-    secrets: inherit
+      - name: Build for testing
+        run: bundle exec fastlane build
   
-  execute_client_tests:
-    name: Test client module if needed
-    needs: evaluate_tests_to_execute
-    if: ${{ needs.evaluate_tests_to_execute.outputs.client_target_changed == 'true' }}
-    uses: ./.github/workflows/execute_test_plan.yml
-    with:
-      test-plan: ClientTestPlan
-      developer-dir: /Applications/Xcode_14.2.0.app/Contents/Developer
-    secrets: inherit
+      - name: Update derived data cache
+        uses: ./.github/actions/save_derived_data
+
+      - name: Evaluate Tests to execute
+        id: evaluate-tests-to-execute
+        uses: ./.github/actions/evaluate_tests_to_execute
+
+      - name: Perform Tests
+        id: perform-tests
+        uses: ./.github/actions/perform_tests
+        with:
+          needs-shared-tests: ${{ steps.evaluate-tests-to-execute.outputs.shared-module-changed }}
+          needs-storage-tests: ${{ steps.evaluate-tests-to-execute.outputs.storage-module-changed }}
+          needs-client-tests: ${{ steps.evaluate-tests-to-execute.outputs.client-target-changed }}    
+
+      - name: Publish Test Report
+        uses: mikepenz/action-junit-report@v3.7.6
+        with:
+          report_paths: '**/test_output/xml/report.junit'
+          github_token: ${{ secrets.GITHUB_TOKEN }}

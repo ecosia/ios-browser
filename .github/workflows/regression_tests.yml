@@ -5,17 +5,43 @@ on:
     branches: [ main ]
 
 jobs:
-  build_for_testing:
-    uses: ./.github/workflows/build_for_testing.yml
-    with:
-      developer-dir: /Applications/Xcode_14.2.0.app/Contents/Developer
-    secrets: inherit
+  execute_merge_tests:
+    runs-on: macos-latest
+    name: Execute Merge Tests
+    permissions:
+      pull-requests: read
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_14.2.0.app/Contents/Developer
 
-  execute_regression_tests:
-    name: Execute regression tests
-    needs: build_for_testing
-    uses: ./.github/workflows/execute_test_plan.yml
-    with:
-      test-plan: MainTestPlan
-      developer-dir: /Applications/Xcode_14.2.0.app/Contents/Developer
-    secrets: inherit
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Prepare environment
+        uses: ./.github/actions/prepare_environment
+        with:
+          core-token: ${{ secrets.IOS_CORE_TOKEN }}
+
+      - name: Build for testing
+        run: bundle exec fastlane build
+  
+      - name: Update derived data cache
+        uses: ./.github/actions/save_derived_data
+
+      - name: Evaluate Tests to execute
+        id: evaluate-tests-to-execute
+        uses: ./.github/actions/evaluate_tests_to_execute
+
+      - name: Perform Tests
+        id: perform-tests
+        uses: ./.github/actions/perform_tests
+        with:
+          needs-shared-tests: ${{ true }}
+          needs-storage-tests: ${{ true }}
+          needs-client-tests: ${{ true }}    
+
+      - name: Publish Test Report
+        uses: mikepenz/action-junit-report@v3.7.6
+        with:
+          report_paths: '**/test_output/xml/report.junit'
+          github_token: ${{ secrets.GITHUB_TOKEN }}
