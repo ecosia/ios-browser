@@ -3,13 +3,13 @@ description: 'This action contains all the usual steps needed to perform the uni
 
 inputs:
   needs-shared-tests:
-    description: 'Flag to determine whether the action needs to perform the Shared's module tests'
+    description: 'Flag to determine whether the action needs to perform the Shared  module tests'
     required: true
   needs-storage-tests:
-    description: 'Flag to determine whether the action needs to perform the Storage's module tests'
+    description: 'Flag to determine whether the action needs to perform the Storage module tests'
     required: true
   needs-client-tests:
-    description: 'Flag to determine whether the action needs to perform the Client's module tests'
+    description: 'Flag to determine whether the action needs to perform the Client module tests'
     required: true
 
 runs:
