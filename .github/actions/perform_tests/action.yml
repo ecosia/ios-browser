@@ -27,7 +27,7 @@ runs:
       uses: mikepenz/action-junit-report@v3.7.6
       with:
         report_paths: '**/test_output/xml/report.junit'
-        github-token: ${{ inputs.github-token }}
+        github_token: ${{ inputs.github-token }}
 
     - name: Run Storage tests if needed
       shell: bash
@@ -38,7 +38,7 @@ runs:
       uses: mikepenz/action-junit-report@v3.7.6
       with:
         report_paths: '**/test_output/xml/report.junit'
-        github-token: ${{ inputs.github-token }}
+        github_token: ${{ inputs.github-token }}
 
     - name: Run Client tests if needed
       shell: bash
@@ -49,4 +49,4 @@ runs:
       uses: mikepenz/action-junit-report@v3.7.6
       with:
         report_paths: '**/test_output/xml/report.junit'
-        github-token: ${{ inputs.github-token }}
+        github_token: ${{ inputs.github-token }}
