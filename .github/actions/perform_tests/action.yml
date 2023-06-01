@@ -1,4 +1,4 @@
-name: 'Perform Tests'
+name: 'Perform Test Plans'
 description: 'This action contains all the usual steps needed to perform the unit tests'
 
 inputs:
@@ -18,32 +18,20 @@ runs:
     - name: Run Shared tests if needed
       shell: bash
       if: inputs.needs-shared-tests == 'true'
-      run: bundle exec fastlane run run_tests derived_data_path:"BuildDerivedData/" test_without_building:true testplan:"SharedTestPlan"
-
-    - name: Publish Test Report
-      uses: mikepenz/action-junit-report@v3.7.6
-      with:
-        report_paths: '**/test_output/xml/report.junit'
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+      uses: ./.github/actions/perform_test_plan
+        with:
+          test-plan: SharedTestPlan
 
     - name: Run Storage tests if needed
       shell: bash
       if: inputs.needs-storage-tests == 'true'
-      run: bundle exec fastlane run run_tests derived_data_path:"BuildDerivedData/" test_without_building:true testplan:"StorageTestPlan"
-
-    - name: Publish Test Report
-      uses: mikepenz/action-junit-report@v3.7.6
-      with:
-        report_paths: '**/test_output/xml/report.junit'
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+      uses: ./.github/actions/perform_test_plan
+        with:
+          test-plan: StorageTestPlan
 
     - name: Run Client tests if needed
       shell: bash
       if: inputs.needs-client-tests == 'true'
-      run: bundle exec fastlane run run_tests derived_data_path:"BuildDerivedData/" test_without_building:true testplan:"ClientTestPlan"
-
-    - name: Publish Test Report
-      uses: mikepenz/action-junit-report@v3.7.6
-      with:
-        report_paths: '**/test_output/xml/report.junit'
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+      uses: ./.github/actions/perform_test_plan
+        with:
+          test-plan: ClientTestPlan
