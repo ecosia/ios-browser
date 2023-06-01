@@ -12,8 +12,6 @@ jobs:
   execute_merge_tests:
     runs-on: macos-latest
     name: Execute Merge Tests
-    permissions:
-      pull-requests: read
     env:
       DEVELOPER_DIR: /Applications/Xcode_14.2.0.app/Contents/Developer
 
