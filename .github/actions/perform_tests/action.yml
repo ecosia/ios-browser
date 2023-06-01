@@ -2,9 +2,15 @@ name: 'Perform Tests'
 description: 'This action contains all the usual steps needed to perform the unit tests'
 
 inputs:
-  test-bundles:
+  needs-shared-tests:
     description: 'Flag to determine whether the action needs to perform the Shared  module tests'
-    required: false
+    required: true
+  needs-storage-tests:
+    description: 'Flag to determine whether the action needs to perform the Storage module tests'
+    required: true
+  needs-client-tests:
+    description: 'Flag to determine whether the action needs to perform the Client module tests'
+    required: true
   github-token:
     description: 'The Github Token'
     required: true
@@ -15,7 +21,29 @@ runs:
     - name: Run Shared tests if needed
       shell: bash
       if: inputs.needs-shared-tests == 'true'
-      run: bundle exec fastlane run run_tests derived_data_path:"BuildDerivedData/" test_without_building:true only_testing:"SharedTests ClientTests"
+      run: bundle exec fastlane run run_tests derived_data_path:"BuildDerivedData/" test_without_building:true testplan:"SharedTestPlan"
+
+    - name: Publish Test Report
+      uses: mikepenz/action-junit-report@v3.7.6
+      with:
+        report_paths: '**/test_output/xml/report.junit'
+        github_token: ${{ inputs.github-token }}
+
+    - name: Run Storage tests if needed
+      shell: bash
+      if: inputs.needs-storage-tests == 'true'
+      run: bundle exec fastlane run run_tests derived_data_path:"BuildDerivedData/" test_without_building:true testplan:"StorageTestPlan"
+
+    - name: Publish Test Report
+      uses: mikepenz/action-junit-report@v3.7.6
+      with:
+        report_paths: '**/test_output/xml/report.junit'
+        github_token: ${{ inputs.github-token }}
+
+    - name: Run Client tests if needed
+      shell: bash
+      if: inputs.needs-client-tests == 'true'
+      run: bundle exec fastlane run run_tests derived_data_path:"BuildDerivedData/" test_without_building:true testplan:"ClientTestPlan"
 
     - name: Publish Test Report
       uses: mikepenz/action-junit-report@v3.7.6
