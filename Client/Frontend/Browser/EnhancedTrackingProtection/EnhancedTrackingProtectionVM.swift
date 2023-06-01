@@ -31,13 +31,13 @@ class EnhancedTrackingProtectionMenuVM {
     }
 
     var connectionStatusImage: UIImage {
-        let insecureImageString = "lock_blocked"
-        let image = connectionSecure ? UIImage(named: "secureLock")! : UIImage(imageLiteralResourceName: insecureImageString)
-        return image
+        // Ecosia: Update with UIImages from Ecoisa's asset
+        let connectionStatus: WebsiteConnectionTypeStatus = connectionSecure ? .secure : .unsecure
+        return ConnectionStatusImage.getForStatus(status: connectionStatus)!
     }
 
     var connectionSecure: Bool {
-        return tab.webView?.hasOnlySecureContent ?? false
+        return tab.webView?.url?.isHTTPS == true
     }
 
     var isSiteETPEnabled: Bool {

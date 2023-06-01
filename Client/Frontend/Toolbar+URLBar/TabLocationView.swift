@@ -82,7 +82,7 @@ class TabLocationView: UIView {
         }
     }
 
-    lazy var trackingProtectionButton: LockButton = .build { trackingProtectionButton in
+    private(set) lazy var trackingProtectionButton: ConnectionButton = .build { trackingProtectionButton in
         trackingProtectionButton.addTarget(self, action: #selector(self.didPressTPShieldButton(_:)), for: .touchUpInside)
         trackingProtectionButton.clipsToBounds = false
         trackingProtectionButton.accessibilityIdentifier = AccessibilityIdentifiers.Toolbar.trackingProtection
@@ -242,9 +242,6 @@ class TabLocationView: UIView {
 
 // MARK: - Private
 private extension TabLocationView {
-    var isTrackingProtectionHidden: Bool {
-        !["https", "http"].contains(url?.scheme ?? "")
-    }
 
     func setReaderModeState(_ newReaderModeState: ReaderModeState) {
         let wasHidden = readerModeButton.isHidden
@@ -311,7 +308,6 @@ extension TabLocationView: NotificationThemeable {
         urlTextField.tintColor = .theme.ecosia.information
         urlTextField.attributedPlaceholder = placeholder
         readerModeButton.applyTheme()
-        trackingProtectionButton.applyTheme()
         reloadButton.tintColor = .theme.ecosia.secondaryText
 
         let color = LegacyThemeManager.instance.currentName == .dark ? UIColor(white: 0.3, alpha: 0.6): UIColor.theme.textField.background
@@ -319,36 +315,21 @@ extension TabLocationView: NotificationThemeable {
     }
 }
 
+// MARK: - Tracking Protection Button Helpers
+extension TabLocationView {
+    
+    private var isTrackingProtectionHidden: Bool {
+        trackingProtectionButton.evaluateNeedingVisbilityForURLScheme(url?.scheme)
+    }
+}
+
 extension TabLocationView: TabEventHandler {
-    func tabDidChangeContentBlocking(_ tab: Tab) {
-        updateBlockerStatus(forTab: tab)
-    }
-
-    private func updateBlockerStatus(forTab tab: Tab) {
-        assertIsMainThread("UI changes must be on the main thread")
-        guard let blocker = tab.contentBlocker else { return }
-        trackingProtectionButton.alpha = 1.0
-
-        var lockImage: UIImage?
-        let imageID = LegacyThemeManager.instance.currentName == .dark ? "lock_blocked_dark" : "lock_blocked"
-        if !(tab.webView?.hasOnlySecureContent ?? false) {
-            lockImage = UIImage(imageLiteralResourceName: imageID)
-
-        } else if let tintColor = trackingProtectionButton.tintColor {
-            lockImage = UIImage(imageLiteralResourceName: "lock_verified").withTintColor(tintColor, renderingMode: .alwaysTemplate)
+    
+    func tab(_ tab: Tab, didChangeURL url: URL) {
+        guard url.isWebPage() else {
+            return
         }
-
-        switch blocker.status {
-        case .blocking, .noBlockedURLs:
-            trackingProtectionButton.setImage(lockImage, for: .normal)
-        case .safelisted:
-            trackingProtectionButton.setImage(lockImage?.overlayWith(image: UIImage(imageLiteralResourceName: "MarkAsRead")), for: .normal)
-        case .disabled:
-            trackingProtectionButton.setImage(lockImage, for: .normal)
-        }
-    }
-
-    func tabDidGainFocus(_ tab: Tab) {
-        updateBlockerStatus(forTab: tab)
+        let status: WebsiteConnectionTypeStatus = url.isHTTPS ? .secure : .unsecure
+        trackingProtectionButton.updateAppearanceForStatus(status)
     }
 }
