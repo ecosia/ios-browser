@@ -5142,10 +5142,19 @@
 		2C1AF2622A27A7D9003970E0 /* Toolbar+URLBar */ = {
 			isa = PBXGroup;
 			children = (
+				8AD40FD427BB1C1000672675 /* ConnectionButton.swift */,
 				2CFA48C62A1E75C1003ED013 /* ConnectionStatusImage.swift */,
 				2CFA48C82A1E7650003ED013 /* ConnectionStatusImage+WebsiteConnectionTypeStatus.swift */,
 			);
 			path = "Toolbar+URLBar";
+			sourceTree = "<group>";
+		};
+		2C1AF2632A289384003970E0 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				2CFA48CA2A1E7692003ED013 /* WebsiteConnectionStatus.swift */,
+			);
+			path = Network;
 			sourceTree = "<group>";
 		};
 		2C3357E42A0D092A00E76A48 /* MMP */ = {
@@ -5776,7 +5785,6 @@
 		8AD40FB727BAD1D600672675 /* Toolbar+URLBar */ = {
 			isa = PBXGroup;
 			children = (
-				8AD40FD427BB1C1000672675 /* ConnectionButton.swift */,
 				8AD40FC827BADC4B00672675 /* ReaderModeButton.swift */,
 				8AD40FC927BADC4B00672675 /* StatefulButton.swift */,
 				E4CD9F2C1A6DC91200318571 /* TabLocationView.swift */,
@@ -6411,6 +6419,7 @@
 		CA4D9C8628C8D801006AFB5D /* Ecosia */ = {
 			isa = PBXGroup;
 			children = (
+				2C1AF2632A289384003970E0 /* Network */,
 				2C3357E42A0D092A00E76A48 /* MMP */,
 				2C5850022A02903F009D7703 /* Experiments */,
 				CA4D9CDE28C8D801006AFB5D /* Analytics */,
@@ -7119,7 +7128,6 @@
 				EB7FFFBF20A9D38C003E1E34 /* AlertController.swift */,
 				E65075631E37F7AB006961AC /* AppConstants.swift */,
 				E65075641E37F7AB006961AC /* AppInfo.swift */,
-				2CFA48CA2A1E7692003ED013 /* WebsiteConnectionStatus.swift */,
 				E65075661E37F7AB006961AC /* AsyncReducer.swift */,
 				32484895B328A342AED539C8 /* AuthenticationManager.strings */,
 				E65075681E37F7AB006961AC /* Bytes.swift */,
