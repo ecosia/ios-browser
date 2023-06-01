@@ -25,13 +25,7 @@ jobs:
         uses: ./.github/actions/prepare_environment
         with:
           core-token: ${{ secrets.IOS_CORE_TOKEN }}
-
-      - name: Build for testing
-        run: bundle exec fastlane build
   
-      - name: Update derived data cache
-        uses: ./.github/actions/save_derived_data
-
       - name: Evaluate Tests to execute
         id: evaluate-tests-to-execute
         uses: ./.github/actions/evaluate_tests_to_execute
@@ -44,3 +38,7 @@ jobs:
           needs-storage-tests: ${{ steps.evaluate-tests-to-execute.outputs.storage-module-changed }}
           needs-client-tests: ${{ steps.evaluate-tests-to-execute.outputs.client-module-changed }}
           github-token: ${{ secrets.IOS_CORE_TOKEN }}
+
+      - name: Update derived data cache
+        uses: ./.github/actions/save_derived_data
+  
