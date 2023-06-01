@@ -28,7 +28,7 @@ runs:
       shell: bash
       id: get-today-date
       run: |
-        echo "::set-output name=today-date::$(/bin/date +'%Y-%m-%d')"
+        echo "::set-output name=today-date::$(date -v-5d '+%Y-%m-%d')"
 
     - name: Cache derived data main branch
       if: steps.restore-derived-data-cache.outputs.cache-hit != 'true'
