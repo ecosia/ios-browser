@@ -21,23 +21,8 @@ runs:
     - name: Run Shared tests if needed
       shell: bash
       run: |
-      bool_values=(${{ inputs.needs-shared-tests }} ${{ inputs.needs-storage-tests }} ${{ inputs.needs-client-tests }})
-      strings=("SharedTests" "StorageTests" "ClientTests")
-
-      tests_to_run=""
-
-      # Iterate over the boolean values and strings
-      for i in "${!bool_values[@]}"; do
-          if [[ "${bool_values[$i]}" == "true" ]]; then
-              if [[ -z "$tests_to_run" ]]; then
-                  tests_to_run="${strings[$i]}"
-              else
-                  tests_to_run+=",""${strings[$i]}"
-              fi
-          fi
-      done
-
-      bundle exec fastlane run run_tests derived_data_path:"BuildDerivedData" only_testing:"$tests_to_run"
+        bundles_under_testing=$(./.github/scripts/process_test_bundles.sh ${{ inputs.needs-shared-tests }} ${{ inputs.needs-storage-tests }} ${{ inputs.needs-client-tests }})
+        bundle exec fastlane run run_tests derived_data_path:"BuildDerivedData" only_testing:"$bundles_under_testing"
 
     - name: Publish Test Report
       uses: mikepenz/action-junit-report@v3.7.6
