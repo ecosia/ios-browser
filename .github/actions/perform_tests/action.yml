@@ -11,6 +11,9 @@ inputs:
   needs-client-tests:
     description: 'Flag to determine whether the action needs to perform the Client module tests'
     required: true
+  github-token:
+    description: 'The Github Token'
+    required: true
 
 runs:
   using: "composite"
@@ -21,6 +24,7 @@ runs:
       uses: ./.github/actions/perform_test_plan
         with:
           test-plan: SharedTestPlan
+          github-token: ${{ inputs.github-token }}
 
     - name: Run Storage tests if needed
       shell: bash
@@ -28,6 +32,7 @@ runs:
       uses: ./.github/actions/perform_test_plan
         with:
           test-plan: StorageTestPlan
+          github-token: ${{ inputs.github-token }}
 
     - name: Run Client tests if needed
       shell: bash
@@ -35,3 +40,4 @@ runs:
       uses: ./.github/actions/perform_test_plan
         with:
           test-plan: ClientTestPlan
+          github-token: ${{ inputs.github-token }}

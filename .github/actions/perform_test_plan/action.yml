@@ -5,6 +5,9 @@ inputs:
   test-plan:
     description: 'The XCTestPlan name'
     required: true
+  github-token:
+    description: 'The Github Token'
+    required: true
 
 runs:
   using: "composite"
@@ -17,4 +20,4 @@ runs:
       uses: mikepenz/action-junit-report@v3.7.6
       with:
         report_paths: '**/test_output/xml/report.junit'
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+        github_token: ${{ inputs.github-token }}
