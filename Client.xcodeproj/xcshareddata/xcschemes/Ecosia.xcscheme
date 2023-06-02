@@ -98,21 +98,6 @@
             ReferencedContainer = "container:Client.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
-      <TestPlans>
-         <TestPlanReference
-            reference = "container:Tests/ClientTestPlan.xctestplan">
-         </TestPlanReference>
-         <TestPlanReference
-            reference = "container:Tests/SharedTestPlan.xctestplan">
-         </TestPlanReference>
-         <TestPlanReference
-            reference = "container:Tests/StorageTestPlan.xctestplan">
-         </TestPlanReference>
-         <TestPlanReference
-            reference = "container:Tests/MainTestPlan.xctestplan"
-            default = "YES">
-         </TestPlanReference>
-      </TestPlans>
       <Testables>
          <TestableReference
             skipped = "NO">
