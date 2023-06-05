@@ -191,6 +191,7 @@ extension String {
         case bookmarksExportFailedTitle = "Exporting failed"
         case bookmarksPanelMore = "More"
         case bookmarksImported = "Bookmarks imported"
+        case bookmarksExported = "Bookmarks exported"
         case bookmarksEmptyViewItem0 = "Tap the bookmark icon when you find a page you want to save."
         case bookmarksEmptyViewItem1 = "You can also import bookmarks:"
         case bookmarksEmptyViewItem1NumberedItem0 = "Export your bookmarks from another browser."

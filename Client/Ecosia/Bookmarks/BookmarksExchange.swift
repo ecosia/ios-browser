@@ -57,7 +57,15 @@ final class BookmarksExchange: BookmarksExchangable {
 
         let activityViewController = UIActivityViewController(activityItems: [exportedBooksmarksUrl], applicationActivities: nil)
         activityViewController.popoverPresentationController?.barButtonItem = barButtonItem
-        
+        activityViewController.completionWithItemsHandler = { _, completed, _, error in
+            guard completed, error == nil else { return }
+            SimpleToast().showAlertWithText(
+                .localized(.bookmarksExported),
+                image: .named("bookmarkSuccess"),
+                bottomContainer: view,
+                bottomInset: view.layoutMargins.bottom
+            )
+        }
         viewController.present(activityViewController, animated: true) {
             toast.dismiss()
         }
