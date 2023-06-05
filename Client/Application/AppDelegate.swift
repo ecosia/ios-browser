@@ -193,11 +193,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 extension AppDelegate {
 
     func startListeningForThemeUpdates() {
-        NotificationCenter.default.addObserver(forName: .DisplayThemeChanged, object: nil, queue: .main) { (_) -> Void in
+        NotificationCenter.default.addObserver(forName: .DisplayThemeChanged, object: nil, queue: .main) { [weak self] (_) -> Void in
+            self?.window?.tintColor = .theme.ecosia.primaryBrand
             if !LegacyThemeManager.instance.systemThemeIsOn {
-                self.window?.overrideUserInterfaceStyle = LegacyThemeManager.instance.userInterfaceStyle
+                self?.window?.overrideUserInterfaceStyle = LegacyThemeManager.instance.userInterfaceStyle
             } else {
-                self.window?.overrideUserInterfaceStyle = .unspecified
+                self?.window?.overrideUserInterfaceStyle = .unspecified
             }
         }
     }
