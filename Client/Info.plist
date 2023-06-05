@@ -86,6 +86,8 @@
 	<string>$(MOZ_PUBLIC_URL_SCHEME)</string>
 	<key>MozWallpaperURLScheme</key>
 	<string>$(MOZ_WALLPAPER_ASSET_URL)</string>
+	<key>NSAdvertisingAttributionReportEndpoint</key>
+	<string>https://singular-bi.net</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>

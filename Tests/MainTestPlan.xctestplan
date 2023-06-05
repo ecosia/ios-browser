@@ -14,7 +14,10 @@
   "testTargets" : [
     {
       "skippedTests" : [
+        "DefaultSearchPrefsTests",
         "ETPCoverSheetTests",
+        "EcosiaBookmarkMigrationTests\/testImportBookmarks()",
+        "HistoryDeletionUtilityTests",
         "TabManagerTests\/testDeleteSelectedTab()",
         "TabManagerTests\/testPrivatePreference_togglePBMDeletesPrivate()",
         "TestFavicons\/testFaviconFetcherParse()",

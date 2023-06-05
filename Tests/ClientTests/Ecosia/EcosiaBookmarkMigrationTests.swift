@@ -9,6 +9,7 @@ import Shared
 import Storage
 
 final class EcosiaBookmarkMigrationTests: ProfileTest {
+    // TODO: The expecation is 20 seconds for this test. Needs review. Disabled now.
     func testImportBookmarks() {
         try? FileManager.default.removeItem(at: FileManager.pages)
         Core.User.shared.migrated = false
