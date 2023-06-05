@@ -164,7 +164,7 @@ class AppSettingsTableViewController: SettingsTableViewController, FeatureFlagga
             ] + accountChinaSyncSetting )]
          */
 
-        let searchSettings: [Setting] = [
+        var searchSettings: [Setting] = [
             SearchAreaSetting(settings: self),
             SafeSearchSettings(settings: self),
             AutoCompleteSettings(prefs: prefs),
