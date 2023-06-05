@@ -113,14 +113,12 @@ final class NTPBookmarkNudgeCell: UICollectionViewCell, NotificationThemeable, R
             openBookmarksButton.heightAnchor.constraint(equalToConstant: UX.OpenBookmarksButtonHeight).priority(.required),
             openBookmarksButton.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: UX.InsetMargin),
             openBookmarksButton.leadingAnchor.constraint(equalTo: backgroundCard.leadingAnchor, constant: UX.InsetMargin),
-            openBookmarksButton.bottomAnchor.constraint(equalTo: backgroundCard.bottomAnchor, constant: -UX.InsetMargin),
+            backgroundCard.bottomAnchor.constraint(equalTo: openBookmarksButton.bottomAnchor, constant: UX.InsetMargin),
             
             icon.trailingAnchor.constraint(equalTo: backgroundCard.trailingAnchor, constant: -UX.InsetMargin),
             icon.bottomAnchor.constraint(equalTo: openBookmarksButton.bottomAnchor, constant: 0),
             icon.widthAnchor.constraint(equalToConstant: UX.IconDimensions).priority(.required),
-            icon.heightAnchor.constraint(equalToConstant: UX.IconDimensions).priority(.required),
-            
-            backgroundCard.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -UX.InsetMargin)
+            icon.heightAnchor.constraint(equalToConstant: UX.IconDimensions).priority(.required)
         ])
         
         closeButton.addTarget(self, action: #selector(handleClose), for: .touchUpInside)
