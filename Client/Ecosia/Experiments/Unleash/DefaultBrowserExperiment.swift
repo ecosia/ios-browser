@@ -5,14 +5,16 @@
 import Foundation
 import Core
 
-extension Unleash {
+struct DefaultBrowserExperiment {
+    
+    private init() {}
 
     static func minPromoSearches() -> Int {
-        let variant = getVariant(.defaultBrowser)
+        let variant = Unleash.getVariant(.defaultBrowser)
         return minSearches(for: variant)
     }
 
-    static func minSearches(for variant: Variant) -> Int {
+    static func minSearches(for variant: Unleash.Variant) -> Int {
         switch variant.name {
         case "control": return 0
         case "test1": return 5
@@ -23,7 +25,7 @@ extension Unleash {
     }
 
     static func isInPromoTest() -> Bool {
-        let variant = getVariant(.defaultBrowser)
+        let variant = Unleash.getVariant(.defaultBrowser)
         return variant.name.hasPrefix("test")
     }
 }
