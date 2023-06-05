@@ -61,7 +61,8 @@ final class Analytics {
                                action: action.rawValue)
             .label("inapp")
         
-        if case .launch, .resume = action {
+        switch action {
+        case .resume, .launch:
             // add A/B Test context
             if let context = Self.getTestContext(from: .bingSearch) {
                 event.contexts.add(context)
