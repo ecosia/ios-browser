@@ -144,11 +144,13 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel, CanRemoveQuickActio
         bookmarksTooltip.delegate = self
         bookmarksTooltip.alpha = 0.0
         view.addSubview(self.bookmarksTooltip)
+        
+        let bottomConstant = -((navigationController?.toolbar.bounds.size.height ?? 0) + (traitCollection.userInterfaceIdiom == .pad ? 0 : 32))
 
         NSLayoutConstraint.activate([
             bookmarksTooltip.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             bookmarksTooltip.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            bookmarksTooltip.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -((navigationController?.toolbar.bounds.size.height ?? 0) + 32))
+            bookmarksTooltip.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: bottomConstant)
         ])
         
         UIView.animate(withDuration: 0.3) {

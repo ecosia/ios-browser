@@ -17,8 +17,7 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
         static let ImportButtonBorderWidth: CGFloat = 1
         static let ImportButtonCornerRadius: CGFloat = 20
         static let TitleSpacerHeight: CGFloat = 24
-        static let SurroundingSpacerWidth: CGFloat = 32
-        static let InBetweenSpacerWidth: CGFloat = 6
+        static let InBetweenSpacerWidth: CGFloat = 8
         static let SectionSpacerWidth: CGFloat = 36
         static let SectionIconLabelSpacerWidth: CGFloat = 24
         static let SectionEndSpacerHeight: CGFloat = 16
@@ -42,6 +41,7 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
     
     private let learnMoreButton: UIButton = {
        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle(.localized(.learnMore), for: .normal)
         button.setContentCompressionResistancePriority(.required, for: .horizontal)
         return button
@@ -49,6 +49,7 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
     
     private let importBookmarksButton: UIButton = {
        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle(.localized(.importBookmarks), for: .normal)
         button.layer.borderWidth = UX.ImportButtonBorderWidth
         button.layer.cornerRadius = UX.ImportButtonCornerRadius
@@ -108,16 +109,26 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
         }
         containerStackView.addArrangedSubview(buttonStackViewSpacer)
 
-        let buttonsStackView = UIStackView(arrangedSubviews: [
-            createSpacerView(width: UX.SurroundingSpacerWidth),
-            learnMoreButton,
-            createSpacerView(width: UX.InBetweenSpacerWidth),
-            importBookmarksButton,
-            createSpacerView(width: UX.SurroundingSpacerWidth)
-        ])
-        buttonsStackView.axis = .horizontal
-        buttonsStackView.distribution = .equalCentering
-        containerStackView.addArrangedSubview(buttonsStackView)
+        let buttonsContainerCenterView = UIView.build { centerView in
+            let buttonsContainer = UIView.build { view in
+                view.addSubview(self.learnMoreButton)
+                view.addSubview(self.importBookmarksButton)
+                NSLayoutConstraint.activate([
+                    self.learnMoreButton.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+                    self.importBookmarksButton.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+                    self.learnMoreButton.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                    self.learnMoreButton.trailingAnchor.constraint(equalTo: self.importBookmarksButton.leadingAnchor, constant: -UX.InBetweenSpacerWidth).priority(.defaultHigh),
+                    self.importBookmarksButton.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+                ])
+            }
+            centerView.addSubview(buttonsContainer)
+            NSLayoutConstraint.activate([
+                buttonsContainer.centerXAnchor.constraint(equalTo: centerView.centerXAnchor),
+                buttonsContainer.centerYAnchor.constraint(equalTo: centerView.centerYAnchor)
+            ])
+        }
+        
+        containerStackView.addArrangedSubview(buttonsContainerCenterView)
         
         // setup buttons
         learnMoreButton.addTarget(self, action: #selector(onLearnMoreTapped), for: .touchUpInside)
