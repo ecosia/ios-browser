@@ -198,12 +198,25 @@ extension BookmarksPanelViewModel: UIDocumentPickerDelegate {
     }
     
     func handlePickedUrl(_ url: URL, in viewController: UIViewController) {
-        guard url.startAccessingSecurityScopedResource() else { return }
-        Task {
-            do {
-                try await bookmarksExchange.import(from: url, in: viewController)
-                await notifyImportDone(url, nil)
-            } catch {
+        let scopedResourceAccess = url.startAccessingSecurityScopedResource()
+        var error: NSError? = nil
+        NSFileCoordinator().coordinate(readingItemAt: url, error: &error) { url in
+            Task {
+                defer {
+                    if scopedResourceAccess {
+                        url.stopAccessingSecurityScopedResource()
+                    }
+                }
+                do {
+                    try await bookmarksExchange.import(from: url, in: viewController)
+                    await notifyImportDone(url, nil)
+                } catch {
+                    await notifyImportDone(url, error)
+                }
+            }
+        }
+        if let error = error {
+            Task {
                 await notifyImportDone(url, error)
             }
         }
