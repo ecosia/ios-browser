@@ -9,6 +9,7 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
     private enum UX {
         static let TitleLabelFont = UIFontMetrics(forTextStyle: .body).scaledFont(for: .systemFont(ofSize: 17, weight: .semibold))
         static let SectionLabelFont = UIFontMetrics(forTextStyle: .callout).scaledFont(for: .systemFont(ofSize: 16))
+        static let SectionEnumerationFont = UIFontMetrics(forTextStyle: .callout).scaledFont(for: .monospacedDigitSystemFont(ofSize: 16, weight: .regular))
         static let LearnMoreButtonLabelFont = UIFontMetrics(forTextStyle: .callout).scaledFont(for: .systemFont(ofSize: 16))
         static let ImportButtonLabelFont = UIFontMetrics(forTextStyle: .callout).scaledFont(for: .systemFont(ofSize: 16))
         static let ImportButtonPaddingInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
@@ -97,7 +98,10 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
         containerStackView.addArrangedSubview(spacerOne)
         
         addSection(imageNamed: "bookmarkAdd", text: .localized(.bookmarksEmptyViewItem0))
-        addSection(imageNamed: "exportShare", text: .localized(.bookmarksEmptyViewItem1))
+        addSection(imageNamed: "exportShare", text: .localized(.bookmarksEmptyViewItem1), listItems: [
+            .localized(.bookmarksEmptyViewItem1NumberedItem0),
+            .localized(.bookmarksEmptyViewItem1NumberedItem1)
+        ])
         
         let buttonStackViewSpacer = UIView.build {
             $0.heightAnchor.constraint(equalToConstant: UX.TitleSpacerHeight / 2).isActive = true
@@ -124,7 +128,7 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
         NotificationCenter.default.addObserver(self, selector: #selector(applyTheme), name: .DisplayThemeChanged, object: nil)
     }
     
-    private func addSection(imageNamed: String, text: String) {
+    private func addSection(imageNamed: String, text: String, listItems: [String]? = nil) {
         // first section (tap the bookmark icon when you find a page you want to share)
         let sectionStackView = UIStackView()
         sectionStackView.axis = .horizontal
@@ -139,6 +143,8 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
         sectionIcon.contentMode = .scaleAspectFit
         sectionIcon.image = UIImage.templateImageNamed(imageNamed)
         sectionIcon.setContentCompressionResistancePriority(.required, for: .horizontal)
+        sectionIcon.setContentHuggingPriority(.required, for: .horizontal)
+        
         sectionStackView.addArrangedSubview(sectionIcon)
         
         let sectionOneIconLabelSpacer = UIView.build {
@@ -146,13 +152,52 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
         }
         sectionStackView.addArrangedSubview(sectionOneIconLabelSpacer)
         
+        let sectionLabelsStackView = UIStackView()
+        sectionLabelsStackView.axis = .vertical
+        sectionStackView.addArrangedSubview(sectionLabelsStackView)
+
         let sectionLabel = UILabel()
         sectionLabel.font = UX.SectionLabelFont
         sectionLabel.numberOfLines = 0
         sectionLabel.textColor = .theme.ecosia.secondaryText
         sectionLabel.text = text
         sectionLabel.adjustsFontForContentSizeCategory = true
-        sectionStackView.addArrangedSubview(sectionLabel)
+        sectionLabelsStackView.addArrangedSubview(sectionLabel)
+        
+        if let listItems = listItems {
+            for (index, listItem) in listItems.enumerated() {
+                let enumerationLabel = UILabel()
+                enumerationLabel.font = UX.SectionEnumerationFont
+                enumerationLabel.text = " \(index+1). "
+
+                let textLabel = UILabel()
+                textLabel.font = UX.SectionLabelFont
+                textLabel.text = listItem
+
+                [enumerationLabel, textLabel].forEach {
+                    $0.setContentHuggingPriority(.required, for: .horizontal)
+                    $0.setContentCompressionResistancePriority(.required, for: .horizontal)
+                    $0.numberOfLines = 0
+                    $0.textColor = .theme.ecosia.secondaryText
+                    $0.adjustsFontForContentSizeCategory = true
+                }
+                
+                let listItemStackView = UIStackView()
+                listItemStackView.axis = .horizontal
+                listItemStackView.alignment = .leading
+                listItemStackView.distribution = .fill
+
+                listItemStackView.addArrangedSubview(enumerationLabel)
+                listItemStackView.addArrangedSubview(textLabel)
+
+                listItemStackView.addArrangedSubview(UIView.build {
+                    $0.setContentHuggingPriority(.required, for: .horizontal)
+                    $0.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+                })
+                
+                sectionLabelsStackView.addArrangedSubview(listItemStackView)
+            }
+        }
         
         if traitCollection.userInterfaceIdiom == .pad {
             sectionStackView.addArrangedSubview(createSpacerView(width: UX.SectionSpacerWidth))
