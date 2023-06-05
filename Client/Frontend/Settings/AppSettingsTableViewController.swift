@@ -172,7 +172,7 @@ class AppSettingsTableViewController: SettingsTableViewController, FeatureFlagga
         ]
         
         // Ecosia: Disable those settings for Bing search experiment when we show the Bing SERP
-        if BingSearchExperiment.isEnabled, BingSearchExperiment.shouldShowBingSERP {
+        if BingSearchExperiment.shouldShowBingSERP {
             searchSettings.removeAll()
         }
         

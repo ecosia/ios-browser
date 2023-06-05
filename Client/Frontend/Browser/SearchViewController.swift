@@ -574,7 +574,7 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
                  Ecosia: Bing Search Experiment
                  remove this if block when the Bing experiment will be removed
                  */
-                if BingSearchExperiment.isEnabled,
+                if BingSearchExperiment.shouldShowBingSERP,
                    let bingSearchURL = BingSearchExperiment.makeBingSearchURLFromURL(url) {
                     url = bingSearchURL
                     BingSearchExperiment.trackAnalytics()

@@ -35,6 +35,11 @@ struct BingSearchExperiment {
 extension BingSearchExperiment {
     
     static var shouldShowBingSERP: Bool {
+        
+        guard BingSearchExperiment.isEnabled else {
+            return false
+        }
+        
         let variant = Unleash.getVariant(.bingSearch)
         switch variant.name {
         case "control": return false

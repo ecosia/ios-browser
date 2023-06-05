@@ -298,8 +298,7 @@ extension BrowserViewController: URLBarDelegate {
              Ecosia: Bing Search Experiment
              remove this if block when the Bing experiment will be removed
              */
-            if BingSearchExperiment.isEnabled,
-               BingSearchExperiment.shouldShowBingSERP,
+            if BingSearchExperiment.shouldShowBingSERP,
                let bingSearchURL = BingSearchExperiment.makeBingSearchURLFromURL(searchURL) {
                 searchURL = bingSearchURL
                 BingSearchExperiment.trackAnalytics()
