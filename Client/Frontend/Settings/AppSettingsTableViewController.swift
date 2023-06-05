@@ -164,12 +164,17 @@ class AppSettingsTableViewController: SettingsTableViewController, FeatureFlagga
             ] + accountChinaSyncSetting )]
          */
 
-        let searchSettings: [Setting] = [
+        var searchSettings: [Setting] = [
             SearchAreaSetting(settings: self),
             SafeSearchSettings(settings: self),
             AutoCompleteSettings(prefs: prefs),
             PersonalSearchSettings(prefs: prefs)
         ]
+        
+        // Ecosia: Disable those settings for Bing search experiment when we show the Bing SERP
+        if BingSearchExperiment.shouldShowBingSERP {
+            searchSettings.removeAll()
+        }
         
         var customization: [Setting] = [HomePageSettingViewController.TopSitesSettings(settings: self)]
         

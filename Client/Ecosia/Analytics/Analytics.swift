@@ -57,10 +57,19 @@ final class Analytics {
     }
     
     func activity(_ action: Action.Activity) {
-        tracker
-            .track(Structured(category: Category.activity.rawValue,
-                              action: action.rawValue)
-                    .label("inapp"))
+        let event = Structured(category: Category.activity.rawValue,
+                               action: action.rawValue)
+            .label("inapp")
+        
+        switch action {
+        case .resume, .launch:
+            // add A/B Test context
+            if let context = Self.getTestContext(from: .bingSearch) {
+                event.contexts.add(context)
+            }
+        }
+        
+        tracker.track(event)
     }
 
     func browser(_ action: Action.Browser, label: Label.Browser, property: Property? = nil) {
@@ -126,11 +135,6 @@ final class Analytics {
         let event = Structured(category: Category.abTest.rawValue,
                               action: "user_search")
             .label("search_key")
-
-        // add A/B Test context
-        if let context = Self.getTestContext(from: .bingSearch) {
-            event.contexts.add(context)
-        }
 
         tracker.track(event)
     }
