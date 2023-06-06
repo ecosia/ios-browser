@@ -123,16 +123,6 @@ platform :ios do
 
   end
 
-  desc "Builds the app"
-  lane :build do
-
-    run_tests(
-      derived_data_path: "BuildDerivedData",
-      build_for_testing: true
-    )
-    
-  end
-
   desc 'Store the derived data path into a file'
   private_lane :save_derived_data_path do |options|
 
