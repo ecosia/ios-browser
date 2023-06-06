@@ -18,7 +18,7 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Run Shared tests if needed
+    - name: Run tests based on file changes
       shell: bash
       run: |
         bundles_under_testing=$(./.github/scripts/process_test_bundles.sh ${{ inputs.needs-shared-tests }} ${{ inputs.needs-storage-tests }} ${{ inputs.needs-client-tests }})
