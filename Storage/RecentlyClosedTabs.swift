@@ -5,8 +5,6 @@
 import Foundation
 import Shared
 
-// Test workflow trigger
-
 open class ClosedTabsStore {
 
     private let prefs: Prefs
