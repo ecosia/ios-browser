@@ -581,7 +581,7 @@ class BrowserViewController: UIViewController {
     private func prepareURLOnboardingContextualHint() {
         guard contextHintVC.shouldPresentHint()
                 && !User.shared.firstTime
-                && NTPTooltip.highlight(for: .shared, isInPromoTest: Unleash.isInPromoTest()) == nil
+                && NTPTooltip.highlight(for: .shared, isInPromoTest: DefaultBrowserExperiment.isInPromoTest()) == nil
         else { return }
 
         contextHintVC.configure(
@@ -2272,7 +2272,7 @@ extension BrowserViewController {
               !showLoadingScreen(for: .shared),
               !User.shared.showsRebrandIntro else { return }
 
-        if shouldShowIntroScreen && Unleash.minPromoSearches() <= User.shared.treeCount  {
+        if shouldShowIntroScreen && DefaultBrowserExperiment.minPromoSearches() <= User.shared.treeCount  {
             if #available(iOS 14, *) {
                 let defaultPromo = DefaultBrowser(delegate: self)
                 present(defaultPromo, animated: true)

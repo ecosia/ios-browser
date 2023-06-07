@@ -17,7 +17,7 @@ struct BingSearchExperiment {
         BingSearchExperimentCounter.read()
     }
     
-    static func isEnabled() -> Bool {
+    static var isEnabled: Bool {
         Unleash.isEnabled(.bingSearch)
     }
     
@@ -30,4 +30,21 @@ struct BingSearchExperiment {
     static func trackAnalytics() {
         Analytics.shared.userSearchViaBingABTest()
     }
+}
+
+extension BingSearchExperiment {
+    
+    static var shouldShowBingSERP: Bool {
+        
+        guard BingSearchExperiment.isEnabled else {
+            return false
+        }
+        
+        let variant = Unleash.getVariant(.bingSearch)
+        switch variant.name {
+        case "control": return false
+        case "test": return true
+        default: return false
+        }
+    }    
 }
