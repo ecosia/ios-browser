@@ -334,7 +334,7 @@ extension TabLocationView: TabEventHandler {
         guard url.isWebPage() else {
             return
         }
-        let status: WebsiteConnectionTypeStatus = url.isHTTPS ? .secure : .unsecure
+        let status: WebsiteConnectionTypeStatus = url.isSecure ? .secure : .unsecure
         trackingProtectionButton.updateAppearanceForStatus(status)
     }
 }
