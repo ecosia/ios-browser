@@ -21,6 +21,9 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
         static let SectionSpacerWidth: CGFloat = 36
         static let SectionIconLabelSpacerWidth: CGFloat = 24
         static let SectionEndSpacerHeight: CGFloat = 16
+        static let SectionIconWidth: CGFloat = 18
+        static let SectionContainerMaxWidth: CGFloat = 450
+        static let ButtonSpacerHeight: CGFloat = 36
     }
 
     private let titleLabel: UILabel = {
@@ -83,8 +86,9 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
         bottomMarginConstraint = containerStackView.centerYAnchor.constraint(equalTo: centerYAnchor, constant: initialBottomMargin)
         
         NSLayoutConstraint.activate([
-            containerStackView.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor, constant: UX.LayoutMargingsInset),
-            containerStackView.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor, constant: -UX.LayoutMargingsInset),
+            containerStackView.leadingAnchor.constraint(greaterThanOrEqualTo: layoutMarginsGuide.leadingAnchor, constant: UX.LayoutMargingsInset),
+            containerStackView.trailingAnchor.constraint(lessThanOrEqualTo: layoutMarginsGuide.trailingAnchor, constant: -UX.LayoutMargingsInset),
+            containerStackView.widthAnchor.constraint(lessThanOrEqualToConstant: UX.SectionContainerMaxWidth),
             bottomMarginConstraint,
             containerStackView.centerXAnchor.constraint(equalTo: centerXAnchor),
         ].compactMap { $0 })
@@ -105,7 +109,7 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
         ])
         
         let buttonStackViewSpacer = UIView.build {
-            $0.heightAnchor.constraint(equalToConstant: UX.TitleSpacerHeight / 2).isActive = true
+            $0.heightAnchor.constraint(equalToConstant: UX.ButtonSpacerHeight).isActive = true
         }
         containerStackView.addArrangedSubview(buttonStackViewSpacer)
 
@@ -155,6 +159,8 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
         sectionIcon.image = UIImage.templateImageNamed(imageNamed)
         sectionIcon.setContentCompressionResistancePriority(.required, for: .horizontal)
         sectionIcon.setContentHuggingPriority(.required, for: .horizontal)
+        sectionIcon.translatesAutoresizingMaskIntoConstraints = false
+        sectionIcon.widthAnchor.constraint(equalToConstant: UX.SectionIconWidth).priority(.required).isActive = true
         
         sectionStackView.addArrangedSubview(sectionIcon)
         

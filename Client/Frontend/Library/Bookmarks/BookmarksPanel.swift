@@ -145,11 +145,19 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel, CanRemoveQuickActio
         bookmarksTooltip.alpha = 0.0
         view.addSubview(self.bookmarksTooltip)
 
-        NSLayoutConstraint.activate([
+        var constraints = [
             bookmarksTooltip.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor, constant: 0),
-            bookmarksTooltip.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor, constant: 0),
-            bookmarksTooltip.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor, constant: 0)
-        ])
+            bookmarksTooltip.trailingAnchor.constraint(lessThanOrEqualTo: view.layoutMarginsGuide.trailingAnchor, constant: 0),
+            bookmarksTooltip.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor, constant: 0),
+        ]
+                
+        if traitCollection.userInterfaceIdiom == .pad {
+            constraints.append(
+                bookmarksTooltip.widthAnchor.constraint(lessThanOrEqualToConstant: view.bounds.width / 2).priority(.defaultHigh)
+            )
+        }
+        
+        NSLayoutConstraint.activate(constraints)
         
         UIView.animate(withDuration: 0.3) {
             self.bookmarksTooltip.alpha = 1.0
