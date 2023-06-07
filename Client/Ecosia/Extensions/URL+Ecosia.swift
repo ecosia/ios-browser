@@ -10,7 +10,7 @@ extension URL {
         scheme == "https"
     }
     
-    /// This computer var is utilized to determine whether a Website is considered secure from the Ecosia's perspective
+    /// This computed var is utilized to determine whether a Website is considered secure from the Ecosia's perspective
     /// We use it mainly to define the UI that tells the user that the currently visited website is secure
     public var isSecure: Bool {
         isHTTPS || isReaderModeURL
