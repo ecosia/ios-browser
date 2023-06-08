@@ -23,7 +23,7 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
         static let SectionEndSpacerHeight: CGFloat = 16
         static let SectionIconWidth: CGFloat = 18
         static let SectionContainerMaxWidth: CGFloat = 450
-        static let ButtonSpacerHeight: CGFloat = 36
+        static let ButtonAreaHeight: CGFloat = 50
     }
 
     private let titleLabel: UILabel = {
@@ -108,11 +108,6 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
             .localized(.bookmarksEmptyViewItem1NumberedItem1)
         ])
         
-        let buttonStackViewSpacer = UIView.build {
-            $0.heightAnchor.constraint(equalToConstant: UX.ButtonSpacerHeight).isActive = true
-        }
-        containerStackView.addArrangedSubview(buttonStackViewSpacer)
-
         let buttonsContainerCenterView = UIView.build { centerView in
             let buttonsContainer = UIView.build { view in
                 view.addSubview(self.learnMoreButton)
@@ -122,13 +117,15 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
                     self.importBookmarksButton.centerYAnchor.constraint(equalTo: view.centerYAnchor),
                     self.learnMoreButton.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                     self.learnMoreButton.trailingAnchor.constraint(equalTo: self.importBookmarksButton.leadingAnchor, constant: -UX.InBetweenSpacerWidth).priority(.defaultHigh),
-                    self.importBookmarksButton.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+                    self.importBookmarksButton.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                    view.heightAnchor.constraint(equalToConstant: UX.ButtonAreaHeight)
                 ])
             }
             centerView.addSubview(buttonsContainer)
             NSLayoutConstraint.activate([
                 buttonsContainer.centerXAnchor.constraint(equalTo: centerView.centerXAnchor),
-                buttonsContainer.centerYAnchor.constraint(equalTo: centerView.centerYAnchor)
+                buttonsContainer.bottomAnchor.constraint(equalTo: centerView.bottomAnchor),
+                buttonsContainer.topAnchor.constraint(equalTo: centerView.topAnchor)
             ])
         }
         
