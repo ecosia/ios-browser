@@ -119,7 +119,7 @@ class HomepageViewModel: FeatureFlaggable, NTPLayoutHighlightDataSource {
             Analytics.shared.showInvitePromo()
         }
         
-        if User.shared.showsBookmarksNTPNudgeCard {
+        if User.shared.showsBookmarksNTPNudgeCard() {
             Analytics.shared.bookmarksNtp(action: .view)
         }
         

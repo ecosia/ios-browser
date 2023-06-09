@@ -51,7 +51,7 @@ extension NTPBookmarkNudgeViewModel: HomepageViewModelProtocol {
     }
 
     var isEnabled: Bool {
-        User.shared.showsBookmarksNTPNudgeCard
+        User.shared.showsBookmarksNTPNudgeCard()
     }
 
     func refreshData(for traitCollection: UITraitCollection,
