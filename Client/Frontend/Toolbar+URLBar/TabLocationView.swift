@@ -67,8 +67,8 @@ class TabLocationView: UIView {
 
     lazy var urlTextField: URLTextField = .build { urlTextField in
         /* Ecosia: removing obsolete implementation as we don't support 4S anymore
-        // Prevent the field from compressing the toolbar buttons on the 4S in landscape.
-        urlTextField.setContentCompressionResistancePriority(UILayoutPriority(rawValue: 250), for: .horizontal)
+         Original reason: Prevent the field from compressing the toolbar buttons on the 4S in landscape.
+         urlTextField.setContentCompressionResistancePriority(UILayoutPriority(rawValue: 250), for: .horizontal)
          */
         urlTextField.accessibilityIdentifier = "url"
         urlTextField.accessibilityActionsSource = self
