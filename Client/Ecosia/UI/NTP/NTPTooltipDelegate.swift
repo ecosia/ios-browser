@@ -13,6 +13,5 @@ protocol NTPTooltipDelegate: AnyObject {
 
 extension NTPTooltipDelegate {
     func reloadTooltip() {}
-    func ntpTooltipCloseTapped(_ tooltip: NTPTooltip?) {}
     func ntpTooltipLinkTapped(_ tooltip: NTPTooltip?) {}
 }
