@@ -251,8 +251,9 @@ class PhotonActionSheetView: UIView, UIGestureRecognizerDelegate {
         // Setup our StackViews
         textStackView.addArrangedSubview(titleLabel)
         textStackView.addArrangedSubview(subtitleLabel)
-        stackView.addArrangedSubview(textStackView)
+        // Ecosia: Swapping texts and icons so it comply to our design (and Apple's expectations)
         stackView.addArrangedSubview(statusIcon)
+        stackView.addArrangedSubview(textStackView)
         addSubview(stackView)
 
         addSubview(selectedOverlay)
