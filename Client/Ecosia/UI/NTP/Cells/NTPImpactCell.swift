@@ -69,6 +69,14 @@ final class NTPImpactCell: UICollectionViewCell, NotificationThemeable, Reusable
         addProgress()
         addConstraints()
         applyTheme()
+        updateAccessibilityElements()
+    }
+    
+    func updateAccessibilityElements() {
+        container.isAccessibilityElement = true
+        container.shouldGroupAccessibilityChildren = true
+        container.accessibilityHint = "By tapping on this content, you'll open the Your Impact section"
+        container.accessibilityLabel = "Your Impact section, highlithing the trees planted by yourself and the Ecosia community overall. You have contributed to plant \(Int(currentProgress.value)) trees. The total number of trees planted has reached \(treesCount.text)"
     }
 
     func display(_ model: Model, animated: Bool) {
