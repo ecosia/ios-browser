@@ -76,7 +76,7 @@ final class NTPImpactCell: UICollectionViewCell, NotificationThemeable, Reusable
         container.isAccessibilityElement = true
         container.shouldGroupAccessibilityChildren = true
         container.accessibilityHint = "Open the Your Impact section"
-        container.accessibilityLabel = "Your Impact section, highlithing the trees planted by yourself and the Ecosia community overall. You have contributed to plant \(Int(currentProgress.value)) trees. The total number of trees planted has reached \(treesCount.text)"
+        container.accessibilityLabel = "Your Impact section, highlithing the trees planted by yourself and the Ecosia community overall. You have contributed to plant \(Int(currentProgress.value)) trees. The total number of trees planted by the Ecosia community has reached \(treesCount.text)"
     }
 
     func display(_ model: Model, animated: Bool) {
