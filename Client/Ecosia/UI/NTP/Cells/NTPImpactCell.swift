@@ -69,7 +69,6 @@ final class NTPImpactCell: UICollectionViewCell, NotificationThemeable, Reusable
         addProgress()
         addConstraints()
         applyTheme()
-        updateAccessibilityElements()
     }
     
     func updateAccessibilityElements() {
@@ -101,6 +100,8 @@ final class NTPImpactCell: UICollectionViewCell, NotificationThemeable, Reusable
         }
         
         globalCount.text = formatter.string(from: .init(value: model.trees))
+        
+        updateAccessibilityElements()
     }
 
     private func addImpact() {
