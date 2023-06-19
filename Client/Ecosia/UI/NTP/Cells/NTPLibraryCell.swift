@@ -28,10 +28,10 @@ class NTPLibraryCell: UICollectionViewCell, NotificationThemeable, ReusableCell 
         }
         var image: UIImage? {
             switch self {
-            case .bookmarks: return UIImage(named: "libraryFavorites")
-            case .history: return UIImage(named: "libraryHistory")
-            case .readingList: return UIImage(named: "libraryReading")
-            case .downloads: return UIImage(named: "libraryDownloads")
+            case .bookmarks: return .init(named: "libraryFavorites")
+            case .history: return .init(named: "libraryHistory")
+            case .readingList: return .init(named: "libraryReading")
+            case .downloads: return .init(named: "libraryDownloads")
             }
         }
     }
