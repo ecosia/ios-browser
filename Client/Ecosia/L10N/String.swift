@@ -192,6 +192,7 @@ extension String {
         case onboardingIllustrationTour4 = "This onboarding illustration is a photo of a monkey climbing a tree. It function mainly as general decoration image."
         case onboardingSkipTourButtonAccessibilityLabel = "Button that allows you to skip the onboarding"
         case onboardingContinueCTAButtonAccessibilityLabel = "Continue to the next onboarding page"
+        case onboardingFinishCTAButtonAccessibilityLabel = "Finish onbaording and start contributing to Ecosia"
         case onboardingStepTitleAccessibilityLabel = "This is the title of the onboarding step"
         case onboardingStepSubtitleAccessibilityLabel = "This is the subtitle of the onboarding step"
     }

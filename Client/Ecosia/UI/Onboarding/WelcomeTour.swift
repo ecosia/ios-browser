@@ -171,7 +171,7 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
         ctaButton.titleLabel?.adjustsFontForContentSizeCategory = true
         ctaButton.translatesAutoresizingMaskIntoConstraints = false
         ctaButton.addTarget(self, action: #selector(forward), for: .primaryActionTriggered)
-        ctaButton.accessibilityLabel = .localized(.onboardingContinueCTAButtonAccessibilityLabel)
+        ctaButton.accessibilityLabel = .localized( isLastStep() ? .onboardingFinishCTAButtonAccessibilityLabel : .onboardingContinueCTAButtonAccessibilityLabel)
         ctaButton.alpha = 0
         view.addSubview(ctaButton)
         self.ctaButton = ctaButton
