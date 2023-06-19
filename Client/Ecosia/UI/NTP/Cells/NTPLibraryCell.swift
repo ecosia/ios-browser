@@ -12,18 +12,31 @@ class NTPLibraryCell: UICollectionViewCell, NotificationThemeable, ReusableCell 
     weak var heightConstraint: NSLayoutConstraint!
     weak var delegate: NTPLibraryDelegate?
 
-    struct Panel {
-        let title: String
-        let image: UIImage?
-        let tag: Int
+    enum Item: Int, CaseIterable {
+        case bookmarks
+        case history
+        case readingList
+        case downloads
+        
+        var title: String {
+            switch self {
+            case .bookmarks: return .AppMenu.AppMenuBookmarksTitleString
+            case .history: return .AppMenu.AppMenuHistoryTitleString
+            case .readingList: return .AppMenu.AppMenuReadingListTitleString
+            case .downloads: return .AppMenu.AppMenuDownloadsTitleString
+            }
+        }
+        var image: UIImage? {
+            switch self {
+            case .bookmarks: return .init(named: "libraryFavorites")
+            case .history: return .init(named: "libraryHistory")
+            case .readingList: return .init(named: "libraryReading")
+            case .downloads: return .init(named: "libraryDownloads")
+            }
+        }
     }
 
     var shortcuts: [NTPLibraryShortcutView] = []
-
-    let bookmarks = Panel(title: .AppMenu.AppMenuBookmarksTitleString, image: UIImage(named: "libraryFavorites"), tag: 0)
-    let history = Panel(title: .AppMenu.AppMenuHistoryTitleString, image: UIImage(named: "libraryHistory"), tag: 1)
-    let readingList = Panel(title: .AppMenu.AppMenuReadingListTitleString, image: UIImage(named: "libraryReading"), tag: 2)
-    let downloads = Panel(title: .AppMenu.AppMenuDownloadsTitleString, image: UIImage(named: "libraryDownloads"), tag: 3)
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -46,17 +59,20 @@ class NTPLibraryCell: UICollectionViewCell, NotificationThemeable, ReusableCell 
         heightConstraint.isActive = true
         self.heightConstraint = heightConstraint
 
-
         // Ecosia: Show history instead of synced tabs
-        [bookmarks, history, readingList, downloads].forEach { item in
+        Item.allCases.forEach { item in
             let view = NTPLibraryShortcutView()
             view.button.setImage(item.image, for: .normal)
-            view.button.tag = item.tag
+            view.button.tag = item.rawValue
             view.button.addTarget(self, action: #selector(tapped), for: .primaryActionTriggered)
             view.title.text = item.title
             let words = view.title.text?.components(separatedBy: NSCharacterSet.whitespacesAndNewlines).count
             view.title.numberOfLines = words == 1 ? 1 : 2
             view.accessibilityLabel = item.title
+            view.isAccessibilityElement = true
+            view.shouldGroupAccessibilityChildren = true
+            view.accessibilityTraits = .button
+            view.accessibilityRespondsToUserInteraction = true
             mainView.addArrangedSubview(view)
             shortcuts.append(view)
         }
@@ -81,14 +97,14 @@ class NTPLibraryCell: UICollectionViewCell, NotificationThemeable, ReusableCell 
     }
 
     @objc func tapped(_ sender: UIButton) {
-        switch sender.tag {
-        case 0:
+        switch Item(rawValue: sender.tag) {
+        case .bookmarks:
             delegate?.libraryCellOpenBookmarks()
-        case 1:
+        case .history:
             delegate?.libraryCellOpenHistory()
-        case 2:
+        case .readingList:
             delegate?.libraryCellOpenReadlist()
-        case 3:
+        case .downloads:
             delegate?.libraryCellOpenDownloads()
         default:
             break
