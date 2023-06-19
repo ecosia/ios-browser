@@ -183,8 +183,10 @@ final class NewsCell: UICollectionViewCell, NotificationThemeable, ReusableCell 
     }
     
     func configure(_ model: NewsModel, images: Images, positions: Positions) {
-        title.text = model.text.replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression)
-        bottomLabel.text = RelativeDateTimeFormatter().localizedString(for: model.publishDate, relativeTo: .init())
+        let titleString = model.text.replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression)
+        title.text = titleString
+        let publishDateString = RelativeDateTimeFormatter().localizedString(for: model.publishDate, relativeTo: .init())
+        bottomLabel.text = publishDateString
         bottomIcon.isHidden = true
         highlightLabel.isHidden = true
 
@@ -210,6 +212,11 @@ final class NewsCell: UICollectionViewCell, NotificationThemeable, ReusableCell 
         }
         background.layer.maskedCorners = masked
         applyTheme()
+            
+        isAccessibilityElement = true
+        accessibilityLabel = "\(titleString); \(publishDateString)"
+        accessibilityTraits = .link
+        shouldGroupAccessibilityChildren = true
     }
 
     private func updateImage(_ data: Data) {
