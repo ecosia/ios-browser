@@ -97,14 +97,14 @@ class NTPLibraryCell: UICollectionViewCell, NotificationThemeable, ReusableCell 
     }
 
     @objc func tapped(_ sender: UIButton) {
-        switch sender.tag {
-        case 0:
+        switch Item(rawValue: sender.tag) {
+        case .bookmarks:
             delegate?.libraryCellOpenBookmarks()
-        case 1:
+        case .history:
             delegate?.libraryCellOpenHistory()
-        case 2:
+        case .readingList:
             delegate?.libraryCellOpenReadlist()
-        case 3:
+        case .downloads:
             delegate?.libraryCellOpenDownloads()
         default:
             break
