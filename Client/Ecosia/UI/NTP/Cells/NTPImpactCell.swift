@@ -70,6 +70,13 @@ final class NTPImpactCell: UICollectionViewCell, NotificationThemeable, Reusable
         addConstraints()
         applyTheme()
     }
+    
+    func updateAccessibilityElements() {
+        container.isAccessibilityElement = true
+        container.shouldGroupAccessibilityChildren = true
+        container.accessibilityHint = .localized(.yourImpactSectionAccessibilityHint)
+        container.accessibilityLabel = String(format: .localized(.yourImpactSectionAccessibilityLabel), "\(Int(currentProgress.value))", treesCount.text!)
+    }
 
     func display(_ model: Model, animated: Bool) {
         self.model = model
@@ -93,6 +100,8 @@ final class NTPImpactCell: UICollectionViewCell, NotificationThemeable, Reusable
         }
         
         globalCount.text = formatter.string(from: .init(value: model.trees))
+        
+        updateAccessibilityElements()
     }
 
     private func addImpact() {

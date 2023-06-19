@@ -182,5 +182,7 @@ extension String {
         case ecosiaLogoAccessibilityLabel = "Ecosia logo"
         case done = "Done"
         case findInPage = "Find in page"
+        case yourImpactSectionAccessibilityHint = "Open the Your Impact section"
+        case yourImpactSectionAccessibilityLabel = "Your Impact section, highlithing the trees planted by yourself and the Ecosia community overall. You have contributed to plant %@ trees. The total number of trees planted by the Ecosia community has reached %@"
     }
 }
