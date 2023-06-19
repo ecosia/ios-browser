@@ -34,6 +34,7 @@ extension UIColor {
         
         struct Icon {
             static let primary = UIColor(red: 0.059, green: 0.059, blue: 0.059, alpha: 1)
+            static let secondary = UIColor(rgb: 0x007508)
             static let decorative = UIColor(red: 0.424, green: 0.424, blue: 0.424, alpha: 1)
         }
         
@@ -76,6 +77,7 @@ extension UIColor {
         
         struct Icon {
             static let primary = UIColor.white
+            static let secondary = UIColor(rgb: 0x5DD25E)
             static let decorative = UIColor(red: 0.871, green: 0.871, blue: 0.871, alpha: 1)
         }
         
