@@ -182,11 +182,17 @@ extension String {
         case ecosiaLogoAccessibilityLabel = "Ecosia logo"
         case done = "Done"
         case findInPage = "Find in page"
+        case pageControlDots = "Page control dots"
+        case backButtonAccessibilityLabel = "Back button"
         case yourImpactSectionAccessibilityHint = "Open the Your Impact section"
         case yourImpactSectionAccessibilityLabel = "Your Impact section, highlithing the trees planted by yourself and the Ecosia community overall. You have contributed to plant %@ trees. The total number of trees planted by the Ecosia community has reached %@"
         case onboardingIllustrationTour1 = "This onboarding illustration shows how by performing searches via the Ecosia app, you are leveling up your tree planting impact score. A small search screenshot and a smaller Your Impact section is shown. Leaves on the background."
         case onboardingIllustrationTour2 = "This onboarding illustration shows briefly an example of a before and after comparision of trees planted in a land. The image is a screenshot from the satellite view."
         case onboardingIllustrationTour3 = "This onboarding illustration show a few numbers like the projects Ecosia is involved in, the total number of trees planted by the Ecosia community, alongisde the number of countries Ecosia is active. A small map of the planisphere with trees pins in few geographic location, background."
         case onboardingIllustrationTour4 = "This onboarding illustration is a photo of a monkey climbing a tree. It function mainly as general decoration image."
+        case onboardingSkipTourButtonAccessibilityLabel = "Button that allows you to skip the onboarding"
+        case onboardingContinueCTAButtonAccessibilityLabel = "Continue to the next onboarding page"
+        case onboardingStepTitleAccessibilityLabel = "This is the title of the onboarding step"
+        case onboardingStepSubtitleAccessibilityLabel = "This is the subtitle of the onboarding step"
     }
 }
