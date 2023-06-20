@@ -24,7 +24,6 @@ final class WelcomeTourPlanet: UIView, NotificationThemeable {
 
         let topImage = UIImageView(image: .init(named: "tourSearch"))
         topImage.translatesAutoresizingMaskIntoConstraints = false
-        topImage.isAccessibilityElement = false
         addSubview(topImage)
 
         topImage.centerXAnchor.constraint(equalTo: centerXAnchor, constant: -25).isActive = true
