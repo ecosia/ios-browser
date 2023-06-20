@@ -9,19 +9,23 @@ final class Analytics {
     private static let namespace = "ios_sp"
 
     private static var tracker: TrackerController {
-        Snowplow
-            .createTracker(namespace: namespace,
-                           network: .init(endpoint: Environment.current.snowplow),
-                           configurations: [TrackerConfiguration()
-                                                .appId(Bundle.version)
-                                                .sessionContext(true)
-                                                .applicationContext(true)
-                                                .platformContext(true)
-                                                .geoLocationContext(true)
-                                                .deepLinkContext(false)
-                                                .screenContext(false),
-                                            SubjectConfiguration()
-                                                .userId(User.shared.analyticsId.uuidString)])
+        
+        let trackerConfiguration = TrackerConfiguration()
+            .appId(Bundle.version)
+            .sessionContext(true)
+            .applicationContext(true)
+            .platformContext(true)
+            .geoLocationContext(true)
+            .deepLinkContext(false)
+            .screenContext(false)
+            .userAnonymisation(true)
+        
+        let subjectConfiguration = SubjectConfiguration()
+            .userId(User.shared.analyticsId.uuidString)
+        
+        return Snowplow.createTracker(namespace: namespace,
+                                      network: .init(endpoint: Environment.current.snowplow),
+                                      configurations: [trackerConfiguration, subjectConfiguration])!
     }
     
     static let shared = Analytics()
