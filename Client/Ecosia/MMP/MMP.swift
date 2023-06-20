@@ -24,7 +24,7 @@ struct MMP {
                                                   deviceModel: DeviceInfo.deviceModelName,
                                                   locale: DeviceInfo.currentLocale,
                                                   deviceBuildVersion: DeviceInfo.osBuildNumber,
-                                                  appVersion: AppInfo.appVersion,
+                                                  appVersion: AppInfo.ecosiaAppVersion,
                                                   installReceipt: AppInfo.installReceipt)
                 
                 let mmpProvider: MMPProvider = Singular(includeSKAN: true)

@@ -137,6 +137,7 @@
 		2CB3BEDA29E03ED700C1951F /* MozillaAppServices in Frameworks */ = {isa = PBXBuildFile; productRef = 2CB3BED929E03ED700C1951F /* MozillaAppServices */; };
 		2CB56E3F1E926BFB00AF7586 /* ToolbarTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB56E3E1E926BFB00AF7586 /* ToolbarTest.swift */; };
 		2CC1B3F01E9B861400814EEC /* DomainAutocompleteTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC1B3EF1E9B861400814EEC /* DomainAutocompleteTest.swift */; };
+		2CC9E08C2A30AED2003420E1 /* URL+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC9E08B2A30AED2003420E1 /* URL+Ecosia.swift */; };
 		2CCB296720A99C9500121DD8 /* SaveLoginsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCB296620A99C9500121DD8 /* SaveLoginsTests.swift */; };
 		2CCF17532105E4FD00705AE5 /* DisplaySettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCF17522105E4FD00705AE5 /* DisplaySettingsTests.swift */; };
 		2CE63B2829C8DA8200047121 /* ErrorPageHandler+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE63B2729C8DA8200047121 /* ErrorPageHandler+Ecosia.swift */; };
@@ -1743,6 +1744,7 @@
 		2CB1A6591FDEA8B60084E96D /* NewTabSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTabSettings.swift; sourceTree = "<group>"; };
 		2CB56E3E1E926BFB00AF7586 /* ToolbarTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToolbarTest.swift; sourceTree = "<group>"; };
 		2CC1B3EF1E9B861400814EEC /* DomainAutocompleteTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DomainAutocompleteTest.swift; sourceTree = "<group>"; };
+		2CC9E08B2A30AED2003420E1 /* URL+Ecosia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+Ecosia.swift"; sourceTree = "<group>"; };
 		2CCB296620A99C9500121DD8 /* SaveLoginsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveLoginsTests.swift; sourceTree = "<group>"; };
 		2CCF17522105E4FD00705AE5 /* DisplaySettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplaySettingsTests.swift; sourceTree = "<group>"; };
 		2CE63B2729C8DA8200047121 /* ErrorPageHandler+Ecosia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ErrorPageHandler+Ecosia.swift"; sourceTree = "<group>"; };
@@ -6664,6 +6666,7 @@
 				CA8BCC3F28D340AF0020BC50 /* TabCell+Ecosia.swift */,
 				2CE63B2729C8DA8200047121 /* ErrorPageHandler+Ecosia.swift */,
 				2C1AF2622A27A7D9003970E0 /* Toolbar+URLBar */,
+				2CC9E08B2A30AED2003420E1 /* URL+Ecosia.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -9670,6 +9673,7 @@
 				96EB6C3C27D82AEA00A9D159 /* HistoryPanel+ContextMenuExtensions.swift in Sources */,
 				CA4D9CF328C8D801006AFB5D /* FilterController.swift in Sources */,
 				43DDB96A240994370058A068 /* ETPCoverSheetViewController.swift in Sources */,
+				2CC9E08C2A30AED2003420E1 /* URL+Ecosia.swift in Sources */,
 				217AEF7828480844004EED37 /* ResizableButton.swift in Sources */,
 				CA220A6C28D070FE000E66E6 /* FeatureFlagsManager.swift in Sources */,
 				CAEB316728D0B38900ADC9DB /* HomepageViewController+Ecosia.swift in Sources */,
@@ -13024,7 +13028,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = "${inherited}";
+				CURRENT_PROJECT_VERSION = 76;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				"DEBUG_INFORMATION_FORMAT[sdk=iphonesimulator*]" = dwarf;
 				DEVELOPMENT_TEAM = 33YMRSYD2L;
@@ -13036,7 +13040,7 @@
 					"@executable_path/Frameworks",
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				MARKETING_VERSION = "${inherited}";
+				MARKETING_VERSION = 8.1.6;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lxml2",
@@ -13419,7 +13423,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon_Beta;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = "${inherited}";
+				CURRENT_PROJECT_VERSION = 76;
 				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				INFOPLIST_FILE = Client/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -13427,7 +13431,7 @@
 					"@executable_path/Frameworks",
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				MARKETING_VERSION = "${inherited}";
+				MARKETING_VERSION = 8.1.6;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lxml2",
@@ -13791,7 +13795,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = "${inherited}";
+				CURRENT_PROJECT_VERSION = 76;
 				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				INFOPLIST_FILE = Client/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -13799,7 +13803,7 @@
 					"@executable_path/Frameworks",
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				MARKETING_VERSION = "${inherited}";
+				MARKETING_VERSION = 8.1.6;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lxml2",
@@ -13989,7 +13993,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon_Beta;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = "${inherited}";
+				CURRENT_PROJECT_VERSION = 77;
 				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				INFOPLIST_FILE = Client/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -13997,7 +14001,7 @@
 					"@executable_path/Frameworks",
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				MARKETING_VERSION = "${inherited}";
+				MARKETING_VERSION = 8.1.7;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lxml2",
@@ -14119,7 +14123,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = "${inherited}";
+				CURRENT_PROJECT_VERSION = 76;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				"DEBUG_INFORMATION_FORMAT[sdk=iphonesimulator*]" = dwarf;
 				DEVELOPMENT_TEAM = 33YMRSYD2L;
@@ -14129,7 +14133,7 @@
 					"@executable_path/Frameworks",
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				MARKETING_VERSION = "${inherited}";
+				MARKETING_VERSION = 8.1.6;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lxml2",

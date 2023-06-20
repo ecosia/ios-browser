@@ -66,8 +66,10 @@ class TabLocationView: UIView {
     }
 
     lazy var urlTextField: URLTextField = .build { urlTextField in
-        // Prevent the field from compressing the toolbar buttons on the 4S in landscape.
-        urlTextField.setContentCompressionResistancePriority(UILayoutPriority(rawValue: 250), for: .horizontal)
+        /* Ecosia: removing obsolete implementation as we don't support 4S anymore
+         Original reason: Prevent the field from compressing the toolbar buttons on the 4S in landscape.
+         urlTextField.setContentCompressionResistancePriority(UILayoutPriority(rawValue: 250), for: .horizontal)
+         */
         urlTextField.accessibilityIdentifier = "url"
         urlTextField.accessibilityActionsSource = self
         urlTextField.backgroundColor = .clear
@@ -95,6 +97,7 @@ class TabLocationView: UIView {
                                          action: #selector(self.longPressReaderModeButton)))
         readerModeButton.isAccessibilityElement = true
         readerModeButton.isHidden = true
+        readerModeButton.contentHorizontalAlignment = .right
         readerModeButton.accessibilityLabel = .TabLocationReaderModeAccessibilityLabel
         readerModeButton.accessibilityIdentifier = AccessibilityIdentifiers.Toolbar.readerModeButton
         readerModeButton.accessibilityCustomActions = [
@@ -111,6 +114,7 @@ class TabLocationView: UIView {
             UILongPressGestureRecognizer(target: self, action: #selector(longPressReloadButton)))
         reloadButton.imageView?.contentMode = .scaleAspectFit
         reloadButton.contentHorizontalAlignment = .left
+        reloadButton.imageEdgeInsets = .init(top: 0, left: 5, bottom: 0, right: 0)
         reloadButton.accessibilityLabel = .TabLocationReloadAccessibilityLabel
         reloadButton.accessibilityIdentifier = AccessibilityIdentifiers.Toolbar.reloadButton
         reloadButton.isAccessibilityElement = true
@@ -145,12 +149,13 @@ class TabLocationView: UIView {
 
         contentView.edges(equalTo: self)
 
+        // Ecosia: Updating icons with same size numbers
         NSLayoutConstraint.activate([
             trackingProtectionButton.widthAnchor.constraint(equalToConstant: TabLocationViewUX.TPIconSize),
             trackingProtectionButton.heightAnchor.constraint(equalToConstant: TabLocationViewUX.ButtonSize),
             readerModeButton.widthAnchor.constraint(equalToConstant: TabLocationViewUX.ReaderModeButtonWidth),
             readerModeButton.heightAnchor.constraint(equalToConstant: TabLocationViewUX.ButtonSize),
-            reloadButton.widthAnchor.constraint(equalToConstant: TabLocationViewUX.ReaderModeButtonWidth),
+            reloadButton.widthAnchor.constraint(equalToConstant: TabLocationViewUX.ButtonSize),
             reloadButton.heightAnchor.constraint(equalToConstant: TabLocationViewUX.ButtonSize),
         ])
 
@@ -329,7 +334,7 @@ extension TabLocationView: TabEventHandler {
         guard url.isWebPage() else {
             return
         }
-        let status: WebsiteConnectionTypeStatus = url.isHTTPS ? .secure : .unsecure
+        let status: WebsiteConnectionTypeStatus = url.isSecure ? .secure : .unsecure
         trackingProtectionButton.updateAppearanceForStatus(status)
     }
 }
