@@ -666,18 +666,19 @@ extension BookmarksPanel {
         viewModel.bookmarkImportSelected(in: self) { [weak self] url, error in
             self?.moreButton.isEnabled = true
             
-            guard let error = error else {
+            guard error != nil else {
                 self?.reloadData()
                 return
             }
             
-            let alert = UIAlertController(title: .localized(.bookmarksImportFailedTitle), message: error.localizedDescription, preferredStyle: .alert)
+            let alert = UIAlertController(title: .localized(.bookmarksImportFailedTitle), message: .localized(.bookmarksImportExportFailedMessage), preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: .CancelString, style: .cancel))
             let retryAction = UIAlertAction(title: .localized(.retryMessage), style: .default) { [weak self] _ in
                 guard let self = self, let url = url else { return }
                 self.viewModel.handlePickedUrl(url, in: self)
             }
             alert.addAction(retryAction)
+            alert.preferredAction = retryAction
             self?.present(alert, animated: true)
         }
     }
@@ -687,12 +688,12 @@ extension BookmarksPanel {
         viewModel.bookmarkExportSelected(in: self) { [weak self] error in
             self?.moreButton.isEnabled = true
             
-            guard let error = error else {
+            guard error != nil else {
                 self?.reloadData()
                 return
             }
             
-            let alert = UIAlertController(title: .localized(.bookmarksExportFailedTitle), message: error.localizedDescription, preferredStyle: .alert)
+            let alert = UIAlertController(title: .localized(.bookmarksExportFailedTitle), message: .localized(.bookmarksImportExportFailedMessage), preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: .CancelString, style: .cancel))
             let retryAction = UIAlertAction(title: .localized(.retryMessage), style: .default) { [weak self] _ in
                 self?.exportBookmarksActionHandler()
