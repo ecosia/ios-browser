@@ -69,7 +69,7 @@ final class Analytics {
         case .resume, .launch:
             // add A/B Test context
             if let context = Self.getTestContext(from: .bingSearch) {
-                event.contexts.add(context)
+                event.contexts.append(context)
             }
         }
         
@@ -129,7 +129,7 @@ final class Analytics {
 
         // add A/B Test context
         if let context = Self.getTestContext(from: .defaultBrowser) {
-            event.contexts.add(context)
+            event.contexts.append(context)
         }
 
         tracker.track(event)
