@@ -12,27 +12,29 @@ extension WelcomeTour {
         let background: Background
         let content: UIView?
 
-        init(title: String, text: String, background: Background, content: UIView?) {
+        init(title: String, text: String, background: Background, content: UIView?, accessibleDescription: String) {
             self.title = title
             self.text = text
             self.background = background
+            content?.isAccessibilityElement = true
+            content?.accessibilityLabel = accessibleDescription
             self.content = content
         }
 
         static var planet: Step {
-            return .init(title: .localized(.aBetterPlanet), text: .localized(.searchTheWeb), background: .init(image: "tour1"), content: WelcomeTourPlanet())
+            return .init(title: .localized(.aBetterPlanet), text: .localized(.searchTheWeb), background: .init(image: "tour1"), content: WelcomeTourPlanet(), accessibleDescription: .localized(.onboardingIllustrationTour1))
         }
 
         static var profit: Step {
-            return .init(title: .localized(.hundredPercentOfProfits), text: .localized(.weUseAllOurProfits), background: .init(image: "tour2"), content: WelcomeTourProfit())
+            return .init(title: .localized(.hundredPercentOfProfits), text: .localized(.weUseAllOurProfits), background: .init(image: "tour2"), content: WelcomeTourProfit(), accessibleDescription: .localized(.onboardingIllustrationTour2))
         }
 
         static var action: Step {
-            return .init(title: .localized(.collectiveAction), text: .localized(.join15Million), background: .init(image: "tour3", color: UIColor(rgb: 0x668A7A)), content: WelcomeTourAction())
+            return .init(title: .localized(.collectiveAction), text: .localized(.join15Million), background: .init(image: "tour3", color: UIColor(rgb: 0x668A7A)), content: WelcomeTourAction(), accessibleDescription: .localized(.onboardingIllustrationTour3))
         }
 
         static var trees: Step {
-            return .init(title: .localized(.weWantTrees), text: .localized(.weDontCreateAProfile), background: .init(image: "tour4"), content: nil)
+            return .init(title: .localized(.weWantTrees), text: .localized(.weDontCreateAProfile), background: .init(image: "tour4"), content: nil, accessibleDescription: .localized(.onboardingIllustrationTour4))
         }
 
         static var all: [Step] {

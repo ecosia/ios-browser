@@ -13,6 +13,7 @@ final class WelcomeTourPlanet: UIView, NotificationThemeable {
     init() {
         super.init(frame: .zero)
         setup()
+        updateAccessibilitySettings()
         applyTheme()
     }
 
@@ -34,6 +35,7 @@ final class WelcomeTourPlanet: UIView, NotificationThemeable {
         searchLabel.font = .systemFont(ofSize: 12)
         searchLabel.numberOfLines = 1
         searchLabel.textAlignment = .left
+        searchLabel.isAccessibilityElement = false
         topImage.addSubview(searchLabel)
         self.searchLabel = searchLabel
 
@@ -45,6 +47,7 @@ final class WelcomeTourPlanet: UIView, NotificationThemeable {
 
         let bottomImage = UIImageView(image: .init(named: "tourCounter"))
         bottomImage.translatesAutoresizingMaskIntoConstraints = false
+        bottomImage.isAccessibilityElement = false
         addSubview(bottomImage)
 
         bottomImage.centerXAnchor.constraint(equalTo: centerXAnchor, constant: 25).isActive = true
@@ -56,6 +59,7 @@ final class WelcomeTourPlanet: UIView, NotificationThemeable {
         impactLabel.numberOfLines = 1
         impactLabel.textAlignment = .left
         impactLabel.font = .systemFont(ofSize: 10)
+        impactLabel.isAccessibilityElement = false
         bottomImage.addSubview(impactLabel)
         self.impactLabel = impactLabel
 
@@ -65,6 +69,7 @@ final class WelcomeTourPlanet: UIView, NotificationThemeable {
         treesLabel.numberOfLines = 1
         treesLabel.textAlignment = .left
         treesLabel.font = .boldSystemFont(ofSize: 13)
+        treesLabel.isAccessibilityElement = false
         bottomImage.addSubview(treesLabel)
         self.treesLabel = treesLabel
 
@@ -74,6 +79,7 @@ final class WelcomeTourPlanet: UIView, NotificationThemeable {
         numTreesLabel.numberOfLines = 1
         numTreesLabel.textAlignment = .left
         numTreesLabel.font = .boldSystemFont(ofSize: 17)
+        numTreesLabel.isAccessibilityElement = false
         bottomImage.addSubview(numTreesLabel)
         self.numTreesLabel = numTreesLabel
 
@@ -99,5 +105,10 @@ final class WelcomeTourPlanet: UIView, NotificationThemeable {
         searchLabel.textColor = .theme.ecosia.primaryText
         impactLabel.textColor = .theme.ecosia.secondaryText
         treesLabel.textColor = .theme.ecosia.primaryText
+    }
+    
+    func updateAccessibilitySettings() {
+        isAccessibilityElement = false
+        shouldGroupAccessibilityChildren = true
     }
 }
