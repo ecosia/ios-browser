@@ -27,13 +27,14 @@ extension UIColor {
         }
 
         struct State {
-            static let warning = UIColor(red: 0.992, green: 0.259, blue: 0.337, alpha: 1)
+            static let warning = UIColor(rgb: 0xFD4256)
             static let information = UIColor(red: 0, green: 0.494, blue: 0.659, alpha: 1)
             static let disabled = UIColor(rgb: 0xDEDED9)
         }
         
         struct Icon {
             static let primary = UIColor(red: 0.059, green: 0.059, blue: 0.059, alpha: 1)
+            static let secondary = UIColor(rgb: 0x007508)
             static let decorative = UIColor(red: 0.424, green: 0.424, blue: 0.424, alpha: 1)
         }
         
@@ -65,7 +66,7 @@ extension UIColor {
         }
 
         struct State {
-            static let warning = UIColor(red: 1.0, green: 0.541, blue: 0.549, alpha: 1)
+            static let warning = UIColor(rgb: 0xFF8A8C)
             static let information = UIColor(red: 0.589, green: 0.839, blue: 0.973, alpha: 1)
             static let disabled = UIColor(rgb: 0x6C6C6C)
         }
@@ -76,6 +77,7 @@ extension UIColor {
         
         struct Icon {
             static let primary = UIColor.white
+            static let secondary = UIColor(rgb: 0x5DD25E)
             static let decorative = UIColor(red: 0.871, green: 0.871, blue: 0.871, alpha: 1)
         }
         

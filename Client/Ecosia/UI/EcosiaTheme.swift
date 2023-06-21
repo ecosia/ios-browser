@@ -47,6 +47,7 @@ class EcosiaTheme {
     var navigationBarText: UIColor { .Light.Text.primary }
 
     var primaryIcon: UIColor { .Light.Icon.primary }
+    var secondaryIcon: UIColor { .Light.Icon.secondary }
     var decorativeIcon: UIColor { .Light.Icon.decorative }
     
     var highlightedBackground: UIColor { .Light.Background.highlighted }
@@ -117,6 +118,7 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var navigationBarText: UIColor { .Dark.Text.primary }
 
     override var primaryIcon: UIColor { .Dark.Icon.primary }
+    override var secondaryIcon: UIColor { .Dark.Icon.secondary }
     override var decorativeIcon: UIColor { .Dark.Icon.decorative }
     
     override var highlightedBackground: UIColor { .Dark.Background.highlighted }

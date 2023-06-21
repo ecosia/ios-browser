@@ -6,6 +6,6 @@ import Foundation
 
 struct ConnectionStatusImage {
     
-    static let connectionSecureImage = UIImage.templateImageNamed("secureLock")?.tinted(withColor: .theme.ecosia.primaryButtonActive)
+    static let connectionSecureImage = UIImage.templateImageNamed("secureLock")?.tinted(withColor: .theme.ecosia.secondaryIcon)
     static let connectionUnsecureImage = UIImage.templateImageNamed("problem")?.tinted(withColor: .theme.ecosia.warning)
 }

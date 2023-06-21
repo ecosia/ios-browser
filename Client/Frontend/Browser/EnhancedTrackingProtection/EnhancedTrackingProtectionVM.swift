@@ -37,7 +37,7 @@ class EnhancedTrackingProtectionMenuVM {
     }
 
     var connectionSecure: Bool {
-        return tab.webView?.url?.isHTTPS == true
+        return tab.webView?.url?.isSecure == true
     }
 
     var isSiteETPEnabled: Bool {
