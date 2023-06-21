@@ -108,12 +108,12 @@
       }
     },
     {
-      "identity" : "snowplow-objc-tracker",
+      "identity" : "snowplow-ios-tracker",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/snowplow/snowplow-objc-tracker.git",
+      "location" : "https://github.com/snowplow/snowplow-ios-tracker",
       "state" : {
-        "revision" : "dc5ecb6ad2921a50f629ef600cc1ee700e608f66",
-        "version" : "3.2.0"
+        "revision" : "1e16a929cef8e944bd41dc36a1d2779e06bd0a3c",
+        "version" : "5.2.0"
       }
     },
     {
