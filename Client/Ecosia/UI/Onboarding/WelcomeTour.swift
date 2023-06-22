@@ -13,7 +13,7 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
     private weak var navStack: UIStackView!
     private weak var labelStack: UIStackView!
     private weak var titleLabel: UILabel!
-    private weak var textLabel: UILabel!
+    private weak var subtitleLabel: UILabel!
     private weak var backButton: UIButton!
     private weak var skipButton: UIButton!
     private weak var pageControl: UIPageControl!
@@ -69,6 +69,7 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
         let backButton = UIButton.systemButton(with: .init(named: "backChevron")!, target: self, action: #selector(back))
         navStack.addArrangedSubview(backButton)
         backButton.widthAnchor.constraint(equalToConstant: 44).isActive = true
+        backButton.accessibilityLabel = .localized(.backButtonAccessibilityLabel)
         navStack.addArrangedSubview(backButton)
         self.backButton = backButton
 
@@ -78,6 +79,7 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
         pageControl.currentPage = 0
         pageControl.setContentHuggingPriority(.defaultLow, for: .horizontal)
         pageControl.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+        pageControl.accessibilityLabel = .localized(.pageControlDots)
         navStack.addArrangedSubview(pageControl)
         self.pageControl = pageControl
 
@@ -91,6 +93,7 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
         skipButton.setContentCompressionResistancePriority(.required, for: .horizontal)
         navStack.addArrangedSubview(skipButton)
         skipButton.setTitle(.localized(.skip), for: .normal)
+        skipButton.accessibilityLabel = .localized(.onboardingSkipTourButtonAccessibilityLabel)
         skipButton.titleLabel?.font = .preferredFont(forTextStyle: .body)
         skipButton.titleLabel?.adjustsFontForContentSizeCategory = true
 
@@ -99,6 +102,7 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
         let waves = UIImageView(image: .init(named: "onboardingWaves"))
         waves.translatesAutoresizingMaskIntoConstraints = false
         waves.setContentHuggingPriority(.required, for: .vertical)
+        waves.isAccessibilityElement = false
         view.addSubview(waves)
         self.waves = waves
 
@@ -142,20 +146,24 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
         titleLabel.adjustsFontForContentSizeCategory = true
         titleLabel.setContentCompressionResistancePriority(.required, for: .vertical)
         titleLabel.setContentHuggingPriority(.required, for: .vertical)
+        titleLabel.accessibilityLabel = .localized(.onboardingStepTitleAccessibilityLabel)
+        titleLabel.accessibilityValue = titleLabel.text
         labelStack.addArrangedSubview(titleLabel)
         self.titleLabel = titleLabel
 
-        let textLabel = UILabel()
-        textLabel.text = steps.first?.text
-        textLabel.numberOfLines = 3
-        textLabel.font = .preferredFont(forTextStyle: .body)
-        textLabel.adjustsFontForContentSizeCategory = true
-        textLabel.adjustsFontSizeToFitWidth = true
-        textLabel.setContentCompressionResistancePriority(.required, for: .vertical)
-        textLabel.setContentHuggingPriority(.required, for: .vertical)
+        let subtitleLabel = UILabel()
+        subtitleLabel.text = steps.first?.text
+        subtitleLabel.numberOfLines = 3
+        subtitleLabel.font = .preferredFont(forTextStyle: .body)
+        subtitleLabel.adjustsFontForContentSizeCategory = true
+        subtitleLabel.adjustsFontSizeToFitWidth = true
+        subtitleLabel.setContentCompressionResistancePriority(.required, for: .vertical)
+        subtitleLabel.setContentHuggingPriority(.required, for: .vertical)
+        subtitleLabel.accessibilityLabel = .localized(.onboardingStepSubtitleAccessibilityLabel)
+        subtitleLabel.accessibilityValue = subtitleLabel.text
 
-        labelStack.addArrangedSubview(textLabel)
-        self.textLabel = textLabel
+        labelStack.addArrangedSubview(subtitleLabel)
+        self.subtitleLabel = subtitleLabel
 
         let ctaButton = UIButton(type: .system)
         ctaButton.setTitle(.localized(.continueMessage), for: .normal)
@@ -163,6 +171,7 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
         ctaButton.titleLabel?.adjustsFontForContentSizeCategory = true
         ctaButton.translatesAutoresizingMaskIntoConstraints = false
         ctaButton.addTarget(self, action: #selector(forward), for: .primaryActionTriggered)
+        ctaButton.accessibilityLabel = .localized(isLastStep() ? .onboardingFinishCTAButtonAccessibilityLabel : .onboardingContinueCTAButtonAccessibilityLabel)
         ctaButton.alpha = 0
         view.addSubview(ctaButton)
         self.ctaButton = ctaButton
@@ -241,7 +250,7 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
             UIView.animate(withDuration: 0.3) {
                 self.moveLeft()
                 self.titleLabel.text = step.title
-                self.textLabel.text = step.text
+                self.subtitleLabel.text = step.text
                 self.labelStack.alpha = 1
                 self.ctaButton.alpha = 1
                 self.container.alpha = 1
@@ -316,7 +325,7 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
         view.backgroundColor = .theme.ecosia.welcomeBackground
         waves.tintColor = .theme.ecosia.welcomeBackground
         titleLabel.textColor = .theme.ecosia.primaryText
-        textLabel.textColor = .theme.ecosia.secondaryText
+        subtitleLabel.textColor = .theme.ecosia.secondaryText
         skipButton.tintColor = .theme.ecosia.primaryButton
         backButton.tintColor = .theme.ecosia.primaryButton
         pageControl.pageIndicatorTintColor = .theme.ecosia.disabled

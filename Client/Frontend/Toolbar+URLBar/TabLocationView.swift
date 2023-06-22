@@ -331,9 +331,6 @@ extension TabLocationView {
 extension TabLocationView: TabEventHandler {
     
     func tab(_ tab: Tab, didChangeURL url: URL) {
-        guard url.isWebPage() else {
-            return
-        }
         let status: WebsiteConnectionTypeStatus = url.isSecure ? .secure : .unsecure
         trackingProtectionButton.updateAppearanceForStatus(status)
     }

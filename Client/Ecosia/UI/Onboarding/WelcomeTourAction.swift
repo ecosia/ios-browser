@@ -19,6 +19,7 @@ final class WelcomeTourAction: UIView, NotificationThemeable {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
+        updateAccessibilitySettings()
     }
 
     required init?(coder: NSCoder) {  nil }
@@ -61,6 +62,11 @@ final class WelcomeTourAction: UIView, NotificationThemeable {
         stack.arrangedSubviews.forEach { view in
             (view as? NotificationThemeable)?.applyTheme()
         }
+    }
+    
+    func updateAccessibilitySettings() {
+        isAccessibilityElement = false
+        shouldGroupAccessibilityChildren = true
     }
 }
 

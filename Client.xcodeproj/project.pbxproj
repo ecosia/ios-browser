@@ -143,6 +143,7 @@
 		2CE63B2829C8DA8200047121 /* ErrorPageHandler+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE63B2729C8DA8200047121 /* ErrorPageHandler+Ecosia.swift */; };
 		2CE63B2A29CCBAB200047121 /* PageActionMenuCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE63B2929CCBAB200047121 /* PageActionMenuCell.swift */; };
 		2CEA6F791E93E3A600D4100E /* SearchSettingsUITest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CEA6F781E93E3A600D4100E /* SearchSettingsUITest.swift */; };
+		2CEA93282A41B25000726795 /* SnowplowTracker in Frameworks */ = {isa = PBXBuildFile; productRef = 2CEA93272A41B25000726795 /* SnowplowTracker */; };
 		2CEDADA220207EC400223A89 /* SyncFAUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CEDADA120207EC400223A89 /* SyncFAUITests.swift */; };
 		2CF21D0920A4A163000D08B7 /* PocketTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CF21D0820A4A163000D08B7 /* PocketTests.swift */; };
 		2CF449A51E7BFE2C00FD7595 /* NavigationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CF449A41E7BFE2C00FD7595 /* NavigationTest.swift */; };
@@ -597,7 +598,6 @@
 		C8F457A81F1FD75A000CB895 /* BrowserViewController+WebViewDelegates.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8F457A71F1FD75A000CB895 /* BrowserViewController+WebViewDelegates.swift */; };
 		C8F457AA1F1FDD9B000CB895 /* BrowserViewController+KeyCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8F457A91F1FDD9B000CB895 /* BrowserViewController+KeyCommands.swift */; };
 		CA03B26A247F1D9E00382B62 /* BreachAlertsClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA03B269247F1D9E00382B62 /* BreachAlertsClient.swift */; };
-		CA103C7728C8DEA600F7170A /* SnowplowTracker in Frameworks */ = {isa = PBXBuildFile; productRef = CA103C7628C8DEA600F7170A /* SnowplowTracker */; };
 		CA103C7928C8DF8D00F7170A /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = CA103C7828C8DF8D00F7170A /* Core */; };
 		CA103C7A28C8E20D00F7170A /* SentryIntegration.swift in Sources */ = {isa = PBXBuildFile; fileRef = D02818601EF056C800240CAA /* SentryIntegration.swift */; };
 		CA103C8028C8F78E00F7170A /* CircleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA103C7F28C8F78E00F7170A /* CircleButton.swift */; };
@@ -4760,7 +4760,6 @@
 				4326A3DC2849C34B00550F73 /* KingfisherDynamic.framework in Frameworks */,
 				96C11E962863985E00840E7C /* Dip in Frameworks */,
 				4368F84E279669A60013419B /* Snapkit.framework in Frameworks */,
-				CA103C7728C8DEA600F7170A /* SnowplowTracker in Frameworks */,
 				43BE580E278BABCF00491291 /* RustMozillaAppServices.framework in Frameworks */,
 				4368F87F27966EA50013419B /* SDWebImage.framework in Frameworks */,
 				C877037A25222F30006E38EB /* Shared.framework in Frameworks */,
@@ -4768,6 +4767,7 @@
 				C8E18F1E222EDE4500E30E52 /* Accelerate.framework in Frameworks */,
 				F8324A7C2649A5A5007E4BFA /* AuthenticationServices.framework in Frameworks */,
 				E6231C051B90A472005ABB0D /* libxml2.2.tbd in Frameworks */,
+				2CEA93282A41B25000726795 /* SnowplowTracker in Frameworks */,
 				E6231C011B90A44F005ABB0D /* libz.tbd in Frameworks */,
 				0B8E0FF41A932BD500161DC3 /* ImageIO.framework in Frameworks */,
 				433F87CE2788EAB600693368 /* GCDWebServers in Frameworks */,
@@ -8247,7 +8247,7 @@
 			packageProductDependencies = (
 				433F87CD2788EAB600693368 /* GCDWebServers */,
 				96C11E952863985E00840E7C /* Dip */,
-				CA103C7628C8DEA600F7170A /* SnowplowTracker */,
+				2CEA93272A41B25000726795 /* SnowplowTracker */,
 			);
 			productName = Client;
 			productReference = F84B21BE1A090F8100AAB793 /* Client.app */;
@@ -8530,8 +8530,8 @@
 				4326A3C22849B8E500550F73 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				96C11E942863985E00840E7C /* XCRemoteSwiftPackageReference "Dip" */,
 				CA103C7228C8DE7D00F7170A /* XCRemoteSwiftPackageReference "ios-core" */,
-				CA103C7528C8DEA600F7170A /* XCRemoteSwiftPackageReference "snowplow-objc-tracker" */,
 				2CB3BED829E03ED700C1951F /* XCRemoteSwiftPackageReference "rust-components-swift" */,
+				2CEA93262A41B25000726795 /* XCRemoteSwiftPackageReference "snowplow-ios-tracker" */,
 			);
 			productRefGroup = F84B21BF1A090F8100AAB793 /* Products */;
 			projectDirPath = "";
@@ -14460,6 +14460,14 @@
 				version = 91.6.4;
 			};
 		};
+		2CEA93262A41B25000726795 /* XCRemoteSwiftPackageReference "snowplow-ios-tracker" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/snowplow/snowplow-ios-tracker";
+			requirement = {
+				kind = exactVersion;
+				version = 5.2.0;
+			};
+		};
 		4326A3C22849B8E500550F73 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
@@ -14540,14 +14548,6 @@
 				kind = branch;
 			};
 		};
-		CA103C7528C8DEA600F7170A /* XCRemoteSwiftPackageReference "snowplow-objc-tracker" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/snowplow/snowplow-objc-tracker.git";
-			requirement = {
-				kind = exactVersion;
-				version = 3.2.0;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -14570,6 +14570,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 2CB3BED829E03ED700C1951F /* XCRemoteSwiftPackageReference "rust-components-swift" */;
 			productName = MozillaAppServices;
+		};
+		2CEA93272A41B25000726795 /* SnowplowTracker */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2CEA93262A41B25000726795 /* XCRemoteSwiftPackageReference "snowplow-ios-tracker" */;
+			productName = SnowplowTracker;
 		};
 		4302EDBD2819D6640070D373 /* SwiftyJSON */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -14629,11 +14634,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 96C11E942863985E00840E7C /* XCRemoteSwiftPackageReference "Dip" */;
 			productName = Dip;
-		};
-		CA103C7628C8DEA600F7170A /* SnowplowTracker */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = CA103C7528C8DEA600F7170A /* XCRemoteSwiftPackageReference "snowplow-objc-tracker" */;
-			productName = SnowplowTracker;
 		};
 		CA103C7828C8DF8D00F7170A /* Core */ = {
 			isa = XCSwiftPackageProductDependency;

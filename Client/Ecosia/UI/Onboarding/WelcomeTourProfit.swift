@@ -14,6 +14,7 @@ final class WelcomeTourProfit: UIView, NotificationThemeable {
     init() {
         super.init(frame: .zero)
         setup()
+        updateAccessibilitySettings()
         applyTheme()
     }
 
@@ -104,6 +105,11 @@ final class WelcomeTourProfit: UIView, NotificationThemeable {
         beforeLabel.textColor = .theme.ecosia.primaryText
         afterLabel.textColor = .theme.ecosia.primaryText
         treeImage.tintColor = .theme.ecosia.primaryBrand
+    }
+    
+    func updateAccessibilitySettings() {
+        isAccessibilityElement = false
+        shouldGroupAccessibilityChildren = true
     }
 }
 
