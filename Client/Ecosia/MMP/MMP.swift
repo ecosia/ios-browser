@@ -23,6 +23,7 @@ struct MMP {
                                                   deviceManufacturer: DeviceInfo.manufacturer,
                                                   deviceModel: DeviceInfo.deviceModelName,
                                                   locale: DeviceInfo.currentLocale,
+                                                  country: DeviceInfo.currentCountry,
                                                   deviceBuildVersion: DeviceInfo.osBuildNumber,
                                                   appVersion: AppInfo.ecosiaAppVersion,
                                                   installReceipt: AppInfo.installReceipt)
