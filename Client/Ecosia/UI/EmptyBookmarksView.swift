@@ -151,7 +151,6 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
         }
         
         let sectionIcon = UIImageView()
-        sectionIcon.tintColor = .theme.ecosia.secondaryText
         sectionIcon.contentMode = .scaleAspectFit
         sectionIcon.image = UIImage.templateImageNamed(imageNamed)
         sectionIcon.setContentCompressionResistancePriority(.required, for: .horizontal)
@@ -173,7 +172,6 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
         let sectionLabel = UILabel()
         sectionLabel.font = UX.SectionLabelFont
         sectionLabel.numberOfLines = 0
-        sectionLabel.textColor = .theme.ecosia.secondaryText
         sectionLabel.text = text
         sectionLabel.adjustsFontForContentSizeCategory = true
         sectionLabelsStackView.addArrangedSubview(sectionLabel)
@@ -254,6 +252,9 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
             .reduce([UIView](), { partialResult, subViews in
                 var finalResult = partialResult
                 finalResult.append(contentsOf: subViews)
+                subViews.compactMap { $0 as? UIStackView }.forEach { subStackView in
+                    finalResult.append(contentsOf: subStackView.arrangedSubviews)
+                }
                 return finalResult
             })
             .forEach {
