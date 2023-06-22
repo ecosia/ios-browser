@@ -6,7 +6,7 @@ import UIKit
 
 final class NTPTooltip: UICollectionReusableView, NotificationThemeable {
     enum TailPosition {
-        case leading, center, trailing
+        case leading, center
     }
     
     static let key = String(describing: NTPTooltip.self)
@@ -184,8 +184,6 @@ final class NTPTooltip: UICollectionReusableView, NotificationThemeable {
         case .leading:
             tailCenterConstraint.isActive = false
             tailLeadingConstraint.isActive = true
-        case .trailing:
-            assertionFailure()
         }
     }
 }
