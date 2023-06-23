@@ -285,7 +285,7 @@ final class YourImpact: UICollectionViewController, UICollectionViewDelegateFlow
     }
 
     @objc private func learnMore(button: UIControl) {
-        delegate?.yourImpact(didSelectURL: Environment.current.aboutCounter)
+        delegate?.yourImpact(didSelectURL: Environment.current.urlProvider.aboutCounter)
         Analytics.shared.navigation(.open, label: .counter)
         
         dismiss(animated: true) { [weak self] in

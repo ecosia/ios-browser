@@ -112,7 +112,7 @@ class EcosiaPrivacyPolicySetting: Setting {
     }
 
     override var url: URL? {
-        return Environment.current.privacy
+        return Environment.current.urlProvider.privacy
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
@@ -161,7 +161,7 @@ class EcosiaTermsSetting: Setting {
     }
 
     override var url: URL? {
-        return Environment.current.terms
+        return Environment.current.urlProvider.terms
     }
 
     override func onClick(_ navigationController: UINavigationController?) {

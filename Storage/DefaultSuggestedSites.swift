@@ -9,7 +9,7 @@ open class DefaultSuggestedSites {
     public static let sites = [
         "default": [
             SuggestedSiteData(
-                url: Environment.current.financialReports.absoluteString,
+                url: Environment.current.urlProvider.financialReports.absoluteString,
                 bgColor: "0x000000",
                 imageUrl: "asset://suggestedsites_ecosia-org",
                 faviconUrl: "asset://defaultFavicon",
@@ -17,7 +17,7 @@ open class DefaultSuggestedSites {
                 title: NSLocalizedString("Financial reports", tableName: "Ecosia", comment: "")
             ),
             SuggestedSiteData(
-                url: Environment.current.privacy.absoluteString,
+                url: Environment.current.urlProvider.privacy.absoluteString,
                 bgColor: "0x000000",
                 imageUrl: "asset://suggestedsites_ecosia-org",
                 faviconUrl: "asset://defaultFavicon",
@@ -25,7 +25,7 @@ open class DefaultSuggestedSites {
                 title: NSLocalizedString("Privacy", tableName: "Ecosia", comment: "")
             ),
             SuggestedSiteData(
-                url: Environment.current.blog.absoluteString,
+                url: Environment.current.urlProvider.blog.absoluteString,
                 bgColor: "0x000000",
                 imageUrl: "asset://suggestedsites_ecosia-org",
                 faviconUrl: "asset://defaultFavicon",

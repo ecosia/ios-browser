@@ -582,7 +582,7 @@ extension BrowserViewController: WKNavigationDelegate {
         }
 
         // Ecosia: intercept URL to impact
-        if Environment.current.isYourImpact(url: url),
+        if Environment.current.urlProvider.isYourImpact(url: url),
            navigationAction.navigationType == .linkActivated {
             presentYourImpact()
             decisionHandler(.cancel)
