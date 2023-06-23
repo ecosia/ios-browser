@@ -14508,7 +14508,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = main;
+				branch = "MOB-1817_environment_staging_updates";
 				kind = branch;
 			};
 		};
