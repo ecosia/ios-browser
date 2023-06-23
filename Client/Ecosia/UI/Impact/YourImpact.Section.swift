@@ -95,15 +95,15 @@ extension YourImpact {
             var url: URL {
                 switch self {
                 case .info:
-                    return Environment.current.howEcosiaWorks
+                    return Environment.current.urlProvider.howEcosiaWorks
                 case .finance:
-                    return Environment.current.financialReports
+                    return Environment.current.urlProvider.financialReports
                 case .trees:
-                    return Environment.current.trees
+                    return Environment.current.urlProvider.trees
                 case .faq:
-                    return Environment.current.faq
+                    return Environment.current.urlProvider.faq
                 case .privacy:
-                    return Environment.current.privacy
+                    return Environment.current.urlProvider.privacy
                 }
             }
 

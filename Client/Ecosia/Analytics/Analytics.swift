@@ -24,7 +24,7 @@ final class Analytics {
             .userId(User.shared.analyticsId.uuidString)
         
         return Snowplow.createTracker(namespace: namespace,
-                                      network: .init(endpoint: Environment.current.snowplow),
+                                      network: .init(endpoint: Environment.current.urlProvider.snowplow),
                                       configurations: [trackerConfiguration, subjectConfiguration])!
     }
     
