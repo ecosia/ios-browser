@@ -568,7 +568,7 @@ class Tab: NSObject {
 
             // Ecosia: inject analytics id
             var request = request
-            request.url = request.url?.ecosified
+            request.url = request.url?.ecosified(isIncognitoEnabled: _isPrivate)
             return webView.load(request)
         }
         return nil
