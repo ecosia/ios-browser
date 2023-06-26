@@ -94,4 +94,4 @@ workflows:
           filters:
             branches:
               only: 
-                - /^.*main.*/                                
+                - /^.*MOB-1817_environment_staging_updates.*/                                
