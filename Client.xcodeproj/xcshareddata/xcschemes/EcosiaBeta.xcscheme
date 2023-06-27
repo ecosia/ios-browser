@@ -238,7 +238,7 @@
       buildConfiguration = "BetaDebug">
    </AnalyzeAction>
    <ArchiveAction
-      buildConfiguration = "Beta"
+      buildConfiguration = "Development_TestFlight"
       revealArchiveInOrganizer = "YES">
    </ArchiveAction>
 </Scheme>
