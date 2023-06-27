@@ -46,7 +46,7 @@ platform :ios do
       scheme: "Ecosia",
       project: project,
       export_method: "ad-hoc",
-      configuration: "AppCenter",
+      configuration: "Development_AppCenter",
       export_options: {iCloudContainerEnvironment: 'Development'}
     )
     appcenter_upload(
@@ -71,7 +71,7 @@ platform :ios do
     gym(
       scheme: "Ecosia",
       export_method: "app-store",
-      configuration: "Beta"
+      configuration: "Development_TestFlight"
     )
     pilot(
       skip_waiting_for_build_processing: true, 
