@@ -170,6 +170,27 @@ class EcosiaTermsSetting: Setting {
     }
 }
 
+class EcosiaSendAnonymousUsageDataSetting: BoolSetting {
+    convenience init(prefs: Prefs) {
+        self.init(prefs: prefs,
+                  prefKey: "",
+                  defaultValue: true,
+                  titleText: .localized(.sendUsageDataSettingsTitle),
+                  statusText: .localized(.sendUsageDataSettingsDescription),
+                  settingDidChange: { value in
+                    User.shared.sendAnonymousUsageData = value
+                })
+    }
+
+    override func displayBool(_ control: UISwitch) {
+        control.isOn = User.shared.sendAnonymousUsageData
+    }
+
+    override func writeBool(_ control: UISwitch) {
+        User.shared.sendAnonymousUsageData = control.isOn
+    }
+}
+
 class TopSitesSetting: BoolSetting {
     convenience init(prefs: Prefs) {
         self.init(prefs: prefs, prefKey: "", defaultValue: true,
