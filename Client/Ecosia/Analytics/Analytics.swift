@@ -2,6 +2,7 @@ import Foundation
 import SnowplowTracker
 import Core
 
+
 final class Analytics {
     private static let installSchema = "iglu:org.ecosia/ios_install_event/jsonschema/1-0-0"
     private static let abTestSchema = "iglu:org.ecosia/abtest_context/jsonschema/1-0-1"
