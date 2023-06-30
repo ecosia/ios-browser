@@ -1143,10 +1143,7 @@ class BrowserViewController: UIViewController {
     func finishEditingAndSubmit(_ url: URL, visitType: VisitType, forTab tab: Tab) {
         urlBar.currentURL = url
         leaveOverlayMode(didCancel: false)
-        // Ecosia: enriching the app with a language region header for market selection options
-        var urlRequest = URLRequest(url: url)
-        urlRequest.addLanguageRegionHeader()
-        if let nav = tab.loadRequest(urlRequest) {
+        if let nav = tab.loadRequest(URLRequest(url: url)) {
             self.recordNavigationInTab(tab, navigation: nav, visitType: visitType)
         }
     }
