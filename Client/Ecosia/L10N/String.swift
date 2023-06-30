@@ -200,6 +200,6 @@ extension String {
         case openExternalLinkTitle = "Open link in external app?"
         case openExternalLinkDescription = "%@ wants to open this application."
         case sendUsageDataSettingsTitle = "Send usage data"
-        case sendUsageDataSettingsDescription = "To improve our browser apps, we collect usage statistics such as the name of the device, its manufacturer, model, operating system number and app number or SDK version. These are anonymous and protect your privacy."
+        case sendUsageDataSettingsDescription = "To improve our browser apps, we collect usage statistics from your device. These are anonymous and protect your privacy."
     }
 }
