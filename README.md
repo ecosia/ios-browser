@@ -40,6 +40,7 @@ This branch works with [Xcode 14.3](https://developer.apple.com/download/more/?=
     cd ios-browser
     sh ./bootstrap.sh
     ```
+
     - If you run into a problem related to `content-blocker-lib-ios`, check the troubleshooting section [here](#missing-content-blocker-lib-ios-files).
 
 1. Open the project
@@ -48,9 +49,9 @@ This branch works with [Xcode 14.3](https://developer.apple.com/download/more/?=
     open Client.xcodeproj
     ```
 
-#### Troubleshooting
+### Troubleshooting
 
-##### Emulation support software not installed when running on Rosetta simulator
+#### Emulation support software not installed when running on Rosetta simulator
 
 *Build error:* `iPhone 14 Pro supports emulating this architecture, but the emuluation support software is not installed`
 
@@ -58,7 +59,8 @@ This branch works with [Xcode 14.3](https://developer.apple.com/download/more/?=
 
 *Fix:* Open an app that needs Rosetta and you will be requested to install it. See [this link](https://support.apple.com/en-us/HT211861).
 
-##### Missing content-blocker-lib-ios files
+#### Missing content-blocker-lib-ios files
+
 *Build error:* `content-blocker-lib-ios/Lists/some-file.json: No such file or directory`
 
 *Reason:* If you get this error while building the project, probably something went wrong when running the `content_blocker_update.sh` script (which also runs as a step in `bootstrap.sh`).
@@ -168,6 +170,43 @@ python3 ecosify-strings.py Extensions
 python3 ecosify-strings.py Shared
 ```
 
-## Release 🚀
+## :rocket: Release
 
 Follow the instructions from our [confluence page](https://ecosia.atlassian.net/wiki/spaces/MOB/pages/2460680288/How+to+release)
+
+## Howto update the release notes (semi-automated)
+
+Make sure that `fastlane` and `transifex`-cli is installed.
+
+### Add source release notes to transifex (English)
+
+- Make sure that an _inflight_ version exists in AppStore Connect. If not, create one.
+- Add English text to release notes in AppStore Connect
+- Download metadata from AppStore
+
+    ```bash
+    bundle exec fastlane deliver download_metadata
+    ```
+
+- Push source to Transifex (It is important to limit the push to release_notes.txt)
+
+    ```bash
+    tx push ecosia-ios-search-app.release_notestxt
+    ```
+
+- Wait for translators :hourglass_flowing_sand:
+
+### Add language translations
+
+- Make sure that all languages are translated in the transifex [web interface](https://app.transifex.com/ecosia/ecosia-ios-search-app/release_notestxt/)
+- Pull from transfex
+
+    ```bash
+    tx pull -f ecosia-ios-search-app.release_notestxt
+    ```
+
+- Push via the update translation via `deliver` to the AppStore
+
+    ```bash
+    bundle exec fastlane deliver
+    ```
