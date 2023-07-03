@@ -15,7 +15,7 @@ private var disclosureIndicator: UIImageView {
     return disclosureIndicator
 }
 
-class SearchAreaSetting: Setting {
+final class SearchAreaSetting: Setting {
     override var accessoryView: UIImageView? { return disclosureIndicator }
 
     override var style: UITableViewCell.CellStyle { return .value1 }
@@ -42,7 +42,7 @@ class SearchAreaSetting: Setting {
     }
 }
 
-class SafeSearchSettings: Setting {
+final class SafeSearchSettings: Setting {
     override var accessoryView: UIImageView? { return disclosureIndicator }
 
     override var style: UITableViewCell.CellStyle { return .value1 }
@@ -66,7 +66,7 @@ class SafeSearchSettings: Setting {
     }
 }
 
-class AutoCompleteSettings: BoolSetting {
+final class AutoCompleteSettings: BoolSetting {
     convenience init(prefs: Prefs) {
         self.init(prefs: prefs, prefKey: "", defaultValue: true,
                 titleText: .localized(.autocomplete),
@@ -86,7 +86,7 @@ class AutoCompleteSettings: BoolSetting {
     }
 }
 
-class PersonalSearchSettings: BoolSetting {
+final class PersonalSearchSettings: BoolSetting {
     convenience init(prefs: Prefs) {
         self.init(prefs: prefs, prefKey: "", defaultValue: false,
                 titleText: .localized(.personalizedResults),
@@ -106,7 +106,7 @@ class PersonalSearchSettings: BoolSetting {
     }
 }
 
-class EcosiaPrivacyPolicySetting: Setting {
+final class EcosiaPrivacyPolicySetting: Setting {
     override var title: NSAttributedString? {
         return NSAttributedString(string: .localized(.privacy), attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
     }
@@ -121,7 +121,7 @@ class EcosiaPrivacyPolicySetting: Setting {
     }
 }
 
-class EcosiaSendFeedbackSetting: Setting {
+final class EcosiaSendFeedbackSetting: Setting {
     private var device: String {
         var systemInfo = utsname()
         uname(&systemInfo)
@@ -155,7 +155,7 @@ class EcosiaSendFeedbackSetting: Setting {
     }
 }
 
-class EcosiaTermsSetting: Setting {
+final class EcosiaTermsSetting: Setting {
     override var title: NSAttributedString? {
         return NSAttributedString(string: .localized(.terms), attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
     }
@@ -170,7 +170,7 @@ class EcosiaTermsSetting: Setting {
     }
 }
 
-class EcosiaSendAnonymousUsageDataSetting: BoolSetting {
+final class EcosiaSendAnonymousUsageDataSetting: BoolSetting {
     convenience init(prefs: Prefs) {
         self.init(prefs: prefs,
                   prefKey: "",
@@ -191,7 +191,7 @@ class EcosiaSendAnonymousUsageDataSetting: BoolSetting {
     }
 }
 
-class TopSitesSetting: BoolSetting {
+final class TopSitesSetting: BoolSetting {
     convenience init(prefs: Prefs) {
         self.init(prefs: prefs, prefKey: "", defaultValue: true,
                 titleText: .Settings.Homepage.Shortcuts.ShortcutsToggle,
