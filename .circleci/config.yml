@@ -94,6 +94,4 @@ workflows:
           filters:
             branches:
               only: 
-                - /^.*main.*/
-                - /^.*fastlane-deliver.*/
-                                
+                - /^.*main.*/                                

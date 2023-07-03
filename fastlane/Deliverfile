@@ -4,6 +4,7 @@
 
 app_version("8.1.7")
 itc_provider("33YMRSYD2L")
+app_identifier("com.ecosia.ecosiaapp")
 
 skip_app_version_update(true)
 skip_binary_upload(true)
