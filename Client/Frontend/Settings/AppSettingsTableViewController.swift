@@ -195,6 +195,8 @@ class AppSettingsTableViewController: SettingsTableViewController, FeatureFlagga
 
         privacySettings.append(ClearPrivateDataSetting(settings: self))
 
+        privacySettings.append(EcosiaSendAnonymousUsageDataSetting(prefs: prefs))
+        
         privacySettings += [
             BoolSetting(prefs: prefs,
                 prefKey: "settings.closePrivateTabs",
