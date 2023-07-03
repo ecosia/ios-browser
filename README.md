@@ -67,6 +67,11 @@ In case the error was due to `xcrun: error: unable to lookup item 'PlatformPath'
 
 *Fix:* Switch the default SDK location by running `sudo xcode-select -switch /Applications/Xcode.app/Contents/Developer`.
 
+#### Build configurations
+
+The app is equipped by two custom Build Configurations for ad-hoc distribution over TestFlight and AppCenter.
+The `Development_` prefix added to those two, serves the purpose of picking the correct `Core` module build configuration.
+
 ### CI/CD
 
 Fastlane is used to push builds to the Appstore and to manage our certs and profiles. Follow the [docs](https://docs.fastlane.tools/getting-started/ios/setup/) to install. We recommend to use fastlane with bundler.
