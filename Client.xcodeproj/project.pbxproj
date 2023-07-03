@@ -14508,7 +14508,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = "MOB-1831_add_app_language_region_header";
+				branch = main;
 				kind = branch;
 			};
 		};
