@@ -14508,7 +14508,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = "MOB-1838_analytics_opt_out";
+				branch = main;
 				kind = branch;
 			};
 		};
