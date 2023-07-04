@@ -708,7 +708,7 @@ class VersionSetting: Setting {
     }
 
     override var title: NSAttributedString? {
-        return NSAttributedString(string: .init(format: .localized(.version), Bundle.version) + " (\(Environment.current.name))", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
+        return NSAttributedString(string: .init(format: .localized(.version), Bundle.version) + " (\(Environment.current.urlProvider))", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
     }
 
     public static var appVersion: String {
