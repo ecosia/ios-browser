@@ -573,10 +573,10 @@ class Tab: NSObject {
             // Ecosia: inject auth parameters if needed
             ecosiaUpdatedRequest = ecosiaUpdatedRequest.withAuthParameters()
             // Ecosia: enriching the search request (showing SERP page) with a language region header for market selection options
-            if request.url?.isEcosiaSearchQuery == true {
-                request.addLanguageRegionHeader()
+            if ecosiaUpdatedRequest.url?.isEcosiaSearchQuery() == true {
+                ecosiaUpdatedRequest.addLanguageRegionHeader()
             }
-            return webView.load(request)
+            return webView.load(ecosiaUpdatedRequest)
         }
         return nil
     }
