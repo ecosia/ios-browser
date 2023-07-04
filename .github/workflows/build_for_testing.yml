@@ -9,7 +9,7 @@ on:
 
 jobs:    
   build_for_testing:
-    runs-on: macos-latest
+    runs-on: macos-13
     name: Build App
     env:
       DEVELOPER_DIR: ${{ inputs.developer-dir }}
