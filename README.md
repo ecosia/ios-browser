@@ -178,7 +178,7 @@ Follow the instructions from our [confluence page](https://ecosia.atlassian.net/
 
 Make sure that `fastlane` and `transifex`-cli is installed.
 
-### Add source release notes to transifex (English)
+### Add source release notes to transifex (en-US)
 
 - Make sure that an _inflight_ version exists in AppStore Connect. If not, create one.
 - Add English text to release notes in AppStore Connect
