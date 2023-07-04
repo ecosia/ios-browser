@@ -567,12 +567,15 @@ class Tab: NSObject {
                 return webView.loadFileURL(url, allowingReadAccessTo: url)
             }
 
-            // Ecosia: updating the request with cookies and auth parameters if needed
+            // Ecosia: updating the request with cookies, auth parameters and language header if needed
             var ecosiaUpdatedRequest = request
-            // Ecosia: inject analytics id
             ecosiaUpdatedRequest.url = ecosiaUpdatedRequest.url?.ecosified(isIncognitoEnabled: _isPrivate)
             // Ecosia: inject auth parameters if needed
             ecosiaUpdatedRequest = ecosiaUpdatedRequest.withAuthParameters()
+            // Ecosia: enriching the search request (showing SERP page) with a language region header for market selection options
+            if ecosiaUpdatedRequest.url?.isEcosiaSearchQuery() == true {
+                ecosiaUpdatedRequest.addLanguageRegionHeader()
+            }
             return webView.load(ecosiaUpdatedRequest)
         }
         return nil

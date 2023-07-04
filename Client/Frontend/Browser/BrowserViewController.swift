@@ -1143,7 +1143,6 @@ class BrowserViewController: UIViewController {
     func finishEditingAndSubmit(_ url: URL, visitType: VisitType, forTab tab: Tab) {
         urlBar.currentURL = url
         leaveOverlayMode(didCancel: false)
-
         if let nav = tab.loadRequest(URLRequest(url: url)) {
             self.recordNavigationInTab(tab, navigation: nav, visitType: visitType)
         }
