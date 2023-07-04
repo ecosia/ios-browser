@@ -3,7 +3,7 @@ version: 2.1
 executors:
   base:
     macos:
-      xcode: "14.2.0"
+      xcode: "14.3.1"
 
 parameters:
   deploy-release:
