@@ -115,9 +115,9 @@ platform :ios do
       itc_provider: "33YMRSYD2L"
     )
 
-    commit_version_bump(
-      message: "Version Bump v_#{udpated_version_number}_#{udpated_build_number} 🌳"
-    )
+    # commit_version_bump(
+    #   message: "Version Bump v_#{udpated_version_number}_#{udpated_build_number} 🌳"
+    # )
 
     add_git_tag(
       tag: "v_#{udpated_version_number}_#{udpated_build_number}",
