@@ -10,6 +10,7 @@ extension Analytics {
         migration,
         navigation,
         onboarding,
+        intro,
         invitations,
         ntp,
         menu,
@@ -28,8 +29,10 @@ extension Analytics {
             shop,
             faq,
             news,
+            next,
             privacy,
             sendFeedback = "send_feedback",
+            skip,
             terms,
             treecard,
             treestore
@@ -84,11 +87,25 @@ extension Analytics {
         }
     }
     
-    enum Property: String {
+    enum Property {
         case
         home,
         menu,
-        toolbar
+        toolbar,
+        screenName(Int)
+        
+        var rawValue: String {
+            switch self {
+            case .home:
+                return "home"
+            case .menu:
+                return "menu"
+            case .toolbar:
+                return "toolbar"
+            case .screenName(let page):
+                return OnboardingPage.allCases[page].rawValue
+            }
+        }
         
         enum TopSite: String {
             case
@@ -96,6 +113,15 @@ extension Analytics {
             privacy,
             financialReports = "financial_reports",
             howEcosiaWorks = "how_ecosia_works"
+        }
+        
+        enum OnboardingPage: String, CaseIterable {
+            case
+            start,
+            search,
+            profits,
+            action,
+            privacy
         }
     }
 
