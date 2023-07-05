@@ -62,7 +62,8 @@ extension Analytics {
         send,
         claim,
         click,
-        change
+        change,
+        display
         
         enum Activity: String {
             case
