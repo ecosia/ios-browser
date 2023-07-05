@@ -15,10 +15,10 @@ final class Analytics {
             .sessionContext(true)
             .applicationContext(true)
             .platformContext(true)
+            .platformContextProperties([]) // track minimal device properties
             .geoLocationContext(true)
             .deepLinkContext(false)
             .screenContext(false)
-            .userAnonymisation(true)
         
         let subjectConfiguration = SubjectConfiguration()
             .userId(User.shared.analyticsId.uuidString)
