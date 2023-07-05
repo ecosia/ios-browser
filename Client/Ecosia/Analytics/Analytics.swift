@@ -256,11 +256,20 @@ final class Analytics {
         track(event)
     }
     
-    func onbaordingDisplaying(page: Int) {
+    func introDisplaying(page: Int) {
         let event = Structured(category: Category.intro.rawValue,
                                action: Action.display.rawValue)
             .property(Property.screenName(page).rawValue)
+            .value(.init(integerLiteral: page))
         track(event)
     }
-    
+
+    func introClick(_ label: Label.Navigation, at page: Int) {
+        let event = Structured(category: Category.intro.rawValue,
+                               action: Action.click.rawValue)
+            .label(label.rawValue)
+            .property(Property.screenName(page).rawValue)
+            .value(.init(integerLiteral: page))
+        track(event)
+    }
 }
