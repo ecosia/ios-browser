@@ -257,6 +257,12 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
                 self.view.layoutIfNeeded()
             }
         }
+        
+        /*
+         Steps needs to be counted starting from 1
+         so we always top up 1 to the current index
+        */
+        Analytics.shared.introDisplaying(page: onboardingAnalyticsPageFromIndex(currentIndex + 1))
     }
 
     private func moveRight() {
@@ -290,18 +296,26 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
             dismiss(animated: true, completion: nil)
             return
         }
-        display(step: steps[currentIndex - 1])
+        let displayingStep = currentIndex - 1
+        display(step: steps[displayingStep])
     }
 
     @objc func forward() {
         guard !isLastStep() else {
-            skip()
+            complete()
             return
         }
-        display(step: steps[currentIndex + 1])
+        Analytics.shared.introClick(.next, at: onboardingAnalyticsPageFromIndex(currentIndex))
+        let displayingStep = currentIndex + 1
+        display(step: steps[displayingStep])
+    }
+    
+    private func complete() {
+        delegate?.welcomeTourDidFinish(self)
     }
 
     @objc func skip() {
+        Analytics.shared.introClick(.skip, at: onboardingAnalyticsPageFromIndex(currentIndex))
         delegate?.welcomeTourDidFinish(self)
     }
 
@@ -341,5 +355,12 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
 
     @objc func themeChanged() {
         applyTheme()
+    }
+}
+
+extension WelcomeTour {
+    
+    private func onboardingAnalyticsPageFromIndex(_ index: Int) -> Analytics.Property.OnboardingPage? {
+        Analytics.Property.OnboardingPage.allCases[index]
     }
 }
