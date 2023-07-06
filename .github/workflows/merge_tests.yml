@@ -1,12 +1,11 @@
 name: Merge Unit Tests
 
 on:
-  pull_request:
+  push:
     paths:
       - 'Client/**'
       - 'Shared/**'
       - 'Storage/**'
-    branches: [ main ]
 
 jobs:
   execute_merge_tests:
