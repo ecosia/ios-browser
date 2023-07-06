@@ -5,7 +5,6 @@
 import UIKit
 import Shared
 
-
 // A small structure to encapsulate all the possible data that we can get
 // from an application sharing a web page or a URL.
 public struct ShareItem {
