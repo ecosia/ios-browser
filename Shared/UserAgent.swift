@@ -4,6 +4,7 @@
 
 import WebKit
 import UIKit
+import Core
 
 open class UserAgent {
     public static let uaBitSafari = "Safari/604.1"
@@ -108,10 +109,12 @@ public struct CustomUserAgentConstant {
         "paypal.com": defaultMobileUA,
         "yahoo.com": defaultMobileUA,
         "disneyplus.com": customDesktopUA,
-        "ecosia.org": ecosiaMobileUA ]
+        URLProvider.production.domain: ecosiaMobileUA,
+        URLProvider.staging.domain: ecosiaMobileUA]
 
     public static let customDesktopUAFor = [
-        "ecosia.org": ecosiaDesktopUA ]
+        URLProvider.production.domain: ecosiaDesktopUA,
+        URLProvider.staging.domain: ecosiaDesktopUA]
 }
 
 public struct UserAgentBuilder {
