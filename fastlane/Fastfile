@@ -93,9 +93,9 @@ platform :ios do
 
     udpated_version_number = File.read("VERSION")
 
-    # udpated_build_number = increment_build_number(
-    #   build_number: ENV["CIRCLE_BUILD_NUM"]
-    # )
+    udpated_build_number = increment_build_number(
+      build_number: ENV["CIRCLE_BUILD_NUM"]
+    )
 
     # match(
     #   app_identifier: ['com.ecosia.ecosiaapp', 'com.ecosia.ecosiaapp.WidgetKit', 'com.ecosia.ecosiaapp.ShareTo'],
