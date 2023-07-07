@@ -119,11 +119,11 @@ platform :ios do
       configuration: "Release"
     )
 
-    pilot(
-      skip_waiting_for_build_processing: true, 
-      apple_id: "670881887",
-      itc_provider: "33YMRSYD2L"
-    )
+    # pilot(
+    #   skip_waiting_for_build_processing: true, 
+    #   apple_id: "670881887",
+    #   itc_provider: "33YMRSYD2L"
+    # )
 
     perform_git_release_tasks(
       version_number: udpated_version_number,
