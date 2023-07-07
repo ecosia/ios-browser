@@ -160,7 +160,7 @@ platform :ios do
       create_pull_request(
         repo: "ecosia/ios-browser",
         title: "Version Bump #{version_number} 🎉",
-        base: "main",
+        base: "MOB-1878_ci_release_candidate_workflow",
         body: "Version bump PR"
       )
       
