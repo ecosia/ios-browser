@@ -87,19 +87,7 @@ platform :ios do
   desc "Testflight build for Live Channel"
   lane :testflight_live do
 
-    version_file = File.read("VERSION")
-
-    lines = version_file.split("\n")
-    results = lines.map do |line|
-      match = line.split(":").last.strip.match(/^[0-9.]*$/)
-      match ? match[0] : nil
-    end
-
-    results.compact!
-
-    updated_version_number_from_version_file = results[0]
-
-    udpated_version_number = udpate_version_in_xcode_proj(pbx_project_file, updated_version_number_from_version_file)
+    udpated_version_number = udpate_version_in_xcode_proj(pbx_project_file, get_version_from_file)
 
     udpated_build_number = increment_build_number(
       build_number: ENV["CIRCLE_BUILD_NUM"]
@@ -128,29 +116,6 @@ platform :ios do
       build_number: udpated_build_number
     )
 
-  end
-
-  desc 'This function increments the sole pbxproj MARKETING_VERSION without touching targets'
-  def udpate_version_in_xcode_proj(pbxproj_file, version_string)
-
-    file_contents = File.read("../#{pbxproj_file}")
-
-    # Update the MARKETING_VERSION build setting
-    updated_marketing_version = file_contents.gsub(/(MARKETING_VERSION = )(.+?)(;)/) do |match|
-      unless match.include?('${inherited}')
-        "#{$1}#{version_string}#{$3}" # Updates the MARKETING_VERSION with the intended value
-      else
-        match  # Do nothing and return ${inherited}
-      end
-    end
-    
-    # Write the updated contents back to the pbxproj file
-    File.open("../#{pbxproj_file}", "w") do |file|
-      file.puts updated_marketing_version
-    end
-
-    # Returns the version string
-    version_string
   end
 
   desc 'This lane performs the expected git steps when releasing'
@@ -211,6 +176,45 @@ platform :ios do
 
     File.open(derived_data_path_file, 'w') { |file| file.write(options[:derived_data_path]) }
 
+  end
+
+  desc 'This function retrives the written version from the staged VERSION file from the repo'
+  def get_version_from_file
+
+    version_file = File.read("VERSION")
+
+    lines = version_file.split("\n")
+    results = lines.map do |line|
+      match = line.split(":").last.strip.match(/^[0-9.]*$/)
+      match ? match[0] : nil
+    end
+
+    results.compact!
+
+    results[0]
+  end
+
+  desc 'This function increments the sole pbxproj MARKETING_VERSION without touching targets'
+  def udpate_version_in_xcode_proj(pbxproj_file, version_string)
+
+    file_contents = File.read("../#{pbxproj_file}")
+
+    # Update the MARKETING_VERSION build setting
+    updated_marketing_version = file_contents.gsub(/(MARKETING_VERSION = )(.+?)(;)/) do |match|
+      unless match.include?('${inherited}')
+        "#{$1}#{version_string}#{$3}" # Updates the MARKETING_VERSION with the intended value
+      else
+        match  # Do nothing and return ${inherited}
+      end
+    end
+    
+    # Write the updated contents back to the pbxproj file
+    File.open("../#{pbxproj_file}", "w") do |file|
+      file.puts updated_marketing_version
+    end
+
+    # Returns the version string
+    version_string
   end
 
 end
