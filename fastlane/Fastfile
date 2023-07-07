@@ -96,7 +96,7 @@ platform :ios do
 
     results.compact!
 
-    updated_version_number_from_version_file = results.[0]
+    updated_version_number_from_version_file = results[0]
 
     udpated_version_number = increment_version_number(
       xcodeproj: project,
@@ -135,7 +135,7 @@ platform :ios do
   desc 'This lane performs the expected git steps when releasing'
   private_lane :perform_git_release_tasks do |options|
 
-    version_number = options[:version_number
+    version_number = options[:version_number]
     build_number = options[:build_number]
 
     git_status_output = sh("git status --porcelain Client.xcodeproj/project.pbxproj")
