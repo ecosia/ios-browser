@@ -131,9 +131,9 @@ platform :ios do
     version_number = options[:version_number]
     build_number = options[:build_number]
 
-    git_status_output = sh("git status --porcelain #{pbx_project_file}")
+    git_status_output = sh("git status --porcelain ../#{pbx_project_file}")
 
-    git_diff_output = `git diff --unified=0 HEAD -- project.pbxproj`
+    git_diff_output = sh("git diff --unified=0 HEAD -- ../#{pbx_project_file}")
 
     marketing_version_build_setting_pattern = /^\+\s+MARKETING_VERSION = (.+);/
   
