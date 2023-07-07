@@ -125,8 +125,50 @@ platform :ios do
       itc_provider: "33YMRSYD2L"
     )
 
+    perform_git_release_tasks(
+      version_number: udpated_version_number,
+      build_number: udpated_build_number
+    )
+
+  end
+
+  desc 'This lane performs the expected git steps when releasing'
+  private_lane :perform_git_release_tasks do |options|
+
+    version_number = options[:version_number
+    build_number = options[:build_number]
+
+    git_status_output = sh("git status --porcelain Client.xcodeproj/project.pbxproj")
+
+    pbx_proj_has_changes = !git_status_output.empty?
+
+    if pbx_proj_has_changes
+
+      # Checkout a new branch
+      sh("git checkout -b release-#{options[:version_number]}-build-#{build_number}-project-bump")
+
+      # Commit the version bump only
+      git_commit(
+        path: "./Client.xcodeproj/project.pbxproj", 
+        message: "Version Bump v_#{version_number}_#{build_number} 🌳"
+      )
+      
+      # Pushes the new branch with committed changes to Git
+      push_to_git_remote
+
+      # Creates a pull request from the current (newly created) branch against the main branch
+      create_pull_request(
+        repo: "ecosia/ios-browser",
+        title: "Version Bump #{version_number} 🎉",
+        base: "main",
+        body: "Version bump PR"
+      )
+      
+    end
+
+    
     add_git_tag(
-      tag: "v_#{udpated_version_number}_#{udpated_build_number}",
+      tag: "v_#{version_number}_#{build_number}",
       force: true
     )
 
