@@ -265,6 +265,7 @@ DEPENDENCIES
   danger-swiftlint
   fastlane
   fastlane-plugin-appcenter
+  xcodeproj
 
 BUNDLED WITH
    2.3.4
