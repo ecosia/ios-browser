@@ -144,8 +144,10 @@ platform :ios do
 
     if pbx_proj_has_changes
 
+      version_bump_branch_name = "release-#{options[:version_number]}-build-#{build_number}-project-bump"
+
       # Checkout a new branch
-      sh("git checkout -b release-#{options[:version_number]}-build-#{build_number}-project-bump")
+      sh("git checkout -b #{version_bump_branch_name}")
 
       # Commit the version bump only
       git_commit(
@@ -160,6 +162,7 @@ platform :ios do
       create_pull_request(
         repo: "ecosia/ios-browser",
         title: "Version Bump #{version_number} 🎉",
+        head: version_bump_branch_name,
         base: "MOB-1878_ci_release_candidate_workflow",
         body: "Version bump PR"
       )
