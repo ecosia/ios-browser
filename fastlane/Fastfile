@@ -89,8 +89,15 @@ platform :ios do
 
     udpated_version_number = udpate_version_in_xcode_proj(pbx_project_file, get_version_from_file)
 
+    ci_run_build_number = ENV["CIRCLE_BUILD_NUM"]
+
+    branch_commit_push_and_create_pr_if_needed(
+      version_number: udpated_version_number,
+      build_number: ci_run_build_number
+    )
+
     udpated_build_number = increment_build_number(
-      build_number: ENV["CIRCLE_BUILD_NUM"]
+      build_number: ci_run_build_number
     )
 
     match(
@@ -111,24 +118,30 @@ platform :ios do
     #   itc_provider: "33YMRSYD2L"
     # )
 
-    perform_git_release_tasks(
+    tag_and_push(
       version_number: udpated_version_number,
       build_number: udpated_build_number
     )
 
   end
 
-  desc 'This lane performs the expected git steps when releasing'
-  private_lane :perform_git_release_tasks do |options|
+  desc 'This lane commits the version number update and creates a PR if needed'
+  private_lane :branch_commit_push_and_create_pr_if_needed do |options|
 
     version_number = options[:version_number]
     build_number = options[:build_number]
 
     git_status_output = sh("git status --porcelain #{pbx_project_file}")
 
-    pbx_proj_has_changes = !git_status_output.empty?
+    git_diff_output = `git diff --unified=0 HEAD -- project.pbxproj`
 
-    if pbx_proj_has_changes
+    marketing_version_build_setting_pattern = /^\+\s+MARKETING_VERSION = (.+);/
+  
+    has_marketing_version_changes = diff_output.match?(marketing_version_build_setting_pattern)  
+
+    matching_required_pbx_changes = !git_status_output.empty? && !has_marketing_version_changes.empty?
+
+    if matching_required_pbx_changes
 
       version_bump_branch_name = "release-#{options[:version_number]}-build-#{build_number}-project-bump"
 
@@ -157,7 +170,14 @@ platform :ios do
       
     end
 
+  end
+
+  desc 'This lane performs the expected git steps when releasing'
+  private_lane :tag_and_push do |options|
     
+    version_number = options[:version_number]
+    build_number = options[:build_number]
+
     add_git_tag(
       tag: "v_#{version_number}_#{build_number}",
       force: true
