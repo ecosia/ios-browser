@@ -7,7 +7,8 @@ fastlane_version "2.210.0"
 
 default_platform :ios
 
-project="Client.xcodeproj"
+project_path="Client.xcodeproj"
+pbx_project_file = "#{project_path}/project.pbxproj"
 
 if ENV['IS_CIRCLECI']
   import_build_tools(
@@ -47,7 +48,7 @@ platform :ios do
     )
     gym(
       scheme: "Ecosia",
-      project: project,
+      project: project_path,
       export_method: "ad-hoc",
       configuration: "Development_AppCenter",
       export_options: {iCloudContainerEnvironment: 'Development'}
@@ -98,10 +99,7 @@ platform :ios do
 
     updated_version_number_from_version_file = results[0]
 
-    udpated_version_number = increment_version_number(
-      xcodeproj: project,
-      version_number: updated_version_number_from_version_file
-    )
+    udpated_version_number = udpate_version_in_xcode_proj(pbx_project_file, updated_version_number_from_version_file)
 
     udpated_build_number = increment_build_number(
       build_number: ENV["CIRCLE_BUILD_NUM"]
@@ -132,13 +130,36 @@ platform :ios do
 
   end
 
+  desc 'This function increments the sole pbxproj MARKETING_VERSION without touching targets'
+  def udpate_version_in_xcode_proj(pbxproj_file, version_string)
+
+    file_contents = File.read("../#{pbxproj_file}")
+
+    # Update the MARKETING_VERSION build setting
+    updated_marketing_version = file_contents.gsub(/(MARKETING_VERSION = )(.+?)(;)/) do |match|
+      unless match.include?('${inherited}')
+        "#{$1}#{version_string}#{$3}" # Updates the MARKETING_VERSION with the intended value
+      else
+        match  # Do nothing and return ${inherited}
+      end
+    end
+    
+    # Write the updated contents back to the pbxproj file
+    File.open("../#{pbxproj_file}", "w") do |file|
+      file.puts updated_marketing_version
+    end
+
+    # Returns the version string
+    version_string
+  end
+
   desc 'This lane performs the expected git steps when releasing'
   private_lane :perform_git_release_tasks do |options|
 
     version_number = options[:version_number]
     build_number = options[:build_number]
 
-    git_status_output = sh("git status --porcelain Client.xcodeproj/project.pbxproj")
+    git_status_output = sh("git status --porcelain #{pbxproj_file}")
 
     pbx_proj_has_changes = !git_status_output.empty?
 
@@ -151,7 +172,7 @@ platform :ios do
 
       # Commit the version bump only
       git_commit(
-        path: "./Client.xcodeproj/project.pbxproj", 
+        path: "./#{pbx_project_file}", 
         message: "Version Bump v_#{version_number}_#{build_number} 🌳"
       )
       
