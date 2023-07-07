@@ -87,6 +87,8 @@ platform :ios do
   desc "Testflight build for Live Channel"
   lane :testflight_live do
 
+    UI.message(pbx_project_file)
+    UI.message(get_version_from_file)
     udpated_version_number = udpate_version_in_xcode_proj(pbx_project_file, get_version_from_file)
 
     ci_run_build_number = ENV["CIRCLE_BUILD_NUM"]
