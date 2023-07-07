@@ -86,7 +86,17 @@ platform :ios do
   desc "Testflight build for Live Channel"
   lane :testflight_live do
 
-    updated_version_number_from_version_file = File.read("VERSION").gsub!(/\s+/, '')
+    version_file = File.read("VERSION")
+
+    lines = version_file.split("\n")
+    results = lines.map do |line|
+      match = line.split(":").last.strip.match(/^[0-9.]*$/)
+      match ? match[0] : nil
+    end
+
+    results.compact!
+
+    updated_version_number_from_version_file = results.[0]
 
     udpated_version_number = increment_version_number(
       xcodeproj: project,
