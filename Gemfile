@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
-gem 'danger', github: 'danger/danger', :branch => 'master'
-gem 'danger-swiftlint'
+# gem 'danger', github: 'danger/danger', :branch => 'master'
+# gem 'danger-swiftlint'
 gem 'fastlane'
 gem 'xcodeproj'
 
