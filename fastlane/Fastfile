@@ -124,7 +124,7 @@ platform :ios do
     version_number = options[:version_number]
     build_number = options[:build_number]
 
-    git_status_output = sh("git status --porcelain #{pbxproj_file}")
+    git_status_output = sh("git status --porcelain #{pbx_project_file}")
 
     pbx_proj_has_changes = !git_status_output.empty?
 
