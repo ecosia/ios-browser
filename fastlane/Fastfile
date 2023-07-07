@@ -151,7 +151,8 @@ platform :ios do
         title: "Version Bump #{version_number} 🎉",
         head: version_bump_branch_name,
         base: "MOB-1878_ci_release_candidate_workflow",
-        body: "Version bump PR"
+        body: "Version bump PR",
+        team_reviewers: "ios"
       )
       
     end
