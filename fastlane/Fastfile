@@ -137,7 +137,7 @@ platform :ios do
 
     marketing_version_build_setting_pattern = /^\+\s+MARKETING_VERSION = (.+);/
   
-    has_marketing_version_changes = diff_output.match?(marketing_version_build_setting_pattern)  
+    has_marketing_version_changes = git_diff_output.match?(marketing_version_build_setting_pattern)  
 
     matching_required_pbx_changes = !git_status_output.empty? && !has_marketing_version_changes.empty?
 
