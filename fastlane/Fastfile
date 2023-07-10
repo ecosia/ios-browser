@@ -143,7 +143,7 @@ platform :ios do
 
     if matching_required_pbx_changes
 
-      version_bump_branch_name = "release-#{options[:version_number]}-build-#{build_number}-project-bump"
+      version_bump_branch_name = "release-#{version_number}-build-#{build_number}-project-bump"
 
       # Checkout a new branch
       sh("git checkout -b #{version_bump_branch_name}")
