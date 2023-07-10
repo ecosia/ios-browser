@@ -256,4 +256,28 @@ final class Analytics {
         track(event)
     }
     
+    func introDisplaying(page: Property.OnboardingPage?) {
+        guard let page,
+              let pageAsInt = Property.OnboardingPage.allCases.firstIndex(of: page) else {
+            return
+        }
+        let event = Structured(category: Category.intro.rawValue,
+                               action: Action.display.rawValue)
+            .property(Property.screenName(pageAsInt).rawValue)
+            .value(.init(integerLiteral: pageAsInt))
+        track(event)
+    }
+
+    func introClick(_ label: Label.Navigation, at page: Property.OnboardingPage?) {
+        guard let page,
+              let pageAsInt = Property.OnboardingPage.allCases.firstIndex(of: page) else {
+            return
+        }
+        let event = Structured(category: Category.intro.rawValue,
+                               action: Action.click.rawValue)
+            .label(label.rawValue)
+            .property(Property.screenName(pageAsInt).rawValue)
+            .value(.init(integerLiteral: pageAsInt))
+        track(event)
+    }
 }
