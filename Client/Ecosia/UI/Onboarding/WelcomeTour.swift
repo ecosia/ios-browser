@@ -146,8 +146,6 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
         titleLabel.adjustsFontForContentSizeCategory = true
         titleLabel.setContentCompressionResistancePriority(.required, for: .vertical)
         titleLabel.setContentHuggingPriority(.required, for: .vertical)
-        titleLabel.accessibilityLabel = .localized(.onboardingStepTitleAccessibilityLabel)
-        titleLabel.accessibilityValue = titleLabel.text
         labelStack.addArrangedSubview(titleLabel)
         self.titleLabel = titleLabel
 
@@ -159,8 +157,6 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
         subtitleLabel.adjustsFontSizeToFitWidth = true
         subtitleLabel.setContentCompressionResistancePriority(.required, for: .vertical)
         subtitleLabel.setContentHuggingPriority(.required, for: .vertical)
-        subtitleLabel.accessibilityLabel = .localized(.onboardingStepSubtitleAccessibilityLabel)
-        subtitleLabel.accessibilityValue = subtitleLabel.text
 
         labelStack.addArrangedSubview(subtitleLabel)
         self.subtitleLabel = subtitleLabel
@@ -171,7 +167,6 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
         ctaButton.titleLabel?.adjustsFontForContentSizeCategory = true
         ctaButton.translatesAutoresizingMaskIntoConstraints = false
         ctaButton.addTarget(self, action: #selector(forward), for: .primaryActionTriggered)
-        ctaButton.accessibilityLabel = .localized(isLastStep() ? .onboardingFinishCTAButtonAccessibilityLabel : .onboardingContinueCTAButtonAccessibilityLabel)
         ctaButton.alpha = 0
         view.addSubview(ctaButton)
         self.ctaButton = ctaButton
@@ -259,6 +254,13 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
         }
         
         Analytics.shared.introDisplaying(page: onboardingAnalyticsPageFromCurrentIndex)
+        updateAccessibilityLabels(step: step)
+    }
+    
+    private func updateAccessibilityLabels(step: Step) {
+        titleLabel.accessibilityLabel = step.title
+        subtitleLabel.accessibilityLabel = step.text
+        ctaButton.accessibilityLabel = .localized(isLastStep() ? .onboardingFinishCTAButtonAccessibilityLabel : .onboardingContinueCTAButtonAccessibilityLabel)
     }
 
     private func moveRight() {
@@ -306,6 +308,7 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
         Analytics.shared.introClick(.next, at: onboardingAnalyticsPageFromCurrentIndex)
         let displayingStep = currentIndex + 1
         display(step: steps[displayingStep])
+        UIAccessibility.post(notification: .screenChanged, argument: titleLabel)
     }
     
     private func complete() {

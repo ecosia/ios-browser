@@ -193,8 +193,6 @@ extension String {
         case onboardingSkipTourButtonAccessibilityLabel = "Skip the onboarding"
         case onboardingContinueCTAButtonAccessibilityLabel = "Continue to the next onboarding page"
         case onboardingFinishCTAButtonAccessibilityLabel = "Finish onbaording and start contributing to Ecosia"
-        case onboardingStepTitleAccessibilityLabel = "This is the title of the onboarding step"
-        case onboardingStepSubtitleAccessibilityLabel = "This is the subtitle of the onboarding step"
         case cancel = "Cancel"
         case open = "Open"
         case openExternalLinkTitle = "Open link in external app?"

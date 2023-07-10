@@ -139,6 +139,7 @@ final class Welcome: UIViewController {
         let label = UILabel()
         label.numberOfLines = 0
         label.attributedText = introText
+        label.accessibilityLabel = simplestWayString.replacingOccurrences(of: "\n", with: "")
         label.font = .preferredFont(forTextStyle: .largeTitle).bold()
         label.adjustsFontForContentSizeCategory = true
         label.textColor = .white
@@ -248,8 +249,9 @@ final class Welcome: UIViewController {
     }
 
     // MARK: Helper
+    private let simplestWayString = String.localized(.theSimplestWay)
     private var introText: NSAttributedString {
-        let raw = String.localized(.theSimplestWay)
+        let raw = simplestWayString
         let splits = raw.components(separatedBy: .newlines)
 
         guard splits.count == 3 else { return NSAttributedString(string: raw) }
