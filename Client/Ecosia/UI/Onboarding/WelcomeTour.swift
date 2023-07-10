@@ -302,6 +302,7 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
             return
         }
         display(step: steps[currentIndex + 1])
+        UIAccessibility.post(notification: .screenChanged, argument: titleLabel)
     }
 
     @objc func skip() {
