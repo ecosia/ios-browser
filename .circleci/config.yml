@@ -77,7 +77,7 @@ workflows:
           filters:
             branches:
               only:
-                - /^.*MOB-1878_ci_release_candidate_workflow.*/
+                - /^.*main.*/
           name: Deploy release version over Testflight if VERSION file updated
           config-path: .circleci/deploy-release.yml
           mapping: |

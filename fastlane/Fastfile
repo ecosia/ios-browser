@@ -163,7 +163,7 @@ platform :ios do
         repo: "ecosia/ios-browser",
         title: "Version Bump #{version_number} 🎉",
         head: version_bump_branch_name,
-        base: "MOB-1878_ci_release_candidate_workflow",
+        base: "main",
         body: "Version bump PR",
         team_reviewers: "ios"
       )
