@@ -204,15 +204,11 @@ platform :ios do
 
     version_file = File.read("VERSION")
 
-    lines = version_file.split("\n")
-    results = lines.map do |line|
-      match = line.split(":").last.strip.match(/^[0-9.]*$/)
-      match ? match[0] : nil
-    end
+    version_line = version_file.split("\n")[0]
+    match = version_line.split(":").last.strip.match(/^[0-9.]*$/)
+    version = match ? match[0] : nil
 
-    results.compact!
-
-    results[0]
+    version
   end
 
   desc 'This function increments the sole pbxproj MARKETING_VERSION without touching targets'
