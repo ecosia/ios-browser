@@ -257,10 +257,8 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
     }
     
     private func updateAccessibilityLabels(step: Step) {
-        titleLabel.accessibilityValue = step.title
-        titleLabel.accessibilityLabel = .localized(.onboardingStepTitleAccessibilityLabel)
-        subtitleLabel.accessibilityValue = step.text
-        subtitleLabel.accessibilityLabel = .localized(.onboardingStepSubtitleAccessibilityLabel)
+        titleLabel.accessibilityLabel = step.title
+        subtitleLabel.accessibilityLabel = step.text
         ctaButton.accessibilityLabel = .localized(isLastStep() ? .onboardingFinishCTAButtonAccessibilityLabel : .onboardingContinueCTAButtonAccessibilityLabel)
     }
 
