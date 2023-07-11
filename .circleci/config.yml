@@ -7,6 +7,7 @@ jobs:
   check-marketing-version:
     macos:
       xcode: "14.3.1"
+    resource_class: macos.x86.medium.gen2
     steps:
       - checkout
       - run:
