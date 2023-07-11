@@ -4,53 +4,6 @@ setup: true
 
 jobs:
 
-  check-marketing-version:
-    macos:
-      xcode: "14.3.1"
-    resource_class: macos.x86.medium.gen2
-    steps:
-      - checkout
-
-  build-testflight-deploy:
-    environment:
-      CI: true
-    macos:
-      xcode: "14.3.1"
-    resource_class: macos.x86.medium.gen2
-    steps:
-      - checkout
-      - run:
-          name: Check for MARKETING_VERSION change
-          command: |
-            git fetch origin $CIRCLE_BRANCH
-            git checkout $CIRCLE_BRANCH
-            CURRENT_VERSION=$(grep 'MARKETING_VERSION' Client/Configuration/Common.xcconfig | cut -d ' ' -f3)
-            git checkout $CIRCLE_BRANCH~1
-            OLD_VERSION=$(grep 'MARKETING_VERSION' Client/Configuration/Common.xcconfig | cut -d ' ' -f3)
-            if [ "$CURRENT_VERSION" = "$OLD_VERSION" ]; then
-              echo "MARKETING_VERSION has not changed. Exiting..."
-              circleci-agent step halt
-            fi
-      - restore_cache:
-          key: 1-gems-{{ checksum "Gemfile.lock" }}
-      - run: bundle check || bundle install --path vendor/bundle
-      - save_cache:
-          key: 1-gems-{{ checksum "Gemfile.lock" }}
-          paths:
-            - vendor/bundle
-      - run:
-          name: verify github
-          command: for ip in $(dig @8.8.8.8 github.com +short); do ssh-keyscan github.com,$ip; ssh-keyscan $ip; done 2>/dev/null >> ~/.ssh/known_hosts
-      - run:
-          name: clean packages
-          command: xcodebuild -scheme Ecosia -project Client.xcodeproj clean
-      - run:
-          name: setup content blocking scripts
-          command: ./content_blocker_update.sh
-      - run:
-          name: Build and deploy to Testflight
-          command: bundle exec fastlane testflight_live
-
   build-testflight-deploy-beta:
     environment:
       CI: true
@@ -113,6 +66,9 @@ jobs:
           name: Build and deploy to AppCenter
           command: bundle exec fastlane appcenter
 
+orbs:
+  path-filtering: circleci/path-filtering@0.1.1
+
 workflows:
 
   build-and-upload-for-testing:
@@ -133,9 +89,12 @@ workflows:
 
   build-and-upload-to-testflight-live:
     jobs:
-      - check-marketing-version:
-          name: Verify MARKETING_VERSION and deploy release if needed
+      - path-filtering/filter:
           filters:
             branches:
               only:
                 - /^.*MOB-1878_ci_release_candidate_workflow_xcconfig.*/
+          name: Deploy release version over Testflight if MARKETING_VERION file updated
+          config-path: .circleci/deploy-release.yml
+          mapping: |
+            Client/Configuration/Common.xcconfig deploy-release true
