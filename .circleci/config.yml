@@ -112,10 +112,7 @@ jobs:
       - run:
           name: Build and deploy to AppCenter
           command: bundle exec fastlane appcenter
-
-orbs:
-  path-filtering: circleci/path-filtering@0.1.1
-
+          
 workflows:
 
   build-and-upload-for-testing:
