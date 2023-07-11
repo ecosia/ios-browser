@@ -111,7 +111,7 @@ workflows:
           filters:
             branches:
               only:
-                - /^.*main.*/
+                - /^.*MOB-1878_ci_release_candidate_workflow_xcconfig.*/
       - path-filtering/filter:
           requires:
             - check-marketing-version
