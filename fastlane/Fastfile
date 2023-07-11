@@ -123,53 +123,6 @@ platform :ios do
 
   end
 
-  desc 'This lane commits the version number update and creates a PR if needed'
-  private_lane :branch_commit_push_and_create_pr_if_needed do |options|
-
-    version_number = options[:version_number]
-    build_number = options[:build_number]
-
-    git_status_output = sh("git status --porcelain ../#{pbx_project_file}")
-
-    git_diff_output = sh("git diff --unified=0 HEAD -- ../#{pbx_project_file}")
-
-    marketing_version_build_setting_pattern = /^\+\s+MARKETING_VERSION = (.+);/
-  
-    has_marketing_version_changes = git_diff_output.match?(marketing_version_build_setting_pattern)  
-
-    matching_required_pbx_changes = !git_status_output.empty? && has_marketing_version_changes
-
-    if matching_required_pbx_changes
-
-      version_bump_branch_name = "release-#{version_number}-build-#{build_number}-project-bump"
-
-      # Checkout a new branch
-      sh("git checkout -b #{version_bump_branch_name}")
-
-      # Commit the version bump only
-      git_commit(
-        path: "./#{pbx_project_file}", 
-        message: "Version Bump v_#{version_number}_#{build_number} 🌳"
-      )
-      
-      # Pushes the new branch with committed changes to Git
-      push_to_git_remote
-
-      # Creates a pull request from the current (newly created) branch against the main branch
-      create_pull_request(
-        api_token: ENV["GITHUB_ACCESS_TOKEN"],
-        repo: "ecosia/ios-browser",
-        title: "Version Bump #{version_number} 🎉",
-        head: version_bump_branch_name,
-        base: "main",
-        body: "Version bump PR",
-        team_reviewers: "ios"
-      )
-      
-    end
-
-  end
-
   desc 'This lane performs the expected git steps when releasing'
   private_lane :tag_and_push do |options|
     
@@ -195,41 +148,6 @@ platform :ios do
 
     File.open(derived_data_path_file, 'w') { |file| file.write(options[:derived_data_path]) }
 
-  end
-
-  desc 'This function retrives the written version from the staged VERSION file from the repo'
-  def get_version_from_file
-
-    version_file = File.read("VERSION")
-
-    version_line = version_file.split("\n")[0]
-    match = version_line.split(":").last.strip.match(/^[0-9.]*$/)
-    version = match ? match[0] : nil
-
-    version
-  end
-
-  desc 'This function increments the sole pbxproj MARKETING_VERSION without touching targets'
-  def udpate_version_in_xcode_proj(pbxproj_file, version_string)
-
-    file_contents = File.read("../#{pbxproj_file}")
-
-    # Update the MARKETING_VERSION build setting
-    updated_marketing_version = file_contents.gsub(/(MARKETING_VERSION = )(.+?)(;)/) do |match|
-      unless match.include?('${inherited}')
-        "#{$1}#{version_string}#{$3}" # Updates the MARKETING_VERSION with the intended value
-      else
-        match  # Do nothing and return ${inherited}
-      end
-    end
-    
-    # Write the updated contents back to the pbxproj file
-    File.open("../#{pbxproj_file}", "w") do |file|
-      file.puts updated_marketing_version
-    end
-
-    # Returns the version string
-    version_string
   end
 
 end
