@@ -112,7 +112,7 @@ jobs:
       - run:
           name: Build and deploy to AppCenter
           command: bundle exec fastlane appcenter
-          
+
 workflows:
 
   build-and-upload-for-testing:
@@ -134,7 +134,7 @@ workflows:
   build-and-upload-to-testflight-live:
     jobs:
       - check-marketing-version:
-          name: Verify the `MARKETING_VERSION` has been modified
+          name: Verify MARKETING_VERSION
           filters:
             branches:
               only:
@@ -142,4 +142,4 @@ workflows:
       - build-testflight-deploy:
           name: Deploy release version over Testflight
           requires:
-            - check-marketing-version
+            - Verify MARKETING_VERSION
