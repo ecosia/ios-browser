@@ -4,11 +4,6 @@ executors:
   base:
     macos:
       xcode: "14.3.1"
-
-parameters:
-  deploy-release:
-    type: boolean
-    default: false
     
 jobs:
   build-testflight-deploy:
@@ -40,6 +35,5 @@ jobs:
               
 workflows:
   deploy-release:
-    when:  << pipeline.parameters.deploy-release >>
     jobs:
       - build-testflight-deploy

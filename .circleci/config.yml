@@ -4,6 +4,24 @@ setup: true
 
 jobs:
 
+  check-marketing-version:
+    macos:
+      xcode: "14.3.1"
+    steps:
+      - checkout
+      - run:
+          name: Check for MARKETING_VERSION change
+          command: |
+            git fetch origin $CIRCLE_BRANCH
+            git checkout $CIRCLE_BRANCH
+            CURRENT_VERSION=$(grep 'MARKETING_VERSION' Client/Configuration/Common.xcconfig | cut -d ' ' -f3)
+            git checkout $CIRCLE_BRANCH~1
+            OLD_VERSION=$(grep 'MARKETING_VERSION' Client/Configuration/Common.xcconfig | cut -d ' ' -f3)
+            if [ "$CURRENT_VERSION" = "$OLD_VERSION" ]; then
+              echo "MARKETING_VERSION has not changed. Exiting..."
+              circleci-agent step halt
+            fi
+
   build-testflight-deploy-beta:
     environment:
       CI: true
@@ -71,17 +89,8 @@ orbs:
 
 workflows:
 
-  build-and-upload-to-delivery-platforms:
+  build-and-upload-for-testing:
     jobs:
-      - path-filtering/filter:
-          filters:
-            branches:
-              only:
-                - /^.*main.*/
-          name: Deploy release version over Testflight if VERSION file updated
-          config-path: .circleci/deploy-release.yml
-          mapping: |
-            fastlane/VERSION deploy-release true
       - build-testflight-deploy-beta:
           name: Deploy beta version over Testflight
           filters:
@@ -94,4 +103,17 @@ workflows:
           filters:
             branches:
               only: 
-                - /^.*main.*/                                
+                - /^.*main.*/
+
+  build-and-upload-to-testflight-live:
+    jobs:
+      - check-marketing-version:
+          filters:
+            branches:
+              only:
+                - /^.*main.*/
+      - path-filtering/filter:
+          requires:
+            - check-marketing-version
+          name: Deploy release version over Testflight if the `MARKETING_VERSION` gets modified
+          config-path: .circleci/deploy-release.yml
