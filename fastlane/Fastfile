@@ -87,14 +87,12 @@ platform :ios do
   desc "Testflight build for Live Channel"
   lane :testflight_live do
 
-    udpated_version_number = udpate_version_in_xcode_proj(pbx_project_file, get_version_from_file)
+    version_number = get_xcconfig_value(
+      path: 'Client/Configuration/Common.xcconfig',
+      name: 'MARKETING_VERSION'
+    )
 
     ci_run_build_number = ENV["CIRCLE_BUILD_NUM"]
-
-    branch_commit_push_and_create_pr_if_needed(
-      version_number: udpated_version_number,
-      build_number: ci_run_build_number
-    )
 
     udpated_build_number = increment_build_number(
       build_number: ci_run_build_number
@@ -119,7 +117,7 @@ platform :ios do
     )
 
     tag_and_push(
-      version_number: udpated_version_number,
+      version_number: version_number,
       build_number: udpated_build_number
     )
 
