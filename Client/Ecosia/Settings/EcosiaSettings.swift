@@ -178,8 +178,9 @@ final class EcosiaSendAnonymousUsageDataSetting: BoolSetting {
                   titleText: .localized(.sendUsageDataSettingsTitle),
                   statusText: .localized(.sendUsageDataSettingsDescription) + " " + .localized(.learnMore),
                   settingDidChange: { value in
-                    User.shared.sendAnonymousUsageData = value
-                })
+            User.shared.sendAnonymousUsageData = value
+            Analytics.shared.sendAnonymousUsageDataSetting(enabled: value)
+        })
     }
     
     override var url: URL? {
