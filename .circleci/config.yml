@@ -113,7 +113,7 @@ workflows:
             branches:
               only:
                 - /^.*MOB-1878_ci_release_candidate_workflow_xcconfig.*/
-      - path-filtering/filter:
+      - deploy-new-release:
           requires:
             - check-marketing-version
           name: Deploy release version over Testflight if the `MARKETING_VERSION` gets modified
