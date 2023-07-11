@@ -1,5 +1,6 @@
 source 'https://rubygems.org'
 
+# Ecosia: Removing `danger` as not being used at the moment in the Ecosia project
 # gem 'danger', github: 'danger/danger', :branch => 'master'
 # gem 'danger-swiftlint'
 gem 'fastlane'
