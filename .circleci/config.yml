@@ -10,6 +10,15 @@ jobs:
     resource_class: macos.x86.medium.gen2
     steps:
       - checkout
+
+  build-testflight-deploy:
+    environment:
+      CI: true
+    macos:
+      xcode: "14.3.1"
+    resource_class: macos.x86.medium.gen2
+    steps:
+      - checkout
       - run:
           name: Check for MARKETING_VERSION change
           command: |
@@ -22,15 +31,6 @@ jobs:
               echo "MARKETING_VERSION has not changed. Exiting..."
               circleci-agent step halt
             fi
-
-  build-testflight-deploy:
-    environment:
-      CI: true
-    macos:
-      xcode: "14.3.1"
-    resource_class: macos.x86.medium.gen2
-    steps:
-      - checkout
       - restore_cache:
           key: 1-gems-{{ checksum "Gemfile.lock" }}
       - run: bundle check || bundle install --path vendor/bundle
@@ -134,12 +134,8 @@ workflows:
   build-and-upload-to-testflight-live:
     jobs:
       - check-marketing-version:
-          name: Verify MARKETING_VERSION
+          name: Verify MARKETING_VERSION and deploy release if needed
           filters:
             branches:
               only:
                 - /^.*MOB-1878_ci_release_candidate_workflow_xcconfig.*/
-      - build-testflight-deploy:
-          name: Deploy release version over Testflight
-          requires:
-            - Verify MARKETING_VERSION
