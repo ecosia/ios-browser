@@ -42,7 +42,7 @@ final class Analytics {
     
     private func track(_ event: Event) {
         guard User.shared.sendAnonymousUsageData else { return }
-        tracker.track(event)
+        _ = tracker.track(event)
     }
     
     private static func getTestContext(from toggle: Unleash.Toggle.Name) -> SelfDescribingJson? {
@@ -279,5 +279,14 @@ final class Analytics {
             .property(Property.screenName(pageAsInt).rawValue)
             .value(.init(integerLiteral: pageAsInt))
         track(event)
+    }
+    
+    func sendAnonymousUsageDataSetting(enabled: Bool) {
+        // This is the only place where the tracker should be directly
+        // used since we want to send this just as the user opts out
+        _ = tracker.track(Structured(category: Category.settings.rawValue,
+                                     action: Action.change.rawValue)
+            .label("analytics")
+            .property(enabled ? "enable" : "disable"))
     }
 }
