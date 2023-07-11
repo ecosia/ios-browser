@@ -97,4 +97,4 @@ workflows:
           name: Deploy release version over Testflight if MARKETING_VERION file updated
           config-path: .circleci/deploy-release.yml
           mapping: |
-            Client/Configuration/Common.xcconfig deploy-release true
+            Client/Configuration/Common.xcconfig
