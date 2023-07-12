@@ -172,11 +172,19 @@ final class EcosiaTermsSetting: Setting {
 
 final class EcosiaSendAnonymousUsageDataSetting: BoolSetting {
     convenience init(prefs: Prefs) {
+        let titleText = NSAttributedString(string: .localized(.sendUsageDataSettingsTitle))
+        
+        let descriptionText: String = .localized(.sendUsageDataSettingsDescription)
+        let learnMoreText: String = .localized(.learnMore)
+        let statusText = NSMutableAttributedString(string: descriptionText + " " + learnMoreText)
+        let privacyLink = Environment.current.urlProvider.privacy
+        statusText.addAttributes([.link: privacyLink], range: .init(location: descriptionText.count + 1, length: learnMoreText.count))
+        
         self.init(prefs: prefs,
                   prefKey: "",
                   defaultValue: true,
-                  titleText: .localized(.sendUsageDataSettingsTitle),
-                  statusText: .localized(.sendUsageDataSettingsDescription) + " " + .localized(.learnMore),
+                  attributedTitleText: titleText,
+                  attributedStatusText: statusText,
                   settingDidChange: { value in
             User.shared.sendAnonymousUsageData = value
             Analytics.shared.sendAnonymousUsageDataSetting(enabled: value)
