@@ -83,6 +83,10 @@ gem install bundler
 bundle update
 ```
 
+### Why is the `CURRENT_PROJECT_VERSION` set to `0`?
+
+The `CURRENT_PROJECT_VERSION` is set to `0`, indicates that is not being used for local testing. The outcoming build number is updated by the CI, mathcing the CI run number (e.g. `8023`).
+
 #### Get certificates and profiles
 
 Our certs and profiles are managed centrally by [fastlane match](https://docs.fastlane.tools/actions/match/).

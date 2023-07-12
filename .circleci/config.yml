@@ -71,17 +71,8 @@ orbs:
 
 workflows:
 
-  build-and-upload-to-delivery-platforms:
+  build-and-upload-for-testing:
     jobs:
-      - path-filtering/filter:
-          filters:
-            branches:
-              only:
-                - /^.*main.*/
-          name: Deploy release version over Testflight if VERSION file updated
-          config-path: .circleci/deploy-release.yml
-          mapping: |
-            fastlane/VERSION deploy-release true
       - build-testflight-deploy-beta:
           name: Deploy beta version over Testflight
           filters:
@@ -94,4 +85,16 @@ workflows:
           filters:
             branches:
               only: 
-                - /^.*main.*/                                
+                - /^.*main.*/
+
+  build-and-upload-to-testflight-live:
+    jobs:
+      - path-filtering/filter:
+          filters:
+            branches:
+              only:
+                - /^.*main.*/
+          name: Deploy release version over Testflight if MARKETING_VERION file updated
+          config-path: .circleci/deploy-release.yml
+          mapping: |
+            Client/Configuration/Common.xcconfig deploy-release true
