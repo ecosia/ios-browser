@@ -4,7 +4,7 @@ setup: true
 
 jobs:
 
-  build-testflight-deploy-beta:
+  build-and-deploy-testflight-beta:
     environment:
       CI: true
     macos:
@@ -35,7 +35,7 @@ jobs:
           name: Build and deploy to Testflight
           command: bundle exec fastlane testflight_beta
 
-  build-appcenter-deploy:
+  build-and-deploy-appcenter:
     environment:
       CI: true
     macos:
