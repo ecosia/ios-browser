@@ -24,7 +24,6 @@ extension Analytics {
             home,
             projects,
             counter,
-            howEcosiaWorks = "how_ecosia_works",
             financialReports = "financial_reports",
             shop,
             faq,
@@ -106,14 +105,6 @@ extension Analytics {
             case .screenName(let page):
                 return OnboardingPage.allCases[page].rawValue
             }
-        }
-        
-        enum TopSite: String {
-            case
-            blog,
-            privacy,
-            financialReports = "financial_reports",
-            howEcosiaWorks = "how_ecosia_works"
         }
         
         enum OnboardingPage: String, CaseIterable {

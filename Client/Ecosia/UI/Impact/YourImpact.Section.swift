@@ -41,7 +41,6 @@ extension YourImpact {
         
         enum Explore: Int, CaseIterable {
             case
-            info,
             finance,
             trees,
             privacy,
@@ -49,8 +48,6 @@ extension YourImpact {
             
             var title: String {
                 switch self {
-                case .info:
-                    return .localized(.howEcosiaWorks)
                 case .finance:
                     return .localized(.financialReports)
                 case .trees:
@@ -64,8 +61,6 @@ extension YourImpact {
             
             var subtitle: String {
                 switch self {
-                case .info:
-                    return .localized(.learnHowEcosia)
                 case .finance:
                     return .localized(.seeHowMuchMoney)
                 case .trees:
@@ -79,8 +74,6 @@ extension YourImpact {
 
             var image: String {
                 switch self {
-                case .info:
-                    return "howEcosiaWorks"
                 case .finance:
                     return "financialReports"
                 case .trees:
@@ -94,8 +87,6 @@ extension YourImpact {
 
             var url: URL {
                 switch self {
-                case .info:
-                    return Environment.current.urlProvider.howEcosiaWorks
                 case .finance:
                     return Environment.current.urlProvider.financialReports
                 case .trees:
@@ -109,8 +100,6 @@ extension YourImpact {
 
             var label: Analytics.Label.Navigation {
                 switch self {
-                case .info:
-                    return .howEcosiaWorks
                 case .finance:
                     return .financialReports
                 case .trees:
@@ -124,8 +113,6 @@ extension YourImpact {
             
             var maskedCorners: CACornerMask {
                 switch self {
-                case .info:
-                    return [.layerMinXMinYCorner, .layerMaxXMinYCorner]
                 case .faq:
                     return [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
                 default:
