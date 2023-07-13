@@ -17,8 +17,9 @@ extension URL {
     /// having issues to load
     /// In case at least one of the flags evaluates to `true`, we consider the URL secure.
     public var isSecure: Bool {
-        let isOriginalUrlFromErrorPageSecure = InternalURL(self)?.originalURLFromErrorPage?.isHTTPS ?? false
-        let securityFlags = [isOriginalUrlFromErrorPageSecure, isHTTPS, isReaderModeURL]
+        let isOriginalUrlFromErrorPageSecure = InternalURL(self)?.originalURLFromErrorPage?.isHTTPS == true
+        let internalUrlIsNotErrorPage = InternalURL(self)?.isErrorPage == false
+        let securityFlags = [isOriginalUrlFromErrorPageSecure, internalUrlIsNotErrorPage, isHTTPS, isReaderModeURL]
         return securityFlags.first(where: { $0 == true }) ?? false
     }
 }
