@@ -189,7 +189,7 @@ Make sure that `fastlane` and `transifex`-cli is installed.
 - Download metadata from AppStore
 
     ```bash
-    bundle exec fastlane deliver download_metadata
+    bundle exec fastlane deliver download_metadata --app-verion 8.2.0
     ```
 
 - Push source to Transifex (It is important to limit the push to release_notes.txt)
@@ -203,7 +203,7 @@ Make sure that `fastlane` and `transifex`-cli is installed.
 ### Add language translations
 
 - Make sure that all languages are translated in the transifex [web interface](https://app.transifex.com/ecosia/ecosia-ios-search-app/release_notestxt/)
-- Pull from transfex
+- Pull from transfex (optional)
 
     ```bash
     tx pull -f ecosia-ios-search-app.release_notestxt
@@ -212,5 +212,5 @@ Make sure that `fastlane` and `transifex`-cli is installed.
 - Push via the update translation via `deliver` to the AppStore
 
     ```bash
-    bundle exec fastlane deliver
+    bundle exec fastlane deliver --app-version 8.2.0
     ```
