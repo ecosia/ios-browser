@@ -25,7 +25,6 @@ extension Analytics {
             home,
             projects,
             counter,
-            howEcosiaWorks = "how_ecosia_works",
             financialReports = "financial_reports",
             shop,
             faq,

@@ -73,6 +73,7 @@ class BrowserViewController: UIViewController {
     fileprivate var customSearchBarButton: UIBarButtonItem?
     var updateState: TabUpdateState = .coldStart
     var openedUrlFromExternalSource = false
+    var passBookHelper: OpenPassBookHelper?
 
     var contextHintVC: ContextualHintViewController
 
