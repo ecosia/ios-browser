@@ -779,7 +779,7 @@ extension BookmarksPanel: NTPTooltipDelegate {
     
     func ntpTooltipLinkTapped(_ tooltip: NTPTooltip?) {
         libraryPanelDelegate?.libraryPanel(
-            didSelectURL: Environment.current.bookmarksHelp,
+            didSelectURL: Environment.current.urlProvider.bookmarksHelp,
             visitType: .link
         )
     }
@@ -788,7 +788,7 @@ extension BookmarksPanel: NTPTooltipDelegate {
 extension BookmarksPanel: EmptyBookmarksViewDelegate {
     func emptyBookmarksViewLearnMoreTapped(_ view: EmptyBookmarksView) {
         libraryPanelDelegate?.libraryPanel(
-            didSelectURL: Environment.current.bookmarksHelp,
+            didSelectURL: Environment.current.urlProvider.bookmarksHelp,
             visitType: .link
         )
     }
