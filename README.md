@@ -189,7 +189,7 @@ Make sure that `fastlane` and `transifex`-cli is installed.
 - Download metadata from AppStore specifying the inflight version
 
     ```bash
-    bundle exec fastlane deliver download_metadata --app-verion 8.2.0
+    bundle exec fastlane deliver download_metadata --app-version 8.2.0
     ```
 
 - Merge the code to main via a PR (The transifex integration will pick up the push)
