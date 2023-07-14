@@ -4,20 +4,34 @@
 
 import UIKit
 
-protocol NTPTooltipDelegate: AnyObject {
-    func ntpTooltipTapped(_ tooltip: NTPTooltip?)
-    func reloadTooltip()
-}
-
 final class NTPTooltip: UICollectionReusableView, NotificationThemeable {
+    enum TailPosition {
+        case leading, center
+    }
+    
     static let key = String(describing: NTPTooltip.self)
     static let margin = CGFloat(16)
     static let containerMargin = CGFloat(12)
     private weak var textLabel: UILabel!
     private weak var tail: UIImageView!
-    private weak var closeImage: UIImageView!
+    private weak var closeButton: UIButton!
     private weak var background: UIView!
     weak var delegate: NTPTooltipDelegate?
+    
+    private var tailLeadingConstraint: NSLayoutConstraint!
+    private var tailCenterConstraint: NSLayoutConstraint!
+    var tailPosition: TailPosition = .center {
+        didSet {
+            updateTailPosition()
+        }
+    }
+    
+    private let linkButton: UIButton = {
+        let button = UIButton()
+        button.titleLabel?.font = .preferredFont(forTextStyle: .callout)
+        button.isHidden = true
+        return button
+    }()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -47,6 +61,10 @@ final class NTPTooltip: UICollectionReusableView, NotificationThemeable {
         stack.axis = .horizontal
         stack.spacing = 12
         stack.distribution = .fill
+        
+        let verticalStack = UIStackView()
+        verticalStack.axis = .vertical
+        verticalStack.alignment = .leading
 
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -54,14 +72,21 @@ final class NTPTooltip: UICollectionReusableView, NotificationThemeable {
         label.adjustsFontForContentSizeCategory = true
         label.setContentCompressionResistancePriority(.defaultHigh, for: .vertical)
         label.numberOfLines = 0
-        stack.addArrangedSubview(label)
+        verticalStack.addArrangedSubview(label)
         self.textLabel = label
+        
+        linkButton.addTarget(self, action: #selector(linkButtonTapped), for: .touchDown)
+        verticalStack.addArrangedSubview(linkButton)
+        
+        stack.addArrangedSubview(verticalStack)
 
-        let closeImage = UIImageView(image: .init(named: "tab_close"))
-        closeImage.heightAnchor.constraint(equalToConstant: 24).isActive = true
-        closeImage.widthAnchor.constraint(equalToConstant: 24).isActive = true
-        stack.addArrangedSubview(closeImage)
-        self.closeImage = closeImage
+        let closeButton = UIButton()
+        closeButton.setImage(.init(named: "tab_close"), for: .normal)
+        closeButton.heightAnchor.constraint(equalToConstant: 24).isActive = true
+        closeButton.widthAnchor.constraint(equalToConstant: 24).isActive = true
+        closeButton.addTarget(self, action: #selector(closeTapped), for: .touchDown)
+        stack.addArrangedSubview(closeButton)
+        self.closeButton = closeButton
 
         addSubview(stack)
         stack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Self.margin).isActive = true
@@ -79,7 +104,10 @@ final class NTPTooltip: UICollectionReusableView, NotificationThemeable {
         addSubview(tail)
         self.tail = tail
 
-        tail.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
+        tailCenterConstraint = tail.centerXAnchor.constraint(equalTo: centerXAnchor)
+        tailLeadingConstraint = tail.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16)
+        updateTailPosition()
+        
         tail.topAnchor.constraint(equalTo: background.bottomAnchor, constant: -0.5).isActive = true
         tail.widthAnchor.constraint(equalToConstant: 28).isActive = true
 
@@ -98,6 +126,21 @@ final class NTPTooltip: UICollectionReusableView, NotificationThemeable {
         accessibilityTraits = .button
         isAccessibilityElement = true
     }
+    
+    func removeLink() {
+        linkButton.setTitle(nil, for: .normal)
+        linkButton.isHidden = true
+    }
+    
+    func setLinkTitle(_ text: String) {
+        let titleString = NSMutableAttributedString(string: text)
+        titleString.addAttributes([
+            .font: UIFont.preferredFont(forTextStyle: .callout).bold(),
+            .foregroundColor: UIColor.theme.ecosia.primaryTextInverted
+        ], range: NSRange(location: 0, length: text.count))
+        linkButton.setAttributedTitle(titleString, for: .normal)
+        linkButton.isHidden = false
+    }
 
     private func addShadows() {
         [background, tail].forEach {
@@ -113,15 +156,34 @@ final class NTPTooltip: UICollectionReusableView, NotificationThemeable {
         tail.tintColor = UIColor.theme.ecosia.quarternaryBackground
         background.backgroundColor = UIColor.theme.ecosia.quarternaryBackground
         textLabel.textColor = .theme.ecosia.primaryTextInverted
-        closeImage.tintColor = .theme.ecosia.primaryTextInverted
+        closeButton.tintColor = .theme.ecosia.primaryTextInverted
     }
 
     @objc func tapped() {
         delegate?.ntpTooltipTapped(self)
     }
+    
+    @objc private func closeTapped() {
+        delegate?.ntpTooltipCloseTapped(self)
+    }
+    
+    @objc private func linkButtonTapped() {
+        delegate?.ntpTooltipLinkTapped(self)
+    }
 
     override func prepareForReuse() {
         super.prepareForReuse()
         applyTheme()
+    }
+    
+    private func updateTailPosition() {
+        switch tailPosition {
+        case .center:
+            tailLeadingConstraint.isActive = false
+            tailCenterConstraint.isActive = true
+        case .leading:
+            tailCenterConstraint.isActive = false
+            tailLeadingConstraint.isActive = true
+        }
     }
 }

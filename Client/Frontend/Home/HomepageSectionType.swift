@@ -6,6 +6,7 @@ import Foundation
 
 enum HomepageSectionType: Int, CaseIterable {
     case logoHeader
+    case bookmarkNudge
     case libraryShortcuts
     case topSites
     case impact
@@ -21,6 +22,7 @@ enum HomepageSectionType: Int, CaseIterable {
     var cellIdentifier: String {
         switch self {
         case .logoHeader: return NTPLogoCell.cellIdentifier
+        case .bookmarkNudge: return NTPBookmarkNudgeCell.cellIdentifier
         case .libraryShortcuts: return NTPLibraryCell.cellIdentifier
         case .topSites: return "" // Top sites has more than 1 cell type, dequeuing is done through FxHomeSectionHandler protocol
         case .impact: return NTPImpactCell.cellIdentifier
@@ -30,6 +32,7 @@ enum HomepageSectionType: Int, CaseIterable {
 
     static var cellTypes: [ReusableCell.Type] {
         return [NTPLogoCell.self,
+                NTPBookmarkNudgeCell.self,
                 TopSiteItemCell.self,
                 EmptyTopSiteCell.self,
                 NTPLibraryCell.self,
@@ -52,7 +55,7 @@ extension HomepageSectionType {
         var insets: CGFloat = traits.horizontalSizeClass == .regular ? 100 : 0
 
         switch self {
-        case .libraryShortcuts, .topSites, .impact, .news:
+        case .libraryShortcuts, .topSites, .impact, .news, .bookmarkNudge:
             guard let window = UIApplication.shared.windows.first(where: \.isKeyWindow) else { return MinimumInsets
             }
             let safeAreaInsets = window.safeAreaInsets.left

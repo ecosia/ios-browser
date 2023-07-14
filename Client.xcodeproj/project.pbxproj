@@ -105,6 +105,13 @@
 		28E08C991AF44EF9009BA2FA /* SQLiteHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FCAE2551ABB531100877008 /* SQLiteHistory.swift */; };
 		28E08C9A1AF44F00009BA2FA /* BrowserSchema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 282915E51AF1A7920006EEB5 /* BrowserSchema.swift */; };
 		28EADE5D1AFC3A78007FB2FB /* UIImageView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28EADE381AFC3898007FB2FB /* UIImageView+Extension.swift */; };
+		2A97D3842A03CA3100FD3FA0 /* NTPBookmarkNudgeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A97D3832A03CA3100FD3FA0 /* NTPBookmarkNudgeCell.swift */; };
+		2A97D3862A03CDC300FD3FA0 /* NTPBookmarkNudgeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A97D3852A03CDC300FD3FA0 /* NTPBookmarkNudgeViewModel.swift */; };
+		2ABCCCAE2A139CE8005D0C5B /* NTPTooltipDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ABCCCAD2A139CE8005D0C5B /* NTPTooltipDelegate.swift */; };
+		2ABCCCB02A13A399005D0C5B /* EmptyBookmarksViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ABCCCAF2A13A399005D0C5B /* EmptyBookmarksViewDelegate.swift */; };
+		2ABCCCB22A13BCB0005D0C5B /* NTPBookmarkNudgeDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ABCCCB12A13BCB0005D0C5B /* NTPBookmarkNudgeDelegate.swift */; };
+		2AC54D3129DC50CE0034FA2E /* BookmarksExchange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AC54D3029DC50CE0034FA2E /* BookmarksExchange.swift */; };
+		2AF2723A29F2C54A004CA46F /* EmptyBookmarksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AF2723929F2C54A004CA46F /* EmptyBookmarksView.swift */; };
 		2C1D049B29DDDC8E00ED43BA /* MyImpactCell+ViewFactories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C1D049A29DDDC8E00ED43BA /* MyImpactCell+ViewFactories.swift */; };
 		2C28F96C201B2D4C00ABA8A5 /* MailAppSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C28F96B201B2D4C00ABA8A5 /* MailAppSettingsTests.swift */; };
 		2C2A5EF41E68469500F02659 /* PrivateBrowsingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A5EF31E68469500F02659 /* PrivateBrowsingTest.swift */; };
@@ -1695,8 +1702,15 @@
 		2A4C4EDA8A7CAAAA8CCA80CD /* vi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = vi; path = vi.lproj/AuthenticationManager.strings; sourceTree = "<group>"; };
 		2A5A40D78F386CBD3170D073 /* ia */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ia; path = ia.lproj/Storage.strings; sourceTree = "<group>"; };
 		2A874B029FBA8C728218EB48 /* da */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = da; path = da.lproj/Storage.strings; sourceTree = "<group>"; };
+		2A97D3832A03CA3100FD3FA0 /* NTPBookmarkNudgeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPBookmarkNudgeCell.swift; sourceTree = "<group>"; };
+		2A97D3852A03CDC300FD3FA0 /* NTPBookmarkNudgeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPBookmarkNudgeViewModel.swift; sourceTree = "<group>"; };
 		2AA943B2B505224956D1B5CD /* el */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = el; path = el.lproj/Localizable.strings; sourceTree = "<group>"; };
+		2ABCCCAD2A139CE8005D0C5B /* NTPTooltipDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPTooltipDelegate.swift; sourceTree = "<group>"; };
+		2ABCCCAF2A13A399005D0C5B /* EmptyBookmarksViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyBookmarksViewDelegate.swift; sourceTree = "<group>"; };
+		2ABCCCB12A13BCB0005D0C5B /* NTPBookmarkNudgeDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPBookmarkNudgeDelegate.swift; sourceTree = "<group>"; };
 		2ABD4C8DA1B0527B9F88E597 /* jv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = jv; path = jv.lproj/ErrorPages.strings; sourceTree = "<group>"; };
+		2AC54D3029DC50CE0034FA2E /* BookmarksExchange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookmarksExchange.swift; sourceTree = "<group>"; };
+		2AF2723929F2C54A004CA46F /* EmptyBookmarksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyBookmarksView.swift; sourceTree = "<group>"; };
 		2B0842AE830BF873B368CEBB /* gu-IN */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "gu-IN"; path = "gu-IN.lproj/ClearPrivateDataConfirm.strings"; sourceTree = "<group>"; };
 		2B1541FDB7ED1BC183797233 /* dsb */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = dsb; path = dsb.lproj/Localizable.strings; sourceTree = "<group>"; };
 		2B31494CBFF9DF6FA41953B2 /* ses */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ses; path = ses.lproj/FindInPage.strings; sourceTree = "<group>"; };
@@ -5158,6 +5172,14 @@
 			path = Unleash;
 			sourceTree = "<group>";
 		};
+		2ABCCCB32A13BE74005D0C5B /* Bookmarks */ = {
+			isa = PBXGroup;
+			children = (
+				2AC54D3029DC50CE0034FA2E /* BookmarksExchange.swift */,
+			);
+			path = Bookmarks;
+			sourceTree = "<group>";
+		};
 		2C3357E42A0D092A00E76A48 /* MMP */ = {
 			isa = PBXGroup;
 			children = (
@@ -6453,6 +6475,7 @@
 				CA8CEBDD298244D100349552 /* Settings */,
 				CA4D9C8728C8D801006AFB5D /* UI */,
 				2CF8781E2A0D4673001E9658 /* FeatureManagement */,
+				2ABCCCB32A13BE74005D0C5B /* Bookmarks */,
 			);
 			path = Ecosia;
 			sourceTree = "<group>";
@@ -6464,6 +6487,8 @@
 				CA4D9C8C28C8D801006AFB5D /* Ecosia.xcassets */,
 				CA4D9C8D28C8D801006AFB5D /* EcosiaTheme.swift */,
 				CA4D9C8E28C8D801006AFB5D /* EmptyHeader.swift */,
+				2AF2723929F2C54A004CA46F /* EmptyBookmarksView.swift */,
+				2ABCCCAF2A13A399005D0C5B /* EmptyBookmarksViewDelegate.swift */,
 				CA4D9C8F28C8D801006AFB5D /* NTP */,
 				CA4D9C9A28C8D801006AFB5D /* Colours.xcassets */,
 				CA4D9C9B28C8D801006AFB5D /* FilterController.swift */,
@@ -6490,6 +6515,9 @@
 				CA506BAD28D1EA080064072B /* NTPLibraryShortcutView.swift */,
 				CA4D9C9828C8D801006AFB5D /* NTPTooltip.Highlight.swift */,
 				CA4D9C9728C8D801006AFB5D /* NTPTooltip.swift */,
+				2ABCCCAD2A139CE8005D0C5B /* NTPTooltipDelegate.swift */,
+				2A97D3852A03CDC300FD3FA0 /* NTPBookmarkNudgeViewModel.swift */,
+				2ABCCCB12A13BCB0005D0C5B /* NTPBookmarkNudgeDelegate.swift */,
 			);
 			path = NTP;
 			sourceTree = "<group>";
@@ -6592,6 +6620,7 @@
 				CA4D9C9928C8D801006AFB5D /* NTPLogoCell.swift */,
 				CA506BA928D1E96E0064072B /* NTPLibraryCell.swift */,
 				CA4D9C9528C8D801006AFB5D /* NTPImpactCell.swift */,
+				2A97D3832A03CA3100FD3FA0 /* NTPBookmarkNudgeCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -9240,6 +9269,7 @@
 				E19B38B528A42EBC00D8C541 /* WallpaperCellViewModel.swift in Sources */,
 				8A5BD95C2878AA74000FE773 /* PinnedSite.swift in Sources */,
 				CA220A6E28D0721B000E66E6 /* NimbusFeatureFlagLayer.swift in Sources */,
+				2A97D3842A03CA3100FD3FA0 /* NTPBookmarkNudgeCell.swift in Sources */,
 				D3B6923F1B9F9A58004B87A4 /* FindInPageHelper.swift in Sources */,
 				F85C7F122721048E004BDBA4 /* Layout.swift in Sources */,
 				CA4D9CFA28C8D801006AFB5D /* NewsCell.swift in Sources */,
@@ -9287,6 +9317,7 @@
 				3BB50E111D6274CD004B33DF /* TopSiteItemCell.swift in Sources */,
 				1DF4266E251BC46D0086386A /* FaviconFetcher+Non-Bundled.swift in Sources */,
 				0B62EFD21AD63CD100ACB9CD /* Clearables.swift in Sources */,
+				2AF2723A29F2C54A004CA46F /* EmptyBookmarksView.swift in Sources */,
 				431C0CA925C890E500395CE4 /* DefaultBrowserOnboardingViewModel.swift in Sources */,
 				8A05123927D17EC3009930CC /* LegacyWallpaperStorageUtility.swift in Sources */,
 				DFACBF81277B916B003D5F41 /* ConfigurableGradientView.swift in Sources */,
@@ -9303,6 +9334,7 @@
 				21D7B60628077CA5003F7E94 /* LibraryViewController+ToolbarActions.swift in Sources */,
 				C869912C28917688007ACC5C /* WallpaperNetworkModule.swift in Sources */,
 				8AB8573F27D961200075C173 /* DataObserver.swift in Sources */,
+				2AC54D3129DC50CE0034FA2E /* BookmarksExchange.swift in Sources */,
 				8A93080927BFE88F0052167D /* PhotonActionSheetContainerCell.swift in Sources */,
 				F85C7F0E2711C556004BDBA4 /* SettingsViewController.swift in Sources */,
 				74C027451B2A348C001B1E88 /* SessionData.swift in Sources */,
@@ -9458,6 +9490,7 @@
 				C8B0F5F4283B7CCE007AE65D /* PocketProvider.swift in Sources */,
 				D3972BF41C22412B00035B87 /* TitleActivityItemProvider.swift in Sources */,
 				D38A1BEE1A9FA2CA00F6A386 /* SiteTableViewController.swift in Sources */,
+				2ABCCCB02A13A399005D0C5B /* EmptyBookmarksViewDelegate.swift in Sources */,
 				7BA0601B1C0F4DE200DFADB6 /* TabPeekViewController.swift in Sources */,
 				D51EA5BA26406A0000334331 /* ExperimentsBranchesViewController.swift in Sources */,
 				CA4D9D0A28C8D801006AFB5D /* WelcomeTour.swift in Sources */,
@@ -9521,6 +9554,7 @@
 				CA506BAE28D1EA080064072B /* NTPLibraryShortcutView.swift in Sources */,
 				8AB5958A284145B30090F4AE /* HomepageSectionHandler.swift in Sources */,
 				E660BDD91BB06521009AC090 /* TabsButton.swift in Sources */,
+				2ABCCCB22A13BCB0005D0C5B /* NTPBookmarkNudgeDelegate.swift in Sources */,
 				4331A9BB27193DF0005E8080 /* ContextualHintViewController.swift in Sources */,
 				39EF434E260A73950011E22E /* Experiments.swift in Sources */,
 				DFEA639E279F468A00D489C3 /* DynamicHeightCollectionView.swift in Sources */,
@@ -9575,6 +9609,7 @@
 				D3A9949D1A3686BD008AD1AC /* Tab.swift in Sources */,
 				8AD40FD127BADCBA00672675 /* ToolbarButton.swift in Sources */,
 				A93067E81D0FE18E00C49C6E /* NightModeHelper.swift in Sources */,
+				2A97D3862A03CDC300FD3FA0 /* NTPBookmarkNudgeViewModel.swift in Sources */,
 				8A35497227BD672700534A65 /* ToggleSwitch.swift in Sources */,
 				213B67A627CE682B000542F5 /* StartAtHomeHelper.swift in Sources */,
 				E10A1F752863BC51001EEA80 /* InactiveTabItemCell.swift in Sources */,
@@ -9611,6 +9646,7 @@
 				C8656D75270F834600E199EA /* FlaggableFeatureOptions.swift in Sources */,
 				23A50958253F782E008FEBD9 /* NewTabButton.swift in Sources */,
 				D3C744CD1A687D6C004CE85D /* URIFixup.swift in Sources */,
+				2ABCCCAE2A139CE8005D0C5B /* NTPTooltipDelegate.swift in Sources */,
 				CA4D9CFC28C8D801006AFB5D /* MultiplyImpactDash.swift in Sources */,
 				E12BD0AC28AC37F00029AAF0 /* UIColor+Extension.swift in Sources */,
 				E4A961181AC041C40069AD6F /* ReadabilityService.swift in Sources */,
