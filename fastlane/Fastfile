@@ -7,7 +7,8 @@ fastlane_version "2.210.0"
 
 default_platform :ios
 
-project="Client.xcodeproj"
+project_path="Client.xcodeproj"
+pbx_project_file = "#{project_path}/project.pbxproj"
 
 if ENV['IS_CIRCLECI']
   import_build_tools(
@@ -42,11 +43,14 @@ platform :ios do
       type: "adhoc",
       readonly: true
     )
+    increment_build_number(
+      build_number: ENV["CIRCLE_BUILD_NUM"]
+    )
     gym(
       scheme: "Ecosia",
-      project: project,
+      project: project_path,
       export_method: "ad-hoc",
-      configuration: "AppCenter",
+      configuration: "Development_AppCenter",
       export_options: {iCloudContainerEnvironment: 'Development'}
     )
     appcenter_upload(
@@ -71,7 +75,7 @@ platform :ios do
     gym(
       scheme: "Ecosia",
       export_method: "app-store",
-      configuration: "Beta"
+      configuration: "Development_TestFlight"
     )
     pilot(
       skip_waiting_for_build_processing: true, 
@@ -83,13 +87,15 @@ platform :ios do
   desc "Testflight build for Live Channel"
   lane :testflight_live do
 
-    udpated_version_number = increment_version_number(
-      xcodeproj: project,
-      version_number: File.read("VERSION")
+    version_number = get_xcconfig_value(
+      path: 'Client/Configuration/Common.xcconfig',
+      name: 'MARKETING_VERSION'
     )
 
+    ci_run_build_number = ENV["CIRCLE_BUILD_NUM"]
+
     udpated_build_number = increment_build_number(
-      xcodeproj: project
+      build_number: ci_run_build_number
     )
 
     match(
@@ -110,12 +116,21 @@ platform :ios do
       itc_provider: "33YMRSYD2L"
     )
 
-    commit_version_bump(
-      message: "Version Bump v_#{udpated_version_number}_#{udpated_build_number} 🌳"
+    tag_and_push(
+      version_number: version_number,
+      build_number: udpated_build_number
     )
 
+  end
+
+  desc 'This lane performs the expected git steps when releasing'
+  private_lane :tag_and_push do |options|
+    
+    version_number = options[:version_number]
+    build_number = options[:build_number]
+
     add_git_tag(
-      tag: "v_#{udpated_version_number}_#{udpated_build_number}",
+      tag: "v_#{version_number}_#{build_number}",
       force: true
     )
 

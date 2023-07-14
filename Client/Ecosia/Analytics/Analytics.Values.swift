@@ -10,6 +10,7 @@ extension Analytics {
         migration,
         navigation,
         onboarding,
+        intro,
         invitations,
         ntp,
         menu,
@@ -29,8 +30,10 @@ extension Analytics {
             shop,
             faq,
             news,
+            next,
             privacy,
             sendFeedback = "send_feedback",
+            skip,
             terms,
             treecard,
             treestore
@@ -68,7 +71,8 @@ extension Analytics {
         send,
         claim,
         click,
-        change
+        change,
+        display
         
         enum Activity: String {
             case
@@ -98,11 +102,25 @@ extension Analytics {
         }
     }
     
-    enum Property: String {
+    enum Property {
         case
         home,
         menu,
-        toolbar
+        toolbar,
+        screenName(Int)
+        
+        var rawValue: String {
+            switch self {
+            case .home:
+                return "home"
+            case .menu:
+                return "menu"
+            case .toolbar:
+                return "toolbar"
+            case .screenName(let page):
+                return OnboardingPage.allCases[page].rawValue
+            }
+        }
         
         enum TopSite: String {
             case
@@ -119,6 +137,15 @@ extension Analytics {
             emptyState = "empty_state",
             success,
             error
+        }
+        
+        enum OnboardingPage: String, CaseIterable {
+            case
+            start,
+            search,
+            profits,
+            action,
+            privacy
         }
     }
 

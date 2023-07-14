@@ -110,7 +110,7 @@ class TabManager: NSObject, FeatureFlaggable, TabManagerProtocol {
         configuration.setURLSchemeHandler(InternalSchemeHandler(), forURLScheme: InternalURL.scheme)
 
         //Ecosia: inject cookie when config is created to make sure they are present
-        let cookie = isPrivate ? Cookie.incognito : Cookie.standard
+        let cookie = isPrivate ? Cookie.makeIncognito() : Cookie.makeStandard()
         configuration.websiteDataStore.httpCookieStore.setCookie(cookie)
         return configuration
     }
@@ -195,8 +195,8 @@ class TabManager: NSObject, FeatureFlaggable, TabManagerProtocol {
         searchSettingsObserver = NotificationCenter.default
             .publisher(for: .searchSettingsChanged)
             .sink() { [privateConfiguration, configuration] _ in
-                configuration.websiteDataStore.httpCookieStore.setCookie(Cookie.standard)
-                privateConfiguration.websiteDataStore.httpCookieStore.setCookie(Cookie.incognito)
+                configuration.websiteDataStore.httpCookieStore.setCookie(Cookie.makeStandard())
+                privateConfiguration.websiteDataStore.httpCookieStore.setCookie(Cookie.makeIncognito())
             }
     }
 

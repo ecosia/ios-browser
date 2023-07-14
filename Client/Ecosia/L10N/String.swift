@@ -213,5 +213,11 @@ extension String {
         case bookmarksNtpNudgeCardDescription = "You can now import bookmarks from other browsers to Ecosia."
         case bookmarksNtpNudgeCardButtonTitle = "Open bookmarks"
         case bookmarksToolTipText = "Tap here to import bookmarks from other browsers."
+        case cancel = "Cancel"
+        case open = "Open"
+        case openExternalLinkTitle = "Open link in external app?"
+        case openExternalLinkDescription = "%@ wants to open this application."
+        case sendUsageDataSettingsTitle = "Send usage data"
+        case sendUsageDataSettingsDescription = "To improve our browser apps, we collect usage statistics from your device. These are anonymous and protect your privacy."
     }
 }

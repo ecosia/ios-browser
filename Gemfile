@@ -1,7 +1,8 @@
 source 'https://rubygems.org'
 
-gem 'danger', github: 'danger/danger', :branch => 'master'
-gem 'danger-swiftlint'
+# Ecosia: Removing `danger` as not being used at the moment in the Ecosia project
+# gem 'danger', github: 'danger/danger', :branch => 'master'
+# gem 'danger-swiftlint'
 gem 'fastlane'
 
 plugins_path = File.join(File.dirname(__FILE__), 'fastlane', 'Pluginfile')

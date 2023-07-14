@@ -146,8 +146,6 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
         titleLabel.adjustsFontForContentSizeCategory = true
         titleLabel.setContentCompressionResistancePriority(.required, for: .vertical)
         titleLabel.setContentHuggingPriority(.required, for: .vertical)
-        titleLabel.accessibilityLabel = .localized(.onboardingStepTitleAccessibilityLabel)
-        titleLabel.accessibilityValue = titleLabel.text
         labelStack.addArrangedSubview(titleLabel)
         self.titleLabel = titleLabel
 
@@ -159,8 +157,6 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
         subtitleLabel.adjustsFontSizeToFitWidth = true
         subtitleLabel.setContentCompressionResistancePriority(.required, for: .vertical)
         subtitleLabel.setContentHuggingPriority(.required, for: .vertical)
-        subtitleLabel.accessibilityLabel = .localized(.onboardingStepSubtitleAccessibilityLabel)
-        subtitleLabel.accessibilityValue = subtitleLabel.text
 
         labelStack.addArrangedSubview(subtitleLabel)
         self.subtitleLabel = subtitleLabel
@@ -171,7 +167,6 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
         ctaButton.titleLabel?.adjustsFontForContentSizeCategory = true
         ctaButton.translatesAutoresizingMaskIntoConstraints = false
         ctaButton.addTarget(self, action: #selector(forward), for: .primaryActionTriggered)
-        ctaButton.accessibilityLabel = .localized(isLastStep() ? .onboardingFinishCTAButtonAccessibilityLabel : .onboardingContinueCTAButtonAccessibilityLabel)
         ctaButton.alpha = 0
         view.addSubview(ctaButton)
         self.ctaButton = ctaButton
@@ -257,6 +252,15 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
                 self.view.layoutIfNeeded()
             }
         }
+        
+        Analytics.shared.introDisplaying(page: onboardingAnalyticsPageFromCurrentIndex)
+        updateAccessibilityLabels(step: step)
+    }
+    
+    private func updateAccessibilityLabels(step: Step) {
+        titleLabel.accessibilityLabel = step.title
+        subtitleLabel.accessibilityLabel = step.text
+        ctaButton.accessibilityLabel = .localized(isLastStep() ? .onboardingFinishCTAButtonAccessibilityLabel : .onboardingContinueCTAButtonAccessibilityLabel)
     }
 
     private func moveRight() {
@@ -287,21 +291,32 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
     // MARK: Actions
     @objc func back() {
         guard !isFirstStep() else {
-            dismiss(animated: true, completion: nil)
+            dismiss(animated: true) {
+                Analytics.shared.introDisplaying(page: .start)
+            }
             return
         }
-        display(step: steps[currentIndex - 1])
+        let displayingStep = currentIndex - 1
+        display(step: steps[displayingStep])
     }
 
     @objc func forward() {
         guard !isLastStep() else {
-            skip()
+            complete()
             return
         }
-        display(step: steps[currentIndex + 1])
+        Analytics.shared.introClick(.next, at: onboardingAnalyticsPageFromCurrentIndex)
+        let displayingStep = currentIndex + 1
+        display(step: steps[displayingStep])
+        UIAccessibility.post(notification: .screenChanged, argument: titleLabel)
+    }
+    
+    private func complete() {
+        delegate?.welcomeTourDidFinish(self)
     }
 
     @objc func skip() {
+        Analytics.shared.introClick(.skip, at: onboardingAnalyticsPageFromCurrentIndex)
         delegate?.welcomeTourDidFinish(self)
     }
 
@@ -341,5 +356,16 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
 
     @objc func themeChanged() {
         applyTheme()
+    }
+}
+
+extension WelcomeTour {
+    
+    private var onboardingAnalyticsPageFromCurrentIndex: Analytics.Property.OnboardingPage? {
+        /*
+         Steps needs to be counted starting from 1
+         so we always top up 1 to the current index
+        */
+        Analytics.Property.OnboardingPage.allCases[currentIndex + 1]
     }
 }

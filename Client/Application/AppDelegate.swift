@@ -35,9 +35,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         appLaunchUtil = AppLaunchUtil(profile: profile)
         appLaunchUtil?.setUpPreLaunchDependencies()
-
-        // Setup environment
-        Environment.current = AppConstants.BuildChannel == .release ? .production : .staging
         
         // Set up a web server that serves us static content. Do this early so that it is ready when the UI is presented.
         webServerUtil = WebServerUtil(profile: profile)

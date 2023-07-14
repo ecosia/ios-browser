@@ -152,6 +152,9 @@
                   Identifier = "SearchEnginesTests">
                </Test>
                <Test
+                  Identifier = "TabDisplayManagerTests">
+               </Test>
+               <Test
                   Identifier = "TabEventHandlerTests/testBlankPopupURL()">
                </Test>
                <Test
@@ -172,9 +175,7 @@
             </SkippedTests>
          </TestableReference>
          <TestableReference
-            skipped = "NO"
-            parallelizable = "YES"
-            testExecutionOrdering = "random">
+            skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "E6F9650B1B2F1CF20034B023"

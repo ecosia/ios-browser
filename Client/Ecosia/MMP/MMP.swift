@@ -11,6 +11,8 @@ struct MMP {
     private init() {}
         
     static func sendSession() {
+        guard User.shared.sendAnonymousUsageData else { return }
+        
         Task {
             do {
                 

@@ -1,16 +1,16 @@
 [main]
 host = https://www.transifex.com
 
-[o:ecosia:p:ecosia-ios-search-app:r:appstorestrings]
-source_file = Client/Ecosia/L10N/en.lproj/AppStore.strings
-file_filter = Client/Ecosia/L10N/<lang>.lproj/AppStore.strings
+[o:ecosia:p:ecosia-ios-search-app:r:release_notestxt]
+source_file = fastlane/metadata/en-US/release_notes.txt
+file_filter = fastlane/metadata/<lang>/release_notes.txt
 source_lang = en
-type        = STRINGS
-trans.fr    = Client/Ecosia/L10N/fr.lproj/AppStore.strings
-trans.it    = Client/Ecosia/L10N/it.lproj/AppStore.strings
-trans.nl    = Client/Ecosia/L10N/nl.lproj/AppStore.strings
-trans.de    = Client/Ecosia/L10N/de.lproj/AppStore.strings
-trans.es    = Client/Ecosia/L10N/es.lproj/AppStore.strings
+type        = TXT
+trans.fr    = fastlane/metadata/fr-FR/release_notes.txt
+trans.it    = fastlane/metadata/it/release_notes.txt
+trans.nl    = fastlane/metadata/nl-NL/release_notes.txt
+trans.de    = fastlane/metadata/de-DE/release_notes.txt
+trans.es    = fastlane/metadata/es-ES/release_notes.txt
 
 [o:ecosia:p:ecosia-ios-search-app:r:ecosiastrings]
 source_file = Client/Ecosia/L10N/en.lproj/Ecosia.strings

@@ -152,6 +152,9 @@
                   Identifier = "SearchEnginesTests">
                </Test>
                <Test
+                  Identifier = "TabDisplayManagerTests">
+               </Test>
+               <Test
                   Identifier = "TabEventHandlerTests/testBlankPopupURL()">
                </Test>
                <Test
@@ -238,7 +241,7 @@
       buildConfiguration = "BetaDebug">
    </AnalyzeAction>
    <ArchiveAction
-      buildConfiguration = "Beta"
+      buildConfiguration = "Development_TestFlight"
       revealArchiveInOrganizer = "YES">
    </ArchiveAction>
 </Scheme>

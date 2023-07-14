@@ -16,7 +16,7 @@ class SearchTests: XCTestCase {
         XCTAssertEqual(engine.shortName, "Google")
 
         // Test regular search queries.
-        XCTAssertTrue(engine.searchURLForQuery("foobar")!.absoluteString.hasPrefix("https://www.ecosia.org/search?q=foobar"))
+        XCTAssertTrue(engine.searchURLForQuery("foobar")!.absoluteString.hasPrefix("https://www.ecosia-staging.xyz/search?q=foobar"))
 
         // Test search suggestion queries.
         XCTAssertEqual(engine.suggestURLForQuery("foobar")!.absoluteString, "https://www.google.com/complete/search?client=firefox&q=foobar")

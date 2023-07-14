@@ -62,6 +62,7 @@ final class Welcome: UIViewController {
         addMask()
         fadeIn()
         didAppear = true
+        Analytics.shared.introDisplaying(page: .start)
     }
 
     private func addOverlay() {
@@ -138,6 +139,7 @@ final class Welcome: UIViewController {
         let label = UILabel()
         label.numberOfLines = 0
         label.attributedText = introText
+        label.accessibilityLabel = simplestWayString.replacingOccurrences(of: "\n", with: "")
         label.font = .preferredFont(forTextStyle: .largeTitle).bold()
         label.adjustsFontForContentSizeCategory = true
         label.textColor = .white
@@ -157,16 +159,16 @@ final class Welcome: UIViewController {
         stack.addArrangedSubview(UIView())
         stack.addArrangedSubview(cta)
 
-        let skip = UIButton(type: .system)
-        skip.backgroundColor = .clear
-        skip.titleLabel?.font = .preferredFont(forTextStyle: .callout)
-        skip.titleLabel?.adjustsFontForContentSizeCategory = true
-        skip.setTitleColor(.Dark.Text.secondary, for: .normal)
-        skip.setTitle(.localized(.skipWelcomeTour), for: .normal)
-        skip.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        skip.addTarget(self, action: #selector(skipTour), for: .primaryActionTriggered)
+        let skipButton = UIButton(type: .system)
+        skipButton.backgroundColor = .clear
+        skipButton.titleLabel?.font = .preferredFont(forTextStyle: .callout)
+        skipButton.titleLabel?.adjustsFontForContentSizeCategory = true
+        skipButton.setTitleColor(.Dark.Text.secondary, for: .normal)
+        skipButton.setTitle(.localized(.skipWelcomeTour), for: .normal)
+        skipButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        skipButton.addTarget(self, action: #selector(skip), for: .primaryActionTriggered)
 
-        stack.addArrangedSubview(skip)
+        stack.addArrangedSubview(skipButton)
 
         if view.traitCollection.userInterfaceIdiom == .phone {
             stack.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16).isActive = true
@@ -247,8 +249,9 @@ final class Welcome: UIViewController {
     }
 
     // MARK: Helper
+    private let simplestWayString = String.localized(.theSimplestWay)
     private var introText: NSAttributedString {
-        let raw = String.localized(.theSimplestWay)
+        let raw = simplestWayString
         let splits = raw.components(separatedBy: .newlines)
 
         guard splits.count == 3 else { return NSAttributedString(string: raw) }
@@ -278,9 +281,11 @@ final class Welcome: UIViewController {
         tour.modalTransitionStyle = .crossDissolve
         tour.modalPresentationStyle = .overCurrentContext
         present(tour, animated: true, completion: nil)
+        Analytics.shared.introClick(.next, at: .start)
     }
 
-    @objc func skipTour() {
+    @objc func skip() {
+        Analytics.shared.introClick(.skip, at: .start)
         delegate?.welcomeDidFinish(self)
     }
 
@@ -292,6 +297,6 @@ final class Welcome: UIViewController {
 
 extension Welcome: WelcomeTourDelegate {
     func welcomeTourDidFinish(_ tour: WelcomeTour) {
-        skipTour()
+        delegate?.welcomeDidFinish(self)
     }
 }

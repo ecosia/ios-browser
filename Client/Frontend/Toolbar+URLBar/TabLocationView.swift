@@ -326,6 +326,10 @@ extension TabLocationView {
     private var isTrackingProtectionHidden: Bool {
         trackingProtectionButton.evaluateNeedingVisbilityForURLScheme(url?.scheme)
     }
+    
+    func toggleURLProtectionButtonVisibility(_ isLoading: Bool = false) {
+        trackingProtectionButton.alpha = isLoading ? 0 : 1
+    }
 }
 
 extension TabLocationView: TabEventHandler {

@@ -431,19 +431,22 @@ extension BrowserViewController: WKNavigationDelegate {
     }
 
     // Use for sms and mailto links, which do not show a confirmation before opening.
-    fileprivate func showSnackbar(forExternalUrl url: URL, tab: Tab, completion: @escaping (Bool) -> Void) {
-        let snackBar = TimerSnackBar(text: .ExternalLinkGenericConfirmation + "\n\(url.absoluteString)", img: nil)
-        let ok = SnackButton(title: .OKString, accessibilityIdentifier: "AppOpenExternal.button.ok") { bar in
-            tab.removeSnackbar(bar)
-            completion(true)
-        }
-        let cancel = SnackButton(title: .CancelString, accessibilityIdentifier: "AppOpenExternal.button.cancel") { bar in
-            tab.removeSnackbar(bar)
+    // Ecosia: Change to native alert controller
+    fileprivate func presentExternalLinkAlert(_ url: URL, completion: @escaping (Bool) -> Void) {
+        let alert = UIAlertController(title: .localized(.openExternalLinkTitle),
+                                      message: String.init(format: .localized(.openExternalLinkDescription), url.absoluteString),
+                                      preferredStyle: .alert)
+        alert.view.tintColor = .theme.ecosia.primaryButton
+        let cancelAction = UIAlertAction(title: .localized(.cancel), style: .default) { _ in
             completion(false)
         }
-        snackBar.addButton(ok)
-        snackBar.addButton(cancel)
-        tab.addSnackbar(snackBar)
+        alert.addAction(cancelAction)
+        let openAction = UIAlertAction(title: .localized(.open), style: .default) { _ in
+            completion(true)
+        }
+        alert.addAction(openAction)
+        alert.preferredAction = openAction
+        present(alert, animated: true)
     }
 
     // This is the place where we decide what to do with a new navigation action. There are a number of special schemes
@@ -488,7 +491,7 @@ extension BrowserViewController: WKNavigationDelegate {
         // gives us the exact same behaviour as Safari.
         if ["sms", "tel", "facetime", "facetime-audio"].contains(url.scheme) {
             if url.scheme == "sms" { // All the other types show a native prompt
-                showSnackbar(forExternalUrl: url, tab: tab) { isOk in
+                presentExternalLinkAlert(url) { isOk in
                     guard isOk else { return }
                     UIApplication.shared.open(url, options: [:])
                 }
@@ -536,7 +539,10 @@ extension BrowserViewController: WKNavigationDelegate {
             DispatchQueue.main.asyncAfter(deadline: .now() + tabManager.delaySelectingNewPopupTab + 0.1) {
                 // Show only if no other snack bar
                 guard let tab = self.tabManager.selectedTab, tab.bars.isEmpty else { return }
-                TimerSnackBar.showAppStoreConfirmationBar(forTab: tab, appStoreURL: url) { _ in
+                self.presentExternalLinkAlert(url) { isOk in
+                    if isOk {
+                        UIApplication.shared.open(url, options: [:])
+                    }
                     // If a new window was opened for this URL (it will have no history), close it.
                     if tab.historyList.isEmpty {
                         self.tabManager.removeTab(tab)
@@ -548,7 +554,7 @@ extension BrowserViewController: WKNavigationDelegate {
 
         // Handles custom mailto URL schemes.
         if url.scheme == "mailto" {
-            showSnackbar(forExternalUrl: url, tab: tab) { isOk in
+            presentExternalLinkAlert(url) { isOk in
                 guard isOk else { return }
 
                 if let mailToMetadata = url.mailToMetadata(), let mailScheme = self.profile.prefs.stringForKey(PrefsKeys.KeyMailToOption), mailScheme != "mailto" {
@@ -582,7 +588,7 @@ extension BrowserViewController: WKNavigationDelegate {
         }
 
         // Ecosia: intercept URL to impact
-        if Environment.current.isYourImpact(url: url),
+        if Environment.current.urlProvider.isYourImpact(url: url),
            navigationAction.navigationType == .linkActivated {
             presentYourImpact()
             decisionHandler(.cancel)
@@ -610,7 +616,7 @@ extension BrowserViewController: WKNavigationDelegate {
         }
 
         if !(url.scheme?.contains("firefox") ?? true) {
-            showSnackbar(forExternalUrl: url, tab: tab) { isOk in
+            presentExternalLinkAlert(url) { isOk in
                 guard isOk else { return }
                 UIApplication.shared.open(url, options: [:]) { openedURL in
                     // Do not show error message for JS navigated links or redirect as it's not the result of a user action.

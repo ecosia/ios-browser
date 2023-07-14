@@ -17,6 +17,8 @@ protocol InternalSchemeResponse {
 }
 
 class InternalSchemeHandler: NSObject, WKURLSchemeHandler {
+    
+    private static let noInternetPNGData = UIImage(named: "noInternet")?.pngData()
 
     static func response(forUrl url: URL) -> URLResponse {
         return URLResponse(url: url, mimeType: "text/html", expectedContentLength: -1, textEncodingName: "utf-8")
@@ -45,7 +47,7 @@ class InternalSchemeHandler: NSObject, WKURLSchemeHandler {
                 urlSchemeTask.didFinish()
                 return true
             } else if path.hasSuffix("EcosiaErrorPlaceholderPath.png"),
-                      let data = UIImage(named: "noInternet")?.pngData() {
+                      let data = Self.noInternetPNGData {
                 urlSchemeTask.didReceive(URLResponse(url: url, mimeType: nil, expectedContentLength: -1, textEncodingName: nil))
                 urlSchemeTask.didReceive(data)
                 urlSchemeTask.didFinish()

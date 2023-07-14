@@ -164,10 +164,8 @@ class JumpBackInViewModelTests: XCTestCase {
     func testMaxJumpBackInItemsToDisplay_compactJumpBackIn() {
         let sut = createSut()
 
-        // iPhone layout
-        let trait = MockTraitCollection()
-        trait.overridenHorizontalSizeClass = .compact
-        trait.overridenVerticalSizeClass = .regular
+        // iPhone layout portrait
+        let trait = MockTraitCollection(horizontalSizeClass: .compact).getTraitCollection()
 
         sut.refreshData(for: trait, isPortrait: true, device: .phone)
         let jumpBackInItemsMax = sut.sectionLayout.maxItemsToDisplay(displayGroup: .jumpBackIn,
@@ -182,15 +180,18 @@ class JumpBackInViewModelTests: XCTestCase {
         sut.featureFlags.set(feature: .jumpBackInSyncedTab, to: true)
         adaptor.syncedTab = JumpBackInSyncedTab(client: remoteClient, tab: remoteTab)
 
-        let trait = MockTraitCollection()
-        trait.overridenHorizontalSizeClass = .compact
-        trait.overridenVerticalSizeClass = .regular
-        sut.refreshData(for: trait, isPortrait: false, device: .pad)
-        let jumpBackInItemsMax = sut.sectionLayout.maxItemsToDisplay(displayGroup: .jumpBackIn,
-                                                                     hasAccount: true,
-                                                                     device: .pad)
-        XCTAssertEqual(jumpBackInItemsMax, 0)
-        XCTAssertEqual(sut.sectionLayout, .compactSyncedTab)
+        // iPhone layout portrait
+        let trait = MockTraitCollection(horizontalSizeClass: .compact).getTraitCollection()
+
+        subject.didLoadNewData()
+        try? await Task.sleep(nanoseconds: sleepTime)
+        subject.refreshData(for: trait, size: iPhone14ScreenSize, isPortrait: true, device: .phone)
+        let maxItems = subject.sectionLayout.maxItemsToDisplay(hasAccount: true,
+                                                               device: .phone)
+
+        XCTAssertEqual(maxItems.tabsCount, 0)
+        XCTAssertEqual(maxItems.syncedTabCount, 1)
+        XCTAssertEqual(subject.sectionLayout, .compactSyncedTab)
     }
 
     func testMaxJumpBackInItemsToDisplay_compactJumpBackInAndSyncedTab() {
@@ -200,15 +201,18 @@ class JumpBackInViewModelTests: XCTestCase {
         let tab1 = createTab(profile: mockProfile, urlString: "www.firefox1.com")
         adaptor.jumpBackInList = JumpBackInList(group: nil, tabs: [tab1])
 
-        let trait = MockTraitCollection()
-        trait.overridenHorizontalSizeClass = .compact
-        trait.overridenVerticalSizeClass = .regular
-        sut.refreshData(for: trait, isPortrait: false, device: .pad)
-        let jumpBackInItemsMax = sut.sectionLayout.maxItemsToDisplay(displayGroup: .jumpBackIn,
-                                                                     hasAccount: true,
-                                                                     device: .pad)
-        XCTAssertEqual(jumpBackInItemsMax, 1)
-        XCTAssertEqual(sut.sectionLayout, .compactJumpBackInAndSyncedTab)
+        // iPhone layout portrait
+        let trait = MockTraitCollection(horizontalSizeClass: .compact).getTraitCollection()
+
+        subject.didLoadNewData()
+        try? await Task.sleep(nanoseconds: sleepTime)
+        subject.refreshData(for: trait, size: iPhone14ScreenSize, isPortrait: true, device: .phone)
+        let maxItems = subject.sectionLayout.maxItemsToDisplay(hasAccount: true,
+                                                               device: .phone)
+
+        XCTAssertEqual(maxItems.tabsCount, 1)
+        XCTAssertEqual(maxItems.syncedTabCount, 1)
+        XCTAssertEqual(subject.sectionLayout, .compactJumpBackInAndSyncedTab)
     }
 
     func testMaxJumpBackInItemsToDisplay_regularIphone() {
@@ -217,15 +221,58 @@ class JumpBackInViewModelTests: XCTestCase {
         adaptor.jumpBackInList = JumpBackInList(group: nil, tabs: [tab1])
         adaptor.mockHasSyncedTabFeatureEnabled = false
 
-        let trait = MockTraitCollection()
-        trait.overridenHorizontalSizeClass = .regular
-        trait.overridenVerticalSizeClass = .regular
-        sut.refreshData(for: trait, isPortrait: true, device: .phone)
-        let jumpBackInItemsMax = sut.sectionLayout.maxItemsToDisplay(displayGroup: .jumpBackIn,
-                                                                     hasAccount: true,
-                                                                     device: .phone)
-        XCTAssertEqual(jumpBackInItemsMax, 4)
-        XCTAssertEqual(sut.sectionLayout, .regular)
+        // iPhone layout landscape
+        let trait = MockTraitCollection(verticalSizeClass: .compact).getTraitCollection()
+
+        subject.didLoadNewData()
+        try? await Task.sleep(nanoseconds: sleepTime)
+        subject.refreshData(for: trait, size: iPhone14ScreenSize, isPortrait: false, device: .phone)
+        let maxItems = subject.sectionLayout.maxItemsToDisplay(hasAccount: true,
+                                                               device: .phone)
+
+        XCTAssertEqual(maxItems.tabsCount, 4)
+        XCTAssertEqual(maxItems.syncedTabCount, 1)
+        XCTAssertEqual(subject.sectionLayout, .medium)
+    }
+
+    func testMaxJumpBackInItemsToDisplay_mediumWithSyncedTabIphone() async {
+        let subject = createSubject()
+        let tab1 = createTab(profile: mockProfile, urlString: "www.firefox1.com")
+        await adaptor.setRecentTabs(recentTabs: [tab1])
+        await adaptor.setSyncedTab(syncedTab: JumpBackInSyncedTab(client: remoteClient, tab: remoteTab))
+
+        // iPhone layout landscape
+        let trait = MockTraitCollection(verticalSizeClass: .compact).getTraitCollection()
+
+        subject.didLoadNewData()
+        try? await Task.sleep(nanoseconds: sleepTime)
+        subject.refreshData(for: trait, size: iPhone14ScreenSize, isPortrait: false, device: .phone)
+        let maxItems = subject.sectionLayout.maxItemsToDisplay(hasAccount: true,
+                                                               device: .phone)
+
+        XCTAssertEqual(maxItems.tabsCount, 2)
+        XCTAssertEqual(maxItems.syncedTabCount, 1)
+        XCTAssertEqual(subject.sectionLayout, .mediumWithSyncedTab)
+    }
+
+    func testMaxJumpBackInItemsToDisplay_mediumIpad() async {
+        let subject = createSubject()
+        let tab1 = createTab(profile: mockProfile, urlString: "www.firefox1.com")
+        await adaptor.setRecentTabs(recentTabs: [tab1])
+        await adaptor.setMockHasSyncedTabFeatureEnabled(enabled: false)
+
+        // iPad layout portrait
+        let trait = MockTraitCollection().getTraitCollection()
+
+        subject.didLoadNewData()
+        try? await Task.sleep(nanoseconds: sleepTime)
+        subject.refreshData(for: trait, size: iPhone14ScreenSize, isPortrait: true, device: .pad)
+        let maxItems = subject.sectionLayout.maxItemsToDisplay(hasAccount: true,
+                                                               device: .pad)
+
+        XCTAssertEqual(maxItems.tabsCount, 4)
+        XCTAssertEqual(maxItems.syncedTabCount, 1)
+        XCTAssertEqual(subject.sectionLayout, .medium)
     }
 
     func testMaxJumpBackInItemsToDisplay_regularIpad() {
@@ -234,15 +281,18 @@ class JumpBackInViewModelTests: XCTestCase {
         adaptor.jumpBackInList = JumpBackInList(group: nil, tabs: [tab1])
         adaptor.mockHasSyncedTabFeatureEnabled = false
 
-        let trait = MockTraitCollection()
-        trait.overridenHorizontalSizeClass = .regular
-        trait.overridenVerticalSizeClass = .regular
-        sut.refreshData(for: trait, isPortrait: true, device: .pad)
-        let jumpBackInItemsMax = sut.sectionLayout.maxItemsToDisplay(displayGroup: .jumpBackIn,
-                                                                     hasAccount: true,
-                                                                     device: .pad)
-        XCTAssertEqual(jumpBackInItemsMax, 6)
-        XCTAssertEqual(sut.sectionLayout, .regular)
+        // iPad layout portrait
+        let trait = MockTraitCollection().getTraitCollection()
+
+        subject.didLoadNewData()
+        try? await Task.sleep(nanoseconds: sleepTime)
+        subject.refreshData(for: trait, size: iPhone14ScreenSize, isPortrait: true, device: .pad)
+        let maxItems = subject.sectionLayout.maxItemsToDisplay(hasAccount: true,
+                                                               device: .pad)
+
+        XCTAssertEqual(maxItems.tabsCount, 2)
+        XCTAssertEqual(maxItems.syncedTabCount, 1)
+        XCTAssertEqual(subject.sectionLayout, .mediumWithSyncedTab)
     }
 
     func testMaxJumpBackInItemsToDisplay_regularWithSyncedTabIphone() {
@@ -251,15 +301,18 @@ class JumpBackInViewModelTests: XCTestCase {
         adaptor.jumpBackInList = JumpBackInList(group: nil, tabs: [tab1])
         adaptor.syncedTab = JumpBackInSyncedTab(client: remoteClient, tab: remoteTab)
 
-        let trait = MockTraitCollection()
-        trait.overridenHorizontalSizeClass = .regular
-        trait.overridenVerticalSizeClass = .regular
-        sut.refreshData(for: trait, isPortrait: true, device: .phone)
-        let jumpBackInItemsMax = sut.sectionLayout.maxItemsToDisplay(displayGroup: .jumpBackIn,
-                                                                     hasAccount: true,
-                                                                     device: .phone)
-        XCTAssertEqual(jumpBackInItemsMax, 2)
-        XCTAssertEqual(sut.sectionLayout, .regularWithSyncedTab)
+        // iPad layout landscape
+        let trait = MockTraitCollection().getTraitCollection()
+
+        subject.didLoadNewData()
+        try? await Task.sleep(nanoseconds: sleepTime)
+        subject.refreshData(for: trait, size: iPhone14ScreenSize, isPortrait: false, device: .pad)
+        let maxItems = subject.sectionLayout.maxItemsToDisplay(hasAccount: true,
+                                                               device: .pad)
+
+        XCTAssertEqual(maxItems.tabsCount, 6)
+        XCTAssertEqual(maxItems.syncedTabCount, 1)
+        XCTAssertEqual(subject.sectionLayout, .regular)
     }
 
     func testMaxJumpBackInItemsToDisplay_regularWithSyncedTabIpad() {
@@ -268,15 +321,37 @@ class JumpBackInViewModelTests: XCTestCase {
         adaptor.jumpBackInList = JumpBackInList(group: nil, tabs: [tab1])
         adaptor.syncedTab = JumpBackInSyncedTab(client: remoteClient, tab: remoteTab)
 
-        let trait = MockTraitCollection()
-        trait.overridenHorizontalSizeClass = .regular
-        trait.overridenVerticalSizeClass = .regular
-        sut.refreshData(for: trait, isPortrait: true, device: .pad)
-        let jumpBackInItemsMax = sut.sectionLayout.maxItemsToDisplay(displayGroup: .jumpBackIn,
-                                                                     hasAccount: true,
-                                                                     device: .pad)
-        XCTAssertEqual(jumpBackInItemsMax, 4)
-        XCTAssertEqual(sut.sectionLayout, .regularWithSyncedTab)
+        // iPhone layout portrait
+        let trait = MockTraitCollection(verticalSizeClass: .compact).getTraitCollection()
+        subject.didLoadNewData()
+        try? await Task.sleep(nanoseconds: sleepTime)
+        subject.refreshData(for: trait, size: iPhone14ScreenSize, isPortrait: true, device: .phone)
+        let maxItems = subject.sectionLayout.maxItemsToDisplay(hasAccount: true,
+                                                               device: .phone)
+
+        XCTAssertEqual(maxItems.tabsCount, 6)
+        XCTAssertEqual(maxItems.syncedTabCount, 1)
+        XCTAssertEqual(subject.sectionLayout, .regular)
+    }
+
+    func testMaxJumpBackInItemsToDisplay_regularWithSyncedTabIpad() async {
+        let subject = createSubject()
+        let tab1 = createTab(profile: mockProfile, urlString: "www.firefox1.com")
+        await adaptor.setRecentTabs(recentTabs: [tab1])
+        await adaptor.setSyncedTab(syncedTab: JumpBackInSyncedTab(client: remoteClient, tab: remoteTab))
+
+        // iPad layout landscape
+        let trait = MockTraitCollection().getTraitCollection()
+
+        subject.didLoadNewData()
+        try? await Task.sleep(nanoseconds: sleepTime)
+        subject.refreshData(for: trait, size: iPhone14ScreenSize, isPortrait: false, device: .pad)
+        let maxItems = subject.sectionLayout.maxItemsToDisplay(hasAccount: true,
+                                                               device: .pad)
+
+        XCTAssertEqual(maxItems.tabsCount, 4)
+        XCTAssertEqual(maxItems.syncedTabCount, 1)
+        XCTAssertEqual(subject.sectionLayout, .regularWithSyncedTab)
     }
 
     func testMaxJumpBackInItemsToDisplay_regularWithSyncedTabIphone_hasNoSyncedTabFallsIntoRegularLayout() {
@@ -284,15 +359,56 @@ class JumpBackInViewModelTests: XCTestCase {
         let tab1 = createTab(profile: mockProfile, urlString: "www.firefox1.com")
         adaptor.jumpBackInList = JumpBackInList(group: nil, tabs: [tab1])
 
-        let trait = MockTraitCollection()
-        trait.overridenHorizontalSizeClass = .regular
-        trait.overridenVerticalSizeClass = .regular
-        sut.refreshData(for: trait, isPortrait: true, device: .phone)
-        let jumpBackInItemsMax = sut.sectionLayout.maxItemsToDisplay(displayGroup: .jumpBackIn,
-                                                                     hasAccount: true,
-                                                                     device: .phone)
-        XCTAssertEqual(jumpBackInItemsMax, 4)
-        XCTAssertEqual(sut.sectionLayout, .regular)
+        // iPhone layout portrait
+        let trait = MockTraitCollection(verticalSizeClass: .compact).getTraitCollection()
+
+        subject.didLoadNewData()
+        try? await Task.sleep(nanoseconds: sleepTime)
+        subject.refreshData(for: trait, size: iPhone14ScreenSize, isPortrait: true, device: .phone)
+        let maxItems = subject.sectionLayout.maxItemsToDisplay(hasAccount: true,
+                                                               device: .phone)
+
+        XCTAssertEqual(maxItems.tabsCount, 4)
+        XCTAssertEqual(maxItems.syncedTabCount, 1)
+        XCTAssertEqual(subject.sectionLayout, .regularWithSyncedTab)
+    }
+
+    func testMaxJumpBackInItemsToDisplay_mediumWithSyncedTabIphone_hasNoSyncedTabFallsIntoMediumLayout() async {
+        let subject = createSubject()
+        let tab1 = createTab(profile: mockProfile, urlString: "www.firefox1.com")
+        await adaptor.setRecentTabs(recentTabs: [tab1])
+
+        // iPhone layout landscape
+        let trait = MockTraitCollection(verticalSizeClass: .compact).getTraitCollection()
+
+        subject.didLoadNewData()
+        try? await Task.sleep(nanoseconds: sleepTime)
+        subject.refreshData(for: trait, size: iPhone14ScreenSize, isPortrait: false, device: .phone)
+        let maxItems = subject.sectionLayout.maxItemsToDisplay(hasAccount: true,
+                                                               device: .phone)
+
+        XCTAssertEqual(maxItems.tabsCount, 4)
+        XCTAssertEqual(maxItems.syncedTabCount, 1)
+        XCTAssertEqual(subject.sectionLayout, .medium)
+    }
+
+    func testMaxJumpBackInItemsToDisplay_regularWithSyncedTabIpad_hasNoSyncedTabFallsIntoRegularLayout() async {
+        let subject = createSubject()
+        let tab1 = createTab(profile: mockProfile, urlString: "www.firefox1.com")
+        await adaptor.setRecentTabs(recentTabs: [tab1])
+
+        // iPad layout landscape
+        let trait = MockTraitCollection().getTraitCollection()
+
+        subject.didLoadNewData()
+        try? await Task.sleep(nanoseconds: sleepTime)
+        subject.refreshData(for: trait, size: iPhone14ScreenSize, isPortrait: false, device: .pad)
+        let maxItems = subject.sectionLayout.maxItemsToDisplay(hasAccount: true,
+                                                               device: .pad)
+
+        XCTAssertEqual(maxItems.tabsCount, 6)
+        XCTAssertEqual(maxItems.syncedTabCount, 1)
+        XCTAssertEqual(subject.sectionLayout, .regular)
     }
 
     func testMaxJumpBackInItemsToDisplay_regularWithSyncedTabIpad_hasNoSyncedTabFallsIntoRegularLayout() {
@@ -319,22 +435,15 @@ class JumpBackInViewModelTests: XCTestCase {
         adaptor.jumpBackInList = JumpBackInList(group: nil, tabs: [tab1, tab2, tab3])
 
         // Start in portrait
-        let portraitTrait = MockTraitCollection()
-        portraitTrait.overridenHorizontalSizeClass = .compact
-        portraitTrait.overridenVerticalSizeClass = .regular
-        sut.refreshData(for: portraitTrait, isPortrait: true, device: .phone)
+        let portraitTrait = MockTraitCollection(horizontalSizeClass: .compact).getTraitCollection()
 
         XCTAssertEqual(adaptor.maxItemToDisplay, 2)
         XCTAssertEqual(sut.sectionLayout, .compactJumpBackIn)
 
         // Mock rotation to landscape
-        let landscapeTrait = MockTraitCollection()
-        landscapeTrait.overridenHorizontalSizeClass = .regular
-        landscapeTrait.overridenVerticalSizeClass = .compact
-        sut.refreshData(for: landscapeTrait, isPortrait: false, device: .phone)
-
-        XCTAssertEqual(adaptor.maxItemToDisplay, 4)
-        XCTAssertEqual(sut.sectionLayout, .regular)
+        let landscapeTrait = MockTraitCollection(verticalSizeClass: .compact).getTraitCollection()
+        subject.refreshData(for: landscapeTrait, size: iPhone14ScreenSize, isPortrait: false, device: .phone)
+        XCTAssertEqual(subject.sectionLayout, .medium)
 
         // Go back to portrait
         sut.refreshData(for: portraitTrait, isPortrait: true, device: .phone)
@@ -364,9 +473,11 @@ class JumpBackInViewModelTests: XCTestCase {
 
     // MARK: Refresh data
 
-    func testRefreshData_noData() {
-        let sut = createSut()
-        sut.refreshData(for: MockTraitCollection())
+    func testRefreshData_noData() async {
+        let subject = createSubject()
+        subject.didLoadNewData()
+        try? await Task.sleep(nanoseconds: sleepTime)
+        subject.refreshData(for: MockTraitCollection().getTraitCollection(), size: iPhone14ScreenSize)
 
         XCTAssertEqual(sut.jumpBackInList.tabs.count, 0)
         XCTAssertNil(sut.mostRecentSyncedTab)
@@ -375,8 +486,10 @@ class JumpBackInViewModelTests: XCTestCase {
     func testRefreshData_jumpBackInList() {
         let sut = createSut()
         let tab1 = createTab(profile: mockProfile, urlString: "www.firefox1.com")
-        adaptor.jumpBackInList = JumpBackInList(group: nil, tabs: [tab1])
-        sut.refreshData(for: MockTraitCollection())
+        await adaptor.setRecentTabs(recentTabs: [tab1])
+        subject.didLoadNewData()
+        try? await Task.sleep(nanoseconds: sleepTime)
+        subject.refreshData(for: MockTraitCollection().getTraitCollection(), size: iPhone14ScreenSize)
 
         XCTAssertEqual(sut.jumpBackInList.tabs.count, 1)
         XCTAssertNil(sut.mostRecentSyncedTab)
@@ -387,8 +500,131 @@ class JumpBackInViewModelTests: XCTestCase {
         adaptor.syncedTab = JumpBackInSyncedTab(client: remoteClient, tab: remoteTab)
         sut.refreshData(for: MockTraitCollection())
 
-        XCTAssertEqual(sut.jumpBackInList.tabs.count, 0)
-        XCTAssertNotNil(sut.mostRecentSyncedTab)
+        subject.didLoadNewData()
+        try? await Task.sleep(nanoseconds: sleepTime)
+        subject.refreshData(for: MockTraitCollection().getTraitCollection(), size: iPhone14ScreenSize)
+
+        XCTAssertEqual(subject.jumpBackInList.tabs.count, 0)
+        XCTAssertNotNil(subject.mostRecentSyncedTab)
+    }
+
+    // MARK: - End to end
+
+    func testCompactJumpBackIn_withThreeJumpBackInTabs() async {
+        let tab1 = createTab(profile: mockProfile, urlString: "www.firefox1.com")
+        let tab2 = createTab(profile: mockProfile, urlString: "www.firefox2.com")
+        let tab3 = createTab(profile: mockProfile, urlString: "www.firefox3.com")
+        await adaptor.setRecentTabs(recentTabs: [tab1, tab2, tab3])
+        let subject = createSubject()
+
+        // iPhone layout portrait
+        let trait = MockTraitCollection(horizontalSizeClass: .compact).getTraitCollection()
+
+        subject.didLoadNewData()
+        try? await Task.sleep(nanoseconds: sleepTime)
+        subject.refreshData(for: trait, size: iPhone14ScreenSize, isPortrait: true, device: .phone)
+
+        XCTAssertEqual(subject.sectionLayout, .compactJumpBackIn)
+        let jumpBackIn = subject.jumpBackInList
+        XCTAssertEqual(jumpBackIn.tabs.count, 2, "iPhone portrait has 2 tabs in it's jumpbackin layout")
+        XCTAssertEqual(jumpBackIn.tabs[0], tab1)
+        XCTAssertEqual(jumpBackIn.tabs[1], tab2)
+        XCTAssertFalse(jumpBackIn.tabs.contains(tab3), "The third tab doesn't appear")
+    }
+
+    func testCompactJumpBackIn_withOneJumpBackInTabs() async {
+        let tab1 = createTab(profile: mockProfile, urlString: "www.firefox1.com")
+        await adaptor.setRecentTabs(recentTabs: [tab1])
+        let subject = createSubject()
+
+        // iPhone layout portrait
+        let trait = MockTraitCollection(horizontalSizeClass: .compact).getTraitCollection()
+
+        subject.didLoadNewData()
+        try? await Task.sleep(nanoseconds: sleepTime)
+        subject.refreshData(for: trait, size: iPhone14ScreenSize, isPortrait: true, device: .phone)
+
+        XCTAssertEqual(subject.sectionLayout, .compactJumpBackIn)
+        let jumpBackIn = subject.jumpBackInList
+        XCTAssertEqual(jumpBackIn.tabs.count, 1, "With a max of 2 items, only shows 1 item when only 1 is available")
+        XCTAssertEqual(jumpBackIn.tabs[0], tab1)
+    }
+
+    func testCompactJumpBackInAndSyncedTab_withThreeJumpBackInTabsAndARemoteTabs() async {
+        await adaptor.setSyncedTab(syncedTab: JumpBackInSyncedTab(client: remoteClient, tab: remoteTab))
+        let tab1 = createTab(profile: mockProfile, urlString: "www.firefox1.com")
+        let tab2 = createTab(profile: mockProfile, urlString: "www.firefox2.com")
+        let tab3 = createTab(profile: mockProfile, urlString: "www.firefox3.com")
+        await adaptor.setRecentTabs(recentTabs: [tab1, tab2, tab3])
+        let subject = createSubject()
+
+        // iPhone layout portrait
+        let trait = MockTraitCollection(horizontalSizeClass: .compact).getTraitCollection()
+
+        subject.didLoadNewData()
+        try? await Task.sleep(nanoseconds: sleepTime)
+        subject.refreshData(for: trait, size: iPhone14ScreenSize, isPortrait: true, device: .phone)
+
+        let jumpBackIn = subject.jumpBackInList
+        XCTAssertEqual(jumpBackIn.tabs.count, 1, "iPhone portrait has 1 tab in it's jumpbackin layout")
+        XCTAssertEqual(jumpBackIn.tabs[0], tab1)
+        XCTAssertFalse(jumpBackIn.tabs.contains(tab2))
+        XCTAssertFalse(jumpBackIn.tabs.contains(tab3))
+        XCTAssertEqual(subject.sectionLayout, .compactJumpBackInAndSyncedTab)
+
+        let syncTab = subject.mostRecentSyncedTab
+        XCTAssertNotNil(syncTab, "iPhone portrait will show 1 sync tab")
+    }
+
+    func testMediumIphone_withThreeJumpbackInTabs() async {
+        let tab1 = createTab(profile: mockProfile, urlString: "www.firefox1.com")
+        let tab2 = createTab(profile: mockProfile, urlString: "www.firefox2.com")
+        let tab3 = createTab(profile: mockProfile, urlString: "www.firefox3.com")
+        await adaptor.setRecentTabs(recentTabs: [tab1, tab2, tab3])
+        let subject = createSubject()
+
+        // iPhone layout landscape
+        let trait = MockTraitCollection(verticalSizeClass: .compact).getTraitCollection()
+
+        subject.didLoadNewData()
+        try? await Task.sleep(nanoseconds: sleepTime)
+        subject.refreshData(for: trait, size: iPhone14ScreenSize, isPortrait: false, device: .phone)
+
+        let jumpBackIn = subject.jumpBackInList
+        XCTAssertEqual(jumpBackIn.tabs.count, 3, "iPhone landscape has 3 tabs in it's jumpbackin layout, up until 4")
+        XCTAssertEqual(jumpBackIn.tabs[0], tab1)
+        XCTAssertEqual(jumpBackIn.tabs[1], tab2)
+        XCTAssertEqual(jumpBackIn.tabs[2], tab3)
+        XCTAssertEqual(subject.sectionLayout, .medium)
+
+        let syncTab = subject.mostRecentSyncedTab
+        XCTAssertNil(syncTab)
+    }
+
+    func testMediumWithSyncedTabIphone_withSyncTabAndJumpbackInTabs() async {
+        let tab1 = createTab(profile: mockProfile, urlString: "www.firefox1.com")
+        let tab2 = createTab(profile: mockProfile, urlString: "www.firefox2.com")
+        let tab3 = createTab(profile: mockProfile, urlString: "www.firefox3.com")
+        await adaptor.setRecentTabs(recentTabs: [tab1, tab2, tab3])
+        await adaptor.setSyncedTab(syncedTab: JumpBackInSyncedTab(client: remoteClient, tab: remoteTab))
+        let subject = createSubject()
+
+        // iPhone layout landscape
+        let trait = MockTraitCollection(verticalSizeClass: .compact).getTraitCollection()
+
+        subject.didLoadNewData()
+        try? await Task.sleep(nanoseconds: sleepTime)
+        subject.refreshData(for: trait, size: iPhone14ScreenSize, isPortrait: false, device: .phone)
+
+        let jumpBackIn = subject.jumpBackInList
+        XCTAssertEqual(jumpBackIn.tabs.count, 2, "iPhone landscape has 2 tabs in it's jumpbackin layout, up until 2")
+        XCTAssertEqual(jumpBackIn.tabs[0], tab1)
+        XCTAssertEqual(jumpBackIn.tabs[1], tab2)
+        XCTAssertFalse(jumpBackIn.tabs.contains(tab3))
+        XCTAssertEqual(subject.sectionLayout, .mediumWithSyncedTab)
+
+        let syncTab = subject.mostRecentSyncedTab
+        XCTAssertNotNil(syncTab, "iPhone landscape will show 1 sync tab")
     }
 
     // MARK: Did load new data
