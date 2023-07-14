@@ -2,7 +2,6 @@
 # For more information, check out the docs
 # https://docs.fastlane.tools/actions/deliver/
 
-app_version("8.1.7")
 itc_provider("33YMRSYD2L")
 app_identifier("com.ecosia.ecosiaapp")
 
