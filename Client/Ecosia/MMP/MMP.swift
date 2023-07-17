@@ -5,6 +5,7 @@
 import Foundation
 import Core
 import Shared
+import AdServices
 
 struct MMP {
     
@@ -28,7 +29,8 @@ struct MMP {
                                                   country: DeviceInfo.currentCountry,
                                                   deviceBuildVersion: DeviceInfo.osBuildNumber,
                                                   appVersion: AppInfo.ecosiaAppVersion,
-                                                  installReceipt: AppInfo.installReceipt)
+                                                  installReceipt: AppInfo.installReceipt,
+                                                  attributionToken: AppInfo.attributionToken)
                 
                 let mmpProvider: MMPProvider = Singular(includeSKAN: true)
                 try await mmpProvider.sendSessionInfo(appDeviceInfo: appDeviceInfo)
