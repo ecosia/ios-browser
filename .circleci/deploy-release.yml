@@ -33,7 +33,6 @@ jobs:
               exit 0
             fi
 
-            git fetch origin $CIRCLE_BRANCH
             git checkout $CIRCLE_BRANCH
 
       - restore_cache:
