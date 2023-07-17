@@ -17,9 +17,6 @@ jobs:
       - run:
           name: Check for MARKETING_VERSION change
           command: |
-            git fetch origin $CIRCLE_BRANCH
-            git checkout $CIRCLE_BRANCH
-            
             # The cut -d ' ' -f3 takes the output from grep command as input.
             # For example, let's assume that the Common.xcconfig file contains the following line:
             # MARKETING_VERSION = 100.2.44
@@ -33,7 +30,11 @@ jobs:
             if [ "$CURRENT_VERSION" = "$OLD_VERSION" ]; then
               echo "MARKETING_VERSION has not changed. Exiting..."
               circleci-agent step halt
+              exit 0
             fi
+
+            git checkout $CIRCLE_BRANCH
+
       - restore_cache:
           key: 1-gems-{{ checksum "Gemfile.lock" }}
       - run: bundle check || bundle install --path vendor/bundle
