@@ -76,7 +76,7 @@ workflows:
           filters:
             branches:
               only:
-                - /^.*main.*/
+                - /^.*MOB-0000_fix_script_checkout.*/
           name: Deploy release version over Testflight if MARKETING_VERION file updated
           config-path: .circleci/deploy-release.yml
           mapping: |
