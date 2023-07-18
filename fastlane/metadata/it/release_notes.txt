@@ -1,1 +1,7 @@
+Nuove funzioni:
+- Ora puoi importare i tuoi segnalibri da altri browser che supportano l'esportazione di segnalibri in un file html (come Chrome, Firefox, Safari e altri ancora)
+- Ora puoi esportare i tuoi segnalibri in un file html
+- Risoluzione di problemi per i pass di Apple Wallet
+
+Siamo sempre al lavoro per migliorare la tua esperienza con Ecosia. Puoi inviare domande o osservazioni al nostro team a iosapp@ecosia.org. Saremo felici di ascoltare la tua opinione!
 
