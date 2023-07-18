@@ -10,11 +10,10 @@ extension AppInfo {
     
     private static let hasAttributedAppleSearchDownloadKey = "hasAttributedAppleSearchDownloadKey"
     
-    /// `AdServices` attribution token.
     /// Returns nil after the first time, so that no unwanted new token is generated.
     /// If an error is caught, it will return nil and retry next time it is fetched.
     /// Only available for iOS 14.3 and later.
-    static var attributionToken: String? {
+    static var adServicesAttributionToken: String? {
         guard #available(iOS 14.3, *),
                 !UserDefaults.standard.bool(forKey: hasAttributedAppleSearchDownloadKey) else {
             return nil

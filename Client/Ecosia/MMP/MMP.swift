@@ -30,7 +30,7 @@ struct MMP {
                                                   deviceBuildVersion: DeviceInfo.osBuildNumber,
                                                   appVersion: AppInfo.ecosiaAppVersion,
                                                   installReceipt: AppInfo.installReceipt,
-                                                  attributionToken: AppInfo.attributionToken)
+                                                  adServicesAttributionToken: AppInfo.adServicesAttributionToken)
                 
                 let mmpProvider: MMPProvider = Singular(includeSKAN: true)
                 try await mmpProvider.sendSessionInfo(appDeviceInfo: appDeviceInfo)
