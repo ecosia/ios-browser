@@ -186,31 +186,22 @@ Make sure that `fastlane` and `transifex`-cli is installed.
 
 - Make sure that an _inflight_ version exists in AppStore Connect. If not, create one.
 - Add English text to release notes in AppStore Connect
-- Download metadata from AppStore
+- Download metadata from AppStore specifying the inflight version
 
     ```bash
-    bundle exec fastlane deliver download_metadata
+    bundle exec fastlane deliver download_metadata --app-version 8.2.0
     ```
 
-- Push source to Transifex (It is important to limit the push to release_notes.txt)
-
-    ```bash
-    tx push ecosia-ios-search-app.release_notestxt
-    ```
+- Merge the code to main via a PR (The transifex integration will pick up the push)
 
 - Wait for translators :hourglass_flowing_sand:
 
 ### Add language translations
 
-- Make sure that all languages are translated in the transifex [web interface](https://app.transifex.com/ecosia/ecosia-ios-search-app/release_notestxt/)
-- Pull from transfex
-
-    ```bash
-    tx pull -f ecosia-ios-search-app.release_notestxt
-    ```
+- Make sure that all languages are translated in the transifex [web interface](https://app.transifex.com/ecosia/ecosia-ios-search-app/release_notestxt/) and found their way to `main`
 
 - Push via the update translation via `deliver` to the AppStore
 
     ```bash
-    bundle exec fastlane deliver
+    bundle exec fastlane deliver --app-version 8.2.0
     ```
