@@ -49,8 +49,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ecosia/ios-core.git",
       "state" : {
-        "branch" : "MOB-1883_ad_services_attribution",
-        "revision" : "8438f4afe9a20d9bc658232fcd342ca4d60b9b4d"
+        "branch" : "main",
+        "revision" : "32a100aac312c9497375cc46c1aa4292f1b3263e"
       }
     },
     {
