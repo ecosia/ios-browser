@@ -1,5 +1,5 @@
 Nuove funzioni:
-- Ora puoi importare i tuoi segnalibri da altri browser che supportano l'esportazione di segnalibri in html (come Chrome, Firefox, Safari e altri ancora)
+- Ora puoi importare i tuoi segnalibri da altri browser che supportano l’esportazione di segnalibri in html (come Chrome, Firefox, Safari e altri ancora)
 - Ora puoi esportare i tuoi segnalibri in html
 - Risoluzione di problemi per i pass di Apple Wallet
 
