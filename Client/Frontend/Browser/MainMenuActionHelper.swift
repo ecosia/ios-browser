@@ -23,7 +23,6 @@ protocol ToolBarActionMenuDelegate: AnyObject {
     func showMenuPresenter(url: URL, tab: Tab, view: UIView)
     func showFindInPage()
     func showCustomizeHomePage()
-    func showReferrals()
 }
 
 enum MenuButtonToastAction {
@@ -86,7 +85,6 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
 
         if isHomePage {
             actions.append(contentsOf: [
-                getFirstSection(),
                 getLibrarySection(),
                 getLastSection()
             ])
@@ -96,11 +94,8 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
         } else {
 
             // Actions on site page need specific data to be loaded
-            updateData(dataLoadingCompletion: { [weak self] in
-                guard let self = self else { return }
-                
+            updateData(dataLoadingCompletion: {
                 actions.append(contentsOf: [
-                    self.getFirstSection(),
                     self.getPageActionsSection(navigationController),
                     self.getLibrarySection(),
                     self.getLastSection()
@@ -178,10 +173,6 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
         append(to: &section, action: getNewTabAction())
 
         return section
-    }
-    
-    private func getFirstSection() -> [PhotonRowActions] {
-        [getInviteFriendsAction()]
     }
 
     private func getLibrarySection() -> [PhotonRowActions] {
@@ -270,18 +261,6 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
 
     // MARK: - Actions
 
-    private func getInviteFriendsAction() -> PhotonRowActions {
-        SingleActionViewModel(
-            title: .localized(.inviteFriends),
-            iconString: "inviteFriends",
-            isNew: User.shared.referralsEntryPointIsNew) { [weak self] action in
-                action.isNew = false
-                self?.delegate?.showReferrals()
-                User.shared.referralsEntryPointUsed()
-                Analytics.shared.menuClick("invitations")
-        }.items
-    }
-    
     private func getNewTabAction() -> PhotonRowActions {
         return SingleActionViewModel(title: .AppMenu.NewTab,
                                      iconString: ImageIdentifiers.newTab) { _ in
