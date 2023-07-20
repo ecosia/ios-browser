@@ -176,19 +176,11 @@ final class EcosiaSendAnonymousUsageDataSetting: BoolSetting {
                   prefKey: "",
                   defaultValue: true,
                   titleText: .localized(.sendUsageDataSettingsTitle),
-                  statusText: .localized(.sendUsageDataSettingsDescription) + " " + .localized(.learnMore),
+                  statusText: .localized(.sendUsageDataSettingsDescription),
                   settingDidChange: { value in
             User.shared.sendAnonymousUsageData = value
             Analytics.shared.sendAnonymousUsageDataSetting(enabled: value)
         })
-    }
-    
-    override var url: URL? {
-        return Environment.current.urlProvider.privacy
-    }
-
-    override func onClick(_ navigationController: UINavigationController?) {
-        setUpAndPushSettingsContentViewController(navigationController, self.url)
     }
 
     override func displayBool(_ control: UISwitch) {
