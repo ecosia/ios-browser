@@ -1,0 +1,28 @@
+settings:
+  language_mapping:
+    en_GB: en-GB
+    fr_FR: fr-FR
+    it: it
+    nl_NL: nl-NL
+    de_DE: de-DE
+    es_ES: es-ES
+
+filters:
+
+  - filter_type: file
+    source_language: en
+    source_file: fastlane/metadata/en-US/release_notes.txt
+    file_format: TXT
+    translation_files_expression: 'fastlane/metadata/<lang>/release_notes.txt'
+
+  - filter_type: file
+    source_language: en
+    source_file: Client/Ecosia/L10N/en.lproj/Ecosia.strings
+    file_format: STRINGS
+    translation_files_expression: 'Client/Ecosia/L10N/<lang>.lproj/Ecosia.strings'
+
+  - filter_type: file
+    source_language: en
+    source_file: Client/Ecosia/L10N/en.lproj/Plurals.stringsdict
+    file_format: STRINGSDICT
+    translation_files_expression: 'Client/Ecosia/L10N/<lang>.lproj/Plurals.stringsdict'
