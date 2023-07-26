@@ -579,10 +579,13 @@ extension GridTabViewController {
                                            style: .destructive,
                                            handler: { _ in self.closeTabsTrayBackground() }),
                              accessibilityIdentifier: AccessibilityIdentifiers.TabTray.deleteCloseAllButton)
-        controller.addAction(UIAlertAction(title: .TabTrayCloseAllTabsPromptCancel,
-                                           style: .cancel,
-                                           handler: nil),
+        let closeAllAction = UIAlertAction(title: .TabTrayCloseAllTabsPromptCancel,
+                                   style: .cancel,
+                                   handler: nil)
+        closeAllAction.setValue(UIColor.theme.ecosia.primaryButtonActive, forKey: "titleTextColor")
+        controller.addAction(closeAllAction,
                              accessibilityIdentifier: AccessibilityIdentifiers.TabTray.deleteCancelButton)
+        
         // Ecosia: fix crash when sent by button
         if let view = sender as? UIView {
             controller.popoverPresentationController?.sourceView = view
