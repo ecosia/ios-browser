@@ -24,16 +24,14 @@ final class DefaultBrowser: UIViewController, NotificationThemeable {
     weak var delegate: DefaultBrowserDelegate?
     
     var text1String: String {
-        let isSearchIncentiveRestricted = false // TODO: Fetch from component
-        if isSearchIncentiveRestricted {
+        if IncentivisedSearchChecker.isSearchIncentiveRestricted {
             return .localized(.openAllLinksAutomatically)
         } else {
             return .localized(.openAllLinksToPlantTrees)
         }
     }
     var text2String: String {
-        let isSearchIncentiveRestricted = false // TODO: Fetch from component
-        if isSearchIncentiveRestricted {
+        if IncentivisedSearchChecker.isSearchIncentiveRestricted {
             return .localized(.beClimateActive)
         } else {
             return .localized(.growYourImpact)
