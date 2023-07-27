@@ -176,8 +176,9 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
         ctaButton.leadingAnchor.constraint(equalTo: labelStack.leadingAnchor).isActive = true
         ctaButton.trailingAnchor.constraint(equalTo: labelStack.trailingAnchor).isActive = true
         ctaButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16).isActive = true
-
-        let imageView = UIImageView(image: .init(named: "tour1"))
+        
+        let isIncentiveRestrictedSearch = true // TODO: Read from component when ready
+        let imageView = UIImageView(image: .init(named: isIncentiveRestrictedSearch ? "tour1-alternative" : "tour1"))
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true

@@ -12,7 +12,9 @@ extension LegacyTheme {
 
 class EcosiaTheme {
     var primaryBrand: UIColor { .Light.Brand.primary}
-    var secondaryBrand: UIColor { UIColor.Photon.Grey60 }
+    // TODO: Review correct brand secondary color
+//    var secondaryBrand: UIColor { UIColor.Photon.Grey60 }
+    var secondaryBrand: UIColor { .Light.Brand.secondary }
     var border: UIColor { .Light.border }
 
     var primaryBackground: UIColor { .Light.Background.primary }
@@ -70,6 +72,7 @@ class EcosiaTheme {
     var warning: UIColor { .Light.State.warning }
     var information: UIColor { .Light.State.information }
     var disabled: UIColor { .Light.State.disabled }
+    var primaryHighlight: UIColor { .Light.State.primaryHighlight }
 
     var tabBackground: UIColor { .Light.Background.primary }
     var tabSelectedBackground: UIColor { .Light.Button.primary }
@@ -83,7 +86,9 @@ class EcosiaTheme {
 
 final class DarkEcosiaTheme: EcosiaTheme {
     override var primaryBrand: UIColor { .Dark.Brand.primary}
-    override var secondaryBrand: UIColor { .white }
+    // TODO: Review correct brand secondary color
+//    override var secondaryBrand: UIColor { .white }
+    override var secondaryBrand: UIColor { .Dark.Brand.secondary }
     override var border: UIColor { .Dark.border }
 
     override var primaryBackground: UIColor { .Dark.Background.primary }
@@ -144,6 +149,7 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var warning: UIColor { .Dark.State.warning }
     override var information: UIColor { .Dark.State.information }
     override var disabled: UIColor { .Dark.State.disabled }
+    override var primaryHighlight: UIColor { .Dark.State.primaryHighlight }
 
     override var tabBackground: UIColor { .Dark.Background.tertiary }
     override var tabSelectedBackground: UIColor { .Dark.Button.primary }

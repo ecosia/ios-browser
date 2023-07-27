@@ -38,6 +38,9 @@
 		0BF42D4F1A7CD09600889E28 /* TestFavicons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF42D4E1A7CD09600889E28 /* TestFavicons.swift */; };
 		0BF8F8DA1AEFF1C900E90BC2 /* noTitle.html in Resources */ = {isa = PBXBuildFile; fileRef = 0BF8F8D91AEFF1C900E90BC2 /* noTitle.html */; };
 		127773B229E98F75008A6A64 /* EcosiaFindInPageBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 127773B129E98F75008A6A64 /* EcosiaFindInPageBar.swift */; };
+		1287A99D2A6FFA45005F21F7 /* WelcomeTourGreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1287A99C2A6FFA45005F21F7 /* WelcomeTourGreen.swift */; };
+		1287A99F2A6FFC0C005F21F7 /* WelcomeTourTransparent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1287A99E2A6FFC0C005F21F7 /* WelcomeTourTransparent.swift */; };
+		1287A9A12A6FFE7A005F21F7 /* WelcomeTourRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1287A9A02A6FFE7A005F21F7 /* WelcomeTourRow.swift */; };
 		158241282820698B00956B39 /* RustRemoteTabsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 158241272820698B00956B39 /* RustRemoteTabsTests.swift */; };
 		15DE98FD27FCED4F00F1ECDB /* RustRemoteTabs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15DE98FC27FCED4F00F1ECDB /* RustRemoteTabs.swift */; };
 		1B0DFD25274856D60008EB0A /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = 1B0DFD24274856D60008EB0A /* SwiftyJSON */; };
@@ -1449,6 +1452,9 @@
 		126A40A4A5AFDFD655B0FDF4 /* ca */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ca; path = ca.lproj/ClearHistoryConfirm.strings; sourceTree = "<group>"; };
 		126F44CCB14373DC7813DE1F /* hr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hr; path = hr.lproj/ClearPrivateDataConfirm.strings; sourceTree = "<group>"; };
 		127773B129E98F75008A6A64 /* EcosiaFindInPageBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaFindInPageBar.swift; sourceTree = "<group>"; };
+		1287A99C2A6FFA45005F21F7 /* WelcomeTourGreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeTourGreen.swift; sourceTree = "<group>"; };
+		1287A99E2A6FFC0C005F21F7 /* WelcomeTourTransparent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeTourTransparent.swift; sourceTree = "<group>"; };
+		1287A9A02A6FFE7A005F21F7 /* WelcomeTourRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeTourRow.swift; sourceTree = "<group>"; };
 		12EA4881BFBE296298150D4A /* bn */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = bn; path = bn.lproj/LoginManager.strings; sourceTree = "<group>"; };
 		12F949169C30744CCC749588 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/HistoryPanel.strings; sourceTree = "<group>"; };
 		1323403C8071FC19BB79C191 /* su */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = su; path = su.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -6543,12 +6549,15 @@
 			isa = PBXGroup;
 			children = (
 				CA4D9CB028C8D801006AFB5D /* WelcomeTourPlanet.swift */,
+				1287A99C2A6FFA45005F21F7 /* WelcomeTourGreen.swift */,
 				CA4D9CB128C8D801006AFB5D /* Welcome.swift */,
 				CA4D9CB228C8D801006AFB5D /* WelcomeTour.Step.swift */,
 				CA4D9CB328C8D801006AFB5D /* WelcomeTourAction.swift */,
+				1287A99E2A6FFC0C005F21F7 /* WelcomeTourTransparent.swift */,
 				CA4D9CB428C8D801006AFB5D /* WelcomeTour.swift */,
 				CA4D9CB528C8D801006AFB5D /* WelcomeNavigation.swift */,
 				CA4D9CB628C8D801006AFB5D /* WelcomeTourProfit.swift */,
+				1287A9A02A6FFE7A005F21F7 /* WelcomeTourRow.swift */,
 			);
 			path = Onboarding;
 			sourceTree = "<group>";
@@ -9307,6 +9316,7 @@
 				FA6B2AC21D41F02D00429414 /* Punycode.swift in Sources */,
 				43446CEA2412066500F5C643 /* UIViewController+Extension.swift in Sources */,
 				8A471185287F6E4800F5A6EA /* SeparatorTableViewCell.swift in Sources */,
+				1287A99F2A6FFC0C005F21F7 /* WelcomeTourTransparent.swift in Sources */,
 				C846560728883B2900861B4A /* WallpaperImageProvider.swift in Sources */,
 				D301AAEE1A3A55B70078DD1D /* GridTabViewController.swift in Sources */,
 				EB9A179B20E69A7F00B12184 /* LegacyThemeManager.swift in Sources */,
@@ -9462,6 +9472,7 @@
 				CA4D9CEA28C8D801006AFB5D /* DefaultBrowser.swift in Sources */,
 				CA4D9CF628C8D801006AFB5D /* EcosiaExploreCell.swift in Sources */,
 				8AE80BB32891AD9200BC12EA /* DispatchGroupInterface.swift in Sources */,
+				1287A9A12A6FFE7A005F21F7 /* WelcomeTourRow.swift in Sources */,
 				96EB6C4327DC205D00A9D159 /* SearchGroupedItemsViewModel.swift in Sources */,
 				8A5BD95F2878B7B6000FE773 /* TopSitesWidgetManager.swift in Sources */,
 				F84B22041A0910F600AAB793 /* AppDelegate.swift in Sources */,
@@ -9554,6 +9565,7 @@
 				CA506BAE28D1EA080064072B /* NTPLibraryShortcutView.swift in Sources */,
 				8AB5958A284145B30090F4AE /* HomepageSectionHandler.swift in Sources */,
 				E660BDD91BB06521009AC090 /* TabsButton.swift in Sources */,
+				1287A99D2A6FFA45005F21F7 /* WelcomeTourGreen.swift in Sources */,
 				2ABCCCB22A13BCB0005D0C5B /* NTPBookmarkNudgeDelegate.swift in Sources */,
 				4331A9BB27193DF0005E8080 /* ContextualHintViewController.swift in Sources */,
 				39EF434E260A73950011E22E /* Experiments.swift in Sources */,

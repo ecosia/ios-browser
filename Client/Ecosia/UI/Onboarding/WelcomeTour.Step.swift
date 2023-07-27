@@ -24,6 +24,11 @@ extension WelcomeTour {
         static var planet: Step {
             return .init(title: .localized(.aBetterPlanet), text: .localized(.searchTheWeb), background: .init(image: "tour1"), content: WelcomeTourPlanet(), accessibleDescription: .localized(.onboardingIllustrationTour1))
         }
+        
+        static var green: Step {
+            // TODO: Add accessible description
+            return .init(title: .localized(.grennestWatToSearch), text: .localized(.planetFriendlySearch), background: .init(image: "tour1-alternative"), content: WelcomeTourGreen(), accessibleDescription: "")
+        }
 
         static var profit: Step {
             return .init(title: .localized(.hundredPercentOfProfits), text: .localized(.weUseAllOurProfits), background: .init(image: "tour2"), content: WelcomeTourProfit(), accessibleDescription: .localized(.onboardingIllustrationTour2))
@@ -36,9 +41,20 @@ extension WelcomeTour {
         static var trees: Step {
             return .init(title: .localized(.weWantTrees), text: .localized(.weDontCreateAProfile), background: .init(image: "tour4"), content: nil, accessibleDescription: .localized(.onboardingIllustrationTour4))
         }
+        
+        static var transparent: Step {
+            // TODO: Add accessible description
+            return .init(title: .localized(.realResults), text: .localized(.shownExactlyHowMuch), background: .init(image: "tour4-alternative"), content: WelcomeTourTransparent(), accessibleDescription: "")
+        }
 
         static var all: [Step] {
-            return [planet, profit, action, trees]
+            let isIncentiveRestrictedSearch = true // TODO: Read from component when ready
+            if isIncentiveRestrictedSearch {
+                return [green, profit, action, transparent]
+            } else {
+                return [planet, profit, action, trees]
+            }
+            
         }
     }
 }
