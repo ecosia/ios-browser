@@ -22,21 +22,6 @@ final class DefaultBrowser: UIViewController, NotificationThemeable {
     weak var cta: UIButton!
     weak var skip: UIButton!
     weak var delegate: DefaultBrowserDelegate?
-    
-    var text1String: String {
-        if IncentivisedSearchChecker.isSearchIncentiveRestricted {
-            return .localized(.openAllLinksAutomatically)
-        } else {
-            return .localized(.openAllLinksToPlantTrees)
-        }
-    }
-    var text2String: String {
-        if IncentivisedSearchChecker.isSearchIncentiveRestricted {
-            return .localized(.beClimateActive)
-        } else {
-            return .localized(.growYourImpact)
-        }
-    }
 
     convenience init(delegate: DefaultBrowserDelegate) {
         self.init(nibName: nil, bundle: nil)
@@ -175,7 +160,7 @@ final class DefaultBrowser: UIViewController, NotificationThemeable {
         self.arrow1 = arrow1
 
         let text1 = UILabel()
-        text1.text = text1String
+        text1.text = .localized(.openAllLinksToPlantTrees, incentiveRestrictedAlternativeKey: .openAllLinksAutomatically)
         text1.translatesAutoresizingMaskIntoConstraints = false
         text1.font = .preferredFont(forTextStyle: .subheadline)
         text1.adjustsFontForContentSizeCategory = true
@@ -197,7 +182,7 @@ final class DefaultBrowser: UIViewController, NotificationThemeable {
         self.arrow2 = arrow2
 
         let text2 = UILabel()
-        text2.text = text2String
+        text2.text = .localized(.growYourImpact, incentiveRestrictedAlternativeKey: .beClimateActive)
         text2.translatesAutoresizingMaskIntoConstraints = false
         text2.font = .preferredFont(forTextStyle: .subheadline)
         text2.adjustsFontForContentSizeCategory = true
