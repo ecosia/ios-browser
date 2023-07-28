@@ -582,7 +582,7 @@ extension GridTabViewController {
         let closeAllAction = UIAlertAction(title: .TabTrayCloseAllTabsPromptCancel,
                                    style: .cancel,
                                    handler: nil)
-        closeAllAction.setValue(UIColor.theme.ecosia.primaryButtonActive, forKey: "titleTextColor")
+        closeAllAction.setValue(UIColor.theme.ecosia.actionSheetCancelButton, forKey: "titleTextColor")
         controller.addAction(closeAllAction,
                              accessibilityIdentifier: AccessibilityIdentifiers.TabTray.deleteCancelButton)
         
