@@ -21,9 +21,9 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         struct ForestAndWaves {
             private init() {}
             static let waveHeight: CGFloat = 34
-            static let forestOffsetTypePad: CGFloat = -26
-            static let forestOffsetTypePhone: CGFloat = -26
-            static let forestHeightTypePad: CGFloat = 144
+            static let forestOffsetTypePad: CGFloat = 38
+            static let forestOffsetTypePhone: CGFloat = 26
+            static let forestHeightTypePad: CGFloat = 135
             static let forestWidthTypePad: CGFloat = 544
             static let forestTopMargin: CGFloat = 24
         }
@@ -408,13 +408,13 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         
         copyLink.centerYAnchor.constraint(equalTo: copyControl.centerYAnchor).isActive = true
         copyLink.leftAnchor.constraint(equalTo: copyControl.leftAnchor, constant: UX.defaultPadding).isActive = true
-        copyLink.rightAnchor.constraint(lessThanOrEqualTo: copyText.leftAnchor, constant: -UX.InviteFriendsFeature.copyLinkRightMargin).isActive = true
+        copyLink.rightAnchor.constraint(lessThanOrEqualTo: copyText.leftAnchor, constant: UX.InviteFriendsFeature.copyLinkRightMargin).isActive = true
         
         copyText.centerYAnchor.constraint(equalTo: copyControl.centerYAnchor).isActive = true
-        copyText.rightAnchor.constraint(equalTo: copyControl.rightAnchor, constant: -UX.InviteFriendsFeature.copyTextRightMargin).isActive = true
+        copyText.rightAnchor.constraint(equalTo: copyControl.rightAnchor, constant: UX.InviteFriendsFeature.copyTextRightMargin).isActive = true
         
         copyDividerLeft.leftAnchor.constraint(equalTo: copyControl.leftAnchor).isActive = true
-        copyDividerLeft.rightAnchor.constraint(equalTo: moreSharingMethods.leftAnchor, constant: -UX.InviteFriendsFeature.copyDividerLeftRightMargin).isActive = true
+        copyDividerLeft.rightAnchor.constraint(equalTo: moreSharingMethods.leftAnchor, constant: UX.InviteFriendsFeature.copyDividerLeftRightMargin).isActive = true
         copyDividerRight.rightAnchor.constraint(equalTo: copyControl.rightAnchor).isActive = true
         copyDividerRight.leftAnchor.constraint(equalTo: moreSharingMethods.rightAnchor, constant: UX.InviteFriendsFeature.copyDividerLeftRightMargin).isActive = true
         
@@ -429,7 +429,7 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         flowTitleStack.topAnchor.constraint(equalTo: sharing.bottomAnchor, constant: UX.Flow.flowTitleStackTopMargin).isActive = true
 
         flowBackground.topAnchor.constraint(equalTo: flowTitleStack.bottomAnchor,constant: UX.defaultPadding).isActive = true
-        flowBackground.bottomAnchor.constraint(equalTo: content.bottomAnchor, constant: -UX.Flow.flowBackgroundBottomMargin).isActive = true
+        flowBackground.bottomAnchor.constraint(equalTo: content.bottomAnchor, constant: UX.Flow.flowBackgroundBottomMargin).isActive = true
 
         flowStack.leftAnchor.constraint(equalTo: flowBackground.leftAnchor, constant: UX.defaultPadding).isActive = true
         flowStack.rightAnchor.constraint(equalTo: flowBackground.rightAnchor, constant: -UX.defaultPadding).isActive = true
