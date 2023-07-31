@@ -1,1 +1,7 @@
+Nouvelles fonctionnalités :
+- Vous pouvez désormais importer vos marque-pages depuis d'autres navigateurs compatibles avec l'exportation de marque-pages vers un fichier html (comme Chrome, Firefox, Safari et d'autres)
+- Vous pouvez désormais exporter vos marque-pages vers un fichier html
+- Réparation de bugs pour les pass Wallet d'Apple
+
+Nous travaillons sans relâche pour améliorer Ecosia pour vous. Si vous avez des questions ou des remarques, n'hésitez pas à les communiquer à notre équipe à l'adresse iosapp@ecosia.org. Nous serons ravis d'avoir de vos nouvelles !
 
