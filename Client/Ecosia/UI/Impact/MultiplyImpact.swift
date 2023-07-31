@@ -119,6 +119,7 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         
         let topBackground = UIView()
         topBackground.translatesAutoresizingMaskIntoConstraints = false
+        topBackground.backgroundColor = .theme.ecosia.primaryBrand.withAlphaComponent(0.2)
         content.addSubview(topBackground)
         self.topBackground = topBackground
 
