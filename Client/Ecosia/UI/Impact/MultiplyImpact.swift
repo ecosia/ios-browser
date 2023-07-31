@@ -96,10 +96,10 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         waves.clipsToBounds = true
         waves.contentMode = .scaleToFill
         forestAndWavesContainerView.addSubview(waves)
-        forestAndWavesContainerView.bringSubviewToFront(waves)
         self.waves = waves
         
         content.addSubview(forestAndWavesContainerView)
+        forestAndWavesContainerView.bringSubviewToFront(waves)
 
         let yourInvites = UILabel()
         yourInvites.text = .localized(.yourInvites)
@@ -303,24 +303,25 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
 
         forestAndWavesContainerView.leadingAnchor.constraint(equalTo: content.leadingAnchor).isActive = true
         forestAndWavesContainerView.trailingAnchor.constraint(equalTo: content.trailingAnchor).isActive = true
-        forestAndWavesContainerView.topAnchor.constraint(equalTo: subtitle.bottomAnchor).isActive = true
-
-        forest.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        forestAndWavesContainerView.topAnchor.constraint(equalTo: subtitle.bottomAnchor, constant: 16).isActive = true
+        
+        forest.centerXAnchor.constraint(equalTo: forestAndWavesContainerView.centerXAnchor).isActive = true
 
         if view.traitCollection.userInterfaceIdiom == .pad {
             forest.widthAnchor.constraint(equalToConstant: 544).isActive = true
             forest.heightAnchor.constraint(equalToConstant: 135).isActive = true
             forest.contentMode = .scaleAspectFit
         } else {
-            forest.leadingAnchor.constraint(equalTo: forestAndWavesContainerView.leadingAnchor).isActive = true
-            forest.trailingAnchor.constraint(equalTo: forestAndWavesContainerView.trailingAnchor).isActive = true
+            forest.leadingAnchor.constraint(equalTo: forestAndWavesContainerView.leadingAnchor, constant: 16).isActive = true
+            forest.trailingAnchor.constraint(equalTo: forestAndWavesContainerView.trailingAnchor, constant: -16).isActive = true
         }
+        
+        forest.heightAnchor.constraint(equalToConstant: 100).isActive = true
 
-        waves.bottomAnchor.constraint(equalTo: forestAndWavesContainerView.bottomAnchor, constant: 16).isActive = true
         waves.leadingAnchor.constraint(equalTo: forestAndWavesContainerView.leadingAnchor).isActive = true
         waves.trailingAnchor.constraint(equalTo: forestAndWavesContainerView.trailingAnchor).isActive = true
         waves.heightAnchor.constraint(equalToConstant: 34).isActive = true
-
+        
         topBackground.leadingAnchor.constraint(equalTo: content.leadingAnchor).isActive = true
         topBackground.trailingAnchor.constraint(equalTo: content.trailingAnchor).isActive = true
         topBackground.topAnchor.constraint(equalTo: content.topAnchor).isActive = true
