@@ -1,7 +1,0 @@
-Nuevaas funciones:
-- Ahora puedes importar tus marcadores desde otros navegadores que permitan la exportación de marcadores a un archivo html (como Chrome, Firefox, Safari y muchos más)
-- Ahora puedes exportar marcadores a un archivo html
-- Corrección de errores en los pases de monedero de Apple
-
-Siempre trabajamos para que Ecosia sea mejor para ti. Envía cualquier duda o comentarios a nuestro equipo a la dirección iosapp@ecosia.org, ¡nos encanta escucharte!
-
