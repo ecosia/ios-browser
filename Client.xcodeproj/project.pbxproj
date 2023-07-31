@@ -14552,7 +14552,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = adjust_incentivized_search_checker;
+				branch = main;
 				kind = branch;
 			};
 		};
