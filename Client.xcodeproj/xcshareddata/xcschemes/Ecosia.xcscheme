@@ -164,7 +164,7 @@
                   Identifier = "TabManagerStoreTests/testAddedTabsAreStored()">
                </Test>
                <Test
-                  Identifier = "TabManagerTests/testPrivatePreference_togglePBMDeletesPrivate()">
+                  Identifier = "TabManagerTests">
                </Test>
                <Test
                   Identifier = "TabTrayViewControllerTests">

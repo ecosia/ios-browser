@@ -3,18 +3,23 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import Foundation
+import Core
 
 extension String {
-    static func localized(_ forKey: Key) -> String {
-        localized(forKey.rawValue)
+    static func localized(_ key: Key) -> String {
+        localized(key.rawValue)
     }
     
     static func localized(_ string: String) -> String {
         NSLocalizedString(string, tableName: "Ecosia", comment: "")
     }
+    
+    static func localized(_ key: Key, incentiveRestrictedAlternativeKey: Key) -> String {
+        localized(IncentivizedSearchHelper.isRestricted ? incentiveRestrictedAlternativeKey : key)
+    }
 
-    static func localizedPlural(_ forKey: Key, num: Int) -> String {
-        return String(format: NSLocalizedString(forKey.rawValue, tableName: "Plurals", comment: ""), num)
+    static func localizedPlural(_ key: Key, num: Int) -> String {
+        String(format: NSLocalizedString(key.rawValue, tableName: "Plurals", comment: ""), num)
     }
     
     enum Key: String {
@@ -156,8 +161,10 @@ extension String {
         case friendInvitesPlural = "%d friend invite(s)"
         case openSettings = "Open settings"
         case maybeLater = "Maybe later"
-        case openAllLinks = "Open all links with Ecosia to plant more trees"
+        case openAllLinksToPlantTrees = "Open all links with Ecosia to plant more trees"
+        case openAllLinksAutomatically = "Open all links automatically with Ecosia"
         case growYourImpact = "Grow your impact with your web searches"
+        case beClimateActive = "Be climate active every day while browsing"
         case groupYourImpact = "Group your impact"
         case getATreeWithEveryFriend = "Get a tree with every friend who joins. They get one too!"
         case aboutEcosia = "About Ecosia"
