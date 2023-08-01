@@ -30,7 +30,7 @@ final class WelcomeTourGreen: UIView, NotificationThemeable {
         stack.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
         stack.centerYAnchor.constraint(equalTo: centerYAnchor, constant: -50 - iPadOffset).isActive = true
 
-        let topImage = UIImageView(image: .init(named: "tourSearch"))
+        let topImage = UIImageView(image: .init(named: "tourSearch-alternative"))
         topImage.translatesAutoresizingMaskIntoConstraints = false
         topImage.isAccessibilityElement = false
         stack.addArrangedSubview(topImage)
@@ -45,11 +45,10 @@ final class WelcomeTourGreen: UIView, NotificationThemeable {
         topImage.addSubview(searchLabel)
         self.searchLabel = searchLabel
 
-        searchLabel.leadingAnchor.constraint(equalTo: topImage.leadingAnchor, constant: 44).isActive = true
-        searchLabel.topAnchor.constraint(equalTo: topImage.topAnchor, constant: 22).isActive = true
+        searchLabel.leadingAnchor.constraint(equalTo: topImage.leadingAnchor, constant: 55).isActive = true
+        searchLabel.topAnchor.constraint(equalTo: topImage.topAnchor, constant: 37).isActive = true
         searchLabel.trailingAnchor.constraint(equalTo: topImage.trailingAnchor, constant: -40).isActive = true
-
-        topImage.transform = .init(rotationAngle: Double.pi / -25)
+        searchLabel.transform = .init(rotationAngle: Double.pi / -33)
 
         let bottomImage = UIImageView(image: .init(named: "tourGreen"))
         bottomImage.translatesAutoresizingMaskIntoConstraints = false
