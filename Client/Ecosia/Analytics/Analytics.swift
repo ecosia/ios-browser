@@ -7,25 +7,14 @@ final class Analytics {
     private static let abTestSchema = "iglu:org.ecosia/abtest_context/jsonschema/1-0-1"
     private static let abTestRoot = "ab_tests"
     private static let namespace = "ios_sp"
-
+    
     private static var tracker: TrackerController {
-        
-        let trackerConfiguration = TrackerConfiguration()
-            .appId(Bundle.version)
-            .sessionContext(true)
-            .applicationContext(true)
-            .platformContext(true)
-            .platformContextProperties([]) // track minimal device properties
-            .geoLocationContext(true)
-            .deepLinkContext(false)
-            .screenContext(false)
-        
-        let subjectConfiguration = SubjectConfiguration()
-            .userId(User.shared.analyticsId.uuidString)
-        
+                
         return Snowplow.createTracker(namespace: namespace,
                                       network: .init(endpoint: Environment.current.urlProvider.snowplow),
-                                      configurations: [trackerConfiguration, subjectConfiguration])!
+                                      configurations: [Self.trackerConfiguration,
+                                                       Self.subjectConfiguration,
+                                                       Self.appResumeDailyTrackingPluginConfiguration])!
     }
     
     static let shared = Analytics()
@@ -67,7 +56,7 @@ final class Analytics {
     func activity(_ action: Action.Activity) {
         let event = Structured(category: Category.activity.rawValue,
                                action: action.rawValue)
-            .label("inapp")
+            .label(Analytics.Label.Navigation.inapp.rawValue)
         
         switch action {
         case .resume, .launch:
