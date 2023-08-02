@@ -9,10 +9,10 @@ final class WelcomeTourTransparent: UIView, NotificationThemeable {
 
     private weak var stack: UIStackView!
 
-    lazy var formatter: NumberFormatter = {
+    lazy var currencyNumberFormatter: NumberFormatter = {
         let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        formatter.usesGroupingSeparator = true
+        formatter.numberStyle = .currency
+        formatter.currencySymbol = "€"
         return formatter
     }()
 
@@ -43,11 +43,13 @@ final class WelcomeTourTransparent: UIView, NotificationThemeable {
         
         addMonthView(toStack: stack)
         
-        let totalIncome = "€3,296,840" // TODO: Read from Statistics when ready
-        let income = WelcomeTourRow(image: "financialReports", title: totalIncome, text: .localized(.totalIncome))
-        stack.addArrangedSubview(income)
+        let financialReports = TreeCounter.shared.statistics.financialReports
+        if let totalIncome = currencyNumberFormatter.string(from: .init(value: financialReports.value)) {
+            let income = WelcomeTourRow(image: "financialReports", title: totalIncome, text: .localized(.totalIncome))
+            stack.addArrangedSubview(income)
+        }
 
-        let treesFinanced = "741,333" // TODO: Read from Statistics when ready
+        let treesFinanced = "741,333" // TODO: Read from somewhere dynamically
         let trees = WelcomeTourRow(image: "treesUpdate", title: treesFinanced, text: .localized(.treesFinanced))
         stack.addArrangedSubview(trees)
     }
@@ -76,13 +78,15 @@ final class WelcomeTourTransparent: UIView, NotificationThemeable {
         containerStack.translatesAutoresizingMaskIntoConstraints = false
         monthView.addSubview(containerStack)
         
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "February 2022"// TODO: Read from Statistics when ready
-        label.textColor = .theme.ecosia.secondaryBrand
-        label.font = .preferredFont(forTextStyle: .footnote)
-        label.setContentCompressionResistancePriority(.required, for: .horizontal)
-        containerStack.addArrangedSubview(label)
+        if let monthAndYearString = TreeCounter.shared.statistics.financialReports.localizedMonthAndYear {
+            let label = UILabel()
+            label.translatesAutoresizingMaskIntoConstraints = false
+            label.text = monthAndYearString
+            label.textColor = .theme.ecosia.secondaryBrand
+            label.font = .preferredFont(forTextStyle: .footnote)
+            label.setContentCompressionResistancePriority(.required, for: .horizontal)
+            containerStack.addArrangedSubview(label)
+        }
         
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
