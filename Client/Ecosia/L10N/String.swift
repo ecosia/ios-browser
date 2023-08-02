@@ -131,6 +131,7 @@ extension String {
         case noDownloadsYet = "No downloads yet"
         case whenYouDownloadFiles = "When you download files they will show up here"
         case checkThisOut = "Check this out: Ecosia plants trees every time you search the web! 🌳\nJoin me and %@+ others and start planting today."
+        case iThinkYouWillLikeThis = "Hey, I think you’ll like this!\nDid you know that Ecosia is the only search engine that uses 100%% of their profits for climate action? 🌍\nJoin me and %@M+ others planting the right trees in the right places."
         case downloadTheApp = "1. Download the app:"
         case useMyInviteLink = "2. Use my ✨ invite link ✨ and we will both plant an extra tree 🌳\n(Android coming soon):"
         case seeWhatsNew = "See what's new"
