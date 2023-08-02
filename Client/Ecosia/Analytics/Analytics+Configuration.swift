@@ -22,7 +22,8 @@ extension Analytics {
         .userId(User.shared.analyticsId.uuidString)
 
     static var appResumeDailyTrackingPluginConfiguration: PluginConfiguration {
-        let plugin = PluginConfiguration(identifier: "appResumeDailyTrackingPluginConfiguration")
+        let identifier = "appResumeDailyTrackingPluginConfiguration"
+        let plugin = PluginConfiguration(identifier: identifier)
         return plugin.filter(schemas: [
             "se" // Structured Events
         ]) { event in
@@ -34,7 +35,42 @@ extension Analytics {
                 return true
             }
             
-            return Self.hasDayPassedSinceLastCheck(for: "appResumeDailyTrackingPluginConfiguration")
+            return Self.hasDayPassedSinceLastCheck(for: identifier)
         }
+    }
+}
+
+extension Analytics {
+    
+    /// Function to check if a day has passed since the last check for a specific identifier.
+    /// - Parameter identifier: The unique identifier used to save the last check date in UserDefaults.
+    /// - Returns: Boolean. True if a day or more has passed since the last check, False otherwise.
+    static func hasDayPassedSinceLastCheck(for identifier: String) -> Bool {
+        let now = Date()
+        let defaults = UserDefaults.standard
+        
+        // get the date of the last check from UserDefaults
+        if let lastCheck = defaults.object(forKey: identifier) as? Date {
+            // calculate the difference in days between now and the last check
+            let calendar = Calendar.current
+            let components = calendar.dateComponents([.day], from: lastCheck, to: now)
+            
+            if let day = components.day {
+                // if a day or more has passed
+                if day >= 1 {
+                    defaults.set(now, forKey: identifier) // update the last check date
+                    return true
+                } else {
+                    // less than a day has passed
+                    return false
+                }
+            }
+        } else {
+            // if the last check date does not exist in UserDefaults, set it to now
+            defaults.set(now, forKey: identifier)
+            return false
+        }
+        
+        return false
     }
 }
