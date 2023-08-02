@@ -44,7 +44,7 @@ extension Analytics {
     
     /// Function to check if a day has passed since the last check for a specific identifier.
     /// - Parameter identifier: The unique identifier used to save the last check date in UserDefaults.
-    /// - Returns: Boolean. True if a day or more has passed since the last check, False otherwise.
+    /// - Returns: Boolean. True if a day or more has passed since the last check OR in case of first time checking, False otherwise.
     static func hasDayPassedSinceLastCheck(for identifier: String) -> Bool {
         let now = Date()
         let defaults = UserDefaults.standard
@@ -67,8 +67,9 @@ extension Analytics {
             }
         } else {
             // if the last check date does not exist in UserDefaults, set it to now
+            // We return `true` in this special scenario to mark the fact that there was no last check
             defaults.set(now, forKey: identifier)
-            return false
+            return true
         }
         
         return false
