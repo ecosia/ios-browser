@@ -16,8 +16,8 @@ final class AnalyticsTests: XCTestCase {
     }
 
     func testFirstCheck() throws {
-        // The first check should always return false since it sets the date for the first time
-        XCTAssertFalse(Analytics.hasDayPassedSinceLastCheck(for: "testIdentifier"))
+        // The first check should always return true since it sets the date for the first time
+        XCTAssertTrue(Analytics.hasDayPassedSinceLastCheck(for: "testIdentifier"))
     }
 
     func testCheckWithinADay() throws {        
