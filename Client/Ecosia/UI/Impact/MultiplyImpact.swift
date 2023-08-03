@@ -9,8 +9,59 @@ import MobileCoreServices
 import LinkPresentation
 
 final class MultiplyImpact: UIViewController, NotificationThemeable {
+    
+    // MARK: - UX
+    
+    private struct UX {
+        private init() {}
+        static let defaultPadding: CGFloat = 16
+        static let subtitleTopMargin: CGFloat = 8
+        static let defaultCornerRadius: CGFloat = 10
+        
+        struct ForestAndWaves {
+            private init() {}
+            static let waveHeight: CGFloat = 34
+            static let forestOffsetTypePad: CGFloat = 38
+            static let forestOffsetTypePhone: CGFloat = 26
+            static let forestHeightTypePad: CGFloat = 135
+            static let forestWidthTypePad: CGFloat = 544
+            static let forestTopMargin: CGFloat = 24
+        }
+
+        struct Card {
+            private init() {}
+            static let distanceFromCardBottom: CGFloat = 32
+            static let cardBottomMargin: CGFloat = 17
+            static let cardIconTopMargin: CGFloat = 17
+            static let cardTitleLeftMargin: CGFloat = 12
+            static let cardTreeCountLeftMargin: CGFloat = 12
+            static let cardTreeIconLeftMargin: CGFloat = 8
+        }
+        
+        struct InviteFriendsFeature {
+            private init() {}
+            static let copyControlBorderWidth: CGFloat = 1
+            static let copyLinkRightMargin: CGFloat = -10
+            static let copyTextRightMargin: CGFloat = -12
+            static let copyDividerLeftRightMargin: CGFloat = -10
+            static let defaultTopMargin: CGFloat = 21
+            static let cornerRadius: CGFloat = 22
+            static let defaultHeight: CGFloat = 44
+        }
+        
+        struct Flow {
+            private init() {}
+            static let flowTitleStackTopMargin: CGFloat = 36
+            static let flowBackgroundBottomMargin: CGFloat = -20
+            static let stackViewSpacing: CGFloat = 12
+        }
+    }
+
+    // MARK: - Properties
+    
     private weak var subtitle: UILabel?
     private weak var topBackground: UIView?
+    private weak var forestOverlay: UIView?
     private weak var waves: UIImageView?
     private weak var card: UIView?
     private weak var cardIcon: UIImageView?
@@ -65,7 +116,7 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         let content = UIView()
         content.translatesAutoresizingMaskIntoConstraints = false
         scroll.addSubview(content)
-
+        
         let topBackground = UIView()
         topBackground.translatesAutoresizingMaskIntoConstraints = false
         topBackground.backgroundColor = .theme.ecosia.primaryBrand.withAlphaComponent(0.2)
@@ -86,8 +137,13 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         forest.translatesAutoresizingMaskIntoConstraints = false
         forest.contentMode = .bottom
         content.addSubview(forest)
+        
+        let forestOverlay = UIView()
+        forestOverlay.translatesAutoresizingMaskIntoConstraints = false
+        forest.addSubview(forestOverlay)
+        self.forestOverlay = forestOverlay
 
-        let waves = UIImageView(image: .init(named: "ntpIntroWaves"))
+        let waves = UIImageView(image: .init(named: "wavesBottom"))
         waves.translatesAutoresizingMaskIntoConstraints = false
         waves.contentMode = .scaleToFill
         content.addSubview(waves)
@@ -101,7 +157,7 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         let card = UIView()
         card.isUserInteractionEnabled = false
         card.translatesAutoresizingMaskIntoConstraints = false
-        card.layer.cornerRadius = 10
+        card.layer.cornerRadius = UX.defaultCornerRadius
         content.addSubview(card)
         self.card = card
         
@@ -150,8 +206,8 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         self.sharing = sharing
         
         let copyControl = UIControl()
-        copyControl.layer.cornerRadius = 10
-        copyControl.layer.borderWidth = 1
+        copyControl.layer.cornerRadius = UX.defaultCornerRadius
+        copyControl.layer.borderWidth = UX.InviteFriendsFeature.copyControlBorderWidth
         copyControl.addTarget(self, action: #selector(copyCode), for: .touchUpInside)
         copyControl.addTarget(self, action: #selector(hover), for: .touchDown)
         copyControl.addTarget(self, action: #selector(unhover), for: .touchUpInside)
@@ -194,7 +250,7 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         inviteFriends.setTitle(.localized(.inviteFriends), for: [])
         inviteFriends.titleLabel!.font = .preferredFont(forTextStyle: .callout)
         inviteFriends.titleLabel!.adjustsFontForContentSizeCategory = true
-        inviteFriends.layer.cornerRadius = 22
+        inviteFriends.layer.cornerRadius = UX.InviteFriendsFeature.cornerRadius
         inviteFriends.addTarget(self, action: #selector(self.inviteFriends), for: .touchUpInside)
         self.inviteButton = inviteFriends
         
@@ -226,7 +282,7 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         flowStack.translatesAutoresizingMaskIntoConstraints = false
         flowStack.axis = .vertical
         flowStack.alignment = .leading
-        flowStack.spacing = 12
+        flowStack.spacing = UX.Flow.stackViewSpacing
         flowBackground.addSubview(flowStack)
 
         let firstStep = MultiplyImpactStep(title: .localized(.inviteYourFriends), subtitle: .localized(.sendAnInvite), image: "paperplane")
@@ -254,20 +310,20 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         
         [card, sharing, flowBackground].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
-            $0.layer.cornerRadius = 10
+            $0.layer.cornerRadius = UX.defaultCornerRadius
             content.addSubview($0)
             
-            $0.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 16).isActive = true
-            $0.rightAnchor.constraint(equalTo: content.rightAnchor, constant: -16).isActive = true
+            $0.leftAnchor.constraint(equalTo: content.leftAnchor, constant: UX.defaultPadding).isActive = true
+            $0.rightAnchor.constraint(equalTo: content.rightAnchor, constant: -UX.defaultPadding).isActive = true
         }
         
         [copyControl, inviteFriends].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             sharing.addSubview($0)
             
-            $0.leftAnchor.constraint(equalTo: sharing.leftAnchor, constant: 16).isActive = true
-            $0.rightAnchor.constraint(equalTo: sharing.rightAnchor, constant: -16).isActive = true
-            $0.heightAnchor.constraint(equalToConstant: 44).isActive = true
+            $0.leftAnchor.constraint(equalTo: sharing.leftAnchor, constant: UX.defaultPadding).isActive = true
+            $0.rightAnchor.constraint(equalTo: sharing.rightAnchor, constant: -UX.defaultPadding).isActive = true
+            $0.heightAnchor.constraint(equalToConstant: UX.InviteFriendsFeature.defaultHeight).isActive = true
         }
         
         [copyDividerLeft, copyDividerRight].forEach {
@@ -275,7 +331,7 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
             $0.isUserInteractionEnabled = false
             sharing.addSubview($0)
             
-            $0.topAnchor.constraint(equalTo: copyControl.bottomAnchor, constant: 21).isActive = true
+            $0.topAnchor.constraint(equalTo: copyControl.bottomAnchor, constant: UX.InviteFriendsFeature.defaultTopMargin).isActive = true
             $0.heightAnchor.constraint(equalToConstant: 1).isActive = true
         }
         
@@ -289,89 +345,97 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         content.rightAnchor.constraint(equalTo: scroll.frameLayoutGuide.rightAnchor).isActive = true
         content.bottomAnchor.constraint(equalTo: scroll.contentLayoutGuide.bottomAnchor).isActive = true
 
-        subtitle.topAnchor.constraint(equalTo: content.topAnchor, constant: 8).isActive = true
-        subtitle.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 16).isActive = true
-        subtitle.rightAnchor.constraint(lessThanOrEqualTo: content.rightAnchor, constant: -16).isActive = true
+        subtitle.topAnchor.constraint(equalTo: content.topAnchor, constant: UX.subtitleTopMargin).isActive = true
+        subtitle.leftAnchor.constraint(equalTo: content.leftAnchor, constant: UX.defaultPadding).isActive = true
+        subtitle.rightAnchor.constraint(lessThanOrEqualTo: content.rightAnchor, constant: -UX.defaultPadding).isActive = true
 
         forest.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        forest.topAnchor.constraint(equalTo: subtitle.bottomAnchor, constant: 24).isActive = true
+        forest.topAnchor.constraint(equalTo: subtitle.bottomAnchor, constant: UX.ForestAndWaves.forestTopMargin).isActive = true
 
         if view.traitCollection.userInterfaceIdiom == .pad {
-            forest.widthAnchor.constraint(equalToConstant: 544).isActive = true
-            forest.heightAnchor.constraint(equalToConstant: 135).isActive = true
+            forest.widthAnchor.constraint(equalToConstant: UX.ForestAndWaves.forestWidthTypePad).isActive = true
+            forest.heightAnchor.constraint(equalToConstant: UX.ForestAndWaves.forestHeightTypePad).isActive = true
+            waves.bottomAnchor.constraint(equalTo: forest.bottomAnchor, constant: -UX.ForestAndWaves.forestOffsetTypePad).isActive = true
+            forestOverlay.topAnchor.constraint(equalTo: forest.bottomAnchor, constant: -UX.ForestAndWaves.forestOffsetTypePad).isActive = true
+            forestOverlay.bottomAnchor.constraint(equalTo: forest.bottomAnchor, constant: UX.ForestAndWaves.forestOffsetTypePad).isActive = true
             forest.contentMode = .scaleAspectFit
         } else {
             forest.leadingAnchor.constraint(equalTo: content.leadingAnchor).isActive = true
             forest.trailingAnchor.constraint(equalTo: content.trailingAnchor).isActive = true
+            waves.bottomAnchor.constraint(equalTo: forest.bottomAnchor, constant: -UX.ForestAndWaves.forestOffsetTypePhone).isActive = true
+            forestOverlay.topAnchor.constraint(equalTo: forest.bottomAnchor, constant: -UX.ForestAndWaves.forestOffsetTypePhone).isActive = true
+            forestOverlay.bottomAnchor.constraint(equalTo: forest.bottomAnchor, constant: UX.ForestAndWaves.forestOffsetTypePhone).isActive = true
         }
 
-        waves.bottomAnchor.constraint(equalTo: forest.bottomAnchor, constant: 16).isActive = true
         waves.leadingAnchor.constraint(equalTo: content.leadingAnchor).isActive = true
         waves.trailingAnchor.constraint(equalTo: content.trailingAnchor).isActive = true
-        waves.heightAnchor.constraint(equalToConstant: 34).isActive = true
+        waves.heightAnchor.constraint(equalToConstant: UX.ForestAndWaves.waveHeight).isActive = true
 
         topBackground.leadingAnchor.constraint(equalTo: content.leadingAnchor).isActive = true
         topBackground.trailingAnchor.constraint(equalTo: content.trailingAnchor).isActive = true
         topBackground.topAnchor.constraint(equalTo: content.topAnchor).isActive = true
         topBackground.bottomAnchor.constraint(equalTo: waves.bottomAnchor).isActive = true
+        
+        forestOverlay.leadingAnchor.constraint(equalTo: content.leadingAnchor).isActive = true
+        forestOverlay.trailingAnchor.constraint(equalTo: content.trailingAnchor).isActive = true
+        
+        yourInvites.leadingAnchor.constraint(equalTo: content.leadingAnchor, constant: UX.defaultPadding).isActive = true
+        yourInvites.trailingAnchor.constraint(equalTo: content.trailingAnchor, constant: -UX.defaultPadding).isActive = true
+        yourInvites.topAnchor.constraint(equalTo: waves.bottomAnchor, constant: UX.defaultPadding).isActive = true
 
-        yourInvites.leadingAnchor.constraint(equalTo: content.leadingAnchor, constant: 16).isActive = true
-        yourInvites.trailingAnchor.constraint(equalTo: content.trailingAnchor, constant: -16).isActive = true
-        yourInvites.topAnchor.constraint(equalTo: waves.bottomAnchor, constant: 16).isActive = true
+        card.topAnchor.constraint(equalTo: yourInvites.bottomAnchor, constant: UX.defaultPadding).isActive = true
+        card.bottomAnchor.constraint(equalTo: cardIcon.bottomAnchor, constant: UX.Card.cardBottomMargin).isActive = true
 
-        card.topAnchor.constraint(equalTo: yourInvites.bottomAnchor, constant: 16).isActive = true
-        card.bottomAnchor.constraint(equalTo: cardIcon.bottomAnchor, constant: 17).isActive = true
-
-        cardIcon.topAnchor.constraint(equalTo: card.topAnchor, constant: 17).isActive = true
-        cardIcon.leftAnchor.constraint(equalTo: card.leftAnchor, constant: 16).isActive = true
+        cardIcon.topAnchor.constraint(equalTo: card.topAnchor, constant: UX.Card.cardIconTopMargin).isActive = true
+        cardIcon.leftAnchor.constraint(equalTo: card.leftAnchor, constant: UX.defaultPadding).isActive = true
 
         cardTitle.centerYAnchor.constraint(equalTo: cardIcon.centerYAnchor).isActive = true
-        cardTitle.leftAnchor.constraint(equalTo: cardIcon.rightAnchor, constant: 12).isActive = true
+        cardTitle.leftAnchor.constraint(equalTo: cardIcon.rightAnchor, constant: UX.Card.cardTitleLeftMargin).isActive = true
 
-        cardTreeCount.leftAnchor.constraint(equalTo: cardTitle.rightAnchor, constant: 12).isActive = true
+        cardTreeCount.leftAnchor.constraint(equalTo: cardTitle.rightAnchor, constant: UX.Card.cardTreeCountLeftMargin).isActive = true
         cardTreeCount.centerYAnchor.constraint(equalTo: cardTitle.centerYAnchor).isActive = true
 
-        cardTreeIcon.leftAnchor.constraint(equalTo: cardTreeCount.rightAnchor, constant: 8).isActive = true
-        cardTreeIcon.rightAnchor.constraint(equalTo: card.rightAnchor, constant: -16).isActive = true
+        cardTreeIcon.leftAnchor.constraint(equalTo: cardTreeCount.rightAnchor, constant: UX.Card.cardTreeIconLeftMargin).isActive = true
+        cardTreeIcon.rightAnchor.constraint(equalTo: card.rightAnchor, constant: -UX.defaultPadding).isActive = true
         cardTreeIcon.centerYAnchor.constraint(equalTo: cardTreeCount.centerYAnchor).isActive = true
 
-        sharingYourLink.leadingAnchor.constraint(equalTo: content.leadingAnchor, constant: 16).isActive = true
-        sharingYourLink.trailingAnchor.constraint(equalTo: content.trailingAnchor, constant: -16).isActive = true
-        sharingYourLink.topAnchor.constraint(equalTo: card.bottomAnchor, constant: 32).isActive = true
+        sharingYourLink.leadingAnchor.constraint(equalTo: content.leadingAnchor, constant: UX.defaultPadding).isActive = true
+        sharingYourLink.trailingAnchor.constraint(equalTo: content.trailingAnchor, constant: -UX.defaultPadding).isActive = true
+        sharingYourLink.topAnchor.constraint(equalTo: card.bottomAnchor, constant: UX.Card.distanceFromCardBottom).isActive = true
         
-        sharing.topAnchor.constraint(equalTo: sharingYourLink.bottomAnchor, constant: 16).isActive = true
+        sharing.topAnchor.constraint(equalTo: sharingYourLink.bottomAnchor, constant: UX.defaultPadding).isActive = true
         
-        copyControl.topAnchor.constraint(equalTo: sharing.topAnchor, constant: 16).isActive = true
+        copyControl.topAnchor.constraint(equalTo: sharing.topAnchor, constant: UX.defaultPadding).isActive = true
         
         copyLink.centerYAnchor.constraint(equalTo: copyControl.centerYAnchor).isActive = true
-        copyLink.leftAnchor.constraint(equalTo: copyControl.leftAnchor, constant: 16).isActive = true
-        copyLink.rightAnchor.constraint(lessThanOrEqualTo: copyText.leftAnchor, constant: -10).isActive = true
+        copyLink.leftAnchor.constraint(equalTo: copyControl.leftAnchor, constant: UX.defaultPadding).isActive = true
+        copyLink.rightAnchor.constraint(lessThanOrEqualTo: copyText.leftAnchor, constant: UX.InviteFriendsFeature.copyLinkRightMargin).isActive = true
         
         copyText.centerYAnchor.constraint(equalTo: copyControl.centerYAnchor).isActive = true
-        copyText.rightAnchor.constraint(equalTo: copyControl.rightAnchor, constant: -12).isActive = true
+        copyText.rightAnchor.constraint(equalTo: copyControl.rightAnchor, constant: UX.InviteFriendsFeature.copyTextRightMargin).isActive = true
         
         copyDividerLeft.leftAnchor.constraint(equalTo: copyControl.leftAnchor).isActive = true
-        copyDividerLeft.rightAnchor.constraint(equalTo: moreSharingMethods.leftAnchor, constant: -10).isActive = true
+        copyDividerLeft.rightAnchor.constraint(equalTo: moreSharingMethods.leftAnchor, constant: UX.InviteFriendsFeature.copyDividerLeftRightMargin).isActive = true
         copyDividerRight.rightAnchor.constraint(equalTo: copyControl.rightAnchor).isActive = true
-        copyDividerRight.leftAnchor.constraint(equalTo: moreSharingMethods.rightAnchor, constant: 10).isActive = true
+        copyDividerRight.leftAnchor.constraint(equalTo: moreSharingMethods.rightAnchor, constant: UX.InviteFriendsFeature.copyDividerLeftRightMargin).isActive = true
         
         moreSharingMethods.centerXAnchor.constraint(equalTo: sharing.centerXAnchor).isActive = true
         moreSharingMethods.centerYAnchor.constraint(equalTo: copyDividerLeft.centerYAnchor).isActive = true
         
-        inviteFriends.topAnchor.constraint(equalTo: copyDividerLeft.bottomAnchor, constant: 21).isActive = true
-        inviteFriends.bottomAnchor.constraint(equalTo: sharing.bottomAnchor, constant: -16).isActive = true
+        inviteFriends.topAnchor.constraint(equalTo: copyDividerLeft.bottomAnchor, constant: UX.InviteFriendsFeature.defaultTopMargin).isActive = true
+        inviteFriends.bottomAnchor.constraint(equalTo: sharing.bottomAnchor, constant: -UX.defaultPadding).isActive = true
         
-        flowTitleStack.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 16).isActive = true
-        flowTitleStack.rightAnchor.constraint(equalTo: content.rightAnchor, constant: -16).isActive = true
-        flowTitleStack.topAnchor.constraint(equalTo: sharing.bottomAnchor, constant: 36).isActive = true
+        flowTitleStack.leftAnchor.constraint(equalTo: content.leftAnchor, constant: UX.defaultPadding).isActive = true
+        flowTitleStack.rightAnchor.constraint(equalTo: content.rightAnchor, constant: -UX.defaultPadding).isActive = true
+        flowTitleStack.topAnchor.constraint(equalTo: sharing.bottomAnchor, constant: UX.Flow.flowTitleStackTopMargin).isActive = true
 
-        flowBackground.topAnchor.constraint(equalTo: flowTitleStack.bottomAnchor,constant: 16).isActive = true
-        flowBackground.bottomAnchor.constraint(equalTo: content.bottomAnchor, constant: -20).isActive = true
+        flowBackground.topAnchor.constraint(equalTo: flowTitleStack.bottomAnchor,constant: UX.defaultPadding).isActive = true
+        flowBackground.bottomAnchor.constraint(equalTo: content.bottomAnchor, constant: UX.Flow.flowBackgroundBottomMargin).isActive = true
 
-        flowStack.leftAnchor.constraint(equalTo: flowBackground.leftAnchor, constant: 16).isActive = true
-        flowStack.rightAnchor.constraint(equalTo: flowBackground.rightAnchor, constant: -16).isActive = true
-        flowStack.topAnchor.constraint(equalTo: flowBackground.topAnchor, constant: 16).isActive = true
-        flowStack.bottomAnchor.constraint(equalTo: flowBackground.bottomAnchor, constant: -16).isActive = true
+        flowStack.leftAnchor.constraint(equalTo: flowBackground.leftAnchor, constant: UX.defaultPadding).isActive = true
+        flowStack.rightAnchor.constraint(equalTo: flowBackground.rightAnchor, constant: -UX.defaultPadding).isActive = true
+        flowStack.topAnchor.constraint(equalTo: flowBackground.topAnchor, constant: UX.defaultPadding).isActive = true
+        flowStack.bottomAnchor.constraint(equalTo: flowBackground.bottomAnchor, constant: -UX.defaultPadding).isActive = true
 
         applyTheme()
     }
@@ -400,6 +464,7 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         learnMoreButton?.setTitleColor(.theme.ecosia.primaryBrand, for: .normal)
         waves?.tintColor = .theme.ecosia.modalBackground
         topBackground?.backgroundColor = .theme.ecosia.modalHeader
+        forestOverlay?.backgroundColor = .theme.ecosia.modalBackground
         subtitle?.textColor = .Dark.Text.primary
         copyControl?.backgroundColor = .theme.ecosia.secondaryBackground
         copyControl?.layer.borderColor = UIColor.theme.ecosia.border.cgColor
