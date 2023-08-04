@@ -220,11 +220,17 @@ class ThemeSettingsController: ThemedTableViewController {
                 deviceBrightnessIndicator.thumbTintColor = deviceBrightnessIndicatorColor
                 self.slider = (slider, deviceBrightnessIndicator)
             } else {
+                // Ecosia: Adding Image to the cell from the Ecosia's asset
                 if indexPath.row == 0 {
                     cell.textLabel?.text = .DisplayThemeOptionLight
+                    cell.imageView?.image = UIImage(named: ImageIdentifiers.lightMode)
                 } else {
                     cell.textLabel?.text = .DisplayThemeOptionDark
+                    cell.imageView?.image = UIImage(named: ImageIdentifiers.nightMode)
                 }
+                
+                // Ecosia: Setting the imageView's tintColor matching design
+                cell.imageView?.tintColor = .theme.ecosia.secondaryText
 
                 let theme = BuiltinThemeName(rawValue: LegacyThemeManager.instance.current.name) ?? .normal
                 if (indexPath.row == 0 && theme == .normal) ||
