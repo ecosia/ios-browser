@@ -141,7 +141,7 @@ extension String {
         case skipWelcomeTour = "Skip welcome tour"
         case aBetterPlanet = "A better planet with every search"
         case searchTheWeb = "Search the web and plant trees with the fast, free, and full-featured Ecosia browser"
-        case grennestWatToSearch = "The greenest way to search"
+        case grennestWayToSearch = "The greenest way to search"
         case planetFriendlySearch = "Ecosia is the world's most planet-friendly way to search - and it's free."
         case hundredPercentOfProfits = "100% of profits for the planet"
         case weUseAllOurProfits = "We use all our profits for climate action, such as planting trees and generating solar energy."

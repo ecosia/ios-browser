@@ -3,6 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import UIKit
+import Core
 
 protocol WelcomeTourDelegate: AnyObject {
     func welcomeTourDidFinish(_ tour: WelcomeTour)
@@ -177,8 +178,8 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
         ctaButton.trailingAnchor.constraint(equalTo: labelStack.trailingAnchor).isActive = true
         ctaButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16).isActive = true
         
-        let isIncentiveRestrictedSearch = true // TODO: Read from component when ready
-        let imageView = UIImageView(image: .init(named: isIncentiveRestrictedSearch ? "tour1-alternative" : "tour1"))
+        let firstTourImageName = WelcomeTour.Step.all.first?.background.image ?? "tour1"
+        let imageView = UIImageView(image: .init(named: firstTourImageName))
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true

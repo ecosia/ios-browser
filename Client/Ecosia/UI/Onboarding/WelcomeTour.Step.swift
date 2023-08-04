@@ -3,6 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import UIKit
+import Core
 
 extension WelcomeTour {
 
@@ -27,7 +28,7 @@ extension WelcomeTour {
         
         static var green: Step {
             // TODO: Add accessible description
-            return .init(title: .localized(.grennestWatToSearch), text: .localized(.planetFriendlySearch), background: .init(image: "tour1-alternative"), content: WelcomeTourGreen(), accessibleDescription: "")
+            return .init(title: .localized(.grennestWayToSearch), text: .localized(.planetFriendlySearch), background: .init(image: "tour1-alternative"), content: WelcomeTourGreen(), accessibleDescription: "")
         }
 
         static var profit: Step {
@@ -48,8 +49,7 @@ extension WelcomeTour {
         }
 
         static var all: [Step] {
-            let isIncentiveRestrictedSearch = true // TODO: Read from component when ready
-            if isIncentiveRestrictedSearch {
+            if IncentivizedSearchHelper.isRestricted {
                 return [green, profit, action, transparent]
             } else {
                 return [planet, profit, action, trees]
