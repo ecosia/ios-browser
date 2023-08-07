@@ -216,7 +216,7 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
 
     private func display(step: Step) {
         current = step
-        pageControl.currentPage = steps.firstIndex(where: { $0 === step }) ?? 0
+        pageControl.currentPage = steps.firstIndex(of: step) ?? 0
 
         let title: String = isLastStep() ? .localized(.finishTour) : .localized(.continueMessage)
 
@@ -255,7 +255,7 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
             }
         }
         
-        Analytics.shared.introDisplaying(page: onboardingAnalyticsPageFromCurrentIndex)
+        Analytics.shared.introDisplaying(page: current?.analyticsValue)
         updateAccessibilityLabels(step: step)
     }
     
@@ -307,7 +307,7 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
             complete()
             return
         }
-        Analytics.shared.introClick(.next, at: onboardingAnalyticsPageFromCurrentIndex)
+        Analytics.shared.introClick(.next, at: current?.analyticsValue)
         let displayingStep = currentIndex + 1
         display(step: steps[displayingStep])
         UIAccessibility.post(notification: .screenChanged, argument: titleLabel)
@@ -318,14 +318,14 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
     }
 
     @objc func skip() {
-        Analytics.shared.introClick(.skip, at: onboardingAnalyticsPageFromCurrentIndex)
+        Analytics.shared.introClick(.skip, at: current?.analyticsValue)
         delegate?.welcomeTourDidFinish(self)
     }
 
     // MARK: Helper
     private var currentIndex: Int {
         guard let current = current else { return 0 }
-        let index = steps.firstIndex(where: { $0 === current }) ?? 0
+        let index = steps.firstIndex(of: current) ?? 0
         return index
     }
 
@@ -358,16 +358,5 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
 
     @objc func themeChanged() {
         applyTheme()
-    }
-}
-
-extension WelcomeTour {
-    
-    private var onboardingAnalyticsPageFromCurrentIndex: Analytics.Property.OnboardingPage? {
-        /*
-         Steps needs to be counted starting from 1
-         so we always top up 1 to the current index
-        */
-        Analytics.Property.OnboardingPage.allCases[currentIndex + 1]
     }
 }
