@@ -52,7 +52,10 @@ public struct ImageIdentifiers {
     public static let navMenu = "nav-menu"
     public static let newPrivateTab = "privateSearch"
     public static let newTab = "quick_action_new_tab"
-    public static let nightMode = "menu-NightMode"
+    // Ecosia: Updating the image name to match the Ecosia's image
+    public static let nightMode = "darkMode"
+    // Ecosia: adding the light mode counterpart
+    public static let lightMode = "lightMode"
     public static let noImageMode = "menu-NoImageMode"
     public static let onboardingWelcome = "tour-Welcome"
     public static let onboardingSync = "tour-sync-v2"
