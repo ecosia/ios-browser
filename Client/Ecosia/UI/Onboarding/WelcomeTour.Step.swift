@@ -27,8 +27,7 @@ extension WelcomeTour {
         }
         
         static var green: Step {
-            // TODO: Add accessible description
-            return .init(title: .localized(.grennestWayToSearch), text: .localized(.planetFriendlySearch), background: .init(image: "tour1-alternative"), content: WelcomeTourGreen(), accessibleDescription: "")
+            return .init(title: .localized(.grennestWayToSearch), text: .localized(.planetFriendlySearch), background: .init(image: "tour1-alternative"), content: WelcomeTourGreen(), accessibleDescription: .localized(.onboardingIllustrationTour1Alternative))
         }
 
         static var profit: Step {
@@ -44,8 +43,7 @@ extension WelcomeTour {
         }
         
         static var transparent: Step {
-            // TODO: Add accessible description
-            return .init(title: .localized(.realResults), text: .localized(.shownExactlyHowMuch), background: .init(image: "tour4-alternative"), content: WelcomeTourTransparent(), accessibleDescription: "")
+            return .init(title: .localized(.realResults), text: .localized(.shownExactlyHowMuch), background: .init(image: "tour4-alternative"), content: WelcomeTourTransparent(), accessibleDescription: .localized(.onboardingIllustrationTour4Alternative))
         }
 
         static var all: [Step] {
