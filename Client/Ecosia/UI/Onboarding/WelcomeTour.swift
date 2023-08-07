@@ -255,7 +255,7 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
             }
         }
         
-        Analytics.shared.introDisplaying(page: current?.analyticsValue)
+        Analytics.shared.introDisplaying(page: current?.analyticsValue, index: currentAnalyticsIndex)
         updateAccessibilityLabels(step: step)
     }
     
@@ -294,7 +294,7 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
     @objc func back() {
         guard !isFirstStep() else {
             dismiss(animated: true) {
-                Analytics.shared.introDisplaying(page: .start)
+                Analytics.shared.introDisplaying(page: .start, index: 0)
             }
             return
         }
@@ -307,7 +307,7 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
             complete()
             return
         }
-        Analytics.shared.introClick(.next, at: current?.analyticsValue)
+        Analytics.shared.introClick(.next, page: current?.analyticsValue, index: currentAnalyticsIndex)
         let displayingStep = currentIndex + 1
         display(step: steps[displayingStep])
         UIAccessibility.post(notification: .screenChanged, argument: titleLabel)
@@ -318,7 +318,7 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
     }
 
     @objc func skip() {
-        Analytics.shared.introClick(.skip, at: current?.analyticsValue)
+        Analytics.shared.introClick(.skip, page: current?.analyticsValue, index: currentAnalyticsIndex)
         delegate?.welcomeTourDidFinish(self)
     }
 
@@ -326,7 +326,13 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
     private var currentIndex: Int {
         guard let current = current else { return 0 }
         let index = steps.firstIndex(of: current) ?? 0
+        print("(Analytics) Current index returned: \(index)")
         return index
+    }
+    
+    private var currentAnalyticsIndex: Int {
+        // Needed since the start screen is considered 0
+        return currentIndex + 1
     }
 
     private func isFirstStep() -> Bool {

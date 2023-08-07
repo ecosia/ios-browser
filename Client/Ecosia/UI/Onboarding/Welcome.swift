@@ -62,7 +62,7 @@ final class Welcome: UIViewController {
         addMask()
         fadeIn()
         didAppear = true
-        Analytics.shared.introDisplaying(page: .start)
+        Analytics.shared.introDisplaying(page: .start, index: 0)
     }
 
     private func addOverlay() {
@@ -281,11 +281,11 @@ final class Welcome: UIViewController {
         tour.modalTransitionStyle = .crossDissolve
         tour.modalPresentationStyle = .overCurrentContext
         present(tour, animated: true, completion: nil)
-        Analytics.shared.introClick(.next, at: .start)
+        Analytics.shared.introClick(.next, page: .start, index: 0)
     }
 
     @objc func skip() {
-        Analytics.shared.introClick(.skip, at: .start)
+        Analytics.shared.introClick(.skip, page: .start, index: 0)
         delegate?.welcomeDidFinish(self)
     }
 

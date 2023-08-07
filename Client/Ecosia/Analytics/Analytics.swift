@@ -255,18 +255,6 @@ final class Analytics {
             .property(content.rawValue)
         track(event)
     }
-    
-    func introDisplaying(page: Property.OnboardingPage?) {
-        guard let page,
-              let pageAsInt = Property.OnboardingPage.allCases.firstIndex(of: page) else {
-            return
-        }
-        let event = Structured(category: Category.intro.rawValue,
-                               action: Action.display.rawValue)
-            .property(Property.screenName(pageAsInt).rawValue)
-            .value(.init(integerLiteral: pageAsInt))
-        track(event)
-    }
 
     func bookmarksPerformImportExport(_ property: Property.Bookmarks) {
         let event = Structured(category: Category.bookmarks.rawValue,
@@ -299,16 +287,28 @@ final class Analytics {
         tracker.track(event)
     }
     
-    func introClick(_ label: Label.Navigation, at page: Property.OnboardingPage?) {
-        guard let page,
-              let pageAsInt = Property.OnboardingPage.allCases.firstIndex(of: page) else {
+    func introDisplaying(page: Property.OnboardingPage?, index: Int) {
+        guard let page else {
+            return
+        }
+        let event = Structured(category: Category.intro.rawValue,
+                               action: Action.display.rawValue)
+            .property(page.rawValue)
+            .value(.init(integerLiteral: index))
+        print("Analytics displaying: \(page) at \(index)")
+        track(event)
+    }
+    
+    func introClick(_ label: Label.Navigation, page: Property.OnboardingPage?, index: Int) {
+        guard let page else {
             return
         }
         let event = Structured(category: Category.intro.rawValue,
                                action: Action.click.rawValue)
             .label(label.rawValue)
-            .property(Property.screenName(pageAsInt).rawValue)
-            .value(.init(integerLiteral: pageAsInt))
+            .property(page.rawValue)
+            .value(.init(integerLiteral: index))
+        print("Analytics clickling: \(page) at \(index)")
         track(event)
     }
     

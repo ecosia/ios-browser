@@ -109,16 +109,19 @@ extension WelcomeTour {
             return view
         }
         var analyticsValue: Analytics.Property.OnboardingPage {
-            // TODO: Review .green and .transparent analytics values
             switch self {
-            case .planet, .green:
+            case .planet:
                 return .search
             case .profit:
                 return .profits
             case .action:
                 return .action
-            case .trees, .transparent:
+            case .trees:
                 return .privacy
+            case .green:
+                return .greenSearch
+            case .transparent:
+                return .transparentFinances
             }
         }
     }
