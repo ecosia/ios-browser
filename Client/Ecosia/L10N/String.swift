@@ -217,23 +217,5 @@ extension String {
         case openExternalLinkDescription = "%@ wants to open this application."
         case sendUsageDataSettingsTitle = "Send usage data"
         case sendUsageDataSettingsDescription = "To improve our browser apps, we collect usage statistics from your device. These are anonymous and protect your privacy."
-        
-        // Strings not translated (used only in raw form)
-        // TODO: Move this strings out of this file since they don't need to be localized
-        case yourImpactSectionAccessibilityHint = "Open the Your Impact section"
-        case yourImpactSectionAccessibilityLabel = "Your Impact section, highlithing the trees planted by yourself and the Ecosia community overall. You have contributed to plant %@ trees. The total number of trees planted by the Ecosia community has reached %@"
-        case pageControlDots = "Page control dots"
-        case backButtonAccessibilityLabel = "Back"
-        case onboardingIllustrationTour1 = "This onboarding illustration shows how by performing searches via the Ecosia app, you are leveling up your tree planting impact score. A small search screenshot and a smaller Your Impact section is shown. Leaves on the background."
-        case onboardingIllustrationTour1Alternative = "This onboarding illustration shows how by performing searches via the Ecosia app, you are leveling up your planed-friendly lifestyle. A small search input field screenshot and result example containing the green icon is shown. A forest can be seen on the background."
-        case onboardingIllustrationTour2 = "This onboarding illustration shows briefly an example of a before and after comparision of trees planted in a land. The image is a screenshot from the satellite view."
-        case onboardingIllustrationTour3 = "This onboarding illustration shows a few numbers like the projects Ecosia is involved in, the total number of trees planted by the Ecosia community, alongisde the number of countries Ecosia is active. A small map of the planisphere with trees pins in few geographic location, background."
-        case onboardingIllustrationTour4 = "This onboarding illustration is a photo of a monkey climbing a tree. It function mainly as general decoration image."
-        case onboardingIllustrationTour4Alternative = "This onboarding illustration shows the latest financial reports of Ecosia. On the background there is an image of a person caring for tree seedlings"
-        case onboardingSkipTourButtonAccessibilityLabel = "Skip the onboarding"
-        case onboardingContinueCTAButtonAccessibilityLabel = "Continue to the next onboarding page"
-        case onboardingFinishCTAButtonAccessibilityLabel = "Finish onbaording and start contributing to Ecosia"
-        case onboardingStepTitleAccessibilityLabel = "This is the title of the onboarding step"
-        case onboardingStepSubtitleAccessibilityLabel = "This is the subtitle of the onboarding step"
     }
 }

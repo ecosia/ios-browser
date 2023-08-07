@@ -13,37 +13,37 @@ extension WelcomeTour {
         let background: Background
         let content: UIView?
 
-        init(title: String, text: String, background: Background, content: UIView?, accessibleDescription: String) {
+        init(title: String, text: String, background: Background, content: UIView?, accessibleDescription: Accessibility) {
             self.title = title
             self.text = text
             self.background = background
             content?.isAccessibilityElement = true
-            content?.accessibilityLabel = accessibleDescription
+            content?.accessibilityLabel = accessibleDescription.rawValue
             self.content = content
         }
 
         static var planet: Step {
-            return .init(title: .localized(.aBetterPlanet), text: .localized(.searchTheWeb), background: .init(image: "tour1"), content: WelcomeTourPlanet(), accessibleDescription: .localized(.onboardingIllustrationTour1))
+            return .init(title: .localized(.aBetterPlanet), text: .localized(.searchTheWeb), background: .init(image: "tour1"), content: WelcomeTourPlanet(), accessibleDescription: .illustrationTour1)
         }
         
         static var green: Step {
-            return .init(title: .localized(.grennestWayToSearch), text: .localized(.planetFriendlySearch), background: .init(image: "tour1-alternative"), content: WelcomeTourGreen(), accessibleDescription: .localized(.onboardingIllustrationTour1Alternative))
+            return .init(title: .localized(.grennestWayToSearch), text: .localized(.planetFriendlySearch), background: .init(image: "tour1-alternative"), content: WelcomeTourGreen(), accessibleDescription: .illustrationTour1Alternative)
         }
 
         static var profit: Step {
-            return .init(title: .localized(.hundredPercentOfProfits), text: .localized(.weUseAllOurProfits), background: .init(image: "tour2"), content: WelcomeTourProfit(), accessibleDescription: .localized(.onboardingIllustrationTour2))
+            return .init(title: .localized(.hundredPercentOfProfits), text: .localized(.weUseAllOurProfits), background: .init(image: "tour2"), content: WelcomeTourProfit(), accessibleDescription: .illustrationTour2)
         }
 
         static var action: Step {
-            return .init(title: .localized(.collectiveAction), text: .localized(.join15Million), background: .init(image: "tour3", color: UIColor(rgb: 0x668A7A)), content: WelcomeTourAction(), accessibleDescription: .localized(.onboardingIllustrationTour3))
+            return .init(title: .localized(.collectiveAction), text: .localized(.join15Million), background: .init(image: "tour3", color: UIColor(rgb: 0x668A7A)), content: WelcomeTourAction(), accessibleDescription: .illustrationTour3)
         }
 
         static var trees: Step {
-            return .init(title: .localized(.weWantTrees), text: .localized(.weDontCreateAProfile), background: .init(image: "tour4"), content: nil, accessibleDescription: .localized(.onboardingIllustrationTour4))
+            return .init(title: .localized(.weWantTrees), text: .localized(.weDontCreateAProfile), background: .init(image: "tour4"), content: nil, accessibleDescription: .illustrationTour4)
         }
         
         static var transparent: Step {
-            return .init(title: .localized(.realResults), text: .localized(.shownExactlyHowMuch), background: .init(image: "tour4-alternative"), content: WelcomeTourTransparent(), accessibleDescription: .localized(.onboardingIllustrationTour4Alternative))
+            return .init(title: .localized(.realResults), text: .localized(.shownExactlyHowMuch), background: .init(image: "tour4-alternative"), content: WelcomeTourTransparent(), accessibleDescription: .illustrationTour4Alternative)
         }
 
         static var all: [Step] {
