@@ -262,7 +262,7 @@ final class Analytics {
                                action: Action.click.rawValue)
             .label(Label.Bookmarks.importFunctionality.rawValue)
             .property(property.rawValue)
-        tracker.track(event)
+        track(event)
     }
 
     func bookmarksEmptyLearnMoreClicked() {
@@ -270,14 +270,14 @@ final class Analytics {
                                action: Action.click.rawValue)
             .label(Label.Bookmarks.learnMore.rawValue)
             .property(Property.Bookmarks.emptyState.rawValue)
-        tracker.track(event)
+        track(event)
     }
     
     func bookmarksNtp(action: Action.Promo) {
         let event = Structured(category: Category.bookmarks.rawValue,
                                action: action.rawValue)
             .label(Label.Bookmarks.bookmarksPromo.rawValue)
-        tracker.track(event)
+        track(event)
     }
     
     func bookmarksImportEnded(_ property: Property.Bookmarks) {
@@ -285,7 +285,7 @@ final class Analytics {
                                action: Action.Bookmarks.import.rawValue)
             .label(Label.Bookmarks.import.rawValue)
             .property(property.rawValue)
-        tracker.track(event)
+        track(event)
     }
     
     func introClick(_ label: Label.Navigation, at page: Property.OnboardingPage?) {
