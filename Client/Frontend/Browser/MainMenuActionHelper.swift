@@ -419,7 +419,8 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
         let nightModeEnabled = NightModeHelper.isActivated(profile.prefs)
         let nightModeTitle: String = nightModeEnabled ? .localized(.turnOffDarkMode) : .localized(.forceDarkMode)
         let nightMode = SingleActionViewModel(title: nightModeTitle, text: .localized(.invertColors),
-                                              iconString: nightModeEnabled ? "menu-NightMode-off" : ImageIdentifiers.nightMode,
+                                              // Ecosia: replacing the menu-NightMode-off with the Ecosia's one
+                                              iconString: nightModeEnabled ? "darkModeSolid" : ImageIdentifiers.nightMode,
                                               isEnabled: nightModeEnabled) { _ in
             NightModeHelper.toggle(self.profile.prefs, tabManager: self.tabManager)
 

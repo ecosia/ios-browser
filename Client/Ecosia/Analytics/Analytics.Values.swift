@@ -22,6 +22,7 @@ extension Analytics {
     enum Label {
         enum Navigation: String {
             case
+            inapp,
             home,
             projects,
             counter,

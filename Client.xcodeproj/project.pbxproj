@@ -138,6 +138,8 @@
 		2C9C9FF72A03C7CF0038A3DD /* UnleashBingExperimentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9C9FF62A03C7CF0038A3DD /* UnleashBingExperimentTests.swift */; };
 		2CA16FDE1E5F089100332277 /* SearchTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CA16FDD1E5F089100332277 /* SearchTest.swift */; };
 		2CA2040629D4954F006848DE /* EcosiaPageActionMenuCellTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CA2040529D4954F006848DE /* EcosiaPageActionMenuCellTests.swift */; };
+		2CAD6D992A7A96C000C2E96D /* Analytics+Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CAD6D982A7A96C000C2E96D /* Analytics+Configuration.swift */; };
+		2CAD6D9E2A7AAFDC00C2E96D /* AnalyticsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CAD6D9C2A7AAFC600C2E96D /* AnalyticsTests.swift */; };
 		2CB1A65A1FDEA8B60084E96D /* NewTabSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB1A6591FDEA8B60084E96D /* NewTabSettings.swift */; };
 		2CB3BEDA29E03ED700C1951F /* MozillaAppServices in Frameworks */ = {isa = PBXBuildFile; productRef = 2CB3BED929E03ED700C1951F /* MozillaAppServices */; };
 		2CB56E3F1E926BFB00AF7586 /* ToolbarTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB56E3E1E926BFB00AF7586 /* ToolbarTest.swift */; };
@@ -1752,6 +1754,8 @@
 		2C9C9FF62A03C7CF0038A3DD /* UnleashBingExperimentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnleashBingExperimentTests.swift; sourceTree = "<group>"; };
 		2CA16FDD1E5F089100332277 /* SearchTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchTest.swift; sourceTree = "<group>"; };
 		2CA2040529D4954F006848DE /* EcosiaPageActionMenuCellTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaPageActionMenuCellTests.swift; sourceTree = "<group>"; };
+		2CAD6D982A7A96C000C2E96D /* Analytics+Configuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Analytics+Configuration.swift"; sourceTree = "<group>"; };
+		2CAD6D9C2A7AAFC600C2E96D /* AnalyticsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsTests.swift; sourceTree = "<group>"; };
 		2CAE4511992E91A32AB7D7C7 /* th */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = th; path = th.lproj/Today.strings; sourceTree = "<group>"; };
 		2CB1A6591FDEA8B60084E96D /* NewTabSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTabSettings.swift; sourceTree = "<group>"; };
 		2CB56E3E1E926BFB00AF7586 /* ToolbarTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToolbarTest.swift; sourceTree = "<group>"; };
@@ -5155,6 +5159,14 @@
 			name = Extensions;
 			sourceTree = "<group>";
 		};
+		2ABCCCB32A13BE74005D0C5B /* Bookmarks */ = {
+			isa = PBXGroup;
+			children = (
+				2AC54D3029DC50CE0034FA2E /* BookmarksExchange.swift */,
+			);
+			path = Bookmarks;
+			sourceTree = "<group>";
+		};
 		2C1AF2622A27A7D9003970E0 /* Toolbar+URLBar */ = {
 			isa = PBXGroup;
 			children = (
@@ -5180,14 +5192,6 @@
 				2C31ECAA2A2E13410058BC31 /* DefaultBrowserExperiment.swift */,
 			);
 			path = Unleash;
-			sourceTree = "<group>";
-		};
-		2ABCCCB32A13BE74005D0C5B /* Bookmarks */ = {
-			isa = PBXGroup;
-			children = (
-				2AC54D3029DC50CE0034FA2E /* BookmarksExchange.swift */,
-			);
-			path = Bookmarks;
 			sourceTree = "<group>";
 		};
 		2C3357E42A0D092A00E76A48 /* MMP */ = {
@@ -5778,18 +5782,6 @@
 				8A590C6028C123100032F1AA /* OpenPassBookHelper.swift */,
 			);
 			path = OpenInHelper;
-			sourceTree = "<group>";
-		};
-		8A7653C028A2E54800924ABF /* Pocket */ = {
-			isa = PBXGroup;
-			children = (
-				8A7653C128A2E57D00924ABF /* PocketDataAdaptorTests.swift */,
-				3B61CD581F2A750800D38DE1 /* PocketFeedTests.swift */,
-				E571EE7A287569960051D9AA /* PocketSponsoredStoriesProviderTests.swift */,
-				E571EE79287569960051D9AA /* PocketStoryProviderTests.swift */,
-				8AA7347A28AEDB3100443D24 /* PocketViewModelTests.swift */,
-			);
-			path = Pocket;
 			sourceTree = "<group>";
 		};
 		8AB5958628412B620090F4AE /* CustomizeHome */ = {
@@ -6614,6 +6606,7 @@
 			children = (
 				CA4D9CDF28C8D801006AFB5D /* Analytics.swift */,
 				CA4D9CE028C8D801006AFB5D /* Analytics.Values.swift */,
+				2CAD6D982A7A96C000C2E96D /* Analytics+Configuration.swift */,
 			);
 			path = Analytics;
 			sourceTree = "<group>";
@@ -6658,6 +6651,7 @@
 				CAA6AC4728E4732A00A13DE9 /* EcosiaTabMigrationTests.swift */,
 				CAA6AC4928E473D500A13DE9 /* EcosiaNTPTooltipHighlightTests.swift */,
 				2CA2040529D4954F006848DE /* EcosiaPageActionMenuCellTests.swift */,
+				2CAD6D9C2A7AAFC600C2E96D /* AnalyticsTests.swift */,
 			);
 			path = Ecosia;
 			sourceTree = "<group>";
@@ -9398,6 +9392,7 @@
 				CAEB316528D0B00900ADC9DB /* TabManagerStore.swift in Sources */,
 				E571EE782875694C0051D9AA /* PocketSponsoredStoriesProvider.swift in Sources */,
 				2F44FC721A9E840300FD20CC /* SettingsNavigationController.swift in Sources */,
+				2CAD6D992A7A96C000C2E96D /* Analytics+Configuration.swift in Sources */,
 				CA4D9CF028C8D801006AFB5D /* NTPTooltip.Highlight.swift in Sources */,
 				D0E89A2920910917001CE5C7 /* DownloadsPanel.swift in Sources */,
 				CA8BCC3728D1FB840020BC50 /* HistoryHighlightsDataAdaptor.swift in Sources */,
@@ -9835,6 +9830,7 @@
 				C8699153289177FB007ACC5C /* WallpaperDataServiceTests.swift in Sources */,
 				8AFE4C2127480D0C00B97C65 /* TabTrayViewControllerTests.swift in Sources */,
 				8A2825352760399B00395E66 /* KeyboardPressesHandlerTests.swift in Sources */,
+				2CAD6D9E2A7AAFDC00C2E96D /* AnalyticsTests.swift in Sources */,
 				6A5F591D28627C0100FABA92 /* TabManagerNavDelegateTests.swift in Sources */,
 				E1D8BC7A21FF7A0000B100BD /* TPStatsBlocklistsTests.swift in Sources */,
 				8AE80BAD2891957C00BC12EA /* TopSitesDimensionTests.swift in Sources */,
