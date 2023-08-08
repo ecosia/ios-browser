@@ -17,7 +17,7 @@ final class WelcomeTourGreen: UIView, NotificationThemeable {
     required init?(coder: NSCoder) {  nil }
 
     func setup() {
-        let iPadOffset: CGFloat = traitCollection.userInterfaceIdiom == .pad ? 30 : 0
+        let iPadOffset: CGFloat = traitCollection.userInterfaceIdiom == .pad ? 60 : 0
         
         let stack = UIStackView()
         stack.translatesAutoresizingMaskIntoConstraints = false
