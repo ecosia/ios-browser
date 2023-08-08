@@ -29,34 +29,33 @@ final class WelcomeTourRow: UIView, NotificationThemeable {
 
         let stack = UIStackView()
         stack.translatesAutoresizingMaskIntoConstraints = false
-        stack.axis = .vertical
-        stack.distribution = .fill
-        stack.alignment = .leading
-        stack.spacing = 4
+        stack.axis = .horizontal
+        stack.alignment = .center
+        stack.spacing = 8
         addSubview(stack)
 
-        stack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8).isActive = true
-        stack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8).isActive = true
+        stack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12).isActive = true
+        stack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12).isActive = true
         stack.topAnchor.constraint(equalTo: topAnchor, constant: 8).isActive = true
         stack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8).isActive = true
 
-        let topStack = UIStackView()
-        topStack.spacing = 8
-        topStack.axis = .horizontal
-        topStack.alignment = .center
-
-        stack.addArrangedSubview(topStack)
-
         let imageView = UIImageView(image: .init(named: image))
-        imageView.heightAnchor.constraint(equalToConstant: 24).isActive = true
-        imageView.widthAnchor.constraint(equalToConstant: 24).isActive = true
-        topStack.addArrangedSubview(imageView)
+        imageView.heightAnchor.constraint(equalToConstant: 33).isActive = true
+        imageView.widthAnchor.constraint(equalToConstant: 33).isActive = true
+        stack.addArrangedSubview(imageView)
+        
+        let trailingStack = UIStackView()
+        trailingStack.spacing = 5
+        trailingStack.axis = .vertical
+        trailingStack.alignment = .leading
+
+        stack.addArrangedSubview(trailingStack)
 
         let titleLabel = UILabel()
         titleLabel.text = title
         titleLabel.font = .preferredFont(forTextStyle: .body).bold()
         titleLabel.adjustsFontForContentSizeCategory = true
-        topStack.addArrangedSubview(titleLabel)
+        trailingStack.addArrangedSubview(titleLabel)
         self.titleLabel = titleLabel
 
         let textLabel = UILabel()
@@ -64,7 +63,7 @@ final class WelcomeTourRow: UIView, NotificationThemeable {
         textLabel.font = .preferredFont(forTextStyle: .footnote)
         textLabel.adjustsFontForContentSizeCategory = true
         textLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
-        stack.addArrangedSubview(textLabel)
+        trailingStack.addArrangedSubview(textLabel)
         self.textLabel = textLabel
     }
 
