@@ -38,6 +38,7 @@ class EcosiaTheme {
     var newsPlaceholder: UIColor { .Light.Background.secondary }
     
     var actionSheetBackground: UIColor { .Light.Background.primary }
+    var actionSheetCancelButton: UIColor { .Light.Button.primaryActive }
     var modalBackground: UIColor { .Light.Background.tertiary }
     var modalHeader: UIColor { .init(red: 0.153, green: 0.322, blue: 0.263, alpha: 1) }
 
@@ -109,6 +110,7 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var newsPlaceholder: UIColor { .Grey.fifty }
 
     override var actionSheetBackground: UIColor { .Dark.Background.secondary }
+    override var actionSheetCancelButton: UIColor { .Dark.Button.primaryActive }
     override var modalBackground: UIColor { .Dark.Background.secondary }
     override var modalHeader: UIColor { .Dark.Background.secondary }
 
