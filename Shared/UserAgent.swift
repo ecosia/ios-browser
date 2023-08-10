@@ -102,7 +102,6 @@ public enum UserAgentPlatform {
 public struct CustomUserAgentConstant {
     private static let defaultMobileUA = UserAgentBuilder.defaultMobileUserAgent().userAgent()
     private static let customDesktopUA = UserAgentBuilder.defaultDesktopUserAgent().clone(extensions: "Version/\(AppInfo.appVersion) \(UserAgent.uaBitSafari)")
-    private static let ecosiaMobileUA = UserAgentBuilder.ecosiaMobileUserAgent().userAgent()
     private static let ecosiaDesktopUA = "\(UserAgent.desktopUserAgent) \(UserAgent.uaBitEcosia)"
 
 
