@@ -21,7 +21,7 @@ runs:
     - name: Run tests based on file changes
       shell: bash
       run: |
-        bundles_under_testing="$(${{ inputs.needs-shared-tests }} && echo "SharedTests,")$(${{ inputs.needs-storage-tests }} && echo "StorageTests,")$(${{ inputs.needs-client-tests }} && echo "ClientTests,")"
+        bundles_under_testing=$(echo "$(${{ inputs.needs-shared-tests }} && echo "SharedTests,")$(${{ inputs.needs-storage-tests }} && echo "StorageTests,")$(${{ inputs.needs-client-tests }} && echo "ClientTests,")" | sed 's/,$//')
         bundle exec fastlane run run_tests derived_data_path:"BuildDerivedData" only_testing:"$bundles_under_testing"
 
     - name: Publish Test Report
