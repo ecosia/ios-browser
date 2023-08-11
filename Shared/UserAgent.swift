@@ -54,7 +54,8 @@ open class UserAgent {
 
 
     public static func mobileUserAgent() -> String {
-        return UserAgentBuilder.defaultMobileUserAgent().userAgent()
+        // Ecosia: Always returns the Ecosia's UA as default one
+        return UserAgentBuilder.ecosiaMobileUserAgent().userAgent()
     }
 
     public static func oppositeUserAgent(domain: String) -> String {
@@ -101,16 +102,13 @@ public enum UserAgentPlatform {
 public struct CustomUserAgentConstant {
     private static let defaultMobileUA = UserAgentBuilder.defaultMobileUserAgent().userAgent()
     private static let customDesktopUA = UserAgentBuilder.defaultDesktopUserAgent().clone(extensions: "Version/\(AppInfo.appVersion) \(UserAgent.uaBitSafari)")
-    private static let ecosiaMobileUA = UserAgentBuilder.ecosiaMobileUserAgent().userAgent()
     private static let ecosiaDesktopUA = "\(UserAgent.desktopUserAgent) \(UserAgent.uaBitEcosia)"
 
 
     public static let customUAFor = [
         "paypal.com": defaultMobileUA,
         "yahoo.com": defaultMobileUA,
-        "disneyplus.com": customDesktopUA,
-        URLProvider.production.domain: ecosiaMobileUA,
-        URLProvider.staging.domain: ecosiaMobileUA]
+        "disneyplus.com": customDesktopUA]
 
     public static let customDesktopUAFor = [
         URLProvider.production.domain: ecosiaDesktopUA,
