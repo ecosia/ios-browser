@@ -294,37 +294,31 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
     }
 
     fileprivate func setupConstraints() {
-
         scrollToTopButton.snp.makeConstraints { make in
             make.top.equalTo(self)
-            make.left.right.equalTo(self.locationContainer)
-        }
-
-        progressBar.snp.makeConstraints { make in
-            make.edges.equalTo(locationView)
+            make.left.right.equalTo(locationContainer)
         }
 
         locationView.snp.makeConstraints { make in
-            make.top.bottom.trailing.equalTo(self.locationContainer)
-            make.leading.equalTo(searchIconImageView.snp.trailing)
+            make.edges.equalTo(self.locationContainer)
         }
 
         cancelButton.snp.makeConstraints { make in
             make.leading.equalTo(self.safeArea.leading)
             make.centerY.equalTo(self.locationContainer)
-            make.size.equalTo(URLBarViewUX.ButtonHeight).priority(.required)
+            make.size.equalTo(URLBarViewUX.ButtonHeight)
         }
 
         backButton.snp.makeConstraints { make in
             make.leading.equalTo(self.safeArea.leading).offset(URLBarViewUX.Padding)
             make.centerY.equalTo(self)
-            make.size.equalTo(URLBarViewUX.ButtonHeight).priority(.high)
+            make.size.equalTo(URLBarViewUX.ButtonHeight)
         }
 
         forwardButton.snp.makeConstraints { make in
             make.leading.equalTo(self.backButton.snp.trailing)
             make.centerY.equalTo(self)
-            make.size.equalTo(URLBarViewUX.ButtonHeight).priority(.high)
+            make.size.equalTo(URLBarViewUX.ButtonHeight)
         }
 
         searchIconImageView.snp.makeConstraints { make in
@@ -345,25 +339,25 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
         bookmarksButton.snp.makeConstraints { make in
             make.trailing.equalTo(self.appMenuButton.snp.leading)
             make.centerY.equalTo(self)
-            make.size.equalTo(URLBarViewUX.ButtonHeight).priority(.high)
+            make.size.equalTo(URLBarViewUX.ButtonHeight)
         }
 
         appMenuButton.snp.makeConstraints { make in
             make.trailing.equalTo(self.safeArea.trailing).offset(-URLBarViewUX.Padding)
             make.centerY.equalTo(self)
-            make.size.equalTo(URLBarViewUX.ButtonHeight).priority(.high)
+            make.size.equalTo(URLBarViewUX.ButtonHeight)
         }
 
         circleButton.snp.makeConstraints { make in
             make.trailing.equalTo(self.tabsButton.snp.leading)
             make.centerY.equalTo(self)
-            make.size.equalTo(URLBarViewUX.ButtonHeight).priority(.high)
+            make.size.equalTo(URLBarViewUX.ButtonHeight)
         }
 
         tabsButton.snp.makeConstraints { make in
             make.trailing.equalTo(self.appMenuButton.snp.leading)
             make.centerY.equalTo(self)
-            make.size.equalTo(URLBarViewUX.ButtonHeight).priority(.high)
+            make.size.equalTo(URLBarViewUX.ButtonHeight)
         }
 
         showQRScannerButton.snp.makeConstraints { make in
@@ -375,7 +369,7 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
         multiStateButton.snp.makeConstraints { make in
             make.trailing.equalTo(self.safeArea.trailing)
             make.centerY.equalTo(self.locationContainer)
-            make.size.equalTo(URLBarViewUX.ButtonHeight).priority(.high)
+            make.size.equalTo(URLBarViewUX.ButtonHeight)
         }
 
         // Ecosia: Remove private mode badge
@@ -423,11 +417,11 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
                 make.centerY.equalTo(self)
             }
             self.locationView.snp.remakeConstraints { make in
-                make.top.bottom.right.equalTo(self.locationContainer)
-                make.leading.equalTo(searchIconImageView.snp.trailing).offset(8)
+                make.top.bottom.trailing.equalTo(self.locationContainer).inset(UIEdgeInsets(equalInset: URLBarViewUX.TextFieldBorderWidthSelected))
+                make.leading.equalTo(self.searchIconImageView.snp.trailing)
             }
             self.locationTextField?.snp.remakeConstraints { make in
-                make.edges.equalTo(self.locationView).inset(UIEdgeInsets(top: 0, left: 0, bottom: 0, right: URLBarViewUX.LocationLeftPadding))
+                make.edges.equalTo(self.locationView).inset(UIEdgeInsets(top: 0, left: URLBarViewUX.LocationLeftPadding, bottom: 0, right: URLBarViewUX.LocationLeftPadding))
             }
         } else {
             // Ecosia: searchIconImageView.alpha = 0
@@ -442,10 +436,9 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
                     }
                 } else {
                     // Otherwise, left align the location view
-                    let rightPadding = toolbarIsShowing ? URLBarViewUX.ButtonHeight : 16
-                    make.leading.trailing.equalTo(self).inset(UIEdgeInsets(top: 0, left: 16, bottom: 0, right: rightPadding))
+                    make.leading.trailing.equalTo(self).inset(UIEdgeInsets(top: 0, left: URLBarViewUX.LocationLeftPadding-1, bottom: 0, right: URLBarViewUX.LocationLeftPadding-1))
                 }
-                make.height.equalTo(URLBarViewUX.LocationHeight+URLBarViewUX.TextFieldBorderWidthSelected * 2)
+                make.height.greaterThanOrEqualTo(URLBarViewUX.LocationHeight+2)
                 make.centerY.equalTo(self)
             }
 
