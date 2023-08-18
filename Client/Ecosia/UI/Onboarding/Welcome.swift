@@ -3,6 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import UIKit
+import Core
 
 protocol WelcomeDelegate: AnyObject {
     func welcomeDidFinish(_ welcome: Welcome)
@@ -54,6 +55,10 @@ final class Welcome: UIViewController {
             LegacyThemeManager.instance.current = userInterfaceStyle == .dark ? DarkTheme() : NormalTheme()
         }
 
+        Task.detached {
+            // Fetching FinancialReports async as some onboarding steps might use it
+            try? await FinancialReports.shared.fetchAndUpdate()
+        }
     }
 
     private var didAppear = false

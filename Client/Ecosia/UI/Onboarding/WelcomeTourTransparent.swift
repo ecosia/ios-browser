@@ -43,13 +43,12 @@ final class WelcomeTourTransparent: UIView, NotificationThemeable {
         
         addMonthView(toStack: stack)
         
-        let financialReports = TreeCounter.shared.statistics.financialReports
-        if let totalIncome = currencyNumberFormatter.string(from: .init(value: financialReports.value)) {
+        let report = FinancialReports.shared.latestReport
+        if let totalIncome = currencyNumberFormatter.string(from: .init(value: report.totalIncome)) {
             let income = WelcomeTourRow(image: "financialReports", title: totalIncome, text: .localized(.totalIncome))
             stack.addArrangedSubview(income)
         }
-
-        let treesFinanced = "741,333" // TODO: Read from somewhere dynamically
+        let treesFinanced = String(report.numberOfTreesFinanced)
         let trees = WelcomeTourRow(image: "treesUpdate", title: treesFinanced, text: .localized(.treesFinanced))
         stack.addArrangedSubview(trees)
     }
@@ -78,15 +77,13 @@ final class WelcomeTourTransparent: UIView, NotificationThemeable {
         containerStack.translatesAutoresizingMaskIntoConstraints = false
         monthView.addSubview(containerStack)
         
-        if let monthAndYearString = TreeCounter.shared.statistics.financialReports.localizedMonthAndYear {
-            let label = UILabel()
-            label.translatesAutoresizingMaskIntoConstraints = false
-            label.text = monthAndYearString
-            label.textColor = .theme.ecosia.secondaryBrand
-            label.font = .preferredFont(forTextStyle: .footnote)
-            label.setContentCompressionResistancePriority(.required, for: .horizontal)
-            containerStack.addArrangedSubview(label)
-        }
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = FinancialReports.shared.localizedMonthAndYear
+        label.textColor = .theme.ecosia.secondaryBrand
+        label.font = .preferredFont(forTextStyle: .footnote)
+        label.setContentCompressionResistancePriority(.required, for: .horizontal)
+        containerStack.addArrangedSubview(label)
         
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
