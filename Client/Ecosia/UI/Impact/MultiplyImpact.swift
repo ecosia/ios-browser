@@ -625,7 +625,7 @@ https://ecosia.co/install-ios
 
     // MARK: Number formatting
     private var activeUsers: String {
-        let activeUsers = Int(TreeCounter.shared.statistics.activeUsers)
+        let activeUsers = Int(Statistics.shared.activeUsers)
         let oneMillion = 1000000
         let million = activeUsers / oneMillion
         return "\(million)"
