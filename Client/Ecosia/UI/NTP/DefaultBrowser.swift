@@ -160,7 +160,7 @@ final class DefaultBrowser: UIViewController, NotificationThemeable {
         self.arrow1 = arrow1
 
         let text1 = UILabel()
-        text1.text = .localized(.openAllLinksToPlantTrees, incentivizedSearchAlternative: .openAllLinksAutomatically)
+        text1.text = .localized(.openAllLinksAutomatically, incentivizedSearchAlternative: .openAllLinksToPlantTrees)
         text1.translatesAutoresizingMaskIntoConstraints = false
         text1.font = .preferredFont(forTextStyle: .subheadline)
         text1.adjustsFontForContentSizeCategory = true
@@ -182,7 +182,7 @@ final class DefaultBrowser: UIViewController, NotificationThemeable {
         self.arrow2 = arrow2
 
         let text2 = UILabel()
-        text2.text = .localized(.growYourImpact, incentivizedSearchAlternative: .beClimateActive)
+        text2.text = .localized(.beClimateActive, incentivizedSearchAlternative: .growYourImpact)
         text2.translatesAutoresizingMaskIntoConstraints = false
         text2.font = .preferredFont(forTextStyle: .subheadline)
         text2.adjustsFontForContentSizeCategory = true
