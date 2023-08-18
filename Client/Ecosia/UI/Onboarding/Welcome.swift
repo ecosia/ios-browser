@@ -62,7 +62,7 @@ final class Welcome: UIViewController {
         addMask()
         fadeIn()
         didAppear = true
-        Analytics.shared.introDisplaying(page: .start, index: 0)
+        Analytics.shared.introDisplaying(page: .start, at: 0)
     }
 
     private func addOverlay() {

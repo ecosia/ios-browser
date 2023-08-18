@@ -255,7 +255,7 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
             }
         }
         
-        Analytics.shared.introDisplaying(page: current?.analyticsValue, index: currentAnalyticsIndex)
+        Analytics.shared.introDisplaying(page: current?.analyticsValue, at: currentAnalyticsIndex)
         updateAccessibilityLabels(step: step)
     }
     
@@ -294,7 +294,7 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
     @objc func back() {
         guard !isFirstStep() else {
             dismiss(animated: true) {
-                Analytics.shared.introDisplaying(page: .start, index: 0)
+                Analytics.shared.introDisplaying(page: .start, at: 0)
             }
             return
         }
@@ -326,7 +326,6 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
     private var currentIndex: Int {
         guard let current = current else { return 0 }
         let index = steps.firstIndex(of: current) ?? 0
-        print("(Analytics) Current index returned: \(index)")
         return index
     }
     

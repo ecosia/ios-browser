@@ -276,7 +276,7 @@ final class Analytics {
         track(event)
     }
     
-    func introDisplaying(page: Property.OnboardingPage?, index: Int) {
+    func introDisplaying(page: Property.OnboardingPage?, at index: Int) {
         guard let page else {
             return
         }
@@ -284,7 +284,6 @@ final class Analytics {
                                action: Action.display.rawValue)
             .property(page.rawValue)
             .value(.init(integerLiteral: index))
-        print("Analytics displaying: \(page) at \(index)")
         track(event)
     }
     
@@ -297,7 +296,6 @@ final class Analytics {
             .label(label.rawValue)
             .property(page.rawValue)
             .value(.init(integerLiteral: index))
-        print("Analytics clickling: \(page) at \(index)")
         track(event)
     }
     
