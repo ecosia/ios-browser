@@ -72,20 +72,20 @@ extension WelcomeTour {
                 return .init(image: "tour4-alternative")
             }
         }
-        var accessibleDescription: Accessibility {
+        var accessibleDescriptionKey: String.Key {
             switch self {
             case .planet:
-                return .illustrationTour1
+                return .onboardingIllustrationTour1
             case .green:
-                return .illustrationTour1Alternative
+                return .onboardingIllustrationTour1Alternative
             case .profit:
-                return .illustrationTour2
+                return .onboardingIllustrationTour2
             case .action:
-                return .illustrationTour3
+                return .onboardingIllustrationTour3
             case .trees:
-                return .illustrationTour4
+                return .onboardingIllustrationTour4
             case .transparent:
-                return .illustrationTour4Alternative
+                return .onboardingIllustrationTour4Alternative
             }
         }
         var content: UIView? {
@@ -105,7 +105,7 @@ extension WelcomeTour {
                 view = WelcomeTourTransparent()
             }
             view?.isAccessibilityElement = true
-            view?.accessibilityLabel = accessibleDescription.rawValue
+            view?.accessibilityLabel = .localized(accessibleDescriptionKey)
             return view
         }
         var analyticsValue: Analytics.Property.OnboardingPage {

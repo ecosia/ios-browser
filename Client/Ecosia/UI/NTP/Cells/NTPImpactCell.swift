@@ -74,8 +74,8 @@ final class NTPImpactCell: UICollectionViewCell, NotificationThemeable, Reusable
     func updateAccessibilityElements() {
         container.isAccessibilityElement = true
         container.shouldGroupAccessibilityChildren = true
-        container.accessibilityHint = Accessibility.sectionAccessibilityHint.rawValue
-        container.accessibilityLabel = String(format: Accessibility.sectionAccessibilityLabel.rawValue, treesCount.text!, globalCount.text!)
+        container.accessibilityHint = .localized(.impactSectionAccessibilityHint)
+        container.accessibilityLabel = String(format: .localized(.impactSectionAccessibilityLabel), treesCount.text!, globalCount.text!)
     }
 
     func display(_ model: Model, animated: Bool) {
