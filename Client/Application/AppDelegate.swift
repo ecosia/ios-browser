@@ -120,7 +120,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Ecosia
         FeatureManagement.fetchConfiguration()
         MMP.sendSession()
-        _ = TreeCounter.shared //Forcing statistics to be fetched before they are used anywhere
+        Task.detached {
+            try? await Statistics.shared.fetchAndUpdate()
+        }
     }
 
     func applicationWillResignActive(_ application: UIApplication) {
