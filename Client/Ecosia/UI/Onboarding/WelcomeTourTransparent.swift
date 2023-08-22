@@ -9,13 +9,6 @@ final class WelcomeTourTransparent: UIView, NotificationThemeable {
 
     private weak var stack: UIStackView!
 
-    lazy var currencyNumberFormatter: NumberFormatter = {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.currencySymbol = "€"
-        return formatter
-    }()
-
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
@@ -44,13 +37,16 @@ final class WelcomeTourTransparent: UIView, NotificationThemeable {
         addMonthView(toStack: stack)
         
         let report = FinancialReports.shared.latestReport
-        if let totalIncome = currencyNumberFormatter.string(from: .init(value: report.totalIncome)) {
+        if let totalIncome = getCurrencyNumberFormatter()
+            .string(from: .init(value: report.totalIncome)) {
             let income = WelcomeTourRow(image: "financialReports", title: totalIncome, text: .localized(.totalIncome))
             stack.addArrangedSubview(income)
         }
-        let treesFinanced = String(report.numberOfTreesFinanced)
-        let trees = WelcomeTourRow(image: "treesUpdate", title: treesFinanced, text: .localized(.treesFinanced))
-        stack.addArrangedSubview(trees)
+        if let treesFinanced = getCurrencyNumberFormatter(withoutSymbol: true)
+            .string(from: .init(value: report.numberOfTreesFinanced)) {
+            let trees = WelcomeTourRow(image: "treesUpdate", title: treesFinanced, text: .localized(.treesFinanced))
+            stack.addArrangedSubview(trees)
+        }
     }
 
     func applyTheme() {
@@ -108,5 +104,15 @@ final class WelcomeTourTransparent: UIView, NotificationThemeable {
         
         // Adding view for extra spacing on parent stack below this specific view
         parentStack.addArrangedSubview(UIView(frame: .init(width: 0, height: 8)))
+    }
+    
+    func getCurrencyNumberFormatter(withoutSymbol: Bool = false) -> NumberFormatter {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.currencySymbol = withoutSymbol ? "" : "€"
+        formatter.maximumFractionDigits = 0
+        formatter.usesGroupingSeparator = true
+        formatter.currencyGroupingSeparator = ","
+        return formatter
     }
 }
