@@ -143,7 +143,6 @@ extension Analytics {
             profits,
             action,
             privacy,
-            // TODO: Review .greenSearch and .transparentFinances analytics values
             greenSearch = "green_search",
             transparentFinances = "transparent_finances"
         }
