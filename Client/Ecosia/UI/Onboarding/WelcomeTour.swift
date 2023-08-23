@@ -70,7 +70,7 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
         let backButton = UIButton.systemButton(with: .init(named: "backChevron")!, target: self, action: #selector(back))
         navStack.addArrangedSubview(backButton)
         backButton.widthAnchor.constraint(equalToConstant: 44).isActive = true
-        backButton.accessibilityLabel = .localized(.onboardingBackButton)
+        backButton.accessibilityLabel = .localized(.onboardingBackButtonAccessibility)
         navStack.addArrangedSubview(backButton)
         self.backButton = backButton
 
@@ -80,7 +80,7 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
         pageControl.currentPage = 0
         pageControl.setContentHuggingPriority(.defaultLow, for: .horizontal)
         pageControl.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
-        pageControl.accessibilityLabel = .localized(.onboardingPageControlDots)
+        pageControl.accessibilityLabel = .localized(.onboardingPageControlDotsAccessibility)
         navStack.addArrangedSubview(pageControl)
         self.pageControl = pageControl
 
@@ -94,7 +94,7 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
         skipButton.setContentCompressionResistancePriority(.required, for: .horizontal)
         navStack.addArrangedSubview(skipButton)
         skipButton.setTitle(.localized(.skip), for: .normal)
-        skipButton.accessibilityLabel = .localized(.onboardingSkipTourButton)
+        skipButton.accessibilityLabel = .localized(.onboardingSkipTourButtonAccessibility)
         skipButton.titleLabel?.font = .preferredFont(forTextStyle: .body)
         skipButton.titleLabel?.adjustsFontForContentSizeCategory = true
 
@@ -262,7 +262,7 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
     private func updateAccessibilityLabels(step: Step) {
         titleLabel.accessibilityLabel = step.title
         subtitleLabel.accessibilityLabel = step.text
-        ctaButton.accessibilityLabel = isLastStep() ? .localized(.onboardingFinishCTAButton) : .localized(.onboardingContinueCTAButton)
+        ctaButton.accessibilityLabel = isLastStep() ? .localized(.onboardingFinishCTAButtonAccessibility) : .localized(.onboardingContinueCTAButtonAccessibility)
     }
 
     private func moveRight() {
