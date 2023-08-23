@@ -1,1 +1,4 @@
+Corrections de bogues et améliorations générales, notamment la résolution d'un bogue qui provoquait un chargement lent lors de la vérification de la sécurité de la page.
 
+
+Nous travaillons sans relâche pour améliorer Ecosia pour vous. Si vous avez des questions ou des remarques, n'hésitez pas à les communiquer à notre équipe à l'adresse iosapp@ecosia.org. Nous serons ravis d'avoir de vos nouvelles !
