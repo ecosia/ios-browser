@@ -1,1 +1,4 @@
+Correzioni di bug e miglioramenti generali, in particolare la risoluzione di un bug che causava un caricamento lento durante il controllo di sicurezza della pagina.
 
+
+Siamo sempre al lavoro per migliorare la tua esperienza con Ecosia. Puoi inviare domande o osservazioni al nostro team a iosapp@ecosia.org. Saremo felici di ascoltare la tua opinione!
