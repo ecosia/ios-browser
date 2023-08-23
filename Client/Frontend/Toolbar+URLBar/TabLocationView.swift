@@ -97,7 +97,6 @@ class TabLocationView: UIView {
                                          action: #selector(self.longPressReaderModeButton)))
         readerModeButton.isAccessibilityElement = true
         readerModeButton.isHidden = true
-        readerModeButton.contentHorizontalAlignment = .right
         readerModeButton.accessibilityLabel = .TabLocationReaderModeAccessibilityLabel
         readerModeButton.accessibilityIdentifier = AccessibilityIdentifiers.Toolbar.readerModeButton
         readerModeButton.accessibilityCustomActions = [
@@ -113,8 +112,7 @@ class TabLocationView: UIView {
         reloadButton.addGestureRecognizer(
             UILongPressGestureRecognizer(target: self, action: #selector(longPressReloadButton)))
         reloadButton.imageView?.contentMode = .scaleAspectFit
-        reloadButton.contentHorizontalAlignment = .left
-        reloadButton.imageEdgeInsets = .init(top: 0, left: 5, bottom: 0, right: 0)
+        reloadButton.contentHorizontalAlignment = .center
         reloadButton.accessibilityLabel = .TabLocationReloadAccessibilityLabel
         reloadButton.accessibilityIdentifier = AccessibilityIdentifiers.Toolbar.reloadButton
         reloadButton.isAccessibilityElement = true

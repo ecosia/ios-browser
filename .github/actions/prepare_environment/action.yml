@@ -77,9 +77,6 @@ runs:
             Client/Assets/*.js.LICENSE.txt
         key: ${{ runner.os }}-content-blocker-cache-${{ hashFiles('content_blocker_commit_sha.txt') }}
 
-    - name: Restore derived data Cache
-      uses: ./.github/actions/restore_derived_data
-
     - name: Create empty Staging xcconfig
       shell: bash
       run: touch Client/Configuration/Staging.xcconfig

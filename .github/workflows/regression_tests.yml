@@ -28,6 +28,3 @@ jobs:
           needs-storage-tests: ${{ true }}
           needs-client-tests: ${{ true }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Update derived data cache
-        uses: ./.github/actions/save_derived_data
