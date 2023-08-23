@@ -14560,7 +14560,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = "MOB-1903_dynamic_trees_financed_data";
+				branch = main;
 				kind = branch;
 			};
 		};
