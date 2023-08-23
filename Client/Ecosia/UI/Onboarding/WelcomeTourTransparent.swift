@@ -6,13 +6,16 @@ import UIKit
 import Core
 
 final class WelcomeTourTransparent: UIView, NotificationThemeable {
-
     private weak var stack: UIStackView!
+    private weak var monthView: UIView!
+    private weak var monthViewLabel: UILabel!
+    private weak var monthViewImage: UIImageView!
 
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
         updateAccessibilitySettings()
+        applyTheme()
     }
 
     required init?(coder: NSCoder) {  nil }
@@ -53,6 +56,7 @@ final class WelcomeTourTransparent: UIView, NotificationThemeable {
         stack.arrangedSubviews.forEach { view in
             (view as? NotificationThemeable)?.applyTheme()
         }
+        applyThemeToMonthView()
     }
     
     func updateAccessibilitySettings() {
@@ -63,8 +67,8 @@ final class WelcomeTourTransparent: UIView, NotificationThemeable {
     func addMonthView(toStack parentStack: UIStackView) {
         let monthView = UIView()
         monthView.translatesAutoresizingMaskIntoConstraints = false
-        monthView.backgroundColor = .theme.ecosia.primaryHighlight.withAlphaComponent(0.5)
         parentStack.addArrangedSubview(monthView)
+        self.monthView = monthView
         
         let containerStack = UIStackView()
         containerStack.axis = .horizontal
@@ -76,20 +80,20 @@ final class WelcomeTourTransparent: UIView, NotificationThemeable {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = FinancialReports.shared.localizedMonthAndYear
-        label.textColor = .theme.ecosia.secondaryBrand
         label.font = .preferredFont(forTextStyle: .footnote)
         label.setContentCompressionResistancePriority(.required, for: .horizontal)
         containerStack.addArrangedSubview(label)
+        self.monthViewLabel = label
         
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
         let image = UIImage(named: "chevronDown")?.withRenderingMode(.alwaysTemplate)
         imageView.image = image
-        imageView.tintColor = .theme.ecosia.secondaryBrand
         imageView.heightAnchor.constraint(equalToConstant: 16).isActive = true
         imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor).isActive = true
         containerStack.addArrangedSubview(imageView)
+        self.monthViewImage = imageView
         
         NSLayoutConstraint.activate([
             containerStack.topAnchor.constraint(equalTo: monthView.topAnchor, constant: 8),
@@ -104,6 +108,12 @@ final class WelcomeTourTransparent: UIView, NotificationThemeable {
         
         // Adding view for extra spacing on parent stack below this specific view
         parentStack.addArrangedSubview(UIView(frame: .init(width: 0, height: 8)))
+    }
+    
+    func applyThemeToMonthView() {
+        monthView.backgroundColor = .theme.ecosia.primaryButton
+        monthViewLabel.textColor = .theme.ecosia.tertiaryText
+        monthViewImage.tintColor = .theme.ecosia.tertiaryText
     }
     
     func getCurrencyNumberFormatter(withoutSymbol: Bool = false) -> NumberFormatter {

@@ -24,13 +24,13 @@ extension UIColor {
         struct Text {
             static let primary = UIColor(red: 0.059, green: 0.059, blue: 0.059, alpha: 1)
             static let secondary = UIColor(red: 0.424, green: 0.424, blue: 0.424, alpha: 1)
+            static let tertiary = UIColor.white
         }
 
         struct State {
             static let warning = UIColor(rgb: 0xFD4256)
             static let information = UIColor(red: 0, green: 0.494, blue: 0.659, alpha: 1)
             static let disabled = UIColor(rgb: 0xDEDED9)
-            static let primaryHighlight = UIColor(red: 0.36, green: 0.82, blue: 0.37, alpha: 1)
         }
         
         struct Icon {
@@ -41,7 +41,6 @@ extension UIColor {
         
         struct Brand {
             static let primary = UIColor(red: 0, green: 0.5, blue: 0.033, alpha: 1)
-            static let secondary = UIColor(red: 0.15, green: 0.32, blue: 0.26, alpha: 1)
         }
         
         static let border = UIColor(rgb: 0xDEDED9)
@@ -65,20 +64,17 @@ extension UIColor {
         struct Text {
             static let primary = UIColor.white
             static let secondary = UIColor(red: 0.871, green: 0.871, blue: 0.851, alpha: 1)
+            static let tertiary = UIColor(red: 0.2, green: 0.2, blue: 0.2, alpha: 1)
         }
 
         struct State {
             static let warning = UIColor(rgb: 0xFF8A8C)
             static let information = UIColor(red: 0.589, green: 0.839, blue: 0.973, alpha: 1)
             static let disabled = UIColor(rgb: 0x6C6C6C)
-            // TODO: Review dark state highlight primary color
-            static let primaryHighlight = UIColor(red: 0.36, green: 0.82, blue: 0.37, alpha: 1)
         }
         
         struct Brand {
             static let primary = UIColor(red: 0.365, green: 0.824, blue: 0.369, alpha: 1)
-            // TODO: Review dark brand secondary color
-            static let secondary = UIColor(red: 0.15, green: 0.32, blue: 0.26, alpha: 1)
         }
         
         struct Icon {

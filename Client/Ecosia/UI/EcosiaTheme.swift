@@ -12,9 +12,7 @@ extension LegacyTheme {
 
 class EcosiaTheme {
     var primaryBrand: UIColor { .Light.Brand.primary}
-    // TODO: Review correct brand secondary color
-//    var secondaryBrand: UIColor { UIColor.Photon.Grey60 }
-    var secondaryBrand: UIColor { .Light.Brand.secondary }
+    var secondaryBrand: UIColor { UIColor.Photon.Grey60 }
     var border: UIColor { .Light.border }
 
     var primaryBackground: UIColor { .Light.Background.primary }
@@ -48,6 +46,7 @@ class EcosiaTheme {
     var primaryTextInverted: UIColor { .Dark.Text.primary }
     var secondaryText: UIColor { .Light.Text.secondary }
     var navigationBarText: UIColor { .Light.Text.primary }
+    var tertiaryText: UIColor { .Light.Text.tertiary }
 
     var primaryIcon: UIColor { .Light.Icon.primary }
     var secondaryIcon: UIColor { .Light.Icon.secondary }
@@ -73,7 +72,6 @@ class EcosiaTheme {
     var warning: UIColor { .Light.State.warning }
     var information: UIColor { .Light.State.information }
     var disabled: UIColor { .Light.State.disabled }
-    var primaryHighlight: UIColor { .Light.State.primaryHighlight }
 
     var tabBackground: UIColor { .Light.Background.primary }
     var tabSelectedBackground: UIColor { .Light.Button.primary }
@@ -87,9 +85,7 @@ class EcosiaTheme {
 
 final class DarkEcosiaTheme: EcosiaTheme {
     override var primaryBrand: UIColor { .Dark.Brand.primary}
-    // TODO: Review correct brand secondary color
-//    override var secondaryBrand: UIColor { .white }
-    override var secondaryBrand: UIColor { .Dark.Brand.secondary }
+    override var secondaryBrand: UIColor { .white }
     override var border: UIColor { .Dark.border }
 
     override var primaryBackground: UIColor { .Dark.Background.primary }
@@ -123,6 +119,7 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var primaryTextInverted: UIColor { .Light.Text.primary }
     override var secondaryText: UIColor { .Dark.Text.secondary }
     override var navigationBarText: UIColor { .Dark.Text.primary }
+    override var tertiaryText: UIColor { .Dark.Text.tertiary }
 
     override var primaryIcon: UIColor { .Dark.Icon.primary }
     override var secondaryIcon: UIColor { .Dark.Icon.secondary }
@@ -151,7 +148,6 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var warning: UIColor { .Dark.State.warning }
     override var information: UIColor { .Dark.State.information }
     override var disabled: UIColor { .Dark.State.disabled }
-    override var primaryHighlight: UIColor { .Dark.State.primaryHighlight }
 
     override var tabBackground: UIColor { .Dark.Background.tertiary }
     override var tabSelectedBackground: UIColor { .Dark.Button.primary }
