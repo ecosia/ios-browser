@@ -3,6 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import UIKit
+import Core
 
 protocol WelcomeTourDelegate: AnyObject {
     func welcomeTourDidFinish(_ tour: WelcomeTour)
@@ -69,7 +70,7 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
         let backButton = UIButton.systemButton(with: .init(named: "backChevron")!, target: self, action: #selector(back))
         navStack.addArrangedSubview(backButton)
         backButton.widthAnchor.constraint(equalToConstant: 44).isActive = true
-        backButton.accessibilityLabel = .localized(.backButtonAccessibilityLabel)
+        backButton.accessibilityLabel = .localized(.onboardingBackButtonAccessibility)
         navStack.addArrangedSubview(backButton)
         self.backButton = backButton
 
@@ -79,7 +80,7 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
         pageControl.currentPage = 0
         pageControl.setContentHuggingPriority(.defaultLow, for: .horizontal)
         pageControl.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
-        pageControl.accessibilityLabel = .localized(.pageControlDots)
+        pageControl.accessibilityLabel = .localized(.onboardingPageControlDotsAccessibility)
         navStack.addArrangedSubview(pageControl)
         self.pageControl = pageControl
 
@@ -93,7 +94,7 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
         skipButton.setContentCompressionResistancePriority(.required, for: .horizontal)
         navStack.addArrangedSubview(skipButton)
         skipButton.setTitle(.localized(.skip), for: .normal)
-        skipButton.accessibilityLabel = .localized(.onboardingSkipTourButtonAccessibilityLabel)
+        skipButton.accessibilityLabel = .localized(.onboardingSkipTourButtonAccessibility)
         skipButton.titleLabel?.font = .preferredFont(forTextStyle: .body)
         skipButton.titleLabel?.adjustsFontForContentSizeCategory = true
 
@@ -176,8 +177,9 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
         ctaButton.leadingAnchor.constraint(equalTo: labelStack.leadingAnchor).isActive = true
         ctaButton.trailingAnchor.constraint(equalTo: labelStack.trailingAnchor).isActive = true
         ctaButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16).isActive = true
-
-        let imageView = UIImageView(image: .init(named: "tour1"))
+        
+        let firstTourImageName = WelcomeTour.Step.all.first?.background.image ?? "tour1"
+        let imageView = UIImageView(image: .init(named: firstTourImageName))
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
@@ -214,7 +216,7 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
 
     private func display(step: Step) {
         current = step
-        pageControl.currentPage = steps.firstIndex(where: { $0 === step }) ?? 0
+        pageControl.currentPage = steps.firstIndex(of: step) ?? 0
 
         let title: String = isLastStep() ? .localized(.finishTour) : .localized(.continueMessage)
 
@@ -253,14 +255,14 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
             }
         }
         
-        Analytics.shared.introDisplaying(page: onboardingAnalyticsPageFromCurrentIndex)
+        Analytics.shared.introDisplaying(page: current?.analyticsValue, at: currentAnalyticsIndex)
         updateAccessibilityLabels(step: step)
     }
     
     private func updateAccessibilityLabels(step: Step) {
         titleLabel.accessibilityLabel = step.title
         subtitleLabel.accessibilityLabel = step.text
-        ctaButton.accessibilityLabel = .localized(isLastStep() ? .onboardingFinishCTAButtonAccessibilityLabel : .onboardingContinueCTAButtonAccessibilityLabel)
+        ctaButton.accessibilityLabel = isLastStep() ? .localized(.onboardingFinishCTAButtonAccessibility) : .localized(.onboardingContinueCTAButtonAccessibility)
     }
 
     private func moveRight() {
@@ -292,7 +294,7 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
     @objc func back() {
         guard !isFirstStep() else {
             dismiss(animated: true) {
-                Analytics.shared.introDisplaying(page: .start)
+                Analytics.shared.introDisplaying(page: .start, at: 0)
             }
             return
         }
@@ -305,7 +307,7 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
             complete()
             return
         }
-        Analytics.shared.introClick(.next, at: onboardingAnalyticsPageFromCurrentIndex)
+        Analytics.shared.introClick(.next, page: current?.analyticsValue, index: currentAnalyticsIndex)
         let displayingStep = currentIndex + 1
         display(step: steps[displayingStep])
         UIAccessibility.post(notification: .screenChanged, argument: titleLabel)
@@ -316,15 +318,20 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
     }
 
     @objc func skip() {
-        Analytics.shared.introClick(.skip, at: onboardingAnalyticsPageFromCurrentIndex)
+        Analytics.shared.introClick(.skip, page: current?.analyticsValue, index: currentAnalyticsIndex)
         delegate?.welcomeTourDidFinish(self)
     }
 
     // MARK: Helper
     private var currentIndex: Int {
         guard let current = current else { return 0 }
-        let index = steps.firstIndex(where: { $0 === current }) ?? 0
+        let index = steps.firstIndex(of: current) ?? 0
         return index
+    }
+    
+    private var currentAnalyticsIndex: Int {
+        // Needed since the start screen is considered 0
+        return currentIndex + 1
     }
 
     private func isFirstStep() -> Bool {
@@ -356,16 +363,5 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
 
     @objc func themeChanged() {
         applyTheme()
-    }
-}
-
-extension WelcomeTour {
-    
-    private var onboardingAnalyticsPageFromCurrentIndex: Analytics.Property.OnboardingPage? {
-        /*
-         Steps needs to be counted starting from 1
-         so we always top up 1 to the current index
-        */
-        Analytics.Property.OnboardingPage.allCases[currentIndex + 1]
     }
 }

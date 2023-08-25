@@ -3,6 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import UIKit
+import Core
 
 protocol WelcomeDelegate: AnyObject {
     func welcomeDidFinish(_ welcome: Welcome)
@@ -54,6 +55,10 @@ final class Welcome: UIViewController {
             LegacyThemeManager.instance.current = userInterfaceStyle == .dark ? DarkTheme() : NormalTheme()
         }
 
+        Task.detached {
+            // Fetching FinancialReports async as some onboarding steps might use it
+            try? await FinancialReports.shared.fetchAndUpdate()
+        }
     }
 
     private var didAppear = false
@@ -62,7 +67,7 @@ final class Welcome: UIViewController {
         addMask()
         fadeIn()
         didAppear = true
-        Analytics.shared.introDisplaying(page: .start)
+        Analytics.shared.introDisplaying(page: .start, at: 0)
     }
 
     private func addOverlay() {
@@ -281,11 +286,11 @@ final class Welcome: UIViewController {
         tour.modalTransitionStyle = .crossDissolve
         tour.modalPresentationStyle = .overCurrentContext
         present(tour, animated: true, completion: nil)
-        Analytics.shared.introClick(.next, at: .start)
+        Analytics.shared.introClick(.next, page: .start, index: 0)
     }
 
     @objc func skip() {
-        Analytics.shared.introClick(.skip, at: .start)
+        Analytics.shared.introClick(.skip, page: .start, index: 0)
         delegate?.welcomeDidFinish(self)
     }
 

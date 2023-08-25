@@ -3,42 +3,126 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import UIKit
+import Core
 
 extension WelcomeTour {
 
-    final class Step {
-        let title: String
-        let text: String
-        let background: Background
-        let content: UIView?
-
-        init(title: String, text: String, background: Background, content: UIView?, accessibleDescription: String) {
-            self.title = title
-            self.text = text
-            self.background = background
-            content?.isAccessibilityElement = true
-            content?.accessibilityLabel = accessibleDescription
-            self.content = content
-        }
-
-        static var planet: Step {
-            return .init(title: .localized(.aBetterPlanet), text: .localized(.searchTheWeb), background: .init(image: "tour1"), content: WelcomeTourPlanet(), accessibleDescription: .localized(.onboardingIllustrationTour1))
-        }
-
-        static var profit: Step {
-            return .init(title: .localized(.hundredPercentOfProfits), text: .localized(.weUseAllOurProfits), background: .init(image: "tour2"), content: WelcomeTourProfit(), accessibleDescription: .localized(.onboardingIllustrationTour2))
-        }
-
-        static var action: Step {
-            return .init(title: .localized(.collectiveAction), text: .localized(.join15Million), background: .init(image: "tour3", color: UIColor(rgb: 0x668A7A)), content: WelcomeTourAction(), accessibleDescription: .localized(.onboardingIllustrationTour3))
-        }
-
-        static var trees: Step {
-            return .init(title: .localized(.weWantTrees), text: .localized(.weDontCreateAProfile), background: .init(image: "tour4"), content: nil, accessibleDescription: .localized(.onboardingIllustrationTour4))
-        }
+    enum Step {
+        case planet
+        case green
+        case profit
+        case action
+        case trees
+        case transparent
 
         static var all: [Step] {
-            return [planet, profit, action, trees]
+            if IncentivizedSearchHelper.isRestricted {
+                return [.green, .profit, .action, .transparent]
+            } else {
+                return [.planet, .profit, .action, .trees]
+            }
+            
+        }
+        
+        var title: String {
+            switch self {
+            case .planet:
+                return .localized(.aBetterPlanet)
+            case .green:
+                return .localized(.grennestWayToSearch)
+            case .profit:
+                return .localized(.hundredPercentOfProfits)
+            case .action:
+                return .localized(.collectiveAction)
+            case .trees:
+                return .localized(.weWantTrees)
+            case .transparent:
+                return .localized(.realResults)
+            }
+        }
+        var text: String {
+            switch self {
+            case .planet:
+                return .localized(.searchTheWeb)
+            case .green:
+                return .localized(.planetFriendlySearch)
+            case .profit:
+                return .localized(.weUseAllOurProfits)
+            case .action:
+                return .localized(.join15Million)
+            case .trees:
+                return .localized(.weDontCreateAProfile)
+            case .transparent:
+                return .localized(.shownExactlyHowMuch)
+            }
+        }
+        var background: Background {
+            switch self {
+            case .planet:
+                return .init(image: "tour1")
+            case .green:
+                return .init(image: "tour1-alternative")
+            case .profit:
+                return .init(image: "tour2")
+            case .action:
+                return .init(image: "tour3", color: UIColor(rgb: 0x668A7A))
+            case .trees:
+                return .init(image: "tour4")
+            case .transparent:
+                return .init(image: "tour4-alternative")
+            }
+        }
+        var accessibleDescriptionKey: String.Key {
+            switch self {
+            case .planet:
+                return .onboardingIllustrationTour1
+            case .green:
+                return .onboardingIllustrationTour1Alternative
+            case .profit:
+                return .onboardingIllustrationTour2
+            case .action:
+                return .onboardingIllustrationTour3
+            case .trees:
+                return .onboardingIllustrationTour4
+            case .transparent:
+                return .onboardingIllustrationTour4Alternative
+            }
+        }
+        var content: UIView? {
+            let view: UIView?
+            switch self {
+            case .planet:
+                view = WelcomeTourPlanet()
+            case .green:
+                view = WelcomeTourGreen()
+            case .profit:
+                view = WelcomeTourProfit()
+            case .action:
+                view = WelcomeTourAction()
+            case .trees:
+                view = nil
+            case .transparent:
+                view = WelcomeTourTransparent()
+            }
+            view?.isAccessibilityElement = true
+            view?.accessibilityLabel = .localized(accessibleDescriptionKey)
+            return view
+        }
+        var analyticsValue: Analytics.Property.OnboardingPage {
+            switch self {
+            case .planet:
+                return .search
+            case .profit:
+                return .profits
+            case .action:
+                return .action
+            case .trees:
+                return .privacy
+            case .green:
+                return .greenSearch
+            case .transparent:
+                return .transparentFinances
+            }
         }
     }
 }

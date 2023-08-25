@@ -18,7 +18,7 @@ class NTPImpactViewModel {
     }
 
     var treesCellModel: NTPImpactCell.Model {
-        .init(impact: User.shared.impact, searches: personalCounter.state!, trees: TreeCounter.shared.statistics.treesAt(.init()))
+        .init(impact: User.shared.impact, searches: personalCounter.state!, trees: TreeCounter.shared.treesAt(.init()))
     }
 
     weak var cell: NTPImpactCell?
