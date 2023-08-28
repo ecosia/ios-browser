@@ -49,8 +49,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ecosia/ios-core.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "c6fed8c4d08f1e22ab356ca1930b7cb56091655b"
+        "branch" : "MOB-1832_ntp_customization_settings",
+        "revision" : "587da2639031055e60f8593891cb36986d42803d"
       }
     },
     {
