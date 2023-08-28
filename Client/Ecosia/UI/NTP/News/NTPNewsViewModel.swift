@@ -29,7 +29,7 @@ class NTPNewsViewModel {
 // MARK: HomeViewModelProtocol
 extension NTPNewsViewModel: HomepageViewModelProtocol {
     var isEnabled: Bool {
-        true
+        User.shared.showEcosiaNews
     }
 
     var sectionType: HomepageSectionType {

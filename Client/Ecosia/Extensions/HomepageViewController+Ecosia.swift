@@ -111,3 +111,20 @@ extension HomepageViewController: NTPBookmarkNudgeViewDelegate {
         reloadView()
     }
 }
+
+extension HomepageViewController: NTPCustomizationCellDelegate {
+    func openNTPCustomizationSettings() {
+        // TODO: Is this the right place to get the profile?
+        guard let profile = currentTab?.profile else { return }
+        let settingsPage = NTPCustomizationSettingsViewController(profile: profile)
+        settingsPage.delegate = self
+        let navigation = EcosiaNavigation(rootViewController: settingsPage)
+        present(navigation, animated: true)
+    }
+}
+
+extension HomepageViewController: NTPCustomizationSettingsDelegate {
+    func willDismissNTPCustomizationSettings() {
+        reloadView()
+    }
+}

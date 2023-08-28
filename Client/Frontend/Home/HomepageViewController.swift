@@ -391,6 +391,7 @@ private extension HomepageViewController {
 
         viewModel.libraryViewModel.delegate = self
         viewModel.bookmarkNudgeViewModel.delegate = self
+        viewModel.ntpCustomizationViewModel.delegate = self
     }
 
     func openTabTray(_ sender: UIButton) {

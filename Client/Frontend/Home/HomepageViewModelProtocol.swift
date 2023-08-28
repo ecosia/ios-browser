@@ -46,7 +46,5 @@ extension HomepageViewModelProtocol {
 
     func refreshData(for traitCollection: UITraitCollection,
                      isPortrait: Bool = UIWindow.isPortrait,
-                     device: UIUserInterfaceIdiom = UIDevice.current.userInterfaceIdiom) {
-        refreshData(for: traitCollection, isPortrait: isPortrait, device: device)
-    }
+                     device: UIUserInterfaceIdiom = UIDevice.current.userInterfaceIdiom) {}
 }

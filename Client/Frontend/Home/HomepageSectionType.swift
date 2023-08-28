@@ -11,6 +11,7 @@ enum HomepageSectionType: Int, CaseIterable {
     case topSites
     case impact
     case news
+    case ntpCustomization
 
     var title: String? {
         switch self {
@@ -27,17 +28,20 @@ enum HomepageSectionType: Int, CaseIterable {
         case .topSites: return "" // Top sites has more than 1 cell type, dequeuing is done through FxHomeSectionHandler protocol
         case .impact: return NTPImpactCell.cellIdentifier
         case .news: return NewsCell.cellIdentifier
-         }
+        case .ntpCustomization: return NTPCustomizationCell.cellIdentifier
+        }
     }
 
     static var cellTypes: [ReusableCell.Type] {
-        return [NTPLogoCell.self,
-                NTPBookmarkNudgeCell.self,
-                TopSiteItemCell.self,
-                EmptyTopSiteCell.self,
-                NTPLibraryCell.self,
-                NTPImpactCell.self,
-                NewsCell.self
+        return [
+            NTPLogoCell.self,
+            NTPBookmarkNudgeCell.self,
+            TopSiteItemCell.self,
+            EmptyTopSiteCell.self,
+            NTPLibraryCell.self,
+            NTPImpactCell.self,
+            NewsCell.self,
+            NTPCustomizationCell.self
         ]
     }
 
@@ -68,6 +72,8 @@ extension HomepageSectionType {
                 insets = window.bounds.width / 4
             }
             return insets
+        case .ntpCustomization:
+            return 32
         default:
             return 0
         }

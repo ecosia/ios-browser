@@ -87,7 +87,7 @@ extension NTPImpactViewModel: HomepageViewModelProtocol {
     }
 
     var isEnabled: Bool {
-        true
+        User.shared.showClimateImpact
     }
 
     func refreshData(for traitCollection: UITraitCollection,
