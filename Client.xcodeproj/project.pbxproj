@@ -5206,6 +5206,13 @@
 			path = Experiments;
 			sourceTree = "<group>";
 		};
+		2C73A7192A9D14B2006EBAAB /* WhatsNew */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = WhatsNew;
+			sourceTree = "<group>";
+		};
 		2C9C9FF52A03C7950038A3DD /* ExperimentsTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -6481,6 +6488,7 @@
 		CA4D9C8728C8D801006AFB5D /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				2C73A7192A9D14B2006EBAAB /* WhatsNew */,
 				CA4D9C8828C8D801006AFB5D /* SemanticColor.swift */,
 				CA4D9C8C28C8D801006AFB5D /* Ecosia.xcassets */,
 				CA4D9C8D28C8D801006AFB5D /* EcosiaTheme.swift */,
