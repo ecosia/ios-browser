@@ -1,7 +1,4 @@
-New features:
-- You can now import your bookmarks from other browsers that support bookmark export to a html file (like Chrome, Firefox, Safari and more)
-- You can now export your bookmarks into a html file
-- Bugfix for Apple wallet passes
+Bug fixes and general improvements, most notably addressing a bug that caused slow loading when checking whether the page is secure.
+
 
 We are always working hard to make Ecosia better for you. Send any questions or feedback to our team at iosapp@ecosia.org, we love hearing from you!
-

@@ -24,6 +24,7 @@ extension UIColor {
         struct Text {
             static let primary = UIColor(red: 0.059, green: 0.059, blue: 0.059, alpha: 1)
             static let secondary = UIColor(red: 0.424, green: 0.424, blue: 0.424, alpha: 1)
+            static let tertiary = UIColor.white
         }
 
         struct State {
@@ -63,6 +64,7 @@ extension UIColor {
         struct Text {
             static let primary = UIColor.white
             static let secondary = UIColor(red: 0.871, green: 0.871, blue: 0.851, alpha: 1)
+            static let tertiary = UIColor(red: 0.2, green: 0.2, blue: 0.2, alpha: 1)
         }
 
         struct State {

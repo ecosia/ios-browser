@@ -71,6 +71,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Ecosia: Disable BG sync //backgroundSyncUtil = BackgroundSyncUtil(profile: profile, application: application)
         // Ecosia: lifecycle tracking
         Analytics.shared.activity(.launch)
+        
+        // Ecosia: fetching statistics before they are used
+        Task.detached {
+            try? await Statistics.shared.fetchAndUpdate()
+        }
 
         return true
     }

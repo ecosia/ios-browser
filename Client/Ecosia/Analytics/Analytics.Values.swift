@@ -106,8 +106,7 @@ extension Analytics {
         case
         home,
         menu,
-        toolbar,
-        screenName(Int)
+        toolbar
         
         var rawValue: String {
             switch self {
@@ -117,8 +116,6 @@ extension Analytics {
                 return "menu"
             case .toolbar:
                 return "toolbar"
-            case .screenName(let page):
-                return OnboardingPage.allCases[page].rawValue
             }
         }
         
@@ -145,7 +142,9 @@ extension Analytics {
             search,
             profits,
             action,
-            privacy
+            privacy,
+            greenSearch = "green_search",
+            transparentFinances = "transparent_finances"
         }
     }
 

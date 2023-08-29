@@ -1,7 +1,4 @@
-Nieuwe functies:
-- Je kunt nu bladwijzers importeren vanuit andere browsers die het exporteren van bladwijzers naar een *.html-bestand ondersteunen (bijvoorbeeld Chrome, Firefox, Safari en meer)
-- Je kunt nu je bladwijzers exporteren naar een *.html-bestand
-- Bugfix voor Apple Wallet-pasjes
+Bugfixes en algemene verbeteringen, met name het aanpakken van een bug die langzaam laden veroorzaakte bij het controleren of de pagina veilig is.
+
 
 We werken er altijd hard aan om Ecosia voor jou beter te maken. Stuur ons team vragen of feedback via iosapp@ecosia.org. We horen graag van je!
-
