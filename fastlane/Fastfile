@@ -111,7 +111,6 @@ platform :ios do
     )
 
     pilot(
-      skip_waiting_for_build_processing: true, 
       apple_id: "670881887",
       itc_provider: "33YMRSYD2L",
       distribute_external: true,
