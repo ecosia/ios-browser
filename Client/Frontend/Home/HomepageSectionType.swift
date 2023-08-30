@@ -11,6 +11,7 @@ enum HomepageSectionType: Int, CaseIterable {
     case topSites
     case impact
     case news
+    case aboutEcosia
     case ntpCustomization
 
     var cellIdentifier: String {
@@ -21,6 +22,7 @@ enum HomepageSectionType: Int, CaseIterable {
         case .topSites: return "" // Top sites has more than 1 cell type, dequeuing is done through FxHomeSectionHandler protocol
         case .impact: return NTPImpactCell.cellIdentifier
         case .news: return NTPNewsCell.cellIdentifier
+        case .aboutEcosia: return NTPAboutEcosiaCell.cellIdentifier
         case .ntpCustomization: return NTPCustomizationCell.cellIdentifier
         }
     }
@@ -34,6 +36,7 @@ enum HomepageSectionType: Int, CaseIterable {
             NTPLibraryCell.self,
             NTPImpactCell.self,
             NTPNewsCell.self,
+            NTPAboutEcosiaCell.self,
             NTPCustomizationCell.self
         ]
     }
@@ -48,6 +51,7 @@ enum HomepageSectionType: Int, CaseIterable {
         case .logoHeader, .bookmarkNudge, .libraryShortcuts, .ntpCustomization: return nil
         case .topSites: return .topSites
         case .impact: return .climateImpact
+        case .aboutEcosia: return .aboutEcosia
         case .news: return .ecosiaNews
         }
     }

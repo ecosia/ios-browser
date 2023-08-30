@@ -75,6 +75,7 @@ class HomepageViewModel: FeatureFlaggable, NTPLayoutHighlightDataSource {
     var topSiteViewModel: TopSitesViewModel
     var impactViewModel: NTPImpactCellViewModel
     var newsViewModel: NTPNewsCellViewModel
+    var aboutEcosiaViewModel: NTPAboutEcosiaCellViewModel
     var ntpCustomizationViewModel: NTPCustomizationCellViewModel
 
     var shouldDisplayHomeTabBanner: Bool {
@@ -97,6 +98,7 @@ class HomepageViewModel: FeatureFlaggable, NTPLayoutHighlightDataSource {
         self.topSiteViewModel = TopSitesViewModel(profile: profile)
         self.impactViewModel = NTPImpactCellViewModel(personalCounter: personalCounter)
         self.newsViewModel = NTPNewsCellViewModel()
+        self.aboutEcosiaViewModel = NTPAboutEcosiaCellViewModel()
         self.ntpCustomizationViewModel = NTPCustomizationCellViewModel()
         self.childViewModels = [headerViewModel,
                                 bookmarkNudgeViewModel,
@@ -104,6 +106,7 @@ class HomepageViewModel: FeatureFlaggable, NTPLayoutHighlightDataSource {
                                 topSiteViewModel,
                                 impactViewModel,
                                 newsViewModel,
+                                aboutEcosiaViewModel,
                                 ntpCustomizationViewModel]
         self.isPrivate = isPrivate
         topSiteViewModel.delegate = self

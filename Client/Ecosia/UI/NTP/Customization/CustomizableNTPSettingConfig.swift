@@ -9,12 +9,14 @@ enum CustomizableNTPSettingConfig: CaseIterable {
     case topSites
     case climateImpact
     case ecosiaNews
+    case aboutEcosia
 
     var localizedTitleKey: String.Key {
         switch self {
         case .topSites: return .topSites
         case .climateImpact: return .climateImpact
         case .ecosiaNews: return .ecosiaNews
+        case .aboutEcosia: return .aboutEcosia
         }
     }
     
@@ -24,13 +26,15 @@ enum CustomizableNTPSettingConfig: CaseIterable {
             case .topSites: return User.shared.showTopSites
             case .climateImpact: return User.shared.showClimateImpact
             case .ecosiaNews: return User.shared.showEcosiaNews
+            case .aboutEcosia: return User.shared.showAboutEcosia
             }
         }
         set {
             switch self {
             case .topSites: User.shared.showTopSites = newValue
-            case .climateImpact: return User.shared.showClimateImpact = newValue
-            case .ecosiaNews: return User.shared.showEcosiaNews = newValue
+            case .climateImpact: User.shared.showClimateImpact = newValue
+            case .ecosiaNews: User.shared.showEcosiaNews = newValue
+            case .aboutEcosia: User.shared.showAboutEcosia = newValue
             }
         }
     }

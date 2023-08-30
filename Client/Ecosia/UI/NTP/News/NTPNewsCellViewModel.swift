@@ -42,9 +42,9 @@ extension NTPNewsCellViewModel: HomepageViewModelProtocol {
     }
 
     var headerViewModel: LabelButtonHeaderViewModel {
-        return .init(title: .localized(.ecosiaNews),
-                     isButtonHidden: false,
-                     buttonTitle: .localized(.seeAll)) { [weak self] _ in
+        .init(title: .localized(.ecosiaNews),
+              isButtonHidden: false,
+              buttonTitle: .localized(.seeAll)) { [weak self] _ in
             self?.delegate?.openSeeAllNews()
         }
     }

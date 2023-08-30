@@ -45,6 +45,9 @@
 		12E8E6B42A9CFC4100E6ED8E /* NTPCustomizationCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12E8E6B12A9CFC4100E6ED8E /* NTPCustomizationCellViewModel.swift */; };
 		12E8E6B52A9CFC4100E6ED8E /* NTPCustomizationSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12E8E6B22A9CFC4100E6ED8E /* NTPCustomizationSettingsViewController.swift */; };
 		12EEE09D2A9F31BB00C4A46D /* CustomizableNTPSettingConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12EEE09C2A9F31BB00C4A46D /* CustomizableNTPSettingConfig.swift */; };
+		12EEE0A62A9F754700C4A46D /* NTPAboutEcosiaCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12EEE0A52A9F754700C4A46D /* NTPAboutEcosiaCell.swift */; };
+		12EEE0A82A9F75C500C4A46D /* NTPAboutEcosiaCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12EEE0A72A9F75C500C4A46D /* NTPAboutEcosiaCellViewModel.swift */; };
+		12EEE0AB2A9F7BD300C4A46D /* AboutEcosiaSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12EEE0AA2A9F7BD300C4A46D /* AboutEcosiaSection.swift */; };
 		158241282820698B00956B39 /* RustRemoteTabsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 158241272820698B00956B39 /* RustRemoteTabsTests.swift */; };
 		15DE98FD27FCED4F00F1ECDB /* RustRemoteTabs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15DE98FC27FCED4F00F1ECDB /* RustRemoteTabs.swift */; };
 		1B0DFD25274856D60008EB0A /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = 1B0DFD24274856D60008EB0A /* SwiftyJSON */; };
@@ -1464,6 +1467,9 @@
 		12E8E6B22A9CFC4100E6ED8E /* NTPCustomizationSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NTPCustomizationSettingsViewController.swift; sourceTree = "<group>"; };
 		12EA4881BFBE296298150D4A /* bn */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = bn; path = bn.lproj/LoginManager.strings; sourceTree = "<group>"; };
 		12EEE09C2A9F31BB00C4A46D /* CustomizableNTPSettingConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomizableNTPSettingConfig.swift; sourceTree = "<group>"; };
+		12EEE0A52A9F754700C4A46D /* NTPAboutEcosiaCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPAboutEcosiaCell.swift; sourceTree = "<group>"; };
+		12EEE0A72A9F75C500C4A46D /* NTPAboutEcosiaCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPAboutEcosiaCellViewModel.swift; sourceTree = "<group>"; };
+		12EEE0AA2A9F7BD300C4A46D /* AboutEcosiaSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutEcosiaSection.swift; sourceTree = "<group>"; };
 		12F949169C30744CCC749588 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/HistoryPanel.strings; sourceTree = "<group>"; };
 		1323403C8071FC19BB79C191 /* su */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = su; path = su.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		13254478B55183D37507CAD4 /* da */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = da; path = da.lproj/AuthenticationManager.strings; sourceTree = "<group>"; };
@@ -4988,6 +4994,16 @@
 			path = BookmarkNudge;
 			sourceTree = "<group>";
 		};
+		12EEE0A42A9F752200C4A46D /* AboutEcosia */ = {
+			isa = PBXGroup;
+			children = (
+				12EEE0A52A9F754700C4A46D /* NTPAboutEcosiaCell.swift */,
+				12EEE0A72A9F75C500C4A46D /* NTPAboutEcosiaCellViewModel.swift */,
+				12EEE0AA2A9F7BD300C4A46D /* AboutEcosiaSection.swift */,
+			);
+			path = AboutEcosia;
+			sourceTree = "<group>";
+		};
 		1DA3CE5B24EEE71B00422BB2 /* OpenTabs */ = {
 			isa = PBXGroup;
 			children = (
@@ -6545,6 +6561,7 @@
 		CA4D9C8F28C8D801006AFB5D /* NTP */ = {
 			isa = PBXGroup;
 			children = (
+				12EEE0A42A9F752200C4A46D /* AboutEcosia */,
 				12EEE0A32A9F71C900C4A46D /* BookmarkNudge */,
 				12E8E6AF2A9CFC4100E6ED8E /* Customization */,
 				12EEE0A12A9F70F700C4A46D /* Impact */,
@@ -9343,10 +9360,12 @@
 				0BF0DB941A8545800039F300 /* URLBarView.swift in Sources */,
 				D01017F5219CB6BD009CBB5A /* DownloadContentScript.swift in Sources */,
 				D5D052EF2645ACBF00759F85 /* View.swift in Sources */,
+				12EEE0A62A9F754700C4A46D /* NTPAboutEcosiaCell.swift in Sources */,
 				39F819C61FD70F5D009E31E4 /* TabEventHandlers.swift in Sources */,
 				E65607611C08B4E200534B02 /* SearchInputView.swift in Sources */,
 				FA6B2AC21D41F02D00429414 /* Punycode.swift in Sources */,
 				43446CEA2412066500F5C643 /* UIViewController+Extension.swift in Sources */,
+				12EEE0A82A9F75C500C4A46D /* NTPAboutEcosiaCellViewModel.swift in Sources */,
 				8A471185287F6E4800F5A6EA /* SeparatorTableViewCell.swift in Sources */,
 				1287A99F2A6FFC0C005F21F7 /* WelcomeTourTransparent.swift in Sources */,
 				C846560728883B2900861B4A /* WallpaperImageProvider.swift in Sources */,
@@ -9548,6 +9567,7 @@
 				CA8BCC3628D1FB7D0020BC50 /* HistoryHighlightsViewModel.swift in Sources */,
 				CA77ABFD24773C92005079F9 /* BreachAlertsManager.swift in Sources */,
 				8AB8572727D93AEC0075C173 /* TopSiteHistoryManager.swift in Sources */,
+				12EEE0AB2A9F7BD300C4A46D /* AboutEcosiaSection.swift in Sources */,
 				C81A8F2526D3ED1900EBA539 /* UIWindow+Extension.swift in Sources */,
 				CA4D9CFF28C8D801006AFB5D /* UICollectionView+maxWidth.swift in Sources */,
 				EBC4869E2195F58300CDA48D /* AboutHomeHandler.swift in Sources */,
