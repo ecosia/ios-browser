@@ -5,7 +5,7 @@
 import Core
 import UIKit
 
-final class NewsCell: UICollectionViewCell, NotificationThemeable, ReusableCell {
+final class NTPNewsCell: UICollectionViewCell, NotificationThemeable, ReusableCell {
     struct Positions: OptionSet {
         static let top = Positions(rawValue: 1)
         static let bottom = Positions(rawValue: 1 << 1)

@@ -91,7 +91,7 @@ extension HomepageViewController: YourImpactDelegate {
     }
 }
 
-extension HomepageViewController: NTPNewsDelegate {
+extension HomepageViewController: NTPNewsCellDelegate {
     func openSeeAllNews() {
         let news = NewsController(items: viewModel.newsViewModel.items, delegate: self)
         let nav = EcosiaNavigation(rootViewController: news)
@@ -100,7 +100,7 @@ extension HomepageViewController: NTPNewsDelegate {
     }
 }
 
-extension HomepageViewController: NTPBookmarkNudgeViewDelegate {
+extension HomepageViewController: NTPBookmarkNudgeCellDelegate {
     func nudgeCellOpenBookmarks() {
         homePanelDelegate?.homePanelDidRequestToOpenLibrary(panel: .bookmarks)
         User.shared.hideBookmarksNTPNudgeCard()

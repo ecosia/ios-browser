@@ -6,11 +6,11 @@ import Foundation
 import Shared
 import Core
 
-protocol NTPNewsDelegate: AnyObject {
+protocol NTPNewsCellDelegate: AnyObject {
     func openSeeAllNews()
 }
 
-class NTPNewsViewModel {
+class NTPNewsCellViewModel {
     struct UX {
         static let bottomSpacing: CGFloat = 12
     }
@@ -18,7 +18,7 @@ class NTPNewsViewModel {
     private let news = News()
     private (set) var items = [NewsModel]()
     private let images = Images(.init(configuration: .ephemeral))
-    weak var delegate: NTPNewsDelegate?
+    weak var delegate: NTPNewsCellDelegate?
     weak var dataModelDelegate: HomepageDataModelDelegate?
 
     init() {
@@ -32,7 +32,7 @@ class NTPNewsViewModel {
 }
 
 // MARK: HomeViewModelProtocol
-extension NTPNewsViewModel: HomepageViewModelProtocol {
+extension NTPNewsCellViewModel: HomepageViewModelProtocol {
     var isEnabled: Bool {
         User.shared.showEcosiaNews
     }
@@ -94,10 +94,10 @@ extension NTPNewsViewModel: HomepageViewModelProtocol {
 
 }
 
-extension NTPNewsViewModel: HomepageSectionHandler {
+extension NTPNewsCellViewModel: HomepageSectionHandler {
 
     func configure(_ cell: UICollectionViewCell, at indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = cell as? NewsCell else { return UICollectionViewCell() }
+        guard let cell = cell as? NTPNewsCell else { return UICollectionViewCell() }
         let itemCount = numberOfItemsInSection()
         cell.defaultBackgroundColor = { .theme.ecosia.ntpImpactBackground }
         cell.configure(items[indexPath.row], images: images, positions: .derive(row: indexPath.row, items: itemCount))

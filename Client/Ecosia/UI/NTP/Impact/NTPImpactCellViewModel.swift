@@ -6,7 +6,7 @@ import Foundation
 import Shared
 import Core
 
-class NTPImpactViewModel {
+class NTPImpactCellViewModel {
     struct UX {
         static let bottomSpacing: CGFloat = 12
     }
@@ -41,7 +41,7 @@ class NTPImpactViewModel {
 }
 
 // MARK: HomeViewModelProtocol
-extension NTPImpactViewModel: HomepageViewModelProtocol {
+extension NTPImpactCellViewModel: HomepageViewModelProtocol {
 
     var sectionType: HomepageSectionType {
         return .impact
@@ -96,7 +96,7 @@ extension NTPImpactViewModel: HomepageViewModelProtocol {
 
 }
 
-extension NTPImpactViewModel: HomepageSectionHandler {
+extension NTPImpactCellViewModel: HomepageSectionHandler {
 
     func configure(_ cell: UICollectionViewCell, at indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = cell as? NTPImpactCell else { return UICollectionViewCell() }

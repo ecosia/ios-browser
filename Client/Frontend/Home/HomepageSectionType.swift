@@ -13,13 +13,6 @@ enum HomepageSectionType: Int, CaseIterable {
     case news
     case ntpCustomization
 
-    var title: String? {
-        switch self {
-        case .topSites: return .ASShortcutsTitle
-        default: return nil
-        }
-    }
-
     var cellIdentifier: String {
         switch self {
         case .logoHeader: return NTPLogoCell.cellIdentifier
@@ -27,7 +20,7 @@ enum HomepageSectionType: Int, CaseIterable {
         case .libraryShortcuts: return NTPLibraryCell.cellIdentifier
         case .topSites: return "" // Top sites has more than 1 cell type, dequeuing is done through FxHomeSectionHandler protocol
         case .impact: return NTPImpactCell.cellIdentifier
-        case .news: return NewsCell.cellIdentifier
+        case .news: return NTPNewsCell.cellIdentifier
         case .ntpCustomization: return NTPCustomizationCell.cellIdentifier
         }
     }
@@ -40,7 +33,7 @@ enum HomepageSectionType: Int, CaseIterable {
             EmptyTopSiteCell.self,
             NTPLibraryCell.self,
             NTPImpactCell.self,
-            NewsCell.self,
+            NTPNewsCell.self,
             NTPCustomizationCell.self
         ]
     }

@@ -6,27 +6,23 @@ import Foundation
 import Shared
 import Core
 
-protocol NTPLibraryDelegate: AnyObject {
-    func libraryCellOpenBookmarks()
-    func libraryCellOpenHistory()
-    func libraryCellOpenReadlist()
-    func libraryCellOpenDownloads()
+protocol NTPBookmarkNudgeCellDelegate: AnyObject {
+    func nudgeCellOpenBookmarks()
+    func nudgeCellDismiss()
 }
 
-class NTPLibraryViewModel {
+final class NTPBookmarkNudgeCellViewModel {
     struct UX {
         static let bottomSpacing: CGFloat = 8
     }
-
-    weak var delegate: NTPLibraryDelegate?
+    
+    weak var delegate: NTPBookmarkNudgeCellDelegate?
 }
 
-
-// MARK: HomeViewModelProtocol
-extension NTPLibraryViewModel: HomepageViewModelProtocol {
+extension NTPBookmarkNudgeCellViewModel: HomepageViewModelProtocol {
 
     var sectionType: HomepageSectionType {
-        return .libraryShortcuts
+        return .bookmarkNudge
     }
 
     var headerViewModel: LabelButtonHeaderViewModel {
@@ -39,7 +35,7 @@ extension NTPLibraryViewModel: HomepageViewModelProtocol {
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
 
         let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
-                                               heightDimension: .estimated(100.0))
+                                               heightDimension: .estimated(200))
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: item, count: 1)
 
         let section = NSCollectionLayoutSection(group: group)
@@ -59,7 +55,7 @@ extension NTPLibraryViewModel: HomepageViewModelProtocol {
     }
 
     var isEnabled: Bool {
-        true
+        User.shared.showsBookmarksNTPNudgeCard()
     }
 
     func refreshData(for traitCollection: UITraitCollection,
@@ -68,10 +64,18 @@ extension NTPLibraryViewModel: HomepageViewModelProtocol {
 
 }
 
-extension NTPLibraryViewModel: HomepageSectionHandler {
+extension NTPBookmarkNudgeCellViewModel: HomepageSectionHandler {
 
     func configure(_ cell: UICollectionViewCell, at indexPath: IndexPath) -> UICollectionViewCell {
-        (cell as! NTPLibraryCell).delegate = delegate
+        if let cell = cell as? NTPBookmarkNudgeCell {
+            cell.closeHandler = { [weak self] in
+                self?.delegate?.nudgeCellDismiss()
+            }
+            
+            cell.openBookmarksHandler = { [weak self] in
+                self?.delegate?.nudgeCellOpenBookmarks()
+            }
+        }
         return cell
     }
 

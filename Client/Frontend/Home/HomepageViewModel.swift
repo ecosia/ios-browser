@@ -70,11 +70,11 @@ class HomepageViewModel: FeatureFlaggable, NTPLayoutHighlightDataSource {
     // Child View models
     private var childViewModels: [HomepageViewModelProtocol]
     var headerViewModel: HomeLogoHeaderViewModel
-    var bookmarkNudgeViewModel: NTPBookmarkNudgeViewModel
-    var libraryViewModel: NTPLibraryViewModel
+    var bookmarkNudgeViewModel: NTPBookmarkNudgeCellViewModel
+    var libraryViewModel: NTPLibraryCellViewModel
     var topSiteViewModel: TopSitesViewModel
-    var impactViewModel: NTPImpactViewModel
-    var newsViewModel: NTPNewsViewModel
+    var impactViewModel: NTPImpactCellViewModel
+    var newsViewModel: NTPNewsCellViewModel
     var ntpCustomizationViewModel: NTPCustomizationCellViewModel
 
     var shouldDisplayHomeTabBanner: Bool {
@@ -92,11 +92,11 @@ class HomepageViewModel: FeatureFlaggable, NTPLayoutHighlightDataSource {
         self.isZeroSearch = isZeroSearch
 
         self.headerViewModel = .init()
-        self.libraryViewModel = NTPLibraryViewModel()
-        self.bookmarkNudgeViewModel = NTPBookmarkNudgeViewModel()
+        self.libraryViewModel = NTPLibraryCellViewModel()
+        self.bookmarkNudgeViewModel = NTPBookmarkNudgeCellViewModel()
         self.topSiteViewModel = TopSitesViewModel(profile: profile)
-        self.impactViewModel = NTPImpactViewModel(personalCounter: personalCounter)
-        self.newsViewModel = NTPNewsViewModel()
+        self.impactViewModel = NTPImpactCellViewModel(personalCounter: personalCounter)
+        self.newsViewModel = NTPNewsCellViewModel()
         self.ntpCustomizationViewModel = NTPCustomizationCellViewModel()
         self.childViewModels = [headerViewModel,
                                 bookmarkNudgeViewModel,

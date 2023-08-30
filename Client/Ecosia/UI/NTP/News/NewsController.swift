@@ -31,7 +31,7 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
         let collection = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
         collection.delegate = self
         collection.dataSource = self
-        collection.register(NewsCell.self, forCellWithReuseIdentifier: identifier)
+        collection.register(NTPNewsCell.self, forCellWithReuseIdentifier: identifier)
         collection.register(NewsSubHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: identifier)
         collection.backgroundView = indicator
         collection.contentInsetAdjustmentBehavior = .scrollableAxes
@@ -117,7 +117,7 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
     }
     
     func collectionView(_: UICollectionView, cellForItemAt: IndexPath) -> UICollectionViewCell {
-        let cell = collection.dequeueReusableCell(withReuseIdentifier: identifier, for: cellForItemAt) as! NewsCell
+        let cell = collection.dequeueReusableCell(withReuseIdentifier: identifier, for: cellForItemAt) as! NTPNewsCell
         cell.configure(items[cellForItemAt.row], images: images, positions: .derive(row: cellForItemAt.item, items: items.count))
         return cell
     }

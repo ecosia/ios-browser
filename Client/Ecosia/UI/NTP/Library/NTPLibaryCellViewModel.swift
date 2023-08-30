@@ -6,19 +6,27 @@ import Foundation
 import Shared
 import Core
 
-final class NTPBookmarkNudgeViewModel {
+protocol NTPLibraryDelegate: AnyObject {
+    func libraryCellOpenBookmarks()
+    func libraryCellOpenHistory()
+    func libraryCellOpenReadlist()
+    func libraryCellOpenDownloads()
+}
+
+class NTPLibraryCellViewModel {
     struct UX {
         static let bottomSpacing: CGFloat = 8
     }
-    
-    weak var delegate: NTPBookmarkNudgeViewDelegate?
+
+    weak var delegate: NTPLibraryDelegate?
 }
 
-// MARK: NTPBookmarkNudgeViewModel
-extension NTPBookmarkNudgeViewModel: HomepageViewModelProtocol {
+
+// MARK: HomeViewModelProtocol
+extension NTPLibraryCellViewModel: HomepageViewModelProtocol {
 
     var sectionType: HomepageSectionType {
-        return .bookmarkNudge
+        return .libraryShortcuts
     }
 
     var headerViewModel: LabelButtonHeaderViewModel {
@@ -31,7 +39,7 @@ extension NTPBookmarkNudgeViewModel: HomepageViewModelProtocol {
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
 
         let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
-                                               heightDimension: .estimated(200))
+                                               heightDimension: .estimated(100.0))
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: item, count: 1)
 
         let section = NSCollectionLayoutSection(group: group)
@@ -51,7 +59,7 @@ extension NTPBookmarkNudgeViewModel: HomepageViewModelProtocol {
     }
 
     var isEnabled: Bool {
-        User.shared.showsBookmarksNTPNudgeCard()
+        true
     }
 
     func refreshData(for traitCollection: UITraitCollection,
@@ -60,18 +68,10 @@ extension NTPBookmarkNudgeViewModel: HomepageViewModelProtocol {
 
 }
 
-extension NTPBookmarkNudgeViewModel: HomepageSectionHandler {
+extension NTPLibraryCellViewModel: HomepageSectionHandler {
 
     func configure(_ cell: UICollectionViewCell, at indexPath: IndexPath) -> UICollectionViewCell {
-        if let cell = cell as? NTPBookmarkNudgeCell {
-            cell.closeHandler = { [weak self] in
-                self?.delegate?.nudgeCellDismiss()
-            }
-            
-            cell.openBookmarksHandler = { [weak self] in
-                self?.delegate?.nudgeCellOpenBookmarks()
-            }
-        }
+        (cell as! NTPLibraryCell).delegate = delegate
         return cell
     }
 
