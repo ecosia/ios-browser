@@ -110,6 +110,12 @@ platform :ios do
       configuration: "Release"
     )
 
+    app_store_connect_api_key(
+      key_id: ENV["FASTLANE_APPSTORE_CONNECT_KEY_ID"],
+      issuer_id: ENV["FASTLANE_APPSTORE_CONNECT_KEY_ISSUER_ID"],
+      key_content: ENV["FASTLANE_APPSTORE_CONNECT_KEY_CONTENT"]
+    )
+
     pilot(
       apple_id: "670881887",
       itc_provider: "33YMRSYD2L",
