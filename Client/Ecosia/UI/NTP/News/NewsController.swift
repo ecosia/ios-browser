@@ -20,7 +20,7 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
         super.init(nibName: nil, bundle: nil)
         self.delegate = delegate
         self.items = items
-        title = .localized(.stories)
+        title = .localized(.ecosiaNews)
         navigationItem.largeTitleDisplayMode = .always
     }
     

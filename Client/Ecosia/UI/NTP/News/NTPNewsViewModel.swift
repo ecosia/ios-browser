@@ -6,6 +6,10 @@ import Foundation
 import Shared
 import Core
 
+protocol NTPNewsDelegate: AnyObject {
+    func openSeeAllNews()
+}
+
 class NTPNewsViewModel {
     struct UX {
         static let bottomSpacing: CGFloat = 12
@@ -14,13 +18,14 @@ class NTPNewsViewModel {
     private let news = News()
     private (set) var items = [NewsModel]()
     private let images = Images(.init(configuration: .ephemeral))
-    weak var delegate: HomepageDataModelDelegate?
+    weak var delegate: NTPNewsDelegate?
+    weak var dataModelDelegate: HomepageDataModelDelegate?
 
     init() {
         news.subscribeAndReceive(self) { [weak self] in
             guard let self = self else { return }
             self.items = $0
-            self.delegate?.reloadView()
+            self.dataModelDelegate?.reloadView()
         }
     }
 
@@ -37,7 +42,11 @@ extension NTPNewsViewModel: HomepageViewModelProtocol {
     }
 
     var headerViewModel: LabelButtonHeaderViewModel {
-        return LabelButtonHeaderViewModel(title: .localized(.stories), isButtonHidden: true)
+        return .init(title: .localized(.ecosiaNews),
+                     isButtonHidden: false,
+                     buttonTitle: .localized(.seeAll)) { [weak self] _ in
+            self?.delegate?.openSeeAllNews()
+        }
     }
 
     func section(for traitCollection: UITraitCollection) -> NSCollectionLayoutSection {
@@ -64,11 +73,7 @@ extension NTPNewsViewModel: HomepageViewModelProtocol {
             layoutSize: size,
             elementKind: UICollectionView.elementKindSectionHeader,
             alignment: .top)
-        let footer = NSCollectionLayoutBoundarySupplementaryItem(
-            layoutSize: size,
-            elementKind: UICollectionView.elementKindSectionFooter,
-            alignment: .bottom)
-        section.boundarySupplementaryItems = [header, footer]
+        section.boundarySupplementaryItems = [header]
         return section
     }
 

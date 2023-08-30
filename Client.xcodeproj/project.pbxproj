@@ -647,7 +647,6 @@
 		CA4D9CFD28C8D801006AFB5D /* MultiplyImpact.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4D9CA628C8D801006AFB5D /* MultiplyImpact.swift */; };
 		CA4D9CFE28C8D801006AFB5D /* EcosiaNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4D9CA728C8D801006AFB5D /* EcosiaNavigation.swift */; };
 		CA4D9CFF28C8D801006AFB5D /* UICollectionView+maxWidth.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4D9CA828C8D801006AFB5D /* UICollectionView+maxWidth.swift */; };
-		CA4D9D0028C8D801006AFB5D /* MoreButtonCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4D9CA928C8D801006AFB5D /* MoreButtonCell.swift */; };
 		CA4D9D0128C8D801006AFB5D /* MyImpactCell.Indicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4D9CAA28C8D801006AFB5D /* MyImpactCell.Indicator.swift */; };
 		CA4D9D0228C8D801006AFB5D /* MultiplyImpactStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4D9CAB28C8D801006AFB5D /* MultiplyImpactStep.swift */; };
 		CA4D9D0328C8D801006AFB5D /* YourImpact.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4D9CAC28C8D801006AFB5D /* YourImpact.swift */; };
@@ -3616,7 +3615,6 @@
 		CA4D9CA628C8D801006AFB5D /* MultiplyImpact.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultiplyImpact.swift; sourceTree = "<group>"; };
 		CA4D9CA728C8D801006AFB5D /* EcosiaNavigation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EcosiaNavigation.swift; sourceTree = "<group>"; };
 		CA4D9CA828C8D801006AFB5D /* UICollectionView+maxWidth.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UICollectionView+maxWidth.swift"; sourceTree = "<group>"; };
-		CA4D9CA928C8D801006AFB5D /* MoreButtonCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MoreButtonCell.swift; sourceTree = "<group>"; };
 		CA4D9CAA28C8D801006AFB5D /* MyImpactCell.Indicator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyImpactCell.Indicator.swift; sourceTree = "<group>"; };
 		CA4D9CAB28C8D801006AFB5D /* MultiplyImpactStep.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultiplyImpactStep.swift; sourceTree = "<group>"; };
 		CA4D9CAC28C8D801006AFB5D /* YourImpact.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = YourImpact.swift; sourceTree = "<group>"; };
@@ -6685,7 +6683,6 @@
 			children = (
 				CA4D9C9F28C8D801006AFB5D /* EcosiaExploreCell.swift */,
 				CAF35AE2292E7CBF002EF660 /* ImpactHeaderCell.swift */,
-				CA4D9CA928C8D801006AFB5D /* MoreButtonCell.swift */,
 				CA4D9C9E28C8D801006AFB5D /* MultiplyImpactCell.swift */,
 				CA4D9CAA28C8D801006AFB5D /* MyImpactCell.Indicator.swift */,
 				CA4D9CA128C8D801006AFB5D /* MyImpactCell.Progress.swift */,
@@ -9622,7 +9619,6 @@
 				C81AC6B626160091007800C5 /* TabTrayViewModel.swift in Sources */,
 				EBB89504219398E500EB91A0 /* TrackingProtectionPageStats.swift in Sources */,
 				D31F95E91AC226CB005C9F3B /* ScreenshotHelper.swift in Sources */,
-				CA4D9D0028C8D801006AFB5D /* MoreButtonCell.swift in Sources */,
 				28EADE5D1AFC3A78007FB2FB /* UIImageView+Extension.swift in Sources */,
 				CACF7D0F28DB3E6D00A996A4 /* EcosiaFavourites.swift in Sources */,
 				D3968F251A38FE8500CEFD3B /* TabManager.swift in Sources */,

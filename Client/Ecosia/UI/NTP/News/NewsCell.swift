@@ -20,65 +20,37 @@ final class NewsCell: UICollectionViewCell, NotificationThemeable, ReusableCell 
     }
 
     private var imageUrl: URL?
-    private weak var background: UIView!
-    private weak var image: UIImageView!
-    private weak var title: UILabel!
-    private weak var bottomLine: UIStackView!
-    private weak var bottomIcon: UIImageView!
-    private weak var highlightLabel: UILabel!
-    private weak var bottomLabel: UILabel!
-    private weak var border: UIView!
-    private weak var placeholder: UIImageView!
-    var defaultBackgroundColor: (() -> UIColor) = { .theme.ecosia.ntpCellBackground }
-
-    required init?(coder: NSCoder) { nil }
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        let container = UIView()
-        container.translatesAutoresizingMaskIntoConstraints = false
-        contentView.addSubview(container)
-
-        container.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
-        container.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
-        container.leftAnchor.constraint(equalTo: contentView.leftAnchor).isActive = true
-        container.rightAnchor.constraint(equalTo: contentView.rightAnchor).isActive = true
-
+    private lazy var background: UIView = {
         let background = UIView()
         background.translatesAutoresizingMaskIntoConstraints = false
-        contentView.addSubview(background)
-        self.background = background
         background.layer.cornerRadius = 10
-
-        background.leadingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leadingAnchor).isActive = true
-        background.trailingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.trailingAnchor).isActive = true
-        background.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
-        background.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
-
+        return background
+    }()
+    private lazy var border: UIView = {
         let border = UIView()
         border.translatesAutoresizingMaskIntoConstraints = false
         border.isUserInteractionEnabled = false
-        background.addSubview(border)
-        self.border = border
-        
+        return border
+    }()
+    private lazy var placeholder: UIImageView = {
         let placeholder = UIImageView()
         placeholder.translatesAutoresizingMaskIntoConstraints = false
         placeholder.contentMode = .scaleAspectFill
         placeholder.clipsToBounds = true
         placeholder.image = UIImage(named: "image_placeholder")!
         placeholder.layer.cornerRadius = 10
-        background.addSubview(placeholder)
-        self.placeholder = placeholder
-
+        return placeholder
+    }()
+    private lazy var image: UIImageView = {
         let image = UIImageView()
         image.translatesAutoresizingMaskIntoConstraints = false
         image.contentMode = .scaleAspectFill
         image.clipsToBounds = true
         image.alpha = 0
         image.layer.cornerRadius = 10
-        background.addSubview(image)
-        self.image = image
-        
+        return image
+    }()
+    private lazy var title: UILabel = {
         let title = UILabel()
         title.translatesAutoresizingMaskIntoConstraints = false
         title.numberOfLines = 4
@@ -88,25 +60,25 @@ final class NewsCell: UICollectionViewCell, NotificationThemeable, ReusableCell 
         title.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         title.adjustsFontForContentSizeCategory = true
         title.adjustsFontSizeToFitWidth = true
-        background.addSubview(title)
-        self.title = title
-
+        return title
+    }()
+    private lazy var bottomLine: UIStackView = {
         let bottomLine = UIStackView()
         bottomLine.translatesAutoresizingMaskIntoConstraints = false
         bottomLine.distribution = .fill
         bottomLine.axis = .horizontal
         bottomLine.spacing = 4
         bottomLine.setContentHuggingPriority(.defaultLow, for: .horizontal)
-        background.addSubview(bottomLine)
-        self.bottomLine = bottomLine
-
+        return bottomLine
+    }()
+    private lazy var bottomIcon: UIImageView = {
         let bottomIcon = UIImageView()
         bottomIcon.translatesAutoresizingMaskIntoConstraints = false
         bottomIcon.contentMode = .scaleAspectFill
         bottomIcon.clipsToBounds = true
-        bottomLine.addArrangedSubview(bottomIcon)
-        self.bottomIcon = bottomIcon
-
+        return bottomIcon
+    }()
+    private lazy var highlightLabel: UILabel = {
         let highlightLabel = UILabel()
         highlightLabel.translatesAutoresizingMaskIntoConstraints = false
         highlightLabel.font = .preferredFont(forTextStyle: .footnote).bold()
@@ -116,9 +88,9 @@ final class NewsCell: UICollectionViewCell, NotificationThemeable, ReusableCell 
         highlightLabel.setContentCompressionResistancePriority(.required, for: .vertical)
         highlightLabel.setContentHuggingPriority(.defaultHigh, for: .vertical)
         highlightLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
-        bottomLine.addArrangedSubview(highlightLabel)
-        self.highlightLabel = highlightLabel
-
+        return highlightLabel
+    }()
+    private lazy var bottomLabel: UILabel = {
         let bottomLabel = UILabel()
         bottomLabel.translatesAutoresizingMaskIntoConstraints = false
         bottomLabel.font = .preferredFont(forTextStyle: .footnote)
@@ -128,8 +100,36 @@ final class NewsCell: UICollectionViewCell, NotificationThemeable, ReusableCell 
         bottomLabel.setContentCompressionResistancePriority(.required, for: .vertical)
         bottomLabel.setContentHuggingPriority(.defaultHigh, for: .vertical)
         bottomLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        return bottomLabel
+    }()
+    var defaultBackgroundColor: (() -> UIColor) = { .theme.ecosia.ntpCellBackground }
+
+    required init?(coder: NSCoder) { nil }
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        let container = UIView()
+        container.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(container)
+        contentView.addSubview(background)
+        background.addSubview(border)
+        background.addSubview(placeholder)
+        background.addSubview(image)
+        background.addSubview(title)
+        background.addSubview(bottomLine)
+        bottomLine.addArrangedSubview(bottomIcon)
+        bottomLine.addArrangedSubview(highlightLabel)
         bottomLine.addArrangedSubview(bottomLabel)
-        self.bottomLabel = bottomLabel
+
+        container.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
+        container.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
+        container.leftAnchor.constraint(equalTo: contentView.leftAnchor).isActive = true
+        container.rightAnchor.constraint(equalTo: contentView.rightAnchor).isActive = true
+
+        background.leadingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leadingAnchor).isActive = true
+        background.trailingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.trailingAnchor).isActive = true
+        background.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
+        background.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
 
         placeholder.topAnchor.constraint(equalTo: image.topAnchor).isActive = true
         placeholder.bottomAnchor.constraint(equalTo: image.bottomAnchor).isActive = true
@@ -234,9 +234,9 @@ final class NewsCell: UICollectionViewCell, NotificationThemeable, ReusableCell 
         background.backgroundColor = defaultBackgroundColor()
         placeholder.tintColor = .theme.ecosia.decorativeIcon
         placeholder.backgroundColor = .theme.ecosia.newsPlaceholder
-        border?.backgroundColor = .theme.ecosia.border
-        title?.textColor = .theme.ecosia.primaryText
-        bottomLabel?.textColor = .theme.ecosia.secondaryText
-        highlightLabel?.textColor = .theme.ecosia.secondaryText
+        border.backgroundColor = .theme.ecosia.border
+        title.textColor = .theme.ecosia.primaryText
+        bottomLabel.textColor = .theme.ecosia.secondaryText
+        highlightLabel.textColor = .theme.ecosia.secondaryText
     }
 }

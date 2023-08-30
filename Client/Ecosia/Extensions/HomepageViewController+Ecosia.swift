@@ -31,14 +31,6 @@ extension HomepageViewController {
     var treesCellModel: NTPImpactCell.Model {
         .init(impact: User.shared.impact, searches: personalCounter.state!, trees: TreeCounter.shared.treesAt(.init()))
     }
-
-    @objc func allNews() {
-        let news = NewsController(items: viewModel.newsViewModel.items, delegate: self)
-        let nav = EcosiaNavigation(rootViewController: news)
-        present(nav, animated: true)
-        Analytics.shared.navigation(.open, label: .news)
-    }
-
 }
 
 extension HomepageViewController: NTPTooltipDelegate {
@@ -99,6 +91,15 @@ extension HomepageViewController: YourImpactDelegate {
     }
 }
 
+extension HomepageViewController: NTPNewsDelegate {
+    func openSeeAllNews() {
+        let news = NewsController(items: viewModel.newsViewModel.items, delegate: self)
+        let nav = EcosiaNavigation(rootViewController: news)
+        present(nav, animated: true)
+        Analytics.shared.navigation(.open, label: .news)
+    }
+}
+
 extension HomepageViewController: NTPBookmarkNudgeViewDelegate {
     func nudgeCellOpenBookmarks() {
         homePanelDelegate?.homePanelDidRequestToOpenLibrary(panel: .bookmarks)
@@ -117,14 +118,8 @@ extension HomepageViewController: NTPCustomizationCellDelegate {
         // TODO: Is this the right place to get the profile?
         guard let profile = currentTab?.profile else { return }
         let settingsPage = NTPCustomizationSettingsViewController(profile: profile)
-        settingsPage.delegate = self
+        settingsPage.ntpDataModelDelegate = viewModel
         let navigation = EcosiaNavigation(rootViewController: settingsPage)
         present(navigation, animated: true)
-    }
-}
-
-extension HomepageViewController: NTPCustomizationSettingsDelegate {
-    func willDismissNTPCustomizationSettings() {
-        reloadView()
     }
 }

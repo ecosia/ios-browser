@@ -17,7 +17,7 @@ class HomepageViewModel: FeatureFlaggable, NTPLayoutHighlightDataSource {
 
     struct UX {
         static let spacingBetweenSections: CGFloat = 32
-        static let standardInset: CGFloat = 18
+        static let standardInset: CGFloat = 16 // Ecosia: update value
         static let iPadInset: CGFloat = 50
         static let iPadTopSiteInset: CGFloat = 25
 
@@ -107,7 +107,7 @@ class HomepageViewModel: FeatureFlaggable, NTPLayoutHighlightDataSource {
                                 ntpCustomizationViewModel]
         self.isPrivate = isPrivate
         topSiteViewModel.delegate = self
-        newsViewModel.delegate = self
+        newsViewModel.dataModelDelegate = self
         updateEnabledSections()
     }
 

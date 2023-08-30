@@ -136,9 +136,6 @@ class HomepageViewController: UIViewController, HomePanel, FeatureFlaggable {
         collectionView.register(NTPTooltip.self,
                                 forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
                                 withReuseIdentifier: NTPTooltip.key)
-        collectionView.register(MoreButtonCell.self,
-                                forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
-                                withReuseIdentifier: MoreButtonCell.cellIdentifier)
         collectionView.keyboardDismissMode = .onDrag
         collectionView.addGestureRecognizer(longPressRecognizer)
         collectionView.delegate = self
@@ -326,15 +323,6 @@ extension HomepageViewController: UICollectionViewDelegate, UICollectionViewData
             return tooltip
         }
 
-        // footer for news
-        if sectionViewModel.sectionType == .news, kind == UICollectionView.elementKindSectionFooter  {
-            let moreButton = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: MoreButtonCell.cellIdentifier, for: indexPath) as! MoreButtonCell
-            moreButton.button.setTitle(.localized(.seeMoreNews), for: .normal)
-            moreButton.button.addTarget(self, action: #selector(allNews), for: .primaryActionTriggered)
-            moreButton.applyTheme()
-            return moreButton
-        }
-
         guard let headerView = collectionView.dequeueReusableSupplementaryView(
                 ofKind: UICollectionView.elementKindSectionHeader,
                 withReuseIdentifier: LabelButtonHeaderView.cellIdentifier,
@@ -391,6 +379,7 @@ private extension HomepageViewController {
 
         viewModel.libraryViewModel.delegate = self
         viewModel.bookmarkNudgeViewModel.delegate = self
+        viewModel.newsViewModel.delegate = self
         viewModel.ntpCustomizationViewModel.delegate = self
     }
 

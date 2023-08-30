@@ -5,12 +5,8 @@
 import Foundation
 import Shared
 
-protocol NTPCustomizationSettingsDelegate: AnyObject {
-    func willDismissNTPCustomizationSettings()
-}
-
 final class NTPCustomizationSettingsViewController: SettingsTableViewController {
-    var delegate: NTPCustomizationSettingsDelegate?
+    weak var ntpDataModelDelegate: HomepageDataModelDelegate?
     
     // TODO: Is Profile actually needed?
     init(profile: Profile) {
@@ -44,7 +40,7 @@ final class NTPCustomizationSettingsViewController: SettingsTableViewController 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
-        delegate?.willDismissNTPCustomizationSettings()
+        ntpDataModelDelegate?.reloadView()
     }
 }
 
