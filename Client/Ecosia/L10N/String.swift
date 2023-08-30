@@ -230,5 +230,11 @@ extension String {
         case onboardingIllustrationTour3 = "This onboarding illustration shows a few numbers like the projects Ecosia is involved in, the total number of trees planted by the Ecosia community, alongisde the number of countries Ecosia is active. A small map of the planisphere with trees pins in few geographic location, background."
         case onboardingIllustrationTour4 = "This onboarding illustration is a photo of a monkey climbing a tree. It function mainly as general decoration image."
         case onboardingIllustrationTour4Alternative = "This onboarding illustration shows the latest financial reports of Ecosia. On the background there is an image of a person caring for tree seedlings"
+        case whatsNewViewTitle = "What's new"
+        case whatsNewFirstItemTitle = "Collective action"
+        case whatsNewFirstItemDescription = "See the climate impact you are having together with the rest of the Ecosia community."
+        case whatsNewSecondItemTitle = "Customizable home page"
+        case whatsNewSecondItemDescription = "Tailor your home page to show the information that’s most relevant to you."
+        case whatsNewFooterButtonTitle = "Discover"
     }
 }

@@ -131,6 +131,12 @@
 		2C4A07DC20246EAD0083E320 /* DragAndDropTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4A07DB20246EAD0083E320 /* DragAndDropTests.swift */; };
 		2C4B6BF320349EB800A009C2 /* FirstRunTourTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4B6BF220349EB800A009C2 /* FirstRunTourTests.swift */; };
 		2C5850012A02879A009D7703 /* BingExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5850002A02879A009D7703 /* BingExperiment.swift */; };
+		2C73A71B2A9E0B7A006EBAAB /* WhatsNewItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C73A71A2A9E0B7A006EBAAB /* WhatsNewItem.swift */; };
+		2C73A71D2A9E0B97006EBAAB /* WhatsNewDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C73A71C2A9E0B97006EBAAB /* WhatsNewDataProvider.swift */; };
+		2C73A71F2A9E0BB5006EBAAB /* WhatsNewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C73A71E2A9E0BB5006EBAAB /* WhatsNewViewModel.swift */; };
+		2C73A7212A9E0BCD006EBAAB /* WhatsNewJSONDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C73A7202A9E0BCD006EBAAB /* WhatsNewJSONDataProvider.swift */; };
+		2C73A7242A9E0C6F006EBAAB /* WhatsNewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C73A7232A9E0C6F006EBAAB /* WhatsNewViewController.swift */; };
+		2C73A7282A9E1BD7006EBAAB /* WhatsNewLocalDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C73A7272A9E1BD7006EBAAB /* WhatsNewLocalDataProvider.swift */; };
 		2C8C07771E7800EA00DC1237 /* FindInPageTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C8C07761E7800EA00DC1237 /* FindInPageTest.swift */; };
 		2C97EC711E72C80E0092EC18 /* TopTabsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C97EC701E72C80E0092EC18 /* TopTabsTest.swift */; };
 		2C9C9FF72A03C7CF0038A3DD /* UnleashBingExperimentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9C9FF62A03C7CF0038A3DD /* UnleashBingExperimentTests.swift */; };
@@ -1744,6 +1750,12 @@
 		2C5850002A02879A009D7703 /* BingExperiment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BingExperiment.swift; sourceTree = "<group>"; };
 		2C6045859589979C43AF09E0 /* jv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = jv; path = jv.lproj/ClearPrivateDataConfirm.strings; sourceTree = "<group>"; };
 		2C6E44099EACF7BE5438CEB6 /* ca */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ca; path = ca.lproj/Today.strings; sourceTree = "<group>"; };
+		2C73A71A2A9E0B7A006EBAAB /* WhatsNewItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhatsNewItem.swift; sourceTree = "<group>"; };
+		2C73A71C2A9E0B97006EBAAB /* WhatsNewDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhatsNewDataProvider.swift; sourceTree = "<group>"; };
+		2C73A71E2A9E0BB5006EBAAB /* WhatsNewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhatsNewViewModel.swift; sourceTree = "<group>"; };
+		2C73A7202A9E0BCD006EBAAB /* WhatsNewJSONDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhatsNewJSONDataProvider.swift; sourceTree = "<group>"; };
+		2C73A7232A9E0C6F006EBAAB /* WhatsNewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhatsNewViewController.swift; sourceTree = "<group>"; };
+		2C73A7272A9E1BD7006EBAAB /* WhatsNewLocalDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhatsNewLocalDataProvider.swift; sourceTree = "<group>"; };
 		2C8C07761E7800EA00DC1237 /* FindInPageTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FindInPageTest.swift; sourceTree = "<group>"; };
 		2C9144B0B15218D8A0FCD538 /* es-AR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-AR"; path = "es-AR.lproj/ClearPrivateData.strings"; sourceTree = "<group>"; };
 		2C97EC701E72C80E0092EC18 /* TopTabsTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TopTabsTest.swift; sourceTree = "<group>"; };
@@ -5209,8 +5221,22 @@
 		2C73A7192A9D14B2006EBAAB /* WhatsNew */ = {
 			isa = PBXGroup;
 			children = (
+				2C73A71A2A9E0B7A006EBAAB /* WhatsNewItem.swift */,
+				2C73A71E2A9E0BB5006EBAAB /* WhatsNewViewModel.swift */,
+				2C73A7222A9E0BD7006EBAAB /* DataProvider */,
+				2C73A7232A9E0C6F006EBAAB /* WhatsNewViewController.swift */,
 			);
 			path = WhatsNew;
+			sourceTree = "<group>";
+		};
+		2C73A7222A9E0BD7006EBAAB /* DataProvider */ = {
+			isa = PBXGroup;
+			children = (
+				2C73A71C2A9E0B97006EBAAB /* WhatsNewDataProvider.swift */,
+				2C73A7202A9E0BCD006EBAAB /* WhatsNewJSONDataProvider.swift */,
+				2C73A7272A9E1BD7006EBAAB /* WhatsNewLocalDataProvider.swift */,
+			);
+			path = DataProvider;
 			sourceTree = "<group>";
 		};
 		2C9C9FF52A03C7950038A3DD /* ExperimentsTests */ = {
@@ -9314,7 +9340,9 @@
 				D01017F5219CB6BD009CBB5A /* DownloadContentScript.swift in Sources */,
 				D5D052EF2645ACBF00759F85 /* View.swift in Sources */,
 				39F819C61FD70F5D009E31E4 /* TabEventHandlers.swift in Sources */,
+				2C73A71F2A9E0BB5006EBAAB /* WhatsNewViewModel.swift in Sources */,
 				E65607611C08B4E200534B02 /* SearchInputView.swift in Sources */,
+				2C73A7242A9E0C6F006EBAAB /* WhatsNewViewController.swift in Sources */,
 				FA6B2AC21D41F02D00429414 /* Punycode.swift in Sources */,
 				43446CEA2412066500F5C643 /* UIViewController+Extension.swift in Sources */,
 				8A471185287F6E4800F5A6EA /* SeparatorTableViewCell.swift in Sources */,
@@ -9358,6 +9386,7 @@
 				D314E7F71A37B98700426A76 /* TabToolbar.swift in Sources */,
 				CA4D9D1E28C8D801006AFB5D /* Analytics.swift in Sources */,
 				96C11E9B2864C2DD00840E7C /* AppContainer.swift in Sources */,
+				2C73A71D2A9E0B97006EBAAB /* WhatsNewDataProvider.swift in Sources */,
 				C8954A542729AD9D001C7283 /* CustomTheme.swift in Sources */,
 				CA4D9CE328C8D801006AFB5D /* UIFont+Ecosia.swift in Sources */,
 				43BDBBFE2752FA8600254DE4 /* TabCell.swift in Sources */,
@@ -9394,6 +9423,7 @@
 				E571EE782875694C0051D9AA /* PocketSponsoredStoriesProvider.swift in Sources */,
 				2F44FC721A9E840300FD20CC /* SettingsNavigationController.swift in Sources */,
 				2CAD6D992A7A96C000C2E96D /* Analytics+Configuration.swift in Sources */,
+				2C73A71B2A9E0B7A006EBAAB /* WhatsNewItem.swift in Sources */,
 				CA4D9CF028C8D801006AFB5D /* NTPTooltip.Highlight.swift in Sources */,
 				D0E89A2920910917001CE5C7 /* DownloadsPanel.swift in Sources */,
 				CA8BCC3728D1FB840020BC50 /* HistoryHighlightsDataAdaptor.swift in Sources */,
@@ -9404,6 +9434,7 @@
 				C8364D7927AAC46700D0A4F0 /* LegacyWallpaperSettingsViewModel.swift in Sources */,
 				0BB5B30B1AC0AD1F0052877D /* LoginsHelper.swift in Sources */,
 				C87DF9DB267247190097E707 /* UIConstants+BottomInset.swift in Sources */,
+				2C73A7282A9E1BD7006EBAAB /* WhatsNewLocalDataProvider.swift in Sources */,
 				8AD08D1527E9198E00B8E907 /* TabsQuantityTelemetry.swift in Sources */,
 				1DA3CE6324EEE83200422BB2 /* SavedTab+ConfigureExtension.swift in Sources */,
 				CA4D9CE428C8D801006AFB5D /* SnapKit+Ecosia.swift in Sources */,
@@ -9593,6 +9624,7 @@
 				C4E3984C1D21F2FD004E89BA /* TabTrayButtonExtensions.swift in Sources */,
 				439086AB286CE61600897904 /* SDWebImageCacheExtension.swift in Sources */,
 				437A857827E43FE100E42764 /* FxAWebViewTelemetry.swift in Sources */,
+				2C73A7212A9E0BCD006EBAAB /* WhatsNewJSONDataProvider.swift in Sources */,
 				D3FEC38D1AC4B42F00494F45 /* AutocompleteTextField.swift in Sources */,
 				C849E46526B9C3DD00260F0B /* SlideoverPresentationController.swift in Sources */,
 				D5D0532E2645B3A700759F85 /* ExperimentsTableView.swift in Sources */,
