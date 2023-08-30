@@ -48,7 +48,16 @@ enum HomepageSectionType: Int, CaseIterable {
     init(_ section: Int) {
         self.init(rawValue: section)!
     }
-
+    
+    //Ecosia: Customizable configuration
+    var customizableConfig: CustomizableNTPSettingConfig? {
+        switch self {
+        case .logoHeader, .bookmarkNudge, .libraryShortcuts, .ntpCustomization: return nil
+        case .topSites: return .topSites
+        case .impact: return .climateImpact
+        case .news: return .ecosiaNews
+        }
+    }
 }
 
 private let MinimumInsets: CGFloat = 16

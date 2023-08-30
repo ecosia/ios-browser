@@ -44,6 +44,7 @@
 		12E8E6B32A9CFC4100E6ED8E /* NTPCustomizationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12E8E6B02A9CFC4100E6ED8E /* NTPCustomizationCell.swift */; };
 		12E8E6B42A9CFC4100E6ED8E /* NTPCustomizationCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12E8E6B12A9CFC4100E6ED8E /* NTPCustomizationCellViewModel.swift */; };
 		12E8E6B52A9CFC4100E6ED8E /* NTPCustomizationSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12E8E6B22A9CFC4100E6ED8E /* NTPCustomizationSettingsViewController.swift */; };
+		12EEE09D2A9F31BB00C4A46D /* CustomizableNTPSettingConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12EEE09C2A9F31BB00C4A46D /* CustomizableNTPSettingConfig.swift */; };
 		158241282820698B00956B39 /* RustRemoteTabsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 158241272820698B00956B39 /* RustRemoteTabsTests.swift */; };
 		15DE98FD27FCED4F00F1ECDB /* RustRemoteTabs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15DE98FC27FCED4F00F1ECDB /* RustRemoteTabs.swift */; };
 		1B0DFD25274856D60008EB0A /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = 1B0DFD24274856D60008EB0A /* SwiftyJSON */; };
@@ -1464,6 +1465,7 @@
 		12E8E6B12A9CFC4100E6ED8E /* NTPCustomizationCellViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NTPCustomizationCellViewModel.swift; sourceTree = "<group>"; };
 		12E8E6B22A9CFC4100E6ED8E /* NTPCustomizationSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NTPCustomizationSettingsViewController.swift; sourceTree = "<group>"; };
 		12EA4881BFBE296298150D4A /* bn */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = bn; path = bn.lproj/LoginManager.strings; sourceTree = "<group>"; };
+		12EEE09C2A9F31BB00C4A46D /* CustomizableNTPSettingConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomizableNTPSettingConfig.swift; sourceTree = "<group>"; };
 		12F949169C30744CCC749588 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/HistoryPanel.strings; sourceTree = "<group>"; };
 		1323403C8071FC19BB79C191 /* su */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = su; path = su.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		13254478B55183D37507CAD4 /* da */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = da; path = da.lproj/AuthenticationManager.strings; sourceTree = "<group>"; };
@@ -4954,6 +4956,7 @@
 		12E8E6AF2A9CFC4100E6ED8E /* NTPCustomization */ = {
 			isa = PBXGroup;
 			children = (
+				12EEE09C2A9F31BB00C4A46D /* CustomizableNTPSettingConfig.swift */,
 				12E8E6B02A9CFC4100E6ED8E /* NTPCustomizationCell.swift */,
 				12E8E6B12A9CFC4100E6ED8E /* NTPCustomizationCellViewModel.swift */,
 				12E8E6B22A9CFC4100E6ED8E /* NTPCustomizationSettingsViewController.swift */,
@@ -9417,6 +9420,7 @@
 				1DA3CE6324EEE83200422BB2 /* SavedTab+ConfigureExtension.swift in Sources */,
 				CA4D9CE428C8D801006AFB5D /* SnapKit+Ecosia.swift in Sources */,
 				C87DC85627B2C8B0006EFCE2 /* LegacyWallpaperNetworkUtility.swift in Sources */,
+				12EEE09D2A9F31BB00C4A46D /* CustomizableNTPSettingConfig.swift in Sources */,
 				392ED7E61D0AEFEF009D9B62 /* HomePageAccessors.swift in Sources */,
 				7BA8D1C71BA037F500C8AE9E /* OpenInHelper.swift in Sources */,
 				8AD40FC727BADC3400672675 /* ToolbarTextField.swift in Sources */,

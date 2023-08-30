@@ -3,7 +3,6 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
-import Core
 import Shared
 
 protocol NTPCustomizationSettingsDelegate: AnyObject {
@@ -12,21 +11,6 @@ protocol NTPCustomizationSettingsDelegate: AnyObject {
 
 final class NTPCustomizationSettingsViewController: SettingsTableViewController {
     var delegate: NTPCustomizationSettingsDelegate?
-    
-    // TODO: Dinamically fetch from homepage sections
-    enum CustomizableSections: CaseIterable {
-        case topSites
-        case climateImpact
-        case ecosiaNews
-        
-        var localizedTitleKey: String.Key {
-            switch self {
-            case .topSites: return .topSites
-            case .climateImpact: return .climateImpact
-            case .ecosiaNews: return .ecosiaNews
-            }
-        }
-    }
     
     // TODO: Is Profile actually needed?
     init(profile: Profile) {
@@ -46,8 +30,9 @@ final class NTPCustomizationSettingsViewController: SettingsTableViewController 
     }
     
     override func generateSettings() -> [SettingSection] {
-        [SettingSection(title: .init(string: .localized(.showOnHomepage)), children: CustomizableSections
-            .allCases.map { NTPCustomizationSetting(prefs: profile.prefs, setting: $0) })]
+        let customizableSectionConfigs = HomepageSectionType.allCases.compactMap({ $0.customizableConfig })
+        let settings = customizableSectionConfigs.map { NTPCustomizationSetting(prefs: profile.prefs, config: $0) }
+        return [SettingSection(title: .init(string: .localized(.showOnHomepage)), children: settings)]
     }
     
     override func viewDidLoad() {
@@ -64,35 +49,20 @@ final class NTPCustomizationSettingsViewController: SettingsTableViewController 
 }
 
 final class NTPCustomizationSetting: BoolSetting {
+    private var config: CustomizableNTPSettingConfig = .topSites
     
-    private var setting: NTPCustomizationSettingsViewController.CustomizableSections = .topSites
-    
-    convenience init(prefs: Prefs, setting: NTPCustomizationSettingsViewController.CustomizableSections) {
+    convenience init(prefs: Prefs, config: CustomizableNTPSettingConfig) {
         self.init(prefs: prefs,
                   defaultValue: true,
-                  titleText: .localized(setting.localizedTitleKey)) { value in
-            switch setting {
-            case .topSites: User.shared.showTopSites = value
-            case .climateImpact: User.shared.showClimateImpact = value
-            case .ecosiaNews: User.shared.showEcosiaNews = value
-            }
-        }
-        self.setting = setting
+                  titleText: .localized(config.localizedTitleKey))
+        self.config = config
     }
 
     override func displayBool(_ control: UISwitch) {
-        switch setting {
-        case .topSites: control.isOn = User.shared.showTopSites
-        case .climateImpact: control.isOn = User.shared.showClimateImpact
-        case .ecosiaNews: control.isOn = User.shared.showEcosiaNews
-        }
+        control.isOn = config.persistedFlag
     }
 
     override func writeBool(_ control: UISwitch) {
-        switch setting {
-        case .topSites: User.shared.showTopSites = control.isOn
-        case .climateImpact: User.shared.showClimateImpact = control.isOn
-        case .ecosiaNews: User.shared.showEcosiaNews = control.isOn
-        }
+        config.persistedFlag = control.isOn
     }
 }
