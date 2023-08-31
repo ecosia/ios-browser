@@ -113,6 +113,15 @@ extension HomepageViewController: NTPBookmarkNudgeCellDelegate {
     }
 }
 
+extension HomepageViewController: NTPAboutEcosiaCellDelegate {
+    // TODO: Make this generic to be used in other places?
+    func invalidateLayout(at indexPath: IndexPath) {
+        let context = UICollectionViewLayoutInvalidationContext()
+        context.invalidateItems(at: [indexPath])
+        collectionView.collectionViewLayout.invalidateLayout(with: context)
+    }
+}
+
 extension HomepageViewController: NTPCustomizationCellDelegate {
     func openNTPCustomizationSettings() {
         // TODO: Is this the right place to get the profile?

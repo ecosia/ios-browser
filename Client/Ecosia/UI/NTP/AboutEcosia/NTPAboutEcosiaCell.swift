@@ -9,6 +9,7 @@ final class NTPAboutEcosiaCell: UICollectionViewCell, ReusableCell {
         static let height: CGFloat = 64
     }
     private var section: AboutEcosiaSection?
+    private weak var viewModel: NTPAboutEcosiaCellViewModel?
     private var isLastSection: Bool {
         section == AboutEcosiaSection.allCases.last
     }
@@ -66,6 +67,7 @@ final class NTPAboutEcosiaCell: UICollectionViewCell, ReusableCell {
         button.layer.cornerRadius = 20
         button.addTarget(self, action: #selector(highlighted), for: .touchDown)
         button.addTarget(self, action: #selector(unhighlighted), for: [.touchUpInside, .touchCancel])
+        // TODO: Add learn more button action
         return button
     }()
     private lazy var learnMoreLabel: UILabel = {
@@ -84,6 +86,10 @@ final class NTPAboutEcosiaCell: UICollectionViewCell, ReusableCell {
         view.isUserInteractionEnabled = false
         return view
     }()
+    
+    var expandedHeight: CGFloat {
+        disclosureView.frame.maxY
+    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -106,6 +112,17 @@ final class NTPAboutEcosiaCell: UICollectionViewCell, ReusableCell {
         super.layoutSubviews()
         // TODO: Why is this needed?
         dividerView.isHidden = isLastSection || frame.height > UX.height
+    }
+    
+    override func preferredLayoutAttributesFitting(_ layoutAttributes: UICollectionViewLayoutAttributes) -> UICollectionViewLayoutAttributes {
+        let isExpanded = viewModel?.expandedIndex == layoutAttributes.indexPath
+        let height = isExpanded ? expandedHeight : UX.height
+        layoutAttributes.frame.size = contentView
+            .systemLayoutSizeFitting(CGSize(width: layoutAttributes.frame.width,
+                                            height: height),
+                                     withHorizontalFittingPriority: .required,
+                                     verticalFittingPriority: .fittingSizeLevel)
+        return layoutAttributes
     }
     
     override var isSelected: Bool {
@@ -177,8 +194,10 @@ final class NTPAboutEcosiaCell: UICollectionViewCell, ReusableCell {
         outlineView.backgroundColor = isSelected || isHighlighted ? .theme.ecosia.secondarySelectedBackground : .theme.ecosia.ntpCellBackground
     }
     
-    func configure(section: AboutEcosiaSection) {
+    func configure(section: AboutEcosiaSection,
+                   viewModel: NTPAboutEcosiaCellViewModel) {
         self.section = section
+        self.viewModel = viewModel
         
         titleLabel.text = section.title
         imageView.image = UIImage(named: section.image)

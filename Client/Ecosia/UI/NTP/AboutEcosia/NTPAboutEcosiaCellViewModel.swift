@@ -5,8 +5,15 @@
 import Foundation
 import Core
 
+protocol NTPAboutEcosiaCellDelegate: AnyObject {
+    func invalidateLayout(at indexPath: IndexPath)
+}
+
 class NTPAboutEcosiaCellViewModel {
     private var sections = AboutEcosiaSection.allCases
+    
+    weak var delegate: NTPAboutEcosiaCellDelegate?
+    var expandedIndex: IndexPath?
 }
 
 extension NTPAboutEcosiaCellViewModel: HomepageViewModelProtocol {
@@ -59,7 +66,16 @@ extension NTPAboutEcosiaCellViewModel: HomepageSectionHandler {
         guard let cell = cell as? NTPAboutEcosiaCell else {
             return UICollectionViewCell()
         }
-        cell.configure(section: sections[indexPath.row])
+        cell.configure(section: sections[indexPath.row], viewModel: self)
         return cell
+    }
+    
+    func didSelectItem(at indexPath: IndexPath, homePanelDelegate: HomePanelDelegate?, libraryPanelDelegate: LibraryPanelDelegate?) {
+        if let previousIndex = expandedIndex {
+            delegate?.invalidateLayout(at: previousIndex)
+        }
+        
+        expandedIndex = indexPath
+        delegate?.invalidateLayout(at: indexPath)
     }
 }
