@@ -12,7 +12,7 @@ struct JSONDataProvider: DataProvider {
         let items: [RemoteWhatsNewItem]
     }
 
-    private struct RemoteWhatsNewItem: Codable {
+    private struct RemoteWhatsNewItem: Decodable {
         let imageURL: URL
         let title: String
         let subtitle: String
