@@ -10,11 +10,12 @@ final class WhatsNewCell: UITableViewCell {
     static let reuseIdentifier = String(describing: WhatsNewCell.self)
     var contentConfigurationToUpdate: Any?
     private var imageURL: URL?
-    
+        
     func configure(with item: WhatsNewItem, images: Images) {
         
+        selectionStyle = .none
+        
         guard let itemImageURL = item.imageURL else { return }
-
         imageURL = itemImageURL
 
         // Load the image asynchronously
@@ -50,8 +51,10 @@ final class WhatsNewCell: UITableViewCell {
 
     @available(iOS 14.0, *)
     override func updateConfiguration(using state: UICellConfigurationState) {
-        super.updateConfiguration(using: state)
-        var updatedConfiguration = (contentConfigurationToUpdate as? UIListContentConfiguration)?.updated(for: state)
-        contentConfiguration = updatedConfiguration
+        // Don't update the contentConfiguration based on the cell's state
+        // If you have a saved configuration, apply it here
+        if let updatedConfiguration = (contentConfigurationToUpdate as? UIListContentConfiguration) {
+            contentConfiguration = updatedConfiguration
+        }
     }
 }

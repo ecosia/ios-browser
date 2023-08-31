@@ -7,8 +7,42 @@ import Core
 
 final class WhatsNewViewController: UIViewController {
     
+    // MARK: - UX
+    
+    private struct UX {
+        private init() {}
+        static let defaultPadding: CGFloat = 16
+
+        struct ForestAndWaves {
+            private init() {}
+            static let waveHeight: CGFloat = 34
+            static let forestOffsetTypePad: CGFloat = 38
+            static let forestOffsetTypePhone: CGFloat = 26
+            static let forestHeightTypePad: CGFloat = 135
+            static let forestWidthTypePad: CGFloat = 544
+            static let forestTopMargin: CGFloat = 24
+        }
+        
+        struct Knob {
+            private init() {}
+            static let height: CGFloat = 4
+            static let width: CGFloat = 32
+            static let cornerRadious: CGFloat = 2
+        }
+
+        struct CloseButton {
+            private init() {}
+            static let size: CGFloat = 32
+            static let distanceFromCardBottom: CGFloat = 32
+        }
+    }
+    
+    // MARK: - Properties
+    
     private var viewModel: WhatsNewViewModel!
-    private var knob = UIView()
+    private let knob = UIView()
+    private let firstImageView = UIImageView(image: .init(named: "whatsNewTrees"))
+    private let secondImageView = UIImageView(image: .init(named: "waves"))
     private let closeButton = UIButton()
     private let headerLabel = UILabel()
     private let containerView = UIView()
@@ -36,9 +70,14 @@ final class WhatsNewViewController: UIViewController {
     private func setupViews() {
         
         knob.translatesAutoresizingMaskIntoConstraints = false
-        knob.layer.cornerRadius = 2
+        knob.layer.cornerRadius = UX.Knob.cornerRadious
 
-        closeButton.setTitle("Close", for: .normal)
+        closeButton.setImage(UIImage(named: "xmark"), for: .normal)
+        closeButton.imageView?.contentMode = .scaleAspectFill
+        closeButton.layer.cornerRadius = UX.CloseButton.size/2
+        closeButton.contentVerticalAlignment = .fill
+        closeButton.contentHorizontalAlignment = .fill
+        closeButton.imageEdgeInsets = UIEdgeInsets(equalInset: 10)
         closeButton.translatesAutoresizingMaskIntoConstraints = false
         closeButton.addTarget(self, action: #selector(closeButtonTapped), for: .touchUpInside)
         
@@ -46,9 +85,15 @@ final class WhatsNewViewController: UIViewController {
         headerLabel.textAlignment = .center
         headerLabel.translatesAutoresizingMaskIntoConstraints = false
         
+        containerView.translatesAutoresizingMaskIntoConstraints = false
+        firstImageView.translatesAutoresizingMaskIntoConstraints = false
+        secondImageView.translatesAutoresizingMaskIntoConstraints = false
+        containerView.addSubview(firstImageView)
+        containerView.insertSubview(secondImageView, aboveSubview: firstImageView)
+        
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.dataSource = self
-        tableView.delegate = self
+        tableView.isScrollEnabled = false
         tableView.register(WhatsNewCell.self, forCellReuseIdentifier: WhatsNewCell.reuseIdentifier)
         
         footerButton.setTitle(.localized(.whatsNewFooterButtonTitle), for: .normal)
@@ -57,6 +102,7 @@ final class WhatsNewViewController: UIViewController {
         
         view.addSubview(knob)
         view.addSubview(closeButton)
+        view.addSubview(containerView)
         view.addSubview(headerLabel)
         view.addSubview(tableView)
         view.addSubview(footerButton)
@@ -64,38 +110,48 @@ final class WhatsNewViewController: UIViewController {
     
     private func layoutViews() {
         
-        // Knob view constraints
         NSLayoutConstraint.activate([
-            knob.topAnchor.constraint(equalTo: view.topAnchor, constant: 8),
+            // Knob view constraints
+            knob.topAnchor.constraint(equalTo: view.topAnchor, constant: UX.defaultPadding/2),
             knob.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            knob.widthAnchor.constraint(equalToConstant: 32),
-            knob.heightAnchor.constraint(equalToConstant: 4)
-        ])
+            knob.widthAnchor.constraint(equalToConstant: UX.Knob.width),
+            knob.heightAnchor.constraint(equalToConstant: UX.Knob.height),
+            
+            // Close button constraints
+            closeButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: UX.defaultPadding),
+            closeButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -UX.defaultPadding),
+            closeButton.heightAnchor.constraint(equalToConstant: UX.CloseButton.size),
+            closeButton.widthAnchor.constraint(equalTo: closeButton.heightAnchor),
 
-        // Close button constraints
-        NSLayoutConstraint.activate([
-            closeButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
-            closeButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10)
-        ])
-        
-        // Header label constraints
-        NSLayoutConstraint.activate([
-            headerLabel.topAnchor.constraint(equalTo: closeButton.bottomAnchor, constant: 20),
-            headerLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor)
-        ])
-        
-        // Table view constraints
-        NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: headerLabel.bottomAnchor, constant: 20),
+            // Container View Constraints
+            containerView.topAnchor.constraint(equalTo: closeButton.bottomAnchor, constant: -UX.defaultPadding),
+            containerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            containerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+
+            // First image view constraints
+            firstImageView.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
+            firstImageView.topAnchor.constraint(equalTo: containerView.topAnchor),
+            firstImageView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+            
+            // Second image view constraints
+            secondImageView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            secondImageView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+            secondImageView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+            secondImageView.heightAnchor.constraint(equalToConstant: UX.ForestAndWaves.waveHeight),
+
+            // Header label constraints
+            headerLabel.topAnchor.constraint(equalTo: containerView.bottomAnchor, constant: UX.defaultPadding),
+            headerLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+
+            // Table view constraints
+            tableView.topAnchor.constraint(equalTo: headerLabel.bottomAnchor, constant: UX.defaultPadding),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-        ])
-        
-        // Footer button constraints
-        NSLayoutConstraint.activate([
-            footerButton.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: 10),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            
+            // Footer button constraints
+            footerButton.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: UX.defaultPadding),
             footerButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            footerButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10)
+            footerButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -UX.defaultPadding),
         ])
     }
     
@@ -104,7 +160,7 @@ final class WhatsNewViewController: UIViewController {
     }
     
     @objc private func footerButtonTapped() {
-        // TODO: Implement your navigation logic
+        closeButtonTapped()
     }
 }
 
@@ -114,15 +170,11 @@ extension WhatsNewViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "WhatsNewCell", for: indexPath) as! WhatsNewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: WhatsNewCell.reuseIdentifier, for: indexPath) as! WhatsNewCell
         let item = viewModel.items[indexPath.row]
         cell.configure(with: item, images: images)
         return cell
     }
-}
-
-extension WhatsNewViewController: UITableViewDelegate {
-    // Implement your delegate methods here
 }
 
 extension WhatsNewViewController {
@@ -138,7 +190,7 @@ extension WhatsNewViewController {
         if #available(iOS 15.0, *), let sheet = sheet.sheetPresentationController {
             sheet.detents = [.medium(), .large()]
         }
-//
+
 //        // ipad
 //        if let popoverVC = sheet.popoverPresentationController, sheet.modalPresentationStyle == .popover {
 //            popoverVC.delegate = viewController
@@ -165,7 +217,9 @@ extension WhatsNewViewController: NotificationThemeable {
     func applyTheme() {
         view.backgroundColor = .theme.ecosia.modalBackground
         tableView.backgroundColor = .theme.ecosia.modalBackground
-        tableView.separatorColor = .theme.ecosia.border
+        tableView.separatorColor = .clear
         knob.backgroundColor = .theme.ecosia.secondaryText
+        closeButton.backgroundColor = .theme.ecosia.primaryBackground
+        closeButton.tintColor = .theme.ecosia.actionSheetCancelButton
     }
 }

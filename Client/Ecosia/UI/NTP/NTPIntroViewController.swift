@@ -55,7 +55,7 @@ final class NTPIntroViewController: UIViewController, NotificationThemeable {
         content.addSubview(image)
         self.image = image
 
-        let waves = UIImageView(image: .init(named: "ntpIntroWaves"))
+        let waves = UIImageView(image: .init(named: "waves"))
         waves.translatesAutoresizingMaskIntoConstraints = false
         waves.contentMode = .scaleToFill
         content.addSubview(waves)
