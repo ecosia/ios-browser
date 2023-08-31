@@ -115,6 +115,7 @@
 		2ABCCCB22A13BCB0005D0C5B /* NTPBookmarkNudgeDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ABCCCB12A13BCB0005D0C5B /* NTPBookmarkNudgeDelegate.swift */; };
 		2AC54D3129DC50CE0034FA2E /* BookmarksExchange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AC54D3029DC50CE0034FA2E /* BookmarksExchange.swift */; };
 		2AF2723A29F2C54A004CA46F /* EmptyBookmarksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AF2723929F2C54A004CA46F /* EmptyBookmarksView.swift */; };
+		2C06B59E2A9FBD02009CDF83 /* WhatsNewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C06B59D2A9FBD02009CDF83 /* WhatsNewCell.swift */; };
 		2C1D049B29DDDC8E00ED43BA /* MyImpactCell+ViewFactories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C1D049A29DDDC8E00ED43BA /* MyImpactCell+ViewFactories.swift */; };
 		2C28F96C201B2D4C00ABA8A5 /* MailAppSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C28F96B201B2D4C00ABA8A5 /* MailAppSettingsTests.swift */; };
 		2C2A5EF41E68469500F02659 /* PrivateBrowsingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A5EF31E68469500F02659 /* PrivateBrowsingTest.swift */; };
@@ -1730,6 +1731,7 @@
 		2B31494CBFF9DF6FA41953B2 /* ses */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ses; path = ses.lproj/FindInPage.strings; sourceTree = "<group>"; };
 		2BAA411FAF1D49B9990A7720 /* sat-Olck */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "sat-Olck"; path = "sat-Olck.lproj/Shared.strings"; sourceTree = "<group>"; };
 		2BAB4A40A318F5A577488909 /* mr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = mr; path = mr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		2C06B59D2A9FBD02009CDF83 /* WhatsNewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhatsNewCell.swift; sourceTree = "<group>"; };
 		2C1D049A29DDDC8E00ED43BA /* MyImpactCell+ViewFactories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MyImpactCell+ViewFactories.swift"; sourceTree = "<group>"; };
 		2C26401D9CCB8C2671EA2431 /* ta */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ta; path = ta.lproj/3DTouchActions.strings; sourceTree = "<group>"; };
 		2C28F96B201B2D4C00ABA8A5 /* MailAppSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailAppSettingsTests.swift; sourceTree = "<group>"; };
@@ -5225,6 +5227,7 @@
 				2C73A71E2A9E0BB5006EBAAB /* WhatsNewViewModel.swift */,
 				2C73A7222A9E0BD7006EBAAB /* DataProvider */,
 				2C73A7232A9E0C6F006EBAAB /* WhatsNewViewController.swift */,
+				2C06B59D2A9FBD02009CDF83 /* WhatsNewCell.swift */,
 			);
 			path = WhatsNew;
 			sourceTree = "<group>";
@@ -9387,6 +9390,7 @@
 				CA4D9D1E28C8D801006AFB5D /* Analytics.swift in Sources */,
 				96C11E9B2864C2DD00840E7C /* AppContainer.swift in Sources */,
 				2C73A71D2A9E0B97006EBAAB /* WhatsNewDataProvider.swift in Sources */,
+				2C06B59E2A9FBD02009CDF83 /* WhatsNewCell.swift in Sources */,
 				C8954A542729AD9D001C7283 /* CustomTheme.swift in Sources */,
 				CA4D9CE328C8D801006AFB5D /* UIFont+Ecosia.swift in Sources */,
 				43BDBBFE2752FA8600254DE4 /* TabCell.swift in Sources */,

@@ -8,6 +8,7 @@ import Core
 final class WhatsNewViewController: UIViewController {
     
     private var viewModel: WhatsNewViewModel!
+    private var knob = UIView()
     private let closeButton = UIButton()
     private let headerLabel = UILabel()
     private let containerView = UIView()
@@ -28,46 +29,82 @@ final class WhatsNewViewController: UIViewController {
         super.viewDidLoad()
         setupViews()
         layoutViews()
+        applyTheme()
+        tableView.reloadData()
     }
     
     private func setupViews() {
-        // Close Button
+        
+        knob.translatesAutoresizingMaskIntoConstraints = false
+        knob.layer.cornerRadius = 2
+
         closeButton.setTitle("Close", for: .normal)
+        closeButton.translatesAutoresizingMaskIntoConstraints = false
         closeButton.addTarget(self, action: #selector(closeButtonTapped), for: .touchUpInside)
         
-        // Header
         headerLabel.text = .localized(.whatsNewViewTitle)
         headerLabel.textAlignment = .center
+        headerLabel.translatesAutoresizingMaskIntoConstraints = false
         
-        // Table View
+        tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.register(WhatsNewCell.self, forCellReuseIdentifier: "WhatsNewCell")
+        tableView.register(WhatsNewCell.self, forCellReuseIdentifier: WhatsNewCell.reuseIdentifier)
         
-        // Footer Button
-        footerButton.setTitle("Learn More", for: .normal)
+        footerButton.setTitle(.localized(.whatsNewFooterButtonTitle), for: .normal)
+        footerButton.translatesAutoresizingMaskIntoConstraints = false
         footerButton.addTarget(self, action: #selector(footerButtonTapped), for: .touchUpInside)
         
-        // Add to view
+        view.addSubview(knob)
         view.addSubview(closeButton)
         view.addSubview(headerLabel)
-        view.addSubview(containerView)
         view.addSubview(tableView)
         view.addSubview(footerButton)
-        
     }
     
     private func layoutViews() {
         
+        // Knob view constraints
+        NSLayoutConstraint.activate([
+            knob.topAnchor.constraint(equalTo: view.topAnchor, constant: 8),
+            knob.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            knob.widthAnchor.constraint(equalToConstant: 32),
+            knob.heightAnchor.constraint(equalToConstant: 4)
+        ])
+
+        // Close button constraints
+        NSLayoutConstraint.activate([
+            closeButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
+            closeButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10)
+        ])
+        
+        // Header label constraints
+        NSLayoutConstraint.activate([
+            headerLabel.topAnchor.constraint(equalTo: closeButton.bottomAnchor, constant: 20),
+            headerLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+        ])
+        
+        // Table view constraints
+        NSLayoutConstraint.activate([
+            tableView.topAnchor.constraint(equalTo: headerLabel.bottomAnchor, constant: 20),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ])
+        
+        // Footer button constraints
+        NSLayoutConstraint.activate([
+            footerButton.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: 10),
+            footerButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            footerButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10)
+        ])
     }
     
     @objc private func closeButtonTapped() {
-        // Close the screen
         dismiss(animated: true, completion: nil)
     }
     
     @objc private func footerButtonTapped() {
-        // TO DO: Implement your navigation logic
+        // TODO: Implement your navigation logic
     }
 }
 
@@ -88,50 +125,47 @@ extension WhatsNewViewController: UITableViewDelegate {
     // Implement your delegate methods here
 }
 
-final class WhatsNewCell: UITableViewCell {
+extension WhatsNewViewController {
     
-    var contentConfiguration: UIListContentConfiguration?
-    private var imageUrl: URL?
-
-    func configure(with item: WhatsNewItem, images: Images) {
-        imageUrl = item.imageUrl
-
-        // Load the image asynchronously
-        images.load(self, url: item.imageUrl) { [weak self] imageData in
-            guard let self = self else { return }
-            guard self.imageUrl == imageData.url else { return }
-            let image = UIImage(data: imageData.data)
-
-            // Configure based on iOS version
-            if #available(iOS 14, *) {
-                self.configureForiOS14(image: image, item: item)
-            } else {
-                self.configureForiOS13(image: image, item: item)
-            }
+    static func presentSheetOn(_ viewController: UIViewController) {
+        
+        // main menu should only be opened from the browser
+        guard let browser = viewController as? BrowserViewController else { return }
+        let sheet = WhatsNewViewController(viewModel: WhatsNewViewModel(provider: LocalDataProvider()))
+        sheet.modalPresentationStyle = .automatic
+//
+        // iPhone
+        if #available(iOS 15.0, *), let sheet = sheet.sheetPresentationController {
+            sheet.detents = [.medium(), .large()]
         }
+//
+//        // ipad
+//        if let popoverVC = sheet.popoverPresentationController, sheet.modalPresentationStyle == .popover {
+//            popoverVC.delegate = viewController
+//            popoverVC.sourceView = view
+//            popoverVC.sourceRect = view.bounds
+//
+//            let trait = viewController.traitCollection
+//            if viewModel.isMainMenu {
+//                let margins = viewModel.getMainMenuPopOverMargins(trait: trait, view: view, presentedOn: viewController)
+//                popoverVC.popoverLayoutMargins = margins
+//            }
+//            popoverVC.permittedArrowDirections = [.up]
+//        }
+        
+        viewController.present(sheet, animated: true, completion: nil)
     }
-    
-    @available(iOS 14, *)
-    private func configureForiOS14(image: UIImage?, item: WhatsNewItem) {
-        var newConfiguration = defaultContentConfiguration().updated(for: self.traitCollection)
-        newConfiguration.text = item.title
-        newConfiguration.secondaryText = item.subtitle
-        newConfiguration.image = image
-        newConfiguration.imageProperties.maximumSize = CGSize(width: 40, height: 40)
-        newConfiguration.imageProperties.cornerRadius = 8
-        contentConfiguration = newConfiguration
-    }
-    
-    private func configureForiOS13(image: UIImage?, item: WhatsNewItem) {
-        textLabel?.text = item.title
-        detailTextLabel?.text = item.subtitle
-        imageView?.image = image
-    }
-    
-    override func updateConfiguration(using state: UICellConfigurationState) {
-        if #available(iOS 14, *) {
-            var updatedConfiguration = contentConfiguration?.updated(for: state.traitCollection)
-            contentConfiguration = updatedConfiguration
-        }
+
+}
+
+// MARK: - NotificationThemeable
+
+extension WhatsNewViewController: NotificationThemeable {
+
+    func applyTheme() {
+        view.backgroundColor = .theme.ecosia.modalBackground
+        tableView.backgroundColor = .theme.ecosia.modalBackground
+        tableView.separatorColor = .theme.ecosia.border
+        knob.backgroundColor = .theme.ecosia.secondaryText
     }
 }

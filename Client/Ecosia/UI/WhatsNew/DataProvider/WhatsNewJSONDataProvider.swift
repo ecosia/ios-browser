@@ -26,7 +26,7 @@ struct JSONDataProvider: DataProvider {
             decoder.keyDecodingStrategy = .convertFromSnakeCase
             let root = try decoder.decode(WhatsNewItemRoot.self, from: jsonData)
             return root.items.map {
-                let item = WhatsNewItem(imageURL: $0.imageURL,
+                WhatsNewItem(imageURL: $0.imageURL,
                                         title: $0.title,
                                         subtitle: $0.subtitle)
             }

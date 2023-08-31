@@ -7,10 +7,12 @@ import Foundation
 struct LocalDataProvider: DataProvider {
     
     private let items: [WhatsNewItem] = [
-        WhatsNewItem(imageURL: Bundle.main.url(forResource: "tree", withExtension: "pdf"),
+        WhatsNewItem(imageURL: URL.localURLForImageset(name: "tree",
+                                                      withExtension: "pdf"),
                      title: .localized(.whatsNewFirstItemTitle),
                      subtitle: .localized(.whatsNewFirstItemDescription)),
-        WhatsNewItem(imageURL: Bundle.main.url(forResource: "customisation", withExtension: "pdf"),
+        WhatsNewItem(imageURL: URL.localURLForImageset(name: "customisation",
+                                                      withExtension: "pdf"),
                      title: .localized(.whatsNewSecondItemTitle),
                      subtitle: .localized(.whatsNewSecondItemDescription)),
     ]
