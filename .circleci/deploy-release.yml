@@ -53,6 +53,7 @@ jobs:
           command: ./content_blocker_update.sh
       - run:
           name: Build and deploy to Testflight
+          no_output_timeout: 35m
           command: bundle exec fastlane testflight_live
               
 workflows:
