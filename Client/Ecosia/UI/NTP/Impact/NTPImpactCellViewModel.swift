@@ -7,10 +7,6 @@ import Shared
 import Core
 
 class NTPImpactCellViewModel {
-    struct UX {
-        static let bottomSpacing: CGFloat = 12
-    }
-
     private let personalCounter: PersonalCounter
 
     init(personalCounter: PersonalCounter) {
@@ -62,12 +58,7 @@ extension NTPImpactCellViewModel: HomepageViewModelProtocol {
 
         let section = NSCollectionLayoutSection(group: group)
 
-        let insets = sectionType.sectionInsets(traitCollection)
-        section.contentInsets = NSDirectionalEdgeInsets(
-            top: 0,
-            leading: insets,
-            bottom: UX.bottomSpacing,
-            trailing: insets)
+        section.contentInsets = sectionType.sectionInsets(traitCollection)
 
         // Adding a header if needed
         if NTPTooltip.highlight(for: User.shared, isInPromoTest: DefaultBrowserExperiment.isInPromoTest())?.text != nil {

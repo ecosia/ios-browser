@@ -10,8 +10,7 @@ protocol NTPAboutEcosiaCellDelegate: AnyObject {
 }
 
 class NTPAboutEcosiaCellViewModel {
-    private var sections = AboutEcosiaSection.allCases
-    
+    var sections = AboutEcosiaSection.allCases
     weak var delegate: NTPAboutEcosiaCellDelegate?
     var expandedIndex: IndexPath?
 }
@@ -44,8 +43,7 @@ extension NTPAboutEcosiaCellViewModel: HomepageViewModelProtocol {
             count: 1
         )
         let section = NSCollectionLayoutSection(group: group)
-        let insets = sectionType.sectionInsets(traitCollection)
-        section.contentInsets = .init(top: insets, leading: insets, bottom: insets, trailing: insets)
+        section.contentInsets = sectionType.sectionInsets(traitCollection)
         section.boundarySupplementaryItems = [
             .init(layoutSize: .init(widthDimension: .fractionalWidth(1),
                                     heightDimension: .estimated(100)),

@@ -11,7 +11,7 @@ final class NTPAboutEcosiaCell: UICollectionViewCell, ReusableCell {
     private var section: AboutEcosiaSection?
     private weak var viewModel: NTPAboutEcosiaCellViewModel?
     private var isLastSection: Bool {
-        section == AboutEcosiaSection.allCases.last
+        section == viewModel?.sections.last
     }
     private lazy var outlineView: UIView = {
         let view = UIView()
@@ -203,7 +203,10 @@ final class NTPAboutEcosiaCell: UICollectionViewCell, ReusableCell {
         imageView.image = UIImage(named: section.image)
         subtitleLabel.text = section.subtitle
         dividerView.isHidden = isLastSection
-        outlineView.layer.maskedCorners = isLastSection ? [.layerMinXMaxYCorner, .layerMaxXMaxYCorner] : []
+        outlineView.setMaskedCornersUsingPosition(
+            row: viewModel.sections.firstIndex(of: section) ?? 0,
+            totalCount: viewModel.sections.count
+        )
     }
     
     @objc private func highlighted() {

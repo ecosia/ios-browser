@@ -31,8 +31,7 @@ extension NTPCustomizationCellViewModel: HomepageViewModelProtocol {
             count: 1
         )
         let section = NSCollectionLayoutSection(group: group)
-        let insets = sectionType.sectionInsets(traitCollection)
-        section.contentInsets = .init(top: insets, leading: insets, bottom: insets, trailing: insets)
+        section.contentInsets = sectionType.sectionInsets(traitCollection)
         return section
     }
     

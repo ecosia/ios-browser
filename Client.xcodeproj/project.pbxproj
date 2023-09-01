@@ -48,6 +48,7 @@
 		12EEE0A62A9F754700C4A46D /* NTPAboutEcosiaCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12EEE0A52A9F754700C4A46D /* NTPAboutEcosiaCell.swift */; };
 		12EEE0A82A9F75C500C4A46D /* NTPAboutEcosiaCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12EEE0A72A9F75C500C4A46D /* NTPAboutEcosiaCellViewModel.swift */; };
 		12EEE0AB2A9F7BD300C4A46D /* AboutEcosiaSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12EEE0AA2A9F7BD300C4A46D /* AboutEcosiaSection.swift */; };
+		12EEE0AD2AA1CFE100C4A46D /* UIView+maskedCorners.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12EEE0AC2AA1CFE100C4A46D /* UIView+maskedCorners.swift */; };
 		158241282820698B00956B39 /* RustRemoteTabsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 158241272820698B00956B39 /* RustRemoteTabsTests.swift */; };
 		15DE98FD27FCED4F00F1ECDB /* RustRemoteTabs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15DE98FC27FCED4F00F1ECDB /* RustRemoteTabs.swift */; };
 		1B0DFD25274856D60008EB0A /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = 1B0DFD24274856D60008EB0A /* SwiftyJSON */; };
@@ -1470,6 +1471,7 @@
 		12EEE0A52A9F754700C4A46D /* NTPAboutEcosiaCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPAboutEcosiaCell.swift; sourceTree = "<group>"; };
 		12EEE0A72A9F75C500C4A46D /* NTPAboutEcosiaCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPAboutEcosiaCellViewModel.swift; sourceTree = "<group>"; };
 		12EEE0AA2A9F7BD300C4A46D /* AboutEcosiaSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutEcosiaSection.swift; sourceTree = "<group>"; };
+		12EEE0AC2AA1CFE100C4A46D /* UIView+maskedCorners.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+maskedCorners.swift"; sourceTree = "<group>"; };
 		12F949169C30744CCC749588 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/HistoryPanel.strings; sourceTree = "<group>"; };
 		1323403C8071FC19BB79C191 /* su */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = su; path = su.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		13254478B55183D37507CAD4 /* da */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = da; path = da.lproj/AuthenticationManager.strings; sourceTree = "<group>"; };
@@ -6743,6 +6745,7 @@
 				2CE63B2729C8DA8200047121 /* ErrorPageHandler+Ecosia.swift */,
 				2C1AF2622A27A7D9003970E0 /* Toolbar+URLBar */,
 				2CC9E08B2A30AED2003420E1 /* URL+Ecosia.swift */,
+				12EEE0AC2AA1CFE100C4A46D /* UIView+maskedCorners.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -9734,6 +9737,7 @@
 				C400467C1CF4E43E00B08303 /* BackForwardListViewController.swift in Sources */,
 				5A430D792853DFDD00782BFF /* OrientationLockUtility.swift in Sources */,
 				D5D237782640BBA600326204 /* ExperimentsSettingsViewController.swift in Sources */,
+				12EEE0AD2AA1CFE100C4A46D /* UIView+maskedCorners.swift in Sources */,
 				DFB2610D277CC5A200DDDD38 /* WallpaperSettingCollectionCell.swift in Sources */,
 				D3972BF31C22412B00035B87 /* ShareExtensionHelper.swift in Sources */,
 				F35B8D2D1D6383E9008E3D61 /* SessionRestoreHelper.swift in Sources */,

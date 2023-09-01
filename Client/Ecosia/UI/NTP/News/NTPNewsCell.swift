@@ -6,19 +6,6 @@ import Core
 import UIKit
 
 final class NTPNewsCell: UICollectionViewCell, NotificationThemeable, ReusableCell {
-    struct Positions: OptionSet {
-        static let top = Positions(rawValue: 1)
-        static let bottom = Positions(rawValue: 1 << 1)
-        let rawValue: Int8
-
-        static func derive(row: Int, items: Int) -> Positions {
-            var pos = Positions()
-            if row == 0 { pos.insert(.top) }
-            if row == items - 1 { pos.insert(.bottom) }
-            return pos
-        }
-    }
-
     private var imageUrl: URL?
     private lazy var background: UIView = {
         let background = UIView()
@@ -182,7 +169,7 @@ final class NTPNewsCell: UICollectionViewCell, NotificationThemeable, ReusableCe
         }
     }
     
-    func configure(_ model: NewsModel, images: Images, positions: Positions) {
+    func configure(_ model: NewsModel, images: Images, row: Int, totalCount: Int) {
         let titleString = model.text.replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression)
         title.text = titleString
         let publishDateString = RelativeDateTimeFormatter().localizedString(for: model.publishDate, relativeTo: .init())
@@ -197,20 +184,9 @@ final class NTPNewsCell: UICollectionViewCell, NotificationThemeable, ReusableCe
             self?.updateImage($0.data)
         }
 
-        border.isHidden = positions.contains(.bottom)
+        border.isHidden = row == totalCount - 1
 
-        // Masking only specific corners
-        var masked: CACornerMask = []
-        if positions.contains(.top) {
-            masked.formUnion(.layerMinXMinYCorner)
-            masked.formUnion(.layerMaxXMinYCorner)
-        }
-
-        if positions.contains(.bottom) {
-            masked.formUnion(.layerMinXMaxYCorner)
-            masked.formUnion(.layerMaxXMaxYCorner)
-        }
-        background.layer.maskedCorners = masked
+        background.setMaskedCornersUsingPosition(row: row, totalCount: totalCount)
         applyTheme()
             
         isAccessibilityElement = true

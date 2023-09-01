@@ -44,8 +44,11 @@ enum HomepageSectionType: Int, CaseIterable {
     init(_ section: Int) {
         self.init(rawValue: section)!
     }
-    
-    //Ecosia: Customizable configuration
+}
+
+// Ecosia
+private let MinimumInsets: CGFloat = 16
+extension HomepageSectionType {
     var customizableConfig: CustomizableNTPSettingConfig? {
         switch self {
         case .logoHeader, .bookmarkNudge, .libraryShortcuts, .ntpCustomization: return nil
@@ -55,33 +58,34 @@ enum HomepageSectionType: Int, CaseIterable {
         case .news: return .ecosiaNews
         }
     }
-}
-
-private let MinimumInsets: CGFloat = 16
-
-// Ecosia
-extension HomepageSectionType {
-    func sectionInsets(_ traits: UITraitCollection) -> CGFloat {
-        var insets: CGFloat = traits.horizontalSizeClass == .regular ? 100 : 0
-
+    
+    func sectionInsets(_ traits: UITraitCollection, bottomSpacing: CGFloat = 12) -> NSDirectionalEdgeInsets {
         switch self {
-        case .libraryShortcuts, .topSites, .impact, .news, .bookmarkNudge:
-            guard let window = UIApplication.shared.windows.first(where: \.isKeyWindow) else { return MinimumInsets
+        case .libraryShortcuts, .topSites, .impact, .news, .bookmarkNudge, .aboutEcosia:
+            guard let window = UIApplication.shared.windows.first(where: \.isKeyWindow) else {
+                return NSDirectionalEdgeInsets(top: 0,
+                                               leading: MinimumInsets,
+                                               bottom: bottomSpacing,
+                                               trailing: MinimumInsets)
             }
+            var horizontal: CGFloat = traits.horizontalSizeClass == .regular ? 100 : 0
             let safeAreaInsets = window.safeAreaInsets.left
-            insets += MinimumInsets + safeAreaInsets
+            horizontal += MinimumInsets + safeAreaInsets
 
             let orientation: UIInterfaceOrientation = window.windowScene?.interfaceOrientation ?? .portrait
 
             /* Ecosia: center layout in iphone landscape or regular size class */
             if traits.horizontalSizeClass == .regular || (orientation.isLandscape && traits.userInterfaceIdiom == .phone) {
-                insets = window.bounds.width / 4
+                horizontal = window.bounds.width / 4
             }
-            return insets
+            return NSDirectionalEdgeInsets(top: 0,
+                                           leading: horizontal,
+                                           bottom: bottomSpacing,
+                                           trailing: horizontal)
         case .ntpCustomization:
-            return 32
-        default:
-            return 0
+            return .init(top: 32, leading: 0, bottom: 32, trailing: 0)
+        case .logoHeader:
+            return .init(top: 0, leading: 0, bottom: 0, trailing: 0)
         }
     }
 }

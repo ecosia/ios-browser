@@ -118,7 +118,7 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
     
     func collectionView(_: UICollectionView, cellForItemAt: IndexPath) -> UICollectionViewCell {
         let cell = collection.dequeueReusableCell(withReuseIdentifier: identifier, for: cellForItemAt) as! NTPNewsCell
-        cell.configure(items[cellForItemAt.row], images: images, positions: .derive(row: cellForItemAt.item, items: items.count))
+        cell.configure(items[cellForItemAt.row], images: images, row: cellForItemAt.item, totalCount: items.count)
         return cell
     }
 

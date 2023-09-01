@@ -14,10 +14,6 @@ protocol NTPLibraryDelegate: AnyObject {
 }
 
 class NTPLibraryCellViewModel {
-    struct UX {
-        static let bottomSpacing: CGFloat = 8
-    }
-
     weak var delegate: NTPLibraryDelegate?
 }
 
@@ -45,11 +41,7 @@ extension NTPLibraryCellViewModel: HomepageViewModelProtocol {
         let section = NSCollectionLayoutSection(group: group)
 
         let insets = sectionType.sectionInsets(traitCollection)
-        section.contentInsets = NSDirectionalEdgeInsets(
-            top: 0,
-            leading: insets,
-            bottom: UX.bottomSpacing,
-            trailing: insets)
+        section.contentInsets = sectionType.sectionInsets(traitCollection, bottomSpacing: 8)
 
         return section
     }

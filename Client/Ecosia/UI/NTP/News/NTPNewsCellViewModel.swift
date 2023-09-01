@@ -11,10 +11,6 @@ protocol NTPNewsCellDelegate: AnyObject {
 }
 
 class NTPNewsCellViewModel {
-    struct UX {
-        static let bottomSpacing: CGFloat = 12
-    }
-
     private let news = News()
     private (set) var items = [NewsModel]()
     private let images = Images(.init(configuration: .ephemeral))
@@ -60,13 +56,8 @@ extension NTPNewsCellViewModel: HomepageViewModelProtocol {
 
         let section = NSCollectionLayoutSection(group: group)
 
-        let insets = sectionType.sectionInsets(traitCollection)
-        section.contentInsets = NSDirectionalEdgeInsets(
-            top: 0,
-            leading: insets,
-            bottom: UX.bottomSpacing,
-            trailing: insets)
-
+        section.contentInsets = sectionType.sectionInsets(traitCollection)
+        
         let size = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
                                           heightDimension: .estimated(100.0))
         let header = NSCollectionLayoutBoundarySupplementaryItem(
@@ -100,7 +91,7 @@ extension NTPNewsCellViewModel: HomepageSectionHandler {
         guard let cell = cell as? NTPNewsCell else { return UICollectionViewCell() }
         let itemCount = numberOfItemsInSection()
         cell.defaultBackgroundColor = { .theme.ecosia.ntpImpactBackground }
-        cell.configure(items[indexPath.row], images: images, positions: .derive(row: indexPath.row, items: itemCount))
+        cell.configure(items[indexPath.row], images: images, row: indexPath.row, totalCount: itemCount)
         return cell
     }
 
