@@ -14,8 +14,8 @@ extension String {
         NSLocalizedString(string, tableName: "Ecosia", comment: "")
     }
     
-    static func localized(_ key: Key, incentiveRestrictedAlternativeKey: Key) -> String {
-        localized(IncentivizedSearchHelper.isRestricted ? incentiveRestrictedAlternativeKey : key)
+    static func localized(_ key: Key, incentiveRestrictedSearchAlternativeKey: Key) -> String {
+        localized(Unleash.isEnabled(.incentiveRestrictedSearch) ? incentiveRestrictedSearchAlternativeKey : key)
     }
 
     static func localizedPlural(_ key: Key, num: Int) -> String {
