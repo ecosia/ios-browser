@@ -114,6 +114,11 @@ extension HomepageViewController: NTPBookmarkNudgeCellDelegate {
 }
 
 extension HomepageViewController: NTPAboutEcosiaCellDelegate {
+    
+    func openLearnMore(withUrl url: URL) {
+        homePanelDelegate?.homePanel(didSelectURL: url, visitType: .link, isGoogleTopSite: false)
+    }
+    
     // TODO: Make this generic to be used in other places?
     func invalidateLayout(at indexPath: IndexPath) {
         let context = UICollectionViewLayoutInvalidationContext()

@@ -67,7 +67,7 @@ final class NTPAboutEcosiaCell: UICollectionViewCell, ReusableCell {
         button.layer.cornerRadius = 20
         button.addTarget(self, action: #selector(highlighted), for: .touchDown)
         button.addTarget(self, action: #selector(unhighlighted), for: [.touchUpInside, .touchCancel])
-        // TODO: Add learn more button action
+        button.addTarget(self, action: #selector(learnMoreAction), for: .touchUpInside)
         return button
     }()
     private lazy var learnMoreLabel: UILabel = {
@@ -215,6 +215,11 @@ final class NTPAboutEcosiaCell: UICollectionViewCell, ReusableCell {
     
     @objc private func unhighlighted() {
         learnMoreLabel.alpha = 1
+    }
+    
+    @objc private func learnMoreAction() {
+        guard let section = section else { return }
+        viewModel?.delegate?.openLearnMore(withUrl: section.url)
     }
 }
 

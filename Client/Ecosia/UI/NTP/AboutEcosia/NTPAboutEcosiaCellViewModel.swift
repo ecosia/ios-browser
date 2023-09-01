@@ -6,6 +6,7 @@ import Foundation
 import Core
 
 protocol NTPAboutEcosiaCellDelegate: AnyObject {
+    func openLearnMore(withUrl url: URL)
     func invalidateLayout(at indexPath: IndexPath)
 }
 

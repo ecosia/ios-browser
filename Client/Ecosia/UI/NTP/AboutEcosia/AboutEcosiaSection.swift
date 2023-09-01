@@ -55,6 +55,7 @@ enum AboutEcosiaSection: Int, CaseIterable {
         }
     }
 
+    // TODO: Is this needed?
     var label: Analytics.Label.Navigation {
         switch self {
         case .financialReports:
