@@ -14560,7 +14560,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = "MOB-1913_unleash_search_incentivized";
+				branch = main;
 				kind = branch;
 			};
 		};
