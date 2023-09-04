@@ -120,9 +120,9 @@ extension HomepageViewController: NTPAboutEcosiaCellDelegate {
     }
     
     // TODO: Make this generic to be used in other places?
-    func invalidateLayout(at indexPath: IndexPath) {
+    func invalidateLayout(at indexPaths: [IndexPath]) {
         let context = UICollectionViewLayoutInvalidationContext()
-        context.invalidateItems(at: [indexPath])
+        context.invalidateItems(at: indexPaths)
         collectionView.collectionViewLayout.invalidateLayout(with: context)
     }
 }

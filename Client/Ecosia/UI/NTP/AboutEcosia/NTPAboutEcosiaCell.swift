@@ -65,8 +65,6 @@ final class NTPAboutEcosiaCell: UICollectionViewCell, ReusableCell {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.backgroundColor = .white
         button.layer.cornerRadius = 20
-        button.addTarget(self, action: #selector(highlighted), for: .touchDown)
-        button.addTarget(self, action: #selector(unhighlighted), for: [.touchUpInside, .touchCancel])
         button.addTarget(self, action: #selector(learnMoreAction), for: .touchUpInside)
         return button
     }()
@@ -88,7 +86,7 @@ final class NTPAboutEcosiaCell: UICollectionViewCell, ReusableCell {
     }()
     
     var expandedHeight: CGFloat {
-        disclosureView.frame.maxY
+        disclosureView.frame.maxY + (isLastSection ? 16 : 0)
     }
     
     override init(frame: CGRect) {
@@ -110,12 +108,12 @@ final class NTPAboutEcosiaCell: UICollectionViewCell, ReusableCell {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        // TODO: Why is this needed?
         dividerView.isHidden = isLastSection || frame.height > UX.height
     }
     
     override func preferredLayoutAttributesFitting(_ layoutAttributes: UICollectionViewLayoutAttributes) -> UICollectionViewLayoutAttributes {
         let isExpanded = viewModel?.expandedIndex == layoutAttributes.indexPath
+        rotateIndicator(isExpanded: isExpanded)
         let height = isExpanded ? expandedHeight : UX.height
         layoutAttributes.frame.size = contentView
             .systemLayoutSizeFitting(CGSize(width: layoutAttributes.frame.width,
@@ -123,18 +121,6 @@ final class NTPAboutEcosiaCell: UICollectionViewCell, ReusableCell {
                                      withHorizontalFittingPriority: .required,
                                      verticalFittingPriority: .fittingSizeLevel)
         return layoutAttributes
-    }
-    
-    override var isSelected: Bool {
-        didSet {
-            hover()
-        }
-    }
-    
-    override var isHighlighted: Bool {
-        didSet {
-            hover()
-        }
     }
     
     private func setup() {
@@ -190,8 +176,8 @@ final class NTPAboutEcosiaCell: UICollectionViewCell, ReusableCell {
         ])
     }
     
-    private func hover() {
-        outlineView.backgroundColor = isSelected || isHighlighted ? .theme.ecosia.secondarySelectedBackground : .theme.ecosia.ntpCellBackground
+    func rotateIndicator(isExpanded: Bool) {
+        indicatorImageView.transform = isExpanded ? .init(rotationAngle: .pi) : .identity
     }
     
     func configure(section: AboutEcosiaSection,

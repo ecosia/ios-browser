@@ -7,7 +7,7 @@ import Core
 
 protocol NTPAboutEcosiaCellDelegate: AnyObject {
     func openLearnMore(withUrl url: URL)
-    func invalidateLayout(at indexPath: IndexPath)
+    func invalidateLayout(at indexPaths: [IndexPath])
 }
 
 class NTPAboutEcosiaCellViewModel {
@@ -70,11 +70,17 @@ extension NTPAboutEcosiaCellViewModel: HomepageSectionHandler {
     }
     
     func didSelectItem(at indexPath: IndexPath, homePanelDelegate: HomePanelDelegate?, libraryPanelDelegate: LibraryPanelDelegate?) {
-        if let previousIndex = expandedIndex {
-            delegate?.invalidateLayout(at: previousIndex)
+        guard let previousIndex = expandedIndex else {
+            expandedIndex = indexPath
+            delegate?.invalidateLayout(at: [indexPath])
+            return
         }
-        
-        expandedIndex = indexPath
-        delegate?.invalidateLayout(at: indexPath)
+        if previousIndex == indexPath {
+            expandedIndex = nil // deselect
+            delegate?.invalidateLayout(at: [indexPath])
+        } else {
+            expandedIndex = indexPath
+            delegate?.invalidateLayout(at: [previousIndex, indexPath])
+        }
     }
 }
