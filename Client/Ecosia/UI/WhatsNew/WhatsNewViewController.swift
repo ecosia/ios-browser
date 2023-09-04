@@ -5,6 +5,10 @@
 import UIKit
 import Core
 
+protocol WhatsNewViewDelegate: AnyObject {
+    func whatsNewViewDidShow(_ viewController: WhatsNewViewController)
+}
+
 final class WhatsNewViewController: UIViewController {
     
     // MARK: - UX
@@ -12,15 +16,11 @@ final class WhatsNewViewController: UIViewController {
     private struct UX {
         private init() {}
         static let defaultPadding: CGFloat = 16
+        static let customDetentHeight: CGFloat = 560
 
         struct ForestAndWaves {
             private init() {}
             static let waveHeight: CGFloat = 34
-            static let forestOffsetTypePad: CGFloat = 38
-            static let forestOffsetTypePhone: CGFloat = 26
-            static let forestHeightTypePad: CGFloat = 135
-            static let forestWidthTypePad: CGFloat = 544
-            static let forestTopMargin: CGFloat = 24
         }
         
         struct Knob {
@@ -35,6 +35,11 @@ final class WhatsNewViewController: UIViewController {
             static let size: CGFloat = 32
             static let distanceFromCardBottom: CGFloat = 32
         }
+        
+        struct FooterButton {
+            private init() {}
+            static let height: CGFloat = 50
+        }
     }
     
     // MARK: - Properties
@@ -45,26 +50,39 @@ final class WhatsNewViewController: UIViewController {
     private let secondImageView = UIImageView(image: .init(named: "waves"))
     private let closeButton = UIButton()
     private let headerLabel = UILabel()
-    private let containerView = UIView()
+    private let topContainerView = UIView()
+    private let headerLabelContainerView = UIView()
     private let tableView = UITableView()
     private let footerButton = UIButton()
     private let images = Images(.init(configuration: .ephemeral))
-    
-    init(viewModel: WhatsNewViewModel) {
+    weak var delegate: WhatsNewViewDelegate?
+
+    init(viewModel: WhatsNewViewModel, delegate: WhatsNewViewDelegate?) {
         super.init(nibName: nil, bundle: nil)
         self.viewModel = viewModel
+        self.delegate = delegate
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        traitCollection.userInterfaceIdiom == .pad ? .all : .portrait
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
         layoutViews()
         applyTheme()
-        tableView.reloadData()
+        updateTableView()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        modalTransitionStyle = .crossDissolve
+        self.delegate?.whatsNewViewDidShow(self)
     }
     
     private func setupViews() {
@@ -81,15 +99,18 @@ final class WhatsNewViewController: UIViewController {
         closeButton.translatesAutoresizingMaskIntoConstraints = false
         closeButton.addTarget(self, action: #selector(closeButtonTapped), for: .touchUpInside)
         
+        headerLabelContainerView.translatesAutoresizingMaskIntoConstraints = false
         headerLabel.text = .localized(.whatsNewViewTitle)
         headerLabel.textAlignment = .center
         headerLabel.translatesAutoresizingMaskIntoConstraints = false
-        
-        containerView.translatesAutoresizingMaskIntoConstraints = false
+        headerLabel.font = .preferredFont(forTextStyle: .title3).bold()
+        headerLabelContainerView.addSubview(headerLabel)
+
+        topContainerView.translatesAutoresizingMaskIntoConstraints = false
         firstImageView.translatesAutoresizingMaskIntoConstraints = false
         secondImageView.translatesAutoresizingMaskIntoConstraints = false
-        containerView.addSubview(firstImageView)
-        containerView.insertSubview(secondImageView, aboveSubview: firstImageView)
+        topContainerView.addSubview(firstImageView)
+        topContainerView.insertSubview(secondImageView, aboveSubview: firstImageView)
         
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.dataSource = self
@@ -99,11 +120,12 @@ final class WhatsNewViewController: UIViewController {
         footerButton.setTitle(.localized(.whatsNewFooterButtonTitle), for: .normal)
         footerButton.translatesAutoresizingMaskIntoConstraints = false
         footerButton.addTarget(self, action: #selector(footerButtonTapped), for: .touchUpInside)
+        footerButton.layer.cornerRadius = UX.FooterButton.height/2
         
-        view.addSubview(knob)
-        view.addSubview(closeButton)
-        view.addSubview(containerView)
-        view.addSubview(headerLabel)
+        topContainerView.addSubview(knob)
+        topContainerView.addSubview(closeButton)
+        view.addSubview(topContainerView)
+        view.addSubview(headerLabelContainerView)
         view.addSubview(tableView)
         view.addSubview(footerButton)
     }
@@ -111,48 +133,62 @@ final class WhatsNewViewController: UIViewController {
     private func layoutViews() {
         
         NSLayoutConstraint.activate([
+            
+            // Top Container View Constraints
+            topContainerView.topAnchor.constraint(equalTo: view.topAnchor),
+            topContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            topContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+
             // Knob view constraints
-            knob.topAnchor.constraint(equalTo: view.topAnchor, constant: UX.defaultPadding/2),
-            knob.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            knob.topAnchor.constraint(equalTo: topContainerView.topAnchor, constant: UX.defaultPadding/2),
+            knob.centerXAnchor.constraint(equalTo: topContainerView.centerXAnchor),
             knob.widthAnchor.constraint(equalToConstant: UX.Knob.width),
             knob.heightAnchor.constraint(equalToConstant: UX.Knob.height),
-            
-            // Close button constraints
-            closeButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: UX.defaultPadding),
-            closeButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -UX.defaultPadding),
-            closeButton.heightAnchor.constraint(equalToConstant: UX.CloseButton.size),
-            closeButton.widthAnchor.constraint(equalTo: closeButton.heightAnchor),
 
-            // Container View Constraints
-            containerView.topAnchor.constraint(equalTo: closeButton.bottomAnchor, constant: -UX.defaultPadding),
-            containerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            containerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            // Close button constraints
+            closeButton.topAnchor.constraint(equalTo: topContainerView.topAnchor, constant: UX.defaultPadding),
+            closeButton.trailingAnchor.constraint(equalTo: topContainerView.trailingAnchor, constant: -UX.defaultPadding),
+            closeButton.widthAnchor.constraint(equalToConstant: UX.CloseButton.size),
+            closeButton.heightAnchor.constraint(equalTo: closeButton.widthAnchor),
 
             // First image view constraints
-            firstImageView.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
-            firstImageView.topAnchor.constraint(equalTo: containerView.topAnchor),
-            firstImageView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
-            
+            firstImageView.topAnchor.constraint(equalTo: knob.bottomAnchor, constant: UX.defaultPadding),
+            firstImageView.bottomAnchor.constraint(equalTo: topContainerView.bottomAnchor),
+            firstImageView.centerXAnchor.constraint(equalTo: topContainerView.centerXAnchor),
+
             // Second image view constraints
-            secondImageView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
-            secondImageView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-            secondImageView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+            secondImageView.bottomAnchor.constraint(equalTo: topContainerView.bottomAnchor),
+            secondImageView.leadingAnchor.constraint(equalTo: topContainerView.leadingAnchor),
+            secondImageView.trailingAnchor.constraint(equalTo: topContainerView.trailingAnchor),
             secondImageView.heightAnchor.constraint(equalToConstant: UX.ForestAndWaves.waveHeight),
 
+            // Header Label Container View Constraints
+            headerLabelContainerView.topAnchor.constraint(equalTo: topContainerView.bottomAnchor),
+            headerLabelContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            headerLabelContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+
             // Header label constraints
-            headerLabel.topAnchor.constraint(equalTo: containerView.bottomAnchor, constant: UX.defaultPadding),
-            headerLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            headerLabel.topAnchor.constraint(equalTo: headerLabelContainerView.topAnchor, constant: UX.defaultPadding),
+            headerLabel.bottomAnchor.constraint(equalTo: headerLabelContainerView.bottomAnchor, constant: -UX.defaultPadding),
+            headerLabel.centerXAnchor.constraint(equalTo: headerLabelContainerView.centerXAnchor),
 
             // Table view constraints
-            tableView.topAnchor.constraint(equalTo: headerLabel.bottomAnchor, constant: UX.defaultPadding),
+            tableView.topAnchor.constraint(equalTo: headerLabelContainerView.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
             // Footer button constraints
             footerButton.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: UX.defaultPadding),
-            footerButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             footerButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -UX.defaultPadding),
+            footerButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: UX.defaultPadding),
+            footerButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -UX.defaultPadding),
+            footerButton.heightAnchor.constraint(equalToConstant: UX.FooterButton.height)
         ])
+    }
+    
+    private func updateTableView() {
+        tableView.reloadData()
     }
     
     @objc private func closeButtonTapped() {
@@ -182,27 +218,27 @@ extension WhatsNewViewController {
     static func presentSheetOn(_ viewController: UIViewController) {
         
         // main menu should only be opened from the browser
-        guard let browser = viewController as? BrowserViewController else { return }
-        let sheet = WhatsNewViewController(viewModel: WhatsNewViewModel(provider: LocalDataProvider()))
+        guard let whatsNewDelegateViewController = viewController as? WhatsNewViewDelegate else { return }
+        let viewModel = WhatsNewViewModel(provider:
+                                            LocalDataProvider()
+        let sheet = WhatsNewViewController(viewModel: viewModel,
+                                           delegate: whatsNewDelegateViewController)
         sheet.modalPresentationStyle = .automatic
-//
+        
         // iPhone
-        if #available(iOS 15.0, *), let sheet = sheet.sheetPresentationController {
-            sheet.detents = [.medium(), .large()]
+        if #available(iOS 16.0, *), let sheet = sheet.sheetPresentationController {
+            let custom = UISheetPresentationController.Detent.custom { context in
+                return UX.customDetentHeight
+            }
+            sheet.detents = [custom, .large()]
+        } else if #available(iOS 15.0, *), let sheet = sheet.sheetPresentationController {
+            sheet.detents = [.large()]
         }
 
-//        // ipad
-//        if let popoverVC = sheet.popoverPresentationController, sheet.modalPresentationStyle == .popover {
-//            popoverVC.delegate = viewController
-//            popoverVC.sourceView = view
-//            popoverVC.sourceRect = view.bounds
-//
-//            let trait = viewController.traitCollection
-//            if viewModel.isMainMenu {
-//                let margins = viewModel.getMainMenuPopOverMargins(trait: trait, view: view, presentedOn: viewController)
-//                popoverVC.popoverLayoutMargins = margins
-//            }
-//            popoverVC.permittedArrowDirections = [.up]
+        // ipad
+//        if traitCollection.userInterfaceIdiom == .pad {
+//            modalPresentationStyle = .formSheet
+//            preferredContentSize = .init(width: 544, height: 600)
 //        }
         
         viewController.present(sheet, animated: true, completion: nil)
@@ -215,11 +251,16 @@ extension WhatsNewViewController {
 extension WhatsNewViewController: NotificationThemeable {
 
     func applyTheme() {
-        view.backgroundColor = .theme.ecosia.modalBackground
-        tableView.backgroundColor = .theme.ecosia.modalBackground
+        view.backgroundColor = .theme.ecosia.primaryBackground
+        topContainerView.backgroundColor = .theme.ecosia.tertiaryBackground
+        tableView.backgroundColor = .theme.ecosia.primaryBackground
         tableView.separatorColor = .clear
         knob.backgroundColor = .theme.ecosia.secondaryText
         closeButton.backgroundColor = .theme.ecosia.primaryBackground
-        closeButton.tintColor = .theme.ecosia.actionSheetCancelButton
+        closeButton.tintColor = .theme.ecosia.whatsNewCloseButton
+        footerButton.backgroundColor = .theme.ecosia.primaryBrand
+        footerButton.setTitleColor(.theme.ecosia.primaryTextInverted, for: .normal)
+        headerLabelContainerView.backgroundColor = .theme.ecosia.primaryBackground
+        secondImageView.tintColor = .theme.ecosia.primaryBackground
     }
 }

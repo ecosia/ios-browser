@@ -14,6 +14,7 @@ final class WhatsNewCell: UITableViewCell {
     func configure(with item: WhatsNewItem, images: Images) {
         
         selectionStyle = .none
+        backgroundColor = .clear
         
         guard let itemImageURL = item.imageURL else { return }
         imageURL = itemImageURL
@@ -37,7 +38,11 @@ final class WhatsNewCell: UITableViewCell {
     private func configureForiOS14(image: UIImage?, item: WhatsNewItem) {
         var newConfiguration = defaultContentConfiguration()
         newConfiguration.text = item.title
+        newConfiguration.textProperties.font = .preferredFont(forTextStyle: .headline)
+        newConfiguration.textProperties.lineBreakMode = .byTruncatingTail
         newConfiguration.secondaryText = item.subtitle
+        newConfiguration.secondaryTextProperties.lineBreakMode = .byTruncatingTail
+        newConfiguration.secondaryTextProperties.font = .preferredFont(forTextStyle: .subheadline)
         newConfiguration.image = image
         newConfiguration.imageProperties.maximumSize = CGSize(width: 24, height: 24)
         contentConfiguration = newConfiguration
@@ -45,7 +50,11 @@ final class WhatsNewCell: UITableViewCell {
     
     private func configureForiOS13(image: UIImage?, item: WhatsNewItem) {
         textLabel?.text = item.title
+        textLabel?.lineBreakMode = .byTruncatingTail
+        textLabel?.font = .preferredFont(forTextStyle: .headline)
         detailTextLabel?.text = item.subtitle
+        detailTextLabel?.lineBreakMode = .byTruncatingTail
+        detailTextLabel?.font = .preferredFont(forTextStyle: .subheadline)
         imageView?.image = image
     }
 
