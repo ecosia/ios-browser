@@ -259,7 +259,7 @@ extension WhatsNewViewController: NotificationThemeable {
 
 extension WhatsNewViewController {
     
-    static func presentSheetOn(_ viewController: UIViewController) {
+    static func presentOn(_ viewController: UIViewController) {
         
         // main menu should only be opened from the browser
         guard let whatsNewDelegateViewController = viewController as? WhatsNewViewDelegate else { return }

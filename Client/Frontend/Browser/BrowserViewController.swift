@@ -578,7 +578,7 @@ class BrowserViewController: UIViewController {
 
         prepareURLOnboardingContextualHint()
         
-        WhatsNewViewController.presentSheetOn(self)
+        WhatsNewViewController.presentOn(self)
     }
 
     private func prepareURLOnboardingContextualHint() {
