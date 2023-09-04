@@ -2768,3 +2768,10 @@ extension BrowserViewController {
                                      extras: [TelemetryWrapper.EventExtraKey.isInvertColorsEnabled.rawValue: UIAccessibility.isInvertColorsEnabled.description])
     }
 }
+
+extension BrowserViewController: WhatsNewViewDelegate {
+    
+    func whatsNewViewDidShow(_ viewController: WhatsNewViewController) {
+        
+    }
+}
