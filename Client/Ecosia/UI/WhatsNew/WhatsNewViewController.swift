@@ -16,8 +16,14 @@ final class WhatsNewViewController: UIViewController {
     private struct UX {
         private init() {}
         static let defaultPadding: CGFloat = 16
-        static let customDetentHeight: CGFloat = 560
 
+        struct PreferredContentSize {
+            private init() {}
+            static let iPadWidth: CGFloat = 544
+            static let iPadHeight: CGFloat = 600
+            static let iPhoneCustomDetentHeight: CGFloat = 560
+        }
+        
         struct ForestAndWaves {
             private init() {}
             static let waveHeight: CGFloat = 34
@@ -57,6 +63,8 @@ final class WhatsNewViewController: UIViewController {
     private let images = Images(.init(configuration: .ephemeral))
     weak var delegate: WhatsNewViewDelegate?
 
+    // MARK: - Init
+
     init(viewModel: WhatsNewViewModel, delegate: WhatsNewViewDelegate?) {
         super.init(nibName: nil, bundle: nil)
         self.viewModel = viewModel
@@ -66,10 +74,8 @@ final class WhatsNewViewController: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        traitCollection.userInterfaceIdiom == .pad ? .all : .portrait
-    }
+        
+    // MARK: - View Life Cycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -84,6 +90,28 @@ final class WhatsNewViewController: UIViewController {
         modalTransitionStyle = .crossDissolve
         self.delegate?.whatsNewViewDidShow(self)
     }
+    
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        traitCollection.userInterfaceIdiom == .pad ? .all : .portrait
+    }
+}
+
+// MARK: - Buttons Actions
+
+extension WhatsNewViewController {
+    
+    @objc private func closeButtonTapped() {
+        dismiss(animated: true, completion: nil)
+    }
+    
+    @objc private func footerButtonTapped() {
+        closeButtonTapped()
+    }
+}
+
+// MARK: - View Setup Helpers
+
+extension WhatsNewViewController {
     
     private func setupViews() {
         
@@ -190,17 +218,12 @@ final class WhatsNewViewController: UIViewController {
     private func updateTableView() {
         tableView.reloadData()
     }
-    
-    @objc private func closeButtonTapped() {
-        dismiss(animated: true, completion: nil)
-    }
-    
-    @objc private func footerButtonTapped() {
-        closeButtonTapped()
-    }
 }
 
+// MARK: - TableView Data Source
+
 extension WhatsNewViewController: UITableViewDataSource {
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return viewModel.items.count
     }
@@ -211,39 +234,6 @@ extension WhatsNewViewController: UITableViewDataSource {
         cell.configure(with: item, images: images)
         return cell
     }
-}
-
-extension WhatsNewViewController {
-    
-    static func presentSheetOn(_ viewController: UIViewController) {
-        
-        // main menu should only be opened from the browser
-        guard let whatsNewDelegateViewController = viewController as? WhatsNewViewDelegate else { return }
-        let viewModel = WhatsNewViewModel(provider:
-                                            LocalDataProvider())
-        let sheet = WhatsNewViewController(viewModel: viewModel,
-                                           delegate: whatsNewDelegateViewController)
-        sheet.modalPresentationStyle = .automatic
-        
-        // iPhone
-        if #available(iOS 16.0, *), let sheet = sheet.sheetPresentationController {
-            let custom = UISheetPresentationController.Detent.custom { context in
-                return UX.customDetentHeight
-            }
-            sheet.detents = [custom, .large()]
-        } else if #available(iOS 15.0, *), let sheet = sheet.sheetPresentationController {
-            sheet.detents = [.large()]
-        }
-
-        // ipad
-//        if traitCollection.userInterfaceIdiom == .pad {
-//            modalPresentationStyle = .formSheet
-//            preferredContentSize = .init(width: 544, height: 600)
-//        }
-        
-        viewController.present(sheet, animated: true, completion: nil)
-    }
-
 }
 
 // MARK: - NotificationThemeable
@@ -263,4 +253,40 @@ extension WhatsNewViewController: NotificationThemeable {
         headerLabelContainerView.backgroundColor = .theme.ecosia.primaryBackground
         secondImageView.tintColor = .theme.ecosia.primaryBackground
     }
+}
+
+// MARK: - Presentation
+
+extension WhatsNewViewController {
+    
+    static func presentSheetOn(_ viewController: UIViewController) {
+        
+        // main menu should only be opened from the browser
+        guard let whatsNewDelegateViewController = viewController as? WhatsNewViewDelegate else { return }
+        let viewModel = WhatsNewViewModel(provider:
+                                            LocalDataProvider())
+        let sheet = WhatsNewViewController(viewModel: viewModel,
+                                           delegate: whatsNewDelegateViewController)
+        sheet.modalPresentationStyle = .automatic
+        
+        // iPhone
+        if #available(iOS 16.0, *), let sheet = sheet.sheetPresentationController {
+            let custom = UISheetPresentationController.Detent.custom { context in
+                return UX.PreferredContentSize.iPhoneCustomDetentHeight
+            }
+            sheet.detents = [custom, .large()]
+        } else if #available(iOS 15.0, *), let sheet = sheet.sheetPresentationController {
+            sheet.detents = [.large()]
+        }
+
+        // iPad
+        if sheet.traitCollection.userInterfaceIdiom == .pad {
+            sheet.modalPresentationStyle = .formSheet
+            sheet.preferredContentSize = .init(width: UX.PreferredContentSize.iPadWidth,
+                                         height: UX.PreferredContentSize.iPadHeight)
+        }
+        
+        viewController.present(sheet, animated: true, completion: nil)
+    }
+
 }
