@@ -261,7 +261,6 @@ extension WhatsNewViewController {
     
     static func presentOn(_ viewController: UIViewController) {
         
-        // main menu should only be opened from the browser
         guard let whatsNewDelegateViewController = viewController as? WhatsNewViewDelegate else { return }
         let viewModel = WhatsNewViewModel(provider:
                                             LocalDataProvider())
@@ -288,5 +287,4 @@ extension WhatsNewViewController {
         
         viewController.present(sheet, animated: true, completion: nil)
     }
-
 }
