@@ -63,7 +63,8 @@ final class NTPAboutEcosiaCell: UICollectionViewCell, ReusableCell {
     private lazy var learnMoreButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.backgroundColor = .white
+        button.layer.borderWidth = 1
+        button.backgroundColor = .clear
         button.layer.cornerRadius = 20
         button.addTarget(self, action: #selector(learnMoreAction), for: .touchUpInside)
         return button
@@ -75,7 +76,6 @@ final class NTPAboutEcosiaCell: UICollectionViewCell, ReusableCell {
         label.adjustsFontForContentSizeCategory = true
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = .localized(.learnMore)
-        label.textColor = .init(white: 0.1, alpha: 1)
         return label
     }()
     private lazy var dividerView: UIView = {
@@ -217,5 +217,7 @@ extension NTPAboutEcosiaCell: NotificationThemeable {
         dividerView.backgroundColor = .theme.ecosia.border
         disclosureView.backgroundColor = .theme.ecosia.quarternaryBackground
         subtitleLabel.textColor = .theme.ecosia.primaryTextInverted
+        learnMoreButton.layer.borderColor = UIColor.theme.ecosia.primaryTextInverted.cgColor
+        learnMoreLabel.textColor = .theme.ecosia.primaryTextInverted
     }
 }
