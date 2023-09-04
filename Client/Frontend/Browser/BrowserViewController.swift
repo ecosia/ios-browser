@@ -576,9 +576,7 @@ class BrowserViewController: UIViewController {
         }
         showQueuedAlertIfAvailable()
 
-        prepareURLOnboardingContextualHint()
-        
-        WhatsNewViewController.presentOn(self)
+        prepareURLOnboardingContextualHint()        
     }
 
     private func prepareURLOnboardingContextualHint() {
