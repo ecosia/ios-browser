@@ -64,7 +64,6 @@ final class NTPImpactCell: UICollectionViewCell, NotificationThemeable, Reusable
         
         containerView.addArrangedSubview(personalImpactOutlineView)
         containerView.addArrangedSubview(communityImpactOutlineView)
-        NTPImpactOutlineView(firstRow: treesRow, secondRow: investmentRow)
         
         setupConstraints()
     }

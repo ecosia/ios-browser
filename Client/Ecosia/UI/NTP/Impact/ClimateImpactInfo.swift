@@ -25,17 +25,16 @@ enum ClimateImpactInfo {
         }
     }
     
-    // TODO: Localize subtitles
     var subtitle: String {
         switch self {
         case .personalCounter(_, let searches):
-            return "\(searches) searches" // TODO: plurallize searches
+            return .localizedPlural(.searches, num: searches)
         case .invites(let value):
-            return "\(value) friends invite" // TODO: plurallize friends
+            return .localizedPlural(.friendInvitesPlural, num: value)
         case .totalTrees:
-            return "trees planted by Ecosia"
+            return .localized(.treesPlantedByTheCommunity) // TODO: lowercase first letter
         case .totalInvested:
-            return "invested into climate action"
+            return .localized(.investedIntoClimateAction)
         }
     }
     
@@ -52,13 +51,12 @@ enum ClimateImpactInfo {
         }
     }
     
-    // TODO: Localize button titles
     var buttonTitle: String? {
         switch self {
         case .personalCounter:
-            return "How it works"
+            return .localized(.howItWorks)
         case .invites:
-            return "Invite friends"
+            return .localized(.inviteFriends)
         case .totalTrees, .totalInvested:
             return nil
         }

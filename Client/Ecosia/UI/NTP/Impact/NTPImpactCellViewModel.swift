@@ -48,7 +48,7 @@ extension NTPImpactCellViewModel: HomepageViewModelProtocol {
     }
 
     var headerViewModel: LabelButtonHeaderViewModel {
-        .init(title: "Climate impact", isButtonHidden: true) // TODO: Localize title
+        .init(title: .localized(.climateImpact), isButtonHidden: true)
     }
 
     func section(for traitCollection: UITraitCollection) -> NSCollectionLayoutSection {
