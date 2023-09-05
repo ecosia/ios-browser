@@ -13,23 +13,22 @@ protocol HomepageViewControllerDelegate: AnyObject {
 extension HomepageViewController {
     func configureEcosiaSetup() {
         personalCounter.subscribe(self) { [weak self] _ in
-            guard let self = self else { return }
-            self.updateTreesCell()
+            self?.updateImpactCell()
         }
 
         referrals.subscribe(self) { [weak self] _ in
-            guard let self = self else { return }
-            self.updateTreesCell()
+            self?.updateImpactCell()
         }
     }
 
-    func updateTreesCell() {
-        guard let impactCell = viewModel.impactViewModel.cell else { return }
-        impactCell.display(treesCellModel, animated: false)
-    }
-
-    var treesCellModel: NTPImpactCell.Model {
-        .init(impact: User.shared.impact, searches: personalCounter.state!, trees: TreeCounter.shared.treesAt(.init()))
+    func updateImpactCell() {
+        guard let cell = viewModel.impactViewModel.cell else { return }
+        // TODO: Delegate to view model
+        cell.configure(model: .init(personalCounter: User.shared.impact,
+                                    personalSearches: personalCounter.state!,
+                                    friendsInvited: User.shared.referrals.count,
+                                    totalTreesCounter: TreeCounter.shared.treesAt(.init()),
+                                    totalAmountInvested: 1))
     }
 }
 

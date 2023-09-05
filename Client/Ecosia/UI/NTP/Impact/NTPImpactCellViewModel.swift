@@ -13,21 +13,25 @@ class NTPImpactCellViewModel {
         self.personalCounter = personalCounter
     }
 
-    var treesCellModel: NTPImpactCell.Model {
-        .init(impact: User.shared.impact, searches: personalCounter.state!, trees: TreeCounter.shared.treesAt(.init()))
+    var model: NTPImpactCell.Model {
+        return .init(personalCounter: User.shared.impact,
+                     personalSearches: personalCounter.state!,
+                     friendsInvited: User.shared.referrals.count,
+                     totalTreesCounter: TreeCounter.shared.treesAt(.init()),
+                     totalAmountInvested: 123456789101112) // TODO: Fetch dynamically
     }
 
     weak var cell: NTPImpactCell?
 
     func startCounter() {
         guard !UIAccessibility.isReduceMotionEnabled else {
-            cell?.display(treesCellModel, animated: false)
+            cell?.configure(model: model)
             return
         }
 
         TreeCounter.shared.subscribe(self) { [weak self] count in
-            guard let cell = self?.cell, let model = self?.treesCellModel else { return }
-            cell.display(model, animated: true)
+            guard let cell = self?.cell, let model = self?.model else { return }
+            cell.configure(model: model)
         }
     }
 
@@ -40,20 +44,20 @@ class NTPImpactCellViewModel {
 extension NTPImpactCellViewModel: HomepageViewModelProtocol {
 
     var sectionType: HomepageSectionType {
-        return .impact
+        .impact
     }
 
     var headerViewModel: LabelButtonHeaderViewModel {
-        return .emptyHeader
+        .init(title: "Climate impact", isButtonHidden: true) // TODO: Localize title
     }
 
     func section(for traitCollection: UITraitCollection) -> NSCollectionLayoutSection {
-        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
-                                              heightDimension: .estimated(200.0))
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1),
+                                              heightDimension: .estimated(364))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
 
-        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
-                                               heightDimension: .estimated(200.0))
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1),
+                                               heightDimension: .estimated(364))
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: item, count: 1)
 
         let section = NSCollectionLayoutSection(group: group)
@@ -62,14 +66,17 @@ extension NTPImpactCellViewModel: HomepageViewModelProtocol {
 
         // Adding a header if needed
         if NTPTooltip.highlight(for: User.shared, isInPromoTest: DefaultBrowserExperiment.isInPromoTest())?.text != nil {
-            let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
-                                                    heightDimension: .absolute(1.0))
+            let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1),
+                                                    heightDimension: .absolute(1))
             let header = NSCollectionLayoutBoundarySupplementaryItem(
                 layoutSize: headerSize,
                 elementKind: UICollectionView.elementKindSectionHeader,
                 alignment: .top)
             section.boundarySupplementaryItems = [header]
         }
+        
+        // TODO: Handle section label header view
+        
         return section
     }
 
@@ -91,7 +98,7 @@ extension NTPImpactCellViewModel: HomepageSectionHandler {
 
     func configure(_ cell: UICollectionViewCell, at indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = cell as? NTPImpactCell else { return UICollectionViewCell() }
-        cell.display(treesCellModel, animated: false)
+        cell.configure(model: model)
         self.cell = cell
         return cell
     }

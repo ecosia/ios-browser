@@ -59,9 +59,9 @@ extension HomepageSectionType {
         }
     }
     
-    func sectionInsets(_ traits: UITraitCollection, bottomSpacing: CGFloat = 12) -> NSDirectionalEdgeInsets {
+    func sectionInsets(_ traits: UITraitCollection, bottomSpacing: CGFloat = 32) -> NSDirectionalEdgeInsets {
         switch self {
-        case .libraryShortcuts, .topSites, .impact, .news, .bookmarkNudge, .aboutEcosia:
+        case .libraryShortcuts, .topSites, .impact, .news, .bookmarkNudge, .aboutEcosia, .ntpCustomization:
             guard let window = UIApplication.shared.windows.first(where: \.isKeyWindow) else {
                 return NSDirectionalEdgeInsets(top: 0,
                                                leading: MinimumInsets,
@@ -82,8 +82,6 @@ extension HomepageSectionType {
                                            leading: horizontal,
                                            bottom: bottomSpacing,
                                            trailing: horizontal)
-        case .ntpCustomization:
-            return .init(top: 32, leading: 0, bottom: 32, trailing: 0)
         case .logoHeader:
             return .init(top: 0, leading: 0, bottom: 0, trailing: 0)
         }

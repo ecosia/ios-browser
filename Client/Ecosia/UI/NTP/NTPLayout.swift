@@ -30,7 +30,7 @@ class NTPLayout: UICollectionViewCompositionalLayout {
 
             tooltip.frame = impact.frame
             tooltip.frame.size.height = height
-            tooltip.frame.origin.y -= (height - NTPImpactCell.topMargin)
+            tooltip.frame.origin.y -= (height)
             tooltip.alpha = 1
         } else {
             tooltip.alpha = 0
