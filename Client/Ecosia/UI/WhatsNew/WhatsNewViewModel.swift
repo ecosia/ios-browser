@@ -9,7 +9,7 @@ final class WhatsNewViewModel {
     
     init(provider: DataProvider) {
         do {
-            self.items = try provider.fetchData()
+            self.items = try provider.getData()
         } catch {
             print("Failed to fetch Whats new items. Reason \(error)")
             self.items = []

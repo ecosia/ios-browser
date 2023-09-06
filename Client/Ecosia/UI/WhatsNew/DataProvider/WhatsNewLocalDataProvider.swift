@@ -17,7 +17,7 @@ struct LocalDataProvider: DataProvider {
                      subtitle: .localized(.whatsNewSecondItemDescription)),
     ]
     
-    func fetchData() throws -> [WhatsNewItem] {
+    func getData() throws -> [WhatsNewItem] {
         items
     }
 }

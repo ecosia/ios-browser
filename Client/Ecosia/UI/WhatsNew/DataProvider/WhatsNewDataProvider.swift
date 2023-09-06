@@ -5,5 +5,5 @@
 import Foundation
 
 protocol DataProvider {
-    func fetchData() throws -> [WhatsNewItem]
+    func getData() throws -> [WhatsNewItem]
 }

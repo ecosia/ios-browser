@@ -18,7 +18,7 @@ struct JSONDataProvider: DataProvider {
         let subtitle: String
     }
 
-    func fetchData() throws -> [WhatsNewItem] {
+    func getData() throws -> [WhatsNewItem] {
         guard let jsonData else { return [] }
                 
         do {
