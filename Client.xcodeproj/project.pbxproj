@@ -40,7 +40,6 @@
 		1246A7CB2AA5D43A00FBB626 /* NTPImpactCellOld.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1246A7CA2AA5D43A00FBB626 /* NTPImpactCellOld.swift */; };
 		1246A7CF2AA6163800FBB626 /* ClimateImpactInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1246A7CE2AA6163800FBB626 /* ClimateImpactInfo.swift */; };
 		1246A7D12AA6165400FBB626 /* NTPImpactRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1246A7D02AA6165400FBB626 /* NTPImpactRowView.swift */; };
-		1246A7D32AA6167200FBB626 /* NTPImpactOutlineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1246A7D22AA6167200FBB626 /* NTPImpactOutlineView.swift */; };
 		12531B4C2AA777230079C9CE /* NumberFormatter+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12531B4B2AA777230079C9CE /* NumberFormatter+Ecosia.swift */; };
 		127773B229E98F75008A6A64 /* EcosiaFindInPageBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 127773B129E98F75008A6A64 /* EcosiaFindInPageBar.swift */; };
 		1287A99D2A6FFA45005F21F7 /* WelcomeTourGreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1287A99C2A6FFA45005F21F7 /* WelcomeTourGreen.swift */; };
@@ -1464,7 +1463,6 @@
 		1246A7CA2AA5D43A00FBB626 /* NTPImpactCellOld.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPImpactCellOld.swift; sourceTree = "<group>"; };
 		1246A7CE2AA6163800FBB626 /* ClimateImpactInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClimateImpactInfo.swift; sourceTree = "<group>"; };
 		1246A7D02AA6165400FBB626 /* NTPImpactRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPImpactRowView.swift; sourceTree = "<group>"; };
-		1246A7D22AA6167200FBB626 /* NTPImpactOutlineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPImpactOutlineView.swift; sourceTree = "<group>"; };
 		12531B4B2AA777230079C9CE /* NumberFormatter+Ecosia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NumberFormatter+Ecosia.swift"; sourceTree = "<group>"; };
 		12674A038346A46589A0AC0B /* el */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = el; path = "el.lproj/Default Browser.strings"; sourceTree = "<group>"; };
 		126A40A4A5AFDFD655B0FDF4 /* ca */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ca; path = ca.lproj/ClearHistoryConfirm.strings; sourceTree = "<group>"; };
@@ -4985,7 +4983,6 @@
 				CA4D9C9528C8D801006AFB5D /* NTPImpactCell.swift */,
 				CA8BCC3A28D218830020BC50 /* NTPImpactCellViewModel.swift */,
 				1246A7CA2AA5D43A00FBB626 /* NTPImpactCellOld.swift */,
-				1246A7D22AA6167200FBB626 /* NTPImpactOutlineView.swift */,
 				1246A7D02AA6165400FBB626 /* NTPImpactRowView.swift */,
 			);
 			path = Impact;
@@ -9384,7 +9381,6 @@
 				FA6B2AC21D41F02D00429414 /* Punycode.swift in Sources */,
 				43446CEA2412066500F5C643 /* UIViewController+Extension.swift in Sources */,
 				12EEE0A82A9F75C500C4A46D /* NTPAboutEcosiaCellViewModel.swift in Sources */,
-				1246A7D32AA6167200FBB626 /* NTPImpactOutlineView.swift in Sources */,
 				8A471185287F6E4800F5A6EA /* SeparatorTableViewCell.swift in Sources */,
 				1287A99F2A6FFC0C005F21F7 /* WelcomeTourTransparent.swift in Sources */,
 				1246A7CB2AA5D43A00FBB626 /* NTPImpactCellOld.swift in Sources */,

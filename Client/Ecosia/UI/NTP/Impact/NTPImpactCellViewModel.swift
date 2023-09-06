@@ -7,31 +7,39 @@ import Shared
 import Core
 
 class NTPImpactCellViewModel {
-    private let personalCounter: PersonalCounter
-
-    init(personalCounter: PersonalCounter) {
-        self.personalCounter = personalCounter
+    var infoItemSections: [[ClimateImpactInfo]] {
+        var firstSection: [ClimateImpactInfo] = [
+            .invites(value: User.shared.referrals.count)
+        ]
+        if !Unleash.isEnabled(.incentiveRestrictedSearch) {
+            firstSection.insert(.personalCounter(value: User.shared.impact,
+                                                 // TODO: Use PersonalCounter
+                                                 searches: User.shared.treeCount),
+                                at: 0)
+        }
+        let secondSection: [ClimateImpactInfo] = [
+            .totalTrees(value: TreeCounter.shared.treesAt(.init())),
+            .totalInvested(value: 123456789101112) // TODO: Fetch dynamically
+        ]
+        return [firstSection, secondSection]
     }
 
-    var model: NTPImpactCell.Model {
-        return .init(personalCounter: User.shared.impact,
-                     personalSearches: personalCounter.state!,
-                     friendsInvited: User.shared.referrals.count,
-                     totalTreesCounter: TreeCounter.shared.treesAt(.init()),
-                     totalAmountInvested: 123456789101112) // TODO: Fetch dynamically
+    private var cells = [Int:NTPImpactCell]()
+    func refreshCells() {
+        // TODO: Refresh only relevant content
+        cells.forEach { (index, cell) in
+            cell.refresh(items: infoItemSections[index])
+        }
     }
-
-    weak var cell: NTPImpactCell?
 
     func startCounter() {
         guard !UIAccessibility.isReduceMotionEnabled else {
-            cell?.configure(model: model)
+            refreshCells()
             return
         }
 
-        TreeCounter.shared.subscribe(self) { [weak self] count in
-            guard let cell = self?.cell, let model = self?.model else { return }
-            cell.configure(model: model)
+        TreeCounter.shared.subscribe(self) { [weak self] _ in
+            self?.refreshCells()
         }
     }
 
@@ -53,11 +61,11 @@ extension NTPImpactCellViewModel: HomepageViewModelProtocol {
 
     func section(for traitCollection: UITraitCollection) -> NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1),
-                                              heightDimension: .estimated(364))
+                                              heightDimension: .estimated(192))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
 
         let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1),
-                                               heightDimension: .estimated(364))
+                                               heightDimension: .estimated(192))
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: item, count: 1)
 
         let section = NSCollectionLayoutSection(group: group)
@@ -81,29 +89,21 @@ extension NTPImpactCellViewModel: HomepageViewModelProtocol {
     }
 
     func numberOfItemsInSection() -> Int {
-        return 1
+        return infoItemSections.count
     }
 
     var isEnabled: Bool {
         User.shared.showClimateImpact
     }
-
-    func refreshData(for traitCollection: UITraitCollection,
-                     isPortrait: Bool = UIWindow.isPortrait,
-                     device: UIUserInterfaceIdiom = UIDevice.current.userInterfaceIdiom) {}
-
 }
 
 extension NTPImpactCellViewModel: HomepageSectionHandler {
 
     func configure(_ cell: UICollectionViewCell, at indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = cell as? NTPImpactCell else { return UICollectionViewCell() }
-        cell.configure(model: model)
-        self.cell = cell
+        let items = infoItemSections[indexPath.row]
+        cell.configure(items: items, addBottomDivider: indexPath.row == (infoItemSections.count - 1))
+        cells[indexPath.row] = cell
         return cell
-    }
-
-    func didSelectItem(at indexPath: IndexPath, homePanelDelegate: HomePanelDelegate?, libraryPanelDelegate: LibraryPanelDelegate?) {
-        homePanelDelegate?.homePanelDidRequestToOpenImpact()
     }
 }

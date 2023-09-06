@@ -53,11 +53,6 @@ extension NTPLibraryCellViewModel: HomepageViewModelProtocol {
     var isEnabled: Bool {
         true
     }
-
-    func refreshData(for traitCollection: UITraitCollection,
-                     isPortrait: Bool = UIWindow.isPortrait,
-                     device: UIUserInterfaceIdiom = UIDevice.current.userInterfaceIdiom) {}
-
 }
 
 extension NTPLibraryCellViewModel: HomepageSectionHandler {

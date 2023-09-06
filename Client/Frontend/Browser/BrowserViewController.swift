@@ -1936,14 +1936,6 @@ extension BrowserViewController: HomePanelDelegate {
     func homePanelDidRequestToOpenSettings(at settingsPage: AppSettingsDeeplinkOption) {
         showSettingsWithDeeplink(to: settingsPage)
     }
-
-    func homePanelDidRequestToOpenImpact() {
-        presentYourImpact { [weak self] in
-            self?.homepageViewController?.reloadView()
-        }
-        homepageViewController?.ntpTooltipTapped(nil)
-        Analytics.shared.clickYourImpact(on: .ntp)
-    }
 }
 
 // MARK: - SearchViewController

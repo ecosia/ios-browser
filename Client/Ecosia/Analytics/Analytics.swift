@@ -209,6 +209,7 @@ final class Analytics {
             .label("learn_more"))
     }
     
+    // TODO: Remove this action ?
     func clickYourImpact(on category: Category) {
         track(Structured(category: category.rawValue,
                          action: Action.click.rawValue)

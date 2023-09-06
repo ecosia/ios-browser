@@ -50,7 +50,6 @@ class HomepageViewModel: FeatureFlaggable, NTPLayoutHighlightDataSource {
 
     //Ecosia: let nimbus: FxNimbus
     let profile: Profile
-    fileprivate let personalCounter = PersonalCounter()
 
     var isZeroSearch: Bool {
         didSet {
@@ -96,7 +95,7 @@ class HomepageViewModel: FeatureFlaggable, NTPLayoutHighlightDataSource {
         self.libraryViewModel = NTPLibraryCellViewModel()
         self.bookmarkNudgeViewModel = NTPBookmarkNudgeCellViewModel()
         self.topSiteViewModel = TopSitesViewModel(profile: profile)
-        self.impactViewModel = NTPImpactCellViewModel(personalCounter: personalCounter)
+        self.impactViewModel = NTPImpactCellViewModel()
         self.newsViewModel = NTPNewsCellViewModel()
         self.aboutEcosiaViewModel = NTPAboutEcosiaCellViewModel()
         self.ntpCustomizationViewModel = NTPCustomizationCellViewModel()

@@ -48,11 +48,6 @@ extension NTPBookmarkNudgeCellViewModel: HomepageViewModelProtocol {
     var isEnabled: Bool {
         User.shared.showsBookmarksNTPNudgeCard()
     }
-
-    func refreshData(for traitCollection: UITraitCollection,
-                     isPortrait: Bool = UIWindow.isPortrait,
-                     device: UIUserInterfaceIdiom = UIDevice.current.userInterfaceIdiom) {}
-
 }
 
 extension NTPBookmarkNudgeCellViewModel: HomepageSectionHandler {

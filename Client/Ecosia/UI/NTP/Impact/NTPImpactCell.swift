@@ -6,37 +6,27 @@ import UIKit
 import Core
 
 final class NTPImpactCell: UICollectionViewCell, NotificationThemeable, ReusableCell {
-    struct Model { // TODO: Do we actually need this?
-        let personalCounter: Int
-        let personalSearches: Int
-        let friendsInvited: Int
-        let totalTreesCounter: Int
-        let totalAmountInvested: Int
+    struct UX {
+        static let cellsSpacing: CGFloat = 12
+        static let dividerInset: CGFloat = 16
+        static let dividerSpacing: CGFloat = 32
     }
     
-    private lazy var containerView: UIStackView = {
+    private lazy var containerStack: UIStackView = {
         let stack = UIStackView()
         stack.translatesAutoresizingMaskIntoConstraints = false
         stack.axis = .vertical
-        stack.spacing = 12
         stack.alignment = .fill
-        stack.distribution = .fillEqually
         return stack
     }()
-    private lazy var personalImpactOutlineView: NTPImpactOutlineView = {
-        NTPImpactOutlineView(firstRow: personalCounterRow, secondRow: invitesRow)
-    }()
-    private let personalCounterRow = NTPImpactRowView()
-    private let invitesRow = NTPImpactRowView()
-    private lazy var communityImpactOutlineView: NTPImpactOutlineView = {
-        NTPImpactOutlineView(firstRow: treesRow, secondRow: investmentRow)
-    }()
-    private let treesRow = NTPImpactRowView()
-    private let investmentRow = NTPImpactRowView()
-    private lazy var dividerView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
+    private let dividerView = UIView()
+    private lazy var dividerContainer = {
+        let stack = UIStackView()
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        stack.layoutMargins = .init(top: UX.dividerSpacing, left: UX.dividerInset, bottom: -UX.cellsSpacing, right: UX.dividerInset)
+        stack.isLayoutMarginsRelativeArrangement = true
+        stack.addArrangedSubview(dividerView)
+        return stack
     }()
     
     override init(frame: CGRect) {
@@ -59,39 +49,49 @@ final class NTPImpactCell: UICollectionViewCell, NotificationThemeable, Reusable
     }
 
     private func setup() {
-        contentView.addSubview(containerView)
-        contentView.addSubview(dividerView)
-        
-        containerView.addArrangedSubview(personalImpactOutlineView)
-        containerView.addArrangedSubview(communityImpactOutlineView)
+        contentView.addSubview(containerStack)
         
         setupConstraints()
     }
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            containerView.widthAnchor.constraint(equalTo: widthAnchor),
-            containerView.topAnchor.constraint(equalTo: topAnchor),
-            containerView.bottomAnchor.constraint(equalTo: dividerView.topAnchor, constant: -32),
-            dividerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-            dividerView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
-            dividerView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            containerStack.topAnchor.constraint(equalTo: topAnchor),
+            containerStack.leadingAnchor.constraint(equalTo: leadingAnchor),
+            containerStack.trailingAnchor.constraint(equalTo: trailingAnchor),
+            containerStack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -UX.cellsSpacing),
             dividerView.heightAnchor.constraint(equalToConstant: 1)
         ])
     }
 
     func applyTheme() {
-        containerView.arrangedSubviews.forEach { view in
+        containerStack.arrangedSubviews.forEach { view in
             (view as? NotificationThemeable)?.applyTheme()
         }
         dividerView.backgroundColor = .theme.ecosia.border
     }
     
-    func configure(model: Model) {
-        personalCounterRow.info = .personalCounter(value: model.personalCounter,
-                                                   searches: model.personalSearches)
-        invitesRow.info = .invites(value: model.friendsInvited)
-        treesRow.info = .totalTrees(value: model.totalTreesCounter)
-        investmentRow.info = .totalInvested(value: model.totalAmountInvested)
+    func configure(items: [ClimateImpactInfo], addBottomDivider: Bool = false) {
+        // Remove existing view upon reuse
+        containerStack.removeAllArrangedViews()
+        
+        for (index, info) in items.enumerated() {
+            let row = NTPImpactRowView()
+            row.info = info
+            row.position = (index, items.count)
+            containerStack.addArrangedSubview(row)
+        }
+        dividerContainer.isHidden = !addBottomDivider
+        if addBottomDivider {
+            containerStack.addArrangedSubview(dividerContainer)
+        }
+    }
+    
+    func refresh(items: [ClimateImpactInfo]) {
+        for (index, view) in containerStack.arrangedSubviews.enumerated() {
+            guard let row = view as? NTPImpactRowView else { return }
+            let info = items[index]
+            row.info = info
+        }
     }
 }

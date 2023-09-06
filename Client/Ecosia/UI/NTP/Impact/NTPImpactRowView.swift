@@ -29,6 +29,11 @@ final class NTPImpactRowView: UIView, NotificationThemeable {
         button.titleLabel?.font = .preferredFont(forTextStyle: .callout)
         return button
     }()
+    private lazy var dividerView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
     
     var info: ClimateImpactInfo = .invites(value: 0) {
         didSet {
@@ -40,18 +45,27 @@ final class NTPImpactRowView: UIView, NotificationThemeable {
             // TODO: Add button action
         }
     }
+    var position: (row: Int, totalCount: Int) = (0, 0) {
+        didSet {
+            let (row, count) = position
+            dividerView.isHidden = row == (count - 1)
+            setMaskedCornersUsingPosition(row: row, totalCount: count)
+        }
+    }
     
     init() {
         super.init(frame: .zero)
         translatesAutoresizingMaskIntoConstraints = false
+        layer.cornerRadius = 10
         
         let hStack = UIStackView()
         hStack.translatesAutoresizingMaskIntoConstraints = false
         hStack.axis = .horizontal
         hStack.alignment = .fill
         hStack.spacing = 8
-        addSubview(hStack)
         hStack.addArrangedSubview(imageView)
+        addSubview(hStack)
+        addSubview(dividerView)
         
         let vStack = UIStackView()
         vStack.translatesAutoresizingMaskIntoConstraints = false
@@ -68,7 +82,11 @@ final class NTPImpactRowView: UIView, NotificationThemeable {
             hStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
             hStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
             hStack.topAnchor.constraint(equalTo: topAnchor, constant: 16),
-            hStack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16),
+            hStack.bottomAnchor.constraint(equalTo: dividerView.topAnchor, constant: -16),
+            dividerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            dividerView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            dividerView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            dividerView.heightAnchor.constraint(equalToConstant: 1),
             imageView.widthAnchor.constraint(equalToConstant: 48),
             imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor)
         ])
@@ -79,8 +97,10 @@ final class NTPImpactRowView: UIView, NotificationThemeable {
     required init?(coder: NSCoder) { nil }
     
     func applyTheme() {
+        backgroundColor = .theme.ecosia.secondaryBackground
         titleLabel.textColor = .theme.ecosia.primaryText
         subtitleLabel.textColor = .theme.ecosia.secondaryText
         actionButton.setTitleColor(.theme.ecosia.primaryButton, for: .normal)
+        dividerView.backgroundColor = .theme.ecosia.border
     }
 }
