@@ -263,7 +263,7 @@ extension WhatsNewViewController {
         
         guard let whatsNewDelegateViewController = viewController as? WhatsNewViewDelegate else { return }
         let viewModel = WhatsNewViewModel(provider:
-                                            LocalDataProvider())
+                                            WhatsNewLocalDataProvider())
         let sheet = WhatsNewViewController(viewModel: viewModel,
                                            delegate: whatsNewDelegateViewController)
         sheet.modalPresentationStyle = .automatic

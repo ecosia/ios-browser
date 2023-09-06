@@ -7,7 +7,7 @@ import Foundation
 final class WhatsNewViewModel {
     var items: [WhatsNewItem]
     
-    init(provider: DataProvider) {
+    init(provider: WhatsNewDataProvider) {
         do {
             self.items = try provider.getData()
         } catch {

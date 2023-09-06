@@ -5,7 +5,7 @@
 import Foundation
 import Core
 
-struct JSONDataProvider: DataProvider {
+struct WhatsNewJSONDataProvider: WhatsNewDataProvider {
     
     let jsonData: Data?
     private struct WhatsNewItemRoot: Decodable {

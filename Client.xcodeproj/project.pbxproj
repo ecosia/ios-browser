@@ -152,6 +152,8 @@
 		2CC9E08C2A30AED2003420E1 /* URL+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC9E08B2A30AED2003420E1 /* URL+Ecosia.swift */; };
 		2CCB296720A99C9500121DD8 /* SaveLoginsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCB296620A99C9500121DD8 /* SaveLoginsTests.swift */; };
 		2CCF17532105E4FD00705AE5 /* DisplaySettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCF17522105E4FD00705AE5 /* DisplaySettingsTests.swift */; };
+		2CE2F2182AA8670400623F26 /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE2F2172AA8670400623F26 /* Version.swift */; };
+		2CE2F21D2AA87B8B00623F26 /* VersionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE2F21B2AA87B3100623F26 /* VersionTests.swift */; };
 		2CE63B2829C8DA8200047121 /* ErrorPageHandler+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE63B2729C8DA8200047121 /* ErrorPageHandler+Ecosia.swift */; };
 		2CE63B2A29CCBAB200047121 /* PageActionMenuCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE63B2929CCBAB200047121 /* PageActionMenuCell.swift */; };
 		2CEA6F791E93E3A600D4100E /* SearchSettingsUITest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CEA6F781E93E3A600D4100E /* SearchSettingsUITest.swift */; };
@@ -1773,6 +1775,8 @@
 		2CC9E08B2A30AED2003420E1 /* URL+Ecosia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+Ecosia.swift"; sourceTree = "<group>"; };
 		2CCB296620A99C9500121DD8 /* SaveLoginsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveLoginsTests.swift; sourceTree = "<group>"; };
 		2CCF17522105E4FD00705AE5 /* DisplaySettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplaySettingsTests.swift; sourceTree = "<group>"; };
+		2CE2F2172AA8670400623F26 /* Version.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Version.swift; sourceTree = "<group>"; };
+		2CE2F21B2AA87B3100623F26 /* VersionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VersionTests.swift; sourceTree = "<group>"; };
 		2CE63B2729C8DA8200047121 /* ErrorPageHandler+Ecosia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ErrorPageHandler+Ecosia.swift"; sourceTree = "<group>"; };
 		2CE63B2929CCBAB200047121 /* PageActionMenuCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageActionMenuCell.swift; sourceTree = "<group>"; };
 		2CEA6F781E93E3A600D4100E /* SearchSettingsUITest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchSettingsUITest.swift; sourceTree = "<group>"; };
@@ -5238,6 +5242,7 @@
 				2C73A71C2A9E0B97006EBAAB /* WhatsNewDataProvider.swift */,
 				2C73A7202A9E0BCD006EBAAB /* WhatsNewJSONDataProvider.swift */,
 				2C73A7272A9E1BD7006EBAAB /* WhatsNewLocalDataProvider.swift */,
+				2CE2F2172AA8670400623F26 /* Version.swift */,
 			);
 			path = DataProvider;
 			sourceTree = "<group>";
@@ -6683,6 +6688,7 @@
 				CAA6AC4928E473D500A13DE9 /* EcosiaNTPTooltipHighlightTests.swift */,
 				2CA2040529D4954F006848DE /* EcosiaPageActionMenuCellTests.swift */,
 				2CAD6D9C2A7AAFC600C2E96D /* AnalyticsTests.swift */,
+				2CE2F21B2AA87B3100623F26 /* VersionTests.swift */,
 			);
 			path = Ecosia;
 			sourceTree = "<group>";
@@ -9264,6 +9270,7 @@
 				D029A04920A62DB0001DB72F /* TemporaryDocument.swift in Sources */,
 				CA9A4B7028D0A2C7006571DB /* FakeNimbus.swift in Sources */,
 				C8BA0E7627F20B8E00DD8214 /* HistoryDeletionUtility.swift in Sources */,
+				2CE2F2182AA8670400623F26 /* Version.swift in Sources */,
 				8A590C6128C123100032F1AA /* OpenPassBookHelper.swift in Sources */,
 				EBB895332193FFF400EB91A0 /* ContentBlockerSettingViewController.swift in Sources */,
 				E692E3371C46E86A009D1240 /* AppSettingsOptions.swift in Sources */,
@@ -9781,6 +9788,7 @@
 			files = (
 				E4CD9F1D1A6D9C2800318571 /* WebServerTests.swift in Sources */,
 				C869916528918C8E007ACC5C /* WallpaperURLSessionMock.swift in Sources */,
+				2CE2F21D2AA87B8B00623F26 /* VersionTests.swift in Sources */,
 				431C0D1E25C9DC4D00395CE4 /* DefaultBrowserOnboardingTests.swift in Sources */,
 				E1AEC17A286E0CF500062E29 /* WebViewNavigationHandlerTests.swift in Sources */,
 				D3D488591ABB54CD00A93597 /* FileAccessorTests.swift in Sources */,
