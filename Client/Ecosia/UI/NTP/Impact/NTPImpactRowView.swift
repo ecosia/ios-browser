@@ -5,6 +5,17 @@
 import Foundation
 
 final class NTPImpactRowView: UIView, NotificationThemeable {
+    struct UX {
+        static let height: CGFloat = 80
+        static let cornerRadius: CGFloat = 10
+        static let horizontalSpacing: CGFloat = 8
+        static let padding: CGFloat = 16
+        static let imageHeight: CGFloat = 48
+        static let imageHeightWithProgress: CGFloat = 26
+        static let progressWidth: CGFloat = 48
+        static let progressHeight: CGFloat = 30
+        static let progressLineWidth: CGFloat = 2
+    }
     
     private lazy var imageContainer: UIView = {
         let view = UIView()
@@ -18,10 +29,12 @@ final class NTPImpactRowView: UIView, NotificationThemeable {
         return image
     }()
     private lazy var totalProgressView: ProgressView = {
-        ProgressView(size: .init(width: 48, height: 30), lineWidth: 2)
+        ProgressView(size: .init(width: UX.progressWidth, height: UX.progressHeight),
+                     lineWidth: UX.progressLineWidth)
     }()
     private lazy var currentProgressView: ProgressView = {
-        ProgressView(size: .init(width: 48, height: 30), lineWidth: 2)
+        ProgressView(size: .init(width: UX.progressWidth, height: UX.progressHeight),
+                     lineWidth: UX.progressLineWidth)
     }()
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -72,13 +85,13 @@ final class NTPImpactRowView: UIView, NotificationThemeable {
         self.info = info
         super.init(frame: .zero)
         translatesAutoresizingMaskIntoConstraints = false
-        layer.cornerRadius = 10
+        layer.cornerRadius = UX.cornerRadius
         
         let hStack = UIStackView()
         hStack.translatesAutoresizingMaskIntoConstraints = false
         hStack.axis = .horizontal
         hStack.alignment = .fill
-        hStack.spacing = 8
+        hStack.spacing = UX.horizontalSpacing
         hStack.addArrangedSubview(imageContainer)
         imageContainer.addSubview(imageView)
         addSubview(hStack)
@@ -95,17 +108,17 @@ final class NTPImpactRowView: UIView, NotificationThemeable {
         hStack.addArrangedSubview(actionButton)
         
         NSLayoutConstraint.activate([
-            heightAnchor.constraint(equalToConstant: 80),
-            hStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-            hStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
-            hStack.topAnchor.constraint(equalTo: topAnchor, constant: 16),
-            hStack.bottomAnchor.constraint(equalTo: dividerView.topAnchor, constant: -16),
-            dividerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-            dividerView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            heightAnchor.constraint(equalToConstant: UX.height),
+            hStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: UX.padding),
+            hStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -UX.padding),
+            hStack.topAnchor.constraint(equalTo: topAnchor, constant: UX.padding),
+            hStack.bottomAnchor.constraint(equalTo: dividerView.topAnchor, constant: -UX.padding),
+            dividerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: UX.padding),
+            dividerView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -UX.padding),
             dividerView.bottomAnchor.constraint(equalTo: bottomAnchor),
             dividerView.heightAnchor.constraint(equalToConstant: 1),
-            imageContainer.widthAnchor.constraint(equalToConstant: 48),
-            imageContainer.heightAnchor.constraint(equalTo: imageContainer.widthAnchor)
+            imageContainer.heightAnchor.constraint(equalToConstant: UX.imageHeight),
+            imageContainer.widthAnchor.constraint(equalTo: imageContainer.heightAnchor)
         ])
         
         if let progress = info.progressIndicatorValue {
@@ -145,8 +158,8 @@ final class NTPImpactRowView: UIView, NotificationThemeable {
             currentProgressView.centerXAnchor.constraint(equalTo: totalProgressView.centerXAnchor),
             imageView.topAnchor.constraint(equalTo: totalProgressView.topAnchor, constant: 10),
             imageView.centerXAnchor.constraint(equalTo: totalProgressView.centerXAnchor),
-            imageView.widthAnchor.constraint(equalToConstant: 26),
-            imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor)
+            imageView.heightAnchor.constraint(equalToConstant: UX.imageHeightWithProgress),
+            imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor)
         ])
     }
 }

@@ -72,8 +72,7 @@ final class NTPImpactCell: UICollectionViewCell, NotificationThemeable, Reusable
     }
     
     func configure(items: [ClimateImpactInfo], addBottomDivider: Bool = false) {
-        // Remove existing view upon reuse
-        containerStack.removeAllArrangedViews()
+        containerStack.removeAllArrangedViews() // Remove existing view upon reuse
         
         for (index, info) in items.enumerated() {
             let row = NTPImpactRowView(info: info)
