@@ -71,19 +71,22 @@ extension NTPImpactCellViewModel: HomepageViewModelProtocol {
         let section = NSCollectionLayoutSection(group: group)
 
         section.contentInsets = sectionType.sectionInsets(traitCollection)
-
-        // Adding a header if needed
-        if NTPTooltip.highlight(for: User.shared, isInPromoTest: DefaultBrowserExperiment.isInPromoTest())?.text != nil {
-            let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1),
-                                                    heightDimension: .absolute(1))
-            let header = NSCollectionLayoutBoundarySupplementaryItem(
-                layoutSize: headerSize,
-                elementKind: UICollectionView.elementKindSectionHeader,
-                alignment: .top)
-            section.boundarySupplementaryItems = [header]
-        }
         
-        // TODO: Handle section label header view
+        if NTPTooltip.highlight(for: User.shared, isInPromoTest: DefaultBrowserExperiment.isInPromoTest()) != nil {
+            section.boundarySupplementaryItems = [
+                .init(layoutSize: .init(widthDimension: .fractionalWidth(1),
+                                        heightDimension: .absolute(1)),
+                      elementKind: UICollectionView.elementKindSectionHeader,
+                      alignment: .top)
+            ]
+        } else {
+            section.boundarySupplementaryItems = [
+                .init(layoutSize: .init(widthDimension: .fractionalWidth(1),
+                                        heightDimension: .estimated(100)),
+                      elementKind: UICollectionView.elementKindSectionHeader,
+                      alignment: .top)
+            ]
+        }
         
         return section
     }

@@ -3,6 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import UIKit
+import Core
 import Shared
 
 protocol NTPLayoutHighlightDataSource: AnyObject {
@@ -14,14 +15,22 @@ class NTPLayout: UICollectionViewCompositionalLayout {
     weak var highlightDataSource: NTPLayoutHighlightDataSource?
 
     override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
-        guard let attr = super.layoutAttributesForElements(in: rect) else { return nil}
-
-        guard let impact = attr.first(where: {
+        let attr = super.layoutAttributesForElements(in: rect)
+        
+        adjustImpactTooltipFrameIfFound(attr: attr)
+        
+        return attr
+    }
+    
+    private func adjustImpactTooltipFrameIfFound(attr: [UICollectionViewLayoutAttributes]?) {
+        let hasTooltip = NTPTooltip.highlight(for: User.shared, isInPromoTest: DefaultBrowserExperiment.isInPromoTest()) != nil
+        
+        guard hasTooltip, let impact = attr?.first(where: {
             $0.representedElementCategory == .cell && highlightDataSource?.getSectionViewModel(shownSection: $0.indexPath.section)?.sectionType == .impact
-        }), let tooltip = attr.first(where: {
+        }), let tooltip = attr?.first(where: {
             $0.representedElementCategory == .supplementaryView &&
             highlightDataSource?.getSectionViewModel(shownSection: $0.indexPath.section)?.sectionType == .impact
-        }) else { return attr }
+        }) else { return }
 
         if let text = highlightDataSource?.ntpLayoutHighlightText() {
             let font = UIFont.preferredFont(forTextStyle: .callout)
@@ -35,7 +44,6 @@ class NTPLayout: UICollectionViewCompositionalLayout {
         } else {
             tooltip.alpha = 0
         }
-        return attr
     }
 }
 
