@@ -37,7 +37,6 @@
 		0BF1B7E31AC60DEA00A7B407 /* InsetButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF1B7E21AC60DEA00A7B407 /* InsetButton.swift */; };
 		0BF42D4F1A7CD09600889E28 /* TestFavicons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF42D4E1A7CD09600889E28 /* TestFavicons.swift */; };
 		0BF8F8DA1AEFF1C900E90BC2 /* noTitle.html in Resources */ = {isa = PBXBuildFile; fileRef = 0BF8F8D91AEFF1C900E90BC2 /* noTitle.html */; };
-		1246A7CB2AA5D43A00FBB626 /* NTPImpactCellOld.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1246A7CA2AA5D43A00FBB626 /* NTPImpactCellOld.swift */; };
 		1246A7CF2AA6163800FBB626 /* ClimateImpactInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1246A7CE2AA6163800FBB626 /* ClimateImpactInfo.swift */; };
 		1246A7D12AA6165400FBB626 /* NTPImpactRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1246A7D02AA6165400FBB626 /* NTPImpactRowView.swift */; };
 		12531B4C2AA777230079C9CE /* NumberFormatter+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12531B4B2AA777230079C9CE /* NumberFormatter+Ecosia.swift */; };
@@ -53,6 +52,7 @@
 		12EEE0A82A9F75C500C4A46D /* NTPAboutEcosiaCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12EEE0A72A9F75C500C4A46D /* NTPAboutEcosiaCellViewModel.swift */; };
 		12EEE0AB2A9F7BD300C4A46D /* AboutEcosiaSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12EEE0AA2A9F7BD300C4A46D /* AboutEcosiaSection.swift */; };
 		12EEE0AD2AA1CFE100C4A46D /* UIView+maskedCorners.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12EEE0AC2AA1CFE100C4A46D /* UIView+maskedCorners.swift */; };
+		12F62A8B2AAA1EB800BB6CBD /* ProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12F62A8A2AAA1EB800BB6CBD /* ProgressView.swift */; };
 		158241282820698B00956B39 /* RustRemoteTabsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 158241272820698B00956B39 /* RustRemoteTabsTests.swift */; };
 		15DE98FD27FCED4F00F1ECDB /* RustRemoteTabs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15DE98FC27FCED4F00F1ECDB /* RustRemoteTabs.swift */; };
 		1B0DFD25274856D60008EB0A /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = 1B0DFD24274856D60008EB0A /* SwiftyJSON */; };
@@ -1460,7 +1460,6 @@
 		11F747589EB8A55A47647C93 /* bn */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = bn; path = bn.lproj/ClearPrivateData.strings; sourceTree = "<group>"; };
 		120F42119EB30F217AB9493E /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/FindInPage.strings; sourceTree = "<group>"; };
 		123045959E0F295753B4B4DB /* lo */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = lo; path = lo.lproj/Today.strings; sourceTree = "<group>"; };
-		1246A7CA2AA5D43A00FBB626 /* NTPImpactCellOld.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPImpactCellOld.swift; sourceTree = "<group>"; };
 		1246A7CE2AA6163800FBB626 /* ClimateImpactInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClimateImpactInfo.swift; sourceTree = "<group>"; };
 		1246A7D02AA6165400FBB626 /* NTPImpactRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPImpactRowView.swift; sourceTree = "<group>"; };
 		12531B4B2AA777230079C9CE /* NumberFormatter+Ecosia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NumberFormatter+Ecosia.swift"; sourceTree = "<group>"; };
@@ -1480,6 +1479,7 @@
 		12EEE0A72A9F75C500C4A46D /* NTPAboutEcosiaCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPAboutEcosiaCellViewModel.swift; sourceTree = "<group>"; };
 		12EEE0AA2A9F7BD300C4A46D /* AboutEcosiaSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutEcosiaSection.swift; sourceTree = "<group>"; };
 		12EEE0AC2AA1CFE100C4A46D /* UIView+maskedCorners.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+maskedCorners.swift"; sourceTree = "<group>"; };
+		12F62A8A2AAA1EB800BB6CBD /* ProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressView.swift; sourceTree = "<group>"; };
 		12F949169C30744CCC749588 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/HistoryPanel.strings; sourceTree = "<group>"; };
 		1323403C8071FC19BB79C191 /* su */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = su; path = su.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		13254478B55183D37507CAD4 /* da */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = da; path = da.lproj/AuthenticationManager.strings; sourceTree = "<group>"; };
@@ -4982,8 +4982,8 @@
 				1246A7CE2AA6163800FBB626 /* ClimateImpactInfo.swift */,
 				CA4D9C9528C8D801006AFB5D /* NTPImpactCell.swift */,
 				CA8BCC3A28D218830020BC50 /* NTPImpactCellViewModel.swift */,
-				1246A7CA2AA5D43A00FBB626 /* NTPImpactCellOld.swift */,
 				1246A7D02AA6165400FBB626 /* NTPImpactRowView.swift */,
+				12F62A8A2AAA1EB800BB6CBD /* ProgressView.swift */,
 			);
 			path = Impact;
 			sourceTree = "<group>";
@@ -9322,6 +9322,7 @@
 				EBF47E701F7979DF00899189 /* TelemetryWrapper.swift in Sources */,
 				CA4D9CE628C8D801006AFB5D /* EcosiaTheme.swift in Sources */,
 				8AD40FCF27BADC6B00672675 /* URLTextField.swift in Sources */,
+				12F62A8B2AAA1EB800BB6CBD /* ProgressView.swift in Sources */,
 				31ADB5DA1E58CEC300E87909 /* ClipboardBarDisplayHandler.swift in Sources */,
 				8AD1980F27BEB3F100D64B0E /* PhotonActionSheetViewModel.swift in Sources */,
 				745DAB3F1CDAB09E00D44181 /* HistoryBackButton.swift in Sources */,
@@ -9383,7 +9384,6 @@
 				12EEE0A82A9F75C500C4A46D /* NTPAboutEcosiaCellViewModel.swift in Sources */,
 				8A471185287F6E4800F5A6EA /* SeparatorTableViewCell.swift in Sources */,
 				1287A99F2A6FFC0C005F21F7 /* WelcomeTourTransparent.swift in Sources */,
-				1246A7CB2AA5D43A00FBB626 /* NTPImpactCellOld.swift in Sources */,
 				C846560728883B2900861B4A /* WallpaperImageProvider.swift in Sources */,
 				D301AAEE1A3A55B70078DD1D /* GridTabViewController.swift in Sources */,
 				EB9A179B20E69A7F00B12184 /* LegacyThemeManager.swift in Sources */,

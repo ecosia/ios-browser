@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
+import Core
 
 enum ClimateImpactInfo {
     case personalCounter(value: Int, searches: Int)
@@ -58,6 +59,15 @@ enum ClimateImpactInfo {
         case .invites:
             return .localized(.inviteFriends)
         case .totalTrees, .totalInvested:
+            return nil
+        }
+    }
+    
+    var progressIndicatorValue: Double? {
+        switch self {
+        case .personalCounter:
+            return User.shared.progress
+        case .invites, .totalInvested, .totalTrees:
             return nil
         }
     }

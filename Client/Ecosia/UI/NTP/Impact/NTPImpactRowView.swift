@@ -6,10 +6,22 @@ import Foundation
 
 final class NTPImpactRowView: UIView, NotificationThemeable {
     
+    private lazy var imageContainer: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
     private lazy var imageView: UIImageView = {
         let image = UIImageView()
+        image.translatesAutoresizingMaskIntoConstraints = false
         image.contentMode = .scaleAspectFit
         return image
+    }()
+    private lazy var totalProgressView: ProgressView = {
+        ProgressView(size: .init(width: 48, height: 30), lineWidth: 2)
+    }()
+    private lazy var currentProgressView: ProgressView = {
+        ProgressView(size: .init(width: 48, height: 30), lineWidth: 2)
     }()
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -35,7 +47,7 @@ final class NTPImpactRowView: UIView, NotificationThemeable {
         return view
     }()
     
-    var info: ClimateImpactInfo = .invites(value: 0) {
+    var info: ClimateImpactInfo {
         didSet {
             imageView.image = info.image
             titleLabel.text = info.title
@@ -43,6 +55,9 @@ final class NTPImpactRowView: UIView, NotificationThemeable {
             actionButton.isHidden = info.buttonTitle == nil
             actionButton.setTitle(info.buttonTitle, for: .normal)
             // TODO: Add button action
+            if let progress = info.progressIndicatorValue {
+                currentProgressView.value = progress
+            }
         }
     }
     var position: (row: Int, totalCount: Int) = (0, 0) {
@@ -53,7 +68,8 @@ final class NTPImpactRowView: UIView, NotificationThemeable {
         }
     }
     
-    init() {
+    init(info: ClimateImpactInfo) {
+        self.info = info
         super.init(frame: .zero)
         translatesAutoresizingMaskIntoConstraints = false
         layer.cornerRadius = 10
@@ -63,7 +79,8 @@ final class NTPImpactRowView: UIView, NotificationThemeable {
         hStack.axis = .horizontal
         hStack.alignment = .fill
         hStack.spacing = 8
-        hStack.addArrangedSubview(imageView)
+        hStack.addArrangedSubview(imageContainer)
+        imageContainer.addSubview(imageView)
         addSubview(hStack)
         addSubview(dividerView)
         
@@ -87,9 +104,20 @@ final class NTPImpactRowView: UIView, NotificationThemeable {
             dividerView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
             dividerView.bottomAnchor.constraint(equalTo: bottomAnchor),
             dividerView.heightAnchor.constraint(equalToConstant: 1),
-            imageView.widthAnchor.constraint(equalToConstant: 48),
-            imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor)
+            imageContainer.widthAnchor.constraint(equalToConstant: 48),
+            imageContainer.heightAnchor.constraint(equalTo: imageContainer.widthAnchor)
         ])
+        
+        if let progress = info.progressIndicatorValue {
+            setupProgressIndicator()
+        } else {
+            NSLayoutConstraint.activate([
+                imageView.topAnchor.constraint(equalTo: imageContainer.topAnchor),
+                imageView.leadingAnchor.constraint(equalTo: imageContainer.leadingAnchor),
+                imageView.trailingAnchor.constraint(equalTo: imageContainer.trailingAnchor),
+                imageView.bottomAnchor.constraint(equalTo: imageContainer.bottomAnchor),
+            ])
+        }
         
         applyTheme()
     }
@@ -102,5 +130,23 @@ final class NTPImpactRowView: UIView, NotificationThemeable {
         subtitleLabel.textColor = .theme.ecosia.secondaryText
         actionButton.setTitleColor(.theme.ecosia.primaryButton, for: .normal)
         dividerView.backgroundColor = .theme.ecosia.border
+        totalProgressView.color = .theme.ecosia.ntpBackground
+        currentProgressView.color = .theme.ecosia.treeCounterProgressCurrent
+    }
+    
+    private func setupProgressIndicator() {
+        imageContainer.addSubview(totalProgressView)
+        imageContainer.addSubview(currentProgressView)
+        
+        NSLayoutConstraint.activate([
+            totalProgressView.topAnchor.constraint(equalTo: imageContainer.topAnchor, constant: 4),
+            totalProgressView.centerXAnchor.constraint(equalTo: imageContainer.centerXAnchor),
+            currentProgressView.centerYAnchor.constraint(equalTo: totalProgressView.centerYAnchor),
+            currentProgressView.centerXAnchor.constraint(equalTo: totalProgressView.centerXAnchor),
+            imageView.topAnchor.constraint(equalTo: totalProgressView.topAnchor, constant: 10),
+            imageView.centerXAnchor.constraint(equalTo: totalProgressView.centerXAnchor),
+            imageView.widthAnchor.constraint(equalToConstant: 26),
+            imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor)
+        ])
     }
 }
