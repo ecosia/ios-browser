@@ -9,7 +9,8 @@ enum AboutEcosiaSection: Int, CaseIterable {
     case
     financialReports,
     trees,
-    privacy
+    privacy,
+    faq
     
     var title: String {
         switch self {
@@ -19,6 +20,8 @@ enum AboutEcosiaSection: Int, CaseIterable {
             return .localized(.treesUpdate)
         case .privacy:
             return .localized(.privacy)
+        case .faq:
+            return .localized(.faqs)
         }
     }
     
@@ -30,6 +33,8 @@ enum AboutEcosiaSection: Int, CaseIterable {
             return .localized(.discoverWhereWe)
         case .privacy:
             return .localized(.learnHowWe)
+        case .faq:
+            return .localized(.findAnswersTo)
         }
     }
 
@@ -41,6 +46,8 @@ enum AboutEcosiaSection: Int, CaseIterable {
             return "treesUpdate"
         case .privacy:
             return "privacy"
+        case .faq:
+            return "faqs"
         }
     }
 
@@ -52,6 +59,8 @@ enum AboutEcosiaSection: Int, CaseIterable {
             return Environment.current.urlProvider.trees
         case .privacy:
             return Environment.current.urlProvider.privacy
+        case .faq:
+            return Environment.current.urlProvider.faq
         }
     }
 
@@ -64,6 +73,8 @@ enum AboutEcosiaSection: Int, CaseIterable {
             return .projects
         case .privacy:
             return .privacy
+        case .faq:
+            return .faq
         }
     }
 }
