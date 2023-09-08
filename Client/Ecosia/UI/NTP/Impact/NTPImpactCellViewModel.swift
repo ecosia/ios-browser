@@ -24,7 +24,7 @@ class NTPImpactCellViewModel {
         }
         let secondSection: [ClimateImpactInfo] = [
             .totalTrees(value: TreeCounter.shared.treesAt(.init())),
-            .totalInvested(value: 123456789101112) // TODO: Fetch dynamically
+            .totalInvested(value: InvestmentsProjection.shared.totalInvestedAt(.init()))
         ]
         return [firstSection, secondSection]
     }
@@ -37,7 +37,7 @@ class NTPImpactCellViewModel {
         }
     }
 
-    func startCounter() {
+    func subscribeToProjections() {
         guard !UIAccessibility.isReduceMotionEnabled else {
             refreshCells()
             return
@@ -46,10 +46,15 @@ class NTPImpactCellViewModel {
         TreeCounter.shared.subscribe(self) { [weak self] _ in
             self?.refreshCells()
         }
+        
+        InvestmentsProjection.shared.subscribe(self) { [weak self] _ in
+            self?.refreshCells()
+        }
     }
 
-    func stopCounter() {
+    func unsubscribeToProjections() {
         TreeCounter.shared.unsubscribe(self)
+        InvestmentsProjection.shared.unsubscribe(self)
     }
 }
 

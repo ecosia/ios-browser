@@ -128,12 +128,12 @@ class HomepageViewModel: FeatureFlaggable, NTPLayoutHighlightDataSource {
             Analytics.shared.bookmarksNtp(action: .view)
         }
         
-        impactViewModel.startCounter()
+        impactViewModel.subscribeToProjections()
     }
 
     func recordViewDisappeared() {
         viewAppeared = false
-        impactViewModel.stopCounter()
+        impactViewModel.unsubscribeToProjections()
     }
 
     // MARK: - Manage sections
