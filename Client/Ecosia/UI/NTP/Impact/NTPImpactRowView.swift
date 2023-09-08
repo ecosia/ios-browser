@@ -52,6 +52,8 @@ final class NTPImpactRowView: UIView, NotificationThemeable {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.titleLabel?.font = .preferredFont(forTextStyle: .callout)
+        button.addTarget(self, action: #selector(buttonAction), for: .touchUpInside)
+        button.clipsToBounds = true
         return button
     }()
     private lazy var dividerView: UIView = {
@@ -60,6 +62,7 @@ final class NTPImpactRowView: UIView, NotificationThemeable {
         return view
     }()
     
+    weak var delegate: NTPImpactCellDelegate?
     var info: ClimateImpactInfo {
         didSet {
             imageView.image = info.image
@@ -67,7 +70,6 @@ final class NTPImpactRowView: UIView, NotificationThemeable {
             subtitleLabel.text = info.subtitle
             actionButton.isHidden = info.buttonTitle == nil
             actionButton.setTitle(info.buttonTitle, for: .normal)
-            // TODO: Add button action
             if let progress = info.progressIndicatorValue {
                 currentProgressView.value = progress
             }
@@ -121,7 +123,7 @@ final class NTPImpactRowView: UIView, NotificationThemeable {
             imageContainer.widthAnchor.constraint(equalTo: imageContainer.heightAnchor)
         ])
         
-        if let progress = info.progressIndicatorValue {
+        if info.progressIndicatorValue != nil {
             setupProgressIndicator()
         } else {
             NSLayoutConstraint.activate([
@@ -161,5 +163,9 @@ final class NTPImpactRowView: UIView, NotificationThemeable {
             imageView.heightAnchor.constraint(equalToConstant: UX.imageHeightWithProgress),
             imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor)
         ])
+    }
+    
+    @objc private func buttonAction() {
+        delegate?.impactCellButtonAction(info: info)
     }
 }

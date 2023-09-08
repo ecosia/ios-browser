@@ -12,6 +12,14 @@ final class NTPImpactCell: UICollectionViewCell, NotificationThemeable, Reusable
         static let dividerSpacing: CGFloat = 32
     }
     
+    weak var delegate: NTPImpactCellDelegate? {
+        didSet {
+            containerStack.arrangedSubviews
+                .compactMap { $0 as? NTPImpactRowView }
+                .forEach { $0.delegate = delegate }
+        }
+    }
+    
     private lazy var containerStack: UIStackView = {
         let stack = UIStackView()
         stack.translatesAutoresizingMaskIntoConstraints = false
@@ -78,6 +86,7 @@ final class NTPImpactCell: UICollectionViewCell, NotificationThemeable, Reusable
             let row = NTPImpactRowView(info: info)
             row.info = info // Needed to force info setup after init
             row.position = (index, items.count)
+            row.delegate = delegate
             containerStack.addArrangedSubview(row)
         }
         dividerContainer.isHidden = !addBottomDivider

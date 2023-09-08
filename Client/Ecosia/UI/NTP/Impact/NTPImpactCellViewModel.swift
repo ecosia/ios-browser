@@ -6,7 +6,12 @@ import Foundation
 import Shared
 import Core
 
+protocol NTPImpactCellDelegate: AnyObject {
+    func impactCellButtonAction(info: ClimateImpactInfo)
+}
+
 class NTPImpactCellViewModel {
+    weak var delegate: NTPImpactCellDelegate?
     var infoItemSections: [[ClimateImpactInfo]] {
         var firstSection: [ClimateImpactInfo] = [
             .invites(value: User.shared.referrals.count)
@@ -106,6 +111,7 @@ extension NTPImpactCellViewModel: HomepageSectionHandler {
         guard let cell = cell as? NTPImpactCell else { return UICollectionViewCell() }
         let items = infoItemSections[indexPath.row]
         cell.configure(items: items, addBottomDivider: indexPath.row == (infoItemSections.count - 1))
+        cell.delegate = delegate
         cells[indexPath.row] = cell
         return cell
     }

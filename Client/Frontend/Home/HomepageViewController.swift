@@ -379,6 +379,7 @@ private extension HomepageViewController {
 
         viewModel.libraryViewModel.delegate = self
         viewModel.bookmarkNudgeViewModel.delegate = self
+        viewModel.impactViewModel.delegate = self
         viewModel.newsViewModel.delegate = self
         viewModel.aboutEcosiaViewModel.delegate = self
         viewModel.ntpCustomizationViewModel.delegate = self

@@ -12,13 +12,12 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
     private let images = Images(.init(configuration: .ephemeral))
     private let news = News()
     private let identifier = "news"
-    var delegate: YourImpactDelegate?
+    var delegate: SharedHomepageCellDelegate?
 
     required init?(coder: NSCoder) { nil }
 
-    init(items: [NewsModel], delegate: YourImpactDelegate?) {
+    init(items: [NewsModel]) {
         super.init(nibName: nil, bundle: nil)
-        self.delegate = delegate
         self.items = items
         title = .localized(.ecosiaNews)
         navigationItem.largeTitleDisplayMode = .always
@@ -125,7 +124,7 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
 
     func collectionView(_: UICollectionView, didSelectItemAt: IndexPath) {
         let item = items[didSelectItemAt.row]
-        delegate?.yourImpact(didSelectURL: item.targetUrl)
+        delegate?.openLink(url: item.targetUrl)
         dismiss(animated: true, completion: nil)
         Analytics.shared.navigationOpenNews(item.trackingName)
     }

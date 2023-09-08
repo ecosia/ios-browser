@@ -10,6 +10,11 @@ protocol HomepageViewControllerDelegate: AnyObject {
     func homeDidPressPersonalCounter(_ home: HomepageViewController, completion: (() -> Void)?)
 }
 
+protocol SharedHomepageCellDelegate: AnyObject {
+    func openLink(url: URL)
+    func invalidateLayout(at indexPaths: [IndexPath])
+}
+
 extension HomepageViewController {
     func configureEcosiaSetup() {
         personalCounter.subscribe(self) { [weak self] _ in
@@ -19,6 +24,18 @@ extension HomepageViewController {
         referrals.subscribe(self) { [weak self] _ in
             self?.viewModel.impactViewModel.refreshCells()
         }
+    }
+}
+
+extension HomepageViewController: SharedHomepageCellDelegate {
+    func openLink(url: URL) {
+        homePanelDelegate?.homePanel(didSelectURL: url, visitType: .link, isGoogleTopSite: false)
+    }
+    
+    func invalidateLayout(at indexPaths: [IndexPath]) {
+        let context = UICollectionViewLayoutInvalidationContext()
+        context.invalidateItems(at: indexPaths)
+        collectionView.collectionViewLayout.invalidateLayout(with: context)
     }
 }
 
@@ -73,16 +90,26 @@ extension HomepageViewController: NTPLibraryDelegate {
     }
 }
 
-extension HomepageViewController: YourImpactDelegate {
-    func yourImpact(didSelectURL url: URL) {
-        dismiss(animated: true)
-        homePanelDelegate?.homePanel(didSelectURL: url, visitType: .link, isGoogleTopSite: false)
+extension HomepageViewController: NTPImpactCellDelegate {
+    func impactCellButtonAction(info: ClimateImpactInfo) {
+        switch info {
+        case .personalCounter:
+            let url = Environment.current.urlProvider.aboutCounter
+            openLink(url: url)
+        case .invites:
+            let invite = MultiplyImpact(delegate: nil, referrals: referrals) // TODO: Update invite page
+            let nav = EcosiaNavigation(rootViewController: invite)
+            present(nav, animated: true)
+        default:
+            return
+        }
     }
 }
 
 extension HomepageViewController: NTPNewsCellDelegate {
     func openSeeAllNews() {
-        let news = NewsController(items: viewModel.newsViewModel.items, delegate: self)
+        let news = NewsController(items: viewModel.newsViewModel.items)
+        news.delegate = self
         let nav = EcosiaNavigation(rootViewController: news)
         present(nav, animated: true)
         Analytics.shared.navigation(.open, label: .news)
@@ -99,20 +126,6 @@ extension HomepageViewController: NTPBookmarkNudgeCellDelegate {
     func nudgeCellDismiss() {
         User.shared.hideBookmarksNTPNudgeCard()
         reloadView()
-    }
-}
-
-extension HomepageViewController: NTPAboutEcosiaCellDelegate {
-    
-    func openLearnMore(withUrl url: URL) {
-        homePanelDelegate?.homePanel(didSelectURL: url, visitType: .link, isGoogleTopSite: false)
-    }
-    
-    // TODO: Make this generic to be used in other places?
-    func invalidateLayout(at indexPaths: [IndexPath]) {
-        let context = UICollectionViewLayoutInvalidationContext()
-        context.invalidateItems(at: indexPaths)
-        collectionView.collectionViewLayout.invalidateLayout(with: context)
     }
 }
 

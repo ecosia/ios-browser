@@ -5,14 +5,9 @@
 import Foundation
 import Core
 
-protocol NTPAboutEcosiaCellDelegate: AnyObject {
-    func openLearnMore(withUrl url: URL)
-    func invalidateLayout(at indexPaths: [IndexPath])
-}
-
 class NTPAboutEcosiaCellViewModel {
     var sections = AboutEcosiaSection.allCases
-    weak var delegate: NTPAboutEcosiaCellDelegate?
+    weak var delegate: SharedHomepageCellDelegate?
     var expandedIndex: IndexPath?
 }
 

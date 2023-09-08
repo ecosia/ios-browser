@@ -205,7 +205,7 @@ final class NTPAboutEcosiaCell: UICollectionViewCell, ReusableCell {
     
     @objc private func learnMoreAction() {
         guard let section = section else { return }
-        viewModel?.delegate?.openLearnMore(withUrl: section.url)
+        viewModel?.delegate?.openLink(url: section.url)
     }
 }
 
