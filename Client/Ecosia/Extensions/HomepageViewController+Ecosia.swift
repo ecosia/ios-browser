@@ -97,7 +97,8 @@ extension HomepageViewController: NTPImpactCellDelegate {
             let url = Environment.current.urlProvider.aboutCounter
             openLink(url: url)
         case .invites:
-            let invite = MultiplyImpact(delegate: nil, referrals: referrals) // TODO: Update invite page
+            let invite = MultiplyImpact(referrals: referrals)
+            invite.delegate = self
             let nav = EcosiaNavigation(rootViewController: invite)
             present(nav, animated: true)
         default:

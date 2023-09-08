@@ -4965,6 +4965,15 @@
 			path = SearchQuickLinksMedium;
 			sourceTree = "<group>";
 		};
+		12ADF69A2AAB6B4600494559 /* MultiplyImpact */ = {
+			isa = PBXGroup;
+			children = (
+				CA4D9CA628C8D801006AFB5D /* MultiplyImpact.swift */,
+				CA4D9CAB28C8D801006AFB5D /* MultiplyImpactStep.swift */,
+			);
+			path = MultiplyImpact;
+			sourceTree = "<group>";
+		};
 		12E8E6AF2A9CFC4100E6ED8E /* Customization */ = {
 			isa = PBXGroup;
 			children = (
@@ -6559,6 +6568,7 @@
 				CA4D9C8E28C8D801006AFB5D /* EmptyHeader.swift */,
 				2AF2723929F2C54A004CA46F /* EmptyBookmarksView.swift */,
 				2ABCCCAF2A13A399005D0C5B /* EmptyBookmarksViewDelegate.swift */,
+				12ADF69A2AAB6B4600494559 /* MultiplyImpact */,
 				CA4D9C8F28C8D801006AFB5D /* NTP */,
 				CA4D9C9A28C8D801006AFB5D /* Colours.xcassets */,
 				CA4D9C9B28C8D801006AFB5D /* FilterController.swift */,
@@ -6597,9 +6607,7 @@
 			children = (
 				CACC5F12292E3949007C807B /* Views */,
 				CA4D9CA728C8D801006AFB5D /* EcosiaNavigation.swift */,
-				CA4D9CA628C8D801006AFB5D /* MultiplyImpact.swift */,
 				CA4D9CA528C8D801006AFB5D /* MultiplyImpactDash.swift */,
-				CA4D9CAB28C8D801006AFB5D /* MultiplyImpactStep.swift */,
 				CA4D9CA828C8D801006AFB5D /* UICollectionView+maxWidth.swift */,
 				CA4D9CAE28C8D801006AFB5D /* YourImpact.Background.swift */,
 				CA4D9CA228C8D801006AFB5D /* YourImpact.Section.swift */,

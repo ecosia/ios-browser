@@ -58,6 +58,7 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
     }
 
     // MARK: - Properties
+    weak var delegate: SharedHomepageCellDelegate?
     
     private weak var subtitle: UILabel?
     private weak var topBackground: UIView?
@@ -91,14 +92,11 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
     private weak var thirdStep: MultiplyImpactStep?
     private weak var fourthStep: MultiplyImpactStep?
 
-    private weak var delegate: YourImpactDelegate?
     private weak var referrals: Referrals!
-    
     required init?(coder: NSCoder) { nil }
-    init(delegate: YourImpactDelegate?, referrals: Referrals) {
+    init(referrals: Referrals) {
         self.referrals = referrals
         super.init(nibName: nil, bundle: nil)
-        self.delegate = delegate
     }
     
     override func viewDidLoad() {
@@ -523,7 +521,7 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
     }
     
     @objc private func learnMore() {
-        delegate?.yourImpact(didSelectURL: URL(string: "https://ecosia.helpscoutdocs.com/article/358-refer-a-friend-ios-only")!)
+        delegate?.openLink(url: Environment.current.urlProvider.referHelp)
         dismiss(animated: true)
         Analytics.shared.inviteLearnMore()
     }

@@ -181,7 +181,7 @@ final class YourImpact: UICollectionViewController, UICollectionViewDelegateFlow
                 collectionView?.deselectItem(at: indexPath, animated: false)
             }
         case .multiply:
-            navigationController?.pushViewController(MultiplyImpact(delegate: delegate, referrals: referrals), animated: true)
+            navigationController?.pushViewController(MultiplyImpact(referrals: referrals), animated: true)
             collectionView.deselectItem(at: indexPath, animated: false)
         default:
             break
@@ -281,7 +281,7 @@ final class YourImpact: UICollectionViewController, UICollectionViewDelegateFlow
     }
 
     @objc private func inviteFriends() {
-        navigationController?.pushViewController(MultiplyImpact(delegate: delegate, referrals: referrals), animated: true)
+        navigationController?.pushViewController(MultiplyImpact(referrals: referrals), animated: true)
     }
 
     @objc private func learnMore(button: UIControl) {
