@@ -163,11 +163,6 @@ class BrowserViewController: UIViewController {
     }
 
     fileprivate var shouldShowIntroScreen: Bool { profile.prefs.intForKey(PrefsKeys.IntroSeen) == nil }
-
-    // Ecosia
-    lazy var ecosiaNavigation: EcosiaNavigation = {
-        .init(rootViewController: YourImpact(delegate: self, referrals: referrals))
-    }()
     
     let referrals = Referrals()
     var menuHelper: MainMenuActionHelper?

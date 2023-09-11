@@ -7,8 +7,8 @@ import UIKit
 protocol PageActionsShortcutsDelegate: AnyObject {
     func pageOptionsOpenHome()
     func pageOptionsNewTab()
-    func pageOptionsYourImpact()
     func pageOptionsShare()
+    func pageOptionsSettings()
 }
 
 class PageActionsShortcutsHeader: UITableViewHeaderFooterView {
@@ -26,8 +26,8 @@ class PageActionsShortcutsHeader: UITableViewHeaderFooterView {
 
     let home = Panel(title: .localized(.home), image: UIImage(named: "menu-Home"), tag: 0)
     let newTab = Panel(title: .AppMenu.NewTab, image: UIImage(named: "menu-NewTab"), tag: 1)
-    let impact = Panel(title: .localized(.yourImpact), image: UIImage(named: "myImpact"), tag: 2)
-    let share = Panel(title: .AppMenu.Share, image: UIImage(named: "action_share"), tag: 3)
+    let share = Panel(title: .AppMenu.Share, image: UIImage(named: "action_share"), tag: 2)
+    let settings = Panel(title: .AppMenu.AppMenuSettingsTitleString, image: UIImage(named: ImageIdentifiers.settings), tag: 3)
 
     override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)
@@ -49,8 +49,8 @@ class PageActionsShortcutsHeader: UITableViewHeaderFooterView {
         ])
 
 
-        // Ecosia: Show history instead of synced tabs
-        [home, newTab, impact, share].forEach { item in
+        // Ecosia: Custom options
+        [home, newTab, share, settings].forEach { item in
             let view = NTPLibraryShortcutView()
             view.button.layer.cornerRadius = 10
             view.button.setImage(item.image, for: .normal)
@@ -92,9 +92,9 @@ class PageActionsShortcutsHeader: UITableViewHeaderFooterView {
         case 1:
             delegate?.pageOptionsNewTab()
         case 2:
-            delegate?.pageOptionsYourImpact()
-        case 3:
             delegate?.pageOptionsShare()
+        case 3:
+            delegate?.pageOptionsSettings()
         default:
             break
         }

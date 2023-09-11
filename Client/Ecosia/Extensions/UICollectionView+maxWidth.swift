@@ -5,7 +5,7 @@
 import UIKit
 
 extension UICollectionView {
-    var yourImpactMaxWidth: CGFloat {
+    var maxWidth: CGFloat {
         let insets = max(max(safeAreaInsets.left, safeAreaInsets.right), 16) * 2
         let maxWidth = bounds.width - insets
         

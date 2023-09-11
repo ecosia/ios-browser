@@ -7,7 +7,6 @@ import Core
 
 protocol HomepageViewControllerDelegate: AnyObject {
     func homeDidTapSearchButton(_ home: HomepageViewController)
-    func homeDidPressPersonalCounter(_ home: HomepageViewController, completion: (() -> Void)?)
 }
 
 protocol SharedHomepageCellDelegate: AnyObject {
@@ -94,6 +93,7 @@ extension HomepageViewController: NTPImpactCellDelegate {
     func impactCellButtonAction(info: ClimateImpactInfo) {
         switch info {
         case .personalCounter:
+            Analytics.shared.navigation(.open, label: .counter) // TODO: Verify Analytics
             let url = Environment.current.urlProvider.aboutCounter
             openLink(url: url)
         case .invites:

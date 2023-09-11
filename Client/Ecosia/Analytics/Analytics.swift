@@ -209,13 +209,6 @@ final class Analytics {
             .label("learn_more"))
     }
     
-    // TODO: Remove this action ?
-    func clickYourImpact(on category: Category) {
-        track(Structured(category: category.rawValue,
-                         action: Action.click.rawValue)
-            .label("your_impact"))
-    }
-    
     func searchbarChanged(to position: String) {
         track(Structured(category: Category.settings.rawValue,
                          action: Action.change.rawValue)

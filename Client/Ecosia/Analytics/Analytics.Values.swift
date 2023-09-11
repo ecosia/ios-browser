@@ -23,7 +23,7 @@ extension Analytics {
         enum Navigation: String {
             case
             inapp,
-            home,
+            home, // TODO: Remove: "view - home" was used for Your Impact
             projects,
             counter,
             financialReports = "financial_reports",

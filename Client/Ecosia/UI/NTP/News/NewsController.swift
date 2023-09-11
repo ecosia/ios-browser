@@ -55,7 +55,7 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
 
             let section = NSCollectionLayoutSection(group: group)
 
-            let horizontal = (self.collection.bounds.width - self.collection.yourImpactMaxWidth) / 2
+            let horizontal = (self.collection.bounds.width - self.collection.maxWidth) / 2
             section.contentInsets = NSDirectionalEdgeInsets(
                 top: 0,
                 leading: horizontal,
