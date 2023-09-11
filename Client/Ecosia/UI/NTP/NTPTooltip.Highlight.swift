@@ -7,15 +7,13 @@ import Core
 
 extension NTPTooltip {
     enum Highlight {
-        case counterIntro
         case gotClaimed
         case successfulInvite
         case referralSpotlight
+        case collectiveImpactIntro
 
         var text: String {
             switch self {
-            case .counterIntro:
-                return .localized(.trackYourProgress)
             case .gotClaimed:
                 return .localized(.youveContributed)
             case .successfulInvite:
@@ -29,6 +27,8 @@ extension NTPTooltip {
                 return highlight
             case .referralSpotlight:
                 return .localized(.togetherWeCan)
+            case .collectiveImpactIntro:
+                return .localized(.seeTheCollectiveImpact)
             }
         }
 
@@ -51,7 +51,7 @@ extension NTPTooltip {
         }
 
         if user.showsCounterIntro {
-            return .counterIntro
+            return .collectiveImpactIntro
         }
 
         return nil

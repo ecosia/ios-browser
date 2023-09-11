@@ -53,17 +53,17 @@ extension HomepageViewController: NTPTooltipDelegate {
 
         UIView.animate(withDuration: 0.3) {
             tooltip?.alpha = 0
-        } completion: { _ in
-
+        } completion: { [weak self] _ in
             switch ntpHighlight {
-            case .counterIntro:
-                User.shared.hideCounterIntro()
             case .gotClaimed, .successfulInvite:
                 User.shared.referrals.accept()
             case .referralSpotlight:
                 Analytics.shared.openInvitePromo()
                 User.shared.hideReferralSpotlight()
+            case .collectiveImpactIntro:
+                User.shared.hideCounterIntro()
             }
+            self?.reloadTooltip()
         }
     }
 
