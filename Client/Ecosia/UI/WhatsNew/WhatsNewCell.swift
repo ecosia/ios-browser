@@ -7,7 +7,6 @@ import Core
 
 final class WhatsNewCell: UITableViewCell {
     
-    static let reuseIdentifier = String(describing: WhatsNewCell.self)
     var contentConfigurationToUpdate: Any?
     private var imageURL: URL?
         
@@ -67,3 +66,5 @@ final class WhatsNewCell: UITableViewCell {
         }
     }
 }
+
+extension WhatsNewCell: ReusableCell {}

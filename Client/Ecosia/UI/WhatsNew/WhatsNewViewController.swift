@@ -143,7 +143,7 @@ extension WhatsNewViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.dataSource = self
         tableView.isScrollEnabled = false
-        tableView.register(WhatsNewCell.self, forCellReuseIdentifier: WhatsNewCell.reuseIdentifier)
+        tableView.register(WhatsNewCell.self, forCellReuseIdentifier: WhatsNewCell.cellIdentifier)
         
         footerButton.setTitle(.localized(.whatsNewFooterButtonTitle), for: .normal)
         footerButton.translatesAutoresizingMaskIntoConstraints = false
@@ -229,7 +229,7 @@ extension WhatsNewViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: WhatsNewCell.reuseIdentifier, for: indexPath) as! WhatsNewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: WhatsNewCell.cellIdentifier, for: indexPath) as! WhatsNewCell
         let item = viewModel.items[indexPath.row]
         cell.configure(with: item, images: images)
         return cell
