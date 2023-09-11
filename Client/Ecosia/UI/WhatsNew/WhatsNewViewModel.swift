@@ -8,11 +8,6 @@ final class WhatsNewViewModel {
     var items: [WhatsNewItem]
     
     init(provider: WhatsNewDataProvider) {
-        do {
-            self.items = try provider.getData()
-        } catch {
-            print("Failed to fetch Whats new items. Reason \(error)")
-            self.items = []
-        }
+        self.items = try? provider.getData() ?? []
     }
 }
