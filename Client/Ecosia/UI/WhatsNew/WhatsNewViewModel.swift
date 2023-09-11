@@ -8,6 +8,7 @@ final class WhatsNewViewModel {
     var items: [WhatsNewItem]
     
     init(provider: WhatsNewDataProvider) {
-        self.items = try? provider.getData() ?? []
+        let providerItems = try? provider.getData()
+        self.items = providerItems ?? []
     }
 }
