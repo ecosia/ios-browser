@@ -141,8 +141,6 @@ extension String {
         case seeWhatsNew = "See what's new"
         case ecosiaNewLook = "Ecosia has a new look, and we added an easy way for you to track your trees."
         case discoverEcosia = "Discover the new Ecosia"
-        // TODO: Remove trackYourProgress
-        case trackYourProgress = "Track your progress and get insights about your impact"
         case seeTheCollectiveImpact  = "See the collective impact you are having with the Ecosia community"
         case theSimplestWay = "The simplest way to be \n climate-active every day while \n browsing the web"
         case skipWelcomeTour = "Skip welcome tour"
