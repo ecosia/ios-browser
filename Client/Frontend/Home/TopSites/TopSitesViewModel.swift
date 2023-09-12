@@ -135,7 +135,7 @@ extension TopSitesViewModel: HomepageViewModelProtocol, FeatureFlaggable {
     }
 
     var isEnabled: Bool {
-        return User.shared.topSites && User.shared.showTopSites // Ecosia // featureFlags.isFeatureEnabled(.topSites, checking: .buildAndUser)
+        return User.shared.showTopSites // Ecosia // featureFlags.isFeatureEnabled(.topSites, checking: .buildAndUser)
     }
 
     func numberOfItemsInSection() -> Int {
