@@ -38,7 +38,7 @@ class EcosiaNTPTooltipHighlightTests: XCTestCase {
 
     func testCounterIntro() throws {
         user.showCounterIntro()
-        XCTAssert(NTPTooltip.highlight(for: user, isInPromoTest: false) == .counterIntro)
+        XCTAssert(NTPTooltip.highlight(for: user, isInPromoTest: false) == .collectiveImpactIntro)
     }
 
     func testFallthrough() throws {
