@@ -29,7 +29,7 @@ class TopSitesSettingsViewController: SettingsTableViewController, FeatureFlagga
     override func generateSettings() -> [SettingSection] {
         var sections = [Setting]()
         // Ecosia: custom top site setting
-        let topSitesSetting = TopSitesSetting(prefs: profile.prefs)
+        let topSitesSetting = NTPCustomizationSetting(prefs: profile.prefs, config: .topSites)
         sections.append(topSitesSetting)
 
         /* Ecosia: no sponsored tiles

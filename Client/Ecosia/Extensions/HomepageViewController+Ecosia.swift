@@ -7,6 +7,7 @@ import Core
 
 protocol HomepageViewControllerDelegate: AnyObject {
     func homeDidTapSearchButton(_ home: HomepageViewController)
+    func showSettingsWithDeeplink(to destination: AppSettingsDeeplinkOption)
 }
 
 protocol SharedHomepageCellDelegate: AnyObject {
@@ -132,11 +133,6 @@ extension HomepageViewController: NTPBookmarkNudgeCellDelegate {
 
 extension HomepageViewController: NTPCustomizationCellDelegate {
     func openNTPCustomizationSettings() {
-        // TODO: Is this the right place to get the profile?
-        guard let profile = currentTab?.profile else { return }
-        let settingsPage = NTPCustomizationSettingsViewController(profile: profile)
-        settingsPage.ntpDataModelDelegate = viewModel
-        let navigation = EcosiaNavigation(rootViewController: settingsPage)
-        present(navigation, animated: true)
+        delegate?.showSettingsWithDeeplink(to: .customizeHomepage)
     }
 }

@@ -4956,7 +4956,6 @@
 				12EEE09C2A9F31BB00C4A46D /* CustomizableNTPSettingConfig.swift */,
 				12E8E6B02A9CFC4100E6ED8E /* NTPCustomizationCell.swift */,
 				12E8E6B12A9CFC4100E6ED8E /* NTPCustomizationCellViewModel.swift */,
-				12E8E6B22A9CFC4100E6ED8E /* NTPCustomizationSettingsViewController.swift */,
 			);
 			path = Customization;
 			sourceTree = "<group>";
@@ -6670,6 +6669,7 @@
 			children = (
 				CA4D9CD128C8D801006AFB5D /* EcosiaSettings.swift */,
 				CA8CEBDE298244EC00349552 /* EcosiaDebugSettings.swift */,
+				12E8E6B22A9CFC4100E6ED8E /* NTPCustomizationSettingsViewController.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";

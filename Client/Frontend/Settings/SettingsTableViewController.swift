@@ -682,6 +682,8 @@ class WithoutAccountSetting: AccountSetting {
 @objc
 protocol SettingsDelegate: AnyObject {
     func settingsOpenURLInNewTab(_ url: URL)
+    // Ecosia: Reload after ntp customization changes
+    func reloadHomepage()
 }
 
 // The base settings view controller.

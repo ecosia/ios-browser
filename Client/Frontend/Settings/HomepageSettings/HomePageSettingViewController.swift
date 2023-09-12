@@ -239,11 +239,12 @@ extension HomePageSettingViewController {
         var profile: Profile
 
         override var accessoryType: UITableViewCell.AccessoryType { return .disclosureIndicator }
-        override var accessibilityIdentifier: String? { return AccessibilityIdentifiers.Settings.Homepage.CustomizeFirefox.Shortcuts.settingsPage }
+        // Ecosia: rename to Top Sites
+        override var accessibilityIdentifier: String? { return .localized(.topSites) }
         override var style: UITableViewCell.CellStyle { return .value1 }
 
         override var status: NSAttributedString {
-            let areShortcutsOn = User.shared.topSites // Ecosia: featureFlags.isFeatureEnabled(.topSites, checking: .userOnly)
+            let areShortcutsOn = User.shared.showTopSites // Ecosia: read from user preference
             let status: String = areShortcutsOn ? .Settings.Homepage.Shortcuts.ToggleOn : .Settings.Homepage.Shortcuts.ToggleOff
             return NSAttributedString(string: String(format: status))
         }

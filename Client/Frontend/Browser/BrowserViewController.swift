@@ -1664,6 +1664,11 @@ extension BrowserViewController: SettingsDelegate {
         let isPrivate = tabManager.selectedTab?.isPrivate ?? false
         self.openURLInNewTab(url, isPrivate: isPrivate)
     }
+    
+    // Ecosia: Reload after ntp customization changes
+    func reloadHomepage() {
+        homepageViewController?.reloadView()
+    }
 }
 
 extension BrowserViewController: PresentingModalViewControllerDelegate {

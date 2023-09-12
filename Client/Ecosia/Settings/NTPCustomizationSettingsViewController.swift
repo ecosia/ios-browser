@@ -6,13 +6,8 @@ import Foundation
 import Shared
 
 final class NTPCustomizationSettingsViewController: SettingsTableViewController {
-    weak var ntpDataModelDelegate: HomepageDataModelDelegate?
-    
-    // TODO: Is Profile actually needed?
-    init(profile: Profile) {
-        super.init(style: .plain)
-        self.profile = profile
-        
+    init() {
+        super.init(style: .insetGrouped)
         
         title = .localized(.homepage)
         navigationItem.rightBarButtonItem = .init(title: .localized(.done),
@@ -27,7 +22,12 @@ final class NTPCustomizationSettingsViewController: SettingsTableViewController 
     
     override func generateSettings() -> [SettingSection] {
         let customizableSectionConfigs = HomepageSectionType.allCases.compactMap({ $0.customizableConfig })
-        let settings = customizableSectionConfigs.map { NTPCustomizationSetting(prefs: profile.prefs, config: $0) }
+        let settings: [Setting] = customizableSectionConfigs.map { config in
+            if config == .topSites {
+                return HomePageSettingViewController.TopSitesSettings(settings: self)
+            }
+            return NTPCustomizationSetting(prefs: profile.prefs, config: config)
+        }
         return [SettingSection(title: .init(string: .localized(.showOnHomepage)), children: settings)]
     }
     
@@ -40,7 +40,7 @@ final class NTPCustomizationSettingsViewController: SettingsTableViewController 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
-        ntpDataModelDelegate?.reloadView()
+        settingsDelegate?.reloadHomepage()
     }
 }
 

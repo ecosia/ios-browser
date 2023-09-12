@@ -192,23 +192,23 @@ final class EcosiaSendAnonymousUsageDataSetting: BoolSetting {
     }
 }
 
-final class TopSitesSetting: BoolSetting {
-    convenience init(prefs: Prefs) {
-        self.init(prefs: prefs, prefKey: "", defaultValue: true,
-                titleText: .Settings.Homepage.Shortcuts.ShortcutsToggle,
-                statusText: nil, settingDidChange: { value in
+final class HomepageSettings: Setting {
+    var profile: Profile
 
-                    User.shared.topSites = value
+    override var accessoryView: UIImageView? { disclosureIndicator }
+    // TODO: Add accessibility
+//    override var accessibilityIdentifier: String? { return }
 
-                })
+    init(settings: SettingsTableViewController) {
+        self.profile = settings.profile
+        super.init(title: NSAttributedString(string: .localized(.homepage)))
     }
 
-    override func displayBool(_ control: UISwitch) {
-        control.isOn = User.shared.topSites
-    }
-
-    override func writeBool(_ control: UISwitch) {
-        User.shared.topSites = control.isOn
+    override func onClick(_ navigationController: UINavigationController?) {
+        let customizationViewController = NTPCustomizationSettingsViewController()
+        customizationViewController.profile = profile
+        customizationViewController.settingsDelegate = delegate
+        navigationController?.pushViewController(customizationViewController, animated: true)
     }
 }
 
