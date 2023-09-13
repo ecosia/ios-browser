@@ -46,10 +46,6 @@ extension CustomizeHomepageSectionViewModel: HomepageViewModelProtocol {
     var isEnabled: Bool {
         return true
     }
-
-    func refreshData(for traitCollection: UITraitCollection,
-                     isPortrait: Bool = UIWindow.isPortrait,
-                     device: UIUserInterfaceIdiom = UIDevice.current.userInterfaceIdiom) {}
 }
 
 // MARK: FxHomeSectionHandler

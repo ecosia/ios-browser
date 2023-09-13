@@ -45,6 +45,6 @@ extension HomepageViewModelProtocol {
     func updatePrivacyConcernedSection(isPrivate: Bool) {}
 
     func refreshData(for traitCollection: UITraitCollection,
-                     isPortrait: Bool = UIWindow.isPortrait,
-                     device: UIUserInterfaceIdiom = UIDevice.current.userInterfaceIdiom) {}
+                     isPortrait: Bool,
+                     device: UIUserInterfaceIdiom) {}
 }

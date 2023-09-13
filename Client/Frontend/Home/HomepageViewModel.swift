@@ -149,7 +149,7 @@ class HomepageViewModel: FeatureFlaggable, NTPLayoutHighlightDataSource {
     func refreshData(for traitCollection: UITraitCollection) {
         updateEnabledSections()
         childViewModels.forEach {
-            $0.refreshData(for: traitCollection)
+            $0.refreshData(for: traitCollection, isPortrait: UIWindow.isPortrait, device: UIDevice.current.userInterfaceIdiom)
         }
     }
 
