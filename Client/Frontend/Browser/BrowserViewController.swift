@@ -2304,7 +2304,7 @@ extension BrowserViewController {
               presentedViewController == nil,
               !showLoadingScreen(for: .shared),
               !User.shared.showsRebrandIntro,
-              !shouldShowIntroScreen,
+              shouldShowIntroScreen,
               DefaultBrowserExperiment.minPromoSearches() <= User.shared.treeCount else { return false }
 
         if #available(iOS 14, *) {
