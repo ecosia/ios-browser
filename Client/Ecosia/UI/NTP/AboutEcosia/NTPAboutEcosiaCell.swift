@@ -206,7 +206,7 @@ final class NTPAboutEcosiaCell: UICollectionViewCell, ReusableCell {
     @objc private func learnMoreAction() {
         guard let section = section else { return }
         viewModel?.delegate?.openLink(url: section.url)
-        Analytics.shared.navigation(.open, label: section.label) // TODO: Verify Analytics
+        Analytics.shared.navigation(.open, label: section.label)
     }
 }
 

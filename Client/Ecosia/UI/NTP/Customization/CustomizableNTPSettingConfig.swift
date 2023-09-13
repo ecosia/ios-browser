@@ -38,4 +38,13 @@ enum CustomizableNTPSettingConfig: CaseIterable {
             }
         }
     }
+    
+    var analyticsLabel: Analytics.Label.NTP {
+        switch self {
+        case .topSites: return .topSites
+        case .climateImpact: return .impact
+        case .ecosiaNews: return .news
+        case .aboutEcosia: return .about
+        }
+    }
 }

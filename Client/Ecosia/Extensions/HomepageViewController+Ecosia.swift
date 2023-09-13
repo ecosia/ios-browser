@@ -94,7 +94,7 @@ extension HomepageViewController: NTPImpactCellDelegate {
     func impactCellButtonAction(info: ClimateImpactInfo) {
         switch info {
         case .personalCounter:
-            Analytics.shared.navigation(.open, label: .counter) // TODO: Verify Analytics
+            Analytics.shared.navigation(.open, label: .counter)
             let url = Environment.current.urlProvider.aboutCounter
             openLink(url: url)
         case .invites:
@@ -133,6 +133,7 @@ extension HomepageViewController: NTPBookmarkNudgeCellDelegate {
 
 extension HomepageViewController: NTPCustomizationCellDelegate {
     func openNTPCustomizationSettings() {
+        Analytics.shared.ntp(.click, label: .customize)
         delegate?.showSettingsWithDeeplink(to: .customizeHomepage)
     }
 }
