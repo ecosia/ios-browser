@@ -2303,18 +2303,19 @@ extension BrowserViewController {
         guard isHome,
               presentedViewController == nil,
               !showLoadingScreen(for: .shared),
-              !User.shared.showsRebrandIntro,
-              shouldShowIntroScreen,
-              DefaultBrowserExperiment.minPromoSearches() <= User.shared.treeCount else { return false }
+              !User.shared.showsRebrandIntro else { return false }
 
-        if #available(iOS 14, *) {
-            let defaultPromo = DefaultBrowser(delegate: self)
-            present(defaultPromo, animated: true)
-        } else {
-            profile.prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
+        if shouldShowIntroScreen && DefaultBrowserExperiment.minPromoSearches() <= User.shared.treeCount  {
+            if #available(iOS 14, *) {
+                let defaultPromo = DefaultBrowser(delegate: self)
+                present(defaultPromo, animated: true)
+            } else {
+                profile.prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
+            }
+            return true
         }
         
-        return true
+        return false
     }
 
     func presentETPCoverSheetViewController(_ force: Bool = false) {
