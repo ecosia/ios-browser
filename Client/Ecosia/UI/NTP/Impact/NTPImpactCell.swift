@@ -7,6 +7,7 @@ import Core
 
 final class NTPImpactCell: UICollectionViewCell, NotificationThemeable, ReusableCell {
     struct UX {
+        static let estimatedHeight: CGFloat = 172
         static let cellsSpacing: CGFloat = 12
         static let dividerInset: CGFloat = 16
         static let dividerSpacing: CGFloat = 32
