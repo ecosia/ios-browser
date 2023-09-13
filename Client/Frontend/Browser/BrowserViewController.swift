@@ -163,6 +163,7 @@ class BrowserViewController: UIViewController {
     }
 
     fileprivate var shouldShowIntroScreen: Bool { profile.prefs.intForKey(PrefsKeys.IntroSeen) == nil }
+    fileprivate var shouldShowWhatsNewPageScreen: Bool { profile.prefs.intForKey(PrefsKeys.WhatsNewPageSeen) == nil }
 
     // Ecosia
     lazy var ecosiaNavigation: EcosiaNavigation = {
@@ -922,12 +923,12 @@ class BrowserViewController: UIViewController {
         homepageViewController?.view.layer.removeAllAnimations()
         view.setNeedsUpdateConstraints()
 
-        // Ecosia: show Default Browser promo if needed
+        // Ecosia: show any of the insighful sheets if needed
         // Workaround for time of experiment
         // -> delay of 0.5s to wait for animations and dismissals to finish
         if inline, !User.shared.firstTime {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                self.presentDefaultBrowserPromoIfNeeded()
+                self.presentInsightfulSheetsIfNeeded()
             }
         }
 
@@ -2256,22 +2257,51 @@ extension BrowserViewController {
             intro.modalTransitionStyle = .crossDissolve
             present(intro, animated: true)
             User.shared.hideRebrandIntro()
+        } else {
+            presentInsightfulSheetsIfNeeded()
         }
-        presentDefaultBrowserPromoIfNeeded()
     }
 
     private func showLoadingScreen(for user: User) -> Bool {
         (user.migrated != true && !user.firstTime)
             || user.referrals.pendingClaim != nil
     }
+    
+    @discardableResult
+    func presentInsightfulSheetsIfNeeded() -> Bool {
+        if !presentDefaultBrowserPromoIfNeeded() {
+            presenWhatsNewPageIfNeeded()
+        }
+    }
+    
+    @discardableResult
+    func presenWhatsNewPageIfNeeded() -> Bool {
+        let isHome = tabManager.selectedTab?.url.flatMap { InternalURL($0)?.isAboutHomeURL } ?? false
+        
+        guard isHome,
+              presentedViewController == nil,
+              !showLoadingScreen(for: .shared),
+              !User.shared.showsRebrandIntro else { return false }
 
-    func presentDefaultBrowserPromoIfNeeded() {
+        if shouldShowWhatsNewPageScreen  {
+            let provider = WhatsNewLocalDataProvider()
+            let viewModel = WhatsNewViewModel(provider: provider)
+            let whatsNewViewController = WhatsNewViewController(viewModel: viewModel, delegate: self)
+            present(whatsNewViewController, animated: true)
+            return true
+        }
+        
+        return false
+    }
+
+    @discardableResult
+    func presentDefaultBrowserPromoIfNeeded() -> Bool {
         let isHome = tabManager.selectedTab?.url.flatMap { InternalURL($0)?.isAboutHomeURL } ?? false
 
         guard isHome,
               presentedViewController == nil,
               !showLoadingScreen(for: .shared),
-              !User.shared.showsRebrandIntro else { return }
+              !User.shared.showsRebrandIntro else { return false }
 
         if shouldShowIntroScreen && DefaultBrowserExperiment.minPromoSearches() <= User.shared.treeCount  {
             if #available(iOS 14, *) {
@@ -2280,6 +2310,7 @@ extension BrowserViewController {
             } else {
                 profile.prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
             }
+            return true
         }
     }
 
@@ -2596,9 +2627,8 @@ extension BrowserViewController: TabTrayDelegate {
     // the tab tray dismisses.
     func tabTrayDidDismiss(_ tabTray: GridTabViewController) {
         // Ecosia: resetBrowserChrome()
-
-        // Ecosia: check if promo needs display
-        presentDefaultBrowserPromoIfNeeded()
+        // Ecosia: check if any sheet needs display
+        presentInsightfulSheetsIfNeeded()
     }
 
     func tabTrayDidAddTab(_ tabTray: GridTabViewController, tab: Tab) {}
