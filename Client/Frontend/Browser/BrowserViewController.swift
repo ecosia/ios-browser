@@ -2270,8 +2270,9 @@ extension BrowserViewController {
     @discardableResult
     func presentInsightfulSheetsIfNeeded() -> Bool {
         if !presentDefaultBrowserPromoIfNeeded() {
-            presenWhatsNewPageIfNeeded()
+            return presenWhatsNewPageIfNeeded()
         }
+        return false
     }
     
     @discardableResult
@@ -2312,6 +2313,7 @@ extension BrowserViewController {
             }
             return true
         }
+        return false
     }
 
     func presentETPCoverSheetViewController(_ force: Bool = false) {
