@@ -7,8 +7,10 @@ import XCTest
 
 final class VersionTests: XCTestCase {
     
+    private static let appVersionUpdateTestKey = "appVersionUpdateTestKey"
+    
     override class func setUp() {
-        UserDefaults.standard.removeObject(forKey: Version.appVersionUpdateKey)
+        UserDefaults.standard.removeObject(forKey: Self.appVersionUpdateTestKey)
     }
     
     // Test initialization
@@ -45,20 +47,16 @@ final class VersionTests: XCTestCase {
     
     // Test Version retrieval and saving using UserDefaults
     func testVersionStorage() {
-        
         let version1 = Version("1.0.0")
         let version2 = Version("1.0.1")
+
+        Version.updateFromCurrent(forKey: Self.appVersionUpdateTestKey)
         
-        // Test initial state
-        XCTAssertNil(Version.retrievePreviousVersionElseSaveCurrent(nil))
+        XCTAssertEqual(Version.saved(forKey: Self.appVersionUpdateTestKey)?.description, version1?.description)
+
+        Version.updateFromCurrent(forKey: Self.appVersionUpdateTestKey, provider: MockAppVersionInfoProvider(appVersion: "1.0.1"))
         
-        // Test saving and retrieving version
-        _ = Version.retrievePreviousVersionElseSaveCurrent(version1)
-        XCTAssertEqual(Version.retrievePreviousVersionElseSaveCurrent(version1), version1)
-        
-        // Test updating and retrieving newer version
-        _ = Version.retrievePreviousVersionElseSaveCurrent(version2)
-        XCTAssertEqual(Version.retrievePreviousVersionElseSaveCurrent(version2), version2)
+        XCTAssertEqual(Version.saved(forKey: Self.appVersionUpdateTestKey)?.description, version2?.description)
     }
     
     func testDoubleDigitVersions() {
@@ -67,21 +65,21 @@ final class VersionTests: XCTestCase {
         let version3 = Version("11.9.8")
         let version4 = Version("11.11.11")
 
-        // Test save and retrieve
-        _ = Version.retrievePreviousVersionElseSaveCurrent(version1)
-        var retrievedVersion = Version.retrievePreviousVersionElseSaveCurrent(version1)
-        XCTAssertEqual(retrievedVersion, version1)
+        Version.updateFromCurrent(forKey: Self.appVersionUpdateTestKey, provider: MockAppVersionInfoProvider(appVersion: "10.9.8"))
+        XCTAssertEqual(Version.saved(forKey: Self.appVersionUpdateTestKey)?.description, version1?.description)
 
-        // Test update and retrieve
-        _ = Version.retrievePreviousVersionElseSaveCurrent(version2)
-        retrievedVersion = Version.retrievePreviousVersionElseSaveCurrent(version2)
-        XCTAssertEqual(retrievedVersion, version2)
+        Version.updateFromCurrent(forKey: Self.appVersionUpdateTestKey, provider: MockAppVersionInfoProvider(appVersion: "10.10.8"))
+        XCTAssertEqual(Version.saved(forKey: Self.appVersionUpdateTestKey)?.description, version2?.description)
 
-        // Test comparability
         XCTAssertTrue(version2! < version3!)
         XCTAssertTrue(version3! < version4!)
-
-        // Test equality
         XCTAssertFalse(version3! == version4!)
+    }
+}
+
+extension VersionTests {
+    
+    struct MockAppVersionInfoProvider: AppVersionInfoProvider {
+        var appVersion: String = "1.0.0"
     }
 }

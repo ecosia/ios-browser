@@ -29,7 +29,7 @@ struct Version: CustomStringConvertible {
         self.minor = minor
         self.patch = patch
     }
-        
+    
     /// A string representation of the `Version`.
     var description: String {
         return "\(major).\(minor).\(patch)"

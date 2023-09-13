@@ -152,6 +152,8 @@
 		2CCB296720A99C9500121DD8 /* SaveLoginsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCB296620A99C9500121DD8 /* SaveLoginsTests.swift */; };
 		2CCF17532105E4FD00705AE5 /* DisplaySettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCF17522105E4FD00705AE5 /* DisplaySettingsTests.swift */; };
 		2CDABC752AB1C7D2009F6D98 /* Version+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CDABC742AB1C7D2009F6D98 /* Version+Extensions.swift */; };
+		2CDABC7E2AB1EAA2009F6D98 /* DefaultAppVersionInfoProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CDABC7C2AB1EAA2009F6D98 /* DefaultAppVersionInfoProvider.swift */; };
+		2CDABC7F2AB1EAA2009F6D98 /* AppVersionInfoProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CDABC7D2AB1EAA2009F6D98 /* AppVersionInfoProvider.swift */; };
 		2CE2F2182AA8670400623F26 /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE2F2172AA8670400623F26 /* Version.swift */; };
 		2CE2F21D2AA87B8B00623F26 /* VersionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE2F21B2AA87B3100623F26 /* VersionTests.swift */; };
 		2CE63B2829C8DA8200047121 /* ErrorPageHandler+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE63B2729C8DA8200047121 /* ErrorPageHandler+Ecosia.swift */; };
@@ -1775,6 +1777,8 @@
 		2CCB296620A99C9500121DD8 /* SaveLoginsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveLoginsTests.swift; sourceTree = "<group>"; };
 		2CCF17522105E4FD00705AE5 /* DisplaySettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplaySettingsTests.swift; sourceTree = "<group>"; };
 		2CDABC742AB1C7D2009F6D98 /* Version+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Version+Extensions.swift"; sourceTree = "<group>"; };
+		2CDABC7C2AB1EAA2009F6D98 /* DefaultAppVersionInfoProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultAppVersionInfoProvider.swift; sourceTree = "<group>"; };
+		2CDABC7D2AB1EAA2009F6D98 /* AppVersionInfoProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppVersionInfoProvider.swift; sourceTree = "<group>"; };
 		2CE2F2172AA8670400623F26 /* Version.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Version.swift; sourceTree = "<group>"; };
 		2CE2F21B2AA87B3100623F26 /* VersionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VersionTests.swift; sourceTree = "<group>"; };
 		2CE63B2729C8DA8200047121 /* ErrorPageHandler+Ecosia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ErrorPageHandler+Ecosia.swift"; sourceTree = "<group>"; };
@@ -5257,6 +5261,7 @@
 			isa = PBXGroup;
 			children = (
 				2CDABC762AB1C7D6009F6D98 /* Version */,
+				2CDABC7B2AB1E8CF009F6D98 /* AppInfoProvider */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -5268,6 +5273,15 @@
 				2CDABC742AB1C7D2009F6D98 /* Version+Extensions.swift */,
 			);
 			path = Version;
+			sourceTree = "<group>";
+		};
+		2CDABC7B2AB1E8CF009F6D98 /* AppInfoProvider */ = {
+			isa = PBXGroup;
+			children = (
+				2CDABC7D2AB1EAA2009F6D98 /* AppVersionInfoProvider.swift */,
+				2CDABC7C2AB1EAA2009F6D98 /* DefaultAppVersionInfoProvider.swift */,
+			);
+			path = AppInfoProvider;
 			sourceTree = "<group>";
 		};
 		2CF8781E2A0D4673001E9658 /* FeatureManagement */ = {
@@ -9277,6 +9291,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5FC276552894AEFF00AF2721 /* LibraryPanelHelper.swift in Sources */,
+				2CDABC7E2AB1EAA2009F6D98 /* DefaultAppVersionInfoProvider.swift in Sources */,
 				5A47CFF52860FB8900B2B7BF /* AppLaunchUtil.swift in Sources */,
 				D04CD74A216CF86B004FF5B0 /* SiriShortcuts.swift in Sources */,
 				EB9A179F20E6C1A200B12184 /* ThemedWidgets.swift in Sources */,
@@ -9454,6 +9469,7 @@
 				CA4D9CF028C8D801006AFB5D /* NTPTooltip.Highlight.swift in Sources */,
 				D0E89A2920910917001CE5C7 /* DownloadsPanel.swift in Sources */,
 				CA8BCC3728D1FB840020BC50 /* HistoryHighlightsDataAdaptor.swift in Sources */,
+				2CDABC7F2AB1EAA2009F6D98 /* AppVersionInfoProvider.swift in Sources */,
 				DA3A4FE9254A781A00C4A9C9 /* TabTableViewHeader.swift in Sources */,
 				D3BA7E0E1B0E934F00153782 /* ContextMenuHelper.swift in Sources */,
 				E19B38B328A42D5E00D8C541 /* WallpaperCollectionViewCell.swift in Sources */,
