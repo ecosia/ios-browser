@@ -8,12 +8,14 @@ import Shared
 /// A local data provider for fetching What's New items based on app version updates.
 final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
     
+    static let appVersionUpdateKey = "appVersionUpdateKey"
+    
     /// The version from which the app was last updated. Optional in case this is the first run
     /// or previous upgrading from an implmention that didn't have this one in the first place.
     private var fromVersion: Version?
     
     /// The current version of the app.
-    private let toVersion = Version(AppInfo.ecosiaAppVersion)
+    private let toVersion = Version.current
     
     /// Default initializer.
     init() {}
@@ -37,10 +39,15 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
     /// - Returns: An array of `WhatsNewItem` to display.
     func getData() throws -> [WhatsNewItem] {
                 
-        fromVersion = Version.retrievePreviousVersionElseSaveCurrent(toVersion)
+        fromVersion = Version.saved(forKey: Self.appVersionUpdateKey)
         
-        // Ensure both fromVersion and toVersion are available.
-        guard let fromVersion, let toVersion else { return [] }
+        if let fromVersion,
+            fromVersion < toVersion {
+            Version.updateFromCurrent(forKey: Self.appVersionUpdateKey)
+        }
+        
+        // Ensure both fromVersion is available.
+        guard let fromVersion else { return [] }
         
         // Get the version range and corresponding What's New items.
         let versionRange = getVersionRange(from: fromVersion, to: toVersion)

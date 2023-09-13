@@ -152,6 +152,7 @@
 		2CC9E08C2A30AED2003420E1 /* URL+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC9E08B2A30AED2003420E1 /* URL+Ecosia.swift */; };
 		2CCB296720A99C9500121DD8 /* SaveLoginsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCB296620A99C9500121DD8 /* SaveLoginsTests.swift */; };
 		2CCF17532105E4FD00705AE5 /* DisplaySettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCF17522105E4FD00705AE5 /* DisplaySettingsTests.swift */; };
+		2CDABC752AB1C7D2009F6D98 /* Version+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CDABC742AB1C7D2009F6D98 /* Version+Extensions.swift */; };
 		2CE2F2182AA8670400623F26 /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE2F2172AA8670400623F26 /* Version.swift */; };
 		2CE2F21D2AA87B8B00623F26 /* VersionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE2F21B2AA87B3100623F26 /* VersionTests.swift */; };
 		2CE63B2829C8DA8200047121 /* ErrorPageHandler+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE63B2729C8DA8200047121 /* ErrorPageHandler+Ecosia.swift */; };
@@ -1775,6 +1776,7 @@
 		2CC9E08B2A30AED2003420E1 /* URL+Ecosia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+Ecosia.swift"; sourceTree = "<group>"; };
 		2CCB296620A99C9500121DD8 /* SaveLoginsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveLoginsTests.swift; sourceTree = "<group>"; };
 		2CCF17522105E4FD00705AE5 /* DisplaySettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplaySettingsTests.swift; sourceTree = "<group>"; };
+		2CDABC742AB1C7D2009F6D98 /* Version+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Version+Extensions.swift"; sourceTree = "<group>"; };
 		2CE2F2172AA8670400623F26 /* Version.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Version.swift; sourceTree = "<group>"; };
 		2CE2F21B2AA87B3100623F26 /* VersionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VersionTests.swift; sourceTree = "<group>"; };
 		2CE63B2729C8DA8200047121 /* ErrorPageHandler+Ecosia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ErrorPageHandler+Ecosia.swift"; sourceTree = "<group>"; };
@@ -5242,7 +5244,6 @@
 				2C73A71C2A9E0B97006EBAAB /* WhatsNewDataProvider.swift */,
 				2C73A7202A9E0BCD006EBAAB /* WhatsNewJSONDataProvider.swift */,
 				2C73A7272A9E1BD7006EBAAB /* WhatsNewLocalDataProvider.swift */,
-				2CE2F2172AA8670400623F26 /* Version.swift */,
 			);
 			path = DataProvider;
 			sourceTree = "<group>";
@@ -5253,6 +5254,23 @@
 				2C9C9FF62A03C7CF0038A3DD /* UnleashBingExperimentTests.swift */,
 			);
 			path = ExperimentsTests;
+			sourceTree = "<group>";
+		};
+		2CDABC732AB1C7C1009F6D98 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				2CDABC762AB1C7D6009F6D98 /* Version */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
+		2CDABC762AB1C7D6009F6D98 /* Version */ = {
+			isa = PBXGroup;
+			children = (
+				2CE2F2172AA8670400623F26 /* Version.swift */,
+				2CDABC742AB1C7D2009F6D98 /* Version+Extensions.swift */,
+			);
+			path = Version;
 			sourceTree = "<group>";
 		};
 		2CF8781E2A0D4673001E9658 /* FeatureManagement */ = {
@@ -6502,6 +6520,7 @@
 		CA4D9C8628C8D801006AFB5D /* Ecosia */ = {
 			isa = PBXGroup;
 			children = (
+				2CDABC732AB1C7C1009F6D98 /* Helpers */,
 				2C1AF2632A289384003970E0 /* Network */,
 				2C3357E42A0D092A00E76A48 /* MMP */,
 				2C5850022A02903F009D7703 /* Experiments */,
@@ -9632,6 +9651,7 @@
 				C869912D28917688007ACC5C /* WallpaperImageLoader.swift in Sources */,
 				E65075541E37F6FC006961AC /* DynamicFontHelper.swift in Sources */,
 				C82CDD47233E8996002E2743 /* Tab+ChangeUserAgent.swift in Sources */,
+				2CDABC752AB1C7D2009F6D98 /* Version+Extensions.swift in Sources */,
 				C4E3984C1D21F2FD004E89BA /* TabTrayButtonExtensions.swift in Sources */,
 				439086AB286CE61600897904 /* SDWebImageCacheExtension.swift in Sources */,
 				437A857827E43FE100E42764 /* FxAWebViewTelemetry.swift in Sources */,

@@ -9,7 +9,6 @@ import Foundation
 /// A semantic version is typically represented as a series of numbers separated by dots, e.g., "1.0.0".
 struct Version: CustomStringConvertible {
     
-    static let appVersionUpdateKey = "appVersionUpdateKey"
     var major: Int
     var minor: Int
     var patch: Int
@@ -77,48 +76,5 @@ extension Version: Hashable {
         hasher.combine(major)
         hasher.combine(minor)
         hasher.combine(patch)
-    }
-}
-
-/// Extension handling previous version retrieval and saving current version.
-extension Version {
-    
-    /// Retrieve the previously saved version or save the current version if none exists.
-    ///
-    /// This method tries to retrieve a previously saved version from `UserDefaults`.
-    /// If no version has been saved before, it saves the `current` version passed into the function.
-    ///
-    /// - Parameters:
-    ///   - current: The current `Version` to save if no version exists. Optional.
-    ///   - prefs: The `UserDefaults` instance to use for saving and retrieving the version.
-    ///            Defaults to `UserDefaults.standard`.
-    ///
-    /// - Returns: The previously saved `Version` if it exists, otherwise returns the current version.
-    ///            Returns `nil` if both the saved version and the current version are `nil`.
-    static func retrievePreviousVersionElseSaveCurrent(_ current: Version?, using prefs: UserDefaults = UserDefaults.standard) -> Version? {
-        guard let savedVersionString = prefs.string(forKey: Version.appVersionUpdateKey),
-              let savedVersion = Version(savedVersionString),
-              let current else {
-                save(current, using: prefs)
-                return current
-        }
-        if savedVersion != current {
-            save(current, using: prefs)
-        }
-        return current
-    }
-
-    /// Save the specified app version to `UserDefaults`.
-    ///
-    /// This method takes a `Version` object and saves its description to `UserDefaults`
-    /// using a predefined key.
-    ///
-    /// - Parameters:
-    ///   - version: The `Version` instance representing the app version to be saved.
-    ///   - prefs: The `UserDefaults` instance to use for saving the version.
-    ///            Defaults to `UserDefaults.standard`.
-    private static func save(_ version: Version?, using prefs: UserDefaults = UserDefaults.standard) {
-        guard let version else { return }
-        prefs.set(version.description, forKey: Version.appVersionUpdateKey)
     }
 }
