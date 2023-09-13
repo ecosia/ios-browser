@@ -52,14 +52,11 @@ final class NTPImpactCell: UICollectionViewCell, NotificationThemeable, Reusable
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        
-        // TODO: Check if really needed to keep constraints on cell reuse
         setupConstraints()
     }
 
     private func setup() {
         contentView.addSubview(containerStack)
-        
         setupConstraints()
     }
     
