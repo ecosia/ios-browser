@@ -2244,45 +2244,56 @@ extension BrowserViewController: UIAdaptivePresentationControllerDelegate {
 extension BrowserViewController {
     func presentIntroViewController(_ alwaysShow: Bool = false) {
         if showLoadingScreen(for: .shared) {
-            present(LoadingScreen(profile: profile, referrals: referrals, referralCode: User.shared.referrals.pendingClaim), animated: true)
+            presentLoadingScreen()
         } else if User.shared.firstTime {
-            User.shared.firstTime = false
-            User.shared.migrated = true
-            User.shared.hideRebrandIntro()
-            // deactivate searchbar hint for new users
-            contextHintVC.viewModel.markContextualHintPresented()
+            handleFirstTimeUserActions()
         } else if User.shared.showsRebrandIntro {
-            let intro = NTPIntroViewController()
-            intro.modalPresentationStyle = .overFullScreen
-            intro.modalTransitionStyle = .crossDissolve
-            present(intro, animated: true)
-            User.shared.hideRebrandIntro()
+            presentRebrandIntro()
         } else {
             presentInsightfulSheetsIfNeeded()
         }
     }
 
+    private func presentLoadingScreen() {
+        present(LoadingScreen(profile: profile, referrals: referrals, referralCode: User.shared.referrals.pendingClaim), animated: true)
+    }
+
+    private func handleFirstTimeUserActions() {
+        User.shared.firstTime = false
+        User.shared.migrated = true
+        User.shared.hideRebrandIntro()
+        // deactivate searchbar hint for new users
+        contextHintVC.viewModel.markContextualHintPresented()
+    }
+
+    private func presentRebrandIntro() {
+        let intro = NTPIntroViewController()
+        intro.modalPresentationStyle = .overFullScreen
+        intro.modalTransitionStyle = .crossDissolve
+        present(intro, animated: true)
+        User.shared.hideRebrandIntro()
+    }
+
     private func showLoadingScreen(for user: User) -> Bool {
         (user.migrated != true && !user.firstTime)
-            || user.referrals.pendingClaim != nil
+                || user.referrals.pendingClaim != nil
     }
-    
+
     func presentInsightfulSheetsIfNeeded() {
-        if !presentDefaultBrowserPromoIfNeeded() {
-            presenWhatsNewPageIfNeeded()
+        if isHomePage() && presentedViewController == nil && !showLoadingScreen(for: .shared) {
+            if !presentDefaultBrowserPromoIfNeeded() {
+                presentWhatsNewPageIfNeeded()
+            }
         }
     }
-    
+
+    private func isHomePage() -> Bool {
+        tabManager.selectedTab?.url.flatMap { InternalURL($0)?.isAboutHomeURL } ?? false
+    }
+
     @discardableResult
-    func presenWhatsNewPageIfNeeded() -> Bool {
-        
-        let isHome = tabManager.selectedTab?.url.flatMap { InternalURL($0)?.isAboutHomeURL } ?? false
-        
-        guard isHome,
-              presentedViewController == nil,
-              !showLoadingScreen(for: .shared),
-              !User.shared.showsRebrandIntro,
-              shouldShowWhatsNewPageScreen else { return false }
+    private func presentWhatsNewPageIfNeeded() -> Bool {
+        guard !User.shared.showsRebrandIntro, shouldShowWhatsNewPageScreen else { return false }
 
         let provider = WhatsNewLocalDataProvider()
         let viewModel = WhatsNewViewModel(provider: provider)
@@ -2291,31 +2302,20 @@ extension BrowserViewController {
             WhatsNewViewController.presentOn(self)
             return true
         }
-        
         return false
     }
 
     @discardableResult
-    func presentDefaultBrowserPromoIfNeeded() -> Bool {
-        
-        let isHome = tabManager.selectedTab?.url.flatMap { InternalURL($0)?.isAboutHomeURL } ?? false
+    private func presentDefaultBrowserPromoIfNeeded() -> Bool {
+        guard !User.shared.showsRebrandIntro, shouldShowIntroScreen, DefaultBrowserExperiment.minPromoSearches() <= User.shared.treeCount else { return false }
 
-        guard isHome,
-              presentedViewController == nil,
-              !showLoadingScreen(for: .shared),
-              !User.shared.showsRebrandIntro else { return false }
-
-        if shouldShowIntroScreen && DefaultBrowserExperiment.minPromoSearches() <= User.shared.treeCount  {
-            if #available(iOS 14, *) {
-                let defaultPromo = DefaultBrowser(delegate: self)
-                present(defaultPromo, animated: true)
-            } else {
-                profile.prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
-            }
-            return true
+        if #available(iOS 14, *) {
+            let defaultPromo = DefaultBrowser(delegate: self)
+            present(defaultPromo, animated: true)
+        } else {
+            profile.prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
         }
-        
-        return false
+        return true
     }
 
     func presentETPCoverSheetViewController(_ force: Bool = false) {
