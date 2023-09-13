@@ -15,7 +15,13 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
     private var fromVersion: Version?
     
     /// The current version of the app.
-    private let toVersion = Version.current
+    private var toVersion: Version {
+        Version(currentAppVersionProvider.version)!
+    }
+    
+    /// The current app version provider is the DefaultAppVersionInfoProvider
+    /// from which the Ecosia App Version is retrieved
+    private let currentAppVersionProvider = DefaultAppVersionInfoProvider()
     
     /// Default initializer.
     init() {}
@@ -24,11 +30,11 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
     private let whatsNewItems: [Version: [WhatsNewItem]] = [
         Version("9.0.0")!: [
             WhatsNewItem(imageURL: URL.localURLForImageset(name: "tree", withExtension: "pdf"),
-                                       title: .localized(.whatsNewFirstItemTitle),
-                                       subtitle: .localized(.whatsNewFirstItemDescription)),
+                         title: .localized(.whatsNewFirstItemTitle),
+                         subtitle: .localized(.whatsNewFirstItemDescription)),
             WhatsNewItem(imageURL: URL.localURLForImageset(name: "customisation", withExtension: "pdf"),
-                                       title: .localized(.whatsNewSecondItemTitle),
-                                       subtitle: .localized(.whatsNewSecondItemDescription))
+                         title: .localized(.whatsNewSecondItemTitle),
+                         subtitle: .localized(.whatsNewSecondItemDescription))
         ]
     ]
             
@@ -41,13 +47,16 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
                 
         fromVersion = Version.saved(forKey: Self.appVersionUpdateKey)
         
-        if let fromVersion,
-            fromVersion < toVersion {
+        let isVersionNil = fromVersion == nil
+        let isVersionLowerThanCurrent = fromVersion != nil && fromVersion! < toVersion
+        
+        if isVersionNil ||
+            isVersionLowerThanCurrent {
             Version.updateFromCurrent(forKey: Self.appVersionUpdateKey)
         }
         
         // Ensure both fromVersion is available.
-        guard let fromVersion else { return [] }
+        guard let fromVersion = Version.saved(forKey: Self.appVersionUpdateKey) else { return [] }
         
         // Get the version range and corresponding What's New items.
         let versionRange = getVersionRange(from: fromVersion, to: toVersion)
@@ -69,10 +78,14 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
     /// - Returns: An array of `Version` between from and to, inclusive.
     private func getVersionRange(from: Version, to: Version) -> [Version] {
         let allVersions = Array(whatsNewItems.keys).sorted()
-        guard let fromIndex = allVersions.firstIndex(of: from),
-              let toIndex = allVersions.firstIndex(of: to) else {
-            return []
-        }
+        
+        // Find the closest previous version or use the first one if `from` is older than all versions.
+        let fromIndex = allVersions.lastIndex { $0 <= from } ?? 0
+
+        // Find the index of `to` version or the last version if `to` is newer than all versions.
+        let toIndex = allVersions.firstIndex { $0 >= to } ?? (allVersions.count - 1)
+        
+        // Return the range.
         return Array(allVersions[fromIndex...toIndex])
     }
 }

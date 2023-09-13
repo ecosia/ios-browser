@@ -42,7 +42,7 @@ extension Version {
 extension Version {
     
     /// A string representation of the current Ecosia App Version.
-    static var current: Version {
+    static var ecosiaCurrent: Version {
         Version(AppInfo.ecosiaAppVersion)!
     }
 }
