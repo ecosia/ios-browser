@@ -142,7 +142,6 @@ extension WhatsNewViewController {
         
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.dataSource = self
-        tableView.isScrollEnabled = false
         tableView.register(WhatsNewCell.self, forCellReuseIdentifier: WhatsNewCell.cellIdentifier)
         
         footerButton.setTitle(.localized(.whatsNewFooterButtonTitle), for: .normal)
@@ -204,7 +203,7 @@ extension WhatsNewViewController {
             tableView.topAnchor.constraint(equalTo: headerLabelContainerView.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            tableView.bottomAnchor.constraint(equalTo: footerButton.topAnchor),
             
             // Footer button constraints
             footerButton.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: UX.defaultPadding),
