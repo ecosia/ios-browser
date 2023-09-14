@@ -39,9 +39,13 @@ final class WhatsNewCell: UITableViewCell {
         newConfiguration.text = item.title
         newConfiguration.textProperties.font = .preferredFont(forTextStyle: .headline)
         newConfiguration.textProperties.lineBreakMode = .byTruncatingTail
+        newConfiguration.textProperties.adjustsFontForContentSizeCategory = true
+        newConfiguration.textProperties.adjustsFontSizeToFitWidth = true
         newConfiguration.secondaryText = item.subtitle
         newConfiguration.secondaryTextProperties.lineBreakMode = .byTruncatingTail
         newConfiguration.secondaryTextProperties.font = .preferredFont(forTextStyle: .subheadline)
+        newConfiguration.secondaryTextProperties.adjustsFontForContentSizeCategory = true
+        newConfiguration.secondaryTextProperties.adjustsFontSizeToFitWidth = true
         newConfiguration.image = image
         newConfiguration.imageProperties.maximumSize = CGSize(width: 24, height: 24)
         contentConfiguration = newConfiguration
@@ -51,9 +55,13 @@ final class WhatsNewCell: UITableViewCell {
         textLabel?.text = item.title
         textLabel?.lineBreakMode = .byTruncatingTail
         textLabel?.font = .preferredFont(forTextStyle: .headline)
+        textLabel?.adjustsFontForContentSizeCategory = true
+        textLabel?.adjustsFontSizeToFitWidth = true
         detailTextLabel?.text = item.subtitle
         detailTextLabel?.lineBreakMode = .byTruncatingTail
         detailTextLabel?.font = .preferredFont(forTextStyle: .subheadline)
+        detailTextLabel?.adjustsFontForContentSizeCategory = true
+        detailTextLabel?.adjustsFontSizeToFitWidth = true
         imageView?.image = image
     }
 
