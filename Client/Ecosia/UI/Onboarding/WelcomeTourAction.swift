@@ -41,7 +41,7 @@ final class WelcomeTourAction: UIView, NotificationThemeable {
         height.priority = .init(rawValue: 500)
         height.isActive = true
 
-        let trees = TreeCounter.shared.treesAt(.init())
+        let trees = TreesProjection.shared.treesAt(.init())
         let oneMillion = 1000000
         let millionTrees = trees / oneMillion
         let multiplesOfFive = millionTrees / 5
