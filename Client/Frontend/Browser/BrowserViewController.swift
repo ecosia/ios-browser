@@ -162,7 +162,7 @@ class BrowserViewController: UIViewController {
         return keyboardPressesHandlerValue
     }
 
-    fileprivate var shouldShowIntroScreen: Bool { profile.prefs.intForKey(PrefsKeys.IntroSeen) == nil }
+    fileprivate var shouldShowDefaultBrowserPromo: Bool { profile.prefs.intForKey(PrefsKeys.IntroSeen) == nil }
     fileprivate var shouldShowWhatsNewPageScreen: Bool { User.shared.showsWhatsNewPage }
 
     // Ecosia
@@ -2310,7 +2310,7 @@ extension BrowserViewController {
 
     @discardableResult
     private func presentDefaultBrowserPromoIfNeeded() -> Bool {
-        guard shouldShowIntroScreen, 
+        guard shouldShowDefaultBrowserPromo, 
                 DefaultBrowserExperiment.minPromoSearches() <= User.shared.treeCount else { return false }
 
         if #available(iOS 14, *) {
