@@ -163,7 +163,7 @@ class BrowserViewController: UIViewController {
     }
 
     fileprivate var shouldShowIntroScreen: Bool { profile.prefs.intForKey(PrefsKeys.IntroSeen) == nil }
-    fileprivate var shouldShowWhatsNewPageScreen: Bool { profile.prefs.intForKey(PrefsKeys.WhatsNewPageSeen) == nil }
+    fileprivate var shouldShowWhatsNewPageScreen: Bool { User.shared.showsWhatsNewPage }
 
     // Ecosia
     lazy var ecosiaNavigation: EcosiaNavigation = {

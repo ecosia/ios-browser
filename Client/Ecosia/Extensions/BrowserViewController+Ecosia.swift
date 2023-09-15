@@ -38,7 +38,7 @@ extension BrowserViewController: DefaultBrowserDelegate {
 
 extension BrowserViewController: WhatsNewViewDelegate {
     func whatsNewViewDidShow(_ viewController: WhatsNewViewController) {
-        profile.prefs.setInt(1, forKey: PrefsKeys.WhatsNewPageSeen)
+        User.shared.setWhatsNewPageFlagAsShown()
         homepageViewController?.reloadTooltip()
     }
 }

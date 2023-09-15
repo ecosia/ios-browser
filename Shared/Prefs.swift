@@ -20,8 +20,6 @@ public struct PrefsKeys {
     public static let HasFocusInstalled = "HasFocusInstalled"
     public static let HasPocketInstalled = "HasPocketInstalled"
     public static let IntroSeen = "IntroViewControllerSeen"
-    // Ecosia: Adding a new key to map the WhatsNew page being seen
-    public static let WhatsNewPageSeen = "WhatsNewPageSeen"
     public static let HomePageTab = "HomePageTab"
     public static let HomeButtonHomePageURL = "HomeButtonHomepageURL"
     public static let NumberOfTopSiteRows = "NumberOfTopSiteRows"
