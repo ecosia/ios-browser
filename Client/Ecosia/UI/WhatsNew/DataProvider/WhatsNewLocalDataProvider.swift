@@ -9,16 +9,7 @@ import Shared
 final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
     
     static let appVersionUpdateKey = "appVersionUpdateKey"
-    
-    /// The version from which the app was last updated. Optional in case this is the first run
-    /// or previous upgrading from an implmention that didn't have this one in the first place.
-    private var fromVersion: Version?
-    
-    /// The current version of the app.
-    private var toVersion: Version {
-        Version(currentAppVersionProvider.version)!
-    }
-    
+        
     /// The current app version provider is the DefaultAppVersionInfoProvider
     /// from which the Ecosia App Version is retrieved
     private let currentAppVersionProvider = DefaultAppVersionInfoProvider()
@@ -44,8 +35,9 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
     ///
     /// - Returns: An array of `WhatsNewItem` to display.
     func getData() throws -> [WhatsNewItem] {
-                
-        fromVersion = Version.saved(forKey: Self.appVersionUpdateKey)
+                        
+        var fromVersion = Version.saved(forKey: Self.appVersionUpdateKey)
+        var toVersion = Version(currentAppVersionProvider.version)!
         
         let isVersionNil = fromVersion == nil
         let isVersionLowerThanCurrent = fromVersion != nil && fromVersion! < toVersion
