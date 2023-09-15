@@ -47,7 +47,7 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
             Version.updateFromCurrent(forKey: Self.appVersionUpdateKey)
         }
         
-        // Ensure both fromVersion is available.
+        // Ensure fromVersion is available.
         guard let fromVersion = Version.saved(forKey: Self.appVersionUpdateKey) else { return [] }
         
         // Get the version range and corresponding What's New items.
