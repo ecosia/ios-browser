@@ -4,12 +4,32 @@
 
 import Foundation
 import Shared
+import Core
 
 /// A local data provider for fetching What's New items based on app version updates.
 final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
     
     static let appVersionUpdateKey = "appVersionUpdateKey"
-        
+    
+    /// The version from which the app was last updated. Optional in case this is the first run
+    /// or previous upgrading from an implmention that didn't have this one in the first place.
+    private let fromVersion = Version.saved(forKey: WhatsNewLocalDataProvider.appVersionUpdateKey)
+    
+    /// The current version of the app.
+    private var toVersion: Version {
+        Version(currentAppVersionProvider.version)!
+    }
+    
+    /// This value can be used to determine if the user should be presented with the What's New page.
+    ///
+    /// - Returns: `true` if the What's New page should be shown; otherwise, `false`.
+    var shouldShowWhatsNewPage: Bool {
+        evaluateVersionNeedsUpdate()
+        let dataProviderVersionsString = getVersionRange().map { $0.description }
+        guard let savedWhatsNewItemVersionsString = User.shared.whatsNewItemsVersions else { return true }
+        return savedWhatsNewItemVersionsString.allSatisfy { dataProviderVersionsString.contains($0) } == false
+    }
+    
     /// The current app version provider is the DefaultAppVersionInfoProvider
     /// from which the Ecosia App Version is retrieved
     private let currentAppVersionProvider = DefaultAppVersionInfoProvider()
@@ -35,23 +55,14 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
     ///
     /// - Returns: An array of `WhatsNewItem` to display.
     func getData() throws -> [WhatsNewItem] {
-                        
-        let fromVersion = Version.saved(forKey: Self.appVersionUpdateKey)
-        let toVersion = Version(currentAppVersionProvider.version)!
         
-        let isVersionNil = fromVersion == nil
-        let isVersionLowerThanCurrent = fromVersion != nil && fromVersion! < toVersion
-        
-        if isVersionNil ||
-            isVersionLowerThanCurrent {
-            Version.updateFromCurrent(forKey: Self.appVersionUpdateKey)
-        }
+        evaluateVersionNeedsUpdate()
         
         // Ensure fromVersion is available.
         guard let fromVersion else { return [] }
         
         // Get the version range and corresponding What's New items.
-        let versionRange = getVersionRange(from: fromVersion, to: toVersion)
+        let versionRange = getVersionRange()
         var items: [WhatsNewItem] = []
         for version in versionRange {
             if let newItems = whatsNewItems[version] {
@@ -61,21 +72,34 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
         return items
     }
     
+    private func evaluateVersionNeedsUpdate() {
+        let isVersionNil = fromVersion == nil
+        let isVersionLowerThanCurrent = fromVersion != nil && fromVersion! < toVersion
+        
+        if isVersionNil ||
+            isVersionLowerThanCurrent {
+            Version.updateFromCurrent(forKey: Self.appVersionUpdateKey)
+        }
+    }
+    
     /// Private helper to fetch version range.
     ///
-    /// - Parameters:
-    ///   - from: Starting `Version`.
-    ///   - to: Ending `Version`.
-    ///
     /// - Returns: An array of `Version` between from and to, inclusive.
-    private func getVersionRange(from: Version, to: Version) -> [Version] {
+    func getVersionRange() -> [Version] {
+        
+        evaluateVersionNeedsUpdate()
+        
+        // Ensure fromVersion is available.
+        guard let fromVersion else { return [] }
+        
+        // Gather all versions
         let allVersions = Array(whatsNewItems.keys).sorted()
         
         // Find the closest previous version or use the first one if `from` is older than all versions.
-        let fromIndex = allVersions.lastIndex { $0 <= from } ?? 0
+        let fromIndex = allVersions.lastIndex { $0 <= fromVersion } ?? 0
 
         // Find the index of `to` version or the last version if `to` is newer than all versions.
-        let toIndex = allVersions.firstIndex { $0 >= to } ?? (allVersions.count - 1)
+        let toIndex = allVersions.firstIndex { $0 >= toVersion } ?? (allVersions.count - 1)
         
         // Return the range.
         return Array(allVersions[fromIndex...toIndex])

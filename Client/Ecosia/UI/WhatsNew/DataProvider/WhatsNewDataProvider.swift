@@ -22,4 +22,13 @@ protocol WhatsNewDataProvider {
     /// - Returns: An array of `WhatsNewItem` objects that encapsulate individual features or updates.
     /// - Throws: An error if data retrieval or generation fails.
     func getData() throws -> [WhatsNewItem]
+    
+    /// A Boolean value indicating whether the What's New page should be shown.
+    ///
+    /// This value can be used to determine if the user should be presented with the What's New page.
+    /// It's based on conditions such as whether there are new items since the last app update,
+    /// or user-specific criteria.
+    ///
+    /// - Returns: `true` if the What's New page should be shown; otherwise, `false`.
+    var shouldShowWhatsNewPage: Bool { get }
 }

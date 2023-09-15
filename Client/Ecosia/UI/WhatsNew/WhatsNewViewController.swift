@@ -206,7 +206,6 @@ extension WhatsNewViewController {
             tableView.bottomAnchor.constraint(equalTo: footerButton.topAnchor),
             
             // Footer button constraints
-            footerButton.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: UX.defaultPadding),
             footerButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -UX.defaultPadding),
             footerButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: UX.defaultPadding),
             footerButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -UX.defaultPadding),
@@ -258,11 +257,11 @@ extension WhatsNewViewController: NotificationThemeable {
 
 extension WhatsNewViewController {
     
-    static func presentOn(_ viewController: UIViewController) {
+    static func presentOn(_ viewController: UIViewController, 
+                          withDataProvider provider: WhatsNewDataProvider = WhatsNewLocalDataProvider()) {
         
         guard let whatsNewDelegateViewController = viewController as? WhatsNewViewDelegate else { return }
-        let viewModel = WhatsNewViewModel(provider:
-                                            WhatsNewLocalDataProvider())
+        let viewModel = WhatsNewViewModel(provider: provider)
         let sheet = WhatsNewViewController(viewModel: viewModel,
                                            delegate: whatsNewDelegateViewController)
         sheet.modalPresentationStyle = .automatic

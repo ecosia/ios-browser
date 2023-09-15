@@ -163,12 +163,14 @@ class BrowserViewController: UIViewController {
     }
 
     fileprivate var shouldShowDefaultBrowserPromo: Bool { profile.prefs.intForKey(PrefsKeys.IntroSeen) == nil }
-    fileprivate var shouldShowWhatsNewPageScreen: Bool { User.shared.showsWhatsNewPage }
+    fileprivate var shouldShowWhatsNewPageScreen: Bool { whatsNewDataProvider.shouldShowWhatsNewPage }
 
     // Ecosia
     lazy var ecosiaNavigation: EcosiaNavigation = {
         .init(rootViewController: YourImpact(delegate: self, referrals: referrals))
     }()
+    
+    let whatsNewDataProvider = WhatsNewLocalDataProvider()
     
     let referrals = Referrals()
     var menuHelper: MainMenuActionHelper?
@@ -2301,11 +2303,14 @@ extension BrowserViewController {
         let provider = WhatsNewLocalDataProvider()
         let viewModel = WhatsNewViewModel(provider: provider)
 
-        if !viewModel.items.isEmpty  {
-            WhatsNewViewController.presentOn(self)
-            return true
+        guard !viewModel.items.isEmpty else {
+            return false
         }
-        return false
+        
+        WhatsNewViewController.presentOn(self,
+                                         withDataProvider: whatsNewDataProvider)
+
+        return true
     }
 
     @discardableResult
