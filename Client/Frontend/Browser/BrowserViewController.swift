@@ -2280,10 +2280,13 @@ extension BrowserViewController {
     }
 
     func presentInsightfulSheetsIfNeeded() {
-        if isHomePage() && presentedViewController == nil && !showLoadingScreen(for: .shared) {
-            if !presentDefaultBrowserPromoIfNeeded() {
-                presentWhatsNewPageIfNeeded()
-            }
+        guard isHomePage(),
+              presentedViewController == nil,
+              !showLoadingScreen(for: .shared),
+              !User.shared.showsRebrandIntro else { return }
+        
+        if !presentDefaultBrowserPromoIfNeeded() {
+            presentWhatsNewPageIfNeeded()
         }
     }
 
@@ -2293,7 +2296,7 @@ extension BrowserViewController {
 
     @discardableResult
     private func presentWhatsNewPageIfNeeded() -> Bool {
-        guard !User.shared.showsRebrandIntro, shouldShowWhatsNewPageScreen else { return false }
+        guard shouldShowWhatsNewPageScreen else { return false }
 
         let provider = WhatsNewLocalDataProvider()
         let viewModel = WhatsNewViewModel(provider: provider)
@@ -2307,7 +2310,8 @@ extension BrowserViewController {
 
     @discardableResult
     private func presentDefaultBrowserPromoIfNeeded() -> Bool {
-        guard !User.shared.showsRebrandIntro, shouldShowIntroScreen, DefaultBrowserExperiment.minPromoSearches() <= User.shared.treeCount else { return false }
+        guard shouldShowIntroScreen, 
+                DefaultBrowserExperiment.minPromoSearches() <= User.shared.treeCount else { return false }
 
         if #available(iOS 14, *) {
             let defaultPromo = DefaultBrowser(delegate: self)
