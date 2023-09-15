@@ -36,8 +36,8 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
     /// - Returns: An array of `WhatsNewItem` to display.
     func getData() throws -> [WhatsNewItem] {
                         
-        var fromVersion = Version.saved(forKey: Self.appVersionUpdateKey)
-        var toVersion = Version(currentAppVersionProvider.version)!
+        let fromVersion = Version.saved(forKey: Self.appVersionUpdateKey)
+        let toVersion = Version(currentAppVersionProvider.version)!
         
         let isVersionNil = fromVersion == nil
         let isVersionLowerThanCurrent = fromVersion != nil && fromVersion! < toVersion
@@ -48,7 +48,7 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
         }
         
         // Ensure fromVersion is available.
-        guard let fromVersion = Version.saved(forKey: Self.appVersionUpdateKey) else { return [] }
+        guard let fromVersion else { return [] }
         
         // Get the version range and corresponding What's New items.
         let versionRange = getVersionRange(from: fromVersion, to: toVersion)
