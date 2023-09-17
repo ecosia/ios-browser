@@ -72,6 +72,16 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
         return items
     }
     
+    /// Evaluates if the stored app version needs to be updated to the current version.
+    ///
+    /// This function checks two conditions:
+    /// 1. If `fromVersion` is `nil`, indicating no version was previously stored.
+    /// 2. If `fromVersion` exists but is lower than `toVersion`, suggesting an app update.
+    ///
+    /// In either case, the stored app version is updated to the current version using the key `appVersionUpdateKey`.
+    ///
+    /// - Note: This function relies on the existence of `fromVersion` and `toVersion` properties in its scope and
+    /// the `Version` type's ability to update stored versions.
     private func evaluateVersionNeedsUpdate() {
         let isVersionNil = fromVersion == nil
         let isVersionLowerThanCurrent = fromVersion != nil && fromVersion! < toVersion

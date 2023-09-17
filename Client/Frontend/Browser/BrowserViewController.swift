@@ -2300,15 +2300,14 @@ extension BrowserViewController {
     private func presentWhatsNewPageIfNeeded() -> Bool {
         guard shouldShowWhatsNewPageScreen else { return false }
 
-        let provider = WhatsNewLocalDataProvider()
-        let viewModel = WhatsNewViewModel(provider: provider)
+        let viewModel = WhatsNewViewModel(provider: whatsNewDataProvider)
 
         guard !viewModel.items.isEmpty else {
             return false
         }
         
         WhatsNewViewController.presentOn(self,
-                                         withDataProvider: whatsNewDataProvider)
+                                         viewModel: viewModel)
 
         return true
     }

@@ -258,10 +258,9 @@ extension WhatsNewViewController: NotificationThemeable {
 extension WhatsNewViewController {
     
     static func presentOn(_ viewController: UIViewController, 
-                          withDataProvider provider: WhatsNewDataProvider = WhatsNewLocalDataProvider()) {
+                          viewModel: WhatsNewViewModel) {
         
         guard let whatsNewDelegateViewController = viewController as? WhatsNewViewDelegate else { return }
-        let viewModel = WhatsNewViewModel(provider: provider)
         let sheet = WhatsNewViewController(viewModel: viewModel,
                                            delegate: whatsNewDelegateViewController)
         sheet.modalPresentationStyle = .automatic
