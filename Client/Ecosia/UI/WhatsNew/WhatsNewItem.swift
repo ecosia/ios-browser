@@ -5,7 +5,7 @@
 import Foundation
 
 struct WhatsNewItem {
-    let imageURL: URL?
+    let image: UIImage?
     let title: String
     let subtitle: String
 }

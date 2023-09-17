@@ -40,10 +40,10 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
     /// The items we would like to attempt to show in the update sheet
     private let whatsNewItems: [Version: [WhatsNewItem]] = [
         Version("9.0.0")!: [
-            WhatsNewItem(imageURL: URL.localURLForImageset(name: "tree", withExtension: "pdf"),
+            WhatsNewItem(image: UIImage(named: "tree"),
                          title: .localized(.whatsNewFirstItemTitle),
                          subtitle: .localized(.whatsNewFirstItemDescription)),
-            WhatsNewItem(imageURL: URL.localURLForImageset(name: "customisation", withExtension: "pdf"),
+            WhatsNewItem(image: UIImage(named: "customisation"),
                          title: .localized(.whatsNewSecondItemTitle),
                          subtitle: .localized(.whatsNewSecondItemDescription))
         ]

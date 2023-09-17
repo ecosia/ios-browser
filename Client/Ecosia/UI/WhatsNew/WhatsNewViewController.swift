@@ -229,7 +229,7 @@ extension WhatsNewViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: WhatsNewCell.cellIdentifier, for: indexPath) as! WhatsNewCell
         let item = viewModel.items[indexPath.row]
-        cell.configure(with: item, images: images)
+        cell.configure(with: item)
         return cell
     }
 }
