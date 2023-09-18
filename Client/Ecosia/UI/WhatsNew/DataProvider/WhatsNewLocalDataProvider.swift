@@ -26,7 +26,7 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
     var shouldShowWhatsNewPage: Bool {
         evaluateVersionNeedsUpdate()
         let dataProviderVersionsString = getVersionRange().map { $0.description }
-        guard let savedWhatsNewItemVersionsString = User.shared.whatsNewItemsVersions else { return true }
+        guard let savedWhatsNewItemVersionsString = User.shared.whatsNewItemsVersionsShown else { return true }
         return savedWhatsNewItemVersionsString.allSatisfy { dataProviderVersionsString.contains($0) } == false
     }
     
