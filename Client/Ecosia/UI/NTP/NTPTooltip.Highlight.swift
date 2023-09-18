@@ -50,7 +50,7 @@ extension NTPTooltip {
             return .referralSpotlight
         }
 
-        if user.showsCounterIntro {
+        if user.shouldShowImpactIntro {
             return .collectiveImpactIntro
         }
 

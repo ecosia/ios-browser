@@ -61,7 +61,7 @@ extension HomepageViewController: NTPTooltipDelegate {
                 Analytics.shared.openInvitePromo()
                 User.shared.hideReferralSpotlight()
             case .collectiveImpactIntro:
-                User.shared.hideCounterIntro()
+                User.shared.hideImpactIntro()
             }
             self?.reloadTooltip()
         }
