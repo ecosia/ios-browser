@@ -48,7 +48,7 @@ final class WelcomeTourAction: UIView, NotificationThemeable {
         let capped = multiplesOfFive * 5 * oneMillion
         let count = formatter.string(from: .init(value: capped)) ?? "150M"
 
-        let top = WelcomeTourRow(image: "trees", title: "\(count)+", text: .localized(.treesPlantedByTheCommunity))
+        let top = WelcomeTourRow(image: "trees", title: "\(count)+", text: .localized(.treesPlantedByTheCommunityCapitalized))
         stack.addArrangedSubview(top)
 
         let middle = WelcomeTourRow(image: "hand", title: "60+", text: .localized(.activeProjects))

@@ -196,8 +196,6 @@ final class HomepageSettings: Setting {
     var profile: Profile
 
     override var accessoryView: UIImageView? { disclosureIndicator }
-    // TODO: Add accessibility
-//    override var accessibilityIdentifier: String? { return }
 
     init(settings: SettingsTableViewController) {
         self.profile = settings.profile

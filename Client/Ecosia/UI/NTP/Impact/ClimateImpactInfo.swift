@@ -33,7 +33,7 @@ enum ClimateImpactInfo: Equatable {
         case .invites(let value):
             return .localizedPlural(.friendInvitesPlural, num: value)
         case .totalTrees:
-            return .localized(.treesPlantedByTheCommunity) // TODO: lowercase first letter
+            return .localized(.treesPlantedByTheCommunity)
         case .totalInvested:
             return .localized(.investedIntoClimateAction)
         }
