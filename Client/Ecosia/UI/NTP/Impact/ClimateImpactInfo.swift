@@ -5,7 +5,7 @@
 import Foundation
 import Core
 
-enum ClimateImpactInfo {
+enum ClimateImpactInfo: Equatable {
     case personalCounter(value: Int, searches: Int)
     case invites(value: Int)
     case totalTrees(value: Int)

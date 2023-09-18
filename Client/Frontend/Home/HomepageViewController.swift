@@ -48,7 +48,8 @@ class HomepageViewController: UIViewController, HomePanel, FeatureFlaggable {
         self.viewModel = HomepageViewModel(profile: profile,
                                            isPrivate: isPrivate,
                                            tabManager: tabManager,
-                                           urlBar: urlBar)
+                                           urlBar: urlBar,
+                                           referrals: referrals)
         self.delegate = delegate
         self.referrals = referrals
 
@@ -79,7 +80,6 @@ class HomepageViewController: UIViewController, HomePanel, FeatureFlaggable {
         super.viewDidLoad()
 
         configureCollectionView()
-        configureEcosiaSetup()
 
         // Delay setting up the view model delegate to ensure the views have been configured first
         viewModel.delegate = self
@@ -302,7 +302,6 @@ class HomepageViewController: UIViewController, HomePanel, FeatureFlaggable {
             }*/
         }
     }
-    let personalCounter = PersonalCounter()
     weak var referrals: Referrals!
 }
 

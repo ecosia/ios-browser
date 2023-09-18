@@ -15,18 +15,6 @@ protocol SharedHomepageCellDelegate: AnyObject {
     func invalidateLayout(at indexPaths: [IndexPath])
 }
 
-extension HomepageViewController {
-    func configureEcosiaSetup() {
-        personalCounter.subscribe(self) { [weak self] _ in
-            self?.viewModel.impactViewModel.refreshCells()
-        }
-
-        referrals.subscribe(self) { [weak self] _ in
-            self?.viewModel.impactViewModel.refreshCells()
-        }
-    }
-}
-
 extension HomepageViewController: SharedHomepageCellDelegate {
     func openLink(url: URL) {
         homePanelDelegate?.homePanel(didSelectURL: url, visitType: .link, isGoogleTopSite: false)

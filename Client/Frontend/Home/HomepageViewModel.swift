@@ -87,6 +87,7 @@ class HomepageViewModel: FeatureFlaggable, NTPLayoutHighlightDataSource {
          tabManager: TabManagerProtocol,
          urlBar: URLBarViewProtocol,
          //Ecosia: remove experiments // nimbus: FxNimbus = FxNimbus.shared,
+         referrals: Referrals, // Ecosia: Add referrals
          isZeroSearch: Bool = false) {
         self.profile = profile
         self.isZeroSearch = isZeroSearch
@@ -95,7 +96,7 @@ class HomepageViewModel: FeatureFlaggable, NTPLayoutHighlightDataSource {
         self.libraryViewModel = NTPLibraryCellViewModel()
         self.bookmarkNudgeViewModel = NTPBookmarkNudgeCellViewModel()
         self.topSiteViewModel = TopSitesViewModel(profile: profile)
-        self.impactViewModel = NTPImpactCellViewModel()
+        self.impactViewModel = NTPImpactCellViewModel(referrals: referrals)
         self.newsViewModel = NTPNewsCellViewModel()
         self.aboutEcosiaViewModel = NTPAboutEcosiaCellViewModel()
         self.ntpCustomizationViewModel = NTPCustomizationCellViewModel()

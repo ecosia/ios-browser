@@ -13,48 +13,77 @@ protocol NTPImpactCellDelegate: AnyObject {
 class NTPImpactCellViewModel {
     weak var delegate: NTPImpactCellDelegate?
     var infoItemSections: [[ClimateImpactInfo]] {
-        var firstSection: [ClimateImpactInfo] = [
-            .invites(value: User.shared.referrals.count)
-        ]
+        var firstSection: [ClimateImpactInfo] = [invitesInfo]
         if !Unleash.isEnabled(.incentiveRestrictedSearch) {
-            firstSection.insert(.personalCounter(value: User.shared.impact,
-                                                 // TODO: Use PersonalCounter
-                                                 searches: User.shared.treeCount),
+            firstSection.insert(personalCounterInfo,
                                 at: 0)
         }
-        let secondSection: [ClimateImpactInfo] = [
-            .totalTrees(value: TreesProjection.shared.treesAt(.init())),
-            .totalInvested(value: InvestmentsProjection.shared.totalInvestedAt(.init()))
-        ]
+        let secondSection: [ClimateImpactInfo] = [totalTreesInfo, totalInvestedInfo]
         return [firstSection, secondSection]
     }
+    var invitesInfo: ClimateImpactInfo {
+        .invites(value: User.shared.referrals.count)
+    }
+    var personalCounterInfo: ClimateImpactInfo {
+        .personalCounter(value: User.shared.impact,
+                         searches: personalCounter.state ?? User.shared.treeCount)
+    }
+    var totalTreesInfo: ClimateImpactInfo {
+        .totalTrees(value: TreesProjection.shared.treesAt(.init()))
+    }
+    var totalInvestedInfo: ClimateImpactInfo {
+        .totalInvested(value: InvestmentsProjection.shared.totalInvestedAt(.init()))
+    }
 
+    private let personalCounter = PersonalCounter()
     private var cells = [Int:NTPImpactCell]()
-    func refreshCells() {
-        // TODO: Refresh only relevant content
-        cells.forEach { (index, cell) in
-            cell.refresh(items: infoItemSections[index])
+    private let referrals: Referrals
+    init(referrals: Referrals) {
+        self.referrals = referrals
+        
+        referrals.subscribe(self) { [weak self] _ in
+            guard let self = self else { return }
+            self.refreshCell(withInfo: self.invitesInfo)
         }
+        
+        personalCounter.subscribe(self) { [weak self] _ in
+            guard let self = self else { return }
+            self.refreshCell(withInfo: self.personalCounterInfo)
+        }
+    }
+    
+    deinit {
+        referrals.unsubscribe(self)
+        personalCounter.unsubscribe(self)
     }
 
     func subscribeToProjections() {
         guard !UIAccessibility.isReduceMotionEnabled else {
-            refreshCells()
+            refreshCell(withInfo: totalTreesInfo)
+            refreshCell(withInfo: totalInvestedInfo)
             return
         }
 
         TreesProjection.shared.subscribe(self) { [weak self] _ in
-            self?.refreshCells()
+            guard let self = self else { return }
+            self.refreshCell(withInfo: self.totalTreesInfo)
         }
         
         InvestmentsProjection.shared.subscribe(self) { [weak self] _ in
-            self?.refreshCells()
+            guard let self = self else { return }
+            self.refreshCell(withInfo: self.totalInvestedInfo)
         }
     }
 
     func unsubscribeToProjections() {
         TreesProjection.shared.unsubscribe(self)
         InvestmentsProjection.shared.unsubscribe(self)
+    }
+    
+    func refreshCell(withInfo info: ClimateImpactInfo) {
+        let indexForInfo = infoItemSections.firstIndex { $0.contains(where: { $0 == info }) }
+        guard let index = indexForInfo else { return }
+        cells[index]?.refresh(items: infoItemSections[index])
     }
 }
 
