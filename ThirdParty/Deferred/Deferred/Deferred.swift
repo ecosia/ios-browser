@@ -31,8 +31,13 @@ open class Deferred<T> {
     private func _fill(value: T, assertIfFilled: Bool) {
         let (filledValue, blocks) = protected.withWriteLock { data -> (T, [UponBlock]) in
             if assertIfFilled {
-                precondition(data.protectedValue == nil, "Cannot fill an already-filled Deferred")
-                data.protectedValue = value
+                // Ecosia: Silencing the precondition and replacing it with a warning
+//                precondition(data.protectedValue == nil, "Cannot fill an already-filled Deferred")
+                if data.protectedValue != nil {
+                    print("Warning: Attempt to fill an already-filled Deferred.")
+                } else {
+                    data.protectedValue = value
+                }
             } else if data.protectedValue == nil {
                 data.protectedValue = value
             }
