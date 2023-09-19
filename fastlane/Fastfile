@@ -69,6 +69,18 @@ platform :ios do
   
   desc "Testflight build for Beta Channel"
   lane :testflight_beta do
+
+    version_number = get_xcconfig_value(
+      path: 'Client/Configuration/Common.xcconfig',
+      name: 'MARKETING_VERSION'
+    )
+
+    ci_run_build_number = ENV["CIRCLE_BUILD_NUM"]
+
+    udpated_build_number = increment_build_number(
+      build_number: ci_run_build_number
+    )
+
     match(
       app_identifier: ['com.ecosia.ecosiaapp.firefox', 'com.ecosia.ecosiaapp.firefox.WidgetKit', 'com.ecosia.ecosiaapp.firefox.ShareTo'], 
       type: 'appstore',
