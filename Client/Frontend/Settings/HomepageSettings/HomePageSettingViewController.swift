@@ -251,7 +251,8 @@ extension HomePageSettingViewController {
 
         init(settings: SettingsTableViewController) {
             self.profile = settings.profile
-            super.init(title: NSAttributedString(string: .Settings.Homepage.Shortcuts.ShortcutsPageTitle))
+            // Ecosia: rename to Top Sites
+            super.init(title: NSAttributedString(string: .localized(.topSites)))
         }
 
         override func onClick(_ navigationController: UINavigationController?) {
