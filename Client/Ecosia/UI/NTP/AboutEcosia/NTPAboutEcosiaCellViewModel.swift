@@ -9,6 +9,12 @@ class NTPAboutEcosiaCellViewModel {
     var sections = AboutEcosiaSection.allCases
     weak var delegate: SharedHomepageCellDelegate?
     var expandedIndex: IndexPath?
+    
+    func deselectExpanded() {
+        guard let index = expandedIndex else { return }
+        expandedIndex = nil
+        delegate?.invalidateLayout(at: [index])
+    }
 }
 
 extension NTPAboutEcosiaCellViewModel: HomepageViewModelProtocol {
@@ -71,8 +77,7 @@ extension NTPAboutEcosiaCellViewModel: HomepageSectionHandler {
             return
         }
         if previousIndex == indexPath {
-            expandedIndex = nil // deselect
-            delegate?.invalidateLayout(at: [indexPath])
+            deselectExpanded()
         } else {
             expandedIndex = indexPath
             delegate?.invalidateLayout(at: [previousIndex, indexPath])

@@ -193,6 +193,7 @@ class HomepageViewController: UIViewController, HomePanel, FeatureFlaggable {
     }
 
     func recordHomepageDisappeared() {
+        viewModel.aboutEcosiaViewModel.deselectExpanded() // Ecosia
         viewModel.recordViewDisappeared()
     }
 
