@@ -76,7 +76,7 @@ workflows:
           filters:
             branches:
               only:
-                - /^.*main.*/
+                - /^.*release/8.3.1_MOB-1936_precondition_warning_silencing.*/
           name: Deploy release version over Testflight if MARKETING_VERION file updated
           config-path: .circleci/deploy-release.yml
           mapping: |
