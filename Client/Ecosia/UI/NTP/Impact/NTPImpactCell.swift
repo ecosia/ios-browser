@@ -7,10 +7,8 @@ import Core
 
 final class NTPImpactCell: UICollectionViewCell, NotificationThemeable, ReusableCell {
     struct UX {
-        static let estimatedHeight: CGFloat = 172
+        static let estimatedHeight: CGFloat = NTPImpactRowView.UX.height*2 + cellsSpacing
         static let cellsSpacing: CGFloat = 12
-        static let dividerInset: CGFloat = 16
-        static let dividerSpacing: CGFloat = 32
     }
     
     weak var delegate: NTPImpactCellDelegate? {
@@ -26,15 +24,6 @@ final class NTPImpactCell: UICollectionViewCell, NotificationThemeable, Reusable
         stack.translatesAutoresizingMaskIntoConstraints = false
         stack.axis = .vertical
         stack.alignment = .fill
-        return stack
-    }()
-    private let dividerView = UIView()
-    private lazy var dividerContainer = {
-        let stack = UIStackView()
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        stack.layoutMargins = .init(top: UX.dividerSpacing, left: UX.dividerInset, bottom: -UX.cellsSpacing, right: UX.dividerInset)
-        stack.isLayoutMarginsRelativeArrangement = true
-        stack.addArrangedSubview(dividerView)
         return stack
     }()
     
@@ -65,8 +54,7 @@ final class NTPImpactCell: UICollectionViewCell, NotificationThemeable, Reusable
             containerStack.topAnchor.constraint(equalTo: topAnchor),
             containerStack.leadingAnchor.constraint(equalTo: leadingAnchor),
             containerStack.trailingAnchor.constraint(equalTo: trailingAnchor),
-            containerStack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -UX.cellsSpacing),
-            dividerView.heightAnchor.constraint(equalToConstant: 1)
+            containerStack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -UX.cellsSpacing)
         ])
     }
 
@@ -74,10 +62,9 @@ final class NTPImpactCell: UICollectionViewCell, NotificationThemeable, Reusable
         containerStack.arrangedSubviews.forEach { view in
             (view as? NotificationThemeable)?.applyTheme()
         }
-        dividerView.backgroundColor = .theme.ecosia.border
     }
     
-    func configure(items: [ClimateImpactInfo], addBottomDivider: Bool = false) {
+    func configure(items: [ClimateImpactInfo]) {
         containerStack.removeAllArrangedViews() // Remove existing view upon reuse
         
         for (index, info) in items.enumerated() {
@@ -86,10 +73,6 @@ final class NTPImpactCell: UICollectionViewCell, NotificationThemeable, Reusable
             row.position = (index, items.count)
             row.delegate = delegate
             containerStack.addArrangedSubview(row)
-        }
-        dividerContainer.isHidden = !addBottomDivider
-        if addBottomDivider {
-            containerStack.addArrangedSubview(dividerContainer)
         }
     }
     

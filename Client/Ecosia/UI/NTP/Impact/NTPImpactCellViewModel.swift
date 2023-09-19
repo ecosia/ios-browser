@@ -109,23 +109,33 @@ extension NTPImpactCellViewModel: HomepageViewModelProtocol {
 
         let section = NSCollectionLayoutSection(group: group)
 
-        section.contentInsets = sectionType.sectionInsets(traitCollection)
+        section.contentInsets = sectionType.sectionInsets(traitCollection, bottomSpacing: 0)
+        
+        var supplementaryItems = [NSCollectionLayoutBoundarySupplementaryItem]()
         
         if NTPTooltip.highlight(for: User.shared, isInPromoTest: DefaultBrowserExperiment.isInPromoTest()) != nil {
-            section.boundarySupplementaryItems = [
+            supplementaryItems.append(
                 .init(layoutSize: .init(widthDimension: .fractionalWidth(1),
                                         heightDimension: .absolute(1)),
                       elementKind: UICollectionView.elementKindSectionHeader,
                       alignment: .top)
-            ]
+            )
         } else {
-            section.boundarySupplementaryItems = [
+            supplementaryItems.append(
                 .init(layoutSize: .init(widthDimension: .fractionalWidth(1),
                                         heightDimension: .estimated(100)),
                       elementKind: UICollectionView.elementKindSectionHeader,
                       alignment: .top)
-            ]
+            )
         }
+        
+        supplementaryItems.append(
+            .init(layoutSize: .init(widthDimension: .fractionalWidth(1),
+                                    heightDimension: .estimated(NTPImpactDividerFooter.UX.estimatedHeight)),
+                  elementKind: UICollectionView.elementKindSectionFooter,
+                  alignment: .bottom)
+        )
+        section.boundarySupplementaryItems = supplementaryItems
         
         return section
     }
@@ -144,7 +154,7 @@ extension NTPImpactCellViewModel: HomepageSectionHandler {
     func configure(_ cell: UICollectionViewCell, at indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = cell as? NTPImpactCell else { return UICollectionViewCell() }
         let items = infoItemSections[indexPath.row]
-        cell.configure(items: items, addBottomDivider: indexPath.row == (infoItemSections.count - 1))
+        cell.configure(items: items)
         cell.delegate = delegate
         cells[indexPath.row] = cell
         return cell

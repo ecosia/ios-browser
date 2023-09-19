@@ -136,6 +136,9 @@ class HomepageViewController: UIViewController, HomePanel, FeatureFlaggable {
         collectionView.register(NTPTooltip.self,
                                 forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
                                 withReuseIdentifier: NTPTooltip.key)
+        collectionView.register(NTPImpactDividerFooter.self,
+                                forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
+                                withReuseIdentifier: NTPImpactDividerFooter.cellIdentifier)
         collectionView.keyboardDismissMode = .onDrag
         collectionView.addGestureRecognizer(longPressRecognizer)
         collectionView.delegate = self
@@ -314,12 +317,17 @@ extension HomepageViewController: UICollectionViewDelegate, UICollectionViewData
         guard let sectionViewModel = viewModel.getSectionViewModel(shownSection: indexPath.section)
         else { return UICollectionReusableView() }
 
-        // tooltip for impact
+        // Ecosia: tooltip for impact
         if sectionViewModel.sectionType == .impact, let text = viewModel.ntpLayoutHighlightText(), kind == UICollectionView.elementKindSectionHeader {
             let tooltip = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: NTPTooltip.key, for: indexPath) as! NTPTooltip
             tooltip.setText(text)
             tooltip.delegate = self
             return tooltip
+        }
+        
+        // Ecosia: footer for impact
+        if sectionViewModel.sectionType == .impact, kind == UICollectionView.elementKindSectionFooter {
+            return collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: NTPImpactDividerFooter.cellIdentifier, for: indexPath)
         }
 
         guard let headerView = collectionView.dequeueReusableSupplementaryView(

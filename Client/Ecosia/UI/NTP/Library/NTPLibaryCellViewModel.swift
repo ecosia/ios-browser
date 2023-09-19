@@ -40,7 +40,6 @@ extension NTPLibraryCellViewModel: HomepageViewModelProtocol {
 
         let section = NSCollectionLayoutSection(group: group)
 
-        let insets = sectionType.sectionInsets(traitCollection)
         section.contentInsets = sectionType.sectionInsets(traitCollection, bottomSpacing: 8)
 
         return section
