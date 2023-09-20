@@ -41,6 +41,8 @@ class EcosiaTheme {
     var actionSheetCancelButton: UIColor { .Light.Button.primaryActive }
     var modalBackground: UIColor { .Light.Background.tertiary }
     var modalHeader: UIColor { .init(red: 0.153, green: 0.322, blue: 0.263, alpha: 1) }
+    
+    var whatsNewCloseButton: UIColor { .Light.Text.primary }
 
     var primaryText: UIColor { .Light.Text.primary }
     var primaryTextInverted: UIColor { .Dark.Text.primary }
@@ -114,6 +116,8 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var actionSheetCancelButton: UIColor { .Dark.Button.primaryActive }
     override var modalBackground: UIColor { .Dark.Background.secondary }
     override var modalHeader: UIColor { .Dark.Background.secondary }
+    
+    override var whatsNewCloseButton: UIColor { .white }
 
     override var primaryText: UIColor { .Dark.Text.primary}
     override var primaryTextInverted: UIColor { .Light.Text.primary }
