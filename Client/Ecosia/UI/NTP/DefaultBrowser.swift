@@ -110,7 +110,7 @@ final class DefaultBrowser: UIViewController, NotificationThemeable {
             forest.contentMode = .scaleAspectFit
         }
 
-        let waves = UIImageView(image: .init(named: "ntpIntroWaves"))
+        let waves = UIImageView(image: .init(named: "waves"))
         waves.translatesAutoresizingMaskIntoConstraints = false
         waves.contentMode = .scaleToFill
         content.addSubview(waves)
