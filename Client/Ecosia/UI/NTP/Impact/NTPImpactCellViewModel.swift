@@ -113,7 +113,7 @@ extension NTPImpactCellViewModel: HomepageViewModelProtocol {
         
         var supplementaryItems = [NSCollectionLayoutBoundarySupplementaryItem]()
         
-        if NTPTooltip.highlight(for: User.shared, isInPromoTest: DefaultBrowserExperiment.isInPromoTest()) != nil {
+        if NTPTooltip.highlight() != nil {
             supplementaryItems.append(
                 .init(layoutSize: .init(widthDimension: .fractionalWidth(1),
                                         heightDimension: .absolute(1)),
@@ -141,7 +141,7 @@ extension NTPImpactCellViewModel: HomepageViewModelProtocol {
     }
 
     func numberOfItemsInSection() -> Int {
-        return infoItemSections.count
+        infoItemSections.count
     }
 
     var isEnabled: Bool {

@@ -577,7 +577,7 @@ class BrowserViewController: UIViewController {
     private func prepareURLOnboardingContextualHint() {
         guard contextHintVC.shouldPresentHint()
                 && !User.shared.firstTime
-                && NTPTooltip.highlight(for: .shared, isInPromoTest: DefaultBrowserExperiment.isInPromoTest()) == nil
+                && NTPTooltip.highlight() == nil
         else { return }
 
         contextHintVC.configure(

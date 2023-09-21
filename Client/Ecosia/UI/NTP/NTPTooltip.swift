@@ -8,10 +8,12 @@ final class NTPTooltip: UICollectionReusableView, NotificationThemeable {
     enum TailPosition {
         case leading, center
     }
+    struct UX {
+        static let margin: CGFloat = 16
+        static let containerMargin: CGFloat = 12
+    }
     
     static let key = String(describing: NTPTooltip.self)
-    static let margin = CGFloat(16)
-    static let containerMargin = CGFloat(12)
     private weak var textLabel: UILabel!
     private weak var tail: UIImageView!
     private weak var closeButton: UIButton!
@@ -42,6 +44,11 @@ final class NTPTooltip: UICollectionReusableView, NotificationThemeable {
         super.init(coder: coder)
         commonInit()
     }
+    
+    override func preferredLayoutAttributesFitting(_ layoutAttributes: UICollectionViewLayoutAttributes) -> UICollectionViewLayoutAttributes {
+        // Empty override required to prevent UICollectionViewRecursion on NTPLayout.adjustImpactTooltipFrame
+        return layoutAttributes
+    }
 
     private func commonInit() {
         translatesAutoresizingMaskIntoConstraints = false
@@ -53,7 +60,7 @@ final class NTPTooltip: UICollectionReusableView, NotificationThemeable {
         background.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
         background.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
         background.topAnchor.constraint(equalTo: topAnchor).isActive = true
-        background.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -Self.margin, priority: .init(999)).isActive = true
+        background.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -UX.margin, priority: .init(999)).isActive = true
 
         let stack = UIStackView()
         stack.translatesAutoresizingMaskIntoConstraints = false
@@ -89,12 +96,12 @@ final class NTPTooltip: UICollectionReusableView, NotificationThemeable {
         self.closeButton = closeButton
 
         addSubview(stack)
-        stack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Self.margin).isActive = true
-        let trailing = stack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -Self.margin)
+        stack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: UX.margin).isActive = true
+        let trailing = stack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -UX.margin)
         trailing.priority = .init(rawValue: 999)
         trailing.isActive = true
-        stack.topAnchor.constraint(equalTo: topAnchor, constant: Self.containerMargin).isActive = true
-        stack.bottomAnchor.constraint(equalTo: background.bottomAnchor, constant: -Self.containerMargin).isActive = true
+        stack.topAnchor.constraint(equalTo: topAnchor, constant: UX.containerMargin).isActive = true
+        stack.bottomAnchor.constraint(equalTo: background.bottomAnchor, constant: -UX.containerMargin).isActive = true
 
         let tail = UIImageView(image: .init(named: "tail"))
         tail.translatesAutoresizingMaskIntoConstraints = false

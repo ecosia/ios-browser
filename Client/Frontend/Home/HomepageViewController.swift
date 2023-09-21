@@ -319,7 +319,9 @@ extension HomepageViewController: UICollectionViewDelegate, UICollectionViewData
         else { return UICollectionReusableView() }
 
         // Ecosia: tooltip for impact
-        if sectionViewModel.sectionType == .impact, let text = viewModel.ntpLayoutHighlightText(), kind == UICollectionView.elementKindSectionHeader {
+        if sectionViewModel.sectionType == .impact,
+            let text = NTPTooltip.highlight()?.text,
+            kind == UICollectionView.elementKindSectionHeader {
             let tooltip = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: NTPTooltip.key, for: indexPath) as! NTPTooltip
             tooltip.setText(text)
             tooltip.delegate = self

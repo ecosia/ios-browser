@@ -121,7 +121,7 @@ class HomepageViewModel: FeatureFlaggable, NTPLayoutHighlightDataSource {
 
         viewAppeared = true
 
-        if NTPTooltip.highlight(for: .shared, isInPromoTest: DefaultBrowserExperiment.isInPromoTest()) == .referralSpotlight {
+        if NTPTooltip.highlight() == .referralSpotlight {
             Analytics.shared.showInvitePromo()
         }
         
@@ -160,11 +160,6 @@ class HomepageViewModel: FeatureFlaggable, NTPLayoutHighlightDataSource {
         guard let actualSectionNumber = shownSections[safe: shownSection]?.rawValue else { return nil }
         return childViewModels[safe: actualSectionNumber]
     }
-
-    func ntpLayoutHighlightText() -> String? {
-        return NTPTooltip.highlight(for: User.shared, isInPromoTest: DefaultBrowserExperiment.isInPromoTest())?.text
-    }
-
 }
 
 // MARK: - HomepageDataModelDelegate
