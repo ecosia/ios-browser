@@ -12,14 +12,20 @@ protocol HomepageViewControllerDelegate: AnyObject {
 
 protocol SharedHomepageCellDelegate: AnyObject {
     func openLink(url: URL)
-    func invalidateLayout(at indexPaths: [IndexPath])
 }
 
 extension HomepageViewController: SharedHomepageCellDelegate {
     func openLink(url: URL) {
         homePanelDelegate?.homePanel(didSelectURL: url, visitType: .link, isGoogleTopSite: false)
     }
-    
+}
+
+
+protocol SharedHomepageCellLayoutDelegate: AnyObject {
+    func invalidateLayout(at indexPaths: [IndexPath])
+}
+
+extension HomepageViewController: SharedHomepageCellLayoutDelegate {
     func invalidateLayout(at indexPaths: [IndexPath]) {
         let context = UICollectionViewLayoutInvalidationContext()
         context.invalidateItems(at: indexPaths)
@@ -79,7 +85,7 @@ extension HomepageViewController: NTPLibraryDelegate {
 }
 
 extension HomepageViewController: NTPImpactCellDelegate {
-    func impactCellButtonAction(info: ClimateImpactInfo) {
+    func impactCellButtonClickedWithInfo(_ info: ClimateImpactInfo) {
         switch info {
         case .personalCounter:
             Analytics.shared.navigation(.open, label: .counter)

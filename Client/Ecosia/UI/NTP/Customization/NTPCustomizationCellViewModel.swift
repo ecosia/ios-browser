@@ -8,7 +8,7 @@ protocol NTPCustomizationCellDelegate: AnyObject {
     func openNTPCustomizationSettings()
 }
 
-class NTPCustomizationCellViewModel {
+final class NTPCustomizationCellViewModel {
     weak var delegate: NTPCustomizationCellDelegate?
 }
 

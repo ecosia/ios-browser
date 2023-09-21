@@ -38,13 +38,11 @@ final class NTPImpactRowView: UIView, NotificationThemeable {
     }()
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .preferredFont(forTextStyle: .title2).bold()
         return label
     }()
     private lazy var subtitleLabel: UILabel = {
         let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .preferredFont(forTextStyle: .footnote)
         return label
     }()
@@ -166,6 +164,6 @@ final class NTPImpactRowView: UIView, NotificationThemeable {
     }
     
     @objc private func buttonAction() {
-        delegate?.impactCellButtonAction(info: info)
+        delegate?.impactCellButtonClickedWithInfo(info)
     }
 }

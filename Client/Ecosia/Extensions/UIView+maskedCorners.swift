@@ -5,7 +5,7 @@
 import Foundation
 
 extension UIView {
-    fileprivate struct Positions: OptionSet {
+    private struct Positions: OptionSet {
         static let top = Positions(rawValue: 1)
         static let bottom = Positions(rawValue: 1 << 1)
         let rawValue: Int8
@@ -18,6 +18,11 @@ extension UIView {
         }
     }
     
+    /// Updates `layer.maskedCorners` based on the position of the view inside any sort of list.
+    /// It masks top left and right if the view is the first of the list and bottom left and right if the view is the last.
+    /// - Parameters:
+    ///   - row: The position of the view.
+    ///   - totalCount: The total count of views on the list.
     func setMaskedCornersUsingPosition(row: Int, totalCount: Int) {
         let pos = Positions.derive(row: row, totalCount: totalCount)
         var masked: CACornerMask = []

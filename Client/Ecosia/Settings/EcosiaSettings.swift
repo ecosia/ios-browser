@@ -193,7 +193,7 @@ final class EcosiaSendAnonymousUsageDataSetting: BoolSetting {
 }
 
 final class HomepageSettings: Setting {
-    var profile: Profile
+    private var profile: Profile
 
     override var accessoryView: UIImageView? { disclosureIndicator }
 

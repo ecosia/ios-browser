@@ -5,10 +5,10 @@
 import Foundation
 
 extension NumberFormatter {
-    static func ecosiaCurrency(withoutSymbol: Bool = false) -> NumberFormatter {
+    static func ecosiaCurrency(withoutEuroSymbol: Bool = false) -> NumberFormatter {
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
-        formatter.currencySymbol = withoutSymbol ? "" : "€"
+        formatter.currencySymbol = withoutEuroSymbol ? "" : "€"
         formatter.maximumFractionDigits = 0
         formatter.usesGroupingSeparator = true
         formatter.currencyGroupingSeparator = ","

@@ -18,7 +18,7 @@ enum ClimateImpactInfo: Equatable {
         case .invites(let value):
             return "\(value)"
         case .totalTrees(let value):
-            return NumberFormatter.ecosiaCurrency(withoutSymbol: true)
+            return NumberFormatter.ecosiaCurrency(withoutEuroSymbol: true)
                 .string(from: .init(integerLiteral: value)) ?? ""
         case .totalInvested(let value):
             return NumberFormatter.ecosiaCurrency()

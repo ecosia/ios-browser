@@ -5,9 +5,11 @@
 import Foundation
 import Core
 
-class NTPAboutEcosiaCellViewModel {
-    var sections = AboutEcosiaSection.allCases
-    weak var delegate: SharedHomepageCellDelegate?
+typealias NTPAboutEcosiaCellDelegate = SharedHomepageCellDelegate & SharedHomepageCellLayoutDelegate
+
+final class NTPAboutEcosiaCellViewModel {
+    let sections = AboutEcosiaSection.allCases
+    weak var delegate: NTPAboutEcosiaCellDelegate?
     var expandedIndex: IndexPath?
     
     func deselectExpanded() {

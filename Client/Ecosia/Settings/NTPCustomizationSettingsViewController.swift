@@ -33,13 +33,11 @@ final class NTPCustomizationSettingsViewController: SettingsTableViewController 
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         navigationController?.navigationBar.prefersLargeTitles = false
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
         settingsDelegate?.reloadHomepage()
     }
 }

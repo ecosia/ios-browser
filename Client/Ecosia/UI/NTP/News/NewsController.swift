@@ -196,3 +196,18 @@ private final class NewsSubHeader: UICollectionReusableView, NotificationThemeab
         subtitle.textColor = UIColor.theme.ecosia.secondaryText
     }
 }
+
+extension UICollectionView {
+    fileprivate var maxWidth: CGFloat {
+        let insets = max(max(safeAreaInsets.left, safeAreaInsets.right), 16) * 2
+        let maxWidth = bounds.width - insets
+        
+        if traitCollection.userInterfaceIdiom == .pad {
+            return min(maxWidth, 544)
+        } else if traitCollection.verticalSizeClass == .compact {
+            return min(maxWidth, 375)
+        } else {
+            return maxWidth
+        }
+    }
+}

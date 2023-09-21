@@ -45,7 +45,7 @@ final class WelcomeTourTransparent: UIView, NotificationThemeable {
             let income = WelcomeTourRow(image: "financialReports", title: totalIncome, text: .localized(.totalIncome))
             stack.addArrangedSubview(income)
         }
-        if let treesFinanced = NumberFormatter.ecosiaCurrency(withoutSymbol: true)
+        if let treesFinanced = NumberFormatter.ecosiaCurrency(withoutEuroSymbol: true)
             .string(from: .init(value: report.numberOfTreesFinanced)) {
             let trees = WelcomeTourRow(image: "treesUpdate", title: treesFinanced, text: .localized(.treesFinanced))
             stack.addArrangedSubview(trees)

@@ -7,10 +7,10 @@ import Shared
 import Core
 
 protocol NTPImpactCellDelegate: AnyObject {
-    func impactCellButtonAction(info: ClimateImpactInfo)
+    func impactCellButtonClickedWithInfo(_ info: ClimateImpactInfo)
 }
 
-class NTPImpactCellViewModel {
+final class NTPImpactCellViewModel {
     weak var delegate: NTPImpactCellDelegate?
     var infoItemSections: [[ClimateImpactInfo]] {
         var firstSection: [ClimateImpactInfo] = [invitesInfo]
