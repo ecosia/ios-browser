@@ -185,6 +185,8 @@ extension String {
         case discoverWhereWe = "Discover where we plant trees, and find out how our tree planting projects across the globe are doing."
         case learnHowWe = "Learn how we protect your privacy by encrypting your searches, never selling your data to advertisers without your permission and more."
         case findAnswersTo = "Find answers to popular questions like how Ecosia neutralizes CO2 emissions and what it means to be a social business."
+        case aboutEcosiaCollapseAccessibility = "Interact to collapse content"
+        case aboutEcosiaExpandAccessibility = "Interact to expand content"
         case customization = "Customization"
         case clearAll = "Clear all"
         case searchBarHint = "To make entering info easier, the toolbar can be set to the bottom of the screen"

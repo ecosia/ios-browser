@@ -67,6 +67,7 @@ final class NTPAboutEcosiaCell: UICollectionViewCell, ReusableCell {
         button.backgroundColor = .clear
         button.layer.cornerRadius = 20
         button.addTarget(self, action: #selector(learnMoreAction), for: .touchUpInside)
+        button.accessibilityLabel = learnMoreLabel.text
         return button
     }()
     private lazy var learnMoreLabel: UILabel = {
@@ -76,6 +77,7 @@ final class NTPAboutEcosiaCell: UICollectionViewCell, ReusableCell {
         label.adjustsFontForContentSizeCategory = true
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = .localized(.learnMore)
+        label.isAccessibilityElement = false
         return label
     }()
     private lazy var dividerView: UIView = {
@@ -114,6 +116,7 @@ final class NTPAboutEcosiaCell: UICollectionViewCell, ReusableCell {
     override func preferredLayoutAttributesFitting(_ layoutAttributes: UICollectionViewLayoutAttributes) -> UICollectionViewLayoutAttributes {
         let isExpanded = viewModel?.expandedIndex == layoutAttributes.indexPath
         rotateIndicator(isExpanded: isExpanded)
+        updateAccessibility(isExpanded: isExpanded)
         let height = isExpanded ? expandedHeight : UX.height
         layoutAttributes.frame.size = contentView
             .systemLayoutSizeFitting(CGSize(width: layoutAttributes.frame.width,
@@ -193,6 +196,13 @@ final class NTPAboutEcosiaCell: UICollectionViewCell, ReusableCell {
             row: viewModel.sections.firstIndex(of: section) ?? 0,
             totalCount: viewModel.sections.count
         )
+    }
+    
+    func updateAccessibility(isExpanded: Bool) {
+        titleLabel.accessibilityTraits = .button
+        titleLabel.accessibilityHint = isExpanded ? .localized(.aboutEcosiaCollapseAccessibility) : .localized(.aboutEcosiaExpandAccessibility)
+        subtitleLabel.isAccessibilityElement = isExpanded
+        learnMoreButton.isAccessibilityElement = isExpanded
     }
     
     @objc private func highlighted() {
