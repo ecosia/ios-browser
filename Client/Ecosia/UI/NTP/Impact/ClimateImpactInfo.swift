@@ -42,7 +42,7 @@ enum ClimateImpactInfo: Equatable {
     var accessibilityLabel: String {
         switch self {
         case .personalCounter(let value, let searches):
-            return "\(value) " + .localizedPlural(.treesPlanted, num: value) + ";" + .localizedPlural(.searches, num: searches)
+            return value.spelledOutString + " " + .localizedPlural(.treesPlanted, num: value) + ";" + .localizedPlural(.searches, num: searches)
         case .invites(let value):
             return .localizedPlural(.friendInvitesPlural, num: value)
         case .totalTrees(let value):
