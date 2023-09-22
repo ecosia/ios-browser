@@ -85,9 +85,9 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
     private func evaluateVersionNeedsUpdate() {
         let isVersionNil = fromVersion == nil
         let isVersionLowerThanCurrent = fromVersion != nil && fromVersion! < toVersion
-        
-        if isVersionNil ||
-            isVersionLowerThanCurrent {
+        let isVersionSameAsCurrent = fromVersion != nil && fromVersion! == toVersion
+                
+        if isVersionNil || (isVersionLowerThanCurrent && !isVersionSameAsCurrent) {
             Version.updateFromCurrent(forKey: Self.appVersionUpdateKey)
         }
     }
@@ -100,11 +100,17 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
         evaluateVersionNeedsUpdate()
         
         // Ensure fromVersion is available.
-        guard let fromVersion else { return [] }
+        guard let fromVersion = self.fromVersion else { return [] }
+        
+        // If there's no update (i.e., the versions are the same), we shouldn't return any versions.
+        guard fromVersion != toVersion else { return [] }
         
         // Gather all versions
         let allVersions = Array(whatsNewItems.keys).sorted()
         
+        // Ensure the `toVersion` is equal to or bigger than the smallest version in `whatsNewItems`
+        guard toVersion >= allVersions.first! else { return [] }
+
         // Find the closest previous version or use the first one if `from` is older than all versions.
         let fromIndex = allVersions.lastIndex { $0 <= fromVersion } ?? 0
 
