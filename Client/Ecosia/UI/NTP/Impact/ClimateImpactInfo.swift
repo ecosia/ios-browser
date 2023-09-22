@@ -39,6 +39,19 @@ enum ClimateImpactInfo: Equatable {
         }
     }
     
+    var accessibilityLabel: String {
+        switch self {
+        case .personalCounter(let value, let searches):
+            return "\(value) " + .localizedPlural(.treesPlanted, num: value) + ";" + .localizedPlural(.searches, num: searches)
+        case .invites(let value):
+            return .localizedPlural(.friendInvitesPlural, num: value)
+        case .totalTrees(let value):
+            return value.spelledOutString + " " + .localized(.treesPlantedByTheCommunity)
+        case .totalInvested(let value):
+            return value.spelledOutString + " " + .localized(.investedIntoClimateAction)
+        }
+    }
+    
     var image: UIImage? {
         switch self {
         case .personalCounter:
@@ -63,6 +76,17 @@ enum ClimateImpactInfo: Equatable {
         }
     }
     
+    var accessibilityHint: String? {
+        switch self {
+        case .personalCounter:
+            return .localized(.howItWorks)
+        case .invites:
+            return .localized(.inviteFriends)
+        case .totalTrees, .totalInvested:
+            return nil
+        }
+    }
+    
     var progressIndicatorValue: Double? {
         switch self {
         case .personalCounter:
@@ -70,5 +94,14 @@ enum ClimateImpactInfo: Equatable {
         case .invites, .totalInvested, .totalTrees:
             return nil
         }
+    }
+}
+
+
+extension Int {
+    fileprivate var spelledOutString: String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .spellOut
+        return formatter.string(from: .init(integerLiteral: self)) ?? ""
     }
 }

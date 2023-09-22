@@ -104,6 +104,9 @@ final class NTPImpactRowView: UIView, NotificationThemeable {
         vStack.addArrangedSubview(titleLabel)
         vStack.addArrangedSubview(subtitleLabel)
         hStack.addArrangedSubview(vStack)
+        vStack.isAccessibilityElement = true
+        vStack.shouldGroupAccessibilityChildren = true
+        vStack.accessibilityLabel = info.accessibilityLabel
 
         hStack.addArrangedSubview(actionButton)
         
