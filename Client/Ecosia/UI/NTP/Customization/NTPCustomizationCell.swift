@@ -19,6 +19,7 @@ final class NTPCustomizationCell: UICollectionViewCell, NotificationThemeable, R
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle(.localized(.customizeHomepage), for: .normal)
         button.titleLabel?.font = .preferredFont(forTextStyle: .callout)
+        button.titleLabel?.adjustsFontSizeToFitWidth = true
         button.setImage(.init(named: ImageIdentifiers.settings)?.withRenderingMode(.alwaysTemplate), for: .normal)
         button.imageView?.contentMode = .scaleAspectFit
         button.setInsets(forContentPadding: .init(top: UX.verticalInset, left: UX.horizontalInset, bottom: UX.verticalInset, right: UX.horizontalInset),
