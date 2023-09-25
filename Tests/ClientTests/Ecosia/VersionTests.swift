@@ -80,6 +80,48 @@ final class VersionTests: XCTestCase {
 
 extension VersionTests {
     
+    func testFakeUpdateToSameVersionAgainstLocalDataProviderItemsData() {
+        
+        // Setup
+        let version = Version("8.3.0")!
+        let appVersionInfoProvider = MockAppVersionInfoProvider(mockedAppVersion: version.description)
+        let dataProvider = WhatsNewLocalDataProvider()
+        
+        // Given: An initial version of 8.3.0 and a "toVersion" of 8.3.0
+        Version.updateFromCurrent(forKey: Self.appVersionUpdateTestKey,
+                                  provider: appVersionInfoProvider)
+        
+        // When: We retrieve the What's New items after this "fake" update
+        let items = try? dataProvider.getData()
+        
+        // Then: We should not have items for versions beyond 8.3.0 (like 9.0.0)
+        XCTAssertTrue(items?.isEmpty == true, "WhatsNewItem list should be empty for fake update to same version")
+    }
+    
+    func testFakeUpdateToMinorVersionAgainstLocalDataProviderItemsData() {
+        
+        // Setup
+        let fromVersion = Version("8.3.0")!
+        let toVersion = Version("8.3.1")!
+        let appVersionInfoProvider = MockAppVersionInfoProvider(mockedAppVersion: toVersion.description)
+        let dataProvider = WhatsNewLocalDataProvider()
+
+        // Given: An initial version of 8.3.0 and a "toVersion" of 8.3.1
+        Version.updateFromCurrent(forKey: Self.appVersionUpdateTestKey, provider: MockAppVersionInfoProvider(mockedAppVersion: fromVersion.description))
+        
+        // When: We perform a fake update to 8.3.1
+        Version.updateFromCurrent(forKey: Self.appVersionUpdateTestKey, provider: appVersionInfoProvider)
+        
+        // And: We retrieve the What's New items after this update
+        let items = try? dataProvider.getData()
+        
+        // Then: We should not have items for versions beyond 8.3.1 (like 9.0.0)
+        XCTAssertTrue(items?.isEmpty == true, "WhatsNewItem list should be empty for an update to minor version when there are items for upper versions")
+    }
+}
+
+extension VersionTests {
+    
     struct MockAppVersionInfoProvider: AppVersionInfoProvider {
         
         var mockedAppVersion: String
