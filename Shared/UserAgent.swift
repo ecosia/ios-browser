@@ -106,7 +106,7 @@ public struct CustomUserAgentConstant {
 
 
     public static let customUAFor = [
-        "paypal.com": defaultMobileUA,
+        "paypal.com": UserAgentBuilder.defaultPayPalMobileUserAgent().userAgent(),
         "yahoo.com": defaultMobileUA,
         "disneyplus.com": customDesktopUA]
 
@@ -153,6 +153,16 @@ public struct UserAgentBuilder {
             platform: UserAgent.platform,
             platformDetails: UserAgent.platformDetails,
             extensions: "\(UserAgent.uaBitVersion) \(UserAgent.uaBitMobile) \(UserAgent.uaBitSafari)")
+    }
+    
+    // Ecosia: Add temporary fix for PayPal sessions
+    public static func defaultPayPalMobileUserAgent() -> UserAgentBuilder {
+        return UserAgentBuilder(
+            product: UserAgent.product,
+            systemInfo: "(\(UIDevice.current.model); CPU iPhone OS \(UIDevice.current.systemVersion.replacingOccurrences(of: ".", with: "_")) like Mac OS X)",
+            platform: UserAgent.platform,
+            platformDetails: UserAgent.platformDetails,
+            extensions: "FxiOS/\(AppInfo.appVersion)  \(UserAgent.uaBitMobile) \(UserAgent.uaBitSafari)")
     }
 
     public static func defaultDesktopUserAgent() -> UserAgentBuilder {
