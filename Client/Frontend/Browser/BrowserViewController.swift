@@ -163,7 +163,7 @@ class BrowserViewController: UIViewController {
     }
 
     fileprivate var shouldShowDefaultBrowserPromo: Bool { profile.prefs.intForKey(PrefsKeys.IntroSeen) == nil }
-    fileprivate var shouldShowWhatsNewPageScreen: Bool { whatsNewDataProvider.shouldShowWhatsNewPage && !User.shared.firstTime }
+    fileprivate var shouldShowWhatsNewPageScreen: Bool { !User.shared.firstTime && whatsNewDataProvider.shouldShowWhatsNewPage }
     
     let whatsNewDataProvider = WhatsNewLocalDataProvider()
     
