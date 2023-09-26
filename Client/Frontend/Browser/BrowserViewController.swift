@@ -163,7 +163,7 @@ class BrowserViewController: UIViewController {
     }
 
     fileprivate var shouldShowDefaultBrowserPromo: Bool { profile.prefs.intForKey(PrefsKeys.IntroSeen) == nil }
-    fileprivate var shouldShowWhatsNewPageScreen: Bool { whatsNewDataProvider.shouldShowWhatsNewPage }
+    fileprivate var shouldShowWhatsNewPageScreen: Bool { EcosiaInstallType.get() == .upgrade && whatsNewDataProvider.shouldShowWhatsNewPage }
     
     let whatsNewDataProvider = WhatsNewLocalDataProvider()
     

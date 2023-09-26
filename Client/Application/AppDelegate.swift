@@ -68,6 +68,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window!.makeKeyAndVisible()
         // Ecosia: pushNotificationSetup()
         appLaunchUtil?.setUpPostLaunchDependencies()
+        // Ecosia: Update EcosiaInstallType if needed
+        EcosiaInstallType.evaluateCurrentEcosiaInstallTypeWithVersionProvider(DefaultAppVersionInfoProvider())
         // Ecosia: Disable BG sync //backgroundSyncUtil = BackgroundSyncUtil(profile: profile, application: application)
         // Ecosia: lifecycle tracking
         Analytics.shared.activity(.launch)
