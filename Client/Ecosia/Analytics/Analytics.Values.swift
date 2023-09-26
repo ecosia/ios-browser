@@ -23,7 +23,6 @@ extension Analytics {
         enum Navigation: String {
             case
             inapp,
-            home,
             projects,
             counter,
             financialReports = "financial_reports",
@@ -37,6 +36,15 @@ extension Analytics {
             terms,
             treecard,
             treestore
+        }
+        
+        enum NTP: String {
+            case
+            customize,
+            topSites = "top_sites",
+            impact,
+            news,
+            about
         }
         
         enum Browser: String {
@@ -72,7 +80,9 @@ extension Analytics {
         claim,
         click,
         change,
-        display
+        display,
+        enable,
+        disable
         
         enum Activity: String {
             case

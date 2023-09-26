@@ -76,6 +76,12 @@ final class Analytics {
             .property(property?.rawValue))
     }
     
+    func ntp(_ action: Action, label: Label.NTP) {
+        track(Structured(category: Category.ntp.rawValue,
+                         action: action.rawValue)
+            .label(label.rawValue))
+    }
+    
     func navigation(_ action: Action, label: Label.Navigation) {
         track(Structured(category: Category.navigation.rawValue,
                          action: action.rawValue)
@@ -214,12 +220,6 @@ final class Analytics {
         track(Structured(category: Category.invitations.rawValue,
                          action: Action.click.rawValue)
             .label("learn_more"))
-    }
-    
-    func clickYourImpact(on category: Category) {
-        track(Structured(category: category.rawValue,
-                         action: Action.click.rawValue)
-            .label("your_impact"))
     }
     
     func searchbarChanged(to position: String) {

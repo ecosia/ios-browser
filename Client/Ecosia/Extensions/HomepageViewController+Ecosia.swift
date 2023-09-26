@@ -7,38 +7,30 @@ import Core
 
 protocol HomepageViewControllerDelegate: AnyObject {
     func homeDidTapSearchButton(_ home: HomepageViewController)
-    func homeDidPressPersonalCounter(_ home: HomepageViewController, completion: (() -> Void)?)
+    func showSettingsWithDeeplink(to destination: AppSettingsDeeplinkOption)
 }
 
-extension HomepageViewController {
-    func configureEcosiaSetup() {
-        personalCounter.subscribe(self) { [weak self] _ in
-            guard let self = self else { return }
-            self.updateTreesCell()
-        }
+protocol SharedHomepageCellDelegate: AnyObject {
+    func openLink(url: URL)
+}
 
-        referrals.subscribe(self) { [weak self] _ in
-            guard let self = self else { return }
-            self.updateTreesCell()
-        }
+extension HomepageViewController: SharedHomepageCellDelegate {
+    func openLink(url: URL) {
+        homePanelDelegate?.homePanel(didSelectURL: url, visitType: .link, isGoogleTopSite: false)
     }
+}
 
-    func updateTreesCell() {
-        guard let impactCell = viewModel.impactViewModel.cell else { return }
-        impactCell.display(treesCellModel, animated: false)
+
+protocol SharedHomepageCellLayoutDelegate: AnyObject {
+    func invalidateLayout(at indexPaths: [IndexPath])
+}
+
+extension HomepageViewController: SharedHomepageCellLayoutDelegate {
+    func invalidateLayout(at indexPaths: [IndexPath]) {
+        let context = UICollectionViewLayoutInvalidationContext()
+        context.invalidateItems(at: indexPaths)
+        collectionView.collectionViewLayout.invalidateLayout(with: context)
     }
-
-    var treesCellModel: NTPImpactCell.Model {
-        .init(impact: User.shared.impact, searches: personalCounter.state!, trees: TreeCounter.shared.treesAt(.init()))
-    }
-
-    @objc func allNews() {
-        let news = NewsController(items: viewModel.newsViewModel.items, delegate: self)
-        let nav = EcosiaNavigation(rootViewController: news)
-        present(nav, animated: true)
-        Analytics.shared.navigation(.open, label: .news)
-    }
-
 }
 
 extension HomepageViewController: NTPTooltipDelegate {
@@ -51,21 +43,21 @@ extension HomepageViewController: NTPTooltipDelegate {
     }
     
     private func handleTooltipTapped(_ tooltip: NTPTooltip?) {
-        guard let ntpHighlight = NTPTooltip.highlight(for: User.shared, isInPromoTest: DefaultBrowserExperiment.isInPromoTest()) else { return }
+        guard let ntpHighlight = NTPTooltip.highlight() else { return }
 
         UIView.animate(withDuration: 0.3) {
             tooltip?.alpha = 0
-        } completion: { _ in
-
+        } completion: { [weak self] _ in
             switch ntpHighlight {
-            case .counterIntro:
-                User.shared.hideCounterIntro()
             case .gotClaimed, .successfulInvite:
                 User.shared.referrals.accept()
             case .referralSpotlight:
                 Analytics.shared.openInvitePromo()
                 User.shared.hideReferralSpotlight()
+            case .collectiveImpactIntro:
+                User.shared.hideImpactIntro()
             }
+            self?.reloadTooltip()
         }
     }
 
@@ -92,14 +84,35 @@ extension HomepageViewController: NTPLibraryDelegate {
     }
 }
 
-extension HomepageViewController: YourImpactDelegate {
-    func yourImpact(didSelectURL url: URL) {
-        dismiss(animated: true)
-        homePanelDelegate?.homePanel(didSelectURL: url, visitType: .link, isGoogleTopSite: false)
+extension HomepageViewController: NTPImpactCellDelegate {
+    func impactCellButtonClickedWithInfo(_ info: ClimateImpactInfo) {
+        switch info {
+        case .personalCounter:
+            Analytics.shared.navigation(.open, label: .counter)
+            let url = Environment.current.urlProvider.aboutCounter
+            openLink(url: url)
+        case .invites:
+            let invite = MultiplyImpact(referrals: referrals)
+            invite.delegate = self
+            let nav = EcosiaNavigation(rootViewController: invite)
+            present(nav, animated: true)
+        default:
+            return
+        }
     }
 }
 
-extension HomepageViewController: NTPBookmarkNudgeViewDelegate {
+extension HomepageViewController: NTPNewsCellDelegate {
+    func openSeeAllNews() {
+        let news = NewsController(items: viewModel.newsViewModel.items)
+        news.delegate = self
+        let nav = EcosiaNavigation(rootViewController: news)
+        present(nav, animated: true)
+        Analytics.shared.navigation(.open, label: .news)
+    }
+}
+
+extension HomepageViewController: NTPBookmarkNudgeCellDelegate {
     func nudgeCellOpenBookmarks() {
         homePanelDelegate?.homePanelDidRequestToOpenLibrary(panel: .bookmarks)
         User.shared.hideBookmarksNTPNudgeCard()
@@ -109,5 +122,12 @@ extension HomepageViewController: NTPBookmarkNudgeViewDelegate {
     func nudgeCellDismiss() {
         User.shared.hideBookmarksNTPNudgeCard()
         reloadView()
+    }
+}
+
+extension HomepageViewController: NTPCustomizationCellDelegate {
+    func openNTPCustomizationSettings() {
+        Analytics.shared.ntp(.click, label: .customize)
+        delegate?.showSettingsWithDeeplink(to: .customizeHomepage)
     }
 }

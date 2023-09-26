@@ -253,9 +253,6 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
         let nightModeAction = getNightModeAction()
         section.append(contentsOf: nightModeAction)
 
-        let settingsAction = getSettingsAction()
-        section.append(settingsAction)
-
         return section
     }
 
@@ -383,34 +380,6 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
                                      iconString: ImageIdentifiers.edit) { _ in
             self.delegate?.showCustomizeHomePage()
         }.items
-    }
-
-    private func getSettingsAction() -> PhotonRowActions {
-        let title = String.AppMenu.AppMenuSettingsTitleString
-        let icon = ImageIdentifiers.settings
-
-        let openSettings = SingleActionViewModel(title: title,
-                                                 iconString: icon) { _ in
-            let settingsTableViewController = AppSettingsTableViewController(
-                with: self.profile,
-                and: self.tabManager,
-                delegate: self.menuActionDelegate)
-
-            let controller = ThemedNavigationController(rootViewController: settingsTableViewController)
-            // On iPhone iOS13 the WKWebview crashes while presenting file picker if its not full screen. Ref #6232
-            if UIDevice.current.userInterfaceIdiom == .phone {
-                controller.modalPresentationStyle = .fullScreen
-            }
-            controller.presentingModalViewControllerDelegate = self.menuActionDelegate
-            Analytics.shared.menuClick("settings")
-
-            // Wait to present VC in an async dispatch queue to prevent a case where dismissal
-            // of this popover on iPad seems to block the presentation of the modal VC.
-            DispatchQueue.main.async {
-                self.delegate?.showViewController(viewController: controller)
-            }
-        }.items
-        return openSettings
     }
 
     private func getNightModeAction() -> [PhotonRowActions] {

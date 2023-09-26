@@ -40,12 +40,12 @@ final class WelcomeTourTransparent: UIView, NotificationThemeable {
         addMonthView(toStack: stack)
         
         let report = FinancialReports.shared.latestReport
-        if let totalIncome = getCurrencyNumberFormatter()
+        if let totalIncome = NumberFormatter.ecosiaCurrency()
             .string(from: .init(value: report.totalIncome)) {
             let income = WelcomeTourRow(image: "financialReports", title: totalIncome, text: .localized(.totalIncome))
             stack.addArrangedSubview(income)
         }
-        if let treesFinanced = getCurrencyNumberFormatter(withoutSymbol: true)
+        if let treesFinanced = NumberFormatter.ecosiaCurrency(withoutEuroSymbol: true)
             .string(from: .init(value: report.numberOfTreesFinanced)) {
             let trees = WelcomeTourRow(image: "treesUpdate", title: treesFinanced, text: .localized(.treesFinanced))
             stack.addArrangedSubview(trees)
@@ -114,15 +114,5 @@ final class WelcomeTourTransparent: UIView, NotificationThemeable {
         monthView.backgroundColor = .theme.ecosia.primaryButton
         monthViewLabel.textColor = .theme.ecosia.tertiaryText
         monthViewImage.tintColor = .theme.ecosia.tertiaryText
-    }
-    
-    func getCurrencyNumberFormatter(withoutSymbol: Bool = false) -> NumberFormatter {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.currencySymbol = withoutSymbol ? "" : "€"
-        formatter.maximumFractionDigits = 0
-        formatter.usesGroupingSeparator = true
-        formatter.currencyGroupingSeparator = ","
-        return formatter
     }
 }

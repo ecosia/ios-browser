@@ -7,15 +7,13 @@ import Core
 
 extension NTPTooltip {
     enum Highlight {
-        case counterIntro
         case gotClaimed
         case successfulInvite
         case referralSpotlight
+        case collectiveImpactIntro
 
         var text: String {
             switch self {
-            case .counterIntro:
-                return .localized(.trackYourProgress)
             case .gotClaimed:
                 return .localized(.youveContributed)
             case .successfulInvite:
@@ -29,12 +27,15 @@ extension NTPTooltip {
                 return highlight
             case .referralSpotlight:
                 return .localized(.togetherWeCan)
+            case .collectiveImpactIntro:
+                return .localized(.seeTheCollectiveImpact)
             }
         }
 
     }
 
-    class func highlight(for user: Core.User, isInPromoTest: Bool) -> NTPTooltip.Highlight? {
+    class func highlight(for user: Core.User = User.shared,
+                         isInPromoTest: Bool = DefaultBrowserExperiment.isInPromoTest()) -> NTPTooltip.Highlight? {
         // on first start, when we show the default browser promo, no highlight should be shown
         guard !user.firstTime || isInPromoTest else { return nil }
 
@@ -50,8 +51,8 @@ extension NTPTooltip {
             return .referralSpotlight
         }
 
-        if user.showsCounterIntro {
-            return .counterIntro
+        if user.shouldShowImpactIntro {
+            return .collectiveImpactIntro
         }
 
         return nil

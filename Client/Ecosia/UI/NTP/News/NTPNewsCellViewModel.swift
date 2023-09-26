@@ -6,30 +6,31 @@ import Foundation
 import Shared
 import Core
 
-class NTPNewsViewModel {
-    struct UX {
-        static let bottomSpacing: CGFloat = 12
-    }
+protocol NTPNewsCellDelegate: AnyObject {
+    func openSeeAllNews()
+}
 
+final class NTPNewsCellViewModel {
     private let news = News()
     private (set) var items = [NewsModel]()
     private let images = Images(.init(configuration: .ephemeral))
-    weak var delegate: HomepageDataModelDelegate?
+    weak var delegate: NTPNewsCellDelegate?
+    weak var dataModelDelegate: HomepageDataModelDelegate?
 
     init() {
         news.subscribeAndReceive(self) { [weak self] in
             guard let self = self else { return }
             self.items = $0
-            self.delegate?.reloadView()
+            self.dataModelDelegate?.reloadView()
         }
     }
 
 }
 
 // MARK: HomeViewModelProtocol
-extension NTPNewsViewModel: HomepageViewModelProtocol {
+extension NTPNewsCellViewModel: HomepageViewModelProtocol {
     var isEnabled: Bool {
-        true
+        User.shared.showEcosiaNews
     }
 
     var sectionType: HomepageSectionType {
@@ -37,7 +38,11 @@ extension NTPNewsViewModel: HomepageViewModelProtocol {
     }
 
     var headerViewModel: LabelButtonHeaderViewModel {
-        return LabelButtonHeaderViewModel(title: .localized(.stories), isButtonHidden: true)
+        .init(title: .localized(.ecosiaNews),
+              isButtonHidden: false,
+              buttonTitle: .localized(.seeAll)) { [weak self] _ in
+            self?.delegate?.openSeeAllNews()
+        }
     }
 
     func section(for traitCollection: UITraitCollection) -> NSCollectionLayoutSection {
@@ -51,24 +56,15 @@ extension NTPNewsViewModel: HomepageViewModelProtocol {
 
         let section = NSCollectionLayoutSection(group: group)
 
-        let insets = sectionType.sectionInsets(traitCollection)
-        section.contentInsets = NSDirectionalEdgeInsets(
-            top: 0,
-            leading: insets,
-            bottom: UX.bottomSpacing,
-            trailing: insets)
-
+        section.contentInsets = sectionType.sectionInsets(traitCollection)
+        
         let size = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
                                           heightDimension: .estimated(100.0))
         let header = NSCollectionLayoutBoundarySupplementaryItem(
             layoutSize: size,
             elementKind: UICollectionView.elementKindSectionHeader,
             alignment: .top)
-        let footer = NSCollectionLayoutBoundarySupplementaryItem(
-            layoutSize: size,
-            elementKind: UICollectionView.elementKindSectionFooter,
-            alignment: .bottom)
-        section.boundarySupplementaryItems = [header, footer]
+        section.boundarySupplementaryItems = [header]
         return section
     }
 
@@ -89,13 +85,13 @@ extension NTPNewsViewModel: HomepageViewModelProtocol {
 
 }
 
-extension NTPNewsViewModel: HomepageSectionHandler {
+extension NTPNewsCellViewModel: HomepageSectionHandler {
 
     func configure(_ cell: UICollectionViewCell, at indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = cell as? NewsCell else { return UICollectionViewCell() }
+        guard let cell = cell as? NTPNewsCell else { return UICollectionViewCell() }
         let itemCount = numberOfItemsInSection()
         cell.defaultBackgroundColor = { .theme.ecosia.ntpImpactBackground }
-        cell.configure(items[indexPath.row], images: images, positions: .derive(row: indexPath.row, items: itemCount))
+        cell.configure(items[indexPath.row], images: images, row: indexPath.row, totalCount: itemCount)
         return cell
     }
 

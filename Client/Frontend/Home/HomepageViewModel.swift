@@ -17,7 +17,7 @@ class HomepageViewModel: FeatureFlaggable, NTPLayoutHighlightDataSource {
 
     struct UX {
         static let spacingBetweenSections: CGFloat = 32
-        static let standardInset: CGFloat = 18
+        static let standardInset: CGFloat = 16 // Ecosia: update value
         static let iPadInset: CGFloat = 50
         static let iPadTopSiteInset: CGFloat = 25
 
@@ -50,7 +50,6 @@ class HomepageViewModel: FeatureFlaggable, NTPLayoutHighlightDataSource {
 
     //Ecosia: let nimbus: FxNimbus
     let profile: Profile
-    fileprivate let personalCounter = PersonalCounter()
 
     var isZeroSearch: Bool {
         didSet {
@@ -70,11 +69,13 @@ class HomepageViewModel: FeatureFlaggable, NTPLayoutHighlightDataSource {
     // Child View models
     private var childViewModels: [HomepageViewModelProtocol]
     var headerViewModel: HomeLogoHeaderViewModel
-    var bookmarkNudgeViewModel: NTPBookmarkNudgeViewModel
-    var libraryViewModel: NTPLibraryViewModel
+    var bookmarkNudgeViewModel: NTPBookmarkNudgeCellViewModel
+    var libraryViewModel: NTPLibraryCellViewModel
     var topSiteViewModel: TopSitesViewModel
-    var impactViewModel: NTPImpactViewModel
-    var newsViewModel: NTPNewsViewModel
+    var impactViewModel: NTPImpactCellViewModel
+    var newsViewModel: NTPNewsCellViewModel
+    var aboutEcosiaViewModel: NTPAboutEcosiaCellViewModel
+    var ntpCustomizationViewModel: NTPCustomizationCellViewModel
 
     var shouldDisplayHomeTabBanner: Bool {
         return false // Ecoaia: return messageCardViewModel.shouldDisplayMessageCard
@@ -86,25 +87,30 @@ class HomepageViewModel: FeatureFlaggable, NTPLayoutHighlightDataSource {
          tabManager: TabManagerProtocol,
          urlBar: URLBarViewProtocol,
          //Ecosia: remove experiments // nimbus: FxNimbus = FxNimbus.shared,
+         referrals: Referrals, // Ecosia: Add referrals
          isZeroSearch: Bool = false) {
         self.profile = profile
         self.isZeroSearch = isZeroSearch
 
         self.headerViewModel = .init()
-        self.libraryViewModel = NTPLibraryViewModel()
-        self.bookmarkNudgeViewModel = NTPBookmarkNudgeViewModel()
+        self.libraryViewModel = NTPLibraryCellViewModel()
+        self.bookmarkNudgeViewModel = NTPBookmarkNudgeCellViewModel()
         self.topSiteViewModel = TopSitesViewModel(profile: profile)
-        self.impactViewModel = NTPImpactViewModel(personalCounter: personalCounter)
-        self.newsViewModel = NTPNewsViewModel()
+        self.impactViewModel = NTPImpactCellViewModel(referrals: referrals)
+        self.newsViewModel = NTPNewsCellViewModel()
+        self.aboutEcosiaViewModel = NTPAboutEcosiaCellViewModel()
+        self.ntpCustomizationViewModel = NTPCustomizationCellViewModel()
         self.childViewModels = [headerViewModel,
                                 bookmarkNudgeViewModel,
                                 libraryViewModel,
                                 topSiteViewModel,
                                 impactViewModel,
-                                newsViewModel]
+                                newsViewModel,
+                                aboutEcosiaViewModel,
+                                ntpCustomizationViewModel]
         self.isPrivate = isPrivate
         topSiteViewModel.delegate = self
-        newsViewModel.delegate = self
+        newsViewModel.dataModelDelegate = self
         updateEnabledSections()
     }
 
@@ -115,7 +121,7 @@ class HomepageViewModel: FeatureFlaggable, NTPLayoutHighlightDataSource {
 
         viewAppeared = true
 
-        if NTPTooltip.highlight(for: .shared, isInPromoTest: DefaultBrowserExperiment.isInPromoTest()) == .referralSpotlight {
+        if NTPTooltip.highlight() == .referralSpotlight {
             Analytics.shared.showInvitePromo()
         }
         
@@ -123,12 +129,12 @@ class HomepageViewModel: FeatureFlaggable, NTPLayoutHighlightDataSource {
             Analytics.shared.bookmarksNtp(action: .view)
         }
         
-        impactViewModel.startCounter()
+        impactViewModel.subscribeToProjections()
     }
 
     func recordViewDisappeared() {
         viewAppeared = false
-        impactViewModel.stopCounter()
+        impactViewModel.unsubscribeToProjections()
     }
 
     // MARK: - Manage sections
@@ -144,7 +150,7 @@ class HomepageViewModel: FeatureFlaggable, NTPLayoutHighlightDataSource {
     func refreshData(for traitCollection: UITraitCollection) {
         updateEnabledSections()
         childViewModels.forEach {
-            $0.refreshData(for: traitCollection)
+            $0.refreshData(for: traitCollection, isPortrait: UIWindow.isPortrait, device: UIDevice.current.userInterfaceIdiom)
         }
     }
 
@@ -154,11 +160,6 @@ class HomepageViewModel: FeatureFlaggable, NTPLayoutHighlightDataSource {
         guard let actualSectionNumber = shownSections[safe: shownSection]?.rawValue else { return nil }
         return childViewModels[safe: actualSectionNumber]
     }
-
-    func ntpLayoutHighlightText() -> String? {
-        return NTPTooltip.highlight(for: User.shared, isInPromoTest: DefaultBrowserExperiment.isInPromoTest())?.text
-    }
-
 }
 
 // MARK: - HomepageDataModelDelegate

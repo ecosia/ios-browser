@@ -48,7 +48,8 @@ class HomepageViewController: UIViewController, HomePanel, FeatureFlaggable {
         self.viewModel = HomepageViewModel(profile: profile,
                                            isPrivate: isPrivate,
                                            tabManager: tabManager,
-                                           urlBar: urlBar)
+                                           urlBar: urlBar,
+                                           referrals: referrals)
         self.delegate = delegate
         self.referrals = referrals
 
@@ -79,7 +80,6 @@ class HomepageViewController: UIViewController, HomePanel, FeatureFlaggable {
         super.viewDidLoad()
 
         configureCollectionView()
-        configureEcosiaSetup()
 
         // Delay setting up the view model delegate to ensure the views have been configured first
         viewModel.delegate = self
@@ -136,9 +136,9 @@ class HomepageViewController: UIViewController, HomePanel, FeatureFlaggable {
         collectionView.register(NTPTooltip.self,
                                 forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
                                 withReuseIdentifier: NTPTooltip.key)
-        collectionView.register(MoreButtonCell.self,
+        collectionView.register(NTPImpactDividerFooter.self,
                                 forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
-                                withReuseIdentifier: MoreButtonCell.cellIdentifier)
+                                withReuseIdentifier: NTPImpactDividerFooter.cellIdentifier)
         collectionView.keyboardDismissMode = .onDrag
         collectionView.addGestureRecognizer(longPressRecognizer)
         collectionView.delegate = self
@@ -193,6 +193,7 @@ class HomepageViewController: UIViewController, HomePanel, FeatureFlaggable {
     }
 
     func recordHomepageDisappeared() {
+        viewModel.aboutEcosiaViewModel.deselectExpanded() // Ecosia
         viewModel.recordViewDisappeared()
     }
 
@@ -305,7 +306,6 @@ class HomepageViewController: UIViewController, HomePanel, FeatureFlaggable {
             }*/
         }
     }
-    let personalCounter = PersonalCounter()
     weak var referrals: Referrals!
 }
 
@@ -318,21 +318,19 @@ extension HomepageViewController: UICollectionViewDelegate, UICollectionViewData
         guard let sectionViewModel = viewModel.getSectionViewModel(shownSection: indexPath.section)
         else { return UICollectionReusableView() }
 
-        // tooltip for impact
-        if sectionViewModel.sectionType == .impact, let text = viewModel.ntpLayoutHighlightText(), kind == UICollectionView.elementKindSectionHeader {
+        // Ecosia: tooltip for impact
+        if sectionViewModel.sectionType == .impact,
+            let text = NTPTooltip.highlight()?.text,
+            kind == UICollectionView.elementKindSectionHeader {
             let tooltip = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: NTPTooltip.key, for: indexPath) as! NTPTooltip
             tooltip.setText(text)
             tooltip.delegate = self
             return tooltip
         }
-
-        // footer for news
-        if sectionViewModel.sectionType == .news, kind == UICollectionView.elementKindSectionFooter  {
-            let moreButton = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: MoreButtonCell.cellIdentifier, for: indexPath) as! MoreButtonCell
-            moreButton.button.setTitle(.localized(.seeMoreNews), for: .normal)
-            moreButton.button.addTarget(self, action: #selector(allNews), for: .primaryActionTriggered)
-            moreButton.applyTheme()
-            return moreButton
+        
+        // Ecosia: footer for impact
+        if sectionViewModel.sectionType == .impact, kind == UICollectionView.elementKindSectionFooter {
+            return collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: NTPImpactDividerFooter.cellIdentifier, for: indexPath)
         }
 
         guard let headerView = collectionView.dequeueReusableSupplementaryView(
@@ -391,6 +389,10 @@ private extension HomepageViewController {
 
         viewModel.libraryViewModel.delegate = self
         viewModel.bookmarkNudgeViewModel.delegate = self
+        viewModel.impactViewModel.delegate = self
+        viewModel.newsViewModel.delegate = self
+        viewModel.aboutEcosiaViewModel.delegate = self
+        viewModel.ntpCustomizationViewModel.delegate = self
     }
 
     func openTabTray(_ sender: UIButton) {

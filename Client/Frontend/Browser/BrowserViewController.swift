@@ -164,11 +164,6 @@ class BrowserViewController: UIViewController {
 
     fileprivate var shouldShowDefaultBrowserPromo: Bool { profile.prefs.intForKey(PrefsKeys.IntroSeen) == nil }
     fileprivate var shouldShowWhatsNewPageScreen: Bool { whatsNewDataProvider.shouldShowWhatsNewPage }
-
-    // Ecosia
-    lazy var ecosiaNavigation: EcosiaNavigation = {
-        .init(rootViewController: YourImpact(delegate: self, referrals: referrals))
-    }()
     
     let whatsNewDataProvider = WhatsNewLocalDataProvider()
     
@@ -585,7 +580,7 @@ class BrowserViewController: UIViewController {
     private func prepareURLOnboardingContextualHint() {
         guard contextHintVC.shouldPresentHint()
                 && !User.shared.firstTime
-                && NTPTooltip.highlight(for: .shared, isInPromoTest: DefaultBrowserExperiment.isInPromoTest()) == nil
+                && NTPTooltip.highlight() == nil
         else { return }
 
         contextHintVC.configure(
@@ -1672,6 +1667,11 @@ extension BrowserViewController: SettingsDelegate {
         let isPrivate = tabManager.selectedTab?.isPrivate ?? false
         self.openURLInNewTab(url, isPrivate: isPrivate)
     }
+    
+    // Ecosia: Reload after ntp customization changes
+    func reloadHomepage() {
+        homepageViewController?.reloadView()
+    }
 }
 
 extension BrowserViewController: PresentingModalViewControllerDelegate {
@@ -1938,14 +1938,6 @@ extension BrowserViewController: HomePanelDelegate {
 
     func homePanelDidRequestToOpenSettings(at settingsPage: AppSettingsDeeplinkOption) {
         showSettingsWithDeeplink(to: settingsPage)
-    }
-
-    func homePanelDidRequestToOpenImpact() {
-        presentYourImpact { [weak self] in
-            self?.homepageViewController?.reloadView()
-        }
-        homepageViewController?.ntpTooltipTapped(nil)
-        Analytics.shared.clickYourImpact(on: .ntp)
     }
 }
 
