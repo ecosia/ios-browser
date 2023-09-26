@@ -151,6 +151,8 @@
 		2C8C07771E7800EA00DC1237 /* FindInPageTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C8C07761E7800EA00DC1237 /* FindInPageTest.swift */; };
 		2C97EC711E72C80E0092EC18 /* TopTabsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C97EC701E72C80E0092EC18 /* TopTabsTest.swift */; };
 		2C9C9FF72A03C7CF0038A3DD /* UnleashBingExperimentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9C9FF62A03C7CF0038A3DD /* UnleashBingExperimentTests.swift */; };
+		2C9F8CB92AC30F6F00678514 /* EcosiaInstallType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9F8CB82AC30F6E00678514 /* EcosiaInstallType.swift */; };
+		2C9F8CBC2AC3106300678514 /* EcosiaInstallTypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9F8CBA2AC3104800678514 /* EcosiaInstallTypeTests.swift */; };
 		2CA16FDE1E5F089100332277 /* SearchTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CA16FDD1E5F089100332277 /* SearchTest.swift */; };
 		2CA2040629D4954F006848DE /* EcosiaPageActionMenuCellTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CA2040529D4954F006848DE /* EcosiaPageActionMenuCellTests.swift */; };
 		2CAD6D992A7A96C000C2E96D /* Analytics+Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CAD6D982A7A96C000C2E96D /* Analytics+Configuration.swift */; };
@@ -1774,6 +1776,8 @@
 		2C9144B0B15218D8A0FCD538 /* es-AR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-AR"; path = "es-AR.lproj/ClearPrivateData.strings"; sourceTree = "<group>"; };
 		2C97EC701E72C80E0092EC18 /* TopTabsTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TopTabsTest.swift; sourceTree = "<group>"; };
 		2C9C9FF62A03C7CF0038A3DD /* UnleashBingExperimentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnleashBingExperimentTests.swift; sourceTree = "<group>"; };
+		2C9F8CB82AC30F6E00678514 /* EcosiaInstallType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EcosiaInstallType.swift; sourceTree = "<group>"; };
+		2C9F8CBA2AC3104800678514 /* EcosiaInstallTypeTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EcosiaInstallTypeTests.swift; sourceTree = "<group>"; };
 		2CA16FDD1E5F089100332277 /* SearchTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchTest.swift; sourceTree = "<group>"; };
 		2CA2040529D4954F006848DE /* EcosiaPageActionMenuCellTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaPageActionMenuCellTests.swift; sourceTree = "<group>"; };
 		2CAD6D982A7A96C000C2E96D /* Analytics+Configuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Analytics+Configuration.swift"; sourceTree = "<group>"; };
@@ -5317,6 +5321,7 @@
 		2CDABC732AB1C7C1009F6D98 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				2C9F8CB82AC30F6E00678514 /* EcosiaInstallType.swift */,
 				2CDABC762AB1C7D6009F6D98 /* Version */,
 				2CDABC7B2AB1E8CF009F6D98 /* AppInfoProvider */,
 			);
@@ -6750,6 +6755,7 @@
 		CAA6AC4628E470C500A13DE9 /* Ecosia */ = {
 			isa = PBXGroup;
 			children = (
+				2C9F8CBA2AC3104800678514 /* EcosiaInstallTypeTests.swift */,
 				2C9C9FF52A03C7950038A3DD /* ExperimentsTests */,
 				CAA6AC4228E4709F00A13DE9 /* EcosiaHistoryMigrationTests.swift */,
 				CAA6AC4428E470BB00A13DE9 /* EcosiaBookmarkMigrationTests.swift */,
@@ -9317,6 +9323,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5FC276552894AEFF00AF2721 /* LibraryPanelHelper.swift in Sources */,
+				2C9F8CB92AC30F6F00678514 /* EcosiaInstallType.swift in Sources */,
 				2CDABC7E2AB1EAA2009F6D98 /* DefaultAppVersionInfoProvider.swift in Sources */,
 				5A47CFF52860FB8900B2B7BF /* AppLaunchUtil.swift in Sources */,
 				D04CD74A216CF86B004FF5B0 /* SiriShortcuts.swift in Sources */,
@@ -9844,6 +9851,7 @@
 			files = (
 				E4CD9F1D1A6D9C2800318571 /* WebServerTests.swift in Sources */,
 				C869916528918C8E007ACC5C /* WallpaperURLSessionMock.swift in Sources */,
+				2C9F8CBC2AC3106300678514 /* EcosiaInstallTypeTests.swift in Sources */,
 				2CE2F21D2AA87B8B00623F26 /* VersionTests.swift in Sources */,
 				431C0D1E25C9DC4D00395CE4 /* DefaultBrowserOnboardingTests.swift in Sources */,
 				E1AEC17A286E0CF500062E29 /* WebViewNavigationHandlerTests.swift in Sources */,
