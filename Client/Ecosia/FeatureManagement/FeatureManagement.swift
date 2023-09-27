@@ -13,10 +13,18 @@ struct FeatureManagement {
     static func fetchConfiguration() {
         Task {
             do {
+                Self.addRefreshingRules()
                 try await _ = Unleash.start(env: .current, appVersion: AppInfo.ecosiaAppVersion)
             } catch {
                 debugPrint(error)
             }
         }
-    }    
+    }
+    
+    private static func addRefreshingRules() {
+        UnleashRefreshConfigurator()
+                    .withAppUpdateCheckRule(appVersion: AppInfo.ecosiaAppVersion)
+                    .withDeviceRegionUpdateCheckRule()
+                    .withTwentyFourHoursCacheExpirationRule()
+    }
 }
