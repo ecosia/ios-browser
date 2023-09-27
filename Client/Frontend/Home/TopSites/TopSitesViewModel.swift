@@ -135,7 +135,7 @@ extension TopSitesViewModel: HomepageViewModelProtocol, FeatureFlaggable {
     }
 
     var isEnabled: Bool {
-        return User.shared.topSites // Ecosia // featureFlags.isFeatureEnabled(.topSites, checking: .buildAndUser)
+        return User.shared.showTopSites // Ecosia // featureFlags.isFeatureEnabled(.topSites, checking: .buildAndUser)
     }
 
     func numberOfItemsInSection() -> Int {
@@ -163,11 +163,9 @@ extension TopSitesViewModel: HomepageViewModelProtocol, FeatureFlaggable {
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: item, count: sectionDimension.numberOfTilesPerRow)
         let section = NSCollectionLayoutSection(group: group)
 
-        let insets = sectionType.sectionInsets(traitCollection)
-        section.contentInsets = NSDirectionalEdgeInsets(top: 0,
-                                                        leading: insets,
-                                                        bottom: TopSiteItemCell.UX.bottomSpace,
-                                                        trailing: insets)
+        // Ecosia: Use sectionType's section insets with updated bottom spacing
+        section.contentInsets = sectionType.sectionInsets(traitCollection, bottomSpacing: 24)
+        
         section.interGroupSpacing = TopSiteItemCell.UX.bottomSpace
 
         return section

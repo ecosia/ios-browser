@@ -110,7 +110,7 @@ final class DefaultBrowser: UIViewController, NotificationThemeable {
             forest.contentMode = .scaleAspectFit
         }
 
-        let waves = UIImageView(image: .init(named: "ntpIntroWaves"))
+        let waves = UIImageView(image: .init(named: "waves"))
         waves.translatesAutoresizingMaskIntoConstraints = false
         waves.contentMode = .scaleToFill
         content.addSubview(waves)
@@ -160,7 +160,7 @@ final class DefaultBrowser: UIViewController, NotificationThemeable {
         self.arrow1 = arrow1
 
         let text1 = UILabel()
-        text1.text = .localized(.openAllLinksToPlantTrees, incentiveRestrictedAlternativeKey: .openAllLinksAutomatically)
+        text1.text = .localized(.openAllLinksToPlantTrees, incentiveRestrictedSearchAlternativeKey: .openAllLinksAutomatically)
         text1.translatesAutoresizingMaskIntoConstraints = false
         text1.font = .preferredFont(forTextStyle: .subheadline)
         text1.adjustsFontForContentSizeCategory = true
@@ -182,7 +182,7 @@ final class DefaultBrowser: UIViewController, NotificationThemeable {
         self.arrow2 = arrow2
 
         let text2 = UILabel()
-        text2.text = .localized(.growYourImpact, incentiveRestrictedAlternativeKey: .beClimateActive)
+        text2.text = .localized(.growYourImpact, incentiveRestrictedSearchAlternativeKey: .beClimateActive)
         text2.translatesAutoresizingMaskIntoConstraints = false
         text2.font = .preferredFont(forTextStyle: .subheadline)
         text2.adjustsFontForContentSizeCategory = true

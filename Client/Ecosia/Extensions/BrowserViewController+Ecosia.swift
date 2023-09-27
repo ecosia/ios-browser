@@ -10,28 +10,19 @@ extension BrowserViewController: HomepageViewControllerDelegate {
     func homeDidTapSearchButton(_ home: HomepageViewController) {
         urlBar.tabLocationViewDidTapLocation(self.urlBar.locationView)
     }
-
-    func homeDidPressPersonalCounter(_ home: HomepageViewController, completion: (() -> Void)? = nil) {
-        presentYourImpact(completion)
-    }
-
-    func presentYourImpact(_ completion: (() -> Void)? = nil) {
-        ecosiaNavigation.popToRootViewController(animated: false)
-        present(ecosiaNavigation, animated: true, completion: completion)
-    }
-}
-
-extension BrowserViewController: YourImpactDelegate {
-    func yourImpact(didSelectURL url: URL) {
-        guard let tab = tabManager.selectedTab else { return }
-        finishEditingAndSubmit(url, visitType: .link, forTab: tab)
-    }
 }
 
 extension BrowserViewController: DefaultBrowserDelegate {
     @available(iOS 14, *)
     func defaultBrowserDidShow(_ defaultBrowser: DefaultBrowser) {
         profile.prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
+        homepageViewController?.reloadTooltip()
+    }
+}
+
+extension BrowserViewController: WhatsNewViewDelegate {
+    func whatsNewViewDidShow(_ viewController: WhatsNewViewController) {
+        User.shared.updateWhatsNewItemsVersionsAppending(whatsNewDataProvider.getVersionRange().map { $0.description })
         homepageViewController?.reloadTooltip()
     }
 }
@@ -48,12 +39,26 @@ extension BrowserViewController: PageActionsShortcutsDelegate {
         dismiss(animated: true)
         Analytics.shared.menuClick("new_tab")
     }
+    
+    func pageOptionsSettings() {
+        let settingsTableViewController = AppSettingsTableViewController(
+            with: self.profile,
+            and: self.tabManager,
+            delegate: self)
 
-    func pageOptionsYourImpact() {
-        dismiss(animated: true) {
-            self.presentYourImpact()
+        let controller = ThemedNavigationController(rootViewController: settingsTableViewController)
+        // On iPhone iOS13 the WKWebview crashes while presenting file picker if its not full screen. Ref #6232
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            controller.modalPresentationStyle = .fullScreen
         }
-        Analytics.shared.menuClick("your_impact")
+        controller.presentingModalViewControllerDelegate = self
+        Analytics.shared.menuClick("settings")
+
+        // Wait to present VC in an async dispatch queue to prevent a case where dismissal
+        // of this popover on iPad seems to block the presentation of the modal VC.
+        DispatchQueue.main.async { [weak self] in
+            self?.showViewController(viewController: controller)
+        }
     }
 
     func pageOptionsShare() {

@@ -69,7 +69,8 @@ class AppSettingsTableViewController: SettingsTableViewController, FeatureFlagga
             viewController.tabManager = tabManager
 
         case .customizeHomepage:
-            viewController = HomePageSettingViewController(prefs: profile.prefs)
+            // Ecosia: Custom ntp customization settings
+            viewController = NTPCustomizationSettingsViewController()
 
         case .customizeTabs:
             viewController = TabsSettingsViewController()
@@ -90,6 +91,8 @@ class AppSettingsTableViewController: SettingsTableViewController, FeatureFlagga
         }
 
         viewController.profile = profile
+        // Ecosia: forward delegate to deeplink page
+        viewController.settingsDelegate = settingsDelegate
         navigationController?.pushViewController(viewController, animated: false)
         // Add a done button from this view
         viewController.navigationItem.rightBarButtonItem = navigationItem.rightBarButtonItem
@@ -171,7 +174,10 @@ class AppSettingsTableViewController: SettingsTableViewController, FeatureFlagga
             PersonalSearchSettings(prefs: prefs)
         ]
                 
-        var customization: [Setting] = [HomePageSettingViewController.TopSitesSettings(settings: self)]
+        // Ecosia: Custom homepage settings
+        let homepageSettings = HomepageSettings(settings: self)
+        homepageSettings.delegate = settingsDelegate
+        var customization: [Setting] = [homepageSettings]
         
         if tabTrayGroupsAreBuildActive || inactiveTabsAreBuildActive {
             customization += [TabsSetting()]
@@ -246,7 +252,7 @@ class AppSettingsTableViewController: SettingsTableViewController, FeatureFlagga
                 // Hidden Debug Settings
                 PushBackInstallation(settings: self),
                 ToggleBrandRefreshIntro(settings: self),
-                ToggleCounterIntro(settings: self),
+                ToggleImpactIntro(settings: self),
                 ShowTour(settings: self),
                 CreateReferralCode(settings: self),
                 AddReferral(settings: self),

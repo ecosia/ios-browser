@@ -12,15 +12,14 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
     private let images = Images(.init(configuration: .ephemeral))
     private let news = News()
     private let identifier = "news"
-    var delegate: YourImpactDelegate?
+    var delegate: SharedHomepageCellDelegate?
 
     required init?(coder: NSCoder) { nil }
 
-    init(items: [NewsModel], delegate: YourImpactDelegate?) {
+    init(items: [NewsModel]) {
         super.init(nibName: nil, bundle: nil)
-        self.delegate = delegate
         self.items = items
-        title = .localized(.stories)
+        title = .localized(.ecosiaNews)
         navigationItem.largeTitleDisplayMode = .always
     }
     
@@ -31,7 +30,7 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
         let collection = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
         collection.delegate = self
         collection.dataSource = self
-        collection.register(NewsCell.self, forCellWithReuseIdentifier: identifier)
+        collection.register(NTPNewsCell.self, forCellWithReuseIdentifier: identifier)
         collection.register(NewsSubHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: identifier)
         collection.backgroundView = indicator
         collection.contentInsetAdjustmentBehavior = .scrollableAxes
@@ -56,7 +55,7 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
 
             let section = NSCollectionLayoutSection(group: group)
 
-            let horizontal = (self.collection.bounds.width - self.collection.yourImpactMaxWidth) / 2
+            let horizontal = (self.collection.bounds.width - self.collection.maxWidth) / 2
             section.contentInsets = NSDirectionalEdgeInsets(
                 top: 0,
                 leading: horizontal,
@@ -117,15 +116,15 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
     }
     
     func collectionView(_: UICollectionView, cellForItemAt: IndexPath) -> UICollectionViewCell {
-        let cell = collection.dequeueReusableCell(withReuseIdentifier: identifier, for: cellForItemAt) as! NewsCell
-        cell.configure(items[cellForItemAt.row], images: images, positions: .derive(row: cellForItemAt.item, items: items.count))
+        let cell = collection.dequeueReusableCell(withReuseIdentifier: identifier, for: cellForItemAt) as! NTPNewsCell
+        cell.configure(items[cellForItemAt.row], images: images, row: cellForItemAt.item, totalCount: items.count)
         return cell
     }
 
 
     func collectionView(_: UICollectionView, didSelectItemAt: IndexPath) {
         let item = items[didSelectItemAt.row]
-        delegate?.yourImpact(didSelectURL: item.targetUrl)
+        delegate?.openLink(url: item.targetUrl)
         dismiss(animated: true, completion: nil)
         Analytics.shared.navigationOpenNews(item.trackingName)
     }
@@ -195,5 +194,20 @@ private final class NewsSubHeader: UICollectionReusableView, NotificationThemeab
     func applyTheme() {
         backgroundColor = UIColor.theme.ecosia.modalBackground
         subtitle.textColor = UIColor.theme.ecosia.secondaryText
+    }
+}
+
+extension UICollectionView {
+    fileprivate var maxWidth: CGFloat {
+        let insets = max(max(safeAreaInsets.left, safeAreaInsets.right), 16) * 2
+        let maxWidth = bounds.width - insets
+        
+        if traitCollection.userInterfaceIdiom == .pad {
+            return min(maxWidth, 544)
+        } else if traitCollection.verticalSizeClass == .compact {
+            return min(maxWidth, 375)
+        } else {
+            return maxWidth
+        }
     }
 }

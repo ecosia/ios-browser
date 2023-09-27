@@ -88,6 +88,9 @@ Link";
 /* Quick Actions title when widget enters edit mode */
 "TodayWidget.QuickActionsGalleryTitle" = "Quick Actions";
 
+/* Firefox shortcuts title when widget enters edit mode. Do not translate the word Firefox. */
+"TodayWidget.QuickActionsGalleryTitleV2" = "Ecosia Shortcuts";
+
 /* Sub label for medium size quick action widget */
 "TodayWidget.QuickActionsSubLabel" = "Ecosia - Quick Actions";
 

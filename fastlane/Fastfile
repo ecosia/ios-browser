@@ -1,6 +1,8 @@
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/. 
+require "base64"
+
 opt_out_usage
 
 fastlane_version "2.210.0"
@@ -110,10 +112,19 @@ platform :ios do
       configuration: "Release"
     )
 
+    app_store_connect_api_key(
+      key_id: ENV["FASTLANE_APPSTORE_CONNECT_KEY_ID"],
+      issuer_id: ENV["FASTLANE_APPSTORE_CONNECT_KEY_ISSUER_ID"],
+      key_content: Base64.decode64(ENV["FASTLANE_APPSTORE_CONNECT_KEY_CONTENT"])
+    )
+
     pilot(
-      skip_waiting_for_build_processing: true, 
       apple_id: "670881887",
-      itc_provider: "33YMRSYD2L"
+      itc_provider: "33YMRSYD2L",
+      distribute_external: true,
+      notify_external_testers: true,
+      changelog: "Our brand new iOS release is now ready to test. It includes many bug fixes and stability improvements. Happy testing! 🌳💚",
+      groups: "Ecosia Team"
     )
 
     tag_and_push(

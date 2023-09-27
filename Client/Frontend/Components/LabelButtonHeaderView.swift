@@ -5,7 +5,8 @@
 import UIKit
 
 struct LabelButtonHeaderViewModel {
-    var leadingInset: CGFloat = 0
+    // Ecosia: use standard value
+    var leadingInset: CGFloat = HomepageViewModel.UX.standardInset
     var trailingInset: CGFloat = HomepageViewModel.UX.standardInset
     var title: String?
     var titleA11yIdentifier: String?
@@ -27,13 +28,15 @@ class LabelButtonHeaderView: UICollectionReusableView, ReusableCell {
         static let maxMoreButtonTextSize: CGFloat = 49 // Style subheadline - AX5
         static let inBetweenSpace: CGFloat = 12
         static let bottomSpace: CGFloat = 16
-        static let bottomButtonSpace: CGFloat = 6
+        // Ecosia: set button bottom offset to align with label
+        static let buttonBottomOffset: CGFloat = 4
     }
 
     // MARK: - UIElements
     lazy var titleLabel: UILabel = .build { label in
         label.text = self.title
-        label.font = .preferredFont(forTextStyle: .headline).bold()
+        // Ecosia: update text style
+        label.font = .preferredFont(forTextStyle: .subheadline).bold()
         label.adjustsFontForContentSizeCategory = true
         label.numberOfLines = 1
     }
@@ -41,10 +44,9 @@ class LabelButtonHeaderView: UICollectionReusableView, ReusableCell {
     lazy var moreButton: ActionButton = .build { button in
         button.isHidden = true
         button.titleLabel?.adjustsFontForContentSizeCategory = true
-        button.titleLabel?.font = DynamicFontHelper.defaultHelper.preferredFont(withTextStyle: .subheadline,
-                                                                                maxSize: UX.maxMoreButtonTextSize)
         button.contentHorizontalAlignment = .right
-        button.setTitleColor(UIColor.Photon.Grey50, for: .highlighted)
+        // Ecosia: update button text style
+        button.titleLabel?.font = .preferredFont(forTextStyle: .callout)
         button.setContentHuggingPriority(UILayoutPriority(1000), for: .vertical)
     }
 
@@ -71,7 +73,7 @@ class LabelButtonHeaderView: UICollectionReusableView, ReusableCell {
 
     func setConstraints(viewModel: LabelButtonHeaderViewModel) {
         NSLayoutConstraint.activate([
-            moreButton.bottomAnchor.constraint(equalTo: titleLabel.lastBaselineAnchor, constant: 0),
+            moreButton.bottomAnchor.constraint(equalTo: titleLabel.lastBaselineAnchor, constant: UX.buttonBottomOffset),
             moreButton.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -viewModel.trailingInset),
 
             titleLabel.topAnchor.constraint(equalTo: topAnchor),
@@ -110,7 +112,8 @@ class LabelButtonHeaderView: UICollectionReusableView, ReusableCell {
 
         moreButton.isHidden = viewModel.isButtonHidden
         if !viewModel.isButtonHidden {
-            moreButton.setTitle(.RecentlySavedShowAllText, for: .normal)
+            // Ecosia: use viewModel.buttonTitle
+            moreButton.setTitle(viewModel.buttonTitle ?? .RecentlySavedShowAllText, for: .normal)
             moreButton.touchUpAction = viewModel.buttonAction
             moreButton.accessibilityIdentifier = viewModel.buttonA11yIdentifier
         }
@@ -123,7 +126,8 @@ class LabelButtonHeaderView: UICollectionReusableView, ReusableCell {
 extension LabelButtonHeaderView: NotificationThemeable {
     func applyTheme() {
         titleLabel.textColor = .theme.ecosia.primaryText
-        moreButton.setTitleColor(UIColor.theme.homePanel.activityStreamHeaderButton, for: .normal)
+        // Ecosia: update button text color
+        moreButton.setTitleColor(.theme.ecosia.primaryButton, for: .normal)
     }
 }
 

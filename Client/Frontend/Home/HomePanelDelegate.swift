@@ -12,7 +12,6 @@ protocol HomePanelDelegate: AnyObject {
     func homePanelDidRequestToOpenTabTray(withFocusedTab tabToFocus: Tab?, focusedSegment: TabTrayViewModel.Segment?)
     func homePanelDidRequestToOpenSettings(at settingsPage: AppSettingsDeeplinkOption)
     func homePanelDidPresentContextualHintOf(type: ContextualHintType)
-    func homePanelDidRequestToOpenImpact()
 }
 
 extension HomePanelDelegate {
