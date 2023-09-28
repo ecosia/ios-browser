@@ -34,15 +34,13 @@ extension NTPAboutEcosiaCellViewModel: HomepageViewModelProtocol {
     }
     
     func section(for traitCollection: UITraitCollection) -> NSCollectionLayoutSection {
-        let height = NTPAboutEcosiaCell.UX.height
-        let count = CGFloat(numberOfItemsInSection())
         let item = NSCollectionLayoutItem(
             layoutSize: .init(widthDimension: .fractionalWidth(1),
-                              heightDimension: .estimated(height))
+                              heightDimension: .estimated(100))
         )
         let group = NSCollectionLayoutGroup.horizontal(
             layoutSize: .init(widthDimension: .fractionalWidth(1),
-                              heightDimension: .estimated(height*count)),
+                              heightDimension: .estimated(100)),
             subitem: item,
             count: 1
         )
