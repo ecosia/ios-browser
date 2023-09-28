@@ -7,7 +7,6 @@ import Core
 
 final class NTPImpactCell: UICollectionViewCell, NotificationThemeable, ReusableCell {
     struct UX {
-        static let estimatedHeight: CGFloat = NTPImpactRowView.UX.height*2 + cellsSpacing
         static let cellsSpacing: CGFloat = 12
     }
     
@@ -51,10 +50,10 @@ final class NTPImpactCell: UICollectionViewCell, NotificationThemeable, Reusable
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            containerStack.topAnchor.constraint(equalTo: topAnchor),
-            containerStack.leadingAnchor.constraint(equalTo: leadingAnchor),
-            containerStack.trailingAnchor.constraint(equalTo: trailingAnchor),
-            containerStack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -UX.cellsSpacing)
+            containerStack.topAnchor.constraint(equalTo: contentView.topAnchor),
+            containerStack.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            containerStack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            containerStack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -UX.cellsSpacing)
         ])
     }
 

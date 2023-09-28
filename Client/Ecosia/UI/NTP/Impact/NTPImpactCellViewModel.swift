@@ -99,20 +99,21 @@ extension NTPImpactCellViewModel: HomepageViewModelProtocol {
     }
 
     func section(for traitCollection: UITraitCollection) -> NSCollectionLayoutSection {
-        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1),
-                                              heightDimension: .estimated(NTPImpactCell.UX.estimatedHeight))
-        let item = NSCollectionLayoutItem(layoutSize: itemSize)
-
-        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1),
-                                               heightDimension: .estimated(NTPImpactCell.UX.estimatedHeight))
-        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: item, count: 1)
-
+        let item = NSCollectionLayoutItem(
+            layoutSize: .init(widthDimension: .fractionalWidth(1),
+                              heightDimension: .estimated(200))
+        )
+        let group = NSCollectionLayoutGroup.horizontal(
+            layoutSize: .init(widthDimension: .fractionalWidth(1),
+                              heightDimension: .estimated(200)),
+            subitem: item,
+            count: 1
+        )
         let section = NSCollectionLayoutSection(group: group)
 
         section.contentInsets = sectionType.sectionInsets(traitCollection, bottomSpacing: 0)
         
         var supplementaryItems = [NSCollectionLayoutBoundarySupplementaryItem]()
-        
         if NTPTooltip.highlight() != nil {
             supplementaryItems.append(
                 .init(layoutSize: .init(widthDimension: .fractionalWidth(1),

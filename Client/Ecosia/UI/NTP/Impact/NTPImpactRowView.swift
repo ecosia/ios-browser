@@ -120,7 +120,7 @@ final class NTPImpactRowView: UIView, NotificationThemeable {
             hStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -UX.padding),
             hStack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -UX.padding),
             dividerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: UX.padding),
-            dividerView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -UX.padding),
+            dividerView.trailingAnchor.constraint(equalTo: trailingAnchor),
             dividerView.bottomAnchor.constraint(equalTo: bottomAnchor),
             dividerView.heightAnchor.constraint(equalToConstant: 1),
             imageContainer.heightAnchor.constraint(equalToConstant: UX.imageHeight),
