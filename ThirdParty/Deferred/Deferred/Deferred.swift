@@ -31,7 +31,11 @@ open class Deferred<T> {
     private func _fill(value: T, assertIfFilled: Bool) {
         let (filledValue, blocks) = protected.withWriteLock { data -> (T, [UponBlock]) in
             if assertIfFilled {
-                // Ecosia: Silencing the precondition and replacing it with a warning
+                // Ecosia: Silencing the precondition and replacing it with a warning.
+                // The issue seem to link back to a process of favicons downloads with a lot of websites in history/bookmarks.
+                // Some downloaded favicons resulted into a "too large" error being thrown at some point in the stacktrace.
+                // The FF codebase currently relies on a different mechanism.
+                // We will review it once we will perform the upgrade.
 //                precondition(data.protectedValue == nil, "Cannot fill an already-filled Deferred")
                 if data.protectedValue != nil {
                     print("Warning: Attempt to fill an already-filled Deferred.")
