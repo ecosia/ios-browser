@@ -13,7 +13,9 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
     
     /// The version from which the app was last updated. Optional in case this is the first run
     /// or previous upgrading from an implmention that didn't have this one in the first place.
-    private let fromVersion = Version.saved(forKey: WhatsNewLocalDataProvider.appVersionUpdateKey)
+    private var fromVersion: Version? {
+        Version.saved(forKey: WhatsNewLocalDataProvider.appVersionUpdateKey)
+    }
     
     /// The current version of the app.
     private var toVersion: Version {

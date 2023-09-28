@@ -80,6 +80,20 @@ final class VersionTests: XCTestCase {
 
 extension VersionTests {
     
+    func testUpgradeFromVersionWithoutLogic() {
+        // Simulate that the app was previously on a version that didn't have the Version struct logic.
+        // We can represent this by not having any version saved in UserDefaults.
+        
+        XCTAssertNil(Version.saved(forKey: Self.appVersionUpdateTestKey), "There should be no version saved initially.")
+        
+        // Simulate the app being updated to the current version which has the Version struct logic.
+        let currentVersion = "9.0.0" // Assuming 9.0.0 is the version with the new logic.
+        Version.updateFromCurrent(forKey: Self.appVersionUpdateTestKey, provider: MockAppVersionInfoProvider(mockedAppVersion: currentVersion))
+        
+        // Check if the version is now saved correctly.
+        XCTAssertEqual(Version.saved(forKey: Self.appVersionUpdateTestKey)?.description, currentVersion, "The version should be updated to \(currentVersion) after the upgrade.")
+    }
+    
     func testFakeUpdateToSameVersionAgainstLocalDataProviderItemsData() {
         
         // Setup
