@@ -133,19 +133,3 @@ extension VersionTests {
         XCTAssertTrue(items?.isEmpty == true, "WhatsNewItem list should be empty for an update to minor version when there are items for upper versions")
     }
 }
-
-extension VersionTests {
-    
-    struct MockAppVersionInfoProvider: AppVersionInfoProvider {
-        
-        var mockedAppVersion: String
-        
-        init(mockedAppVersion: String) {
-            self.mockedAppVersion = mockedAppVersion
-        }
-        
-        var version: String {
-            mockedAppVersion
-        }
-    }
-}

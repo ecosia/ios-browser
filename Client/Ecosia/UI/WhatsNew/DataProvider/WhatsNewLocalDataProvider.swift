@@ -8,36 +8,33 @@ import Core
 
 /// A local data provider for fetching What's New items based on app version updates.
 final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
-    
-    static let appVersionUpdateKey = "appVersionUpdateKey"
-    
-    /// The version from which the app was last updated. Optional in case this is the first run
-    /// or previous upgrading from an implmention that didn't have this one in the first place.
+        
+    /// The version from which the app was last updated.
     private var fromVersion: Version? {
-        Version.saved(forKey: WhatsNewLocalDataProvider.appVersionUpdateKey)
+        Version(EcosiaInstallType.persistedCurrentVersion())
     }
     
     /// The current version of the app.
     private var toVersion: Version {
-        Version(currentAppVersionProvider.version)!
+        Version(versionProvider.version)!
     }
     
     /// This value can be used to determine if the user should be presented with the What's New page.
     ///
     /// - Returns: `true` if the What's New page should be shown; otherwise, `false`.
     var shouldShowWhatsNewPage: Bool {
-        evaluateVersionNeedsUpdate()
-        let dataProviderVersionsString = getVersionRange().map { $0.description }
-        guard let savedWhatsNewItemVersionsString = User.shared.whatsNewItemsVersionsShown else { return true }
-        return savedWhatsNewItemVersionsString.allSatisfy { dataProviderVersionsString.contains($0) } == false
+        return EcosiaInstallType.get() == .upgrade
     }
-    
-    /// The current app version provider is the DefaultAppVersionInfoProvider
-    /// from which the Ecosia App Version is retrieved
-    private let currentAppVersionProvider = DefaultAppVersionInfoProvider()
+
+    /// The current app version provider from which the Ecosia App Version is retrieved
+    private var versionProvider: AppVersionInfoProvider
     
     /// Default initializer.
-    init() {}
+    /// - Parameters:
+    ///   - versionProvider: The current app version provider. Defaults to `DefaultAppVersionInfoProvider`
+    init(versionProvider: AppVersionInfoProvider = DefaultAppVersionInfoProvider()) {
+        self.versionProvider = versionProvider
+    }
     
     /// The items we would like to attempt to show in the update sheet
     private let whatsNewItems: [Version: [WhatsNewItem]] = [
@@ -57,12 +54,6 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
     ///
     /// - Returns: An array of `WhatsNewItem` to display.
     func getData() throws -> [WhatsNewItem] {
-        
-        evaluateVersionNeedsUpdate()
-        
-        // Ensure fromVersion is available.
-        guard let fromVersion else { return [] }
-        
         // Get the version range and corresponding What's New items.
         let versionRange = getVersionRange()
         var items: [WhatsNewItem] = []
@@ -73,43 +64,30 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
         }
         return items
     }
-    
-    /// Evaluates if the stored app version needs to be updated to the current version.
-    ///
-    /// This function checks two conditions:
-    /// 1. If `fromVersion` is `nil`, indicating no version was previously stored.
-    /// 2. If `fromVersion` exists but is lower than `toVersion`, suggesting an app update.
-    ///
-    /// In either case, the stored app version is updated to the current version using the key `appVersionUpdateKey`.
-    ///
-    /// - Note: This function relies on the existence of `fromVersion` and `toVersion` properties in its scope and
-    /// the `Version` type's ability to update stored versions.
-    private func evaluateVersionNeedsUpdate() {
-        let isVersionNil = fromVersion == nil
-        let isVersionLowerThanCurrent = fromVersion != nil && fromVersion! < toVersion
-        let isVersionSameAsCurrent = fromVersion != nil && fromVersion! == toVersion
-                
-        if isVersionNil || (isVersionLowerThanCurrent && !isVersionSameAsCurrent) {
-            Version.updateFromCurrent(forKey: Self.appVersionUpdateKey)
-        }
-    }
-    
+        
     /// Private helper to fetch version range.
     ///
     /// - Returns: An array of `Version` between from and to, inclusive.
     func getVersionRange() -> [Version] {
-        
-        evaluateVersionNeedsUpdate()
-        
-        // Ensure fromVersion is available.
-        guard let fromVersion = self.fromVersion else { return [] }
-        
-        // If there's no update (i.e., the versions are the same), we shouldn't return any versions.
-        guard fromVersion != toVersion else { return [] }
-        
+                
+        // Ensure this is an upgrade scenario; otherwise, return an empty version range.
+        guard EcosiaInstallType.get() == .upgrade else { return [] }
+
+        // Ensure `fromVersion` is available; otherwise, return an empty version range.
+        guard let fromVersion else { return [] }
+
         // Gather all versions
         let allVersions = Array(whatsNewItems.keys).sorted()
-        
+                
+        // At this point in the logic, we are still in the upgrade scenario
+        // however, if the fromVersion and the toVersion will result being the same
+        // we will assume that we have upgraded to a version that didn't have this logic in place before
+        // There is no need to enforce the check for `EcosiaInstallType.get() == .buildUpdate`
+        // As we currently checked the `.upgrade` scenario above.
+        if fromVersion == toVersion {
+            return allVersions.filter { $0 == toVersion } ?? []
+        }
+                
         // Gather first item in `allVersions` array
         guard let firstItemInAllVersions = allVersions.first else { return [] }
         

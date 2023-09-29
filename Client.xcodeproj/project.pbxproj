@@ -136,6 +136,7 @@
 		2C31ECAB2A2E13410058BC31 /* DefaultBrowserExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C31ECAA2A2E13410058BC31 /* DefaultBrowserExperiment.swift */; };
 		2C3357E22A09227100E76A48 /* AppInfo+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3357E02A09227100E76A48 /* AppInfo+Ecosia.swift */; };
 		2C3357E32A09227100E76A48 /* DeviceInfo+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3357E12A09227100E76A48 /* DeviceInfo+Ecosia.swift */; };
+		2C3386F02AC6BCA0009F789C /* MockAppVersionInfoProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3386EF2AC6BCA0009F789C /* MockAppVersionInfoProvider.swift */; };
 		2C3406C81E719F00000FD889 /* SettingsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3406C71E719F00000FD889 /* SettingsTest.swift */; };
 		2C3518BB29C34A0500D03ECD /* URLBarViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3518BA29C34A0500D03ECD /* URLBarViewTests.swift */; };
 		2C473BD0209778900008C853 /* DownloadFilesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C473BCF209778900008C853 /* DownloadFilesTests.swift */; };
@@ -1758,6 +1759,7 @@
 		2C33410CB7E921A125379D7C /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
 		2C3357E02A09227100E76A48 /* AppInfo+Ecosia.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AppInfo+Ecosia.swift"; sourceTree = "<group>"; };
 		2C3357E12A09227100E76A48 /* DeviceInfo+Ecosia.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DeviceInfo+Ecosia.swift"; sourceTree = "<group>"; };
+		2C3386EF2AC6BCA0009F789C /* MockAppVersionInfoProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAppVersionInfoProvider.swift; sourceTree = "<group>"; };
 		2C3406C71E719F00000FD889 /* SettingsTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsTest.swift; sourceTree = "<group>"; };
 		2C3518BA29C34A0500D03ECD /* URLBarViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLBarViewTests.swift; sourceTree = "<group>"; };
 		2C473BCF209778900008C853 /* DownloadFilesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadFilesTests.swift; sourceTree = "<group>"; };
@@ -6504,6 +6506,7 @@
 				8A7653C328A2E68B00924ABF /* MockPocketAPI.swift */,
 				8A2366F928A302E500846D1B /* MockSponsoredPocketAPI.swift */,
 				5A9A09D528B01FD500B6F51E /* MockURLBarView.swift */,
+				2C3386EF2AC6BCA0009F789C /* MockAppVersionInfoProvider.swift */,
 			);
 			path = Mocks;
 			sourceTree = "<group>";
@@ -9913,6 +9916,7 @@
 				2F13E79B1AC0C02700D75081 /* StringExtensionsTests.swift in Sources */,
 				C869915628917803007ACC5C /* WallpaperJSONTestProvider.swift in Sources */,
 				CAA6AC4328E4709F00A13DE9 /* EcosiaHistoryMigrationTests.swift in Sources */,
+				2C3386F02AC6BCA0009F789C /* MockAppVersionInfoProvider.swift in Sources */,
 				8AE1E1DB27B1C1320024C45E /* SearchBarSettingsViewModelTests.swift in Sources */,
 				CA24B53924ABFE250093848C /* LoginsListSelectionHelperTests.swift in Sources */,
 				2FDB10931A9FBEC5006CF312 /* PrefsTests.swift in Sources */,
