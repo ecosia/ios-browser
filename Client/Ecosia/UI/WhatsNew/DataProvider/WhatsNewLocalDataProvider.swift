@@ -82,7 +82,7 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
         // At this point in the logic, we are still in the upgrade scenario
         // however, if the fromVersion and the toVersion will result being the same
         // we will assume that we have upgraded to a version that didn't have this logic in place before
-        // There is no need to enforce the check for `EcosiaInstallType.get() == .buildUpdate`
+        // There is no need to enforce the check for something ideally considered as a build update.
         // As we currently checked the `.upgrade` scenario above.
         if fromVersion == toVersion {
             return allVersions.filter { $0 == toVersion } ?? []

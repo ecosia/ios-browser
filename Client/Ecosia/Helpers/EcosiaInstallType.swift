@@ -12,12 +12,7 @@ enum EcosiaInstallType: String {
     
     /// Represents an upgrade from a previous version of Ecosia.
     case upgrade
-    
-    /// Represents a state where a same version has been installed
-    /// A different build run / build number has replaced the previous installation.
-    /// This scenario won't happen production.
-    case buildUpdate
-    
+        
     /// Represents an unknown installation type.
     case unknown
 
@@ -85,8 +80,6 @@ extension EcosiaInstallType {
         if EcosiaInstallType.persistedCurrentVersion() != versionProvider.version {
             EcosiaInstallType.set(type: .upgrade)
             EcosiaInstallType.updateCurrentVersion(version: versionProvider.version)
-        } else if EcosiaInstallType.persistedCurrentVersion() == versionProvider.version {
-            EcosiaInstallType.set(type: .buildUpdate)
         }
     }
 }
