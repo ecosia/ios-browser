@@ -38,10 +38,6 @@ final class Welcome: UIViewController {
         return zoomedOut ? .lightContent : .darkContent
     }
 
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        .portrait
-    }
-
     // MARK: Views
     override func viewDidLoad() {
         super.viewDidLoad()

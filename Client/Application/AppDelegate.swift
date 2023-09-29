@@ -296,7 +296,7 @@ extension AppDelegate {
             rootVC = browserViewController!
         }
 
-        let navigationController = UINavigationController(rootViewController: rootVC)
+        let navigationController = WelcomeNavigation(rootViewController: rootVC)
         navigationController.isNavigationBarHidden = true
         navigationController.edgesForExtendedLayout = UIRectEdge(rawValue: 0)
         rootViewController = navigationController
