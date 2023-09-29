@@ -12,7 +12,7 @@ enum EcosiaInstallType: String {
     
     /// Represents an upgrade from a previous version of Ecosia.
     case upgrade
-    
+        
     /// Represents an unknown installation type.
     case unknown
 
