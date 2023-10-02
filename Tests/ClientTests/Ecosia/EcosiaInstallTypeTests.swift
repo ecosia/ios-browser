@@ -6,7 +6,7 @@ import XCTest
 @testable import Client
 @testable import Core
 
- final class EcosiaInstallTypeTests: XCTestCase {
+final class EcosiaInstallTypeTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
