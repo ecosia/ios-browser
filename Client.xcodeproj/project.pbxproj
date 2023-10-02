@@ -144,6 +144,7 @@
 		2C4A07DC20246EAD0083E320 /* DragAndDropTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4A07DB20246EAD0083E320 /* DragAndDropTests.swift */; };
 		2C4B6BF320349EB800A009C2 /* FirstRunTourTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4B6BF220349EB800A009C2 /* FirstRunTourTests.swift */; };
 		2C50F09A2AC703E500F09803 /* WhatsNewLocalDataProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C50F0992AC703E500F09803 /* WhatsNewLocalDataProviderTests.swift */; };
+		2C50F09C2ACAD8E400F09803 /* EcosiaInstallType+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C50F09B2ACAD8E400F09803 /* EcosiaInstallType+Extensions.swift */; };
 		2C5850012A02879A009D7703 /* BingExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5850002A02879A009D7703 /* BingExperiment.swift */; };
 		2C73A71B2A9E0B7A006EBAAB /* WhatsNewItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C73A71A2A9E0B7A006EBAAB /* WhatsNewItem.swift */; };
 		2C73A71D2A9E0B97006EBAAB /* WhatsNewDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C73A71C2A9E0B97006EBAAB /* WhatsNewDataProvider.swift */; };
@@ -1768,6 +1769,7 @@
 		2C4A07DB20246EAD0083E320 /* DragAndDropTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragAndDropTests.swift; sourceTree = "<group>"; };
 		2C4B6BF220349EB800A009C2 /* FirstRunTourTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstRunTourTests.swift; sourceTree = "<group>"; };
 		2C50F0992AC703E500F09803 /* WhatsNewLocalDataProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhatsNewLocalDataProviderTests.swift; sourceTree = "<group>"; };
+		2C50F09B2ACAD8E400F09803 /* EcosiaInstallType+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EcosiaInstallType+Extensions.swift"; sourceTree = "<group>"; };
 		2C5850002A02879A009D7703 /* BingExperiment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BingExperiment.swift; sourceTree = "<group>"; };
 		2C6045859589979C43AF09E0 /* jv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = jv; path = jv.lproj/ClearPrivateDataConfirm.strings; sourceTree = "<group>"; };
 		2C6E44099EACF7BE5438CEB6 /* ca */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ca; path = ca.lproj/Today.strings; sourceTree = "<group>"; };
@@ -5285,6 +5287,15 @@
 			path = MMP;
 			sourceTree = "<group>";
 		};
+		2C50F09D2ACAD94500F09803 /* EcosiaInstallType */ = {
+			isa = PBXGroup;
+			children = (
+				2C9F8CB82AC30F6E00678514 /* EcosiaInstallType.swift */,
+				2C50F09B2ACAD8E400F09803 /* EcosiaInstallType+Extensions.swift */,
+			);
+			path = EcosiaInstallType;
+			sourceTree = "<group>";
+		};
 		2C5850022A02903F009D7703 /* Experiments */ = {
 			isa = PBXGroup;
 			children = (
@@ -5325,7 +5336,7 @@
 		2CDABC732AB1C7C1009F6D98 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				2C9F8CB82AC30F6E00678514 /* EcosiaInstallType.swift */,
+				2C50F09D2ACAD94500F09803 /* EcosiaInstallType */,
 				2CDABC762AB1C7D6009F6D98 /* Version */,
 				2CDABC7B2AB1E8CF009F6D98 /* AppInfoProvider */,
 			);
@@ -9434,6 +9445,7 @@
 				EB9A179B20E69A7F00B12184 /* LegacyThemeManager.swift in Sources */,
 				EBFDB790211C83A5005CCA2F /* BrowserViewController+FindInPage.swift in Sources */,
 				EBB89509219398E500EB91A0 /* TabContentBlocker+ContentScript.swift in Sources */,
+				2C50F09C2ACAD8E400F09803 /* EcosiaInstallType+Extensions.swift in Sources */,
 				D3BE7B461B054F8600641031 /* UITestAppDelegate.swift in Sources */,
 				23D57E6E25ED6F2700883FAD /* SearchViewController.swift in Sources */,
 				3BB50E111D6274CD004B33DF /* TopSiteItemCell.swift in Sources */,

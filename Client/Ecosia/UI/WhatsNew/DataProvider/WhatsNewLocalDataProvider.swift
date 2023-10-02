@@ -19,14 +19,22 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
         Version(versionProvider.version)!
     }
     
-    /// This value can be used to determine if the user should be presented with the What's New page.
-    ///
+    /// A computed property to determine whether the "What's New" page should be displayed.
     /// - Returns: `true` if the What's New page should be shown; otherwise, `false`.
     var shouldShowWhatsNewPage: Bool {
+        // Get a list of version strings from the data provider.
         let dataProviderVersionsString = getVersionRange().map { $0.description }
+        
+        // Check if there are saved "What's New" item versions in the user settings.
         guard let savedWhatsNewItemVersionsString = User.shared.whatsNewItemsVersionsShown else { return true }
-        return savedWhatsNewItemVersionsString.allSatisfy { dataProviderVersionsString.contains($0) } == false
+        
+        // Determine if there are any new items to show based on saved versions.
+        let isNeedingItemsToShow = savedWhatsNewItemVersionsString.allSatisfy { dataProviderVersionsString.contains($0) } == false
+        
+        // Return true if it's an upgrade and there are new items to show.
+        return EcosiaInstallType.get() == .upgrade && isNeedingItemsToShow
     }
+
 
     /// The current app version provider from which the Ecosia App Version is retrieved
     private(set) var versionProvider: AppVersionInfoProvider
