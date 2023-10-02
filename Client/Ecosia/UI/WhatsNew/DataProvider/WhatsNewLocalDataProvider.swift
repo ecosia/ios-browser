@@ -22,6 +22,13 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
     /// A computed property to determine whether the "What's New" page should be displayed.
     /// - Returns: `true` if the What's New page should be shown; otherwise, `false`.
     var shouldShowWhatsNewPage: Bool {
+        
+        // Check if we are in the upgrade scenario
+        guard EcosiaInstallType.get() == .upgrade else {
+            markAllPreviousVersionsAsSeen()
+            return false
+        }
+        
         // Get a list of version strings from the data provider.
         let dataProviderVersionsString = getVersionRange().map { $0.description }
         
@@ -32,7 +39,7 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
         let isNeedingItemsToShow = savedWhatsNewItemVersionsString.allSatisfy { dataProviderVersionsString.contains($0) } == false
         
         // Return true if it's an upgrade and there are new items to show.
-        return EcosiaInstallType.get() == .upgrade && isNeedingItemsToShow
+        return isNeedingItemsToShow
     }
 
 
@@ -101,4 +108,15 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
         // Return the range.
         return Array(allVersions[fromIndex...toIndex])
     }
+}
+
+extension WhatsNewLocalDataProvider {
+    
+    private func markAllPreviousVersionsAsSeen() {
+        let previousVersions = whatsNewItems.keys
+            .filter { $0 <= toVersion }
+            .map { $0.description }
+        User.shared.updateWhatsNewItemsVersionsAppending(previousVersions)
+    }
+    
 }
