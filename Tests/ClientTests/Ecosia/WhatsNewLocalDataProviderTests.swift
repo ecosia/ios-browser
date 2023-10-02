@@ -43,6 +43,18 @@ final class WhatsNewLocalDataProviderTests: XCTestCase {
     
     // MARK: - Upgrade Tests
     
+    func testUpgradeToDifferentVersionShouldShowWhatsNew() {
+        // Given
+        let dataProvider = WhatsNewLocalDataProvider(versionProvider: MockAppVersionInfoProvider(mockedAppVersion: "10.0.0"))
+        EcosiaInstallType.set(type: .upgrade)
+        
+        // When
+        let shouldShowWhatsNew = dataProvider.shouldShowWhatsNewPage
+        
+        // Then
+        XCTAssertTrue(shouldShowWhatsNew, "Upgrade to a different version should show What's New")
+    }
+        
     func testUpgradeToSameVersionShouldNotShowWhatsNew() {
         // Given
         let dataProvider = WhatsNewLocalDataProvider(versionProvider: MockAppVersionInfoProvider(mockedAppVersion: "9.0.0"))
