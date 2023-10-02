@@ -22,7 +22,7 @@ enum EcosiaInstallType: String {
     static let installTypeKey = "ecosiaInstallTypeKey"
     
     /// The key used to store and retrieve the current installed version from UserDefaults.
-    static let currentInstalledVersionKey = "currentInstalledVersionKey"
+    static let currentInstalledVersionKey = "ecosiaCurrentInstalledVersionKey"
     
     // MARK: - Public Methods
     
