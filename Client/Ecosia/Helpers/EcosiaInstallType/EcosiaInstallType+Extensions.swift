@@ -19,7 +19,7 @@ extension EcosiaInstallType {
     /// - SeeAlso: `AppVersionInfoProvider`
     static func evaluateCurrentEcosiaInstallTypeWithVersionProvider(_ versionProvider: AppVersionInfoProvider) {
         
-        if !User.shared.firstTime &&
+        if User.shared.firstTime &&
             EcosiaInstallType.get() == .unknown {
             EcosiaInstallType.set(type: .fresh)
             EcosiaInstallType.updateCurrentVersion(version: versionProvider.version)

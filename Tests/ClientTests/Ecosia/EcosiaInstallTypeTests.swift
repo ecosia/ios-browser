@@ -4,12 +4,14 @@
 
 import XCTest
 @testable import Client
+@testable import Core
 
-final class EcosiaInstallTypeTests: XCTestCase {
+ final class EcosiaInstallTypeTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
         // Reset UserDefaults for a clean state before each test
+        try? FileManager().removeItem(at: FileManager.user)
         UserDefaults.standard.removeObject(forKey: EcosiaInstallType.installTypeKey)
         UserDefaults.standard.removeObject(forKey: EcosiaInstallType.currentInstalledVersionKey)
     }
@@ -62,6 +64,53 @@ final class EcosiaInstallTypeTests: XCTestCase {
         EcosiaInstallType.evaluateCurrentEcosiaInstallTypeWithVersionProvider(mockVersion)
         let type = EcosiaInstallType.get()
         XCTAssertEqual(type, .fresh)
+    }
+}
+
+extension EcosiaInstallTypeTests {
+    
+    // Test evaluating install type and version for a fresh install with firstTime=true
+    func testEvaluateFreshInstallType_WithFirstTime_And_VersionProvider() {
+        User.shared.firstTime = true
+        let versionProvider = MockAppVersionInfoProvider(mockedAppVersion: "1.0.0")
+        EcosiaInstallType.evaluateCurrentEcosiaInstallTypeWithVersionProvider(versionProvider)
+        
+        XCTAssertEqual(EcosiaInstallType.get(), .fresh)
+        XCTAssertEqual(EcosiaInstallType.persistedCurrentVersion(), "1.0.0")
+    }
+
+    // Test evaluating install type and version for a fresh install with firstTime=false
+    func testEvaluateFreshInstallType_WithFirstTimeFalse_And_VersionProvider() {
+        User.shared.firstTime = false
+        let versionProvider = MockAppVersionInfoProvider(mockedAppVersion: "1.0.0")
+        EcosiaInstallType.evaluateCurrentEcosiaInstallTypeWithVersionProvider(versionProvider)
+        
+        XCTAssertEqual(EcosiaInstallType.get(), .upgrade)
+        XCTAssertEqual(EcosiaInstallType.persistedCurrentVersion(), "1.0.0")
+    }
+
+    // Test evaluating install type and version for an upgrade with firstTime=true
+    func testEvaluateUpgradeInstallType_WithFirstTime_And_VersionProvider() {
+        User.shared.firstTime = true
+        UserDefaults.standard.set("0.9.0", forKey: EcosiaInstallType.currentInstalledVersionKey)
+        
+        let versionProvider = MockAppVersionInfoProvider(mockedAppVersion: "1.0.0")
+        EcosiaInstallType.evaluateCurrentEcosiaInstallTypeWithVersionProvider(versionProvider)
+        
+        XCTAssertEqual(EcosiaInstallType.get(), .fresh)
+        XCTAssertEqual(EcosiaInstallType.persistedCurrentVersion(), "1.0.0")
+    }
+
+    // Test evaluating install type and version for an upgrade with firstTime=false
+    func testEvaluateUpgradeInstallType_WithFirstTimeFalse_And_VersionProvider() {
+        User.shared.firstTime = false
+        UserDefaults.standard.set("0.9.0", forKey: EcosiaInstallType.currentInstalledVersionKey)
+        
+        let versionProvider = MockAppVersionInfoProvider(mockedAppVersion: "1.0.0")
+        EcosiaInstallType.evaluateCurrentEcosiaInstallTypeWithVersionProvider(versionProvider)
+        
+        XCTAssertEqual(EcosiaInstallType.get(), .upgrade)
+        XCTAssertEqual(EcosiaInstallType.persistedCurrentVersion(), "1.0.0")
     }
 }
 
