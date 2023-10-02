@@ -19,15 +19,23 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
         Version(versionProvider.version)!
     }
     
+    /// The last version where the WhatsNewPage was shown
+    private var whatsNewPageLastVersionDisplayed: Version {
+        guard let whatsNewPageLastVersionDisplayed: String = User.shared.whatsNewPageLastVersionDisplayed else {
+            return Version("0.0.0")!
+        }
+        return Version(whatsNewPageLastVersionDisplayed)!
+    }
+    
     /// This value can be used to determine if the user should be presented with the What's New page.
     ///
     /// - Returns: `true` if the What's New page should be shown; otherwise, `false`.
     var shouldShowWhatsNewPage: Bool {
-        return EcosiaInstallType.get() == .upgrade
+        return EcosiaInstallType.get() == .upgrade && toVersion > whatsNewPageLastVersionDisplayed
     }
 
     /// The current app version provider from which the Ecosia App Version is retrieved
-    private var versionProvider: AppVersionInfoProvider
+    private(set) var versionProvider: AppVersionInfoProvider
     
     /// Default initializer.
     /// - Parameters:
