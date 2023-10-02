@@ -10,6 +10,7 @@ final class WhatsNewLocalDataProviderTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
+        try? FileManager().removeItem(at: FileManager.user)
         UserDefaults.standard.removeObject(forKey: EcosiaInstallType.installTypeKey)
         UserDefaults.standard.removeObject(forKey: EcosiaInstallType.currentInstalledVersionKey)
     }
@@ -46,13 +47,18 @@ final class WhatsNewLocalDataProviderTests: XCTestCase {
     
     func testUpgradeToDifferentVersionShouldShowWhatsNew() {
         // Given
+        User.shared.firstTime = false
+        UserDefaults.standard.set("8.3.0", forKey: EcosiaInstallType.currentInstalledVersionKey)
+
         let dataProvider = WhatsNewLocalDataProvider(versionProvider: MockAppVersionInfoProvider(mockedAppVersion: "10.0.0"))
-        EcosiaInstallType.set(type: .upgrade)
         
         // When
+        EcosiaInstallType.evaluateCurrentEcosiaInstallTypeWithVersionProvider(dataProvider.versionProvider)
+        // and
         let shouldShowWhatsNew = dataProvider.shouldShowWhatsNewPage
         
         // Then
+        XCTAssertEqual(EcosiaInstallType.get(), .upgrade)
         XCTAssertTrue(shouldShowWhatsNew, "Upgrade to a different version should show What's New. Got items to be shown: \(User.shared.whatsNewItemsVersionsShown), for version range: \(dataProvider.getVersionRange().map { $0.description })")
     }
         
