@@ -14684,7 +14684,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = main;
+				branch = "MOB-XXX_checkoff_whatsnewpage_user_profile";
 				kind = branch;
 			};
 		};
