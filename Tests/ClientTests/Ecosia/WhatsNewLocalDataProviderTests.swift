@@ -4,6 +4,7 @@
 
 import XCTest
 @testable import Client
+@testable import Core
 
 final class WhatsNewLocalDataProviderTests: XCTestCase {
     
@@ -52,7 +53,7 @@ final class WhatsNewLocalDataProviderTests: XCTestCase {
         let shouldShowWhatsNew = dataProvider.shouldShowWhatsNewPage
         
         // Then
-        XCTAssertTrue(shouldShowWhatsNew, "Upgrade to a different version should show What's New")
+        XCTAssertTrue(shouldShowWhatsNew, "Upgrade to a different version should show What's New. Got items to be shown: \(User.shared.whatsNewItemsVersionsShown), for version range: \(dataProvider.getVersionRange().map { $0.description })")
     }
         
     func testUpgradeToSameVersionShouldNotShowWhatsNew() {
