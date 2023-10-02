@@ -80,7 +80,7 @@ extension EcosiaInstallTypeTests {
     }
 
     // Test evaluating install type and version for a fresh install with firstTime=false
-    func testEvaluateFreshInstallType_WithFirstTimeFalse_And_VersionProvider() {
+    func testEvaluateUpgradeInstallType_WithFirstTimeFalse_And_VersionProvider() {
         User.shared.firstTime = false
         let versionProvider = MockAppVersionInfoProvider(mockedAppVersion: "1.0.0")
         EcosiaInstallType.evaluateCurrentEcosiaInstallTypeWithVersionProvider(versionProvider)
@@ -90,7 +90,7 @@ extension EcosiaInstallTypeTests {
     }
 
     // Test evaluating install type and version for an upgrade with firstTime=true
-    func testEvaluateUpgradeInstallType_WithFirstTime_And_VersionProvider() {
+    func testEvaluateFreshInstallType_WithFirstTime_And_VersionProvider() {
         User.shared.firstTime = true
         UserDefaults.standard.set("0.9.0", forKey: EcosiaInstallType.currentInstalledVersionKey)
         
