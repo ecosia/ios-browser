@@ -14696,7 +14696,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = main;
+				branch = "revert-113-MOB-1948_whatsnewpage_improvements_and_fixes";
 				kind = branch;
 			};
 		};
