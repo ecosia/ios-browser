@@ -19,19 +19,13 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
         Version(versionProvider.version)!
     }
     
-    /// The last version where the WhatsNewPage was shown
-    private var whatsNewPageLastVersionDisplayed: Version {
-        guard let whatsNewPageLastVersionDisplayed: String = User.shared.whatsNewPageLastVersionDisplayed else {
-            return Version("0.0.0")!
-        }
-        return Version(whatsNewPageLastVersionDisplayed)!
-    }
-    
     /// This value can be used to determine if the user should be presented with the What's New page.
     ///
     /// - Returns: `true` if the What's New page should be shown; otherwise, `false`.
     var shouldShowWhatsNewPage: Bool {
-        return EcosiaInstallType.get() == .upgrade && toVersion > whatsNewPageLastVersionDisplayed
+        let dataProviderVersionsString = getVersionRange().map { $0.description }
+        guard let savedWhatsNewItemVersionsString = User.shared.whatsNewItemsVersionsShown else { return true }
+        return savedWhatsNewItemVersionsString.allSatisfy { dataProviderVersionsString.contains($0) } == false
     }
 
     /// The current app version provider from which the Ecosia App Version is retrieved
@@ -77,25 +71,13 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
     ///
     /// - Returns: An array of `Version` between from and to, inclusive.
     func getVersionRange() -> [Version] {
-                
-        // Ensure this is an upgrade scenario; otherwise, return an empty version range.
-        guard EcosiaInstallType.get() == .upgrade else { return [] }
-
+        
         // Ensure `fromVersion` is available; otherwise, return an empty version range.
         guard let fromVersion else { return [] }
 
         // Gather all versions
         let allVersions = Array(whatsNewItems.keys).sorted()
-                
-        // At this point in the logic, we are still in the upgrade scenario
-        // however, if the fromVersion and the toVersion will result being the same
-        // we will assume that we have upgraded to a version that didn't have this logic in place before
-        // There is no need to enforce the check for something ideally considered as a build update.
-        // As we currently checked the `.upgrade` scenario above.
-        if fromVersion == toVersion {
-            return allVersions.filter { $0 == toVersion } ?? []
-        }
-                
+
         // Gather first item in `allVersions` array
         guard let firstItemInAllVersions = allVersions.first else { return [] }
         

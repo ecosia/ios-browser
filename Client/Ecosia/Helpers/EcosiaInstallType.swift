@@ -16,7 +16,7 @@ enum EcosiaInstallType: String {
     /// Represents an unknown installation type.
     case unknown
 
-    // MARK: - Private Properties
+    // MARK: - Internal Properties
     
     /// The key used to store and retrieve the install type from UserDefaults.
     static let installTypeKey = "installTypeKey"
@@ -49,7 +49,6 @@ enum EcosiaInstallType: String {
     /// - Returns: The persisted current version. If not found, returns an empty string.
     static func persistedCurrentVersion() -> String {
         guard let currentVersion = UserDefaults.standard.string(forKey: Self.currentInstalledVersionKey) else { return "" }
-
         return currentVersion
     }
 
