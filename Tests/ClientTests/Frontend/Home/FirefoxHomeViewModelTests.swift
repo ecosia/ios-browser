@@ -35,9 +35,9 @@ class FirefoxHomeViewModelTests: XCTestCase {
                                           tabManager: MockTabManager(),
                                           urlBar: URLBarView(profile: profile),
                                           referrals: .init())
-        XCTAssertEqual(viewModel.shownSections.count, 5) //Ecosia: Update number of sections
+        XCTAssertEqual(viewModel.shownSections.count, 6) //Ecosia: Update number of sections
         XCTAssertEqual(viewModel.shownSections[0], HomepageSectionType.logoHeader)
-        XCTAssertEqual(viewModel.shownSections[1], HomepageSectionType.libraryShortcuts)
-        XCTAssertEqual(viewModel.shownSections[2], HomepageSectionType.impact)
+        XCTAssertEqual(viewModel.shownSections[1], HomepageSectionType.bookmarkNudge)
+        XCTAssertEqual(viewModel.shownSections[2], HomepageSectionType.libraryShortcuts)
     }
 }
