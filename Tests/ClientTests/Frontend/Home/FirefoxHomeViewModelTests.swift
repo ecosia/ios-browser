@@ -36,8 +36,8 @@ class FirefoxHomeViewModelTests: XCTestCase {
                                           urlBar: URLBarView(profile: profile),
                                           referrals: .init())
         XCTAssertEqual(viewModel.shownSections.count, 6) //Ecosia: Update number of sections
-        XCTAssertEqual(viewModel.shownSections[0], HomepageSectionType.logoHeader)
-        XCTAssertEqual(viewModel.shownSections[1], HomepageSectionType.bookmarkNudge)
-        XCTAssertEqual(viewModel.shownSections[2], HomepageSectionType.libraryShortcuts)
+        XCTAssertEqual(viewModel.shownSections[0], HomepageSectionType.logoHeader) //Ecosia: Update due to new Ecosia HomePage
+        XCTAssertEqual(viewModel.shownSections[1], HomepageSectionType.bookmarkNudge) //Ecosia: Update due to new Ecosia HomePage
+        XCTAssertEqual(viewModel.shownSections[2], HomepageSectionType.libraryShortcuts) //Ecosia: Update due to new Ecosia HomePage
     }
 }
