@@ -44,8 +44,8 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
 
     /// The current app version provider from which the Ecosia App Version is retrieved
     private(set) var versionProvider: AppVersionInfoProvider
-    /// The User instance
-    private(set) var user: User // To accommodate tests
+    /// The `User` instance. Mainly utilized to pass the correct instance in tests. Production code rely on its `.shared` instance.
+    private(set) var user: User
 
     /// Default initializer.
     /// - Parameters:
