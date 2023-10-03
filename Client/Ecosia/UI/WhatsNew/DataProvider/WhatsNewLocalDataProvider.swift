@@ -42,7 +42,6 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
         return isNeedingItemsToShow
     }
 
-
     /// The current app version provider from which the Ecosia App Version is retrieved
     private(set) var versionProvider: AppVersionInfoProvider
     

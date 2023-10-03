@@ -49,12 +49,10 @@ final class WhatsNewLocalDataProviderTests: XCTestCase {
         // Given
         User.shared.firstTime = false
         UserDefaults.standard.set("8.3.0", forKey: EcosiaInstallType.currentInstalledVersionKey)
-
         let dataProvider = WhatsNewLocalDataProvider(versionProvider: MockAppVersionInfoProvider(mockedAppVersion: "10.0.0"))
         
         // When
         EcosiaInstallType.evaluateCurrentEcosiaInstallTypeWithVersionProvider(dataProvider.versionProvider)
-        // and
         let shouldShowWhatsNew = dataProvider.shouldShowWhatsNewPage
         
         // Then
