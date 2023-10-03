@@ -33,7 +33,7 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
         let dataProviderVersionsString = getVersionRange().map { $0.description }
         
         // Check if there are saved "What's New" item versions in the user settings.
-        guard let savedWhatsNewItemVersionsString = User.shared.whatsNewItemsVersionsShown else { return true }
+        guard let savedWhatsNewItemVersionsString = user.whatsNewItemsVersionsShown else { return true }
         
         // Determine if there are any new items to show based on saved versions.
         let isNeedingItemsToShow = savedWhatsNewItemVersionsString.allSatisfy { dataProviderVersionsString.contains($0) } == false
@@ -44,12 +44,17 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
 
     /// The current app version provider from which the Ecosia App Version is retrieved
     private(set) var versionProvider: AppVersionInfoProvider
-    
+    /// The User instance
+    private(set) var user: User // To accommodate tests
+
     /// Default initializer.
     /// - Parameters:
     ///   - versionProvider: The current app version provider. Defaults to `DefaultAppVersionInfoProvider`
-    init(versionProvider: AppVersionInfoProvider = DefaultAppVersionInfoProvider()) {
+    ///   - user: An instance of the `User` object to improve reliability on tests. Defaults to its shared instance `.shared`
+    init(versionProvider: AppVersionInfoProvider = DefaultAppVersionInfoProvider(),
+         user: User = .shared) {
         self.versionProvider = versionProvider
+        self.user = user
     }
     
     /// The items we would like to attempt to show in the update sheet
@@ -115,7 +120,7 @@ extension WhatsNewLocalDataProvider {
         let previousVersions = whatsNewItems.keys
             .filter { $0 <= toVersion }
             .map { $0.description }
-        User.shared.updateWhatsNewItemsVersionsAppending(previousVersions)
+        user.updateWhatsNewItemsVersionsAppending(previousVersions)
     }
     
 }
