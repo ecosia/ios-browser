@@ -95,8 +95,8 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
         // Gather first item in `allVersions` array
         guard let firstItemInAllVersions = allVersions.first else { return [] }
         
-        // Ensure the `toVersion` is equal to or bigger than the smallest version in `whatsNewItems`
-        guard toVersion >= firstItemInAllVersions else { return [] }
+        // Ensure the `toVersion` is bigger than the smallest version in `whatsNewItems`
+        guard toVersion > firstItemInAllVersions else { return [] }
 
         // Find the closest previous version or use the first one if `from` is older than all versions.
         let fromIndex = allVersions.lastIndex { $0 <= fromVersion } ?? 0
