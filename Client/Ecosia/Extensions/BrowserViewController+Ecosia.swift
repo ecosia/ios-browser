@@ -22,6 +22,7 @@ extension BrowserViewController: DefaultBrowserDelegate {
 
 extension BrowserViewController: WhatsNewViewDelegate {
     func whatsNewViewDidShow(_ viewController: WhatsNewViewController) {
+        User.shared.updateWhatsNewItemsVersionsAppending(whatsNewDataProvider.getVersionRange().map { $0.description })
         homepageViewController?.reloadTooltip()
     }
 }

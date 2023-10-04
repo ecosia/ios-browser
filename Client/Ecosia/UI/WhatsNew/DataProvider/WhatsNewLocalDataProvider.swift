@@ -19,21 +19,42 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
         Version(versionProvider.version)!
     }
     
-    /// This value can be used to determine if the user should be presented with the What's New page.
-    ///
+    /// A computed property to determine whether the "What's New" page should be displayed.
     /// - Returns: `true` if the What's New page should be shown; otherwise, `false`.
     var shouldShowWhatsNewPage: Bool {
-        return EcosiaInstallType.get() == .upgrade
+        
+        // Check if we are in the upgrade scenario
+        guard EcosiaInstallType.get() == .upgrade else {
+            markAllPreviousVersionsAsSeen()
+            return false
+        }
+        
+        // Get a list of version strings from the data provider.
+        let dataProviderVersionsString = getVersionRange().map { $0.description }
+        
+        // Check if there are saved "What's New" item versions in the user settings.
+        guard let savedWhatsNewItemVersionsString = user.whatsNewItemsVersionsShown else { return true }
+        
+        // Determine if there are any new items to show based on saved versions.
+        let isNeedingItemsToShow = savedWhatsNewItemVersionsString.allSatisfy { dataProviderVersionsString.contains($0) } == false
+        
+        // Return true if it's an upgrade and there are new items to show.
+        return isNeedingItemsToShow
     }
 
     /// The current app version provider from which the Ecosia App Version is retrieved
-    private var versionProvider: AppVersionInfoProvider
-    
+    private(set) var versionProvider: AppVersionInfoProvider
+    /// The `User` instance. Mainly utilized to pass the correct instance in tests. Production code rely on its `.shared` instance.
+    private(set) var user: User
+
     /// Default initializer.
     /// - Parameters:
     ///   - versionProvider: The current app version provider. Defaults to `DefaultAppVersionInfoProvider`
-    init(versionProvider: AppVersionInfoProvider = DefaultAppVersionInfoProvider()) {
+    ///   - user: An instance of the `User` object to improve reliability on tests. Defaults to its shared instance `.shared`
+    init(versionProvider: AppVersionInfoProvider = DefaultAppVersionInfoProvider(),
+         user: User = .shared) {
         self.versionProvider = versionProvider
+        self.user = user
     }
     
     /// The items we would like to attempt to show in the update sheet
@@ -69,30 +90,18 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
     ///
     /// - Returns: An array of `Version` between from and to, inclusive.
     func getVersionRange() -> [Version] {
-                
-        // Ensure this is an upgrade scenario; otherwise, return an empty version range.
-        guard EcosiaInstallType.get() == .upgrade else { return [] }
-
+        
         // Ensure `fromVersion` is available; otherwise, return an empty version range.
         guard let fromVersion else { return [] }
 
         // Gather all versions
         let allVersions = Array(whatsNewItems.keys).sorted()
-                
-        // At this point in the logic, we are still in the upgrade scenario
-        // however, if the fromVersion and the toVersion will result being the same
-        // we will assume that we have upgraded to a version that didn't have this logic in place before
-        // There is no need to enforce the check for something ideally considered as a build update.
-        // As we currently checked the `.upgrade` scenario above.
-        if fromVersion == toVersion {
-            return allVersions.filter { $0 == toVersion } ?? []
-        }
-                
+
         // Gather first item in `allVersions` array
         guard let firstItemInAllVersions = allVersions.first else { return [] }
         
-        // Ensure the `toVersion` is equal to or bigger than the smallest version in `whatsNewItems`
-        guard toVersion >= firstItemInAllVersions else { return [] }
+        // Ensure the `toVersion` is bigger than the smallest version in `whatsNewItems`
+        guard toVersion > firstItemInAllVersions else { return [] }
 
         // Find the closest previous version or use the first one if `from` is older than all versions.
         let fromIndex = allVersions.lastIndex { $0 <= fromVersion } ?? 0
@@ -103,4 +112,15 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
         // Return the range.
         return Array(allVersions[fromIndex...toIndex])
     }
+}
+
+extension WhatsNewLocalDataProvider {
+    
+    private func markAllPreviousVersionsAsSeen() {
+        let previousVersions = whatsNewItems.keys
+            .filter { $0 <= toVersion }
+            .map { $0.description }
+        user.updateWhatsNewItemsVersionsAppending(previousVersions)
+    }
+    
 }

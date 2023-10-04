@@ -16,13 +16,13 @@ enum EcosiaInstallType: String {
     /// Represents an unknown installation type.
     case unknown
 
-    // MARK: - Private Properties
+    // MARK: - Internal Properties
     
     /// The key used to store and retrieve the install type from UserDefaults.
-    static let installTypeKey = "installTypeKey"
+    static let installTypeKey = "ecosiaInstallTypeKey"
     
     /// The key used to store and retrieve the current installed version from UserDefaults.
-    static let currentInstalledVersionKey = "currentInstalledVersionKey"
+    static let currentInstalledVersionKey = "ecosiaCurrentInstalledVersionKey"
     
     // MARK: - Public Methods
     
@@ -49,7 +49,6 @@ enum EcosiaInstallType: String {
     /// - Returns: The persisted current version. If not found, returns an empty string.
     static func persistedCurrentVersion() -> String {
         guard let currentVersion = UserDefaults.standard.string(forKey: Self.currentInstalledVersionKey) else { return "" }
-
         return currentVersion
     }
 
@@ -62,24 +61,3 @@ enum EcosiaInstallType: String {
 }
 
 extension EcosiaInstallType: Equatable {}
-
-extension EcosiaInstallType {
-    
-    /// Evaluates and updates the current Ecosia install type based on the persisted data and the provided app version.
-    ///
-    /// If the current install type is `.unknown`, it sets the install type to `.fresh` and updates the current version.
-    /// If the persisted version is different from the provided app version, it sets the install type to `.upgrade` and updates the current version.
-    ///
-    /// - Parameter versionProvider: An object conforming to `AppVersionInfoProvider` that provides the current app version.
-    static func evaluateCurrentEcosiaInstallTypeWithVersionProvider(_ versionProvider: AppVersionInfoProvider) {
-        if EcosiaInstallType.get() == .unknown {
-            EcosiaInstallType.set(type: .fresh)
-            EcosiaInstallType.updateCurrentVersion(version: versionProvider.version)
-        }
-        
-        if EcosiaInstallType.persistedCurrentVersion() != versionProvider.version {
-            EcosiaInstallType.set(type: .upgrade)
-            EcosiaInstallType.updateCurrentVersion(version: versionProvider.version)
-        }
-    }
-}
