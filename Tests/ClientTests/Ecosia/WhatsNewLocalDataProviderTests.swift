@@ -57,7 +57,7 @@ final class WhatsNewLocalDataProviderTests: XCTestCase {
                                                      user: user)
         
         // When
-        EcosiaInstallType.evaluateCurrentEcosiaInstallTypeWithVersionProvider(dataProvider.versionProvider, 
+        EcosiaInstallType.evaluateCurrentEcosiaInstallType(withVersionProvider: dataProvider.versionProvider, 
                                                                               user: user)
         let shouldShowWhatsNew = dataProvider.shouldShowWhatsNewPage
         
@@ -74,7 +74,7 @@ final class WhatsNewLocalDataProviderTests: XCTestCase {
                                                      user: user)
         
         // When
-        EcosiaInstallType.evaluateCurrentEcosiaInstallTypeWithVersionProvider(dataProvider.versionProvider, 
+        EcosiaInstallType.evaluateCurrentEcosiaInstallType(withVersionProvider: dataProvider.versionProvider, 
                                                                               user: user)
         let shouldShowWhatsNew = dataProvider.shouldShowWhatsNewPage
         
@@ -92,7 +92,7 @@ final class WhatsNewLocalDataProviderTests: XCTestCase {
         
         // When
         do {
-            EcosiaInstallType.evaluateCurrentEcosiaInstallTypeWithVersionProvider(dataProvider.versionProvider, 
+            EcosiaInstallType.evaluateCurrentEcosiaInstallType(withVersionProvider: dataProvider.versionProvider, 
                                                                                   user: user)
             let whatsNewItems = try dataProvider.getData()
             
@@ -109,7 +109,7 @@ final class WhatsNewLocalDataProviderTests: XCTestCase {
         let dataProvider = WhatsNewLocalDataProvider(versionProvider: MockAppVersionInfoProvider(mockedAppVersion: "8.0.0"))
         
         // When
-        EcosiaInstallType.evaluateCurrentEcosiaInstallTypeWithVersionProvider(dataProvider.versionProvider,
+        EcosiaInstallType.evaluateCurrentEcosiaInstallType(withVersionProvider: dataProvider.versionProvider,
                                                                               user: user)
         let shouldShowWhatsNew = dataProvider.shouldShowWhatsNewPage
         
@@ -123,7 +123,7 @@ final class WhatsNewLocalDataProviderTests: XCTestCase {
         
         // When
         do {
-            EcosiaInstallType.evaluateCurrentEcosiaInstallTypeWithVersionProvider(dataProvider.versionProvider,
+            EcosiaInstallType.evaluateCurrentEcosiaInstallType(withVersionProvider: dataProvider.versionProvider,
                                                                                   user: user)
             let whatsNewItems = try dataProvider.getData()
             

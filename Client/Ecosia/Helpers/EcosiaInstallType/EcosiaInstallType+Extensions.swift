@@ -10,15 +10,15 @@ extension EcosiaInstallType {
     /// Evaluates the current Ecosia installation type and updates it if necessary.
     ///
     /// - Parameters:
-    ///   - versionProvider: An instance of `AppVersionInfoProvider` used to obtain the current app version.
+    ///   - versionProvider: An instance of `AppVersionInfoProvider` used to obtain the current app version. Defaults to `DefaultAppVersionProvider`.`
     ///   - user: An instance of the `User` object to improve reliability on tests. Defaults to its shared instance `.shared`.
     ///
     /// - Note: This function checks if it's not the user's first time and the current Ecosia installation type is unknown. If so, it sets the type to fresh and updates the current version. Additionally, it checks if the persisted version differs from the provided version and sets the type to upgrade while updating the current version.
     ///
     /// - Warning: Ensure that `User.shared.firstTime` and `versionProvider.version` are correctly initialized before calling this function.
     ///
-    /// - SeeAlso: `AppVersionInfoProvider`
-    static func evaluateCurrentEcosiaInstallTypeWithVersionProvider(_ versionProvider: AppVersionInfoProvider, user: User = .shared) {
+    static func evaluateCurrentEcosiaInstallType(withVersionProvider versionProvider: AppVersionInfoProvider = DefaultAppVersionInfoProvider(),
+                                                 user: User = .shared) {
         
         if user.firstTime &&
             EcosiaInstallType.get() == .unknown {

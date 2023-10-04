@@ -42,7 +42,7 @@ final class EcosiaInstallTypeTests: XCTestCase {
     
     func testEvaluateCurrentEcosiaInstallType_WhenUnknown_ShouldSetToFresh() {
         let mockVersion = MockAppVersion(version: "1.0.0")
-        EcosiaInstallType.evaluateCurrentEcosiaInstallTypeWithVersionProvider(mockVersion, 
+        EcosiaInstallType.evaluateCurrentEcosiaInstallType(withVersionProvider: mockVersion, 
                                                                               user: user)
         let type = EcosiaInstallType.get()
         XCTAssertEqual(type, .fresh)
@@ -53,7 +53,7 @@ final class EcosiaInstallTypeTests: XCTestCase {
         EcosiaInstallType.set(type: .fresh)
         EcosiaInstallType.updateCurrentVersion(version: "0.9.0")
         
-        EcosiaInstallType.evaluateCurrentEcosiaInstallTypeWithVersionProvider(mockVersion, 
+        EcosiaInstallType.evaluateCurrentEcosiaInstallType(withVersionProvider: mockVersion, 
                                                                               user: user)
         let type = EcosiaInstallType.get()
         XCTAssertEqual(type, .upgrade)
@@ -64,7 +64,7 @@ final class EcosiaInstallTypeTests: XCTestCase {
         EcosiaInstallType.set(type: .fresh)
         EcosiaInstallType.updateCurrentVersion(version: "1.0.0")
         
-        EcosiaInstallType.evaluateCurrentEcosiaInstallTypeWithVersionProvider(mockVersion, 
+        EcosiaInstallType.evaluateCurrentEcosiaInstallType(withVersionProvider: mockVersion, 
                                                                               user: user)
         let type = EcosiaInstallType.get()
         XCTAssertEqual(type, .fresh)
@@ -77,7 +77,7 @@ extension EcosiaInstallTypeTests {
     func testEvaluateFreshInstallType_WithFirstTime_And_VersionProvider() {
         user.firstTime = true
         let versionProvider = MockAppVersionInfoProvider(mockedAppVersion: "1.0.0")
-        EcosiaInstallType.evaluateCurrentEcosiaInstallTypeWithVersionProvider(versionProvider,
+        EcosiaInstallType.evaluateCurrentEcosiaInstallType(withVersionProvider: versionProvider,
                                                                               user: user)
         
         XCTAssertEqual(EcosiaInstallType.get(), .fresh)
@@ -90,7 +90,7 @@ extension EcosiaInstallTypeTests {
         UserDefaults.standard.set("0.9.0", forKey: EcosiaInstallType.currentInstalledVersionKey)
         
         let versionProvider = MockAppVersionInfoProvider(mockedAppVersion: "1.0.0")
-        EcosiaInstallType.evaluateCurrentEcosiaInstallTypeWithVersionProvider(versionProvider,
+        EcosiaInstallType.evaluateCurrentEcosiaInstallType(withVersionProvider: versionProvider,
                                                                               user: user)
         
         XCTAssertEqual(EcosiaInstallType.get(), .upgrade)
