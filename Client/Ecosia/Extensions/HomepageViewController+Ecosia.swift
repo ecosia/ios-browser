@@ -87,11 +87,11 @@ extension HomepageViewController: NTPLibraryDelegate {
 extension HomepageViewController: NTPImpactCellDelegate {
     func impactCellButtonClickedWithInfo(_ info: ClimateImpactInfo) {
         switch info {
-        case .personalCounter:
+        case .search:
             Analytics.shared.navigation(.open, label: .counter)
             let url = Environment.current.urlProvider.aboutCounter
             openLink(url: url)
-        case .invites:
+        case .referral:
             let invite = MultiplyImpact(referrals: referrals)
             invite.delegate = self
             let nav = EcosiaNavigation(rootViewController: invite)
