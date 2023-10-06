@@ -14696,7 +14696,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = main;
+				branch = "MOB-1953_separate_search_and_referral_impact";
 				kind = branch;
 			};
 		};
