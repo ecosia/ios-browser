@@ -50,7 +50,7 @@
       "location" : "https://github.com/ecosia/ios-core.git",
       "state" : {
         "branch" : "MOB-1953_separate_search_and_referral_impact",
-        "revision" : "8f0985f217651666aeab4530a3c8b1b353a9a917"
+        "revision" : "e6b2df6c8f9bf5f7e56abcaf19a52b3cbd8f40ac"
       }
     },
     {

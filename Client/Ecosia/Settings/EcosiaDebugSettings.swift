@@ -149,11 +149,11 @@ final class ResetSearchCount: HiddenSetting {
     }
 
     override var status: NSAttributedString? {
-        return NSAttributedString(string: "\(User.shared.treeCount)", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
+        return NSAttributedString(string: "\(User.shared.searchCount)", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
-        User.shared.treeCount = 0
+        User.shared.searchCount = 0
         self.settings.tableView.reloadData()
         NotificationCenter.default.post(name: .HomePanelPrefsChanged, object: nil)
     }
@@ -165,11 +165,11 @@ final class ChangeSearchCount: HiddenSetting {
     }
 
     override var status: NSAttributedString? {
-        return NSAttributedString(string: "\(User.shared.treeCount)", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
+        return NSAttributedString(string: "\(User.shared.searchCount)", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
-        User.shared.treeCount += 10
+        User.shared.searchCount += 10
         self.settings.tableView.reloadData()
         NotificationCenter.default.post(name: .HomePanelPrefsChanged, object: nil)
     }
