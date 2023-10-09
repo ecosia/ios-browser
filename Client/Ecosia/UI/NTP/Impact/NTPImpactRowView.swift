@@ -69,7 +69,7 @@ final class NTPImpactRowView: UIView, NotificationThemeable {
             imageView.image = info.image
             titleLabel.text = info.title
             subtitleLabel.text = info.subtitle
-            actionButton.isHidden = info.buttonTitle == nil
+            actionButton.isHidden = forceHideActionButton ? true : info.buttonTitle == nil
             actionButton.setTitle(info.buttonTitle, for: .normal)
             if let progress = info.progressIndicatorValue {
                 currentProgressView.value = progress
@@ -83,6 +83,12 @@ final class NTPImpactRowView: UIView, NotificationThemeable {
             setMaskedCornersUsingPosition(row: row, totalCount: count)
         }
     }
+    var forceHideActionButton: Bool = false {
+        didSet {
+            actionButton.isHidden = forceHideActionButton
+        }
+    }
+    var customBackgroundColor: UIColor? = nil
     
     init(info: ClimateImpactInfo) {
         self.info = info
@@ -144,7 +150,7 @@ final class NTPImpactRowView: UIView, NotificationThemeable {
     required init?(coder: NSCoder) { nil }
     
     func applyTheme() {
-        backgroundColor = .theme.ecosia.secondaryBackground
+        backgroundColor = customBackgroundColor ?? .theme.ecosia.secondaryBackground
         titleLabel.textColor = .theme.ecosia.primaryText
         subtitleLabel.textColor = .theme.ecosia.secondaryText
         actionButton.setTitleColor(.theme.ecosia.primaryButton, for: .normal)
