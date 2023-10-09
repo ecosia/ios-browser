@@ -167,10 +167,7 @@ extension PageActionMenu: UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        guard section == 0 else {
-            return 0
-        }
-        return UITableView.automaticDimension
+        return if section == 0 { 0 } else { UITableView.automaticDimension }
     }
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
