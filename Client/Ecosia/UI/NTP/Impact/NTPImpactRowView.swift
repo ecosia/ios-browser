@@ -9,7 +9,6 @@ final class NTPImpactRowView: UIView, NotificationThemeable {
         static let cornerRadius: CGFloat = 10
         static let horizontalSpacing: CGFloat = 8
         static let padding: CGFloat = 16
-        static let buttonMaximumWidth: CGFloat = 120
         static let imageHeight: CGFloat = 48
         static let imageHeightWithProgress: CGFloat = 26
         static let progressWidth: CGFloat = 48
@@ -48,12 +47,13 @@ final class NTPImpactRowView: UIView, NotificationThemeable {
         label.numberOfLines = 0
         return label
     }()
-    private lazy var actionButton: UIButton = {
-        let button = UIButton()
+    private lazy var actionButton: ResizableButton = {
+        let button = ResizableButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.titleLabel?.font = .preferredFont(forTextStyle: .callout)
-        button.titleLabel?.numberOfLines = 0
         button.titleLabel?.textAlignment = .right
+        button.contentHorizontalAlignment = .right
+        button.edgeSpacing = 0
         button.setContentCompressionResistancePriority(.required, for: .horizontal)
         button.addTarget(self, action: #selector(buttonAction), for: .touchUpInside)
         button.clipsToBounds = true
@@ -120,7 +120,7 @@ final class NTPImpactRowView: UIView, NotificationThemeable {
             hStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: UX.padding),
             hStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -UX.padding),
             hStack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -UX.padding),
-            actionButton.widthAnchor.constraint(lessThanOrEqualToConstant: UX.buttonMaximumWidth),
+            actionButton.widthAnchor.constraint(equalTo: hStack.widthAnchor, multiplier: 1/3),
             dividerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: UX.padding),
             dividerView.trailingAnchor.constraint(equalTo: trailingAnchor),
             dividerView.bottomAnchor.constraint(equalTo: bottomAnchor),

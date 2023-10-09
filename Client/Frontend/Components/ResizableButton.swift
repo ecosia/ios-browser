@@ -6,8 +6,13 @@ import UIKit
 
 class ResizableButton: UIButton {
 
-    struct UX {
-        static let buttonEdgeSpacing: CGFloat = 8
+    var edgeSpacing: CGFloat = 8 {
+        didSet {
+            contentEdgeInsets = UIEdgeInsets(top: 0,
+                                             left: edgeSpacing,
+                                             bottom: 0,
+                                             right: edgeSpacing)
+        }
     }
 
     override init(frame: CGRect) {
@@ -25,9 +30,9 @@ class ResizableButton: UIButton {
         titleLabel?.adjustsFontForContentSizeCategory = true
         titleLabel?.lineBreakMode = .byWordWrapping
         contentEdgeInsets = UIEdgeInsets(top: 0,
-                                         left: UX.buttonEdgeSpacing,
+                                         left: edgeSpacing,
                                          bottom: 0,
-                                         right: UX.buttonEdgeSpacing)
+                                         right: edgeSpacing)
     }
 
     override var intrinsicContentSize: CGSize {
