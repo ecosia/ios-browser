@@ -9,7 +9,6 @@ final class PageActionMenu: UIViewController, UIGestureRecognizerDelegate {
     // MARK: - UX
 
     struct UX {
-        static let spacing: CGFloat = 16
         static let estimatedSectionHeaderHeight: CGFloat = 16
         static let shortcuts = "Shortcuts"
         static let rowHeight: CGFloat = 50
