@@ -94,6 +94,11 @@ class HomepageViewController: UIViewController, HomePanel, FeatureFlaggable {
 
         viewModel.recordViewAppeared()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        referrals.refresh()
+    }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)

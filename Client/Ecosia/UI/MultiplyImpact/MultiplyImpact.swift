@@ -457,7 +457,7 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
     private func updateInviteLink() {
         guard let inviteLink = inviteLink else {
             copyLink?.text = "-"
-            referrals.refresh(createCode: true) {[weak self] error in
+            referrals.refresh(force: true, createCode: true) {[weak self] error in
                 if let error = error {
                     self?.showObtainingCode(error)
                 } else {
