@@ -25,6 +25,7 @@ final class NTPCustomizationCell: UICollectionViewCell, NotificationThemeable, R
         button.setInsets(forContentPadding: .init(top: UX.verticalInset, left: UX.horizontalInset, bottom: UX.verticalInset, right: UX.horizontalInset),
                          imageTitlePadding: UX.imageTitlePadding)
         button.addTarget(self, action: #selector(touchButtonAction), for: .touchUpInside)
+        button.clipsToBounds = true
         return button
     }()
     
@@ -63,7 +64,8 @@ final class NTPCustomizationCell: UICollectionViewCell, NotificationThemeable, R
     func applyTheme() {
         button.imageView?.tintColor = .theme.ecosia.secondaryButtonContent
         button.setTitleColor(.theme.ecosia.secondaryButtonContent, for: .normal)
-        button.backgroundColor = .theme.ecosia.secondaryButtonBackground
+        button.setBackgroundColor(.theme.ecosia.secondaryButtonBackground, forState: .normal)
+        button.setBackgroundColor(.theme.ecosia.activeTransparentBackground, forState: .highlighted)
     }
     
     @objc func touchButtonAction() {
