@@ -93,6 +93,11 @@ final class NTPImpactRowView: UIView, NotificationThemeable {
     init(info: ClimateImpactInfo) {
         self.info = info
         super.init(frame: .zero)
+        defer {
+            // Needed to force info setup after init
+            self.info = info
+        }
+        
         translatesAutoresizingMaskIntoConstraints = false
         layer.cornerRadius = UX.cornerRadius
         

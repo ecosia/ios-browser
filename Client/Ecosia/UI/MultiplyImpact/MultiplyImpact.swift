@@ -69,7 +69,6 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         let info = ClimateImpactInfo.referral(value: User.shared.referrals.impact,
                                               invites: User.shared.referrals.count)
         let view = NTPImpactRowView(info: info)
-        view.info = info // Needed to force info setup after init
         view.forceHideActionButton = true
         view.position = (0, 1)
         return view
