@@ -58,10 +58,8 @@ extension WelcomeTour {
         }
         var background: Background {
             switch self {
-            case .planet:
+            case .green ,.planet:
                 return .init(image: "tour1")
-            case .green:
-                return .init(image: "tour1-alternative")
             case .profit:
                 return .init(image: "tour2")
             case .action:
@@ -92,7 +90,7 @@ extension WelcomeTour {
             let view: UIView?
             switch self {
             case .planet:
-                view = WelcomeTourPlanet()
+                view = WelcomeTourGreen(hasCounter: true)
             case .green:
                 view = WelcomeTourGreen()
             case .profit:

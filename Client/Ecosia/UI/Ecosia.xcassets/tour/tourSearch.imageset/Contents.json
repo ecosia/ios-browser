@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "Group 1411.pdf",
+      "filename" : "Theme=Light, Variant=Search.pdf",
       "idiom" : "universal"
     },
     {
@@ -11,7 +11,7 @@
           "value" : "dark"
         }
       ],
-      "filename" : "Group 1411-2.pdf",
+      "filename" : "Theme=Dark, Variant=Search.pdf",
       "idiom" : "universal"
     }
   ],
