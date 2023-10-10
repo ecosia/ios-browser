@@ -33,16 +33,16 @@ final class WelcomeTourGreen: UIView, NotificationThemeable {
         return label
     }()
 
-    init(hasCounter: Bool = false) {
+    init(isCounterEnabled: Bool = false) {
         super.init(frame: .zero)
-        setup(hasCounter: hasCounter)
+        setup(isCounterEnabled: isCounterEnabled)
         updateAccessibilitySettings()
         applyTheme()
     }
 
     required init?(coder: NSCoder) {  nil }
 
-    func setup(hasCounter: Bool) {
+    func setup(isCounterEnabled: Bool) {
         let iPadOffset: CGFloat = traitCollection.userInterfaceIdiom == .pad ? 60 : 0
         
         let stack = UIStackView()
@@ -67,11 +67,11 @@ final class WelcomeTourGreen: UIView, NotificationThemeable {
         searchLabel.trailingAnchor.constraint(equalTo: topImage.trailingAnchor, constant: -40).isActive = true
         searchLabel.transform = .init(rotationAngle: Double.pi / -33)
 
-        let bottomImage = UIImageView(image: .init(named: hasCounter ? "tourCounter" : "tourGreen"))
+        let bottomImage = UIImageView(image: .init(named: isCounterEnabled ? "tourCounter" : "tourGreen"))
         bottomImage.translatesAutoresizingMaskIntoConstraints = false
         stack.addArrangedSubview(bottomImage)
 
-        if hasCounter {
+        if isCounterEnabled {
             bottomImage.addSubview(counterLabel)
             bottomImage.addSubview(counterSubtitleLabel)
             

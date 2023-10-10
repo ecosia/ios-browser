@@ -90,7 +90,7 @@ extension WelcomeTour {
             let view: UIView?
             switch self {
             case .planet:
-                view = WelcomeTourGreen(hasCounter: true)
+                view = WelcomeTourGreen(isCounterEnabled: true)
             case .green:
                 view = WelcomeTourGreen()
             case .profit:
