@@ -147,6 +147,10 @@ extension NTPImpactCellViewModel: HomepageViewModelProtocol {
     var isEnabled: Bool {
         User.shared.showClimateImpact
     }
+    
+    func refreshData(for traitCollection: UITraitCollection, isPortrait: Bool, device: UIUserInterfaceIdiom) {
+        referrals.refresh()
+    }
 }
 
 extension NTPImpactCellViewModel: HomepageSectionHandler {
