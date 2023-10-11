@@ -456,7 +456,7 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
     }
 
     private func updateInviteLink() {
-        copyLink?.text = inviteLink
+        copyLink?.text = inviteLink ?? inviteLinkPlaceholder
     }
     
     private func refreshReferrals() {
@@ -565,8 +565,10 @@ https://ecosia.co/install-ios
 """
     }
     
-    private var inviteLink: String {
-        guard let code = User.shared.referrals.code else { return "-" }
+    private let inviteLinkPlaceholder = "-"
+    
+    private var inviteLink: String? {
+        guard let code = User.shared.referrals.code else { return nil }
         return "ecosia://\(Referrals.host)/" + code
     }
 
