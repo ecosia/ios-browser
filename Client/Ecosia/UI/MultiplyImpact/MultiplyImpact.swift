@@ -66,13 +66,15 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
     private weak var waves: UIImageView?
     private weak var yourInvites: UILabel?
     private lazy var referralImpactRowView: NTPImpactRowView = {
-        let info = ClimateImpactInfo.referral(value: User.shared.referrals.impact,
-                                              invites: User.shared.referrals.count)
-        let view = NTPImpactRowView(info: info)
+        let view = NTPImpactRowView(info: referralInfo)
         view.forceHideActionButton = true
         view.position = (0, 1)
         return view
     }()
+    
+    var referralInfo: ClimateImpactInfo {
+        .referral(value: User.shared.referrals.impact, invites: User.shared.referrals.count)
+    }
     
     private weak var sharingYourLink: UILabel?
     private weak var sharing: UIView?
@@ -391,6 +393,7 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         updateInviteLink()
+        refreshReferrals()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -455,18 +458,19 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
     }
 
     private func updateInviteLink() {
-        guard let inviteLink = inviteLink else {
-            copyLink?.text = "-"
-            referrals.refresh(createCode: true) {[weak self] error in
-                if let error = error {
-                    self?.showObtainingCode(error)
-                } else {
-                    self?.updateInviteLink()
-                }
+        copyLink?.text = inviteLink ?? inviteLinkPlaceholder
+    }
+    
+    private func refreshReferrals() {
+        referrals.refresh(force: true, createCode: true) { [weak self] error in
+            guard error == nil else {
+                self?.showRefreshReferralsError(error!)
+                return
             }
-            return
+            guard let self = self else { return }
+            self.updateInviteLink()
+            self.referralImpactRowView.info = self.referralInfo
         }
-        copyLink?.text = inviteLink
     }
     
     @objc private func learnMore() {
@@ -501,7 +505,7 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         guard let message = inviteMessage else {
             referrals.refresh(createCode: true) { error in
                 if let error = error {
-                    self.showReferralError(error)
+                    self.showInviteFriendsError(error)
                 } else {
                     self.share(message: self.inviteMessage!)
                 }
@@ -525,7 +529,7 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         Analytics.shared.startInvite()
     }
 
-    private func showReferralError(_ error: Referrals.Error) {
+    private func showInviteFriendsError(_ error: Referrals.Error) {
         let alert = UIAlertController(title: error.title,
                                       message: error.message,
                                       preferredStyle: .alert)
@@ -536,13 +540,13 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         present(alert, animated: true)
     }
 
-    private func showObtainingCode(_ error: Referrals.Error) {
+    private func showRefreshReferralsError(_ error: Referrals.Error) {
         let alert = UIAlertController(title: error.title,
                                       message: error.message,
                                       preferredStyle: .alert)
         alert.addAction(.init(title: .localized(.continueMessage), style: .cancel))
         alert.addAction(.init(title: .localized(.retryMessage), style: .default) { [weak self] _ in
-            self?.updateInviteLink()
+            self?.refreshReferrals()
         })
         present(alert, animated: true)
     }
@@ -564,6 +568,8 @@ https://ecosia.co/install-ios
 \(link)
 """
     }
+    
+    private let inviteLinkPlaceholder = "-"
     
     private var inviteLink: String? {
         guard let code = User.shared.referrals.code else { return nil }
