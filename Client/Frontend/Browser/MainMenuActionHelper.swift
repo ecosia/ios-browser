@@ -252,6 +252,10 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
 
         let nightModeAction = getNightModeAction()
         section.append(contentsOf: nightModeAction)
+        
+        // Ecosia: Adding help button
+        let helpAction = getHelpAction()
+        section.append(helpAction)
 
         return section
     }
@@ -368,10 +372,13 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
     private func getHelpAction() -> PhotonRowActions {
         return SingleActionViewModel(title: .AppMenu.Help,
                                      iconString: ImageIdentifiers.help) { _ in
-
+            
+            /* Ecosia: Replacing Firefox Support URL with Ecosia FAQ URL
             if let url = URL(string: "https://support.mozilla.org/products/ios") {
                 self.delegate?.openURLInNewTab(url, isPrivate: false)
             }
+             */
+            self.delegate?.openURLInNewTab(Environment.current.urlProvider.faq, isPrivate: false)
         }.items
     }
 
