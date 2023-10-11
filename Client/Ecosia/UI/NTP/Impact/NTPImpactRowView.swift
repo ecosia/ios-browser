@@ -6,7 +6,6 @@ import Foundation
 
 final class NTPImpactRowView: UIView, NotificationThemeable {
     struct UX {
-        static let height: CGFloat = 80
         static let cornerRadius: CGFloat = 10
         static let horizontalSpacing: CGFloat = 8
         static let padding: CGFloat = 16
@@ -45,14 +44,17 @@ final class NTPImpactRowView: UIView, NotificationThemeable {
     private lazy var subtitleLabel: UILabel = {
         let label = UILabel()
         label.font = .preferredFont(forTextStyle: .footnote)
-        label.adjustsFontSizeToFitWidth = true
+        label.numberOfLines = 0
         return label
     }()
-    private lazy var actionButton: UIButton = {
-        let button = UIButton()
+    private lazy var actionButton: ResizableButton = {
+        let button = ResizableButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.titleLabel?.font = .preferredFont(forTextStyle: .callout)
-        button.titleLabel?.adjustsFontSizeToFitWidth = true
+        button.titleLabel?.textAlignment = .right
+        button.contentHorizontalAlignment = .right
+        button.edgeSpacing = 0
+        button.setContentCompressionResistancePriority(.required, for: .horizontal)
         button.addTarget(self, action: #selector(buttonAction), for: .touchUpInside)
         button.clipsToBounds = true
         return button
@@ -104,7 +106,7 @@ final class NTPImpactRowView: UIView, NotificationThemeable {
         let hStack = UIStackView()
         hStack.translatesAutoresizingMaskIntoConstraints = false
         hStack.axis = .horizontal
-        hStack.alignment = .fill
+        hStack.alignment = .center
         hStack.spacing = UX.horizontalSpacing
         hStack.addArrangedSubview(imageContainer)
         imageContainer.addSubview(imageView)
@@ -117,19 +119,19 @@ final class NTPImpactRowView: UIView, NotificationThemeable {
         vStack.alignment = .leading
         vStack.addArrangedSubview(titleLabel)
         vStack.addArrangedSubview(subtitleLabel)
-        hStack.addArrangedSubview(vStack)
         vStack.isAccessibilityElement = true
         vStack.shouldGroupAccessibilityChildren = true
         vStack.accessibilityLabel = info.accessibilityLabel
-
+        
+        hStack.addArrangedSubview(vStack)
         hStack.addArrangedSubview(actionButton)
         
         NSLayoutConstraint.activate([
-            heightAnchor.constraint(equalToConstant: UX.height),
             hStack.topAnchor.constraint(equalTo: topAnchor, constant: UX.padding),
             hStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: UX.padding),
             hStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -UX.padding),
             hStack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -UX.padding),
+            actionButton.widthAnchor.constraint(equalTo: hStack.widthAnchor, multiplier: 1/3),
             dividerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: UX.padding),
             dividerView.trailingAnchor.constraint(equalTo: trailingAnchor),
             dividerView.bottomAnchor.constraint(equalTo: bottomAnchor),
