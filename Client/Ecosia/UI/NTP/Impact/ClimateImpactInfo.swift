@@ -99,9 +99,9 @@ enum ClimateImpactInfo: Equatable {
     /// Created to be used for comparison without taking the associated types arguments into consideration.
     var rawValue: Int {
         switch self {
-        case .personalCounter:
+        case .search:
             return 0
-        case .invites:
+        case .referral:
             return 1
         case .totalTrees:
             return 2
