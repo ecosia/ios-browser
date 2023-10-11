@@ -34,7 +34,6 @@ extension String {
         case estimatedImpact = "Estimated impact"
         case estimatedTrees = "Estimated trees"
         case exploreEcosia = "Explore Ecosia"
-        case faqs = "FAQs"
         case financialReports = "Financial reports"
         case forceDarkMode = "Force Dark Mode"
         case turnOffDarkMode = "Turn off Dark Mode"
