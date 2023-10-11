@@ -5,18 +5,44 @@
 import UIKit
 
 final class WelcomeTourGreen: UIView, NotificationThemeable {
-    private weak var searchLabel: UILabel!
+    private lazy var searchLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = .localized(.sustainableShoes)
+        label.font = .systemFont(ofSize: 15)
+        label.numberOfLines = 1
+        label.textAlignment = .left
+        return label
+    }()
+    private lazy var counterLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "10"
+        label.font = .systemFont(ofSize: 17).bold()
+        label.numberOfLines = 1
+        label.textAlignment = .left
+        return label
+    }()
+    private lazy var counterSubtitleLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = .localizedPlural(.searches, num: 500)
+        label.font = .systemFont(ofSize: 13)
+        label.numberOfLines = 1
+        label.textAlignment = .left
+        return label
+    }()
 
-    init() {
+    init(isCounterEnabled: Bool = false) {
         super.init(frame: .zero)
-        setup()
+        setup(isCounterEnabled: isCounterEnabled)
         updateAccessibilitySettings()
         applyTheme()
     }
 
     required init?(coder: NSCoder) {  nil }
 
-    func setup() {
+    func setup(isCounterEnabled: Bool) {
         let iPadOffset: CGFloat = traitCollection.userInterfaceIdiom == .pad ? 60 : 0
         
         let stack = UIStackView()
@@ -30,31 +56,38 @@ final class WelcomeTourGreen: UIView, NotificationThemeable {
         stack.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
         stack.centerYAnchor.constraint(equalTo: centerYAnchor, constant: -50 - iPadOffset).isActive = true
 
-        let topImage = UIImageView(image: .init(named: "tourSearch-alternative"))
+        let topImage = UIImageView(image: .init(named: "tourSearch"))
         topImage.translatesAutoresizingMaskIntoConstraints = false
-        topImage.isAccessibilityElement = false
         stack.addArrangedSubview(topImage)
 
-        let searchLabel = UILabel()
-        searchLabel.translatesAutoresizingMaskIntoConstraints = false
-        searchLabel.text = .localized(.sustainableShoes)
-        searchLabel.font = .systemFont(ofSize: 12)
-        searchLabel.numberOfLines = 1
-        searchLabel.textAlignment = .left
-        searchLabel.isAccessibilityElement = false
         topImage.addSubview(searchLabel)
-        self.searchLabel = searchLabel
 
         searchLabel.leadingAnchor.constraint(equalTo: topImage.leadingAnchor, constant: 55).isActive = true
-        searchLabel.topAnchor.constraint(equalTo: topImage.topAnchor, constant: 37).isActive = true
+        searchLabel.topAnchor.constraint(equalTo: topImage.topAnchor, constant: 35).isActive = true
         searchLabel.trailingAnchor.constraint(equalTo: topImage.trailingAnchor, constant: -40).isActive = true
         searchLabel.transform = .init(rotationAngle: Double.pi / -33)
 
-        let bottomImage = UIImageView(image: .init(named: "tourGreen"))
+        let bottomImage = UIImageView(image: .init(named: isCounterEnabled ? "tourCounter" : "tourGreen"))
         bottomImage.translatesAutoresizingMaskIntoConstraints = false
-        bottomImage.isAccessibilityElement = false
         stack.addArrangedSubview(bottomImage)
 
+        if isCounterEnabled {
+            bottomImage.addSubview(counterLabel)
+            bottomImage.addSubview(counterSubtitleLabel)
+            
+            NSLayoutConstraint.activate([
+                counterLabel.topAnchor.constraint(equalTo: bottomImage.topAnchor, constant: 28),
+                counterLabel.leadingAnchor.constraint(equalTo: bottomImage.leadingAnchor, constant: 65),
+                counterLabel.trailingAnchor.constraint(equalTo: bottomImage.trailingAnchor, constant: -46),
+                counterSubtitleLabel.topAnchor.constraint(equalTo: counterLabel.bottomAnchor, constant: 2),
+                counterSubtitleLabel.leadingAnchor.constraint(equalTo: counterLabel.leadingAnchor),
+                counterSubtitleLabel.trailingAnchor.constraint(equalTo: counterLabel.trailingAnchor)
+            ])
+            let angle: CGFloat = .pi / 33
+            counterLabel.transform = .init(rotationAngle: angle)
+            counterSubtitleLabel.transform = .init(rotationAngle: angle)
+        }
+        
         // upscale images for iPad
         if traitCollection.userInterfaceIdiom == .pad {
             bottomImage.transform = bottomImage.transform.scaledBy(x: 1.5, y: 1.5)
@@ -64,6 +97,8 @@ final class WelcomeTourGreen: UIView, NotificationThemeable {
 
     func applyTheme() {
         searchLabel.textColor = .theme.ecosia.primaryText
+        counterLabel.textColor = .theme.ecosia.primaryText
+        counterSubtitleLabel.textColor = .theme.ecosia.secondaryText
     }
     
     func updateAccessibilitySettings() {

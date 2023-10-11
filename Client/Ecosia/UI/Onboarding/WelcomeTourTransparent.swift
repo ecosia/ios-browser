@@ -9,7 +9,6 @@ final class WelcomeTourTransparent: UIView, NotificationThemeable {
     private weak var stack: UIStackView!
     private weak var monthView: UIView!
     private weak var monthViewLabel: UILabel!
-    private weak var monthViewImage: UIImageView!
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -85,16 +84,6 @@ final class WelcomeTourTransparent: UIView, NotificationThemeable {
         containerStack.addArrangedSubview(label)
         self.monthViewLabel = label
         
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFit
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        let image = UIImage(named: "chevronDown")?.withRenderingMode(.alwaysTemplate)
-        imageView.image = image
-        imageView.heightAnchor.constraint(equalToConstant: 16).isActive = true
-        imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor).isActive = true
-        containerStack.addArrangedSubview(imageView)
-        self.monthViewImage = imageView
-        
         NSLayoutConstraint.activate([
             containerStack.topAnchor.constraint(equalTo: monthView.topAnchor, constant: 8),
             containerStack.bottomAnchor.constraint(equalTo: monthView.bottomAnchor, constant: -8),
@@ -113,6 +102,5 @@ final class WelcomeTourTransparent: UIView, NotificationThemeable {
     func applyThemeToMonthView() {
         monthView.backgroundColor = .theme.ecosia.primaryButton
         monthViewLabel.textColor = .theme.ecosia.tertiaryText
-        monthViewImage.tintColor = .theme.ecosia.tertiaryText
     }
 }

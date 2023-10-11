@@ -664,7 +664,6 @@
 		CA4D9CFD28C8D801006AFB5D /* MultiplyImpact.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4D9CA628C8D801006AFB5D /* MultiplyImpact.swift */; };
 		CA4D9CFE28C8D801006AFB5D /* EcosiaNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4D9CA728C8D801006AFB5D /* EcosiaNavigation.swift */; };
 		CA4D9D0228C8D801006AFB5D /* MultiplyImpactStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4D9CAB28C8D801006AFB5D /* MultiplyImpactStep.swift */; };
-		CA4D9D0628C8D801006AFB5D /* WelcomeTourPlanet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4D9CB028C8D801006AFB5D /* WelcomeTourPlanet.swift */; };
 		CA4D9D0728C8D801006AFB5D /* Welcome.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4D9CB128C8D801006AFB5D /* Welcome.swift */; };
 		CA4D9D0828C8D801006AFB5D /* WelcomeTour.Step.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4D9CB228C8D801006AFB5D /* WelcomeTour.Step.swift */; };
 		CA4D9D0928C8D801006AFB5D /* WelcomeTourAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4D9CB328C8D801006AFB5D /* WelcomeTourAction.swift */; };
@@ -3643,7 +3642,6 @@
 		CA4D9CA628C8D801006AFB5D /* MultiplyImpact.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultiplyImpact.swift; sourceTree = "<group>"; };
 		CA4D9CA728C8D801006AFB5D /* EcosiaNavigation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EcosiaNavigation.swift; sourceTree = "<group>"; };
 		CA4D9CAB28C8D801006AFB5D /* MultiplyImpactStep.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultiplyImpactStep.swift; sourceTree = "<group>"; };
-		CA4D9CB028C8D801006AFB5D /* WelcomeTourPlanet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WelcomeTourPlanet.swift; sourceTree = "<group>"; };
 		CA4D9CB128C8D801006AFB5D /* Welcome.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Welcome.swift; sourceTree = "<group>"; };
 		CA4D9CB228C8D801006AFB5D /* WelcomeTour.Step.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WelcomeTour.Step.swift; sourceTree = "<group>"; };
 		CA4D9CB328C8D801006AFB5D /* WelcomeTourAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WelcomeTourAction.swift; sourceTree = "<group>"; };
@@ -6674,7 +6672,6 @@
 		CA4D9CAF28C8D801006AFB5D /* Onboarding */ = {
 			isa = PBXGroup;
 			children = (
-				CA4D9CB028C8D801006AFB5D /* WelcomeTourPlanet.swift */,
 				1287A99C2A6FFA45005F21F7 /* WelcomeTourGreen.swift */,
 				CA4D9CB128C8D801006AFB5D /* Welcome.swift */,
 				CA4D9CB228C8D801006AFB5D /* WelcomeTour.Step.swift */,
@@ -9359,7 +9356,6 @@
 				C84655FD2887A01800861B4A /* WallpaperResourceManager.swift in Sources */,
 				CAA3B7E62497DCB60094E3C1 /* LoginDataSource.swift in Sources */,
 				1DFE57FF27BAE3150025DE58 /* HomepageSectionType.swift in Sources */,
-				CA4D9D0628C8D801006AFB5D /* WelcomeTourPlanet.swift in Sources */,
 				E4CD9F6D1A77DD2800318571 /* ReaderModeStyleViewController.swift in Sources */,
 				8AD40FD527BB1C1000672675 /* ConnectionButton.swift in Sources */,
 				E571EE772875694C0051D9AA /* MockPocketSponsoredStoriesProvider.swift in Sources */,
