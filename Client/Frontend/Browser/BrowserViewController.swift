@@ -2307,7 +2307,7 @@ extension BrowserViewController {
     @discardableResult
     private func presentDefaultBrowserPromoIfNeeded() -> Bool {
         guard shouldShowDefaultBrowserPromo, 
-                DefaultBrowserExperiment.minPromoSearches() <= User.shared.treeCount else { return false }
+                DefaultBrowserExperiment.minPromoSearches() <= User.shared.searchCount else { return false }
 
         if #available(iOS 14, *) {
             let defaultPromo = DefaultBrowser(delegate: self)

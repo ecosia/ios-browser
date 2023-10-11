@@ -13,20 +13,19 @@ protocol NTPImpactCellDelegate: AnyObject {
 final class NTPImpactCellViewModel {
     weak var delegate: NTPImpactCellDelegate?
     var infoItemSections: [[ClimateImpactInfo]] {
-        var firstSection: [ClimateImpactInfo] = [invitesInfo]
+        var firstSection: [ClimateImpactInfo] = [referralInfo]
         if !Unleash.isEnabled(.incentiveRestrictedSearch) {
-            firstSection.insert(personalCounterInfo,
+            firstSection.insert(searchInfo,
                                 at: 0)
         }
         let secondSection: [ClimateImpactInfo] = [totalTreesInfo, totalInvestedInfo]
         return [firstSection, secondSection]
     }
-    var invitesInfo: ClimateImpactInfo {
-        .invites(value: User.shared.referrals.count)
+    var searchInfo: ClimateImpactInfo {
+        .search(value: User.shared.searchImpact, searches: searchesCounter.state ?? User.shared.searchCount)
     }
-    var personalCounterInfo: ClimateImpactInfo {
-        .personalCounter(value: User.shared.impact,
-                         searches: personalCounter.state ?? User.shared.treeCount)
+    var referralInfo: ClimateImpactInfo {
+        .referral(value: User.shared.referrals.impact, invites: User.shared.referrals.count)
     }
     var totalTreesInfo: ClimateImpactInfo {
         .totalTrees(value: TreesProjection.shared.treesAt(.init()))
@@ -35,7 +34,7 @@ final class NTPImpactCellViewModel {
         .totalInvested(value: InvestmentsProjection.shared.totalInvestedAt(.init()))
     }
 
-    private let personalCounter = PersonalCounter()
+    private let searchesCounter = SearchesCounter()
     private var cells = [Int:NTPImpactCell]()
     private let referrals: Referrals
     init(referrals: Referrals) {
@@ -43,18 +42,18 @@ final class NTPImpactCellViewModel {
         
         referrals.subscribe(self) { [weak self] _ in
             guard let self = self else { return }
-            self.refreshCell(withInfo: self.invitesInfo)
+            self.refreshCell(withInfo: self.referralInfo)
         }
         
-        personalCounter.subscribe(self) { [weak self] _ in
+        searchesCounter.subscribe(self) { [weak self] _ in
             guard let self = self else { return }
-            self.refreshCell(withInfo: self.personalCounterInfo)
+            self.refreshCell(withInfo: self.searchInfo)
         }
     }
     
     deinit {
         referrals.unsubscribe(self)
-        personalCounter.unsubscribe(self)
+        searchesCounter.unsubscribe(self)
     }
 
     func subscribeToProjections() {

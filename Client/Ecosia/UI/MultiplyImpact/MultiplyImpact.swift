@@ -64,12 +64,15 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
     private weak var topBackground: UIView?
     private weak var forestOverlay: UIView?
     private weak var waves: UIImageView?
-    private weak var card: UIView?
-    private weak var cardIcon: UIImageView?
-    private weak var cardTitle: UILabel?
-    private weak var cardTreeCount: UILabel?
-    private weak var cardTreeIcon: UIImageView?
     private weak var yourInvites: UILabel?
+    private lazy var referralImpactRowView: NTPImpactRowView = {
+        let info = ClimateImpactInfo.referral(value: User.shared.referrals.impact,
+                                              invites: User.shared.referrals.count)
+        let view = NTPImpactRowView(info: info)
+        view.forceHideActionButton = true
+        view.position = (0, 1)
+        return view
+    }()
     
     private weak var sharingYourLink: UILabel?
     private weak var sharing: UIView?
@@ -152,48 +155,7 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         content.addSubview(yourInvites)
         self.yourInvites = yourInvites
         
-        let card = UIView()
-        card.isUserInteractionEnabled = false
-        card.translatesAutoresizingMaskIntoConstraints = false
-        card.layer.cornerRadius = UX.defaultCornerRadius
-        content.addSubview(card)
-        self.card = card
-        
-        let cardIcon = UIImageView(image: .init(named: "impactReferrals"))
-        cardIcon.translatesAutoresizingMaskIntoConstraints = false
-        cardIcon.setContentHuggingPriority(.required, for: .vertical)
-        cardIcon.contentMode = .center
-        card.addSubview(cardIcon)
-        self.cardIcon = cardIcon
-        
-        let cardTitle = UILabel()
-        cardTitle.translatesAutoresizingMaskIntoConstraints = false
-        cardTitle.numberOfLines = 0
-        cardTitle.text = .localizedPlural(.acceptedInvites, num: User.shared.referrals.count)
-        cardTitle.font = .preferredFont(forTextStyle: .body)
-        cardTitle.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-        cardTitle.setContentHuggingPriority(.defaultLow, for: .horizontal)
-        cardTitle.adjustsFontForContentSizeCategory = true
-        card.addSubview(cardTitle)
-        self.cardTitle = cardTitle
-        
-        let cardTreeCount = UILabel()
-        cardTreeCount.translatesAutoresizingMaskIntoConstraints = false
-        cardTreeCount.numberOfLines = 0
-        cardTreeCount.text = "\(User.shared.referrals.impact)"
-        cardTreeCount.font = .preferredFont(forTextStyle: .subheadline).bold()
-        cardTreeCount.setContentCompressionResistancePriority(.required, for: .horizontal)
-        cardTreeCount.setContentCompressionResistancePriority(.required, for: .vertical)
-        cardTreeCount.setContentHuggingPriority(.required, for: .horizontal)
-        cardTreeCount.adjustsFontForContentSizeCategory = true
-        card.addSubview(cardTreeCount)
-        self.cardTreeCount = cardTreeCount
-
-        let cardTreeIcon = UIImageView(image: .init(named: "yourImpact")?.withRenderingMode(.alwaysTemplate))
-        cardTreeIcon.translatesAutoresizingMaskIntoConstraints = false
-        cardTreeIcon.setContentHuggingPriority(.required, for: .horizontal)
-        card.addSubview(cardTreeIcon)
-        self.cardTreeIcon = cardTreeIcon
+        content.addSubview(referralImpactRowView)
 
         let sharingYourLink = UILabel()
         sharingYourLink.text = .localized(.sharingYourLink)
@@ -306,7 +268,7 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
             $0.setContentHuggingPriority(.defaultLow, for: .horizontal)
         }
         
-        [card, sharing, flowBackground].forEach {
+        [sharing, flowBackground].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             $0.layer.cornerRadius = UX.defaultCornerRadius
             content.addSubview($0)
@@ -381,25 +343,13 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         yourInvites.trailingAnchor.constraint(equalTo: content.trailingAnchor, constant: -UX.defaultPadding).isActive = true
         yourInvites.topAnchor.constraint(equalTo: waves.bottomAnchor, constant: UX.defaultPadding).isActive = true
 
-        card.topAnchor.constraint(equalTo: yourInvites.bottomAnchor, constant: UX.defaultPadding).isActive = true
-        card.bottomAnchor.constraint(equalTo: cardIcon.bottomAnchor, constant: UX.Card.cardBottomMargin).isActive = true
-
-        cardIcon.topAnchor.constraint(equalTo: card.topAnchor, constant: UX.Card.cardIconTopMargin).isActive = true
-        cardIcon.leftAnchor.constraint(equalTo: card.leftAnchor, constant: UX.defaultPadding).isActive = true
-
-        cardTitle.centerYAnchor.constraint(equalTo: cardIcon.centerYAnchor).isActive = true
-        cardTitle.leftAnchor.constraint(equalTo: cardIcon.rightAnchor, constant: UX.Card.cardTitleLeftMargin).isActive = true
-
-        cardTreeCount.leftAnchor.constraint(equalTo: cardTitle.rightAnchor, constant: UX.Card.cardTreeCountLeftMargin).isActive = true
-        cardTreeCount.centerYAnchor.constraint(equalTo: cardTitle.centerYAnchor).isActive = true
-
-        cardTreeIcon.leftAnchor.constraint(equalTo: cardTreeCount.rightAnchor, constant: UX.Card.cardTreeIconLeftMargin).isActive = true
-        cardTreeIcon.rightAnchor.constraint(equalTo: card.rightAnchor, constant: -UX.defaultPadding).isActive = true
-        cardTreeIcon.centerYAnchor.constraint(equalTo: cardTreeCount.centerYAnchor).isActive = true
-
+        referralImpactRowView.leftAnchor.constraint(equalTo: content.leftAnchor, constant: UX.defaultPadding).isActive = true
+        referralImpactRowView.rightAnchor.constraint(equalTo: content.rightAnchor, constant: -UX.defaultPadding).isActive = true
+        referralImpactRowView.topAnchor.constraint(equalTo: yourInvites.bottomAnchor, constant: UX.defaultPadding).isActive = true
+        
         sharingYourLink.leadingAnchor.constraint(equalTo: content.leadingAnchor, constant: UX.defaultPadding).isActive = true
         sharingYourLink.trailingAnchor.constraint(equalTo: content.trailingAnchor, constant: -UX.defaultPadding).isActive = true
-        sharingYourLink.topAnchor.constraint(equalTo: card.bottomAnchor, constant: UX.Card.distanceFromCardBottom).isActive = true
+        sharingYourLink.topAnchor.constraint(equalTo: referralImpactRowView.bottomAnchor, constant: UX.Card.distanceFromCardBottom).isActive = true
         
         sharing.topAnchor.constraint(equalTo: sharingYourLink.bottomAnchor, constant: UX.defaultPadding).isActive = true
         
@@ -469,16 +419,12 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         moreSharingMethods?.textColor = .theme.ecosia.secondaryText
         copyText?.textColor = .theme.ecosia.primaryBrand
         
-        [yourInvites, sharingYourLink, flowTitle, cardTitle, cardTreeCount, copyLink].forEach {
+        [yourInvites, sharingYourLink, flowTitle, copyLink].forEach {
             $0?.textColor = .theme.ecosia.primaryText
         }
         
-        [card, sharing, flowBackground].forEach {
+        [sharing, flowBackground].forEach {
             $0?.backgroundColor = .theme.ecosia.impactMultiplyCardBackground
-        }
-        
-        [cardIcon, cardTreeIcon].forEach {
-            $0?.tintColor = .theme.ecosia.primaryBrand
         }
         
         [firstStep, secondStep, thirdStep, fourthStep].forEach {
@@ -488,6 +434,9 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         [copyDividerLeft, copyDividerRight].forEach {
             $0?.backgroundColor = .theme.ecosia.border
         }
+        
+        referralImpactRowView.customBackgroundColor = .theme.ecosia.impactMultiplyCardBackground
+        referralImpactRowView.applyTheme()
         
         updateBarAppearance()
     }

@@ -69,7 +69,6 @@ final class NTPImpactCell: UICollectionViewCell, NotificationThemeable, Reusable
         
         for (index, info) in items.enumerated() {
             let row = NTPImpactRowView(info: info)
-            row.info = info // Needed to force info setup after init
             row.position = (index, items.count)
             row.delegate = delegate
             containerStack.addArrangedSubview(row)
