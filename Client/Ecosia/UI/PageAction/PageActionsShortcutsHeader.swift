@@ -24,16 +24,24 @@ class PageActionsShortcutsHeader: UITableViewHeaderFooterView {
 
     var shortcuts: [NTPLibraryShortcutView] = []
 
-    let home = Panel(title: .localized(.home), image: UIImage(named: "menu-Home"), tag: 0)
-    let newTab = Panel(title: .AppMenu.NewTab, image: UIImage(named: "menu-NewTab"), tag: 1)
-    let share = Panel(title: .AppMenu.Share, image: UIImage(named: "action_share"), tag: 2)
-    let settings = Panel(title: .AppMenu.AppMenuSettingsTitleString, image: UIImage(named: ImageIdentifiers.settings), tag: 3)
+    let home = Panel(title: .localized(.home), 
+                     image: UIImage(named: "menu-Home"),
+                     tag: 0)
+    let newTab = Panel(title: .AppMenu.NewTab, 
+                       image: UIImage(named: "menu-NewTab"),
+                       tag: 1)
+    let share = Panel(title: .AppMenu.Share, 
+                      image: UIImage(named: "action_share"),
+                      tag: 2)
+    let settings = Panel(title: .AppMenu.AppMenuSettingsTitleString, 
+                         image: UIImage(named: ImageIdentifiers.settings),
+                         tag: 3)
 
     override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)
         mainView.distribution = .fillEqually
-        mainView.alignment = .leading
-        mainView.spacing = 0
+        mainView.alignment = .center
+        mainView.spacing = 8
         mainView.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(mainView)
 
@@ -42,10 +50,10 @@ class PageActionsShortcutsHeader: UITableViewHeaderFooterView {
         height.isActive = true
 
         NSLayoutConstraint.activate([
-            mainView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 22),
+            mainView.topAnchor.constraint(equalTo: contentView.topAnchor),
             mainView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8, priority: .defaultHigh),
-            mainView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            mainView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            mainView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            mainView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
         ])
 
 

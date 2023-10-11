@@ -146,6 +146,7 @@ extension PageActionMenuCell {
         separatorView.backgroundColor = .theme.ecosia.border
         
         contentView.addSubview(separatorView)
+        contentView.bringSubviewToFront(separatorView)
         
         updateSeparatorViewConstraints(separatorView)
     }
@@ -153,7 +154,7 @@ extension PageActionMenuCell {
     private func updateSeparatorViewConstraints(_ separatorView: UIView) {
         separatorView.heightAnchor.constraint(equalToConstant: UX.separatorHeight).isActive = true
         separatorView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -UX.separatorHeight).isActive = true
-        separatorView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -UX.padding).isActive = true
+        separatorView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -UX.padding).isActive = true
         if let imageView {
             separatorView.leadingAnchor.constraint(equalTo: imageView.leadingAnchor).isActive = true
         } else if let textLabel {
@@ -218,8 +219,8 @@ extension PageActionMenuCell {
                 badgeLabel.text = .localized(.new)
                 badge.addSubview(badgeLabel)
                 
-                badgeLabel.topAnchor.constraint(equalTo: badge.topAnchor, constant: 2.5).isActive = true
-                badgeLabel.leftAnchor.constraint(equalTo: badge.leftAnchor, constant: 8).isActive = true
+                badgeLabel.centerXAnchor.constraint(equalTo: badge.centerXAnchor).isActive = true
+                badgeLabel.centerYAnchor.constraint(equalTo: badge.centerYAnchor).isActive = true
                 
                 self.badge = badge
                 self.badgeLabel = badgeLabel

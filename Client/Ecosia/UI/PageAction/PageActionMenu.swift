@@ -9,7 +9,6 @@ final class PageActionMenu: UIViewController, UIGestureRecognizerDelegate {
     // MARK: - UX
 
     struct UX {
-        static let spacing: CGFloat = 16
         static let estimatedSectionHeaderHeight: CGFloat = 16
         static let shortcuts = "Shortcuts"
         static let rowHeight: CGFloat = 50
@@ -166,20 +165,15 @@ extension PageActionMenu: UITableViewDataSource, UITableViewDelegate {
         return cell
     }
 
-    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        return UIView()
-    }
-
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        if section == 0 {
-            return UITableView.automaticDimension
-        } else {
-            return UX.spacing
+        guard section == 0 else {
+            return 0
         }
+        return UITableView.automaticDimension
     }
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        guard section == 0 else { return UIView() }
+        guard section == 0 else { return nil }
 
         let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: UX.shortcuts) as! PageActionsShortcutsHeader
         header.delegate = delegate

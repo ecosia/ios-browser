@@ -96,11 +96,24 @@ enum ClimateImpactInfo: Equatable {
         }
     }
     
+    /// Created to be used for comparison without taking the associated types arguments into consideration.
+    var rawValue: Int {
+        switch self {
+        case .personalCounter:
+            return 0
+        case .invites:
+            return 1
+        case .totalTrees:
+            return 2
+        case .totalInvested:
+            return 3
+        }
+    }
+    
     private func accessiblityLabelTreesPlanted(value: Int) -> String {
         value.spelledOutString + " " + .localizedPlural(.treesPlanted, num: value) + ";"
     }
 }
-
 
 extension Int {
     fileprivate var spelledOutString: String {

@@ -12,9 +12,7 @@ final class NTPImpactCell: UICollectionViewCell, NotificationThemeable, Reusable
     
     weak var delegate: NTPImpactCellDelegate? {
         didSet {
-            containerStack.arrangedSubviews
-                .compactMap { $0 as? NTPImpactRowView }
-                .forEach { $0.delegate = delegate }
+            impactRows.forEach { $0.delegate = delegate }
         }
     }
     
@@ -25,6 +23,9 @@ final class NTPImpactCell: UICollectionViewCell, NotificationThemeable, Reusable
         stack.alignment = .fill
         return stack
     }()
+    private var impactRows: [NTPImpactRowView] {
+        containerStack.arrangedSubviews.compactMap { $0 as? NTPImpactRowView }
+    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -75,9 +76,9 @@ final class NTPImpactCell: UICollectionViewCell, NotificationThemeable, Reusable
     }
     
     func refresh(items: [ClimateImpactInfo]) {
-        for (index, view) in containerStack.arrangedSubviews.enumerated() {
-            guard let row = view as? NTPImpactRowView else { return }
-            let info = items[index]
+        impactRows.forEach { row in
+            let matchingInfo = items.first { $0.rawValue == row.info.rawValue }
+            guard let info = matchingInfo else { return }
             row.info = info
         }
     }
