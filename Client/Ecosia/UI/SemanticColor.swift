@@ -21,6 +21,7 @@ extension UIColor {
             static let secondaryActive = UIColor(rgb: 0xF8F8F6)
             static let secondaryContent = UIColor(rgb: 0x333333)
             static let secondaryBackground = UIColor(rgb: 0xF8F8F6)
+            static let activeTransparentBackground = UIColor(rgb: 0x333333).withAlphaComponent(0.24)
         }
         
         struct Text {
@@ -63,6 +64,7 @@ extension UIColor {
             static let secondary = UIColor(rgb: 0x333333)
             static let secondaryContent = UIColor.white
             static let secondaryBackground = UIColor(rgb: 0x252525)
+            static let activeTransparentBackground = UIColor(rgb: 0xDEDED9).withAlphaComponent(0.32)
         }
         
         struct Text {
