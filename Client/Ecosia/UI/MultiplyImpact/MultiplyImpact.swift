@@ -391,6 +391,7 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         updateInviteLink()
+        refreshReferrals()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -455,18 +456,17 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
     }
 
     private func updateInviteLink() {
-        guard let inviteLink = inviteLink else {
-            copyLink?.text = "-"
-            referrals.refresh(force: true, createCode: true) {[weak self] error in
-                if let error = error {
-                    self?.showObtainingCode(error)
-                } else {
-                    self?.updateInviteLink()
-                }
-            }
-            return
-        }
         copyLink?.text = inviteLink
+    }
+    
+    private func refreshReferrals() {
+        referrals.refresh(force: true, createCode: true) { [weak self] error in
+            guard error == nil else {
+                self?.showObtainingCode(error!)
+                return
+            }
+            self?.updateInviteLink()
+        }
     }
     
     @objc private func learnMore() {
@@ -565,8 +565,8 @@ https://ecosia.co/install-ios
 """
     }
     
-    private var inviteLink: String? {
-        guard let code = User.shared.referrals.code else { return nil }
+    private var inviteLink: String {
+        guard let code = User.shared.referrals.code else { return "-" }
         return "ecosia://\(Referrals.host)/" + code
     }
 
