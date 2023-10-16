@@ -8,11 +8,7 @@ import XCTest
 
 final class EcosiaInstallTypeTests: XCTestCase {
     
-    private var user: User = .shared
-    
     override func setUpWithError() throws {
-        try? FileManager.default.removeItem(at: FileManager.user)
-        User.shared = .init()
         UserDefaults.standard.removeObject(forKey: EcosiaInstallType.installTypeKey)
         UserDefaults.standard.removeObject(forKey: EcosiaInstallType.currentInstalledVersionKey)
     }
@@ -41,6 +37,7 @@ final class EcosiaInstallTypeTests: XCTestCase {
     }
     
     func testEvaluateCurrentEcosiaInstallType_WhenUnknown_ShouldSetToFresh() {
+        User.shared.firstTime = true
         let mockVersion = MockAppVersion(version: "1.0.0")
         EcosiaInstallType.evaluateCurrentEcosiaInstallType(withVersionProvider: mockVersion)
         let type = EcosiaInstallType.get()
@@ -72,7 +69,7 @@ extension EcosiaInstallTypeTests {
     
     // Test evaluating install type and version for a fresh install with firstTime=true
     func testEvaluateFreshInstallType_WithFirstTime_And_VersionProvider() {
-        user.firstTime = true
+        User.shared.firstTime = true
         let versionProvider = MockAppVersionInfoProvider(mockedAppVersion: "1.0.0")
         EcosiaInstallType.evaluateCurrentEcosiaInstallType(withVersionProvider: versionProvider)
         
@@ -82,7 +79,7 @@ extension EcosiaInstallTypeTests {
 
     // Test evaluating install type and version for an upgrade with firstTime=true
     func testEvaluateUpgradeInstallType_WithFirstTimeFalse_And_VersionProvider() {
-        user.firstTime = false
+        User.shared.firstTime = false
         UserDefaults.standard.set("0.9.0", forKey: EcosiaInstallType.currentInstalledVersionKey)
         
         let versionProvider = MockAppVersionInfoProvider(mockedAppVersion: "1.0.0")

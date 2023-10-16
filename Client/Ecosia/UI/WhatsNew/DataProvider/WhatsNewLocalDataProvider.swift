@@ -29,17 +29,19 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
             return false
         }
         
-        // Get a list of version strings from the data provider.
-        let dataProviderVersionsString = getVersionRange().map { $0.description }
+        // Are there items to be shown in the range?
+        guard let items = try? getData(), !items.isEmpty else { return false }
         
-        // Check if there are saved "What's New" item versions in the user settings.
-        guard let savedWhatsNewItemVersionsString = User.shared.whatsNewItemsVersionsShown else { return true }
+        // Was there already shown items in the past?
+        // TODO: Mock it! (it is always empty on tests atm)
+        let shownVersions = User.shared.whatsNewItemsVersionsShown ?? []
         
-        // Determine if there are any new items to show based on saved versions.
-        let isNeedingItemsToShow = savedWhatsNewItemVersionsString.allSatisfy { dataProviderVersionsString.contains($0) } == false
+        let versionsInRange = getVersionRange().map { $0.description }
         
-        // Return true if it's an upgrade and there are new items to show.
-        return isNeedingItemsToShow
+        // Are all versions in the range contained in the shown versions?
+        let allVersionsShown = Set(versionsInRange).subtracting(shownVersions).isEmpty
+        
+        return !allVersionsShown
     }
 
     /// The current app version provider from which the Ecosia App Version is retrieved
@@ -95,8 +97,8 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
         // Gather first item in `allVersions` array
         guard let firstItemInAllVersions = allVersions.first else { return [] }
         
-        // Ensure the `toVersion` is bigger than the smallest version in `whatsNewItems`
-        guard toVersion > firstItemInAllVersions else { return [] }
+        // Ensure the `toVersion` is greater than or equal to the smallest version in `whatsNewItems`
+        guard toVersion >= firstItemInAllVersions else { return [] }
 
         // Find the closest previous version or use the first one if `from` is older than all versions.
         let fromIndex = allVersions.lastIndex { $0 <= fromVersion } ?? 0

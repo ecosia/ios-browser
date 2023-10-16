@@ -8,11 +8,7 @@ import XCTest
 
 final class WhatsNewLocalDataProviderTests: XCTestCase {
     
-    private var user: User = .shared
-        
     override func setUpWithError() throws {
-        try? FileManager.default.removeItem(at: FileManager.user)
-        User.shared = .init()
         UserDefaults.standard.removeObject(forKey: EcosiaInstallType.installTypeKey)
         UserDefaults.standard.removeObject(forKey: EcosiaInstallType.currentInstalledVersionKey)
     }
@@ -45,69 +41,68 @@ final class WhatsNewLocalDataProviderTests: XCTestCase {
         }
     }
     
-    // MARK: - Upgrade Tests
+    // MARK: - Unknown Install Tests
     
-    func testUpgradeToDifferentVersionShouldShowWhatsNew() {
+    func testUnkownInstallShouldNotShowWhatsNew() {
         // Given
-        user.firstTime = false
-        UserDefaults.standard.set("8.3.0", forKey: EcosiaInstallType.currentInstalledVersionKey)
-        let dataProvider = WhatsNewLocalDataProvider(versionProvider: MockAppVersionInfoProvider(mockedAppVersion: "10.0.0"))
-        
-        // When
-        EcosiaInstallType.evaluateCurrentEcosiaInstallType(withVersionProvider: dataProvider.versionProvider)
-        let shouldShowWhatsNew = dataProvider.shouldShowWhatsNewPage
-        
-        // Then
-        XCTAssertEqual(EcosiaInstallType.get(), .upgrade)
-        XCTAssertTrue(shouldShowWhatsNew, "Upgrade to a different version should show What's New. Got items to be shown: \(User.shared.whatsNewItemsVersionsShown), for version range: \(dataProvider.getVersionRange().map { $0.description })")
-    }
-        
-    func testUpgradeToSameVersionShouldNotShowWhatsNew() {
-        // Given
-        user.firstTime = false
-        UserDefaults.standard.set("9.0.0", forKey: EcosiaInstallType.currentInstalledVersionKey)
+        EcosiaInstallType.set(type: .unknown)
         let dataProvider = WhatsNewLocalDataProvider(versionProvider: MockAppVersionInfoProvider(mockedAppVersion: "9.0.0"))
         
         // When
-        EcosiaInstallType.evaluateCurrentEcosiaInstallType(withVersionProvider: dataProvider.versionProvider)
         let shouldShowWhatsNew = dataProvider.shouldShowWhatsNewPage
         
         // Then
-        XCTAssertEqual(EcosiaInstallType.get(), .unknown) // As we manually simulate an updgrade to the same version a.k.a. build rerun
         XCTAssertFalse(shouldShowWhatsNew, "Upgrade to the same version should not show What's New")
     }
     
-    func testUpgradeToSameVersionShouldNotGetWhatsNewItems() {
+    func testUnknownInstallShouldNotGetWhatsNewItems() {
         // Given
-        user.firstTime = false
-        UserDefaults.standard.set("9.0.0", forKey: EcosiaInstallType.currentInstalledVersionKey)
+        EcosiaInstallType.set(type: .unknown)
         let dataProvider = WhatsNewLocalDataProvider(versionProvider: MockAppVersionInfoProvider(mockedAppVersion: "9.0.0"))
         
         // When
         do {
-            EcosiaInstallType.evaluateCurrentEcosiaInstallType(withVersionProvider: dataProvider.versionProvider)
             let whatsNewItems = try dataProvider.getData()
             
             // Then
-            XCTAssertEqual(EcosiaInstallType.get(), .unknown) // As we manually simulate an updgrade to the same version a.k.a. build rerun
             XCTAssertTrue(whatsNewItems.isEmpty, "Upgrade to the same version should not get What's New items")
         } catch {
             XCTFail("Unexpected error: \(error)")
         }
     }
     
+    // MARK: - Upgrade Install Tests
+    
+    // TODO: Make the test independent of WhatsNewLocalDataProvider.whatsNewItems
+    func testUpgradeToVersionWithItemsShouldShowWhatsNew() {
+        // Given
+        EcosiaInstallType.updateCurrentVersion(version: "8.0.0")
+        EcosiaInstallType.set(type: .upgrade)
+        let dataProvider = WhatsNewLocalDataProvider(versionProvider: MockAppVersionInfoProvider(mockedAppVersion: "9.0.0"))
+        
+        // When
+        let shouldShowWhatsNew = dataProvider.shouldShowWhatsNewPage
+        
+        // Then
+        XCTAssertTrue(shouldShowWhatsNew, "Upgrade to a different version should show What's New. Got items to be shown: \(User.shared.whatsNewItemsVersionsShown ?? []), for version range: \(dataProvider.getVersionRange().map { $0.description })")
+    }
+    
+    // TODO: In this case ☝️, don't we also need to test `getData()`?
+    
     func testUpgradeToLowerVersionShouldNotShowWhatsNew() {
         // Given
+        EcosiaInstallType.set(type: .upgrade)
+        EcosiaInstallType.updateCurrentVersion(version: "9.0.0")
         let dataProvider = WhatsNewLocalDataProvider(versionProvider: MockAppVersionInfoProvider(mockedAppVersion: "8.0.0"))
         
         // When
-        EcosiaInstallType.evaluateCurrentEcosiaInstallType(withVersionProvider: dataProvider.versionProvider)
         let shouldShowWhatsNew = dataProvider.shouldShowWhatsNewPage
         
         // Then
         XCTAssertFalse(shouldShowWhatsNew, "Upgrade to a lower version should not show What's New")
     }
     
+    // TODO: Is this repetitive with the ☝️?
     func testUpgradeToLowerVersionShouldNotGetWhatsNewItems() {
         // Given
         let dataProvider = WhatsNewLocalDataProvider(versionProvider: MockAppVersionInfoProvider(mockedAppVersion: "8.0.0"))
