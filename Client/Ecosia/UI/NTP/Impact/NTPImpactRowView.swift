@@ -39,12 +39,14 @@ final class NTPImpactRowView: UIView, NotificationThemeable {
         let label = UILabel()
         label.font = .preferredFont(forTextStyle: .title2).bold()
         label.adjustsFontSizeToFitWidth = true
+        label.adjustsFontForContentSizeCategory = true
         return label
     }()
     private lazy var subtitleLabel: UILabel = {
         let label = UILabel()
         label.font = .preferredFont(forTextStyle: .footnote)
         label.numberOfLines = 0
+        label.adjustsFontForContentSizeCategory = true
         return label
     }()
     private lazy var actionButton: ResizableButton = {
