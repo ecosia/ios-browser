@@ -190,6 +190,9 @@ class HomepageViewController: UIViewController, HomePanel, FeatureFlaggable {
     func recordHomepageAppeared(isZeroSearch: Bool) {
         viewModel.isZeroSearch = isZeroSearch
         viewModel.recordViewAppeared()
+        
+        // Ecosia: Refresh referral claims
+        referrals.refresh()
     }
 
     func recordHomepageDisappeared() {
