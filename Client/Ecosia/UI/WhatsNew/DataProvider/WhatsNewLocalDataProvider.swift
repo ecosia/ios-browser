@@ -22,39 +22,31 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
     /// A computed property to determine whether the "What's New" page should be displayed.
     /// - Returns: `true` if the What's New page should be shown; otherwise, `false`.
     var shouldShowWhatsNewPage: Bool {
-        
-        // Check if we are in the upgrade scenario
         guard EcosiaInstallType.get() == .upgrade else {
-            markAllPreviousVersionsAsSeen()
+            markPreviousVersionsAsSeen()
             return false
         }
         
-        // Get a list of version strings from the data provider.
-        let dataProviderVersionsString = getVersionRange().map { $0.description }
+        // Are there items to be shown in the range?
+        guard let items = try? getWhatsNewItemsInRange(), !items.isEmpty else { return false }
         
-        // Check if there are saved "What's New" item versions in the user settings.
-        guard let savedWhatsNewItemVersionsString = user.whatsNewItemsVersionsShown else { return true }
+        let shownVersions = User.shared.whatsNewItemsVersionsShown
+        let versionsInRange = getVersionRange().map { $0.description }
         
-        // Determine if there are any new items to show based on saved versions.
-        let isNeedingItemsToShow = savedWhatsNewItemVersionsString.allSatisfy { dataProviderVersionsString.contains($0) } == false
+        // Are all versions in the range contained in the shown versions?
+        let allVersionsShown = Set(versionsInRange).subtracting(shownVersions).isEmpty
         
-        // Return true if it's an upgrade and there are new items to show.
-        return isNeedingItemsToShow
+        return !allVersionsShown
     }
 
     /// The current app version provider from which the Ecosia App Version is retrieved
     private(set) var versionProvider: AppVersionInfoProvider
-    /// The `User` instance. Mainly utilized to pass the correct instance in tests. Production code rely on its `.shared` instance.
-    private(set) var user: User
 
     /// Default initializer.
     /// - Parameters:
     ///   - versionProvider: The current app version provider. Defaults to `DefaultAppVersionInfoProvider`
-    ///   - user: An instance of the `User` object to improve reliability on tests. Defaults to its shared instance `.shared`
-    init(versionProvider: AppVersionInfoProvider = DefaultAppVersionInfoProvider(),
-         user: User = .shared) {
+    init(versionProvider: AppVersionInfoProvider = DefaultAppVersionInfoProvider()) {
         self.versionProvider = versionProvider
-        self.user = user
     }
     
     /// The items we would like to attempt to show in the update sheet
@@ -74,7 +66,7 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
     /// - Throws: An error if fetching fails.
     ///
     /// - Returns: An array of `WhatsNewItem` to display.
-    func getData() throws -> [WhatsNewItem] {
+    func getWhatsNewItemsInRange() throws -> [WhatsNewItem] {
         // Get the version range and corresponding What's New items.
         let versionRange = getVersionRange()
         var items: [WhatsNewItem] = []
@@ -100,8 +92,8 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
         // Gather first item in `allVersions` array
         guard let firstItemInAllVersions = allVersions.first else { return [] }
         
-        // Ensure the `toVersion` is bigger than the smallest version in `whatsNewItems`
-        guard toVersion > firstItemInAllVersions else { return [] }
+        // Ensure the `toVersion` is greater than or equal to the smallest version in `whatsNewItems`
+        guard toVersion >= firstItemInAllVersions else { return [] }
 
         // Find the closest previous version or use the first one if `from` is older than all versions.
         let fromIndex = allVersions.lastIndex { $0 <= fromVersion } ?? 0
@@ -112,15 +104,11 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
         // Return the range.
         return Array(allVersions[fromIndex...toIndex])
     }
-}
-
-extension WhatsNewLocalDataProvider {
     
-    private func markAllPreviousVersionsAsSeen() {
+    func markPreviousVersionsAsSeen() {
         let previousVersions = whatsNewItems.keys
             .filter { $0 <= toVersion }
             .map { $0.description }
-        user.updateWhatsNewItemsVersionsAppending(previousVersions)
+        User.shared.whatsNewItemsVersionsShown.formUnion(previousVersions)
     }
-    
 }

@@ -2291,16 +2291,9 @@ extension BrowserViewController {
     @discardableResult
     private func presentWhatsNewPageIfNeeded() -> Bool {
         guard shouldShowWhatsNewPageScreen else { return false }
-
-        let viewModel = WhatsNewViewModel(provider: whatsNewDataProvider)
-
-        guard !viewModel.items.isEmpty else {
-            return false
-        }
         
-        WhatsNewViewController.presentOn(self,
-                                         viewModel: viewModel)
-
+        let viewModel = WhatsNewViewModel(provider: whatsNewDataProvider)
+        WhatsNewViewController.presentOn(self, viewModel: viewModel)
         return true
     }
 

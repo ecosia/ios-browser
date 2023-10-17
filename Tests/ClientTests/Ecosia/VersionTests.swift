@@ -78,6 +78,7 @@ final class VersionTests: XCTestCase {
     }
 }
 
+// Integration tests for Version + WhatsNewLocalDataProvider
 extension VersionTests {
     
     func testUpgradeFromVersionWithoutLogic() {
@@ -106,7 +107,7 @@ extension VersionTests {
                                   provider: appVersionInfoProvider)
         
         // When: We retrieve the What's New items after this "fake" update
-        let items = try? dataProvider.getData()
+        let items = try? dataProvider.getWhatsNewItemsInRange()
         
         // Then: We should not have items for versions beyond 8.3.0 (like 9.0.0)
         XCTAssertTrue(items?.isEmpty == true, "WhatsNewItem list should be empty for fake update to same version")
@@ -127,7 +128,7 @@ extension VersionTests {
         Version.updateFromCurrent(forKey: Self.appVersionUpdateTestKey, provider: appVersionInfoProvider)
         
         // And: We retrieve the What's New items after this update
-        let items = try? dataProvider.getData()
+        let items = try? dataProvider.getWhatsNewItemsInRange()
         
         // Then: We should not have items for versions beyond 8.3.1 (like 9.0.0)
         XCTAssertTrue(items?.isEmpty == true, "WhatsNewItem list should be empty for an update to minor version when there are items for upper versions")
