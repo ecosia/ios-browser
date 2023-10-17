@@ -198,6 +198,11 @@ extension BrowserViewController: TabToolbarDelegate, PhotonActionSheetProtocol {
 
 // MARK: - ToolbarActionMenuDelegate
 extension BrowserViewController: ToolBarActionMenuDelegate {
+    
+    func openURLInCurrentTab(_ url: URL?) {
+        guard let url else { return }
+        tabManager.selectedTab?.loadRequest(URLRequest(url: url))
+    }
 
     func updateToolbarState() {
         updateToolbarStateForTraitCollection(view.traitCollection)

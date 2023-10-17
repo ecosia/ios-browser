@@ -15,6 +15,8 @@ protocol ToolBarActionMenuDelegate: AnyObject {
     func addBookmark(url: String, title: String?, favicon: Favicon?)
 
     func openURLInNewTab(_ url: URL?, isPrivate: Bool)
+    // Ecosia: Add option to open in same tab
+    func openURLInCurrentTab(_ url: URL?)
     func openBlankNewTab(focusLocationField: Bool, isPrivate: Bool, searchFor searchText: String?)
 
     func showLibrary(panel: LibraryPanelType?)
@@ -378,7 +380,7 @@ class MainMenuActionHelper: PhotonActionSheetProtocol, FeatureFlaggable, CanRemo
                 self.delegate?.openURLInNewTab(url, isPrivate: false)
             }
              */
-            self.delegate?.openURLInNewTab(Environment.current.urlProvider.faq, isPrivate: false)
+            self.delegate?.openURLInCurrentTab(Environment.current.urlProvider.faq)
         }.items
     }
 
