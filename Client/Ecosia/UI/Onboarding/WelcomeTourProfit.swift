@@ -32,7 +32,7 @@ final class WelcomeTourProfit: UIView, NotificationThemeable {
         let beforeLabel = UILabel()
         beforeLabel.translatesAutoresizingMaskIntoConstraints = false
         beforeLabel.text = .localized(.before)
-        beforeLabel.font = .preferredFont(forTextStyle: .body).bold()
+        beforeLabel.font = .systemFont(ofSize: 15, weight: .semibold)
         beforeLabel.adjustsFontForContentSizeCategory = true
         beforeContainer.addSubview(beforeLabel)
         self.beforeLabel = beforeLabel
@@ -80,7 +80,7 @@ final class WelcomeTourProfit: UIView, NotificationThemeable {
         let afterLabel = UILabel()
         afterLabel.translatesAutoresizingMaskIntoConstraints = false
         afterLabel.text = .localized(.after)
-        afterLabel.font = .preferredFont(forTextStyle: .body).bold()
+        afterLabel.font = .systemFont(ofSize: 15, weight: .semibold)
         afterLabel.adjustsFontForContentSizeCategory = true
         stack.addArrangedSubview(afterLabel)
         self.afterLabel = afterLabel
