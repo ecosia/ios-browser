@@ -22,20 +22,15 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
     /// A computed property to determine whether the "What's New" page should be displayed.
     /// - Returns: `true` if the What's New page should be shown; otherwise, `false`.
     var shouldShowWhatsNewPage: Bool {
-        
-        // Check if we are in the upgrade scenario
         guard EcosiaInstallType.get() == .upgrade else {
-            markAllPreviousVersionsAsSeen()
+            markPreviousVersionsAsSeen()
             return false
         }
         
         // Are there items to be shown in the range?
         guard let items = try? getData(), !items.isEmpty else { return false }
         
-        // Was there already shown items in the past?
-        // TODO: Mock it! (it is always empty on tests atm)
-        let shownVersions = User.shared.whatsNewItemsVersionsShown ?? []
-        
+        let shownVersions = User.shared.whatsNewItemsVersionsShown
         let versionsInRange = getVersionRange().map { $0.description }
         
         // Are all versions in the range contained in the shown versions?
@@ -109,15 +104,11 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
         // Return the range.
         return Array(allVersions[fromIndex...toIndex])
     }
-}
-
-extension WhatsNewLocalDataProvider {
     
-    private func markAllPreviousVersionsAsSeen() {
+    func markPreviousVersionsAsSeen() {
         let previousVersions = whatsNewItems.keys
             .filter { $0 <= toVersion }
             .map { $0.description }
-        User.shared.updateWhatsNewItemsVersionsAppending(previousVersions)
+        User.shared.whatsNewItemsVersionsShown.formUnion(previousVersions)
     }
-    
 }
