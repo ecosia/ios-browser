@@ -9,7 +9,7 @@ final class WelcomeTourGreen: UIView, NotificationThemeable {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = .localized(.sustainableShoes)
-        label.font = .systemFont(ofSize: 15)
+        label.font = .systemFont(ofSize: 15, weight: .semibold)
         label.numberOfLines = 1
         label.textAlignment = .left
         return label
