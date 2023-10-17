@@ -57,15 +57,6 @@ final class Analytics {
         let event = Structured(category: Category.activity.rawValue,
                                action: action.rawValue)
             .label(Analytics.Label.Navigation.inapp.rawValue)
-        
-        switch action {
-        case .resume, .launch:
-            // add A/B Test context
-            if let context = Self.getTestContext(from: .bingSearch) {
-                event.contexts.append(context)
-            }
-        }
-        
         track(event)
     }
     

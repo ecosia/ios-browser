@@ -292,19 +292,7 @@ extension BrowserViewController: URLBarDelegate {
          revert `searchURL` from `var` to `let`
          when the Bing experiment will be removed
          */
-        if var searchURL = engine.searchURLForQuery(text) {
-            
-            /*
-             Ecosia: Bing Search Experiment
-             remove this if block when the Bing experiment will be removed
-             */
-            if BingSearchExperiment.shouldShowBingSERP,
-               let bingSearchURL = BingSearchExperiment.makeBingSearchURLFromURL(searchURL) {
-                searchURL = bingSearchURL
-                BingSearchExperiment.trackAnalytics()
-                BingSearchExperiment.incrementCounter()
-            }
-            
+        if var searchURL = engine.searchURLForQuery(text) {            
             // We couldn't find a matching search keyword, so do a search query.
             Telemetry.default.recordSearch(location: .actionBar, searchEngine: engine.engineID ?? "other")
             // Ecosia: remove Glean dependency // GleanMetrics.Search.counts["\(engine.engineID ?? "custom").\(SearchesMeasurement.SearchLocation.actionBar.rawValue)"].add()
