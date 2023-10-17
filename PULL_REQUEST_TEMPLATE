@@ -1,7 +1,16 @@
-[MOB-####](https://ecosia.atlassian.net/browse/MOB-####)
+[MOB-####]
 
 ## Context
 
 ## Approach
 
-## Other
+## Other
+
+## Before merging
+
+### Checklist
+
+- [ ] I performed some relevant testing on a real device and/or simulator
+- [ ] I wrote Unit Tests that confirm the expected behaviour
+- [ ] I updated the Localization if needed
+- [ ] I added the `// Ecosia:` helper comments where needed 
