@@ -28,7 +28,7 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
         }
         
         // Are there items to be shown in the range?
-        guard let items = try? getData(), !items.isEmpty else { return false }
+        guard let items = try? getWhatsNewItemsInRange(), !items.isEmpty else { return false }
         
         let shownVersions = User.shared.whatsNewItemsVersionsShown
         let versionsInRange = getVersionRange().map { $0.description }
@@ -66,7 +66,7 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
     /// - Throws: An error if fetching fails.
     ///
     /// - Returns: An array of `WhatsNewItem` to display.
-    func getData() throws -> [WhatsNewItem] {
+    func getWhatsNewItemsInRange() throws -> [WhatsNewItem] {
         // Get the version range and corresponding What's New items.
         let versionRange = getVersionRange()
         var items: [WhatsNewItem] = []
