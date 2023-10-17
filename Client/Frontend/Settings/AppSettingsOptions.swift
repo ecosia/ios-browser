@@ -9,7 +9,7 @@ import LocalAuthentication
 import Core
 
 // This file contains all of the settings available in the main settings screen of the app.
-#if MOZ_CHANNEL_FENNEC
+#if MOZ_CHANNEL_FENNEC || MOZ_CHANNEL_BETA
 private var ShowDebugSettings: Bool = true
 #else
 private var ShowDebugSettings: Bool = false
