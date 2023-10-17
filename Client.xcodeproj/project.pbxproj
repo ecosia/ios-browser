@@ -14692,7 +14692,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = main;
+				branch = "MOB-1923_refactor_whats_new_versions_shown";
 				kind = branch;
 			};
 		};
