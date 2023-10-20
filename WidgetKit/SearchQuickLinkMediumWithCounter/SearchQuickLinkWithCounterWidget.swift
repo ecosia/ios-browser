@@ -72,7 +72,7 @@ struct GlobalCounter: View {
                 Text(treesPlanted)
                     .font(.title2)
                     .bold()
-                Text("trees planted by Ecosia the community")
+                Text("trees planted by the Ecosia community")
                     .font(.footnote)
             }
         }
