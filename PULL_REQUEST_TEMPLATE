@@ -17,6 +17,6 @@ Don't forget to add a prefix to the pr title in this format
 
 - [ ] I performed some relevant testing on a real device and/or simulator
 - [ ] I wrote Unit Tests that confirm the expected behaviour
-- [ ] I updated the Localization if needed
+- [ ] I updated only the [english localization source files](Client/Ecosia/L10N/es.lproj) if needed
 - [ ] I added the `// Ecosia:` helper comments where needed
 - [ ] I included documentation updates to the coding standards or Confluence doc, when needed
