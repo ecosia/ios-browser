@@ -110,6 +110,7 @@ public struct PrefsKeys {
     // Widgetkit Key
     public static let WidgetKitSimpleTabKey = "WidgetKitSimpleTabKey"
     public static let WidgetKitSimpleTopTab = "WidgetKitSimpleTopTab"
+    public static let WidgetKitInfoModelKey = "WidgetKitInfoModelKey"
 
     // ThemeManager key
     public static let ThemeManagerCustomizationKey = "ThemeManagerCustomizationKey"

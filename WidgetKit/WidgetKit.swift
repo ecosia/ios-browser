@@ -11,6 +11,7 @@ struct FirefoxWidgets: WidgetBundle {
     @WidgetBundleBuilder
     var body: some Widget {
         SmallQuickLinkWidget()
+        MediumQuickLinkWidgetWithCounter()
         SearchQuickLinksWidget()
         OpenTabsWidget()
         TopSitesWidget()

@@ -151,6 +151,11 @@
 		2C73A71F2A9E0BB5006EBAAB /* WhatsNewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C73A71E2A9E0BB5006EBAAB /* WhatsNewViewModel.swift */; };
 		2C73A7242A9E0C6F006EBAAB /* WhatsNewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C73A7232A9E0C6F006EBAAB /* WhatsNewViewController.swift */; };
 		2C73A7282A9E1BD7006EBAAB /* WhatsNewLocalDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C73A7272A9E1BD7006EBAAB /* WhatsNewLocalDataProvider.swift */; };
+		2C7C22292AE140D400841612 /* SearchQuickLinkWithCounterWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7C22282AE140D400841612 /* SearchQuickLinkWithCounterWidget.swift */; };
+		2C7C222C2AE168CB00841612 /* QuickLinkWithCounterIntentProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7C222B2AE168CB00841612 /* QuickLinkWithCounterIntentProvider.swift */; };
+		2C7C22302AE16C1300841612 /* WidgetKitInfoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7C222F2AE16C1300841612 /* WidgetKitInfoModel.swift */; };
+		2C7C22332AE1751D00841612 /* WidgetInfoModelManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7C22312AE1745C00841612 /* WidgetInfoModelManager.swift */; };
+		2C7C22342AE1754D00841612 /* WidgetKitInfoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7C222F2AE16C1300841612 /* WidgetKitInfoModel.swift */; };
 		2C8C07771E7800EA00DC1237 /* FindInPageTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C8C07761E7800EA00DC1237 /* FindInPageTest.swift */; };
 		2C97EC711E72C80E0092EC18 /* TopTabsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C97EC701E72C80E0092EC18 /* TopTabsTest.swift */; };
 		2C9C9FF72A03C7CF0038A3DD /* UnleashBingExperimentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9C9FF62A03C7CF0038A3DD /* UnleashBingExperimentTests.swift */; };
@@ -1777,6 +1782,10 @@
 		2C73A71E2A9E0BB5006EBAAB /* WhatsNewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhatsNewViewModel.swift; sourceTree = "<group>"; };
 		2C73A7232A9E0C6F006EBAAB /* WhatsNewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhatsNewViewController.swift; sourceTree = "<group>"; };
 		2C73A7272A9E1BD7006EBAAB /* WhatsNewLocalDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhatsNewLocalDataProvider.swift; sourceTree = "<group>"; };
+		2C7C22282AE140D400841612 /* SearchQuickLinkWithCounterWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchQuickLinkWithCounterWidget.swift; sourceTree = "<group>"; };
+		2C7C222B2AE168CB00841612 /* QuickLinkWithCounterIntentProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickLinkWithCounterIntentProvider.swift; sourceTree = "<group>"; };
+		2C7C222F2AE16C1300841612 /* WidgetKitInfoModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetKitInfoModel.swift; sourceTree = "<group>"; };
+		2C7C22312AE1745C00841612 /* WidgetInfoModelManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetInfoModelManager.swift; sourceTree = "<group>"; };
 		2C8C07761E7800EA00DC1237 /* FindInPageTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FindInPageTest.swift; sourceTree = "<group>"; };
 		2C9144B0B15218D8A0FCD538 /* es-AR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-AR"; path = "es-AR.lproj/ClearPrivateData.strings"; sourceTree = "<group>"; };
 		2C97EC701E72C80E0092EC18 /* TopTabsTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TopTabsTest.swift; sourceTree = "<group>"; };
@@ -4952,6 +4961,7 @@
 				DA9FD88724E213DC00168D1E /* QuickLink.swift */,
 				DA9FD88024E213B400168D1E /* SearchQuickLinksSmall */,
 				047F9B3924E1FED200CD7DF7 /* SearchQuickLinksMedium */,
+				2C7C222A2AE140F700841612 /* SearchQuickLinkMediumWithCounter */,
 				DA9FD88524E213CC00168D1E /* Helpers.swift */,
 				047F9B3C24E1FF4000CD7DF7 /* ImageButtonWithLabel.swift */,
 				047F9B2B24E1FE1C00CD7DF7 /* WidgetKit.swift */,
@@ -5321,6 +5331,16 @@
 				2C73A7272A9E1BD7006EBAAB /* WhatsNewLocalDataProvider.swift */,
 			);
 			path = DataProvider;
+			sourceTree = "<group>";
+		};
+		2C7C222A2AE140F700841612 /* SearchQuickLinkMediumWithCounter */ = {
+			isa = PBXGroup;
+			children = (
+				2C7C22282AE140D400841612 /* SearchQuickLinkWithCounterWidget.swift */,
+				2C7C222B2AE168CB00841612 /* QuickLinkWithCounterIntentProvider.swift */,
+				2C7C222F2AE16C1300841612 /* WidgetKitInfoModel.swift */,
+			);
+			path = SearchQuickLinkMediumWithCounter;
 			sourceTree = "<group>";
 		};
 		2C9C9FF52A03C7950038A3DD /* ExperimentsTests */ = {
@@ -6936,6 +6956,7 @@
 				D34DC84D1A16C40C00D49B7B /* Profile.swift */,
 				1D0BA05B24F46A0400D731B5 /* TopSitesProvider.swift */,
 				8A5BD95E2878B7B6000FE773 /* TopSitesWidgetManager.swift */,
+				2C7C22312AE1745C00841612 /* WidgetInfoModelManager.swift */,
 			);
 			path = Providers;
 			sourceTree = "<group>";
@@ -8983,6 +9004,7 @@
 				DA9FD88624E213CD00168D1E /* Helpers.swift in Sources */,
 				1DF426CF251BDF6A0086386A /* photon-colors.swift in Sources */,
 				4392FB5C252EC51E00AD3D23 /* PrivilegedRequest.swift in Sources */,
+				2C7C22292AE140D400841612 /* SearchQuickLinkWithCounterWidget.swift in Sources */,
 				1D06AE6A24FEE8D6000B092B /* TabProvider.swift in Sources */,
 				DA9FD88424E213B500168D1E /* SmallQuickLink.swift in Sources */,
 				435222C225882E3800FCA5B6 /* WidgetKitTopSiteModel.swift in Sources */,
@@ -8996,6 +9018,7 @@
 				1DDAD13E24F0651C007623C8 /* TopSitesWidget.swift in Sources */,
 				4392FB20252EC49D00AD3D23 /* SessionData.swift in Sources */,
 				D59431EE25E9912900F0BA82 /* WidgetIntents.intentdefinition in Sources */,
+				2C7C22302AE16C1300841612 /* WidgetKitInfoModel.swift in Sources */,
 				047F9B4224E1FF4000CD7DF7 /* ImageButtonWithLabel.swift in Sources */,
 				047F9B2C24E1FE1C00CD7DF7 /* WidgetKit.swift in Sources */,
 				1DA3CE6724EEE86C00422BB2 /* AppInfo.swift in Sources */,
@@ -9003,6 +9026,7 @@
 				DA9FD88824E213DD00168D1E /* QuickLink.swift in Sources */,
 				8A1A231A28AFD3FD0081DE20 /* QuickLinkSelection.intentdefinition in Sources */,
 				1DA3CE5D24EEE73100422BB2 /* OpenTabsWidget.swift in Sources */,
+				2C7C222C2AE168CB00841612 /* QuickLinkWithCounterIntentProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9354,6 +9378,7 @@
 				E692E3371C46E86A009D1240 /* AppSettingsOptions.swift in Sources */,
 				D38F02D11C05127100175932 /* Authenticator.swift in Sources */,
 				C84655FD2887A01800861B4A /* WallpaperResourceManager.swift in Sources */,
+				2C7C22342AE1754D00841612 /* WidgetKitInfoModel.swift in Sources */,
 				CAA3B7E62497DCB60094E3C1 /* LoginDataSource.swift in Sources */,
 				1DFE57FF27BAE3150025DE58 /* HomepageSectionType.swift in Sources */,
 				E4CD9F6D1A77DD2800318571 /* ReaderModeStyleViewController.swift in Sources */,
@@ -9695,6 +9720,7 @@
 				DFEA639E279F468A00D489C3 /* DynamicHeightCollectionView.swift in Sources */,
 				C87DC85A27B2C8DE006EFCE2 /* LegacyWallpaperFilePathProtocol.swift in Sources */,
 				63306D3921103EAE00F25400 /* SavedTab.swift in Sources */,
+				2C7C22332AE1751D00841612 /* WidgetInfoModelManager.swift in Sources */,
 				2F44FCCB1A9E972E00FD20CC /* SearchEnginePicker.swift in Sources */,
 				1DA3CE5F24EEE7C600422BB2 /* SiteArchiver.swift in Sources */,
 				12E8E6B32A9CFC4100E6ED8E /* NTPCustomizationCell.swift in Sources */,

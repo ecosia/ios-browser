@@ -7,6 +7,7 @@ import Storage
 import CoreSpotlight
 import SDWebImage
 import Core
+import WidgetKit
 
 let LatestAppVersionProfileKey = "latestAppVersion"
 
@@ -131,6 +132,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillResignActive(_ application: UIApplication) {
         updateTopSitesWidget()
+        WidgetInfoModelManager.writeWidgetKitTotalTrees()
         UserDefaults.standard.setValue(Date(), forKey: "LastActiveTimestamp")
     }
 
@@ -160,7 +162,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // we do this to remove any disk cache
         // that the app might have built over the
         // time which is taking up un-necessary space
-        SDImageCache.shared.clearDiskCache { _ in }
+        SDImageCache.shared.clearDiskCache { _ in }        
     }
 
     private func updateTopSitesWidget() {
