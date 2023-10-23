@@ -57,15 +57,6 @@ final class Analytics {
         let event = Structured(category: Category.activity.rawValue,
                                action: action.rawValue)
             .label(Analytics.Label.Navigation.inapp.rawValue)
-        
-        switch action {
-        case .resume, .launch:
-            // add A/B Test context
-            if let context = Self.getTestContext(from: .bingSearch) {
-                event.contexts.append(context)
-            }
-        }
-        
         track(event)
     }
     
@@ -134,15 +125,7 @@ final class Analytics {
         
         track(event)
     }
-    
-    func userSearchViaBingABTest() {
-        let event = Structured(category: Category.abTest.rawValue,
-                               action: "user_search")
-            .label("search_key")
         
-        track(event)
-    }
-    
     func defaultBrowserSettings() {
         track(Structured(category: Category.browser.rawValue,
                          action: Action.open.rawValue)

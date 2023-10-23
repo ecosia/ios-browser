@@ -191,11 +191,6 @@ class AppSettingsTableViewController: SettingsTableViewController, FeatureFlagga
                      .init(title: .init(string: .localized(.customization)), children: customization),
                      .init(title: .init(string: .SettingsGeneralSectionTitle), children: generalSettings)]
         
-        // Ecosia: Disable search settings for Bing search experiment when we show the Bing SERP
-        if BingSearchExperiment.shouldShowBingSERP {
-            settings.removeAll(where: { $0.title?.string == .localized(.search) } )
-        }
-
         var privacySettings = [Setting]()
         privacySettings.append(LoginsSetting(settings: self, delegate: settingsDelegate))
 
