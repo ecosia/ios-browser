@@ -37,6 +37,7 @@
 		0BF1B7E31AC60DEA00A7B407 /* InsetButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF1B7E21AC60DEA00A7B407 /* InsetButton.swift */; };
 		0BF42D4F1A7CD09600889E28 /* TestFavicons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF42D4E1A7CD09600889E28 /* TestFavicons.swift */; };
 		0BF8F8DA1AEFF1C900E90BC2 /* noTitle.html in Resources */ = {isa = PBXBuildFile; fileRef = 0BF8F8D91AEFF1C900E90BC2 /* noTitle.html */; };
+		121C74912AE67EA800A637A0 /* Test.strings in Resources */ = {isa = PBXBuildFile; fileRef = 121C74932AE67EA800A637A0 /* Test.strings */; };
 		127773B229E98F75008A6A64 /* EcosiaFindInPageBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 127773B129E98F75008A6A64 /* EcosiaFindInPageBar.swift */; };
 		158241282820698B00956B39 /* RustRemoteTabsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 158241272820698B00956B39 /* RustRemoteTabsTests.swift */; };
 		15DE98FD27FCED4F00F1ECDB /* RustRemoteTabs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15DE98FC27FCED4F00F1ECDB /* RustRemoteTabs.swift */; };
@@ -1444,6 +1445,8 @@
 		10CD44F0A402C84BB31E5474 /* gu-IN */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "gu-IN"; path = "gu-IN.lproj/Intro.strings"; sourceTree = "<group>"; };
 		11F747589EB8A55A47647C93 /* bn */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = bn; path = bn.lproj/ClearPrivateData.strings; sourceTree = "<group>"; };
 		120F42119EB30F217AB9493E /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/FindInPage.strings; sourceTree = "<group>"; };
+		121C74922AE67EA800A637A0 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Test.strings; sourceTree = "<group>"; };
+		121C74942AE67EB200A637A0 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Test.strings; sourceTree = "<group>"; };
 		123045959E0F295753B4B4DB /* lo */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = lo; path = lo.lproj/Today.strings; sourceTree = "<group>"; };
 		12674A038346A46589A0AC0B /* el */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = el; path = "el.lproj/Default Browser.strings"; sourceTree = "<group>"; };
 		126A40A4A5AFDFD655B0FDF4 /* ca */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ca; path = ca.lproj/ClearHistoryConfirm.strings; sourceTree = "<group>"; };
@@ -5145,6 +5148,14 @@
 			name = Extensions;
 			sourceTree = "<group>";
 		};
+		2ABCCCB32A13BE74005D0C5B /* Bookmarks */ = {
+			isa = PBXGroup;
+			children = (
+				2AC54D3029DC50CE0034FA2E /* BookmarksExchange.swift */,
+			);
+			path = Bookmarks;
+			sourceTree = "<group>";
+		};
 		2C1AF2622A27A7D9003970E0 /* Toolbar+URLBar */ = {
 			isa = PBXGroup;
 			children = (
@@ -5170,14 +5181,6 @@
 				2C31ECAA2A2E13410058BC31 /* DefaultBrowserExperiment.swift */,
 			);
 			path = Unleash;
-			sourceTree = "<group>";
-		};
-		2ABCCCB32A13BE74005D0C5B /* Bookmarks */ = {
-			isa = PBXGroup;
-			children = (
-				2AC54D3029DC50CE0034FA2E /* BookmarksExchange.swift */,
-			);
-			path = Bookmarks;
 			sourceTree = "<group>";
 		};
 		2C3357E42A0D092A00E76A48 /* MMP */ = {
@@ -5768,18 +5771,6 @@
 				8A590C6028C123100032F1AA /* OpenPassBookHelper.swift */,
 			);
 			path = OpenInHelper;
-			sourceTree = "<group>";
-		};
-		8A7653C028A2E54800924ABF /* Pocket */ = {
-			isa = PBXGroup;
-			children = (
-				8A7653C128A2E57D00924ABF /* PocketDataAdaptorTests.swift */,
-				3B61CD581F2A750800D38DE1 /* PocketFeedTests.swift */,
-				E571EE7A287569960051D9AA /* PocketSponsoredStoriesProviderTests.swift */,
-				E571EE79287569960051D9AA /* PocketStoryProviderTests.swift */,
-				8AA7347A28AEDB3100443D24 /* PocketViewModelTests.swift */,
-			);
-			path = Pocket;
 			sourceTree = "<group>";
 		};
 		8AB5958628412B620090F4AE /* CustomizeHome */ = {
@@ -6560,6 +6551,7 @@
 				CA4D9CBA28C8D801006AFB5D /* Plurals.stringsdict */,
 				CA4D9CC728C8D801006AFB5D /* Scripts */,
 				CA4D9CCA28C8D801006AFB5D /* String.swift */,
+				121C74932AE67EA800A637A0 /* Test.strings */,
 			);
 			path = L10N;
 			sourceTree = "<group>";
@@ -8677,6 +8669,7 @@
 				43446CE7240D9F3000F5C643 /* ETP.xcassets in Resources */,
 				C8399D9522DE5E6200EFA5CA /* disconnect-block-social.json in Resources */,
 				E4CD9F541A71506400318571 /* Reader.html in Resources */,
+				121C74912AE67EA800A637A0 /* Test.strings in Resources */,
 				CA4D9D0E28C8D801006AFB5D /* Plurals.stringsdict in Resources */,
 				CA4D9D0D28C8D801006AFB5D /* Ecosia.strings in Resources */,
 				23BEA76A251A99ED00A014BF /* NewYorkMedium-RegularItalic.otf in Resources */,
@@ -10172,6 +10165,15 @@
 				D4BF6AB72893DDA9001B5130 /* en-US */,
 			);
 			name = Shared.strings;
+			sourceTree = "<group>";
+		};
+		121C74932AE67EA800A637A0 /* Test.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				121C74922AE67EA800A637A0 /* en */,
+				121C74942AE67EB200A637A0 /* de */,
+			);
+			name = Test.strings;
 			sourceTree = "<group>";
 		};
 		21374EEAA2C69079F77A0AC3 /* Today.strings */ = {
