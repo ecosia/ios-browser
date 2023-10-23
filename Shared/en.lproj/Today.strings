@@ -132,3 +132,5 @@ Private Tab";
 /* View More… for Firefox Pocket stories widget where we don't know how many articles are available. */
 "TodayWidget.ViewMoreDots" = "View More…";
 
+/* Just testing: will be removed */
+"Test" = "Test";
