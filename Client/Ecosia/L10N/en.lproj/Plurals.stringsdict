@@ -77,7 +77,7 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>Tree planted</string>
+			<string>Tree planted - test</string>
 			<key>other</key>
 			<string>Trees planted</string>
 		</dict>
