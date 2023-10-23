@@ -3613,7 +3613,7 @@
 		CA4D9CB628C8D801006AFB5D /* WelcomeTourProfit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WelcomeTourProfit.swift; sourceTree = "<group>"; };
 		CA4D9CB928C8D801006AFB5D /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Ecosia.strings; sourceTree = "<group>"; };
 		CA4D9CBB28C8D801006AFB5D /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = de; path = de.lproj/Plurals.stringsdict; sourceTree = "<group>"; };
-		CA4D9CBE28C8D801006AFB5D /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Ecosia.strings; sourceTree = "<group>"; };
+		CA4D9CBE28C8D801006AFB5D /* en */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Ecosia.strings; sourceTree = "<group>"; };
 		CA4D9CBF28C8D801006AFB5D /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = en; path = en.lproj/Plurals.stringsdict; sourceTree = "<group>"; };
 		CA4D9CC128C8D801006AFB5D /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Ecosia.strings; sourceTree = "<group>"; };
 		CA4D9CC228C8D801006AFB5D /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = es; path = es.lproj/Plurals.stringsdict; sourceTree = "<group>"; };
