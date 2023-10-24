@@ -14684,7 +14684,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = main;
+				branch = "MOB-1970_fix_bookmarks_badge_existing_users_only";
 				kind = branch;
 			};
 		};
