@@ -21,6 +21,7 @@ final class NTPCustomizationCell: UICollectionViewCell, NotificationThemeable, R
         button.titleLabel?.font = .preferredFont(forTextStyle: .callout)
         button.titleLabel?.adjustsFontSizeToFitWidth = true
         button.setImage(.init(named: ImageIdentifiers.settings)?.withRenderingMode(.alwaysTemplate), for: .normal)
+        button.setImage(.init(named: ImageIdentifiers.settings)?.withRenderingMode(.alwaysTemplate), for: .highlighted)
         button.imageView?.contentMode = .scaleAspectFit
         button.setInsets(forContentPadding: .init(top: UX.verticalInset, left: UX.horizontalInset, bottom: UX.verticalInset, right: UX.horizontalInset),
                          imageTitlePadding: UX.imageTitlePadding)
