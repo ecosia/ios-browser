@@ -20,4 +20,4 @@ Don't forget to add a prefix to the PR title in this format
 - [ ] I updated only the [english localization source files](Client/Ecosia/L10N/es.lproj) if needed
 - [ ] I added the `// Ecosia:` helper comments where needed
 - [ ] I included documentation updates to the coding standards or Confluence doc when needed
-- [ ] I updated `Core` back to the `main` reference with a new revision if needed
+- [ ] I am using the correct version from [core](https://github.com/ecosia/ios-core), including any necessary changes for this ticket and pointing to `main` instead of a feature branch
