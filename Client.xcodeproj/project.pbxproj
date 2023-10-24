@@ -1465,6 +1465,7 @@
 		122211942AE7C989007C5E1C /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Temporary.strings; sourceTree = "<group>"; };
 		122211952AE7C9A0007C5E1C /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Temporary.strings; sourceTree = "<group>"; };
 		122211962AE7C9AB007C5E1C /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Temporary.strings; sourceTree = "<group>"; };
+		122211992AE7CD1A007C5E1C /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Temporary.strings; sourceTree = "<group>"; };
 		123045959E0F295753B4B4DB /* lo */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = lo; path = lo.lproj/Today.strings; sourceTree = "<group>"; };
 		1246A7CE2AA6163800FBB626 /* ClimateImpactInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClimateImpactInfo.swift; sourceTree = "<group>"; };
 		1246A7D02AA6165400FBB626 /* NTPImpactRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPImpactRowView.swift; sourceTree = "<group>"; };
@@ -10313,6 +10314,7 @@
 				122211942AE7C989007C5E1C /* it */,
 				122211952AE7C9A0007C5E1C /* fr */,
 				122211962AE7C9AB007C5E1C /* es */,
+				122211992AE7CD1A007C5E1C /* de */,
 			);
 			name = Temporary.strings;
 			sourceTree = "<group>";
