@@ -26,4 +26,4 @@ jobs:
         run: |
             CURRENT_VERSION=$(grep 'MARKETING_VERSION' Client/Configuration/Common.xcconfig | cut -d ' ' -f3)
             echo $CURRENT_VERSION
-            # bundle exec fastlane deliver --app-version $CURRENT_VERSION
+            # bundle exec fastlane deliver --force true --app-version $CURRENT_VERSION
