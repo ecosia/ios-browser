@@ -1,11 +1,11 @@
 name: Release Notes update
 
 on:
-  pull_request:
+  push:
     paths:
       - 'fastlane/metadata/**'
       - '!fastlane/metadata/en-US/**'
-    branches: [ main ]
+    branches: [ MOB-1977_fully_automated_release_notes  ]
 
 jobs:
   upload_release_notes_to_appstore:
