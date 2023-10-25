@@ -178,7 +178,7 @@ python3 ecosify-strings.py Shared
 
 Follow the instructions from our [confluence page](https://ecosia.atlassian.net/wiki/spaces/MOB/pages/2460680288/How+to+release)
 
-## Howto update the release notes (semi-automated)
+## How to update the release notes
 
 Make sure that `fastlane` and `transifex`-cli is installed.
 
@@ -199,6 +199,14 @@ Make sure that `fastlane` and `transifex`-cli is installed.
 ### Add language translations
 
 - Make sure that all languages are translated in the transifex [web interface](https://app.transifex.com/ecosia/ecosia-ios-search-app/release_notestxt/) and found their way to `main`
+
+- Verify the translations in the Transifex-made PR
+
+- Squash and Merge the PR
+
+- The GitHub Action Workflow `Upload release notes to AppStore` will take care of the upload
+
+#### In case you need a manual update
 
 - Push via the update translation via `deliver` to the AppStore
 
