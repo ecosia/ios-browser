@@ -192,7 +192,9 @@ class HomepageViewController: UIViewController, HomePanel, FeatureFlaggable {
         viewModel.recordViewAppeared()
         
         // Ecosia: Refresh referral claims
-        referrals.refresh()
+        Task {
+            try? await referrals.refresh()
+        }
     }
 
     func recordHomepageDisappeared() {
