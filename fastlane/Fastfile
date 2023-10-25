@@ -134,6 +134,27 @@ platform :ios do
 
   end
 
+  desc 'Upload release notes to the AppStore'
+  lane :upload_release_notes do
+    
+    app_store_connect_api_key(
+      key_id: ENV["FASTLANE_APPSTORE_CONNECT_KEY_ID"],
+      issuer_id: ENV["FASTLANE_APPSTORE_CONNECT_KEY_ISSUER_ID"],
+      key_content: Base64.decode64(ENV["FASTLANE_APPSTORE_CONNECT_KEY_CONTENT"])
+    )
+
+    version_number = get_xcconfig_value(
+      path: 'Client/Configuration/Common.xcconfig',
+      name: 'MARKETING_VERSION'
+    )
+
+    upload_to_app_store(
+      force: true,
+      app_version: version_number
+    )
+
+  end
+
   desc 'This lane performs the expected git steps when releasing'
   private_lane :tag_and_push do |options|
     

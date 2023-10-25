@@ -23,6 +23,4 @@ jobs:
           bundler-cache: true
     
       - name: Fastlane upload release notes
-        run: |
-            CURRENT_VERSION=$(grep 'MARKETING_VERSION' Client/Configuration/Common.xcconfig | cut -d ' ' -f3)
-            bundle exec fastlane deliver --force true --app-version $CURRENT_VERSION
+        run: bundle exec fastlane upload_release_notes
