@@ -1,11 +1,11 @@
 name: Release Notes update
 
 on:
-  pull_request:
+  push:
     paths:
       - 'fastlane/metadata/**'
       - '!fastlane/metadata/en-US/**'
-    branches: [ main ]
+    branches: [ MOB-1977_fully_automated_release_notes ]
 
 jobs:
   upload_release_notes_to_appstore:
@@ -30,4 +30,5 @@ jobs:
       - name: Fastlane upload release notes
         run: |
             CURRENT_VERSION=$(grep 'MARKETING_VERSION' Client/Configuration/Common.xcconfig | cut -d ' ' -f3)
-            bundle exec fastlane deliver --app-version $CURRENT_VERSION
+            echo $CURRENT_VERSION
+            # bundle exec fastlane deliver --app-version $CURRENT_VERSION
