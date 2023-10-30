@@ -184,6 +184,8 @@ Make sure that `fastlane` and `transifex`-cli is installed.
 
 ### Add source release notes to transifex (en-US)
 
+> ℹ️ Updating the source file in the project and merging it into `main` will automatically push it to Transifex as well since the Github integration is in place
+
 - Make sure that an _inflight_ version exists in AppStore Connect. If not, create one.
 - Add English text to release notes in AppStore Connect
 - Download metadata from AppStore specifying the inflight version
