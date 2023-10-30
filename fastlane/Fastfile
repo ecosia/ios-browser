@@ -152,7 +152,7 @@ platform :ios do
     )
 
     upload_to_app_store(
-      force: true,
+      force: true, # Set to true to skip the verification via HTML preview file
       app_version: version_number
     )
 
