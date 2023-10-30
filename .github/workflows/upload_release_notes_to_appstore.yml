@@ -24,3 +24,7 @@ jobs:
     
       - name: Fastlane upload release notes
         run: bundle exec fastlane upload_release_notes
+        env:
+          FASTLANE_APPSTORE_CONNECT_KEY_ID: ${{ secrets.FASTLANE_APPSTORE_CONNECT_KEY_ID }}
+          FASTLANE_APPSTORE_CONNECT_KEY_ISSUER_ID: ${{ secrets.FASTLANE_APPSTORE_CONNECT_KEY_ISSUER_ID }}
+          FASTLANE_APPSTORE_CONNECT_KEY_CONTENT: ${{ secrets.FASTLANE_APPSTORE_CONNECT_KEY_CONTENT }}
