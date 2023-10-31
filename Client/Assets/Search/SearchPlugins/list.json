@@ -2,7 +2,7 @@
   "default": {
     "searchDefault": "ecosia",
     "visibleDefaultEngines": [
-        "google-b-m", "bing", "ddg", "wikipedia"
+        "ecosia", "google-b-m", "bing", "ddg", "wikipedia"
     ]
   },
   "regionOverrides": {
