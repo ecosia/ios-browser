@@ -462,14 +462,15 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
     }
     
     private func refreshReferrals() {
-        referrals.refresh(force: true, createCode: true) { [weak self] error in
-            guard error == nil else {
-                self?.showRefreshReferralsError(error!)
-                return
+        Task { [weak self] in
+            do {
+                try await self?.referrals.refresh(force: true, createCode: true)
+                guard let self = self else { return }
+                self.updateInviteLink()
+                self.referralImpactRowView.info = self.referralInfo
+            } catch {
+                self?.showRefreshReferralsError(error as? Referrals.Error ?? .genericError)
             }
-            guard let self = self else { return }
-            self.updateInviteLink()
-            self.referralImpactRowView.info = self.referralInfo
         }
     }
     
@@ -503,12 +504,15 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
     
     @objc private func inviteFriends() {
         guard let message = inviteMessage else {
-            referrals.refresh(createCode: true) { error in
-                if let error = error {
-                    self.showInviteFriendsError(error)
-                } else {
+            Task { [weak self] in
+                do {
+                    try await self?.referrals.refresh(createCode: true)
+                    guard let self = self else { return }
                     self.share(message: self.inviteMessage!)
+                } catch {
+                    self?.showInviteFriendsError(error as? Referrals.Error ?? .genericError)
                 }
+                
             }
             return
         }

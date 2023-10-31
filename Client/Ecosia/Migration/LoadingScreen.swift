@@ -158,16 +158,15 @@ final class LoadingScreen: UIViewController {
 
     // MARK: Referrals
     private func claimReferral(_ code: String) {
-        referrals.claim(referrer: code) { [weak self] result in
-            User.shared.referrals.pendingClaim = nil
-
-            switch result {
-            case .success:
+        Task { [weak self] in
+            do {
+                try await referrals.claim(referrer: code)
                 self?.loadingGroup.leave()
                 Analytics.shared.inviteClaimSuccess()
-            case .failure(let error):
-                self?.showReferralError(error)
+            } catch {
+                self?.showReferralError(error as? Referrals.Error ?? .genericError)
             }
+            User.shared.referrals.pendingClaim = nil
         }
     }
 
