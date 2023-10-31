@@ -168,6 +168,8 @@ class AppSettingsTableViewController: SettingsTableViewController, FeatureFlagga
          */
 
         var searchSettings: [Setting] = [
+            // Ecosia: Move SearchSetting in appropriate section
+            SearchSetting(settings: self),
             SearchAreaSetting(settings: self),
             SafeSearchSettings(settings: self),
             AutoCompleteSettings(prefs: prefs),
