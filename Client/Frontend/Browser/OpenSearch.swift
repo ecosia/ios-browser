@@ -66,8 +66,20 @@ class OpenSearchEngine: NSObject, NSCoding {
      */
     func searchURLForQuery(_ query: String) -> URL? {
         // Ecosia: Unleash Shortcuts Experiment
-        if EngineShortcutsExperiment.isEnabled {
-            return getURLFromTemplate(searchTemplate, query: query)
+        /* 
+         If the search is performed via Ecosia, we want to follow the standard flow
+         which is now environment-dependant.
+         the function `getURLFromTemplate(::)` takes into account the ecosia search engine
+         which contains only the production URL.
+         Once this experiment is considered finished and the logic needs fallback,
+         leave only the following line of code for the whole function's body
+         
+         `URL.search(query: query)`
+         */
+        if EngineShortcutsExperiment.isEnabled,
+        let fromTemplateURL = getURLFromTemplate(searchTemplate, query: query),
+           fromTemplateURL.baseDomain != Environment.production.urlProvider.root.baseDomain {
+            return fromTemplateURL
         } else {
             return URL.search(query: query)
         }
