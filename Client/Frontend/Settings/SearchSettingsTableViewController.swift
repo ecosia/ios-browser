@@ -133,16 +133,12 @@ class SearchSettingsTableViewController: ThemedTableViewController {
                 cell.imageView?.layer.masksToBounds = true
                 cell.selectionStyle = .none
             }
-            // Ecosia: Unleash Shortcuts Experiment
-            // Do not show the Default Search Engine option
-            /*
             else {
                 cell.editingAccessoryType = .disclosureIndicator
                 cell.accessibilityLabel = .SettingsAddCustomEngineTitle
                 cell.accessibilityIdentifier = AccessibilityIdentifiers.Settings.Search.customEngineViewButton
                 cell.textLabel?.text = .SettingsAddCustomEngine
             }
-            */
         }
 
         // So that the separator line goes all the way to the left edge.
@@ -161,10 +157,7 @@ class SearchSettingsTableViewController: ThemedTableViewController {
         } else {
             // The first engine -- the default engine -- is not shown in the quick search engine list.
             // But the option to add Custom Engine is.
-            
-            // Ecosia: Unleash Shortcuts Experiment
-            // Do not show the Default Search Engine option
-            return model.orderedEngines.count - 1
+            return model.orderedEngines.count
         }
     }
 
