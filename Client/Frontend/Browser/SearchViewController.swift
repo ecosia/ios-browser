@@ -75,11 +75,9 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
 
     // Views for displaying the bottom scrollable search engine list. searchEngineScrollView is the
     // scrollable container; searchEngineScrollViewContent contains the actual set of search engine buttons.
-    /* Ecosia: deactivate search engine customization
     private let searchEngineContainerView = UIView()
     private let searchEngineScrollView = ButtonScrollView()
     private let searchEngineScrollViewContent = UIView()
-    */
 
     private lazy var bookmarkedBadge: UIImage = {
         return UIImage(named: "bookmark_results")!
@@ -124,16 +122,13 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
     }
 
     override func viewDidLoad() {
-        /* Ecosia: deactivate blur
         let blur = UIVisualEffectView(effect: UIBlurEffect(style: .light))
         view.addSubview(blur)
-         */
 
         super.viewDidLoad()
         getCachedTabs()
         KeyboardHelper.defaultHelper.addDelegate(self)
 
-        /* Ecosia: deactivate search engine customization
         searchEngineContainerView.layer.backgroundColor = SearchViewControllerUX.SearchEngineScrollViewBackgroundColor
         searchEngineContainerView.layer.shadowRadius = 0
         searchEngineContainerView.layer.shadowOpacity = 100
@@ -147,7 +142,6 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
 
         searchEngineScrollViewContent.layer.backgroundColor = UIColor.clear.cgColor
         searchEngineScrollView.addSubview(searchEngineScrollViewContent)
-        */
 
         layoutTable()
 
@@ -156,22 +150,16 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
         }
         tableView.sectionFooterHeight = 0
         
-        /* Ecosia: deactivate search engine customization
         layoutSearchEngineScrollView()
         layoutSearchEngineScrollViewContent()
-        */
 
-        /* Ecosia: deactivate blur
         blur.snp.makeConstraints { make in
             make.edges.equalTo(self.view)
         }
-        */
     
-        /* Ecosia: deactivate search engine customization
         searchEngineContainerView.snp.makeConstraints { make in
             make.leading.trailing.bottom.equalToSuperview()
         }
-        */
 
         NotificationCenter.default.addObserver(self, selector: #selector(dynamicFontChanged), name: .DynamicFontChanged, object: nil)
     }
@@ -208,6 +196,7 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
         super.viewDidAppear(animated)
         searchFeature.recordExposure()
     }
+     */
 
     private func layoutSearchEngineScrollView() {
         let keyboardHeight = KeyboardHelper.defaultHelper.currentState?.intersectionHeightForView(self.view) ?? 0
@@ -221,10 +210,8 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
             }
         }
     }
-    */
 
     private func layoutSearchEngineScrollViewContent() {
-        /* Ecosia: remove alternative search
         searchEngineScrollViewContent.snp.remakeConstraints { make in
             make.center.equalTo(self.searchEngineScrollView).priority(10)
             // left-align the engines on iphones, center on ipad
@@ -237,7 +224,6 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
             make.top.equalTo(self.searchEngineScrollView)
             make.bottom.equalTo(self.searchEngineScrollView)
         }
-        */
     }
 
     var searchEngines: SearchEngines! {
@@ -291,12 +277,11 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
             tableView.topAnchor.constraint(equalTo: view.topAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            tableView.bottomAnchor.constraint(equalTo: searchEngineScrollView.topAnchor)
         ])
     }
 
     func reloadSearchEngines() {
-        /* Ecosia: deactivate search engine customization
         searchEngineScrollViewContent.subviews.forEach { $0.removeFromSuperview() }
         var leftEdge = searchEngineScrollViewContent.snp.leading
 
@@ -347,11 +332,9 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
             }
             leftEdge = engineButton.snp.trailing
         }
-        */
     }
 
     func didSelectEngine(_ sender: UIButton) {
-        /* Ecosia: deactivate search engine customization
         // The UIButtons are the same cardinality and order as the array of quick search engines.
         // Subtract 1 from index to account for magnifying glass accessory.
         guard let index = searchEngineScrollViewContent.subviews.firstIndex(of: sender) else {
@@ -367,10 +350,10 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
         }
 
         Telemetry.default.recordSearch(location: .quickSearch, searchEngine: engine.engineID ?? "other")
+        /* Ecosia: remove Glean dependency
         GleanMetrics.Search.counts["\(engine.engineID ?? "custom").\(SearchesMeasurement.SearchLocation.quickSearch.rawValue)"].add()
-
-        searchDelegate?.searchViewController(self, didSelectURL: url, searchTerm: "")
         */
+        searchDelegate?.searchViewController(self, didSelectURL: url, searchTerm: "")
     }
 
     func didClickSearchButton() {
@@ -399,7 +382,6 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
     }
 
     private func animateSearchEnginesWithKeyboard(_ keyboardState: KeyboardState) {
-        /* Ecosia: remove search customization
         layoutSearchEngineScrollView()
 
         UIView.animate(
@@ -409,7 +391,6 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
             animations: {
                 self.view.layoutIfNeeded()
             })
-         */
     }
 
     private func getCachedTabs() {
