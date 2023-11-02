@@ -287,6 +287,7 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             // Ecosia: Unleash Shortcuts Experiment
+            // tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
             tableView.bottomAnchor.constraint(equalTo: tableViewBottomEqualToAnchor)
         ])
     }
