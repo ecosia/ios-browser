@@ -57,6 +57,15 @@ final class Analytics {
         let event = Structured(category: Category.activity.rawValue,
                                action: action.rawValue)
             .label(Analytics.Label.Navigation.inapp.rawValue)
+        
+        switch action {
+        case .resume, .launch:
+            // add A/B Test context
+            if let context = Self.getTestContext(from: .searchShortcuts) {
+                event.contexts.append(context)
+            }
+        }
+
         track(event)
     }
     
@@ -123,6 +132,23 @@ final class Analytics {
             event.contexts.append(context)
         }
         
+        track(event)
+    }
+    
+    func accessQuickSearchSettingsScreen() {
+        let event = Structured(category: Category.browser.rawValue,
+                               action: Action.open.rawValue)
+            .label("quick_search_settings")
+
+        track(event)
+    }
+    
+    func addsNewSearchEngineInQuickSearchSettingsScreen(_ searchEngine: String) {
+        let event = Structured(category: Category.browser.rawValue,
+                               action: "add")
+            .label("search_engine")
+            .property(searchEngine)
+
         track(event)
     }
         

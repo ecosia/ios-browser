@@ -9,6 +9,7 @@ struct EngineShortcutsExperiment {
     private init() {}
     
     static var isEnabled: Bool {
+        return true
         Unleash.isEnabled(.searchShortcuts)
     }
 }

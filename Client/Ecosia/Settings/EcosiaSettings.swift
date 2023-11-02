@@ -227,6 +227,7 @@ final class QuickSearchSearchSetting: Setting {
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
+        Analytics.shared.accessQuickSearchSettingsScreen()
         let viewController = SearchSettingsTableViewController()
         viewController.model = profile.searchEngines
         viewController.profile = profile
