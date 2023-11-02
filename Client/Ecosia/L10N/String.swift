@@ -244,5 +244,6 @@ extension String {
         case whatsNewSecondItemTitle = "Customizable home page"
         case whatsNewSecondItemDescription = "Tailor your home page to show the information that’s most relevant to you."
         case whatsNewFooterButtonTitle = "Discover"
+        case quickSearch = "Quick Search"
     }
 }

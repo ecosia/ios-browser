@@ -210,3 +210,29 @@ final class HomepageSettings: Setting {
     }
 }
 
+// Ecosia: Unleash Shortcuts Experiment
+// Opens the quick search settings panel
+final class QuickSearchSearchSetting: Setting {
+    let profile: Profile
+
+    override var accessoryView: UIImageView? { return disclosureIndicator }
+
+    override var style: UITableViewCell.CellStyle { return .value1 }
+
+    override var status: NSAttributedString { return NSAttributedString(string: profile.searchEngines.defaultEngine.shortName) }
+
+    override var accessibilityIdentifier: String? { return "Search" }
+
+    init(settings: SettingsTableViewController) {
+        self.profile = settings.profile
+        super.init(title: NSAttributedString(string: .localized(.quickSearch), attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText]))
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        let viewController = SearchSettingsTableViewController()
+        viewController.model = profile.searchEngines
+        viewController.profile = profile
+        navigationController?.pushViewController(viewController, animated: true)
+    }
+}
+
