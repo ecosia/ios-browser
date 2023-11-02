@@ -219,7 +219,7 @@ final class QuickSearchSearchSetting: Setting {
 
     override var style: UITableViewCell.CellStyle { return .value1 }
 
-    override var accessibilityIdentifier: String? { return "Search" }
+    override var accessibilityIdentifier: String? { return .localized(.quickSearch) }
 
     init(settings: SettingsTableViewController) {
         self.profile = settings.profile
