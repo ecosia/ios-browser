@@ -144,6 +144,7 @@
 		2C49854E206173C800893DAE /* photon-colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C49854D206173C800893DAE /* photon-colors.swift */; };
 		2C4A07DC20246EAD0083E320 /* DragAndDropTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4A07DB20246EAD0083E320 /* DragAndDropTests.swift */; };
 		2C4B6BF320349EB800A009C2 /* FirstRunTourTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4B6BF220349EB800A009C2 /* FirstRunTourTests.swift */; };
+		2C50B3DD2AF3EE930037AA90 /* EngineShortcutsExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C50B3DC2AF3EE930037AA90 /* EngineShortcutsExperiment.swift */; };
 		2C50F09A2AC703E500F09803 /* WhatsNewLocalDataProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C50F0992AC703E500F09803 /* WhatsNewLocalDataProviderTests.swift */; };
 		2C50F09C2ACAD8E400F09803 /* EcosiaInstallType+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C50F09B2ACAD8E400F09803 /* EcosiaInstallType+Extensions.swift */; };
 		2C73A71B2A9E0B7A006EBAAB /* WhatsNewItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C73A71A2A9E0B7A006EBAAB /* WhatsNewItem.swift */; };
@@ -1771,6 +1772,7 @@
 		2C49854D206173C800893DAE /* photon-colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "photon-colors.swift"; sourceTree = "<group>"; };
 		2C4A07DB20246EAD0083E320 /* DragAndDropTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragAndDropTests.swift; sourceTree = "<group>"; };
 		2C4B6BF220349EB800A009C2 /* FirstRunTourTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstRunTourTests.swift; sourceTree = "<group>"; };
+		2C50B3DC2AF3EE930037AA90 /* EngineShortcutsExperiment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EngineShortcutsExperiment.swift; sourceTree = "<group>"; };
 		2C50F0992AC703E500F09803 /* WhatsNewLocalDataProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhatsNewLocalDataProviderTests.swift; sourceTree = "<group>"; };
 		2C50F09B2ACAD8E400F09803 /* EcosiaInstallType+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EcosiaInstallType+Extensions.swift"; sourceTree = "<group>"; };
 		2C6045859589979C43AF09E0 /* jv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = jv; path = jv.lproj/ClearPrivateDataConfirm.strings; sourceTree = "<group>"; };
@@ -5267,6 +5269,7 @@
 		2C31ECA92A2E131A0058BC31 /* Unleash */ = {
 			isa = PBXGroup;
 			children = (
+				2C50B3DC2AF3EE930037AA90 /* EngineShortcutsExperiment.swift */,
 				2C31ECAA2A2E13410058BC31 /* DefaultBrowserExperiment.swift */,
 			);
 			path = Unleash;
@@ -9538,6 +9541,7 @@
 				96EB6C3827D821B800A9D159 /* HistoryPanelViewModel.swift in Sources */,
 				CACF7D0D28DB3D5D00A996A4 /* EcosiaImport.swift in Sources */,
 				43E69EC3254D081D00B591C2 /* SimpleTab.swift in Sources */,
+				2C50B3DD2AF3EE930037AA90 /* EngineShortcutsExperiment.swift in Sources */,
 				21A7C45028353D0E0071D996 /* OnboardingCardViewController.swift in Sources */,
 				742A56391D80B54A00BDB803 /* PhotonActionSheet.swift in Sources */,
 				C4EFEECF1CEBB6F2009762A4 /* BackForwardTableViewCell.swift in Sources */,
