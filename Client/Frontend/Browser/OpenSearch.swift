@@ -65,7 +65,12 @@ class OpenSearchEngine: NSObject, NSCoding {
      * Returns the search URL for the given query.
      */
     func searchURLForQuery(_ query: String) -> URL? {
-        return URL.search(query: query)
+        // Ecosia: Unleash Shortcuts Experiment
+        if EngineShortcutsExperiment.isEnabled {
+            return getURLFromTemplate(searchTemplate, query: query)
+        } else {
+            return URL.search(query: query)
+        }
     }
 
     /**

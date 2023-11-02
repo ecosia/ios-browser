@@ -168,13 +168,16 @@ class AppSettingsTableViewController: SettingsTableViewController, FeatureFlagga
          */
 
         var searchSettings: [Setting] = [
-            // Ecosia: Move SearchSetting in appropriate section
-            SearchSetting(settings: self),
             SearchAreaSetting(settings: self),
             SafeSearchSettings(settings: self),
             AutoCompleteSettings(prefs: prefs),
             PersonalSearchSettings(prefs: prefs)
         ]
+        
+        // Ecosia: Unleash Shortcuts Experiment
+        if EngineShortcutsExperiment.isEnabled {
+            searchSettings.insert(QuickSearchSearchSetting(settings: self), at: 0)
+        }
                 
         // Ecosia: Custom homepage settings
         let homepageSettings = HomepageSettings(settings: self)
