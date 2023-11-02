@@ -287,7 +287,8 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
 
         // search settings icon
         let searchButton = UIButton()
-        searchButton.setImage(UIImage(named: "quickSearch"), for: [])
+        // Ecosia: Update image reference for search button
+        searchButton.setImage(UIImage(named: "searches"), for: [])
         searchButton.imageView?.contentMode = .center
         searchButton.layer.backgroundColor = SearchViewControllerUX.EngineButtonBackgroundColor
         searchButton.addTarget(self, action: #selector(didClickSearchButton), for: .touchUpInside)
