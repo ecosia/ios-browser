@@ -128,6 +128,7 @@
 		2ABCCCB02A13A399005D0C5B /* EmptyBookmarksViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ABCCCAF2A13A399005D0C5B /* EmptyBookmarksViewDelegate.swift */; };
 		2AC54D3129DC50CE0034FA2E /* BookmarksExchange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AC54D3029DC50CE0034FA2E /* BookmarksExchange.swift */; };
 		2AF2723A29F2C54A004CA46F /* EmptyBookmarksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AF2723929F2C54A004CA46F /* EmptyBookmarksView.swift */; };
+		2C019BAA2AF3EFD500830CD1 /* EngineShortcutsExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C50B3DC2AF3EE930037AA90 /* EngineShortcutsExperiment.swift */; };
 		2C06B59E2A9FBD02009CDF83 /* WhatsNewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C06B59D2A9FBD02009CDF83 /* WhatsNewCell.swift */; };
 		2C28F96C201B2D4C00ABA8A5 /* MailAppSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C28F96B201B2D4C00ABA8A5 /* MailAppSettingsTests.swift */; };
 		2C2A5EF41E68469500F02659 /* PrivateBrowsingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A5EF31E68469500F02659 /* PrivateBrowsingTest.swift */; };
@@ -9977,6 +9978,7 @@
 				8AB8574027D961550075C173 /* DataObserver.swift in Sources */,
 				6025B10F267B6C7F00F59F6B /* LoginRecordExtension.swift in Sources */,
 				E418D0D91A251B3200CAE47A /* Profile.swift in Sources */,
+				2C019BAA2AF3EFD500830CD1 /* EngineShortcutsExperiment.swift in Sources */,
 				DDA24A451FD84D630098F159 /* DefaultSearchPrefs.swift in Sources */,
 				EA0EE87723D0F1DE002BEDAA /* ShareTheme.swift in Sources */,
 				F8708D321A0970B70051AB07 /* ShareViewController.swift in Sources */,
