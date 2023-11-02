@@ -10,6 +10,9 @@ protocol SearchEnginePickerDelegate: AnyObject {
 }
 
 class SearchSettingsTableViewController: ThemedTableViewController {
+    // Ecosia: Unleash Shortcuts Experiment
+    // Do not show the Default Search Engine option
+    /*
     fileprivate let SectionDefault = 0
     fileprivate let ItemDefaultEngine = 0
     fileprivate let ItemDefaultSuggestions = 1
@@ -17,6 +20,14 @@ class SearchSettingsTableViewController: ThemedTableViewController {
     fileprivate let NumberOfItemsInSectionDefault = 2
     fileprivate let SectionOrder = 1
     fileprivate let NumberOfSections = 2
+     */
+    fileprivate let SectionDefault = 1
+    fileprivate let ItemDefaultEngine = 0
+    fileprivate let ItemDefaultSuggestions = 1
+    fileprivate let ItemAddCustomSearch = 2
+    fileprivate let NumberOfItemsInSectionDefault = 2
+    fileprivate let SectionOrder = 0
+    fileprivate let NumberOfSections = 1
     fileprivate let IconSize = CGSize(width: OpenSearchEngine.PreferredIconSize, height: OpenSearchEngine.PreferredIconSize)
 
     fileprivate var showDeletion = false
@@ -121,12 +132,17 @@ class SearchSettingsTableViewController: ThemedTableViewController {
                 cell.imageView?.layer.cornerRadius = 4
                 cell.imageView?.layer.masksToBounds = true
                 cell.selectionStyle = .none
-            } else {
+            }
+            // Ecosia: Unleash Shortcuts Experiment
+            // Do not show the Default Search Engine option
+            /*
+            else {
                 cell.editingAccessoryType = .disclosureIndicator
                 cell.accessibilityLabel = .SettingsAddCustomEngineTitle
                 cell.accessibilityIdentifier = AccessibilityIdentifiers.Settings.Search.customEngineViewButton
                 cell.textLabel?.text = .SettingsAddCustomEngine
             }
+            */
         }
 
         // So that the separator line goes all the way to the left edge.
@@ -145,7 +161,10 @@ class SearchSettingsTableViewController: ThemedTableViewController {
         } else {
             // The first engine -- the default engine -- is not shown in the quick search engine list.
             // But the option to add Custom Engine is.
-            return model.orderedEngines.count
+            
+            // Ecosia: Unleash Shortcuts Experiment
+            // Do not show the Default Search Engine option
+            return model.orderedEngines.count - 1
         }
     }
 
