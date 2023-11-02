@@ -68,6 +68,9 @@ class CustomSearchViewController: SettingsTableViewController {
                 return
             }
             self.profile.searchEngines.addSearchEngine(engine)
+            // Ecosia: Unleash Shortcuts Experiment
+            Analytics.shared.addsNewSearchEngineInQuickSearchSettingsScreen(trimmedTitle)
+
 
             CATransaction.begin() // Use transaction to call callback after animation has been completed
             CATransaction.setCompletionBlock(self.successCallback)
