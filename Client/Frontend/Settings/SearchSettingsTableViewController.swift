@@ -132,8 +132,7 @@ class SearchSettingsTableViewController: ThemedTableViewController {
                 cell.imageView?.layer.cornerRadius = 4
                 cell.imageView?.layer.masksToBounds = true
                 cell.selectionStyle = .none
-            }
-            else {
+            } else {
                 cell.editingAccessoryType = .disclosureIndicator
                 cell.accessibilityLabel = .SettingsAddCustomEngineTitle
                 cell.accessibilityIdentifier = AccessibilityIdentifiers.Settings.Search.customEngineViewButton
