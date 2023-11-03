@@ -31,9 +31,7 @@ final class NTPImpactDividerFooter: UICollectionReusableView, ReusableCell, Noti
             dividerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: UX.dividerInset),
             dividerView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -UX.dividerInset),
             dividerView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -UX.dividerBottom)
-        ])
-        
-        applyTheme()
+        ])        
     }
 
     func applyTheme() {

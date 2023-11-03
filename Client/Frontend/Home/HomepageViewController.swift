@@ -334,8 +334,10 @@ extension HomepageViewController: UICollectionViewDelegate, UICollectionViewData
         }
         
         // Ecosia: footer for impact
-        if sectionViewModel.sectionType == .impact, kind == UICollectionView.elementKindSectionFooter {
-            return collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: NTPImpactDividerFooter.cellIdentifier, for: indexPath)
+        if sectionViewModel.sectionType == .impact, kind == UICollectionView.elementKindSectionFooter,
+           let footer = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: NTPImpactDividerFooter.cellIdentifier, for: indexPath) as? NTPImpactDividerFooter {
+            footer.applyTheme()
+            return footer
         }
 
         guard let headerView = collectionView.dequeueReusableSupplementaryView(
