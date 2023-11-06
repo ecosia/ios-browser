@@ -49,7 +49,7 @@
     "az": {
       "default": {
         "visibleDefaultEngines": [
-          "google-b-m", "azerdict", "bing", "ddg", "wikipedia-az"
+          "google-b-m", "bing", "ddg", "wikipedia-az"
         ]
       }
     },
