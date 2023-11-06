@@ -605,7 +605,7 @@
     "nb-NO": {
       "default": {
         "visibleDefaultEngines": [
-          "google-b-m", "ddg", "gulesider-mobile-NO", "wikipedia-NO"
+          "google-b-m", "ddg", "wikipedia-NO"
         ]
       }
     },
@@ -631,7 +631,7 @@
     "nn-NO": {
       "default": {
         "visibleDefaultEngines": [
-          "google-b-m", "ddg", "gulesider-mobile-NO", "wikipedia-NN"
+          "google-b-m", "ddg", "wikipedia-NN"
         ]
       }
     },
