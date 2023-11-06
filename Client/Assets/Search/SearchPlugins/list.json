@@ -314,7 +314,7 @@
     "eu": {
       "default": {
         "visibleDefaultEngines": [
-          "google-b-m", "bing", "elebila", "wikipedia-eu"
+          "google-b-m", "bing", "wikipedia-eu"
         ]
       }
     },
