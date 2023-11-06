@@ -274,14 +274,14 @@
     "es-AR": {
       "default": {
         "visibleDefaultEngines": [
-          "google-b-m", "mercadolibre-ar", "wikipedia-es"
+          "google-b-m", "wikipedia-es"
         ]
       }
     },
     "es-CL": {
       "default": {
         "visibleDefaultEngines": [
-          "google-b-m", "bing", "mercadolibre-cl", "wikipedia-es"
+          "google-b-m", "bing", "wikipedia-es"
         ]
       }
     },
@@ -295,7 +295,7 @@
     "es-MX": {
       "default": {
         "visibleDefaultEngines": [
-          "google-b-m", "bing", "ddg", "mercadolibre-mx", "wikipedia-es"
+          "google-b-m", "bing", "ddg", "wikipedia-es"
         ]
       },
       "experimental-hidden": {
