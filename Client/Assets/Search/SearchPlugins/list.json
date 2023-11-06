@@ -424,7 +424,7 @@
     "hu": {
       "default": {
         "visibleDefaultEngines": [
-          "google-b-m", "sztaki-en-hu", "wikipedia-hu"
+          "google-b-m", "wikipedia-hu"
         ]
       }
     },
