@@ -521,7 +521,7 @@
     "kn": {
       "default": {
         "visibleDefaultEngines": [
-          "google-b-m", "bing", "wikipedia-kn", "wiktionary-kn"
+          "google-b-m", "bing", "wikipedia-kn", 
         ]
       }
     },
@@ -638,14 +638,14 @@
     "oc": {
       "default": {
         "visibleDefaultEngines": [
-          "google-b-m", "bing", "wikipedia-oc", "wiktionary-oc"
+          "google-b-m", "bing", "wikipedia-oc", 
         ]
       }
     },
     "or": {
       "default": {
         "visibleDefaultEngines": [
-          "google-b-m", "bing", "wikipedia-or", "wiktionary-or"
+          "google-b-m", "bing", "wikipedia-or", 
         ]
       }
     },
@@ -768,14 +768,14 @@
     "ta": {
       "default": {
         "visibleDefaultEngines": [
-          "google-b-m", "bing", "ddg", "wikipedia-ta", "wiktionary-ta"
+          "google-b-m", "bing", "ddg", "wikipedia-ta", 
         ]
       }
     },
     "te": {
       "default": {
         "visibleDefaultEngines": [
-          "google-b-m", "bing", "wikipedia-te", "wiktionary-te"
+          "google-b-m", "bing", "wikipedia-te", 
         ]
       }
     },
