@@ -10,7 +10,7 @@ protocol SearchEnginePickerDelegate: AnyObject {
 }
 
 class SearchSettingsTableViewController: ThemedTableViewController {
-    // Ecosia: Unleash Shortcuts Experiment
+    // Ecosia: Quick Search Shortcuts Experiment
     // Do not show the Default Search Engine option
     /*
     fileprivate let SectionDefault = 0

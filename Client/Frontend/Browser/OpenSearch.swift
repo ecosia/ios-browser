@@ -65,7 +65,7 @@ class OpenSearchEngine: NSObject, NSCoding {
      * Returns the search URL for the given query.
      */
     func searchURLForQuery(_ query: String) -> URL? {
-        // Ecosia: Unleash Shortcuts Experiment
+        // Ecosia: Quick Search Shortcuts Experiment
         /* 
          If the search is performed via Ecosia, we want to follow the standard flow
          which is now environment-dependant.

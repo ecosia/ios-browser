@@ -68,7 +68,7 @@ class CustomSearchViewController: SettingsTableViewController {
                 return
             }
             self.profile.searchEngines.addSearchEngine(engine)
-            // Ecosia: Unleash Shortcuts Experiment
+            // Ecosia: Quick Search Shortcuts Experiment
             Analytics.shared.addsNewSearchEngineInQuickSearchSettingsScreen(trimmedTitle)
 
 
