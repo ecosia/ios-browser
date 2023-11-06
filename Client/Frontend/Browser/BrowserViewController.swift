@@ -2256,6 +2256,8 @@ extension BrowserViewController {
         User.shared.firstTime = false
         User.shared.migrated = true
         User.shared.hideRebrandIntro()
+        User.shared.hideBookmarksNewBadge()
+        User.shared.hideBookmarksImportExportTooltip()
         // deactivate searchbar hint for new users
         contextHintVC.viewModel.markContextualHintPresented()
     }
