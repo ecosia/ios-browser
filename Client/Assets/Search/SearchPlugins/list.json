@@ -563,7 +563,7 @@
     "lv": {
       "default": {
         "visibleDefaultEngines": [
-          "google-b-m", "salidzinilv", "wikipedia-lv"
+          "google-b-m", "wikipedia-lv"
         ]
       }
     },
