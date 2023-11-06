@@ -761,7 +761,7 @@
     "sv-SE": {
       "default": {
         "visibleDefaultEngines": [
-          "google-b-m", "prisjakt-sv-SE", "wikipedia-sv-SE"
+          "google-b-m", "wikipedia-sv-SE"
         ]
       }
     },
