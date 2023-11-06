@@ -167,7 +167,7 @@
     "el": {
       "default": {
         "visibleDefaultEngines": [
-          "google-b-m", "bing", "skroutz", "wikipedia-el"
+          "google-b-m", "bing", "wikipedia-el"
         ]
       }
     },
