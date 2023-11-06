@@ -368,7 +368,7 @@
     "gd": {
       "default": {
         "visibleDefaultEngines": [
-          "google-b-m", "bing", "ddg", "faclair-beag", "wikipedia-gd"
+          "google-b-m", "bing", "ddg", "wikipedia-gd"
         ]
       }
     },
