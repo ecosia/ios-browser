@@ -267,7 +267,7 @@
     "eo": {
       "default": {
         "visibleDefaultEngines": [
-          "google-b-m", "bing", "ddg", "reta-vortaro", "wikipedia-eo"
+          "google-b-m", "bing", "ddg", "wikipedia-eo"
         ]
       }
     },
