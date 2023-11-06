@@ -528,7 +528,7 @@
     "ko": {
       "default": {
         "visibleDefaultEngines": [
-          "google-b-m", "danawa-kr", "daum-kr", "ebay"
+          "google-b-m", "daum-kr", "ebay"
         ]
       }
     },
