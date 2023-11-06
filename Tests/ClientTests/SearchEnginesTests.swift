@@ -166,7 +166,7 @@ class SearchEnginesTests: XCTestCase {
             ["Google", "Amazon.com", "Bing", "DuckDuckGo", "eBay", "Wikipedia"])
         XCTAssertEqual(
             SearchEngines.getUnorderedBundledEnginesFor(locale: Locale(identifier: "de-DE")).compactMap({$0.shortName}),
-            ["Google", "Amazon.de", "Bing", "DuckDuckGo", "eBay", "Ecosia", "Qwant", "Wikipedia (de)"])
+            ["Google", "Amazon.de", "Bing", "DuckDuckGo", "eBay", "Ecosia", "Wikipedia (de)"])
         XCTAssertEqual(
             SearchEngines.getUnorderedBundledEnginesFor(locale: Locale(identifier: "en-US")).compactMap({$0.shortName}),
             ["Google", "Amazon.com", "Bing", "DuckDuckGo", "eBay", "Wikipedia"])
