@@ -133,7 +133,7 @@ class BookmarksPanel: SiteTableViewController, LibraryPanel, CanRemoveQuickActio
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        if User.shared.showsBookmarksImportExportTooltip {
+        if EcosiaInstallType.get() == .upgrade && User.shared.showsBookmarksImportExportTooltip {
             showBookmarksTooltip()
         }
     }
