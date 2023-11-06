@@ -18,10 +18,6 @@ final class NTPImpactDividerFooter: UICollectionReusableView, ReusableCell, Noti
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
-    
-    deinit {
-        NotificationCenter.default.removeObserver(self)
-    }
 
     required init?(coder: NSCoder) { nil }
 
