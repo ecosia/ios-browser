@@ -528,7 +528,7 @@
     "ko": {
       "default": {
         "visibleDefaultEngines": [
-          "google-b-m", "ebay"
+          "google-b-m"
         ]
       }
     },
