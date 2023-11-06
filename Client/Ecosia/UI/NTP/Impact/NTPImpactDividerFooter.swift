@@ -18,6 +18,10 @@ final class NTPImpactDividerFooter: UICollectionReusableView, ReusableCell, Noti
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
 
     required init?(coder: NSCoder) { nil }
 
@@ -31,10 +35,14 @@ final class NTPImpactDividerFooter: UICollectionReusableView, ReusableCell, Noti
             dividerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: UX.dividerInset),
             dividerView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -UX.dividerInset),
             dividerView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -UX.dividerBottom)
-        ])        
+        ])
+        
+        applyTheme()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(applyTheme), name: .DisplayThemeChanged, object: nil)
     }
 
-    func applyTheme() {
+    @objc func applyTheme() {
         dividerView.backgroundColor = .theme.ecosia.border
     }
 }
