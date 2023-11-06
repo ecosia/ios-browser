@@ -132,7 +132,7 @@
     "cs": {
       "default": {
         "visibleDefaultEngines": [
-          "google-b-m", "bing", "ddg", "mapy-cz", "wikipedia-cz"
+          "google-b-m", "bing", "ddg", "wikipedia-cz"
         ]
       }
     },
