@@ -34,9 +34,11 @@ final class NTPImpactDividerFooter: UICollectionReusableView, ReusableCell, Noti
         ])
         
         applyTheme()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(applyTheme), name: .DisplayThemeChanged, object: nil)
     }
 
-    func applyTheme() {
+    @objc func applyTheme() {
         dividerView.backgroundColor = .theme.ecosia.border
     }
 }
