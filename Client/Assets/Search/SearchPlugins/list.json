@@ -685,7 +685,7 @@
     "rm": {
       "default": {
         "visibleDefaultEngines": [
-          "google-b-m", "bing", "ddg", "leo_ende_de", "pledarigrond", "wikipedia-rm"
+          "google-b-m", "bing", "ddg", "pledarigrond", "wikipedia-rm"
         ]
       }
     },
