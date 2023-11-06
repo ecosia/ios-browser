@@ -97,7 +97,7 @@
     "bn-IN": {
       "default": {
         "visibleDefaultEngines": [
-          "google-b-m", "bing", "rediff", "wikipedia-bn"
+          "google-b-m", "bing", "wikipedia-bn"
         ]
       }
     },
@@ -584,7 +584,7 @@
     "mr": {
       "default": {
         "visibleDefaultEngines": [
-          "google-b-m", "bing", "rediff", "wikipedia-mr"
+          "google-b-m", "bing", "wikipedia-mr"
         ]
       }
     },
