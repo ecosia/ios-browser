@@ -14690,7 +14690,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = "MOB-1935_unleash_search_engines_flag";
+				branch = main;
 				kind = branch;
 			};
 		};
