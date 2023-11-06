@@ -726,7 +726,7 @@
     "sk": {
       "default": {
         "visibleDefaultEngines": [
-          "google-b-m", "slovnik-sk", "wikipedia-sk"
+          "google-b-m", "wikipedia-sk"
         ]
       }
     },
