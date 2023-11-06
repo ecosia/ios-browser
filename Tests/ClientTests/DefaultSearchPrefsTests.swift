@@ -16,14 +16,14 @@ class DefaultSearchPrefsTests: XCTestCase {
 
         // setup the most popular locales
         let us = (lang: ["en-US", "en"], region: "US", resultList: ["google-b-1-m", "amazondotcom", "bing", "ddg", "ebay", "wikipedia"], resultDefault: "Google")
-        let england = (lang: ["en-GB", "en"], region: "GB", resultList: ["google-b-m", "amazon-co-uk", "bing", "ddg", "ebay-co-uk", "wikipedia"], resultDefault: "Google")
-        let france = (lang: ["fr-FR", "fr"], region: "FR", resultList: ["google-b-m", "bing", "ddg", "ebay-fr", "wikipedia-fr"], resultDefault: "Google")
+        let england = (lang: ["en-GB", "en"], region: "GB", resultList: ["google-b-m", "amazon-co-uk", "bing", "ddg", "wikipedia"], resultDefault: "Google")
+        let france = (lang: ["fr-FR", "fr"], region: "FR", resultList: ["google-b-m", "bing", "ddg", "wikipedia-fr"], resultDefault: "Google")
         let japan = (lang: ["ja-JP", "ja"], region: "JP", resultList: ["google-b-m", "amazon-jp", "bing", "ebay", "wikipedia-ja", "yahoo-jp"], resultDefault: "Google")
         let canada = (lang: ["en-CA", "en"], region: "CA", resultList: ["google-b-m", "amazondotcom", "bing", "ddg", "ebay", "wikipedia"], resultDefault: "Google")
         let russia = (lang: ["ru-RU", "ru"], region: "RU", resultList: ["google-com-nocodes", "ebay", "wikipedia-ru"], resultDefault: "Google")
         let taiwan = (lang: ["zh-TW", "zh"], region: "TW", resultList: ["google-b-m", "bing", "ddg", "wikipedia-zh-TW"], resultDefault: "Google")
         let china = (lang: ["zh-hans-CN", "zh-CN", "zh"], region: "CN", resultList: ["google-b-m", "baidu", "bing", "wikipedia-zh-CN"], resultDefault: "百度")
-        let germany = (lang: ["de-DE", "de"], region: "DE", resultList: ["google-b-m", "amazon-de", "bing", "ddg", "ebay-de", "ecosia", "wikipedia-de"], resultDefault: "Google")
+        let germany = (lang: ["de-DE", "de"], region: "DE", resultList: ["google-b-m", "amazon-de", "bing", "ddg", "ecosia", "wikipedia-de"], resultDefault: "Google")
         let southAfrica = (lang: ["en-SA", "en"], region: "SA", resultList: ["google-b-m", "amazondotcom", "bing", "ddg", "ebay", "wikipedia"], resultDefault: "Google")
         let testLocales = [us, england, france, japan, canada, russia, taiwan, china, germany, southAfrica]
 
