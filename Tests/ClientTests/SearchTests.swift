@@ -148,9 +148,10 @@ class SearchTests: XCTestCase {
         let file = Bundle.main.path(forResource: "bing", ofType: "xml", inDirectory: "SearchPlugins/")
         let engine: OpenSearchEngine! = parser.parse(file!, engineID: "bing")
         XCTAssertEqual(engine.shortName, "Bing")
-
-        let containsPartnerCode = engine.searchTemplate.contains("pc=MOZW")
-        XCTAssertTrue(containsPartnerCode)
+        // Ecosia: Unleash Shortcuts Experiment
+        // Allow tests to success on modified Bing search engine
+        // let containsPartnerCode = engine.searchTemplate.contains("pc=MOZW")
+        // XCTAssertTrue(containsPartnerCode)
     }
 
     func testBingParsing_iPad_hasIpadPartnerCode() {
@@ -158,9 +159,10 @@ class SearchTests: XCTestCase {
         let file = Bundle.main.path(forResource: "bing", ofType: "xml", inDirectory: "SearchPlugins/")
         let engine: OpenSearchEngine! = parser.parse(file!, engineID: "bing")
         XCTAssertEqual(engine.shortName, "Bing")
-
-        let containsPartnerCode = engine.searchTemplate.contains("pc=MOZL")
-        XCTAssertTrue(containsPartnerCode)
+        // Ecosia: Unleash Shortcuts Experiment
+        // Allow tests to success on modified Bing search engine
+        // let containsPartnerCode = engine.searchTemplate.contains("pc=MOZL")
+        // XCTAssertTrue(containsPartnerCode)
     }
 
     fileprivate func startMockSuggestServer() -> String {
