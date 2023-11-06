@@ -175,7 +175,8 @@ class SearchTests: BaseTestCase {
         changeSearchEngine(searchEngine: "Bing")
         changeSearchEngine(searchEngine: "DuckDuckGo")
         changeSearchEngine(searchEngine: "Google")
-        changeSearchEngine(searchEngine: "eBay")
+        // Ecosia: Unleash Shortcuts Experiment
+        // changeSearchEngine(searchEngine: "eBay")
         changeSearchEngine(searchEngine: "Wikipedia")
         // Last check failing intermittently, temporary disabled
         // changeSearchEngine(searchEngine: "Amazon.com")
