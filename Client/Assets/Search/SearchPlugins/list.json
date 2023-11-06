@@ -845,7 +845,7 @@
     "vi": {
       "default": {
         "visibleDefaultEngines": [
-          "google-b-m", "coccoc", "ddg", "wikipedia-vi"
+          "google-b-m", "ddg", "wikipedia-vi"
         ]
       }
     },
