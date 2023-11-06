@@ -466,7 +466,7 @@
     "ja": {
       "default": {
         "visibleDefaultEngines": [
-          "google-b-m", "bing", "wikipedia-ja", "yahoo-jp"
+          "google-b-m", "bing", "wikipedia-ja"
         ]
       }
     },

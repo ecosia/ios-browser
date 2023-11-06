@@ -18,7 +18,7 @@ class DefaultSearchPrefsTests: XCTestCase {
         let us = (lang: ["en-US", "en"], region: "US", resultList: ["google-b-1-m", "amazondotcom", "bing", "ddg", "ebay", "wikipedia"], resultDefault: "Google")
         let england = (lang: ["en-GB", "en"], region: "GB", resultList: ["google-b-m", "amazon-co-uk", "bing", "ddg", "wikipedia"], resultDefault: "Google")
         let france = (lang: ["fr-FR", "fr"], region: "FR", resultList: ["google-b-m", "bing", "ddg", "wikipedia-fr"], resultDefault: "Google")
-        let japan = (lang: ["ja-JP", "ja"], region: "JP", resultList: ["google-b-m", "amazon-jp", "bing", "ebay", "wikipedia-ja", "yahoo-jp"], resultDefault: "Google")
+        let japan = (lang: ["ja-JP", "ja"], region: "JP", resultList: ["google-b-m", "amazon-jp", "bing", "ebay", "wikipedia-ja"], resultDefault: "Google")
         let canada = (lang: ["en-CA", "en"], region: "CA", resultList: ["google-b-m", "amazondotcom", "bing", "ddg", "ebay", "wikipedia"], resultDefault: "Google")
         let russia = (lang: ["ru-RU", "ru"], region: "RU", resultList: ["google-com-nocodes", "ebay", "wikipedia-ru"], resultDefault: "Google")
         let taiwan = (lang: ["zh-TW", "zh"], region: "TW", resultList: ["google-b-m", "bing", "ddg", "wikipedia-zh-TW"], resultDefault: "Google")
