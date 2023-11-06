@@ -452,7 +452,7 @@
     "is": {
       "default": {
         "visibleDefaultEngines": [
-          "google-b-m", "bing", "leit-is", "wikipedia-is"
+          "google-b-m", "bing", "wikipedia-is"
         ]
       }
     },
