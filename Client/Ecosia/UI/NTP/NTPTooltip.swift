@@ -34,10 +34,6 @@ final class NTPTooltip: UICollectionReusableView, NotificationThemeable {
         button.isHidden = true
         return button
     }()
-    
-    deinit {
-        NotificationCenter.default.removeObserver(self)
-    }
 
     override init(frame: CGRect) {
         super.init(frame: frame)
