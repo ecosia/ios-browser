@@ -174,7 +174,7 @@ class AppSettingsTableViewController: SettingsTableViewController, FeatureFlagga
             PersonalSearchSettings(prefs: prefs)
         ]
         
-        // Ecosia: Unleash Shortcuts Experiment
+        // Ecosia: Quick Search Shortcuts Experiment
         if EngineShortcutsExperiment.isEnabled {
             searchSettings.insert(QuickSearchSearchSetting(settings: self), at: 2)
         }

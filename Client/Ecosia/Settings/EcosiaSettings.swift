@@ -210,7 +210,7 @@ final class HomepageSettings: Setting {
     }
 }
 
-// Ecosia: Unleash Shortcuts Experiment
+// Ecosia: Quick Search Shortcuts Experiment
 // Opens the quick search settings panel
 final class QuickSearchSearchSetting: Setting {
     let profile: Profile
