@@ -349,7 +349,7 @@
     "fy-NL": {
       "default": {
         "visibleDefaultEngines": [
-          "google-b-m", "bolcom-fy-NL", "wikipedia-fy-NL"
+          "google-b-m", "wikipedia-fy-NL"
         ]
       },
       "experimental-hidden": {
