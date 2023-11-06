@@ -733,7 +733,7 @@
     "sl": {
       "default": {
         "visibleDefaultEngines": [
-          "google-b-m", "ceneje", "odpiralni", "wikipedia-sl"
+          "google-b-m", "odpiralni", "wikipedia-sl"
         ]
       }
     },
