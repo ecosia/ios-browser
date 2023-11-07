@@ -260,6 +260,9 @@ class OpenSearchParser {
                             print("Param element must have name and value attributes", terminator: "\n")
                             return nil
                         }
+                        
+                        // Ecosia: Quick Search Shortcuts Experiment
+                        if let value, value.isMozillaFirefoxParamValue { continue }
 
                         // Ref: FXIOS-4547 required us to change partner code (pc) for Bing search on iPad 
                         if name == "pc", shortName == "Bing", userInterfaceIdiom == .pad {
@@ -317,5 +320,19 @@ class OpenSearchParser {
         }
 
         return OpenSearchEngine(engineID: engineID, shortName: shortName, image: uiImage, searchTemplate: searchTemplate, suggestTemplate: suggestTemplate, isCustomEngine: false)
+    }
+}
+
+// Ecosia: Quick Search Shortcuts Experiment
+extension String {
+    
+    fileprivate var isMozillaFirefoxParamValue: Bool {
+        let values = [
+            "Mozilla-search",
+            "firefox-b-m",
+            "MOZW",
+            "MOZWSB"
+        ]
+        return values.contains(self)
     }
 }
