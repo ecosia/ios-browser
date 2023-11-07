@@ -906,12 +906,6 @@ extension TabManager {
             tabToSelect = addTab()
         }
 
-        // Ecosia: this logic makes us start on NTP if user should see rebrand intro
-        let startOnNTP = User.shared.showsRebrandIntro || User.shared.firstTime
-        if !(startOnNTP) {
-            selectTab(tabToSelect)
-        }
-
         for delegate in self.delegates {
             delegate.get()?.tabManagerDidRestoreTabs(self)
         }
@@ -920,13 +914,10 @@ extension TabManager {
     }
 
     private func checkForSingleTab() {
-        // Ecosia: this logic makes us start on NTP if user should see rebrand intro
-        let startOnNTP = User.shared.showsRebrandIntro || User.shared.firstTime
-
         // Always make sure there is a single normal tab.
-        if normalTabs.isEmpty || startOnNTP {
+        if normalTabs.isEmpty {
             let tab = addTab()
-            if selectedTab == nil || startOnNTP { selectTab(tab) }
+            if selectedTab == nil { selectTab(tab) }
         }
     }
 
