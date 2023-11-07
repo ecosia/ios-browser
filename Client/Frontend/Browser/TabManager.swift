@@ -905,6 +905,8 @@ extension TabManager {
         if tabToSelect == nil {
             tabToSelect = addTab()
         }
+        
+        selectTab(tabToSelect)
 
         for delegate in self.delegates {
             delegate.get()?.tabManagerDidRestoreTabs(self)
