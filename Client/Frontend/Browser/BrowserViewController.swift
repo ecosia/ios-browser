@@ -2241,8 +2241,6 @@ extension BrowserViewController {
             presentLoadingScreen()
         } else if User.shared.firstTime {
             handleFirstTimeUserActions()
-        } else if User.shared.showsRebrandIntro {
-            presentRebrandIntro()
         } else {
             presentInsightfulSheetsIfNeeded()
         }
@@ -2260,14 +2258,6 @@ extension BrowserViewController {
         User.shared.hideBookmarksImportExportTooltip()
         // deactivate searchbar hint for new users
         contextHintVC.viewModel.markContextualHintPresented()
-    }
-
-    private func presentRebrandIntro() {
-        let intro = NTPIntroViewController()
-        intro.modalPresentationStyle = .overFullScreen
-        intro.modalTransitionStyle = .crossDissolve
-        present(intro, animated: true)
-        User.shared.hideRebrandIntro()
     }
 
     private func showLoadingScreen(for user: User) -> Bool {
