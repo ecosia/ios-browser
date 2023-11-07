@@ -2253,7 +2253,6 @@ extension BrowserViewController {
     private func handleFirstTimeUserActions() {
         User.shared.firstTime = false
         User.shared.migrated = true
-        User.shared.hideRebrandIntro()
         User.shared.hideBookmarksNewBadge()
         User.shared.hideBookmarksImportExportTooltip()
         // deactivate searchbar hint for new users
@@ -2268,8 +2267,7 @@ extension BrowserViewController {
     func presentInsightfulSheetsIfNeeded() {
         guard isHomePage(),
               presentedViewController == nil,
-              !showLoadingScreen(for: .shared),
-              !User.shared.showsRebrandIntro else { return }
+              !showLoadingScreen(for: .shared) else { return }
         
         if !presentDefaultBrowserPromoIfNeeded() {
             presentWhatsNewPageIfNeeded()

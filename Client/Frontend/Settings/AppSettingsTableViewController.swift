@@ -251,7 +251,6 @@ class AppSettingsTableViewController: SettingsTableViewController, FeatureFlagga
  */
                 // Hidden Debug Settings
                 PushBackInstallation(settings: self),
-                ToggleBrandRefreshIntro(settings: self),
                 ToggleImpactIntro(settings: self),
                 ShowTour(settings: self),
                 CreateReferralCode(settings: self),

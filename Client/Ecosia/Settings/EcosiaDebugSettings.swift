@@ -19,22 +19,6 @@ final class PushBackInstallation: HiddenSetting {
     }
 }
 
-final class ToggleBrandRefreshIntro: HiddenSetting {
-    override var title: NSAttributedString? {
-        return NSAttributedString(string: "Debug: Toggle - Show Rebrand intro", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
-    }
-
-    override var status: NSAttributedString? {
-        let isOn = User.shared.showsRebrandIntro
-        return NSAttributedString(string: isOn ? "True" : "False", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
-    }
-
-    override func onClick(_ navigationController: UINavigationController?) {
-        User.shared.showsRebrandIntro ? User.shared.hideRebrandIntro() : User.shared.showRebrandIntro()
-        settings.tableView.reloadData()
-    }
-}
-
 final class ToggleImpactIntro: HiddenSetting {
     override var title: NSAttributedString? {
         return NSAttributedString(string: "Debug: Toggle - Show Impact intro", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
