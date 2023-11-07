@@ -14686,7 +14686,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = "MOB-1932_remove_rebrand_intro";
+				branch = main;
 				kind = branch;
 			};
 		};
