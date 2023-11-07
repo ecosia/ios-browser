@@ -81,7 +81,7 @@ class OpenSearchEngine: NSObject, NSCoding {
            fromTemplateURL.baseDomain != "ecosia.org" {
             return fromTemplateURL
         } else {
-            return URL.search(query: query)
+            return URL.ecosiaSearchWithQuery(query)
         }
     }
 
