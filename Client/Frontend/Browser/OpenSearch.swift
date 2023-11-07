@@ -262,7 +262,8 @@ class OpenSearchParser {
                         }
                         
                         // Ecosia: Quick Search Shortcuts Experiment
-                        if let value, value.isMozillaFirefoxParamValue { continue }
+                        if EngineShortcutsExperiment.isEnabled,
+                           let value, value.isMozillaFirefoxParamValue { continue }
 
                         // Ref: FXIOS-4547 required us to change partner code (pc) for Bing search on iPad 
                         if name == "pc", shortName == "Bing", userInterfaceIdiom == .pad {
