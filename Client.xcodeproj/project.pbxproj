@@ -652,7 +652,6 @@
 		CA4D9CE628C8D801006AFB5D /* EcosiaTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4D9C8D28C8D801006AFB5D /* EcosiaTheme.swift */; };
 		CA4D9CE828C8D801006AFB5D /* NTPLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4D9C9028C8D801006AFB5D /* NTPLayout.swift */; };
 		CA4D9CEA28C8D801006AFB5D /* DefaultBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4D9C9228C8D801006AFB5D /* DefaultBrowser.swift */; };
-		CA4D9CEC28C8D801006AFB5D /* NTPIntroViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4D9C9428C8D801006AFB5D /* NTPIntroViewController.swift */; };
 		CA4D9CED28C8D801006AFB5D /* NTPImpactCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4D9C9528C8D801006AFB5D /* NTPImpactCell.swift */; };
 		CA4D9CEF28C8D801006AFB5D /* NTPTooltip.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4D9C9728C8D801006AFB5D /* NTPTooltip.swift */; };
 		CA4D9CF028C8D801006AFB5D /* NTPTooltip.Highlight.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4D9C9828C8D801006AFB5D /* NTPTooltip.Highlight.swift */; };
@@ -3634,7 +3633,6 @@
 		CA4D9C8E28C8D801006AFB5D /* EmptyHeader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmptyHeader.swift; sourceTree = "<group>"; };
 		CA4D9C9028C8D801006AFB5D /* NTPLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NTPLayout.swift; sourceTree = "<group>"; };
 		CA4D9C9228C8D801006AFB5D /* DefaultBrowser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultBrowser.swift; sourceTree = "<group>"; };
-		CA4D9C9428C8D801006AFB5D /* NTPIntroViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NTPIntroViewController.swift; sourceTree = "<group>"; };
 		CA4D9C9528C8D801006AFB5D /* NTPImpactCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NTPImpactCell.swift; sourceTree = "<group>"; };
 		CA4D9C9728C8D801006AFB5D /* NTPTooltip.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NTPTooltip.swift; sourceTree = "<group>"; };
 		CA4D9C9828C8D801006AFB5D /* NTPTooltip.Highlight.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NTPTooltip.Highlight.swift; sourceTree = "<group>"; };
@@ -6658,7 +6656,6 @@
 				CA8A48B0291BB8CA008BE12F /* News */,
 				CA103C7F28C8F78E00F7170A /* CircleButton.swift */,
 				CA4D9C9228C8D801006AFB5D /* DefaultBrowser.swift */,
-				CA4D9C9428C8D801006AFB5D /* NTPIntroViewController.swift */,
 				CA4D9C9028C8D801006AFB5D /* NTPLayout.swift */,
 				CA4D9C9828C8D801006AFB5D /* NTPTooltip.Highlight.swift */,
 				CA4D9C9728C8D801006AFB5D /* NTPTooltip.swift */,
@@ -9664,7 +9661,6 @@
 				EBB89507219398E500EB91A0 /* ContentBlocker.swift in Sources */,
 				23ED80FF25C89C9800D0E9D5 /* DefaultBrowserOnboardingViewController.swift in Sources */,
 				D88FDA9F1F4E2B9200FD9709 /* PhotonActionSheetProtocol.swift in Sources */,
-				CA4D9CEC28C8D801006AFB5D /* NTPIntroViewController.swift in Sources */,
 				E12BD0AE28AC38480029AAF0 /* UIImage+Extension.swift in Sources */,
 				F886218C270CD3B8007F4562 /* DevicePasscodeRequiredViewController.swift in Sources */,
 				CA220A6D28D071C2000E66E6 /* NimbusFlaggableFeature.swift in Sources */,
