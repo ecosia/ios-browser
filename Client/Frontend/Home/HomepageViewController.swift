@@ -133,9 +133,6 @@ class HomepageViewController: UIViewController, HomePanel, FeatureFlaggable {
         collectionView.register(LabelButtonHeaderView.self,
                                 forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
                                 withReuseIdentifier: LabelButtonHeaderView.cellIdentifier)
-        collectionView.register(NTPTooltip.self,
-                                forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-                                withReuseIdentifier: NTPTooltip.key)
         collectionView.register(NTPImpactDividerFooter.self,
                                 forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
                                 withReuseIdentifier: NTPImpactDividerFooter.cellIdentifier)
@@ -322,16 +319,6 @@ extension HomepageViewController: UICollectionViewDelegate, UICollectionViewData
 
         guard let sectionViewModel = viewModel.getSectionViewModel(shownSection: indexPath.section)
         else { return UICollectionReusableView() }
-
-        // Ecosia: tooltip for impact
-        if sectionViewModel.sectionType == .impact,
-            let text = NTPTooltip.highlight()?.text,
-            kind == UICollectionView.elementKindSectionHeader {
-            let tooltip = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: NTPTooltip.key, for: indexPath) as! NTPTooltip
-            tooltip.setText(text)
-            tooltip.delegate = self
-            return tooltip
-        }
         
         // Ecosia: footer for impact
         if sectionViewModel.sectionType == .impact, kind == UICollectionView.elementKindSectionFooter {
