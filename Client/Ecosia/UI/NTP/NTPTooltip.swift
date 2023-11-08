@@ -4,7 +4,7 @@
 
 import UIKit
 
-final class NTPTooltip: UICollectionReusableView, NotificationThemeable {
+final class NTPTooltip: UIView, NotificationThemeable {
     enum TailPosition {
         case leading, center
     }
@@ -45,13 +45,7 @@ final class NTPTooltip: UICollectionReusableView, NotificationThemeable {
         commonInit()
     }
     
-    override func preferredLayoutAttributesFitting(_ layoutAttributes: UICollectionViewLayoutAttributes) -> UICollectionViewLayoutAttributes {
-        // Empty override required to prevent UICollectionViewRecursion on NTPLayout.adjustImpactTooltipFrame
-        return layoutAttributes
-    }
-
     private func commonInit() {
-        translatesAutoresizingMaskIntoConstraints = false
         let background = UIView()
         background.translatesAutoresizingMaskIntoConstraints = false
         addSubview(background)
@@ -176,11 +170,6 @@ final class NTPTooltip: UICollectionReusableView, NotificationThemeable {
     
     @objc private func linkButtonTapped() {
         delegate?.ntpTooltipLinkTapped(self)
-    }
-
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        applyTheme()
     }
     
     private func updateTailPosition() {
