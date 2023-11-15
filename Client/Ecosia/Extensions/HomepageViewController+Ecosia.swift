@@ -57,12 +57,8 @@ extension HomepageViewController: NTPTooltipDelegate {
             case .collectiveImpactIntro:
                 User.shared.hideImpactIntro()
             }
-            self?.reloadTooltip()
+            self?.hideImpactTooltip()
         }
-    }
-
-    func reloadTooltip() {
-        reloadView()
     }
 }
 

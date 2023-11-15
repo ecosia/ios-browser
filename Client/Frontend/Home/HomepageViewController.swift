@@ -34,7 +34,9 @@ class HomepageViewController: UIViewController, HomePanel, FeatureFlaggable {
     var currentTab: Tab? {
         return tabManager.selectedTab
     }
-
+    
+    var impactTooltip = NTPTooltip()
+    
     // MARK: - Initializers
     init(profile: Profile,
          tabManager: TabManagerProtocol,
@@ -160,7 +162,6 @@ class HomepageViewController: UIViewController, HomePanel, FeatureFlaggable {
             else { return nil }
             return viewModel.section(for: layoutEnvironment.traitCollection)
         }
-        layout.highlightDataSource = viewModel
         return layout
     }
 
@@ -352,6 +353,11 @@ extension HomepageViewController: UICollectionViewDelegate, UICollectionViewData
 
         return viewModel.configure(collectionView, at: indexPath)
     }
+    
+    func collectionView(_ collectionView: UICollectionView, willDisplaySupplementaryView view: UICollectionReusableView, forElementKind elementKind: String, at indexPath: IndexPath) {
+        guard let impactHeader = view as? LabelButtonHeaderView else { return }
+        showImpactTooltipIfNeeded(on: impactHeader)
+    }
 
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         (cell as? NotificationThemeable)?.applyTheme()
@@ -501,6 +507,50 @@ extension HomepageViewController: Notifiable {
 
             default: break
             }
+        }
+    }
+}
+
+extension HomepageViewController {
+    
+    private func showImpactTooltipIfNeeded(on view: UIView) {
+        
+        guard let text = NTPTooltip.highlight()?.text else { return }
+        
+        impactTooltip.setText(text)
+        impactTooltip.delegate = self
+        impactTooltip.alpha = 0.0
+
+        collectionView.addSubview(impactTooltip)
+        collectionView.bringSubviewToFront(impactTooltip)
+        
+        var constraints = [
+            impactTooltip.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor),
+            impactTooltip.trailingAnchor.constraint(lessThanOrEqualTo: view.layoutMarginsGuide.trailingAnchor),
+            impactTooltip.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor)
+        ]
+                
+        if traitCollection.userInterfaceIdiom == .pad {
+            constraints.append(
+                impactTooltip.widthAnchor.constraint(lessThanOrEqualToConstant: view.bounds.width / 2).priority(.defaultHigh)
+            )
+        }
+
+        NSLayoutConstraint.activate(constraints)
+                
+        UIView.animate(withDuration: 0.3) {
+            self.impactTooltip.alpha = 1.0
+        }
+    }
+    
+    func hideImpactTooltip() {
+        
+        impactTooltip.delegate = nil
+        
+        UIView.animate(withDuration: 0.3, animations: {
+            self.impactTooltip.alpha = 0.0
+        }) { _ in
+            self.impactTooltip.removeFromSuperview()
         }
     }
 }

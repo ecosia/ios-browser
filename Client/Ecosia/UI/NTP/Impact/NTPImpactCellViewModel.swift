@@ -113,22 +113,13 @@ extension NTPImpactCellViewModel: HomepageViewModelProtocol {
         section.contentInsets = sectionType.sectionInsets(traitCollection, bottomSpacing: 0)
         
         var supplementaryItems = [NSCollectionLayoutBoundarySupplementaryItem]()
-        if NTPTooltip.highlight() != nil {
-            supplementaryItems.append(
-                .init(layoutSize: .init(widthDimension: .fractionalWidth(1),
-                                        heightDimension: .absolute(1)),
-                      elementKind: UICollectionView.elementKindSectionHeader,
-                      alignment: .top)
-            )
-        } else {
-            supplementaryItems.append(
-                .init(layoutSize: .init(widthDimension: .fractionalWidth(1),
-                                        heightDimension: .estimated(100)),
-                      elementKind: UICollectionView.elementKindSectionHeader,
-                      alignment: .top)
-            )
-        }
-        
+        supplementaryItems.append(
+            .init(layoutSize: .init(widthDimension: .fractionalWidth(1),
+                                    heightDimension: .estimated(100)),
+                  elementKind: UICollectionView.elementKindSectionHeader,
+                  alignment: .top)
+        )
+
         supplementaryItems.append(
             .init(layoutSize: .init(widthDimension: .fractionalWidth(1),
                                     heightDimension: .estimated(NTPImpactDividerFooter.UX.estimatedHeight)),
