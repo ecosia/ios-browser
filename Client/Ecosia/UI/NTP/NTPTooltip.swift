@@ -46,6 +46,7 @@ final class NTPTooltip: UIView, NotificationThemeable {
     }
     
     private func commonInit() {
+        translatesAutoresizingMaskIntoConstraints = false
         let background = UIView()
         background.translatesAutoresizingMaskIntoConstraints = false
         addSubview(background)
