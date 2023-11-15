@@ -36,6 +36,9 @@ class HomepageViewController: UIViewController, HomePanel, FeatureFlaggable {
     }
     
     var impactTooltip = NTPTooltip()
+    var isImpactTooltipOnScreen: Bool {
+        impactTooltip.superview != nil
+    }
     
     // MARK: - Initializers
     init(profile: Profile,
@@ -99,20 +102,22 @@ class HomepageViewController: UIViewController, HomePanel, FeatureFlaggable {
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
-
-        if UIDevice.current.userInterfaceIdiom == .pad {
-            reloadOnRotation()
-        }
+        let shouldReload = UIDevice.current.userInterfaceIdiom == .pad || isImpactTooltipOnScreen
+        guard shouldReload else { return }
+        reloadOnRotation()
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         applyTheme()
+        
+        let shouldReload = previousTraitCollection?.horizontalSizeClass != traitCollection.horizontalSizeClass
+        || previousTraitCollection?.verticalSizeClass != traitCollection.verticalSizeClass ||
+        isImpactTooltipOnScreen
 
-        if previousTraitCollection?.horizontalSizeClass != traitCollection.horizontalSizeClass
-            || previousTraitCollection?.verticalSizeClass != traitCollection.verticalSizeClass {
-            reloadOnRotation()
-        }
+        guard shouldReload else { return }
+
+        reloadOnRotation()
     }
 
     // MARK: - Layout
@@ -204,6 +209,9 @@ class HomepageViewController: UIViewController, HomePanel, FeatureFlaggable {
     /// is done with the new trait. On iPad, trait collection doesn't change from portrait to landscape (and vice-versa)
     /// since it's `.regular` on both. We reloadOnRotation from viewWillTransition in that case.
     private func reloadOnRotation() {
+        
+        hideImpactTooltip()
+        
         if let _ = presentedViewController as? PhotonActionSheet {
             presentedViewController?.dismiss(animated: false, completion: nil)
         }
@@ -355,7 +363,9 @@ extension HomepageViewController: UICollectionViewDelegate, UICollectionViewData
     }
     
     func collectionView(_ collectionView: UICollectionView, willDisplaySupplementaryView view: UICollectionReusableView, forElementKind elementKind: String, at indexPath: IndexPath) {
-        guard let impactHeader = view as? LabelButtonHeaderView else { return }
+        guard let impactHeader = view as? LabelButtonHeaderView,
+              viewModel.getSectionViewModel(shownSection: indexPath.section)?.sectionType == .impact
+        else { return }
         showImpactTooltipIfNeeded(on: impactHeader)
     }
 
@@ -515,8 +525,9 @@ extension HomepageViewController {
     
     private func showImpactTooltipIfNeeded(on view: UIView) {
         
-        guard let text = NTPTooltip.highlight()?.text else { return }
-        
+        guard impactTooltip.superview == nil,
+              let text = NTPTooltip.highlight()?.text else { return }
+                
         impactTooltip.setText(text)
         impactTooltip.delegate = self
         impactTooltip.alpha = 0.0
