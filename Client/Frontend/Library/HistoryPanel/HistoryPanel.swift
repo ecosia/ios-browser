@@ -54,9 +54,11 @@ class HistoryPanel: UIViewController,
     }
 
     var shouldShowSearch: Bool {
+        /* Ecosia: disable flag
         guard viewModel.featureFlags.isFeatureEnabled(.historyGroups, checking: .buildOnly) else {
             return false
         }
+         */
 
         return state == .history(state: .mainView) || state == .history(state: .search)
     }
@@ -76,12 +78,20 @@ class HistoryPanel: UIViewController,
             return [bottomDeleteButton, flexibleSpace]
         }
 
-        return [bottomDeleteButton, flexibleSpace, bottomSearchButton, flexibleSpace]
+        // Ecosia: Update button position
+        // return [bottomDeleteButton, flexibleSpace, bottomSearchButton, flexibleSpace]
+        return [flexibleSpace, bottomSearchButton, flexibleSpace, bottomDeleteButton]
     }
 
     // UI
     private lazy var bottomSearchButton: UIBarButtonItem = {
+        /* Ecosia: Updare bottom search button
         let button = UIBarButtonItem(image: UIImage.templateImageNamed(ImageIdentifiers.libraryPanelSearch),
+                                     style: .plain,
+                                     target: self,
+                                     action: #selector(bottomSearchButtonAction))
+         */
+        let button = UIBarButtonItem(image: UIImage.templateImageNamed("searchFilled"),
                                      style: .plain,
                                      target: self,
                                      action: #selector(bottomSearchButtonAction))
@@ -90,7 +100,13 @@ class HistoryPanel: UIViewController,
     }()
 
     private lazy var bottomDeleteButton: UIBarButtonItem = {
+        /* Ecosia: Updare clear all button
         let button = UIBarButtonItem(image: UIImage.templateImageNamed(StandardImageIdentifiers.Large.delete),
+                                     style: .plain,
+                                     target: self,
+                                     action: #selector(bottomDeleteButtonAction))
+         */
+        let button = UIBarButtonItem(title: .localized(.clearAll),
                                      style: .plain,
                                      target: self,
                                      action: #selector(bottomDeleteButtonAction))
@@ -104,10 +120,18 @@ class HistoryPanel: UIViewController,
         searchbar.searchTextField.placeholder = self.viewModel.searchHistoryPlaceholder
         searchbar.returnKeyType = .go
         searchbar.delegate = self
+        // Ecosia: Update SearchBar properties
+        searchbar.searchBarStyle = .prominent
+        searchbar.searchTextField.layer.cornerRadius = 18
+        searchbar.searchTextField.layer.masksToBounds = true
+        searchbar.backgroundImage = .init()
     }
 
-    private lazy var tableView: UITableView = .build { [weak self] tableView in
-        guard let self = self else { return }
+    // Ecosia: Update TableView init to make it grouped
+    // private lazy var tableView: UITableView = .build { [weak self] tableView in
+    private lazy var tableView: UITableView = {
+        let tableView = UITableView(frame: .zero, style: .insetGrouped)
+        tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.dataSource = self.diffableDataSource
         tableView.addGestureRecognizer(self.longPressRecognizer)
         tableView.accessibilityIdentifier = a11yIds.tableView
@@ -125,7 +149,11 @@ class HistoryPanel: UIViewController,
         if #available(iOS 15.0, *) {
             tableView.sectionHeaderTopPadding = 0
         }
-    }
+        
+        // Ecosia: Update tableView properties
+        tableView.contentInset.top = 32
+        return tableView
+    }()
 
     lazy var longPressRecognizer: UILongPressGestureRecognizer = {
         UILongPressGestureRecognizer(target: self, action: #selector(onLongPressGestureRecognized))
@@ -141,6 +169,8 @@ class HistoryPanel: UIViewController,
         label.numberOfLines = 0
         label.adjustsFontSizeToFitWidth = true
     }
+    // Ecosia: Add Empty Header
+    private lazy var emptyHeader = EmptyHeader(icon: "libraryHistory", title: .localized(.noHistory), subtitle: .localized(.websitesYouHave))
     var refreshControl: UIRefreshControl?
     var recentlyClosedCell: OneLineTableViewCell?
 
@@ -220,9 +250,14 @@ class HistoryPanel: UIViewController,
             tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
 
-            bottomStackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            /* Ecosia: Update constraints
+             bottomStackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+             bottomStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+             bottomStackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
+             */
+            bottomStackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 8),
             bottomStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            bottomStackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
+            bottomStackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -8)
         ])
     }
 
@@ -322,10 +357,12 @@ class HistoryPanel: UIViewController,
             }
             break
         case .DynamicFontChanged:
+            /* Ecosia: Remove emptyStateOverlayView ref
             if emptyStateOverlayView.superview != nil {
                 emptyStateOverlayView.removeFromSuperview()
             }
             emptyStateOverlayView = createEmptyStateOverlayView()
+             */
             resyncHistory()
             break
         case .DatabaseWasReopened:
@@ -525,7 +562,10 @@ class HistoryPanel: UIViewController,
     func updateEmptyPanelState() {
         if viewModel.shouldShowEmptyState(searchText: searchbar.text ?? "") {
             welcomeLabel.text = viewModel.emptyStateText
-            tableView.tableFooterView = emptyStateOverlayView
+            // Ecosia: Replace empty header
+            // tableView.tableFooterView = emptyStateOverlayView
+            tableView.tableFooterView = emptyHeader
+            emptyHeader.applyTheme()
         } else {
             tableView.alwaysBounceVertical = true
             tableView.tableFooterView = nil
@@ -567,16 +607,26 @@ class HistoryPanel: UIViewController,
         updateEmptyPanelState()
 
         tableView.backgroundColor = themeManager.currentTheme.colors.layer6
-        searchbar.backgroundColor = themeManager.currentTheme.colors.layer3
-        let tintColor = themeManager.currentTheme.colors.textPrimary
-        let searchBarImage = UIImage(named: StandardImageIdentifiers.Large.history)?
-            .withRenderingMode(.alwaysTemplate)
-            .tinted(withColor: tintColor)
+        // Ecosia: Search Bar and TableView with same color
+        // searchbar.backgroundColor = themeManager.currentTheme.colors.layer3
+        searchbar.barTintColor = tableView.backgroundColor
+        searchbar.backgroundColor = tableView.backgroundColor
+        searchbar.searchTextField.backgroundColor = .legacyTheme.ecosia.primaryBackground
+        // Ecosia: Update search bar image and color
+        // let tintColor = themeManager.currentTheme.colors.textPrimary
+        // let searchBarImage = UIImage(named: StandardImageIdentifiers.Large.history)?.withRenderingMode(.alwaysTemplate).tinted(withColor: tintColor)
+        let searchBarImage = UIImage(named: "search")?.tinted(withColor: .legacyTheme.ecosia.secondaryText).createScaled(.init(width: 16, height: 16))
         searchbar.setImage(searchBarImage, for: .search, state: .normal)
         searchbar.tintColor = themeManager.currentTheme.colors.textPrimary
+        // Ecosia: Update search bar position
+        searchbar.setPositionAdjustment(.init(horizontal: 4, vertical: 0), for: .search)
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: themeManager.currentTheme.colors.textPrimary]
+        /* Ecosia: Update bottomSearchButton theming
         bottomSearchButton.tintColor = themeManager.currentTheme.colors.iconPrimary
         bottomDeleteButton.tintColor = themeManager.currentTheme.colors.iconPrimary
+        */
+        bottomSearchButton.tintColor = .legacyTheme.ecosia.primaryText
+        bottomDeleteButton.tintColor = .legacyTheme.ecosia.warning
         welcomeLabel.textColor = themeManager.currentTheme.colors.textSecondary
 
         tableView.reloadData()

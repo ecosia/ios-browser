@@ -22,13 +22,20 @@ public struct StandardImageIdentifiers {
     // Icon size 24x24
     public struct Large {
         public static let appendUp = "appendUpLarge"
-        public static let appMenu = "appMenuLarge"
+        // Ecosia: Update App Menu to looklike Vanilla v104
+        // public static let appMenu = "appMenuLarge"
+        public static let appMenu = "nav-menu"
         public static let avatarCircle = "avatarCircleLarge"
         public static let back = "backLarge"
-        public static let bookmark = "bookmarkLarge"
-        public static let bookmarkFill = "bookmarkFillLarge"
-        public static let bookmarkSlash = "bookmarkSlashLarge"
-        public static let bookmarkTrayFill = "bookmarkTrayFillLarge"
+        // Ecosia: Bookmarks Review
+        // public static let bookmark = "bookmarkLarge"
+        // public static let bookmarkFill = "bookmarkFillLarge"
+        // public static let bookmarkSlash = "bookmarkSlashLarge"
+        // public static let bookmarkTrayFill = "bookmarkTrayFillLarge"
+        public static let bookmark = "bookmarksEmpty"
+        public static let bookmarkFill = "bookmarkFill"
+        public static let bookmarkSlash = "bookmarkFill"
+        public static let bookmarkTrayFill = "bookmarksEmpty"
         public static let checkmark = "checkmarkLarge"
         public static let chevronDown = "chevronDownLarge"
         public static let chevronLeft = "chevronLeftLarge"
@@ -40,9 +47,15 @@ public struct StandardImageIdentifiers {
         public static let criticalFill = "criticalFillLarge"
         public static let cross = "crossLarge"
         public static let delete = "deleteLarge"
+        // Ecosia: Review Device icons
+        /*
         public static let deviceDesktop = "deviceDesktopLarge"
         public static let deviceDesktopSend = "deviceDesktopSendLarge"
         public static let deviceMobile = "deviceMobileLarge"
+        */
+        public static let deviceDesktop = "menu-RequestDesktopSite"
+        public static let deviceDesktopSend = "menu-Send-to-Device"
+        public static let deviceMobile = "menu-ViewMobile"
         public static let download = "downloadLarge"
         public static let edit = "editLarge"
         public static let folder = "folderLarge"
@@ -66,7 +79,9 @@ public struct StandardImageIdentifiers {
         public static let qrCode = "qrCodeLarge"
         public static let shipping = "shippingLarge"
         public static let shopping = "shoppingLarge"
-        public static let tabTray = "tabTrayLarge"
+        // Ecosia: Update tabTray image name
+        // public static let tabTray = "tabTrayLarge"
+        public static let tabTray = "recentlyClosed"
         public static let warningFill = "warningFillLarge"
     }
 

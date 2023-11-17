@@ -14,6 +14,7 @@ import MobileCoreServices
 import Telemetry
 import Common
 import ComponentLibrary
+import Core
 
 class BrowserViewController: UIViewController,
                              SearchBarLocationProvider,
@@ -49,7 +50,9 @@ class BrowserViewController: UIViewController,
     var screenshotHelper: ScreenshotHelper!
     var searchTelemetry: SearchTelemetry?
     var searchLoader: SearchLoader?
-    var findInPageBar: FindInPageBar?
+    // Ecosia: Custom UI for FindInPageBar
+    // var findInPageBar: FindInPageBar?
+    var findInPageBar: EcosiaFindInPageBar?
     var zoomPageBar: ZoomPageBar?
     lazy var mailtoLinkHandler = MailtoLinkHandler()
     var urlFromAnotherApp: UrlToOpenModel?
@@ -166,6 +169,26 @@ class BrowserViewController: UIViewController,
         return keyboardPressesHandlerValue
     }
 
+    fileprivate var shouldShowDefaultBrowserPromo: Bool {
+        profile.prefs.intForKey(PrefsKeys.IntroSeen) == nil &&
+        DefaultBrowserExperiment.minPromoSearches() <= User.shared.searchCount
+    }
+    fileprivate var shouldShowWhatsNewPageScreen: Bool { whatsNewDataProvider.shouldShowWhatsNewPage }
+    fileprivate var shouldShowAPNConsentScreen: Bool {
+        EngagementServiceExperiment.isEnabled &&
+        EngagementServiceExperiment.minSearches() <= User.shared.searchCount &&
+        User.shared.shouldShowAPNConsentScreen
+    }
+
+    let whatsNewDataProvider = WhatsNewLocalDataProvider()
+    let referrals = Referrals()
+    
+    // Ecosia: Make `menuHelper` available at class level
+    var menuHelper: MainMenuActionHelper?
+    
+    // Ecosia: Add init to separate from Ecosia Properties
+    // MARK: - Init
+    
     init(
         profile: Profile,
         tabManager: TabManager,
@@ -281,6 +304,8 @@ class BrowserViewController: UIViewController,
         isBottomSearchBar = newPositionIsBottom
         updateViewConstraints()
         updateHeaderConstraints()
+        // Ecosia: Update toolbar search button
+        toolbar.circleButton.config = isBottomSearchBar ? .newTab : .search
         toolbar.setNeedsDisplay()
         urlBar.updateConstraints()
     }
@@ -295,7 +320,9 @@ class BrowserViewController: UIViewController,
 
     @objc
     fileprivate func appMenuBadgeUpdate() {
-        let actionNeeded = RustFirefoxAccounts.shared.isActionNeeded
+        // Ecosia: actionNeeded set to fasle
+        // let actionNeeded = RustFirefoxAccounts.shared.isActionNeeded
+        let actionNeeded = false
         let showWarningBadge = actionNeeded
 
         urlBar.warningMenuBadge(setVisible: showWarningBadge)
@@ -309,7 +336,9 @@ class BrowserViewController: UIViewController,
         let hideReloadButton = shouldUseiPadSetup(traitCollection: newCollection)
         urlBar.topTabsIsShowing = showTopTabs
         urlBar.setShowToolbar(!showToolbar, hideReloadButton: hideReloadButton)
-        toolbar.addNewTabButton.isHidden = showToolbar
+        // Ecosia: Update toolbar search/add button
+        // toolbar.circleButton.isHidden = showToolbar
+        toolbar.circleButton.isHidden = false
 
         if showToolbar {
             toolbar.isHidden = false
@@ -351,6 +380,9 @@ class BrowserViewController: UIViewController,
             navigationToolbar.updateBackStatus(webView.canGoBack)
             navigationToolbar.updateForwardStatus(webView.canGoForward)
         }
+        
+        // Ecosia: Update toolbar search/add button
+        toolbar.circleButton.config = isBottomSearchBar ? .newTab : .search
     }
 
     func dismissVisibleMenus() {
@@ -466,7 +498,8 @@ class BrowserViewController: UIViewController,
 
         updateLegacyTheme()
 
-        searchTelemetry = SearchTelemetry()
+        // Ecosia: removing SearchTelemetry
+        // searchTelemetry = SearchTelemetry()
 
         // Awesomebar Location Telemetry
         SearchBarSettingsViewModel.recordLocationTelemetry(for: isBottomSearchBar ? .bottom : .top)
@@ -625,7 +658,8 @@ class BrowserViewController: UIViewController,
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
+        // Ecosia: Present Intro logic
+        presentIntroViewController()
         screenshotHelper.viewIsVisible = true
 
         if let toast = self.pendingToast {
@@ -713,6 +747,12 @@ class BrowserViewController: UIViewController,
             themeManager.systemThemeChanged()
             updateLegacyTheme()
         }
+        // Ecosia: fixing theme changes when night mode is on
+        let shouldStayDark = LegacyThemeManager.instance.current.isDark
+        if let prefs = profile.prefs as? UserDefaultsInterface, NightModeHelper.isActivated(prefs) {
+            LegacyThemeManager.instance.themeChanged(from: previousTraitCollection, to: traitCollection, forceDark: shouldStayDark)
+        }
+
         setupMiddleButtonStatus(isLoading: false)
     }
 
@@ -895,6 +935,7 @@ class BrowserViewController: UIViewController,
         }
     }
 
+    /* Ecosia: unused method
     func resetBrowserChrome() {
         // animate and reset transform for tab chrome
         urlBar.updateAlphaForSubviews(1)
@@ -904,7 +945,8 @@ class BrowserViewController: UIViewController,
             view?.transform = .identity
         }
     }
-
+     */
+    
     // MARK: - Manage embedded content
 
     func frontEmbeddedContent(_ viewController: ContentContainable) {
@@ -1117,7 +1159,13 @@ class BrowserViewController: UIViewController,
     }
 
     private func showBookmarksToast() {
+        /* Ecosia: Update Toast to look like v104
         let viewModel = ButtonToastViewModel(labelText: .AppMenu.AddBookmarkConfirmMessage,
+                                             buttonText: .BookmarksEdit,
+                                             textAlignment: .left)
+         */
+        let viewModel = ButtonToastViewModel(labelText: .AppMenu.AddBookmarkConfirmMessage,
+                                             imageName: StandardImageIdentifiers.Large.bookmarkSlash,
                                              buttonText: .BookmarksEdit,
                                              textAlignment: .left)
         let toast = ButtonToast(viewModel: viewModel,
@@ -1429,6 +1477,15 @@ class BrowserViewController: UIViewController,
         let tab = tabManager.addTab(request, isPrivate: isPrivate)
         tabManager.selectTab(tab)
         return tab
+    }
+    
+    /*
+     Ecosia: Add ToolBarActionMenuDelegate additional delegate function
+     to handle the opening of URLs as part of the current tab
+     */
+    func openURLInCurrentTab(_ url: URL?) {
+        guard let url else { return }
+        tabManager.selectedTab?.loadRequest(URLRequest(url: url))
     }
 
     func focusLocationTextField(forTab tab: Tab?, setSearchText searchText: String? = nil) {
@@ -1831,7 +1888,12 @@ class BrowserViewController: UIViewController,
         // If in overlay mode switching doesnt correctly dismiss the homepanels
         guard !topTabsVisible, !self.urlBar.inOverlayMode else { return }
         // We're not showing the top tabs; show a toast to quick switch to the fresh new tab.
+        /* Ecosia: Update Toast to look like v104
         let viewModel = ButtonToastViewModel(labelText: .ContextMenuButtonToastNewTabOpenedLabelText,
+                                             buttonText: .ContextMenuButtonToastNewTabOpenedButtonText)
+         */
+        let viewModel = ButtonToastViewModel(labelText: .ContextMenuButtonToastNewTabOpenedLabelText,
+                                             imageName: "tabs",
                                              buttonText: .ContextMenuButtonToastNewTabOpenedButtonText)
         let toast = ButtonToast(viewModel: viewModel,
                                 theme: themeManager.currentTheme,
@@ -2069,7 +2131,12 @@ extension BrowserViewController: HomePanelDelegate {
         guard !topTabsVisible else { return }
 
         // We're not showing the top tabs; show a toast to quick switch to the fresh new tab.
+        /* Ecosia: Update Toast to look like v104
         let viewModel = ButtonToastViewModel(labelText: .ContextMenuButtonToastNewTabOpenedLabelText,
+                                             buttonText: .ContextMenuButtonToastNewTabOpenedButtonText)
+         */
+        let viewModel = ButtonToastViewModel(labelText: .ContextMenuButtonToastNewTabOpenedLabelText,
+                                             imageName: "tabs",
                                              buttonText: .ContextMenuButtonToastNewTabOpenedButtonText)
         let toast = ButtonToast(viewModel: viewModel,
                                 theme: themeManager.currentTheme,
@@ -2312,6 +2379,7 @@ extension BrowserViewController: UIAdaptivePresentationControllerDelegate {
 }
 
 extension BrowserViewController {
+    
     public func showBottomSheetCardViewController(creditCard: CreditCard?,
                                                   decryptedCard: UnencryptedCreditCardFields?,
                                                   viewType state: CreditCardBottomSheetState,
@@ -2333,47 +2401,72 @@ extension BrowserViewController {
                                                  method: .tap,
                                                  object: .creditCardSavePromptCreate)
                 }
-
-                // Save or update a card toast message
-                let saveSuccessMessage: String = .CreditCard.RememberCreditCard.CreditCardSaveSuccessToastMessage
-                let updateSuccessMessage: String = .CreditCard.UpdateCreditCard.CreditCardUpdateSuccessToastMessage
-                let toastMessage: String = state == .save ? saveSuccessMessage : updateSuccessMessage
-                SimpleToast().showAlertWithText(toastMessage,
-                                                bottomContainer: self.contentContainer,
-                                                theme: self.themeManager.currentTheme)
             }
         }
+    }
 
-        viewController.didTapManageCardsClosure = {
-            self.showCreditCardSettings()
+    private func presentLoadingScreen() {
+        present(LoadingScreen(profile: profile, referrals: referrals, referralCode: User.shared.referrals.pendingClaim), animated: true)
+    }
+
+    private func showLoadingScreen(for user: User) -> Bool {
+        (user.migrated != true && !user.firstTime)
+                || user.referrals.pendingClaim != nil
+    }
+
+    func presentInsightfulSheetsIfNeeded() {
+        guard isHomePage(),
+              presentedViewController == nil,
+              !showLoadingScreen(for: .shared) else { return }
+        
+        // TODO: To review this logic as part of the upgrade
+        /*
+         We are not fan of this one, but given the current approach a refactor
+         would not be suitable as part of this ticke scope.
+         As part of the upgrade and with a more structured navigation approach, we will
+         refactor it.
+         The below is a decent compromise given the complexity of the decisional execution and presentation.
+         The order of the function represents the priority.
+         */
+        let presentationFunctions: [() -> Bool] = [
+            presentDefaultBrowserPromoIfNeeded,
+            presentWhatsNewPageIfNeeded,
+            presentAPNConsentIfNeeded
+        ]
+
+        _ = presentationFunctions.first(where: { $0() })
+    }
+
+    private func isHomePage() -> Bool {
+        tabManager.selectedTab?.url.flatMap { InternalURL($0)?.isAboutHomeURL } ?? false
+    }
+
+    @discardableResult
+    private func presentWhatsNewPageIfNeeded() -> Bool {
+        guard shouldShowWhatsNewPageScreen else { return false }
+        let viewModel = WhatsNewViewModel(provider: whatsNewDataProvider)
+        WhatsNewViewController.presentOn(self, viewModel: viewModel)
+        return true
+    }
+    
+    @discardableResult
+    private func presentAPNConsentIfNeeded() -> Bool {
+        guard shouldShowAPNConsentScreen else { return false }
+        APNConsentViewController.presentOn(self, viewModel: UnleashAPNConsentViewModel())
+        return true
+    }
+
+    @discardableResult
+    private func presentDefaultBrowserPromoIfNeeded() -> Bool {
+        guard shouldShowDefaultBrowserPromo else { return false }
+        
+        if #available(iOS 14, *) {
+            let defaultPromo = DefaultBrowser(delegate: self)
+            present(defaultPromo, animated: true)
+        } else {
+            profile.prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
         }
-
-        viewController.didSelectCreditCardToFill = { [unowned self] plainTextCard in
-            guard let currentTab = self.tabManager.selectedTab else {
-                return
-            }
-            CreditCardHelper.injectCardInfo(logger: self.logger,
-                                            card: plainTextCard,
-                                            tab: currentTab,
-                                            frame: frame) { error in
-                guard let error = error else {
-                    return
-                }
-                self.logger.log("Credit card bottom sheet injection \(error)",
-                                level: .debug,
-                                category: .webview)
-            }
-        }
-
-        var bottomSheetViewModel = BottomSheetViewModel(closeButtonA11yLabel: .CloseButtonTitle)
-        bottomSheetViewModel.shouldDismissForTapOutside = false
-
-        let bottomSheetVC = BottomSheetViewController(
-            viewModel: bottomSheetViewModel,
-            childViewController: viewController
-        )
-
-        self.present(bottomSheetVC, animated: true, completion: nil)
+        return true
     }
 }
 
@@ -2399,7 +2492,12 @@ extension BrowserViewController: ContextMenuHelperDelegate {
                 let tab = self.tabManager.addTab(URLRequest(url: rURL as URL), afterTab: currentTab, isPrivate: isPrivate)
                 guard !self.topTabsVisible else { return }
                 // We're not showing the top tabs; show a toast to quick switch to the fresh new tab.
+                /* Ecosia: Update Toast to look like v104
                 let viewModel = ButtonToastViewModel(labelText: .ContextMenuButtonToastNewTabOpenedLabelText,
+                                                     buttonText: .ContextMenuButtonToastNewTabOpenedButtonText)
+                 */
+                let viewModel = ButtonToastViewModel(labelText: .ContextMenuButtonToastNewTabOpenedLabelText,
+                                                     imageName: "tabs",
                                                      buttonText: .ContextMenuButtonToastNewTabOpenedButtonText)
                 let toast = ButtonToast(viewModel: viewModel,
                                         theme: self.themeManager.currentTheme,
@@ -2636,7 +2734,10 @@ extension BrowserViewController: TabTrayDelegate {
     // This function animates and resets the tab chrome transforms when
     // the tab tray dismisses.
     func tabTrayDidDismiss(_ tabTray: LegacyGridTabViewController) {
-        resetBrowserChrome()
+        // Ecosia: unused method
+        // resetBrowserChrome()
+        // Ecosia: check if any sheet needs display
+        presentInsightfulSheetsIfNeeded()
     }
 
     func tabTrayDidAddTab(_ tabTray: LegacyGridTabViewController, tab: Tab) {}
@@ -2755,5 +2856,21 @@ extension BrowserViewController {
 
     func trackNotificationPermission() {
         NotificationManager().getNotificationSettings(sendTelemetry: true) { _ in }
+    }
+}
+
+// Ecosia
+extension BrowserViewController {
+    
+    // Ecosia: Handle Referral
+    func openBlankNewTabAndClaimReferral(code: String) {
+        User.shared.referrals.pendingClaim = code
+
+        // on first start, browser is not in view hierarchy yet
+        guard !User.shared.firstTime else { return }
+        popToBVC()
+        openURLInNewTab(nil, isPrivate: false)
+        // Intro logic will trigger claiming referral
+        presentIntroViewController()
     }
 }

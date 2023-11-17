@@ -95,10 +95,17 @@ extension BrowserViewController: TabToolbarDelegate, PhotonActionSheetProtocol {
 
         updateZoomPageBarVisibility(visible: false)
         menuHelper.getToolbarActions(navigationController: navigationController) { actions in
+            /* Ecosia: custom UI/UX for main menu
             let shouldInverse = PhotonActionSheetViewModel.hasInvertedMainMenu(trait: self.traitCollection, isBottomSearchBar: self.isBottomSearchBar)
             let viewModel = PhotonActionSheetViewModel(actions: actions, modalStyle: .popover, isMainMenu: true, isMainMenuInverted: shouldInverse)
             self.presentSheetWith(viewModel: viewModel, on: self, from: button)
+             */
+            let isPhone = self.traitCollection.userInterfaceIdiom == .phone
+            let viewModel = PhotonActionSheetViewModel(actions: actions, modalStyle: isPhone ? .pageSheet : .popover, isMainMenu: true, isMainMenuInverted: false)
+            self.presentSheetWith(viewModel: viewModel, on: self, from: button)
         }
+        // Ecosia: Make `menuHelper` available at class level
+        self.menuHelper = menuHelper
     }
 
     func tabToolbarDidPressTabs(_ tabToolbar: TabToolbarProtocol, button: UIButton) {
@@ -215,7 +222,13 @@ extension BrowserViewController: ToolBarActionMenuDelegate {
     func showToast(message: String, toastAction: MenuButtonToastAction, url: String?) {
         switch toastAction {
         case .removeBookmark:
+            /* Ecosia: Update Toast to look like v104
             let viewModel = ButtonToastViewModel(labelText: message,
+                                                 buttonText: .UndoString,
+                                                 textAlignment: .left)
+             */
+            let viewModel = ButtonToastViewModel(labelText: message,
+                                                 imageName: "bookmarksEmpty",
                                                  buttonText: .UndoString,
                                                  textAlignment: .left)
             let toast = ButtonToast(viewModel: viewModel,

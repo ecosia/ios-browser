@@ -55,6 +55,11 @@ class ThemedNavigationController: DismissableNavigationViewController, Themeable
             navigationBar.compactScrollEdgeAppearance = standardAppearance
         }
         navigationBar.tintColor = theme.colors.actionPrimary
+        
+        // Ecosia: Update navigationBar properties
+        navigationBar.setBackgroundImage(UIImage(), for: .default)
+        navigationBar.shadowImage = UIImage()
+        navigationBar.prefersLargeTitles = true
     }
 
     func applyTheme() {

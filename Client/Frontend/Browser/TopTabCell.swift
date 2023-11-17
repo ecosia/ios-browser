@@ -97,6 +97,7 @@ class TopTabCell: UICollectionViewCell, ThemeApplicable, LegacyTabTrayCell, Reus
     }
 
     func applySelectedStyle(theme: Theme) {
+        /* Ecosia: Update theme
         favicon.tintColor = theme.colors.textPrimary
         titleText.textColor = theme.colors.textPrimary
         closeButton.tintColor = theme.colors.textPrimary
@@ -104,6 +105,15 @@ class TopTabCell: UICollectionViewCell, ThemeApplicable, LegacyTabTrayCell, Reus
         selectedBackground.backgroundColor = theme.colors.layer2
         selectedBackground.layer.shadowColor = theme.colors.shadowDefault.cgColor
         selectedBackground.isHidden = false
+         */
+        selectedBackground.backgroundColor = UIColor.legacyTheme.ecosia.primaryButton
+        backgroundView?.backgroundColor = .legacyTheme.ecosia.ntpImpactBackground
+
+        let tint = isSelectedTab ? UIColor.legacyTheme.ecosia.primaryTextInverted : UIColor.legacyTheme.ecosia.primaryText
+        titleText.textColor = tint
+        closeButton.tintColor = tint
+        favicon.tintColor = tint
+        selectedBackground.isHidden = !isSelectedTab
     }
 
     func applyUnselectedStyle(theme: Theme) {

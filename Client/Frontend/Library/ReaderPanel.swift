@@ -26,7 +26,9 @@ private struct ReadingListTableViewCellUX {
 
 private struct ReadingListPanelUX {
     // Welcome Screen
-    static let WelcomeScreenPadding: CGFloat = 15
+    // Ecosia: Update Welcome Screen Padding
+    // static let WelcomeScreenPadding: CGFloat = 15
+    static let WelcomeScreenPadding: CGFloat = 24
     static let WelcomeScreenHorizontalMinPadding: CGFloat = 40
 
     static let WelcomeScreenMaxWidth: CGFloat = 400
@@ -262,13 +264,16 @@ class ReadingListPanel: UITableViewController,
 
             let scrollView = self.emptyStateViewA11YScroll
             let emptyView = self.emptyStateView
-
+            // Ecosia: Add `topAnchorDelta` util to determine `topAnchor` margin
+            let topAnchorDelta: CGFloat = UIDevice.current.userInterfaceIdiom == .phone ? -50 : 0
             if visible {
                 guard scrollView.superview == nil else { return }
                 scrollView.addSubview(emptyView)
                 NSLayoutConstraint.activate([
                     emptyView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-                    emptyView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+                    // Ecosia: Update reading list top anchor constant only if iPhone
+                    // emptyView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+                    emptyView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: topAnchorDelta),
                     emptyView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
                     emptyView.heightAnchor.constraint(greaterThanOrEqualTo: scrollView.heightAnchor)
                 ])
@@ -295,6 +300,8 @@ class ReadingListPanel: UITableViewController,
         return scrollView
     }()
 
+    private var emptyStateView = EmptyReadingListView()
+    /* Ecosia: Update Empty State View reference
     private lazy var emptyStateView: UIView = {
         let view: UIView = .build()
 
@@ -304,6 +311,7 @@ class ReadingListPanel: UITableViewController,
             label.font = DefaultDynamicFontHelper.preferredFont(withTextStyle: .body, size: 16, weight: .semibold)
             label.adjustsFontSizeToFitWidth = true
             label.textColor = self.themeManager.currentTheme.colors.textSecondary
+            label.textColor = self.themeManager.currentTheme.colors.textPrimary
         }
         let readerModeLabel: UILabel = .build { label in
             label.text = .ReaderPanelReadingModeDescription
@@ -339,7 +347,6 @@ class ReadingListPanel: UITableViewController,
             welcomeLabel.leadingAnchor.constraint(equalTo: emptyStateViewWrapper.leadingAnchor),
             welcomeLabel.trailingAnchor.constraint(equalTo: emptyStateViewWrapper.trailingAnchor),
 
-            // first row
             readerModeLabel.topAnchor.constraint(equalTo: welcomeLabel.bottomAnchor, constant: ReadingListPanelUX.WelcomeScreenPadding),
             readerModeLabel.leadingAnchor.constraint(equalTo: welcomeLabel.leadingAnchor),
             readerModeLabel.trailingAnchor.constraint(equalTo: readerModeImageView.leadingAnchor, constant: -ReadingListPanelUX.WelcomeScreenPadding),
@@ -358,7 +365,7 @@ class ReadingListPanel: UITableViewController,
             readingListImageView.widthAnchor.constraint(equalToConstant: ReadingListPanelUX.WelcomeScreenItemImageWidth),
 
             readingListLabel.bottomAnchor.constraint(equalTo: emptyStateViewWrapper.bottomAnchor).priority(.defaultLow),
-
+            
             // overall positioning of emptyStateViewWrapper
             emptyStateViewWrapper.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: ReadingListPanelUX.WelcomeScreenHorizontalMinPadding),
             emptyStateViewWrapper.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -ReadingListPanelUX.WelcomeScreenHorizontalMinPadding),
@@ -375,7 +382,7 @@ class ReadingListPanel: UITableViewController,
 
         return view
     }()
-
+     */
     @objc
     fileprivate func longPress(_ longPressGestureRecognizer: UILongPressGestureRecognizer) {
         guard longPressGestureRecognizer.state == .began else { return }

@@ -4,6 +4,8 @@
 
 import UIKit
 import Common
+// Ecosia: Import Core
+import Core
 
 protocol BundleImageFetcher {
     /// Fetches from the bundle
@@ -64,6 +66,27 @@ class DefaultBundleImageFetcher: BundleImageFetcher {
     // MARK: - Private
 
     private func getBundleDomain(domain: ImageDomain) -> String? {
+        /* Ecosia: Allor Favicon to import the correct financial one
+         OLD Implementation:
+           return domain.bundleDomains.first(where: { bundledImages[$0] != nil })
+         
+         Explanantion:
+         Firefox relies on a made-up system to retrieve and associate favicons from
+         local assets to a set URLs. What they do, really, is relying on domains.
+         For Ecosia URLs like the financial updates, we do not have a separated domain
+         as it is currently a page that lies under our `blog` domain.
+         This change applies a workaround for the `bundle_sites.json` (where the data is retrieved from) and tells the domain fetcher to look for a key `blog.ecosia.finance`
+         within the `bundledImages` array so the corresponding favicon path gets resolved.
+         The `DefaultBundleImageFetcher` is made out an handy protocol `BundleImageFetcher` so
+         in the first place we thought about creating our own implementation.
+         However, as per this class and all other dependencies being wrapped
+         into the BrowserKit package, this would have resulted into macking a lot of changes into accessors to be able to make our own file outside of the BrowserKit context.
+         */
+
+        let schemeStrippedFinancialUrlString = Environment.current.urlProvider.financialReports.absoluteString.replacingOccurrences(of: "https://", with: "")
+        if domain.bundleDomains.contains(schemeStrippedFinancialUrlString) {
+            return "blog.ecosia.finance"
+        }
         return domain.bundleDomains.first(where: { bundledImages[$0] != nil })
     }
 

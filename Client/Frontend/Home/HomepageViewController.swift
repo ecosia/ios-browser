@@ -8,6 +8,7 @@ import Storage
 import MozillaAppServices
 import Common
 import ComponentLibrary
+import Core
 
 class HomepageViewController: UIViewController, FeatureFlaggable, Themeable, ContentContainable,
                                 SearchBarLocationProvider {
@@ -32,7 +33,9 @@ class HomepageViewController: UIViewController, FeatureFlaggable, Themeable, Con
 
     weak var statusBarScrollDelegate: StatusBarScrollDelegate?
 
-    private var viewModel: HomepageViewModel
+    // Ecosia: Expose `viewModel` in extensions
+    // private var viewModel: HomepageViewModel
+    var viewModel: HomepageViewModel
     private var contextMenuHelper: HomepageContextMenuHelper
     private var tabManager: TabManager
     private var overlayManager: OverlayModeManager
@@ -40,7 +43,9 @@ class HomepageViewController: UIViewController, FeatureFlaggable, Themeable, Con
     private lazy var wallpaperView: WallpaperBackgroundView = .build { _ in }
     private var jumpBackInContextualHintViewController: ContextualHintViewController
     private var syncTabContextualHintViewController: ContextualHintViewController
-    private var collectionView: UICollectionView! = nil
+    // Ecosia: Expose `collectionView` in extensions
+    // private var collectionView: UICollectionView! = nil
+    var collectionView: UICollectionView! = nil
     private var logger: Logger
     var contentType: ContentType = .homepage
 
@@ -57,6 +62,10 @@ class HomepageViewController: UIViewController, FeatureFlaggable, Themeable, Con
     var currentTab: Tab? {
         return tabManager.selectedTab
     }
+    // Ecosia: Add referrals
+    weak var referrals: Referrals!
+    // Ecosia: Add HomePageViewControllerDelegate reference
+    weak var delegate: HomepageViewControllerDelegate?
 
     // MARK: - Initializers
     init(profile: Profile,
@@ -67,7 +76,11 @@ class HomepageViewController: UIViewController, FeatureFlaggable, Themeable, Con
          userDefaults: UserDefaultsInterface = UserDefaults.standard,
          themeManager: ThemeManager = AppContainer.shared.resolve(),
          notificationCenter: NotificationProtocol = NotificationCenter.default,
-         logger: Logger = DefaultLogger.shared
+         logger: Logger = DefaultLogger.shared,
+         // Ecosia: Add Referrals
+         referrals: Referrals,
+         // Ecosia: Add HomePageViewControllerDelegate
+         delegate: HomepageViewControllerDelegate
     ) {
         self.overlayManager = overlayManager
         self.tabManager = tabManager
@@ -76,6 +89,7 @@ class HomepageViewController: UIViewController, FeatureFlaggable, Themeable, Con
         self.viewModel = HomepageViewModel(profile: profile,
                                            isPrivate: isPrivate,
                                            tabManager: tabManager,
+                                           referrals: referrals, // Ecosia: Add referrals
                                            theme: themeManager.currentTheme)
 
         let jumpBackInContextualViewProvider = ContextualHintViewProvider(forHintType: .jumpBackIn,
@@ -89,6 +103,10 @@ class HomepageViewController: UIViewController, FeatureFlaggable, Themeable, Con
         self.themeManager = themeManager
         self.notificationCenter = notificationCenter
         self.logger = logger
+        // Ecosia: Add referrals
+        self.referrals = referrals
+        // Ecosia: Add HomePageViewControllerDelegate
+        self.delegate = delegate
         super.init(nibName: nil, bundle: nil)
 
         viewModel.isZeroSearch = isZeroSearch
@@ -140,12 +158,14 @@ class HomepageViewController: UIViewController, FeatureFlaggable, Themeable, Con
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         viewModel.recordViewAppeared()
+        
+        // Ecosia: Refresh referral claims
+        Task {
+            try? await referrals.refresh()
+        }
 
         notificationCenter.post(name: .ShowHomepage)
         notificationCenter.post(name: .HistoryUpdated)
-
-        applyTheme()
-        reloadView()
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -159,6 +179,9 @@ class HomepageViewController: UIViewController, FeatureFlaggable, Themeable, Con
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
+        // Ecosia
+        viewModel.aboutEcosiaViewModel.deselectExpanded()
+        
         jumpBackInContextualHintViewController.stopTimer()
         syncTabContextualHintViewController.stopTimer()
         viewModel.recordViewDisappeared()
@@ -202,9 +225,18 @@ class HomepageViewController: UIViewController, FeatureFlaggable, Themeable, Con
         collectionView.register(LabelButtonHeaderView.self,
                                 forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
                                 withReuseIdentifier: LabelButtonHeaderView.cellIdentifier)
+        // Ecosia: NTP Toltip
+        collectionView.register(NTPTooltip.self,
+                                forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+                                withReuseIdentifier: NTPTooltip.key)
+        collectionView.register(NTPImpactDividerFooter.self,
+                                forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
+                                withReuseIdentifier: NTPImpactDividerFooter.cellIdentifier)
+        /* Ecosia: Remove PocketFooterView
         collectionView.register(PocketFooterView.self,
                                 forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
                                 withReuseIdentifier: PocketFooterView.cellIdentifier)
+         */
         collectionView.keyboardDismissMode = .onDrag
         collectionView.addGestureRecognizer(longPressRecognizer)
         collectionView.delegate = self
@@ -244,15 +276,18 @@ class HomepageViewController: UIViewController, FeatureFlaggable, Themeable, Con
     }
 
     func createLayout() -> UICollectionViewLayout {
-        let layout = UICollectionViewCompositionalLayout { [weak self]
+        // Ecosia: Update Layout type
+        // let layout = UICollectionViewCompositionalLayout { [weak self]
+        let layout = NTPLayout { [weak self]
             (sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
             guard let self = self,
                   let viewModel = self.viewModel.getSectionViewModel(shownSection: sectionIndex),
                   viewModel.shouldShow
             else { return nil }
             self.logger.log("Section \(viewModel.sectionType) is going to show", level: .debug, category: .homepage)
-            return viewModel.section(for: layoutEnvironment.traitCollection, size: self.view.frame.size)
+            return viewModel.section(for: layoutEnvironment.traitCollection, size: self.view.bounds.size)
         }
+        layout.highlightDataSource = viewModel
         return layout
     }
 
@@ -322,7 +357,9 @@ class HomepageViewController: UIViewController, FeatureFlaggable, Themeable, Con
     func applyTheme() {
         let theme = themeManager.currentTheme
         viewModel.theme = theme
-        view.backgroundColor = theme.colors.layer1
+        // Ecosia: Update NTP background
+        // view.backgroundColor = theme.colors.layer1
+        view.backgroundColor = .legacyTheme.ecosia.ntpBackground
     }
 
     func scrollToTop(animated: Bool = false) {
@@ -440,6 +477,7 @@ extension HomepageViewController: UICollectionViewDelegate, UICollectionViewData
                         viewForSupplementaryElementOfKind kind: String,
                         at indexPath: IndexPath) -> UICollectionReusableView {
         let reusableView = UICollectionReusableView()
+        /* Ecosia: Adjust HomePageViewController's CollectionView
         if kind == UICollectionView.elementKindSectionHeader {
             guard let headerView = collectionView.dequeueReusableSupplementaryView(
                 ofKind: kind,
@@ -451,7 +489,8 @@ extension HomepageViewController: UICollectionViewDelegate, UICollectionViewData
             // Configure header only if section is shown
             let headerViewModel = sectionViewModel.shouldShow ? sectionViewModel.headerViewModel : LabelButtonHeaderViewModel.emptyHeader
             headerView.configure(viewModel: headerViewModel, theme: themeManager.currentTheme)
-
+            
+            /* Ecosia: Remove `jumpBackIn` section reference
             // Jump back in header specific setup
             if sectionViewModel.sectionType == .jumpBackIn {
                 self.viewModel.jumpBackInViewModel.sendImpressionTelemetry()
@@ -461,6 +500,7 @@ extension HomepageViewController: UICollectionViewDelegate, UICollectionViewData
                     self?.prepareJumpBackInContextualHint(onView: headerView)
                 }
             }
+             */
             return headerView
         }
 
@@ -482,6 +522,36 @@ extension HomepageViewController: UICollectionViewDelegate, UICollectionViewData
             return footerView
         }
         return reusableView
+         */
+        guard let sectionViewModel = viewModel.getSectionViewModel(shownSection: indexPath.section)
+        else { return reusableView }
+
+        // Ecosia: tooltip for impact
+        if sectionViewModel.sectionType == .impact,
+            let text = NTPTooltip.highlight()?.text,
+            kind == UICollectionView.elementKindSectionHeader {
+            let tooltip = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: NTPTooltip.key, for: indexPath) as! NTPTooltip
+            tooltip.setText(text)
+            tooltip.delegate = self
+            return tooltip
+        }
+        
+        // Ecosia: footer for impact
+        if sectionViewModel.sectionType == .impact, kind == UICollectionView.elementKindSectionFooter {
+            return collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: NTPImpactDividerFooter.cellIdentifier, for: indexPath)
+        }
+
+        guard let headerView = collectionView.dequeueReusableSupplementaryView(
+                ofKind: UICollectionView.elementKindSectionHeader,
+                withReuseIdentifier: LabelButtonHeaderView.cellIdentifier,
+                for: indexPath) as? LabelButtonHeaderView
+        else { return UICollectionReusableView() }
+
+        // Configure header only if section is shown
+        let headerViewModel = sectionViewModel.shouldShow ? sectionViewModel.headerViewModel : LabelButtonHeaderViewModel.emptyHeader
+        headerView.configure(viewModel: headerViewModel, theme: themeManager.currentTheme)
+        return headerView
+
     }
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -516,10 +586,12 @@ private extension HomepageViewController {
             // No action currently set if the logo button is tapped.
         }
 
+        /* Ecosia: Remove message Card  from HomePage
         // Message card
         viewModel.messageCardViewModel.dismissClosure = { [weak self] in
             self?.reloadView()
         }
+         */
 
         // Top sites
         viewModel.topSiteViewModel.tilePressedHandler = { [weak self] site, isGoogle in
@@ -531,11 +603,14 @@ private extension HomepageViewController {
             self?.contextMenuHelper.presentContextMenu(for: site, with: sourceView, sectionType: .topSites)
         }
 
+        /* Ecosia: Remove `recentlySaved` reference
         // Recently saved
         viewModel.recentlySavedViewModel.headerButtonAction = { [weak self] button in
             self?.openBookmarks(button)
         }
+         */
 
+        /* Ecosia: Remove `jumpBackIn` reference
         // Jumpback in
         viewModel.jumpBackInViewModel.headerButtonAction = { [weak self] button in
             self?.openTabTray(button)
@@ -572,7 +647,9 @@ private extension HomepageViewController {
         viewModel.jumpBackInViewModel.prepareContextualHint = { [weak self] syncedTabCell in
             self?.prepareSyncedTabContextualHint(onCell: syncedTabCell)
         }
+         */
 
+        /* Ecosia: Remove History Highlights and Pocket
         // History highlights
         viewModel.historyHighlightsViewModel.onTapItem = { [weak self] highlight in
             guard let url = highlight.siteUrl else {
@@ -603,11 +680,20 @@ private extension HomepageViewController {
         viewModel.pocketViewModel.onLongPressTileAction = { [weak self] (site, sourceView) in
             self?.contextMenuHelper.presentContextMenu(for: site, with: sourceView, sectionType: .pocket)
         }
-
+         */
+        /* Ecosia: Remove `customizeHome` reference
         // Customize home
         viewModel.customizeButtonViewModel.onTapAction = { [weak self] _ in
             self?.openCustomizeHomeSettings()
         }
+         */
+        // Ecosia: Adjust HomePageViewController's CollectionView
+        viewModel.libraryViewModel.delegate = self
+        viewModel.bookmarkNudgeViewModel.delegate = self
+        viewModel.impactViewModel.delegate = self
+        viewModel.newsViewModel.delegate = self
+        viewModel.aboutEcosiaViewModel.delegate = self
+        viewModel.ntpCustomizationViewModel.delegate = self
     }
 
     private func openHistoryHighlightsSearchGroup(item: HighlightItem) {

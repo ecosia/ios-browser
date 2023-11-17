@@ -94,7 +94,7 @@ public final class ActionFooterView: UIView, ThemeApplicable {
     }
 
     // MARK: - ThemeApplicable
-    public func applyTheme(theme: Common.Theme) {
+    public func applyTheme(theme: Theme) {
         linkButton.setTitleColor(theme.colors.actionPrimary, for: .normal)
         linkButton.setTitleColor(theme.colors.actionPrimaryHover, for: .highlighted)
         titleLabel.textColor = theme.colors.textSecondary

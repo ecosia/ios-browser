@@ -24,6 +24,10 @@ enum BuiltinThemeName: String {
 class TableViewColor {
     var rowText: UIColor { return UIColor.Photon.Grey90 } // textPrimary
     var disabledRowText: UIColor { return UIColor.Photon.Grey40 } // textDisabled
+    // Ecosia: Re enabling legacy colo references
+    var accessoryViewTint: UIColor { return .Light.Text.secondary }
+    var headerBackground: UIColor { .Light.Background.tertiary }
+    var separator: UIColor { .Light.border }
 }
 
 class BrowserColor {
@@ -32,6 +36,11 @@ class BrowserColor {
 
 class TabTrayColor {
     var tabTitleBlur: UIBlurEffect.Style { return UIBlurEffect.Style.extraLight }
+    // Ecosia: Add legacy color references from 9.1.0 App Version
+    var cellBackground: UIColor { return UIColor.white }
+    var screenshotBackground: UIColor { return UIColor.white }
+    var background: UIColor { return UIColor.Photon.Grey10 }
+    var tabTitleText: UIColor { return UIColor.black }
 }
 
 class SnackBarColor {
@@ -47,6 +56,8 @@ protocol LegacyTheme {
     var browser: BrowserColor { get }
     var tabTray: TabTrayColor { get }
     var snackbar: SnackBarColor { get }
+    // Ecosia: Adapt theme
+    var ecosia: EcosiaTheme { get }
 }
 
 class LegacyNormalTheme: LegacyTheme {
@@ -55,4 +66,6 @@ class LegacyNormalTheme: LegacyTheme {
     var browser: BrowserColor { return BrowserColor() }
     var tabTray: TabTrayColor { return TabTrayColor() }
     var snackbar: SnackBarColor { return SnackBarColor() }
+    // Ecosia: Adapt theme
+    var ecosia: EcosiaTheme { return EcosiaTheme() }
 }

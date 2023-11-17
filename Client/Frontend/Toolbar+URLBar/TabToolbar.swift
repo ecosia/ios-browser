@@ -12,7 +12,10 @@ class TabToolbar: UIView, SearchBarLocationProvider {
     weak var tabToolbarDelegate: TabToolbarDelegate?
 
     let tabsButton = TabsButton()
+    /* Ecosia: Change `addNewTabButton` to configurable CircleButton
     let addNewTabButton = ToolbarButton()
+     */
+    let circleButton = CircleButton(config: .search)
     let appMenuButton = ToolbarButton()
     let bookmarksButton = ToolbarButton()
     let forwardButton = ToolbarButton()
@@ -31,7 +34,9 @@ class TabToolbar: UIView, SearchBarLocationProvider {
 
     // MARK: - Initializers
     override private init(frame: CGRect) {
-        actionButtons = [backButton, forwardButton, multiStateButton, addNewTabButton, tabsButton, appMenuButton]
+        // Ecosia: Update toolbar search button
+        // actionButtons = [backButton, forwardButton, multiStateButton, circleButton, tabsButton, appMenuButton]
+        actionButtons = [backButton, forwardButton, circleButton, tabsButton, appMenuButton]
         super.init(frame: frame)
         setupAccessibility()
 
@@ -39,7 +44,8 @@ class TabToolbar: UIView, SearchBarLocationProvider {
         helper = TabToolbarHelper(toolbar: self)
         addButtons(actionButtons)
 
-        privateModeBadge.add(toParent: contentView)
+        // Ecosia: Remove private mode badge
+        // privateModeBadge.add(toParent: contentView)
         appMenuBadge.add(toParent: contentView)
         warningMenuBadge.add(toParent: contentView)
 
@@ -55,7 +61,8 @@ class TabToolbar: UIView, SearchBarLocationProvider {
     // MARK: - View Setup
 
     override func updateConstraints() {
-        privateModeBadge.layout(onButton: tabsButton)
+        // Ecosia: Remove private mode badge
+        // privateModeBadge.layout(onButton: tabsButton)
         appMenuBadge.layout(onButton: appMenuButton)
         warningMenuBadge.layout(onButton: appMenuButton)
 
@@ -72,7 +79,7 @@ class TabToolbar: UIView, SearchBarLocationProvider {
         backButton.accessibilityIdentifier = AccessibilityIdentifiers.Toolbar.backButton
         forwardButton.accessibilityIdentifier = AccessibilityIdentifiers.Toolbar.forwardButton
         tabsButton.accessibilityIdentifier = AccessibilityIdentifiers.Toolbar.tabsButton
-        addNewTabButton.accessibilityIdentifier = AccessibilityIdentifiers.Toolbar.addNewTabButton
+        circleButton.accessibilityIdentifier = AccessibilityIdentifiers.Ecosia.TabToolbar.circleButton
         appMenuButton.accessibilityIdentifier = AccessibilityIdentifiers.Toolbar.settingsMenuButton
         accessibilityNavigationStyle = .combined
         accessibilityLabel = .TabToolbarNavigationToolbarAccessibilityLabel
@@ -105,7 +112,8 @@ extension TabToolbar: TabToolbarProtocol {
     var homeButton: ToolbarButton { multiStateButton }
 
     func privateModeBadge(visible: Bool) {
-        privateModeBadge.show(visible)
+        // Ecosia: Remove private mode badge
+        // privateModeBadge.show(visible)
     }
 
     func warningMenuBadge(setVisible: Bool) {
@@ -136,15 +144,25 @@ extension TabToolbar: TabToolbarProtocol {
 // MARK: - Theme protocols
 extension TabToolbar: ThemeApplicable, PrivateModeUI {
     func applyTheme(theme: Theme) {
+        /* Ecosia: Update theme colors
         backgroundColor = theme.colors.layer1
         actionButtons.forEach { $0.applyTheme(theme: theme) }
 
         privateModeBadge.badge.tintBackground(color: theme.colors.layer1)
         appMenuBadge.badge.tintBackground(color: theme.colors.layer1)
         warningMenuBadge.badge.tintBackground(color: theme.colors.layer1)
+         */
+        backgroundColor = .legacyTheme.ecosia.barBackground
+        actionButtons.forEach { $0.applyTheme(theme: theme) }
+
+        privateModeBadge.badge.tintBackground(color: .legacyTheme.ecosia.barBackground)
+        appMenuBadge.badge.tintBackground(color: .legacyTheme.ecosia.barBackground)
+        warningMenuBadge.badge.tintBackground(color: .legacyTheme.ecosia.barBackground)
+
     }
 
     func applyUIMode(isPrivate: Bool, theme: Theme) {
-        privateModeBadge(visible: isPrivate)
+        // Ecosia: Remove private mode badge
+        // privateModeBadge(visible: isPrivate)
     }
 }

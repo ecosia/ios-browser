@@ -2,13 +2,17 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
-import Account
+// Ecosia: Remove `import Account`
+// import Account
 import Foundation
 import Shared
 import Storage
 import UIKit
 import SwiftUI
 import Common
+import Core
+// Ecosia: Need SafariServices to enable "open in safari" action
+import SafariServices
 
 protocol ToolBarActionMenuDelegate: AnyObject {
     func updateToolbarState()
@@ -17,6 +21,8 @@ protocol ToolBarActionMenuDelegate: AnyObject {
     @discardableResult
     func openURLInNewTab(_ url: URL?, isPrivate: Bool) -> Tab
     func openNewTabFromMenu(focusLocationField: Bool, isPrivate: Bool)
+    // Ecosia: Add option to open in same tab
+    func openURLInCurrentTab(_ url: URL?)
 
     func showLibrary(panel: LibraryPanelType)
     func showViewController(viewController: UIViewController)
@@ -100,8 +106,10 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
 
         if isHomePage {
             actions.append(contentsOf: [
+                /* Ecosia: Remove Misc Section
+                firstMiscSection
+                 */
                 getLibrarySection(),
-                firstMiscSection,
                 getLastSection()
             ])
 
@@ -110,10 +118,15 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
             // Actions on site page need specific data to be loaded
             updateData(dataLoadingCompletion: {
                 actions.append(contentsOf: [
+                    /* Ecosia: Review Sections
                     self.getNewTabSection(),
-                    self.getLibrarySection(),
+                    getLibrarySection(),
                     firstMiscSection,
                     self.getSecondMiscSection(),
+                    self.getLastSection()
+                     */
+                    self.getPageActionsSection(navigationController),
+                    self.getLibrarySection(),
                     self.getLastSection()
                 ])
 
@@ -123,6 +136,65 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
             })
         }
     }
+    
+    // Ecosia: Readd sections from v104
+    
+    private func getPageActionsSection(_ navigationController: UINavigationController?) -> [PhotonRowActions] {
+        var section = [PhotonRowActions]()
+
+        let bookmarkAction = getBookmarkAction()
+        section.append(.init(bookmarkAction))
+
+        let readingListAction = getReadingListAction()
+        section.append(.init(readingListAction))
+
+        let shortAction = getShortcutAction()
+        append(to: &section, action: shortAction)
+
+        let copyAction = getCopyAction()
+        append(to: &section, action: copyAction)
+
+        if !isHomePage && !isFileURL {
+            let findInPageAction = getFindInPageAction()
+            append(to: &section, action: findInPageAction)
+
+            let desktopSiteAction = getRequestDesktopSiteAction()
+            append(to: &section, action: desktopSiteAction)
+
+            /* Ecosia: Remove report issue
+            let reportSiteIssueAction = getReportSiteIssueAction()
+            append(to: &section, action: reportSiteIssueAction)
+             */
+        }
+
+        if let safari = getOpenInSafariAction(navigationController) {
+            section.append(.init(safari))
+        }
+
+        return section
+    }
+    
+    // MARK: - Ecosia Additions
+
+    private func getOpenInSafariAction(_ navigationController: UINavigationController?) -> SingleActionViewModel? {
+
+        guard let url = selectedTab?.canonicalURL?.displayURL,
+                ["http", "https"].contains(url.scheme), let navigationController = navigationController else { return nil }
+
+        let model = SingleActionViewModel(title: .localized(.openInSafari), iconString: "safari") { model in
+
+            let config = SFSafariViewController.Configuration()
+            config.entersReaderIfAvailable = false
+            config.barCollapsingEnabled = false
+            let safari = SFSafariViewController(url: url, configuration: config)
+            safari.dismissButtonStyle = .close
+            navigationController.present(safari, animated: true, completion: nil)
+            Analytics.shared.menuClick("open_in_safari")
+        }
+
+        return model
+    }
+
 
     // MARK: - Update data
 
@@ -195,6 +267,7 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
         var section = [PhotonRowActions]()
 
         if !isFileURL {
+            /* Ecosia: Rearrange item positions
             let bookmarkSection = getBookmarkSection()
             append(to: &section, action: bookmarkSection)
 
@@ -206,16 +279,32 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
 
             let readingListSection = getReadingListSection()
             append(to: &section, action: readingListSection)
+             */
+
+            let bookmarkSection = getBookmarkSection()
+            append(to: &section, action: bookmarkSection)
+            
+            let historySection = getHistoryLibraryAction()
+            append(to: &section, action: historySection)
+            
+            let readingListSection = getReadingListSection()
+            append(to: &section, action: readingListSection)
+            
+            let downloadSection = getDownloadsLibraryAction()
+            append(to: &section, action: downloadSection)
         }
 
+        /* Ecosia: Remove sync menu
         let syncAction = syncMenuButton()
         append(to: &section, action: syncAction)
-
+         */
         return section
     }
 
     private func getFirstMiscSection(_ navigationController: UINavigationController?) -> [PhotonRowActions] {
         var section = [PhotonRowActions]()
+        
+        // Ecosia: Rearrange items
 
         if !isHomePage && !isFileURL {
             if featureFlags.isFeatureEnabled(.zoomFeature, checking: .buildOnly) {
@@ -229,13 +318,18 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
             let desktopSiteAction = getRequestDesktopSiteAction()
             append(to: &section, action: desktopSiteAction)
         }
+        
+        // Ecosia: Adding help button
+        let helpAction = getHelpAction()
+        section.append(helpAction)
 
         let nightModeAction = getNightModeAction()
         append(to: &section, action: nightModeAction)
-
+        
+        /* Ecosia: Disable Passwords option
         let passwordsAction = getPasswordAction(navigationController: navigationController)
         append(to: &section, action: passwordsAction)
-
+         */
         if !isHomePage && !isFileURL {
             let reportSiteIssueAction = getReportSiteIssueAction()
             append(to: &section, action: reportSiteIssueAction)
@@ -279,6 +373,7 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
     private func getLastSection() -> [PhotonRowActions] {
         var section = [PhotonRowActions]()
 
+        /* Ecosia: Return different items for this sections
         if isHomePage {
             let whatsNewAction = getWhatsNewAction()
             append(to: &section, action: whatsNewAction)
@@ -292,6 +387,16 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
 
         let settingsAction = getSettingsAction()
         section.append(settingsAction)
+         */
+
+        let nightModeAction = getNightModeAction()
+        section.append(contentsOf: nightModeAction)
+
+        let customizeHomePageAction = getCustomizeHomePageAction()
+        append(to: &section, action: customizeHomePageAction)
+        
+        let helpAction = getHelpAction()
+        section.append(helpAction)
 
         return section
     }
@@ -338,8 +443,12 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
     }
 
     private func getFindInPageAction() -> PhotonRowActions {
+        /* Ecosia: Update Image
         return SingleActionViewModel(title: .AppMenu.AppMenuFindInPageTitleString,
                                      iconString: ImageIdentifiers.findInPage) { _ in
+         */
+        return SingleActionViewModel(title: .AppMenu.AppMenuFindInPageTitleString,
+                                     iconString: "menu-FindInPageUpdate") { _ in
             TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .findInPage)
             self.delegate?.showFindInPage()
         }.items
@@ -373,8 +482,12 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
     }
 
     private func getCopyAction() -> PhotonRowActions? {
+        /* Ecosia: Update Image
         return SingleActionViewModel(title: .AppMenu.AppMenuCopyLinkTitleString,
                                      iconString: StandardImageIdentifiers.Large.link) { _ in
+         */
+        return SingleActionViewModel(title: .AppMenu.AppMenuCopyLinkTitleString,
+                                     iconString: "menu-Copy-Link") { _ in
             TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .copyAddress)
             if let url = self.selectedTab?.canonicalURL?.displayURL {
                 UIPasteboard.general.url = url
@@ -422,10 +535,13 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
     private func getHelpAction() -> PhotonRowActions {
         return SingleActionViewModel(title: .AppMenu.Help,
                                      iconString: StandardImageIdentifiers.Large.helpCircle) { _ in
+            /* Ecosia: Replacing Firefox Support URL with Ecosia FAQ URL
             if let url = URL(string: "https://support.mozilla.org/products/ios") {
                 self.delegate?.openURLInNewTab(url, isPrivate: false)
             }
             TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .help)
+             */
+            self.delegate?.openURLInCurrentTab(Environment.current.urlProvider.faq)
         }.items
     }
 
@@ -454,9 +570,16 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
         var items: [PhotonRowActions] = []
 
         let nightModeEnabled = NightModeHelper.isActivated()
+        /* Ecosia: Update Night mode copy/imagery
         let nightModeTitle: String = nightModeEnabled ? .AppMenu.AppMenuTurnOffNightMode : .AppMenu.AppMenuTurnOnNightMode
         let nightMode = SingleActionViewModel(title: nightModeTitle,
                                               iconString: ImageIdentifiers.nightMode,
+                                              isEnabled: nightModeEnabled) { _ in
+         */
+        let nightModeTitle: String = nightModeEnabled ? .localized(.turnOffDarkMode) : .localized(.forceDarkMode)
+        let nightMode = SingleActionViewModel(title: nightModeTitle, 
+                                              text: .localized(.invertColors),
+                                              iconString: nightModeEnabled ? "darkModeSolid" : "darkMode",
                                               isEnabled: nightModeEnabled) { _ in
             NightModeHelper.toggle(tabManager: self.tabManager)
 
@@ -485,6 +608,7 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
         return items
     }
 
+    /* Ecosia: Remove sync menu button dependant from the Account module
     private func syncMenuButton() -> PhotonRowActions? {
         let action: (SingleActionViewModel) -> Void = { [weak self] action in
             let fxaParams = FxALaunchParams(entrypoint: .browserMenu, query: [:])
@@ -527,6 +651,7 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
                                                tapHandler: action).items
         return syncOption
     }
+     */
 
     // MARK: Whats New
 
@@ -572,8 +697,12 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
     private func getShareAction() -> PhotonRowActions {
         return SingleActionViewModel(title: .AppMenu.Share,
                                      iconString: ImageIdentifiers.share) { _ in
-            guard let tab = self.selectedTab, let url = tab.canonicalURL?.displayURL else { return }
-
+            
+            // Ecosia: if we have nothing to share we share Ecosia Root URL
+            // guard let tab = self.selectedTab, let url = tab.canonicalURL?.displayURL else { return }
+            guard let tab = self.selectedTab else { return }
+            let url = tab.canonicalURL?.displayURL ?? Environment.current.urlProvider.root
+            
             TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .sharePageWith)
 
             guard let temporaryDocument = tab.temporaryDocument else {
@@ -652,7 +781,7 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
 
     private func getReadingListLibraryAction() -> SingleActionViewModel {
         return SingleActionViewModel(title: .AppMenu.ReadingList,
-                                     iconString: ImageIdentifiers.readingList) { _ in
+                                     iconString: "libraryReading") { _ in
             self.delegate?.showLibrary(panel: .readingList)
         }
     }
@@ -662,8 +791,12 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
     }
 
     private func getAddReadingListAction() -> SingleActionViewModel {
+        /* Ecosia: Update Title and Image
         return SingleActionViewModel(title: .AppMenu.AddReadingList,
                                      iconString: ImageIdentifiers.addToReadingList) { _ in
+         */
+        return SingleActionViewModel(title: .ShareAddToReadingList,
+                                     iconString: "addToReadingListUpdate") { _ in
             guard let tab = self.selectedTab,
                   let url = self.tabUrl?.displayURL
             else { return }
@@ -718,8 +851,10 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
     }
 
     private func getAddBookmarkAction() -> SingleActionViewModel {
-        return SingleActionViewModel(title: .AppMenu.AddBookmark,
-                                     iconString: StandardImageIdentifiers.Large.bookmark) { _ in
+        // Ecosia: Update Title
+        //return SingleActionViewModel(title: .AppMenu.AddBookmark,
+        return SingleActionViewModel(title: .KeyboardShortcuts.AddBookmark,
+                                     iconString: "menu-Bookmark") { _ in
             guard let tab = self.selectedTab,
                   let url = tab.canonicalURL?.displayURL
             else { return }
@@ -731,7 +866,9 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
     }
 
     private func getRemoveBookmarkAction() -> SingleActionViewModel {
-        return SingleActionViewModel(title: .AppMenu.RemoveBookmark,
+        // Ecosia: Update Title
+        // return SingleActionViewModel(title: .AppMenu.RemoveBookmark,
+        return SingleActionViewModel(title: .RemoveBookmarkContextMenuTitle,
                                      iconString: StandardImageIdentifiers.Large.bookmarkSlash) { _ in
             guard let url = self.tabUrl?.displayURL else { return }
 
@@ -752,8 +889,12 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
     }
 
     private func getAddShortcutAction() -> SingleActionViewModel {
+        /* Ecosia: Update Image
         return SingleActionViewModel(title: .AddToShortcutsActionTitle,
                                      iconString: StandardImageIdentifiers.Large.pin) { _ in
+         */
+        return SingleActionViewModel(title: .AddToShortcutsActionTitle,
+                                     iconString: "action_pin") { _ in
             guard let url = self.selectedTab?.url?.displayURL,
                   let title = self.selectedTab?.displayTitle else { return }
             let site = Site(url: url.absoluteString, title: title)
@@ -767,8 +908,12 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
     }
 
     private func getRemoveShortcutAction() -> SingleActionViewModel {
+        /* Ecosia: Update Image
         return SingleActionViewModel(title: .AppMenu.RemoveFromShortcuts,
                                      iconString: StandardImageIdentifiers.Large.pinSlash) { _ in
+         */
+        return SingleActionViewModel(title: .AddToShortcutsActionTitle,
+                                     iconString: "action_unpin") { _ in
             guard let url = self.selectedTab?.url?.displayURL,
                   let title = self.selectedTab?.displayTitle else { return }
             let site = Site(url: url.absoluteString, title: title)
@@ -806,5 +951,12 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
         if let action = action {
             items.append(contentsOf: action)
         }
+    }
+}
+
+// Ecosia: Add helper function from old codebase
+extension MainMenuActionHelper {
+    func getSharingAction() -> PhotonRowActions {
+        isFileURL ? getShareFileAction() : getShareAction()
     }
 }

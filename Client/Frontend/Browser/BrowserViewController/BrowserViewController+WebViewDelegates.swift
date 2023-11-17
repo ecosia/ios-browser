@@ -179,7 +179,12 @@ extension BrowserViewController: WKUIDelegate {
                         toastLabelText = .ContextMenuButtonToastNewTabOpenedLabelText
                     }
                     // We're not showing the top tabs; show a toast to quick switch to the fresh new tab.
+                    /* Ecosia: Update Toast to look like v104
                     let viewModel = ButtonToastViewModel(labelText: toastLabelText,
+                                                         buttonText: .ContextMenuButtonToastNewTabOpenedButtonText)
+                     */
+                    let viewModel = ButtonToastViewModel(labelText: toastLabelText,
+                                                         imageName: "tabs",
                                                          buttonText: .ContextMenuButtonToastNewTabOpenedButtonText)
                     let toast = ButtonToast(viewModel: viewModel,
                                             theme: self.themeManager.currentTheme,

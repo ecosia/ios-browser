@@ -177,12 +177,20 @@ class LibraryViewController: UIViewController, Themeable {
         case 1:
             selectedPanel = .history
             eventValue = .historyPanel
+        /* Ecosia: Invert Download and Reading list positions in the LibraryViewController
         case 2:
             selectedPanel = .downloads
             eventValue = .downloadsPanel
         case 3:
             selectedPanel = .readingList
             eventValue = .readingListPanel
+         */
+        case 2:
+            selectedPanel = .readingList
+            eventValue = .readingListPanel
+        case 3:
+            selectedPanel = .downloads
+            eventValue = .downloadsPanel
         default:
             return
         }
@@ -340,7 +348,10 @@ class LibraryViewController: UIViewController, Themeable {
     private func setupToolBarAppearance() {
         let standardAppearance = UIToolbarAppearance()
         standardAppearance.configureWithDefaultBackground()
-        standardAppearance.backgroundColor = themeManager.currentTheme.colors.layer1
+        // Ecosia: Update theming
+        standardAppearance.backgroundColor = themeManager.currentTheme.colors.layer6
+        standardAppearance.backgroundColor = UIColor.legacyTheme.ecosia.barBackground
+        standardAppearance.shadowColor = UIColor.legacyTheme.ecosia.barSeparator
         navigationController?.toolbar.standardAppearance = standardAppearance
         navigationController?.toolbar.compactAppearance = standardAppearance
         if #available(iOS 15.0, *) {
@@ -358,12 +369,20 @@ class LibraryViewController: UIViewController, Themeable {
         navigationController?.navigationBar.shadowImage = UIImage()
 
         view.backgroundColor = themeManager.currentTheme.colors.layer3
-        navigationController?.navigationBar.barTintColor = themeManager.currentTheme.colors.layer1
+        /* Ecosia: Update background of layer1 to layer6
+        navigationController?.navigationBar.barTintColor = themeManager.currentTheme.colors.layer6
         navigationController?.navigationBar.tintColor = themeManager.currentTheme.colors.actionPrimary
-        navigationController?.navigationBar.backgroundColor = themeManager.currentTheme.colors.layer1
-        navigationController?.toolbar.barTintColor = themeManager.currentTheme.colors.layer1
+        navigationController?.navigationBar.backgroundColor = themeManager.currentTheme.colors.layer6
+        navigationController?.toolbar.barTintColor = themeManager.currentTheme.colors.layer6
         navigationController?.toolbar.tintColor = themeManager.currentTheme.colors.actionPrimary
-        segmentControlToolbar.barTintColor = themeManager.currentTheme.colors.layer1
+        segmentControlToolbar.barTintColor = themeManager.currentTheme.colors.layer6
+         */
+        navigationController?.navigationBar.barTintColor = themeManager.currentTheme.colors.layer6
+        navigationController?.navigationBar.tintColor = themeManager.currentTheme.colors.actionPrimary
+        navigationController?.navigationBar.backgroundColor = themeManager.currentTheme.colors.layer6
+        navigationController?.toolbar.barTintColor = themeManager.currentTheme.colors.layer6
+        navigationController?.toolbar.tintColor = themeManager.currentTheme.colors.actionPrimary
+        segmentControlToolbar.barTintColor = themeManager.currentTheme.colors.layer6
         segmentControlToolbar.tintColor = themeManager.currentTheme.colors.textPrimary
         segmentControlToolbar.isTranslucent = false
 

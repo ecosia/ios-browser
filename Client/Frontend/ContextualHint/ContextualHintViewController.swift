@@ -188,3 +188,12 @@ class ContextualHintViewController: UIViewController, OnViewDismissable, Themeab
         false
     }
 }
+
+/* Ecosia: Accessing the function of the private `viewProvider`
+ via helper function. The scope is to deactivate the hint for new users
+ */
+extension ContextualHintViewController {
+    func deactivateHintForNewUsers() {
+        viewProvider.markContextualHintPresented()
+    }
+}

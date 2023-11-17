@@ -123,16 +123,26 @@ private extension TopSitesProviderImplementation {
         let unionOnURL = { (site: Site) -> String in
             return URL(string: site.url, invalidCharacters: false)?.normalizedHost ?? ""
         }
+        
+        /* Ecosia: Merge default sites including path to keep blog.ecosia.org + blog.ecosia.org/financial-results */
+        let unionOnURLAndPath = { (site: Site) -> String in
+            return URL(string: site.url)?.normalizedHostAndPath ?? ""
+        }
 
         // Fetch the default sites
         let defaultSites = defaultTopSites(prefs)
         // Create PinnedSite objects. Used by the view layer to tell topsites apart
         let pinnedSites: [Site] = pinnedSites.map({ PinnedSite(site: $0) })
+        // Ecosia: No need of Pinned Sites
+        // let pinnedSites: [Site] = pinnedSites.map({ PinnedSite(site: $0) })
         // Merge default topsites with a user's topsites.
         let mergedSites = sites.union(defaultSites, f: unionOnURL)
+        /* Ecosia: Get different `allSites`
         // Filter out duplicates in merged sites, but do not remove duplicates within pinned sites
         let duplicateFreeList = pinnedSites.union(mergedSites, f: unionOnURL).filter { $0 as? PinnedSite == nil }
         let allSites = pinnedSites + duplicateFreeList
+         */
+        let allSites = mergedSites.union(defaultSites, f: unionOnURLAndPath)
 
         // Favour topsites from defaultSites as they have better favicons. But keep PinnedSites
         let newSites = allSites.map { site -> Site in

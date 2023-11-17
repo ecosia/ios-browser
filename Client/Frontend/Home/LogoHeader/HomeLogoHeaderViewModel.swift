@@ -8,7 +8,9 @@ import Shared
 
 class HomeLogoHeaderViewModel {
     struct UX {
-        static let bottomSpacing: CGFloat = 30
+        // Ecosia: Update bottom spacing
+        // static let bottomSpacing: CGFloat = 30
+        static let bottomSpacing: CGFloat = 8
     }
 
     private let profile: Profile
@@ -41,11 +43,23 @@ extension HomeLogoHeaderViewModel: HomepageViewModelProtocol, FeatureFlaggable {
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: item, count: 1)
 
         let section = NSCollectionLayoutSection(group: group)
-
+        
+        /* Ecosia: Migrate the top edge inset calculation from older app version
         let leadingInset = HomepageViewModel.UX.leadingInset(traitCollection: traitCollection)
         section.contentInsets = NSDirectionalEdgeInsets(
             top: 0,
             leading: leadingInset,
+            bottom: UX.bottomSpacing,
+            trailing: 0)
+         */
+        let height = max(UIScreen.main.bounds.width, UIScreen.main.bounds.height)
+        let pos: SearchBarPosition = LegacyFeatureFlagsManager.shared.getCustomState(for: .searchBarPosition) ?? .top
+        let factor = pos == .bottom ? 0.1 : 0.05
+
+        let leadingInset = HomepageViewModel.UX.leadingInset(traitCollection: traitCollection)
+        section.contentInsets = NSDirectionalEdgeInsets(
+            top: height * factor,
+            leading: 0,
             bottom: UX.bottomSpacing,
             trailing: 0)
 
@@ -66,9 +80,11 @@ extension HomeLogoHeaderViewModel: HomepageViewModelProtocol, FeatureFlaggable {
 }
 
 extension HomeLogoHeaderViewModel: HomepageSectionHandler {
+    
     func configure(_ cell: UICollectionViewCell, at indexPath: IndexPath) -> UICollectionViewCell {
-        guard let logoHeaderCell = cell as? HomeLogoHeaderCell else { return UICollectionViewCell() }
-        logoHeaderCell.applyTheme(theme: theme)
+        // Ecosia: cell as NTPLogoCell
+        // guard let logoHeaderCell = cell as? HomeLogoHeaderCell else { return UICollectionViewCell() }
+        guard let logoHeaderCell = cell as? NTPLogoCell else { return UICollectionViewCell() }
         return logoHeaderCell
     }
 }

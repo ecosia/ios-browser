@@ -53,6 +53,7 @@ struct HistoryHighlightsModel {
     }
 }
 
+/* Ecosia
 class HistoryHighlightsViewModel {
     struct UX {
         static let maxNumberOfItemsPerColumn = 3
@@ -455,3 +456,4 @@ extension HistoryHighlightsViewModel: HistoryHighlightsDelegate {
         }
     }
 }
+*/
