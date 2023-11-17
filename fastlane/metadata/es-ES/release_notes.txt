@@ -1,0 +1,8 @@
+Reorganizamos la página de inicio:
+Toda la información relacionada con el impacto que generas estará aquí.
+Puedes personalizar la página de inicio según tus necesidades y desactivar sesiones individuales.
+
+También solucionamos algunos bugs y mejoramos la estabilidad:
+-Los pagos con Paypal ya deberían funcionar nuevamente
+
+Siempre trabajamos para que Ecosia sea mejor para ti. Envía cualquier duda o comentarios a nuestro equipo a la dirección iosapp@ecosia.org, ¡nos encanta escucharte!

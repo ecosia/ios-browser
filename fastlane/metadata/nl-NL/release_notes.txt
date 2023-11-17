@@ -1,0 +1,8 @@
+We hebben de startpagina opnieuw ingedeeld:
+Alle informatie omtrent jouw impact staat nu hier bij elkaar.
+Je kunt de startpagina naar wens aanpassen en individuele secties uitschakelen.
+
+We hebben een aantal bugs verholpen en een aantal stabiliteitsverbeteringen doorgevoerd:
+- Het is weer mogelijk om via PayPal te betalen
+
+We werken er altijd hard aan om Ecosia voor jou beter te maken. Stuur ons team vragen of feedback via iosapp@ecosia.org. We horen graag van je!
