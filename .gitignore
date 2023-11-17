@@ -114,3 +114,13 @@ nimbus-fml/
 
 # tmp files
 /test-fixtures/tmp/*
+
+# bundler
+vendor/bundle
+.bundle/config
+
+# transifex
+/tx
+
+# Staging token
+Staging.xcconfig
