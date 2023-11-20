@@ -108,9 +108,18 @@ extension EcosiaImport {
     }
 
     class func getTopSiteURLs() -> [String] {
-        let filePath = Bundle.main.path(forResource: "top_sites", ofType: "json")
+
+        struct BundledImage: Codable {
+            var title: String
+            var url: String?
+            var image_url: String
+            var background_color: String
+            var domain: String
+        }
+
+        let filePath = Bundle.main.path(forResource: "bundle_sites", ofType: "json")
         let file = try! Data(contentsOf: URL(fileURLWithPath: filePath!))
-        let decoded = try! JSONDecoder().decode([FaviconFetcher.BundledIcon].self, from: file)
+        let decoded = try! JSONDecoder().decode([BundledImage].self, from: file)
         return decoded.compactMap({$0.url})
     }
 }
