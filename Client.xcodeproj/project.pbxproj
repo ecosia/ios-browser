@@ -282,7 +282,6 @@
 		2CB289B82B07C8F000A8FCB3 /* ErrorPageHandler+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB289462B07C8F000A8FCB3 /* ErrorPageHandler+Ecosia.swift */; };
 		2CB289B92B07C8F000A8FCB3 /* SnapKit+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB289472B07C8F000A8FCB3 /* SnapKit+Ecosia.swift */; };
 		2CB289BA2B07C8F000A8FCB3 /* HomepageViewController+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB289482B07C8F000A8FCB3 /* HomepageViewController+Ecosia.swift */; };
-		2CB289BB2B07C8F000A8FCB3 /* TabCell+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB289492B07C8F000A8FCB3 /* TabCell+Ecosia.swift */; };
 		2CB289BC2B07C8F000A8FCB3 /* UIView+maskedCorners.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB2894A2B07C8F000A8FCB3 /* UIView+maskedCorners.swift */; };
 		2CB289BD2B07C8F000A8FCB3 /* AppInfo+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB2894B2B07C8F000A8FCB3 /* AppInfo+Ecosia.swift */; };
 		2CB289BE2B07C8F000A8FCB3 /* NumberFormatter+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB2894C2B07C8F000A8FCB3 /* NumberFormatter+Ecosia.swift */; };
@@ -2536,7 +2535,6 @@
 		2CB289462B07C8F000A8FCB3 /* ErrorPageHandler+Ecosia.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ErrorPageHandler+Ecosia.swift"; sourceTree = "<group>"; };
 		2CB289472B07C8F000A8FCB3 /* SnapKit+Ecosia.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SnapKit+Ecosia.swift"; sourceTree = "<group>"; };
 		2CB289482B07C8F000A8FCB3 /* HomepageViewController+Ecosia.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "HomepageViewController+Ecosia.swift"; sourceTree = "<group>"; };
-		2CB289492B07C8F000A8FCB3 /* TabCell+Ecosia.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "TabCell+Ecosia.swift"; sourceTree = "<group>"; };
 		2CB2894A2B07C8F000A8FCB3 /* UIView+maskedCorners.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+maskedCorners.swift"; sourceTree = "<group>"; };
 		2CB2894B2B07C8F000A8FCB3 /* AppInfo+Ecosia.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AppInfo+Ecosia.swift"; sourceTree = "<group>"; };
 		2CB2894C2B07C8F000A8FCB3 /* NumberFormatter+Ecosia.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NumberFormatter+Ecosia.swift"; sourceTree = "<group>"; };
@@ -8121,7 +8119,6 @@
 				2CB289462B07C8F000A8FCB3 /* ErrorPageHandler+Ecosia.swift */,
 				2CB289472B07C8F000A8FCB3 /* SnapKit+Ecosia.swift */,
 				2CB289482B07C8F000A8FCB3 /* HomepageViewController+Ecosia.swift */,
-				2CB289492B07C8F000A8FCB3 /* TabCell+Ecosia.swift */,
 				2CB2894A2B07C8F000A8FCB3 /* UIView+maskedCorners.swift */,
 				2CB2894B2B07C8F000A8FCB3 /* AppInfo+Ecosia.swift */,
 				2CB2894C2B07C8F000A8FCB3 /* NumberFormatter+Ecosia.swift */,
@@ -13262,7 +13259,6 @@
 				3BCE6D3C1CEB9E4D0080928C /* ThirdPartySearchAlerts.swift in Sources */,
 				8A93F86229D36F0F004159D9 /* NavigationController.swift in Sources */,
 				E13F8C342928194800BDC8B4 /* PhotonActionSheetSiteHeaderView.swift in Sources */,
-				2CB289BB2B07C8F000A8FCB3 /* TabCell+Ecosia.swift in Sources */,
 				C2D71B9B2A3850B4003DEC7A /* ThemedTableViewCellViewModel.swift in Sources */,
 				C869912F28917688007ACC5C /* WallpaperMetadataLoader.swift in Sources */,
 				2137785D297F1F2800D01309 /* DownloadedFile.swift in Sources */,
@@ -20348,8 +20344,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/snowplow/snowplow-ios-tracker";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 5.6.0;
+				kind = exactVersion;
+				version = 5.2.0;
 			};
 		};
 		432BD0222790EBD000A0F3C3 /* XCRemoteSwiftPackageReference "ios_sdk" */ = {

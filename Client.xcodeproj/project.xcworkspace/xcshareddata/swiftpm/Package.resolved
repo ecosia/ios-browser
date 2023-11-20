@@ -131,8 +131,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/snowplow/snowplow-ios-tracker",
       "state" : {
-        "revision" : "cc136256383ed50c754219895e34d25c48650314",
-        "version" : "5.6.0"
+        "revision" : "1e16a929cef8e944bd41dc36a1d2779e06bd0a3c",
+        "version" : "5.2.0"
       }
     },
     {
