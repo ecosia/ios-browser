@@ -4,6 +4,7 @@
 
 import Foundation
 import Core
+import Common
 
 typealias NTPAboutEcosiaCellDelegate = SharedHomepageCellDelegate & SharedHomepageCellLayoutDelegate
 
@@ -11,6 +12,11 @@ final class NTPAboutEcosiaCellViewModel {
     let sections = AboutEcosiaSection.allCases
     weak var delegate: NTPAboutEcosiaCellDelegate?
     var expandedIndex: IndexPath?
+    var theme: Theme
+    
+    init(theme: Theme) {
+        self.theme = theme
+    }
     
     func deselectExpanded() {
         guard let index = expandedIndex else { return }
@@ -20,6 +26,11 @@ final class NTPAboutEcosiaCellViewModel {
 }
 
 extension NTPAboutEcosiaCellViewModel: HomepageViewModelProtocol {
+            
+    func setTheme(theme: Theme) {
+        self.theme = theme
+    }
+    
     var isEnabled: Bool {
         User.shared.showAboutEcosia
     }
@@ -33,7 +44,7 @@ extension NTPAboutEcosiaCellViewModel: HomepageViewModelProtocol {
               isButtonHidden: true)
     }
     
-    func section(for traitCollection: UITraitCollection) -> NSCollectionLayoutSection {
+    func section(for traitCollection: UITraitCollection, size: CGSize) -> NSCollectionLayoutSection {
         let item = NSCollectionLayoutItem(
             layoutSize: .init(widthDimension: .fractionalWidth(1),
                               heightDimension: .estimated(100))

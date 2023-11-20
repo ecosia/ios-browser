@@ -4,6 +4,7 @@
 
 import UIKit
 import Shared
+import Common
 
 protocol EcosiaFindInPageBarDelegate: AnyObject {
     func findInPage(_ findInPage: EcosiaFindInPageBar, didTextChange text: String)
@@ -15,7 +16,7 @@ protocol EcosiaFindInPageBarDelegate: AnyObject {
 /// Ecosia's custom UI for FindInPageBar.
 ///
 /// You can find the Firefox original view in Client/Frontend/Browser/FindInPageBar (removed from Target since no longer used)
-final class EcosiaFindInPageBar: UIView {
+final class EcosiaFindInPageBar: UIView, Themeable {
     private struct UX {
         static let barHeight: CGFloat = 60
         static let searchViewTopBottomSpacing: CGFloat = 8
@@ -118,6 +119,14 @@ final class EcosiaFindInPageBar: UIView {
             didTextChange(searchTextField)
         }
     }
+    
+    // MARK: - Themeable Properties
+    
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeObserver: NSObjectProtocol?
+    var notificationCenter: NotificationProtocol = NotificationCenter.default
+
+    // MARK: - Init
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -133,7 +142,7 @@ final class EcosiaFindInPageBar: UIView {
         applyTheme()
         setupConstraints()
         
-        listenForThemeChange(self.view)
+        listenForThemeChange(self)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -149,7 +158,7 @@ final class EcosiaFindInPageBar: UIView {
         return super.becomeFirstResponder()
     }
     
-    @objc private func applyTheme() {
+    @objc func applyTheme() {
         backgroundColor = .legacyTheme.ecosia.secondaryBackground
         searchView.backgroundColor = .legacyTheme.ecosia.tertiaryBackground
         searchTextField.textColor = .legacyTheme.ecosia.primaryText
