@@ -239,17 +239,17 @@ extension WhatsNewViewController: UITableViewDataSource {
 extension WhatsNewViewController: NotificationThemeable {
 
     func applyTheme() {
-        view.backgroundColor = .theme.ecosia.primaryBackground
-        topContainerView.backgroundColor = .theme.ecosia.tertiaryBackground
-        tableView.backgroundColor = .theme.ecosia.primaryBackground
+        view.backgroundColor = .legacyTheme.ecosia.primaryBackground
+        topContainerView.backgroundColor = .legacyTheme.ecosia.tertiaryBackground
+        tableView.backgroundColor = .legacyTheme.ecosia.primaryBackground
         tableView.separatorColor = .clear
-        knob.backgroundColor = .theme.ecosia.secondaryText
-        closeButton.backgroundColor = .theme.ecosia.primaryBackground
-        closeButton.tintColor = .theme.ecosia.whatsNewCloseButton
-        footerButton.backgroundColor = .theme.ecosia.primaryBrand
-        footerButton.setTitleColor(.theme.ecosia.primaryTextInverted, for: .normal)
-        headerLabelContainerView.backgroundColor = .theme.ecosia.primaryBackground
-        secondImageView.tintColor = .theme.ecosia.primaryBackground
+        knob.backgroundColor = .legacyTheme.ecosia.secondaryText
+        closeButton.backgroundColor = .legacyTheme.ecosia.primaryBackground
+        closeButton.tintColor = .legacyTheme.ecosia.whatsNewCloseButton
+        footerButton.backgroundColor = .legacyTheme.ecosia.primaryBrand
+        footerButton.setTitleColor(.legacyTheme.ecosia.primaryTextInverted, for: .normal)
+        headerLabelContainerView.backgroundColor = .legacyTheme.ecosia.primaryBackground
+        secondImageView.tintColor = .legacyTheme.ecosia.primaryBackground
     }
 }
 

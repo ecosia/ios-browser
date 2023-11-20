@@ -128,10 +128,10 @@ final class NTPBookmarkNudgeCell: UICollectionViewCell, NotificationThemeable, R
     }
     
     @objc func applyTheme() {
-        backgroundCard.backgroundColor = .theme.ecosia.ntpCellBackground
-        openBookmarksButton.setTitleColor(.theme.ecosia.primaryText, for: .normal)
-        openBookmarksButton.layer.borderColor = UIColor.theme.ecosia.primaryText.cgColor
-        closeButton.tintColor = .theme.ecosia.primaryText
+        backgroundCard.backgroundColor = .legacyTheme.ecosia.ntpCellBackground
+        openBookmarksButton.setTitleColor(.legacyTheme.ecosia.primaryText, for: .normal)
+        openBookmarksButton.layer.borderColor = UIColor.legacyTheme.ecosia.primaryText.cgColor
+        closeButton.tintColor = .legacyTheme.ecosia.primaryText
 
         badge.applyTheme()
     }
@@ -202,7 +202,7 @@ private final class NTPBookmarkNudgeCellBadge: UIView, NotificationThemeable {
     }
     
     func applyTheme() {
-        backgroundColor = .theme.ecosia.primaryBrand
-        badgeLabel.textColor = .theme.ecosia.primaryTextInverted
+        backgroundColor = .legacyTheme.ecosia.primaryBrand
+        badgeLabel.textColor = .legacyTheme.ecosia.primaryTextInverted
     }
 }

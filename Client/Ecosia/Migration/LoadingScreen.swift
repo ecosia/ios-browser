@@ -24,7 +24,7 @@ final class LoadingScreen: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor.theme.ecosia.primaryBackground
+        view.backgroundColor = UIColor.legacyTheme.ecosia.primaryBackground
 
         let logo = UIImageView(image: UIImage(named: "ecosiaLogoLaunch"))
         logo.translatesAutoresizingMaskIntoConstraints = false
@@ -34,7 +34,7 @@ final class LoadingScreen: UIViewController {
         
         let progress = UIProgressView()
         progress.translatesAutoresizingMaskIntoConstraints = false
-        progress.progressTintColor = UIColor.theme.ecosia.primaryBrand
+        progress.progressTintColor = UIColor.legacyTheme.ecosia.primaryBrand
         view.addSubview(progress)
         self.progress = progress
         
@@ -44,7 +44,7 @@ final class LoadingScreen: UIViewController {
         message.font = .preferredFont(forTextStyle: .footnote)
         message.numberOfLines = 0
         message.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-        message.textColor = UIColor.theme.ecosia.primaryText
+        message.textColor = UIColor.legacyTheme.ecosia.primaryText
         message.textAlignment = .center
         view.addSubview(message)
         

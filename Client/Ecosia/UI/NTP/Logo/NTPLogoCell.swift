@@ -45,7 +45,7 @@ final class NTPLogoCell: UICollectionViewCell, ReusableCell, NotificationThemeab
     }
 
     func applyTheme() {
-        logo.tintColor = .theme.ecosia.primaryBrand
+        logo.tintColor = .legacyTheme.ecosia.primaryBrand
     }
 
     override func prepareForReuse() {

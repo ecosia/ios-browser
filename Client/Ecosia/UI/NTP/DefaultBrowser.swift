@@ -228,16 +228,16 @@ final class DefaultBrowser: UIViewController, NotificationThemeable {
 
     @objc func applyTheme() {
         view.backgroundColor = .clear
-        headline.textColor = .theme.ecosia.primaryText
-        text1.textColor = .theme.ecosia.secondaryText
-        text2.textColor = .theme.ecosia.secondaryText
-        arrow1.tintColor = .theme.ecosia.primaryButton
-        arrow2.tintColor = .theme.ecosia.primaryButton
-        content.backgroundColor = .theme.ecosia.ntpIntroBackground
-        waves.tintColor = .theme.ecosia.ntpIntroBackground
-        cta.setTitleColor(.theme.ecosia.primaryTextInverted, for: .normal)
-        skip.setTitleColor(.theme.ecosia.primaryButton, for: .normal)
-        cta.backgroundColor = .theme.ecosia.primaryButton
+        headline.textColor = .legacyTheme.ecosia.primaryText
+        text1.textColor = .legacyTheme.ecosia.secondaryText
+        text2.textColor = .legacyTheme.ecosia.secondaryText
+        arrow1.tintColor = .legacyTheme.ecosia.primaryButton
+        arrow2.tintColor = .legacyTheme.ecosia.primaryButton
+        content.backgroundColor = .legacyTheme.ecosia.ntpIntroBackground
+        waves.tintColor = .legacyTheme.ecosia.ntpIntroBackground
+        cta.setTitleColor(.legacyTheme.ecosia.primaryTextInverted, for: .normal)
+        skip.setTitleColor(.legacyTheme.ecosia.primaryButton, for: .normal)
+        cta.backgroundColor = .legacyTheme.ecosia.primaryButton
     }
 
     @objc private func skipTapped() {

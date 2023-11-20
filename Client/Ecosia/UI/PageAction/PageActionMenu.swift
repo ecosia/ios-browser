@@ -197,9 +197,9 @@ extension PageActionMenu: NotificationThemeable {
 
     func applyTheme() {
         tableView.reloadData()
-        view.backgroundColor = .theme.ecosia.modalBackground
-        tableView.backgroundColor = .theme.ecosia.modalBackground
-        tableView.separatorColor = .theme.ecosia.border
-        knob.backgroundColor = .theme.ecosia.secondaryText
+        view.backgroundColor = .legacyTheme.ecosia.modalBackground
+        tableView.backgroundColor = .legacyTheme.ecosia.modalBackground
+        tableView.separatorColor = .legacyTheme.ecosia.border
+        knob.backgroundColor = .legacyTheme.ecosia.secondaryText
     }
 }

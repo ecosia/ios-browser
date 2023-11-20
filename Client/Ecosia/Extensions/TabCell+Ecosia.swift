@@ -9,12 +9,12 @@ extension TabCell: NotificationThemeable {
         backgroundHolder.backgroundColor = UIColor.theme.tabTray.cellBackground
         screenshotView.backgroundColor = UIColor.theme.tabTray.screenshotBackground
 
-        let activeBGColor = isPrivate ? UIColor.theme.ecosia.tabSelectedPrivateBackground : UIColor.theme.ecosia.tabSelectedBackground
-        title.backgroundColor = isSelectedTab ? activeBGColor : UIColor.theme.ecosia.tabBackground
+        let activeBGColor = isPrivate ? UIColor.legacyTheme.ecosia.tabSelectedPrivateBackground : UIColor.legacyTheme.ecosia.tabSelectedBackground
+        title.backgroundColor = isSelectedTab ? activeBGColor : UIColor.legacyTheme.ecosia.tabBackground
 
-        titleText.textColor = isSelectedTab ? UIColor.theme.ecosia.primaryTextInverted : UIColor.theme.ecosia.primaryText
-        favicon.tintColor = isSelectedTab ? UIColor.theme.ecosia.primaryTextInverted : UIColor.theme.ecosia.primaryText
-        closeButton.tintColor = isSelectedTab ? UIColor.theme.ecosia.primaryTextInverted : UIColor.theme.ecosia.primaryText
+        titleText.textColor = isSelectedTab ? UIColor.legacyTheme.ecosia.primaryTextInverted : UIColor.legacyTheme.ecosia.primaryText
+        favicon.tintColor = isSelectedTab ? UIColor.legacyTheme.ecosia.primaryTextInverted : UIColor.legacyTheme.ecosia.primaryText
+        closeButton.tintColor = isSelectedTab ? UIColor.legacyTheme.ecosia.primaryTextInverted : UIColor.legacyTheme.ecosia.primaryText
 
         if isSelectedTab {
             // This creates a border around a tabcell. Using the shadow craetes a border _outside_ of the tab frame.

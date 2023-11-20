@@ -63,10 +63,10 @@ final class NTPCustomizationCell: UICollectionViewCell, NotificationThemeable, R
     }
     
     func applyTheme() {
-        button.imageView?.tintColor = .theme.ecosia.secondaryButtonContent
-        button.setTitleColor(.theme.ecosia.secondaryButtonContent, for: .normal)
-        button.setBackgroundColor(.theme.ecosia.secondaryButtonBackground, forState: .normal)
-        button.setBackgroundColor(.theme.ecosia.activeTransparentBackground, forState: .highlighted)
+        button.imageView?.tintColor = .legacyTheme.ecosia.secondaryButtonContent
+        button.setTitleColor(.legacyTheme.ecosia.secondaryButtonContent, for: .normal)
+        button.setBackgroundColor(.legacyTheme.ecosia.secondaryButtonBackground, forState: .normal)
+        button.setBackgroundColor(.legacyTheme.ecosia.activeTransparentBackground, forState: .highlighted)
     }
     
     @objc func touchButtonAction() {

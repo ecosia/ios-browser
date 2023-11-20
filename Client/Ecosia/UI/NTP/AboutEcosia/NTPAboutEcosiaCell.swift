@@ -222,13 +222,13 @@ final class NTPAboutEcosiaCell: UICollectionViewCell, ReusableCell {
 
 extension NTPAboutEcosiaCell: NotificationThemeable {
     func applyTheme() {
-        outlineView.backgroundColor = .theme.ecosia.ntpCellBackground
-        titleLabel.textColor = .theme.ecosia.primaryText
-        indicatorImageView.tintColor = .theme.ecosia.secondaryText
-        dividerView.backgroundColor = .theme.ecosia.border
-        disclosureView.backgroundColor = .theme.ecosia.quarternaryBackground
-        subtitleLabel.textColor = .theme.ecosia.primaryTextInverted
-        learnMoreButton.layer.borderColor = UIColor.theme.ecosia.primaryTextInverted.cgColor
-        learnMoreLabel.textColor = .theme.ecosia.primaryTextInverted
+        outlineView.backgroundColor = .legacyTheme.ecosia.ntpCellBackground
+        titleLabel.textColor = .legacyTheme.ecosia.primaryText
+        indicatorImageView.tintColor = .legacyTheme.ecosia.secondaryText
+        dividerView.backgroundColor = .legacyTheme.ecosia.border
+        disclosureView.backgroundColor = .legacyTheme.ecosia.quarternaryBackground
+        subtitleLabel.textColor = .legacyTheme.ecosia.primaryTextInverted
+        learnMoreButton.layer.borderColor = UIColor.legacyTheme.ecosia.primaryTextInverted.cgColor
+        learnMoreLabel.textColor = .legacyTheme.ecosia.primaryTextInverted
     }
 }

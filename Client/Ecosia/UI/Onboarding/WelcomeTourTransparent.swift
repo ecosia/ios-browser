@@ -100,7 +100,7 @@ final class WelcomeTourTransparent: UIView, NotificationThemeable {
     }
     
     func applyThemeToMonthView() {
-        monthView.backgroundColor = .theme.ecosia.primaryButton
-        monthViewLabel.textColor = .theme.ecosia.tertiaryText
+        monthView.backgroundColor = .legacyTheme.ecosia.primaryButton
+        monthViewLabel.textColor = .legacyTheme.ecosia.tertiaryText
     }
 }

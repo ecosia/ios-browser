@@ -136,7 +136,7 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
         collection.visibleCells.forEach({
             ($0 as? NotificationThemeable)?.applyTheme()
         })
-        collection.backgroundColor = UIColor.theme.ecosia.modalBackground
+        collection.backgroundColor = UIColor.legacyTheme.ecosia.modalBackground
         updateBarAppearance()
 
         if traitCollection.userInterfaceIdiom == .pad {
@@ -147,12 +147,12 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
 
     private func updateBarAppearance() {
         guard let appearance = navigationController?.navigationBar.standardAppearance else { return }
-        appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.theme.ecosia.primaryText]
-        appearance.titleTextAttributes = [.foregroundColor: UIColor.theme.ecosia.primaryText]
-        appearance.backgroundColor = .theme.ecosia.modalBackground
+        appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.legacyTheme.ecosia.primaryText]
+        appearance.titleTextAttributes = [.foregroundColor: UIColor.legacyTheme.ecosia.primaryText]
+        appearance.backgroundColor = .legacyTheme.ecosia.modalBackground
         navigationItem.standardAppearance = appearance
-        navigationController?.navigationBar.backgroundColor = .theme.ecosia.modalBackground
-        navigationController?.navigationBar.tintColor = .theme.ecosia.primaryBrand
+        navigationController?.navigationBar.backgroundColor = .legacyTheme.ecosia.modalBackground
+        navigationController?.navigationBar.tintColor = .legacyTheme.ecosia.primaryBrand
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -192,8 +192,8 @@ private final class NewsSubHeader: UICollectionReusableView, NotificationThemeab
     }
 
     func applyTheme() {
-        backgroundColor = UIColor.theme.ecosia.modalBackground
-        subtitle.textColor = UIColor.theme.ecosia.secondaryText
+        backgroundColor = UIColor.legacyTheme.ecosia.modalBackground
+        subtitle.textColor = UIColor.legacyTheme.ecosia.secondaryText
     }
 }
 

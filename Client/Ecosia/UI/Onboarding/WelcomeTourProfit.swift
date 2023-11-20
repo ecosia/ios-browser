@@ -100,11 +100,11 @@ final class WelcomeTourProfit: UIView, NotificationThemeable {
     }
 
     func applyTheme() {
-        beforeContainer.backgroundColor = .theme.ecosia.welcomeBackground
-        afterContainer.backgroundColor = .theme.ecosia.welcomeBackground
-        beforeLabel.textColor = .theme.ecosia.primaryText
-        afterLabel.textColor = .theme.ecosia.primaryText
-        treeImage.tintColor = .theme.ecosia.primaryBrand
+        beforeContainer.backgroundColor = .legacyTheme.ecosia.welcomeBackground
+        afterContainer.backgroundColor = .legacyTheme.ecosia.welcomeBackground
+        beforeLabel.textColor = .legacyTheme.ecosia.primaryText
+        afterLabel.textColor = .legacyTheme.ecosia.primaryText
+        treeImage.tintColor = .legacyTheme.ecosia.primaryBrand
     }
     
     func updateAccessibilitySettings() {

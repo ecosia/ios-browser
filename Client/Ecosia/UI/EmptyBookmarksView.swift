@@ -190,7 +190,7 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
                     $0.setContentHuggingPriority(.required, for: .horizontal)
                     $0.setContentCompressionResistancePriority(.required, for: .horizontal)
                     $0.numberOfLines = 0
-                    $0.textColor = .theme.ecosia.secondaryText
+                    $0.textColor = .legacyTheme.ecosia.secondaryText
                     $0.adjustsFontForContentSizeCategory = true
                 }
                 
@@ -241,12 +241,12 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
     }
     
     @objc func applyTheme() {
-        importBookmarksButton.layer.borderColor = UIColor.theme.ecosia.primaryText.cgColor
-        learnMoreButton.setTitleColor(.theme.ecosia.primaryText, for: .normal)
+        importBookmarksButton.layer.borderColor = UIColor.legacyTheme.ecosia.primaryText.cgColor
+        learnMoreButton.setTitleColor(.legacyTheme.ecosia.primaryText, for: .normal)
         learnMoreButton.titleLabel?.font = UX.LearnMoreButtonLabelFont
-        importBookmarksButton.setTitleColor(.theme.ecosia.primaryText, for: .normal)
+        importBookmarksButton.setTitleColor(.legacyTheme.ecosia.primaryText, for: .normal)
         importBookmarksButton.titleLabel?.font = UX.ImportButtonLabelFont
-        titleLabel.textColor = .theme.ecosia.primaryText
+        titleLabel.textColor = .legacyTheme.ecosia.primaryText
         containerStackView.arrangedSubviews
             .compactMap { ($0 as? UIStackView)?.arrangedSubviews }
             .reduce([UIView](), { partialResult, subViews in
@@ -260,9 +260,9 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
             .forEach {
                 switch $0 {
                 case let label as UILabel:
-                    label.textColor = .theme.ecosia.secondaryText
+                    label.textColor = .legacyTheme.ecosia.secondaryText
                 default:
-                    $0.tintColor = .theme.ecosia.secondaryText
+                    $0.tintColor = .legacyTheme.ecosia.secondaryText
                     break
                 }
             }

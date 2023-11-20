@@ -59,8 +59,8 @@ final class MultiplyImpactStep: UIView, NotificationThemeable {
     }
     
     func applyTheme() {
-        indicator?.tintColor = .theme.ecosia.primaryBrand
-        titleLabel?.textColor = .theme.ecosia.primaryText
-        subtitleLabel?.textColor = .theme.ecosia.secondaryText
+        indicator?.tintColor = .legacyTheme.ecosia.primaryBrand
+        titleLabel?.textColor = .legacyTheme.ecosia.primaryText
+        subtitleLabel?.textColor = .legacyTheme.ecosia.secondaryText
     }
 }

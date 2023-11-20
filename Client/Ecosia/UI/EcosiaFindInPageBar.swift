@@ -150,16 +150,16 @@ final class EcosiaFindInPageBar: UIView {
     }
     
     @objc private func applyTheme() {
-        backgroundColor = .theme.ecosia.secondaryBackground
-        searchView.backgroundColor = .theme.ecosia.tertiaryBackground
-        searchTextField.textColor = .theme.ecosia.primaryText
+        backgroundColor = .legacyTheme.ecosia.secondaryBackground
+        searchView.backgroundColor = .legacyTheme.ecosia.tertiaryBackground
+        searchTextField.textColor = .legacyTheme.ecosia.primaryText
         searchTextField.attributedPlaceholder = .init(string: .localized(.findInPage),
-                                                      attributes: [.foregroundColor: UIColor.theme.ecosia.secondaryText])
-        matchCountLabel.textColor = .theme.ecosia.secondaryText
-        previousButton.tintColor = .theme.ecosia.primaryIcon
-        nextButton.tintColor = .theme.ecosia.primaryIcon
-        closeButton.setTitleColor(.theme.ecosia.primaryButton, for: .normal)
-        topBorder.backgroundColor = .theme.ecosia.border
+                                                      attributes: [.foregroundColor: UIColor.legacyTheme.ecosia.secondaryText])
+        matchCountLabel.textColor = .legacyTheme.ecosia.secondaryText
+        previousButton.tintColor = .legacyTheme.ecosia.primaryIcon
+        nextButton.tintColor = .legacyTheme.ecosia.primaryIcon
+        closeButton.setTitleColor(.legacyTheme.ecosia.primaryButton, for: .normal)
+        topBorder.backgroundColor = .legacyTheme.ecosia.border
     }
     
     private func setupConstraints() {

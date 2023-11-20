@@ -85,9 +85,9 @@ class NTPLibraryCell: UICollectionViewCell, NotificationThemeable, ReusableCell 
 
     func applyTheme() {
         shortcuts.forEach { item in
-            item.title.textColor = .theme.ecosia.primaryText
-            item.button.tintColor = .theme.ecosia.primaryButton
-            item.button.backgroundColor = .theme.ecosia.secondaryButton
+            item.title.textColor = .legacyTheme.ecosia.primaryText
+            item.button.tintColor = .legacyTheme.ecosia.primaryButton
+            item.button.backgroundColor = .legacyTheme.ecosia.secondaryButton
         }
     }
 

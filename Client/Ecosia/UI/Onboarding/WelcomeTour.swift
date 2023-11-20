@@ -344,14 +344,14 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
 
     // MARK: Theming
     func applyTheme() {
-        view.backgroundColor = .theme.ecosia.welcomeBackground
-        waves.tintColor = .theme.ecosia.welcomeBackground
-        titleLabel.textColor = .theme.ecosia.primaryText
-        subtitleLabel.textColor = .theme.ecosia.secondaryText
-        skipButton.tintColor = .theme.ecosia.primaryButton
-        backButton.tintColor = .theme.ecosia.primaryButton
-        pageControl.pageIndicatorTintColor = .theme.ecosia.disabled
-        pageControl.currentPageIndicatorTintColor = .theme.ecosia.primaryButton
+        view.backgroundColor = .legacyTheme.ecosia.welcomeBackground
+        waves.tintColor = .legacyTheme.ecosia.welcomeBackground
+        titleLabel.textColor = .legacyTheme.ecosia.primaryText
+        subtitleLabel.textColor = .legacyTheme.ecosia.secondaryText
+        skipButton.tintColor = .legacyTheme.ecosia.primaryButton
+        backButton.tintColor = .legacyTheme.ecosia.primaryButton
+        pageControl.pageIndicatorTintColor = .legacyTheme.ecosia.disabled
+        pageControl.currentPageIndicatorTintColor = .legacyTheme.ecosia.primaryButton
         ctaButton.backgroundColor = .Light.Button.secondary
         ctaButton.setTitleColor(.Light.Text.primary, for: .normal)
         container.subviews.forEach({ ($0 as? NotificationThemeable)?.applyTheme() })

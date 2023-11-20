@@ -143,7 +143,7 @@ extension PageActionMenuCell {
         guard let separatorView else { return }
         
         separatorView.translatesAutoresizingMaskIntoConstraints = false
-        separatorView.backgroundColor = .theme.ecosia.border
+        separatorView.backgroundColor = .legacyTheme.ecosia.border
         
         contentView.addSubview(separatorView)
         contentView.bringSubviewToFront(separatorView)
@@ -172,21 +172,21 @@ extension PageActionMenuCell {
     ///   - indexPath: The TableView's index path
     func configure(with viewModel: PhotonActionSheetViewModel, at indexPath: IndexPath) {
         
-        backgroundColor = .theme.ecosia.impactMultiplyCardBackground
+        backgroundColor = .legacyTheme.ecosia.impactMultiplyCardBackground
         let actions = viewModel.actions[indexPath.section][indexPath.row]
         let item = actions.item
         
         textLabel?.text = item.currentTitle
-        textLabel?.textColor = .theme.ecosia.primaryText
+        textLabel?.textColor = .legacyTheme.ecosia.primaryText
         detailTextLabel?.text = item.text
-        detailTextLabel?.textColor = .theme.ecosia.secondaryText
+        detailTextLabel?.textColor = .legacyTheme.ecosia.secondaryText
         
         accessibilityIdentifier = item.iconString ?? item.accessibilityId
         accessibilityLabel = item.currentTitle
         
         if let iconName = item.iconString {
             imageView?.image = UIImage(named: iconName)?.withRenderingMode(.alwaysTemplate)
-            imageView?.tintColor = .theme.ecosia.secondaryText
+            imageView?.tintColor = .legacyTheme.ecosia.secondaryText
         } else {
             imageView?.image = nil
         }
@@ -230,8 +230,8 @@ extension PageActionMenuCell {
             let height = size.height + 5
             badge?.layer.cornerRadius = height / 2
             badge?.frame.size = .init(width: size.width + 16, height: height)
-            badge?.backgroundColor = .theme.ecosia.primaryBrand
-            badgeLabel?.textColor = .theme.ecosia.primaryTextInverted
+            badge?.backgroundColor = .legacyTheme.ecosia.primaryBrand
+            badgeLabel?.textColor = .legacyTheme.ecosia.primaryTextInverted
         } else {
             accessoryView = nil
         }

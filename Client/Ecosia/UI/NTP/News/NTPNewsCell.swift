@@ -89,7 +89,7 @@ final class NTPNewsCell: UICollectionViewCell, NotificationThemeable, ReusableCe
         bottomLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
         return bottomLabel
     }()
-    var defaultBackgroundColor: (() -> UIColor) = { .theme.ecosia.ntpCellBackground }
+    var defaultBackgroundColor: (() -> UIColor) = { .legacyTheme.ecosia.ntpCellBackground }
 
     required init?(coder: NSCoder) { nil }
     
@@ -203,16 +203,16 @@ final class NTPNewsCell: UICollectionViewCell, NotificationThemeable, ReusableCe
     }
     
     private func hover() {
-        background.backgroundColor = isSelected || isHighlighted ? .theme.ecosia.secondarySelectedBackground : defaultBackgroundColor()
+        background.backgroundColor = isSelected || isHighlighted ? .legacyTheme.ecosia.secondarySelectedBackground : defaultBackgroundColor()
     }
 
     func applyTheme() {
         background.backgroundColor = defaultBackgroundColor()
-        placeholder.tintColor = .theme.ecosia.decorativeIcon
-        placeholder.backgroundColor = .theme.ecosia.newsPlaceholder
-        border.backgroundColor = .theme.ecosia.border
-        title.textColor = .theme.ecosia.primaryText
-        bottomLabel.textColor = .theme.ecosia.secondaryText
-        highlightLabel.textColor = .theme.ecosia.secondaryText
+        placeholder.tintColor = .legacyTheme.ecosia.decorativeIcon
+        placeholder.backgroundColor = .legacyTheme.ecosia.newsPlaceholder
+        border.backgroundColor = .legacyTheme.ecosia.border
+        title.textColor = .legacyTheme.ecosia.primaryText
+        bottomLabel.textColor = .legacyTheme.ecosia.secondaryText
+        highlightLabel.textColor = .legacyTheme.ecosia.secondaryText
     }
 }

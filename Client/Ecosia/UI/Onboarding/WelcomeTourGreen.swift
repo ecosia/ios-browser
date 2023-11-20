@@ -96,9 +96,9 @@ final class WelcomeTourGreen: UIView, NotificationThemeable {
     }
 
     func applyTheme() {
-        searchLabel.textColor = .theme.ecosia.primaryText
-        counterLabel.textColor = .theme.ecosia.primaryText
-        counterSubtitleLabel.textColor = .theme.ecosia.secondaryText
+        searchLabel.textColor = .legacyTheme.ecosia.primaryText
+        counterLabel.textColor = .legacyTheme.ecosia.primaryText
+        counterSubtitleLabel.textColor = .legacyTheme.ecosia.secondaryText
     }
     
     func updateAccessibilitySettings() {

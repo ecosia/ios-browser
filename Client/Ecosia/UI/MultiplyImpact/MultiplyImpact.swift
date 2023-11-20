@@ -122,7 +122,7 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         
         let topBackground = UIView()
         topBackground.translatesAutoresizingMaskIntoConstraints = false
-        topBackground.backgroundColor = .theme.ecosia.primaryBrand.withAlphaComponent(0.2)
+        topBackground.backgroundColor = .legacyTheme.ecosia.primaryBrand.withAlphaComponent(0.2)
         content.addSubview(topBackground)
         self.topBackground = topBackground
 
@@ -407,27 +407,27 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
     }
     
     func applyTheme() {
-        view.backgroundColor = .theme.ecosia.modalBackground
-        inviteButton.backgroundColor = .theme.ecosia.primaryBrand
-        inviteButton.setTitleColor(.theme.ecosia.primaryTextInverted, for: .normal)
-        inviteButton.setTitleColor(.theme.ecosia.primaryTextInverted, for: .highlighted)
-        inviteButton.setTitleColor(.theme.ecosia.primaryTextInverted, for: .selected)
-        learnMoreButton?.setTitleColor(.theme.ecosia.primaryBrand, for: .normal)
-        waves?.tintColor = .theme.ecosia.modalBackground
-        topBackground?.backgroundColor = .theme.ecosia.modalHeader
-        forestOverlay?.backgroundColor = .theme.ecosia.modalBackground
+        view.backgroundColor = .legacyTheme.ecosia.modalBackground
+        inviteButton.backgroundColor = .legacyTheme.ecosia.primaryBrand
+        inviteButton.setTitleColor(.legacyTheme.ecosia.primaryTextInverted, for: .normal)
+        inviteButton.setTitleColor(.legacyTheme.ecosia.primaryTextInverted, for: .highlighted)
+        inviteButton.setTitleColor(.legacyTheme.ecosia.primaryTextInverted, for: .selected)
+        learnMoreButton?.setTitleColor(.legacyTheme.ecosia.primaryBrand, for: .normal)
+        waves?.tintColor = .legacyTheme.ecosia.modalBackground
+        topBackground?.backgroundColor = .legacyTheme.ecosia.modalHeader
+        forestOverlay?.backgroundColor = .legacyTheme.ecosia.modalBackground
         subtitle?.textColor = .Dark.Text.primary
-        copyControl?.backgroundColor = .theme.ecosia.secondaryBackground
-        copyControl?.layer.borderColor = UIColor.theme.ecosia.border.cgColor
-        moreSharingMethods?.textColor = .theme.ecosia.secondaryText
-        copyText?.textColor = .theme.ecosia.primaryBrand
+        copyControl?.backgroundColor = .legacyTheme.ecosia.secondaryBackground
+        copyControl?.layer.borderColor = UIColor.legacyTheme.ecosia.border.cgColor
+        moreSharingMethods?.textColor = .legacyTheme.ecosia.secondaryText
+        copyText?.textColor = .legacyTheme.ecosia.primaryBrand
         
         [yourInvites, sharingYourLink, flowTitle, copyLink].forEach {
-            $0?.textColor = .theme.ecosia.primaryText
+            $0?.textColor = .legacyTheme.ecosia.primaryText
         }
         
         [sharing, flowBackground].forEach {
-            $0?.backgroundColor = .theme.ecosia.impactMultiplyCardBackground
+            $0?.backgroundColor = .legacyTheme.ecosia.impactMultiplyCardBackground
         }
         
         [firstStep, secondStep, thirdStep, fourthStep].forEach {
@@ -435,10 +435,10 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         }
         
         [copyDividerLeft, copyDividerRight].forEach {
-            $0?.backgroundColor = .theme.ecosia.border
+            $0?.backgroundColor = .legacyTheme.ecosia.border
         }
         
-        referralImpactRowView.customBackgroundColor = .theme.ecosia.impactMultiplyCardBackground
+        referralImpactRowView.customBackgroundColor = .legacyTheme.ecosia.impactMultiplyCardBackground
         referralImpactRowView.applyTheme()
         
         updateBarAppearance()
@@ -449,11 +449,11 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
         appearance.configureWithOpaqueBackground()
         appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.Dark.Text.primary]
         appearance.titleTextAttributes = [.foregroundColor: UIColor.Dark.Text.primary]
-        appearance.backgroundColor = .theme.ecosia.modalHeader
+        appearance.backgroundColor = .legacyTheme.ecosia.modalHeader
         appearance.shadowColor = nil
         navigationItem.standardAppearance = appearance
         navigationItem.scrollEdgeAppearance = appearance
-        navigationController?.navigationBar.backgroundColor = .theme.ecosia.modalHeader
+        navigationController?.navigationBar.backgroundColor = .legacyTheme.ecosia.modalHeader
         navigationController?.navigationBar.tintColor = UIColor.Dark.Text.primary
     }
 

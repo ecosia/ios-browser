@@ -60,8 +60,8 @@ final class EmptyHeader: UITableViewHeaderFooterView, NotificationThemeable {
     
     func applyTheme() {
         image?.image = .init(named: icon)?.withRenderingMode(.alwaysTemplate)
-        image?.tintColor = UIColor.theme.ecosia.secondaryText
-        labelTitle?.textColor = .theme.ecosia.primaryText
-        labelSubtitle?.textColor = .theme.ecosia.secondaryText
+        image?.tintColor = UIColor.legacyTheme.ecosia.secondaryText
+        labelTitle?.textColor = .legacyTheme.ecosia.primaryText
+        labelSubtitle?.textColor = .legacyTheme.ecosia.secondaryText
     }
 }

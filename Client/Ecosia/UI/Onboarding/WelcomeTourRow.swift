@@ -68,8 +68,8 @@ final class WelcomeTourRow: UIView, NotificationThemeable {
     }
 
     func applyTheme() {
-        backgroundColor = .theme.ecosia.welcomeElementBackground
-        titleLabel.textColor = .theme.ecosia.primaryText
-        textLabel.textColor = .theme.ecosia.secondaryText
+        backgroundColor = .legacyTheme.ecosia.welcomeElementBackground
+        titleLabel.textColor = .legacyTheme.ecosia.primaryText
+        textLabel.textColor = .legacyTheme.ecosia.secondaryText
     }
 }

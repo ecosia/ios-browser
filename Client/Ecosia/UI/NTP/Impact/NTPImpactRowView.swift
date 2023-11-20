@@ -159,13 +159,13 @@ final class NTPImpactRowView: UIView, NotificationThemeable {
     required init?(coder: NSCoder) { nil }
     
     func applyTheme() {
-        backgroundColor = customBackgroundColor ?? .theme.ecosia.secondaryBackground
-        titleLabel.textColor = .theme.ecosia.primaryText
-        subtitleLabel.textColor = .theme.ecosia.secondaryText
-        actionButton.setTitleColor(.theme.ecosia.primaryButton, for: .normal)
-        dividerView.backgroundColor = .theme.ecosia.border
-        totalProgressView.color = .theme.ecosia.ntpBackground
-        currentProgressView.color = .theme.ecosia.treeCounterProgressCurrent
+        backgroundColor = customBackgroundColor ?? .legacyTheme.ecosia.secondaryBackground
+        titleLabel.textColor = .legacyTheme.ecosia.primaryText
+        subtitleLabel.textColor = .legacyTheme.ecosia.secondaryText
+        actionButton.setTitleColor(.legacyTheme.ecosia.primaryButton, for: .normal)
+        dividerView.backgroundColor = .legacyTheme.ecosia.border
+        totalProgressView.color = .legacyTheme.ecosia.ntpBackground
+        currentProgressView.color = .legacyTheme.ecosia.treeCounterProgressCurrent
     }
     
     private func setupProgressIndicator() {
