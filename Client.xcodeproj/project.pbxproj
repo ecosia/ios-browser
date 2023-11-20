@@ -187,6 +187,8 @@
 		28ECD9BF1BA1F19900D829DA /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = E6231C001B90A44F005ABB0D /* libz.tbd */; };
 		2C1296E42B0B673400FC0A04 /* EcosiaTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB288E52B07C8F000A8FCB3 /* EcosiaTheme.swift */; };
 		2C1296E52B0B676C00FC0A04 /* SemanticColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB288DD2B07C8EF00A8FCB3 /* SemanticColor.swift */; };
+		2C1296E92B0BA55100FC0A04 /* LegacyThemeManager+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C1296E82B0BA55100FC0A04 /* LegacyThemeManager+Ecosia.swift */; };
+		2C1296EB2B0BA5D100FC0A04 /* UIButton+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C1296EA2B0BA5D100FC0A04 /* UIButton+Ecosia.swift */; };
 		2C28F96C201B2D4C00ABA8A5 /* MailAppSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C28F96B201B2D4C00ABA8A5 /* MailAppSettingsTests.swift */; };
 		2C2A5EF41E68469500F02659 /* PrivateBrowsingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A5EF31E68469500F02659 /* PrivateBrowsingTest.swift */; };
 		2C2A91291FA2410D002E36BD /* HistoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A91281FA2410D002E36BD /* HistoryTests.swift */; };
@@ -2424,6 +2426,8 @@
 		2B31494CBFF9DF6FA41953B2 /* ses */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ses; path = ses.lproj/FindInPage.strings; sourceTree = "<group>"; };
 		2BAA411FAF1D49B9990A7720 /* sat-Olck */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "sat-Olck"; path = "sat-Olck.lproj/Shared.strings"; sourceTree = "<group>"; };
 		2BAB4A40A318F5A577488909 /* mr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = mr; path = mr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		2C1296E82B0BA55100FC0A04 /* LegacyThemeManager+Ecosia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LegacyThemeManager+Ecosia.swift"; sourceTree = "<group>"; };
+		2C1296EA2B0BA5D100FC0A04 /* UIButton+Ecosia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+Ecosia.swift"; sourceTree = "<group>"; };
 		2C26401D9CCB8C2671EA2431 /* ta */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ta; path = ta.lproj/3DTouchActions.strings; sourceTree = "<group>"; };
 		2C28F96B201B2D4C00ABA8A5 /* MailAppSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailAppSettingsTests.swift; sourceTree = "<group>"; };
 		2C2A5EF31E68469500F02659 /* PrivateBrowsingTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PrivateBrowsingTest.swift; sourceTree = "<group>"; };
@@ -8125,6 +8129,8 @@
 				2CB2894D2B07C8F000A8FCB3 /* URL+Ecosia.swift */,
 				2CB2894E2B07C8F000A8FCB3 /* DeviceInfo+Ecosia.swift */,
 				2CB2894F2B07C8F000A8FCB3 /* Toolbar+URLBar */,
+				2C1296E82B0BA55100FC0A04 /* LegacyThemeManager+Ecosia.swift */,
+				2C1296EA2B0BA5D100FC0A04 /* UIButton+Ecosia.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -13480,6 +13486,7 @@
 				2CB2899D2B07C8F000A8FCB3 /* MarketsController.swift in Sources */,
 				C83432FE26BAD30D00ABAAA6 /* EnhancedTrackingProtectionDetailsVC.swift in Sources */,
 				E698FFDA1B4AADF40001F623 /* TabScrollController.swift in Sources */,
+				2C1296EB2B0BA5D100FC0A04 /* UIButton+Ecosia.swift in Sources */,
 				8A359EF32A1FD449004A5BB7 /* AdjustWrapper.swift in Sources */,
 				D34510881ACF415700EC27F0 /* SearchLoader.swift in Sources */,
 				E17496402994302D0096900A /* PreferredFont.swift in Sources */,
@@ -13539,6 +13546,7 @@
 				D31A0FC71A65D6D000DC8C7E /* SearchSuggestClient.swift in Sources */,
 				8A57519927AD80B800A84DBF /* ReaderModeStyleViewModel.swift in Sources */,
 				435D7CC5246209AA0043ACB9 /* IntroViewController.swift in Sources */,
+				2C1296E92B0BA55100FC0A04 /* LegacyThemeManager+Ecosia.swift in Sources */,
 				C855728429AEA3C300AF32B0 /* SurveySurfaceViewModel.swift in Sources */,
 				CA4ACE4924C8C91600F55894 /* BreachAlertsDetailView.swift in Sources */,
 				2CB289CF2B07C8F000A8FCB3 /* AppVersionInfoProvider.swift in Sources */,
