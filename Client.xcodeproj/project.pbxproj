@@ -72,7 +72,6 @@
 		1DF426CF251BDF6A0086386A /* photon-colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C49854D206173C800893DAE /* photon-colors.swift */; };
 		1DFE57FB27B2CB870025DE58 /* HighlightItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DFE57FA27B2CB870025DE58 /* HighlightItem.swift */; };
 		1DFE57FD27BADD7D0025DE58 /* HomepageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DFE57FC27BADD7C0025DE58 /* HomepageViewModel.swift */; };
-		1DFE57FF27BAE3150025DE58 /* HomepageSectionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DFE57FE27BAE3150025DE58 /* HomepageSectionType.swift */; };
 		210887CC293E8800000AB4EE /* RemoteTabsErrorCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 210887CB293E8800000AB4EE /* RemoteTabsErrorCell.swift */; };
 		2109478928AFD24C00B73D44 /* OnboardingViewControllerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2109478828AFD24C00B73D44 /* OnboardingViewControllerProtocol.swift */; };
 		210E0EB8298D9D4500BB4F33 /* DefaultSearchEngineProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A5F72F298D8BEE00234E5F /* DefaultSearchEngineProvider.swift */; };
@@ -189,6 +188,7 @@
 		2C1296E52B0B676C00FC0A04 /* SemanticColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB288DD2B07C8EF00A8FCB3 /* SemanticColor.swift */; };
 		2C1296E92B0BA55100FC0A04 /* LegacyThemeManager+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C1296E82B0BA55100FC0A04 /* LegacyThemeManager+Ecosia.swift */; };
 		2C1296EB2B0BA5D100FC0A04 /* UIButton+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C1296EA2B0BA5D100FC0A04 /* UIButton+Ecosia.swift */; };
+		2C1296EF2B0BA63E00FC0A04 /* EcosiaHomepageSectionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C1296EE2B0BA63E00FC0A04 /* EcosiaHomepageSectionType.swift */; };
 		2C28F96C201B2D4C00ABA8A5 /* MailAppSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C28F96B201B2D4C00ABA8A5 /* MailAppSettingsTests.swift */; };
 		2C2A5EF41E68469500F02659 /* PrivateBrowsingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A5EF31E68469500F02659 /* PrivateBrowsingTest.swift */; };
 		2C2A91291FA2410D002E36BD /* HistoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A91281FA2410D002E36BD /* HistoryTests.swift */; };
@@ -2428,6 +2428,7 @@
 		2BAB4A40A318F5A577488909 /* mr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = mr; path = mr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		2C1296E82B0BA55100FC0A04 /* LegacyThemeManager+Ecosia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LegacyThemeManager+Ecosia.swift"; sourceTree = "<group>"; };
 		2C1296EA2B0BA5D100FC0A04 /* UIButton+Ecosia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+Ecosia.swift"; sourceTree = "<group>"; };
+		2C1296EE2B0BA63E00FC0A04 /* EcosiaHomepageSectionType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaHomepageSectionType.swift; sourceTree = "<group>"; };
 		2C26401D9CCB8C2671EA2431 /* ta */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ta; path = ta.lproj/3DTouchActions.strings; sourceTree = "<group>"; };
 		2C28F96B201B2D4C00ABA8A5 /* MailAppSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailAppSettingsTests.swift; sourceTree = "<group>"; };
 		2C2A5EF31E68469500F02659 /* PrivateBrowsingTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PrivateBrowsingTest.swift; sourceTree = "<group>"; };
@@ -7853,9 +7854,26 @@
 			path = Extensions;
 			sourceTree = "<group>";
 		};
+		2C1296EC2B0BA5FC00FC0A04 /* Frontend */ = {
+			isa = PBXGroup;
+			children = (
+				2C1296ED2B0BA60400FC0A04 /* Home */,
+			);
+			path = Frontend;
+			sourceTree = "<group>";
+		};
+		2C1296ED2B0BA60400FC0A04 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				2C1296EE2B0BA63E00FC0A04 /* EcosiaHomepageSectionType.swift */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
 		2CB288D92B07C8EF00A8FCB3 /* Ecosia */ = {
 			isa = PBXGroup;
 			children = (
+				2C1296EC2B0BA5FC00FC0A04 /* Frontend */,
 				2CB288DA2B07C8EF00A8FCB3 /* MMP */,
 				2CB288DC2B07C8EF00A8FCB3 /* UI */,
 				2CB289242B07C8F000A8FCB3 /* Settings */,
@@ -13161,7 +13179,6 @@
 				CAA3B7E62497DCB60094E3C1 /* LoginDataSource.swift in Sources */,
 				8ADC2A1B2A33998100543DAA /* AppStoreReviewSetting.swift in Sources */,
 				8A5D1CA82A30D6D3005AD35C /* HomeSetting.swift in Sources */,
-				1DFE57FF27BAE3150025DE58 /* HomepageSectionType.swift in Sources */,
 				C2D1A10D2A66C70000205DCC /* BookmarksCoordinator.swift in Sources */,
 				396E38F11EE0C8EC00CC180F /* FxAPushMessageHandler.swift in Sources */,
 				8A76B01629F6EB3900A82607 /* ScreenshotService.swift in Sources */,
@@ -13420,6 +13437,7 @@
 				8A5D1CA42A30D69A005AD35C /* SearchSetting.swift in Sources */,
 				74BBDF472A17979000D3BEFE /* OnboardingDefaultBrowserModelProtocol.swift in Sources */,
 				8AD40FC727BADC3400672675 /* ToolbarTextField.swift in Sources */,
+				2C1296EF2B0BA63E00FC0A04 /* EcosiaHomepageSectionType.swift in Sources */,
 				8A720C5E2A4C85DA0003018A /* AccountSettingsDelegate.swift in Sources */,
 				CA90753824929B22005B794D /* NoLoginsView.swift in Sources */,
 				E4B423BE1AB9FE6A007E66C8 /* ReaderModeCache.swift in Sources */,
