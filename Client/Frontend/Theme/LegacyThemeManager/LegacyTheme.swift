@@ -47,6 +47,8 @@ protocol LegacyTheme {
     var browser: BrowserColor { get }
     var tabTray: TabTrayColor { get }
     var snackbar: SnackBarColor { get }
+    // Ecosia: Adapt theme
+    var ecosia: EcosiaTheme { get }
 }
 
 class LegacyNormalTheme: LegacyTheme {
@@ -55,4 +57,6 @@ class LegacyNormalTheme: LegacyTheme {
     var browser: BrowserColor { return BrowserColor() }
     var tabTray: TabTrayColor { return TabTrayColor() }
     var snackbar: SnackBarColor { return SnackBarColor() }
+    // Ecosia: Adapt theme
+    var ecosia: EcosiaTheme { return EcosiaTheme() }
 }

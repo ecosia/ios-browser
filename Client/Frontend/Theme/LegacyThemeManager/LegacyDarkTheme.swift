@@ -23,4 +23,6 @@ class LegacyDarkTheme: LegacyNormalTheme {
     override var browser: BrowserColor { return DarkBrowserColor() }
     override var tabTray: TabTrayColor { return DarkTabTrayColor() }
     override var snackbar: SnackBarColor { return SnackBarColor() }
+    // Ecosia: Adapt theme
+    override var ecosia: EcosiaTheme { DarkEcosiaTheme() }
 }

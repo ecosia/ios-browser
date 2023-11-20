@@ -19,6 +19,15 @@
       }
     },
     {
+      "identity" : "fmdb",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ccgus/fmdb",
+      "state" : {
+        "revision" : "61e51fde7f7aab6554f30ab061cc588b28a97d04",
+        "version" : "2.7.7"
+      }
+    },
+    {
       "identity" : "fuzi",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/nbhasin2/Fuzi.git",
@@ -43,6 +52,15 @@
       "state" : {
         "revision" : "63e6475bd275399b701951925c64fd4c9a5f7c2d",
         "version" : "54.0.0"
+      }
+    },
+    {
+      "identity" : "ios-core",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ecosia/ios-core",
+      "state" : {
+        "branch" : "main",
+        "revision" : "963d328b2c424a56a1f7557ddc4d35d05c1c31df"
       }
     },
     {
@@ -106,6 +124,24 @@
       "state" : {
         "revision" : "f222cbdf325885926566172f6f5f06af95473158",
         "version" : "5.6.0"
+      }
+    },
+    {
+      "identity" : "snowplow-ios-tracker",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/snowplow/snowplow-ios-tracker",
+      "state" : {
+        "revision" : "cc136256383ed50c754219895e34d25c48650314",
+        "version" : "5.6.0"
+      }
+    },
+    {
+      "identity" : "swiftsoup",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/scinfu/SwiftSoup",
+      "state" : {
+        "branch" : "2.5.3",
+        "revision" : "f707b8680cddb96dc1855632340a572ef37bbb98"
       }
     },
     {
