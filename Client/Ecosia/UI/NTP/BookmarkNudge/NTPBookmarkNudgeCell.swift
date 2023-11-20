@@ -133,7 +133,7 @@ final class NTPBookmarkNudgeCell: UICollectionViewCell, Themeable, ReusableCell 
         closeButton.addTarget(self, action: #selector(handleClose), for: .touchUpInside)
         openBookmarksButton.addTarget(self, action: #selector(handleOpenBookmarks), for: .touchUpInside)
         
-        listenForThemeChange(self.view)
+        listenForThemeChange(self.contentView)
     }
     
     @objc func applyTheme() {
