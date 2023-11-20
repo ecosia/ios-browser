@@ -14,6 +14,7 @@ import MobileCoreServices
 import Telemetry
 import Common
 import ComponentLibrary
+import Core
 
 class BrowserViewController: UIViewController,
                              SearchBarLocationProvider,
@@ -49,7 +50,9 @@ class BrowserViewController: UIViewController,
     var screenshotHelper: ScreenshotHelper!
     var searchTelemetry: SearchTelemetry?
     var searchLoader: SearchLoader?
-    var findInPageBar: FindInPageBar?
+    // Ecosia: Custom UI for FindInPageBar
+    // var findInPageBar: FindInPageBar?
+    var findInPageBar: EcosiaFindInPageBar?
     var zoomPageBar: ZoomPageBar?
     lazy var mailtoLinkHandler = MailtoLinkHandler()
     var urlFromAnotherApp: UrlToOpenModel?
@@ -165,7 +168,20 @@ class BrowserViewController: UIViewController,
         }
         return keyboardPressesHandlerValue
     }
-
+    
+    // Ecosia: Properties
+    // MARK: - Ecosia Properties
+    var shouldShowDefaultBrowserPromo: Bool { profile.prefs.intForKey(PrefsKeys.IntroSeen) == nil }
+    var shouldShowWhatsNewPageScreen: Bool { whatsNewDataProvider.shouldShowWhatsNewPage }
+    let whatsNewDataProvider = WhatsNewLocalDataProvider()
+    let referrals = Referrals()
+    
+    // Ecosia: Make `menuHelper` available at class level
+    var menuHelper: MainMenuActionHelper?
+    
+    // Ecosia: Add init to separate from Ecosia Properties
+    // MARK: - Init
+    
     init(
         profile: Profile,
         tabManager: TabManager,
@@ -295,7 +311,9 @@ class BrowserViewController: UIViewController,
 
     @objc
     fileprivate func appMenuBadgeUpdate() {
-        let actionNeeded = RustFirefoxAccounts.shared.isActionNeeded
+        // Ecosia: actionNeeded set to fasle
+        // let actionNeeded = RustFirefoxAccounts.shared.isActionNeeded
+        let actionNeeded = false
         let showWarningBadge = actionNeeded
 
         urlBar.warningMenuBadge(setVisible: showWarningBadge)
@@ -466,7 +484,8 @@ class BrowserViewController: UIViewController,
 
         updateLegacyTheme()
 
-        searchTelemetry = SearchTelemetry()
+        // Ecosia: removing SearchTelemetry
+        // searchTelemetry = SearchTelemetry()
 
         // Awesomebar Location Telemetry
         SearchBarSettingsViewModel.recordLocationTelemetry(for: isBottomSearchBar ? .bottom : .top)
@@ -625,7 +644,8 @@ class BrowserViewController: UIViewController,
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
+        // Ecosia: Present Intro logic
+        presentIntroViewController()
         screenshotHelper.viewIsVisible = true
 
         if let toast = self.pendingToast {
@@ -713,6 +733,12 @@ class BrowserViewController: UIViewController,
             themeManager.systemThemeChanged()
             updateLegacyTheme()
         }
+        // Ecosia: fixing theme changes when night mode is on
+        let shouldStayDark = LegacyThemeManager.instance.current.isDark
+        if let prefs = profile.prefs as? UserDefaultsInterface, NightModeHelper.isActivated(prefs) {
+            LegacyThemeManager.instance.themeChanged(from: previousTraitCollection, to: traitCollection, forceDark: shouldStayDark)
+        }
+
         setupMiddleButtonStatus(isLoading: false)
     }
 
@@ -895,6 +921,7 @@ class BrowserViewController: UIViewController,
         }
     }
 
+    /* Ecosia: unused method
     func resetBrowserChrome() {
         // animate and reset transform for tab chrome
         urlBar.updateAlphaForSubviews(1)
@@ -904,7 +931,8 @@ class BrowserViewController: UIViewController,
             view?.transform = .identity
         }
     }
-
+     */
+    
     // MARK: - Manage embedded content
 
     func frontEmbeddedContent(_ viewController: ContentContainable) {
@@ -2636,7 +2664,10 @@ extension BrowserViewController: TabTrayDelegate {
     // This function animates and resets the tab chrome transforms when
     // the tab tray dismisses.
     func tabTrayDidDismiss(_ tabTray: LegacyGridTabViewController) {
-        resetBrowserChrome()
+        // Ecosia: unused method
+        // resetBrowserChrome()
+        // Ecosia: check if any sheet needs display
+        presentInsightfulSheetsIfNeeded()
     }
 
     func tabTrayDidAddTab(_ tabTray: LegacyGridTabViewController, tab: Tab) {}
@@ -2755,5 +2786,21 @@ extension BrowserViewController {
 
     func trackNotificationPermission() {
         NotificationManager().getNotificationSettings(sendTelemetry: true) { _ in }
+    }
+}
+
+// Ecosia
+extension BrowserViewController {
+    
+    // Ecosia: Handle Referral
+    func openBlankNewTabAndClaimReferral(code: String) {
+        User.shared.referrals.pendingClaim = code
+
+        // on first start, browser is not in view hierarchy yet
+        guard !User.shared.firstTime else { return }
+        popToBVC()
+        openURLInNewTab(nil, isPrivate: false)
+        // Intro logic will trigger claiming referral
+        presentIntroViewController()
     }
 }

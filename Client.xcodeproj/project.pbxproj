@@ -189,6 +189,7 @@
 		2C1296E92B0BA55100FC0A04 /* LegacyThemeManager+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C1296E82B0BA55100FC0A04 /* LegacyThemeManager+Ecosia.swift */; };
 		2C1296EB2B0BA5D100FC0A04 /* UIButton+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C1296EA2B0BA5D100FC0A04 /* UIButton+Ecosia.swift */; };
 		2C1296EF2B0BA63E00FC0A04 /* EcosiaHomepageSectionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C1296EE2B0BA63E00FC0A04 /* EcosiaHomepageSectionType.swift */; };
+		2C1296F12B0BACED00FC0A04 /* BrowserCoordinator+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C1296F02B0BACED00FC0A04 /* BrowserCoordinator+Ecosia.swift */; };
 		2C28F96C201B2D4C00ABA8A5 /* MailAppSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C28F96B201B2D4C00ABA8A5 /* MailAppSettingsTests.swift */; };
 		2C2A5EF41E68469500F02659 /* PrivateBrowsingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A5EF31E68469500F02659 /* PrivateBrowsingTest.swift */; };
 		2C2A91291FA2410D002E36BD /* HistoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A91281FA2410D002E36BD /* HistoryTests.swift */; };
@@ -2429,6 +2430,7 @@
 		2C1296E82B0BA55100FC0A04 /* LegacyThemeManager+Ecosia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LegacyThemeManager+Ecosia.swift"; sourceTree = "<group>"; };
 		2C1296EA2B0BA5D100FC0A04 /* UIButton+Ecosia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+Ecosia.swift"; sourceTree = "<group>"; };
 		2C1296EE2B0BA63E00FC0A04 /* EcosiaHomepageSectionType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaHomepageSectionType.swift; sourceTree = "<group>"; };
+		2C1296F02B0BACED00FC0A04 /* BrowserCoordinator+Ecosia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BrowserCoordinator+Ecosia.swift"; sourceTree = "<group>"; };
 		2C26401D9CCB8C2671EA2431 /* ta */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ta; path = ta.lproj/3DTouchActions.strings; sourceTree = "<group>"; };
 		2C28F96B201B2D4C00ABA8A5 /* MailAppSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailAppSettingsTests.swift; sourceTree = "<group>"; };
 		2C2A5EF31E68469500F02659 /* PrivateBrowsingTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PrivateBrowsingTest.swift; sourceTree = "<group>"; };
@@ -8149,6 +8151,7 @@
 				2CB2894F2B07C8F000A8FCB3 /* Toolbar+URLBar */,
 				2C1296E82B0BA55100FC0A04 /* LegacyThemeManager+Ecosia.swift */,
 				2C1296EA2B0BA5D100FC0A04 /* UIButton+Ecosia.swift */,
+				2C1296F02B0BACED00FC0A04 /* BrowserCoordinator+Ecosia.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -13820,6 +13823,7 @@
 				E18EA57128AD46D3003F97FC /* WallpaperCollectionType.swift in Sources */,
 				C84655E42887394B00861B4A /* WallpaperMetadata.swift in Sources */,
 				8AB8572E27D94A1A0075C173 /* UXSizeClass.swift in Sources */,
+				2C1296F12B0BACED00FC0A04 /* BrowserCoordinator+Ecosia.swift in Sources */,
 				965C3C8F29313A1B006499ED /* AppSessionManager.swift in Sources */,
 				45D5EDA729269F7500311934 /* DataObserver.swift in Sources */,
 				961577922A38FDB300391E8D /* SponsoredTileDataUtility.swift in Sources */,
