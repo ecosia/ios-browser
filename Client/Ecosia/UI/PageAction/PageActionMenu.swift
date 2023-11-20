@@ -189,9 +189,9 @@ extension PageActionMenu: UITableViewDataSource, UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let actions = viewModel.actions[indexPath.section][indexPath.row]
-        let item = actions.item
+        let item = actions.items.first
         dismiss(animated: true) {
-            if let handler = item.tapHandler {
+            if let item, let handler = item.tapHandler {
                 handler(item)
             }
         }
