@@ -5,6 +5,7 @@
 import Foundation
 import Shared
 import Core
+import Common
 
 protocol NTPNewsCellDelegate: AnyObject {
     func openSeeAllNews()
@@ -16,8 +17,9 @@ final class NTPNewsCellViewModel {
     private let images = Images(.init(configuration: .ephemeral))
     weak var delegate: NTPNewsCellDelegate?
     weak var dataModelDelegate: HomepageDataModelDelegate?
-
-    init() {
+    var theme: Theme
+    
+    init(theme: Theme) {
         news.subscribeAndReceive(self) { [weak self] in
             guard let self = self else { return }
             self.items = $0
@@ -29,6 +31,11 @@ final class NTPNewsCellViewModel {
 
 // MARK: HomeViewModelProtocol
 extension NTPNewsCellViewModel: HomepageViewModelProtocol {
+    
+    func setTheme(theme: Theme) {
+        self.theme = theme
+    }
+
     var isEnabled: Bool {
         User.shared.showEcosiaNews
     }
@@ -45,7 +52,7 @@ extension NTPNewsCellViewModel: HomepageViewModelProtocol {
         }
     }
 
-    func section(for traitCollection: UITraitCollection) -> NSCollectionLayoutSection {
+    func section(for traitCollection: UITraitCollection, size: CGSize) -> NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
                                               heightDimension: .estimated(100.0))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)

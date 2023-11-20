@@ -44,7 +44,7 @@ final class NTPImpactDividerFooter: UICollectionReusableView, ReusableCell, Them
         
         applyTheme()
         
-        listenForThemeChange(self.view)
+        listenForThemeChange(self)
     }
 
     @objc func applyTheme() {

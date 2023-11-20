@@ -4,6 +4,7 @@
 
 import Foundation
 import Shared
+import Common
 
 final class NTPCustomizationSettingsViewController: SettingsTableViewController {
     init() {
@@ -46,7 +47,8 @@ final class NTPCustomizationSetting: BoolSetting {
     private var config: CustomizableNTPSettingConfig = .topSites
     
     convenience init(prefs: Prefs, config: CustomizableNTPSettingConfig) {
-        self.init(prefs: prefs,
+        self.init(prefs: prefs, 
+                  theme: AppContainer.shared.resolve(),
                   defaultValue: true,
                   titleText: .localized(config.localizedTitleKey))
         self.config = config

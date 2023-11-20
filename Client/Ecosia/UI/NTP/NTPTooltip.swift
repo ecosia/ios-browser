@@ -133,7 +133,7 @@ final class NTPTooltip: UICollectionReusableView, Themeable {
         applyTheme()
         addShadows()
 
-        listenForThemeChange(self.view)
+        listenForThemeChange(self)
     }
 
     func setText(_ text: String) {

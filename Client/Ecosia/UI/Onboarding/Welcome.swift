@@ -48,7 +48,7 @@ final class Welcome: UIViewController {
 
         if LegacyThemeManager.instance.systemThemeIsOn {
             let userInterfaceStyle = traitCollection.userInterfaceStyle
-            LegacyThemeManager.instance.current = userInterfaceStyle == .dark ? DarkTheme() : NormalTheme()
+            LegacyThemeManager.instance.current = userInterfaceStyle == .dark ? LegacyDarkTheme() : LegacyNormalTheme()
         }
 
         Task.detached {

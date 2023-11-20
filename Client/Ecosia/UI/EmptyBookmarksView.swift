@@ -146,7 +146,7 @@ final class EmptyBookmarksView: UIView, Themeable {
 
         applyTheme()
         
-        listenForThemeChange(self.view)
+        listenForThemeChange(self)
     }
     
     private func addSection(imageNamed: String, text: String, listItems: [String]? = nil) {
