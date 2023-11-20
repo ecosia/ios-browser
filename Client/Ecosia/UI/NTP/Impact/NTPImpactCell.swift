@@ -4,8 +4,9 @@
 
 import UIKit
 import Core
+import Common
 
-final class NTPImpactCell: UICollectionViewCell, NotificationThemeable, ReusableCell {
+final class NTPImpactCell: UICollectionViewCell, Themeable, ReusableCell {
     struct UX {
         static let cellsSpacing: CGFloat = 12
     }
@@ -26,6 +27,14 @@ final class NTPImpactCell: UICollectionViewCell, NotificationThemeable, Reusable
     private var impactRows: [NTPImpactRowView] {
         containerStack.arrangedSubviews.compactMap { $0 as? NTPImpactRowView }
     }
+    
+    // MARK: - Themeable Properties
+    
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeObserver: NSObjectProtocol?
+    var notificationCenter: NotificationProtocol = NotificationCenter.default
+
+    // MARK: - Init
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -60,7 +69,7 @@ final class NTPImpactCell: UICollectionViewCell, NotificationThemeable, Reusable
 
     func applyTheme() {
         containerStack.arrangedSubviews.forEach { view in
-            (view as? NotificationThemeable)?.applyTheme()
+            (view as? Themeable)?.applyTheme()
         }
     }
     

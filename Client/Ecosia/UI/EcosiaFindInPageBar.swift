@@ -133,7 +133,7 @@ final class EcosiaFindInPageBar: UIView {
         applyTheme()
         setupConstraints()
         
-        NotificationCenter.default.addObserver(self, selector: #selector(applyTheme), name: .DisplayThemeChanged, object: nil)
+        listenForThemeChange(self.view)
     }
 
     required init?(coder aDecoder: NSCoder) {

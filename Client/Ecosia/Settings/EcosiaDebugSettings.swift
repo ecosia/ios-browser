@@ -9,7 +9,7 @@ import Shared
 
 final class PushBackInstallation: HiddenSetting {
     override var title: NSAttributedString? {
-        return NSAttributedString(string: "Debug: Push back installation by 3 days (needs restart).", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
+        return NSAttributedString(string: "Debug: Push back installation by 3 days (needs restart).", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
@@ -21,12 +21,12 @@ final class PushBackInstallation: HiddenSetting {
 
 final class ToggleImpactIntro: HiddenSetting {
     override var title: NSAttributedString? {
-        return NSAttributedString(string: "Debug: Toggle - Show Impact intro", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
+        return NSAttributedString(string: "Debug: Toggle - Show Impact intro", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
     }
 
     override var status: NSAttributedString? {
         let isOn = User.shared.shouldShowImpactIntro
-        return NSAttributedString(string: isOn ? "True" : "False", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
+        return NSAttributedString(string: isOn ? "True" : "False", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
@@ -37,7 +37,7 @@ final class ToggleImpactIntro: HiddenSetting {
 
 final class ShowTour: HiddenSetting, WelcomeDelegate {
     override var title: NSAttributedString? {
-        return NSAttributedString(string: "Debug: Show Intro", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
+        return NSAttributedString(string: "Debug: Show Intro", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
@@ -55,7 +55,7 @@ final class ShowTour: HiddenSetting, WelcomeDelegate {
 
 final class CreateReferralCode: HiddenSetting {
     override var title: NSAttributedString? {
-        return NSAttributedString(string: "Debug: Referral Code \(User.shared.referrals.code ?? "-")", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
+        return NSAttributedString(string: "Debug: Referral Code \(User.shared.referrals.code ?? "-")", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
     }
 
     override var status: NSAttributedString? {
@@ -92,7 +92,7 @@ final class CreateReferralCode: HiddenSetting {
 
 final class AddReferral: HiddenSetting {
     override var title: NSAttributedString? {
-        return NSAttributedString(string: "Debug: Add Referral", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
+        return NSAttributedString(string: "Debug: Add Referral", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
@@ -110,7 +110,7 @@ final class AddReferral: HiddenSetting {
 
 final class AddClaim: HiddenSetting {
     override var title: NSAttributedString? {
-        return NSAttributedString(string: "Debug: Add Referral Claim", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
+        return NSAttributedString(string: "Debug: Add Referral Claim", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
@@ -129,11 +129,11 @@ final class AddClaim: HiddenSetting {
 
 final class ResetSearchCount: HiddenSetting {
     override var title: NSAttributedString? {
-        return NSAttributedString(string: "Debug: Set search count to 0", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
+        return NSAttributedString(string: "Debug: Set search count to 0", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
     }
 
     override var status: NSAttributedString? {
-        return NSAttributedString(string: "\(User.shared.searchCount)", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
+        return NSAttributedString(string: "\(User.shared.searchCount)", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
@@ -145,11 +145,11 @@ final class ResetSearchCount: HiddenSetting {
 
 final class ChangeSearchCount: HiddenSetting {
     override var title: NSAttributedString? {
-        return NSAttributedString(string: "Debug: Increase search count by 10", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
+        return NSAttributedString(string: "Debug: Increase search count by 10", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
     }
 
     override var status: NSAttributedString? {
-        return NSAttributedString(string: "\(User.shared.searchCount)", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
+        return NSAttributedString(string: "\(User.shared.searchCount)", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
@@ -162,13 +162,13 @@ final class ChangeSearchCount: HiddenSetting {
 final class UnleashDefaultBrowserSetting: HiddenSetting {
     override var title: NSAttributedString? {
 
-        return NSAttributedString(string: "Debug: Unleash default browser variant", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
+        return NSAttributedString(string: "Debug: Unleash default browser variant", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
     }
 
     override var status: NSAttributedString? {
         let variant = Unleash.getVariant(.defaultBrowser).name
 
-        return NSAttributedString(string: "\(variant) (Click to reset)", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
+        return NSAttributedString(string: "\(variant) (Click to reset)", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
     }
 
     override func onClick(_ navigationController: UINavigationController?) {

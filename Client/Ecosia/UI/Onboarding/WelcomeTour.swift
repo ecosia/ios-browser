@@ -4,12 +4,13 @@
 
 import UIKit
 import Core
+import Common
 
 protocol WelcomeTourDelegate: AnyObject {
     func welcomeTourDidFinish(_ tour: WelcomeTour)
 }
 
-final class WelcomeTour: UIViewController,  NotificationThemeable {
+final class WelcomeTour: UIViewController,  Themeable {
 
     private weak var navStack: UIStackView!
     private weak var labelStack: UIStackView!
@@ -34,6 +35,14 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
     private var steps: [Step]!
     private var current: Step?
     private weak var delegate: WelcomeTourDelegate?
+    
+    // MARK: - Themeable Properties
+    
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeObserver: NSObjectProtocol?
+    var notificationCenter: NotificationProtocol = NotificationCenter.default
+
+    // MARK: - Init
 
     init(delegate: WelcomeTourDelegate) {
         super.init(nibName: nil, bundle: nil)
@@ -279,7 +288,7 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
         container.subviews.forEach({ $0.removeFromSuperview() })
 
         guard let content = content else { return }
-        (content as? NotificationThemeable)?.applyTheme()
+        (content as? Themeable)?.applyTheme()
         container.addSubview(content)
         content.translatesAutoresizingMaskIntoConstraints = false
         content.leadingAnchor.constraint(equalTo: container.leadingAnchor).isActive = true
@@ -354,7 +363,7 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
         pageControl.currentPageIndicatorTintColor = .legacyTheme.ecosia.primaryButton
         ctaButton.backgroundColor = .Light.Button.secondary
         ctaButton.setTitleColor(.Light.Text.primary, for: .normal)
-        container.subviews.forEach({ ($0 as? NotificationThemeable)?.applyTheme() })
+        container.subviews.forEach({ ($0 as? Themeable)?.applyTheme() })
 
         imageView.backgroundColor = current?.background.color ?? .clear
         guard let current = current else { return }

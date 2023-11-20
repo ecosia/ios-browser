@@ -4,8 +4,9 @@
 
 import UIKit
 import Core
+import Common
 
-final class WelcomeTourAction: UIView, NotificationThemeable {
+final class WelcomeTourAction: UIView, Themeable {
 
     private weak var stack: UIStackView!
 
@@ -15,6 +16,14 @@ final class WelcomeTourAction: UIView, NotificationThemeable {
         formatter.usesGroupingSeparator = true
         return formatter
     }()
+    
+    // MARK: - Themeable Properties
+    
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeObserver: NSObjectProtocol?
+    var notificationCenter: NotificationProtocol = NotificationCenter.default
+
+    // MARK: - Init
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -60,7 +69,7 @@ final class WelcomeTourAction: UIView, NotificationThemeable {
 
     func applyTheme() {
         stack.arrangedSubviews.forEach { view in
-            (view as? NotificationThemeable)?.applyTheme()
+            (view as? Themeable)?.applyTheme()
         }
     }
     

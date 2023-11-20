@@ -32,6 +32,9 @@ class BrowserColor {
 
 class TabTrayColor {
     var tabTitleBlur: UIBlurEffect.Style { return UIBlurEffect.Style.extraLight }
+    // Ecosia: Add legacy color references from 9.1.0 App Version
+    var cellBackground: UIColor { return UIColor.white }
+    var screenshotBackground: UIColor { return UIColor.white }
 }
 
 class SnackBarColor {

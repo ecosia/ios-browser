@@ -3,8 +3,9 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
+import Common
 
-final class NTPImpactDividerFooter: UICollectionReusableView, ReusableCell, NotificationThemeable {
+final class NTPImpactDividerFooter: UICollectionReusableView, ReusableCell, Themeable {
     struct UX {
         static let dividerHeight: CGFloat = 1
         static let dividerTop: CGFloat = 20
@@ -18,6 +19,14 @@ final class NTPImpactDividerFooter: UICollectionReusableView, ReusableCell, Noti
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
+    
+    // MARK: - Themeable Properties
+    
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeObserver: NSObjectProtocol?
+    var notificationCenter: NotificationProtocol = NotificationCenter.default
+
+    // MARK: - Init
 
     required init?(coder: NSCoder) { nil }
 
@@ -35,7 +44,7 @@ final class NTPImpactDividerFooter: UICollectionReusableView, ReusableCell, Noti
         
         applyTheme()
         
-        NotificationCenter.default.addObserver(self, selector: #selector(applyTheme), name: .DisplayThemeChanged, object: nil)
+        listenForThemeChange(self.view)
     }
 
     @objc func applyTheme() {

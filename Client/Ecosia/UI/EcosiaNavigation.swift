@@ -3,8 +3,17 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import UIKit
+import Common
 
-final class EcosiaNavigation: UINavigationController, NotificationThemeable {
+final class EcosiaNavigation: UINavigationController, Themeable {
+    
+    // MARK: - Themeable Properties
+    
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeObserver: NSObjectProtocol?
+    var notificationCenter: NotificationProtocol = NotificationCenter.default
+
+    // MARK: - Init
 
     override init(rootViewController: UIViewController) {
         super.init(rootViewController: rootViewController)
@@ -30,16 +39,12 @@ final class EcosiaNavigation: UINavigationController, NotificationThemeable {
         navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationBar.shadowImage = UIImage()
         navigationBar.prefersLargeTitles = true
-        NotificationCenter.default.addObserver(self, selector: #selector(displayThemeChanged), name: .DisplayThemeChanged, object: nil)
+        listenForThemeChange(self.view)
         applyTheme()
     }
 
     func applyTheme() {
-        (topViewController as? NotificationThemeable)?.applyTheme()
-    }
-
-    @objc private func displayThemeChanged(notification: Notification) {
-        applyTheme()
+        (topViewController as? Themeable)?.applyTheme()
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {

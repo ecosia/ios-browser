@@ -3,8 +3,9 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0
 
 import UIKit
+import Common
 
-final class PageActionMenu: UIViewController, UIGestureRecognizerDelegate {
+final class PageActionMenu: UIViewController, UIGestureRecognizerDelegate, Themeable {
 
     // MARK: - UX
 
@@ -13,6 +14,12 @@ final class PageActionMenu: UIViewController, UIGestureRecognizerDelegate {
         static let shortcuts = "Shortcuts"
         static let rowHeight: CGFloat = 50
     }
+    
+    // MARK: - Themeable Properties
+    
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeObserver: NSObjectProtocol?
+    var notificationCenter: NotificationProtocol = NotificationCenter.default
 
     // MARK: - Variables
     
@@ -191,9 +198,9 @@ extension PageActionMenu: UITableViewDataSource, UITableViewDelegate {
     }
 }
 
-// MARK: - NotificationThemeable
+// MARK: - Themeable
 
-extension PageActionMenu: NotificationThemeable {
+extension PageActionMenu {
 
     func applyTheme() {
         tableView.reloadData()

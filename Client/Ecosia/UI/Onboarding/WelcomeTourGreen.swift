@@ -3,8 +3,9 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import UIKit
+import Common
 
-final class WelcomeTourGreen: UIView, NotificationThemeable {
+final class WelcomeTourGreen: UIView, Themeable {
     private lazy var searchLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -32,6 +33,14 @@ final class WelcomeTourGreen: UIView, NotificationThemeable {
         label.textAlignment = .left
         return label
     }()
+    
+    // MARK: - Themeable Properties
+    
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeObserver: NSObjectProtocol?
+    var notificationCenter: NotificationProtocol = NotificationCenter.default
+
+    // MARK: - Init
 
     init(isCounterEnabled: Bool = false) {
         super.init(frame: .zero)

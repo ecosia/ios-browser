@@ -4,13 +4,22 @@
 
 import UIKit
 import Core
+import Common
 
-final class NTPLogoCell: UICollectionViewCell, ReusableCell, NotificationThemeable {
+final class NTPLogoCell: UICollectionViewCell, ReusableCell, Themeable {
     static let bottomMargin: CGFloat = 6
     static let width: CGFloat = 144
 
     private weak var logo: UIImageView!
 
+    // MARK: - Themeable Properties
+    
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeObserver: NSObjectProtocol?
+    var notificationCenter: NotificationProtocol = NotificationCenter.default
+
+    // MARK: - Init
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()

@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class NTPCustomizationCell: UICollectionViewCell, NotificationThemeable, ReusableCell {
+final class NTPCustomizationCell: UICollectionViewCell, Themeable, ReusableCell {
     struct UX {
         static let buttonHeight: CGFloat = 40
         static let horizontalInset: CGFloat = 16
@@ -29,6 +29,14 @@ final class NTPCustomizationCell: UICollectionViewCell, NotificationThemeable, R
         button.clipsToBounds = true
         return button
     }()
+    
+    // MARK: - Themeable Properties
+    
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeObserver: NSObjectProtocol?
+    var notificationCenter: NotificationProtocol = NotificationCenter.default
+
+    // MARK: - Init
     
     override init(frame: CGRect) {
         super.init(frame: frame)

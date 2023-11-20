@@ -3,14 +3,23 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import UIKit
+import Common
 
-final class WelcomeTourProfit: UIView, NotificationThemeable {
+final class WelcomeTourProfit: UIView, Themeable {
     weak var beforeContainer: UIView!
     weak var beforeLabel: UILabel!
     weak var afterContainer: UIView!
     weak var afterLabel: UILabel!
     weak var treeImage: UIImageView!
 
+    // MARK: - Themeable Properties
+    
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeObserver: NSObjectProtocol?
+    var notificationCenter: NotificationProtocol = NotificationCenter.default
+
+    // MARK: - Init
+    
     init() {
         super.init(frame: .zero)
         setup()

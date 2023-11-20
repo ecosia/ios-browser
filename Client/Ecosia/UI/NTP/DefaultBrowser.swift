@@ -3,6 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import UIKit
+import Common
 
 @available(iOS 14, *)
 protocol DefaultBrowserDelegate: AnyObject {
@@ -10,7 +11,8 @@ protocol DefaultBrowserDelegate: AnyObject {
 }
 
 @available(iOS 14, *)
-final class DefaultBrowser: UIViewController, NotificationThemeable {
+final class DefaultBrowser: UIViewController, Themeable {
+    
     weak var content: UIView!
     weak var image: UIImageView!
     weak var waves: UIImageView!
@@ -22,6 +24,12 @@ final class DefaultBrowser: UIViewController, NotificationThemeable {
     weak var cta: UIButton!
     weak var skip: UIButton!
     weak var delegate: DefaultBrowserDelegate?
+    
+    // MARK: - Themeable Properties
+    
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeObserver: NSObjectProtocol?
+    var notificationCenter: NotificationProtocol = NotificationCenter.default
 
     convenience init(delegate: DefaultBrowserDelegate) {
         self.init(nibName: nil, bundle: nil)
@@ -53,7 +61,7 @@ final class DefaultBrowser: UIViewController, NotificationThemeable {
         setupViews()
         applyTheme()
 
-        NotificationCenter.default.addObserver(self, selector: #selector(applyTheme), name: .DisplayThemeChanged, object: nil)
+        listenForThemeChange(self.view)
     }
 
     override func viewWillAppear(_ animated: Bool) {

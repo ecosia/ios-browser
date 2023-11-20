@@ -15,6 +15,9 @@ private class DarkTableViewColor: TableViewColor {
 
 private class DarkTabTrayColor: TabTrayColor {
     override var tabTitleBlur: UIBlurEffect.Style { return UIBlurEffect.Style.dark }
+    // Ecosia: Add legacy color references from 9.1.0 App Version
+    override var screenshotBackground: UIColor { return UIColor.Photon.DarkGrey30 }
+    override var cellBackground: UIColor { return UIColor.Dark.Background.primary }
 }
 
 class LegacyDarkTheme: LegacyNormalTheme {

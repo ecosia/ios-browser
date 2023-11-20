@@ -10,7 +10,7 @@ private var disclosureIndicator: UIImageView {
     let config = UIImage.SymbolConfiguration(pointSize: 16)
     let disclosureIndicator = UIImageView(image: .init(systemName: "chevron.right", withConfiguration: config))
     disclosureIndicator.contentMode = .center
-    disclosureIndicator.tintColor = UIColor.theme.tableView.accessoryViewTint
+    disclosureIndicator.tintColor = UIColor.legacyTheme.tableView.accessoryViewTint
     disclosureIndicator.sizeToFit()
     return disclosureIndicator
 }
@@ -25,7 +25,7 @@ final class SearchAreaSetting: Setting {
     override var accessibilityIdentifier: String? { return .localized(.searchRegion) }
 
     init(settings: SettingsTableViewController) {
-        super.init(title: NSAttributedString(string: .localized(.searchRegion), attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText]))
+        super.init(title: NSAttributedString(string: .localized(.searchRegion), attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText]))
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
@@ -52,7 +52,7 @@ final class SafeSearchSettings: Setting {
     override var accessibilityIdentifier: String? { return .localized(.searchRegion) }
 
     init(settings: SettingsTableViewController) {
-        super.init(title: NSAttributedString(string: .localized(.safeSearch), attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText]))
+        super.init(title: NSAttributedString(string: .localized(.safeSearch), attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText]))
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
@@ -108,7 +108,7 @@ final class PersonalSearchSettings: BoolSetting {
 
 final class EcosiaPrivacyPolicySetting: Setting {
     override var title: NSAttributedString? {
-        return NSAttributedString(string: .localized(.privacy), attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
+        return NSAttributedString(string: .localized(.privacy), attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
     }
 
     override var url: URL? {
@@ -144,7 +144,7 @@ final class EcosiaSendFeedbackSetting: Setting {
     }
 
     override var title: NSAttributedString? {
-        return NSAttributedString(string: .localized(.sendFeedback), attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
+        return NSAttributedString(string: .localized(.sendFeedback), attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
@@ -157,7 +157,7 @@ final class EcosiaSendFeedbackSetting: Setting {
 
 final class EcosiaTermsSetting: Setting {
     override var title: NSAttributedString? {
-        return NSAttributedString(string: .localized(.terms), attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
+        return NSAttributedString(string: .localized(.terms), attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
     }
 
     override var url: URL? {
@@ -223,7 +223,7 @@ final class QuickSearchSearchSetting: Setting {
 
     init(settings: SettingsTableViewController) {
         self.profile = settings.profile
-        super.init(title: NSAttributedString(string: .localized(.quickSearch), attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText]))
+        super.init(title: NSAttributedString(string: .localized(.quickSearch), attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText]))
     }
 
     override func onClick(_ navigationController: UINavigationController?) {

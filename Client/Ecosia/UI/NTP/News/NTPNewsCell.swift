@@ -4,8 +4,9 @@
 
 import Core
 import UIKit
+import Common
 
-final class NTPNewsCell: UICollectionViewCell, NotificationThemeable, ReusableCell {
+final class NTPNewsCell: UICollectionViewCell, Themeable, ReusableCell {
     private var imageUrl: URL?
     private lazy var background: UIView = {
         let background = UIView()
@@ -90,6 +91,14 @@ final class NTPNewsCell: UICollectionViewCell, NotificationThemeable, ReusableCe
         return bottomLabel
     }()
     var defaultBackgroundColor: (() -> UIColor) = { .legacyTheme.ecosia.ntpCellBackground }
+    
+    // MARK: - Themeable Properties
+    
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeObserver: NSObjectProtocol?
+    var notificationCenter: NotificationProtocol = NotificationCenter.default
+
+    // MARK: - Init
 
     required init?(coder: NSCoder) { nil }
     

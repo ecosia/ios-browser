@@ -4,15 +4,24 @@
 
 import Core
 import UIKit
+import Common
 
 final class NewsController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource,
-    UICollectionViewDelegateFlowLayout, NotificationThemeable {
+    UICollectionViewDelegateFlowLayout, Themeable {
     private weak var collection: UICollectionView!
     private var items = [NewsModel]()
     private let images = Images(.init(configuration: .ephemeral))
     private let news = News()
     private let identifier = "news"
     var delegate: SharedHomepageCellDelegate?
+    
+    // MARK: - Themeable Properties
+    
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeObserver: NSObjectProtocol?
+    var notificationCenter: NotificationProtocol = NotificationCenter.default
+
+    // MARK: - Init
 
     required init?(coder: NSCoder) { nil }
 
@@ -131,10 +140,10 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
 
     func applyTheme() {
         collection.visibleSupplementaryViews(ofKind: UICollectionView.elementKindSectionHeader).forEach({
-            ($0 as? NotificationThemeable)?.applyTheme()
+            ($0 as? Themeable)?.applyTheme()
         })
         collection.visibleCells.forEach({
-            ($0 as? NotificationThemeable)?.applyTheme()
+            ($0 as? Themeable)?.applyTheme()
         })
         collection.backgroundColor = UIColor.legacyTheme.ecosia.modalBackground
         updateBarAppearance()
@@ -161,7 +170,7 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
     }
 }
 
-private final class NewsSubHeader: UICollectionReusableView, NotificationThemeable {
+private final class NewsSubHeader: UICollectionReusableView, Themeable {
     private weak var subtitle: UILabel!
     
     required init?(coder: NSCoder) { nil }

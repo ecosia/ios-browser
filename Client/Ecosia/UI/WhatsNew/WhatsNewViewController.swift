@@ -4,12 +4,13 @@
 
 import UIKit
 import Core
+import Common
 
 protocol WhatsNewViewDelegate: AnyObject {
     func whatsNewViewDidShow(_ viewController: WhatsNewViewController)
 }
 
-final class WhatsNewViewController: UIViewController {
+final class WhatsNewViewController: UIViewController, Themeable {
     
     // MARK: - UX
     
@@ -62,6 +63,12 @@ final class WhatsNewViewController: UIViewController {
     private let footerButton = UIButton()
     private let images = Images(.init(configuration: .ephemeral))
     weak var delegate: WhatsNewViewDelegate?
+
+    // MARK: - Themeable Properties
+    
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeObserver: NSObjectProtocol?
+    var notificationCenter: NotificationProtocol = NotificationCenter.default
 
     // MARK: - Init
 
@@ -234,9 +241,9 @@ extension WhatsNewViewController: UITableViewDataSource {
     }
 }
 
-// MARK: - NotificationThemeable
+// MARK: - Themeable
 
-extension WhatsNewViewController: NotificationThemeable {
+extension WhatsNewViewController {
 
     func applyTheme() {
         view.backgroundColor = .legacyTheme.ecosia.primaryBackground

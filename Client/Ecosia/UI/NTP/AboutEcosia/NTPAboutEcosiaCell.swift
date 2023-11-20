@@ -220,7 +220,7 @@ final class NTPAboutEcosiaCell: UICollectionViewCell, ReusableCell {
     }
 }
 
-extension NTPAboutEcosiaCell: NotificationThemeable {
+extension NTPAboutEcosiaCell: Themeable {
     func applyTheme() {
         outlineView.backgroundColor = .legacyTheme.ecosia.ntpCellBackground
         titleLabel.textColor = .legacyTheme.ecosia.primaryText

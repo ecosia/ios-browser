@@ -3,8 +3,10 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
+import Common
+import ComponentLibrary
 
-final class NTPImpactRowView: UIView, NotificationThemeable {
+final class NTPImpactRowView: UIView, Themeable {
     struct UX {
         static let cornerRadius: CGFloat = 10
         static let horizontalSpacing: CGFloat = 8
@@ -55,7 +57,7 @@ final class NTPImpactRowView: UIView, NotificationThemeable {
         button.titleLabel?.font = .preferredFont(forTextStyle: .callout)
         button.titleLabel?.textAlignment = .right
         button.contentHorizontalAlignment = .right
-        button.edgeSpacing = 0
+        button.buttonEdgeSpacing = 0
         button.setContentCompressionResistancePriority(.required, for: .horizontal)
         button.addTarget(self, action: #selector(buttonAction), for: .touchUpInside)
         button.clipsToBounds = true
@@ -93,6 +95,14 @@ final class NTPImpactRowView: UIView, NotificationThemeable {
         }
     }
     var customBackgroundColor: UIColor? = nil
+    
+    // MARK: - Themeable Properties
+    
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeObserver: NSObjectProtocol?
+    var notificationCenter: NotificationProtocol = NotificationCenter.default
+
+    // MARK: - Init
     
     init(info: ClimateImpactInfo) {
         self.info = info

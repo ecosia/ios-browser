@@ -3,11 +3,20 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import UIKit
+import Common
 
-final class MultiplyImpactStep: UIView, NotificationThemeable {
+final class MultiplyImpactStep: UIView, Themeable {
     private weak var indicator: UIImageView?
     private weak var titleLabel: UILabel?
     private weak var subtitleLabel: UILabel?
+    
+    // MARK: - Themeable Properties
+    
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeObserver: NSObjectProtocol?
+    var notificationCenter: NotificationProtocol = NotificationCenter.default
+
+    // MARK: - Init
     
     required init?(coder: NSCoder) { nil }
     init(title: String, subtitle: String, image: String) {

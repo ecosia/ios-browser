@@ -4,8 +4,9 @@
 
 import Shared
 import UIKit
+import Common
 
-class NTPLibraryCell: UICollectionViewCell, NotificationThemeable, ReusableCell {
+class NTPLibraryCell: UICollectionViewCell, Themeable, ReusableCell {
 
     var mainView = UIStackView()
     weak var widthConstraint: NSLayoutConstraint!
@@ -37,6 +38,14 @@ class NTPLibraryCell: UICollectionViewCell, NotificationThemeable, ReusableCell 
     }
 
     var shortcuts: [NTPLibraryShortcutView] = []
+    
+    // MARK: - Themeable Properties
+    
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeObserver: NSObjectProtocol?
+    var notificationCenter: NotificationProtocol = NotificationCenter.default
+
+    // MARK: - Init
 
     override init(frame: CGRect) {
         super.init(frame: frame)

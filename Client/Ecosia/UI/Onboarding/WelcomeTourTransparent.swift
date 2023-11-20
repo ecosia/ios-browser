@@ -4,12 +4,21 @@
 
 import UIKit
 import Core
+import Common
 
-final class WelcomeTourTransparent: UIView, NotificationThemeable {
+final class WelcomeTourTransparent: UIView, Themeable {
     private weak var stack: UIStackView!
     private weak var monthView: UIView!
     private weak var monthViewLabel: UILabel!
 
+    // MARK: - Themeable Properties
+    
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeObserver: NSObjectProtocol?
+    var notificationCenter: NotificationProtocol = NotificationCenter.default
+
+    // MARK: - Init
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
@@ -53,7 +62,7 @@ final class WelcomeTourTransparent: UIView, NotificationThemeable {
 
     func applyTheme() {
         stack.arrangedSubviews.forEach { view in
-            (view as? NotificationThemeable)?.applyTheme()
+            (view as? Themeable)?.applyTheme()
         }
         applyThemeToMonthView()
     }

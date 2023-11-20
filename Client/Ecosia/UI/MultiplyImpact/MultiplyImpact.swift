@@ -7,8 +7,9 @@ import Core
 import UniformTypeIdentifiers
 import MobileCoreServices
 import LinkPresentation
+import Common
 
-final class MultiplyImpact: UIViewController, NotificationThemeable {
+final class MultiplyImpact: UIViewController, Themeable {
     
     // MARK: - UX
     
@@ -98,6 +99,15 @@ final class MultiplyImpact: UIViewController, NotificationThemeable {
     private weak var fourthStep: MultiplyImpactStep?
 
     private weak var referrals: Referrals!
+    
+    // MARK: - Themeable Properties
+    
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeObserver: NSObjectProtocol?
+    var notificationCenter: NotificationProtocol = NotificationCenter.default
+
+    // MARK: - Init
+    
     required init?(coder: NSCoder) { nil }
     init(referrals: Referrals) {
         self.referrals = referrals

@@ -3,14 +3,23 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
+import Common
 
-final class WelcomeTourRow: UIView, NotificationThemeable {
+final class WelcomeTourRow: UIView, Themeable {
     let image: String
     let title: String
     let text: String
 
     weak var titleLabel: UILabel!
     weak var textLabel: UILabel!
+
+    // MARK: - Themeable Properties
+    
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeObserver: NSObjectProtocol?
+    var notificationCenter: NotificationProtocol = NotificationCenter.default
+
+    // MARK: - Init
 
     init(image: String, title: String, text: String) {
         self.image = image

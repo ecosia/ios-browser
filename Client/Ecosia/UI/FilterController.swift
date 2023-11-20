@@ -4,19 +4,28 @@
 
 import Core
 import UIKit
+import Common
 
 private let items: [(AdultFilter, String)] = [
     (.strict, .localized(.strict)),
     (.moderate, .localized(.moderate)),
     (.off, .localized(.off))]
 
-final class FilterController: UIViewController, UITableViewDataSource, UITableViewDelegate, NotificationThemeable {
+final class FilterController: UIViewController, UITableViewDataSource, UITableViewDelegate, Themeable {
     private weak var table: UITableView!
 
     private let identifier = "filter"
     static var current: String? {
         items.first(where: { $0.0 == User.shared.adultFilter }).map { $0.1 }
     }
+    
+    // MARK: - Themeable Properties
+    
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeObserver: NSObjectProtocol?
+    var notificationCenter: NotificationProtocol = NotificationCenter.default
+
+    // MARK: - View Life Cycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -59,12 +68,12 @@ final class FilterController: UIViewController, UITableViewDataSource, UITableVi
 
     func applyTheme() {
         table.visibleCells.forEach {
-            ($0 as? NotificationThemeable)?.applyTheme()
+            ($0 as? Themeable)?.applyTheme()
         }
 
-        view.backgroundColor = UIColor.theme.tableView.headerBackground
+        view.backgroundColor = UIColor.legacyTheme.tableView.headerBackground
         table.tintColor = UIColor.legacyTheme.ecosia.primaryBrand
-        table.separatorColor = UIColor.theme.tableView.separator
-        table.backgroundColor = UIColor.theme.tableView.headerBackground
+        table.separatorColor = UIColor.legacyTheme.tableView.separator
+        table.backgroundColor = UIColor.legacyTheme.tableView.headerBackground
     }
 }

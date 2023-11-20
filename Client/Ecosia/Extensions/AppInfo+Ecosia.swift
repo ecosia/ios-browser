@@ -5,6 +5,7 @@
 import Foundation
 import Shared
 import AdServices
+import Common
 
 extension AppInfo {
     

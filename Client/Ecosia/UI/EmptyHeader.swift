@@ -3,12 +3,21 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import UIKit
+import Common
 
-final class EmptyHeader: UITableViewHeaderFooterView, NotificationThemeable {
+final class EmptyHeader: UITableViewHeaderFooterView, Themeable {
     private let icon: String
     private weak var labelTitle: UILabel?
     private weak var labelSubtitle: UILabel?
     private weak var image: UIImageView?
+    
+    // MARK: - Themeable Properties
+    
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeObserver: NSObjectProtocol?
+    var notificationCenter: NotificationProtocol = NotificationCenter.default
+
+    // MARK: - Init
     
     required init?(coder: NSCoder) { nil }
     
@@ -57,6 +66,8 @@ final class EmptyHeader: UITableViewHeaderFooterView, NotificationThemeable {
         labelSubtitle.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
         labelSubtitle.widthAnchor.constraint(lessThanOrEqualToConstant: 180).isActive = true
     }
+    
+    // MARK: - Themeable
     
     func applyTheme() {
         image?.image = .init(named: icon)?.withRenderingMode(.alwaysTemplate)

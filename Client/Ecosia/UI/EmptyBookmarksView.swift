@@ -3,8 +3,9 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import UIKit
+import Common
 
-final class EmptyBookmarksView: UIView, NotificationThemeable {
+final class EmptyBookmarksView: UIView, Themeable {    
     
     private enum UX {
         static let TitleLabelFont = UIFontMetrics(forTextStyle: .body).scaledFont(for: .systemFont(ofSize: 17, weight: .semibold))
@@ -67,6 +68,14 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
     weak var delegate: EmptyBookmarksViewDelegate?
     
     var bottomMarginConstraint: NSLayoutConstraint?
+    
+    // MARK: - Themeable Properties
+    
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeObserver: NSObjectProtocol?
+    var notificationCenter: NotificationProtocol = NotificationCenter.default
+
+    // MARK: - Init
     
     required init?(coder: NSCoder) {
         assertionFailure("This view is only supposed to be instantiated programmatically")
@@ -137,7 +146,7 @@ final class EmptyBookmarksView: UIView, NotificationThemeable {
 
         applyTheme()
         
-        NotificationCenter.default.addObserver(self, selector: #selector(applyTheme), name: .DisplayThemeChanged, object: nil)
+        listenForThemeChange(self.view)
     }
     
     private func addSection(imageNamed: String, text: String, listItems: [String]? = nil) {

@@ -4,8 +4,9 @@
 
 import UIKit
 import Core
+import Common
 
-final class NTPBookmarkNudgeCell: UICollectionViewCell, NotificationThemeable, ReusableCell {
+final class NTPBookmarkNudgeCell: UICollectionViewCell, Themeable, ReusableCell {
     
     private enum UX {
         static let BackgroundCardCornerRadius: CGFloat = 8
@@ -74,6 +75,14 @@ final class NTPBookmarkNudgeCell: UICollectionViewCell, NotificationThemeable, R
     var openBookmarksHandler: (() -> Void)?
     var closeHandler: (() -> Void)?
     
+    // MARK: - Themeable Properties
+    
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeObserver: NSObjectProtocol?
+    var notificationCenter: NotificationProtocol = NotificationCenter.default
+
+    // MARK: - Init
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
@@ -124,7 +133,7 @@ final class NTPBookmarkNudgeCell: UICollectionViewCell, NotificationThemeable, R
         closeButton.addTarget(self, action: #selector(handleClose), for: .touchUpInside)
         openBookmarksButton.addTarget(self, action: #selector(handleOpenBookmarks), for: .touchUpInside)
         
-        NotificationCenter.default.addObserver(self, selector: #selector(applyTheme), name: .DisplayThemeChanged, object: nil)
+        listenForThemeChange(self.view)
     }
     
     @objc func applyTheme() {
@@ -153,7 +162,7 @@ final class NTPBookmarkNudgeCell: UICollectionViewCell, NotificationThemeable, R
     }
 }
 
-private final class NTPBookmarkNudgeCellBadge: UIView, NotificationThemeable {
+private final class NTPBookmarkNudgeCellBadge: UIView, Themeable {
 
     private enum UX {
         static let LabelInsetX: CGFloat = 8
@@ -171,6 +180,14 @@ private final class NTPBookmarkNudgeCellBadge: UIView, NotificationThemeable {
         label.text = .localized(.new)
         return label
     }()
+    
+    // MARK: - Themeable Properties
+    
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeObserver: NSObjectProtocol?
+    var notificationCenter: NotificationProtocol = NotificationCenter.default
+
+    // MARK: - Init
 
     init() {
         super.init(frame: .zero)

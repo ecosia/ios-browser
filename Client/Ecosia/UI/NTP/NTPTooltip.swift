@@ -3,8 +3,9 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import UIKit
+import Common
 
-final class NTPTooltip: UICollectionReusableView, NotificationThemeable {
+final class NTPTooltip: UICollectionReusableView, Themeable {
     enum TailPosition {
         case leading, center
     }
@@ -34,6 +35,14 @@ final class NTPTooltip: UICollectionReusableView, NotificationThemeable {
         button.isHidden = true
         return button
     }()
+    
+    // MARK: - Themeable Properties
+    
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeObserver: NSObjectProtocol?
+    var notificationCenter: NotificationProtocol = NotificationCenter.default
+
+    // MARK: - Init
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -124,7 +133,7 @@ final class NTPTooltip: UICollectionReusableView, NotificationThemeable {
         applyTheme()
         addShadows()
 
-        NotificationCenter.default.addObserver(self, selector: #selector(applyTheme), name: .DisplayThemeChanged, object: nil)
+        listenForThemeChange(self.view)
     }
 
     func setText(_ text: String) {
