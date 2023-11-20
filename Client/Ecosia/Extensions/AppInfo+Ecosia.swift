@@ -9,6 +9,10 @@ import Common
 
 extension AppInfo {
     
+    public static var ecosiaAppVersion: String {
+        return applicationBundle.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
+    }
+    
     private static let hasAttributedAppleSearchDownloadKey = "hasAttributedAppleSearchDownloadKey"
     
     /// Only available for iOS 14.3 and later (will return nil on earlier versions).
