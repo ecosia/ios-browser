@@ -5,10 +5,10 @@
 import UIKit
 import Core
 
-protocol HomepageViewControllerDelegate: AnyObject {
-    func homeDidTapSearchButton(_ home: HomepageViewController)
-    func showSettingsWithDeeplink(to destination: AppSettingsDeeplinkOption)
-}
+//protocol HomepageViewControllerDelegate: AnyObject {
+//    func homeDidTapSearchButton(_ home: HomepageViewController)
+//    func showSettingsWithDeeplink(to destination: AppSettingsDeeplinkOption)
+//}
 
 protocol SharedHomepageCellDelegate: AnyObject {
     func openLink(url: URL)
@@ -125,9 +125,9 @@ extension HomepageViewController: NTPBookmarkNudgeCellDelegate {
     }
 }
 
-extension HomepageViewController: NTPCustomizationCellDelegate {
-    func openNTPCustomizationSettings() {
-        Analytics.shared.ntp(.click, label: .customize)
-        delegate?.showSettingsWithDeeplink(to: .customizeHomepage)
-    }
-}
+//extension HomepageViewController: NTPCustomizationCellDelegate {
+//    func openNTPCustomizationSettings() {
+//        Analytics.shared.ntp(.click, label: .customize)
+//        delegate?.showSettingsWithDeeplink(to: .customizeHomepage)
+//    }
+//}
