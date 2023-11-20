@@ -99,6 +99,8 @@ extension BrowserViewController: TabToolbarDelegate, PhotonActionSheetProtocol {
             let viewModel = PhotonActionSheetViewModel(actions: actions, modalStyle: .popover, isMainMenu: true, isMainMenuInverted: shouldInverse)
             self.presentSheetWith(viewModel: viewModel, on: self, from: button)
         }
+        // Ecosia: Make `menuHelper` available at class level
+        self.menuHelper = menuHelper
     }
 
     func tabToolbarDidPressTabs(_ tabToolbar: TabToolbarProtocol, button: UIButton) {

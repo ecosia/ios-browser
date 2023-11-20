@@ -808,3 +808,10 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
         }
     }
 }
+
+// Ecosia: Add helper function from old codebase
+extension MainMenuActionHelper {
+    func getSharingAction() -> PhotonRowActions {
+        isFileURL ? getShareFileAction() : getShareAction()
+    }
+}
