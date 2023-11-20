@@ -273,8 +273,6 @@
 		2CB289AC2B07C8F000A8FCB3 /* NTPCustomizationSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB289272B07C8F000A8FCB3 /* NTPCustomizationSettingsViewController.swift */; };
 		2CB289AD2B07C8F000A8FCB3 /* Ecosia.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2CB289292B07C8F000A8FCB3 /* Ecosia.strings */; };
 		2CB289AE2B07C8F000A8FCB3 /* Plurals.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = 2CB2892B2B07C8F000A8FCB3 /* Plurals.stringsdict */; };
-		2CB289AF2B07C8F000A8FCB3 /* Clean.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB289342B07C8F000A8FCB3 /* Clean.swift */; };
-		2CB289B02B07C8F000A8FCB3 /* Validate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB289352B07C8F000A8FCB3 /* Validate.swift */; };
 		2CB289B12B07C8F000A8FCB3 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB289362B07C8F000A8FCB3 /* String.swift */; };
 		2CB289B22B07C8F000A8FCB3 /* FeatureManagement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB2893C2B07C8F000A8FCB3 /* FeatureManagement.swift */; };
 		2CB289B32B07C8F000A8FCB3 /* EngineShortcutsExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB2893F2B07C8F000A8FCB3 /* EngineShortcutsExperiment.swift */; };
@@ -13713,7 +13711,6 @@
 				74F80D342A0A52D700013C3D /* PrivacyPolicyViewController.swift in Sources */,
 				2CB289A62B07C8F000A8FCB3 /* WelcomeNavigation.swift in Sources */,
 				274A36CE239EB9EC00A21587 /* LibraryViewController+LibraryPanelDelegate.swift in Sources */,
-				2CB289B02B07C8F000A8FCB3 /* Validate.swift in Sources */,
 				C869912D28917688007ACC5C /* WallpaperImageLoader.swift in Sources */,
 				96A5F73829928B3700234E5F /* GeneralizedImageFetcher.swift in Sources */,
 				1D7B78992ADF328E0011E9F2 /* AppEvent.swift in Sources */,
@@ -13815,7 +13812,6 @@
 				C23889E12A4F3E7200429673 /* ParentCoordinatorDelegate.swift in Sources */,
 				8AD40FCD27BADC5C00672675 /* TabLocationContainerView.swift in Sources */,
 				8A720C602A4C8B700003018A /* SharedSettingsDelegate.swift in Sources */,
-				2CB289AF2B07C8F000A8FCB3 /* Clean.swift in Sources */,
 				2CB2897F2B07C8F000A8FCB3 /* NTPLayout.swift in Sources */,
 				211046CD2A7D842A00A7309F /* TPAccessoryInfo.swift in Sources */,
 				21E77E502AA8BAEC00FABA10 /* TabTrayState.swift in Sources */,
