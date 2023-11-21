@@ -65,9 +65,7 @@ final class BookmarksExchange: BookmarksExchangable {
                 bottomInset: view.layoutMargins.bottom
             )
         }
-        viewController.present(activityViewController, animated: true) {
-            toast.dismiss()
-        }
+        viewController.present(activityViewController, animated: true) {}
     }
     
     @MainActor

@@ -7,6 +7,7 @@ import Foundation
 import WebKit
 import Shared
 import Storage
+import Core
 
 class BrowserCoordinator: BaseCoordinator,
                           LaunchCoordinatorDelegate,
@@ -34,6 +35,7 @@ class BrowserCoordinator: BaseCoordinator,
     init(router: Router,
          screenshotService: ScreenshotService,
          profile: Profile = AppContainer.shared.resolve(),
+         referrals: Referrals, // Ecosia: Add referrals
          tabManager: TabManager = AppContainer.shared.resolve(),
          themeManager: ThemeManager = AppContainer.shared.resolve(),
          glean: GleanWrapper = DefaultGleanWrapper.shared,
@@ -145,6 +147,7 @@ class BrowserCoordinator: BaseCoordinator,
                 profile: profile,
                 isZeroSearch: inline,
                 toastContainer: toastContainer,
+                referrals: browserViewController.referrals, // Ecosia: Add Referrals
                 overlayManager: overlayManager)
             homepageViewController.homePanelDelegate = homepanelDelegate
             homepageViewController.libraryPanelDelegate = libraryPanelDelegate
