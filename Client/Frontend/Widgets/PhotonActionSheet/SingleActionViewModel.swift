@@ -72,6 +72,7 @@ class SingleActionViewModel {
          badgeIconNamed: String? = nil,
          bold: Bool? = false,
          tabCount: String? = nil,
+         isNew: Bool = false, // Ecosia: Add `isNew` bool
          tapHandler: ((SingleActionViewModel) -> Void)? = nil) {
         self.title = title
         self.iconString = iconString
@@ -84,6 +85,7 @@ class SingleActionViewModel {
         self.text = text
         self.bold = bold ?? false
         self.tabCount = tabCount
+        self.isNew = isNew // Ecosia: Add `isNew` bool
         self.badgeIconName = badgeIconNamed
     }
 
