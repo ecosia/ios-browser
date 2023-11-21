@@ -174,7 +174,7 @@ extension PageActionMenuCell {
         
         backgroundColor = .legacyTheme.ecosia.impactMultiplyCardBackground
         let actions = viewModel.actions[indexPath.section][indexPath.row]
-        let item = actions.item
+        guard let item = actions.items.first else { return }
         
         textLabel?.text = item.currentTitle
         textLabel?.textColor = .legacyTheme.ecosia.primaryText
@@ -191,7 +191,7 @@ extension PageActionMenuCell {
             imageView?.image = nil
         }
         
-        isNew(actions.item.isNew)
+        isNew(actions.items.first.isNew)
 
         if separatorCellsPositions.contains(position) {
             addCustomGroupedStyleLikeSeparator()

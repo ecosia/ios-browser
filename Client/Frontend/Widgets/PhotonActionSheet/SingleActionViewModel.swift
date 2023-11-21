@@ -39,6 +39,8 @@ class SingleActionViewModel {
     private(set) var needsIconActionableTint: Bool
 
     var isEnabled: Bool // Used by toggles like night mode to switch tint color
+    // Ecosia: Add `isNew` bool
+    var isNew: Bool // Used to display the "New" badge
     private(set) var bold = false
     private(set) var tabCount: String?
     private(set) var tapHandler: ((SingleActionViewModel) -> Void)?
