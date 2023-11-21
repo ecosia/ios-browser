@@ -102,7 +102,8 @@ class HomepageViewModel: FeatureFlaggable {
     var historyHighlightsViewModel: HistoryHighlightsViewModel
     var pocketViewModel: PocketViewModel
      */
-    var customizeButtonViewModel: CustomizeHomepageSectionViewModel
+    // Ecosia: Remove `customizeHome` reference
+    // var customizeButtonViewModel: CustomizeHomepageSectionViewModel
 
     var shouldDisplayHomeTabBanner: Bool {
         false
@@ -171,7 +172,8 @@ class HomepageViewModel: FeatureFlaggable {
                                                wallpaperManager: wallpaperManager)
         pocketDataAdaptor.delegate = pocketViewModel
          */
-        self.customizeButtonViewModel = CustomizeHomepageSectionViewModel(theme: theme)
+        // Ecosia: Remove `customizeHome` reference
+        // self.customizeButtonViewModel = CustomizeHomepageSectionViewModel(theme: theme)
         self.childViewModels = [headerViewModel,
                                 // Ecosia: Remove message Card  from HomePage
                                 // messageCardViewModel,
@@ -184,7 +186,9 @@ class HomepageViewModel: FeatureFlaggable {
                                 historyHighlightsViewModel,
                                 pocketViewModel,
                                  */
-                                customizeButtonViewModel]
+                                // Ecosia: Remove `customizeHome` reference
+                                // customizeButtonViewModel
+        ]
         self.isPrivate = isPrivate
 
         self.nimbus = nimbus

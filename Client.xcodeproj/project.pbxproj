@@ -662,7 +662,6 @@
 		8A13FA8B2AD82E6D007527AB /* ApplicationStateProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A13FA8A2AD82E6D007527AB /* ApplicationStateProvider.swift */; };
 		8A13FA8D2AD834FA007527AB /* BackgroundTabLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A13FA8C2AD834FA007527AB /* BackgroundTabLoader.swift */; };
 		8A13FA8F2AD83F00007527AB /* DefaultBackgroundTabLoaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A13FA8E2AD83F00007527AB /* DefaultBackgroundTabLoaderTests.swift */; };
-		8A161411282C035D00DDBB02 /* CustomizeHomepageSectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A161410282C035D00DDBB02 /* CustomizeHomepageSectionViewModel.swift */; };
 		8A171A6329F82B0E0085770E /* SceneDelegateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A171A6129F82AE20085770E /* SceneDelegateTests.swift */; };
 		8A19ACAB2A32895E001C2147 /* BrowserNavigationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A19ACAA2A32895E001C2147 /* BrowserNavigationHandler.swift */; };
 		8A19ACAE2A329058001C2147 /* PasswordManagerSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A19ACAD2A329058001C2147 /* PasswordManagerSetting.swift */; };
@@ -13652,7 +13651,6 @@
 				2CB289B22B07C8F000A8FCB3 /* FeatureManagement.swift in Sources */,
 				2CB289B82B07C8F000A8FCB3 /* ErrorPageHandler+Ecosia.swift in Sources */,
 				D8AA923421A602DC002605C0 /* HomePageSettingViewController.swift in Sources */,
-				8A161411282C035D00DDBB02 /* CustomizeHomepageSectionViewModel.swift in Sources */,
 				C8DC90C52A066B6A0008832B /* MarkupTokenizingUtility.swift in Sources */,
 				EBC4869D2195F58300CDA48D /* ErrorPageHelper.swift in Sources */,
 				C84655E8288739CB00861B4A /* WallpaperCollectionAvailability.swift in Sources */,
