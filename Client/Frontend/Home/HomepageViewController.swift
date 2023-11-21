@@ -535,10 +535,12 @@ private extension HomepageViewController {
             self?.contextMenuHelper.presentContextMenu(for: site, with: sourceView, sectionType: .topSites)
         }
 
+        /* Ecosia: Remove `recentlySaved` reference
         // Recently saved
         viewModel.recentlySavedViewModel.headerButtonAction = { [weak self] button in
             self?.openBookmarks(button)
         }
+         */
 
         /* Ecosia: Remove `jumpBackIn` reference
         // Jumpback in

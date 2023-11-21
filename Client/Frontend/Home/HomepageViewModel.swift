@@ -67,7 +67,8 @@ class HomepageViewModel: FeatureFlaggable {
             topSiteViewModel.isZeroSearch = isZeroSearch
             // Ecosia: Remove `jumpBackIn` section reference
             // jumpBackInViewModel.isZeroSearch = isZeroSearch
-            recentlySavedViewModel.isZeroSearch = isZeroSearch
+            // Ecosia: Ecosia: Remove `recentlySaved` reference
+            // recentlySavedViewModel.isZeroSearch = isZeroSearch
             // Ecosia: Remove History Highlights and Pocket
             // pocketViewModel.isZeroSearch = isZeroSearch
         }
@@ -93,7 +94,8 @@ class HomepageViewModel: FeatureFlaggable {
     // Ecosia: Remove message Card  from HomePage
     // var messageCardViewModel: HomepageMessageCardViewModel
     var topSiteViewModel: TopSitesViewModel
-    var recentlySavedViewModel: RecentlySavedViewModel
+    // Ecosia: Remove `recentlySaved` reference
+    // var recentlySavedViewModel: RecentlySavedViewModel
     // Ecosia: Remove `jumpBackIn` section reference
     // var jumpBackInViewModel: JumpBackInViewModel
     /* Ecosia: Remove History Highlights and Pocket
@@ -144,9 +146,11 @@ class HomepageViewModel: FeatureFlaggable {
             adaptor: jumpBackInAdaptor,
             wallpaperManager: wallpaperManager)
          */
+        /* Ecosia: Remove `recentlySaved` reference
         self.recentlySavedViewModel = RecentlySavedViewModel(profile: profile,
                                                              theme: theme,
                                                              wallpaperManager: wallpaperManager)
+         */
         let deletionUtility = HistoryDeletionUtility(with: profile)
         let historyDataAdaptor = HistoryHighlightsDataAdaptorImplementation(
             profile: profile,
@@ -174,7 +178,8 @@ class HomepageViewModel: FeatureFlaggable {
                                 topSiteViewModel,
                                 // Ecosia: Remove `jumpBackIn` section reference
                                 // jumpBackInViewModel,
-                                recentlySavedViewModel,
+                                // Ecosia: Remove `recentlySaved` reference
+                                // recentlySavedViewModel,
                                 /* Ecosia: Remove History Highlights and Pocket
                                 historyHighlightsViewModel,
                                 pocketViewModel,
@@ -186,7 +191,8 @@ class HomepageViewModel: FeatureFlaggable {
         topSiteViewModel.delegate = self
         // Ecosia: Remove History Highlights and Pocket
         // historyHighlightsViewModel.delegate = self
-        recentlySavedViewModel.delegate = self
+        // Ecosia: Remove `recentlySaved` reference
+        // recentlySavedViewModel.delegate = self
         // Ecosia: Remove History Highlights and Pocket
         // pocketViewModel.delegate = self
         // Ecosia: Remove `jumpBackIn` section reference
