@@ -44,7 +44,6 @@ final class BookmarksExchange: BookmarksExchangable {
             .localized(.exportingBookmarks),
             image: .view(activityIndicator),
             bottomContainer: view,
-            dismissAfter: nil,
             bottomInset: view.layoutMargins.bottom
         )
         
@@ -85,7 +84,6 @@ final class BookmarksExchange: BookmarksExchangable {
             .localized(.importingBookmarks),
             image: .view(activityIndicator),
             bottomContainer: view,
-            dismissAfter: nil,
             bottomInset: view.layoutMargins.bottom
         )
 
@@ -98,7 +96,6 @@ final class BookmarksExchange: BookmarksExchangable {
             Analytics.shared.bookmarksImportEnded(.success)
         } catch {
             Analytics.shared.bookmarksImportEnded(.error)
-            toast.dismiss()
             throw error
         }
     }
@@ -127,7 +124,6 @@ final class BookmarksExchange: BookmarksExchangable {
     
     @MainActor
     private func showImportSuccess(using toast: SimpleToast, in view: UIView) async {
-        toast.dismiss()
         
         SimpleToast().showAlertWithText(
             .localized(.bookmarksImported),
