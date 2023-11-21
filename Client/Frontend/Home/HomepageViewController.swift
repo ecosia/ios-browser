@@ -577,6 +577,7 @@ private extension HomepageViewController {
             self?.prepareSyncedTabContextualHint(onCell: syncedTabCell)
         }
 
+        /* Ecosia: Remove History Highlights and Pocket
         // History highlights
         viewModel.historyHighlightsViewModel.onTapItem = { [weak self] highlight in
             guard let url = highlight.siteUrl else {
@@ -607,7 +608,7 @@ private extension HomepageViewController {
         viewModel.pocketViewModel.onLongPressTileAction = { [weak self] (site, sourceView) in
             self?.contextMenuHelper.presentContextMenu(for: site, with: sourceView, sectionType: .pocket)
         }
-
+         */
         // Customize home
         viewModel.customizeButtonViewModel.onTapAction = { [weak self] _ in
             self?.openCustomizeHomeSettings()

@@ -55,9 +55,12 @@ class HomepageContextMenuHelper: HomepageContextMenuProtocol {
         var actions = [PhotonRowActions]()
         if sectionType == .topSites, let topSitesActions = getTopSitesActions(site: site) {
             actions = topSitesActions
+        }
+            /* Ecosia: Remove History Highlights and Pocket
         } else if sectionType == .pocket, let pocketActions = getPocketActions(site: site, with: sourceView) {
             actions = pocketActions
         }
+             */
 
         return actions
     }
@@ -75,11 +78,14 @@ class HomepageContextMenuHelper: HomepageContextMenuProtocol {
                                with sourceView: UIView?,
                                sectionType: HomepageSectionType
     ) -> [PhotonRowActions]? {
+        /* Ecosia: Remove History Highlights and Pocket
         guard sectionType == .historyHighlights,
               let highlightsActions = getHistoryHighlightsActions(for: highlightItem)
         else { return nil }
 
         return highlightsActions
+         */
+        return nil
     }
 
     // MARK: - Default actions
@@ -90,6 +96,7 @@ class HomepageContextMenuHelper: HomepageContextMenuProtocol {
         }.items
     }
 
+    /* Ecosia: Remove History Highlights and Pocket
     // MARK: - History Highlights
 
     private func getHistoryHighlightsActions(for highlightItem: HighlightItem) -> [PhotonRowActions]? {
@@ -113,11 +120,11 @@ class HomepageContextMenuHelper: HomepageContextMenuProtocol {
 
         return [openInNewTabAction, openInNewPrivateTabAction, bookmarkAction, shareAction]
     }
-
+     */
     private func getOpenInNewTabAction(siteURL: URL, sectionType: HomepageSectionType) -> PhotonRowActions {
         return SingleActionViewModel(title: .OpenInNewTabContextMenuTitle, iconString: StandardImageIdentifiers.Large.plus) { _ in
             self.delegate?.homePanelDidRequestToOpenInNewTab(siteURL, isPrivate: false)
-
+            /* Ecosia: Remove History Highlights and Pocket
             if sectionType == .pocket {
                 let originExtras = TelemetryWrapper.getOriginExtras(isZeroSearch: self.viewModel.isZeroSearch)
                 TelemetryWrapper.recordEvent(category: .action,
@@ -125,6 +132,7 @@ class HomepageContextMenuHelper: HomepageContextMenuProtocol {
                                              object: .pocketStory,
                                              extras: originExtras)
             }
+             */
         }.items
     }
 

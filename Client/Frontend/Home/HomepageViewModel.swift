@@ -67,7 +67,8 @@ class HomepageViewModel: FeatureFlaggable {
             topSiteViewModel.isZeroSearch = isZeroSearch
             jumpBackInViewModel.isZeroSearch = isZeroSearch
             recentlySavedViewModel.isZeroSearch = isZeroSearch
-            pocketViewModel.isZeroSearch = isZeroSearch
+            // Ecosia: Remove History Highlights and Pocket
+            // pocketViewModel.isZeroSearch = isZeroSearch
         }
     }
 
@@ -93,8 +94,10 @@ class HomepageViewModel: FeatureFlaggable {
     var topSiteViewModel: TopSitesViewModel
     var recentlySavedViewModel: RecentlySavedViewModel
     var jumpBackInViewModel: JumpBackInViewModel
+    /* Ecosia: Remove History Highlights and Pocket
     var historyHighlightsViewModel: HistoryHighlightsViewModel
     var pocketViewModel: PocketViewModel
+     */
     var customizeButtonViewModel: CustomizeHomepageSectionViewModel
 
     /* Ecosia: Remove message Card  from HomePage
@@ -145,6 +148,7 @@ class HomepageViewModel: FeatureFlaggable {
             profile: profile,
             tabManager: tabManager,
             deletionUtility: deletionUtility)
+        /* Ecosia: Remove History Highlights and Pocket
         self.historyHighlightsViewModel = HistoryHighlightsViewModel(
             with: profile,
             isPrivate: isPrivate,
@@ -158,7 +162,7 @@ class HomepageViewModel: FeatureFlaggable {
                                                prefs: profile.prefs,
                                                wallpaperManager: wallpaperManager)
         pocketDataAdaptor.delegate = pocketViewModel
-
+         */
         self.customizeButtonViewModel = CustomizeHomepageSectionViewModel(theme: theme)
         self.childViewModels = [headerViewModel,
                                 // Ecosia: Remove message Card  from HomePage
@@ -166,16 +170,20 @@ class HomepageViewModel: FeatureFlaggable {
                                 topSiteViewModel,
                                 jumpBackInViewModel,
                                 recentlySavedViewModel,
+                                /* Ecosia: Remove History Highlights and Pocket
                                 historyHighlightsViewModel,
                                 pocketViewModel,
+                                 */
                                 customizeButtonViewModel]
         self.isPrivate = isPrivate
 
         self.nimbus = nimbus
         topSiteViewModel.delegate = self
-        historyHighlightsViewModel.delegate = self
+        // Ecosia: Remove History Highlights and Pocket
+        // historyHighlightsViewModel.delegate = self
         recentlySavedViewModel.delegate = self
-        pocketViewModel.delegate = self
+        // Ecosia: Remove History Highlights and Pocket
+        // pocketViewModel.delegate = self
         jumpBackInViewModel.delegate = self
         // Ecosia: Remove message Card  from HomePage
         // messageCardViewModel.delegate = self
