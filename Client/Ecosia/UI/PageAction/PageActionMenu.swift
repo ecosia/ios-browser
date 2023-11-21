@@ -21,7 +21,7 @@ final class PageActionMenu: UIViewController, UIGestureRecognizerDelegate, Theme
     var themeObserver: NSObjectProtocol?
     var notificationCenter: NotificationProtocol = NotificationCenter.default
 
-    // MARK: - Variables
+    // MARK: - Properties
     
     private var tableView = UITableView(frame: .zero, style: .plain)
     private var knob = UIView()
