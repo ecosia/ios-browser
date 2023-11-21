@@ -8,6 +8,7 @@ import Storage
 import MozillaAppServices
 import Common
 import ComponentLibrary
+import Core
 
 class HomepageViewController: UIViewController, FeatureFlaggable, Themeable, ContentContainable,
                                 SearchBarLocationProvider {
@@ -42,7 +43,9 @@ class HomepageViewController: UIViewController, FeatureFlaggable, Themeable, Con
     private lazy var wallpaperView: WallpaperBackgroundView = .build { _ in }
     private var jumpBackInContextualHintViewController: ContextualHintViewController
     private var syncTabContextualHintViewController: ContextualHintViewController
-    private var collectionView: UICollectionView! = nil
+    // Ecosia: Expose `collectionView` in extensions
+    // private var collectionView: UICollectionView! = nil
+    var collectionView: UICollectionView! = nil
     private var logger: Logger
     var contentType: ContentType = .homepage
 
@@ -65,6 +68,7 @@ class HomepageViewController: UIViewController, FeatureFlaggable, Themeable, Con
          isZeroSearch: Bool = false,
          toastContainer: UIView,
          tabManager: TabManager = AppContainer.shared.resolve(),
+         referrals: Referrals, // Ecosia: Add referrals
          overlayManager: OverlayModeManager,
          userDefaults: UserDefaultsInterface = UserDefaults.standard,
          themeManager: ThemeManager = AppContainer.shared.resolve(),
@@ -78,6 +82,7 @@ class HomepageViewController: UIViewController, FeatureFlaggable, Themeable, Con
         self.viewModel = HomepageViewModel(profile: profile,
                                            isPrivate: isPrivate,
                                            tabManager: tabManager,
+                                           referrals: referrals, // Ecosia: Add referrals
                                            theme: themeManager.currentTheme)
 
         let jumpBackInContextualViewProvider = ContextualHintViewProvider(forHintType: .jumpBackIn,
