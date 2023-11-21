@@ -129,6 +129,7 @@ extension TopSitesViewModel: HomepageViewModelProtocol, FeatureFlaggable {
     }
 
     var headerViewModel: LabelButtonHeaderViewModel {
+        /* Ecosia: no header for top sites
         // Only show a header if the firefox browser logo isn't showing
         let shouldShow = !featureFlags.isFeatureEnabled(.wallpapers, checking: .buildOnly)
         var textColor: UIColor?
@@ -141,6 +142,8 @@ extension TopSitesViewModel: HomepageViewModelProtocol, FeatureFlaggable {
             titleA11yIdentifier: AccessibilityIdentifiers.FirefoxHomepage.SectionTitles.topSites,
             isButtonHidden: true,
             textColor: textColor)
+         */
+        .emptyHeader
     }
 
     var isEnabled: Bool {
