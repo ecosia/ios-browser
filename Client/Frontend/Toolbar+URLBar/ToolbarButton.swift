@@ -8,9 +8,12 @@ import Shared
 
 class ToolbarButton: UIButton {
     // MARK: - Variables
-
-    private var selectedTintColor: UIColor!
-    private var unselectedTintColor: UIColor!
+    
+    // Ecosia: Modify accessors
+    // private var selectedTintColor: UIColor!
+    // private var unselectedTintColor: UIColor!
+    var selectedTintColor: UIColor!
+    var unselectedTintColor: UIColor!
     private var disabledTintColor: UIColor!
 
     // Optionally can associate a separator line that hide/shows along with the button

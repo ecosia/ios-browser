@@ -4,8 +4,9 @@
 
 import UIKit
 import Shared
+import Common
 
-class CircleButton: ToolbarButton {
+class CircleButton: ToolbarButton, Themeable {
     enum Config {
         case search
         case newTab
@@ -25,7 +26,7 @@ class CircleButton: ToolbarButton {
         var accessibilityLabel: String {
             switch self {
             case .search: return .TabToolbarSearchAccessibilityLabel
-            case .newTab: return .TabToolbarNewTabAccessibilityLabel
+            case .newTab: return .TabTrayButtonNewTabAccessibilityLabel
             }
         }
     }
@@ -37,6 +38,10 @@ class CircleButton: ToolbarButton {
         }
     }
     private var margin: CGFloat = 8
+    
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeObserver: NSObjectProtocol?
+    var notificationCenter: NotificationProtocol = NotificationCenter.default
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -73,8 +78,8 @@ class CircleButton: ToolbarButton {
         circle.center = .init(x: bounds.width/2, y: bounds.height/2)
         circle.isHidden = config.shouldHideCircle
     }
-
-    override func applyTheme() {
+    
+    func applyTheme() {
         circle.backgroundColor = UIColor.legacyTheme.ecosia.tertiaryBackground
         tintColor = config.shouldHideCircle ? .legacyTheme.ecosia.primaryText : .legacyTheme.ecosia.primaryButton
         selectedTintColor = UIColor.legacyTheme.ecosia.primaryButtonActive
