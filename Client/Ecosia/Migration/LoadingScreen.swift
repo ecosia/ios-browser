@@ -90,7 +90,7 @@ final class LoadingScreen: UIViewController {
             UIApplication.shared.endBackgroundTask(self.backgroundTaskID!)
             self.backgroundTaskID = .invalid
             // force shutting down profile to avoid crash by system
-            self.profile._shutdown(force: true)
+            self.profile.shutdown()
         })
 
         let ecosiaImport = EcosiaImport(profile: profile)
@@ -116,7 +116,7 @@ final class LoadingScreen: UIViewController {
             }
 
             if UIApplication.shared.applicationState != .active {
-                self?.profile._shutdown(force: false)
+                self?.profile.shutdown()
             }
         }
     }
