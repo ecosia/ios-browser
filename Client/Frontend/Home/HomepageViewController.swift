@@ -451,7 +451,8 @@ extension HomepageViewController: UICollectionViewDelegate, UICollectionViewData
             // Configure header only if section is shown
             let headerViewModel = sectionViewModel.shouldShow ? sectionViewModel.headerViewModel : LabelButtonHeaderViewModel.emptyHeader
             headerView.configure(viewModel: headerViewModel, theme: themeManager.currentTheme)
-
+            
+            /* Ecosia: Remove `jumpBackIn` section reference
             // Jump back in header specific setup
             if sectionViewModel.sectionType == .jumpBackIn {
                 self.viewModel.jumpBackInViewModel.sendImpressionTelemetry()
@@ -461,6 +462,7 @@ extension HomepageViewController: UICollectionViewDelegate, UICollectionViewData
                     self?.prepareJumpBackInContextualHint(onView: headerView)
                 }
             }
+             */
             return headerView
         }
 
