@@ -5,6 +5,7 @@
 import Common
 import MozillaAppServices
 import Shared
+import Core
 
 protocol HomepageViewModelDelegate: AnyObject {
     func reloadView()
@@ -111,11 +112,20 @@ class HomepageViewModel: FeatureFlaggable {
         // return messageCardViewModel.shouldDisplayMessageCard
     }
     
+    // Ecosia: Add Ecosia's ViewModels
+    var bookmarkNudgeViewModel: NTPBookmarkNudgeCellViewModel
+    var libraryViewModel: NTPLibraryCellViewModel
+    var impactViewModel: NTPImpactCellViewModel
+    var newsViewModel: NTPNewsCellViewModel
+    var aboutEcosiaViewModel: NTPAboutEcosiaCellViewModel
+    var ntpCustomizationViewModel: NTPCustomizationCellViewModel
+    
     // MARK: - Initializers
     init(profile: Profile,
          isPrivate: Bool,
          tabManager: TabManager,
          nimbus: FxNimbus = FxNimbus.shared,
+         referrals: Referrals, // Ecosia: Add referrals
          isZeroSearch: Bool = false,
          theme: Theme,
          wallpaperManager: WallpaperManager = WallpaperManager(),
@@ -134,6 +144,14 @@ class HomepageViewModel: FeatureFlaggable {
         self.topSiteViewModel = TopSitesViewModel(profile: profile,
                                                   theme: theme,
                                                   wallpaperManager: wallpaperManager)
+        // Ecosia: Add Ecosia's ViewModels
+        self.libraryViewModel = NTPLibraryCellViewModel(theme: theme)
+        self.bookmarkNudgeViewModel = NTPBookmarkNudgeCellViewModel(theme: theme)
+        self.impactViewModel = NTPImpactCellViewModel(referrals: referrals, theme: theme)
+        self.newsViewModel = NTPNewsCellViewModel(theme: theme)
+        self.aboutEcosiaViewModel = NTPAboutEcosiaCellViewModel(theme: theme)
+        self.ntpCustomizationViewModel = NTPCustomizationCellViewModel(theme: theme)
+
         self.wallpaperManager = wallpaperManager
 
         let jumpBackInAdaptor = JumpBackInDataAdaptorImplementation(profile: profile,
@@ -188,10 +206,20 @@ class HomepageViewModel: FeatureFlaggable {
                                  */
                                 // Ecosia: Remove `customizeHome` reference
                                 // customizeButtonViewModel
+                                
+                                // Ecosia: Add Ecosia's ViewModels
+                                bookmarkNudgeViewModel,
+                                libraryViewModel,
+                                impactViewModel,
+                                newsViewModel,
+                                aboutEcosiaViewModel,
+                                ntpCustomizationViewModel
         ]
         self.isPrivate = isPrivate
 
         self.nimbus = nimbus
+        // Ecosia: Add Ecosia's ViewModels delegates
+        newsViewModel.dataModelDelegate = self
         topSiteViewModel.delegate = self
         // Ecosia: Remove History Highlights and Pocket
         // historyHighlightsViewModel.delegate = self
