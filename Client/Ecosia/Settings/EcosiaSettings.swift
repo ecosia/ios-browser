@@ -5,6 +5,7 @@
 import Foundation
 import Core
 import Shared
+import Common
 
 private var disclosureIndicator: UIImageView {
     let config = UIImage.SymbolConfiguration(pointSize: 16)
@@ -31,9 +32,9 @@ final class SearchAreaSetting: Setting {
     override func onClick(_ navigationController: UINavigationController?) {
         navigationController?.pushViewController(MarketsController(style: .insetGrouped), animated: true)
     }
-
-    override func onConfigureCell(_ cell: UITableViewCell) {
-        super.onConfigureCell(cell)
+    
+    override func onConfigureCell(_ cell: UITableViewCell, theme: Theme) {
+        super.onConfigureCell(cell, theme: theme)
         cell.detailTextLabel?.numberOfLines = 2
         cell.detailTextLabel?.adjustsFontSizeToFitWidth = true
         cell.detailTextLabel?.minimumScaleFactor = 0.8
@@ -59,16 +60,16 @@ final class SafeSearchSettings: Setting {
         navigationController?.pushViewController(FilterController(), animated: true)
     }
 
-    override func onConfigureCell(_ cell: UITableViewCell) {
-        super.onConfigureCell(cell)
+    override func onConfigureCell(_ cell: UITableViewCell, theme: Theme) {
+        super.onConfigureCell(cell, theme: theme)
         cell.detailTextLabel?.numberOfLines = 2
         cell.textLabel?.numberOfLines = 2
     }
 }
 
 final class AutoCompleteSettings: BoolSetting {
-    convenience init(prefs: Prefs) {
-        self.init(prefs: prefs, prefKey: "", defaultValue: true,
+    convenience init(prefs: Prefs, theme: Theme) {
+        self.init(prefs: prefs, theme: theme, prefKey: "", defaultValue: true,
                 titleText: .localized(.autocomplete),
                 statusText: .localized(.shownUnderSearchField), settingDidChange: { value in
 
@@ -87,13 +88,11 @@ final class AutoCompleteSettings: BoolSetting {
 }
 
 final class PersonalSearchSettings: BoolSetting {
-    convenience init(prefs: Prefs) {
-        self.init(prefs: prefs, prefKey: "", defaultValue: false,
+    convenience init(prefs: Prefs, theme: Theme) {
+        self.init(prefs: prefs, theme: theme, prefKey: "", defaultValue: false,
                 titleText: .localized(.personalizedResults),
                 statusText: .localized(.relevantResults), settingDidChange: { value in
-
                     User.shared.personalized = value
-
                 })
     }
 
@@ -171,8 +170,8 @@ final class EcosiaTermsSetting: Setting {
 }
 
 final class EcosiaSendAnonymousUsageDataSetting: BoolSetting {
-    convenience init(prefs: Prefs) {
-        self.init(prefs: prefs,
+    convenience init(prefs: Prefs, theme: Theme) {
+        self.init(prefs: prefs, theme: theme,
                   prefKey: "",
                   defaultValue: true,
                   titleText: .localized(.sendUsageDataSettingsTitle),
@@ -228,10 +227,19 @@ final class QuickSearchSearchSetting: Setting {
 
     override func onClick(_ navigationController: UINavigationController?) {
         Analytics.shared.accessQuickSearchSettingsScreen()
-        let viewController = SearchSettingsTableViewController()
-        viewController.model = profile.searchEngines
-        viewController.profile = profile
+        let viewController = SearchSettingsTableViewController(profile: profile)
         navigationController?.pushViewController(viewController, animated: true)
     }
 }
 
+extension Setting {
+    // Helper method to set up and push a SettingsContentViewController
+    func setUpAndPushSettingsContentViewController(_ navigationController: UINavigationController?, _ url: URL? = nil) {
+        if let url = self.url {
+            let viewController = SettingsContentViewController()
+            viewController.settingsTitle = self.title
+            viewController.url = url
+            navigationController?.pushViewController(viewController, animated: true)
+        }
+    }
+}
