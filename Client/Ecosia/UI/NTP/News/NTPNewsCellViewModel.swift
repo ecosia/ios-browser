@@ -20,6 +20,7 @@ final class NTPNewsCellViewModel {
     var theme: Theme
     
     init(theme: Theme) {
+        self.theme = theme
         news.subscribeAndReceive(self) { [weak self] in
             guard let self = self else { return }
             self.items = $0

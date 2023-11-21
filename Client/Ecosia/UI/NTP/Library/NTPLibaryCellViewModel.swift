@@ -5,6 +5,7 @@
 import Foundation
 import Shared
 import Core
+import Common
 
 protocol NTPLibraryDelegate: AnyObject {
     func libraryCellOpenBookmarks()
@@ -15,11 +16,20 @@ protocol NTPLibraryDelegate: AnyObject {
 
 final class NTPLibraryCellViewModel {
     weak var delegate: NTPLibraryDelegate?
+    var theme: Theme
+    
+    init(delegate: NTPLibraryDelegate? = nil, theme: Theme) {
+        self.delegate = delegate
+        self.theme = theme
+    }
 }
-
 
 // MARK: HomeViewModelProtocol
 extension NTPLibraryCellViewModel: HomepageViewModelProtocol {
+        
+    func setTheme(theme: Theme) {
+        self.theme = theme
+    }
 
     var sectionType: HomepageSectionType {
         return .libraryShortcuts
@@ -29,7 +39,7 @@ extension NTPLibraryCellViewModel: HomepageViewModelProtocol {
         return .emptyHeader
     }
 
-    func section(for traitCollection: UITraitCollection) -> NSCollectionLayoutSection {
+    func section(for traitCollection: UITraitCollection, size: CGSize) -> NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
                                               heightDimension: .fractionalHeight(1.0))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)

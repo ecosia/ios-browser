@@ -5,6 +5,7 @@
 import Foundation
 import Shared
 import Core
+import Common
 
 protocol NTPImpactCellDelegate: AnyObject {
     func impactCellButtonClickedWithInfo(_ info: ClimateImpactInfo)
@@ -37,8 +38,12 @@ final class NTPImpactCellViewModel {
     private let searchesCounter = SearchesCounter()
     private var cells = [Int:NTPImpactCell]()
     private let referrals: Referrals
-    init(referrals: Referrals) {
+    
+    var theme: Theme
+    
+    init(referrals: Referrals, theme: Theme) {
         self.referrals = referrals
+        self.theme = theme
         
         referrals.subscribe(self) { [weak self] _ in
             guard let self = self else { return }
@@ -88,6 +93,10 @@ final class NTPImpactCellViewModel {
 
 // MARK: HomeViewModelProtocol
 extension NTPImpactCellViewModel: HomepageViewModelProtocol {
+    
+    func setTheme(theme: Theme) {
+        self.theme = theme
+    }
 
     var sectionType: HomepageSectionType {
         .impact
@@ -97,7 +106,7 @@ extension NTPImpactCellViewModel: HomepageViewModelProtocol {
         .init(title: .localized(.climateImpact), isButtonHidden: true)
     }
 
-    func section(for traitCollection: UITraitCollection) -> NSCollectionLayoutSection {
+    func section(for traitCollection: UITraitCollection, size: CGSize) -> NSCollectionLayoutSection {
         let item = NSCollectionLayoutItem(
             layoutSize: .init(widthDimension: .fractionalWidth(1),
                               heightDimension: .estimated(200))

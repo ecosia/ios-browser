@@ -5,6 +5,7 @@
 import Foundation
 import Shared
 import Core
+import Common
 
 protocol NTPBookmarkNudgeCellDelegate: AnyObject {
     func nudgeCellOpenBookmarks()
@@ -13,9 +14,20 @@ protocol NTPBookmarkNudgeCellDelegate: AnyObject {
 
 final class NTPBookmarkNudgeCellViewModel {
     weak var delegate: NTPBookmarkNudgeCellDelegate?
+    var theme: Theme
+    
+    init(delegate: NTPBookmarkNudgeCellDelegate? = nil, theme: Theme) {
+        self.delegate = delegate
+        self.theme = theme
+    }
 }
 
 extension NTPBookmarkNudgeCellViewModel: HomepageViewModelProtocol {
+
+    func setTheme(theme: Theme) {
+        self.theme = theme
+    }
+    
 
     var sectionType: HomepageSectionType {
         return .bookmarkNudge
@@ -25,7 +37,7 @@ extension NTPBookmarkNudgeCellViewModel: HomepageViewModelProtocol {
         return .emptyHeader
     }
 
-    func section(for traitCollection: UITraitCollection) -> NSCollectionLayoutSection {
+    func section(for traitCollection: UITraitCollection, size: CGSize) -> NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
                                               heightDimension: .fractionalHeight(1.0))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
