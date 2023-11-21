@@ -88,7 +88,8 @@ class HomepageViewModel: FeatureFlaggable {
     // Child View models
     private var childViewModels: [HomepageViewModelProtocol]
     var headerViewModel: HomeLogoHeaderViewModel
-    var messageCardViewModel: HomepageMessageCardViewModel
+    // Ecosia: Remove message Card  from HomePage
+    // var messageCardViewModel: HomepageMessageCardViewModel
     var topSiteViewModel: TopSitesViewModel
     var recentlySavedViewModel: RecentlySavedViewModel
     var jumpBackInViewModel: JumpBackInViewModel
@@ -96,10 +97,11 @@ class HomepageViewModel: FeatureFlaggable {
     var pocketViewModel: PocketViewModel
     var customizeButtonViewModel: CustomizeHomepageSectionViewModel
 
+    /* Ecosia: Remove message Card  from HomePage
     var shouldDisplayHomeTabBanner: Bool {
         return messageCardViewModel.shouldDisplayMessageCard
     }
-
+     */
     // MARK: - Initializers
     init(profile: Profile,
          isPrivate: Bool,
@@ -115,9 +117,11 @@ class HomepageViewModel: FeatureFlaggable {
         self.logger = logger
 
         self.headerViewModel = HomeLogoHeaderViewModel(profile: profile, theme: theme)
+        /* Ecosia: Remove message Card  from HomePage
         let messageCardAdaptor = MessageCardDataAdaptorImplementation()
         self.messageCardViewModel = HomepageMessageCardViewModel(dataAdaptor: messageCardAdaptor, theme: theme)
         messageCardAdaptor.delegate = messageCardViewModel
+         */
         self.topSiteViewModel = TopSitesViewModel(profile: profile,
                                                   theme: theme,
                                                   wallpaperManager: wallpaperManager)
@@ -157,7 +161,8 @@ class HomepageViewModel: FeatureFlaggable {
 
         self.customizeButtonViewModel = CustomizeHomepageSectionViewModel(theme: theme)
         self.childViewModels = [headerViewModel,
-                                messageCardViewModel,
+                                // Ecosia: Remove message Card  from HomePage
+                                // messageCardViewModel,
                                 topSiteViewModel,
                                 jumpBackInViewModel,
                                 recentlySavedViewModel,
@@ -172,7 +177,8 @@ class HomepageViewModel: FeatureFlaggable {
         recentlySavedViewModel.delegate = self
         pocketViewModel.delegate = self
         jumpBackInViewModel.delegate = self
-        messageCardViewModel.delegate = self
+        // Ecosia: Remove message Card  from HomePage
+        // messageCardViewModel.delegate = self
 
         Task {
             await jumpBackInAdaptor.setDelegate(delegate: jumpBackInViewModel)

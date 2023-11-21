@@ -518,10 +518,12 @@ private extension HomepageViewController {
             // No action currently set if the logo button is tapped.
         }
 
+        /* Ecosia: Remove message Card  from HomePage
         // Message card
         viewModel.messageCardViewModel.dismissClosure = { [weak self] in
             self?.reloadView()
         }
+         */
 
         // Top sites
         viewModel.topSiteViewModel.tilePressedHandler = { [weak self] site, isGoogle in
