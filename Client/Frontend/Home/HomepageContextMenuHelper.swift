@@ -92,7 +92,8 @@ class HomepageContextMenuHelper: HomepageContextMenuProtocol {
     func getOpenInNewPrivateTabAction(siteURL: URL, sectionType: HomepageSectionType) -> PhotonRowActions {
         return SingleActionViewModel(title: .OpenInNewPrivateTabContextMenuTitle, iconString: ImageIdentifiers.newPrivateTab) { _ in
             self.delegate?.homePanelDidRequestToOpenInNewTab(siteURL, isPrivate: true)
-            sectionType.newPrivateTabActionTelemetry()
+            // Ecosia: Remove Telemetry section type helper
+            // sectionType.newPrivateTabActionTelemetry()
         }.items
     }
 
