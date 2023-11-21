@@ -100,11 +100,12 @@ class HomepageViewModel: FeatureFlaggable {
      */
     var customizeButtonViewModel: CustomizeHomepageSectionViewModel
 
-    /* Ecosia: Remove message Card  from HomePage
     var shouldDisplayHomeTabBanner: Bool {
-        return messageCardViewModel.shouldDisplayMessageCard
+        false
+        // Ecosia: Remove message Card  from HomePage
+        // return messageCardViewModel.shouldDisplayMessageCard
     }
-     */
+    
     // MARK: - Initializers
     init(profile: Profile,
          isPrivate: Bool,
