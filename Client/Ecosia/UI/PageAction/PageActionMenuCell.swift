@@ -191,7 +191,7 @@ extension PageActionMenuCell {
             imageView?.image = nil
         }
         
-        isNew(actions.items.first.isNew)
+        isNew(actions.items.first?.isNew == true)
 
         if separatorCellsPositions.contains(position) {
             addCustomGroupedStyleLikeSeparator()
