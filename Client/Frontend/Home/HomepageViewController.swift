@@ -62,6 +62,8 @@ class HomepageViewController: UIViewController, FeatureFlaggable, Themeable, Con
     var currentTab: Tab? {
         return tabManager.selectedTab
     }
+    // Ecosia: Add referrals
+    weak var referrals: Referrals!
 
     // MARK: - Initializers
     init(profile: Profile,
