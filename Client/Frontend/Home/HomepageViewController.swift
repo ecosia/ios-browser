@@ -620,10 +620,12 @@ private extension HomepageViewController {
             self?.contextMenuHelper.presentContextMenu(for: site, with: sourceView, sectionType: .pocket)
         }
          */
+        /* Ecosia: Remove `customizeHome` reference
         // Customize home
         viewModel.customizeButtonViewModel.onTapAction = { [weak self] _ in
             self?.openCustomizeHomeSettings()
         }
+         */
     }
 
     private func openHistoryHighlightsSearchGroup(item: HighlightItem) {
