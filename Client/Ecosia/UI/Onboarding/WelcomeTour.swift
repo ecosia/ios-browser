@@ -58,8 +58,8 @@ final class WelcomeTour: UIViewController,  Themeable {
         addStaticViews()
         addDynamicViews()
         applyTheme()
-
-        NotificationCenter.default.addObserver(self, selector: #selector(themeChanged), name: .DisplayThemeChanged, object: nil)
+        
+        listenForThemeChange(self.view)
     }
 
     private func addStaticViews() {
@@ -368,9 +368,5 @@ final class WelcomeTour: UIViewController,  Themeable {
         imageView.backgroundColor = current?.background.color ?? .clear
         guard let current = current else { return }
         imageView.image = .init(named: current.background.image)
-    }
-
-    @objc func themeChanged() {
-        applyTheme()
     }
 }
