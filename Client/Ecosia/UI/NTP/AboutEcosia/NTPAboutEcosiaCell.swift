@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
+import Common
 
 final class NTPAboutEcosiaCell: UICollectionViewCell, ReusableCell {
     struct UX {
@@ -90,6 +91,14 @@ final class NTPAboutEcosiaCell: UICollectionViewCell, ReusableCell {
     var expandedHeight: CGFloat {
         disclosureView.frame.maxY + (isLastSection ? 16 : 0)
     }
+    
+    // MARK: - Themeable Properties
+    
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeObserver: NSObjectProtocol?
+    var notificationCenter: NotificationProtocol = NotificationCenter.default
+
+    // MARK: - Init
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -221,6 +230,7 @@ final class NTPAboutEcosiaCell: UICollectionViewCell, ReusableCell {
 }
 
 extension NTPAboutEcosiaCell: Themeable {
+    
     func applyTheme() {
         outlineView.backgroundColor = .legacyTheme.ecosia.ntpCellBackground
         titleLabel.textColor = .legacyTheme.ecosia.primaryText
