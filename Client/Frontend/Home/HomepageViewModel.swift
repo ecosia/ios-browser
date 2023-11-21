@@ -65,7 +65,8 @@ class HomepageViewModel: FeatureFlaggable {
     var isZeroSearch: Bool {
         didSet {
             topSiteViewModel.isZeroSearch = isZeroSearch
-            jumpBackInViewModel.isZeroSearch = isZeroSearch
+            // Ecosia: Remove `jumpBackIn` section reference
+            // jumpBackInViewModel.isZeroSearch = isZeroSearch
             recentlySavedViewModel.isZeroSearch = isZeroSearch
             // Ecosia: Remove History Highlights and Pocket
             // pocketViewModel.isZeroSearch = isZeroSearch
@@ -93,7 +94,8 @@ class HomepageViewModel: FeatureFlaggable {
     // var messageCardViewModel: HomepageMessageCardViewModel
     var topSiteViewModel: TopSitesViewModel
     var recentlySavedViewModel: RecentlySavedViewModel
-    var jumpBackInViewModel: JumpBackInViewModel
+    // Ecosia: Remove `jumpBackIn` section reference
+    // var jumpBackInViewModel: JumpBackInViewModel
     /* Ecosia: Remove History Highlights and Pocket
     var historyHighlightsViewModel: HistoryHighlightsViewModel
     var pocketViewModel: PocketViewModel
@@ -133,6 +135,7 @@ class HomepageViewModel: FeatureFlaggable {
 
         let jumpBackInAdaptor = JumpBackInDataAdaptorImplementation(profile: profile,
                                                                     tabManager: tabManager)
+        /* Ecosia: Remove `jumpBackIn` section reference
         self.jumpBackInViewModel = JumpBackInViewModel(
             profile: profile,
             isPrivate: isPrivate,
@@ -140,7 +143,7 @@ class HomepageViewModel: FeatureFlaggable {
             tabManager: tabManager,
             adaptor: jumpBackInAdaptor,
             wallpaperManager: wallpaperManager)
-
+         */
         self.recentlySavedViewModel = RecentlySavedViewModel(profile: profile,
                                                              theme: theme,
                                                              wallpaperManager: wallpaperManager)
@@ -169,7 +172,8 @@ class HomepageViewModel: FeatureFlaggable {
                                 // Ecosia: Remove message Card  from HomePage
                                 // messageCardViewModel,
                                 topSiteViewModel,
-                                jumpBackInViewModel,
+                                // Ecosia: Remove `jumpBackIn` section reference
+                                // jumpBackInViewModel,
                                 recentlySavedViewModel,
                                 /* Ecosia: Remove History Highlights and Pocket
                                 historyHighlightsViewModel,
@@ -185,14 +189,16 @@ class HomepageViewModel: FeatureFlaggable {
         recentlySavedViewModel.delegate = self
         // Ecosia: Remove History Highlights and Pocket
         // pocketViewModel.delegate = self
-        jumpBackInViewModel.delegate = self
+        // Ecosia: Remove `jumpBackIn` section reference
+        // jumpBackInViewModel.delegate = self
         // Ecosia: Remove message Card  from HomePage
         // messageCardViewModel.delegate = self
 
+        /* Ecosia: Remove `jumpBackIn` section reference
         Task {
             await jumpBackInAdaptor.setDelegate(delegate: jumpBackInViewModel)
         }
-
+         */
         updateEnabledSections()
     }
 

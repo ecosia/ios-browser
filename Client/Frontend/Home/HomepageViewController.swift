@@ -540,6 +540,7 @@ private extension HomepageViewController {
             self?.openBookmarks(button)
         }
 
+        /* Ecosia: Remove `jumpBackIn` reference
         // Jumpback in
         viewModel.jumpBackInViewModel.headerButtonAction = { [weak self] button in
             self?.openTabTray(button)
@@ -576,6 +577,7 @@ private extension HomepageViewController {
         viewModel.jumpBackInViewModel.prepareContextualHint = { [weak self] syncedTabCell in
             self?.prepareSyncedTabContextualHint(onCell: syncedTabCell)
         }
+         */
 
         /* Ecosia: Remove History Highlights and Pocket
         // History highlights
