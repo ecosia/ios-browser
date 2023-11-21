@@ -32,7 +32,9 @@ class HomepageViewController: UIViewController, FeatureFlaggable, Themeable, Con
 
     weak var statusBarScrollDelegate: StatusBarScrollDelegate?
 
-    private var viewModel: HomepageViewModel
+    // Ecosia: Expose `viewModel` in extensions
+    // private var viewModel: HomepageViewModel
+    var viewModel: HomepageViewModel
     private var contextMenuHelper: HomepageContextMenuHelper
     private var tabManager: TabManager
     private var overlayManager: OverlayModeManager
