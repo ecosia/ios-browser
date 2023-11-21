@@ -75,27 +75,27 @@ final class EcosiaHistory {
 
     static func insertData(_ data: EcosiaHistory.Data, to profile: Profile, finished: @escaping (Result<Void, EcosiaImport.Failure>) -> ()){
 
-        guard let history = profile.history as? SQLiteHistory else { return }
-
-        let success = history.clearHistory()
-            >>> { history.storeDomains(data.domains) }
-            >>> { history.storeSites(data.sites) }
-            >>> { history.storeVisits(data.visits) }
-
-        success.uponQueue(.main) { (result) in
-            let duration = Date().timeIntervalSince(start ?? Date())
-            Analytics.shared.migrated(.history, in: duration)
-
-            // make UI update
-            history.setTopSitesNeedsInvalidation()
-
-            switch result {
-            case .success:
-                finished(.success(()))
-            case .failure(let error):
-                finished(.failure(.init(reasons: [error])))
-            }
-        }
+//        guard let history = profile.places as? RustPlaces else { return }
+//
+//        let success = history.clearHistory()
+//            >>> { history.storeDomains(data.domains) }
+//            >>> { history.storeSites(data.sites) }
+//            >>> { history.storeVisits(data.visits) }
+//
+//        success.uponQueue(.main) { (result) in
+//            let duration = Date().timeIntervalSince(start ?? Date())
+//            Analytics.shared.migrated(.history, in: duration)
+//
+//            // make UI update
+//            history.setTopSitesNeedsInvalidation()
+//
+//            switch result {
+//            case .success:
+//                finished(.success(()))
+//            case .failure(let error):
+//                finished(.failure(.init(reasons: [error])))
+//            }
+//        }
 
     }
 
