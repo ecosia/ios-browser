@@ -171,6 +171,15 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
 }
 
 private final class NewsSubHeader: UICollectionReusableView, Themeable {
+    
+    // MARK: - Themeable Properties
+    
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeObserver: NSObjectProtocol?
+    var notificationCenter: NotificationProtocol = NotificationCenter.default
+
+    // MARK: - Properties
+
     private weak var subtitle: UILabel!
     
     required init?(coder: NSCoder) { nil }
