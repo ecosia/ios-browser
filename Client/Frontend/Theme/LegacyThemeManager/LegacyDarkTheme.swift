@@ -13,6 +13,7 @@ private class DarkTableViewColor: TableViewColor {
     override var disabledRowText: UIColor { return UIColor.Photon.Grey40 } // textDisabled
     // Ecosia: Re enabling legacy colo references
     override var accessoryViewTint: UIColor { return .Dark.Text.secondary }
+    override var headerBackground: UIColor { .Dark.Background.primary }
 }
 
 private class DarkTabTrayColor: TabTrayColor {

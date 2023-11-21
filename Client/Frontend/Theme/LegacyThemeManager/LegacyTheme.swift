@@ -26,6 +26,7 @@ class TableViewColor {
     var disabledRowText: UIColor { return UIColor.Photon.Grey40 } // textDisabled
     // Ecosia: Re enabling legacy colo references
     var accessoryViewTint: UIColor { return .Light.Text.secondary }
+    var headerBackground: UIColor { .Light.Background.tertiary }
 }
 
 class BrowserColor {
