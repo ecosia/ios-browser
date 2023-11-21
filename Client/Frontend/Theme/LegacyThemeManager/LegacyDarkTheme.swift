@@ -11,6 +11,8 @@ private class DarkBrowserColor: BrowserColor {
 private class DarkTableViewColor: TableViewColor {
     override var rowText: UIColor { return UIColor.Photon.Grey10 } // textPrimary
     override var disabledRowText: UIColor { return UIColor.Photon.Grey40 } // textDisabled
+    // Ecosia: Re enabling legacy colo references
+    override var accessoryViewTint: UIColor { return .Dark.Text.secondary }
 }
 
 private class DarkTabTrayColor: TabTrayColor {

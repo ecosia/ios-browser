@@ -24,6 +24,8 @@ enum BuiltinThemeName: String {
 class TableViewColor {
     var rowText: UIColor { return UIColor.Photon.Grey90 } // textPrimary
     var disabledRowText: UIColor { return UIColor.Photon.Grey40 } // textDisabled
+    // Ecosia: Re enabling legacy colo references
+    var accessoryViewTint: UIColor { return .Light.Text.secondary }
 }
 
 class BrowserColor {
