@@ -6,6 +6,10 @@ import Foundation
 
 struct ConnectionStatusImage {
     
-    static let connectionSecureImage = UIImage.templateImageNamed("secureLock")?.tinted(withColor: .theme.ecosia.secondaryIcon)
-    static let connectionUnsecureImage = UIImage.templateImageNamed("problem")?.tinted(withColor: .theme.ecosia.warning)
+    static var connectionSecureImage: UIImage? {
+        UIImage.templateImageNamed("secureLock")?.tinted(withColor: .theme.ecosia.secondaryIcon)
+    }
+    static var connectionUnsecureImage: UIImage? {
+        UIImage.templateImageNamed("problem")?.tinted(withColor: .theme.ecosia.warning)
+    }
 }
