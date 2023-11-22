@@ -64,6 +64,8 @@ class TabLocationView: UIView {
     var placeholder: NSAttributedString {
         return NSAttributedString(string: .TabLocationURLPlaceholder, attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.ecosia.secondaryText])
     }
+    
+    var status: WebsiteConnectionTypeStatus?
 
     lazy var urlTextField: URLTextField = .build { urlTextField in
         /* Ecosia: removing obsolete implementation as we don't support 4S anymore
@@ -315,6 +317,7 @@ extension TabLocationView: NotificationThemeable {
 
         let color = LegacyThemeManager.instance.currentName == .dark ? UIColor(white: 0.3, alpha: 0.6): UIColor.theme.textField.background
         menuBadge.badge.tintBackground(color: color)
+        updateProtectionButtonStatusIfNeeded()
     }
 }
 
@@ -325,6 +328,11 @@ extension TabLocationView {
         trackingProtectionButton.evaluateNeedingVisbilityForURLScheme(url?.scheme)
     }
     
+    private func updateProtectionButtonStatusIfNeeded() {
+        guard let status else { return }
+        trackingProtectionButton.updateAppearanceForStatus(status)
+    }
+    
     func toggleURLProtectionButtonVisibility(_ isLoading: Bool = false) {
         trackingProtectionButton.alpha = isLoading ? 0 : 1
     }
@@ -333,7 +341,7 @@ extension TabLocationView {
 extension TabLocationView: TabEventHandler {
     
     func tab(_ tab: Tab, didChangeURL url: URL) {
-        let status: WebsiteConnectionTypeStatus = url.isSecure ? .secure : .unsecure
-        trackingProtectionButton.updateAppearanceForStatus(status)
+        status = url.isSecure ? .secure : .unsecure
+        updateProtectionButtonStatusIfNeeded()
     }
 }
