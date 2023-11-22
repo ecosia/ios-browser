@@ -12,6 +12,7 @@
 		047F9B2924E1FE1C00CD7DF7 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DAD46F3524A1606C001B3967 /* SwiftUI.framework */; };
 		047F9B2C24E1FE1C00CD7DF7 /* WidgetKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047F9B2B24E1FE1C00CD7DF7 /* WidgetKit.swift */; };
 		047F9B2E24E1FE1F00CD7DF7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 047F9B2D24E1FE1F00CD7DF7 /* Assets.xcassets */; };
+		047F9B3224E1FE1F00CD7DF7 /* WidgetKitExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 047F9B2724E1FE1C00CD7DF7 /* WidgetKitExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		047F9B3E24E1FF4000CD7DF7 /* SearchQuickLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047F9B3A24E1FF4000CD7DF7 /* SearchQuickLinks.swift */; };
 		047F9B4224E1FF4000CD7DF7 /* ImageButtonWithLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047F9B3C24E1FF4000CD7DF7 /* ImageButtonWithLabel.swift */; };
 		0B305E1B1E3A98A900BE0767 /* BookmarksTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B305E1A1E3A98A900BE0767 /* BookmarksTests.swift */; };
@@ -1651,6 +1652,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		047F9B3024E1FE1F00CD7DF7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F84B21B61A090F8100AAB793 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 047F9B2624E1FE1C00CD7DF7;
+			remoteInfo = WidgetKitExtension;
+		};
 		2827316A1ABC9BE700AA1954 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F84B21B61A090F8100AAB793 /* Project object */;
@@ -1941,6 +1949,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				047F9B3224E1FE1F00CD7DF7 /* WidgetKitExtension.appex in Embed App Extensions */,
 				397848E21ED86605004C0C0B /* NotificationService.appex in Embed App Extensions */,
 				F8324A122649A188007E4BFA /* CredentialProvider.appex in Embed App Extensions */,
 				F84B22541A0920C600AAB793 /* ShareTo.appex in Embed App Extensions */,
@@ -11907,6 +11916,7 @@
 				288A2D9C1AB8B3260023ABC3 /* PBXTargetDependency */,
 				397848E11ED86605004C0C0B /* PBXTargetDependency */,
 				F84B22521A0920C600AAB793 /* PBXTargetDependency */,
+				047F9B3124E1FE1F00CD7DF7 /* PBXTargetDependency */,
 			);
 			name = Client;
 			packageProductDependencies = (
@@ -14247,6 +14257,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		047F9B3124E1FE1F00CD7DF7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 047F9B2624E1FE1C00CD7DF7 /* WidgetKitExtension */;
+			targetProxy = 047F9B3024E1FE1F00CD7DF7 /* PBXContainerItemProxy */;
+		};
 		2827316B1ABC9BE700AA1954 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 2827315D1ABC9BE600AA1954 /* Sync */;
