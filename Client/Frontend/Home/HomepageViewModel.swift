@@ -192,29 +192,27 @@ class HomepageViewModel: FeatureFlaggable {
          */
         // Ecosia: Remove `customizeHome` reference
         // self.customizeButtonViewModel = CustomizeHomepageSectionViewModel(theme: theme)
+        
+        /* 
+         Ecosia: Replace view models.
         self.childViewModels = [headerViewModel,
-                                // Ecosia: Remove message Card  from HomePage
-                                // messageCardViewModel,
+                                messageCardViewModel,
                                 topSiteViewModel,
-                                // Ecosia: Remove `jumpBackIn` section reference
-                                // jumpBackInViewModel,
-                                // Ecosia: Remove `recentlySaved` reference
-                                // recentlySavedViewModel,
-                                /* Ecosia: Remove History Highlights and Pocket
+                                jumpBackInViewModel,
+                                recentlySavedViewModel,
                                 historyHighlightsViewModel,
                                 pocketViewModel,
-                                 */
-                                // Ecosia: Remove `customizeHome` reference
-                                // customizeButtonViewModel
-                                
-                                // Ecosia: Add Ecosia's ViewModels
+                                customizeButtonViewModel
+        ]
+         */
+        self.childViewModels = [headerViewModel,
                                 bookmarkNudgeViewModel,
                                 libraryViewModel,
+                                topSiteViewModel,
                                 impactViewModel,
                                 newsViewModel,
                                 aboutEcosiaViewModel,
-                                ntpCustomizationViewModel
-        ]
+                                ntpCustomizationViewModel]
         self.isPrivate = isPrivate
 
         self.nimbus = nimbus
