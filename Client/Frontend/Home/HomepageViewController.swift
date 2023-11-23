@@ -211,9 +211,18 @@ class HomepageViewController: UIViewController, FeatureFlaggable, Themeable, Con
         collectionView.register(LabelButtonHeaderView.self,
                                 forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
                                 withReuseIdentifier: LabelButtonHeaderView.cellIdentifier)
+        // Ecosia: NTP Toltip
+        collectionView.register(NTPTooltip.self,
+                                forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+                                withReuseIdentifier: NTPTooltip.key)
+        collectionView.register(NTPImpactDividerFooter.self,
+                                forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
+                                withReuseIdentifier: NTPImpactDividerFooter.cellIdentifier)
+        /* Ecosia: Remove PocketFooterView
         collectionView.register(PocketFooterView.self,
                                 forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
                                 withReuseIdentifier: PocketFooterView.cellIdentifier)
+         */
         collectionView.keyboardDismissMode = .onDrag
         collectionView.addGestureRecognizer(longPressRecognizer)
         collectionView.delegate = self
