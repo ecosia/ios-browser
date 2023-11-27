@@ -83,14 +83,10 @@ extension NTPNewsCellViewModel: HomepageViewModelProtocol {
     var hasData: Bool {
         numberOfItemsInSection() > 0
     }
-
-    func refreshData(for traitCollection: UITraitCollection,
-                     isPortrait: Bool = UIWindow.isPortrait,
-                     device: UIUserInterfaceIdiom = UIDevice.current.userInterfaceIdiom) {
-
+    
+    func refreshData(for traitCollection: UITraitCollection, size: CGSize, isPortrait: Bool, device: UIUserInterfaceIdiom) {
         news.load(session: .shared, force: !hasData)
     }
-
 }
 
 extension NTPNewsCellViewModel: HomepageSectionHandler {
