@@ -460,6 +460,7 @@ extension HomepageViewController: UICollectionViewDelegate, UICollectionViewData
                         viewForSupplementaryElementOfKind kind: String,
                         at indexPath: IndexPath) -> UICollectionReusableView {
         let reusableView = UICollectionReusableView()
+        /* Ecosia: Adjust HomePageViewController's CollectionView
         if kind == UICollectionView.elementKindSectionHeader {
             guard let headerView = collectionView.dequeueReusableSupplementaryView(
                 ofKind: kind,
@@ -504,6 +505,36 @@ extension HomepageViewController: UICollectionViewDelegate, UICollectionViewData
             return footerView
         }
         return reusableView
+         */
+        guard let sectionViewModel = viewModel.getSectionViewModel(shownSection: indexPath.section)
+        else { return reusableView }
+
+        // Ecosia: tooltip for impact
+        if sectionViewModel.sectionType == .impact,
+            let text = NTPTooltip.highlight()?.text,
+            kind == UICollectionView.elementKindSectionHeader {
+            let tooltip = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: NTPTooltip.key, for: indexPath) as! NTPTooltip
+            tooltip.setText(text)
+            tooltip.delegate = self
+            return tooltip
+        }
+        
+        // Ecosia: footer for impact
+        if sectionViewModel.sectionType == .impact, kind == UICollectionView.elementKindSectionFooter {
+            return collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: NTPImpactDividerFooter.cellIdentifier, for: indexPath)
+        }
+
+        guard let headerView = collectionView.dequeueReusableSupplementaryView(
+                ofKind: UICollectionView.elementKindSectionHeader,
+                withReuseIdentifier: LabelButtonHeaderView.cellIdentifier,
+                for: indexPath) as? LabelButtonHeaderView
+        else { return UICollectionReusableView() }
+
+        // Configure header only if section is shown
+        let headerViewModel = sectionViewModel.shouldShow ? sectionViewModel.headerViewModel : LabelButtonHeaderViewModel.emptyHeader
+        headerView.configure(viewModel: headerViewModel, theme: themeManager.currentTheme)
+        return headerView
+
     }
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -639,6 +670,13 @@ private extension HomepageViewController {
             self?.openCustomizeHomeSettings()
         }
          */
+        // Ecosia: Adjust HomePageViewController's CollectionView
+        viewModel.libraryViewModel.delegate = self
+        viewModel.bookmarkNudgeViewModel.delegate = self
+        viewModel.impactViewModel.delegate = self
+        viewModel.newsViewModel.delegate = self
+        viewModel.aboutEcosiaViewModel.delegate = self
+        viewModel.ntpCustomizationViewModel.delegate = self
     }
 
     private func openHistoryHighlightsSearchGroup(item: HighlightItem) {
