@@ -64,6 +64,8 @@ class HomepageViewController: UIViewController, FeatureFlaggable, Themeable, Con
     }
     // Ecosia: Add referrals
     weak var referrals: Referrals!
+    // Ecosia: Add HomePageViewControllerDelegate reference
+    weak var delegate: HomepageViewControllerDelegate?
 
     // MARK: - Initializers
     init(profile: Profile,
