@@ -33,7 +33,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             quality: UIConstants.ScreenshotQuality)
     )
 
+    /* Ecosia: Swap Theme Manager with Ecosia's
     lazy var themeManager: ThemeManager = DefaultThemeManager(sharedContainerIdentifier: AppInfo.sharedContainerIdentifier)
+     */
+    lazy var themeManager: ThemeManager = EcosiaThemeManager(sharedContainerIdentifier: AppInfo.sharedContainerIdentifier)
     lazy var ratingPromptManager = RatingPromptManager(profile: profile)
     lazy var appSessionManager: AppSessionProvider = AppSessionManager()
     lazy var notificationSurfaceManager = NotificationSurfaceManager()
