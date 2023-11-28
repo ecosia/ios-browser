@@ -205,6 +205,7 @@
 		2C7DC2322B15F5C600C049C8 /* EcosiaTopSiteItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7DC2312B15F5C600C049C8 /* EcosiaTopSiteItemCell.swift */; };
 		2C7DC2382B16332E00C049C8 /* EcosiaThemeColourPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7DC2372B16332E00C049C8 /* EcosiaThemeColourPalette.swift */; };
 		2C7DC23B2B163AF900C049C8 /* EcosiaThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7DC23A2B163AF900C049C8 /* EcosiaThemeManager.swift */; };
+		2C7DC23C2B16411E00C049C8 /* AppInfo+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB2894B2B07C8F000A8FCB3 /* AppInfo+Ecosia.swift */; };
 		2C8C07771E7800EA00DC1237 /* FindInPageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C8C07761E7800EA00DC1237 /* FindInPageTests.swift */; };
 		2C97EC711E72C80E0092EC18 /* TopTabsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C97EC701E72C80E0092EC18 /* TopTabsTest.swift */; };
 		2CA16FDE1E5F089100332277 /* SearchTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CA16FDD1E5F089100332277 /* SearchTest.swift */; };
@@ -12868,6 +12869,7 @@
 				E683F0C21E93D4E90035D990 /* DictionaryExtensions.swift in Sources */,
 				288A2DB51AB8B38D0023ABC3 /* Error.swift in Sources */,
 				E65075A91E37F7AB006961AC /* URLExtensions.swift in Sources */,
+				2C7DC23C2B16411E00C049C8 /* AppInfo+Ecosia.swift in Sources */,
 				96666D0129969AF700A4029F /* URLCaching.swift in Sources */,
 				D054352A226687A400FDE4EF /* UIBarButtonItemExtensions.swift in Sources */,
 				7479B4EF1C5306A200DF000B /* Reachability.swift in Sources */,
