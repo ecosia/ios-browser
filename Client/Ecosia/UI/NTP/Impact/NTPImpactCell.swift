@@ -56,6 +56,7 @@ final class NTPImpactCell: UICollectionViewCell, Themeable, ReusableCell {
     private func setup() {
         contentView.addSubview(containerStack)
         setupConstraints()
+        listenForThemeChange(contentView)
     }
     
     private func setupConstraints() {

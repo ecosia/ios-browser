@@ -186,6 +186,7 @@ final class NTPAboutEcosiaCell: UICollectionViewCell, ReusableCell {
             dividerView.bottomAnchor.constraint(equalTo: outlineView.bottomAnchor),
             dividerView.heightAnchor.constraint(equalToConstant: 1)
         ])
+        listenForThemeChange(contentView)
     }
     
     func rotateIndicator(isExpanded: Bool) {

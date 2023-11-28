@@ -51,6 +51,7 @@ final class NTPLogoCell: UICollectionViewCell, ReusableCell, Themeable {
         logo.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
         logo.widthAnchor.constraint(equalToConstant: Self.width).isActive = true
         applyTheme()
+        listenForThemeChange(contentView)
     }
 
     func applyTheme() {

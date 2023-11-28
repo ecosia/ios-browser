@@ -69,6 +69,7 @@ final class NTPCustomizationCell: UICollectionViewCell, Themeable, ReusableCell 
             button.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             button.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
         ])
+        listenForThemeChange(contentView)
     }
     
     func applyTheme() {

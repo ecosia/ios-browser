@@ -86,6 +86,7 @@ class NTPLibraryCell: UICollectionViewCell, Themeable, ReusableCell {
             shortcuts.append(view)
         }
         applyTheme()
+        listenForThemeChange(contentView)
     }
 
     required init?(coder aDecoder: NSCoder) {

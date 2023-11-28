@@ -164,6 +164,7 @@ final class NTPNewsCell: UICollectionViewCell, Themeable, ReusableCell {
         border.heightAnchor.constraint(equalToConstant: 1).isActive = true
 
         applyTheme()
+        listenForThemeChange(contentView)
     }
     
     override var isSelected: Bool {
