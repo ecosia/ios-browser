@@ -40,4 +40,15 @@ extension AppInfo {
         
         return receiptData.base64EncodedString(options: [])
     }
+    
+    /// Return the shared container identifier (also known as the app group) to be used with for example background
+    /// http requests. It is the base bundle identifier with a "group." prefix.
+    public static var ecosiaSharedContainerIdentifier: String {
+        return "\("group.")\(baseBundleIdentifier)"
+    }
+    
+    /// Return the keychain access group.
+    public static func ecosiaKeychainAccessGroupWithPrefix(_ prefix: String) -> String {
+        return "\(prefix)\(".")+\(baseBundleIdentifier)"
+    }
 }
