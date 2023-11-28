@@ -15,6 +15,7 @@ In the previous releases of Firefox the theming architecture relied on a protoco
 */
 
 import Common
+import UIKit
 
 public struct EcosiaLightTheme: Theme {
     public var type: ThemeType = .light

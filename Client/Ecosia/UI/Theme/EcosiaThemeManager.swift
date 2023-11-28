@@ -1,4 +1,5 @@
 import Common
+import UIKit
 
 /// The `ThemeManager` will be responsible for providing the theme throughout the app
 public final class EcosiaThemeManager: ThemeManager, Notifiable {
