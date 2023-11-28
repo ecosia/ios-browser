@@ -12,7 +12,10 @@ class TabToolbar: UIView, SearchBarLocationProvider {
     weak var tabToolbarDelegate: TabToolbarDelegate?
 
     let tabsButton = TabsButton()
+    /* Ecosia: Change `addNewTabButton` to configurable CircleButton
     let addNewTabButton = ToolbarButton()
+     */
+    let circleButton = CircleButton(config: .search)
     let appMenuButton = ToolbarButton()
     let bookmarksButton = ToolbarButton()
     let forwardButton = ToolbarButton()
@@ -31,7 +34,7 @@ class TabToolbar: UIView, SearchBarLocationProvider {
 
     // MARK: - Initializers
     override private init(frame: CGRect) {
-        actionButtons = [backButton, forwardButton, multiStateButton, addNewTabButton, tabsButton, appMenuButton]
+        actionButtons = [backButton, forwardButton, multiStateButton, circleButton, tabsButton, appMenuButton]
         super.init(frame: frame)
         setupAccessibility()
 
@@ -72,7 +75,7 @@ class TabToolbar: UIView, SearchBarLocationProvider {
         backButton.accessibilityIdentifier = AccessibilityIdentifiers.Toolbar.backButton
         forwardButton.accessibilityIdentifier = AccessibilityIdentifiers.Toolbar.forwardButton
         tabsButton.accessibilityIdentifier = AccessibilityIdentifiers.Toolbar.tabsButton
-        addNewTabButton.accessibilityIdentifier = AccessibilityIdentifiers.Toolbar.addNewTabButton
+        circleButton.accessibilityIdentifier = AccessibilityIdentifiers.Ecosia.TabToolbar.circleButton
         appMenuButton.accessibilityIdentifier = AccessibilityIdentifiers.Toolbar.settingsMenuButton
         accessibilityNavigationStyle = .combined
         accessibilityLabel = .TabToolbarNavigationToolbarAccessibilityLabel

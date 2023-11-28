@@ -181,7 +181,10 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
     var appMenuButton = ToolbarButton()
     var bookmarksButton = ToolbarButton()
     var homeButton = ToolbarButton()
+    /* Ecosia: Change `addNewTabButton` to configurable CircleButton
     var addNewTabButton = ToolbarButton()
+     */
+    var circleButton = CircleButton(config: .search)
     var forwardButton = ToolbarButton()
     var multiStateButton = ToolbarButton()
 
@@ -196,7 +199,7 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
         self.homeButton,
         self.bookmarksButton,
         self.appMenuButton,
-        self.addNewTabButton,
+        self.circleButton,
         self.forwardButton,
         self.backButton,
         self.multiStateButton]
@@ -238,7 +241,7 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
         locationContainer.addSubview(locationView)
 
         [scrollToTopButton, line, tabsButton, progressBar, cancelButton, showQRScannerButton,
-         homeButton, bookmarksButton, appMenuButton, addNewTabButton, forwardButton, backButton,
+         homeButton, bookmarksButton, appMenuButton, circleButton, forwardButton, backButton,
          multiStateButton, locationContainer, searchIconImageView].forEach {
             addSubview($0)
         }
@@ -316,7 +319,7 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
             make.size.equalTo(URLBarViewUX.ButtonHeight)
         }
 
-        addNewTabButton.snp.makeConstraints { make in
+        circleButton.snp.makeConstraints { make in
             make.trailing.equalTo(self.tabsButton.snp.leading)
             make.centerY.equalTo(self)
             make.size.equalTo(URLBarViewUX.ButtonHeight)
@@ -391,7 +394,7 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
                     if self.topTabsIsShowing {
                         make.trailing.equalTo(self.homeButton.snp.leading).offset(-URLBarViewUX.Padding)
                     } else {
-                        make.trailing.equalTo(self.addNewTabButton.snp.leading).offset(-URLBarViewUX.Padding)
+                        make.trailing.equalTo(self.circleButton.snp.leading).offset(-URLBarViewUX.Padding)
                     }
                 } else {
                     // Otherwise, left align the location view
@@ -544,7 +547,7 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
         cancelButton.isHidden = false
         showQRScannerButton.isHidden = false
         progressBar.isHidden = false
-        addNewTabButton.isHidden = !toolbarIsShowing || topTabsIsShowing
+        circleButton.isHidden = !toolbarIsShowing || topTabsIsShowing
         appMenuButton.isHidden = !toolbarIsShowing
         homeButton.isHidden = !toolbarIsShowing || !topTabsIsShowing
         bookmarksButton.isHidden = !toolbarIsShowing || !topTabsIsShowing
@@ -563,7 +566,7 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
         appMenuButton.alpha = inOverlayMode ? 0 : 1
         homeButton.alpha = inOverlayMode ? 0 : 1
         bookmarksButton.alpha = inOverlayMode ? 0 : 1
-        addNewTabButton.alpha = inOverlayMode ? 0 : 1
+        circleButton.alpha = inOverlayMode ? 0 : 1
         forwardButton.alpha = inOverlayMode ? 0 : 1
         backButton.alpha = inOverlayMode ? 0 : 1
         multiStateButton.alpha = inOverlayMode ? 0 : 1
@@ -591,7 +594,7 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
         cancelButton.isHidden = !inOverlayMode
         showQRScannerButton.isHidden = !inOverlayMode
         progressBar.isHidden = inOverlayMode
-        addNewTabButton.isHidden = !toolbarIsShowing || topTabsIsShowing || inOverlayMode
+        circleButton.isHidden = !toolbarIsShowing || topTabsIsShowing || inOverlayMode
         appMenuButton.isHidden = !toolbarIsShowing || inOverlayMode
         homeButton.isHidden = !toolbarIsShowing || inOverlayMode || !topTabsIsShowing
         bookmarksButton.isHidden = !toolbarIsShowing || inOverlayMode || !topTabsIsShowing
@@ -697,7 +700,7 @@ extension URLBarView: TabToolbarProtocol {
                 return [locationTextField, cancelButton]
             } else {
                 if toolbarIsShowing {
-                    return [backButton, forwardButton, multiStateButton, locationView, tabsButton, homeButton, bookmarksButton, appMenuButton, addNewTabButton, progressBar]
+                    return [backButton, forwardButton, multiStateButton, locationView, tabsButton, homeButton, bookmarksButton, appMenuButton, circleButton, progressBar]
                 } else {
                     return [locationView, progressBar]
                 }
@@ -836,7 +839,7 @@ extension URLBarView: ThemeApplicable {
 
         actionButtons.forEach { $0.applyTheme(theme: theme) }
         tabsButton.applyTheme(theme: theme)
-        addNewTabButton.applyTheme(theme: theme)
+        circleButton.applyTheme(theme: theme)
 
         cancelTintColor = theme.colors.textPrimary
         showQRButtonTintColor = theme.colors.textPrimary

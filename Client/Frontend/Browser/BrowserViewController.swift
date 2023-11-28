@@ -327,7 +327,7 @@ class BrowserViewController: UIViewController,
         let hideReloadButton = shouldUseiPadSetup(traitCollection: newCollection)
         urlBar.topTabsIsShowing = showTopTabs
         urlBar.setShowToolbar(!showToolbar, hideReloadButton: hideReloadButton)
-        toolbar.addNewTabButton.isHidden = showToolbar
+        toolbar.circleButton.isHidden = showToolbar
 
         if showToolbar {
             toolbar.isHidden = false
