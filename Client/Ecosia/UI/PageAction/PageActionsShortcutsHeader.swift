@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import UIKit
+import Common
 
 protocol PageActionsShortcutsDelegate: AnyObject {
     func pageOptionsOpenHome()
@@ -25,13 +26,13 @@ class PageActionsShortcutsHeader: UITableViewHeaderFooterView {
     var shortcuts: [NTPLibraryShortcutView] = []
 
     let home = Panel(title: .localized(.home), 
-                     image: UIImage(named: "menu-Home"),
+                     image: UIImage(named: StandardImageIdentifiers.Large.home),
                      tag: 0)
     let newTab = Panel(title: .AppMenu.NewTab, 
-                       image: UIImage(named: "menu-NewTab"),
+                       image: UIImage(named: StandardImageIdentifiers.Large.plus),
                        tag: 1)
     let share = Panel(title: .AppMenu.Share, 
-                      image: UIImage(named: "action_share"),
+                      image: UIImage(named: ImageIdentifiers.share),
                       tag: 2)
     let settings = Panel(title: .AppMenu.AppMenuSettingsTitleString, 
                          image: UIImage(named: ImageIdentifiers.settings),
