@@ -260,6 +260,17 @@ class HomepageViewModel: FeatureFlaggable {
                                      value: trackingValue,
                                      extras: nil)
         childViewModels.forEach { $0.screenWasShown() }
+        
+        // Ecosia
+        if NTPTooltip.highlight() == .referralSpotlight {
+            Analytics.shared.showInvitePromo()
+        }
+        
+        if User.shared.showsBookmarksNTPNudgeCard() {
+            Analytics.shared.bookmarksNtp(action: .view)
+        }
+        
+        impactViewModel.subscribeToProjections()
     }
 
     func recordViewDisappeared() {
