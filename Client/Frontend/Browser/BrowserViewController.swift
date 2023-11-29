@@ -1458,6 +1458,15 @@ class BrowserViewController: UIViewController,
         tabManager.selectTab(tab)
         return tab
     }
+    
+    /*
+     Ecosia: Add ToolBarActionMenuDelegate additional delegate function
+     to handle the opening of URLs as part of the current tab
+     */
+    func openURLInCurrentTab(_ url: URL?) {
+        guard let url else { return }
+        tabManager.selectedTab?.loadRequest(URLRequest(url: url))
+    }
 
     func focusLocationTextField(forTab tab: Tab?, setSearchText searchText: String? = nil) {
         DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(300)) {

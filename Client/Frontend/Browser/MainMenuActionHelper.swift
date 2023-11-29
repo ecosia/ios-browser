@@ -9,6 +9,7 @@ import Storage
 import UIKit
 import SwiftUI
 import Common
+import Core
 
 protocol ToolBarActionMenuDelegate: AnyObject {
     func updateToolbarState()
@@ -17,6 +18,8 @@ protocol ToolBarActionMenuDelegate: AnyObject {
     @discardableResult
     func openURLInNewTab(_ url: URL?, isPrivate: Bool) -> Tab
     func openNewTabFromMenu(focusLocationField: Bool, isPrivate: Bool)
+    // Ecosia: Add option to open in same tab
+    func openURLInCurrentTab(_ url: URL?)
 
     func showLibrary(panel: LibraryPanelType)
     func showViewController(viewController: UIViewController)
@@ -422,10 +425,13 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
     private func getHelpAction() -> PhotonRowActions {
         return SingleActionViewModel(title: .AppMenu.Help,
                                      iconString: StandardImageIdentifiers.Large.helpCircle) { _ in
+            /* Ecosia: Replacing Firefox Support URL with Ecosia FAQ URL
             if let url = URL(string: "https://support.mozilla.org/products/ios") {
                 self.delegate?.openURLInNewTab(url, isPrivate: false)
             }
             TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .help)
+             */
+            self.delegate?.openURLInCurrentTab(Environment.current.urlProvider.faq)
         }.items
     }
 
