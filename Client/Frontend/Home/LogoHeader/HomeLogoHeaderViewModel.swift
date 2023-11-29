@@ -41,11 +41,23 @@ extension HomeLogoHeaderViewModel: HomepageViewModelProtocol, FeatureFlaggable {
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: item, count: 1)
 
         let section = NSCollectionLayoutSection(group: group)
-
+        
+        /* Ecosia: Migrate the top edge inset calculation from older app version
         let leadingInset = HomepageViewModel.UX.leadingInset(traitCollection: traitCollection)
         section.contentInsets = NSDirectionalEdgeInsets(
             top: 0,
             leading: leadingInset,
+            bottom: UX.bottomSpacing,
+            trailing: 0)
+         */
+        let height = max(UIScreen.main.bounds.width, UIScreen.main.bounds.height)
+        let pos: SearchBarPosition = LegacyFeatureFlagsManager.shared.getCustomState(for: .searchBarPosition) ?? .top
+        let factor = pos == .bottom ? 0.1 : 0.05
+
+        let leadingInset = HomepageViewModel.UX.leadingInset(traitCollection: traitCollection)
+        section.contentInsets = NSDirectionalEdgeInsets(
+            top: height * factor,
+            leading: 0,
             bottom: UX.bottomSpacing,
             trailing: 0)
 
