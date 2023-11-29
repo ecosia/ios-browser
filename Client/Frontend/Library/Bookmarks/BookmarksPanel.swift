@@ -7,6 +7,7 @@ import UIKit
 import Storage
 import Shared
 import SiteImageView
+import Core
 
 let LocalizedRootBookmarkFolderStrings = [
     BookmarkRoots.MenuFolderGUID: String.BookmarksFolderTitleMenu,
@@ -77,6 +78,9 @@ class BookmarksPanel: SiteTableViewController,
         button.accessibilityIdentifier = AccessibilityIdentifiers.LibraryPanels.bottomRightButton
         return button
     }()
+    
+    // Ecosia: add bookmarks empty state
+    private lazy var emptyHeader = EmptyHeader(icon: "bookmarksEmpty", title: .localized(.noBookmarksYet), subtitle: .localized(.AddYourFavoritePages))
 
     // MARK: - Init
 
@@ -132,6 +136,28 @@ class BookmarksPanel: SiteTableViewController,
             if self?.viewModel.shouldFlashRow ?? false {
                 self?.flashRow()
             }
+            
+            // Ecosia: add bookmarks empty state
+            self?.updateEmptyView()
+        }
+    }
+    
+    // Ecosia: add bookmarks empty state
+    private func updateEmptyView() {
+        switch (viewModel.isRootNode, viewModel.bookmarkNodes.isEmpty) {
+        case (true, true): // is first level, no bookmarks -> show explainative empty view
+            let emptyBookmarksView = EmptyBookmarksView(
+                initialBottomMargin: -(navigationController?.toolbar.bounds.size.height ?? 0)
+            )
+            emptyBookmarksView.delegate = self
+            tableView.tableHeaderView = nil
+            tableView.backgroundView = emptyBookmarksView
+        case (false, true): // is folder which is empty -> show "old" empty view
+            tableView.tableHeaderView = emptyHeader
+            tableView.backgroundView = nil
+        case (_, false): // got bookmarks, don't show any empty view
+            tableView.tableHeaderView = nil
+            tableView.backgroundView = nil
         }
     }
 
@@ -645,5 +671,19 @@ extension BookmarksPanel {
                 self.viewModel.didAddBookmarkNode()
             }
         }
+    }
+}
+
+// Ecosia: add bookmarks empty state
+extension BookmarksPanel: EmptyBookmarksViewDelegate {
+    func emptyBookmarksViewLearnMoreTapped(_ view: EmptyBookmarksView) {
+        libraryPanelDelegate?.libraryPanel(
+            didSelectURL: Environment.current.urlProvider.bookmarksHelp,
+            visitType: .link
+        )
+    }
+    
+    func emptyBookmarksViewImportBookmarksTapped(_ view: EmptyBookmarksView) {
+//        importBookmarksActionHandler()
     }
 }

@@ -122,9 +122,10 @@ class BookmarksPanelViewModel {
                                                  value: .doesNotHaveMobileBookmarks)
                 }
 
+                /* Ecosia: remove desktop folder
                 let desktopFolder = LocalDesktopFolder()
                 self.bookmarkNodes.insert(desktopFolder, at: 0)
-
+                 */
                 completion()
             }
     }
