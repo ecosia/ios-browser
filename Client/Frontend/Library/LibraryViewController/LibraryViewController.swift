@@ -177,12 +177,20 @@ class LibraryViewController: UIViewController, Themeable {
         case 1:
             selectedPanel = .history
             eventValue = .historyPanel
+        /* Ecosia: Invert Download and Reading list positions in the LibraryViewController
         case 2:
             selectedPanel = .downloads
             eventValue = .downloadsPanel
         case 3:
             selectedPanel = .readingList
             eventValue = .readingListPanel
+         */
+        case 2:
+            selectedPanel = .readingList
+            eventValue = .readingListPanel
+        case 3:
+            selectedPanel = .downloads
+            eventValue = .downloadsPanel
         default:
             return
         }
