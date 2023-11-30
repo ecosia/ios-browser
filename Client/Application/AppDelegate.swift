@@ -78,6 +78,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Task.detached {
             try? await Statistics.shared.fetchAndUpdate()
         }
+        
+        let types : UIUserNotificationType = UIUserNotificationType.Badge | UIUserNotificationType.Sound | UIUserNotificationType.Alert
+        var setting : UIUserNotificationSettings = UIUserNotificationSettings(forTypes: types, categories: nil)
+        UIApplication.shared.registerUserNotificationSettings(setting)
+        UIApplication.shared.registerForRemoteNotifications()
 
         return true
     }
