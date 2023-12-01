@@ -1,8 +1,3 @@
-We reorganised the homepage:
-All your impact related information is now gathered there.
-You can customise the homepage to your needs and deactivate individual sections.
-
-We also fixed some bugs and added some stability improvements:
-- Paying with Paypal should work again
+We fixed some bugs and added some stability improvements.
 
 We are always working hard to make Ecosia better for you. Send any questions or feedback to our team at iosapp@ecosia.org, we love hearing from you!
