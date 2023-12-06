@@ -154,6 +154,12 @@
 		2C73A7242A9E0C6F006EBAAB /* WhatsNewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C73A7232A9E0C6F006EBAAB /* WhatsNewViewController.swift */; };
 		2C73A7282A9E1BD7006EBAAB /* WhatsNewLocalDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C73A7272A9E1BD7006EBAAB /* WhatsNewLocalDataProvider.swift */; };
 		2C8C07771E7800EA00DC1237 /* FindInPageTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C8C07761E7800EA00DC1237 /* FindInPageTest.swift */; };
+		2C9165412B20DDF900BE390E /* APNConsentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9165402B20DDF900BE390E /* APNConsentViewController.swift */; };
+		2C9165432B20DE5700BE390E /* APNConsentViewModelProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9165422B20DE5700BE390E /* APNConsentViewModelProtocol.swift */; };
+		2C9165452B20DEF800BE390E /* APNConsentItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9165442B20DEF800BE390E /* APNConsentItemCell.swift */; };
+		2C9165472B20DF0C00BE390E /* APNConsentListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9165462B20DF0C00BE390E /* APNConsentListItem.swift */; };
+		2C9165492B20E55200BE390E /* EngagementServiceExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9165482B20E55200BE390E /* EngagementServiceExperiment.swift */; };
+		2C91654B2B20E64100BE390E /* UnleashAPNConsentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C91654A2B20E64100BE390E /* UnleashAPNConsentViewModel.swift */; };
 		2C97EC711E72C80E0092EC18 /* TopTabsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C97EC701E72C80E0092EC18 /* TopTabsTest.swift */; };
 		2C9F8CB92AC30F6F00678514 /* EcosiaInstallType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9F8CB82AC30F6E00678514 /* EcosiaInstallType.swift */; };
 		2C9F8CBC2AC3106300678514 /* EcosiaInstallTypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9F8CBA2AC3104800678514 /* EcosiaInstallTypeTests.swift */; };
@@ -1784,6 +1790,12 @@
 		2C73A7272A9E1BD7006EBAAB /* WhatsNewLocalDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhatsNewLocalDataProvider.swift; sourceTree = "<group>"; };
 		2C8C07761E7800EA00DC1237 /* FindInPageTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FindInPageTest.swift; sourceTree = "<group>"; };
 		2C9144B0B15218D8A0FCD538 /* es-AR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-AR"; path = "es-AR.lproj/ClearPrivateData.strings"; sourceTree = "<group>"; };
+		2C9165402B20DDF900BE390E /* APNConsentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APNConsentViewController.swift; sourceTree = "<group>"; };
+		2C9165422B20DE5700BE390E /* APNConsentViewModelProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APNConsentViewModelProtocol.swift; sourceTree = "<group>"; };
+		2C9165442B20DEF800BE390E /* APNConsentItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APNConsentItemCell.swift; sourceTree = "<group>"; };
+		2C9165462B20DF0C00BE390E /* APNConsentListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APNConsentListItem.swift; sourceTree = "<group>"; };
+		2C9165482B20E55200BE390E /* EngagementServiceExperiment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EngagementServiceExperiment.swift; sourceTree = "<group>"; };
+		2C91654A2B20E64100BE390E /* UnleashAPNConsentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnleashAPNConsentViewModel.swift; sourceTree = "<group>"; };
 		2C97EC701E72C80E0092EC18 /* TopTabsTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TopTabsTest.swift; sourceTree = "<group>"; };
 		2C9F8CB82AC30F6E00678514 /* EcosiaInstallType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EcosiaInstallType.swift; sourceTree = "<group>"; };
 		2C9F8CBA2AC3104800678514 /* EcosiaInstallTypeTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EcosiaInstallTypeTests.swift; sourceTree = "<group>"; };
@@ -5270,6 +5282,7 @@
 			children = (
 				2C50B3DC2AF3EE930037AA90 /* EngineShortcutsExperiment.swift */,
 				2C31ECAA2A2E13410058BC31 /* DefaultBrowserExperiment.swift */,
+				2C9165482B20E55200BE390E /* EngagementServiceExperiment.swift */,
 			);
 			path = Unleash;
 			sourceTree = "<group>";
@@ -5318,6 +5331,18 @@
 				2C73A7272A9E1BD7006EBAAB /* WhatsNewLocalDataProvider.swift */,
 			);
 			path = DataProvider;
+			sourceTree = "<group>";
+		};
+		2C91653F2B20DDAB00BE390E /* APNConsent */ = {
+			isa = PBXGroup;
+			children = (
+				2C9165402B20DDF900BE390E /* APNConsentViewController.swift */,
+				2C9165422B20DE5700BE390E /* APNConsentViewModelProtocol.swift */,
+				2C9165442B20DEF800BE390E /* APNConsentItemCell.swift */,
+				2C9165462B20DF0C00BE390E /* APNConsentListItem.swift */,
+				2C91654A2B20E64100BE390E /* UnleashAPNConsentViewModel.swift */,
+			);
+			path = APNConsent;
 			sourceTree = "<group>";
 		};
 		2C9C9FF52A03C7950038A3DD /* ExperimentsTests */ = {
@@ -6624,6 +6649,7 @@
 		CA4D9C8728C8D801006AFB5D /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				2C91653F2B20DDAB00BE390E /* APNConsent */,
 				2C73A7192A9D14B2006EBAAB /* WhatsNew */,
 				CA4D9C8828C8D801006AFB5D /* SemanticColor.swift */,
 				CA4D9C8C28C8D801006AFB5D /* Ecosia.xcassets */,
@@ -9418,6 +9444,7 @@
 				C45F44691D087DB600CB7EF0 /* TopTabsViewController.swift in Sources */,
 				DFACDFAF274D4D6D00A94EEC /* ReusableCell.swift in Sources */,
 				1D0BA05C24F46A0400D731B5 /* TopSitesProvider.swift in Sources */,
+				2C9165492B20E55200BE390E /* EngagementServiceExperiment.swift in Sources */,
 				0BF0DB941A8545800039F300 /* URLBarView.swift in Sources */,
 				D01017F5219CB6BD009CBB5A /* DownloadContentScript.swift in Sources */,
 				D5D052EF2645ACBF00759F85 /* View.swift in Sources */,
@@ -9428,6 +9455,7 @@
 				2C73A7242A9E0C6F006EBAAB /* WhatsNewViewController.swift in Sources */,
 				FA6B2AC21D41F02D00429414 /* Punycode.swift in Sources */,
 				43446CEA2412066500F5C643 /* UIViewController+Extension.swift in Sources */,
+				2C91654B2B20E64100BE390E /* UnleashAPNConsentViewModel.swift in Sources */,
 				12EEE0A82A9F75C500C4A46D /* NTPAboutEcosiaCellViewModel.swift in Sources */,
 				8A471185287F6E4800F5A6EA /* SeparatorTableViewCell.swift in Sources */,
 				1287A99F2A6FFC0C005F21F7 /* WelcomeTourTransparent.swift in Sources */,
@@ -9499,6 +9527,7 @@
 				CA8BCC3928D1FBBC0020BC50 /* HistoryHighlightsManager.swift in Sources */,
 				CA4D9D0C28C8D801006AFB5D /* WelcomeTourProfit.swift in Sources */,
 				CAB544C828F6BBFD00657722 /* PageActionsShortcutsHeader.swift in Sources */,
+				2C9165472B20DF0C00BE390E /* APNConsentListItem.swift in Sources */,
 				D8D33A7D1FBD080300A20A28 /* UIView+Extension.swift in Sources */,
 				CA4D9CFD28C8D801006AFB5D /* MultiplyImpact.swift in Sources */,
 				E650755C1E37F747006961AC /* Swizzling.m in Sources */,
@@ -9508,6 +9537,7 @@
 				E571EE782875694C0051D9AA /* PocketSponsoredStoriesProvider.swift in Sources */,
 				2F44FC721A9E840300FD20CC /* SettingsNavigationController.swift in Sources */,
 				2CAD6D992A7A96C000C2E96D /* Analytics+Configuration.swift in Sources */,
+				2C9165412B20DDF900BE390E /* APNConsentViewController.swift in Sources */,
 				2C73A71B2A9E0B7A006EBAAB /* WhatsNewItem.swift in Sources */,
 				CA4D9CF028C8D801006AFB5D /* NTPTooltip.Highlight.swift in Sources */,
 				D0E89A2920910917001CE5C7 /* DownloadsPanel.swift in Sources */,
@@ -9583,6 +9613,7 @@
 				43AB6FA425DC53D30016B015 /* LabelButtonHeaderView.swift in Sources */,
 				C8163851268A0899004C7160 /* AddCredentialViewController.swift in Sources */,
 				CA520E7A24913C1B00CCAB48 /* LoginListViewModel.swift in Sources */,
+				2C9165452B20DEF800BE390E /* APNConsentItemCell.swift in Sources */,
 				12E8E6B42A9CFC4100E6ED8E /* NTPCustomizationCellViewModel.swift in Sources */,
 				8AB8574327D963920075C173 /* Loggable.swift in Sources */,
 				8AE1E1CD27B191110024C45E /* SearchBarSettingsViewModel.swift in Sources */,
@@ -9618,6 +9649,7 @@
 				D0E55C4F1FB4FD23006DC274 /* FormPostHelper.swift in Sources */,
 				E118B9292862674E00C84831 /* InactiveTabItemCellModel.swift in Sources */,
 				E650754E1E37F6AE006961AC /* CGRect+Extension.swift in Sources */,
+				2C9165432B20DE5700BE390E /* APNConsentViewModelProtocol.swift in Sources */,
 				8AE1E1D227B1ADC40024C45E /* TopBottomInterchangeable.swift in Sources */,
 				C8B0F5F4283B7CCE007AE65D /* PocketProvider.swift in Sources */,
 				D3972BF41C22412B00035B87 /* TitleActivityItemProvider.swift in Sources */,
