@@ -39,8 +39,8 @@ extension UnleashAPNConsentViewModel {
     
     private var titleMatchingVariant: String {
         switch EngagementServiceExperiment.variantName {
-        case "test1": return .localized(.apnConsentVariantNameTest1CTAAllowButtonTitle)
-        default: return .localized(.apnConsentVariantNameControlCTAAllowButtonTitle)
+        case "test1": return .localized(.apnConsentVariantNameTest1HeaderTitle)
+        default: return .localized(.apnConsentVariantNameControlHeaderTitle)
         }
     }
     
