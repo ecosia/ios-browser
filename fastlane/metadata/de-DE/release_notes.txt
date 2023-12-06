@@ -1,8 +1,3 @@
-Wir haben die Homepage umgestaltet:
-Alle Infos zu deinem Beitrag sind jetzt dort gesammelt.
-Du kannst die Homepage an deine Vorlieben anpassen und einzelne Bereiche deaktivieren.
+Wir haben einige Bugs behoben und die Stabilität verbessert.
 
-Außerdem haben wir einige Bugs behoben und die Stabilität verbessert:
-- Bezahlen mit Paypal sollte wieder funktionieren
-
-Wir arbeiten immer hart daran, Ecosia für Dich zu verbessern. Schicke uns gerne Fragen oder Feedback an iosapp@ecosia.org. Wir freuen uns, von dir zu hören!
+Wir arbeiten immer hart daran, Ecosia für dich zu verbessern. Schicke uns gerne Fragen oder Feedback an iosapp@ecosia.org. Wir freuen uns, von dir zu hören!

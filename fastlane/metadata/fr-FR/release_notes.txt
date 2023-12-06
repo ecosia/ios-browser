@@ -1,8 +1,3 @@
-Nous avons réorganisé notre page d'accueil :
-Toutes les informations liées à votre impact sont désormais regroupées ici.
-Vous pouvez personnaliser la page d'accueil selon vos besoins et désactiver certaines sections.
-
-Nous avons également résolu quelques problèmes et ajouté des améliorations en termes de stabilité :
-- Le paiement par Paypal devrait fonctionner à nouveau
+Nous avons résolu quelques problèmes et ajouté des améliorations en termes de stabilité.
 
 Nous travaillons sans relâche pour améliorer Ecosia pour vous. Si vous avez des questions ou des remarques, n'hésitez pas à les communiquer à notre équipe à l'adresse iosapp@ecosia.org. Nous serons ravis d'avoir de vos nouvelles !
