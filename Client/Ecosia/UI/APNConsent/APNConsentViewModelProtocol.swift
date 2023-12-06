@@ -15,10 +15,10 @@ protocol APNConsentViewModelProtocol {
 extension APNConsentViewModelProtocol {
     
     var ctaAllowButtonTitle: String {
-        "Allow push notifications"
+        .localized(.apnConsentCTAAllowButtonTitle)
     }
     
     var ctaDenyButtonTitle: String {
-        "Not now"
+        .localized(.apnConsentCTADenyButtonTitle)
     }
 }

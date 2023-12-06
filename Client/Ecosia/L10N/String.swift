@@ -242,11 +242,13 @@ extension String {
         case whatsNewSecondItemDescription = "Tailor your home page to show the information that’s most relevant to you."
         case whatsNewFooterButtonTitle = "Discover"
         case quickSearch = "Quick Search"
-        case apnConsentVariantNameControlCTAAllowButtonTitle = "Keep up with Ecosia"
-        case apnConsentVariantNameTest1CTAAllowButtonTitle = "Turn on push notifications"
+        case apnConsentVariantNameControlHeaderTitle = "Keep up with Ecosia"
+        case apnConsentVariantNameTest1HeaderTitle = "Turn on push notifications"
         case apnConsentVariantNameControlFirstItemTitle = "Discover the trees we plant and the impact they’re having"
         case apnConsentVariantNameControlSecondItemTitle = "Get tips on how to help build a greener future"
         case apnConsentVariantNameTest1FirstItemTitle = "Receive updates on our tree-planting projects around the world"
         case apnConsentVariantNameTest1SecondItemTitle = "Get tips on how to be climate active every day"
+        case apnConsentCTAAllowButtonTitle = "Allow push notifications"
+        case apnConsentCTADenyButtonTitle = "Not now"
     }
 }
