@@ -164,7 +164,11 @@ class BrowserViewController: UIViewController {
 
     fileprivate var shouldShowDefaultBrowserPromo: Bool { profile.prefs.intForKey(PrefsKeys.IntroSeen) == nil }
     fileprivate var shouldShowWhatsNewPageScreen: Bool { whatsNewDataProvider.shouldShowWhatsNewPage }
-    fileprivate var shouldShowAPNConsentScreen: Bool { User.shared.shouldShowAPNConsentScreen }
+    fileprivate var shouldShowAPNConsentScreen: Bool {
+        EngagementServiceExperiment.isEnabled &&
+        EngagementServiceExperiment.minSearches() <= User.shared.searchCount &&
+        User.shared.shouldShowAPNConsentScreen
+    }
 
     let whatsNewDataProvider = WhatsNewLocalDataProvider()
     
