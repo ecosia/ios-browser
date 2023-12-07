@@ -21,19 +21,23 @@ final class UnleashAPNConsentViewModel: APNConsentViewModelProtocol {
 
 extension UnleashAPNConsentViewModel {
     
-    private static let listItemsVariantNameControl: [APNConsentListItem] = [
-        APNConsentListItem(title: .localized(.apnConsentVariantNameControlFirstItemTitle)),
-        APNConsentListItem(title: .localized(.apnConsentVariantNameControlSecondItemTitle))
-    ]
-    private static let listItemsVariantNameTest1: [APNConsentListItem] = [
-        APNConsentListItem(title: .localized(.apnConsentVariantNameTest1FirstItemTitle)),
-        APNConsentListItem(title: .localized(.apnConsentVariantNameTest1SecondItemTitle))
-    ]
+    private var listItemsVariantNameControl: [APNConsentListItem] {
+        [
+            APNConsentListItem(title: .localized(.apnConsentVariantNameControlFirstItemTitle)),
+            APNConsentListItem(title: .localized(.apnConsentVariantNameControlSecondItemTitle))
+        ]
+    }
+    private var listItemsVariantNameTest1: [APNConsentListItem] {
+        [
+            APNConsentListItem(title: .localized(.apnConsentVariantNameTest1FirstItemTitle)),
+            APNConsentListItem(title: .localized(.apnConsentVariantNameTest1SecondItemTitle))
+        ]
+    }
     
     private var listItemsMatchingVariant: [APNConsentListItem] {
         switch EngagementServiceExperiment.variantName {
-        case "test1": return Self.listItemsVariantNameTest1
-        default: return Self.listItemsVariantNameControl
+        case "test1": return listItemsVariantNameTest1
+        default: return listItemsVariantNameControl
         }
     }
     
