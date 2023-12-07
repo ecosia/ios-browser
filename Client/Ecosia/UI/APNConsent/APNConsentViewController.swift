@@ -204,9 +204,8 @@ extension APNConsentViewController {
     }
 
     @objc private func ctaTapped() {
-        dismiss(animated: true) {
-            // TODO: Add Engagement Service Initialization and native consent request
-        }
+        // TODO: Add Engagement Service Initialization and native consent request
+        // Dismiss the View Controller upon receiving the allow/deny consent response via Apple Native Popup
     }
 }
 

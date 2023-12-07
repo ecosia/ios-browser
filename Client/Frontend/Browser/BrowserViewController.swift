@@ -164,10 +164,7 @@ class BrowserViewController: UIViewController {
 
     fileprivate var shouldShowDefaultBrowserPromo: Bool { profile.prefs.intForKey(PrefsKeys.IntroSeen) == nil }
     fileprivate var shouldShowWhatsNewPageScreen: Bool { whatsNewDataProvider.shouldShowWhatsNewPage }
-    fileprivate var shouldShowAPNConsentScreen: Bool {
-        // TODO: Get the "APN Consent Flag shown"
-        true
-    }
+    fileprivate var shouldShowAPNConsentScreen: Bool { User.shared.shouldShowAPNConsentScreen }
 
     let whatsNewDataProvider = WhatsNewLocalDataProvider()
     
@@ -2279,12 +2276,16 @@ extension BrowserViewController {
          would not be suitable as part of this ticke scope.
          As part of the upgrade and with a more structured navigation approach, we will
          refactor it.
+         The below is a decent compromise given the complexity of the decisional execution and presentation.
+         The order of the function represents the priority.
          */
-        if !presentDefaultBrowserPromoIfNeeded() {
-            presentWhatsNewPageIfNeeded()
-        } else if !presentWhatsNewPageIfNeeded() {
-            presentAPNConsentIfNeeded()
-        }
+        let presentationFunctions: [() -> Bool] = [
+            presentDefaultBrowserPromoIfNeeded,
+            presentWhatsNewPageIfNeeded,
+            presentAPNConsentIfNeeded
+        ]
+
+        _ = presentationFunctions.first(where: { $0() })
     }
 
     private func isHomePage() -> Bool {
@@ -2293,12 +2294,7 @@ extension BrowserViewController {
 
     @discardableResult
     private func presentWhatsNewPageIfNeeded() -> Bool {
-        
-        APNConsentViewController.presentOn(self, viewModel: UnleashAPNConsentViewModel())
-        return true
-        
         guard shouldShowWhatsNewPageScreen else { return false }
-        
         let viewModel = WhatsNewViewModel(provider: whatsNewDataProvider)
         WhatsNewViewController.presentOn(self, viewModel: viewModel)
         return true
@@ -2306,10 +2302,7 @@ extension BrowserViewController {
     
     @discardableResult
     private func presentAPNConsentIfNeeded() -> Bool {
-        guard shouldShowAPNConsentScreen,
-              EngagementServiceExperiment.minSearches() <= User.shared.searchCount
-        else { return false }
-
+        guard shouldShowAPNConsentScreen else { return false }
         APNConsentViewController.presentOn(self, viewModel: UnleashAPNConsentViewModel())
         return true
     }
