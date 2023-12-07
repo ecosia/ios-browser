@@ -138,6 +138,9 @@ final class Analytics {
     /// Sends the analytics event for a given action
     /// The function is EngagementService agnostic e.g. doesn't have context
     /// of the engagement service being used (i.e. `Braze`)
+    /// but it does get the `Toggle.Name` from the one
+    /// defined in the `EngagementServiceExperiment`
+    /// so to leverage decoupling.
     func apnConsent(_ action: Action.APNConsent) {
         let event = Structured(category: Category.pushNotification.rawValue,
                                action: action.rawValue)
