@@ -112,7 +112,9 @@ extension Analytics {
             case
             view,
             click,
-            skip
+            skip,
+            denied,
+            allowed
         }
         
         enum Bookmarks: String {
