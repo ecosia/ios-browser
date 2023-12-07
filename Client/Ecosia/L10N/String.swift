@@ -249,6 +249,6 @@ extension String {
         case apnConsentVariantNameTest1FirstItemTitle = "Receive updates on our tree-planting projects around the world"
         case apnConsentVariantNameTest1SecondItemTitle = "Get tips on how to be climate active every day"
         case apnConsentCTAAllowButtonTitle = "Allow push notifications"
-        case apnConsentCTADenyButtonTitle = "Not now"
+        case apnConsentSkipButtonTitle = "Not now"
     }
 }

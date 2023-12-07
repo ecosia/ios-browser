@@ -26,7 +26,8 @@ final class APNConsentItemCell: UITableViewCell {
     private func configureForiOS14(item: APNConsentListItem) {
         var newConfiguration = defaultContentConfiguration()
         newConfiguration.text = item.title
-        newConfiguration.textProperties.font = .preferredFont(forTextStyle: .headline)
+        newConfiguration.textProperties.color = .theme.ecosia.secondaryText
+        newConfiguration.textProperties.font = .preferredFont(forTextStyle: .body)
         newConfiguration.textProperties.lineBreakMode = .byTruncatingTail
         newConfiguration.textProperties.adjustsFontForContentSizeCategory = true
         newConfiguration.textProperties.adjustsFontSizeToFitWidth = true
@@ -37,8 +38,9 @@ final class APNConsentItemCell: UITableViewCell {
     
     private func configureForiOS13(item: APNConsentListItem) {
         textLabel?.text = item.title
+        textLabel?.textColor = .theme.ecosia.secondaryText
         textLabel?.lineBreakMode = .byTruncatingTail
-        textLabel?.font = .preferredFont(forTextStyle: .headline)
+        textLabel?.font = .preferredFont(forTextStyle: .body)
         textLabel?.adjustsFontForContentSizeCategory = true
         textLabel?.adjustsFontSizeToFitWidth = true
         imageView?.image = item.image

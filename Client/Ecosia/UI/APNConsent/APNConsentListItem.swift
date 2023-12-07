@@ -5,6 +5,6 @@
 import Foundation
 
 struct APNConsentListItem {
-    let image: UIImage? = .init(named: "stroke")
+    let image: UIImage? = .templateImageNamed("stroke")?.tinted(withColor: .theme.ecosia.secondaryIcon)
     let title: String
 }
