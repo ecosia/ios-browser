@@ -100,7 +100,11 @@ extension APNConsentViewController {
     private func setupViews() {
         
         firstImageView = UIImageView(image: viewModel.image)
+        firstImageView.contentMode = .scaleAspectFill
+        firstImageView.clipsToBounds = true
         firstImageView.translatesAutoresizingMaskIntoConstraints = false
+        firstImageView.setContentCompressionResistancePriority(.required, for: .vertical)
+        firstImageView.setContentHuggingPriority(.required, for: .vertical)
 
         headerLabelContainerView.translatesAutoresizingMaskIntoConstraints = false
         headerLabel.text = viewModel.title
@@ -260,13 +264,15 @@ extension APNConsentViewController {
         sheet.modalPresentationStyle = .automatic
         
         // iPhone
-        if #available(iOS 16.0, *), let sheet = sheet.sheetPresentationController {
-            let custom = UISheetPresentationController.Detent.custom { context in
-                return UX.PreferredContentSize.iPhoneCustomDetentHeight
+        if sheet.traitCollection.userInterfaceIdiom == .phone {
+            if #available(iOS 16.0, *), let sheet = sheet.sheetPresentationController {
+                let custom = UISheetPresentationController.Detent.custom { context in
+                    return UX.PreferredContentSize.iPhoneCustomDetentHeight
+                }
+                sheet.detents = [custom, .large()]
+            } else if #available(iOS 15.0, *), let sheet = sheet.sheetPresentationController {
+                sheet.detents = [.large()]
             }
-            sheet.detents = [custom, .large()]
-        } else if #available(iOS 15.0, *), let sheet = sheet.sheetPresentationController {
-            sheet.detents = [.large()]
         }
 
         // iPad
