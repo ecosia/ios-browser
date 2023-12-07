@@ -28,21 +28,8 @@ final class APNConsentViewController: UIViewController {
             private init() {}
             static let waveHeight: CGFloat = 34
         }
-        
-        struct Knob {
-            private init() {}
-            static let height: CGFloat = 4
-            static let width: CGFloat = 32
-            static let cornerRadious: CGFloat = 2
-        }
-
-        struct CloseButton {
-            private init() {}
-            static let size: CGFloat = 32
-            static let distanceFromCardBottom: CGFloat = 32
-        }
-        
-        struct FooterButton {
+                
+        struct FooterButtons {
             private init() {}
             static let height: CGFloat = 50
         }
@@ -57,7 +44,8 @@ final class APNConsentViewController: UIViewController {
     private let topContainerView = UIView()
     private let headerLabelContainerView = UIView()
     private let tableView = UITableView()
-    private let footerButton = UIButton()
+    private let ctaButton = UIButton()
+    private let skipButton = UIButton()
     weak var delegate: APNConsentViewDelegate?
 
     // MARK: - Init
@@ -79,7 +67,6 @@ final class APNConsentViewController: UIViewController {
         setupViews()
         layoutViews()
         applyTheme()
-        updateTableView()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -117,8 +104,8 @@ extension APNConsentViewController {
 
         headerLabelContainerView.translatesAutoresizingMaskIntoConstraints = false
         headerLabel.text = viewModel.title
-        headerLabel.textAlignment = .center
         headerLabel.translatesAutoresizingMaskIntoConstraints = false
+        headerLabel.adjustsFontForContentSizeCategory = true
         headerLabel.font = .preferredFont(forTextStyle: .title3).bold()
         headerLabelContainerView.addSubview(headerLabel)
 
@@ -131,15 +118,25 @@ extension APNConsentViewController {
         tableView.dataSource = self
         tableView.register(APNConsentItemCell.self, forCellReuseIdentifier: APNConsentItemCell.cellIdentifier)
         
-        footerButton.setTitle(viewModel.ctaAllowButtonTitle, for: .normal)
-        footerButton.translatesAutoresizingMaskIntoConstraints = false
-        footerButton.addTarget(self, action: #selector(footerButtonTapped), for: .touchUpInside)
-        footerButton.layer.cornerRadius = UX.FooterButton.height/2
+        ctaButton.setTitle(viewModel.ctaAllowButtonTitle, for: .normal)
+        ctaButton.titleLabel?.adjustsFontForContentSizeCategory = true
+        ctaButton.translatesAutoresizingMaskIntoConstraints = false
+        ctaButton.addTarget(self, action: #selector(footerButtonTapped), for: .touchUpInside)
+        ctaButton.layer.cornerRadius = UX.FooterButtons.height/2
+        ctaButton.addTarget(self, action: #selector(ctaTapped), for: .primaryActionTriggered)
+
+        skipButton.translatesAutoresizingMaskIntoConstraints = false
+        skipButton.backgroundColor = .clear
+        skipButton.titleLabel?.font = .preferredFont(forTextStyle: .callout)
+        skipButton.titleLabel?.adjustsFontForContentSizeCategory = true
+        skipButton.setTitle(.localized(.apnConsentSkipButtonTitle), for: .normal)
+        skipButton.addTarget(self, action: #selector(skipTapped), for: .primaryActionTriggered)
         
         view.addSubview(topContainerView)
         view.addSubview(headerLabelContainerView)
         view.addSubview(tableView)
-        view.addSubview(footerButton)
+        view.addSubview(ctaButton)
+        view.addSubview(skipButton)
     }
     
     private func layoutViews() {
@@ -153,8 +150,9 @@ extension APNConsentViewController {
 
             // First image view constraints
             firstImageView.topAnchor.constraint(equalTo: topContainerView.topAnchor),
+            firstImageView.leadingAnchor.constraint(equalTo: topContainerView.leadingAnchor),
+            firstImageView.trailingAnchor.constraint(equalTo: topContainerView.trailingAnchor),
             firstImageView.bottomAnchor.constraint(equalTo: topContainerView.bottomAnchor),
-            firstImageView.centerXAnchor.constraint(equalTo: topContainerView.centerXAnchor),
 
             // Second image view constraints
             secondImageView.bottomAnchor.constraint(equalTo: topContainerView.bottomAnchor),
@@ -170,24 +168,45 @@ extension APNConsentViewController {
             // Header label constraints
             headerLabel.topAnchor.constraint(equalTo: headerLabelContainerView.topAnchor, constant: UX.defaultPadding),
             headerLabel.bottomAnchor.constraint(equalTo: headerLabelContainerView.bottomAnchor, constant: -UX.defaultPadding),
-            headerLabel.centerXAnchor.constraint(equalTo: headerLabelContainerView.centerXAnchor),
+            headerLabel.leadingAnchor.constraint(equalTo: headerLabelContainerView.leadingAnchor, constant: UX.defaultPadding),
+            headerLabel.trailingAnchor.constraint(equalTo: headerLabelContainerView.trailingAnchor),
 
             // Table view constraints
             tableView.topAnchor.constraint(equalTo: headerLabelContainerView.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: footerButton.topAnchor),
+            tableView.bottomAnchor.constraint(equalTo: ctaButton.topAnchor),
             
             // Footer button constraints
-            footerButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -UX.defaultPadding),
-            footerButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: UX.defaultPadding),
-            footerButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -UX.defaultPadding),
-            footerButton.heightAnchor.constraint(equalToConstant: UX.FooterButton.height)
+            ctaButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: UX.defaultPadding),
+            ctaButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -UX.defaultPadding),
+            ctaButton.heightAnchor.constraint(equalToConstant: UX.FooterButtons.height),
+            ctaButton.bottomAnchor.constraint(equalTo: skipButton.topAnchor),
+
+            skipButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -UX.defaultPadding),
+            skipButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: UX.defaultPadding),
+            skipButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -UX.defaultPadding),
+            skipButton.heightAnchor.constraint(equalTo: ctaButton.heightAnchor)
         ])
     }
     
     private func updateTableView() {
         tableView.reloadData()
+    }
+}
+
+// MARK: - Button's Actions
+
+extension APNConsentViewController {
+
+    @objc private func skipTapped() {
+        dismiss(animated: true)
+    }
+
+    @objc private func ctaTapped() {
+        dismiss(animated: true) {
+            // TODO: Add Engagement Service Initialization and native consent request
+        }
     }
 }
 
@@ -216,10 +235,16 @@ extension APNConsentViewController: NotificationThemeable {
         topContainerView.backgroundColor = .theme.ecosia.tertiaryBackground
         tableView.backgroundColor = .theme.ecosia.primaryBackground
         tableView.separatorColor = .clear
-        footerButton.backgroundColor = .theme.ecosia.primaryBrand
-        footerButton.setTitleColor(.theme.ecosia.primaryTextInverted, for: .normal)
+        ctaButton.backgroundColor = .theme.ecosia.primaryBrand
+        ctaButton.setTitleColor(.theme.ecosia.primaryTextInverted, for: .normal)
+        skipButton.setTitleColor(.theme.ecosia.primaryButton, for: .normal)
         headerLabelContainerView.backgroundColor = .theme.ecosia.primaryBackground
         secondImageView.tintColor = .theme.ecosia.primaryBackground
+        /* 
+         Updating the TableView here so that the items containing the image will update the theming
+         showing the correct `tintColor`
+        */
+        updateTableView()
     }
 }
 

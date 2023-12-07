@@ -9,7 +9,7 @@ protocol APNConsentViewModelProtocol {
     var title: String { get }
     var image: UIImage? { get }
     var ctaAllowButtonTitle: String { get }
-    var ctaDenyButtonTitle: String { get }
+    var skipButtonTitle: String { get }
 }
 
 extension APNConsentViewModelProtocol {
@@ -18,7 +18,7 @@ extension APNConsentViewModelProtocol {
         .localized(.apnConsentCTAAllowButtonTitle)
     }
     
-    var ctaDenyButtonTitle: String {
-        .localized(.apnConsentCTADenyButtonTitle)
+    var skipButtonTitle: String {
+        .localized(.apnConsentSkipButtonTitle)
     }
 }
