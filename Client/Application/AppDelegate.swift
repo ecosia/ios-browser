@@ -74,6 +74,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Ecosia: lifecycle tracking
         Analytics.shared.activity(.launch)
         
+        // Ecosia: Engagement Service Initialization with AnalyticsId binding
+        ClientEngagementService.shared.initialize(parameters: ["id": User.shared.analyticsId.uuidString])
+        // Ecosia: Engagement Service consent request
+        ClientEngagementService.shared.requestAPNConsent(notificationCenterDelegate: self) { granted, error in
+            
+        }
+        
         // Ecosia: fetching statistics before they are used
         Task.detached {
             try? await Statistics.shared.fetchAndUpdate()
@@ -309,3 +316,21 @@ extension AppDelegate: WelcomeDelegate {
         rootViewController.setViewControllers([browserViewController], animated: true)
     }
 }
+
+/* 
+ Ecosia: Engagement Service
+ Add the conformance to `UNUserNotificationCenterDelegate` here as well as registering the token directly in the AppDelegate
+ as we are now requesting the consent as soon as the app starts.
+ We don't have a UI yet to handle the request consent elsewhere we do it directly at this stage of implementation.
+*/
+
+extension AppDelegate: UNUserNotificationCenterDelegate {}
+
+// Ecosia: Register the APN device token
+
+extension AppDelegate {
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        ClientEngagementService.shared.registerDeviceToken(deviceToken)
+    }
+}
+
