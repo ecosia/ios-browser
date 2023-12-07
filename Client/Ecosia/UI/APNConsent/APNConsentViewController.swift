@@ -69,6 +69,11 @@ final class APNConsentViewController: UIViewController {
         applyTheme()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        Analytics.shared.apnConsent(.view)
+    }
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         modalTransitionStyle = .crossDissolve
@@ -204,10 +209,12 @@ extension APNConsentViewController {
 extension APNConsentViewController {
 
     @objc private func skipTapped() {
+        Analytics.shared.apnConsent(.skip)
         dismiss(animated: true)
     }
 
     @objc private func ctaTapped() {
+        Analytics.shared.apnConsent(.click)
         // TODO: Add Engagement Service Initialization and native consent request
         // Dismiss the View Controller upon receiving the allow/deny consent response via Apple Native Popup
     }
