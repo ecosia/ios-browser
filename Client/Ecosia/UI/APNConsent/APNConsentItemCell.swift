@@ -54,6 +54,18 @@ final class APNConsentItemCell: UITableViewCell {
             contentConfiguration = updatedConfiguration
         }
     }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        if #available(iOS 14, *) {
+            var newConfiguration = defaultContentConfiguration()
+            newConfiguration.text = nil
+            newConfiguration.image = nil
+        } else {
+            textLabel?.text = nil
+            imageView?.image = nil
+        }
+    }
 }
 
 extension APNConsentItemCell: ReusableCell {}
