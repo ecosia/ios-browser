@@ -162,7 +162,10 @@ class BrowserViewController: UIViewController {
         return keyboardPressesHandlerValue
     }
 
-    fileprivate var shouldShowDefaultBrowserPromo: Bool { profile.prefs.intForKey(PrefsKeys.IntroSeen) == nil }
+    fileprivate var shouldShowDefaultBrowserPromo: Bool {
+        profile.prefs.intForKey(PrefsKeys.IntroSeen) == nil &&
+        DefaultBrowserExperiment.minPromoSearches() <= User.shared.searchCount
+    }
     fileprivate var shouldShowWhatsNewPageScreen: Bool { whatsNewDataProvider.shouldShowWhatsNewPage }
     fileprivate var shouldShowAPNConsentScreen: Bool {
         EngagementServiceExperiment.isEnabled &&
@@ -2313,9 +2316,8 @@ extension BrowserViewController {
 
     @discardableResult
     private func presentDefaultBrowserPromoIfNeeded() -> Bool {
-        guard shouldShowDefaultBrowserPromo, 
-                DefaultBrowserExperiment.minPromoSearches() <= User.shared.searchCount else { return false }
-
+        guard shouldShowDefaultBrowserPromo else { return false }
+        
         if #available(iOS 14, *) {
             let defaultPromo = DefaultBrowser(delegate: self)
             present(defaultPromo, animated: true)
