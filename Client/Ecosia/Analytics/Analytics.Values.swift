@@ -6,6 +6,7 @@ extension Analytics {
         activity,
         abTest = "ab_Test",
         browser,
+        pushNotification = "push_notification",
         external,
         migration,
         navigation,
@@ -82,7 +83,8 @@ extension Analytics {
         change,
         display,
         enable,
-        disable
+        disable,
+        dismiss
         
         enum Activity: String {
             case
@@ -104,6 +106,13 @@ extension Analytics {
             view,
             click,
             close
+        }
+        
+        enum APNConsent: String {
+            case
+            view,
+            click,
+            skip
         }
         
         enum Bookmarks: String {

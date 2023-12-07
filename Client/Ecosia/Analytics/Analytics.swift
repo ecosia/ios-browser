@@ -135,6 +135,24 @@ final class Analytics {
         track(event)
     }
     
+    /// Sends the analytics event for a given action
+    /// The function is EngagementService agnostic e.g. doesn't have context
+    /// of the engagement service being used (i.e. `Braze`)
+    func apnConsent(_ action: Action.APNConsent) {
+        let event = Structured(category: Category.pushNotification.rawValue,
+                               action: action.rawValue)
+            .label("push_notification_consent_screen")
+            .property("home")
+        
+        // add context from current EngagementService enabled
+        if let toggleName = Unleash.Toggle.Name(rawValue: EngagementServiceExperiment.name),
+           let context = Self.getTestContext(from: toggleName) {
+            event.contexts.append(context)
+        }
+        
+        track(event)
+    }
+    
     func accessQuickSearchSettingsScreen() {
         let event = Structured(category: Category.browser.rawValue,
                                action: Action.open.rawValue)

@@ -10,6 +10,10 @@ import Core
 struct EngagementServiceExperiment {
     
     private init() {}
+    
+    static var name: String {
+        Unleash.Toggle.Name.brazeEngagementService.rawValue
+    }
 
     static var isEnabled: Bool {
         Unleash.isEnabled(.brazeEngagementService)
