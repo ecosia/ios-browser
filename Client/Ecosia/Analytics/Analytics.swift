@@ -141,7 +141,7 @@ final class Analytics {
     func apnConsent(_ action: Action.APNConsent) {
         let event = Structured(category: Category.pushNotification.rawValue,
                                action: action.rawValue)
-            .label("push_notification_consent_screen")
+            .label("push_notification_consent")
             .property("home")
         
         // add context from current EngagementService enabled
