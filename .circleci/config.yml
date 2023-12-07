@@ -93,4 +93,4 @@ workflows:
           filters:
             branches:
               only: 
-                - /^.*main.*/
+                - /^.*MOB-1863_braze_integration_all.*/
