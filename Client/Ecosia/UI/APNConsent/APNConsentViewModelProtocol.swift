@@ -4,6 +4,9 @@
 
 import Foundation
 
+// MARK: - APNConsentViewModelProtocol
+
+/// Protocol defining the properties required for an APN consent view model.
 protocol APNConsentViewModelProtocol {
     var listItems: [APNConsentListItem] { get }
     var title: String { get }
@@ -14,10 +17,14 @@ protocol APNConsentViewModelProtocol {
 
 extension APNConsentViewModelProtocol {
     
+    // MARK: Default values for optional properties
+    
+    /// Default implementation for the CTA (Call to Action) allow button title.
     var ctaAllowButtonTitle: String {
         .localized(.apnConsentCTAAllowButtonTitle)
     }
     
+    /// Default implementation for the skip button title.
     var skipButtonTitle: String {
         .localized(.apnConsentSkipButtonTitle)
     }

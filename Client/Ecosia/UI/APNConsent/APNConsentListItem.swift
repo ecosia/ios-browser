@@ -4,6 +4,9 @@
 
 import Foundation
 
+// MARK: - APNConsentListItem
+
+/// Structure representing an item in the APN consent list.
 struct APNConsentListItem {
     let image: UIImage? = .templateImageNamed("stroke")?.tinted(withColor: .theme.ecosia.secondaryIcon)
     let title: String

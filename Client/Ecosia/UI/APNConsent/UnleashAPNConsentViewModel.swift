@@ -4,16 +4,24 @@
 
 import Core
 
+// MARK: - UnleashAPNConsentViewModel
+
+/// Final class implementing the APNConsentViewModelProtocol for a specific variant.
 final class UnleashAPNConsentViewModel: APNConsentViewModelProtocol {
     
+    // MARK: Properties
+    
+    /// Title for the APN consent view, currently based on the Unleash variant.
     var title: String {
         titleMatchingVariant
     }
     
+    /// Image for the APN consent view, currently based on the Unleash variant.
     var image: UIImage? {
         imageMatchinVariant
     }
-        
+    
+    /// List items for the APN consent view, currently based on the Unleash variant.
     var listItems: [APNConsentListItem] {
         listItemsMatchingVariant
     }
@@ -21,12 +29,17 @@ final class UnleashAPNConsentViewModel: APNConsentViewModelProtocol {
 
 extension UnleashAPNConsentViewModel {
     
+    // MARK: List Items for Different Variants
+    
+    /// List items for the `control` variant.
     private var listItemsVariantNameControl: [APNConsentListItem] {
         [
             APNConsentListItem(title: .localized(.apnConsentVariantNameControlFirstItemTitle)),
             APNConsentListItem(title: .localized(.apnConsentVariantNameControlSecondItemTitle))
         ]
     }
+    
+    /// List items for the `test1` variant.
     private var listItemsVariantNameTest1: [APNConsentListItem] {
         [
             APNConsentListItem(title: .localized(.apnConsentVariantNameTest1FirstItemTitle)),
@@ -34,6 +47,9 @@ extension UnleashAPNConsentViewModel {
         ]
     }
     
+    // MARK: Computed Properties for Different Variants
+    
+    /// Computed property to determine the list items based on the current variant.
     private var listItemsMatchingVariant: [APNConsentListItem] {
         switch EngagementServiceExperiment.variantName {
         case "test1": return listItemsVariantNameTest1
@@ -41,6 +57,7 @@ extension UnleashAPNConsentViewModel {
         }
     }
     
+    /// Computed property to determine the title based on the current variant.
     private var titleMatchingVariant: String {
         switch EngagementServiceExperiment.variantName {
         case "test1": return .localized(.apnConsentVariantNameTest1HeaderTitle)
@@ -48,6 +65,7 @@ extension UnleashAPNConsentViewModel {
         }
     }
     
+    /// Computed property to determine the image based on the current variant.
     private var imageMatchinVariant: UIImage? {
         switch EngagementServiceExperiment.variantName {
         case "test1": return .init(named: "apnConsentImageTest1")
