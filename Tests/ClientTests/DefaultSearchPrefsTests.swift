@@ -15,6 +15,7 @@ class DefaultSearchPrefsTests: XCTestCase {
         let searchPrefs = DefaultSearchPrefs(with: Bundle.main.resourceURL!.appendingPathComponent("SearchPlugins").appendingPathComponent("list.json"))!
 
         // setup the most popular locales
+        // Ecosia: update values to include ecosia
         let us = (lang: ["en-US", "en"], region: "US", resultList: ["google-b-1-m", "bing", "ddg", "wikipedia", "ecosia"], resultDefault: "ecosia")
         let england = (lang: ["en-GB", "en"], region: "GB", resultList: ["google-b-m", "bing", "ddg", "wikipedia", "ecosia"], resultDefault: "ecosia")
         let france = (lang: ["fr-FR", "fr"], region: "FR", resultList: ["google-b-m", "bing", "ddg", "wikipedia-fr", "ecosia"], resultDefault: "ecosia")
