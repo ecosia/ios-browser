@@ -69,6 +69,11 @@ final class DefaultSearchPrefs {
         if let overrides = regionOverrides?[region] as? [String: Any] {
             usersEngineList = usersEngineList.map({ overrides[$0] as? String ?? $0 })
         }
+        
+        if !usersEngineList.contains(globalDefaultEngine) {
+            usersEngineList.append(globalDefaultEngine)
+        }
+        
         return usersEngineList
     }
 

@@ -201,7 +201,7 @@ class SearchEngines {
             }).compactMap({
                 parser.parse($0.path, engineID: $0.name)
             }).sorted { e, _ in
-                e.shortName == defaultEngineName
+                e.shortName.lowercased() == defaultEngineName.lowercased()
             }
     }
 
