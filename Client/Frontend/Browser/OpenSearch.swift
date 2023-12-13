@@ -77,7 +77,7 @@ class OpenSearchEngine: NSObject, NSCoding {
          `URL.search(query: query)`
          */
         if EngineShortcutsExperiment.isEnabled,
-        let fromTemplateURL = getURLFromTemplate(searchTemplate, query: query),
+           let fromTemplateURL = getURLFromTemplate(searchTemplate, query: query),
            fromTemplateURL.baseDomain != "ecosia.org" {
             return fromTemplateURL
         } else {

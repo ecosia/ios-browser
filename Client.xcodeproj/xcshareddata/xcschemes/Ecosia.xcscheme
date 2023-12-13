@@ -128,9 +128,6 @@
                   Identifier = "CustomSearchEnginesTest">
                </Test>
                <Test
-                  Identifier = "DefaultSearchPrefsTests">
-               </Test>
-               <Test
                   Identifier = "EcosiaBookmarkMigrationTests">
                </Test>
                <Test
