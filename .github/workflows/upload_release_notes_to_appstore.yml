@@ -1,10 +1,10 @@
 name: Release Notes update
 
 on:
-  pull_request:
+  push:
     paths:
-      - 'fastlane/metadata/**'
-      - '!fastlane/metadata/en-US/**'
+      - 'fastlane/metadata/**/release_notes.txt'
+      - '!fastlane/metadata/en-US/**/release_notes.txt'
     branches: [ main ]
 
 jobs:
