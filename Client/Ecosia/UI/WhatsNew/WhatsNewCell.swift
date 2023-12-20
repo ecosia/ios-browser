@@ -7,18 +7,21 @@ import Core
 
 final class WhatsNewCell: UITableViewCell {
     
-    var contentConfigurationToUpdate: Any?
-        
+    private var item: WhatsNewItem!
+            
     func configure(with item: WhatsNewItem) {
-        
         selectionStyle = .none
         backgroundColor = .clear
-        
-        // Configure based on iOS version
+        self.item = item
+        configureBasedOnOSVersion()
+        NotificationCenter.default.addObserver(self, selector: #selector(applyTheme), name: .DisplayThemeChanged, object: nil)
+    }
+    
+    private func configureBasedOnOSVersion() {
         if #available(iOS 14, *) {
-            self.configureForiOS14(item: item)
+            configureForiOS14(item: item)
         } else {
-            self.configureForiOS13(item: item)
+            configureForiOS13(item: item)
         }
     }
     
@@ -35,7 +38,7 @@ final class WhatsNewCell: UITableViewCell {
         newConfiguration.secondaryTextProperties.font = .preferredFont(forTextStyle: .subheadline)
         newConfiguration.secondaryTextProperties.adjustsFontForContentSizeCategory = true
         newConfiguration.secondaryTextProperties.adjustsFontSizeToFitWidth = true
-        newConfiguration.image = item.image
+        newConfiguration.image = item.image?.tinted(withColor: .theme.ecosia.secondaryIcon)
         newConfiguration.imageProperties.maximumSize = CGSize(width: 24, height: 24)
         contentConfiguration = newConfiguration
     }
@@ -51,16 +54,26 @@ final class WhatsNewCell: UITableViewCell {
         detailTextLabel?.font = .preferredFont(forTextStyle: .subheadline)
         detailTextLabel?.adjustsFontForContentSizeCategory = true
         detailTextLabel?.adjustsFontSizeToFitWidth = true
-        imageView?.image = item.image
+        imageView?.image = item.image?.tinted(withColor: .theme.ecosia.secondaryIcon)
     }
-
-    @available(iOS 14.0, *)
-    override func updateConfiguration(using state: UICellConfigurationState) {
-        // Don't update the contentConfiguration based on the cell's state
-        // If you have a saved configuration, apply it here
-        if let updatedConfiguration = (contentConfigurationToUpdate as? UIListContentConfiguration) {
-            contentConfiguration = updatedConfiguration
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        if #available(iOS 14, *) {
+            var newConfiguration = defaultContentConfiguration()
+            newConfiguration.text = nil
+            newConfiguration.image = nil
+        } else {
+            textLabel?.text = nil
+            imageView?.image = nil
         }
+    }
+}
+
+extension WhatsNewCell: NotificationThemeable {
+    
+    @objc func applyTheme() {
+        configureBasedOnOSVersion()
     }
 }
 
