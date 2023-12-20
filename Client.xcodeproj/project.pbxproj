@@ -14700,7 +14700,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = "MOB-2034_integrate_braze";
+				branch = main;
 				kind = branch;
 			};
 		};
