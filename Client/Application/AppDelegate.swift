@@ -74,6 +74,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Ecosia: lifecycle tracking
         Analytics.shared.activity(.launch)
         
+        // Ecosia: Engagement Service Initialization with AnalyticsId binding
+        ClientEngagementService.shared.initialize(parameters: ["id": User.shared.analyticsId.uuidString])
+        // Ecosia: Engagement Service consent request
+        ClientEngagementService.shared.requestAPNConsent(notificationCenterDelegate: self) { granted, error in
+            // TODO: Add analytics
+        }
+        
         // Ecosia: fetching statistics before they are used
         Task.detached {
             try? await Statistics.shared.fetchAndUpdate()
@@ -309,3 +316,16 @@ extension AppDelegate: WelcomeDelegate {
         rootViewController.setViewControllers([browserViewController], animated: true)
     }
 }
+
+// Ecosia: Conformance to UNUserNotificationCenterDelegate to enable APN
+
+extension AppDelegate: UNUserNotificationCenterDelegate {}
+
+// Ecosia: Register the APN device token
+
+extension AppDelegate {
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        ClientEngagementService.shared.registerDeviceToken(deviceToken)
+    }
+}
+

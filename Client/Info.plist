@@ -11,6 +11,8 @@
 		<string>org.mozilla.ios.sync.part1</string>
 		<string>org.mozilla.ios.sync.part2</string>
 	</array>
+	<key>BRAZE_API_KEY</key>
+	<string>$(BRAZE_API_KEY)</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
