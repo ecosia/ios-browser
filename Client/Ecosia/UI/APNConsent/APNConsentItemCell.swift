@@ -8,12 +8,14 @@ import Core
 final class APNConsentItemCell: UITableViewCell {
     
     private var item: APNConsentListItem!
+    private var contentConfigurationToUpdate: Any?
             
     func configure(with item: APNConsentListItem) {        
         selectionStyle = .none
         backgroundColor = .clear
         self.item = item
         configureBasedOnOSVersion()
+        applyTheme()
         NotificationCenter.default.addObserver(self, selector: #selector(applyTheme), name: .DisplayThemeChanged, object: nil)
     }
     
@@ -29,24 +31,20 @@ final class APNConsentItemCell: UITableViewCell {
     private func configureForiOS14(item: APNConsentListItem) {
         var newConfiguration = defaultContentConfiguration()
         newConfiguration.text = item.title
-        newConfiguration.textProperties.color = .theme.ecosia.secondaryText
         newConfiguration.textProperties.font = .preferredFont(forTextStyle: .body)
         newConfiguration.textProperties.lineBreakMode = .byTruncatingTail
         newConfiguration.textProperties.adjustsFontForContentSizeCategory = true
         newConfiguration.textProperties.adjustsFontSizeToFitWidth = true
-        newConfiguration.image = item.image
         newConfiguration.imageProperties.maximumSize = CGSize(width: 24, height: 24)
-        contentConfiguration = newConfiguration
+        contentConfigurationToUpdate = newConfiguration
     }
     
     private func configureForiOS13(item: APNConsentListItem) {
         textLabel?.text = item.title
-        textLabel?.textColor = .theme.ecosia.secondaryText
         textLabel?.lineBreakMode = .byTruncatingTail
         textLabel?.font = .preferredFont(forTextStyle: .body)
         textLabel?.adjustsFontForContentSizeCategory = true
         textLabel?.adjustsFontSizeToFitWidth = true
-        imageView?.image = item.image
     }
     
     override func prepareForReuse() {
@@ -65,7 +63,15 @@ final class APNConsentItemCell: UITableViewCell {
 extension APNConsentItemCell: NotificationThemeable {
     
     @objc func applyTheme() {
-        configureBasedOnOSVersion()
+        if #available(iOS 14, *) {
+            guard var updatedConfiguration = contentConfigurationToUpdate as? UIListContentConfiguration else { return }
+            updatedConfiguration.textProperties.color = .theme.ecosia.secondaryText
+            updatedConfiguration.image = item.image
+            contentConfiguration = updatedConfiguration
+        } else {
+            textLabel?.textColor = .theme.ecosia.secondaryText
+            imageView?.image = item.image
+        }
     }
 }
 

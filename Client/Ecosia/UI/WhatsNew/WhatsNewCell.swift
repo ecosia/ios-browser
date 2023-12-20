@@ -8,12 +8,14 @@ import Core
 final class WhatsNewCell: UITableViewCell {
     
     private var item: WhatsNewItem!
-            
+    private var contentConfigurationToUpdate: Any?
+
     func configure(with item: WhatsNewItem) {
         selectionStyle = .none
         backgroundColor = .clear
         self.item = item
         configureBasedOnOSVersion()
+        applyTheme()
         NotificationCenter.default.addObserver(self, selector: #selector(applyTheme), name: .DisplayThemeChanged, object: nil)
     }
     
@@ -38,9 +40,8 @@ final class WhatsNewCell: UITableViewCell {
         newConfiguration.secondaryTextProperties.font = .preferredFont(forTextStyle: .subheadline)
         newConfiguration.secondaryTextProperties.adjustsFontForContentSizeCategory = true
         newConfiguration.secondaryTextProperties.adjustsFontSizeToFitWidth = true
-        newConfiguration.image = item.image?.tinted(withColor: .theme.ecosia.secondaryIcon)
         newConfiguration.imageProperties.maximumSize = CGSize(width: 24, height: 24)
-        contentConfiguration = newConfiguration
+        contentConfigurationToUpdate = newConfiguration
     }
     
     private func configureForiOS13(item: WhatsNewItem) {
@@ -54,7 +55,6 @@ final class WhatsNewCell: UITableViewCell {
         detailTextLabel?.font = .preferredFont(forTextStyle: .subheadline)
         detailTextLabel?.adjustsFontForContentSizeCategory = true
         detailTextLabel?.adjustsFontSizeToFitWidth = true
-        imageView?.image = item.image?.tinted(withColor: .theme.ecosia.secondaryIcon)
     }
     
     override func prepareForReuse() {
@@ -73,7 +73,13 @@ final class WhatsNewCell: UITableViewCell {
 extension WhatsNewCell: NotificationThemeable {
     
     @objc func applyTheme() {
-        configureBasedOnOSVersion()
+        if #available(iOS 14, *) {
+            guard var updatedConfiguration = contentConfigurationToUpdate as? UIListContentConfiguration else { return }
+            updatedConfiguration.image = item.image?.tinted(withColor: .theme.ecosia.secondaryIcon)
+            contentConfiguration = updatedConfiguration
+        } else {
+            imageView?.image = item.image?.tinted(withColor: .theme.ecosia.secondaryIcon)
+        }
     }
 }
 
