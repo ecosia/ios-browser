@@ -208,8 +208,10 @@ extension APNConsentViewController {
     }
 
     @objc private func ctaTapped() {
-        // TODO: Add Engagement Service Initialization and native consent request
-        // Dismiss the View Controller upon receiving the allow/deny consent response via Apple Native Popup
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        ClientEngagementService.shared.requestAPNConsent(notificationCenterDelegate: appDelegate) { granted, error in
+            // TODO: Add analytics
+        }
     }
 }
 

@@ -76,10 +76,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Ecosia: Engagement Service Initialization with AnalyticsId binding
         ClientEngagementService.shared.initialize(parameters: ["id": User.shared.analyticsId.uuidString])
-        // Ecosia: Engagement Service consent request
-        ClientEngagementService.shared.requestAPNConsent(notificationCenterDelegate: self) { granted, error in
-            // TODO: Add analytics
-        }
         
         // Ecosia: fetching statistics before they are used
         Task.detached {
