@@ -317,12 +317,7 @@ extension AppDelegate: WelcomeDelegate {
     }
 }
 
-/* 
- Ecosia: Engagement Service
- Add the conformance to `UNUserNotificationCenterDelegate` here as well as registering the token directly in the AppDelegate
- as we are now requesting the consent as soon as the app starts.
- We don't have a UI yet to handle the request consent elsewhere we do it directly at this stage of implementation.
-*/
+// Ecosia: Conformance to UNUserNotificationCenterDelegate to enable APN
 
 extension AppDelegate: UNUserNotificationCenterDelegate {}
 
