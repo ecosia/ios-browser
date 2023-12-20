@@ -14,18 +14,3 @@ protocol APNConsentViewModelProtocol {
     var ctaAllowButtonTitle: String { get }
     var skipButtonTitle: String { get }
 }
-
-extension APNConsentViewModelProtocol {
-    
-    // MARK: Default values for optional properties
-    
-    /// Default implementation for the CTA (Call to Action) allow button title.
-    var ctaAllowButtonTitle: String {
-        .localized(.apnConsentCTAAllowButtonTitle)
-    }
-    
-    /// Default implementation for the skip button title.
-    var skipButtonTitle: String {
-        .localized(.apnConsentSkipButtonTitle)
-    }
-}

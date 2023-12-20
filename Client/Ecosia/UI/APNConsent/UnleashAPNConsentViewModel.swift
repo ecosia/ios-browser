@@ -13,17 +13,36 @@ final class UnleashAPNConsentViewModel: APNConsentViewModelProtocol {
     
     /// Title for the APN consent view, currently based on the Unleash variant.
     var title: String {
-        titleMatchingVariant
+        switch EngagementServiceExperiment.variantName {
+        case "test1": return .localized(.apnConsentVariantNameTest1HeaderTitle)
+        default: return .localized(.apnConsentVariantNameControlHeaderTitle)
+        }
     }
     
     /// Image for the APN consent view, currently based on the Unleash variant.
     var image: UIImage? {
-        imageMatchinVariant
+        switch EngagementServiceExperiment.variantName {
+        case "test1": return .init(named: "apnConsentImageTest1")
+        default: return .init(named: "apnConsentImageControl")
+        }
     }
     
     /// List items for the APN consent view, currently based on the Unleash variant.
     var listItems: [APNConsentListItem] {
-        listItemsMatchingVariant
+        switch EngagementServiceExperiment.variantName {
+        case "test1": return listItemsVariantNameTest1
+        default: return listItemsVariantNameControl
+        }
+    }
+    
+    /// CTA (Call to Action) allow button title.
+    var ctaAllowButtonTitle: String {
+        .localized(.apnConsentCTAAllowButtonTitle)
+    }
+    
+    /// Skip button title.
+    var skipButtonTitle: String {
+        .localized(.apnConsentSkipButtonTitle)
     }
 }
 
@@ -45,31 +64,5 @@ extension UnleashAPNConsentViewModel {
             APNConsentListItem(title: .localized(.apnConsentVariantNameTest1FirstItemTitle)),
             APNConsentListItem(title: .localized(.apnConsentVariantNameTest1SecondItemTitle))
         ]
-    }
-    
-    // MARK: Computed Properties for Different Variants
-    
-    /// Computed property to determine the list items based on the current variant.
-    private var listItemsMatchingVariant: [APNConsentListItem] {
-        switch EngagementServiceExperiment.variantName {
-        case "test1": return listItemsVariantNameTest1
-        default: return listItemsVariantNameControl
-        }
-    }
-    
-    /// Computed property to determine the title based on the current variant.
-    private var titleMatchingVariant: String {
-        switch EngagementServiceExperiment.variantName {
-        case "test1": return .localized(.apnConsentVariantNameTest1HeaderTitle)
-        default: return .localized(.apnConsentVariantNameControlHeaderTitle)
-        }
-    }
-    
-    /// Computed property to determine the image based on the current variant.
-    private var imageMatchinVariant: UIImage? {
-        switch EngagementServiceExperiment.variantName {
-        case "test1": return .init(named: "apnConsentImageTest1")
-        default: return .init(named: "apnConsentImageControl")
-        }
     }
 }
