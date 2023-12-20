@@ -59,7 +59,7 @@
       "location" : "https://github.com/ecosia/ios-core.git",
       "state" : {
         "branch" : "MOB-2034_integrate_braze",
-        "revision" : "201765c76c9b35175655a5c69dfdd99bafbe3b2a"
+        "revision" : "e786adb1235456cce0464d427df8a9d78f3bb671"
       }
     },
     {
@@ -103,8 +103,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SDWebImage/SDWebImage.git",
       "state" : {
-        "revision" : "1b9a2e902cbde5fdf362faa0f4fd76ea74d74305",
-        "version" : "5.18.5"
+        "revision" : "3e48cb68d8e668d146dc59c73fb98cb628616236",
+        "version" : "5.13.2"
       }
     },
     {

@@ -115,5 +115,6 @@ vendor/bundle
 # transifex
 /tx
 
-# Staging token
+# Additional configs
 Staging.xcconfig
+Production.xcconfig

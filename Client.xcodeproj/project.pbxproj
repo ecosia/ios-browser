@@ -1783,6 +1783,7 @@
 		2C73A71E2A9E0BB5006EBAAB /* WhatsNewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhatsNewViewModel.swift; sourceTree = "<group>"; };
 		2C73A7232A9E0C6F006EBAAB /* WhatsNewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhatsNewViewController.swift; sourceTree = "<group>"; };
 		2C73A7272A9E1BD7006EBAAB /* WhatsNewLocalDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhatsNewLocalDataProvider.swift; sourceTree = "<group>"; };
+		2C7B95322B33088B00E2392B /* Production.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Production.xcconfig; path = Configuration/Production.xcconfig; sourceTree = "<group>"; };
 		2C8C07761E7800EA00DC1237 /* FindInPageTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FindInPageTest.swift; sourceTree = "<group>"; };
 		2C9144B0B15218D8A0FCD538 /* es-AR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-AR"; path = "es-AR.lproj/ClearPrivateData.strings"; sourceTree = "<group>"; };
 		2C97EC701E72C80E0092EC18 /* TopTabsTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TopTabsTest.swift; sourceTree = "<group>"; };
@@ -5329,12 +5330,12 @@
 			path = ExperimentsTests;
 			sourceTree = "<group>";
 		};
-		2CA6DA142B18E4C2000AF363 /* EngagementServices */ = {
+		2CA6DA142B18E4C2000AF363 /* EngagementService */ = {
 			isa = PBXGroup;
 			children = (
 				2CA6DA152B18E4E1000AF363 /* EngagementService.swift */,
 			);
-			path = EngagementServices;
+			path = EngagementService;
 			sourceTree = "<group>";
 		};
 		2CDABC732AB1C7C1009F6D98 /* Helpers */ = {
@@ -6615,7 +6616,7 @@
 			children = (
 				2CDABC732AB1C7C1009F6D98 /* Helpers */,
 				2C1AF2632A289384003970E0 /* Network */,
-				2CA6DA142B18E4C2000AF363 /* EngagementServices */,
+				2CA6DA142B18E4C2000AF363 /* EngagementService */,
 				2C3357E42A0D092A00E76A48 /* MMP */,
 				2C5850022A02903F009D7703 /* Experiments */,
 				CA4D9CDE28C8D801006AFB5D /* Analytics */,
@@ -7374,6 +7375,7 @@
 		E60961841B62B7E100DD640F /* Configuration */ = {
 			isa = PBXGroup;
 			children = (
+				2C7B95322B33088B00E2392B /* Production.xcconfig */,
 				8A2B1A5B28216C4C0061216B /* Common.xcconfig */,
 				8A2B1A5A28216C4C0061216B /* Debug.xcconfig */,
 				8A2B1A5C28216C4D0061216B /* Release.xcconfig */,
@@ -14658,8 +14660,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SDWebImage/SDWebImage.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 5.12.5;
+				kind = exactVersion;
+				version = 5.13.2;
 			};
 		};
 		43AFC0CA2796788B0039DDF4 /* XCRemoteSwiftPackageReference "XCGLogger" */ = {

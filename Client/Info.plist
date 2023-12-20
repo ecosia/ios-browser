@@ -11,8 +11,8 @@
 		<string>org.mozilla.ios.sync.part1</string>
 		<string>org.mozilla.ios.sync.part2</string>
 	</array>
-	<key>BRAZE_ENDPOINT</key>
-	<string>$(BRAZE_ENDPOINT)</string>
+	<key>BRAZE_API_KEY</key>
+	<string>$(BRAZE_API_KEY)</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
@@ -115,8 +115,6 @@
 	<string>$(NIMBUS_URL)</string>
 	<key>PocketEnvironmentAPIKey</key>
 	<string>$(POCKET_API_KEY)</string>
-	<key>STAGING_BRAZE_API_KEY</key>
-	<string>$(STAGING_BRAZE_API_KEY)</string>
 	<key>SentryCloudDSN</key>
 	<string>$(SENTRY_CLOUD_DSN)</string>
 	<key>UIAppFonts</key>
