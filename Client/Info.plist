@@ -13,6 +13,8 @@
 		<string>org.mozilla.ios.surface.notification.refresh</string>
 		<string>org.mozilla.ios.firefox.suggest.ingest</string>
 	</array>
+	<key>BRAZE_API_KEY</key>
+	<string>$(BRAZE_API_KEY)</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>

@@ -24,5 +24,7 @@
 	<array>
 		<string>$(AppIdentifierPrefix)com.ecosia.ecosiaapp.firefox</string>
 	</array>
+	<key>aps-environment</key>
+	<string>development</string>
 </dict>
 </plist>

@@ -10,6 +10,15 @@
       }
     },
     {
+      "identity" : "braze-swift-sdk",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/braze-inc/braze-swift-sdk",
+      "state" : {
+        "revision" : "d3963492b9ae0dd2c28a41201707b1723a7d7c94",
+        "version" : "7.3.0"
+      }
+    },
+    {
       "identity" : "dip",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/AliSoftware/Dip.git",
@@ -60,7 +69,7 @@
       "location" : "https://github.com/ecosia/ios-core",
       "state" : {
         "branch" : "main",
-        "revision" : "963d328b2c424a56a1f7557ddc4d35d05c1c31df"
+        "revision" : "9f4cf04dfa7ab0336940faa12c1a055e72602cb2"
       }
     },
     {

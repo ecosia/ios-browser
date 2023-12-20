@@ -218,6 +218,10 @@
 		2C8C07771E7800EA00DC1237 /* FindInPageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C8C07761E7800EA00DC1237 /* FindInPageTests.swift */; };
 		2C97EC711E72C80E0092EC18 /* TopTabsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C97EC701E72C80E0092EC18 /* TopTabsTest.swift */; };
 		2CA16FDE1E5F089100332277 /* SearchTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CA16FDD1E5F089100332277 /* SearchTest.swift */; };
+		2CA2040629D4954F006848DE /* EcosiaPageActionMenuCellTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CA2040529D4954F006848DE /* EcosiaPageActionMenuCellTests.swift */; };
+		2CA6DA162B18E4E1000AF363 /* EngagementService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CA6DA152B18E4E1000AF363 /* EngagementService.swift */; };
+		2CAD6D992A7A96C000C2E96D /* Analytics+Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CAD6D982A7A96C000C2E96D /* Analytics+Configuration.swift */; };
+		2CAD6D9E2A7AAFDC00C2E96D /* AnalyticsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CAD6D9C2A7AAFC600C2E96D /* AnalyticsTests.swift */; };
 		2CB1A65A1FDEA8B60084E96D /* NewTabSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB1A6591FDEA8B60084E96D /* NewTabSettings.swift */; };
 		2CB288D42B07C6F400A8FCB3 /* EcosiaDebug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 2CB288CF2B07C6F300A8FCB3 /* EcosiaDebug.xcconfig */; };
 		2CB288D52B07C6F400A8FCB3 /* EcosiaBeta.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 2CB288D02B07C6F300A8FCB3 /* EcosiaBeta.xcconfig */; };
@@ -2453,10 +2457,20 @@
 		2C7DC2312B15F5C600C049C8 /* EcosiaTopSiteItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaTopSiteItemCell.swift; sourceTree = "<group>"; };
 		2C7DC2372B16332E00C049C8 /* EcosiaThemeColourPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaThemeColourPalette.swift; sourceTree = "<group>"; };
 		2C7DC23A2B163AF900C049C8 /* EcosiaThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaThemeManager.swift; sourceTree = "<group>"; };
-		2C8C07761E7800EA00DC1237 /* FindInPageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FindInPageTests.swift; sourceTree = "<group>"; };
+		2C73A71A2A9E0B7A006EBAAB /* WhatsNewItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhatsNewItem.swift; sourceTree = "<group>"; };
+		2C73A71C2A9E0B97006EBAAB /* WhatsNewDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhatsNewDataProvider.swift; sourceTree = "<group>"; };
+		2C73A71E2A9E0BB5006EBAAB /* WhatsNewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhatsNewViewModel.swift; sourceTree = "<group>"; };
+		2C73A7232A9E0C6F006EBAAB /* WhatsNewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhatsNewViewController.swift; sourceTree = "<group>"; };
+		2C73A7272A9E1BD7006EBAAB /* WhatsNewLocalDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhatsNewLocalDataProvider.swift; sourceTree = "<group>"; };
+		2C7B95322B33088B00E2392B /* Production.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Production.xcconfig; path = Configuration/Production.xcconfig; sourceTree = "<group>"; };
+		2C8C07761E7800EA00DC1237 /* FindInPageTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FindInPageTest.swift; sourceTree = "<group>"; };
 		2C9144B0B15218D8A0FCD538 /* es-AR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-AR"; path = "es-AR.lproj/ClearPrivateData.strings"; sourceTree = "<group>"; };
 		2C97EC701E72C80E0092EC18 /* TopTabsTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TopTabsTest.swift; sourceTree = "<group>"; };
 		2CA16FDD1E5F089100332277 /* SearchTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchTest.swift; sourceTree = "<group>"; };
+		2CA2040529D4954F006848DE /* EcosiaPageActionMenuCellTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaPageActionMenuCellTests.swift; sourceTree = "<group>"; };
+		2CA6DA152B18E4E1000AF363 /* EngagementService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EngagementService.swift; sourceTree = "<group>"; };
+		2CAD6D982A7A96C000C2E96D /* Analytics+Configuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Analytics+Configuration.swift"; sourceTree = "<group>"; };
+		2CAD6D9C2A7AAFC600C2E96D /* AnalyticsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsTests.swift; sourceTree = "<group>"; };
 		2CAE4511992E91A32AB7D7C7 /* th */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = th; path = th.lproj/Today.strings; sourceTree = "<group>"; };
 		2CB1A6591FDEA8B60084E96D /* NewTabSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTabSettings.swift; sourceTree = "<group>"; };
 		2CB288CF2B07C6F300A8FCB3 /* EcosiaDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = EcosiaDebug.xcconfig; path = Configuration/EcosiaDebug.xcconfig; sourceTree = "<group>"; };
@@ -8239,6 +8253,14 @@
 			path = AppDelegate;
 			sourceTree = "<group>";
 		};
+		2CA6DA142B18E4C2000AF363 /* EngagementService */ = {
+			isa = PBXGroup;
+			children = (
+				2CA6DA152B18E4E1000AF363 /* EngagementService.swift */,
+			);
+			path = EngagementService;
+			sourceTree = "<group>";
+		};
 		2CB289572B07C8F000A8FCB3 /* Fake */ = {
 			isa = PBXGroup;
 			children = (
@@ -10268,6 +10290,213 @@
 			path = BrowserViewController;
 			sourceTree = "<group>";
 		};
+		CA4D9C8628C8D801006AFB5D /* Ecosia */ = {
+			isa = PBXGroup;
+			children = (
+				2CDABC732AB1C7C1009F6D98 /* Helpers */,
+				2C1AF2632A289384003970E0 /* Network */,
+				2CA6DA142B18E4C2000AF363 /* EngagementService */,
+				2C3357E42A0D092A00E76A48 /* MMP */,
+				2C5850022A02903F009D7703 /* Experiments */,
+				CA4D9CDE28C8D801006AFB5D /* Analytics */,
+				CAEB316A28D0BFC000ADC9DB /* Extensions */,
+				CA4D9CD328C8D801006AFB5D /* Fake */,
+				CA4D9CB728C8D801006AFB5D /* L10N */,
+				CA4D9CD228C8D801006AFB5D /* markets.json */,
+				CA4D9CD828C8D801006AFB5D /* Migration */,
+				CA8CEBDD298244D100349552 /* Settings */,
+				CA4D9C8728C8D801006AFB5D /* UI */,
+				2CF8781E2A0D4673001E9658 /* FeatureManagement */,
+				2ABCCCB32A13BE74005D0C5B /* Bookmarks */,
+			);
+			path = Ecosia;
+			sourceTree = "<group>";
+		};
+		CA4D9C8728C8D801006AFB5D /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				2C73A7192A9D14B2006EBAAB /* WhatsNew */,
+				CA4D9C8828C8D801006AFB5D /* SemanticColor.swift */,
+				CA4D9C8C28C8D801006AFB5D /* Ecosia.xcassets */,
+				CA4D9CA728C8D801006AFB5D /* EcosiaNavigation.swift */,
+				CA4D9C8D28C8D801006AFB5D /* EcosiaTheme.swift */,
+				CA4D9C8E28C8D801006AFB5D /* EmptyHeader.swift */,
+				2AF2723929F2C54A004CA46F /* EmptyBookmarksView.swift */,
+				2ABCCCAF2A13A399005D0C5B /* EmptyBookmarksViewDelegate.swift */,
+				12ADF69A2AAB6B4600494559 /* MultiplyImpact */,
+				CA4D9C8F28C8D801006AFB5D /* NTP */,
+				CA4D9C9A28C8D801006AFB5D /* Colours.xcassets */,
+				CA4D9C9B28C8D801006AFB5D /* FilterController.swift */,
+				CA4D9C9C28C8D801006AFB5D /* MarketsController.swift */,
+				CA4D9CAF28C8D801006AFB5D /* Onboarding */,
+				CAB544C428F5AE6B00657722 /* PageAction */,
+				127773B129E98F75008A6A64 /* EcosiaFindInPageBar.swift */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+		CA4D9C8F28C8D801006AFB5D /* NTP */ = {
+			isa = PBXGroup;
+			children = (
+				12EEE0A42A9F752200C4A46D /* AboutEcosia */,
+				12EEE0A32A9F71C900C4A46D /* BookmarkNudge */,
+				12E8E6AF2A9CFC4100E6ED8E /* Customization */,
+				12EEE0A12A9F70F700C4A46D /* Impact */,
+				12EEE0A22A9F714100C4A46D /* Library */,
+				CA8BCC3C28D308E30020BC50 /* Logo */,
+				CA8A48B0291BB8CA008BE12F /* News */,
+				CA103C7F28C8F78E00F7170A /* CircleButton.swift */,
+				CA4D9C9228C8D801006AFB5D /* DefaultBrowser.swift */,
+				CA4D9C9028C8D801006AFB5D /* NTPLayout.swift */,
+				CA4D9C9828C8D801006AFB5D /* NTPTooltip.Highlight.swift */,
+				CA4D9C9728C8D801006AFB5D /* NTPTooltip.swift */,
+				2ABCCCAD2A139CE8005D0C5B /* NTPTooltipDelegate.swift */,
+			);
+			path = NTP;
+			sourceTree = "<group>";
+		};
+		CA4D9CAF28C8D801006AFB5D /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				1287A99C2A6FFA45005F21F7 /* WelcomeTourGreen.swift */,
+				CA4D9CB128C8D801006AFB5D /* Welcome.swift */,
+				CA4D9CB228C8D801006AFB5D /* WelcomeTour.Step.swift */,
+				CA4D9CB328C8D801006AFB5D /* WelcomeTourAction.swift */,
+				1287A99E2A6FFC0C005F21F7 /* WelcomeTourTransparent.swift */,
+				CA4D9CB428C8D801006AFB5D /* WelcomeTour.swift */,
+				CA4D9CB528C8D801006AFB5D /* WelcomeNavigation.swift */,
+				CA4D9CB628C8D801006AFB5D /* WelcomeTourProfit.swift */,
+				1287A9A02A6FFE7A005F21F7 /* WelcomeTourRow.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		CA4D9CB728C8D801006AFB5D /* L10N */ = {
+			isa = PBXGroup;
+			children = (
+				CA4D9CBA28C8D801006AFB5D /* Plurals.stringsdict */,
+				CA4D9CC728C8D801006AFB5D /* Scripts */,
+				CA4D9CCA28C8D801006AFB5D /* String.swift */,
+				122211912AE7C971007C5E1C /* Ecosia.strings */,
+			);
+			path = L10N;
+			sourceTree = "<group>";
+		};
+		CA4D9CC728C8D801006AFB5D /* Scripts */ = {
+			isa = PBXGroup;
+			children = (
+				CA4D9CC828C8D801006AFB5D /* Clean.swift */,
+				CA4D9CC928C8D801006AFB5D /* Validate.swift */,
+			);
+			path = Scripts;
+			sourceTree = "<group>";
+		};
+		CA4D9CD328C8D801006AFB5D /* Fake */ = {
+			isa = PBXGroup;
+			children = (
+				CA4D9CD428C8D801006AFB5D /* FakeTelemetry.swift */,
+				CA4D9CD728C8D801006AFB5D /* FakeSentry.swift */,
+				CA9A4B6F28D0A2C7006571DB /* FakeNimbus.swift */,
+			);
+			path = Fake;
+			sourceTree = "<group>";
+		};
+		CA4D9CD828C8D801006AFB5D /* Migration */ = {
+			isa = PBXGroup;
+			children = (
+				CA4D9CD928C8D801006AFB5D /* EcosiaImport+PerformanceTests.swift */,
+				CA4D9CDA28C8D801006AFB5D /* EcosiaFavourites.swift */,
+				CA4D9CDB28C8D801006AFB5D /* EcosiaImport.swift */,
+				CA4D9CDC28C8D801006AFB5D /* LoadingScreen.swift */,
+				CA4D9CDD28C8D801006AFB5D /* EcosiaHistory.swift */,
+			);
+			path = Migration;
+			sourceTree = "<group>";
+		};
+		CA4D9CDE28C8D801006AFB5D /* Analytics */ = {
+			isa = PBXGroup;
+			children = (
+				CA4D9CDF28C8D801006AFB5D /* Analytics.swift */,
+				CA4D9CE028C8D801006AFB5D /* Analytics.Values.swift */,
+				2CAD6D982A7A96C000C2E96D /* Analytics+Configuration.swift */,
+			);
+			path = Analytics;
+			sourceTree = "<group>";
+		};
+		CA8A48B0291BB8CA008BE12F /* News */ = {
+			isa = PBXGroup;
+			children = (
+				CA4D9CA028C8D801006AFB5D /* NewsController.swift */,
+				CA4D9CA328C8D801006AFB5D /* NTPNewsCell.swift */,
+				CA1453C0290943270000957F /* NTPNewsCellViewModel.swift */,
+			);
+			path = News;
+			sourceTree = "<group>";
+		};
+		CA8BCC3C28D308E30020BC50 /* Logo */ = {
+			isa = PBXGroup;
+			children = (
+				CA4D9C9928C8D801006AFB5D /* NTPLogoCell.swift */,
+			);
+			path = Logo;
+			sourceTree = "<group>";
+		};
+		CA8CEBDD298244D100349552 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				CA4D9CD128C8D801006AFB5D /* EcosiaSettings.swift */,
+				CA8CEBDE298244EC00349552 /* EcosiaDebugSettings.swift */,
+				12E8E6B22A9CFC4100E6ED8E /* NTPCustomizationSettingsViewController.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		CAA6AC4628E470C500A13DE9 /* Ecosia */ = {
+			isa = PBXGroup;
+			children = (
+				2C9F8CBA2AC3104800678514 /* EcosiaInstallTypeTests.swift */,
+				2C9C9FF52A03C7950038A3DD /* ExperimentsTests */,
+				CAA6AC4228E4709F00A13DE9 /* EcosiaHistoryMigrationTests.swift */,
+				CAA6AC4428E470BB00A13DE9 /* EcosiaBookmarkMigrationTests.swift */,
+				CAA6AC4728E4732A00A13DE9 /* EcosiaTabMigrationTests.swift */,
+				CAA6AC4928E473D500A13DE9 /* EcosiaNTPTooltipHighlightTests.swift */,
+				2CA2040529D4954F006848DE /* EcosiaPageActionMenuCellTests.swift */,
+				2CAD6D9C2A7AAFC600C2E96D /* AnalyticsTests.swift */,
+				2CE2F21B2AA87B3100623F26 /* VersionTests.swift */,
+				2C50F0992AC703E500F09803 /* WhatsNewLocalDataProviderTests.swift */,
+			);
+			path = Ecosia;
+			sourceTree = "<group>";
+		};
+		CAB544C428F5AE6B00657722 /* PageAction */ = {
+			isa = PBXGroup;
+			children = (
+				CAB544C528F5AE6B00657722 /* PageActionMenu.swift */,
+				2CE63B2929CCBAB200047121 /* PageActionMenuCell.swift */,
+				CAB544C728F6BBFD00657722 /* PageActionsShortcutsHeader.swift */,
+			);
+			path = PageAction;
+			sourceTree = "<group>";
+		};
+		CAEB316A28D0BFC000ADC9DB /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				2C3357E02A09227100E76A48 /* AppInfo+Ecosia.swift */,
+				2C3357E12A09227100E76A48 /* DeviceInfo+Ecosia.swift */,
+				CA4D9C8928C8D801006AFB5D /* BrowserViewController+Ecosia.swift */,
+				CAEB316628D0B38900ADC9DB /* HomepageViewController+Ecosia.swift */,
+				CA4D9C8B28C8D801006AFB5D /* SnapKit+Ecosia.swift */,
+				CA8BCC3F28D340AF0020BC50 /* TabCell+Ecosia.swift */,
+				2CE63B2729C8DA8200047121 /* ErrorPageHandler+Ecosia.swift */,
+				2C1AF2622A27A7D9003970E0 /* Toolbar+URLBar */,
+				2CC9E08B2A30AED2003420E1 /* URL+Ecosia.swift */,
+				CA4D9C8A28C8D801006AFB5D /* UIFont+Ecosia.swift */,
+				12EEE0AC2AA1CFE100C4A46D /* UIView+maskedCorners.swift */,
+				12531B4B2AA777230079C9CE /* NumberFormatter+Ecosia.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
 		D010187021AF0E63009CBB5A /* js */ = {
 			isa = PBXGroup;
 			children = (
@@ -10956,6 +11185,7 @@
 				2CB288D12B07C6F300A8FCB3 /* EcosiaBetaDebug.xcconfig */,
 				2CB288CF2B07C6F300A8FCB3 /* EcosiaDebug.xcconfig */,
 				2CB288D22B07C6F300A8FCB3 /* Staging.xcconfig */,
+				2C7B95322B33088B00E2392B /* Production.xcconfig */,
 				8A2B1A5B28216C4C0061216B /* Common.xcconfig */,
 				8A2B1A5A28216C4C0061216B /* Debug.xcconfig */,
 				8A2B1A5C28216C4D0061216B /* Release.xcconfig */,
@@ -13546,6 +13776,14 @@
 				C8DC90BD2A06699E0008832B /* MarkupNode.swift in Sources */,
 				E63ED8E11BFD25580097D08E /* PasswordManagerListViewController.swift in Sources */,
 				8ADC2A162A33765E00543DAA /* UrlToOpenModel.swift in Sources */,
+				2CA6DA162B18E4E1000AF363 /* EngagementService.swift in Sources */,
+				2CF8781B2A0D45E5001E9658 /* MMP.swift in Sources */,
+				E64ED8FA1BC55AE300DAF864 /* UIAlertController+Extension.swift in Sources */,
+				CA4D9D1528C8D801006AFB5D /* FakeTelemetry.swift in Sources */,
+				282DA4731A68C1E700A406E2 /* OpenSearch.swift in Sources */,
+				CA4D9D1F28C8D801006AFB5D /* Analytics.Values.swift in Sources */,
+				CA4D9CE228C8D801006AFB5D /* BrowserViewController+Ecosia.swift in Sources */,
+				E63ED8E11BFD25580097D08E /* LoginListViewController.swift in Sources */,
 				D0625CA8208FC47A0081F3B2 /* BrowserViewController+DownloadQueueDelegate.swift in Sources */,
 				C22753402A3C9E1300B9C0D1 /* WebsiteDataManagementViewModel.swift in Sources */,
 				2F44FCC71A9E8CF500FD20CC /* SearchSettingsTableViewController.swift in Sources */,
@@ -20844,6 +21082,22 @@
 			requirement = {
 				kind = exactVersion;
 				version = 5.6.0;
+			};
+		};
+		4368F86C27966E770013419B /* XCRemoteSwiftPackageReference "SDWebImage" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SDWebImage/SDWebImage.git";
+			requirement = {
+				kind = exactVersion;
+				version = 5.13.2;
+			};
+		};
+		43AFC0CA2796788B0039DDF4 /* XCRemoteSwiftPackageReference "XCGLogger" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/DaveWoodCom/XCGLogger.git";
+			requirement = {
+				kind = exactVersion;
+				version = 7.0.1;
 			};
 		};
 		43AFC0E027967BFA0039DDF4 /* XCRemoteSwiftPackageReference "Fuzi" */ = {
