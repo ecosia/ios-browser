@@ -7,18 +7,21 @@ import Core
 
 final class APNConsentItemCell: UITableViewCell {
     
-    var contentConfigurationToUpdate: Any?
-        
-    func configure(with item: APNConsentListItem) {
-        
+    private var item: APNConsentListItem!
+            
+    func configure(with item: APNConsentListItem) {        
         selectionStyle = .none
         backgroundColor = .clear
-        
-        // Configure based on iOS version
+        self.item = item
+        configureBasedOnOSVersion()
+        NotificationCenter.default.addObserver(self, selector: #selector(applyTheme), name: .DisplayThemeChanged, object: nil)
+    }
+    
+    private func configureBasedOnOSVersion() {
         if #available(iOS 14, *) {
-            self.configureForiOS14(item: item)
+            configureForiOS14(item: item)
         } else {
-            self.configureForiOS13(item: item)
+            configureForiOS13(item: item)
         }
     }
     
@@ -45,15 +48,6 @@ final class APNConsentItemCell: UITableViewCell {
         textLabel?.adjustsFontSizeToFitWidth = true
         imageView?.image = item.image
     }
-
-    @available(iOS 14.0, *)
-    override func updateConfiguration(using state: UICellConfigurationState) {
-        // Don't update the contentConfiguration based on the cell's state
-        // If you have a saved configuration, apply it here
-        if let updatedConfiguration = (contentConfigurationToUpdate as? UIListContentConfiguration) {
-            contentConfiguration = updatedConfiguration
-        }
-    }
     
     override func prepareForReuse() {
         super.prepareForReuse()
@@ -65,6 +59,13 @@ final class APNConsentItemCell: UITableViewCell {
             textLabel?.text = nil
             imageView?.image = nil
         }
+    }
+}
+
+extension APNConsentItemCell: NotificationThemeable {
+    
+    @objc func applyTheme() {
+        configureBasedOnOSVersion()
     }
 }
 
