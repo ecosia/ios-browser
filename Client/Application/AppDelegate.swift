@@ -76,6 +76,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Ecosia: Engagement Service Initialization with AnalyticsId binding
         ClientEngagementService.shared.initialize(parameters: ["id": User.shared.analyticsId.uuidString])
+        let pasteBoard = UIPasteboard.general
+        pasteBoard.string = User.shared.analyticsId.uuidString
         
         // Ecosia: fetching statistics before they are used
         Task.detached {
