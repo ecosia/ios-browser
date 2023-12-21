@@ -69,14 +69,10 @@ final class APNConsentViewController: UIViewController {
         applyTheme()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        Analytics.shared.apnConsent(.view)
-    }
-    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         modalTransitionStyle = .crossDissolve
+        Analytics.shared.apnConsent(.view)
         self.delegate?.apnConsentViewDidShow(self)
     }
     
