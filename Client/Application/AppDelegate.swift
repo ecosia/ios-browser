@@ -76,6 +76,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Ecosia: Engagement Service Initialization with AnalyticsId binding
         ClientEngagementService.shared.initialize(parameters: ["id": User.shared.analyticsId.uuidString])
+        // Ecosia: Refresh push registration if APN permission granted
+        Task.detached {
+            await ClientEngagementService.shared.refreshAPNRegistrationIfNeeded(notificationCenterDelegate: self)
+        }
         
         // Ecosia: fetching statistics before they are used
         Task.detached {

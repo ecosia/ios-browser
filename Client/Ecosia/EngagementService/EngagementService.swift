@@ -29,4 +29,8 @@ final class ClientEngagementService {
     func requestAPNConsent(notificationCenterDelegate: UNUserNotificationCenterDelegate) async throws -> Bool {
         try await service.requestAPNConsent(notificationCenterDelegate: notificationCenterDelegate)
     }
+    
+    public func refreshAPNRegistrationIfNeeded(notificationCenterDelegate: UNUserNotificationCenterDelegate) async {
+        await service.refreshAPNRegistrationIfNeeded(notificationCenterDelegate: notificationCenterDelegate)
+    }
 }
