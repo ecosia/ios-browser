@@ -212,7 +212,7 @@ extension APNConsentViewController {
     @objc private func ctaTapped() {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         ClientEngagementService.shared.requestAPNConsent(notificationCenterDelegate: appDelegate) { granted, error in
-            guard error == nil else {
+            guard granted else {
                 Analytics.shared.apnConsent(.deny)
                 return
             }
