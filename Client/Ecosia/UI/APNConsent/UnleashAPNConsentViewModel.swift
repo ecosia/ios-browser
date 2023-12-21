@@ -13,7 +13,7 @@ final class UnleashAPNConsentViewModel: APNConsentViewModelProtocol {
     
     /// Title for the APN consent view, currently based on the Unleash variant.
     var title: String {
-        switch EngagementServiceExperiment.variantName {
+        switch APNConsentUIExperiment.variantName {
         case "test1": return .localized(.apnConsentVariantNameTest1HeaderTitle)
         default: return .localized(.apnConsentVariantNameControlHeaderTitle)
         }
@@ -21,7 +21,7 @@ final class UnleashAPNConsentViewModel: APNConsentViewModelProtocol {
     
     /// Image for the APN consent view, currently based on the Unleash variant.
     var image: UIImage? {
-        switch EngagementServiceExperiment.variantName {
+        switch APNConsentUIExperiment.variantName {
         case "test1": return .init(named: "apnConsentImageTest1")
         default: return .init(named: "apnConsentImageControl")
         }
@@ -29,7 +29,7 @@ final class UnleashAPNConsentViewModel: APNConsentViewModelProtocol {
     
     /// List items for the APN consent view, currently based on the Unleash variant.
     var listItems: [APNConsentListItem] {
-        switch EngagementServiceExperiment.variantName {
+        switch APNConsentUIExperiment.variantName {
         case "test1": return listItemsVariantNameTest1
         default: return listItemsVariantNameControl
         }

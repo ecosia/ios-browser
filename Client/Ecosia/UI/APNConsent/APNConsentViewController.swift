@@ -72,6 +72,7 @@ final class APNConsentViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         modalTransitionStyle = .crossDissolve
+        Analytics.shared.apnConsent(.view)
         self.delegate?.apnConsentViewDidShow(self)
     }
     
@@ -204,13 +205,18 @@ extension APNConsentViewController {
 extension APNConsentViewController {
 
     @objc private func skipTapped() {
+        Analytics.shared.apnConsent(.skip)
         dismiss(animated: true)
     }
 
     @objc private func ctaTapped() {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         ClientEngagementService.shared.requestAPNConsent(notificationCenterDelegate: appDelegate) { granted, error in
-            // TODO: Add analytics
+            guard granted else {
+                Analytics.shared.apnConsent(.deny)
+                return
+            }
+            Analytics.shared.apnConsent(.allow)
         }
     }
 }

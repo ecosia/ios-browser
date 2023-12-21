@@ -232,7 +232,7 @@
 		2C9165432B20DE5700BE390E /* APNConsentViewModelProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9165422B20DE5700BE390E /* APNConsentViewModelProtocol.swift */; };
 		2C9165452B20DEF800BE390E /* APNConsentItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9165442B20DEF800BE390E /* APNConsentItemCell.swift */; };
 		2C9165472B20DF0C00BE390E /* APNConsentListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9165462B20DF0C00BE390E /* APNConsentListItem.swift */; };
-		2C9165492B20E55200BE390E /* EngagementServiceExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9165482B20E55200BE390E /* EngagementServiceExperiment.swift */; };
+		2C9165492B20E55200BE390E /* APNConsentUIExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9165482B20E55200BE390E /* APNConsentUIExperiment.swift */; };
 		2C91654B2B20E64100BE390E /* UnleashAPNConsentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C91654A2B20E64100BE390E /* UnleashAPNConsentViewModel.swift */; };
 >>>>>>> 126114c70 ([MOB-2048] Push notification card UI (#606))
 		2C97EC711E72C80E0092EC18 /* TopTabsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C97EC701E72C80E0092EC18 /* TopTabsTest.swift */; };
@@ -2488,7 +2488,7 @@
 		2C9165422B20DE5700BE390E /* APNConsentViewModelProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APNConsentViewModelProtocol.swift; sourceTree = "<group>"; };
 		2C9165442B20DEF800BE390E /* APNConsentItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APNConsentItemCell.swift; sourceTree = "<group>"; };
 		2C9165462B20DF0C00BE390E /* APNConsentListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APNConsentListItem.swift; sourceTree = "<group>"; };
-		2C9165482B20E55200BE390E /* EngagementServiceExperiment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EngagementServiceExperiment.swift; sourceTree = "<group>"; };
+		2C9165482B20E55200BE390E /* APNConsentUIExperiment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APNConsentUIExperiment.swift; sourceTree = "<group>"; };
 		2C91654A2B20E64100BE390E /* UnleashAPNConsentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnleashAPNConsentViewModel.swift; sourceTree = "<group>"; };
 		2C97EC701E72C80E0092EC18 /* TopTabsTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TopTabsTest.swift; sourceTree = "<group>"; };
 		2CA16FDD1E5F089100332277 /* SearchTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchTest.swift; sourceTree = "<group>"; };
@@ -7940,8 +7940,12 @@
 =======
 				2C50B3DC2AF3EE930037AA90 /* EngineShortcutsExperiment.swift */,
 				2C31ECAA2A2E13410058BC31 /* DefaultBrowserExperiment.swift */,
+<<<<<<< HEAD
 				2C9165482B20E55200BE390E /* EngagementServiceExperiment.swift */,
 >>>>>>> 126114c70 ([MOB-2048] Push notification card UI (#606))
+=======
+				2C9165482B20E55200BE390E /* APNConsentUIExperiment.swift */,
+>>>>>>> d5e85887e ([MOB-2060] Add engagement service analytics (#610))
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -13638,7 +13642,7 @@
 				DF529E9F2AA86FF4003C5373 /* FakespotReviewQualityCardView.swift in Sources */,
 				DFACDFAF274D4D6D00A94EEC /* ReusableCell.swift in Sources */,
 				1D0BA05C24F46A0400D731B5 /* TopSitesProvider.swift in Sources */,
-				2C9165492B20E55200BE390E /* EngagementServiceExperiment.swift in Sources */,
+				2C9165492B20E55200BE390E /* APNConsentUIExperiment.swift in Sources */,
 				0BF0DB941A8545800039F300 /* URLBarView.swift in Sources */,
 				2CB2896F2B07C8F000A8FCB3 /* MMP.swift in Sources */,
 				DFACBF7F277B5F7B003D5F41 /* WallpaperBackgroundView.swift in Sources */,
