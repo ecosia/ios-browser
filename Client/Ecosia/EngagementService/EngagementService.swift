@@ -1,7 +1,7 @@
 import Foundation
 import Core
 
-class ClientEngagementService {
+final class ClientEngagementService {
     
     private init() {}
     

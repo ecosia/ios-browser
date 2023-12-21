@@ -162,9 +162,17 @@ class BrowserViewController: UIViewController {
         return keyboardPressesHandlerValue
     }
 
-    fileprivate var shouldShowDefaultBrowserPromo: Bool { profile.prefs.intForKey(PrefsKeys.IntroSeen) == nil }
+    fileprivate var shouldShowDefaultBrowserPromo: Bool {
+        profile.prefs.intForKey(PrefsKeys.IntroSeen) == nil &&
+        DefaultBrowserExperiment.minPromoSearches() <= User.shared.searchCount
+    }
     fileprivate var shouldShowWhatsNewPageScreen: Bool { whatsNewDataProvider.shouldShowWhatsNewPage }
-    
+    fileprivate var shouldShowAPNConsentScreen: Bool {
+        EngagementServiceExperiment.isEnabled &&
+        EngagementServiceExperiment.minSearches() <= User.shared.searchCount &&
+        User.shared.shouldShowAPNConsentScreen
+    }
+
     let whatsNewDataProvider = WhatsNewLocalDataProvider()
     
     let referrals = Referrals()
@@ -2269,9 +2277,22 @@ extension BrowserViewController {
               presentedViewController == nil,
               !showLoadingScreen(for: .shared) else { return }
         
-        if !presentDefaultBrowserPromoIfNeeded() {
-            presentWhatsNewPageIfNeeded()
-        }
+        // TODO: To review this logic as part of the upgrade
+        /*
+         We are not fan of this one, but given the current approach a refactor
+         would not be suitable as part of this ticke scope.
+         As part of the upgrade and with a more structured navigation approach, we will
+         refactor it.
+         The below is a decent compromise given the complexity of the decisional execution and presentation.
+         The order of the function represents the priority.
+         */
+        let presentationFunctions: [() -> Bool] = [
+            presentDefaultBrowserPromoIfNeeded,
+            presentWhatsNewPageIfNeeded,
+            presentAPNConsentIfNeeded
+        ]
+
+        _ = presentationFunctions.first(where: { $0() })
     }
 
     private func isHomePage() -> Bool {
@@ -2281,17 +2302,22 @@ extension BrowserViewController {
     @discardableResult
     private func presentWhatsNewPageIfNeeded() -> Bool {
         guard shouldShowWhatsNewPageScreen else { return false }
-        
         let viewModel = WhatsNewViewModel(provider: whatsNewDataProvider)
         WhatsNewViewController.presentOn(self, viewModel: viewModel)
+        return true
+    }
+    
+    @discardableResult
+    private func presentAPNConsentIfNeeded() -> Bool {
+        guard shouldShowAPNConsentScreen else { return false }
+        APNConsentViewController.presentOn(self, viewModel: UnleashAPNConsentViewModel())
         return true
     }
 
     @discardableResult
     private func presentDefaultBrowserPromoIfNeeded() -> Bool {
-        guard shouldShowDefaultBrowserPromo, 
-                DefaultBrowserExperiment.minPromoSearches() <= User.shared.searchCount else { return false }
-
+        guard shouldShowDefaultBrowserPromo else { return false }
+        
         if #available(iOS 14, *) {
             let defaultPromo = DefaultBrowser(delegate: self)
             present(defaultPromo, animated: true)

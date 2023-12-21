@@ -12,6 +12,12 @@ extension BrowserViewController: HomepageViewControllerDelegate {
     }
 }
 
+extension BrowserViewController: APNConsentViewDelegate {
+    func apnConsentViewDidShow(_ viewController: APNConsentViewController) {
+        User.shared.markAPNConsentScreenAsShown()
+    }
+}
+
 extension BrowserViewController: DefaultBrowserDelegate {
     @available(iOS 14, *)
     func defaultBrowserDidShow(_ defaultBrowser: DefaultBrowser) {
