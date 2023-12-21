@@ -5,7 +5,7 @@
 import Foundation
 import Core
 
-struct EngagementServiceExperiment {
+struct APNConsentUIExperiment {
     
     private init() {}
     
