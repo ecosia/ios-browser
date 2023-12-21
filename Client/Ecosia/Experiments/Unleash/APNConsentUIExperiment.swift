@@ -5,9 +5,13 @@
 import Foundation
 import Core
 
-struct EngagementServiceExperiment {
+struct APNConsentUIExperiment {
     
     private init() {}
+    
+    static var toggleName: String {
+        Unleash.Toggle.Name.brazeAPNConsentUI.rawValue
+    }
 
     static var isEnabled: Bool {
         Unleash.isEnabled(.brazeAPNConsentUI)
