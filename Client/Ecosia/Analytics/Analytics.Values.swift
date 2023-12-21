@@ -111,7 +111,6 @@ extension Analytics {
         enum APNConsent: String {
             case
             view,
-            click,
             skip,
             deny,
             allow
