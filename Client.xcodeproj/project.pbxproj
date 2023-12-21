@@ -14732,7 +14732,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = main;
+				branch = "MOB-2090_register_token_if_granted";
 				kind = branch;
 			};
 		};
