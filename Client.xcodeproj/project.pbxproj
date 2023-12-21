@@ -201,6 +201,7 @@
 		2C473BD0209778900008C853 /* DownloadsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C473BCF209778900008C853 /* DownloadsTests.swift */; };
 		2C49854E206173C800893DAE /* photon-colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C49854D206173C800893DAE /* photon-colors.swift */; };
 		2C4A07DC20246EAD0083E320 /* DragAndDropTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4A07DB20246EAD0083E320 /* DragAndDropTests.swift */; };
+<<<<<<< HEAD
 		2C4B6BF320349EB800A009C2 /* OnboardingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4B6BF220349EB800A009C2 /* OnboardingTests.swift */; };
 		2C7DC2322B15F5C600C049C8 /* EcosiaTopSiteItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7DC2312B15F5C600C049C8 /* EcosiaTopSiteItemCell.swift */; };
 		2C7DC2382B16332E00C049C8 /* EcosiaThemeColourPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7DC2372B16332E00C049C8 /* EcosiaThemeColourPalette.swift */; };
@@ -216,6 +217,24 @@
 		2C7DC2452B16492800C049C8 /* DispatchQueueHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83821FF1FC7961D00303C12 /* DispatchQueueHelper.swift */; };
 		2C7DC2462B16493C00C049C8 /* UIConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2816EFFF1B33E05400522243 /* UIConstants.swift */; };
 		2C8C07771E7800EA00DC1237 /* FindInPageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C8C07761E7800EA00DC1237 /* FindInPageTests.swift */; };
+=======
+		2C4B6BF320349EB800A009C2 /* FirstRunTourTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4B6BF220349EB800A009C2 /* FirstRunTourTests.swift */; };
+		2C50B3DD2AF3EE930037AA90 /* EngineShortcutsExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C50B3DC2AF3EE930037AA90 /* EngineShortcutsExperiment.swift */; };
+		2C50F09A2AC703E500F09803 /* WhatsNewLocalDataProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C50F0992AC703E500F09803 /* WhatsNewLocalDataProviderTests.swift */; };
+		2C50F09C2ACAD8E400F09803 /* EcosiaInstallType+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C50F09B2ACAD8E400F09803 /* EcosiaInstallType+Extensions.swift */; };
+		2C73A71B2A9E0B7A006EBAAB /* WhatsNewItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C73A71A2A9E0B7A006EBAAB /* WhatsNewItem.swift */; };
+		2C73A71D2A9E0B97006EBAAB /* WhatsNewDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C73A71C2A9E0B97006EBAAB /* WhatsNewDataProvider.swift */; };
+		2C73A71F2A9E0BB5006EBAAB /* WhatsNewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C73A71E2A9E0BB5006EBAAB /* WhatsNewViewModel.swift */; };
+		2C73A7242A9E0C6F006EBAAB /* WhatsNewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C73A7232A9E0C6F006EBAAB /* WhatsNewViewController.swift */; };
+		2C73A7282A9E1BD7006EBAAB /* WhatsNewLocalDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C73A7272A9E1BD7006EBAAB /* WhatsNewLocalDataProvider.swift */; };
+		2C8C07771E7800EA00DC1237 /* FindInPageTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C8C07761E7800EA00DC1237 /* FindInPageTest.swift */; };
+		2C9165412B20DDF900BE390E /* APNConsentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9165402B20DDF900BE390E /* APNConsentViewController.swift */; };
+		2C9165432B20DE5700BE390E /* APNConsentViewModelProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9165422B20DE5700BE390E /* APNConsentViewModelProtocol.swift */; };
+		2C9165452B20DEF800BE390E /* APNConsentItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9165442B20DEF800BE390E /* APNConsentItemCell.swift */; };
+		2C9165472B20DF0C00BE390E /* APNConsentListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9165462B20DF0C00BE390E /* APNConsentListItem.swift */; };
+		2C9165492B20E55200BE390E /* EngagementServiceExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9165482B20E55200BE390E /* EngagementServiceExperiment.swift */; };
+		2C91654B2B20E64100BE390E /* UnleashAPNConsentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C91654A2B20E64100BE390E /* UnleashAPNConsentViewModel.swift */; };
+>>>>>>> 126114c70 ([MOB-2048] Push notification card UI (#606))
 		2C97EC711E72C80E0092EC18 /* TopTabsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C97EC701E72C80E0092EC18 /* TopTabsTest.swift */; };
 		2CA16FDE1E5F089100332277 /* SearchTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CA16FDD1E5F089100332277 /* SearchTest.swift */; };
 		2CA2040629D4954F006848DE /* EcosiaPageActionMenuCellTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CA2040529D4954F006848DE /* EcosiaPageActionMenuCellTests.swift */; };
@@ -2465,6 +2484,12 @@
 		2C7B95322B33088B00E2392B /* Production.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Production.xcconfig; path = Configuration/Production.xcconfig; sourceTree = "<group>"; };
 		2C8C07761E7800EA00DC1237 /* FindInPageTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FindInPageTest.swift; sourceTree = "<group>"; };
 		2C9144B0B15218D8A0FCD538 /* es-AR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-AR"; path = "es-AR.lproj/ClearPrivateData.strings"; sourceTree = "<group>"; };
+		2C9165402B20DDF900BE390E /* APNConsentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APNConsentViewController.swift; sourceTree = "<group>"; };
+		2C9165422B20DE5700BE390E /* APNConsentViewModelProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APNConsentViewModelProtocol.swift; sourceTree = "<group>"; };
+		2C9165442B20DEF800BE390E /* APNConsentItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APNConsentItemCell.swift; sourceTree = "<group>"; };
+		2C9165462B20DF0C00BE390E /* APNConsentListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APNConsentListItem.swift; sourceTree = "<group>"; };
+		2C9165482B20E55200BE390E /* EngagementServiceExperiment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EngagementServiceExperiment.swift; sourceTree = "<group>"; };
+		2C91654A2B20E64100BE390E /* UnleashAPNConsentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnleashAPNConsentViewModel.swift; sourceTree = "<group>"; };
 		2C97EC701E72C80E0092EC18 /* TopTabsTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TopTabsTest.swift; sourceTree = "<group>"; };
 		2CA16FDD1E5F089100332277 /* SearchTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchTest.swift; sourceTree = "<group>"; };
 		2CA2040529D4954F006848DE /* EcosiaPageActionMenuCellTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaPageActionMenuCellTests.swift; sourceTree = "<group>"; };
@@ -7909,8 +7934,14 @@
 		2C1296ED2B0BA60400FC0A04 /* Home */ = {
 			isa = PBXGroup;
 			children = (
+<<<<<<< HEAD
 				2C1296EE2B0BA63E00FC0A04 /* EcosiaHomepageSectionType.swift */,
 				2C7DC2342B15F6C700C049C8 /* TopSites */,
+=======
+				2C50B3DC2AF3EE930037AA90 /* EngineShortcutsExperiment.swift */,
+				2C31ECAA2A2E13410058BC31 /* DefaultBrowserExperiment.swift */,
+				2C9165482B20E55200BE390E /* EngagementServiceExperiment.swift */,
+>>>>>>> 126114c70 ([MOB-2048] Push notification card UI (#606))
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -8028,6 +8059,7 @@
 			path = DataProvider;
 			sourceTree = "<group>";
 		};
+<<<<<<< HEAD
 		2CB288EF2B07C8F000A8FCB3 /* NTP */ = {
 			isa = PBXGroup;
 			children = (
@@ -8247,6 +8279,21 @@
 			sourceTree = "<group>";
 		};
 		2CB289552B07C8F000A8FCB3 /* AppDelegate */ = {
+=======
+		2C91653F2B20DDAB00BE390E /* APNConsent */ = {
+			isa = PBXGroup;
+			children = (
+				2C9165402B20DDF900BE390E /* APNConsentViewController.swift */,
+				2C9165422B20DE5700BE390E /* APNConsentViewModelProtocol.swift */,
+				2C9165442B20DEF800BE390E /* APNConsentItemCell.swift */,
+				2C9165462B20DF0C00BE390E /* APNConsentListItem.swift */,
+				2C91654A2B20E64100BE390E /* UnleashAPNConsentViewModel.swift */,
+			);
+			path = APNConsent;
+			sourceTree = "<group>";
+		};
+		2C9C9FF52A03C7950038A3DD /* ExperimentsTests */ = {
+>>>>>>> 126114c70 ([MOB-2048] Push notification card UI (#606))
 			isa = PBXGroup;
 			children = (
 			);
@@ -10315,6 +10362,7 @@
 		CA4D9C8728C8D801006AFB5D /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				2C91653F2B20DDAB00BE390E /* APNConsent */,
 				2C73A7192A9D14B2006EBAAB /* WhatsNew */,
 				CA4D9C8828C8D801006AFB5D /* SemanticColor.swift */,
 				CA4D9C8C28C8D801006AFB5D /* Ecosia.xcassets */,
@@ -13590,17 +13638,28 @@
 				DF529E9F2AA86FF4003C5373 /* FakespotReviewQualityCardView.swift in Sources */,
 				DFACDFAF274D4D6D00A94EEC /* ReusableCell.swift in Sources */,
 				1D0BA05C24F46A0400D731B5 /* TopSitesProvider.swift in Sources */,
+				2C9165492B20E55200BE390E /* EngagementServiceExperiment.swift in Sources */,
 				0BF0DB941A8545800039F300 /* URLBarView.swift in Sources */,
 				2CB2896F2B07C8F000A8FCB3 /* MMP.swift in Sources */,
 				DFACBF7F277B5F7B003D5F41 /* WallpaperBackgroundView.swift in Sources */,
 				D01017F5219CB6BD009CBB5A /* DownloadContentScript.swift in Sources */,
 				8A093D832A4B68940099ABA5 /* PrivacySettingsDelegate.swift in Sources */,
 				39F819C61FD70F5D009E31E4 /* TabEventHandlers.swift in Sources */,
+<<<<<<< HEAD
 				2CB289D02B07C8F000A8FCB3 /* EcosiaInstallType.swift in Sources */,
 				C8DC90C32A066B4A0008832B /* MarkupToken.swift in Sources */,
 				FA6B2AC21D41F02D00429414 /* String+Punycode.swift in Sources */,
 				E174963C2992B6A60096900A /* HostingTableViewSectionHeader.swift in Sources */,
 				2CB289AB2B07C8F000A8FCB3 /* EcosiaSettings.swift in Sources */,
+=======
+				2C73A71F2A9E0BB5006EBAAB /* WhatsNewViewModel.swift in Sources */,
+				E65607611C08B4E200534B02 /* SearchInputView.swift in Sources */,
+				2C73A7242A9E0C6F006EBAAB /* WhatsNewViewController.swift in Sources */,
+				FA6B2AC21D41F02D00429414 /* Punycode.swift in Sources */,
+				43446CEA2412066500F5C643 /* UIViewController+Extension.swift in Sources */,
+				2C91654B2B20E64100BE390E /* UnleashAPNConsentViewModel.swift in Sources */,
+				12EEE0A82A9F75C500C4A46D /* NTPAboutEcosiaCellViewModel.swift in Sources */,
+>>>>>>> 126114c70 ([MOB-2048] Push notification card UI (#606))
 				8A471185287F6E4800F5A6EA /* SeparatorTableViewCell.swift in Sources */,
 				D301AAEE1A3A55B70078DD1D /* LegacyGridTabViewController.swift in Sources */,
 				EB9A179B20E69A7F00B12184 /* LegacyThemeManager.swift in Sources */,
@@ -13701,13 +13760,29 @@
 				8A6A796D27F773550022D6C6 /* HomepageContextMenuHelper.swift in Sources */,
 				2CB2899C2B07C8F000A8FCB3 /* FilterController.swift in Sources */,
 				8A2783F1275FFDC50080D29D /* KeyboardPressesHandler.swift in Sources */,
+<<<<<<< HEAD
+=======
+				CA8BCC3928D1FBBC0020BC50 /* HistoryHighlightsManager.swift in Sources */,
+				CA4D9D0C28C8D801006AFB5D /* WelcomeTourProfit.swift in Sources */,
+				CAB544C828F6BBFD00657722 /* PageActionsShortcutsHeader.swift in Sources */,
+				2C9165472B20DF0C00BE390E /* APNConsentListItem.swift in Sources */,
+				D8D33A7D1FBD080300A20A28 /* UIView+Extension.swift in Sources */,
+				CA4D9CFD28C8D801006AFB5D /* MultiplyImpact.swift in Sources */,
+>>>>>>> 126114c70 ([MOB-2048] Push notification card UI (#606))
 				E650755C1E37F747006961AC /* Swizzling.m in Sources */,
 				74821FC51DB56A2500EEEA72 /* OpenWithSettingsViewController.swift in Sources */,
 				C84656012887A0F700861B4A /* WallpaperMetadataUtility.swift in Sources */,
 				E1B04A9D28E20A8300670E54 /* InstructionsView.swift in Sources */,
 				D3B6923D1B9F9444004B87A4 /* FindInPageBar.swift in Sources */,
 				2F44FC721A9E840300FD20CC /* SettingsNavigationController.swift in Sources */,
+<<<<<<< HEAD
 				2CB289A32B07C8F000A8FCB3 /* WelcomeTour.swift in Sources */,
+=======
+				2CAD6D992A7A96C000C2E96D /* Analytics+Configuration.swift in Sources */,
+				2C9165412B20DDF900BE390E /* APNConsentViewController.swift in Sources */,
+				2C73A71B2A9E0B7A006EBAAB /* WhatsNewItem.swift in Sources */,
+				CA4D9CF028C8D801006AFB5D /* NTPTooltip.Highlight.swift in Sources */,
+>>>>>>> 126114c70 ([MOB-2048] Push notification card UI (#606))
 				D0E89A2920910917001CE5C7 /* DownloadsPanel.swift in Sources */,
 				D3BA7E0E1B0E934F00153782 /* ContextMenuHelper.swift in Sources */,
 				E19B38B328A42D5E00D8C541 /* WallpaperCollectionViewCell.swift in Sources */,
@@ -13824,8 +13899,15 @@
 				43D16B7C29831CD0009F8279 /* CreditCardItemRow.swift in Sources */,
 				965C3C942933A860006499ED /* LaunchSessionProvider.swift in Sources */,
 				C8163851268A0899004C7160 /* AddCredentialViewController.swift in Sources */,
+<<<<<<< HEAD
 				8A19ACB22A3290AE001C2147 /* ClearPrivateDataSetting.swift in Sources */,
 				CA520E7A24913C1B00CCAB48 /* PasswordManagerViewModel.swift in Sources */,
+=======
+				CA520E7A24913C1B00CCAB48 /* LoginListViewModel.swift in Sources */,
+				2C9165452B20DEF800BE390E /* APNConsentItemCell.swift in Sources */,
+				12E8E6B42A9CFC4100E6ED8E /* NTPCustomizationCellViewModel.swift in Sources */,
+				8AB8574327D963920075C173 /* Loggable.swift in Sources */,
+>>>>>>> 126114c70 ([MOB-2048] Push notification card UI (#606))
 				8AE1E1CD27B191110024C45E /* SearchBarSettingsViewModel.swift in Sources */,
 				43D16B8529831EA5009F8279 /* Style.swift in Sources */,
 				E16258EF2A83BE0800522742 /* FakespotLoadingView.swift in Sources */,
@@ -13874,9 +13956,15 @@
 				C8EDDBF429DF119F003A4C07 /* DeeplinkInput.swift in Sources */,
 				2CB289722B07C8F000A8FCB3 /* PageActionsShortcutsHeader.swift in Sources */,
 				D0E55C4F1FB4FD23006DC274 /* FormPostHelper.swift in Sources */,
+<<<<<<< HEAD
 				E118B9292862674E00C84831 /* LegacyInactiveTabItemCellModel.swift in Sources */,
 				C88E7A552A0553180072E638 /* OnboardingViewModel.swift in Sources */,
 				962021E128B8078400BDF3D9 /* ContextualHintCopyProvider.swift in Sources */,
+=======
+				E118B9292862674E00C84831 /* InactiveTabItemCellModel.swift in Sources */,
+				E650754E1E37F6AE006961AC /* CGRect+Extension.swift in Sources */,
+				2C9165432B20DE5700BE390E /* APNConsentViewModelProtocol.swift in Sources */,
+>>>>>>> 126114c70 ([MOB-2048] Push notification card UI (#606))
 				8AE1E1D227B1ADC40024C45E /* TopBottomInterchangeable.swift in Sources */,
 				8A7653BD28A2C61D00924ABF /* PocketDataAdaptor.swift in Sources */,
 				8A093D7D2A4B3E4F0099ABA5 /* DebugSettingsDelegate.swift in Sources */,

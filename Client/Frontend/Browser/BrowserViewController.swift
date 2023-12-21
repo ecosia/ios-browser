@@ -168,11 +168,18 @@ class BrowserViewController: UIViewController,
         }
         return keyboardPressesHandlerValue
     }
-    
-    // Ecosia: Properties
-    // MARK: - Ecosia Properties
-    var shouldShowDefaultBrowserPromo: Bool { profile.prefs.intForKey(PrefsKeys.IntroSeen) == nil }
-    var shouldShowWhatsNewPageScreen: Bool { whatsNewDataProvider.shouldShowWhatsNewPage }
+
+    fileprivate var shouldShowDefaultBrowserPromo: Bool {
+        profile.prefs.intForKey(PrefsKeys.IntroSeen) == nil &&
+        DefaultBrowserExperiment.minPromoSearches() <= User.shared.searchCount
+    }
+    fileprivate var shouldShowWhatsNewPageScreen: Bool { whatsNewDataProvider.shouldShowWhatsNewPage }
+    fileprivate var shouldShowAPNConsentScreen: Bool {
+        EngagementServiceExperiment.isEnabled &&
+        EngagementServiceExperiment.minSearches() <= User.shared.searchCount &&
+        User.shared.shouldShowAPNConsentScreen
+    }
+
     let whatsNewDataProvider = WhatsNewLocalDataProvider()
     let referrals = Referrals()
     
@@ -2369,6 +2376,108 @@ extension BrowserViewController {
                     TelemetryWrapper.recordEvent(category: .action,
                                                  method: .tap,
                                                  object: .creditCardSavePromptCreate)
+    func presentIntroViewController(_ alwaysShow: Bool = false) {
+        if showLoadingScreen(for: .shared) {
+            presentLoadingScreen()
+        } else if User.shared.firstTime {
+            handleFirstTimeUserActions()
+        } else {
+            presentInsightfulSheetsIfNeeded()
+        }
+    }
+
+    private func presentLoadingScreen() {
+        present(LoadingScreen(profile: profile, referrals: referrals, referralCode: User.shared.referrals.pendingClaim), animated: true)
+    }
+
+    private func handleFirstTimeUserActions() {
+        User.shared.firstTime = false
+        User.shared.migrated = true
+        User.shared.hideBookmarksNewBadge()
+        User.shared.hideBookmarksImportExportTooltip()
+        // deactivate searchbar hint for new users
+        contextHintVC.viewModel.markContextualHintPresented()
+    }
+
+    private func showLoadingScreen(for user: User) -> Bool {
+        (user.migrated != true && !user.firstTime)
+                || user.referrals.pendingClaim != nil
+    }
+
+    func presentInsightfulSheetsIfNeeded() {
+        guard isHomePage(),
+              presentedViewController == nil,
+              !showLoadingScreen(for: .shared) else { return }
+        
+        // TODO: To review this logic as part of the upgrade
+        /*
+         We are not fan of this one, but given the current approach a refactor
+         would not be suitable as part of this ticke scope.
+         As part of the upgrade and with a more structured navigation approach, we will
+         refactor it.
+         The below is a decent compromise given the complexity of the decisional execution and presentation.
+         The order of the function represents the priority.
+         */
+        let presentationFunctions: [() -> Bool] = [
+            presentDefaultBrowserPromoIfNeeded,
+            presentWhatsNewPageIfNeeded,
+            presentAPNConsentIfNeeded
+        ]
+
+        _ = presentationFunctions.first(where: { $0() })
+    }
+
+    private func isHomePage() -> Bool {
+        tabManager.selectedTab?.url.flatMap { InternalURL($0)?.isAboutHomeURL } ?? false
+    }
+
+    @discardableResult
+    private func presentWhatsNewPageIfNeeded() -> Bool {
+        guard shouldShowWhatsNewPageScreen else { return false }
+        let viewModel = WhatsNewViewModel(provider: whatsNewDataProvider)
+        WhatsNewViewController.presentOn(self, viewModel: viewModel)
+        return true
+    }
+    
+    @discardableResult
+    private func presentAPNConsentIfNeeded() -> Bool {
+        guard shouldShowAPNConsentScreen else { return false }
+        APNConsentViewController.presentOn(self, viewModel: UnleashAPNConsentViewModel())
+        return true
+    }
+
+    @discardableResult
+    private func presentDefaultBrowserPromoIfNeeded() -> Bool {
+        guard shouldShowDefaultBrowserPromo else { return false }
+        
+        if #available(iOS 14, *) {
+            let defaultPromo = DefaultBrowser(delegate: self)
+            present(defaultPromo, animated: true)
+        } else {
+            profile.prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
+        }
+        return true
+    }
+
+    func presentETPCoverSheetViewController(_ force: Bool = false) {
+        guard !hasTriedToPresentETPAlready else { return }
+        hasTriedToPresentETPAlready = true
+        let cleanInstall = ETPViewModel.isCleanInstall(userPrefs: profile.prefs)
+        let shouldShow = ETPViewModel.shouldShowETPCoverSheet(userPrefs: profile.prefs, isCleanInstall: cleanInstall)
+        guard force || shouldShow else { return }
+        let etpCoverSheetViewController = ETPCoverSheetViewController()
+        if topTabsVisible {
+            etpCoverSheetViewController.preferredContentSize = CGSize(
+                width: ViewControllerConsts.PreferredSize.UpdateViewController.width,
+                height: ViewControllerConsts.PreferredSize.UpdateViewController.height)
+            etpCoverSheetViewController.modalPresentationStyle = .formSheet
+        } else {
+            etpCoverSheetViewController.modalPresentationStyle = .fullScreen
+        }
+        etpCoverSheetViewController.viewModel.startBrowsing = {
+            etpCoverSheetViewController.dismiss(animated: true) {
+                if self.navigationController?.viewControllers.count ?? 0 > 1 {
+                    _ = self.navigationController?.popToRootViewController(animated: true)
                 }
 
                 // Save or update a card toast message

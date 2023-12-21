@@ -6,6 +6,18 @@ import UIKit
 import Core
 import Shared
 
+extension BrowserViewController: HomepageViewControllerDelegate {
+    func homeDidTapSearchButton(_ home: HomepageViewController) {
+        urlBar.tabLocationViewDidTapLocation(self.urlBar.locationView)
+    }
+}
+
+extension BrowserViewController: APNConsentViewDelegate {
+    func apnConsentViewDidShow(_ viewController: APNConsentViewController) {
+        User.shared.markAPNConsentScreenAsShown()
+    }
+}
+
 extension BrowserViewController: DefaultBrowserDelegate {
     @available(iOS 14, *)
     func defaultBrowserDidShow(_ defaultBrowser: DefaultBrowser) {
