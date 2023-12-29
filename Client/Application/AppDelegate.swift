@@ -8,6 +8,7 @@ import CoreSpotlight
 import UIKit
 import Common
 import Glean
+import Core
 
 class AppDelegate: UIResponder, UIApplicationDelegate {
     let logger = DefaultLogger.shared

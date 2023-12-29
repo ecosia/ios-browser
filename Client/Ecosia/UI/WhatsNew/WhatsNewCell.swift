@@ -4,11 +4,22 @@
 
 import UIKit
 import Core
+import Common
 
-final class WhatsNewCell: UITableViewCell {
+final class WhatsNewCell: UITableViewCell, Themeable {
     
+    // MARK: - Properties
+
     private var item: WhatsNewItem!
     private var contentConfigurationToUpdate: Any?
+    
+    // MARK: - Themeable Properties
+    
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeObserver: NSObjectProtocol?
+    var notificationCenter: NotificationProtocol = NotificationCenter.default
+
+    // MARK: - Configuration
 
     func configure(with item: WhatsNewItem) {
         selectionStyle = .none
@@ -16,7 +27,7 @@ final class WhatsNewCell: UITableViewCell {
         self.item = item
         configureBasedOnOSVersion()
         applyTheme()
-        NotificationCenter.default.addObserver(self, selector: #selector(applyTheme), name: .DisplayThemeChanged, object: nil)
+        listenForThemeChange(contentView)
     }
     
     private func configureBasedOnOSVersion() {
@@ -70,15 +81,15 @@ final class WhatsNewCell: UITableViewCell {
     }
 }
 
-extension WhatsNewCell: NotificationThemeable {
+extension WhatsNewCell {
     
-    @objc func applyTheme() {
+    func applyTheme() {
         if #available(iOS 14, *) {
             guard var updatedConfiguration = contentConfigurationToUpdate as? UIListContentConfiguration else { return }
-            updatedConfiguration.image = item.image?.tinted(withColor: .theme.ecosia.secondaryIcon)
+            updatedConfiguration.image = item.image?.tinted(withColor: .legacyTheme.ecosia.secondaryIcon)
             contentConfiguration = updatedConfiguration
         } else {
-            imageView?.image = item.image?.tinted(withColor: .theme.ecosia.secondaryIcon)
+            imageView?.image = item.image?.tinted(withColor: .legacyTheme.ecosia.secondaryIcon)
         }
     }
 }

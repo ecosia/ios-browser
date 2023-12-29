@@ -8,6 +8,6 @@ import Foundation
 
 /// Structure representing an item in the APN consent list.
 struct APNConsentListItem {
-    let image: UIImage? = .templateImageNamed("stroke")?.tinted(withColor: .theme.ecosia.secondaryIcon)
+    let image: UIImage? = .templateImageNamed("stroke")?.tinted(withColor: .legacyTheme.ecosia.secondaryIcon)
     let title: String
 }

@@ -201,8 +201,15 @@
 		2C473BD0209778900008C853 /* DownloadsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C473BCF209778900008C853 /* DownloadsTests.swift */; };
 		2C49854E206173C800893DAE /* photon-colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C49854D206173C800893DAE /* photon-colors.swift */; };
 		2C4A07DC20246EAD0083E320 /* DragAndDropTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4A07DB20246EAD0083E320 /* DragAndDropTests.swift */; };
-<<<<<<< HEAD
 		2C4B6BF320349EB800A009C2 /* OnboardingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4B6BF220349EB800A009C2 /* OnboardingTests.swift */; };
+		2C56A4632B3F051C001261D0 /* EngagementService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C56A4622B3F051B001261D0 /* EngagementService.swift */; };
+		2C56A46A2B3F057F001261D0 /* APNConsentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C56A4652B3F057F001261D0 /* APNConsentViewController.swift */; };
+		2C56A46B2B3F057F001261D0 /* UnleashAPNConsentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C56A4662B3F057F001261D0 /* UnleashAPNConsentViewModel.swift */; };
+		2C56A46C2B3F057F001261D0 /* APNConsentListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C56A4672B3F057F001261D0 /* APNConsentListItem.swift */; };
+		2C56A46D2B3F057F001261D0 /* APNConsentItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C56A4682B3F057F001261D0 /* APNConsentItemCell.swift */; };
+		2C56A46E2B3F057F001261D0 /* APNConsentViewModelProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C56A4692B3F057F001261D0 /* APNConsentViewModelProtocol.swift */; };
+		2C56A4772B3F0923001261D0 /* APNConsentUIExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C56A4762B3F0923001261D0 /* APNConsentUIExperiment.swift */; };
+		2C56A4792B3F0BA3001261D0 /* Production.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 2C56A4782B3F0BA3001261D0 /* Production.xcconfig */; };
 		2C7DC2322B15F5C600C049C8 /* EcosiaTopSiteItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7DC2312B15F5C600C049C8 /* EcosiaTopSiteItemCell.swift */; };
 		2C7DC2382B16332E00C049C8 /* EcosiaThemeColourPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7DC2372B16332E00C049C8 /* EcosiaThemeColourPalette.swift */; };
 		2C7DC23B2B163AF900C049C8 /* EcosiaThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7DC23A2B163AF900C049C8 /* EcosiaThemeManager.swift */; };
@@ -217,30 +224,8 @@
 		2C7DC2452B16492800C049C8 /* DispatchQueueHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83821FF1FC7961D00303C12 /* DispatchQueueHelper.swift */; };
 		2C7DC2462B16493C00C049C8 /* UIConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2816EFFF1B33E05400522243 /* UIConstants.swift */; };
 		2C8C07771E7800EA00DC1237 /* FindInPageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C8C07761E7800EA00DC1237 /* FindInPageTests.swift */; };
-=======
-		2C4B6BF320349EB800A009C2 /* FirstRunTourTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4B6BF220349EB800A009C2 /* FirstRunTourTests.swift */; };
-		2C50B3DD2AF3EE930037AA90 /* EngineShortcutsExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C50B3DC2AF3EE930037AA90 /* EngineShortcutsExperiment.swift */; };
-		2C50F09A2AC703E500F09803 /* WhatsNewLocalDataProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C50F0992AC703E500F09803 /* WhatsNewLocalDataProviderTests.swift */; };
-		2C50F09C2ACAD8E400F09803 /* EcosiaInstallType+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C50F09B2ACAD8E400F09803 /* EcosiaInstallType+Extensions.swift */; };
-		2C73A71B2A9E0B7A006EBAAB /* WhatsNewItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C73A71A2A9E0B7A006EBAAB /* WhatsNewItem.swift */; };
-		2C73A71D2A9E0B97006EBAAB /* WhatsNewDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C73A71C2A9E0B97006EBAAB /* WhatsNewDataProvider.swift */; };
-		2C73A71F2A9E0BB5006EBAAB /* WhatsNewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C73A71E2A9E0BB5006EBAAB /* WhatsNewViewModel.swift */; };
-		2C73A7242A9E0C6F006EBAAB /* WhatsNewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C73A7232A9E0C6F006EBAAB /* WhatsNewViewController.swift */; };
-		2C73A7282A9E1BD7006EBAAB /* WhatsNewLocalDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C73A7272A9E1BD7006EBAAB /* WhatsNewLocalDataProvider.swift */; };
-		2C8C07771E7800EA00DC1237 /* FindInPageTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C8C07761E7800EA00DC1237 /* FindInPageTest.swift */; };
-		2C9165412B20DDF900BE390E /* APNConsentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9165402B20DDF900BE390E /* APNConsentViewController.swift */; };
-		2C9165432B20DE5700BE390E /* APNConsentViewModelProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9165422B20DE5700BE390E /* APNConsentViewModelProtocol.swift */; };
-		2C9165452B20DEF800BE390E /* APNConsentItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9165442B20DEF800BE390E /* APNConsentItemCell.swift */; };
-		2C9165472B20DF0C00BE390E /* APNConsentListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9165462B20DF0C00BE390E /* APNConsentListItem.swift */; };
-		2C9165492B20E55200BE390E /* APNConsentUIExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9165482B20E55200BE390E /* APNConsentUIExperiment.swift */; };
-		2C91654B2B20E64100BE390E /* UnleashAPNConsentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C91654A2B20E64100BE390E /* UnleashAPNConsentViewModel.swift */; };
->>>>>>> 126114c70 ([MOB-2048] Push notification card UI (#606))
 		2C97EC711E72C80E0092EC18 /* TopTabsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C97EC701E72C80E0092EC18 /* TopTabsTest.swift */; };
 		2CA16FDE1E5F089100332277 /* SearchTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CA16FDD1E5F089100332277 /* SearchTest.swift */; };
-		2CA2040629D4954F006848DE /* EcosiaPageActionMenuCellTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CA2040529D4954F006848DE /* EcosiaPageActionMenuCellTests.swift */; };
-		2CA6DA162B18E4E1000AF363 /* EngagementService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CA6DA152B18E4E1000AF363 /* EngagementService.swift */; };
-		2CAD6D992A7A96C000C2E96D /* Analytics+Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CAD6D982A7A96C000C2E96D /* Analytics+Configuration.swift */; };
-		2CAD6D9E2A7AAFDC00C2E96D /* AnalyticsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CAD6D9C2A7AAFC600C2E96D /* AnalyticsTests.swift */; };
 		2CB1A65A1FDEA8B60084E96D /* NewTabSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB1A6591FDEA8B60084E96D /* NewTabSettings.swift */; };
 		2CB288D42B07C6F400A8FCB3 /* EcosiaDebug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 2CB288CF2B07C6F300A8FCB3 /* EcosiaDebug.xcconfig */; };
 		2CB288D52B07C6F400A8FCB3 /* EcosiaBeta.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 2CB288D02B07C6F300A8FCB3 /* EcosiaBeta.xcconfig */; };
@@ -2471,31 +2456,23 @@
 		2C49854D206173C800893DAE /* photon-colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "photon-colors.swift"; sourceTree = "<group>"; };
 		2C4A07DB20246EAD0083E320 /* DragAndDropTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragAndDropTests.swift; sourceTree = "<group>"; };
 		2C4B6BF220349EB800A009C2 /* OnboardingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingTests.swift; sourceTree = "<group>"; };
+		2C56A4622B3F051B001261D0 /* EngagementService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EngagementService.swift; sourceTree = "<group>"; };
+		2C56A4652B3F057F001261D0 /* APNConsentViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APNConsentViewController.swift; sourceTree = "<group>"; };
+		2C56A4662B3F057F001261D0 /* UnleashAPNConsentViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnleashAPNConsentViewModel.swift; sourceTree = "<group>"; };
+		2C56A4672B3F057F001261D0 /* APNConsentListItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APNConsentListItem.swift; sourceTree = "<group>"; };
+		2C56A4682B3F057F001261D0 /* APNConsentItemCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APNConsentItemCell.swift; sourceTree = "<group>"; };
+		2C56A4692B3F057F001261D0 /* APNConsentViewModelProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APNConsentViewModelProtocol.swift; sourceTree = "<group>"; };
+		2C56A4762B3F0923001261D0 /* APNConsentUIExperiment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APNConsentUIExperiment.swift; sourceTree = "<group>"; };
+		2C56A4782B3F0BA3001261D0 /* Production.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Production.xcconfig; sourceTree = "<group>"; };
 		2C6045859589979C43AF09E0 /* jv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = jv; path = jv.lproj/ClearPrivateDataConfirm.strings; sourceTree = "<group>"; };
 		2C6E44099EACF7BE5438CEB6 /* ca */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ca; path = ca.lproj/Today.strings; sourceTree = "<group>"; };
 		2C7DC2312B15F5C600C049C8 /* EcosiaTopSiteItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaTopSiteItemCell.swift; sourceTree = "<group>"; };
 		2C7DC2372B16332E00C049C8 /* EcosiaThemeColourPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaThemeColourPalette.swift; sourceTree = "<group>"; };
 		2C7DC23A2B163AF900C049C8 /* EcosiaThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaThemeManager.swift; sourceTree = "<group>"; };
-		2C73A71A2A9E0B7A006EBAAB /* WhatsNewItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhatsNewItem.swift; sourceTree = "<group>"; };
-		2C73A71C2A9E0B97006EBAAB /* WhatsNewDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhatsNewDataProvider.swift; sourceTree = "<group>"; };
-		2C73A71E2A9E0BB5006EBAAB /* WhatsNewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhatsNewViewModel.swift; sourceTree = "<group>"; };
-		2C73A7232A9E0C6F006EBAAB /* WhatsNewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhatsNewViewController.swift; sourceTree = "<group>"; };
-		2C73A7272A9E1BD7006EBAAB /* WhatsNewLocalDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhatsNewLocalDataProvider.swift; sourceTree = "<group>"; };
-		2C7B95322B33088B00E2392B /* Production.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Production.xcconfig; path = Configuration/Production.xcconfig; sourceTree = "<group>"; };
-		2C8C07761E7800EA00DC1237 /* FindInPageTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FindInPageTest.swift; sourceTree = "<group>"; };
+		2C8C07761E7800EA00DC1237 /* FindInPageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FindInPageTests.swift; sourceTree = "<group>"; };
 		2C9144B0B15218D8A0FCD538 /* es-AR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-AR"; path = "es-AR.lproj/ClearPrivateData.strings"; sourceTree = "<group>"; };
-		2C9165402B20DDF900BE390E /* APNConsentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APNConsentViewController.swift; sourceTree = "<group>"; };
-		2C9165422B20DE5700BE390E /* APNConsentViewModelProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APNConsentViewModelProtocol.swift; sourceTree = "<group>"; };
-		2C9165442B20DEF800BE390E /* APNConsentItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APNConsentItemCell.swift; sourceTree = "<group>"; };
-		2C9165462B20DF0C00BE390E /* APNConsentListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APNConsentListItem.swift; sourceTree = "<group>"; };
-		2C9165482B20E55200BE390E /* APNConsentUIExperiment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APNConsentUIExperiment.swift; sourceTree = "<group>"; };
-		2C91654A2B20E64100BE390E /* UnleashAPNConsentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnleashAPNConsentViewModel.swift; sourceTree = "<group>"; };
 		2C97EC701E72C80E0092EC18 /* TopTabsTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TopTabsTest.swift; sourceTree = "<group>"; };
 		2CA16FDD1E5F089100332277 /* SearchTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchTest.swift; sourceTree = "<group>"; };
-		2CA2040529D4954F006848DE /* EcosiaPageActionMenuCellTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaPageActionMenuCellTests.swift; sourceTree = "<group>"; };
-		2CA6DA152B18E4E1000AF363 /* EngagementService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EngagementService.swift; sourceTree = "<group>"; };
-		2CAD6D982A7A96C000C2E96D /* Analytics+Configuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Analytics+Configuration.swift"; sourceTree = "<group>"; };
-		2CAD6D9C2A7AAFC600C2E96D /* AnalyticsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsTests.swift; sourceTree = "<group>"; };
 		2CAE4511992E91A32AB7D7C7 /* th */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = th; path = th.lproj/Today.strings; sourceTree = "<group>"; };
 		2CB1A6591FDEA8B60084E96D /* NewTabSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTabSettings.swift; sourceTree = "<group>"; };
 		2CB288CF2B07C6F300A8FCB3 /* EcosiaDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = EcosiaDebug.xcconfig; path = Configuration/EcosiaDebug.xcconfig; sourceTree = "<group>"; };
@@ -7934,20 +7911,30 @@
 		2C1296ED2B0BA60400FC0A04 /* Home */ = {
 			isa = PBXGroup;
 			children = (
-<<<<<<< HEAD
 				2C1296EE2B0BA63E00FC0A04 /* EcosiaHomepageSectionType.swift */,
 				2C7DC2342B15F6C700C049C8 /* TopSites */,
-=======
-				2C50B3DC2AF3EE930037AA90 /* EngineShortcutsExperiment.swift */,
-				2C31ECAA2A2E13410058BC31 /* DefaultBrowserExperiment.swift */,
-<<<<<<< HEAD
-				2C9165482B20E55200BE390E /* EngagementServiceExperiment.swift */,
->>>>>>> 126114c70 ([MOB-2048] Push notification card UI (#606))
-=======
-				2C9165482B20E55200BE390E /* APNConsentUIExperiment.swift */,
->>>>>>> d5e85887e ([MOB-2060] Add engagement service analytics (#610))
 			);
 			path = Home;
+			sourceTree = "<group>";
+		};
+		2C56A4612B3F051B001261D0 /* EngagementService */ = {
+			isa = PBXGroup;
+			children = (
+				2C56A4622B3F051B001261D0 /* EngagementService.swift */,
+			);
+			path = EngagementService;
+			sourceTree = "<group>";
+		};
+		2C56A4642B3F057F001261D0 /* APNConsent */ = {
+			isa = PBXGroup;
+			children = (
+				2C56A4652B3F057F001261D0 /* APNConsentViewController.swift */,
+				2C56A4662B3F057F001261D0 /* UnleashAPNConsentViewModel.swift */,
+				2C56A4672B3F057F001261D0 /* APNConsentListItem.swift */,
+				2C56A4682B3F057F001261D0 /* APNConsentItemCell.swift */,
+				2C56A4692B3F057F001261D0 /* APNConsentViewModelProtocol.swift */,
+			);
+			path = APNConsent;
 			sourceTree = "<group>";
 		};
 		2C7DC2332B15F6BB00C049C8 /* Cell */ = {
@@ -7979,6 +7966,7 @@
 		2CB288D92B07C8EF00A8FCB3 /* Ecosia */ = {
 			isa = PBXGroup;
 			children = (
+				2C56A4612B3F051B001261D0 /* EngagementService */,
 				2C02BE5A2B0E705300FE80C2 /* LaunchScreen */,
 				2C02BE4E2B0E325700FE80C2 /* Entitlements */,
 				2C1296EC2B0BA5FC00FC0A04 /* Frontend */,
@@ -8012,6 +8000,7 @@
 		2CB288DC2B07C8EF00A8FCB3 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				2C56A4642B3F057F001261D0 /* APNConsent */,
 				2CB288DD2B07C8EF00A8FCB3 /* SemanticColor.swift */,
 				2CB288DE2B07C8EF00A8FCB3 /* PageAction */,
 				2CB288E22B07C8EF00A8FCB3 /* EmptyBookmarksViewDelegate.swift */,
@@ -8063,7 +8052,6 @@
 			path = DataProvider;
 			sourceTree = "<group>";
 		};
-<<<<<<< HEAD
 		2CB288EF2B07C8F000A8FCB3 /* NTP */ = {
 			isa = PBXGroup;
 			children = (
@@ -8228,6 +8216,7 @@
 		2CB2893E2B07C8F000A8FCB3 /* Unleash */ = {
 			isa = PBXGroup;
 			children = (
+				2C56A4762B3F0923001261D0 /* APNConsentUIExperiment.swift */,
 				2CB2893F2B07C8F000A8FCB3 /* EngineShortcutsExperiment.swift */,
 				2CB289402B07C8F000A8FCB3 /* DefaultBrowserExperiment.swift */,
 			);
@@ -8283,33 +8272,10 @@
 			sourceTree = "<group>";
 		};
 		2CB289552B07C8F000A8FCB3 /* AppDelegate */ = {
-=======
-		2C91653F2B20DDAB00BE390E /* APNConsent */ = {
-			isa = PBXGroup;
-			children = (
-				2C9165402B20DDF900BE390E /* APNConsentViewController.swift */,
-				2C9165422B20DE5700BE390E /* APNConsentViewModelProtocol.swift */,
-				2C9165442B20DEF800BE390E /* APNConsentItemCell.swift */,
-				2C9165462B20DF0C00BE390E /* APNConsentListItem.swift */,
-				2C91654A2B20E64100BE390E /* UnleashAPNConsentViewModel.swift */,
-			);
-			path = APNConsent;
-			sourceTree = "<group>";
-		};
-		2C9C9FF52A03C7950038A3DD /* ExperimentsTests */ = {
->>>>>>> 126114c70 ([MOB-2048] Push notification card UI (#606))
 			isa = PBXGroup;
 			children = (
 			);
 			path = AppDelegate;
-			sourceTree = "<group>";
-		};
-		2CA6DA142B18E4C2000AF363 /* EngagementService */ = {
-			isa = PBXGroup;
-			children = (
-				2CA6DA152B18E4E1000AF363 /* EngagementService.swift */,
-			);
-			path = EngagementService;
 			sourceTree = "<group>";
 		};
 		2CB289572B07C8F000A8FCB3 /* Fake */ = {
@@ -10341,214 +10307,6 @@
 			path = BrowserViewController;
 			sourceTree = "<group>";
 		};
-		CA4D9C8628C8D801006AFB5D /* Ecosia */ = {
-			isa = PBXGroup;
-			children = (
-				2CDABC732AB1C7C1009F6D98 /* Helpers */,
-				2C1AF2632A289384003970E0 /* Network */,
-				2CA6DA142B18E4C2000AF363 /* EngagementService */,
-				2C3357E42A0D092A00E76A48 /* MMP */,
-				2C5850022A02903F009D7703 /* Experiments */,
-				CA4D9CDE28C8D801006AFB5D /* Analytics */,
-				CAEB316A28D0BFC000ADC9DB /* Extensions */,
-				CA4D9CD328C8D801006AFB5D /* Fake */,
-				CA4D9CB728C8D801006AFB5D /* L10N */,
-				CA4D9CD228C8D801006AFB5D /* markets.json */,
-				CA4D9CD828C8D801006AFB5D /* Migration */,
-				CA8CEBDD298244D100349552 /* Settings */,
-				CA4D9C8728C8D801006AFB5D /* UI */,
-				2CF8781E2A0D4673001E9658 /* FeatureManagement */,
-				2ABCCCB32A13BE74005D0C5B /* Bookmarks */,
-			);
-			path = Ecosia;
-			sourceTree = "<group>";
-		};
-		CA4D9C8728C8D801006AFB5D /* UI */ = {
-			isa = PBXGroup;
-			children = (
-				2C91653F2B20DDAB00BE390E /* APNConsent */,
-				2C73A7192A9D14B2006EBAAB /* WhatsNew */,
-				CA4D9C8828C8D801006AFB5D /* SemanticColor.swift */,
-				CA4D9C8C28C8D801006AFB5D /* Ecosia.xcassets */,
-				CA4D9CA728C8D801006AFB5D /* EcosiaNavigation.swift */,
-				CA4D9C8D28C8D801006AFB5D /* EcosiaTheme.swift */,
-				CA4D9C8E28C8D801006AFB5D /* EmptyHeader.swift */,
-				2AF2723929F2C54A004CA46F /* EmptyBookmarksView.swift */,
-				2ABCCCAF2A13A399005D0C5B /* EmptyBookmarksViewDelegate.swift */,
-				12ADF69A2AAB6B4600494559 /* MultiplyImpact */,
-				CA4D9C8F28C8D801006AFB5D /* NTP */,
-				CA4D9C9A28C8D801006AFB5D /* Colours.xcassets */,
-				CA4D9C9B28C8D801006AFB5D /* FilterController.swift */,
-				CA4D9C9C28C8D801006AFB5D /* MarketsController.swift */,
-				CA4D9CAF28C8D801006AFB5D /* Onboarding */,
-				CAB544C428F5AE6B00657722 /* PageAction */,
-				127773B129E98F75008A6A64 /* EcosiaFindInPageBar.swift */,
-			);
-			path = UI;
-			sourceTree = "<group>";
-		};
-		CA4D9C8F28C8D801006AFB5D /* NTP */ = {
-			isa = PBXGroup;
-			children = (
-				12EEE0A42A9F752200C4A46D /* AboutEcosia */,
-				12EEE0A32A9F71C900C4A46D /* BookmarkNudge */,
-				12E8E6AF2A9CFC4100E6ED8E /* Customization */,
-				12EEE0A12A9F70F700C4A46D /* Impact */,
-				12EEE0A22A9F714100C4A46D /* Library */,
-				CA8BCC3C28D308E30020BC50 /* Logo */,
-				CA8A48B0291BB8CA008BE12F /* News */,
-				CA103C7F28C8F78E00F7170A /* CircleButton.swift */,
-				CA4D9C9228C8D801006AFB5D /* DefaultBrowser.swift */,
-				CA4D9C9028C8D801006AFB5D /* NTPLayout.swift */,
-				CA4D9C9828C8D801006AFB5D /* NTPTooltip.Highlight.swift */,
-				CA4D9C9728C8D801006AFB5D /* NTPTooltip.swift */,
-				2ABCCCAD2A139CE8005D0C5B /* NTPTooltipDelegate.swift */,
-			);
-			path = NTP;
-			sourceTree = "<group>";
-		};
-		CA4D9CAF28C8D801006AFB5D /* Onboarding */ = {
-			isa = PBXGroup;
-			children = (
-				1287A99C2A6FFA45005F21F7 /* WelcomeTourGreen.swift */,
-				CA4D9CB128C8D801006AFB5D /* Welcome.swift */,
-				CA4D9CB228C8D801006AFB5D /* WelcomeTour.Step.swift */,
-				CA4D9CB328C8D801006AFB5D /* WelcomeTourAction.swift */,
-				1287A99E2A6FFC0C005F21F7 /* WelcomeTourTransparent.swift */,
-				CA4D9CB428C8D801006AFB5D /* WelcomeTour.swift */,
-				CA4D9CB528C8D801006AFB5D /* WelcomeNavigation.swift */,
-				CA4D9CB628C8D801006AFB5D /* WelcomeTourProfit.swift */,
-				1287A9A02A6FFE7A005F21F7 /* WelcomeTourRow.swift */,
-			);
-			path = Onboarding;
-			sourceTree = "<group>";
-		};
-		CA4D9CB728C8D801006AFB5D /* L10N */ = {
-			isa = PBXGroup;
-			children = (
-				CA4D9CBA28C8D801006AFB5D /* Plurals.stringsdict */,
-				CA4D9CC728C8D801006AFB5D /* Scripts */,
-				CA4D9CCA28C8D801006AFB5D /* String.swift */,
-				122211912AE7C971007C5E1C /* Ecosia.strings */,
-			);
-			path = L10N;
-			sourceTree = "<group>";
-		};
-		CA4D9CC728C8D801006AFB5D /* Scripts */ = {
-			isa = PBXGroup;
-			children = (
-				CA4D9CC828C8D801006AFB5D /* Clean.swift */,
-				CA4D9CC928C8D801006AFB5D /* Validate.swift */,
-			);
-			path = Scripts;
-			sourceTree = "<group>";
-		};
-		CA4D9CD328C8D801006AFB5D /* Fake */ = {
-			isa = PBXGroup;
-			children = (
-				CA4D9CD428C8D801006AFB5D /* FakeTelemetry.swift */,
-				CA4D9CD728C8D801006AFB5D /* FakeSentry.swift */,
-				CA9A4B6F28D0A2C7006571DB /* FakeNimbus.swift */,
-			);
-			path = Fake;
-			sourceTree = "<group>";
-		};
-		CA4D9CD828C8D801006AFB5D /* Migration */ = {
-			isa = PBXGroup;
-			children = (
-				CA4D9CD928C8D801006AFB5D /* EcosiaImport+PerformanceTests.swift */,
-				CA4D9CDA28C8D801006AFB5D /* EcosiaFavourites.swift */,
-				CA4D9CDB28C8D801006AFB5D /* EcosiaImport.swift */,
-				CA4D9CDC28C8D801006AFB5D /* LoadingScreen.swift */,
-				CA4D9CDD28C8D801006AFB5D /* EcosiaHistory.swift */,
-			);
-			path = Migration;
-			sourceTree = "<group>";
-		};
-		CA4D9CDE28C8D801006AFB5D /* Analytics */ = {
-			isa = PBXGroup;
-			children = (
-				CA4D9CDF28C8D801006AFB5D /* Analytics.swift */,
-				CA4D9CE028C8D801006AFB5D /* Analytics.Values.swift */,
-				2CAD6D982A7A96C000C2E96D /* Analytics+Configuration.swift */,
-			);
-			path = Analytics;
-			sourceTree = "<group>";
-		};
-		CA8A48B0291BB8CA008BE12F /* News */ = {
-			isa = PBXGroup;
-			children = (
-				CA4D9CA028C8D801006AFB5D /* NewsController.swift */,
-				CA4D9CA328C8D801006AFB5D /* NTPNewsCell.swift */,
-				CA1453C0290943270000957F /* NTPNewsCellViewModel.swift */,
-			);
-			path = News;
-			sourceTree = "<group>";
-		};
-		CA8BCC3C28D308E30020BC50 /* Logo */ = {
-			isa = PBXGroup;
-			children = (
-				CA4D9C9928C8D801006AFB5D /* NTPLogoCell.swift */,
-			);
-			path = Logo;
-			sourceTree = "<group>";
-		};
-		CA8CEBDD298244D100349552 /* Settings */ = {
-			isa = PBXGroup;
-			children = (
-				CA4D9CD128C8D801006AFB5D /* EcosiaSettings.swift */,
-				CA8CEBDE298244EC00349552 /* EcosiaDebugSettings.swift */,
-				12E8E6B22A9CFC4100E6ED8E /* NTPCustomizationSettingsViewController.swift */,
-			);
-			path = Settings;
-			sourceTree = "<group>";
-		};
-		CAA6AC4628E470C500A13DE9 /* Ecosia */ = {
-			isa = PBXGroup;
-			children = (
-				2C9F8CBA2AC3104800678514 /* EcosiaInstallTypeTests.swift */,
-				2C9C9FF52A03C7950038A3DD /* ExperimentsTests */,
-				CAA6AC4228E4709F00A13DE9 /* EcosiaHistoryMigrationTests.swift */,
-				CAA6AC4428E470BB00A13DE9 /* EcosiaBookmarkMigrationTests.swift */,
-				CAA6AC4728E4732A00A13DE9 /* EcosiaTabMigrationTests.swift */,
-				CAA6AC4928E473D500A13DE9 /* EcosiaNTPTooltipHighlightTests.swift */,
-				2CA2040529D4954F006848DE /* EcosiaPageActionMenuCellTests.swift */,
-				2CAD6D9C2A7AAFC600C2E96D /* AnalyticsTests.swift */,
-				2CE2F21B2AA87B3100623F26 /* VersionTests.swift */,
-				2C50F0992AC703E500F09803 /* WhatsNewLocalDataProviderTests.swift */,
-			);
-			path = Ecosia;
-			sourceTree = "<group>";
-		};
-		CAB544C428F5AE6B00657722 /* PageAction */ = {
-			isa = PBXGroup;
-			children = (
-				CAB544C528F5AE6B00657722 /* PageActionMenu.swift */,
-				2CE63B2929CCBAB200047121 /* PageActionMenuCell.swift */,
-				CAB544C728F6BBFD00657722 /* PageActionsShortcutsHeader.swift */,
-			);
-			path = PageAction;
-			sourceTree = "<group>";
-		};
-		CAEB316A28D0BFC000ADC9DB /* Extensions */ = {
-			isa = PBXGroup;
-			children = (
-				2C3357E02A09227100E76A48 /* AppInfo+Ecosia.swift */,
-				2C3357E12A09227100E76A48 /* DeviceInfo+Ecosia.swift */,
-				CA4D9C8928C8D801006AFB5D /* BrowserViewController+Ecosia.swift */,
-				CAEB316628D0B38900ADC9DB /* HomepageViewController+Ecosia.swift */,
-				CA4D9C8B28C8D801006AFB5D /* SnapKit+Ecosia.swift */,
-				CA8BCC3F28D340AF0020BC50 /* TabCell+Ecosia.swift */,
-				2CE63B2729C8DA8200047121 /* ErrorPageHandler+Ecosia.swift */,
-				2C1AF2622A27A7D9003970E0 /* Toolbar+URLBar */,
-				2CC9E08B2A30AED2003420E1 /* URL+Ecosia.swift */,
-				CA4D9C8A28C8D801006AFB5D /* UIFont+Ecosia.swift */,
-				12EEE0AC2AA1CFE100C4A46D /* UIView+maskedCorners.swift */,
-				12531B4B2AA777230079C9CE /* NumberFormatter+Ecosia.swift */,
-			);
-			path = Extensions;
-			sourceTree = "<group>";
-		};
 		D010187021AF0E63009CBB5A /* js */ = {
 			isa = PBXGroup;
 			children = (
@@ -11237,7 +10995,7 @@
 				2CB288D12B07C6F300A8FCB3 /* EcosiaBetaDebug.xcconfig */,
 				2CB288CF2B07C6F300A8FCB3 /* EcosiaDebug.xcconfig */,
 				2CB288D22B07C6F300A8FCB3 /* Staging.xcconfig */,
-				2C7B95322B33088B00E2392B /* Production.xcconfig */,
+				2C56A4782B3F0BA3001261D0 /* Production.xcconfig */,
 				8A2B1A5B28216C4C0061216B /* Common.xcconfig */,
 				8A2B1A5A28216C4C0061216B /* Debug.xcconfig */,
 				8A2B1A5C28216C4D0061216B /* Release.xcconfig */,
@@ -12833,6 +12591,7 @@
 				23BEA769251A99ED00A014BF /* NewYorkMedium-Regular.otf in Resources */,
 				2CB288D62B07C6F400A8FCB3 /* EcosiaBetaDebug.xcconfig in Resources */,
 				D03F8F23200EAC1F003C2224 /* AllFramesAtDocumentStart.js in Resources */,
+				2C56A4792B3F0BA3001261D0 /* Production.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -13563,6 +13322,7 @@
 				2CB289C72B07C8F000A8FCB3 /* FakeNimbus.swift in Sources */,
 				E1FC23F12A8629380089E14D /* FakespotReliabilityCardView.swift in Sources */,
 				C8DC90C92A0675E70008832B /* MarkupParsingUtility.swift in Sources */,
+				2C56A46C2B3F057F001261D0 /* APNConsentListItem.swift in Sources */,
 				CA03B26A247F1D9E00382B62 /* BreachAlertsClient.swift in Sources */,
 				8A3EF8072A2FCFF700796E3A /* SentryIDSetting.swift in Sources */,
 				8A03294E288F1F0800AD9B89 /* TopSitesDimension.swift in Sources */,
@@ -13642,28 +13402,17 @@
 				DF529E9F2AA86FF4003C5373 /* FakespotReviewQualityCardView.swift in Sources */,
 				DFACDFAF274D4D6D00A94EEC /* ReusableCell.swift in Sources */,
 				1D0BA05C24F46A0400D731B5 /* TopSitesProvider.swift in Sources */,
-				2C9165492B20E55200BE390E /* APNConsentUIExperiment.swift in Sources */,
 				0BF0DB941A8545800039F300 /* URLBarView.swift in Sources */,
 				2CB2896F2B07C8F000A8FCB3 /* MMP.swift in Sources */,
 				DFACBF7F277B5F7B003D5F41 /* WallpaperBackgroundView.swift in Sources */,
 				D01017F5219CB6BD009CBB5A /* DownloadContentScript.swift in Sources */,
 				8A093D832A4B68940099ABA5 /* PrivacySettingsDelegate.swift in Sources */,
 				39F819C61FD70F5D009E31E4 /* TabEventHandlers.swift in Sources */,
-<<<<<<< HEAD
 				2CB289D02B07C8F000A8FCB3 /* EcosiaInstallType.swift in Sources */,
 				C8DC90C32A066B4A0008832B /* MarkupToken.swift in Sources */,
 				FA6B2AC21D41F02D00429414 /* String+Punycode.swift in Sources */,
 				E174963C2992B6A60096900A /* HostingTableViewSectionHeader.swift in Sources */,
 				2CB289AB2B07C8F000A8FCB3 /* EcosiaSettings.swift in Sources */,
-=======
-				2C73A71F2A9E0BB5006EBAAB /* WhatsNewViewModel.swift in Sources */,
-				E65607611C08B4E200534B02 /* SearchInputView.swift in Sources */,
-				2C73A7242A9E0C6F006EBAAB /* WhatsNewViewController.swift in Sources */,
-				FA6B2AC21D41F02D00429414 /* Punycode.swift in Sources */,
-				43446CEA2412066500F5C643 /* UIViewController+Extension.swift in Sources */,
-				2C91654B2B20E64100BE390E /* UnleashAPNConsentViewModel.swift in Sources */,
-				12EEE0A82A9F75C500C4A46D /* NTPAboutEcosiaCellViewModel.swift in Sources */,
->>>>>>> 126114c70 ([MOB-2048] Push notification card UI (#606))
 				8A471185287F6E4800F5A6EA /* SeparatorTableViewCell.swift in Sources */,
 				D301AAEE1A3A55B70078DD1D /* LegacyGridTabViewController.swift in Sources */,
 				EB9A179B20E69A7F00B12184 /* LegacyThemeManager.swift in Sources */,
@@ -13684,6 +13433,7 @@
 				8A07910F278F62F2005529CB /* AdjustHelper.swift in Sources */,
 				E1442FC2294782C3003680B0 /* NSAttributedString+Extension.swift in Sources */,
 				2CB2898D2B07C8F000A8FCB3 /* NTPNewsCellViewModel.swift in Sources */,
+				2C56A4632B3F051C001261D0 /* EngagementService.swift in Sources */,
 				967A028E28FA026F003C35E3 /* SceneDelegate.swift in Sources */,
 				C8B07A4128199500000AFCE7 /* NimbusFlaggableFeature.swift in Sources */,
 				0B62EFD21AD63CD100ACB9CD /* Clearables.swift in Sources */,
@@ -13749,6 +13499,7 @@
 				E1442FCF294782D9003680B0 /* UIView+Screenshot.swift in Sources */,
 				8AB8572C27D945FA0075C173 /* TopSitesDataAdaptor.swift in Sources */,
 				EBC4869F2195F58300CDA48D /* SessionRestoreHandler.swift in Sources */,
+				2C56A4772B3F0923001261D0 /* APNConsentUIExperiment.swift in Sources */,
 				C889569A27E8D1AC00E3779E /* LegacyInactiveTabHeader.swift in Sources */,
 				7BEFC6801BFF68C30059C952 /* QuickActions.swift in Sources */,
 				8A3EF8132A2FD07A00796E3A /* ResetContextualHints.swift in Sources */,
@@ -13764,29 +13515,13 @@
 				8A6A796D27F773550022D6C6 /* HomepageContextMenuHelper.swift in Sources */,
 				2CB2899C2B07C8F000A8FCB3 /* FilterController.swift in Sources */,
 				8A2783F1275FFDC50080D29D /* KeyboardPressesHandler.swift in Sources */,
-<<<<<<< HEAD
-=======
-				CA8BCC3928D1FBBC0020BC50 /* HistoryHighlightsManager.swift in Sources */,
-				CA4D9D0C28C8D801006AFB5D /* WelcomeTourProfit.swift in Sources */,
-				CAB544C828F6BBFD00657722 /* PageActionsShortcutsHeader.swift in Sources */,
-				2C9165472B20DF0C00BE390E /* APNConsentListItem.swift in Sources */,
-				D8D33A7D1FBD080300A20A28 /* UIView+Extension.swift in Sources */,
-				CA4D9CFD28C8D801006AFB5D /* MultiplyImpact.swift in Sources */,
->>>>>>> 126114c70 ([MOB-2048] Push notification card UI (#606))
 				E650755C1E37F747006961AC /* Swizzling.m in Sources */,
 				74821FC51DB56A2500EEEA72 /* OpenWithSettingsViewController.swift in Sources */,
 				C84656012887A0F700861B4A /* WallpaperMetadataUtility.swift in Sources */,
 				E1B04A9D28E20A8300670E54 /* InstructionsView.swift in Sources */,
 				D3B6923D1B9F9444004B87A4 /* FindInPageBar.swift in Sources */,
 				2F44FC721A9E840300FD20CC /* SettingsNavigationController.swift in Sources */,
-<<<<<<< HEAD
 				2CB289A32B07C8F000A8FCB3 /* WelcomeTour.swift in Sources */,
-=======
-				2CAD6D992A7A96C000C2E96D /* Analytics+Configuration.swift in Sources */,
-				2C9165412B20DDF900BE390E /* APNConsentViewController.swift in Sources */,
-				2C73A71B2A9E0B7A006EBAAB /* WhatsNewItem.swift in Sources */,
-				CA4D9CF028C8D801006AFB5D /* NTPTooltip.Highlight.swift in Sources */,
->>>>>>> 126114c70 ([MOB-2048] Push notification card UI (#606))
 				D0E89A2920910917001CE5C7 /* DownloadsPanel.swift in Sources */,
 				D3BA7E0E1B0E934F00153782 /* ContextMenuHelper.swift in Sources */,
 				E19B38B328A42D5E00D8C541 /* WallpaperCollectionViewCell.swift in Sources */,
@@ -13843,6 +13578,7 @@
 				C8CD80DA2A1E8C1D0097C3AE /* OnboardingTelemetryProtocol.swift in Sources */,
 				8A5D1CB02A30D740005AD35C /* SearchBarSetting.swift in Sources */,
 				EB9854FF2422686F0040F24B /* AppDelegate+PushNotifications.swift in Sources */,
+				2C56A46B2B3F057F001261D0 /* UnleashAPNConsentViewModel.swift in Sources */,
 				2CB289B52B07C8F000A8FCB3 /* WebsiteConnectionStatus.swift in Sources */,
 				2CB289D62B07C8F000A8FCB3 /* Analytics.Values.swift in Sources */,
 				DFACBF85277B9B5B003D5F41 /* TopSitesRowCountSettingsController.swift in Sources */,
@@ -13855,14 +13591,6 @@
 				C8DC90BD2A06699E0008832B /* MarkupNode.swift in Sources */,
 				E63ED8E11BFD25580097D08E /* PasswordManagerListViewController.swift in Sources */,
 				8ADC2A162A33765E00543DAA /* UrlToOpenModel.swift in Sources */,
-				2CA6DA162B18E4E1000AF363 /* EngagementService.swift in Sources */,
-				2CF8781B2A0D45E5001E9658 /* MMP.swift in Sources */,
-				E64ED8FA1BC55AE300DAF864 /* UIAlertController+Extension.swift in Sources */,
-				CA4D9D1528C8D801006AFB5D /* FakeTelemetry.swift in Sources */,
-				282DA4731A68C1E700A406E2 /* OpenSearch.swift in Sources */,
-				CA4D9D1F28C8D801006AFB5D /* Analytics.Values.swift in Sources */,
-				CA4D9CE228C8D801006AFB5D /* BrowserViewController+Ecosia.swift in Sources */,
-				E63ED8E11BFD25580097D08E /* LoginListViewController.swift in Sources */,
 				D0625CA8208FC47A0081F3B2 /* BrowserViewController+DownloadQueueDelegate.swift in Sources */,
 				C22753402A3C9E1300B9C0D1 /* WebsiteDataManagementViewModel.swift in Sources */,
 				2F44FCC71A9E8CF500FD20CC /* SearchSettingsTableViewController.swift in Sources */,
@@ -13895,6 +13623,7 @@
 				964FA97528A1A8F20024BB3B /* ContextualHintEligibilityUtility.swift in Sources */,
 				439C489C29760575007C3DCD /* CreditCardValidator.swift in Sources */,
 				8ADC2A122A3375B900543DAA /* FxAEntryPoint.swift in Sources */,
+				2C56A46A2B3F057F001261D0 /* APNConsentViewController.swift in Sources */,
 				216A0D7B2A40F08B008077BA /* ThemeSettingsAction.swift in Sources */,
 				C2506C932A6A863600F2B76E /* HistoryCoordinator.swift in Sources */,
 				8A3EF8012A2FCFC900796E3A /* FasterInactiveTabs.swift in Sources */,
@@ -13903,15 +13632,8 @@
 				43D16B7C29831CD0009F8279 /* CreditCardItemRow.swift in Sources */,
 				965C3C942933A860006499ED /* LaunchSessionProvider.swift in Sources */,
 				C8163851268A0899004C7160 /* AddCredentialViewController.swift in Sources */,
-<<<<<<< HEAD
 				8A19ACB22A3290AE001C2147 /* ClearPrivateDataSetting.swift in Sources */,
 				CA520E7A24913C1B00CCAB48 /* PasswordManagerViewModel.swift in Sources */,
-=======
-				CA520E7A24913C1B00CCAB48 /* LoginListViewModel.swift in Sources */,
-				2C9165452B20DEF800BE390E /* APNConsentItemCell.swift in Sources */,
-				12E8E6B42A9CFC4100E6ED8E /* NTPCustomizationCellViewModel.swift in Sources */,
-				8AB8574327D963920075C173 /* Loggable.swift in Sources */,
->>>>>>> 126114c70 ([MOB-2048] Push notification card UI (#606))
 				8AE1E1CD27B191110024C45E /* SearchBarSettingsViewModel.swift in Sources */,
 				43D16B8529831EA5009F8279 /* Style.swift in Sources */,
 				E16258EF2A83BE0800522742 /* FakespotLoadingView.swift in Sources */,
@@ -13960,15 +13682,10 @@
 				C8EDDBF429DF119F003A4C07 /* DeeplinkInput.swift in Sources */,
 				2CB289722B07C8F000A8FCB3 /* PageActionsShortcutsHeader.swift in Sources */,
 				D0E55C4F1FB4FD23006DC274 /* FormPostHelper.swift in Sources */,
-<<<<<<< HEAD
+				2C56A46D2B3F057F001261D0 /* APNConsentItemCell.swift in Sources */,
 				E118B9292862674E00C84831 /* LegacyInactiveTabItemCellModel.swift in Sources */,
 				C88E7A552A0553180072E638 /* OnboardingViewModel.swift in Sources */,
 				962021E128B8078400BDF3D9 /* ContextualHintCopyProvider.swift in Sources */,
-=======
-				E118B9292862674E00C84831 /* InactiveTabItemCellModel.swift in Sources */,
-				E650754E1E37F6AE006961AC /* CGRect+Extension.swift in Sources */,
-				2C9165432B20DE5700BE390E /* APNConsentViewModelProtocol.swift in Sources */,
->>>>>>> 126114c70 ([MOB-2048] Push notification card UI (#606))
 				8AE1E1D227B1ADC40024C45E /* TopBottomInterchangeable.swift in Sources */,
 				8A7653BD28A2C61D00924ABF /* PocketDataAdaptor.swift in Sources */,
 				8A093D7D2A4B3E4F0099ABA5 /* DebugSettingsDelegate.swift in Sources */,
@@ -14174,6 +13891,7 @@
 				8A9AC465276CEC4E0047F5B0 /* JumpBackInCell.swift in Sources */,
 				4347B398298D6D7B0045F677 /* CreditCardTableViewModel.swift in Sources */,
 				1DFE57FD27BADD7D0025DE58 /* HomepageViewModel.swift in Sources */,
+				2C56A46E2B3F057F001261D0 /* APNConsentViewModelProtocol.swift in Sources */,
 				2CB289BF2B07C8F000A8FCB3 /* URL+Ecosia.swift in Sources */,
 				D3A9949D1A3686BD008AD1AC /* Tab.swift in Sources */,
 				8AD40FD127BADCBA00672675 /* ToolbarButton.swift in Sources */,
@@ -21174,22 +20892,6 @@
 			requirement = {
 				kind = exactVersion;
 				version = 5.6.0;
-			};
-		};
-		4368F86C27966E770013419B /* XCRemoteSwiftPackageReference "SDWebImage" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/SDWebImage/SDWebImage.git";
-			requirement = {
-				kind = exactVersion;
-				version = 5.13.2;
-			};
-		};
-		43AFC0CA2796788B0039DDF4 /* XCRemoteSwiftPackageReference "XCGLogger" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/DaveWoodCom/XCGLogger.git";
-			requirement = {
-				kind = exactVersion;
-				version = 7.0.1;
 			};
 		};
 		43AFC0E027967BFA0039DDF4 /* XCRemoteSwiftPackageReference "Fuzi" */ = {

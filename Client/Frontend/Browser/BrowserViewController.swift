@@ -2356,6 +2356,7 @@ extension BrowserViewController: UIAdaptivePresentationControllerDelegate {
 }
 
 extension BrowserViewController {
+    
     public func showBottomSheetCardViewController(creditCard: CreditCard?,
                                                   decryptedCard: UnencryptedCreditCardFields?,
                                                   viewType state: CreditCardBottomSheetState,
@@ -2376,27 +2377,13 @@ extension BrowserViewController {
                     TelemetryWrapper.recordEvent(category: .action,
                                                  method: .tap,
                                                  object: .creditCardSavePromptCreate)
-    func presentIntroViewController(_ alwaysShow: Bool = false) {
-        if showLoadingScreen(for: .shared) {
-            presentLoadingScreen()
-        } else if User.shared.firstTime {
-            handleFirstTimeUserActions()
-        } else {
-            presentInsightfulSheetsIfNeeded()
+                }
+            }
         }
     }
 
     private func presentLoadingScreen() {
         present(LoadingScreen(profile: profile, referrals: referrals, referralCode: User.shared.referrals.pendingClaim), animated: true)
-    }
-
-    private func handleFirstTimeUserActions() {
-        User.shared.firstTime = false
-        User.shared.migrated = true
-        User.shared.hideBookmarksNewBadge()
-        User.shared.hideBookmarksImportExportTooltip()
-        // deactivate searchbar hint for new users
-        contextHintVC.viewModel.markContextualHintPresented()
     }
 
     private func showLoadingScreen(for user: User) -> Bool {
@@ -2457,69 +2444,6 @@ extension BrowserViewController {
             profile.prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
         }
         return true
-    }
-
-    func presentETPCoverSheetViewController(_ force: Bool = false) {
-        guard !hasTriedToPresentETPAlready else { return }
-        hasTriedToPresentETPAlready = true
-        let cleanInstall = ETPViewModel.isCleanInstall(userPrefs: profile.prefs)
-        let shouldShow = ETPViewModel.shouldShowETPCoverSheet(userPrefs: profile.prefs, isCleanInstall: cleanInstall)
-        guard force || shouldShow else { return }
-        let etpCoverSheetViewController = ETPCoverSheetViewController()
-        if topTabsVisible {
-            etpCoverSheetViewController.preferredContentSize = CGSize(
-                width: ViewControllerConsts.PreferredSize.UpdateViewController.width,
-                height: ViewControllerConsts.PreferredSize.UpdateViewController.height)
-            etpCoverSheetViewController.modalPresentationStyle = .formSheet
-        } else {
-            etpCoverSheetViewController.modalPresentationStyle = .fullScreen
-        }
-        etpCoverSheetViewController.viewModel.startBrowsing = {
-            etpCoverSheetViewController.dismiss(animated: true) {
-                if self.navigationController?.viewControllers.count ?? 0 > 1 {
-                    _ = self.navigationController?.popToRootViewController(animated: true)
-                }
-
-                // Save or update a card toast message
-                let saveSuccessMessage: String = .CreditCard.RememberCreditCard.CreditCardSaveSuccessToastMessage
-                let updateSuccessMessage: String = .CreditCard.UpdateCreditCard.CreditCardUpdateSuccessToastMessage
-                let toastMessage: String = state == .save ? saveSuccessMessage : updateSuccessMessage
-                SimpleToast().showAlertWithText(toastMessage,
-                                                bottomContainer: self.contentContainer,
-                                                theme: self.themeManager.currentTheme)
-            }
-        }
-
-        viewController.didTapManageCardsClosure = {
-            self.showCreditCardSettings()
-        }
-
-        viewController.didSelectCreditCardToFill = { [unowned self] plainTextCard in
-            guard let currentTab = self.tabManager.selectedTab else {
-                return
-            }
-            CreditCardHelper.injectCardInfo(logger: self.logger,
-                                            card: plainTextCard,
-                                            tab: currentTab,
-                                            frame: frame) { error in
-                guard let error = error else {
-                    return
-                }
-                self.logger.log("Credit card bottom sheet injection \(error)",
-                                level: .debug,
-                                category: .webview)
-            }
-        }
-
-        var bottomSheetViewModel = BottomSheetViewModel(closeButtonA11yLabel: .CloseButtonTitle)
-        bottomSheetViewModel.shouldDismissForTapOutside = false
-
-        let bottomSheetVC = BottomSheetViewController(
-            viewModel: bottomSheetViewModel,
-            childViewController: viewController
-        )
-
-        self.present(bottomSheetVC, animated: true, completion: nil)
     }
 }
 

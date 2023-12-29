@@ -106,6 +106,15 @@ class BrowserCoordinator: BaseCoordinator,
         homepageController.scrollToTop()
         // We currently don't support full page screenshot of the homepage
         screenshotService.screenshotableView = nil
+        
+        // Ecosia: show any of the insighful sheets if needed
+        // Workaround for time of experiment
+        // -> delay of 0.5s to wait for animations and dismissals to finish
+        if inline, !User.shared.firstTime {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                self?.browserViewController.presentInsightfulSheetsIfNeeded()
+            }
+        }
     }
 
     func show(webView: WKWebView) {

@@ -118,40 +118,7 @@ extension BrowserViewController {
         || user.referrals.pendingClaim != nil
     }
     
-    func presentInsightfulSheetsIfNeeded() {
-        guard isHomePage(),
-              presentedViewController == nil,
-              !showLoadingScreen(for: .shared) else { return }
-        
-        if !presentDefaultBrowserPromoIfNeeded() {
-            presentWhatsNewPageIfNeeded()
-        }
-    }
-    
     private func isHomePage() -> Bool {
         tabManager.selectedTab?.url.flatMap { InternalURL($0)?.isAboutHomeURL } ?? false
-    }
-    
-    @discardableResult
-    private func presentWhatsNewPageIfNeeded() -> Bool {
-        guard shouldShowWhatsNewPageScreen else { return false }
-        
-        let viewModel = WhatsNewViewModel(provider: whatsNewDataProvider)
-        WhatsNewViewController.presentOn(self, viewModel: viewModel)
-        return true
-    }
-    
-    @discardableResult
-    private func presentDefaultBrowserPromoIfNeeded() -> Bool {
-        guard shouldShowDefaultBrowserPromo,
-              DefaultBrowserExperiment.minPromoSearches() <= User.shared.searchCount else { return false }
-        
-        if #available(iOS 14, *) {
-            let defaultPromo = DefaultBrowser(delegate: self)
-            present(defaultPromo, animated: true)
-        } else {
-            profile.prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
-        }
-        return true
     }
 }

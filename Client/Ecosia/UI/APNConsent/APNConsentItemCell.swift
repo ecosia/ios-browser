@@ -4,19 +4,30 @@
 
 import UIKit
 import Core
+import Common
 
-final class APNConsentItemCell: UITableViewCell {
+final class APNConsentItemCell: UITableViewCell, Themeable {
+    
+    // MARK: - Properties
     
     private var item: APNConsentListItem!
     private var contentConfigurationToUpdate: Any?
-            
-    func configure(with item: APNConsentListItem) {        
+    
+    // MARK: - Themeable Properties
+    
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeObserver: NSObjectProtocol?
+    var notificationCenter: NotificationProtocol = NotificationCenter.default
+
+    // MARK: - Configuration
+
+    func configure(with item: APNConsentListItem) {
         selectionStyle = .none
         backgroundColor = .clear
         self.item = item
         configureBasedOnOSVersion()
         applyTheme()
-        NotificationCenter.default.addObserver(self, selector: #selector(applyTheme), name: .DisplayThemeChanged, object: nil)
+        listenForThemeChange(contentView)
     }
     
     private func configureBasedOnOSVersion() {
@@ -60,16 +71,16 @@ final class APNConsentItemCell: UITableViewCell {
     }
 }
 
-extension APNConsentItemCell: NotificationThemeable {
+extension APNConsentItemCell {
     
-    @objc func applyTheme() {
+    func applyTheme() {
         if #available(iOS 14, *) {
             guard var updatedConfiguration = contentConfigurationToUpdate as? UIListContentConfiguration else { return }
-            updatedConfiguration.textProperties.color = .theme.ecosia.secondaryText
+            updatedConfiguration.textProperties.color = .legacyTheme.ecosia.secondaryText
             updatedConfiguration.image = item.image
             contentConfiguration = updatedConfiguration
         } else {
-            textLabel?.textColor = .theme.ecosia.secondaryText
+            textLabel?.textColor = .legacyTheme.ecosia.secondaryText
             imageView?.image = item.image
         }
     }

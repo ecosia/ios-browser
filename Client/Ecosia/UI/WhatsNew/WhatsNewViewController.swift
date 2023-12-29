@@ -90,6 +90,7 @@ final class WhatsNewViewController: UIViewController, Themeable {
         layoutViews()
         applyTheme()
         updateTableView()
+        listenForThemeChange(view)
     }
     
     override func viewDidAppear(_ animated: Bool) {

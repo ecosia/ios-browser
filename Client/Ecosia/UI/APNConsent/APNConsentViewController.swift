@@ -4,12 +4,13 @@
 
 import UIKit
 import Core
+import Common
 
 protocol APNConsentViewDelegate: AnyObject {
     func apnConsentViewDidShow(_ viewController: APNConsentViewController)
 }
 
-final class APNConsentViewController: UIViewController {
+final class APNConsentViewController: UIViewController, Themeable {
     
     // MARK: - UX
     
@@ -47,6 +48,12 @@ final class APNConsentViewController: UIViewController {
     private let ctaButton = UIButton()
     private let skipButton = UIButton()
     weak var delegate: APNConsentViewDelegate?
+    
+    // MARK: - Themeable Properties
+    
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeObserver: NSObjectProtocol?
+    var notificationCenter: NotificationProtocol = NotificationCenter.default
 
     // MARK: - Init
 
@@ -67,6 +74,7 @@ final class APNConsentViewController: UIViewController {
         setupViews()
         layoutViews()
         applyTheme()
+        listenForThemeChange(view)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -239,19 +247,19 @@ extension APNConsentViewController: UITableViewDataSource {
 
 // MARK: - NotificationThemeable
 
-extension APNConsentViewController: NotificationThemeable {
+extension APNConsentViewController {
 
     func applyTheme() {
-        view.backgroundColor = .theme.ecosia.primaryBackground
-        topContainerView.backgroundColor = .theme.ecosia.tertiaryBackground
-        tableView.backgroundColor = .theme.ecosia.primaryBackground
+        view.backgroundColor = .legacyTheme.ecosia.primaryBackground
+        topContainerView.backgroundColor = .legacyTheme.ecosia.tertiaryBackground
+        tableView.backgroundColor = .legacyTheme.ecosia.primaryBackground
         tableView.separatorColor = .clear
-        ctaButton.backgroundColor = .theme.ecosia.primaryBrand
-        ctaButton.setTitleColor(.theme.ecosia.primaryTextInverted, for: .normal)
-        skipButton.setTitleColor(.theme.ecosia.primaryButton, for: .normal)
-        headerLabelContainerView.backgroundColor = .theme.ecosia.primaryBackground
-        secondImageView.tintColor = .theme.ecosia.primaryBackground
-        /* 
+        ctaButton.backgroundColor = .legacyTheme.ecosia.primaryBrand
+        ctaButton.setTitleColor(.legacyTheme.ecosia.primaryTextInverted, for: .normal)
+        skipButton.setTitleColor(.legacyTheme.ecosia.primaryButton, for: .normal)
+        headerLabelContainerView.backgroundColor = .legacyTheme.ecosia.primaryBackground
+        secondImageView.tintColor = .legacyTheme.ecosia.primaryBackground
+        /*
          Updating the TableView here so that the items containing the image will update the theming
          showing the correct `tintColor`
         */
