@@ -7,10 +7,16 @@ final class ClientEngagementService {
     
     static let shared = ClientEngagementService()
     private let service  = EngagementService(provider: Braze())
+    private var parameters: [String: Any] = [:]
+    
+    var identifier: String? {
+        parameters["id"] as? String
+    }
     
     func initialize(parameters: [String: Any]) {
         do {
             try service.initialize(parameters: parameters)
+            self.parameters = parameters
         } catch {
             debugPrint(error)
         }

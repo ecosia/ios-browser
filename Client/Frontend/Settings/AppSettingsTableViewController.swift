@@ -259,7 +259,8 @@ class AppSettingsTableViewController: SettingsTableViewController, FeatureFlagga
                 InactiveTabsExpireEarly(settings: self),
                 ChangeSearchCount(settings: self),
                 ResetSearchCount(settings: self),
-                UnleashDefaultBrowserSetting(settings: self)
+                UnleashDefaultBrowserSetting(settings: self),
+                EngagementServiceIdentifierSetting(settings: self)
             ])]
 
         return settings
