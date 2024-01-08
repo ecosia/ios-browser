@@ -192,3 +192,27 @@ final class UnleashDefaultBrowserSetting: HiddenSetting {
         }
     }
 }
+
+final class EngagementServiceIdentifierSetting: HiddenSetting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Engagement Service Identifier parameter", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
+    }
+
+    override var status: NSAttributedString? {
+        
+        let attributes = [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText]
+        
+        guard let identifier = ClientEngagementService.shared.identifier else {
+            return NSAttributedString(string: "n/a", attributes: attributes)
+        }
+        let variant = Unleash.getVariant(.defaultBrowser).name
+        return NSAttributedString(string: "\(identifier) (Click to copy)", attributes: attributes)
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        guard let identifier = ClientEngagementService.shared.identifier else { return }
+        let pasteBoard = UIPasteboard.general
+        pasteBoard.string = identifier
+    }
+}
+
