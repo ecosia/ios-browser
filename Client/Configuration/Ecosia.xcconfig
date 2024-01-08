@@ -4,6 +4,7 @@
 
 #include "Common.xcconfig"
 #include "Release.xcconfig"
+#include "Production.xcconfig"
 
 MOZ_BUNDLE_DISPLAY_NAME = Ecosia
 MOZ_BUNDLE_ID = com.ecosia.ecosiaapp
