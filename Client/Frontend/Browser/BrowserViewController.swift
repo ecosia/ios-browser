@@ -168,8 +168,8 @@ class BrowserViewController: UIViewController {
     }
     fileprivate var shouldShowWhatsNewPageScreen: Bool { whatsNewDataProvider.shouldShowWhatsNewPage }
     fileprivate var shouldShowAPNConsentScreen: Bool {
-        EngagementServiceFeature.isEnabled &&
-        EngagementServiceFeature.minSearches() <= User.shared.searchCount &&
+        EngagementServiceExperiment.isEnabled &&
+        EngagementServiceExperiment.minSearches() <= User.shared.searchCount &&
         User.shared.shouldShowAPNConsentScreen
     }
 
