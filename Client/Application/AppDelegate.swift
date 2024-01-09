@@ -313,22 +313,6 @@ extension AppDelegate: WelcomeDelegate {
     }
 }
 
-/* 
- 
- and
- Refresh push registration if APN permission granted
- */
-extension AppDelegate {
-    
-    func initializeEngagementServiceAndUpdateRemoteNotificationRegistrationIfNeeded() {
-        guard EngagementServiceFeature.isEnabled else { return }
-        ClientEngagementService.shared.initialize(parameters: ["id": User.shared.analyticsId.uuidString])
-        Task.detached {
-            await ClientEngagementService.shared.refreshAPNRegistrationIfNeeded(notificationCenterDelegate: self)
-        }
-    }
-}
-
 // Ecosia: Conformance to UNUserNotificationCenterDelegate to enable APN
 
 extension AppDelegate: UNUserNotificationCenterDelegate {}
