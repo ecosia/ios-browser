@@ -58,8 +58,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ecosia/ios-core.git",
       "state" : {
-        "branch" : "MOB-2121_braze_initialization_logic_behind_flag",
-        "revision" : "08588954a50952e4a4c0cde191a038d50f1cb380"
+        "branch" : "main",
+        "revision" : "9692f7ecc6ce80083574ec37428bc9aeef6bb9a4"
       }
     },
     {
