@@ -74,12 +74,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Ecosia: lifecycle tracking
         Analytics.shared.activity(.launch)
         
-        // Ecosia: Engagement Service Initialization with AnalyticsId binding
-        ClientEngagementService.shared.initialize(parameters: ["id": User.shared.analyticsId.uuidString])
-        // Ecosia: Refresh push registration if APN permission granted
-        Task.detached {
-            await ClientEngagementService.shared.refreshAPNRegistrationIfNeeded(notificationCenterDelegate: self)
-        }
+        // Ecosia: Engagement Service Initialization helper
+        ClientEngagementService.shared.initializeAndUpdateNotificationRegistrationIfNeeded(notificationCenterDelegate: self)
         
         // Ecosia: fetching statistics before they are used
         Task.detached {
@@ -314,6 +310,22 @@ extension AppDelegate {
 extension AppDelegate: WelcomeDelegate {
     func welcomeDidFinish(_ welcome: Welcome) {
         rootViewController.setViewControllers([browserViewController], animated: true)
+    }
+}
+
+/* 
+ 
+ and
+ Refresh push registration if APN permission granted
+ */
+extension AppDelegate {
+    
+    func initializeEngagementServiceAndUpdateRemoteNotificationRegistrationIfNeeded() {
+        guard EngagementServiceFeature.isEnabled else { return }
+        ClientEngagementService.shared.initialize(parameters: ["id": User.shared.analyticsId.uuidString])
+        Task.detached {
+            await ClientEngagementService.shared.refreshAPNRegistrationIfNeeded(notificationCenterDelegate: self)
+        }
     }
 }
 
