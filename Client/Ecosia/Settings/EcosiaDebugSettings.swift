@@ -195,12 +195,12 @@ final class UnleashDefaultBrowserSetting: HiddenSetting {
 
 final class EngagementServiceIdentifierSetting: HiddenSetting {
     override var title: NSAttributedString? {
-        return NSAttributedString(string: "Debug: Engagement Service Identifier parameter", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
+        return NSAttributedString(string: "Debug: Engagement Service Identifier parameter", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
     }
 
     override var status: NSAttributedString? {
         
-        let attributes = [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText]
+        let attributes = [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText]
         
         guard let identifier = ClientEngagementService.shared.identifier else {
             return NSAttributedString(string: "n/a", attributes: attributes)

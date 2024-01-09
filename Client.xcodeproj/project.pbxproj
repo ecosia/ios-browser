@@ -208,7 +208,6 @@
 		2C56A46C2B3F057F001261D0 /* APNConsentListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C56A4672B3F057F001261D0 /* APNConsentListItem.swift */; };
 		2C56A46D2B3F057F001261D0 /* APNConsentItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C56A4682B3F057F001261D0 /* APNConsentItemCell.swift */; };
 		2C56A46E2B3F057F001261D0 /* APNConsentViewModelProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C56A4692B3F057F001261D0 /* APNConsentViewModelProtocol.swift */; };
-		2C56A4772B3F0923001261D0 /* APNConsentUIExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C56A4762B3F0923001261D0 /* APNConsentUIExperiment.swift */; };
 		2C56A4792B3F0BA3001261D0 /* Production.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 2C56A4782B3F0BA3001261D0 /* Production.xcconfig */; };
 		2C7DC2322B15F5C600C049C8 /* EcosiaTopSiteItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7DC2312B15F5C600C049C8 /* EcosiaTopSiteItemCell.swift */; };
 		2C7DC2382B16332E00C049C8 /* EcosiaThemeColourPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7DC2372B16332E00C049C8 /* EcosiaThemeColourPalette.swift */; };
@@ -338,6 +337,7 @@
 		2CC1B3F01E9B861400814EEC /* DomainAutocompleteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC1B3EF1E9B861400814EEC /* DomainAutocompleteTests.swift */; };
 		2CCB296720A99C9500121DD8 /* LoginsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCB296620A99C9500121DD8 /* LoginsTests.swift */; };
 		2CCF17532105E4FD00705AE5 /* DisplaySettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCF17522105E4FD00705AE5 /* DisplaySettingsTests.swift */; };
+		2CDBF1B32B4EB97200A4F367 /* EngagementServiceFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CDBF1B22B4EB97200A4F367 /* EngagementServiceFeature.swift */; };
 		2CEA6F791E93E3A600D4100E /* SearchSettingsUITest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CEA6F781E93E3A600D4100E /* SearchSettingsUITest.swift */; };
 		2CEDADA220207EC400223A89 /* SyncFAUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CEDADA120207EC400223A89 /* SyncFAUITests.swift */; };
 		2CF21D0920A4A163000D08B7 /* PocketTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CF21D0820A4A163000D08B7 /* PocketTests.swift */; };
@@ -2462,7 +2462,6 @@
 		2C56A4672B3F057F001261D0 /* APNConsentListItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APNConsentListItem.swift; sourceTree = "<group>"; };
 		2C56A4682B3F057F001261D0 /* APNConsentItemCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APNConsentItemCell.swift; sourceTree = "<group>"; };
 		2C56A4692B3F057F001261D0 /* APNConsentViewModelProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APNConsentViewModelProtocol.swift; sourceTree = "<group>"; };
-		2C56A4762B3F0923001261D0 /* APNConsentUIExperiment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APNConsentUIExperiment.swift; sourceTree = "<group>"; };
 		2C56A4782B3F0BA3001261D0 /* Production.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Production.xcconfig; sourceTree = "<group>"; };
 		2C6045859589979C43AF09E0 /* jv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = jv; path = jv.lproj/ClearPrivateDataConfirm.strings; sourceTree = "<group>"; };
 		2C6E44099EACF7BE5438CEB6 /* ca */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ca; path = ca.lproj/Today.strings; sourceTree = "<group>"; };
@@ -2597,6 +2596,7 @@
 		2CC1B3EF1E9B861400814EEC /* DomainAutocompleteTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DomainAutocompleteTests.swift; sourceTree = "<group>"; };
 		2CCB296620A99C9500121DD8 /* LoginsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginsTests.swift; sourceTree = "<group>"; };
 		2CCF17522105E4FD00705AE5 /* DisplaySettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplaySettingsTests.swift; sourceTree = "<group>"; };
+		2CDBF1B22B4EB97200A4F367 /* EngagementServiceFeature.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EngagementServiceFeature.swift; sourceTree = "<group>"; };
 		2CEA6F781E93E3A600D4100E /* SearchSettingsUITest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchSettingsUITest.swift; sourceTree = "<group>"; };
 		2CEDADA120207EC400223A89 /* SyncFAUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncFAUITests.swift; sourceTree = "<group>"; };
 		2CF21D0820A4A163000D08B7 /* PocketTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PocketTests.swift; sourceTree = "<group>"; };
@@ -8216,7 +8216,7 @@
 		2CB2893E2B07C8F000A8FCB3 /* Unleash */ = {
 			isa = PBXGroup;
 			children = (
-				2C56A4762B3F0923001261D0 /* APNConsentUIExperiment.swift */,
+				2CDBF1B22B4EB97200A4F367 /* EngagementServiceFeature.swift */,
 				2CB2893F2B07C8F000A8FCB3 /* EngineShortcutsExperiment.swift */,
 				2CB289402B07C8F000A8FCB3 /* DefaultBrowserExperiment.swift */,
 			);
@@ -13440,6 +13440,7 @@
 				431C0CA925C890E500395CE4 /* DefaultBrowserOnboardingViewModel.swift in Sources */,
 				DFACBF81277B916B003D5F41 /* ConfigurableGradientView.swift in Sources */,
 				7482205C1DBAB56300EEEA72 /* MailProviders.swift in Sources */,
+				2CDBF1B32B4EB97200A4F367 /* EngagementServiceFeature.swift in Sources */,
 				8A93F87029D3A597004159D9 /* SceneCoordinator.swift in Sources */,
 				C88E7A602A05551B0072E638 /* NimbusOnboardingFeatureLayerProtocol.swift in Sources */,
 				8CFD56882AAF057D003157A6 /* SwitchFakespotProduction.swift in Sources */,
@@ -13499,7 +13500,6 @@
 				E1442FCF294782D9003680B0 /* UIView+Screenshot.swift in Sources */,
 				8AB8572C27D945FA0075C173 /* TopSitesDataAdaptor.swift in Sources */,
 				EBC4869F2195F58300CDA48D /* SessionRestoreHandler.swift in Sources */,
-				2C56A4772B3F0923001261D0 /* APNConsentUIExperiment.swift in Sources */,
 				C889569A27E8D1AC00E3779E /* LegacyInactiveTabHeader.swift in Sources */,
 				7BEFC6801BFF68C30059C952 /* QuickActions.swift in Sources */,
 				8A3EF8132A2FD07A00796E3A /* ResetContextualHints.swift in Sources */,
@@ -20507,9 +20507,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon_Developer;
 				CODE_SIGN_ENTITLEMENTS = Client/Ecosia/Entitlements/Ecosia.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 33YMRSYD2L;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -20523,6 +20525,7 @@
 				PRODUCT_MODULE_NAME = Client;
 				PRODUCT_NAME = Client;
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match Development com.ecosia.ecosiaapp";
 				SKIP_INSTALL = NO;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/Client/Client-Bridging-Header.h";

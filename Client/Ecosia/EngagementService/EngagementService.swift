@@ -40,3 +40,16 @@ final class ClientEngagementService {
         await service.refreshAPNRegistrationIfNeeded(notificationCenterDelegate: notificationCenterDelegate)
     }
 }
+
+// MARK: - Helpers
+
+extension ClientEngagementService {
+    
+    func initializeAndUpdateNotificationRegistrationIfNeeded(notificationCenterDelegate: UNUserNotificationCenterDelegate) {
+        guard EngagementServiceFeature.isEnabled else { return }
+        initialize(parameters: ["id": User.shared.analyticsId.uuidString])
+        Task.detached {
+            await self.refreshAPNRegistrationIfNeeded(notificationCenterDelegate: notificationCenterDelegate)
+        }
+    }
+}
