@@ -14732,7 +14732,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = main;
+				branch = "MOB-2121_braze_initialization_logic_behind_flag";
 				kind = branch;
 			};
 		};
