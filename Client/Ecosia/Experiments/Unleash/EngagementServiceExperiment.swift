@@ -5,7 +5,7 @@
 import Foundation
 import Core
 
-struct EngagementServiceFeature {
+struct EngagementServiceExperiment {
     
     private init() {}
     

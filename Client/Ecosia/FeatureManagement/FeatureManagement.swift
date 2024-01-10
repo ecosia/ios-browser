@@ -8,23 +8,41 @@ import Core
 
 struct FeatureManagement {
     
+    // MARK: - Initialization
+    
     private init() {}
     
-    static func fetchConfiguration() {
-        Task {
-            do {
-                Self.addRefreshingRules()
-                try await _ = Unleash.start(env: .current, appVersion: AppInfo.ecosiaAppVersion)
-            } catch {
-                debugPrint(error)
-            }
+    // MARK: - Configuration
+    
+    /// Fetches the feature configuration asynchronously.
+    static func fetchConfiguration() async {
+        do {
+            try await start()
+        } catch {
+            debugPrint(error)
         }
     }
     
+    // MARK: - Private Methods
+    
+    /// Starts the feature management process asynchronously.
+    ///
+    /// - Throws: An error if the feature management process encounters an issue.
+    @MainActor
+    private static func start() async throws {
+        Self.addRefreshingRules()
+        do {
+            try await _ = Unleash.start(env: .current, appVersion: AppInfo.ecosiaAppVersion)
+        } catch {
+            debugPrint(error)
+        }
+    }
+    
+    /// Adds refreshing rules for feature management.
     private static func addRefreshingRules() {
         UnleashRefreshConfigurator()
-                    .withAppUpdateCheckRule(appVersion: AppInfo.ecosiaAppVersion)
-                    .withDeviceRegionUpdateCheckRule()
-                    .withTwentyFourHoursCacheExpirationRule()
+            .withAppUpdateCheckRule(appVersion: AppInfo.ecosiaAppVersion)
+            .withDeviceRegionUpdateCheckRule()
+            .withTwentyFourHoursCacheExpirationRule()
     }
 }
