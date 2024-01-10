@@ -74,8 +74,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Ecosia: lifecycle tracking
         Analytics.shared.activity(.launch)
         
-        // Ecosia: Engagement Service Initialization helper
-        ClientEngagementService.shared.initializeAndUpdateNotificationRegistrationIfNeeded(notificationCenterDelegate: self)
+        /* 
+         Ecosia: Feature Management fetch
+         We perform the same configuration retrieval in
+         `applicationDidBecomeActive(:)` and sounds redundant;
+         However we need it here to make sure we retrieve the latest
+         flag state of the EngagementService.
+         Decouple the "loading" only from the filesystem of any
+         previously saved Model from the `Unleash.start(:)` will not
+         make any tangible difference in the process as we check if
+         any cached version of the Model is in place.
+         */
+        Task {
+            await FeatureManagement.fetchConfiguration()
+            // Ecosia: Engagement Service Initialization helper
+            ClientEngagementService.shared.initializeAndUpdateNotificationRegistrationIfNeeded(notificationCenterDelegate: self)
+        }
         
         // Ecosia: fetching statistics before they are used
         Task.detached {
@@ -128,7 +142,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         // Ecosia
-        FeatureManagement.fetchConfiguration()
+        Task {
+            await FeatureManagement.fetchConfiguration()
+        }
         MMP.sendSession()
     }
 
