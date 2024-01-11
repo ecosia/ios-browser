@@ -61,23 +61,9 @@ extension BrowserViewController: PageActionsShortcutsDelegate {
     }
     
     func pageOptionsSettings() {
-        let settingsTableViewController = AppSettingsTableViewController(
-            with: self.profile,
-            and: self.tabManager,
-            delegate: self)
-
-        let controller = ThemedNavigationController(rootViewController: settingsTableViewController)
-        // On iPhone iOS13 the WKWebview crashes while presenting file picker if its not full screen. Ref #6232
-        if UIDevice.current.userInterfaceIdiom == .phone {
-            controller.modalPresentationStyle = .fullScreen
-        }
+        homePanelDidRequestToOpenSettings(at: .general)
+        dismiss(animated: true)
         Analytics.shared.menuClick("settings")
-
-        // Wait to present VC in an async dispatch queue to prevent a case where dismissal
-        // of this popover on iPad seems to block the presentation of the modal VC.
-        DispatchQueue.main.async { [weak self] in
-            self?.showViewController(viewController: controller)
-        }
     }
 
     func pageOptionsShare() {
