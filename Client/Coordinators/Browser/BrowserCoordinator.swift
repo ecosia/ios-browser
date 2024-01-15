@@ -155,8 +155,9 @@ class BrowserCoordinator: BaseCoordinator,
                 profile: profile,
                 isZeroSearch: inline,
                 toastContainer: toastContainer,
-                referrals: browserViewController.referrals, // Ecosia: Add Referrals
-                overlayManager: overlayManager)
+                overlayManager: overlayManager,
+                // Ecosia: Add Referrals
+                referrals: browserViewController.referrals)
             homepageViewController.homePanelDelegate = homepanelDelegate
             homepageViewController.libraryPanelDelegate = libraryPanelDelegate
             homepageViewController.sendToDeviceDelegate = sendToDeviceDelegate

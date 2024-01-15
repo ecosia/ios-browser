@@ -72,12 +72,13 @@ class HomepageViewController: UIViewController, FeatureFlaggable, Themeable, Con
          isZeroSearch: Bool = false,
          toastContainer: UIView,
          tabManager: TabManager = AppContainer.shared.resolve(),
-         referrals: Referrals, // Ecosia: Add referrals
          overlayManager: OverlayModeManager,
          userDefaults: UserDefaultsInterface = UserDefaults.standard,
          themeManager: ThemeManager = AppContainer.shared.resolve(),
          notificationCenter: NotificationProtocol = NotificationCenter.default,
-         logger: Logger = DefaultLogger.shared
+         logger: Logger = DefaultLogger.shared,
+         // Ecosia: Add Referrals
+         referrals: Referrals
     ) {
         self.overlayManager = overlayManager
         self.tabManager = tabManager
@@ -100,6 +101,8 @@ class HomepageViewController: UIViewController, FeatureFlaggable, Themeable, Con
         self.themeManager = themeManager
         self.notificationCenter = notificationCenter
         self.logger = logger
+        // Ecosia: Add referrals
+        self.referrals = referrals
         super.init(nibName: nil, bundle: nil)
 
         viewModel.isZeroSearch = isZeroSearch
