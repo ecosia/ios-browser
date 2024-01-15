@@ -7,7 +7,6 @@ import Core
 
 protocol HomepageViewControllerDelegate: AnyObject {
     func homeDidTapSearchButton(_ home: HomepageViewController)
-//    func showSettingsWithDeeplink(to destination: AppSettingsDeeplinkOption)
 }
 
 protocol SharedHomepageCellDelegate: AnyObject {
@@ -128,6 +127,6 @@ extension HomepageViewController: NTPBookmarkNudgeCellDelegate {
 extension HomepageViewController: NTPCustomizationCellDelegate {
     func openNTPCustomizationSettings() {
         Analytics.shared.ntp(.click, label: .customize)
-//        delegate?.showSettingsWithDeeplink(to: .customizeHomepage)
+        browserNavigationHandler?.show(settings: .homePage)
     }
 }

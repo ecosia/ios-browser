@@ -157,7 +157,9 @@ class BrowserCoordinator: BaseCoordinator,
                 toastContainer: toastContainer,
                 overlayManager: overlayManager,
                 // Ecosia: Add Referrals
-                referrals: browserViewController.referrals)
+                referrals: browserViewController.referrals,
+                // Ecosia: Add HomePageViewControllerDelegate
+                delegate: browserViewController)
             homepageViewController.homePanelDelegate = homepanelDelegate
             homepageViewController.libraryPanelDelegate = libraryPanelDelegate
             homepageViewController.sendToDeviceDelegate = sendToDeviceDelegate

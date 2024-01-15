@@ -78,7 +78,9 @@ class HomepageViewController: UIViewController, FeatureFlaggable, Themeable, Con
          notificationCenter: NotificationProtocol = NotificationCenter.default,
          logger: Logger = DefaultLogger.shared,
          // Ecosia: Add Referrals
-         referrals: Referrals
+         referrals: Referrals,
+         // Ecosia: Add HomePageViewControllerDelegate
+         delegate: HomepageViewControllerDelegate
     ) {
         self.overlayManager = overlayManager
         self.tabManager = tabManager
@@ -103,6 +105,8 @@ class HomepageViewController: UIViewController, FeatureFlaggable, Themeable, Con
         self.logger = logger
         // Ecosia: Add referrals
         self.referrals = referrals
+        // Ecosia: Add HomePageViewControllerDelegate
+        self.delegate = delegate
         super.init(nibName: nil, bundle: nil)
 
         viewModel.isZeroSearch = isZeroSearch
