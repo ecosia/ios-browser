@@ -20,7 +20,9 @@ class EmptyPrivateTabsView: UIView {
         static let paddingInBetweenItems: CGFloat = 15
         static let verticalPadding: CGFloat = 20
         static let horizontalPadding: CGFloat = 24
-        static let imageSize = CGSize(width: 90, height: 90)
+        // Ecosia
+        // static let imageSize = CGSize(width: 90, height: 90)
+        static let imageSize = CGSize(width: 120, height: 120)
     }
 
     // MARK: - Properties
@@ -48,7 +50,9 @@ class EmptyPrivateTabsView: UIView {
                                                             size: UX.descriptionSizeFont)
         label.textAlignment = .center
         label.numberOfLines = 0
-        label.text = .TabTrayPrivateBrowsingDescription
+        // Ecosia
+        // label.text = .TabTrayPrivateBrowsingDescription
+        label.text = .localized(.privateEmpty)
     }
 
     let learnMoreButton: UIButton = .build { button in
@@ -58,9 +62,12 @@ class EmptyPrivateTabsView: UIView {
                                                                          size: UX.buttonSizeFont)
     }
 
+    /* Ecosia
     private let iconImageView: UIImageView = .build { imageView in
         imageView.image = UIImage.templateImageNamed(ImageIdentifiers.largePrivateTabsMask)
     }
+     */
+    private let iconImageView: UIImageView = .build()
 
     // MARK: - Inits
 
@@ -75,10 +82,13 @@ class EmptyPrivateTabsView: UIView {
     }
 
     private func setupLayout() {
+        /* Ecosia: Remove Learn More button
         learnMoreButton.addTarget(self,
                                   action: #selector(didTapLearnMore),
                                   for: .touchUpInside)
         containerView.addSubviews(iconImageView, titleLabel, descriptionLabel, learnMoreButton)
+         */
+        containerView.addSubviews(iconImageView, titleLabel, descriptionLabel)
         scrollView.addSubview(containerView)
         addSubview(scrollView)
 
@@ -114,21 +124,24 @@ class EmptyPrivateTabsView: UIView {
                                                   constant: UX.paddingInBetweenItems),
             descriptionLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
             descriptionLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-
+            /* Ecosia: Remove Learn More button
             learnMoreButton.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor,
                                                  constant: UX.paddingInBetweenItems),
             learnMoreButton.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
             learnMoreButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
             learnMoreButton.bottomAnchor.constraint(equalTo: containerView.bottomAnchor,
                                                     constant: -UX.paddingInBetweenItems),
+             */
         ])
     }
 
     func applyTheme(_ theme: Theme) {
         titleLabel.textColor = theme.colors.textPrimary
         descriptionLabel.textColor = theme.colors.textPrimary
-        learnMoreButton.setTitleColor(theme.colors.borderAccentPrivate, for: [])
+        // Ecosia: Remove Learn More button
+        // learnMoreButton.setTitleColor(theme.colors.borderAccentPrivate, for: [])
         iconImageView.tintColor = theme.colors.indicatorActive
+        iconImageView.image = .init(named: "tigerIncognito")
     }
 
     @objc

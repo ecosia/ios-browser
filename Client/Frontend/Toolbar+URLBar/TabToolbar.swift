@@ -42,7 +42,8 @@ class TabToolbar: UIView, SearchBarLocationProvider {
         helper = TabToolbarHelper(toolbar: self)
         addButtons(actionButtons)
 
-        privateModeBadge.add(toParent: contentView)
+        // Ecosia: Remove private mode badge
+        // privateModeBadge.add(toParent: contentView)
         appMenuBadge.add(toParent: contentView)
         warningMenuBadge.add(toParent: contentView)
 
@@ -58,7 +59,8 @@ class TabToolbar: UIView, SearchBarLocationProvider {
     // MARK: - View Setup
 
     override func updateConstraints() {
-        privateModeBadge.layout(onButton: tabsButton)
+        // Ecosia: Remove private mode badge
+        // privateModeBadge.layout(onButton: tabsButton)
         appMenuBadge.layout(onButton: appMenuButton)
         warningMenuBadge.layout(onButton: appMenuButton)
 
@@ -108,7 +110,8 @@ extension TabToolbar: TabToolbarProtocol {
     var homeButton: ToolbarButton { multiStateButton }
 
     func privateModeBadge(visible: Bool) {
-        privateModeBadge.show(visible)
+        // Ecosia: Remove private mode badge
+        // privateModeBadge.show(visible)
     }
 
     func warningMenuBadge(setVisible: Bool) {
@@ -148,6 +151,7 @@ extension TabToolbar: ThemeApplicable, PrivateModeUI {
     }
 
     func applyUIMode(isPrivate: Bool, theme: Theme) {
-        privateModeBadge(visible: isPrivate)
+        // Ecosia: Remove private mode badge
+        // privateModeBadge(visible: isPrivate)
     }
 }

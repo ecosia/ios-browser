@@ -105,6 +105,13 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
     /// is *not* tied to the location text field's editing state; for instance, when selecting
     /// a panel, the first responder will be resigned, yet the overlay mode UI is still active.
     var inOverlayMode = false
+    
+    // Ecosia: Helper flags
+    var isPrivate = false
+    var isHome: Bool {
+        guard let url = currentURL else { return true }
+        return InternalURL(url)?.isAboutHomeURL == true
+    }
 
     lazy var locationView: TabLocationView = {
         let locationView = TabLocationView()
@@ -245,10 +252,13 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
          multiStateButton, locationContainer, searchIconImageView].forEach {
             addSubview($0)
         }
-
+        // Ecosia: Update Search Engine Image
+        updateSearchEngineImage()
+        
         profile.searchEngines.delegate = self
 
-        privateModeBadge.add(toParent: self)
+        // Ecosia: Remove private mode badge
+        // privateModeBadge.add(toParent: self)
         appMenuBadge.add(toParent: self)
         warningMenuBadge.add(toParent: self)
 
@@ -337,7 +347,8 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
             make.size.equalTo(URLBarViewUX.ButtonHeight)
         }
 
-        privateModeBadge.layout(onButton: tabsButton)
+        // Ecosia: Remove private mode badge
+        // privateModeBadge.layout(onButton: tabsButton)
         appMenuBadge.layout(onButton: appMenuButton)
         warningMenuBadge.layout(onButton: appMenuButton)
     }
@@ -604,7 +615,9 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
         multiStateButton.isHidden = !toolbarIsShowing || inOverlayMode
 
         // badge isHidden is tied to private mode on/off, use alpha to hide in this case
-        [privateModeBadge, appMenuBadge, warningMenuBadge].forEach {
+        // Ecosia: Remove private mode badge
+        // [privateModeBadge, appMenuBadge, warningMenuBadge].forEach {
+        [appMenuBadge, warningMenuBadge].forEach {
             $0.badge.alpha = (!toolbarIsShowing || inOverlayMode) ? 0 : 1
             $0.backdrop.alpha = (!toolbarIsShowing || inOverlayMode) ? 0 : BadgeWithBackdrop.UX.backdropAlpha
         }
@@ -652,9 +665,11 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
 
 extension URLBarView: TabToolbarProtocol {
     func privateModeBadge(visible: Bool) {
+        /* Ecosia: Remove private mode badge
         if UIDevice.current.userInterfaceIdiom != .pad {
             privateModeBadge.show(visible)
         }
+         */
     }
 
     func appMenuBadge(setVisible: Bool) {
@@ -859,9 +874,14 @@ extension URLBarView: ThemeApplicable {
 // MARK: - PrivateModeUI
 extension URLBarView: PrivateModeUI {
     func applyUIMode(isPrivate: Bool, theme: Theme) {
+        
+        // Ecosia: Save `isPrivate` state
+        self.isPrivate = isPrivate
+        
+        /* Ecosia: Remove private mode badge
         if UIDevice.current.userInterfaceIdiom != .pad {
             privateModeBadge.show(isPrivate)
-        }
+        }*/
 
         let gradientStartColor = isPrivate ? theme.colors.borderAccentPrivate : theme.colors.borderAccent
         let gradientMiddleColor = isPrivate ? nil : theme.colors.iconAccentPink
@@ -873,5 +893,22 @@ extension URLBarView: PrivateModeUI {
         locationTextField?.applyUIMode(isPrivate: isPrivate, theme: theme)
         locationTextField?.applyTheme(theme: theme)
         applyTheme(theme: theme)
+    }
+}
+
+// Ecosia: Update Search Engine Image
+extension URLBarView {
+    
+    func updateSearchEngineImage() {
+        if inOverlayMode {
+            if isPrivate {
+                searchIconImageView.image = .init(named: ImageIdentifiers.newPrivateTab)
+            } else {
+                searchIconImageView.image = .init(themed: "searchLogo")
+            }
+        } else {
+            searchIconImageView.image = .init(named: "search")
+        }
+        searchIconImageView.isHidden = !isHome && !inOverlayMode
     }
 }
