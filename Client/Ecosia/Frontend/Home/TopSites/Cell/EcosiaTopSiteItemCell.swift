@@ -152,9 +152,13 @@ class TopSiteItemCell: UICollectionViewCell, ReusableCell {
         NSLayoutConstraint.activate([
             rootContainer.topAnchor.constraint(equalTo: contentView.topAnchor),
             rootContainer.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            /* Ecosia: Update constraints
             rootContainer.widthAnchor.constraint(greaterThanOrEqualToConstant: UX.imageBackgroundSize.width),
             rootContainer.heightAnchor.constraint(greaterThanOrEqualToConstant: UX.imageBackgroundSize.height),
-
+             */
+            rootContainer.widthAnchor.constraint(equalToConstant: UX.imageBackgroundSize.width),
+            rootContainer.heightAnchor.constraint(equalToConstant: UX.imageBackgroundSize.height),
+            
             imageView.topAnchor.constraint(equalTo: rootContainer.topAnchor,
                                            constant: UX.imageTopSpace),
             imageView.leadingAnchor.constraint(equalTo: rootContainer.leadingAnchor,

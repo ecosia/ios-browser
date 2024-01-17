@@ -17,8 +17,11 @@ protocol HomepageDataModelDelegate: AnyObject {
 
 class HomepageViewModel: FeatureFlaggable {
     struct UX {
-        static let spacingBetweenSections: CGFloat = 62
-        static let standardInset: CGFloat = 18
+        // Ecosia: Update `spacingBetweenSections` and `standardInset`
+        // static let spacingBetweenSections: CGFloat = 62
+        // static let standardInset: CGFloat = 18
+        static let spacingBetweenSections: CGFloat = 32
+        static let standardInset: CGFloat = 16
         static let iPadInset: CGFloat = 50
         static let iPadTopSiteInset: CGFloat = 25
 
