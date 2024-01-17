@@ -46,8 +46,6 @@ class LegacyTabTrayViewController: UIViewController, Themeable {
         button.titleLabel?.adjustsFontForContentSizeCategory = true
         button.accessibilityIdentifier = "closeAllTabsButtonTabTray"
         button.setTitle(.localized(.closeAll), for: .normal)
-        // Ecosia: Change close all button title color
-        button.setTitleColor(.legacyTheme.ecosia.warning, for: .normal)
         button.addTarget(self, action: #selector(didTapDeleteTabs), for: .primaryActionTriggered)
         button.accessibilityLabel = .AppMenu.Toolbar.TabTrayDeleteMenuButtonAccessibilityLabel
         return UIBarButtonItem(customView: button)
@@ -466,7 +464,9 @@ extension LegacyTabTrayViewController {
          }
          maskButton.applyUIMode(isPrivate: maskButton.isSelected, theme: themeManager.currentTheme)
          addNewTabButton.applyTheme()
-
+         // Ecosia: Change close all button title color
+         (deleteButton.customView as? UIButton)?.setTitleColor(.legacyTheme.ecosia.warning, for: .normal)
+         
          if shouldUseiPadSetup() {
              navigationItem.leftBarButtonItem?.tintColor = UIColor.legacyTheme.ecosia.primaryButton
              navigationItem.rightBarButtonItem?.tintColor = UIColor.legacyTheme.ecosia.primaryButton
