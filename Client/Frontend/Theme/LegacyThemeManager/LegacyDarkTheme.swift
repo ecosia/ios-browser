@@ -22,6 +22,8 @@ private class DarkTabTrayColor: TabTrayColor {
     // Ecosia: Add legacy color references from 9.1.0 App Version
     override var screenshotBackground: UIColor { return UIColor.Photon.DarkGrey30 }
     override var cellBackground: UIColor { return UIColor.Dark.Background.primary }
+    override var background: UIColor { return UIColor.Photon.Grey80 }
+    override var tabTitleText: UIColor { return UIColor.Dark.Text.primary }
 }
 
 class LegacyDarkTheme: LegacyNormalTheme {

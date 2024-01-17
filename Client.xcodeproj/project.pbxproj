@@ -194,6 +194,7 @@
 		2C1296F12B0BACED00FC0A04 /* BrowserCoordinator+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C1296F02B0BACED00FC0A04 /* BrowserCoordinator+Ecosia.swift */; };
 		2C150B042B4EBC7300D1D990 /* EngagementServiceExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C150B032B4EBC7300D1D990 /* EngagementServiceExperiment.swift */; };
 		2C28F96C201B2D4C00ABA8A5 /* MailAppSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C28F96B201B2D4C00ABA8A5 /* MailAppSettingsTests.swift */; };
+		2C29882A2B57D614005FE726 /* EcosiaTabTrayButtonExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2988292B57D614005FE726 /* EcosiaTabTrayButtonExtensions.swift */; };
 		2C2A5EF41E68469500F02659 /* PrivateBrowsingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A5EF31E68469500F02659 /* PrivateBrowsingTest.swift */; };
 		2C2A91291FA2410D002E36BD /* HistoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A91281FA2410D002E36BD /* HistoryTests.swift */; };
 		2C31A7A91E8BFB2200DAC646 /* ReadingListTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C31A7A81E8BFB2200DAC646 /* ReadingListTests.swift */; };
@@ -338,6 +339,7 @@
 		2CC1B3F01E9B861400814EEC /* DomainAutocompleteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC1B3EF1E9B861400814EEC /* DomainAutocompleteTests.swift */; };
 		2CCB296720A99C9500121DD8 /* LoginsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCB296620A99C9500121DD8 /* LoginsTests.swift */; };
 		2CCF17532105E4FD00705AE5 /* DisplaySettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCF17522105E4FD00705AE5 /* DisplaySettingsTests.swift */; };
+		2CDF61912B56E7B6001186DB /* EcosiaLegacyTabTrayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CDF61902B56E7B6001186DB /* EcosiaLegacyTabTrayViewController.swift */; };
 		2CEA6F791E93E3A600D4100E /* SearchSettingsUITest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CEA6F781E93E3A600D4100E /* SearchSettingsUITest.swift */; };
 		2CEDADA220207EC400223A89 /* SyncFAUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CEDADA120207EC400223A89 /* SyncFAUITests.swift */; };
 		2CF21D0920A4A163000D08B7 /* PocketTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CF21D0820A4A163000D08B7 /* PocketTests.swift */; };
@@ -1025,7 +1027,6 @@
 		C40046FA1CF8E0B200B08303 /* BackForwardListAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40046F91CF8E0B200B08303 /* BackForwardListAnimator.swift */; };
 		C45F44691D087DB600CB7EF0 /* TopTabsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C45F44681D087DB600CB7EF0 /* TopTabsViewController.swift */; };
 		C4E3983D1D21F1E7004E89BA /* TopTabCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4E3983C1D21F1E7004E89BA /* TopTabCell.swift */; };
-		C4E3984C1D21F2FD004E89BA /* TabTrayButtonExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4E3984B1D21F2FD004E89BA /* TabTrayButtonExtensions.swift */; };
 		C4E398601D22C409004E89BA /* TopTabsLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4E3985F1D22C409004E89BA /* TopTabsLayout.swift */; };
 		C4EFEECF1CEBB6F2009762A4 /* BackForwardTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4EFEECE1CEBB6F2009762A4 /* BackForwardTableViewCell.swift */; };
 		C4F3B29A1CFCF93A00966259 /* ButtonToast.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4F3B2991CFCF93A00966259 /* ButtonToast.swift */; };
@@ -1353,7 +1354,6 @@
 		D980063D26D8308700321BC1 /* RustPlacesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D980063C26D8308700321BC1 /* RustPlacesTests.swift */; };
 		DA27EEDB28BADF4700DD6F5D /* MenuBuilderHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA27EEDA28BADF4700DD6F5D /* MenuBuilderHelper.swift */; };
 		DA4F826729AD221600189590 /* ZoomPageBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA4F826629AD221600189590 /* ZoomPageBar.swift */; };
-		DA52E1DA25F5961F0092204C /* LegacyTabTrayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA52E1D925F5961F0092204C /* LegacyTabTrayViewController.swift */; };
 		DA9FD88424E213B500168D1E /* SmallQuickLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA9FD88224E213B400168D1E /* SmallQuickLink.swift */; };
 		DA9FD88624E213CD00168D1E /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA9FD88524E213CC00168D1E /* Helpers.swift */; };
 		DA9FD88824E213DD00168D1E /* QuickLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA9FD88724E213DC00168D1E /* QuickLink.swift */; };
@@ -2447,6 +2447,7 @@
 		2C150B032B4EBC7300D1D990 /* EngagementServiceExperiment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EngagementServiceExperiment.swift; sourceTree = "<group>"; };
 		2C26401D9CCB8C2671EA2431 /* ta */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ta; path = ta.lproj/3DTouchActions.strings; sourceTree = "<group>"; };
 		2C28F96B201B2D4C00ABA8A5 /* MailAppSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailAppSettingsTests.swift; sourceTree = "<group>"; };
+		2C2988292B57D614005FE726 /* EcosiaTabTrayButtonExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaTabTrayButtonExtensions.swift; sourceTree = "<group>"; };
 		2C2A5EF31E68469500F02659 /* PrivateBrowsingTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PrivateBrowsingTest.swift; sourceTree = "<group>"; };
 		2C2A91281FA2410D002E36BD /* HistoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryTests.swift; sourceTree = "<group>"; };
 		2C31A7A81E8BFB2200DAC646 /* ReadingListTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReadingListTests.swift; sourceTree = "<group>"; };
@@ -2597,6 +2598,7 @@
 		2CC1B3EF1E9B861400814EEC /* DomainAutocompleteTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DomainAutocompleteTests.swift; sourceTree = "<group>"; };
 		2CCB296620A99C9500121DD8 /* LoginsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginsTests.swift; sourceTree = "<group>"; };
 		2CCF17522105E4FD00705AE5 /* DisplaySettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplaySettingsTests.swift; sourceTree = "<group>"; };
+		2CDF61902B56E7B6001186DB /* EcosiaLegacyTabTrayViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaLegacyTabTrayViewController.swift; sourceTree = "<group>"; };
 		2CEA6F781E93E3A600D4100E /* SearchSettingsUITest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchSettingsUITest.swift; sourceTree = "<group>"; };
 		2CEDADA120207EC400223A89 /* SyncFAUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncFAUITests.swift; sourceTree = "<group>"; };
 		2CF21D0820A4A163000D08B7 /* PocketTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PocketTests.swift; sourceTree = "<group>"; };
@@ -7620,6 +7622,7 @@
 				C81AC6B526160091007800C5 /* LegacyTabTrayViewModel.swift */,
 				968BD7EA27DFF0F8003148B3 /* ASGroup.swift */,
 				216C133D29DCA8FF0097533B /* LegacyTabLayoutDelegate.swift */,
+				2CDF61902B56E7B6001186DB /* EcosiaLegacyTabTrayViewController.swift */,
 			);
 			path = Legacy;
 			sourceTree = "<group>";
@@ -10456,6 +10459,7 @@
 				59A68B1F857A8638598A63A0 /* TwoLineImageOverlayCell.swift */,
 				BD4B2DE129BB4CD9005FAA50 /* SnackButton.swift */,
 				BD4B2DE329BB4D9A005FAA50 /* TimerSnackBar.swift */,
+				2C2988292B57D614005FE726 /* EcosiaTabTrayButtonExtensions.swift */,
 			);
 			path = Widgets;
 			sourceTree = "<group>";
@@ -13361,7 +13365,6 @@
 				DF036E43274FD434002E834E /* HistoryHighlightsCell.swift in Sources */,
 				EB9A179C20E69A7F00B12184 /* LegacyDarkTheme.swift in Sources */,
 				21618A8A2A4389F700A5189E /* ActiveScreenState.swift in Sources */,
-				DA52E1DA25F5961F0092204C /* LegacyTabTrayViewController.swift in Sources */,
 				8AD40FD327BB068F00672675 /* MainMenuActionHelper.swift in Sources */,
 				2CB289A82B07C8F000A8FCB3 /* MultiplyImpact.swift in Sources */,
 				2CB289882B07C8F000A8FCB3 /* CircleButton.swift in Sources */,
@@ -13403,6 +13406,7 @@
 				39F819C61FD70F5D009E31E4 /* TabEventHandlers.swift in Sources */,
 				2CB289D02B07C8F000A8FCB3 /* EcosiaInstallType.swift in Sources */,
 				C8DC90C32A066B4A0008832B /* MarkupToken.swift in Sources */,
+				2C29882A2B57D614005FE726 /* EcosiaTabTrayButtonExtensions.swift in Sources */,
 				FA6B2AC21D41F02D00429414 /* String+Punycode.swift in Sources */,
 				E174963C2992B6A60096900A /* HostingTableViewSectionHeader.swift in Sources */,
 				2CB289AB2B07C8F000A8FCB3 /* EcosiaSettings.swift in Sources */,
@@ -13612,6 +13616,7 @@
 				C8699131289176A5007ACC5C /* WallpaperNetworking.swift in Sources */,
 				2CB289712B07C8F000A8FCB3 /* PageActionMenuCell.swift in Sources */,
 				5A271ABD2860B0D700471CE4 /* WebServerUtil.swift in Sources */,
+				2CDF61912B56E7B6001186DB /* EcosiaLegacyTabTrayViewController.swift in Sources */,
 				964FA97528A1A8F20024BB3B /* ContextualHintEligibilityUtility.swift in Sources */,
 				439C489C29760575007C3DCD /* CreditCardValidator.swift in Sources */,
 				8ADC2A122A3375B900543DAA /* FxAEntryPoint.swift in Sources */,
@@ -13817,7 +13822,6 @@
 				2CB289C02B07C8F000A8FCB3 /* DeviceInfo+Ecosia.swift in Sources */,
 				2CB289922B07C8F000A8FCB3 /* NTPImpactCell.swift in Sources */,
 				C82CDD47233E8996002E2743 /* Tab+ChangeUserAgent.swift in Sources */,
-				C4E3984C1D21F2FD004E89BA /* TabTrayButtonExtensions.swift in Sources */,
 				437A857827E43FE100E42764 /* FxAWebViewTelemetry.swift in Sources */,
 				E13E9AB42AAB0FB5001A0E9D /* FakespotCoordinator.swift in Sources */,
 				E1442FD1294782D9003680B0 /* UIModalPresentationStyle+Photon.swift in Sources */,

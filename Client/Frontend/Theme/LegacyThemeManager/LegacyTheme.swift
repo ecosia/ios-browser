@@ -39,6 +39,8 @@ class TabTrayColor {
     // Ecosia: Add legacy color references from 9.1.0 App Version
     var cellBackground: UIColor { return UIColor.white }
     var screenshotBackground: UIColor { return UIColor.white }
+    var background: UIColor { return UIColor.Photon.Grey10 }
+    var tabTitleText: UIColor { return UIColor.black }
 }
 
 class SnackBarColor {

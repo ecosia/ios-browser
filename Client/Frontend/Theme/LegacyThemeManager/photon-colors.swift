@@ -33,6 +33,8 @@ extension UIColor {
         static let Grey50 = UIColor(rgb: 0x737373)
         static let Grey60 = UIColor(rgb: 0x4a4a4f)
         static let Grey70 = UIColor(rgb: 0x38383d)
+        // Ecosia: Add `Grey80` color
+        static let Grey80 = UIColor(rgb: 0x2a2a2e)
         static let Grey90 = UIColor(rgb: 0x0c0c0d)
     }
 }
