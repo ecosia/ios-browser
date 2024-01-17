@@ -18,8 +18,8 @@ class TopSiteItemCell: UICollectionViewCell, ReusableCell {
 
     struct UX {
         static let titleOffset: CGFloat = 4
-        static let iconSize = CGSize(width: 36, height: 36)
-        static let imageBackgroundSize = CGSize(width: 60, height: 60)
+        static let iconSize = CGSize(width: 32, height: 32)
+        static let imageBackgroundSize = CGSize(width: 52, height: 52)
         static let pinAlignmentSpacing: CGFloat = 2
         static let pinIconSize = CGSize(width: 12, height: 12)
         static let textSafeSpace: CGFloat = 6
@@ -30,10 +30,12 @@ class TopSiteItemCell: UICollectionViewCell, ReusableCell {
         static let titleFontSize: CGFloat = 12
         static let cellCornerRadius: CGFloat = 26
         static let iconCornerRadius: CGFloat = 4
+        static let overlayColor = UIColor(white: 0.0, alpha: 0.25)
     }
 
     private var rootContainer: UIView = .build { view in
         view.backgroundColor = .clear
+        view.layer.cornerRadius = UX.cellCornerRadius
     }
 
     lazy var imageView: FaviconImageView = .build { _ in }
@@ -59,6 +61,7 @@ class TopSiteItemCell: UICollectionViewCell, ReusableCell {
     private lazy var selectedOverlay: UIView = .build { selectedOverlay in
         selectedOverlay.isHidden = true
         selectedOverlay.layer.cornerRadius = UX.cellCornerRadius
+        selectedOverlay.backgroundColor = UX.overlayColor
     }
 
     override var isSelected: Bool {
@@ -142,8 +145,8 @@ class TopSiteItemCell: UICollectionViewCell, ReusableCell {
 
     private func setupLayout() {
         rootContainer.addSubview(imageView)
-        rootContainer.addSubview(selectedOverlay)
         rootContainer.addSubview(pinImageView)
+        contentView.addSubview(selectedOverlay)
         contentView.addSubview(titleLabel)
         contentView.addSubview(rootContainer)
         NSLayoutConstraint.activate([
@@ -205,8 +208,7 @@ extension TopSiteItemCell: ThemeApplicable {
         pinImageView.tintColor = textColor ?? theme.colors.iconPrimary
         titleLabel.textColor = textColor ?? theme.colors.textPrimary
         selectedOverlay.backgroundColor = theme.colors.layer5Hover.withAlphaComponent(0.25)
-
-        adjustBlur(theme: theme)
+        rootContainer.backgroundColor = .legacyTheme.ecosia.secondaryButton
     }
 }
 
