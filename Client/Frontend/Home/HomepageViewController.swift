@@ -349,7 +349,9 @@ class HomepageViewController: UIViewController, FeatureFlaggable, Themeable, Con
     func applyTheme() {
         let theme = themeManager.currentTheme
         viewModel.theme = theme
-        view.backgroundColor = theme.colors.layer1
+        // Ecosia: Update NTP background
+        // view.backgroundColor = theme.colors.layer1
+        view.backgroundColor = .legacyTheme.ecosia.ntpBackground
     }
 
     func scrollToTop(animated: Bool = false) {
