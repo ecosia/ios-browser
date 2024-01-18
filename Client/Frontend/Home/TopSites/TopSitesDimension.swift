@@ -66,6 +66,7 @@ class TopSitesDimensionImplementation: TopSitesDimension {
     /// - Parameter interface: Tile number is based on layout, this param contains the parameters needed to computer the tile number
     /// - Returns: The number of tiles per row the user will see
     private func getNumberOfTilesPerRow(for interface: TopSitesUIInterface) -> Int {
+        /* Ecosia: The design decided to have 4 tiles per row by default.
         let cellWidth = TopSitesViewModel.UX.cellEstimatedSize.width
         let leadingInset = HomepageViewModel.UX.leadingInset(traitCollection: interface.trait,
                                                              interfaceIdiom: interface.interfaceIdiom)
@@ -77,5 +78,7 @@ class TopSitesDimensionImplementation: TopSitesDimension {
             availableWidth = availableWidth - cellWidth - TopSitesViewModel.UX.cardSpacing
         }
         return numberOfTiles < TopSitesViewModel.UX.minCards ? TopSitesViewModel.UX.minCards : numberOfTiles
+         */
+        4
     }
 }
