@@ -218,13 +218,19 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
 
         set(newURL) {
             locationView.url = newURL
+            
+            // Ecosia: update visibility of reload/multi-state button
+            if !inOverlayMode {
+                setNeedsUpdateConstraints()
+            }
         }
     }
 
     var profile: Profile
-
-    fileprivate lazy var privateModeBadge = BadgeWithBackdrop(imageName: ImageIdentifiers.privateModeBadge,
-                                                              isPrivateBadge: true)
+    
+    /* Ecosia: Remove private mode badge
+    fileprivate lazy var privateModeBadge = BadgeWithBackdrop(imageName: ImageIdentifiers.privateModeBadge, isPrivateBadge: true)
+     */
     fileprivate let appMenuBadge = BadgeWithBackdrop(imageName: ImageIdentifiers.menuBadge)
     fileprivate let warningMenuBadge = BadgeWithBackdrop(imageName: ImageIdentifiers.menuWarning,
                                                          imageMask: ImageIdentifiers.menuWarningMask)
@@ -311,11 +317,13 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
             make.size.equalTo(URLBarViewUX.ButtonHeight)
         }
 
+        /* Ecosia: deactivate home button icon
         homeButton.snp.makeConstraints { make in
             make.trailing.equalTo(self.bookmarksButton.snp.leading)
             make.centerY.equalTo(self)
             make.size.equalTo(URLBarViewUX.ButtonHeight)
         }
+         */
 
         bookmarksButton.snp.makeConstraints { make in
             make.trailing.equalTo(self.appMenuButton.snp.leading)
@@ -367,6 +375,7 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
             make.height.equalTo(URLBarViewUX.urlBarLineHeight)
         }
 
+        /* Ecosia: custom progress bar
         progressBar.snp.remakeConstraints { make in
             if isBottomSearchBar {
                 make.bottom.equalTo(snp.top).inset(URLBarViewUX.ProgressBarHeight / 2)
@@ -377,9 +386,11 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
             make.height.equalTo(URLBarViewUX.ProgressBarHeight)
             make.left.right.equalTo(self)
         }
+         */
 
         if inOverlayMode {
-            searchIconImageView.alpha = 1
+            // Ecosia: Customise alpha
+            // searchIconImageView.alpha = 1
             // In overlay mode, we always show the location view full width
             self.locationContainer.layer.borderWidth = URLBarViewUX.TextFieldBorderWidthSelected
             self.locationContainer.snp.remakeConstraints { make in
@@ -580,8 +591,10 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
         circleButton.alpha = inOverlayMode ? 0 : 1
         forwardButton.alpha = inOverlayMode ? 0 : 1
         backButton.alpha = inOverlayMode ? 0 : 1
-        multiStateButton.alpha = inOverlayMode ? 0 : 1
-
+        // Ecosia: always hide multi state button
+        // multiStateButton.alpha = inOverlayMode ? 0 : 1
+        multiStateButton.alpha = 0
+        
         let borderColor = inOverlayMode ? locationActiveBorderColor : locationBorderColor
         locationContainer.layer.borderColor = borderColor.cgColor
 
@@ -864,8 +877,8 @@ extension URLBarView: ThemeApplicable {
         locationBorderColor = theme.colors.borderPrimary
         locationView.backgroundColor = theme.colors.layer3
         locationContainer.backgroundColor = theme.colors.layer3
-
-        privateModeBadge.badge.tintBackground(color: theme.colors.layer1)
+        // Ecosia: Remove private mode badge
+        // privateModeBadge.badge.tintBackground(color: theme.colors.layer1)
         appMenuBadge.badge.tintBackground(color: theme.colors.layer1)
         warningMenuBadge.badge.tintBackground(color: theme.colors.layer1)
     }
