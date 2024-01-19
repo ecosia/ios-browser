@@ -23,6 +23,7 @@ public let SuggestedSites = SuggestedSitesCursor()
 open class SuggestedSitesCursor: ArrayCursor<SuggestedSite> {
     fileprivate init() {
         let locale = Locale.current
+        /* Ecosia: Update SuggestedSites retrieval
         let sites = DefaultSuggestedSites.sites[locale.identifier] ??
                     DefaultSuggestedSites.sites["default"]! as [SuggestedSiteData]
         let tiles = sites.map({ data -> SuggestedSite in
@@ -31,6 +32,12 @@ open class SuggestedSitesCursor: ArrayCursor<SuggestedSite> {
                 site.url = localizedURL
             }
             return SuggestedSite(data: site)
+        })
+         */
+        let sites = DefaultSuggestedSites.sites[locale.identifier] ??
+                    DefaultSuggestedSites.sites["default"]! as [SuggestedSiteData]
+        let tiles = sites.map({ data -> SuggestedSite in
+            return SuggestedSite(data: data)
         })
         super.init(data: tiles, status: .success, statusMessage: "Loaded")
     }
