@@ -22,13 +22,20 @@ public struct StandardImageIdentifiers {
     // Icon size 24x24
     public struct Large {
         public static let appendUp = "appendUpLarge"
-        public static let appMenu = "appMenuLarge"
+        // Ecosia: Update App Menu to looklike Vanilla v104
+        // public static let appMenu = "appMenuLarge"
+        public static let appMenu = "nav-menu"
         public static let avatarCircle = "avatarCircleLarge"
         public static let back = "backLarge"
-        public static let bookmark = "bookmarkLarge"
-        public static let bookmarkFill = "bookmarkFillLarge"
-        public static let bookmarkSlash = "bookmarkSlashLarge"
-        public static let bookmarkTrayFill = "bookmarkTrayFillLarge"
+        // Ecosia: Bookmarks Review
+        // public static let bookmark = "bookmarkLarge"
+        // public static let bookmarkFill = "bookmarkFillLarge"
+        // public static let bookmarkSlash = "bookmarkSlashLarge"
+        // public static let bookmarkTrayFill = "bookmarkTrayFillLarge"
+        public static let bookmark = "bookmarksEmpty"
+        public static let bookmarkFill = "bookmarkFill"
+        public static let bookmarkSlash = "bookmarkFill"
+        public static let bookmarkTrayFill = "bookmarksEmpty"
         public static let checkmark = "checkmarkLarge"
         public static let chevronDown = "chevronDownLarge"
         public static let chevronLeft = "chevronLeftLarge"

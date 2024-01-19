@@ -40,9 +40,9 @@ private class EcosiaLightColourPalette: ThemeColourPalette {
     }()
         
     // MARK: - Layers
-    var layer1: UIColor = fallbackDefaultThemeManager.currentTheme.colors.layer1
+    var layer1: UIColor = UIColor.legacyTheme.ecosia.primaryBackground
     var layer2: UIColor = fallbackDefaultThemeManager.currentTheme.colors.layer2
-    var layer3: UIColor = fallbackDefaultThemeManager.currentTheme.colors.layer3
+    var layer3: UIColor = UIColor.legacyTheme.ecosia.primaryBackground
     var layer4: UIColor = fallbackDefaultThemeManager.currentTheme.colors.layer4
     var layer5: UIColor = fallbackDefaultThemeManager.currentTheme.colors.layer5
     var layer6: UIColor = fallbackDefaultThemeManager.currentTheme.colors.layer6
@@ -50,9 +50,9 @@ private class EcosiaLightColourPalette: ThemeColourPalette {
     var layerScrim: UIColor = fallbackDefaultThemeManager.currentTheme.colors.layerScrim
     var layerGradient = fallbackDefaultThemeManager.currentTheme.colors.layerGradient
     var layerGradientOverlay = fallbackDefaultThemeManager.currentTheme.colors.layerGradientOverlay
-    var layerAccentNonOpaque: UIColor = fallbackDefaultThemeManager.currentTheme.colors.layerAccentNonOpaque
+    var layerAccentNonOpaque: UIColor = UIColor.legacyTheme.ecosia.primaryButton
     var layerAccentPrivate: UIColor = fallbackDefaultThemeManager.currentTheme.colors.layerAccentPrivate
-    var layerAccentPrivateNonOpaque: UIColor = fallbackDefaultThemeManager.currentTheme.colors.layerAccentPrivateNonOpaque
+    var layerAccentPrivateNonOpaque: UIColor = UIColor.legacyTheme.ecosia.primaryText
     var layerLightGrey30: UIColor = fallbackDefaultThemeManager.currentTheme.colors.layerLightGrey30
     var layerSepia: UIColor = fallbackDefaultThemeManager.currentTheme.colors.layerSepia
     var layerInfo: UIColor = fallbackDefaultThemeManager.currentTheme.colors.layerInfo
@@ -109,7 +109,7 @@ private class EcosiaLightColourPalette: ThemeColourPalette {
     var iconAccentYellow: UIColor = fallbackDefaultThemeManager.currentTheme.colors.iconAccentYellow
 
     // MARK: - Border
-    var borderPrimary: UIColor = fallbackDefaultThemeManager.currentTheme.colors.borderPrimary
+    var borderPrimary: UIColor = UIColor.Photon.Grey20
     var borderAccent: UIColor = fallbackDefaultThemeManager.currentTheme.colors.borderAccent
     var borderAccentNonOpaque: UIColor = fallbackDefaultThemeManager.currentTheme.colors.borderAccentNonOpaque
     var borderAccentPrivate: UIColor = fallbackDefaultThemeManager.currentTheme.colors.borderAccentPrivate

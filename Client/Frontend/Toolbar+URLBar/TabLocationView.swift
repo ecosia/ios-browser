@@ -93,7 +93,9 @@ class TabLocationView: UIView, FeatureFlaggable {
     }
 
     private func setURLTextfieldPlaceholder(theme: Theme) {
-        let attributes = [NSAttributedString.Key.foregroundColor: theme.colors.textSecondary]
+        // Ecosia: Update Placeholder attributes
+//        let attributes = [NSAttributedString.Key.foregroundColor: theme.colors.textSecondary]
+        let attributes = [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.ecosia.secondaryText]
         urlTextField.attributedPlaceholder = NSAttributedString(string: .TabLocationURLPlaceholder,
                                                                 attributes: attributes)
     }
@@ -427,12 +429,20 @@ extension TabLocationView: AccessibilityActionsSource {
 extension TabLocationView: ThemeApplicable {
     func applyTheme(theme: Theme) {
         setURLTextfieldPlaceholder(theme: theme)
-        urlTextField.textColor = theme.colors.textPrimary
+        // Ecosia: Update `urlTextField` theme
+        // urlTextField.textColor = theme.colors.textPrimary
+        urlTextField.textColor = UIColor.legacyTheme.ecosia.primaryText
+        urlTextField.tintColor = .legacyTheme.ecosia.information
+
         readerModeButton.applyTheme(theme: theme)
         trackingProtectionButton.applyTheme(theme: theme)
         shareButton.applyTheme(theme: theme)
         reloadButton.applyTheme(theme: theme)
-        menuBadge.badge.tintBackground(color: theme.colors.layer3)
+        // Ecosia: Update `menuBadge` color
+        // menuBadge.badge.tintBackground(color: theme.colors.layer3)
+        let color = LegacyThemeManager.instance.currentName == .dark ? UIColor(white: 0.3, alpha: 0.6): UIColor.legacyTheme.ecosia.primaryBackground
+        menuBadge.badge.tintBackground(color: color)
+
         setTrackingProtection(theme: theme)
         shoppingButton.tintColor = theme.colors.textPrimary
         shoppingButton.setImage(UIImage(named: StandardImageIdentifiers.Large.shopping)?

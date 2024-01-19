@@ -57,11 +57,19 @@ enum MiddleButtonState {
 @objcMembers
 open class TabToolbarHelper: NSObject {
     let toolbar: TabToolbarProtocol
+    /* Ecosia: Updates images in batch.
+       Some of them are the same but easier to solve when rebasing/merging
     let ImageReload = UIImage.templateImageNamed("nav-refresh")
     let ImageStop = UIImage.templateImageNamed(StandardImageIdentifiers.Large.cross)
     let ImageSearch = UIImage.templateImageNamed("search")
     let ImageNewTab = UIImage.templateImageNamed(StandardImageIdentifiers.Large.plus)
     let ImageHome = UIImage.templateImageNamed(StandardImageIdentifiers.Large.home)
+     */
+    let ImageReload = UIImage.templateImageNamed("nav-refresh")
+    let ImageStop = UIImage.templateImageNamed("nav-stop")
+    let ImageSearch = UIImage.templateImageNamed("search")
+    let ImageNewTab = UIImage.templateImageNamed("nav-add")
+    let ImageHome = UIImage.templateImageNamed("menu-Home")
 
     func setMiddleButtonState(_ state: MiddleButtonState) {
         let device = UIDevice.current.userInterfaceIdiom

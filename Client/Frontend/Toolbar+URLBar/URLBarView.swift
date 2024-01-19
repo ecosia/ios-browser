@@ -13,11 +13,17 @@ private struct URLBarViewUX {
     static let LocationHeight: CGFloat = 40
     static let ButtonHeight: CGFloat = 44
     static let LocationContentOffset: CGFloat = 8
-    static let TextFieldCornerRadius: CGFloat = 8
+    // Ecosia: Update Corner Radius
+    // static let TextFieldCornerRadius: CGFloat = 8
+    static let TextFieldCornerRadius: CGFloat = 22
     static let TextFieldBorderWidth: CGFloat = 0
-    static let TextFieldBorderWidthSelected: CGFloat = 4
+    // Ecosia: Update Border width in selected state
+    // static let TextFieldBorderWidthSelected: CGFloat = 4
+    static let TextFieldBorderWidthSelected: CGFloat = 2
     static let ProgressBarHeight: CGFloat = 3
-    static let SearchIconImageWidth: CGFloat = 30
+    // Ecosia: Update search icon size
+    static let SearchIconWidthSmall: CGFloat = 16
+    static let SearchIconWidthMedium: CGFloat = 24
     static let TabsButtonRotationOffset: CGFloat = 1.5
     static let TabsButtonHeight: CGFloat = 18.0
     static let ToolbarButtonInsets = UIEdgeInsets(equalInset: Padding)
@@ -72,7 +78,9 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
             }
         }
     }
-    @objc dynamic lazy var locationActiveBorderColor: UIColor = .clear {
+    // Ecosia: Update `locationActiveBorderColor`
+    // @objc dynamic lazy var locationActiveBorderColor: UIColor = .clear {
+    @objc dynamic lazy var locationActiveBorderColor: UIColor = UIColor.legacyTheme.ecosia.primaryButton {
         didSet {
             if inOverlayMode {
                 locationContainer.layer.borderColor = locationActiveBorderColor.cgColor
@@ -118,6 +126,9 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
         locationView.layer.cornerRadius = URLBarViewUX.TextFieldCornerRadius
         locationView.translatesAutoresizingMaskIntoConstraints = false
         locationView.delegate = self
+        // Ecosia: Update LocationView properties
+        locationView.layer.masksToBounds = true
+        locationView.clipsToBounds = true
         return locationView
     }()
 
@@ -157,7 +168,9 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
 
     fileprivate lazy var showQRScannerButton: InsetButton = {
         let button = InsetButton()
-        button.setImage(UIImage.templateImageNamed(StandardImageIdentifiers.Large.qrCode), for: .normal)
+        // Ecosia: Update QR Code image
+        // button.setImage(UIImage.templateImageNamed(StandardImageIdentifiers.Large.qrCode), for: .normal)
+        button.setImage(UIImage.templateImageNamed("menu-ScanQRCode"), for: .normal)
         button.accessibilityIdentifier = AccessibilityIdentifiers.Browser.UrlBar.scanQRCodeButton
         button.accessibilityLabel = .ScanQRCodeViewTitle
         button.clipsToBounds = false
@@ -304,16 +317,23 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
         }
 
         searchIconImageView.snp.remakeConstraints { make in
+            /* Ecosia: Update search icon constraints
             let heightMin = URLBarViewUX.LocationHeight + (URLBarViewUX.TextFieldBorderWidthSelected * 2)
             make.height.greaterThanOrEqualTo(heightMin)
             make.centerY.equalTo(self)
             make.leading.equalTo(self.cancelButton.snp.trailing).offset(URLBarViewUX.LocationLeftPadding)
             make.width.equalTo(URLBarViewUX.SearchIconImageWidth)
+             */
+            make.centerY.equalTo(self)
+            make.leading.equalTo(self.locationContainer.snp.leading).offset(12)
+            make.size.equalTo(URLBarViewUX.SearchIconWidthSmall)
         }
 
         multiStateButton.snp.makeConstraints { make in
             make.leading.equalTo(self.forwardButton.snp.trailing)
-            make.centerY.equalTo(self)
+            // Ecosia: Update center Y constraint
+            // make.centerY.equalTo(self)
+            make.centerY.equalTo(self.locationContainer)
             make.size.equalTo(URLBarViewUX.ButtonHeight)
         }
 
@@ -387,7 +407,8 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
             make.left.right.equalTo(self)
         }
          */
-
+        
+        /* Ecosia: Update Overlay / Standard constraints
         if inOverlayMode {
             // Ecosia: Customise alpha
             // searchIconImageView.alpha = 1
@@ -408,7 +429,8 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
                 make.edges.equalTo(self.locationView).inset(UIEdgeInsets(top: 0, left: URLBarViewUX.LocationLeftPadding, bottom: 0, right: URLBarViewUX.LocationLeftPadding))
             }
         } else {
-            searchIconImageView.alpha = 0
+            // Ecosia: Customise alpha
+            // searchIconImageView.alpha = 0
             self.locationContainer.snp.remakeConstraints { make in
                 if self.toolbarIsShowing {
                     // If we are showing a toolbar, show the text field next to the forward button
@@ -430,6 +452,69 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
                 make.edges.equalTo(self.locationContainer).inset(UIEdgeInsets(equalInset: URLBarViewUX.TextFieldBorderWidth))
             }
         }
+        */
+        if inOverlayMode {
+            // In overlay mode, we always show the location view full width
+            self.locationContainer.layer.borderWidth = URLBarViewUX.TextFieldBorderWidthSelected
+            self.locationContainer.snp.remakeConstraints { make in
+                let height = URLBarViewUX.LocationHeight + (URLBarViewUX.TextFieldBorderWidthSelected * 2)
+                make.height.equalTo(height)
+                make.trailing.equalTo(self.showQRScannerButton.snp.leading).offset(-URLBarViewUX.Padding)
+                make.leading.equalTo(self.cancelButton.snp.trailing)
+                make.centerY.equalTo(self)
+            }
+            self.locationView.snp.remakeConstraints { make in
+                make.top.bottom.trailing.equalTo(self.locationContainer).inset(UIEdgeInsets(equalInset: URLBarViewUX.TextFieldBorderWidthSelected))
+                make.leading.equalTo(self.searchIconImageView.snp.trailing)
+            }
+            self.locationTextField?.snp.remakeConstraints { make in
+                make.edges.equalTo(self.locationView).inset(UIEdgeInsets(top: 0, left: URLBarViewUX.LocationLeftPadding, bottom: 0, right: URLBarViewUX.LocationLeftPadding))
+            }
+        } else {
+            self.locationContainer.snp.remakeConstraints { make in
+                if self.toolbarIsShowing {
+                    // If we are showing a toolbar, show the text field next to the forward button
+                    make.leading.equalTo(self.forwardButton.snp.trailing).offset(URLBarViewUX.Padding)
+                    if topTabsIsShowing {
+                        make.trailing.equalTo(self.bookmarksButton.snp.leading).offset(-URLBarViewUX.Padding)
+                    } else {
+                        make.trailing.equalTo(self.circleButton.snp.leading).offset(-URLBarViewUX.Padding)
+                    }
+                } else {
+                    // Otherwise, left align the location view
+                    make.leading.trailing.equalTo(self).inset(UIEdgeInsets(top: 0, left: URLBarViewUX.LocationLeftPadding-1, bottom: 0, right: URLBarViewUX.LocationLeftPadding-1))
+                }
+                make.height.greaterThanOrEqualTo(URLBarViewUX.LocationHeight+2)
+                make.centerY.equalTo(self)
+            }
+
+            self.locationView.snp.remakeConstraints { make in
+                make.top.bottom.trailing.equalTo(self.locationContainer)
+                if isHome {
+                    make.leading.equalTo(searchIconImageView.snp.trailing).offset(8)
+                } else {
+                    make.leading.equalTo(self.locationContainer)
+                }
+            }
+
+            self.multiStateButton.snp.remakeConstraints { make in
+                if self.toolbarIsShowing {
+                    make.trailing.equalTo(self.circleButton.snp.leading)
+                } else {
+                    make.trailing.equalTo(self.safeArea.trailing)
+                }
+                make.centerY.equalTo(self.locationContainer)
+                make.size.equalTo(URLBarViewUX.ButtonHeight).priority(.high)
+            }
+        }
+
+        let width = inOverlayMode ? URLBarViewUX.SearchIconWidthMedium : URLBarViewUX.SearchIconWidthSmall
+        searchIconImageView.snp.updateConstraints { make in
+            make.size.equalTo(width)
+        }
+        
+        // Ecosia: Update search engine image after constraints update
+        updateSearchEngineImage()
     }
 
     @objc
@@ -875,10 +960,16 @@ extension URLBarView: ThemeApplicable {
         line.backgroundColor = theme.colors.borderPrimary
 
         locationBorderColor = theme.colors.borderPrimary
-        locationView.backgroundColor = theme.colors.layer3
-        locationContainer.backgroundColor = theme.colors.layer3
+        // Ecosia: Take into account overlay mode for `locationView` background
+        // locationView.backgroundColor = theme.colors.layer3
+        // locationContainer.backgroundColor = theme.colors.layer3
+        locationView.backgroundColor = inOverlayMode ? UIColor.legacyTheme.ecosia.primaryBackground : UIColor.legacyTheme.ecosia.tertiaryBackground
+        locationContainer.backgroundColor = locationView.backgroundColor
+
         // Ecosia: Remove private mode badge
         // privateModeBadge.badge.tintBackground(color: theme.colors.layer1)
+        // Ecosia: Update Search Image Color
+        searchIconImageView.tintColor = isPrivate ? UIColor.legacyTheme.ecosia.primaryText : UIColor.legacyTheme.ecosia.textfieldIconTint
         appMenuBadge.badge.tintBackground(color: theme.colors.layer1)
         warningMenuBadge.badge.tintBackground(color: theme.colors.layer1)
     }
@@ -920,7 +1011,7 @@ extension URLBarView {
                 searchIconImageView.image = .init(themed: "searchLogo")
             }
         } else {
-            searchIconImageView.image = .init(named: "search")
+            searchIconImageView.image = .templateImageNamed("searchUrl")
         }
         searchIconImageView.isHidden = !isHome && !inOverlayMode
     }
