@@ -97,7 +97,7 @@ final class NTPTooltip: UICollectionReusableView, Themeable {
         stack.addArrangedSubview(verticalStack)
 
         let closeButton = UIButton()
-        closeButton.setImage(.init(named: "tab_close"), for: .normal)
+        closeButton.setImage(.templateImageNamed("crossLarge"), for: .normal)
         closeButton.heightAnchor.constraint(equalToConstant: 24).isActive = true
         closeButton.widthAnchor.constraint(equalToConstant: 24).isActive = true
         closeButton.addTarget(self, action: #selector(closeTapped), for: .touchDown)
