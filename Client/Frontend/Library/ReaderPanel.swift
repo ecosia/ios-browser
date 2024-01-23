@@ -262,13 +262,16 @@ class ReadingListPanel: UITableViewController,
 
             let scrollView = self.emptyStateViewA11YScroll
             let emptyView = self.emptyStateView
-
+            // Ecosia: Add `topAnchorDelta` util to determine `topAnchor` margin
+            let topAnchorDelta: CGFloat = UIDevice.current.userInterfaceIdiom == .phone ? -50 : 0
             if visible {
                 guard scrollView.superview == nil else { return }
                 scrollView.addSubview(emptyView)
                 NSLayoutConstraint.activate([
                     emptyView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-                    emptyView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+                    // Ecosia: Update reading list top anchor constant only if iPhone
+                    // emptyView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+                    emptyView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: topAnchorDelta),
                     emptyView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
                     emptyView.heightAnchor.constraint(greaterThanOrEqualTo: scrollView.heightAnchor)
                 ])
@@ -339,7 +342,7 @@ class ReadingListPanel: UITableViewController,
             welcomeLabel.leadingAnchor.constraint(equalTo: emptyStateViewWrapper.leadingAnchor),
             welcomeLabel.trailingAnchor.constraint(equalTo: emptyStateViewWrapper.trailingAnchor),
 
-            // first row
+            /* Ecosia: Invert label and image position (image first, label second)
             readerModeLabel.topAnchor.constraint(equalTo: welcomeLabel.bottomAnchor, constant: ReadingListPanelUX.WelcomeScreenPadding),
             readerModeLabel.leadingAnchor.constraint(equalTo: welcomeLabel.leadingAnchor),
             readerModeLabel.trailingAnchor.constraint(equalTo: readerModeImageView.leadingAnchor, constant: -ReadingListPanelUX.WelcomeScreenPadding),
@@ -355,6 +358,26 @@ class ReadingListPanel: UITableViewController,
 
             readingListImageView.centerYAnchor.constraint(equalTo: readingListLabel.centerYAnchor),
             readingListImageView.trailingAnchor.constraint(equalTo: welcomeLabel.trailingAnchor),
+            readingListImageView.widthAnchor.constraint(equalToConstant: ReadingListPanelUX.WelcomeScreenItemImageWidth),
+
+            readingListLabel.bottomAnchor.constraint(equalTo: emptyStateViewWrapper.bottomAnchor).priority(.defaultLow),
+             */
+            // first row
+            readerModeLabel.topAnchor.constraint(equalTo: welcomeLabel.bottomAnchor, constant: ReadingListPanelUX.WelcomeScreenPadding),
+            readerModeImageView.leadingAnchor.constraint(equalTo: welcomeLabel.leadingAnchor),
+            readerModeImageView.trailingAnchor.constraint(equalTo: readerModeLabel.leadingAnchor, constant: -ReadingListPanelUX.WelcomeScreenPadding),
+
+            readerModeImageView.centerYAnchor.constraint(equalTo: readerModeLabel.centerYAnchor),
+            readerModeLabel.trailingAnchor.constraint(equalTo: welcomeLabel.trailingAnchor),
+            readerModeImageView.widthAnchor.constraint(equalToConstant: ReadingListPanelUX.WelcomeScreenItemImageWidth),
+
+            // second row
+            readingListLabel.topAnchor.constraint(equalTo: readerModeLabel.bottomAnchor, constant: ReadingListPanelUX.WelcomeScreenPadding),
+            readingListImageView.leadingAnchor.constraint(equalTo: welcomeLabel.leadingAnchor),
+            readingListImageView.trailingAnchor.constraint(equalTo: readingListLabel.leadingAnchor, constant: -ReadingListPanelUX.WelcomeScreenPadding),
+
+            readingListImageView.centerYAnchor.constraint(equalTo: readingListLabel.centerYAnchor),
+            readingListLabel.trailingAnchor.constraint(equalTo: welcomeLabel.trailingAnchor),
             readingListImageView.widthAnchor.constraint(equalToConstant: ReadingListPanelUX.WelcomeScreenItemImageWidth),
 
             readingListLabel.bottomAnchor.constraint(equalTo: emptyStateViewWrapper.bottomAnchor).priority(.defaultLow),

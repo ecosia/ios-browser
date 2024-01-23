@@ -205,9 +205,13 @@ class DownloadsPanel: UIViewController,
             if emptyStateOverlayView.superview == nil {
                 view.addSubview(emptyStateOverlayView)
                 view.bringSubviewToFront(emptyStateOverlayView)
+                // Ecosia: Add `topAnchorDelta` util to determine `topAnchor` margin
+                let topAnchorDelta: CGFloat = UIDevice.current.userInterfaceIdiom == .phone ? -50 : 0
 
                 NSLayoutConstraint.activate([
-                    emptyStateOverlayView.topAnchor.constraint(equalTo: view.topAnchor),
+                    // Ecosia: Update reading list top anchor constant only if iPhone
+                    // emptyStateOverlayView.topAnchor.constraint(equalTo: view.topAnchor),
+                    emptyStateOverlayView.topAnchor.constraint(equalTo: view.topAnchor, constant: topAnchorDelta),
                     emptyStateOverlayView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                     emptyStateOverlayView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
                     emptyStateOverlayView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
@@ -226,7 +230,9 @@ class DownloadsPanel: UIViewController,
         let logoImageView: UIImageView = .build { imageView in
             imageView.image = UIImage.templateImageNamed(StandardImageIdentifiers.Large.download)?
                 .withRenderingMode(.alwaysTemplate)
-            imageView.tintColor = self.themeManager.currentTheme.colors.iconSecondary
+            // Ecosia: Update icon color
+            // imageView.tintColor = self.themeManager.currentTheme.colors.iconSecondary
+            imageView.tintColor = self.themeManager.currentTheme.colors.textPrimary
         }
         let welcomeLabel: UILabel = .build { label in
             label.text = .DownloadsPanelEmptyStateTitle

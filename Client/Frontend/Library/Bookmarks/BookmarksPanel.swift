@@ -178,9 +178,15 @@ class BookmarksPanel: SiteTableViewController,
     private func updateEmptyView() {
         switch (viewModel.isRootNode, viewModel.bookmarkNodes.isEmpty) {
         case (true, true): // is first level, no bookmarks -> show explainative empty view
+            // Ecosia: Add `bottomAnchorDelta` util to determine `bottomAnchor` margin
+            let navigationControllerHeight: CGFloat = (navigationController?.toolbar.bounds.size.height ?? 0)
+            let topAnchorDelta: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? -navigationControllerHeight : -navigationControllerHeight*3
+            /* Update EmptyBookmarksView initialization
             let emptyBookmarksView = EmptyBookmarksView(
                 initialBottomMargin: -(navigationController?.toolbar.bounds.size.height ?? 0)
             )
+             */
+            let emptyBookmarksView = EmptyBookmarksView(initialBottomMargin: topAnchorDelta)
             emptyBookmarksView.delegate = self
             tableView.tableHeaderView = nil
             tableView.backgroundView = emptyBookmarksView
