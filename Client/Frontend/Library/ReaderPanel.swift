@@ -26,7 +26,9 @@ private struct ReadingListTableViewCellUX {
 
 private struct ReadingListPanelUX {
     // Welcome Screen
-    static let WelcomeScreenPadding: CGFloat = 15
+    // Ecosia: Update Welcome Screen Padding
+    // static let WelcomeScreenPadding: CGFloat = 15
+    static let WelcomeScreenPadding: CGFloat = 24
     static let WelcomeScreenHorizontalMinPadding: CGFloat = 40
 
     static let WelcomeScreenMaxWidth: CGFloat = 400
@@ -306,7 +308,9 @@ class ReadingListPanel: UITableViewController,
             label.textAlignment = .center
             label.font = DefaultDynamicFontHelper.preferredFont(withTextStyle: .body, size: 16, weight: .semibold)
             label.adjustsFontSizeToFitWidth = true
-            label.textColor = self.themeManager.currentTheme.colors.textSecondary
+            // Ecosia: Update Text color
+            // label.textColor = self.themeManager.currentTheme.colors.textSecondary
+            label.textColor = self.themeManager.currentTheme.colors.textPrimary
         }
         let readerModeLabel: UILabel = .build { label in
             label.text = .ReaderPanelReadingModeDescription

@@ -31,7 +31,9 @@ final class EmptyBookmarksView: UIView, Themeable {
         let label = UILabel()
         label.text = .localized(.noBookmarksYet)
         label.textAlignment = .center
-        label.font = UX.TitleLabelFont
+        // Ecosia: Aligning Fonts to Reading list that uses Dynamic Fonts helper
+        // label.font = UX.TitleLabelFont
+        label.font = DefaultDynamicFontHelper.preferredFont(withTextStyle: .body, size: 16, weight: .semibold)
         label.adjustsFontForContentSizeCategory = true
         return label
     }()
@@ -179,7 +181,9 @@ final class EmptyBookmarksView: UIView, Themeable {
         sectionStackView.addArrangedSubview(sectionLabelsStackView)
 
         let sectionLabel = UILabel()
-        sectionLabel.font = UX.SectionLabelFont
+        // Ecosia: Aligning Fonts to Reading list that uses Dynamic Fonts helper
+        // sectionLabel.font = UX.SectionLabelFont
+        sectionLabel.font = DefaultDynamicFontHelper.preferredFont(withTextStyle: .body, size: 16, weight: .light)
         sectionLabel.numberOfLines = 0
         sectionLabel.text = text
         sectionLabel.adjustsFontForContentSizeCategory = true
