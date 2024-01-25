@@ -279,15 +279,18 @@ class HomepageViewController: UIViewController, FeatureFlaggable, Themeable, Con
     }
 
     func createLayout() -> UICollectionViewLayout {
-        let layout = UICollectionViewCompositionalLayout { [weak self]
+        // Ecosia: Update Layout type
+        // let layout = UICollectionViewCompositionalLayout { [weak self]
+        let layout = NTPLayout { [weak self]
             (sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
             guard let self = self,
                   let viewModel = self.viewModel.getSectionViewModel(shownSection: sectionIndex),
                   viewModel.shouldShow
             else { return nil }
             self.logger.log("Section \(viewModel.sectionType) is going to show", level: .debug, category: .homepage)
-            return viewModel.section(for: layoutEnvironment.traitCollection, size: self.view.frame.size)
+            return viewModel.section(for: layoutEnvironment.traitCollection, size: self.view.bounds.size)
         }
+        layout.highlightDataSource = viewModel
         return layout
     }
 

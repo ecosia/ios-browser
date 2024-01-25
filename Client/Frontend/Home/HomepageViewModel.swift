@@ -156,10 +156,9 @@ class HomepageViewModel: FeatureFlaggable {
         self.ntpCustomizationViewModel = NTPCustomizationCellViewModel(theme: theme)
 
         self.wallpaperManager = wallpaperManager
-
+        /* Ecosia: Remove `jumpBackIn` section reference
         let jumpBackInAdaptor = JumpBackInDataAdaptorImplementation(profile: profile,
                                                                     tabManager: tabManager)
-        /* Ecosia: Remove `jumpBackIn` section reference
         self.jumpBackInViewModel = JumpBackInViewModel(
             profile: profile,
             isPrivate: isPrivate,
@@ -278,6 +277,8 @@ class HomepageViewModel: FeatureFlaggable {
 
     func recordViewDisappeared() {
         viewAppeared = false
+        // Ecosia: Unsubscribe to projections
+        impactViewModel.unsubscribeToProjections()
     }
 
     // MARK: - Manage sections
@@ -302,18 +303,19 @@ class HomepageViewModel: FeatureFlaggable {
                            device: UIDevice.current.userInterfaceIdiom)
         }
     }
-
-    // MARK: - Section ViewModel helper
-
-    func getSectionViewModel(shownSection: Int) -> HomepageViewModelProtocol? {
-        guard let actualSectionNumber = shownSections[safe: shownSection]?.rawValue else { return nil }
-        return childViewModels[safe: actualSectionNumber]
-    }
 }
 
 // MARK: - HomepageDataModelDelegate
 extension HomepageViewModel: HomepageDataModelDelegate {
     func reloadView() {
         delegate?.reloadView()
+    }
+}
+
+// Ecosia: NTPLayoutHighlightDataSource
+extension HomepageViewModel: NTPLayoutHighlightDataSource {
+    func getSectionViewModel(shownSection: Int) -> HomepageViewModelProtocol? {
+        guard let actualSectionNumber = shownSections[safe: shownSection]?.rawValue else { return nil }
+        return childViewModels[safe: actualSectionNumber]
     }
 }
