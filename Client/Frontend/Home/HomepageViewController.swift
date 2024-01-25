@@ -158,6 +158,11 @@ class HomepageViewController: UIViewController, FeatureFlaggable, Themeable, Con
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         viewModel.recordViewAppeared()
+        
+        // Ecosia: Refresh referral claims
+        Task {
+            try? await referrals.refresh()
+        }
 
         notificationCenter.post(name: .ShowHomepage)
         notificationCenter.post(name: .HistoryUpdated)
@@ -177,6 +182,9 @@ class HomepageViewController: UIViewController, FeatureFlaggable, Themeable, Con
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
+        // Ecosia
+        viewModel.aboutEcosiaViewModel.deselectExpanded()
+        
         jumpBackInContextualHintViewController.stopTimer()
         syncTabContextualHintViewController.stopTimer()
         viewModel.recordViewDisappeared()
