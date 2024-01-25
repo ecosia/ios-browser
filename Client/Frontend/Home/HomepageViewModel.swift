@@ -173,12 +173,12 @@ class HomepageViewModel: FeatureFlaggable {
                                                              theme: theme,
                                                              wallpaperManager: wallpaperManager)
          */
+        /* Ecosia: Remove History Highlights and Pocket
         let deletionUtility = HistoryDeletionUtility(with: profile)
         let historyDataAdaptor = HistoryHighlightsDataAdaptorImplementation(
             profile: profile,
             tabManager: tabManager,
             deletionUtility: deletionUtility)
-        /* Ecosia: Remove History Highlights and Pocket
         self.historyHighlightsViewModel = HistoryHighlightsViewModel(
             with: profile,
             isPrivate: isPrivate,
