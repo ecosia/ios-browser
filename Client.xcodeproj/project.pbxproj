@@ -337,6 +337,7 @@
 		2CB289D92B07CBBC00A8FCB3 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 2CB289D82B07CBBC00A8FCB3 /* Core */; };
 		2CB289DC2B07CCAB00A8FCB3 /* SnowplowTracker in Frameworks */ = {isa = PBXBuildFile; productRef = 2CB289DB2B07CCAB00A8FCB3 /* SnowplowTracker */; };
 		2CB56E3F1E926BFB00AF7586 /* ToolbarTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB56E3E1E926BFB00AF7586 /* ToolbarTest.swift */; };
+		2CBF88572B682801000318AD /* EmptyReadingListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CBF88562B682801000318AD /* EmptyReadingListView.swift */; };
 		2CC1B3F01E9B861400814EEC /* DomainAutocompleteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC1B3EF1E9B861400814EEC /* DomainAutocompleteTests.swift */; };
 		2CCB296720A99C9500121DD8 /* LoginsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCB296620A99C9500121DD8 /* LoginsTests.swift */; };
 		2CCF17532105E4FD00705AE5 /* DisplaySettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCF17522105E4FD00705AE5 /* DisplaySettingsTests.swift */; };
@@ -2596,6 +2597,7 @@
 		2CB2896D2B07C8F000A8FCB3 /* Analytics+Configuration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Analytics+Configuration.swift"; sourceTree = "<group>"; };
 		2CB2896E2B07C8F000A8FCB3 /* Analytics.Values.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Analytics.Values.swift; sourceTree = "<group>"; };
 		2CB56E3E1E926BFB00AF7586 /* ToolbarTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToolbarTest.swift; sourceTree = "<group>"; };
+		2CBF88562B682801000318AD /* EmptyReadingListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyReadingListView.swift; sourceTree = "<group>"; };
 		2CC1B3EF1E9B861400814EEC /* DomainAutocompleteTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DomainAutocompleteTests.swift; sourceTree = "<group>"; };
 		2CCB296620A99C9500121DD8 /* LoginsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginsTests.swift; sourceTree = "<group>"; };
 		2CCF17522105E4FD00705AE5 /* DisplaySettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplaySettingsTests.swift; sourceTree = "<group>"; };
@@ -8020,6 +8022,7 @@
 				2CB289162B07C8F000A8FCB3 /* EmptyBookmarksView.swift */,
 				2CB289172B07C8F000A8FCB3 /* Onboarding */,
 				2CB289212B07C8F000A8FCB3 /* MultiplyImpact */,
+				2CBF88562B682801000318AD /* EmptyReadingListView.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -13734,6 +13737,7 @@
 				E47616C71AB74CA600E7DD25 /* ReaderModeBarView.swift in Sources */,
 				D821E90E2141B71C00452C55 /* SiriSettingsViewController.swift in Sources */,
 				EBB89507219398E500EB91A0 /* ContentBlocker.swift in Sources */,
+				2CBF88572B682801000318AD /* EmptyReadingListView.swift in Sources */,
 				2CB289C62B07C8F000A8FCB3 /* FakeTelemetry.swift in Sources */,
 				2CB289792B07C8F000A8FCB3 /* WhatsNewCell.swift in Sources */,
 				216A0D792A40E85A008077BA /* ThemeSettingsState.swift in Sources */,

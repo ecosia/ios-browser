@@ -300,6 +300,8 @@ class ReadingListPanel: UITableViewController,
         return scrollView
     }()
 
+    private var emptyStateView = EmptyReadingListView()
+    /* Ecosia: Update Empty State View reference
     private lazy var emptyStateView: UIView = {
         let view: UIView = .build()
 
@@ -308,8 +310,7 @@ class ReadingListPanel: UITableViewController,
             label.textAlignment = .center
             label.font = DefaultDynamicFontHelper.preferredFont(withTextStyle: .body, size: 16, weight: .semibold)
             label.adjustsFontSizeToFitWidth = true
-            // Ecosia: Update Text color
-            // label.textColor = self.themeManager.currentTheme.colors.textSecondary
+            label.textColor = self.themeManager.currentTheme.colors.textSecondary
             label.textColor = self.themeManager.currentTheme.colors.textPrimary
         }
         let readerModeLabel: UILabel = .build { label in
@@ -346,7 +347,6 @@ class ReadingListPanel: UITableViewController,
             welcomeLabel.leadingAnchor.constraint(equalTo: emptyStateViewWrapper.leadingAnchor),
             welcomeLabel.trailingAnchor.constraint(equalTo: emptyStateViewWrapper.trailingAnchor),
 
-            /* Ecosia: Invert label and image position (image first, label second)
             readerModeLabel.topAnchor.constraint(equalTo: welcomeLabel.bottomAnchor, constant: ReadingListPanelUX.WelcomeScreenPadding),
             readerModeLabel.leadingAnchor.constraint(equalTo: welcomeLabel.leadingAnchor),
             readerModeLabel.trailingAnchor.constraint(equalTo: readerModeImageView.leadingAnchor, constant: -ReadingListPanelUX.WelcomeScreenPadding),
@@ -365,27 +365,7 @@ class ReadingListPanel: UITableViewController,
             readingListImageView.widthAnchor.constraint(equalToConstant: ReadingListPanelUX.WelcomeScreenItemImageWidth),
 
             readingListLabel.bottomAnchor.constraint(equalTo: emptyStateViewWrapper.bottomAnchor).priority(.defaultLow),
-             */
-            // first row
-            readerModeLabel.topAnchor.constraint(equalTo: welcomeLabel.bottomAnchor, constant: ReadingListPanelUX.WelcomeScreenPadding),
-            readerModeImageView.leadingAnchor.constraint(equalTo: welcomeLabel.leadingAnchor),
-            readerModeImageView.trailingAnchor.constraint(equalTo: readerModeLabel.leadingAnchor, constant: -ReadingListPanelUX.WelcomeScreenPadding),
-
-            readerModeImageView.centerYAnchor.constraint(equalTo: readerModeLabel.centerYAnchor),
-            readerModeLabel.trailingAnchor.constraint(equalTo: welcomeLabel.trailingAnchor),
-            readerModeImageView.widthAnchor.constraint(equalToConstant: ReadingListPanelUX.WelcomeScreenItemImageWidth),
-
-            // second row
-            readingListLabel.topAnchor.constraint(equalTo: readerModeLabel.bottomAnchor, constant: ReadingListPanelUX.WelcomeScreenPadding),
-            readingListImageView.leadingAnchor.constraint(equalTo: welcomeLabel.leadingAnchor),
-            readingListImageView.trailingAnchor.constraint(equalTo: readingListLabel.leadingAnchor, constant: -ReadingListPanelUX.WelcomeScreenPadding),
-
-            readingListImageView.centerYAnchor.constraint(equalTo: readingListLabel.centerYAnchor),
-            readingListLabel.trailingAnchor.constraint(equalTo: welcomeLabel.trailingAnchor),
-            readingListImageView.widthAnchor.constraint(equalToConstant: ReadingListPanelUX.WelcomeScreenItemImageWidth),
-
-            readingListLabel.bottomAnchor.constraint(equalTo: emptyStateViewWrapper.bottomAnchor).priority(.defaultLow),
-
+            
             // overall positioning of emptyStateViewWrapper
             emptyStateViewWrapper.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: ReadingListPanelUX.WelcomeScreenHorizontalMinPadding),
             emptyStateViewWrapper.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -ReadingListPanelUX.WelcomeScreenHorizontalMinPadding),
@@ -402,7 +382,7 @@ class ReadingListPanel: UITableViewController,
 
         return view
     }()
-
+     */
     @objc
     fileprivate func longPress(_ longPressGestureRecognizer: UILongPressGestureRecognizer) {
         guard longPressGestureRecognizer.state == .began else { return }
