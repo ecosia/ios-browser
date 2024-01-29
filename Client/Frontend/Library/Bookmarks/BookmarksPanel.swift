@@ -45,7 +45,15 @@ class BookmarksPanel: SiteTableViewController,
 
     private var toolbarButtonItems: [UIBarButtonItem] {
         switch state {
+        /* Ecosia: Split mainView and inFolder staes
         case .bookmarks(state: .mainView), .bookmarks(state: .inFolder):
+            bottomRightButton.title = .BookmarksEdit
+            return [flexibleSpace, bottomRightButton]
+         */
+        case .bookmarks(state: .mainView):
+            bottomRightButton.title = .BookmarksEdit
+            return [moreButton, flexibleSpace, bottomRightButton]
+        case .bookmarks(state: .inFolder):
             bottomRightButton.title = .BookmarksEdit
             return [flexibleSpace, bottomRightButton]
         case .bookmarks(state: .inFolderEditMode):
