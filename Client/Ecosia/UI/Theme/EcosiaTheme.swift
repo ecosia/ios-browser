@@ -88,6 +88,8 @@ class EcosiaTheme {
     var autocompleteBackground: UIColor { .Light.Background.primary }
     var welcomeBackground: UIColor { .Light.Background.tertiary }
     var welcomeElementBackground: UIColor { .Light.Background.primary }
+    
+    var homePanelBackground: UIColor { return .Light.Background.tertiary }
 }
 
 final class DarkEcosiaTheme: EcosiaTheme {
@@ -169,6 +171,8 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var autocompleteBackground: UIColor { .Dark.Background.secondary }
     override var welcomeBackground: UIColor { .Dark.Background.secondary }
     override var welcomeElementBackground: UIColor { .Dark.Background.secondary }
+    
+    override var homePanelBackground: UIColor { return .Dark.Background.secondary }
 }
 
 extension UIImage {

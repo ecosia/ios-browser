@@ -45,7 +45,7 @@ private class EcosiaLightColourPalette: ThemeColourPalette {
     var layer3: UIColor = UIColor.legacyTheme.ecosia.primaryBackground
     var layer4: UIColor = fallbackDefaultThemeManager.currentTheme.colors.layer4
     var layer5: UIColor = fallbackDefaultThemeManager.currentTheme.colors.layer5
-    var layer6: UIColor = fallbackDefaultThemeManager.currentTheme.colors.layer6
+    var layer6: UIColor = .legacyTheme.ecosia.homePanelBackground
     var layer5Hover: UIColor = fallbackDefaultThemeManager.currentTheme.colors.layer5Hover
     var layerScrim: UIColor = fallbackDefaultThemeManager.currentTheme.colors.layerScrim
     var layerGradient = fallbackDefaultThemeManager.currentTheme.colors.layerGradient

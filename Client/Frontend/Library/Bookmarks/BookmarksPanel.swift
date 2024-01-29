@@ -138,7 +138,7 @@ class BookmarksPanel: SiteTableViewController,
         tableView.allowsSelectionDuringEditing = true
         tableView.dragInteractionEnabled = false
         // Ecosia: Update TableView properties
-        tableView.backgroundColor = .legacyTheme.ecosia.tertiaryBackground
+        tableView.backgroundColor = themeManager.currentTheme.colors.layer6
         tableView.contentInset.top = 32
     }
     
