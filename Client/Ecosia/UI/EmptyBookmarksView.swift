@@ -31,9 +31,7 @@ final class EmptyBookmarksView: UIView, Themeable {
         let label = UILabel()
         label.text = .localized(.noBookmarksYet)
         label.textAlignment = .center
-        // Ecosia: Aligning Fonts to Reading list that uses Dynamic Fonts helper
-        // label.font = UX.TitleLabelFont
-        label.font = DefaultDynamicFontHelper.preferredFont(withTextStyle: .body, size: 16, weight: .semibold)
+        label.font = UX.TitleLabelFont
         label.adjustsFontForContentSizeCategory = true
         return label
     }()
@@ -181,9 +179,7 @@ final class EmptyBookmarksView: UIView, Themeable {
         sectionStackView.addArrangedSubview(sectionLabelsStackView)
 
         let sectionLabel = UILabel()
-        // Ecosia: Aligning Fonts to Reading list that uses Dynamic Fonts helper
-        // sectionLabel.font = UX.SectionLabelFont
-        sectionLabel.font = DefaultDynamicFontHelper.preferredFont(withTextStyle: .body, size: 16, weight: .light)
+        sectionLabel.font = UX.SectionLabelFont
         sectionLabel.numberOfLines = 0
         sectionLabel.text = text
         sectionLabel.adjustsFontForContentSizeCategory = true
@@ -254,6 +250,7 @@ final class EmptyBookmarksView: UIView, Themeable {
     }
     
     @objc func applyTheme() {
+        backgroundColor = .legacyTheme.ecosia.homePanelBackground
         importBookmarksButton.layer.borderColor = UIColor.legacyTheme.ecosia.primaryText.cgColor
         learnMoreButton.setTitleColor(.legacyTheme.ecosia.primaryText, for: .normal)
         learnMoreButton.titleLabel?.font = UX.LearnMoreButtonLabelFont
