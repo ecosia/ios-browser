@@ -73,7 +73,9 @@ public struct StandardImageIdentifiers {
         public static let qrCode = "qrCodeLarge"
         public static let shipping = "shippingLarge"
         public static let shopping = "shoppingLarge"
-        public static let tabTray = "tabTrayLarge"
+        // Ecosia: Update tabTray image name
+        // public static let tabTray = "tabTrayLarge"
+        public static let tabTray = "recentlyClosed"
         public static let warningFill = "warningFillLarge"
     }
 
