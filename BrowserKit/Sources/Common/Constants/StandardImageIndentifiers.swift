@@ -47,9 +47,15 @@ public struct StandardImageIdentifiers {
         public static let criticalFill = "criticalFillLarge"
         public static let cross = "crossLarge"
         public static let delete = "deleteLarge"
+        // Ecosia: Review Device icons
+        /*
         public static let deviceDesktop = "deviceDesktopLarge"
         public static let deviceDesktopSend = "deviceDesktopSendLarge"
         public static let deviceMobile = "deviceMobileLarge"
+        */
+        public static let deviceDesktop = "menu-RequestDesktopSite"
+        public static let deviceDesktopSend = "menu-Send-to-Device"
+        public static let deviceMobile = "menu-ViewMobile"
         public static let download = "downloadLarge"
         public static let edit = "editLarge"
         public static let folder = "folderLarge"
