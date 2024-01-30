@@ -392,6 +392,8 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
         let nightModeAction = getNightModeAction()
         section.append(contentsOf: nightModeAction)
 
+        let customizeHomePageAction = getCustomizeHomePageAction()
+        append(to: &section, action: customizeHomePageAction)
         
         let helpAction = getHelpAction()
         section.append(helpAction)
