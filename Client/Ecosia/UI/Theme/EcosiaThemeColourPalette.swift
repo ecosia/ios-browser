@@ -40,9 +40,9 @@ private class EcosiaLightColourPalette: ThemeColourPalette {
     }()
         
     // MARK: - Layers
-    var layer1: UIColor = UIColor.legacyTheme.ecosia.primaryBackground
+    var layer1: UIColor = .legacyTheme.ecosia.primaryBackground
     var layer2: UIColor = fallbackDefaultThemeManager.currentTheme.colors.layer2
-    var layer3: UIColor = UIColor.legacyTheme.ecosia.primaryBackground
+    var layer3: UIColor = .legacyTheme.ecosia.primaryBackground
     var layer4: UIColor = fallbackDefaultThemeManager.currentTheme.colors.layer4
     var layer5: UIColor = .legacyTheme.ecosia.secondaryBackground
     var layer6: UIColor = .legacyTheme.ecosia.homePanelBackground
@@ -50,14 +50,14 @@ private class EcosiaLightColourPalette: ThemeColourPalette {
     var layerScrim: UIColor = fallbackDefaultThemeManager.currentTheme.colors.layerScrim
     var layerGradient = fallbackDefaultThemeManager.currentTheme.colors.layerGradient
     var layerGradientOverlay = fallbackDefaultThemeManager.currentTheme.colors.layerGradientOverlay
-    var layerAccentNonOpaque: UIColor = UIColor.legacyTheme.ecosia.primaryButton
+    var layerAccentNonOpaque: UIColor = .legacyTheme.ecosia.primaryButton
     var layerAccentPrivate: UIColor = fallbackDefaultThemeManager.currentTheme.colors.layerAccentPrivate
-    var layerAccentPrivateNonOpaque: UIColor = UIColor.legacyTheme.ecosia.primaryText
+    var layerAccentPrivateNonOpaque: UIColor = .legacyTheme.ecosia.primaryText
     var layerLightGrey30: UIColor = fallbackDefaultThemeManager.currentTheme.colors.layerLightGrey30
     var layerSepia: UIColor = fallbackDefaultThemeManager.currentTheme.colors.layerSepia
     var layerInfo: UIColor = fallbackDefaultThemeManager.currentTheme.colors.layerInfo
     var layerConfirmation: UIColor = fallbackDefaultThemeManager.currentTheme.colors.layerConfirmation
-    var layerWarning: UIColor = UIColor.legacyTheme.ecosia.warning
+    var layerWarning: UIColor = .legacyTheme.ecosia.warning
     var layerError: UIColor = fallbackDefaultThemeManager.currentTheme.colors.layerError
     var layerRatingA: UIColor = fallbackDefaultThemeManager.currentTheme.colors.layerRatingA
     var layerRatingASubdued: UIColor = fallbackDefaultThemeManager.currentTheme.colors.layerRatingASubdued
@@ -71,32 +71,32 @@ private class EcosiaLightColourPalette: ThemeColourPalette {
     var layerRatingFSubdued: UIColor = fallbackDefaultThemeManager.currentTheme.colors.layerRatingFSubdued
 
     // MARK: - Actions
-    var actionPrimary: UIColor = UIColor.legacyTheme.ecosia.primaryButton
-    var actionPrimaryHover: UIColor = UIColor.legacyTheme.ecosia.primaryButtonActive
-    var actionSecondary: UIColor = UIColor.legacyTheme.ecosia.secondaryButton
+    var actionPrimary: UIColor = .legacyTheme.ecosia.primaryButton
+    var actionPrimaryHover: UIColor = .legacyTheme.ecosia.primaryButtonActive
+    var actionSecondary: UIColor = .legacyTheme.ecosia.secondaryButton
     var actionSecondaryHover: UIColor = fallbackDefaultThemeManager.currentTheme.colors.actionSecondaryHover
     var formSurfaceOff: UIColor = fallbackDefaultThemeManager.currentTheme.colors.formSurfaceOff
     var formKnob: UIColor = fallbackDefaultThemeManager.currentTheme.colors.formKnob
     var indicatorActive: UIColor = fallbackDefaultThemeManager.currentTheme.colors.indicatorActive
     var indicatorInactive: UIColor = fallbackDefaultThemeManager.currentTheme.colors.indicatorInactive
     var actionConfirmation: UIColor = fallbackDefaultThemeManager.currentTheme.colors.actionConfirmation
-    var actionWarning: UIColor = UIColor.legacyTheme.ecosia.warning
+    var actionWarning: UIColor = .legacyTheme.ecosia.warning
     var actionError: UIColor = fallbackDefaultThemeManager.currentTheme.colors.actionError
 
     // MARK: - Text
-    var textPrimary: UIColor = UIColor.legacyTheme.ecosia.primaryText
-    var textSecondary: UIColor = UIColor.legacyTheme.ecosia.secondaryText
+    var textPrimary: UIColor = .legacyTheme.ecosia.primaryText
+    var textSecondary: UIColor = .legacyTheme.ecosia.secondaryText
     var textSecondaryAction: UIColor = fallbackDefaultThemeManager.currentTheme.colors.textSecondaryAction
     var textDisabled: UIColor = fallbackDefaultThemeManager.currentTheme.colors.textDisabled
     var textWarning: UIColor = fallbackDefaultThemeManager.currentTheme.colors.textWarning
-    var textAccent: UIColor = UIColor.legacyTheme.ecosia.primaryButton
+    var textAccent: UIColor = .legacyTheme.ecosia.primaryButton
     var textOnDark: UIColor = fallbackDefaultThemeManager.currentTheme.colors.textOnDark
     var textOnLight: UIColor = fallbackDefaultThemeManager.currentTheme.colors.textOnLight
-    var textInverted: UIColor = UIColor.legacyTheme.ecosia.primaryTextInverted
+    var textInverted: UIColor = .legacyTheme.ecosia.primaryTextInverted
 
     // MARK: - Icons
-    var iconPrimary: UIColor = UIColor.legacyTheme.ecosia.primaryIcon
-    var iconSecondary: UIColor = UIColor.legacyTheme.ecosia.secondaryIcon
+    var iconPrimary: UIColor = .legacyTheme.ecosia.primaryIcon
+    var iconSecondary: UIColor = .legacyTheme.ecosia.secondaryIcon
     var iconDisabled: UIColor = fallbackDefaultThemeManager.currentTheme.colors.iconDisabled
     var iconAction: UIColor = fallbackDefaultThemeManager.currentTheme.colors.iconAction
     var iconOnColor: UIColor = fallbackDefaultThemeManager.currentTheme.colors.iconOnColor
@@ -109,7 +109,7 @@ private class EcosiaLightColourPalette: ThemeColourPalette {
     var iconAccentYellow: UIColor = fallbackDefaultThemeManager.currentTheme.colors.iconAccentYellow
 
     // MARK: - Border
-    var borderPrimary: UIColor = UIColor.Photon.Grey20
+    var borderPrimary: UIColor = .legacyTheme.ecosia.barSeparator
     var borderAccent: UIColor = fallbackDefaultThemeManager.currentTheme.colors.borderAccent
     var borderAccentNonOpaque: UIColor = fallbackDefaultThemeManager.currentTheme.colors.borderAccentNonOpaque
     var borderAccentPrivate: UIColor = fallbackDefaultThemeManager.currentTheme.colors.borderAccentPrivate
