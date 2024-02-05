@@ -221,7 +221,9 @@ class ButtonToast: Toast {
 
         titleLabel.textColor = theme.colors.textInverted
         descriptionLabel.textColor = theme.colors.textInverted
-        imageView.tintColor = theme.colors.textInverted
+        // Ecosia: Add image tintColor to look like v104
+        // imageView.tintColor = theme.colors.textInverted
+        imageView.tintColor = UIColor.legacyTheme.ecosia.toastImageTint
         roundedButton.setTitleColor(theme.colors.textInverted, for: [])
         /* Ecosia: Add `horizontalStackView` background as the Toast view is made clear
            so to have the padding effect from bottom, left and right

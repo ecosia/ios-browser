@@ -222,7 +222,13 @@ extension BrowserViewController: ToolBarActionMenuDelegate {
     func showToast(message: String, toastAction: MenuButtonToastAction, url: String?) {
         switch toastAction {
         case .removeBookmark:
+            /* Ecosia: Update Toast to look like v104
             let viewModel = ButtonToastViewModel(labelText: message,
+                                                 buttonText: .UndoString,
+                                                 textAlignment: .left)
+             */
+            let viewModel = ButtonToastViewModel(labelText: message,
+                                                 imageName: "bookmarksEmpty",
                                                  buttonText: .UndoString,
                                                  textAlignment: .left)
             let toast = ButtonToast(viewModel: viewModel,

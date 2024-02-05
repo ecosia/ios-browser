@@ -1152,7 +1152,13 @@ class BrowserViewController: UIViewController,
     }
 
     private func showBookmarksToast() {
+        /* Ecosia: Update Toast to look like v104
         let viewModel = ButtonToastViewModel(labelText: .AppMenu.AddBookmarkConfirmMessage,
+                                             buttonText: .BookmarksEdit,
+                                             textAlignment: .left)
+         */
+        let viewModel = ButtonToastViewModel(labelText: .AppMenu.AddBookmarkConfirmMessage,
+                                             imageName: StandardImageIdentifiers.Large.bookmarkSlash,
                                              buttonText: .BookmarksEdit,
                                              textAlignment: .left)
         let toast = ButtonToast(viewModel: viewModel,
@@ -1875,7 +1881,12 @@ class BrowserViewController: UIViewController,
         // If in overlay mode switching doesnt correctly dismiss the homepanels
         guard !topTabsVisible, !self.urlBar.inOverlayMode else { return }
         // We're not showing the top tabs; show a toast to quick switch to the fresh new tab.
+        /* Ecosia: Update Toast to look like v104
         let viewModel = ButtonToastViewModel(labelText: .ContextMenuButtonToastNewTabOpenedLabelText,
+                                             buttonText: .ContextMenuButtonToastNewTabOpenedButtonText)
+         */
+        let viewModel = ButtonToastViewModel(labelText: .ContextMenuButtonToastNewTabOpenedLabelText,
+                                             imageName: "tabs",
                                              buttonText: .ContextMenuButtonToastNewTabOpenedButtonText)
         let toast = ButtonToast(viewModel: viewModel,
                                 theme: themeManager.currentTheme,
@@ -2113,7 +2124,12 @@ extension BrowserViewController: HomePanelDelegate {
         guard !topTabsVisible else { return }
 
         // We're not showing the top tabs; show a toast to quick switch to the fresh new tab.
+        /* Ecosia: Update Toast to look like v104
         let viewModel = ButtonToastViewModel(labelText: .ContextMenuButtonToastNewTabOpenedLabelText,
+                                             buttonText: .ContextMenuButtonToastNewTabOpenedButtonText)
+         */
+        let viewModel = ButtonToastViewModel(labelText: .ContextMenuButtonToastNewTabOpenedLabelText,
+                                             imageName: "tabs",
                                              buttonText: .ContextMenuButtonToastNewTabOpenedButtonText)
         let toast = ButtonToast(viewModel: viewModel,
                                 theme: themeManager.currentTheme,
@@ -2469,7 +2485,12 @@ extension BrowserViewController: ContextMenuHelperDelegate {
                 let tab = self.tabManager.addTab(URLRequest(url: rURL as URL), afterTab: currentTab, isPrivate: isPrivate)
                 guard !self.topTabsVisible else { return }
                 // We're not showing the top tabs; show a toast to quick switch to the fresh new tab.
+                /* Ecosia: Update Toast to look like v104
                 let viewModel = ButtonToastViewModel(labelText: .ContextMenuButtonToastNewTabOpenedLabelText,
+                                                     buttonText: .ContextMenuButtonToastNewTabOpenedButtonText)
+                 */
+                let viewModel = ButtonToastViewModel(labelText: .ContextMenuButtonToastNewTabOpenedLabelText,
+                                                     imageName: "tabs",
                                                      buttonText: .ContextMenuButtonToastNewTabOpenedButtonText)
                 let toast = ButtonToast(viewModel: viewModel,
                                         theme: self.themeManager.currentTheme,
