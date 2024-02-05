@@ -127,14 +127,14 @@ class ButtonToast: Toast {
     }
 
     private func createView(viewModel: ButtonToastViewModel) -> UIView {
+        
+        // Ecosia: Review ToastView to look like v104
+        let space = UIView()
+        space.widthAnchor.constraint(equalToConstant: UX.padding).isActive = true
+        horizontalStackView.addArrangedSubview(space)
+
         if let imageName = viewModel.imageName {
             imageView = UIImageView(image: UIImage.templateImageNamed(imageName))
-            // Ecosia: Add image tintColor
-            imageView.tintColor = UIColor.legacyTheme.ecosia.toastImageTint
-            // Ecosia: Review ToastView to look like v104
-            let space = UIView()
-            space.widthAnchor.constraint(equalToConstant: UX.padding).isActive = true
-            horizontalStackView.addArrangedSubview(space)
             horizontalStackView.addArrangedSubview(imageView)
         }
 
