@@ -25,8 +25,12 @@ class ButtonToast: Toast {
         static let buttonPadding: CGFloat = 16
         static let buttonBorderRadius: CGFloat = 5
         static let buttonBorderWidth: CGFloat = 1
+        /* Ecosia: Adjust font sizes
         static let titleFontSize: CGFloat = 15
         static let descriptionFontSize: CGFloat = 13
+         */
+        static let titleFontSize: CGFloat = 17
+        static let descriptionFontSize: CGFloat = 15
         static let widthOffset: CGFloat = 20
         // Ecosia: Add properties
         static let standardCornerRadius: CGFloat = 10
@@ -60,7 +64,7 @@ class ButtonToast: Toast {
     }
 
     private var titleLabel: UILabel = .build { label in
-        label.font = DefaultDynamicFontHelper.preferredBoldFont(withTextStyle: .body,
+        label.font = DefaultDynamicFontHelper.preferredFont(withTextStyle: .body,
                                                                 size: UX.titleFontSize)
         label.numberOfLines = 0
         // Ecosia: Review ToastView to look like v104
@@ -70,7 +74,7 @@ class ButtonToast: Toast {
     }
 
     private var descriptionLabel: UILabel = .build { label in
-        label.font = DefaultDynamicFontHelper.preferredBoldFont(withTextStyle: .body,
+        label.font = DefaultDynamicFontHelper.preferredFont(withTextStyle: .body,
                                                                 size: UX.descriptionFontSize)
         label.numberOfLines = 0
     }
@@ -82,8 +86,8 @@ class ButtonToast: Toast {
         button.titleLabel?.font = DefaultDynamicFontHelper.preferredFont(withTextStyle: .body,
                                                                           size: Toast.UX.fontSize)
          */
-        button.titleLabel?.font = DefaultDynamicFontHelper.preferredFont(withTextStyle: .body,
-                                                                         size: Toast.UX.fontSize).bold()
+        button.titleLabel?.font = DefaultDynamicFontHelper.preferredBoldFont(withTextStyle: .body,
+                                                                             size: UX.titleFontSize)
         button.titleLabel?.numberOfLines = 1
         button.titleLabel?.lineBreakMode = .byClipping
         button.titleLabel?.adjustsFontSizeToFitWidth = true
