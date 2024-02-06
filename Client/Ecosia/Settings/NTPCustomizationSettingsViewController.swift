@@ -48,7 +48,7 @@ final class NTPCustomizationSetting: BoolSetting {
     
     convenience init(prefs: Prefs, config: CustomizableNTPSettingConfig) {
         self.init(prefs: prefs, 
-                  theme: AppContainer.shared.resolve(),
+                  theme: EcosiaThemeManager(sharedContainerIdentifier: AppInfo.sharedContainerIdentifier).currentTheme,
                   defaultValue: true,
                   titleText: .localized(config.localizedTitleKey))
         self.config = config
