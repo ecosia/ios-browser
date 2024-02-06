@@ -163,7 +163,7 @@ final class ChangeSearchCount: HiddenSetting {
 final class UnleashDefaultBrowserSetting: HiddenSetting {
     override var title: NSAttributedString? {
 
-        return NSAttributedString(string: "Debug: Unleash default browser variant", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
+        return NSAttributedString(string: "Debug: Unleash Reset", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
     }
 
     override var status: NSAttributedString? {
@@ -181,13 +181,11 @@ final class UnleashDefaultBrowserSetting: HiddenSetting {
             }
             await MainActor.run {
                 self.settings.tableView.reloadData()
-
-                let alert = AlertController(title: "New variant assigned", message: "It might be the old one though", preferredStyle: .alert)
-                navigationController?.topViewController?.present(alert, animated: true) {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                        alert.dismiss(animated: true)
-                    }
-                }
+                let alert = AlertController(title: "Unleash reset ✅", 
+                                            message: "The local Unleash cache has been wiped out",
+                                            preferredStyle: .alert)
+                alert.addAction(.init(title: "Ok", style: .default))
+                navigationController?.topViewController?.show(alert, sender: nil)
             }
         }
     }
