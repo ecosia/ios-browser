@@ -148,7 +148,8 @@ class AppSettingsTableViewController: SettingsTableViewController,
     override func generateSettings() -> [SettingSection] {
         var settings = [SettingSection]()
         settings += getDefaultBrowserSetting()
-        settings += getAccountSetting()
+        // Ecosia: Deactivate account settings
+        // settings += getAccountSetting()
         settings += getGeneralSettings()
         settings += getPrivacySettings()
         settings += getSupportSettings()
@@ -165,7 +166,11 @@ class AppSettingsTableViewController: SettingsTableViewController,
         let footerTitle = NSAttributedString(
             string: String.FirefoxHomepage.HomeTabBanner.EvergreenMessage.HomeTabBannerDescription)
 
+        /* Ecosia: Update Default Browser footer
         return [SettingSection(footerTitle: footerTitle,
+                               children: [DefaultBrowserSetting(theme: themeManager.currentTheme)])]
+         */
+        return [SettingSection(footerTitle: .init(string: .localized(.linksFromWebsites)),
                                children: [DefaultBrowserSetting(theme: themeManager.currentTheme)])]
     }
 
@@ -197,13 +202,20 @@ class AppSettingsTableViewController: SettingsTableViewController,
         var generalSettings: [Setting] = [
             SearchSetting(settings: self, settingsDelegate: parentCoordinator),
             NewTabPageSetting(settings: self, settingsDelegate: parentCoordinator),
-            HomeSetting(settings: self, settingsDelegate: parentCoordinator),
+            // Ecosia: Custom homepage settings
+            // HomeSetting(settings: self, settingsDelegate: parentCoordinator),
+            HomepageSettings(settings: self, settingsDelegate: settingsDelegate),
             OpenWithSetting(settings: self, settingsDelegate: parentCoordinator),
             ThemeSetting(settings: self, settingsDelegate: parentCoordinator),
             SiriPageSetting(settings: self, settingsDelegate: parentCoordinator),
             BlockPopupSetting(settings: self),
             NoImageModeSetting(settings: self),
         ]
+        
+        // Ecosia: Quick Search Shortcuts Experiment
+        if EngineShortcutsExperiment.isEnabled {
+            generalSettings.insert(QuickSearchSearchSetting(settings: self), at: 2)
+        }
 
         if isSearchBarLocationFeatureEnabled {
             generalSettings.insert(SearchBarSetting(settings: self, settingsDelegate: parentCoordinator), at: 5)
@@ -266,9 +278,15 @@ class AppSettingsTableViewController: SettingsTableViewController,
         privacySettings.append(NotificationsSetting(theme: themeManager.currentTheme,
                                                     profile: profile,
                                                     settingsDelegate: parentCoordinator))
-
+        
+        /* Ecosia: Add Ecosia Privacy and Terms
         privacySettings += [
             PrivacyPolicySetting(theme: themeManager.currentTheme, settingsDelegate: parentCoordinator)
+        ]
+         */
+        privacySettings += [
+            EcosiaPrivacyPolicySetting(),
+            EcosiaTermsSetting()
         ]
 
         return [SettingSection(title: NSAttributedString(string: .AppSettingsPrivacyTitle),
@@ -318,7 +336,8 @@ class AppSettingsTableViewController: SettingsTableViewController,
             ForceCrashSetting(settings: self),
             ForgetSyncAuthStateDebugSetting(settings: self),
             SwitchFakespotProduction(settings: self, settingsDelegate: self),
-            ChangeToChinaSetting(settings: self),
+            // Ecosia: deactivate china settings
+            // ChangeToChinaSetting(settings: self),
             AppReviewPromptSetting(settings: self, settingsDelegate: self),
             ToggleHistoryGroups(settings: self, settingsDelegate: self),
             ToggleInactiveTabs(settings: self, settingsDelegate: self),
