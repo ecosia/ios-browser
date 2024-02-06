@@ -51,7 +51,9 @@ class AppSettingsTableViewController: SettingsTableViewController,
         self.appAuthenticator = appAuthenticator
         self.applicationHelper = applicationHelper
 
-        super.init()
+        // Ecosia: Update TableView to grouped style
+        // super.init()
+        super.init(style: .insetGrouped)
         self.profile = profile
         self.tabManager = tabManager
         self.settingsDelegate = delegate
