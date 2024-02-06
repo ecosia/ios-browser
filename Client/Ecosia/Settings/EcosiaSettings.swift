@@ -196,9 +196,10 @@ final class HomepageSettings: Setting {
 
     override var accessoryView: UIImageView? { disclosureIndicator }
 
-    init(settings: SettingsTableViewController) {
+    init(settings: SettingsTableViewController, settingsDelegate: SettingsDelegate?) {
         self.profile = settings.profile
         super.init(title: NSAttributedString(string: .localized(.homepage)))
+        self.delegate = settingsDelegate
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
