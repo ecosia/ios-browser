@@ -6,14 +6,14 @@ import UIKit
 import Shared
 import Common
 
-class CircleButton: ToolbarButton, Themeable {
+class CircleButton: ToolbarButton {
     enum Config {
         case search
         case newTab
         
         var image: String {
             switch self {
-            case .search: return "search"
+            case .search: return "searchUrl"
             case .newTab: return "nav-add"
             }
         }
@@ -39,10 +39,6 @@ class CircleButton: ToolbarButton, Themeable {
     }
     private var margin: CGFloat = 8
     
-    var themeManager: ThemeManager { AppContainer.shared.resolve() }
-    var themeObserver: NSObjectProtocol?
-    var notificationCenter: NotificationProtocol = NotificationCenter.default
-
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
@@ -61,11 +57,10 @@ class CircleButton: ToolbarButton, Themeable {
     }
 
     private func setup() {
-        setImage(UIImage(named: config.image), for: .normal)
+        setImage(.templateImageNamed(config.image), for: .normal)
         circle.isUserInteractionEnabled = false
         addSubview(circle)
         sendSubviewToBack(circle)
-        applyTheme()
         accessibilityLabel = config.accessibilityLabel
         accessibilityIdentifier = AccessibilityIdentifiers.Ecosia.TabToolbar.circleButton
     }
@@ -79,10 +74,10 @@ class CircleButton: ToolbarButton, Themeable {
         circle.isHidden = config.shouldHideCircle
     }
     
-    func applyTheme() {
-        circle.backgroundColor = UIColor.legacyTheme.ecosia.tertiaryBackground
+    override func applyTheme(theme: Theme) {
+        circle.backgroundColor = .legacyTheme.ecosia.tertiaryBackground
         tintColor = config.shouldHideCircle ? .legacyTheme.ecosia.primaryText : .legacyTheme.ecosia.primaryButton
-        selectedTintColor = UIColor.legacyTheme.ecosia.primaryButtonActive
+        selectedTintColor = .legacyTheme.ecosia.primaryButtonActive
         unselectedTintColor = tintColor
     }
 }
