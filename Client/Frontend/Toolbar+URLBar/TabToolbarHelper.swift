@@ -67,7 +67,7 @@ open class TabToolbarHelper: NSObject {
      */
     let ImageReload = UIImage.templateImageNamed("nav-refresh")
     let ImageStop = UIImage.templateImageNamed("nav-stop")
-    let ImageSearch = UIImage.templateImageNamed("search")
+    let ImageSearch = UIImage.templateImageNamed("searchUrl")
     let ImageNewTab = UIImage.templateImageNamed("nav-add")
     let ImageHome = UIImage.templateImageNamed("menu-Home")
 
@@ -142,9 +142,8 @@ open class TabToolbarHelper: NSObject {
         toolbar.addNewTabButton.addTarget(self, action: #selector(didClickAddNewTab), for: .touchUpInside)
         toolbar.addNewTabButton.accessibilityIdentifier = AccessibilityIdentifiers.Toolbar.addNewTabButton
          */
-        toolbar.circleButton.setImage(UIImage.templateImageNamed(StandardImageIdentifiers.Large.plus), for: .normal)
         toolbar.circleButton.accessibilityLabel = .AddTabAccessibilityLabel
-        toolbar.circleButton.addTarget(self, action: #selector(didClickAddNewTab), for: .touchUpInside)
+        toolbar.circleButton.addTarget(self, action: #selector(didClickCircleButton), for: .touchUpInside)
         toolbar.circleButton.accessibilityIdentifier = AccessibilityIdentifiers.Ecosia.TabToolbar.circleButton
 
         toolbar.appMenuButton.contentMode = .center
@@ -213,13 +212,12 @@ open class TabToolbarHelper: NSObject {
         toolbar.tabToolbarDelegate?.tabToolbarDidPressBookmarks(toolbar, button: toolbar.appMenuButton)
     }
 
+    /* Ecosia: Change `addNewTabButton` to configurable CircleButton
     func didClickAddNewTab() {
         TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .addNewTabButton)
-        /* Ecosia: Change `addNewTabButton` to configurable CircleButton
         toolbar.tabToolbarDelegate?.tabToolbarDidPressAddNewTab(toolbar, button: toolbar.addNewTabButton)
-         */
-        toolbar.tabToolbarDelegate?.tabToolbarDidPressAddNewTab(toolbar, button: toolbar.circleButton)
     }
+     */
 
     func didPressMultiStateButton() {
         switch middleButtonState {
@@ -243,6 +241,18 @@ open class TabToolbarHelper: NSObject {
             if recognizer.state == .began {
                 toolbar.tabToolbarDelegate?.tabToolbarDidLongPressReload(toolbar, button: toolbar.multiStateButton)
             }
+        }
+    }
+    
+    // Ecosia: Change addNewTabButton to configurable CircleButton
+    func didClickCircleButton() {
+        switch toolbar.circleButton.config {
+        case .search:
+            TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .startSearchButton)
+            toolbar.tabToolbarDelegate?.tabToolbarDidPressSearch(toolbar, button: toolbar.circleButton)
+        case .newTab:
+            TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .addNewTabButton)
+            toolbar.tabToolbarDelegate?.tabToolbarDidPressAddNewTab(toolbar, button: toolbar.circleButton)
         }
     }
 }

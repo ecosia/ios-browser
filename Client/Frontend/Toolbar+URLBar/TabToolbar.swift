@@ -34,7 +34,9 @@ class TabToolbar: UIView, SearchBarLocationProvider {
 
     // MARK: - Initializers
     override private init(frame: CGRect) {
-        actionButtons = [backButton, forwardButton, multiStateButton, circleButton, tabsButton, appMenuButton]
+        // Ecosia: Update toolbar search button
+        // actionButtons = [backButton, forwardButton, multiStateButton, circleButton, tabsButton, appMenuButton]
+        actionButtons = [backButton, forwardButton, circleButton, tabsButton, appMenuButton]
         super.init(frame: frame)
         setupAccessibility()
 
@@ -142,12 +144,21 @@ extension TabToolbar: TabToolbarProtocol {
 // MARK: - Theme protocols
 extension TabToolbar: ThemeApplicable, PrivateModeUI {
     func applyTheme(theme: Theme) {
+        /* Ecosia: Update theme colors
         backgroundColor = theme.colors.layer1
         actionButtons.forEach { $0.applyTheme(theme: theme) }
 
         privateModeBadge.badge.tintBackground(color: theme.colors.layer1)
         appMenuBadge.badge.tintBackground(color: theme.colors.layer1)
         warningMenuBadge.badge.tintBackground(color: theme.colors.layer1)
+         */
+        backgroundColor = .legacyTheme.ecosia.barBackground
+        actionButtons.forEach { $0.applyTheme(theme: theme) }
+
+        privateModeBadge.badge.tintBackground(color: .legacyTheme.ecosia.barBackground)
+        appMenuBadge.badge.tintBackground(color: .legacyTheme.ecosia.barBackground)
+        warningMenuBadge.badge.tintBackground(color: .legacyTheme.ecosia.barBackground)
+
     }
 
     func applyUIMode(isPrivate: Bool, theme: Theme) {
