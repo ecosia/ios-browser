@@ -107,7 +107,7 @@ extension AppSettingsTableViewController {
     }
     
     private func getEcosiaPrivacySection() -> SettingSection {
-        var privacySettings = [
+        let privacySettings = [
             PasswordManagerSetting(settings: self, settingsDelegate: parentCoordinator),
             ClearPrivateDataSetting(settings: self, settingsDelegate: parentCoordinator),
             EcosiaSendAnonymousUsageDataSetting(prefs: profile.prefs, theme: themeManager.currentTheme),
