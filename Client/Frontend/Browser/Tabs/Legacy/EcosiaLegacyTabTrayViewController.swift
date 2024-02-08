@@ -463,7 +463,9 @@ extension LegacyTabTrayViewController {
              navigationController?.navigationBar.tintColor = UIColor.legacyTheme.ecosia.primaryButton
          }
          maskButton.applyUIMode(isPrivate: maskButton.isSelected, theme: themeManager.currentTheme)
-         addNewTabButton.applyTheme()
+         // Ecosia: Update `addNewTabButton.applyTheme`
+         // addNewTabButton.applyTheme()
+         addNewTabButton.applyTheme(theme: themeManager.currentTheme)
          // Ecosia: Change close all button title color
          (deleteButton.customView as? UIButton)?.setTitleColor(.legacyTheme.ecosia.warning, for: .normal)
          
