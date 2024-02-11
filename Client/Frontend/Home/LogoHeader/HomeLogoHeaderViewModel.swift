@@ -8,7 +8,9 @@ import Shared
 
 class HomeLogoHeaderViewModel {
     struct UX {
-        static let bottomSpacing: CGFloat = 30
+        // Ecosia: Update bottom spacing
+        // static let bottomSpacing: CGFloat = 30
+        static let bottomSpacing: CGFloat = 8
     }
 
     private let profile: Profile
