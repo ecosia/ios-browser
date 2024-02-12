@@ -166,9 +166,6 @@ class HomepageViewController: UIViewController, FeatureFlaggable, Themeable, Con
 
         notificationCenter.post(name: .ShowHomepage)
         notificationCenter.post(name: .HistoryUpdated)
-
-        applyTheme()
-        reloadView()
     }
 
     override func viewDidAppear(_ animated: Bool) {
