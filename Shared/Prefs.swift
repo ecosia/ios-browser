@@ -75,7 +75,10 @@ public struct PrefsKeys {
         public static let InactiveTabs = "InactiveTabsUserPrefsKey"
         public static let JumpBackInSection = "JumpBackInSectionUserPrefsKey"
         public static let SearchBarPosition = "SearchBarPositionUsersPrefsKey"
-        public static let TopSiteSection = "TopSitesUserPrefsKey"
+    }
+
+    public struct SearchSettings {
+        public static let showPrivateModeSearchSuggestions = "ShowPrivateModeSearchSuggestionsKey"
     }
 
     public struct UserFeatureFlagPrefs {
@@ -83,10 +86,12 @@ public struct PrefsKeys {
         public static let RecentlySavedSection = "RecentlySavedSectionUserPrefsKey"
         public static let SponsoredShortcuts = "SponsoredShortcutsUserPrefsKey"
         public static let StartAtHome = "StartAtHomeUserPrefsKey"
+        public static let TopSiteSection = "TopSitesUserPrefsKey"
     }
 
     // Firefox contextual hint
     public enum ContextualHints: String, CaseIterable {
+        case dataClearanceKey = "ContextualHintDataClearance"
         case jumpBackinKey = "ContextualHintJumpBackin"
         case jumpBackInConfiguredKey = "JumpBackInConfigured"
         case jumpBackInSyncedTabKey = "ContextualHintJumpBackInSyncedTab"

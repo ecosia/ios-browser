@@ -7,298 +7,104 @@ import Shared
 @_exported import MozillaAppServices
 import Common
 
+/// Typealias for AutofillStore.
 typealias AutofillStore = Store
 
-public extension AutofillApiError {
-    var descriptionValue: String {
-        switch self {
-        case .SqlError: return "SqlError"
-        case .CryptoError: return "CryptoError"
-        case .NoSuchRecord: return "NoSuchRecord"
-        case .UnexpectedAutofillApiError: return "UnexpectedAutofillApiError"
-        case .InterruptedError: return "InterruptedError"
-        }
-    }
-}
-
+/// Enum representing errors related to Autofill encryption keys.
 public enum AutofillEncryptionKeyError: Error {
+    /// Indicates an illegal state error.
     case illegalState
+    /// Indicates that no key was created.
     case noKeyCreated
 }
 
-// Note: This was created in lieu of a view model
-public struct UnencryptedCreditCardFields {
-    public var ccName: String = ""
-    public var ccNumber: String = ""
-    public var ccNumberLast4: String = ""
-    public var ccExpMonth: Int64 = 0
-    public var ccExpYear: Int64 = 0
-    public var ccType: String = ""
-
-    public init() { }
-
-    public init(ccName: String,
-                ccNumber: String,
-                ccNumberLast4: String,
-                ccExpMonth: Int64,
-                ccExpYear: Int64,
-                ccType: String) {
-        self.ccName = ccName
-        self.ccNumber = ccNumber
-        self.ccNumberLast4 = ccNumberLast4
-        self.ccExpMonth = ccExpMonth
-        self.ccExpYear = ccExpYear
-        self.ccType = ccType
-    }
-
-    func toUpdatableCreditCardFields() -> UpdatableCreditCardFields {
-        let rustKeys = RustAutofillEncryptionKeys()
-        let ccNumberEnc = rustKeys.encryptCreditCardNum(creditCardNum: self.ccNumber)
-        return UpdatableCreditCardFields(ccName: self.ccName,
-                                         ccNumberEnc: ccNumberEnc ?? "",
-                                         ccNumberLast4: self.ccNumberLast4,
-                                         ccExpMonth: self.ccExpMonth,
-                                         ccExpYear: self.ccExpYear,
-                                         ccType: self.ccType)
-    }
-
-    public func convertToTempCreditCard() -> CreditCard {
-        let convertedCreditCard = CreditCard(guid: "",
-                                             ccName: self.ccName,
-                                             ccNumberEnc: "",
-                                             ccNumberLast4: self.ccNumberLast4,
-                                             ccExpMonth: self.ccExpMonth,
-                                             ccExpYear: self.ccExpYear,
-                                             ccType: self.ccType,
-                                             timeCreated: Int64(Date().timeIntervalSince1970),
-                                             timeLastUsed: nil,
-                                             timeLastModified: Int64(Date().timeIntervalSince1970),
-                                             timesUsed: 0)
-        return convertedCreditCard
-    }
-
-    public func isEqualToCreditCard(creditCard: CreditCard) -> Bool {
-        return creditCard.ccExpMonth == ccExpMonth &&
-        creditCard.ccExpYear == ccExpYear &&
-        creditCard.ccName == ccName &&
-        creditCard.ccNumberLast4 == ccNumberLast4
-    }
-}
-
-public class RustAutofillEncryptionKeys {
-    public let ccKeychainKey = "appservices.key.creditcard.perfield"
-
-    let keychain = MZKeychainWrapper.sharedClientAppContainerKeychain
-    let ccCanaryPhraseKey = "creditCardCanaryPhrase"
-    let canaryPhrase = "a string for checking validity of the key"
-
-    private let logger: Logger
-
-    public init(logger: Logger = DefaultLogger.shared) {
-        self.logger = logger
-    }
-
-    fileprivate func createAndStoreKey() throws -> String {
-        do {
-            let secret = try createAutofillKey()
-            let canary = try self.createCanary(text: canaryPhrase, key: secret)
-
-            keychain.set(secret,
-                         forKey: ccKeychainKey,
-                         withAccessibility: MZKeychainItemAccessibility.afterFirstUnlock)
-            keychain.set(canary,
-                         forKey: ccCanaryPhraseKey,
-                         withAccessibility: MZKeychainItemAccessibility.afterFirstUnlock)
-
-            return secret
-        } catch let err as NSError {
-            if let autofillStoreError = err as? AutofillApiError {
-                logAutofillStoreError(err: autofillStoreError,
-                                      errorDomain: err.domain,
-                                      errorMessage: "Error while creating and storing credit card key")
-
-                throw AutofillEncryptionKeyError.noKeyCreated
-            } else {
-                logger.log("Unknown error while creating and storing credit card key",
-                           level: .warning,
-                           category: .storage,
-                           description: err.localizedDescription)
-
-                throw AutofillEncryptionKeyError.noKeyCreated
-            }
-        }
-    }
-
-    func decryptCreditCardNum(encryptedCCNum: String) -> String? {
-        guard let key = self.keychain.string(forKey: self.ccKeychainKey) else {
-            return nil
-        }
-
-        do {
-            return try decryptString(key: key, ciphertext: encryptedCCNum)
-        } catch let err as NSError {
-            if let autofillStoreError = err as? AutofillApiError {
-                logAutofillStoreError(err: autofillStoreError,
-                                      errorDomain: err.domain,
-                                      errorMessage: "Error while decrypting credit card")
-            } else {
-                logger.log("Unknown error while decrypting credit card",
-                           level: .warning,
-                           category: .storage,
-                           description: err.localizedDescription)
-            }
-            return nil
-        }
-    }
-
-    fileprivate func checkCanary(canary: String,
-                                 text: String,
-                                 key: String) throws -> Bool {
-        return try decryptString(key: key, ciphertext: canary) == text
-    }
-
-    func encryptCreditCardNum(creditCardNum: String) -> String? {
-        guard let key = self.keychain.string(forKey: self.ccKeychainKey) else {
-            return nil
-        }
-
-        do {
-            return try encryptString(key: key, cleartext: creditCardNum)
-        } catch let err as NSError {
-            if let autofillStoreError = err as? AutofillApiError {
-                logAutofillStoreError(err: autofillStoreError,
-                                      errorDomain: err.domain,
-                                      errorMessage: "Error while encrypting credit card")
-            } else {
-                logger.log("Unknown error while encrypting credit card",
-                           level: .warning,
-                           category: .storage,
-                           description: err.localizedDescription)
-            }
-        }
-        return nil
-    }
-
-    fileprivate func createCanary(text: String,
-                                  key: String) throws -> String {
-        return try encryptString(key: key, cleartext: text)
-    }
-
-    private func logAutofillStoreError(err: AutofillApiError,
-                                       errorDomain: String,
-                                       errorMessage: String) {
-        var message: String {
-            switch err {
-            case .SqlError(let message),
-                    .CryptoError(let message),
-                    .NoSuchRecord(let message),
-                    .UnexpectedAutofillApiError(let message):
-                return message
-            case .InterruptedError:
-                return "Interrupted Error"
-            }
-        }
-
-        logger.log(errorMessage,
-                   level: .warning,
-                   category: .storage,
-                   description: "\(errorDomain) - \(err.descriptionValue): \(message)")
-    }
-}
-
 public class RustAutofill {
+    /// The path to the Autofill database file.
     let databasePath: String
-
+    /// DispatchQueue for synchronization.
     let queue: DispatchQueue
+    /// AutofillStore instance.
     var storage: AutofillStore?
 
     private(set) var isOpen = false
-
     private var didAttemptToMoveToBackup = false
-
     private let logger: Logger
 
-    public init(databasePath: String,
-                logger: Logger = DefaultLogger.shared) {
-        self.databasePath = databasePath
+    // MARK: - Initialization
 
-        queue = DispatchQueue(label: "RustAutofill queue: \(databasePath)",
-                              attributes: [])
+    /// Initializes a new RustAutofill instance.
+    ///
+    /// - Parameters:
+    ///   - databasePath: The path to the Autofill database file.
+    ///   - logger: An optional logger for recording informational and error messages. Default is shared DefaultLogger.
+    public init(databasePath: String, logger: Logger = DefaultLogger.shared) {
+        self.databasePath = databasePath
+        queue = DispatchQueue(label: "RustAutofill queue: \(databasePath)")
         self.logger = logger
     }
 
-    private func open() -> NSError? {
+    // MARK: - Database Operations
+
+    /// Opens the Autofill database.
+    ///
+    /// - Returns: An optional NSError if an error occurs during the database opening process.
+    internal func open() -> NSError? {
         do {
             try getStoredKey()
             storage = try AutofillStore(dbpath: databasePath)
             isOpen = true
             return nil
         } catch let err as NSError {
-            if let autofillStoreError = err as? AutofillApiError {
-                // This is an unrecoverable
-                // state unless we can move the existing file to a backup
-                // location and start over.
-                logger.log("Rust Autofill store error when opening database",
-                           level: .warning,
-                           category: .storage,
-                           description: autofillStoreError.localizedDescription)
-            } else {
-                logger.log("Unknown error when opening Rust Autofill database",
-                           level: .warning,
-                           category: .storage,
-                           description: err.localizedDescription)
-            }
-
-            if !didAttemptToMoveToBackup {
-                RustShared.moveDatabaseFileToBackupLocation(
-                    databasePath: self.databasePath)
-                didAttemptToMoveToBackup = true
-                return open()
-            }
-
+            handleDatabaseError(err)
             return err
         }
     }
 
-    private func close() -> NSError? {
+    /// Closes the Autofill database.
+    ///
+    /// - Returns: An optional NSError if an error occurs during the database closing process.
+    internal func close() -> NSError? {
         storage = nil
         isOpen = false
         return nil
     }
 
+    /// Reopens the database if it is closed.
+    ///
+    /// - Returns: An optional NSError if an error occurs during the reopening process.
     public func reopenIfClosed() -> NSError? {
         var error: NSError?
-
         queue.sync {
             guard !isOpen else { return }
-
             error = open()
         }
-
         return error
     }
 
+    /// Forces the database to close.
+    ///
+    /// - Returns: An optional NSError if an error occurs during the closing process.
     public func forceClose() -> NSError? {
         var error: NSError?
-
         queue.sync {
             guard isOpen else { return }
-
             error = close()
         }
-
         return error
     }
 
+    /// Adds a credit card to the database.
+    ///
+    /// - Parameters:
+    ///   - creditCard: UnencryptedCreditCardFields representing the credit card to be added.
+    ///   - completion: A closure called upon completion with the added credit card or an error.
+    /// - Note: Uses a completion handler for asynchronous code execution.
     public func addCreditCard(creditCard: UnencryptedCreditCardFields, completion: @escaping (CreditCard?, Error?) -> Void) {
-        queue.async {
-            guard self.isOpen else {
-                let error = AutofillApiError.UnexpectedAutofillApiError(
-                    reason: "Database is closed")
+        performDatabaseOperation { error in
+            guard error == nil else {
                 completion(nil, error)
                 return
             }
-
             do {
                 let id = try self.storage?.addCreditCard(cc: creditCard.toUpdatableCreditCardFields())
                 completion(id!, nil)
@@ -308,15 +114,31 @@ public class RustAutofill {
         }
     }
 
+    /// Decrypts a credit card number using RustAutofillEncryptionKeys.
+    ///
+    /// - Parameter encryptedCCNum: The encrypted credit card number.
+    /// - Returns: The decrypted credit card number or nil if the input is invalid.
+    /// - Note: Uses guard statements and optionals effectively, following Swift best practices.
+    public func decryptCreditCardNumber(encryptedCCNum: String?) -> String? {
+        guard let encryptedCCNum = encryptedCCNum, !encryptedCCNum.isEmpty else {
+            return nil
+        }
+        let keys = RustAutofillEncryptionKeys()
+        return keys.decryptCreditCardNum(encryptedCCNum: encryptedCCNum)
+    }
+
+    /// Retrieves a credit card from the database by its identifier.
+    ///
+    /// - Parameters:
+    ///   - id: The identifier of the credit card.
+    ///   - completion: A closure called upon completion with the retrieved credit card or an error.
+    /// - Note: Follows the common pattern of using completion handlers for asynchronous tasks.
     public func getCreditCard(id: String, completion: @escaping (CreditCard?, Error?) -> Void) {
-        queue.async {
-            guard self.isOpen else {
-                let error = AutofillApiError.UnexpectedAutofillApiError(
-                    reason: "Database is closed")
+        performDatabaseOperation { error in
+            guard error == nil else {
                 completion(nil, error)
                 return
             }
-
             do {
                 let record = try self.storage?.getCreditCard(guid: id)
                 completion(record, nil)
@@ -326,24 +148,16 @@ public class RustAutofill {
         }
     }
 
-    public func decryptCreditCardNumber(encryptedCCNum: String?) -> String? {
-        guard let encryptedCCNum = encryptedCCNum, !encryptedCCNum.isEmpty else {
-            return nil
-        }
-        let keys = RustAutofillEncryptionKeys()
-        let num = keys.decryptCreditCardNum(encryptedCCNum: encryptedCCNum)
-        return num
-    }
-
+    /// Retrieves all credit cards from the database.
+    ///
+    /// - Parameter completion: A closure called upon completion with the list of credit cards or an error.
+    /// - Note: Uses a completion handler for handling asynchronous code execution.
     public func listCreditCards(completion: @escaping ([CreditCard]?, Error?) -> Void) {
-        queue.async {
-            guard self.isOpen else {
-                let error = AutofillApiError.UnexpectedAutofillApiError(
-                    reason: "Database is closed")
+        performDatabaseOperation { error in
+            guard error == nil else {
                 completion(nil, error)
                 return
             }
-
             do {
                 let records = try self.storage?.getAllCreditCards()
                 completion(records, nil)
@@ -353,15 +167,18 @@ public class RustAutofill {
         }
     }
 
+    /// Checks for the existence of a credit card in the database.
+    ///
+    /// - Parameters:
+    ///   - cardNumber: The last four digits of the credit card.
+    ///   - completion: A closure called upon completion with the found credit card or an error.
+    /// - Note: Checks for the existence of a credit card and uses a completion handler for result reporting.
     public func checkForCreditCardExistance(cardNumber: String, completion: @escaping (CreditCard?, Error?) -> Void) {
-        queue.async {
-            guard self.isOpen else {
-                let error = AutofillApiError.UnexpectedAutofillApiError(
-                    reason: "Database is closed")
+        performDatabaseOperation { error in
+            guard error == nil else {
                 completion(nil, error)
                 return
             }
-
             do {
                 guard let records = try self.storage?.getAllCreditCards(),
                       let foundCard = records.first(where: { $0.ccNumberLast4 == cardNumber })
@@ -376,19 +193,24 @@ public class RustAutofill {
         }
     }
 
+    /// Updates a credit card in the database.
+    ///
+    /// - Parameters:
+    ///   - id: The identifier of the credit card to be updated.
+    ///   - creditCard: UnencryptedCreditCardFields representing the updated credit card details.
+    ///   - completion: A closure called upon completion with a boolean indicating success and an error if any.
+    /// - Note: Updates a credit card and reports the result using a completion handler.
     public func updateCreditCard(id: String, creditCard: UnencryptedCreditCardFields, completion: @escaping (Bool, Error?) -> Void) {
-        queue.async {
-            guard self.isOpen else {
-                let error = AutofillApiError.UnexpectedAutofillApiError(
-                    reason: "Database is closed")
+        performDatabaseOperation { error in
+            guard error == nil else {
                 completion(false, error)
                 return
             }
-
             do {
                 try self.storage?.updateCreditCard(
                     guid: id,
-                    cc: creditCard.toUpdatableCreditCardFields())
+                    cc: creditCard.toUpdatableCreditCardFields()
+                )
                 completion(true, nil)
             } catch let err as NSError {
                 completion(false, err)
@@ -396,15 +218,18 @@ public class RustAutofill {
         }
     }
 
+    /// Deletes a credit card from the database.
+    ///
+    /// - Parameters:
+    ///   - id: The identifier of the credit card to be deleted.
+    ///   - completion: A closure called upon completion with a boolean indicating success and an error if any.
+    /// - Note: Deletes a credit card and reports the result using a completion handler.
     public func deleteCreditCard(id: String, completion: @escaping (Bool, Error?) -> Void) {
-        queue.async {
-            guard self.isOpen else {
-                let error = AutofillApiError.UnexpectedAutofillApiError(
-                    reason: "Database is closed")
+        performDatabaseOperation { error in
+            guard error == nil else {
                 completion(false, error)
                 return
             }
-
             do {
                 let existed = try self.storage?.deleteCreditCard(guid: id)
                 completion(existed!, nil)
@@ -414,15 +239,18 @@ public class RustAutofill {
         }
     }
 
+    /// Marks a credit card as used in the database.
+    ///
+    /// - Parameters:
+    ///   - creditCard: The credit card to be marked as used.
+    ///   - completion: A closure called upon completion with a boolean indicating success and an error if any.
+    /// - Note: Marks a credit card as used and reports the result using a completion handler.
     public func use(creditCard: CreditCard, completion: @escaping (Bool, Error?) -> Void) {
-        queue.async {
-            guard self.isOpen else {
-                let error = AutofillApiError.UnexpectedAutofillApiError(
-                    reason: "Database is closed")
+        performDatabaseOperation { error in
+            guard error == nil else {
                 completion(false, error)
                 return
             }
-
             do {
                 try self.storage?.touchCreditCard(guid: creditCard.guid)
                 completion(true, nil)
@@ -432,15 +260,16 @@ public class RustAutofill {
         }
     }
 
+    /// Performs an operation to scrub encrypted credit card numbers from the database.
+    ///
+    /// - Parameter completion: A closure called upon completion with a boolean indicating success and an error if any.
+    /// - Note: Scrubs encrypted credit card numbers and reports the result using a completion handler.
     public func scrubCreditCardNums(completion: @escaping (Bool, Error?) -> Void) {
-        queue.async {
-            guard self.isOpen else {
-                let error = AutofillApiError.UnexpectedAutofillApiError(
-                    reason: "Database is closed")
+        performDatabaseOperation { error in
+            guard error == nil else {
                 completion(false, error)
                 return
             }
-
             do {
                 try self.storage?.scrubEncryptedData()
                 completion(true, nil)
@@ -450,35 +279,123 @@ public class RustAutofill {
         }
     }
 
+    /// Adds an address to the database.
+    ///
+    /// - Parameters:
+    ///   - address: UpdatableAddressFields representing the address to be added.
+    ///   - completion: A closure called upon completion with the added address or an error.
+    public func addAddress(address: UpdatableAddressFields, completion: @escaping (Address?, Error?) -> Void) {
+        performDatabaseOperation { error in
+            guard error == nil else {
+                completion(nil, error)
+                return
+            }
+            do {
+                // Use optional binding to safely unwrap the optional result of addAddress.
+                if let id = try self.storage?.addAddress(a: address) {
+                    // Successfully added the address, call the completion handler with the result.
+                    completion(id, nil)
+                } else {
+                    // Handle the case where addAddress returns nil, possibly due to an internal error.
+                    let internalError = NSError(domain: "YourDomain", code: 1, userInfo: [
+                        NSLocalizedDescriptionKey: "Internal error: Failed to add address."
+                    ])
+                    completion(nil, internalError)
+                }
+            } catch let err as NSError {
+                // Handle any other errors that might occur during the database operation.
+                completion(nil, err)
+            }
+        }
+    }
+
+    /// Retrieves an address from the database by its identifier.
+    ///
+    /// - Parameters:
+    ///   - id: The identifier of the address.
+    ///   - completion: A closure called upon completion with the retrieved address or an error.
+    public func getAddress(id: String, completion: @escaping (Address?, Error?) -> Void) {
+        performDatabaseOperation { error in
+            guard error == nil else {
+                completion(nil, error)
+                return
+            }
+            do {
+                // Use optional binding to safely unwrap the optional result of getAddress.
+                if let record = try self.storage?.getAddress(guid: id) {
+                    // Successfully retrieved the address, call the completion handler with the result.
+                    completion(record, nil)
+                } else {
+                    // Handle the case where getAddress returns nil, possibly due to a missing record.
+                    let missingRecordError = NSError(domain: "YourDomain", code: 2, userInfo: [
+                        NSLocalizedDescriptionKey: "Record with id \(id) not found."
+                    ])
+                    completion(nil, missingRecordError)
+                }
+            } catch let err as NSError {
+                // Handle any other errors that might occur during the database operation.
+                completion(nil, err)
+            }
+        }
+    }
+
+    /// Retrieves all addresses from the database.
+    ///
+    /// - Parameter completion: A closure called upon completion with the list of addresses or an error.
+    /// - Note: Uses a completion handler for handling asynchronous code execution.
+    public func listAllAddresses(completion: @escaping ([Address]?, Error?) -> Void) {
+        performDatabaseOperation { error in
+            guard error == nil else {
+                completion(nil, error)
+                return
+            }
+            do {
+                let records = try self.storage?.getAllAddresses()
+                completion(records, nil)
+            } catch let error {
+                completion(nil, error)
+            }
+        }
+    }
+
+    // MARK: - Sync Manager Interaction
+
+    /// Asynchronously registers the instance with a sync manager.
+    ///
+    /// - Note: Uses `async` to perform the operation asynchronously.
     public func registerWithSyncManager() {
         queue.async { [unowned self] in
             self.storage?.registerWithSyncManager()
         }
     }
 
+    // MARK: - Key Management
+
+    /// Retrieves the stored encryption key.
+    /// - Throws: An error if there is an issue retrieving the key.
+    /// - Returns: The retrieved encryption key.
+    /// - Note: Uses Swift's `throws` for error handling, providing a clear indication of potential failures.
     @discardableResult
     public func getStoredKey() throws -> String {
         let rustKeys = RustAutofillEncryptionKeys()
         let key = rustKeys.keychain.string(forKey: rustKeys.ccKeychainKey)
         let encryptedCanaryPhrase = rustKeys.keychain.string(
-            forKey: rustKeys.ccCanaryPhraseKey)
+            forKey: rustKeys.ccCanaryPhraseKey
+        )
 
-        switch(key, encryptedCanaryPhrase) {
-        case (.some(key), .some(encryptedCanaryPhrase)):
+        switch (key, encryptedCanaryPhrase) {
+        case (.some(let key), .some(let encryptedCanaryPhrase)):
             // We expected the key to be present, and it is.
             do {
                 let canaryIsValid = try rustKeys.checkCanary(
-                    canary: encryptedCanaryPhrase!,
+                    canary: encryptedCanaryPhrase,
                     text: rustKeys.canaryPhrase,
-                    key: key!)
+                    key: key
+                )
                 if canaryIsValid {
-                    return key!
+                    return key
                 } else {
-                    logger.log("Autofill key was corrupted, new one generated",
-                               level: .warning,
-                               category: .storage)
-
-                    self.scrubCreditCardNums(completion: {_, _ in })
+                    handleKeyCorruption()
                     return try rustKeys.createAndStoreKey()
                 }
             } catch let error as NSError {
@@ -487,26 +404,12 @@ public class RustAutofill {
                            category: .storage,
                            description: error.localizedDescription)
             }
-        case (.some(key), .none):
+        case (.some(key), .none), (.none, .some(encryptedCanaryPhrase)):
             // The key is present, but we didn't expect it to be there.
+            // or
+            // We expected the key to be present, but it's gone missing on us
             do {
-                logger.log("Autofill key lost due to storage malfunction, new one generated",
-                           level: .warning,
-                           category: .storage)
-
-                self.scrubCreditCardNums(completion: {_, _ in })
-                return try rustKeys.createAndStoreKey()
-            } catch let error as NSError {
-                throw error
-            }
-        case (.none, .some(encryptedCanaryPhrase)):
-            // We expected the key to be present, but it's gone missing on us.
-            do {
-                logger.log("Autofill key lost, new one generated",
-                           level: .warning,
-                           category: .storage)
-
-                self.scrubCreditCardNums(completion: {_, _ in })
+                handleKeyLoss()
                 return try rustKeys.createAndStoreKey()
             } catch let error as NSError {
                 throw error
@@ -524,9 +427,58 @@ public class RustAutofill {
             // but is disallowed nonetheless
             throw AutofillEncryptionKeyError.illegalState
         }
-
         // This must be declared again for Swift's sake even though the above switch statement
         // handles all cases
         throw AutofillEncryptionKeyError.illegalState
+    }
+
+    // MARK: - Private Helper Methods
+
+    private func handleDatabaseError(_ error: NSError) {
+        // This is an unrecoverable state unless we can move the existing file to a backup
+        // location and start over.
+        if let autofillStoreError = error as? AutofillApiError {
+            logger.log("Rust Autofill store error when opening database",
+                       level: .warning,
+                       category: .storage,
+                       description: autofillStoreError.localizedDescription)
+        } else {
+            logger.log("Unknown error when opening Rust Autofill database",
+                       level: .warning,
+                       category: .storage,
+                       description: error.localizedDescription)
+        }
+
+        if !didAttemptToMoveToBackup {
+            RustShared.moveDatabaseFileToBackupLocation(databasePath: self.databasePath)
+            didAttemptToMoveToBackup = true
+            _ = open()
+        }
+    }
+
+    private func performDatabaseOperation(_ operation: @escaping (Error?) -> Void) {
+        queue.async {
+            guard self.isOpen else {
+                let error = AutofillApiError.UnexpectedAutofillApiError(
+                    reason: "Database is closed")
+                operation(error)
+                return
+            }
+            operation(nil)
+        }
+    }
+
+    private func handleKeyCorruption() {
+        logger.log("Autofill key was corrupted, new one generated",
+                   level: .warning,
+                   category: .storage)
+        scrubCreditCardNums(completion: { _, _ in })
+    }
+
+    private func handleKeyLoss() {
+        logger.log("Autofill key lost, new one generated",
+                   level: .warning,
+                   category: .storage)
+        scrubCreditCardNums(completion: { _, _ in })
     }
 }

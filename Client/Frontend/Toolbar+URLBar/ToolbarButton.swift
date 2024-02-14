@@ -51,10 +51,10 @@ class ToolbarButton: UIButton, ThemeApplicable {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        adjustsImageWhenHighlighted = false
         selectedTintColor = tintColor
         unselectedTintColor = tintColor
         imageView?.contentMode = .scaleAspectFit
+        configuration = .plain()
     }
 
     required init?(coder aDecoder: NSCoder) {

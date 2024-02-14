@@ -31,6 +31,7 @@ class IntroViewController: UIViewController,
     private lazy var closeButton: UIButton = .build { button in
         button.setImage(UIImage(named: StandardImageIdentifiers.ExtraLarge.crossCircleFill), for: .normal)
         button.addTarget(self, action: #selector(self.closeOnboarding), for: .touchUpInside)
+        button.accessibilityLabel = String.localizedStringWithFormat(.Onboarding.Welcome.CloseButtonAccessibilityLabel, AppName.shortName.rawValue)
         button.accessibilityIdentifier = AccessibilityIdentifiers.Onboarding.closeButton
     }
 
@@ -115,6 +116,7 @@ class IntroViewController: UIViewController,
         guard viewModel.isDismissable else { return }
         view.addSubview(closeButton)
         view.bringSubviewToFront(closeButton)
+        view.accessibilityElements = [closeButton, pageController.view as Any, pageControl]
 
         NSLayoutConstraint.activate([
             closeButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor,

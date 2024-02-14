@@ -3,28 +3,28 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import UIKit
+import Common
 
-class DevicePickerTableViewHeaderCell: UITableViewCell, ReusableCell {
+class DevicePickerTableViewHeaderCell: UITableViewCell, ReusableCell, ThemeApplicable {
     private struct UX {
         static let tableHeaderTextFont = UIFont.systemFont(ofSize: 16)
-        static let tableHeaderTextColor = UIColor.Photon.Grey50
         static let tableHeaderTextPaddingLeft: CGFloat = 20
     }
 
-    let nameLabel = UILabel()
+    private lazy var nameLabel: UILabel = .build { label in
+        label.font = UX.tableHeaderTextFont
+        label.text = .SendToDevicesListTitle
+    }
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         contentView.addSubview(nameLabel)
-        nameLabel.font = UX.tableHeaderTextFont
-        nameLabel.text = .SendToDevicesListTitle
-        nameLabel.textColor = UX.tableHeaderTextColor
 
-        nameLabel.snp.makeConstraints { (make) -> Void in
-            make.left.equalTo(contentView).offset(UX.tableHeaderTextPaddingLeft)
-            make.centerY.equalTo(contentView)
-            make.right.equalTo(contentView)
-        }
+        NSLayoutConstraint.activate([
+            nameLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: UX.tableHeaderTextPaddingLeft),
+            nameLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            nameLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
+        ])
 
         preservesSuperviewLayoutMargins = false
         layoutMargins = .zero
@@ -33,5 +33,12 @@ class DevicePickerTableViewHeaderCell: UITableViewCell, ReusableCell {
 
     required init(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: - ThemeApplicable
+
+    func applyTheme(theme: Theme) {
+        let colors = theme.colors
+        nameLabel.textColor = colors.textSecondary
     }
 }

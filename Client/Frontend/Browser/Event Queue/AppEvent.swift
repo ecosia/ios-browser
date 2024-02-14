@@ -4,8 +4,30 @@
 
 import Foundation
 
-protocol AppEventType: Hashable { }
+/// Base event type protocol. Conforming types must be hashable.
+public protocol AppEventType: Hashable { }
 
-enum AppEvent: Int, AppEventType {
-    case profileDidFinishLoading // Integration forthcoming. [FXIOS-7606]
+public enum AppEvent: AppEventType {
+    // MARK: - Global App Events
+
+    // Events: Startup flow
+    case startupFlowComplete
+
+    // Sub-Events for Startup Flow
+    case profileInitialized
+    case preLaunchDependenciesComplete
+    case postLaunchDependenciesComplete
+    case accountManagerInitialized
+
+    // Activities: Profile Syncing
+    case profileSyncing
+
+    // MARK: - Browser Events
+
+    // Activities: Browser
+    case browserUpdatedForAppActivation(WindowUUID)
+
+    // Activites: Tabs
+    case tabRestoration(WindowUUID)
+    case selectTab(URL, WindowUUID)
 }

@@ -5,7 +5,7 @@
 import Foundation
 
 protocol DownloadsNavigationHandler: AnyObject {
-    /// Handles the possibile navigations for a file.
+    /// Handles the possible navigations for a file.
     /// The source view is the view used to display a popover for the share controller.
     func handleFile(_ file: DownloadedFile, sourceView: UIView)
 
@@ -18,16 +18,19 @@ class DownloadsCoordinator: BaseCoordinator, ParentCoordinatorDelegate, Download
 
     private weak var parentCoordinator: LibraryCoordinatorDelegate?
     private let profile: Profile
+    private let tabManager: TabManager
 
     // MARK: - Initializers
 
     init(
         router: Router,
         profile: Profile,
-        parentCoordinator: LibraryCoordinatorDelegate?
+        parentCoordinator: LibraryCoordinatorDelegate?,
+        tabManager: TabManager
     ) {
         self.parentCoordinator = parentCoordinator
         self.profile = profile
+        self.tabManager = tabManager
         super.init(router: router)
     }
 
@@ -36,11 +39,7 @@ class DownloadsCoordinator: BaseCoordinator, ParentCoordinatorDelegate, Download
     func handleFile(_ file: DownloadedFile, sourceView: UIView) {
         guard file.canShowInWebView
         else {
-            if CoordinatorFlagManager.isShareExtensionCoordinatorEnabled {
-                startShare(file: file, sourceView: sourceView)
-            } else {
-                shareFile(file, sourceView: sourceView)
-            }
+            startShare(file: file, sourceView: sourceView)
             return
         }
         parentCoordinator?.libraryPanel(didSelectURL: file.path, visitType: .typed)
@@ -57,23 +56,11 @@ class DownloadsCoordinator: BaseCoordinator, ParentCoordinatorDelegate, Download
             alertContainer: UIView(),
             router: router,
             profile: profile,
-            parentCoordinator: self
+            parentCoordinator: self,
+            tabManager: tabManager
         )
         add(child: coordinator)
         return coordinator
-    }
-
-    private func shareFile(_ file: DownloadedFile, sourceView: UIView) {
-        let helper = ShareExtensionHelper(url: file.path, tab: nil)
-        let controller = helper.createActivityViewController { _, _ in }
-
-        if let popoverPresentationController = controller.popoverPresentationController {
-            popoverPresentationController.sourceView = sourceView
-            popoverPresentationController.sourceRect = sourceView.bounds
-            popoverPresentationController.permittedArrowDirections = .any
-        }
-
-        router.present(controller)
     }
 
     func showDocument(file: DownloadedFile) {

@@ -2,28 +2,30 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
-import Shared
-import UIKit
-import Storage
-import MozillaAppServices
 import Common
 import ComponentLibrary
+import MozillaAppServices
+import Shared
+import Storage
+import Redux
+import UIKit
+// Ecosia: Import Core
 import Core
 
-class HomepageViewController: UIViewController, FeatureFlaggable, Themeable, ContentContainable,
-                                SearchBarLocationProvider {
+class HomepageViewController:
+    UIViewController,
+    FeatureFlaggable,
+    Themeable,
+    ContentContainable,
+    SearchBarLocationProvider {
     // MARK: - Typealiases
+
     private typealias a11y = AccessibilityIdentifiers.FirefoxHomepage
-    typealias SendToDeviceDelegate = InstructionsViewDelegate & DevicePickerViewControllerDelegate
 
     // MARK: - Operational Variables
+
     weak var homePanelDelegate: HomePanelDelegate?
     weak var libraryPanelDelegate: LibraryPanelDelegate?
-    weak var sendToDeviceDelegate: SendToDeviceDelegate? {
-        didSet {
-            contextMenuHelper.sendToDeviceDelegate = sendToDeviceDelegate
-        }
-    }
 
     weak var browserNavigationHandler: BrowserNavigationHandler? {
         didSet {
@@ -71,7 +73,7 @@ class HomepageViewController: UIViewController, FeatureFlaggable, Themeable, Con
     init(profile: Profile,
          isZeroSearch: Bool = false,
          toastContainer: UIView,
-         tabManager: TabManager = AppContainer.shared.resolve(),
+         tabManager: TabManager,
          overlayManager: OverlayModeManager,
          userDefaults: UserDefaultsInterface = UserDefaults.standard,
          themeManager: ThemeManager = AppContainer.shared.resolve(),
@@ -262,8 +264,7 @@ class HomepageViewController: UIViewController, FeatureFlaggable, Themeable, Con
         view.addSubview(wallpaperView)
 
         // Constraint so wallpaper appears under the status bar
-        let window = UIApplication.shared.windows.first
-        let wallpaperTopConstant: CGFloat = window?.safeAreaInsets.top ?? statusBarFrame?.height ?? 0
+        let wallpaperTopConstant: CGFloat = UIWindow.keyWindow?.safeAreaInsets.top ?? statusBarFrame?.height ?? 0
 
         NSLayoutConstraint.activate([
             wallpaperView.topAnchor.constraint(equalTo: view.topAnchor, constant: -wallpaperTopConstant),
@@ -442,6 +443,7 @@ class HomepageViewController: UIViewController, FeatureFlaggable, Themeable, Con
             overlayState: overlayManager)
     }
 
+    /* Ecosia: remove SyncedTabCell as references in JumpBackIn
     private func prepareSyncedTabContextualHint(onCell cell: SyncedTabCell) {
         guard syncTabContextualHintViewController.shouldPresentHint()
         else {
@@ -456,6 +458,7 @@ class HomepageViewController: UIViewController, FeatureFlaggable, Themeable, Con
             presentedUsing: { self.presentContextualHint(contextualHintViewController: self.syncTabContextualHintViewController) },
             overlayState: overlayManager)
     }
+     */
 
     @objc
     private func presentContextualHint(contextualHintViewController: ContextualHintViewController) {
@@ -608,12 +611,20 @@ private extension HomepageViewController {
         viewModel.recentlySavedViewModel.headerButtonAction = { [weak self] button in
             self?.openBookmarks(button)
         }
-         */
+
+        viewModel.recentlySavedViewModel.onLongPressTileAction = { [weak self] (site, sourceView) in
+            self?.contextMenuHelper.presentContextMenu(for: site, with: sourceView, sectionType: .recentlySaved)
+        }
+	*/
 
         /* Ecosia: Remove `jumpBackIn` reference
         // Jumpback in
         viewModel.jumpBackInViewModel.headerButtonAction = { [weak self] button in
             self?.openTabTray(button)
+        }
+
+        viewModel.jumpBackInViewModel.onLongPressTileAction = { [weak self] (site, sourceView) in
+            self?.contextMenuHelper.presentContextMenu(for: site, with: sourceView, sectionType: .recentlySaved)
         }
 
         viewModel.jumpBackInViewModel.syncedTabsShowAllAction = { [weak self] in
@@ -792,10 +803,6 @@ extension HomepageViewController: HomepageContextMenuHelperDelegate {
 
     func homePanelDidRequestToOpenSettings(at settingsPage: Route.SettingsSection) {
         homePanelDelegate?.homePanelDidRequestToOpenSettings(at: settingsPage)
-    }
-
-    func showToast(message: String) {
-        SimpleToast().showAlertWithText(message, bottomContainer: view, theme: themeManager.currentTheme)
     }
 }
 

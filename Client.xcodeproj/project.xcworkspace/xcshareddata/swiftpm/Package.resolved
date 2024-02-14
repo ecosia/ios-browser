@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/braze-inc/braze-swift-sdk",
       "state" : {
-        "revision" : "a3d83be34c5e3f32d91391544b2c18f707cd27eb",
-        "version" : "7.5.0"
+        "revision" : "2973b623ab2c270bfa5acf3142397b0e1f4806af",
+        "version" : "7.7.0"
       }
     },
     {
@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ccgus/fmdb",
       "state" : {
-        "revision" : "e6e1c0eff4f115c46a850db9dc92fb41a01a8b55",
-        "version" : "2.7.8"
+        "revision" : "47a2fa12a242b5a2fe13b916c22f2212e426055c",
+        "version" : "2.7.9"
       }
     },
     {
@@ -59,14 +59,14 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/mozilla/glean-swift",
       "state" : {
-        "revision" : "63e6475bd275399b701951925c64fd4c9a5f7c2d",
-        "version" : "54.0.0"
+        "revision" : "aa9172bfe715a9f918dd95bf49d8f1b2363500a0",
+        "version" : "56.0.0"
       }
     },
     {
       "identity" : "ios-core",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/ecosia/ios-core",
+      "location" : "https://github.com/ecosia/ios-core.git",
       "state" : {
         "branch" : "main",
         "revision" : "9692f7ecc6ce80083574ec37428bc9aeef6bb9a4"
@@ -113,8 +113,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/mozilla/rust-components-swift.git",
       "state" : {
-        "revision" : "1bbd230d928b767788ac6ab74eb0681ad3ea536c",
-        "version" : "120.0.1"
+        "revision" : "d80080cd008b36b2da81b3242a8ffb37d7499adc",
+        "version" : "122.0.2"
       }
     },
     {
@@ -131,8 +131,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa.git",
       "state" : {
-        "revision" : "7b0d185631a6d4b7756468efa464a68725c061d2",
-        "version" : "8.13.1"
+        "revision" : "74cf23b2946c92550fb1185612077151497e648e",
+        "version" : "8.17.1"
       }
     },
     {
@@ -147,7 +147,7 @@
     {
       "identity" : "snowplow-ios-tracker",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/snowplow/snowplow-ios-tracker",
+      "location" : "https://github.com/snowplow/snowplow-ios-tracker.git",
       "state" : {
         "revision" : "1e16a929cef8e944bd41dc36a1d2779e06bd0a3c",
         "version" : "5.2.0"
@@ -169,15 +169,6 @@
       "state" : {
         "revision" : "1080914828ef1c9ca9cd2bad50667b3d847dabff",
         "version" : "2.0.0"
-      }
-    },
-    {
-      "identity" : "swiftyjson",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/SwiftyJSON/SwiftyJSON",
-      "state" : {
-        "revision" : "b3dcd7dbd0d488e1a7077cb33b00f2083e382f07",
-        "version" : "5.0.1"
       }
     },
     {

@@ -99,8 +99,13 @@ class SiteTableViewHeader: UITableViewHeaderFooterView, ThemeApplicable, Reusabl
     }
 
     func applyTheme(theme: Theme) {
+        /* Ecosia: review theme
         titleLabel.textColor = theme.colors.textPrimary
         backgroundView?.backgroundColor = theme.colors.layer1
+        collapsibleImageView.image = collapsibleState?.image?.tinted(withColor: theme.colors.iconAction)
+         */
+        titleLabel.textColor = UIColor.legacyTheme.ecosia.secondaryText
+        backgroundView?.backgroundColor = .clear
         collapsibleImageView.image = collapsibleState?.image?.tinted(withColor: theme.colors.iconAction)
         bordersHelper.applyTheme(theme: theme)
     }

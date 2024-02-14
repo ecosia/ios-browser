@@ -54,6 +54,8 @@ extension Notification.Name {
 
     public static let FakespotViewControllerDidDismiss = Notification.Name("FakespotViewControllerDidDismiss")
 
+    public static let FakespotViewControllerDidAppear = Notification.Name("FakespotViewControllerDidAppear")
+
     public static let FileDidDownload = Notification.Name("FileDidDownload")
 
     public static let SearchBarPositionDidChange = Notification.Name("SearchBarPositionDidChange")
@@ -88,9 +90,6 @@ extension Notification.Name {
     // fired when user taps on undo button on Toast
     public static let DidTapUndoCloseAllTabToast = Notification.Name("DidTapUndoCloseAllTabToast")
 
-    // Has to be used in combination of OpenTabNotificationObject
-    public static let OpenTabNotification = Notification.Name("OpenTabNotification")
-
     // MARK: Settings
 
     public static let BlockPopup = Notification.Name("BlockPopup")
@@ -98,5 +97,8 @@ extension Notification.Name {
     public static let ReadingListUpdated = Notification.Name("ReadingListUpdated")
     public static let TopSitesUpdated = Notification.Name("TopSitesUpdated")
     public static let HistoryUpdated = Notification.Name("HistoryUpdated")
+
+    // Search
     public static let DefaultSearchEngineUpdated = Notification.Name("DefaultSearchEngineUpdated")
+    public static let DisablePrivateModeSearchSuggests = Notification.Name("DisablePrivateModeSearchSuggests")
 }

@@ -5,7 +5,6 @@
 import { XPCOMUtils } from "resource://gre/modules/XPCOMUtils.sys.mjs";
 import { Region } from "resource://gre/modules/Region.sys.mjs";
 
-const ADDRESSES_FIRST_TIME_USE_PREF = "extensions.formautofill.firstTimeUse";
 const AUTOFILL_ADDRESSES_AVAILABLE_PREF =
   "extensions.formautofill.addresses.supported";
 // This pref should be refactored after the migration of the old bool pref
@@ -33,14 +32,16 @@ const AUTOFILL_CREDITCARDS_AUTOCOMPLETE_OFF_PREF =
   "extensions.formautofill.creditCards.ignoreAutocompleteOff";
 const AUTOFILL_ADDRESSES_AUTOCOMPLETE_OFF_PREF =
   "extensions.formautofill.addresses.ignoreAutocompleteOff";
+const ENABLED_AUTOFILL_CAPTURE_ON_FORM_REMOVAL =
+  "extensions.formautofill.heuristics.captureOnFormRemoval";
 
 export const FormAutofill = {
   ENABLED_AUTOFILL_ADDRESSES_PREF,
   ENABLED_AUTOFILL_ADDRESSES_CAPTURE_PREF,
   ENABLED_AUTOFILL_ADDRESSES_CAPTURE_V2_PREF,
+  ENABLED_AUTOFILL_CAPTURE_ON_FORM_REMOVAL,
   ENABLED_AUTOFILL_CREDITCARDS_PREF,
   ENABLED_AUTOFILL_CREDITCARDS_REAUTH_PREF,
-  ADDRESSES_FIRST_TIME_USE_PREF,
   AUTOFILL_CREDITCARDS_AUTOCOMPLETE_OFF_PREF,
   AUTOFILL_ADDRESSES_AUTOCOMPLETE_OFF_PREF,
 
@@ -226,11 +227,6 @@ XPCOMUtils.defineLazyPreferenceGetter(
 );
 XPCOMUtils.defineLazyPreferenceGetter(
   FormAutofill,
-  "isAutofillAddressesFirstTimeUse",
-  ADDRESSES_FIRST_TIME_USE_PREF
-);
-XPCOMUtils.defineLazyPreferenceGetter(
-  FormAutofill,
   "_addressAutofillSupportedCountries",
   ENABLED_AUTOFILL_ADDRESSES_SUPPORTED_COUNTRIES_PREF,
   null,
@@ -258,6 +254,11 @@ XPCOMUtils.defineLazyPreferenceGetter(
   FormAutofill,
   "addressesAutocompleteOff",
   AUTOFILL_ADDRESSES_AUTOCOMPLETE_OFF_PREF
+);
+XPCOMUtils.defineLazyPreferenceGetter(
+  FormAutofill,
+  "captureOnFormRemoval",
+  ENABLED_AUTOFILL_CAPTURE_ON_FORM_REMOVAL
 );
 
 // XXX: This should be invalidated on intl:app-locales-changed.

@@ -143,7 +143,7 @@ extension AppSettingsTableViewController {
             ExportBrowserDataSetting(settings: self),
             ForceCrashSetting(settings: self),
             PushBackInstallation(settings: self),
-            OpenFiftyTabsDebugOption(settings: self),
+            OpenFiftyTabsDebugOption(settings: self, settingsDelegate: self),
             ToggleImpactIntro(settings: self),
             ShowTour(settings: self),
             CreateReferralCode(settings: self),

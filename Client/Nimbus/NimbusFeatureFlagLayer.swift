@@ -11,51 +11,53 @@ final class NimbusFeatureFlagLayer {
                                      from nimbus: FxNimbus = FxNimbus.shared
     ) -> Bool {
         switch featureID {
-        case .reportSiteIssue:
-            return checkGeneralFeature(for: featureID, from: nimbus)
+        case .addressAutofill:
+            return checkAddressAutofill(from: nimbus)
 
         case .bottomSearchBar,
                 .searchHighlights,
                 .isToolbarCFREnabled:
             return checkAwesomeBarFeature(for: featureID, from: nimbus)
 
-        case .credentialAutofillCoordinatorRefactor:
-            return checkCredentialAutofillCoordinatorRefactorFeature(from: nimbus)
-
-        case .jumpBackIn,
-                .historyHighlights,
-                .topSites:
-            return checkHomescreenSectionsFeature(for: featureID, from: nimbus)
-
         case .contextualHintForToolbar:
             return checkNimbusForContextualHintsFeature(for: featureID, from: nimbus)
 
-        case .libraryCoordinatorRefactor:
-            return checkLibraryCoordinatorRefactorFeature(from: nimbus)
+        case .creditCardAutofillStatus:
+            return checkNimbusForCreditCardAutofill(for: featureID, from: nimbus)
 
-        case .fakespotFeature:
-            return checkFakespotFeature(from: nimbus)
-
-        case .firefoxSuggestFeature:
-            return checkFirefoxSuggestFeature(from: nimbus)
+        case .jumpBackIn,
+                .historyHighlights:
+            return checkHomescreenSectionsFeature(for: featureID, from: nimbus)
 
         case .inactiveTabs:
             return checkTabTrayFeature(for: featureID, from: nimbus)
 
+        case .fakespotFeature:
+            return checkFakespotFeature(from: nimbus)
+
+        case .fakespotProductAds:
+            return checkFakespotProductAds(from: nimbus)
+
+        case .firefoxSuggestFeature:
+            return checkFirefoxSuggestFeature(from: nimbus)
+
         case .historyGroups:
             return checkGroupingFeature(for: featureID, from: nimbus)
 
-        case .feltPrivacyUI:
-            return checkFeltPrivacyUIFeature(from: nimbus)
+        case .feltPrivacySimplifiedUI, .feltPrivacyFeltDeletion:
+            return checkFeltPrivacyFeature(for: featureID, from: nimbus)
+
+        case .fakespotBackInStock:
+            return checkProductBackInStockFakespotFeature(from: nimbus)
+
+        case .preferSwitchToOpenTabOverDuplicate:
+            return checkPreferSwitchToOpenTabOverDuplicate(from: nimbus)
 
         case .qrCodeCoordinatorRefactor:
             return checkQRCodeCoordinatorRefactorFeature(from: nimbus)
 
-        case .reduxIntegration:
-            return checkReduxIntegrationFeature(from: nimbus)
-
-        case .shareExtensionCoordinatorRefactor:
-            return checkShareExtensionCoordinatorRefactorFeature(from: nimbus)
+        case .reportSiteIssue:
+            return checkGeneralFeature(for: featureID, from: nimbus)
 
         case .shareSheetChanges,
                 .shareToolbarChanges:
@@ -70,9 +72,6 @@ final class NimbusFeatureFlagLayer {
 
         case .wallpaperOnboardingSheet:
             return checkNimbusForWallpaperOnboarding(using: nimbus)
-
-        case .creditCardAutofillStatus:
-            return checkNimbusForCreditCardAutofill(for: featureID, from: nimbus)
 
         case .zoomFeature:
             return checkZoomFeature(from: nimbus)
@@ -111,7 +110,6 @@ final class NimbusFeatureFlagLayer {
         var nimbusID: HomeScreenSection
 
         switch featureID {
-        case .topSites: nimbusID = HomeScreenSection.topSites
         case .jumpBackIn: nimbusID = HomeScreenSection.jumpBackIn
         case .historyHighlights: nimbusID = HomeScreenSection.recentExplorations
         default: return false
@@ -138,21 +136,6 @@ final class NimbusFeatureFlagLayer {
         return status
     }
 
-    private func checkLibraryCoordinatorRefactorFeature(from nimbus: FxNimbus) -> Bool {
-        let config = nimbus.features.libraryCoordinatorRefactor.value()
-        return config.enabled
-    }
-
-    private func checkCredentialAutofillCoordinatorRefactorFeature(from nimbus: FxNimbus) -> Bool {
-        let config = nimbus.features.credentialAutofillCoordinatorRefactor.value()
-        return config.enabled
-    }
-
-    private func checkShareExtensionCoordinatorRefactorFeature(from nimbus: FxNimbus) -> Bool {
-        let config = nimbus.features.shareExtensionCoordinatorRefactor.value()
-        return config.enabled
-    }
-
     private func checkNimbusForWallpapersFeature(using nimbus: FxNimbus) -> Bool {
         let config = nimbus.features.wallpaperFeature.value()
 
@@ -169,11 +152,6 @@ final class NimbusFeatureFlagLayer {
         return config.configuration.version.rawValue
     }
 
-    private func checkReduxIntegrationFeature(from nimbus: FxNimbus) -> Bool {
-        let config = nimbus.features.reduxIntegrationFeature.value()
-        return config.enabled
-    }
-
     private func checkQRCodeCoordinatorRefactorFeature(from nimbus: FxNimbus) -> Bool {
         return nimbus.features.qrCodeCoordinatorRefactor.value().enabled
     }
@@ -183,9 +161,17 @@ final class NimbusFeatureFlagLayer {
         return config.enabled
     }
 
-    private func checkFeltPrivacyUIFeature(from nimbus: FxNimbus ) -> Bool {
-        let config = nimbus.features.privateBrowsing.value()
-        return config.feltPrivacyEnabled
+    private func checkFeltPrivacyFeature(
+        for featureID: NimbusFeatureFlagID,
+        from nimbus: FxNimbus
+    ) -> Bool {
+        let config = nimbus.features.feltPrivacyFeature.value()
+
+        switch featureID {
+        case .feltPrivacySimplifiedUI: return config.simplifiedUiEnabled
+        case .feltPrivacyFeltDeletion: return config.feltDeletionEnabled && config.simplifiedUiEnabled
+        default: return false
+        }
     }
 
     public func checkNimbusForCreditCardAutofill(
@@ -246,6 +232,28 @@ final class NimbusFeatureFlagLayer {
 
     private func checkFakespotFeature(from nimbus: FxNimbus) -> Bool {
         let config = nimbus.features.shopping2023.value()
+
+        return config.status
+    }
+
+    private func checkFakespotProductAds(from nimbus: FxNimbus) -> Bool {
+        let config = nimbus.features.shopping2023.value()
+
+        return config.productAds
+    }
+
+    private func checkProductBackInStockFakespotFeature(from nimbus: FxNimbus) -> Bool {
+        let config = nimbus.features.shopping2023.value()
+
+        return config.backInStockReporting
+    }
+
+    private func checkPreferSwitchToOpenTabOverDuplicate(from nimbus: FxNimbus) -> Bool {
+        return nimbus.features.homescreenFeature.value().preferSwitchToOpenTab
+    }
+
+    private func checkAddressAutofill(from nimbus: FxNimbus) -> Bool {
+        let config = nimbus.features.addressAutofillFeature.value()
 
         return config.status
     }

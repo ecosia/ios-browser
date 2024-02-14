@@ -8,21 +8,28 @@ import TabDataStore
 
 protocol TabMigrationUtility {
     var shouldRunMigration: Bool { get }
-    func runMigration(savedTabs: [LegacySavedTab]) async -> WindowData
+    var legacyTabs: [LegacySavedTab] { get set }
+    func runMigration(for windowUUID: WindowUUID) async -> WindowData
 }
 
 class DefaultTabMigrationUtility: TabMigrationUtility {
+    private let tabsKey = "tabs"
     private let migrationKey = PrefsKeys.TabMigrationKey
-    private var prefs: Prefs
-    private var tabDataStore: TabDataStore
-    private var logger: Logger
+    private let prefs: Prefs
+    private let tabDataStore: TabDataStore
+    private let logger: Logger
+    private var legacyTabDataRetriever: LegacyTabDataRetriever
+    var legacyTabs = [LegacySavedTab]()
 
     init(profile: Profile = AppContainer.shared.resolve(),
-         tabDataStore: TabDataStore = DefaultTabDataStore(),
-         logger: Logger = DefaultLogger.shared) {
+         tabDataStore: TabDataStore = AppContainer.shared.resolve(),
+         logger: Logger = DefaultLogger.shared,
+         legacyTabDataRetriever: LegacyTabDataRetriever = LegacyTabDataRetrieverImplementation()) {
         self.prefs = profile.prefs
         self.tabDataStore = tabDataStore
         self.logger = logger
+        self.legacyTabDataRetriever = legacyTabDataRetriever
+        self.legacyTabs = getLegacyTabs()
     }
 
     var shouldRunMigration: Bool {
@@ -39,15 +46,31 @@ class DefaultTabMigrationUtility: TabMigrationUtility {
         return shouldRunMigration
     }
 
-    func runMigration(savedTabs: [LegacySavedTab]) async -> WindowData {
-        logger.log("Begin tab migration with legacy tab count \(savedTabs.count)",
+    func getLegacyTabs() -> [LegacySavedTab] {
+        guard let tabData = legacyTabDataRetriever.getTabData() else {
+            return []
+        }
+
+        do {
+            let unarchiver = try NSKeyedUnarchiver(forReadingFrom: tabData)
+            guard let tabs = unarchiver.decodeDecodable([LegacySavedTab].self, forKey: tabsKey) else {
+                return []
+            }
+            return tabs
+        } catch {
+            return []
+        }
+    }
+
+    func runMigration(for windowUUID: WindowUUID) async -> WindowData {
+        logger.log("Begin tab migration with legacy tab count \(legacyTabs.count)",
                    level: .debug,
                    category: .tabs)
-        // Create TabData array from savedTabs
+        // Create TabData array from legacyTabs
         var tabsToMigrate = [TabData]()
 
         var selectTabUUID: UUID?
-        for savedTab in savedTabs {
+        for savedTab in legacyTabs {
             let savedTabUUID = savedTab.screenshotUUID ?? UUID()
 
             let tabGroupData = TabGroupData(
@@ -71,7 +94,7 @@ class DefaultTabMigrationUtility: TabMigrationUtility {
             tabsToMigrate.append(tabData)
         }
 
-        let windowData = WindowData(id: UUID(uuidString: "44BA0B7D-097A-484D-8358-91A6E374451D")!,
+        let windowData = WindowData(id: windowUUID,
                                     isPrimary: true,
                                     activeTabId: selectTabUUID ?? UUID(),
                                     tabData: tabsToMigrate)
@@ -80,7 +103,7 @@ class DefaultTabMigrationUtility: TabMigrationUtility {
                    level: .debug,
                    category: .tabs)
 
-        if savedTabs.count != windowData.tabData.count {
+        if legacyTabs.count != windowData.tabData.count {
             logger.log("Something went wrong when migrating tab data",
                        level: .fatal,
                        category: .tabs)

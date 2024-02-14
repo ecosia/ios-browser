@@ -146,9 +146,7 @@ class HistoryPanel: UIViewController,
         tableView.register(SiteTableViewHeader.self,
                            forHeaderFooterViewReuseIdentifier: SiteTableViewHeader.cellIdentifier)
 
-        if #available(iOS 15.0, *) {
-            tableView.sectionHeaderTopPadding = 0
-        }
+        tableView.sectionHeaderTopPadding = 0
         
         // Ecosia: Update tableView properties
         tableView.contentInset.top = 32
@@ -217,9 +215,7 @@ class HistoryPanel: UIViewController,
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        if CoordinatorFlagManager.isLibraryCoordinatorEnabled {
-            viewModel.shouldResetHistory = true
-        }
+        viewModel.shouldResetHistory = true
         bottomStackView.isHidden = !viewModel.isSearchInProgress
         if viewModel.shouldResetHistory {
             fetchDataAndUpdateLayout()
@@ -620,7 +616,7 @@ class HistoryPanel: UIViewController,
         searchbar.tintColor = themeManager.currentTheme.colors.textPrimary
         // Ecosia: Update search bar position
         searchbar.setPositionAdjustment(.init(horizontal: 4, vertical: 0), for: .search)
-        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: themeManager.currentTheme.colors.textPrimary]
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.ecosia.primaryText]
         /* Ecosia: Update bottomSearchButton theming
         bottomSearchButton.tintColor = themeManager.currentTheme.colors.iconPrimary
         bottomDeleteButton.tintColor = themeManager.currentTheme.colors.iconPrimary
@@ -630,6 +626,21 @@ class HistoryPanel: UIViewController,
         welcomeLabel.textColor = themeManager.currentTheme.colors.textSecondary
 
         tableView.reloadData()
+    }
+
+    // MARK: Telemetry
+
+    func sendOpenedHistoryItemTelemetry() {
+        TelemetryWrapper.recordEvent(category: .action,
+                                     method: .tap,
+                                     object: .openedHistoryItem)
+    }
+
+    func sendSelectedHistoryItemCount() {
+        TelemetryWrapper.recordEvent(category: .action,
+                                     method: .tap,
+                                     object: .selectedHistoryItem,
+                                     value: .historyPanelNonGroupItem)
     }
 }
 
@@ -670,11 +681,8 @@ extension HistoryPanel: UITableViewDelegate {
 
         libraryPanelDelegate?.libraryPanel(didSelectURL: url, visitType: .typed)
 
-        TelemetryWrapper.recordEvent(category: .action,
-                                     method: .tap,
-                                     object: .selectedHistoryItem,
-                                     value: .historyPanelNonGroupItem,
-                                     extras: nil)
+        sendSelectedHistoryItemCount()
+        sendOpenedHistoryItemTelemetry()
     }
 
     private func handleHistoryActionableTapped(historyActionable: HistoryActionablesModel) {
@@ -684,13 +692,9 @@ extension HistoryPanel: UITableViewDelegate {
         case .clearHistory:
             showClearRecentHistory()
         case .recentlyClosed:
-            if CoordinatorFlagManager.isLibraryCoordinatorEnabled {
-                guard viewModel.hasRecentlyClosed else { return }
-                refreshControl?.endRefreshing()
-                historyCoordinatorDelegate?.showRecentlyClosedTab()
-            } else {
-                navigateToRecentlyClosed()
-            }
+            guard viewModel.hasRecentlyClosed else { return }
+            refreshControl?.endRefreshing()
+            historyCoordinatorDelegate?.showRecentlyClosedTab()
         default: break
         }
     }
@@ -699,15 +703,7 @@ extension HistoryPanel: UITableViewDelegate {
         exitSearchState()
         updatePanelState(newState: .history(state: .inFolder))
 
-        if CoordinatorFlagManager.isLibraryCoordinatorEnabled {
-            historyCoordinatorDelegate?.showSearchGroupedItems(asGroupItem)
-        } else {
-            let asGroupListViewModel = SearchGroupedItemsViewModel(asGroup: asGroupItem, presenter: .historyPanel)
-            let asGroupListVC = SearchGroupedItemsViewController(viewModel: asGroupListViewModel, profile: profile)
-            asGroupListVC.libraryPanelDelegate = libraryPanelDelegate
-            asGroupListVC.title = asGroupItem.displayTitle
-            navigationController?.pushViewController(asGroupListVC, animated: true)
-        }
+        historyCoordinatorDelegate?.showSearchGroupedItems(asGroupItem)
         TelemetryWrapper.recordEvent(category: .action, method: .navigate, object: .navigateToGroupHistory, value: nil, extras: nil)
     }
 
@@ -831,16 +827,6 @@ extension HistoryPanel {
                                                 theme: self.themeManager.currentTheme)
             }
         }
-    }
-
-    private func navigateToRecentlyClosed() {
-        guard viewModel.hasRecentlyClosed else { return }
-
-        let nextController = RecentlyClosedTabsPanel(profile: profile)
-        nextController.title = .RecentlyClosedTabsPanelTitle
-        nextController.libraryPanelDelegate = libraryPanelDelegate
-        refreshControl?.endRefreshing()
-        navigationController?.pushViewController(nextController, animated: true)
     }
 
     @objc

@@ -8,12 +8,15 @@ import UIKit
 public enum ThemeType: String {
     case light = "normal" // This needs to match the string used in the legacy system
     case dark
+    case privateMode
 
     public func getInterfaceStyle() -> UIUserInterfaceStyle {
         switch self {
         case .light:
             return .light
         case .dark:
+            return .dark
+        case .privateMode:
             return .dark
         }
     }
@@ -24,15 +27,22 @@ public enum ThemeType: String {
             return .default
         case .dark:
             return .black
+        case .privateMode:
+            return .black
         }
     }
 
-    public func getThemedImageName(name: String) -> String {
-        switch self {
-        case .light:
-            return name
+    public func keyboardAppearence(isPrivate: Bool) -> UIKeyboardAppearance {
+        if isPrivate {
+            return .dark
+        }
+        return switch self {
         case .dark:
-            return "\(name)_dark"
+            .dark
+        case .light:
+            .light
+        case .privateMode:
+            .dark
         }
     }
 }

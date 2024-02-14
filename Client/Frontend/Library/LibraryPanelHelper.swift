@@ -78,11 +78,9 @@ enum LibraryPanelType: Int, CaseIterable {
 
 class LibraryPanelHelper {
     private let profile: Profile
-    private let tabManager: TabManager
 
-    init(profile: Profile, tabManager: TabManager) {
+    init(profile: Profile) {
         self.profile = profile
-        self.tabManager = tabManager
     }
 
     lazy var enabledPanels: [LibraryPanelDescriptor] = {
@@ -90,50 +88,30 @@ class LibraryPanelHelper {
 
         return [
             LibraryPanelDescriptor(
-                viewController: BookmarksPanel(viewModel: bookmarksViewModel),
-                profile: profile,
-                tabManager: tabManager,
                 accessibilityLabel: .LibraryPanelBookmarksAccessibilityLabel,
                 accessibilityIdentifier: AccessibilityIdentifiers.LibraryPanels.bookmarksView,
                 panelType: .bookmarks),
 
             LibraryPanelDescriptor(
-                viewController: HistoryPanel(profile: profile, tabManager: tabManager),
-                profile: profile,
-                tabManager: tabManager,
                 accessibilityLabel: .LibraryPanelHistoryAccessibilityLabel,
                 accessibilityIdentifier: AccessibilityIdentifiers.LibraryPanels.historyView,
                 panelType: .history),
-
             /* Ecosia: Invert Download and Reading list positions in the LibraryViewController
-             LibraryPanelDescriptor(
-                 viewController: DownloadsPanel(),
-                 profile: profile,
-                 tabManager: tabManager,
-                 accessibilityLabel: .LibraryPanelDownloadsAccessibilityLabel,
-                 accessibilityIdentifier: AccessibilityIdentifiers.LibraryPanels.downloadsView,
-                 panelType: .downloads),
-             
             LibraryPanelDescriptor(
-                viewController: ReadingListPanel(profile: profile),
-                profile: profile,
-                tabManager: tabManager,
+                accessibilityLabel: .LibraryPanelDownloadsAccessibilityLabel,
+                accessibilityIdentifier: AccessibilityIdentifiers.LibraryPanels.downloadsView,
+                panelType: .downloads),
+            LibraryPanelDescriptor(
                 accessibilityLabel: .LibraryPanelReadingListAccessibilityLabel,
                 accessibilityIdentifier: AccessibilityIdentifiers.LibraryPanels.readingListView,
                 panelType: .readingList),
              */
             LibraryPanelDescriptor(
-                viewController: ReadingListPanel(profile: profile),
-                profile: profile,
-                tabManager: tabManager,
                 accessibilityLabel: .LibraryPanelReadingListAccessibilityLabel,
                 accessibilityIdentifier: AccessibilityIdentifiers.LibraryPanels.readingListView,
                 panelType: .readingList),
             
             LibraryPanelDescriptor(
-                viewController: DownloadsPanel(),
-                profile: profile,
-                tabManager: tabManager,
                 accessibilityLabel: .LibraryPanelDownloadsAccessibilityLabel,
                 accessibilityIdentifier: AccessibilityIdentifiers.LibraryPanels.downloadsView,
                 panelType: .downloads)

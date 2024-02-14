@@ -22,6 +22,7 @@ public struct AccessibilityIdentifiers {
         static let reloadButton = "TabLocationView.reloadButton"
         static let shareButton = "TabLocationView.shareButton"
         static let backButton = "TabToolbar.backButton"
+        static let fireButton = "TabToolbar.fireButton"
         static let forwardButton = "TabToolbar.forwardButton"
         static let tabsButton = "TabToolbar.tabsButton"
         static let addNewTabButton = "TabToolbar.addNewTabButton"
@@ -62,8 +63,7 @@ public struct AccessibilityIdentifiers {
         }
 
         struct OtherButtons {
-            static let logoImage = "FxHomeLogoImage"
-            static let logoText = "FxHomeLogoText"
+            static let logoID = "FxHomeLogoID"
             static let customizeHome = "FxHomeCustomizeHomeSettingButton"
         }
 
@@ -119,10 +119,39 @@ public struct AccessibilityIdentifiers {
         public static let back = "Back"
     }
 
+    struct PrivateMode {
+        static let dimmingView = "PrivateMode.DimmingView"
+        struct Homepage {
+            static let title = "PrivateMode.Homepage.Title"
+            static let body = "PrivateMode.Homepage.Body"
+            static let link = "PrivateMode.Homepage.Link"
+            static let card = "PrivateMode.Homepage.MessageCard"
+        }
+    }
+
     struct Shopping {
         static let sheetHeaderTitle = "Shopping.Sheet.HeaderTitle"
         static let sheetHeaderBetaLabel = "Shopping.Sheet.HeaderBetaLabel"
         static let sheetCloseButton = "Shopping.Sheet.CloseButton"
+
+        struct InfoComingSoonCard {
+            static let card = "Shopping.InfoComingSoonCard.Card"
+            static let title = "Shopping.InfoComingSoonCard.Title"
+            static let description = "Shopping.InfoComingSoonCard.Description"
+        }
+
+        struct ReportingProductFeedbackCard {
+            static let card = "Shopping.ReportingProductFeedbackCard.Card"
+            static let title = "Shopping.ReportingProductFeedbackCard.Title"
+            static let description = "Shopping.ReportingProductFeedbackCard.Description"
+        }
+
+        struct ReportProductInStockCard {
+            static let card = "Shopping.ReportProductInStockCard.Card"
+            static let title = "Shopping.ReportProductInStockCard.Title"
+            static let description = "Shopping.ReportProductInStockCard.Description"
+            static let primaryAction = "Shopping.ReportProductInStockCard.PrimaryAction"
+        }
 
         struct AnalysisProgressInfoCard {
             static let card = "Shopping.AnalysisProgressInfoCard.Card"
@@ -249,6 +278,18 @@ public struct AccessibilityIdentifiers {
             static let mainButton = "Shopping.OptInCard.MainButton"
             static let secondaryButton = "Shopping.OptInCard.SecondaryButton"
         }
+
+        struct AdCard {
+            static let card = "Shopping.AdCard.Card"
+            static let title = "Shopping.AdCard.Title"
+            static let price = "Shopping.AdCard.PriceLabel"
+            static let starRating = "Shopping.AdCard.starRating"
+            static let productTitle = "Shopping.AdCard.ProductTitle"
+            static let description = "Shopping.AdCard.Description"
+            static let footer = "Shopping.AdCard.Footer"
+            static let defaultImage = "Shopping.AdCard.DefaultImage"
+            static let productImage = "Shopping.AdCard.ProductImage"
+        }
     }
 
     struct TabTray {
@@ -299,6 +340,14 @@ public struct AccessibilityIdentifiers {
 
         struct GroupedList {
             static let tableView = "grouped-items-table-view"
+        }
+
+        struct ReadingListPanel {
+            static let tableView = "Reading list"
+        }
+
+        struct DownloadsPanel {
+            static let tableView = "DownloadsTable"
         }
     }
 
@@ -373,6 +422,7 @@ public struct AccessibilityIdentifiers {
             static let searchNavigationBar = "Search"
             static let deleteMozillaEngine = "Remove Mozilla Engine"
             static let deleteButton = "Delete"
+            static let disableSearchSuggestsInPrivateMode = "PrivateMode.DisableSearchSuggests"
         }
 
         struct AdvancedAccountSettings {
@@ -381,6 +431,39 @@ public struct AccessibilityIdentifiers {
 
         struct Logins {
             static let title = "Logins"
+        }
+
+        struct CreditCards {
+            static let title = "AutofillCreditCard"
+
+            struct AutoFillCreditCard {
+                static let autoFillCreditCards = "Payment Methods"
+                static let addCard = "Add Card"
+                static let saveAutofillCards = "Save and Fill Payment Methods"
+                static let savedCards = "SAVED CARDS"
+            }
+
+            struct AddCreditCard {
+                static let addCreditCard = "Add Card"
+                static let nameOnCard = "Name on Card"
+                static let cardNumber = "Card Number"
+                static let expiration = "Expiration MM / YY"
+                static let close = "Close"
+                static let save = "Save"
+            }
+
+            struct ViewCreditCard {
+                static let viewCard = "View Card"
+                static let edit = "Edit"
+            }
+
+            struct EditCreditCard {
+                static let editCreditCard = "Edit Card"
+                static let removeCard = "Remove Card"
+                static let removeThisCard = "Remove Card?"
+                static let cancel = "Cancel"
+                static let remove = "Remove"
+            }
         }
 
         struct ClearData {

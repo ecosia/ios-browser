@@ -669,7 +669,73 @@ shopping:
     notification_emails:
       - fx-ios-data-stewards@mozilla.com
     expires: "2024-06-01"
-    unit: counter of product pages
+
+  ads_exposure:
+    type: event
+    description: |
+      On a supported product page, the review checker showed analysis, and
+      the ads exposure pref was enabled, or review checker ads were enabled,
+      and when we tried to fetch an ad from the ad server, an ad was available.
+      Does not indicate whether the ad was actually shown.
+    bugs:
+      - https://github.com/mozilla-mobile/firefox-ios/issues/17306
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-ios/pull/17493
+    notification_emails:
+      - fx-ios-data-stewards@mozilla.com
+    expires: "2024-06-01"
+    send_in_pings:
+      - events
+
+  surface_no_ads_available:
+    type: event
+    description: |
+      On a supported product page, the review checker
+      showed analysis, and review checker ads were enabled,
+      but when we tried to fetch an ad from the ad server,
+      no ad was available.
+    bugs:
+      - https://github.com/mozilla-mobile/firefox-ios/issues/17301
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-ios/pull/17663
+    notification_emails:
+      - fx-ios-data-stewards@mozilla.com
+    expires: "2024-06-01"
+    send_in_pings:
+      - events
+
+  surface_ads_impression:
+    type: event
+    description: |
+      An ad was shown and visible in the bottom sheet for 1.5 seconds.
+    bugs:
+      - https://github.com/mozilla-mobile/firefox-ios/issues/17302
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-ios/pull/17524
+    data_sensitivity:
+      - interaction
+    expires: "2024-06-01"
+    notification_emails:
+      - fx-ios-data-stewards@mozilla.com
+    send_in_pings:
+      - events
+
+  surface_ads_clicked:
+    type: event
+    description: |
+      An ad shown in the fakespot bar was clicked.
+    bugs:
+      - https://github.com/mozilla-mobile/firefox-ios/issues/7752
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-ios/pull/17861
+    data_sensitivity:
+      - interaction
+    expires: "2024-06-01"
+    notification_emails:
+      - fx-ios-data-stewards@mozilla.com
+    send_in_pings:
+      - events
+
   address_bar_icon_clicked:
     type: event
     description: |
@@ -909,6 +975,18 @@ shopping:
       - https://github.com/mozilla-mobile/firefox-ios/issues/16632
     data_reviews:
       - https://github.com/mozilla-mobile/firefox-ios/pull/16782
+    notification_emails:
+      - fx-ios-data-stewards@mozilla.com
+    expires: "2024-06-01"
+
+  surface_reactivated_button_clicked:
+    type: event
+    description: |
+      Records an event when a user reports a product as back in stock.
+    bugs:
+      - https://github.com/mozilla-mobile/firefox-ios/issues/17145
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-ios/pull/17230
     notification_emails:
       - fx-ios-data-stewards@mozilla.com
     expires: "2024-06-01"
@@ -1893,21 +1971,6 @@ firefox_home_page:
     notification_emails:
       - fx-ios-data-stewards@mozilla.com
     expires: "2024-06-01"
-  history_highlights_view:
-    type: counter
-    description: |
-      Counts the number of times a user sees the
-      History Highlights section on the homepage
-    bugs:
-      - https://github.com/mozilla-mobile/firefox-ios/pull/9563
-    data_reviews:
-      - https://github.com/mozilla-mobile/firefox-ios/pull/9563
-      - https://github.com/mozilla-mobile/firefox-ios/pull/9673
-      - https://github.com/mozilla-mobile/firefox-ios/pull/12334
-      - https://github.com/mozilla-mobile/firefox-ios/pull/14102
-    notification_emails:
-      - fx-ios-data-stewards@mozilla.com
-    expires: "2024-06-01"
   history_highlights_item_opened:
     type: event
     description: |
@@ -1921,6 +1984,18 @@ firefox_home_page:
       - https://github.com/mozilla-mobile/firefox-ios/pull/10516
       - https://github.com/mozilla-mobile/firefox-ios/pull/12334
       - https://github.com/mozilla-mobile/firefox-ios/pull/14102
+    notification_emails:
+      - fx-ios-data-stewards@mozilla.com
+    expires: "2024-06-01"
+  history_impressions:
+    type: event
+    description: |
+      Records the number of times a user views
+      history highlights section
+    bugs:
+      - https://github.com/mozilla-mobile/firefox-ios/issues/18088
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-ios/pull/18068
     notification_emails:
       - fx-ios-data-stewards@mozilla.com
     expires: "2024-06-01"
@@ -2040,6 +2115,17 @@ history:
       - https://github.com/mozilla-mobile/firefox-ios/pull/10212
       - https://github.com/mozilla-mobile/firefox-ios/pull/12334
       - https://github.com/mozilla-mobile/firefox-ios/pull/14102
+    notification_emails:
+      - fx-ios-data-stewards@mozilla.com
+    expires: "2024-06-01"
+  opened_item:
+    type: event
+    description: |
+      Recorded when a user opened a history item
+    bugs:
+      - https://github.com/mozilla-mobile/firefox-ios/issues/17296
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-ios/pull/17462
     notification_emails:
       - fx-ios-data-stewards@mozilla.com
     expires: "2024-06-01"
@@ -2610,6 +2696,9 @@ preferences:
 # Password Manager metrics
 logins:
   password_detected:
+# Private Browsing
+private_browsing:
+  data_clearance_icon_tapped:
     type: event
     description: |
       Records when a username and password pair was detected
@@ -2635,13 +2724,24 @@ logins:
     type: event
     description: |
       Records when the Password autofill prompt was dismissed.
+      Records when the private browsing button is tapped.
+    extra_keys:
+      did_confirm:
+       type: boolean
+       description: |
+         Whether the user confirmed the reset action via the confirmation dialog.
     bugs:
       - https://github.com/mozilla-mobile/firefox-ios/issues/14902
+      - https://github.com/mozilla-mobile/firefox-ios/issues/18078
     data_reviews:
       - https://github.com/mozilla-mobile/firefox-ios/pull/16685
+      - https://github.com/mozilla-mobile/firefox-ios/pull/18080
     notification_emails:
       - fx-ios-data-stewards@mozilla.com
     expires: "2024-06-01"
+
+# Password Manager metrics
+logins:
   autofilled:
     type: event
     description: |
@@ -2697,7 +2797,6 @@ logins:
     notification_emails:
       - fx-ios-data-stewards@mozilla.com
     expires: "2024-06-01"
-    unit: counter of logins.saved
   saved_all:
     type: quantity
     description: |
@@ -2721,7 +2820,6 @@ logins:
     notification_emails:
       - fx-ios-data-stewards@mozilla.com
     expires: "2024-06-01"
-    unit: counter of logins.deleted
   modified:
     type: counter
     description: |
@@ -2733,7 +2831,6 @@ logins:
     notification_emails:
       - fx-ios-data-stewards@mozilla.com
     expires: "2024-06-01"
-    unit: counter of logins.modified
   sync_enabled:
     type: event
     description: |
@@ -4638,6 +4735,129 @@ credit_card:
       - fx-ios-data-stewards@mozilla.com
     expires: "2024-06-01"
 
+  autofill_prompt_shown:
+    type: event
+    description: |
+      Records when the credit card autofill prompt was shown.
+    bugs:
+      - https://github.com/mozilla-mobile/firefox-ios/issues/17248
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-ios/pull/17331
+    notification_emails:
+      - fx-ios-data-stewards@mozilla.com
+    expires: "2024-06-01"
+  autofill_prompt_expanded:
+    type: event
+    description: |
+      Records when the credit card autofill prompt was expanded.
+    bugs:
+      - https://github.com/mozilla-mobile/firefox-ios/issues/17248
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-ios/pull/17331
+    notification_emails:
+      - fx-ios-data-stewards@mozilla.com
+    expires: "2024-06-01"
+  autofill_prompt_dismissed:
+    type: event
+    description: |
+      Records when the credit card autofill prompt was dismissed.
+    bugs:
+      - https://github.com/mozilla-mobile/firefox-ios/issues/17248
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-ios/pull/17331
+    notification_emails:
+      - fx-ios-data-stewards@mozilla.com
+    expires: "2024-06-01"
+  save_prompt_shown:
+    type: event
+    description: |
+      Records when the credit card autofill save prompt is shown.
+    bugs:
+      - https://github.com/mozilla-mobile/firefox-ios/issues/17248
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-ios/pull/17331
+    notification_emails:
+      - fx-ios-data-stewards@mozilla.com
+    expires: "2024-06-01"
+  save_prompt_update:
+    type: event
+    description: |
+      Records when the user updated a credit card using the autofill save prompt.
+    bugs:
+      - https://github.com/mozilla-mobile/firefox-ios/issues/17248
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-ios/pull/17331
+    notification_emails:
+      - fx-ios-data-stewards@mozilla.com
+    expires: "2024-06-01"
+  management_add_tapped:
+    type: event
+    description: |
+      Records when the user has tapped the add button through credit card management settings.
+    bugs:
+      - https://github.com/mozilla-mobile/firefox-ios/issues/17248
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-ios/pull/17331
+    notification_emails:
+      - fx-ios-data-stewards@mozilla.com
+    expires: "2024-06-01"
+  management_card_tapped:
+    type: event
+    description: |
+      Records when the user has tapped on a saved card through credit card management settings.
+    bugs:
+      - https://github.com/mozilla-mobile/firefox-ios/issues/17248
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-ios/pull/17331
+    notification_emails:
+      - fx-ios-data-stewards@mozilla.com
+    expires: "2024-06-01"
+  saved:
+    type: counter
+    description: |
+      A counter of the number of credit cards that have been saved by the user.
+    bugs:
+      - https://github.com/mozilla-mobile/firefox-ios/issues/17248
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-ios/pull/17331
+    notification_emails:
+      - fx-ios-data-stewards@mozilla.com
+    expires: "2024-06-01"
+  saved_all:
+    type: quantity
+    description: |
+      Record the number of ALL the credit cards that have been currently stored by the user.
+    bugs:
+      - https://github.com/mozilla-mobile/firefox-ios/issues/17248
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-ios/pull/17331
+    notification_emails:
+      - fx-ios-data-stewards@mozilla.com
+    expires: "2024-06-01"
+    unit: quantity of credit_card.saved_all
+  deleted:
+    type: counter
+    description: |
+      A counter of the number of credit cards that have been deleted by the user.
+    bugs:
+      - https://github.com/mozilla-mobile/firefox-ios/issues/17248
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-ios/pull/17331
+    notification_emails:
+      - fx-ios-data-stewards@mozilla.com
+    expires: "2024-06-01"
+  modified:
+    type: counter
+    description: |
+      A counter of the number of credit cards that have been modified by the user.
+    bugs:
+      - https://github.com/mozilla-mobile/firefox-ios/issues/17248
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-ios/pull/17331
+    notification_emails:
+      - fx-ios-data-stewards@mozilla.com
+    expires: "2024-06-01"
+
 baseline.validation:
   startup_duration:
     type: timespan
@@ -4710,3 +4930,219 @@ app_errors:
     notification_emails:
       - fx-ios-data-stewards@mozilla.com
     expires: never
+  crashed_last_launch:
+    type: event
+    description: |
+      Recorded when the previous session ended as a result of a crash
+    bugs:
+      - https://github.com/mozilla-mobile/firefox-ios/issues/16827
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-ios/pull/17844
+    notification_emails:
+      - fx-ios-data-stewards@mozilla.com
+    expires: never
+  cpu_exception:
+    type: event
+    description: |
+      Recorded when a cpu exception is triggered
+    extra_keys:
+      size:
+        description: |
+          Total CPU time consumed in the scope of the exception
+        type: quantity
+    bugs:
+      - https://github.com/mozilla-mobile/firefox-ios/issues/16828
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-ios/pull/17844
+    notification_emails:
+      - fx-ios-data-stewards@mozilla.com
+    expires: never
+  hang_exception:
+    type: event
+    description: |
+      Recorded when the main thread hangs
+    extra_keys:
+      size:
+        description: |
+          Total time the main thread was blocked
+        type: quantity
+    bugs:
+      - https://github.com/mozilla-mobile/firefox-ios/issues/16829
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-ios/pull/17844
+    notification_emails:
+      - fx-ios-data-stewards@mozilla.com
+    expires: never
+
+webview:
+  did_fail_provisional:
+    type: event
+    description: |
+      Recorded when an error occurs on early webview navigation.
+    bugs:
+      - https://github.com/mozilla-mobile/firefox-ios/issues/17716
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-ios/pull/17910
+    notification_emails:
+      - fx-ios-data-stewards@mozilla.com
+    expires: never
+  did_fail:
+    type: event
+    description: |
+      Recorded when an error occurred during navigation.
+    bugs:
+      - https://github.com/mozilla-mobile/firefox-ios/issues/17716
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-ios/pull/17910
+    notification_emails:
+      - fx-ios-data-stewards@mozilla.com
+    expires: never
+  show_error_page:
+    type: event
+    extra_keys:
+      error_code:
+        type: string
+        description: |
+          The error code number
+    description: |
+      Recorded when an error page is shown on the webview.
+    bugs:
+      - https://github.com/mozilla-mobile/firefox-ios/issues/17716
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-ios/pull/17910
+    notification_emails:
+      - fx-ios-data-stewards@mozilla.com
+    expires: never
+
+fx_suggest:
+  ping_type:
+    type: string
+    description: >
+      The ping's type. Either "fxsuggest-click" or "fxsuggest-impression".
+    bugs:
+      - https://github.com/mozilla-mobile/firefox-ios/issues/16589
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-ios/pull/17556
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - fx-ios-data-stewards@mozilla.com
+      - lina@mozilla.com
+      - ttran@mozilla.com
+      - najiang@mozilla.com
+    expires: never
+    send_in_pings:
+      - fx-suggest
+  position:
+    type: quantity
+    unit: non-negative integer
+    description: >
+      The position (1-based) of this suggestion in the full list of suggestions, relative to the
+      top of the awesomebar.
+    bugs:
+      - https://github.com/mozilla-mobile/firefox-ios/issues/16589
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-ios/pull/17556
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - fx-ios-data-stewards@mozilla.com
+      - lina@mozilla.com
+      - ttran@mozilla.com
+      - najiang@mozilla.com
+    expires: never
+    send_in_pings:
+      - fx-suggest
+  block_id:
+    type: quantity
+    description: |
+      A unique identifier for a sponsored suggestion. Not set for non-sponsored suggestions.
+    bugs:
+      - https://github.com/mozilla-mobile/firefox-ios/issues/16589
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-ios/pull/17556
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - fx-ios-data-stewards@mozilla.com
+      - lina@mozilla.com
+      - ttran@mozilla.com
+      - najiang@mozilla.com
+    expires: never
+    unit: integer
+    send_in_pings:
+      - fx-suggest
+  advertiser:
+    type: string
+    description: |
+      The name of the advertiser providing the sponsored suggestion
+    bugs:
+      - https://github.com/mozilla-mobile/firefox-ios/issues/16589
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-ios/pull/17556
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - fx-ios-data-stewards@mozilla.com
+      - lina@mozilla.com
+      - ttran@mozilla.com
+      - najiang@mozilla.com
+    expires: never
+    send_in_pings:
+      - fx-suggest
+  reporting_url:
+    type: url
+    description: |
+      If this ping is for a sponsored suggestion, the partner URL for reporting this interaction.
+      Not set for non-sponsored suggestions.
+    bugs:
+      - https://github.com/mozilla-mobile/firefox-ios/issues/16589
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-ios/pull/17556
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - fx-ios-data-stewards@mozilla.com
+      - lina@mozilla.com
+      - ttran@mozilla.com
+      - najiang@mozilla.com
+    expires: never
+    send_in_pings:
+      - fx-suggest
+  context_id:
+    type: uuid
+    description: |
+      An identifier to identify users for Contextual Services user interaction pings.
+    bugs:
+      - https://github.com/mozilla-mobile/firefox-ios/issues/16589
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-ios/pull/17556
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - fx-ios-data-stewards@mozilla.com
+      - lina@mozilla.com
+      - ttran@mozilla.com
+      - najiang@mozilla.com
+    expires: never
+    send_in_pings:
+      - fx-suggest
+  iab_category:
+    type: string
+    description: |
+      The suggestion's advertising category. "22 - Shopping" for sponsored suggestions.
+      Not set for non-sponsored suggestions.
+    bugs:
+      - https://github.com/mozilla-mobile/firefox-ios/issues/16589
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-ios/pull/17556
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - fx-ios-data-stewards@mozilla.com
+      - lina@mozilla.com
+      - ttran@mozilla.com
+      - najiang@mozilla.com
+    expires: never
+    send_in_pings:
+      - fx-suggest

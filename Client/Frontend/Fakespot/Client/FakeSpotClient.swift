@@ -11,15 +11,15 @@ protocol FakespotClientType {
     /// - Parameters:
     ///   - productId: The ID of the product to analyze.
     ///   - website: The website associated with the product.
-    func fetchProductAnalysisData(productId: String, website: String) async throws -> ProductAnalysisData
+    func fetchProductAnalysisData(productId: String, website: String) async throws -> ProductAnalysisResponse
 
     /// Fetches product ad data for a given product ID and website.
     /// - Parameters:
     ///   - productId: The ID of the product to fetch ad data for.
     ///   - website: The website associated with the product.
     /// - Throws: An error if the operation fails.
-    /// - Returns: An array of `ProductAdsData` objects containing ad data.
-    func fetchProductAdData(productId: String, website: String) async throws -> [ProductAdsData]
+    /// - Returns: An array of `ProductAdsResponse` objects containing ad data.
+    func fetchProductAdData(productId: String, website: String) async throws -> [ProductAdsResponse]
 
     /// Triggers the analysis of a product for a given product ID and website.
     /// - Parameters:
@@ -38,6 +38,25 @@ protocol FakespotClientType {
     /// - Throws: `FakeSpotClientError.invalidURL` if the API endpoint URL is missing or invalid,
     ///           and any other errors that may occur during the API request.
     func getProductAnalysisStatus(productId: String, website: String) async throws -> ProductAnalysisStatusResponse
+
+    /// Reports a product as back in stock for a given product ID and website asynchronously.
+    ///
+    /// - Parameters:
+    ///   - productId: The ID of the product to analyze.
+    ///   - website: The website associated with the product.
+    /// - Returns: A `ReportResponse` indicating the result of the back-in-stock report.
+    /// - Throws: `FakeSpotClientError.invalidURL` if the API endpoint URL is missing or invalid,
+    ///           and any other errors that may occur during the API request.
+    func reportProductBackInStock(productId: String, website: String) async throws -> ReportResponse
+
+    /// Reports an advertising event with specified details to the API.
+    /// - Parameters:
+    ///   - eventName: The name of the advertising event.
+    ///   - eventSource: The source of the advertising event.
+    ///   - aid: A string representing identifier for the event.
+    /// - Returns: An `AdEventsResponse` object containing the response data.
+    /// - Throws: `FakeSpotClientError.invalidURL` if the ad recording endpoint URL is invalid or not set.
+    func reportAdEvent(eventName: FakespotAdsEvent, eventSource: String, aidvs: [String]) async throws -> AdEventsResponse
 }
 
 /// An enumeration representing different environments for the Fakespot client.
@@ -49,6 +68,7 @@ enum FakespotEnvironment {
         case analyze = "/analyze"
         case analysis = "/analysis"
         case analysisStatus = "/analysis_status"
+        case report = "/report"
     }
 
     private var baseURL: String {
@@ -61,7 +81,7 @@ enum FakespotEnvironment {
     }
 
     private var apiVersion: String {
-        return "/api/v1/fx"
+        return "/api/v2/fx"
     }
 
     private func buildURL(path: FakespotPath) -> URL? {
@@ -84,6 +104,10 @@ enum FakespotEnvironment {
         buildURL(path: .analysisStatus)
     }
 
+    var reportEndpoint: URL? {
+        buildURL(path: .report)
+    }
+
     /// Returns the API ad endpoint URL based on the selected environment.
     var adEndpoint: URL? {
         switch self {
@@ -91,6 +115,15 @@ enum FakespotEnvironment {
             return URL(string: "https://staging-affiliates.fakespot.io/v1/fx/sp_search")
         case .prod:
             return URL(string: "https://a.fakespot.com/v1/fx/sp_search")
+        }
+    }
+
+    var adRecordingEndpoint: URL? {
+        switch self {
+        case .staging:
+            return URL(string: "https://staging-partner-ads.fakespot.io/api/v1/fx/events")
+        case .prod:
+            return URL(string: "https://pe.fakespot.com/api/v1/fx/events")
         }
     }
 
@@ -139,8 +172,8 @@ struct FakespotClient: FakespotClientType {
 
         // Prepare the request body
         let requestBody = [
-            "product_id": productId,
-            "website": website
+            "website": website,
+            "product_id": productId
         ]
 
         // Perform the async API request and get the data
@@ -156,8 +189,8 @@ struct FakespotClient: FakespotClientType {
 
         // Prepare the request body
         let requestBody = [
-            "product_id": productId,
-            "website": website
+            "website": website,
+            "product_id": productId
         ]
 
         // Perform the async API request and get the data
@@ -165,7 +198,7 @@ struct FakespotClient: FakespotClientType {
     }
 
     /// Fetches product analysis data for a given product ID and website.
-    func fetchProductAnalysisData(productId: String, website: String) async throws -> ProductAnalysisData {
+    func fetchProductAnalysisData(productId: String, website: String) async throws -> ProductAnalysisResponse {
         // Define the API endpoint URL
         guard let endpointURL = environment.analysisEndpoint else {
             throw FakeSpotClientError.invalidURL
@@ -173,16 +206,16 @@ struct FakespotClient: FakespotClientType {
 
         // Prepare the request body
         let requestBody = [
-            "product_id": productId,
-            "website": website
+            "website": website,
+            "product_id": productId
         ]
 
         // Perform the async API request and get the data
-        return try await fetch(ProductAnalysisData.self, url: endpointURL, requestBody: requestBody)
+        return try await fetch(ProductAnalysisResponse.self, url: endpointURL, requestBody: requestBody)
     }
 
     /// Fetches product ad data for a given product ID and website.
-    func fetchProductAdData(productId: String, website: String) async throws -> [ProductAdsData] {
+    func fetchProductAdData(productId: String, website: String) async throws -> [ProductAdsResponse] {
         // Define the API endpoint URL
         guard let endpointURL = environment.adEndpoint else {
             throw FakeSpotClientError.invalidURL
@@ -195,7 +228,52 @@ struct FakespotClient: FakespotClientType {
         ]
 
         // Perform the async API request and get the data
-        return try await fetch([ProductAdsData].self, url: endpointURL, requestBody: requestBody)
+        return try await fetch([ProductAdsResponse].self, url: endpointURL, requestBody: requestBody)
+    }
+
+    /// Reports product back in stock for a given product ID and website.
+    func reportProductBackInStock(productId: String, website: String) async throws -> ReportResponse {
+        // Define the API endpoint URL
+        guard let endpointURL = environment.reportEndpoint else {
+            throw FakeSpotClientError.invalidURL
+        }
+
+        // Prepare the request body
+        let requestBody = [
+            "website": website,
+            "product_id": productId
+        ]
+
+        // Perform the async API request and get the data
+        return try await fetch(ReportResponse.self, url: endpointURL, requestBody: requestBody)
+    }
+
+    /// Reports an advertising event with specified details to the API
+    func reportAdEvent(eventName: FakespotAdsEvent, eventSource: String, aidvs: [String]) async throws -> AdEventsResponse {
+        // Define the API endpoint URL
+        guard let endpointURL = environment.adRecordingEndpoint else {
+            throw FakeSpotClientError.invalidURL
+        }
+
+        let requestBody: [String: Any]
+
+        switch eventName {
+        case .trustedDealsLinkClicked:
+            requestBody = [
+                "event_name": eventName.rawValue,
+                "event_source": eventSource,
+                "aid": aidvs.first
+            ]
+        case .trustedDealsImpression, .trustedDealsPlacement:
+            requestBody = [
+                "event_name": eventName.rawValue,
+                "event_source": eventSource,
+                "aidvs": aidvs
+            ]
+        }
+
+        // Perform the async API request and get the data
+        return try await fetch(AdEventsResponse.self, url: endpointURL, requestBody: requestBody)
     }
 
     /// Asynchronous method to perform the API request and decode the response data.
@@ -207,6 +285,7 @@ struct FakespotClient: FakespotClientType {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
         request.httpBody = jsonData
 
         guard

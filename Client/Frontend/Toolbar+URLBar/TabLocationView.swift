@@ -14,7 +14,6 @@ protocol TabLocationViewDelegate: AnyObject {
     func tabLocationViewDidTapShield(_ tabLocationView: TabLocationView)
     func tabLocationViewDidBeginDragInteraction(_ tabLocationView: TabLocationView)
     func tabLocationViewDidTapShare(_ tabLocationView: TabLocationView, button: UIButton)
-    func tabLocationViewDidTapShopping(_ tabLocationView: TabLocationView, button: UIButton)
     func tabLocationViewPresentCFR(at sourceView: UIView)
 
     /// - returns: whether the long-press was handled by the delegate; i.e. return `false` when the conditions for even starting handling long-press were not satisfied
@@ -49,7 +48,9 @@ class TabLocationView: UIView, FeatureFlaggable {
     private let menuBadge = BadgeWithBackdrop(imageName: ImageIdentifiers.menuBadge, backdropCircleSize: 32)
 
     var url: URL? {
+        willSet { handleShoppingAdsCacheURLChange(newURL: newValue) }
         didSet {
+            hideButtons()
             updateTextWithURL()
             trackingProtectionButton.isHidden = !isValidHttpUrlProtocol
             shareButton.isHidden = !(shouldEnableShareButtonFeature && isValidHttpUrlProtocol)
@@ -104,6 +105,10 @@ class TabLocationView: UIView, FeatureFlaggable {
         trackingProtectionButton.addTarget(self, action: #selector(self.didPressTPShieldButton(_:)), for: .touchUpInside)
         trackingProtectionButton.clipsToBounds = false
         trackingProtectionButton.accessibilityIdentifier = AccessibilityIdentifiers.Toolbar.trackingProtection
+        trackingProtectionButton.showsLargeContentViewer = true
+        trackingProtectionButton.largeContentImage = .templateImageNamed(StandardImageIdentifiers.Large.lock)
+        trackingProtectionButton.largeContentTitle = .TabLocationLockButtonLargeContentTitle
+        trackingProtectionButton.accessibilityLabel = .TabLocationLockButtonAccessibilityLabel
     }
 
     lazy var shareButton: ShareButton = .build { shareButton in
@@ -112,15 +117,23 @@ class TabLocationView: UIView, FeatureFlaggable {
         shareButton.contentHorizontalAlignment = .center
         shareButton.accessibilityIdentifier = AccessibilityIdentifiers.Toolbar.shareButton
         shareButton.accessibilityLabel = .TabLocationShareAccessibilityLabel
+        shareButton.showsLargeContentViewer = true
+        shareButton.largeContentImage = .templateImageNamed(ImageIdentifiers.share)
+        shareButton.largeContentTitle = .TabLocationShareButtonLargeContentTitle
     }
 
     private lazy var shoppingButton: UIButton = .build { button in
+        let image = UIImage(named: StandardImageIdentifiers.Large.shopping)
+
         button.addTarget(self, action: #selector(self.didPressShoppingButton(_:)), for: .touchUpInside)
         button.isHidden = true
-        button.setImage(UIImage(named: StandardImageIdentifiers.Large.shopping)?.withRenderingMode(.alwaysTemplate), for: .normal)
+        button.setImage(image?.withRenderingMode(.alwaysTemplate), for: .normal)
         button.imageView?.contentMode = .scaleAspectFit
         button.accessibilityLabel = .TabLocationShoppingAccessibilityLabel
         button.accessibilityIdentifier = AccessibilityIdentifiers.Toolbar.shoppingButton
+        button.showsLargeContentViewer = true
+        button.largeContentTitle = .TabLocationShoppingAccessibilityLabel
+        button.largeContentImage = image
     }
 
     private lazy var readerModeButton: ReaderModeButton = .build { readerModeButton in
@@ -137,6 +150,9 @@ class TabLocationView: UIView, FeatureFlaggable {
                 name: .TabLocationReaderModeAddToReadingListAccessibilityLabel,
                 target: self,
                 selector: #selector(self.readerModeCustomAction))]
+        readerModeButton.showsLargeContentViewer = true
+        readerModeButton.largeContentTitle = .TabLocationReaderModeAccessibilityLabel
+        readerModeButton.largeContentImage = .templateImageNamed("reader")
     }
 
     lazy var reloadButton: StatefulButton = {
@@ -150,12 +166,14 @@ class TabLocationView: UIView, FeatureFlaggable {
         reloadButton.accessibilityIdentifier = AccessibilityIdentifiers.Toolbar.reloadButton
         reloadButton.isAccessibilityElement = true
         reloadButton.translatesAutoresizingMaskIntoConstraints = false
+        reloadButton.showsLargeContentViewer = true
+        reloadButton.largeContentTitle = .TabLocationReloadAccessibilityLabel
         return reloadButton
     }()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setupNotifications(forObserver: self, observing: [.FakespotViewControllerDidDismiss])
+        setupNotifications(forObserver: self, observing: [.FakespotViewControllerDidDismiss, .FakespotViewControllerDidAppear])
         register(self, forTabEvents: .didGainFocus, .didToggleDesktopMode, .didChangeContentBlocking)
         longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPressLocation))
         longPressRecognizer.delegate = self
@@ -206,7 +224,7 @@ class TabLocationView: UIView, FeatureFlaggable {
 
     // MARK: - Accessibility
 
-    private lazy var _accessibilityElements = [urlTextField, shoppingButton, readerModeButton, reloadButton, trackingProtectionButton, shareButton]
+    private lazy var _accessibilityElements = [trackingProtectionButton, urlTextField, shoppingButton, readerModeButton, shareButton, reloadButton]
 
     override var accessibilityElements: [Any]? {
         get {
@@ -274,7 +292,8 @@ class TabLocationView: UIView, FeatureFlaggable {
     @objc
     func didPressShoppingButton(_ button: UIButton) {
         button.isSelected = true
-        delegate?.tabLocationViewDidTapShopping(self, button: button)
+        TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .shoppingButton)
+        store.dispatch(FakespotAction.pressedShoppingButton)
     }
 
     @objc
@@ -310,6 +329,14 @@ class TabLocationView: UIView, FeatureFlaggable {
                                      object: .shoppingProductPageVisits)
     }
 
+    private func handleShoppingAdsCacheURLChange(newURL: URL?) {
+        guard  url?.displayURL != newURL,
+               !shoppingButton.isHidden else { return }
+        Task {
+            await ProductAdsCache.shared.clearCache()
+        }
+    }
+
     private func updateTextWithURL() {
         if let host = url?.host, AppConstants.punyCode {
             urlTextField.text = url?.absoluteString.replacingOccurrences(of: host, with: host.asciiHostToUTF8())
@@ -343,6 +370,11 @@ class TabLocationView: UIView, FeatureFlaggable {
                     .TabLocationETPOffSecureAccessibilityLabel : .TabLocationETPOffNotSecureAccessibilityLabel
             }
         }
+    }
+
+    // Fixes: https://github.com/mozilla-mobile/firefox-ios/issues/17403
+    private func hideButtons() {
+        [shoppingButton, shareButton].forEach { $0.isHidden = true }
     }
 }
 
@@ -380,6 +412,8 @@ extension TabLocationView: Notifiable {
         switch notification.name {
         case .FakespotViewControllerDidDismiss:
             shoppingButton.isSelected = false
+        case .FakespotViewControllerDidAppear:
+            shoppingButton.isSelected = true
         default: break
         }
     }

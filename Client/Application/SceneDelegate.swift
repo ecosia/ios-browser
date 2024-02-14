@@ -14,21 +14,8 @@ import Common
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
-    var logger: Logger = DefaultLogger.shared
-
-    /// This is a temporary work around until we have the architecture to properly replace the use cases where this code is used
-    /// Do not use in new code under any circumstances
-    var coordinatorBrowserViewController: BrowserViewController {
-        if let browserCoordinator = sceneCoordinator?.childCoordinators.first(where: { $0 as? BrowserCoordinator != nil }) as? BrowserCoordinator {
-            return browserCoordinator.browserViewController
-        } else {
-            logger.log("BrowserViewController couldn't be retrieved", level: .fatal, category: .lifecycle)
-            return BrowserViewController(profile: profile, tabManager: tabManager)
-        }
-    }
 
     let profile: Profile = AppContainer.shared.resolve()
-    let tabManager: TabManager = AppContainer.shared.resolve()
     var sessionManager: AppSessionProvider = AppContainer.shared.resolve()
     var downloadQueue: DownloadQueue = AppContainer.shared.resolve()
 
@@ -37,7 +24,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     // MARK: - Connecting / Disconnecting Scenes
 
-    /// Invoked when the app creates OR restores an instance of the UI.
+    /// Invoked when the app creates OR restores an instance of the UI. This is also where deeplinks are handled
+    /// when the app is launched from a cold start. The deeplink URLs are passed in via the `connectionOptions`.
     ///
     /// Use this method to respond to the addition of a new scene, and begin loading data that needs to display.
     /// Take advantage of what's given in `options`.
@@ -56,13 +44,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         routeBuilder.configure(isPrivate: UserDefaults.standard.bool(forKey: PrefsKeys.LastSessionWasPrivate),
                                prefs: profile.prefs)
 
-        sceneCoordinator = SceneCoordinator(scene: scene)
-        sceneCoordinator?.start()
+        let sceneCoordinator = SceneCoordinator(scene: scene)
+        self.sceneCoordinator = sceneCoordinator
+        sceneCoordinator.start()
 
-        // Adding a half second delay to ensure start up actions have resolved prior to attempting deeplink actions
-        // This is a hacky fix and a long term solution will be add in FXIOS-6828
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            self.handle(connectionOptions: connectionOptions)
+        AppEventQueue.wait(for: [.startupFlowComplete, .tabRestoration(sceneCoordinator.windowUUID)]) { [weak self] in
+            self?.handle(connectionOptions: connectionOptions)
         }
     }
 
@@ -93,7 +80,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     /// Asks the delegate to open one or more URLs.
     ///
-    /// This method is equivalent to AppDelegate's openURL method. We implement deep links this way.
+    /// This method is equivalent to AppDelegate's openURL method. Deeplinks opened while
+    /// the app is running are passed in through this delegate method.
     func scene(
         _ scene: UIScene,
         openURLContexts URLContexts: Set<UIOpenURLContext>
@@ -147,6 +135,25 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         if let shortcut = connectionOptions.shortcutItem,
            let route = routeBuilder.makeRoute(shortcutItem: shortcut,
                                               tabSetting: NewTabAccessors.getNewTabPage(profile.prefs)) {
+            sceneCoordinator?.findAndHandle(route: route)
+        }
+
+        // Check if our connection options include a user response to a push
+        // notification that is for Sent Tabs. If so, route the related tab URLs.
+        let sentTabsKey = NotificationSentTabs.sentTabsKey
+        if let notification = connectionOptions.notificationResponse?.notification,
+           let userInfo = notification.request.content.userInfo[sentTabsKey] as? [[String: Any]] {
+            handleConnectionOptionsSentTabs(userInfo)
+        }
+    }
+
+    private func handleConnectionOptionsSentTabs(_ userInfo: [[String: Any]]) {
+        // For Sent Tab data structure, see also:
+        // NotificationService.displayNewSentTabNotification()
+        for tab in userInfo {
+            guard let urlString = tab["url"] as? String,
+                  let url = URL(string: urlString),
+                  let route = routeBuilder.makeRoute(url: url) else { continue }
             sceneCoordinator?.findAndHandle(route: route)
         }
     }

@@ -15,7 +15,7 @@ class ContentBlockerSettingViewController: SettingsTableViewController {
          isShownFromSettings: Bool = true) {
         self.prefs = prefs
 
-        currentBlockingStrength = prefs.stringForKey(ContentBlockingConfig.Prefs.StrengthKey).flatMap({BlockingStrength(rawValue: $0)}) ?? .basic
+        currentBlockingStrength = prefs.stringForKey(ContentBlockingConfig.Prefs.StrengthKey).flatMap({ BlockingStrength(rawValue: $0) }) ?? .basic
 
         super.init(style: .grouped)
 
@@ -132,12 +132,8 @@ class ContentBlockerSettingViewController: SettingsTableViewController {
             button.addTarget(self, action: #selector(moreInfoTapped), for: .touchUpInside)
             button.isHidden = false
 
-            defaultFooter.addSubview(button)
+            defaultFooter.stackView.addArrangedSubview(button)
 
-            button.snp.makeConstraints { (make) in
-                make.top.equalTo(defaultFooter.titleLabel.snp.bottom)
-                make.leading.equalTo(defaultFooter.titleLabel)
-            }
             return defaultFooter
         }
 

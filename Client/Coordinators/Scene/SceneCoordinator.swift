@@ -5,21 +5,29 @@
 import Common
 import UIKit
 import Shared
+import Storage
+// Ecosia: Import Core
 import Core
 
 /// Each scene has it's own scene coordinator, which is the root coordinator for a scene.
 class SceneCoordinator: BaseCoordinator, LaunchCoordinatorDelegate, LaunchFinishedLoadingDelegate {
     var window: UIWindow?
+    let windowUUID: WindowUUID
     private let screenshotService: ScreenshotService
     private let sceneContainer: SceneContainer
+    private let windowManager: WindowManager
 
     init(scene: UIScene,
          sceneSetupHelper: SceneSetupHelper = SceneSetupHelper(),
          screenshotService: ScreenshotService = ScreenshotService(),
-         sceneContainer: SceneContainer = SceneContainer()) {
+         sceneContainer: SceneContainer = SceneContainer(),
+         windowManager: WindowManager = AppContainer.shared.resolve()) {
         self.window = sceneSetupHelper.configureWindowFor(scene, screenshotServiceDelegate: screenshotService)
         self.screenshotService = screenshotService
         self.sceneContainer = sceneContainer
+        self.windowManager = windowManager
+        self.windowUUID = windowManager.nextAvailableWindowUUID()
+
         let navigationController = sceneSetupHelper.createNavigationController()
         let router = DefaultRouter(navigationController: navigationController)
         super.init(router: router)
@@ -35,16 +43,32 @@ class SceneCoordinator: BaseCoordinator, LaunchCoordinatorDelegate, LaunchFinish
         router.push(launchScreenVC, animated: false)
     }
 
-    override func handle(route: Route) -> Bool {
+    override func canHandle(route: Route) -> Bool {
         switch route {
         case .action(action: .showIntroOnboarding):
-            return showIntroOnboardingIfNeeded()
+            return canShowIntroOnboarding()
         default:
             return false
         }
     }
 
-    private func showIntroOnboardingIfNeeded() -> Bool {
+    override func handle(route: Route) {
+        switch route {
+        case .action(action: .showIntroOnboarding):
+            showIntroOnboardingIfNeeded()
+        default:
+            break
+        }
+    }
+
+    private func canShowIntroOnboarding() -> Bool {
+        let profile: Profile = AppContainer.shared.resolve()
+        let introManager = IntroScreenManager(prefs: profile.prefs)
+        let launchType = LaunchType.intro(manager: introManager)
+        return launchType.canLaunch(fromType: .SceneCoordinator)
+    }
+
+    private func showIntroOnboardingIfNeeded() {
         let profile: Profile = AppContainer.shared.resolve()
         let introManager = IntroScreenManager(prefs: profile.prefs)
         let launchType = LaunchType.intro(manager: introManager)
@@ -53,9 +77,6 @@ class SceneCoordinator: BaseCoordinator, LaunchCoordinatorDelegate, LaunchFinish
         if launchType.canLaunch(fromType: .SceneCoordinator),
            User.shared.firstTime {
             startLaunch(with: launchType)
-            return true
-        } else {
-            return false
         }
     }
 
@@ -88,20 +109,35 @@ class SceneCoordinator: BaseCoordinator, LaunchCoordinatorDelegate, LaunchFinish
     }
 
     private func startBrowser(with launchType: LaunchType?) {
-        guard !childCoordinators.contains(where: { $0 is BrowserCoordinator}) else { return }
+        guard !childCoordinators.contains(where: { $0 is BrowserCoordinator }) else { return }
 
         logger.log("Starting browser with launchtype \(String(describing: launchType))",
                    level: .info,
                    category: .coordinator)
 
         let browserCoordinator = BrowserCoordinator(router: router,
-                                                    screenshotService: screenshotService)
+                                                    screenshotService: screenshotService,
+                                                    tabManager: createWindowTabManager(for: windowUUID))
         add(child: browserCoordinator)
         browserCoordinator.start(with: launchType)
 
         if let savedRoute {
             browserCoordinator.findAndHandle(route: savedRoute)
         }
+    }
+
+    private func createWindowTabManager(for windowUUID: WindowUUID) -> TabManager {
+        let profile: Profile = AppContainer.shared.resolve()
+        let imageStore = defaultDiskImageStoreForSceneTabManager()
+        return TabManagerImplementation(profile: profile, imageStore: imageStore, uuid: windowUUID)
+    }
+
+    private func defaultDiskImageStoreForSceneTabManager() -> DefaultDiskImageStore {
+        let profile: Profile = AppContainer.shared.resolve()
+        // TODO: [FXIOS-7885] Once iPad multi-window enabled each TabManager will likely share same default image store.
+        return DefaultDiskImageStore(files: profile.files,
+                                     namespace: "TabManagerScreenshots",
+                                     quality: UIConstants.ScreenshotQuality)
     }
 
     // MARK: - LaunchCoordinatorDelegate

@@ -8,6 +8,8 @@ import CoreSpotlight
 import UIKit
 import Common
 import Glean
+import TabDataStore
+// Ecosia: Import Core
 import Core
 
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -26,13 +28,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         sendTabDelegate: UIApplication.shared.sendTabDelegate,
         creditCardAutofillEnabled: creditCardAutofillStatus
     )
-    lazy var tabManager: TabManager = TabManagerImplementation(
-        profile: profile,
-        imageStore: DefaultDiskImageStore(
-            files: profile.files,
-            namespace: "TabManagerScreenshots",
-            quality: UIConstants.ScreenshotQuality)
-    )
 
     /* Ecosia: Swap Theme Manager with Ecosia's
     lazy var themeManager: ThemeManager = DefaultThemeManager(sharedContainerIdentifier: AppInfo.sharedContainerIdentifier)
@@ -41,6 +36,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     lazy var ratingPromptManager = RatingPromptManager(profile: profile)
     lazy var appSessionManager: AppSessionProvider = AppSessionManager()
     lazy var notificationSurfaceManager = NotificationSurfaceManager()
+    lazy var tabDataStore = DefaultTabDataStore()
+    lazy var windowManager = WindowManagerImplementation()
 
     private var shutdownWebServer: DispatchSourceTimer?
     private var webServerUtil: WebServerUtil?
@@ -94,12 +91,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                                nightlyAppVersion: AppConstants.nightlyAppVersion,
                                                sharedContainerIdentifier: AppInfo.sharedContainerIdentifier)
 
+        // Set-up Rust network stack. Note that this has to be called
+        // before any Application Services component gets used.
+        Viaduct.shared.useReqwestBackend()
+
         // Configure logger so we can start tracking logs early
         logger.configure(crashManager: DefaultCrashManager())
         initializeRustErrors(logger: logger)
         logger.log("willFinishLaunchingWithOptions begin",
                    level: .info,
                    category: .lifecycle)
+
+        // Establish event dependencies for startup flow
+        AppEventQueue.establishDependencies(for: .startupFlowComplete, against: [
+            .profileInitialized,
+            .preLaunchDependenciesComplete,
+            .postLaunchDependenciesComplete,
+            .accountManagerInitialized
+        ])
 
         // Then setup dependency container as it's needed for everything else
         DependencyHelper().bootstrapDependencies()
@@ -257,7 +266,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         handleBackgroundEvent()
         TelemetryWrapper.recordEvent(category: .action, method: .background, object: .app)
-        TabsQuantityTelemetry.trackTabsQuantity(tabManager: tabManager)
 
         profile.syncManager.applicationDidEnterBackground()
 
@@ -271,7 +279,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         singleShotTimer.resume()
         shutdownWebServer = singleShotTimer
         backgroundWorkUtility?.scheduleOnAppBackground()
-        tabManager.preserveTabs()
 
         logger.log("applicationDidEnterBackground end",
                    level: .info,

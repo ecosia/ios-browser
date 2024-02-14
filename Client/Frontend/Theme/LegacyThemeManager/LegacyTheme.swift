@@ -43,19 +43,11 @@ class TabTrayColor {
     var tabTitleText: UIColor { return UIColor.black }
 }
 
-class SnackBarColor {
-    var highlight: UIColor { return UIColor.LegacyDefaults.iOSTextHighlightBlue.withAlphaComponent(0.9) }
-    var highlightText: UIColor { return UIColor.Photon.Blue40 }
-    var border: UIColor { return UIColor.Photon.Grey30 }
-    var title: UIColor { return UIColor.Photon.Blue40 }
-}
-
 protocol LegacyTheme {
     var name: String { get }
     var tableView: TableViewColor { get }
     var browser: BrowserColor { get }
     var tabTray: TabTrayColor { get }
-    var snackbar: SnackBarColor { get }
     // Ecosia: Adapt theme
     var ecosia: EcosiaTheme { get }
 }
@@ -65,7 +57,6 @@ class LegacyNormalTheme: LegacyTheme {
     var tableView: TableViewColor { return TableViewColor() }
     var browser: BrowserColor { return BrowserColor() }
     var tabTray: TabTrayColor { return TabTrayColor() }
-    var snackbar: SnackBarColor { return SnackBarColor() }
     // Ecosia: Adapt theme
     var ecosia: EcosiaTheme { return EcosiaTheme() }
 }

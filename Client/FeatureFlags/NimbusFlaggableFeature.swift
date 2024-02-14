@@ -10,28 +10,28 @@ import UIKit
 /// An enum describing the featureID of all features found in Nimbus.
 /// Please add new features alphabetically.
 enum NimbusFeatureFlagID: String, CaseIterable {
+    case addressAutofill
     case bottomSearchBar
     case contextualHintForToolbar
-    case credentialAutofillCoordinatorRefactor
     case creditCardAutofillStatus
+    case fakespotBackInStock
     case fakespotFeature
-    case feltPrivacyUI
+    case fakespotProductAds
+    case feltPrivacySimplifiedUI
+    case feltPrivacyFeltDeletion
     case firefoxSuggestFeature
     case historyHighlights
     case historyGroups
     case inactiveTabs
     case isToolbarCFREnabled
     case jumpBackIn
-    case libraryCoordinatorRefactor
+    case preferSwitchToOpenTabOverDuplicate
     case qrCodeCoordinatorRefactor
-    case reduxIntegration
     case reportSiteIssue
     case searchHighlights
-    case shareExtensionCoordinatorRefactor
     case shareSheetChanges
     case shareToolbarChanges
     case tabTrayRefactor
-    case topSites
     case wallpapers
     case wallpaperOnboardingSheet
     case wallpaperVersion
@@ -66,24 +66,23 @@ struct NimbusFlaggableFeature: HasNimbusSearchBar {
             return FlagKeys.InactiveTabs
         case .jumpBackIn:
             return FlagKeys.JumpBackInSection
-        case .topSites:
-            return FlagKeys.TopSiteSection
         case .wallpapers:
             return FlagKeys.CustomWallpaper
 
         // Cases where users do not have the option to manipulate a setting.
         case .contextualHintForToolbar,
+                .addressAutofill,
                 .creditCardAutofillStatus,
-                .credentialAutofillCoordinatorRefactor,
+                .fakespotBackInStock,
                 .fakespotFeature,
+                .fakespotProductAds,
                 .isToolbarCFREnabled,
-                .libraryCoordinatorRefactor,
+                .preferSwitchToOpenTabOverDuplicate,
                 .qrCodeCoordinatorRefactor,
-                .reduxIntegration,
                 .reportSiteIssue,
-                .feltPrivacyUI,
+                .feltPrivacySimplifiedUI,
+                .feltPrivacyFeltDeletion,
                 .searchHighlights,
-                .shareExtensionCoordinatorRefactor,
                 .shareSheetChanges,
                 .shareToolbarChanges,
                 .tabTrayRefactor,

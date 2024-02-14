@@ -8,10 +8,10 @@ public protocol ThemeManager {
     var currentTheme: Theme { get }
     var window: UIWindow? { get set }
 
-    func getInterfaceStyle() -> UIUserInterfaceStyle
     func changeCurrentTheme(_ newTheme: ThemeType)
     func systemThemeChanged()
     func setSystemTheme(isOn: Bool)
+    func setPrivateTheme(isOn: Bool)
     func setAutomaticBrightness(isOn: Bool)
     func setAutomaticBrightnessValue(_ value: Float)
 }

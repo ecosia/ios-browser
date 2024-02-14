@@ -62,7 +62,7 @@ enum TabUrlType: String {
     case googleTopSiteFollowOn
 }
 
-class Tab: NSObject {
+class Tab: NSObject, ThemeApplicable {
     static let privateModeKey = "PrivateModeKey"
     private var _isPrivate = false
     private(set) var isPrivate: Bool {
@@ -186,6 +186,10 @@ class Tab: NSObject {
     /// This property returns, ideally, the web page's title. Otherwise, based on the page being internal or not, it will
     /// resort to other displayable titles.
     var displayTitle: String {
+        if let lastTitle = lastTitle, !lastTitle.isEmpty {
+            return lastTitle
+        }
+
         // First, check if the webView can give us a title.
         if let title = webView?.title, !title.isEmpty {
             return title
@@ -194,7 +198,7 @@ class Tab: NSObject {
         // If the webView doesn't give a title. check the URL to see if it's our Home URL, with no sessionData on this tab.
         // When picking a display title. Tabs with sessionData are pending a restore so show their old title.
         // To prevent flickering of the display title. If a tab is restoring make sure to use its lastTitle.
-        if let url = self.url, InternalURL(url)?.isAboutHomeURL ?? false, sessionData == nil, !isRestoring {
+        if let url = self.url, InternalURL(url)?.isAboutHomeURL ?? false, sessionData == nil {
             return .AppMenu.AppMenuOpenHomePageTitleString
         }
 
@@ -229,7 +233,7 @@ class Tab: NSObject {
             backUpName = about
         }
 
-        return self.displayTitle.isEmpty ? backUpName : self.displayTitle
+        return displayTitle.isEmpty ? backUpName : displayTitle
     }
 
     var canGoBack: Bool {
@@ -256,7 +260,6 @@ class Tab: NSObject {
         }
     }
     fileprivate var lastRequest: URLRequest?
-    var isRestoring = false
     var pendingScreenshot = false
     var url: URL? {
         didSet {
@@ -491,46 +494,12 @@ class Tab: NSObject {
     }
 
     func restore(_ webView: WKWebView, interactionState: Data? = nil) {
-        // If the interactionState field is populated it means the new session store is in use and the session data
-        // now comes from a different source than save tab and parsing is managed by the web view itself
-        if #available(iOS 15, *) {
-            if let url = url {
-                webView.load(PrivilegedRequest(url: url) as URLRequest)
-            }
-            if let interactionState = interactionState {
-                webView.interactionState = interactionState
-            }
-            return
+        if let url = url {
+            webView.load(PrivilegedRequest(url: url) as URLRequest)
         }
 
-        // Pulls restored session data from a previous LegacySavedTab to load into the Tab. If it's nil, a session restore
-        // has already been triggered via custom URL, so we use the last request to trigger it again; otherwise,
-        // we extract the information needed to restore the tabs and create a NSURLRequest with the custom session restore URL
-        // to trigger the session restore via custom handlers
-        if let sessionData = self.sessionData {
-            isRestoring = true
-
-            var urls = [String]()
-            for url in sessionData.urls {
-                urls.append(url.absoluteString)
-            }
-
-            let currentPage = sessionData.currentPage
-            self.sessionData = nil
-            var jsonDict = [String: AnyObject]()
-            jsonDict["history"] = urls as AnyObject?
-            jsonDict["currentPage"] = currentPage as AnyObject?
-
-            guard let json = jsonDict.asString?.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else { return }
-
-            if let restoreURL = URL(string: "\(InternalURL.baseUrl)/\(SessionRestoreHandler.path)?history=\(json)", invalidCharacters: false) {
-                let request = PrivilegedRequest(url: restoreURL) as URLRequest
-                webView.load(request)
-                lastRequest = request
-                isRestoring = false
-            }
-        } else if let request = lastRequest {
-            webView.load(request)
+        if let interactionState = interactionState {
+            webView.interactionState = interactionState
         }
     }
 
@@ -779,7 +748,8 @@ class Tab: NSObject {
     func toggleChangeUserAgent() {
         changedUserAgent = !changedUserAgent
 
-        if changedUserAgent, let url = url?.withoutMobilePrefix() {
+        if changedUserAgent, let url = url {
+            let url = ChangeUserAgent().removeMobilePrefixFrom(url: url)
             let request = URLRequest(url: url)
             webView?.load(request)
         } else {
@@ -830,10 +800,6 @@ class Tab: NSObject {
         }
     }
 
-    func applyTheme() {
-        UITextField.appearance().keyboardAppearance = isPrivate ? .dark : (LegacyThemeManager.instance.currentName == .dark ? .dark : .light)
-    }
-
     func getProviderForUrl() -> SearchEngine {
         guard let url = self.webView?.url else {
             return .none
@@ -844,6 +810,12 @@ class Tab: NSObject {
         }
 
         return .none
+    }
+
+    // MARK: - ThemeApplicable
+
+    func applyTheme(theme: Theme) {
+        UITextField.appearance().keyboardAppearance = theme.type.keyboardAppearence(isPrivate: isPrivate)
     }
 }
 
@@ -954,7 +926,7 @@ protocol TabWebViewDelegate: AnyObject {
     func tabWebViewSearchWithFirefox(_ tabWebViewSearchWithFirefox: TabWebView, didSelectSearchWithFirefoxForSelection selection: String)
 }
 
-class TabWebView: WKWebView, MenuHelperInterface {
+class TabWebView: WKWebView, MenuHelperInterface, ThemeApplicable {
     var accessoryView = AccessoryViewProvider()
     private var logger: Logger = DefaultLogger.shared
     private weak var delegate: TabWebViewDelegate?
@@ -977,19 +949,19 @@ class TabWebView: WKWebView, MenuHelperInterface {
 
         accessoryView.previousClosure = { [weak self] in
             guard let self else { return }
-            CreditCardHelper.focusPreviousInputField(tabWebView: self,
-                                                     logger: self.logger)
+            FormAutofillHelper.focusPreviousInputField(tabWebView: self,
+                                                       logger: self.logger)
         }
 
         accessoryView.nextClosure = { [weak self] in
             guard let self else { return }
-            CreditCardHelper.focusNextInputField(tabWebView: self,
-                                                 logger: self.logger)
+            FormAutofillHelper.focusNextInputField(tabWebView: self,
+                                                   logger: self.logger)
         }
 
         accessoryView.doneClosure = { [weak self] in
             guard let self else { return }
-            CreditCardHelper.blurActiveElement(tabWebView: self, logger: self.logger)
+            FormAutofillHelper.blurActiveElement(tabWebView: self, logger: self.logger)
             self.endEditing(true)
         }
     }
@@ -1000,15 +972,6 @@ class TabWebView: WKWebView, MenuHelperInterface {
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    // Updates the `background-color` of the webview to match
-    // the theme if the webview is showing "about:blank" (nil).
-    func applyTheme() {
-        if url == nil {
-            let backgroundColor = LegacyThemeManager.instance.current.browser.background.hexString
-            evaluateJavascriptInDefaultContentWorld("document.documentElement.style.backgroundColor = '\(backgroundColor)';")
-        }
     }
 
     override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
@@ -1045,5 +1008,16 @@ class TabWebView: WKWebView, MenuHelperInterface {
                 message: "Do not call evaluateJavaScript directly on TabWebViews, should only be called on super class")
     override func evaluateJavaScript(_ javaScriptString: String, completionHandler: ((Any?, Error?) -> Void)? = nil) {
         super.evaluateJavaScript(javaScriptString, completionHandler: completionHandler)
+    }
+
+    // MARK: - ThemeApplicable
+
+    /// Updates the `background-color` of the webview to match
+    /// the theme if the webview is showing "about:blank" (nil).
+    func applyTheme(theme: Theme) {
+        if url == nil {
+            let backgroundColor = theme.colors.layer1.hexString
+            evaluateJavascriptInDefaultContentWorld("document.documentElement.style.backgroundColor = '\(backgroundColor)';")
+        }
     }
 }

@@ -318,6 +318,7 @@ open class BrowserProfile: Profile {
         if let downloadsPath = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false).appendingPathComponent("Downloads").path {
             try? FileManager.default.createDirectory(atPath: downloadsPath, withIntermediateDirectories: true, attributes: nil)
         }
+        AppEventQueue.signal(event: .profileInitialized)
     }
 
     func reopen() {
@@ -489,7 +490,7 @@ open class BrowserProfile: Profile {
     func retrieveTabData() -> Deferred<Maybe<[ClientAndTabs]>> {
         logger.log("Getting all tabs and clients", level: .debug, category: .tabs)
 
-        guard let accountManager = self.rustFxA.accountManager.peek(),
+        guard let accountManager = self.rustFxA.accountManager,
               let state = accountManager.deviceConstellation()?.state()
         else {
             return deferMaybe([])
@@ -553,10 +554,10 @@ open class BrowserProfile: Profile {
 
     public func sendItem(_ item: ShareItem, toDevices devices: [RemoteDevice]) -> Success {
         let deferred = Success()
-        RustFirefoxAccounts.shared.accountManager.uponQueue(.main) { accountManager in
+        if let accountManager = RustFirefoxAccounts.shared.accountManager {
             guard let constellation = accountManager.deviceConstellation() else {
                 deferred.fill(Maybe(failure: NoAccountError()))
-                return
+                return deferred
             }
             devices.forEach {
                 if let id = $0.id {
@@ -589,7 +590,7 @@ open class BrowserProfile: Profile {
             return
         }
         self.prefs.setTimestamp(now, forKey: PrefsKeys.PollCommandsTimestamp)
-        self.rustFxA.accountManager.upon { accountManager in
+        if let accountManager = self.rustFxA.accountManager {
             accountManager.deviceConstellation()?.pollForCommands { commands in
                 guard let commands = try? commands.get() else { return }
                 let urls = commands.compactMap { command in
@@ -605,13 +606,8 @@ open class BrowserProfile: Profile {
     }
 
     lazy var logins: RustLogins = {
-        // TODO: #16076 - We should avoid force unwraps
         let databasePath = URL(fileURLWithPath: directory, isDirectory: true).appendingPathComponent("loginsPerField.db").path
-        // Though we don't migrate SQLCipher DBs anymore, we keep this call to
-        // delete any existing DBs if they still exist
-        let sqlCipherDatabasePath = URL(fileURLWithPath: directory, isDirectory: true).appendingPathComponent("logins.db").path
-
-        return RustLogins(sqlCipherDatabasePath: sqlCipherDatabasePath, databasePath: databasePath)
+        return RustLogins(databasePath: databasePath)
     }()
 
     lazy var firefoxSuggest: RustFirefoxSuggest? = {
@@ -667,20 +663,8 @@ open class BrowserProfile: Profile {
         let creditCardKey = keychain.string(forKey: rustAutofillKey.ccKeychainKey)
         let rustLoginsKeys = RustLoginEncryptionKeys()
         let perFieldKey = keychain.string(forKey: rustLoginsKeys.loginPerFieldKeychainKey)
-        let sqlCipherKey = keychain.string(forKey: rustLoginsKeys.loginsUnlockKeychainKey)
-        let sqlCipherSalt = keychain.string(forKey: rustLoginsKeys.loginPerFieldKeychainKey)
-
         // Remove all items, removal is not key-by-key specific (due to the risk of failing to delete something), simply restore what is needed.
         keychain.removeAllKeys()
-
-        // Restore the keys that are still needed
-        if let sqlCipherKey = sqlCipherKey {
-            keychain.set(sqlCipherKey, forKey: rustLoginsKeys.loginsUnlockKeychainKey, withAccessibility: MZKeychainItemAccessibility.afterFirstUnlock)
-        }
-
-        if let sqlCipherSalt = sqlCipherSalt {
-            keychain.set(sqlCipherSalt, forKey: rustLoginsKeys.loginsSaltKeychainKey, withAccessibility: MZKeychainItemAccessibility.afterFirstUnlock)
-        }
 
         if let perFieldKey = perFieldKey {
             keychain.set(perFieldKey, forKey: rustLoginsKeys.loginPerFieldKeychainKey, withAccessibility: .afterFirstUnlock)

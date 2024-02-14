@@ -12,7 +12,8 @@ class FakespotViewController:
     Themeable,
     Notifiable,
     UIAdaptivePresentationControllerDelegate,
-    UISheetPresentationControllerDelegate {
+    UISheetPresentationControllerDelegate,
+    UIScrollViewDelegate {
     private struct UX {
         static let headerTopSpacing: CGFloat = 22
         static let headerHorizontalSpacing: CGFloat = 18
@@ -31,18 +32,28 @@ class FakespotViewController:
         static let scrollContentBottomPadding: CGFloat = 40
         static let scrollContentHorizontalPadding: CGFloat = 16
         static let scrollContentStackSpacing: CGFloat = 16
+        static let shadowRadius: CGFloat = 14
+        static let shadowOpacity: Float = 1
+        static let shadowOffset = CGSize(width: 0, height: 2)
+        static let animationDuration: TimeInterval = 0.2
     }
     var notificationCenter: NotificationProtocol
     var themeManager: ThemeManager
     var themeObserver: NSObjectProtocol?
-    private let viewModel: FakespotViewModel
-    weak var delegate: FakespotViewControllerDelegate?
+    private var viewModel: FakespotViewModel
+
+    private var adView: FakespotAdView?
 
     private lazy var scrollView: UIScrollView = .build()
 
     private lazy var contentStackView: UIStackView = .build { stackView in
         stackView.axis = .vertical
         stackView.spacing = UX.scrollContentStackSpacing
+    }
+
+    private lazy var shadowView: UIView = .build { view in
+        view.layer.shadowOffset = UX.shadowOffset
+        view.layer.shadowRadius = UX.shadowRadius
     }
 
     private lazy var headerView: UIView = .build()
@@ -83,7 +94,7 @@ class FakespotViewController:
     private lazy var closeButton: UIButton = .build { button in
         button.setImage(UIImage(named: StandardImageIdentifiers.ExtraLarge.crossCircleFill), for: .normal)
         button.addTarget(self, action: #selector(self.closeTapped), for: .touchUpInside)
-        button.accessibilityLabel = .CloseButtonTitle
+        button.accessibilityLabel = .Shopping.CloseButtonAccessibilityLabel
         button.accessibilityIdentifier = AccessibilityIdentifiers.Shopping.sheetCloseButton
     }
 
@@ -98,11 +109,7 @@ class FakespotViewController:
         self.themeManager = themeManager
         super.init(nibName: nil, bundle: nil)
 
-        viewModel.onStateChange = { [weak self] in
-            ensureMainThread {
-                self?.updateContent()
-            }
-        }
+        listenToStateChange()
     }
 
     required init?(coder: NSCoder) {
@@ -114,6 +121,7 @@ class FakespotViewController:
         super.viewDidLoad()
         presentationController?.delegate = self
         sheetPresentationController?.delegate = self
+        scrollView.delegate = self
 
         setupNotifications(forObserver: self,
                            observing: [.DynamicFontChanged])
@@ -137,17 +145,20 @@ class FakespotViewController:
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         viewModel.isSwiping = false
+        setShadowPath()
+        handleAdVisibilityChanges()
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        notificationCenter.post(name: .FakespotViewControllerDidAppear)
         viewModel.recordBottomSheetDisplayed(presentationController)
         updateModalA11y()
     }
 
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        notificationCenter.post(name: .FakespotViewControllerDidDismiss, withObject: nil)
+        notificationCenter.post(name: .FakespotViewControllerDidDismiss)
     }
 
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -155,9 +166,45 @@ class FakespotViewController:
         viewModel.isSwiping = true
     }
 
+    func update(viewModel: FakespotViewModel, triggerFetch: Bool = true) {
+        // Only update the model if the shopping product changed to avoid unnecessary API calls
+        guard self.viewModel.shoppingProduct != viewModel.shoppingProduct else { return }
+
+        self.viewModel = viewModel
+        listenToStateChange()
+
+        guard triggerFetch else { return }
+        viewModel.fetchProductIfOptedIn()
+    }
+
+    private func handleAdVisibilityChanges() {
+        guard let adView else { return }
+        viewModel.handleVisibilityChanges(for: adView, in: scrollView)
+    }
+
+    private func setShadowPath() {
+        // Calculate the rect for the shadowPath, ensuring it is at the bottom of the view
+        let shadowPathRect = CGRect(
+            x: 0,
+            y: shadowView.bounds.maxY - shadowView.layer.shadowRadius,
+            width: shadowView.bounds.width,
+            height: shadowView.layer.shadowRadius
+        )
+        shadowView.layer.shadowPath = UIBezierPath(rect: shadowPathRect).cgPath
+    }
+
+    private func listenToStateChange() {
+        viewModel.onStateChange = { [weak self] in
+            ensureMainThread {
+                self?.updateContent()
+            }
+        }
+    }
+
     func applyTheme() {
         let theme = themeManager.currentTheme
-
+        shadowView.layer.shadowColor = theme.colors.shadowDefault.cgColor
+        shadowView.backgroundColor = theme.colors.layer1
         view.backgroundColor = theme.colors.layer1
         titleLabel.textColor = theme.colors.textPrimary
         betaLabel.textColor = theme.colors.textSecondary
@@ -182,7 +229,7 @@ class FakespotViewController:
         titleStackView.addArrangedSubview(titleLabel)
         titleStackView.addArrangedSubview(betaView)
         headerView.addSubviews(titleStackView, closeButton)
-        view.addSubviews(headerView, scrollView)
+        view.addSubviews(scrollView, shadowView, headerView)
 
         scrollView.addSubview(contentStackView)
         updateContent()
@@ -210,6 +257,11 @@ class FakespotViewController:
             headerView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor,
                                                  constant: -UX.headerHorizontalSpacing),
 
+            shadowView.topAnchor.constraint(equalTo: view.topAnchor),
+            shadowView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            shadowView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            shadowView.bottomAnchor.constraint(equalTo: scrollView.topAnchor),
+
             titleStackView.topAnchor.constraint(equalTo: headerView.topAnchor),
             titleStackView.leadingAnchor.constraint(equalTo: headerView.leadingAnchor),
             titleStackView.trailingAnchor.constraint(lessThanOrEqualTo: closeButton.leadingAnchor,
@@ -230,6 +282,8 @@ class FakespotViewController:
     }
 
     private func adjustLayout() {
+        closeButton.isHidden = FakespotUtils().shouldDisplayInSidebar()
+
         guard let titleLabelText = titleLabel.text, let betaLabelText = betaLabel.text else { return }
 
         var availableTitleStackWidth = headerView.frame.width
@@ -275,6 +329,31 @@ class FakespotViewController:
         applyTheme()
     }
 
+    private func adjustShadowBasedOnIntersection() {
+        let shadowViewFrameInSuperview = shadowView.convert(
+            shadowView.bounds,
+            to: view
+        )
+        let contentStackViewFrameInSuperview = contentStackView.convert(
+            contentStackView.bounds,
+            to: view
+        )
+
+        if shadowViewFrameInSuperview.intersects(contentStackViewFrameInSuperview) {
+            guard !viewModel.isViewIntersected else { return }
+            viewModel.isViewIntersected.toggle()
+            UIView.animate(withDuration: UX.animationDuration) {
+                self.shadowView.layer.shadowOpacity = UX.shadowOpacity
+            }
+        } else {
+            guard viewModel.isViewIntersected else { return }
+            viewModel.isViewIntersected.toggle()
+            UIView.animate(withDuration: UX.animationDuration) {
+                self.shadowView.layer.shadowOpacity = 0
+            }
+        }
+    }
+
     private func createContentView(viewElement: FakespotViewModel.ViewElement) -> UIView? {
         switch viewElement {
         case .loadingView:
@@ -283,9 +362,9 @@ class FakespotViewController:
         case .onboarding:
             let view: FakespotOptInCardView = .build()
             viewModel.optInCardViewModel.dismissViewController = { [weak self] action in
-                guard let self = self else { return }
-                self.delegate?.fakespotControllerDidDismiss()
-                guard let action else { return }
+                store.dispatch(FakespotAction.setAppearanceTo(false))
+
+                guard let self = self, let action else { return }
                 viewModel.recordDismissTelemetry(by: action)
             }
             viewModel.optInCardViewModel.onOptIn = { [weak self] in
@@ -315,9 +394,8 @@ class FakespotViewController:
 
         case .qualityDeterminationCard:
             let reviewQualityCardView: FakespotReviewQualityCardView = .build()
-            viewModel.reviewQualityCardViewModel.dismissViewController = { [weak self] in
-                guard let self = self else { return }
-                self.delegate?.fakespotControllerDidDismiss()
+            viewModel.reviewQualityCardViewModel.dismissViewController = {
+                store.dispatch(FakespotAction.setAppearanceTo(false))
             }
             reviewQualityCardView.configure(viewModel.reviewQualityCardViewModel)
             return reviewQualityCardView
@@ -326,27 +404,37 @@ class FakespotViewController:
             let view: FakespotSettingsCardView = .build()
             view.configure(viewModel.settingsCardViewModel)
             viewModel.settingsCardViewModel.dismissViewController = { [weak self] action in
-                guard let self = self else { return }
-                self.delegate?.fakespotControllerDidDismiss()
-                guard let action else { return }
+                guard let self = self, let action else { return }
+
+                store.dispatch(FakespotAction.setAppearanceTo(false))
                 viewModel.recordDismissTelemetry(by: action)
+            }
+            viewModel.settingsCardViewModel.toggleAdsEnabled = { [weak self] in
+                self?.viewModel.toggleAdsEnabled()
             }
             return view
 
         case .noAnalysisCard:
              let view: FakespotNoAnalysisCardView = .build()
-             viewModel.noAnalysisCardViewModel.onTapStartAnalysis = { [weak view, weak self] in
-                 view?.updateLayoutForInProgress()
+             viewModel.noAnalysisCardViewModel.onTapStartAnalysis = { [weak self] in
                  self?.onNeedsAnalysisTap()
              }
              view.configure(viewModel.noAnalysisCardViewModel)
              return view
 
-        case .progressAnalysisCard:
-             let view: FakespotNoAnalysisCardView = .build()
-             view.configure(viewModel.noAnalysisCardViewModel)
-             view.updateLayoutForInProgress()
-             return view
+        case .productAdCard(let adData):
+            guard viewModel.areAdsEnabled else { return nil }
+            let view: FakespotAdView = .build()
+            var viewModel = FakespotAdViewModel(productAdsData: adData)
+            viewModel.onTapProductLink = { [weak self] in
+                self?.viewModel.addTab(url: adData.url)
+                self?.viewModel.recordSurfaceAdsClickedTelemetry()
+                self?.viewModel.reportAdEvent(eventName: .trustedDealsLinkClicked, aidvs: [adData.aid])
+                store.dispatch(FakespotAction.setAppearanceTo(false))
+            }
+            view.configure(viewModel)
+            adView = view
+            return view
 
         case .messageCard(let messageType):
             switch messageType {
@@ -386,6 +474,21 @@ class FakespotViewController:
                 let view: FakespotMessageCardView = .build()
                 view.configure(viewModel.analysisProgressViewModel)
                 return view
+
+            case .reportProductInStock:
+                let view: FakespotMessageCardView = .build()
+                viewModel.reportProductInStockViewModel.primaryAction = { [weak view, weak self] in
+                    guard let self else { return }
+                    view?.configure(self.viewModel.reportingProductFeedbackViewModel)
+                    self.viewModel.reportProductBackInStock()
+                }
+                view.configure(viewModel.reportProductInStockViewModel)
+                return view
+
+            case .infoComingSoonCard:
+                let view: FakespotMessageCardView = .build()
+                view.configure(viewModel.infoComingSoonCardViewModel)
+                return view
             }
         }
     }
@@ -396,8 +499,12 @@ class FakespotViewController:
 
     @objc
     private func closeTapped() {
-        delegate?.fakespotControllerDidDismiss()
+        triggerDismiss()
         viewModel.recordDismissTelemetry(by: .closeButton)
+    }
+
+    private func triggerDismiss() {
+        store.dispatch(FakespotAction.dismiss)
     }
 
     deinit {
@@ -425,7 +532,8 @@ class FakespotViewController:
     // MARK: - UIAdaptivePresentationControllerDelegate
 
     func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
-        delegate?.fakespotControllerDidDismiss()
+        triggerDismiss()
+
         let currentDetent = viewModel.getCurrentDetent(for: presentationController)
 
         if viewModel.isSwiping || currentDetent == .large {
@@ -451,5 +559,11 @@ class FakespotViewController:
     // MARK: - UISheetPresentationControllerDelegate
     func sheetPresentationControllerDidChangeSelectedDetentIdentifier(_ sheetPresentationController: UISheetPresentationController) {
         updateModalA11y()
+    }
+
+    // MARK: - UIScrollViewDelegate
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        adjustShadowBasedOnIntersection()
+        handleAdVisibilityChanges()
     }
 }
