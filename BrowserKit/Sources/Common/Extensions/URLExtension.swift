@@ -7,11 +7,9 @@ import Foundation
 extension URL {
     /// Temporary init that will be removed with the update to XCode 15 where this URL API is available
     public init?(string: String, invalidCharacters: Bool) {
-        if #available(iOS 17, *) {
-            self.init(string: string, encodingInvalidCharacters: invalidCharacters)
-        } else {
-            self.init(string: string)
-        }
+        // FXIOS-8107: Removed 'encodingInvalidCharacters' init for
+        // compatibility reasons that is available for iOS 17+ only
+        self.init(string: string)
     }
 
     /// Returns a shorter displayable string for a domain
@@ -210,6 +208,34 @@ extension URL {
         } else {
             return urlString
         }
+    }
+
+    public func removeBlobFromUrl() -> URL {
+        let urlString = absoluteString
+        guard scheme == "blob" else {
+            return self
+        }
+
+        let stringURL = String(urlString[urlString.index(urlString.startIndex, offsetBy: 5)...])
+        return URL(string: stringURL) ?? self
+    }
+
+    public func getQuery() -> [String: String] {
+        var results = [String: String]()
+
+        guard let components = URLComponents(url: self, resolvingAgainstBaseURL: false),
+              let queryItems = components.percentEncodedQueryItems
+        else {
+            return results
+        }
+
+        for item in queryItems {
+            if let value = item.value {
+                results[item.name] = value
+            }
+        }
+
+        return results
     }
 }
 

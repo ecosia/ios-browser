@@ -23,7 +23,7 @@ struct Product: Equatable {
 /// Class for working with the products shopping API,
 /// with helpers for parsing the product from a URL
 /// and querying the shopping API for information on it.
-class ShoppingProduct: FeatureFlaggable {
+class ShoppingProduct: FeatureFlaggable, Equatable {
     private let url: URL
     private let nimbusFakespotFeatureLayer: NimbusFakespotFeatureLayerProtocol
     private let client: FakespotClientType
@@ -57,8 +57,29 @@ class ShoppingProduct: FeatureFlaggable {
         return true
     }
 
+    var isProductBackInStockFeatureEnabled: Bool {
+        featureFlags.isFeatureEnabled(.fakespotBackInStock, checking: .buildOnly)
+    }
+
+    var isProductAdsFeatureEnabled: Bool {
+        featureFlags.isFeatureEnabled(.fakespotProductAds, checking: .buildOnly)
+    }
+
     var isShoppingButtonVisible: Bool {
         return product != nil && isFakespotFeatureEnabled
+    }
+
+    /// Gets a list of supported top-level domain (TLD) websites.
+    /// - Returns: An array of supported TLD websites or `nil` if no valid product is available.
+    var supportedTLDWebsites: [String]? {
+        guard let product = product else { return nil }
+        let config = nimbusFakespotFeatureLayer.config
+
+        let validWebsites = config.compactMap { (key, value) in
+            value.validTlDs.contains(product.topLevelDomain) ? key : nil
+        }
+
+        return validWebsites
     }
 
     /// Gets a Product from a URL.
@@ -84,7 +105,7 @@ class ShoppingProduct: FeatureFlaggable {
     /// - Throws: An error of type `Error` if there's an issue during the data fetching process, even after the specified number of retries.
     /// - Note: This function is an asynchronous operation and should be called within an asynchronous context using `await`.
     ///
-    func fetchProductAnalysisData(maxRetries: Int = 3, retryTimeout: Int = 100) async throws -> ProductAnalysisData? {
+    func fetchProductAnalysisData(maxRetries: Int = 3, retryTimeout: Int = 100) async throws -> ProductAnalysisResponse? {
         guard let product else { return nil }
 
         // Perform 'retryCount' attempts, and retry on 500 failure:
@@ -125,9 +146,9 @@ class ShoppingProduct: FeatureFlaggable {
     /// - Throws: An error of type `Error` if there's an issue during the data fetching process.
     /// - Note: This function is an asynchronous operation and should be called within an asynchronous context using `await`.
     ///
-    func fetchProductAdsData() async throws -> [ProductAdsData] {
+    func fetchProductAdsData() async -> [ProductAdsResponse] {
         guard let product else { return [] }
-        return try await client.fetchProductAdData(productId: product.id, website: product.host)
+        return (try? await client.fetchProductAdData(productId: product.id, website: product.host)) ?? []
     }
 
     /// Triggers the analysis of the current product.
@@ -156,5 +177,29 @@ class ShoppingProduct: FeatureFlaggable {
 
         // Retrieve the product analysis status using the product ID and website
         return try await client.getProductAnalysisStatus(productId: product.id, website: product.host)
+    }
+
+    /// Reports the current product as back in stock.
+    ///
+    /// This function asynchronously reports the current product as back in stock using the product's ID and website.
+    ///
+    /// - Returns: A `ReportResponse` containing the result of the reporting operation, or `nil` if there's no product available.
+    /// - Throws: An error of type `Error` if there's an issue reporting the product as back in stock.
+    /// - Note: This function is an asynchronous operation and should be called within an asynchronous context using `await`.
+    ///
+    func reportProductBackInStock() async throws -> ReportResponse? {
+        // Ensure that a valid product is available
+        guard let product = product else { return nil }
+
+        // Report the product as back in stock using the product ID and website
+        return try await client.reportProductBackInStock(productId: product.id, website: product.host)
+    }
+
+    func reportAdEvent(eventName: FakespotAdsEvent, eventSource: String, aidvs: [String]) async throws -> AdEventsResponse {
+        return try await client.reportAdEvent(eventName: eventName, eventSource: eventSource, aidvs: aidvs)
+    }
+
+    static func == (lhs: ShoppingProduct, rhs: ShoppingProduct) -> Bool {
+        return lhs.product == rhs.product
     }
 }

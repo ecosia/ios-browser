@@ -17,6 +17,7 @@ class TabToolbar: UIView, SearchBarLocationProvider {
      */
     let circleButton = CircleButton(config: .search)
     let appMenuButton = ToolbarButton()
+    let homeButton = ToolbarButton()
     let bookmarksButton = ToolbarButton()
     let forwardButton = ToolbarButton()
     let backButton = ToolbarButton()
@@ -109,8 +110,6 @@ class TabToolbar: UIView, SearchBarLocationProvider {
 
 // MARK: - TabToolbarProtocol
 extension TabToolbar: TabToolbarProtocol {
-    var homeButton: ToolbarButton { multiStateButton }
-
     func privateModeBadge(visible: Bool) {
         // Ecosia: Remove private mode badge
         // privateModeBadge.show(visible)
@@ -138,6 +137,12 @@ extension TabToolbar: TabToolbarProtocol {
 
     func updateTabCount(_ count: Int, animated: Bool) {
         tabsButton.updateTabCount(count, animated: animated)
+    }
+
+    func addUILargeContentViewInteraction(
+        interaction: UILargeContentViewerInteraction
+    ) {
+        addInteraction(interaction)
     }
 }
 

@@ -31,7 +31,7 @@ class AppLaunchUtil {
         }
 
         TelemetryWrapper.shared.setup(profile: profile)
-        recordUserPrefsTelemetry()
+        recordStartUpTelemetry()
 
         // Need to get "settings.sendUsageData" this way so that Sentry can be initialized before getting the Profile.
         let sendUsageData = NSUserDefaultsPrefs(prefix: "profile").boolForKey(AppConstants.prefSendUsageData) ?? true
@@ -69,10 +69,9 @@ class AppLaunchUtil {
             }
         }
 
-        SystemUtils.onFirstRun()
-
-        RustFirefoxAccounts.startup(prefs: profile.prefs).uponQueue(.main) { _ in
+        RustFirefoxAccounts.startup(prefs: profile.prefs) { _ in
             self.logger.log("RustFirefoxAccounts started", level: .info, category: .sync)
+            AppEventQueue.signal(event: .accountManagerInitialized)
         }
 
         // Add swizzle on UIViewControllers to automatically log when there's a new view showing
@@ -88,6 +87,7 @@ class AppLaunchUtil {
         logger.log("Prefs for migration is \(String(describing: profile.prefs.boolForKey(PrefsKeys.TabMigrationKey)))",
                    level: .debug,
                    category: .tabs)
+        AppEventQueue.signal(event: .preLaunchDependenciesComplete)
     }
 
     func setUpPostLaunchDependencies() {
@@ -114,6 +114,7 @@ class AppLaunchUtil {
 
         updateSessionCount()
         adjustHelper.setupAdjust()
+        AppEventQueue.signal(event: .postLaunchDependenciesComplete)
     }
 
     private func setUserAgent() {
@@ -190,12 +191,19 @@ class AppLaunchUtil {
         }
     }
 
-    private func recordUserPrefsTelemetry() {
+    private func recordStartUpTelemetry() {
         let isEnabled: Bool = (profile.prefs.boolForKey(PrefsKeys.UserFeatureFlagPrefs.SponsoredShortcuts) ?? true) &&
-                               (profile.prefs.boolForKey(PrefsKeys.FeatureFlags.TopSiteSection) ?? true)
+                               (profile.prefs.boolForKey(PrefsKeys.UserFeatureFlagPrefs.TopSiteSection) ?? true)
         TelemetryWrapper.recordEvent(category: .information,
                                      method: .view,
                                      object: .sponsoredShortcuts,
                                      extras: [TelemetryWrapper.EventExtraKey.preference.rawValue: isEnabled])
+
+        if logger.crashedLastLaunch {
+            TelemetryWrapper.recordEvent(category: .information,
+                                         method: .error,
+                                         object: .app,
+                                         value: .crashedLastLaunch)
+        }
     }
 }

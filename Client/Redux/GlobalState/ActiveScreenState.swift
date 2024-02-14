@@ -6,21 +6,33 @@ import Foundation
 import Redux
 
 enum AppScreenState: Equatable {
-    case themeSettings(ThemeSettingsState)
+    case browserViewController(BrowserViewControllerState)
     case remoteTabsPanel(RemoteTabsPanelState)
+    case tabsPanel(TabsPanelState)
+    case tabsTray(TabTrayState)
+    case themeSettings(ThemeSettingsState)
+    case tabPeek(TabPeekState)
 
     static let reducer: Reducer<Self> = { state, action in
         switch state {
+        case .tabPeek(let state): return .tabPeek(TabPeekState.reducer(state, action))
         case .themeSettings(let state): return .themeSettings(ThemeSettingsState.reducer(state, action))
+        case .tabsTray(let state): return .tabsTray(TabTrayState.reducer(state, action))
+        case .tabsPanel(let state): return .tabsPanel(TabsPanelState.reducer(state, action))
         case .remoteTabsPanel(let state): return .remoteTabsPanel(RemoteTabsPanelState.reducer(state, action))
+        case .browserViewController(let state): return .browserViewController(BrowserViewControllerState.reducer(state, action))
         }
     }
 
     /// Returns the matching AppScreen enum for a given AppScreenState
     var associatedAppScreen: AppScreen {
         switch self {
+        case .browserViewController: return .browserViewController
         case .themeSettings: return .themeSettings
+        case .tabsTray: return .tabsTray
+        case .tabsPanel: return .tabsPanel
         case .remoteTabsPanel: return .remoteTabsPanel
+        case .tabPeek: return .tabPeek
         }
     }
 }
@@ -43,10 +55,18 @@ struct ActiveScreensState: Equatable {
             switch action {
             case .closeScreen(let screenType):
                 screens = screens.filter({ return $0.associatedAppScreen != screenType })
-            case .showScreen(.themeSettings):
-                screens += [.themeSettings(ThemeSettingsState())]
+            case .showScreen(.browserViewController):
+                screens += [.browserViewController(BrowserViewControllerState())]
             case .showScreen(.remoteTabsPanel):
                 screens += [.remoteTabsPanel(RemoteTabsPanelState())]
+            case .showScreen(.tabsTray):
+                screens += [.tabsTray(TabTrayState())]
+            case .showScreen(.tabsPanel):
+                screens += [.tabsPanel(TabsPanelState())]
+            case .showScreen(.themeSettings):
+                screens += [.themeSettings(ThemeSettingsState())]
+            case .showScreen(.tabPeek):
+                screens += [.tabPeek(TabPeekState())]
             }
         }
 

@@ -1,6 +1,8 @@
 only_rules: # Only enforce these rules, ignore all others
   - blanket_disable_command
   - class_delegate_protocol
+  - closure_spacing
+  - closure_parameter_position
   - colon
   - comma
   - comment_spacing
@@ -113,14 +115,15 @@ excluded: # paths to ignore during linting. Takes precedence over `included`.
   - Storage/Generated/Metrics.swift
   - ThirdParty
   - test-fixtures/tmp
-  - Tests/UITests/
+  - firefox-ios/firefox-ios-tests/Tests/UITests/
   - l10n-screenshots-dd/
   - DerivedData/
   # Package.swift files need a custom header for swift-tools-version
   # so must be excluded due to file_header rule
   - Package.swift
   - BrowserKit/Package.swift
-  - content-blocker-lib-ios/ContentBlockerGenerator/Package.swift
+  - Client/ContentBlocker/ContentBlockerGenerator/Package.swift
+  - BrowserKit/.build/
 
 included:
   - /Users/vagrant/git

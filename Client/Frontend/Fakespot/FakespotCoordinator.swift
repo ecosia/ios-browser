@@ -10,31 +10,27 @@ protocol FakespotCoordinatorDelegate: AnyObject {
     // Define any coordinator delegate methods
 }
 
-protocol FakespotViewControllerDelegate: AnyObject {
-    func fakespotControllerDidDismiss()
-}
-
-class FakespotCoordinator: BaseCoordinator, FakespotViewControllerDelegate, FeatureFlaggable {
+class FakespotCoordinator: BaseCoordinator, FeatureFlaggable {
     weak var parentCoordinator: ParentCoordinatorDelegate?
     private var profile: Profile
+    private let tabManager: TabManager
 
     private var isOptedIn: Bool {
         return profile.prefs.boolForKey(PrefsKeys.Shopping2023OptIn) ?? false
     }
 
-    init(router: Router, profile: Profile = AppContainer.shared.resolve()) {
+    init(router: Router,
+         profile: Profile = AppContainer.shared.resolve(),
+         tabManager: TabManager) {
+        self.tabManager = tabManager
         self.profile = profile
         super.init(router: router)
     }
 
-    func start(productURL: URL) {
-        let environment = featureFlags.isCoreFeatureEnabled(.useStagingFakespotAPI) ? FakespotEnvironment.staging : .prod
-        let viewModel = FakespotViewModel(shoppingProduct: ShoppingProduct(
-            url: productURL,
-            client: FakespotClient(environment: environment)))
-        let fakespotViewController = FakespotViewController(viewModel: viewModel)
-        fakespotViewController.delegate = self
-        if let sheet = fakespotViewController.sheetPresentationController {
+    func startModal(productURL: URL) {
+        let viewController = createFakespotViewController(productURL: productURL)
+
+        if let sheet = viewController.sheetPresentationController {
             sheet.detents = [.medium(), .large()]
 
             // Show onboarding in full height
@@ -42,11 +38,45 @@ class FakespotCoordinator: BaseCoordinator, FakespotViewControllerDelegate, Feat
                 sheet.selectedDetentIdentifier = .large
             }
         }
-        router.present(fakespotViewController, animated: true)
+        router.present(viewController, animated: true)
     }
 
-    func fakespotControllerDidDismiss() {
-        router.dismiss(animated: true, completion: nil)
+    func startSidebar(productURL: URL,
+                      sidebarContainer: SidebarEnabledViewProtocol,
+                      parentViewController: UIViewController) {
+        let viewController = createFakespotViewController(productURL: productURL)
+        sidebarContainer.showSidebar(viewController, parentViewController: parentViewController)
+    }
+
+    func closeSidebar(sidebarContainer: SidebarEnabledViewProtocol,
+                      parentViewController: UIViewController) {
+        sidebarContainer.hideSidebar(parentViewController)
+        dismissModal(animated: true)
+    }
+
+    func dismissModal(animated: Bool) {
+        router.dismiss(animated: animated, completion: nil)
         parentCoordinator?.didFinish(from: self)
+    }
+
+    func updateSidebar(productURL: URL,
+                       sidebarContainer: SidebarEnabledViewProtocol,
+                       parentViewController: UIViewController) {
+        let viewModel = createFakespotViewModel(productURL: productURL)
+        sidebarContainer.updateSidebar(viewModel, parentViewController: parentViewController)
+    }
+
+    private func createFakespotViewController(productURL: URL) -> FakespotViewController {
+        let viewModel = createFakespotViewModel(productURL: productURL)
+        let fakespotViewController = FakespotViewController(viewModel: viewModel)
+        return fakespotViewController
+    }
+
+    private func createFakespotViewModel(productURL: URL) -> FakespotViewModel {
+        let environment = featureFlags.isCoreFeatureEnabled(.useStagingFakespotAPI) ? FakespotEnvironment.staging : .prod
+        let viewModel = FakespotViewModel(shoppingProduct: ShoppingProduct(
+            url: productURL,
+            client: FakespotClient(environment: environment)), tabManager: tabManager)
+        return viewModel
     }
 }

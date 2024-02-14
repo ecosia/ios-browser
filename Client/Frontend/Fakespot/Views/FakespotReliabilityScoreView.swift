@@ -17,7 +17,7 @@ final class FakespotReliabilityScoreView: UIView, Notifiable, ThemeApplicable {
 
     var notificationCenter: NotificationProtocol = NotificationCenter.default
 
-    private let grade: ReliabilityGrade
+    private var grade: ReliabilityGrade
 
     private lazy var reliabilityLetterView: UIView = .build()
 
@@ -34,25 +34,29 @@ final class FakespotReliabilityScoreView: UIView, Notifiable, ThemeApplicable {
     init(grade: ReliabilityGrade) {
         self.grade = grade
         super.init(frame: .zero)
+        self.translatesAutoresizingMaskIntoConstraints = false
         setupNotifications(forObserver: self,
                            observing: [.DynamicFontChanged])
         setupLayout()
         setupView()
-        reliabilityLetterLabel.text = grade.rawValue
-        reliabilityLetterLabel.accessibilityLabel = String(format: .Shopping.ReliabilityScoreGradeA11yLabel,
-                                                           grade.rawValue)
+        configure(grade: grade)
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func setupLayout() {
-        let size = min(UIFontMetrics.default.scaledValue(for: UX.ratingSize), UX.maxRatingSize)
-        ratingHeightConstraint = heightAnchor.constraint(equalToConstant: size)
-        ratingHeightConstraint?.isActive = true
+    public func configure(grade: ReliabilityGrade) {
+        self.grade = grade
+        reliabilityLetterLabel.text = grade.rawValue
+        reliabilityLetterLabel.accessibilityLabel = String(format: .Shopping.ReliabilityScoreGradeA11yLabel,
+                                                           grade.rawValue)
+    }
 
-        ratingWidthConstraint = widthAnchor.constraint(equalToConstant: size)
+    private func setupLayout() {
+        ratingHeightConstraint = heightAnchor.constraint(equalToConstant: UX.ratingSize)
+        ratingWidthConstraint = widthAnchor.constraint(equalToConstant: UX.ratingSize)
+        ratingHeightConstraint?.isActive = true
         ratingWidthConstraint?.isActive = true
 
         addSubview(reliabilityLetterView)

@@ -35,6 +35,10 @@ class TelemetryWrapper: TelemetryWrapperProtocol, FeatureFlaggable {
     typealias ExtraKey = TelemetryWrapper.EventExtraKey
 
     static let shared = TelemetryWrapper()
+
+    // TODO [7856]: Temporary. Additional telemetry updates forthcoming once iPad multi-window enabled.
+    var defaultTabManager: TabManager?
+
     let legacyTelemetry = Telemetry.default
     let glean = Glean.shared
     // Boolean flag to temporarily remember if we crashed during the
@@ -115,9 +119,8 @@ class TelemetryWrapper: TelemetryWrapperProtocol, FeatureFlaggable {
 
             outputDict["settings"] = settings
 
-            let delegate = UIApplication.shared.delegate as? AppDelegate
-
-            outputDict["openTabCount"] = delegate?.tabManager.count ?? 0
+            // TODO [7856]: Additional telemetry updates forthcoming once iPad multi-window enabled.
+            outputDict["openTabCount"] = self.defaultTabManager?.count ?? 0
 
             outputDict["systemTheme"] = UITraitCollection.current.userInterfaceStyle == .dark ? "dark" : "light"
 
@@ -129,8 +132,8 @@ class TelemetryWrapper: TelemetryWrapperProtocol, FeatureFlaggable {
 
             var settings: [String: String?] = inputDict["settings"] as? [String: String?] ?? [:]
 
-            let searchEngines = SearchEngines(prefs: profile.prefs, files: profile.files)
-            settings["defaultSearchEngine"] = searchEngines.defaultEngine?.engineID ?? "custom"
+            let defaultEngine = profile.searchEngines.defaultEngine
+            settings["defaultSearchEngine"] = defaultEngine?.engineID ?? "custom"
 
             if let windowBounds = UIWindow.keyWindow?.bounds {
                 settings["windowWidth"] = String(describing: windowBounds.width)
@@ -177,8 +180,7 @@ class TelemetryWrapper: TelemetryWrapperProtocol, FeatureFlaggable {
         // Save the profile so we can record settings from it when the notification below fires.
         self.profile = profile
 
-        setSyncDeviceId()
-        SponsoredTileTelemetry.setupContextId()
+        TelemetryContextualIdentifier.setupContextId()
 
         // Register an observer to record settings and other metrics that are more appropriate to
         // record on going to background rather than during initialization.
@@ -194,20 +196,6 @@ class TelemetryWrapper: TelemetryWrapperProtocol, FeatureFlaggable {
             name: UIApplication.didFinishLaunchingNotification,
             object: nil
         )
-    }
-
-    // Sets hashed fxa sync device id for glean deletion ping
-    func setSyncDeviceId() {
-        // Grab our token so we can use the hashed_fxa_uid and clientGUID for deletion-request ping
-        guard let accountManager = RustFirefoxAccounts.shared.accountManager.peek(),
-              let state = accountManager.deviceConstellation()?.state(),
-              let clientGUID = state.localDevice?.id
-        else { return }
-
-        RustFirefoxAccounts.shared.syncAuthState.token(Date.now(), canBeExpired: true) >>== { (token, _) in
-            let deviceId = (clientGUID + token.hashedFxAUID).sha256.hexEncodedString
-            GleanMetrics.Deletion.syncDeviceId.set(deviceId)
-        }
     }
 
     @objc
@@ -231,12 +219,12 @@ class TelemetryWrapper: TelemetryWrapperProtocol, FeatureFlaggable {
         }
 
         // Record default search engine setting
-        let searchEngines = SearchEngines(prefs: profile.prefs, files: profile.files)
-        GleanMetrics.Search.defaultEngine.set(searchEngines.defaultEngine?.engineID ?? "custom")
+        let defaultEngine = profile.searchEngines.defaultEngine
+        GleanMetrics.Search.defaultEngine.set(defaultEngine?.engineID ?? "custom")
 
         // Record the open tab count
-        let delegate = UIApplication.shared.delegate as? AppDelegate
-        if let count = delegate?.tabManager.count {
+        // TODO [7856]: Additional telemetry updates forthcoming once iPad multi-window enabled.
+        if let count = defaultTabManager?.count {
             GleanMetrics.Tabs.cumulativeCount.add(Int32(count))
         }
 
@@ -393,6 +381,7 @@ extension TelemetryWrapper {
         case app = "app"
         case bookmark = "bookmark"
         case awesomebarResults = "awesomebar-results"
+        case recordSearch = "record-search"
         case bookmarksPanel = "bookmarks-panel"
         case mobileBookmarks = "has-mobile-bookmarks"
         case download = "download"
@@ -414,6 +403,7 @@ extension TelemetryWrapper {
         case shoppingPoweredByFakespotLabel = "shopping-powered-by-fakespot-label"
         case shoppingNoAnalysisCardViewPrimaryButton = "shopping-no-analysis-card-view-primary-button"
         case shoppingNeedsAnalysisCardViewPrimaryButton = "shopping-needs-analysis-card-view-primary-button"
+        case shoppingProductBackInStockButton = "shopping-product-back-in-stock-button"
         case shoppingSurfaceStaleAnalysisShown = "shopping-surface-stale-analysis-shown"
         case shoppingNimbusDisabled = "shopping-nimbus-disabled"
         case shoppingComponentOptedOut = "shopping-component-opted-out"
@@ -462,9 +452,6 @@ extension TelemetryWrapper {
         case settingsMenuShowTour = "show-tour"
         case settingsMenuPasswords = "passwords"
         // MARK: Logins and Passwords
-        case loginsPasswordDetected = "logins-password-detected"
-        case loginsAutofillPromptShown = "logins-autofill-prompt-shown"
-        case loginsAutofillPromptDismissed = "logins-autofill-prompt-dismissed"
         case loginsAutofilled = "logins-autofilled"
         case loginsAutofillFailed = "logins-autofill-failed"
         case loginsManagementAddTapped = "logins-management-add-tapped"
@@ -484,6 +471,17 @@ extension TelemetryWrapper {
         case creditCardSyncEnabled = "creditCardSyncEnabled"
         case creditCardAutofillToggle = "creditCardAutofillToggle"
         case creditCardSyncToggle = "creditCardSyncToggle"
+        case creditCardAutofillPromptShown = "creditCard-autofill-prompt-shown"
+        case creditCardAutofillPromptExpanded = "creditCard-autofill-prompt-expanded"
+        case creditCardAutofillPromptDismissed = "creditCard-autofill-prompt-dismissed"
+        case creditCardSavePromptShown = "creditCard-save-prompt-shown"
+        case creditCardSavePromptUpdate = "creditCard-save-prompt-update"
+        case creditCardManagementAddTapped = "creditCard-management-add-tapped"
+        case creditCardManagementCardTapped = "creditCard-management-card-tapped"
+        case creditCardSaved = "creditCard-saved"
+        case creditCardSavedAll = "creditCard-saved-all"
+        case creditCardDeleted = "creditCard-deleted"
+        case creditCardModified = "creditCard-modified"
         case notificationPermission = "notificationPermission"
         case engagementNotification = "engagementNotification"
         // MARK: New Onboarding
@@ -540,6 +538,7 @@ extension TelemetryWrapper {
         case libraryPanel = "library-panel"
         case navigateToGroupHistory = "navigate-to-group-history"
         case selectedHistoryItem = "selected-history-item"
+        case openedHistoryItem = "opened-item"
         case searchHistory = "search-history"
         case deleteHistory = "delete-history"
         case historySingleItemRemoved = "history-single-item-removed"
@@ -581,6 +580,8 @@ extension TelemetryWrapper {
         case viewHistoryPanel = "view-history-panel"
         case createNewTab = "create-new-tab"
         case sponsoredShortcuts = "sponsored-shortcuts"
+        case fxSuggest = "fx-suggest"
+        case webview = "webview"
     }
 
     public enum EventValue: String {
@@ -671,8 +672,20 @@ extension TelemetryWrapper {
         case searchSuggestion = "search-suggestion"
         case searchHighlights = "search-highlights"
         case shoppingCFRsDisplayed = "shopping-cfrs-displayed"
+        case surfaceAdsClicked = "surface-ads-clicked"
+        case shoppingAdsExposure = "shopping-ads-exposure"
+        case shoppingAdsImpression = "shopping-ads-impression"
+        case shoppingNoAdsAvailable = "shopping-no-ads-available"
         case awesomebarShareTap = "awesomebar-share-tap"
         case largeFileWrite = "large-file-write"
+        case crashedLastLaunch = "crashed_last_launch"
+        case cpuException = "cpu_exception"
+        case hangException = "hang-exception"
+        case fxSuggestionClickInfo = "fx-suggestion-click-info"
+        case fxSuggestionPosition = "fx-suggestion-position"
+        case webviewFail = "webview-fail"
+        case webviewFailProvisional = "webview-fail-provisional"
+        case webviewShowErrorPage = "webview-show-error-page"
     }
 
     public enum EventExtraKey: String, CustomStringConvertible {
@@ -684,12 +697,15 @@ extension TelemetryWrapper {
         case tabsQuantity = "tabsQuantity"
         case isRestoreTabsStarted = "is-restore-tabs-started"
         case awesomebarSearchTapType = "awesomebarSearchTapType"
+        case recordSearchLocation = "recordSearchLocation"
+        case recordSearchEngineID = "recordSearchEngineID"
 
         case preference = "pref"
         case preferenceChanged = "to"
         case isPrivate = "is-private"
         case action = "action"
         case size = "size"
+        case errorCode = "errorCode"
 
         case wallpaperName = "wallpaperName"
         case wallpaperType = "wallpaperType"
@@ -750,6 +766,7 @@ extension TelemetryWrapper {
         case isCreditCardSyncToggleEnabled = "is-credit-card-sync-toggle-enabled"
         case isCreditCardAutofillEnabled = "is-credit-card-autofill-enabled"
         case isCreditCardSyncEnabled = "is-credit-card-sync-enabled"
+        case creditCardsQuantity = "credit-cards-quantity"
 
         // Password Manager
         case loginsQuantity = "loginsQuantity"
@@ -1013,6 +1030,32 @@ extension TelemetryWrapper {
                     value: value,
                     extras: extras)
             }
+        case(.action, .view, .creditCardAutofillPromptShown, _, _):
+            GleanMetrics.CreditCard.autofillPromptShown.record()
+        case(.action, .tap, .creditCardAutofillPromptExpanded, _, _):
+            GleanMetrics.CreditCard.autofillPromptExpanded.record()
+        case(.action, .close, .creditCardAutofillPromptDismissed, _, _):
+            GleanMetrics.CreditCard.autofillPromptDismissed.record()
+        case(.action, .view, .creditCardSavePromptShown, _, _):
+            GleanMetrics.CreditCard.savePromptShown.record()
+        case(.action, .tap, .creditCardSavePromptUpdate, _, _):
+            GleanMetrics.CreditCard.savePromptUpdate.record()
+        case(.action, .tap, .creditCardManagementAddTapped, _, _):
+            GleanMetrics.CreditCard.managementAddTapped.record()
+        case(.action, .tap, .creditCardManagementCardTapped, _, _):
+            GleanMetrics.CreditCard.managementCardTapped.record()
+        case(.action, .add, .creditCardSaved, _, _):
+            GleanMetrics.CreditCard.saved.add()
+        case(.information, .foreground, .creditCardSavedAll, _, let extras):
+            if let quantity = extras?[EventExtraKey.creditCardsQuantity.rawValue] as? Int64 {
+                GleanMetrics.CreditCard.savedAll.set(quantity)
+            } else {
+                recordUninstrumentedMetrics(category: category, method: method, object: object, value: value, extras: extras)
+            }
+        case(.action, .delete, .creditCardDeleted, _, _):
+            GleanMetrics.CreditCard.deleted.add()
+        case(.action, .change, .creditCardModified, _, _):
+            GleanMetrics.CreditCard.modified.add()
         // MARK: Settings Menu
         case (.action, .open, .settingsMenuSetAsDefaultBrowser, _, _):
             GleanMetrics.SettingsMenu.setAsDefaultBrowserPressed.add()
@@ -1022,12 +1065,6 @@ extension TelemetryWrapper {
             GleanMetrics.SettingsMenu.showTourPressed.record()
 
         // MARK: Logins and Passwords
-        case(.information, .emailLogin, .loginsPasswordDetected, _, _):
-            GleanMetrics.Logins.passwordDetected.record()
-        case(.action, .view, .loginsAutofillPromptShown, _, _):
-            GleanMetrics.Logins.autofillPromptShown.record()
-        case(.action, .close, .loginsAutofillPromptDismissed, _, _):
-            GleanMetrics.Logins.autofillPromptDismissed.record()
         case(.action, .tap, .loginsAutofilled, _, _):
             GleanMetrics.Logins.autofilled.record()
         case(.action, .tap, .loginsAutofillFailed, _, _):
@@ -1063,6 +1100,18 @@ extension TelemetryWrapper {
         // MARK: Start Search Button
         case (.action, .tap, .startSearchButton, _, _):
             GleanMetrics.Search.startSearchPressed.add()
+        case(.action, .tap, .recordSearch, _, let extras):
+            if let searchLocation = extras?[EventExtraKey.recordSearchLocation.rawValue] as? SearchesMeasurement.SearchLocation, let searchEngineID = extras?[EventExtraKey.recordSearchEngineID.rawValue] as? String? {
+                Telemetry.default.recordSearch(location: searchLocation, searchEngine: searchEngineID ?? "other")
+                GleanMetrics.Search.counts["\(searchEngineID ?? "custom").\(searchLocation.rawValue)"].add()
+            } else {
+                recordUninstrumentedMetrics(
+                    category: category,
+                    method: method,
+                    object: object,
+                    value: value,
+                    extras: extras)
+            }
 
         // MARK: Awesomebar Search Results
         case (.action, .tap, .awesomebarResults, _, let extras):
@@ -1125,8 +1174,16 @@ extension TelemetryWrapper {
             }
 
         // MARK: Shopping Experience (Fakespot)
+        case (.action, .view, .shoppingBottomSheet, .surfaceAdsClicked, _):
+            GleanMetrics.Shopping.surfaceAdsClicked.record()
         case (.action, .tap, .shoppingButton, _, _):
             GleanMetrics.Shopping.addressBarIconClicked.record()
+        case (.action, .view, .shoppingBottomSheet, .shoppingAdsExposure, _):
+            GleanMetrics.Shopping.adsExposure.record()
+        case (.action, .view, .shoppingBottomSheet, .shoppingAdsImpression, _):
+            GleanMetrics.Shopping.surfaceAdsImpression.record()
+        case (.action, .view, .shoppingBottomSheet, .shoppingNoAdsAvailable, _):
+            GleanMetrics.Shopping.surfaceNoAdsAvailable.record()
         case (.action, .view, .shoppingButton, _, _):
             GleanMetrics.Shopping.addressBarIconDisplayed.record()
         case (.action, .close, .shoppingBottomSheet, _, let extras):
@@ -1181,6 +1238,8 @@ extension TelemetryWrapper {
             GleanMetrics.Shopping.surfaceAnalyzeReviewsNoneAvailableClicked.record()
         case (.action, .tap, .shoppingNeedsAnalysisCardViewPrimaryButton, _, _):
             GleanMetrics.Shopping.surfaceReanalyzeClicked.record()
+        case (.action, .tap, .shoppingProductBackInStockButton, _, _):
+            GleanMetrics.Shopping.surfaceReactivatedButtonClicked.record()
         case (.action, .navigate, .shoppingBottomSheet, _, _):
             GleanMetrics.Shopping.surfaceNoReviewReliabilityAvailable.record()
         case (.action, .view, .shoppingSurfaceStaleAnalysisShown, _, _):
@@ -1358,6 +1417,8 @@ extension TelemetryWrapper {
             GleanMetrics.History.groupList.add()
         case (.action, .tap, .selectedHistoryItem, let type?, _):
             GleanMetrics.History.selectedItem[type.rawValue].add()
+        case (.action, .tap, .openedHistoryItem, _, _):
+            GleanMetrics.History.openedItem.record()
         case (.action, .tap, .searchHistory, _, _):
             GleanMetrics.History.searchTap.record()
         case (.action, .tap, .deleteHistory, _, _):
@@ -1651,13 +1712,13 @@ extension TelemetryWrapper {
 
         // MARK: - History Highlights
         case (.action, .tap, .firefoxHomepage, .historyHighlightsShowAll, _):
-            GleanMetrics.FirefoxHomePage.customizeHomepageButton.add()
+            GleanMetrics.FirefoxHomePage.historyHighlightsShowAll.add()
         case (.action, .tap, .firefoxHomepage, .historyHighlightsItemOpened, _):
             GleanMetrics.FirefoxHomePage.historyHighlightsItemOpened.record()
         case (.action, .tap, .firefoxHomepage, .historyHighlightsGroupOpen, _):
             GleanMetrics.FirefoxHomePage.historyHighlightsGroupOpen.record()
         case (.action, .view, .historyImpressions, _, _):
-            GleanMetrics.FirefoxHomePage.customizeHomepageButton.add()
+            GleanMetrics.FirefoxHomePage.historyImpressions.record()
         case (.action, .view, .historyHighlightContextualMenu, _, let extras):
             if let type = extras?[EventExtraKey.contextualMenuType.rawValue] as? String {
                 let contextExtra = GleanMetrics.FirefoxHomePage.HistoryHighlightsContextExtra(type: type)
@@ -1812,6 +1873,37 @@ extension TelemetryWrapper {
             if let quantity = extras?[EventExtraKey.size.rawValue] as? Int32 {
                 let properties = GleanMetrics.AppErrors.LargeFileWriteExtra(size: quantity)
                 GleanMetrics.AppErrors.largeFileWrite.record(properties)
+            } else {
+                recordUninstrumentedMetrics(category: category, method: method, object: object, value: value, extras: extras)
+            }
+        case(.information, .error, .app, .crashedLastLaunch, _):
+            GleanMetrics.AppErrors.crashedLastLaunch.record()
+        case(.information, .error, .app, .cpuException, let extras):
+            if let quantity = extras?[EventExtraKey.size.rawValue] as? Int32 {
+                let properties = GleanMetrics.AppErrors.CpuExceptionExtra(size: quantity)
+                GleanMetrics.AppErrors.cpuException.record(properties)
+            } else {
+                recordUninstrumentedMetrics(category: category, method: method, object: object, value: value, extras: extras)
+            }
+        case(.information, .error, .app, .hangException, let extras):
+            if let quantity = extras?[EventExtraKey.size.rawValue] as? Int32 {
+                let properties = GleanMetrics.AppErrors.HangExceptionExtra(size: quantity)
+                GleanMetrics.AppErrors.hangException.record(properties)
+            } else {
+                recordUninstrumentedMetrics(category: category, method: method, object: object, value: value, extras: extras)
+            }
+
+        // MARK: Webview
+        case(.information, .error, .webview, .webviewFail, _):
+            GleanMetrics.Webview.didFail.record()
+        case(.information, .error, .webview, .webviewFailProvisional, _):
+            GleanMetrics.Webview.didFailProvisional.record()
+        case(.information, .error, .webview, .webviewShowErrorPage, let extras):
+            if let errorCode = extras?[EventExtraKey.errorCode.rawValue] as? String {
+                let errorCodeExtra = GleanMetrics.Webview.ShowErrorPageExtra(errorCode: errorCode)
+                GleanMetrics.Webview.showErrorPage.record(errorCodeExtra)
+            } else {
+                recordUninstrumentedMetrics(category: category, method: method, object: object, value: value, extras: extras)
             }
         default:
             recordUninstrumentedMetrics(category: category, method: method, object: object, value: value, extras: extras)

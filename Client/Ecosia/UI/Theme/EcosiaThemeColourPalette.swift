@@ -69,6 +69,12 @@ private class EcosiaLightColourPalette: ThemeColourPalette {
     var layerRatingDSubdued: UIColor = fallbackDefaultThemeManager.currentTheme.colors.layerRatingDSubdued
     var layerRatingF: UIColor = fallbackDefaultThemeManager.currentTheme.colors.layerRatingF
     var layerRatingFSubdued: UIColor = fallbackDefaultThemeManager.currentTheme.colors.layerRatingFSubdued
+    var layerHomepage: Common.Gradient = fallbackDefaultThemeManager.currentTheme.colors.layerHomepage
+    var layerSearch: UIColor = fallbackDefaultThemeManager.currentTheme.colors.layerSearch
+    var layerGradientURL: Common.Gradient = fallbackDefaultThemeManager.currentTheme.colors.layerGradientURL
+    var actionTabActive: UIColor = fallbackDefaultThemeManager.currentTheme.colors.actionTabActive
+    var actionTabInactive: UIColor = fallbackDefaultThemeManager.currentTheme.colors.actionTabInactive
+    var borderToolbarDivider: UIColor = fallbackDefaultThemeManager.currentTheme.colors.borderToolbarDivider
 
     // MARK: - Actions
     var actionPrimary: UIColor = .legacyTheme.ecosia.primaryButton
@@ -86,7 +92,6 @@ private class EcosiaLightColourPalette: ThemeColourPalette {
     // MARK: - Text
     var textPrimary: UIColor = .legacyTheme.ecosia.primaryText
     var textSecondary: UIColor = .legacyTheme.ecosia.secondaryText
-    var textSecondaryAction: UIColor = fallbackDefaultThemeManager.currentTheme.colors.textSecondaryAction
     var textDisabled: UIColor = fallbackDefaultThemeManager.currentTheme.colors.textDisabled
     var textWarning: UIColor = fallbackDefaultThemeManager.currentTheme.colors.textWarning
     var textAccent: UIColor = .legacyTheme.ecosia.primaryButton

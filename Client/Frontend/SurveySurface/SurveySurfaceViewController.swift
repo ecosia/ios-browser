@@ -41,6 +41,21 @@ class SurveySurfaceViewController: UIViewController, Themeable {
     var themeObserver: NSObjectProtocol?
     var imageViewYConstraint: NSLayoutConstraint!
 
+    // MARK: - Orientation
+    override var prefersStatusBarHidden: Bool {
+        return true
+    }
+
+    override var shouldAutorotate: Bool {
+        return false
+    }
+
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        // This actually does the right thing on iPad where the modally
+        // presented version happily rotates with the iPad orientation.
+        return .portrait
+    }
+
     // MARK: - UI Elements
     // Other than the imageView, all elements begin with an alpha of 0.0 as,
     // they are meant to be invisible, and appear during the animation.
@@ -59,7 +74,7 @@ class SurveySurfaceViewController: UIViewController, Themeable {
         label.alpha = 0.0
     }
 
-    private lazy var takeSurveyButton: ResizableButton = .build { button in
+    private lazy var takeSurveyButton: LegacyResizableButton = .build { button in
         button.titleLabel?.font = DefaultDynamicFontHelper.preferredBoldFont(
             withTextStyle: .callout,
             size: UX.buttonFontSize)
@@ -75,7 +90,7 @@ class SurveySurfaceViewController: UIViewController, Themeable {
         button.alpha = 0.0
     }
 
-    private lazy var dismissSurveyButton: ResizableButton = .build { button in
+    private lazy var dismissSurveyButton: LegacyResizableButton = .build { button in
         button.titleLabel?.font = DefaultDynamicFontHelper.preferredBoldFont(
             withTextStyle: .callout,
             size: UX.buttonFontSize)
@@ -116,20 +131,10 @@ class SurveySurfaceViewController: UIViewController, Themeable {
         applyTheme()
     }
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        viewModel.setOrientationLockTo(on: true)
-    }
-
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         viewModel.didDisplayMessage()
         animateElements()
-    }
-
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        viewModel.setOrientationLockTo(on: false)
     }
 
     // MARK: - View setup
@@ -242,7 +247,7 @@ class SurveySurfaceViewController: UIViewController, Themeable {
         takeSurveyButton.setTitleColor(theme.colors.textInverted, for: .normal)
         takeSurveyButton.backgroundColor = theme.colors.actionPrimary
 
-        dismissSurveyButton.setTitleColor(theme.colors.textSecondaryAction, for: .normal)
+        dismissSurveyButton.setTitleColor(theme.colors.textOnLight, for: .normal)
         dismissSurveyButton.backgroundColor = theme.colors.actionSecondary
     }
 }

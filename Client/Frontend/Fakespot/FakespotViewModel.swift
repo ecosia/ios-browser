@@ -10,110 +10,131 @@ class FakespotViewModel {
     enum ViewState {
         case loading
         case onboarding
-        case loaded(ProductAnalysisData?, AnalysisStatus?, analysisCount: Int)
+        case loaded(ProductState)
         case error(Error)
 
-        fileprivate var viewElements: [ViewElement] {
+        fileprivate var productData: ProductAnalysisResponse? {
             switch self {
-            case .loading:
-                return [.loadingView]
-            case let .loaded(product, analysisStatus, analysisCount):
-                guard let product else {
-                    return [
-                        .messageCard(.genericError),
-                        .qualityDeterminationCard,
-                        .settingsCard
-                    ]
+            case .loading, .error, .onboarding: return nil
+            case .loaded(let productState): return productState.product
+            }
+        }
+    }
+
+    fileprivate func viewElements(for viewState: ViewState) -> [ViewElement] {
+        switch viewState {
+        case .loading:
+            return [.loadingView]
+        case .loaded(let productState):
+            guard let product = productState.product else {
+                return [
+                    .messageCard(.genericError),
+                    .qualityDeterminationCard,
+                    .settingsCard
+                ]
+            }
+
+            let minRating = product.adjustedRating ?? 0
+            let productAdCard = productState
+                .productAds
+                .sorted(by: { $0.adjustedRating > $1.adjustedRating })
+                .first(where: { $0.adjustedRating >= minRating }) // Choosing the product with the same or better rating to display
+                .map(ViewElement.productAdCard)
+
+            if product.grade == nil {
+                Self.recordNoReviewReliabilityAvailableTelemetry()
+            }
+
+            if product.infoComingSoonCardVisible && shoppingProduct.isProductBackInStockFeatureEnabled {
+                return [
+                    .messageCard(.infoComingSoonCard),
+                    .qualityDeterminationCard,
+                    .settingsCard
+                ]
+            } else if product.reportProductInStockCardVisible && shoppingProduct.isProductBackInStockFeatureEnabled {
+                return [
+                    .messageCard(.reportProductInStock),
+                    .qualityDeterminationCard,
+                    .settingsCard
+                ]
+            } else if product.productNotSupportedCardVisible {
+                return [
+                    .messageCard(.productNotSupported),
+                    .qualityDeterminationCard,
+                    .settingsCard
+                ]
+            } else if product.notAnalyzedCardVisible {
+                // Don't show not analyzed message card if analysis is in progress
+                var cards: [ViewElement] = []
+
+                if productState.analysisStatus?.isAnalyzing == true {
+                    cards.append(.messageCard(.analysisInProgress))
+                } else {
+                    cards.append(.noAnalysisCard)
                 }
 
-                if product.grade == nil {
-                    recordNoReviewReliabilityAvailableTelemetry()
-                }
+                cards += [
+                    .qualityDeterminationCard,
+                    .settingsCard
+                ]
+                return cards
+            } else if product.notEnoughReviewsCardVisible {
+                var cards: [ViewElement] = []
 
-                if product.productNotSupportedCardVisible {
-                    return [
-                        .messageCard(.productNotSupported),
-                        .qualityDeterminationCard,
-                        .settingsCard
-                    ]
-                } else if product.notAnalyzedCardVisible {
-                    // Don't show not analyzed message card if analysis is in progress
-                    var cards: [ViewElement] = []
-
-                    if analysisStatus?.isAnalyzing == true {
-                        cards.append(.progressAnalysisCard)
+                if productState.analyzeCount > 0 {
+                    cards.append(.messageCard(.notEnoughReviews))
+                } else {
+                    if productState.analysisStatus?.isAnalyzing == true {
+                        cards.append(.messageCard(.analysisInProgress))
                     } else {
                         cards.append(.noAnalysisCard)
                     }
-
-                    cards += [
-                        .qualityDeterminationCard,
-                        .settingsCard
-                    ]
-                    return cards
-                } else if product.notEnoughReviewsCardVisible {
-                    var cards: [ViewElement] = []
-
-                    if analysisCount > 0 {
-                        cards.append(.messageCard(.notEnoughReviews))
-                    } else {
-                        if analysisStatus?.isAnalyzing == true {
-                            cards.append(.progressAnalysisCard)
-                        } else {
-                            cards.append(.noAnalysisCard)
-                        }
-                    }
-
-                    cards += [
-                        .qualityDeterminationCard,
-                        .settingsCard
-                    ]
-                    return cards
-                } else if product.needsAnalysisCardVisible {
-                    // Don't show needs analysis message card if analysis is in progress
-                    var cards: [ViewElement] = []
-
-                    if analysisStatus?.isAnalyzing == true {
-                        cards.append(.messageCard(.analysisInProgress))
-                    } else {
-                        cards.append(.messageCard(.needsAnalysis))
-                    }
-
-                    cards += [
-                        .reliabilityCard,
-                        .adjustRatingCard,
-                        .highlightsCard,
-                        .qualityDeterminationCard,
-                        .settingsCard
-                    ]
-
-                    return cards
-                } else {
-                    return [
-                        .reliabilityCard,
-                        .adjustRatingCard,
-                        .highlightsCard,
-                        .qualityDeterminationCard,
-                        .settingsCard
-                    ]
                 }
-            case let .error(error):
-                let baseElements = [ViewElement.qualityDeterminationCard, .settingsCard]
-                if let error = error as NSError?, error.domain == NSURLErrorDomain, error.code == -1009 {
-                    return [.messageCard(.noConnectionError)] + baseElements
-                } else {
-                    return [.messageCard(.genericError)] + baseElements
-                }
-            case .onboarding:
-                return [.onboarding]
-            }
-        }
 
-        fileprivate var productData: ProductAnalysisData? {
-            switch self {
-            case .loading, .error, .onboarding: return nil
-            case .loaded(let data, _, _): return data
+                cards += [
+                    .qualityDeterminationCard,
+                    .settingsCard
+                ]
+                return cards
+            } else if product.needsAnalysisCardVisible {
+                // Don't show needs analysis message card if analysis is in progress
+                var cards: [ViewElement] = []
+
+                if productState.analysisStatus?.isAnalyzing == true {
+                    cards.append(.messageCard(.analysisInProgress))
+                } else {
+                    cards.append(.messageCard(.needsAnalysis))
+                }
+
+                cards += [
+                    .reliabilityCard,
+                    .adjustRatingCard,
+                    .highlightsCard,
+                    .qualityDeterminationCard,
+                    productAdCard,
+                    .settingsCard
+                ].compactMap { $0 }
+
+                return cards
+            } else {
+                return [
+                    .reliabilityCard,
+                    .adjustRatingCard,
+                    .highlightsCard,
+                    .qualityDeterminationCard,
+                    productAdCard,
+                    .settingsCard
+                ].compactMap { $0 }
             }
+        case let .error(error):
+            let baseElements = [ViewElement.qualityDeterminationCard, .settingsCard]
+            if let error = error as NSError?, error.domain == NSURLErrorDomain, error.code == -1009 {
+                return [.messageCard(.noConnectionError)] + baseElements
+            } else {
+                return [.messageCard(.genericError)] + baseElements
+            }
+        case .onboarding:
+            return [.onboarding]
         }
     }
 
@@ -126,7 +147,7 @@ class FakespotViewModel {
         case qualityDeterminationCard
         case settingsCard
         case noAnalysisCard
-        case progressAnalysisCard
+        case productAdCard(ProductAdsResponse)
         case messageCard(MessageType)
         enum MessageType {
             case genericError
@@ -135,6 +156,8 @@ class FakespotViewModel {
             case notEnoughReviews
             case needsAnalysis
             case analysisInProgress
+            case reportProductInStock
+            case infoComingSoonCard
         }
     }
 
@@ -147,6 +170,12 @@ class FakespotViewModel {
     let shoppingProduct: ShoppingProduct
     var onStateChange: (() -> Void)?
     var isSwiping = false
+    var isViewIntersected = false
+    // Timer-related properties for handling view visibility
+    private var isViewVisible = false
+    private var hasTimerFired = false
+    private var timer: Timer?
+    private let tabManager: TabManager
 
     private var fetchProductTask: Task<Void, Never>?
     private var observeProductTask: Task<Void, Never>?
@@ -154,12 +183,16 @@ class FakespotViewModel {
     var viewElements: [ViewElement] {
         guard isOptedIn else { return [.onboarding] }
 
-        return state.viewElements
+        return viewElements(for: state)
     }
 
     private let prefs: Prefs
     private var isOptedIn: Bool {
         return prefs.boolForKey(PrefsKeys.Shopping2023OptIn) ?? false
+    }
+
+    var areAdsEnabled: Bool {
+        return prefs.boolForKey(PrefsKeys.Shopping2023EnableAds) ?? true
     }
 
     var reliabilityCardViewModel: FakespotReliabilityCardViewModel? {
@@ -239,19 +272,54 @@ class FakespotViewModel {
         a11yTitleIdentifier: AccessibilityIdentifiers.Shopping.AnalysisProgressInfoCard.title
     )
 
-    let settingsCardViewModel = FakespotSettingsCardViewModel()
+    lazy var reportProductInStockViewModel = FakespotMessageCardViewModel(
+        type: .info,
+        title: .Shopping.InfoCardProductNotInStockTitle,
+        description: .Shopping.InfoCardProductNotInStockDescription,
+        primaryActionText: .Shopping.InfoCardProductNotInStockPrimaryAction,
+        a11yCardIdentifier: AccessibilityIdentifiers.Shopping.ReportProductInStockCard.card,
+        a11yTitleIdentifier: AccessibilityIdentifiers.Shopping.ReportProductInStockCard.title,
+        a11yDescriptionIdentifier: AccessibilityIdentifiers.Shopping.ReportProductInStockCard.description,
+        a11yPrimaryActionIdentifier: AccessibilityIdentifiers.Shopping.ReportProductInStockCard.primaryAction
+    )
+
+    lazy var reportingProductFeedbackViewModel = FakespotMessageCardViewModel(
+        type: .info,
+        title: .Shopping.InfoCardReportSubmittedByCurrentUserTitle,
+        description: .Shopping.InfoCardReportSubmittedByCurrentUserDescription,
+        a11yCardIdentifier: AccessibilityIdentifiers.Shopping.ReportingProductFeedbackCard.card,
+        a11yTitleIdentifier: AccessibilityIdentifiers.Shopping.ReportingProductFeedbackCard.title,
+        a11yDescriptionIdentifier: AccessibilityIdentifiers.Shopping.ReportingProductFeedbackCard.description
+    )
+
+    lazy var infoComingSoonCardViewModel = FakespotMessageCardViewModel(
+        type: .info,
+        title: .Shopping.InfoCardInfoComingSoonTitle,
+        description: .Shopping.InfoCardInfoComingSoonDescription,
+        a11yCardIdentifier: AccessibilityIdentifiers.Shopping.InfoComingSoonCard.card,
+        a11yTitleIdentifier: AccessibilityIdentifiers.Shopping.InfoComingSoonCard.title,
+        a11yDescriptionIdentifier: AccessibilityIdentifiers.Shopping.InfoComingSoonCard.description
+    )
+
+    let settingsCardViewModel: FakespotSettingsCardViewModel
     var noAnalysisCardViewModel = FakespotNoAnalysisCardViewModel()
-    let reviewQualityCardViewModel = FakespotReviewQualityCardViewModel()
-    var optInCardViewModel = FakespotOptInCardViewModel()
+    let reviewQualityCardViewModel: FakespotReviewQualityCardViewModel
+    var optInCardViewModel: FakespotOptInCardViewModel
 
     private var analyzeCount = 0
 
     init(shoppingProduct: ShoppingProduct,
-         profile: Profile = AppContainer.shared.resolve()) {
+         profile: Profile = AppContainer.shared.resolve(),
+         tabManager: TabManager) {
         self.shoppingProduct = shoppingProduct
+        self.settingsCardViewModel = FakespotSettingsCardViewModel(tabManager: tabManager)
+        self.reviewQualityCardViewModel = FakespotReviewQualityCardViewModel(tabManager: tabManager)
+        optInCardViewModel = FakespotOptInCardViewModel(tabManager: tabManager)
         optInCardViewModel.productSitename = shoppingProduct.product?.sitename
+        optInCardViewModel.supportedTLDWebsites = shoppingProduct.supportedTLDWebsites
         reviewQualityCardViewModel.productSitename = shoppingProduct.product?.sitename
         self.prefs = profile.prefs
+        self.tabManager = tabManager
     }
 
     func fetchProductIfOptedIn() {
@@ -264,7 +332,19 @@ class FakespotViewModel {
                     for try await status in self.observeProductAnalysisStatus() where status.isAnalyzing == false {
                         await self.fetchProductAnalysis(showLoading: false)
                     }
-                } catch {}
+                } catch {
+                    if case .loaded(let productState) = state {
+                        // Restore the previous state in case of a failure
+                        state = .loaded(
+                            ProductState(
+                                product: productState.product,
+                                productAds: productState.productAds,
+                                analysisStatus: nil,
+                                analyzeCount: analyzeCount
+                            )
+                        )
+                    }
+                }
             }
         }
     }
@@ -275,15 +355,65 @@ class FakespotViewModel {
         }
     }
 
+    func toggleAdsEnabled() {
+        prefs.setBool(!areAdsEnabled, forKey: PrefsKeys.Shopping2023EnableAds)
+
+        // Make sure the view updates with the new ads setting
+        onStateChange?()
+    }
+
+    struct ProductState {
+        let product: ProductAnalysisResponse?
+        let productAds: [ProductAdsResponse]
+        let analysisStatus: AnalysisStatus?
+        let analyzeCount: Int
+    }
+
     func fetchProductAnalysis(showLoading: Bool = true) async {
         if showLoading { state = .loading }
         do {
             let product = try await shoppingProduct.fetchProductAnalysisData()
+            let productAds = await loadProductAds(for: product?.productId)
+
             let needsAnalysis = product?.needsAnalysis ?? false
             let analysis: AnalysisStatus? = needsAnalysis ? try? await shoppingProduct.getProductAnalysisStatus()?.status : nil
-            state = .loaded(product, analysis, analysisCount: analyzeCount)
+            state = .loaded(
+                ProductState(
+                    product: product,
+                    productAds: productAds,
+                    analysisStatus: analysis,
+                    analyzeCount: analyzeCount
+                )
+            )
+
+            guard product != nil else { return }
+            if productAds.isEmpty {
+                recordSurfaceNoAdsAvailableTelemetry()
+            } else {
+                reportAdEvent(eventName: .trustedDealsPlacement, aidvs: productAds.map(\.aid))
+                recordAdsExposureTelemetry()
+            }
         } catch {
             state = .error(error)
+        }
+    }
+
+    func loadProductAds(for productId: String?) async -> [ProductAdsResponse] {
+        if let productId,
+           let cachedAds = await ProductAdsCache.shared.getCachedAds(forKey: productId) {
+            return cachedAds
+        } else {
+            let newAds: [ProductAdsResponse]
+            if shoppingProduct.isProductAdsFeatureEnabled, areAdsEnabled {
+                newAds = await shoppingProduct.fetchProductAdsData()
+            } else {
+                newAds = []
+            }
+            if let productId, !newAds.isEmpty {
+                await ProductAdsCache.shared.cacheAds(newAds, forKey: productId)
+            }
+
+            return newAds
         }
     }
 
@@ -294,6 +424,19 @@ class FakespotViewModel {
             await fetchProductAnalysis()
             return
         }
+
+        if case .loaded(let productState) = state {
+            // update the state to in progress so UI is updated
+            state = .loaded(
+                ProductState(
+                    product: productState.product,
+                    productAds: productState.productAds,
+                    analysisStatus: status,
+                    analyzeCount: analyzeCount
+                )
+            )
+        }
+
         do {
             // Listen for analysis status until it's completed, then fetch new information
             for try await status in observeProductAnalysisStatus() where status.isAnalyzing == false {
@@ -302,6 +445,13 @@ class FakespotViewModel {
         } catch {
             // Sometimes we get an error that product is not found in analysis so we fetch new information
             await fetchProductAnalysis()
+        }
+    }
+
+    func reportProductBackInStock() {
+        recordTelemetry(for: .messageCard(.reportProductInStock))
+        Task {
+            _ = try? await shoppingProduct.reportProductBackInStock()
         }
     }
 
@@ -348,12 +498,107 @@ class FakespotViewModel {
         return sheetController.selectedDetentIdentifier
     }
 
+    // MARK: - Timer Handling
+    private func startTimer(aid: String) {
+        timer = Timer.scheduledTimer(
+            withTimeInterval: 1.5,
+            repeats: false,
+            block: { [weak self] _ in
+                self?.timerFired(aid: aid)
+            }
+        )
+        // Add the timer to the common run loop mode
+        // to ensure that the selector method fires even during user interactions such as scrolling,
+        // without requiring the user to lift their finger from the screen.
+        RunLoop.current.add(timer!, forMode: .common)
+    }
+
+    private func stopTimer() {
+        timer?.invalidate()
+        timer = nil
+    }
+
+    private func timerFired(aid: String) {
+        hasTimerFired = true
+        recordSurfaceAdsImpressionTelemetry()
+        reportAdEvent(eventName: .trustedDealsImpression, aidvs: [aid])
+        stopTimer()
+    }
+
+    func handleVisibilityChanges(for view: FakespotAdView, in superview: UIView) {
+        guard !hasTimerFired else { return }
+        let halfViewHeight = view.frame.height / 2
+        let intersection = superview.bounds.intersection(view.frame)
+        let areViewsIntersected = intersection.height >= halfViewHeight && halfViewHeight > 0
+
+        if areViewsIntersected {
+            guard !isViewVisible else { return }
+            isViewVisible.toggle()
+            if let ad = view.ad { startTimer(aid: ad.aid) }
+        } else {
+            guard isViewVisible else { return }
+            isViewVisible.toggle()
+            stopTimer()
+        }
+    }
+
+    func addTab(url: URL) {
+        tabManager.addTabsForURLs([url], zombie: false, shouldSelectTab: true)
+    }
+
     // MARK: - Telemetry
+
+    func reportAdEvent(eventName: FakespotAdsEvent, aidvs: [String]) {
+        Task {
+            _ = try? await shoppingProduct.reportAdEvent(
+                eventName: eventName,
+                eventSource: FakespotAdsEvent.eventSource,
+                aidvs: aidvs
+            )
+        }
+    }
+
+    public func recordSurfaceAdsClickedTelemetry() {
+        TelemetryWrapper.recordEvent(
+            category: .action,
+            method: .view,
+            object: .shoppingBottomSheet,
+            value: .surfaceAdsClicked
+        )
+    }
+
     private static func recordNoReviewReliabilityAvailableTelemetry() {
         TelemetryWrapper.recordEvent(
             category: .action,
             method: .navigate,
             object: .shoppingBottomSheet
+        )
+    }
+
+    private func recordSurfaceAdsImpressionTelemetry() {
+        TelemetryWrapper.recordEvent(
+            category: .action,
+            method: .view,
+            object: .shoppingBottomSheet,
+            value: .shoppingAdsImpression
+        )
+    }
+
+    private func recordSurfaceNoAdsAvailableTelemetry() {
+        TelemetryWrapper.recordEvent(
+            category: .action,
+            method: .view,
+            object: .shoppingBottomSheet,
+            value: .shoppingNoAdsAvailable
+        )
+    }
+
+    private func recordAdsExposureTelemetry() {
+        TelemetryWrapper.recordEvent(
+            category: .action,
+            method: .view,
+            object: .shoppingBottomSheet,
+            value: .shoppingAdsExposure
         )
     }
 
@@ -373,6 +618,12 @@ class FakespotViewModel {
                 category: .action,
                 method: .tap,
                 object: .shoppingNeedsAnalysisCardViewPrimaryButton
+            )
+        case .messageCard(.reportProductInStock):
+            TelemetryWrapper.recordEvent(
+                category: .action,
+                method: .tap,
+                object: .shoppingProductBackInStockButton
             )
         default: break
         }

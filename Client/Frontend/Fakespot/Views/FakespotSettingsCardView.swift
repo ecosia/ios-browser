@@ -27,6 +27,7 @@ class FakespotSettingsCardViewModel {
     let footerA11yActionIdentifier: String = a11yIds.footerAction
     let footerActionUrl = FakespotUtils.fakespotUrl
     var dismissViewController: ((TelemetryWrapper.EventExtraKey.Shopping?) -> Void)?
+    var toggleAdsEnabled: (() -> Void)?
 
     var isReviewQualityCheckOn: Bool {
         get { return prefs.boolForKey(PrefsKeys.Shopping2023OptIn) ?? false }
@@ -40,8 +41,7 @@ class FakespotSettingsCardViewModel {
     }
 
     var areAdsEnabled: Bool {
-        get { return prefs.boolForKey(PrefsKeys.Shopping2023EnableAds) ?? true }
-        set { prefs.setBool(newValue, forKey: PrefsKeys.Shopping2023EnableAds) }
+        return prefs.boolForKey(PrefsKeys.Shopping2023EnableAds) ?? true
     }
 
     var footerModel: ActionFooterViewModel {
@@ -53,7 +53,7 @@ class FakespotSettingsCardViewModel {
     }
 
     init(profile: Profile = AppContainer.shared.resolve(),
-         tabManager: TabManager = AppContainer.shared.resolve()) {
+         tabManager: TabManager) {
         prefs = profile.prefs
         self.tabManager = tabManager
     }
@@ -69,14 +69,11 @@ class FakespotSettingsCardViewModel {
 final class FakespotSettingsCardView: UIView, ThemeApplicable {
     private struct UX {
         static let headerLabelFontSize: CGFloat = 15
-        static let buttonLabelFontSize: CGFloat = 16
-        static let buttonCornerRadius: CGFloat = 14
         static let buttonLeadingTrailingPadding: CGFloat = 8
         static let buttonTopPadding: CGFloat = 16
         static let contentStackViewSpacing: CGFloat = 16
         static let labelSwitchStackViewSpacing: CGFloat = 12
         static let contentInsets = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
-        static let buttonInsets = UIEdgeInsets(top: 12, left: 16, bottom: 12, right: 16)
         static let cardBottomSpace: CGFloat = 8
         static let footerHorizontalSpace: CGFloat = 8
     }
@@ -113,15 +110,8 @@ final class FakespotSettingsCardView: UIView, ThemeApplicable {
         uiSwitch.addTarget(self, action: #selector(self.didToggleSwitch), for: .valueChanged)
     }
 
-    private lazy var turnOffButton: ResizableButton = .build { button in
-        button.layer.cornerRadius = UX.buttonCornerRadius
-        button.contentEdgeInsets = UX.buttonInsets
-        button.titleLabel?.textAlignment = .center
-        button.clipsToBounds = true
+    private lazy var turnOffButton: SecondaryRoundedButton = .build { button in
         button.addTarget(self, action: #selector(self.didTapTurnOffButton), for: .touchUpInside)
-        button.titleLabel?.font = DefaultDynamicFontHelper.preferredFont(withTextStyle: .headline,
-                                                                         size: UX.buttonLabelFontSize,
-                                                                         weight: .semibold)
     }
 
     private lazy var footerView: ActionFooterView = .build()
@@ -142,8 +132,7 @@ final class FakespotSettingsCardView: UIView, ThemeApplicable {
 
         [showProductsLabel, recommendedProductsSwitch].forEach(labelSwitchStackView.addArrangedSubview)
 
-        // FXIOS-7369: https://mozilla-hub.atlassian.net/browse/FXIOS-7369
-//        contentStackView.addArrangedSubview(labelSwitchStackView)
+        contentStackView.addArrangedSubview(labelSwitchStackView)
 
         NSLayoutConstraint.activate([
             collapsibleContainer.leadingAnchor.constraint(equalTo: leadingAnchor),
@@ -176,8 +165,11 @@ final class FakespotSettingsCardView: UIView, ThemeApplicable {
         showProductsLabel.text = viewModel.showProductsLabelTitle
         showProductsLabel.accessibilityIdentifier = viewModel.showProductsLabelTitleA11yId
 
-        turnOffButton.setTitle(viewModel.turnOffButtonTitle, for: .normal)
-        turnOffButton.accessibilityIdentifier = viewModel.turnOffButtonTitleA11yId
+        let turnOffButtonViewModel = SecondaryRoundedButtonViewModel(
+            title: viewModel.turnOffButtonTitle,
+            a11yIdentifier: viewModel.turnOffButtonTitleA11yId
+        )
+        turnOffButton.configure(viewModel: turnOffButtonViewModel)
 
         recommendedProductsSwitch.accessibilityIdentifier = viewModel.recommendedProductsSwitchA11yId
 
@@ -201,7 +193,7 @@ final class FakespotSettingsCardView: UIView, ThemeApplicable {
 
     @objc
     private func didToggleSwitch(_ sender: UISwitch) {
-        viewModel?.areAdsEnabled = sender.isOn
+        viewModel?.toggleAdsEnabled?()
     }
 
     @objc
@@ -223,8 +215,7 @@ final class FakespotSettingsCardView: UIView, ThemeApplicable {
         recommendedProductsSwitch.onTintColor = colors.actionPrimary
         recommendedProductsSwitch.tintColor = colors.formKnob
 
-        turnOffButton.backgroundColor = colors.actionSecondary
-        turnOffButton.setTitleColor(colors.textOnLight, for: .normal)
+        turnOffButton.applyTheme(theme: theme)
 
         footerView.applyTheme(theme: theme)
     }

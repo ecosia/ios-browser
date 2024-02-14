@@ -50,7 +50,7 @@ DerivedData
 /fastlane/templates
 
 # content blocking lists
-content-blocker-lib-ios/Lists/*
+Client/ContentBlocker/Lists/*
 
 #python environment
 python-env/
@@ -115,6 +115,10 @@ nimbus-fml/
 # tmp files
 /test-fixtures/tmp/*
 
+# Nimbus build artifacts.
+bin/nimbus-fml-configuration.local.sh
+bin/nimbus-fml.sh
+
 # bundler
 vendor/bundle
 .bundle/config
@@ -125,3 +129,4 @@ vendor/bundle
 # Additional configs
 Staging.xcconfig
 Production.xcconfig
+.github/workflows/firefox-*.yml

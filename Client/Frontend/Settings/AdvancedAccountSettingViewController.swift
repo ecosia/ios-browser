@@ -4,7 +4,6 @@
 
 import UIKit
 import Shared
-import SnapKit
 
 import Account
 
@@ -48,7 +47,7 @@ private class CustomFxAContentServerEnableSetting: BoolSetting {
                      placeholder: placeholder,
                      accessibilityIdentifier: accessibilityIdentifier,
                      settingDidChange: settingDidChange)
-          textField.clearButtonMode = .always
+          enableClearButtonForTextField()
       }
   }
 
@@ -65,7 +64,7 @@ class AdvancedAccountSettingViewController: SettingsTableViewController {
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        RustFirefoxAccounts.reconfig(prefs: profile.prefs)
+        RustFirefoxAccounts.reconfig(prefs: profile.prefs) { _ in }
     }
 
     override func generateSettings() -> [SettingSection] {

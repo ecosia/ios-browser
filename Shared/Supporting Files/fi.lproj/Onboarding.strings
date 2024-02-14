@@ -26,7 +26,7 @@
 "Onboarding.Notification.Continue.Action.v114" = "Jatka";
 
 /* String used to describe the description of the notification onboarding page in our Onboarding screens. Placeholder is for the app name. */
-"Onboarding.Notification.Description.v114" = "Lähetä välilehtiä laitteidesi välillä ja hanki vinkkejä siitä, miten saat kaiken irti %@ista.";
+"Onboarding.Notification.Description.v120" = "Lähetä turvallisesti välilehtiä laitteidesi välillä ja tutustu muihin %@in tietosuojaominaisuuksiin.";
 
 /* String used to describe the description of the notification onboarding page in our Onboarding screens. Placeholder is for the app name. */
 "Onboarding.Notification.Description.v120" = "Lähetä turvallisesti välilehtiä laitteidesi välillä ja tutustu muihin %@in tietosuojaominaisuuksiin.";
@@ -35,7 +35,7 @@
 "Onboarding.Notification.Skip.Action.v115" = "Ohita";
 
 /* String used to describe the title of the notification onboarding page in our Onboarding screens. Placeholder is for the app name. */
-"Onboarding.Notification.Title.v114" = "Ilmoitukset auttavat sinua tekemään enemmän %@illa";
+"Onboarding.Notification.Title.v120" = "Ilmoitukset auttavat sinua pysymään paremmassa turvassa %@illa";
 
 /* String used to describe the title of the notification onboarding page in our Onboarding screens. Placeholder is for the app name. */
 "Onboarding.Notification.Title.v120" = "Ilmoitukset auttavat sinua pysymään paremmassa turvassa %@illa";
@@ -43,8 +43,8 @@
 /* String used to describe the option to continue to ask for the notification permission in Firefox Onboarding screens. */
 "Onboarding.Notification.TurnOnNotifications.Action.v114" = "Ota ilmoitukset käyttöön";
 
-/* String used to describes the description of what Firefox is on the Sync onboarding page for current version in our Onboarding screens. */
-"Onboarding.Sync.Description.v114" = "Nappaa välilehdet ja salasanat muilta laitteiltasi ja jatka siitä, mihin jäit.";
+/* String used to describes the description of what Firefox is on the Sync onboarding page for current version in our Onboarding screens. Placeholder is for the app name. */
+"Onboarding.Sync.Description.v120" = "Kun olet kirjautunut sisään ja synkronoitu, tietosi ovat paremmassa turvassa. %@ salaa salasanasi, kirjanmerkkisi ja paljon muuta.";
 
 /* String used to describes the description of what Firefox is on the Sync onboarding page for current version in our Onboarding screens. Placeholder is for the app name. */
 "Onboarding.Sync.Description.v120" = "Kun olet kirjautunut sisään ja synkronoitu, tietosi ovat paremmassa turvassa. %@ salaa salasanasi, kirjanmerkkisi ja paljon muuta.";
@@ -56,7 +56,7 @@
 "Onboarding.Sync.Skip.Action.v114" = "Ohita";
 
 /* String used to describes the title of what Firefox is on the Sync onboarding page for current version in our Onboarding screens. */
-"Onboarding.Sync.Title.v114" = "Hyppää puhelimelta kannettavalle tietokoneelle ja takaisin";
+"Onboarding.Sync.Title.v120" = "Pysy salattuna, kun vaihtelet laitteiden välillä";
 
 /* String used to describes the title of what Firefox is on the Sync onboarding page for current version in our Onboarding screens. */
 "Onboarding.Sync.Title.v120" = "Pysy salattuna, kun vaihtelet laitteiden välillä";
@@ -85,8 +85,14 @@
 /* Describes the action on the first onboarding page in our Onboarding screen. This indicates that the user will set their default browser to Firefox. */
 "Onboarding.Welcome.ActionTreatementA.v114" = "Aseta oletusselaimeksi";
 
+/* Accessibility label for close button that dismisses the welcome onboarding screen. Placeholder is for the app name. */
+"Onboarding.Welcome.Close.AccessibilityLabel.v121" = "Sulje ja poistu %@in käyttöönottovaiheesta";
+
+/* String used to describes the description of what Firefox is on the welcome onboarding page for current version in our Onboarding screens. */
+"Onboarding.Welcome.Description.TreatementA.v120" = "Voittoa tavoittelemattoman tahon tukema selain auttaa sinua estämään yrityksiä seuraamasta sinua verkossa.";
+
 /* String used to describes the description of what Firefox is on the welcome onboarding page for current version in our Onboarding screens. Placeholder is for the app name. */
-"Onboarding.Welcome.Description.TreatementA.v114" = "%@ asettaa ihmiset voittojen edelle ja suojaa yksityisyyttäsi oletuksena.";
+"Onboarding.Welcome.Description.v120" = "Voittoa tavoittelemattoman tahon tukema selaimemme auttaa estämään yrityksiä seuraamasta sinua salaa verkossa.";
 
 /* String used to describe the title of link button is on the welcome onboarding page for current version in our Onboarding screens. */
 "Onboarding.Welcome.Link.Action.v114" = "Lue yksityisyyskäytäntömme";
@@ -94,8 +100,8 @@
 /* Describes the action on the first onboarding page in our Onboarding screen. This string will be on a button so user can skip this onboarding card. */
 "Onboarding.Welcome.Skip.v114" = "Ohita";
 
-/* String used to describes the title of what Firefox is on the welcome onboarding page for current version in our Onboarding screens. Placeholder is for the app name. */
-"Onboarding.Welcome.Title.TreatementA.v114" = "Aseta %@ selaimeksesi";
+/* String used to describes the title of what Firefox is on the welcome onboarding page for current version in our Onboarding screens. */
+"Onboarding.Welcome.Title.TreatementA.v120" = "Turvaamisesi on tärkeää meille";
 
 /* String used to describes the title of what Firefox is on the welcome onboarding page for current version in our Onboarding screens. */
 "Onboarding.Welcome.Title.TreatementA.v120" = "Turvaamisesi on tärkeää meille";

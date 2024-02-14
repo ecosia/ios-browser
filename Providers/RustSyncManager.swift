@@ -160,6 +160,7 @@ public class RustSyncManager: NSObject, SyncManager {
     private func beginSyncing() {
         syncDisplayState = .inProgress
         notifySyncing(notification: .ProfileDidStartSyncing)
+        AppEventQueue.started(.profileSyncing)
     }
 
     private func resolveSyncState(result: SyncResult) -> SyncDisplayState {
@@ -192,7 +193,7 @@ public class RustSyncManager: NSObject, SyncManager {
         }
 
         if canSendUsageData() {
-            self.syncManagerAPI.reportSyncTelemetry(syncResult: result) {_ in }
+            self.syncManagerAPI.reportSyncTelemetry(syncResult: result) { _ in }
         } else {
             logger.log("Profile isn't sending usage data. Not sending sync status event.",
                        level: .debug,
@@ -203,6 +204,7 @@ public class RustSyncManager: NSObject, SyncManager {
         // db access from happening
         if !backgrounded {
             notifySyncing(notification: .ProfileDidFinishSyncing)
+            AppEventQueue.completed(.profileSyncing)
         }
     }
 
@@ -280,7 +282,7 @@ public class RustSyncManager: NSObject, SyncManager {
             // last sync.
             let engines = self.creditCardAutofillEnabled ?
                 syncManagerAPI.rustTogglableEngines :
-                syncManagerAPI.rustTogglableEngines.filter({$0 != RustSyncManagerAPI.TogglableEngine.creditcards })
+                syncManagerAPI.rustTogglableEngines.filter({ $0 != RustSyncManagerAPI.TogglableEngine.creditcards })
 
             engines.forEach { engine in
                 let stateChangedPref = "engine.\(engine).enabledStateChanged"
@@ -328,48 +330,48 @@ public class RustSyncManager: NSObject, SyncManager {
 
     func getEnginesAndKeys(engines: [RustSyncManagerAPI.TogglableEngine],
                            completion: @escaping (([String], [String: String])) -> Void) {
-        var localEncryptionKeys: [String: String] = [:]
-        var rustEngines: [String] = []
-        var registeredPlaces = false
+       var localEncryptionKeys: [String: String] = [:]
+       var rustEngines: [String] = []
+       var registeredPlaces = false
 
-        for engine in engines.filter({ syncManagerAPI.rustTogglableEngines.contains($0) }) {
-            switch engine {
-            case .tabs:
-                profile?.tabs.registerWithSyncManager()
-                rustEngines.append(engine.rawValue)
-            case .passwords:
-                profile?.logins.registerWithSyncManager()
-                if let key = try? profile?.logins.getStoredKey() {
-                    localEncryptionKeys[engine.rawValue] = key
-                    rustEngines.append(engine.rawValue)
-                } else {
-                    logger.log("Login encryption key could not be retrieved for syncing",
-                               level: .warning,
-                               category: .sync)
-                }
-            case .creditcards:
-                if self.creditCardAutofillEnabled {
-                    profile?.autofill.registerWithSyncManager()
-                    if let key = try? profile?.autofill.getStoredKey() {
-                        localEncryptionKeys[engine.rawValue] = key
-                        rustEngines.append(engine.rawValue)
-                    } else {
-                        logger.log("Credit card encryption key could not be retrieved for syncing",
-                                   level: .warning,
-                                   category: .sync)
-                    }
-                }
-            case .bookmarks, .history:
-                if !registeredPlaces {
-                    profile?.places.registerWithSyncManager()
-                    registeredPlaces = true
-                }
-                rustEngines.append(engine.rawValue)
-            }
-        }
+       for engine in engines.filter({ syncManagerAPI.rustTogglableEngines.contains($0) }) {
+           switch engine {
+           case .tabs:
+               profile?.tabs.registerWithSyncManager()
+               rustEngines.append(engine.rawValue)
+           case .passwords:
+               profile?.logins.registerWithSyncManager()
+               if let key = try? profile?.logins.getStoredKey() {
+                   localEncryptionKeys[engine.rawValue] = key
+                   rustEngines.append(engine.rawValue)
+               } else {
+                   logger.log("Login encryption key could not be retrieved for syncing",
+                              level: .warning,
+                              category: .sync)
+               }
+           case .creditcards:
+               if self.creditCardAutofillEnabled {
+                   profile?.autofill.registerWithSyncManager()
+                   if let key = try? profile?.autofill.getStoredKey() {
+                       localEncryptionKeys[engine.rawValue] = key
+                       rustEngines.append(engine.rawValue)
+                   } else {
+                       logger.log("Credit card encryption key could not be retrieved for syncing",
+                                  level: .warning,
+                                  category: .sync)
+                   }
+               }
+           case .bookmarks, .history:
+               if !registeredPlaces {
+                   profile?.places.registerWithSyncManager()
+                   registeredPlaces = true
+               }
+               rustEngines.append(engine.rawValue)
+           }
+       }
 
-        completion((rustEngines, localEncryptionKeys))
-    }
+       completion((rustEngines, localEncryptionKeys))
+   }
 
     private func doSync(params: SyncParams, completion: @escaping (SyncResult) -> Void) {
         beginSyncing()
@@ -436,7 +438,7 @@ public class RustSyncManager: NSObject, SyncManager {
         let deferred = Deferred<Maybe<SyncResult>>()
 
         logger.log("Syncing \(engines)", level: .info, category: .sync)
-        self.profile?.rustFxA.accountManager.upon { accountManager in
+        if let accountManager = RustFirefoxAccounts.shared.accountManager {
             guard let device = accountManager.deviceConstellation()?
                 .state()?
                 .localDevice else {
@@ -444,7 +446,7 @@ public class RustSyncManager: NSObject, SyncManager {
                                 level: .warning,
                                 category: .sync)
                 deferred.fill(Maybe(failure: DeviceIdError()))
-                return
+                return deferred
             }
 
             accountManager.getAccessToken(scope: OAuthScope.oldSync) { result in

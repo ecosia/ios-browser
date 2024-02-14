@@ -74,6 +74,18 @@ class OneLineTableViewCell: UITableViewCell,
                             right: 0)
     }
 
+    /// Holds a reference to the left image view's leading constraint so we can update
+    /// its constant when modifying this cell's ``indentationLevel`` value.
+    private var leftImageViewLeadingConstraint: NSLayoutConstraint?
+
+    override var indentationLevel: Int {
+        didSet {
+            // Update the leading constraint based on this cell's indentationLevel value,
+            // adding 1 since the default indentation is 0.
+            leftImageViewLeadingConstraint?.constant = UX.borderViewMargin * CGFloat(1 + indentationLevel)
+        }
+    }
+
     private func setupLayout() {
         separatorInset = defaultSeparatorInset
         selectionStyle = .default
@@ -88,6 +100,12 @@ class OneLineTableViewCell: UITableViewCell,
         let containerViewTrailingAnchor = accessoryView?.leadingAnchor ?? contentView.trailingAnchor
         let midViewLeadingMargin: CGFloat = shouldLeftAlignTitle ? UX.shortLeadingMargin : UX.longLeadingMargin
 
+        // Keep a reference to the left image's leading constraint to be able to update its value when
+        // modifying this cell's indentationLevel value
+        leftImageViewLeadingConstraint = leftImageView.leadingAnchor.constraint(
+            equalTo: containerView.leadingAnchor,
+            constant: UX.borderViewMargin
+        )
         NSLayoutConstraint.activate([
             containerView.topAnchor.constraint(equalTo: contentView.topAnchor,
                                                constant: UX.verticalMargin),
@@ -96,9 +114,8 @@ class OneLineTableViewCell: UITableViewCell,
                                                   constant: -UX.verticalMargin),
             containerView.trailingAnchor.constraint(equalTo: containerViewTrailingAnchor),
 
+            leftImageViewLeadingConstraint,
             leftImageView.centerYAnchor.constraint(equalTo: titleLabel.centerYAnchor),
-            leftImageView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor,
-                                                   constant: UX.borderViewMargin),
             leftImageView.widthAnchor.constraint(equalToConstant: UX.leftImageViewSize),
             leftImageView.heightAnchor.constraint(equalToConstant: UX.leftImageViewSize),
             leftImageView.trailingAnchor.constraint(equalTo: titleLabel.leadingAnchor,
@@ -115,7 +132,7 @@ class OneLineTableViewCell: UITableViewCell,
             bottomSeparatorView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
             bottomSeparatorView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
             bottomSeparatorView.heightAnchor.constraint(equalToConstant: UX.separatorViewHeight)
-        ])
+        ].compactMap { $0 })
 
         selectedBackgroundView = selectedView
     }
@@ -164,6 +181,7 @@ class OneLineTableViewCell: UITableViewCell,
         
         bottomSeparatorView.backgroundColor = theme.colors.borderPrimary
         accessoryView?.tintColor = theme.colors.actionSecondary
+        leftImageView.tintColor = theme.colors.textPrimary
         // Ecosia: update tint color
         tintColor = UIColor.legacyTheme.ecosia.primaryButton
     }

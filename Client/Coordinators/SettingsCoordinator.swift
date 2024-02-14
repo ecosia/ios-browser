@@ -9,6 +9,7 @@ import Redux
 
 protocol SettingsCoordinatorDelegate: AnyObject {
     func openURLinNewTab(_ url: URL)
+    func openDebugTestTabs(count: Int)
     func didFinishSettings(from coordinator: SettingsCoordinator)
 }
 
@@ -32,7 +33,7 @@ class SettingsCoordinator: BaseCoordinator,
     init(router: Router,
          wallpaperManager: WallpaperManagerInterface = WallpaperManager(),
          profile: Profile = AppContainer.shared.resolve(),
-         tabManager: TabManager = AppContainer.shared.resolve(),
+         tabManager: TabManager,
          themeManager: ThemeManager = AppContainer.shared.resolve()) {
         self.wallpaperManager = wallpaperManager
         self.profile = profile
@@ -57,13 +58,21 @@ class SettingsCoordinator: BaseCoordinator,
         }
     }
 
-    override func handle(route: Route) -> Bool {
+    override func canHandle(route: Route) -> Bool {
         switch route {
-        case let .settings(section):
-            start(with: section)
+        case .settings:
             return true
         default:
             return false
+        }
+    }
+
+    override func handle(route: Route) {
+        switch route {
+        case let .settings(section):
+            start(with: section)
+        default:
+            break
         }
     }
 
@@ -75,7 +84,9 @@ class SettingsCoordinator: BaseCoordinator,
             return viewController
 
         case .homePage:
-            let viewController = HomePageSettingViewController(prefs: profile.prefs, settingsDelegate: self)
+            let viewController = HomePageSettingViewController(prefs: profile.prefs,
+                                                               settingsDelegate: self,
+                                                               tabManager: tabManager)
             viewController.profile = profile
             return viewController
 
@@ -184,6 +195,10 @@ class SettingsCoordinator: BaseCoordinator,
         router.push(firefoxSuggestViewController)
     }
 
+    func openDebugTestTabs(count: Int) {
+        parentCoordinator?.openDebugTestTabs(count: count)
+    }
+
     func showPasswordManager(shouldShowOnboarding: Bool) {
         let passwordCoordinator = PasswordManagerCoordinator(
             router: router,
@@ -194,11 +209,12 @@ class SettingsCoordinator: BaseCoordinator,
         passwordCoordinator.start(with: shouldShowOnboarding)
     }
 
-    func showQRCode(delegate: QRCodeViewControllerDelegate) {
+    func showQRCode(delegate: QRCodeViewControllerDelegate, rootNavigationController: UINavigationController?) {
         var coordinator: QRCodeCoordinator
         if let qrCodeCoordinator = childCoordinators.first(where: { $0 is QRCodeCoordinator }) as? QRCodeCoordinator {
             coordinator = qrCodeCoordinator
         } else {
+            let router = rootNavigationController != nil ? DefaultRouter(navigationController: rootNavigationController!) : router
             coordinator = QRCodeCoordinator(parentCoordinator: self, router: router)
             add(child: coordinator)
         }
@@ -250,7 +266,8 @@ class SettingsCoordinator: BaseCoordinator,
 
     func pressedHome() {
         let viewController = HomePageSettingViewController(prefs: profile.prefs,
-                                                           settingsDelegate: self)
+                                                           settingsDelegate: self,
+                                                           tabManager: tabManager)
         viewController.profile = profile
         router.push(viewController)
     }
@@ -289,9 +306,7 @@ class SettingsCoordinator: BaseCoordinator,
     }
 
     func pressedTheme() {
-        if ReduxFlagManager.isReduxEnabled {
-            store.dispatch(ActiveScreensStateAction.showScreen(.themeSettings))
-        }
+        store.dispatch(ActiveScreensStateAction.showScreen(.themeSettings))
         router.push(ThemeSettingsController())
     }
 

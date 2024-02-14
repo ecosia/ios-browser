@@ -32,7 +32,7 @@ public struct FakespotUtils: FeatureFlaggable {
 
     public static var fakespotUrl: URL? {
         // Returns the predefined URL associated to Fakespot button action.
-        return URL(string: "https://www.fakespot.com/our-mission?utm_source=review-checker&utm_campaign=fakespot-by-mozilla&utm_medium=inproduct&utm_term=core-sheet")
+        return URL(string: "https://www.fakespot.com/review-checker?utm_source=review-checker&utm_campaign=fakespot-by-mozilla&utm_medium=inproduct&utm_term=core-sheet")
     }
 
     static func widthOfString(_ string: String, usingFont font: UIFont) -> CGFloat {
@@ -74,5 +74,26 @@ public struct FakespotUtils: FeatureFlaggable {
                 TelemetryWrapper.ExtraKey.Shopping.isUserOnboarded.rawValue: isUserOnboarded
             ]
         )
+    }
+
+    func isPadInMultitasking(device: UIUserInterfaceIdiom = UIDevice.current.userInterfaceIdiom,
+                             window: UIWindow? = UIWindow.attachedKeyWindow,
+                             viewSize: CGSize?) -> Bool {
+        guard device == .pad, let window else { return false }
+
+        let frameSize = viewSize ?? window.frame.size
+        return frameSize.width != window.screen.bounds.width || frameSize.height != window.screen.bounds.height
+    }
+
+    func shouldDisplayInSidebar(device: UIUserInterfaceIdiom = UIDevice.current.userInterfaceIdiom,
+                                window: UIWindow? = UIWindow.attachedKeyWindow,
+                                viewSize: CGSize? = nil,
+                                isPortrait: Bool = UIWindow.isPortrait,
+                                orientation: UIDeviceOrientation = UIDevice.current.orientation) -> Bool {
+        let isPadInMultitasking = isPadInMultitasking(device: device, window: window, viewSize: viewSize)
+
+        // UIDevice is not always returning the correct orientation so we check against the window orientation as well
+        let isPortrait = orientation.isPortrait || isPortrait
+        return device == .pad && !isPadInMultitasking && !isPortrait
     }
 }

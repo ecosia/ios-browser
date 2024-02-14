@@ -7,50 +7,6 @@ import Shared
 import Storage
 
 class LegacyTabTrayViewModel {
-    enum Segment: Int, CaseIterable {
-        case tabs
-        case privateTabs
-        case syncedTabs
-
-        var navTitle: String {
-            switch self {
-            case .tabs:
-                return .TabTrayV2Title
-            case .privateTabs:
-                return .TabTrayPrivateBrowsingTitle
-            case .syncedTabs:
-                return .AppMenu.AppMenuSyncedTabsTitleString
-            }
-        }
-
-        var label: String {
-            switch self {
-            case .tabs:
-                return String.TabTraySegmentedControlTitlesTabs
-            case .privateTabs:
-                return String.TabTraySegmentedControlTitlesPrivateTabs
-            case .syncedTabs:
-                return String.TabTraySegmentedControlTitlesSyncedTabs
-            }
-        }
-
-        var image: UIImage? {
-            switch self {
-            case .tabs:
-                return UIImage(named: ImageIdentifiers.navTabCounter)
-            case .privateTabs:
-                return UIImage(named: ImageIdentifiers.privateMaskSmall)
-            case .syncedTabs:
-                return UIImage(named: ImageIdentifiers.syncedDevicesIcon)
-            }
-        }
-    }
-
-    enum Layout: Equatable {
-        case regular // iPad
-        case compact // iPhone
-    }
-
     let profile: Profile
     let tabManager: TabManager
     let overlayManager: OverlayModeManager
@@ -59,8 +15,8 @@ class LegacyTabTrayViewModel {
     let tabTrayView: TabTrayViewDelegate
     let syncedTabsController: LegacyRemoteTabsPanel
 
-    var segmentToFocus: LegacyTabTrayViewModel.Segment?
-    var layout: Layout = .compact
+    var segmentToFocus: TabTrayPanelType?
+    var layout: TabTrayLayoutType = .compact
 
     var normalTabsCount: String {
         (tabManager.normalTabs.count < 100) ? tabManager.normalTabs.count.description : "\u{221E}"
@@ -71,7 +27,7 @@ class LegacyTabTrayViewModel {
          tabToFocus: Tab? = nil,
          tabManager: TabManager,
          overlayManager: OverlayModeManager,
-         segmentToFocus: LegacyTabTrayViewModel.Segment? = nil) {
+         segmentToFocus: TabTrayPanelType? = nil) {
         self.profile = profile
         self.tabManager = tabManager
         self.overlayManager = overlayManager
@@ -86,7 +42,7 @@ class LegacyTabTrayViewModel {
 
     func navTitle(for segmentIndex: Int) -> String? {
         if layout == .compact {
-            let segment = LegacyTabTrayViewModel.Segment(rawValue: segmentIndex)
+            let segment = TabTrayPanelType(rawValue: segmentIndex)
             return segment?.navTitle
         }
         return nil
@@ -107,12 +63,15 @@ extension LegacyTabTrayViewModel {
     @objc
     func didTapAddTab(_ sender: UIBarButtonItem) {
         tabTrayView.performToolbarAction(.addTab, sender: sender)
-        overlayManager.openNewTab(url: nil,
-                                  newTabSettings: NewTabAccessors.getNewTabPage(profile.prefs))
     }
 
     @objc
     func didTapSyncTabs(_ sender: UIBarButtonItem) {
         reloadRemoteTabs()
+    }
+
+    func didDismiss() {
+        overlayManager.openNewTab(url: nil,
+                                  newTabSettings: NewTabAccessors.getNewTabPage(profile.prefs))
     }
 }

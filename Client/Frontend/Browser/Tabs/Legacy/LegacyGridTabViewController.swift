@@ -286,13 +286,17 @@ class LegacyGridTabViewController: UIViewController,
 
         tabDisplayManager.togglePrivateMode(isOn: !tabDisplayManager.isPrivate, createTabOnEmptyPrivateMode: false)
 
+        emptyPrivateTabsView.alpha = 0.0
         emptyPrivateTabsView.isHidden = !privateTabsAreEmpty
+        if privateTabsAreEmpty {
+            UIView.animate(withDuration: 0.2) { [weak self] in
+                self?.emptyPrivateTabsView.alpha = 1.0
+            }
+        }
     }
 
     func openNewTab(_ request: URLRequest? = nil, isPrivate: Bool) {
-        if tabDisplayManager.isDragging {
-            return
-        }
+        guard !tabDisplayManager.isDragging else { return }
 
         // Ensure Firefox home page is refreshed if privacy mode was changed
         if tabManager.selectedTab?.isPrivate != isPrivate {
@@ -326,9 +330,7 @@ class LegacyGridTabViewController: UIViewController,
     func closeTabsTrayBackground() {
         tabDisplayManager.removeAllTabsFromView()
 
-        tabManager.backgroundRemoveAllTabs(isPrivate: tabDisplayManager.isPrivate) {
-            recentlyClosedTabs, isPrivateState, previousTabUUID in
-
+        tabManager.backgroundRemoveAllTabs(isPrivate: tabDisplayManager.isPrivate) { recentlyClosedTabs, isPrivateState, previousTabUUID in
             DispatchQueue.main.async { [unowned self] in
                 if isPrivateState {
                     let previousTab = self.tabManager.tabs.first(where: { $0.tabUUID == previousTabUUID })
@@ -377,8 +379,10 @@ class LegacyGridTabViewController: UIViewController,
     }
 
     func dismissTabTray() {
-        self.navigationController?.dismiss(animated: true, completion: nil)
-        TelemetryWrapper.recordEvent(category: .action, method: .close, object: .tabTray)
+        DispatchQueue.main.async {
+            self.navigationController?.dismiss(animated: true, completion: nil)
+            TelemetryWrapper.recordEvent(category: .action, method: .close, object: .tabTray)
+        }
     }
 
     /// Handles close tab by clicking on close button or swipe gesture
@@ -574,8 +578,8 @@ extension LegacyGridTabViewController: LegacyTabCellDelegate {
     }
 }
 
-// MARK: - TabPeekDelegate
-extension LegacyGridTabViewController: TabPeekDelegate {
+// MARK: - LegacyTabPeekDelegate
+extension LegacyGridTabViewController: LegacyTabPeekDelegate {
     func tabPeekDidAddBookmark(_ tab: Tab) {
         delegate?.tabTrayDidAddBookmark(tab)
     }

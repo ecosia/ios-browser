@@ -9,9 +9,8 @@ features:
         type: Map<HomeScreenSection, Boolean>
         default:
           {
-            "top-sites": true,
             "jump-back-in": true,
-            "recent-explorations": true,
+            "recent-explorations": false,
           }
       pocket-sponsored-stories:
         description: >
@@ -19,32 +18,36 @@ features:
           stories appear on the homepage.
         type: Boolean
         default: false
+      prefer-switch-to-open-tab:
+        description: >
+           Enables the feature to automatically switch to an existing tab
+           with the same content instead of opening a new one.
+        type: Boolean
+        default: false
     defaults:
       - channel: developer
         value: {
           "sections-enabled": {
-            "top-sites": true,
             "jump-back-in": true,
-            "recent-explorations": true,
+            "recent-explorations": false,
           },
-          "pocket-sponsored-stories": true
+          "pocket-sponsored-stories": true,
+          "prefer-switch-to-open-tab": true
         }
       - channel: beta
         value: {
           "sections-enabled": {
-            "top-sites": true,
             "jump-back-in": true,
-            "recent-explorations": true,
+            "recent-explorations": false,
           },
-          "pocket-sponsored-stories": false
+          "pocket-sponsored-stories": false,
+          "prefer-switch-to-open-tab": false
         }
 
 enums:
   HomeScreenSection:
     description: The identifiers for the sections of the homescreen.
     variants:
-      top-sites:
-        description: The frecency and pinned sites.
       jump-back-in:
         description: The tabs the user was looking immediately before being interrupted.
       recent-explorations:
