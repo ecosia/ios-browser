@@ -74,8 +74,14 @@ class AppSettingsTableViewController: SettingsTableViewController,
         tableView.accessibilityIdentifier = AccessibilityIdentifiers.Settings.tableViewController
     }
 
+    /* Ecosia: Move settings reload to `viewWillAppear`
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        askedToReload()
+    }
+     */
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         askedToReload()
     }
 
@@ -208,7 +214,7 @@ class AppSettingsTableViewController: SettingsTableViewController,
             BlockPopupSetting(settings: self),
             NoImageModeSetting(settings: self),
         ]
-        
+
         if isSearchBarLocationFeatureEnabled {
             generalSettings.insert(SearchBarSetting(settings: self, settingsDelegate: parentCoordinator), at: 5)
         }
@@ -270,7 +276,7 @@ class AppSettingsTableViewController: SettingsTableViewController,
         privacySettings.append(NotificationsSetting(theme: themeManager.currentTheme,
                                                     profile: profile,
                                                     settingsDelegate: parentCoordinator))
-        
+
         privacySettings += [
             PrivacyPolicySetting(theme: themeManager.currentTheme, settingsDelegate: parentCoordinator)
         ]

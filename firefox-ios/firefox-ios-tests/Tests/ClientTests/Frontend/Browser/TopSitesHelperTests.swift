@@ -62,7 +62,9 @@ class TopSitesHelperTests: XCTestCase {
                 XCTFail("Has no sites")
                 return
             }
-            XCTAssertEqual(sites.count, 5, "Contains 5 default sites")
+            // Ecosia: Update minimum top sites with Ecosia's
+            // XCTAssertEqual(sites.count, 5, "Contains 5 default sites")
+            XCTAssertEqual(sites.count, 3, "Contains 3 default sites")
             expectation.fulfill()
         }
 
@@ -78,7 +80,9 @@ class TopSitesHelperTests: XCTestCase {
                 XCTFail("Has no sites")
                 return
             }
-            XCTAssertEqual(sites.count, 7, "Contains 5 default sites and two pinned sites")
+            // Ecosia: update number of items
+            // XCTAssertEqual(sites.count, 7, "Contains 5 default sites and two pinned sites")
+            XCTAssertEqual(sites.count, 5, "Contains 3 default sites and two pinned sites")
             expectation.fulfill()
         }
 
@@ -97,7 +101,9 @@ class TopSitesHelperTests: XCTestCase {
                 XCTFail("Has no sites")
                 return
             }
-            XCTAssertEqual(sites.count, 7, "Contains 5 default sites and 2 frecency sites")
+            // Ecosia: adjust espected number as we have 3 default sites only
+            // XCTAssertEqual(sites.count, 7, "Contains 5 default sites and 2 frecency sites")
+            XCTAssertEqual(sites.count, 5, "Contains 3 default sites and 2 frecency sites")
             expectation.fulfill()
         }
 
@@ -115,7 +121,9 @@ class TopSitesHelperTests: XCTestCase {
                 XCTFail("Has no sites")
                 return
             }
-            XCTAssertEqual(sites.count, 7, "Contains 5 default sites and 2 frecency sites, no sponsored urls")
+            // Ecosia: adjust espected number as we have 3 default sites only
+            // XCTAssertEqual(sites.count, 7, "Contains 5 default sites and 2 frecency sites, no sponsored urls")
+            XCTAssertEqual(sites.count, 5, "Contains 3 default sites and 2 frecency sites, no sponsored urls")
             expectation.fulfill()
         }
 
@@ -133,7 +141,9 @@ class TopSitesHelperTests: XCTestCase {
                 XCTFail("Has no sites")
                 return
             }
-            XCTAssertEqual(sites.count, 7, "Contains 5 default sites and 2 frecency sites, no frecency duplicates")
+            // Ecosia: adjust espected number as we have 3 default sites only
+            // XCTAssertEqual(sites.count, 7, "Contains 5 default sites and 2 frecency sites, no frecency duplicates")
+            XCTAssertEqual(sites.count, 5, "Contains 3 default sites and 2 frecency sites, no frecency duplicates")
             expectation.fulfill()
         }
 
@@ -150,7 +160,9 @@ class TopSitesHelperTests: XCTestCase {
                 XCTFail("Has no sites")
                 return
             }
-            XCTAssertEqual(sites.count, 5, "Contains only 5 default sites, no duplicates of defaults sites")
+            // Ecosia: adjust espected number as we have 3 default sites only
+            // XCTAssertEqual(sites.count, 5, "Contains only 5 default sites, no duplicates of defaults sites")
+            XCTAssertEqual(sites.count, 4, "Contains only 3 default sites, no duplicates of defaults sites")
             expectation.fulfill()
         }
 
@@ -166,7 +178,9 @@ class TopSitesHelperTests: XCTestCase {
                 XCTFail("Has no sites")
                 return
             }
-            XCTAssertEqual(sites.count, 5, "Contains only 4 default sites, and "
+            // Ecosia: adjust espected number as we have 3 default sites only
+            // XCTAssertEqual(sites.count, 5, "Contains only 4 default sites, and " + "one pinned site that replaced the default site")
+            XCTAssertEqual(sites.count, 4, "Contains only 3 default sites, and "
                            + "one pinned site that replaced the default site")
             expectation.fulfill()
         }

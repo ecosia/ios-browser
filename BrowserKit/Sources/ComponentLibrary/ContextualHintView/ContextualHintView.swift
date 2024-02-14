@@ -88,7 +88,8 @@ public class ContextualHintView: UIView, ThemeApplicable {
         closeButton.accessibilityLabel = viewModel.closeButtonA11yLabel
         descriptionLabel.text = viewModel.description
 
-        layer.addSublayer(gradient)
+        // Ecosia: Remove gradient
+        // layer.addSublayer(gradient)
 
         addSubview(scrollView)
         addSubview(closeButton)
@@ -152,6 +153,12 @@ public class ContextualHintView: UIView, ThemeApplicable {
     public func applyTheme(theme: Theme) {
         closeButton.tintColor = theme.colors.textOnDark
         descriptionLabel.textColor = theme.colors.textOnDark
+        // Ecosia: Update custom background theming
+        if theme.type == .light {
+            backgroundColor = UIColor(red: 0.153, green: 0.322, blue: 0.263, alpha: 1)
+        } else {
+            backgroundColor = UIColor(rgb: 0xAFE9B0)
+        }
         gradient.colors = theme.colors.layerGradient.cgColors
 
         if viewModel.isActionType {

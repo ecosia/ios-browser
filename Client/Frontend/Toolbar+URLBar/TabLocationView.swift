@@ -31,6 +31,9 @@ class TabLocationView: UIView, FeatureFlaggable {
         static let statusIconSize: CGFloat = 18
         static let buttonSize: CGFloat = 40
         static let urlBarPadding = 4
+        // Ecosia: Update show/hide locker icon based on Firefox v128
+        static let trackingProtectionAnimationDuration = 0.3
+        static let trackingProtectionxOffset = CGAffineTransform(translationX: 25, y: 0)
     }
 
     // MARK: Variables
@@ -41,9 +44,23 @@ class TabLocationView: UIView, FeatureFlaggable {
 
     var notificationCenter: NotificationProtocol = NotificationCenter.default
 
+    /* Ecosia: Update show/hide locker icon based on Firefox v128
+     private var blockerStatus: BlockerStatus = .noBlockedURLs
+     private var hasSecureContent = false
+    */
     /// Tracking protection button, gets updated from tabDidChangeContentBlocking
-    private var blockerStatus: BlockerStatus = .noBlockedURLs
-    private var hasSecureContent = false
+    var blockerStatus: BlockerStatus = .noBlockedURLs {
+        didSet {
+            if oldValue != blockerStatus { setTrackingProtection(theme: themeManager.currentTheme) }
+        }
+    }
+
+    var hasSecureContent = false {
+        didSet {
+            if oldValue != hasSecureContent { setTrackingProtection(theme: themeManager.currentTheme) }
+        }
+    }
+    private var themeManager: ThemeManager = AppContainer.shared.resolve()
 
     private let menuBadge = BadgeWithBackdrop(imageName: ImageIdentifiers.menuBadge, backdropCircleSize: 32)
 
@@ -52,9 +69,12 @@ class TabLocationView: UIView, FeatureFlaggable {
         didSet {
             hideButtons()
             updateTextWithURL()
+            /* Ecosia: Update show/hide locker icon based on Firefox v128
             trackingProtectionButton.isHidden = !isValidHttpUrlProtocol
             shareButton.isHidden = !(shouldEnableShareButtonFeature && isValidHttpUrlProtocol)
+             */
             setNeedsUpdateConstraints()
+            showTrackingProtectionButton(for: url)
         }
     }
 
@@ -95,7 +115,7 @@ class TabLocationView: UIView, FeatureFlaggable {
 
     private func setURLTextfieldPlaceholder(theme: Theme) {
         // Ecosia: Update Placeholder attributes
-//        let attributes = [NSAttributedString.Key.foregroundColor: theme.colors.textSecondary]
+        // let attributes = [NSAttributedString.Key.foregroundColor: theme.colors.textSecondary]
         let attributes = [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.ecosia.secondaryText]
         urlTextField.attributedPlaceholder = NSAttributedString(string: .TabLocationURLPlaceholder,
                                                                 attributes: attributes)
@@ -107,6 +127,7 @@ class TabLocationView: UIView, FeatureFlaggable {
         trackingProtectionButton.accessibilityIdentifier = AccessibilityIdentifiers.Toolbar.trackingProtection
         trackingProtectionButton.showsLargeContentViewer = true
         trackingProtectionButton.largeContentImage = .templateImageNamed(StandardImageIdentifiers.Large.lock)
+        trackingProtectionButton.imageView?.contentMode = .scaleAspectFit
         trackingProtectionButton.largeContentTitle = .TabLocationLockButtonLargeContentTitle
         trackingProtectionButton.accessibilityLabel = .TabLocationLockButtonAccessibilityLabel
     }
@@ -216,6 +237,9 @@ class TabLocationView: UIView, FeatureFlaggable {
 
         menuBadge.add(toParent: contentView)
         menuBadge.show(false)
+
+        // Ecosia: Update show/hide locker icon based on Firefox v128
+        hideTrackingProtectionButton()
     }
 
     required init(coder: NSCoder) {
@@ -349,6 +373,31 @@ class TabLocationView: UIView, FeatureFlaggable {
         }
     }
 
+    func hideTrackingProtectionButton() {
+        ensureMainThread {
+            self.trackingProtectionButton.isHidden = true
+        }
+    }
+
+    // Ecosia: Update show/hide locker icon based on Firefox v128
+    func showTrackingProtectionButton(for url: URL?) {
+        ensureMainThread {
+            let isValidHttpUrlProtocol = self.isValidHttpUrlProtocol(url)
+            let isReaderModeURL = url?.isReaderModeURL ?? false
+            let isFxHomeUrl = url?.isFxHomeUrl ?? false
+            if !isFxHomeUrl, !isReaderModeURL, isValidHttpUrlProtocol, self.trackingProtectionButton.isHidden {
+                self.trackingProtectionButton.transform = UX.trackingProtectionxOffset
+                self.trackingProtectionButton.alpha = 0
+                self.trackingProtectionButton.isHidden = false
+                UIView.animate(withDuration: UX.trackingProtectionAnimationDuration) {
+                    self.trackingProtectionButton.alpha = 1
+                    self.trackingProtectionButton.transform = .identity
+                }
+            }
+            self.trackingProtectionButton.isHidden = !isValidHttpUrlProtocol || isReaderModeURL || isFxHomeUrl
+        }
+    }
+
     private func setTrackingProtection(theme: Theme) {
         var lockImage: UIImage?
         if !hasSecureContent {
@@ -380,7 +429,9 @@ class TabLocationView: UIView, FeatureFlaggable {
 
 // MARK: - Private
 private extension TabLocationView {
-    var isValidHttpUrlProtocol: Bool {
+    // Ecosia: Update show/hide locker icon based on Firefox v128
+    // var isValidHttpUrlProtocol: Bool {
+    func isValidHttpUrlProtocol(_ url: URL?) -> Bool {
         ["https", "http"].contains(url?.scheme ?? "")
     }
 
@@ -390,7 +441,9 @@ private extension TabLocationView {
 
         readerModeButton.isHidden = shoppingButton.isHidden ? newReaderModeState == .unavailable : true
         // When the user turns on the reader mode we need to hide the trackingProtectionButton (according to 16400), we will hide it once the newReaderModeState == .active
-        self.trackingProtectionButton.isHidden = newReaderModeState == .active
+        if newReaderModeState == .active {
+            self.trackingProtectionButton.isHidden = true
+        }
 
         if wasHidden != readerModeButton.isHidden {
             UIAccessibility.post(notification: UIAccessibility.Notification.layoutChanged, argument: nil)
@@ -485,24 +538,47 @@ extension TabLocationView: ThemeApplicable {
     }
 }
 
+/* Ecosia: Update show/hide locker icon based on Firefox v128
+ extension TabLocationView: TabEventHandler {
+ 
+ func tabDidChangeContentBlocking(_ tab: Tab) {
+ updateBlockerStatus(forTab: tab)
+ }
+ 
+ private func updateBlockerStatus(forTab tab: Tab) {
+ guard let blocker = tab.contentBlocker else { return }
+ 
+ ensureMainThread { [self] in
+ trackingProtectionButton.alpha = 1.0
+ let themeManager: ThemeManager = AppContainer.shared.resolve()
+ self.blockerStatus = blocker.status
+ self.hasSecureContent = (tab.webView?.hasOnlySecureContent ?? false)
+ setTrackingProtection(theme: themeManager.currentTheme)
+ }
+ }
+ 
+ func tabDidGainFocus(_ tab: Tab) {
+ updateBlockerStatus(forTab: tab)
+ }
+ }
+ */
+
 extension TabLocationView: TabEventHandler {
     func tabDidChangeContentBlocking(_ tab: Tab) {
-        updateBlockerStatus(forTab: tab)
-    }
-
-    private func updateBlockerStatus(forTab tab: Tab) {
         guard let blocker = tab.contentBlocker else { return }
 
         ensureMainThread { [self] in
-            trackingProtectionButton.alpha = 1.0
-            let themeManager: ThemeManager = AppContainer.shared.resolve()
             self.blockerStatus = blocker.status
-            self.hasSecureContent = (tab.webView?.hasOnlySecureContent ?? false)
-            setTrackingProtection(theme: themeManager.currentTheme)
         }
     }
 
     func tabDidGainFocus(_ tab: Tab) {
-        updateBlockerStatus(forTab: tab)
+        guard let blocker = tab.contentBlocker else { return }
+
+        ensureMainThread { [self] in
+            self.showTrackingProtectionButton(for: tab.webView?.url)
+            self.hasSecureContent = (tab.webView?.hasOnlySecureContent ?? false)
+            self.blockerStatus = blocker.status
+        }
     }
 }

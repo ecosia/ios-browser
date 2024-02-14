@@ -86,23 +86,29 @@
   },
   "testTargets" : [
     {
-      "target" : {
-        "containerPath" : "container:Client.xcodeproj",
-        "identifier" : "2FA436041ABB83B4008031D1",
-        "name" : "AccountTests"
-      }
-    },
-    {
       "skippedTests" : [
         "ETPCoverSheetTests",
+        "GeneralizedImageFetcherTests\/testErrorResponse()",
         "GleanPlumbMessageManagerTests\/testManagerOnMessagePressed_withMalformedURL()",
+        "HistoryDeletionUtilityTests\/testDeletingMultipleItemsEmptyingDatabase()",
+        "HistoryDeletionUtilityTests\/testDeletingMultipleSpecificItems()",
         "HistoryHighlightsDataAdaptorTests\/testReloadDataOnNotification()",
+        "HistoryHighlightsTests\/testSingleHistoryHighlightOrder_withMoreSingleItemEach()",
+        "IntroScreenManagerTests\/testHasSeenIntroScreen_shouldNotShowIt()",
         "IntroViewControllerTests\/testBasicSetupReturnsExpectedItems()",
+        "RustSyncManagerTests\/testGetEnginesAndKeys()",
         "RustSyncManagerTests\/testGetEnginesAndKeysWithNoKey()",
         "RustSyncManagerTests\/testUpdateEnginePrefs_bookmarksEnabled()",
+        "RustSyncManagerTests\/testUpdateEnginePrefs_creditCardEnabled()",
         "ShortcutRouteTests\/testOpenLastBookmarkShortcutWithInvalidUrl()",
         "TabManagerTests\/testDeleteSelectedTab()",
+        "TabManagerTests\/testPreserveTabsWithManyTabs()",
+        "TabManagerTests\/testPreserveTabsWithNoTabs()",
+        "TabManagerTests\/testPreserveTabsWithOneTab()",
         "TabManagerTests\/testPrivatePreference_togglePBMDeletesPrivate()",
+        "TabManagerTests\/testRemoveScreenshotWithImage()",
+        "TabManagerTests\/testSaveScreenshotWithImage()",
+        "TabManagerTests\/testSaveScreenshotWithNoImage()",
         "TestFavicons\/testFaviconFetcherParse()",
         "VersionSettingTests",
         "VersionSettingTests\/testCopyAppVersion()"
@@ -133,37 +139,9 @@
     },
     {
       "target" : {
-        "containerPath" : "container:Client.xcodeproj",
-        "identifier" : "E69DB07C1E97DEA9008A67E6",
-        "name" : "SyncTelemetryTests"
-      }
-    },
-    {
-      "skippedTests" : [
-        "MetaGlobalTests\/testHappyOptimisticStateMachine()",
-        "MetaGlobalTests\/testMetaGlobalAndCryptoKeysFresh()",
-        "MetaGlobalTests\/testMetaGlobalModified()",
-        "MetaGlobalTests\/testUpdatedCryptoKeys()",
-        "StateTests\/testPickling()"
-      ],
-      "target" : {
-        "containerPath" : "container:Client.xcodeproj",
-        "identifier" : "282731671ABC9BE700AA1954",
-        "name" : "SyncTests"
-      }
-    },
-    {
-      "target" : {
         "containerPath" : "container:BrowserKit",
         "identifier" : "CommonTests",
         "name" : "CommonTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:BrowserKit",
-        "identifier" : "SiteImageViewTests",
-        "name" : "SiteImageViewTests"
       }
     },
     {

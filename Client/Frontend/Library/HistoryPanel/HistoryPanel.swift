@@ -147,7 +147,7 @@ class HistoryPanel: UIViewController,
                            forHeaderFooterViewReuseIdentifier: SiteTableViewHeader.cellIdentifier)
 
         tableView.sectionHeaderTopPadding = 0
-        
+
         // Ecosia: Update tableView properties
         tableView.contentInset.top = 32
         return tableView

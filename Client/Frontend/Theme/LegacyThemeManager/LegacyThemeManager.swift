@@ -96,8 +96,11 @@ class LegacyThemeManager {
     private func applicationDidBecomeActive() {
         let nightMode = UserDefaults.standard.bool(forKey: "profile.NightModeStatus")
         if !nightMode && LegacyThemeManager.instance.systemThemeIsOn {
+            /* Ecosia: Update legacy theme to use the single source of truth
             let userInterfaceStyle = UIScreen.main.traitCollection.userInterfaceStyle
             LegacyThemeManager.instance.current = userInterfaceStyle == .dark ? LegacyDarkTheme() : LegacyNormalTheme()
+             */
+            LegacyThemeManager.updateBasedOnCurrentSystemThemeType()
         }
     }
 }

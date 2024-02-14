@@ -82,7 +82,7 @@ class HomepageViewController:
          // Ecosia: Add Referrals
          referrals: Referrals,
          // Ecosia: Add HomePageViewControllerDelegate
-         delegate: HomepageViewControllerDelegate
+         delegate: HomepageViewControllerDelegate?
     ) {
         self.overlayManager = overlayManager
         self.tabManager = tabManager
@@ -122,7 +122,10 @@ class HomepageViewController:
         setupNotifications(forObserver: self,
                            observing: [.HomePanelPrefsChanged,
                                        .TabsPrivacyModeChanged,
-                                       .WallpaperDidChange])
+                                       .WallpaperDidChange,
+                                       // Ecosia: Seed Counter Experiment
+                                       SeedCounterNTPExperiment.progressManagerType.levelUpNotification,
+                                       UIApplication.didBecomeActiveNotification])
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -160,7 +163,7 @@ class HomepageViewController:
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         viewModel.recordViewAppeared()
-        
+
         // Ecosia: Refresh referral claims
         Task {
             try? await referrals.refresh()
@@ -183,7 +186,7 @@ class HomepageViewController:
 
         // Ecosia
         viewModel.aboutEcosiaViewModel.deselectExpanded()
-        
+
         jumpBackInContextualHintViewController.stopTimer()
         syncTabContextualHintViewController.stopTimer()
         viewModel.recordViewDisappeared()
@@ -279,8 +282,7 @@ class HomepageViewController:
     func createLayout() -> UICollectionViewLayout {
         // Ecosia: Update Layout type
         // let layout = UICollectionViewCompositionalLayout { [weak self]
-        let layout = NTPLayout { [weak self]
-            (sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
+        let layout = NTPLayout { [weak self] (sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
             guard let self = self,
                   let viewModel = self.viewModel.getSectionViewModel(shownSection: sectionIndex),
                   viewModel.shouldShow
@@ -538,7 +540,7 @@ extension HomepageViewController: UICollectionViewDelegate, UICollectionViewData
             tooltip.delegate = self
             return tooltip
         }
-        
+
         // Ecosia: footer for impact
         if sectionViewModel.sectionType == .impact, kind == UICollectionView.elementKindSectionFooter {
             return collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: NTPImpactDividerFooter.cellIdentifier, for: indexPath)
@@ -554,7 +556,6 @@ extension HomepageViewController: UICollectionViewDelegate, UICollectionViewData
         let headerViewModel = sectionViewModel.shouldShow ? sectionViewModel.headerViewModel : LabelButtonHeaderViewModel.emptyHeader
         headerView.configure(viewModel: headerViewModel, theme: themeManager.currentTheme)
         return headerView
-
     }
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -700,11 +701,12 @@ private extension HomepageViewController {
          */
         // Ecosia: Adjust HomePageViewController's CollectionView
         viewModel.libraryViewModel.delegate = self
-        viewModel.bookmarkNudgeViewModel.delegate = self
+        viewModel.newsletterCardViewModel.delegate = self
         viewModel.impactViewModel.delegate = self
         viewModel.newsViewModel.delegate = self
         viewModel.aboutEcosiaViewModel.delegate = self
         viewModel.ntpCustomizationViewModel.delegate = self
+        viewModel.climateImpactCounterViewModel.delegate = self
     }
 
     private func openHistoryHighlightsSearchGroup(item: HighlightItem) {
@@ -863,6 +865,12 @@ extension HomepageViewController: HomepageViewModelDelegate {
     }
 }
 
+extension HomepageViewController: NTPSeedCounterDelegate {
+    func didTapSeedCounter() {
+        SeedCounterNTPExperiment.trackTapOnSeedCounter()
+    }
+}
+
 // MARK: - Notifiable
 extension HomepageViewController: Notifiable {
     func handleNotifications(_ notification: Notification) {
@@ -877,6 +885,12 @@ extension HomepageViewController: Notifiable {
                     .WallpaperDidChange:
                 self.reloadView()
 
+            // Ecosia: Seed Counter Experiment
+            case SeedCounterNTPExperiment.progressManagerType.levelUpNotification:
+                SeedCounterNTPExperiment.trackSeedLevellingUp()
+            case UIApplication.didBecomeActiveNotification:
+                SeedCounterNTPExperiment.trackSeedCollectionIfNewDayAppOpening()
+                SeedCounterNTPExperiment.progressManagerType.collectDailySeed()
             default: break
             }
         }

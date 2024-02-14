@@ -99,8 +99,11 @@ class ThemeSettingsController: ThemedTableViewController, StoreSubscriber {
         if control.isOn {
             // Reset the user interface style to the default before choosing our theme
             UIApplication.shared.delegate?.window??.overrideUserInterfaceStyle = .unspecified
+            /* Ecosia: Update legacy theme accoridng correctly
             let userInterfaceStyle = traitCollection.userInterfaceStyle
             LegacyThemeManager.instance.current = userInterfaceStyle == .dark ? LegacyDarkTheme() : LegacyNormalTheme()
+             */
+            LegacyThemeManager.updateBasedOnCurrentSystemThemeType()
         } else if LegacyThemeManager.instance.automaticBrightnessIsOn {
             LegacyThemeManager.instance.updateCurrentThemeBasedOnScreenBrightness()
         }

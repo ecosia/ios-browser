@@ -163,7 +163,6 @@ extension TabToolbar: ThemeApplicable, PrivateModeUI {
         privateModeBadge.badge.tintBackground(color: .legacyTheme.ecosia.barBackground)
         appMenuBadge.badge.tintBackground(color: .legacyTheme.ecosia.barBackground)
         warningMenuBadge.badge.tintBackground(color: .legacyTheme.ecosia.barBackground)
-
     }
 
     func applyUIMode(isPrivate: Bool, theme: Theme) {

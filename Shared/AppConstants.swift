@@ -6,7 +6,9 @@ import Common
 import UIKit
 
 public enum AppName: String, CustomStringConvertible {
-    case shortName = "Firefox"
+    // Ecosia: Update shortName
+    // case shortName = "Firefox"
+    case shortName = "Ecosia"
 
     public var description: String {
         return self.rawValue
@@ -45,6 +47,8 @@ public enum KVOConstants: String {
     case canGoBack
     case canGoForward
     case contentSize
+    // Ecosia: Update show/hide locker icon based on Firefox v128
+    case hasOnlySecureContent
 }
 
 public struct KeychainKey {

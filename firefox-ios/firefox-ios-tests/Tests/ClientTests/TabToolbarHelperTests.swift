@@ -4,7 +4,7 @@
 
 @testable import Client
 
-import Glean
+// Ecosia: remove Glean dependency // import Glean
 import XCTest
 import Common
 import Shared
@@ -16,16 +16,21 @@ class TabToolbarHelperTests: XCTestCase {
     let backButtonImage = UIImage.templateImageNamed(StandardImageIdentifiers.Large.back)?.imageFlippedForRightToLeftLayoutDirection()
     let forwardButtonImage = UIImage.templateImageNamed(StandardImageIdentifiers.Large.forward)?.imageFlippedForRightToLeftLayoutDirection()
     let menuButtonImage = UIImage.templateImageNamed(StandardImageIdentifiers.Large.appMenu)
-    let searchButtonImage = UIImage.templateImageNamed("search")
+    // Ecosia: update search image
+    // let searchButtonImage = UIImage.templateImageNamed("search")
+    let searchButtonImage = UIImage.templateImageNamed("searchUrl")
     let imageNewTab = UIImage.templateImageNamed(StandardImageIdentifiers.Large.plus)
-    let imageHome = UIImage.templateImageNamed(StandardImageIdentifiers.Large.home)
+    // Ecosia: update home image
+    // let imageHome = UIImage.templateImageNamed(StandardImageIdentifiers.Large.home)
+    let imageHome = UIImage.templateImageNamed("menu-Home")
 
     override func setUp() {
         super.setUp()
         DependencyHelperMock().bootstrapDependencies()
         mockToolbar = MockTabToolbar()
         subject = TabToolbarHelper(toolbar: mockToolbar)
-        Glean.shared.resetGlean(clearStores: true)
+        // Ecosia: remove Glean dependency
+        // Glean.shared.resetGlean(clearStores: true)
     }
 
     override func tearDown() {
@@ -50,11 +55,12 @@ class TabToolbarHelperTests: XCTestCase {
         XCTAssertEqual(mockToolbar.multiStateButton.image(for: .normal), imageHome)
     }
 
+    /* Ecosia: remove Glean dependency
     func testTelemetryForSiteMenu() {
         mockToolbar.tabToolbarDelegate?.tabToolbarDidPressMenu(mockToolbar, button: mockToolbar.appMenuButton)
         testCounterMetricRecordingSuccess(metric: GleanMetrics.AppMenu.siteMenu)
     }
-
+     */
     func test_tabToolBarHelper_basicCreation_doesntLeak() {
         let tabToolBar = TabToolbar()
         let subject = TabToolbarHelper(toolbar: tabToolBar)
@@ -99,9 +105,13 @@ class MockTabToolbar: TabToolbarProtocol {
 
     var _bookmarksButton = MockToolbarButton()
     var bookmarksButton: ToolbarButton { return _bookmarksButton }
-
+    /* Ecosia: Change `addNewTabButton` to configurable CircleButton
     var _addNewTabButton = MockToolbarButton()
     var addNewTabButton: ToolbarButton { return _addNewTabButton }
+     */
+
+    var _circleButton: Client.CircleButton = CircleButton()
+    var circleButton: Client.CircleButton { return _circleButton }
 
     var _homeButton = MockToolbarButton()
     var homeButton: ToolbarButton { return _homeButton }

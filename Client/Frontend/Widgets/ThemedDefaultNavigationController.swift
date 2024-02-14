@@ -42,7 +42,9 @@ class ThemedDefaultNavigationController: DismissableNavigationViewController, Th
         navigationBar.compactAppearance = standardAppearance
         navigationBar.scrollEdgeAppearance = standardAppearance
         navigationBar.compactScrollEdgeAppearance = standardAppearance
-        navigationBar.tintColor = themeManager.currentTheme.colors.textPrimary
+        // Ecosia: Update bar tint
+        // navigationBar.tintColor = themeManager.currentTheme.colors.textPrimary
+        navigationBar.tintColor = themeManager.currentTheme.colors.actionPrimary
     }
 
     private func setupToolBarAppearance() {

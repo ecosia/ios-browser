@@ -130,3 +130,7 @@ vendor/bundle
 Staging.xcconfig
 Production.xcconfig
 .github/workflows/firefox-*.yml
+SourcePackages
+test_output
+.vscode
+EcosiaTests/Results

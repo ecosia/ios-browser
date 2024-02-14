@@ -46,7 +46,8 @@ public final class DefaultThemeManager: ThemeManager, Notifiable {
         self.mainQueue = mainQueue
         self.sharedContainerIdentifier = sharedContainerIdentifier
 
-        migrateDefaultsToUseStandard()
+        // Ecosia: Remove migration as unneded
+        // migrateDefaultsToUseStandard()
 
         self.userDefaults.register(defaults: [
             ThemeKeys.systemThemeIsOn: true,
@@ -54,7 +55,7 @@ public final class DefaultThemeManager: ThemeManager, Notifiable {
             ThemeKeys.PrivateMode.isOn: NSNumber(value: false),
         ])
 
-        changeCurrentTheme(loadInitialThemeType())
+        changeCurrentTheme(loadInitialStoredThemeType())
 
         setupNotifications(forObserver: self,
                            observing: [UIScreen.brightnessDidChangeNotification,
@@ -69,7 +70,8 @@ public final class DefaultThemeManager: ThemeManager, Notifiable {
 
         // overwrite the user interface style on the window attached to our scene
         // once we have multiple scenes we need to update all of them
-        window?.overrideUserInterfaceStyle = currentTheme.type.getInterfaceStyle()
+        // Ecosia: Remove `overrideUserInterfaceStyle` window set
+        // window?.overrideUserInterfaceStyle = currentTheme.type.getInterfaceStyle()
 
         mainQueue.ensureMainThread { [weak self] in
             self?.notificationCenter.post(name: .ThemeDidChange)
@@ -104,7 +106,7 @@ public final class DefaultThemeManager: ThemeManager, Notifiable {
     public func setPrivateTheme(isOn: Bool) {
         userDefaults.set(isOn, forKey: ThemeKeys.PrivateMode.isOn)
 
-        changeCurrentTheme(loadInitialThemeType())
+        changeCurrentTheme(loadInitialStoredThemeType())
     }
 
     public func setAutomaticBrightness(isOn: Bool) {
@@ -122,7 +124,7 @@ public final class DefaultThemeManager: ThemeManager, Notifiable {
 
     // MARK: - Private methods
 
-    private func loadInitialThemeType() -> ThemeType {
+    private func loadInitialStoredThemeType() -> ThemeType {
         if let privateModeIsOn = userDefaults.object(forKey: ThemeKeys.PrivateMode.isOn) as? NSNumber,
            privateModeIsOn.boolValue == true {
             return .privateMode

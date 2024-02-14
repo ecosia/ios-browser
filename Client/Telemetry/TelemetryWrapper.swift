@@ -3,7 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Common
-import Glean
+// Ecosia: remove Glean dependency // import Glean
 import Shared
 import Telemetry
 import Account
@@ -40,7 +40,7 @@ class TelemetryWrapper: TelemetryWrapperProtocol, FeatureFlaggable {
     var defaultTabManager: TabManager?
 
     let legacyTelemetry = Telemetry.default
-    let glean = Glean.shared
+    // Ecosia: remove Glean dependency let glean = Glean.shared
     // Boolean flag to temporarily remember if we crashed during the
     // last run of the app. We cannot simply use `Sentry.crashedLastLaunch`
     // because we want to clear this flag after we've already reported it
@@ -166,6 +166,7 @@ class TelemetryWrapper: TelemetryWrapperProtocol, FeatureFlaggable {
     }
 
     func initGlean(_ profile: Profile, sendUsageData: Bool) {
+        /* Ecosia: remove Glean dependency
         // Get the legacy telemetry ID and record it in Glean for the deletion-request ping
         if let uuidString = UserDefaults.standard.string(forKey: "telemetry-key-prefix-clientId"), let uuid = UUID(uuidString: uuidString) {
             GleanMetrics.LegacyIds.clientId.set(uuid)
@@ -196,10 +197,12 @@ class TelemetryWrapper: TelemetryWrapperProtocol, FeatureFlaggable {
             name: UIApplication.didFinishLaunchingNotification,
             object: nil
         )
+         */
     }
 
     @objc
     func recordFinishedLaunchingPreferenceMetrics(notification: NSNotification) {
+        /* Ecosia: remove Glean dependency
         guard let profile = self.profile else { return }
         // Pocket stories visible
         if let pocketStoriesVisible = profile.prefs.boolForKey(PrefsKeys.UserFeatureFlagPrefs.ASPocketStories) {
@@ -207,12 +210,14 @@ class TelemetryWrapper: TelemetryWrapperProtocol, FeatureFlaggable {
         } else {
             GleanMetrics.FirefoxHomePage.pocketStoriesVisible.set(true)
         }
+         */
     }
 
     // Function for recording metrics that are better recorded when going to background due
     // to the particular measurement, or availability of the information.
     @objc
     func recordEnteredBackgroundPreferenceMetrics(notification: NSNotification) {
+        /* Ecosia: remove Glean dependency
         guard let profile = self.profile else {
             assertionFailure("Error unwrapping profile")
             return
@@ -318,6 +323,7 @@ class TelemetryWrapper: TelemetryWrapperProtocol, FeatureFlaggable {
 
         let startAtHomeOption = prefs.stringForKey(PrefsKeys.UserFeatureFlagPrefs.StartAtHome) ?? StartAtHomeSetting.afterFourHours.rawValue
         GleanMetrics.Preferences.openingScreen.set(startAtHomeOption)
+         */
     }
 
     @objc
@@ -808,6 +814,7 @@ extension TelemetryWrapper {
     }
 
     static func gleanRecordEvent(category: EventCategory, method: EventMethod, object: EventObject, value: EventValue? = nil, extras: [String: Any]? = nil) {
+        /* Ecosia: remove Glean dependency
         switch (category, method, object, value, extras) {
         // MARK: Bookmarks
         case (.action, .view, .bookmarksPanel, let from?, _):
@@ -1908,6 +1915,7 @@ extension TelemetryWrapper {
         default:
             recordUninstrumentedMetrics(category: category, method: method, object: object, value: value, extras: extras)
         }
+         */
     }
 
     private static func recordUninstrumentedMetrics(

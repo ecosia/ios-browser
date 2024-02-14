@@ -690,6 +690,10 @@ extension LegacyTabDisplayManager: UICollectionViewDragDelegate {
         guard tabDisplayType == .TopTabTray || section == .regularTabs else { return [] }
         guard let tab = dataStore.at(indexPath.item) else { return [] }
 
+        /* Ecosia: 
+         This code must be old code from v122 as not present at all in the latest version
+         on top of that, the resulting `url` is not used anywhere in the snippet below
+         
         // Get the tab's current URL. If it is `nil`, check the `sessionData` since
         // it may be a tab that has not been restored yet.
         var url = tab.url
@@ -700,6 +704,7 @@ extension LegacyTabDisplayManager: UICollectionViewDragDelegate {
                 url = urls[index]
             }
         }
+         */
 
         // Don't store the URL in the item as dragging a tab near the screen edge will prompt to open Safari with the URL
         let itemProvider = NSItemProvider()

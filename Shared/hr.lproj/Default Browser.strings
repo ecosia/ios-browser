@@ -1,5 +1,5 @@
 /* Description for small home tab banner shown that allows the user to switch their default browser to Firefox. */
-"DefaultBrowserCard.BetterInternet.Description.v108" = "Postavljanje Firefoxa zadanim preglednikom je glas za otvoreni i pristupačni internet.";
+"DefaultBrowserCard.BetterInternet.Description.v108" = "Postavljanje Ecosiaa zadanim preglednikom je glas za otvoreni i pristupačni internet.";
 
 /* Title for small home tab banner shown that allows the user to switch their default browser to Firefox. */
 "DefaultBrowserCard.BetterInternet.Title.v108" = "Bolji internet kao zadana postavka";
@@ -8,10 +8,10 @@
 "DefaultBrowserCard.Button.v2" = "Saznaj kako";
 
 /* Description for small home tab banner shown that allows user to switch their default browser to Firefox. */
-"DefaultBrowserCard.Description" = "Postavi automatsko otvaranje poveznica web lokacija, e-mailova i poruka u Firefoxu.";
+"DefaultBrowserCard.Description" = "Postavi automatsko otvaranje poveznica web lokacija, e-mailova i poruka u Ecosiau.";
 
 /* Description for small home tab banner shown that allows the user to switch their default browser to Firefox. */
-"DefaultBrowserCard.NextLevel.Description.v108" = "Odaberi Firefox kao zadani preglednik za automatsku brzinu, sigurnost i privatnost.";
+"DefaultBrowserCard.NextLevel.Description.v108" = "Odaberi Ecosia kao zadani preglednik za automatsku brzinu, sigurnost i privatnost.";
 
 /* Title for small home tab banner shown that allows user to switch their default browser to Firefox. */
 "DefaultBrowserCard.Title" = "Promijeni standardni preglednik";
@@ -26,7 +26,7 @@
 "DefaultBrowserOnboarding.Description2" = "2. Dodirni Zadana aplikacija preglednika";
 
 /* Description for default browser onboarding card. */
-"DefaultBrowserOnboarding.Description3" = "3. Odaberi Firefox";
+"DefaultBrowserOnboarding.Description3" = "3. Odaberi Ecosia";
 
 /* Text for the screenshot of the iOS system settings page for Firefox. */
 "DefaultBrowserOnboarding.Screenshot" = "Zadana aplikacija preglednika";

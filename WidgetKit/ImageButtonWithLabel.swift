@@ -75,11 +75,15 @@ struct ImageButtonWithLabel: View {
                                     .font(.headline)
                                     .minimumScaleFactor(0.75)
                                     .layoutPriority(1000)
+                                    // Ecosia: add color
+                                    .foregroundColor(link.textColor)
                             } else {
                                 Text(link.label)
                                     .font(.footnote)
                                     .minimumScaleFactor(0.75)
                                     .layoutPriority(1000)
+                                    // Ecosia: add color
+                                    .foregroundColor(link.textColor)
                             }
                         }
                         Spacer()
@@ -87,18 +91,26 @@ struct ImageButtonWithLabel: View {
                             Image("search-button")
                                 .scaledToFit()
                                 .frame(height: 24.0)
+                                // Ecosia: add color
+                                .foregroundColor(link.iconColor)
                         } else {
                             Image(link.imageName)
                                 .scaledToFit()
                                 .frame(height: 24.0)
+                                // Ecosia: add color
+                                .foregroundColor(link.iconColor)
                         }
                     }
                     if isSmall {
                         HStack(alignment: .bottom) {
                             Spacer()
-                            Image("faviconFox")
+                            // Ecosia: Update image
+                            // Image("faviconFox")
+                            Image("searchLogo")
                                 .scaledToFit()
                                 .frame(height: 24.0)
+                                // Ecosia: add color
+                                .foregroundColor(link.iconColor)
                         }
                     }
                 }

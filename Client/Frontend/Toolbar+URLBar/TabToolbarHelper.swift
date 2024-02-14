@@ -316,7 +316,7 @@ open class TabToolbarHelper: NSObject {
             }
         }
     }
-    
+
     // Ecosia: Change addNewTabButton to configurable CircleButton
     func didClickCircleButton() {
         switch toolbar.circleButton.config {

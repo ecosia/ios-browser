@@ -7,7 +7,7 @@ import Foundation
 import Shared
 import Storage
 import Account
-import Glean
+// Ecosia: remove Glean dependency // import Glean
 
 class AppLaunchUtil {
     private var logger: Logger
@@ -43,11 +43,12 @@ class AppLaunchUtil {
         LegacyDynamicFontHelper.defaultHelper.startObserving()
         MenuHelper.defaultHelper.setItems()
 
+        /* Ecosia: Do not intialize Firefox-specific SkAdNetwork and legacy feature flag manager
         // Initialize conversion value by specifying fineValue and coarseValue.
         // Call update postback conversion value for install event.
         let conversionValue = ConversionValueUtil(fineValue: 0, coarseValue: .low, logger: logger)
         conversionValue.adNetworkAttributionUpdateConversionEvent()
-
+         */
         // Initialize the feature flag subsystem.
         // Among other things, it toggles on and off Nimbus, Contile, Adjust.
         // i.e. this must be run before initializing those systems.
@@ -55,7 +56,8 @@ class AppLaunchUtil {
 
         // Start initializing the Nimbus SDK. This should be done after Glean
         // has been started.
-        initializeExperiments()
+        // Ecosia: Do not intialize Nimbus
+        // initializeExperiments()
 
         // We migrate history from browser db to places if it hasn't already
         DispatchQueue.global().async {
@@ -69,10 +71,15 @@ class AppLaunchUtil {
             }
         }
 
+        /* Ecosia: Hide RustFirefoxAccounts
+           Keep `accountManagerInitialized` signaling right after this commented code👇 active to satifsy tasks dependencies
         RustFirefoxAccounts.startup(prefs: profile.prefs) { _ in
             self.logger.log("RustFirefoxAccounts started", level: .info, category: .sync)
+         
             AppEventQueue.signal(event: .accountManagerInitialized)
         }
+         */
+        AppEventQueue.signal(event: .accountManagerInitialized)
 
         // Add swizzle on UIViewControllers to automatically log when there's a new view showing
         UIViewController.loggerSwizzle()
@@ -152,25 +159,32 @@ class AppLaunchUtil {
             logger.log("Migrating Application services history",
                        level: .info,
                        category: .sync)
+
+            /* Ecosia: remove Glean dependency
             let id = GleanMetrics.PlacesHistoryMigration.duration.start()
             // We mark that the migration started
             // this will help us identify how often the migration starts, but never ends
             // additionally, we have a separate metric for error rates
             GleanMetrics.PlacesHistoryMigration.migrationEndedRate.addToNumerator(1)
             GleanMetrics.PlacesHistoryMigration.migrationErrorRate.addToNumerator(1)
+             */
             browserProfile?.migrateHistoryToPlaces(
             callback: { result in
                 self.logger.log("Successful Migration took \(result.totalDuration / 1000) seconds",
                                 level: .info,
                                 category: .sync)
+                /* Ecosia: remove Glean dependency
                 // We record various success metrics here
                 GleanMetrics.PlacesHistoryMigration.duration.stopAndAccumulate(id)
                 GleanMetrics.PlacesHistoryMigration.numMigrated.set(Int64(result.numSucceeded))
+                 */
                 self.logger.log("Migrated \(result.numSucceeded) entries",
                                 level: .info,
                                 category: .sync)
+                /* Ecosia: remove Glean dependency
                 GleanMetrics.PlacesHistoryMigration.numToMigrate.set(Int64(result.numTotal))
                 GleanMetrics.PlacesHistoryMigration.migrationEndedRate.addToDenominator(1)
+                 */
                 UserDefaults.standard.setValue(true, forKey: PrefsKeys.PlacesHistoryMigrationSucceeded)
                 NotificationCenter.default.post(name: .TopSitesUpdated, object: nil)
             },
@@ -179,10 +193,11 @@ class AppLaunchUtil {
                 self.logger.log("Migration failed with \(errDescription)",
                                 level: .warning,
                                 category: .sync)
-
+                /* Ecosia: remove Glean dependency
                 GleanMetrics.PlacesHistoryMigration.duration.cancel(id)
                 GleanMetrics.PlacesHistoryMigration.migrationEndedRate.addToDenominator(1)
                 GleanMetrics.PlacesHistoryMigration.migrationErrorRate.addToDenominator(1)
+                 */
             })
         } else {
             self.logger.log("History Migration skipped",

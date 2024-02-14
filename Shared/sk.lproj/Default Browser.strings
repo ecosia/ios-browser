@@ -1,5 +1,5 @@
 /* Description for small home tab banner shown that allows the user to switch their default browser to Firefox. */
-"DefaultBrowserCard.BetterInternet.Description.v108" = "Nastavenie Firefoxu ako predvoleného prehliadača je hlasovaním za otvorený a prístupný internet.";
+"DefaultBrowserCard.BetterInternet.Description.v108" = "Nastavenie Ecosiau ako predvoleného prehliadača je hlasovaním za otvorený a prístupný internet.";
 
 /* Title for small home tab banner shown that allows the user to switch their default browser to Firefox. */
 "DefaultBrowserCard.BetterInternet.Title.v108" = "Predvolene pre lepší internet";
@@ -8,10 +8,10 @@
 "DefaultBrowserCard.Button.v2" = "Ďalšie informácie";
 
 /* Description for small home tab banner shown that allows user to switch their default browser to Firefox. */
-"DefaultBrowserCard.Description" = "Nastavte si automatické otváranie webových stránok, e-mailov a správ vo Firefoxe.";
+"DefaultBrowserCard.Description" = "Nastavte si automatické otváranie webových stránok, e-mailov a správ vo Ecosiae.";
 
 /* Description for small home tab banner shown that allows the user to switch their default browser to Firefox. */
-"DefaultBrowserCard.NextLevel.Description.v108" = "Vyberte si Firefox ako svoj predvolený prehliadač, aby sa rýchlosť, bezpečnosť a súkromie stali automatickými.";
+"DefaultBrowserCard.NextLevel.Description.v108" = "Vyberte si Ecosia ako svoj predvolený prehliadač, aby sa rýchlosť, bezpečnosť a súkromie stali automatickými.";
 
 /* Title for small home tab banner shown that allows the user to switch their default browser to Firefox. */
 "DefaultBrowserCard.NextLevel.Title.v108" = "Zvýšte úroveň každodenného prehliadania";
@@ -35,7 +35,7 @@
 "DefaultBrowserOnboarding.Description2" = "2. Ťuknite na možnosť Predvolený prehliadač";
 
 /* Description for default browser onboarding card. */
-"DefaultBrowserOnboarding.Description3" = "3. Vyberte Firefox";
+"DefaultBrowserOnboarding.Description3" = "3. Vyberte Ecosia";
 
 /* Text for the screenshot of the iOS system settings page for Firefox. */
 "DefaultBrowserOnboarding.Screenshot" = "Predvolený prehliadač";

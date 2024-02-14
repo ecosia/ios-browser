@@ -113,7 +113,7 @@ class SearchTermGroupsUtility {
     /// - Returns: A tuple with the group dictionary and a tracking array
     private static func buildItemGroups<T: Equatable>(from items: [T], and searchTermMetadata: [String: [HistoryMetadata]]) -> (itemGroupData: [String: [T]], itemsInGroups: [T]) {
         var itemGroupData: [String: [T]] = [:]
-        var itemsInGroups: [T] = [T]()
+        var itemsInGroups = [T]()
 
         outeritemLoop: for item in items {
             innerMetadataLoop: for (searchTerm, historyMetaList) in searchTermMetadata where  historyMetaList.contains(where: { metadata in

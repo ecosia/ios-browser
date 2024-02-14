@@ -7,7 +7,7 @@ import Storage
 import CoreSpotlight
 import UIKit
 import Common
-import Glean
+// Ecosia: remove Glean dependency // import Glean
 import TabDataStore
 // Ecosia: Import Core
 import Core
@@ -42,6 +42,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     private var shutdownWebServer: DispatchSourceTimer?
     private var webServerUtil: WebServerUtil?
     private var appLaunchUtil: AppLaunchUtil?
+    // Ecosia: Searches counter
+    private let searchesCounter = SearchesCounter()
     private var backgroundWorkUtility: BackgroundFetchAndProcessingUtility?
     private var widgetManager: TopSitesWidgetManager?
     private var menuBuilderHelper: MenuBuilderHelper?
@@ -53,28 +55,33 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     /// Handle the `willEnterForegroundNotification` the same way Glean handles it.
     func handleForegroundEvent() {
         if !isActive {
+            /* Ecosia: remove Glean dependency
             GleanMetrics.Pings.shared.tempBaseline.submit(reason: .active)
             GleanMetrics.BaselineValidation.startupDuration.start()
             GleanMetrics.BaselineValidation.baselineDuration.start()
             NSUserDefaultsPrefs(prefix: "profile").setBool(true, forKey: AppConstants.prefGleanTempDirtyFlag)
-
+             */
             isActive = true
         }
     }
 
     /// Handle the `didBecomeActiveNotification` the way Glean would handle it
     func handleVisibleEvent() {
+        /* Ecosia: remove Glean dependency
         GleanMetrics.BaselineValidation.startupDuration.stop()
         GleanMetrics.Pings.shared.tempBaseline.submit(reason: .foreground)
         GleanMetrics.BaselineValidation.visibleDuration.start()
+         */
     }
 
     /// Handle the `didEnterBackgroundNotification` the same way Glean handles it.
     func handleBackgroundEvent() {
         if isActive {
+            /* Ecosia: remove Glean dependency
             GleanMetrics.BaselineValidation.baselineDuration.stop()
             GleanMetrics.BaselineValidation.visibleDuration.stop()
             GleanMetrics.Pings.shared.tempBaseline.submit(reason: .inactive)
+             */
             NSUserDefaultsPrefs(prefix: "profile").setBool(false, forKey: AppConstants.prefGleanTempDirtyFlag)
 
             isActive = false
@@ -116,6 +123,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         appLaunchUtil = AppLaunchUtil(profile: profile)
         appLaunchUtil?.setUpPreLaunchDependencies()
 
+        /* Ecosia: remove Glean dependency
         // Handle the dirty bit the same way Glean handles it
         // and submit the right ping.
         let prefs = NSUserDefaultsPrefs(prefix: "profile")
@@ -124,6 +132,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if dirtyFlag {
             GleanMetrics.Pings.shared.tempBaseline.submit(reason: .dirtyStartup)
         }
+         */
 
         // Glean does this as part of the LifecycleObserver too.
         // `isActive` tracks active status to avoid double-triggers.
@@ -151,8 +160,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                    level: .info,
                    category: .lifecycle)
 
-        pushNotificationSetup()
+        // Ecosia: pushNotificationSetup()
         appLaunchUtil?.setUpPostLaunchDependencies()
+        /* Ecosia: Do not intialize Background sync
         backgroundWorkUtility = BackgroundFetchAndProcessingUtility()
         backgroundWorkUtility?.registerUtility(BackgroundSyncUtility(profile: profile, application: application))
         backgroundWorkUtility?.registerUtility(BackgroundNotificationSurfaceUtility())
@@ -161,12 +171,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 firefoxSuggest: firefoxSuggest
             ))
         }
-        // Ecosia: Update EcosiaInstallType if needed
+         */
+        // Ecosia: Update EcosiaInstallType if needed. This should always happen before `FeatureManagement`.
         EcosiaInstallType.evaluateCurrentEcosiaInstallType()
         // Ecosia: Disable BG sync //backgroundSyncUtil = BackgroundSyncUtil(profile: profile, application: application)
-        // Ecosia: lifecycle tracking
-        Analytics.shared.activity(.launch)
-        
+
         /* 
          Ecosia: Feature Management fetch
          We perform the same configuration retrieval in
@@ -180,10 +189,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
          */
         Task {
             await FeatureManagement.fetchConfiguration()
-            // Ecosia: Engagement Service Initialization helper
-            ClientEngagementService.shared.initializeAndUpdateNotificationRegistrationIfNeeded(notificationCenterDelegate: self)
+            // Ecosia: Braze Service Initialization helper
+            await BrazeService.shared.initialize()
+            // Ecosia: Directly ask for consent
+            await APNConsent.requestIfNeeded()
+            // Ecosia: Lifecycle tracking. Needs to happen after Unleash start so that the flags are correctly added to the analytics context.
+            Analytics.shared.activity(.launch)
         }
-        
+
         // Ecosia: fetching statistics before they are used
         Task.detached {
             try? await Statistics.shared.fetchAndUpdate()
@@ -198,6 +211,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         widgetManager = TopSitesWidgetManager(topSitesProvider: topSitesProvider)
 
         addObservers()
+
+        // Ecosia: Send the install event. It happens only once per App install.
+        Analytics.shared.install()
 
         logger.log("didFinishLaunchingWithOptions end",
                    level: .info,
@@ -241,8 +257,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Ecosia
         Task {
             await FeatureManagement.fetchConfiguration()
+            Analytics.shared.activity(.resume)
         }
         MMP.sendSession()
+        searchesCounter.subscribe(self) { searchCount in
+            MMP.handleSearchEvent(searchCount)
+        }
 
         DispatchQueue.global().async { [weak self] in
             self?.profile.pollCommands(forcePoll: false)
@@ -374,15 +394,10 @@ extension AppDelegate {
     }
 }
 
-// Ecosia: Conformance to UNUserNotificationCenterDelegate to enable APN
-
-extension AppDelegate: UNUserNotificationCenterDelegate {}
-
 // Ecosia: Register the APN device token
 
 extension AppDelegate {
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        ClientEngagementService.shared.registerDeviceToken(deviceToken)
+        BrazeService.shared.registerDeviceToken(deviceToken)
     }
 }
-

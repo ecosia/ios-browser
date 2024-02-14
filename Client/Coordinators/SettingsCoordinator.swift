@@ -84,12 +84,17 @@ class SettingsCoordinator: BaseCoordinator,
             return viewController
 
         case .homePage:
+            /* Ecosia: Update Home page customization route
             let viewController = HomePageSettingViewController(prefs: profile.prefs,
                                                                settingsDelegate: self,
                                                                tabManager: tabManager)
-            viewController.profile = profile
-            return viewController
-
+             viewController.profile = profile
+             return viewController
+             */
+            let customizationViewController = NTPCustomizationSettingsViewController()
+            customizationViewController.profile = profile
+            customizationViewController.settingsDelegate = self
+            return customizationViewController
         case .mailto:
             let viewController = OpenWithSettingsViewController(prefs: profile.prefs)
             return viewController
@@ -166,10 +171,10 @@ class SettingsCoordinator: BaseCoordinator,
     func didFinish() {
         parentCoordinator?.didFinishSettings(from: self)
     }
-    
+
     // Ecosia: SettingsDelegate
     func reloadHomepage() {
-        
+        (parentCoordinator as? BrowserCoordinator)?.homepageViewController?.reloadView()
     }
 
     // MARK: - SettingsFlowDelegate
@@ -265,11 +270,17 @@ class SettingsCoordinator: BaseCoordinator,
     // MARK: GeneralSettingsDelegate
 
     func pressedHome() {
+        /* Ecosia: Update Home page customization route
         let viewController = HomePageSettingViewController(prefs: profile.prefs,
                                                            settingsDelegate: self,
                                                            tabManager: tabManager)
-        viewController.profile = profile
-        router.push(viewController)
+         viewController.profile = profile
+         router.push(viewController)
+         */
+        let customizationViewController = NTPCustomizationSettingsViewController()
+        customizationViewController.profile = profile
+        customizationViewController.settingsDelegate = self
+        router.push(customizationViewController)
     }
 
     func pressedMailApp() {

@@ -38,7 +38,10 @@ public struct ImageIdentifiers {
     public static let menuWarning = "menuWarning"
     public static let menuWarningMask = "warning-mask"
     public static let navTabCounter = "nav-tabcounter"
-    public static let newPrivateTab = "quick_action_new_private_tab"
+    // Ecosia: Update `newPrivateTab` image
+    // Updating it here as it appearns in many sections of the app
+    // public static let newPrivateTab = "quick_action_new_private_tab"
+    public static let newPrivateTab = "privateSearch"
     public static let nightMode = "menu-NightMode"
     public static let onboardingWelcomev106 = "onboardingWelcome"
     public static let onboardingSyncv106 = "onboardingSync"
