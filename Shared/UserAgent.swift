@@ -30,19 +30,27 @@ open class UserAgent {
     }
 
     public static var syncUserAgent: String {
-        return clientUserAgent(prefix: "Firefox-iOS-Sync")
+        // Ecosia: update UA prefix
+        // return clientUserAgent(prefix: "Firefox-iOS-Sync")
+        return clientUserAgent(prefix: "Ecosia-iOS-Sync")
     }
 
     public static var tokenServerClientUserAgent: String {
-        return clientUserAgent(prefix: "Firefox-iOS-Token")
+        // Ecosia: update UA prefix
+        // return clientUserAgent(prefix: "Firefox-iOS-Token")
+        return clientUserAgent(prefix: "Ecosia-iOS-Token")
     }
 
     public static var fxaUserAgent: String {
-        return clientUserAgent(prefix: "Firefox-iOS-FxA")
+        // Ecosia: update UA prefix
+        // return clientUserAgent(prefix: "Firefox-iOS-FxA")
+        return clientUserAgent(prefix: "Ecosia-iOS-FxA")
     }
 
     public static var defaultClientUserAgent: String {
-        return clientUserAgent(prefix: "Firefox-iOS")
+        // Ecosia: update UA prefix
+        // return clientUserAgent(prefix: "Firefox-iOS")
+        return clientUserAgent(prefix: "Ecosia-iOS")
     }
 
     public static func isDesktop(ua: String) -> Bool {
@@ -153,7 +161,9 @@ public struct UserAgentBuilder {
             systemInfo: "(\(UIDevice.current.model); CPU iPhone OS \(UIDevice.current.systemVersion.replacingOccurrences(of: ".", with: "_")) like Mac OS X)",
             platform: UserAgent.platform,
             platformDetails: UserAgent.platformDetails,
-            extensions: "FxiOS/\(AppInfo.appVersion)  \(UserAgent.uaBitMobile) \(UserAgent.uaBitSafari)")
+            // Ecosia: Update extension
+            // extensions: "FxiOS/\(AppInfo.appVersion)  \(UserAgent.uaBitMobile) \(UserAgent.uaBitSafari)")
+            extensions: "Ecosia/\(AppInfo.appVersion)  \(UserAgent.uaBitMobile) \(UserAgent.uaBitSafari)")
     }
 
     public static func defaultDesktopUserAgent() -> UserAgentBuilder {
@@ -162,6 +172,8 @@ public struct UserAgentBuilder {
             systemInfo: "(Macintosh; Intel Mac OS X 10.15)",
             platform: UserAgent.platform,
             platformDetails: UserAgent.platformDetails,
-            extensions: "FxiOS/\(AppInfo.appVersion) \(UserAgent.uaBitSafari)")
+            // Ecosia: Update extension
+            // extensions: "FxiOS/\(AppInfo.appVersion) \(UserAgent.uaBitSafari)")
+            extensions: "Ecosia/\(AppInfo.appVersion) \(UserAgent.uaBitSafari)")
     }
 }
