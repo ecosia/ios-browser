@@ -338,11 +338,6 @@
 		2C6189A82B7A8A22006B70D7 /* Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C61892E2B7A8A22006B70D7 /* Analytics.swift */; };
 		2C6189A92B7A8A22006B70D7 /* Analytics+Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C61892F2B7A8A22006B70D7 /* Analytics+Configuration.swift */; };
 		2C6189AA2B7A8A22006B70D7 /* Analytics.Values.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6189302B7A8A22006B70D7 /* Analytics.Values.swift */; };
-		2C6189C52B7A8B87006B70D7 /* Ecosia.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 2C6189C02B7A8B86006B70D7 /* Ecosia.xcconfig */; };
-		2C6189C62B7A8B87006B70D7 /* EcosiaBetaDebug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 2C6189C12B7A8B86006B70D7 /* EcosiaBetaDebug.xcconfig */; };
-		2C6189C72B7A8B87006B70D7 /* EcosiaDebug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 2C6189C22B7A8B86006B70D7 /* EcosiaDebug.xcconfig */; };
-		2C6189C82B7A8B87006B70D7 /* Staging.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 2C6189C32B7A8B86006B70D7 /* Staging.xcconfig */; };
-		2C6189C92B7A8B87006B70D7 /* EcosiaBeta.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 2C6189C42B7A8B86006B70D7 /* EcosiaBeta.xcconfig */; };
 		2C6189CF2B7A8D09006B70D7 /* AppInfo+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6189092B7A8A22006B70D7 /* AppInfo+Ecosia.swift */; };
 		2C6189D02B7A8D14006B70D7 /* AppInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = E65075641E37F7AB006961AC /* AppInfo.swift */; };
 		2C6189D12B7A8D3E006B70D7 /* EcosiaThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6188C32B7A8A22006B70D7 /* EcosiaThemeManager.swift */; };
@@ -751,7 +746,6 @@
 		8A2825352760399B00395E66 /* KeyboardPressesHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2825342760399B00395E66 /* KeyboardPressesHandlerTests.swift */; };
 		8A285B08294A5D4C00149B0F /* HomepageHeroImageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A285B07294A5D4C00149B0F /* HomepageHeroImageViewModel.swift */; };
 		8A28C628291028870078A81A /* CanRemoveQuickActionBookmarkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A28C627291028870078A81A /* CanRemoveQuickActionBookmarkTests.swift */; };
-		8A2B1A5E28216C4D0061216B /* Common.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 8A2B1A5B28216C4C0061216B /* Common.xcconfig */; };
 		8A2D593E27DC0AA100713EC9 /* TopSite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2D593D27DC0AA100713EC9 /* TopSite.swift */; };
 		8A3233FC286270CF003E1C33 /* FxBookmarkNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A3233FB286270CF003E1C33 /* FxBookmarkNode.swift */; };
 		8A3233FE28627446003E1C33 /* LocalDesktopFolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A3233FD28627446003E1C33 /* LocalDesktopFolder.swift */; };
@@ -13253,7 +13247,6 @@
 				8AA1A8842AF2A0C90026B0E0 /* disconnect-block-social.json in Resources */,
 				2C61897A2B7A8A22006B70D7 /* Plurals.stringsdict in Resources */,
 				2C6189792B7A8A22006B70D7 /* Ecosia.strings in Resources */,
-				2C6189C52B7A8B87006B70D7 /* Ecosia.xcconfig in Resources */,
 				8AA1A8852AF2A0C90026B0E0 /* disconnect-block-cookies-social.json in Resources */,
 				8AA1A8862AF2A0C90026B0E0 /* disconnect-block-fingerprinting.json in Resources */,
 				8AA1A8872AF2A0C90026B0E0 /* disconnect-block-cryptomining.json in Resources */,
@@ -13261,7 +13254,6 @@
 				8AA1A8892AF2A0C90026B0E0 /* disconnect-block-cookies-advertising.json in Resources */,
 				8AA1A88A2AF2A0C90026B0E0 /* disconnect-block-cookies-content.json in Resources */,
 				8AA1A88B2AF2A0C90026B0E0 /* disconnect-block-content.json in Resources */,
-				2C6189C92B7A8B87006B70D7 /* EcosiaBeta.xcconfig in Resources */,
 				D4AFAB0E2AFA8F9A000BFEAA /* SyncIntegrationTests in Resources */,
 				8AA1A88C2AF2A0C90026B0E0 /* disconnect-block-advertising.json in Resources */,
 				8AA1A88D2AF2A0C90026B0E0 /* disconnect-block-cookies-analytics.json in Resources */,
@@ -13278,7 +13270,6 @@
 				F35B8D2B1D6380EA008E3D61 /* SessionRestore.html in Resources */,
 				7B42406E1CA04CAC009B5C28 /* Menu.xcassets in Resources */,
 				4336FAD2264B169000A6B076 /* WebcompatAllFramesAtDocumentStart.js in Resources */,
-				2C6189C82B7A8B87006B70D7 /* Staging.xcconfig in Resources */,
 				23BEA767251A99ED00A014BF /* NewYorkMedium-Bold.otf in Resources */,
 				3BC659591E5BA505006D560F /* bundle_sites.json in Resources */,
 				E4CD9F541A71506400318571 /* Reader.html in Resources */,
@@ -13311,12 +13302,9 @@
 				E4A961381AC06FA50069AD6F /* ReaderViewLoading.html in Resources */,
 				E1AF3565286DE5F800960045 /* UnitTest.xctestplan in Resources */,
 				2C61893A2B7A8A22006B70D7 /* Ecosia.xcassets in Resources */,
-				2C6189C72B7A8B87006B70D7 /* EcosiaDebug.xcconfig in Resources */,
 				E1AF3564286DE5F800960045 /* SyncIntegrationTestPlan.xctestplan in Resources */,
-				2C6189C62B7A8B87006B70D7 /* EcosiaBetaDebug.xcconfig in Resources */,
 				8AEE62C92756BA34003207D1 /* LoginsHelper.js in Resources */,
 				D0E17FB6201F847600F1FCB5 /* FxASignIn.js in Resources */,
-				8A2B1A5E28216C4D0061216B /* Common.xcconfig in Resources */,
 				39A35AED1C0662A3006B9E87 /* SpotlightHelper.js in Resources */,
 				D0FCF8071FE4772D004A7995 /* MainFrameAtDocumentEnd.js in Resources */,
 				E4D6BEB91A0930EC00F538BD /* LaunchScreen.xib in Resources */,
