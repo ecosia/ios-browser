@@ -324,7 +324,6 @@
 		2C6189972B7A8A22006B70D7 /* ConnectionStatusImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6189122B7A8A22006B70D7 /* ConnectionStatusImage.swift */; };
 		2C6189982B7A8A22006B70D7 /* BookmarksExchange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6189172B7A8A22006B70D7 /* BookmarksExchange.swift */; };
 		2C6189992B7A8A22006B70D7 /* markets.json in Resources */ = {isa = PBXBuildFile; fileRef = 2C6189182B7A8A22006B70D7 /* markets.json */; };
-		2C61899B2B7A8A22006B70D7 /* FakeNimbus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C61891B2B7A8A22006B70D7 /* FakeNimbus.swift */; };
 		2C61899D2B7A8A22006B70D7 /* EcosiaImport+PerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C61891E2B7A8A22006B70D7 /* EcosiaImport+PerformanceTests.swift */; };
 		2C61899E2B7A8A22006B70D7 /* EcosiaFavourites.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C61891F2B7A8A22006B70D7 /* EcosiaFavourites.swift */; };
 		2C61899F2B7A8A22006B70D7 /* EcosiaImport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6189202B7A8A22006B70D7 /* EcosiaImport.swift */; };
