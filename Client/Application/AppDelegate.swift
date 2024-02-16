@@ -153,6 +153,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         // Ecosia: pushNotificationSetup()
         appLaunchUtil?.setUpPostLaunchDependencies()
+        /* Ecosia: Do not intialize Background sync
         backgroundWorkUtility = BackgroundFetchAndProcessingUtility()
         backgroundWorkUtility?.registerUtility(BackgroundSyncUtility(profile: profile, application: application))
         backgroundWorkUtility?.registerUtility(BackgroundNotificationSurfaceUtility())
@@ -161,6 +162,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 firefoxSuggest: firefoxSuggest
             ))
         }
+         */
         // Ecosia: Update EcosiaInstallType if needed
         EcosiaInstallType.evaluateCurrentEcosiaInstallType()
         // Ecosia: Disable BG sync //backgroundSyncUtil = BackgroundSyncUtil(profile: profile, application: application)
