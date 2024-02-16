@@ -40,7 +40,7 @@ jobs:
       CI: true
     macos:
       xcode: "14.3.1"
-    resource_class: macos.m1.medium.gen1
+    resource_class: macos.x86.medium.gen2
     steps:
       - checkout
       - restore_cache:
@@ -93,4 +93,4 @@ workflows:
           filters:
             branches:
               only: 
-                - /^.*MOB-2012_firefox_120_upgrade.*/
+                - /^.*main.*/
