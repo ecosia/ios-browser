@@ -151,7 +151,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                    level: .info,
                    category: .lifecycle)
 
-        pushNotificationSetup()
+        // Ecosia: pushNotificationSetup()
         appLaunchUtil?.setUpPostLaunchDependencies()
         backgroundWorkUtility = BackgroundFetchAndProcessingUtility()
         backgroundWorkUtility?.registerUtility(BackgroundSyncUtility(profile: profile, application: application))
