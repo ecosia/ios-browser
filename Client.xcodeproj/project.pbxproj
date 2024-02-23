@@ -2433,6 +2433,8 @@
 		2B31494CBFF9DF6FA41953B2 /* ses */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ses; path = ses.lproj/FindInPage.strings; sourceTree = "<group>"; };
 		2BAA411FAF1D49B9990A7720 /* sat-Olck */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "sat-Olck"; path = "sat-Olck.lproj/Shared.strings"; sourceTree = "<group>"; };
 		2BAB4A40A318F5A577488909 /* mr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = mr; path = mr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		2C08319B2B89127200BD7134 /* Ecosia.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Ecosia.entitlements; sourceTree = "<group>"; };
+		2C08319C2B89127200BD7134 /* EcosiaBeta.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = EcosiaBeta.entitlements; sourceTree = "<group>"; };
 		2C26401D9CCB8C2671EA2431 /* ta */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ta; path = ta.lproj/3DTouchActions.strings; sourceTree = "<group>"; };
 		2C2A5EF31E68469500F02659 /* PrivateBrowsingTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PrivateBrowsingTest.swift; sourceTree = "<group>"; };
 		2C2A91281FA2410D002E36BD /* HistoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryTests.swift; sourceTree = "<group>"; };
@@ -8430,6 +8432,15 @@
 			path = Extensions;
 			sourceTree = "<group>";
 		};
+		2C08319A2B89124000BD7134 /* AppExtensions */ = {
+			isa = PBXGroup;
+			children = (
+				2C08319B2B89127200BD7134 /* Ecosia.entitlements */,
+				2C08319C2B89127200BD7134 /* EcosiaBeta.entitlements */,
+			);
+			path = AppExtensions;
+			sourceTree = "<group>";
+		};
 		2C61887E2B7A8A21006B70D7 /* Ecosia */ = {
 			isa = PBXGroup;
 			children = (
@@ -8814,6 +8825,7 @@
 		2C6189132B7A8A22006B70D7 /* Entitlements */ = {
 			isa = PBXGroup;
 			children = (
+				2C08319A2B89124000BD7134 /* AppExtensions */,
 				2C6189142B7A8A22006B70D7 /* EcosiaBeta.entitlements */,
 				2C6189152B7A8A22006B70D7 /* Ecosia.entitlements */,
 			);

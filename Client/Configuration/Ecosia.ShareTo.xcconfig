@@ -2,11 +2,6 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-#include "Common.xcconfig"
-#include "Release.xcconfig"
-#include "Production.xcconfig"
-#include "Ecosia.xcconfig"
-
-MOZ_BUNDLE_ID = com.ecosia.ecosiaapp.firefox.ShareTo
-PROVISIONING_PROFILE_SPECIFIER = "match AdHoc com.ecosia.ecosiaapp.ShareTo";
-PRODUCT_BUNDLE_IDENTIFIER = $(MOZ_BUNDLE_ID)
+PROVISIONING_PROFILE_SPECIFIER = match AdHoc com.ecosia.ecosiaapp.ShareTo
+CODE_SIGN_ENTITLEMENTS = Client/Ecosia/Entitlements/AppExtensions/Ecosia.entitlements
+MOZ_BUNDLE_ID = com.ecosia.ecosiaapp
