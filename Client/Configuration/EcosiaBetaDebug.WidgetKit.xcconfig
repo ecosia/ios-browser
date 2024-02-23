@@ -9,3 +9,4 @@
 
 MOZ_BUNDLE_ID = com.ecosia.ecosiaapp.firefox.WidgetKit
 PROVISIONING_PROFILE_SPECIFIER = "match AdHoc com.ecosia.ecosiaapp.firefox.WidgetKit";
+PRODUCT_BUNDLE_IDENTIFIER = $(MOZ_BUNDLE_ID)

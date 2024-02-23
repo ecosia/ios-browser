@@ -7,5 +7,6 @@
 #include "Production.xcconfig"
 #include "Ecosia.xcconfig"
 
-MOZ_BUNDLE_ID = com.ecosia.ecosiaapp.firefox.WidgetKit
-PROVISIONING_PROFILE_SPECIFIER = "match AdHoc com.ecosia.ecosiaapp.firefox.WidgetKit";
+MOZ_BUNDLE_ID = com.ecosia.ecosiaapp.WidgetKit
+PROVISIONING_PROFILE_SPECIFIER = "match AdHoc com.ecosia.ecosiaapp.WidgetKit";
+PRODUCT_BUNDLE_IDENTIFIER = $(MOZ_BUNDLE_ID)

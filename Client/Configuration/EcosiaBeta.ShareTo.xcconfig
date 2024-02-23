@@ -9,3 +9,4 @@
 
 MOZ_BUNDLE_ID = com.ecosia.ecosiaapp.firefox.ShareTo
 PROVISIONING_PROFILE_SPECIFIER = "match AdHoc com.ecosia.ecosiaapp.firefox.ShareTo";
+PRODUCT_BUNDLE_IDENTIFIER = $(MOZ_BUNDLE_ID)
