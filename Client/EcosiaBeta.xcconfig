@@ -4,11 +4,10 @@
 
 #include "Common.xcconfig"
 #include "Release.xcconfig"
-#include "Production.xcconfig"
+#include "Staging.xcconfig"
 
-MOZ_BUNDLE_DISPLAY_NAME = Ecosia
-MOZ_BUNDLE_ID = com.ecosia.ecosiaapp
-CODE_SIGN_ENTITLEMENTS = Client/Ecosia/Entitlements/Ecosia.entitlements
-OTHER_SWIFT_FLAGS = $(OTHER_SWIFT_FLAGS_common) -DMOZ_CHANNEL_RELEASE
+MOZ_BUNDLE_DISPLAY_NAME = Ecosia Beta
+MOZ_BUNDLE_ID = com.ecosia.ecosiaapp.firefox
+CODE_SIGN_ENTITLEMENTS = Client/Entitlements/EcosiaBeta.entitlements
+OTHER_SWIFT_FLAGS = $(OTHER_SWIFT_FLAGS_common) -DMOZ_CHANNEL_BETA
 MOZ_INTERNAL_URL_SCHEME = ecosia
-DEVELOPMENT_TEAM = 33YMRSYD2L;

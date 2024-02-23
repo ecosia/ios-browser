@@ -16,3 +16,4 @@ CODE_SIGN_ENTITLEMENTS = Client/Entitlements/Ecosia.entitlements
 OTHER_SWIFT_FLAGS = $(OTHER_SWIFT_FLAGS_common) -DMOZ_CHANNEL_FENNEC
 MOZ_INTERNAL_URL_SCHEME = ecosia
 OTHER_LDFLAGS = -ObjC -lxml2 -fprofile-instr-generate
+DEVELOPMENT_TEAM = 33YMRSYD2L;

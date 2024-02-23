@@ -2670,11 +2670,6 @@
 		2C61892E2B7A8A22006B70D7 /* Analytics.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Analytics.swift; sourceTree = "<group>"; };
 		2C61892F2B7A8A22006B70D7 /* Analytics+Configuration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Analytics+Configuration.swift"; sourceTree = "<group>"; };
 		2C6189302B7A8A22006B70D7 /* Analytics.Values.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Analytics.Values.swift; sourceTree = "<group>"; };
-		2C6189C02B7A8B86006B70D7 /* Ecosia.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Ecosia.xcconfig; path = Configuration/Ecosia.xcconfig; sourceTree = "<group>"; };
-		2C6189C12B7A8B86006B70D7 /* EcosiaBetaDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = EcosiaBetaDebug.xcconfig; path = Configuration/EcosiaBetaDebug.xcconfig; sourceTree = "<group>"; };
-		2C6189C22B7A8B86006B70D7 /* EcosiaDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = EcosiaDebug.xcconfig; path = Configuration/EcosiaDebug.xcconfig; sourceTree = "<group>"; };
-		2C6189C32B7A8B86006B70D7 /* Staging.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Staging.xcconfig; path = Configuration/Staging.xcconfig; sourceTree = "<group>"; };
-		2C6189C42B7A8B86006B70D7 /* EcosiaBeta.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = EcosiaBeta.xcconfig; path = Configuration/EcosiaBeta.xcconfig; sourceTree = "<group>"; };
 		2C6E44099EACF7BE5438CEB6 /* ca */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ca; path = ca.lproj/Today.strings; sourceTree = "<group>"; };
 		2C8C07761E7800EA00DC1237 /* FindInPageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FindInPageTests.swift; sourceTree = "<group>"; };
 		2C9144B0B15218D8A0FCD538 /* es-AR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-AR"; path = "es-AR.lproj/ClearPrivateData.strings"; sourceTree = "<group>"; };
@@ -2683,6 +2678,26 @@
 		2CAE4511992E91A32AB7D7C7 /* th */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = th; path = th.lproj/Today.strings; sourceTree = "<group>"; };
 		2CB1A6591FDEA8B60084E96D /* NewTabSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTabSettings.swift; sourceTree = "<group>"; };
 		2CB56E3E1E926BFB00AF7586 /* ToolbarTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToolbarTest.swift; sourceTree = "<group>"; };
+		2CBCAAFB2B88EEE40080AD68 /* Ecosia.WidgetKit.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Ecosia.WidgetKit.xcconfig; sourceTree = "<group>"; };
+		2CBCAAFC2B88EEE40080AD68 /* EcosiaBeta.ShareTo.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = EcosiaBeta.ShareTo.xcconfig; sourceTree = "<group>"; };
+		2CBCAAFD2B88EEE40080AD68 /* Ecosia.ShareTo.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Ecosia.ShareTo.xcconfig; sourceTree = "<group>"; };
+		2CBCAAFE2B88EEE40080AD68 /* EcosiaBetaDebug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = EcosiaBetaDebug.xcconfig; sourceTree = "<group>"; };
+		2CBCAAFF2B88EEE40080AD68 /* Firefox.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Firefox.xcconfig; sourceTree = "<group>"; };
+		2CBCAB002B88EEE40080AD68 /* Common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Common.xcconfig; sourceTree = "<group>"; };
+		2CBCAB012B88EEE40080AD68 /* Fennec.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Fennec.xcconfig; sourceTree = "<group>"; };
+		2CBCAB022B88EEE40080AD68 /* EcosiaBetaDebug.WidgetKit.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = EcosiaBetaDebug.WidgetKit.xcconfig; sourceTree = "<group>"; };
+		2CBCAB032B88EEE40080AD68 /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
+		2CBCAB042B88EEE40080AD68 /* EcosiaBeta.WidgetKit.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = EcosiaBeta.WidgetKit.xcconfig; sourceTree = "<group>"; };
+		2CBCAB052B88EEE40080AD68 /* FirefoxBeta.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = FirefoxBeta.xcconfig; sourceTree = "<group>"; };
+		2CBCAB062B88EEE40080AD68 /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
+		2CBCAB072B88EEE40080AD68 /* EcosiaDebug.ShareTo.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = EcosiaDebug.ShareTo.xcconfig; sourceTree = "<group>"; };
+		2CBCAB082B88EEE40080AD68 /* Staging.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Staging.xcconfig; sourceTree = "<group>"; };
+		2CBCAB092B88EEE40080AD68 /* EcosiaBetaDebug.ShareTo.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = EcosiaBetaDebug.ShareTo.xcconfig; sourceTree = "<group>"; };
+		2CBCAB0A2B88EEE40080AD68 /* Fennec.enterprise.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Fennec.enterprise.xcconfig; sourceTree = "<group>"; };
+		2CBCAB0B2B88EEE40080AD68 /* EcosiaBeta.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = EcosiaBeta.xcconfig; sourceTree = "<group>"; };
+		2CBCAB0C2B88EEE40080AD68 /* Ecosia.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Ecosia.xcconfig; sourceTree = "<group>"; };
+		2CBCAB0D2B88EEE40080AD68 /* EcosiaDebug.WidgetKit.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = EcosiaDebug.WidgetKit.xcconfig; sourceTree = "<group>"; };
+		2CBCAB0E2B88EEE40080AD68 /* EcosiaDebug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = EcosiaDebug.xcconfig; sourceTree = "<group>"; };
 		2CC1B3EF1E9B861400814EEC /* DomainAutocompleteTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DomainAutocompleteTests.swift; sourceTree = "<group>"; };
 		2CCB296620A99C9500121DD8 /* LoginsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginsTests.swift; sourceTree = "<group>"; };
 		2CCF17522105E4FD00705AE5 /* DisplaySettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplaySettingsTests.swift; sourceTree = "<group>"; };
@@ -5784,9 +5799,6 @@
 		8A2825342760399B00395E66 /* KeyboardPressesHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardPressesHandlerTests.swift; sourceTree = "<group>"; };
 		8A285B07294A5D4C00149B0F /* HomepageHeroImageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomepageHeroImageViewModel.swift; sourceTree = "<group>"; };
 		8A28C627291028870078A81A /* CanRemoveQuickActionBookmarkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanRemoveQuickActionBookmarkTests.swift; sourceTree = "<group>"; };
-		8A2B1A5A28216C4C0061216B /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Debug.xcconfig; path = Configuration/Debug.xcconfig; sourceTree = "<group>"; };
-		8A2B1A5B28216C4C0061216B /* Common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Common.xcconfig; path = Configuration/Common.xcconfig; sourceTree = "<group>"; };
-		8A2B1A5C28216C4D0061216B /* Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Configuration/Release.xcconfig; sourceTree = "<group>"; };
 		8A2D593D27DC0AA100713EC9 /* TopSite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopSite.swift; sourceTree = "<group>"; };
 		8A3233FB286270CF003E1C33 /* FxBookmarkNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FxBookmarkNode.swift; sourceTree = "<group>"; };
 		8A3233FD28627446003E1C33 /* LocalDesktopFolder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalDesktopFolder.swift; sourceTree = "<group>"; };
@@ -7553,8 +7565,6 @@
 		E59A418F9208400903902F07 /* ses */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ses; path = ses.lproj/LoginManager.strings; sourceTree = "<group>"; };
 		E5C24864B9BA6790B352962E /* fi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fi; path = fi.lproj/Search.strings; sourceTree = "<group>"; };
 		E5D343558F3C933F5CA7690C /* pt-PT */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-PT"; path = "pt-PT.lproj/Storage.strings"; sourceTree = "<group>"; };
-		E60961861B62B8A700DD640F /* Fennec.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Fennec.xcconfig; path = Configuration/Fennec.xcconfig; sourceTree = "<group>"; };
-		E60961891B62B8C800DD640F /* Firefox.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Firefox.xcconfig; path = Configuration/Firefox.xcconfig; sourceTree = "<group>"; };
 		E60D03171D511398002FE3F6 /* SyncDisplayState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncDisplayState.swift; sourceTree = "<group>"; };
 		E6231C001B90A44F005ABB0D /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		E6231C041B90A472005ABB0D /* libxml2.2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.2.tbd; path = usr/lib/libxml2.2.tbd; sourceTree = SDKROOT; };
@@ -7625,7 +7635,6 @@
 		E6C64CCF918A53B1EB0FAF01 /* rm */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = rm; path = rm.lproj/ClearHistoryConfirm.strings; sourceTree = "<group>"; };
 		E6CA4229B067C32CA10E19A9 /* ml */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ml; path = ml.lproj/Search.strings; sourceTree = "<group>"; };
 		E6CF28E61CB43B7900151AB3 /* SensitiveViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SensitiveViewController.swift; sourceTree = "<group>"; };
-		E6DCC1ED1DCBB6AA00CEC4B7 /* Fennec.enterprise.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Fennec.enterprise.xcconfig; path = Configuration/Fennec.enterprise.xcconfig; sourceTree = "<group>"; };
 		E6DD408EAF352F4B541022BA /* or */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = or; path = or.lproj/HistoryPanel.strings; sourceTree = "<group>"; };
 		E6EAC5951B29CB3A00E1DE1E /* scrollablePage.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = scrollablePage.html; sourceTree = "<group>"; };
 		E6EC4E5DA51902A09A0F0957 /* hr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hr; path = "hr.lproj/Default Browser.strings"; sourceTree = "<group>"; };
@@ -7635,7 +7644,6 @@
 		E6F9650C1B2F1CF20034B023 /* SharedTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SharedTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E6F9650F1B2F1CF20034B023 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E6F9653B1B2F1D5D0034B023 /* NSURLExtensionsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSURLExtensionsTests.swift; sourceTree = "<group>"; };
-		E6FCC43C1C40565200DF6113 /* FirefoxBeta.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = FirefoxBeta.xcconfig; path = Configuration/FirefoxBeta.xcconfig; sourceTree = "<group>"; };
 		E6FF6AC91D873CFF0070C294 /* PageMetadata.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PageMetadata.swift; sourceTree = "<group>"; };
 		E70049799CF2243911759906 /* oc */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = oc; path = oc.lproj/Storage.strings; sourceTree = "<group>"; };
 		E70B441A9D02B00C3000646B /* te */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = te; path = te.lproj/Storage.strings; sourceTree = "<group>"; };
@@ -9004,6 +9012,33 @@
 				2C6189302B7A8A22006B70D7 /* Analytics.Values.swift */,
 			);
 			path = Analytics;
+			sourceTree = "<group>";
+		};
+		2CBCAAFA2B88EEE40080AD68 /* Configuration */ = {
+			isa = PBXGroup;
+			children = (
+				2CBCAAFB2B88EEE40080AD68 /* Ecosia.WidgetKit.xcconfig */,
+				2CBCAAFC2B88EEE40080AD68 /* EcosiaBeta.ShareTo.xcconfig */,
+				2CBCAAFD2B88EEE40080AD68 /* Ecosia.ShareTo.xcconfig */,
+				2CBCAAFE2B88EEE40080AD68 /* EcosiaBetaDebug.xcconfig */,
+				2CBCAAFF2B88EEE40080AD68 /* Firefox.xcconfig */,
+				2CBCAB002B88EEE40080AD68 /* Common.xcconfig */,
+				2CBCAB012B88EEE40080AD68 /* Fennec.xcconfig */,
+				2CBCAB022B88EEE40080AD68 /* EcosiaBetaDebug.WidgetKit.xcconfig */,
+				2CBCAB032B88EEE40080AD68 /* Debug.xcconfig */,
+				2CBCAB042B88EEE40080AD68 /* EcosiaBeta.WidgetKit.xcconfig */,
+				2CBCAB052B88EEE40080AD68 /* FirefoxBeta.xcconfig */,
+				2CBCAB062B88EEE40080AD68 /* Release.xcconfig */,
+				2CBCAB072B88EEE40080AD68 /* EcosiaDebug.ShareTo.xcconfig */,
+				2CBCAB082B88EEE40080AD68 /* Staging.xcconfig */,
+				2CBCAB092B88EEE40080AD68 /* EcosiaBetaDebug.ShareTo.xcconfig */,
+				2CBCAB0A2B88EEE40080AD68 /* Fennec.enterprise.xcconfig */,
+				2CBCAB0B2B88EEE40080AD68 /* EcosiaBeta.xcconfig */,
+				2CBCAB0C2B88EEE40080AD68 /* Ecosia.xcconfig */,
+				2CBCAB0D2B88EEE40080AD68 /* EcosiaDebug.WidgetKit.xcconfig */,
+				2CBCAB0E2B88EEE40080AD68 /* EcosiaDebug.xcconfig */,
+			);
+			path = Configuration;
 			sourceTree = "<group>";
 		};
 		2CE2945C2B7FC51E006C22B2 /* EcosiaTests */ = {
@@ -11767,25 +11802,6 @@
 			path = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		E60961841B62B7E100DD640F /* Configuration */ = {
-			isa = PBXGroup;
-			children = (
-				2C6189C02B7A8B86006B70D7 /* Ecosia.xcconfig */,
-				2C6189C42B7A8B86006B70D7 /* EcosiaBeta.xcconfig */,
-				2C6189C12B7A8B86006B70D7 /* EcosiaBetaDebug.xcconfig */,
-				2C6189C22B7A8B86006B70D7 /* EcosiaDebug.xcconfig */,
-				2C6189C32B7A8B86006B70D7 /* Staging.xcconfig */,
-				8A2B1A5B28216C4C0061216B /* Common.xcconfig */,
-				8A2B1A5A28216C4C0061216B /* Debug.xcconfig */,
-				8A2B1A5C28216C4D0061216B /* Release.xcconfig */,
-				E60961861B62B8A700DD640F /* Fennec.xcconfig */,
-				E6DCC1ED1DCBB6AA00CEC4B7 /* Fennec.enterprise.xcconfig */,
-				E6FCC43C1C40565200DF6113 /* FirefoxBeta.xcconfig */,
-				E60961891B62B8C800DD640F /* Firefox.xcconfig */,
-			);
-			name = Configuration;
-			sourceTree = "<group>";
-		};
 		E63ED8DF1BFD254E0097D08E /* PasswordManagement */ = {
 			isa = PBXGroup;
 			children = (
@@ -12083,6 +12099,7 @@
 		F84B21C01A090F8100AAB793 /* Client */ = {
 			isa = PBXGroup;
 			children = (
+				2CBCAAFA2B88EEE40080AD68 /* Configuration */,
 				2C61887E2B7A8A21006B70D7 /* Ecosia */,
 				8AD984F12AF1554F00B9FDA4 /* ContentBlocker */,
 				216A0D6F2A40D0E4008077BA /* Redux */,
@@ -12090,7 +12107,6 @@
 				8A590C6228C13E1D0032F1AA /* TabManagement */,
 				F84B21E41A0910F600AAB793 /* Application */,
 				F84B21EB1A0910F600AAB793 /* Assets */,
-				E60961841B62B7E100DD640F /* Configuration */,
 				E689C6FF1E0C716F008BAADB /* Entitlements */,
 				39EF434C260A736D0011E22E /* Experiments */,
 				28EADE5C1AFC3A6D007FB2FB /* Extensions */,
@@ -20092,7 +20108,7 @@
 		};
 		2C6189AB2B7A8B15006B70D7 /* Development_AppCenter */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2C6189C42B7A8B86006B70D7 /* EcosiaBeta.xcconfig */;
+			baseConfigurationReference = 2CBCAAFE2B88EEE40080AD68 /* EcosiaBetaDebug.xcconfig */;
 			buildSettings = {
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -20112,6 +20128,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = 43AQ936H96;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 33YMRSYD2L;
 				EXCLUDED_SOURCE_FILE_NAMES = "Client/Nimbus/TestData/*";
 				INFOPLIST_FILE = Client/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -20127,6 +20144,7 @@
 				PRODUCT_MODULE_NAME = Client;
 				PRODUCT_NAME = Client;
 				PROVISIONING_PROFILE_SPECIFIER = "bitrise org.mozilla.ios.FirefoxBeta";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match AdHoc com.ecosia.ecosiaapp.firefox";
 				SKIP_INSTALL = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/Client/Client-Bridging-Header.h";
 				VALIDATE_WORKSPACE = YES;
@@ -20151,6 +20169,7 @@
 		};
 		2C6189AE2B7A8B15006B70D7 /* Development_AppCenter */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2CBCAB092B88EEE40080AD68 /* EcosiaBetaDebug.ShareTo.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "$(inherit)Client/Ecosia/Entitlements/EcosiaBeta.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
@@ -20166,6 +20185,7 @@
 		};
 		2C6189AF2B7A8B15006B70D7 /* Development_AppCenter */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2CBCAB022B88EEE40080AD68 /* EcosiaBetaDebug.WidgetKit.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "$(inherit)Client/Ecosia/Entitlements/EcosiaBeta.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
@@ -21010,6 +21030,7 @@
 		};
 		4354D3E124EEEEC5001184F6 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2CBCAB0D2B88EEE40080AD68 /* EcosiaDebug.WidgetKit.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "$(inherit)Client/Ecosia/Entitlements/Ecosia.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -21026,6 +21047,7 @@
 		};
 		4354D3E224EEEEC5001184F6 /* BetaDebug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2CBCAB022B88EEE40080AD68 /* EcosiaBetaDebug.WidgetKit.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "$(inherit)Client/Ecosia/Entitlements/EcosiaBeta.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -21051,6 +21073,7 @@
 		};
 		4354D3E324EEEEC5001184F6 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2CBCAAFB2B88EEE40080AD68 /* Ecosia.WidgetKit.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "$(inherit)Client/Ecosia/Entitlements/Ecosia.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
@@ -21067,6 +21090,7 @@
 		};
 		4354D3E424EEEEC5001184F6 /* Development_TestFlight */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2CBCAB022B88EEE40080AD68 /* EcosiaBetaDebug.WidgetKit.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "$(inherit)Client/Ecosia/Entitlements/EcosiaBeta.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
@@ -21200,7 +21224,7 @@
 		};
 		E448FC9D1AEE7A6000869B6C /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2C6189C02B7A8B86006B70D7 /* Ecosia.xcconfig */;
+			baseConfigurationReference = 2CBCAB0C2B88EEE40080AD68 /* Ecosia.xcconfig */;
 			buildSettings = {
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -21252,6 +21276,7 @@
 		};
 		E448FCA01AEE7A6000869B6C /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2CBCAAFD2B88EEE40080AD68 /* Ecosia.ShareTo.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "$(inherit)Client/Ecosia/Entitlements/Ecosia.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
@@ -21446,7 +21471,7 @@
 		};
 		E6DCC2051DCBB6F100CEC4B7 /* BetaDebug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2C6189C12B7A8B86006B70D7 /* EcosiaBetaDebug.xcconfig */;
+			baseConfigurationReference = 2CBCAAFE2B88EEE40080AD68 /* EcosiaBetaDebug.xcconfig */;
 			buildSettings = {
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -21497,6 +21522,7 @@
 		};
 		E6DCC2081DCBB6F100CEC4B7 /* BetaDebug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2CBCAB092B88EEE40080AD68 /* EcosiaBetaDebug.ShareTo.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "$(inherit)Client/Ecosia/Entitlements/EcosiaBeta.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -21702,7 +21728,7 @@
 		};
 		E6FCC4291C40562400DF6113 /* Development_TestFlight */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2C6189C42B7A8B86006B70D7 /* EcosiaBeta.xcconfig */;
+			baseConfigurationReference = 2CBCAAFE2B88EEE40080AD68 /* EcosiaBetaDebug.xcconfig */;
 			buildSettings = {
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -21722,6 +21748,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = 43AQ936H96;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 33YMRSYD2L;
 				EXCLUDED_SOURCE_FILE_NAMES = "Client/Nimbus/TestData/*";
 				INFOPLIST_FILE = Client/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -21737,6 +21764,7 @@
 				PRODUCT_MODULE_NAME = Client;
 				PRODUCT_NAME = Client;
 				PROVISIONING_PROFILE_SPECIFIER = "bitrise org.mozilla.ios.FirefoxBeta";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match AdHoc com.ecosia.ecosiaapp.firefox";
 				SKIP_INSTALL = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/Client/Client-Bridging-Header.h";
 				VALIDATE_WORKSPACE = YES;
@@ -21755,6 +21783,7 @@
 		};
 		E6FCC42D1C40562400DF6113 /* Development_TestFlight */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2CBCAB092B88EEE40080AD68 /* EcosiaBetaDebug.ShareTo.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "$(inherit)Client/Ecosia/Entitlements/EcosiaBeta.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
@@ -22192,7 +22221,7 @@
 		};
 		F84B21DB1A090F8100AAB793 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2C6189C22B7A8B86006B70D7 /* EcosiaDebug.xcconfig */;
+			baseConfigurationReference = 2CBCAB0E2B88EEE40080AD68 /* EcosiaDebug.xcconfig */;
 			buildSettings = {
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -22245,6 +22274,7 @@
 		};
 		F84B22561A0920C600AAB793 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2CBCAB072B88EEE40080AD68 /* EcosiaDebug.ShareTo.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "$(inherit)Client/Ecosia/Entitlements/Ecosia.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
