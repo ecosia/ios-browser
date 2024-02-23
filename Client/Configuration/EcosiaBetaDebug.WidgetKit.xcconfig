@@ -2,7 +2,8 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-PRODUCT_NAME = WidgetKit
-PROVISIONING_PROFILE_SPECIFIER = match AdHoc com.ecosia.ecosiaapp.firefox.WidgetKit
+#include "EcosiaBetaDebug.xcconfig"
+
+ECOSIA_PRODUCT_NAME = WidgetKit
+PROVISIONING_PROFILE_SPECIFIER = match Development com.ecosia.ecosiaapp.firefox.WidgetKit
 CODE_SIGN_ENTITLEMENTS = Client/Ecosia/Entitlements/AppExtensions/EcosiaBeta.entitlements
-MOZ_BUNDLE_ID = com.ecosia.ecosiaapp.firefox
