@@ -162,13 +162,6 @@
     {
       "target" : {
         "containerPath" : "container:BrowserKit",
-        "identifier" : "SiteImageViewTests",
-        "name" : "SiteImageViewTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:BrowserKit",
         "identifier" : "TabDataStoreTests",
         "name" : "TabDataStoreTests"
       }
