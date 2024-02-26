@@ -14,20 +14,22 @@ jobs:
       - checkout
       - restore_cache:
           key: 1-gems-{{ checksum "Gemfile.lock" }}
-      - run: bundle check || bundle install --path vendor/bundle
+      - run:
+          name: Bundle install
+          bundle check || bundle install --path vendor/bundle
       - save_cache:
           key: 1-gems-{{ checksum "Gemfile.lock" }}
           paths:
             - vendor/bundle
       - run:
-          name: verify github
+          name: Verify github
           command: for ip in $(dig @8.8.8.8 github.com +short); do ssh-keyscan github.com,$ip; ssh-keyscan $ip; done 2>/dev/null >> ~/.ssh/known_hosts
       - run:
           name: extract Staging XCConfig
           command: echo "$STAGING_XCCONFIG" | base64 --decode > Client/Configuration/Staging.xcconfig
       - run:
-          name: setup content blocking scripts
-          command: ./content_blocker_update.sh
+          name: Execute bootstrap
+          command: ./bootstrap.sh
       - run:
           name: Build and deploy to Testflight
           command: bundle exec fastlane testflight_beta
@@ -42,16 +44,18 @@ jobs:
       - checkout
       - restore_cache:
           key: 1-gems-{{ checksum "Gemfile.lock" }}
-      - run: bundle check || bundle install --path vendor/bundle
+      - run:
+          name: Bundle install
+          bundle check || bundle install --path vendor/bundle
       - save_cache:
           key: 1-gems-{{ checksum "Gemfile.lock" }}
           paths:
             - vendor/bundle
       - run:
-          name: verify github
+          name: Verify github
           command: for ip in $(dig @8.8.8.8 github.com +short); do ssh-keyscan github.com,$ip; ssh-keyscan $ip; done 2>/dev/null >> ~/.ssh/known_hosts
       - run:
-          name: extract Staging XCConfig
+          name: Extract Staging XCConfig
           command: echo "$STAGING_XCCONFIG" | base64 --decode > Client/Configuration/Staging.xcconfig
       - run:
           name: Execute bootstrap
