@@ -19821,7 +19821,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon_Beta;
-				CODE_SIGN_ENTITLEMENTS = Client/Ecosia/Entitlements/EcosiaBeta.entitlements;
+				CODE_SIGN_ENTITLEMENTS = "$(inherited)";
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = 43AQ936H96;
@@ -19852,7 +19852,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 2CBCAAFC2B88EEE40080AD68 /* EcosiaBeta.ShareTo.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = "$(inherit)Client/Ecosia/Entitlements/EcosiaBeta.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "$(inherited)";
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = 43AQ936H96;
@@ -19868,7 +19868,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 2CBCAB042B88EEE40080AD68 /* EcosiaBeta.WidgetKit.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = "$(inherit)Client/Ecosia/Entitlements/EcosiaBeta.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "$(inherited)";
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = 43AQ936H96;
@@ -20574,7 +20574,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 2CBCAB0D2B88EEE40080AD68 /* EcosiaDebug.WidgetKit.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = "$(inherit)Client/Ecosia/Entitlements/Ecosia.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "$(inherited)";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 43AQ936H96;
@@ -20591,7 +20591,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 2CBCAB022B88EEE40080AD68 /* EcosiaBetaDebug.WidgetKit.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = "$(inherit)Client/Ecosia/Entitlements/EcosiaBeta.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "$(inherited)";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
@@ -20617,7 +20617,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 2CBCAAFB2B88EEE40080AD68 /* Ecosia.WidgetKit.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = "$(inherit)Client/Ecosia/Entitlements/Ecosia.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "$(inherited)";
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = 43AQ936H96;
@@ -20634,7 +20634,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 2CBCAB042B88EEE40080AD68 /* EcosiaBeta.WidgetKit.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = "$(inherit)Client/Ecosia/Entitlements/EcosiaBeta.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "$(inherited)";
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = 43AQ936H96;
@@ -20786,6 +20786,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "$(inherited)";
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = 43AQ936H96;
@@ -20824,7 +20825,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 2CBCAAFD2B88EEE40080AD68 /* Ecosia.ShareTo.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = "$(inherit)Client/Ecosia/Entitlements/Ecosia.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "$(inherited)";
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = 43AQ936H96;
@@ -21035,7 +21036,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon_Developer;
-				CODE_SIGN_ENTITLEMENTS = Client/Ecosia/Entitlements/EcosiaBeta.entitlements;
+				CODE_SIGN_ENTITLEMENTS = "$(inherited)";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
@@ -21072,7 +21073,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 2CBCAB092B88EEE40080AD68 /* EcosiaBetaDebug.ShareTo.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = "$(inherit)Client/Ecosia/Entitlements/EcosiaBeta.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "$(inherited)";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
@@ -21294,7 +21295,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon_Beta;
-				CODE_SIGN_ENTITLEMENTS = Client/Ecosia/Entitlements/EcosiaBeta.entitlements;
+				CODE_SIGN_ENTITLEMENTS = "$(inherited)";
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = 43AQ936H96;
@@ -21335,7 +21336,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 2CBCAAFC2B88EEE40080AD68 /* EcosiaBeta.ShareTo.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = "$(inherit)Client/Ecosia/Entitlements/EcosiaBeta.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "$(inherited)";
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = 43AQ936H96;
@@ -21492,7 +21493,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon_Developer;
-				CODE_SIGN_ENTITLEMENTS = Client/Ecosia/Entitlements/Ecosia.entitlements;
+				CODE_SIGN_ENTITLEMENTS = "$(inherited)";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
@@ -21531,7 +21532,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 2CBCAB072B88EEE40080AD68 /* EcosiaDebug.ShareTo.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = "$(inherit)Client/Ecosia/Entitlements/Ecosia.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "$(inherited)";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 43AQ936H96;
