@@ -50,7 +50,6 @@ platform :ios do
     )
     gym(
       scheme: "Ecosia",
-      clean: true,
       project: project_path,
       export_method: "ad-hoc",
       configuration: "Development_AppCenter",
@@ -77,7 +76,6 @@ platform :ios do
     )
     gym(
       scheme: "Ecosia",
-      clean: true,
       export_method: "app-store",
       configuration: "Development_TestFlight"
     )
@@ -121,7 +119,6 @@ platform :ios do
 
     gym(
       scheme: "Ecosia",
-      clean: true,
       export_method: "app-store",
       configuration: "Release"
     )
