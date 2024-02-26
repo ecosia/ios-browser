@@ -7,3 +7,4 @@
 PROVISIONING_PROFILE_SPECIFIER = match Development com.ecosia.ecosiaapp.firefox.ShareTo
 CODE_SIGN_ENTITLEMENTS = Client/Ecosia/Entitlements/AppExtensions/EcosiaBeta.entitlements
 MOZ_BUNDLE_ID = com.ecosia.ecosiaapp.firefox
+PRODUCT_BUNDLE_IDENTIFIER = $(MOZ_BUNDLE_ID).$(PRODUCT_NAME)
