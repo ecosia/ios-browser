@@ -2,14 +2,19 @@ version: 2.1
 
 setup: true
 
+environment_common: &environment_common
+  environment:
+    CI: true
+
+macos_common: &macos_common
+  xcode: "15.2"
+  resource_class: macos.m1.medium.gen1
+
 jobs:
 
   build-and-deploy-testflight-beta:
-    environment:
-      CI: true
-    macos:
-      xcode: "15.2"
-    resource_class: macos.m1.medium.gen1
+    <<: *environment_common
+    <<: *macos_common
     steps:
       - checkout
       - restore_cache:
@@ -35,11 +40,8 @@ jobs:
           command: bundle exec fastlane testflight_beta
 
   build-and-deploy-appcenter:
-    environment:
-      CI: true
-    macos:
-      xcode: "15.2"
-    resource_class: macos.m1.medium.gen1
+    <<: *environment_common
+    <<: *macos_common
     steps:
       - checkout
       - restore_cache:
