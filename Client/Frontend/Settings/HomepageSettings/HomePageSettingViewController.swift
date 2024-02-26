@@ -5,6 +5,8 @@
 import Foundation
 import Shared
 import Common
+// Ecosia: import Core
+import Core
 
 class HomePageSettingViewController: SettingsTableViewController, FeatureFlaggable {
     // MARK: - Variables
@@ -242,18 +244,24 @@ extension HomePageSettingViewController {
         var profile: Profile
 
         override var accessoryType: UITableViewCell.AccessoryType { return .disclosureIndicator }
-        override var accessibilityIdentifier: String? { return AccessibilityIdentifiers.Settings.Homepage.CustomizeFirefox.Shortcuts.settingsPage }
+        // Ecosia: rename to Top Sites
+        // override var accessibilityIdentifier: String? { return AccessibilityIdentifiers.Settings.Homepage.CustomizeFirefox.Shortcuts.settingsPage }
+        override var accessibilityIdentifier: String? { return .localized(.topSites) }
         override var style: UITableViewCell.CellStyle { return .value1 }
 
         override var status: NSAttributedString {
-            let areShortcutsOn = profile.prefs.boolForKey(PrefsKeys.UserFeatureFlagPrefs.TopSiteSection) ?? true
+            // Ecosia: Update contidion
+            // let areShortcutsOn = profile.prefs.boolForKey(PrefsKeys.UserFeatureFlagPrefs.TopSiteSection) ?? true
+            let areShortcutsOn = User.shared.showTopSites
             let status: String = areShortcutsOn ? .Settings.Homepage.Shortcuts.ToggleOn : .Settings.Homepage.Shortcuts.ToggleOff
             return NSAttributedString(string: String(format: status))
         }
 
         init(settings: SettingsTableViewController) {
             self.profile = settings.profile
-            super.init(title: NSAttributedString(string: .Settings.Homepage.Shortcuts.ShortcutsPageTitle))
+            // Ecosia: rename to Top Sites
+            // super.init(title: NSAttributedString(string: .Settings.Homepage.Shortcuts.ShortcutsPageTitle))
+            super.init(title: NSAttributedString(string: .localized(.topSites)))
         }
 
         override func onClick(_ navigationController: UINavigationController?) {

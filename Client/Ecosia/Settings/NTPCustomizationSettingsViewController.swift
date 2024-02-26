@@ -13,7 +13,8 @@ final class NTPCustomizationSettingsViewController: SettingsTableViewController 
         title = .localized(.homepage)
         navigationItem.rightBarButtonItem = .init(title: .localized(.done),
                                                   style: .done) { [weak self] _ in
-            self?.dismiss(animated: true)
+            self?.settingsDelegate?.reloadHomepage()
+            self?.settingsDelegate?.didFinish()
         }
     }
     

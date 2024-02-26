@@ -26,20 +26,6 @@ extension BrowserViewController: DefaultBrowserDelegate {
     }
 }
 
-extension BrowserViewController: SettingsDelegate {
-    func settingsOpenURLInNewTab(_ url: URL) {
-        
-    }
-    
-    func didFinish() {
-        
-    }
-    
-    func reloadHomepage() {
-        
-    }
-}
-
 extension BrowserViewController: WhatsNewViewDelegate {
     func whatsNewViewDidShow(_ viewController: WhatsNewViewController) {
         whatsNewDataProvider.markPreviousVersionsAsSeen()
