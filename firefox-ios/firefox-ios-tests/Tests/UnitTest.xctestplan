@@ -86,13 +86,6 @@
   },
   "testTargets" : [
     {
-      "target" : {
-        "containerPath" : "container:Client.xcodeproj",
-        "identifier" : "2FA436041ABB83B4008031D1",
-        "name" : "AccountTests"
-      }
-    },
-    {
       "skippedTests" : [
         "ETPCoverSheetTests",
         "GleanPlumbMessageManagerTests\/testManagerOnMessagePressed_withMalformedURL()",
