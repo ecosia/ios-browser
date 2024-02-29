@@ -312,7 +312,6 @@
 		2C6189A92B7A8A22006B70D7 /* Analytics+Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C61892F2B7A8A22006B70D7 /* Analytics+Configuration.swift */; };
 		2C6189AA2B7A8A22006B70D7 /* Analytics.Values.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6189302B7A8A22006B70D7 /* Analytics.Values.swift */; };
 		2C6189CF2B7A8D09006B70D7 /* AppInfo+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6189092B7A8A22006B70D7 /* AppInfo+Ecosia.swift */; };
-		2C6189D02B7A8D14006B70D7 /* AppInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = E65075641E37F7AB006961AC /* AppInfo.swift */; };
 		2C6189D12B7A8D3E006B70D7 /* EcosiaThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6188C32B7A8A22006B70D7 /* EcosiaThemeManager.swift */; };
 		2C6189D22B7A8D69006B70D7 /* EcosiaThemeColourPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6188C42B7A8A22006B70D7 /* EcosiaThemeColourPalette.swift */; };
 		2C6189DD2B7B7776006B70D7 /* AppInfo+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6189092B7A8A22006B70D7 /* AppInfo+Ecosia.swift */; };
@@ -13817,7 +13816,6 @@
 				21B548952B1E5F1400DC1DF8 /* InactiveTabsManager.swift in Sources */,
 				C8F457A81F1FD75A000CB895 /* BrowserViewController+WebViewDelegates.swift in Sources */,
 				964FA97728A2A55C0024BB3B /* ContextualHintPrefsKeysProvider.swift in Sources */,
-				2C6189D02B7A8D14006B70D7 /* AppInfo.swift in Sources */,
 				8A1E3BDF28CBA81E003388C4 /* SponsoredContentFilterUtility.swift in Sources */,
 				8CBDE8E32AB09804001985BF /* ProductAnalyzeResponse.swift in Sources */,
 				96EB6C4327DC205D00A9D159 /* SearchGroupedItemsViewModel.swift in Sources */,
