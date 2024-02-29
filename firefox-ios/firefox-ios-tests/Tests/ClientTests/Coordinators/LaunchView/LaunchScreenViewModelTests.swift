@@ -8,7 +8,8 @@ import XCTest
 @testable import Client
 
 final class LaunchScreenViewModelTests: XCTestCase {
-    private var messageManager: MockGleanPlumbMessageManagerProtocol!
+    // Ecosia: Remove MockGleanPlumbMessageManagerProtocol ref
+    // private var messageManager: MockGleanPlumbMessageManagerProtocol!
     private var profile: MockProfile!
     private var delegate: MockLaunchFinishedLoadingDelegate!
 
@@ -18,7 +19,8 @@ final class LaunchScreenViewModelTests: XCTestCase {
         profile = MockProfile()
         delegate = MockLaunchFinishedLoadingDelegate()
         LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: profile)
-        messageManager = MockGleanPlumbMessageManagerProtocol()
+        // Ecosia: Remove MockGleanPlumbMessageManagerProtocol ref
+        // messageManager = MockGleanPlumbMessageManagerProtocol()
 
         UserDefaults.standard.set(true, forKey: PrefsKeys.NimbusFeatureTestsOverride)
     }
@@ -27,7 +29,8 @@ final class LaunchScreenViewModelTests: XCTestCase {
         super.tearDown()
         AppContainer.shared.reset()
         profile = nil
-        messageManager = nil
+        // Ecosia: Remove MockGleanPlumbMessageManagerProtocol ref
+        // messageManager = nil
         delegate = nil
 
         UserDefaults.standard.set(false, forKey: PrefsKeys.NimbusFeatureTestsOverride)
@@ -73,8 +76,9 @@ final class LaunchScreenViewModelTests: XCTestCase {
     func testLaunchType_survey() async {
         profile.prefs.setString("112.0", forKey: PrefsKeys.AppVersion.Latest)
         profile.prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
-        let message = createMessage(isExpired: false)
-        messageManager.message = message
+        // Ecosia: Remove MockGleanPlumbMessageManagerProtocol ref
+        // let message = createMessage(isExpired: false)
+        // messageManager.message = message
 
         let subject = createSubject()
         subject.delegate = delegate
@@ -91,8 +95,9 @@ final class LaunchScreenViewModelTests: XCTestCase {
     func testLaunchType_nilBrowserIsStarted() async {
         profile.prefs.setString("112.0", forKey: PrefsKeys.AppVersion.Latest)
         profile.prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
-        let message = createMessage(isExpired: true)
-        messageManager.message = message
+        // Ecosia: Remove MockGleanPlumbMessageManagerProtocol ref
+        // let message = createMessage(isExpired: true)
+        // messageManager.message = message
 
         let subject = createSubject()
         subject.delegate = delegate
@@ -109,12 +114,13 @@ final class LaunchScreenViewModelTests: XCTestCase {
         let onboardingModel = createOnboardingViewModel()
 
         let subject = LaunchScreenViewModel(profile: profile,
-                                            messageManager: messageManager,
+                                            // Ecosia: Remove MockGleanPlumbMessageManagerProtocol ref
+                                            // messageManager: messageManager,
                                             onboardingModel: onboardingModel)
         trackForMemoryLeaks(subject, file: file, line: line)
         return subject
     }
-
+    /* Ecosia: Remove MockGleanPlumbMessageManagerProtocol ref
     private func createMessage(
         for surface: MessageSurfaceId = .survey,
         isExpired: Bool,
@@ -132,6 +138,7 @@ final class LaunchScreenViewModelTests: XCTestCase {
                                  style: MockStyleDataProtocol(),
                                  metadata: metadata)
     }
+     */
 
     func createOnboardingViewModel() -> OnboardingViewModel {
         let cards: [OnboardingCardInfoModel] = [

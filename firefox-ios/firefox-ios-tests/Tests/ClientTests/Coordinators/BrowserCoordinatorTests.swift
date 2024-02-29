@@ -94,10 +94,19 @@ final class BrowserCoordinatorTests: XCTestCase {
                              statusBarScrollDelegate: scrollDelegate,
                              overlayManager: overlayModeManager)
 
+        /* Ecosia: Update HomepageViewController's init
         let secondHomepage = HomepageViewController(profile: profile,
                                                     toastContainer: UIView(),
                                                     tabManager: tabManager,
                                                     overlayManager: overlayModeManager)
+         */
+        let secondHomepage = HomepageViewController(profile: profile,
+                                                               toastContainer: UIView(),
+                                                               tabManager: tabManager,
+                                                    overlayManager: overlayModeManager,
+                                                    referrals: .init(),
+                                                    delegate: nil)
+
         XCTAssertFalse(subject.browserViewController.contentContainer.canAdd(content: secondHomepage))
         XCTAssertNotNil(subject.homepageViewController)
         XCTAssertNil(subject.webviewController)

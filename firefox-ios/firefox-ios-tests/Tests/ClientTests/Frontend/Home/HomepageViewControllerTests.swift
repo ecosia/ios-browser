@@ -29,10 +29,18 @@ class HomepageViewControllerTests: XCTestCase {
         let overlayManager = MockOverlayModeManager()
         overlayManager.setURLBar(urlBarView: urlBar)
 
+        /* Ecosia: update HomepageViewController's init
         let firefoxHomeViewController = HomepageViewController(profile: profile,
                                                                toastContainer: UIView(),
                                                                tabManager: tabManager,
                                                                overlayManager: overlayManager)
+         */
+        let firefoxHomeViewController = HomepageViewController(profile: profile,
+                                                               toastContainer: UIView(),
+                                                               tabManager: tabManager,
+                                                               overlayManager: overlayManager, 
+                                                               referrals: .init(),
+                                                               delegate: nil)
 
         trackForMemoryLeaks(firefoxHomeViewController)
     }

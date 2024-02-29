@@ -99,9 +99,13 @@ class MockTabToolbar: TabToolbarProtocol {
 
     var _bookmarksButton = MockToolbarButton()
     var bookmarksButton: ToolbarButton { return _bookmarksButton }
-
+    /* Ecosia: Change `addNewTabButton` to configurable CircleButton
     var _addNewTabButton = MockToolbarButton()
     var addNewTabButton: ToolbarButton { return _addNewTabButton }
+     */
+    
+    var _circleButton: Client.CircleButton = CircleButton()
+    var circleButton: Client.CircleButton { return _circleButton }
 
     var _homeButton = MockToolbarButton()
     var homeButton: ToolbarButton { return _homeButton }

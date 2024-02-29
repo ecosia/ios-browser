@@ -31,9 +31,10 @@ class EcosiaHomeViewModelTests: XCTestCase {
     // MARK: Number of sections
 
     func testNumberOfSection_withoutUpdatingData_has3Sections() {
+        // Ecosia: Update Viewmodel
         let viewModel = HomepageViewModel(profile: profile,
                                           isPrivate: false, 
-                                          tabManager: <#TabManager#>,
+                                          tabManager: MockTabManager(),
                                           referrals: .init(),
                                           theme: EcosiaLightTheme())
         // Ecosia: Update shown sections

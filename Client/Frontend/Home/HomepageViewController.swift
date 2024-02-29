@@ -82,7 +82,7 @@ class HomepageViewController:
          // Ecosia: Add Referrals
          referrals: Referrals,
          // Ecosia: Add HomePageViewControllerDelegate
-         delegate: HomepageViewControllerDelegate
+         delegate: HomepageViewControllerDelegate?
     ) {
         self.overlayManager = overlayManager
         self.tabManager = tabManager
