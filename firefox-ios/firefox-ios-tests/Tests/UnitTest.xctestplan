@@ -126,27 +126,6 @@
     },
     {
       "target" : {
-        "containerPath" : "container:Client.xcodeproj",
-        "identifier" : "E69DB07C1E97DEA9008A67E6",
-        "name" : "SyncTelemetryTests"
-      }
-    },
-    {
-      "skippedTests" : [
-        "MetaGlobalTests\/testHappyOptimisticStateMachine()",
-        "MetaGlobalTests\/testMetaGlobalAndCryptoKeysFresh()",
-        "MetaGlobalTests\/testMetaGlobalModified()",
-        "MetaGlobalTests\/testUpdatedCryptoKeys()",
-        "StateTests\/testPickling()"
-      ],
-      "target" : {
-        "containerPath" : "container:Client.xcodeproj",
-        "identifier" : "282731671ABC9BE700AA1954",
-        "name" : "SyncTests"
-      }
-    },
-    {
-      "target" : {
         "containerPath" : "container:BrowserKit",
         "identifier" : "CommonTests",
         "name" : "CommonTests"
