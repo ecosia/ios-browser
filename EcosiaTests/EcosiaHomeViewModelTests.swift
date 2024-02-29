@@ -30,7 +30,7 @@ class EcosiaHomeViewModelTests: XCTestCase {
 
     // MARK: Number of sections
 
-    func testNumberOfSection_withoutUpdatingData_has3Sections() {
+    func testNumberOfSection_withoutUpdatingData_has6Sections() {
         // Ecosia: Update Viewmodel
         let viewModel = HomepageViewModel(profile: profile,
                                           isPrivate: false, 
