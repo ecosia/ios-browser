@@ -4,13 +4,13 @@ description: 'This action contains all the usual steps needed to perform the uni
 inputs:
   needs-shared-tests:
     description: 'Flag to determine whether the action needs to perform the Shared  module tests'
-    required: true
+    required: false
   needs-storage-tests:
     description: 'Flag to determine whether the action needs to perform the Storage module tests'
-    required: true
+    required: falase
   needs-client-tests:
     description: 'Flag to determine whether the action needs to perform the Client module tests'
-    required: true
+    required: false
   github-token:
     description: 'The Github Token'
     required: true
@@ -21,8 +21,9 @@ runs:
     - name: Run tests based on file changes
       shell: bash
       run: |
-        bundles_under_testing=$(echo "$(${{ inputs.needs-shared-tests }} && echo "SharedTests,")$(${{ inputs.needs-storage-tests }} && echo "StorageTests,")$(${{ inputs.needs-client-tests }} && echo "ClientTests,")" | sed 's/,$//')
-        bundle exec fastlane run run_tests only_testing:"$bundles_under_testing"
+        # bundles_under_testing=$(echo "$(${{ inputs.needs-shared-tests }} && echo "SharedTests,")$(${{ inputs.needs-storage-tests }} && echo "StorageTests,")$(${{ inputs.needs-client-tests }} && echo "ClientTests,")" | sed 's/,$//')
+        # bundle exec fastlane run run_tests only_testing:"$bundles_under_testing"
+        bundle exec fastlane run run_tests testplan:"UnitTest"
 
     - name: Publish Test Report
       uses: mikepenz/action-junit-report@v3.7.6
