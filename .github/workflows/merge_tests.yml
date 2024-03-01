@@ -1,9 +1,6 @@
 name: Merge Unit Tests
 
-on:
-  push:
-    branches: [ MOB-2012_firefox_120_upgrade ]
-
+on: push
 
 jobs:
   execute_merge_tests:
