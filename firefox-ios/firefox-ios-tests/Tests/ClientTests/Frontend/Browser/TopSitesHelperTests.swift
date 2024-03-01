@@ -78,7 +78,9 @@ class TopSitesHelperTests: XCTestCase {
                 XCTFail("Has no sites")
                 return
             }
-            XCTAssertEqual(sites.count, 7, "Contains 5 default sites and two pinned sites")
+            // Ecosia: update number of items
+            // XCTAssertEqual(sites.count, 7, "Contains 5 default sites and two pinned sites")
+            XCTAssertEqual(sites.count, 5, "Contains 3 default sites and two pinned sites")
             expectation.fulfill()
         }
 

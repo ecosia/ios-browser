@@ -16,10 +16,14 @@ class TabToolbarHelperTests: XCTestCase {
     let backButtonImage = UIImage.templateImageNamed(StandardImageIdentifiers.Large.back)?.imageFlippedForRightToLeftLayoutDirection()
     let forwardButtonImage = UIImage.templateImageNamed(StandardImageIdentifiers.Large.forward)?.imageFlippedForRightToLeftLayoutDirection()
     let menuButtonImage = UIImage.templateImageNamed(StandardImageIdentifiers.Large.appMenu)
-    let searchButtonImage = UIImage.templateImageNamed("search")
+    // Ecosia: update search image
+    // let searchButtonImage = UIImage.templateImageNamed("search")
+    let searchButtonImage = UIImage.templateImageNamed("searchUrl")
     let imageNewTab = UIImage.templateImageNamed(StandardImageIdentifiers.Large.plus)
-    let imageHome = UIImage.templateImageNamed(StandardImageIdentifiers.Large.home)
-
+    // Ecosia: update home image
+    // let imageHome = UIImage.templateImageNamed(StandardImageIdentifiers.Large.home)
+    let imageHome = UIImage.templateImageNamed("menu-Home")
+    
     override func setUp() {
         super.setUp()
         DependencyHelperMock().bootstrapDependencies()

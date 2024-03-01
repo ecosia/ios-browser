@@ -43,7 +43,7 @@ final class LaunchScreenViewModelTests: XCTestCase {
         XCTAssertEqual(delegate.launchBrowserCalled, 0)
         XCTAssertEqual(delegate.launchWithTypeCalled, 0)
     }
-
+    /* Ecosia: Versioning is testes in a dedicated Ecosia test
     func testLaunchType_intro() async {
         let subject = createSubject()
         subject.delegate = delegate
@@ -72,7 +72,9 @@ final class LaunchScreenViewModelTests: XCTestCase {
         XCTAssertEqual(delegate.launchBrowserCalled, 0)
         XCTAssertEqual(delegate.launchWithTypeCalled, 1)
     }
+     */
 
+    /* Ecosia: Comment test with no mean to Launch survey
     func testLaunchType_survey() async {
         profile.prefs.setString("112.0", forKey: PrefsKeys.AppVersion.Latest)
         profile.prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
@@ -91,7 +93,9 @@ final class LaunchScreenViewModelTests: XCTestCase {
         XCTAssertEqual(delegate.launchBrowserCalled, 0)
         XCTAssertEqual(delegate.launchWithTypeCalled, 1)
     }
+     */
 
+    /* Ecosia: Versioning is testes in a dedicated Ecosia test
     func testLaunchType_nilBrowserIsStarted() async {
         profile.prefs.setString("112.0", forKey: PrefsKeys.AppVersion.Latest)
         profile.prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
@@ -107,6 +111,7 @@ final class LaunchScreenViewModelTests: XCTestCase {
         XCTAssertEqual(delegate.launchWithTypeCalled, 0)
         XCTAssertNil(delegate.savedLaunchType)
     }
+     */
 
     // MARK: - Helpers
     private func createSubject(file: StaticString = #file,
