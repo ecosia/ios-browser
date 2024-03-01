@@ -50,7 +50,7 @@ runs:
 
     - name: Run bootstrap script
       shell: bash
-      run: ./boostrap.sh
+      run: ./bootstrap.sh
 
     # - name: Restore Content Blocker Cache
     #   id: restore-content-blocker-cache
