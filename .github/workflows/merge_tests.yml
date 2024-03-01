@@ -6,6 +6,7 @@ on:
       - 'Client/**'
       - 'Shared/**'
       - 'Storage/**'
+      - 'BrowserKit/**'
     branches: [ main ]
 
 jobs:
