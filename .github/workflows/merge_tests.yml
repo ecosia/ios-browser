@@ -1,13 +1,13 @@
 name: Merge Unit Tests
 
 on:
-  push:
+  pull_request:
     paths:
       - 'Client/**'
       - 'Shared/**'
       - 'Storage/**'
       - 'BrowserKit/**'
-    branches: [ main, MOB-2012_firefox_120_upgrade ]
+    branches: [ main ]
 
 jobs:
   execute_merge_tests:
