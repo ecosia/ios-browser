@@ -130,3 +130,4 @@ vendor/bundle
 Staging.xcconfig
 Production.xcconfig
 .github/workflows/firefox-*.yml
+SourcePackages
