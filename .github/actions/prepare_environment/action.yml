@@ -88,11 +88,3 @@ runs:
     # - name: Create empty Staging xcconfig
     #   shell: bash
     #   run: touch Client/Configuration/Staging.xcconfig
-
-    - name: Update Xcodebuild settings
-      shell: bash
-      run: |
-        defaults write com.apple.dt.xcodebuild IgnoreFileSystemDeviceInodeChanges -bool YES
-        defaults write com.apple.dt.xcodebuild PBXNumberOfParallelBuildSubtasks 8
-        defaults write com.apple.dt.xcodebuild IDEBuildOperationMaxNumberOfConcurrentCompileTasks 8
-        defaults write com.apple.dt.xcodebuild BuildSystemScheduleInherentlyParallelCommandsExclusively -bool YES
