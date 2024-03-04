@@ -8,8 +8,6 @@ jobs:
   execute_merge_tests:
     runs-on: macos-13
     name: Execute Merge Tests
-    env:
-      DEVELOPER_DIR: /Applications/Xcode_14.3.1.app/Contents/Developer
 
     steps:
       - name: Checkout
