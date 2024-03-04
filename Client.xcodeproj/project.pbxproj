@@ -311,7 +311,6 @@
 		2C6189A82B7A8A22006B70D7 /* Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C61892E2B7A8A22006B70D7 /* Analytics.swift */; };
 		2C6189A92B7A8A22006B70D7 /* Analytics+Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C61892F2B7A8A22006B70D7 /* Analytics+Configuration.swift */; };
 		2C6189AA2B7A8A22006B70D7 /* Analytics.Values.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6189302B7A8A22006B70D7 /* Analytics.Values.swift */; };
-		2C6189CF2B7A8D09006B70D7 /* AppInfo+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6189092B7A8A22006B70D7 /* AppInfo+Ecosia.swift */; };
 		2C6189D12B7A8D3E006B70D7 /* EcosiaThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6188C32B7A8A22006B70D7 /* EcosiaThemeManager.swift */; };
 		2C6189D22B7A8D69006B70D7 /* EcosiaThemeColourPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6188C42B7A8A22006B70D7 /* EcosiaThemeColourPalette.swift */; };
 		2C6189DD2B7B7776006B70D7 /* AppInfo+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6189092B7A8A22006B70D7 /* AppInfo+Ecosia.swift */; };
@@ -13228,7 +13227,6 @@
 				E65075BF1E37F7AB006961AC /* UserAgent.swift in Sources */,
 				E65075C01E37F7AB006961AC /* WeakList.swift in Sources */,
 				E65075AE1E37F7AB006961AC /* UIImageExtensions.swift in Sources */,
-				2C6189CF2B7A8D09006B70D7 /* AppInfo+Ecosia.swift in Sources */,
 				E65075A21E37F7AB006961AC /* HexExtensions.swift in Sources */,
 				288A2DB61AB8B38D0023ABC3 /* Result.swift in Sources */,
 				EB912B9B22722B6300DF585A /* ReadWriteLock.swift in Sources */,
