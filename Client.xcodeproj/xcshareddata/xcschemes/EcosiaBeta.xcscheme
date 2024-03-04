@@ -23,7 +23,7 @@
       </BuildActionEntries>
    </BuildAction>
    <TestAction
-      buildConfiguration = "BetaDebug"
+      buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES"
@@ -89,16 +89,6 @@
                BlueprintIdentifier = "2FCAE2231ABB51F800877008"
                BuildableName = "StorageTests.xctest"
                BlueprintName = "StorageTests"
-               ReferencedContainer = "container:Client.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "2CE2945A2B7FC51A006C22B2"
-               BuildableName = "EcosiaTests.xctest"
-               BlueprintName = "EcosiaTests"
                ReferencedContainer = "container:Client.xcodeproj">
             </BuildableReference>
          </TestableReference>
