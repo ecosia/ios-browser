@@ -365,6 +365,8 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
         /* Ecosia: remove Glean dependency
         GleanMetrics.Search.counts["\(engine.engineID ?? "custom").\(SearchesMeasurement.SearchLocation.quickSearch.rawValue)"].add()
         */
+        // Ecosia: Add Search Engine Analytics
+        Analytics.shared.searchEngineShortcutClick(engine.engineID ?? "other")
         searchDelegate?.searchViewController(self, didSelectURL: url, searchTerm: "")
     }
 
