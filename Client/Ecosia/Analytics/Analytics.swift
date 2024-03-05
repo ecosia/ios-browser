@@ -336,6 +336,13 @@ final class Analytics {
         track(event)
     }
     
+    func searchEngineShortcutClick(_ engineID: String) {
+        track(Structured(category: Category.browser.rawValue,
+                         action: Action.search.rawValue)
+            .label(Label.Browser.searchEngineShortcut.rawValue)
+            .property(engineID))
+    }
+    
     func sendAnonymousUsageDataSetting(enabled: Bool) {
         // This is the only place where the tracker should be directly
         // used since we want to send this just as the user opts out
