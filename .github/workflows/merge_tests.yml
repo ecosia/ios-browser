@@ -22,8 +22,8 @@ jobs:
       - name: Run tests based on file changes
         shell: bash
         run: |
-          bundle exec fastlane run run_tests build_for_testing:true
-          bundle exec fastlane run run_tests test_without_building:true testplan:"UnitTest"
+          bundle exec fastlane run run_tests build_for_testing:true run_rosetta_simulator:true
+          bundle exec fastlane run run_tests test_without_building:true run_rosetta_simulator:true testplan:"UnitTest"
 
       - name: Publish Test Report
         uses: mikepenz/action-junit-report@v3.7.6
