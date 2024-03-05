@@ -21,13 +21,11 @@ runs:
 
     - uses: actions/setup-python@v4
       with:
-        python-version: '3.11'
         cache: 'pip'
 
     - name: Install gems
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 2.7
         bundler-cache: true
 
     - name: Install npm
