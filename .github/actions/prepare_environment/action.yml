@@ -52,6 +52,10 @@ runs:
         path: SourcePackages/
         key: ${{ runner.os }}-spm-cache-${{ hashFiles('Client.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}  
 
+    - name: extract Staging XCConfig
+      shell: bash
+      run: echo "$STAGING_XCCONFIG" | base64 --decode > Client/Configuration/Staging.xcconfig
+
     - name: Run bootstrap script
       shell: bash
       run: ./bootstrap.sh
