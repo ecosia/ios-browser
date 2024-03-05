@@ -56,7 +56,8 @@ extension Analytics {
             settings,
             newTab = "new_tab",
             blockImages = "block_images",
-            searchbar = "searchbar"
+            searchbar = "searchbar",
+            searchEngineShortcut = "shortcut"
         }
         
         enum Bookmarks: String {
@@ -84,7 +85,8 @@ extension Analytics {
         display,
         enable,
         disable,
-        dismiss
+        dismiss,
+        search
         
         enum Activity: String {
             case
