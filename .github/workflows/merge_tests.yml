@@ -30,13 +30,3 @@ jobs:
         with:
           report_paths: '**/test_output/xml/report.junit'
           github_token: ${{ inputs.github-token }}
-
-      # - name: Evaluate Tests to execute
-      #   id: evaluate-tests-to-execute
-      #   uses: ./.github/actions/evaluate_tests_to_execute
-
-      # - name: Perform Tests and Publish Test reports
-      #   id: perform-tests
-      #   uses: ./.github/actions/perform_tests
-      #   with:
-      #     github-token: ${{ secrets.GITHUB_TOKEN }}  
