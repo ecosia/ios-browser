@@ -54,7 +54,7 @@ runs:
         path: SourcePackages/
         key: ${{ runner.os }}-spm-cache-${{ hashFiles('Client.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}  
 
-    - name: extract Staging XCConfig
+    - name: Extract Staging XCConfig
       shell: bash
       run: echo "$STAGING_XCCONFIG" | base64 --decode > Client/Configuration/Staging.xcconfig
 
