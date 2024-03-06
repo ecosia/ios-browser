@@ -19,7 +19,7 @@ jobs:
         with:
           core-token: ${{ secrets.IOS_CORE_TOKEN }}
 
-      - name: Run tests based on file changes
+      - name: Run tests
         shell: bash
         run: |
           bundle exec fastlane run run_tests build_for_testing:true
