@@ -11,7 +11,9 @@ runs:
   steps:
     - name: Select Xcode version
       shell: bash
-      run: sudo xcode-select -s /Applications/Xcode_15.2.app
+      run: |
+        sudo mv /Applications/Xcode_15.2.app /Applications/Xcode.app
+        sudo xcode-select -s /Applications/Xcode.app
 
     - name: Fix-up private Github URLs
       shell: bash
