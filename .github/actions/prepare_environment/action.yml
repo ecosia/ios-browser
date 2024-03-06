@@ -12,6 +12,9 @@ runs:
     - name: Select Xcode version
       shell: bash
       run: |
+        # Workaround to make the Xcode app to compile successfully
+        # Seen performing the new upgrade and managing to compile over arm64 machines
+        # Issue seen on GitHubActions only
         sudo mv /Applications/Xcode_15.2.app /Applications/Xcode.app
         sudo xcode-select -s /Applications/Xcode.app
 

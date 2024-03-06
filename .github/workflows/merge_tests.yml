@@ -22,6 +22,9 @@ jobs:
       - name: Run tests
         shell: bash
         run: |
+          # Workaround to make the DerivedData work properly and
+          # the simulator to speed up properly 
+          # Issue seen both local machines + CIs
           bundle exec fastlane run run_tests build_for_testing:true
           bundle exec fastlane run run_tests test_without_building:true prelaunch_simulator:true testplan:"UnitTest"
 
