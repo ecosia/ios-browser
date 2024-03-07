@@ -621,6 +621,12 @@ extension BrowserViewController: WKNavigationDelegate {
                 }
             }
         }
+        
+        // Ecosia: Allow MarketplaceKit requests for iOS 17.4+
+        if #available(iOS 17.4, *), url.scheme == "marketplace-kit" {
+            decisionHandler(.allow)
+            return
+        }
 
         decisionHandler(.cancel)
     }
