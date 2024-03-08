@@ -339,6 +339,7 @@
 		2C872A642B8CD7E000B318A0 /* EcosiaHomeViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C872A562B8CD65100B318A0 /* EcosiaHomeViewModelTests.swift */; };
 		2CE294472B7CDD56006C22B2 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 2CE294462B7CDD56006C22B2 /* Core */; };
 		2CE294492B7CDD78006C22B2 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 2CE294482B7CDD78006C22B2 /* Core */; };
+		2CE2E24D2B9B1FCB00973C16 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 2CE2E24C2B9B1FCB00973C16 /* Core */; };
 		2F13E79B1AC0C02700D75081 /* StringExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F13E79A1AC0C02700D75081 /* StringExtensionsTests.swift */; };
 		2F44FA1B1A9D426A00FD20CC /* TestHashExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F44FA1A1A9D426A00FD20CC /* TestHashExtensions.swift */; };
 		2F44FB2C1A9D5D8500FD20CC /* Library.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F84B22261A09127C00AAB793 /* Library.xcassets */; };
@@ -7698,6 +7699,7 @@
 				43A878FD27AB4A110071C372 /* RustMozillaAppServices.framework in Frameworks */,
 				8A88815C2B2103AD009635AE /* WebEngine in Frameworks */,
 				8A88815A2B20FFE0009635AE /* GCDWebServers in Frameworks */,
+				2CE2E24D2B9B1FCB00973C16 /* Core in Frameworks */,
 				5A9FF8492942454600DF9FBB /* Common in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -12224,6 +12226,7 @@
 				5A9FF8482942454600DF9FBB /* Common */,
 				8A8881592B20FFE0009635AE /* GCDWebServers */,
 				8A88815B2B2103AD009635AE /* WebEngine */,
+				2CE2E24C2B9B1FCB00973C16 /* Core */,
 			);
 			productName = Shared;
 			productReference = 288A2D861AB8B3260023ABC3 /* Shared.framework */;
@@ -20993,6 +20996,11 @@
 			productName = Core;
 		};
 		2CE294482B7CDD78006C22B2 /* Core */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2C61887D2B7A89E4006B70D7 /* XCRemoteSwiftPackageReference "ios-core" */;
+			productName = Core;
+		};
+		2CE2E24C2B9B1FCB00973C16 /* Core */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 2C61887D2B7A89E4006B70D7 /* XCRemoteSwiftPackageReference "ios-core" */;
 			productName = Core;

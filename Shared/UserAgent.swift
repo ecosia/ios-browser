@@ -5,11 +5,21 @@
 import Common
 import WebKit
 import UIKit
+// Ecosia: importing Core
+import Core
 
 open class UserAgent {
     public static let uaBitSafari = "Safari/605.1.15"
     public static let uaBitMobile = "Mobile/15E148"
     public static let uaBitFx = "FxiOS/\(AppInfo.appVersion)"
+    // Ecosia: Add Ecosia UserAgent info
+    public static let uaBitVersion = "Version/\(UIDevice.current.systemVersion)"
+    public static var uaBitEcosia: String {
+        let ecosiaAppVersion = AppInfo.applicationBundle.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
+        return "(Ecosia ios@\(ecosiaAppVersion).\(AppInfo.buildNumber))"
+    }
+    public static let ecosiaDesktopUA = "\(UserAgent.desktopUserAgent()) \(UserAgent.uaBitEcosia)"
+
     public static let product = "Mozilla/5.0"
     public static let platform = "AppleWebKit/605.1.15"
     public static let platformDetails = "(KHTML, like Gecko)"
@@ -44,7 +54,7 @@ open class UserAgent {
     public static var fxaUserAgent: String {
         // Ecosia: update UA prefix
         // return clientUserAgent(prefix: "Firefox-iOS-FxA")
-        return clientUserAgent(prefix: "Ecosia-iOS-FxA")
+        return clientUserAgent(prefix: "Ecosia-iOS-EcosiaA")
     }
 
     public static var defaultClientUserAgent: String {
@@ -62,7 +72,9 @@ open class UserAgent {
     }
 
     public static func mobileUserAgent() -> String {
-        return UserAgentBuilder.defaultMobileUserAgent().userAgent()
+        // Ecosia: Always returns the Ecosia's UA as default one
+        // return UserAgentBuilder.defaultMobileUserAgent().userAgent()
+        UserAgentBuilder.ecosiaMobileUserAgent().userAgent()
     }
 
     public static func oppositeUserAgent(domain: String) -> String {
@@ -75,8 +87,23 @@ open class UserAgent {
     }
 
     public static func getUserAgent(domain: String, platform: UserAgentPlatform) -> String {
+        /* Ecosia: review User Aget retrieval
         switch platform {
         case .Desktop:
+            return desktopUserAgent()
+        case .Mobile:
+            if let customUA = CustomUserAgentConstant.customUAFor[domain] {
+                return customUA
+            } else {
+                return mobileUserAgent()
+            }
+        }
+         */
+        switch platform {
+        case .Desktop:
+            if let customUA = CustomUserAgentConstant.customDesktopUAFor[domain] {
+                return customUA
+            }
             return desktopUserAgent()
         case .Mobile:
             if let customUA = CustomUserAgentConstant.customUAFor[domain] {
@@ -107,13 +134,15 @@ public struct CustomUserAgentConstant {
     private static let defaultMobileUA = UserAgentBuilder.defaultMobileUserAgent().userAgent()
     private static let customDesktopUA = UserAgentBuilder.defaultDesktopUserAgent().clone(extensions: "Version/\(AppInfo.appVersion) \(UserAgent.uaBitSafari)")
     private static let mobileAdsUA = UserAgentBuilder.defaultMobileUserAgent().clone(extensions: "\(UserAgent.uaBitMobile) \(UserAgent.uaBitSafari)")
-
+    
     // when clicking the videos on nba.com they make requests to
     // demdex.net ,doubleclick.net, amazon-adsystem.com, rfihub.com as well
     // and if the User Agent is different in any of those, the video on nba.com won't work either.
     // Rokuchannel didn't have these restrictions
     public static let customUAFor = [
-        "paypal.com": defaultMobileUA,
+        // Ecosia: Update paypal UA
+        // "paypal.com": defaultMobileUA,
+        "paypal.com": UserAgentBuilder.defaultPayPalMobileUserAgent().userAgent(),
         "yahoo.com": defaultMobileUA,
         "demdex.net": mobileAdsUA,
         "doubleclick.net": mobileAdsUA,
@@ -122,6 +151,12 @@ public struct CustomUserAgentConstant {
         "nba.com": mobileAdsUA,
         "roku.com": mobileAdsUA,
         "disneyplus.com": customDesktopUA]
+    
+    // Ecosia: Add custom desktop UA
+    public static let customDesktopUAFor = [
+        URLProvider.production.domain: UserAgent.ecosiaDesktopUA,
+        URLProvider.staging.domain: UserAgent.ecosiaDesktopUA
+    ]
 }
 
 public struct UserAgentBuilder {
@@ -174,6 +209,27 @@ public struct UserAgentBuilder {
             platformDetails: UserAgent.platformDetails,
             // Ecosia: Update extension
             // extensions: "FxiOS/\(AppInfo.appVersion) \(UserAgent.uaBitSafari)")
-            extensions: "Ecosia/\(AppInfo.appVersion) \(UserAgent.uaBitSafari)")
+            extensions: "\(UserAgent.uaBitVersion) \(UserAgent.uaBitMobile) \(UserAgent.uaBitSafari)")
+    }
+}
+
+// Ecosia: Ecosia Mobile UA + Paypal fix
+extension UserAgentBuilder {
+    
+    public static func ecosiaMobileUserAgent() -> UserAgentBuilder {
+        UserAgentBuilder(product: UserAgent.product,
+                         systemInfo: "(\(UIDevice.current.model); CPU iPhone OS \(UIDevice.current.systemVersion.replacingOccurrences(of: ".", with: "_")) like Mac OS X)",
+                         platform: UserAgent.platform,
+                         platformDetails: UserAgent.platformDetails,
+                         extensions: "\(UserAgent.uaBitVersion) \(UserAgent.uaBitMobile) \(UserAgent.uaBitSafari) \(UserAgent.uaBitEcosia)")
+    }
+    
+    public static func defaultPayPalMobileUserAgent() -> UserAgentBuilder {
+        return UserAgentBuilder(
+            product: UserAgent.product,
+            systemInfo: "(\(UIDevice.current.model); CPU iPhone OS \(UIDevice.current.systemVersion.replacingOccurrences(of: ".", with: "_")) like Mac OS X)",
+            platform: UserAgent.platform,
+            platformDetails: UserAgent.platformDetails,
+            extensions: "FxiOS/\(AppInfo.appVersion)  \(UserAgent.uaBitMobile) \(UserAgent.uaBitSafari)")
     }
 }
