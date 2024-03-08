@@ -47,7 +47,7 @@ final class LaunchCoordinatorTests: XCTestCase {
         let presentedViewController = try XCTUnwrap(mockRouter.presentedViewController)
         // Ecosia: Update view controller being presented
         // XCTAssertNotNil(presentedViewController as? IntroViewController)
-        XCTAssertNotNil(presentedViewController as? Welcome)
+        XCTAssertNotNil(presentedViewController as? WelcomeNavigation)
     }
 
     func testStart_introIsIphone_setRootView() throws {
@@ -60,7 +60,7 @@ final class LaunchCoordinatorTests: XCTestCase {
         let pushedVC = try XCTUnwrap(mockRouter.presentedViewController)
         // Ecosia: Update view controller being presented
         // XCTAssertNotNil(pushedVC as? IntroViewController)
-        XCTAssertNotNil(pushedVC as? Welcome)
+        XCTAssertNotNil(pushedVC as? WelcomeNavigation)
     }
 
     // MARK: - Update

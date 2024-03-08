@@ -57,7 +57,8 @@ class LaunchCoordinator: BaseCoordinator,
             self.parentCoordinator?.didFinishLaunch(from: self)
         }
          */
-        let introViewController = Welcome(delegate: self)
+        let introViewController = WelcomeNavigation(rootViewController: Welcome(delegate: self))
+        Analytics.shared.install()
         if isFullScreen {
             introViewController.modalPresentationStyle = .fullScreen
             router.present(introViewController, animated: false)
