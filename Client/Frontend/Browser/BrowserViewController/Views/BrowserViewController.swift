@@ -1941,7 +1941,14 @@ class BrowserViewController: UIViewController,
     func applyTheme() {
         let currentTheme = themeManager.currentTheme
         statusBarOverlay.hasTopTabs = shouldShowTopTabsForTraitCollection(traitCollection)
-        keyboardBackdrop?.backgroundColor = currentTheme.colors.layer1
+        // Ecosia: update background
+        // keyboardBackdrop?.backgroundColor = currentTheme.colors.layer1
+        
+        // Ecosia: background additions
+        keyboardBackdrop?.backgroundColor = .legacyTheme.browser.background
+        navigationController?.view.backgroundColor = .legacyTheme.browser.background
+        header.backgroundColor = statusBarOverlay.backgroundColor
+        
         setNeedsStatusBarAppearanceUpdate()
 
         // Update the `background-color` of any blank webviews.

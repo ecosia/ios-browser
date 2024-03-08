@@ -966,9 +966,12 @@ extension URLBarView: ThemeApplicable {
 
         cancelTintColor = theme.colors.textPrimary
         showQRButtonTintColor = theme.colors.textPrimary
-        backgroundColor = theme.colors.layer1
-        line.backgroundColor = theme.colors.borderPrimary
-
+        // Ecosia: update background
+        // backgroundColor = theme.colors.layer1
+        //line.backgroundColor = theme.colors.borderPrimary
+        backgroundColor = .legacyTheme.ecosia.primaryBackground
+        line.backgroundColor = .legacyTheme.ecosia.barSeparator
+        
         locationBorderColor = theme.colors.borderPrimary
         // Ecosia: Take into account overlay mode for `locationView` background
         // locationView.backgroundColor = theme.colors.layer3
