@@ -1043,8 +1043,7 @@ extension URLBarView {
             if isPrivate {
                 // Ecosia: Make sure private tab image has alwways the appropriate color
                 // searchIconImageView.image = .init(named: ImageIdentifiers.newPrivateTab)
-                searchIconImageView.image = nil
-                searchIconImageView.image = .init(named: ImageIdentifiers.newPrivateTab)
+                searchIconImageView.image = .templateImageNamed(ImageIdentifiers.newPrivateTab)?.tinted(withColor: locationActiveBorderColor)
             } else {
                 searchIconImageView.image = .init(themed: "searchLogo")
             }
