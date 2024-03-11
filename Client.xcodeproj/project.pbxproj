@@ -193,6 +193,7 @@
 		28E08C9A1AF44F00009BA2FA /* BrowserSchema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 282915E51AF1A7920006EEB5 /* BrowserSchema.swift */; };
 		28E91E751B443AD5009DF274 /* SyncConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28E91E741B443AD5009DF274 /* SyncConstants.swift */; };
 		28ECD9BF1BA1F19900D829DA /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = E6231C001B90A44F005ABB0D /* libz.tbd */; };
+		2C1F23BD2B9F405E00186F55 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 2C1F23BC2B9F405E00186F55 /* Core */; };
 		2C49854E206173C800893DAE /* photon-colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C49854D206173C800893DAE /* photon-colors.swift */; };
 		2C6189312B7A8A22006B70D7 /* EcosiaLaunchScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6188802B7A8A21006B70D7 /* EcosiaLaunchScreenView.swift */; };
 		2C6189322B7A8A22006B70D7 /* EcosiaLaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2C6188812B7A8A21006B70D7 /* EcosiaLaunchScreen.xib */; };
@@ -7812,6 +7813,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				43F93C2827A8683E009833D9 /* RustMozillaAppServices.framework in Frameworks */,
+				2C1F23BD2B9F405E00186F55 /* Core in Frameworks */,
 				8A8BAE142B21110000D774EB /* GCDWebServers in Frameworks */,
 				E6231C081B90A71E005ABB0D /* libz.tbd in Frameworks */,
 			);
@@ -12474,6 +12476,7 @@
 			name = ClientTests;
 			packageProductDependencies = (
 				8A8BAE132B21110000D774EB /* GCDWebServers */,
+				2C1F23BC2B9F405E00186F55 /* Core */,
 			);
 			productName = ClientTests;
 			productReference = F84B21D31A090F8100AAB793 /* ClientTests.xctest */;
@@ -20984,6 +20987,11 @@
 		216A0D752A40E7AB008077BA /* Redux */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Redux;
+		};
+		2C1F23BC2B9F405E00186F55 /* Core */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2C61887D2B7A89E4006B70D7 /* XCRemoteSwiftPackageReference "ios-core" */;
+			productName = Core;
 		};
 		2C6189F02B7B7D5D006B70D7 /* SnowplowTracker */ = {
 			isa = XCSwiftPackageProductDependency;
