@@ -63,6 +63,14 @@ extension BrowserViewController: PageActionsShortcutsDelegate {
 
 extension BrowserViewController {
     
+    func updateURLBarFollowingPrivateModeUI() {
+        let isPrivate = tabManager.selectedTab?.isPrivate ?? false
+        urlBar.applyUIMode(isPrivate: isPrivate, theme: themeManager.currentTheme)
+    }
+}
+
+extension BrowserViewController {
+    
     func presentIntroViewController(_ alwaysShow: Bool = false) {
         if showLoadingScreen(for: .shared) {
             presentLoadingScreen()

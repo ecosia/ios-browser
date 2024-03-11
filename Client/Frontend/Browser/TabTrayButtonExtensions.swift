@@ -11,7 +11,9 @@ class PrivateModeButton: ToggleButton, PrivateModeUI {
         super.init(frame: frame)
         accessibilityLabel = .TabTrayToggleAccessibilityLabel
         accessibilityHint = .TabTrayToggleAccessibilityHint
-        let maskImage = UIImage(named: ImageIdentifiers.privateMaskSmall)?.withRenderingMode(.alwaysTemplate)
+        // Ecosia: Update private image
+        // let maskImage = UIImage(named: ImageIdentifiers.privateMaskSmall)?.withRenderingMode(.alwaysTemplate)
+        let maskImage = UIImage.templateImageNamed(ImageIdentifiers.newPrivateTab)
         setImage(maskImage, for: [])
         showsLargeContentViewer = true
         largeContentTitle = .TabTrayToggleAccessibilityLabel

@@ -1962,6 +1962,9 @@ class BrowserViewController: UIViewController,
 
         guard let contentScript = tabManager.selectedTab?.getContentScript(name: ReaderMode.name()) else { return }
         applyThemeForPreferences(profile.prefs, contentScript: contentScript)
+        
+        // Ecosia: Update URLBar following PrivateModeUI
+        updateURLBarFollowingPrivateModeUI()
     }
 
     var isPreferSwitchToOpenTabOverDuplicateFeatureEnabled: Bool {
@@ -2329,6 +2332,8 @@ extension BrowserViewController: TabManagerDelegate {
 
             if previous == nil || tab.isPrivate != previous?.isPrivate {
                 applyTheme()
+                // Ecosia: Update search engine icon
+                urlBar.updateSearchEngineImage()
 
                 let ui: [PrivateModeUI?] = [toolbar, topTabsViewController, urlBar]
                 ui.forEach { $0?.applyUIMode(isPrivate: tab.isPrivate, theme: themeManager.currentTheme) }

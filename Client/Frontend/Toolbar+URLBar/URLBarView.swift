@@ -266,6 +266,8 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
     }
 
     func searchEnginesDidUpdate() {
+        // Ecosia: Do not update if private mode enabled
+        guard isPrivate == false else { return }
         self.searchIconImageView.image = profile.searchEngines.defaultEngine?.image
         self.searchIconImageView.largeContentTitle = profile.searchEngines.defaultEngine?.shortName
         self.searchIconImageView.largeContentImage = nil
@@ -985,6 +987,8 @@ extension URLBarView: ThemeApplicable {
         searchIconImageView.tintColor = isPrivate ? UIColor.legacyTheme.ecosia.primaryText : UIColor.legacyTheme.ecosia.textfieldIconTint
         appMenuBadge.badge.tintBackground(color: theme.colors.layer1)
         warningMenuBadge.badge.tintBackground(color: theme.colors.layer1)
+        // Ecosia: Update UI Elements with helper
+        updateUIElementsWithTheme(theme)
     }
 }
 
@@ -999,7 +1003,26 @@ extension URLBarView: PrivateModeUI {
         if UIDevice.current.userInterfaceIdiom != .pad {
             privateModeBadge.show(isPrivate)
         }*/
+        
+        /* Ecosia: Update UI Elements with helper
+         let gradientStartColor = isPrivate ? theme.colors.borderAccentPrivate : theme.colors.borderAccent
+         let gradientMiddleColor = isPrivate ? nil : theme.colors.iconAccentPink
+         let gradientEndColor = isPrivate ? theme.colors.borderAccentPrivate : theme.colors.iconAccentYellow
+         locationActiveBorderColor = isPrivate ? theme.colors.layerAccentPrivateNonOpaque : theme.colors.layerAccentNonOpaque
+         progressBar.setGradientColors(startColor: gradientStartColor,
+                                       middleColor: gradientMiddleColor,
+                                       endColor: gradientEndColor)
+         locationTextField?.applyUIMode(isPrivate: isPrivate, theme: theme)
+         locationTextField?.applyTheme(theme: theme)
+         */
+        updateUIElementsWithTheme(theme)
+    }
+}
 
+// Ecosia: Apply Theme in private mode helper
+extension URLBarView {
+    
+    func updateUIElementsWithTheme(_ theme: Theme) {
         let gradientStartColor = isPrivate ? theme.colors.borderAccentPrivate : theme.colors.borderAccent
         let gradientMiddleColor = isPrivate ? nil : theme.colors.iconAccentPink
         let gradientEndColor = isPrivate ? theme.colors.borderAccentPrivate : theme.colors.iconAccentYellow
@@ -1009,7 +1032,6 @@ extension URLBarView: PrivateModeUI {
                                       endColor: gradientEndColor)
         locationTextField?.applyUIMode(isPrivate: isPrivate, theme: theme)
         locationTextField?.applyTheme(theme: theme)
-        applyTheme(theme: theme)
     }
 }
 
@@ -1019,6 +1041,9 @@ extension URLBarView {
     func updateSearchEngineImage() {
         if inOverlayMode {
             if isPrivate {
+                // Ecosia: Make sure private tab image has alwways the appropriate color
+                // searchIconImageView.image = .init(named: ImageIdentifiers.newPrivateTab)
+                searchIconImageView.image = nil
                 searchIconImageView.image = .init(named: ImageIdentifiers.newPrivateTab)
             } else {
                 searchIconImageView.image = .init(themed: "searchLogo")
