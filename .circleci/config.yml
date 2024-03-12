@@ -76,7 +76,7 @@ workflows:
           filters:
             branches:
               only:
-                - /^.*MOB-2309_implement_alternative_marketplace_eligibility.*/
+                - /^.*main.*/
           name: Deploy release version over Testflight if MARKETING_VERION file updated
           config-path: .circleci/deploy-release.yml
           mapping: |

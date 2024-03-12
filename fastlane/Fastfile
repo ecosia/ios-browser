@@ -134,10 +134,10 @@ platform :ios do
       groups: "Ecosia Team"
     )
 
-    # tag_and_push(
-    #   version_number: version_number,
-    #   build_number: udpated_build_number
-    # )
+    tag_and_push(
+      version_number: version_number,
+      build_number: udpated_build_number
+    )
 
   end
 
