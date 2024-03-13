@@ -674,7 +674,9 @@ class BrowserViewController: UIViewController,
 
     func addSubviews() {
         webViewContainerBackdrop = UIView()
-        webViewContainerBackdrop.backgroundColor = UIColor.Photon.Ink90
+        // Ecosia: Update background overlay for private tabs
+        // webViewContainerBackdrop.backgroundColor = UIColor.Photon.Ink90
+        webViewContainerBackdrop.backgroundColor = .legacyTheme.ecosia.primaryBackground
         webViewContainerBackdrop.alpha = 0
         view.addSubview(webViewContainerBackdrop)
         view.addSubview(contentStackView)
