@@ -52,7 +52,9 @@ extension LockButton: ThemeApplicable {
     func applyTheme(theme: Theme) {
         selectedTintColor = theme.colors.actionPrimary
         disabledTintColor = theme.colors.actionSecondary
-        unselectedTintColor = theme.colors.textPrimary
+        // Ecosia: set same tint as selected state
+        // unselectedTintColor = theme.colors.textPrimary
+        unselectedTintColor = theme.colors.actionPrimary
         tintColor = isEnabled ? unselectedTintColor : disabledTintColor
     }
 }

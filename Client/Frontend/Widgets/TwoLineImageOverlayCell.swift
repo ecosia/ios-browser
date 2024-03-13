@@ -94,7 +94,8 @@ class TwoLineImageOverlayCell: UITableViewCell,
 
         containerView.addSubview(leftImageView)
         containerView.addSubview(stackView)
-        containerView.addSubview(leftOverlayImageView)
+        // Ecosia: Remove overlay image
+        // containerView.addSubview(leftOverlayImageView)
 
         contentView.addSubview(containerView)
         bringSubviewToFront(containerView)
@@ -114,13 +115,14 @@ class TwoLineImageOverlayCell: UITableViewCell,
             leftImageView.trailingAnchor.constraint(equalTo: stackView.leadingAnchor,
                                                     constant: -16),
 
+            /* Ecosia: Remove overlay image
             leftOverlayImageView.trailingAnchor.constraint(equalTo: leftImageView.trailingAnchor,
                                                            constant: 8),
             leftOverlayImageView.bottomAnchor.constraint(equalTo: leftImageView.bottomAnchor,
                                                          constant: 8),
             leftOverlayImageView.heightAnchor.constraint(equalToConstant: 22),
             leftOverlayImageView.widthAnchor.constraint(equalToConstant: 22),
-
+             */
             stackView.topAnchor.constraint(equalTo: containerView.topAnchor,
                                            constant: 8),
             stackView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor,

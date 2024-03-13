@@ -112,8 +112,9 @@ class SearchViewController: SiteTableViewController,
         self.tabManager = tabManager
         self.searchFeature = featureConfig
         self.highlightManager = highlightManager
-        super.init(profile: profile)
-
+        // Ecosia: Update init adding `style`
+        // super.init(profile: profile)
+        super.init(profile: profile, style: .insetGrouped)
         tableView.sectionHeaderTopPadding = 0
     }
 
@@ -309,7 +310,9 @@ class SearchViewController: SiteTableViewController,
 
         // search settings icon
         let searchButton: UIButton = .build()
-        searchButton.setImage(UIImage(named: "quickSearch"), for: [])
+        // Ecosia: Update image reference for search button
+        // searchButton.setImage(UIImage(named: "quickSearch"), for: [])
+        searchButton.setImage(UIImage(named: "searches"), for: [])
         searchButton.imageView?.contentMode = .scaleAspectFit
         searchButton.layer.backgroundColor = SearchViewControllerUX.EngineButtonBackgroundColor
         searchButton.addTarget(self, action: #selector(didClickSearchButton), for: .touchUpInside)
@@ -462,12 +465,14 @@ class SearchViewController: SiteTableViewController,
                 $0 && content.range(of: $1, options: .caseInsensitive) != nil
             }
         }
+        /* Ecosia: hardcode config
         let config = searchFeature.value().awesomeBar
         // Searching within the content will get annoying, so only start searching
         // in content when there are at least one word with more than 3 letters in.
         let searchInContent = config.usePageContent
             && searchTerms.find { $0.count >= config.minSearchTerm } != nil
-
+         */
+        let searchInContent = searchTerms.find { $0.count >= 3 } != nil
         filteredOpenedTabs = currentTabs.filter { tab in
             guard let url = tab.url ?? tab.sessionData?.urls.last,
                   !InternalURL.isValid(url: url) else {
@@ -639,6 +644,11 @@ class SearchViewController: SiteTableViewController,
                                  for: SearchListSection(rawValue: indexPath.section)!,
                                  indexPath)
     }
+    
+    // Ecosia: Update cell background
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        cell.backgroundColor = .legacyTheme.ecosia.ntpImpactBackground
+    }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch SearchListSection(rawValue: section)! {
@@ -659,7 +669,8 @@ class SearchViewController: SiteTableViewController,
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return SearchListSection.allCases.count
+        // return SearchListSection.allCases.count
+        return 4
     }
 
     func tableView(_ tableView: UITableView, didHighlightRowAt indexPath: IndexPath) {
@@ -674,7 +685,9 @@ class SearchViewController: SiteTableViewController,
     override func applyTheme() {
         super.applyTheme()
         view.backgroundColor = themeManager.currentTheme.colors.layer5
-        searchEngineContainerView.layer.backgroundColor = themeManager.currentTheme.colors.layer1.cgColor
+        // Ecosia: Update background
+        // searchEngineContainerView.layer.backgroundColor = themeManager.currentTheme.colors.layer1.cgColor
+        searchEngineContainerView.layer.backgroundColor = UIColor.legacyTheme.ecosia.barBackground.withAlphaComponent(0.8).cgColor
         searchEngineContainerView.layer.shadowColor = themeManager.currentTheme.colors.shadowDefault.cgColor
         reloadData()
     }
@@ -694,6 +707,10 @@ class SearchViewController: SiteTableViewController,
                                    oneLineCell: OneLineTableViewCell,
                                    for section: SearchListSection,
                                    _ indexPath: IndexPath) -> UITableViewCell {
+        // Ecosia: It makes sense to call applyTheme here to let it do the first setup and then override the values appropriately
+        oneLineCell.applyTheme(theme: themeManager.currentTheme)
+        twoLineCell.applyTheme(theme: themeManager.currentTheme)
+        
         var cell = UITableViewCell()
         switch section {
         case .searchSuggestions:
@@ -705,15 +722,25 @@ class SearchViewController: SiteTableViewController,
                 }
                 oneLineCell.leftImageView.contentMode = .center
                 oneLineCell.leftImageView.layer.borderWidth = 0
-                oneLineCell.leftImageView.manuallySetImage(UIImage(named: SearchViewControllerUX.SearchImage) ?? UIImage())
-                oneLineCell.leftImageView.tintColor = themeManager.currentTheme.colors.iconPrimary
+                // Ecosia: Update set image
+                // oneLineCell.leftImageView.manuallySetImage(UIImage(named: SearchViewControllerUX.SearchImage) ?? UIImage())
+                oneLineCell.leftImageView.manuallySetImage(UIImage.templateImageNamed(SearchViewControllerUX.SearchImage) ?? UIImage())
+                // Ecosia: Update tintColor
+                // oneLineCell.leftImageView.tintColor = themeManager.currentTheme.colors.iconPrimary
+                oneLineCell.leftImageView.tintColor = .legacyTheme.ecosia.primaryButton
                 oneLineCell.leftImageView.backgroundColor = nil
                 let appendButton = UIButton(type: .roundedRect)
-                appendButton.setImage(searchAppendImage?.withRenderingMode(.alwaysTemplate), for: .normal)
+                // Ecosia: Update image
+                // appendButton.setImage(searchAppendImage?.withRenderingMode(.alwaysTemplate), for: .normal)
+                appendButton.setImage(UIImage.templateImageNamed("searchAppend"), for: .normal)
                 appendButton.addTarget(self, action: #selector(append(_ :)), for: .touchUpInside)
-                appendButton.tintColor = themeManager.currentTheme.colors.iconPrimary
+                // Ecosia: Update tintColor
+                // appendButton.tintColor = themeManager.currentTheme.colors.iconPrimary
+                appendButton.tintColor = themeManager.currentTheme.colors.textPrimary
                 appendButton.sizeToFit()
                 oneLineCell.accessoryView = indexPath.row > 0 ? appendButton : nil
+                // Ecosia: Enrich background
+                oneLineCell.backgroundColor = .legacyTheme.ecosia.autocompleteBackground
                 cell = oneLineCell
             }
         case .openedTabs:
@@ -728,6 +755,8 @@ class SearchViewController: SiteTableViewController,
                 if let urlString = openedTab.url?.absoluteString {
                     twoLineCell.leftImageView.setFavicon(FaviconImageViewModel(siteURLString: urlString))
                 }
+                // Ecosia: Enrich background
+                twoLineCell.backgroundColor = .legacyTheme.ecosia.autocompleteBackground
                 twoLineCell.accessoryView = nil
                 cell = twoLineCell
             }
@@ -743,6 +772,8 @@ class SearchViewController: SiteTableViewController,
                 twoLineCell.leftImageView.layer.borderWidth = SearchViewControllerUX.IconBorderWidth
                 let urlString = remoteTab.URL.absoluteString
                 twoLineCell.leftImageView.setFavicon(FaviconImageViewModel(siteURLString: urlString))
+                // Ecosia: Enrich background
+                twoLineCell.backgroundColor = .legacyTheme.ecosia.autocompleteBackground
                 twoLineCell.accessoryView = nil
                 cell = twoLineCell
             }
@@ -790,17 +821,20 @@ class SearchViewController: SiteTableViewController,
             twoLineCell.accessoryView = nil
             cell = twoLineCell
         }
-
+        /* Ecosia: No sense to call applyTheme at this point which overrides all the values set above. Will move up
         // We need to set the correct theme on the cells when the initial display happens
         oneLineCell.applyTheme(theme: themeManager.currentTheme)
         twoLineCell.applyTheme(theme: themeManager.currentTheme)
+         */
         return cell
     }
 
     private func shouldShowHeader(for section: Int) -> Bool {
         switch section {
         case SearchListSection.remoteTabs.rawValue:
-            return hasFirefoxSuggestions
+            // Ecosia: Do not show header
+            // return hasFirefoxSuggestions
+            return false
         case SearchListSection.searchSuggestions.rawValue:
             return model.shouldShowSearchSuggestions
         default:

@@ -24,16 +24,24 @@ class SiteTableViewController: UIViewController,
     var themeObserver: NSObjectProtocol?
     var notificationCenter: NotificationProtocol
     let profile: Profile
+    // Ecosia: Branding
+    let style: UITableView.Style
 
     var data: Cursor<Site> = Cursor<Site>(status: .success, msg: "No data set")
-    lazy var tableView: UITableView = .build { [weak self] table in
-        guard let self = self else { return }
+    // Ecosia: Update TableView init to make it grouped
+    // lazy var tableView: UITableView = .build { [weak self] table in
+    lazy var tableView: UITableView = {
+        let table = UITableView(frame: .zero, style: self.style)
+        table.translatesAutoresizingMaskIntoConstraints = false
+        // Ecosia: Update TableView init to make it grouped
+        // guard let self = self else { return }
         table.delegate = self
         table.dataSource = self
         table.register(TwoLineImageOverlayCell.self, forCellReuseIdentifier: TwoLineImageOverlayCell.cellIdentifier)
         table.register(OneLineTableViewCell.self, forCellReuseIdentifier: OneLineTableViewCell.cellIdentifier)
         table.register(SiteTableViewHeader.self, forHeaderFooterViewReuseIdentifier: SiteTableViewHeader.cellIdentifier)
-        table.layoutMargins = .zero
+        // Ecosia: Enable layoutMargins
+        // table.layoutMargins = .zero
         table.keyboardDismissMode = .onDrag
         table.accessibilityIdentifier = "SiteTable"
         table.cellLayoutMarginsFollowReadableWidth = false
@@ -47,7 +55,9 @@ class SiteTableViewController: UIViewController,
         // Set an empty footer to prevent empty cells from appearing in the list.
         table.tableFooterView = UIView()
         table.sectionHeaderTopPadding = 0
-    }
+        // Ecosia: Update TableView init to make it grouped
+        return table
+    }()
 
     override private init(nibName: String?, bundle: Bundle?) {
         fatalError("init(coder:) has not been implemented")
@@ -56,11 +66,16 @@ class SiteTableViewController: UIViewController,
     init(profile: Profile,
          notificationCenter: NotificationProtocol = NotificationCenter.default,
          windowManager: WindowManager = AppContainer.shared.resolve(),
-         themeManager: ThemeManager = AppContainer.shared.resolve()) {
+         // Ecosia: Update init adding `style`
+         // themeManager: ThemeManager = AppContainer.shared.resolve()
+         themeManager: ThemeManager = AppContainer.shared.resolve(),
+         style: UITableView.Style = .plain) {
         self.profile = profile
         self.notificationCenter = notificationCenter
         self.themeManager = themeManager
         self.windowManager = windowManager
+        // Ecosia: Update init adding `style`
+        self.style = style
         super.init(nibName: nil, bundle: nil)
         listenForThemeChange(view)
         applyTheme()
@@ -134,8 +149,12 @@ class SiteTableViewController: UIViewController,
 
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
         if let header = view as? UITableViewHeaderFooterView {
+            /* Ecosia: Update header text label color
             header.textLabel?.textColor = themeManager.currentTheme.colors.textPrimary
             header.contentView.backgroundColor = themeManager.currentTheme.colors.layer1
+             */
+            header.textLabel?.textColor = .legacyTheme.ecosia.secondaryText
+            header.contentView.backgroundColor = .clear
         }
     }
 
