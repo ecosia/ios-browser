@@ -563,6 +563,12 @@ extension BrowserViewController: WKNavigationDelegate {
             decisionHandler(.allow)
             return
         }
+        
+        // Ecosia: Allow MarketplaceKit requests for iOS 17.4+
+        if #available(iOS 17.4, *), url.scheme == "marketplace-kit" {
+            decisionHandler(.allow)
+            return
+        }
 
         if !(url.scheme?.contains("firefox") ?? true) {
             showSnackbar(forExternalUrl: url, tab: tab) { isOk in
@@ -577,7 +583,7 @@ extension BrowserViewController: WKNavigationDelegate {
                 }
             }
         }
-
+        
         decisionHandler(.cancel)
     }
 
