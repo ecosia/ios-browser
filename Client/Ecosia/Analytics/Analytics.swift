@@ -150,7 +150,7 @@ final class Analytics {
         // When the user sees the APNConsent
         // we add the number of search counts as value of the event
         if action == .view {
-            _ = event.value(NSNumber(integerLiteral: User.shared.searchCount))
+            event.value = NSNumber(integerLiteral: User.shared.searchCount)
         }
         
         // Add context (if any) from current EngagementService enabled
