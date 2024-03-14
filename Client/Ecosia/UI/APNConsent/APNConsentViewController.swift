@@ -157,6 +157,7 @@ extension APNConsentViewController {
             firstImageView.topAnchor.constraint(equalTo: topContainerView.topAnchor),
             firstImageView.leadingAnchor.constraint(equalTo: topContainerView.leadingAnchor),
             firstImageView.trailingAnchor.constraint(equalTo: topContainerView.trailingAnchor),
+            firstImageView.heightAnchor.constraint(lessThanOrEqualTo: view.heightAnchor, multiplier: 0.5),
             firstImageView.bottomAnchor.constraint(equalTo: topContainerView.bottomAnchor),
 
             // Second image view constraints
@@ -180,6 +181,7 @@ extension APNConsentViewController {
             tableView.topAnchor.constraint(equalTo: headerLabelContainerView.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tableView.heightAnchor.constraint(lessThanOrEqualToConstant: view.bounds.height / 2),
             tableView.bottomAnchor.constraint(equalTo: ctaButton.topAnchor),
             
             // Footer button constraints
