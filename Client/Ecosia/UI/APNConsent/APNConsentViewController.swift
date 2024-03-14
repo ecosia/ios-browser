@@ -273,12 +273,7 @@ extension APNConsentViewController {
         
         // iPhone
         if sheet.traitCollection.userInterfaceIdiom == .phone {
-            if #available(iOS 16.0, *), let sheet = sheet.sheetPresentationController {
-                let custom = UISheetPresentationController.Detent.custom { context in
-                    return UX.PreferredContentSize.iPhoneCustomDetentHeight
-                }
-                sheet.detents = [custom, .large()]
-            } else if #available(iOS 15.0, *), let sheet = sheet.sheetPresentationController {
+            if #available(iOS 15.0, *), let sheet = sheet.sheetPresentationController {
                 sheet.detents = [.large()]
             }
         }
