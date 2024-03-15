@@ -28,7 +28,9 @@ final class NTPCustomizationSettingsViewController: SettingsTableViewController 
             if config == .topSites {
                 return HomePageSettingViewController.TopSitesSettings(settings: self)
             }
-            return NTPCustomizationSetting(prefs: profile.prefs, config: config)
+            return NTPCustomizationSetting(prefs: profile.prefs,
+                                           theme: themeManager.currentTheme,
+                                           config: config)
         }
         return [SettingSection(title: .init(string: .localized(.showOnHomepage)), children: settings)]
     }
@@ -47,9 +49,9 @@ final class NTPCustomizationSettingsViewController: SettingsTableViewController 
 final class NTPCustomizationSetting: BoolSetting {
     private var config: CustomizableNTPSettingConfig = .topSites
     
-    convenience init(prefs: Prefs, config: CustomizableNTPSettingConfig) {
-        self.init(prefs: prefs, 
-                  theme: EcosiaThemeManager(sharedContainerIdentifier: AppInfo.sharedContainerIdentifier).currentTheme,
+    convenience init(prefs: Prefs, theme: Theme, config: CustomizableNTPSettingConfig) {
+        self.init(prefs: prefs,
+                  theme: theme,
                   defaultValue: true,
                   titleText: .localized(config.localizedTitleKey))
         self.config = config
