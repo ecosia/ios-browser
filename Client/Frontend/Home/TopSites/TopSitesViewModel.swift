@@ -6,6 +6,8 @@ import Common
 import Foundation
 import Shared
 import Storage
+// Ecosia: importing Core
+import Core
 
 class TopSitesViewModel {
     struct UX {
@@ -153,7 +155,9 @@ extension TopSitesViewModel: HomepageViewModelProtocol, FeatureFlaggable {
     }
 
     var isEnabled: Bool {
-        return profile.prefs.boolForKey(PrefsKeys.UserFeatureFlagPrefs.TopSiteSection) ?? true
+        // Ecosia: Check against different value
+        // return profile.prefs.boolForKey(PrefsKeys.UserFeatureFlagPrefs.TopSiteSection) ?? true
+        User.shared.showTopSites
     }
 
     func numberOfItemsInSection() -> Int {
