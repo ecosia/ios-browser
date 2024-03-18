@@ -160,7 +160,8 @@ extension APNConsentViewController {
             topContainerView.topAnchor.constraint(equalTo: view.topAnchor),
             topContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             topContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-
+            topContainerView.heightAnchor.constraint(lessThanOrEqualTo: view.heightAnchor, multiplier: 0.5),
+            
             // First image view constraints
             firstImageView.topAnchor.constraint(equalTo: topContainerView.topAnchor),
             firstImageView.leadingAnchor.constraint(equalTo: topContainerView.leadingAnchor),
@@ -281,12 +282,7 @@ extension APNConsentViewController {
         
         // iPhone
         if sheet.traitCollection.userInterfaceIdiom == .phone {
-            if #available(iOS 16.0, *), let sheet = sheet.sheetPresentationController {
-                let custom = UISheetPresentationController.Detent.custom { context in
-                    return UX.PreferredContentSize.iPhoneCustomDetentHeight
-                }
-                sheet.detents = [custom, .large()]
-            } else if #available(iOS 15.0, *), let sheet = sheet.sheetPresentationController {
+            if #available(iOS 15.0, *), let sheet = sheet.sheetPresentationController {
                 sheet.detents = [.large()]
             }
         }
