@@ -1,5 +1,2 @@
-Stay Up-to-date with Ecosia via push notifications
-* Receive updates on our tree-planting projects around the world
-* Get tips on how to be climate active every day
-
-We are always working hard to make Ecosia better for you. Send any questions or feedback to our team at iosapp@ecosia.org, we love hearing from you!
+This version makes the Ecosia Browser capable of installing apps from other sources via the Alternative App Marketplaces feature provided by Apple for those living in EU countries.
+As usual we included several bugfixes and improvements.
