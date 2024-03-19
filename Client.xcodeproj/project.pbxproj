@@ -14732,7 +14732,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = main;
+				branch = "MOB-2169_implement_apn_consent_screen_reminder";
 				kind = branch;
 			};
 		};

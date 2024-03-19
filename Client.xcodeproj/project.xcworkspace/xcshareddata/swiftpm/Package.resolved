@@ -58,8 +58,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ecosia/ios-core.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "5c1244ad583289bc1777a45613287845bf478983"
+        "branch" : "MOB-2169_implement_apn_consent_screen_reminder",
+        "revision" : "d6f0ce409a58592f2271869fa493dd18dc9ef555"
       }
     },
     {
