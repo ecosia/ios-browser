@@ -85,17 +85,15 @@ bundle update
 
 ### Why is the `CURRENT_PROJECT_VERSION` set to `0`?
 
-The `CURRENT_PROJECT_VERSION` is set to `0`, indicates that is not being used for local testing. The outcoming build number is updated by the CI, mathcing the CI run number (e.g. `8023`).
+The `CURRENT_PROJECT_VERSION` being set to `0` indicates that it is not being used for local testing. The outcoming build number is updated by the CI, matching the CI run number (e.g. `8023`).
 
-#### Get certificates and profiles
+### Get certificates and profiles
 
-Our certs and profiles are managed centrally by [fastlane match](https://docs.fastlane.tools/actions/match/).
-
-Find the repo is [here](https://github.com/ecosia/IosSearchSigning)
+Our certs and profiles are managed centrally by [fastlane match](https://docs.fastlane.tools/actions/match/). Find the repo [here](https://github.com/ecosia/IosSearchSigning)
 
 Run `bundle exec fastlane match --readonly` to add certs and profiles to your system. You can append  `-p "keychain password"` to avoid keychain prompts during the process. The passphrase to decrypt the repo can be found in LastPass.
 
-#### Adding your own device
+### Adding your own device
 
 As we use `fastlane match` to hardwire profiles it gets a bit tricky to add a new device and run the app via your machine.
 
