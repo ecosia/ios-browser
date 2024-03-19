@@ -391,7 +391,9 @@ private extension TabLocationView {
 
         readerModeButton.isHidden = shoppingButton.isHidden ? newReaderModeState == .unavailable : true
         // When the user turns on the reader mode we need to hide the trackingProtectionButton (according to 16400), we will hide it once the newReaderModeState == .active
-        self.trackingProtectionButton.isHidden = newReaderModeState == .active
+        if newReaderModeState == .active {
+            self.trackingProtectionButton.isHidden = true
+        }
 
         if wasHidden != readerModeButton.isHidden {
             UIAccessibility.post(notification: UIAccessibility.Notification.layoutChanged, argument: nil)
