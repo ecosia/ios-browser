@@ -1,1 +1,2 @@
-
+Met deze versie van de Ecosia-browser kun je apps van andere bronnen installeren via de functie 'alternatieve app stores' die Apple biedt voor mensen die in EU-landen wonen.
+Zoals gebruikelijk hebben we ook een aantal bugfixes en verbeteringen toegevoegd.
