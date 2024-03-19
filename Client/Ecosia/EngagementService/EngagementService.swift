@@ -8,6 +8,7 @@ final class ClientEngagementService {
     static let shared = ClientEngagementService()
     private let service  = EngagementService(provider: Braze())
     private var parameters: [String: Any] = [:]
+    private(set) var notificationAuthorizationStatus: UNAuthorizationStatus?
     
     var identifier: String? {
         parameters["id"] as? String
@@ -17,6 +18,9 @@ final class ClientEngagementService {
         do {
             try service.initialize(parameters: parameters)
             self.parameters = parameters
+            Task {
+                await retrieveUserCurrentNotificationAuthStatus()
+            }
         } catch {
             debugPrint(error)
         }
@@ -51,5 +55,11 @@ extension ClientEngagementService {
         Task.detached {
             await self.refreshAPNRegistrationIfNeeded(notificationCenterDelegate: notificationCenterDelegate)
         }
+    }
+    
+    func retrieveUserCurrentNotificationAuthStatus() async {
+        let notificationCenter = UNUserNotificationCenter.current()
+        let currentSettings = await notificationCenter.notificationSettings()
+        notificationAuthorizationStatus = currentSettings.authorizationStatus
     }
 }

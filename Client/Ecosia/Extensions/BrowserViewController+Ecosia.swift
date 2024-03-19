@@ -14,7 +14,7 @@ extension BrowserViewController: HomepageViewControllerDelegate {
 
 extension BrowserViewController: APNConsentViewDelegate {
     func apnConsentViewDidShow(_ viewController: APNConsentViewController) {
-        User.shared.markAPNConsentScreenAsShown()
+
     }
 }
 

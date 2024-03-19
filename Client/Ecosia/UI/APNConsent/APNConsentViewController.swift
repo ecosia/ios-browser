@@ -47,6 +47,11 @@ final class APNConsentViewController: UIViewController {
     private let ctaButton = UIButton()
     private let skipButton = UIButton()
     weak var delegate: APNConsentViewDelegate?
+    var shouldShow: Bool {
+        EngagementServiceExperiment.isEnabled &&
+        ClientEngagementService.shared.notificationAuthorizationStatus == .notDetermined &&
+        User.shared.apnConsentReminderManager?.shouldDisplayOptInScreenForSearchesCount(User.shared.searchCount) == true
+    }
 
     // MARK: - Init
 
@@ -54,6 +59,7 @@ final class APNConsentViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
         self.viewModel = viewModel
         self.delegate = delegate
+        self.initializeReminderManagerIfNeeded()
     }
     
     required init?(coder: NSCoder) {
@@ -78,19 +84,6 @@ final class APNConsentViewController: UIViewController {
     
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         traitCollection.userInterfaceIdiom == .pad ? .all : .portrait
-    }
-}
-
-// MARK: - Buttons Actions
-
-extension APNConsentViewController {
-    
-    @objc private func closeButtonTapped() {
-        dismiss(animated: true, completion: nil)
-    }
-    
-    @objc private func footerButtonTapped() {
-        closeButtonTapped()
     }
 }
 
@@ -126,7 +119,6 @@ extension APNConsentViewController {
         ctaButton.setTitle(viewModel.ctaAllowButtonTitle, for: .normal)
         ctaButton.titleLabel?.adjustsFontForContentSizeCategory = true
         ctaButton.translatesAutoresizingMaskIntoConstraints = false
-        ctaButton.addTarget(self, action: #selector(footerButtonTapped), for: .touchUpInside)
         ctaButton.layer.cornerRadius = UX.FooterButtons.height/2
         ctaButton.addTarget(self, action: #selector(ctaTapped), for: .primaryActionTriggered)
 
@@ -134,7 +126,7 @@ extension APNConsentViewController {
         skipButton.backgroundColor = .clear
         skipButton.titleLabel?.font = .preferredFont(forTextStyle: .callout)
         skipButton.titleLabel?.adjustsFontForContentSizeCategory = true
-        skipButton.setTitle(.localized(.apnConsentSkipButtonTitle), for: .normal)
+        skipButton.setTitle(viewModel.skipButtonTitle, for: .normal)
         skipButton.addTarget(self, action: #selector(skipTapped), for: .primaryActionTriggered)
         
         view.addSubview(topContainerView)
@@ -206,6 +198,7 @@ extension APNConsentViewController {
 extension APNConsentViewController {
 
     @objc private func skipTapped() {
+        User.shared.apnConsentReminderManager?.recordOptInAttempt()
         Analytics.shared.apnConsent(.skip)
         dismiss(animated: true)
     }
@@ -215,6 +208,7 @@ extension APNConsentViewController {
         ClientEngagementService.shared.requestAPNConsent(notificationCenterDelegate: appDelegate) { granted, error in
             guard granted else {
                 Analytics.shared.apnConsent(.deny)
+                User.shared.apnConsentReminderManager?.recordOptInAttempt()
                 return
             }
             Analytics.shared.apnConsent(.allow)
@@ -264,28 +258,39 @@ extension APNConsentViewController: NotificationThemeable {
 
 extension APNConsentViewController {
     
-    static func presentOn(_ viewController: UIViewController,
-                          viewModel: APNConsentViewModelProtocol) {
+    func presentAsSheetFrom(_ viewController: UIViewController) {
         
-        guard let whatsNewDelegateViewController = viewController as? APNConsentViewDelegate else { return }
-        let sheet = APNConsentViewController(viewModel: viewModel,
-                                           delegate: whatsNewDelegateViewController)
-        sheet.modalPresentationStyle = .automatic
+        guard viewController as? APNConsentViewDelegate != nil else { return }
+
+        modalPresentationStyle = .automatic
         
         // iPhone
-        if sheet.traitCollection.userInterfaceIdiom == .phone {
-            if #available(iOS 15.0, *), let sheet = sheet.sheetPresentationController {
+        if traitCollection.userInterfaceIdiom == .phone {
+            if #available(iOS 15.0, *), let sheet = sheetPresentationController {
                 sheet.detents = [.large()]
             }
         }
 
         // iPad
-        if sheet.traitCollection.userInterfaceIdiom == .pad {
-            sheet.modalPresentationStyle = .formSheet
-            sheet.preferredContentSize = .init(width: UX.PreferredContentSize.iPadWidth,
+        if traitCollection.userInterfaceIdiom == .pad {
+            modalPresentationStyle = .formSheet
+            preferredContentSize = .init(width: UX.PreferredContentSize.iPadWidth,
                                          height: UX.PreferredContentSize.iPadHeight)
         }
         
-        viewController.present(sheet, animated: true, completion: nil)
+        viewController.present(self, animated: true, completion: nil)
+    }
+}
+
+// MARK: Reminder Manager initialization
+
+extension APNConsentViewController {
+    
+    func initializeReminderManagerIfNeeded() {
+        let convenienceReminderManager = OptInReminderManager(maxOptInScreenCount: EngagementServiceExperiment.maxOptInShowingAttempts,
+                                                         searchesToDisplay: EngagementServiceExperiment.minSearches)
+        if User.shared.apnConsentReminderManager == nil {
+            User.shared.apnConsentReminderManager = convenienceReminderManager
+        }
     }
 }

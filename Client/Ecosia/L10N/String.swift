@@ -250,5 +250,6 @@ extension String {
         case apnConsentVariantNameTest1SecondItemTitle = "Get tips on how to be climate active every day"
         case apnConsentCTAAllowButtonTitle = "Allow push notifications"
         case apnConsentSkipButtonTitle = "Not now"
+        case apnConsentLastReminderSkipButtonTitle = "No thanks"
     }
 }

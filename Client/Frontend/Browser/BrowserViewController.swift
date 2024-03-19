@@ -167,11 +167,6 @@ class BrowserViewController: UIViewController {
         DefaultBrowserExperiment.minPromoSearches() <= User.shared.searchCount
     }
     fileprivate var shouldShowWhatsNewPageScreen: Bool { whatsNewDataProvider.shouldShowWhatsNewPage }
-    fileprivate var shouldShowAPNConsentScreen: Bool {
-        EngagementServiceExperiment.isEnabled &&
-        EngagementServiceExperiment.minSearches() <= User.shared.searchCount &&
-        User.shared.shouldShowAPNConsentScreen
-    }
 
     let whatsNewDataProvider = WhatsNewLocalDataProvider()
     
@@ -2309,8 +2304,9 @@ extension BrowserViewController {
     
     @discardableResult
     private func presentAPNConsentIfNeeded() -> Bool {
-        guard shouldShowAPNConsentScreen else { return false }
-        APNConsentViewController.presentOn(self, viewModel: UnleashAPNConsentViewModel())
+        let vc = APNConsentViewController(viewModel: UnleashAPNConsentViewModel(), delegate: self)
+        guard vc.shouldShow else { return false }
+        vc.presentAsSheetFrom(self)
         return true
     }
 

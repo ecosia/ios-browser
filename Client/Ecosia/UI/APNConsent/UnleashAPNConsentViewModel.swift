@@ -42,7 +42,11 @@ final class UnleashAPNConsentViewModel: APNConsentViewModelProtocol {
     
     /// Skip button title.
     var skipButtonTitle: String {
-        .localized(.apnConsentSkipButtonTitle)
+        if User.shared.apnConsentReminderManager?.isLastReminder == true {
+            return .localized(.apnConsentLastReminderSkipButtonTitle)
+        } else {
+            return .localized(.apnConsentSkipButtonTitle)
+        }
     }
 }
 
