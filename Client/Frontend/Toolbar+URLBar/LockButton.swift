@@ -40,6 +40,8 @@ class LockButton: UIButton {
         setImage(UIImage.templateImageNamed(StandardImageIdentifiers.Large.lock), for: .normal)
         imageView?.contentMode = .scaleAspectFill
         configuration = .plain()
+        //Ecosia: Remove trailing image insets
+        configuration?.contentInsets = .init(top: 0, leading: 10, bottom: 0, trailing: 0)
     }
 
     required init?(coder aDecoder: NSCoder) {

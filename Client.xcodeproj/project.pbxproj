@@ -294,7 +294,6 @@
 		2C6189932B7A8A22006B70D7 /* AppSettingsTableViewController+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C61890D2B7A8A22006B70D7 /* AppSettingsTableViewController+Ecosia.swift */; };
 		2C6189942B7A8A22006B70D7 /* DeviceInfo+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C61890E2B7A8A22006B70D7 /* DeviceInfo+Ecosia.swift */; };
 		2C6189952B7A8A22006B70D7 /* ConnectionStatusImage+WebsiteConnectionTypeStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6189102B7A8A22006B70D7 /* ConnectionStatusImage+WebsiteConnectionTypeStatus.swift */; };
-		2C6189962B7A8A22006B70D7 /* ConnectionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6189112B7A8A22006B70D7 /* ConnectionButton.swift */; };
 		2C6189972B7A8A22006B70D7 /* ConnectionStatusImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6189122B7A8A22006B70D7 /* ConnectionStatusImage.swift */; };
 		2C6189982B7A8A22006B70D7 /* BookmarksExchange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6189172B7A8A22006B70D7 /* BookmarksExchange.swift */; };
 		2C6189992B7A8A22006B70D7 /* markets.json in Resources */ = {isa = PBXBuildFile; fileRef = 2C6189182B7A8A22006B70D7 /* markets.json */; };
@@ -2422,7 +2421,6 @@
 		2C61890D2B7A8A22006B70D7 /* AppSettingsTableViewController+Ecosia.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AppSettingsTableViewController+Ecosia.swift"; sourceTree = "<group>"; };
 		2C61890E2B7A8A22006B70D7 /* DeviceInfo+Ecosia.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DeviceInfo+Ecosia.swift"; sourceTree = "<group>"; };
 		2C6189102B7A8A22006B70D7 /* ConnectionStatusImage+WebsiteConnectionTypeStatus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ConnectionStatusImage+WebsiteConnectionTypeStatus.swift"; sourceTree = "<group>"; };
-		2C6189112B7A8A22006B70D7 /* ConnectionButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectionButton.swift; sourceTree = "<group>"; };
 		2C6189122B7A8A22006B70D7 /* ConnectionStatusImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectionStatusImage.swift; sourceTree = "<group>"; };
 		2C6189142B7A8A22006B70D7 /* EcosiaBeta.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = EcosiaBeta.entitlements; sourceTree = "<group>"; };
 		2C6189152B7A8A22006B70D7 /* Ecosia.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = Ecosia.entitlements; sourceTree = "<group>"; };
@@ -8653,7 +8651,6 @@
 			isa = PBXGroup;
 			children = (
 				2C6189102B7A8A22006B70D7 /* ConnectionStatusImage+WebsiteConnectionTypeStatus.swift */,
-				2C6189112B7A8A22006B70D7 /* ConnectionButton.swift */,
 				2C6189122B7A8A22006B70D7 /* ConnectionStatusImage.swift */,
 			);
 			path = "Toolbar+URLBar";
@@ -13504,7 +13501,6 @@
 				C8BE692729BA2FBB0015C4A2 /* SurveySurfaceInfoModel.swift in Sources */,
 				D0152245229855A8009DE753 /* OneLineTableViewCell.swift in Sources */,
 				F018F84C2719AE8300B9A52D /* ThemedDefaultNavigationController.swift in Sources */,
-				2C6189962B7A8A22006B70D7 /* ConnectionButton.swift in Sources */,
 				602B3D6729B0E1DB0066DEF8 /* ConversionValueUtil.swift in Sources */,
 				2C61894C2B7A8A22006B70D7 /* NTPCustomizationCellViewModel.swift in Sources */,
 				8ADED7EE276A7750009C19E6 /* CumulativeDaysOfUseCounter.swift in Sources */,
