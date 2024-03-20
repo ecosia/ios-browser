@@ -7,7 +7,7 @@ import Core
 import Shared
 import Common
 
-private var disclosureIndicator: UIImageView {
+var ecosiaDisclosureIndicator: UIImageView {
     let config = UIImage.SymbolConfiguration(pointSize: 16)
     let disclosureIndicator = UIImageView(image: .init(systemName: "chevron.right", withConfiguration: config))
     disclosureIndicator.contentMode = .center
@@ -17,7 +17,7 @@ private var disclosureIndicator: UIImageView {
 }
 
 final class SearchAreaSetting: Setting {
-    override var accessoryView: UIImageView? { return disclosureIndicator }
+    override var accessoryView: UIImageView? { return ecosiaDisclosureIndicator }
 
     override var style: UITableViewCell.CellStyle { return .value1 }
 
@@ -44,7 +44,7 @@ final class SearchAreaSetting: Setting {
 }
 
 final class SafeSearchSettings: Setting {
-    override var accessoryView: UIImageView? { return disclosureIndicator }
+    override var accessoryView: UIImageView? { return ecosiaDisclosureIndicator }
 
     override var style: UITableViewCell.CellStyle { return .value1 }
 
@@ -194,7 +194,7 @@ final class EcosiaSendAnonymousUsageDataSetting: BoolSetting {
 final class HomepageSettings: Setting {
     private var profile: Profile
 
-    override var accessoryView: UIImageView? { disclosureIndicator }
+    override var accessoryView: UIImageView? { ecosiaDisclosureIndicator }
 
     init(settings: SettingsTableViewController, settingsDelegate: SettingsDelegate?) {
         self.profile = settings.profile
@@ -215,7 +215,7 @@ final class HomepageSettings: Setting {
 final class QuickSearchSearchSetting: Setting {
     let profile: Profile
 
-    override var accessoryView: UIImageView? { return disclosureIndicator }
+    override var accessoryView: UIImageView? { return ecosiaDisclosureIndicator }
 
     override var style: UITableViewCell.CellStyle { return .value1 }
 
