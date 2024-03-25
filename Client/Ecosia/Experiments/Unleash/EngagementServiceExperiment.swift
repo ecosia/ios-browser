@@ -10,7 +10,8 @@ struct EngagementServiceExperiment {
     private init() {}
     
     static let minSearches = 3
-    static let maxOptInShowingAttempts = 10
+    static let searchesUntilOptInRedisplay = 10
+    static let maxOptInShowingAttempts = 3
 
     static var toggleName: String {
         Unleash.Toggle.Name.braze.rawValue

@@ -172,6 +172,13 @@ class BrowserViewController: UIViewController {
     
     let referrals = Referrals()
     var menuHelper: MainMenuActionHelper?
+    
+    // Ecosia: Initialize the OptInReminderManager that handles the APNConsent showing
+    private let apnConsentOptInReminderManager = OptInReminderManager(currentSearchesCount: User.shared.searchCount,
+                                                                      maxOptInScreenCount: EngagementServiceExperiment.maxOptInShowingAttempts,
+                                                                      searchesForOptInDisplay: EngagementServiceExperiment.minSearches,
+                                                                      searchesUntilOptInRedisplay: EngagementServiceExperiment.searchesUntilOptInRedisplay,
+                                                                      model: User.shared.apnConsentReminderModel ?? OptInModel())
 
     init(profile: Profile, tabManager: TabManager) {
         self.profile = profile
@@ -2304,8 +2311,9 @@ extension BrowserViewController {
     
     @discardableResult
     private func presentAPNConsentIfNeeded() -> Bool {
-        let vc = APNConsentViewController(viewModel: UnleashAPNConsentViewModel(), delegate: self)
-        guard vc.shouldShow else { return false }
+        let vc = APNConsentViewController(viewModel: UnleashAPNConsentViewModel(optInManager: apnConsentOptInReminderManager),
+                                          optInManager: apnConsentOptInReminderManager,
+                                          delegate: self)
         vc.presentAsSheetFrom(self)
         return true
     }

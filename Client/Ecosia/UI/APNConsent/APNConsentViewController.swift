@@ -46,20 +46,23 @@ final class APNConsentViewController: UIViewController {
     private let tableView = UITableView()
     private let ctaButton = UIButton()
     private let skipButton = UIButton()
+    private var optInManager: OptInReminderManager?
     weak var delegate: APNConsentViewDelegate?
     var shouldShow: Bool {
         EngagementServiceExperiment.isEnabled &&
         ClientEngagementService.shared.notificationAuthorizationStatus == .notDetermined &&
-        User.shared.apnConsentReminderManager?.shouldDisplayOptInScreenForSearchesCount(User.shared.searchCount) == true
+        optInManager?.shouldDisplayOptInScreen == true
     }
 
     // MARK: - Init
 
-    init(viewModel: APNConsentViewModelProtocol, delegate: APNConsentViewDelegate?) {
+    init(viewModel: APNConsentViewModelProtocol,
+         optInManager: OptInReminderManager?,
+         delegate: APNConsentViewDelegate?) {
         super.init(nibName: nil, bundle: nil)
         self.viewModel = viewModel
         self.delegate = delegate
-        self.initializeReminderManagerIfNeeded()
+        self.optInManager = optInManager
     }
     
     required init?(coder: NSCoder) {
@@ -71,6 +74,7 @@ final class APNConsentViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
+        setupPanGestureRecognizer()
         layoutViews()
         applyTheme()
     }
@@ -84,6 +88,51 @@ final class APNConsentViewController: UIViewController {
     
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         traitCollection.userInterfaceIdiom == .pad ? .all : .portrait
+    }
+}
+
+// MARK: - Handle Pan Gesture
+
+extension APNConsentViewController: UIGestureRecognizerDelegate {
+    
+    // MARK: UIGestureRecognizerDelegate
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        // Allow simultaneous recognition of the specific pan gesture along with other gestures.
+        return true
+    }
+}
+
+extension APNConsentViewController {
+        
+    /// Sets up a pan gesture recognizer on the view to handle user dragging.
+    private func setupPanGestureRecognizer() {
+        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:)))
+        panGesture.delegate = self
+        view.addGestureRecognizer(panGesture)
+    }
+    
+    /// Handles the pan gesture recognizer's events.
+    ///
+    /// - Parameter gestureRecognizer: The pan gesture recognizer.
+    @objc func handlePan(_ gestureRecognizer: UIPanGestureRecognizer) {
+        
+        let translation = gestureRecognizer.translation(in: view)
+        let minimumVelocityToHide: CGFloat = 1500
+        let minimumScreenRatioToHide: CGFloat = 0.5
+
+        switch gestureRecognizer.state {
+        case .ended:
+            let velocity = gestureRecognizer.velocity(in: view)
+            let closing = (translation.y > view.frame.size.height * minimumScreenRatioToHide) ||
+                          (velocity.y > minimumVelocityToHide)
+            if closing {
+                // Track analytics event when the user dismisses the view
+                Analytics.shared.apnConsent(.dismiss)
+            }
+        default:
+            break
+        }
     }
 }
 
@@ -198,20 +247,26 @@ extension APNConsentViewController {
 extension APNConsentViewController {
 
     @objc private func skipTapped() {
-        User.shared.apnConsentReminderManager?.recordOptInAttempt()
+        optInManager?.recordOptInAttempt()
         Analytics.shared.apnConsent(.skip)
         dismiss(animated: true)
     }
 
     @objc private func ctaTapped() {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
-        ClientEngagementService.shared.requestAPNConsent(notificationCenterDelegate: appDelegate) { granted, error in
+        ClientEngagementService.shared.requestAPNConsent(notificationCenterDelegate: appDelegate) { [weak self] granted, error in
             guard granted else {
                 Analytics.shared.apnConsent(.deny)
-                User.shared.apnConsentReminderManager?.recordOptInAttempt()
+                self?.optInManager?.recordOptInAttempt()
+                self?.ensureMainThread { [weak self] in
+                    self?.dismissVC()
+                }
                 return
             }
             Analytics.shared.apnConsent(.allow)
+            self?.ensureMainThread { [weak self] in
+                self?.dismissVC()
+            }
         }
     }
 }
@@ -279,18 +334,5 @@ extension APNConsentViewController {
         }
         
         viewController.present(self, animated: true, completion: nil)
-    }
-}
-
-// MARK: Reminder Manager initialization
-
-extension APNConsentViewController {
-    
-    func initializeReminderManagerIfNeeded() {
-        let convenienceReminderManager = OptInReminderManager(maxOptInScreenCount: EngagementServiceExperiment.maxOptInShowingAttempts,
-                                                         searchesToDisplay: EngagementServiceExperiment.minSearches)
-        if User.shared.apnConsentReminderManager == nil {
-            User.shared.apnConsentReminderManager = convenienceReminderManager
-        }
     }
 }

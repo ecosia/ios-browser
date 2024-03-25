@@ -1,4 +1,5 @@
 {
+  "originHash" : "dd737c8479c7c03d60cc0d5580d88f95ec42a221f5b1dbdb30acb0c67d7c5f4b",
   "pins" : [
     {
       "identity" : "a-star",
@@ -59,7 +60,7 @@
       "location" : "https://github.com/ecosia/ios-core.git",
       "state" : {
         "branch" : "MOB-2169_implement_apn_consent_screen_reminder",
-        "revision" : "d6f0ce409a58592f2271869fa493dd18dc9ef555"
+        "revision" : "b6acb804e62d207e1937ee6576c4ad3325bc1eb1"
       }
     },
     {
@@ -162,5 +163,5 @@
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }
