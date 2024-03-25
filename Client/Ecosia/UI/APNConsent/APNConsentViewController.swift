@@ -258,13 +258,13 @@ extension APNConsentViewController {
             guard granted else {
                 Analytics.shared.apnConsent(.deny)
                 self?.optInManager?.recordOptInAttempt()
-                self?.ensureMainThread { [weak self] in
+                DispatchQueue.main.async { [weak self] in
                     self?.dismissVC()
                 }
                 return
             }
             Analytics.shared.apnConsent(.allow)
-            self?.ensureMainThread { [weak self] in
+            DispatchQueue.main.async { [weak self] in
                 self?.dismissVC()
             }
         }
