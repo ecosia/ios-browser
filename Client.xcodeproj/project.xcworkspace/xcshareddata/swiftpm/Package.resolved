@@ -60,7 +60,7 @@
       "location" : "https://github.com/ecosia/ios-core.git",
       "state" : {
         "branch" : "MOB-2169_implement_apn_consent_screen_reminder",
-        "revision" : "b6acb804e62d207e1937ee6576c4ad3325bc1eb1"
+        "revision" : "c317a69c19f778801e83007044c7eb33da9f213c"
       }
     },
     {

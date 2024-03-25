@@ -183,8 +183,8 @@ class BrowserViewController: UIViewController {
     }
     private let apnConsentOptInReminderManager = OptInReminderManager(currentSearchesCount: User.shared.searchCount,
                                                                       maxOptInScreenCount: EngagementServiceExperiment.maxOptInShowingAttempts,
-                                                                      searchesForOptInDisplay: EngagementServiceExperiment.minSearches,
-                                                                      searchesUntilOptInRedisplay: EngagementServiceExperiment.searchesUntilOptInRedisplay,
+                                                                      minSearchesForFirstOptIn: EngagementServiceExperiment.minSearches,
+                                                                      searchesBetweenOptIns: EngagementServiceExperiment.searchesBetweenOptIns,
                                                                       model: userApnConsentOptInReminderManager)
 
     init(profile: Profile, tabManager: TabManager) {

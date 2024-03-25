@@ -10,7 +10,7 @@ struct EngagementServiceExperiment {
     private init() {}
     
     static let minSearches = 3
-    static let searchesUntilOptInRedisplay = 10
+    static let searchesBetweenOptIns = 10
     static let maxOptInShowingAttempts = 3
 
     static var toggleName: String {
