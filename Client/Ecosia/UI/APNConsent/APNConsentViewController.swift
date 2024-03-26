@@ -5,10 +5,6 @@
 import UIKit
 import Core
 
-protocol APNConsentViewDelegate: AnyObject {
-    func apnConsentViewDidShow(_ viewController: APNConsentViewController)
-}
-
 final class APNConsentViewController: UIViewController {
     
     // MARK: - UX
@@ -47,7 +43,6 @@ final class APNConsentViewController: UIViewController {
     private let ctaButton = UIButton()
     private let skipButton = UIButton()
     private var optInManager: OptInReminderManager?
-    weak var delegate: APNConsentViewDelegate?
     var shouldShow: Bool {
         EngagementServiceExperiment.isEnabled &&
         ClientEngagementService.shared.notificationAuthorizationStatus == .notDetermined &&
@@ -57,11 +52,9 @@ final class APNConsentViewController: UIViewController {
     // MARK: - Init
 
     init(viewModel: APNConsentViewModelProtocol,
-         optInManager: OptInReminderManager?,
-         delegate: APNConsentViewDelegate?) {
+         optInManager: OptInReminderManager?) {
         super.init(nibName: nil, bundle: nil)
         self.viewModel = viewModel
-        self.delegate = delegate
         self.optInManager = optInManager
     }
     
@@ -83,7 +76,6 @@ final class APNConsentViewController: UIViewController {
         super.viewDidAppear(animated)
         modalTransitionStyle = .crossDissolve
         Analytics.shared.apnConsent(.view)
-        self.delegate?.apnConsentViewDidShow(self)
     }
     
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
@@ -314,8 +306,6 @@ extension APNConsentViewController: NotificationThemeable {
 extension APNConsentViewController {
     
     func presentAsSheetFrom(_ viewController: UIViewController) {
-        
-        guard viewController as? APNConsentViewDelegate != nil else { return }
 
         modalPresentationStyle = .automatic
         

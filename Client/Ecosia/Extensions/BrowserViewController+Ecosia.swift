@@ -12,12 +12,6 @@ extension BrowserViewController: HomepageViewControllerDelegate {
     }
 }
 
-extension BrowserViewController: APNConsentViewDelegate {
-    func apnConsentViewDidShow(_ viewController: APNConsentViewController) {
-
-    }
-}
-
 extension BrowserViewController: DefaultBrowserDelegate {
     @available(iOS 14, *)
     func defaultBrowserDidShow(_ defaultBrowser: DefaultBrowser) {

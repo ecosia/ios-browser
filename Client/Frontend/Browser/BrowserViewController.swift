@@ -2318,9 +2318,7 @@ extension BrowserViewController {
     
     @discardableResult
     private func presentAPNConsentIfNeeded() -> Bool {
-        let vc = APNConsentViewController(viewModel: UnleashAPNConsentViewModel(optInManager: apnConsentOptInReminderManager),
-                                          optInManager: apnConsentOptInReminderManager,
-                                          delegate: self)
+        let vc = APNConsentViewController(viewModel: UnleashAPNConsentViewModel(optInManager: apnConsentOptInReminderManager), optInManager: apnConsentOptInReminderManager)
         vc.presentAsSheetFrom(self)
         return true
     }
