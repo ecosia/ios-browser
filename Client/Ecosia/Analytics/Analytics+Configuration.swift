@@ -13,7 +13,7 @@ extension Analytics {
         .sessionContext(true)
         .applicationContext(true)
         .platformContext(true)
-        .platformContextProperties([.appleIdfv]) // track minimal device properties
+        .platformContextProperties([]) // track minimal device properties
         .geoLocationContext(true)
         .deepLinkContext(false)
         .screenContext(false)
