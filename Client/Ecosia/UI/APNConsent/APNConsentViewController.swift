@@ -5,10 +5,6 @@
 import UIKit
 import Core
 
-protocol APNConsentViewDelegate: AnyObject {
-    func apnConsentViewDidShow(_ viewController: APNConsentViewController)
-}
-
 final class APNConsentViewController: UIViewController {
     
     // MARK: - UX
@@ -46,14 +42,20 @@ final class APNConsentViewController: UIViewController {
     private let tableView = UITableView()
     private let ctaButton = UIButton()
     private let skipButton = UIButton()
-    weak var delegate: APNConsentViewDelegate?
+    private var optInManager: OptInReminderManager?
+    var shouldShow: Bool {
+        EngagementServiceExperiment.isEnabled &&
+        ClientEngagementService.shared.notificationAuthorizationStatus == .notDetermined &&
+        optInManager?.shouldDisplayOptInScreen == true
+    }
 
     // MARK: - Init
 
-    init(viewModel: APNConsentViewModelProtocol, delegate: APNConsentViewDelegate?) {
+    init(viewModel: APNConsentViewModelProtocol,
+         optInManager: OptInReminderManager?) {
         super.init(nibName: nil, bundle: nil)
         self.viewModel = viewModel
-        self.delegate = delegate
+        self.optInManager = optInManager
     }
     
     required init?(coder: NSCoder) {
@@ -65,6 +67,7 @@ final class APNConsentViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
+        setupPanGestureRecognizer()
         layoutViews()
         applyTheme()
     }
@@ -73,7 +76,6 @@ final class APNConsentViewController: UIViewController {
         super.viewDidAppear(animated)
         modalTransitionStyle = .crossDissolve
         Analytics.shared.apnConsent(.view)
-        self.delegate?.apnConsentViewDidShow(self)
     }
     
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
@@ -81,16 +83,48 @@ final class APNConsentViewController: UIViewController {
     }
 }
 
-// MARK: - Buttons Actions
+// MARK: - Handle Pan Gesture
+
+extension APNConsentViewController: UIGestureRecognizerDelegate {
+    
+    // MARK: UIGestureRecognizerDelegate
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        // Allow simultaneous recognition of the specific pan gesture along with other gestures.
+        return true
+    }
+}
 
 extension APNConsentViewController {
-    
-    @objc private func closeButtonTapped() {
-        dismiss(animated: true, completion: nil)
+        
+    /// Sets up a pan gesture recognizer on the view to handle user dragging.
+    private func setupPanGestureRecognizer() {
+        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:)))
+        panGesture.delegate = self
+        view.addGestureRecognizer(panGesture)
     }
     
-    @objc private func footerButtonTapped() {
-        closeButtonTapped()
+    /// Handles the pan gesture recognizer's events.
+    ///
+    /// - Parameter gestureRecognizer: The pan gesture recognizer.
+    @objc func handlePan(_ gestureRecognizer: UIPanGestureRecognizer) {
+        
+        let translation = gestureRecognizer.translation(in: view)
+        let minimumVelocityToHide: CGFloat = 1500
+        let minimumScreenRatioToHide: CGFloat = 0.5
+
+        switch gestureRecognizer.state {
+        case .ended:
+            let velocity = gestureRecognizer.velocity(in: view)
+            let closing = (translation.y > view.frame.size.height * minimumScreenRatioToHide) ||
+                          (velocity.y > minimumVelocityToHide)
+            if closing {
+                // Track analytics event when the user dismisses the view
+                Analytics.shared.apnConsent(.dismiss)
+            }
+        default:
+            break
+        }
     }
 }
 
@@ -126,7 +160,6 @@ extension APNConsentViewController {
         ctaButton.setTitle(viewModel.ctaAllowButtonTitle, for: .normal)
         ctaButton.titleLabel?.adjustsFontForContentSizeCategory = true
         ctaButton.translatesAutoresizingMaskIntoConstraints = false
-        ctaButton.addTarget(self, action: #selector(footerButtonTapped), for: .touchUpInside)
         ctaButton.layer.cornerRadius = UX.FooterButtons.height/2
         ctaButton.addTarget(self, action: #selector(ctaTapped), for: .primaryActionTriggered)
 
@@ -134,7 +167,7 @@ extension APNConsentViewController {
         skipButton.backgroundColor = .clear
         skipButton.titleLabel?.font = .preferredFont(forTextStyle: .callout)
         skipButton.titleLabel?.adjustsFontForContentSizeCategory = true
-        skipButton.setTitle(.localized(.apnConsentSkipButtonTitle), for: .normal)
+        skipButton.setTitle(viewModel.skipButtonTitle, for: .normal)
         skipButton.addTarget(self, action: #selector(skipTapped), for: .primaryActionTriggered)
         
         view.addSubview(topContainerView)
@@ -206,18 +239,26 @@ extension APNConsentViewController {
 extension APNConsentViewController {
 
     @objc private func skipTapped() {
+        optInManager?.recordOptInAttempt()
         Analytics.shared.apnConsent(.skip)
         dismiss(animated: true)
     }
 
     @objc private func ctaTapped() {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
-        ClientEngagementService.shared.requestAPNConsent(notificationCenterDelegate: appDelegate) { granted, error in
+        ClientEngagementService.shared.requestAPNConsent(notificationCenterDelegate: appDelegate) { [weak self] granted, error in
             guard granted else {
                 Analytics.shared.apnConsent(.deny)
+                self?.optInManager?.recordOptInAttempt()
+                DispatchQueue.main.async { [weak self] in
+                    self?.dismissVC()
+                }
                 return
             }
             Analytics.shared.apnConsent(.allow)
+            DispatchQueue.main.async { [weak self] in
+                self?.dismissVC()
+            }
         }
     }
 }
@@ -264,28 +305,24 @@ extension APNConsentViewController: NotificationThemeable {
 
 extension APNConsentViewController {
     
-    static func presentOn(_ viewController: UIViewController,
-                          viewModel: APNConsentViewModelProtocol) {
-        
-        guard let whatsNewDelegateViewController = viewController as? APNConsentViewDelegate else { return }
-        let sheet = APNConsentViewController(viewModel: viewModel,
-                                           delegate: whatsNewDelegateViewController)
-        sheet.modalPresentationStyle = .automatic
+    func presentAsSheetFrom(_ viewController: UIViewController) {
+
+        modalPresentationStyle = .automatic
         
         // iPhone
-        if sheet.traitCollection.userInterfaceIdiom == .phone {
-            if #available(iOS 15.0, *), let sheet = sheet.sheetPresentationController {
+        if traitCollection.userInterfaceIdiom == .phone {
+            if #available(iOS 15.0, *), let sheet = sheetPresentationController {
                 sheet.detents = [.large()]
             }
         }
 
         // iPad
-        if sheet.traitCollection.userInterfaceIdiom == .pad {
-            sheet.modalPresentationStyle = .formSheet
-            sheet.preferredContentSize = .init(width: UX.PreferredContentSize.iPadWidth,
+        if traitCollection.userInterfaceIdiom == .pad {
+            modalPresentationStyle = .formSheet
+            preferredContentSize = .init(width: UX.PreferredContentSize.iPadWidth,
                                          height: UX.PreferredContentSize.iPadHeight)
         }
         
-        viewController.present(sheet, animated: true, completion: nil)
+        viewController.present(self, animated: true, completion: nil)
     }
 }

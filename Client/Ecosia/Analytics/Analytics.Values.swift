@@ -115,7 +115,8 @@ extension Analytics {
             view,
             skip,
             deny,
-            allow
+            allow,
+            dismiss
         }
         
         enum Bookmarks: String {

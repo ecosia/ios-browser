@@ -167,16 +167,25 @@ class BrowserViewController: UIViewController {
         DefaultBrowserExperiment.minPromoSearches() <= User.shared.searchCount
     }
     fileprivate var shouldShowWhatsNewPageScreen: Bool { whatsNewDataProvider.shouldShowWhatsNewPage }
-    fileprivate var shouldShowAPNConsentScreen: Bool {
-        EngagementServiceExperiment.isEnabled &&
-        EngagementServiceExperiment.minSearches() <= User.shared.searchCount &&
-        User.shared.shouldShowAPNConsentScreen
-    }
 
     let whatsNewDataProvider = WhatsNewLocalDataProvider()
     
     let referrals = Referrals()
     var menuHelper: MainMenuActionHelper?
+    
+    // Ecosia: Initialize the OptInReminderManager that handles the APNConsent showing
+    private static var userApnConsentOptInModel = User.shared.apnConsentReminderModel ?? OptInModel() {
+        didSet {
+            if User.shared.apnConsentReminderModel == nil {
+                User.shared.apnConsentReminderModel = userApnConsentOptInModel
+            }
+        }
+    }
+    private let apnConsentOptInReminderManager = OptInReminderManager(currentSearchesCount: User.shared.searchCount,
+                                                                      maxOptInScreenCount: EngagementServiceExperiment.maxOptInShowingAttempts,
+                                                                      minSearchesForFirstOptIn: EngagementServiceExperiment.minSearches,
+                                                                      searchesBetweenOptIns: EngagementServiceExperiment.searchesBetweenOptIns,
+                                                                      model: userApnConsentOptInModel)
 
     init(profile: Profile, tabManager: TabManager) {
         self.profile = profile
@@ -2309,8 +2318,8 @@ extension BrowserViewController {
     
     @discardableResult
     private func presentAPNConsentIfNeeded() -> Bool {
-        guard shouldShowAPNConsentScreen else { return false }
-        APNConsentViewController.presentOn(self, viewModel: UnleashAPNConsentViewModel())
+        let vc = APNConsentViewController(viewModel: UnleashAPNConsentViewModel(optInManager: apnConsentOptInReminderManager), optInManager: apnConsentOptInReminderManager)
+        vc.presentAsSheetFrom(self)
         return true
     }
 
