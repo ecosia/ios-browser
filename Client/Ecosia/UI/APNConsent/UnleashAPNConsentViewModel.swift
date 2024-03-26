@@ -42,7 +42,23 @@ final class UnleashAPNConsentViewModel: APNConsentViewModelProtocol {
     
     /// Skip button title.
     var skipButtonTitle: String {
-        .localized(.apnConsentSkipButtonTitle)
+        if optInManager?.isLastReminder == true {
+            return .localized(.apnConsentLastReminderSkipButtonTitle)
+        } else {
+            return .localized(.apnConsentSkipButtonTitle)
+        }
+    }
+    
+    /// The `OptInManager` to optionally initialize the Model with
+    private var optInManager: OptInReminderManager?
+    
+    // MARK: Convienence Init
+    
+    /// Initializes an `UnleashAPNConsentViewModel` with the provided `optInManager`.
+    /// - Parameter optInManager: The opt-in reminder manager to be associated with the view model.
+    convenience init(optInManager: OptInReminderManager) {
+        self.init()
+        self.optInManager = optInManager
     }
 }
 
