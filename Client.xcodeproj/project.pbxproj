@@ -14732,7 +14732,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = "MOB-2164_update_optin_analytics";
+				branch = main;
 				kind = branch;
 			};
 		};
