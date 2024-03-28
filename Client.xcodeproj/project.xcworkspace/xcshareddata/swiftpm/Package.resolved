@@ -59,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ecosia/ios-core.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "87fd05cc88ff9c2d10422b961bebd5e8e645aa9d"
+        "branch" : "MOB-2169_optin_model_init_fix",
+        "revision" : "e85276c6f0e6fda58ad49c2d7cf687393840043a"
       }
     },
     {

@@ -179,13 +179,11 @@ class BrowserViewController: UIViewController {
     var menuHelper: MainMenuActionHelper?
     
     // Ecosia: Initialize the OptInReminderManager that handles the APNConsent showing
-    private static let userApnConsentOptInModel = User.shared.apnConsentReminderModel ?? OptInModel()
-    
     private let apnConsentOptInReminderManager = OptInReminderManager(currentSearchesCount: User.shared.searchCount,
                                                                       maxOptInScreenCount: EngagementServiceExperiment.maxOptInShowingAttempts,
                                                                       minSearchesForFirstOptIn: EngagementServiceExperiment.minSearches,
                                                                       searchesBetweenOptIns: EngagementServiceExperiment.searchesBetweenOptIns,
-                                                                      model: userApnConsentOptInModel)
+                                                                      model: User.shared.apnConsentReminderModel)
 
     init(profile: Profile, tabManager: TabManager) {
         self.profile = profile
@@ -197,11 +195,6 @@ class BrowserViewController: UIViewController {
                                                        with: profile)
         self.contextHintVC = ContextualHintViewController(with: contextViewModel)
         
-        // Ecosia: User's stored `apnConsentReminderModel` initialization
-        if User.shared.apnConsentReminderModel == nil {
-            User.shared.apnConsentReminderModel = BrowserViewController.userApnConsentOptInModel
-        }
-
         super.init(nibName: nil, bundle: nil)
         didInit()
     }
