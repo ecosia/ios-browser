@@ -84,7 +84,23 @@ class OpenSearchEngine: NSObject, NSSecureCoding {
 
     /// Returns the search URL for the given query.
     func searchURLForQuery(_ query: String) -> URL? {
-        return getURLFromTemplate(searchTemplate, query: query)
+        /* Ecosia: Quick Search Shortcuts Experiment
+         If the search is performed via Ecosia, we want to follow the standard flow
+         which is now environment-dependant.
+         the function `getURLFromTemplate(::)` takes into account the ecosia search engine
+         which contains only the production URL.
+         Once this experiment is considered finished and the logic needs fallback,
+         leave only the following line of code for the whole function's body
+         
+         return getURLFromTemplate(searchTemplate, query: query)
+         */
+        if EngineShortcutsExperiment.isEnabled,
+           let fromTemplateURL = getURLFromTemplate(searchTemplate, query: query),
+           fromTemplateURL.baseDomain != "ecosia.org" {
+            return fromTemplateURL
+        } else {
+            return URL.ecosiaSearchWithQuery(query)
+        }
     }
 
     /// Returns the search suggestion URL for the given query.

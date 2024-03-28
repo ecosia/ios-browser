@@ -286,6 +286,15 @@ class SearchViewController: SiteTableViewController,
             reloadData()
         }
     }
+    
+    // Ecosia: Quick Search Shortcuts Experiment
+    var tableViewBottomEqualToAnchor: NSLayoutYAxisAnchor {
+        if EngineShortcutsExperiment.isEnabled {
+            return searchEngineScrollView.topAnchor
+        } else {
+            return view.bottomAnchor
+        }
+    }
 
     override func reloadData() {
         querySuggestClient()
@@ -300,7 +309,9 @@ class SearchViewController: SiteTableViewController,
             tableView.topAnchor.constraint(equalTo: view.topAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: searchEngineScrollView.topAnchor)
+            // Ecosia: Quick Search Shortcuts Experiment
+            // tableView.bottomAnchor.constraint(equalTo: searchEngineScrollView.topAnchor)
+            tableView.bottomAnchor.constraint(equalTo: tableViewBottomEqualToAnchor)
         ])
     }
 
