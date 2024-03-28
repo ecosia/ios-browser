@@ -43,11 +43,6 @@ final class APNConsentViewController: UIViewController {
     private let ctaButton = UIButton()
     private let skipButton = UIButton()
     private var optInManager: OptInReminderManager?
-    var shouldShow: Bool {
-        EngagementServiceExperiment.isEnabled &&
-        ClientEngagementService.shared.notificationAuthorizationStatus == .notDetermined &&
-        optInManager?.shouldDisplayOptInScreen == true
-    }
 
     // MARK: - Init
 
