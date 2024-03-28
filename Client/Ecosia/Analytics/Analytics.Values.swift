@@ -6,7 +6,7 @@ extension Analytics {
         activity,
         abTest = "ab_Test",
         browser,
-        pushNotification = "push_notification",
+        pushNotificationConsent = "push_notification_consent",
         external,
         migration,
         navigation,
