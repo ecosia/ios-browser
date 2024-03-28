@@ -60,7 +60,7 @@
       "location" : "https://github.com/ecosia/ios-core.git",
       "state" : {
         "branch" : "MOB-2169_optin_model_init_fix",
-        "revision" : "e85276c6f0e6fda58ad49c2d7cf687393840043a"
+        "revision" : "64171b679438a190ecca87e9ccd352c77fd147ef"
       }
     },
     {
