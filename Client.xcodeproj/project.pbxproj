@@ -14732,7 +14732,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = "MOB-2169_optin_model_init_fix";
+				branch = main;
 				kind = branch;
 			};
 		};
