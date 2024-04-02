@@ -44,12 +44,7 @@ final class APNConsentViewController: UIViewController, Themeable {
     private let ctaButton = UIButton()
     private let skipButton = UIButton()
     private var optInManager: OptInReminderManager?
-    var shouldShow: Bool {
-        EngagementServiceExperiment.isEnabled &&
-        ClientEngagementService.shared.notificationAuthorizationStatus == .notDetermined &&
-        optInManager?.shouldDisplayOptInScreen == true
-    }
-    
+
     // MARK: - Themeable Properties
     
     var themeManager: ThemeManager { AppContainer.shared.resolve() }
@@ -83,6 +78,7 @@ final class APNConsentViewController: UIViewController, Themeable {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         modalTransitionStyle = .crossDissolve
+        optInManager?.recordOptInAttempt()
         Analytics.shared.apnConsent(.view)
     }
     
@@ -247,7 +243,6 @@ extension APNConsentViewController {
 extension APNConsentViewController {
 
     @objc private func skipTapped() {
-        optInManager?.recordOptInAttempt()
         Analytics.shared.apnConsent(.skip)
         dismiss(animated: true)
     }
@@ -257,7 +252,6 @@ extension APNConsentViewController {
         ClientEngagementService.shared.requestAPNConsent(notificationCenterDelegate: appDelegate) { [weak self] granted, error in
             guard granted else {
                 Analytics.shared.apnConsent(.deny)
-                self?.optInManager?.recordOptInAttempt()
                 DispatchQueue.main.async { [weak self] in
                     self?.dismissVC()
                 }
