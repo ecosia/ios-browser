@@ -167,6 +167,11 @@ class BrowserViewController: UIViewController {
         DefaultBrowserExperiment.minPromoSearches() <= User.shared.searchCount
     }
     fileprivate var shouldShowWhatsNewPageScreen: Bool { whatsNewDataProvider.shouldShowWhatsNewPage }
+    fileprivate var shouldShowAPNConsentScreen: Bool {
+        EngagementServiceExperiment.isEnabled &&
+        ClientEngagementService.shared.notificationAuthorizationStatus == .notDetermined &&
+        apnConsentOptInReminderManager.shouldDisplayOptInScreen == true
+    }
 
     let whatsNewDataProvider = WhatsNewLocalDataProvider()
     
@@ -174,18 +179,11 @@ class BrowserViewController: UIViewController {
     var menuHelper: MainMenuActionHelper?
     
     // Ecosia: Initialize the OptInReminderManager that handles the APNConsent showing
-    private static var userApnConsentOptInModel = User.shared.apnConsentReminderModel ?? OptInModel() {
-        didSet {
-            if User.shared.apnConsentReminderModel == nil {
-                User.shared.apnConsentReminderModel = userApnConsentOptInModel
-            }
-        }
-    }
     private let apnConsentOptInReminderManager = OptInReminderManager(currentSearchesCount: User.shared.searchCount,
                                                                       maxOptInScreenCount: EngagementServiceExperiment.maxOptInShowingAttempts,
                                                                       minSearchesForFirstOptIn: EngagementServiceExperiment.minSearches,
                                                                       searchesBetweenOptIns: EngagementServiceExperiment.searchesBetweenOptIns,
-                                                                      model: userApnConsentOptInModel)
+                                                                      model: User.shared.apnConsentReminderModel)
 
     init(profile: Profile, tabManager: TabManager) {
         self.profile = profile
@@ -196,7 +194,7 @@ class BrowserViewController: UIViewController {
         let contextViewModel = ContextualHintViewModel(forHintType: .toolbarLocation,
                                                        with: profile)
         self.contextHintVC = ContextualHintViewController(with: contextViewModel)
-
+        
         super.init(nibName: nil, bundle: nil)
         didInit()
     }
@@ -2318,6 +2316,7 @@ extension BrowserViewController {
     
     @discardableResult
     private func presentAPNConsentIfNeeded() -> Bool {
+        guard shouldShowAPNConsentScreen else { return false }
         let vc = APNConsentViewController(viewModel: UnleashAPNConsentViewModel(optInManager: apnConsentOptInReminderManager), optInManager: apnConsentOptInReminderManager)
         vc.presentAsSheetFrom(self)
         return true

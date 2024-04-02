@@ -142,10 +142,9 @@ final class Analytics {
     /// defined in the `APNConsentUIExperiment`
     /// so to leverage decoupling.
     func apnConsent(_ action: Action.APNConsent) {
-        let iterationsCount = User.shared.apnConsentReminderModel != nil ? "\(User.shared.apnConsentReminderModel!.optInScreenCount)" : "n/a"
         let event = Structured(category: Category.pushNotificationConsent.rawValue,
                                action: action.rawValue)
-            .label(iterationsCount)
+            .label("\(User.shared.apnConsentReminderModel.optInScreenCount)")
             .property(Property.home.rawValue)
         
         // When the user sees the APNConsent
