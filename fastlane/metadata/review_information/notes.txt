@@ -1,9 +1,3 @@
-Updated reviewers note for this version only:
-Dear Review Team, thanks for letting us release this version without any screenshots updates.
-However, due to recent priority shift, we had to cancel the approved 9.2.5 and revert the IDFV collection, resulting into a patch release which is the one we are now sending for review. We would like to kindly ask you to get this version approved (with the current screenshots set). We promptly tackled the screenshots redesign according to your guidelines and will definitely come with a planned minor release (namely 9.3.0).
-The release is planned for next weeks.
-Thanks in advance for your understanding. 
-
 General Notes:
 - Our app does make use of Siri Intents. There is one Shortcut that can be configured to open a new tab. 
 - We provide iOS14 widgets for both iPad and iPhone. There is a Today Widget for lower iOS versions. They can be added via the usual way.
