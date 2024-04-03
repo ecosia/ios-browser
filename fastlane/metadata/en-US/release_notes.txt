@@ -1,1 +1,2 @@
-We fixed some bugs and added some stability improvements.
+This version makes the Ecosia Browser capable of installing apps from other sources via the Alternative App Marketplaces feature provided by Apple for those living in EU countries.
+As usual we included several bugfixes and improvements.
