@@ -1,2 +1,1 @@
-Questa versione permette al browser Ecosia di installare applicazioni da altre fonti tramite la funzione Marketplace di app alternativi fornita da Apple per chi vive nei Paesi dell'UE.
-Come sempre, abbiamo incluso correzioni di bug e miglioramenti.
+

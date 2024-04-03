@@ -1,2 +1,1 @@
-Cette version permet au navigateur Ecosia d'installer des applications issues d'autres sources via la fonctionnalité Alternative App Marketplaces fournie par Apple pour les personnes domiciliées dans des pays de l'UE.
-Comme toujours, nous avons inclus plusieurs corrections d'erreurs et améliorations.
+
