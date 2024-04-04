@@ -161,7 +161,7 @@ extension String {
         case after = "After"
         case treesPlantedByTheCommunity = "trees planted by the Ecosia community"
         case treesPlantedByTheCommunityCapitalized = "Trees planted by the Ecosia community"
-        case dedicatedToClimateAction = "dedicted to climate action"
+        case dedicatedToClimateAction = "dedicated to climate action"
         case activeProjects = "Active projects"
         case countries = "Countries"
         case finishTour = "Start Planting"
