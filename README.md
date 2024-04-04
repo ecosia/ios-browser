@@ -182,19 +182,15 @@ Make sure that `fastlane` and `transifex`-cli is installed.
 
 ### Add source release notes to transifex (en-US)
 
-> ℹ️ Updating the source file in the project and merging it into `main` will automatically push it to Transifex as well since the Github integration is in place
+> ℹ️ Updating the source file in the project and merging it into `main` will automatically push it to Transifex as well since the Github integration is in place.
 
-- Make sure that an _inflight_ version exists in AppStore Connect. If not, create one.
-- Add English text to release notes in AppStore Connect
-- Download metadata from AppStore specifying the inflight version
+> 🔔 Make sure that an _inflight_ version exists in AppStore Connect. If not, create one.
 
-    ```bash
-    bundle exec fastlane deliver download_metadata --app-version 8.2.0
-    ```
-
-- Merge the code to main via a PR (The transifex integration will pick up the push)
-
-- Wait for translators :hourglass_flowing_sand:
+- Create a new branch off `main` and modify the English release notes [here](/fastlane/metadata/en-US/release_notes.txt)
+- Open a PR with the modified English release note text file against `main` branch
+- Once approved, *Squash and Merge* the code to `main`. (The transifex integration will pick up the push)
+- Transifex will create a PR and update it with the release notes in all available languages :hourglass_flowing_sand:
+- *Squash and Merge* the code to `main` via a PR and a GitHubAction workflow will be triggered to upload the newly translated release notes 
 
 ### Add language translations
 
