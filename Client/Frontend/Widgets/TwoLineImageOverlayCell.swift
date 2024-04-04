@@ -140,6 +140,8 @@ class TwoLineImageOverlayCell: UITableViewCell,
         titleLabel.textColor = theme.colors.textPrimary
         descriptionLabel.textColor = theme.colors.textSecondary
         leftImageView.layer.borderColor = theme.colors.borderPrimary.cgColor
+        // Ecosia: Update image view properties
+        leftImageView.tintColor = theme.colors.textPrimary
         accessoryView?.tintColor = theme.colors.actionSecondary
         topSeparatorView.backgroundColor = theme.colors.borderPrimary
         bottomSeparatorView.backgroundColor = theme.colors.borderPrimary
