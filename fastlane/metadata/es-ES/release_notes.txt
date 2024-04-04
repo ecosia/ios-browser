@@ -1,2 +1,1 @@
-Esta versión permite al buscador Ecosia instalar aplicaciones de otras fuentes a través de la función de mercados de apps alternativos de Apple para los residentes en países de la UE.
-Como de costumbre, hemos incluido varias correcciones de errores y mejoras.
+Arreglamos algunos bugs y añadimos algunas mejoras de estabilidad.
