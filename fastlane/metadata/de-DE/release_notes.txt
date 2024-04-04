@@ -1,2 +1,1 @@
-Mit dieser Version des Ecosia-Browsers lassen sich über den Marketplace für alternative Apps von Apple auch Apps von anderen Quellen runterladen. Dieses Feature steht Leuten mit Wohnsitz in EU-Ländern zur Verfügung.
-Wie immer wurden auch Bugs behoben und einige Verbesserungen eingearbeitet.
+Wir haben einige Bugs behoben und die Stabilität verbessert.
