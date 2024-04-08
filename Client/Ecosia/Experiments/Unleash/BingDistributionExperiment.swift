@@ -64,6 +64,6 @@ extension BingDistributionExperiment {
             return false
         }
         
-        return Unleash.getVariant(.braze) == "test"
+        return Unleash.getVariant(.bingDistribution).name == "test"
     }
 }
