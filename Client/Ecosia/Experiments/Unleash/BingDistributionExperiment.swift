@@ -27,7 +27,8 @@ struct BingDistributionExperiment {
         urlComponents?.queryItems = [
             URLQueryItem(name: "PC", value: "ECAA"),
             URLQueryItem(name: "FROM", value: "ECAA01"),
-            URLQueryItem(name: "PTAG", value: "st_ios_bing_distribution_test")]
+            URLQueryItem(name: "PTAG", value: "st_ios_bing_distribution_test")
+        ]
         return urlComponents?.url
     }
     
