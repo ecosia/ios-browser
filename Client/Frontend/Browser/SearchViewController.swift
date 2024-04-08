@@ -564,6 +564,16 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
              when the Bing experiment will be removed
              */
             if var url = engine.searchURLForQuery(suggestion) {
+                /*
+                 Ecosia: Bing Search Experiment
+                 remove this if block when the Bing experiment will be removed
+                 */
+                if BingDistributionExperiment.shouldShowBingSERP,
+                   let bingSearchURL = BingDistributionExperiment.makeBingSearchURLFromURL(url) {
+                    url = bingSearchURL
+                    BingDistributionExperiment.trackAnalytics()
+                    BingDistributionExperiment.incrementCounter()
+                }
                 searchDelegate?.searchViewController(self, didSelectURL: url, searchTerm: suggestion)
             }
         case .openedTabs:

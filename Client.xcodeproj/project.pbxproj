@@ -130,6 +130,8 @@
 		2AF2723A29F2C54A004CA46F /* EmptyBookmarksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AF2723929F2C54A004CA46F /* EmptyBookmarksView.swift */; };
 		2C019BAA2AF3EFD500830CD1 /* EngineShortcutsExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C50B3DC2AF3EE930037AA90 /* EngineShortcutsExperiment.swift */; };
 		2C06B59E2A9FBD02009CDF83 /* WhatsNewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C06B59D2A9FBD02009CDF83 /* WhatsNewCell.swift */; };
+		2C2375662BC2EF9400F5F213 /* BingDistributionExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2375652BC2EF9400F5F213 /* BingDistributionExperiment.swift */; };
+		2C23756A2BC2F77C00F5F213 /* UnleashBingDistributionExperimentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2375682BC2F0CB00F5F213 /* UnleashBingDistributionExperimentTests.swift */; };
 		2C28F96C201B2D4C00ABA8A5 /* MailAppSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C28F96B201B2D4C00ABA8A5 /* MailAppSettingsTests.swift */; };
 		2C2A5EF41E68469500F02659 /* PrivateBrowsingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A5EF31E68469500F02659 /* PrivateBrowsingTest.swift */; };
 		2C2A91291FA2410D002E36BD /* HistoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A91281FA2410D002E36BD /* HistoryTests.swift */; };
@@ -1762,6 +1764,8 @@
 		2BAA411FAF1D49B9990A7720 /* sat-Olck */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "sat-Olck"; path = "sat-Olck.lproj/Shared.strings"; sourceTree = "<group>"; };
 		2BAB4A40A318F5A577488909 /* mr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = mr; path = mr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		2C06B59D2A9FBD02009CDF83 /* WhatsNewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhatsNewCell.swift; sourceTree = "<group>"; };
+		2C2375652BC2EF9400F5F213 /* BingDistributionExperiment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BingDistributionExperiment.swift; sourceTree = "<group>"; };
+		2C2375682BC2F0CB00F5F213 /* UnleashBingDistributionExperimentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnleashBingDistributionExperimentTests.swift; sourceTree = "<group>"; };
 		2C26401D9CCB8C2671EA2431 /* ta */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ta; path = ta.lproj/3DTouchActions.strings; sourceTree = "<group>"; };
 		2C28F96B201B2D4C00ABA8A5 /* MailAppSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailAppSettingsTests.swift; sourceTree = "<group>"; };
 		2C2A5EF31E68469500F02659 /* PrivateBrowsingTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PrivateBrowsingTest.swift; sourceTree = "<group>"; };
@@ -5280,12 +5284,21 @@
 			path = Network;
 			sourceTree = "<group>";
 		};
+		2C2375672BC2F0B800F5F213 /* ExperimentsTests */ = {
+			isa = PBXGroup;
+			children = (
+				2C2375682BC2F0CB00F5F213 /* UnleashBingDistributionExperimentTests.swift */,
+			);
+			path = ExperimentsTests;
+			sourceTree = "<group>";
+		};
 		2C31ECA92A2E131A0058BC31 /* Unleash */ = {
 			isa = PBXGroup;
 			children = (
 				2C50B3DC2AF3EE930037AA90 /* EngineShortcutsExperiment.swift */,
 				2C31ECAA2A2E13410058BC31 /* DefaultBrowserExperiment.swift */,
 				2C9165482B20E55200BE390E /* EngagementServiceExperiment.swift */,
+				2C2375652BC2EF9400F5F213 /* BingDistributionExperiment.swift */,
 			);
 			path = Unleash;
 			sourceTree = "<group>";
@@ -5346,13 +5359,6 @@
 				2C91654A2B20E64100BE390E /* UnleashAPNConsentViewModel.swift */,
 			);
 			path = APNConsent;
-			sourceTree = "<group>";
-		};
-		2C9C9FF52A03C7950038A3DD /* ExperimentsTests */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = ExperimentsTests;
 			sourceTree = "<group>";
 		};
 		2CA6DA142B18E4C2000AF363 /* EngagementService */ = {
@@ -6801,8 +6807,8 @@
 		CAA6AC4628E470C500A13DE9 /* Ecosia */ = {
 			isa = PBXGroup;
 			children = (
+				2C2375672BC2F0B800F5F213 /* ExperimentsTests */,
 				2C9F8CBA2AC3104800678514 /* EcosiaInstallTypeTests.swift */,
-				2C9C9FF52A03C7950038A3DD /* ExperimentsTests */,
 				CAA6AC4228E4709F00A13DE9 /* EcosiaHistoryMigrationTests.swift */,
 				CAA6AC4428E470BB00A13DE9 /* EcosiaBookmarkMigrationTests.swift */,
 				CAA6AC4728E4732A00A13DE9 /* EcosiaTabMigrationTests.swift */,
@@ -9819,6 +9825,7 @@
 				C8B0F5F5283B7CCE007AE65D /* PocketSponsoredStory.swift in Sources */,
 				8AB8571F27D931B40075C173 /* EmptyTopSiteCell.swift in Sources */,
 				CAC458F1249429C20042561A /* LoginListSelectionHelper.swift in Sources */,
+				2C2375662BC2EF9400F5F213 /* BingDistributionExperiment.swift in Sources */,
 				EB9A178E20E525DF00B12184 /* ThemeSettingsController.swift in Sources */,
 				C8656D75270F834600E199EA /* FlaggableFeatureOptions.swift in Sources */,
 				23A50958253F782E008FEBD9 /* NewTabButton.swift in Sources */,
@@ -10004,6 +10011,7 @@
 				43446CF02412DDBE00F5C643 /* UpdateViewModelTests.swift in Sources */,
 				8AE1E1D927B1BD380024C45E /* UIStackViewExtensionsTests.swift in Sources */,
 				3B6F40181DC7849C00656CC6 /* TopSitesViewModelTests.swift in Sources */,
+				2C23756A2BC2F77C00F5F213 /* UnleashBingDistributionExperimentTests.swift in Sources */,
 				C869915528917803007ACC5C /* WallpaperMetadataTestProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
