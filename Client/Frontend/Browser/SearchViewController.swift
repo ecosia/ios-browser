@@ -573,7 +573,12 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
                     url = bingSearchURL
                     BingDistributionExperiment.trackAnalytics()
                     BingDistributionExperiment.incrementCounter()
+                } else if BingDistributionExperiment.isEnabled {
+                    // The experiment is enabled but we are in the `control` group
+                    let tagEnrichedSearchURL = BingDistributionExperiment.appendControlGroupAdditionalTypeTagTo(url)
+                    url = tagEnrichedSearchURL
                 }
+
                 searchDelegate?.searchViewController(self, didSelectURL: url, searchTerm: suggestion)
             }
         case .openedTabs:
