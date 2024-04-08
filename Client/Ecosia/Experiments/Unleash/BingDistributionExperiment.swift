@@ -64,11 +64,6 @@ extension BingDistributionExperiment {
             return false
         }
         
-        let variant = Unleash.getVariant(.braze)
-        switch variant.name {
-        case "control": return false
-        case "test": return true
-        default: return false
-        }
+        return Unleash.getVariant(.braze) == "test"
     }
 }
