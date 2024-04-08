@@ -14740,7 +14740,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = main;
+				branch = "MOB-2120_bing_distribution_experiment";
 				kind = branch;
 			};
 		};
