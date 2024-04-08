@@ -35,7 +35,7 @@ enum ClimateImpactInfo: Equatable {
         case .totalTrees:
             return .localized(.treesPlantedByTheCommunity)
         case .totalInvested:
-            return .localized(.investedIntoClimateAction)
+            return .localized(.dedicatedToClimateAction)
         }
     }
     
@@ -48,7 +48,7 @@ enum ClimateImpactInfo: Equatable {
         case .totalTrees(let value):
             return value.spelledOutString + " " + .localized(.treesPlantedByTheCommunity)
         case .totalInvested(let value):
-            return value.spelledOutString + " " + .localized(.investedIntoClimateAction)
+            return value.spelledOutString + " " + .localized(.dedicatedToClimateAction)
         }
     }
     

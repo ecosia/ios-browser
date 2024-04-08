@@ -403,6 +403,8 @@ class SearchViewController: SiteTableViewController,
                                           object: .recordSearch,
                                           extras: extras)
 
+        // Ecosia: Add Search Engine Analytics
+        Analytics.shared.searchEngineShortcutClick(engine.engineID ?? "other")
         searchDelegate?.searchViewController(self, didSelectURL: url, searchTerm: "")
     }
 

@@ -142,10 +142,16 @@ final class Analytics {
     /// defined in the `APNConsentUIExperiment`
     /// so to leverage decoupling.
     func apnConsent(_ action: Action.APNConsent) {
-        let event = Structured(category: Category.pushNotification.rawValue,
+        let event = Structured(category: Category.pushNotificationConsent.rawValue,
                                action: action.rawValue)
-            .label("push_notification_consent")
+            .label("\(User.shared.apnConsentReminderModel.optInScreenCount)")
             .property(Property.home.rawValue)
+        
+        // When the user sees the APNConsent
+        // we add the number of search counts as value of the event
+        if action == .view {
+            event.value = NSNumber(integerLiteral: User.shared.searchCount)
+        }
         
         // Add context (if any) from current EngagementService enabled
         if let toggleName = Unleash.Toggle.Name(rawValue: EngagementServiceExperiment.toggleName),
@@ -334,6 +340,13 @@ final class Analytics {
             .property(page.rawValue)
             .value(.init(integerLiteral: index))
         track(event)
+    }
+    
+    func searchEngineShortcutClick(_ engineID: String) {
+        track(Structured(category: Category.browser.rawValue,
+                         action: Action.search.rawValue)
+            .label(Label.Browser.searchEngineShortcut.rawValue)
+            .property(engineID))
     }
     
     func sendAnonymousUsageDataSetting(enabled: Bool) {

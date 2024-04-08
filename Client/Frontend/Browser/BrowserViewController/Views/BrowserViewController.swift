@@ -193,8 +193,8 @@ class BrowserViewController: UIViewController,
     fileprivate var shouldShowWhatsNewPageScreen: Bool { whatsNewDataProvider.shouldShowWhatsNewPage }
     fileprivate var shouldShowAPNConsentScreen: Bool {
         EngagementServiceExperiment.isEnabled &&
-        EngagementServiceExperiment.minSearches() <= User.shared.searchCount &&
-        User.shared.shouldShowAPNConsentScreen
+        ClientEngagementService.shared.notificationAuthorizationStatus == .notDetermined &&
+        apnConsentOptInReminderManager.shouldDisplayOptInScreen == true
     }
 
     let whatsNewDataProvider = WhatsNewLocalDataProvider()
@@ -203,6 +203,12 @@ class BrowserViewController: UIViewController,
     // Ecosia: Make `menuHelper` available at class level
     var menuHelper: MainMenuActionHelper?
     
+    // Ecosia: Initialize the OptInReminderManager that handles the APNConsent showing
+    private let apnConsentOptInReminderManager = OptInReminderManager(currentSearchesCount: User.shared.searchCount,
+                                                                      maxOptInScreenCount: EngagementServiceExperiment.maxOptInShowingAttempts,
+                                                                      minSearchesForFirstOptIn: EngagementServiceExperiment.minSearches,
+                                                                      searchesBetweenOptIns: EngagementServiceExperiment.searchesBetweenOptIns,
+                                                                      model: User.shared.apnConsentReminderModel)
     // Ecosia: Add init to separate from Ecosia Properties
     // MARK: - Init
     
@@ -2578,7 +2584,8 @@ extension BrowserViewController {
     @discardableResult
     private func presentAPNConsentIfNeeded() -> Bool {
         guard shouldShowAPNConsentScreen else { return false }
-        APNConsentViewController.presentOn(self, viewModel: UnleashAPNConsentViewModel())
+        let vc = APNConsentViewController(viewModel: UnleashAPNConsentViewModel(optInManager: apnConsentOptInReminderManager), optInManager: apnConsentOptInReminderManager)
+        vc.presentAsSheetFrom(self)
         return true
     }
 

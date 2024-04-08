@@ -161,7 +161,7 @@ extension String {
         case after = "After"
         case treesPlantedByTheCommunity = "trees planted by the Ecosia community"
         case treesPlantedByTheCommunityCapitalized = "Trees planted by the Ecosia community"
-        case investedIntoClimateAction = "invested into climate action"
+        case dedicatedToClimateAction = "dedicated to climate action"
         case activeProjects = "Active projects"
         case countries = "Countries"
         case finishTour = "Start Planting"
@@ -250,5 +250,6 @@ extension String {
         case apnConsentVariantNameTest1SecondItemTitle = "Get tips on how to be climate active every day"
         case apnConsentCTAAllowButtonTitle = "Allow push notifications"
         case apnConsentSkipButtonTitle = "Not now"
+        case apnConsentLastReminderSkipButtonTitle = "No thanks"
     }
 }

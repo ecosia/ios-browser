@@ -6,10 +6,6 @@ import UIKit
 import Core
 import Common
 
-protocol APNConsentViewDelegate: AnyObject {
-    func apnConsentViewDidShow(_ viewController: APNConsentViewController)
-}
-
 final class APNConsentViewController: UIViewController, Themeable {
     
     // MARK: - UX
@@ -47,8 +43,8 @@ final class APNConsentViewController: UIViewController, Themeable {
     private let tableView = UITableView()
     private let ctaButton = UIButton()
     private let skipButton = UIButton()
-    weak var delegate: APNConsentViewDelegate?
-    
+    private var optInManager: OptInReminderManager?
+
     // MARK: - Themeable Properties
     
     var themeManager: ThemeManager { AppContainer.shared.resolve() }
@@ -57,10 +53,11 @@ final class APNConsentViewController: UIViewController, Themeable {
 
     // MARK: - Init
 
-    init(viewModel: APNConsentViewModelProtocol, delegate: APNConsentViewDelegate?) {
+    init(viewModel: APNConsentViewModelProtocol,
+         optInManager: OptInReminderManager?) {
         super.init(nibName: nil, bundle: nil)
         self.viewModel = viewModel
-        self.delegate = delegate
+        self.optInManager = optInManager
     }
     
     required init?(coder: NSCoder) {
@@ -72,6 +69,7 @@ final class APNConsentViewController: UIViewController, Themeable {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
+        setupPanGestureRecognizer()
         layoutViews()
         applyTheme()
         listenForThemeChange(view)
@@ -80,8 +78,8 @@ final class APNConsentViewController: UIViewController, Themeable {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         modalTransitionStyle = .crossDissolve
+        optInManager?.recordOptInAttempt()
         Analytics.shared.apnConsent(.view)
-        self.delegate?.apnConsentViewDidShow(self)
     }
     
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
@@ -89,16 +87,48 @@ final class APNConsentViewController: UIViewController, Themeable {
     }
 }
 
-// MARK: - Buttons Actions
+// MARK: - Handle Pan Gesture
+
+extension APNConsentViewController: UIGestureRecognizerDelegate {
+    
+    // MARK: UIGestureRecognizerDelegate
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        // Allow simultaneous recognition of the specific pan gesture along with other gestures.
+        return true
+    }
+}
 
 extension APNConsentViewController {
-    
-    @objc private func closeButtonTapped() {
-        dismiss(animated: true, completion: nil)
+        
+    /// Sets up a pan gesture recognizer on the view to handle user dragging.
+    private func setupPanGestureRecognizer() {
+        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:)))
+        panGesture.delegate = self
+        view.addGestureRecognizer(panGesture)
     }
     
-    @objc private func footerButtonTapped() {
-        closeButtonTapped()
+    /// Handles the pan gesture recognizer's events.
+    ///
+    /// - Parameter gestureRecognizer: The pan gesture recognizer.
+    @objc func handlePan(_ gestureRecognizer: UIPanGestureRecognizer) {
+        
+        let translation = gestureRecognizer.translation(in: view)
+        let minimumVelocityToHide: CGFloat = 1500
+        let minimumScreenRatioToHide: CGFloat = 0.5
+
+        switch gestureRecognizer.state {
+        case .ended:
+            let velocity = gestureRecognizer.velocity(in: view)
+            let closing = (translation.y > view.frame.size.height * minimumScreenRatioToHide) ||
+                          (velocity.y > minimumVelocityToHide)
+            if closing {
+                // Track analytics event when the user dismisses the view
+                Analytics.shared.apnConsent(.dismiss)
+            }
+        default:
+            break
+        }
     }
 }
 
@@ -134,7 +164,6 @@ extension APNConsentViewController {
         ctaButton.setTitle(viewModel.ctaAllowButtonTitle, for: .normal)
         ctaButton.titleLabel?.adjustsFontForContentSizeCategory = true
         ctaButton.translatesAutoresizingMaskIntoConstraints = false
-        ctaButton.addTarget(self, action: #selector(footerButtonTapped), for: .touchUpInside)
         ctaButton.layer.cornerRadius = UX.FooterButtons.height/2
         ctaButton.addTarget(self, action: #selector(ctaTapped), for: .primaryActionTriggered)
 
@@ -142,7 +171,7 @@ extension APNConsentViewController {
         skipButton.backgroundColor = .clear
         skipButton.titleLabel?.font = .preferredFont(forTextStyle: .callout)
         skipButton.titleLabel?.adjustsFontForContentSizeCategory = true
-        skipButton.setTitle(.localized(.apnConsentSkipButtonTitle), for: .normal)
+        skipButton.setTitle(viewModel.skipButtonTitle, for: .normal)
         skipButton.addTarget(self, action: #selector(skipTapped), for: .primaryActionTriggered)
         
         view.addSubview(topContainerView)
@@ -160,7 +189,8 @@ extension APNConsentViewController {
             topContainerView.topAnchor.constraint(equalTo: view.topAnchor),
             topContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             topContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-
+            topContainerView.heightAnchor.constraint(lessThanOrEqualTo: view.heightAnchor, multiplier: 0.5),
+            
             // First image view constraints
             firstImageView.topAnchor.constraint(equalTo: topContainerView.topAnchor),
             firstImageView.leadingAnchor.constraint(equalTo: topContainerView.leadingAnchor),
@@ -219,12 +249,18 @@ extension APNConsentViewController {
 
     @objc private func ctaTapped() {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
-        ClientEngagementService.shared.requestAPNConsent(notificationCenterDelegate: appDelegate) { granted, error in
+        ClientEngagementService.shared.requestAPNConsent(notificationCenterDelegate: appDelegate) { [weak self] granted, error in
             guard granted else {
                 Analytics.shared.apnConsent(.deny)
+                DispatchQueue.main.async { [weak self] in
+                    self?.dismissVC()
+                }
                 return
             }
             Analytics.shared.apnConsent(.allow)
+            DispatchQueue.main.async { [weak self] in
+                self?.dismissVC()
+            }
         }
     }
 }
@@ -271,33 +307,24 @@ extension APNConsentViewController {
 
 extension APNConsentViewController {
     
-    static func presentOn(_ viewController: UIViewController,
-                          viewModel: APNConsentViewModelProtocol) {
-        
-        guard let whatsNewDelegateViewController = viewController as? APNConsentViewDelegate else { return }
-        let sheet = APNConsentViewController(viewModel: viewModel,
-                                           delegate: whatsNewDelegateViewController)
-        sheet.modalPresentationStyle = .automatic
+    func presentAsSheetFrom(_ viewController: UIViewController) {
+
+        modalPresentationStyle = .automatic
         
         // iPhone
-        if sheet.traitCollection.userInterfaceIdiom == .phone {
-            if #available(iOS 16.0, *), let sheet = sheet.sheetPresentationController {
-                let custom = UISheetPresentationController.Detent.custom { context in
-                    return UX.PreferredContentSize.iPhoneCustomDetentHeight
-                }
-                sheet.detents = [custom, .large()]
-            } else if #available(iOS 15.0, *), let sheet = sheet.sheetPresentationController {
+        if traitCollection.userInterfaceIdiom == .phone {
+            if #available(iOS 15.0, *), let sheet = sheetPresentationController {
                 sheet.detents = [.large()]
             }
         }
 
         // iPad
-        if sheet.traitCollection.userInterfaceIdiom == .pad {
-            sheet.modalPresentationStyle = .formSheet
-            sheet.preferredContentSize = .init(width: UX.PreferredContentSize.iPadWidth,
+        if traitCollection.userInterfaceIdiom == .pad {
+            modalPresentationStyle = .formSheet
+            preferredContentSize = .init(width: UX.PreferredContentSize.iPadWidth,
                                          height: UX.PreferredContentSize.iPadHeight)
         }
         
-        viewController.present(sheet, animated: true, completion: nil)
+        viewController.present(self, animated: true, completion: nil)
     }
 }

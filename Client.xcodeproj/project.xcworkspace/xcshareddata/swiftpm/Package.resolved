@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/braze-inc/braze-swift-sdk",
       "state" : {
-        "revision" : "2973b623ab2c270bfa5acf3142397b0e1f4806af",
-        "version" : "7.7.0"
+        "revision" : "dee5204a3f92ca48b58284327c32053c0a379460",
+        "version" : "7.6.0"
       }
     },
     {
@@ -69,7 +69,7 @@
       "location" : "https://github.com/ecosia/ios-core.git",
       "state" : {
         "branch" : "main",
-        "revision" : "5c1244ad583289bc1777a45613287845bf478983"
+        "revision" : "eab4330cff3c0a64e97124576dcc660bd8e63ca8"
       }
     },
     {
@@ -105,7 +105,7 @@
       "location" : "https://github.com/mozilla-mobile/MappaMundi.git",
       "state" : {
         "branch" : "master",
-        "revision" : "f56a6e483163a761adc8cd25c337db0ed1eac524"
+        "revision" : "ded1e15d9e3a973f723185e07d0f2573a7fe1034"
       }
     },
     {
@@ -122,8 +122,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SDWebImage/SDWebImage.git",
       "state" : {
-        "revision" : "73b9397cfbd902f606572964055464903b1d84c6",
-        "version" : "5.19.0"
+        "revision" : "3e48cb68d8e668d146dc59c73fb98cb628616236",
+        "version" : "5.13.2"
       }
     },
     {

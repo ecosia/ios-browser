@@ -6,7 +6,7 @@ extension Analytics {
         activity,
         abTest = "ab_Test",
         browser,
-        pushNotification = "push_notification",
+        pushNotificationConsent = "push_notification_consent",
         external,
         migration,
         navigation,
@@ -56,7 +56,8 @@ extension Analytics {
             settings,
             newTab = "new_tab",
             blockImages = "block_images",
-            searchbar = "searchbar"
+            searchbar = "searchbar",
+            searchEngineShortcut = "shortcut"
         }
         
         enum Bookmarks: String {
@@ -84,7 +85,8 @@ extension Analytics {
         display,
         enable,
         disable,
-        dismiss
+        dismiss,
+        search
         
         enum Activity: String {
             case
@@ -113,7 +115,8 @@ extension Analytics {
             view,
             skip,
             deny,
-            allow
+            allow,
+            dismiss
         }
         
         enum Bookmarks: String {
