@@ -5,36 +5,17 @@
 import XCTest
 @testable import Client
 
-final class UnleashBingDistributionExperimentTests: XCTestCase {
-        
-    func testMakeBingSearchURLFromURLNotNil() {
-        let url = URL(string: "https://google.com/search?q=test")!
-        let bingUrl = BingDistributionExperiment.makeBingSearchURLFromURL(url)
-        XCTAssertNotNil(bingUrl)
-    }
-    
-    func testMakeBingSearchURLFromURL() {
-        let sourceURL = URL(string: "https://google.com?q=swift")!
-        let expectedURLString = "https://bing.com?q=swift"
-        let resultURL = BingDistributionExperiment.makeBingSearchURLFromURL(sourceURL)
-        XCTAssertEqual(resultURL?.baseDomain, URL(string: expectedURLString)!.baseDomain, "URL should be modified to use bing.com")
-    }
-    
+final class BingDistributionExperimentTests: XCTestCase {
+
     func testMakeBingSearchURLFromURLAppendingTags() {
         // Given
         let sourceURL = URL(string: "https://www.example.com/search?q=apple")!
         
         // When
         let bingURL = BingDistributionExperiment.makeBingSearchURLFromURL(sourceURL)
-        let components = URLComponents(url: bingURL!, resolvingAgainstBaseURL: false)
         
-        XCTAssertNotNil(components)
-        XCTAssertEqual(components!.scheme, "https")
-        XCTAssertEqual(components!.host, "bing.com")
-        XCTAssertEqual(components!.queryItems?.count, 3)
-        XCTAssertEqual(components!.queryItems?.first(where: { $0.name == "PC" })?.value, "ECAA")
-        XCTAssertEqual(components!.queryItems?.first(where: { $0.name == "FROM" })?.value, "ECAA01")
-        XCTAssertEqual(components!.queryItems?.first(where: { $0.name == "PTAG" })?.value, "st_ios_bing_distribution_test")
+        XCTAssertEqual(bingURL?.absoluteString,
+                       "https://bing.com/search?q=apple&PC=ECAA&FORM=ECAA01&PTAG=st_ios_bing_distribution_test")
     }
     
     func testAppendControlGroupAdditionalTypeTagTo() {

@@ -10,11 +10,11 @@ struct BingDistributionExperiment {
     private init() {}
     
     static func incrementCounter() {
-        BingDistributionExperimentCounter.increment()
+        User.shared.searchCount += 1
     }
     
     static func getCounterCurrentCount() -> Int {
-        BingDistributionExperimentCounter.read()
+        User.shared.searchCount
     }
     
     static var isEnabled: Bool {
@@ -24,11 +24,17 @@ struct BingDistributionExperiment {
     static func makeBingSearchURLFromURL(_ sourceURL: URL) -> URL? {
         var urlComponents = URLComponents(url: sourceURL.absoluteURL, resolvingAgainstBaseURL: false)
         urlComponents?.host = "bing.com"
-        urlComponents?.queryItems = [
+        var queryItems = [URLQueryItem]()
+        if let existingSearchQuery = urlComponents?.queryItems?.first(where: { $0.name == "q" }) {
+            queryItems.append(existingSearchQuery)
+        }
+        queryItems.append(contentsOf: [
             URLQueryItem(name: "PC", value: "ECAA"),
-            URLQueryItem(name: "FROM", value: "ECAA01"),
+            URLQueryItem(name: "FORM", value: "ECAA01"),
             URLQueryItem(name: "PTAG", value: "st_ios_bing_distribution_test")
-        ]
+        ])
+        urlComponents?.queryItems = queryItems
+        print("[TEST] Using Bing url: \(urlComponents!.url)")
         return urlComponents?.url
     }
     
@@ -59,7 +65,6 @@ struct BingDistributionExperiment {
 extension BingDistributionExperiment {
     
     static var shouldShowBingSERP: Bool {
-        
         guard BingDistributionExperiment.isEnabled else {
             return false
         }
