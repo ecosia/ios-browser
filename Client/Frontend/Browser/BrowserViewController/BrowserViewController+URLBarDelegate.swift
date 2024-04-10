@@ -300,7 +300,6 @@ extension BrowserViewController: URLBarDelegate {
             if BingDistributionExperiment.shouldShowBingSERP,
                let bingSearchURL = BingDistributionExperiment.makeBingSearchURLFromURL(searchURL) {
                 searchURL = bingSearchURL
-                BingDistributionExperiment.trackAnalytics()
                 BingDistributionExperiment.incrementCounter()
             } else if BingDistributionExperiment.isEnabled {
                 // The experiment is enabled but we are in the `control` group

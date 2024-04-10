@@ -571,7 +571,6 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
                 if BingDistributionExperiment.shouldShowBingSERP,
                    let bingSearchURL = BingDistributionExperiment.makeBingSearchURLFromURL(url) {
                     url = bingSearchURL
-                    BingDistributionExperiment.trackAnalytics()
                     BingDistributionExperiment.incrementCounter()
                 } else if BingDistributionExperiment.isEnabled {
                     // The experiment is enabled but we are in the `control` group

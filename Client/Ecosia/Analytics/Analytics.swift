@@ -138,14 +138,6 @@ final class Analytics {
         track(event)
     }
     
-    func userSearchesViaBingABTest() {
-        let event = Structured(category: Category.abTest.rawValue,
-                               action: "user_search")
-            .label("search_key")
-
-        track(event)
-    }
-    
     /// Sends the analytics event for a given action
     /// The function is EngagementService agnostic e.g. doesn't have context
     /// of the engagement service being used (i.e. `Braze`)

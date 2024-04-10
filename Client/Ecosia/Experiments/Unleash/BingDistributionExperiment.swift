@@ -34,7 +34,6 @@ struct BingDistributionExperiment {
             URLQueryItem(name: "PTAG", value: "st_ios_bing_distribution_test")
         ])
         urlComponents?.queryItems = queryItems
-        print("[TEST] Using Bing url: \(urlComponents!.url)")
         return urlComponents?.url
     }
     
@@ -55,10 +54,6 @@ struct BingDistributionExperiment {
             }
         }
         return urlToUpdate
-    }
-    
-    static func trackAnalytics() {
-        Analytics.shared.userSearchesViaBingABTest()
     }
 }
 
