@@ -71,12 +71,12 @@ class OpenSearchEngine: NSObject, NSCoding {
          Once they are finished, we can move back to the following line:
          `URL.ecosiaSearchWithQuery(query)`
          */
-        if BingDistributionExperiment.isEnabled {
-            return BingDistributionExperiment.searchURLForQuery(query)
-        } else if EngineShortcutsExperiment.isEnabled,
+        if EngineShortcutsExperiment.isEnabled,
            let fromTemplateURL = getURLFromTemplate(searchTemplate, query: query),
            fromTemplateURL.baseDomain != "ecosia.org" {
             return fromTemplateURL
+        } else if BingDistributionExperiment.isEnabled {
+            return BingDistributionExperiment.searchURLForQuery(query)
         } else {
             return URL.ecosiaSearchWithQuery(query)
         }
