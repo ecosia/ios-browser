@@ -8,34 +8,20 @@ import XCTest
 final class BingDistributionExperimentTests: XCTestCase {
 
     func testMakeBingSearchURLFromURLAppendingTags() {
-        // Given
-        let sourceURL = URL(string: "https://www.example.com/search?q=apple")!
-        
         // When
-        let bingURL = BingDistributionExperiment.makeBingSearchURLFromURL(sourceURL)
+        let bingURL = BingDistributionExperiment.bingSearchWithQuery("apple")
         
-        XCTAssertEqual(bingURL?.absoluteString,
-                       "https://bing.com/search?q=apple&PC=ECAA&FORM=ECAA01&PTAG=st_ios_bing_distribution_test")
+        // Then
+        XCTAssertEqual(bingURL.absoluteString,
+                       "https://www.bing.com/search?q=apple&PC=ECAA&FORM=ECAA01&PTAG=st_ios_bing_distribution_test")
     }
     
     func testAppendControlGroupAdditionalTypeTagTo() {
-        // Given
-        let sourceURL = URL(string: "https://www.example.com/search?q=apple")!
-        
         // When
-        let updatedURL = BingDistributionExperiment.appendControlGroupAdditionalTypeTagTo(sourceURL)
+        let updatedURL = BingDistributionExperiment.ecosiaSearchWithTypetag("apple")
         
         // Then
-        guard let components = URLComponents(url: updatedURL, resolvingAgainstBaseURL: true) else {
-            XCTFail("Failed to create URL components")
-            return
-        }
-        
-        XCTAssertEqual(components.scheme, "https")
-        XCTAssertEqual(components.host, "www.example.com")
-        XCTAssertEqual(components.path, "/search")
-        
-        // Check if the "tts" query item with the expected value is appended
-        XCTAssertTrue(components.queryItems?.contains { $0.name == "tts" && $0.value == "st_ios_bing_distribution_control" } ?? false)
+        let components = URLComponents(url: updatedURL, resolvingAgainstBaseURL: true)
+        XCTAssertTrue(components!.queryItems!.contains { $0.name == "tts" && $0.value == "st_ios_bing_distribution_control" } ?? false)
     }
 }
