@@ -12,7 +12,7 @@ final class BingDistributionExperimentTests: XCTestCase {
         let bingURL = BingDistributionExperiment.bingSearchWithQuery("apple")
         
         // Then
-        XCTAssertEqual(bingURL.absoluteString,
+        XCTAssertEqual(bingURL?.absoluteString,
                        "https://www.bing.com/search?q=apple&PC=ECAA&FORM=ECAA01&PTAG=st_ios_bing_distribution_test")
     }
     
@@ -21,7 +21,7 @@ final class BingDistributionExperimentTests: XCTestCase {
         let updatedURL = BingDistributionExperiment.ecosiaSearchWithTypetag("apple")
         
         // Then
-        let components = URLComponents(url: updatedURL, resolvingAgainstBaseURL: true)
-        XCTAssertTrue(components!.queryItems!.contains { $0.name == "tts" && $0.value == "st_ios_bing_distribution_control" } ?? false)
+        let components = URLComponents(url: updatedURL!, resolvingAgainstBaseURL: true)
+        XCTAssertTrue(components?.queryItems?.contains { $0.name == "tts" && $0.value == "st_ios_bing_distribution_control" } ?? false)
     }
 }

@@ -21,9 +21,11 @@ struct BingDistributionExperiment {
         return Unleash.getVariant(.bingDistribution).name == "test"
     }
     
-    static func bingSearchWithQuery(_ query: String) -> URL {
-        let rootUrl = URL(string: "https://www.bing.com")!
-        var components = URLComponents(url: rootUrl, resolvingAgainstBaseURL: false)!
+    static func bingSearchWithQuery(_ query: String) -> URL? {
+        guard let rootUrl = URL(string: "https://www.bing.com"),
+              var components = URLComponents(url: rootUrl, resolvingAgainstBaseURL: false) else {
+            return nil
+        }
         components.path = "/search"
         components.queryItems = [
             URLQueryItem(name: "q", value: query),
@@ -31,17 +33,17 @@ struct BingDistributionExperiment {
             URLQueryItem(name: "FORM", value: "ECAA01"),
             URLQueryItem(name: "PTAG", value: "st_ios_bing_distribution_test"),
         ]
-        return components.url!
+        return components.url
     }
     
-    static func ecosiaSearchWithTypetag(_ query: String) -> URL {
+    static func ecosiaSearchWithTypetag(_ query: String) -> URL? {
         let url = URL.ecosiaSearchWithQuery(query)
-        var components = URLComponents(url: url, resolvingAgainstBaseURL: false)!
+        guard var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else { return nil }
         components.queryItems?.append(URLQueryItem(name: "tts", value: "st_ios_bing_distribution_control"))
-        return components.url!
+        return components.url
     }
     
-    static func searchURLForQuery(_ query: String) -> URL {
+    static func searchURLForQuery(_ query: String) -> URL? {
         if isTestVariant {
             // Increment counter everytime we use bing's url
             BingDistributionExperiment.incrementCounter()
