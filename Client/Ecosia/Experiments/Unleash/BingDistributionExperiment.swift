@@ -13,57 +13,41 @@ struct BingDistributionExperiment {
         User.shared.searchCount += 1
     }
     
-    static func getCounterCurrentCount() -> Int {
-        User.shared.searchCount
-    }
-    
     static var isEnabled: Bool {
         Unleash.isEnabled(.bingDistribution)
     }
     
-    static func makeBingSearchURLFromURL(_ sourceURL: URL) -> URL? {
-        var urlComponents = URLComponents(url: sourceURL.absoluteURL, resolvingAgainstBaseURL: false)
-        urlComponents?.host = "bing.com"
-        var queryItems = [URLQueryItem]()
-        if let existingSearchQuery = urlComponents?.queryItems?.first(where: { $0.name == "q" }) {
-            queryItems.append(existingSearchQuery)
-        }
-        queryItems.append(contentsOf: [
+    static private var isTestVariant: Bool {
+        return Unleash.getVariant(.bingDistribution).name == "test"
+    }
+    
+    static private func bingSearchWithQuery(_ query: String) -> URL {
+        let rootUrl = URL(string: "https://www.bing.com")!
+        var components = URLComponents(url: rootUrl, resolvingAgainstBaseURL: false)!
+        components.path = "/search"
+        components.queryItems = [
+            URLQueryItem(name: "q", value: query),
             URLQueryItem(name: "PC", value: "ECAA"),
             URLQueryItem(name: "FORM", value: "ECAA01"),
-            URLQueryItem(name: "PTAG", value: "st_ios_bing_distribution_test")
-        ])
-        urlComponents?.queryItems = queryItems
-        return urlComponents?.url
+            URLQueryItem(name: "PTAG", value: "st_ios_bing_distribution_test"),
+        ]
+        return components.url!
     }
     
-    static func appendControlGroupAdditionalTypeTagTo(_ sourceURL: URL) -> URL {
-        var urlToUpdate = sourceURL
-        let queryItem = URLQueryItem(name: "tts", value: "st_ios_bing_distribution_control")
-        if #available(iOS 16.0, *) {
-            urlToUpdate.append(queryItems: [queryItem])
+    static private func ecosiaSearchWithTypetag(_ query: String) -> URL {
+        let url = URL.ecosiaSearchWithQuery(query)
+        var components = URLComponents(url: url, resolvingAgainstBaseURL: false)!
+        components.queryItems?.append(URLQueryItem(name: "tts", value: "st_ios_bing_distribution_control"))
+        return components.url!
+    }
+    
+    static func searchURLForQuery(_ query: String) -> URL {
+        if isTestVariant {
+            // Increment counter everytime we use bing's url
+            BingDistributionExperiment.incrementCounter()
+            return bingSearchWithQuery(query)
         } else {
-            // Construct the query string manually
-            if var components = URLComponents(url: sourceURL, resolvingAgainstBaseURL: true) {
-                if components.queryItems == nil {
-                    components.queryItems = [queryItem]
-                } else {
-                    components.queryItems?.append(queryItem)
-                }
-                urlToUpdate = components.url!
-            }
+            return ecosiaSearchWithTypetag(query)
         }
-        return urlToUpdate
-    }
-}
-
-extension BingDistributionExperiment {
-    
-    static var shouldShowBingSERP: Bool {
-        guard BingDistributionExperiment.isEnabled else {
-            return false
-        }
-        
-        return Unleash.getVariant(.bingDistribution).name == "test"
     }
 }

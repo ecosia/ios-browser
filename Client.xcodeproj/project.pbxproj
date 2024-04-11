@@ -37,6 +37,7 @@
 		0BF1B7E31AC60DEA00A7B407 /* InsetButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF1B7E21AC60DEA00A7B407 /* InsetButton.swift */; };
 		0BF42D4F1A7CD09600889E28 /* TestFavicons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF42D4E1A7CD09600889E28 /* TestFavicons.swift */; };
 		0BF8F8DA1AEFF1C900E90BC2 /* noTitle.html in Resources */ = {isa = PBXBuildFile; fileRef = 0BF8F8D91AEFF1C900E90BC2 /* noTitle.html */; };
+		121891E62BC7DAF50074B83F /* BingDistributionExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2375652BC2EF9400F5F213 /* BingDistributionExperiment.swift */; };
 		1222118F2AE7C971007C5E1C /* Ecosia.strings in Resources */ = {isa = PBXBuildFile; fileRef = 122211912AE7C971007C5E1C /* Ecosia.strings */; };
 		1246A7CF2AA6163800FBB626 /* ClimateImpactInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1246A7CE2AA6163800FBB626 /* ClimateImpactInfo.swift */; };
 		1246A7D12AA6165400FBB626 /* NTPImpactRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1246A7D02AA6165400FBB626 /* NTPImpactRowView.swift */; };
@@ -10028,6 +10029,7 @@
 				8AB8574027D961550075C173 /* DataObserver.swift in Sources */,
 				6025B10F267B6C7F00F59F6B /* LoginRecordExtension.swift in Sources */,
 				E418D0D91A251B3200CAE47A /* Profile.swift in Sources */,
+				121891E62BC7DAF50074B83F /* BingDistributionExperiment.swift in Sources */,
 				2C019BAA2AF3EFD500830CD1 /* EngineShortcutsExperiment.swift in Sources */,
 				DDA24A451FD84D630098F159 /* DefaultSearchPrefs.swift in Sources */,
 				EA0EE87723D0F1DE002BEDAA /* ShareTheme.swift in Sources */,
