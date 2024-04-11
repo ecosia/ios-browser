@@ -263,6 +263,7 @@ class AppSettingsTableViewController: SettingsTableViewController, FeatureFlagga
                 ChangeSearchCount(settings: self),
                 ResetSearchCount(settings: self),
                 UnleashDefaultBrowserSetting(settings: self),
+                UnleashBingDistributionSetting(settings: self),
                 EngagementServiceIdentifierSetting(settings: self)
             ])]
 
