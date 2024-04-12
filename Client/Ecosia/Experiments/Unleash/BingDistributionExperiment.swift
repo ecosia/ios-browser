@@ -9,16 +9,17 @@ struct BingDistributionExperiment {
     
     private init() {}
     
-    static func incrementCounter() {
-        User.shared.searchCount += 1
-    }
-    
     static var isEnabled: Bool {
         Unleash.isEnabled(.bingDistribution)
     }
     
     static private var isTestVariant: Bool {
         return Unleash.getVariant(.bingDistribution).name == "test"
+    }
+    
+    static func incrementCounterIfTestVariant() {
+        guard isEnabled && isTestVariant else { return }
+        User.shared.searchCount += 1
     }
     
     static func bingSearchWithQuery(_ query: String) -> URL? {
@@ -45,8 +46,6 @@ struct BingDistributionExperiment {
     
     static func searchURLForQuery(_ query: String) -> URL? {
         if isTestVariant {
-            // Increment counter everytime we use bing's url
-            BingDistributionExperiment.incrementCounter()
             return bingSearchWithQuery(query)
         } else {
             return ecosiaSearchWithTypetag(query)

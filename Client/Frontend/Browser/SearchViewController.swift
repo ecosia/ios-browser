@@ -559,6 +559,9 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
             guard let suggestion = suggestions[safe: indexPath.row] else { return }
             
             if let url = engine.searchURLForQuery(suggestion) {
+                // Ecosia: increment search count when bing distribution
+                BingDistributionExperiment.incrementCounterIfTestVariant()
+                
                 searchDelegate?.searchViewController(self, didSelectURL: url, searchTerm: suggestion)
             }
         case .openedTabs:
