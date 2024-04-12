@@ -159,18 +159,18 @@ final class ChangeSearchCount: HiddenSetting {
     }
 }
 
-final class UnleashDefaultBrowserSetting: HiddenSetting {
+class UnleashVariantResetSetting: HiddenSetting {
+    var titleName: String? { return nil }
+    var variant: Unleash.Variant? { return nil }
+    
     override var title: NSAttributedString? {
-
-        return NSAttributedString(string: "Debug: Unleash default browser variant", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
+        return NSAttributedString(string: "Debug: Unleash \(titleName ?? "Unknown") variant", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
     }
 
     override var status: NSAttributedString? {
-        let variant = Unleash.getVariant(.defaultBrowser).name
-
-        return NSAttributedString(string: "\(variant) (Click to reset)", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
+        return NSAttributedString(string: "\(variant?.name ?? "Unknown") (Click to reset)", attributes: [NSAttributedString.Key.foregroundColor: UIColor.theme.tableView.rowText])
     }
-
+    
     override func onClick(_ navigationController: UINavigationController?) {
         Task {
             do {
@@ -189,6 +189,27 @@ final class UnleashDefaultBrowserSetting: HiddenSetting {
                 }
             }
         }
+    }
+}
+
+
+final class UnleashDefaultBrowserSetting: UnleashVariantResetSetting {
+    override var titleName: String? {
+        return "default browser"
+    }
+    
+    override var variant: Unleash.Variant? {
+        Unleash.getVariant(.defaultBrowser)
+    }
+}
+
+final class UnleashBingDistributionSetting: UnleashVariantResetSetting {
+    override var titleName: String? {
+        return "Bing distribution"
+    }
+    
+    override var variant: Unleash.Variant? {
+        Unleash.getVariant(.bingDistribution)
     }
 }
 

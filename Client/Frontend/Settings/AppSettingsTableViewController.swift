@@ -192,8 +192,11 @@ class AppSettingsTableViewController: SettingsTableViewController, FeatureFlagga
             customization += [SearchBarSetting(settings: self)]
         }
         
-        settings += [.init(title: .init(string: .localized(.search)), children: searchSettings),
-                     .init(title: .init(string: .localized(.customization)), children: customization),
+        // Ecosia: Not adding search settings with Bing distribution experiment
+        if !BingDistributionExperiment.isEnabled {
+            settings += [.init(title: .init(string: .localized(.search)), children: searchSettings)]
+        }
+        settings += [.init(title: .init(string: .localized(.customization)), children: customization),
                      .init(title: .init(string: .SettingsGeneralSectionTitle), children: generalSettings)]
         
         var privacySettings = [Setting]()
@@ -260,6 +263,7 @@ class AppSettingsTableViewController: SettingsTableViewController, FeatureFlagga
                 ChangeSearchCount(settings: self),
                 ResetSearchCount(settings: self),
                 UnleashDefaultBrowserSetting(settings: self),
+                UnleashBingDistributionSetting(settings: self),
                 EngagementServiceIdentifierSetting(settings: self)
             ])]
 

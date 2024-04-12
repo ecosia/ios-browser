@@ -1,5 +1,4 @@
 {
-  "originHash" : "dd737c8479c7c03d60cc0d5580d88f95ec42a221f5b1dbdb30acb0c67d7c5f4b",
   "pins" : [
     {
       "identity" : "a-star",
@@ -60,7 +59,7 @@
       "location" : "https://github.com/ecosia/ios-core.git",
       "state" : {
         "branch" : "main",
-        "revision" : "eab4330cff3c0a64e97124576dcc660bd8e63ca8"
+        "revision" : "8de157069c5c8cfd217db387645a806c35c50eef"
       }
     },
     {
@@ -120,7 +119,7 @@
     {
       "identity" : "snowplow-ios-tracker",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/snowplow/snowplow-ios-tracker",
+      "location" : "https://github.com/snowplow/snowplow-ios-tracker.git",
       "state" : {
         "revision" : "1e16a929cef8e944bd41dc36a1d2779e06bd0a3c",
         "version" : "5.2.0"

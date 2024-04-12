@@ -558,12 +558,10 @@ class SearchViewController: SiteTableViewController, KeyboardHelperDelegate, Loa
             guard let suggestions = suggestions else { return }
             guard let suggestion = suggestions[safe: indexPath.row] else { return }
             
-            /*
-             Ecosia: Bing Search Experiment
-             revert `url` from `var` to `let`
-             when the Bing experiment will be removed
-             */
-            if var url = engine.searchURLForQuery(suggestion) {
+            if let url = engine.searchURLForQuery(suggestion) {
+                // Ecosia: increment search count when bing distribution
+                BingDistributionExperiment.incrementCounterIfTestVariant()
+                
                 searchDelegate?.searchViewController(self, didSelectURL: url, searchTerm: suggestion)
             }
         case .openedTabs:
