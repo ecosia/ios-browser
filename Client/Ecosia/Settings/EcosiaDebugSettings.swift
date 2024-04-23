@@ -160,18 +160,18 @@ final class ChangeSearchCount: HiddenSetting {
     }
 }
 
-final class UnleashDefaultBrowserSetting: HiddenSetting {
+class UnleashVariantResetSetting: HiddenSetting {
+    var titleName: String? { return nil }
+    var variant: Unleash.Variant? { return nil }
+    
     override var title: NSAttributedString? {
-
-        return NSAttributedString(string: "Debug: Unleash Reset", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
+        return NSAttributedString(string: "Debug: Unleash \(titleName ?? "Unknown") variant", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
     }
 
     override var status: NSAttributedString? {
-        let variant = Unleash.getVariant(.defaultBrowser).name
-
-        return NSAttributedString(string: "\(variant) (Click to reset)", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
+        return NSAttributedString(string: "\(variant?.name ?? "Unknown") (Click to reset)", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
     }
-
+    
     override func onClick(_ navigationController: UINavigationController?) {
         Task {
             do {
@@ -191,6 +191,27 @@ final class UnleashDefaultBrowserSetting: HiddenSetting {
     }
 }
 
+
+final class UnleashDefaultBrowserSetting: UnleashVariantResetSetting {
+    override var titleName: String? {
+        return "default browser"
+    }
+    
+    override var variant: Unleash.Variant? {
+        Unleash.getVariant(.defaultBrowser)
+    }
+}
+
+final class UnleashBingDistributionSetting: UnleashVariantResetSetting {
+    override var titleName: String? {
+        return "Bing distribution"
+    }
+    
+    override var variant: Unleash.Variant? {
+        Unleash.getVariant(.bingDistribution)
+    }
+}
+
 final class EngagementServiceIdentifierSetting: HiddenSetting {
     override var title: NSAttributedString? {
         return NSAttributedString(string: "Debug: Engagement Service Identifier parameter", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
@@ -203,7 +224,7 @@ final class EngagementServiceIdentifierSetting: HiddenSetting {
         guard let identifier = ClientEngagementService.shared.identifier else {
             return NSAttributedString(string: "n/a", attributes: attributes)
         }
-        let variant = Unleash.getVariant(.defaultBrowser).name
+
         return NSAttributedString(string: "\(identifier) (Click to copy)", attributes: attributes)
     }
 

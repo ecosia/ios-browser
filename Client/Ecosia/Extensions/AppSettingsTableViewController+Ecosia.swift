@@ -11,13 +11,17 @@ extension AppSettingsTableViewController {
     func getEcosiaSettingsSectionsShowingDebug(_ isDebugSectionEnabled: Bool) -> [SettingSection] {
         var sections = [
             getEcosiaDefaultBrowserSection(),
-            getSearchSection(),
             getCustomizationSection(),
             getEcosiaGeneralSection(),
             getEcosiaPrivacySection(),
             getEcosiaSupportSection(),
             getEcosiaAboutSection()
         ]
+        
+        // Ecosia: Not adding search settings with Bing distribution experiment
+        if !BingDistributionExperiment.isEnabled {
+            settings.insert(getSearchSection(), at: 1)
+        }
         
         if isDebugSectionEnabled {
             sections.append(getEcosiaDebugSupportSection())
@@ -152,6 +156,7 @@ extension AppSettingsTableViewController {
             ChangeSearchCount(settings: self),
             ResetSearchCount(settings: self),
             UnleashDefaultBrowserSetting(settings: self),
+            UnleashBingDistributionSetting(settings: self),
             EngagementServiceIdentifierSetting(settings: self)
         ]
         

@@ -61,8 +61,11 @@ final class Analytics {
         switch action {
         case .resume, .launch:
             // add A/B Test context
-            if let context = Self.getTestContext(from: .searchShortcuts) {
-                event.contexts.append(context)
+            let abTestToggles: [Unleash.Toggle.Name] = [.searchShortcuts, .bingDistribution]
+            abTestToggles.forEach {
+                if let context = Self.getTestContext(from: $0) {
+                    event.contexts.append(context)
+                }
             }
         }
 
