@@ -354,6 +354,9 @@ extension BrowserViewController: URLBarDelegate {
             DefaultLogger.shared.log("Error handling URL entry: \"\(text)\".", level: .warning, category: .tabs)
             return
         }
+        
+        // Ecosia: increment search count when bing distribution
+        BingDistributionExperiment.incrementCounterIfTestVariant()
 
         let conversionMetrics = UserConversionMetrics()
         conversionMetrics.didPerformSearch()
