@@ -97,8 +97,8 @@ private class EcosiaLightColourPalette: ThemeColourPalette {
     var textDisabled: UIColor { Self.fallbackDefaultThemeManager.currentTheme.colors.textDisabled }
     var textWarning: UIColor { Self.fallbackDefaultThemeManager.currentTheme.colors.textWarning }
     var textAccent: UIColor { .legacyTheme.ecosia.primaryButton }
-    var textOnDark: UIColor { Self.fallbackDefaultThemeManager.currentTheme.colors.textOnDark }
-    var textOnLight: UIColor { Self.fallbackDefaultThemeManager.currentTheme.colors.textOnLight }
+    var textOnDark: UIColor { .legacyTheme.ecosia.primaryTextInverted }
+    var textOnLight: UIColor { .legacyTheme.ecosia.primaryTextInverted }
     var textInverted: UIColor { .legacyTheme.ecosia.primaryTextInverted }
 
     // MARK: - Icons
