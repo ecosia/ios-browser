@@ -209,3 +209,5 @@ Make sure that `fastlane` and `transifex`-cli is installed.
     ```bash
     bundle exec fastlane deliver --app-version 8.2.0
     ```
+
+- adding a fake change to test the PR review codium config
