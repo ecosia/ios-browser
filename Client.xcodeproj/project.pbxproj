@@ -2494,6 +2494,7 @@
 		2CE2946F2B7FC5A6006C22B2 /* EcosiaBookmarkMigrationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EcosiaBookmarkMigrationTests.swift; sourceTree = "<group>"; };
 		2CE294702B7FC5A6006C22B2 /* VersionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VersionTests.swift; sourceTree = "<group>"; };
 		2CEA6F781E93E3A600D4100E /* SearchSettingsUITest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchSettingsUITest.swift; sourceTree = "<group>"; };
+		2CEB48402BE0EE2600498471 /* Production.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Production.xcconfig; sourceTree = "<group>"; };
 		2CEDADA120207EC400223A89 /* SyncFAUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncFAUITests.swift; sourceTree = "<group>"; };
 		2CF21D0820A4A163000D08B7 /* PocketTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PocketTests.swift; sourceTree = "<group>"; };
 		2CF449A41E7BFE2C00FD7595 /* NavigationTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationTest.swift; sourceTree = "<group>"; };
