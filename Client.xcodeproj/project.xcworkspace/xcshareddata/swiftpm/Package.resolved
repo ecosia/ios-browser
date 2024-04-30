@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/braze-inc/braze-swift-sdk",
       "state" : {
-        "revision" : "dee5204a3f92ca48b58284327c32053c0a379460",
-        "version" : "7.6.0"
+        "revision" : "2973b623ab2c270bfa5acf3142397b0e1f4806af",
+        "version" : "7.7.0"
       }
     },
     {
@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ccgus/fmdb",
       "state" : {
-        "revision" : "47a2fa12a242b5a2fe13b916c22f2212e426055c",
-        "version" : "2.7.9"
+        "revision" : "306c1f8421581d16a8d4a0e919766bb3195dc52b",
+        "version" : "2.7.10"
       }
     },
     {
@@ -105,7 +105,7 @@
       "location" : "https://github.com/mozilla-mobile/MappaMundi.git",
       "state" : {
         "branch" : "master",
-        "revision" : "ded1e15d9e3a973f723185e07d0f2573a7fe1034"
+        "revision" : "f56a6e483163a761adc8cd25c337db0ed1eac524"
       }
     },
     {
@@ -122,8 +122,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SDWebImage/SDWebImage.git",
       "state" : {
-        "revision" : "3e48cb68d8e668d146dc59c73fb98cb628616236",
-        "version" : "5.13.2"
+        "revision" : "f6afa0132961d593f07970d84e2d8b588c29ea04",
+        "version" : "5.19.1"
       }
     },
     {
