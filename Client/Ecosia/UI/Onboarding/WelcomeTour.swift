@@ -314,6 +314,7 @@ final class WelcomeTour: UIViewController,  NotificationThemeable {
     }
     
     private func complete() {
+        MMP.sendEvent(.onboardingComplete)
         delegate?.welcomeTourDidFinish(self)
     }
 

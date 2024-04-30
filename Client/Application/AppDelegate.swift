@@ -24,6 +24,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     private var webServerUtil: WebServerUtil?
     private var appLaunchUtil: AppLaunchUtil?
     // Ecosia: Disable BG sync // private var backgroundSyncUtil: BackgroundSyncUtil?
+    // Ecosia: Searches counter
+    // TODO: Unsubscribe?
+    private let searchesCounter = SearchesCounter()
 
     func application(_ application: UIApplication,
                      willFinishLaunchingWithOptions
@@ -146,6 +149,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             await FeatureManagement.fetchConfiguration()
         }
         MMP.sendSession()
+        searchesCounter.subscribe(self) { searchCount in
+            MMP.handleSearchEvent(searchCount)
+        }
     }
 
     func applicationWillResignActive(_ application: UIApplication) {

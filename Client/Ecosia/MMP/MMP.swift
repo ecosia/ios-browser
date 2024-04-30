@@ -10,6 +10,20 @@ import AdServices
 struct MMP {
     
     private init() {}
+    
+    static var appDeviceInfo: AppDeviceInfo {
+        AppDeviceInfo(platform: "iOS",
+                      bundleId: AppInfo.bundleIdentifier,
+                      osVersion: DeviceInfo.osVersionNumber,
+                      deviceManufacturer: DeviceInfo.manufacturer,
+                      deviceModel: DeviceInfo.deviceModelName,
+                      locale: DeviceInfo.currentLocale,
+                      country: DeviceInfo.currentCountry,
+                      deviceBuildVersion: DeviceInfo.osBuildNumber,
+                      appVersion: AppInfo.ecosiaAppVersion,
+                      installReceipt: AppInfo.installReceipt,
+                      adServicesAttributionToken: AppInfo.adServicesAttributionToken)
+    }
         
     static func sendSession() {
         guard User.shared.sendAnonymousUsageData else { return }
@@ -37,6 +51,32 @@ struct MMP {
             } catch {
                 debugPrint(error)
             }
+        }
+    }
+    
+    static func sendEvent(_ event: MMPEvent) {
+        guard User.shared.sendAnonymousUsageData else { return }
+        
+        Task {
+            do {
+                let mmpProvider: MMPProvider = Singular(includeSKAN: true)
+                try await mmpProvider.sendEvent(event, appDeviceInfo: appDeviceInfo)
+            } catch {
+                debugPrint(error)
+            }
+        }
+    }
+    
+    static func handleSearchEvent(_ count: Int) {
+        switch (count) {
+        case 1:
+            self.sendEvent(.firstSearch)
+        case 5:
+            self.sendEvent(.fifthSearch)
+        case 10:
+            self.sendEvent(.tenthSearch)
+        default:
+            break
         }
     }
 }

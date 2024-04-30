@@ -14742,7 +14742,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = main;
+				branch = "ls-mob-2407-singular-event-request";
 				kind = branch;
 			};
 		};
