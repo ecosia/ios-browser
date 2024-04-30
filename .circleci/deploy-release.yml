@@ -49,11 +49,8 @@ jobs:
           name: extract Production XCConfig
           command: echo "$PRODUCTION_XCCONFIG" | base64 --decode > Client/Configuration/Production.xcconfig
       - run:
-          name: clean packages
-          command: xcodebuild -scheme Ecosia -project Client.xcodeproj clean
-      - run:
-          name: setup content blocking scripts
-          command: ./content_blocker_update.sh
+          name: Execute bootstrap
+          command: ./bootstrap.sh
       - run:
           name: Build and deploy to Testflight
           no_output_timeout: 35m
