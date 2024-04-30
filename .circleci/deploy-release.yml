@@ -10,8 +10,8 @@ jobs:
     environment:
       CI: true
     macos:
-      xcode: "15.3"
-    resource_class: macos.m1.medium.gen2
+      xcode: "15.2"
+    resource_class: macos.m1.medium.gen1
     steps:
       - checkout
       - run:
