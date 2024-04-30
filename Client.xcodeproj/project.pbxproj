@@ -20905,7 +20905,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = main;
+				branch = "MOB-2498_upgrade_braze";
 				kind = branch;
 			};
 		};
