@@ -149,7 +149,9 @@ final class NTPImpactRowView: UIView, Themeable {
             dividerView.bottomAnchor.constraint(equalTo: bottomAnchor),
             dividerView.heightAnchor.constraint(equalToConstant: 1),
             imageContainer.heightAnchor.constraint(equalToConstant: UX.imageHeight),
-            imageContainer.widthAnchor.constraint(equalTo: imageContainer.heightAnchor)
+            imageContainer.widthAnchor.constraint(equalTo: imageContainer.heightAnchor),
+            actionButton.topAnchor.constraint(lessThanOrEqualTo: imageContainer.topAnchor),
+            actionButton.bottomAnchor.constraint(lessThanOrEqualTo: imageContainer.bottomAnchor)
         ])
         
         if info.progressIndicatorValue != nil {
