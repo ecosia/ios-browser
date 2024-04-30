@@ -77,7 +77,7 @@ workflows:
           filters:
             branches:
               only:
-                - /^.*MOB-2012_firefox_120_upgrade.*/
+                - /^.*main.*/
           name: Deploy release version over Testflight if MARKETING_VERION file updated
           config-path: .circleci/deploy-release.yml
           mapping: |
