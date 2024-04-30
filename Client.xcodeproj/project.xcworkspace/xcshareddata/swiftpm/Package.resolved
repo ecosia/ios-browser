@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/braze-inc/braze-swift-sdk",
       "state" : {
-        "revision" : "2973b623ab2c270bfa5acf3142397b0e1f4806af",
-        "version" : "7.7.0"
+        "revision" : "f893978502a08b02124d2d15c6117eb1a06b7f6f",
+        "version" : "8.4.0"
       }
     },
     {
@@ -68,8 +68,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ecosia/ios-core.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "8de157069c5c8cfd217db387645a806c35c50eef"
+        "branch" : "MOB-2498_upgrade_braze",
+        "revision" : "907cd4a54dc83c970b26c3e7ab421be577ee381d"
       }
     },
     {
