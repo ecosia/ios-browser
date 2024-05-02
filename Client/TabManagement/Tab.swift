@@ -582,7 +582,17 @@ class Tab: NSObject, ThemeApplicable {
             if let url = request.url, url.isFileURL, request.isPrivileged {
                 return webView.loadFileURL(url, allowingReadAccessTo: url)
             }
-            return webView.load(request)
+            // Ecosia: updating the request with cookies, auth parameters and language header if needed
+            // return webView.load(request)
+            var ecosiaUpdatedRequest = request
+            ecosiaUpdatedRequest.url = ecosiaUpdatedRequest.url?.ecosified(isIncognitoEnabled: _isPrivate)
+            // Inject auth parameters if needed
+            ecosiaUpdatedRequest = ecosiaUpdatedRequest.withAuthParameters()
+            // Enriching the search request (showing SERP page) with a language region header for market selection options
+            if ecosiaUpdatedRequest.url?.isEcosiaSearchQuery() == true {
+                ecosiaUpdatedRequest.addLanguageRegionHeader()
+            }
+            return webView.load(ecosiaUpdatedRequest)
         }
         return nil
     }
