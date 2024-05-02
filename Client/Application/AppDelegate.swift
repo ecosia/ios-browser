@@ -25,7 +25,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     private var appLaunchUtil: AppLaunchUtil?
     // Ecosia: Disable BG sync // private var backgroundSyncUtil: BackgroundSyncUtil?
     // Ecosia: Searches counter
-    // TODO: Unsubscribe?
     private let searchesCounter = SearchesCounter()
 
     func application(_ application: UIApplication,
