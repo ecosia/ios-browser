@@ -55,15 +55,9 @@ struct MMP {
     }
     
     static func handleSearchEvent(_ count: Int) {
-        switch (count) {
-        case 1:
-            self.sendEvent(.firstSearch)
-        case 5:
-            self.sendEvent(.fifthSearch)
-        case 10:
-            self.sendEvent(.tenthSearch)
-        default:
-            break
+        let eventMap: [Int: MMPEvent] = [1: .firstSearch, 5: .fifthSearch, 10: .tenthSearch]
+        if let event = eventMap[count] {
+            self.sendEvent(event)
         }
     }
 }
