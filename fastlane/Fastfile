@@ -93,7 +93,6 @@ platform :ios do
       type: 'development',
       readonly: true
     )
-
     run_test(
       only_testing: options[:testing_bundles]
     )
