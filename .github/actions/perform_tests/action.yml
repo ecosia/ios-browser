@@ -22,7 +22,7 @@ runs:
       shell: bash
       run: |
         bundles_under_testing=$(echo "$(${{ inputs.needs-shared-tests }} && echo "SharedTests,")$(${{ inputs.needs-storage-tests }} && echo "StorageTests,")$(${{ inputs.needs-client-tests }} && echo "ClientTests,")" | sed 's/,$//')
-        bundle exec fastlane run run_tests only_testing:"$bundles_under_testing"
+        bundle exec fastlane test_ecosia_beta testing_bundles:"$bundles_under_testing"
 
     - name: Publish Test Report
       uses: mikepenz/action-junit-report@v3.7.6

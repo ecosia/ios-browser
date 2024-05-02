@@ -86,6 +86,19 @@ platform :ios do
     )
   end
 
+  desc "Build and Test for Ecosia Beta"
+  lane :test_ecosia_beta do |options|
+    match(
+      app_identifier: ['com.ecosia.ecosiaapp.firefox', 'com.ecosia.ecosiaapp.firefox.WidgetKit', 'com.ecosia.ecosiaapp.firefox.ShareTo'], 
+      type: 'development',
+      readonly: true
+    )
+
+    run_test(
+      only_testing: options[:testing_bundles]
+    )
+  end
+
   desc "Creates an API KEY to add as step in other lanes"
   private_lane :inject_appstore_connect_api do
 
