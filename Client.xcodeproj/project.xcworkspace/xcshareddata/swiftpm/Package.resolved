@@ -58,8 +58,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ecosia/ios-core.git",
       "state" : {
-        "branch" : "ls-mob-2407-singular-event-request",
-        "revision" : "57658b82e0386e6d01e606830260c8424dad9059"
+        "branch" : "main",
+        "revision" : "51df35d23b64eccd019fe0384c20b047987a4ef9"
       }
     },
     {
