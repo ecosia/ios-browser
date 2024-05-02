@@ -14,11 +14,7 @@ extension DeviceInfo {
     }
     
     static var currentCountry: String? {
-        if #available(iOS 16, *) {
-            return Locale.current.language.region?.identifier
-        } else {
-            return Locale.current.regionCode
-        }
+        Locale.current.regionIdentifierLowercasedWithFallbackValue
     }
 
     static var platform: String {
