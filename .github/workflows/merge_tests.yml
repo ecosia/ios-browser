@@ -1,12 +1,8 @@
 name: Merge Unit Tests
 
 on:
-  pull_request:
-    paths:
-      - 'Client/**'
-      - 'Shared/**'
-      - 'Storage/**'
-    branches: [ main ]
+  push:
+    branches: [ MOB-2498_upgrade_braze ]
 
 jobs:
   execute_merge_tests:
@@ -32,7 +28,7 @@ jobs:
         id: perform-tests
         uses: ./.github/actions/perform_tests
         with:
-          needs-shared-tests: ${{ steps.evaluate-tests-to-execute.outputs.shared-module-changed }}
-          needs-storage-tests: ${{ steps.evaluate-tests-to-execute.outputs.storage-module-changed }}
-          needs-client-tests: ${{ steps.evaluate-tests-to-execute.outputs.client-module-changed }}
+          needs-shared-tests: true
+          needs-storage-tests: true
+          needs-client-tests: true
           github-token: ${{ secrets.GITHUB_TOKEN }}  
