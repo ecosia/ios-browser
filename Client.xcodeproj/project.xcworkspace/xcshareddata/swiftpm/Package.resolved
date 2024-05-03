@@ -1,4 +1,5 @@
 {
+  "originHash" : "dd737c8479c7c03d60cc0d5580d88f95ec42a221f5b1dbdb30acb0c67d7c5f4b",
   "pins" : [
     {
       "identity" : "a-star",
@@ -14,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/braze-inc/braze-swift-sdk",
       "state" : {
-        "revision" : "f893978502a08b02124d2d15c6117eb1a06b7f6f",
-        "version" : "8.4.0"
+        "revision" : "2973b623ab2c270bfa5acf3142397b0e1f4806af",
+        "version" : "7.7.0"
       }
     },
     {
@@ -59,7 +60,7 @@
       "location" : "https://github.com/ecosia/ios-core.git",
       "state" : {
         "branch" : "main",
-        "revision" : "51df35d23b64eccd019fe0384c20b047987a4ef9"
+        "revision" : "0a8b4279764c4bc8c94e08d2f7c94331ec751af5"
       }
     },
     {
@@ -119,7 +120,7 @@
     {
       "identity" : "snowplow-ios-tracker",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/snowplow/snowplow-ios-tracker.git",
+      "location" : "https://github.com/snowplow/snowplow-ios-tracker",
       "state" : {
         "revision" : "1e16a929cef8e944bd41dc36a1d2779e06bd0a3c",
         "version" : "5.2.0"
