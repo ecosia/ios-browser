@@ -21,8 +21,12 @@ runs:
     - name: Run tests based on file changes
       shell: bash
       run: |
+        # Workaround to make the DerivedData work properly and
+        # the simulator to speed up properly 
+        # Issue seen both local machines + CIs
         bundles_under_testing=$(echo "$(${{ inputs.needs-shared-tests }} && echo "SharedTests,")$(${{ inputs.needs-storage-tests }} && echo "StorageTests,")$(${{ inputs.needs-client-tests }} && echo "ClientTests,")" | sed 's/,$//')
-        bundle exec fastlane test_ecosia_beta testing_bundles:"$bundles_under_testing"
+        bundle exec fastlane run run_tests build_for_testing:true
+        bundle exec fastlane run run_tests test_without_building:true prelaunch_simulator:true only_testing:"$bundles_under_testing"
 
     - name: Publish Test Report
       uses: mikepenz/action-junit-report@v3.7.6
