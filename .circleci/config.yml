@@ -76,11 +76,11 @@ workflows:
           filters:
             branches:
               only:
-                - /^.*main.*/
+                - /^.*9_5_0_xcode-update.*/
           name: Deploy release version over Testflight if MARKETING_VERION file updated
           config-path: .circleci/deploy-release.yml
           mapping: |
-            Client/Configuration/Common.xcconfig deploy-release true
+            .circleci/config.yml deploy-release true
       - build-and-deploy-testflight-beta:
           name: Deploy beta version over Testflight
           filters:
