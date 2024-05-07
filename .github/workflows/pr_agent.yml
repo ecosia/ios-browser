@@ -23,3 +23,4 @@ jobs:
           github_action_config.auto_describe: "false" # enable\disable auto describe
           github_action_config.auto_improve: "true" # enable\disable auto improve
           github_action_config.enable_output: "false" # enable\disable github actions output parameter
+          
