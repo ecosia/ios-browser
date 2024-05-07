@@ -323,6 +323,7 @@ final class WelcomeTour: UIViewController,  Themeable {
     }
     
     private func complete() {
+        MMP.sendEvent(.onboardingComplete)
         delegate?.welcomeTourDidFinish(self)
     }
 

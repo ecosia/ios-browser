@@ -64,6 +64,8 @@ final class Welcome: UIViewController {
         fadeIn()
         didAppear = true
         Analytics.shared.introDisplaying(page: .start, at: 0)
+        
+        MMP.sendEvent(.onboardingStart)
     }
 
     private func addOverlay() {
