@@ -1,0 +1,16 @@
+[github_app]
+# This config disables automatic PR reviews for all PRs that do not contain "MOB". 
+# Add a similar regex to the list if you want to enable codium in your team.
+ignore_pr_title = ["^(?!.*MOB).*$"]
+
+[pr_reviewer]
+# if set to true, the tool will publish a 'Review effort [1-5]: x' label
+enable_review_labels_effort = false
+# if set to true, the tool will publish a 'possible security issue' label if it detects a security issue
+enable_review_labels_security = false
+# if set to true, the tool will publish the code suggestions as comments on the code diff
+inline_code_comments = true
+# if set to true, the tool will check if the PR can be split into smaller PRs
+require_can_be_split_review = true
+# if set to true, the tool will add a section that checks if the PR contains tests
+require_tests_review = false
