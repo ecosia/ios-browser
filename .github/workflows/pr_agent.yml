@@ -18,9 +18,10 @@ jobs:
         env:
           OPENAI_KEY: ${{ secrets.OPENAI_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # from https://pr-agent-docs.codium.ai/usage-guide/automations_and_usage/#github-action
-          github_action_config.auto_review: "true" # enable\disable auto review
-          github_action_config.auto_describe: "false" # enable\disable auto describe
-          github_action_config.auto_improve: "true" # enable\disable auto improve
-          github_action_config.enable_output: "false" # enable\disable github actions output parameter
-          
+          # from https://github.com/Codium-ai/pr-agent/blob/main/pr_agent/settings/configuration.toml
+          github_action_config.auto_review: "true" 
+          github_action_config.auto_describe: "false" 
+          github_action_config.auto_improve: "true" 
+          github_action_config.enable_output: "false"
+          pr_reviewer.inline_code_comments: "true" 
+          github_app.ignore_pr_title: '["^(?!.*MOB).*$"]'
