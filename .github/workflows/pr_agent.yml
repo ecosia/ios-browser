@@ -23,5 +23,5 @@ jobs:
           github_action_config.auto_describe: "false" 
           github_action_config.auto_improve: "true" 
           github_action_config.enable_output: "false"
-          pr_reviewer.inline_code_comments: "true" 
-          github_app.ignore_pr_title: '["^(?!.*MOB).*$"]'
+          PR_REVIEWER.INLINE_CODE_COMMENTS: "true" 
+          GITHUB_APP.IGNORE_PR_TITLE: "["^(?!.*MOB).*$"]"
