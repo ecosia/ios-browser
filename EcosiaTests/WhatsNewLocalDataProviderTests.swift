@@ -19,7 +19,9 @@ final class WhatsNewLocalDataProviderTests: XCTestCase {
     func testFreshInstallShouldNotShowWhatsNewAndMarkPreviousVersionsAsSeen() {
         // Given
         EcosiaInstallType.set(type: .fresh)
-        let dataProvider = WhatsNewLocalDataProvider(versionProvider: MockAppVersionInfoProvider(mockedAppVersion: "9.0.2"))
+        let items: [Version: [WhatsNewItem]] = [Version("9.0.0")!: [.emptyItem()]]
+        let dataProvider = WhatsNewLocalDataProvider(versionProvider: MockAppVersionInfoProvider(mockedAppVersion: "9.0.2"),
+                                                     whatsNewItems: items)
         
         // When
         let shouldShowWhatsNew = dataProvider.shouldShowWhatsNewPage
@@ -48,12 +50,18 @@ final class WhatsNewLocalDataProviderTests: XCTestCase {
         // Given
         EcosiaInstallType.updateCurrentVersion(version: "8.0.0")
         EcosiaInstallType.set(type: .upgrade)
-        let dataProvider = WhatsNewLocalDataProvider(versionProvider: MockAppVersionInfoProvider(mockedAppVersion: "9.0.0"))
+        let items: [Version: [WhatsNewItem]] = [Version("8.0.0")!: [.emptyItem()],
+                                                Version("9.0.0")!: [.emptyItem()],
+                                                Version("9.0.1")!: [.emptyItem()],
+                                                Version("9.0.2")!: [.emptyItem()]
+        ]
+        let dataProvider = WhatsNewLocalDataProvider(versionProvider: MockAppVersionInfoProvider(mockedAppVersion: "9.0.0"), whatsNewItems: items)
         
         // When
         let shouldShowWhatsNew = dataProvider.shouldShowWhatsNewPage
         
         // Then
+        XCTAssertTrue(dataProvider.getVersionRange() == [Version("9.0.0")!], "The version 9.0.0 should be the only the only version returned, got \(dataProvider.getVersionRange()) instead")
         XCTAssertTrue(shouldShowWhatsNew, "Upgrade to a version with items should show whats new")
     }
     
@@ -61,7 +69,12 @@ final class WhatsNewLocalDataProviderTests: XCTestCase {
         // Given
         EcosiaInstallType.updateCurrentVersion(version: "8.2.1")
         EcosiaInstallType.set(type: .upgrade)
-        let dataProvider = WhatsNewLocalDataProvider(versionProvider: MockAppVersionInfoProvider(mockedAppVersion: "8.3.0"))
+        let items: [Version: [WhatsNewItem]] = [Version("8.2.0")!: [.emptyItem()],
+                                                Version("8.2.6")!: [.emptyItem()]
+        ]
+        let dataProvider = WhatsNewLocalDataProvider(versionProvider:
+                                                        MockAppVersionInfoProvider(mockedAppVersion: "8.2.5"),
+                                                     whatsNewItems: items)
         
         // When
         let shouldShowWhatsNew = dataProvider.shouldShowWhatsNewPage
@@ -84,16 +97,23 @@ final class WhatsNewLocalDataProviderTests: XCTestCase {
         XCTAssertFalse(shouldShowWhatsNew, "Downgrade should not show what's new")
     }
     
-    func testUpgradeToGreaterVersionThanTheOneWithItemsShouldShowWhatsNew() {
+    func testUpgradeToGreaterVersionThanAnyInBetweenWithItemsShouldShowWhatsNew() {
         // Given
         EcosiaInstallType.set(type: .upgrade)
         EcosiaInstallType.updateCurrentVersion(version: "8.0.0")
-        let dataProvider = WhatsNewLocalDataProvider(versionProvider: MockAppVersionInfoProvider(mockedAppVersion: "9.0.2"))
+        let items: [Version: [WhatsNewItem]] = [Version("8.0.0")!: [.emptyItem()],
+                                                Version("9.0.0")!: [.emptyItem()],
+                                                Version("9.0.1")!: [.emptyItem()],
+                                                Version("9.0.2")!: [.emptyItem()]
+        ]
+        let dataProvider = WhatsNewLocalDataProvider(versionProvider: MockAppVersionInfoProvider(mockedAppVersion: "9.0.2"), whatsNewItems: items)
         
         // When
         let shouldShowWhatsNew = dataProvider.shouldShowWhatsNewPage
         
         // Then
+        XCTAssertFalse(dataProvider.getVersionRange().contains(Version("8.0.0")!), "The version 8.0.0 should not be among the picked version range, got \(dataProvider.getVersionRange()) instead")
+        XCTAssertTrue(dataProvider.getVersionRange() == [Version("9.0.0")!, Version("9.0.1")!, Version("9.0.2")!], "The versions 9.0.0 and 9.0.1 should be among the picked version range. Resulting version range \(dataProvider.getVersionRange()).")
         XCTAssertTrue(shouldShowWhatsNew, "Upgrade to greater version than the one with items should show what's new")
     }
     
@@ -102,12 +122,39 @@ final class WhatsNewLocalDataProviderTests: XCTestCase {
         User.shared.whatsNewItemsVersionsShown = ["9.0.0"]
         EcosiaInstallType.set(type: .upgrade)
         EcosiaInstallType.updateCurrentVersion(version: "8.0.0")
+        let items: [Version: [WhatsNewItem]] = [
+            Version("8.2.0")!: [.emptyItem()],
+            Version("9.0.0")!: [.emptyItem()]
+        ]
         let dataProvider = WhatsNewLocalDataProvider(versionProvider: MockAppVersionInfoProvider(mockedAppVersion: "9.0.2"))
         
         // When
         let shouldShowWhatsNew = dataProvider.shouldShowWhatsNewPage
         
         // Then
+        XCTAssertFalse(dataProvider.getVersionRange() == [Version("8.2.0")!], "The version 8.2.0 should not be among the picked version range. Resulting version range: \(dataProvider.getVersionRange())")
         XCTAssertFalse(shouldShowWhatsNew, "Upgrade with already shown items should show not show what's new")
+    }
+    
+    func testUpgradeToVersionWithoutItemsLike940ShouldNotShowWhatsNew() {
+        // Given
+        EcosiaInstallType.updateCurrentVersion(version: "9.4.0")
+        EcosiaInstallType.set(type: .upgrade)
+        let dataProvider = WhatsNewLocalDataProvider(versionProvider: MockAppVersionInfoProvider(mockedAppVersion: "10.0.0"))
+        
+        // When
+        let shouldShowWhatsNew = dataProvider.shouldShowWhatsNewPage
+        
+        // Then
+        XCTAssertFalse(shouldShowWhatsNew, "Upgrade to a version without items should not show whats new")
+    }
+}
+
+extension WhatsNewItem {
+    
+    fileprivate static func emptyItem() -> WhatsNewItem {
+        WhatsNewItem(image: .init(),
+                     title: .init(),
+                     subtitle: .init())
     }
 }

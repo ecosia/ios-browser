@@ -45,12 +45,17 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
     /// Default initializer.
     /// - Parameters:
     ///   - versionProvider: The current app version provider. Defaults to `DefaultAppVersionInfoProvider`
-    init(versionProvider: AppVersionInfoProvider = DefaultAppVersionInfoProvider()) {
+    ///   - whatsNewItems: The items we would like to attempt to show in the update sheet, split by version
+    init(versionProvider: AppVersionInfoProvider = DefaultAppVersionInfoProvider(),
+         whatsNewItems: [Version: [WhatsNewItem]] = defaultWhatsNewItems) {
         self.versionProvider = versionProvider
+        self.whatsNewItems = whatsNewItems
     }
     
     /// The items we would like to attempt to show in the update sheet
-    private let whatsNewItems: [Version: [WhatsNewItem]] = [
+    private var whatsNewItems: [Version: [WhatsNewItem]]
+    
+    private static let defaultWhatsNewItems = [
         Version("9.0.0")!: [
             WhatsNewItem(image: UIImage(named: "tree"),
                          title: .localized(.whatsNewFirstItemTitle),
@@ -88,21 +93,15 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
 
         // Gather all versions
         let allVersions = Array(whatsNewItems.keys).sorted()
-
-        // Gather first item in `allVersions` array
-        guard let firstItemInAllVersions = allVersions.first else { return [] }
         
-        // Ensure the `toVersion` is greater than or equal to the smallest version in `whatsNewItems`
-        guard toVersion >= firstItemInAllVersions else { return [] }
-
-        // Find the closest previous version or use the first one if `from` is older than all versions.
-        let fromIndex = allVersions.lastIndex { $0 <= fromVersion } ?? 0
-
-        // Find the index of `to` version or the last version if `to` is newer than all versions.
-        let toIndex = allVersions.firstIndex { $0 >= toVersion } ?? (allVersions.count - 1)
+        // Find the index of the version immediately after `fromVersion`
+        guard let fromIndex = allVersions.firstIndex(where: { $0 > fromVersion }) else { return [] }
         
-        // Return the range.
-        return Array(allVersions[fromIndex...toIndex])
+        // Find the index of the version immediately before or equal to `toVersion`
+        guard let toIndex = allVersions.lastIndex(where: { $0 <= toVersion }) else { return [] }
+        
+        // Return the range between `fromIndex` (excluded) and `toIndex` (included)
+        return Array(allVersions[fromIndex..<toIndex + 1])
     }
     
     func markPreviousVersionsAsSeen() {
