@@ -12,6 +12,8 @@ class ThemedTableViewCell: UITableViewCell, ReusableCell, ThemeApplicable {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         self.cellStyle = style
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        // Ecosia: adjust layout margins
+        contentView.directionalLayoutMargins.leading = 16
     }
 
     required init?(coder aDecoder: NSCoder) {
