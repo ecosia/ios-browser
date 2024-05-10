@@ -75,11 +75,13 @@ struct ImageButtonWithLabel: View {
                                     .font(.headline)
                                     .minimumScaleFactor(0.75)
                                     .layoutPriority(1000)
+                                    .foregroundColor(link.textColor)
                             } else {
                                 Text(link.label)
                                     .font(.footnote)
                                     .minimumScaleFactor(0.75)
                                     .layoutPriority(1000)
+                                    .foregroundColor(link.textColor)
                             }
                         }
                         Spacer()
