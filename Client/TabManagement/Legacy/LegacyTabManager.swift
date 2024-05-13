@@ -7,6 +7,9 @@ import Foundation
 import WebKit
 import Storage
 import Shared
+// Ecosia
+import Core
+import Combine
 
 // MARK: - TabManagerDelegate
 protocol TabManagerDelegate: AnyObject {
@@ -174,6 +177,23 @@ class LegacyTabManager: NSObject, FeatureFlaggable, TabManager, TabEventHandler 
                                                selector: #selector(blockPopUpDidChange),
                                                name: .BlockPopup,
                                                object: nil)
+        // Ecosia: Cookie and settings observing
+        configuration.websiteDataStore.httpCookieStore.add(self)
+
+        searchSettingsObserver = NotificationCenter.default
+            .publisher(for: .searchSettingsChanged)
+            .sink() { [privateConfiguration, configuration] _ in
+                configuration.websiteDataStore.httpCookieStore.setCookie(Cookie.makeStandard())
+                privateConfiguration.websiteDataStore.httpCookieStore.setCookie(Cookie.makeIncognito())
+            }
+    }
+    
+    // MARK: Ecosia: Observing Cookies and Search setting changes
+    var searchSettingsObserver: Cancellable?
+
+    deinit {
+        configuration.websiteDataStore.httpCookieStore.remove(self)
+        searchSettingsObserver?.cancel()
     }
 
     // MARK: - Delegates
@@ -227,6 +247,9 @@ class LegacyTabManager: NSObject, FeatureFlaggable, TabManager, TabEventHandler 
         }
 
         configuration.setURLSchemeHandler(InternalSchemeHandler(), forURLScheme: InternalURL.scheme)
+        //Ecosia: inject cookie when config is created to make sure they are present
+        let cookie = isPrivate ? Cookie.makeIncognito() : Cookie.makeStandard()
+        configuration.websiteDataStore.httpCookieStore.setCookie(cookie)
         return configuration
     }
 
@@ -962,6 +985,17 @@ extension LegacyTabManager: WKNavigationDelegate {
                 webView.reload()
             } else {
                 tab.consecutiveCrashes = 0
+            }
+        }
+    }
+}
+
+// Ecosia: Cookie observer
+extension LegacyTabManager: WKHTTPCookieStoreObserver {
+    func cookiesDidChange(in cookieStore: WKHTTPCookieStore) {
+        cookieStore.getAllCookies { cookies in
+            DispatchQueue.main.async {
+                Cookie.received(cookies)
             }
         }
     }
