@@ -4,6 +4,7 @@
 
 import Core
 import UIKit
+import Common
 
 final class Markets {
     static private (set) var all: [Market] = {
@@ -73,6 +74,7 @@ final class MarketsController: ThemedTableViewController {
 
     override func applyTheme() {
         super.applyTheme()
+        tableView.tintColor = UIColor.legacyTheme.ecosia.primaryBrand
         view.backgroundColor = UIColor.legacyTheme.tableView.headerBackground
     }
 }
