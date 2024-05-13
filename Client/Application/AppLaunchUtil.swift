@@ -72,12 +72,16 @@ class AppLaunchUtil {
             }
         }
 
-        /* Hide RustFirefoxAccounts
+        /* Ecosia: Hide RustFirefoxAccounts
+           Keep `accountManagerInitialized` signaling right after this commented code👇 active to satifsy tasks dependencies
         RustFirefoxAccounts.startup(prefs: profile.prefs) { _ in
             self.logger.log("RustFirefoxAccounts started", level: .info, category: .sync)
+         
             AppEventQueue.signal(event: .accountManagerInitialized)
         }
          */
+        AppEventQueue.signal(event: .accountManagerInitialized)
+        
         // Add swizzle on UIViewControllers to automatically log when there's a new view showing
         UIViewController.loggerSwizzle()
 
