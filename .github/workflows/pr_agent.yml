@@ -1,7 +1,8 @@
 on:
   pull_request:
     types: [opened, reopened, ready_for_review]
-  issue_comment:
+    branches: [main, MOB-*]
+  issue_comment:  
 jobs:
   pr_agent_job:
     if: ${{ github.event.sender.type != 'Bot' }}
@@ -24,4 +25,4 @@ jobs:
           github_action_config.auto_improve: "true" 
           github_action_config.enable_output: "false"
           PR_REVIEWER.INLINE_CODE_COMMENTS: "true" 
-          GITHUB_APP.IGNORE_PR_TITLE: "[^(?!.*MOB).*$]"
+          PR_REVIEWER.ENABLE_REVIEW_LABELS_EFFORT: "false" 
