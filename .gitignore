@@ -132,3 +132,4 @@ Production.xcconfig
 .github/workflows/firefox-*.yml
 SourcePackages
 test_output
+.vscode
