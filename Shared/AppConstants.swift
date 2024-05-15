@@ -47,6 +47,8 @@ public enum KVOConstants: String {
     case canGoBack
     case canGoForward
     case contentSize
+    // Ecosia: Update show/hide locker icon based on Firefox v128
+    case hasOnlySecureContent
 }
 
 public struct KeychainKey {
