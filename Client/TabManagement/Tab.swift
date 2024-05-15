@@ -487,6 +487,8 @@ class Tab: NSObject, ThemeApplicable {
             configureEdgeSwipeGestureRecognizers()
             self.webView?.addObserver(self, forKeyPath: KVOConstants.URL.rawValue, options: .new, context: nil)
             self.webView?.addObserver(self, forKeyPath: KVOConstants.title.rawValue, options: .new, context: nil)
+            // Ecosia: Update show/hide locker icon based on Firefox v128
+            self.webView?.addObserver(self, forKeyPath: KVOConstants.hasOnlySecureContent.rawValue, options: .new, context: nil)
             UserScriptManager.shared.injectUserScriptsIntoWebView(webView, nightMode: nightMode, noImageMode: noImageMode)
 
             tabDelegate?.tab(self, didCreateWebView: webView)
@@ -506,6 +508,8 @@ class Tab: NSObject, ThemeApplicable {
     deinit {
         webView?.removeObserver(self, forKeyPath: KVOConstants.URL.rawValue)
         webView?.removeObserver(self, forKeyPath: KVOConstants.title.rawValue)
+        // Ecosia: Update show/hide locker icon based on Firefox v128
+        webView?.removeObserver(self, forKeyPath: KVOConstants.hasOnlySecureContent.rawValue)
         webView?.navigationDelegate = nil
 
         debugTabCount -= 1

@@ -39,6 +39,8 @@ class BrowserViewController: UIViewController,
         .canGoForward,
         .URL,
         .title,
+        // Ecosia: Update show/hide locker icon based on Firefox v128
+        .hasOnlySecureContent
     ]
 
     weak var browserDelegate: BrowserDelegate?
@@ -1417,6 +1419,10 @@ class BrowserViewController: UIViewController,
                   let canGoForward = change?[.newKey] as? Bool
             else { break }
             navigationToolbar.updateForwardStatus(canGoForward)
+        // Ecosia: Update show/hide locker icon based on Firefox v128
+        case .hasOnlySecureContent:
+            urlBar.locationView.hasSecureContent = webView.hasOnlySecureContent
+            urlBar.locationView.showTrackingProtectionButton(for: webView.url)
         default:
             assertionFailure("Unhandled KVO key: \(keyPath ?? "nil")")
         }
@@ -1449,7 +1455,8 @@ class BrowserViewController: UIViewController,
                 isPrivate: tab.isPrivate)
         }
         urlBar.currentURL = tab.url?.displayURL
-        urlBar.locationView.tabDidChangeContentBlocking(tab)
+        // Ecosia: Update show/hide locker icon based on Firefox v128
+        // urlBar.locationView.tabDidChangeContentBlocking(tab)
         urlBar.locationView.updateShoppingButtonVisibility(for: tab)
         let isPage = tab.url?.displayURL?.isWebPage() ?? false
         navigationToolbar.updatePageStatus(isPage)
@@ -1681,9 +1688,11 @@ class BrowserViewController: UIViewController,
         guard let webView = tab.webView else { return }
 
         if let url = webView.url {
+            /* Ecosia: Update show/hide locker icon based on Firefox v128
             if tab === tabManager.selectedTab {
                 urlBar.locationView.tabDidChangeContentBlocking(tab)
             }
+             */
 
             if (!InternalURL.isValid(url: url) || url.isReaderModeURL) && !url.isFileURL {
                 postLocationChangeNotificationForTab(tab, navigation: navigation)
