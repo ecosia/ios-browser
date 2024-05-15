@@ -770,6 +770,7 @@ extension BookmarksPanel {
             self?.moreButton.isEnabled = true
         }
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        alert.view.tintColor = UIColor.legacyTheme.ecosia.primaryButton
         alert.popoverPresentationController?.barButtonItem = moreButton
         [importAction, exportAction, cancelAction].forEach(alert.addAction)
         present(alert, animated: true)
