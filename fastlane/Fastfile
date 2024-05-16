@@ -94,6 +94,11 @@ platform :ios do
       release_notes: ENV["CIRCLE_BRANCH"],
       notify_testers: false
     )
+    upload_to_browserstack_app_automate(
+      browserstack_username: ENV["BROWSERSTACK_USERNAME"],
+      browserstack_access_key: ENV["BROWSERSTACK_ACCESS_KEY"],
+      file_path: ENV["IPA_OUTPUT_PATH"]
+    )
   end
   
   desc "Testflight build for Beta Channel"
