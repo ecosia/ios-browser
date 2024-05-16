@@ -52,6 +52,19 @@ enum ClimateImpactInfo: Equatable {
         }
     }
     
+    var accessibilityIdentifier: String? {
+        switch self {
+        case .search:
+            "personal_trees_counter"
+        case .referral:
+            "friends_and_trees_invites_counter"
+        case .totalTrees:
+            "total_trees_count"
+        case .totalInvested:
+            "total_invested_count"
+        }
+    }
+    
     var image: UIImage? {
         switch self {
         case .search:

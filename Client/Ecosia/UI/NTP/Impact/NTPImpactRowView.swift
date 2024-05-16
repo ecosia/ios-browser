@@ -135,6 +135,7 @@ final class NTPImpactRowView: UIView, Themeable {
         vStack.isAccessibilityElement = true
         vStack.shouldGroupAccessibilityChildren = true
         vStack.accessibilityLabel = info.accessibilityLabel
+        vStack.accessibilityIdentifier = info.accessibilityIdentifier
         
         hStack.addArrangedSubview(vStack)
         hStack.addArrangedSubview(actionButton)
