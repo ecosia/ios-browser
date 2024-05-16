@@ -38,8 +38,8 @@ platform :ios do
     setup_circle_ci
   end
 
-  desc "Deploy to MS App-Center"
-  lane :appcenter do
+  desc "Deploy to MS App-Center + Browserstack"
+  lane :upload_to_appcenter_and_browserstack do
     match(
       app_identifier: ['com.ecosia.ecosiaapp.firefox', 'com.ecosia.ecosiaapp.firefox.WidgetKit', 'com.ecosia.ecosiaapp.firefox.ShareTo'], 
       type: "adhoc",
@@ -64,6 +64,11 @@ platform :ios do
       should_clip: false,
       release_notes: ENV["CIRCLE_BRANCH"],
       notify_testers: false
+    )
+    upload_to_browserstack_app_automate(
+      browserstack_username: ENV["BROWSERSTACK_USERNAME"],
+      browserstack_access_key: ENV["BROWSERSTACK_ACCESS_KEY"],
+      file_path: ENV["IPA_OUTPUT_PATH"]
     )
   end
   
