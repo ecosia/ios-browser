@@ -10,6 +10,7 @@ enum ClimateImpactInfo: Equatable {
     case referral(value: Int, invites: Int)
     case totalTrees(value: Int)
     case totalInvested(value: Int)
+    case organization(value:Int, name: String)
     
     var title: String {
         switch self {
@@ -22,6 +23,9 @@ enum ClimateImpactInfo: Equatable {
                 .string(from: .init(integerLiteral: value)) ?? ""
         case .totalInvested(let value):
             return NumberFormatter.ecosiaCurrency()
+                .string(from: .init(integerLiteral: value)) ?? ""
+        case .organization(let value, _):
+            return NumberFormatter.ecosiaCurrency(withoutEuroSymbol: true)
                 .string(from: .init(integerLiteral: value)) ?? ""
         }
     }
@@ -36,6 +40,8 @@ enum ClimateImpactInfo: Equatable {
             return .localized(.treesPlantedByEcosia)
         case .totalInvested:
             return .localized(.dedicatedToClimateAction)
+        case .organization(_, let name):
+            return "estimated trees planted by \(name)"
         }
     }
     
@@ -48,6 +54,8 @@ enum ClimateImpactInfo: Equatable {
         case .totalTrees(let value):
             return value.spelledOutString + " " + .localized(.treesPlantedByEcosia)
         case .totalInvested(let value):
+            return value.spelledOutString + " " + .localized(.dedicatedToClimateAction)
+        case .organization(let value, _):
             return value.spelledOutString + " " + .localized(.dedicatedToClimateAction)
         }
     }
@@ -62,6 +70,8 @@ enum ClimateImpactInfo: Equatable {
             "total_trees_count"
         case .totalInvested:
             "total_invested_count"
+        case .organization:
+            "organization"
         }
     }
     
@@ -75,6 +85,8 @@ enum ClimateImpactInfo: Equatable {
             return .init(named: "hand")
         case .totalInvested:
             return .init(named: "financialReports")
+        case .organization:
+            return .init(named: "treesUpdate")
         }
     }
     
@@ -84,7 +96,7 @@ enum ClimateImpactInfo: Equatable {
             return .localized(.howItWorks)
         case .referral:
             return .localized(.inviteFriends)
-        case .totalTrees, .totalInvested:
+        case .totalTrees, .totalInvested, .organization:
             return nil
         }
     }
@@ -95,7 +107,7 @@ enum ClimateImpactInfo: Equatable {
             return .localized(.howItWorks)
         case .referral:
             return .localized(.inviteFriends)
-        case .totalTrees, .totalInvested:
+        case .totalTrees, .totalInvested, .organization:
             return nil
         }
     }
@@ -110,6 +122,8 @@ enum ClimateImpactInfo: Equatable {
             "total_trees_image"
         case .totalInvested:
             "total_invested_image"
+        case .organization:
+            "organisation_image"
         }
     }
     
@@ -117,7 +131,7 @@ enum ClimateImpactInfo: Equatable {
         switch self {
         case .search:
             return User.shared.progress
-        case .referral, .totalInvested, .totalTrees:
+        case .referral, .totalInvested, .totalTrees, .organization:
             return nil
         }
     }
@@ -133,6 +147,8 @@ enum ClimateImpactInfo: Equatable {
             return 2
         case .totalInvested:
             return 3
+        case .organization:
+            return 4
         }
     }
     

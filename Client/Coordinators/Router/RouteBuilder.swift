@@ -112,14 +112,17 @@ final class RouteBuilder {
             RatingPromptManager.isBrowserDefault = true
             // Use the last browsing mode the user was in
             return .search(url: url, isPrivate: isPrivate, options: [.focusLocationField])
-            // Ecosia: Referral deeplink
-        } else if urlScanner.scheme == "ecosia", urlScanner.host == "invite" {
-            let paths = url.absoluteString.split(separator: "/")
-            guard let componentPath = paths[safe: 2] else { return nil }
-            return .referrals(code: String(componentPath))
-        } else {
-            return nil
+            // Ecosia: Deeplinks
+        } else if urlScanner.scheme == "ecosia" {
+            if urlScanner.host == "invite" {
+                let paths = url.absoluteString.split(separator: "/")
+                guard let componentPath = paths[safe: 2] else { return nil }
+                return .referrals(code: String(componentPath))
+            } else if urlScanner.host == "companies", let typeTag = urlScanner.components.last {
+                    return .company(typeTag: typeTag)
+            }
         }
+        return nil
     }
 
     func makeRoute(userActivity: NSUserActivity) -> Route? {

@@ -208,9 +208,9 @@ class BrowserCoordinator: BaseCoordinator,
         }
 
         switch route {
-        // Ecosia: Add Referrals route
+        // Ecosia: Add Referrals and Company route
         // case .searchQuery, .search, .searchURL, .glean, .homepanel, .action, .fxaSignIn, .defaultBrowser:
-        case .searchQuery, .search, .searchURL, .glean, .homepanel, .action, .fxaSignIn, .defaultBrowser, .referrals:
+        case .searchQuery, .search, .searchURL, .glean, .homepanel, .action, .fxaSignIn, .defaultBrowser, .referrals, .company:
             return true
         case let .settings(section):
             return canHandleSettings(with: section)
@@ -265,6 +265,9 @@ class BrowserCoordinator: BaseCoordinator,
         // Ecosia: Add Referrals route
         case let .referrals(code):
             openBlankNewTabAndClaimReferral(code: code)
+        // Ecosia: Add Company route
+        case let .company(typeTag):
+            handleCompanyConnect(typeTag: typeTag)
         }
     }
     
@@ -322,6 +325,10 @@ class BrowserCoordinator: BaseCoordinator,
         browserViewController.handle(url: searchURL, tabId: tabId)
     }
 
+    private func handleCompanyConnect(typeTag: String) {
+        browserViewController.handleCompanyConnect(typeTag: typeTag)
+    }
+    
     private func handle(fxaParams: FxALaunchParams) {
         browserViewController.presentSignInViewController(fxaParams)
     }

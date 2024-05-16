@@ -1498,6 +1498,27 @@ class BrowserViewController: UIViewController,
        openBlankNewTab(focusLocationField: false)
        urlBar(urlBar, didSubmitText: query)
     }
+    
+    
+    func handleCompanyConnect(typeTag: String) {
+        
+        Task.detached {
+            try? await Companies.shared.fetchAndUpdate()
+            if let company = Companies.shared.findCompany(for: typeTag) {
+                User.shared.company = company
+                await self.presentCompanyAlert(for: company)
+            }
+        }
+    }
+    
+    @MainActor
+    func presentCompanyAlert(for company: Company) {
+        let alert = UIAlertController(title: "Congratulations!", message: "Your searches are now planting trees for \(company.name) ", preferredStyle: .alert)
+        alert.addAction(.init(title: "OK", style: .default))
+        present(alert, animated: true)
+        
+        openBlankNewTab(focusLocationField: false)
+    }
 
     func handle(url: URL?, isPrivate: Bool, options: Set<Route.SearchOptions>? = nil) {
         if let url = url {

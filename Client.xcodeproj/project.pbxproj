@@ -1142,6 +1142,7 @@
 		CA24B52224ABD7D40093848C /* PasswordManagerViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA24B52024ABD7D40093848C /* PasswordManagerViewModelTests.swift */; };
 		CA24B53924ABFE250093848C /* PasswordManagerSelectionHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA24B53824ABFE250093848C /* PasswordManagerSelectionHelperTests.swift */; };
 		CA24B53B24ABFE5D0093848C /* PasswordManagerDataSourceHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA24B53A24ABFE5D0093848C /* PasswordManagerDataSourceHelperTests.swift */; };
+		CA3F57992BF638C5004F16B5 /* SVGKit in Frameworks */ = {isa = PBXBuildFile; productRef = CA3F57982BF638C5004F16B5 /* SVGKit */; };
 		CA4ACE4924C8C91600F55894 /* BreachAlertsDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4ACE4824C8C91500F55894 /* BreachAlertsDetailView.swift */; };
 		CA520E7A24913C1B00CCAB48 /* PasswordManagerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA520E7924913C1B00CCAB48 /* PasswordManagerViewModel.swift */; };
 		CA77ABFD24773C92005079F9 /* BreachAlertsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA77ABF424772D98005079F9 /* BreachAlertsManager.swift */; };
@@ -7736,6 +7737,7 @@
 				0B8E0FF41A932BD500161DC3 /* ImageIO.framework in Frameworks */,
 				435C85F02788F4D00072B526 /* Glean in Frameworks */,
 				433F87CE2788EAB600693368 /* GCDWebServers in Frameworks */,
+				CA3F57992BF638C5004F16B5 /* SVGKit in Frameworks */,
 				5A06135A29D6052E008F3D38 /* TabDataStore in Frameworks */,
 				2CE294472B7CDD56006C22B2 /* Core in Frameworks */,
 				216A0D762A40E7AB008077BA /* Redux in Frameworks */,
@@ -12448,6 +12450,7 @@
 				8AF2D0FB2A5F272A00C7DD69 /* ComponentLibrary */,
 				2C6189F02B7B7D5D006B70D7 /* SnowplowTracker */,
 				2CE294462B7CDD56006C22B2 /* Core */,
+				CA3F57982BF638C5004F16B5 /* SVGKit */,
 			);
 			productName = Client;
 			productReference = F84B21BE1A090F8100AAB793 /* Client.app */;
@@ -12747,6 +12750,7 @@
 				5A37861729A2C337006B3A34 /* XCRemoteSwiftPackageReference "sentry-cocoa" */,
 				2C61887D2B7A89E4006B70D7 /* XCRemoteSwiftPackageReference "ios-core" */,
 				2C6189EF2B7B7D48006B70D7 /* XCRemoteSwiftPackageReference "snowplow-ios-tracker" */,
+				CA3F57972BF638C5004F16B5 /* XCRemoteSwiftPackageReference "SVGKit" */,
 				2CCFB3D82C0FC4DC00BEDCA0 /* XCRemoteSwiftPackageReference "rust-components-swift" */,
 			);
 			productRefGroup = F84B21BF1A090F8100AAB793 /* Products */;
@@ -20828,7 +20832,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = "MOB-2498_upgrade_braze";
+				branch = "ecosia-for-companies";
 				kind = branch;
 			};
 		};
@@ -20910,6 +20914,14 @@
 			requirement = {
 				kind = exactVersion;
 				version = 8.17.1;
+			};
+		};
+		CA3F57972BF638C5004F16B5 /* XCRemoteSwiftPackageReference "SVGKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SVGKit/SVGKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.0.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -21095,6 +21107,11 @@
 		8AF2D0FB2A5F272A00C7DD69 /* ComponentLibrary */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = ComponentLibrary;
+		};
+		CA3F57982BF638C5004F16B5 /* SVGKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CA3F57972BF638C5004F16B5 /* XCRemoteSwiftPackageReference "SVGKit" */;
+			productName = SVGKit;
 		};
 		D433852B27ABC8150069DD33 /* MappaMundi */ = {
 			isa = XCSwiftPackageProductDependency;

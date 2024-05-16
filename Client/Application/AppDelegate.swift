@@ -200,6 +200,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             try? await Statistics.shared.fetchAndUpdate()
         }
 
+        // Ecosia: fetching statistics before they are used
+        Task.detached {
+            do {
+                try await Companies.shared.fetchAndUpdate()
+            } catch(let e) {
+                debugPrint(e)
+            }
+        }
+        
         let topSitesProvider = TopSitesProviderImplementation(
             placesFetcher: profile.places,
             pinnedSiteFetcher: profile.pinnedSites,

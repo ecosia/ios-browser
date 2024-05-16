@@ -14,25 +14,31 @@ protocol NTPImpactCellDelegate: AnyObject {
 final class NTPImpactCellViewModel {
     weak var delegate: NTPImpactCellDelegate?
     var infoItemSections: [[ClimateImpactInfo]] {
-        var firstSection: [ClimateImpactInfo] = [referralInfo]
-        if !Unleash.isEnabled(.incentiveRestrictedSearch) {
-            firstSection.insert(searchInfo,
-                                at: 0)
-        }
-        let secondSection: [ClimateImpactInfo] = [totalTreesInfo, totalInvestedInfo]
+        let firstSection: [ClimateImpactInfo] = [referralInfo]
+        
+        let orgOrInvestmentInfo = orgInfo ?? totalInvestedInfo
+        let secondSection: [ClimateImpactInfo] = [totalTreesInfo, orgOrInvestmentInfo]
         return [firstSection, secondSection]
     }
     var searchInfo: ClimateImpactInfo {
         .search(value: User.shared.searchImpact, searches: searchesCounter.state ?? User.shared.searchCount)
     }
+    
     var referralInfo: ClimateImpactInfo {
         .referral(value: User.shared.referrals.impact, invites: User.shared.referrals.count)
     }
+    
     var totalTreesInfo: ClimateImpactInfo {
         .totalTrees(value: TreesProjection.shared.treesAt(.init()))
     }
     var totalInvestedInfo: ClimateImpactInfo {
         .totalInvested(value: InvestmentsProjection.shared.totalInvestedAt(.init()))
+    }
+    
+    var orgInfo: ClimateImpactInfo? {
+        User.shared.company.map({
+            ClimateImpactInfo.organization(value: $0.treesAt(.init()), name: $0.name)
+        })
     }
 
     private let searchesCounter = SearchesCounter()
