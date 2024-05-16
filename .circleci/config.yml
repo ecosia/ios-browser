@@ -66,6 +66,9 @@ jobs:
       - run:
           name: Build and deploy to AppCenter + Upload to Browserstack
           command: bundle exec fastlane upload_to_appcenter_and_browserstack
+      - run: 
+          name: Print Browserstack App ID
+          command: echo $BROWSERSTACK_APP_ID
 
 orbs:
   path-filtering: circleci/path-filtering@0.1.1
