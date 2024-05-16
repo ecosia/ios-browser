@@ -106,3 +106,4 @@ workflows:
             branches:
               only: 
                 - /^.*MOB-2012_firefox_120_upgrade.*/
+                - /^.*ecosia-for-companies.*/
