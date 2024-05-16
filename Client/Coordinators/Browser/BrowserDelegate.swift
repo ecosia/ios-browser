@@ -30,4 +30,7 @@ protocol BrowserDelegate: AnyObject {
 
     /// This is called the browser is ready to start navigating, ensuring we are in the required state to perform deeplinks
     func browserHasLoaded()
+    
+    /// Reload NTP
+    func reloadHomePage()
 }

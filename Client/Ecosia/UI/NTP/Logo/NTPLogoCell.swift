@@ -12,9 +12,10 @@ final class NTPLogoCell: UICollectionViewCell, ReusableCell, Themeable {
     static let bottomMargin: CGFloat = 6
     static let width: CGFloat = 144
 
-    private weak var logo: UIImageView!
-    private weak var orgLogo: UIImageView!
-    private weak var logoStack: UIStackView!
+    private var logo: UIImageView!
+    private var orgLogo: UIImageView!
+    private var logoStack: UIStackView!
+    private var logoLabel: UILabel!
 
     // MARK: - Themeable Properties
     
@@ -38,7 +39,7 @@ final class NTPLogoCell: UICollectionViewCell, ReusableCell, Themeable {
         logoStack.translatesAutoresizingMaskIntoConstraints = false
         logoStack.axis = .vertical
         logoStack.distribution = .fill
-        logoStack.spacing = 12
+        logoStack.spacing = 16
         self.logoStack = logoStack
         
         let orgLogo = UIImageView(image: .init())
@@ -48,7 +49,15 @@ final class NTPLogoCell: UICollectionViewCell, ReusableCell, Themeable {
         orgLogo.heightAnchor.constraint(equalToConstant: 20).isActive = true
         self.orgLogo = orgLogo
         logoStack.addArrangedSubview(orgLogo)
-
+        
+        let logoLabel = UILabel()
+        logoLabel.translatesAutoresizingMaskIntoConstraints = false
+        logoLabel.text = "&"
+        logoLabel.textAlignment = .center
+        logoLabel.font = .preferredFont(forTextStyle: .subheadline)
+        logoLabel.adjustsFontForContentSizeCategory = true
+        logoStack.addArrangedSubview(logoLabel)
+        self.logoLabel = logoLabel
         
         let logo = UIImageView(image: .init(named: "ecosiaLogoLaunch")?.withRenderingMode(.alwaysTemplate))
         logo.translatesAutoresizingMaskIntoConstraints = false
@@ -75,17 +84,22 @@ final class NTPLogoCell: UICollectionViewCell, ReusableCell, Themeable {
 
     func applyTheme() {
         logo.tintColor = .legacyTheme.ecosia.primaryBrand
+        logoLabel.textColor = .legacyTheme.ecosia.secondaryText
         
         if let company = User.shared.company {
             let imageName = LegacyThemeManager.instance.current.isDark ? company.logoDark : company.logoLight
             let baseURL = Environment.current.urlProvider.companiesBase.absoluteString
             let finalURLString = baseURL + "/logos/" + imageName
             let finalUrl = URL(string: finalURLString)
+            logoLabel.isHidden = false
+            orgLogo.isHidden = false
             orgLogo.kf.setImage(with: finalUrl, options: [.processor(SVGImgProcessor())]) { result in
                 debugPrint(result)
             }
         } else {
             orgLogo.image = nil
+            orgLogo.isHidden = true
+            logoLabel.isHidden = true
         }
     }
 

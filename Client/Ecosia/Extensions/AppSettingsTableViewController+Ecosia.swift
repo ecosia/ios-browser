@@ -5,6 +5,7 @@
 import Common
 import UIKit
 import Shared
+import Core
 
 extension AppSettingsTableViewController {
     
@@ -21,6 +22,14 @@ extension AppSettingsTableViewController {
         // Ecosia: Not adding search settings with Bing distribution experiment
         if !BingDistributionExperiment.isEnabled {
             sections.insert(getSearchSection(), at: 1)
+        }
+        
+        if User.shared.company != nil {
+            let company = CompanySetting(settings: self)
+            let about = AboutEcosiaForCompaniesSetting()
+            
+            let section = SettingSection(title: NSAttributedString(string: "Ecosia for Companies"), children: [company, about])
+            sections.insert(section, at: 4)
         }
         
         if isDebugSectionEnabled {

@@ -233,6 +233,53 @@ final class QuickSearchSearchSetting: Setting {
     }
 }
 
+final class CompanySetting: Setting {
+    let settings: SettingsTableViewController
+    
+    init(settings: SettingsTableViewController) {
+        self.settings = settings
+        let companyName = User.shared.company?.name ?? ""
+        super.init(title: NSAttributedString(string: "Connected to \(companyName)", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText]))
+    }
+    
+    override var status: NSAttributedString? {
+        return NSAttributedString(string: "Click to disconnect", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
+    }
+    
+    override func onClick(_ navigationController: UINavigationController?) {
+        let alert = UIAlertController(title: "Disconnect from company", message: "Do you want to disconnect this iPhone from your company?", preferredStyle: .alert)
+        let cancel = UIAlertAction(title: "No", style: .cancel)
+        let ok = UIAlertAction(title: "Yes", style: .destructive) { _ in
+            User.shared.company = nil
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(300)) {
+                // this will trigger a settings reload
+                self.settings.applyTheme()
+                NotificationCenter.default.post(name: .HomePanelPrefsChanged, object: nil)
+            }
+            // this will trigger the NTP to reload
+        }
+        alert.addAction(cancel)
+        alert.addAction(ok)
+        settings.present(alert, animated: true)
+    }
+    
+}
+
+final class AboutEcosiaForCompaniesSetting: Setting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "About Ecosia for Companies", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
+    }
+
+    override var url: URL? {
+        return URL(string: "https://companies.ecosia.org")
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        setUpAndPushSettingsContentViewController(navigationController, self.url)
+    }
+}
+
 extension Setting {
     // Helper method to set up and push a SettingsContentViewController
     func setUpAndPushSettingsContentViewController(_ navigationController: UINavigationController?, _ url: URL? = nil) {

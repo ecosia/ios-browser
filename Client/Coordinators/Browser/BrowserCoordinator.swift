@@ -136,6 +136,10 @@ class BrowserCoordinator: BaseCoordinator,
         }
         self.privateViewController = privateHomepageController
     }
+    
+    func reloadHomePage() {
+        homepageViewController?.reloadView()
+    }
 
     // MARK: - PrivateHomepageDelegate
 
