@@ -55,6 +55,11 @@ enum Route: Equatable {
     ///
     /// - Parameter section: An instance of `DefaultBrowserSection` indicating the section of the default browser settings to be displayed.
     case defaultBrowser(section: DefaultBrowserSection)
+    
+    /// Represents the referrals route that takes a string as invite code.
+    ///
+    /// - Parameter code: represents the invite code
+    case referrals(code: String)
 
     /// An enumeration representing different sections of the home panel.
     enum HomepanelSection: String, CaseIterable, Equatable {

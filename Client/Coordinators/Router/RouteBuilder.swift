@@ -28,6 +28,11 @@ final class RouteBuilder {
             recordTelemetry(input: host, isPrivate: isPrivate)
 
             switch host {
+            // Ecosia: Referral deeplink
+            case .referrarls:
+                let paths = url.absoluteString.split(separator: "/")
+                guard let componentPath = paths[safe: 1] else { return nil }
+                return .referrals(code: String(componentPath))
             case .deepLink:
                 let deepLinkURL = urlScanner.fullURLQueryItem()?.lowercased()
                 let paths = deepLinkURL?.split(separator: "/") ?? []
@@ -177,7 +182,9 @@ final class RouteBuilder {
 
     private func recordTelemetry(input: DeeplinkInput.Host, isPrivate: Bool) {
         switch input {
-        case .deepLink, .fxaSignIn, .glean:
+        // Ecosia: Add Referrals route
+        // case .deepLink, .fxaSignIn, .glean:
+        case .deepLink, .fxaSignIn, .glean, .referrarls:
             return
         case .widgetMediumTopSitesOpenUrl:
             TelemetryWrapper.recordEvent(category: .action, method: .open, object: .mediumTopSitesWidget)

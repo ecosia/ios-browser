@@ -3,6 +3,8 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
+// Ecosia: import Core
+import Core
 
 /// An enumeration of possible input parameters for handling deep links in the Mozilla Firefox browser.
 enum DeeplinkInput {
@@ -22,6 +24,8 @@ enum DeeplinkInput {
         case widgetMediumQuickLinkClosePrivateTabs = "widget-medium-quicklink-close-private-tabs"
         case widgetTabsMediumOpenUrl = "widget-tabs-medium-open-url"
         case widgetTabsLargeOpenUrl = "widget-tabs-large-open-url"
+        // Ecosia: Add referrals' host
+        case referrarls = "invite"
     }
 
     /// An enumeration of possible paths for deep links.

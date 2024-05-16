@@ -208,7 +208,9 @@ class BrowserCoordinator: BaseCoordinator,
         }
 
         switch route {
-        case .searchQuery, .search, .searchURL, .glean, .homepanel, .action, .fxaSignIn, .defaultBrowser:
+        // Ecosia: Add Referrals route
+        // case .searchQuery, .search, .searchURL, .glean, .homepanel, .action, .fxaSignIn, .defaultBrowser:
+        case .searchQuery, .search, .searchURL, .glean, .homepanel, .action, .fxaSignIn, .defaultBrowser, .referrals:
             return true
         case let .settings(section):
             return canHandleSettings(with: section)
@@ -260,6 +262,11 @@ class BrowserCoordinator: BaseCoordinator,
             case .tutorial:
                 startLaunch(with: .defaultBrowser)
             }
+        // Ecosia: Add Referrals route
+        case let .referrals(code):
+            User.shared.referrals.pendingClaim = code
+            guard !User.shared.firstTime else { return }
+            showIntroOnboarding()
         }
     }
 
