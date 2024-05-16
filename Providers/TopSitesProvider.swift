@@ -132,7 +132,6 @@ private extension TopSitesProviderImplementation {
         // Fetch the default sites
         let defaultSites = defaultTopSites(prefs)
         // Create PinnedSite objects. Used by the view layer to tell topsites apart
-        let pinnedSites: [Site] = pinnedSites.map({ PinnedSite(site: $0) })
         // Ecosia: No need of Pinned Sites
         // let pinnedSites: [Site] = pinnedSites.map({ PinnedSite(site: $0) })
         // Merge default topsites with a user's topsites.
