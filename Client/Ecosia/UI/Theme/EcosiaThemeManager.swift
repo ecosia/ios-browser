@@ -50,6 +50,11 @@ public final class EcosiaThemeManager: ThemeManager, Notifiable {
         self.userDefaults.register(defaults: [ThemeKeys.systemThemeIsOn: true,
                                               ThemeKeys.NightMode.isOn: NSNumber(value: false)])
 
+        if LegacyThemeManager.instance.systemThemeIsOn {
+            let userInterfaceStyle = UIScreen.main.traitCollection.userInterfaceStyle
+            LegacyThemeManager.instance.current = userInterfaceStyle == .dark ? LegacyDarkTheme() : LegacyNormalTheme()
+        }
+
         changeCurrentTheme(loadInitialThemeType())
 
         setupNotifications(forObserver: self,
