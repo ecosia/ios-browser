@@ -100,4 +100,4 @@ workflows:
           filters:
             branches:
               only: 
-                - /^.*browserstack_upload_automation.*/
+                - /^.*MOB-2012_firefox_120_upgrade.*/
