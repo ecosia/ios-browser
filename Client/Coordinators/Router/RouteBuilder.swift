@@ -28,11 +28,6 @@ final class RouteBuilder {
             recordTelemetry(input: host, isPrivate: isPrivate)
 
             switch host {
-            // Ecosia: Referral deeplink
-            case .referrarls:
-                let paths = url.absoluteString.split(separator: "/")
-                guard let componentPath = paths[safe: 1] else { return nil }
-                return .referrals(code: String(componentPath))
             case .deepLink:
                 let deepLinkURL = urlScanner.fullURLQueryItem()?.lowercased()
                 let paths = deepLinkURL?.split(separator: "/") ?? []
@@ -117,6 +112,11 @@ final class RouteBuilder {
             RatingPromptManager.isBrowserDefault = true
             // Use the last browsing mode the user was in
             return .search(url: url, isPrivate: isPrivate, options: [.focusLocationField])
+            // Ecosia: Referral deeplink
+        } else if urlScanner.scheme == "ecosia", urlScanner.host == "invite" {
+            let paths = url.absoluteString.split(separator: "/")
+            guard let componentPath = paths[safe: 2] else { return nil }
+            return .referrals(code: String(componentPath))
         } else {
             return nil
         }
@@ -182,9 +182,7 @@ final class RouteBuilder {
 
     private func recordTelemetry(input: DeeplinkInput.Host, isPrivate: Bool) {
         switch input {
-        // Ecosia: Add Referrals route
-        // case .deepLink, .fxaSignIn, .glean:
-        case .deepLink, .fxaSignIn, .glean, .referrarls:
+         case .deepLink, .fxaSignIn, .glean:
             return
         case .widgetMediumTopSitesOpenUrl:
             TelemetryWrapper.recordEvent(category: .action, method: .open, object: .mediumTopSitesWidget)

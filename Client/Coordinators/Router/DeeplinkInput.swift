@@ -24,8 +24,6 @@ enum DeeplinkInput {
         case widgetMediumQuickLinkClosePrivateTabs = "widget-medium-quicklink-close-private-tabs"
         case widgetTabsMediumOpenUrl = "widget-tabs-medium-open-url"
         case widgetTabsLargeOpenUrl = "widget-tabs-large-open-url"
-        // Ecosia: Add referrals' host
-        case referrarls = "invite"
     }
 
     /// An enumeration of possible paths for deep links.

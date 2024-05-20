@@ -264,12 +264,19 @@ class BrowserCoordinator: BaseCoordinator,
             }
         // Ecosia: Add Referrals route
         case let .referrals(code):
-            User.shared.referrals.pendingClaim = code
-            guard !User.shared.firstTime else { return }
-            showIntroOnboarding()
+            openBlankNewTabAndClaimReferral(code: code)
         }
     }
-
+    
+    private func openBlankNewTabAndClaimReferral(code: String) {
+        User.shared.referrals.pendingClaim = code
+        // on first start, browser is not in view hierarchy yet
+        guard !User.shared.firstTime else { return }
+        browserViewController.openBlankNewTab(focusLocationField: false)
+        // Intro logic will trigger claiming referral
+        browserViewController.presentIntroViewController()
+    }
+    
     private func showIntroOnboarding() {
         let introManager = IntroScreenManager(prefs: profile.prefs)
         let launchType = LaunchType.intro(manager: introManager)

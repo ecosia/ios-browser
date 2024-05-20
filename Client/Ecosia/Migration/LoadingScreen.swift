@@ -160,7 +160,7 @@ final class LoadingScreen: UIViewController {
     private func claimReferral(_ code: String) {
         Task { [weak self] in
             do {
-                try await referrals.claim(referrer: code)
+                try await self?.referrals.claim(referrer: code)
                 self?.loadingGroup.leave()
                 Analytics.shared.inviteClaimSuccess()
             } catch {
