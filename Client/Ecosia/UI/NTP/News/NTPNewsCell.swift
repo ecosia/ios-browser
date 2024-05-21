@@ -182,13 +182,16 @@ final class NTPNewsCell: UICollectionViewCell, Themeable, ReusableCell {
     func configure(_ model: NewsModel, images: Images, row: Int, totalCount: Int) {
         let titleString = model.text.replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression)
         title.text = titleString
+        title.accessibilityIdentifier = "news_item_title_\(row)"
         let publishDateString = RelativeDateTimeFormatter().localizedString(for: model.publishDate, relativeTo: .init())
         bottomLabel.text = publishDateString
+        bottomLabel.accessibilityIdentifier = "news_item_published_date_\(row)"
         bottomIcon.isHidden = true
         highlightLabel.isHidden = true
 
         imageUrl = model.imageUrl
         image.image = nil
+        image.accessibilityIdentifier = "news_item_image_\(row)"
         images.load(self, url: model.imageUrl) { [weak self] in
             guard self?.imageUrl == $0.url else { return }
             self?.updateImage($0.data)
@@ -200,6 +203,7 @@ final class NTPNewsCell: UICollectionViewCell, Themeable, ReusableCell {
         applyTheme()
             
         isAccessibilityElement = true
+        accessibilityIdentifier = "news_item"
         accessibilityLabel = "\(titleString); \(publishDateString)"
         accessibilityTraits = .link
         shouldGroupAccessibilityChildren = true

@@ -73,6 +73,7 @@ final class NTPImpactRowView: UIView, Themeable {
     var info: ClimateImpactInfo {
         didSet {
             imageView.image = info.image
+            imageView.accessibilityIdentifier = info.imageAccessibilityIdentifier
             titleLabel.text = info.title
             subtitleLabel.text = info.subtitle
             actionButton.isHidden = forceHideActionButton ? true : info.buttonTitle == nil
@@ -134,6 +135,7 @@ final class NTPImpactRowView: UIView, Themeable {
         vStack.isAccessibilityElement = true
         vStack.shouldGroupAccessibilityChildren = true
         vStack.accessibilityLabel = info.accessibilityLabel
+        vStack.accessibilityIdentifier = info.accessibilityIdentifier
         
         hStack.addArrangedSubview(vStack)
         hStack.addArrangedSubview(actionButton)

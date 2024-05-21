@@ -52,6 +52,19 @@ enum ClimateImpactInfo: Equatable {
         }
     }
     
+    var accessibilityIdentifier: String? {
+        switch self {
+        case .search:
+            "personal_trees_counter"
+        case .referral:
+            "friends_and_trees_invites_counter"
+        case .totalTrees:
+            "total_trees_count"
+        case .totalInvested:
+            "total_invested_count"
+        }
+    }
+    
     var image: UIImage? {
         switch self {
         case .search:
@@ -84,6 +97,19 @@ enum ClimateImpactInfo: Equatable {
             return .localized(.inviteFriends)
         case .totalTrees, .totalInvested:
             return nil
+        }
+    }
+    
+    var imageAccessibilityIdentifier: String? {
+        switch self {
+        case .search:
+            "search_image"
+        case .referral:
+            "referral_image"
+        case .totalTrees:
+            "total_trees_image"
+        case .totalInvested:
+            "total_invested_image"
         }
     }
     
