@@ -2,7 +2,7 @@ name: Regression Tests
 
 on:
   push:
-    branches: [ main ]
+    branches: [ fix_tests ]
 
 jobs:
   execute_merge_tests:
