@@ -9,7 +9,8 @@ fastlane_version "2.210.0"
 
 default_platform :ios
 
-project_path="Client.xcodeproj"
+target_name = "Client" 
+project_path = "#{target_name}.xcodeproj"
 pbx_project_file = "#{project_path}/project.pbxproj"
 
 if ENV['IS_CIRCLECI']
@@ -17,8 +18,8 @@ if ENV['IS_CIRCLECI']
     url: 'git@github.com:mozilla/firefox-ios-build-tools.git',
     clone_folder: "../build-tools",
   )
-  ENV["IPA_PATH"] = "/Users/distiller/project/Client.ipa"
-  ENV["DSYM_PATH"] = "/Users/distiller/project/Client.app.dSYM.zip"
+  ENV["IPA_PATH"] = "/Users/distiller/project/#{target_name}.ipa"
+  ENV["DSYM_PATH"] = "/Users/distiller/project/#{target_name}.app.dSYM.zip"
 end
 
 #move all the build tools to the right places
@@ -129,7 +130,7 @@ platform :ios do
   lane :testflight_live do
 
     version_number = get_xcconfig_value(
-      path: 'Client/Configuration/Common.xcconfig',
+      path: "#{target_name}/Configuration/Common.xcconfig",
       name: 'MARKETING_VERSION'
     )
 
@@ -175,7 +176,7 @@ platform :ios do
     inject_appstore_connect_api
 
     version_number = get_xcconfig_value(
-      path: 'Client/Configuration/Common.xcconfig',
+      path: "#{target_name}/Configuration/Common.xcconfig",
       name: 'MARKETING_VERSION'
     )
 
