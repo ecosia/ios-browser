@@ -208,7 +208,9 @@ class BrowserCoordinator: BaseCoordinator,
         }
 
         switch route {
-        case .searchQuery, .search, .searchURL, .glean, .homepanel, .action, .fxaSignIn, .defaultBrowser:
+        // Ecosia: Add Referrals route
+        // case .searchQuery, .search, .searchURL, .glean, .homepanel, .action, .fxaSignIn, .defaultBrowser:
+        case .searchQuery, .search, .searchURL, .glean, .homepanel, .action, .fxaSignIn, .defaultBrowser, .referrals:
             return true
         case let .settings(section):
             return canHandleSettings(with: section)
@@ -260,9 +262,21 @@ class BrowserCoordinator: BaseCoordinator,
             case .tutorial:
                 startLaunch(with: .defaultBrowser)
             }
+        // Ecosia: Add Referrals route
+        case let .referrals(code):
+            openBlankNewTabAndClaimReferral(code: code)
         }
     }
-
+    
+    private func openBlankNewTabAndClaimReferral(code: String) {
+        User.shared.referrals.pendingClaim = code
+        // on first start, browser is not in view hierarchy yet
+        guard !User.shared.firstTime else { return }
+        browserViewController.openBlankNewTab(focusLocationField: false)
+        // Intro logic will trigger claiming referral
+        browserViewController.presentIntroViewController()
+    }
+    
     private func showIntroOnboarding() {
         let introManager = IntroScreenManager(prefs: profile.prefs)
         let launchType = LaunchType.intro(manager: introManager)
