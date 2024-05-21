@@ -196,6 +196,9 @@
 		2C1298A52BF5EB16005AE4E4 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 2C1298A42BF5EB16005AE4E4 /* PrivacyInfo.xcprivacy */; };
 		2C1298A62BF5EB1E005AE4E4 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 2C1298A42BF5EB16005AE4E4 /* PrivacyInfo.xcprivacy */; };
 		2C1298A72BF5EB1F005AE4E4 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 2C1298A42BF5EB16005AE4E4 /* PrivacyInfo.xcprivacy */; };
+		2C1298A82BF5EE23005AE4E4 /* libStorage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FCAE21A1ABB51F800877008 /* libStorage.a */; };
+		2C1298AC2BF5EE3E005AE4E4 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 2C1298AB2BF5EE3E005AE4E4 /* Core */; };
+		2C1298AF2BF602D3005AE4E4 /* DefaultSuggestedSites.swift in Sources */ = {isa = PBXBuildFile; fileRef = 394CF6CE1BAA493C00906917 /* DefaultSuggestedSites.swift */; };
 		2C1F23BD2B9F405E00186F55 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 2C1F23BC2B9F405E00186F55 /* Core */; };
 		2C4414422BD7B43F00249464 /* BingDistributionExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4414412BD7B43F00249464 /* BingDistributionExperiment.swift */; };
 		2C4414452BD7B4D800249464 /* BingDistributionExperimentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4414432BD7B4D000249464 /* BingDistributionExperimentTests.swift */; };
@@ -374,7 +377,6 @@
 		392ED7E61D0AEFEF009D9B62 /* HomePageAccessors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 392ED7E51D0AEFEF009D9B62 /* HomePageAccessors.swift */; };
 		3943A81D1E9807C700D4F6DC /* FxAPushMessageTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3943A81C1E9807C700D4F6DC /* FxAPushMessageTest.swift */; };
 		39455F771FC83F430088A22C /* TabEventHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39455F761FC83F430088A22C /* TabEventHandler.swift */; };
-		394CF6CF1BAA493C00906917 /* DefaultSuggestedSites.swift in Sources */ = {isa = PBXBuildFile; fileRef = 394CF6CE1BAA493C00906917 /* DefaultSuggestedSites.swift */; };
 		3964B09A1EA8F06F00F2EEF4 /* FeatureSwitch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3964B0991EA8F06F00F2EEF4 /* FeatureSwitch.swift */; };
 		3964B09C1EA8F32C00F2EEF4 /* FeatureSwitchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3964B09B1EA8F32C00F2EEF4 /* FeatureSwitchTests.swift */; };
 		396CDB55203C5B870034A3A3 /* TabTrayController+KeyCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 396CDB54203C5B870034A3A3 /* TabTrayController+KeyCommands.swift */; };
@@ -1604,6 +1606,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = F84B21BD1A090F8100AAB793;
 			remoteInfo = Client;
+		};
+		2C1298A92BF5EE23005AE4E4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F84B21B61A090F8100AAB793 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2FCAE2191ABB51F800877008;
+			remoteInfo = Storage;
 		};
 		2F11EE4F1ABCAE910083902D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -7691,6 +7700,7 @@
 				C820439A2523DC4500740B71 /* libStorage.a in Frameworks */,
 				5A70EF12295DFD6400790249 /* Common in Frameworks */,
 				D09A0CDC1FAA24CC009A0273 /* libAccount.a in Frameworks */,
+				2C1298AC2BF5EE3E005AE4E4 /* Core in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7837,6 +7847,7 @@
 				43BE5827278BE81500491291 /* RustMozillaAppServices.framework in Frameworks */,
 				5A8FD0EE293A7D6D00333AA7 /* SnapKit in Frameworks */,
 				C82043AF2523DC9600740B71 /* Sync.framework in Frameworks */,
+				2C1298A82BF5EE23005AE4E4 /* libStorage.a in Frameworks */,
 				5A70EF14295DFD7C00790249 /* Common in Frameworks */,
 				2CF4DA632BB31970001C340A /* Core in Frameworks */,
 				C877039625222FDC006E38EB /* Shared.framework in Frameworks */,
@@ -12198,6 +12209,7 @@
 			packageProductDependencies = (
 				5A87148B292EA1640039A5BD /* Fuzi */,
 				5A70EF11295DFD6400790249 /* Common */,
+				2C1298AB2BF5EE3E005AE4E4 /* Core */,
 			);
 			productName = Sync;
 			productReference = 2827315E1ABC9BE600AA1954 /* Sync.framework */;
@@ -12510,6 +12522,7 @@
 			dependencies = (
 				D09A0CF11FAA2C7E009A0273 /* PBXTargetDependency */,
 				D09A0CF31FAA2C81009A0273 /* PBXTargetDependency */,
+				2C1298AA2BF5EE23005AE4E4 /* PBXTargetDependency */,
 			);
 			name = ShareTo;
 			packageProductDependencies = (
@@ -13307,7 +13320,6 @@
 				B2999FED2B044A5900F0FEC1 /* UnencryptedCreditCardFields.swift in Sources */,
 				15DE98FD27FCED4F00F1ECDB /* RustRemoteTabs.swift in Sources */,
 				285D3B901B4386520035FD22 /* SQLiteQueue.swift in Sources */,
-				394CF6CF1BAA493C00906917 /* DefaultSuggestedSites.swift in Sources */,
 				B2999FEF2B044B4E00F0FEC1 /* RustAutofillEncryptionKeys.swift in Sources */,
 				2FCAE2781ABB531100877008 /* Visit.swift in Sources */,
 				D3BF8CBB1B7425570007AFE6 /* DiskImageStore.swift in Sources */,
@@ -13315,6 +13327,7 @@
 				F8AAC1B429663619000BCDEC /* RustAutofill.swift in Sources */,
 				45D5EDCE292D83DB00311934 /* SQLitePinnedSites.swift in Sources */,
 				E18BAB0028E4AEBB00098AE2 /* ImageIdentifiers.swift in Sources */,
+				2C1298AF2BF602D3005AE4E4 /* DefaultSuggestedSites.swift in Sources */,
 				45D5EDCC292D839800311934 /* PinnedSites.swift in Sources */,
 				2FCAE2611ABB531100877008 /* FileAccessor.swift in Sources */,
 				E677F0451D9423FB00ECF1FB /* SQLiteMetadata.swift in Sources */,
@@ -14621,6 +14634,11 @@
 			isa = PBXTargetDependency;
 			target = F84B21BD1A090F8100AAB793 /* Client */;
 			targetProxy = 28ECD9BE1BA1F12B00D829DA /* PBXContainerItemProxy */;
+		};
+		2C1298AA2BF5EE23005AE4E4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2FCAE2191ABB51F800877008 /* Storage */;
+			targetProxy = 2C1298A92BF5EE23005AE4E4 /* PBXContainerItemProxy */;
 		};
 		2F11EE501ABCAE910083902D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -21008,6 +21026,11 @@
 		216A0D752A40E7AB008077BA /* Redux */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Redux;
+		};
+		2C1298AB2BF5EE3E005AE4E4 /* Core */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2C61887D2B7A89E4006B70D7 /* XCRemoteSwiftPackageReference "ios-core" */;
+			productName = Core;
 		};
 		2C1F23BC2B9F405E00186F55 /* Core */ = {
 			isa = XCSwiftPackageProductDependency;
