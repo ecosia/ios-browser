@@ -200,6 +200,7 @@
 		2C1298AC2BF5EE3E005AE4E4 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 2C1298AB2BF5EE3E005AE4E4 /* Core */; };
 		2C1298AF2BF602D3005AE4E4 /* DefaultSuggestedSites.swift in Sources */ = {isa = PBXBuildFile; fileRef = 394CF6CE1BAA493C00906917 /* DefaultSuggestedSites.swift */; };
 		2C1F23BD2B9F405E00186F55 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 2C1F23BC2B9F405E00186F55 /* Core */; };
+		2C3BD5EB2BF6193B00E25B0D /* EcosiaThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6188C32B7A8A22006B70D7 /* EcosiaThemeManager.swift */; };
 		2C4414422BD7B43F00249464 /* BingDistributionExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4414412BD7B43F00249464 /* BingDistributionExperiment.swift */; };
 		2C4414452BD7B4D800249464 /* BingDistributionExperimentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4414432BD7B4D000249464 /* BingDistributionExperimentTests.swift */; };
 		2C4414462BD7B68600249464 /* BingDistributionExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4414412BD7B43F00249464 /* BingDistributionExperiment.swift */; };
@@ -13194,6 +13195,7 @@
 				047F9B4224E1FF4000CD7DF7 /* ImageButtonWithLabel.swift in Sources */,
 				2C6189DE2B7B78ED006B70D7 /* LegacyTheme.swift in Sources */,
 				047F9B2C24E1FE1C00CD7DF7 /* WidgetKit.swift in Sources */,
+				2C3BD5EB2BF6193B00E25B0D /* EcosiaThemeManager.swift in Sources */,
 				1DA3CE6724EEE86C00422BB2 /* AppInfo.swift in Sources */,
 				4392FB34252EC4CE00AD3D23 /* SessionRestoreHandler.swift in Sources */,
 				DA9FD88824E213DD00168D1E /* QuickLink.swift in Sources */,

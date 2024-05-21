@@ -464,7 +464,7 @@ final class MultiplyImpact: UIViewController, Themeable {
         navigationItem.standardAppearance = appearance
         navigationItem.scrollEdgeAppearance = appearance
         navigationController?.navigationBar.backgroundColor = .legacyTheme.ecosia.modalHeader
-        navigationController?.navigationBar.tintColor = UIColor.Dark.Text.primary
+        navigationController?.navigationBar.tintColor = themeManager.currentTheme.type == .light ? UIColor.Dark.Text.primary : .legacyTheme.ecosia.primaryBrand
     }
 
     private func updateInviteLink() {

@@ -199,7 +199,6 @@ final class EmptyBookmarksView: UIView, Themeable {
                     $0.setContentHuggingPriority(.required, for: .horizontal)
                     $0.setContentCompressionResistancePriority(.required, for: .horizontal)
                     $0.numberOfLines = 0
-                    $0.textColor = .legacyTheme.ecosia.secondaryText
                     $0.adjustsFontForContentSizeCategory = true
                 }
                 
@@ -257,24 +256,37 @@ final class EmptyBookmarksView: UIView, Themeable {
         importBookmarksButton.setTitleColor(.legacyTheme.ecosia.primaryText, for: .normal)
         importBookmarksButton.titleLabel?.font = UX.ImportButtonLabelFont
         titleLabel.textColor = .legacyTheme.ecosia.primaryText
-        containerStackView.arrangedSubviews
-            .compactMap { ($0 as? UIStackView)?.arrangedSubviews }
-            .reduce([UIView](), { partialResult, subViews in
-                var finalResult = partialResult
-                finalResult.append(contentsOf: subViews)
-                subViews.compactMap { $0 as? UIStackView }.forEach { subStackView in
-                    finalResult.append(contentsOf: subStackView.arrangedSubviews)
-                }
-                return finalResult
-            })
-            .forEach {
-                switch $0 {
-                case let label as UILabel:
-                    label.textColor = .legacyTheme.ecosia.secondaryText
-                default:
-                    $0.tintColor = .legacyTheme.ecosia.secondaryText
-                    break
+        applyThemeToSectionsIn(containerStackView)
+    }
+    
+    func applyThemeToSectionsIn(_ stackView: UIStackView) {
+        var finalResult = [UIView]()
+        var iterateThroughSubviews: ((UIStackView) -> Void)?
+
+        iterateThroughSubviews = { stackView in
+            for subview in stackView.arrangedSubviews {
+                if let subStackView = subview as? UIStackView {
+                    iterateThroughSubviews?(subStackView)
+                } else {
+                    finalResult.append(subview)
                 }
             }
+        }
+
+        stackView.arrangedSubviews.forEach {
+            if let stackView = $0 as? UIStackView {
+                iterateThroughSubviews?(stackView)
+            }
+        }
+        
+        finalResult.forEach {
+            switch $0 {
+            case let label as UILabel:
+                label.textColor = .legacyTheme.ecosia.secondaryText
+            default:
+                $0.tintColor = .legacyTheme.ecosia.secondaryText
+                break
+            }
+        }
     }
 }
