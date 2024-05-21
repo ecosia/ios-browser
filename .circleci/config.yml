@@ -101,3 +101,4 @@ workflows:
             branches:
               only: 
                 - /^.*MOB-2012_firefox_120_upgrade.*/
+                - /^.*MOB-2565_browserstack_upload_automation.*/
