@@ -17,6 +17,8 @@ if ENV['IS_CIRCLECI']
     url: 'git@github.com:mozilla/firefox-ios-build-tools.git',
     clone_folder: "../build-tools",
   )
+  ENV["IPA_PATH"] = "/Users/distiller/project/Client.ipa"
+  ENV["DSYM_PATH"] = "/Users/distiller/project/Client.app.dSYM.zip"
 end
 
 #move all the build tools to the right places
@@ -55,13 +57,16 @@ platform :ios do
       configuration: "Development_AppCenter",
       export_options: {iCloudContainerEnvironment: 'Development'}
     )
-
-    ENV["IPA_PATH"] = Actions.lane_context[Actions::SharedValues::IPA_OUTPUT_PATH]
-    ENV["DSYM_PATH"] = Actions.lane_context[Actions::SharedValues::DSYM_OUTPUT_PATH]
   end
 
   desc "Upload to Browserstack AppAutomate"
   lane :upload_to_browserstack do
+    ensure_env_vars(
+      env_vars: [
+        'IPA_PATH', 
+        'BROWSERSTACK_USERNAME',
+        'BROWSERSTACK_ACCESS_KEY']
+    )
     upload_to_browserstack_app_automate(
       browserstack_username: ENV["BROWSERSTACK_USERNAME"],
       browserstack_access_key: ENV["BROWSERSTACK_ACCESS_KEY"],
@@ -71,6 +76,13 @@ platform :ios do
 
   desc "Upload to MS App-Center"
   lane :upload_to_appcenter do
+    ensure_env_vars(
+      env_vars: [
+        'IPA_PATH',
+        'DSYM_PATH',
+        'APPCENTER_API_TOKEN',
+        'APPCENTER_OWNER_NAME']
+    )
     appcenter_upload(
       api_token: ENV["APPCENTER_API_TOKEN"],
       owner_name: ENV["APPCENTER_OWNER_NAME"],
