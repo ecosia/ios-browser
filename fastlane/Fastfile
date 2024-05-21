@@ -55,6 +55,9 @@ platform :ios do
       configuration: "Development_AppCenter",
       export_options: {iCloudContainerEnvironment: 'Development'}
     )
+
+    ENV["IPA_PATH"] = Actions.lane_context[Actions::SharedValues::IPA_OUTPUT_PATH]
+    ENV["DSYM_PATH"] = Actions.lane_context[Actions::SharedValues::DSYM_OUTPUT_PATH]
   end
 
   desc "Upload to Browserstack AppAutomate"
@@ -62,7 +65,7 @@ platform :ios do
     upload_to_browserstack_app_automate(
       browserstack_username: ENV["BROWSERSTACK_USERNAME"],
       browserstack_access_key: ENV["BROWSERSTACK_ACCESS_KEY"],
-      file_path: ENV["IPA_OUTPUT_PATH"]
+      file_path: ENV["IPA_PATH"]
     )
   end
 
@@ -72,8 +75,8 @@ platform :ios do
       api_token: ENV["APPCENTER_API_TOKEN"],
       owner_name: ENV["APPCENTER_OWNER_NAME"],
       app_name: "iOS-FF-Beta",
-      file: ENV["IPA_OUTPUT_PATH"],
-      dsym: ENV["DSYM_OUTPUT_PATH"],
+      file: ENV["IPA_PATH"],
+      dsym: ENV["DSYM_PATH"],
       should_clip: false,
       release_notes: ENV["CIRCLE_BRANCH"],
       notify_testers: false
