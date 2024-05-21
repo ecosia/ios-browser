@@ -58,6 +58,9 @@ platform :ios do
       configuration: "Development_AppCenter",
       export_options: {iCloudContainerEnvironment: 'Development'}
     )
+
+    ENV["IPA_PATH"] = Actions.lane_context[Actions::SharedValues::IPA_OUTPUT_PATH]
+    ENV["DSYM_PATH"] = Actions.lane_context[Actions::SharedValues::DSYM_OUTPUT_PATH]
   end
 
   desc "Upload to Browserstack AppAutomate"
