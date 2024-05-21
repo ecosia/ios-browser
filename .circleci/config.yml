@@ -40,7 +40,7 @@ jobs:
           name: Build and deploy to Testflight
           command: bundle exec fastlane testflight_beta
 
-  build-and-deploy-appcenter:
+  build-and-deploy-appcenter-and-browserstack:
     <<: *environment_common
     <<: *macos_common
     steps:
@@ -64,8 +64,14 @@ jobs:
           name: Execute bootstrap
           command: ./bootstrap.sh
       - run:
-          name: Build and deploy to AppCenter
-          command: bundle exec fastlane appcenter
+          name: Build the Ecosia app
+          command: bundle exec fastlane build_ecosia_app
+      - run:
+          name: Upload to AppCenter
+          command: bundle exec fastlane upload_to_appcenter
+      - run:
+          name: Upload to Browserstack
+          command: bundle exec fastlane upload_to_browserstack
 
 orbs:
   path-filtering: circleci/path-filtering@0.1.1
@@ -89,8 +95,8 @@ workflows:
               only: /^beta.*/
             branches:
               ignore: /.*/
-      - build-and-deploy-appcenter:
-          name: Deploy ad-hoc version over AppCenter
+      - build-and-deploy-appcenter-and-browserstack:
+          name: Deploy ad-hoc version over AppCenter + Upload to Browserstack
           filters:
             branches:
               only: 
