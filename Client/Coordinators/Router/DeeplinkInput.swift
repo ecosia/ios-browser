@@ -3,8 +3,6 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
-// Ecosia: import Core
-import Core
 
 /// An enumeration of possible input parameters for handling deep links in the Mozilla Firefox browser.
 enum DeeplinkInput {
