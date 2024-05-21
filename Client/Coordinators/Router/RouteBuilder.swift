@@ -182,7 +182,7 @@ final class RouteBuilder {
 
     private func recordTelemetry(input: DeeplinkInput.Host, isPrivate: Bool) {
         switch input {
-         case .deepLink, .fxaSignIn, .glean:
+        case .deepLink, .fxaSignIn, .glean:
             return
         case .widgetMediumTopSitesOpenUrl:
             TelemetryWrapper.recordEvent(category: .action, method: .open, object: .mediumTopSitesWidget)
