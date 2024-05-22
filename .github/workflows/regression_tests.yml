@@ -9,7 +9,7 @@ jobs:
     runs-on: macos-14
     name: Execute Merge Tests
     env:
-      DEVELOPER_DIR: /Applications/Xcode_15.3.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_15.4.app/Contents/Developer
               
     steps:
       - name: Checkout
@@ -19,6 +19,11 @@ jobs:
         uses: ./.github/actions/prepare_environment
         with:
           core-token: ${{ secrets.IOS_CORE_TOKEN }}
+
+      # lot of people are experiencing the same issue apparently
+      # found a workaround here https://github.com/actions/runner-images/issues/9577
+      - name: Delete Xcode.app
+        run: sudo rm -rf /Applications/Xcode.app
 
       - name: Perform Tests and Publish Test reports
         id: perform-tests
