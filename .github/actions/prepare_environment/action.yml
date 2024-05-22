@@ -29,6 +29,11 @@ runs:
     - name: Install npm
       uses: bahmutov/npm-install@v1
 
+    # lot of people are experiencing the same issue apparently
+    # found a workaround here https://github.com/actions/runner-images/issues/9577
+    - name: Delete Xcode.app
+      run: sudo rm -rf /Applications/Xcode.app
+      
     - name: Restore SPM Cache
       id: restore-spm-cache
       uses: actions/cache/restore@v3
