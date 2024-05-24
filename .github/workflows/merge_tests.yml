@@ -1,8 +1,8 @@
 name: Merge Unit Tests
 
 on:
-  push:
-    branches: [ MOB-2012_firefox_120_upgrade, MOB-2567_review_ci ]
+  pull_request:
+    branches: [ MOB-2012_firefox_120_upgrade ]
 
 
 jobs:
