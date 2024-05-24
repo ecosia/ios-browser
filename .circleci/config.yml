@@ -20,7 +20,6 @@ jobs:
       - checkout
       - macos/switch-ruby:
           version: "3.2"
-          failOnError: true
       - restore_cache:
           key: 1-gems-{{ checksum "Gemfile.lock" }}
       - run:
@@ -50,7 +49,6 @@ jobs:
       - checkout
       - macos/switch-ruby:
           version: "3.2"
-          failOnError: true
       - restore_cache:
           key: 1-gems-{{ checksum "Gemfile.lock" }}
       - run:
