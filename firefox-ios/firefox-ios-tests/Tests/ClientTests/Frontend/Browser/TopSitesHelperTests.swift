@@ -62,7 +62,9 @@ class TopSitesHelperTests: XCTestCase {
                 XCTFail("Has no sites")
                 return
             }
-            XCTAssertEqual(sites.count, 5, "Contains 5 default sites")
+            // Ecosia: Update minimum top sites with Ecosia's
+            // XCTAssertEqual(sites.count, 5, "Contains 5 default sites")
+            XCTAssertEqual(sites.count, 3, "Contains 3 default sites")
             expectation.fulfill()
         }
 
