@@ -50,8 +50,8 @@ private class EcosiaLightColourPalette: ThemeColourPalette {
     var layer6: UIColor { .legacyTheme.ecosia.homePanelBackground }
     var layer5Hover: UIColor { .legacyTheme.ecosia.secondarySelectedBackground }
     var layerScrim: UIColor { Self.fallbackDefaultThemeManager.currentTheme.colors.layerScrim }
-    var layerGradient = fallbackDefaultThemeManager.currentTheme.colors.layerGradient
-    var layerGradientOverlay = fallbackDefaultThemeManager.currentTheme.colors.layerGradientOverlay
+    var layerGradient: Common.Gradient { Self.fallbackDefaultThemeManager.currentTheme.colors.layerGradient }
+    var layerGradientOverlay: Common.Gradient { Self.fallbackDefaultThemeManager.currentTheme.colors.layerGradientOverlay }
     var layerAccentNonOpaque: UIColor { .legacyTheme.ecosia.primaryButton }
     var layerAccentPrivate: UIColor { Self.fallbackDefaultThemeManager.currentTheme.colors.layerAccentPrivate }
     var layerAccentPrivateNonOpaque: UIColor { .legacyTheme.ecosia.primaryText }
@@ -71,9 +71,9 @@ private class EcosiaLightColourPalette: ThemeColourPalette {
     var layerRatingDSubdued: UIColor { Self.fallbackDefaultThemeManager.currentTheme.colors.layerRatingDSubdued }
     var layerRatingF: UIColor { Self.fallbackDefaultThemeManager.currentTheme.colors.layerRatingF }
     var layerRatingFSubdued: UIColor { Self.fallbackDefaultThemeManager.currentTheme.colors.layerRatingFSubdued }
-    var layerHomepage: Common.Gradient = fallbackDefaultThemeManager.currentTheme.colors.layerHomepage
+    var layerHomepage: Common.Gradient { Self.fallbackDefaultThemeManager.currentTheme.colors.layerHomepage }
     var layerSearch: UIColor { Self.fallbackDefaultThemeManager.currentTheme.colors.layerSearch }
-    var layerGradientURL: Common.Gradient = fallbackDefaultThemeManager.currentTheme.colors.layerGradientURL
+    var layerGradientURL: Common.Gradient { Self.fallbackDefaultThemeManager.currentTheme.colors.layerGradientURL }
     var actionTabActive: UIColor { Self.fallbackDefaultThemeManager.currentTheme.colors.actionTabActive }
     var actionTabInactive: UIColor { Self.fallbackDefaultThemeManager.currentTheme.colors.actionTabInactive }
     var borderToolbarDivider: UIColor { Self.fallbackDefaultThemeManager.currentTheme.colors.borderToolbarDivider }

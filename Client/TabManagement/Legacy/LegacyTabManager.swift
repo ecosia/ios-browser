@@ -234,22 +234,28 @@ class LegacyTabManager: NSObject, FeatureFlaggable, TabManager, TabEventHandler 
 
     public static func makeWebViewConfig(isPrivate: Bool, prefs: Prefs?) -> WKWebViewConfiguration {
         let configuration = WKWebViewConfiguration()
-        configuration.processPool = WKProcessPool()
-        let blockPopups = prefs?.boolForKey(PrefsKeys.KeyBlockPopups) ?? true
-        configuration.preferences.javaScriptCanOpenWindowsAutomatically = !blockPopups
-        // We do this to go against the configuration of the <meta name="viewport">
-        // tag to behave the same way as Safari :-(
-        configuration.ignoresViewportScaleLimits = true
-        if isPrivate {
-            configuration.websiteDataStore = WKWebsiteDataStore.nonPersistent()
-        } else {
-            configuration.websiteDataStore = WKWebsiteDataStore.default()
+        /*
+         Ecosia: Ensure main thread to avoid EXC_BAD_ACCESS issue
+         All properties setup as part of `configuration`
+         should be accessed from MainThread only.
+        */
+        ensureMainThread {
+            configuration.processPool = WKProcessPool()
+            let blockPopups = prefs?.boolForKey(PrefsKeys.KeyBlockPopups) ?? true
+            configuration.preferences.javaScriptCanOpenWindowsAutomatically = !blockPopups
+            // We do this to go against the configuration of the <meta name="viewport">
+            // tag to behave the same way as Safari :-(
+            configuration.ignoresViewportScaleLimits = true
+                if isPrivate {
+                    configuration.websiteDataStore = WKWebsiteDataStore.nonPersistent()
+                } else {
+                    configuration.websiteDataStore = WKWebsiteDataStore.default()
+                }
+            configuration.setURLSchemeHandler(InternalSchemeHandler(), forURLScheme: InternalURL.scheme)
+            //Ecosia: inject cookie when config is created to make sure they are present
+            let cookie = isPrivate ? Cookie.makeIncognito() : Cookie.makeStandard()
+            configuration.websiteDataStore.httpCookieStore.setCookie(cookie)
         }
-
-        configuration.setURLSchemeHandler(InternalSchemeHandler(), forURLScheme: InternalURL.scheme)
-        //Ecosia: inject cookie when config is created to make sure they are present
-        let cookie = isPrivate ? Cookie.makeIncognito() : Cookie.makeStandard()
-        configuration.websiteDataStore.httpCookieStore.setCookie(cookie)
         return configuration
     }
 
