@@ -132,10 +132,9 @@ private extension TopSitesProviderImplementation {
         // Fetch the default sites
         let defaultSites = defaultTopSites(prefs)
         // Create PinnedSite objects. Used by the view layer to tell topsites apart
-        // Ecosia: No need of Pinned Sites
-        // let pinnedSites: [Site] = pinnedSites.map({ PinnedSite(site: $0) })
+        let pinnedSites: [Site] = pinnedSites.map({ PinnedSite(site: $0) })
         // Merge default topsites with a user's topsites.
-        let mergedSites = sites.union(defaultSites, f: unionOnURL)
+        let mergedSites = pinnedSites.union(sites, f: unionOnURL)
         /* Ecosia: Get different `allSites`
         // Filter out duplicates in merged sites, but do not remove duplicates within pinned sites
         let duplicateFreeList = pinnedSites.union(mergedSites, f: unionOnURL).filter { $0 as? PinnedSite == nil }
