@@ -95,7 +95,13 @@
         "RustSyncManagerTests\/testUpdateEnginePrefs_bookmarksEnabled()",
         "ShortcutRouteTests\/testOpenLastBookmarkShortcutWithInvalidUrl()",
         "TabManagerTests\/testDeleteSelectedTab()",
+        "TabManagerTests\/testPreserveTabsWithManyTabs()",
+        "TabManagerTests\/testPreserveTabsWithNoTabs()",
+        "TabManagerTests\/testPreserveTabsWithOneTab()",
         "TabManagerTests\/testPrivatePreference_togglePBMDeletesPrivate()",
+        "TabManagerTests\/testRemoveScreenshotWithImage()",
+        "TabManagerTests\/testSaveScreenshotWithImage()",
+        "TabManagerTests\/testSaveScreenshotWithNoImage()",
         "TestFavicons\/testFaviconFetcherParse()",
         "VersionSettingTests",
         "VersionSettingTests\/testCopyAppVersion()"

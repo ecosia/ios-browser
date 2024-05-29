@@ -240,12 +240,11 @@ class LegacyTabManager: NSObject, FeatureFlaggable, TabManager, TabEventHandler 
         // We do this to go against the configuration of the <meta name="viewport">
         // tag to behave the same way as Safari :-(
         configuration.ignoresViewportScaleLimits = true
-        if isPrivate {
-            configuration.websiteDataStore = WKWebsiteDataStore.nonPersistent()
-        } else {
-            configuration.websiteDataStore = WKWebsiteDataStore.default()
-        }
-
+            if isPrivate {
+                configuration.websiteDataStore = WKWebsiteDataStore.nonPersistent()
+            } else {
+                configuration.websiteDataStore = WKWebsiteDataStore.default()
+            }
         configuration.setURLSchemeHandler(InternalSchemeHandler(), forURLScheme: InternalURL.scheme)
         //Ecosia: inject cookie when config is created to make sure they are present
         let cookie = isPrivate ? Cookie.makeIncognito() : Cookie.makeStandard()
