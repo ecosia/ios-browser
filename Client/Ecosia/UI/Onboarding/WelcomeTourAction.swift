@@ -9,13 +9,6 @@ final class WelcomeTourAction: UIView, NotificationThemeable {
 
     private weak var stack: UIStackView!
 
-    lazy var formatter: NumberFormatter = {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        formatter.usesGroupingSeparator = true
-        return formatter
-    }()
-
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
@@ -46,7 +39,7 @@ final class WelcomeTourAction: UIView, NotificationThemeable {
         let millionTrees = trees / oneMillion
         let multiplesOfFive = millionTrees / 5
         let capped = multiplesOfFive * 5 * oneMillion
-        let count = formatter.string(from: .init(value: capped)) ?? "150M"
+        let count = NumberFormatter.ecosiaDecimalNumberFormatter().string(from: .init(value: capped)) ?? "150M"
 
         let top = WelcomeTourRow(image: "trees", 
                                  title: .init(format: .localized(.treesPlantedByTheCommunityCount), count),
