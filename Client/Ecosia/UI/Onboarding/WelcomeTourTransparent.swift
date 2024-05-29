@@ -78,7 +78,7 @@ final class WelcomeTourTransparent: UIView, NotificationThemeable {
         
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = FinancialReports.shared.localizedMonthAndYear
+        label.text = FinancialReports.shared.localizedMonthAndYear.localizedCapitalized
         label.font = .preferredFont(forTextStyle: .footnote)
         label.setContentCompressionResistancePriority(.required, for: .horizontal)
         containerStack.addArrangedSubview(label)
