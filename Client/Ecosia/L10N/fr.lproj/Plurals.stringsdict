@@ -125,7 +125,7 @@
 			<key>many</key>
 			<string>%d invitations acceptées</string>
 			<key>other</key>
-			<string>%d invitation(s) acceptée(s)</string>
+			<string>%d invitation(s) envoyée(s)</string>
 		</dict>
 	</dict>
 </dict>
