@@ -107,7 +107,7 @@
 			<key>many</key>
 			<string>%d invitations d'amis</string>
 			<key>other</key>
-			<string>%d invitations d'amis</string>
+			<string>%d invitation envoyée</string>
 		</dict>
 	</dict>
 	<key>%d accepted invite(s)</key>
