@@ -39,20 +39,22 @@ final class WelcomeTourAction: UIView, NotificationThemeable {
         let millionTrees = trees / oneMillion
         let multiplesOfFive = millionTrees / 5
         let capped = multiplesOfFive * 5 * oneMillion
-        let count = NumberFormatter.ecosiaDecimalNumberFormatter().string(from: .init(value: capped)) ?? "150M"
+        let treesPlantedByTheCommunity = NumberFormatter.ecosiaDecimalNumberFormatter().string(from: .init(value: capped)) ?? "150M"
+        let countries = "30"
+        let activeProjects = "60"
 
         let top = WelcomeTourRow(image: "trees", 
-                                 title: .init(format: .localized(.treesPlantedByTheCommunityCount), count),
+                                 title: .init(format: .localized(.numberAsStringWithPlusSymbol), treesPlantedByTheCommunity),
                                  text: .localized(.treesPlantedByTheCommunityCapitalized))
         stack.addArrangedSubview(top)
 
         let middle = WelcomeTourRow(image: "hand",
-                                    title: .localized(.numberOfActiveProjects),
+                                    title: .init(format: .localized(.numberAsStringWithPlusSymbol), activeProjects),
                                     text: .localized(.activeProjects))
         stack.addArrangedSubview(middle)
 
         let bottom = WelcomeTourRow(image: "pins", 
-                                    title: .localized(.numberOfCountries),
+                                    title: .init(format: .localized(.numberAsStringWithPlusSymbol), countries),
                                     text: .localized(.countries))
         stack.addArrangedSubview(bottom)
     }
