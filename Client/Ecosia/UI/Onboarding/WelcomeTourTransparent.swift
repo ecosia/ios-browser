@@ -53,8 +53,7 @@ final class WelcomeTourTransparent: UIView, Themeable {
             let income = WelcomeTourRow(image: "financialReports", title: totalIncome, text: .localized(.totalIncome))
             stack.addArrangedSubview(income)
         }
-        if let treesFinanced = NumberFormatter.ecosiaCurrency(withoutEuroSymbol: true)
-            .string(from: .init(value: report.numberOfTreesFinanced)) {
+        if let treesFinanced = NumberFormatter.ecosiaDecimalNumberFormatter().string(from: .init(value: report.numberOfTreesFinanced)) {
             let trees = WelcomeTourRow(image: "treesUpdate", title: treesFinanced, text: .localized(.treesFinanced))
             stack.addArrangedSubview(trees)
         }
@@ -87,7 +86,7 @@ final class WelcomeTourTransparent: UIView, Themeable {
         
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = FinancialReports.shared.localizedMonthAndYear
+        label.text = FinancialReports.shared.localizedMonthAndYear.localizedCapitalized
         label.font = .preferredFont(forTextStyle: .footnote)
         label.setContentCompressionResistancePriority(.required, for: .horizontal)
         containerStack.addArrangedSubview(label)

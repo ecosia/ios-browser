@@ -7,15 +7,10 @@ import Core
 import Common
 
 final class WelcomeTourAction: UIView, Themeable {
+    
+    // MARK: - Properties
 
     private weak var stack: UIStackView!
-
-    lazy var formatter: NumberFormatter = {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        formatter.usesGroupingSeparator = true
-        return formatter
-    }()
     
     // MARK: - Themeable Properties
     
@@ -55,15 +50,23 @@ final class WelcomeTourAction: UIView, Themeable {
         let millionTrees = trees / oneMillion
         let multiplesOfFive = millionTrees / 5
         let capped = multiplesOfFive * 5 * oneMillion
-        let count = formatter.string(from: .init(value: capped)) ?? "150M"
+        let treesPlantedByTheCommunity = NumberFormatter.ecosiaDecimalNumberFormatter().string(from: .init(value: capped)) ?? "150M"
+        let countries = "30"
+        let activeProjects = "60"
 
-        let top = WelcomeTourRow(image: "trees", title: "\(count)+", text: .localized(.treesPlantedByTheCommunityCapitalized))
+        let top = WelcomeTourRow(image: "trees", 
+                                 title: .init(format: .localized(.numberAsStringWithPlusSymbol), treesPlantedByTheCommunity),
+                                 text: .localized(.treesPlantedByTheCommunityCapitalized))
         stack.addArrangedSubview(top)
 
-        let middle = WelcomeTourRow(image: "hand", title: "60+", text: .localized(.activeProjects))
+        let middle = WelcomeTourRow(image: "hand",
+                                    title: .init(format: .localized(.numberAsStringWithPlusSymbol), activeProjects),
+                                    text: .localized(.activeProjects))
         stack.addArrangedSubview(middle)
 
-        let bottom = WelcomeTourRow(image: "pins", title: "30+", text: .localized(.countries))
+        let bottom = WelcomeTourRow(image: "pins", 
+                                    title: .init(format: .localized(.numberAsStringWithPlusSymbol), countries),
+                                    text: .localized(.countries))
         stack.addArrangedSubview(bottom)
     }
 
