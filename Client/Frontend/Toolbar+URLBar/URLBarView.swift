@@ -281,6 +281,10 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
          multiStateButton, locationContainer, searchIconImageView].forEach {
             addSubview($0)
         }
+        
+        // Ecosia: ProgressBar sits at the back of the LocationView
+        locationView.addSubview(progressBar)
+        locationView.sendSubviewToBack(progressBar)
         // Ecosia: Update Search Engine Image
         updateSearchEngineImage()
         
@@ -302,6 +306,11 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
         scrollToTopButton.snp.makeConstraints { make in
             make.top.equalTo(self)
             make.left.right.equalTo(locationContainer)
+        }
+        
+        // Ecosia: ProgressBar fills the entire URL Bar
+        progressBar.snp.makeConstraints { make in
+            make.edges.equalTo(locationView)
         }
 
         locationView.snp.makeConstraints { make in
@@ -1019,17 +1028,14 @@ extension URLBarView: PrivateModeUI {
     }
 }
 
-// Ecosia: Apply Theme in private mode helper
+// Ecosia: Apply Theme via helper
 extension URLBarView {
     
     func updateUIElementsWithTheme(_ theme: Theme) {
-        let gradientStartColor = isPrivate ? theme.colors.borderAccentPrivate : theme.colors.borderAccent
-        let gradientMiddleColor = isPrivate ? nil : theme.colors.iconAccentPink
-        let gradientEndColor = isPrivate ? theme.colors.borderAccentPrivate : theme.colors.iconAccentYellow
-        locationActiveBorderColor = isPrivate ? theme.colors.layerAccentPrivateNonOpaque : theme.colors.layerAccentNonOpaque
-        progressBar.setGradientColors(startColor: gradientStartColor,
-                                      middleColor: gradientMiddleColor,
-                                      endColor: gradientEndColor)
+        progressBar.backgroundColor = .legacyTheme.ecosia.tertiaryBackground
+        progressBar.setGradientColors(startColor: .legacyTheme.ecosia.highlightedBackground,
+                                      middleColor: .legacyTheme.ecosia.highlightedBackground,
+                                      endColor: .legacyTheme.ecosia.highlightedBackground)
         locationTextField?.applyUIMode(isPrivate: isPrivate, theme: theme)
         locationTextField?.applyTheme(theme: theme)
     }
