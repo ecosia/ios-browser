@@ -499,7 +499,15 @@ extension BrowserViewController: WKNavigationDelegate {
             DispatchQueue.main.asyncAfter(deadline: .now() + tabManager.delaySelectingNewPopupTab + 0.1) {
                 // Show only if no other snack bar
                 guard let tab = self.tabManager.selectedTab, tab.bars.isEmpty else { return }
+                /* Ecosia: Change to native alert controller (showSnackbar() contains the Ecosia change)
                 TimerSnackBar.showAppStoreConfirmationBar(forTab: tab, appStoreURL: url, theme: self.themeManager.currentTheme) { _ in
+                    // If a new window was opened for this URL (it will have no history), close it.
+                    if tab.historyList.isEmpty {
+                        self.tabManager.removeTab(tab)
+                    }
+                }
+                 */
+                self.showSnackbar(forExternalUrl: url, tab: tab) { _ in
                     // If a new window was opened for this URL (it will have no history), close it.
                     if tab.historyList.isEmpty {
                         self.tabManager.removeTab(tab)
