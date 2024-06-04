@@ -88,8 +88,7 @@ extension BrowserViewController {
     }
     
     private func showLoadingScreen(for user: User) -> Bool {
-        (user.migrated != true && !user.firstTime)
-        || user.referrals.pendingClaim != nil
+        user.referrals.pendingClaim != nil
     }
     
     private func isHomePage() -> Bool {
