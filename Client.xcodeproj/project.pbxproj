@@ -347,7 +347,7 @@
 		2C872A632B8CD7E000B318A0 /* WhatsNewLocalDataProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE2946B2B7FC5A5006C22B2 /* WhatsNewLocalDataProviderTests.swift */; };
 		2C872A642B8CD7E000B318A0 /* EcosiaHomeViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C872A562B8CD65100B318A0 /* EcosiaHomeViewModelTests.swift */; };
 		2CABD7162C11C9CC00A0750F /* MozillaAppServices in Frameworks */ = {isa = PBXBuildFile; productRef = 2CABD7152C11C9CC00A0750F /* MozillaAppServices */; };
-		2CABD71B2C11E07300A0750F /* PersistedFxNimbus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CABD7182C11E07300A0750F /* PersistedFxNimbus.swift */; };
+		2CABD71B2C11E07300A0750F /* FxNimbus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CABD7182C11E07300A0750F /* FxNimbus.swift */; };
 		2CCFB3D72C0FBEE800BEDCA0 /* TabToolbarHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D815A3A724A53F3200AAB221 /* TabToolbarHelperTests.swift */; };
 		2CABD7282C12EF1E00A0750F /* PrivateModeButtonTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CABD7272C12EF1E00A0750F /* PrivateModeButtonTests.swift */; };
 		2CE294472B7CDD56006C22B2 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 2CE294462B7CDD56006C22B2 /* Core */; };
@@ -8772,12 +8772,12 @@
 			path = Mocks;
 			sourceTree = "<group>";
 		};
-		2CABD71A2C11E07300A0750F /* Generated */ = {
+		2CABD71A2C11E07300A0750F /* PersistedGenerated */ = {
 			isa = PBXGroup;
 			children = (
-				2CABD7182C11E07300A0750F /* PersistedFxNimbus.swift */,
+				2CABD7182C11E07300A0750F /* FxNimbus.swift */,
 			);
-			path = Generated;
+			path = PersistedGenerated;
 			sourceTree = "<group>";
 		};
 		2CBCAAFA2B88EEE40080AD68 /* Configuration */ = {
@@ -11858,7 +11858,7 @@
 		F84B21C01A090F8100AAB793 /* Client */ = {
 			isa = PBXGroup;
 			children = (
-				2CABD71A2C11E07300A0750F /* Generated */,
+				2CABD71A2C11E07300A0750F /* PersistedGenerated */,
 				2CBCAAFA2B88EEE40080AD68 /* Configuration */,
 				2C61887E2B7A8A21006B70D7 /* Ecosia */,
 				8AD984F12AF1554F00B9FDA4 /* ContentBlocker */,
@@ -13534,7 +13534,7 @@
 				2C6189372B7A8A22006B70D7 /* PageActionMenu.swift in Sources */,
 				2137785D297F1F2800D01309 /* DownloadedFile.swift in Sources */,
 				745DAB301CDAAFAA00D44181 /* RecentlyClosedTabsPanel.swift in Sources */,
-				2CABD71B2C11E07300A0750F /* PersistedFxNimbus.swift in Sources */,
+				2CABD71B2C11E07300A0750F /* FxNimbus.swift in Sources */,
 				D0B9483D22A18B78002F4AA1 /* TextFieldTableViewCell.swift in Sources */,
 				8AF99B4F29EF1BA700108DEC /* BrowserDelegate.swift in Sources */,
 				C87D8B802818333F00A6307D /* NimbusManager.swift in Sources */,
