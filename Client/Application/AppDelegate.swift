@@ -7,7 +7,7 @@ import Storage
 import CoreSpotlight
 import UIKit
 import Common
-import Glean
+// Ecosia: remove Glean dependency // import Glean
 import TabDataStore
 // Ecosia: Import Core
 import Core
@@ -55,28 +55,33 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     /// Handle the `willEnterForegroundNotification` the same way Glean handles it.
     func handleForegroundEvent() {
         if !isActive {
+            /* Ecosia: remove Glean dependency
             GleanMetrics.Pings.shared.tempBaseline.submit(reason: .active)
             GleanMetrics.BaselineValidation.startupDuration.start()
             GleanMetrics.BaselineValidation.baselineDuration.start()
             NSUserDefaultsPrefs(prefix: "profile").setBool(true, forKey: AppConstants.prefGleanTempDirtyFlag)
-
+             */
             isActive = true
         }
     }
 
     /// Handle the `didBecomeActiveNotification` the way Glean would handle it
     func handleVisibleEvent() {
+        /* Ecosia: remove Glean dependency
         GleanMetrics.BaselineValidation.startupDuration.stop()
         GleanMetrics.Pings.shared.tempBaseline.submit(reason: .foreground)
         GleanMetrics.BaselineValidation.visibleDuration.start()
+         */
     }
 
     /// Handle the `didEnterBackgroundNotification` the same way Glean handles it.
     func handleBackgroundEvent() {
         if isActive {
+            /* Ecosia: remove Glean dependency
             GleanMetrics.BaselineValidation.baselineDuration.stop()
             GleanMetrics.BaselineValidation.visibleDuration.stop()
             GleanMetrics.Pings.shared.tempBaseline.submit(reason: .inactive)
+             */
             NSUserDefaultsPrefs(prefix: "profile").setBool(false, forKey: AppConstants.prefGleanTempDirtyFlag)
 
             isActive = false
@@ -118,6 +123,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         appLaunchUtil = AppLaunchUtil(profile: profile)
         appLaunchUtil?.setUpPreLaunchDependencies()
 
+        /* Ecosia: remove Glean dependency
         // Handle the dirty bit the same way Glean handles it
         // and submit the right ping.
         let prefs = NSUserDefaultsPrefs(prefix: "profile")
@@ -126,6 +132,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if dirtyFlag {
             GleanMetrics.Pings.shared.tempBaseline.submit(reason: .dirtyStartup)
         }
+         */
 
         // Glean does this as part of the LifecycleObserver too.
         // `isActive` tracks active status to avoid double-triggers.

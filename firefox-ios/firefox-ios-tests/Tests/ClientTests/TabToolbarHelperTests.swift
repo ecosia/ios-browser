@@ -4,7 +4,7 @@
 
 @testable import Client
 
-import Glean
+// Ecosia: remove Glean dependency // import Glean
 import XCTest
 import Common
 import Shared
@@ -29,7 +29,8 @@ class TabToolbarHelperTests: XCTestCase {
         DependencyHelperMock().bootstrapDependencies()
         mockToolbar = MockTabToolbar()
         subject = TabToolbarHelper(toolbar: mockToolbar)
-        Glean.shared.resetGlean(clearStores: true)
+        // Ecosia: remove Glean dependency
+        // Glean.shared.resetGlean(clearStores: true)
     }
 
     override func tearDown() {
@@ -54,11 +55,12 @@ class TabToolbarHelperTests: XCTestCase {
         XCTAssertEqual(mockToolbar.multiStateButton.image(for: .normal), imageHome)
     }
 
+    /* Ecosia: remove Glean dependency
     func testTelemetryForSiteMenu() {
         mockToolbar.tabToolbarDelegate?.tabToolbarDidPressMenu(mockToolbar, button: mockToolbar.appMenuButton)
         testCounterMetricRecordingSuccess(metric: GleanMetrics.AppMenu.siteMenu)
     }
-
+     */
     func test_tabToolBarHelper_basicCreation_doesntLeak() {
         let tabToolBar = TabToolbar()
         let subject = TabToolbarHelper(toolbar: tabToolBar)
