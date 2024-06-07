@@ -68,7 +68,12 @@ final class PageActionMenu: UIViewController, UIGestureRecognizerDelegate, Theme
         checkSwipeDown()
         guard traitCollection.userInterfaceIdiom == .pad else { return }
         contentSizeObserver = tableView.observe(\.contentSize) { [weak self] tableView, _ in
-            self?.preferredContentSize = CGSize(width: 350, height: tableView.contentSize.height)
+            // Ecosia: Update height for iPad
+            var height = tableView.contentSize.height
+            if UIDevice.current.userInterfaceIdiom == .pad {
+                height += PhotonActionSheet.UX.bigSpacing
+            }
+            self?.preferredContentSize = CGSize(width: 350, height: height)
         }
     }
 
