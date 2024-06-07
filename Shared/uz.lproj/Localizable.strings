@@ -179,7 +179,7 @@
 "Facebook" = "Facebook";
 
 /* Title for firefox about:home page in tab history list */
-"Firefox.HomePage.Title" = "Firefox bosh sahifasi";
+"Firefox.HomePage.Title" = "Ecosia bosh sahifasi";
 
 /* Accessibility Label for the tab toolbar Forward button */
 "Forward" = "Oldinga";

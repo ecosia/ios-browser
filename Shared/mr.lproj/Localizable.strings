@@ -254,7 +254,7 @@
 "Facebook" = "Facebook";
 
 /* Title for firefox about:home page in tab history list */
-"Firefox.HomePage.Title" = "Firefox मुख्य पृष्ठ";
+"Firefox.HomePage.Title" = "Ecosia मुख्य पृष्ठ";
 
 /* Accessibility Label for the tab toolbar Forward button */
 "Forward" = "पुढे";
