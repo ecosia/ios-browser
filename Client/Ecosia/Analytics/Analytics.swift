@@ -5,6 +5,7 @@ import Core
 final class Analytics {
     private static let installSchema = "iglu:org.ecosia/ios_install_event/jsonschema/1-0-0"
     private static let abTestSchema = "iglu:org.ecosia/abtest_context/jsonschema/1-0-1"
+    private static let consentSchema = "iglu:org.ecosia/eccc_context/jsonschema/1-0-2"
     private static let abTestRoot = "ab_tests"
     private static let namespace = "ios_sp"
     
@@ -66,7 +67,7 @@ final class Analytics {
                 if let context = Self.getTestContext(from: $0) {
                     event.contexts.append(context)
                     if let consentValue = User.shared.cookieConsentValue {
-                        event.contexts.append(SelfDescribingJson(schema: "iglu:org.ecosia/eccc_context/jsonschema/1-0-2",
+                        event.contexts.append(SelfDescribingJson(schema: Self.consentSchema,
                                                                  andDictionary: ["cookie_consent": consentValue]))
                     }
                 }
