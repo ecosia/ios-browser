@@ -65,6 +65,10 @@ final class Analytics {
             abTestToggles.forEach {
                 if let context = Self.getTestContext(from: $0) {
                     event.contexts.append(context)
+                    if let consentValue = User.shared.cookieConsentValue {
+                        event.contexts.append(SelfDescribingJson(schema: "iglu:org.ecosia/eccc_context/jsonschema/1-0-2",
+                                                                 andDictionary: ["cookie_consent": consentValue]))
+                    }
                 }
             }
         }

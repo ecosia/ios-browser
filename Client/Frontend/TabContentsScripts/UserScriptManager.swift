@@ -3,6 +3,8 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import WebKit
+// Ecosia
+import Core
 
 class UserScriptManager: FeatureFlaggable {
     // Scripts can use this to verify the *app* (not JS on the web) is calling into them.
@@ -108,6 +110,15 @@ class UserScriptManager: FeatureFlaggable {
         // that it gets enabled immediately when the DOM loads.
         if noImageMode {
             webView?.configuration.userContentController.addUserScript(noImageModeUserScript)
+        }
+        
+        // Ecosia: Inject Cookie banner consent
+        if let cookieConsentValue = User.shared.cookieConsentValue {
+            let cookieConsentScript = WKUserScript.createInDefaultContentWorld(
+                source: "localStorage.setItem(\"\(Cookie.consentKey)\", \"\(cookieConsentValue)\")",
+                injectionTime: .atDocumentStart,
+                forMainFrameOnly: true)
+            webView?.configuration.userContentController.addUserScript(cookieConsentScript)
         }
     }
 }

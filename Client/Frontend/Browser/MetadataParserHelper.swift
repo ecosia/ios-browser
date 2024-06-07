@@ -6,6 +6,8 @@ import Foundation
 import Shared
 import Storage
 import WebKit
+// Ecosia:
+import Core
 
 class MetadataParserHelper: TabEventHandler {
     init() {
@@ -45,6 +47,14 @@ class MetadataParserHelper: TabEventHandler {
                 "tabURL": pageURL
             ]
             NotificationCenter.default.post(name: .OnPageMetadataFetched, object: nil, userInfo: userInfo)
+        }
+        
+        // Ecosia: read local storage value for cookie consent
+        if url.normalizedHost?.hasPrefix("ecosia.org") == true, !tab.isPrivate {
+            webView.evaluateJavascriptInDefaultContentWorld("localStorage.getItem(\"\(Cookie.consentKey)\")") { result, error in
+                guard error == nil, let consentValue = result as? String else { return }
+                User.shared.cookieConsentValue = consentValue
+            }
         }
     }
 }
