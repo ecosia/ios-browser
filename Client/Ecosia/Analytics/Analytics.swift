@@ -66,11 +66,12 @@ final class Analytics {
             abTestToggles.forEach {
                 if let context = Self.getTestContext(from: $0) {
                     event.contexts.append(context)
-                    if let consentValue = User.shared.cookieConsentValue {
-                        event.contexts.append(SelfDescribingJson(schema: Self.consentSchema,
-                                                                 andDictionary: ["cookie_consent": consentValue]))
-                    }
                 }
+            }
+            // Cookie consent context
+            if let consentValue = User.shared.cookieConsentValue {
+                event.contexts.append(SelfDescribingJson(schema: Self.consentSchema,
+                                                         andDictionary: ["cookie_consent": consentValue]))
             }
         }
 
