@@ -145,7 +145,7 @@ extension String {
         case grennestWayToSearch = "The greenest way to search"
         case planetFriendlySearch = "Ecosia is the world's most planet-friendly way to search - and it's free."
         case hundredPercentOfProfits = "100% of profits for the planet"
-        case weUseAllOurProfits = "We use all our profits for climate action, such as planting trees and generating solar energy."
+        case weUseAllOurProfits = "All our profits go directly to reforestation and renewable energy around the world."
         case collectiveAction = "Collective action starts here"
         case join15Million = "Join 15 million people growing the right trees in the right places."
         case weWantTrees = "We want your trees, not your data"
