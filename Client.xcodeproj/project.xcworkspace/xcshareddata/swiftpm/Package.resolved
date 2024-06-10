@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ccgus/fmdb",
       "state" : {
-        "revision" : "306c1f8421581d16a8d4a0e919766bb3195dc52b",
-        "version" : "2.7.10"
+        "revision" : "4cd6276ee24a1d90fe521b130608858b5a1e36f4",
+        "version" : "2.7.11"
       }
     },
     {
@@ -111,10 +111,10 @@
     {
       "identity" : "rust-components-swift",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/mozilla/rust-components-swift.git",
+      "location" : "https://github.com/ecosia/rust-components-swift/",
       "state" : {
-        "revision" : "d80080cd008b36b2da81b3242a8ffb37d7499adc",
-        "version" : "122.0.2"
+        "branch" : "122.0.2_Glean_dependency_removed",
+        "revision" : "b5d49206724ececd346bc1ac1a9474424e2f00df"
       }
     },
     {

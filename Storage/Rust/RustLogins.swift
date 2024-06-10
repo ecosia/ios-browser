@@ -3,7 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
-import Glean
+// Ecosia: remove Glean dependency // import Glean
 import Shared
 @_exported import MozillaAppServices
 import Common
@@ -806,7 +806,8 @@ public class RustLogins {
                     logger.log("Logins key was corrupted, new one generated",
                                level: .warning,
                                category: .storage)
-                    GleanMetrics.LoginsStoreKeyRegeneration.corrupt.record()
+                    // Ecosia: remove Glean dependency
+                    // GleanMetrics.LoginsStoreKeyRegeneration.corrupt.record()
                     _ = self.wipeLocalEngine()
 
                     return try rustKeys.createAndStoreKey()
@@ -823,7 +824,8 @@ public class RustLogins {
                 logger.log("Logins key lost due to storage malfunction, new one generated",
                            level: .warning,
                            category: .storage)
-                GleanMetrics.LoginsStoreKeyRegeneration.other.record()
+                // Ecosia: remove Glean dependency
+                // GleanMetrics.LoginsStoreKeyRegeneration.other.record()
                 _ = self.wipeLocalEngine()
 
                 return try rustKeys.createAndStoreKey()
@@ -836,7 +838,8 @@ public class RustLogins {
                 logger.log("Logins key lost, new one generated",
                            level: .warning,
                            category: .storage)
-                GleanMetrics.LoginsStoreKeyRegeneration.lost.record()
+                // Ecosia: remove Glean dependency
+                // GleanMetrics.LoginsStoreKeyRegeneration.lost.record()
                 _ = self.wipeLocalEngine()
 
                 return try rustKeys.createAndStoreKey()

@@ -3,7 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
-import Glean
+// Ecosia: remove Glean dependency // import Glean
 
 protocol AdjustWrapper {
     func recordDeeplink(url: URL)
@@ -15,23 +15,29 @@ protocol AdjustWrapper {
 
 struct DefaultAdjustWrapper: AdjustWrapper {
     func recordDeeplink(url: URL) {
+        /* Ecosia: remove Glean dependency
         let extra = GleanMetrics.Adjust.DeeplinkReceivedExtra(receivedUrl: url.absoluteString)
         GleanMetrics.Adjust.deeplinkReceived.record(extra)
+         */
     }
 
     func record(campaign: String) {
-        GleanMetrics.Adjust.campaign.set(campaign)
+        // Ecosia: remove Glean dependency
+        // GleanMetrics.Adjust.campaign.set(campaign)
     }
 
     func record(adgroup: String) {
-        GleanMetrics.Adjust.adGroup.set(adgroup)
+        // Ecosia: remove Glean dependency
+        // GleanMetrics.Adjust.adGroup.set(adgroup)
     }
 
     func record(creative: String) {
-        GleanMetrics.Adjust.creative.set(creative)
+        // Ecosia: remove Glean dependency
+        // GleanMetrics.Adjust.creative.set(creative)
     }
 
     func record(network: String) {
-        GleanMetrics.Adjust.network.set(network)
+        // Ecosia: remove Glean dependency
+        // GleanMetrics.Adjust.network.set(network)
     }
 }
