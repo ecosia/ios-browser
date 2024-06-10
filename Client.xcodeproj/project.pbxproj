@@ -333,6 +333,7 @@
 		2C6189EB2B7B7AB4006B70D7 /* DispatchQueueHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83821FF1FC7961D00303C12 /* DispatchQueueHelper.swift */; };
 		2C6189EC2B7B7AB4006B70D7 /* DispatchQueueHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83821FF1FC7961D00303C12 /* DispatchQueueHelper.swift */; };
 		2C6189F12B7B7D5D006B70D7 /* SnowplowTracker in Frameworks */ = {isa = PBXBuildFile; productRef = 2C6189F02B7B7D5D006B70D7 /* SnowplowTracker */; };
+		2C78374B2C1765DF00BBFFEB /* LoadingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCFB3D42C0F1EA500BEDCA0 /* LoadingScreen.swift */; };
 		2C872A552B8CD58200B318A0 /* ContileProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A7A93ED2810ADF2005E7E1B /* ContileProviderTests.swift */; };
 		2C872A5A2B8CD7E000B318A0 /* MockAppVersionInfoProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C872A532B8CD47600B318A0 /* MockAppVersionInfoProvider.swift */; };
 		2C872A5B2B8CD7E000B318A0 /* AnalyticsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE294692B7FC5A5006C22B2 /* AnalyticsTests.swift */; };
@@ -342,7 +343,6 @@
 		2C872A622B8CD7E000B318A0 /* VersionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE294702B7FC5A6006C22B2 /* VersionTests.swift */; };
 		2C872A632B8CD7E000B318A0 /* WhatsNewLocalDataProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE2946B2B7FC5A5006C22B2 /* WhatsNewLocalDataProviderTests.swift */; };
 		2C872A642B8CD7E000B318A0 /* EcosiaHomeViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C872A562B8CD65100B318A0 /* EcosiaHomeViewModelTests.swift */; };
-		2CCFB3D32C0F191900BEDCA0 /* LoadingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCFB3D22C0F191900BEDCA0 /* LoadingScreen.swift */; };
 		2CABD7162C11C9CC00A0750F /* MozillaAppServices in Frameworks */ = {isa = PBXBuildFile; productRef = 2CABD7152C11C9CC00A0750F /* MozillaAppServices */; };
 		2CABD7282C12EF1E00A0750F /* PrivateModeButtonTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CABD7272C12EF1E00A0750F /* PrivateModeButtonTests.swift */; };
 		2CCFB3D72C0FBEE800BEDCA0 /* TabToolbarHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D815A3A724A53F3200AAB221 /* TabToolbarHelperTests.swift */; };
@@ -13908,7 +13908,6 @@
 				8A03309528C2653600286539 /* LegacyTabFileManager.swift in Sources */,
 				8AB5958A284145B30090F4AE /* HomepageSectionHandler.swift in Sources */,
 				2C6189512B7A8A22006B70D7 /* CircleButton.swift in Sources */,
-				2CCFB3D52C0F1EA500BEDCA0 /* LoadingScreen.swift in Sources */,
 				E1442FD0294782D9003680B0 /* UIAlertController+Extension.swift in Sources */,
 				8A76B01429F6E45600A82607 /* CoordinatorFlagManager.swift in Sources */,
 				E660BDD91BB06521009AC090 /* TabsButton.swift in Sources */,
@@ -14068,6 +14067,7 @@
 				1D969C702B21322B004255B1 /* BrowserWindow.swift in Sources */,
 				8AB8571D27D929350075C173 /* TopSitesViewModel.swift in Sources */,
 				2C6189942B7A8A22006B70D7 /* DeviceInfo+Ecosia.swift in Sources */,
+				2C78374B2C1765DF00BBFFEB /* LoadingScreen.swift in Sources */,
 				8A93F85E29D36DA9004159D9 /* Coordinator.swift in Sources */,
 				1D2F68B12ACCA22000524B92 /* RemoteTabsEmptyView.swift in Sources */,
 				43D16B8729831EEF009F8279 /* RemoveCardButton.swift in Sources */,
