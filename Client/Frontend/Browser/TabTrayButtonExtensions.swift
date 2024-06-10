@@ -8,10 +8,6 @@ import Shared
 
 class PrivateModeButton: ToggleButton, PrivateModeUI {
     
-    // Ecosia: Add tints
-    private var offTint = UIColor.black
-    private var onTint = UIColor.black
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         accessibilityLabel = .TabTrayToggleAccessibilityLabel
