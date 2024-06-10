@@ -59,12 +59,6 @@ final class LoadingScreen: UIViewController {
         message.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         message.topAnchor.constraint(equalTo: progress.bottomAnchor, constant: 25).isActive = true
         message.widthAnchor.constraint(lessThanOrEqualToConstant: 280).isActive = true
-
-
-        if User.shared.migrated != true {
-            loadingGroup.enter()
-            migrate()
-        }
           
         if let code = referralCode {
             loadingGroup.enter()
@@ -75,87 +69,7 @@ final class LoadingScreen: UIViewController {
             self?.dismiss(animated: true)
         }
     }
-
-    // MARK: migration
-
-    private var backgroundTaskID: UIBackgroundTaskIdentifier?
-    private func migrate() {
-        guard !skip() else { return }
-
-        NSSetUncaughtExceptionHandler { exception in
-            EcosiaImport.Exception(reason: exception.reason ?? "Unknown").save()
-        }
-
-        backgroundTaskID = UIApplication.shared.beginBackgroundTask(withName: "Migration", expirationHandler: {
-            UIApplication.shared.endBackgroundTask(self.backgroundTaskID!)
-            self.backgroundTaskID = .invalid
-            // force shutting down profile to avoid crash by system
-            self.profile.shutdown()
-        })
-
-        let ecosiaImport = EcosiaImport(profile: profile)
-        ecosiaImport.migrate(progress: { [weak self] progress in
-            self?.progress.setProgress(.init(progress), animated: true)
-        }){ [weak self] migration in
-            if case .succeeded = migration.favorites,
-               case .succeeded = migration.history {
-                
-                Analytics.shared.migration(true)
-                self?.cleanUp()
-                self?.loadingGroup.leave()
-            } else {
-                Analytics.shared.migration(false)
-                self?.showError()
-            }
-            
-            Core.User.shared.migrated = true
-            NSSetUncaughtExceptionHandler(nil)
-
-            if let id = self?.backgroundTaskID {
-                UIApplication.shared.endBackgroundTask(id)
-            }
-
-            if UIApplication.shared.applicationState != .active {
-                self?.profile.shutdown()
-            }
-        }
-    }
-
-
-
-    private func skip() -> Bool {
-        if let exception = EcosiaImport.Exception.load() {
-            Analytics.shared.migrationError(in: .exception, message: exception.reason)
-            Core.User.shared.migrated = true
-            EcosiaImport.Exception.clear()
-            cleanUp()
-
-            DispatchQueue.main.async { [weak self] in
-                self?.showError()
-            }
-            return true
-        }
-        return false
-    }
-
     
-    private func showError() {
-        let alert = UIAlertController(title: .localized(.weHitAGlitch),
-                                      message: .localized(.weAreMomentarilyUnable),
-                                      preferredStyle: .alert)
-        alert.addAction(.init(title: .localized(.continueMessage), style: .default) { [weak self] _ in
-            self?.loadingGroup.leave()
-        })
-        
-        present(alert, animated: true)
-    }
-    
-    private func cleanUp() {
-        History().deleteAll()
-        Favourites().items = []
-        Tabs().clear()
-    }
-
     // MARK: Referrals
     private func claimReferral(_ code: String) {
         Task { [weak self] in
