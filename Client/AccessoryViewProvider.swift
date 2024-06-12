@@ -189,9 +189,14 @@ class AccessoryViewProvider: UIView, Themeable {
         let theme = themeManager.currentTheme
 
         backgroundColor = theme.colors.layer5
+        /* Ecosia: Update Theming
         previousButton.tintColor = theme.colors.iconAccentBlue
         nextButton.tintColor = theme.colors.iconAccentBlue
         doneButton.tintColor = theme.colors.iconAccentBlue
+         */
+        previousButton.tintColor = theme.colors.actionPrimary
+        nextButton.tintColor = theme.colors.actionPrimary
+        doneButton.tintColor = theme.colors.actionPrimary
         cardImageView.tintColor = theme.colors.iconPrimary
         cardButtonStackView.backgroundColor = theme.colors.layer5Hover
     }
