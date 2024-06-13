@@ -65,4 +65,15 @@ enum AboutEcosiaSection: Int, CaseIterable {
             return .privacy
         }
     }
+        
+    var accessibilityIdentifierPrefix: String {
+        switch self {
+        case .financialReports:
+            return "financial_reports"
+        case .trees:
+            return "our_trees"
+        case .privacy:
+            return "privacy"
+        }
+    }
 }

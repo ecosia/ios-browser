@@ -200,6 +200,8 @@ final class NTPAboutEcosiaCell: UICollectionViewCell, ReusableCell {
         
         titleLabel.text = section.title
         imageView.image = UIImage(named: section.image)
+        imageView.accessibilityIdentifier = "\(section.accessibilityIdentifierPrefix)_image"
+        indicatorImageView.accessibilityIdentifier = "\(section.accessibilityIdentifierPrefix)_dropdown"
         subtitleLabel.text = section.subtitle
         dividerView.isHidden = isLastSection
         outlineView.setMaskedCornersUsingPosition(
