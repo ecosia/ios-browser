@@ -47,6 +47,7 @@ extension NTPNewsCellViewModel: HomepageViewModelProtocol {
 
     var headerViewModel: LabelButtonHeaderViewModel {
         .init(title: .localized(.ecosiaNews),
+              titleA11yIdentifier: "see_all", 
               isButtonHidden: false,
               buttonTitle: .localized(.seeAll)) { [weak self] _ in
             self?.delegate?.openSeeAllNews()
