@@ -117,9 +117,9 @@ private class EcosiaLightColourPalette: ThemeColourPalette {
 
     // MARK: - Border
     var borderPrimary: UIColor { .legacyTheme.ecosia.barSeparator }
-    var borderAccent: UIColor { Self.fallbackDefaultThemeManager.currentTheme.colors.borderAccent }
-    var borderAccentNonOpaque: UIColor { Self.fallbackDefaultThemeManager.currentTheme.colors.borderAccentNonOpaque }
-    var borderAccentPrivate: UIColor { Self.fallbackDefaultThemeManager.currentTheme.colors.borderAccentPrivate }
+    var borderAccent: UIColor { actionPrimary }
+    var borderAccentNonOpaque: UIColor { actionPrimary }
+    var borderAccentPrivate: UIColor { actionPrimary }
     var borderInverted: UIColor { Self.fallbackDefaultThemeManager.currentTheme.colors.borderInverted }
 
     // MARK: - Shadow
