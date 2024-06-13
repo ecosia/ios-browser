@@ -62,6 +62,9 @@ final class NTPCustomizationCell: UICollectionViewCell, Themeable, ReusableCell 
     }
     
     private func setup() {
+        isAccessibilityElement = true
+        accessibilityIdentifier = "customize_homepage"
+        
         contentView.addSubview(button)
         
         NSLayoutConstraint.activate([
