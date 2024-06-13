@@ -111,14 +111,5 @@ class UserScriptManager: FeatureFlaggable {
         if noImageMode {
             webView?.configuration.userContentController.addUserScript(noImageModeUserScript)
         }
-        
-        // Ecosia: Inject Cookie banner consent
-        if let cookieConsentValue = User.shared.cookieConsentValue {
-            let cookieConsentScript = WKUserScript.createInDefaultContentWorld(
-                source: "localStorage.setItem(\"\(Cookie.consentKey)\", \"\(cookieConsentValue)\")",
-                injectionTime: .atDocumentStart,
-                forMainFrameOnly: true)
-            webView?.configuration.userContentController.addUserScript(cookieConsentScript)
-        }
     }
 }
