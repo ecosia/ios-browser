@@ -47,4 +47,13 @@ enum CustomizableNTPSettingConfig: CaseIterable {
         case .aboutEcosia: return .about
         }
     }
+    
+    var accessibilityIdentifierPrefix: String {
+        switch self {
+        case .topSites: "top_sites"
+        case .climateImpact: "climate_impact"
+        case .ecosiaNews: "ecosia_news"
+        case .aboutEcosia: "about_ecosia"
+        }
+    }
 }
