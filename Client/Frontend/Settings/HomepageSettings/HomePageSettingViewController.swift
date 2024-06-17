@@ -244,9 +244,9 @@ extension HomePageSettingViewController {
         var profile: Profile
 
         override var accessoryType: UITableViewCell.AccessoryType { return .disclosureIndicator }
-        // Ecosia: rename to Top Sites
+        // Ecosia: Override accessibilityIdentifier
         // override var accessibilityIdentifier: String? { return AccessibilityIdentifiers.Settings.Homepage.CustomizeFirefox.Shortcuts.settingsPage }
-        override var accessibilityIdentifier: String? { return .localized(.topSites) }
+        override var accessibilityIdentifier: String? { CustomizableNTPSettingConfig.topSites.accessibilityIdentifierPrefix }
         override var style: UITableViewCell.CellStyle { return .value1 }
 
         override var status: NSAttributedString {

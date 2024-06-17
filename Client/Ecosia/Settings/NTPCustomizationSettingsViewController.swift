@@ -51,7 +51,8 @@ final class NTPCustomizationSetting: BoolSetting {
     
     convenience init(prefs: Prefs, theme: Theme, config: CustomizableNTPSettingConfig) {
         self.init(prefs: prefs,
-                  theme: theme,
+                  theme: theme, 
+                  accessibilityIdentifier: config.accessibilityIdentifierPrefix,
                   defaultValue: true,
                   titleText: .localized(config.localizedTitleKey))
         self.config = config

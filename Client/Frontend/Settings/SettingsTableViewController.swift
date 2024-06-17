@@ -83,6 +83,12 @@ class Setting: NSObject {
         cell.selectionStyle = enabled ? .default : .none
         cell.accessibilityIdentifier = accessibilityIdentifier
         cell.imageView?.image = _image
+        // Ecosia: Update identifier
+        if let accessibilityIdentifier {
+            cell.textLabel?.accessibilityIdentifier = "\(accessibilityIdentifier)_title"
+            cell.detailTextLabel?.accessibilityIdentifier = "\(accessibilityIdentifier)_detail"
+            cell.imageView?.accessibilityIdentifier = "\(accessibilityIdentifier)_image"
+        }
         if let title = title?.string {
             if let detailText = cell.detailTextLabel?.text {
                 cell.accessibilityLabel = "\(title), \(detailText)"
@@ -184,6 +190,8 @@ class BoolSetting: Setting, FeatureFlaggable {
     init(
         prefs: Prefs?,
         prefKey: String? = nil,
+        // Ecosia: Add accessibility identifier
+        accessibilityIdentifier: String? = nil,
         defaultValue: Bool?,
         attributedTitleText: NSAttributedString,
         attributedStatusText: NSAttributedString? = nil,
@@ -197,12 +205,16 @@ class BoolSetting: Setting, FeatureFlaggable {
         self.statusText = attributedStatusText
         self.featureFlagName = featureFlagName
         super.init(title: attributedTitleText)
+        // Ecosia: Add accessibility identifier
+        self.accessibilityIdentifier = accessibilityIdentifier
     }
 
     convenience init(
         prefs: Prefs,
         theme: Theme,
         prefKey: String? = nil,
+        // Ecosia: Add accessibility identifier
+        accessibilityIdentifier: String? = nil,
         defaultValue: Bool,
         titleText: String,
         statusText: String? = nil,
@@ -217,6 +229,8 @@ class BoolSetting: Setting, FeatureFlaggable {
         self.init(
             prefs: prefs,
             prefKey: prefKey,
+            // Ecosia: Add accessibility identifier
+            accessibilityIdentifier: accessibilityIdentifier,
             defaultValue: defaultValue,
             attributedTitleText: NSAttributedString(
                 string: titleText,
@@ -265,7 +279,11 @@ class BoolSetting: Setting, FeatureFlaggable {
 
     public lazy var control: UISwitch = {
         let control = UISwitch()
-        control.accessibilityIdentifier = prefKey
+        // Ecosia: Update identifier
+        // control.accessibilityIdentifier = prefKey
+        if let accessibilityIdentifier {
+            control.accessibilityIdentifier = "\(accessibilityIdentifier)_switch"
+        }
         control.addTarget(self, action: #selector(switchValueChanged), for: .valueChanged)
         return control
     }()
