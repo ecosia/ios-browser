@@ -159,7 +159,7 @@ extension String {
         case sustainableShoes = "sustainable shoes"
         case before = "Before ..."
         case after = "After"
-        case treesPlantedByEcosia = "trees planted the Ecosia"
+        case treesPlantedByEcosia = "trees planted by Ecosia"
         case treesPlantedByEcosiaCapitalized = "Trees planted by Ecosia"
         case numberAsStringWithPlusSymbol = "%@+"
         case dedicatedToClimateAction = "dedicated to climate action"
