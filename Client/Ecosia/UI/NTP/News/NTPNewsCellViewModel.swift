@@ -47,11 +47,12 @@ extension NTPNewsCellViewModel: HomepageViewModelProtocol {
 
     var headerViewModel: LabelButtonHeaderViewModel {
         .init(title: .localized(.ecosiaNews),
-              titleA11yIdentifier: "see_all", 
+              titleA11yIdentifier: "ecosia_news",
               isButtonHidden: false,
-              buttonTitle: .localized(.seeAll)) { [weak self] _ in
-            self?.delegate?.openSeeAllNews()
-        }
+              buttonTitle: .localized(.seeAll),
+              buttonAction: { [weak self] _ in self?.delegate?.openSeeAllNews()
+              },
+              buttonA11yIdentifier: "see_all")
     }
 
     func section(for traitCollection: UITraitCollection, size: CGSize) -> NSCollectionLayoutSection {
