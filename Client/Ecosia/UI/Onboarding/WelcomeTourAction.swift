@@ -56,7 +56,7 @@ final class WelcomeTourAction: UIView, Themeable {
 
         let top = WelcomeTourRow(image: "trees", 
                                  title: .init(format: .localized(.numberAsStringWithPlusSymbol), treesPlantedByTheCommunity),
-                                 text: .localized(.treesPlantedByTheCommunityCapitalized))
+                                 text: .localized(.treesPlantedByEcosiaCapitalized))
         stack.addArrangedSubview(top)
 
         let middle = WelcomeTourRow(image: "hand",
