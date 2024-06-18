@@ -183,8 +183,8 @@ class LegacyTabManager: NSObject, FeatureFlaggable, TabManager, TabEventHandler 
         searchSettingsObserver = NotificationCenter.default
             .publisher(for: .searchSettingsChanged)
             .sink() { [privateConfiguration, configuration] _ in
-                configuration.websiteDataStore.httpCookieStore.setCookie(Cookie.makeStandard())
-                privateConfiguration.websiteDataStore.httpCookieStore.setCookie(Cookie.makeIncognito())
+                configuration.websiteDataStore.httpCookieStore.setCookie(Cookie.makeStandardCookie())
+                privateConfiguration.websiteDataStore.httpCookieStore.setCookie(Cookie.makeIncognitoCookie())
             }
     }
     
@@ -247,8 +247,12 @@ class LegacyTabManager: NSObject, FeatureFlaggable, TabManager, TabEventHandler 
             }
         configuration.setURLSchemeHandler(InternalSchemeHandler(), forURLScheme: InternalURL.scheme)
         //Ecosia: inject cookie when config is created to make sure they are present
-        let cookie = isPrivate ? Cookie.makeIncognito() : Cookie.makeStandard()
+        let cookie = isPrivate ? Cookie.makeIncognitoCookie() : Cookie.makeStandardCookie()
         configuration.websiteDataStore.httpCookieStore.setCookie(cookie)
+        // Ecosia: inject consent cookie when config is created to make sure they are present
+        if let consentCookie = Cookie.makeConsentCookie() {
+            configuration.websiteDataStore.httpCookieStore.setCookie(consentCookie)
+        }
         return configuration
     }
 
