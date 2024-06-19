@@ -587,7 +587,7 @@ https://ecosia.co/install-ios
     
     private var inviteLink: String? {
         guard let code = User.shared.referrals.code else { return nil }
-        return "ecosia://\(Referrals.host)/" + code
+        return "\(Referrals.root)\(code)"
     }
 
     // MARK: Number formatting
