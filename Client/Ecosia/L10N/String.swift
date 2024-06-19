@@ -168,7 +168,6 @@ extension String {
         case finishTour = "Start Planting"
         case treesPlantedPlural = "Tree(s) planted"
         case howItWorks = "How it works"
-        case friendInvitesPlural = "%d friend invite(s)"
         case openSettings = "Open settings"
         case maybeLater = "Maybe later"
         case openAllLinksToPlantTrees = "Open all links with Ecosia to plant more trees"

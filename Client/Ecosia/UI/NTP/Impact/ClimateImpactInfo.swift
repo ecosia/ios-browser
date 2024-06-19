@@ -31,7 +31,7 @@ enum ClimateImpactInfo: Equatable {
         case .search(_, let searches):
             return .localizedPlural(.searches, num: searches)
         case .referral(_, let invites):
-            return .localizedPlural(.friendInvitesPlural, num: invites)
+            return .localizedPlural(.acceptedInvites, num: invites)
         case .totalTrees:
             return .localized(.treesPlantedByEcosia)
         case .totalInvested:
@@ -44,7 +44,7 @@ enum ClimateImpactInfo: Equatable {
         case .search(let value, let searches):
             return accessiblityLabelTreesPlanted(value: value) + .localizedPlural(.searches, num: searches)
         case .referral(let value, let invites):
-            return accessiblityLabelTreesPlanted(value: value) + .localizedPlural(.friendInvitesPlural, num: invites)
+            return accessiblityLabelTreesPlanted(value: value) + .localizedPlural(.acceptedInvites, num: invites)
         case .totalTrees(let value):
             return value.spelledOutString + " " + .localized(.treesPlantedByEcosia)
         case .totalInvested(let value):
