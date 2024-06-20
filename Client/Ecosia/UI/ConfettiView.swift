@@ -11,11 +11,15 @@ struct LottieView: UIViewRepresentable {
 
     func makeUIView(context: Context) -> UIView {
         let view = UIView(frame: .zero)
-        let animationView = LottieAnimationView(name: filename)
+        var animationView = LottieAnimationView(name: filename)
         animationView.contentMode = .scaleAspectFill
         animationView.loopMode = shouldReduceMotion ? .playOnce : .loop
         animationView.animationSpeed = shouldReduceMotion ? 0 : 1.0
-        
+
+        if shouldReduceMotion {
+            animationView = .init(frame: .zero)
+        }
+        view.addSubview(animationView)
         animationView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
@@ -26,7 +30,6 @@ struct LottieView: UIViewRepresentable {
         ])
         
         if !shouldReduceMotion {
-            view.addSubview(animationView)
             animationView.play()
         }
         

@@ -39,11 +39,13 @@ struct CompanyJoinedAlertView: View {
                         .multilineTextAlignment(.center)
                         .padding()
 
-                    KFImage(imageUrl!)
-                        .setProcessor(SVGImgProcessor())
-                        .resizable()
-                        .scaledToFit()
-                        .frame(maxHeight: 40)
+                    if let imageUrl = imageUrl {
+                        KFImage(imageUrl)
+                            .setProcessor(SVGImgProcessor())
+                            .resizable()
+                            .scaledToFit()
+                            .frame(maxHeight: 40)
+                    }
                 }
 
                 Button(action: {
@@ -65,12 +67,12 @@ struct CompanyJoinedAlertView: View {
             .padding()
             .scaleEffect(scale)
             .onAppear {
-                if !reduceMotion {
+                if reduceMotion {
+                    scale = 1.0
+                } else {
                     withAnimation(.spring(response: 0.5, dampingFraction: 0.5, blendDuration: 1)) {
                         scale = 1.0
                     }
-                } else {
-                    scale = 1.0
                 }
             }
         }
