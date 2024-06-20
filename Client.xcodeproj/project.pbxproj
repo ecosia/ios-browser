@@ -351,6 +351,12 @@
 		2CE2E24D2B9B1FCB00973C16 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 2CE2E24C2B9B1FCB00973C16 /* Core */; };
 		2CF4DA612BB31909001C340A /* EngineShortcutsExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6188F72B7A8A22006B70D7 /* EngineShortcutsExperiment.swift */; };
 		2CF4DA632BB31970001C340A /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 2CF4DA622BB31970001C340A /* Core */; };
+		2CFE59512C2442BE00247D02 /* CompanyJoinedAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFE59502C2442BE00247D02 /* CompanyJoinedAlertView.swift */; };
+		2CFE59532C24430100247D02 /* ConfettiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFE59522C24430100247D02 /* ConfettiView.swift */; };
+		2CFE59552C24436A00247D02 /* CompanyJoinedAlertViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFE59542C24436A00247D02 /* CompanyJoinedAlertViewController.swift */; };
+		2CFE59652C2469E500247D02 /* lottie_confetti_dark.json in Resources */ = {isa = PBXBuildFile; fileRef = 2CFE59632C2469E400247D02 /* lottie_confetti_dark.json */; };
+		2CFE59662C2469E500247D02 /* lottie_confetti_light.json in Resources */ = {isa = PBXBuildFile; fileRef = 2CFE59642C2469E500247D02 /* lottie_confetti_light.json */; };
+		2CFE59692C246A3000247D02 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 2CFE59682C246A3000247D02 /* Lottie */; };
 		2F13E79B1AC0C02700D75081 /* StringExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F13E79A1AC0C02700D75081 /* StringExtensionsTests.swift */; };
 		2F44FA1B1A9D426A00FD20CC /* TestHashExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F44FA1A1A9D426A00FD20CC /* TestHashExtensions.swift */; };
 		2F44FB2C1A9D5D8500FD20CC /* Library.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F84B22261A09127C00AAB793 /* Library.xcassets */; };
@@ -2500,6 +2506,11 @@
 		2CF21D0820A4A163000D08B7 /* PocketTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PocketTests.swift; sourceTree = "<group>"; };
 		2CF449A41E7BFE2C00FD7595 /* NavigationTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationTest.swift; sourceTree = "<group>"; };
 		2CF9D9A920067FA10083DF2A /* BrowsingPDFTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowsingPDFTests.swift; sourceTree = "<group>"; };
+		2CFE59502C2442BE00247D02 /* CompanyJoinedAlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyJoinedAlertView.swift; sourceTree = "<group>"; };
+		2CFE59522C24430100247D02 /* ConfettiView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfettiView.swift; sourceTree = "<group>"; };
+		2CFE59542C24436A00247D02 /* CompanyJoinedAlertViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyJoinedAlertViewController.swift; sourceTree = "<group>"; };
+		2CFE59632C2469E400247D02 /* lottie_confetti_dark.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = lottie_confetti_dark.json; sourceTree = "<group>"; };
+		2CFE59642C2469E500247D02 /* lottie_confetti_light.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = lottie_confetti_light.json; sourceTree = "<group>"; };
 		2D434B33B5B653C6602FB516 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		2D4D4136886E42550B1AD716 /* uz */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uz; path = uz.lproj/Localizable.strings; sourceTree = "<group>"; };
 		2D5D468686FEA0B04D7F04CE /* az */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = az; path = az.lproj/Search.strings; sourceTree = "<group>"; };
@@ -7724,6 +7735,7 @@
 				5A37861929A2C337006B3A34 /* Sentry in Frameworks */,
 				8AF2D0FC2A5F272A00C7DD69 /* ComponentLibrary in Frameworks */,
 				5A871490292EA3910039A5BD /* SiteImageView in Frameworks */,
+				2CFE59692C246A3000247D02 /* Lottie in Frameworks */,
 				C877037A25222F30006E38EB /* Shared.framework in Frameworks */,
 				C8E18F20222EDED000E30E52 /* SafariServices.framework in Frameworks */,
 				C8E18F1E222EDE4500E30E52 /* Accelerate.framework in Frameworks */,
@@ -8332,6 +8344,8 @@
 		2C6188842B7A8A21006B70D7 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				2CFE59602C24674E00247D02 /* Lottie Animations */,
+				2CFE594F2C24428D00247D02 /* Companies */,
 				2CCFB3D42C0F1EA500BEDCA0 /* LoadingScreen.swift */,
 				2C6188852B7A8A21006B70D7 /* SemanticColor.swift */,
 				2C6188862B7A8A21006B70D7 /* PageAction */,
@@ -8351,6 +8365,7 @@
 				2C6188C82B7A8A22006B70D7 /* EmptyBookmarksView.swift */,
 				2C6188C92B7A8A22006B70D7 /* Onboarding */,
 				2C6188D32B7A8A22006B70D7 /* MultiplyImpact */,
+				2CFE59522C24430100247D02 /* ConfettiView.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -8803,6 +8818,24 @@
 				2CABD7272C12EF1E00A0750F /* PrivateModeButtonTests.swift */,
 			);
 			path = EcosiaTests;
+			sourceTree = "<group>";
+		};
+		2CFE594F2C24428D00247D02 /* Companies */ = {
+			isa = PBXGroup;
+			children = (
+				2CFE59502C2442BE00247D02 /* CompanyJoinedAlertView.swift */,
+				2CFE59542C24436A00247D02 /* CompanyJoinedAlertViewController.swift */,
+			);
+			path = Companies;
+			sourceTree = "<group>";
+		};
+		2CFE59602C24674E00247D02 /* Lottie Animations */ = {
+			isa = PBXGroup;
+			children = (
+				2CFE59632C2469E400247D02 /* lottie_confetti_dark.json */,
+				2CFE59642C2469E500247D02 /* lottie_confetti_light.json */,
+			);
+			path = "Lottie Animations";
 			sourceTree = "<group>";
 		};
 		2F44FC551A9E83E200FD20CC /* Settings */ = {
@@ -12451,6 +12484,7 @@
 				2C6189F02B7B7D5D006B70D7 /* SnowplowTracker */,
 				2CE294462B7CDD56006C22B2 /* Core */,
 				CA3F57982BF638C5004F16B5 /* SVGKit */,
+				2CFE59682C246A3000247D02 /* Lottie */,
 			);
 			productName = Client;
 			productReference = F84B21BE1A090F8100AAB793 /* Client.app */;
@@ -12752,6 +12786,7 @@
 				2C6189EF2B7B7D48006B70D7 /* XCRemoteSwiftPackageReference "snowplow-ios-tracker" */,
 				CA3F57972BF638C5004F16B5 /* XCRemoteSwiftPackageReference "SVGKit" */,
 				2CCFB3D82C0FC4DC00BEDCA0 /* XCRemoteSwiftPackageReference "rust-components-swift" */,
+				2CFE59672C246A1300247D02 /* XCRemoteSwiftPackageReference "lottie-ios" */,
 			);
 			productRefGroup = F84B21BF1A090F8100AAB793 /* Products */;
 			projectDirPath = "";
@@ -12910,6 +12945,7 @@
 				23BEA76A251A99ED00A014BF /* NewYorkMedium-RegularItalic.otf in Resources */,
 				7B2142FE1E5E055000CDD3FC /* InfoPlist.strings in Resources */,
 				E1AF27442A17BCF700CE5991 /* engagementNotificationWithoutConditions.json in Resources */,
+				2CFE59652C2469E500247D02 /* lottie_confetti_dark.json in Resources */,
 				E69922171B94E3EF007C480D /* Licenses.html in Resources */,
 				E1AF3560286DE5F800960045 /* Smoketest3.xctestplan in Resources */,
 				E4CD9F5B1A71506C00318571 /* Reader.css in Resources */,
@@ -12917,6 +12953,7 @@
 				D37524871C6E8B5A00A5F6C2 /* topdomains.txt in Resources */,
 				7B4980A81CE363ED0017547C /* Settings.xcassets in Resources */,
 				2C1298A52BF5EB16005AE4E4 /* PrivacyInfo.xcprivacy in Resources */,
+				2CFE59662C2469E500247D02 /* lottie_confetti_light.json in Resources */,
 				39F4C0FA2045D87400746155 /* FocusHelper.js in Resources */,
 				E1AF3562286DE5F800960045 /* Smoketest2.xctestplan in Resources */,
 				2F44FB2C1A9D5D8500FD20CC /* Library.xcassets in Resources */,
@@ -13797,6 +13834,7 @@
 				1D7B78972ADF32590011E9F2 /* EventQueue.swift in Sources */,
 				C81B78A4280752A20000C15F /* NimbusFeatureFlagLayer.swift in Sources */,
 				4345441D26D2E52600D5EEAA /* SearchTermGroupsUtility.swift in Sources */,
+				2CFE59552C24436A00247D02 /* CompanyJoinedAlertViewController.swift in Sources */,
 				2165B2CC28748CD7004C0786 /* LibraryPanelDescriptor.swift in Sources */,
 				D31A0FC71A65D6D000DC8C7E /* SearchSuggestClient.swift in Sources */,
 				8A57519927AD80B800A84DBF /* ReaderModeStyleViewModel.swift in Sources */,
@@ -13889,6 +13927,7 @@
 				C84655FB28879FC600861B4A /* WallpaperStorageUtility.swift in Sources */,
 				8A13FA8B2AD82E6D007527AB /* ApplicationStateProvider.swift in Sources */,
 				4347B39A298DA5BB0045F677 /* CreditCardInputViewModel.swift in Sources */,
+				2CFE59532C24430100247D02 /* ConfettiView.swift in Sources */,
 				6025B10D267B6C5400F59F6B /* LoginRecordExtension.swift in Sources */,
 				2C61893B2B7A8A22006B70D7 /* EmptyReadingListView.swift in Sources */,
 				2F44FCC51A9E85E900FD20CC /* SettingsTableViewController.swift in Sources */,
@@ -13917,6 +13956,7 @@
 				E660BDD91BB06521009AC090 /* TabsButton.swift in Sources */,
 				8C92DE932A7128DE0090BD28 /* ProductAdsResponse.swift in Sources */,
 				E1A6AB4828CA833000EBEBDD /* WallpaperBaseViewController.swift in Sources */,
+				2CFE59512C2442BE00247D02 /* CompanyJoinedAlertView.swift in Sources */,
 				4331A9BB27193DF0005E8080 /* ContextualHintViewController.swift in Sources */,
 				2C6189882B7A8A22006B70D7 /* UIButton+Ecosia.swift in Sources */,
 				39EF434E260A73950011E22E /* Experiments.swift in Sources */,
@@ -20852,6 +20892,14 @@
 				kind = branch;
 			};
 		};
+		2CFE59672C246A1300247D02 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/airbnb/lottie-ios.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.4.3;
+			};
+		};
 		432BD0222790EBD000A0F3C3 /* XCRemoteSwiftPackageReference "ios_sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/adjust/ios_sdk.git";
@@ -20975,6 +21023,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 2C61887D2B7A89E4006B70D7 /* XCRemoteSwiftPackageReference "ios-core" */;
 			productName = Core;
+		};
+		2CFE59682C246A3000247D02 /* Lottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2CFE59672C246A1300247D02 /* XCRemoteSwiftPackageReference "lottie-ios" */;
+			productName = Lottie;
 		};
 		432BD0232790EBD000A0F3C3 /* Adjust */ = {
 			isa = XCSwiftPackageProductDependency;

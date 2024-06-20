@@ -1511,17 +1511,6 @@ class BrowserViewController: UIViewController,
         }
     }
     
-    @MainActor
-    func presentCompanyAlert(for company: Company) {
-        let alert = UIAlertController(title: "Congratulations!", message: "Your searches are now planting trees for \(company.name) ", preferredStyle: .alert)
-        alert.addAction(.init(title: "OK", style: .default, handler: { _ in
-            self.browserDelegate?.reloadHomePage()
-            self.openBlankNewTab(focusLocationField: false)
-        }))
-        present(alert, animated: true)
-        
-    }
-
     func handle(url: URL?, isPrivate: Bool, options: Set<Route.SearchOptions>? = nil) {
         if let url = url {
             if options?.contains(.switchToNormalMode) == true {
