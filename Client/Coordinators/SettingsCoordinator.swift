@@ -22,7 +22,9 @@ class SettingsCoordinator: BaseCoordinator,
                            AccountSettingsDelegate,
                            AboutSettingsDelegate,
                            ParentCoordinatorDelegate,
-                           QRCodeNavigationHandler {
+                           QRCodeNavigationHandler,
+                           // Ecosia: Add CompaniesSettingsDelegate
+                           CompaniesSettingsDelegate {
     var settingsViewController: AppSettingsScreen
     private let wallpaperManager: WallpaperManagerInterface
     private let profile: Profile
@@ -351,6 +353,20 @@ class SettingsCoordinator: BaseCoordinator,
                                                                 deepLinkParams: fxaParams)
         viewController.qrCodeNavigationHandler = self
         router.push(viewController)
+    }
+    
+    // Ecosia: Companies settings
+    // MARK: - Ecosia for Companies
+    func pressedIconChooser() {
+        router.push(UIViewController.makeIconChooserViewController(), animated: true)
+    }
+    
+    func pressedAboutEcosiaForCompanies(_ url: URL?) {
+        if let url {
+            let viewController = SettingsContentViewController()
+            viewController.url = url
+            router.push(viewController, animated: true)
+        }
     }
 
     // MARK: - SupportSettingsDelegate

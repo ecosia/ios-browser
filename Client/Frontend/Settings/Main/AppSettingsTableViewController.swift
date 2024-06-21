@@ -12,7 +12,9 @@ protocol SettingsFlowDelegate: AnyObject,
                                PrivacySettingsDelegate,
                                AccountSettingsDelegate,
                                AboutSettingsDelegate,
-                               SupportSettingsDelegate {
+                               SupportSettingsDelegate,
+                               // Ecosia: Add CompaniesSettingsDelegate
+                               CompaniesSettingsDelegate {
     func showDevicePassCode()
     func showCreditCardSettings()
     func showExperiments()

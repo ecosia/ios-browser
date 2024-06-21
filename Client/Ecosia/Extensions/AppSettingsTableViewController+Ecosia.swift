@@ -26,9 +26,10 @@ extension AppSettingsTableViewController {
         
         if User.shared.company != nil {
             let company = CompanySetting(settings: self)
-            let about = AboutEcosiaForCompaniesSetting()
+            let about = AboutEcosiaForCompaniesSetting(settingsDelegate: parentCoordinator)
+            let iconChooser = AppIconChooserEcosiaForCompaniesSetting(settingsDelegate: parentCoordinator)
             
-            let section = SettingSection(title: NSAttributedString(string: "Ecosia for Companies"), children: [company, about])
+            let section = SettingSection(title: NSAttributedString(string: "Ecosia for Companies"), children: [company, iconChooser, about])
             sections.insert(section, at: 4)
         }
         

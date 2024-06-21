@@ -251,7 +251,7 @@ final class CompanySetting: Setting {
         let cancel = UIAlertAction(title: "No", style: .cancel)
         let ok = UIAlertAction(title: "Yes", style: .destructive) { _ in
             User.shared.company = nil
-            
+            AppIconChooserModel().setAlternateAppIcon(icon: .primary)
             DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(300)) {
                 // this will trigger a settings reload
                 self.settings.applyTheme()
@@ -267,6 +267,9 @@ final class CompanySetting: Setting {
 }
 
 final class AboutEcosiaForCompaniesSetting: Setting {
+    
+    private weak var settingsDelegate: CompaniesSettingsDelegate?
+
     override var title: NSAttributedString? {
         return NSAttributedString(string: "About Ecosia for Companies", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
     }
@@ -276,8 +279,43 @@ final class AboutEcosiaForCompaniesSetting: Setting {
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
-        setUpAndPushSettingsContentViewController(navigationController, self.url)
+        settingsDelegate?.pressedAboutEcosiaForCompanies(self.url)
     }
+    
+    init(settingsDelegate: CompaniesSettingsDelegate?) {
+        self.settingsDelegate = settingsDelegate
+        super.init()
+    }
+}
+
+final class AppIconChooserEcosiaForCompaniesSetting: Setting {
+    
+    private weak var settingsDelegate: CompaniesSettingsDelegate?
+        
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Customize your Ecosia app icon", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
+    }
+    
+    override var accessoryView: UIImageView? { ecosiaDisclosureIndicator }
+    
+    override var status: NSAttributedString? {
+        return NSAttributedString(string: "Click to discover exclusive icons for Ecosia for Companies members!", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        settingsDelegate?.pressedIconChooser()
+    }
+    
+    init(settingsDelegate: CompaniesSettingsDelegate?) {
+        self.settingsDelegate = settingsDelegate
+        super.init()
+    }
+}
+
+/// Child settings pages Ecosia for Companies actions
+protocol CompaniesSettingsDelegate: AnyObject {
+    func pressedAboutEcosiaForCompanies(_ url: URL?)
+    func pressedIconChooser()
 }
 
 extension Setting {
