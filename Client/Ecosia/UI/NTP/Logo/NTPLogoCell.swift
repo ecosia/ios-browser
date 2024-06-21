@@ -55,7 +55,7 @@ final class NTPLogoCell: UICollectionViewCell, ReusableCell, Themeable {
         logoLabel.translatesAutoresizingMaskIntoConstraints = false
         logoLabel.text = "&"
         logoLabel.textAlignment = .center
-        logoLabel.font = .preferredFont(forTextStyle: .headline)
+        logoLabel.font = .preferredFont(forTextStyle: .title3)
         logoLabel.adjustsFontForContentSizeCategory = true
         logoStack.addArrangedSubview(logoLabel)
         self.logoLabel = logoLabel
