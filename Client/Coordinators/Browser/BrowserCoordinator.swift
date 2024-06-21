@@ -331,6 +331,7 @@ class BrowserCoordinator: BaseCoordinator,
 
     private func handleCompanyConnect(typeTag: String) {
         browserViewController.handleCompanyConnect(typeTag: typeTag)
+        reloadHomePage()
     }
     
     private func handle(fxaParams: FxALaunchParams) {
