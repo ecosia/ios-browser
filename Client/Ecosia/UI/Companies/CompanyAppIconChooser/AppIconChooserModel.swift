@@ -6,7 +6,7 @@ import UIKit
 /// These raw values match the names in the app's project settings under
 /// `ASSETCATALOG_COMPILER_APPICON_NAME` and `ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES`.
 enum AppIcon: String, CaseIterable, Identifiable {
-    case primary            = "AppIcon_Developer"
+    case primary            = "AppIcon"
     case companiesTrees     = "AppIcon_Companies_Trees"
     case companiesSmileTree = "AppIcon_Companies_Smile_Tree"
     case companiesLogo1     = "AppIcon_Companies_Logo_1"
