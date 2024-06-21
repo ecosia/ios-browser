@@ -35,30 +35,31 @@ final class NTPLogoCell: UICollectionViewCell, ReusableCell, Themeable {
     }
 
     private func setup() {
+        
         let logoStack = UIStackView()
         logoStack.translatesAutoresizingMaskIntoConstraints = false
-        logoStack.axis = .vertical
+        logoStack.axis = .horizontal
         logoStack.distribution = .fill
         logoStack.spacing = 16
         self.logoStack = logoStack
-        
-        let orgLogo = UIImageView(image: .init())
+                
+        let orgLogo: UIImageView = .init()
         orgLogo.translatesAutoresizingMaskIntoConstraints = false
         orgLogo.clipsToBounds = true
         orgLogo.contentMode = .scaleAspectFit
-        orgLogo.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        orgLogo.widthAnchor.constraint(lessThanOrEqualToConstant: 50).isActive = true
         self.orgLogo = orgLogo
         logoStack.addArrangedSubview(orgLogo)
-        
+
         let logoLabel = UILabel()
         logoLabel.translatesAutoresizingMaskIntoConstraints = false
         logoLabel.text = "&"
         logoLabel.textAlignment = .center
-        logoLabel.font = .preferredFont(forTextStyle: .subheadline)
+        logoLabel.font = .preferredFont(forTextStyle: .headline)
         logoLabel.adjustsFontForContentSizeCategory = true
         logoStack.addArrangedSubview(logoLabel)
         self.logoLabel = logoLabel
-        
+
         let logo = UIImageView(image: .init(named: "ecosiaLogoLaunch")?.withRenderingMode(.alwaysTemplate))
         logo.translatesAutoresizingMaskIntoConstraints = false
         logo.clipsToBounds = true
@@ -68,7 +69,7 @@ final class NTPLogoCell: UICollectionViewCell, ReusableCell, Themeable {
         logo.accessibilityLabel = .localized(.ecosiaLogoAccessibilityLabel)
         self.logo = logo
         logoStack.addArrangedSubview(logo)
-
+                
         contentView.addSubview(logoStack)
 
         let bottom = logoStack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -Self.bottomMargin)
@@ -77,7 +78,8 @@ final class NTPLogoCell: UICollectionViewCell, ReusableCell, Themeable {
 
         logoStack.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
         logoStack.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
-        logoStack.widthAnchor.constraint(equalToConstant: Self.width).isActive = true
+        logoStack.widthAnchor.constraint(greaterThanOrEqualToConstant: Self.width).isActive = true
+        logoStack.heightAnchor.constraint(lessThanOrEqualToConstant: 50).isActive = true
         applyTheme()
         listenForThemeChange(contentView)
     }
@@ -93,9 +95,8 @@ final class NTPLogoCell: UICollectionViewCell, ReusableCell, Themeable {
             let finalUrl = URL(string: finalURLString)
             logoLabel.isHidden = false
             orgLogo.isHidden = false
-            orgLogo.kf.setImage(with: finalUrl, options: [.processor(SVGImgProcessor())]) { result in
-                debugPrint(result)
-            }
+            orgLogo.kf.setImage(with: finalUrl, 
+                                options: [.processor(SVGImgProcessor())])
         } else {
             orgLogo.image = nil
             orgLogo.isHidden = true
