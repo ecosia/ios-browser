@@ -68,8 +68,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ecosia/ios-core.git",
       "state" : {
-        "branch" : "MOB-2498_upgrade_braze",
-        "revision" : "6991780e9b6e64f6ff2f38d1626bab8e44f14ba0"
+        "branch" : "MOB-2193_update_copy_android_referrals",
+        "revision" : "bb69a5ba7cb1c8ac6d2b6ca88350622341e7e47a"
       }
     },
     {
