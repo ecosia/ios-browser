@@ -134,9 +134,11 @@ extension String {
         case websitesYouHave = "Websites you’ve recently visited will show up here"
         case noDownloadsYet = "No downloads yet"
         case whenYouDownloadFiles = "When you download files they will show up here"
-        case iThinkYouWillLikeThis = "Hey, I think you’ll like this!\nDid you know that Ecosia is the only search engine that uses 100%% of their profits for climate action? 🌍\nJoin me and %@M+ others planting the right trees in the right places."
-        case downloadTheApp = "1. Download the app:"
-        case useMyInviteLink = "2. Use my ✨ invite link ✨ and we will both plant an extra tree 🌳\n(Android coming soon):"
+        case messageMentioningActiveUsers = """
+        Check this out: Ecosia plants trees when you search the web! 🌳
+        Join me and %@M+ others and start planting today.
+        """
+        case tapLinkToConfirm = "If you’re using an iPhone or iPad, tap here to confirm you’ve joined:"
         case seeTheCollectiveImpact  = "See the collective impact you are having with the Ecosia community"
         case theSimplestWay = "The simplest way to be \n climate-active every day while \n browsing the web"
         case skipWelcomeTour = "Skip welcome tour"
