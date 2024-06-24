@@ -101,7 +101,8 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
     func getToolbarActions(navigationController: UINavigationController?,
                            completion: @escaping ([[PhotonRowActions]]) -> Void) {
         var actions: [[PhotonRowActions]] = []
-        let firstMiscSection = getFirstMiscSection(navigationController)
+        // Ecosia: Remove unused constant
+        // let firstMiscSection = getFirstMiscSection(navigationController)
 
         if isHomePage {
             actions.append(contentsOf: [
@@ -154,6 +155,11 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
         append(to: &section, action: copyAction)
 
         if !isHomePage && !isFileURL {
+            
+            // Ecosia: Add Zoom Action
+            let zoomAction = getZoomAction()
+            append(to: &section, action: zoomAction)
+
             let findInPageAction = getFindInPageAction()
             append(to: &section, action: findInPageAction)
 
