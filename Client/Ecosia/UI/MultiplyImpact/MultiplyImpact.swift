@@ -74,7 +74,7 @@ final class MultiplyImpact: UIViewController, Themeable {
     }()
     
     var referralInfo: ClimateImpactInfo {
-        .referral(value: User.shared.referrals.impact, invites: User.shared.referrals.count)
+        .referral(value: User.shared.referrals.count)
     }
     
     private weak var sharingYourLink: UILabel?

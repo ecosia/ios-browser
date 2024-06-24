@@ -115,7 +115,7 @@ extension String {
         case showTopSites = "Show Top Sites"
         case helpYourFriendsBecome = "Help your friends become climate active and plant trees together"
         case friendsJoined = "%d friend(s) joined"
-        case acceptedInvites = "%d accepted invite(s)"
+        case acceptedInvites = "accepted invite(s)"
         case invitingAFriend = "Inviting a friend"
         case inviteYourFriends = "Invite your friends"
         case sendAnInvite = "Send an invite with your unique invitation link"
