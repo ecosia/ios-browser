@@ -987,7 +987,7 @@ extension URLBarView: ThemeApplicable {
         // Ecosia: Take into account overlay mode for `locationView` background
         // locationView.backgroundColor = theme.colors.layer3
         // locationContainer.backgroundColor = theme.colors.layer3
-        locationView.backgroundColor = inOverlayMode ? UIColor.legacyTheme.ecosia.primaryBackground : UIColor.legacyTheme.ecosia.tertiaryBackground
+        locationView.backgroundColor = inOverlayMode ? .legacyTheme.ecosia.primaryBackground : .legacyTheme.ecosia.tertiaryBackground
         locationContainer.backgroundColor = locationView.backgroundColor
 
         // Ecosia: Remove private mode badge
