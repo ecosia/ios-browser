@@ -26,7 +26,7 @@ final class NTPImpactCellViewModel {
         .search(value: User.shared.searchImpact, searches: searchesCounter.state ?? User.shared.searchCount)
     }
     var referralInfo: ClimateImpactInfo {
-        .referral(value: User.shared.referrals.impact, invites: User.shared.referrals.count)
+        .referral(value: User.shared.referrals.count)
     }
     var totalTreesInfo: ClimateImpactInfo {
         .totalTrees(value: TreesProjection.shared.treesAt(.init()))

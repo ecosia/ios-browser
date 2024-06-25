@@ -74,7 +74,7 @@ final class MultiplyImpact: UIViewController, Themeable {
     }()
     
     var referralInfo: ClimateImpactInfo {
-        .referral(value: User.shared.referrals.impact, invites: User.shared.referrals.count)
+        .referral(value: User.shared.referrals.count)
     }
     
     private weak var sharingYourLink: UILabel?
@@ -501,13 +501,7 @@ final class MultiplyImpact: UIViewController, Themeable {
     @objc private func copyCode() {
         unhover()
         guard let message = inviteMessage else { return }
-        
-        if #available(iOS 14.0, *) {
-            UIPasteboard.general.setValue(message, forPasteboardType: UTType.plainText.identifier)
-        } else {
-            UIPasteboard.general.setValue(message, forPasteboardType: kUTTypePlainText as String)
-        }
-        
+        UIPasteboard.general.setValue(message, forPasteboardType: UTType.plainText.identifier)
         copyText?.text = .localized(.copied)
         Analytics.shared.inviteCopy()
     }
@@ -570,16 +564,17 @@ final class MultiplyImpact: UIViewController, Themeable {
     }
     
     private var inviteMessage: String? {
-        guard let link = inviteLink else { return nil }
-        
+        guard let inviteDeepLink, let inviteDeepLinkUrl = URL(string: inviteDeepLink) else { return nil }
+        guard let inviteLink else { return nil }
+
         return """
-\(String(format: .localized(.iThinkYouWillLikeThis), activeUsers))
+\(String(format: .localized(.messageMentioningActiveUsers), activeUsers))
 
-\(String.localized(.downloadTheApp))
-https://ecosia.co/install-ios
+\(inviteLink)
 
-\(String.localized(.useMyInviteLink))
-\(link)
+\(String.localized(.tapLinkToConfirm))
+
+\(inviteDeepLinkUrl.absoluteString)
 """
     }
     
@@ -587,7 +582,12 @@ https://ecosia.co/install-ios
     
     private var inviteLink: String? {
         guard let code = User.shared.referrals.code else { return nil }
-        return "ecosia://\(Referrals.host)/" + code
+        return "\(Referrals.sharingLinkRoot)\(code)"
+    }
+    
+    private var inviteDeepLink: String? {
+        guard let code = User.shared.referrals.code else { return nil }
+        return "\(Referrals.deepLinkPath)\(code)"
     }
 
     // MARK: Number formatting

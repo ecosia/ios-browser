@@ -7,7 +7,7 @@ import Core
 
 enum ClimateImpactInfo: Equatable {
     case search(value: Int, searches: Int)
-    case referral(value: Int, invites: Int)
+    case referral(value: Int)
     case totalTrees(value: Int)
     case totalInvested(value: Int)
     
@@ -15,7 +15,7 @@ enum ClimateImpactInfo: Equatable {
         switch self {
         case .search(let value, _):
             return "\(value)"
-        case .referral(let value, _):
+        case .referral(let value):
             return "\(value)"
         case .totalTrees(let value):
             return NumberFormatter.ecosiaCurrency(withoutEuroSymbol: true)
@@ -30,8 +30,8 @@ enum ClimateImpactInfo: Equatable {
         switch self {
         case .search(_, let searches):
             return .localizedPlural(.searches, num: searches)
-        case .referral(_, let invites):
-            return .localizedPlural(.friendInvitesPlural, num: invites)
+        case .referral(let value):
+            return .localizedPlural(.acceptedInvites, num: value)
         case .totalTrees:
             return .localized(.treesPlantedByEcosia)
         case .totalInvested:
@@ -43,8 +43,8 @@ enum ClimateImpactInfo: Equatable {
         switch self {
         case .search(let value, let searches):
             return accessiblityLabelTreesPlanted(value: value) + .localizedPlural(.searches, num: searches)
-        case .referral(let value, let invites):
-            return accessiblityLabelTreesPlanted(value: value) + .localizedPlural(.friendInvitesPlural, num: invites)
+        case .referral(let value):
+            return accessiblityLabelTreesPlanted(value: value) + .localizedPlural(.acceptedInvites, num: value)
         case .totalTrees(let value):
             return value.spelledOutString + " " + .localized(.treesPlantedByEcosia)
         case .totalInvested(let value):
