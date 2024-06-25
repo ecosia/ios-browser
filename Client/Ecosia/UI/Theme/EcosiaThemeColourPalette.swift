@@ -107,7 +107,7 @@ private class EcosiaLightColourPalette: ThemeColourPalette {
     var iconDisabled: UIColor { Self.fallbackDefaultThemeManager.currentTheme.colors.iconDisabled }
     var iconAction: UIColor { Self.fallbackDefaultThemeManager.currentTheme.colors.iconAction }
     var iconOnColor: UIColor { Self.fallbackDefaultThemeManager.currentTheme.colors.iconOnColor }
-    var iconWarning: UIColor { Self.fallbackDefaultThemeManager.currentTheme.colors.iconWarning }
+    var iconWarning: UIColor { .legacyTheme.ecosia.warning }
     var iconSpinner: UIColor { Self.fallbackDefaultThemeManager.currentTheme.colors.iconSpinner }
     var iconAccentViolet: UIColor { Self.fallbackDefaultThemeManager.currentTheme.colors.iconAccentViolet }
     var iconAccentBlue: UIColor { Self.fallbackDefaultThemeManager.currentTheme.colors.iconAccentBlue }
