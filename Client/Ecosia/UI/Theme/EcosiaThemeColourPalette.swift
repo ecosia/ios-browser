@@ -44,7 +44,7 @@ private class EcosiaLightColourPalette: ThemeColourPalette {
     // MARK: - Layers
     var layer1: UIColor { .legacyTheme.ecosia.tertiaryBackground }
     var layer2: UIColor { Self.fallbackDefaultThemeManager.currentTheme.colors.layer2 }
-    var layer3: UIColor { .legacyTheme.ecosia.primaryBackground }
+    var layer3: UIColor { .legacyTheme.ecosia.ntpBackground }
     var layer4: UIColor { Self.fallbackDefaultThemeManager.currentTheme.colors.layer4 }
     var layer5: UIColor { .legacyTheme.ecosia.secondaryBackground }
     var layer6: UIColor { .legacyTheme.ecosia.homePanelBackground }
