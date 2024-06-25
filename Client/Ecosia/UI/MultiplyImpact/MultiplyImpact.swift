@@ -564,16 +564,17 @@ final class MultiplyImpact: UIViewController, Themeable {
     }
     
     private var inviteMessage: String? {
-        guard let inviteDeepLink, let inviteUrl = URL(string: inviteDeepLink) else { return nil }
-        
+        guard let inviteDeepLink, let inviteDeepLinkUrl = URL(string: inviteDeepLink) else { return nil }
+        guard let inviteLink else { return nil }
+
         return """
 \(String(format: .localized(.messageMentioningActiveUsers), activeUsers))
 
-\(Referrals.sharingLinkRoot)\(inviteUrl.lastPathComponent)
+\(inviteLink)
 
 \(String.localized(.tapLinkToConfirm))
 
-\(inviteUrl.absoluteString)
+\(inviteDeepLinkUrl.absoluteString)
 """
     }
     
