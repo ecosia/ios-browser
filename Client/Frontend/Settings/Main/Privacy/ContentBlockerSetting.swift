@@ -16,20 +16,20 @@ class ContentBlockerSetting: Setting {
     override var accessibilityIdentifier: String? {
         return AccessibilityIdentifiers.Settings.ContentBlocker.title
     }
-
-    override var status: NSAttributedString? {
-        let isOn = profile.prefs.boolForKey(ContentBlockingConfig.Prefs.EnabledKey) ?? ContentBlockingConfig.Defaults.NormalBrowsing
-
-        if isOn {
-            let currentBlockingStrength = profile
-                .prefs
-                .stringForKey(ContentBlockingConfig.Prefs.StrengthKey)
-                .flatMap(BlockingStrength.init(rawValue:)) ?? .basic
-            return NSAttributedString(string: currentBlockingStrength.settingStatus)
-        } else {
-            return NSAttributedString(string: .Settings.Homepage.Shortcuts.ToggleOff)
-        }
-    }
+// Ecosia: Remove `status` as there is a UI issue in showing the content in e.g. German
+//    override var status: NSAttributedString? {
+//        let isOn = profile.prefs.boolForKey(ContentBlockingConfig.Prefs.EnabledKey) ?? ContentBlockingConfig.Defaults.NormalBrowsing
+//
+//        if isOn {
+//            let currentBlockingStrength = profile
+//                .prefs
+//                .stringForKey(ContentBlockingConfig.Prefs.StrengthKey)
+//                .flatMap(BlockingStrength.init(rawValue:)) ?? .basic
+//            return NSAttributedString(string: currentBlockingStrength.settingStatus)
+//        } else {
+//            return NSAttributedString(string: .Settings.Homepage.Shortcuts.ToggleOff)
+//        }
+//    }
 
     override var style: UITableViewCell.CellStyle { return .value1 }
 
