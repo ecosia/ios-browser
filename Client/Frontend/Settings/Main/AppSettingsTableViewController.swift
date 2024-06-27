@@ -74,8 +74,14 @@ class AppSettingsTableViewController: SettingsTableViewController,
         tableView.accessibilityIdentifier = AccessibilityIdentifiers.Settings.tableViewController
     }
 
+    /* Ecosia: Move settings reload to `viewWillAppear`
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        askedToReload()
+    }
+     */
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         askedToReload()
     }
 
