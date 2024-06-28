@@ -80,7 +80,7 @@ class InactiveTabsFooterView: UICollectionReusableView, ReusableCell, ThemeAppli
 
     func applyTheme(theme: Theme) {
         backgroundColor = theme.colors.layer2
-        // Update button's color
+        // Ecosia: Update button's color
         // roundedButton.setTitleColor(theme.colors.textPrimary, for: .normal)
         roundedButton.setTitleColor(theme.colors.iconWarning, for: .normal)
         roundedButton.backgroundColor = theme.colors.layer3
