@@ -236,7 +236,13 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
         }
 
         set(newURL) {
-            locationView.url = newURL
+            // Ecosia: Update URL accordingly
+            var updatedUrl = newURL
+            if updatedUrl?.isEcosiaSearchQuery() == true {
+                updatedUrl = newURL?.ecosified(isIncognitoEnabled: isPrivate)
+            }
+            locationView.url = updatedUrl
+            // locationView.url = newURL
             
             // Ecosia: update visibility of reload/multi-state button
             if !inOverlayMode {
