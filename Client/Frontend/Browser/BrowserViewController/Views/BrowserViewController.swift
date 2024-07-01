@@ -594,6 +594,7 @@ class BrowserViewController: UIViewController,
         statusBarOverlay.hasTopTabs = shouldShowTopTabsForTraitCollection(traitCollection)
         statusBarOverlay.applyTheme(theme: theme)
 
+        /* Ecosia: Remove Credit Cards Save/Autofill
         // Feature flag for credit card until we fully enable this feature
         let autofillCreditCardStatus = featureFlags.isFeatureEnabled(
             .creditCardAutofillStatus, checking: .buildOnly)
@@ -603,6 +604,7 @@ class BrowserViewController: UIViewController,
         profile.syncManager.updateCreditCardAutofillStatus(value: autofillCreditCardStatus)
         // Credit card initial setup telemetry
         creditCardInitialSetupTelemetry()
+         */
 
         // Send settings telemetry for Fakespot
         FakespotUtils().addSettingTelemetry()
@@ -2144,8 +2146,10 @@ extension BrowserViewController: LegacyTabDelegate {
             tab.addContentScript(logins, name: LoginsHelper.name())
         }
 
+        /* Ecosia: Remove Credit Cards Save/Autofill
         // Credit card autofill setup and callback
         creditCardAutofillSetup(tab, didCreateWebView: webView)
+         */
 
         let contextMenuHelper = ContextMenuHelper(tab: tab)
         tab.addContentScript(contextMenuHelper, name: ContextMenuHelper.name())
