@@ -16,7 +16,7 @@ class ContentBlockerSetting: Setting {
     override var accessibilityIdentifier: String? {
         return AccessibilityIdentifiers.Settings.ContentBlocker.title
     }
-
+/* Ecosia: Remove `status` as there is a UI issue in showing the content in e.g. German
     override var status: NSAttributedString? {
         let isOn = profile.prefs.boolForKey(ContentBlockingConfig.Prefs.EnabledKey) ?? ContentBlockingConfig.Defaults.NormalBrowsing
 
@@ -30,6 +30,7 @@ class ContentBlockerSetting: Setting {
             return NSAttributedString(string: .Settings.Homepage.Shortcuts.ToggleOff)
         }
     }
+    */
 
     override var style: UITableViewCell.CellStyle { return .value1 }
 

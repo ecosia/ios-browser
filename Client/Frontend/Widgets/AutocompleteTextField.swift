@@ -380,12 +380,13 @@ extension AutocompleteTextField: ThemeApplicable, PrivateModeUI {
         attributedPlaceholder = NSAttributedString(string: .TabLocationURLPlaceholder,
                                                    attributes: attributes)
 
-        backgroundColor = theme.colors.layer3
         /* Ecosia: update color
+        backgroundColor = theme.colors.layer3
         textColor = theme.colors.textPrimary
         tintColor = theme.colors.actionPrimary
          */
         textColor = theme.colors.textSecondary
+        backgroundColor = .clear
 
         // Only refresh if an autocomplete label is presented to the user
         if autocompleteTextLabel?.attributedText != nil {

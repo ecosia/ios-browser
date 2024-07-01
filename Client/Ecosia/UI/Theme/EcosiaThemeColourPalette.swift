@@ -44,7 +44,7 @@ private class EcosiaLightColourPalette: ThemeColourPalette {
     // MARK: - Layers
     var layer1: UIColor { .legacyTheme.ecosia.tertiaryBackground }
     var layer2: UIColor { Self.fallbackDefaultThemeManager.currentTheme.colors.layer2 }
-    var layer3: UIColor { .legacyTheme.ecosia.primaryBackground }
+    var layer3: UIColor { .legacyTheme.ecosia.ntpBackground }
     var layer4: UIColor { Self.fallbackDefaultThemeManager.currentTheme.colors.layer4 }
     var layer5: UIColor { .legacyTheme.ecosia.secondaryBackground }
     var layer6: UIColor { .legacyTheme.ecosia.homePanelBackground }
@@ -107,7 +107,7 @@ private class EcosiaLightColourPalette: ThemeColourPalette {
     var iconDisabled: UIColor { Self.fallbackDefaultThemeManager.currentTheme.colors.iconDisabled }
     var iconAction: UIColor { Self.fallbackDefaultThemeManager.currentTheme.colors.iconAction }
     var iconOnColor: UIColor { Self.fallbackDefaultThemeManager.currentTheme.colors.iconOnColor }
-    var iconWarning: UIColor { Self.fallbackDefaultThemeManager.currentTheme.colors.iconWarning }
+    var iconWarning: UIColor { .legacyTheme.ecosia.warning }
     var iconSpinner: UIColor { Self.fallbackDefaultThemeManager.currentTheme.colors.iconSpinner }
     var iconAccentViolet: UIColor { Self.fallbackDefaultThemeManager.currentTheme.colors.iconAccentViolet }
     var iconAccentBlue: UIColor { Self.fallbackDefaultThemeManager.currentTheme.colors.iconAccentBlue }
