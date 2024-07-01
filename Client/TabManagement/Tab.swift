@@ -586,10 +586,9 @@ class Tab: NSObject, ThemeApplicable {
             if let url = request.url, url.isFileURL, request.isPrivileged {
                 return webView.loadFileURL(url, allowingReadAccessTo: url)
             }
-            // Ecosia: updating the request with cookies, auth parameters and language header if needed
+            // Ecosia: updating the request with auth parameters and language header if needed
             // return webView.load(request)
             var ecosiaUpdatedRequest = request
-            ecosiaUpdatedRequest.url = ecosiaUpdatedRequest.url?.ecosified(isIncognitoEnabled: _isPrivate)
             // Inject auth parameters if needed
             ecosiaUpdatedRequest = ecosiaUpdatedRequest.withAuthParameters()
             // Enriching the search request (showing SERP page) with a language region header for market selection options

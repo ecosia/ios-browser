@@ -1211,7 +1211,9 @@ class BrowserViewController: UIViewController,
         urlBar.currentURL = url
         overlayManager.finishEditing(shouldCancelLoading: false)
 
-        if let nav = tab.loadRequest(URLRequest(url: url)) {
+        // Ecosia: Update url with currentURL (ecosified)
+        // if let nav = tab.loadRequest(URLRequest(url: url)) {
+        if let nav = tab.loadRequest(URLRequest(url: urlBar.currentURL!)) {
             self.recordNavigationInTab(tab, navigation: nav, visitType: visitType)
         }
     }
