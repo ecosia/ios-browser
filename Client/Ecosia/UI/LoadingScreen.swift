@@ -85,6 +85,7 @@ final class LoadingScreen: UIViewController {
     }
 
     private func showReferralError(_ error: Referrals.Error) {
+        guard !error.title.isEmpty else { return }
         let alert = UIAlertController(title: error.title,
                                       message: error.message,
                                       preferredStyle: .alert)
@@ -108,6 +109,8 @@ extension Referrals.Error {
             return .localized(.linkAlreadyUsedTitle)
         case .noConnection:
             return .localized(.networkError)
+        case .notFound:
+            return ""
         }
     }
 
@@ -119,6 +122,8 @@ extension Referrals.Error {
             return .localized(.linkAlreadyUsedMessage)
         case .noConnection:
             return .localized(.noConnectionMessage)
+        case .notFound:
+            return ""
         }
     }
 }
