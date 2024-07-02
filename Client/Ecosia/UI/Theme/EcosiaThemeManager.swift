@@ -58,11 +58,7 @@ public final class EcosiaThemeManager: ThemeManager, Notifiable {
          
          This check will extract the last saved theme before killing the app, therefore a different one in case we switched at app killed state where no observers were alive.
          */
-        if LegacyThemeManager.instance.systemThemeIsOn {
-            let userInterfaceStyle = UIScreen.main.traitCollection.userInterfaceStyle
-            LegacyThemeManager.instance.current = userInterfaceStyle == .dark ? LegacyDarkTheme() : LegacyNormalTheme()
-        }
-
+        updateLegacyThemeIfNeeded()
         changeCurrentTheme(loadInitialStoredThemeType())
 
         setupNotifications(forObserver: self,
@@ -79,10 +75,11 @@ public final class EcosiaThemeManager: ThemeManager, Notifiable {
     public func changeCurrentTheme(_ newTheme: ThemeType) {
         guard currentTheme.type != newTheme else { return }
         currentTheme = newThemeForType(newTheme)
+        updateLegacyThemeIfNeeded()
 
         // overwrite the user interface style on the window attached to our scene
         // once we have multiple scenes we need to update all of them
-        window?.overrideUserInterfaceStyle = currentTheme.type.getInterfaceStyle()
+        // window?.overrideUserInterfaceStyle = currentTheme.type.getInterfaceStyle()
 
         mainQueue.ensureMainThread { [weak self] in
             self?.notificationCenter.post(name: .ThemeDidChange)
@@ -201,6 +198,16 @@ public final class EcosiaThemeManager: ThemeManager, Notifiable {
             }
         default:
             return
+        }
+    }
+}
+
+extension EcosiaThemeManager {
+    
+    func updateLegacyThemeIfNeeded() {
+        if LegacyThemeManager.instance.systemThemeIsOn {
+            let userInterfaceStyle = UIScreen.main.traitCollection.userInterfaceStyle
+            LegacyThemeManager.instance.current = userInterfaceStyle == .dark ? LegacyDarkTheme() : LegacyNormalTheme()
         }
     }
 }
