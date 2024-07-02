@@ -61,6 +61,7 @@ final class PageActionMenu: UIViewController, UIGestureRecognizerDelegate, Theme
         setupKnob()
         setupConstraints()
         applyTheme()
+        listenForThemeChange(view)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -74,7 +75,7 @@ final class PageActionMenu: UIViewController, UIGestureRecognizerDelegate, Theme
             if UIDevice.current.userInterfaceIdiom == .pad {
                 height += PhotonActionSheet.UX.bigSpacing
             }
-            self?.preferredContentSize = CGSize(width: 350, height: tableView.contentSize.height)
+            self?.preferredContentSize = CGSize(width: 350, height: height)
         }
     }
 
@@ -136,6 +137,7 @@ extension PageActionMenu {
     }
     
     private func setupKnob() {
+        guard traitCollection.userInterfaceIdiom == .phone else { return }
         view.addSubview(knob)
         knob.translatesAutoresizingMaskIntoConstraints = false
         knob.layer.cornerRadius = 2
@@ -146,7 +148,12 @@ extension PageActionMenu {
             tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             tableView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor),
             tableView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+        ])
+        
+        guard traitCollection.userInterfaceIdiom == .phone else { return }
+        
+        NSLayoutConstraint.activate([
             knob.topAnchor.constraint(equalTo: view.topAnchor, constant: 8),
             knob.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             knob.widthAnchor.constraint(equalToConstant: 32),
