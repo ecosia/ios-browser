@@ -170,7 +170,9 @@ class TopTabsViewController: UIViewController, Themeable, Notifiable {
 
     func applyTheme() {
         let currentTheme = themeManager.currentTheme
-        view.backgroundColor = currentTheme.colors.layer3
+        // Ecosia: update background
+        // view.backgroundColor = currentTheme.colors.layer3
+        view.backgroundColor = currentTheme.type == .dark ? .Dark.Background.primary : .Light.Background.primary
         tabsButton.applyTheme(theme: currentTheme)
         privateModeButton.applyTheme(theme: currentTheme)
         newTab.tintColor = currentTheme.colors.iconPrimary
