@@ -205,7 +205,8 @@ class BrowserViewController: UIViewController,
     var menuHelper: MainMenuActionHelper?
     
     // Ecosia: Initialize the OptInReminderManager that handles the APNConsent showing
-    private let apnConsentOptInReminderManager = OptInReminderManager(currentSearchesCount: User.shared.searchCount,
+    // Pass `0` as of `currentSearchesCount` temporarily
+    private let apnConsentOptInReminderManager = OptInReminderManager(currentSearchesCount: 0,
                                                                       maxOptInScreenCount: EngagementServiceExperiment.maxOptInShowingAttempts,
                                                                       minSearchesForFirstOptIn: EngagementServiceExperiment.minSearches,
                                                                       searchesBetweenOptIns: EngagementServiceExperiment.searchesBetweenOptIns,
