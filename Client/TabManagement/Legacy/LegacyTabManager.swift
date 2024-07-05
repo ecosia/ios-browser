@@ -179,13 +179,12 @@ class LegacyTabManager: NSObject, FeatureFlaggable, TabManager, TabEventHandler 
                                                object: nil)
         // Ecosia: Cookie and settings observing
         configuration.websiteDataStore.httpCookieStore.add(self)
-        
         searchSettingsObserver = NotificationCenter.default
-                    .publisher(for: .searchSettingsChanged)
-                    .sink() { [privateConfiguration, configuration] _ in
-                        configuration.websiteDataStore.httpCookieStore.setCookie(Cookie.makeStandardCookie())
-                        privateConfiguration.websiteDataStore.httpCookieStore.setCookie(Cookie.makeIncognitoCookie())
-                    }
+            .publisher(for: .searchSettingsChanged)
+            .sink() { [privateConfiguration, configuration] _ in
+                configuration.websiteDataStore.httpCookieStore.setCookie(Cookie.makeStandardCookie())
+                privateConfiguration.websiteDataStore.httpCookieStore.setCookie(Cookie.makeIncognitoCookie())
+            }
     }
     
     // MARK: Ecosia: Observing Cookies and Search setting changes
