@@ -16,12 +16,7 @@ extension WelcomeTour {
         case transparent
 
         static var all: [Step] {
-            if Unleash.isEnabled(.incentiveRestrictedSearch) {
-                return [.green, .profit, .action, .transparent]
-            } else {
-                return [.planet, .profit, .action, .trees]
-            }
-            
+            [.planet, .profit, .action, .trees]
         }
         
         var title: String {

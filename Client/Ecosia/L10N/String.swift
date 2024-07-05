@@ -14,10 +14,6 @@ extension String {
         NSLocalizedString(string, tableName: "Ecosia", comment: "")
     }
     
-    static func localized(_ key: Key, incentiveRestrictedSearchAlternativeKey: Key) -> String {
-        localized(Unleash.isEnabled(.incentiveRestrictedSearch) ? incentiveRestrictedSearchAlternativeKey : key)
-    }
-
     static func localizedPlural(_ key: Key, num: Int) -> String {
         String(format: NSLocalizedString(key.rawValue, tableName: "Plurals", comment: ""), num)
     }
@@ -169,9 +165,7 @@ extension String {
         case howItWorks = "How it works"
         case openSettings = "Open settings"
         case maybeLater = "Maybe later"
-        case openAllLinksToPlantTrees = "Open all links with Ecosia to plant more trees"
         case openAllLinksAutomatically = "Open all links automatically with Ecosia"
-        case growYourImpact = "Grow your impact with your web searches"
         case beClimateActive = "Be climate active every day while browsing"
         case groupYourImpact = "Group your impact"
         case getATreeWithEveryFriend = "Get a tree with every friend who joins. They get one too!"

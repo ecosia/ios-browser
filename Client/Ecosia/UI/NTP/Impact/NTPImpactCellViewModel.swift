@@ -14,16 +14,9 @@ protocol NTPImpactCellDelegate: AnyObject {
 final class NTPImpactCellViewModel {
     weak var delegate: NTPImpactCellDelegate?
     var infoItemSections: [[ClimateImpactInfo]] {
-        var firstSection: [ClimateImpactInfo] = [referralInfo]
-        if !Unleash.isEnabled(.incentiveRestrictedSearch) {
-            firstSection.insert(searchInfo,
-                                at: 0)
-        }
+        let firstSection: [ClimateImpactInfo] = [referralInfo]
         let secondSection: [ClimateImpactInfo] = [totalTreesInfo, totalInvestedInfo]
         return [firstSection, secondSection]
-    }
-    var searchInfo: ClimateImpactInfo {
-        .search(value: User.shared.searchImpact, searches: searchesCounter.state ?? User.shared.searchCount)
     }
     var referralInfo: ClimateImpactInfo {
         .referral(value: User.shared.referrals.count)
@@ -35,7 +28,6 @@ final class NTPImpactCellViewModel {
         .totalInvested(value: InvestmentsProjection.shared.totalInvestedAt(.init()))
     }
 
-    private let searchesCounter = SearchesCounter()
     private var cells = [Int:NTPImpactCell]()
     private let referrals: Referrals
     
@@ -49,16 +41,10 @@ final class NTPImpactCellViewModel {
             guard let self = self else { return }
             self.refreshCell(withInfo: self.referralInfo)
         }
-        
-        searchesCounter.subscribe(self) { [weak self] _ in
-            guard let self = self else { return }
-            self.refreshCell(withInfo: self.searchInfo)
-        }
     }
     
     deinit {
         referrals.unsubscribe(self)
-        searchesCounter.unsubscribe(self)
     }
 
     func subscribeToProjections() {

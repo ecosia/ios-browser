@@ -114,12 +114,7 @@ enum ClimateImpactInfo: Equatable {
     }
     
     var progressIndicatorValue: Double? {
-        switch self {
-        case .search:
-            return User.shared.progress
-        case .referral, .totalInvested, .totalTrees:
-            return nil
-        }
+        return nil
     }
     
     /// Created to be used for comparison without taking the associated types arguments into consideration.

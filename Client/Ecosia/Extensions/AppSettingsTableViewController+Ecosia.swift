@@ -153,8 +153,6 @@ extension AppSettingsTableViewController {
             CreateReferralCode(settings: self),
             AddReferral(settings: self),
             AddClaim(settings: self),
-            ChangeSearchCount(settings: self),
-            ResetSearchCount(settings: self),
             UnleashDefaultBrowserSetting(settings: self),
             UnleashBingDistributionSetting(settings: self),
             EngagementServiceIdentifierSetting(settings: self)
