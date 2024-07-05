@@ -156,12 +156,6 @@ final class Analytics {
             .label("\(User.shared.apnConsentReminderModel.optInScreenCount)")
             .property(Property.home.rawValue)
         
-        // When the user sees the APNConsent
-        // we add the number of search counts as value of the event
-        if action == .view {
-            event.value = NSNumber(integerLiteral: User.shared.searchCount)
-        }
-        
         // Add context (if any) from current EngagementService enabled
         if let toggleName = Unleash.Toggle.Name(rawValue: EngagementServiceExperiment.toggleName),
            let context = Self.getTestContext(from: toggleName) {
