@@ -17,12 +17,6 @@ extension AppSettingsTableViewController {
             getEcosiaSupportSection(),
             getEcosiaAboutSection()
         ]
-        
-        // Ecosia: Not adding search settings with Bing distribution experiment
-        if !BingDistributionExperiment.isEnabled {
-            sections.insert(getSearchSection(), at: 1)
-        }
-        
         if isDebugSectionEnabled {
             sections.append(getEcosiaDebugSupportSection())
         }
