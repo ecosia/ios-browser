@@ -112,11 +112,7 @@ enum ClimateImpactInfo: Equatable {
             "total_invested_image"
         }
     }
-    
-    var progressIndicatorValue: Double? {
-        return nil
-    }
-    
+        
     /// Created to be used for comparison without taking the associated types arguments into consideration.
     var rawValue: Int {
         switch self {
