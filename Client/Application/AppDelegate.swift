@@ -42,8 +42,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     private var shutdownWebServer: DispatchSourceTimer?
     private var webServerUtil: WebServerUtil?
     private var appLaunchUtil: AppLaunchUtil?
-    // Ecosia: Searches counter
-    private let searchesCounter = SearchesCounter()
     private var backgroundWorkUtility: BackgroundFetchAndProcessingUtility?
     private var widgetManager: TopSitesWidgetManager?
     private var menuBuilderHelper: MenuBuilderHelper?
@@ -254,9 +252,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             await FeatureManagement.fetchConfiguration()
         }
         MMP.sendSession()
-        searchesCounter.subscribe(self) { searchCount in
-            MMP.handleSearchEvent(searchCount)
-        }
 
         DispatchQueue.global().async { [weak self] in
             self?.profile.pollCommands(forcePoll: false)
