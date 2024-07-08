@@ -796,7 +796,9 @@ class BrowserViewController: UIViewController,
 
         // During split screen launching on iPad, this callback gets fired before viewDidLoad gets a chance to
         // set things up. Make sure to only update the toolbar state if the view is ready for it.
-        if isViewLoaded {
+        // Ecosia: Update check
+        // if isViewLoaded {
+        if isViewLoaded && UIDevice.current.userInterfaceIdiom == .pad {
             updateToolbarStateForTraitCollection(newCollection)
         }
 

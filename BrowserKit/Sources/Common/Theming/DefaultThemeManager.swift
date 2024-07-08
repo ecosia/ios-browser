@@ -69,7 +69,8 @@ public final class DefaultThemeManager: ThemeManager, Notifiable {
 
         // overwrite the user interface style on the window attached to our scene
         // once we have multiple scenes we need to update all of them
-        window?.overrideUserInterfaceStyle = currentTheme.type.getInterfaceStyle()
+        // Ecosia: Remove `overrideUserInterfaceStyle` window set
+        // window?.overrideUserInterfaceStyle = currentTheme.type.getInterfaceStyle()
 
         mainQueue.ensureMainThread { [weak self] in
             self?.notificationCenter.post(name: .ThemeDidChange)
