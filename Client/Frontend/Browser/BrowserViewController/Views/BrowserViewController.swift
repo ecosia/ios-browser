@@ -189,7 +189,8 @@ class BrowserViewController: UIViewController,
     }
 
     fileprivate var shouldShowDefaultBrowserPromo: Bool {
-        profile.prefs.intForKey(PrefsKeys.IntroSeen) == nil
+        profile.prefs.intForKey(PrefsKeys.IntroSeen) == nil &&
+        DefaultBrowserExperiment.minPromoSearches() <= User.shared.searchCount
     }
     fileprivate var shouldShowWhatsNewPageScreen: Bool { whatsNewDataProvider.shouldShowWhatsNewPage }
     fileprivate var shouldShowAPNConsentScreen: Bool {
