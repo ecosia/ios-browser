@@ -128,6 +128,38 @@ final class AddClaim: HiddenSetting {
     }
 }
 
+final class ResetSearchCount: HiddenSetting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Set search count to 0", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
+    }
+
+    override var status: NSAttributedString? {
+        return NSAttributedString(string: "\(User.shared.searchCount)", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        User.shared.searchCount = 0
+        self.settings.tableView.reloadData()
+        NotificationCenter.default.post(name: .HomePanelPrefsChanged, object: nil)
+    }
+}
+
+final class ChangeSearchCount: HiddenSetting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Increase search count by 10", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
+    }
+
+    override var status: NSAttributedString? {
+        return NSAttributedString(string: "\(User.shared.searchCount)", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        User.shared.searchCount += 10
+        self.settings.tableView.reloadData()
+        NotificationCenter.default.post(name: .HomePanelPrefsChanged, object: nil)
+    }
+}
+
 class UnleashVariantResetSetting: HiddenSetting {
     var titleName: String? { return nil }
     var variant: Unleash.Variant? { return nil }
