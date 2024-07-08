@@ -96,7 +96,13 @@ final class WelcomeTour: UIViewController,  Themeable {
         let centerControl = pageControl.centerXAnchor.constraint(equalTo: navStack.centerXAnchor)
         centerControl.priority = .defaultHigh
         centerControl.isActive = true
-        if !Unleash.isEnabled(.hideOnboardingSkip) {
+        if HideSkipOnboardingExperiment.isEnabled {
+            let placeholderView = UIButton(type: .system)
+            placeholderView.widthAnchor.constraint(greaterThanOrEqualToConstant: 74).isActive = true
+            placeholderView.setContentCompressionResistancePriority(.required, for: .horizontal)
+            placeholderView.isAccessibilityElement = false
+            navStack.addArrangedSubview(placeholderView)
+        } else {
             let skipButton = UIButton(type: .system)
             skipButton.widthAnchor.constraint(greaterThanOrEqualToConstant: 74).isActive = true
             skipButton.addTarget(self, action: #selector(skip), for: .primaryActionTriggered)
@@ -108,12 +114,6 @@ final class WelcomeTour: UIViewController,  Themeable {
             skipButton.titleLabel?.adjustsFontForContentSizeCategory = true
             
             self.skipButton = skipButton
-        } else {
-            let placeholderView = UIButton(type: .system)
-            placeholderView.widthAnchor.constraint(greaterThanOrEqualToConstant: 74).isActive = true
-            placeholderView.setContentCompressionResistancePriority(.required, for: .horizontal)
-            placeholderView.isAccessibilityElement = false
-            navStack.addArrangedSubview(placeholderView)
         }
 
         let waves = UIImageView(image: .init(named: "onboardingWaves"))
