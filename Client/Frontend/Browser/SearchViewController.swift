@@ -583,6 +583,9 @@ class SearchViewController: SiteTableViewController,
                   let url = defaultEngine.searchURLForQuery(suggestion)
             else { return }
 
+            // Ecosia: increment search count when bing distribution
+            BingDistributionExperiment.incrementCounterIfTestVariant()
+
             let extras = [TelemetryWrapper.EventExtraKey.recordSearchLocation.rawValue: SearchesMeasurement.SearchLocation.suggestion,
                           TelemetryWrapper.EventExtraKey.recordSearchEngineID.rawValue: defaultEngine.engineID as Any] as [String: Any]
             TelemetryWrapper.gleanRecordEvent(category: .action,

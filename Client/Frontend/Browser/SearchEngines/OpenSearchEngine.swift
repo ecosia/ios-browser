@@ -93,6 +93,8 @@ class OpenSearchEngine: NSObject, NSSecureCoding {
            let fromTemplateURL = getURLFromTemplate(searchTemplate, query: query),
            fromTemplateURL.baseDomain != "ecosia.org" {
             return fromTemplateURL
+        } else if BingDistributionExperiment.isEnabled {
+            return BingDistributionExperiment.searchURLForQuery(query)
         } else {
             return URL.ecosiaSearchWithQuery(query)
         }

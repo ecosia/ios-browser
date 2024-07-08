@@ -16,6 +16,12 @@ struct BingDistributionExperiment {
     static private var isTestVariant: Bool {
         return Unleash.getVariant(.bingDistribution).name == "test"
     }
+    
+    static func incrementCounterIfTestVariant() {
+        guard isEnabled && isTestVariant else { return }
+        User.shared.searchCount += 1
+    }
+    
     static func bingSearchWithQuery(_ query: String) -> URL? {
         guard let rootUrl = URL(string: "https://www.bing.com"),
               var components = URLComponents(url: rootUrl, resolvingAgainstBaseURL: false) else {

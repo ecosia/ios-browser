@@ -355,6 +355,9 @@ extension BrowserViewController: URLBarDelegate {
             return
         }
         
+        // Ecosia: increment search count when bing distribution
+        BingDistributionExperiment.incrementCounterIfTestVariant()
+
         let conversionMetrics = UserConversionMetrics()
         conversionMetrics.didPerformSearch()
         // We couldn't find a matching search keyword, so do a search query.
