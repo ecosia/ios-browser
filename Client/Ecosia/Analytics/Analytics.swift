@@ -54,14 +54,10 @@ final class Analytics {
         tracker = Self.tracker
     }
     
-    func activity(_ action: Action.Activity) {
-        let event = Structured(category: Category.activity.rawValue,
-                               action: action.rawValue)
-            .label(Analytics.Label.Navigation.inapp.rawValue)
-        
+    private func appendTestContextIfNeeded(_ action: Analytics.Action.Activity, _ event: Structured) {
         switch action {
         case .resume, .launch:
-            // add A/B Test context
+            // Add A/B Test context
             let abTestToggles: [Unleash.Toggle.Name] = [.searchShortcuts, .bingDistribution]
             abTestToggles.forEach {
                 if let context = Self.getTestContext(from: $0) {
@@ -74,6 +70,19 @@ final class Analytics {
                                                          andDictionary: ["cookie_consent": consentValue]))
             }
         }
+        
+        // Add Skip onbaording A/B Test context
+        if let context = Self.getTestContext(from: .hideOnboardingSkip) {
+            event.contexts.append(context)
+        }
+    }
+    
+    func activity(_ action: Action.Activity) {
+        let event = Structured(category: Category.activity.rawValue,
+                               action: action.rawValue)
+            .label(Analytics.Label.Navigation.inapp.rawValue)
+        
+        appendTestContextIfNeeded(action, event)
 
         track(event)
     }
