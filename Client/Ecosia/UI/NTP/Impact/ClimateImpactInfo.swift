@@ -100,11 +100,11 @@ enum ClimateImpactInfo: Equatable {
     var rawValue: Int {
         switch self {
         case .referral:
-            return 1
+            return 0
         case .totalTrees:
-            return 2
+            return 1
         case .totalInvested:
-            return 3
+            return 2
         }
     }
     
