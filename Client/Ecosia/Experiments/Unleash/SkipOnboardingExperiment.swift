@@ -5,12 +5,15 @@
 import Foundation
 import Core
 
-struct HideSkipOnboardingExperiment {
+struct SkipOnboardingExperiment {
     
     private init() {}
     
-    static var isEnabled: Bool {
-        Unleash.isEnabled(.hideOnboardingSkip) &&
-        Unleash.getVariant(.hideOnboardingSkip).name == "test"
+    private static var isEnabled: Bool {
+        Unleash.isEnabled(.hideOnboardingSkip)
+    }
+    
+    static var shouldHideSkipButton: Bool {
+        Self.isEnabled && Unleash.getVariant(.hideOnboardingSkip).name == "test"
     }
 }

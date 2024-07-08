@@ -96,7 +96,7 @@ final class WelcomeTour: UIViewController,  Themeable {
         let centerControl = pageControl.centerXAnchor.constraint(equalTo: navStack.centerXAnchor)
         centerControl.priority = .defaultHigh
         centerControl.isActive = true
-        if HideSkipOnboardingExperiment.isEnabled {
+        if SkipOnboardingExperiment.shouldHideSkipButton {
             let placeholderView = UIButton(type: .system)
             placeholderView.widthAnchor.constraint(greaterThanOrEqualToConstant: 74).isActive = true
             placeholderView.setContentCompressionResistancePriority(.required, for: .horizontal)

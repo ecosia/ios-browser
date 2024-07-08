@@ -162,7 +162,7 @@ final class Welcome: UIViewController {
         stack.addArrangedSubview(UIView())
         stack.addArrangedSubview(cta)
 
-        if !HideSkipOnboardingExperiment.isEnabled {
+        if !SkipOnboardingExperiment.shouldHideSkipButton {
             let skipButton = UIButton(type: .system)
             skipButton.backgroundColor = .clear
             skipButton.titleLabel?.font = .preferredFont(forTextStyle: .callout)
