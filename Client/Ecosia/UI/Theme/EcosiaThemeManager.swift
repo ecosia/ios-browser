@@ -76,11 +76,6 @@ public final class EcosiaThemeManager: ThemeManager, Notifiable {
         guard currentTheme.type != newTheme else { return }
         currentTheme = newThemeForType(newTheme)
         updateLegacyThemeIfNeeded()
-
-        // overwrite the user interface style on the window attached to our scene
-        // once we have multiple scenes we need to update all of them
-        // window?.overrideUserInterfaceStyle = currentTheme.type.getInterfaceStyle()
-
         mainQueue.ensureMainThread { [weak self] in
             self?.notificationCenter.post(name: .ThemeDidChange)
         }
