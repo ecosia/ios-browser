@@ -168,7 +168,7 @@ final class DefaultBrowser: UIViewController, Themeable {
         self.arrow1 = arrow1
 
         let text1 = UILabel()
-        text1.text = .localized(.openAllLinksToPlantTrees, incentiveRestrictedSearchAlternativeKey: .openAllLinksAutomatically)
+        text1.text = .localized(.openAllLinksAutomatically)
         text1.translatesAutoresizingMaskIntoConstraints = false
         text1.font = .preferredFont(forTextStyle: .subheadline)
         text1.adjustsFontForContentSizeCategory = true
@@ -190,7 +190,7 @@ final class DefaultBrowser: UIViewController, Themeable {
         self.arrow2 = arrow2
 
         let text2 = UILabel()
-        text2.text = .localized(.growYourImpact, incentiveRestrictedSearchAlternativeKey: .beClimateActive)
+        text2.text = .localized(.beClimateActive)
         text2.translatesAutoresizingMaskIntoConstraints = false
         text2.font = .preferredFont(forTextStyle: .subheadline)
         text2.adjustsFontForContentSizeCategory = true

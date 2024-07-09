@@ -6,15 +6,12 @@ import Foundation
 import Core
 
 enum ClimateImpactInfo: Equatable {
-    case search(value: Int, searches: Int)
     case referral(value: Int)
     case totalTrees(value: Int)
     case totalInvested(value: Int)
     
     var title: String {
         switch self {
-        case .search(let value, _):
-            return "\(value)"
         case .referral(let value):
             return "\(value)"
         case .totalTrees(let value):
@@ -28,8 +25,6 @@ enum ClimateImpactInfo: Equatable {
     
     var subtitle: String {
         switch self {
-        case .search(_, let searches):
-            return .localizedPlural(.searches, num: searches)
         case .referral(let value):
             return .localizedPlural(.acceptedInvites, num: value)
         case .totalTrees:
@@ -41,8 +36,6 @@ enum ClimateImpactInfo: Equatable {
     
     var accessibilityLabel: String {
         switch self {
-        case .search(let value, let searches):
-            return accessiblityLabelTreesPlanted(value: value) + .localizedPlural(.searches, num: searches)
         case .referral(let value):
             return accessiblityLabelTreesPlanted(value: value) + .localizedPlural(.acceptedInvites, num: value)
         case .totalTrees(let value):
@@ -54,8 +47,6 @@ enum ClimateImpactInfo: Equatable {
     
     var accessibilityIdentifier: String? {
         switch self {
-        case .search:
-            "personal_trees_counter"
         case .referral:
             "friends_and_trees_invites_counter"
         case .totalTrees:
@@ -67,8 +58,6 @@ enum ClimateImpactInfo: Equatable {
     
     var image: UIImage? {
         switch self {
-        case .search:
-            return .init(named: "yourImpact")
         case .referral:
             return .init(named: "groupYourImpact")
         case .totalTrees:
@@ -80,8 +69,6 @@ enum ClimateImpactInfo: Equatable {
     
     var buttonTitle: String? {
         switch self {
-        case .search:
-            return .localized(.howItWorks)
         case .referral:
             return .localized(.inviteFriends)
         case .totalTrees, .totalInvested:
@@ -91,8 +78,6 @@ enum ClimateImpactInfo: Equatable {
     
     var accessibilityHint: String? {
         switch self {
-        case .search:
-            return .localized(.howItWorks)
         case .referral:
             return .localized(.inviteFriends)
         case .totalTrees, .totalInvested:
@@ -102,8 +87,6 @@ enum ClimateImpactInfo: Equatable {
     
     var imageAccessibilityIdentifier: String? {
         switch self {
-        case .search:
-            "search_image"
         case .referral:
             "referral_image"
         case .totalTrees:
@@ -112,27 +95,16 @@ enum ClimateImpactInfo: Equatable {
             "total_invested_image"
         }
     }
-    
-    var progressIndicatorValue: Double? {
-        switch self {
-        case .search:
-            return User.shared.progress
-        case .referral, .totalInvested, .totalTrees:
-            return nil
-        }
-    }
-    
+        
     /// Created to be used for comparison without taking the associated types arguments into consideration.
     var rawValue: Int {
         switch self {
-        case .search:
-            return 0
         case .referral:
-            return 1
+            return 0
         case .totalTrees:
-            return 2
+            return 1
         case .totalInvested:
-            return 3
+            return 2
         }
     }
     

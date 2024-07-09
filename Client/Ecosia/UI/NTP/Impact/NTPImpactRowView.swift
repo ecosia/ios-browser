@@ -78,9 +78,6 @@ final class NTPImpactRowView: UIView, Themeable {
             subtitleLabel.text = info.subtitle
             actionButton.isHidden = forceHideActionButton ? true : info.buttonTitle == nil
             actionButton.setTitle(info.buttonTitle, for: .normal)
-            if let progress = info.progressIndicatorValue {
-                currentProgressView.value = progress
-            }
         }
     }
     var position: (row: Int, totalCount: Int) = (0, 0) {
@@ -156,16 +153,12 @@ final class NTPImpactRowView: UIView, Themeable {
             actionButton.bottomAnchor.constraint(lessThanOrEqualTo: imageContainer.bottomAnchor)
         ])
         
-        if info.progressIndicatorValue != nil {
-            setupProgressIndicator()
-        } else {
-            NSLayoutConstraint.activate([
-                imageView.topAnchor.constraint(equalTo: imageContainer.topAnchor),
-                imageView.leadingAnchor.constraint(equalTo: imageContainer.leadingAnchor),
-                imageView.trailingAnchor.constraint(equalTo: imageContainer.trailingAnchor),
-                imageView.bottomAnchor.constraint(equalTo: imageContainer.bottomAnchor),
-            ])
-        }
+        NSLayoutConstraint.activate([
+            imageView.topAnchor.constraint(equalTo: imageContainer.topAnchor),
+            imageView.leadingAnchor.constraint(equalTo: imageContainer.leadingAnchor),
+            imageView.trailingAnchor.constraint(equalTo: imageContainer.trailingAnchor),
+            imageView.bottomAnchor.constraint(equalTo: imageContainer.bottomAnchor),
+        ])
         
         applyTheme()
     }

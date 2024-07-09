@@ -165,7 +165,7 @@ final class Analytics {
         // Add context (if any) from current EngagementService enabled
         if let toggleName = Unleash.Toggle.Name(rawValue: EngagementServiceExperiment.toggleName),
            let context = Self.getTestContext(from: toggleName) {
-            event.contexts.append(context)
+            event.entities.append(context)
         }
         
         track(event)
