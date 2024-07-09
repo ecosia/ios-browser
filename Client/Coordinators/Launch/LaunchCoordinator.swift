@@ -67,6 +67,8 @@ class LaunchCoordinator: BaseCoordinator,
         }
          */
         let introViewController = WelcomeNavigation(rootViewController: Welcome(delegate: self))
+        introViewController.isNavigationBarHidden = true
+        introViewController.edgesForExtendedLayout = UIRectEdge(rawValue: 0)
         Analytics.shared.install()
         if isFullScreen {
             introViewController.modalPresentationStyle = .fullScreen
