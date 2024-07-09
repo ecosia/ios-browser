@@ -41,7 +41,8 @@ final class LaunchCoordinatorTests: XCTestCase {
         let introScreenManager = IntroScreenManager(prefs: profile.prefs)
         let subject = createSubject(isIphone: false)
         subject.start(with: .intro(manager: introScreenManager))
-
+        // Ecosia: Remove wait when the `SkipOnboardingExperiment` finishes
+        wait(0.5)
         XCTAssertEqual(mockRouter.presentCalled, 1)
         XCTAssertEqual(mockRouter.setRootViewControllerCalled, 0)
         let presentedViewController = try XCTUnwrap(mockRouter.presentedViewController)
@@ -54,7 +55,8 @@ final class LaunchCoordinatorTests: XCTestCase {
         let introScreenManager = IntroScreenManager(prefs: profile.prefs)
         let subject = createSubject(isIphone: true)
         subject.start(with: .intro(manager: introScreenManager))
-
+        // Ecosia: Remove wait when the `SkipOnboardingExperiment` finishes
+        wait(0.5)
         XCTAssertEqual(mockRouter.presentCalled, 1)
         XCTAssertEqual(mockRouter.setRootViewControllerCalled, 0)
         let pushedVC = try XCTUnwrap(mockRouter.presentedViewController)
