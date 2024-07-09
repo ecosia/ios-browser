@@ -507,7 +507,10 @@ extension BrowserViewController: WKNavigationDelegate {
                     }
                 }
                  */
-                self.showSnackbar(forExternalUrl: url, tab: tab) { _ in
+                self.showSnackbar(forExternalUrl: url, tab: tab) { isOK in
+                    if isOK {
+                        UIApplication.shared.open(url, options: [:])
+                    }
                     // If a new window was opened for this URL (it will have no history), close it.
                     if tab.historyList.isEmpty {
                         self.tabManager.removeTab(tab)
