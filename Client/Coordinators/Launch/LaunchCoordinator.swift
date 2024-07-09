@@ -30,7 +30,16 @@ class LaunchCoordinator: BaseCoordinator,
         let isFullScreen = launchType.isFullScreenAvailable(isIphone: isIphone)
         switch launchType {
         case .intro(let manager):
-            presentIntroOnboarding(with: manager, isFullScreen: isFullScreen)
+            /*
+             Ecosia: Fetch Config before showing onboarding
+             in order to be able to correctly evaluate `SkipOnboardingExperiment.shouldHideSkipButton`
+             
+             presentIntroOnboarding(with: manager, isFullScreen: isFullScreen)
+             */
+            Task {
+                await FeatureManagement.fetchConfiguration()
+                await MainActor.run { presentIntroOnboarding(with: manager, isFullScreen: isFullScreen) }
+            }
         case .update(let viewModel):
             presentUpdateOnboarding(with: viewModel, isFullScreen: isFullScreen)
         case .defaultBrowser:
