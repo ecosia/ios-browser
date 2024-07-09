@@ -34,10 +34,10 @@ extension NTPTooltip {
 
     }
 
-    class func highlight(for user: Core.User = User.shared,
-                         isInPromoTest: Bool = DefaultBrowserExperiment.isInPromoTest()) -> NTPTooltip.Highlight? {
+    class func highlight(for user: Core.User = User.shared) -> NTPTooltip.Highlight? {
+        
         // on first start, when we show the default browser promo, no highlight should be shown
-        guard !user.firstTime || isInPromoTest else { return nil }
+        guard !user.firstTime else { return nil }
 
         if user.referrals.isNewClaim {
             return .gotClaimed
