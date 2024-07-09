@@ -69,7 +69,7 @@
       "location" : "https://github.com/ecosia/ios-core.git",
       "state" : {
         "branch" : "MOB-2498_upgrade_braze",
-        "revision" : "8e9b6bc3d47ddf5c5e7ce33c073691978e5a6cda"
+        "revision" : "c257abdc2c113a95b577b8edcd88de9a150c252e"
       }
     },
     {

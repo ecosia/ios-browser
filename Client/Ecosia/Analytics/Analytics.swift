@@ -53,27 +53,13 @@ final class Analytics {
         User.shared.analyticsId = .init()
         tracker = Self.tracker
     }
-    
+        
     func activity(_ action: Action.Activity) {
         let event = Structured(category: Category.activity.rawValue,
                                action: action.rawValue)
             .label(Analytics.Label.Navigation.inapp.rawValue)
         
-        switch action {
-        case .resume, .launch:
-            // add A/B Test context
-            let abTestToggles: [Unleash.Toggle.Name] = [.searchShortcuts, .bingDistribution]
-            abTestToggles.forEach {
-                if let context = Self.getTestContext(from: $0) {
-                    event.contexts.append(context)
-                }
-            }
-            // Cookie consent context
-            if let consentValue = User.shared.cookieConsentValue {
-                event.contexts.append(SelfDescribingJson(schema: Self.consentSchema,
-                                                         andDictionary: ["cookie_consent": consentValue]))
-            }
-        }
+        appendTestContextIfNeeded(action, event)
 
         track(event)
     }
@@ -365,5 +351,31 @@ final class Analytics {
                                      action: Action.change.rawValue)
             .label("analytics")
             .property(enabled ? "enable" : "disable"))
+    }
+}
+
+extension Analytics {
+    private func appendTestContextIfNeeded(_ action: Analytics.Action.Activity, _ event: Structured) {
+        switch action {
+        case .resume, .launch:
+            addABTestContexts(to: event, toggles: [.searchShortcuts, .bingDistribution, .hideOnboardingSkip])
+            addCookieConsentContext(to: event)
+        }
+    }
+
+    private func addABTestContexts(to event: Structured, toggles: [Unleash.Toggle.Name]) {
+        toggles.forEach { toggle in
+            if let context = Self.getTestContext(from: toggle) {
+                event.contexts.append(context)
+            }
+        }
+    }
+
+    private func addCookieConsentContext(to event: Structured) {
+        if let consentValue = User.shared.cookieConsentValue {
+            let consentContext = SelfDescribingJson(schema: Self.consentSchema,
+                                                    andDictionary: ["cookie_consent": consentValue])
+            event.contexts.append(consentContext)
+        }
     }
 }
