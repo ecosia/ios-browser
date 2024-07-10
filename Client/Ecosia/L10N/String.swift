@@ -228,7 +228,7 @@ extension String {
         case whatsNewSecondItemTitle9_0_0 = "Customizable home page"
         case whatsNewSecondItemDescription9_0_0 = "Tailor your home page to show the information that’s most relevant to you."
         case whatsNewFirstItemTitle10_0_0 = "Zooming"
-        case whatsNewFirstItemDescription10_0_0 = "You can now pinch with two fingers on the screen to zoom in and out on pages."
+        case whatsNewFirstItemDescription10_0_0 = "You can now easily zoom in and out on any page through options."
         case whatsNewSecondItemTitle10_0_0 = "Password manager"
         case whatsNewSecondItemDescription10_0_0 = "We’ve added 1Password to Ecosia to help you to manage your passwords securely."
         case whatsNewFooterButtonTitle = "Discover"
