@@ -2694,8 +2694,6 @@ extension BrowserViewController: TabTrayDelegate {
     func tabTrayDidDismiss(_ tabTray: LegacyGridTabViewController) {
         // Ecosia: unused method
         // resetBrowserChrome()
-        // Ecosia: check if any sheet needs display
-        presentInsightfulSheetsIfNeeded()
     }
 
     func tabTrayDidAddTab(_ tabTray: LegacyGridTabViewController, tab: Tab) {}
