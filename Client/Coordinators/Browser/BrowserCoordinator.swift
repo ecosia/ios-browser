@@ -123,6 +123,8 @@ class BrowserCoordinator: BaseCoordinator,
         if inline, !User.shared.firstTime {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
                 self?.browserViewController.presentInsightfulSheetsIfNeeded()
+                // Ecosia: at this stage, we consider it a safe place where storing the current version
+                EcosiaInstallType.evaluateCurrentEcosiaInstallType(storeUpgradeVersion: true)
             }
         }
     }
