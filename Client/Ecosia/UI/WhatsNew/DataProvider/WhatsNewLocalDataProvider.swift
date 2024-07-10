@@ -5,6 +5,7 @@
 import Foundation
 import Shared
 import Core
+import Common
 
 /// A local data provider for fetching What's New items based on app version updates.
 final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
@@ -58,11 +59,19 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
     private static let defaultWhatsNewItems = [
         Version("9.0.0")!: [
             WhatsNewItem(image: UIImage(named: "tree"),
-                         title: .localized(.whatsNewFirstItemTitle),
-                         subtitle: .localized(.whatsNewFirstItemDescription)),
+                         title: .localized(.whatsNewFirstItemTitle9_0_0),
+                         subtitle: .localized(.whatsNewFirstItemDescription9_0_0)),
             WhatsNewItem(image: UIImage(named: "customisation"),
-                         title: .localized(.whatsNewSecondItemTitle),
-                         subtitle: .localized(.whatsNewSecondItemDescription))
+                         title: .localized(.whatsNewSecondItemTitle9_0_0),
+                         subtitle: .localized(.whatsNewSecondItemDescription9_0_0))
+        ],
+        Version("10.0.0")!: [
+            WhatsNewItem(image: UIImage(named: ImageIdentifiers.zoomIn),
+                         title: .localized(.whatsNewFirstItemTitle10_0_0),
+                         subtitle: .localized(.whatsNewFirstItemDescription10_0_0)),
+            WhatsNewItem(image: UIImage(named: StandardImageIdentifiers.Large.lock),
+                         title: .localized(.whatsNewSecondItemTitle10_0_0),
+                         subtitle: .localized(.whatsNewSecondItemDescription10_0_0))
         ]
     ]
             
