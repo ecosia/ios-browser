@@ -13,6 +13,9 @@ protocol DefaultBrowserDelegate: AnyObject {
 @available(iOS 14, *)
 final class DefaultBrowser: UIViewController, Themeable {
     
+    /// The minimum amount of searches required to show the Default Browser
+    static var minPromoSearches = 50
+    
     weak var content: UIView!
     weak var image: UIImageView!
     weak var waves: UIImageView!
