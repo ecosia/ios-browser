@@ -159,7 +159,7 @@ final class WhatsNewLocalDataProviderTests: XCTestCase {
         let shouldShowWhatsNew = dataProvider.shouldShowWhatsNewPage
         
         // Then
-        XCTAssertTrue(shouldShowWhatsNew, "Upgrade to a version without items should not show whats new")
+        XCTAssertTrue(shouldShowWhatsNew, "Upgrade to a version without items should show whats new")
     }
 }
 
