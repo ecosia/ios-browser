@@ -231,7 +231,7 @@ extension String {
         case whatsNewFirstItemDescription10_0_0 = "You can now easily zoom in and out on any page through options."
         case whatsNewSecondItemTitle10_0_0 = "Password manager"
         case whatsNewSecondItemDescription10_0_0 = "We’ve added 1Password to Ecosia to help you to manage your passwords securely."
-        case whatsNewFooterButtonTitle = "Discover"
+        case whatsNewFooterButtonTitle = "Got it"
         case quickSearch = "Quick Search"
         case apnConsentVariantNameControlHeaderTitle = "Keep up with Ecosia"
         case apnConsentVariantNameTest1HeaderTitle = "Turn on push notifications"
