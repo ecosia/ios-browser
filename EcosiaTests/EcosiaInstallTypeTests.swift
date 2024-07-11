@@ -67,8 +67,7 @@ final class EcosiaInstallTypeTests: XCTestCase {
 
 extension EcosiaInstallTypeTests {
     
-    // Test evaluating install type and version for a fresh install with firstTime=true
-    func testEvaluateFreshInstallType_WithFirstTime_And_VersionProvider() {
+    func testEvaluateFreshInstallType_WithFirstTimeTrue_And_VersionProvider() {
         User.shared.firstTime = true
         let versionProvider = MockAppVersionInfoProvider(mockedAppVersion: "1.0.0")
         EcosiaInstallType.evaluateCurrentEcosiaInstallType(withVersionProvider: versionProvider)
@@ -77,13 +76,23 @@ extension EcosiaInstallTypeTests {
         XCTAssertEqual(EcosiaInstallType.persistedCurrentVersion(), "1.0.0")
     }
 
-    // Test evaluating install type and version for an upgrade with firstTime=true
-    func testEvaluateUpgradeInstallType_WithFirstTimeFalse_And_VersionProvider() {
+    func testEvaluateUpgradeInstallType_WithFirstTimeFalse_NotStoringNewVersion_And_VersionProvider() {
         User.shared.firstTime = false
         UserDefaults.standard.set("0.9.0", forKey: EcosiaInstallType.currentInstalledVersionKey)
         
         let versionProvider = MockAppVersionInfoProvider(mockedAppVersion: "1.0.0")
         EcosiaInstallType.evaluateCurrentEcosiaInstallType(withVersionProvider: versionProvider)
+        
+        XCTAssertEqual(EcosiaInstallType.get(), .upgrade)
+        XCTAssertEqual(EcosiaInstallType.persistedCurrentVersion(), "0.9.0")
+    }
+    
+    func testEvaluateUpgradeInstallType_WithFirstTimeFalse_StoringNewVersion_And_VersionProvider() {
+        User.shared.firstTime = false
+        UserDefaults.standard.set("0.9.0", forKey: EcosiaInstallType.currentInstalledVersionKey)
+        
+        let versionProvider = MockAppVersionInfoProvider(mockedAppVersion: "1.0.0")
+        EcosiaInstallType.evaluateCurrentEcosiaInstallType(withVersionProvider: versionProvider, storeUpgradeVersion: true)
         
         XCTAssertEqual(EcosiaInstallType.get(), .upgrade)
         XCTAssertEqual(EcosiaInstallType.persistedCurrentVersion(), "1.0.0")
