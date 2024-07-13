@@ -47,6 +47,12 @@ class DefaultTabMigrationUtility: TabMigrationUtility {
     }
 
     func getLegacyTabs() -> [LegacySavedTab] {
+        
+        // Ecosia: Tabs architecture implementation from ~v112 to ~116
+        if let deprecatedMigratedTabs = getDeprecatedTabsToMigrate() {
+            return deprecatedMigratedTabs
+        }
+
         guard let tabData = legacyTabDataRetriever.getTabData() else {
             return []
         }
@@ -115,3 +121,46 @@ class DefaultTabMigrationUtility: TabMigrationUtility {
         return windowData
     }
 }
+
+// Ecosia: Tabs architecture implementation from ~v112 to ~116
+// This is temprorary in order to fix a migration error, can be removed after our Ecosia 10.0.0 has been well adopted
+
+extension DefaultTabMigrationUtility {
+    
+    func getDeprecatedTabsToMigrate() -> [LegacySavedTab]? {
+        guard let tabData = legacyTabDataRetriever.getTabData()
+        else { return [LegacySavedTab]() }
+        do {
+            let deprecatedUnarchiver = NSKeyedUnarchiver(forReadingWith: tabData)
+            deprecatedUnarchiver.requiresSecureCoding = true
+            deprecatedUnarchiver.setClass(LegacySavedTab.self, forClassName: "Client.SavedTab")
+            deprecatedUnarchiver.setClass(LegacySessionData.self, forClassName: "Client.SessionData")
+            deprecatedUnarchiver.setClass(LegacyTabGroupData.self, forClassName: "Client.TabGroupData")
+            deprecatedUnarchiver.decodingFailurePolicy = .setErrorAndReturn
+            guard let migratedTabs = try deprecatedUnarchiver.decodeTopLevelObject(forKey: tabsKey) as? [LegacySavedTab] else {
+                let error = String(describing: deprecatedUnarchiver.error)
+                logger.log("Deprecated unarchiver could not decode Saved tab with: \(error)", level: .warning, category: .tabs, description: error.localizedDescription)
+                return nil
+            }
+            return migratedTabs
+        } catch {
+            return nil
+        }
+    }
+    
+    
+    private func clearDeprecatedArchive() {
+        guard let deprecatedPath = legacyTabDataRetriever.tabsStateArchivePath else { return }
+
+        do {
+            try (legacyTabDataRetriever as? LegacyTabDataRetrieverImplementation)?.fileManager.removeItem(at: deprecatedPath)
+        } catch let error {
+            logger.log("Clear deprecated archive couldn't be completed",
+                       level: .warning,
+                       category: .tabs,
+                       description: error.localizedDescription)
+        }
+    }
+}
+
+// Ecosia: End Tabs architecture implementation from ~v112 to ~116
