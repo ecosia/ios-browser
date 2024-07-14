@@ -51,11 +51,6 @@ class LegacySessionData: NSObject, Codable, NSCoding {
         case currentPage
         case lastUsedTime
         case urls
-        
-        // Ecosia: Tabs architecture implementation from ~v112 to ~116
-        // This is temprorary in order to fix a migration error, can be removed after our Ecosia 10.0.0 has been well adopted
-        case legacyCurrentPage = "user_first_name"
-        case legacyLastUsedTime = "user_last_name"
     }
 
     /**
@@ -82,32 +77,11 @@ class LegacySessionData: NSObject, Codable, NSCoding {
             CodingKeys.urls.rawValue: urls.map { $0.absoluteString }
         ]
     }
-    
-    required init(from decoder: Decoder) throws {
-        let values = try decoder.container(keyedBy: CodingKeys.self)
-        do {
-            currentPage = try values.decode(Int.self, forKey: .currentPage)
-        } catch {
-            currentPage = try values.decode(Int.self, forKey: .legacyCurrentPage)
-        }
-
-        do {
-            lastUsedTime = try values.decode(Timestamp.self, forKey: .lastUsedTime)
-        } catch {
-            lastUsedTime = try values.decode(Timestamp.self, forKey: .legacyLastUsedTime)
-        }
-
-        urls = try values.decode([URL].self, forKey: .urls)
-    }
-    
-    func encode(to encoder: any Encoder) throws {
-        
-    }
-    
+            
     required init?(coder: NSCoder) {
-        self.currentPage = coder.decodeObject(forKey: CodingKeys.currentPage.rawValue) as? Int ?? coder.decodeInteger(forKey: CodingKeys.currentPage.rawValue)
+        self.currentPage = coder.decodeInteger(forKey: CodingKeys.currentPage.rawValue)
         self.urls = migrate(urls: coder.decodeObject(forKey: CodingKeys.urls.rawValue) as? [URL] ?? [URL]())
-        self.lastUsedTime = (coder.decodeObject(forKey: CodingKeys.lastUsedTime.rawValue) as? NSNumber)?.uint64Value ?? UInt64(coder.decodeInt64(forKey: CodingKeys.lastUsedTime.rawValue))
+        self.lastUsedTime = UInt64(coder.decodeInt64(forKey: CodingKeys.lastUsedTime.rawValue))
     }
 
     func encode(with coder: NSCoder) {
