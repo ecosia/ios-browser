@@ -130,21 +130,17 @@ extension DefaultTabMigrationUtility {
     func getDeprecatedTabsToMigrate() -> [LegacySavedTab]? {
         guard let tabData = legacyTabDataRetriever.getTabData()
         else { return [LegacySavedTab]() }
-        do {
-            let deprecatedUnarchiver = try NSKeyedUnarchiver(forReadingWith: tabData)
-            deprecatedUnarchiver.setClass(LegacySavedTab.self, forClassName: "Client.SavedTab")
-            deprecatedUnarchiver.setClass(LegacySessionData.self, forClassName: "Client.SessionData")
-            deprecatedUnarchiver.setClass(LegacyTabGroupData.self, forClassName: "Client.TabGroupData")
-            deprecatedUnarchiver.decodingFailurePolicy = .setErrorAndReturn
-            guard let migratedTabs = deprecatedUnarchiver.decodeObject(forKey: tabsKey) as? [LegacySavedTab] else {
-                let error = String(describing: deprecatedUnarchiver.error)
-                logger.log("Deprecated unarchiver could not decode Saved tab with: \(error)", level: .warning, category: .tabs, description: error.localizedDescription)
-                return nil
-            }
-            return migratedTabs
-        } catch {
+        let deprecatedUnarchiver = try NSKeyedUnarchiver(forReadingWith: tabData)
+        deprecatedUnarchiver.setClass(LegacySavedTab.self, forClassName: "Client.SavedTab")
+        deprecatedUnarchiver.setClass(LegacySessionData.self, forClassName: "Client.SessionData")
+        deprecatedUnarchiver.setClass(LegacyTabGroupData.self, forClassName: "Client.TabGroupData")
+        deprecatedUnarchiver.decodingFailurePolicy = .setErrorAndReturn
+        guard let migratedTabs = deprecatedUnarchiver.decodeObject(forKey: tabsKey) as? [LegacySavedTab] else {
+            let error = String(describing: deprecatedUnarchiver.error)
+            logger.log("Deprecated unarchiver could not decode Saved tab with: \(error)", level: .warning, category: .tabs, description: error.localizedDescription)
             return nil
         }
+        return migratedTabs
     }
     
     
