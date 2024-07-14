@@ -43,7 +43,13 @@ class DefaultTabMigrationUtility: TabMigrationUtility {
         logger.log("Key exists - running migration? \(shouldRunMigration)",
                    level: .debug,
                    category: .tabs)
-        return shouldRunMigration
+        /* 
+         Ecosia: Tabs architecture implementation from ~v112 to ~116
+         This is temprorary in order to fix a migration error, can be removed after our Ecosia 10.0.0 has been well adopted
+         return shouldRunMigration
+         */
+        let hasLegacyTabData = legacyTabDataRetriever.getTabData() != nil
+        return shouldRunMigration || hasLegacyTabData
     }
 
     func getLegacyTabs() -> [LegacySavedTab] {
@@ -118,6 +124,8 @@ class DefaultTabMigrationUtility: TabMigrationUtility {
         // Save migration WindowData
         await tabDataStore.saveWindowData(window: windowData, forced: true)
         prefs.setBool(false, forKey: migrationKey)
+        // Ecosia: Tabs architecture implementation from ~v112 to ~116
+        clearDeprecatedArchive()
         return windowData
     }
 }
