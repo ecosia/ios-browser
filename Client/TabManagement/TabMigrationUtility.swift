@@ -126,6 +126,7 @@ class DefaultTabMigrationUtility: TabMigrationUtility {
         prefs.setBool(false, forKey: migrationKey)
         // Ecosia: Tabs architecture implementation from ~v112 to ~116
         clearDeprecatedArchive()
+        Analytics.shared.migration(true)
         return windowData
     }
 }
@@ -145,7 +146,10 @@ extension DefaultTabMigrationUtility {
         deprecatedUnarchiver.decodingFailurePolicy = .setErrorAndReturn
         guard let migratedTabs = deprecatedUnarchiver.decodeObject(forKey: tabsKey) as? [LegacySavedTab] else {
             let error = String(describing: deprecatedUnarchiver.error)
-            logger.log("Deprecated unarchiver could not decode Saved tab with: \(error)", level: .warning, category: .tabs, description: error.localizedDescription)
+            let message = "Deprecated unarchiver could not decode Saved tab with: \(error)"
+            logger.log(message, level: .warning, category: .tabs, description: error.localizedDescription)
+            Analytics.shared.migration(false)
+            Analytics.shared.migrationError(in: .tabs, message: message)
             return nil
         }
         return migratedTabs
