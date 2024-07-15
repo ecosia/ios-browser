@@ -107,12 +107,7 @@ final class Analytics {
         let event = Structured(category: Category.external.rawValue,
                                action: Action.receive.rawValue)
             .label("default_browser_deeplink")
-        
-        // add A/B Test context
-        if let context = Self.getTestContext(from: .defaultBrowser) {
-            event.contexts.append(context)
-        }
-        
+                
         track(event)
     }
     
@@ -121,12 +116,7 @@ final class Analytics {
                                action: action.rawValue)
             .label("default_browser_promo")
             .property("home")
-        
-        // add A/B Test context
-        if let context = Self.getTestContext(from: .defaultBrowser) {
-            event.contexts.append(context)
-        }
-        
+                
         track(event)
     }
     

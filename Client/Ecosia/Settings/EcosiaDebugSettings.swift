@@ -191,17 +191,6 @@ class UnleashVariantResetSetting: HiddenSetting {
     }
 }
 
-
-final class UnleashDefaultBrowserSetting: UnleashVariantResetSetting {
-    override var titleName: String? {
-        return "default browser"
-    }
-    
-    override var variant: Unleash.Variant? {
-        Unleash.getVariant(.defaultBrowser)
-    }
-}
-
 final class UnleashBingDistributionSetting: UnleashVariantResetSetting {
     override var titleName: String? {
         return "Bing distribution"
