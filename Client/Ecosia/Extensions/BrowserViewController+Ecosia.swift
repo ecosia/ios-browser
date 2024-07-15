@@ -70,8 +70,6 @@ extension BrowserViewController {
             presentLoadingScreen()
         } else if User.shared.firstTime {
             handleFirstTimeUserActions()
-        } else {
-            presentInsightfulSheetsIfNeeded()
         }
     }
     

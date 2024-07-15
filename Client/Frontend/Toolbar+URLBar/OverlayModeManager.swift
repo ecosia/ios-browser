@@ -34,6 +34,8 @@ protocol OverlayModeManager: OverlayStateProtocol {
 }
 
 class DefaultOverlayModeManager: OverlayModeManager {
+    // Ecosia: Add override to manage the overlay mode in case of other pages being shown
+    var overrideShouldEnterOverlayMode: Bool?
     private var urlBarView: URLBarViewProtocol?
 
     var inOverlayMode: Bool {
@@ -67,6 +69,10 @@ class DefaultOverlayModeManager: OverlayModeManager {
     }
 
     private func shouldEnterOverlay(for url: URL?, newTabSettings: NewTabPage) -> Bool {
+        // Ecosia: Add override to manage the overlay mode in case of other pages being shown
+        guard overrideShouldEnterOverlayMode == nil else {
+            return overrideShouldEnterOverlayMode!
+        }
         // The NewTabPage cases are weird topSites = homepage
         // and homepage = customURL
         switch newTabSettings {
