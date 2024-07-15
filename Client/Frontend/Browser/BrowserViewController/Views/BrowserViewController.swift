@@ -2564,7 +2564,6 @@ extension BrowserViewController {
 
     func presentInsightfulSheetsIfNeeded() {
         guard isHomePage(),
-              presentedViewController == nil,
               !showLoadingScreen(for: .shared) else { return }
         
         // TODO: To review this logic as part of the upgrade
