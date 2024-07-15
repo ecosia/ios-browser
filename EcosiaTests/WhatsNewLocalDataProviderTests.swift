@@ -136,7 +136,20 @@ final class WhatsNewLocalDataProviderTests: XCTestCase {
         XCTAssertFalse(shouldShowWhatsNew, "Upgrade with already shown items should show not show what's new")
     }
     
-    func testUpgradeToVersionWithoutItemsLike940ShouldNotShowWhatsNew() {
+    func testUpgradeToVersionWithoutItemsLike950ShouldNotShowWhatsNew() {
+        // Given
+        EcosiaInstallType.updateCurrentVersion(version: "9.4.0")
+        EcosiaInstallType.set(type: .upgrade)
+        let dataProvider = WhatsNewLocalDataProvider(versionProvider: MockAppVersionInfoProvider(mockedAppVersion: "9.5.0"))
+        
+        // When
+        let shouldShowWhatsNew = dataProvider.shouldShowWhatsNewPage
+        
+        // Then
+        XCTAssertFalse(shouldShowWhatsNew, "Upgrade to a version without items should not show whats new")
+    }
+    
+    func testUpgradeToVersionWithItemsLike10ShouldShowWhatsNew() {
         // Given
         EcosiaInstallType.updateCurrentVersion(version: "9.4.0")
         EcosiaInstallType.set(type: .upgrade)
@@ -146,7 +159,7 @@ final class WhatsNewLocalDataProviderTests: XCTestCase {
         let shouldShowWhatsNew = dataProvider.shouldShowWhatsNewPage
         
         // Then
-        XCTAssertFalse(shouldShowWhatsNew, "Upgrade to a version without items should not show whats new")
+        XCTAssertTrue(shouldShowWhatsNew, "Upgrade to a version without items should show whats new")
     }
 }
 
