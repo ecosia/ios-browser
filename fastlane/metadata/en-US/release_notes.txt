@@ -1,1 +1,10 @@
-We fixed some bugs and added some stability improvements.
+We updated the entire foundation of our app. This makes our browser faster, more stable, and more secure.
+
+Here are some of the exciting new features in this release:
+
+	-	Zoom: Zoom in and out of websites to improve legibility
+	-	1Password support: Seamlessly integrate your passwords for a smoother browsing experience
+
+Upgrade now to enjoy these new features and enhancements! If you haven't installed our app yet, now is the perfect time to join the Ecosia community.
+
+Happy browsing!
