@@ -39,8 +39,10 @@ private func migrate(urls: [URL]) -> [URL] {
         return url
     }
 }
-
-class LegacySessionData: Codable {
+// Ecosia: Tabs architecture implementation from ~v112 to ~116
+// class LegacySessionData: Codable {
+class LegacySessionData: NSObject, Codable, NSCoding {
+    
     let currentPage: Int
     let lastUsedTime: Timestamp
     let urls: [URL]
@@ -64,4 +66,29 @@ class LegacySessionData: Codable {
         self.urls = migrate(urls: urls)
         self.lastUsedTime = lastUsedTime
     }
+    
+    // Ecosia: Tabs architecture implementation from ~v112 to ~116
+    // This is temprorary in order to fix a migration error, can be removed after our Ecosia 10.0.0 has been well adopted
+    
+    var jsonDictionary: [String: Any] {
+        return [
+            CodingKeys.currentPage.rawValue: String(self.currentPage),
+            CodingKeys.lastUsedTime.rawValue: String(self.lastUsedTime),
+            CodingKeys.urls.rawValue: urls.map { $0.absoluteString }
+        ]
+    }
+            
+    required init?(coder: NSCoder) {
+        self.currentPage = coder.decodeInteger(forKey: CodingKeys.currentPage.rawValue)
+        self.urls = migrate(urls: coder.decodeObject(forKey: CodingKeys.urls.rawValue) as? [URL] ?? [URL]())
+        self.lastUsedTime = UInt64(coder.decodeInt64(forKey: CodingKeys.lastUsedTime.rawValue))
+    }
+
+    func encode(with coder: NSCoder) {
+        coder.encode(currentPage, forKey: CodingKeys.currentPage.rawValue)
+        coder.encode(migrate(urls: urls), forKey: CodingKeys.urls.rawValue)
+        coder.encode(Int64(lastUsedTime), forKey: CodingKeys.lastUsedTime.rawValue)
+    }
+
+    // Ecosia: End Tabs architecture implementation from ~v112 to ~116
 }
