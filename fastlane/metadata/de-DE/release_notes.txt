@@ -1,4 +1,4 @@
-Wir haben unsere App grundlegend aktualisiert. So ist unser Browser nun schneller, stabiler und sicherer.
+Wir haben unsere App grundlegend aktualisiert. Unser Browser ist jetzt schneller, stabiler und sicherer.
 
 Dies sind einige der aufregenden neuen Funktionen in dieser Version:
 
