@@ -1,6 +1,6 @@
 Hemos actualizado los cimientos de nuestra aplicación. Esto permite que nuestro navegador sea más rápido, estable y seguro.
 
-Éstas son algunas de las emocionantes novedades de esta versión:
+Estas son algunas de las emocionantes novedades de esta versión:
 
 	-	Zoom: acerca y aleja los sitios web para mejorar la legibilidad
 	-	Compatible con 1Password: integra perfectamente tus contraseñas para disfrutar de una experiencia de navegación más fluida
