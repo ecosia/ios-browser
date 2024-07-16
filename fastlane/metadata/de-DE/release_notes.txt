@@ -3,7 +3,7 @@ Wir haben unsere App grundlegend aktualisiert. Unser Browser ist jetzt schneller
 Dies sind einige der aufregenden neuen Funktionen in dieser Version:
 
 	-	Zoom: Vergrößern und Verkleinern von Websites zur besseren Lesbarkeit
-1Password-Support: Nahtlose Integration von Passwörtern für ein reibungsloses Surferlebnis
+1Password-Unterstützung: Nahtlose Integration von Passwörtern für ein reibungsloses Surferlebnis
 
 Jetzt upgraden, um diese neuen Funktionen und Verbesserungen zu genießen! Solltest du unsere App noch nicht installiert haben, ist jetzt der perfekte Zeitpunkt, Teil der Ecosia Community zu werden.
 
