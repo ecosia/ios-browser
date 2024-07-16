@@ -1,1 +1,10 @@
-Abbiamo risolto alcuni bug e aggiunto alcuni miglioramenti della stabilità.
+Abbiamo aggiornato le fondamenta della nostra app, rendendo il nostro browser più veloce, più stabile e più sicuro.
+
+Ecco alcune delle entusiasmanti nuove funzioni di questa release:
+
+	-	Zoom: ingrandisci e rimpicciolisci le pagine web per migliorare la leggibilità
+	-	Assistenza 1Password: integra direttamente le tue password, per un'esperienza di navigazione più semplice
+
+Fai subito l'aggiornamento per sfruttare queste nuove funzioni e miglioramenti! Se non hai ancora installato la nostra app, ora è il momento perfetto per unirti alla community di Ecosia.
+
+Buona navigazione!
