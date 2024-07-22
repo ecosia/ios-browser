@@ -48,6 +48,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     private var widgetManager: TopSitesWidgetManager?
     private var menuBuilderHelper: MenuBuilderHelper?
     private var metricKitWrapper = MetricKitWrapper()
+    // Ecosia: Add analytics
+    var analytics: AnalyticsProtocol = Analytics.shared
 
     /// Tracking active status of the application.
     private var isActive = false
@@ -190,7 +192,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Task {
             await FeatureManagement.fetchConfiguration()
             // Ecosia: lifecycle tracking
-            Analytics.shared.activity(.launch)
+            analytics.activity(.launch)
             // Ecosia: Engagement Service Initialization helper
             ClientEngagementService.shared.initializeAndUpdateNotificationRegistrationIfNeeded(notificationCenterDelegate: self)
         }
@@ -301,7 +303,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillEnterForeground(_ application: UIApplication) {
         // Ecosia: lifecycle tracking
-        Analytics.shared.activity(.resume)
+        analytics.activity(.resume)
         handleForegroundEvent()
     }
 
