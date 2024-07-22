@@ -43,8 +43,8 @@ DerivedData
 /assets
 #build tools
 /fastlane/Appfile
-/fastlane/Snapfile
-/fastlane/SnapshotHelper.swift
+# /fastlane/Snapfile
+# /fastlane/SnapshotHelper.swift
 /fastlane/frames
 /fastlane/scripts
 /fastlane/templates
