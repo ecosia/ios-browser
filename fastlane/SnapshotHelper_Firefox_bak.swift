@@ -15,12 +15,13 @@
 import Foundation
 import XCTest
 
-@MainActor
+var deviceLanguage = ""
+var locale = ""
+
 func setupSnapshot(_ app: XCUIApplication, waitForAnimations: Bool = true) {
     Snapshot.setupSnapshot(app, waitForAnimations: waitForAnimations)
 }
 
-@MainActor
 func snapshot(_ name: String, waitForLoadingIndicator: Bool) {
     if waitForLoadingIndicator {
         Snapshot.snapshot(name)
@@ -32,7 +33,6 @@ func snapshot(_ name: String, waitForLoadingIndicator: Bool) {
 /// - Parameters:
 ///   - name: The name of the snapshot
 ///   - timeout: Amount of seconds to wait until the network loading indicator disappears. Pass `0` if you don't want to wait.
-@MainActor
 func snapshot(_ name: String, timeWaitingForIdle timeout: TimeInterval = 20) {
     Snapshot.snapshot(name, timeWaitingForIdle: timeout)
 }
@@ -52,7 +52,6 @@ enum SnapshotError: Error, CustomDebugStringConvertible {
 }
 
 @objcMembers
-@MainActor
 open class Snapshot: NSObject {
     static var app: XCUIApplication?
     static var waitForAnimations = true
@@ -60,8 +59,6 @@ open class Snapshot: NSObject {
     static var screenshotsDirectory: URL? {
         return cacheDirectory?.appendingPathComponent("screenshots", isDirectory: true)
     }
-    static var deviceLanguage = ""
-    static var currentLocale = ""
 
     open class func setupSnapshot(_ app: XCUIApplication, waitForAnimations: Bool = true) {
 
@@ -106,17 +103,17 @@ open class Snapshot: NSObject {
 
         do {
             let trimCharacterSet = CharacterSet.whitespacesAndNewlines
-            currentLocale = try String(contentsOf: path, encoding: .utf8).trimmingCharacters(in: trimCharacterSet)
+            locale = try String(contentsOf: path, encoding: .utf8).trimmingCharacters(in: trimCharacterSet)
         } catch {
             NSLog("Couldn't detect/set locale...")
         }
 
-        if currentLocale.isEmpty && !deviceLanguage.isEmpty {
-            currentLocale = Locale(identifier: deviceLanguage).identifier
+        if locale.isEmpty && !deviceLanguage.isEmpty {
+            locale = Locale(identifier: deviceLanguage).identifier
         }
 
-        if !currentLocale.isEmpty {
-            app.launchArguments += ["-AppleLocale", "\"\(currentLocale)\""]
+        if !locale.isEmpty {
+            app.launchArguments += ["-AppleLocale", "\"\(locale)\""]
         }
     }
 
@@ -184,7 +181,7 @@ open class Snapshot: NSObject {
 
                 let path = screenshotsDir.appendingPathComponent("\(simulator)-\(name).png")
                 #if swift(<5.0)
-                    try UIImagePNGRepresentation(image)?.write(to: path, options: .atomic)
+                    UIImagePNGRepresentation(image)?.write(to: path, options: .atomic)
                 #else
                     try image.pngData()?.write(to: path, options: .atomic)
                 #endif
@@ -284,7 +281,6 @@ private extension XCUIElementQuery {
         return self.containing(isNetworkLoadingIndicator)
     }
 
-    @MainActor
     var deviceStatusBars: XCUIElementQuery {
         guard let app = Snapshot.app else {
             fatalError("XCUIApplication is not set. Please call setupSnapshot(app) before snapshot().")
@@ -310,4 +306,4 @@ private extension CGFloat {
 
 // Please don't remove the lines below
 // They are used to detect outdated configuration files
-// SnapshotHelperVersion [1.30]
+// SnapshotHelperVersion [1.28]
