@@ -175,8 +175,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Ecosia: Update EcosiaInstallType if needed
         EcosiaInstallType.evaluateCurrentEcosiaInstallType()
         // Ecosia: Disable BG sync //backgroundSyncUtil = BackgroundSyncUtil(profile: profile, application: application)
-        // Ecosia: lifecycle tracking
-        Analytics.shared.activity(.launch)
         
         /* 
          Ecosia: Feature Management fetch
@@ -191,6 +189,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
          */
         Task {
             await FeatureManagement.fetchConfiguration()
+            // Ecosia: lifecycle tracking
+            Analytics.shared.activity(.launch)
             // Ecosia: Engagement Service Initialization helper
             ClientEngagementService.shared.initializeAndUpdateNotificationRegistrationIfNeeded(notificationCenterDelegate: self)
         }
