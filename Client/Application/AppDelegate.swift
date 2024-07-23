@@ -191,7 +191,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
          */
         Task {
             await FeatureManagement.fetchConfiguration()
-            // Ecosia: lifecycle tracking
+            // Ecosia: Lifecycle tracking. Needs to happen after Unleash start so that the flags are correctly added to the analytics context.
             analytics.activity(.launch)
             // Ecosia: Engagement Service Initialization helper
             ClientEngagementService.shared.initializeAndUpdateNotificationRegistrationIfNeeded(notificationCenterDelegate: self)
