@@ -6,16 +6,6 @@ import XCTest
 @testable import Client
 @testable import Core
 
-final class MockAnalytics: AnalyticsProtocol {
-    var activityCallCount = 0
-    var lastActivity: Analytics.Action.Activity?
-    
-    func activity(_ action: Analytics.Action.Activity) {
-        activityCallCount += 1
-        lastActivity = action
-    }
-}
-
 final class AnalyticsFeatureManagementIntegrationTests: XCTestCase {
     var appDelegate: AppDelegate!
     var mockAnalytics: MockAnalytics!
