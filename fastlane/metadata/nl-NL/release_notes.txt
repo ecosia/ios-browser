@@ -1,10 +1,1 @@
-We hebben de basis van onze app volledig bijgewerkt. Daardoor is onze browser sneller, stabieler en veiliger.
-
-Dit zijn enkele geweldige nieuwe functies in deze release:
-
-	-	Zoom: In- en uitzoomen bij websites om leesbaarheid te verbeteren
-	-	1Password-ondersteuning: Naadloze integratie van je wachtwoorden voor een betere browse-ervaring
-
-Upgrade nu om te profiteren van deze nieuwe functies en verbeteringen! Als je onze app nog niet hebt geïnstalleerd, is dit het ideale moment om lid te worden van de Ecosia-community.
-
-Happy browsing!
+We hebben een aantal bugs verholpen en een aantal stabiliteitsverbeteringen doorgevoerd:
