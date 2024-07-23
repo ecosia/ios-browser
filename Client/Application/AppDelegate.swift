@@ -48,6 +48,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     private var widgetManager: TopSitesWidgetManager?
     private var menuBuilderHelper: MenuBuilderHelper?
     private var metricKitWrapper = MetricKitWrapper()
+    // Ecosia: Add analytics
+    var analytics: AnalyticsProtocol = Analytics.shared
 
     /// Tracking active status of the application.
     private var isActive = false
@@ -175,8 +177,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Ecosia: Update EcosiaInstallType if needed
         EcosiaInstallType.evaluateCurrentEcosiaInstallType()
         // Ecosia: Disable BG sync //backgroundSyncUtil = BackgroundSyncUtil(profile: profile, application: application)
-        // Ecosia: lifecycle tracking
-        Analytics.shared.activity(.launch)
         
         /* 
          Ecosia: Feature Management fetch
@@ -191,6 +191,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
          */
         Task {
             await FeatureManagement.fetchConfiguration()
+            // Ecosia: Lifecycle tracking. Needs to happen after Unleash start so that the flags are correctly added to the analytics context.
+            analytics.activity(.launch)
             // Ecosia: Engagement Service Initialization helper
             ClientEngagementService.shared.initializeAndUpdateNotificationRegistrationIfNeeded(notificationCenterDelegate: self)
         }
@@ -300,6 +302,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
+        // Ecosia: lifecycle tracking
+        analytics.activity(.resume)
         handleForegroundEvent()
     }
 
