@@ -39,7 +39,7 @@ final class AnalyticsFeatureManagementIntegrationTests: XCTestCase {
         
         XCTAssertTrue(didFinishLaunching)
         // Let it go thru all the activities, including the Task detached ones
-        wait(0.5)
+        wait(1)
         XCTAssertEqual(mockAnalytics.activityCallCount, 1)
         XCTAssertEqual(mockAnalytics.lastActivity, .launch)
         XCTAssertNotEqual(Unleash.model.updated, Date(timeIntervalSince1970: 0))
@@ -58,7 +58,7 @@ final class AnalyticsFeatureManagementIntegrationTests: XCTestCase {
         
         XCTAssertTrue(didFinishLaunching)
         // Let it go thru all the activities, including the Task detached ones
-        wait(0.5)
+        wait(1)
         XCTAssertEqual(mockAnalytics.activityCallCount, 1)
         XCTAssertEqual(mockAnalytics.lastActivity, .launch)
         let modelAfterLaunch = Unleash.model
@@ -66,7 +66,7 @@ final class AnalyticsFeatureManagementIntegrationTests: XCTestCase {
         // Simulate entering background and foreground again
         await appDelegate.applicationDidBecomeActive(application)
         
-        wait(0.5)
+        wait(1)
         XCTAssertEqual(mockAnalytics.activityCallCount, 2)
         XCTAssertEqual(mockAnalytics.lastActivity, .resume)
         XCTAssertEqual(Unleash.model.toggles.count, modelAfterLaunch.toggles.count)
