@@ -93,7 +93,7 @@ class DefaultTabMigrationUtility: TabMigrationUtility {
 
             let tabData = TabData(id: savedTabUUID,
                                   title: savedTab.title,
-                                  siteUrl: savedTab.url?.absoluteString ?? "",
+                                  siteUrl: savedTab.url?.absoluteString ?? savedTab.sessionData?.urls.last?.absoluteString ?? "",
                                   faviconURL: savedTab.faviconURL,
                                   isPrivate: savedTab.isPrivate,
                                   lastUsedTime: Date.fromTimestamp(savedTab.sessionData?.lastUsedTime ?? Date().toTimestamp()),
