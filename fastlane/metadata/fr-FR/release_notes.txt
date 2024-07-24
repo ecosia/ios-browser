@@ -1,10 +1,1 @@
-Nous avons mis à jour toutes les bases de notre application. Notre navigateur est ainsi plus rapide, plus stable et plus sûr.
-
-Voici quelques-unes des nouvelles fonctionnalités passionnantes de cette version :
-
-	-	Zoom : zoom vers l'avant et vers l'arrière sur les sites Internet pour améliorer la lisibilité
-	-	Assistance 1Password : intégration fluide de vos mots de passe pour une expérience de navigation plus confortable
-
-Installez la mise à jour dès à présent pour profiter de ces nouvelles fonctionnalités et optimisations ! Si vous n'avez pas encore installé notre application, c'est le moment idéal pour rejoindre la communauté Ecosia.
-
-Nous vous souhaitons une bonne navigation !
+Nous avons résolu quelques problèmes et ajouté des améliorations en termes de stabilité.

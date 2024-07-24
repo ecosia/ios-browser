@@ -46,7 +46,8 @@ public final class DefaultThemeManager: ThemeManager, Notifiable {
         self.mainQueue = mainQueue
         self.sharedContainerIdentifier = sharedContainerIdentifier
 
-        migrateDefaultsToUseStandard()
+        // Ecosia: Remove migration as unneded
+        //migrateDefaultsToUseStandard()
 
         self.userDefaults.register(defaults: [
             ThemeKeys.systemThemeIsOn: true,

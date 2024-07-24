@@ -254,6 +254,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Ecosia
         Task {
             await FeatureManagement.fetchConfiguration()
+            analytics.activity(.resume)
         }
         MMP.sendSession()
         searchesCounter.subscribe(self) { searchCount in
@@ -302,8 +303,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
-        // Ecosia: lifecycle tracking
-        analytics.activity(.resume)
         handleForegroundEvent()
     }
 

@@ -27,18 +27,7 @@ final class AnalyticsFeatureManagementIntegrationTests: XCTestCase {
         XCTAssertEqual(Unleash.model.toggles.count, 0)
         XCTAssertEqual(Unleash.model.updated, Date(timeIntervalSince1970: 0))
     }
-    
-    func testStateAfterInitialForeground_expectsNoModelUpdates() async {
-        let application = await UIApplication.shared
         
-        await appDelegate.applicationWillEnterForeground(application)
-        
-        XCTAssertEqual(mockAnalytics.activityCallCount, 1)
-        XCTAssertEqual(mockAnalytics.lastActivity, .resume)
-        XCTAssertEqual(Unleash.model.toggles.count, 0)
-        XCTAssertEqual(Unleash.model.updated, Date(timeIntervalSince1970: 0))
-    }
-    
     func testStateAfterDidFinishLaunchingWithOptions_expectsModelUpdates() async {
         let application = await UIApplication.shared
         let options: [UIApplication.LaunchOptionsKey: Any]? = nil
@@ -50,14 +39,14 @@ final class AnalyticsFeatureManagementIntegrationTests: XCTestCase {
         
         XCTAssertTrue(didFinishLaunching)
         // Let it go thru all the activities, including the Task detached ones
-        wait(0.5)
+        wait(1)
         XCTAssertEqual(mockAnalytics.activityCallCount, 1)
         XCTAssertEqual(mockAnalytics.lastActivity, .launch)
         XCTAssertNotEqual(Unleash.model.updated, Date(timeIntervalSince1970: 0))
         XCTAssertNotEqual(Unleash.model.toggles.count, 0)
     }
     
-    func testStateAfterSubsequentForeground_expectesSameModel_AfterDidFinishLaunchingWithOptions() async {
+    func testStateAfterDidBecomeActive_expectesSameModel_AfterDidFinishLaunchingWithOptions() async {
         let application = await UIApplication.shared
         
         // Store an updated model so to not let Unleash perform a call
@@ -69,14 +58,15 @@ final class AnalyticsFeatureManagementIntegrationTests: XCTestCase {
         
         XCTAssertTrue(didFinishLaunching)
         // Let it go thru all the activities, including the Task detached ones
-        wait(0.5)
+        wait(1)
         XCTAssertEqual(mockAnalytics.activityCallCount, 1)
         XCTAssertEqual(mockAnalytics.lastActivity, .launch)
         let modelAfterLaunch = Unleash.model
         
         // Simulate entering background and foreground again
-        await appDelegate.applicationWillEnterForeground(application)
+        await appDelegate.applicationDidBecomeActive(application)
         
+        wait(1)
         XCTAssertEqual(mockAnalytics.activityCallCount, 2)
         XCTAssertEqual(mockAnalytics.lastActivity, .resume)
         XCTAssertEqual(Unleash.model.toggles.count, modelAfterLaunch.toggles.count)

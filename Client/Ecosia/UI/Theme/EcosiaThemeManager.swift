@@ -45,20 +45,8 @@ public final class EcosiaThemeManager: ThemeManager, Notifiable {
         self.mainQueue = mainQueue
         self.sharedContainerIdentifier = sharedContainerIdentifier
 
-        migrateDefaultsToUseStandard()
-
         self.userDefaults.register(defaults: [ThemeKeys.systemThemeIsOn: true,
                                               ThemeKeys.NightMode.isOn: NSNumber(value: false)])
-
-        /* 
-         Additional check in case the theme changed while the app was closed
-         Within loadInitialStoredThemeType(), a check of a persisted value is made 👇
-         
-         let savedThemeDescription = userDefaults.string(forKey: ThemeKeys.themeName)
-         
-         This check will extract the last saved theme before killing the app, therefore a different one in case we switched at app killed state where no observers were alive.
-         */
-        updateLegacyThemeIfNeeded()
         changeCurrentTheme(loadInitialStoredThemeType())
 
         setupNotifications(forObserver: self,
