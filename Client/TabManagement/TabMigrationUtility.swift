@@ -73,7 +73,6 @@ class DefaultTabMigrationUtility: TabMigrationUtility {
             return []
         }
     }
-    
     func runMigration(for windowUUID: WindowUUID) async -> WindowData {
         logger.log("Begin tab migration with legacy tab count \(legacyTabs.count)",
                    level: .debug,
