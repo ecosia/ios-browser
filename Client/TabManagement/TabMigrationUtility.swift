@@ -73,12 +73,14 @@ class DefaultTabMigrationUtility: TabMigrationUtility {
             return []
         }
     }
+
     func runMigration(for windowUUID: WindowUUID) async -> WindowData {
         logger.log("Begin tab migration with legacy tab count \(legacyTabs.count)",
                    level: .debug,
                    category: .tabs)
         // Create TabData array from legacyTabs
         var tabsToMigrate = [TabData]()
+
         var selectTabUUID: UUID?
         for savedTab in legacyTabs {
             let savedTabUUID = savedTab.screenshotUUID ?? UUID()
