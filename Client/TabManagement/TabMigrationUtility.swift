@@ -5,8 +5,6 @@
 import Common
 import Shared
 import TabDataStore
-// Ecosia: import to run migration
-import Storage
 
 protocol TabMigrationUtility {
     var shouldRunMigration: Bool { get }
@@ -22,16 +20,12 @@ class DefaultTabMigrationUtility: TabMigrationUtility {
     private let logger: Logger
     private var legacyTabDataRetriever: LegacyTabDataRetriever
     var legacyTabs = [LegacySavedTab]()
-    // Ecosia: Add profile
-    private var profile: Profile
 
     init(profile: Profile = AppContainer.shared.resolve(),
          tabDataStore: TabDataStore = AppContainer.shared.resolve(),
          logger: Logger = DefaultLogger.shared,
          legacyTabDataRetriever: LegacyTabDataRetriever = LegacyTabDataRetrieverImplementation()) {
         self.prefs = profile.prefs
-        // Ecosia: Add profile
-        self.profile = profile
         self.tabDataStore = tabDataStore
         self.logger = logger
         self.legacyTabDataRetriever = legacyTabDataRetriever
@@ -86,6 +80,7 @@ class DefaultTabMigrationUtility: TabMigrationUtility {
                    category: .tabs)
         // Create TabData array from legacyTabs
         var tabsToMigrate = [TabData]()
+        
         var selectTabUUID: UUID?
         for savedTab in legacyTabs {
             let savedTabUUID = savedTab.screenshotUUID ?? UUID()
@@ -98,8 +93,7 @@ class DefaultTabMigrationUtility: TabMigrationUtility {
 
             let tabData = TabData(id: savedTabUUID,
                                   title: savedTab.title,
-                                  /* Ecosia: `savedTab.url` is sometimes not there after migration,
-									 so we fallback to the last url from the session data history
+                                  /* Ecosia: `savedTab.url` is sometimes not there after migration, so we fallback to the last url from the session data history
                                      siteUrl: savedTab.url?.absoluteString ?? "",
                                    */
                                   siteUrl: savedTab.url?.absoluteString ?? savedTab.sessionData?.urls.last?.absoluteString ?? "",
