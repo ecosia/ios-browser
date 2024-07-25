@@ -510,8 +510,7 @@ extension TabManagerImplementation {
             UserDefaults.standard.setValue(true, forKey: Self.restoreMigratedv10TabsMissingUrlKey)
         }
         // We only want to run it if the user just upgraded to the version containing this restoration code.
-        // Otherwise it means the user is a fresh install and we just mark it as restorarion done.
-        // This also covers the case where the user migrated directly to >= v10.0.3 since in that case the first run of the app will `TabMigrationUtility.runMigration` and therefore not reach here.
+        // Otherwise it means the user is a fresh install and we just mark it as restoration done.
         guard EcosiaInstallType.get() == .upgrade else {
             return window
         }
