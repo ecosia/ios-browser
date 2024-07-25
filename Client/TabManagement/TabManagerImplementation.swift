@@ -99,7 +99,15 @@ class TabManagerImplementation: LegacyTabManager, Notifiable {
     private func restoreOnly() {
         tabs = [Tab]()
         Task {
-            await buildTabRestore(window: await self.tabDataStore.fetchWindowData())
+            /* Ecosia: Upgrading from v9.x to v10.0.0 caused an issue where migrated URLs were blank.
+             To fix that for users that had already upgraded we need to run `restoreMigratedv10TabsMissingUrlIfNeeded` once.
+             await buildTabRestore(window: await self.tabDataStore.fetchWindowData())
+             */
+            var windowData = await self.tabDataStore.fetchWindowData()
+            if shouldRestoreMigratedv10TabsMissingUrl {
+                windowData = await restoreMigratedv10TabsMissingUrlIfNeeded(window: windowData)
+            }
+            await buildTabRestore(window: windowData)
             logger.log("Tabs restore ended after fetching window data", level: .debug, category: .tabs)
             logger.log("Normal tabs count; \(normalTabs.count), Inactive tabs count; \(inactiveTabs.count), Private tabs count; \(privateTabs.count)", level: .debug, category: .tabs)
         }
@@ -149,13 +157,7 @@ class TabManagerImplementation: LegacyTabManager, Notifiable {
 
         for tabData in filteredTabs {
             let newTab = addTab(flushToDisk: false, zombie: true, isPrivate: tabData.isPrivate)
-            // Ecosia:
-            // newTab.url = URL(string: tabData.siteUrl, invalidCharacters: false)
-            if let urlString = sites.first(where: { $0.title == tabData.title })?.url {
-                newTab.url = URL(string: tabData.siteUrl, invalidCharacters: false) ?? URL(string: urlString, invalidCharacters: false)
-            } else {
-                newTab.url = URL(string: tabData.siteUrl, invalidCharacters: false)
-            }
+            newTab.url = URL(string: tabData.siteUrl, invalidCharacters: false)
             newTab.lastTitle = tabData.title
             newTab.tabUUID = tabData.id.uuidString
             newTab.screenshotUUID = tabData.id
@@ -504,5 +506,42 @@ extension TabManagerImplementation {
         } catch {
             return []
         }
+    }
+    
+    // Ecosia: Fix tabs that where migrated from v9.x to v10.0.0 by fetching from places DB instead.
+    // This can be removed after there are no significant number of users on v10.0.0.
+    private static let restoreMigratedv10TabsMissingUrlKey = "restoreMigratedv10TabsMissingUrl"
+    private var shouldRestoreMigratedv10TabsMissingUrl: Bool {
+        !UserDefaults.standard.bool(forKey: Self.restoreMigratedv10TabsMissingUrlKey)
+    }
+    private func restoreMigratedv10TabsMissingUrlIfNeeded(window: WindowData?) async -> WindowData? {
+        defer {
+            UserDefaults.standard.setValue(true, forKey: Self.restoreMigratedv10TabsMissingUrlKey)
+        }
+        guard let window = window, window.tabData.filter({ $0.siteUrl.isEmpty }).count > 0 else {
+            return window
+        }
+        let sites = await fetchDBSites()
+        var restoredTabs = [TabData]()
+        window.tabData.forEach { tab in
+            var restoredUrl = tab.siteUrl
+            if restoredUrl.isEmpty {
+                restoredUrl = sites.first(where: { $0.title == tab.title })?.url ?? ""
+            }
+            restoredTabs.append(
+                .init(id: tab.id,
+                      title: tab.title,
+                      siteUrl: restoredUrl,
+                      faviconURL: tab.faviconURL,
+                      isPrivate: tab.isPrivate,
+                      lastUsedTime: tab.lastUsedTime,
+                      createdAtTime: tab.createdAtTime,
+                      tabGroupData: tab.tabGroupData)
+            )
+        }
+        return WindowData(id: window.id,
+                          isPrimary: window.isPrimary,
+                          activeTabId: window.activeTabId,
+                          tabData: restoredTabs)
     }
 }
