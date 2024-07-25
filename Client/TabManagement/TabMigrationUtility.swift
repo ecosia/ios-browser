@@ -5,6 +5,8 @@
 import Common
 import Shared
 import TabDataStore
+// Ecosia: import to run migration
+import Storage
 
 protocol TabMigrationUtility {
     var shouldRunMigration: Bool { get }
@@ -20,12 +22,16 @@ class DefaultTabMigrationUtility: TabMigrationUtility {
     private let logger: Logger
     private var legacyTabDataRetriever: LegacyTabDataRetriever
     var legacyTabs = [LegacySavedTab]()
+    // Ecosia: Add profile
+    private var profile: Profile
 
     init(profile: Profile = AppContainer.shared.resolve(),
          tabDataStore: TabDataStore = AppContainer.shared.resolve(),
          logger: Logger = DefaultLogger.shared,
          legacyTabDataRetriever: LegacyTabDataRetriever = LegacyTabDataRetrieverImplementation()) {
         self.prefs = profile.prefs
+        // Ecosia: Add profile
+        self.profile = profile
         self.tabDataStore = tabDataStore
         self.logger = logger
         self.legacyTabDataRetriever = legacyTabDataRetriever
@@ -73,6 +79,28 @@ class DefaultTabMigrationUtility: TabMigrationUtility {
             return []
         }
     }
+    
+    // Ecosia: Get Sites from places
+    private func fetchDBSites() async -> [Site] {
+        do {
+            let sites = try await withCheckedThrowingContinuation { continuation in
+                profile.places.getSitesWithBound(
+                    limit: 100,
+                    offset: 0,
+                    excludedTypes: VisitTransitionSet(0)
+                ).upon { result in
+                    if let successValue = result.successValue {
+                        continuation.resume(returning: successValue.asArray())
+                    } else {
+                        continuation.resume(returning: [])
+                    }
+                }
+            }
+            return sites
+        } catch {
+            return []
+        }
+    }
 
     func runMigration(for windowUUID: WindowUUID) async -> WindowData {
         logger.log("Begin tab migration with legacy tab count \(legacyTabs.count)",
@@ -80,7 +108,8 @@ class DefaultTabMigrationUtility: TabMigrationUtility {
                    category: .tabs)
         // Create TabData array from legacyTabs
         var tabsToMigrate = [TabData]()
-
+        // Ecosia: Fetch Sites from the `browser.db`
+        let sites = await fetchDBSites()
         var selectTabUUID: UUID?
         for savedTab in legacyTabs {
             let savedTabUUID = savedTab.screenshotUUID ?? UUID()
@@ -93,10 +122,13 @@ class DefaultTabMigrationUtility: TabMigrationUtility {
 
             let tabData = TabData(id: savedTabUUID,
                                   title: savedTab.title,
-                                  /* Ecosia: `savedTab.url` is sometimes not there after migration, so we fallback to the last url from the session data history
+                                  /* Ecosia: `savedTab.url` is sometimes not there after migration,
+									 so we fallback to the last url from the session data or stored db history
                                      siteUrl: savedTab.url?.absoluteString ?? "",
                                    */
-                                  siteUrl: savedTab.url?.absoluteString ?? savedTab.sessionData?.urls.last?.absoluteString ?? "",
+                                  siteUrl: savedTab.url?.absoluteString ??
+                                           savedTab.sessionData?.urls.last?.absoluteString ??
+                                           sites.first(where: { $0.title == savedTab.title })?.url ?? "",
                                   faviconURL: savedTab.faviconURL,
                                   isPrivate: savedTab.isPrivate,
                                   lastUsedTime: Date.fromTimestamp(savedTab.sessionData?.lastUsedTime ?? Date().toTimestamp()),
