@@ -86,8 +86,6 @@ class DefaultTabMigrationUtility: TabMigrationUtility {
                    category: .tabs)
         // Create TabData array from legacyTabs
         var tabsToMigrate = [TabData]()
-        // Ecosia: Fetch Sites from the `browser.db`
-        let sites = await fetchDBSites()
         var selectTabUUID: UUID?
         for savedTab in legacyTabs {
             let savedTabUUID = savedTab.screenshotUUID ?? UUID()
