@@ -79,7 +79,6 @@ class DefaultTabMigrationUtility: TabMigrationUtility {
                    category: .tabs)
         // Create TabData array from legacyTabs
         var tabsToMigrate = [TabData]()
-        
         var selectTabUUID: UUID?
         for savedTab in legacyTabs {
             let savedTabUUID = savedTab.screenshotUUID ?? UUID()
