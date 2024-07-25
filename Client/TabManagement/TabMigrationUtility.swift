@@ -80,28 +80,6 @@ class DefaultTabMigrationUtility: TabMigrationUtility {
         }
     }
     
-    // Ecosia: Get Sites from places
-    private func fetchDBSites() async -> [Site] {
-        do {
-            let sites = try await withCheckedThrowingContinuation { continuation in
-                profile.places.getSitesWithBound(
-                    limit: 100,
-                    offset: 0,
-                    excludedTypes: VisitTransitionSet(0)
-                ).upon { result in
-                    if let successValue = result.successValue {
-                        continuation.resume(returning: successValue.asArray())
-                    } else {
-                        continuation.resume(returning: [])
-                    }
-                }
-            }
-            return sites
-        } catch {
-            return []
-        }
-    }
-
     func runMigration(for windowUUID: WindowUUID) async -> WindowData {
         logger.log("Begin tab migration with legacy tab count \(legacyTabs.count)",
                    level: .debug,
@@ -123,12 +101,10 @@ class DefaultTabMigrationUtility: TabMigrationUtility {
             let tabData = TabData(id: savedTabUUID,
                                   title: savedTab.title,
                                   /* Ecosia: `savedTab.url` is sometimes not there after migration,
-									 so we fallback to the last url from the session data or stored db history
+									 so we fallback to the last url from the session data history
                                      siteUrl: savedTab.url?.absoluteString ?? "",
                                    */
-                                  siteUrl: savedTab.url?.absoluteString ??
-                                           savedTab.sessionData?.urls.last?.absoluteString ??
-                                           sites.first(where: { $0.title == savedTab.title })?.url ?? "",
+                                  siteUrl: savedTab.url?.absoluteString ?? savedTab.sessionData?.urls.last?.absoluteString ?? "",
                                   faviconURL: savedTab.faviconURL,
                                   isPrivate: savedTab.isPrivate,
                                   lastUsedTime: Date.fromTimestamp(savedTab.sessionData?.lastUsedTime ?? Date().toTimestamp()),

@@ -143,10 +143,19 @@ class TabManagerImplementation: LegacyTabManager, Notifiable {
         let filteredTabs = filterPrivateTabs(from: windowData,
                                              clearPrivateTabs: shouldClearPrivateTabs())
         var tabToSelect: Tab?
+        
+        // Ecosia: Get Sites from places
+        let sites = await fetchDBSites()
 
         for tabData in filteredTabs {
             let newTab = addTab(flushToDisk: false, zombie: true, isPrivate: tabData.isPrivate)
-            newTab.url = URL(string: tabData.siteUrl, invalidCharacters: false)
+            // Ecosia:
+            // newTab.url = URL(string: tabData.siteUrl, invalidCharacters: false)
+            if let urlString = sites.first(where: { $0.title == tabData.title })?.url {
+                newTab.url = URL(string: tabData.siteUrl, invalidCharacters: false) ?? URL(string: urlString, invalidCharacters: false)
+            } else {
+                newTab.url = URL(string: tabData.siteUrl, invalidCharacters: false)
+            }
             newTab.lastTitle = tabData.title
             newTab.tabUUID = tabData.id.uuidString
             newTab.screenshotUUID = tabData.id
@@ -464,6 +473,30 @@ class TabManagerImplementation: LegacyTabManager, Notifiable {
             saveAllTabData()
         default:
             break
+        }
+    }
+}
+
+extension TabManagerImplementation {
+    // Ecosia: Get Sites from places
+    private func fetchDBSites() async -> [Site] {
+        do {
+            let sites = try await withCheckedThrowingContinuation { continuation in
+                profile.places.getSitesWithBound(
+                    limit: 100,
+                    offset: 0,
+                    excludedTypes: VisitTransitionSet(0)
+                ).upon { result in
+                    if let successValue = result.successValue {
+                        continuation.resume(returning: successValue.asArray())
+                    } else {
+                        continuation.resume(returning: [])
+                    }
+                }
+            }
+            return sites
+        } catch {
+            return []
         }
     }
 }
