@@ -509,7 +509,15 @@ extension TabManagerImplementation {
         defer {
             UserDefaults.standard.setValue(true, forKey: Self.restoreMigratedv10TabsMissingUrlKey)
         }
-        guard let window = window, window.tabData.filter({ $0.siteUrl.isEmpty }).count > 0 else {
+        // We only want to run it if the user just upgraded to the version containing this restoration code.
+        // Otherwise it means the user is a fresh install and we just mark it as restorarion done.
+        // This also covers the case where the user migrated directly to >= v10.0.3 since in that case the first run of the app will `TabMigrationUtility.runMigration` and therefore not reach here.
+        guard EcosiaInstallType.get() == .upgrade else {
+            return window
+        }
+        // We only restore if there are actually any tabs with empty url.
+        guard let window = window,
+              window.tabData.filter({ $0.siteUrl.isEmpty }).count > 0 else {
             return window
         }
         let sites = await fetchDBSites()
@@ -518,7 +526,7 @@ extension TabManagerImplementation {
             var restoredUrl = tab.siteUrl
             if restoredUrl.isEmpty {
                 restoredUrl = sites.first(where: { $0.title == tab.title })?.url ?? ""
-                // If we don't have a URL and the tab has no title after the migration, we assign to it the Homepage one
+                // If we don't have a URL and the tab has no title, it means it should be the homepage (or at least that's better than blank)
                 if restoredUrl.isEmpty && tab.title?.isEmpty == true {
                     restoredUrl = "internal://local/about/home"
                 }
