@@ -175,6 +175,12 @@ class TabManagerImplementation: LegacyTabManager, Notifiable {
                            level: .debug,
                            category: .tabs)
             }
+            
+            // Ecosia: if we don't have a URL and the Tab has no title after the migration even
+            // we assign to it the Homepage one
+            if newTab.url == nil && newTab.lastTitle?.isEmpty == true {
+                newTab.url = URL(string: "internal://local/about/home")
+            }
 
             // Restore screenshot
             restoreScreenshot(tab: newTab)
