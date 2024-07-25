@@ -151,9 +151,6 @@ class TabManagerImplementation: LegacyTabManager, Notifiable {
         let filteredTabs = filterPrivateTabs(from: windowData,
                                              clearPrivateTabs: shouldClearPrivateTabs())
         var tabToSelect: Tab?
-        
-        // Ecosia: Get Sites from places
-        let sites = await fetchDBSites()
 
         for tabData in filteredTabs {
             let newTab = addTab(flushToDisk: false, zombie: true, isPrivate: tabData.isPrivate)
@@ -176,12 +173,6 @@ class TabManagerImplementation: LegacyTabManager, Notifiable {
                 logger.log("Tab restored has empty URL for tab id \(tabData.id.uuidString). It was last used \(tabData.lastUsedTime)",
                            level: .debug,
                            category: .tabs)
-            }
-            
-            // Ecosia: if we don't have a URL and the Tab has no title after the migration even
-            // we assign to it the Homepage one
-            if newTab.url == nil && newTab.lastTitle?.isEmpty == true {
-                newTab.url = URL(string: "internal://local/about/home")
             }
 
             // Restore screenshot
@@ -527,6 +518,10 @@ extension TabManagerImplementation {
             var restoredUrl = tab.siteUrl
             if restoredUrl.isEmpty {
                 restoredUrl = sites.first(where: { $0.title == tab.title })?.url ?? ""
+                // If we don't have a URL and the tab has no title after the migration, we assign to it the Homepage one
+                if restoredUrl.isEmpty && tab.title?.isEmpty == true {
+                    restoredUrl = "internal://local/about/home"
+                }
             }
             restoredTabs.append(
                 .init(id: tab.id,
