@@ -926,7 +926,10 @@ class LegacyTabManager: NSObject, FeatureFlaggable, TabManager, TabEventHandler 
     ) -> Tab? {
         let page = NewTabAccessors.getHomePage(profilePreferences)
         let customUrl = HomeButtonHomePageAccessors.getHomePage(profilePreferences)
-        let homeUrl = URL(string: "internal://local/about/home")
+        /* Ecosia: Use homepage url constant
+         let homeUrl = URL(string: "internal://local/about/home")
+         */
+        let homeUrl = URL(string: URL.homepageUrlString)
 
         if page == .homePage, let customUrl = customUrl {
             return existingTab ?? addTab(URLRequest(url: customUrl), isPrivate: privateMode)
