@@ -530,7 +530,7 @@ extension TabManagerImplementation {
             if restoredUrl.isEmpty {
                 restoredUrl = sites.first(where: { $0.title == tab.title })?.url ?? ""
                 // If we don't have a URL and the tab has no title, it means it should be the homepage (or at least that's better than blank)
-                if restoredUrl.isEmpty && tab.title?.isEmpty == true {
+                if restoredUrl.isEmpty && (tab.title ?? "").isEmpty {
                     restoredUrl = "internal://local/about/home"
                 }
             }
