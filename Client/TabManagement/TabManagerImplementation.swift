@@ -477,12 +477,14 @@ class TabManagerImplementation: LegacyTabManager, Notifiable {
 }
 
 extension TabManagerImplementation {
-    // Ecosia: Get Sites from places
-    private func fetchDBSites() async -> [Site] {
+    /// Ecosia: Get last visited sites from Places DB.
+    /// - Parameter count: How many sites should be fetched.
+    /// - Returns: Array of fetched sites.
+    private func fetchLastVisitedSitesFromDB(count: Int) async -> [Site] {
         do {
             let sites = try await withCheckedThrowingContinuation { continuation in
                 profile.places.getSitesWithBound(
-                    limit: 100,
+                    limit: count,
                     offset: 0,
                     excludedTypes: VisitTransitionSet(0)
                 ).upon { result in
@@ -499,12 +501,14 @@ extension TabManagerImplementation {
         }
     }
     
-    // Ecosia: Fix tabs that where migrated from v9.x to v10.0.0 by fetching from places DB instead.
-    // This can be removed after there are no significant number of users on v10.0.0.
     private static let restoreMigratedv10TabsMissingUrlKey = "restoreMigratedv10TabsMissingUrl"
     private var shouldRestoreMigratedv10TabsMissingUrl: Bool {
         !UserDefaults.standard.bool(forKey: Self.restoreMigratedv10TabsMissingUrlKey)
     }
+    /// Fix tabs that where migrated from v9.x to v10.0.0 by fetching from last visited sites instead.
+    /// This should be removed after there are no significant number of users on v10.0.0.
+    /// - Parameter window: Window to be updated.
+    /// - Returns: Updated window.
     private func restoreMigratedv10TabsMissingUrlIfNeeded(window: WindowData?) async -> WindowData? {
         defer {
             UserDefaults.standard.setValue(true, forKey: Self.restoreMigratedv10TabsMissingUrlKey)
@@ -519,7 +523,7 @@ extension TabManagerImplementation {
               window.tabData.filter({ $0.siteUrl.isEmpty }).count > 0 else {
             return window
         }
-        let sites = await fetchDBSites()
+        let sites = await fetchLastVisitedSitesFromDB(count: 100)
         var restoredTabs = [TabData]()
         window.tabData.forEach { tab in
             var restoredUrl = tab.siteUrl
