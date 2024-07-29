@@ -64,7 +64,6 @@ final class EcosiaPerformanceTestHistory: ProfileTest {
                     switch cursorResult {
                     case .success(let cursor):
                         XCTAssertGreaterThan(cursor.count, 0, "No sites were retrieved")
-                        print("Execution time: \(duration) ms")
                     case .failure(let error):
                         XCTFail("Failed to retrieve sites: \(error)")
                     }
