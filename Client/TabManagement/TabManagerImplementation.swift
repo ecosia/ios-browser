@@ -523,7 +523,7 @@ extension TabManagerImplementation {
               window.tabData.filter({ $0.siteUrl.isEmpty }).count > 0 else {
             return window
         }
-        let sites = await fetchLastVisitedSitesFromDB(count: 100)
+        let sites = await fetchLastVisitedSitesFromDB(count: 1000)
         var restoredTabs = [TabData]()
         window.tabData.forEach { tab in
             var restoredUrl = tab.siteUrl
