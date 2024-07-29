@@ -2,17 +2,45 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
-import XCTest
+/**
+ * EcosiaPerformanceTestHistory
+ *
+ * This class extends `ProfileTest` and is designed to test the performance of the `getSitesWithBound` function
+ * in the `RustPlaces` API. It performs a series of performance tests with different limits and numbers of entries
+ * in the database to measure and analyze execution times.
+ *
+ * The class includes helper methods to:
+ * - Add individual or multiple site entries into the database.
+ * - Clear the database.
+ * - Measure and log the performance of the `getSitesWithBound` function under different conditions.
+ *
+ * Each test method corresponds to a specific combination of limit and entry count, ensuring comprehensive
+ * performance analysis.
+ */
+
 @testable import Client
 import Foundation
 import Storage
+import XCTest
 
-extension TestHistory {
+final class EcosiaPerformanceTestHistory: ProfileTest {
 
-    fileprivate func addSites(_ places: RustPlaces, count: Int) {
+    private func addSite(_ places: RustPlaces, url: String, title: String, bool: Bool = true, visitType: VisitType = .link) {
+        _ = places.reopenIfClosed()
+        let site = Site(url: url, title: title)
+        let visit = VisitObservation(url: site.url, title: site.title, visitType: visitType)
+        let res = places.applyObservation(visitObservation: visit).value
+        XCTAssertEqual(bool, res.isSuccess, "Site added: \(url)., error value: \(res.failureValue ?? "wow")")
+    }
+
+    private func addSites(_ places: RustPlaces, count: Int) {
         for index in 0..<count {
             self.addSite(places, url: "https://example\(index).com/", title: "Title \(index)")
         }
+    }
+    
+    private func clear(_ places: RustPlaces) {
+        XCTAssertTrue(places.deleteEverythingHistory().value.isSuccess, "History cleared.")
     }
 
     // Function to test getSitesWithBound performance

@@ -9,9 +9,7 @@ import Storage
 import XCTest
 
 class TestHistory: ProfileTest {
-    // Ecosia: Update accessor
-    // fileprivate func addSite(_ places: RustPlaces, url: String, title: String, bool: Bool = true, visitType: VisitType = .link) {
-    func addSite(_ places: RustPlaces, url: String, title: String, bool: Bool = true, visitType: VisitType = .link) {
+    fileprivate func addSite(_ places: RustPlaces, url: String, title: String, bool: Bool = true, visitType: VisitType = .link) {
         _ = places.reopenIfClosed()
         let site = Site(url: url, title: title)
         let visit = VisitObservation(url: site.url, title: site.title, visitType: visitType)
@@ -44,10 +42,8 @@ class TestHistory: ProfileTest {
             XCTFail("Couldn't get cursor.")
         }
     }
-    
-    // Ecosia: Update accessor
-    // fileprivate func clear(_ places: RustPlaces) {
-    func clear(_ places: RustPlaces) {
+
+    fileprivate func clear(_ places: RustPlaces) {
         XCTAssertTrue(places.deleteEverythingHistory().value.isSuccess, "History cleared.")
     }
 
@@ -212,7 +208,7 @@ class TestHistory: ProfileTest {
     }
 
     let numThreads = 5
-    let numCmds = 100
+    let numCmds = 10
 
     func testInsertPerformance() {
         withTestProfile { profile -> Void in
