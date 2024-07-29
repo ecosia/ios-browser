@@ -5,17 +5,20 @@
 /**
  * EcosiaPerformanceTestHistory
  *
+ * Context:
+ * As part of PR #731, we addressed an issue with blank migrated tabs during an upgrade. While the issue was fixed for new upgrades, users who had already upgraded continued to experience this problem. This class was created to ensure that tabs without URLs can be restored by fetching the URLs from an alternative source, specifically the places database (`places.db`).
+ *
  * This class extends `ProfileTest` and is designed to test the performance of the `getSitesWithBound` function
  * in the `RustPlaces` API. It performs a series of performance tests with different limits and numbers of entries
  * in the database to measure and analyze execution times.
  *
- * The class includes helper methods to:
- * - Add individual or multiple site entries into the database.
- * - Clear the database.
- * - Measure and log the performance of the `getSitesWithBound` function under different conditions.
+ * Approach inspired by `TestHistory.swift`:
+ * The class contains helper methods gotten from the above mentioned class:
+ * - It can add either individual or multiple site entries into the database, facilitating bulk data insertion for testing purposes.
+ * - It includes a method to clear the database, ensuring a clean state before each test run.
+ * - The core testing function measures and logs the performance of the `getSitesWithBound` function under varying conditions.
  *
- * Each test method corresponds to a specific combination of limit and entry count, ensuring comprehensive
- * performance analysis.
+ * Each test method is tailored to a specific combination of limit and entry count.
  */
 
 @testable import Client
