@@ -595,7 +595,9 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
 
     func updateProgressBar(_ progress: Float) {
         progressBar.alpha = 1
-        progressBar.isHidden = false
+        // Ecosia: Do not show loading state when user has selected the url bar and is potentially typing
+        // progressBar.isHidden = false
+        progressBar.isHidden = inOverlayMode
         progressBar.setProgress(progress, animated: !isTransitioning)
     }
 
