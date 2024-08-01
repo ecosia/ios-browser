@@ -156,7 +156,8 @@ extension AppSettingsTableViewController {
             ChangeSearchCount(settings: self),
             ResetSearchCount(settings: self),
             UnleashBingDistributionSetting(settings: self),
-            EngagementServiceIdentifierSetting(settings: self)
+            EngagementServiceIdentifierSetting(settings: self),
+            FasterInactiveTabs(settings: self, settingsDelegate: self),
         ]
         
         return SettingSection(title: NSAttributedString(string: "Debug"), children: hiddenDebugSettings)
