@@ -85,6 +85,6 @@ extension AppInfo {
     
     /// Return the keychain access group.
     public static func ecosiaKeychainAccessGroupWithPrefix(_ prefix: String) -> String {
-        return "\(prefix)\(".")+\(baseBundleIdentifier)"
+        return "\(prefix).\(baseBundleIdentifier)"
     }
 }
