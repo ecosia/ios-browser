@@ -1,13 +1,10 @@
 # Uncomment the lines below you want to change by removing the # in the beginning
 
+# ios_version("17.5")
+
 # A list of devices you want to take the screenshots from
 devices([
-  "iPhone 8",
-  "iPhone 8 Plus",
-  "iPhone SE",
-  "iPhone X",
-  "iPad Pro (12.9-inch)",
-  "iPad Pro (9.7-inch)",
+  "iPhone 15",
 #   "Apple TV 1080p",
 #   "Apple Watch Series 6 - 44mm"
 ])
@@ -19,14 +16,15 @@ languages([
 #   ["pt", "pt_BR"] # Portuguese with Brazilian locale
 ])
 
-# The name of the scheme which contains the UI Tests
 scheme("Ecosia")
-
-# Where should the resulting screenshots be stored?
+configuration("Debug")
+app_identifier("com.ecosia.ecosiaapp")
+test_target_name("EcosiaSnapshotTests")
 output_directory("./fastlane/screenshots")
-
-# remove the '#' to clear all previously generated screenshots before creating new ones
 clear_previous_screenshots(true)
+reinstall_app(true)
+number_of_retries(2)
+disable_package_automatic_updates(true)
 
 # Remove the '#' to set the status bar to 9:41 AM, and show full battery and reception. See also override_status_bar_arguments for custom options.
 override_status_bar(true)
