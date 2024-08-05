@@ -12822,6 +12822,7 @@
 				2C61887D2B7A89E4006B70D7 /* XCRemoteSwiftPackageReference "ios-core" */,
 				2C6189EF2B7B7D48006B70D7 /* XCRemoteSwiftPackageReference "snowplow-ios-tracker" */,
 				2CCFB3D82C0FC4DC00BEDCA0 /* XCRemoteSwiftPackageReference "rust-components-swift" */,
+				2C0222032C612A04006724D5 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */,
 			);
 			productRefGroup = F84B21BF1A090F8100AAB793 /* Products */;
 			projectDirPath = "";
@@ -21292,6 +21293,14 @@
 			requirement = {
 				kind = exactVersion;
 				version = 2.0.0;
+			};
+		};
+		2C0222032C612A04006724D5 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-snapshot-testing";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.17.3;
 			};
 		};
 		2C61887D2B7A89E4006B70D7 /* XCRemoteSwiftPackageReference "ios-core" */ = {
