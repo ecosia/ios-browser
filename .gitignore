@@ -43,8 +43,7 @@ DerivedData
 /assets
 #build tools
 /fastlane/Appfile
-# Ecosia: We want those files to be tracked.
-# /fastlane/Snapfile
+/fastlane/Snapfile
 /fastlane/SnapshotHelper.swift
 /fastlane/frames
 /fastlane/scripts
