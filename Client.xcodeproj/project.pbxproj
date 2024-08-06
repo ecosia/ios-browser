@@ -335,6 +335,16 @@
 		2C6189F12B7B7D5D006B70D7 /* SnowplowTracker in Frameworks */ = {isa = PBXBuildFile; productRef = 2C6189F02B7B7D5D006B70D7 /* SnowplowTracker */; };
 		2C69DA722C62175400D7F69F /* SnapshotTestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C69DA712C62175400D7F69F /* SnapshotTestHelper.swift */; };
 		2C69DA752C62185A00D7F69F /* Welcome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C69DA742C62185A00D7F69F /* Welcome.swift */; };
+		2C69DA772C62243300D7F69F /* NTPTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C69DA762C62243300D7F69F /* NTPTests.swift */; };
+		2C69DA782C62259D00D7F69F /* MockProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 281B2BE91ADF4D90002917DC /* MockProfile.swift */; };
+		2C69DA792C6225AE00D7F69F /* DependencyHelperMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A70EF18295E2E1600790249 /* DependencyHelperMock.swift */; };
+		2C69DA7B2C6225C400D7F69F /* Common in Frameworks */ = {isa = PBXBuildFile; productRef = 2C69DA7A2C6225C400D7F69F /* Common */; };
+		2C69DA7C2C6225DB00D7F69F /* MockOverlayModeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21B41A1B298B1876008BC0A2 /* MockOverlayModeManager.swift */; };
+		2C69DA7D2C6244BE00D7F69F /* MockTabDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A475E8C29DB888E009C13FD /* MockTabDataStore.swift */; };
+		2C69DA7E2C6244C400D7F69F /* MockThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AA75A622A46272000533F8D /* MockThemeManager.swift */; };
+		2C69DA7F2C62458300D7F69F /* RustMozillaAppServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43BE578A278BA4D900491291 /* RustMozillaAppServices.framework */; };
+		2C69DA812C62459200D7F69F /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 2C69DA802C62459200D7F69F /* Core */; };
+		2C69DA822C62459C00D7F69F /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CB1728B2C61336D008551E2 /* libz.tbd */; };
 		2C6C908F2C614A6C007D9B43 /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = 2C6C908E2C614A6C007D9B43 /* SnapshotTesting */; };
 		2C6C90902C614A76007D9B43 /* OnboardingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD368492C5BC31700972871 /* OnboardingTests.swift */; };
 		2C78374B2C1765DF00BBFFEB /* LoadingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCFB3D42C0F1EA500BEDCA0 /* LoadingScreen.swift */; };
@@ -2465,6 +2475,7 @@
 		2C6189302B7A8A22006B70D7 /* Analytics.Values.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Analytics.Values.swift; sourceTree = "<group>"; };
 		2C69DA712C62175400D7F69F /* SnapshotTestHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapshotTestHelper.swift; sourceTree = "<group>"; };
 		2C69DA742C62185A00D7F69F /* Welcome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Welcome.swift; sourceTree = "<group>"; };
+		2C69DA762C62243300D7F69F /* NTPTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPTests.swift; sourceTree = "<group>"; };
 		2C6C90822C614A16007D9B43 /* EcosiaSnapshotTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EcosiaSnapshotTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C6E44099EACF7BE5438CEB6 /* ca */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ca; path = ca.lproj/Today.strings; sourceTree = "<group>"; };
 		2C7DBABB2C4EA17200BCD03F /* AnalyticsFeatureManagementIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsFeatureManagementIntegrationTests.swift; sourceTree = "<group>"; };
@@ -7766,7 +7777,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2C69DA822C62459C00D7F69F /* libz.tbd in Frameworks */,
+				2C69DA7F2C62458300D7F69F /* RustMozillaAppServices.framework in Frameworks */,
+				2C69DA812C62459200D7F69F /* Core in Frameworks */,
 				2C6C908F2C614A6C007D9B43 /* SnapshotTesting in Frameworks */,
+				2C69DA7B2C6225C400D7F69F /* Common in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8834,6 +8849,7 @@
 				2C69DA732C62185000D7F69F /* Mocks */,
 				2CD368492C5BC31700972871 /* OnboardingTests.swift */,
 				2C69DA712C62175400D7F69F /* SnapshotTestHelper.swift */,
+				2C69DA762C62243300D7F69F /* NTPTests.swift */,
 			);
 			path = SnapshotTests;
 			sourceTree = "<group>";
@@ -12303,6 +12319,8 @@
 			name = EcosiaSnapshotTests;
 			packageProductDependencies = (
 				2C6C908E2C614A6C007D9B43 /* SnapshotTesting */,
+				2C69DA7A2C6225C400D7F69F /* Common */,
+				2C69DA802C62459200D7F69F /* Core */,
 			);
 			productName = EcosiaSnapshotTests;
 			productReference = 2C6C90822C614A16007D9B43 /* EcosiaSnapshotTests.xctest */;
@@ -13301,7 +13319,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				2C69DA752C62185A00D7F69F /* Welcome.swift in Sources */,
+				2C69DA7D2C6244BE00D7F69F /* MockTabDataStore.swift in Sources */,
 				2C6C90902C614A76007D9B43 /* OnboardingTests.swift in Sources */,
+				2C69DA772C62243300D7F69F /* NTPTests.swift in Sources */,
+				2C69DA782C62259D00D7F69F /* MockProfile.swift in Sources */,
+				2C69DA792C6225AE00D7F69F /* DependencyHelperMock.swift in Sources */,
+				2C69DA7C2C6225DB00D7F69F /* MockOverlayModeManager.swift in Sources */,
+				2C69DA7E2C6244C400D7F69F /* MockThemeManager.swift in Sources */,
 				2C69DA722C62175400D7F69F /* SnapshotTestHelper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -21420,6 +21444,15 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 2C6189EF2B7B7D48006B70D7 /* XCRemoteSwiftPackageReference "snowplow-ios-tracker" */;
 			productName = SnowplowTracker;
+		};
+		2C69DA7A2C6225C400D7F69F /* Common */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Common;
+		};
+		2C69DA802C62459200D7F69F /* Core */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2C61887D2B7A89E4006B70D7 /* XCRemoteSwiftPackageReference "ios-core" */;
+			productName = Core;
 		};
 		2C6C908E2C614A6C007D9B43 /* SnapshotTesting */ = {
 			isa = XCSwiftPackageProductDependency;
