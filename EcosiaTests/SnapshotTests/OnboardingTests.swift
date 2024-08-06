@@ -6,13 +6,13 @@ import SnapshotTesting
 import XCTest
 @testable import Client
 
-final class EcosiaSnapshotTestsLaunchTests: XCTestCase {
+final class OnboardingTests: XCTestCase {
     
-    func testOnbaordingWelcomeScreen() {
+    func testWelcomeScreen() {
         SnapshotTestHelper.assertSnapshot(of: Welcome(delegate: MockWelcomeDelegate()))
     }
     
-    func testOnboardingStepsScreens() {
+    func testWelcomeStepsScreens() {
         let welcomeTourViewController = WelcomeTour(delegate: MockWelcomeTourDelegate())
         // Number of steps in the WelcomeTour
         let numberOfSteps = 4
@@ -21,7 +21,7 @@ final class EcosiaSnapshotTestsLaunchTests: XCTestCase {
             if step != 1 {
                 welcomeTourViewController.forward() // Move to the next step
             }
-            SnapshotTestHelper.assertSnapshot(of: welcomeTourViewController, wait: 1.0, testName: "testOnboardingWelcomeScreen_step_\(step)")
+            SnapshotTestHelper.assertSnapshot(of: welcomeTourViewController, wait: 1.0, testName: "testWelcomeScreen_step_\(step)")
         }
     }
 }

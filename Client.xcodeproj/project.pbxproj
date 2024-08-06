@@ -336,7 +336,7 @@
 		2C69DA722C62175400D7F69F /* SnapshotTestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C69DA712C62175400D7F69F /* SnapshotTestHelper.swift */; };
 		2C69DA752C62185A00D7F69F /* Welcome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C69DA742C62185A00D7F69F /* Welcome.swift */; };
 		2C6C908F2C614A6C007D9B43 /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = 2C6C908E2C614A6C007D9B43 /* SnapshotTesting */; };
-		2C6C90902C614A76007D9B43 /* EcosiaSnapshotTestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD368492C5BC31700972871 /* EcosiaSnapshotTestsLaunchTests.swift */; };
+		2C6C90902C614A76007D9B43 /* OnboardingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD368492C5BC31700972871 /* OnboardingTests.swift */; };
 		2C78374B2C1765DF00BBFFEB /* LoadingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCFB3D42C0F1EA500BEDCA0 /* LoadingScreen.swift */; };
 		2C7DBABD2C4EA37200BCD03F /* AnalyticsFeatureManagementIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7DBABB2C4EA17200BCD03F /* AnalyticsFeatureManagementIntegrationTests.swift */; };
 		2C872A552B8CD58200B318A0 /* ContileProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A7A93ED2810ADF2005E7E1B /* ContileProviderTests.swift */; };
@@ -2504,7 +2504,7 @@
 		2CCB296620A99C9500121DD8 /* LoginsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginsTests.swift; sourceTree = "<group>"; };
 		2CCF17522105E4FD00705AE5 /* DisplaySettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplaySettingsTests.swift; sourceTree = "<group>"; };
 		2CCFB3D42C0F1EA500BEDCA0 /* LoadingScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingScreen.swift; sourceTree = "<group>"; };
-		2CD368492C5BC31700972871 /* EcosiaSnapshotTestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaSnapshotTestsLaunchTests.swift; sourceTree = "<group>"; };
+		2CD368492C5BC31700972871 /* OnboardingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingTests.swift; sourceTree = "<group>"; };
 		2CE294442B7CDD05006C22B2 /* CoreAudioTypes.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioTypes.framework; path = System/Library/Frameworks/CoreAudioTypes.framework; sourceTree = SDKROOT; };
 		2CE294672B7FC5A4006C22B2 /* EcosiaInstallTypeTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EcosiaInstallTypeTests.swift; sourceTree = "<group>"; };
 		2CE294692B7FC5A5006C22B2 /* AnalyticsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsTests.swift; sourceTree = "<group>"; };
@@ -8832,7 +8832,7 @@
 			isa = PBXGroup;
 			children = (
 				2C69DA732C62185000D7F69F /* Mocks */,
-				2CD368492C5BC31700972871 /* EcosiaSnapshotTestsLaunchTests.swift */,
+				2CD368492C5BC31700972871 /* OnboardingTests.swift */,
 				2C69DA712C62175400D7F69F /* SnapshotTestHelper.swift */,
 			);
 			path = SnapshotTests;
@@ -13301,7 +13301,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2C69DA752C62185A00D7F69F /* Welcome.swift in Sources */,
-				2C6C90902C614A76007D9B43 /* EcosiaSnapshotTestsLaunchTests.swift in Sources */,
+				2C6C90902C614A76007D9B43 /* OnboardingTests.swift in Sources */,
 				2C69DA722C62175400D7F69F /* SnapshotTestHelper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
