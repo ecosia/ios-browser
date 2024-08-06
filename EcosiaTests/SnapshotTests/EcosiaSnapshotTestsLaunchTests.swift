@@ -21,7 +21,7 @@ final class EcosiaSnapshotTestsLaunchTests: XCTestCase {
             if step != 1 {
                 welcomeTourViewController.forward() // Move to the next step
             }
-            SnapshotTestHelper.assertSnapshot(of: welcomeTourViewController, wait: 1.0, testName: "testWelcomeTourViewController_step_\(step)")
+            SnapshotTestHelper.assertSnapshot(of: welcomeTourViewController, wait: 1.0, testName: "testOnboardingWelcomeScreen_step_\(step)")
         }
-    }    
+    }
 }
