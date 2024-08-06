@@ -144,7 +144,7 @@
             buildForAnalyzing = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "2CD368442C5BC31700972871"
+               BlueprintIdentifier = "2C6C90812C614A16007D9B43"
                BuildableName = "EcosiaSnapshotTests.xctest"
                BlueprintName = "EcosiaSnapshotTests"
                ReferencedContainer = "container:Client.xcodeproj">
@@ -469,6 +469,17 @@
                BlueprintIdentifier = "2CE2945A2B7FC51A006C22B2"
                BuildableName = "EcosiaTests.xctest"
                BlueprintName = "EcosiaTests"
+               ReferencedContainer = "container:Client.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "2C8F5AB72C613F8800000D12"
+               BuildableName = "EcosiaSnapshotsTests.xctest"
+               BlueprintName = "EcosiaSnapshotsTests"
                ReferencedContainer = "container:Client.xcodeproj">
             </BuildableReference>
          </TestableReference>

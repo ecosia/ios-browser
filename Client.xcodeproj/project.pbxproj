@@ -333,6 +333,11 @@
 		2C6189EB2B7B7AB4006B70D7 /* DispatchQueueHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83821FF1FC7961D00303C12 /* DispatchQueueHelper.swift */; };
 		2C6189EC2B7B7AB4006B70D7 /* DispatchQueueHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83821FF1FC7961D00303C12 /* DispatchQueueHelper.swift */; };
 		2C6189F12B7B7D5D006B70D7 /* SnowplowTracker in Frameworks */ = {isa = PBXBuildFile; productRef = 2C6189F02B7B7D5D006B70D7 /* SnowplowTracker */; };
+		2C69DA722C62175400D7F69F /* SnapshotTestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C69DA712C62175400D7F69F /* SnapshotTestHelper.swift */; };
+		2C69DA752C62185A00D7F69F /* Welcome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C69DA742C62185A00D7F69F /* Welcome.swift */; };
+		2C6C908F2C614A6C007D9B43 /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = 2C6C908E2C614A6C007D9B43 /* SnapshotTesting */; };
+		2C6C90902C614A76007D9B43 /* EcosiaSnapshotTestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD368492C5BC31700972871 /* EcosiaSnapshotTestsLaunchTests.swift */; };
+		2C6C90922C614A76007D9B43 /* EcosiaBaseSnapshotTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C894B452C5BD597005405C4 /* EcosiaBaseSnapshotTest.swift */; };
 		2C78374B2C1765DF00BBFFEB /* LoadingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCFB3D42C0F1EA500BEDCA0 /* LoadingScreen.swift */; };
 		2C7DBABD2C4EA37200BCD03F /* AnalyticsFeatureManagementIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7DBABB2C4EA17200BCD03F /* AnalyticsFeatureManagementIntegrationTests.swift */; };
 		2C872A552B8CD58200B318A0 /* ContileProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A7A93ED2810ADF2005E7E1B /* ContileProviderTests.swift */; };
@@ -344,15 +349,10 @@
 		2C872A622B8CD7E000B318A0 /* VersionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE294702B7FC5A6006C22B2 /* VersionTests.swift */; };
 		2C872A632B8CD7E000B318A0 /* WhatsNewLocalDataProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE2946B2B7FC5A5006C22B2 /* WhatsNewLocalDataProviderTests.swift */; };
 		2C872A642B8CD7E000B318A0 /* EcosiaHomeViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C872A562B8CD65100B318A0 /* EcosiaHomeViewModelTests.swift */; };
-		2C88B31F2C5BD03B004926B8 /* XCTestCase+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C88B31D2C5BD021004926B8 /* XCTestCase+Ecosia.swift */; };
-		2C88B3202C5BD0D5004926B8 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6188E82B7A8A22006B70D7 /* String.swift */; };
-		2C894B462C5BD597005405C4 /* EcosiaBaseSnapshotTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C894B452C5BD597005405C4 /* EcosiaBaseSnapshotTest.swift */; };
 		2CABD7162C11C9CC00A0750F /* MozillaAppServices in Frameworks */ = {isa = PBXBuildFile; productRef = 2CABD7152C11C9CC00A0750F /* MozillaAppServices */; };
 		2CABD7282C12EF1E00A0750F /* PrivateModeButtonTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CABD7272C12EF1E00A0750F /* PrivateModeButtonTests.swift */; };
 		2CC8AC342C4F887D000A669A /* MockAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC8AC332C4F887D000A669A /* MockAnalytics.swift */; };
 		2CCFB3D72C0FBEE800BEDCA0 /* TabToolbarHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D815A3A724A53F3200AAB221 /* TabToolbarHelperTests.swift */; };
-		2CD3685B2C5BC3C700972871 /* EcosiaSnapshotTestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD368492C5BC31700972871 /* EcosiaSnapshotTestsLaunchTests.swift */; };
-		2CD3685C2C5BC3CB00972871 /* SnapshotHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD3683E2C5BA30A00972871 /* SnapshotHelper.swift */; };
 		2CD3685D2C5BC92300972871 /* SnapshotHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD3683E2C5BA30A00972871 /* SnapshotHelper.swift */; };
 		2CE294472B7CDD56006C22B2 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 2CE294462B7CDD56006C22B2 /* Core */; };
 		2CE294492B7CDD78006C22B2 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 2CE294482B7CDD78006C22B2 /* Core */; };
@@ -1612,7 +1612,7 @@
 			remoteGlobalIDString = 2FCAE2191ABB51F800877008;
 			remoteInfo = Storage;
 		};
-		2CD3684B2C5BC31700972871 /* PBXContainerItemProxy */ = {
+		2C6C90862C614A17007D9B43 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F84B21B61A090F8100AAB793 /* Project object */;
 			proxyType = 1;
@@ -2465,11 +2465,13 @@
 		2C61892E2B7A8A22006B70D7 /* Analytics.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Analytics.swift; sourceTree = "<group>"; };
 		2C61892F2B7A8A22006B70D7 /* Analytics+Configuration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Analytics+Configuration.swift"; sourceTree = "<group>"; };
 		2C6189302B7A8A22006B70D7 /* Analytics.Values.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Analytics.Values.swift; sourceTree = "<group>"; };
+		2C69DA712C62175400D7F69F /* SnapshotTestHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapshotTestHelper.swift; sourceTree = "<group>"; };
+		2C69DA742C62185A00D7F69F /* Welcome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Welcome.swift; sourceTree = "<group>"; };
+		2C6C90822C614A16007D9B43 /* EcosiaSnapshotTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EcosiaSnapshotTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C6E44099EACF7BE5438CEB6 /* ca */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ca; path = ca.lproj/Today.strings; sourceTree = "<group>"; };
 		2C7DBABB2C4EA17200BCD03F /* AnalyticsFeatureManagementIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsFeatureManagementIntegrationTests.swift; sourceTree = "<group>"; };
 		2C872A532B8CD47600B318A0 /* MockAppVersionInfoProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAppVersionInfoProvider.swift; sourceTree = "<group>"; };
 		2C872A562B8CD65100B318A0 /* EcosiaHomeViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaHomeViewModelTests.swift; sourceTree = "<group>"; };
-		2C88B31D2C5BD021004926B8 /* XCTestCase+Ecosia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+Ecosia.swift"; sourceTree = "<group>"; };
 		2C894B452C5BD597005405C4 /* EcosiaBaseSnapshotTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaBaseSnapshotTest.swift; sourceTree = "<group>"; };
 		2C8C07761E7800EA00DC1237 /* FindInPageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FindInPageTests.swift; sourceTree = "<group>"; };
 		2C9144B0B15218D8A0FCD538 /* es-AR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-AR"; path = "es-AR.lproj/ClearPrivateData.strings"; sourceTree = "<group>"; };
@@ -2477,6 +2479,7 @@
 		2CA16FDD1E5F089100332277 /* SearchTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchTest.swift; sourceTree = "<group>"; };
 		2CABD7272C12EF1E00A0750F /* PrivateModeButtonTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivateModeButtonTests.swift; sourceTree = "<group>"; };
 		2CAE4511992E91A32AB7D7C7 /* th */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = th; path = th.lproj/Today.strings; sourceTree = "<group>"; };
+		2CB1728B2C61336D008551E2 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.5.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
 		2CB1A6591FDEA8B60084E96D /* NewTabSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTabSettings.swift; sourceTree = "<group>"; };
 		2CB56E3E1E926BFB00AF7586 /* ToolbarTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToolbarTest.swift; sourceTree = "<group>"; };
 		2CBCAAFB2B88EEE40080AD68 /* Ecosia.WidgetKit.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Ecosia.WidgetKit.xcconfig; sourceTree = "<group>"; };
@@ -2505,7 +2508,6 @@
 		2CCF17522105E4FD00705AE5 /* DisplaySettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplaySettingsTests.swift; sourceTree = "<group>"; };
 		2CCFB3D42C0F1EA500BEDCA0 /* LoadingScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingScreen.swift; sourceTree = "<group>"; };
 		2CD3683E2C5BA30A00972871 /* SnapshotHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnapshotHelper.swift; sourceTree = "<group>"; };
-		2CD368452C5BC31700972871 /* EcosiaSnapshotTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EcosiaSnapshotTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2CD368492C5BC31700972871 /* EcosiaSnapshotTestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaSnapshotTestsLaunchTests.swift; sourceTree = "<group>"; };
 		2CE294442B7CDD05006C22B2 /* CoreAudioTypes.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioTypes.framework; path = System/Library/Frameworks/CoreAudioTypes.framework; sourceTree = SDKROOT; };
 		2CE294672B7FC5A4006C22B2 /* EcosiaInstallTypeTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EcosiaInstallTypeTests.swift; sourceTree = "<group>"; };
@@ -7764,10 +7766,11 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		2CD368422C5BC31700972871 /* Frameworks */ = {
+		2C6C907F2C614A16007D9B43 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2C6C908F2C614A6C007D9B43 /* SnapshotTesting in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8768,6 +8771,14 @@
 			path = Analytics;
 			sourceTree = "<group>";
 		};
+		2C69DA732C62185000D7F69F /* Mocks */ = {
+			isa = PBXGroup;
+			children = (
+				2C69DA742C62185A00D7F69F /* Welcome.swift */,
+			);
+			path = Mocks;
+			sourceTree = "<group>";
+		};
 		2C7DBABA2C4EA14C00BCD03F /* IntegrationTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -8824,10 +8835,11 @@
 		2CD3683F2C5BA30A00972871 /* SnapshotTests */ = {
 			isa = PBXGroup;
 			children = (
+				2C69DA732C62185000D7F69F /* Mocks */,
 				2CD368492C5BC31700972871 /* EcosiaSnapshotTestsLaunchTests.swift */,
 				2CD3683E2C5BA30A00972871 /* SnapshotHelper.swift */,
-				2C88B31D2C5BD021004926B8 /* XCTestCase+Ecosia.swift */,
 				2C894B452C5BD597005405C4 /* EcosiaBaseSnapshotTest.swift */,
+				2C69DA712C62175400D7F69F /* SnapshotTestHelper.swift */,
 			);
 			path = SnapshotTests;
 			sourceTree = "<group>";
@@ -9472,6 +9484,7 @@
 		7B604FC11C496005006EEEC3 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2CB1728B2C61336D008551E2 /* libz.tbd */,
 				2CE294442B7CDD05006C22B2 /* CoreAudioTypes.framework */,
 				8A08EC6327EBDCAC00E119C7 /* AdServices.framework */,
 				C8E18F1F222EDED000E30E52 /* SafariServices.framework */,
@@ -11874,7 +11887,7 @@
 				E69DB07D1E97DEA9008A67E6 /* SyncTelemetryTests.xctest */,
 				047F9B2724E1FE1C00CD7DF7 /* WidgetKitExtension.appex */,
 				43BE578A278BA4D900491291 /* RustMozillaAppServices.framework */,
-				2CD368452C5BC31700972871 /* EcosiaSnapshotTests.xctest */,
+				2C6C90822C614A16007D9B43 /* EcosiaSnapshotTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -12280,26 +12293,26 @@
 			productReference = 288A2D861AB8B3260023ABC3 /* Shared.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		2CD368442C5BC31700972871 /* EcosiaSnapshotTests */ = {
+		2C6C90812C614A16007D9B43 /* EcosiaSnapshotTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 2CD3684D2C5BC31700972871 /* Build configuration list for PBXNativeTarget "EcosiaSnapshotTests" */;
+			buildConfigurationList = 2C6C90882C614A17007D9B43 /* Build configuration list for PBXNativeTarget "EcosiaSnapshotTests" */;
 			buildPhases = (
-				2CD368412C5BC31700972871 /* Sources */,
-				2CD368422C5BC31700972871 /* Frameworks */,
-				2CD368432C5BC31700972871 /* Resources */,
+				2C6C907E2C614A16007D9B43 /* Sources */,
+				2C6C907F2C614A16007D9B43 /* Frameworks */,
+				2C6C90802C614A16007D9B43 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				2C894B442C5BD326005405C4 /* PBXTargetDependency */,
-				2CD3684C2C5BC31700972871 /* PBXTargetDependency */,
+				2C6C90872C614A17007D9B43 /* PBXTargetDependency */,
 			);
 			name = EcosiaSnapshotTests;
 			packageProductDependencies = (
+				2C6C908E2C614A6C007D9B43 /* SnapshotTesting */,
 			);
 			productName = EcosiaSnapshotTests;
-			productReference = 2CD368452C5BC31700972871 /* EcosiaSnapshotTests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
+			productReference = 2C6C90822C614A16007D9B43 /* EcosiaSnapshotTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		2FA435FA1ABB83B4008031D1 /* Account */ = {
 			isa = PBXNativeTarget;
@@ -12603,7 +12616,7 @@
 						CreatedOnToolsVersion = 6.2;
 						LastSwiftMigration = 1000;
 					};
-					2CD368442C5BC31700972871 = {
+					2C6C90812C614A16007D9B43 = {
 						CreatedOnToolsVersion = 15.4;
 						TestTargetID = F84B21BD1A090F8100AAB793;
 					};
@@ -12822,7 +12835,7 @@
 				2C61887D2B7A89E4006B70D7 /* XCRemoteSwiftPackageReference "ios-core" */,
 				2C6189EF2B7B7D48006B70D7 /* XCRemoteSwiftPackageReference "snowplow-ios-tracker" */,
 				2CCFB3D82C0FC4DC00BEDCA0 /* XCRemoteSwiftPackageReference "rust-components-swift" */,
-				2C0222032C612A04006724D5 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */,
+				2CB172802C612D68008551E2 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */,
 			);
 			productRefGroup = F84B21BF1A090F8100AAB793 /* Products */;
 			projectDirPath = "";
@@ -12844,7 +12857,7 @@
 				43BE5774278BA4D900491291 /* RustMozillaAppServices */,
 				288A2D851AB8B3260023ABC3 /* Shared */,
 				2827315D1ABC9BE600AA1954 /* Sync */,
-				2CD368442C5BC31700972871 /* EcosiaSnapshotTests */,
+				2C6C90812C614A16007D9B43 /* EcosiaSnapshotTests */,
 			);
 		};
 /* End PBXProject section */
@@ -12932,7 +12945,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		2CD368432C5BC31700972871 /* Resources */ = {
+		2C6C90802C614A16007D9B43 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -13289,15 +13302,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		2CD368412C5BC31700972871 /* Sources */ = {
+		2C6C907E2C614A16007D9B43 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2CD3685C2C5BC3CB00972871 /* SnapshotHelper.swift in Sources */,
-				2C894B462C5BD597005405C4 /* EcosiaBaseSnapshotTest.swift in Sources */,
-				2CD3685B2C5BC3C700972871 /* EcosiaSnapshotTestsLaunchTests.swift in Sources */,
-				2C88B3202C5BD0D5004926B8 /* String.swift in Sources */,
-				2C88B31F2C5BD03B004926B8 /* XCTestCase+Ecosia.swift in Sources */,
+				2C69DA752C62185A00D7F69F /* Welcome.swift in Sources */,
+				2C6C90902C614A76007D9B43 /* EcosiaSnapshotTestsLaunchTests.swift in Sources */,
+				2C6C90922C614A76007D9B43 /* EcosiaBaseSnapshotTest.swift in Sources */,
+				2C69DA722C62175400D7F69F /* SnapshotTestHelper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -14653,14 +14665,10 @@
 			target = 2FCAE2191ABB51F800877008 /* Storage */;
 			targetProxy = 2C1298A92BF5EE23005AE4E4 /* PBXContainerItemProxy */;
 		};
-		2C894B442C5BD326005405C4 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			productRef = 2C894B432C5BD326005405C4 /* Core */;
-		};
-		2CD3684C2C5BC31700972871 /* PBXTargetDependency */ = {
+		2C6C90872C614A17007D9B43 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = F84B21BD1A090F8100AAB793 /* Client */;
-			targetProxy = 2CD3684B2C5BC31700972871 /* PBXContainerItemProxy */;
+			targetProxy = 2C6C90862C614A17007D9B43 /* PBXContainerItemProxy */;
 		};
 		2F11EE501ABCAE910083902D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -19710,11 +19718,12 @@
 			};
 			name = Development_AppCenter;
 		};
-		2CD3684E2C5BC31700972871 /* Debug */ = {
+		2C6C90892C614A17007D9B43 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -19743,11 +19752,10 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = "";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -19772,24 +19780,24 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "${MOZ_BUNDLE_ID}.EcosiaSnapshotTests";
+				PRODUCT_BUNDLE_IDENTIFIER = com.ecosia.ecosiaapp.EcosiaSnapshotTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = Client;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Client.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Client";
 			};
 			name = Debug;
 		};
-		2CD3684F2C5BC31700972871 /* BetaDebug */ = {
+		2C6C908A2C614A17007D9B43 /* BetaDebug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -19839,23 +19847,24 @@
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "${MOZ_BUNDLE_ID}.EcosiaSnapshotTests";
+				PRODUCT_BUNDLE_IDENTIFIER = com.ecosia.ecosiaapp.EcosiaSnapshotTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = Client;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Client.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Client";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = BetaDebug;
 		};
-		2CD368502C5BC31700972871 /* Release */ = {
+		2C6C908B2C614A17007D9B43 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -19905,23 +19914,24 @@
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "${MOZ_BUNDLE_ID}.EcosiaSnapshotTests";
+				PRODUCT_BUNDLE_IDENTIFIER = com.ecosia.ecosiaapp.EcosiaSnapshotTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = Client;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Client.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Client";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
-		2CD368512C5BC31700972871 /* Development_TestFlight */ = {
+		2C6C908C2C614A17007D9B43 /* Development_TestFlight */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -19978,7 +19988,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "${MOZ_BUNDLE_ID}.EcosiaSnapshotTests";
+				PRODUCT_BUNDLE_IDENTIFIER = com.ecosia.ecosiaapp.EcosiaSnapshotTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
@@ -19986,15 +19996,16 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = Client;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Client.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Client";
 			};
 			name = Development_TestFlight;
 		};
-		2CD368522C5BC31700972871 /* Development_AppCenter */ = {
+		2C6C908D2C614A17007D9B43 /* Development_AppCenter */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -20051,7 +20062,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "${MOZ_BUNDLE_ID}.EcosiaSnapshotTests";
+				PRODUCT_BUNDLE_IDENTIFIER = com.ecosia.ecosiaapp.EcosiaSnapshotTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
@@ -20059,7 +20070,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = Client;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Client.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Client";
 			};
 			name = Development_AppCenter;
 		};
@@ -21116,14 +21127,14 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		2CD3684D2C5BC31700972871 /* Build configuration list for PBXNativeTarget "EcosiaSnapshotTests" */ = {
+		2C6C90882C614A17007D9B43 /* Build configuration list for PBXNativeTarget "EcosiaSnapshotTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				2CD3684E2C5BC31700972871 /* Debug */,
-				2CD3684F2C5BC31700972871 /* BetaDebug */,
-				2CD368502C5BC31700972871 /* Release */,
-				2CD368512C5BC31700972871 /* Development_TestFlight */,
-				2CD368522C5BC31700972871 /* Development_AppCenter */,
+				2C6C90892C614A17007D9B43 /* Debug */,
+				2C6C908A2C614A17007D9B43 /* BetaDebug */,
+				2C6C908B2C614A17007D9B43 /* Release */,
+				2C6C908C2C614A17007D9B43 /* Development_TestFlight */,
+				2C6C908D2C614A17007D9B43 /* Development_AppCenter */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -21295,14 +21306,6 @@
 				version = 2.0.0;
 			};
 		};
-		2C0222032C612A04006724D5 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/pointfreeco/swift-snapshot-testing";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.17.3;
-			};
-		};
 		2C61887D2B7A89E4006B70D7 /* XCRemoteSwiftPackageReference "ios-core" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
@@ -21317,6 +21320,14 @@
 			requirement = {
 				kind = exactVersion;
 				version = 5.2.0;
+			};
+		};
+		2CB172802C612D68008551E2 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-snapshot-testing";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.17.3;
 			};
 		};
 		2CCFB3D82C0FC4DC00BEDCA0 /* XCRemoteSwiftPackageReference "rust-components-swift" */ = {
@@ -21418,10 +21429,10 @@
 			package = 2C6189EF2B7B7D48006B70D7 /* XCRemoteSwiftPackageReference "snowplow-ios-tracker" */;
 			productName = SnowplowTracker;
 		};
-		2C894B432C5BD326005405C4 /* Core */ = {
+		2C6C908E2C614A6C007D9B43 /* SnapshotTesting */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 2C61887D2B7A89E4006B70D7 /* XCRemoteSwiftPackageReference "ios-core" */;
-			productName = Core;
+			package = 2CB172802C612D68008551E2 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */;
+			productName = SnapshotTesting;
 		};
 		2CABD7152C11C9CC00A0750F /* MozillaAppServices */ = {
 			isa = XCSwiftPackageProductDependency;

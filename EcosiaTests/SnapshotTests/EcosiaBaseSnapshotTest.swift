@@ -4,14 +4,4 @@
 
 import XCTest
 
-class EcosiaBaseSnapshotTests: XCTestCase {
-    var app: XCUIApplication!
-
-    override func setUp() async throws {
-        continueAfterFailure = true
-        app = await XCUIApplication()
-        await setupSnapshot(app)
-        await app.launch()
-    }
-
-}
+class EcosiaBaseSnapshotTests: XCTestCase {}

@@ -2,24 +2,26 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
+import SnapshotTesting
 import XCTest
+@testable import Client
 
-final class EcosiaSnapshotTestsLaunchTests: EcosiaBaseSnapshotTests {
+final class EcosiaSnapshotTestsLaunchTests: XCTestCase {
     
-    func testTakeOnbaordingSnapshots() async throws {
-        await waitForExistence(app.staticTexts[String.localized(.skipWelcomeTour)], timeout: 15)
-        await snapshot("01OnboardingScreen")
-        await app.buttons[String.localized(.getStarted)].tap()
-        await waitForExistence(app.staticTexts[String.localized(.grennestWayToSearch)], timeout: 15)
-        await snapshot("02OnboardingScreen")
-        await app.buttons[String.localized(.onboardingContinueCTAButtonAccessibility)].tap()
-        await waitForExistence(app.staticTexts[String.localized(.hundredPercentOfProfits)], timeout: 15)
-        await snapshot("03OnboardingScreen")
-        await app.buttons[String.localized(.onboardingContinueCTAButtonAccessibility)].tap()
-        await waitForExistence(app.staticTexts[String.localized(.collectiveAction)], timeout: 15)
-        await snapshot("04OnboardingScreen")
-        await app.buttons[String.localized(.onboardingContinueCTAButtonAccessibility)].tap()
-        await waitForExistence(app.staticTexts[String.localized(.realResults)], timeout: 15)
-        await snapshot("05OnboardingScreen")
+    func testOnbaordingWelcomeScreen() {
+        SnapshotTestHelper.assertSnapshot(of: Welcome(delegate: MockWelcomeDelegate()))
     }
+    
+    func testOnboardingStepsScreens() {
+        let welcomeTourViewController = WelcomeTour(delegate: MockWelcomeTourDelegate())
+        // Number of steps in the WelcomeTour
+        let numberOfSteps = 4
+        // Iterate through steps and take snapshots, skipping the first one
+        for step in 1...numberOfSteps {
+            if step != 1 {
+                welcomeTourViewController.forward() // Move to the next step
+            }
+            SnapshotTestHelper.assertSnapshot(of: welcomeTourViewController, wait: 1.0, testName: "testWelcomeTourViewController_step_\(step)")
+        }
+    }    
 }
