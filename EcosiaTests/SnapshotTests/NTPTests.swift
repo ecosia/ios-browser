@@ -27,21 +27,41 @@ class HomepageViewControllerTests: XCTestCase {
         profile = nil
     }
 
-    func testHomepageViewController() {
-        User.shared.firstTime = false
+    func testNTPShowingImpactIntro() {
+        User.shared.showImpactIntro()
         let tabManager = TabManagerImplementation(profile: profile, imageStore: nil)
         let urlBar = URLBarView(profile: profile)
         let overlayManager = MockOverlayModeManager()
         overlayManager.setURLBar(urlBarView: urlBar)
 
-        let homeViewController = HomepageViewController(profile: profile,
+        let homePageViewController = HomepageViewController(profile: profile,
                                                                toastContainer: UIView(),
                                                                tabManager: tabManager,
                                                                overlayManager: overlayManager,
                                                                referrals: .init(),
                                                                delegate: nil)
+        
         // Providing precision = 0.95 to accommodate the trees and the money counter updates which will result into different numbers
         // for different snapshots.
-        SnapshotTestHelper.assertSnapshot(of: homeViewController, wait: 3.0, precision: 0.95, testName: "HomepageViewController_Initial")
+        SnapshotTestHelper.assertSnapshot(of: homePageViewController, wait: 3.0, precision: 0.95, testName: "NTP_with_impact_intro")
+    }
+    
+    func testNTPImpactIntroHidden() {
+        User.shared.hideImpactIntro()
+        let tabManager = TabManagerImplementation(profile: profile, imageStore: nil)
+        let urlBar = URLBarView(profile: profile)
+        let overlayManager = MockOverlayModeManager()
+        overlayManager.setURLBar(urlBarView: urlBar)
+
+        let homePageViewController = HomepageViewController(profile: profile,
+                                                               toastContainer: UIView(),
+                                                               tabManager: tabManager,
+                                                               overlayManager: overlayManager,
+                                                               referrals: .init(),
+                                                               delegate: nil)
+        
+        // Providing precision = 0.95 to accommodate the trees and the money counter updates which will result into different numbers
+        // for different snapshots.
+        SnapshotTestHelper.assertSnapshot(of: homePageViewController, wait: 3.0, precision: 0.95, testName: "NTP_without_impact_intro")
     }
 }
