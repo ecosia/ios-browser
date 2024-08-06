@@ -19384,8 +19384,6 @@
 				CODE_SIGN_ENTITLEMENTS = "$(inherited)";
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 33YMRSYD2L;
 				EXCLUDED_SOURCE_FILE_NAMES = "Client/Nimbus/TestData/*";
 				INFOPLIST_FILE = Client/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -19897,8 +19895,6 @@
 				CODE_SIGN_ENTITLEMENTS = "$(inherited)";
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 33YMRSYD2L;
 				EXCLUDED_SOURCE_FILE_NAMES = "Client/Nimbus/TestData/*";
 				INFOPLIST_FILE = Client/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -20147,8 +20143,6 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 33YMRSYD2L;
 				EXCLUDED_ARCHS = "";
 				EXCLUDED_SOURCE_FILE_NAMES = (
 					CredentialProvider.appex,
@@ -20381,8 +20375,6 @@
 				CODE_SIGN_ENTITLEMENTS = "$(inherited)";
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 33YMRSYD2L;
 				EXCLUDED_SOURCE_FILE_NAMES = "Client/Nimbus/TestData/*";
 				INFOPLIST_FILE = Client/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -20575,8 +20567,6 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
-				DEVELOPMENT_TEAM = 33YMRSYD2L;
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 33YMRSYD2L;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
