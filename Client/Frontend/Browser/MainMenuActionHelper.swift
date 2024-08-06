@@ -697,6 +697,7 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
 
             self.share(fileURL: url, buttonView: self.buttonView)
             
+            // Ecosia: Analytics
             Analytics.shared.menuShare(.file)
         }.items
     }
@@ -712,6 +713,7 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
             
             TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .sharePageWith)
 
+            // Ecosia: Analytics
             if tab.canonicalURL?.displayURL == nil {
                 Analytics.shared.menuShare(.ntp)
             } else {
