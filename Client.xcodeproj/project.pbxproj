@@ -345,6 +345,7 @@
 		2C69DA7F2C62458300D7F69F /* RustMozillaAppServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43BE578A278BA4D900491291 /* RustMozillaAppServices.framework */; };
 		2C69DA812C62459200D7F69F /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 2C69DA802C62459200D7F69F /* Core */; };
 		2C69DA822C62459C00D7F69F /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CB1728B2C61336D008551E2 /* libz.tbd */; };
+		2C69DA842C62B44B00D7F69F /* NTPComponentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C69DA832C62B44B00D7F69F /* NTPComponentTests.swift */; };
 		2C6C908F2C614A6C007D9B43 /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = 2C6C908E2C614A6C007D9B43 /* SnapshotTesting */; };
 		2C6C90902C614A76007D9B43 /* OnboardingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD368492C5BC31700972871 /* OnboardingTests.swift */; };
 		2C78374B2C1765DF00BBFFEB /* LoadingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCFB3D42C0F1EA500BEDCA0 /* LoadingScreen.swift */; };
@@ -2476,6 +2477,7 @@
 		2C69DA712C62175400D7F69F /* SnapshotTestHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapshotTestHelper.swift; sourceTree = "<group>"; };
 		2C69DA742C62185A00D7F69F /* Welcome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Welcome.swift; sourceTree = "<group>"; };
 		2C69DA762C62243300D7F69F /* NTPTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPTests.swift; sourceTree = "<group>"; };
+		2C69DA832C62B44B00D7F69F /* NTPComponentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPComponentTests.swift; sourceTree = "<group>"; };
 		2C6C90822C614A16007D9B43 /* EcosiaSnapshotTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EcosiaSnapshotTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C6E44099EACF7BE5438CEB6 /* ca */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ca; path = ca.lproj/Today.strings; sourceTree = "<group>"; };
 		2C7DBABB2C4EA17200BCD03F /* AnalyticsFeatureManagementIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsFeatureManagementIntegrationTests.swift; sourceTree = "<group>"; };
@@ -8850,6 +8852,7 @@
 				2CD368492C5BC31700972871 /* OnboardingTests.swift */,
 				2C69DA712C62175400D7F69F /* SnapshotTestHelper.swift */,
 				2C69DA762C62243300D7F69F /* NTPTests.swift */,
+				2C69DA832C62B44B00D7F69F /* NTPComponentTests.swift */,
 			);
 			path = SnapshotTests;
 			sourceTree = "<group>";
@@ -13324,6 +13327,7 @@
 				2C69DA772C62243300D7F69F /* NTPTests.swift in Sources */,
 				2C69DA782C62259D00D7F69F /* MockProfile.swift in Sources */,
 				2C69DA792C6225AE00D7F69F /* DependencyHelperMock.swift in Sources */,
+				2C69DA842C62B44B00D7F69F /* NTPComponentTests.swift in Sources */,
 				2C69DA7C2C6225DB00D7F69F /* MockOverlayModeManager.swift in Sources */,
 				2C69DA7E2C6244C400D7F69F /* MockThemeManager.swift in Sources */,
 				2C69DA722C62175400D7F69F /* SnapshotTestHelper.swift in Sources */,
