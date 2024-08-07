@@ -4,9 +4,13 @@
 
 import Common
 import Shared
+// Ecosia: import Client
+@testable import Client
 
 class MockThemeManager: ThemeManager {
-    var currentTheme: Theme = LightTheme()
+    // Ecosia: Make Ecosia Theme
+    // var currentTheme: Theme = LightTheme()
+    var currentTheme: Theme = EcosiaLightTheme()
     var window: UIWindow?
 
     func getInterfaceStyle() -> UIUserInterfaceStyle {
@@ -14,11 +18,21 @@ class MockThemeManager: ThemeManager {
     }
 
     func changeCurrentTheme(_ newTheme: ThemeType) {
+        /* Ecosia: Make Ecosia Theme
         switch newTheme {
         case .light:
             currentTheme = LightTheme()
         case .dark:
             currentTheme = DarkTheme()
+        case .privateMode:
+            currentTheme = PrivateModeTheme()
+        }
+         */
+        switch newTheme {
+        case .light:
+            currentTheme = EcosiaLightTheme()
+        case .dark:
+            currentTheme = EcosiaDarkTheme()
         case .privateMode:
             currentTheme = PrivateModeTheme()
         }

@@ -44,11 +44,12 @@ final class WelcomeTour: UIViewController,  Themeable {
 
     // MARK: - Init
 
-    init(delegate: WelcomeTourDelegate) {
+    init(delegate: WelcomeTourDelegate, startingStep: Step? = nil) {
         super.init(nibName: nil, bundle: nil)
         modalPresentationCapturesStatusBarAppearance = true
         self.delegate = delegate
         steps = Step.all
+        current = startingStep
     }
 
     required init?(coder: NSCoder) { return nil }
