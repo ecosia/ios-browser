@@ -2485,6 +2485,7 @@
 		2C6C90822C614A16007D9B43 /* EcosiaSnapshotTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EcosiaSnapshotTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C6E44099EACF7BE5438CEB6 /* ca */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ca; path = ca.lproj/Today.strings; sourceTree = "<group>"; };
 		2C7DBABB2C4EA17200BCD03F /* AnalyticsFeatureManagementIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsFeatureManagementIntegrationTests.swift; sourceTree = "<group>"; };
+		2C8262572C64424300E2A255 /* EcosiaSnapshotTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = EcosiaSnapshotTests.xctestplan; sourceTree = "<group>"; };
 		2C872A532B8CD47600B318A0 /* MockAppVersionInfoProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAppVersionInfoProvider.swift; sourceTree = "<group>"; };
 		2C872A562B8CD65100B318A0 /* EcosiaHomeViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaHomeViewModelTests.swift; sourceTree = "<group>"; };
 		2C8C07761E7800EA00DC1237 /* FindInPageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FindInPageTests.swift; sourceTree = "<group>"; };
@@ -8869,6 +8870,7 @@
 		2CD3683F2C5BA30A00972871 /* SnapshotTests */ = {
 			isa = PBXGroup;
 			children = (
+				2C8262572C64424300E2A255 /* EcosiaSnapshotTests.xctestplan */,
 				2C69DA882C63A54100D7F69F /* Onboarding */,
 				2C69DA872C63A53C00D7F69F /* NTP */,
 				2C69DA732C62185000D7F69F /* Mocks */,
