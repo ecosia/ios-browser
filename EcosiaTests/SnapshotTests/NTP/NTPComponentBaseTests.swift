@@ -15,11 +15,9 @@ final class NTPComponentBaseTests: SnapshotBaseTests {
     private let commonWidth = 375
     
     func testNTPLogoCell() {
-        func testNTPCustomizationCell() {
-            SnapshotTestHelper.assertSnapshot(initializingWith: {
-                NTPLogoCell(frame: CGRect(x: 0, y: 0, width: self.commonWidth, height: 100))
-            })
-        }
+        SnapshotTestHelper.assertSnapshot(initializingWith: {
+            NTPLogoCell(frame: CGRect(x: 0, y: 0, width: self.commonWidth, height: 100))
+        })
     }
     
     func testNTPLibraryCell() {
