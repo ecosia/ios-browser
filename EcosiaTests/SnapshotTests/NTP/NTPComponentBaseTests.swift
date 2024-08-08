@@ -14,16 +14,11 @@ final class NTPComponentBaseTests: SnapshotBaseTests {
     
     private let commonWidth = 375
     
-    func testNTPNewsCell() {
-        do {
-            let mockNews = try createMockNewsModel()
+    func testNTPLogoCell() {
+        func testNTPCustomizationCell() {
             SnapshotTestHelper.assertSnapshot(initializingWith: {
-                let cell = NTPNewsCell(frame: CGRect(x: 0, y: 0, width: self.commonWidth, height: 100))
-                cell.configure(mockNews!, images: Images(.init(configuration: .ephemeral)), row: 0, totalCount: 1)
-                return cell
+                NTPLogoCell(frame: CGRect(x: 0, y: 0, width: self.commonWidth, height: 100))
             })
-        } catch {
-            XCTFail("Failed to create mock NewsModel: \(error)")
         }
     }
     
@@ -68,13 +63,20 @@ final class NTPComponentBaseTests: SnapshotBaseTests {
             return cell
         })
     }
-    
-    func testNTPCustomizationCell() {
-        SnapshotTestHelper.assertSnapshot(initializingWith: {
-            NTPCustomizationCell(frame: CGRect(x: 0, y: 0, width: self.commonWidth, height: 100))
-        })
+
+    func testNTPNewsCell() {
+        do {
+            let mockNews = try createMockNewsModel()
+            SnapshotTestHelper.assertSnapshot(initializingWith: {
+                let cell = NTPNewsCell(frame: CGRect(x: 0, y: 0, width: self.commonWidth, height: 100))
+                cell.configure(mockNews!, images: Images(.init(configuration: .ephemeral)), row: 0, totalCount: 1)
+                return cell
+            })
+        } catch {
+            XCTFail("Failed to create mock NewsModel: \(error)")
+        }
     }
-    
+            
     func testNTPAboutFinancialReportsEcosiaCell() {
         aboutCellForSection(.financialReports)
     }
@@ -85,6 +87,12 @@ final class NTPComponentBaseTests: SnapshotBaseTests {
     
     func testNTPAboutTreesEcosiaCell() {
         aboutCellForSection(.trees)
+    }
+    
+    func testNTPCustomizationCell() {
+        SnapshotTestHelper.assertSnapshot(initializingWith: {
+            NTPCustomizationCell(frame: CGRect(x: 0, y: 0, width: self.commonWidth, height: 100))
+        })
     }
 }
 
