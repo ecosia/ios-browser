@@ -23,7 +23,7 @@ final class OnboardingTests: SnapshotBaseTests {
             // Using closure to ensure that the snapshot captures the current state of the view controller after navigation actions
             SnapshotTestHelper.assertSnapshot(initializingWith: {
                 WelcomeTour(delegate: MockWelcomeTourDelegate(), startingStep: startingStep)
-            }, wait: 1.0, precision: 0.95, testName: "testWelcomeScreen_step_\(step)")
+            }, devices: [.iPhone12Pro_Portrait, .iPadPro_Portrait], wait: 1.0, precision: 0.95, testName: "testWelcomeScreen_step_\(step)")
         }
     }
 }
