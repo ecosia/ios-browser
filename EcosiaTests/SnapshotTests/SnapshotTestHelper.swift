@@ -33,11 +33,11 @@ final class SnapshotTestHelper {
     private static func performSnapshot<T>(
         initializingWith initializer: @escaping () -> T,
         within container: () -> UIWindow,
-        wait: TimeInterval = 0.0,
-        precision: CGFloat = 1.0,
-        file: StaticString = #file,
-        testName: String = #function,
-        line: UInt = #line
+        wait: TimeInterval,
+        precision: CGFloat,
+        file: StaticString,
+        testName: String,
+        line: UInt
     ) {
         let themes: [(UIUserInterfaceStyle, ThemeConfiguration.Theme)] = [
             (.light, .light),
@@ -62,7 +62,6 @@ final class SnapshotTestHelper {
                 window.bounds = viewController.view.bounds
                 viewController.view.frame = window.bounds
                 viewController.loadViewIfNeeded()
-                viewController.view.layoutSubviews()
             }
             
             window.makeKeyAndVisible()
@@ -88,7 +87,7 @@ final class SnapshotTestHelper {
     ///   - line: The line number to report failures.
     static func assertSnapshot(
         initializingWith initializer: @escaping () -> UIViewController,
-        wait: TimeInterval = 1.0,
+        wait: TimeInterval = 0,
         precision: CGFloat = 1.0,
         file: StaticString = #file,
         testName: String = #function,
@@ -117,7 +116,7 @@ final class SnapshotTestHelper {
     ///   - line: The line number to report failures.
     static func assertSnapshot(
         initializingWith initializer: @escaping () -> UIView,
-        wait: TimeInterval = 1.0,
+        wait: TimeInterval = 0,
         precision: CGFloat = 1.0,
         file: StaticString = #file,
         testName: String = #function,
