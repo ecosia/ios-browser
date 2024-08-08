@@ -221,9 +221,11 @@ final class WelcomeTour: UIViewController,  Themeable {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        if current == nil {
+        guard let current else {
             startTour()
+            return
         }
+        display(step: current)
     }
 
     private func startTour() {
