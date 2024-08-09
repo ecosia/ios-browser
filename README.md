@@ -213,3 +213,17 @@ Make sure that `fastlane` and `transifex`-cli is installed.
     ```bash
     bundle exec fastlane deliver --app-version 8.2.0
     ```
+
+## 📸 Snapshot Testing
+
+We built our snapshot testing setup with `SnapshotTestHelper` to streamline UI checks. Here’s the gist:
+
+- **Dynamic Setup**: We create UI components on-the-fly for testing, ensuring they're set up with current data and state.
+  
+- **Config Flexibility**: The tool handles multiple themes and devices, simulating how UI looks across different environments.
+
+- **Localization**: It supports testing in various languages by adjusting the app’s locale dynamically, crucial for ensuring the UI displays correctly in all supported languages.
+
+- **Comparison**: We capture snapshots of the UI and compare them to reference images to spot any unintended changes.
+
+More details [here](SNAPSHOT_TESTING_WIKI)
