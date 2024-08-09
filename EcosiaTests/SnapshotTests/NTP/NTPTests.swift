@@ -37,6 +37,8 @@ extension NTPTests {
                                                                 delegate: nil)
             return homePageViewController
         },
+        // Precision at .95 to accommodate a snapshot looking slightly different due to the different data output
+        // from the statistics json
         precision: 0.95,
         testName: impactIntroShown ? "NTP_with_impact_intro" : "NTP_without_impact_intro")
     }

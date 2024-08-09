@@ -21,6 +21,7 @@ final class SnapshotTestHelper {
     /// - Parameters:
     ///   - initializer: A closure that returns newly initialized content (UIView or UIViewController).
     ///   - devices: An array of `DeviceType` specifying the device configurations for the snapshot.
+    ///   - locales: An array of `Locale` specifying the locales for the snapshot.
     ///   - wait: The time interval to wait before taking the snapshot.
     ///   - precision: The precision of the snapshot comparison.
     ///   - file: The file in which failures should be reported.
@@ -29,6 +30,7 @@ final class SnapshotTestHelper {
     private static func performSnapshot<T>(
         initializingWith initializer: @escaping () -> T,
         devices: [DeviceType],
+        locales: [Locale],
         wait: TimeInterval,
         precision: CGFloat,
         file: StaticString,
@@ -43,28 +45,49 @@ final class SnapshotTestHelper {
         let themeManager: ThemeManager = AppContainer.shared.resolve()
         var window = UIWindow(frame: CGRect(origin: .zero, size: UIScreen.main.bounds.size))
         if devices.isEmpty {
-            themes.forEach { theme, suffix in
-                changeThemeTo(theme, suffix: suffix, themeManager: themeManager)
-                updateContentInitializingWith(initializer, inWindow: window)
-                RunLoop.current.run(until: Date(timeIntervalSinceNow: wait))
-                let snapshotting = Snapshotting<UIView, UIImage>.image(precision: Float(precision))
-                let snapshotName = "\(String.cleanFunctionName(testName))_\(suffix.rawValue)"
-                SnapshotTesting.assertSnapshot(of: window, as: snapshotting, file: file, testName: snapshotName, line: line)
-            }
-        } else {
-            devices.forEach { device in
+            locales.forEach { locale in
                 themes.forEach { theme, suffix in
-                    let config = device.config
-                    window = UIWindow(frame: CGRect(origin: .zero, size: config.size!))
+                    setLocale(locale)
                     changeThemeTo(theme, suffix: suffix, themeManager: themeManager)
                     updateContentInitializingWith(initializer, inWindow: window)
                     RunLoop.current.run(until: Date(timeIntervalSinceNow: wait))
-                    let snapshotting = Snapshotting<UIView, UIImage>.image(precision: Float(precision), traits: config.traits)
-                    let snapshotName = "\(String.cleanFunctionName(testName))_\(suffix.rawValue)_\(device.rawValue)"
+                    let snapshotting = Snapshotting<UIView, UIImage>.image(precision: Float(precision))
+                    let snapshotName = "\(String.cleanFunctionName(testName))_\(suffix.rawValue)_\(locale.identifier)"
                     SnapshotTesting.assertSnapshot(of: window, as: snapshotting, file: file, testName: snapshotName, line: line)
                 }
             }
+        } else {
+            locales.forEach { locale in
+                devices.forEach { device in
+                    themes.forEach { theme, suffix in
+                        let config = device.config
+                        window = UIWindow(frame: CGRect(origin: .zero, size: config.size!))
+                        setLocale(locale)
+                        changeThemeTo(theme, suffix: suffix, themeManager: themeManager)
+                        updateContentInitializingWith(initializer, inWindow: window)
+                        RunLoop.current.run(until: Date(timeIntervalSinceNow: wait))
+                        let snapshotting = Snapshotting<UIView, UIImage>.image(precision: Float(precision), traits: config.traits)
+                        let snapshotName = "\(String.cleanFunctionName(testName))_\(suffix.rawValue)_\(device.rawValue)_\(locale.identifier)"
+                        SnapshotTesting.assertSnapshot(of: window, as: snapshotting, file: file, testName: snapshotName, line: line)
+                    }
+                }
+            }
         }
+    }
+    
+    /// Sets the application's locale to the specified locale for testing.
+    ///
+    /// - Parameter locale: The locale to set for the application.
+    private static func setLocale(_ locale: Locale) {
+        overriddenLocaleIdentifier = locale.identifier
+        UserDefaults.standard.set([locale.identifier], forKey: "AppleLanguages")
+        UserDefaults.standard.set(locale.identifier, forKey: "AppleLocale")
+        UserDefaults.standard.synchronize()
+        swizzleMainBundle()  // Swap the main bundle to use your custom bundle
+    }
+    
+    private static func swizzleMainBundle() {
+        object_setClass(Bundle.main, LocalizationOverrideTestingBundle.self)
     }
     
     /// Updates the window with newly initialized content and makes it visible.
@@ -79,7 +102,7 @@ final class SnapshotTestHelper {
         setupContent(content, in: window)
         window.makeKeyAndVisible()
     }
-
+    
     /// Changes the current theme to a specified UI style and updates the LegacyThemeManager accordingly.
     /// This method applies a specified theme and updates the global theme settings through a theme manager.
     ///
@@ -97,6 +120,7 @@ final class SnapshotTestHelper {
     /// - Parameters:
     ///   - initializer: A closure that returns a newly initialized UIViewController.
     ///   - devices: An array of `DeviceType` for different device configurations.
+    ///   - locales: An array of `Locale` specifying the locales for the snapshot. Default to English if not specified
     ///   - wait: The time interval to delay the snapshot.
     ///   - precision: The precision of the snapshot comparison.
     ///   - file: The file in which failures should be reported.
@@ -105,7 +129,8 @@ final class SnapshotTestHelper {
     static func assertSnapshot(
         initializingWith initializer: @escaping () -> UIViewController,
         devices: [DeviceType] = [.iPhone12Pro_Portrait],
-        wait: TimeInterval = 0,
+        locales: [Locale] = [Locale(identifier: "en")],
+        wait: TimeInterval = 0.5,
         precision: CGFloat = 1.0,
         file: StaticString = #file,
         testName: String = #function,
@@ -114,6 +139,7 @@ final class SnapshotTestHelper {
         performSnapshot(
             initializingWith: initializer,
             devices: devices,
+            locales: locales,
             wait: wait,
             precision: precision,
             file: file,
@@ -127,6 +153,7 @@ final class SnapshotTestHelper {
     /// - Parameters:
     ///   - initializer: A closure that returns a newly initialized UIView.
     ///   - devices: An array of `DeviceType` for different device configurations.
+    ///   - locales: An array of `Locale` specifying the locales for the snapshot. Default to English if not specified
     ///   - wait: The time interval to delay the snapshot.
     ///   - precision: The precision of the snapshot comparison.
     ///   - file: The file in which failures should be reported.
@@ -135,7 +162,8 @@ final class SnapshotTestHelper {
     static func assertSnapshot(
         initializingWith initializer: @escaping () -> UIView,
         devices: [DeviceType] = [],
-        wait: TimeInterval = 0,
+        locales: [Locale] = [Locale(identifier: "en")],
+        wait: TimeInterval = 0.5,
         precision: CGFloat = 1.0,
         file: StaticString = #file,
         testName: String = #function,
@@ -144,6 +172,7 @@ final class SnapshotTestHelper {
         performSnapshot(
             initializingWith: initializer,
             devices: devices,
+            locales: locales,
             wait: wait,
             precision: precision,
             file: file,

@@ -11,7 +11,7 @@ final class OnboardingTests: SnapshotBaseTests {
     func testWelcomeScreen() {
         SnapshotTestHelper.assertSnapshot(initializingWith: {
             Welcome(delegate: MockWelcomeDelegate())
-        }, wait: 2.0)
+        }, locales: LocalizationOverrideTestingBundle.supportedLocales, wait: 2.0)
     }
     
     func testWelcomeStepsScreens() {
@@ -20,10 +20,16 @@ final class OnboardingTests: SnapshotBaseTests {
         // Iterate through steps and take snapshots, skipping the first one
         for step in 1...numberOfSteps {
             let startingStep = WelcomeTour.Step.all[step-1]
-            // Using closure to ensure that the snapshot captures the current state of the view controller after navigation actions
+            // Precision at .95 to accommodate a snapshot looking slightly different due to the different data output
+            // from the statistics json
+            let precision = startingStep == .transparent ? 0.95 : 1.0
             SnapshotTestHelper.assertSnapshot(initializingWith: {
                 WelcomeTour(delegate: MockWelcomeTourDelegate(), startingStep: startingStep)
-            }, devices: [.iPhone12Pro_Portrait, .iPadPro_Portrait], wait: 1.0, precision: 0.95, testName: "testWelcomeScreen_step_\(step)")
+            }, devices: [.iPhone12Pro_Portrait, .iPadPro_Portrait], 
+                                              locales: LocalizationOverrideTestingBundle.supportedLocales,
+                                              wait: 1.0,
+                                              precision: precision,
+                                              testName: "testWelcomeScreen_step_\(step)")
         }
     }
 }

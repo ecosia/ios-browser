@@ -353,6 +353,7 @@
 		2C78374B2C1765DF00BBFFEB /* LoadingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCFB3D42C0F1EA500BEDCA0 /* LoadingScreen.swift */; };
 		2C7DBABD2C4EA37200BCD03F /* AnalyticsFeatureManagementIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7DBABB2C4EA17200BCD03F /* AnalyticsFeatureManagementIntegrationTests.swift */; };
 		2C82625A2C64BB9300E2A255 /* DeviceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C8262592C64BB9300E2A255 /* DeviceType.swift */; };
+		2C82625C2C6648D900E2A255 /* LocalizationOverrideTestingBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C82625B2C6648D900E2A255 /* LocalizationOverrideTestingBundle.swift */; };
 		2C872A552B8CD58200B318A0 /* ContileProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A7A93ED2810ADF2005E7E1B /* ContileProviderTests.swift */; };
 		2C872A5A2B8CD7E000B318A0 /* MockAppVersionInfoProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C872A532B8CD47600B318A0 /* MockAppVersionInfoProvider.swift */; };
 		2C872A5B2B8CD7E000B318A0 /* AnalyticsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE294692B7FC5A5006C22B2 /* AnalyticsTests.swift */; };
@@ -2488,6 +2489,7 @@
 		2C7DBABB2C4EA17200BCD03F /* AnalyticsFeatureManagementIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsFeatureManagementIntegrationTests.swift; sourceTree = "<group>"; };
 		2C8262572C64424300E2A255 /* EcosiaSnapshotTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = EcosiaSnapshotTests.xctestplan; sourceTree = "<group>"; };
 		2C8262592C64BB9300E2A255 /* DeviceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceType.swift; sourceTree = "<group>"; };
+		2C82625B2C6648D900E2A255 /* LocalizationOverrideTestingBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationOverrideTestingBundle.swift; sourceTree = "<group>"; };
 		2C872A532B8CD47600B318A0 /* MockAppVersionInfoProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAppVersionInfoProvider.swift; sourceTree = "<group>"; };
 		2C872A562B8CD65100B318A0 /* EcosiaHomeViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaHomeViewModelTests.swift; sourceTree = "<group>"; };
 		2C8C07761E7800EA00DC1237 /* FindInPageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FindInPageTests.swift; sourceTree = "<group>"; };
@@ -8880,6 +8882,7 @@
 				2C69DA912C63A92D00D7F69F /* SnapshotBaseTests.swift */,
 				2C69DA932C63B0C000D7F69F /* String+Extension.swift */,
 				2C8262592C64BB9300E2A255 /* DeviceType.swift */,
+				2C82625B2C6648D900E2A255 /* LocalizationOverrideTestingBundle.swift */,
 			);
 			path = SnapshotTests;
 			sourceTree = "<group>";
@@ -13358,6 +13361,7 @@
 				2C82625A2C64BB9300E2A255 /* DeviceType.swift in Sources */,
 				2C69DA792C6225AE00D7F69F /* DependencyHelperMock.swift in Sources */,
 				2C69DA842C62B44B00D7F69F /* NTPComponentBaseTests.swift in Sources */,
+				2C82625C2C6648D900E2A255 /* LocalizationOverrideTestingBundle.swift in Sources */,
 				2C69DA7C2C6225DB00D7F69F /* MockOverlayModeManager.swift in Sources */,
 				2C69DA7E2C6244C400D7F69F /* MockThemeManager.swift in Sources */,
 				2C69DA722C62175400D7F69F /* SnapshotTestHelper.swift in Sources */,

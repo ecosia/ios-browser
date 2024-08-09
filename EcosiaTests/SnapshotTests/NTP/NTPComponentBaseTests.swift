@@ -97,7 +97,7 @@ final class NTPComponentBaseTests: SnapshotBaseTests {
 extension NTPComponentBaseTests {
     
     private func aboutCellForSection(_ aboutEcosiaSection: AboutEcosiaSection) {
-        let sectionTitle = aboutEcosiaSection.title.lowercased().replacingOccurrences(of: " ", with: "_")
+        let sectionTitle = aboutEcosiaSection.image.lowercased().camelCaseToSnakeCase()
         SnapshotTestHelper.assertSnapshot(initializingWith: {
             let cell = NTPAboutEcosiaCell(frame: CGRect(x: 0, y: 0, width: self.commonWidth, height: 240))
             let viewModel = NTPAboutEcosiaCellViewModel(theme: self.themeManager.currentTheme)
