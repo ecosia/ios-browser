@@ -4,21 +4,23 @@
 
 import Common
 import Shared
+@testable import Client
 
-class MockThemeManager: ThemeManager {
-    var currentTheme: Theme = LightTheme()
+final class EcosiaMockThemeManager: ThemeManager {
+
+    var currentTheme: Theme = EcosiaLightTheme()
     var window: UIWindow?
 
     func getInterfaceStyle() -> UIUserInterfaceStyle {
-        return .light
+        currentTheme.type.getInterfaceStyle()
     }
 
     func changeCurrentTheme(_ newTheme: ThemeType) {
         switch newTheme {
         case .light:
-            currentTheme = LightTheme()
+            currentTheme = EcosiaLightTheme()
         case .dark:
-            currentTheme = DarkTheme()
+            currentTheme = EcosiaDarkTheme()
         case .privateMode:
             currentTheme = PrivateModeTheme()
         }
