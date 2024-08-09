@@ -11,7 +11,7 @@ final class OnboardingTests: SnapshotBaseTests {
     func testWelcomeScreen() {
         SnapshotTestHelper.assertSnapshot(initializingWith: {
             Welcome(delegate: MockWelcomeDelegate())
-        }, locales: LocalizationOverrideTestingBundle.supportedLocales, wait: 2.0)
+        }, locales: LocalizationOverrideTestingBundle.supportedLocales, wait: 1.0)
     }
     
     func testWelcomeStepsScreens() {
@@ -27,7 +27,7 @@ final class OnboardingTests: SnapshotBaseTests {
                 WelcomeTour(delegate: MockWelcomeTourDelegate(), startingStep: startingStep)
             }, devices: [.iPhone12Pro_Portrait, .iPadPro_Portrait], 
                                               locales: LocalizationOverrideTestingBundle.supportedLocales,
-                                              wait: 1.0,
+                                              wait: 2.0,
                                               precision: precision,
                                               testName: "testWelcomeScreen_step_\(step)")
         }
