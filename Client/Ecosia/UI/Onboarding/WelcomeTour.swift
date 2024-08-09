@@ -44,11 +44,12 @@ final class WelcomeTour: UIViewController,  Themeable {
 
     // MARK: - Init
 
-    init(delegate: WelcomeTourDelegate) {
+    init(delegate: WelcomeTourDelegate, startingStep: Step? = nil) {
         super.init(nibName: nil, bundle: nil)
         modalPresentationCapturesStatusBarAppearance = true
         self.delegate = delegate
         steps = Step.all
+        current = startingStep
     }
 
     required init?(coder: NSCoder) { return nil }
@@ -220,9 +221,11 @@ final class WelcomeTour: UIViewController,  Themeable {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        if current == nil {
+        guard let current else {
             startTour()
+            return
         }
+        display(step: current)
     }
 
     private func startTour() {

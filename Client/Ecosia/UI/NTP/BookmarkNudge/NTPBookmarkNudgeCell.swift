@@ -139,6 +139,7 @@ final class NTPBookmarkNudgeCell: UICollectionViewCell, Themeable, ReusableCell 
     @objc func applyTheme() {
         backgroundCard.backgroundColor = .legacyTheme.ecosia.ntpCellBackground
         openBookmarksButton.setTitleColor(.legacyTheme.ecosia.primaryText, for: .normal)
+        descriptionLabel.textColor = .legacyTheme.ecosia.primaryText
         openBookmarksButton.layer.borderColor = UIColor.legacyTheme.ecosia.primaryText.cgColor
         closeButton.tintColor = .legacyTheme.ecosia.primaryText
 
