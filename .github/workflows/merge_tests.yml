@@ -23,7 +23,7 @@ jobs:
 
       - name: Perform Unit Tests and Publish Test reports
         id: perform-tests
-        uses: ./.github/actions/perform_tests
+        uses: ./.github/actions/perform_unit_tests
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
