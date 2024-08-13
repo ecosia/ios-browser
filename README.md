@@ -226,4 +226,4 @@ We built our snapshot testing setup with `SnapshotTestHelper` to streamline UI c
 
 - **Comparison**: We capture snapshots of the UI and compare them to reference images to spot any unintended changes.
 
-More details [here](SNAPSHOT_TESTING_WIKI)
+More details [here](SNAPSHOT_TESTING_WIKI.md)
