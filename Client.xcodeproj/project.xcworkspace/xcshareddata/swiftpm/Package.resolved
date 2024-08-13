@@ -68,8 +68,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ecosia/ios-core.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "66ec7f099ec1e31841468c6636474919fe9a4bf8"
+        "branch" : "ls-mob-2773-send-version-on-install-to-unleash",
+        "revision" : "31a28d0279f2619c33da5e53bb18bc9174feb6c4"
       }
     },
     {
@@ -122,8 +122,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SDWebImage/SDWebImage.git",
       "state" : {
-        "revision" : "be0bcd7823ce56629948491f2eaeaa19979514f7",
-        "version" : "5.19.4"
+        "revision" : "5191b801aca999b704eb93f118f91468b4570571",
+        "version" : "5.19.6"
       }
     },
     {
@@ -147,7 +147,7 @@
     {
       "identity" : "snowplow-ios-tracker",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/snowplow/snowplow-ios-tracker",
+      "location" : "https://github.com/snowplow/snowplow-ios-tracker.git",
       "state" : {
         "revision" : "1e16a929cef8e944bd41dc36a1d2779e06bd0a3c",
         "version" : "5.2.0"
