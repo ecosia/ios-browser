@@ -23,6 +23,7 @@ extension EcosiaInstallType {
             EcosiaInstallType.get() == .unknown {
             EcosiaInstallType.set(type: .fresh)
             EcosiaInstallType.updateCurrentVersion(version: versionProvider.version)
+            User.shared.versionOnInstall = versionProvider.version
         }
         
         if EcosiaInstallType.persistedCurrentVersion() != versionProvider.version {
