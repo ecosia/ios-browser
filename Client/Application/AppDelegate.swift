@@ -174,7 +174,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             ))
         }
          */
-        // Ecosia: Update EcosiaInstallType if needed
+        // Ecosia: Update EcosiaInstallType if needed. This should always happen before `FeatureManagement`.
         EcosiaInstallType.evaluateCurrentEcosiaInstallType()
         // Ecosia: Disable BG sync //backgroundSyncUtil = BackgroundSyncUtil(profile: profile, application: application)
         
