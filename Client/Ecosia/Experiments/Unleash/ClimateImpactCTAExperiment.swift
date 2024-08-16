@@ -24,11 +24,11 @@ struct ClimateImpactCTAExperiment {
     static var actionText: String {
         switch Unleash.getVariant(.climateImpactCTA).name {
         case "test1":
-            return "See where our money goes"
+            return .localized(.climateImpactCTAExperimentText1)
         case "test2":
-            return "Check out our monthly updates"
+            return .localized(.climateImpactCTAExperimentText2)
         default:
-            return "See where our money goes"
+            return .localized(.climateImpactCTAExperimentText1)
         }
     }
 }
