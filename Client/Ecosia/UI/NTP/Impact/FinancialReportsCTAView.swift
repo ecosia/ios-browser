@@ -59,6 +59,7 @@ final class FinancialReportsCTAView: UIView, Themeable {
     }
     
     @objc private func buttonAction() {
+        Analytics.shared.ntp(.click, label: .climateImpactCTA)
         delegate?.openFinancialReports()
     }
 }
