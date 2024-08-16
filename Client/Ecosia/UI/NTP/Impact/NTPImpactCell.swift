@@ -100,6 +100,7 @@ final class NTPImpactCell: UICollectionViewCell, Themeable, ReusableCell {
         guard ClimateImpactCTAExperiment.isEnabled else { return }
         row.updateLayoutForCTA()
         containerStack.addArrangedSubview(financialReportCTAView)
+        ClimateImpactCTAExperiment.trackExperimentImpression()
     }
     
     func refresh(items: [ClimateImpactInfo]) {

@@ -16,4 +16,14 @@ struct ClimateImpactCTAExperiment {
     static var isEnabled: Bool {
         Unleash.isEnabled(.climateImpactCTA)
     }
+    
+    static let trackExperimentImpressionKey = "climateImpactCTAExperimentImpressionKey"
+    /// Send `climateImpactCTA` Analytics view event, but just the first time it's called.
+    static func trackExperimentImpression() {
+        guard !UserDefaults.standard.bool(forKey: Self.trackExperimentImpressionKey) else {
+            return
+        }
+        Analytics.shared.ntp(.view, label: .climateImpactCTA)
+        UserDefaults.standard.setValue(true, forKey: Self.trackExperimentImpressionKey)
+    }
 }
