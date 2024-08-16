@@ -242,5 +242,7 @@ extension String {
         case apnConsentCTAAllowButtonTitle = "Allow push notifications"
         case apnConsentSkipButtonTitle = "Not now"
         case apnConsentLastReminderSkipButtonTitle = "No thanks"
+        case climateImpactCTAExperimentText1 = "See where our money goes"
+        case climateImpactCTAExperimentText2 = "Check out our monthly updates"
     }
 }
