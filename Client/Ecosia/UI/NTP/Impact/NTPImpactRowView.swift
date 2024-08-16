@@ -175,6 +175,17 @@ final class NTPImpactRowView: UIView, Themeable {
         currentProgressView.color = .legacyTheme.ecosia.treeCounterProgressCurrent
     }
     
+    // Currently only used for `ClimateImpactCTAExperiment`
+    func updateLayoutForCTA() {
+        // Remove rounded corners
+        layer.maskedCorners = []
+        // Show full length divider
+        dividerView.isHidden = false
+        let dividerSizeConstraint = dividerView.leadingAnchor.constraint(equalTo: leadingAnchor)
+        dividerSizeConstraint.priority = .required
+        dividerSizeConstraint.isActive = true
+    }
+    
     private func setupProgressIndicator() {
         imageContainer.addSubview(totalProgressView)
         imageContainer.addSubview(currentProgressView)

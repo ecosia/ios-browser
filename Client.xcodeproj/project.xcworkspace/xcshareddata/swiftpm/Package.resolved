@@ -68,8 +68,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ecosia/ios-core.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "66ec7f099ec1e31841468c6636474919fe9a4bf8"
+        "branch" : "ls-mob-2758-climate-impact-cta-experiment",
+        "revision" : "fca5193b39846e85d6bc8cedbeaef76c8f2e3b5c"
       }
     },
     {

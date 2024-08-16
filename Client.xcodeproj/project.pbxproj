@@ -27,6 +27,8 @@
 		0BB5B30B1AC0AD1F0052877D /* LoginsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BB5B30A1AC0AD1F0052877D /* LoginsHelper.swift */; };
 		0BF0DB941A8545800039F300 /* URLBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF0DB931A8545800039F300 /* URLBarView.swift */; };
 		0BF1B7E31AC60DEA00A7B407 /* InsetButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF1B7E21AC60DEA00A7B407 /* InsetButton.swift */; };
+		128694C92C6E0CB000736EBF /* ClimateImpactCTAExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 128694C82C6E0CB000736EBF /* ClimateImpactCTAExperiment.swift */; };
+		128694CB2C6E2F4100736EBF /* FinancialReportsCTAView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 128694CA2C6E2F4100736EBF /* FinancialReportsCTAView.swift */; };
 		158241282820698B00956B39 /* RustRemoteTabsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 158241272820698B00956B39 /* RustRemoteTabsTests.swift */; };
 		15DE98FD27FCED4F00F1ECDB /* RustRemoteTabs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15DE98FC27FCED4F00F1ECDB /* RustRemoteTabs.swift */; };
 		1B3D99F1270E89D0006E1264 /* Telemetry in Frameworks */ = {isa = PBXBuildFile; productRef = 1B3D99F0270E89D0006E1264 /* Telemetry */; };
@@ -2004,6 +2006,8 @@
 		12674A038346A46589A0AC0B /* el */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = el; path = "el.lproj/Default Browser.strings"; sourceTree = "<group>"; };
 		126A40A4A5AFDFD655B0FDF4 /* ca */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ca; path = ca.lproj/ClearHistoryConfirm.strings; sourceTree = "<group>"; };
 		126F44CCB14373DC7813DE1F /* hr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hr; path = hr.lproj/ClearPrivateDataConfirm.strings; sourceTree = "<group>"; };
+		128694C82C6E0CB000736EBF /* ClimateImpactCTAExperiment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClimateImpactCTAExperiment.swift; sourceTree = "<group>"; };
+		128694CA2C6E2F4100736EBF /* FinancialReportsCTAView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinancialReportsCTAView.swift; sourceTree = "<group>"; };
 		12EA4881BFBE296298150D4A /* bn */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = bn; path = bn.lproj/LoginManager.strings; sourceTree = "<group>"; };
 		12F949169C30744CCC749588 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/HistoryPanel.strings; sourceTree = "<group>"; };
 		1323403C8071FC19BB79C191 /* su */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = su; path = su.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -8526,6 +8530,7 @@
 				2C6188B92B7A8A22006B70D7 /* NTPImpactRowView.swift */,
 				2C6188BA2B7A8A22006B70D7 /* NTPImpactDividerFooter.swift */,
 				2C6188BB2B7A8A22006B70D7 /* ClimateImpactInfo.swift */,
+				128694CA2C6E2F4100736EBF /* FinancialReportsCTAView.swift */,
 			);
 			path = Impact;
 			sourceTree = "<group>";
@@ -8661,6 +8666,7 @@
 				2C6188F72B7A8A22006B70D7 /* EngineShortcutsExperiment.swift */,
 				2C6188F82B7A8A22006B70D7 /* EngagementServiceExperiment.swift */,
 				2CE5E11F2C3C529900FB5FB0 /* SkipOnboardingExperiment.swift */,
+				128694C82C6E0CB000736EBF /* ClimateImpactCTAExperiment.swift */,
 			);
 			path = Unleash;
 			sourceTree = "<group>";
@@ -13726,6 +13732,7 @@
 				8CFD56882AAF057D003157A6 /* SwitchFakespotProduction.swift in Sources */,
 				C40046FA1CF8E0B200B08303 /* BackForwardListAnimator.swift in Sources */,
 				DD31E0FB1B382B520077078A /* TabPrintPageRenderer.swift in Sources */,
+				128694CB2C6E2F4100736EBF /* FinancialReportsCTAView.swift in Sources */,
 				2C6189732B7A8A22006B70D7 /* WelcomeTourProfit.swift in Sources */,
 				2C6189412B7A8A22006B70D7 /* EmptyHeader.swift in Sources */,
 				2C61896F2B7A8A22006B70D7 /* WelcomeTour.swift in Sources */,
@@ -13776,6 +13783,7 @@
 				FA9293D41D6580E100AC8D33 /* QRCodeViewController.swift in Sources */,
 				5A679E4B2B239FAE004F2B0D /* TabPeekViewController.swift in Sources */,
 				2178A6A0291454B5002EC290 /* ReaderModeThemeButton.swift in Sources */,
+				128694C92C6E0CB000736EBF /* ClimateImpactCTAExperiment.swift in Sources */,
 				39F4C10A2045DB2E00746155 /* FocusHelper.swift in Sources */,
 				E4CD9F2D1A6DC91200318571 /* TabLocationView.swift in Sources */,
 				81CAE4DB2B1A2C220040C78A /* BrowserViewControllerState.swift in Sources */,
@@ -21358,7 +21366,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = main;
+				branch = "ls-mob-2758-climate-impact-cta-experiment";
 				kind = branch;
 			};
 		};
