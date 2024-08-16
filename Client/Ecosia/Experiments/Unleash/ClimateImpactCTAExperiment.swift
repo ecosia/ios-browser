@@ -16,19 +16,4 @@ struct ClimateImpactCTAExperiment {
     static var isEnabled: Bool {
         Unleash.isEnabled(.climateImpactCTA)
     }
-    
-    static var shouldShow: Bool {
-        isEnabled && Unleash.getVariant(.climateImpactCTA).name != "control"
-    }
-
-    static var actionText: String {
-        switch Unleash.getVariant(.climateImpactCTA).name {
-        case "test1":
-            return .localized(.climateImpactCTAExperimentText1)
-        case "test2":
-            return .localized(.climateImpactCTAExperimentText2)
-        default:
-            return .localized(.climateImpactCTAExperimentText1)
-        }
-    }
 }

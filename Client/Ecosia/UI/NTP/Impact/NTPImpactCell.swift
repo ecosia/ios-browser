@@ -29,8 +29,8 @@ final class NTPImpactCell: UICollectionViewCell, Themeable, ReusableCell {
         containerStack.arrangedSubviews.compactMap { $0 as? NTPImpactRowView }
     }
     private lazy var financialReportCTAView: FinancialReportsCTAView = {
-        let view = FinancialReportsCTAView(actionText: ClimateImpactCTAExperiment.actionText)
-        view.isHidden = !ClimateImpactCTAExperiment.shouldShow
+        let view = FinancialReportsCTAView()
+        view.isHidden = !ClimateImpactCTAExperiment.isEnabled
         return view
     }()
     
