@@ -14,7 +14,6 @@ final class FinancialReportsCTAView: UIView, Themeable {
     
     private lazy var actionButton: ResizableButton = {
         let button = ResizableButton()
-        button.setTitle(.localized(.climateImpactCTAExperimentText), for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.titleLabel?.font = .preferredFont(forTextStyle: .callout)
         button.contentHorizontalAlignment = .left
@@ -32,9 +31,10 @@ final class FinancialReportsCTAView: UIView, Themeable {
     var notificationCenter: NotificationProtocol = NotificationCenter.default
 
     // MARK: - Init
-    init() {
+    init(actionText: String) {
         super.init(frame: .zero)
         
+        actionButton.setTitle(actionText, for: .normal)
         addSubview(actionButton)
         
         translatesAutoresizingMaskIntoConstraints = false
@@ -59,7 +59,7 @@ final class FinancialReportsCTAView: UIView, Themeable {
     }
     
     @objc private func buttonAction() {
-        Analytics.shared.ntp(.click, label: .climateImpactCTA)
+        Analytics.shared.ntpClimateImpactCTAExperiment(.click)
         delegate?.openFinancialReports()
     }
 }

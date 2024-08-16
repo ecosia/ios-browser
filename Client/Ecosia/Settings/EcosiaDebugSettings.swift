@@ -181,11 +181,6 @@ class UnleashVariantResetSetting: HiddenSetting {
             }
             await MainActor.run {
                 self.settings.tableView.reloadData()
-                let alert = AlertController(title: "Unleash reset ✅", 
-                                            message: "The local Unleash cache has been wiped out",
-                                            preferredStyle: .alert)
-                alert.addAction(.init(title: "Ok", style: .default))
-                navigationController?.topViewController?.show(alert, sender: nil)
             }
         }
     }
@@ -198,6 +193,16 @@ final class UnleashBingDistributionSetting: UnleashVariantResetSetting {
     
     override var variant: Unleash.Variant? {
         Unleash.getVariant(.bingDistribution)
+    }
+}
+
+final class UnleashClimateImpactCTASetting: UnleashVariantResetSetting {
+    override var titleName: String? {
+        return "Climate impact CTA"
+    }
+    
+    override var variant: Unleash.Variant? {
+        Unleash.getVariant(.climateImpactCTA)
     }
 }
 
