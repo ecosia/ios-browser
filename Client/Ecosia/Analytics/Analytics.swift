@@ -352,7 +352,7 @@ extension Analytics {
     private func appendTestContextIfNeeded(_ action: Analytics.Action.Activity, _ event: Structured) {
         switch action {
         case .resume, .launch:
-            addABTestContexts(to: event, toggles: [.searchShortcuts, .bingDistribution, .hideOnboardingSkip])
+            addABTestContexts(to: event, toggles: [.searchShortcuts, .bingDistribution])
             addCookieConsentContext(to: event)
         }
     }
