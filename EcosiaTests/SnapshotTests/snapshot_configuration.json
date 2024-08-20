@@ -19,11 +19,13 @@
     },
     {
       "name": "iPhone 13 Pro Max",
-      "orientation": "landscape"
+      "orientation": "landscape",
+      "os": "17.5"
     },
     {
       "name": "iPad Pro (12.9-inch)",
-      "orientation": "portrait"
+      "orientation": "portrait",
+      "os": "17.5"
     }
   ],
   "testPlans": [
