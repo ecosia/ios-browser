@@ -3,7 +3,7 @@
 # Read the JSON file
 config_file="EcosiaTests/SnapshotTests/snapshot_configuration.json"
 devices=$(jq -r '.devices[] | @base64' $config_file)
-tests=$(jq -r '.tests[] | @base64' $config_file)
+test_plans=$(jq -r '.testPlans[] | @base64' $config_file)
 
 for device in $devices; do
   # Decode the device JSON
@@ -14,40 +14,42 @@ for device in $devices; do
   orientation=$(_jq '.orientation')
   os_version=$(_jq '.os')
 
-  # Fallback to "latest" if OS is not specified
-  if [ -z "$os_version" ] || [ "$os_version" == "null" ]; then
-    os_version="latest"
-  fi
-
-  echo "Device: $device_name, Orientation: $orientation, OS: $os_version"
-
-  # Initialize a variable to store the xcodebuild command
-  xcodebuild_cmd="xcodebuild clean test -scheme EcosiaSnapshotTests -testPlan EcosiaSnapshotTests -destination \"platform=iOS Simulator,name=$device_name,OS=$os_version\" DEVICE_NAME=\"$device_name\" ORIENTATION=\"$orientation\""
-
-  for test in $tests; do
+  for test_plan in $test_plans; do
     _jq() {
-      echo ${test} | base64 --decode | jq -r ${1}
+      echo ${test_plan} | base64 --decode | jq -r ${1}
     }
-    test_class=$(_jq '.testClass')
-    test_devices=$(_jq '.devices[]')
+    plan_name=$(_jq '.name')
+    test_classes=$(echo ${test_plan} | base64 --decode | jq -r '.testClasses[] | @base64')
 
-    if [[ "$test_devices" == "all" || "$test_devices" == *"$device_name"* ]]; then
-      # Check locales for this test class
-      test_locales=$(_jq '.locales[]')
+    for test_class in $test_classes; do
+      _jq() {
+        echo ${test_class} | base64 --decode | jq -r ${1}
+      }
+      class_name=$(_jq '.name')
+      class_devices=$(_jq '.devices[]')
 
-      if [[ "$test_locales" == "all" ]]; then
-        locales=$(jq -r '.locales[]' $config_file | paste -sd "," -)
-      else
-        locales=$(echo $test | base64 --decode | jq -r '.locales[]' | paste -sd "," -)
+      if [[ "$class_devices" == "all" || "$class_devices" == *"$device_name"* ]]; then
+        # Check locales for this test class
+        class_locales=$(_jq '.locales[]')
+
+        if [[ "$class_locales" == "all" ]]; then
+          locales=$(jq -r '.locales[]' $config_file)
+        else
+          locales=$(echo $test_class | base64 --decode | jq -r '.locales[]')
+        fi
+
+        # Combine locales into a comma-separated string
+        locale_string=$(echo $locales | tr ' ' ',')
+
+        # Concatenate plan_name and class_name with /
+        only_testing_param="$plan_name/$class_name"
+
+        # Construct xcodebuild command
+        xcodebuild_cmd="xcodebuild test -scheme EcosiaSnapshotTests -destination \"platform=iOS Simulator,name=$device_name,OS=$os_version\" -testPlan $plan_name -only-testing:$only_testing_param DEVICE_NAME=\"$device_name\" LOCALES=\"$locale_string\" ORIENTATION=\"$orientation\""
+
+        echo "Running command: $xcodebuild_cmd"
+        eval $xcodebuild_cmd
       fi
-
-      xcodebuild_cmd+=" -only-testing:$test_class LOCALES=\"$locales\""
-    fi
+    done
   done
-
-  # Debug output of the command before running
-  echo "Running command: $xcodebuild_cmd"
-
-  # Run the constructed xcodebuild command
-  eval $xcodebuild_cmd
 done

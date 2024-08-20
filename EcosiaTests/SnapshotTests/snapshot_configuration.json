@@ -8,6 +8,11 @@
   ],
   "devices": [
     {
+      "name": "iPhone SE (2nd generation)",
+      "orientation": "portrait",
+      "os": "17.5"
+    },
+    {
       "name": "iPhone 12 Pro",
       "orientation": "portrait",
       "os": "17.5"
@@ -21,16 +26,21 @@
       "orientation": "portrait"
     }
   ],
-  "tests": [
+  "testPlans": [
     {
-      "testClass": "OnboardingTests",
-      "devices": ["iPhone 12 Pro", "iPad Pro (12.9-inch)"],
-      "locales": ["en", "es"]
-    },
-    {
-      "testClass": "NTPComponentBaseTests",
-      "devices": ["iPhone 8", "iPhone 13 Pro Max"],
-      "locales": ["all"]
+      "name": "EcosiaSnapshotTests",
+      "testClasses": [
+        {
+          "name": "OnboardingTests",
+          "devices": ["iPhone 12 Pro", "iPad Pro (12.9-inch)"],
+          "locales": ["en", "es"]
+        },
+        {
+          "name": "NTPTests",
+          "devices": ["all"],
+          "locales": ["en", "fr", "de"]
+        }
+      ]
     }
   ]
 }

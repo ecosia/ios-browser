@@ -45,9 +45,9 @@ enum DeviceType: String, CaseIterable {
     /// - Returns: The corresponding `DeviceType` or crashes 💥 if the combination is not supported.
     static func from(deviceName: String, orientation: String) -> DeviceType {
         switch (deviceName, orientation) {
-        case ("iPhone 8", "portrait"):
+        case ("iPhone SE (2nd generation)", "portrait"):
             return .iPhone8_Portrait
-        case ("iPhone 8", "landscape"):
+        case ("iPhone SE (2nd generation)", "landscape"):
             return .iPhone8_Landscape
         case ("iPhone 12 Pro", "portrait"):
             return .iPhone12Pro_Portrait
