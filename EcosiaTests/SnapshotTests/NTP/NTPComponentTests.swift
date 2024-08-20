@@ -10,7 +10,7 @@ import Core
 import MozillaAppServices
 @testable import Client
 
-final class NTPComponentBaseTests: SnapshotBaseTests {
+final class NTPComponentTests: SnapshotBaseTests {
     
     private let commonWidth = 375
     
@@ -94,7 +94,7 @@ final class NTPComponentBaseTests: SnapshotBaseTests {
     }
 }
 
-extension NTPComponentBaseTests {
+extension NTPComponentTests {
     
     private func aboutCellForSection(_ aboutEcosiaSection: AboutEcosiaSection) {
         let sectionTitle = aboutEcosiaSection.image.lowercased().camelCaseToSnakeCase()
