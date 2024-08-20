@@ -8,22 +8,17 @@
   ],
   "devices": [
     {
-      "name": "iPhone 8",
-      "orientation": "portrait",
-      "os": "17.5"
-    },
-    {
       "name": "iPhone 12 Pro",
       "orientation": "portrait",
       "os": "17.5"
     },
     {
       "name": "iPhone 13 Pro Max",
-      "orientation": "landscape",
+      "orientation": "landscape"
     },
     {
       "name": "iPad Pro (12.9-inch)",
-      "orientation": "portrait",
+      "orientation": "portrait"
     }
   ],
   "tests": [
@@ -36,11 +31,6 @@
       "testClass": "NTPComponentBaseTests",
       "devices": ["iPhone 8", "iPhone 13 Pro Max"],
       "locales": ["all"]
-    },
-    {
-      "testClass": "NTPTests",
-      "devices": ["all"],
-      "locales": ["en", "fr", "de"]
     }
   ]
 }

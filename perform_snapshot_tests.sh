@@ -14,8 +14,15 @@ for device in $devices; do
   orientation=$(_jq '.orientation')
   os_version=$(_jq '.os')
 
+  # Fallback to "latest" if OS is not specified
+  if [ -z "$os_version" ] || [ "$os_version" == "null" ]; then
+    os_version="latest"
+  fi
+
+  echo "Device: $device_name, Orientation: $orientation, OS: $os_version"
+
   # Initialize a variable to store the xcodebuild command
-  xcodebuild_cmd="xcodebuild test -scheme Ecosia -destination \"platform=iOS Simulator,name=$device_name,OS=$os_version\" -testPlan EcosiaSnapshotTests DEVICE_NAME=\"$device_name\""
+  xcodebuild_cmd="xcodebuild clean test -scheme EcosiaSnapshotTests -configuration BetaDebug -testPlan EcosiaSnapshotTests -destination \"platform=iOS Simulator,name=$device_name,OS=$os_version\" DEVICE_NAME=\"$device_name\" ORIENTATION=\"$orientation\""
 
   for test in $tests; do
     _jq() {
@@ -29,20 +36,17 @@ for device in $devices; do
       test_locales=$(_jq '.locales[]')
 
       if [[ "$test_locales" == "all" ]]; then
-        locales=$(jq -r '.locales[]' $config_file)
+        locales=$(jq -r '.locales[]' $config_file | paste -sd "," -)
       else
-        locales=$(echo $test | base64 --decode | jq -r '.locales[]')
+        locales=$(echo $test | base64 --decode | jq -r '.locales[]' | paste -sd "," -)
       fi
 
-      # Combine locales into a single string
-      locale_string=""
-      for locale in $locales; do
-        locale_string+="$locale "
-      done
-
-      xcodebuild_cmd+=" -only-testing:$test_class LOCALES=\"$locale_string\""
+      xcodebuild_cmd+=" -only-testing:$test_class LOCALES=\"$locales\""
     fi
   done
+
+  # Debug output of the command before running
+  echo "Running command: $xcodebuild_cmd"
 
   # Run the constructed xcodebuild command
   eval $xcodebuild_cmd

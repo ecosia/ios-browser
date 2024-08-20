@@ -13,6 +13,7 @@ runs:
       uses: actions/checkout@v2
 
     - name: Set up environment
+      shell: bash
       run: |
         brew install jq
 
