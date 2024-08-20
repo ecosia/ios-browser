@@ -54,7 +54,7 @@ for device in $devices; do
 
         # Construct and run the xcodebuild command for each test class separately
         echo "Running tests for class: $class_name on device: $device_name with locales: $locale_string"
-        xcodebuild \
+        xcodebuild test-without-building \
           -scheme "$scheme" \
           -destination "platform=iOS Simulator,name=$device_name,OS=$os_version" \
           -only-testing:$plan_name/$class_name \
