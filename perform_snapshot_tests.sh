@@ -15,6 +15,11 @@ for device in $devices; do
   orientation=$(_jq '.orientation')
   os_version=$(_jq '.os')
 
+  # Check if os_version is empty or null, if so default to 'latest'
+  if [ -z "$os_version" ] || [ "$os_version" == "null" ]; then
+    os_version="latest"
+  fi
+
   # Build the project once for the current device
   echo "Building the project for device: $device_name, OS: $os_version"
   xcodebuild build-for-testing \
