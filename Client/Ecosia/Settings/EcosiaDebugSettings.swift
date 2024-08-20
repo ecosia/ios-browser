@@ -181,6 +181,11 @@ class UnleashVariantResetSetting: HiddenSetting {
             }
             await MainActor.run {
                 self.settings.tableView.reloadData()
+                let alert = AlertController(title: "Unleash reset ✅",
+                                                            message: "The local Unleash cache has been wiped out",
+                                                            preferredStyle: .alert)
+                alert.addAction(.init(title: "Ok", style: .default))
+                navigationController?.topViewController?.present(alert, animated: true)
             }
         }
     }
