@@ -4,9 +4,7 @@
 config_file="EcosiaTests/SnapshotTests/snapshot_configuration.json"
 devices=$(jq -r '.devices[] | @base64' $config_file)
 tests=$(jq -r '.testPlans[] | @base64' $config_file)
-
-# Build the project first
-xcodebuild build -scheme Ecosia
+scheme="EcosiaSnapshotTests"
 
 for device in $devices; do
   # Decode the device JSON
@@ -17,10 +15,16 @@ for device in $devices; do
   orientation=$(_jq '.orientation')
   os_version=$(_jq '.os')
 
-    # Check if os_version is empty, if so default to 'latest'
-  if [ -z "$os_version" ]; then
+  # Check if os_version is empty or null, if so default to 'latest'
+  if [ -z "$os_version" ] || [ "$os_version" == "null" ]; then
     os_version="latest"
   fi
+
+  # Build the project once for the current device
+  echo "Building the project for device: $device_name, OS: $os_version"
+  xcodebuild build \
+    -scheme "$scheme" \
+    -destination "platform=iOS Simulator,name=$device_name,OS=$os_version"
 
   # Loop through the test plans and test classes
   for test_plan in $tests; do
@@ -54,10 +58,10 @@ for device in $devices; do
         locale_string=${locale_string%,}
 
         # Construct and run the xcodebuild command for each test class separately
-        xcodebuild test-without-building \
-          -scheme Ecosia \
+        echo "Running tests for class: $class_name on device: $device_name with locales: $locale_string"
+        xcodebuild \
+          -scheme "$scheme" \
           -destination "platform=iOS Simulator,name=$device_name,OS=$os_version" \
-          -testPlan "$plan_name" \
           -only-testing:$plan_name/$class_name \
           DEVICE_NAME="$device_name" \
           ORIENTATION="$orientation" \
