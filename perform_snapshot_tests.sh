@@ -17,9 +17,14 @@ for device in $devices; do
 
   # Build the project once for the current device
   echo "Building the project for device: $device_name, OS: $os_version"
-  xcodebuild build \
+  xcodebuild build-for-testing \
     -scheme "$scheme" \
-    -destination "platform=iOS Simulator,name=$device_name,OS=$os_version"
+    -destination "platform=iOS Simulator,name=$device_name,OS=$os_version" \
+    CODE_SIGN_IDENTITY="" \
+    CODE_SIGNING_REQUIRED=NO \
+    PROVISIONING_PROFILE_SPECIFIER="" \
+    CODE_SIGN_ENTITLEMENTS="" \
+    CODE_SIGNING_ALLOWED="NO"
 
   # Loop through the test plans and test classes
   for test_plan in $tests; do
