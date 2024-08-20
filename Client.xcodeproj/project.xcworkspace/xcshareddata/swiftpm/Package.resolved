@@ -68,8 +68,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ecosia/ios-core.git",
       "state" : {
-        "branch" : "ls-mob-2773-send-version-on-install-to-unleash",
-        "revision" : "31a28d0279f2619c33da5e53bb18bc9174feb6c4"
+        "branch" : "main",
+        "revision" : "9448d059627ecd447ef3f58ede00d385c6232119"
       }
     },
     {

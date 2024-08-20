@@ -21358,7 +21358,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = "ls-mob-2773-send-version-on-install-to-unleash";
+				branch = main;
 				kind = branch;
 			};
 		};
