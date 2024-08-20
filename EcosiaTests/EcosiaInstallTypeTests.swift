@@ -97,6 +97,26 @@ extension EcosiaInstallTypeTests {
         XCTAssertEqual(EcosiaInstallType.get(), .upgrade)
         XCTAssertEqual(EcosiaInstallType.persistedCurrentVersion(), "1.0.0")
     }
+    
+    func testEvaluateUpgradeInstallType_UpdatesVersionOnInstall_WhenFirstTime() {
+        User.shared.firstTime = true
+        User.shared.versionOnInstall = "0.0.1"
+        
+        let versionProvider = MockAppVersionInfoProvider(mockedAppVersion: "1.0.0")
+        EcosiaInstallType.evaluateCurrentEcosiaInstallType(withVersionProvider: versionProvider)
+        
+        XCTAssertEqual(User.shared.versionOnInstall, "1.0.0")
+    }
+    
+    func testEvaluateUpgradeInstallType_DoesNotUpdatesVersionOnInstall_WhenNotFirstTime() {
+        User.shared.firstTime = false
+        User.shared.versionOnInstall = "0.0.1"
+        
+        let versionProvider = MockAppVersionInfoProvider(mockedAppVersion: "1.0.0")
+        EcosiaInstallType.evaluateCurrentEcosiaInstallType(withVersionProvider: versionProvider)
+        
+        XCTAssertEqual(User.shared.versionOnInstall, "0.0.1")
+    }
 }
 
 extension EcosiaInstallTypeTests {
