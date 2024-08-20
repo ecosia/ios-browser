@@ -22,7 +22,7 @@ for device in $devices; do
   echo "Device: $device_name, Orientation: $orientation, OS: $os_version"
 
   # Initialize a variable to store the xcodebuild command
-  xcodebuild_cmd="xcodebuild clean test -scheme EcosiaSnapshotTests -configuration BetaDebug -testPlan EcosiaSnapshotTests -destination \"platform=iOS Simulator,name=$device_name,OS=$os_version\" DEVICE_NAME=\"$device_name\" ORIENTATION=\"$orientation\""
+  xcodebuild_cmd="xcodebuild clean test -scheme EcosiaSnapshotTests -testPlan EcosiaSnapshotTests -destination \"platform=iOS Simulator,name=$device_name,OS=$os_version\" DEVICE_NAME=\"$device_name\" ORIENTATION=\"$orientation\""
 
   for test in $tests; do
     _jq() {
