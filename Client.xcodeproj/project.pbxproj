@@ -371,7 +371,6 @@
 		2CE294472B7CDD56006C22B2 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 2CE294462B7CDD56006C22B2 /* Core */; };
 		2CE294492B7CDD78006C22B2 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 2CE294482B7CDD78006C22B2 /* Core */; };
 		2CE2E24D2B9B1FCB00973C16 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 2CE2E24C2B9B1FCB00973C16 /* Core */; };
-		2CE5E1202C3C529900FB5FB0 /* SkipOnboardingExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE5E11F2C3C529900FB5FB0 /* SkipOnboardingExperiment.swift */; };
 		2CF4DA612BB31909001C340A /* EngineShortcutsExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6188F72B7A8A22006B70D7 /* EngineShortcutsExperiment.swift */; };
 		2CF4DA632BB31970001C340A /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 2CF4DA622BB31970001C340A /* Core */; };
 		2F13E79B1AC0C02700D75081 /* StringExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F13E79A1AC0C02700D75081 /* StringExtensionsTests.swift */; };
@@ -2536,7 +2535,6 @@
 		2CE2946C2B7FC5A5006C22B2 /* EcosiaNTPTooltipHighlightTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EcosiaNTPTooltipHighlightTests.swift; sourceTree = "<group>"; };
 		2CE2946D2B7FC5A5006C22B2 /* EcosiaPageActionMenuCellTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EcosiaPageActionMenuCellTests.swift; sourceTree = "<group>"; };
 		2CE294702B7FC5A6006C22B2 /* VersionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VersionTests.swift; sourceTree = "<group>"; };
-		2CE5E11F2C3C529900FB5FB0 /* SkipOnboardingExperiment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkipOnboardingExperiment.swift; sourceTree = "<group>"; };
 		2CEA6F781E93E3A600D4100E /* SearchSettingsUITest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchSettingsUITest.swift; sourceTree = "<group>"; };
 		2CEB48402BE0EE2600498471 /* Production.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Production.xcconfig; sourceTree = "<group>"; };
 		2CEDADA120207EC400223A89 /* SyncFAUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncFAUITests.swift; sourceTree = "<group>"; };
@@ -8660,7 +8658,6 @@
 				2C4414412BD7B43F00249464 /* BingDistributionExperiment.swift */,
 				2C6188F72B7A8A22006B70D7 /* EngineShortcutsExperiment.swift */,
 				2C6188F82B7A8A22006B70D7 /* EngagementServiceExperiment.swift */,
-				2CE5E11F2C3C529900FB5FB0 /* SkipOnboardingExperiment.swift */,
 			);
 			path = Unleash;
 			sourceTree = "<group>";
@@ -14343,7 +14340,6 @@
 				F85C7EDD27109241004BDBA4 /* PasswordManagerOnboardingViewController.swift in Sources */,
 				D8FDEB57220CFE970069A582 /* UIImage+ImageEffects.m in Sources */,
 				EBB89506219398E500EB91A0 /* TabContentBlocker.swift in Sources */,
-				2CE5E1202C3C529900FB5FB0 /* SkipOnboardingExperiment.swift in Sources */,
 				21F2A2D22B0BC85200626AEC /* InactiveTabsModel.swift in Sources */,
 				D3E8EF101B97BE69001900FB /* ClearPrivateDataTableViewController.swift in Sources */,
 				C8F457AA1F1FDD9B000CB895 /* BrowserViewController+KeyCommands.swift in Sources */,
