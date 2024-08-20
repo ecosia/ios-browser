@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# Function to extract test cases from a given test class file
+extract_test_cases() {
+  local test_class_file=$1
+  grep -oE "func test[A-Za-z0-9_]+" "$test_class_file" | awk '{print $2}'
+}
+
 # Read the JSON file
 config_file="EcosiaTests/SnapshotTests/snapshot_configuration.json"
 devices=$(jq -r '.devices[] | @base64' $config_file)
@@ -31,6 +37,9 @@ for device in $devices; do
     CODE_SIGN_ENTITLEMENTS="" \
     CODE_SIGNING_ALLOWED="NO"
 
+  # Initialize the xcodebuild command
+  xcodebuild_cmd="xcodebuild test-without-building -scheme \"$scheme\" -destination \"platform=iOS Simulator,name=$device_name,OS=$os_version\""
+
   # Loop through the test plans and test classes
   for test_plan in $tests; do
     plan_name=$(echo ${test_plan} | base64 --decode | jq -r '.name')
@@ -55,23 +64,31 @@ for device in $devices; do
         fi
 
         # Combine locales into a comma-separated string
-        locale_string=""
-        for locale in $locales; do
-          locale_string+="$locale,"
-        done
-        # Remove the trailing comma
-        locale_string=${locale_string%,}
+        locale_string=$(echo "${locales[@]}" | tr '\n' ',' | sed 's/,$//')
 
-        # Construct and run the xcodebuild command for each test class separately
-        echo "Running tests for class: $class_name on device: $device_name with locales: $locale_string"
-        xcodebuild test-without-building \
-          -scheme "$scheme" \
-          -destination "platform=iOS Simulator,name=$device_name,OS=$os_version" \
-          -only-testing:$plan_name/$class_name \
-          DEVICE_NAME="$device_name" \
-          ORIENTATION="$orientation" \
-          LOCALES="$locale_string"
+        # Find the test class file in EcosiaTests subdirectories
+        test_class_file=$(find EcosiaTests -name "${class_name}.swift" | head -n 1)
+
+        if [[ -n "$test_class_file" ]]; then
+          # Extract the test cases from the test class file
+          test_cases=$(extract_test_cases "$test_class_file")
+
+          # Append each test case to the xcodebuild command
+          for test_case in $test_cases; do
+            xcodebuild_cmd+=" -only-testing:$plan_name/$class_name/$test_case"
+          done
+
+          # Add the remaining parameters
+          xcodebuild_cmd+=" DEVICE_NAME=\"$device_name\" ORIENTATION=\"$orientation\" LOCALES=\"$locale_string\""
+        else
+          echo "Test class file for $class_name not found."
+        fi
       fi
     done
   done
+
+  # Run the accumulated xcodebuild command
+  echo "Running tests for device: $device_name with the following command:"
+  echo $xcodebuild_cmd
+  eval $xcodebuild_cmd
 done
