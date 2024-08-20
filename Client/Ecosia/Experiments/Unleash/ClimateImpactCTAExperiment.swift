@@ -43,13 +43,13 @@ struct ClimateImpactCTAExperiment {
         }
     }
     
-    static let trackExperimentImpressionKey = "climateImpactCTAExperimentImpressionKey"
     /// Send `climateImpactCTA` Analytics view event, but just the first time it's called.
     static func trackExperimentImpression() {
-        guard !UserDefaults.standard.bool(forKey: Self.trackExperimentImpressionKey) else {
+        let trackExperimentImpressionKey = "climateImpactCTAExperimentImpressionKey"
+        guard !UserDefaults.standard.bool(forKey: trackExperimentImpressionKey) else {
             return
         }
         Analytics.shared.ntpClimateImpactCTAExperiment(.view)
-        UserDefaults.standard.setValue(true, forKey: Self.trackExperimentImpressionKey)
+        UserDefaults.standard.setValue(true, forKey: trackExperimentImpressionKey)
     }
 }
