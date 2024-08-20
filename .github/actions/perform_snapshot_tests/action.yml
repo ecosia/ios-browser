@@ -1,18 +1,24 @@
-name: 'Perform Tests'
+name: 'Perform Snapshot Tests'
 description: 'This action contains all the usual steps needed to perform the snapshot tests'
 
 inputs:
   github-token:
-    description: 'The Github Token'
+    description: 'The GitHub Token'
     required: true
 
 runs:
   using: "composite"
   steps:
+    - name: Check out repository
+      uses: actions/checkout@v2
+
+    - name: Set up environment
+      run: |
+        brew install jq
+
     - name: Run Snapshot Tests
       shell: bash
-      run: |
-        xcodebuild clean test -scheme Ecosia -configuration BetaDebug -testPlan EcosiaSnapshotTests -destination 'platform=iOS Simulator,name=iPhone 12 Pro,OS=17.5' CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO PROVISIONING_PROFILE_SPECIFIER="" CODE_SIGN_ENTITLEMENTS="" CODE_SIGNING_ALLOWED="NO"
+      run: run_snapshot_tests.sh
 
     - name: Publish Test Report
       uses: mikepenz/action-junit-report@v3.7.6
