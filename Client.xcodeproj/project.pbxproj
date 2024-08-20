@@ -209,6 +209,7 @@
 		2C4414452BD7B4D800249464 /* BingDistributionExperimentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4414432BD7B4D000249464 /* BingDistributionExperimentTests.swift */; };
 		2C4414462BD7B68600249464 /* BingDistributionExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4414412BD7B43F00249464 /* BingDistributionExperiment.swift */; };
 		2C49854E206173C800893DAE /* photon-colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C49854D206173C800893DAE /* photon-colors.swift */; };
+		2C5B81C82C75388300B81D95 /* LocaleRetriever.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5B81C72C75388300B81D95 /* LocaleRetriever.swift */; };
 		2C6189312B7A8A22006B70D7 /* EcosiaLaunchScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6188802B7A8A21006B70D7 /* EcosiaLaunchScreenView.swift */; };
 		2C6189322B7A8A22006B70D7 /* EcosiaLaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2C6188812B7A8A21006B70D7 /* EcosiaLaunchScreen.xib */; };
 		2C6189332B7A8A22006B70D7 /* MMP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6188832B7A8A21006B70D7 /* MMP.swift */; };
@@ -2356,6 +2357,7 @@
 		2C49854D206173C800893DAE /* photon-colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "photon-colors.swift"; sourceTree = "<group>"; };
 		2C4A07DB20246EAD0083E320 /* DragAndDropTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragAndDropTests.swift; sourceTree = "<group>"; };
 		2C4B6BF220349EB800A009C2 /* OnboardingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingTests.swift; sourceTree = "<group>"; };
+		2C5B81C72C75388300B81D95 /* LocaleRetriever.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocaleRetriever.swift; sourceTree = "<group>"; };
 		2C6045859589979C43AF09E0 /* jv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = jv; path = jv.lproj/ClearPrivateDataConfirm.strings; sourceTree = "<group>"; };
 		2C6188802B7A8A21006B70D7 /* EcosiaLaunchScreenView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EcosiaLaunchScreenView.swift; sourceTree = "<group>"; };
 		2C6188812B7A8A21006B70D7 /* EcosiaLaunchScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = EcosiaLaunchScreen.xib; sourceTree = "<group>"; };
@@ -8891,6 +8893,7 @@
 				2C69DA932C63B0C000D7F69F /* String+Extension.swift */,
 				2C8262592C64BB9300E2A255 /* DeviceType.swift */,
 				2C82625B2C6648D900E2A255 /* LocalizationOverrideTestingBundle.swift */,
+				2C5B81C72C75388300B81D95 /* LocaleRetriever.swift */,
 				2C19DACE2C74C7BF00D2641C /* snapshot_configuration.json */,
 			);
 			path = SnapshotTests;
@@ -13369,6 +13372,7 @@
 				2C82625E2C66661700E2A255 /* EcosiaMockThemeManager.swift in Sources */,
 				2C69DA772C62243300D7F69F /* NTPTests.swift in Sources */,
 				2C69DA782C62259D00D7F69F /* MockProfile.swift in Sources */,
+				2C5B81C82C75388300B81D95 /* LocaleRetriever.swift in Sources */,
 				2C82625A2C64BB9300E2A255 /* DeviceType.swift in Sources */,
 				2C69DA792C6225AE00D7F69F /* DependencyHelperMock.swift in Sources */,
 				2C69DA842C62B44B00D7F69F /* NTPComponentBaseTests.swift in Sources */,

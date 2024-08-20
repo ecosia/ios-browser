@@ -20,7 +20,7 @@ final class SnapshotTestHelper {
     ///
     /// - Parameters:
     ///   - initializer: A closure that returns newly initialized content (`UIView` or `UIViewController`).
-    ///   - locales: An array of `Locale` specifying the locales for the snapshot.
+    ///   - locales: An array of `Locale` specifying the locales for the snapshot. Defaults to the loaded from snapshot_configuration.json of each test if no other array is passed.
     ///   - wait: The time interval to wait before taking the snapshot.
     ///   - precision: The precision of the snapshot comparison.
     ///   - file: The file in which failures should be reported.
@@ -28,7 +28,7 @@ final class SnapshotTestHelper {
     ///   - line: The line number in the source code file where the failure occurred.
     private static func performSnapshot<T>(
         initializingWith initializer: @escaping () -> T,
-        locales: [Locale],
+        locales: [Locale] = LocaleRetriever.getLocales(),
         wait: TimeInterval,
         precision: CGFloat,
         file: StaticString,
