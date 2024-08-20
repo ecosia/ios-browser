@@ -12,7 +12,7 @@ runs:
     - name: Run Snapshot Tests
       shell: bash
       run: |
-        xcodebuild clean test -scheme EcosiaSnapshotTests -configuration BetaDebug -testPlan EcosiaSnapshotTests -destination 'platform=iOS Simulator,name=iPhone 12 Pro,OS=17.5'
+        xcodebuild clean test -scheme EcosiaSnapshotTests -configuration BetaDebug -testPlan EcosiaSnapshotTests -destination 'platform=iOS Simulator,name=iPhone 12 Pro,OS=17.5' CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO PROVISIONING_PROFILE_SPECIFIER="" CODE_SIGN_ENTITLEMENTS="" CODE_SIGNING_ALLOWED="NO"
 
     - name: Publish Test Report
       uses: mikepenz/action-junit-report@v3.7.6
