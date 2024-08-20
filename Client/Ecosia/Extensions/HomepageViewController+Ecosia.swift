@@ -95,6 +95,10 @@ extension HomepageViewController: NTPImpactCellDelegate {
             return
         }
     }
+    
+    func openFinancialReports() {
+        openLink(url: Environment.current.urlProvider.financialReports)
+    }
 }
 
 extension HomepageViewController: NTPNewsCellDelegate {

@@ -45,7 +45,8 @@ extension Analytics {
             topSites = "top_sites",
             impact,
             news,
-            about
+            about,
+            climateImpactCTA = "climate_impact_cta"
         }
         
         enum Browser: String {
