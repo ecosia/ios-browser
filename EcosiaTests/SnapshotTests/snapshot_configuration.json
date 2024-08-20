@@ -1,0 +1,46 @@
+{
+  "locales": [
+    "en",
+    "it",
+    "de",
+    "es",
+    "nl"
+  ],
+  "devices": [
+    {
+      "name": "iPhone 8",
+      "orientation": "portrait",
+      "os": "17.5"
+    },
+    {
+      "name": "iPhone 12 Pro",
+      "orientation": "portrait",
+      "os": "17.5"
+    },
+    {
+      "name": "iPhone 13 Pro Max",
+      "orientation": "landscape",
+    },
+    {
+      "name": "iPad Pro (12.9-inch)",
+      "orientation": "portrait",
+    }
+  ],
+  "tests": [
+    {
+      "testClass": "OnboardingTests",
+      "devices": ["iPhone 12 Pro", "iPad Pro (12.9-inch)"],
+      "locales": ["en", "es"]
+    },
+    {
+      "testClass": "NTPComponentBaseTests",
+      "devices": ["iPhone 8", "iPhone 13 Pro Max"],
+      "locales": ["all"]
+    },
+    {
+      "testClass": "NTPTests",
+      "devices": ["all"],
+      "locales": ["en", "fr", "de"]
+    }
+  ]
+}

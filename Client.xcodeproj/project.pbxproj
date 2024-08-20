@@ -200,6 +200,7 @@
 		2C1298A82BF5EE23005AE4E4 /* libStorage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FCAE21A1ABB51F800877008 /* libStorage.a */; };
 		2C1298AC2BF5EE3E005AE4E4 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 2C1298AB2BF5EE3E005AE4E4 /* Core */; };
 		2C1298AF2BF602D3005AE4E4 /* DefaultSuggestedSites.swift in Sources */ = {isa = PBXBuildFile; fileRef = 394CF6CE1BAA493C00906917 /* DefaultSuggestedSites.swift */; };
+		2C19DACF2C74C7BF00D2641C /* snapshot_configuration.json in Resources */ = {isa = PBXBuildFile; fileRef = 2C19DACE2C74C7BF00D2641C /* snapshot_configuration.json */; };
 		2C1F23BD2B9F405E00186F55 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 2C1F23BC2B9F405E00186F55 /* Core */; };
 		2C2349A32C57E5BC007A5894 /* EcosiaPerformanceTestHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2349A22C57E5BC007A5894 /* EcosiaPerformanceTestHistory.swift */; };
 		2C26EA142C04CAD100795552 /* EcosiaTopSitesHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C26EA132C04CAD100795552 /* EcosiaTopSitesHelperTests.swift */; };
@@ -2339,6 +2340,7 @@
 		2C08319B2B89127200BD7134 /* Ecosia.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Ecosia.entitlements; sourceTree = "<group>"; };
 		2C08319C2B89127200BD7134 /* EcosiaBeta.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = EcosiaBeta.entitlements; sourceTree = "<group>"; };
 		2C1298A42BF5EB16005AE4E4 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		2C19DACE2C74C7BF00D2641C /* snapshot_configuration.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = snapshot_configuration.json; sourceTree = "<group>"; };
 		2C2349A22C57E5BC007A5894 /* EcosiaPerformanceTestHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaPerformanceTestHistory.swift; sourceTree = "<group>"; };
 		2C26401D9CCB8C2671EA2431 /* ta */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ta; path = ta.lproj/3DTouchActions.strings; sourceTree = "<group>"; };
 		2C26EA132C04CAD100795552 /* EcosiaTopSitesHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaTopSitesHelperTests.swift; sourceTree = "<group>"; };
@@ -8889,6 +8891,7 @@
 				2C69DA932C63B0C000D7F69F /* String+Extension.swift */,
 				2C8262592C64BB9300E2A255 /* DeviceType.swift */,
 				2C82625B2C6648D900E2A255 /* LocalizationOverrideTestingBundle.swift */,
+				2C19DACE2C74C7BF00D2641C /* snapshot_configuration.json */,
 			);
 			path = SnapshotTests;
 			sourceTree = "<group>";
@@ -13000,6 +13003,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2C19DACF2C74C7BF00D2641C /* snapshot_configuration.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
