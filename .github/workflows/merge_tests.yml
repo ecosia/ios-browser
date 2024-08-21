@@ -32,4 +32,3 @@ jobs:
         uses: ./.github/actions/perform_snapshot_tests
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          core-token: ${{ secrets.IOS_CORE_TOKEN }}

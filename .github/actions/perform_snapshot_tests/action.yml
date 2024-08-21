@@ -5,9 +5,6 @@ inputs:
   github-token:
     description: 'The GitHub Token'
     required: true
-  core-token:
-    description: 'The iOS core token'
-    required: true
 
 runs:
   using: "composite"
