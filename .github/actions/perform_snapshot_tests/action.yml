@@ -12,19 +12,11 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Check out repository
-      uses: actions/checkout@v2
 
     - name: Set up environment
       shell: bash
       run: |
         brew install jq
-
-    - name: Fix-up private Github URLs
-      shell: bash
-      run: find . -type f \( -name '*.pbxproj' -o -name 'Package.swift' -o -name 'Package.resolved' \) -exec sed -i '' "s/https:\/\/github.com\/${GITHUB_REPOSITORY_OWNER}/https:\/\/${GITHUB_ACCESS_TOKEN}@github.com\/${GITHUB_REPOSITORY_OWNER}/g" {} \;
-      env:
-        GITHUB_ACCESS_TOKEN: ${{ inputs.core-token }}
 
     - name: Run Snapshot Tests
       shell: bash
