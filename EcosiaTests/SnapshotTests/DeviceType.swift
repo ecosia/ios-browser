@@ -7,28 +7,28 @@ import UIKit
 
 /// An enum representing different device types and their corresponding `ViewImageConfig` configurations.
 enum DeviceType: String, CaseIterable {
-    case iPhone8_Portrait
-    case iPhone8_Landscape
-    case iPhone12Pro_Portrait
-    case iPhone12Pro_Landscape
-    case iPhone13ProMax_Portrait
-    case iPhone13ProMax_Landscape
+    case iPhoneSE_Portrait
+    case iPhoneSE_Landscape
+    case iPhone14Pro_Portrait
+    case iPhone14Pro_Landscape
+    case iPhone14ProMax_Portrait
+    case iPhone14ProMax_Landscape
     case iPadPro_Portrait
     case iPadPro_Landscape
     
     var config: ViewImageConfig {
         switch self {
-        case .iPhone8_Portrait:
+        case .iPhoneSE_Portrait:
             return ViewImageConfig.iPhone8(.portrait)
-        case .iPhone8_Landscape:
+        case .iPhoneSE_Landscape:
             return ViewImageConfig.iPhone8(.landscape)
-        case .iPhone12Pro_Portrait:
-            return ViewImageConfig.iPhone12Pro(.portrait)
-        case .iPhone12Pro_Landscape:
-            return ViewImageConfig.iPhone12Pro(.landscape)
-        case .iPhone13ProMax_Portrait:
+        case .iPhone14Pro_Portrait:
+            return ViewImageConfig.iPhone13Pro(.portrait)
+        case .iPhone14Pro_Landscape:
+            return ViewImageConfig.iPhone13Pro(.landscape)
+        case .iPhone14ProMax_Portrait:
             return ViewImageConfig.iPhone13ProMax(.portrait)
-        case .iPhone13ProMax_Landscape:
+        case .iPhone14ProMax_Landscape:
             return ViewImageConfig.iPhone13ProMax(.landscape)
         case .iPadPro_Portrait:
             return ViewImageConfig.iPadPro12_9(.portrait)
@@ -46,20 +46,20 @@ enum DeviceType: String, CaseIterable {
     static func from(deviceName: String, orientation: String) -> DeviceType {
         switch (deviceName, orientation) {
         case ("iPhone SE (2nd generation)", "portrait"):
-            return .iPhone8_Portrait
+            return .iPhoneSE_Portrait
         case ("iPhone SE (2nd generation)", "landscape"):
-            return .iPhone8_Landscape
-        case ("iPhone 12 Pro", "portrait"):
-            return .iPhone12Pro_Portrait
-        case ("iPhone 12 Pro", "landscape"):
-            return .iPhone12Pro_Landscape
-        case ("iPhone 13 Pro Max", "portrait"):
-            return .iPhone13ProMax_Portrait
-        case ("iPhone 13 Pro Max", "landscape"):
-            return .iPhone13ProMax_Landscape
-        case ("iPad Pro (12.9-inch)", "portrait"):
+            return .iPhoneSE_Landscape
+        case ("iPhone 14 Pro", "portrait"):
+            return .iPhone14Pro_Portrait
+        case ("iPhone 14 Pro", "landscape"):
+            return .iPhone14Pro_Landscape
+        case ("iPhone 14 Pro Max", "portrait"):
+            return .iPhone14ProMax_Portrait
+        case ("iPhone 14 Pro Max", "landscape"):
+            return .iPhone14ProMax_Landscape
+        case ("iPad Pro (12.9-inch) (6th generation)", "portrait"):
             return .iPadPro_Portrait
-        case ("iPad Pro (12.9-inch)", "landscape"):
+        case ("iPad Pro (12.9-inch) (6th generation)", "landscape"):
             return .iPadPro_Landscape
         default:
             fatalError("Device Name \(deviceName) and Orientation \(orientation) not found. Please add them correctly.")

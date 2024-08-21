@@ -8,21 +8,21 @@
   ],
   "devices": [
     {
-      "name": "iPhone SE (2nd generation)",
+      "name": "iPhone SE (3rd generation)",
       "orientation": "portrait",
       "os": "17.5"
     },
     {
-      "name": "iPhone 12 Pro",
+      "name": "iPhone 14 Pro",
       "orientation": "portrait",
       "os": "17.5"
     },
     {
-      "name": "iPhone 13 Pro Max",
+      "name": "iPhone 14 Pro Max",
       "orientation": "landscape"
     },
     {
-      "name": "iPad Pro (12.9-inch) (4th generation)",
+      "name": "iPad Pro (12.9-inch) (6th generation)",
       "orientation": "portrait"
     }
   ],
