@@ -5,6 +5,9 @@ inputs:
   github-token:
     description: 'The GitHub Token'
     required: true
+  core-token:
+    description: 'The iOS core token'
+    required: true
 
 runs:
   using: "composite"
@@ -21,7 +24,7 @@ runs:
       shell: bash
       run: find . -type f \( -name '*.pbxproj' -o -name 'Package.swift' -o -name 'Package.resolved' \) -exec sed -i '' "s/https:\/\/github.com\/${GITHUB_REPOSITORY_OWNER}/https:\/\/${GITHUB_ACCESS_TOKEN}@github.com\/${GITHUB_REPOSITORY_OWNER}/g" {} \;
       env:
-        GITHUB_ACCESS_TOKEN: ${{ inputs.github-token }}
+        GITHUB_ACCESS_TOKEN: ${{ inputs.core-token }}
 
     - name: Run Snapshot Tests
       shell: bash
