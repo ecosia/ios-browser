@@ -30,6 +30,7 @@ for device in $devices; do
   echo "Building the project for device: $device_name, OS: $os_version"
   xcodebuild build-for-testing \
     -scheme "$scheme" \
+    -clonedSourcePackagesDirPath SourcePackages \
     -destination "platform=iOS Simulator,name=$device_name,OS=$os_version" \
     CODE_SIGN_IDENTITY="" \
     CODE_SIGNING_REQUIRED=NO \
