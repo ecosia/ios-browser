@@ -38,9 +38,6 @@ for device in $devices; do
     CODE_SIGN_ENTITLEMENTS="" \
     CODE_SIGNING_ALLOWED="NO"
 
-  # Initialize the xcodebuild command
-  xcodebuild_cmd="xcodebuild test-without-building -scheme \"$scheme\" -destination \"platform=iOS Simulator,name=$device_name,OS=$os_version\""
-
   # Loop through the test plans and test classes
   for test_plan in $tests; do
     plan_name=$(echo ${test_plan} | base64 --decode | jq -r '.name')
@@ -74,22 +71,26 @@ for device in $devices; do
           # Extract the test cases from the test class file
           test_cases=$(extract_test_cases "$test_class_file")
 
-          # Append each test case to the xcodebuild command
+          # Construct and run the xcodebuild command for each test class separately
           for test_case in $test_cases; do
-            xcodebuild_cmd+=" -only-testing:$plan_name/$class_name/$test_case"
-          done
+            # Prepare the command
+            xcodebuild_cmd="xcodebuild test-without-building \
+              -scheme \"$scheme\" \
+              -clonedSourcePackagesDirPath SourcePackages \
+              -destination \"platform=iOS Simulator,name=$device_name,OS=$os_version\" \
+              -only-testing:$plan_name/$class_name/$test_case \
+              DEVICE_NAME=\"$device_name\" \
+              ORIENTATION=\"$orientation\" \
+              LOCALES=\"$locale_string\""
 
-          # Add the remaining parameters
-          xcodebuild_cmd+=" DEVICE_NAME=\"$device_name\" ORIENTATION=\"$orientation\" LOCALES=\"$locale_string\""
+            # Run the xcodebuild command
+            echo "Running test case: $test_case for class: $class_name on device: $device_name with locales: $locale_string"
+            eval $xcodebuild_cmd
+          done
         else
           echo "Test class file for $class_name not found."
         fi
       fi
     done
   done
-
-  # Run the accumulated xcodebuild command
-  echo "Running tests for device: $device_name with the following command:"
-  echo $xcodebuild_cmd
-  eval $xcodebuild_cmd
 done
