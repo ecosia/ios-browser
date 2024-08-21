@@ -96,6 +96,7 @@ final class NTPImpactCell: UICollectionViewCell, Themeable, ReusableCell {
         guard ClimateImpactCTAExperiment.isEnabled else { return }
         row.updateLayoutForCTA()
         containerStack.addArrangedSubview(financialReportCTAView)
+        financialReportCTAView.layoutSubviews() // Needed since it's here that the intended size is known
         ClimateImpactCTAExperiment.trackExperimentImpression()
     }
     
