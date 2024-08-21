@@ -40,8 +40,12 @@ final class SnapshotTestHelper {
             (.dark, .dark)
         ]
 
-        guard let deviceName = ProcessInfo.processInfo.environment["DEVICE_NAME"],
-              let orientation = ProcessInfo.processInfo.environment["ORIENTATION"] else {
+        guard let path = Bundle.main.path(forResource: "environment", ofType: "json"),
+           let data = try? Data(contentsOf: URL(fileURLWithPath: path)),
+           let json = try? JSONSerialization.jsonObject(with: data, options: []),
+           let dict = json as? [String: String],
+           let deviceName = dict["DEVICE_NAME"],
+              let orientation = dict["ORIENTATION"] else {
             fatalError("Script error. Could not retrieve DEVICE_NAME or ORIENTATION")
         }
 

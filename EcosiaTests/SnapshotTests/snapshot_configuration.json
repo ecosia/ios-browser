@@ -22,7 +22,7 @@
       "orientation": "landscape"
     },
     {
-      "name": "iPad Pro (12.9-inch)",
+      "name": "iPad Pro (12.9-inch) (4th generation)",
       "orientation": "portrait"
     }
   ],
@@ -36,7 +36,7 @@
           "locales": ["en", "es"]
         },
         {
-          "name": "NTPTests",
+          "name": "NTPComponentTests",
           "devices": ["all"],
           "locales": ["en", "fr", "de"]
         }
