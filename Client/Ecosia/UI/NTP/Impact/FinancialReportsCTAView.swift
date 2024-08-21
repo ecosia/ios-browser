@@ -20,6 +20,7 @@ final class FinancialReportsCTAView: UIView, Themeable {
         button.buttonEdgeSpacing = 0
         button.addTarget(self, action: #selector(buttonAction), for: .touchUpInside)
         button.clipsToBounds = true
+        button.setTitleColor(.legacyTheme.ecosia.primaryButton, for: .normal)
         return button
     }()
     
