@@ -8,8 +8,8 @@ extract_test_cases() {
 
 # Function to get device information
 get_device_info() {
-  local device_name=$1
-  local info_type=$2
+  local device_name="$1"
+  local info_type="$2"
   for device in $devices; do
     _jq() {
       echo ${device} | base64 --decode | jq -r ${1}
@@ -40,7 +40,13 @@ for test_plan in $tests; do
     class_name=$(_jq '.name')
     test_devices=$(echo ${test_class} | base64 --decode | jq -r '.devices[]')
 
-    for test_device_name in "${test_devices[@]}"; do
+    # If "all" is specified, use all devices from the devices list
+    if [[ "$test_devices" == "all" ]]; then
+      test_devices=$(jq -r '.devices[] | .name' $config_file)
+    fi
+
+    IFS=$'\n' # Change IFS to handle device names with spaces correctly
+    for test_device_name in $test_devices; do
       # Get the full device information from the devices list
       device_info=$(jq -r --arg name "$test_device_name" '.devices[] | select(.name == $name) | @base64' $config_file)
 
@@ -79,6 +85,18 @@ for test_plan in $tests; do
         echo "Environment file created at: $env_file_path"
         cat "$env_file_path"  # Print the contents of the file for verification
 
+        # Perform the build once for the current device
+        echo "Building the project for device: $device_name, OS: $os_version"
+        xcodebuild build-for-testing \
+          -scheme "$scheme" \
+          -clonedSourcePackagesDirPath SourcePackages \
+          -destination "platform=iOS Simulator,name=$device_name,OS=$os_version" \
+          CODE_SIGN_IDENTITY="" \
+          CODE_SIGNING_REQUIRED=NO \
+          PROVISIONING_PROFILE_SPECIFIER="" \
+          CODE_SIGN_ENTITLEMENTS="" \
+          CODE_SIGNING_ALLOWED="NO"
+
         # Find the test class file in EcosiaTests subdirectories
         test_class_file=$(find EcosiaTests -name "${class_name}.swift" | head -n 1)
 
@@ -106,5 +124,6 @@ for test_plan in $tests; do
         echo "Device $test_device_name not found in the devices list. Skipping..."
       fi
     done
+    unset IFS # Reset IFS
   done
 done

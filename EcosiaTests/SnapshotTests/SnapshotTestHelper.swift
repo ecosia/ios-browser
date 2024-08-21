@@ -39,22 +39,23 @@ final class SnapshotTestHelper {
             (.light, .light),
             (.dark, .dark)
         ]
-
-        guard let path = Bundle.main.path(forResource: "environment", ofType: "json"),
-           let data = try? Data(contentsOf: URL(fileURLWithPath: path)),
-           let json = try? JSONSerialization.jsonObject(with: data, options: []),
-           let dict = json as? [String: String],
-           let deviceName = dict["DEVICE_NAME"],
+        
+        guard let testBundle = Bundle(identifier: "com.ecosia.ecosiaapp.EcosiaSnapshotTests"),
+              let path = testBundle.path(forResource: "environment", ofType: "json"),
+              let data = try? Data(contentsOf: URL(fileURLWithPath: path)),
+              let json = try? JSONSerialization.jsonObject(with: data, options: []),
+              let dict = json as? [String: String],
+              let deviceName = dict["DEVICE_NAME"],
               let orientation = dict["ORIENTATION"] else {
             fatalError("Script error. Could not retrieve DEVICE_NAME or ORIENTATION")
         }
-
+                
         let deviceType = DeviceType.from(deviceName: deviceName, orientation: orientation)
         let config = deviceType.config
         let themeManager: ThemeManager = AppContainer.shared.resolve()
         var window = UIWindow(frame: CGRect(origin: .zero, size: config.size!))
-
-        locales.forEach { locale in
+        
+            locales.forEach { locale in
             themes.forEach { theme, suffix in
                 setLocale(locale)
                 changeThemeTo(theme, suffix: suffix, themeManager: themeManager)
@@ -66,7 +67,7 @@ final class SnapshotTestHelper {
             }
         }
     }
-
+    
     /// Sets the application's locale to the specified locale for testing.
     ///
     /// - Parameter locale: The locale to set for the application.
@@ -77,12 +78,12 @@ final class SnapshotTestHelper {
         UserDefaults.standard.synchronize()
         swizzleMainBundle()  // Swap the main bundle to use your custom bundle
     }
-
+    
     /// Swaps the main bundle to use a custom bundle for localization override during testing.
     private static func swizzleMainBundle() {
         object_setClass(Bundle.main, LocalizationOverrideTestingBundle.self)
     }
-
+    
     /// Updates the window with newly initialized content and makes it visible.
     /// This method initializes content using a provided initializer closure, sets up the content within the specified window,
     /// and makes the window key and visible, ready for interaction or snapshotting.
@@ -95,7 +96,7 @@ final class SnapshotTestHelper {
         setupContent(content, in: window)
         window.makeKeyAndVisible()
     }
-
+    
     /// Changes the current theme to a specified UI style and updates the LegacyThemeManager accordingly.
     /// This method applies a specified theme and updates the global theme settings through a theme manager.
     ///
@@ -107,7 +108,7 @@ final class SnapshotTestHelper {
         LegacyThemeManager.instance.current = suffix == .light ? LegacyNormalTheme() : LegacyDarkTheme()
         themeManager.changeCurrentTheme(suffix == .light ? .light : .dark)
     }
-
+    
     /// Captures snapshots of a `UIViewController` across multiple device configurations.
     ///
     /// - Parameters:
@@ -137,7 +138,7 @@ final class SnapshotTestHelper {
             line: line
         )
     }
-
+    
     /// Captures snapshots of a UIView across multiple device configurations.
     ///
     /// - Parameters:

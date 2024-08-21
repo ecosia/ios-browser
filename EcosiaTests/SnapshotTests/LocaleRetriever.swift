@@ -13,14 +13,15 @@ struct LocaleRetriever {
     // Function to get locales from the JSON file
     static func getLocales() -> [Locale] {
         // Load the JSON file from the app bundle
-        guard let path = Bundle.main.path(forResource: "environment", ofType: "json"),
+        guard let testBundle = Bundle(identifier: "com.ecosia.ecosiaapp.EcosiaSnapshotTests"),
+              let path = testBundle.path(forResource: "environment", ofType: "json"),
               let data = try? Data(contentsOf: URL(fileURLWithPath: path)),
               let json = try? JSONSerialization.jsonObject(with: data, options: []),
               let dict = json as? [String: String],
               let localesString = dict["LOCALES"] else {
-                  // Fallback to default locale if the JSON file is not found or cannot be parsed
-                  return [Locale(identifier: "en")]
-              }
+            // Fallback to default locale if the JSON file is not found or cannot be parsed
+            return [Locale(identifier: "en")]
+        }
         let localeIdentifiers = localesString.split(separator: ",").map({ String($0) })
         return localeIdentifiers.map { Locale(identifier: $0) }
     }

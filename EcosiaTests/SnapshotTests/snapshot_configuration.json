@@ -32,13 +32,16 @@
       "testClasses": [
         {
           "name": "OnboardingTests",
-          "devices": ["iPhone 12 Pro", "iPad Pro (12.9-inch)"],
-          "locales": ["en", "es"]
+          "devices": ["all"],
+          "locales": ["all"]
         },
         {
           "name": "NTPComponentTests",
-          "devices": ["all"],
-          "locales": ["en", "fr", "de"]
+          "devices": ["iPhone 12 Pro"],
+          "locales": [
+            "en",
+            "es"
+          ]
         }
       ]
     }
