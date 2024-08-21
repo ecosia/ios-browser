@@ -37,7 +37,7 @@
         },
         {
           "name": "NTPComponentTests",
-          "devices": ["iPhone 12 Pro"],
+          "devices": ["iPhone 14 Pro"],
           "locales": [
             "en",
             "es"
