@@ -89,7 +89,7 @@ for test_plan in $tests; do
         echo "Building the project for device: $device_name, OS: $os_version"
         xcodebuild build-for-testing \
           -scheme "$scheme" \
-          -clonedSourcePackagesDirPath SourcePackages \
+          -clonedSourcePackagesDirPath "SourcePackages/" \
           -destination "platform=iOS Simulator,name=$device_name,OS=$os_version" \
           CODE_SIGN_IDENTITY="" \
           CODE_SIGNING_REQUIRED=NO \
@@ -109,7 +109,7 @@ for test_plan in $tests; do
             # Prepare the command
             xcodebuild_cmd="xcodebuild test-without-building \
               -scheme \"$scheme\" \
-              -clonedSourcePackagesDirPath SourcePackages \
+              -clonedSourcePackagesDirPath "SourcePackages/" \
               -destination \"platform=iOS Simulator,name=$device_name,OS=$os_version\" \
               -only-testing:$plan_name/$class_name/$test_case"
 
