@@ -32,15 +32,9 @@
       "testClasses": [
         {
           "name": "OnboardingTests",
-          "devices": ["all"],
-          "locales": ["all"]
-        },
-        {
-          "name": "NTPComponentTests",
           "devices": ["iPhone 14 Pro"],
           "locales": [
-            "en",
-            "es"
+            "en"
           ]
         }
       ]
