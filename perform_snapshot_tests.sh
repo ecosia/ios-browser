@@ -118,10 +118,10 @@ for test_plan in $tests; do
             # Prepare the command
             xcodebuild_cmd="xcodebuild test-without-building \
               -scheme \"$scheme\" \
-              -clonedSourcePackagesDirPath "SourcePackages/" \
+              -clonedSourcePackagesDirPath \"SourcePackages/\" \
               -destination \"platform=iOS Simulator,name=$device_name,OS=$os_version\" \
-              -only-testing:$plan_name/$class_name/$test_case" \
-              -resultBundlePath "$result_path"
+              -only-testing \"$plan_name/$class_name/$test_case\" \
+              -resultBundlePath \"$result_path\""
 
             # Run the xcodebuild command
             echo "Running test case: $test_case for class: $class_name on device: $device_name with locales: $locale_string"
