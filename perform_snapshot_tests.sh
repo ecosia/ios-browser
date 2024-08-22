@@ -113,7 +113,7 @@ for test_plan in $tests; do
           # Construct and run the xcodebuild command for each test case separately
           for test_case in $test_cases; do
 
-            result_path="EcosiaTests/Results/$device_name.xcresult"
+            result_path="EcosiaTests/Results/$device_name\_$class_name\_$test_case.xcresult"
 
             # Prepare the command
             xcodebuild_cmd="xcodebuild test-without-building \
