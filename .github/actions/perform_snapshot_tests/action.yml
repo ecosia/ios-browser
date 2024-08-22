@@ -19,15 +19,15 @@ runs:
       shell: bash
       run: sh ./perform_snapshot_tests.sh
 
-      - name: Process xcresult files
-        uses: kishikawakatsumi/xcresulttool@v1
-        with:
-          path: 'EcosiaTests/Results/'
-          output: 'EcosiaTests/Reports/'
-          format: 'description'
-          
-      - name: Upload Test Results
-        uses: actions/upload-artifact@v3
-        with:
-          name: xcresult-reports
-          path: EcosiaTests/Reports/
+    - name: Process xcresult files
+      uses: kishikawakatsumi/xcresulttool@v1
+      with:
+        path: 'EcosiaTests/Results/'
+        output: 'EcosiaTests/Reports/'
+        format: 'description'
+        
+    - name: Upload Test Results
+      uses: actions/upload-artifact@v3
+      with:
+        name: xcresult-reports
+        path: EcosiaTests/Reports/
