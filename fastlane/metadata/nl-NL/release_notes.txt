@@ -1,1 +1,1 @@
-We hebben een aantal bugs verholpen en een aantal stabiliteitsverbeteringen doorgevoerd.
+We hebben een aantal bugs verholpen en een aantal stabiliteitsverbeteringen doorgevoerd:
