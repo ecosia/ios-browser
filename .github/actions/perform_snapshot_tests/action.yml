@@ -25,11 +25,7 @@ runs:
       uses: kishikawakatsumi/xcresulttool@v1
       with:
         path: 'EcosiaTests/Results/'
-        output: 'EcosiaTests/Reports/'
-        format: 'description'
-        
-    - name: Upload Test Results
-      uses: actions/upload-artifact@v3
-      with:
-        name: xcresult-reports
-        path: EcosiaTests/Reports/
+        token: ${{ inputs.github-token }}
+        show-passed-tests: false
+        show-code-coverage: false
+      if: success() || failure()
