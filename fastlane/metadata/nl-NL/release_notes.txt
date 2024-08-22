@@ -1,1 +1,1 @@
-We hebben de problemen met de wachtwoordmanager opgelost en een paar bugs verholpen.
+We hebben een aantal bugs verholpen en een aantal stabiliteitsverbeteringen doorgevoerd.

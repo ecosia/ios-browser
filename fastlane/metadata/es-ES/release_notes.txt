@@ -1,1 +1,1 @@
-Hemos resuelto los problemas con el administrador de contraseñas y corregido algunos errores.
+Arreglamos algunos bugs y añadimos algunas mejoras de estabilidad.

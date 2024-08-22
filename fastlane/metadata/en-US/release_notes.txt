@@ -1,1 +1,1 @@
-We've resolved the issues with the password manager and fixed a few bugs
+We fixed some bugs and added some stability improvements.
