@@ -17,7 +17,9 @@ runs:
 
     - name: Run Snapshot Tests
       shell: bash
-      run: sh ./perform_snapshot_tests.sh
+      run: |
+        mkdir -p EcosiaTests/Results/
+        sh ./perform_snapshot_tests.sh "EcosiaTests/SnapshotTests/snapshot_configuration.json" "EcosiaSnapshotTests"
 
     - name: Process xcresult files
       uses: kishikawakatsumi/xcresulttool@v1

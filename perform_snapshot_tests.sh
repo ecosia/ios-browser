@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# Check if the required parameters are passed
+if [ "$#" -lt 2 ]; then
+  echo "Usage: ./perform_snapshot_tests.sh <config_file> <scheme>"
+  exit 1
+fi
+
 # Function to extract test cases from a given test class file
 extract_test_cases() {
   local test_class_file=$1
@@ -23,10 +29,10 @@ get_device_info() {
 }
 
 # Read the JSON file
-config_file="EcosiaTests/SnapshotTests/snapshot_configuration.json"
+config_file=$1
 devices=$(jq -r '.devices[] | @base64' $config_file)
 tests=$(jq -r '.testPlans[] | @base64' $config_file)
-scheme="EcosiaSnapshotTests"
+scheme=$2
 
 # Loop through the test plans and test classes
 for test_plan in $tests; do
