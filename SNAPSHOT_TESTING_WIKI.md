@@ -56,6 +56,7 @@ This array specifies the devices on which the snapshot tests will be executed. E
 - **`"name"`**: The name of the device (e.g., `"iPhone SE (2nd generation)"`).
 - **`"orientation"`**: The orientation in which the device should be tested (e.g., `"portrait"` or `"landscape"`).
 - **`"os"`**: The operating system version to simulate (e.g., `"17.5"`). If `"os"` is not specified, the default would be used.
+> Make sure the devices you are going to list down are present or available in the machine you are going to run the tests.
 
 #### 3. Test Plans (`"testPlans"`)
 This array defines the test plans, which are groups of tests to be executed under the specified configurations. Each test plan contains:
