@@ -140,3 +140,7 @@ for test_plan in $tests; do
     unset IFS # Reset IFS
   done
 done
+
+ls -R EcosiaTests/Results/
+echo "Checking for xcresult files..."
+ls -la EcosiaTests/Results/
