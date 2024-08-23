@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Check if the required parameters are passed
-if [ "$#" -lt 3 ]; then
-  echo "Usage: ./perform_snapshot_tests.sh <config_file> <environment_file> <scheme>"
+if [ "$#" -lt 4 ]; then
+  echo "Usage: ./perform_snapshot_tests.sh <config_file> <environment_file> <results_dir> <scheme>"
   exit 1
 fi
 
@@ -34,6 +34,7 @@ environment_file=$2
 devices=$(jq -r '.devices[] | @base64' $config_file)
 tests=$(jq -r '.testPlans[] | @base64' $config_file)
 scheme=$3
+results_dir=$4
 
 # Loop through the test plans and test classes
 for test_plan in $tests; do
@@ -142,7 +143,7 @@ for test_plan in $tests; do
 done
 
 # Combine all xcresult files into one
-combined_result_path="$result_dir/all_tests.xcresult"
-/Applications/Xcode_15.4.app/Contents/Developer/usr/bin/xcresulttool merge $(find "$result_dir" -name "*.xcresult") --output-path "$combined_result_path"
+combined_result_path="$results_dir/all_tests.xcresult"
+/Applications/Xcode_15.4.app/Contents/Developer/usr/bin/xcresulttool merge $(find "$results_dir" -name "*.xcresult") --output-path "$combined_result_path"
 
 echo "Combined xcresult created at: $combined_result_path"

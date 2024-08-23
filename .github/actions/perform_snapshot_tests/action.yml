@@ -19,7 +19,7 @@ runs:
       shell: bash
       run: |
         mkdir -p EcosiaTests/Results/
-        sh ./perform_snapshot_tests.sh "EcosiaTests/SnapshotTests/snapshot_configuration.json" "EcosiaTests/SnapshotTests/environment.json" "EcosiaSnapshotTests"
+        sh ./perform_snapshot_tests.sh "EcosiaTests/SnapshotTests/snapshot_configuration.json" "EcosiaTests/SnapshotTests/environment.json" "EcosiaTests/Results" "EcosiaSnapshotTests"
 
     - name: Process xcresult files
       uses: kishikawakatsumi/xcresulttool@v1
