@@ -143,6 +143,6 @@ done
 
 # Combine all xcresult files into one
 combined_result_path="$result_dir/all_tests.xcresult"
-xcresulttool merge $(find "$result_dir" -name "*.xcresult") --output-path "$combined_result_path"
+/Applications/Xcode.app/Contents/Developer/usr/bin/xcresulttool merge $(find "$result_dir" -name "*.xcresult") --output-path "$combined_result_path"
 
 echo "Combined xcresult created at: $combined_result_path"
