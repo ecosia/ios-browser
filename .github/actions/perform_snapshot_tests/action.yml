@@ -26,7 +26,5 @@ runs:
       with:
         path: 'EcosiaTests/Results/all_tests.xcresult'
         token: ${{ inputs.github-token }}
-        show-passed-tests: false
         show-code-coverage: false
-        upload-bundles: 'failure'
       if: success() || failure()
