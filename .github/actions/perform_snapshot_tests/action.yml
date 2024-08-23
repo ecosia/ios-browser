@@ -24,7 +24,7 @@ runs:
     - name: Process xcresult files
       uses: kishikawakatsumi/xcresulttool@v1
       with:
-        path: 'EcosiaTests/Results/'
+        path: 'EcosiaTests/Results/iPhone_14_Pro_OnboardingTests_testWelcomeScreen.xcresult'
         token: ${{ inputs.github-token }}
         show-passed-tests: false
         show-code-coverage: false
