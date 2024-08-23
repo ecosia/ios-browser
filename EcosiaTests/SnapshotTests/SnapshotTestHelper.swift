@@ -115,7 +115,7 @@ final class SnapshotTestHelper {
     ///   - initializer: A closure that returns a newly initialized `UIViewController`.
     ///   - locales: An array of `Locale` specifying the locales for the snapshot. Defaults to the loaded from `snapshot_configuration.json` of each test if no other array is passed.
     ///   - wait: The time interval to delay the snapshot.
-    ///   - precision: The precision of the snapshot comparison.
+    ///   - precision: The precision of the snapshot comparison. Default to 0.99 to allow slightly different colors between CI and local runs.
     ///   - file: The file in which failures should be reported.
     ///   - testName: The name of the test.
     ///   - line: The line number to report failures.
@@ -123,7 +123,7 @@ final class SnapshotTestHelper {
         initializingWith initializer: @escaping () -> UIViewController,
         locales: [Locale] = LocaleRetriever.getLocales(),
         wait: TimeInterval = 0.5,
-        precision: CGFloat = 1.0,
+        precision: CGFloat = 0.99,
         file: StaticString = #file,
         testName: String = #function,
         line: UInt = #line
@@ -145,7 +145,7 @@ final class SnapshotTestHelper {
     ///   - initializer: A closure that returns a newly initialized UIView.
     ///   - locales: An array of `Locale` specifying the locales for the snapshot. Defaults to the loaded from `snapshot_configuration.json` of each test if no other array is passed.
     ///   - wait: The time interval to delay the snapshot.
-    ///   - precision: The precision of the snapshot comparison.
+    ///   - precision: The precision of the snapshot comparison. Default to 0.99 to allow slightly different colors between CI and local runs.
     ///   - file: The file in which failures should be reported.
     ///   - testName: The name of the test.
     ///   - line: The line number to report failures.
@@ -153,7 +153,7 @@ final class SnapshotTestHelper {
         initializingWith initializer: @escaping () -> UIView,
         locales: [Locale] = LocaleRetriever.getLocales(),
         wait: TimeInterval = 0.5,
-        precision: CGFloat = 1.0,
+        precision: CGFloat = 0.99,
         file: StaticString = #file,
         testName: String = #function,
         line: UInt = #line
