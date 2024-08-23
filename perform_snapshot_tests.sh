@@ -92,18 +92,6 @@ for test_plan in $tests; do
         echo "Environment file created at: $env_file_path"
         cat "$env_file_path"  # Print the contents of the file for verification
 
-        # Perform the build once for the current device
-        echo "Building the project for device: $device_name, OS: $os_version"
-        xcodebuild build-for-testing \
-          -scheme "$scheme" \
-          -clonedSourcePackagesDirPath "SourcePackages/" \
-          -destination "platform=iOS Simulator,name=$device_name,OS=$os_version" \
-          CODE_SIGN_IDENTITY="" \
-          CODE_SIGNING_REQUIRED=NO \
-          PROVISIONING_PROFILE_SPECIFIER="" \
-          CODE_SIGN_ENTITLEMENTS="" \
-          CODE_SIGNING_ALLOWED="NO"
-
         # Find the test class file in EcosiaTests subdirectories
         test_class_file=$(find EcosiaTests -name "${class_name}.swift" | head -n 1)
 
@@ -119,13 +107,20 @@ for test_plan in $tests; do
 
             result_path="EcosiaTests/Results/${updated_device_name}_${class_name}_${test_case}.xcresult"
 
+            echo "Building and testing the project for device: $device_name, OS: $os_version"
+
             # Prepare the command
-            xcodebuild_cmd="xcodebuild test-without-building \
+            xcodebuild_cmd="xcodebuild build-for-testing \
               -scheme \"$scheme\" \
               -clonedSourcePackagesDirPath \"SourcePackages/\" \
               -destination \"platform=iOS Simulator,name=$device_name,OS=$os_version\" \
               -only-testing \"$plan_name/$class_name/$test_case\" \
-              -resultBundlePath \"$result_path\""
+              -resultBundlePath \"$result_path\" \
+              CODE_SIGN_IDENTITY="" \
+              CODE_SIGNING_REQUIRED=NO \
+              PROVISIONING_PROFILE_SPECIFIER="" \
+              CODE_SIGN_ENTITLEMENTS="" \
+              CODE_SIGNING_ALLOWED="NO""
 
             # Run the xcodebuild command
             echo "Running test case: $test_case for class: $class_name on device: $device_name with locales: $locale_string"
