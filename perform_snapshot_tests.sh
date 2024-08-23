@@ -33,8 +33,8 @@ config_file=$1
 environment_file=$2
 devices=$(jq -r '.devices[] | @base64' $config_file)
 tests=$(jq -r '.testPlans[] | @base64' $config_file)
-scheme=$3
-results_dir=$4
+results_dir=$3
+scheme=$4
 
 # Loop through the test plans and test classes
 for test_plan in $tests; do
