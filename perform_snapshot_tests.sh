@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Check if the required parameters are passed
-if [ "$#" -lt 2 ]; then
-  echo "Usage: ./perform_snapshot_tests.sh <config_file> <scheme>"
+if [ "$#" -lt 3 ]; then
+  echo "Usage: ./perform_snapshot_tests.sh <config_file> <environment_file> <scheme>"
   exit 1
 fi
 
@@ -30,9 +30,10 @@ get_device_info() {
 
 # Read the JSON file
 config_file=$1
+environment_file=$2
 devices=$(jq -r '.devices[] | @base64' $config_file)
 tests=$(jq -r '.testPlans[] | @base64' $config_file)
-scheme=$2
+scheme=$3
 
 # Loop through the test plans and test classes
 for test_plan in $tests; do
@@ -81,12 +82,11 @@ for test_plan in $tests; do
         locale_string=$(echo "${locales[@]}" | tr '\n' ',' | sed 's/,$//')
 
         # Create the JSON file with the environment variables
-        env_file_path="EcosiaTests/SnapshotTests/environment.json"
         echo "{
   \"DEVICE_NAME\": \"$device_name\",
   \"ORIENTATION\": \"$orientation\",
   \"LOCALES\": \"$locale_string\"
-}" > "$env_file_path"
+}" > "$environment_file"
 
         echo "Environment file created at: $env_file_path"
         cat "$env_file_path"  # Print the contents of the file for verification
@@ -141,6 +141,8 @@ for test_plan in $tests; do
   done
 done
 
-ls -R EcosiaTests/Results/
-echo "Checking for xcresult files..."
-ls -la EcosiaTests/Results/
+# Combine all xcresult files into one
+combined_result_path="$result_dir/all_tests.xcresult"
+xcresulttool merge $(find "$result_dir" -name "*.xcresult") --output-path "$combined_result_path"
+
+echo "Combined xcresult created at: $combined_result_path"

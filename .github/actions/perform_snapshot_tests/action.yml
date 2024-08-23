@@ -19,12 +19,12 @@ runs:
       shell: bash
       run: |
         mkdir -p EcosiaTests/Results/
-        sh ./perform_snapshot_tests.sh "EcosiaTests/SnapshotTests/snapshot_configuration.json" "EcosiaSnapshotTests"
+        sh ./perform_snapshot_tests.sh "EcosiaTests/SnapshotTests/snapshot_configuration.json" "EcosiaTests/SnapshotTests/environment.json" "EcosiaSnapshotTests"
 
     - name: Process xcresult files
       uses: kishikawakatsumi/xcresulttool@v1
       with:
-        path: 'EcosiaTests/Results/iPhone_14_Pro_OnboardingTests_testWelcomeScreen.xcresult'
+        path: 'EcosiaTests/Results/all_tests.xcresult'
         token: ${{ inputs.github-token }}
         show-passed-tests: false
         show-code-coverage: false
