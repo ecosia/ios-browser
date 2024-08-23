@@ -93,6 +93,8 @@ for test_plan in $tests; do
         cat "$env_file_path"  # Print the contents of the file for verification
 
         # Perform the build once for the current device
+        echo "Cleaning the project"
+        xcodebuild clean -scheme "$scheme"
         echo "Building the project for device: $device_name, OS: $os_version"
         xcodebuild build-for-testing \
           -scheme "$scheme" \
