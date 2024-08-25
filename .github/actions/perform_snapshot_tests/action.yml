@@ -33,4 +33,4 @@ runs:
       uses: mikepenz/action-junit-report@v3.7.6
       with:
         report_paths: 'test_output/xml/*.junit'
-        github_token: ${{ inputs.GITHUB_TOKEN }}
+        github_token: ${{ secrets.GITHUB_TOKEN }}
