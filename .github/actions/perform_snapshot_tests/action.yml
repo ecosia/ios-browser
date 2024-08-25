@@ -23,14 +23,13 @@ runs:
         sh ./perform_snapshot_tests.sh "EcosiaTests/SnapshotTests/snapshot_configuration.json" "EcosiaTests/SnapshotTests/environment.json" "EcosiaTests/Results" "EcosiaSnapshotTests"
 
     - name: Convert XCResult to JUnit
-      shell: bash
       run: |
         mkdir -p test_output/xml
-        xcparse junit all_tests.xcresult test_output/xml
-        xcparse attachments all_tests.xcresult test_output/attachments
+        xcparse junit all_tests.xcresult ./test_output/xml
+        xcparse attachments all_tests.xcresult ./test_output/attachments
 
     - name: Publish Test Report
       uses: mikepenz/action-junit-report@v3.7.6
       with:
-        report_paths: 'test_output/xml/*.junit'
+        report_paths: './test_output/xml/*.junit'
         github_token: ${{ secrets.GITHUB_TOKEN }}
