@@ -2,8 +2,7 @@ name: Merge Unit Tests
 
 on:
   push:
-    branches: [ MOB-2735_attach_snapshots_tests_to_ci ]
-
+    branches: [ main ]
 
 jobs:
   execute_merge_tests:
