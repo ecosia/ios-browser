@@ -19,7 +19,7 @@ if [ "$CURRENT_VERSION" = "$OLD_VERSION" ]; then
   if [ -n "$CIRCLECI" ]; then
     circleci-agent step halt
   elif [ -n "$GITHUB_ACTIONS" ]; then
-    exit 1
+    echo "skipnext=true" >> $GITHUB_OUTPUT
   else
     exit 0
   fi
