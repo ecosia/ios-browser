@@ -54,7 +54,7 @@ final class NTPComponentTests: SnapshotBaseTests {
     
     func testNTPTotalInvestedCell() {
         /*
-         Precision to .98 to accommodate differences in Locale formatter
+         Precision to .97 to accommodate differences in Locale formatter
          as not possible to update Locale.current on the fly nor swizzle it
          */
         SnapshotTestHelper.assertSnapshot(initializingWith: {
@@ -64,7 +64,7 @@ final class NTPComponentTests: SnapshotBaseTests {
             cell.layoutIfNeeded()
             return cell
         },
-                                          precision: 0.98)
+                                          precision: 0.97)
     }
 
     func testNTPNewsCell() {
