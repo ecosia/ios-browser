@@ -59,7 +59,6 @@ final class SnapshotTestHelper {
             themes.forEach { theme, suffix in
                 setLocale(locale)
                 changeThemeTo(theme, suffix: suffix, themeManager: themeManager)
-                RunLoop.current.run(until: .now + 0.5)
                 updateContentInitializingWith(initializer, inWindow: window)
                 RunLoop.current.run(until: Date(timeIntervalSinceNow: wait))
                 let snapshotting = Snapshotting<UIView, UIImage>.image(precision: Float(precision), traits: config.traits)
