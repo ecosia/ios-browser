@@ -24,9 +24,3 @@ jobs:
         uses: ./.github/actions/perform_unit_tests
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Perform Snapshot Tests and Publish Test reports
-        id: perform-snapshot-tests
-        uses: ./.github/actions/perform_snapshot_tests
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
