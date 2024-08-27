@@ -64,12 +64,14 @@ final class NTPComponentTests: SnapshotBaseTests {
 
     func testNTPNewsCell() {
         do {
+            // Precision to .98 to accommodate different timestamps
             let mockNews = try createMockNewsModel()
             SnapshotTestHelper.assertSnapshot(initializingWith: {
                 let cell = NTPNewsCell(frame: CGRect(x: 0, y: 0, width: self.commonWidth, height: 100))
                 cell.configure(mockNews!, images: Images(.init(configuration: .ephemeral)), row: 0, totalCount: 1)
                 return cell
-            })
+            },
+                                              precision: 0.98)
         } catch {
             XCTFail("Failed to create mock NewsModel: \(error)")
         }

@@ -53,12 +53,13 @@ final class SnapshotTestHelper {
         let deviceType = DeviceType.from(deviceName: deviceName, orientation: orientation)
         let config = deviceType.config
         let themeManager: ThemeManager = AppContainer.shared.resolve()
-        var window = UIWindow(frame: CGRect(origin: .zero, size: config.size!))
+        let window = UIWindow(frame: CGRect(origin: .zero, size: config.size!))
         
-            locales.forEach { locale in
+        locales.forEach { locale in
             themes.forEach { theme, suffix in
                 setLocale(locale)
                 changeThemeTo(theme, suffix: suffix, themeManager: themeManager)
+                RunLoop.current.run(until: .now + 0.5)
                 updateContentInitializingWith(initializer, inWindow: window)
                 RunLoop.current.run(until: Date(timeIntervalSinceNow: wait))
                 let snapshotting = Snapshotting<UIView, UIImage>.image(precision: Float(precision), traits: config.traits)
@@ -184,6 +185,7 @@ final class SnapshotTestHelper {
             window.bounds = viewController.view.bounds
             viewController.view.frame = window.bounds
             viewController.loadViewIfNeeded()
+            viewController.view.layoutIfNeeded()
         }
         applyDataReloadAndLayoutIfNeeded(for: window)
     }

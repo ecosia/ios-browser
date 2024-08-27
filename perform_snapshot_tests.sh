@@ -89,12 +89,12 @@ for test_plan in $tests; do
   \"LOCALES\": \"$locale_string\"
 }" > "$environment_file"
 
-        echo "Environment file created at: $env_file_path"
-        cat "$env_file_path"  # Print the contents of the file for verification
+        echo "Environment file created at: $environment_file"
+        cat "$environment_file"  # Print the contents of the file for verification
 
         # Perform the build once for the current device
         echo "Cleaning the project"
-        xcodebuild clean -scheme "$scheme"
+        xcodebuild clean -scheme "$scheme" -destination "platform=iOS Simulator,name=$device_name,OS=$os_version"
         echo "Building the project for device: $device_name, OS: $os_version"
         xcodebuild build-for-testing \
           -scheme "$scheme" \
@@ -146,6 +146,13 @@ done
 
 # Combine all xcresult files into one
 combined_result_path="$results_dir/all_tests.xcresult"
-/Applications/Xcode_15.4.app/Contents/Developer/usr/bin/xcresulttool merge $(find "$results_dir" -name "*.xcresult") --output-path "$combined_result_path"
+# Define the Xcode path based on the CI environment variable
+if [ "$CI" = "true" ]; then
+    xcresulttool_path="/Applications/Xcode_15.4.app/Contents/Developer/usr/bin/xcresulttool"
+else
+    xcresulttool_path="/Applications/Xcode.app/Contents/Developer/usr/bin/xcresulttool"
+fi
 
+# Run the xcresulttool merge command using the determined path
+$xcresulttool_path merge $(find "$results_dir" -name "*.xcresult") --output-path "$combined_result_path"
 echo "Combined xcresult created at: $combined_result_path"

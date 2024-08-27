@@ -133,3 +133,4 @@ Production.xcconfig
 SourcePackages
 test_output
 .vscode
+EcosiaTests/Results
