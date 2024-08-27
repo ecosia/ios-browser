@@ -53,13 +53,18 @@ final class NTPComponentTests: SnapshotBaseTests {
     }
     
     func testNTPTotalInvestedCell() {
+        /*
+         Precision to .98 to accommodate differences in Locale formatter
+         as not possible to update Locale.current on the fly nor swizzle it
+         */
         SnapshotTestHelper.assertSnapshot(initializingWith: {
             let cell = NTPImpactCell(frame: CGRect(x: 0, y: 0, width: self.commonWidth, height: 100))
             let mockInfoItemSection: ClimateImpactInfo = .totalInvested(value: 89942822)
             cell.configure(items: [mockInfoItemSection])
             cell.layoutIfNeeded()
             return cell
-        })
+        },
+                                          precision: 0.98)
     }
 
     func testNTPNewsCell() {
