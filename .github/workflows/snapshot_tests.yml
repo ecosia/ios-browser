@@ -1,8 +1,9 @@
 name: Snapshot Tests
 
 on:
-  push:
-    branches: [ MOB-2735_attach_snapshots_tests_to_ci ]
+  pull_request:
+    paths:
+      - 'Client/Configuration/Common.xcconfig'
 
 jobs:
   execute_snapshot_tests:
@@ -13,9 +14,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      # - name: Check for MARKETING_VERSION change
-      #   id: check_marketing_version
-      #   run: sh ./check_marketing_version.sh
+      - name: Check for MARKETING_VERSION change
+        id: check_marketing_version
+        run: sh ./check_marketing_version.sh
 
       - name: Prepare environment
         if : ( steps.check_marketing_version.outputs.skipnext  != 'true' )
