@@ -19,7 +19,7 @@ if [ "$CURRENT_VERSION" = "$OLD_VERSION" ]; then
   if [ -n "$CIRCLECI" ]; then
     circleci-agent step halt
   elif [ -n "$GITHUB_ACTIONS" ]; then
-    exit 1
+    exit 78  # Special exit code to indicate GitHub Actions raceful exit
   else
     exit 0
   fi
