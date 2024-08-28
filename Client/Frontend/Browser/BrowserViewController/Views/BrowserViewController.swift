@@ -2560,9 +2560,9 @@ extension BrowserViewController {
         user.referrals.pendingClaim != nil
     }
 
-    func presentInsightfulSheetsIfNeeded() -> Bool {
+    func presentInsightfulSheetsIfNeeded() {
         guard isHomePage(),
-              !showLoadingScreen(for: .shared) else { return false }
+              !showLoadingScreen(for: .shared) else { return }
         
         // TODO: To review this logic as part of the upgrade
         /*
@@ -2579,7 +2579,7 @@ extension BrowserViewController {
             presentAPNConsentIfNeeded
         ]
 
-        return (presentationFunctions.first(where: { $0() }) != nil)
+        _ = presentationFunctions.first(where: { $0() })
     }
 
     private func isHomePage() -> Bool {
