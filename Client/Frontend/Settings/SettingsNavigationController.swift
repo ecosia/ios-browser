@@ -46,6 +46,7 @@ class ThemedNavigationController: DismissableNavigationViewController, Themeable
         let standardAppearance = UINavigationBarAppearance()
         standardAppearance.configureWithDefaultBackground()
         standardAppearance.backgroundColor = theme.colors.layer1
+        // Ecosia: Define `largeTitleTextAttributes` as done for ThemedDefaultNavigationController utilized in Widgets
         standardAppearance.largeTitleTextAttributes = [.foregroundColor: theme.colors.textPrimary]
         standardAppearance.titleTextAttributes = [.foregroundColor: theme.colors.textPrimary]
 
