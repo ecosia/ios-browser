@@ -32,8 +32,9 @@ class OverlayModeManagerTests: XCTestCase {
     func testEnterOverlayMode_ForNewTabHome_WithNilURL() {
         subject.setURLBar(urlBarView: urlBar)
         subject.openNewTab(url: nil, newTabSettings: .topSites)
-
-        XCTAssertTrue(subject.inOverlayMode)
+        // Ecosia: Update with the new Ecosia's behaviour where overlay mode is OFF for New Tab
+        // XCTAssertTrue(subject.inOverlayMode)
+        XCTAssertFalse(subject.inOverlayMode)
         XCTAssertEqual(subject.enterOverlayModeCallCount, 1)
     }
 
@@ -42,7 +43,9 @@ class OverlayModeManagerTests: XCTestCase {
         subject.openNewTab(url: URL(string: "internal://local/about/home"),
                            newTabSettings: .topSites)
 
-        XCTAssertTrue(subject.inOverlayMode)
+        // Ecosia: Update with the new Ecosia's behaviour where overlay mode is OFF for New Tab
+        // XCTAssertTrue(subject.inOverlayMode)
+        XCTAssertFalse(subject.inOverlayMode)
         XCTAssertEqual(subject.enterOverlayModeCallCount, 1)
     }
 
