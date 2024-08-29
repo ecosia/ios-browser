@@ -107,7 +107,7 @@ extension Analytics {
             defaults.set(now, forKey: identifier)
             return true
         }
-
+        
         return false
     }
 }
