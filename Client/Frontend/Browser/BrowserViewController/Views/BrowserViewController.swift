@@ -2560,6 +2560,7 @@ extension BrowserViewController {
         user.referrals.pendingClaim != nil
     }
 
+    // Ecosia: Function that presents the Ecosia cards at given priority if needed
     func presentInsightfulSheetsIfNeeded() {
         guard isHomePage(),
               !showLoadingScreen(for: .shared) else { return }
