@@ -92,18 +92,22 @@ extension Analytics {
             let calendar = Calendar.current
             let components = calendar.dateComponents([.day], from: lastCheck, to: now)
             
-            if let day = components.day, day >= 1 {
-                // If a day or more has passed, update the last check date and return true
+            if let day = components.day {
+                // if a day or more has passed
+                if day >= 1 {
+                    defaults.set(now, forKey: identifier) // update the last check date
+                    return true
+                } else {
+                    // less than a day has passed
+                    return false
+                }
+            } else {
+                // If no last check date exists, set the current date and return true
                 defaults.set(now, forKey: identifier)
                 return true
-            } else {
-                // If less than a day has passed, return false
-                return false
             }
-        } else {
-            // If no last check date exists, set the current date and return true
-            defaults.set(now, forKey: identifier)
-            return true
         }
+        
+        return false
     }
 }
