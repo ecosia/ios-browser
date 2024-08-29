@@ -11,7 +11,7 @@ final class OnboardingTests: SnapshotBaseTests {
     func testWelcomeScreen() {
         SnapshotTestHelper.assertSnapshot(initializingWith: {
             Welcome(delegate: MockWelcomeDelegate())
-        }, locales: LocalizationOverrideTestingBundle.supportedLocales, wait: 1.0)
+        }, wait: 1.0)
     }
     
     func testWelcomeStepsScreens() {
@@ -20,15 +20,18 @@ final class OnboardingTests: SnapshotBaseTests {
         // Iterate through steps and take snapshots, skipping the first one
         for step in 1...numberOfSteps {
             let startingStep = WelcomeTour.Step.all[step-1]
-            // Precision at .95 to accommodate a snapshot looking slightly different due to the different data output
-            // from the statistics json
-            let precision = startingStep == .transparent ? 0.95 : 1.0
+            /*
+             Precision at .95 to accommodate a snapshot looking slightly different 
+             due to the different data output from the statistics json
+             as well as the fact that is not possible to update the Locale.current
+             hence the component depending on it will show the decimal divider 
+             in the current language.
+             */
             SnapshotTestHelper.assertSnapshot(initializingWith: {
                 WelcomeTour(delegate: MockWelcomeTourDelegate(), startingStep: startingStep)
-            }, devices: [.iPhone12Pro_Portrait, .iPadPro_Portrait], 
-                                              locales: LocalizationOverrideTestingBundle.supportedLocales,
-                                              wait: 2.0,
-                                              precision: precision,
+            },
+                                              wait: 1.0,
+                                              precision: 0.95,
                                               testName: "testWelcomeScreen_step_\(step)")
         }
     }

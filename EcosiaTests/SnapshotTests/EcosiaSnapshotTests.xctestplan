@@ -15,7 +15,8 @@
     {
       "parallelizable" : true,
       "skippedTests" : [
-        "NTPTests"
+        "NTPTests",
+        "SnapshotBaseTests"
       ],
       "target" : {
         "containerPath" : "container:Client.xcodeproj",

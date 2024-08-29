@@ -200,6 +200,7 @@
 		2C1298A82BF5EE23005AE4E4 /* libStorage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FCAE21A1ABB51F800877008 /* libStorage.a */; };
 		2C1298AC2BF5EE3E005AE4E4 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 2C1298AB2BF5EE3E005AE4E4 /* Core */; };
 		2C1298AF2BF602D3005AE4E4 /* DefaultSuggestedSites.swift in Sources */ = {isa = PBXBuildFile; fileRef = 394CF6CE1BAA493C00906917 /* DefaultSuggestedSites.swift */; };
+		2C19DACF2C74C7BF00D2641C /* snapshot_configuration.json in Resources */ = {isa = PBXBuildFile; fileRef = 2C19DACE2C74C7BF00D2641C /* snapshot_configuration.json */; };
 		2C1F23BD2B9F405E00186F55 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 2C1F23BC2B9F405E00186F55 /* Core */; };
 		2C2349A32C57E5BC007A5894 /* EcosiaPerformanceTestHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2349A22C57E5BC007A5894 /* EcosiaPerformanceTestHistory.swift */; };
 		2C26EA142C04CAD100795552 /* EcosiaTopSitesHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C26EA132C04CAD100795552 /* EcosiaTopSitesHelperTests.swift */; };
@@ -208,6 +209,8 @@
 		2C4414452BD7B4D800249464 /* BingDistributionExperimentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4414432BD7B4D000249464 /* BingDistributionExperimentTests.swift */; };
 		2C4414462BD7B68600249464 /* BingDistributionExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4414412BD7B43F00249464 /* BingDistributionExperiment.swift */; };
 		2C49854E206173C800893DAE /* photon-colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C49854D206173C800893DAE /* photon-colors.swift */; };
+		2C4D16602C76360800E89C95 /* environment.json in Resources */ = {isa = PBXBuildFile; fileRef = 2C4D165F2C76360800E89C95 /* environment.json */; };
+		2C5B81C82C75388300B81D95 /* LocaleRetriever.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5B81C72C75388300B81D95 /* LocaleRetriever.swift */; };
 		2C6189312B7A8A22006B70D7 /* EcosiaLaunchScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6188802B7A8A21006B70D7 /* EcosiaLaunchScreenView.swift */; };
 		2C6189322B7A8A22006B70D7 /* EcosiaLaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2C6188812B7A8A21006B70D7 /* EcosiaLaunchScreen.xib */; };
 		2C6189332B7A8A22006B70D7 /* MMP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6188832B7A8A21006B70D7 /* MMP.swift */; };
@@ -347,7 +350,7 @@
 		2C69DA7F2C62458300D7F69F /* RustMozillaAppServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43BE578A278BA4D900491291 /* RustMozillaAppServices.framework */; };
 		2C69DA812C62459200D7F69F /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 2C69DA802C62459200D7F69F /* Core */; };
 		2C69DA822C62459C00D7F69F /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CB1728B2C61336D008551E2 /* libz.tbd */; };
-		2C69DA842C62B44B00D7F69F /* NTPComponentBaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C69DA832C62B44B00D7F69F /* NTPComponentBaseTests.swift */; };
+		2C69DA842C62B44B00D7F69F /* NTPComponentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C69DA832C62B44B00D7F69F /* NTPComponentTests.swift */; };
 		2C69DA922C63A92D00D7F69F /* SnapshotBaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C69DA912C63A92D00D7F69F /* SnapshotBaseTests.swift */; };
 		2C69DA942C63B0C000D7F69F /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C69DA932C63B0C000D7F69F /* String+Extension.swift */; };
 		2C6C908F2C614A6C007D9B43 /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = 2C6C908E2C614A6C007D9B43 /* SnapshotTesting */; };
@@ -2339,6 +2342,7 @@
 		2C08319B2B89127200BD7134 /* Ecosia.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Ecosia.entitlements; sourceTree = "<group>"; };
 		2C08319C2B89127200BD7134 /* EcosiaBeta.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = EcosiaBeta.entitlements; sourceTree = "<group>"; };
 		2C1298A42BF5EB16005AE4E4 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		2C19DACE2C74C7BF00D2641C /* snapshot_configuration.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = snapshot_configuration.json; sourceTree = "<group>"; };
 		2C2349A22C57E5BC007A5894 /* EcosiaPerformanceTestHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaPerformanceTestHistory.swift; sourceTree = "<group>"; };
 		2C26401D9CCB8C2671EA2431 /* ta */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ta; path = ta.lproj/3DTouchActions.strings; sourceTree = "<group>"; };
 		2C26EA132C04CAD100795552 /* EcosiaTopSitesHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaTopSitesHelperTests.swift; sourceTree = "<group>"; };
@@ -2354,6 +2358,8 @@
 		2C49854D206173C800893DAE /* photon-colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "photon-colors.swift"; sourceTree = "<group>"; };
 		2C4A07DB20246EAD0083E320 /* DragAndDropTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragAndDropTests.swift; sourceTree = "<group>"; };
 		2C4B6BF220349EB800A009C2 /* OnboardingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingTests.swift; sourceTree = "<group>"; };
+		2C4D165F2C76360800E89C95 /* environment.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = environment.json; sourceTree = "<group>"; };
+		2C5B81C72C75388300B81D95 /* LocaleRetriever.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocaleRetriever.swift; sourceTree = "<group>"; };
 		2C6045859589979C43AF09E0 /* jv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = jv; path = jv.lproj/ClearPrivateDataConfirm.strings; sourceTree = "<group>"; };
 		2C6188802B7A8A21006B70D7 /* EcosiaLaunchScreenView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EcosiaLaunchScreenView.swift; sourceTree = "<group>"; };
 		2C6188812B7A8A21006B70D7 /* EcosiaLaunchScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = EcosiaLaunchScreen.xib; sourceTree = "<group>"; };
@@ -2485,7 +2491,7 @@
 		2C69DA712C62175400D7F69F /* SnapshotTestHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapshotTestHelper.swift; sourceTree = "<group>"; };
 		2C69DA742C62185A00D7F69F /* Welcome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Welcome.swift; sourceTree = "<group>"; };
 		2C69DA762C62243300D7F69F /* NTPTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPTests.swift; sourceTree = "<group>"; };
-		2C69DA832C62B44B00D7F69F /* NTPComponentBaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPComponentBaseTests.swift; sourceTree = "<group>"; };
+		2C69DA832C62B44B00D7F69F /* NTPComponentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPComponentTests.swift; sourceTree = "<group>"; };
 		2C69DA912C63A92D00D7F69F /* SnapshotBaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapshotBaseTests.swift; sourceTree = "<group>"; };
 		2C69DA932C63B0C000D7F69F /* String+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extension.swift"; sourceTree = "<group>"; };
 		2C6C90822C614A16007D9B43 /* EcosiaSnapshotTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EcosiaSnapshotTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -8811,7 +8817,7 @@
 			isa = PBXGroup;
 			children = (
 				2C69DA762C62243300D7F69F /* NTPTests.swift */,
-				2C69DA832C62B44B00D7F69F /* NTPComponentBaseTests.swift */,
+				2C69DA832C62B44B00D7F69F /* NTPComponentTests.swift */,
 			);
 			path = NTP;
 			sourceTree = "<group>";
@@ -8889,6 +8895,9 @@
 				2C69DA932C63B0C000D7F69F /* String+Extension.swift */,
 				2C8262592C64BB9300E2A255 /* DeviceType.swift */,
 				2C82625B2C6648D900E2A255 /* LocalizationOverrideTestingBundle.swift */,
+				2C5B81C72C75388300B81D95 /* LocaleRetriever.swift */,
+				2C19DACE2C74C7BF00D2641C /* snapshot_configuration.json */,
+				2C4D165F2C76360800E89C95 /* environment.json */,
 			);
 			path = SnapshotTests;
 			sourceTree = "<group>";
@@ -13000,6 +13009,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2C19DACF2C74C7BF00D2641C /* snapshot_configuration.json in Resources */,
+				2C4D16602C76360800E89C95 /* environment.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -13365,9 +13376,10 @@
 				2C82625E2C66661700E2A255 /* EcosiaMockThemeManager.swift in Sources */,
 				2C69DA772C62243300D7F69F /* NTPTests.swift in Sources */,
 				2C69DA782C62259D00D7F69F /* MockProfile.swift in Sources */,
+				2C5B81C82C75388300B81D95 /* LocaleRetriever.swift in Sources */,
 				2C82625A2C64BB9300E2A255 /* DeviceType.swift in Sources */,
 				2C69DA792C6225AE00D7F69F /* DependencyHelperMock.swift in Sources */,
-				2C69DA842C62B44B00D7F69F /* NTPComponentBaseTests.swift in Sources */,
+				2C69DA842C62B44B00D7F69F /* NTPComponentTests.swift in Sources */,
 				2C82625C2C6648D900E2A255 /* LocalizationOverrideTestingBundle.swift in Sources */,
 				2C69DA7C2C6225DB00D7F69F /* MockOverlayModeManager.swift in Sources */,
 				2C69DA7E2C6244C400D7F69F /* MockThemeManager.swift in Sources */,
@@ -19812,10 +19824,13 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -19842,13 +19857,14 @@
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ecosia.ecosiaapp.EcosiaSnapshotTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Client.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Client";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Client.app/Client";
 			};
 			name = Debug;
 		};
@@ -19886,10 +19902,13 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -19909,12 +19928,13 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ecosia.ecosiaapp.EcosiaSnapshotTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Client.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Client";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Client.app/Client";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = BetaDebug;
@@ -19953,10 +19973,13 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -19976,12 +19999,13 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ecosia.ecosiaapp.EcosiaSnapshotTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Client.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Client";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Client.app/Client";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -20020,10 +20044,13 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -20050,13 +20077,14 @@
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ecosia.ecosiaapp.EcosiaSnapshotTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Client.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Client";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Client.app/Client";
 			};
 			name = Development_TestFlight;
 		};
@@ -20094,10 +20122,13 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 33YMRSYD2L;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -20124,13 +20155,14 @@
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ecosia.ecosiaapp.EcosiaSnapshotTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Client.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Client";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Client.app/Client";
 			};
 			name = Development_AppCenter;
 		};

@@ -14,11 +14,12 @@ SnapshotTestHelper is a utility class designed to facilitate snapshot testing ac
 - **Purpose**: Executes the snapshot test with specified configurations.
 - **Parameters**:
   - `initializer`: A closure that returns the UI component to be tested.
-  - `devices`: An array of device configurations to simulate different screen sizes and resolutions.
   - `locales`: An array of locales to test the component in different languages.
   - `wait`: Duration to wait before taking the snapshot, allowing UI to stabilize.
   - `precision`: The accuracy of the snapshot comparison.
   - `file`, `testName`, `line`: Standard XCTest parameters for identifying the test source.
+
+The device name, orientation, and locales of the current test run are retrieved from the `environment.json` file.
 
 #### assertSnapshot
 
@@ -35,6 +36,45 @@ SnapshotTestHelper is a utility class designed to facilitate snapshot testing ac
 
 - **Purpose**: Configures the UIWindow with the content to be snapshot.
 - **Details**: Adds the content to the window, sets appropriate bounds, and ensures it is ready for display and snapshotting.
+
+### Snapshot Testing Configuration
+
+This JSON configuration is designed for automated snapshot testing of an iOS application. It defines the locales, devices, and specific test plans that should be used during the snapshot tests.
+
+#### Breakdown of the JSON Structure:
+
+#### 1. Locales (`"locales"`)
+This array lists all the language locales that the app will be tested in. In this example, the locales are:
+- English (`"en"`)
+- Italian (`"it"`)
+- German (`"de"`)
+- Spanish (`"es"`)
+- Dutch (`"nl"`)
+
+#### 2. Devices (`"devices"`)
+This array specifies the devices on which the snapshot tests will be executed. Each device entry includes:
+- **`"name"`**: The name of the device (e.g., `"iPhone SE (2nd generation)"`).
+- **`"orientation"`**: The orientation in which the device should be tested (e.g., `"portrait"` or `"landscape"`).
+- **`"os"`**: The operating system version to simulate (e.g., `"17.5"`). If `"os"` is not specified, the default would be used.
+> Make sure the devices you are going to list down are present or available in the machine you are going to run the tests.
+
+#### 3. Test Plans (`"testPlans"`)
+This array defines the test plans, which are groups of tests to be executed under the specified configurations. Each test plan contains:
+- **`"name"`**: The name of the test plan (e.g., `"EcosiaSnapshotTests"`).
+- **`"testClasses"`**: An array of test classes to be executed within this plan. Each test class includes:
+  - **`"name"`**: The name of the test class (e.g., `"OnboardingTests"`).
+  - **`"devices"`**: An array specifying the devices this test class should run on. If `"all"` is specified, the test will run on all devices listed in the `"devices"` section.
+  - **`"locales"`**: An array specifying the locales this test class should be tested in. If `"all"` is specified, the test will run in all locales listed in the `"locales"` section.
+
+#### Purpose
+
+This JSON file configures the settings for automated snapshot tests, which involve capturing screenshots of the app’s UI to ensure it looks correct across various devices and locales.
+
+- **Locales**: Helps ensure that the app displays correctly in multiple languages.
+- **Devices**: Ensures that the UI is responsive and correctly rendered on different screen sizes and orientations.
+- **Test Plans**: Organizes which tests should run on which devices and in which locales, allowing for comprehensive testing without manually configuring each test.
+
+This configuration is typically consumed by a script or a test runner that uses this information to execute the specified tests, taking screenshots of the app's UI in the defined scenarios and comparing them to reference images to detect any unintended changes.
 
 ### Localization Support 🗣️
 
@@ -73,31 +113,121 @@ This documentation should help developers understand how to leverage SnapshotTes
 <details>
 <summary> What if I want to test on different devices? </summary>
 
-To perform snapshot tests on different devices, you can specify the devices using the `devices` parameter in the `assertSnapshot` function. SnapshotTestHelper configures the test environment to simulate the screen size and resolution of the specified devices.
+To perform snapshot tests on different devices, you can specify the devices as part of the `snapshot_configuration.json`.
+SnapshotTestHelper will take care of retrieving all the details and configure the test environment to simulate the screen size and resolution of the specified devices.
 
 **Example:**
-
-```swift
-SnapshotTestHelper.assertSnapshot(initializingWith: {
-    MyCustomView()
-}, devices: [.iPhone8_Portrait, .iPadPro_Portrait], wait: 1.0)
+```json
+{
+  "locales": [
+    "en",
+    "it",
+    "de",
+    "es",
+    "nl"
+  ],
+  "devices": [
+    {
+      "name": "iPhone SE (2nd generation)",
+      "orientation": "portrait",
+      "os": "17.5"
+    },
+    {
+      "name": "iPhone 12 Pro",
+      "orientation": "portrait",
+      "os": "17.5"
+    },
+    {
+      "name": "iPhone 13 Pro Max",
+      "orientation": "landscape"
+    },
+    {
+      "name": "iPad Pro (12.9-inch) (4th generation)",
+      "orientation": "portrait"
+    }
+  ],
+  "testPlans": [
+    {
+      "name": "EcosiaSnapshotTests",
+      "testClasses": [
+        {
+          "name": "OnboardingTests",
+          "devices": [
+            "iPhone SE (2nd generation)", 
+            "iPad Pro (12.9-inch) (4th generation)"
+            ],
+          "locales": [
+            "en", 
+            "es"
+            ]
+        }
+      ]
+    }
+  ]
+}
 ```
 
-This configuration tests the MyCustomView on both an iPhone 8 in portrait mode and an iPad Pro in portrait mode.
+This configuration executes the `OnboardingTests` class which is part of the `EcosiaSnapshotTests` on both an iPhone SE and iPad Pro in portrait mode for the English and Spanish languages.
 </details>
 
 <details>
 <summary> What if I want to test with different languages? </summary>
 
-SnapshotTestHelper supports testing UI components in different languages by passing an array of Locale objects to the locales parameter. This adjusts the app’s locale settings dynamically before capturing each snapshot, ensuring that localized strings are displayed correctly.
+To perform snapshot tests on different locales, you can specify the devices as part of the `snapshot_configuration.json`. All available locales are declared in the `locales` array.
+SnapshotTestHelper will take care of retrieving all the details and configure the test environment to the specified languages.
 
-```swift
-SnapshotTestHelper.assertSnapshot(initializingWith: {
-    LocalizedWelcomeView()
-}, locales: [Locale(identifier: "en"), Locale(identifier: "fr")], wait: 1.0)
+```json
+{
+  "locales": [
+    "en",
+    "it",
+    "de",
+    "es",
+    "nl"
+  ],
+  "devices": [
+    {
+      "name": "iPhone SE (2nd generation)",
+      "orientation": "portrait",
+      "os": "17.5"
+    },
+    {
+      "name": "iPhone 12 Pro",
+      "orientation": "portrait",
+      "os": "17.5"
+    },
+    {
+      "name": "iPhone 13 Pro Max",
+      "orientation": "landscape"
+    },
+    {
+      "name": "iPad Pro (12.9-inch) (4th generation)",
+      "orientation": "portrait"
+    }
+  ],
+  "testPlans": [
+    {
+      "name": "EcosiaSnapshotTests",
+      "testClasses": [
+        {
+          "name": "OnboardingTests",
+          "devices": [
+            "iPhone SE (2nd generation)", 
+            "iPad Pro (12.9-inch) (4th generation)"
+            ],
+          "locales": [
+            "en", 
+            "it",
+            "es"
+            ]
+        }
+      ]
+    }
+  ]
+}
 ```
 
-This tests the LocalizedWelcomeView in both English and French, capturing how the view appears with different localized content.
+This configuration executes the `OnboardingTests` class which is part of the `EcosiaSnapshotTests` on both an iPhone SE and iPad Pro in portrait mode for the English, Italian and Spanish languages.
 </details>
 
 <details>
@@ -120,17 +250,58 @@ enum DeviceType: String, CaseIterable {
             return ViewImageConfig.iPhone12Pro(.landscape)
         }
     }
+
+    static func from(deviceName: String, orientation: String) -> DeviceType {
+        switch (deviceName, orientation) {
+        case ("iPhone 12 Pro", "portrait"):
+            return .iPhone12Pro_Portrait
+        case ("iPhone 12 Pro", "landscape"):
+            return .iPhone12Pro_Landscape
+        default:
+            fatalError("Device Name \(deviceName) and Orientation \(orientation) not found. Please add them correctly.")
+        }
+    }
 }
 ```
 
-Then, to test on landscape devices using SnapshotTestHelper, you need to specify the device and orientation when configuring your test.
+Do not forget to also declare the new device in the `snapshot_configuration.json` as well 👇
 
-```swift
-SnapshotTestHelper.assertSnapshot(
-    initializingWith: { YourCustomView() },
-    devices: [.iPhone12Pro_Landscape], // Assume you have defined this device configuration for landscape orientation earlier like above
-    wait: 1.0
-)
+```json
+{
+  "locales": [
+    "en",
+    "it",
+    "de",
+    "es",
+    "nl"
+  ],
+  "devices": [
+    {
+      "name": "iPhone SE (2nd generation)",
+      "orientation": "portrait",
+      "os": "17.5"
+    },
+    {
+      "name": "iPhone 12 Pro",
+      "orientation": "landscape",
+      "os": "17.5"
+    }
+    ...
+  ],
+  "testPlans": [
+    {
+      "name": "EcosiaSnapshotTests",
+      "testClasses": [
+        {
+          "name": "OnboardingTests",
+          "devices": ["all"],
+          "locales": ["all"]
+        }
+        ...
+      ]
+    }
+  ]
+}
 ```
 </details>
 
