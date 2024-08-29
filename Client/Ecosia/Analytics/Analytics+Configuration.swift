@@ -101,13 +101,13 @@ extension Analytics {
                     // less than a day has passed
                     return false
                 }
-            } else {
-                // If no last check date exists, set the current date and return true
-                defaults.set(now, forKey: identifier)
-                return true
             }
+        } else {
+            // If no last check date exists, set the current date and return true
+            defaults.set(now, forKey: identifier)
+            return true
         }
-        
+
         return false
     }
 }
