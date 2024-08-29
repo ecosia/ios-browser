@@ -7,7 +7,7 @@ protocol AnalyticsProtocol {
 }
 
 final class Analytics: AnalyticsProtocol {
-    private static let installSchema = "iglu:org.ecosia/ios_install_event/jsonschema/1-0-0"
+    static let installSchema = "iglu:org.ecosia/ios_install_event/jsonschema/1-0-0"
     private static let abTestSchema = "iglu:org.ecosia/abtest_context/jsonschema/1-0-1"
     private static let consentSchema = "iglu:org.ecosia/eccc_context/jsonschema/1-0-2"
     private static let abTestRoot = "ab_tests"
@@ -19,6 +19,7 @@ final class Analytics: AnalyticsProtocol {
                                       network: .init(endpoint: Environment.current.urlProvider.snowplow),
                                       configurations: [Self.trackerConfiguration,
                                                        Self.subjectConfiguration,
+                                                       Self.appInstallTrackingPluginConfiguration,
                                                        Self.appResumeDailyTrackingPluginConfiguration])!
     }
     
