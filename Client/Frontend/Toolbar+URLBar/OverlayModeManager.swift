@@ -76,7 +76,13 @@ class DefaultOverlayModeManager: OverlayModeManager {
         // The NewTabPage cases are weird topSites = homepage
         // and homepage = customURL
         switch newTabSettings {
-        case .topSites: return url?.isFxHomeUrl ?? true
+        /*
+         Ecosia: Given the upper comment, we'll return `false` for `topSites`
+         so that it won't go in overlay mode as soon as we open a new tab
+         and present the New Tab Page.
+         */
+        // case .topSites: return url?.isFxHomeUrl ?? true
+        case .topSites: return false
         case .blankPage: return true
         case .homePage: return false
         }

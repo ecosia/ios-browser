@@ -373,6 +373,7 @@
 		2CABD7282C12EF1E00A0750F /* PrivateModeButtonTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CABD7272C12EF1E00A0750F /* PrivateModeButtonTests.swift */; };
 		2CC8AC342C4F887D000A669A /* MockAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC8AC332C4F887D000A669A /* MockAnalytics.swift */; };
 		2CCFB3D72C0FBEE800BEDCA0 /* TabToolbarHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D815A3A724A53F3200AAB221 /* TabToolbarHelperTests.swift */; };
+		2CD48B7F2C7F7E4100A70908 /* EcosiaOverlayModeManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD48B7E2C7F7E4100A70908 /* EcosiaOverlayModeManagerTests.swift */; };
 		2CE294472B7CDD56006C22B2 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 2CE294462B7CDD56006C22B2 /* Core */; };
 		2CE294492B7CDD78006C22B2 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 2CE294482B7CDD78006C22B2 /* Core */; };
 		2CE2E24D2B9B1FCB00973C16 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 2CE2E24C2B9B1FCB00973C16 /* Core */; };
@@ -2538,6 +2539,7 @@
 		2CCF17522105E4FD00705AE5 /* DisplaySettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplaySettingsTests.swift; sourceTree = "<group>"; };
 		2CCFB3D42C0F1EA500BEDCA0 /* LoadingScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingScreen.swift; sourceTree = "<group>"; };
 		2CD368492C5BC31700972871 /* OnboardingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingTests.swift; sourceTree = "<group>"; };
+		2CD48B7E2C7F7E4100A70908 /* EcosiaOverlayModeManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaOverlayModeManagerTests.swift; sourceTree = "<group>"; };
 		2CE294442B7CDD05006C22B2 /* CoreAudioTypes.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioTypes.framework; path = System/Library/Frameworks/CoreAudioTypes.framework; sourceTree = SDKROOT; };
 		2CE294672B7FC5A4006C22B2 /* EcosiaInstallTypeTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EcosiaInstallTypeTests.swift; sourceTree = "<group>"; };
 		2CE294692B7FC5A5006C22B2 /* AnalyticsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsTests.swift; sourceTree = "<group>"; };
@@ -8919,6 +8921,7 @@
 				2C26EA132C04CAD100795552 /* EcosiaTopSitesHelperTests.swift */,
 				2CABD7272C12EF1E00A0750F /* PrivateModeButtonTests.swift */,
 				2C2349A22C57E5BC007A5894 /* EcosiaPerformanceTestHistory.swift */,
+				2CD48B7E2C7F7E4100A70908 /* EcosiaOverlayModeManagerTests.swift */,
 			);
 			path = EcosiaTests;
 			sourceTree = "<group>";
@@ -14641,6 +14644,7 @@
 				D82ED2641FEB3C420059570B /* DefaultSearchPrefsTests.swift in Sources */,
 				1D74FF502B2797EA00FF01D0 /* WindowManagerTests.swift in Sources */,
 				CA24B53B24ABFE5D0093848C /* PasswordManagerDataSourceHelperTests.swift in Sources */,
+				2CD48B7F2C7F7E4100A70908 /* EcosiaOverlayModeManagerTests.swift in Sources */,
 				E1390FB828B42EF200C9EF3E /* WallpaperManagerMock.swift in Sources */,
 				ABB507CF2A136FB2009CAA67 /* UserConversionMetricsTests.swift in Sources */,
 				21FA8FB22AE856EB0013B815 /* MockTabTrayCoordinatorDelegate.swift in Sources */,
