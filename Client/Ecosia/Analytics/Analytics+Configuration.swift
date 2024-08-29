@@ -67,7 +67,7 @@ extension Analytics {
     /// Checks if the current installation is the first time the app has been installed.
     /// - Parameter identifier: A unique identifier used to store and retrieve the first install check status from `UserDefaults`.
     /// - Returns: A Boolean value indicating whether the app is being installed for the first time.
-    private static func isFirstInstall(for identifier: String) -> Bool {
+    static func isFirstInstall(for identifier: String) -> Bool {
         let defaults = UserDefaults.standard
         let isFirstTime = defaults.object(forKey: identifier) as? Bool ?? {
             defaults.set(false, forKey: identifier)
@@ -82,7 +82,7 @@ extension Analytics {
     /// Checks if a day has passed since the last check for a specific event.
     /// - Parameter identifier: A unique identifier used to store and retrieve the last check date from `UserDefaults`.
     /// - Returns: A Boolean value indicating whether a day has passed since the last check. If no previous check exists, returns `true` and records the current date.
-    private static func hasDayPassedSinceLastCheck(for identifier: String) -> Bool {
+    static func hasDayPassedSinceLastCheck(for identifier: String) -> Bool {
         let now = Date()
         let defaults = UserDefaults.standard
         
