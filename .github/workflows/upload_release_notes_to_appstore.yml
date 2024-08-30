@@ -2,7 +2,10 @@ name: Release Notes update
 
 on:
   push:
-    branches: [ MOB-2848_mexican_release_notes ]
+    paths:
+      - 'fastlane/metadata/**/release_notes.txt'
+      - '!fastlane/metadata/en-US/**/release_notes.txt'
+    branches: [ main ]
 
 jobs:
   upload_release_notes_to_appstore:
