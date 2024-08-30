@@ -1,0 +1,32 @@
+name: 'Perform Snapshot Tests'
+description: 'This action contains all the usual steps needed to perform the snapshot tests'
+
+inputs:
+  github-token:
+    description: 'The GitHub Token'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+
+    - name: Set up environment
+      shell: bash
+      run: |
+        brew install jq
+
+    - name: Run Snapshot Tests
+      shell: bash
+      run: |
+        mkdir -p EcosiaTests/Results/
+        sh ./perform_snapshot_tests.sh "EcosiaTests/SnapshotTests/snapshot_configuration.json" "EcosiaTests/SnapshotTests/environment.json" "EcosiaTests/Results" "EcosiaSnapshotTests"
+
+    - name: Process xcresult files
+      uses: kishikawakatsumi/xcresulttool@v1
+      with:
+        path: 'EcosiaTests/Results/all_tests.xcresult'
+        token: ${{ inputs.github-token }}
+        show-passed-tests: false
+        show-code-coverage: false
+        upload-bundles: 'failure'
+      if: success() || failure()

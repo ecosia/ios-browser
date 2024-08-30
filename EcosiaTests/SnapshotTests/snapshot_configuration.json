@@ -1,0 +1,49 @@
+{
+  "locales": [
+    "en",
+    "it",
+    "de",
+    "es",
+    "nl"
+  ],
+  "devices": [
+    {
+      "name": "iPhone SE (3rd generation)",
+      "orientation": "portrait",
+      "os": "17.5"
+    },
+    {
+      "name": "iPhone 14 Pro",
+      "orientation": "portrait",
+      "os": "17.5"
+    },
+    {
+      "name": "iPhone 14 Pro Max",
+      "orientation": "landscape"
+    },
+    {
+      "name": "iPad Pro (12.9-inch) (6th generation)",
+      "orientation": "portrait"
+    }
+  ],
+  "testPlans": [
+    {
+      "name": "EcosiaSnapshotTests",
+      "testClasses": [
+        {
+          "name": "OnboardingTests",
+          "devices": ["all"],
+          "locales": ["all"]
+        },
+        {
+          "name": "NTPComponentTests",
+          "devices": ["iPhone 14 Pro"],
+          "locales": [
+            "en",
+            "es"
+          ]
+        }
+      ]
+    }
+  ]
+}

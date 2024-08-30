@@ -122,11 +122,7 @@ class BrowserCoordinator: BaseCoordinator,
         // -> delay of 0.5s to wait for animations and dismissals to finish
         if inline, !User.shared.firstTime {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
-                if self?.browserViewController.presentInsightfulSheetsIfNeeded() == true {
-                    (overlayManager as? DefaultOverlayModeManager)?.overrideShouldEnterOverlayMode = false
-                } else {
-                    (overlayManager as? DefaultOverlayModeManager)?.overrideShouldEnterOverlayMode = nil
-                }
+                self?.browserViewController.presentInsightfulSheetsIfNeeded()
                 // Ecosia: at this stage, we consider it a safe place where storing the current version
                 EcosiaInstallType.evaluateCurrentEcosiaInstallType(storeUpgradeVersion: true)
             }
