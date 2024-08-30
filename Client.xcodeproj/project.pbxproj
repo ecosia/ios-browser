@@ -21362,7 +21362,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = "ls-mob-2858-ecosify-all-ecosia-urls";
+				branch = main;
 				kind = branch;
 			};
 		};
