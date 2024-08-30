@@ -180,10 +180,10 @@ platform :ios do
       name: 'MARKETING_VERSION'
     )
 
-    upload_to_app_store(
-      force: true, # Set to true to skip the verification via HTML preview file
-      app_version: version_number
-    )
+    # upload_to_app_store(
+    #   force: true, # Set to true to skip the verification via HTML preview file
+    #   app_version: version_number
+    # )
 
   end
 
