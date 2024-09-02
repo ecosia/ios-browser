@@ -81,13 +81,6 @@ final class Analytics: AnalyticsProtocol {
             .label(label.rawValue))
     }
     
-    func ntpClimateImpactCTAExperiment(_ action: Action) {
-        track(Structured(category: Category.ntp.rawValue,
-                         action: action.rawValue)
-            .label(Label.NTP.climateImpactCTA.rawValue)
-            .property(ClimateImpactCTAExperiment.analyticsProperty))
-    }
-    
     func navigation(_ action: Action, label: Label.Navigation) {
         track(Structured(category: Category.navigation.rawValue,
                          action: action.rawValue)

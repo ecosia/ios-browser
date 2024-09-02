@@ -14,7 +14,6 @@ final class NTPImpactCell: UICollectionViewCell, Themeable, ReusableCell {
     weak var delegate: NTPImpactCellDelegate? {
         didSet {
             impactRows.forEach { $0.delegate = delegate }
-            financialReportCTAView.delegate = delegate
         }
     }
     
@@ -28,7 +27,6 @@ final class NTPImpactCell: UICollectionViewCell, Themeable, ReusableCell {
     private var impactRows: [NTPImpactRowView] {
         containerStack.arrangedSubviews.compactMap { $0 as? NTPImpactRowView }
     }
-    private let financialReportCTAView = FinancialReportsCTAView(actionText: ClimateImpactCTAExperiment.actionText)
     
     // MARK: - Themeable Properties
     
@@ -84,20 +82,7 @@ final class NTPImpactCell: UICollectionViewCell, Themeable, ReusableCell {
             row.position = (index, items.count)
             row.delegate = delegate
             containerStack.addArrangedSubview(row)
-            
-            // If last item for section, currently totalInvested
-            if case .totalInvested = info {
-                configureFinancialReportCTAIfNeeded(afterRow: row)
-            }
         }
-    }
-    
-    func configureFinancialReportCTAIfNeeded(afterRow row: NTPImpactRowView) {
-        guard ClimateImpactCTAExperiment.isEnabled else { return }
-        row.updateLayoutForCTA()
-        containerStack.addArrangedSubview(financialReportCTAView)
-        financialReportCTAView.layoutSubviews() // Needed since it's here that the intended size is known
-        ClimateImpactCTAExperiment.trackExperimentImpression()
     }
     
     func refresh(items: [ClimateImpactInfo]) {

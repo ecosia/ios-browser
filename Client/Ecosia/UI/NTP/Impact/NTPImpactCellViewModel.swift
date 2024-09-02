@@ -9,7 +9,6 @@ import Common
 
 protocol NTPImpactCellDelegate: AnyObject {
     func impactCellButtonClickedWithInfo(_ info: ClimateImpactInfo)
-    func openFinancialReports()
 }
 
 final class NTPImpactCellViewModel {
