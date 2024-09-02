@@ -239,7 +239,7 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
             // Ecosia: Update URL accordingly
             // locationView.url = newURL
             var updatedUrl = newURL
-            if updatedUrl?.isEcosiaSearchQuery() == true {
+            if updatedUrl?.shouldEcosify() ?? false {
                 updatedUrl = newURL?.ecosified(isIncognitoEnabled: isPrivate)
             }
             locationView.url = updatedUrl
