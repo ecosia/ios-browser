@@ -191,26 +191,6 @@ class UnleashVariantResetSetting: HiddenSetting {
     }
 }
 
-final class UnleashBingDistributionSetting: UnleashVariantResetSetting {
-    override var titleName: String? {
-        return "Bing distribution"
-    }
-    
-    override var variant: Unleash.Variant? {
-        Unleash.getVariant(.bingDistribution)
-    }
-}
-
-final class UnleashClimateImpactCTASetting: UnleashVariantResetSetting {
-    override var titleName: String? {
-        return "Climate impact CTA"
-    }
-    
-    override var variant: Unleash.Variant? {
-        Unleash.getVariant(.climateImpactCTA)
-    }
-}
-
 final class EngagementServiceIdentifierSetting: HiddenSetting {
     override var title: NSAttributedString? {
         return NSAttributedString(string: "Debug: Engagement Service Identifier parameter", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])

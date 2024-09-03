@@ -155,8 +155,6 @@ extension AppSettingsTableViewController {
             AddClaim(settings: self),
             ChangeSearchCount(settings: self),
             ResetSearchCount(settings: self),
-            UnleashClimateImpactCTASetting(settings: self),
-            UnleashBingDistributionSetting(settings: self),
             EngagementServiceIdentifierSetting(settings: self),
             FasterInactiveTabs(settings: self, settingsDelegate: self),
         ]
