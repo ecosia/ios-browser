@@ -88,6 +88,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     ) {
         guard let url = URLContexts.first?.url,
               let route = routeBuilder.makeRoute(url: url) else { return }
+        Analytics.shared.temporaryDebugExternalLink("scene_open", label: url.absoluteString)
         sceneCoordinator?.findAndHandle(route: route)
 
         sessionManager.launchSessionProvider.openedFromExternalSource = true

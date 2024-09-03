@@ -1504,6 +1504,7 @@ class BrowserViewController: UIViewController,
     }
 
     func handle(url: URL?, isPrivate: Bool, options: Set<Route.SearchOptions>? = nil) {
+        Analytics.shared.temporaryDebugExternalLink("browser_handle", label: url?.absoluteString ?? "undefined")
         if let url = url {
             if options?.contains(.switchToNormalMode) == true {
                 switchToPrivacyMode(isPrivate: false)

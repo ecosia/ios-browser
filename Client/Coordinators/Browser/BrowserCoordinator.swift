@@ -221,15 +221,18 @@ class BrowserCoordinator: BaseCoordinator,
 
     override func handle(route: Route) {
         guard browserIsReady, !tabManager.isRestoringTabs else {
+            Analytics.shared.temporaryDebugExternalLink("error", label: "not_ready")
             return
         }
 
         logger.log("Handling a route", level: .info, category: .coordinator)
+        Analytics.shared.temporaryDebugExternalLink("handle", label: String(reflecting: route))
         switch route {
         case let .searchQuery(query):
             handle(query: query)
 
         case let .search(url, isPrivate, options):
+            Analytics.shared.temporaryDebugExternalLink("handle_search", label: url?.absoluteString ?? "undefined")
             handle(url: url, isPrivate: isPrivate, options: options)
 
         case let .searchURL(url, tabId):
