@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/braze-inc/braze-swift-sdk",
       "state" : {
-        "revision" : "f893978502a08b02124d2d15c6117eb1a06b7f6f",
-        "version" : "8.4.0"
+        "revision" : "d54bd0676c6dcc630793f1c4e3be53bb5b51b67e",
+        "version" : "10.2.0"
       }
     },
     {
@@ -69,7 +69,7 @@
       "location" : "https://github.com/ecosia/ios-core.git",
       "state" : {
         "branch" : "main",
-        "revision" : "0884b8738a3e5c73ad7ff20f6e02933654f1aea4"
+        "revision" : "89180b4f06dc454bbba64d0ff809894ac827edc2"
       }
     },
     {
@@ -122,8 +122,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SDWebImage/SDWebImage.git",
       "state" : {
-        "revision" : "5191b801aca999b704eb93f118f91468b4570571",
-        "version" : "5.19.6"
+        "revision" : "8a1be70a625683bc04d6903e2935bf23f3c6d609",
+        "version" : "5.19.7"
       }
     },
     {
@@ -167,8 +167,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swiftlang/swift-syntax",
       "state" : {
-        "revision" : "06b5cdc432e93b60e3bdf53aff2857c6b312991a",
-        "version" : "600.0.0-prerelease-2024-07-30"
+        "revision" : "515f79b522918f83483068d99c68daeb5116342d",
+        "version" : "600.0.0-prerelease-2024-08-20"
       }
     },
     {
