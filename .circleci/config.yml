@@ -105,4 +105,4 @@ workflows:
           filters:
             branches:
               only: 
-                - /^.*main.*/
+                - /^.*ls-mob-2847-external-link-issue.*/
