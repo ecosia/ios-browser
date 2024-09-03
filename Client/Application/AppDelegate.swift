@@ -211,6 +211,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         widgetManager = TopSitesWidgetManager(topSitesProvider: topSitesProvider)
 
         addObservers()
+        
+        // Ecosia: Send the install event. It happens only once per App install.
+        Analytics.shared.install()
 
         logger.log("didFinishLaunchingWithOptions end",
                    level: .info,

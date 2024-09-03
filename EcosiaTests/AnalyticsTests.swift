@@ -8,38 +8,105 @@ import XCTest
 @testable import Client
 
 final class AnalyticsTests: XCTestCase {
+
+    // Cleanup method that runs after each test
+    override func tearDownWithError() throws {
+        let defaults = UserDefaults.standard
+        // Remove any saved dates or flags after each test to avoid side effects between tests
+        defaults.removeObject(forKey: "dayPassedCheckIdentifier")
+        defaults.removeObject(forKey: "installCheckIdentifier")
+    }
     
-    override func setUpWithError() throws {
-        let defaults = UserDefaults.standard
-        // Remove any saved dates from UserDefaults before each test
-        defaults.removeObject(forKey: "testIdentifier")
-    }
-
-    func testFirstCheck() throws {
-        // The first check should always return true since it sets the date for the first time
-        XCTAssertTrue(Analytics.hasDayPassedSinceLastCheck(for: "testIdentifier"))
-    }
-
-    func testCheckWithinADay() throws {        
-        //Given
-        let defaults = UserDefaults.standard
+    // MARK: - hasDayPassedSinceLastCheck Tests
+    
+    func testFirstCheckAlwaysReturnsTrue() throws {
+        // Given: No previous date exists in UserDefaults for the identifier
+        // (Handled by setUpWithError)
         
-        //When
-        defaults.set(Date(), forKey: "testIdentifier")
+        // When: The method is called for the first time
+        let result = Analytics.hasDayPassedSinceLastCheck(for: "dayPassedCheckIdentifier")
         
-        //Then
-        XCTAssertFalse(Analytics.hasDayPassedSinceLastCheck(for: "testIdentifier"))
+        // Then: The result should be true because no previous date exists
+        XCTAssertTrue(result, "The first check should return true because no previous date exists.")
     }
 
-    func testCheckAfterADay() throws {
-        //Given
+    func testCheckWithinADayReturnsFalse() throws {
+        // Given: The current date is saved as the last check date
+        let defaults = UserDefaults.standard
+        defaults.set(Date(), forKey: "dayPassedCheckIdentifier")
+        
+        // When: The method is called within the same day
+        let result = Analytics.hasDayPassedSinceLastCheck(for: "dayPassedCheckIdentifier")
+        
+        // Then: The result should be false since less than a day has passed
+        XCTAssertFalse(result, "The check should return false if it's been less than a day since the last check.")
+    }
+
+    func testDateUpdateAfterADayPasses() throws {
+        // Given: A date more than a day ago is saved as the last check date
         let defaults = UserDefaults.standard
         let moreThanADayAgo = Calendar.current.date(byAdding: .day, value: -2, to: Date())!
+        defaults.set(moreThanADayAgo, forKey: "dayPassedCheckIdentifier")
         
-        //When
-        defaults.set(moreThanADayAgo, forKey: "testIdentifier")
+        // When: The method is called after more than a day has passed
+        let result = Analytics.hasDayPassedSinceLastCheck(for: "dayPassedCheckIdentifier")
         
-        //Then
-        XCTAssertTrue(Analytics.hasDayPassedSinceLastCheck(for: "testIdentifier"))
+        // Then: The method should return true and update the last check date to today
+        XCTAssertTrue(result, "The check should return true since more than a day has passed.")
+        let updatedDate = defaults.object(forKey: "dayPassedCheckIdentifier") as? Date
+        XCTAssertNotNil(updatedDate, "The date should be updated in UserDefaults.")
+        XCTAssertTrue(Calendar.current.isDateInToday(updatedDate!), "The last check date should be updated to today's date.")
+    }
+
+    func testHandleCorruptedOrMissingData() throws {
+        // Given: Corrupted data (e.g., a string instead of a Date) is saved in UserDefaults
+        let defaults = UserDefaults.standard
+        defaults.set("corruptedData", forKey: "dayPassedCheckIdentifier")
+        
+        // When: The method is called
+        let result = Analytics.hasDayPassedSinceLastCheck(for: "dayPassedCheckIdentifier")
+        
+        // Then: The method should return true, treat it as the first check, and reset the last check date to today
+        XCTAssertTrue(result, "The method should handle corrupted data gracefully and treat it as the first check.")
+        let updatedDate = defaults.object(forKey: "dayPassedCheckIdentifier") as? Date
+        XCTAssertNotNil(updatedDate, "The date should be reset in UserDefaults after detecting corrupted data.")
+        XCTAssertTrue(Calendar.current.isDateInToday(updatedDate!), "The last check date should be updated to today's date after handling corrupted data.")
+    }
+    
+    // MARK: - isFirstInstall Tests
+
+    func testIsFirstInstall_FirstCall_ReturnsTrue() {
+        // Given: No previous installation flag exists in UserDefaults for the identifier
+        // (Handled by setUpWithError)
+        
+        // When: The method is called for the first time
+        let result = Analytics.isFirstInstall(for: "installCheckIdentifier")
+        
+        // Then: The result should be true indicating the first install
+        XCTAssertTrue(result, "The first install should return true")
+    }
+    
+    func testIsFirstInstall_SecondCall_ReturnsFalse() {
+        // Given: The method has already been called once
+        _ = Analytics.isFirstInstall(for: "installCheckIdentifier")
+        
+        // When: The method is called again
+        let result = Analytics.isFirstInstall(for: "installCheckIdentifier")
+        
+        // Then: The result should be false indicating it is no longer the first install
+        XCTAssertFalse(result, "The second call should return false as the app is no longer on its first install")
+    }
+    
+    func testIsFirstInstall_StoresValueInUserDefaults() {
+        // Given: The method is called for the first time
+        _ = Analytics.isFirstInstall(for: "installCheckIdentifier")
+        
+        // When: The value is retrieved from UserDefaults
+        let defaults = UserDefaults.standard
+        let storedValue = defaults.object(forKey: "installCheckIdentifier") as? Bool
+        
+        // Then: The stored value should be false indicating the first install has been recorded
+        XCTAssertNotNil(storedValue, "The value should be stored in UserDefaults")
+        XCTAssertEqual(storedValue, false, "The stored value in UserDefaults should be false after the first call")
     }
 }
