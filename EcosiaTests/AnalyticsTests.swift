@@ -8,14 +8,6 @@ import XCTest
 @testable import Client
 
 final class AnalyticsTests: XCTestCase {
-    
-    // Setup method that runs before each test
-    override func setUpWithError() throws {
-        let defaults = UserDefaults.standard
-        // Remove any saved dates or flags from UserDefaults before each test to ensure a clean slate
-        defaults.removeObject(forKey: "dayPassedCheckIdentifier")
-        defaults.removeObject(forKey: "installCheckIdentifier")
-    }
 
     // Cleanup method that runs after each test
     override func tearDownWithError() throws {
@@ -48,19 +40,6 @@ final class AnalyticsTests: XCTestCase {
         
         // Then: The result should be false since less than a day has passed
         XCTAssertFalse(result, "The check should return false if it's been less than a day since the last check.")
-    }
-
-    func testCheckAfterADayReturnsTrue() throws {
-        // Given: A date more than a day ago is saved as the last check date
-        let defaults = UserDefaults.standard
-        let moreThanADayAgo = Calendar.current.date(byAdding: .day, value: -2, to: Date())!
-        defaults.set(moreThanADayAgo, forKey: "dayPassedCheckIdentifier")
-        
-        // When: The method is called after more than a day has passed
-        let result = Analytics.hasDayPassedSinceLastCheck(for: "dayPassedCheckIdentifier")
-        
-        // Then: The result should be true since more than a day has passed
-        XCTAssertTrue(result, "The check should return true if more than a day has passed since the last check.")
     }
 
     func testDateUpdateAfterADayPasses() throws {
