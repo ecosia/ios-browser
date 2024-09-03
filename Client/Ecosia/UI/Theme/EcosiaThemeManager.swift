@@ -116,7 +116,7 @@ public final class EcosiaThemeManager: ThemeManager, Notifiable {
         return themeType
     }
 
-    private func getSystemThemeType() -> ThemeType {
+    func getSystemThemeType() -> ThemeType {
         return UIScreen.main.traitCollection.userInterfaceStyle == .dark ? ThemeType.dark : ThemeType.light
     }
 
@@ -189,8 +189,7 @@ extension EcosiaThemeManager {
     
     func updateLegacyThemeIfNeeded() {
         if LegacyThemeManager.instance.systemThemeIsOn {
-            let userInterfaceStyle = UIScreen.main.traitCollection.userInterfaceStyle
-            LegacyThemeManager.instance.current = userInterfaceStyle == .dark ? LegacyDarkTheme() : LegacyNormalTheme()
+            LegacyThemeManager.instance.updateBasedOnCurrentSystemThemeType()
         }
     }
 }

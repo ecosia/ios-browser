@@ -96,8 +96,11 @@ class LegacyThemeManager {
     private func applicationDidBecomeActive() {
         let nightMode = UserDefaults.standard.bool(forKey: "profile.NightModeStatus")
         if !nightMode && LegacyThemeManager.instance.systemThemeIsOn {
-            let userInterfaceStyle = UIScreen.main.traitCollection.userInterfaceStyle
+            /* Ecosia: Update legacy theme accoridng correctly
+            let userInterfaceStyle = traitCollection.userInterfaceStyle
             LegacyThemeManager.instance.current = userInterfaceStyle == .dark ? LegacyDarkTheme() : LegacyNormalTheme()
+             */
+            LegacyThemeManager.instance.updateBasedOnCurrentSystemThemeType()
         }
     }
 }

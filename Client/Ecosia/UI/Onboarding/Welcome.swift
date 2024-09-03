@@ -4,6 +4,7 @@
 
 import UIKit
 import Core
+import Common
 
 protocol WelcomeDelegate: AnyObject {
     func welcomeDidFinish(_ welcome: Welcome)
@@ -46,10 +47,8 @@ final class Welcome: UIViewController {
         addBackground()
         addStack()
 
-        if LegacyThemeManager.instance.systemThemeIsOn {
-            let userInterfaceStyle = traitCollection.userInterfaceStyle
-            LegacyThemeManager.instance.current = userInterfaceStyle == .dark ? LegacyDarkTheme() : LegacyNormalTheme()
-        }
+        let themeManager: ThemeManager = AppContainer.shared.resolve()
+        (themeManager as? EcosiaThemeManager)?.updateLegacyThemeIfNeeded()
 
         Task.detached {
             // Fetching FinancialReports async as some onboarding steps might use it
