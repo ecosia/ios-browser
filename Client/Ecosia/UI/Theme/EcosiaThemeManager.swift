@@ -63,7 +63,7 @@ public final class EcosiaThemeManager: ThemeManager, Notifiable {
     public func changeCurrentTheme(_ newTheme: ThemeType) {
         guard currentTheme.type != newTheme else { return }
         currentTheme = newThemeForType(newTheme)
-        updateLegacyThemeIfNeeded()
+        updateLegacyThemeIfSystemThemeON()
         mainQueue.ensureMainThread { [weak self] in
             self?.notificationCenter.post(name: .ThemeDidChange)
         }
@@ -75,7 +75,7 @@ public final class EcosiaThemeManager: ThemeManager, Notifiable {
               let nightModeIsOn = userDefaults.object(forKey: ThemeKeys.NightMode.isOn) as? NSNumber,
               nightModeIsOn.boolValue == false
         else { return }
-        changeCurrentTheme(getSystemThemeType())
+        changeCurrentTheme(Self.getSystemThemeType())
     }
 
     public func setSystemTheme(isOn: Bool) {
@@ -108,7 +108,7 @@ public final class EcosiaThemeManager: ThemeManager, Notifiable {
            nightModeIsOn.boolValue == true {
             return .dark
         }
-        var themeType = getSystemThemeType()
+        var themeType = Self.getSystemThemeType()
         if let savedThemeDescription = userDefaults.string(forKey: ThemeKeys.themeName),
            let savedTheme = ThemeType(rawValue: savedThemeDescription) {
             themeType = savedTheme
@@ -116,7 +116,7 @@ public final class EcosiaThemeManager: ThemeManager, Notifiable {
         return themeType
     }
 
-    private func getSystemThemeType() -> ThemeType {
+    static func getSystemThemeType() -> ThemeType {
         return UIScreen.main.traitCollection.userInterfaceStyle == .dark ? ThemeType.dark : ThemeType.light
     }
 
@@ -187,10 +187,9 @@ public final class EcosiaThemeManager: ThemeManager, Notifiable {
 
 extension EcosiaThemeManager {
     
-    func updateLegacyThemeIfNeeded() {
+    func updateLegacyThemeIfSystemThemeON() {
         if LegacyThemeManager.instance.systemThemeIsOn {
-            let userInterfaceStyle = UIScreen.main.traitCollection.userInterfaceStyle
-            LegacyThemeManager.instance.current = userInterfaceStyle == .dark ? LegacyDarkTheme() : LegacyNormalTheme()
+            LegacyThemeManager.updateBasedOnCurrentSystemThemeType()
         }
     }
 }

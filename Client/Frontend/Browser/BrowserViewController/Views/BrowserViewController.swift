@@ -859,8 +859,11 @@ class BrowserViewController: UIViewController,
            !NightModeHelper.isActivated()
             && LegacyThemeManager.instance.systemThemeIsOn
             && !state.usePrivateHomepage {
+            /* Ecosia: Update legacy theme accoridng correctly
             let userInterfaceStyle = traitCollection.userInterfaceStyle
             LegacyThemeManager.instance.current = userInterfaceStyle == .dark ? LegacyDarkTheme() : LegacyNormalTheme()
+             */
+            LegacyThemeManager.updateBasedOnCurrentSystemThemeType()
         }
     }
 
