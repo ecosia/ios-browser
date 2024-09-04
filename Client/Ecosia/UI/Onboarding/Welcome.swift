@@ -48,7 +48,7 @@ final class Welcome: UIViewController {
         addStack()
 
         let themeManager: ThemeManager = AppContainer.shared.resolve()
-        (themeManager as? EcosiaThemeManager)?.updateLegacyThemeIfNeeded()
+        (themeManager as? EcosiaThemeManager)?.updateLegacyThemeIfSystemThemeON()
 
         Task.detached {
             // Fetching FinancialReports async as some onboarding steps might use it

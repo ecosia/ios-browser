@@ -863,7 +863,7 @@ class BrowserViewController: UIViewController,
             let userInterfaceStyle = traitCollection.userInterfaceStyle
             LegacyThemeManager.instance.current = userInterfaceStyle == .dark ? LegacyDarkTheme() : LegacyNormalTheme()
              */
-            LegacyThemeManager.instance.updateBasedOnCurrentSystemThemeType()
+            LegacyThemeManager.updateBasedOnCurrentSystemThemeType()
         }
     }
 

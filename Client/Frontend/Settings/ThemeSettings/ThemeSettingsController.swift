@@ -103,7 +103,7 @@ class ThemeSettingsController: ThemedTableViewController, StoreSubscriber {
             let userInterfaceStyle = traitCollection.userInterfaceStyle
             LegacyThemeManager.instance.current = userInterfaceStyle == .dark ? LegacyDarkTheme() : LegacyNormalTheme()
              */
-            LegacyThemeManager.instance.updateBasedOnCurrentSystemThemeType()
+            LegacyThemeManager.updateBasedOnCurrentSystemThemeType()
         } else if LegacyThemeManager.instance.automaticBrightnessIsOn {
             LegacyThemeManager.instance.updateCurrentThemeBasedOnScreenBrightness()
         }

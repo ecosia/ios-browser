@@ -63,7 +63,7 @@ public final class EcosiaThemeManager: ThemeManager, Notifiable {
     public func changeCurrentTheme(_ newTheme: ThemeType) {
         guard currentTheme.type != newTheme else { return }
         currentTheme = newThemeForType(newTheme)
-        updateLegacyThemeIfNeeded()
+        updateLegacyThemeIfSystemThemeON()
         mainQueue.ensureMainThread { [weak self] in
             self?.notificationCenter.post(name: .ThemeDidChange)
         }
@@ -187,10 +187,9 @@ public final class EcosiaThemeManager: ThemeManager, Notifiable {
 
 extension EcosiaThemeManager {
     
-    func updateLegacyThemeIfNeeded() {
+    func updateLegacyThemeIfSystemThemeON() {
         if LegacyThemeManager.instance.systemThemeIsOn {
-            let userInterfaceStyle = UIScreen.main.traitCollection.userInterfaceStyle
-            LegacyThemeManager.instance.current = userInterfaceStyle == .dark ? LegacyDarkTheme() : LegacyNormalTheme()
+            LegacyThemeManager.updateBasedOnCurrentSystemThemeType()
         }
     }
 }
