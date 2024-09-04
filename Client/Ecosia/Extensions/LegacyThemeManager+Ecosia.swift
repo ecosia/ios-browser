@@ -35,12 +35,8 @@ extension LegacyThemeManager {
     /// This method retrieves the `EcosiaThemeManager` from the shared `AppContainer` and updates
     /// the theme accordingly. It checks whether the system theme type is dark and sets the
     /// `current` theme to `LegacyDarkTheme` or `LegacyNormalTheme` based on that.
-    static func updateBasedOnCurrentSystemThemeType() {
-        // Safely unwrap the ThemeManager and cast it to EcosiaThemeManager. If this fails, return early.
-        guard let themeManager: ThemeManager = AppContainer.shared.resolve(),
-              let ecosiaThemeManager = themeManager as? EcosiaThemeManager else { return }
-        
+    static func updateBasedOnCurrentSystemThemeType() {        
         // Update the current theme based on the system theme type.
-        LegacyThemeManager.instance.current = ecosiaThemeManager.getSystemThemeType() == .dark ? LegacyDarkTheme() : LegacyNormalTheme()
+        LegacyThemeManager.instance.current = EcosiaThemeManager.getSystemThemeType() == .dark ? LegacyDarkTheme() : LegacyNormalTheme()
     }
 }

@@ -75,7 +75,7 @@ public final class EcosiaThemeManager: ThemeManager, Notifiable {
               let nightModeIsOn = userDefaults.object(forKey: ThemeKeys.NightMode.isOn) as? NSNumber,
               nightModeIsOn.boolValue == false
         else { return }
-        changeCurrentTheme(getSystemThemeType())
+        changeCurrentTheme(Self.getSystemThemeType())
     }
 
     public func setSystemTheme(isOn: Bool) {
@@ -108,7 +108,7 @@ public final class EcosiaThemeManager: ThemeManager, Notifiable {
            nightModeIsOn.boolValue == true {
             return .dark
         }
-        var themeType = getSystemThemeType()
+        var themeType = Self.getSystemThemeType()
         if let savedThemeDescription = userDefaults.string(forKey: ThemeKeys.themeName),
            let savedTheme = ThemeType(rawValue: savedThemeDescription) {
             themeType = savedTheme
@@ -116,7 +116,7 @@ public final class EcosiaThemeManager: ThemeManager, Notifiable {
         return themeType
     }
 
-    func getSystemThemeType() -> ThemeType {
+    static func getSystemThemeType() -> ThemeType {
         return UIScreen.main.traitCollection.userInterfaceStyle == .dark ? ThemeType.dark : ThemeType.light
     }
 
