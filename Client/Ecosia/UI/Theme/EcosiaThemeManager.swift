@@ -189,7 +189,8 @@ extension EcosiaThemeManager {
     
     func updateLegacyThemeIfNeeded() {
         if LegacyThemeManager.instance.systemThemeIsOn {
-            LegacyThemeManager.instance.updateBasedOnCurrentSystemThemeType()
+            let userInterfaceStyle = UIScreen.main.traitCollection.userInterfaceStyle
+            LegacyThemeManager.instance.current = userInterfaceStyle == .dark ? LegacyDarkTheme() : LegacyNormalTheme()
         }
     }
 }
