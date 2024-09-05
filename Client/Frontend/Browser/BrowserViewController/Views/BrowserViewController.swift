@@ -1499,7 +1499,7 @@ class BrowserViewController: UIViewController,
     }
 
     func handle(query: String) {
-        Analytics.shared.temporaryDebugExternalLink("browser_handle_query", label: url?.absoluteString ?? "undefined")
+       Analytics.shared.temporaryDebugExternalLink("browser_handle_query", label: query)
        openBlankNewTab(focusLocationField: false)
        urlBar(urlBar, didSubmitText: query)
     }
@@ -1559,7 +1559,7 @@ class BrowserViewController: UIViewController,
         }
         popToBVC()
         guard !isShowingJSPromptAlert() else {
-            Analytics.shared.temporaryDebugExternalLink("add_tab", label: url?.absoluteString ?? "undefined")
+            Analytics.shared.temporaryDebugExternalLink("add_tab", label: url.absoluteString)
             tabManager.addTab(URLRequest(url: url), isPrivate: isPrivate)
             return
         }
@@ -1571,7 +1571,7 @@ class BrowserViewController: UIViewController,
             Analytics.shared.temporaryDebugExternalLink("select_tab_url", label: tab.url?.absoluteString ?? "undefined")
             tabManager.selectTab(tab)
         } else {
-            Analytics.shared.temporaryDebugExternalLink("open_new_tab_url", label: url?.absoluteString ?? "undefined")
+            Analytics.shared.temporaryDebugExternalLink("open_new_tab_url", label: url.absoluteString)
             openURLInNewTab(url, isPrivate: isPrivate)
         }
     }
@@ -1629,7 +1629,7 @@ class BrowserViewController: UIViewController,
             return
         }
         openedUrlFromExternalSource = true
-        Analytics.shared.temporaryDebugExternalLink("open_blank_newtab", label: url?.absoluteString ?? "undefined")
+        Analytics.shared.temporaryDebugExternalLink("open_blank_newtab", label: isPrivate ? "private" : "not_private")
 
         let freshTab = openURLInNewTab(nil, isPrivate: isPrivate)
         freshTab.metadataManager?.updateTimerAndObserving(state: .newTab, isPrivate: freshTab.isPrivate)
