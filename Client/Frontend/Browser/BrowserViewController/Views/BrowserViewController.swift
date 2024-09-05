@@ -1578,6 +1578,7 @@ class BrowserViewController: UIViewController,
 
     @discardableResult
     func openURLInNewTab(_ url: URL?, isPrivate: Bool = false) -> Tab {
+        Analytics.shared.temporaryDebugExternalLink("open_new_tab_generic", label: url?.absoluteString ?? "undefined")
         if let selectedTab = tabManager.selectedTab {
             screenshotHelper.takeScreenshot(selectedTab)
         }
