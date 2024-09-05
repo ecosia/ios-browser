@@ -1499,6 +1499,7 @@ class BrowserViewController: UIViewController,
     }
 
     func handle(query: String) {
+        Analytics.shared.temporaryDebugExternalLink("browser_handle_query", label: url?.absoluteString ?? "undefined")
        openBlankNewTab(focusLocationField: false)
        urlBar(urlBar, didSubmitText: query)
     }
@@ -1516,6 +1517,7 @@ class BrowserViewController: UIViewController,
     }
 
     func handle(url: URL?, tabId: String, isPrivate: Bool = false) {
+        Analytics.shared.temporaryDebugExternalLink("browser_handle_two", label: url?.absoluteString ?? "undefined")
         if let url = url {
             switchToTabForURLOrOpen(url, uuid: tabId, isPrivate: isPrivate)
         } else {
@@ -1557,6 +1559,7 @@ class BrowserViewController: UIViewController,
         }
         popToBVC()
         guard !isShowingJSPromptAlert() else {
+            Analytics.shared.temporaryDebugExternalLink("add_tab", label: url?.absoluteString ?? "undefined")
             tabManager.addTab(URLRequest(url: url), isPrivate: isPrivate)
             return
         }
@@ -1565,8 +1568,10 @@ class BrowserViewController: UIViewController,
         if let uuid = uuid, let tab = tabManager.getTabForUUID(uuid: uuid) {
             tabManager.selectTab(tab)
         } else if let tab = tabManager.getTabForURL(url) {
+            Analytics.shared.temporaryDebugExternalLink("select_tab_url", label: tab.url?.absoluteString ?? "undefined")
             tabManager.selectTab(tab)
         } else {
+            Analytics.shared.temporaryDebugExternalLink("open_new_tab_url", label: url?.absoluteString ?? "undefined")
             openURLInNewTab(url, isPrivate: isPrivate)
         }
     }
@@ -1624,6 +1629,7 @@ class BrowserViewController: UIViewController,
             return
         }
         openedUrlFromExternalSource = true
+        Analytics.shared.temporaryDebugExternalLink("open_blank_newtab", label: url?.absoluteString ?? "undefined")
 
         let freshTab = openURLInNewTab(nil, isPrivate: isPrivate)
         freshTab.metadataManager?.updateTimerAndObserving(state: .newTab, isPrivate: freshTab.isPrivate)
