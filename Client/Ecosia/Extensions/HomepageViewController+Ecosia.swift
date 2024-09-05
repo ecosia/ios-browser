@@ -83,6 +83,16 @@ extension HomepageViewController: NTPLibraryDelegate {
     }
 }
 
+extension HomepageViewController: NTPOnboardingCardCellDelegate {
+    func showOnboarding() {
+        print("Show onboarding here")
+    }
+    
+    func onboardingCardDismiss() {
+        print("Dismiss onboarding here")
+    }
+}
+
 extension HomepageViewController: NTPImpactCellDelegate {
     func impactCellButtonClickedWithInfo(_ info: ClimateImpactInfo) {
         switch info {

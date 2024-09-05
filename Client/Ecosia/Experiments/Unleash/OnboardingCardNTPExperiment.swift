@@ -24,7 +24,7 @@ struct OnboardingCardNTPExperiment {
     }
     
     // TODO: Link to correct translations
-    static private var title: String {
+    static var title: String {
         switch variant {
         case .first:
             return "First title"
@@ -35,7 +35,7 @@ struct OnboardingCardNTPExperiment {
         }
     }
     
-    static private var description: String {
+    static var description: String {
         switch variant {
         case .first:
             return "First description that need to be more long than the title"
@@ -46,7 +46,7 @@ struct OnboardingCardNTPExperiment {
         }
     }
     
-    static private var buttonTitle: String {
+    static var buttonTitle: String {
         switch variant {
         case .first:
             return "First buttom"
