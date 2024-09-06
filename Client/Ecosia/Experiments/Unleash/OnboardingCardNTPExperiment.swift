@@ -20,16 +20,15 @@ struct OnboardingCardNTPExperiment {
     }
     
     static private var variant: Variant {
-        Variant(rawValue: "test1") ?? .control
+        Variant(rawValue: "test2") ?? .control
     }
     
-    // TODO: Link to correct translations
     static var title: String {
         switch variant {
         case .first:
-            return "First title"
+            return .localized(.onboardingCardNTPExperimentTitle1)
         case .second:
-            return "Second title"
+            return .localized(.onboardingCardNTPExperimentTitle2)
         default:
             return ""
         }
@@ -38,9 +37,9 @@ struct OnboardingCardNTPExperiment {
     static var description: String {
         switch variant {
         case .first:
-            return "First description that need to be more long than the title"
+            return .localized(.onboardingCardNTPExperimentDescription1)
         case .second:
-            return "Second description that need to be more long than the title"
+            return .localized(.onboardingCardNTPExperimentDescription2)
         default:
             return ""
         }
@@ -49,9 +48,9 @@ struct OnboardingCardNTPExperiment {
     static var buttonTitle: String {
         switch variant {
         case .first:
-            return "First button"
+            return .localized(.onboardingCardNTPExperimentButtonText1)
         case .second:
-            return "Second button"
+            return .localized(.onboardingCardNTPExperimentButtonText2)
         default:
             return ""
         }
