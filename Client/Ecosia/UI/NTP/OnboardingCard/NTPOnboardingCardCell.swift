@@ -12,6 +12,8 @@ final class NTPOnboardingCardCell: UICollectionViewCell, Themeable, ReusableCell
         static let cornerRadius: CGFloat = 10
         static let closeButtonWidthHeight: CGFloat = 24
         static let insetMargin: CGFloat = 16
+        static let textSpacing: CGFloat = 4
+        static let buttonAdditionalSpacing: CGFloat = 8
     }
     
     private let backgroundStackView: UIStackView = {
@@ -22,6 +24,7 @@ final class NTPOnboardingCardCell: UICollectionViewCell, Themeable, ReusableCell
         stackView.alignment = .leading
         stackView.isLayoutMarginsRelativeArrangement = true
         stackView.directionalLayoutMargins = .init(top: UX.insetMargin, leading: UX.insetMargin, bottom: UX.insetMargin, trailing: UX.insetMargin)
+        stackView.spacing = UX.textSpacing
         return stackView
     }()
     
@@ -31,6 +34,7 @@ final class NTPOnboardingCardCell: UICollectionViewCell, Themeable, ReusableCell
         button.setImage(UIImage(named: "xmark"), for: .normal)
         button.imageView?.contentMode = .scaleAspectFill
         button.addTarget(self, action: #selector(closeAction), for: .touchUpInside)
+        button.setContentHuggingPriority(.required, for: .horizontal)
         return button
     }()
     
@@ -39,8 +43,6 @@ final class NTPOnboardingCardCell: UICollectionViewCell, Themeable, ReusableCell
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = OnboardingCardNTPExperiment.title
         label.numberOfLines = 0
-        label.setContentHuggingPriority(.required, for: .vertical)
-        label.setContentCompressionResistancePriority(.required, for: .vertical)
         return label
     }()
     
@@ -49,8 +51,6 @@ final class NTPOnboardingCardCell: UICollectionViewCell, Themeable, ReusableCell
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = OnboardingCardNTPExperiment.description
         label.numberOfLines = 0
-        label.setContentHuggingPriority(.required, for: .vertical)
-        label.setContentCompressionResistancePriority(.required, for: .vertical)
         return label
     }()
     
@@ -60,8 +60,7 @@ final class NTPOnboardingCardCell: UICollectionViewCell, Themeable, ReusableCell
         button.setTitle(OnboardingCardNTPExperiment.buttonTitle, for: .normal)
         button.titleLabel?.font = .preferredFont(forTextStyle: .subheadline)
         button.addTarget(self, action: #selector(showOnboarding), for: .touchUpInside)
-        button.setContentHuggingPriority(.required, for: .vertical)
-        button.setContentCompressionResistancePriority(.required, for: .vertical)
+        button.setInsets(forContentPadding: .init(top: UX.buttonAdditionalSpacing, left: 0, bottom: 0, right: 0), imageTitlePadding: 0)
         return button
     }()
     
@@ -87,9 +86,14 @@ final class NTPOnboardingCardCell: UICollectionViewCell, Themeable, ReusableCell
 
     private func setup() {
         contentView.addSubview(backgroundStackView)
-        contentView.addSubview(closeButton)
         
-        backgroundStackView.addArrangedSubview(titleLabel)
+        let hStack = UIStackView()
+        hStack.axis = .horizontal
+        hStack.spacing = UX.insetMargin
+        hStack.addArrangedSubview(titleLabel)
+        hStack.addArrangedSubview(closeButton)
+        
+        backgroundStackView.addArrangedSubview(hStack)
         backgroundStackView.addArrangedSubview(descriptionLabel)
         backgroundStackView.addArrangedSubview(showOnboardingButton)
         
@@ -98,11 +102,9 @@ final class NTPOnboardingCardCell: UICollectionViewCell, Themeable, ReusableCell
             backgroundStackView.topAnchor.constraint(equalTo: contentView.topAnchor),
             backgroundStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             backgroundStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            
+            hStack.widthAnchor.constraint(equalTo: backgroundStackView.widthAnchor, constant: -UX.insetMargin*2),
             closeButton.widthAnchor.constraint(equalToConstant: UX.closeButtonWidthHeight),
             closeButton.heightAnchor.constraint(equalToConstant: UX.closeButtonWidthHeight),
-            closeButton.trailingAnchor.constraint(equalTo: backgroundStackView.trailingAnchor),
-            closeButton.topAnchor.constraint(equalTo: backgroundStackView.topAnchor),
         ])
         
         applyTheme()
