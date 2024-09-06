@@ -49,7 +49,7 @@ struct OnboardingCardNTPExperiment {
     static var buttonTitle: String {
         switch variant {
         case .first:
-            return "First buttom"
+            return "First button"
         case .second:
             return "Second button"
         default:
