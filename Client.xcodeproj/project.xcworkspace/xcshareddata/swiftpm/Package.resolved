@@ -68,8 +68,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ecosia/ios-core.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "89180b4f06dc454bbba64d0ff809894ac827edc2"
+        "branch" : "ls-mob-2759-unleash-flag-name",
+        "revision" : "022b611aaddf7a88363cb39d33f0fd90eb418206"
       }
     },
     {
