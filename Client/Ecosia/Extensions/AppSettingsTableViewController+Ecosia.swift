@@ -157,6 +157,7 @@ extension AppSettingsTableViewController {
             ResetSearchCount(settings: self),
             EngagementServiceIdentifierSetting(settings: self),
             FasterInactiveTabs(settings: self, settingsDelegate: self),
+            UnleashOnboardingCardNTPSetting(settings: self),
         ]
         
         return SettingSection(title: NSAttributedString(string: "Debug"), children: hiddenDebugSettings)

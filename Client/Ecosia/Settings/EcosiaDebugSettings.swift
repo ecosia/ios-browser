@@ -191,6 +191,16 @@ class UnleashVariantResetSetting: HiddenSetting {
     }
 }
 
+final class UnleashOnboardingCardNTPSetting: UnleashVariantResetSetting {
+    override var titleName: String? {
+        "Onboarding card NTP"
+    }
+    
+    override var variant: Unleash.Variant? {
+        Unleash.getVariant(.onboardingCardNTP)
+    }
+}
+
 final class EngagementServiceIdentifierSetting: HiddenSetting {
     override var title: NSAttributedString? {
         return NSAttributedString(string: "Debug: Engagement Service Identifier parameter", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])

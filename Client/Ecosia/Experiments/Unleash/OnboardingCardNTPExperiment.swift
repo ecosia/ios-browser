@@ -14,13 +14,12 @@ struct OnboardingCardNTPExperiment {
     
     private init() {}
     
-    // TODO: Link to actual Unleash flag
     static var isEnabled: Bool {
-        true
+        Unleash.isEnabled(.onboardingCardNTP) && variant != .control
     }
     
     static private var variant: Variant {
-        Variant(rawValue: "test2") ?? .control
+        Variant(rawValue: Unleash.getVariant(.onboardingCardNTP).name) ?? .control
     }
     
     static var title: String {
