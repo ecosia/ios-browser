@@ -345,12 +345,6 @@ final class Analytics: AnalyticsProtocol {
             .property(engineID))
     }
     
-    func temporaryDebugExternalLink(_ action: String, label: String) {
-        track(Structured(category: "tmp_debug_external_link",
-                         action: action)
-            .label(label))
-    }
-    
     func sendAnonymousUsageDataSetting(enabled: Bool) {
         // This is the only place where the tracker should be directly
         // used since we want to send this just as the user opts out

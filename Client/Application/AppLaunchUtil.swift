@@ -24,7 +24,6 @@ class AppLaunchUtil {
     }
 
     func setUpPreLaunchDependencies() {
-        Analytics.shared.temporaryDebugExternalLink("pre_launch", label: "setup")
         // If the 'Save logs to Files app on next launch' toggle
         // is turned on in the Settings app, copy over old logs.
         if DebugSettingsBundleOptions.saveLogsToDocuments {

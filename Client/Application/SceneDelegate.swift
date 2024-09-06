@@ -88,7 +88,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     ) {
         guard let url = URLContexts.first?.url,
               let route = routeBuilder.makeRoute(url: url) else { return }
-        Analytics.shared.temporaryDebugExternalLink("scene_open", label: url.absoluteString)
         handle(route: route)
     }
 
@@ -158,7 +157,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     private func handle(route: Route) {
-        Analytics.shared.temporaryDebugExternalLink("scene_handle_route", label: String(reflecting: route))
         sessionManager.launchSessionProvider.openedFromExternalSource = true
         sceneCoordinator?.findAndHandle(route: route)
     }

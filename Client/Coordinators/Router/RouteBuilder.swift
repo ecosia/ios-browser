@@ -17,7 +17,6 @@ final class RouteBuilder {
     }
 
     func makeRoute(url: URL) -> Route? {
-        Analytics.shared.temporaryDebugExternalLink("make_route", label: url.absoluteString)
         guard let urlScanner = URLScanner(url: url) else { return nil }
 
         if urlScanner.isOurScheme, let host = DeeplinkInput.Host(rawValue: urlScanner.host.lowercased()) {

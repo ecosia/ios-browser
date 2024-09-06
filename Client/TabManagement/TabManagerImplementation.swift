@@ -318,7 +318,6 @@ class TabManagerImplementation: LegacyTabManager, Notifiable {
     /// This function updates the _selectedIndex.
     /// Note: it is safe to call this with `tab` and `previous` as the same tab, for use in the case where the index of the tab has changed (such as after deletion).
     override func selectTab(_ tab: Tab?, previous: Tab? = nil) {
-        Analytics.shared.temporaryDebugExternalLink("select_tab", label: tab?.url?.absoluteString ?? "undefined")
         let url = tab?.url
         guard let tab = tab,
               let tabUUID = UUID(uuidString: tab.tabUUID)
@@ -362,13 +361,11 @@ class TabManagerImplementation: LegacyTabManager, Notifiable {
     }
 
     private func willSelectTab(_ url: URL?) {
-        Analytics.shared.temporaryDebugExternalLink("will_select_tab", label: url?.absoluteString ?? "undefined")
         guard let url else { return }
         AppEventQueue.started(.selectTab(url, windowUUID))
     }
 
     private func didSelectTab(_ url: URL?) {
-        Analytics.shared.temporaryDebugExternalLink("did_select_tab", label: url?.absoluteString ?? "undefined")
         guard let url else { return }
         AppEventQueue.completed(.selectTab(url, windowUUID))
     }

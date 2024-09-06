@@ -43,7 +43,6 @@ open class BaseCoordinator: NSObject, Coordinator {
     @discardableResult
     func findAndHandle(route: Route) -> Coordinator? {
         guard let matchingCoordinator = find(route: route) else { return nil }
-        Analytics.shared.temporaryDebugExternalLink("coordinator_handle", label: String(describing: matchingCoordinator.self))
 
         // Dismiss any child of the matching coordinator that handles a route
         for child in matchingCoordinator.childCoordinators {
