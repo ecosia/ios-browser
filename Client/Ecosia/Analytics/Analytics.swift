@@ -82,6 +82,13 @@ final class Analytics: AnalyticsProtocol {
             .label(label.rawValue))
     }
     
+    func ntpOnboardingCardExperiment(_ action: Action) {
+        track(Structured(category: Category.ntp.rawValue,
+                         action: action.rawValue)
+            .label(Label.NTP.onboardingCard.rawValue)
+            .property(OnboardingCardNTPExperiment.analyticsProperty))
+    }
+    
     func navigation(_ action: Action, label: Label.Navigation) {
         track(Structured(category: Category.navigation.rawValue,
                          action: action.rawValue)
@@ -306,7 +313,7 @@ final class Analytics: AnalyticsProtocol {
         guard let page else {
             return
         }
-        let event = Structured(category: OnboardingCardNTPExperiment.introCategory ?? Category.intro.rawValue,
+        let event = Structured(category: OnboardingCardNTPExperiment.analyticsIntroCategory ?? Category.intro.rawValue,
                                action: Action.display.rawValue)
             .property(page.rawValue)
             .value(.init(integerLiteral: index))
@@ -317,7 +324,7 @@ final class Analytics: AnalyticsProtocol {
         guard let page else {
             return
         }
-        let event = Structured(category: OnboardingCardNTPExperiment.introCategory ?? Category.intro.rawValue,
+        let event = Structured(category: OnboardingCardNTPExperiment.analyticsIntroCategory ?? Category.intro.rawValue,
                                action: Action.click.rawValue)
             .label(label.rawValue)
             .property(page.rawValue)

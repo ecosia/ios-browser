@@ -23,8 +23,29 @@ struct OnboardingCardNTPExperiment {
     }
     
     // MARK: Analytics
-    static var introCategory: String? {
+    static var analyticsIntroCategory: String? {
         isEnabled ? "intro_card" : nil
+    }
+    
+    static var analyticsProperty: String? {
+        switch variant {
+        case .first:
+            return "first_copy"
+        case .second:
+            return "second_copy"
+        default:
+            return nil
+        }
+    }
+    
+    /// Send onboarding card view analytics event, but just the first time it's called.
+    static func trackExperimentImpression() {
+        let trackExperimentImpressionKey = "onboardingCardNTPExperimentImpression"
+        guard !UserDefaults.standard.bool(forKey: trackExperimentImpressionKey) else {
+            return
+        }
+        Analytics.shared.ntpOnboardingCardExperiment(.view)
+        UserDefaults.standard.setValue(true, forKey: trackExperimentImpressionKey)
     }
     
     // MARK: Card dismissed

@@ -70,4 +70,8 @@ extension NTPOnboardingCardCellViewModel: HomepageSectionHandler {
     }
 
     func didSelectItem(at indexPath: IndexPath, homePanelDelegate: HomePanelDelegate?, libraryPanelDelegate: LibraryPanelDelegate?) {}
+    
+    func screenWasShown() {
+        OnboardingCardNTPExperiment.trackExperimentImpression()
+    }
 }

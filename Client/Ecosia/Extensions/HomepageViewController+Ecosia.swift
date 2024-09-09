@@ -86,11 +86,15 @@ extension HomepageViewController: NTPLibraryDelegate {
 extension HomepageViewController: NTPOnboardingCardCellDelegate {
     func onboardingCardClick() {
         browserNavigationHandler?.showOnboarding()
+        OnboardingCardNTPExperiment.setCardDismissed()
+        reloadView()
+        Analytics.shared.ntpOnboardingCardExperiment(.click)
     }
     
     func onboardingCardDismiss() {
         OnboardingCardNTPExperiment.setCardDismissed()
         reloadView()
+        Analytics.shared.ntpOnboardingCardExperiment(.dismiss)
     }
 }
 
