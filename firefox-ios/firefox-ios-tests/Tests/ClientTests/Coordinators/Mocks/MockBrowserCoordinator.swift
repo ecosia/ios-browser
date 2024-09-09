@@ -89,4 +89,7 @@ class MockBrowserCoordinator: BrowserNavigationHandler, ParentCoordinatorDelegat
                                parentViewController: UIViewController) {
         updateFakespotSidebarCalled += 1
     }
+    
+    // Ecosia: Used for `OnboardingCardNTPExperiment`
+    func showOnboarding() { }
 }
