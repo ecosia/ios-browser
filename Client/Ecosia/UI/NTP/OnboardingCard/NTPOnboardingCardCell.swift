@@ -130,6 +130,6 @@ final class NTPOnboardingCardCell: UICollectionViewCell, Themeable, ReusableCell
     }
     
     @objc private func showOnboarding() {
-        delegate?.showOnboarding()
+        delegate?.onboardingCardClick()
     }
 }

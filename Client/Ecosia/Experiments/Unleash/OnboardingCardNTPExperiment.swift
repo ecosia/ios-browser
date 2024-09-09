@@ -22,6 +22,18 @@ struct OnboardingCardNTPExperiment {
         Variant(rawValue: Unleash.getVariant(.onboardingCardNTP).name) ?? .control
     }
     
+    // MARK: Card dismissed
+    static private let cardDismissedKey = "onboardingCardNTPExperimentDismissed"
+    
+    static var shouldShowCard: Bool {
+        isEnabled && !UserDefaults.standard.bool(forKey: cardDismissedKey)
+    }
+    
+    static func setCardDismissed() {
+        UserDefaults.standard.set(true, forKey: cardDismissedKey)
+    }
+    
+    // MARK: Texts
     static var title: String {
         switch variant {
         case .first:

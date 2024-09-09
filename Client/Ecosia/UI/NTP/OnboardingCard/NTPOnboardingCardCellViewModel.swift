@@ -8,7 +8,7 @@ import Core
 import Common
 
 protocol NTPOnboardingCardCellDelegate: AnyObject {
-    func showOnboarding()
+    func onboardingCardClick()
     func onboardingCardDismiss()
 }
 
@@ -56,7 +56,7 @@ extension NTPOnboardingCardCellViewModel: HomepageViewModelProtocol {
     }
 
     var isEnabled: Bool {
-        OnboardingCardNTPExperiment.isEnabled
+        OnboardingCardNTPExperiment.shouldShowCard
     }
 }
 
