@@ -85,7 +85,7 @@ extension HomepageViewController: NTPLibraryDelegate {
 
 extension HomepageViewController: NTPOnboardingCardCellDelegate {
     func onboardingCardClick() {
-        print("Show onboarding here")
+        browserNavigationHandler?.showOnboarding()
     }
     
     func onboardingCardDismiss() {

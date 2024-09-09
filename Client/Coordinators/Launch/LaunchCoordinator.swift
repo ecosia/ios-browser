@@ -29,15 +29,25 @@ class LaunchCoordinator: BaseCoordinator,
     func start(with launchType: LaunchType) {
         let isFullScreen = launchType.isFullScreenAvailable(isIphone: isIphone)
         switch launchType {
-        case .intro(let manager):
-            // TODO: Make this better - maybe a notification from FeatureManagement?
-            /* Ecosia: Making sure Unleash is initialized
-             presentIntroOnboarding(with: manager, isFullScreen: isFullScreen)
-             */
+        /* Ecosia: Change to support `OnboardingCardNTPExperiment` conditions
+         case .intro(let manager):
+            presentIntroOnboarding(with: manager, isFullScreen: isFullScreen)
+         */
+        case .intro(let manager, let checkExperiment):
+            guard checkExperiment else {
+                presentIntroOnboarding(with: manager, isFullScreen: isFullScreen)
+                return
+            }
+            // TODO: Refactor `FeatureManagement.fetchConfiguration()` pre-condition - maybe a notification from FeatureManagement?
             Task {
                 await FeatureManagement.fetchConfiguration()
                 DispatchQueue.main.async { [weak self] in
-                    self?.presentIntroOnboarding(with: manager, isFullScreen: isFullScreen)
+                    guard let self = self else { return }
+                    guard !OnboardingCardNTPExperiment.isEnabled else {
+                        self.parentCoordinator?.didFinishLaunch(from: self)
+                        return
+                    }
+                    self.presentIntroOnboarding(with: manager, isFullScreen: isFullScreen)
                 }
             }
         case .update(let viewModel):
@@ -52,12 +62,6 @@ class LaunchCoordinator: BaseCoordinator,
     // MARK: - Intro
     private func presentIntroOnboarding(with manager: IntroScreenManager,
                                         isFullScreen: Bool) {
-        // Ecosia: Should not present intro if on experiment
-        guard !OnboardingCardNTPExperiment.isEnabled else {
-            parentCoordinator?.didFinishLaunch(from: self)
-            return
-        }
-        
         let onboardingModel = NimbusOnboardingFeatureLayer().getOnboardingModel(for: .freshInstall)
         let telemetryUtility = OnboardingTelemetryUtility(with: onboardingModel)
         let introViewModel = IntroViewModel(introScreenManager: manager,

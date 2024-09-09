@@ -11,8 +11,9 @@ enum LaunchCoordinatorType {
 }
 
 enum LaunchType {
+    // Ecosia: Add `checkExperiment` - used for `OnboardingCardNTPExperiment`
     /// Showing the intro onboarding
-    case intro(manager: IntroScreenManager)
+    case intro(manager: IntroScreenManager, checkExperiment: Bool = true)
 
     /// Show the update onboarding
     case update(viewModel: UpdateViewModel)
