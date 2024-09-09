@@ -37,6 +37,7 @@ final class LaunchCoordinatorTests: XCTestCase {
     }
 
     // MARK: - Intro
+    // TODO: Fix intro tests
     func testStart_introNotIphone_present() throws {
         let introScreenManager = IntroScreenManager(prefs: profile.prefs)
         let subject = createSubject(isIphone: false)
