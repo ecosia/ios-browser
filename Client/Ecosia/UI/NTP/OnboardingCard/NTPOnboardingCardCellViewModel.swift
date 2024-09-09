@@ -56,7 +56,8 @@ extension NTPOnboardingCardCellViewModel: HomepageViewModelProtocol {
     }
 
     var isEnabled: Bool {
-        OnboardingCardNTPExperiment.shouldShowCard
+//        OnboardingCardNTPExperiment.shouldShowCard
+        true // TODO: Why is there a `UICollectionViewCompositionalLayout` whenever this is false?
     }
 }
 

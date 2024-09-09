@@ -89,7 +89,8 @@ extension HomepageViewController: NTPOnboardingCardCellDelegate {
     }
     
     func onboardingCardDismiss() {
-        print("Dismiss onboarding here")
+        OnboardingCardNTPExperiment.setCardDismissed()
+        reloadView()
     }
 }
 
