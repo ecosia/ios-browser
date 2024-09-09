@@ -30,7 +30,16 @@ class LaunchCoordinator: BaseCoordinator,
         let isFullScreen = launchType.isFullScreenAvailable(isIphone: isIphone)
         switch launchType {
         case .intro(let manager):
-            presentIntroOnboarding(with: manager, isFullScreen: isFullScreen)
+            // TODO: Make this better - maybe a notification from FeatureManagement?
+            /* Ecosia: Making sure Unleash is initialized
+             presentIntroOnboarding(with: manager, isFullScreen: isFullScreen)
+             */
+            Task {
+                await FeatureManagement.fetchConfiguration()
+                DispatchQueue.main.async { [weak self] in
+                    self?.presentIntroOnboarding(with: manager, isFullScreen: isFullScreen)
+                }
+            }
         case .update(let viewModel):
             presentUpdateOnboarding(with: viewModel, isFullScreen: isFullScreen)
         case .defaultBrowser:
@@ -43,6 +52,12 @@ class LaunchCoordinator: BaseCoordinator,
     // MARK: - Intro
     private func presentIntroOnboarding(with manager: IntroScreenManager,
                                         isFullScreen: Bool) {
+        // Ecosia: Should not present intro if on experiment
+        guard !OnboardingCardNTPExperiment.isEnabled else {
+            parentCoordinator?.didFinishLaunch(from: self)
+            return
+        }
+        
         let onboardingModel = NimbusOnboardingFeatureLayer().getOnboardingModel(for: .freshInstall)
         let telemetryUtility = OnboardingTelemetryUtility(with: onboardingModel)
         let introViewModel = IntroViewModel(introScreenManager: manager,
