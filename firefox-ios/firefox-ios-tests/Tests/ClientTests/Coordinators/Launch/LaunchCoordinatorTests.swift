@@ -37,11 +37,10 @@ final class LaunchCoordinatorTests: XCTestCase {
     }
 
     // MARK: - Intro
-    // TODO: Fix intro tests
     func testStart_introNotIphone_present() throws {
         let introScreenManager = IntroScreenManager(prefs: profile.prefs)
         let subject = createSubject(isIphone: false)
-        subject.start(with: .intro(manager: introScreenManager))
+        subject.start(with: .intro(manager: introScreenManager, checkExperiment: false))
         XCTAssertEqual(mockRouter.presentCalled, 1)
         XCTAssertEqual(mockRouter.setRootViewControllerCalled, 0)
         let presentedViewController = try XCTUnwrap(mockRouter.presentedViewController)
@@ -53,7 +52,7 @@ final class LaunchCoordinatorTests: XCTestCase {
     func testStart_introIsIphone_setRootView() throws {
         let introScreenManager = IntroScreenManager(prefs: profile.prefs)
         let subject = createSubject(isIphone: true)
-        subject.start(with: .intro(manager: introScreenManager))
+        subject.start(with: .intro(manager: introScreenManager, checkExperiment: false))
         XCTAssertEqual(mockRouter.presentCalled, 1)
         XCTAssertEqual(mockRouter.setRootViewControllerCalled, 0)
         let pushedVC = try XCTUnwrap(mockRouter.presentedViewController)
