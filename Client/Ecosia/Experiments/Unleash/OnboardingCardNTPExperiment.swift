@@ -22,6 +22,11 @@ struct OnboardingCardNTPExperiment {
         Variant(rawValue: Unleash.getVariant(.onboardingCardNTP).name) ?? .control
     }
     
+    // MARK: Analytics
+    static var introCategory: String? {
+        isEnabled ? "intro_card" : nil
+    }
+    
     // MARK: Card dismissed
     static private let cardDismissedKey = "onboardingCardNTPExperimentDismissed"
     
