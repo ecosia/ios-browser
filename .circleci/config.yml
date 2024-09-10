@@ -105,4 +105,4 @@ workflows:
           filters:
             branches:
               only: 
-                - /^.*main.*/
+                - /^.*braze-in-app-ui-test.*/
