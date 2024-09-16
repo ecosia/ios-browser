@@ -42,6 +42,9 @@ final class NTPOnboardingCardCell: UICollectionViewCell, Themeable, ReusableCell
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = OnboardingCardNTPExperiment.title
+        label.font = .preferredFont(forTextStyle: .subheadline).bold()
+        label.adjustsFontForContentSizeCategory = true
+        label.lineBreakMode = .byWordWrapping
         label.numberOfLines = 0
         return label
     }()
@@ -50,6 +53,9 @@ final class NTPOnboardingCardCell: UICollectionViewCell, Themeable, ReusableCell
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = OnboardingCardNTPExperiment.description
+        label.font = .preferredFont(forTextStyle: .subheadline)
+        label.adjustsFontForContentSizeCategory = true
+        label.lineBreakMode = .byWordWrapping
         label.numberOfLines = 0
         return label
     }()
@@ -58,7 +64,9 @@ final class NTPOnboardingCardCell: UICollectionViewCell, Themeable, ReusableCell
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle(OnboardingCardNTPExperiment.buttonTitle, for: .normal)
+        button.titleLabel?.adjustsFontForContentSizeCategory = true
         button.titleLabel?.font = .preferredFont(forTextStyle: .subheadline)
+        button.setContentCompressionResistancePriority(.required, for: .horizontal)
         button.addTarget(self, action: #selector(showOnboarding), for: .touchUpInside)
         button.setInsets(forContentPadding: .init(top: UX.buttonAdditionalSpacing, left: 0, bottom: 0, right: 0), imageTitlePadding: 0)
         return button
@@ -80,8 +88,7 @@ final class NTPOnboardingCardCell: UICollectionViewCell, Themeable, ReusableCell
     }
 
     required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        setup()
+        fatalError("init(coder:) has not been implemented")
     }
 
     private func setup() {
