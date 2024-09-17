@@ -1,6 +1,24 @@
 {
   "pins" : [
     {
+      "identity" : "a-star",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Dev1an/A-Star",
+      "state" : {
+        "revision" : "036256f9a8d1dda44085a2b92fa58199446a8339",
+        "version" : "3.0.0-beta-1"
+      }
+    },
+    {
+      "identity" : "braze-swift-sdk",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/braze-inc/braze-swift-sdk",
+      "state" : {
+        "revision" : "9c0577f916f23b170abf77bfd22ef6e3583fd12f",
+        "version" : "10.3.0"
+      }
+    },
+    {
       "identity" : "dip",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/AliSoftware/Dip.git",
@@ -28,6 +46,42 @@
       }
     },
     {
+      "identity" : "glean-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/mozilla/glean-swift",
+      "state" : {
+        "revision" : "aa9172bfe715a9f918dd95bf49d8f1b2363500a0",
+        "version" : "56.0.0"
+      }
+    },
+    {
+      "identity" : "ios-core",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ecosia/ios-core.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "956f7bacd4c03723079aea6f66cd1d5e552ebce3"
+      }
+    },
+    {
+      "identity" : "ios_sdk",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/adjust/ios_sdk.git",
+      "state" : {
+        "revision" : "20c2666082c372f9f2c0adf871d8cef195d011f7",
+        "version" : "4.35.2"
+      }
+    },
+    {
+      "identity" : "kif",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/kif-framework/KIF.git",
+      "state" : {
+        "revision" : "6c3ff27d9449eab614dae63e571596e4982a5205",
+        "version" : "3.8.9"
+      }
+    },
+    {
       "identity" : "kingfisher",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/onevcat/Kingfisher.git",
@@ -43,6 +97,51 @@
       "state" : {
         "revision" : "74cf23b2946c92550fb1185612077151497e648e",
         "version" : "8.17.1"
+      }
+    },
+    {
+      "identity" : "snapkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SnapKit/SnapKit.git",
+      "state" : {
+        "revision" : "f222cbdf325885926566172f6f5f06af95473158",
+        "version" : "5.6.0"
+      }
+    },
+    {
+      "identity" : "snowplow-ios-tracker",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/snowplow/snowplow-ios-tracker.git",
+      "state" : {
+        "revision" : "1e16a929cef8e944bd41dc36a1d2779e06bd0a3c",
+        "version" : "5.2.0"
+      }
+    },
+    {
+      "identity" : "swift-snapshot-testing",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/swift-snapshot-testing",
+      "state" : {
+        "revision" : "7b0bbbae90c41f848f90ac7b4df6c4f50068256d",
+        "version" : "1.17.5"
+      }
+    },
+    {
+      "identity" : "swift-syntax",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swiftlang/swift-syntax",
+      "state" : {
+        "revision" : "cb53fa1bd3219b0b23ded7dfdd3b2baff266fd25",
+        "version" : "600.0.0"
+      }
+    },
+    {
+      "identity" : "swiftsoup",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/scinfu/SwiftSoup",
+      "state" : {
+        "branch" : "2.5.3",
+        "revision" : "f707b8680cddb96dc1855632340a572ef37bbb98"
       }
     },
     {
