@@ -46,7 +46,7 @@ extension NTPOnboardingCardCellViewModel: HomepageViewModelProtocol {
 
         let section = NSCollectionLayoutSection(group: group)
 
-        section.contentInsets = sectionType.sectionInsets(traitCollection, bottomSpacing: 8)
+        section.contentInsets = sectionType.sectionInsets(traitCollection)
 
         return section
     }
