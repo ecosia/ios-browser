@@ -123,7 +123,7 @@ final class NTPOnboardingCardCell: UICollectionViewCell, Themeable, ReusableCell
         closeButton.tintColor = .legacyTheme.ecosia.decorativeIcon
         titleLabel.textColor = .legacyTheme.ecosia.primaryText
         descriptionLabel.textColor = .legacyTheme.ecosia.secondaryText
-        showOnboardingButton.setTitleColor(.legacyTheme.ecosia.primaryButtonActive, for: .normal)
+        showOnboardingButton.setTitleColor(.legacyTheme.ecosia.primaryButton, for: .normal)
     }
     
     override func preferredLayoutAttributesFitting(_ layoutAttributes: UICollectionViewLayoutAttributes) -> UICollectionViewLayoutAttributes {
