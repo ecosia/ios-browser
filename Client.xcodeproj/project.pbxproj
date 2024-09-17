@@ -21398,7 +21398,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = "ls-mob-2759-unleash-flag-name";
+				branch = main;
 				kind = branch;
 			};
 		};
