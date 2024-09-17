@@ -207,10 +207,11 @@ class HomepageViewModel: FeatureFlaggable {
                                 customizeButtonViewModel
         ]
          */
+        // Ecosia: Those models needs to follow strictly the order defined in `enum HomepageSectionType`
         self.childViewModels = [headerViewModel,
                                 libraryViewModel,
-                                onboardingCardViewModel,
                                 topSiteViewModel,
+                                onboardingCardViewModel,
                                 impactViewModel,
                                 newsViewModel,
                                 aboutEcosiaViewModel,

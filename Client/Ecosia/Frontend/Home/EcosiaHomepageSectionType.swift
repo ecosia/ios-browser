@@ -24,8 +24,8 @@ enum HomepageSectionType: Int, CaseIterable {
         case .logoHeader: return NTPLogoCell.cellIdentifier
         case .libraryShortcuts: return NTPLibraryCell.cellIdentifier
         case .topSites: return "" // Top sites has more than 1 cell type, dequeuing is done through FxHomeSectionHandler protocol
-        case .impact: return NTPImpactCell.cellIdentifier
         case .onboardingCard: return NTPOnboardingCardCell.cellIdentifier
+        case .impact: return NTPImpactCell.cellIdentifier
         case .news: return NTPNewsCell.cellIdentifier
         case .aboutEcosia: return NTPAboutEcosiaCell.cellIdentifier
         case .ntpCustomization: return NTPCustomizationCell.cellIdentifier
