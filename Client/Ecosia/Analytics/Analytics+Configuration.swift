@@ -57,7 +57,7 @@ extension Analytics {
         return plugin.filter(schemas: [
             Self.installSchema
         ]) { _ in
-            return Self.isFirstInstall(for: identifier) && EcosiaInstallType.get() != .upgrade
+            return Self.isFirstInstall(for: identifier)
         }
     }
 }
@@ -73,7 +73,7 @@ extension Analytics {
             defaults.set(false, forKey: identifier)
             return true
         }()
-        return isFirstTime
+        return isFirstTime && EcosiaInstallType.get() != .upgrade
     }
 }
 
