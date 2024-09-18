@@ -77,36 +77,72 @@ final class AnalyticsTests: XCTestCase {
 
     func testIsFirstInstall_FirstCall_ReturnsTrue() {
         // Given: No previous installation flag exists in UserDefaults for the identifier
-        // (Handled by setUpWithError)
+        // Also, EcosiaInstallType is not set to .upgrade
+        let defaults = UserDefaults.standard
+        defaults.removeObject(forKey: "installCheckIdentifier")
+        defaults.removeObject(forKey: EcosiaInstallType.installTypeKey)
+        
+        // Set EcosiaInstallType to .fresh to simulate a fresh install
+        EcosiaInstallType.set(type: .fresh)
         
         // When: The method is called for the first time
         let result = Analytics.isFirstInstall(for: "installCheckIdentifier")
         
         // Then: The result should be true indicating the first install
-        XCTAssertTrue(result, "The first install should return true")
+        XCTAssertTrue(result, "The first install should return TRUE when not an upgrade")
     }
-    
+
     func testIsFirstInstall_SecondCall_ReturnsFalse() {
         // Given: The method has already been called once
+        let defaults = UserDefaults.standard
+        defaults.removeObject(forKey: "installCheckIdentifier")
+        defaults.removeObject(forKey: EcosiaInstallType.installTypeKey)
+        
+        // Set EcosiaInstallType to .fresh to simulate a fresh install
+        EcosiaInstallType.set(type: .fresh)
+        
+        // First call to set the flag
         _ = Analytics.isFirstInstall(for: "installCheckIdentifier")
         
         // When: The method is called again
         let result = Analytics.isFirstInstall(for: "installCheckIdentifier")
         
         // Then: The result should be false indicating it is no longer the first install
-        XCTAssertFalse(result, "The second call should return false as the app is no longer on its first install")
+        XCTAssertFalse(result, "The second call should return FALSE as the app is no longer on its first install")
     }
-    
+
     func testIsFirstInstall_StoresValueInUserDefaults() {
         // Given: The method is called for the first time
+        let defaults = UserDefaults.standard
+        defaults.removeObject(forKey: "installCheckIdentifier")
+        defaults.removeObject(forKey: EcosiaInstallType.installTypeKey)
+        
+        // Set EcosiaInstallType to .fresh to simulate a fresh install
+        EcosiaInstallType.set(type: .fresh)
+        
         _ = Analytics.isFirstInstall(for: "installCheckIdentifier")
         
         // When: The value is retrieved from UserDefaults
-        let defaults = UserDefaults.standard
         let storedValue = defaults.object(forKey: "installCheckIdentifier") as? Bool
         
         // Then: The stored value should be false indicating the first install has been recorded
         XCTAssertNotNil(storedValue, "The value should be stored in UserDefaults")
-        XCTAssertEqual(storedValue, false, "The stored value in UserDefaults should be false after the first call")
+        XCTAssertEqual(storedValue, false, "The stored value in UserDefaults should be FALSE after the first call")
     }
-}
+
+    func testIsFirstInstall_FirstCallOnUpgrade_ReturnsFalse() {
+        // Given: No previous installation flag exists in UserDefaults for the identifier
+        // Also, EcosiaInstallType is set to .upgrade
+        let defaults = UserDefaults.standard
+        defaults.removeObject(forKey: "installCheckIdentifier")
+        defaults.removeObject(forKey: EcosiaInstallType.installTypeKey)
+        
+        // Set EcosiaInstallType to .upgrade to simulate an upgrade scenario
+        EcosiaInstallType.set(type: .upgrade)
+        
+        // When: The method is called for the first time
+        let result = Analytics.isFirstInstall(for: "installCheckIdentifier")
+        
+        // Then: The result should be false because it's an upgrade
+        XCTAssertFalse(result, "The first install should return FALSE when it's an upgrade")
+    }}

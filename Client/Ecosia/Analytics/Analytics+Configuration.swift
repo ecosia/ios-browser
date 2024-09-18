@@ -73,7 +73,7 @@ extension Analytics {
             defaults.set(false, forKey: identifier)
             return true
         }()
-        return isFirstTime
+        return isFirstTime && EcosiaInstallType.get() != .upgrade
     }
 }
 
