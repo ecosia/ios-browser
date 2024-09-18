@@ -15,7 +15,8 @@
     {
       "name": "iPhone 14 Pro",
       "orientation": "portrait",
-      "os": "17.5"
+      "os": "17.5",
+      "isDefaultTestDevice": true
     },
     {
       "name": "iPhone 14 Pro Max",
@@ -36,11 +37,20 @@
           "locales": ["all"]
         },
         {
+          "name": "NTPIpadTests",
+          "devices": ["iPad Pro (12.9-inch) (6th generation)"],
+          "locales": ["all"],
+          "runsOn": "iPad Pro (12.9-inch) (6th generation)"
+        },
+        {
           "name": "NTPComponentTests",
           "devices": ["iPhone 14 Pro"],
           "locales": [
             "en",
-            "es"
+            "it",
+            "de",
+            "es",
+            "nl"
           ]
         }
       ]

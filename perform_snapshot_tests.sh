@@ -12,29 +12,55 @@ extract_test_cases() {
   grep -oE "func test[A-Za-z0-9_]+" "$test_class_file" | awk '{print $2}'
 }
 
-# Function to get device information
-get_device_info() {
-  local device_name="$1"
-  local info_type="$2"
-  for device in $devices; do
-    _jq() {
-      echo ${device} | base64 --decode | jq -r ${1}
-    }
-    current_device_name=$(_jq '.name')
-    if [[ "$current_device_name" == "$device_name" ]]; then
-      echo $(_jq ".$info_type")
-      return
-    fi
-  done
-}
-
-# Read the JSON file
 config_file=$1
 environment_file=$2
-devices=$(jq -r '.devices[] | @base64' $config_file)
-tests=$(jq -r '.testPlans[] | @base64' $config_file)
 results_dir=$3
 scheme=$4
+
+# Read the JSON file
+devices=$(jq -r '.devices[] | @base64' $config_file)
+tests=$(jq -r '.testPlans[] | @base64' $config_file)
+
+# Find the default device
+default_device_name=""
+default_device_count=0
+
+declare -A device_info_map
+
+for device in $devices; do
+  _jq() {
+    echo ${device} | base64 --decode | jq -r ${1}
+  }
+  is_default=$(_jq '.isDefaultTestDevice')
+  device_name=$(_jq '.name')
+  orientation=$(_jq '.orientation')
+  os_version=$(_jq '.os')
+
+  # If os_version is empty or null, default to 'latest'
+  if [ -z "$os_version" ] || [ "$os_version" == "null" ]; then
+    os_version="latest"
+  fi
+
+  device_info_map["$device_name"]="$orientation;$os_version"
+
+  if [ "$is_default" == "true" ]; then
+    default_device_name=$device_name
+    default_device_count=$((default_device_count + 1))
+  fi
+done
+
+if [ "$default_device_count" -eq 0 ]; then
+  echo "Error: No default device specified in the configuration (isDefaultTestDevice: true)."
+  exit 1
+elif [ "$default_device_count" -gt 1 ]; then
+  echo "Error: More than one default device specified in the configuration (isDefaultTestDevice: true)."
+  exit 1
+fi
+
+echo "Default device: $default_device_name"
+
+# Map to hold device to tests mapping
+declare -A device_to_tests_map
 
 # Loop through the test plans and test classes
 for test_plan in $tests; do
@@ -46,102 +72,90 @@ for test_plan in $tests; do
       echo ${test_class} | base64 --decode | jq -r ${1}
     }
     class_name=$(_jq '.name')
-    test_devices=$(echo ${test_class} | base64 --decode | jq -r '.devices[]')
+    runs_on_device=$(_jq '.runsOn')
 
-    # If "all" is specified, use all devices from the devices list
-    if [[ "$test_devices" == "all" ]]; then
-      test_devices=$(jq -r '.devices[] | .name' $config_file)
+    # Determine the device this test class should run on
+    if [[ "$runs_on_device" != "null" && "$runs_on_device" != "" ]]; then
+      test_device_name="$runs_on_device"
+    else
+      test_device_name="$default_device_name"
     fi
 
-    IFS=$'\n' # Change IFS to handle device names with spaces correctly
-    for test_device_name in $test_devices; do
-      # Get the full device information from the devices list
-      device_info=$(jq -r --arg name "$test_device_name" '.devices[] | select(.name == $name) | @base64' $config_file)
+    # Add the test class to the device's list
+    device_to_tests_map["$test_device_name"]+="$class_name "
+  done
+done
 
-      # If the device is found, proceed with the testing
-      if [ -n "$device_info" ]; then
-        device_json=$(echo "$device_info" | base64 --decode)
-        device_name=$(echo "$device_json" | jq -r '.name')
-        orientation=$(echo "$device_json" | jq -r '.orientation')
-        os_version=$(echo "$device_json" | jq -r '.os')
+# Now, for each device, run all its tests in one go
+for device_name in "${!device_to_tests_map[@]}"; do
+  orientation_and_os="${device_info_map[$device_name]}"
+  IFS=';' read -r orientation os_version <<< "$orientation_and_os"
 
-        # Check if os_version is empty or null, if so default to 'latest'
-        if [ -z "$os_version" ] || [ "$os_version" == "null" ]; then
-          os_version="latest"
-        fi
-
-        # Get the locales for this test class
-        test_locales=$(_jq '.locales[]')
-
-        if [[ "$test_locales" == "all" ]]; then
-          locales=$(jq -r '.locales[]' $config_file)
-        else
-          locales=$(echo $test_class | base64 --decode | jq -r '.locales[]')
-        fi
-
-        # Combine locales into a comma-separated string
-        locale_string=$(echo "${locales[@]}" | tr '\n' ',' | sed 's/,$//')
-
-        # Create the JSON file with the environment variables
-        echo "{
+  # Create the JSON file with the environment variables
+  echo "{
   \"DEVICE_NAME\": \"$device_name\",
-  \"ORIENTATION\": \"$orientation\",
-  \"LOCALES\": \"$locale_string\"
+  \"ORIENTATION\": \"$orientation\"
 }" > "$environment_file"
 
-        echo "Environment file created at: $environment_file"
-        cat "$environment_file"  # Print the contents of the file for verification
+  echo "Environment file created at: $environment_file"
+  cat "$environment_file"  # Print the contents of the file for verification
 
-        # Perform the build once for the current device
-        echo "Cleaning the project"
-        xcodebuild clean -scheme "$scheme" -destination "platform=iOS Simulator,name=$device_name,OS=$os_version"
-        echo "Building the project for device: $device_name, OS: $os_version"
-        xcodebuild build-for-testing \
-          -scheme "$scheme" \
-          -clonedSourcePackagesDirPath "SourcePackages/" \
-          -destination "platform=iOS Simulator,name=$device_name,OS=$os_version" \
-          CODE_SIGN_IDENTITY="" \
-          CODE_SIGNING_REQUIRED=NO \
-          PROVISIONING_PROFILE_SPECIFIER="" \
-          CODE_SIGN_ENTITLEMENTS="" \
-          CODE_SIGNING_ALLOWED="NO"
+  # Perform the build once for the current device
+  echo "Cleaning the project"
+  xcodebuild clean -scheme "$scheme" -destination "platform=iOS Simulator,name=$device_name,OS=$os_version"
+  echo "Building the project for device: $device_name, OS: $os_version"
+  xcodebuild build-for-testing \
+    -scheme "$scheme" \
+    -clonedSourcePackagesDirPath "SourcePackages/" \
+    -destination "platform=iOS Simulator,name=$device_name,OS=$os_version" \
+    CODE_SIGN_IDENTITY="" \
+    CODE_SIGNING_REQUIRED=NO \
+    PROVISIONING_PROFILE_SPECIFIER="" \
+    CODE_SIGN_ENTITLEMENTS="" \
+    CODE_SIGNING_ALLOWED="NO"
 
-        # Find the test class file in EcosiaTests subdirectories
-        test_class_file=$(find EcosiaTests -name "${class_name}.swift" | head -n 1)
+  # Collect all test cases for this device
+  test_classes=${device_to_tests_map[$device_name]}
+  test_cases_to_run=()
 
-        if [[ -n "$test_class_file" ]]; then
-          # Extract the test cases from the test class file
-          test_cases=$(extract_test_cases "$test_class_file")
+  for class_name in $test_classes; do
+    # Find the test class file in EcosiaTests subdirectories
+    test_class_file=$(find EcosiaTests -name "${class_name}.swift" | head -n 1)
 
-          # Construct and run the xcodebuild command for each test case separately
-          for test_case in $test_cases; do
-
-            # Replace whitespaces in device_name with _
-            updated_device_name=$(echo "$device_name" | tr ' ' '_')
-
-            result_path="EcosiaTests/Results/${updated_device_name}_${class_name}_${test_case}.xcresult"
-
-            # Prepare the command
-            xcodebuild_cmd="xcodebuild test-without-building \
-              -scheme \"$scheme\" \
-              -clonedSourcePackagesDirPath \"SourcePackages/\" \
-              -destination \"platform=iOS Simulator,name=$device_name,OS=$os_version\" \
-              -only-testing \"$plan_name/$class_name/$test_case\" \
-              -resultBundlePath \"$result_path\""
-
-            # Run the xcodebuild command
-            echo "Running test case: $test_case for class: $class_name on device: $device_name with locales: $locale_string"
-            eval $xcodebuild_cmd
-          done
-        else
-          echo "Test class file for $class_name not found."
-        fi
-      else
-        echo "Device $test_device_name not found in the devices list. Skipping..."
-      fi
-    done
-    unset IFS # Reset IFS
+    if [[ -n "$test_class_file" ]]; then
+      # Extract the test cases from the test class file
+      test_cases=$(extract_test_cases "$test_class_file")
+      for test_case in $test_cases; do
+        # Append to the list of test cases to run
+        test_cases_to_run+=("$plan_name/$class_name/$test_case")
+      done
+    else
+      echo "Test class file for $class_name not found."
+    fi
   done
+
+  # Prepare the list of -only-testing parameters
+  only_testing_params=""
+  for test_identifier in "${test_cases_to_run[@]}"; do
+    only_testing_params+=" -only-testing \"$test_identifier\""
+  done
+
+  # Replace whitespaces in device_name with _
+  updated_device_name=$(echo "$device_name" | tr ' ' '_')
+
+  result_path="$results_dir/${updated_device_name}_tests.xcresult"
+
+  # Prepare the command
+  xcodebuild_cmd="xcodebuild test-without-building \
+    -scheme \"$scheme\" \
+    -clonedSourcePackagesDirPath \"SourcePackages/\" \
+    -destination \"platform=iOS Simulator,name=$device_name,OS=$os_version\" \
+    $only_testing_params \
+    -resultBundlePath \"$result_path\""
+
+  # Run the xcodebuild command
+  echo "Running tests on device: $device_name with orientation: $orientation"
+  eval $xcodebuild_cmd
 done
 
 # Combine all xcresult files into one
