@@ -11,9 +11,9 @@ import Foundation
 
 enum HomepageSectionType: Int, CaseIterable {
     case logoHeader
+    case onboardingCard
     case libraryShortcuts
     case topSites
-    case onboardingCard
     case impact
     case news
     case aboutEcosia
@@ -22,9 +22,9 @@ enum HomepageSectionType: Int, CaseIterable {
     var cellIdentifier: String {
         switch self {
         case .logoHeader: return NTPLogoCell.cellIdentifier
+        case .onboardingCard: return NTPOnboardingCardCell.cellIdentifier
         case .libraryShortcuts: return NTPLibraryCell.cellIdentifier
         case .topSites: return "" // Top sites has more than 1 cell type, dequeuing is done through FxHomeSectionHandler protocol
-        case .onboardingCard: return NTPOnboardingCardCell.cellIdentifier
         case .impact: return NTPImpactCell.cellIdentifier
         case .news: return NTPNewsCell.cellIdentifier
         case .aboutEcosia: return NTPAboutEcosiaCell.cellIdentifier

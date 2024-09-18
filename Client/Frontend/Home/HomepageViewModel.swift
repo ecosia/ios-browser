@@ -122,6 +122,12 @@ class HomepageViewModel: FeatureFlaggable {
     var newsViewModel: NTPNewsCellViewModel
     var aboutEcosiaViewModel: NTPAboutEcosiaCellViewModel
     var ntpCustomizationViewModel: NTPCustomizationCellViewModel
+    /* 
+     Ecosia: Represents the container that stores some of the `HomepageSectionType`s.
+     The earlier a section type appears in the array, the higher its priority.
+     */
+    private let cardsPrioritySectionTypes: [HomepageSectionType] = [.bookmarkNudge,
+                                                                    .onboardingCard]
     
     // MARK: - Initializers
     init(profile: Profile,
@@ -209,9 +215,9 @@ class HomepageViewModel: FeatureFlaggable {
          */
         // Ecosia: Those models needs to follow strictly the order defined in `enum HomepageSectionType`
         self.childViewModels = [headerViewModel,
+                                onboardingCardViewModel,
                                 libraryViewModel,
                                 topSiteViewModel,
-                                onboardingCardViewModel,
                                 impactViewModel,
                                 newsViewModel,
                                 aboutEcosiaViewModel,
@@ -282,10 +288,29 @@ class HomepageViewModel: FeatureFlaggable {
 
     func updateEnabledSections() {
         shownSections.removeAll()
-
+        
+        /* Ecosia: Handle priority of cards view models
+         childViewModels.forEach {
+             if $0.shouldShow { shownSections.append($0.sectionType) }
+         }
+         */
+        var prioritySectionAdded = false
         childViewModels.forEach {
-            if $0.shouldShow { shownSections.append($0.sectionType) }
+            if $0.shouldShow {
+                if cardsPrioritySectionTypes.contains($0.sectionType) {
+                    if !prioritySectionAdded {
+                        shownSections.append($0.sectionType)
+                        prioritySectionAdded = true
+                    }
+                    // If a priority section has already been added, skip the rest
+                } else {
+                    // Non-priority section, add if shouldShow is true
+                    shownSections.append($0.sectionType)
+                }
+            }
+            // If shouldShow is false, skip this viewModel
         }
+
         logger.log("Homepage amount of sections shown \(shownSections.count)",
                    level: .debug,
                    category: .homepage)
