@@ -80,7 +80,6 @@ extension BrowserViewController {
     private func handleFirstTimeUserActions() {
         User.shared.firstTime = false
         User.shared.migrated = true
-        User.shared.hideBookmarksNewBadge()
         User.shared.hideBookmarksImportExportTooltip()
         toolbarContextHintVC.deactivateHintForNewUsers()
     }

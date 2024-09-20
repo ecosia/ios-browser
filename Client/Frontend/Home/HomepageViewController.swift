@@ -700,7 +700,6 @@ private extension HomepageViewController {
          */
         // Ecosia: Adjust HomePageViewController's CollectionView
         viewModel.libraryViewModel.delegate = self
-        viewModel.bookmarkNudgeViewModel.delegate = self
         viewModel.impactViewModel.delegate = self
         viewModel.newsViewModel.delegate = self
         viewModel.aboutEcosiaViewModel.delegate = self

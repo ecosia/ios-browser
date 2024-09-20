@@ -11,7 +11,6 @@ import Foundation
 
 enum HomepageSectionType: Int, CaseIterable {
     case logoHeader
-    case bookmarkNudge
     case libraryShortcuts
     case topSites
     case impact
@@ -22,7 +21,6 @@ enum HomepageSectionType: Int, CaseIterable {
     var cellIdentifier: String {
         switch self {
         case .logoHeader: return NTPLogoCell.cellIdentifier
-        case .bookmarkNudge: return NTPBookmarkNudgeCell.cellIdentifier
         case .libraryShortcuts: return NTPLibraryCell.cellIdentifier
         case .topSites: return "" // Top sites has more than 1 cell type, dequeuing is done through FxHomeSectionHandler protocol
         case .impact: return NTPImpactCell.cellIdentifier
@@ -35,7 +33,6 @@ enum HomepageSectionType: Int, CaseIterable {
     static var cellTypes: [ReusableCell.Type] {
         return [
             NTPLogoCell.self,
-            NTPBookmarkNudgeCell.self,
             TopSiteItemCell.self,
             EmptyTopSiteCell.self,
             NTPLibraryCell.self,
@@ -56,7 +53,7 @@ private let MinimumInsets: CGFloat = 16
 extension HomepageSectionType {
     var customizableConfig: CustomizableNTPSettingConfig? {
         switch self {
-        case .logoHeader, .bookmarkNudge, .libraryShortcuts, .ntpCustomization: return nil
+        case .logoHeader, .libraryShortcuts, .ntpCustomization: return nil
         case .topSites: return .topSites
         case .impact: return .climateImpact
         case .aboutEcosia: return .aboutEcosia
@@ -66,7 +63,7 @@ extension HomepageSectionType {
     
     func sectionInsets(_ traits: UITraitCollection, bottomSpacing: CGFloat = 32) -> NSDirectionalEdgeInsets {
         switch self {
-        case .libraryShortcuts, .topSites, .impact, .news, .bookmarkNudge, .aboutEcosia, .ntpCustomization:
+        case .libraryShortcuts, .topSites, .impact, .news, .aboutEcosia, .ntpCustomization:
             guard let window = UIApplication.shared.windows.first(where: \.isKeyWindow) else {
                 return NSDirectionalEdgeInsets(top: 0,
                                                leading: MinimumInsets,

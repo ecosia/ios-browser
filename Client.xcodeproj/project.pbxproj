@@ -245,8 +245,6 @@
 		2C6189502B7A8A22006B70D7 /* NTPTooltip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6188A82B7A8A21006B70D7 /* NTPTooltip.swift */; };
 		2C6189512B7A8A22006B70D7 /* CircleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6188A92B7A8A21006B70D7 /* CircleButton.swift */; };
 		2C6189522B7A8A22006B70D7 /* NTPTooltip.Highlight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6188AA2B7A8A21006B70D7 /* NTPTooltip.Highlight.swift */; };
-		2C6189532B7A8A22006B70D7 /* NTPBookmarkNudgeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6188AC2B7A8A21006B70D7 /* NTPBookmarkNudgeCell.swift */; };
-		2C6189542B7A8A22006B70D7 /* NTPBookmarkNudgeCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6188AD2B7A8A21006B70D7 /* NTPBookmarkNudgeCellViewModel.swift */; };
 		2C6189552B7A8A22006B70D7 /* NewsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6188AF2B7A8A22006B70D7 /* NewsController.swift */; };
 		2C6189562B7A8A22006B70D7 /* NTPNewsCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6188B02B7A8A22006B70D7 /* NTPNewsCellViewModel.swift */; };
 		2C6189572B7A8A22006B70D7 /* NTPNewsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6188B12B7A8A22006B70D7 /* NTPNewsCell.swift */; };
@@ -2394,8 +2392,6 @@
 		2C6188A82B7A8A21006B70D7 /* NTPTooltip.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NTPTooltip.swift; sourceTree = "<group>"; };
 		2C6188A92B7A8A21006B70D7 /* CircleButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CircleButton.swift; sourceTree = "<group>"; };
 		2C6188AA2B7A8A21006B70D7 /* NTPTooltip.Highlight.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NTPTooltip.Highlight.swift; sourceTree = "<group>"; };
-		2C6188AC2B7A8A21006B70D7 /* NTPBookmarkNudgeCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NTPBookmarkNudgeCell.swift; sourceTree = "<group>"; };
-		2C6188AD2B7A8A21006B70D7 /* NTPBookmarkNudgeCellViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NTPBookmarkNudgeCellViewModel.swift; sourceTree = "<group>"; };
 		2C6188AF2B7A8A22006B70D7 /* NewsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewsController.swift; sourceTree = "<group>"; };
 		2C6188B02B7A8A22006B70D7 /* NTPNewsCellViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NTPNewsCellViewModel.swift; sourceTree = "<group>"; };
 		2C6188B12B7A8A22006B70D7 /* NTPNewsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NTPNewsCell.swift; sourceTree = "<group>"; };
@@ -8468,7 +8464,6 @@
 				2C6188A82B7A8A21006B70D7 /* NTPTooltip.swift */,
 				2C6188A92B7A8A21006B70D7 /* CircleButton.swift */,
 				2C6188AA2B7A8A21006B70D7 /* NTPTooltip.Highlight.swift */,
-				2C6188AB2B7A8A21006B70D7 /* BookmarkNudge */,
 				2C6188AE2B7A8A22006B70D7 /* News */,
 				2C6188B22B7A8A22006B70D7 /* Logo */,
 				2C6188B42B7A8A22006B70D7 /* NTPTooltipDelegate.swift */,
@@ -8496,15 +8491,6 @@
 				2C6188A72B7A8A21006B70D7 /* NTPLibaryCellViewModel.swift */,
 			);
 			path = Library;
-			sourceTree = "<group>";
-		};
-		2C6188AB2B7A8A21006B70D7 /* BookmarkNudge */ = {
-			isa = PBXGroup;
-			children = (
-				2C6188AC2B7A8A21006B70D7 /* NTPBookmarkNudgeCell.swift */,
-				2C6188AD2B7A8A21006B70D7 /* NTPBookmarkNudgeCellViewModel.swift */,
-			);
-			path = BookmarkNudge;
 			sourceTree = "<group>";
 		};
 		2C6188AE2B7A8A22006B70D7 /* News */ = {
@@ -13853,7 +13839,6 @@
 				211F00AC27F4D918001D9189 /* HistoryPanel+Search.swift in Sources */,
 				96EB6C3827D821B800A9D159 /* HistoryPanelViewModel.swift in Sources */,
 				AB52ED3B2A0E8873001067F5 /* UserConversionMetrics.swift in Sources */,
-				2C6189542B7A8A22006B70D7 /* NTPBookmarkNudgeCellViewModel.swift in Sources */,
 				219935EC2B07110900E5966F /* TabTrayModel.swift in Sources */,
 				8A3EF7F72A2FCF6D00796E3A /* ExportLogDataSetting.swift in Sources */,
 				43E69EC3254D081D00B591C2 /* SimpleTab.swift in Sources */,
@@ -14280,7 +14265,6 @@
 				C2D71B992A384F6A003DEC7A /* ThemedLeftAlignedTableViewCell.swift in Sources */,
 				21A7C44E283539170071D996 /* IntroViewModel.swift in Sources */,
 				E1FF93E228A2E55700E6360E /* WallpaperSelectorViewController.swift in Sources */,
-				2C6189532B7A8A22006B70D7 /* NTPBookmarkNudgeCell.swift in Sources */,
 				2C6189A92B7A8A22006B70D7 /* Analytics+Configuration.swift in Sources */,
 				D3A9949C1A3686BD008AD1AC /* BrowserViewController.swift in Sources */,
 				8A5D1CBB2A30DC0B005AD35C /* ConnectSetting.swift in Sources */,
