@@ -14,16 +14,29 @@ final class NTPOnboardingCardCell: UICollectionViewCell, Themeable, ReusableCell
         static let insetMargin: CGFloat = 16
         static let textSpacing: CGFloat = 4
         static let buttonAdditionalSpacing: CGFloat = 8
+        static let imageHeight: CGFloat = 48
     }
     
-    private let backgroundStackView: UIStackView = {
+    private let mainContainerStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.layer.cornerRadius = UX.cornerRadius
-        stackView.axis = .vertical
+        stackView.axis = .horizontal
         stackView.alignment = .leading
         stackView.isLayoutMarginsRelativeArrangement = true
-        stackView.directionalLayoutMargins = .init(top: UX.insetMargin, leading: UX.insetMargin, bottom: UX.insetMargin, trailing: UX.insetMargin)
+        stackView.directionalLayoutMargins = .init(top: UX.insetMargin, 
+                                                   leading: UX.insetMargin,
+                                                   bottom: UX.insetMargin,
+                                                   trailing: UX.insetMargin)
+        stackView.spacing = UX.textSpacing
+        return stackView
+    }()
+    
+    private let labelsAndCloseButtonStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .vertical
+        stackView.alignment = .leading
         stackView.spacing = UX.textSpacing
         return stackView
     }()
@@ -36,6 +49,13 @@ final class NTPOnboardingCardCell: UICollectionViewCell, Themeable, ReusableCell
         button.addTarget(self, action: #selector(closeAction), for: .touchUpInside)
         button.setContentHuggingPriority(.required, for: .horizontal)
         return button
+    }()
+    
+    private lazy var imageView: UIImageView = {
+        let image = UIImageView()
+        image.translatesAutoresizingMaskIntoConstraints = false
+        image.contentMode = .scaleAspectFit
+        return image
     }()
     
     private let titleLabel: UILabel = {
@@ -92,26 +112,32 @@ final class NTPOnboardingCardCell: UICollectionViewCell, Themeable, ReusableCell
     }
 
     private func setup() {
-        contentView.addSubview(backgroundStackView)
+        contentView.addSubview(mainContainerStackView)
         
-        let hStack = UIStackView()
-        hStack.axis = .horizontal
-        hStack.spacing = UX.insetMargin
-        hStack.addArrangedSubview(titleLabel)
-        hStack.addArrangedSubview(closeButton)
+        let titleAndCloseButtonStackView = UIStackView()
+        titleAndCloseButtonStackView.axis = .horizontal
+        titleAndCloseButtonStackView.spacing = UX.insetMargin
+        titleAndCloseButtonStackView.addArrangedSubview(titleLabel)
+        titleAndCloseButtonStackView.addArrangedSubview(closeButton)
         
-        backgroundStackView.addArrangedSubview(hStack)
-        backgroundStackView.addArrangedSubview(descriptionLabel)
-        backgroundStackView.addArrangedSubview(showOnboardingButton)
+        labelsAndCloseButtonStackView.addArrangedSubview(titleAndCloseButtonStackView)
+        labelsAndCloseButtonStackView.addArrangedSubview(descriptionLabel)
+        labelsAndCloseButtonStackView.addArrangedSubview(showOnboardingButton)
+        
+        mainContainerStackView.addArrangedSubview(imageView)
+        mainContainerStackView.addArrangedSubview(labelsAndCloseButtonStackView)
         
         NSLayoutConstraint.activate([
-            backgroundStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            backgroundStackView.topAnchor.constraint(equalTo: contentView.topAnchor),
-            backgroundStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            backgroundStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            hStack.widthAnchor.constraint(equalTo: backgroundStackView.widthAnchor, constant: -UX.insetMargin*2),
+            mainContainerStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            mainContainerStackView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            mainContainerStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            mainContainerStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            titleAndCloseButtonStackView.widthAnchor.constraint(equalTo: labelsAndCloseButtonStackView.widthAnchor, constant: -UX.insetMargin*2),
             closeButton.widthAnchor.constraint(equalToConstant: UX.closeButtonWidthHeight),
             closeButton.heightAnchor.constraint(equalToConstant: UX.closeButtonWidthHeight),
+            closeButton.trailingAnchor.constraint(equalTo: labelsAndCloseButtonStackView.trailingAnchor),
+            imageView.heightAnchor.constraint(equalToConstant: UX.imageHeight),
+            imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor),
         ])
         
         applyTheme()
@@ -119,7 +145,7 @@ final class NTPOnboardingCardCell: UICollectionViewCell, Themeable, ReusableCell
     }
     
     @objc func applyTheme() {
-        backgroundStackView.backgroundColor = .legacyTheme.ecosia.secondaryBackground
+        mainContainerStackView.backgroundColor = .legacyTheme.ecosia.secondaryBackground
         closeButton.tintColor = .legacyTheme.ecosia.decorativeIcon
         titleLabel.textColor = .legacyTheme.ecosia.primaryText
         descriptionLabel.textColor = .legacyTheme.ecosia.secondaryText
