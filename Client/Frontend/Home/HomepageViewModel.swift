@@ -116,7 +116,6 @@ class HomepageViewModel: FeatureFlaggable {
     }
     
     // Ecosia: Add Ecosia's ViewModels
-    var bookmarkNudgeViewModel: NTPBookmarkNudgeCellViewModel
     var libraryViewModel: NTPLibraryCellViewModel
     var impactViewModel: NTPImpactCellViewModel
     var newsViewModel: NTPNewsCellViewModel
@@ -149,7 +148,6 @@ class HomepageViewModel: FeatureFlaggable {
                                                   wallpaperManager: wallpaperManager)
         // Ecosia: Add Ecosia's ViewModels
         self.libraryViewModel = NTPLibraryCellViewModel(theme: theme)
-        self.bookmarkNudgeViewModel = NTPBookmarkNudgeCellViewModel(theme: theme)
         self.impactViewModel = NTPImpactCellViewModel(referrals: referrals, theme: theme)
         self.newsViewModel = NTPNewsCellViewModel(theme: theme)
         self.aboutEcosiaViewModel = NTPAboutEcosiaCellViewModel(theme: theme)
@@ -208,7 +206,6 @@ class HomepageViewModel: FeatureFlaggable {
         ]
          */
         self.childViewModels = [headerViewModel,
-                                bookmarkNudgeViewModel,
                                 libraryViewModel,
                                 topSiteViewModel,
                                 impactViewModel,
@@ -267,11 +264,7 @@ class HomepageViewModel: FeatureFlaggable {
         if NTPTooltip.highlight() == .referralSpotlight {
             Analytics.shared.showInvitePromo()
         }
-        
-        if User.shared.showsBookmarksNTPNudgeCard() {
-            Analytics.shared.bookmarksNtp(action: .view)
-        }
-        
+                
         impactViewModel.subscribeToProjections()
     }
 

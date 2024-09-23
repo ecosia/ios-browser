@@ -293,14 +293,7 @@ final class Analytics: AnalyticsProtocol {
             .property(Property.Bookmarks.emptyState.rawValue)
         track(event)
     }
-    
-    func bookmarksNtp(action: Action.Promo) {
-        let event = Structured(category: Category.bookmarks.rawValue,
-                               action: action.rawValue)
-            .label(Label.Bookmarks.bookmarksPromo.rawValue)
-        track(event)
-    }
-    
+        
     func bookmarksImportEnded(_ property: Property.Bookmarks) {
         let event = Structured(category: Category.bookmarks.rawValue,
                                action: Action.Bookmarks.import.rawValue)

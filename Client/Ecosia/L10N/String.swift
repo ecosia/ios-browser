@@ -202,8 +202,6 @@ extension String {
         case bookmarksEmptyViewItem1 = "You can also import bookmarks:"
         case bookmarksEmptyViewItem1NumberedItem0 = "Export your bookmarks from another browser."
         case bookmarksEmptyViewItem1NumberedItem1 = "Tap on the link below to import the file of your bookmarks"
-        case bookmarksNtpNudgeCardDescription = "You can now import bookmarks from other browsers to Ecosia."
-        case bookmarksNtpNudgeCardButtonTitle = "Open bookmarks"
         case bookmarksToolTipText = "Tap here to import bookmarks from other browsers."
         case cancel = "Cancel"
         case open = "Open"

@@ -107,19 +107,6 @@ extension HomepageViewController: NTPNewsCellDelegate {
     }
 }
 
-extension HomepageViewController: NTPBookmarkNudgeCellDelegate {
-    func nudgeCellOpenBookmarks() {
-        homePanelDelegate?.homePanelDidRequestToOpenLibrary(panel: .bookmarks)
-        User.shared.hideBookmarksNTPNudgeCard()
-        reloadView()
-    }
-    
-    func nudgeCellDismiss() {
-        User.shared.hideBookmarksNTPNudgeCard()
-        reloadView()
-    }
-}
-
 extension HomepageViewController: NTPCustomizationCellDelegate {
     func openNTPCustomizationSettings() {
         Analytics.shared.ntp(.click, label: .customize)

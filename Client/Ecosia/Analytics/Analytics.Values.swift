@@ -64,7 +64,6 @@ extension Analytics {
             case
             importFunctionality = "import_functionality",
             learnMore = "learn_more",
-            bookmarksPromo = "bookmarks_promo",
             `import`
         }
     }
