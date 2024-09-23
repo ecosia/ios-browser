@@ -126,8 +126,7 @@ class HomepageViewModel: FeatureFlaggable {
      Ecosia: Represents the container that stores some of the `HomepageSectionType`s.
      The earlier a section type appears in the array, the higher its priority.
      */
-    private let cardsPrioritySectionTypes: [HomepageSectionType] = [.bookmarkNudge,
-                                                                    .onboardingCard]
+    private let cardsPrioritySectionTypes: [HomepageSectionType] = [.onboardingCard]
     
     // MARK: - Initializers
     init(profile: Profile,
