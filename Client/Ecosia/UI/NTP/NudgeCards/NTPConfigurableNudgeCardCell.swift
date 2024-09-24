@@ -178,7 +178,7 @@ class NTPConfigurableNudgeCardCell: UICollectionViewCell, Themeable, ReusableCel
         titleLabel.accessibilityLabel = viewModel.title
         descriptionLabel.accessibilityLabel = viewModel.description
         actionButton.accessibilityLabel = viewModel.buttonText
-        closeButton.accessibilityLabel = "Close card button"
+        closeButton.accessibilityLabel = .localized(.configurableNudgeCardCloseButtonAccessibilityLabel)
     }
 
     // MARK: - Theming

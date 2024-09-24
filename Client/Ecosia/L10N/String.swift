@@ -246,5 +246,6 @@ extension String {
         case onboardingCardNTPExperimentTitle2 = "Wondering how it all works?"
         case onboardingCardNTPExperimentDescription2 = "Take our welcome tour to learn more about how we contribute to climate action."
         case onboardingCardNTPExperimentButtonText2 = "Learn more about Ecosia"
+        case configurableNudgeCardCloseButtonAccessibilityLabel = "Close card button"
     }
 }
