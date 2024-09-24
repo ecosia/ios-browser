@@ -83,18 +83,31 @@ extension HomepageViewController: NTPLibraryDelegate {
     }
 }
 
-extension HomepageViewController: NTPOnboardingCardCellDelegate {
-    func onboardingCardClick() {
-        browserNavigationHandler?.showOnboarding()
-        OnboardingCardNTPExperiment.setCardDismissed()
+extension HomepageViewController: NTPConfigurableNudgeCardCellDelegate {
+    
+    func nudgeCardRequestToDimiss(for cardIdentifier: String) {
+        switch cardIdentifier {
+        case NTPOnboardingCardCell.cellIdentifier:
+            OnboardingCardNTPExperiment.setCardDismissed()
+            Analytics.shared.ntpOnboardingCardExperiment(.dismiss)
+        default:
+            return
+        }
+        
         reloadView()
-        Analytics.shared.ntpOnboardingCardExperiment(.click)
     }
     
-    func onboardingCardDismiss() {
-        OnboardingCardNTPExperiment.setCardDismissed()
+    func nudgeCardRequestToPerformAction(for cardIdentifier: String) {
+        switch cardIdentifier {
+        case NTPOnboardingCardCell.cellIdentifier:
+            browserNavigationHandler?.showOnboarding()
+            OnboardingCardNTPExperiment.setCardDismissed()
+            Analytics.shared.ntpOnboardingCardExperiment(.click)
+        default:
+            return
+        }
+        
         reloadView()
-        Analytics.shared.ntpOnboardingCardExperiment(.dismiss)
     }
 }
 
