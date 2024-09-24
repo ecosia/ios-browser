@@ -117,7 +117,7 @@ class HomepageViewModel: FeatureFlaggable {
     
     // Ecosia: Add Ecosia's ViewModels
     var libraryViewModel: NTPLibraryCellViewModel
-    var onboardingCardViewModel: NTPConfigurableNudgeCardCellViewModel
+    var onboardingCardViewModel: NTPOnboardingCardViewModel
     var impactViewModel: NTPImpactCellViewModel
     var newsViewModel: NTPNewsCellViewModel
     var aboutEcosiaViewModel: NTPAboutEcosiaCellViewModel
@@ -154,13 +154,12 @@ class HomepageViewModel: FeatureFlaggable {
                                                   wallpaperManager: wallpaperManager)
         // Ecosia: Add Ecosia's ViewModels
         self.libraryViewModel = NTPLibraryCellViewModel(theme: theme)
-        self.onboardingCardViewModel = NTPConfigurableNudgeCardCellViewModel(title: OnboardingCardNTPExperiment.title,
-                                                                             description: OnboardingCardNTPExperiment.description,
-                                                                             buttonText: OnboardingCardNTPExperiment.buttonTitle,
-                                                                             image: .init(named: "onboardingExperimentNudgeCardAccessoryImage"),
-                                                                             cardType: .onboardingCard,
-                                                                             isCardEnabled: OnboardingCardNTPExperiment.isEnabled,
-                                                                             theme: theme)
+        self.onboardingCardViewModel = NTPOnboardingCardViewModel(title: OnboardingCardNTPExperiment.title,
+                                                                  description: OnboardingCardNTPExperiment.description,
+                                                                  buttonText: OnboardingCardNTPExperiment.buttonTitle,
+                                                                  image: .init(named: "onboardingExperimentNudgeCardAccessoryImage"),
+                                                                  cardType: .onboardingCard,
+                                                                  theme: theme)
         self.impactViewModel = NTPImpactCellViewModel(referrals: referrals, theme: theme)
         self.newsViewModel = NTPNewsCellViewModel(theme: theme)
         self.aboutEcosiaViewModel = NTPAboutEcosiaCellViewModel(theme: theme)

@@ -25,8 +25,8 @@ class NTPConfigurableNudgeCardCell: UICollectionViewCell, Themeable, ReusableCel
     private let mainContainerStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.layer.cornerRadius = UX.mainContainerSpacing
-        stackView.spacing = UX.textSpacing
+        stackView.layer.cornerRadius = UX.cornerRadius
+        stackView.spacing = UX.mainContainerSpacing
         stackView.axis = .horizontal
         stackView.alignment = .leading
         stackView.isLayoutMarginsRelativeArrangement = true
@@ -50,7 +50,8 @@ class NTPConfigurableNudgeCardCell: UICollectionViewCell, Themeable, ReusableCel
     private let closeButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(UIImage(named: "xmark"), for: .normal)
+        button.setImage(.init(named: "closeButtonStandard"), for: .normal)
+        button.contentMode = .top
         button.imageView?.contentMode = .scaleAspectFill
         button.addTarget(self, action: #selector(closeAction), for: .touchUpInside)
         button.setContentHuggingPriority(.required, for: .horizontal)

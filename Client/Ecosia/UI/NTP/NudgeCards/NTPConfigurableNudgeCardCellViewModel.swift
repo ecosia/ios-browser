@@ -12,7 +12,7 @@ protocol NTPConfigurableNudgeCardCellDelegate: AnyObject {
 }
 
 /// ViewModel for configuring a Nudge Card Cell.
-class NTPConfigurableNudgeCardCellViewModel {
+class NTPConfigurableNudgeCardCellViewModel: HomepageViewModelProtocol {
     
     var title: String
     var description: String
@@ -20,7 +20,6 @@ class NTPConfigurableNudgeCardCellViewModel {
     var image: UIImage?
     var showsCloseButton: Bool
     var cardSectionType: HomepageSectionType
-    var isCardEnabled: Bool
     var identifier: String?
     var theme: Theme
     weak var delegate: NTPConfigurableNudgeCardCellDelegate?
@@ -33,7 +32,6 @@ class NTPConfigurableNudgeCardCellViewModel {
     ///   - image: Optional image to display on the card.
     ///   - showsCloseButton: Boolean to show or hide the close button.
     ///   - cardType: The associated `HomepageSectionType` for a given card. Used by the NTP to make each card a single section.
-    ///   - isCardEnabled: Boolean to determine whether the card should be shown.
     ///   - identifier: Optional unique identifier for the card.
     ///   - theme: The current theme for styling the card.
     init(title: String,
@@ -42,7 +40,6 @@ class NTPConfigurableNudgeCardCellViewModel {
          image: UIImage? = nil,
          showsCloseButton: Bool = true,
          cardType: HomepageSectionType,
-         isCardEnabled: Bool,
          identifier: String? = nil,
          theme: Theme) {
         
@@ -52,13 +49,9 @@ class NTPConfigurableNudgeCardCellViewModel {
         self.image = image
         self.showsCloseButton = showsCloseButton
         self.cardSectionType = cardType
-        self.isCardEnabled = isCardEnabled
         self.theme = theme
         self.identifier = identifier ?? sectionType.cellIdentifier
     }
-}
-
-extension NTPConfigurableNudgeCardCellViewModel: HomepageViewModelProtocol {
     
     func setTheme(theme: Theme) {
         self.theme = theme
@@ -83,7 +76,7 @@ extension NTPConfigurableNudgeCardCellViewModel: HomepageViewModelProtocol {
 
         let section = NSCollectionLayoutSection(group: group)
 
-        section.contentInsets = sectionType.sectionInsets(traitCollection)
+        section.contentInsets = sectionType.sectionInsets(traitCollection, topSpacing: 24)
 
         return section
     }
@@ -93,7 +86,7 @@ extension NTPConfigurableNudgeCardCellViewModel: HomepageViewModelProtocol {
     }
 
     var isEnabled: Bool {
-        isCardEnabled
+        fatalError("Needs to be implemented")
     }
 }
 

@@ -371,6 +371,7 @@
 		2C872A642B8CD7E000B318A0 /* EcosiaHomeViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C872A562B8CD65100B318A0 /* EcosiaHomeViewModelTests.swift */; };
 		2CA995282CA2C06A001064CC /* NTPConfigurableNudgeCardCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CA995272CA2C06A001064CC /* NTPConfigurableNudgeCardCell.swift */; };
 		2CA9952A2CA2C0BB001064CC /* NTPConfigurableNudgeCardCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CA995292CA2C0BB001064CC /* NTPConfigurableNudgeCardCellViewModel.swift */; };
+		2CA9952E2CA2EFAA001064CC /* NTPOnboardingCardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CA9952D2CA2EFAA001064CC /* NTPOnboardingCardViewModel.swift */; };
 		2CABD7162C11C9CC00A0750F /* MozillaAppServices in Frameworks */ = {isa = PBXBuildFile; productRef = 2CABD7152C11C9CC00A0750F /* MozillaAppServices */; };
 		2CABD7282C12EF1E00A0750F /* PrivateModeButtonTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CABD7272C12EF1E00A0750F /* PrivateModeButtonTests.swift */; };
 		2CC8AC342C4F887D000A669A /* MockAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC8AC332C4F887D000A669A /* MockAnalytics.swift */; };
@@ -2510,6 +2511,7 @@
 		2CA16FDD1E5F089100332277 /* SearchTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchTest.swift; sourceTree = "<group>"; };
 		2CA995272CA2C06A001064CC /* NTPConfigurableNudgeCardCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPConfigurableNudgeCardCell.swift; sourceTree = "<group>"; };
 		2CA995292CA2C0BB001064CC /* NTPConfigurableNudgeCardCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPConfigurableNudgeCardCellViewModel.swift; sourceTree = "<group>"; };
+		2CA9952D2CA2EFAA001064CC /* NTPOnboardingCardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPOnboardingCardViewModel.swift; sourceTree = "<group>"; };
 		2CABD7272C12EF1E00A0750F /* PrivateModeButtonTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivateModeButtonTests.swift; sourceTree = "<group>"; };
 		2CAE4511992E91A32AB7D7C7 /* th */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = th; path = th.lproj/Today.strings; sourceTree = "<group>"; };
 		2CB1728B2C61336D008551E2 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.5.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
@@ -7940,6 +7942,7 @@
 			isa = PBXGroup;
 			children = (
 				12187B522C89E15000BA88CA /* NTPOnboardingCardCell.swift */,
+				2CA9952D2CA2EFAA001064CC /* NTPOnboardingCardViewModel.swift */,
 			);
 			path = OnboardingCard;
 			sourceTree = "<group>";
@@ -14338,6 +14341,7 @@
 				BD4B2DE429BB4D9A005FAA50 /* TimerSnackBar.swift in Sources */,
 				810FF3582B1784E7009F062C /* PrivateModeAction.swift in Sources */,
 				21EA466A2B04130500AAAB2D /* TabsPanelState.swift in Sources */,
+				2CA9952E2CA2EFAA001064CC /* NTPOnboardingCardViewModel.swift in Sources */,
 				D04D1B862097859B0074B35F /* DownloadToast.swift in Sources */,
 				C29B64EE2AD937D500F3244B /* QRCodeNavigationHandler.swift in Sources */,
 				8A19ACB42A3290D9001C2147 /* ContentBlockerSetting.swift in Sources */,

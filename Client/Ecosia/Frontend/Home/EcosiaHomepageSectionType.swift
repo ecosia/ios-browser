@@ -64,7 +64,9 @@ extension HomepageSectionType {
         }
     }
     
-    func sectionInsets(_ traits: UITraitCollection, bottomSpacing: CGFloat = 32) -> NSDirectionalEdgeInsets {
+    func sectionInsets(_ traits: UITraitCollection,
+                       topSpacing: CGFloat = 0,
+                       bottomSpacing: CGFloat = 32) -> NSDirectionalEdgeInsets {
         switch self {
         case .libraryShortcuts, .topSites, .impact, .news, .aboutEcosia, .ntpCustomization, .onboardingCard:
             guard let window = UIApplication.shared.windows.first(where: \.isKeyWindow) else {
@@ -83,7 +85,7 @@ extension HomepageSectionType {
             if traits.horizontalSizeClass == .regular || (orientation.isLandscape && traits.userInterfaceIdiom == .phone) {
                 horizontal = window.bounds.width / 4
             }
-            return NSDirectionalEdgeInsets(top: 0,
+            return NSDirectionalEdgeInsets(top: topSpacing,
                                            leading: horizontal,
                                            bottom: bottomSpacing,
                                            trailing: horizontal)
