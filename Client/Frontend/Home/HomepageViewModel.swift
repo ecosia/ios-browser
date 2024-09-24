@@ -157,6 +157,7 @@ class HomepageViewModel: FeatureFlaggable {
         self.onboardingCardViewModel = NTPConfigurableNudgeCardCellViewModel(title: OnboardingCardNTPExperiment.title,
                                                                              description: OnboardingCardNTPExperiment.description,
                                                                              buttonText: OnboardingCardNTPExperiment.buttonTitle,
+                                                                             image: .init(named: "onboardingExperimentNudgeCardAccessoryImage"),
                                                                              cardType: .onboardingCard,
                                                                              isCardEnabled: OnboardingCardNTPExperiment.isEnabled,
                                                                              theme: theme)

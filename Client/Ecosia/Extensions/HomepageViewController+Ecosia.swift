@@ -85,9 +85,9 @@ extension HomepageViewController: NTPLibraryDelegate {
 
 extension HomepageViewController: NTPConfigurableNudgeCardCellDelegate {
     
-    func nudgeCardRequestToDimiss(for cardIdentifier: String) {
-        switch cardIdentifier {
-        case NTPOnboardingCardCell.cellIdentifier:
+    func nudgeCardRequestToDimiss(for cardType: HomepageSectionType) {
+        switch cardType {
+        case .onboardingCard:
             OnboardingCardNTPExperiment.setCardDismissed()
             Analytics.shared.ntpOnboardingCardExperiment(.dismiss)
         default:
@@ -97,9 +97,9 @@ extension HomepageViewController: NTPConfigurableNudgeCardCellDelegate {
         reloadView()
     }
     
-    func nudgeCardRequestToPerformAction(for cardIdentifier: String) {
-        switch cardIdentifier {
-        case NTPOnboardingCardCell.cellIdentifier:
+    func nudgeCardRequestToPerformAction(for cardType: HomepageSectionType) {
+        switch cardType {
+        case .onboardingCard:
             browserNavigationHandler?.showOnboarding()
             OnboardingCardNTPExperiment.setCardDismissed()
             Analytics.shared.ntpOnboardingCardExperiment(.click)

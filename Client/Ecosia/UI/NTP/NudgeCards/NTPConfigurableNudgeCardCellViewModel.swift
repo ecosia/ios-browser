@@ -4,10 +4,11 @@
 
 import Common
 
-/// Delegate that forwards events to the Cell to let perform its appropriate actions. The `cardIdentifier` corresponds to the 
+/// Delegate that forwards events to the Cell to let perform its appropriate actions.
+/// The `cardType` corresponds to the section type we will always need to define for each card.
 protocol NTPConfigurableNudgeCardCellDelegate: AnyObject {
-    func nudgeCardRequestToDimiss(for cardIdentifier: String)
-    func nudgeCardRequestToPerformAction(for cardIdentifier: String)
+    func nudgeCardRequestToDimiss(for cardType: HomepageSectionType)
+    func nudgeCardRequestToPerformAction(for cardType: HomepageSectionType)
 }
 
 /// ViewModel for configuring a Nudge Card Cell.
@@ -29,7 +30,7 @@ class NTPConfigurableNudgeCardCellViewModel {
     ///   - title: Title text for the card.
     ///   - description: Description text for the card.
     ///   - buttonText: Text to display on the action button.
-    ///   - image: Optional image to display on the card. If not passed, the `nudgeCardDefaultImage` will be shown.
+    ///   - image: Optional image to display on the card.
     ///   - showsCloseButton: Boolean to show or hide the close button.
     ///   - cardType: The associated `HomepageSectionType` for a given card. Used by the NTP to make each card a single section.
     ///   - isCardEnabled: Boolean to determine whether the card should be shown.
@@ -48,7 +49,7 @@ class NTPConfigurableNudgeCardCellViewModel {
         self.title = title
         self.description = description
         self.buttonText = buttonText
-        self.image = image ?? .init(named: "nudgeCardDefaultImage")
+        self.image = image
         self.showsCloseButton = showsCloseButton
         self.cardSectionType = cardType
         self.isCardEnabled = isCardEnabled

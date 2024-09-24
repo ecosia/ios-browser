@@ -97,12 +97,12 @@ class NTPConfigurableNudgeCardCell: UICollectionViewCell, Themeable, ReusableCel
     
     // MARK: - Properties
     
-    private var cardIdentifier: String?
+    private var viewModel: NTPConfigurableNudgeCardCellViewModel?
 
     // MARK: - Delegate
     
     weak var delegate: NTPConfigurableNudgeCardCellDelegate?
-
+    
     // MARK: - Themeable Properties
     
     var themeManager: ThemeManager { AppContainer.shared.resolve() }
@@ -165,19 +165,18 @@ class NTPConfigurableNudgeCardCell: UICollectionViewCell, Themeable, ReusableCel
         }
 
         closeButton.isHidden = !viewModel.showsCloseButton
-        
-        cardIdentifier = viewModel.identifier
+        self.viewModel = viewModel
         delegate = viewModel.delegate
 
         // Apply accessibility updates
-        configureAccessibility(for: viewModel)
+        configureAccessibility()
     }
 
-    private func configureAccessibility(for viewModel: NTPConfigurableNudgeCardCellViewModel) {
+    private func configureAccessibility() {
         // Set accessibility labels and traits based on the ViewModel
-        titleLabel.accessibilityLabel = viewModel.title
-        descriptionLabel.accessibilityLabel = viewModel.description
-        actionButton.accessibilityLabel = viewModel.buttonText
+        titleLabel.accessibilityLabel = viewModel?.title
+        descriptionLabel.accessibilityLabel = viewModel?.description
+        actionButton.accessibilityLabel = viewModel?.buttonText
         closeButton.accessibilityLabel = .localized(.configurableNudgeCardCloseButtonAccessibilityLabel)
     }
 
@@ -192,12 +191,12 @@ class NTPConfigurableNudgeCardCell: UICollectionViewCell, Themeable, ReusableCel
     }
     
     @objc private func closeAction() {
-        guard let cardIdentifier else { return }
-        delegate?.nudgeCardRequestToDimiss(for: cardIdentifier)
+        guard let cardSectionType = viewModel?.cardSectionType else { return }
+        delegate?.nudgeCardRequestToDimiss(for: cardSectionType)
     }
     
     @objc private func actionButtonTapped() {
-        guard let cardIdentifier else { return }
-        delegate?.nudgeCardRequestToPerformAction(for: cardIdentifier)
+        guard let cardSectionType = viewModel?.cardSectionType else { return }
+        delegate?.nudgeCardRequestToPerformAction(for: cardSectionType)
     }
 }
