@@ -704,6 +704,7 @@ private extension HomepageViewController {
         viewModel.newsViewModel.delegate = self
         viewModel.aboutEcosiaViewModel.delegate = self
         viewModel.ntpCustomizationViewModel.delegate = self
+        viewModel.climateImpactCounterViewModel.delegate = self
     }
 
     private func openHistoryHighlightsSearchGroup(item: HighlightItem) {
@@ -859,6 +860,14 @@ extension HomepageViewController: HomepageViewModelDelegate {
                             level: .debug,
                             category: .homepage)
         }
+    }
+}
+
+extension HomepageViewController: NTPSeedCounterDelegate {
+    func didTapSeedCounter() {
+        let webVC = ClimateImpactPOCView()
+        let navController = UINavigationController(rootViewController: webVC)
+        present(navController, animated: true)
     }
 }
 

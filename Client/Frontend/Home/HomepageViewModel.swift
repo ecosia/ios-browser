@@ -121,6 +121,7 @@ class HomepageViewModel: FeatureFlaggable {
     var newsViewModel: NTPNewsCellViewModel
     var aboutEcosiaViewModel: NTPAboutEcosiaCellViewModel
     var ntpCustomizationViewModel: NTPCustomizationCellViewModel
+    var climateImpactCounterViewModel: NTPSeedCounterViewModel
     
     // MARK: - Initializers
     init(profile: Profile,
@@ -152,6 +153,7 @@ class HomepageViewModel: FeatureFlaggable {
         self.newsViewModel = NTPNewsCellViewModel(theme: theme)
         self.aboutEcosiaViewModel = NTPAboutEcosiaCellViewModel(theme: theme)
         self.ntpCustomizationViewModel = NTPCustomizationCellViewModel(theme: theme)
+        self.climateImpactCounterViewModel = NTPSeedCounterViewModel(profile: profile, theme: theme)
 
         self.wallpaperManager = wallpaperManager
         /* Ecosia: Remove `jumpBackIn` section reference
@@ -205,7 +207,8 @@ class HomepageViewModel: FeatureFlaggable {
                                 customizeButtonViewModel
         ]
          */
-        self.childViewModels = [headerViewModel,
+        self.childViewModels = [climateImpactCounterViewModel,
+                                headerViewModel,
                                 libraryViewModel,
                                 topSiteViewModel,
                                 impactViewModel,

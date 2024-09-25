@@ -6,7 +6,7 @@ import Common
 import Foundation
 import Shared
 
-class HomeLogoHeaderViewModel {
+class NTPSeedCounterViewModel {
     struct UX {
         // Ecosia: Update bottom spacing
         // static let bottomSpacing: CGFloat = 30
@@ -14,6 +14,7 @@ class HomeLogoHeaderViewModel {
     }
 
     private let profile: Profile
+    weak var delegate: NTPSeedCounterDelegate?
     var onTapAction: ((UIButton) -> Void)?
     var theme: Theme
 
@@ -24,9 +25,9 @@ class HomeLogoHeaderViewModel {
 }
 
 // MARK: HomeViewModelProtocol
-extension HomeLogoHeaderViewModel: HomepageViewModelProtocol, FeatureFlaggable {
+extension NTPSeedCounterViewModel: HomepageViewModelProtocol, FeatureFlaggable {
     var sectionType: HomepageSectionType {
-        return .logoHeader
+        return .climateImpactCounter
     }
 
     var headerViewModel: LabelButtonHeaderViewModel {
@@ -35,11 +36,11 @@ extension HomeLogoHeaderViewModel: HomepageViewModelProtocol, FeatureFlaggable {
 
     func section(for traitCollection: UITraitCollection, size: CGSize) -> NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1),
-                                              heightDimension: .estimated(100))
+                                              heightDimension: .estimated(50))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
 
         let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1),
-                                               heightDimension: .estimated(100))
+                                               heightDimension: .estimated(50))
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: item, count: 1)
 
         let section = NSCollectionLayoutSection(group: group)
@@ -60,7 +61,7 @@ extension HomeLogoHeaderViewModel: HomepageViewModelProtocol, FeatureFlaggable {
         section.contentInsets = NSDirectionalEdgeInsets(
             top: 24,
             leading: 0,
-            bottom: UX.bottomSpacing,
+            bottom: 0,
             trailing: 0)
 
         return section
@@ -71,7 +72,7 @@ extension HomeLogoHeaderViewModel: HomepageViewModelProtocol, FeatureFlaggable {
     }
 
     var isEnabled: Bool {
-        return featureFlags.isFeatureEnabled(.wallpapers, checking: .buildOnly)
+        true
     }
 
     func setTheme(theme: Theme) {
@@ -79,12 +80,11 @@ extension HomeLogoHeaderViewModel: HomepageViewModelProtocol, FeatureFlaggable {
     }
 }
 
-extension HomeLogoHeaderViewModel: HomepageSectionHandler {
+extension NTPSeedCounterViewModel: HomepageSectionHandler {
     
     func configure(_ cell: UICollectionViewCell, at indexPath: IndexPath) -> UICollectionViewCell {
-        // Ecosia: cell as NTPLogoCell
-        // guard let logoHeaderCell = cell as? HomeLogoHeaderCell else { return UICollectionViewCell() }
-        guard let logoHeaderCell = cell as? NTPLogoCell else { return UICollectionViewCell() }
-        return logoHeaderCell
+        guard let seedCounterCell = cell as? NTPSeedCounterCell else { return UICollectionViewCell() }
+        seedCounterCell.delegate = delegate
+        return seedCounterCell
     }
 }
