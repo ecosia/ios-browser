@@ -207,6 +207,7 @@ class ClimateImpactPOCView: UIViewController {
         
         // Check for network availability
         if isNetworkAvailable() {
+            isModalInPresentation = true
             setupDoneButton()
             webView.loadHTMLString(htmlString, baseURL: nil)
         } else {
