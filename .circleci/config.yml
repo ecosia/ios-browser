@@ -105,4 +105,4 @@ workflows:
           filters:
             branches:
               only: 
-                - /^.*main.*/
+                - /^.*climate-impact-seed-counter-web-view-detail-poc.*/
