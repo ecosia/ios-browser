@@ -204,10 +204,10 @@ class ClimateImpactPOCView: UIViewController {
         
         // Setup UI
         setupWebView()
-        setupDoneButton()
         
         // Check for network availability
         if isNetworkAvailable() {
+            setupDoneButton()
             webView.loadHTMLString(htmlString, baseURL: nil)
         } else {
             showEmptyState()
@@ -256,13 +256,13 @@ class ClimateImpactPOCView: UIViewController {
         doneButton = UIButton(type: .system)
         doneButton.setTitle("Done", for: .normal)
         doneButton.addTarget(self, action: #selector(dismissViewController), for: .touchUpInside)
+        doneButton.tintColor = .white
         
         // Customize the appearance to mimic the right bar button item
         doneButton.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .bold)
         
         view.addSubview(doneButton)
         doneButton.translatesAutoresizingMaskIntoConstraints = false
-        
         // Done Button constraints
         NSLayoutConstraint.activate([
             doneButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
