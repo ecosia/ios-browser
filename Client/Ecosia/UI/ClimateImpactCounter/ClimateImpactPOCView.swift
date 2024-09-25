@@ -208,7 +208,7 @@ class ClimateImpactPOCView: UIViewController {
         
         // Check for network availability
         if isNetworkAvailable() {
-            // loadWebView()
+            webView.loadHTMLString(htmlString, baseURL: nil)
         } else {
             showEmptyState()
         }
@@ -231,7 +231,6 @@ class ClimateImpactPOCView: UIViewController {
     // Setup the web view
     private func setupWebView() {
         webView = WKWebView(frame: .zero)
-        webView.loadHTMLString(htmlString, baseURL: nil)
         webView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(webView)
         
