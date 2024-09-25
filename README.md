@@ -40,7 +40,7 @@ Building the code
     ```
 1. Clone the repository:
     ```shell
-    git clone https://github.com/mozilla-mobile/firefox-ios
+    git clone https://github.com/ecosia/ios-browser
     ```
 1. Install Node.js dependencies, build user scripts and update content blocker:
     ```shell
@@ -54,6 +54,7 @@ Building the code
 
 ⚠️ Important: In case you have dependencies issues with SPM, please try the following:
 - Xcode -> File -> Packages -> Reset Package Caches
+- This will also require you to have a working github integration set up in xcode (see Settings > Accounts > Source Control Accounts)
 
 Building User Scripts
 -----------------
