@@ -83,6 +83,34 @@ extension HomepageViewController: NTPLibraryDelegate {
     }
 }
 
+extension HomepageViewController: NTPConfigurableNudgeCardCellDelegate {
+    
+    func nudgeCardRequestToDimiss(for cardType: HomepageSectionType) {
+        switch cardType {
+        case .onboardingCard:
+            OnboardingCardNTPExperiment.setCardDismissed()
+            Analytics.shared.ntpOnboardingCardExperiment(.dismiss)
+        default:
+            return
+        }
+        
+        reloadView()
+    }
+    
+    func nudgeCardRequestToPerformAction(for cardType: HomepageSectionType) {
+        switch cardType {
+        case .onboardingCard:
+            browserNavigationHandler?.showOnboarding()
+            OnboardingCardNTPExperiment.setCardDismissed()
+            Analytics.shared.ntpOnboardingCardExperiment(.click)
+        default:
+            return
+        }
+        
+        reloadView()
+    }
+}
+
 extension HomepageViewController: NTPImpactCellDelegate {
     func impactCellButtonClickedWithInfo(_ info: ClimateImpactInfo) {
         switch info {

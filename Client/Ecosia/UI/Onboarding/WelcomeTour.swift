@@ -17,7 +17,7 @@ final class WelcomeTour: UIViewController,  Themeable {
     private weak var titleLabel: UILabel!
     private weak var subtitleLabel: UILabel!
     private weak var backButton: UIButton!
-    private weak var skipButton: UIButton!
+    private weak var skipButton: UIButton?
     private weak var pageControl: UIPageControl!
     private weak var ctaButton: UIButton!
     private weak var waves: UIImageView!
@@ -98,16 +98,24 @@ final class WelcomeTour: UIViewController,  Themeable {
         centerControl.priority = .defaultHigh
         centerControl.isActive = true
         
-        let skipButton = UIButton(type: .system)
-        skipButton.widthAnchor.constraint(greaterThanOrEqualToConstant: 74).isActive = true
-        skipButton.addTarget(self, action: #selector(skip), for: .primaryActionTriggered)
-        skipButton.setContentCompressionResistancePriority(.required, for: .horizontal)
-        navStack.addArrangedSubview(skipButton)
-        skipButton.setTitle(.localized(.skip), for: .normal)
-        skipButton.accessibilityLabel = .localized(.onboardingSkipTourButtonAccessibility)
-        skipButton.titleLabel?.font = .preferredFont(forTextStyle: .body)
-        skipButton.titleLabel?.adjustsFontForContentSizeCategory = true
-        self.skipButton = skipButton
+        if OnboardingCardNTPExperiment.isEnabled {
+            let placeholderView = UIButton(type: .system)
+            placeholderView.widthAnchor.constraint(greaterThanOrEqualToConstant: 74).isActive = true
+            placeholderView.setContentCompressionResistancePriority(.required, for: .horizontal)
+            placeholderView.isAccessibilityElement = false
+            navStack.addArrangedSubview(placeholderView)
+        } else {
+            let skipButton = UIButton(type: .system)
+            skipButton.widthAnchor.constraint(greaterThanOrEqualToConstant: 74).isActive = true
+            skipButton.addTarget(self, action: #selector(skip), for: .primaryActionTriggered)
+            skipButton.setContentCompressionResistancePriority(.required, for: .horizontal)
+            navStack.addArrangedSubview(skipButton)
+            skipButton.setTitle(.localized(.skip), for: .normal)
+            skipButton.accessibilityLabel = .localized(.onboardingSkipTourButtonAccessibility)
+            skipButton.titleLabel?.font = .preferredFont(forTextStyle: .body)
+            skipButton.titleLabel?.adjustsFontForContentSizeCategory = true
+            self.skipButton = skipButton
+        }
 
         let waves = UIImageView(image: .init(named: "onboardingWaves"))
         waves.translatesAutoresizingMaskIntoConstraints = false
@@ -360,7 +368,7 @@ final class WelcomeTour: UIViewController,  Themeable {
         waves.tintColor = .legacyTheme.ecosia.welcomeBackground
         titleLabel.textColor = .legacyTheme.ecosia.primaryText
         subtitleLabel.textColor = .legacyTheme.ecosia.secondaryText
-        skipButton.tintColor = .legacyTheme.ecosia.primaryButton
+        skipButton?.tintColor = .legacyTheme.ecosia.primaryButton
         backButton.tintColor = .legacyTheme.ecosia.primaryButton
         pageControl.pageIndicatorTintColor = .legacyTheme.ecosia.disabled
         pageControl.currentPageIndicatorTintColor = .legacyTheme.ecosia.primaryButton

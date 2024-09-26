@@ -45,7 +45,8 @@ extension Analytics {
             topSites = "top_sites",
             impact,
             news,
-            about
+            about,
+            onboardingCard = "onboarding_card"
         }
         
         enum Browser: String {

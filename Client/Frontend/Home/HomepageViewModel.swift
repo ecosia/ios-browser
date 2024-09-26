@@ -117,10 +117,16 @@ class HomepageViewModel: FeatureFlaggable {
     
     // Ecosia: Add Ecosia's ViewModels
     var libraryViewModel: NTPLibraryCellViewModel
+    var onboardingCardViewModel: NTPOnboardingCardViewModel
     var impactViewModel: NTPImpactCellViewModel
     var newsViewModel: NTPNewsCellViewModel
     var aboutEcosiaViewModel: NTPAboutEcosiaCellViewModel
     var ntpCustomizationViewModel: NTPCustomizationCellViewModel
+    /* 
+     Ecosia: Represents the container that stores some of the `HomepageSectionType`s.
+     The earlier a section type appears in the array, the higher its priority.
+     */
+    private let cardsPrioritySectionTypes: [HomepageSectionType] = [.onboardingCard]
     
     // MARK: - Initializers
     init(profile: Profile,
@@ -148,6 +154,12 @@ class HomepageViewModel: FeatureFlaggable {
                                                   wallpaperManager: wallpaperManager)
         // Ecosia: Add Ecosia's ViewModels
         self.libraryViewModel = NTPLibraryCellViewModel(theme: theme)
+        self.onboardingCardViewModel = NTPOnboardingCardViewModel(title: OnboardingCardNTPExperiment.title,
+                                                                  description: OnboardingCardNTPExperiment.description,
+                                                                  buttonText: OnboardingCardNTPExperiment.buttonTitle,
+                                                                  image: .init(named: "onboardingExperimentNudgeCardAccessoryImage"),
+                                                                  cardType: .onboardingCard,
+                                                                  theme: theme)
         self.impactViewModel = NTPImpactCellViewModel(referrals: referrals, theme: theme)
         self.newsViewModel = NTPNewsCellViewModel(theme: theme)
         self.aboutEcosiaViewModel = NTPAboutEcosiaCellViewModel(theme: theme)
@@ -205,7 +217,9 @@ class HomepageViewModel: FeatureFlaggable {
                                 customizeButtonViewModel
         ]
          */
+        // Ecosia: Those models needs to follow strictly the order defined in `enum HomepageSectionType`
         self.childViewModels = [headerViewModel,
+                                onboardingCardViewModel,
                                 libraryViewModel,
                                 topSiteViewModel,
                                 impactViewModel,
@@ -278,10 +292,29 @@ class HomepageViewModel: FeatureFlaggable {
 
     func updateEnabledSections() {
         shownSections.removeAll()
-
+        
+        /* Ecosia: Handle priority of cards view models
+         childViewModels.forEach {
+             if $0.shouldShow { shownSections.append($0.sectionType) }
+         }
+         */
+        var prioritySectionAdded = false
         childViewModels.forEach {
-            if $0.shouldShow { shownSections.append($0.sectionType) }
+            if $0.shouldShow {
+                if cardsPrioritySectionTypes.contains($0.sectionType) {
+                    if !prioritySectionAdded {
+                        shownSections.append($0.sectionType)
+                        prioritySectionAdded = true
+                    }
+                    // If a priority section has already been added, skip the rest
+                } else {
+                    // Non-priority section, add if shouldShow is true
+                    shownSections.append($0.sectionType)
+                }
+            }
+            // If shouldShow is false, skip this viewModel
         }
+
         logger.log("Homepage amount of sections shown \(shownSections.count)",
                    level: .debug,
                    category: .homepage)
