@@ -9,4 +9,8 @@ final class NTPOnboardingCardViewModel: NTPConfigurableNudgeCardCellViewModel {
     override var isEnabled: Bool {
         OnboardingCardNTPExperiment.shouldShowCard
     }
+    
+    override func screenWasShown() {
+        OnboardingCardNTPExperiment.trackExperimentImpression()
+    }
 }
