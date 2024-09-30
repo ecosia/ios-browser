@@ -122,6 +122,7 @@ class HomepageViewModel: FeatureFlaggable {
     var newsViewModel: NTPNewsCellViewModel
     var aboutEcosiaViewModel: NTPAboutEcosiaCellViewModel
     var ntpCustomizationViewModel: NTPCustomizationCellViewModel
+    var climateImpactCounterViewModel: NTPSeedCounterViewModel
     /* 
      Ecosia: Represents the container that stores some of the `HomepageSectionType`s.
      The earlier a section type appears in the array, the higher its priority.
@@ -164,6 +165,7 @@ class HomepageViewModel: FeatureFlaggable {
         self.newsViewModel = NTPNewsCellViewModel(theme: theme)
         self.aboutEcosiaViewModel = NTPAboutEcosiaCellViewModel(theme: theme)
         self.ntpCustomizationViewModel = NTPCustomizationCellViewModel(theme: theme)
+        self.climateImpactCounterViewModel = NTPSeedCounterViewModel(profile: profile, theme: theme)
 
         self.wallpaperManager = wallpaperManager
         /* Ecosia: Remove `jumpBackIn` section reference
@@ -218,7 +220,8 @@ class HomepageViewModel: FeatureFlaggable {
         ]
          */
         // Ecosia: Those models needs to follow strictly the order defined in `enum HomepageSectionType`
-        self.childViewModels = [headerViewModel,
+        self.childViewModels = [climateImpactCounterViewModel,
+								headerViewModel,
                                 onboardingCardViewModel,
                                 libraryViewModel,
                                 topSiteViewModel,

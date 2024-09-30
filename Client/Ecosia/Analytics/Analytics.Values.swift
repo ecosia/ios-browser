@@ -43,11 +43,14 @@ extension Analytics {
             case
             about,
             customize,
+            topSites = "top_sites",
             impact,
             quickActions = "quick_actions",
             news,
+            about,
             onboardingCard = "onboarding_card",
             topSites = "top_sites"
+            seedCounter = "seed_counter"
         }
         
         enum Browser: String {
