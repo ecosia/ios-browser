@@ -10,10 +10,27 @@ protocol NTPSeedCounterDelegate: NSObject {
     func didTapSeedCounter()
 }
 
-final class NTPSeedCounterCell: UICollectionViewCell, ReusableCell {
+final class NTPSeedCounterCell: UICollectionViewCell, Themeable, ReusableCell {
 
-    private var seedCounter: UIButton!
+    // MARK: - UX Constants
+    private enum UX {
+        static let cornerRadius: CGFloat = 24
+        static let containerWidthHeight: CGFloat = 48
+        static let insetMargin: CGFloat = 16
+        static let imageWidthHeight: CGFloat = 24
+    }
+    
+    // MARK: - Properties
+    
+    private let seedCounter = UIImageView(image: .init(named: "seedIcon"))
+    private var containerStackView = UIStackView()
     weak var delegate: NTPSeedCounterDelegate?
+    
+    // MARK: - Themeable Properties
+    
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeObserver: NSObjectProtocol?
+    var notificationCenter: NotificationProtocol = NotificationCenter.default
 
     // MARK: - Init
     
@@ -25,24 +42,42 @@ final class NTPSeedCounterCell: UICollectionViewCell, ReusableCell {
     required init?(coder: NSCoder) {
         super.init(coder: coder)
     }
+    
+    // MARK: - Setup
 
     private func setup() {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
+        
+        contentView.addSubview(containerStackView)
+        
+        containerStackView.axis = .horizontal
+        containerStackView.alignment = .center
+        containerStackView.translatesAutoresizingMaskIntoConstraints = false
+        containerStackView.heightAnchor.constraint(equalToConstant: UX.containerWidthHeight).isActive = true
+        containerStackView.widthAnchor.constraint(equalToConstant: UX.containerWidthHeight).isActive = true
+        containerStackView.layer.masksToBounds = true
+        containerStackView.layer.cornerRadius = UX.cornerRadius
+        containerStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,
+                                                     constant: -UX.insetMargin).isActive = true
 
-        seedCounter = UIButton()
-        seedCounter.setImage(.init(named: "seedIcon"), for: .normal)
         seedCounter.translatesAutoresizingMaskIntoConstraints = false
         seedCounter.clipsToBounds = true
         seedCounter.contentMode = .scaleAspectFit
-        seedCounter.heightAnchor.constraint(equalToConstant: 48).isActive = true
-        seedCounter.widthAnchor.constraint(equalToConstant: 48).isActive = true
-        seedCounter.addTarget(self, action: #selector(openClimateImpactCounter), for: .touchUpInside)
-        contentView.addSubview(seedCounter)
-        seedCounter.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16).isActive = true
+        seedCounter.heightAnchor.constraint(equalToConstant: UX.imageWidthHeight).isActive = true
+        seedCounter.widthAnchor.constraint(equalToConstant: UX.imageWidthHeight).isActive = true
+        
+        containerStackView.addArrangedSubview(seedCounter)
+        applyTheme()
+        listenForThemeChange(contentView)
     }
+    
+    // MARK: - Action
     
     @objc private func openClimateImpactCounter() {
         delegate?.didTapSeedCounter()
+    }
+    
+    // MARK: - Theming
+    @objc func applyTheme() {
+        containerStackView.backgroundColor = .legacyTheme.ecosia.secondaryBackground
     }
 }
