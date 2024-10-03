@@ -14,6 +14,9 @@ struct SeedCounterView: View {
 
     // MARK: - Properties
     
+    @State private var seedsCollected: Int = SeedProgressManager.loadSeedsCollected()
+    @State private var level: Int = SeedProgressManager.loadLevel()
+    @State private var progressValue: CGFloat = SeedProgressManager.calculateProgress()
     @StateObject var theme = SeedTheme()
     @Environment(\.themeType)
     var themeVal
@@ -22,15 +25,25 @@ struct SeedCounterView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            SeedProgressView(progressValue: SeedProgressManager.calculateProgress(),
+            SeedProgressView(progressValue: progressValue,
                              theme: theme)
                 
-            Text("\(Int(SeedProgressManager.loadSeedsCollected()))")
+            Text("\(Int(seedsCollected))")
                     .font(.subheadline)
                     .fontWeight(.semibold)
         }
         .onAppear {
+            // Add observer for progress updates
+            NotificationCenter.default.addObserver(forName: SeedProgressManager.progressUpdatedNotification, object: nil, queue: .main) { _ in
+                // Update the state when progress changes
+                self.seedsCollected = SeedProgressManager.loadSeedsCollected()
+                self.level = SeedProgressManager.loadLevel()
+                self.progressValue = SeedProgressManager.calculateProgress()
+            }
             applyTheme(theme: themeVal.theme)
+        }
+        .onDisappear {
+            NotificationCenter.default.removeObserver(self, name: SeedProgressManager.progressUpdatedNotification, object: nil)
         }
         .onChange(of: themeVal) { newThemeValue in
             applyTheme(theme: newThemeValue.theme)

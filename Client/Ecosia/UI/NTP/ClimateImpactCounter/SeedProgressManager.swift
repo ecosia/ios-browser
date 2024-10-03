@@ -6,6 +6,8 @@ import Foundation
 
 final class SeedProgressManager {
     
+    static let progressUpdatedNotification = Notification.Name("SeedProgressUpdated")
+    
     // UserDefaults keys
     private static let levelKey = "SeedProgressLevel"
     private static let seedsCollectedKey = "SeedsCollected"
@@ -41,6 +43,7 @@ final class SeedProgressManager {
         if let date = lastAppOpenDate {
             defaults.set(date, forKey: lastAppOpenDateKey)
         }
+        NotificationCenter.default.post(name: progressUpdatedNotification, object: nil)
     }
 
     // Add seeds to the counter
