@@ -156,9 +156,12 @@ extension AppSettingsTableViewController {
         }
         
         if SeedCounterNTPExperiment.isEnabled {
-            hiddenDebugSettings.append(AddOneSeedSetting(settings: self))
-            hiddenDebugSettings.append(AddFiveSeedsSetting(settings: self))
-            hiddenDebugSettings.append(ResetSeedCounterSetting(settings: self))
+            hiddenDebugSettings.append(AddOneSeedSetting(settings: self,
+                                                         progressManagerType: UserDefaultsSeedProgressManager.self))
+            hiddenDebugSettings.append(AddFiveSeedsSetting(settings: self,
+                                                           progressManagerType: UserDefaultsSeedProgressManager.self))
+            hiddenDebugSettings.append(ResetSeedCounterSetting(settings: self,
+                                                               progressManagerType: UserDefaultsSeedProgressManager.self))
         }
         
         return SettingSection(title: NSAttributedString(string: "Debug"), children: hiddenDebugSettings)
