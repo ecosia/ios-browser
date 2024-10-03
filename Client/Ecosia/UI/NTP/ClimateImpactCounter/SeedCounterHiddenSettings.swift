@@ -5,7 +5,7 @@
 import Foundation
 import Foundation
 
-final class AddOneSeed: HiddenSetting {
+final class AddOneSeedSetting: HiddenSetting {
     override var title: NSAttributedString? {
         return NSAttributedString(
             string: "Debug: Add One Seed",
@@ -29,7 +29,7 @@ final class AddOneSeed: HiddenSetting {
     }
 }
 
-final class AddFiveSeeds: HiddenSetting {
+final class AddFiveSeedsSetting: HiddenSetting {
     override var title: NSAttributedString? {
         return NSAttributedString(string: "Debug: Add Five Seeds", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
     }
@@ -46,7 +46,7 @@ final class AddFiveSeeds: HiddenSetting {
     }
 }
 
-final class ResetSeedCounter: HiddenSetting {
+final class ResetSeedCounterSetting: HiddenSetting {
     override var title: NSAttributedString? {
         return NSAttributedString(string: "Debug: Reset Seed Counter", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
     }
