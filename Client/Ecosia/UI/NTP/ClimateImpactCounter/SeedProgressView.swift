@@ -17,14 +17,14 @@ struct SeedProgressView: View {
 
     // MARK: - Properties
     
-    var progress: SeedProgressEntity
+    var progressValue: CGFloat
     @ObservedObject var theme: SeedTheme
     
     // MARK: - View
     
     var body: some View {
         ZStack(alignment: .top) {
-            ArchProgressView(progress: calculateProgress(),
+            ArchProgressView(progress: progressValue,
                              lineWidth: UX.seedLineWidth,
                              theme: theme
             )
@@ -34,19 +34,6 @@ struct SeedProgressView: View {
                 .resizable()
                 .frame(width: UX.seedIconWidthHeight, height: UX.seedIconWidthHeight)
                 .offset(y: UX.seedIconBottomOffset)
-        }
-    }
-}
-
-extension SeedProgressView {
-    
-    func calculateProgress() -> CGFloat {
-        if progress.level == 1 {
-            return CGFloat(progress.seedsCollected) / 5.0
-        } else if progress.level == 2 {
-            return CGFloat(progress.seedsCollected) / 7.0
-        } else {
-            return 1.0 // Full progress after level 2
         }
     }
 }

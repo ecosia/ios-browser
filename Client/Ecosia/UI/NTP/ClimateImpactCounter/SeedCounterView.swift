@@ -15,7 +15,6 @@ struct SeedCounterView: View {
     // MARK: - Properties
     
     @StateObject var progressManager = SeedProgressManager()
-    @State private var seedProgress: SeedProgressEntity?
     @StateObject var theme = SeedTheme()
     @Environment(\.themeType)
     var themeVal
@@ -24,20 +23,15 @@ struct SeedCounterView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            if let seedProgress {
-                SeedProgressView(progress: seedProgress,
-                                 theme: theme)
+            SeedProgressView(progressValue: progressManager.progressValue,
+                             theme: theme)
                 
-                Text("\(Int(seedProgress.level))")
+            Text("\(Int(progressManager.seedsCollected))")
                     .font(.subheadline)
                     .fontWeight(.semibold)
-            } else {
-                Image("seedIcon")
-            }
         }
         .onAppear {
-            progressManager.collectSeed()
-            seedProgress = progressManager.fetchSeedProgress()
+            progressManager.updateProgress()
             applyTheme(theme: themeVal.theme)
         }
         .onChange(of: themeVal) { newThemeValue in
