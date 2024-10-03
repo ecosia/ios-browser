@@ -14,9 +14,9 @@ struct SeedCounterView: View {
 
     // MARK: - Properties
     
-    @State private var seedsCollected: Int = SeedProgressManager.loadSeedsCollected()
-    @State private var level: Int = SeedProgressManager.loadLevel()
-    @State private var progressValue: CGFloat = SeedProgressManager.calculateProgress()
+    @State private var seedsCollected: Int = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
+    @State private var level: Int = UserDefaultsSeedProgressManager.loadCurrentLevel()
+    @State private var progressValue: CGFloat = UserDefaultsSeedProgressManager.calculateInnerProgress()
     @StateObject var theme = SeedTheme()
     @Environment(\.themeType)
     var themeVal
@@ -34,16 +34,16 @@ struct SeedCounterView: View {
         }
         .onAppear {
             // Add observer for progress updates
-            NotificationCenter.default.addObserver(forName: SeedProgressManager.progressUpdatedNotification, object: nil, queue: .main) { _ in
+            NotificationCenter.default.addObserver(forName: UserDefaultsSeedProgressManager.progressUpdatedNotification, object: nil, queue: .main) { _ in
                 // Update the state when progress changes
-                self.seedsCollected = SeedProgressManager.loadSeedsCollected()
-                self.level = SeedProgressManager.loadLevel()
-                self.progressValue = SeedProgressManager.calculateProgress()
+                self.seedsCollected = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
+                self.level = UserDefaultsSeedProgressManager.loadCurrentLevel()
+                self.progressValue = UserDefaultsSeedProgressManager.calculateInnerProgress()
             }
             applyTheme(theme: themeVal.theme)
         }
         .onDisappear {
-            NotificationCenter.default.removeObserver(self, name: SeedProgressManager.progressUpdatedNotification, object: nil)
+            NotificationCenter.default.removeObserver(self, name: UserDefaultsSeedProgressManager.progressUpdatedNotification, object: nil)
         }
         .onChange(of: themeVal) { newThemeValue in
             applyTheme(theme: newThemeValue.theme)

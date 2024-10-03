@@ -4,30 +4,45 @@
 
 import Foundation
 
-final class SeedProgressManager {
+protocol SeedProgressManagerProtocol {
+    static func loadCurrentLevel() -> Int
+    static func loadTotalSeedsCollected() -> Int
+    static  func loadLastAppOpenDate() -> Date?
+    
+    static func saveProgress(level: Int, totalSeeds: Int, lastAppOpenDate: Date?)
+    
+    static func addSeeds(_ count: Int)
+    static func resetCounter()
+    
+    static func calculateInnerProgress() -> CGFloat
+    static func collectSeed()
+}
+
+final class UserDefaultsSeedProgressManager {
     
     static let progressUpdatedNotification = Notification.Name("SeedProgressUpdated")
     
     // UserDefaults keys
-    private static let levelKey = "SeedProgressLevel"
-    private static let seedsCollectedKey = "SeedsCollected"
+    private static let totalSeedsCollectedKey = "TotalSeedsCollected"
+    private static let currentLevelKey = "CurrentLevel"
     private static let lastAppOpenDateKey = "LastAppOpenDate"
     
-    private static let level1Threshold = 5
-    private static let level2Threshold = 7
+    // Thresholds for each level
+    private static let levelThresholds: [Int] = [5, 10] // Example thresholds for levels 1, 2
     
     private init() {}
     
     // MARK: - Static Methods
 
     // Load the current level from UserDefaults
-    static func loadLevel() -> Int {
-        return UserDefaults.standard.integer(forKey: levelKey) == 0 ? 1 : UserDefaults.standard.integer(forKey: levelKey)
+    static func loadCurrentLevel() -> Int {
+        let currentLevel = UserDefaults.standard.integer(forKey: currentLevelKey)
+        return currentLevel == 0 ? 1 : currentLevel
     }
 
-    // Load the seeds collected from UserDefaults
-    static func loadSeedsCollected() -> Int {
-        return UserDefaults.standard.integer(forKey: seedsCollectedKey) == 0 ? 1 : UserDefaults.standard.integer(forKey: seedsCollectedKey)
+    // Load the total seeds collected from UserDefaults
+    static func loadTotalSeedsCollected() -> Int {
+        return UserDefaults.standard.integer(forKey: totalSeedsCollectedKey)
     }
 
     // Load the last app open date from UserDefaults
@@ -36,65 +51,70 @@ final class SeedProgressManager {
     }
 
     // Save the seed progress and level to UserDefaults
-    static func saveProgress(level: Int, seedsCollected: Int, lastAppOpenDate: Date?) {
+    private static func saveProgress(totalSeeds: Int, currentLevel: Int, lastAppOpenDate: Date?) {
         let defaults = UserDefaults.standard
-        defaults.set(level, forKey: levelKey)
-        defaults.set(seedsCollected, forKey: seedsCollectedKey)
+        defaults.set(totalSeeds, forKey: totalSeedsCollectedKey)
+        defaults.set(currentLevel, forKey: currentLevelKey)
         if let date = lastAppOpenDate {
             defaults.set(date, forKey: lastAppOpenDateKey)
         }
         NotificationCenter.default.post(name: progressUpdatedNotification, object: nil)
     }
 
-    // Add seeds to the counter
+    // Calculate the seed threshold for the current level
+    private static func seedThreshold(for level: Int) -> Int {
+        return level <= levelThresholds.count ? levelThresholds[level - 1] : levelThresholds.last ?? 0
+    }
+
+    // Calculate the inner progress for the current level (0 to 1)
+    static func calculateInnerProgress() -> CGFloat {
+        let totalSeeds = loadTotalSeedsCollected()
+        let currentLevel = loadCurrentLevel()
+        let thresholdForCurrentLevel = seedThreshold(for: currentLevel)
+        
+        // Seeds needed to reach the current level
+        let previousLevelTotal = currentLevel > 1 ? seedThreshold(for: currentLevel - 1) : 0
+        
+        // Inner progress is calculated between the seeds collected in the current level
+        let seedsForCurrentLevel = totalSeeds - previousLevelTotal
+        return CGFloat(seedsForCurrentLevel) / CGFloat(thresholdForCurrentLevel)
+    }
+
+    // Add seeds to the counter and handle level progression
     static func addSeeds(_ count: Int) {
-        var level = loadLevel()
-        var seedsCollected = loadSeedsCollected()
-
-        // Increment the seeds collected by the specified count
-        seedsCollected += count
-
-        // Handle level progression logic
-        if level == 1 && seedsCollected >= level1Threshold {
-            level = 2
-            seedsCollected = 0
-        } else if level == 2 && seedsCollected >= level2Threshold {
-            seedsCollected = level2Threshold // Cap at level 2
+        var totalSeeds = loadTotalSeedsCollected()
+        var currentLevel = loadCurrentLevel()
+        
+        totalSeeds += count
+        
+        // Check if the new total seeds surpass the threshold for the current level
+        while totalSeeds >= seedThreshold(for: currentLevel) {
+            if currentLevel < levelThresholds.count {
+                currentLevel += 1
+            } else {
+                break // Stay at the highest defined level
+            }
         }
-
-        // Save the updated progress
-        saveProgress(level: level, seedsCollected: seedsCollected, lastAppOpenDate: loadLastAppOpenDate())
+        
+        saveProgress(totalSeeds: totalSeeds, currentLevel: currentLevel, lastAppOpenDate: loadLastAppOpenDate())
     }
 
     // Reset the counter to the initial state
     static func resetCounter() {
-        saveProgress(level: 1, seedsCollected: 1, lastAppOpenDate: nil)
+        saveProgress(totalSeeds: 0, currentLevel: 1, lastAppOpenDate: nil)
     }
 
-    // Calculate progress value (0 to 1) based on current level and seeds collected
-    static func calculateProgress() -> CGFloat {
-        let level = loadLevel()
-        let seedsCollected = loadSeedsCollected()
-        let currentThreshold = (level == 1) ? level1Threshold : level2Threshold
-        
-        if level == 1 || level == 2 {
-            return CGFloat(seedsCollected) / CGFloat(currentThreshold)
-        }
-        return 1.0
-    }
-    
     // Collect a seed once per day
     static func collectSeed() {
         let currentDate = Date()
         let calendar = Calendar.current
         
         if let lastOpenDate = loadLastAppOpenDate(), calendar.isDateInToday(lastOpenDate) {
-            // Seed already collected today, do nothing
-            return
+            return // Seed already collected today
         }
         
         // Add 1 seed and save the last open date as today
         addSeeds(1)
-        saveProgress(level: loadLevel(), seedsCollected: loadSeedsCollected(), lastAppOpenDate: currentDate)
+        saveProgress(totalSeeds: loadTotalSeedsCollected(), currentLevel: loadCurrentLevel(), lastAppOpenDate: currentDate)
     }
 }
