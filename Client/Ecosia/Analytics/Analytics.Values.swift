@@ -17,7 +17,8 @@ extension Analytics {
         menu,
         menuStatus = "menu_status",
         settings,
-        bookmarks
+        bookmarks,
+        climateCounter = "climate_counter"
     }
     
     enum Label {
