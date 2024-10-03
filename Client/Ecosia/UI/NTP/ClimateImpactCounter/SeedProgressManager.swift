@@ -7,9 +7,9 @@ import Foundation
 protocol SeedProgressManagerProtocol {
     static func loadCurrentLevel() -> Int
     static func loadTotalSeedsCollected() -> Int
-    static  func loadLastAppOpenDate() -> Date?
+    static  func loadLastAppOpenDate() -> Date
     
-    static func saveProgress(level: Int, totalSeeds: Int, lastAppOpenDate: Date?)
+    static func saveProgress(totalSeeds: Int, currentLevel: Int, lastAppOpenDate: Date)
     
     static func addSeeds(_ count: Int)
     static func resetCounter()
@@ -18,7 +18,7 @@ protocol SeedProgressManagerProtocol {
     static func collectSeed()
 }
 
-final class UserDefaultsSeedProgressManager {
+final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol {    
     
     static let progressUpdatedNotification = Notification.Name("SeedProgressUpdated")
     private static let numberOfSeedsAtStart = 1
@@ -53,7 +53,7 @@ final class UserDefaultsSeedProgressManager {
     }
 
     // Save the seed progress and level to UserDefaults
-    private static func saveProgress(totalSeeds: Int, currentLevel: Int, lastAppOpenDate: Date) {
+    static func saveProgress(totalSeeds: Int, currentLevel: Int, lastAppOpenDate: Date) {
         let defaults = UserDefaults.standard
         defaults.set(totalSeeds, forKey: totalSeedsCollectedKey)
         defaults.set(currentLevel, forKey: currentLevelKey)

@@ -14,12 +14,21 @@ struct SeedCounterView: View {
 
     // MARK: - Properties
     
-    @State private var seedsCollected: Int = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
-    @State private var level: Int = UserDefaultsSeedProgressManager.loadCurrentLevel()
-    @State private var progressValue: CGFloat = UserDefaultsSeedProgressManager.calculateInnerProgress()
+    private let progressManagerType: SeedProgressManagerProtocol.Type
+    @State private var seedsCollected: Int = 0
+    @State private var level: Int = 1
+    @State private var progressValue: CGFloat = 0.0
     @StateObject var theme = SeedTheme()
-    @Environment(\.themeType)
-    var themeVal
+    @Environment(\.themeType) var themeVal
+
+    // MARK: - Init
+    
+    init(progressManagerType: SeedProgressManagerProtocol.Type) {
+        self.progressManagerType = progressManagerType
+        _seedsCollected = State(initialValue: progressManagerType.loadTotalSeedsCollected())
+        _level = State(initialValue: progressManagerType.loadCurrentLevel())
+        _progressValue = State(initialValue: progressManagerType.calculateInnerProgress())
+    }
 
     // MARK: - View
 
