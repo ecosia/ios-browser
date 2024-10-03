@@ -275,7 +275,13 @@ class HomepageViewModel: FeatureFlaggable {
                                      object: .firefoxHomepage,
                                      value: trackingValue,
                                      extras: nil)
-        childViewModels.forEach { $0.screenWasShown() }
+        // Ecosia: Only execute screenWasShown for shown sections
+        // childViewModels.forEach { $0.screenWasShown() }
+        shownSections.forEach { section in
+            if let viewModel = childViewModels.first(where: { $0.sectionType == section }) {
+                viewModel.screenWasShown()
+            }
+        }
         
         // Ecosia
         if NTPTooltip.highlight() == .referralSpotlight {
