@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import SwiftUI
+import Common
 
 struct SeedProgressView: View {
     
@@ -16,18 +17,19 @@ struct SeedProgressView: View {
 
     // MARK: - Properties
     
-    @Binding var progress: CGFloat
+    @ObservedObject var progress: SeedProgress
+    @ObservedObject var theme: SeedTheme
     
     // MARK: - View
     
     var body: some View {
         ZStack(alignment: .top) {
             ArchProgressView(progress: progress,
-                             lineWidth: UX.seedLineWidth,
-                             backgroundColor: Color(.legacyTheme.ecosia.secondaryBackground),
-                             progressColor: Color(.legacyTheme.ecosia.primaryButtonActive))
-                .offset(y: -UX.seedLineWidth * 2)
-
+                             theme: theme,
+                             lineWidth: UX.seedLineWidth
+            )
+            .offset(y: -UX.seedLineWidth * 2)
+            
             Image("seedIcon")
                 .resizable()
                 .frame(width: UX.seedIconWidthHeight, height: UX.seedIconWidthHeight)

@@ -4,8 +4,6 @@
 
 import SwiftUI
 
-import SwiftUI
-
 struct RectangularArcShape: Shape {
     var progress: CGFloat // Progress value between 0 and 1
     
@@ -29,41 +27,35 @@ struct RectangularArcShape: Shape {
 
 struct ArchProgressView: View {
     
-    /// Progress value between 0 and 1
-    var progress: CGFloat
-    
-    /// Default arch thickness
+    @ObservedObject var progress: SeedProgress
+    @ObservedObject var theme: SeedTheme
     var lineWidth: CGFloat = 10
-        
-    /// Default background (static arc) color
-    var backgroundColor: Color = .gray.opacity(0.3)
-
-    /// Default foreground (progress) color
-    var progressColor: Color = .green
-
+    
     var body: some View {
-        SwiftUI.ProgressView(value: progress)
-            .progressViewStyle(ArchProgressViewStyle(lineWidth: lineWidth,
-                                                     backgroundColor: backgroundColor,
-                                                     progressColor: progressColor))
+        SwiftUI.ProgressView(value: progress.value)
+            .progressViewStyle(ArchProgressViewStyle(progress: progress,
+                                                     theme: theme,
+                                                     lineWidth: lineWidth))
     }
 }
 
 private struct ArchProgressViewStyle: ProgressViewStyle {
     
+    @ObservedObject var progress: SeedProgress
+    @ObservedObject var theme: SeedTheme
     var lineWidth: CGFloat
-    var backgroundColor: Color
-    var progressColor: Color
 
     func makeBody(configuration: Configuration) -> some View {
         ZStack {
             // Static background arch
             RectangularArcShape(progress: 1)
-                .stroke(backgroundColor, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
+                .stroke(theme.backgroundColor,
+                        style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
 
             // Progress arc
             RectangularArcShape(progress: CGFloat(configuration.fractionCompleted ?? 0))
-                .stroke(progressColor, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
+                .stroke(theme.progressColor, 
+                        style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
                 .animation(.easeInOut(duration: 0.5), value: configuration.fractionCompleted)
         }
     }
