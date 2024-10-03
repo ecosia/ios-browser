@@ -8,8 +8,6 @@ import Shared
 
 class NTPSeedCounterViewModel {
     struct UX {
-        // Ecosia: Update bottom spacing
-        // static let bottomSpacing: CGFloat = 30
         static let bottomSpacing: CGFloat = 8
     }
 
