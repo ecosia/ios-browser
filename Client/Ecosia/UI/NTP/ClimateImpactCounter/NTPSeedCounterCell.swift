@@ -22,7 +22,8 @@ final class NTPSeedCounterCell: UICollectionViewCell, Themeable, ReusableCell {
     
     // MARK: - Properties
     
-    private let seedCounter = UIImageView(image: .init(named: "seedIcon"))
+    private let seedCounterAndProgressContainer = UIStackView()
+    private let seedCounterIcon = UIImageView(image: .init(named: "seedIcon"))
     private var containerStackView = UIStackView()
     weak var delegate: NTPSeedCounterDelegate?
     
@@ -44,28 +45,14 @@ final class NTPSeedCounterCell: UICollectionViewCell, Themeable, ReusableCell {
     }
     
     // MARK: - Setup
-
+    
     private func setup() {
-        
         contentView.addSubview(containerStackView)
+        setupContainerStackView()
+        setupSeedCounterIcon()
         
-        containerStackView.axis = .horizontal
-        containerStackView.alignment = .center
-        containerStackView.translatesAutoresizingMaskIntoConstraints = false
-        containerStackView.heightAnchor.constraint(equalToConstant: UX.containerWidthHeight).isActive = true
-        containerStackView.widthAnchor.constraint(equalToConstant: UX.containerWidthHeight).isActive = true
-        containerStackView.layer.masksToBounds = true
-        containerStackView.layer.cornerRadius = UX.cornerRadius
-        containerStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,
-                                                     constant: -UX.insetMargin).isActive = true
-
-        seedCounter.translatesAutoresizingMaskIntoConstraints = false
-        seedCounter.clipsToBounds = true
-        seedCounter.contentMode = .scaleAspectFit
-        seedCounter.heightAnchor.constraint(equalToConstant: UX.imageWidthHeight).isActive = true
-        seedCounter.widthAnchor.constraint(equalToConstant: UX.imageWidthHeight).isActive = true
-        
-        containerStackView.addArrangedSubview(seedCounter)
+        seedCounterAndProgressContainer.addArrangedSubview(seedCounterIcon)
+        containerStackView.addArrangedSubview(seedCounterAndProgressContainer)
         applyTheme()
         listenForThemeChange(contentView)
     }
@@ -79,5 +66,30 @@ final class NTPSeedCounterCell: UICollectionViewCell, Themeable, ReusableCell {
     // MARK: - Theming
     @objc func applyTheme() {
         containerStackView.backgroundColor = .legacyTheme.ecosia.secondaryBackground
+    }
+}
+
+// MARK: - Helpers
+
+extension NTPSeedCounterCell {
+    
+    private func setupContainerStackView() {
+        containerStackView.axis = .horizontal
+        containerStackView.alignment = .center
+        containerStackView.translatesAutoresizingMaskIntoConstraints = false
+        containerStackView.heightAnchor.constraint(equalToConstant: UX.containerWidthHeight).isActive = true
+        containerStackView.widthAnchor.constraint(equalToConstant: UX.containerWidthHeight).isActive = true
+        containerStackView.layer.masksToBounds = true
+        containerStackView.layer.cornerRadius = UX.cornerRadius
+        containerStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,
+                                                     constant: -UX.insetMargin).isActive = true
+    }
+    
+    private func setupSeedCounterIcon() {
+        seedCounterIcon.translatesAutoresizingMaskIntoConstraints = false
+        seedCounterIcon.clipsToBounds = true
+        seedCounterIcon.contentMode = .scaleAspectFit
+        seedCounterIcon.heightAnchor.constraint(equalToConstant: UX.imageWidthHeight).isActive = true
+        seedCounterIcon.widthAnchor.constraint(equalToConstant: UX.imageWidthHeight).isActive = true
     }
 }
