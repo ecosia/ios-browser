@@ -27,21 +27,19 @@ struct RectangularArcShape: Shape {
 
 struct ArchProgressView: View {
     
-    @ObservedObject var progress: SeedProgress
-    @ObservedObject var theme: SeedTheme
+    var progress: CGFloat
     var lineWidth: CGFloat = 10
-    
+    @ObservedObject var theme: SeedTheme
+
     var body: some View {
-        SwiftUI.ProgressView(value: progress.value)
-            .progressViewStyle(ArchProgressViewStyle(progress: progress,
-                                                     theme: theme,
+        SwiftUI.ProgressView(value: progress)
+            .progressViewStyle(ArchProgressViewStyle(theme: theme,
                                                      lineWidth: lineWidth))
     }
 }
 
 private struct ArchProgressViewStyle: ProgressViewStyle {
     
-    @ObservedObject var progress: SeedProgress
     @ObservedObject var theme: SeedTheme
     var lineWidth: CGFloat
 

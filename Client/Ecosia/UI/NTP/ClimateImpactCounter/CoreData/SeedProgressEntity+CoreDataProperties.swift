@@ -9,7 +9,7 @@ import CoreData
 extension SeedProgressEntity {
 
     @nonobjc public class func fetchRequest() -> NSFetchRequest<SeedProgressEntity> {
-        return NSFetchRequest<SeedProgressEntity>(entityName: "ProgressEntity")
+        return NSFetchRequest<SeedProgressEntity>(entityName: "SeedCounterProgressEntity")
     }
 
     @NSManaged public var level: Int16

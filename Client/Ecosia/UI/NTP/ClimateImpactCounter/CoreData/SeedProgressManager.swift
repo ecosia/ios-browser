@@ -4,7 +4,7 @@
 
 import CoreData
 
-final class SeedProgressManager {
+final class SeedProgressManager: ObservableObject {
     private let context: NSManagedObjectContext
     
     init(context: NSManagedObjectContext = PersistenceController.shared.container.viewContext) {
@@ -33,7 +33,7 @@ final class SeedProgressManager {
             seedProgress.lastAppOpenDate = lastAppOpenDate
         } else {
             // Create new SeedProgress entity
-            let newProgress = ProgressEntity(context: context)
+            let newProgress = SeedProgressEntity(context: context)
             newProgress.level = level
             newProgress.seedsCollected = seedsCollected
             newProgress.lastAppOpenDate = lastAppOpenDate

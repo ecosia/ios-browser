@@ -6,7 +6,7 @@
 import Foundation
 import CoreData
 
-@objc(ProgressEntity)
+@objc(SeedProgressEntity)
 public class SeedProgressEntity: NSManagedObject {
 
 }

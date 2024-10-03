@@ -5,10 +5,6 @@
 import SwiftUI
 import Common
 
-final class SeedProgress: ObservableObject {
-    @Published var value: CGFloat = 0
-}
-
 final class SeedTheme: ObservableObject {
     @Published var backgroundColor: Color = .clear
     @Published var progressColor: Color = .clear
@@ -18,7 +14,8 @@ struct SeedCounterView: View {
 
     // MARK: - Properties
     
-    @StateObject var progress = SeedProgress()
+    @StateObject var progressManager = SeedProgressManager()
+    @State private var seedProgress: SeedProgressEntity?
     @StateObject var theme = SeedTheme()
     @Environment(\.themeType)
     var themeVal
@@ -27,34 +24,30 @@ struct SeedCounterView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            SeedProgressView(progress: progress,
-                             theme: theme)
-            
-            Text("\(Int(progress.value))")
-                .font(.subheadline)
-                .fontWeight(.semibold)
-        }.onAppear {
+            if let seedProgress {
+                SeedProgressView(progress: seedProgress,
+                                 theme: theme)
+                
+                Text("\(Int(seedProgress.level))")
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+            } else {
+                Image("seedIcon")
+            }
+        }
+        .onAppear {
+            progressManager.collectSeed()
+            seedProgress = progressManager.fetchSeedProgress()
             applyTheme(theme: themeVal.theme)
         }
         .onChange(of: themeVal) { newThemeValue in
             applyTheme(theme: newThemeValue.theme)
-        }
-        
-        .onChange(of: progress.value) { newProgress in
-            if newProgress >= 1.0 {
-                progress.value += 1
-            }
         }
 }
     
     
     
     // MARK: - Helpers
-     
-    func increaseProgress(by amount: CGFloat) {
-        let newProgress = progress.value + amount
-        progress.value = min(newProgress, 1.0) // Update between 0 and 1
-    }
     
     func applyTheme(theme: Theme) {
         self.theme.backgroundColor = Color(.legacyTheme.ecosia.primaryBackground)
