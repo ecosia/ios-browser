@@ -6,6 +6,18 @@ import Foundation
 import Foundation
 
 final class AddOneSeedSetting: HiddenSetting {
+    
+    // This property holds a reference to the type conforming to SeedProgressManagerProtocol
+    private let progressManagerType: SeedProgressManagerProtocol.Type
+
+    // MARK: - Init
+    init(settings: SettingsTableViewController, 
+         progressManagerType: SeedProgressManagerProtocol.Type) {
+        self.progressManagerType = progressManagerType
+        super.init(settings: settings)
+    }
+
+    // MARK: - Title
     override var title: NSAttributedString? {
         return NSAttributedString(
             string: "Debug: Add One Seed",
@@ -13,52 +25,96 @@ final class AddOneSeedSetting: HiddenSetting {
         )
     }
 
+    // MARK: - Status
     override var status: NSAttributedString? {
-        let seedsCollected = SeedProgressManager.loadSeedsCollected()
-        let level = SeedProgressManager.loadLevel()
+        let seedsCollected = progressManagerType.loadTotalSeedsCollected()
+        let level = progressManagerType.loadCurrentLevel()
         return NSAttributedString(
             string: "Seeds: \(seedsCollected) | Level: \(level)",
             attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText]
         )
     }
 
+    // MARK: - Action
     override func onClick(_ navigationController: UINavigationController?) {
-        // Add 1 seed to the counter
-        SeedProgressManager.addSeeds(1)
+        // Add 1 seed to the counter using the static method of the passed progressManager type
+        progressManagerType.addSeeds(1)
         settings.tableView.reloadData()
     }
 }
 
 final class AddFiveSeedsSetting: HiddenSetting {
+    
+    // This property holds a reference to the type conforming to SeedProgressManagerProtocol
+    private let progressManagerType: SeedProgressManagerProtocol.Type
+
+    // MARK: - Init
+    init(settings: SettingsTableViewController,
+         progressManagerType: SeedProgressManagerProtocol.Type) {
+        self.progressManagerType = progressManagerType
+        super.init(settings: settings)
+    }
+
+    // MARK: - Title
     override var title: NSAttributedString? {
-        return NSAttributedString(string: "Debug: Add Five Seeds", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
+        return NSAttributedString(
+            string: "Debug: Add Five Seeds",
+            attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText]
+        )
     }
 
+    // MARK: - Status
     override var status: NSAttributedString? {
-        let seedsCollected = SeedProgressManager.loadSeedsCollected()
-        let level = SeedProgressManager.loadLevel()
-        return NSAttributedString(string: "Seeds: \(seedsCollected) | Level: \(level)", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
+        let seedsCollected = progressManagerType.loadTotalSeedsCollected()
+        let level = progressManagerType.loadCurrentLevel()
+        return NSAttributedString(
+            string: "Seeds: \(seedsCollected) | Level: \(level)",
+            attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText]
+        )
     }
 
+    // MARK: - Action
     override func onClick(_ navigationController: UINavigationController?) {
-        SeedProgressManager.addSeeds(5)
+        // Add 5 seeds to the counter using the static method of the passed progressManager type
+        progressManagerType.addSeeds(5)
         settings.tableView.reloadData()
     }
 }
 
 final class ResetSeedCounterSetting: HiddenSetting {
+    
+    // This property holds a reference to the type conforming to SeedProgressManagerProtocol
+    private let progressManagerType: SeedProgressManagerProtocol.Type
+
+    // MARK: - Init
+    init(settings: SettingsTableViewController,
+         progressManagerType: SeedProgressManagerProtocol.Type) {
+        self.progressManagerType = progressManagerType
+        super.init(settings: settings)
+    }
+
+    // MARK: - Title
     override var title: NSAttributedString? {
-        return NSAttributedString(string: "Debug: Reset Seed Counter", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
+        return NSAttributedString(
+            string: "Debug: Reset Seed Counter",
+            attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText]
+        )
     }
 
+    // MARK: - Status
     override var status: NSAttributedString? {
-        let seedsCollected = SeedProgressManager.loadSeedsCollected()
-        let level = SeedProgressManager.loadLevel()
-        return NSAttributedString(string: "Seeds: \(seedsCollected) | Level: \(level)", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
+        let seedsCollected = progressManagerType.loadTotalSeedsCollected()
+        let level = progressManagerType.loadCurrentLevel()
+        return NSAttributedString(
+            string: "Seeds: \(seedsCollected) | Level: \(level)",
+            attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText]
+        )
     }
 
+    // MARK: - Action
     override func onClick(_ navigationController: UINavigationController?) {
-        SeedProgressManager.resetCounter()
+        // Reset the seed counter using the static method of the passed progressManager type
+        progressManagerType.resetCounter()
         settings.tableView.reloadData()
     }
 }
