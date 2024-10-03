@@ -29,7 +29,8 @@ struct SeedCounterNTPExperiment {
         guard !UserDefaults.standard.bool(forKey: trackExperimentImpressionKey) else {
             return
         }
-        Analytics.shared.ntpSeedCounterExperiment(.view)
+        Analytics.shared.ntpSeedCounterExperiment(.view,
+                                                  seedCounterManager: UserDefaultsSeedProgressManager.self)
         UserDefaults.standard.setValue(true, forKey: trackExperimentImpressionKey)
     }
 }
