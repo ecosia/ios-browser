@@ -3,6 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import UIKit
+import SwiftUI
 import Core
 import Common
 
@@ -17,13 +18,10 @@ final class NTPSeedCounterCell: UICollectionViewCell, Themeable, ReusableCell {
         static let cornerRadius: CGFloat = 24
         static let containerWidthHeight: CGFloat = 48
         static let insetMargin: CGFloat = 16
-        static let imageWidthHeight: CGFloat = 24
     }
     
     // MARK: - Properties
-    
-    private let seedCounterAndProgressContainer = UIStackView()
-    private let seedCounterIcon = UIImageView(image: .init(named: "seedIcon"))
+    private var hostingController: UIHostingController<SeedCounterView>?
     private var containerStackView = UIStackView()
     weak var delegate: NTPSeedCounterDelegate?
     
@@ -49,10 +47,7 @@ final class NTPSeedCounterCell: UICollectionViewCell, Themeable, ReusableCell {
     private func setup() {
         contentView.addSubview(containerStackView)
         setupContainerStackView()
-        setupSeedCounterIcon()
-        
-        seedCounterAndProgressContainer.addArrangedSubview(seedCounterIcon)
-        containerStackView.addArrangedSubview(seedCounterAndProgressContainer)
+        setupSeedCounterViewHostingController()
         applyTheme()
         listenForThemeChange(contentView)
     }
@@ -65,7 +60,7 @@ final class NTPSeedCounterCell: UICollectionViewCell, Themeable, ReusableCell {
     
     // MARK: - Theming
     @objc func applyTheme() {
-        containerStackView.backgroundColor = .legacyTheme.ecosia.secondaryBackground
+        containerStackView.backgroundColor = .legacyTheme.ecosia.primaryBackground
     }
 }
 
@@ -73,23 +68,25 @@ final class NTPSeedCounterCell: UICollectionViewCell, Themeable, ReusableCell {
 
 extension NTPSeedCounterCell {
     
-    private func setupContainerStackView() {
-        containerStackView.axis = .horizontal
-        containerStackView.alignment = .center
-        containerStackView.translatesAutoresizingMaskIntoConstraints = false
-        containerStackView.heightAnchor.constraint(equalToConstant: UX.containerWidthHeight).isActive = true
-        containerStackView.widthAnchor.constraint(equalToConstant: UX.containerWidthHeight).isActive = true
-        containerStackView.layer.masksToBounds = true
-        containerStackView.layer.cornerRadius = UX.cornerRadius
-        containerStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,
-                                                     constant: -UX.insetMargin).isActive = true
+    private func setupSeedCounterViewHostingController() {
+        let swiftUIView = SeedCounterView()
+        hostingController = UIHostingController(rootView: swiftUIView)
+        
+        guard let hostingController else { return }
+        
+        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
+        hostingController.view.backgroundColor = .clear
+        containerStackView.addArrangedSubview(hostingController.view)
     }
     
-    private func setupSeedCounterIcon() {
-        seedCounterIcon.translatesAutoresizingMaskIntoConstraints = false
-        seedCounterIcon.clipsToBounds = true
-        seedCounterIcon.contentMode = .scaleAspectFit
-        seedCounterIcon.heightAnchor.constraint(equalToConstant: UX.imageWidthHeight).isActive = true
-        seedCounterIcon.widthAnchor.constraint(equalToConstant: UX.imageWidthHeight).isActive = true
+    private func setupContainerStackView() {
+        containerStackView.translatesAutoresizingMaskIntoConstraints = false
+        containerStackView.layer.masksToBounds = true
+        containerStackView.layer.cornerRadius = UX.cornerRadius
+        NSLayoutConstraint.activate([
+            containerStackView.heightAnchor.constraint(equalToConstant: UX.containerWidthHeight),
+            containerStackView.widthAnchor.constraint(equalToConstant: UX.containerWidthHeight),
+            containerStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -UX.insetMargin)
+        ])
     }
 }
