@@ -21,6 +21,7 @@ protocol SeedProgressManagerProtocol {
 final class UserDefaultsSeedProgressManager {
     
     static let progressUpdatedNotification = Notification.Name("SeedProgressUpdated")
+    private static let numberOfSeedsAtStart = 1
     
     // UserDefaults keys
     private static let totalSeedsCollectedKey = "TotalSeedsCollected"
@@ -42,22 +43,21 @@ final class UserDefaultsSeedProgressManager {
 
     // Load the total seeds collected from UserDefaults
     static func loadTotalSeedsCollected() -> Int {
-        return UserDefaults.standard.integer(forKey: totalSeedsCollectedKey)
+        let seedsCollected = UserDefaults.standard.integer(forKey: totalSeedsCollectedKey)
+        return seedsCollected == 0 ? numberOfSeedsAtStart : seedsCollected
     }
 
     // Load the last app open date from UserDefaults
-    static func loadLastAppOpenDate() -> Date? {
-        return UserDefaults.standard.object(forKey: lastAppOpenDateKey) as? Date
+    static func loadLastAppOpenDate() -> Date {
+        return UserDefaults.standard.object(forKey: lastAppOpenDateKey) as? Date ?? .now
     }
 
     // Save the seed progress and level to UserDefaults
-    private static func saveProgress(totalSeeds: Int, currentLevel: Int, lastAppOpenDate: Date?) {
+    private static func saveProgress(totalSeeds: Int, currentLevel: Int, lastAppOpenDate: Date) {
         let defaults = UserDefaults.standard
         defaults.set(totalSeeds, forKey: totalSeedsCollectedKey)
         defaults.set(currentLevel, forKey: currentLevelKey)
-        if let date = lastAppOpenDate {
-            defaults.set(date, forKey: lastAppOpenDateKey)
-        }
+        defaults.set(lastAppOpenDate, forKey: lastAppOpenDateKey)
         NotificationCenter.default.post(name: progressUpdatedNotification, object: nil)
     }
 
@@ -101,15 +101,18 @@ final class UserDefaultsSeedProgressManager {
 
     // Reset the counter to the initial state
     static func resetCounter() {
-        saveProgress(totalSeeds: 0, currentLevel: 1, lastAppOpenDate: nil)
+        saveProgress(totalSeeds: numberOfSeedsAtStart, 
+                     currentLevel: 1,
+                     lastAppOpenDate: .now)
     }
 
     // Collect a seed once per day
     static func collectSeed() {
         let currentDate = Date()
+        let lastOpenDate = loadLastAppOpenDate()
         let calendar = Calendar.current
         
-        if let lastOpenDate = loadLastAppOpenDate(), calendar.isDateInToday(lastOpenDate) {
+        if calendar.isDateInToday(lastOpenDate) {
             return // Seed already collected today
         }
         
