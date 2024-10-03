@@ -5,6 +5,7 @@
 import XCTest
 @testable import Client
 
+/// Remember that we always start from 1 seed and level 1 every time we perform `addSeed(:)`
 final class UserDefaultsSeedProgressManagerTests: XCTestCase {
 
     override func setUp() {
@@ -97,7 +98,7 @@ final class UserDefaultsSeedProgressManagerTests: XCTestCase {
 
     // Test progress calculation for level 2 and beyond
     func test_progress_calculation_beyond_level_2() {
-        // Setup to be at level 2 with 7 seeds collected
+        // Setup to be at level 2 with 7 new seeds collected
         UserDefaultsSeedProgressManager.addSeeds(7)
         
         let innerProgress = UserDefaultsSeedProgressManager.calculateInnerProgress()
