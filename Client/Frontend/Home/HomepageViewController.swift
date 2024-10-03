@@ -866,7 +866,8 @@ extension HomepageViewController: HomepageViewModelDelegate {
 
 extension HomepageViewController: NTPSeedCounterDelegate {
     func didTapSeedCounter() {
-        // Nothing to do at the moment
+        Analytics.shared.ntpSeedCounterExperiment(.click,
+                                                  seedCounterManager: UserDefaultsSeedProgressManager.self)
     }
 }
 

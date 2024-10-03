@@ -23,10 +23,11 @@ final class NTPSeedCounterCell: UICollectionViewCell, Themeable, ReusableCell {
     // MARK: - Properties
     private var hostingController: UIHostingController<SeedCounterView>?
     private var containerStackView = UIStackView()
+    private var transparentOverlayButton: UIButton = UIButton(type: .custom)
+    
     weak var delegate: NTPSeedCounterDelegate?
     
     // MARK: - Themeable Properties
-    
     var themeManager: ThemeManager { AppContainer.shared.resolve() }
     var themeObserver: NSObjectProtocol?
     var notificationCenter: NotificationProtocol = NotificationCenter.default
@@ -40,6 +41,7 @@ final class NTPSeedCounterCell: UICollectionViewCell, Themeable, ReusableCell {
 
     required init?(coder: NSCoder) {
         super.init(coder: coder)
+        setup()
     }
     
     // MARK: - Setup
@@ -48,13 +50,14 @@ final class NTPSeedCounterCell: UICollectionViewCell, Themeable, ReusableCell {
         contentView.addSubview(containerStackView)
         setupContainerStackView()
         setupSeedCounterViewHostingController()
+        setupTransparentButton()  // Set up the transparent button
         applyTheme()
         listenForThemeChange(contentView)
     }
     
     // MARK: - Action
     
-    @objc private func openClimateImpactCounter() {
+    @objc private func seedCounterTapped() {
         delegate?.didTapSeedCounter()
     }
     
@@ -67,7 +70,8 @@ final class NTPSeedCounterCell: UICollectionViewCell, Themeable, ReusableCell {
 // MARK: - Helpers
 
 extension NTPSeedCounterCell {
-    
+
+    // Setup the SwiftUI SeedCounterView in a hosting controller
     private func setupSeedCounterViewHostingController() {
         let swiftUIView = SeedCounterView(progressManagerType: UserDefaultsSeedProgressManager.self)
         hostingController = UIHostingController(rootView: swiftUIView)
@@ -78,15 +82,36 @@ extension NTPSeedCounterCell {
         hostingController.view.backgroundColor = .clear
         containerStackView.addArrangedSubview(hostingController.view)
     }
-    
+
+    // Setup the containerStackView and add constraints
     private func setupContainerStackView() {
         containerStackView.translatesAutoresizingMaskIntoConstraints = false
         containerStackView.layer.masksToBounds = true
         containerStackView.layer.cornerRadius = UX.cornerRadius
+        
+        contentView.addSubview(containerStackView)
+
         NSLayoutConstraint.activate([
             containerStackView.heightAnchor.constraint(equalToConstant: UX.containerWidthHeight),
             containerStackView.widthAnchor.constraint(equalToConstant: UX.containerWidthHeight),
             containerStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -UX.insetMargin)
+        ])
+    }
+
+    // Setup the transparent button to make the container tappable
+    private func setupTransparentButton() {
+        transparentOverlayButton.translatesAutoresizingMaskIntoConstraints = false
+        transparentOverlayButton.backgroundColor = .clear
+        transparentOverlayButton.addTarget(self, action: #selector(seedCounterTapped), for: .touchUpInside)
+        
+        contentView.addSubview(transparentOverlayButton)  // Add button over contentView
+        
+        // Button should overlay the containerStackView
+        NSLayoutConstraint.activate([
+            transparentOverlayButton.topAnchor.constraint(equalTo: containerStackView.topAnchor),
+            transparentOverlayButton.leadingAnchor.constraint(equalTo: containerStackView.leadingAnchor),
+            transparentOverlayButton.trailingAnchor.constraint(equalTo: containerStackView.trailingAnchor),
+            transparentOverlayButton.bottomAnchor.constraint(equalTo: containerStackView.bottomAnchor)
         ])
     }
 }

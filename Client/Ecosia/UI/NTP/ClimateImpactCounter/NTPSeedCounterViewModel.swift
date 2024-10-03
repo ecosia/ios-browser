@@ -61,7 +61,8 @@ extension NTPSeedCounterViewModel: HomepageViewModelProtocol, FeatureFlaggable {
     }
     
     func screenWasShown() {
-        SeedCounterNTPExperiment.trackExperimentImpression()
+        Analytics.shared.ntpSeedCounterExperiment(.view,
+                                                  seedCounterManager: UserDefaultsSeedProgressManager.self)
     }
 
     func setTheme(theme: Theme) {

@@ -104,10 +104,12 @@ final class Analytics: AnalyticsProtocol {
             .property(OnboardingCardNTPExperiment.analyticsProperty))
     }
     
-    func ntpSeedCounterExperiment(_ action: Action) {
-        track(Structured(category: Category.ntp.rawValue,
+    func ntpSeedCounterExperiment(_ action: Action, seedCounterManager: SeedProgressManagerProtocol.Type) {
+        track(Structured(category: Category.climateCounter.rawValue,
                          action: action.rawValue)
-            .label(Label.NTP.seedCounter.rawValue))
+            .label(Label.Browser.newTab.rawValue)
+            .value(NSNumber(integerLiteral: seedCounterManager.loadTotalSeedsCollected()))
+        )
     }
     
     func navigation(_ action: Action, label: Label.Navigation) {
