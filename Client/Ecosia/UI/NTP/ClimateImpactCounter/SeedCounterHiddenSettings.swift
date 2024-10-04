@@ -3,7 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
-import Foundation
+import Core
 
 final class AddOneSeedSetting: HiddenSetting {
     
@@ -116,5 +116,16 @@ final class ResetSeedCounterSetting: HiddenSetting {
         // Reset the seed counter using the static method of the passed progressManager type
         progressManagerType.resetCounter()
         settings.tableView.reloadData()
+    }
+}
+
+final class UnleashSeedCounterNTPSetting: UnleashVariantResetSetting {
+    // MARK: - Title
+    override var titleName: String? {
+        "Seed Counter NTP"
+    }
+    
+    override var variant: Unleash.Variant? {
+        Unleash.getVariant(.seedCounterNTP)
     }
 }
