@@ -50,7 +50,7 @@ final class NTPSeedCounterCell: UICollectionViewCell, Themeable, ReusableCell {
         contentView.addSubview(containerStackView)
         setupContainerStackView()
         setupSeedCounterViewHostingController()
-        setupTransparentButton()  // Set up the transparent button
+        setupTransparentButton()
         applyTheme()
         listenForThemeChange(contentView)
     }
