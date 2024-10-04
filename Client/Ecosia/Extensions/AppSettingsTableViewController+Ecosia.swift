@@ -149,11 +149,9 @@ extension AppSettingsTableViewController {
             ResetSearchCount(settings: self),
             EngagementServiceIdentifierSetting(settings: self),
             FasterInactiveTabs(settings: self, settingsDelegate: self),
+            UnleashOnboardingCardNTPSetting(settings: self),
+            UnleashSeedCounterNTPSetting(settings: self)
         ]
-        
-        if OnboardingCardNTPExperiment.isEnabled {
-            hiddenDebugSettings.append(UnleashOnboardingCardNTPSetting(settings: self))
-        }
         
         if SeedCounterNTPExperiment.isEnabled {
             hiddenDebugSettings.append(AddOneSeedSetting(settings: self,
