@@ -104,6 +104,12 @@ final class URLExtensionTests: XCTestCase {
         XCTAssertEqual(host!, "bugzilla.mozilla.org")
         XCTAssertEqual(url!.fragment!, "h=dupes%7CData%20%26%20BI%20Services%20Team%7C")
     }
+    
+    func testNormalizedHostReturnsOriginalHost() {
+        let url = URL(string: "https://mobile.co.uk")!
+        let host = url.normalizedHost
+        XCTAssertEqual(host, "mobile.co.uk")
+    }
 
     func testIPv6Domain() {
         let url = URL(string: "http://[::1]/foo/bar")!
