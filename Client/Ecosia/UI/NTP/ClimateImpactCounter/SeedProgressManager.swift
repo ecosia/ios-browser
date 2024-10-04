@@ -86,14 +86,14 @@ final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol {
         var totalSeeds = loadTotalSeedsCollected()
         var currentLevel = loadCurrentLevel()
         
+        let previousLevelTotal = currentLevel > 1 ? seedThreshold(for: currentLevel - 1) : 0
+        let thresholdForCurrentLevel = seedThreshold(for: currentLevel)
         totalSeeds += count
         
-        // Check if the new total seeds surpass the threshold for the current level
-        while totalSeeds >= seedThreshold(for: currentLevel) {
+        // Level progression occurs only AFTER crossing the threshold for the current level
+        if totalSeeds > previousLevelTotal + thresholdForCurrentLevel {
             if currentLevel < levelThresholds.count {
                 currentLevel += 1
-            } else {
-                break // Stay at the highest defined level
             }
         }
         
