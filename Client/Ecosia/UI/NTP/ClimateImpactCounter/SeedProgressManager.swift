@@ -5,6 +5,7 @@
 import Foundation
 
 protocol SeedProgressManagerProtocol {
+    static var progressUpdatedNotification: Notification.Name { get }
     static func loadCurrentLevel() -> Int
     static func loadTotalSeedsCollected() -> Int
     static func loadLastAppOpenDate() -> Date
@@ -20,7 +21,7 @@ protocol SeedProgressManagerProtocol {
 
 final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol {    
     
-    static let progressUpdatedNotification = Notification.Name("SeedProgressUpdated")
+    static var progressUpdatedNotification: Notification.Name { .init("SeedProgressUpdated") }
     private static let numberOfSeedsAtStart = 1
     
     // UserDefaults keys

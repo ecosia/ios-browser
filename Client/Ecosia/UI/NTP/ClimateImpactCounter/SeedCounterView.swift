@@ -43,16 +43,16 @@ struct SeedCounterView: View {
         }
         .onAppear {
             // Add observer for progress updates
-            NotificationCenter.default.addObserver(forName: UserDefaultsSeedProgressManager.progressUpdatedNotification, object: nil, queue: .main) { _ in
+            NotificationCenter.default.addObserver(forName: progressManagerType.progressUpdatedNotification, object: nil, queue: .main) { _ in
                 // Update the state when progress changes
-                self.seedsCollected = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
+                self.seedsCollected = progressManagerType.loadTotalSeedsCollected()
                 self.level = UserDefaultsSeedProgressManager.loadCurrentLevel()
-                self.progressValue = UserDefaultsSeedProgressManager.calculateInnerProgress()
+                self.progressValue = progressManagerType.calculateInnerProgress()
             }
             applyTheme(theme: themeVal.theme)
         }
         .onDisappear {
-            NotificationCenter.default.removeObserver(self, name: UserDefaultsSeedProgressManager.progressUpdatedNotification, object: nil)
+            NotificationCenter.default.removeObserver(self, name: progressManagerType.progressUpdatedNotification, object: nil)
         }
         .onChange(of: themeVal) { newThemeValue in
             applyTheme(theme: newThemeValue.theme)
