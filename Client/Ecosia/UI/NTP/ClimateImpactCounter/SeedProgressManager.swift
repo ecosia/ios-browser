@@ -6,6 +6,7 @@ import Foundation
 
 protocol SeedProgressManagerProtocol {
     static var progressUpdatedNotification: Notification.Name { get }
+    static var levelUpNotification: Notification.Name { get }
     static func loadCurrentLevel() -> Int
     static func loadTotalSeedsCollected() -> Int
     static func loadLastAppOpenDate() -> Date
@@ -22,6 +23,7 @@ protocol SeedProgressManagerProtocol {
 final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol {    
     
     static var progressUpdatedNotification: Notification.Name { .init("SeedProgressUpdated") }
+    static var levelUpNotification: Notification.Name { .init("SeedLevelUp") }
     private static let numberOfSeedsAtStart = 1
     
     // UserDefaults keys
@@ -90,14 +92,21 @@ final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol {
         let thresholdForCurrentLevel = seedThreshold(for: currentLevel)
         totalSeeds += count
         
+        var leveledUp = false
         // Level progression occurs only AFTER crossing the threshold for the current level
         if totalSeeds > previousLevelTotal + thresholdForCurrentLevel {
             if currentLevel < levelThresholds.count {
                 currentLevel += 1
+                leveledUp = true
             }
         }
         
         saveProgress(totalSeeds: totalSeeds, currentLevel: currentLevel, lastAppOpenDate: loadLastAppOpenDate())
+        
+        // Notify listeners if leveled up
+        if leveledUp {
+            NotificationCenter.default.post(name: levelUpNotification, object: nil)
+        }
     }
 
     // Reset the counter to the initial state
