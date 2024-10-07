@@ -164,7 +164,7 @@ extension Analytics {
         enum TopSite: String {
             case
             `default`,
-            mostVisited,
+            mostVisited = "most_visited",
             pinned
         }
         
