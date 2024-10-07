@@ -65,15 +65,26 @@ class TopSitesViewModel {
         tilePressedHandler?(site.site, site.isGoogleURL)
     }
     
-    // Ecosia: Track Top Site click
-    func trackTopSitePressed(topSite: TopSite, position: Int) {
-        var property: Analytics.Property.TopSite = .mostVisited
-        if topSite.isPinned {
-            property = .pinned
-        } else if topSiteHistoryManager.isDefaultTopSite(site: topSite.site) {
-            property = .default
+    // MARK: - Ecosia Top Sites Analytics
+    
+    private func ecosiaAnalyticsProperty(forSite site: Site) -> Analytics.Property.TopSite {
+        if (site as? PinnedSite) != nil {
+            return .pinned
+        } else if topSiteHistoryManager.isDefaultTopSite(site: site) {
+            return .default
+        } else {
+            return .mostVisited
         }
+    }
+    
+    func trackTopSitePressed(topSite: TopSite, position: Int) {
+        let property = ecosiaAnalyticsProperty(forSite: topSite.site)
         Analytics.shared.ntpTopSite(.click, property: property, position: position as NSNumber)
+    }
+    
+    func trackTopSiteMenuAction(site: Site, action: Analytics.Action.TopSite) {
+        let property = ecosiaAnalyticsProperty(forSite: site)
+        Analytics.shared.ntpTopSite(action, property: property)
     }
 
     // MARK: - Telemetry

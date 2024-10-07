@@ -82,7 +82,7 @@ final class Analytics: AnalyticsProtocol {
             .label(label.rawValue))
     }
     
-    func ntpTopSite(_ action: Action.TopSite, property: Property.TopSite, position: NSNumber) {
+    func ntpTopSite(_ action: Action.TopSite, property: Property.TopSite, position: NSNumber? = nil) {
         track(Structured(category: Category.ntp.rawValue,
                          action: action.rawValue)
             .label(Label.NTP.topSites.rawValue)
