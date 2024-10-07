@@ -5,7 +5,7 @@
 import SwiftUI
 import Common
 
-final class SeedTheme: ObservableObject {
+final class ArcTheme: ObservableObject {
     @Published var backgroundColor: Color = .clear
     @Published var progressColor: Color = .clear
 }
@@ -18,7 +18,7 @@ struct SeedCounterView: View {
     @State private var seedsCollected: Int = 0
     @State private var level: Int = 1
     @State private var progressValue: CGFloat = 0.0
-    @StateObject var theme = SeedTheme()
+    @StateObject var theme = ArcTheme()
     @Environment(\.themeType) var themeVal
 
     // MARK: - Init

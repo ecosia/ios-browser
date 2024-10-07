@@ -29,7 +29,7 @@ struct ArcProgressView: View {
     
     var progress: CGFloat
     var lineWidth: CGFloat = 10
-    @ObservedObject var theme: SeedTheme
+    @ObservedObject var theme: ArcTheme
 
     var body: some View {
         SwiftUI.ProgressView(value: progress)
@@ -40,7 +40,7 @@ struct ArcProgressView: View {
 
 private struct ArcProgressViewStyle: ProgressViewStyle {
     
-    @ObservedObject var theme: SeedTheme
+    @ObservedObject var theme: ArcTheme
     var lineWidth: CGFloat
 
     func makeBody(configuration: Configuration) -> some View {

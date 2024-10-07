@@ -18,7 +18,7 @@ struct SeedProgressView: View {
     // MARK: - Properties
     
     var progressValue: CGFloat
-    @ObservedObject var theme: SeedTheme
+    @ObservedObject var theme: ArcTheme
     
     // MARK: - View
     
