@@ -41,12 +41,13 @@ extension Analytics {
         
         enum NTP: String {
             case
-            customize,
-            topSites = "top_sites",
-            impact,
-            news,
             about,
-            onboardingCard = "onboarding_card"
+            customize,
+            impact,
+            library,
+            news,
+            onboardingCard = "onboarding_card",
+            topSites = "top_sites"
         }
         
         enum Browser: String {
@@ -123,6 +124,16 @@ extension Analytics {
             case
             `import`
         }
+        
+        enum TopSite: String {
+            case
+            click,
+            openNewTab = "open_new_tab",
+            openPrivateTab = "open_private_tab",
+            pin,
+            remove,
+            unpin
+        }
     }
     
     enum Property {
@@ -142,12 +153,19 @@ extension Analytics {
             }
         }
         
+        enum Library: String {
+            case
+            bookmarks,
+            downloads,
+            history,
+            readingList = "reading_list"
+        }
+        
         enum TopSite: String {
             case
-            blog,
-            privacy,
-            financialReports = "financial_reports",
-            howEcosiaWorks = "how_ecosia_works"
+            `default`,
+            mostVisited,
+            pinned
         }
         
         enum Bookmarks: String {

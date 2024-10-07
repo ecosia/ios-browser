@@ -82,6 +82,21 @@ final class Analytics: AnalyticsProtocol {
             .label(label.rawValue))
     }
     
+    func ntpTopSite(_ action: Action.TopSite, property: Property.TopSite, position: NSNumber) {
+        track(Structured(category: Category.ntp.rawValue,
+                         action: action.rawValue)
+            .label(Label.NTP.topSites.rawValue)
+            .property(property.rawValue)
+            .value(position))
+    }
+    
+    func ntpLibraryItem(_ action: Action, property: Property.Library) {
+        track(Structured(category: Category.ntp.rawValue,
+                         action: action.rawValue)
+            .label(Label.NTP.library.rawValue)
+            .property(property.rawValue))
+    }
+    
     func ntpOnboardingCardExperiment(_ action: Action) {
         track(Structured(category: Category.ntp.rawValue,
                          action: action.rawValue)
