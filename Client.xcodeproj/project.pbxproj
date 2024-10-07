@@ -375,7 +375,7 @@
 		2CABD7162C11C9CC00A0750F /* MozillaAppServices in Frameworks */ = {isa = PBXBuildFile; productRef = 2CABD7152C11C9CC00A0750F /* MozillaAppServices */; };
 		2CABD7282C12EF1E00A0750F /* PrivateModeButtonTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CABD7272C12EF1E00A0750F /* PrivateModeButtonTests.swift */; };
 		2CC8AC342C4F887D000A669A /* MockAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC8AC332C4F887D000A669A /* MockAnalytics.swift */; };
-		2CCBB5232CAE9826006E2E10 /* ArchProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCBB5222CAE9826006E2E10 /* ArchProgressView.swift */; };
+		2CCBB5232CAE9826006E2E10 /* ArcProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCBB5222CAE9826006E2E10 /* ArcProgressView.swift */; };
 		2CCBB5252CAEA9DF006E2E10 /* SeedProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCBB5242CAEA9DF006E2E10 /* SeedProgressView.swift */; };
 		2CCBB5272CAEAD53006E2E10 /* SeedCounterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCBB5262CAEAD53006E2E10 /* SeedCounterView.swift */; };
 		2CCBB5352CAF06DE006E2E10 /* SeedProgressManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCBB5342CAF06DE006E2E10 /* SeedProgressManager.swift */; };
@@ -2544,7 +2544,7 @@
 		2CC1B3EF1E9B861400814EEC /* DomainAutocompleteTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DomainAutocompleteTests.swift; sourceTree = "<group>"; };
 		2CC8AC332C4F887D000A669A /* MockAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAnalytics.swift; sourceTree = "<group>"; };
 		2CCB296620A99C9500121DD8 /* LoginsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginsTests.swift; sourceTree = "<group>"; };
-		2CCBB5222CAE9826006E2E10 /* ArchProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchProgressView.swift; sourceTree = "<group>"; };
+		2CCBB5222CAE9826006E2E10 /* ArcProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArcProgressView.swift; sourceTree = "<group>"; };
 		2CCBB5242CAEA9DF006E2E10 /* SeedProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedProgressView.swift; sourceTree = "<group>"; };
 		2CCBB5262CAEAD53006E2E10 /* SeedCounterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedCounterView.swift; sourceTree = "<group>"; };
 		2CCBB5342CAF06DE006E2E10 /* SeedProgressManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedProgressManager.swift; sourceTree = "<group>"; };
@@ -8856,7 +8856,7 @@
 			children = (
 				2C6B5B3A2CAAF27F00F15323 /* NTPSeedCounterCell.swift */,
 				2C6B5B3B2CAAF27F00F15323 /* NTPSeedCounterViewModel.swift */,
-				2CCBB5222CAE9826006E2E10 /* ArchProgressView.swift */,
+				2CCBB5222CAE9826006E2E10 /* ArcProgressView.swift */,
 				2CCBB5242CAEA9DF006E2E10 /* SeedProgressView.swift */,
 				2CCBB5262CAEAD53006E2E10 /* SeedCounterView.swift */,
 				2CCBB5342CAF06DE006E2E10 /* SeedProgressManager.swift */,
@@ -14182,7 +14182,7 @@
 				2C6189972B7A8A22006B70D7 /* ConnectionStatusImage.swift in Sources */,
 				43F7952525795F69005AEE40 /* SearchTelemetry.swift in Sources */,
 				E65075541E37F6FC006961AC /* LegacyDynamicFontHelper.swift in Sources */,
-				2CCBB5232CAE9826006E2E10 /* ArchProgressView.swift in Sources */,
+				2CCBB5232CAE9826006E2E10 /* ArcProgressView.swift in Sources */,
 				8ADAE4242A33A126007BF926 /* StudiesToggleSetting.swift in Sources */,
 				C82CDD47233E8996002E2743 /* Tab+ChangeUserAgent.swift in Sources */,
 				81122E212B221AC0003DD9F8 /* SearchScreenState.swift in Sources */,

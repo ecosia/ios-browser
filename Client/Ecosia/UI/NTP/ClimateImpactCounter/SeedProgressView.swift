@@ -24,7 +24,7 @@ struct SeedProgressView: View {
     
     var body: some View {
         ZStack(alignment: .top) {
-            ArchProgressView(progress: progressValue,
+            ArcProgressView(progress: progressValue,
                              lineWidth: UX.seedLineWidth,
                              theme: theme
             )
