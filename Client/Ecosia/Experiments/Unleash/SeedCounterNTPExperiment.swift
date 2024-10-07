@@ -13,6 +13,8 @@ struct SeedCounterNTPExperiment {
     
     private init() {}
     
+    static var progressManagerType: SeedProgressManagerProtocol.Type = UserDefaultsSeedProgressManager.self
+    
     static var isEnabled: Bool {
         Unleash.isEnabled(.seedCounterNTP) && variant != .control
     }
@@ -23,14 +25,23 @@ struct SeedCounterNTPExperiment {
     
     // MARK: Analytics
 
-    /// Send onboarding card view analytics event, but just the first time it's called.
-    static func trackExperimentImpression() {
-        let trackExperimentImpressionKey = "seedCounterNTPExperimentImpression"
-        guard !UserDefaults.standard.bool(forKey: trackExperimentImpressionKey) else {
+    static func trackSeedCollectionIfNewDayAppOpening() {
+        let seedCollectionExperimentIdentifier = "seedCollectionNTPExperimentIdentifier"
+        guard Analytics.hasDayPassedSinceLastCheck(for: seedCollectionExperimentIdentifier) else {
             return
         }
         Analytics.shared.ntpSeedCounterExperiment(.view,
-                                                  seedCounterManager: UserDefaultsSeedProgressManager.self)
-        UserDefaults.standard.setValue(true, forKey: trackExperimentImpressionKey)
+                                                  value: NSNumber(integerLiteral: 1))
+        UserDefaults.standard.setValue(true, forKey: seedCollectionExperimentIdentifier)
+    }
+    
+    static func trackTapOnSeedCounter() {
+        Analytics.shared.ntpSeedCounterExperiment(.view,
+                                                  value: NSNumber(integerLiteral: progressManagerType.loadTotalSeedsCollected()))
+    }
+    
+    static func trackSeedLevellingUp() {
+        Analytics.shared.ntpSeedCounterExperiment(.level,
+                                                  value: NSNumber(integerLiteral: progressManagerType.loadTotalSeedsCollected()))
     }
 }

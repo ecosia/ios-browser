@@ -17,8 +17,7 @@ extension Analytics {
         menu,
         menuStatus = "menu_status",
         settings,
-        bookmarks,
-        climateCounter = "climate_counter"
+        bookmarks
     }
     
     enum Label {
@@ -49,8 +48,7 @@ extension Analytics {
             quickActions = "quick_actions",
             news,
             about,
-            topSites = "top_sites"
-            seedCounter = "seed_counter"
+            climateCounter = "climate_counter"
         }
         
         enum Browser: String {
@@ -135,6 +133,13 @@ extension Analytics {
             pin,
             remove,
             unpin
+		}
+
+        enum SeedCounter: String {
+            case
+            view,
+            level,
+            collect
         }
     }
     

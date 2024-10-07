@@ -46,7 +46,7 @@ struct SeedCounterView: View {
             NotificationCenter.default.addObserver(forName: progressManagerType.progressUpdatedNotification, object: nil, queue: .main) { _ in
                 // Update the state when progress changes
                 self.seedsCollected = progressManagerType.loadTotalSeedsCollected()
-                self.level = UserDefaultsSeedProgressManager.loadCurrentLevel()
+                self.level = progressManagerType.loadCurrentLevel()
                 self.progressValue = progressManagerType.calculateInnerProgress()
             }
             applyTheme(theme: themeVal.theme)
