@@ -11,6 +11,8 @@ class HomeLogoHeaderViewModel {
         // Ecosia: Update bottom spacing
         // static let bottomSpacing: CGFloat = 30
         static let bottomSpacing: CGFloat = 8
+        //Ecosia: Update top inset for Seed Experiment
+        static let seedCounterNTPExperimentTopInset: CGFloat = 24
     }
 
     private let profile: Profile
@@ -58,7 +60,9 @@ extension HomeLogoHeaderViewModel: HomepageViewModelProtocol, FeatureFlaggable {
 
         let leadingInset = HomepageViewModel.UX.leadingInset(traitCollection: traitCollection)
         section.contentInsets = NSDirectionalEdgeInsets(
-            top: 24,
+            //Ecosia: Update top inset for Seed Experiment
+            // top: height * factor,
+            top: SeedCounterNTPExperiment.isEnabled ? UX.seedCounterNTPExperimentTopInset : height * factor,
             leading: 0,
             bottom: UX.bottomSpacing,
             trailing: 0)
