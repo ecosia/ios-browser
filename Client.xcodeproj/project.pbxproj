@@ -381,7 +381,6 @@
 		2CCBB5252CAEA9DF006E2E10 /* SeedProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCBB5242CAEA9DF006E2E10 /* SeedProgressView.swift */; };
 		2CCBB5272CAEAD53006E2E10 /* SeedCounterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCBB5262CAEAD53006E2E10 /* SeedCounterView.swift */; };
 		2CCBB5352CAF06DE006E2E10 /* SeedProgressManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCBB5342CAF06DE006E2E10 /* SeedProgressManagerProtocol.swift */; };
-		2CCBB5372CAF0E8C006E2E10 /* SeedCounterHiddenSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCBB5362CAF0E8C006E2E10 /* SeedCounterHiddenSettings.swift */; };
 		2CCFB3D72C0FBEE800BEDCA0 /* TabToolbarHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D815A3A724A53F3200AAB221 /* TabToolbarHelperTests.swift */; };
 		2CD48B7F2C7F7E4100A70908 /* EcosiaOverlayModeManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD48B7E2C7F7E4100A70908 /* EcosiaOverlayModeManagerTests.swift */; };
 		2CE294472B7CDD56006C22B2 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 2CE294462B7CDD56006C22B2 /* Core */; };
@@ -2553,7 +2552,6 @@
 		2CCBB5242CAEA9DF006E2E10 /* SeedProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedProgressView.swift; sourceTree = "<group>"; };
 		2CCBB5262CAEAD53006E2E10 /* SeedCounterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedCounterView.swift; sourceTree = "<group>"; };
 		2CCBB5342CAF06DE006E2E10 /* SeedProgressManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedProgressManagerProtocol.swift; sourceTree = "<group>"; };
-		2CCBB5362CAF0E8C006E2E10 /* SeedCounterHiddenSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedCounterHiddenSettings.swift; sourceTree = "<group>"; };
 		2CCF17522105E4FD00705AE5 /* DisplaySettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplaySettingsTests.swift; sourceTree = "<group>"; };
 		2CCFB3D42C0F1EA500BEDCA0 /* LoadingScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingScreen.swift; sourceTree = "<group>"; };
 		2CD368492C5BC31700972871 /* OnboardingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingTests.swift; sourceTree = "<group>"; };
@@ -8875,7 +8873,6 @@
 				2CCBB5242CAEA9DF006E2E10 /* SeedProgressView.swift */,
 				2CCBB5262CAEAD53006E2E10 /* SeedCounterView.swift */,
 				2C5A5E682CB53E05005BFE8B /* SeedProgressManager */,
-				2CCBB5362CAF0E8C006E2E10 /* SeedCounterHiddenSettings.swift */,
 				2C5A5E642CB53DB7005BFE8B /* SeedLevelConfig.swift */,
 			);
 			path = ClimateImpactCounter;
