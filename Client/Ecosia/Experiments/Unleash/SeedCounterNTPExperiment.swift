@@ -42,6 +42,6 @@ struct SeedCounterNTPExperiment {
     
     static func trackSeedLevellingUp() {
         Analytics.shared.ntpSeedCounterExperiment(.level,
-                                                  value: NSNumber(integerLiteral: progressManagerType.loadTotalSeedsCollected()))
+                                                  value: NSNumber(integerLiteral: progressManagerType.loadCurrentLevel()))
     }
 }
