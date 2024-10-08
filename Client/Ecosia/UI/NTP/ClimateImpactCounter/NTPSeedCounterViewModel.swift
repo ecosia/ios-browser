@@ -8,7 +8,7 @@ import Shared
 
 class NTPSeedCounterViewModel {
     struct UX {
-        static let bottomSpacing: CGFloat = 8
+        static let topInset: CGFloat = 24
     }
 
     private let profile: Profile
@@ -44,7 +44,7 @@ extension NTPSeedCounterViewModel: HomepageViewModelProtocol, FeatureFlaggable {
         let section = NSCollectionLayoutSection(group: group)
 
         section.contentInsets = NSDirectionalEdgeInsets(
-            top: 24,
+            top: UX.topInset,
             leading: 0,
             bottom: 0,
             trailing: 0)
