@@ -44,7 +44,7 @@ extension Analytics {
             about,
             customize,
             impact,
-            library,
+            quickActions = "quick_actions",
             news,
             onboardingCard = "onboarding_card",
             topSites = "top_sites"

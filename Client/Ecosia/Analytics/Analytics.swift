@@ -93,7 +93,7 @@ final class Analytics: AnalyticsProtocol {
     func ntpLibraryItem(_ action: Action, property: Property.Library) {
         track(Structured(category: Category.ntp.rawValue,
                          action: action.rawValue)
-            .label(Label.NTP.library.rawValue)
+            .label(Label.NTP.quickActions.rawValue)
             .property(property.rawValue))
     }
     
