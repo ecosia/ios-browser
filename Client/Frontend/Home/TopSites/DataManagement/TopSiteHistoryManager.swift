@@ -37,8 +37,7 @@ class TopSiteHistoryManager: DataObserver {
 
     // Ecosia: New method to check if default top site
     func isDefaultTopSite(site: Site) -> Bool {
-        let url = site.tileURL.absoluteString
-        return topSitesProvider.defaultTopSites(profile.prefs).contains(where: { $0.url == url })
+        return topSitesProvider.defaultTopSites(profile.prefs).contains(where: { $0.url == site.url })
     }
     
     /// If the default top sites contains the siteurl. also wipe it from default suggested sites.
