@@ -11,7 +11,7 @@ final class ArcTheme: ObservableObject {
 }
 
 struct SeedCounterView: View {
-
+    
     // MARK: - Properties
     
     private let progressManagerType: SeedProgressManagerProtocol.Type
@@ -20,7 +20,7 @@ struct SeedCounterView: View {
     @State private var progressValue: CGFloat = 0.0
     @StateObject var theme = ArcTheme()
     @Environment(\.themeType) var themeVal
-
+    
     // MARK: - Init
     
     init(progressManagerType: SeedProgressManagerProtocol.Type) {
@@ -29,17 +29,17 @@ struct SeedCounterView: View {
         _level = State(initialValue: progressManagerType.loadCurrentLevel())
         _progressValue = State(initialValue: progressManagerType.calculateInnerProgress())
     }
-
+    
     // MARK: - View
-
+    
     var body: some View {
         VStack(spacing: 0) {
             SeedProgressView(progressValue: progressValue,
                              theme: theme)
-                
+            
             Text("\(Int(seedsCollected))")
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
+                .font(.subheadline)
+                .fontWeight(.semibold)
         }
         .onAppear {
             // Add observer for progress updates
@@ -57,14 +57,12 @@ struct SeedCounterView: View {
         .onChange(of: themeVal) { newThemeValue in
             applyTheme(theme: newThemeValue.theme)
         }
-}
-    
-    
+    }
     
     // MARK: - Helpers
     
     func applyTheme(theme: Theme) {
         self.theme.backgroundColor = Color(.legacyTheme.ecosia.primaryBackground)
         self.theme.progressColor = Color(.legacyTheme.ecosia.primaryButtonActive)
-    }    
+    }
 }
