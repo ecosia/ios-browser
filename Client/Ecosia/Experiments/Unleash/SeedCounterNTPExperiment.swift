@@ -16,7 +16,9 @@ struct SeedCounterNTPExperiment {
     static var progressManagerType: SeedProgressManagerProtocol.Type = UserDefaultsSeedProgressManager.self
     
     static var isEnabled: Bool {
-        Unleash.isEnabled(.seedCounterNTP) && variant != .control
+        Unleash.isEnabled(.seedCounterNTP) &&
+        variant != .control &&
+        SeedCounterNTPExperiment.seedLevelConfig != nil
     }
     
     static private var variant: Variant {
@@ -43,5 +45,15 @@ struct SeedCounterNTPExperiment {
     static func trackSeedLevellingUp() {
         Analytics.shared.ntpSeedCounterExperiment(.level,
                                                   value: NSNumber(integerLiteral: progressManagerType.loadCurrentLevel()))
+    }
+    
+    static var seedLevelConfig: SeedLevelConfig? {
+        guard let payloadString = Unleash.getVariant(.seedCounterNTP).payload?.value,
+              let payloadData = payloadString.data(using: .utf8),
+              let seedLevelConfig = try? JSONDecoder().decode(SeedLevelConfig.self, from: payloadData)
+        else {
+            return nil
+        }
+        return seedLevelConfig
     }
 }

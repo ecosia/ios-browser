@@ -14,6 +14,12 @@ final class UserDefaultsSeedProgressManagerTests: XCTestCase {
         UserDefaults.standard.removeObject(forKey: "CurrentLevel")
         UserDefaults.standard.removeObject(forKey: "TotalSeedsCollected")
         UserDefaults.standard.removeObject(forKey: "LastAppOpenDate")
+        
+        // Set initial seed levels to use in the tests
+        UserDefaultsSeedProgressManager.seedLevels = [
+            SeedLevelConfig.SeedLevel(level: 1, requiredSeeds: 5),
+            SeedLevelConfig.SeedLevel(level: 2, requiredSeeds: 10)
+        ]
     }
 
     // Test the initial state
@@ -48,11 +54,10 @@ final class UserDefaultsSeedProgressManagerTests: XCTestCase {
 
     // Test adding seeds beyond level 1 and keep accumulating for level 2
     func test_add_seeds_beyond_level_1() {
-        
         // Collect 5 seeds, stay in level 1 (4+1)
         UserDefaultsSeedProgressManager.addSeeds(4)
 
-        // Add 1 more seeds, moves to level 2
+        // Add 2 more seeds, moves to level 2
         UserDefaultsSeedProgressManager.addSeeds(2)
         
         let level = UserDefaultsSeedProgressManager.loadCurrentLevel()

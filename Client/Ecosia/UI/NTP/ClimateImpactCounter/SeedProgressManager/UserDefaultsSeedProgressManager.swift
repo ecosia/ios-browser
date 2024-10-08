@@ -4,23 +4,7 @@
 
 import Foundation
 
-protocol SeedProgressManagerProtocol {
-    static var progressUpdatedNotification: Notification.Name { get }
-    static var levelUpNotification: Notification.Name { get }
-    static func loadCurrentLevel() -> Int
-    static func loadTotalSeedsCollected() -> Int
-    static func loadLastAppOpenDate() -> Date
-    
-    static func saveProgress(totalSeeds: Int, currentLevel: Int, lastAppOpenDate: Date)
-    
-    static func addSeeds(_ count: Int)
-    static func resetCounter()
-    
-    static func calculateInnerProgress() -> CGFloat
-    static func collectSeed()
-}
-
-final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol {    
+final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol {
     
     private static let className = String(describing: UserDefaultsSeedProgressManager.self)
     static var progressUpdatedNotification: Notification.Name { .init("\(className).SeedProgressUpdated") }
@@ -32,8 +16,7 @@ final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol {
     private static let currentLevelKey = "CurrentLevel"
     private static let lastAppOpenDateKey = "LastAppOpenDate"
     
-    // Thresholds for each level
-    private static let levelThresholds: [Int] = [5, 10] // Example thresholds for levels 1, 2
+    static var seedLevels: [SeedLevelConfig.SeedLevel] = SeedCounterNTPExperiment.seedLevelConfig?.levels.compactMap { $0 } ?? []
     
     private init() {}
     
@@ -55,7 +38,7 @@ final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol {
     static func loadLastAppOpenDate() -> Date {
         return UserDefaults.standard.object(forKey: lastAppOpenDateKey) as? Date ?? .now
     }
-
+    
     // Save the seed progress and level to UserDefaults
     static func saveProgress(totalSeeds: Int, currentLevel: Int, lastAppOpenDate: Date) {
         let defaults = UserDefaults.standard
@@ -65,19 +48,24 @@ final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol {
         NotificationCenter.default.post(name: progressUpdatedNotification, object: nil)
     }
 
-    // Calculate the seed threshold for the current level
-    private static func seedThreshold(for level: Int) -> Int {
-        return level <= levelThresholds.count ? levelThresholds[level - 1] : levelThresholds.last ?? 0
+    // Helper method to get the seed threshold for the current level
+    private static func requiredSeedsForLevel(_ level: Int) -> Int {
+        if let seedLevel = seedLevels.first(where: { $0.level == level }) {
+            return seedLevel.requiredSeeds
+        }
+        return seedLevels.last?.requiredSeeds ?? 0  // If the level exceeds defined levels, use the last one
     }
 
     // Calculate the inner progress for the current level (0 to 1)
     static func calculateInnerProgress() -> CGFloat {
         let totalSeeds = loadTotalSeedsCollected()
         let currentLevel = loadCurrentLevel()
-        let thresholdForCurrentLevel = seedThreshold(for: currentLevel)
+        
+        // Get the required seeds for the current level
+        let thresholdForCurrentLevel = requiredSeedsForLevel(currentLevel)
         
         // Seeds needed to reach the current level
-        let previousLevelTotal = currentLevel > 1 ? seedThreshold(for: currentLevel - 1) : 0
+        let previousLevelTotal = currentLevel > 1 ? requiredSeedsForLevel(currentLevel - 1) : 0
         
         // Inner progress is calculated between the seeds collected in the current level
         let seedsForCurrentLevel = totalSeeds - previousLevelTotal
@@ -88,31 +76,32 @@ final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol {
     static func addSeeds(_ count: Int) {
         var totalSeeds = loadTotalSeedsCollected()
         var currentLevel = loadCurrentLevel()
-        
-        let previousLevelTotal = currentLevel > 1 ? seedThreshold(for: currentLevel - 1) : 0
-        let thresholdForCurrentLevel = seedThreshold(for: currentLevel)
+
+        let previousLevelTotal = currentLevel > 1 ? requiredSeedsForLevel(currentLevel - 1) : 0
+        let thresholdForCurrentLevel = requiredSeedsForLevel(currentLevel)
+
         totalSeeds += count
-        
+
         var leveledUp = false
-        // Level progression occurs only AFTER crossing the threshold for the current level
+        // Only level up if the total seeds EXCEED the threshold for the current level
         if totalSeeds > previousLevelTotal + thresholdForCurrentLevel {
-            if currentLevel < levelThresholds.count {
+            if currentLevel < seedLevels.count {
                 currentLevel += 1
                 leveledUp = true
             }
         }
-        
+
         saveProgress(totalSeeds: totalSeeds, currentLevel: currentLevel, lastAppOpenDate: loadLastAppOpenDate())
-        
+
         // Notify listeners if leveled up
         if leveledUp {
             NotificationCenter.default.post(name: levelUpNotification, object: nil)
         }
     }
-
+    
     // Reset the counter to the initial state
     static func resetCounter() {
-        saveProgress(totalSeeds: numberOfSeedsAtStart, 
+        saveProgress(totalSeeds: numberOfSeedsAtStart,
                      currentLevel: 1,
                      lastAppOpenDate: .now)
     }

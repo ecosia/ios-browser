@@ -210,6 +210,8 @@
 		2C3BD5EB2BF6193B00E25B0D /* EcosiaThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6188C32B7A8A22006B70D7 /* EcosiaThemeManager.swift */; };
 		2C49854E206173C800893DAE /* photon-colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C49854D206173C800893DAE /* photon-colors.swift */; };
 		2C4D16602C76360800E89C95 /* environment.json in Resources */ = {isa = PBXBuildFile; fileRef = 2C4D165F2C76360800E89C95 /* environment.json */; };
+		2C5A5E652CB53DB7005BFE8B /* SeedLevelConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5A5E642CB53DB7005BFE8B /* SeedLevelConfig.swift */; };
+		2C5A5E672CB53DF9005BFE8B /* UserDefaultsSeedProgressManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5A5E662CB53DF9005BFE8B /* UserDefaultsSeedProgressManager.swift */; };
 		2C5B81C82C75388300B81D95 /* LocaleRetriever.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5B81C72C75388300B81D95 /* LocaleRetriever.swift */; };
 		2C6189312B7A8A22006B70D7 /* EcosiaLaunchScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6188802B7A8A21006B70D7 /* EcosiaLaunchScreenView.swift */; };
 		2C6189322B7A8A22006B70D7 /* EcosiaLaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2C6188812B7A8A21006B70D7 /* EcosiaLaunchScreen.xib */; };
@@ -378,7 +380,8 @@
 		2CCBB5232CAE9826006E2E10 /* ArcProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCBB5222CAE9826006E2E10 /* ArcProgressView.swift */; };
 		2CCBB5252CAEA9DF006E2E10 /* SeedProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCBB5242CAEA9DF006E2E10 /* SeedProgressView.swift */; };
 		2CCBB5272CAEAD53006E2E10 /* SeedCounterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCBB5262CAEAD53006E2E10 /* SeedCounterView.swift */; };
-		2CCBB5352CAF06DE006E2E10 /* SeedProgressManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCBB5342CAF06DE006E2E10 /* SeedProgressManager.swift */; };
+		2CCBB5352CAF06DE006E2E10 /* SeedProgressManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCBB5342CAF06DE006E2E10 /* SeedProgressManagerProtocol.swift */; };
+		2CCBB5372CAF0E8C006E2E10 /* SeedCounterHiddenSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCBB5362CAF0E8C006E2E10 /* SeedCounterHiddenSettings.swift */; };
 		2CCFB3D72C0FBEE800BEDCA0 /* TabToolbarHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D815A3A724A53F3200AAB221 /* TabToolbarHelperTests.swift */; };
 		2CD48B7F2C7F7E4100A70908 /* EcosiaOverlayModeManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD48B7E2C7F7E4100A70908 /* EcosiaOverlayModeManagerTests.swift */; };
 		2CE294472B7CDD56006C22B2 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 2CE294462B7CDD56006C22B2 /* Core */; };
@@ -2365,6 +2368,8 @@
 		2C4A07DB20246EAD0083E320 /* DragAndDropTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragAndDropTests.swift; sourceTree = "<group>"; };
 		2C4B6BF220349EB800A009C2 /* OnboardingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingTests.swift; sourceTree = "<group>"; };
 		2C4D165F2C76360800E89C95 /* environment.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = environment.json; sourceTree = "<group>"; };
+		2C5A5E642CB53DB7005BFE8B /* SeedLevelConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedLevelConfig.swift; sourceTree = "<group>"; };
+		2C5A5E662CB53DF9005BFE8B /* UserDefaultsSeedProgressManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsSeedProgressManager.swift; sourceTree = "<group>"; };
 		2C5B81C72C75388300B81D95 /* LocaleRetriever.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocaleRetriever.swift; sourceTree = "<group>"; };
 		2C6045859589979C43AF09E0 /* jv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = jv; path = jv.lproj/ClearPrivateDataConfirm.strings; sourceTree = "<group>"; };
 		2C6188802B7A8A21006B70D7 /* EcosiaLaunchScreenView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EcosiaLaunchScreenView.swift; sourceTree = "<group>"; };
@@ -2547,7 +2552,8 @@
 		2CCBB5222CAE9826006E2E10 /* ArcProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArcProgressView.swift; sourceTree = "<group>"; };
 		2CCBB5242CAEA9DF006E2E10 /* SeedProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedProgressView.swift; sourceTree = "<group>"; };
 		2CCBB5262CAEAD53006E2E10 /* SeedCounterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedCounterView.swift; sourceTree = "<group>"; };
-		2CCBB5342CAF06DE006E2E10 /* SeedProgressManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedProgressManager.swift; sourceTree = "<group>"; };
+		2CCBB5342CAF06DE006E2E10 /* SeedProgressManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedProgressManagerProtocol.swift; sourceTree = "<group>"; };
+		2CCBB5362CAF0E8C006E2E10 /* SeedCounterHiddenSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedCounterHiddenSettings.swift; sourceTree = "<group>"; };
 		2CCF17522105E4FD00705AE5 /* DisplaySettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplaySettingsTests.swift; sourceTree = "<group>"; };
 		2CCFB3D42C0F1EA500BEDCA0 /* LoadingScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingScreen.swift; sourceTree = "<group>"; };
 		2CD368492C5BC31700972871 /* OnboardingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingTests.swift; sourceTree = "<group>"; };
@@ -8378,6 +8384,15 @@
 			path = ClimateImpactCounter;
 			sourceTree = "<group>";
 		};
+		2C5A5E682CB53E05005BFE8B /* SeedProgressManager */ = {
+			isa = PBXGroup;
+			children = (
+				2CCBB5342CAF06DE006E2E10 /* SeedProgressManagerProtocol.swift */,
+				2C5A5E662CB53DF9005BFE8B /* UserDefaultsSeedProgressManager.swift */,
+			);
+			path = SeedProgressManager;
+			sourceTree = "<group>";
+		};
 		2C61887E2B7A8A21006B70D7 /* Ecosia */ = {
 			isa = PBXGroup;
 			children = (
@@ -8859,7 +8874,9 @@
 				2CCBB5222CAE9826006E2E10 /* ArcProgressView.swift */,
 				2CCBB5242CAEA9DF006E2E10 /* SeedProgressView.swift */,
 				2CCBB5262CAEAD53006E2E10 /* SeedCounterView.swift */,
-				2CCBB5342CAF06DE006E2E10 /* SeedProgressManager.swift */,
+				2C5A5E682CB53E05005BFE8B /* SeedProgressManager */,
+				2CCBB5362CAF0E8C006E2E10 /* SeedCounterHiddenSettings.swift */,
+				2C5A5E642CB53DB7005BFE8B /* SeedLevelConfig.swift */,
 			);
 			path = ClimateImpactCounter;
 			sourceTree = "<group>";
@@ -13906,6 +13923,7 @@
 				AB52ED3B2A0E8873001067F5 /* UserConversionMetrics.swift in Sources */,
 				219935EC2B07110900E5966F /* TabTrayModel.swift in Sources */,
 				8A3EF7F72A2FCF6D00796E3A /* ExportLogDataSetting.swift in Sources */,
+				2C5A5E652CB53DB7005BFE8B /* SeedLevelConfig.swift in Sources */,
 				43E69EC3254D081D00B591C2 /* SimpleTab.swift in Sources */,
 				8ADAE4202A33A0FD007BF926 /* SendFeedbackSetting.swift in Sources */,
 				C29B64812AD6959E00F3244B /* QRCodeCoordinator.swift in Sources */,
@@ -14048,7 +14066,7 @@
 				96EA9454293655BF00123345 /* AppSession+Enums.swift in Sources */,
 				C8B0F5F4283B7CCE007AE65D /* PocketProvider.swift in Sources */,
 				2C6189642B7A8A22006B70D7 /* EcosiaNavigation.swift in Sources */,
-				2CCBB5352CAF06DE006E2E10 /* SeedProgressManager.swift in Sources */,
+				2CCBB5352CAF06DE006E2E10 /* SeedProgressManagerProtocol.swift in Sources */,
 				1DC372022B23C80F000F96C8 /* WindowManager.swift in Sources */,
 				C8E531C829E5EB6100E03FEF /* RouteBuilder.swift in Sources */,
 				D3972BF41C22412B00035B87 /* TitleActivityItemProvider.swift in Sources */,
@@ -14270,6 +14288,7 @@
 				2137786529832C8900D01309 /* OverlayModeManager.swift in Sources */,
 				8AF99B4D29EF076800108DEC /* WebviewViewController.swift in Sources */,
 				3B39EDCB1E16E1AA00EF029F /* CustomSearchViewController.swift in Sources */,
+				2C5A5E672CB53DF9005BFE8B /* UserDefaultsSeedProgressManager.swift in Sources */,
 				C8B0F5F7283B7CCE007AE65D /* PocketFeedStory.swift in Sources */,
 				96A562A027D6D0E80045144A /* ContileProvider.swift in Sources */,
 				8A5D1CAC2A30D70B005AD35C /* OpenWithSetting.swift in Sources */,
