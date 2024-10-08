@@ -122,7 +122,9 @@ class HomepageViewController:
         setupNotifications(forObserver: self,
                            observing: [.HomePanelPrefsChanged,
                                        .TabsPrivacyModeChanged,
-                                       .WallpaperDidChange])
+                                       .WallpaperDidChange,
+                                       // Ecosia: Seed Counter Experiment
+                                       UserDefaultsSeedProgressManager.levelUpNotification])
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -884,6 +886,9 @@ extension HomepageViewController: Notifiable {
                     .WallpaperDidChange:
                 self.reloadView()
 
+            // Ecosia: Seed Counter Experiment
+            case UserDefaultsSeedProgressManager.levelUpNotification:
+                SeedCounterNTPExperiment.trackSeedLevellingUp()
             default: break
             }
         }
