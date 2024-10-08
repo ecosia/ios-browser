@@ -158,23 +158,6 @@ final class Analytics: AnalyticsProtocol {
         
         track(event)
     }
-    
-    func accessQuickSearchSettingsScreen() {
-        let event = Structured(category: Category.browser.rawValue,
-                               action: Action.open.rawValue)
-            .label("quick_search_settings")
-
-        track(event)
-    }
-    
-    func addsNewSearchEngineInQuickSearchSettingsScreen(_ searchEngine: String) {
-        let event = Structured(category: Category.browser.rawValue,
-                               action: "add")
-            .label("search_engine")
-            .property(searchEngine)
-
-        track(event)
-    }
         
     func defaultBrowserSettings() {
         track(Structured(category: Category.browser.rawValue,
@@ -332,13 +315,6 @@ final class Analytics: AnalyticsProtocol {
         track(event)
     }
     
-    func searchEngineShortcutClick(_ engineID: String) {
-        track(Structured(category: Category.browser.rawValue,
-                         action: Action.search.rawValue)
-            .label(Label.Browser.searchEngineShortcut.rawValue)
-            .property(engineID))
-    }
-    
     func sendAnonymousUsageDataSetting(enabled: Bool) {
         // This is the only place where the tracker should be directly
         // used since we want to send this just as the user opts out
@@ -353,7 +329,7 @@ extension Analytics {
     private func appendTestContextIfNeeded(_ action: Analytics.Action.Activity, _ event: Structured) {
         switch action {
         case .resume, .launch:
-            addABTestContexts(to: event, toggles: [.searchShortcuts, .onboardingCardNTP])
+            addABTestContexts(to: event, toggles: [.onboardingCardNTP])
             addCookieConsentContext(to: event)
         }
     }

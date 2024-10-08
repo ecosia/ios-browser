@@ -43,10 +43,6 @@ extension AppSettingsTableViewController {
             PersonalSearchSettings(prefs: profile.prefs, theme: themeManager.currentTheme)
         ]
         
-        if EngineShortcutsExperiment.isEnabled {
-            settings.insert(QuickSearchSearchSetting(settings: self), at: 2)
-        }
-        
         return .init(title: .init(string: .localized(.search)),
                      children: settings)
     }

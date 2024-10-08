@@ -286,15 +286,6 @@ class SearchViewController: SiteTableViewController,
             reloadData()
         }
     }
-    
-    // Ecosia: Quick Search Shortcuts Experiment
-    var tableViewBottomEqualToAnchor: NSLayoutYAxisAnchor {
-        if EngineShortcutsExperiment.isEnabled {
-            return searchEngineScrollView.topAnchor
-        } else {
-            return view.bottomAnchor
-        }
-    }
 
     override func reloadData() {
         querySuggestClient()
@@ -309,9 +300,9 @@ class SearchViewController: SiteTableViewController,
             tableView.topAnchor.constraint(equalTo: view.topAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            // Ecosia: Quick Search Shortcuts Experiment
+            // Ecosia: Hide `searchEngineScrollView` by changing constraints
             // tableView.bottomAnchor.constraint(equalTo: searchEngineScrollView.topAnchor)
-            tableView.bottomAnchor.constraint(equalTo: tableViewBottomEqualToAnchor)
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
 
@@ -403,8 +394,6 @@ class SearchViewController: SiteTableViewController,
                                           object: .recordSearch,
                                           extras: extras)
 
-        // Ecosia: Add Search Engine Analytics
-        Analytics.shared.searchEngineShortcutClick(engine.engineID ?? "other")
         searchDelegate?.searchViewController(self, didSelectURL: url, searchTerm: "")
     }
 

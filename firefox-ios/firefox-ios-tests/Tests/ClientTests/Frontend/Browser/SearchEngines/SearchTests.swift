@@ -158,10 +158,8 @@ class SearchTests: XCTestCase {
         let engine: OpenSearchEngine! = parser.parse(file!, engineID: "bing")
         XCTAssertEqual(engine.shortName, "Bing")
 
-        // Ecosia: Quick Search Shortcuts Experiment
-        // Allow tests to success on modified Bing search engine
-        // let containsPartnerCode = engine.searchTemplate.contains("pc=MOZW")
-        // XCTAssertTrue(containsPartnerCode)
+         let containsPartnerCode = engine.searchTemplate.contains("pc=MOZW")
+         XCTAssertTrue(containsPartnerCode)
     }
 
     func testBingParsing_iPad_hasIpadPartnerCode() {
@@ -170,10 +168,8 @@ class SearchTests: XCTestCase {
         let engine: OpenSearchEngine! = parser.parse(file!, engineID: "bing")
         XCTAssertEqual(engine.shortName, "Bing")
 
-        // Ecosia: Quick Search Shortcuts Experiment
-        // Allow tests to success on modified Bing search engine
-        // let containsPartnerCode = engine.searchTemplate.contains("pc=MOZL")
-        // XCTAssertTrue(containsPartnerCode)
+         let containsPartnerCode = engine.searchTemplate.contains("pc=MOZL")
+         XCTAssertTrue(containsPartnerCode)
     }
 }
 
