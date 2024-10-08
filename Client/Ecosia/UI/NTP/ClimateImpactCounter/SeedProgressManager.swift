@@ -22,8 +22,9 @@ protocol SeedProgressManagerProtocol {
 
 final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol {    
     
-    static var progressUpdatedNotification: Notification.Name { .init("SeedProgressUpdated") }
-    static var levelUpNotification: Notification.Name { .init("SeedLevelUp") }
+    private static let className = String(describing: UserDefaultsSeedProgressManager.self)
+    static var progressUpdatedNotification: Notification.Name { .init("\(className).SeedProgressUpdated") }
+    static var levelUpNotification: Notification.Name { .init("\(className).SeedLevelUp") }
     private static let numberOfSeedsAtStart = 1
     
     // UserDefaults keys
