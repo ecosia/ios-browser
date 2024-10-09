@@ -130,6 +130,11 @@ final class NTPSeedCounterCell: UICollectionViewCell, Themeable, ReusableCell {
     
     // Trigger the twinkle animation on level-up
     func triggerTwinkleEffect() {
+        
+        if UIAccessibility.isReduceMotionEnabled {
+            return  // Skip the animation if Reduce Motion is enabled
+        }
+
         isTwinkleActive = true
         updateTwinkleView()
 
