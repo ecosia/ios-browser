@@ -34,14 +34,22 @@ struct SeedCounterView: View {
                                  theme: theme)
                 
                 if #available(iOS 17.0, *) {
-                    Text("\(Int(seedsCollected))")
-                        .contentTransition(.numericText(value: Double(seedsCollected)))
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
+                    if UIAccessibility.isReduceMotionEnabled {
+                        Text("\(Int(seedsCollected))")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                    } else {
+                        Text("\(Int(seedsCollected))")
+                            .contentTransition(.numericText(value: Double(seedsCollected)))
+                            .animation(.default, value: seedsCollected)
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                    }
                 } else {
                     Text("\(Int(seedsCollected))")
                         .font(.subheadline)
                         .fontWeight(.semibold)
+                        .animation(!UIAccessibility.isReduceMotionEnabled ? .easeInOut(duration: 0.5) : .none, value: seedsCollected)
                 }
             }
         }
@@ -49,9 +57,7 @@ struct SeedCounterView: View {
             // Add observer for progress updates
             NotificationCenter.default.addObserver(forName: progressManagerType.progressUpdatedNotification, object: nil, queue: .main) { _ in
                 // Update the state when progress changes
-                self.seedsCollected = progressManagerType.loadTotalSeedsCollected()
-                self.level = progressManagerType.loadCurrentLevel()
-                self.progressValue = progressManagerType.calculateInnerProgress()
+                self.triggerUpdateValues()
             }
             applyTheme(theme: themeVal.theme)
         }
@@ -68,5 +74,23 @@ struct SeedCounterView: View {
     func applyTheme(theme: Theme) {
         self.theme.backgroundColor = Color(.legacyTheme.ecosia.primaryBackground)
         self.theme.progressColor = Color(.legacyTheme.ecosia.primaryButtonActive)
+    }
+    
+    private func triggerUpdateValues() {
+        if BrowserKitInformation.shared.buildChannel == .release {
+            updateValues()
+        } else {
+            // In ANY other build (e.g. adhoc, development), delay updateValues by 5 seconds
+            // so they can be seen and perhaps QAd as well
+            DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                self.updateValues()
+            }
+        }
+    }
+    
+    private func updateValues() {
+        self.seedsCollected = progressManagerType.loadTotalSeedsCollected()
+        self.level = progressManagerType.loadCurrentLevel()
+        self.progressValue = progressManagerType.calculateInnerProgress()
     }
 }
