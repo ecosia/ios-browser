@@ -211,7 +211,7 @@
 		2C49854E206173C800893DAE /* photon-colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C49854D206173C800893DAE /* photon-colors.swift */; };
 		2C4ABD492CB58E4F00FF86F9 /* Sparkle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4ABD482CB58E4F00FF86F9 /* Sparkle.swift */; };
 		2C4D16602C76360800E89C95 /* environment.json in Resources */ = {isa = PBXBuildFile; fileRef = 2C4D165F2C76360800E89C95 /* environment.json */; };
-		2C5A5E652CB53DB7005BFE8B /* SeedLevelConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5A5E642CB53DB7005BFE8B /* SeedLevelConfig.swift */; };
+		2C5A5E652CB53DB7005BFE8B /* SeedCounterConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5A5E642CB53DB7005BFE8B /* SeedCounterConfig.swift */; };
 		2C5A5E672CB53DF9005BFE8B /* UserDefaultsSeedProgressManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5A5E662CB53DF9005BFE8B /* UserDefaultsSeedProgressManager.swift */; };
 		2C5B81C82C75388300B81D95 /* LocaleRetriever.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5B81C72C75388300B81D95 /* LocaleRetriever.swift */; };
 		2C6189312B7A8A22006B70D7 /* EcosiaLaunchScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6188802B7A8A21006B70D7 /* EcosiaLaunchScreenView.swift */; };
@@ -2370,7 +2370,7 @@
 		2C4ABD482CB58E4F00FF86F9 /* Sparkle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Sparkle.swift; sourceTree = "<group>"; };
 		2C4B6BF220349EB800A009C2 /* OnboardingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingTests.swift; sourceTree = "<group>"; };
 		2C4D165F2C76360800E89C95 /* environment.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = environment.json; sourceTree = "<group>"; };
-		2C5A5E642CB53DB7005BFE8B /* SeedLevelConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedLevelConfig.swift; sourceTree = "<group>"; };
+		2C5A5E642CB53DB7005BFE8B /* SeedCounterConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedCounterConfig.swift; sourceTree = "<group>"; };
 		2C5A5E662CB53DF9005BFE8B /* UserDefaultsSeedProgressManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsSeedProgressManager.swift; sourceTree = "<group>"; };
 		2C5B81C72C75388300B81D95 /* LocaleRetriever.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocaleRetriever.swift; sourceTree = "<group>"; };
 		2C6045859589979C43AF09E0 /* jv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = jv; path = jv.lproj/ClearPrivateDataConfirm.strings; sourceTree = "<group>"; };
@@ -8879,7 +8879,7 @@
 				2CCBB5262CAEAD53006E2E10 /* SeedCounterView.swift */,
 				2CCBB5362CAF0E8C006E2E10 /* SeedCounterHiddenSettings.swift */,
 				2C5A5E682CB53E05005BFE8B /* SeedProgressManager */,
-				2C5A5E642CB53DB7005BFE8B /* SeedLevelConfig.swift */,
+				2C5A5E642CB53DB7005BFE8B /* SeedCounterConfig.swift */,
 			);
 			path = ClimateImpactCounter;
 			sourceTree = "<group>";
@@ -13928,7 +13928,7 @@
 				AB52ED3B2A0E8873001067F5 /* UserConversionMetrics.swift in Sources */,
 				219935EC2B07110900E5966F /* TabTrayModel.swift in Sources */,
 				8A3EF7F72A2FCF6D00796E3A /* ExportLogDataSetting.swift in Sources */,
-				2C5A5E652CB53DB7005BFE8B /* SeedLevelConfig.swift in Sources */,
+				2C5A5E652CB53DB7005BFE8B /* SeedCounterConfig.swift in Sources */,
 				43E69EC3254D081D00B591C2 /* SimpleTab.swift in Sources */,
 				8ADAE4202A33A0FD007BF926 /* SendFeedbackSetting.swift in Sources */,
 				C29B64812AD6959E00F3244B /* QRCodeCoordinator.swift in Sources */,

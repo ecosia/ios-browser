@@ -30,7 +30,7 @@ struct TwinkleView: View {
         return value == 0 ? 0.1 : value
     }
     
-    let active: Bool
+    var active: Bool // Made active a var so it can change even from UIKit
     @StateObject var magic = SparkleMagic()
     
     var body: some View {
@@ -42,7 +42,7 @@ struct TwinkleView: View {
                         ForEach(magic.sparkles) { sparkle in
                             SparkleShape()
                                 .fill(Color.white)
-                                .frame(width: 20, height: 20)  // Increased size of sparkles
+                                .frame(width: 15, height: 15)
                                 .scaleEffect(scaleFor(date: context.date, sparkle: sparkle))
                                 .position(self.position(in: geo, sparkle: sparkle))
                         }
