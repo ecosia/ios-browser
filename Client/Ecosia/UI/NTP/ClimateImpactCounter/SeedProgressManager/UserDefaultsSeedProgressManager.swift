@@ -16,7 +16,7 @@ final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol {
     private static let currentLevelKey = "CurrentLevel"
     private static let lastAppOpenDateKey = "LastAppOpenDate"
     
-    static var seedLevels: [SeedLevelConfig.SeedLevel] = SeedCounterNTPExperiment.seedLevelConfig?.levels.compactMap { $0 } ?? []
+    static var seedLevels: [SeedCounterConfig.SeedLevel] = SeedCounterNTPExperiment.seedCounterConfig?.levels.compactMap { $0 } ?? []
     
     private init() {}
     
