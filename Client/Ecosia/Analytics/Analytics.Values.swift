@@ -47,7 +47,7 @@ extension Analytics {
             impact,
             quickActions = "quick_actions",
             news,
-            about,
+            onboardingCard = "onboarding_card",
             climateCounter = "climate_counter"
         }
         
