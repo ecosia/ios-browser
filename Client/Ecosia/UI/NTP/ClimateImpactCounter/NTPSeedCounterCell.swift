@@ -60,8 +60,8 @@ final class NTPSeedCounterCell: UICollectionViewCell, Themeable, ReusableCell {
         contentView.addSubview(containerStackView)
         setupContainerStackView()
         setupSeedCounterViewHostingController()
-        setupTransparentButton()
         setupTwinkleViewHostingController()
+        setupTransparentButton()
         applyTheme()
         listenForThemeChange(contentView)
     }
