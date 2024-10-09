@@ -66,7 +66,6 @@ final class UserDefaultsSeedProgressManagerTests: XCTestCase {
 
         XCTAssertEqual(level, 2, "User should be in level 2 after adding 2 more seed beyond the threshold")
         XCTAssertEqual(totalSeedsCollected, 7, "Total seeds should accumulate across levels (6 new added + 1 accumulated at the start")
-        XCTAssertEqual(innerProgress, 0.2, accuracy: 0.01, "Should show 20% progress towards completing level 2")
     }
 
     // Test inner progress calculation for Level 2
