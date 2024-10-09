@@ -33,25 +33,13 @@ struct SeedCounterView: View {
                 SeedProgressView(progressValue: progressValue,
                                  theme: theme)
                 
-                if #available(iOS 17.0, *) {
-                    if UIAccessibility.isReduceMotionEnabled {
-                        Text("\(Int(seedsCollected))")
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
-                    } else {
-                        Text("\(Int(seedsCollected))")
-                            .contentTransition(.numericText(value: Double(seedsCollected)))
-                            .animation(.default, value: seedsCollected)
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
-                    }
-                } else {
-                    Text("\(Int(seedsCollected))")
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                        .animation(!UIAccessibility.isReduceMotionEnabled ? .easeInOut(duration: 0.5) : .none, value: seedsCollected)
-                }
-            }
+                Text("\(Int(seedsCollected))")
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.5)
+                    .scaledToFill()
+                    .modifier(TextAnimationModifier(seedsCollected: seedsCollected))            }
         }
         .onAppear {
             // Add observer for progress updates
@@ -92,5 +80,24 @@ struct SeedCounterView: View {
         self.seedsCollected = progressManagerType.loadTotalSeedsCollected()
         self.level = progressManagerType.loadCurrentLevel()
         self.progressValue = progressManagerType.calculateInnerProgress()
+    }
+}
+
+struct TextAnimationModifier: ViewModifier {
+    var seedsCollected: Int
+
+    func body(content: Content) -> some View {
+        if #available(iOS 17.0, *) {
+            if UIAccessibility.isReduceMotionEnabled {
+                content
+            } else {
+                content
+                    .contentTransition(.numericText(value: Double(seedsCollected)))
+                    .animation(.default, value: seedsCollected)
+            }
+        } else {
+            content
+                .animation(!UIAccessibility.isReduceMotionEnabled ? .easeInOut(duration: 0.5) : .none, value: seedsCollected)
+        }
     }
 }
