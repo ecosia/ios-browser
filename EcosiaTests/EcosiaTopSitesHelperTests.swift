@@ -20,7 +20,7 @@ extension TopSitesHelperTests {
             
             XCTAssertTrue((sites.first(where: { $0.url.asURL?.absoluteString == "https://blog.ecosia.org/ecosia-financial-reports-tree-planting-receipts/" }) != nil))
             XCTAssertTrue((sites.first(where: { $0.url.asURL?.absoluteString == "https://www.ecosia.org/privacy" }) != nil))
-            XCTAssertTrue((sites.first(where: { $0.url.asURL?.absoluteString == "https://blog.ecosia.org/" }) != nil))
+            XCTAssertTrue((sites.first(where: { $0.url.asURL?.absoluteString == "https://blog.ecosia.org/tag/where-does-ecosia-plant-trees/" }) != nil))
 
             expectation.fulfill()
         }

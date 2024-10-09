@@ -155,7 +155,7 @@ open class DefaultSuggestedSites {
                 title: NSLocalizedString("Privacy", tableName: "Ecosia", comment: "")
             ),
             SuggestedSiteData(
-                url: Environment.current.urlProvider.blog.absoluteString,
+                url: Environment.current.urlProvider.trees.absoluteString,
                 bgColor: "0x000000",
                 imageUrl: "asset://suggestedsites_ecosia-org",
                 faviconUrl: "asset://defaultFavicon",

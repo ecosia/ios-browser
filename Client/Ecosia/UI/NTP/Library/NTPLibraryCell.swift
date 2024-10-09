@@ -27,12 +27,22 @@ class NTPLibraryCell: UICollectionViewCell, Themeable, ReusableCell {
             case .downloads: return .AppMenu.AppMenuDownloadsTitleString
             }
         }
+        
         var image: UIImage? {
             switch self {
             case .bookmarks: return .init(named: "libraryFavorites")
             case .history: return .init(named: "libraryHistory")
             case .readingList: return .init(named: "libraryReading")
             case .downloads: return .init(named: "libraryDownloads")
+            }
+        }
+        
+        var analyticsProperty: Analytics.Property.Library {
+            switch self {
+            case .bookmarks: return .bookmarks
+            case .history: return .history
+            case .readingList: return .readingList
+            case .downloads: return .downloads
             }
         }
     }
@@ -107,7 +117,9 @@ class NTPLibraryCell: UICollectionViewCell, Themeable, ReusableCell {
     }
 
     @objc func tapped(_ sender: UIButton) {
-        switch Item(rawValue: sender.tag) {
+        guard let item = Item(rawValue: sender.tag) else { return }
+        Analytics.shared.ntpLibraryItem(.click, property: item.analyticsProperty)
+        switch item {
         case .bookmarks:
             delegate?.libraryCellOpenBookmarks()
         case .history:
@@ -116,8 +128,6 @@ class NTPLibraryCell: UICollectionViewCell, Themeable, ReusableCell {
             delegate?.libraryCellOpenReadlist()
         case .downloads:
             delegate?.libraryCellOpenDownloads()
-        default:
-            break
         }
     }
 }

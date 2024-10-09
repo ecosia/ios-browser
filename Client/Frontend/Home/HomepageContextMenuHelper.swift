@@ -89,9 +89,14 @@ class HomepageContextMenuHelper: HomepageContextMenuProtocol {
     }
 
     // MARK: - Default actions
-    func getOpenInNewPrivateTabAction(siteURL: URL, sectionType: HomepageSectionType) -> PhotonRowActions {
+    /* Ecosia: Receive `Site` in addition to `URL`. Required for tracking.
+     func getOpenInNewPrivateTabAction(siteURL: URL, sectionType: HomepageSectionType) -> PhotonRowActions {
+     */
+    func getOpenInNewPrivateTabAction(site: Site, siteURL: URL, sectionType: HomepageSectionType) -> PhotonRowActions {
         return SingleActionViewModel(title: .OpenInNewPrivateTabContextMenuTitle, iconString: ImageIdentifiers.newPrivateTab) { _ in
             self.delegate?.homePanelDidRequestToOpenInNewTab(siteURL, isPrivate: true)
+            // Ecosia: Track open in new tab top site action
+            self.viewModel.topSiteViewModel.trackTopSiteMenuAction(site: site, action: .openPrivateTab)
             // Ecosia: Remove Telemetry section type helper
             // sectionType.newPrivateTabActionTelemetry()
         }.items
@@ -150,9 +155,15 @@ class HomepageContextMenuHelper: HomepageContextMenuProtocol {
         return [openInNewTabAction, openInNewPrivateTabAction, bookmarkAction, shareAction]
     }
      */
-    private func getOpenInNewTabAction(siteURL: URL, sectionType: HomepageSectionType) -> PhotonRowActions {
+    
+    /* Ecosia: Receive `Site` in addition to `URL`. Required for tracking.
+     private func getOpenInNewTabAction(siteURL: URL, sectionType: HomepageSectionType) -> PhotonRowActions {
+     */
+    private func getOpenInNewTabAction(site: Site, siteURL: URL, sectionType: HomepageSectionType) -> PhotonRowActions {
         return SingleActionViewModel(title: .OpenInNewTabContextMenuTitle, iconString: StandardImageIdentifiers.Large.plus) { _ in
             self.delegate?.homePanelDidRequestToOpenInNewTab(siteURL, isPrivate: false)
+            // Ecosia: Track open in new tab top site action
+            self.viewModel.topSiteViewModel.trackTopSiteMenuAction(site: site, action: .openNewTab)
             /* Ecosia: Remove History Highlights and Pocket
             if sectionType == .pocket {
                 let originExtras = TelemetryWrapper.getOriginExtras(isZeroSearch: self.viewModel.isZeroSearch)
@@ -235,20 +246,38 @@ class HomepageContextMenuHelper: HomepageContextMenuProtocol {
         guard let siteURL = site.url.asURL else { return nil }
 
         let topSiteActions: [PhotonRowActions]
+        /* Ecosia: Include `site: Site` wherever required by tracking
+         if let site = site as? PinnedSite {
+             topSiteActions = [getRemovePinTopSiteAction(site: site),
+                               getOpenInNewTabAction(siteURL: siteURL, sectionType: .topSites),
+                               getOpenInNewPrivateTabAction(siteURL: siteURL, sectionType: .topSites),
+                               getRemoveTopSiteAction(site: site)]
+         } else if site as? SponsoredTile != nil {
+             topSiteActions = [getOpenInNewTabAction(siteURL: siteURL, sectionType: .topSites),
+                               getOpenInNewPrivateTabAction(siteURL: siteURL, sectionType: .topSites),
+                               getSettingsAction(),
+                               getSponsoredContentAction()]
+         } else {
+             topSiteActions = [getPinTopSiteAction(site: site),
+                               getOpenInNewTabAction(siteURL: siteURL, sectionType: .topSites),
+                               getOpenInNewPrivateTabAction(siteURL: siteURL, sectionType: .topSites),
+                               getRemoveTopSiteAction(site: site)]
+         }
+         */
         if let site = site as? PinnedSite {
             topSiteActions = [getRemovePinTopSiteAction(site: site),
-                              getOpenInNewTabAction(siteURL: siteURL, sectionType: .topSites),
-                              getOpenInNewPrivateTabAction(siteURL: siteURL, sectionType: .topSites),
+                              getOpenInNewTabAction(site: site, siteURL: siteURL, sectionType: .topSites),
+                              getOpenInNewPrivateTabAction(site: site, siteURL: siteURL, sectionType: .topSites),
                               getRemoveTopSiteAction(site: site)]
         } else if site as? SponsoredTile != nil {
-            topSiteActions = [getOpenInNewTabAction(siteURL: siteURL, sectionType: .topSites),
-                              getOpenInNewPrivateTabAction(siteURL: siteURL, sectionType: .topSites),
+            topSiteActions = [getOpenInNewTabAction(site: site, siteURL: siteURL, sectionType: .topSites),
+                              getOpenInNewPrivateTabAction(site: site, siteURL: siteURL, sectionType: .topSites),
                               getSettingsAction(),
                               getSponsoredContentAction()]
         } else {
             topSiteActions = [getPinTopSiteAction(site: site),
-                              getOpenInNewTabAction(siteURL: siteURL, sectionType: .topSites),
-                              getOpenInNewPrivateTabAction(siteURL: siteURL, sectionType: .topSites),
+                              getOpenInNewTabAction(site: site, siteURL: siteURL, sectionType: .topSites),
+                              getOpenInNewPrivateTabAction(site: site, siteURL: siteURL, sectionType: .topSites),
                               getRemoveTopSiteAction(site: site)]
         }
         return topSiteActions
@@ -265,6 +294,8 @@ class HomepageContextMenuHelper: HomepageContextMenuProtocol {
             }
 
             self.sendTopSiteContextualTelemetry(type: .remove)
+            // Ecosia: Track remove top site action
+            self.viewModel.topSiteViewModel.trackTopSiteMenuAction(site: site, action: .remove)
         }).items
     }
 
@@ -274,6 +305,8 @@ class HomepageContextMenuHelper: HomepageContextMenuProtocol {
                                      tapHandler: { _ in
             self.viewModel.topSiteViewModel.pinTopSite(site)
             self.sendTopSiteContextualTelemetry(type: .pin)
+            // Ecosia: Track pin top site action
+            self.viewModel.topSiteViewModel.trackTopSiteMenuAction(site: site, action: .pin)
         }).items
     }
 
@@ -284,6 +317,8 @@ class HomepageContextMenuHelper: HomepageContextMenuProtocol {
                                      tapHandler: { _ in
             self.viewModel.topSiteViewModel.removePinTopSite(site)
             self.sendTopSiteContextualTelemetry(type: .unpin)
+            // Ecosia: Track unpin top site action
+            self.viewModel.topSiteViewModel.trackTopSiteMenuAction(site: site, action: .unpin)
         }).items
     }
 
