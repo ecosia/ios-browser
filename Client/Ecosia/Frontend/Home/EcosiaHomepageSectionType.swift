@@ -10,6 +10,7 @@
 import Foundation
 
 enum HomepageSectionType: Int, CaseIterable {
+    case climateImpactCounter
     case logoHeader
     case onboardingCard
     case libraryShortcuts
@@ -21,6 +22,7 @@ enum HomepageSectionType: Int, CaseIterable {
 
     var cellIdentifier: String {
         switch self {
+        case .climateImpactCounter: return NTPSeedCounterCell.cellIdentifier
         case .logoHeader: return NTPLogoCell.cellIdentifier
         case .onboardingCard: return NTPOnboardingCardCell.cellIdentifier
         case .libraryShortcuts: return NTPLibraryCell.cellIdentifier
@@ -34,6 +36,7 @@ enum HomepageSectionType: Int, CaseIterable {
 
     static var cellTypes: [ReusableCell.Type] {
         return [
+            NTPSeedCounterCell.self,
             NTPLogoCell.self,
             TopSiteItemCell.self,
             EmptyTopSiteCell.self,
@@ -56,7 +59,7 @@ private let MinimumInsets: CGFloat = 16
 extension HomepageSectionType {
     var customizableConfig: CustomizableNTPSettingConfig? {
         switch self {
-        case .logoHeader, .onboardingCard, .libraryShortcuts, .ntpCustomization: return nil
+        case .logoHeader, .onboardingCard, .libraryShortcuts, .ntpCustomization, .climateImpactCounter: return nil
         case .topSites: return .topSites
         case .impact: return .climateImpact
         case .aboutEcosia: return .aboutEcosia
@@ -89,7 +92,7 @@ extension HomepageSectionType {
                                            leading: horizontal,
                                            bottom: bottomSpacing,
                                            trailing: horizontal)
-        case .logoHeader:
+        case .logoHeader, .climateImpactCounter:
             return .init(top: 0, leading: 0, bottom: 0, trailing: 0)
         }
     }

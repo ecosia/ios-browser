@@ -122,7 +122,9 @@ class HomepageViewController:
         setupNotifications(forObserver: self,
                            observing: [.HomePanelPrefsChanged,
                                        .TabsPrivacyModeChanged,
-                                       .WallpaperDidChange])
+                                       .WallpaperDidChange,
+                                       // Ecosia: Seed Counter Experiment
+                                       SeedCounterNTPExperiment.progressManagerType.levelUpNotification])
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -705,6 +707,7 @@ private extension HomepageViewController {
         viewModel.newsViewModel.delegate = self
         viewModel.aboutEcosiaViewModel.delegate = self
         viewModel.ntpCustomizationViewModel.delegate = self
+        viewModel.climateImpactCounterViewModel.delegate = self
     }
 
     private func openHistoryHighlightsSearchGroup(item: HighlightItem) {
@@ -863,6 +866,12 @@ extension HomepageViewController: HomepageViewModelDelegate {
     }
 }
 
+extension HomepageViewController: NTPSeedCounterDelegate {
+    func didTapSeedCounter() {
+        SeedCounterNTPExperiment.trackTapOnSeedCounter()
+    }
+}
+
 // MARK: - Notifiable
 extension HomepageViewController: Notifiable {
     func handleNotifications(_ notification: Notification) {
@@ -877,6 +886,9 @@ extension HomepageViewController: Notifiable {
                     .WallpaperDidChange:
                 self.reloadView()
 
+            // Ecosia: Seed Counter Experiment
+            case SeedCounterNTPExperiment.progressManagerType.levelUpNotification:
+                SeedCounterNTPExperiment.trackSeedLevellingUp()
             default: break
             }
         }

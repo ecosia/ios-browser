@@ -200,6 +200,7 @@
 		2C1298A82BF5EE23005AE4E4 /* libStorage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FCAE21A1ABB51F800877008 /* libStorage.a */; };
 		2C1298AC2BF5EE3E005AE4E4 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 2C1298AB2BF5EE3E005AE4E4 /* Core */; };
 		2C1298AF2BF602D3005AE4E4 /* DefaultSuggestedSites.swift in Sources */ = {isa = PBXBuildFile; fileRef = 394CF6CE1BAA493C00906917 /* DefaultSuggestedSites.swift */; };
+		2C16B7672CAF2441006118F8 /* UserDefaultsSeedProgressManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C16B7652CAF2425006118F8 /* UserDefaultsSeedProgressManagerTests.swift */; };
 		2C19DACF2C74C7BF00D2641C /* snapshot_configuration.json in Resources */ = {isa = PBXBuildFile; fileRef = 2C19DACE2C74C7BF00D2641C /* snapshot_configuration.json */; };
 		2C1F23BD2B9F405E00186F55 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 2C1F23BC2B9F405E00186F55 /* Core */; };
 		2C2349A32C57E5BC007A5894 /* EcosiaPerformanceTestHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2349A22C57E5BC007A5894 /* EcosiaPerformanceTestHistory.swift */; };
@@ -209,6 +210,8 @@
 		2C3BD5EB2BF6193B00E25B0D /* EcosiaThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6188C32B7A8A22006B70D7 /* EcosiaThemeManager.swift */; };
 		2C49854E206173C800893DAE /* photon-colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C49854D206173C800893DAE /* photon-colors.swift */; };
 		2C4D16602C76360800E89C95 /* environment.json in Resources */ = {isa = PBXBuildFile; fileRef = 2C4D165F2C76360800E89C95 /* environment.json */; };
+		2C5A5E652CB53DB7005BFE8B /* SeedLevelConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5A5E642CB53DB7005BFE8B /* SeedLevelConfig.swift */; };
+		2C5A5E672CB53DF9005BFE8B /* UserDefaultsSeedProgressManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5A5E662CB53DF9005BFE8B /* UserDefaultsSeedProgressManager.swift */; };
 		2C5B81C82C75388300B81D95 /* LocaleRetriever.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5B81C72C75388300B81D95 /* LocaleRetriever.swift */; };
 		2C6189312B7A8A22006B70D7 /* EcosiaLaunchScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6188802B7A8A21006B70D7 /* EcosiaLaunchScreenView.swift */; };
 		2C6189322B7A8A22006B70D7 /* EcosiaLaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2C6188812B7A8A21006B70D7 /* EcosiaLaunchScreen.xib */; };
@@ -349,6 +352,9 @@
 		2C69DA842C62B44B00D7F69F /* NTPComponentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C69DA832C62B44B00D7F69F /* NTPComponentTests.swift */; };
 		2C69DA922C63A92D00D7F69F /* SnapshotBaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C69DA912C63A92D00D7F69F /* SnapshotBaseTests.swift */; };
 		2C69DA942C63B0C000D7F69F /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C69DA932C63B0C000D7F69F /* String+Extension.swift */; };
+		2C6B5B3E2CAAF28000F15323 /* NTPSeedCounterCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6B5B3A2CAAF27F00F15323 /* NTPSeedCounterCell.swift */; };
+		2C6B5B3F2CAAF28000F15323 /* NTPSeedCounterViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6B5B3B2CAAF27F00F15323 /* NTPSeedCounterViewModel.swift */; };
+		2C6B5B412CAAF3AA00F15323 /* SeedCounterNTPExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6B5B402CAAF3AA00F15323 /* SeedCounterNTPExperiment.swift */; };
 		2C6C908F2C614A6C007D9B43 /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = 2C6C908E2C614A6C007D9B43 /* SnapshotTesting */; };
 		2C6C90902C614A76007D9B43 /* OnboardingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD368492C5BC31700972871 /* OnboardingTests.swift */; };
 		2C78374B2C1765DF00BBFFEB /* LoadingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCFB3D42C0F1EA500BEDCA0 /* LoadingScreen.swift */; };
@@ -371,6 +377,10 @@
 		2CABD7162C11C9CC00A0750F /* MozillaAppServices in Frameworks */ = {isa = PBXBuildFile; productRef = 2CABD7152C11C9CC00A0750F /* MozillaAppServices */; };
 		2CABD7282C12EF1E00A0750F /* PrivateModeButtonTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CABD7272C12EF1E00A0750F /* PrivateModeButtonTests.swift */; };
 		2CC8AC342C4F887D000A669A /* MockAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC8AC332C4F887D000A669A /* MockAnalytics.swift */; };
+		2CCBB5232CAE9826006E2E10 /* ArcProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCBB5222CAE9826006E2E10 /* ArcProgressView.swift */; };
+		2CCBB5252CAEA9DF006E2E10 /* SeedProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCBB5242CAEA9DF006E2E10 /* SeedProgressView.swift */; };
+		2CCBB5272CAEAD53006E2E10 /* SeedCounterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCBB5262CAEAD53006E2E10 /* SeedCounterView.swift */; };
+		2CCBB5352CAF06DE006E2E10 /* SeedProgressManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCBB5342CAF06DE006E2E10 /* SeedProgressManagerProtocol.swift */; };
 		2CCFB3D72C0FBEE800BEDCA0 /* TabToolbarHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D815A3A724A53F3200AAB221 /* TabToolbarHelperTests.swift */; };
 		2CD48B7F2C7F7E4100A70908 /* EcosiaOverlayModeManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD48B7E2C7F7E4100A70908 /* EcosiaOverlayModeManagerTests.swift */; };
 		2CE294472B7CDD56006C22B2 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 2CE294462B7CDD56006C22B2 /* Core */; };
@@ -2341,6 +2351,7 @@
 		2C08319B2B89127200BD7134 /* Ecosia.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Ecosia.entitlements; sourceTree = "<group>"; };
 		2C08319C2B89127200BD7134 /* EcosiaBeta.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = EcosiaBeta.entitlements; sourceTree = "<group>"; };
 		2C1298A42BF5EB16005AE4E4 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		2C16B7652CAF2425006118F8 /* UserDefaultsSeedProgressManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsSeedProgressManagerTests.swift; sourceTree = "<group>"; };
 		2C19DACE2C74C7BF00D2641C /* snapshot_configuration.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = snapshot_configuration.json; sourceTree = "<group>"; };
 		2C2349A22C57E5BC007A5894 /* EcosiaPerformanceTestHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaPerformanceTestHistory.swift; sourceTree = "<group>"; };
 		2C26401D9CCB8C2671EA2431 /* ta */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ta; path = ta.lproj/3DTouchActions.strings; sourceTree = "<group>"; };
@@ -2356,6 +2367,8 @@
 		2C4A07DB20246EAD0083E320 /* DragAndDropTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragAndDropTests.swift; sourceTree = "<group>"; };
 		2C4B6BF220349EB800A009C2 /* OnboardingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingTests.swift; sourceTree = "<group>"; };
 		2C4D165F2C76360800E89C95 /* environment.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = environment.json; sourceTree = "<group>"; };
+		2C5A5E642CB53DB7005BFE8B /* SeedLevelConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedLevelConfig.swift; sourceTree = "<group>"; };
+		2C5A5E662CB53DF9005BFE8B /* UserDefaultsSeedProgressManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsSeedProgressManager.swift; sourceTree = "<group>"; };
 		2C5B81C72C75388300B81D95 /* LocaleRetriever.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocaleRetriever.swift; sourceTree = "<group>"; };
 		2C6045859589979C43AF09E0 /* jv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = jv; path = jv.lproj/ClearPrivateDataConfirm.strings; sourceTree = "<group>"; };
 		2C6188802B7A8A21006B70D7 /* EcosiaLaunchScreenView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EcosiaLaunchScreenView.swift; sourceTree = "<group>"; };
@@ -2488,6 +2501,9 @@
 		2C69DA832C62B44B00D7F69F /* NTPComponentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPComponentTests.swift; sourceTree = "<group>"; };
 		2C69DA912C63A92D00D7F69F /* SnapshotBaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapshotBaseTests.swift; sourceTree = "<group>"; };
 		2C69DA932C63B0C000D7F69F /* String+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extension.swift"; sourceTree = "<group>"; };
+		2C6B5B3A2CAAF27F00F15323 /* NTPSeedCounterCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NTPSeedCounterCell.swift; sourceTree = "<group>"; };
+		2C6B5B3B2CAAF27F00F15323 /* NTPSeedCounterViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NTPSeedCounterViewModel.swift; sourceTree = "<group>"; };
+		2C6B5B402CAAF3AA00F15323 /* SeedCounterNTPExperiment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedCounterNTPExperiment.swift; sourceTree = "<group>"; };
 		2C6C90822C614A16007D9B43 /* EcosiaSnapshotTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EcosiaSnapshotTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C6E44099EACF7BE5438CEB6 /* ca */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ca; path = ca.lproj/Today.strings; sourceTree = "<group>"; };
 		2C7DBABB2C4EA17200BCD03F /* AnalyticsFeatureManagementIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsFeatureManagementIntegrationTests.swift; sourceTree = "<group>"; };
@@ -2532,6 +2548,10 @@
 		2CC1B3EF1E9B861400814EEC /* DomainAutocompleteTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DomainAutocompleteTests.swift; sourceTree = "<group>"; };
 		2CC8AC332C4F887D000A669A /* MockAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAnalytics.swift; sourceTree = "<group>"; };
 		2CCB296620A99C9500121DD8 /* LoginsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginsTests.swift; sourceTree = "<group>"; };
+		2CCBB5222CAE9826006E2E10 /* ArcProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArcProgressView.swift; sourceTree = "<group>"; };
+		2CCBB5242CAEA9DF006E2E10 /* SeedProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedProgressView.swift; sourceTree = "<group>"; };
+		2CCBB5262CAEAD53006E2E10 /* SeedCounterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedCounterView.swift; sourceTree = "<group>"; };
+		2CCBB5342CAF06DE006E2E10 /* SeedProgressManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedProgressManagerProtocol.swift; sourceTree = "<group>"; };
 		2CCF17522105E4FD00705AE5 /* DisplaySettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplaySettingsTests.swift; sourceTree = "<group>"; };
 		2CCFB3D42C0F1EA500BEDCA0 /* LoadingScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingScreen.swift; sourceTree = "<group>"; };
 		2CD368492C5BC31700972871 /* OnboardingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingTests.swift; sourceTree = "<group>"; };
@@ -8354,6 +8374,23 @@
 			path = AppExtensions;
 			sourceTree = "<group>";
 		};
+		2C16B7642CAF2417006118F8 /* ClimateImpactCounter */ = {
+			isa = PBXGroup;
+			children = (
+				2C16B7652CAF2425006118F8 /* UserDefaultsSeedProgressManagerTests.swift */,
+			);
+			path = ClimateImpactCounter;
+			sourceTree = "<group>";
+		};
+		2C5A5E682CB53E05005BFE8B /* SeedProgressManager */ = {
+			isa = PBXGroup;
+			children = (
+				2CCBB5342CAF06DE006E2E10 /* SeedProgressManagerProtocol.swift */,
+				2C5A5E662CB53DF9005BFE8B /* UserDefaultsSeedProgressManager.swift */,
+			);
+			path = SeedProgressManager;
+			sourceTree = "<group>";
+		};
 		2C61887E2B7A8A21006B70D7 /* Ecosia */ = {
 			isa = PBXGroup;
 			children = (
@@ -8468,6 +8505,7 @@
 		2C61889D2B7A8A21006B70D7 /* NTP */ = {
 			isa = PBXGroup;
 			children = (
+				2C6B5B3C2CAAF27F00F15323 /* ClimateImpactCounter */,
 				2CA995262CA2C053001064CC /* NudgeCards */,
 				2C61889E2B7A8A21006B70D7 /* NTPLayout.swift */,
 				2C61889F2B7A8A21006B70D7 /* DefaultBrowser.swift */,
@@ -8665,6 +8703,7 @@
 			children = (
 				2C6188F82B7A8A22006B70D7 /* EngagementServiceExperiment.swift */,
 				12187B4F2C89B43D00BA88CA /* OnboardingCardNTPExperiment.swift */,
+				2C6B5B402CAAF3AA00F15323 /* SeedCounterNTPExperiment.swift */,
 			);
 			path = Unleash;
 			sourceTree = "<group>";
@@ -8825,6 +8864,20 @@
 			path = Onboarding;
 			sourceTree = "<group>";
 		};
+		2C6B5B3C2CAAF27F00F15323 /* ClimateImpactCounter */ = {
+			isa = PBXGroup;
+			children = (
+				2C6B5B3A2CAAF27F00F15323 /* NTPSeedCounterCell.swift */,
+				2C6B5B3B2CAAF27F00F15323 /* NTPSeedCounterViewModel.swift */,
+				2CCBB5222CAE9826006E2E10 /* ArcProgressView.swift */,
+				2CCBB5242CAEA9DF006E2E10 /* SeedProgressView.swift */,
+				2CCBB5262CAEAD53006E2E10 /* SeedCounterView.swift */,
+				2C5A5E682CB53E05005BFE8B /* SeedProgressManager */,
+				2C5A5E642CB53DB7005BFE8B /* SeedLevelConfig.swift */,
+			);
+			path = ClimateImpactCounter;
+			sourceTree = "<group>";
+		};
 		2C7DBABA2C4EA14C00BCD03F /* IntegrationTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -8910,6 +8963,7 @@
 		2CE2945C2B7FC51E006C22B2 /* EcosiaTests */ = {
 			isa = PBXGroup;
 			children = (
+				2C16B7642CAF2417006118F8 /* ClimateImpactCounter */,
 				2CD3683F2C5BA30A00972871 /* SnapshotTests */,
 				2C7DBABA2C4EA14C00BCD03F /* IntegrationTests */,
 				2C872A522B8CD45F00B318A0 /* Mocks */,
@@ -13623,6 +13677,7 @@
 				2128E2802934FBB400FB91BE /* CopyLinkActivity.swift in Sources */,
 				E17BE4C42A94BA6900C5124E /* FakespotHighlightGroupView.swift in Sources */,
 				C825E9832832A425006CB811 /* NimbusSearchBarLayer.swift in Sources */,
+				2C6B5B3F2CAAF28000F15323 /* NTPSeedCounterViewModel.swift in Sources */,
 				E1FC23F12A8629380089E14D /* FakespotReliabilityCardView.swift in Sources */,
 				C8DC90C92A0675E70008832B /* MarkupParsingUtility.swift in Sources */,
 				CA03B26A247F1D9E00382B62 /* BreachAlertsClient.swift in Sources */,
@@ -13711,6 +13766,7 @@
 				FA6B2AC21D41F02D00429414 /* String+Punycode.swift in Sources */,
 				E174963C2992B6A60096900A /* HostingTableViewSectionHeader.swift in Sources */,
 				8A471185287F6E4800F5A6EA /* SeparatorTableViewCell.swift in Sources */,
+				2C6B5B412CAAF3AA00F15323 /* SeedCounterNTPExperiment.swift in Sources */,
 				D301AAEE1A3A55B70078DD1D /* LegacyGridTabViewController.swift in Sources */,
 				EB9A179B20E69A7F00B12184 /* LegacyThemeManager.swift in Sources */,
 				EBFDB790211C83A5005CCA2F /* BrowserViewController+FindInPage.swift in Sources */,
@@ -13766,6 +13822,7 @@
 				BD4B2DE229BB4CD9005FAA50 /* SnackButton.swift in Sources */,
 				F85C7F0E2711C556004BDBA4 /* SettingsViewController.swift in Sources */,
 				2C6189362B7A8A22006B70D7 /* PageActionsShortcutsHeader.swift in Sources */,
+				2C6B5B3E2CAAF28000F15323 /* NTPSeedCounterCell.swift in Sources */,
 				C8B509E3293FA39900AC013C /* AppVersionUpdateCheckerProtocol.swift in Sources */,
 				E1AFBAF9292EA0330065E35E /* SendToDeviceHelper.swift in Sources */,
 				21D151262AFC28960062D891 /* TabManagerMiddleware.swift in Sources */,
@@ -13781,6 +13838,7 @@
 				43D00493296FC48F00CB0F31 /* CreditCardSettingsEmptyView.swift in Sources */,
 				2C61896D2B7A8A22006B70D7 /* WelcomeTour.Step.swift in Sources */,
 				2C6189A82B7A8A22006B70D7 /* Analytics.swift in Sources */,
+				2CCBB5252CAEA9DF006E2E10 /* SeedProgressView.swift in Sources */,
 				CEFA977E1FAA6B490016F365 /* SyncContentSettingsViewController.swift in Sources */,
 				C8CD80DC2A1E8C970097C3AE /* OnboardingTelemetryUtility.swift in Sources */,
 				96C11E9B2864C2DD00840E7C /* DependencyHelper.swift in Sources */,
@@ -13856,11 +13914,13 @@
 				EBB8950C21939E4100EB91A0 /* FirefoxTabContentBlocker.swift in Sources */,
 				21618A632A422A3900A5189E /* ThemeMiddleware.swift in Sources */,
 				219A0FDB2ACCCFFC009A6D1A /* InactiveTabsSectionManager.swift in Sources */,
+				2CCBB5272CAEAD53006E2E10 /* SeedCounterView.swift in Sources */,
 				211F00AC27F4D918001D9189 /* HistoryPanel+Search.swift in Sources */,
 				96EB6C3827D821B800A9D159 /* HistoryPanelViewModel.swift in Sources */,
 				AB52ED3B2A0E8873001067F5 /* UserConversionMetrics.swift in Sources */,
 				219935EC2B07110900E5966F /* TabTrayModel.swift in Sources */,
 				8A3EF7F72A2FCF6D00796E3A /* ExportLogDataSetting.swift in Sources */,
+				2C5A5E652CB53DB7005BFE8B /* SeedLevelConfig.swift in Sources */,
 				43E69EC3254D081D00B591C2 /* SimpleTab.swift in Sources */,
 				8ADAE4202A33A0FD007BF926 /* SendFeedbackSetting.swift in Sources */,
 				C29B64812AD6959E00F3244B /* QRCodeCoordinator.swift in Sources */,
@@ -14003,6 +14063,7 @@
 				96EA9454293655BF00123345 /* AppSession+Enums.swift in Sources */,
 				C8B0F5F4283B7CCE007AE65D /* PocketProvider.swift in Sources */,
 				2C6189642B7A8A22006B70D7 /* EcosiaNavigation.swift in Sources */,
+				2CCBB5352CAF06DE006E2E10 /* SeedProgressManagerProtocol.swift in Sources */,
 				1DC372022B23C80F000F96C8 /* WindowManager.swift in Sources */,
 				C8E531C829E5EB6100E03FEF /* RouteBuilder.swift in Sources */,
 				D3972BF41C22412B00035B87 /* TitleActivityItemProvider.swift in Sources */,
@@ -14136,6 +14197,7 @@
 				2C6189972B7A8A22006B70D7 /* ConnectionStatusImage.swift in Sources */,
 				43F7952525795F69005AEE40 /* SearchTelemetry.swift in Sources */,
 				E65075541E37F6FC006961AC /* LegacyDynamicFontHelper.swift in Sources */,
+				2CCBB5232CAE9826006E2E10 /* ArcProgressView.swift in Sources */,
 				8ADAE4242A33A126007BF926 /* StudiesToggleSetting.swift in Sources */,
 				C82CDD47233E8996002E2743 /* Tab+ChangeUserAgent.swift in Sources */,
 				81122E212B221AC0003DD9F8 /* SearchScreenState.swift in Sources */,
@@ -14223,6 +14285,7 @@
 				2137786529832C8900D01309 /* OverlayModeManager.swift in Sources */,
 				8AF99B4D29EF076800108DEC /* WebviewViewController.swift in Sources */,
 				3B39EDCB1E16E1AA00EF029F /* CustomSearchViewController.swift in Sources */,
+				2C5A5E672CB53DF9005BFE8B /* UserDefaultsSeedProgressManager.swift in Sources */,
 				C8B0F5F7283B7CCE007AE65D /* PocketFeedStory.swift in Sources */,
 				96A562A027D6D0E80045144A /* ContileProvider.swift in Sources */,
 				8A5D1CAC2A30D70B005AD35C /* OpenWithSetting.swift in Sources */,
@@ -14444,6 +14507,7 @@
 				F84B21DA1A090F8100AAB793 /* ClientTests.swift in Sources */,
 				2CABD7282C12EF1E00A0750F /* PrivateModeButtonTests.swift in Sources */,
 				219935F12B07DFA200E5966F /* TabDisplayPanelTests.swift in Sources */,
+				2C16B7672CAF2441006118F8 /* UserDefaultsSeedProgressManagerTests.swift in Sources */,
 				DF940A0C2A96352B00C1497D /* FakespotSettingsCardViewModelTests.swift in Sources */,
 				281B2BEA1ADF4D90002917DC /* MockProfile.swift in Sources */,
 				96AF8C1C29FC14F700EC2219 /* CreditCardInputFieldHelperTests.swift in Sources */,
