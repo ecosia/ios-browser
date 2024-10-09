@@ -62,6 +62,7 @@ extension NTPSeedCounterViewModel: HomepageViewModelProtocol, FeatureFlaggable {
     
     func screenWasShown() {
         SeedCounterNTPExperiment.trackSeedCollectionIfNewDayAppOpening()
+        SeedCounterNTPExperiment.progressManagerType.collectDailySeed()
     }
 
     func setTheme(theme: Theme) {

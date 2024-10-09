@@ -124,7 +124,7 @@ class HomepageViewController:
                                        .TabsPrivacyModeChanged,
                                        .WallpaperDidChange,
                                        // Ecosia: Seed Counter Experiment
-                                       UserDefaultsSeedProgressManager.levelUpNotification])
+                                       SeedCounterNTPExperiment.progressManagerType.levelUpNotification])
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -887,7 +887,7 @@ extension HomepageViewController: Notifiable {
                 self.reloadView()
 
             // Ecosia: Seed Counter Experiment
-            case UserDefaultsSeedProgressManager.levelUpNotification:
+            case SeedCounterNTPExperiment.progressManagerType.levelUpNotification:
                 SeedCounterNTPExperiment.trackSeedLevellingUp()
             default: break
             }

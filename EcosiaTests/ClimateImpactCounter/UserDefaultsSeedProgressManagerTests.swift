@@ -93,10 +93,10 @@ final class UserDefaultsSeedProgressManagerTests: XCTestCase {
 
     // Test collecting a seed once per day
     func test_collect_seed_once_per_day() {
-        UserDefaultsSeedProgressManager.collectSeed()  // First seed collection today
+        UserDefaultsSeedProgressManager.collectDailySeed()  // First seed collection today
         let totalSeedsAfterFirstCollect = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
         
-        UserDefaultsSeedProgressManager.collectSeed()  // Try collecting another seed today
+        UserDefaultsSeedProgressManager.collectDailySeed()  // Try collecting another seed today
         let totalSeedsAfterSecondCollect = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
 
         XCTAssertEqual(totalSeedsAfterFirstCollect, 1, "Should collect one seed on first open")
@@ -108,7 +108,7 @@ final class UserDefaultsSeedProgressManagerTests: XCTestCase {
         let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: Date())
         UserDefaults.standard.set(yesterday, forKey: "LastAppOpenDate")
         
-        UserDefaultsSeedProgressManager.collectSeed()  // Simulate collecting seed today
+        UserDefaultsSeedProgressManager.collectDailySeed()  // Simulate collecting seed today
         
         let totalSeedsCollected = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
         XCTAssertEqual(totalSeedsCollected, 2, "User should be able to collect a seed on a new day")

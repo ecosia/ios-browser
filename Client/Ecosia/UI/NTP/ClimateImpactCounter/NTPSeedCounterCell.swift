@@ -73,7 +73,7 @@ extension NTPSeedCounterCell {
 
     // Setup the SwiftUI SeedCounterView in a hosting controller
     private func setupSeedCounterViewHostingController() {
-        let swiftUIView = SeedCounterView(progressManagerType: UserDefaultsSeedProgressManager.self)
+        let swiftUIView = SeedCounterView(progressManagerType: SeedCounterNTPExperiment.progressManagerType.self)
         hostingController = UIHostingController(rootView: swiftUIView)
         
         guard let hostingController else { return }

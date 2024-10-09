@@ -5,11 +5,6 @@
 import SwiftUI
 import Common
 
-final class ArcTheme: ObservableObject {
-    @Published var backgroundColor: Color = .clear
-    @Published var progressColor: Color = .clear
-}
-
 struct SeedCounterView: View {
     
     // MARK: - Properties

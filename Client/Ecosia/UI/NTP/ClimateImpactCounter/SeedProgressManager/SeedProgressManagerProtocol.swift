@@ -19,5 +19,5 @@ protocol SeedProgressManagerProtocol {
     static func resetCounter()
     
     static func calculateInnerProgress() -> CGFloat
-    static func collectSeed()
+    static func collectDailySeed()
 }

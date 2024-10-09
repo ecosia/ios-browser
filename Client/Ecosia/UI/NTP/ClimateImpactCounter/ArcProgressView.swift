@@ -4,6 +4,11 @@
 
 import SwiftUI
 
+final class ArcTheme: ObservableObject {
+    @Published var backgroundColor: Color = .clear
+    @Published var progressColor: Color = .clear
+}
+
 struct RectangularArcShape: Shape {
     var progress: CGFloat // Progress value between 0 and 1
     

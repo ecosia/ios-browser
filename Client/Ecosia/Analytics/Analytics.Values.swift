@@ -139,7 +139,8 @@ extension Analytics {
             case
             view,
             level,
-            collect
+            collect,
+            click
         }
     }
     

@@ -38,7 +38,7 @@ struct SeedCounterNTPExperiment {
     }
     
     static func trackTapOnSeedCounter() {
-        Analytics.shared.ntpSeedCounterExperiment(.view,
+        Analytics.shared.ntpSeedCounterExperiment(.click,
                                                   value: NSNumber(integerLiteral: progressManagerType.loadTotalSeedsCollected()))
     }
     

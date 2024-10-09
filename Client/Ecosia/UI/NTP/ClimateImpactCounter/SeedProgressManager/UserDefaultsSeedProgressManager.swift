@@ -6,7 +6,7 @@ import Foundation
 
 final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol {
     
-    private static let className = String(describing: UserDefaultsSeedProgressManager.self)
+    private static let className = String(describing: SeedCounterNTPExperiment.progressManagerType.self)
     static var progressUpdatedNotification: Notification.Name { .init("\(className).SeedProgressUpdated") }
     static var levelUpNotification: Notification.Name { .init("\(className).SeedLevelUp") }
     private static let numberOfSeedsAtStart = 1
@@ -107,7 +107,7 @@ final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol {
     }
 
     // Collect a seed once per day
-    static func collectSeed() {
+    static func collectDailySeed() {
         let currentDate = Date()
         let lastOpenDate = loadLastAppOpenDate()
         let calendar = Calendar.current
