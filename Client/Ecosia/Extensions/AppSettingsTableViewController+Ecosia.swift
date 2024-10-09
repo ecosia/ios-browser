@@ -135,7 +135,7 @@ extension AppSettingsTableViewController {
     
     private func getEcosiaDebugSupportSection() -> SettingSection {
         
-        let hiddenDebugSettings = [
+        var hiddenDebugSettings = [
             ExportBrowserDataSetting(settings: self),
             ForceCrashSetting(settings: self),
             PushBackInstallation(settings: self),
@@ -150,7 +150,17 @@ extension AppSettingsTableViewController {
             EngagementServiceIdentifierSetting(settings: self),
             FasterInactiveTabs(settings: self, settingsDelegate: self),
             UnleashOnboardingCardNTPSetting(settings: self),
+            UnleashSeedCounterNTPSetting(settings: self)
         ]
+        
+        if SeedCounterNTPExperiment.isEnabled {
+            hiddenDebugSettings.append(AddOneSeedSetting(settings: self,
+                                                         progressManagerType: UserDefaultsSeedProgressManager.self))
+            hiddenDebugSettings.append(AddFiveSeedsSetting(settings: self,
+                                                           progressManagerType: UserDefaultsSeedProgressManager.self))
+            hiddenDebugSettings.append(ResetSeedCounterSetting(settings: self,
+                                                               progressManagerType: UserDefaultsSeedProgressManager.self))
+        }
         
         return SettingSection(title: NSAttributedString(string: "Debug"), children: hiddenDebugSettings)
     }
