@@ -84,20 +84,7 @@ class OpenSearchEngine: NSObject, NSSecureCoding {
 
     /// Returns the search URL for the given query.
     func searchURLForQuery(_ query: String) -> URL? {
-        /* Ecosia: Quick search shortcuts & Bing distribution Experiment
-         We have two experiments that potentially change the search url.
-         Once they are finished, we can move back to the following line:
-         `URL.ecosiaSearchWithQuery(query)`
-         */
-        if EngineShortcutsExperiment.isEnabled,
-           let fromTemplateURL = getURLFromTemplate(searchTemplate, query: query),
-           fromTemplateURL.baseDomain != "ecosia.org" {
-            return fromTemplateURL
-        } else if BingDistributionExperiment.isEnabled {
-            return BingDistributionExperiment.searchURLForQuery(query)
-        } else {
-            return URL.ecosiaSearchWithQuery(query)
-        }
+        return URL.ecosiaSearchWithQuery(query)
     }
 
     /// Returns the search suggestion URL for the given query.

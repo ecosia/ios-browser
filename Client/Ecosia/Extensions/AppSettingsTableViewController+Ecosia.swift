@@ -11,17 +11,13 @@ extension AppSettingsTableViewController {
     func getEcosiaSettingsSectionsShowingDebug(_ isDebugSectionEnabled: Bool) -> [SettingSection] {
         var sections = [
             getEcosiaDefaultBrowserSection(),
+            getSearchSection(),
             getCustomizationSection(),
             getEcosiaGeneralSection(),
             getEcosiaPrivacySection(),
             getEcosiaSupportSection(),
             getEcosiaAboutSection()
         ]
-        
-        // Ecosia: Not adding search settings with Bing distribution experiment
-        if !BingDistributionExperiment.isEnabled {
-            sections.insert(getSearchSection(), at: 1)
-        }
         
         if isDebugSectionEnabled {
             sections.append(getEcosiaDebugSupportSection())
@@ -46,10 +42,6 @@ extension AppSettingsTableViewController {
             AutoCompleteSettings(prefs: profile.prefs, theme: themeManager.currentTheme),
             PersonalSearchSettings(prefs: profile.prefs, theme: themeManager.currentTheme)
         ]
-        
-        if EngineShortcutsExperiment.isEnabled {
-            settings.insert(QuickSearchSearchSetting(settings: self), at: 2)
-        }
         
         return .init(title: .init(string: .localized(.search)),
                      children: settings)

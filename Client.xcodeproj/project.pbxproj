@@ -207,9 +207,6 @@
 		2C26FAA92C8752D20055760A /* LegacyThemeManager+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6189012B7A8A22006B70D7 /* LegacyThemeManager+Ecosia.swift */; };
 		2C26FAAA2C8752D20055760A /* LegacyThemeManager+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6189012B7A8A22006B70D7 /* LegacyThemeManager+Ecosia.swift */; };
 		2C3BD5EB2BF6193B00E25B0D /* EcosiaThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6188C32B7A8A22006B70D7 /* EcosiaThemeManager.swift */; };
-		2C4414422BD7B43F00249464 /* BingDistributionExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4414412BD7B43F00249464 /* BingDistributionExperiment.swift */; };
-		2C4414452BD7B4D800249464 /* BingDistributionExperimentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4414432BD7B4D000249464 /* BingDistributionExperimentTests.swift */; };
-		2C4414462BD7B68600249464 /* BingDistributionExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4414412BD7B43F00249464 /* BingDistributionExperiment.swift */; };
 		2C49854E206173C800893DAE /* photon-colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C49854D206173C800893DAE /* photon-colors.swift */; };
 		2C4D16602C76360800E89C95 /* environment.json in Resources */ = {isa = PBXBuildFile; fileRef = 2C4D165F2C76360800E89C95 /* environment.json */; };
 		2C5B81C82C75388300B81D95 /* LocaleRetriever.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5B81C72C75388300B81D95 /* LocaleRetriever.swift */; };
@@ -289,7 +286,6 @@
 		2C61897E2B7A8A22006B70D7 /* FeatureManagement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6188EE2B7A8A22006B70D7 /* FeatureManagement.swift */; };
 		2C61897F2B7A8A22006B70D7 /* EcosiaHomepageSectionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6188F12B7A8A22006B70D7 /* EcosiaHomepageSectionType.swift */; };
 		2C6189802B7A8A22006B70D7 /* EcosiaTopSiteItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6188F42B7A8A22006B70D7 /* EcosiaTopSiteItemCell.swift */; };
-		2C6189812B7A8A22006B70D7 /* EngineShortcutsExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6188F72B7A8A22006B70D7 /* EngineShortcutsExperiment.swift */; };
 		2C6189822B7A8A22006B70D7 /* EngagementServiceExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6188F82B7A8A22006B70D7 /* EngagementServiceExperiment.swift */; };
 		2C6189842B7A8A22006B70D7 /* WebsiteConnectionStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6188FB2B7A8A22006B70D7 /* WebsiteConnectionStatus.swift */; };
 		2C6189852B7A8A22006B70D7 /* EngagementService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6188FE2B7A8A22006B70D7 /* EngagementService.swift */; };
@@ -380,7 +376,6 @@
 		2CE294472B7CDD56006C22B2 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 2CE294462B7CDD56006C22B2 /* Core */; };
 		2CE294492B7CDD78006C22B2 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 2CE294482B7CDD78006C22B2 /* Core */; };
 		2CE2E24D2B9B1FCB00973C16 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 2CE2E24C2B9B1FCB00973C16 /* Core */; };
-		2CF4DA612BB31909001C340A /* EngineShortcutsExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6188F72B7A8A22006B70D7 /* EngineShortcutsExperiment.swift */; };
 		2CF4DA632BB31970001C340A /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 2CF4DA622BB31970001C340A /* Core */; };
 		2F13E79B1AC0C02700D75081 /* StringExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F13E79A1AC0C02700D75081 /* StringExtensionsTests.swift */; };
 		2F44FA1B1A9D426A00FD20CC /* TestHashExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F44FA1A1A9D426A00FD20CC /* TestHashExtensions.swift */; };
@@ -2356,8 +2351,6 @@
 		2C31A8461E8D447F00DAC646 /* HomePageSettingsUITest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomePageSettingsUITest.swift; sourceTree = "<group>"; };
 		2C33410CB7E921A125379D7C /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
 		2C3406C71E719F00000FD889 /* SettingsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsTests.swift; sourceTree = "<group>"; };
-		2C4414412BD7B43F00249464 /* BingDistributionExperiment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BingDistributionExperiment.swift; sourceTree = "<group>"; };
-		2C4414432BD7B4D000249464 /* BingDistributionExperimentTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BingDistributionExperimentTests.swift; sourceTree = "<group>"; };
 		2C473BCF209778900008C853 /* DownloadsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadsTests.swift; sourceTree = "<group>"; };
 		2C49854D206173C800893DAE /* photon-colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "photon-colors.swift"; sourceTree = "<group>"; };
 		2C4A07DB20246EAD0083E320 /* DragAndDropTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragAndDropTests.swift; sourceTree = "<group>"; };
@@ -2453,7 +2446,6 @@
 		2C6188EE2B7A8A22006B70D7 /* FeatureManagement.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeatureManagement.swift; sourceTree = "<group>"; };
 		2C6188F12B7A8A22006B70D7 /* EcosiaHomepageSectionType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EcosiaHomepageSectionType.swift; sourceTree = "<group>"; };
 		2C6188F42B7A8A22006B70D7 /* EcosiaTopSiteItemCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EcosiaTopSiteItemCell.swift; sourceTree = "<group>"; };
-		2C6188F72B7A8A22006B70D7 /* EngineShortcutsExperiment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EngineShortcutsExperiment.swift; sourceTree = "<group>"; };
 		2C6188F82B7A8A22006B70D7 /* EngagementServiceExperiment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EngagementServiceExperiment.swift; sourceTree = "<group>"; };
 		2C6188FB2B7A8A22006B70D7 /* WebsiteConnectionStatus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebsiteConnectionStatus.swift; sourceTree = "<group>"; };
 		2C6188FE2B7A8A22006B70D7 /* EngagementService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EngagementService.swift; sourceTree = "<group>"; };
@@ -8671,8 +8663,6 @@
 		2C6188F62B7A8A22006B70D7 /* Unleash */ = {
 			isa = PBXGroup;
 			children = (
-				2C4414412BD7B43F00249464 /* BingDistributionExperiment.swift */,
-				2C6188F72B7A8A22006B70D7 /* EngineShortcutsExperiment.swift */,
 				2C6188F82B7A8A22006B70D7 /* EngagementServiceExperiment.swift */,
 				12187B4F2C89B43D00BA88CA /* OnboardingCardNTPExperiment.swift */,
 			);
@@ -8922,7 +8912,6 @@
 			children = (
 				2CD3683F2C5BA30A00972871 /* SnapshotTests */,
 				2C7DBABA2C4EA14C00BCD03F /* IntegrationTests */,
-				2C4414432BD7B4D000249464 /* BingDistributionExperimentTests.swift */,
 				2C872A522B8CD45F00B318A0 /* Mocks */,
 				2CE294692B7FC5A5006C22B2 /* AnalyticsTests.swift */,
 				2CE294672B7FC5A4006C22B2 /* EcosiaInstallTypeTests.swift */,
@@ -14200,7 +14189,6 @@
 				2C6189492B7A8A22006B70D7 /* DefaultBrowser.swift in Sources */,
 				2C61896C2B7A8A22006B70D7 /* Welcome.swift in Sources */,
 				C4E398601D22C409004E89BA /* TopTabsLayout.swift in Sources */,
-				2C6189812B7A8A22006B70D7 /* EngineShortcutsExperiment.swift in Sources */,
 				E1A102D62AC19B30007B617A /* FakespotUtils.swift in Sources */,
 				8A5D1CC12A30DCA4005AD35C /* SettingDisclosureUtility.swift in Sources */,
 				E1442FD5294782D9003680B0 /* UIView+SnapKit.swift in Sources */,
@@ -14374,7 +14362,6 @@
 				43175DB826B87D2C00C41C31 /* AdsTelemetryHelper.swift in Sources */,
 				8A3EF7FF2A2FCFBB00796E3A /* ChangeToChinaSetting.swift in Sources */,
 				E6327A641BF6438E008D12E0 /* DebugSettingsBundleOptions.swift in Sources */,
-				2C4414422BD7B43F00249464 /* BingDistributionExperiment.swift in Sources */,
 				F85C7EDD27109241004BDBA4 /* PasswordManagerOnboardingViewController.swift in Sources */,
 				D8FDEB57220CFE970069A582 /* UIImage+ImageEffects.m in Sources */,
 				EBB89506219398E500EB91A0 /* TabContentBlocker.swift in Sources */,
@@ -14598,7 +14585,6 @@
 				5AE371852A4DD6FE0092A760 /* PasswordManagerCoordinatorDelegateMock.swift in Sources */,
 				8A6E8DEB2B275BA9000C4301 /* PrivateHomepageViewControllerTests.swift in Sources */,
 				8A93F86529D37331004159D9 /* DefaultRouterTests.swift in Sources */,
-				2C4414452BD7B4D800249464 /* BingDistributionExperimentTests.swift in Sources */,
 				8AF10D8A29D713F50086351D /* LaunchScreenViewModelTests.swift in Sources */,
 				2F13E79B1AC0C02700D75081 /* StringExtensionsTests.swift in Sources */,
 				CA24B52224ABD7D40093848C /* PasswordManagerViewModelTests.swift in Sources */,
@@ -14694,7 +14680,6 @@
 				D38B2D8A1A8D98D00040E6B5 /* SearchEngines.swift in Sources */,
 				EB6E0C60207E6C3100FBFF7E /* SendToDevice.swift in Sources */,
 				D3C744CF1A687D6C004CE85D /* URIFixup.swift in Sources */,
-				2CF4DA612BB31909001C340A /* EngineShortcutsExperiment.swift in Sources */,
 				EB94075320850C9F00702E05 /* photon-colors.swift in Sources */,
 				210E0EB9298D9D4B00BB4F33 /* DefaultSearchEngineProvider.swift in Sources */,
 				D38B2D8C1A8D98D90040E6B5 /* OpenSearchParser.swift in Sources */,
@@ -14714,7 +14699,6 @@
 				E60D03271D511554002FE3F6 /* SyncDisplayState.swift in Sources */,
 				2C6189D22B7A8D69006B70D7 /* EcosiaThemeColourPalette.swift in Sources */,
 				2C6189D12B7A8D3E006B70D7 /* EcosiaThemeManager.swift in Sources */,
-				2C4414462BD7B68600249464 /* BingDistributionExperiment.swift in Sources */,
 				210E0EBB298D9D6600BB4F33 /* OpenSearchEngine.swift in Sources */,
 				2C6189E62B7B7952006B70D7 /* SemanticColor.swift in Sources */,
 				2128E27C2930216F00FB91BE /* SendToDeviceHelper.swift in Sources */,

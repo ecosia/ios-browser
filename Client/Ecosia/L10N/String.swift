@@ -230,7 +230,6 @@ extension String {
         case whatsNewSecondItemTitle10_0_0 = "Password manager"
         case whatsNewSecondItemDescription10_0_0 = "We’ve added 1Password to Ecosia to help you to manage your passwords securely."
         case whatsNewFooterButtonTitle = "Got it"
-        case quickSearch = "Quick Search"
         case apnConsentVariantNameControlHeaderTitle = "Keep up with Ecosia"
         case apnConsentVariantNameTest1HeaderTitle = "Turn on push notifications"
         case apnConsentVariantNameControlFirstItemTitle = "Discover the trees we plant and the impact they’re having"
