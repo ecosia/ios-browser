@@ -13,11 +13,11 @@ struct SeedCounterView: View {
     @State private var seedsCollected: Int = 0
     @State private var level: Int = 1
     @State private var progressValue: CGFloat = 0.0
-    @State private var showZoomCircle = false
+    @State private var showNumberOfSeedsCollectedCircleView = false
     @StateObject var theme = ArcTheme()
     @Environment(\.themeType) var themeVal
     @Environment(\.accessibilityReduceMotion) var reduceMotion
-
+    
     // MARK: - Init
     
     init(progressManagerType: SeedProgressManagerProtocol.Type) {
@@ -41,14 +41,22 @@ struct SeedCounterView: View {
                     .lineLimit(1)
                     .minimumScaleFactor(0.5)
                     .scaledToFill()
-                    .modifier(TextAnimationModifier(seedsCollected: seedsCollected))
+                    .modifier(TextAnimationModifier(seedsCollected: seedsCollected,
+                                                    reduceMotionEnabled: reduceMotion))
             }
-            if showZoomCircle {
-                NewSeedCollectedCircleView(seedsCollected: seedsCollected)
-                    .offset(x: 20, y: -20)
+            if showNumberOfSeedsCollectedCircleView {
+                NewSeedCollectedCircleView(seedsCollected: 1)
+                    .frame(width: 20, height: 20)
                     .transition(.scale(scale: 0.1, anchor: .center))
-                    .scaleEffect(showZoomCircle ? 1.0 : 0.1)
-                    .animation(reduceMotion ? .none : .linear(duration: 10), value: showZoomCircle)
+                    .scaleEffect(showNumberOfSeedsCollectedCircleView ? 1.0 : 0.1)
+                    .modifier(ZoomEffectModifier(active: showNumberOfSeedsCollectedCircleView, reduceMotionEnabled: reduceMotion, duration: 0.4))
+                    .onAppear {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                            withAnimation(.linear(duration: 0.4)) {
+                                self.showNumberOfSeedsCollectedCircleView = false
+                            }
+                        }
+                    }
             }
         }
         .onAppear {
@@ -56,7 +64,6 @@ struct SeedCounterView: View {
             NotificationCenter.default.addObserver(forName: progressManagerType.progressUpdatedNotification, object: nil, queue: .main) { _ in
                 // Update the state when progress changes
                 self.triggerUpdateValues()
-                self.showZoomEffect()
             }
             applyTheme(theme: themeVal.theme)
         }
@@ -75,26 +82,6 @@ struct SeedCounterView: View {
         self.theme.progressColor = Color(.legacyTheme.ecosia.primaryButtonActive)
     }
     
-    private func showZoomEffect() {
-        if reduceMotion {
-            // No animation, just appear and disappear
-            showZoomCircle = true
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                self.showZoomCircle = false
-            }
-        } else {
-            // Animate the zoom effect
-            withAnimation(.linear(duration: 0.5)) {
-                showZoomCircle = true
-            }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                withAnimation(.linear(duration: 0.5)) {
-                    self.showZoomCircle = false
-                }
-            }
-        }
-    }
-    
     private func triggerUpdateValues() {
         if BrowserKitInformation.shared.buildChannel == .release {
             updateValues()
@@ -111,6 +98,7 @@ struct SeedCounterView: View {
         self.seedsCollected = progressManagerType.loadTotalSeedsCollected()
         self.level = progressManagerType.loadCurrentLevel()
         self.progressValue = progressManagerType.calculateInnerProgress()
+        self.showNumberOfSeedsCollectedCircleView = true
     }
 }
 
@@ -118,23 +106,38 @@ struct NewSeedCollectedCircleView: View {
     var seedsCollected: Int
     
     var body: some View {
-        Circle()
-            .fill(Color(.legacyTheme.ecosia.peach))
-            .frame(width: 20, height: 20)
-            .overlay(
-                Text("\(seedsCollected)")
-                    .font(.caption)
-                    .foregroundColor(.white)
-            )
+        ZStack {
+            Circle()
+                .fill(Color(.legacyTheme.ecosia.peach))
+            Text("+\(seedsCollected)")
+                .font(.caption)
+        }
+    }
+}
+
+struct ZoomEffectModifier: ViewModifier {
+    var active: Bool
+    var reduceMotionEnabled: Bool
+    var duration: Double
+    
+    func body(content: Content) -> some View {
+        if reduceMotionEnabled {
+            content
+        } else {
+            content
+                .scaleEffect(active ? 1.0 : 0.1)
+                .animation(.linear(duration: duration), value: active)
+        }
     }
 }
 
 struct TextAnimationModifier: ViewModifier {
     var seedsCollected: Int
-
+    var reduceMotionEnabled: Bool
+    
     func body(content: Content) -> some View {
         if #available(iOS 17.0, *) {
-            if UIAccessibility.isReduceMotionEnabled {
+            if reduceMotionEnabled {
                 content
             } else {
                 content
@@ -143,7 +146,7 @@ struct TextAnimationModifier: ViewModifier {
             }
         } else {
             content
-                .animation(!UIAccessibility.isReduceMotionEnabled ? .easeInOut(duration: 0.5) : .none, value: seedsCollected)
+                .animation(!UIAccessibility.isReduceMotionEnabled ? .easeInOut(duration: 3) : .none, value: seedsCollected)
         }
     }
 }
