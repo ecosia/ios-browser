@@ -177,6 +177,7 @@ class HomepageViewController:
             self?.displayWallpaperSelector()
         }
         
+        ClientEngagementService.shared.logCustomEvent(name: "ios_ntp_view")
         ClientEngagementService.shared.presentNextQueuedMessage()
     }
 

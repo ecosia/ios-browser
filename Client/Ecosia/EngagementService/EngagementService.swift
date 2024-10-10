@@ -30,6 +30,10 @@ final class ClientEngagementService {
         service.provider.presentNextQueuedMessage()
     }
     
+    func logCustomEvent(name: String) {
+        service.provider.logCustomEvent(name: name)
+    }
+    
     func registerDeviceToken(_ deviceToken: Data) {
         service.registerDeviceToken(deviceToken)
     }
