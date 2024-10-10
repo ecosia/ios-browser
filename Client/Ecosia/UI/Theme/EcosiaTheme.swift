@@ -90,7 +90,7 @@ class EcosiaTheme {
     var welcomeElementBackground: UIColor { .Light.Background.primary }
     
     var homePanelBackground: UIColor { return .Light.Background.tertiary }
-    var peach: UIColor { .init(red: 0.255, green: 0.230, blue: 0.191, alpha: 1) }
+    var peach: UIColor { .init(rgb: 0xFFE6BF) }
 }
 
 final class DarkEcosiaTheme: EcosiaTheme {
@@ -174,6 +174,7 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var welcomeElementBackground: UIColor { .Dark.Background.secondary }
     
     override var homePanelBackground: UIColor { return .Dark.Background.secondary }
+    override var peach: UIColor { .init(rgb: 0xCC7722) }
 }
 
 extension UIImage {
