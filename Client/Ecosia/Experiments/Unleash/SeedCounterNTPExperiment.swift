@@ -32,7 +32,7 @@ struct SeedCounterNTPExperiment {
         guard Analytics.hasDayPassedSinceLastCheck(for: seedCollectionExperimentIdentifier) else {
             return
         }
-        Analytics.shared.ntpSeedCounterExperiment(.view,
+        Analytics.shared.ntpSeedCounterExperiment(.collect,
                                                   value: NSNumber(integerLiteral: 1))
         UserDefaults.standard.setValue(true, forKey: seedCollectionExperimentIdentifier)
     }

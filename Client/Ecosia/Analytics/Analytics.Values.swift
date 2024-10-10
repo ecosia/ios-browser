@@ -137,7 +137,6 @@ extension Analytics {
 
         enum SeedCounter: String {
             case
-            view,
             level,
             collect,
             click
