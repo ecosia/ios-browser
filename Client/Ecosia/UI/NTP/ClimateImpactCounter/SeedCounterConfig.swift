@@ -4,7 +4,8 @@
 
 import Foundation
 
-struct SeedLevelConfig {
+struct SeedCounterConfig {
+    let sparklesAnimationDuration: Double
     let levels: [SeedLevel]
 
     struct SeedLevel: Codable {
@@ -13,4 +14,4 @@ struct SeedLevelConfig {
     }
 }
 
-extension SeedLevelConfig: Decodable {}
+extension SeedCounterConfig: Decodable {}

@@ -18,7 +18,7 @@ struct SeedCounterNTPExperiment {
     static var isEnabled: Bool {
         Unleash.isEnabled(.seedCounterNTP) &&
         variant != .control &&
-        SeedCounterNTPExperiment.seedLevelConfig != nil
+        SeedCounterNTPExperiment.seedCounterConfig != nil
     }
     
     static private var variant: Variant {
@@ -47,13 +47,17 @@ struct SeedCounterNTPExperiment {
                                                   value: NSNumber(integerLiteral: progressManagerType.loadCurrentLevel()))
     }
     
-    static var seedLevelConfig: SeedLevelConfig? {
+    static var seedCounterConfig: SeedCounterConfig? {
         guard let payloadString = Unleash.getVariant(.seedCounterNTP).payload?.value,
               let payloadData = payloadString.data(using: .utf8),
-              let seedLevelConfig = try? JSONDecoder().decode(SeedLevelConfig.self, from: payloadData)
+              let seedLevelConfig = try? JSONDecoder().decode(SeedCounterConfig.self, from: payloadData)
         else {
             return nil
         }
         return seedLevelConfig
+    }
+    
+    static var sparklesAnimationDuration: Double {
+        seedCounterConfig?.sparklesAnimationDuration ?? 0.0
     }
 }
