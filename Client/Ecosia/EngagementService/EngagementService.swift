@@ -26,6 +26,10 @@ final class ClientEngagementService {
         }
     }
     
+    func presentNextQueuedMessage() {
+        service.provider.presentNextQueuedMessage()
+    }
+    
     func registerDeviceToken(_ deviceToken: Data) {
         service.registerDeviceToken(deviceToken)
     }
