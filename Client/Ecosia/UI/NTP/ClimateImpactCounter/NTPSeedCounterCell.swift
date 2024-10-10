@@ -19,6 +19,8 @@ final class NTPSeedCounterCell: UICollectionViewCell, Themeable, ReusableCell {
         static let containerWidthHeight: CGFloat = 48
         static let insetMargin: CGFloat = 16
         static let twinkleSizeOffset: CGFloat = 16
+        static let newSeedCircleSize: CGFloat = 20
+        static let newSeedCircleAnimationDuration = 2.5
     }
     
     // MARK: - Properties
@@ -28,10 +30,12 @@ final class NTPSeedCounterCell: UICollectionViewCell, Themeable, ReusableCell {
     private var sparklesAnimationDuration: Double {
         SeedCounterNTPExperiment.sparklesAnimationDuration
     }
+    private var isTwinkleActive: Bool = false
+    @State private var showNewSeedCollectedCircleView = false
+
     // Transparent button and TwinkleView
     private var button: UIButton = UIButton()
     private var twinkleHostingController: UIHostingController<TwinkleView>?
-    private var isTwinkleActive: Bool = false
     
     // MARK: - Themeable Properties
     var themeManager: ThemeManager { AppContainer.shared.resolve() }
@@ -39,7 +43,7 @@ final class NTPSeedCounterCell: UICollectionViewCell, Themeable, ReusableCell {
     var notificationCenter: NotificationProtocol = NotificationCenter.default
 
     // MARK: - Init
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
@@ -49,13 +53,14 @@ final class NTPSeedCounterCell: UICollectionViewCell, Themeable, ReusableCell {
     required init?(coder: NSCoder) {
         super.init(coder: coder)
     }
-    
+
     deinit {
         NotificationCenter.default.removeObserver(self, name: UserDefaultsSeedProgressManager.levelUpNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UserDefaultsSeedProgressManager.progressUpdatedNotification, object: nil)
     }
-    
+
     // MARK: - Setup
-    
+
     private func setup() {
         contentView.addSubview(containerStackView)
         setupContainerStackView()
@@ -65,12 +70,10 @@ final class NTPSeedCounterCell: UICollectionViewCell, Themeable, ReusableCell {
         applyTheme()
         listenForThemeChange(contentView)
     }
-    
+
     private func setupTransparentButton() {
-        // Transparent button to make the entire stack view tappable
         button.backgroundColor = .clear
         button.addTarget(self, action: #selector(openClimateImpactCounter), for: .touchUpInside)
-        
         button.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(button)
 
@@ -88,14 +91,12 @@ final class NTPSeedCounterCell: UICollectionViewCell, Themeable, ReusableCell {
         
         guard let twinkleHostingController else { return }
         
-        // Setup TwinkleView hosting
         twinkleHostingController.view.backgroundColor = .clear
         twinkleHostingController.view.translatesAutoresizingMaskIntoConstraints = false
         twinkleHostingController.view.isUserInteractionEnabled = false
         twinkleHostingController.view.clipsToBounds = true
         contentView.addSubview(twinkleHostingController.view)
         
-        // Add a 16-point offset around the TwinkleView
         NSLayoutConstraint.activate([
             twinkleHostingController.view.leadingAnchor.constraint(equalTo: containerStackView.leadingAnchor, constant: -UX.twinkleSizeOffset),
             twinkleHostingController.view.trailingAnchor.constraint(equalTo: containerStackView.trailingAnchor, constant: UX.twinkleSizeOffset),
@@ -114,7 +115,7 @@ final class NTPSeedCounterCell: UICollectionViewCell, Themeable, ReusableCell {
         hostingController.view.backgroundColor = .clear
         containerStackView.addArrangedSubview(hostingController.view)
     }
-    
+
     private func setupContainerStackView() {
         containerStackView.translatesAutoresizingMaskIntoConstraints = false
         containerStackView.layer.masksToBounds = true
@@ -125,12 +126,46 @@ final class NTPSeedCounterCell: UICollectionViewCell, Themeable, ReusableCell {
             containerStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -UX.insetMargin)
         ])
     }
+
+    // MARK: - New Seed Collected Circle
+
+    private func addNewSeedCollectedCircleView() {
+        let duration = UX.newSeedCircleAnimationDuration
+        let newSeedView = NewSeedCollectedCircleView(seedsCollected: 1)
+            .frame(width: UX.newSeedCircleSize, height: UX.newSeedCircleSize)
+            .modifier(AppearFromBottomEffectModifier(reduceMotionEnabled: UIAccessibility.isReduceMotionEnabled,
+                                                     duration: duration,
+                                                     parentViewHeight: UX.containerWidthHeight))
+
+        let newSeedHostingController = UIHostingController(rootView: newSeedView)
+        newSeedHostingController.view.backgroundColor = .clear
+        newSeedHostingController.view.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(newSeedHostingController.view)
+
+        // Position the NewSeedCollectedCircleView at the top-right corner of the SeedCounterView
+        NSLayoutConstraint.activate([
+            newSeedHostingController.view.widthAnchor.constraint(equalToConstant: UX.newSeedCircleSize),
+            newSeedHostingController.view.heightAnchor.constraint(equalToConstant: UX.newSeedCircleSize),
+            newSeedHostingController.view.trailingAnchor.constraint(equalTo: containerStackView.trailingAnchor),
+            newSeedHostingController.view.topAnchor.constraint(equalTo: containerStackView.topAnchor)
+        ])
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
+            newSeedHostingController.view.removeFromSuperview()
+        }
+    }
     
+    // MARK: - Seed Collection Circle helpers
+    
+    func showSeedCollectionCircleViewAndAnimateIfNeeded() {
+        executeOnMainThreadWithDelayForNonReleaseBuild { [weak self] in
+            self?.addNewSeedCollectedCircleView()
+        }
+    }
+
     // MARK: - Twinkle helpers
-    
-    // Trigger the twinkle animation on level-up
+
     func triggerTwinkleEffect() {
-        
         if UIAccessibility.isReduceMotionEnabled {
             return  // Skip the animation if Reduce Motion is enabled
         }
@@ -138,33 +173,34 @@ final class NTPSeedCounterCell: UICollectionViewCell, Themeable, ReusableCell {
         isTwinkleActive = true
         updateTwinkleView()
 
-        // Automatically stop showing twinkle after a delay
         DispatchQueue.main.asyncAfter(deadline: .now() + sparklesAnimationDuration) {
             self.isTwinkleActive = false
             self.updateTwinkleView()
         }
     }
 
-    // Update the TwinkleView based on `isTwinkleActive`
     private func updateTwinkleView() {
         twinkleHostingController?.rootView = TwinkleView(active: isTwinkleActive)
     }
-    
+
     // MARK: - Observer
-    
+
     private func listenForLevelUpNotification() {
-        // Listen for the level-up notification
+        NotificationCenter.default.addObserver(forName: UserDefaultsSeedProgressManager.progressUpdatedNotification, object: nil, queue: .main) { [weak self] _ in
+            self?.showSeedCollectionCircleViewAndAnimateIfNeeded()
+        }
+        
         NotificationCenter.default.addObserver(forName: UserDefaultsSeedProgressManager.levelUpNotification, object: nil, queue: .main) { [weak self] _ in
             self?.triggerTwinkleEffect()
         }
     }
 
     // MARK: - Action
-    
+
     @objc private func openClimateImpactCounter() {
         delegate?.didTapSeedCounter()
     }
-    
+
     // MARK: - Theming
     @objc func applyTheme() {
         containerStackView.backgroundColor = .legacyTheme.ecosia.secondaryBackground

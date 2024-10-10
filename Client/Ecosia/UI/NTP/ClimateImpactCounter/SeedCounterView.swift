@@ -6,63 +6,42 @@ import SwiftUI
 import Common
 
 struct SeedCounterView: View {
-    
+
     // MARK: - Properties
-    
+
     private let progressManagerType: SeedProgressManagerProtocol.Type
     @State private var seedsCollected: Int = 0
     @State private var level: Int = 1
     @State private var progressValue: CGFloat = 0.0
-    @State private var showNumberOfSeedsCollectedCircleView = false
     @StateObject var theme = ArcTheme()
     @Environment(\.themeType) var themeVal
     @Environment(\.accessibilityReduceMotion) var reduceMotion
-    
+
     // MARK: - Init
-    
+
     init(progressManagerType: SeedProgressManagerProtocol.Type) {
         self.progressManagerType = progressManagerType
         _seedsCollected = State(initialValue: progressManagerType.loadTotalSeedsCollected())
         _level = State(initialValue: progressManagerType.loadCurrentLevel())
         _progressValue = State(initialValue: progressManagerType.calculateInnerProgress())
     }
-    
+
     // MARK: - View
-    
+
     var body: some View {
-        ZStack(alignment: .topTrailing) {
-            VStack(spacing: 0) {
-                SeedProgressView(progressValue: progressValue,
-                                 theme: theme)
-                
-                Text("\(Int(seedsCollected))")
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.5)
-                    .scaledToFill()
-                    .modifier(TextAnimationModifier(seedsCollected: seedsCollected,
-                                                    reduceMotionEnabled: reduceMotion))
-            }
-            if showNumberOfSeedsCollectedCircleView {
-                NewSeedCollectedCircleView(seedsCollected: 1)
-                    .frame(width: 20, height: 20)
-                    .transition(.scale(scale: 0.1, anchor: .center))
-                    .scaleEffect(showNumberOfSeedsCollectedCircleView ? 1.0 : 0.1)
-                    .modifier(ZoomEffectModifier(active: showNumberOfSeedsCollectedCircleView, reduceMotionEnabled: reduceMotion, duration: 0.4))
-                    .onAppear {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                            withAnimation(.linear(duration: 0.4)) {
-                                self.showNumberOfSeedsCollectedCircleView = false
-                            }
-                        }
-                    }
-            }
+        VStack(spacing: 0) {
+            SeedProgressView(progressValue: progressValue, theme: theme)
+
+            Text("\(Int(seedsCollected))")
+                .font(.subheadline)
+                .fontWeight(.semibold)
+                .lineLimit(1)
+                .minimumScaleFactor(0.5)
+                .scaledToFill()
+                .modifier(TextAnimationModifier(seedsCollected: seedsCollected, reduceMotionEnabled: reduceMotion))
         }
         .onAppear {
-            // Add observer for progress updates
             NotificationCenter.default.addObserver(forName: progressManagerType.progressUpdatedNotification, object: nil, queue: .main) { _ in
-                // Update the state when progress changes
                 self.triggerUpdateValues()
             }
             applyTheme(theme: themeVal.theme)
@@ -74,34 +53,26 @@ struct SeedCounterView: View {
             applyTheme(theme: newThemeValue.theme)
         }
     }
-    
+
     // MARK: - Helpers
-    
+
     func applyTheme(theme: Theme) {
         self.theme.backgroundColor = Color(.legacyTheme.ecosia.primaryBackground)
         self.theme.progressColor = Color(.legacyTheme.ecosia.primaryButtonActive)
     }
-    
+
     private func triggerUpdateValues() {
-        if BrowserKitInformation.shared.buildChannel == .release {
-            updateValues()
-        } else {
-            // In ANY other build (e.g. adhoc, development), delay updateValues by 5 seconds
-            // so they can be seen and perhaps QAd as well
-            DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-                self.updateValues()
-            }
+        executeOnMainThreadWithDelayForNonReleaseBuild {
+            self.updateValues()
         }
     }
-    
+
     private func updateValues() {
         self.seedsCollected = progressManagerType.loadTotalSeedsCollected()
         self.level = progressManagerType.loadCurrentLevel()
         self.progressValue = progressManagerType.calculateInnerProgress()
-        self.showNumberOfSeedsCollectedCircleView = true
     }
 }
-
 struct NewSeedCollectedCircleView: View {
     var seedsCollected: Int
     
@@ -115,19 +86,29 @@ struct NewSeedCollectedCircleView: View {
     }
 }
 
-struct ZoomEffectModifier: ViewModifier {
-    var active: Bool
+struct AppearFromBottomEffectModifier: ViewModifier {
+    @State private var isAppeared: Bool = false
     var reduceMotionEnabled: Bool
     var duration: Double
+    var parentViewHeight: Double
     
     func body(content: Content) -> some View {
-        if reduceMotionEnabled {
-            content
-        } else {
-            content
-                .scaleEffect(active ? 1.0 : 0.1)
-                .animation(.linear(duration: duration), value: active)
-        }
+        content
+            .offset(y: isAppeared ? -parentViewHeight/2 : 0)
+            .scaleEffect(isAppeared ? 1.0 : 0.5)
+            .opacity(isAppeared ? 1.0 : 0.0)
+            .onAppear {
+                // Animate appearance
+                withAnimation(reduceMotionEnabled ? .none : .easeInOut(duration: duration)) {
+                    self.isAppeared = true
+                }
+                // Animate disappearance after duration
+                DispatchQueue.main.asyncAfter(deadline: .now() + duration/2) {
+                    withAnimation(reduceMotionEnabled ? .none : .easeInOut(duration: duration)) {
+                        self.isAppeared = false
+                    }
+                }
+            }
     }
 }
 

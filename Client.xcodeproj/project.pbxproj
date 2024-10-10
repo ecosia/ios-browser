@@ -194,6 +194,7 @@
 		28E91E751B443AD5009DF274 /* SyncConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28E91E741B443AD5009DF274 /* SyncConstants.swift */; };
 		28ECD9BF1BA1F19900D829DA /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = E6231C001B90A44F005ABB0D /* libz.tbd */; };
 		2C0360DA2C1747E6006706F2 /* FxNimbus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C0360D92C1747E6006706F2 /* FxNimbus.swift */; };
+		2C03A4152CB7C7CC00AB228B /* DispatchQueueHelper+BuildChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C03A4142CB7C7CC00AB228B /* DispatchQueueHelper+BuildChannel.swift */; };
 		2C1298A52BF5EB16005AE4E4 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 2C1298A42BF5EB16005AE4E4 /* PrivacyInfo.xcprivacy */; };
 		2C1298A62BF5EB1E005AE4E4 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 2C1298A42BF5EB16005AE4E4 /* PrivacyInfo.xcprivacy */; };
 		2C1298A72BF5EB1F005AE4E4 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 2C1298A42BF5EB16005AE4E4 /* PrivacyInfo.xcprivacy */; };
@@ -2350,6 +2351,7 @@
 		2BAA411FAF1D49B9990A7720 /* sat-Olck */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "sat-Olck"; path = "sat-Olck.lproj/Shared.strings"; sourceTree = "<group>"; };
 		2BAB4A40A318F5A577488909 /* mr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = mr; path = mr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		2C0360D92C1747E6006706F2 /* FxNimbus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FxNimbus.swift; sourceTree = "<group>"; };
+		2C03A4142CB7C7CC00AB228B /* DispatchQueueHelper+BuildChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DispatchQueueHelper+BuildChannel.swift"; sourceTree = "<group>"; };
 		2C08319B2B89127200BD7134 /* Ecosia.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Ecosia.entitlements; sourceTree = "<group>"; };
 		2C08319C2B89127200BD7134 /* EcosiaBeta.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = EcosiaBeta.entitlements; sourceTree = "<group>"; };
 		2C1298A42BF5EB16005AE4E4 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
@@ -8754,6 +8756,7 @@
 				2C61890D2B7A8A22006B70D7 /* AppSettingsTableViewController+Ecosia.swift */,
 				2C61890E2B7A8A22006B70D7 /* DeviceInfo+Ecosia.swift */,
 				2C61890F2B7A8A22006B70D7 /* Toolbar+URLBar */,
+				2C03A4142CB7C7CC00AB228B /* DispatchQueueHelper+BuildChannel.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -14278,6 +14281,7 @@
 				1D2F68AD2ACB266300524B92 /* RemoteTabsPanelState.swift in Sources */,
 				4347B398298D6D7B0045F677 /* CreditCardTableViewModel.swift in Sources */,
 				1DFE57FD27BADD7D0025DE58 /* HomepageViewModel.swift in Sources */,
+				2C03A4152CB7C7CC00AB228B /* DispatchQueueHelper+BuildChannel.swift in Sources */,
 				D3A9949D1A3686BD008AD1AC /* Tab.swift in Sources */,
 				8AD40FD127BADCBA00672675 /* ToolbarButton.swift in Sources */,
 				A93067E81D0FE18E00C49C6E /* NightModeHelper.swift in Sources */,
