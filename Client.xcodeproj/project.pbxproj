@@ -380,6 +380,7 @@
 		2CCBB5232CAE9826006E2E10 /* ArcProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCBB5222CAE9826006E2E10 /* ArcProgressView.swift */; };
 		2CCBB5252CAEA9DF006E2E10 /* SeedProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCBB5242CAEA9DF006E2E10 /* SeedProgressView.swift */; };
 		2CCBB5272CAEAD53006E2E10 /* SeedCounterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCBB5262CAEAD53006E2E10 /* SeedCounterView.swift */; };
+		2CCBB5372CAF0E8C006E2E10 /* SeedCounterHiddenSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCBB5362CAF0E8C006E2E10 /* SeedCounterHiddenSettings.swift */; };
 		2CCBB5352CAF06DE006E2E10 /* SeedProgressManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCBB5342CAF06DE006E2E10 /* SeedProgressManagerProtocol.swift */; };
 		2CCFB3D72C0FBEE800BEDCA0 /* TabToolbarHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D815A3A724A53F3200AAB221 /* TabToolbarHelperTests.swift */; };
 		2CD48B7F2C7F7E4100A70908 /* EcosiaOverlayModeManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD48B7E2C7F7E4100A70908 /* EcosiaOverlayModeManagerTests.swift */; };
@@ -2551,6 +2552,7 @@
 		2CCBB5222CAE9826006E2E10 /* ArcProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArcProgressView.swift; sourceTree = "<group>"; };
 		2CCBB5242CAEA9DF006E2E10 /* SeedProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedProgressView.swift; sourceTree = "<group>"; };
 		2CCBB5262CAEAD53006E2E10 /* SeedCounterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedCounterView.swift; sourceTree = "<group>"; };
+		2CCBB5362CAF0E8C006E2E10 /* SeedCounterHiddenSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedCounterHiddenSettings.swift; sourceTree = "<group>"; };
 		2CCBB5342CAF06DE006E2E10 /* SeedProgressManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedProgressManagerProtocol.swift; sourceTree = "<group>"; };
 		2CCF17522105E4FD00705AE5 /* DisplaySettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplaySettingsTests.swift; sourceTree = "<group>"; };
 		2CCFB3D42C0F1EA500BEDCA0 /* LoadingScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingScreen.swift; sourceTree = "<group>"; };
@@ -8872,6 +8874,7 @@
 				2CCBB5222CAE9826006E2E10 /* ArcProgressView.swift */,
 				2CCBB5242CAEA9DF006E2E10 /* SeedProgressView.swift */,
 				2CCBB5262CAEAD53006E2E10 /* SeedCounterView.swift */,
+				2CCBB5362CAF0E8C006E2E10 /* SeedCounterHiddenSettings.swift */,
 				2C5A5E682CB53E05005BFE8B /* SeedProgressManager */,
 				2C5A5E642CB53DB7005BFE8B /* SeedLevelConfig.swift */,
 			);
@@ -13630,6 +13633,7 @@
 				8ADAE4262A33A13B007BF926 /* OpenSupportPageSetting.swift in Sources */,
 				8A590C6128C123100032F1AA /* OpenPassBookHelper.swift in Sources */,
 				EBB895332193FFF400EB91A0 /* ContentBlockerSettingViewController.swift in Sources */,
+				2CCBB5372CAF0E8C006E2E10 /* SeedCounterHiddenSettings.swift in Sources */,
 				8A5D1CB42A30D7D9005AD35C /* NoImageModeSetting.swift in Sources */,
 				8A3EF8152A2FD08800796E3A /* OpenFiftyTabsDebugOption.swift in Sources */,
 				D38F02D11C05127100175932 /* Authenticator.swift in Sources */,
