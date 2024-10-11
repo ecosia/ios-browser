@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Directory containing your custom hooks
+HOOKS_DIR="hooks"
+
+# Check if hooks have already been installed in the .git/hooks directory
+# We check for one example hook to verify, you can change this to your preference
+if [ ! -f ".git/hooks/prepare-commit-msg" ]; then
+  echo "Git hooks not found in .git/hooks. Running setup-hooks.sh to install them."
+  
+  # Run the setup script to copy the hooks
+  ./setup-hooks.sh
+else
+  echo "Git hooks are already installed."
+fi
