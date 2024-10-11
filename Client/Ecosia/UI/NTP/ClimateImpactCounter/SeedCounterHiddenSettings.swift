@@ -38,7 +38,7 @@ final class AddOneSeedSetting: HiddenSetting {
     // MARK: - Action
     override func onClick(_ navigationController: UINavigationController?) {
         // Add 1 seed to the counter using the static method of the passed progressManager type
-        progressManagerType.addSeeds(1)
+        progressManagerType.addSeeds(1, relativeToDate: progressManagerType.loadLastAppOpenDate())
         settings.tableView.reloadData()
     }
 }
@@ -76,7 +76,7 @@ final class AddFiveSeedsSetting: HiddenSetting {
     // MARK: - Action
     override func onClick(_ navigationController: UINavigationController?) {
         // Add 5 seeds to the counter using the static method of the passed progressManager type
-        progressManagerType.addSeeds(5)
+        progressManagerType.addSeeds(5, relativeToDate: progressManagerType.loadLastAppOpenDate())
         settings.tableView.reloadData()
     }
 }
