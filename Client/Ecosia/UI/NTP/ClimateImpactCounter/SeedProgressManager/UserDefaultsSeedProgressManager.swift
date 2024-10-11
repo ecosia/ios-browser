@@ -71,9 +71,14 @@ final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol {
         let seedsForCurrentLevel = totalSeeds - previousLevelTotal
         return CGFloat(seedsForCurrentLevel) / CGFloat(thresholdForCurrentLevel)
     }
-
+    
     // Add seeds to the counter and handle level progression
     static func addSeeds(_ count: Int) {
+        addSeeds(count, relativeToDate: loadLastAppOpenDate())
+    }
+
+    // Add seeds to the counter with a specificed date
+    static func addSeeds(_ count: Int, relativeToDate date: Date) {
         var totalSeeds = loadTotalSeedsCollected()
         var currentLevel = loadCurrentLevel()
 
@@ -91,7 +96,7 @@ final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol {
             }
         }
 
-        saveProgress(totalSeeds: totalSeeds, currentLevel: currentLevel, lastAppOpenDate: loadLastAppOpenDate())
+        saveProgress(totalSeeds: totalSeeds, currentLevel: currentLevel, lastAppOpenDate: date)
 
         // Notify listeners if leveled up
         if leveledUp {
@@ -117,7 +122,6 @@ final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol {
         }
         
         // Add 1 seed and save the last open date as today
-        addSeeds(1)
-        saveProgress(totalSeeds: loadTotalSeedsCollected(), currentLevel: loadCurrentLevel(), lastAppOpenDate: currentDate)
+        addSeeds(1, relativeToDate: currentDate)
     }
 }

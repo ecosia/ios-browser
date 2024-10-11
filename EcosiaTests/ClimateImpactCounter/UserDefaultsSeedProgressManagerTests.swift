@@ -124,4 +124,16 @@ final class UserDefaultsSeedProgressManagerTests: XCTestCase {
         let innerProgress = UserDefaultsSeedProgressManager.calculateInnerProgress()
         XCTAssertEqual(innerProgress, 0.2, accuracy: 0.01, "Should have 20% progress in level 2 after collecting 2 seeds in level 2")
     }
+    
+    // Test progress calculation for level 2 and beyond, keeping the level at the last defined, 2.
+    func test_progress_calculation_collect_seeds_beyond_level_2_stays_at_level_2() {
+        // Setup to be at level 2 with 10 new seeds collected
+        UserDefaultsSeedProgressManager.addSeeds(10)
+        
+        let totalSeedsCollected = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
+        XCTAssertEqual(totalSeedsCollected, 11, "Total seeds accumulated (10+1)")
+        
+        let currentLevel = UserDefaultsSeedProgressManager.loadCurrentLevel()
+        XCTAssertEqual(currentLevel, 2, "Should stay at level 2 when more seeds than required to go beyond the last level (2 in this testing preconditions scenario)")
+    }
 }
