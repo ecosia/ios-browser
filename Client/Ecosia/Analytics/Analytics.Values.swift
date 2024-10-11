@@ -43,11 +43,12 @@ extension Analytics {
             case
             about,
             customize,
+            topSites = "top_sites",
             impact,
             quickActions = "quick_actions",
             news,
             onboardingCard = "onboarding_card",
-            topSites = "top_sites"
+            climateCounter = "climate_counter"
         }
         
         enum Browser: String {
@@ -132,6 +133,13 @@ extension Analytics {
             pin,
             remove,
             unpin
+		}
+
+        enum SeedCounter: String {
+            case
+            level,
+            collect,
+            click
         }
     }
     
