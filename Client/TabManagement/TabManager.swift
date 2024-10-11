@@ -75,6 +75,9 @@ extension TabManager {
     }
 
     func selectTab(_ tab: Tab?) {
+        if tab?.isFxHomeTab ?? false {
+            ClientEngagementService.shared.logCustomEvent(name: "ios_open_ntp")
+        }
         selectTab(tab, previous: nil)
     }
 

@@ -26,6 +26,14 @@ final class ClientEngagementService {
         }
     }
     
+    func presentNextQueuedMessage() {
+        service.provider.presentNextQueuedMessage()
+    }
+
+    func logCustomEvent(name: String) {
+        service.provider.logCustomEvent(name: name)
+    }
+    
     func registerDeviceToken(_ deviceToken: Data) {
         service.registerDeviceToken(deviceToken)
     }
@@ -50,7 +58,7 @@ final class ClientEngagementService {
 extension ClientEngagementService {
     
     func initializeAndUpdateNotificationRegistrationIfNeeded(notificationCenterDelegate: UNUserNotificationCenterDelegate) {
-        guard EngagementServiceExperiment.isEnabled else { return }
+//        guard EngagementServiceExperiment.isEnabled else { return }
         initialize(parameters: ["id": User.shared.analyticsId.uuidString])
         Task.detached {
             await self.refreshAPNRegistrationIfNeeded(notificationCenterDelegate: notificationCenterDelegate)
