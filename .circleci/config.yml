@@ -77,7 +77,7 @@ jobs:
           name: Upload to Browserstack
           command: bundle exec fastlane upload_to_browserstack
       - jira/notify:
-          issue_regexp: (?i)([A-Z]+[-_]\d+)
+          issue_regexp: "([A-Za-z]{2,30}-[0-9]+)"
           pipeline_id: << pipeline.id >>
           pipeline_number: << pipeline.number >>
 
