@@ -17,8 +17,8 @@ final class UserDefaultsSeedProgressManagerTests: XCTestCase {
         
         // Set initial seed levels to use in the tests
         UserDefaultsSeedProgressManager.seedLevels = [
-            SeedLevelConfig.SeedLevel(level: 1, requiredSeeds: 5),
-            SeedLevelConfig.SeedLevel(level: 2, requiredSeeds: 10)
+            SeedCounterConfig.SeedLevel(level: 1, requiredSeeds: 5),
+            SeedCounterConfig.SeedLevel(level: 2, requiredSeeds: 10)
         ]
     }
 
