@@ -50,11 +50,11 @@ struct SeedCounterNTPExperiment {
     static var seedCounterConfig: SeedCounterConfig? {
         guard let payloadString = Unleash.getVariant(.seedCounterNTP).payload?.value,
               let payloadData = payloadString.data(using: .utf8),
-              let seedLevelConfig = try? JSONDecoder().decode(SeedCounterConfig.self, from: payloadData)
+              let seedCounterConfig = try? JSONDecoder().decode(SeedCounterConfig.self, from: payloadData)
         else {
             return nil
         }
-        return seedLevelConfig
+        return seedCounterConfig
     }
     
     static var sparklesAnimationDuration: Double {
