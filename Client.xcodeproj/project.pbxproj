@@ -21462,7 +21462,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = main;
+				branch = "braze-in-app-ui-test";
 				kind = branch;
 			};
 		};
