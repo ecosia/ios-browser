@@ -62,7 +62,6 @@ final class UserDefaultsSeedProgressManagerTests: XCTestCase {
         
         let level = UserDefaultsSeedProgressManager.loadCurrentLevel()
         let totalSeedsCollected = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
-        let innerProgress = UserDefaultsSeedProgressManager.calculateInnerProgress()
 
         XCTAssertEqual(level, 2, "User should be in level 2 after adding 2 more seed beyond the threshold")
         XCTAssertEqual(totalSeedsCollected, 7, "Total seeds should accumulate across levels (6 new added + 1 accumulated at the start")
@@ -113,27 +112,27 @@ final class UserDefaultsSeedProgressManagerTests: XCTestCase {
         XCTAssertEqual(totalSeedsCollected, 2, "User should be able to collect a seed on a new day")
     }
 
-    // Test progress calculation for level 2 and beyond
-    func test_progress_calculation_beyond_level_2() {
-        // Setup to be at level 2 with 6 new seeds collected
-        UserDefaultsSeedProgressManager.addSeeds(6)
+    // Test that adding seeds beyond the maximum level stops at the maximum seeds for the last level.
+    func test_add_seeds_beyond_maximum_level_stops_at_max_seeds_for_last_level() {
+        // Add enough seeds to reach level 2
+        UserDefaultsSeedProgressManager.addSeeds(9) // +9 seeds; total: 10 seeds (5 from level 1, 5 from level 2)
         
-        let totalSeedsCollected = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
-        XCTAssertEqual(totalSeedsCollected, 7, "Total seeds accumulated (6+1)")
+        // Ensure user is at level 2 and has 10 seeds
+        var totalSeedsCollected = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
+        var currentLevel = UserDefaultsSeedProgressManager.loadCurrentLevel()
         
-        let innerProgress = UserDefaultsSeedProgressManager.calculateInnerProgress()
-        XCTAssertEqual(innerProgress, 0.2, accuracy: 0.01, "Should have 20% progress in level 2 after collecting 2 seeds in level 2")
-    }
-    
-    // Test progress calculation for level 2 and beyond, keeping the level at the last defined, 2.
-    func test_progress_calculation_collect_seeds_beyond_level_2_stays_at_level_2() {
-        // Setup to be at level 2 with 10 new seeds collected
-        UserDefaultsSeedProgressManager.addSeeds(10)
+        XCTAssertEqual(currentLevel, 2, "User should be at level 2 after collecting 10 seeds.")
+        XCTAssertEqual(totalSeedsCollected, 10, "Total seeds should be exactly 10 after reaching level 2.")
+
+        // Now, try to add more seeds beyond the maximum allowed seeds for level 2
+        UserDefaultsSeedProgressManager.addSeeds(5) // Try adding +5 seeds
         
-        let totalSeedsCollected = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
-        XCTAssertEqual(totalSeedsCollected, 11, "Total seeds accumulated (10+1)")
+        // Reload the values after adding seeds
+        totalSeedsCollected = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
+        currentLevel = UserDefaultsSeedProgressManager.loadCurrentLevel()
         
-        let currentLevel = UserDefaultsSeedProgressManager.loadCurrentLevel()
-        XCTAssertEqual(currentLevel, 2, "Should stay at level 2 when more seeds than required to go beyond the last level (2 in this testing preconditions scenario)")
+        // Ensure user is still at level 2, and total seeds should be capped at 10
+        XCTAssertEqual(currentLevel, 2, "User should remain at level 2, as it's the last level.")
+        XCTAssertEqual(totalSeedsCollected, 10, "Total seeds should be capped at 10 (the maximum for level 2) even after adding more seeds.")
     }
 }

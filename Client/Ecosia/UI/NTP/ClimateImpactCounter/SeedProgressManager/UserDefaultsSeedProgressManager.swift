@@ -77,9 +77,19 @@ final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol {
         addSeeds(count, relativeToDate: loadLastAppOpenDate())
     }
 
-    // Add seeds to the counter with a specificed date
+    // Add seeds to the counter with a specific date
     static func addSeeds(_ count: Int, relativeToDate date: Date) {
+        // Load total seeds from User Defaults
         var totalSeeds = loadTotalSeedsCollected()
+        
+        // Get the seed requirement for the last level
+        let maxRequiredSeeds = seedLevels.last?.requiredSeeds ?? 0
+
+        // Early exit if the maximum number of seeds is already collected
+        if totalSeeds >= maxRequiredSeeds {
+            return
+        }
+
         var currentLevel = loadCurrentLevel()
 
         let previousLevelTotal = currentLevel > 1 ? requiredSeedsForLevel(currentLevel - 1) : 0
