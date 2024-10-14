@@ -80,9 +80,6 @@ jobs:
           issue_regexp: "([A-Za-z]{2,30}-[0-9]+)"
           pipeline_id: << pipeline.id >>
           pipeline_number: << pipeline.number >>
-
-
-
 orbs:
   path-filtering: circleci/path-filtering@0.1.1
   macos: circleci/macos@2
