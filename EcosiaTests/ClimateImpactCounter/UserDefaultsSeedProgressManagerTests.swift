@@ -5,7 +5,7 @@
 import XCTest
 @testable import Client
 
-/// Remember that we always start from 1 seed and level 1 every time we perform `addSeed(:)`
+/// Remember that we always start from 1 seed and level 1 every time.
 final class UserDefaultsSeedProgressManagerTests: XCTestCase {
 
     override func setUp() {
@@ -15,11 +15,16 @@ final class UserDefaultsSeedProgressManagerTests: XCTestCase {
         UserDefaults.standard.removeObject(forKey: "TotalSeedsCollected")
         UserDefaults.standard.removeObject(forKey: "LastAppOpenDate")
         
-        // Set initial seed levels to use in the tests
-        UserDefaultsSeedProgressManager.seedLevels = [
-            SeedCounterConfig.SeedLevel(level: 1, requiredSeeds: 5),
-            SeedCounterConfig.SeedLevel(level: 2, requiredSeeds: 10)
-        ]
+        // Default Seed Levels for testing (arbitrary levels)
+        UserDefaultsSeedProgressManager.seedCounterConfig = SeedCounterConfig(
+            sparklesAnimationDuration: 10,
+            maxCappedLevel: nil,
+            maxCappedSeeds: nil,
+            levels: [
+                SeedCounterConfig.SeedLevel(level: 1, requiredSeeds: 5),
+                SeedCounterConfig.SeedLevel(level: 2, requiredSeeds: 10)
+            ]
+        )
     }
 
     // Test the initial state
@@ -31,7 +36,7 @@ final class UserDefaultsSeedProgressManagerTests: XCTestCase {
         XCTAssertEqual(totalSeedsCollected, 1, "Initial totalSeedsCollected should be 1")
     }
 
-    // Test adding seeds, make sure the user stays on level 1 until the next seed is added
+    // Test adding seeds, make sure the user stays on level 1 until the required seeds to reach next level are added
     func test_add_seeds_progress_to_next_level() {
         UserDefaultsSeedProgressManager.addSeeds(4)
         
@@ -42,14 +47,14 @@ final class UserDefaultsSeedProgressManagerTests: XCTestCase {
         XCTAssertEqual(level, 1, "User should still be in level 1 after collecting 5 seeds")
         XCTAssertEqual(totalSeedsCollected, 5, "Total seeds should be 5")
 
-        // Add 1 more seed, now the user should progress to level 2
-        UserDefaultsSeedProgressManager.addSeeds(1)
+        // Add 5 more seeds, now the user should progress to level 2, as 10 seeds total reached
+        UserDefaultsSeedProgressManager.addSeeds(5)
         
         level = UserDefaultsSeedProgressManager.loadCurrentLevel()
         totalSeedsCollected = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
         
-        XCTAssertEqual(level, 2, "User should progress to level 2 after collecting the 6th seed")
-        XCTAssertEqual(totalSeedsCollected, 6, "Total seeds should be 6")
+        XCTAssertEqual(level, 2, "User should progress to level 2 after collecting the 10th seed")
+        XCTAssertEqual(totalSeedsCollected, 10, "Total seeds should be 10")
     }
 
     // Test adding seeds beyond level 1 and keep accumulating for level 2
@@ -57,22 +62,22 @@ final class UserDefaultsSeedProgressManagerTests: XCTestCase {
         // Collect 5 seeds, stay in level 1 (4+1)
         UserDefaultsSeedProgressManager.addSeeds(4)
 
-        // Add 2 more seeds, moves to level 2
+        // Add 2 more seeds, stays at level 1
         UserDefaultsSeedProgressManager.addSeeds(2)
         
         let level = UserDefaultsSeedProgressManager.loadCurrentLevel()
         let totalSeedsCollected = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
 
-        XCTAssertEqual(level, 2, "User should be in level 2 after adding 2 more seed beyond the threshold")
+        XCTAssertEqual(level, 1, "User should still be in level 1 after adding 2 more seed beyond the first level threshold")
         XCTAssertEqual(totalSeedsCollected, 7, "Total seeds should accumulate across levels (6 new added + 1 accumulated at the start")
     }
 
     // Test inner progress calculation for Level 2
     func test_calculate_inner_progress_for_level_2() {
-        UserDefaultsSeedProgressManager.addSeeds(6)  // Collect 6 seeds, which puts the user at level 2
+        UserDefaultsSeedProgressManager.addSeeds(6)  // Collect 7 (1+6) seeds, which puts the user progressing to level 2
 
         let innerProgress = UserDefaultsSeedProgressManager.calculateInnerProgress()
-        XCTAssertEqual(innerProgress, 0.2, accuracy: 0.01, "Inner progress should reflect 20% progress for level 2 after collecting 2 seeds")
+        XCTAssertEqual(innerProgress, 0.4, accuracy: 0.01, "Inner progress should reflect 40% progress for level 2 after collecting 7 seeds total out of 10")
     }
 
     // Test resetting the progress to the initial state
