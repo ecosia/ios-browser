@@ -26,7 +26,18 @@ If more information is required or you have any questions then we suggest reachi
 - Chat on Element channel [#fx-ios](https://chat.mozilla.org/#/room/#fx-ios:mozilla.org) for general discussion, or write DMs to specific teammates for questions.
 - Open a [Github discussion](https://github.com/mozilla-mobile/firefox-ios/discussions) which can be used for general questions.
 
-Want to contribute on the codebase but don't know where to start? Here is a list of [issues that are contributor friendly](https://github.com/mozilla-mobile/firefox-ios/labels/Contributor%20OK), but make sure to read the [Contributing guidelines](https://github.com/mozilla-mobile/firefox-ios/blob/main/CONTRIBUTING.md) first. 
+Want to contribute on the codebase but don't know where to start? Here is a list of [issues that are contributor friendly](https://github.com/mozilla-mobile/firefox-ios/labels/Contributor%20OK), but make sure to read the [Contributing guidelines](https://github.com/mozilla-mobile/firefox-ios/blob/main/CONTRIBUTING.md) first.
+
+After cloning (for Ecosians)
+-----------
+
+This project uses custom Git hooks to enforce commit message formatting and other automated tasks. 
+To ensure that these hooks are installed correctly in your local `.git/hooks` directory, you need to run the provided setup script after cloning the repository.
+
+- Navigate into the project directory
+- Run the setup script to install the Git hooks: `./setup-hooks.sh`
+
+This script will copy all the necessary hooks (such as `prepare-commit-msg`) to your local `.git/hooks` directory, ensuring they are executable.
 
 Building the code
 -----------------
