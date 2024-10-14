@@ -17,7 +17,7 @@ final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol {
     private static let lastAppOpenDateKey = "LastAppOpenDate"
     
     static var seedCounterConfig: SeedCounterConfig? = SeedCounterNTPExperiment.seedCounterConfig
-    private static var seedLevels: [SeedCounterConfig.SeedLevel] = seedCounterConfig?.levels.compactMap { $0 } ?? []
+    private static var seedLevels: [SeedCounterConfig.SeedLevel] { seedCounterConfig?.levels.compactMap { $0 } ?? [] }
     
     // Fetch max level and max seeds from remote configuration if provided
     private static let maxCappedLevel = seedCounterConfig?.maxCappedLevel
