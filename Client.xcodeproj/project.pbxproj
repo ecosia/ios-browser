@@ -359,6 +359,7 @@
 		2C6B5B412CAAF3AA00F15323 /* SeedCounterNTPExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6B5B402CAAF3AA00F15323 /* SeedCounterNTPExperiment.swift */; };
 		2C6C908F2C614A6C007D9B43 /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = 2C6C908E2C614A6C007D9B43 /* SnapshotTesting */; };
 		2C6C90902C614A76007D9B43 /* OnboardingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD368492C5BC31700972871 /* OnboardingTests.swift */; };
+		2C728D7E2CBBDCDC00C7684B /* UnleashUserDefaultsSeedProgressManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C728D7D2CBBDCDC00C7684B /* UnleashUserDefaultsSeedProgressManagerTests.swift */; };
 		2C78374B2C1765DF00BBFFEB /* LoadingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCFB3D42C0F1EA500BEDCA0 /* LoadingScreen.swift */; };
 		2C7DBABD2C4EA37200BCD03F /* AnalyticsFeatureManagementIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7DBABB2C4EA17200BCD03F /* AnalyticsFeatureManagementIntegrationTests.swift */; };
 		2C82625A2C64BB9300E2A255 /* DeviceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C8262592C64BB9300E2A255 /* DeviceType.swift */; };
@@ -2511,6 +2512,7 @@
 		2C6B5B402CAAF3AA00F15323 /* SeedCounterNTPExperiment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedCounterNTPExperiment.swift; sourceTree = "<group>"; };
 		2C6C90822C614A16007D9B43 /* EcosiaSnapshotTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EcosiaSnapshotTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C6E44099EACF7BE5438CEB6 /* ca */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ca; path = ca.lproj/Today.strings; sourceTree = "<group>"; };
+		2C728D7D2CBBDCDC00C7684B /* UnleashUserDefaultsSeedProgressManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnleashUserDefaultsSeedProgressManagerTests.swift; sourceTree = "<group>"; };
 		2C7DBABB2C4EA17200BCD03F /* AnalyticsFeatureManagementIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsFeatureManagementIntegrationTests.swift; sourceTree = "<group>"; };
 		2C8262572C64424300E2A255 /* EcosiaSnapshotTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = EcosiaSnapshotTests.xctestplan; sourceTree = "<group>"; };
 		2C8262592C64BB9300E2A255 /* DeviceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceType.swift; sourceTree = "<group>"; };
@@ -8384,6 +8386,7 @@
 			isa = PBXGroup;
 			children = (
 				2C16B7652CAF2425006118F8 /* UserDefaultsSeedProgressManagerTests.swift */,
+				2C728D7D2CBBDCDC00C7684B /* UnleashUserDefaultsSeedProgressManagerTests.swift */,
 			);
 			path = ClimateImpactCounter;
 			sourceTree = "<group>";
@@ -14637,6 +14640,7 @@
 				2173326A29CCF901007F20C7 /* UIPanGestureRecognizerMock.swift in Sources */,
 				5A9A09D628B01FD500B6F51E /* MockURLBarView.swift in Sources */,
 				8A33222227DFE658008F809E /* NimbusMock.swift in Sources */,
+				2C728D7E2CBBDCDC00C7684B /* UnleashUserDefaultsSeedProgressManagerTests.swift in Sources */,
 				8A6E139E2A71C78A00A88FA8 /* GridTabViewControllerTests.swift in Sources */,
 				8A8629E72880B7330096DDB1 /* BookmarksPanelTests.swift in Sources */,
 				C8B394362A0ED55D00700E49 /* MockOnboardingCardDelegate.swift in Sources */,

@@ -7,7 +7,7 @@ import Foundation
 protocol SeedProgressManagerProtocol {
     static var progressUpdatedNotification: Notification.Name { get }
     static var levelUpNotification: Notification.Name { get }
-    static var seedLevels: [SeedCounterConfig.SeedLevel] { get set }
+    static var seedCounterConfig: SeedCounterConfig? { get set }
     
     static func loadCurrentLevel() -> Int
     static func loadTotalSeedsCollected() -> Int

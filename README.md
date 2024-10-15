@@ -35,7 +35,7 @@ This project uses custom Git hooks to enforce commit message formatting and othe
 To ensure that these hooks are installed correctly in your local `.git/hooks` directory, you need to run the provided setup script after cloning the repository.
 
 - Navigate into the project directory
-- Run the setup script to install the Git hooks: `./setup-hooks.sh`
+- Run the setup script to install the Git hooks: `./setup_hooks.sh`
 
 This script will copy all the necessary hooks (such as `prepare-commit-msg`) to your local `.git/hooks` directory, ensuring they are executable.
 

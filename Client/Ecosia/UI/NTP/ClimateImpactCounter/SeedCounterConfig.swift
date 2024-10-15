@@ -6,6 +6,8 @@ import Foundation
 
 struct SeedCounterConfig {
     let sparklesAnimationDuration: Double
+    let maxCappedLevel: Int?  // Optional field to cap the level as part of the experiment
+    let maxCappedSeeds: Int? // Optional field to cap the total seeds as part of the experiment
     let levels: [SeedLevel]
 
     struct SeedLevel: Codable {

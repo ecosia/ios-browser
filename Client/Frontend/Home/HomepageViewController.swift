@@ -124,7 +124,8 @@ class HomepageViewController:
                                        .TabsPrivacyModeChanged,
                                        .WallpaperDidChange,
                                        // Ecosia: Seed Counter Experiment
-                                       SeedCounterNTPExperiment.progressManagerType.levelUpNotification])
+                                       SeedCounterNTPExperiment.progressManagerType.levelUpNotification,
+                                       UIApplication.didBecomeActiveNotification])
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -892,6 +893,9 @@ extension HomepageViewController: Notifiable {
             // Ecosia: Seed Counter Experiment
             case SeedCounterNTPExperiment.progressManagerType.levelUpNotification:
                 SeedCounterNTPExperiment.trackSeedLevellingUp()
+            case UIApplication.didBecomeActiveNotification:
+                SeedCounterNTPExperiment.trackSeedCollectionIfNewDayAppOpening()
+                SeedCounterNTPExperiment.progressManagerType.collectDailySeed()
             default: break
             }
         }

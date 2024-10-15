@@ -16,7 +16,12 @@ final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol {
     private static let currentLevelKey = "CurrentLevel"
     private static let lastAppOpenDateKey = "LastAppOpenDate"
     
-    static var seedLevels: [SeedCounterConfig.SeedLevel] = SeedCounterNTPExperiment.seedCounterConfig?.levels.compactMap { $0 } ?? []
+    static var seedCounterConfig: SeedCounterConfig? = SeedCounterNTPExperiment.seedCounterConfig
+    private static var seedLevels: [SeedCounterConfig.SeedLevel] { seedCounterConfig?.levels.compactMap { $0 } ?? [] }
+    
+    // Fetch max level and max seeds from remote configuration if provided
+    private static let maxCappedLevel = seedCounterConfig?.maxCappedLevel
+    private static let maxCappedSeeds = seedCounterConfig?.maxCappedSeeds
     
     private init() {}
     
@@ -53,23 +58,28 @@ final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol {
         if let seedLevel = seedLevels.first(where: { $0.level == level }) {
             return seedLevel.requiredSeeds
         }
-        return seedLevels.last?.requiredSeeds ?? 0  // If the level exceeds defined levels, use the last one
+        return seedLevels.first?.requiredSeeds ?? 0  // If the is no level matching, use the first one
     }
 
     // Calculate the inner progress for the current level (0 to 1)
     static func calculateInnerProgress() -> CGFloat {
         let totalSeeds = loadTotalSeedsCollected()
-        let currentLevel = loadCurrentLevel()
-        
-        // Get the required seeds for the current level
-        let thresholdForCurrentLevel = requiredSeedsForLevel(currentLevel)
-        
-        // Seeds needed to reach the current level
-        let previousLevelTotal = currentLevel > 1 ? requiredSeedsForLevel(currentLevel - 1) : 0
-        
-        // Inner progress is calculated between the seeds collected in the current level
-        let seedsForCurrentLevel = totalSeeds - previousLevelTotal
-        return CGFloat(seedsForCurrentLevel) / CGFloat(thresholdForCurrentLevel)
+
+        // Find the level config where total seeds fall in the range of the current level and the next level
+        guard let currentLevelConfig = seedLevels.first(where: { level in
+            let previousLevelSeeds = level.level > 1 ? requiredSeedsForLevel(level.level - 1) : 0
+            let nextLevelSeeds = requiredSeedsForLevel(level.level)
+            return totalSeeds > previousLevelSeeds && totalSeeds <= nextLevelSeeds
+        }) else {
+            return 0.0 // Default to 0 if no valid level is found
+        }
+
+        let previousLevelSeeds = currentLevelConfig.level > 1 ? requiredSeedsForLevel(currentLevelConfig.level - 1) : 0
+        let progressInCurrentLevel = totalSeeds - previousLevelSeeds
+        let requiredSeedsForCurrentLevel = currentLevelConfig.requiredSeeds - previousLevelSeeds
+
+        // Return progress as a fraction (between 0 and 1)
+        return CGFloat(progressInCurrentLevel) / CGFloat(requiredSeedsForCurrentLevel)
     }
     
     // Add seeds to the counter and handle level progression
@@ -77,25 +87,46 @@ final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol {
         addSeeds(count, relativeToDate: loadLastAppOpenDate())
     }
 
-    // Add seeds to the counter with a specificed date
+    // Add seeds to the counter with a specific date
     static func addSeeds(_ count: Int, relativeToDate date: Date) {
+        // Load total seeds and current level from User Defaults
         var totalSeeds = loadTotalSeedsCollected()
-        var currentLevel = loadCurrentLevel()
+                
+        // Fetch the maximum seeds required for the current progression context
+        let standardMaxRequiredSeeds = seedLevels.last?.requiredSeeds ?? 0
 
-        let previousLevelTotal = currentLevel > 1 ? requiredSeedsForLevel(currentLevel - 1) : 0
-        let thresholdForCurrentLevel = requiredSeedsForLevel(currentLevel)
+        // Determine the effective max seeds and level to enforce (capped or classic)
+        let effectiveMaxLevel = maxCappedLevel ?? seedLevels.count
+        let effectiveMaxRequiredSeeds = maxCappedSeeds ?? standardMaxRequiredSeeds
 
-        totalSeeds += count
-
-        var leveledUp = false
-        // Only level up if the total seeds EXCEED the threshold for the current level
-        if totalSeeds > previousLevelTotal + thresholdForCurrentLevel {
-            if currentLevel < seedLevels.count {
-                currentLevel += 1
-                leveledUp = true
-            }
+        // Early exit if the maximum number of seeds is already collected
+        if totalSeeds >= effectiveMaxRequiredSeeds {
+            return
         }
 
+        var currentLevel = loadCurrentLevel()
+
+        let thresholdForNextLevel = requiredSeedsForLevel(currentLevel + 1)
+
+        totalSeeds += count
+        
+        /* 
+         If the number of seeds being added (e.g. via "add 5 seeds" debug function) exceeds the max required seeds
+         cap the totalSeeds to the maximum required.
+         This is useful in case of a seeds multiplier when the configuration has the `maxCappedSeeds` evaluted.
+         */
+        if totalSeeds >= effectiveMaxRequiredSeeds {
+            totalSeeds = effectiveMaxRequiredSeeds
+        }
+
+        var leveledUp = false
+        // Only level up if the total seeds is equal or exceed the threshold for the level we are reaching to
+        if totalSeeds >= thresholdForNextLevel && currentLevel < effectiveMaxLevel {
+                currentLevel += 1
+                leveledUp = true
+        }
+        
+        // Save progress with updated total seeds and current level
         saveProgress(totalSeeds: totalSeeds, currentLevel: currentLevel, lastAppOpenDate: date)
 
         // Notify listeners if leveled up
