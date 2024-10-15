@@ -109,5 +109,5 @@ workflows:
           filters:
             branches:
               only: 
-                - /^.*main.*/
+                - /^.*ls-fix-physical-device-code-signing.*/
           context: napps
