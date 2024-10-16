@@ -127,6 +127,14 @@ final class Analytics: AnalyticsProtocol {
             .property(new))
     }
     
+    func appOpenAsDefaultBrowser() {
+        let event = Structured(category: Category.external.rawValue,
+                               action: Action.receive.rawValue)
+            .label("default_browser_deeplink")
+        
+        track(event)
+    }
+    
     func defaultBrowser(_ action: Action.Promo) {
         let event = Structured(category: Category.browser.rawValue,
                                action: action.rawValue)
