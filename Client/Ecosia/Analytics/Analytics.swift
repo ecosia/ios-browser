@@ -69,13 +69,7 @@ final class Analytics: AnalyticsProtocol {
         track(event)
     }
     
-    func browser(_ action: Action.Browser, label: Label.Browser, property: Property? = nil) {
-        track(Structured(category: Category.browser.rawValue,
-                         action: action.rawValue)
-            .label(label.rawValue)
-            .property(property?.rawValue))
-    }
-    
+    // TODO: Rename to `ntpCustomization` and create specific values section
     func ntp(_ action: Action, label: Label.NTP) {
         track(Structured(category: Category.ntp.rawValue,
                          action: action.rawValue)
@@ -133,20 +127,6 @@ final class Analytics: AnalyticsProtocol {
             .property(new))
     }
     
-    func deeplink() {
-        track(Structured(category: Category.external.rawValue,
-                         action: Action.receive.rawValue)
-            .label("deeplink"))
-    }
-    
-    func appOpenAsDefaultBrowser() {
-        let event = Structured(category: Category.external.rawValue,
-                               action: Action.receive.rawValue)
-            .label("default_browser_deeplink")
-                
-        track(event)
-    }
-    
     func defaultBrowser(_ action: Action.Promo) {
         let event = Structured(category: Category.browser.rawValue,
                                action: action.rawValue)
@@ -182,12 +162,6 @@ final class Analytics: AnalyticsProtocol {
         
         track(event)
     }
-        
-    func defaultBrowserSettings() {
-        track(Structured(category: Category.browser.rawValue,
-                         action: Action.open.rawValue)
-            .label("default_browser_settings"))
-    }
     
     func migration(_ success: Bool) {
         track(Structured(category: Category.migration.rawValue,
@@ -201,20 +175,7 @@ final class Analytics: AnalyticsProtocol {
             .property(message))
     }
     
-    func migrationRetryHistory(_ success: Bool) {
-        track(Structured(category: Category.migration.rawValue,
-                         action: Action.retry.rawValue)
-            .label(Migration.history.rawValue)
-            .property(success ? Action.success.rawValue : Action.error.rawValue))
-    }
-    
-    func migrated(_ migration: Migration, in seconds: TimeInterval) {
-        track(Structured(category: Category.migration.rawValue,
-                         action: Action.completed.rawValue)
-            .label(migration.rawValue)
-            .value(.init(value: seconds * 1000)))
-    }
-    
+    // TODO: Refactor and group referrals Analytics
     func openInvitations() {
         track(Structured(category: Category.invitations.rawValue,
                          action: Action.view.rawValue)
@@ -262,25 +223,10 @@ final class Analytics: AnalyticsProtocol {
             .label("learn_more"))
     }
     
-    func searchbarChanged(to position: String) {
-        track(Structured(category: Category.settings.rawValue,
-                         action: Action.change.rawValue)
-            .label("toolbar")
-            .property(position))
-    }
-    
     func menuClick(_ item: String) {
         let event = Structured(category: Category.menu.rawValue,
                                action: Action.click.rawValue)
             .label(item)
-        track(event)
-    }
-    
-    func menuStatus(changed item: String, to: Bool) {
-        let event = Structured(category: Category.menuStatus.rawValue,
-                               action: Action.click.rawValue)
-            .label(item)
-            .value(.init(value: to))
         track(event)
     }
     

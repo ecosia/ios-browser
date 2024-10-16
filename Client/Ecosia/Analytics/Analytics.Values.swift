@@ -15,7 +15,6 @@ extension Analytics {
         invitations,
         ntp,
         menu,
-        menuStatus = "menu_status",
         settings,
         bookmarks
     }
@@ -25,18 +24,13 @@ extension Analytics {
             case
             inapp,
             projects,
-            counter,
             financialReports = "financial_reports",
-            shop,
-            faq,
             news,
             next,
             privacy,
             sendFeedback = "send_feedback",
-            skip,
-            terms,
-            treecard,
-            treestore
+            skip, // TODO: Split Onboarding specific Labels
+            terms
         }
         
         enum NTP: String {
@@ -78,7 +72,6 @@ extension Analytics {
         error,
         completed,
         success,
-        retry,
         send,
         claim,
         click,
@@ -198,10 +191,7 @@ extension Analytics {
 
     enum Migration: String {
         case
-        tabs,
-        favourites,
-        history,
-        exception
+        tabs
     }
 
     enum ShareContent: String {
