@@ -26,14 +26,6 @@ final class NTPComponentTests: SnapshotBaseTests {
         })
     }
     
-    func testNTPBookmarkNudgeCell() {
-        SnapshotTestHelper.assertSnapshot(initializingWith: {
-            let cell = NTPBookmarkNudgeCell(frame: CGRect(x: 0, y: 0, width: self.commonWidth, height: 200))
-            cell.applyTheme()
-            return cell
-        })
-    }
-    
     func testNTPReferralMultipleInvitesCell() {
         impactInfoReferralCellWithInvites(2)
     }
