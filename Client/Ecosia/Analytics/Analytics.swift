@@ -144,6 +144,12 @@ final class Analytics: AnalyticsProtocol {
         track(event)
     }
     
+    func defaultBrowserSettings() {
+        track(Structured(category: Category.browser.rawValue,
+                         action: Action.open.rawValue)
+            .label("default_browser_settings"))
+    }
+    
     /// Sends the analytics event for a given action
     /// The function is EngagementService agnostic e.g. doesn't have context
     /// of the engagement service being used (i.e. `Braze`)
