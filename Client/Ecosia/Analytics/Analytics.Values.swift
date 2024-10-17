@@ -20,7 +20,19 @@ extension Analytics {
         bookmarks
     }
     
-    enum Label {
+    enum Label: String {
+        case
+        analytics,
+        market,
+        toolbar
+        
+        enum DefaultBrowser: String {
+            case
+            deeplink = "default_browser_deeplink",
+            promo = "default_browser_promo",
+            settings = "default_browser_settings"
+        }
+        
         enum Navigation: String {
             case
             inapp,
@@ -77,6 +89,7 @@ extension Analytics {
             readingList = "reading_list",
             requestDesktopSite = "request_desktop_site",
             settings,
+            share,
             zoom
         }
         
@@ -192,22 +205,13 @@ extension Analytics {
         }
     }
     
-    enum Property {
+    enum Property: String {
         case
+        enable,
+        disable,
         home,
         menu,
         toolbar
-        
-        var rawValue: String {
-            switch self {
-            case .home:
-                return "home"
-            case .menu:
-                return "menu"
-            case .toolbar:
-                return "toolbar"
-            }
-        }
         
         enum Library: String {
             case

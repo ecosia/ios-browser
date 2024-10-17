@@ -121,15 +121,15 @@ final class Analytics: AnalyticsProtocol {
     
     func navigationChangeMarket(_ new: String) {
         track(Structured(category: Category.navigation.rawValue,
-                         action: "change")
-            .label("market")
+                         action: Action.change.rawValue)
+            .label(Label.market.rawValue)
             .property(new))
     }
     
     func appOpenAsDefaultBrowser() {
         let event = Structured(category: Category.external.rawValue,
                                action: Action.receive.rawValue)
-            .label("default_browser_deeplink")
+            .label(Label.DefaultBrowser.deeplink.rawValue)
         
         track(event)
     }
@@ -137,8 +137,8 @@ final class Analytics: AnalyticsProtocol {
     func defaultBrowser(_ action: Action.Promo) {
         let event = Structured(category: Category.browser.rawValue,
                                action: action.rawValue)
-            .label("default_browser_promo")
-            .property("home")
+            .label(Label.DefaultBrowser.promo.rawValue)
+            .property(Property.home.rawValue)
                 
         track(event)
     }
@@ -146,7 +146,7 @@ final class Analytics: AnalyticsProtocol {
     func defaultBrowserSettings() {
         track(Structured(category: Category.browser.rawValue,
                          action: Action.open.rawValue)
-            .label("default_browser_settings"))
+            .label(Label.DefaultBrowser.settings.rawValue))
     }
     
     /// Sends the analytics event for a given action
@@ -197,7 +197,7 @@ final class Analytics: AnalyticsProtocol {
     func searchbarChanged(to position: String) {
         track(Structured(category: Category.settings.rawValue,
                          action: Action.change.rawValue)
-            .label("toolbar")
+            .label(Label.toolbar.rawValue)
             .property(position))
     }
     
@@ -211,7 +211,7 @@ final class Analytics: AnalyticsProtocol {
     func menuShare(_ content: ShareContent) {
         let event = Structured(category: Category.menu.rawValue,
                                action: Action.click.rawValue)
-            .label("share")
+            .label(Label.Menu.share.rawValue)
             .property(content.rawValue)
         track(event)
     }
@@ -276,8 +276,8 @@ final class Analytics: AnalyticsProtocol {
         // used since we want to send this just as the user opts out
         _ = tracker.track(Structured(category: Category.settings.rawValue,
                                      action: Action.change.rawValue)
-            .label("analytics")
-            .property(enabled ? "enable" : "disable"))
+            .label(Label.analytics.rawValue)
+            .property(enabled ? Property.enable.rawValue : Property.disable.rawValue))
     }
 }
 
