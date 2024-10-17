@@ -301,7 +301,7 @@ final class Analytics: AnalyticsProtocol {
         track(event)
     }
     
-    func introClick(_ label: Label.Navigation, page: Property.OnboardingPage?, index: Int) {
+    func introClick(_ label: Label.Onboarding, page: Property.OnboardingPage?, index: Int) {
         guard let page else {
             return
         }

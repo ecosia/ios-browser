@@ -27,10 +27,8 @@ extension Analytics {
             projects,
             financialReports = "financial_reports",
             news,
-            next,
             privacy,
             sendFeedback = "send_feedback",
-            skip, // TODO: Split Onboarding specific Labels
             terms
         }
         
@@ -88,6 +86,12 @@ extension Analytics {
             darkMode = "dark_mode",
             readingList = "reading_list",
             shortcut
+        }
+        
+        enum Onboarding: String {
+            case
+            next,
+            skip
         }
     }
     
