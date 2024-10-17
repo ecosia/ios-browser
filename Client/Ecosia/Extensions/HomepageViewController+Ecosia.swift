@@ -137,7 +137,7 @@ extension HomepageViewController: NTPNewsCellDelegate {
 
 extension HomepageViewController: NTPCustomizationCellDelegate {
     func openNTPCustomizationSettings() {
-        Analytics.shared.ntp(.click, label: .customize)
+        Analytics.shared.ntpCustomisation(.click, label: .customize)
         browserNavigationHandler?.show(settings: .homePage)
     }
 }

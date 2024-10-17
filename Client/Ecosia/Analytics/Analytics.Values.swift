@@ -161,6 +161,13 @@ extension Analytics {
             collect,
             click
         }
+        
+        enum NTPCustomization: String {
+            case
+            click,
+            disable,
+            enable
+        }
     }
     
     enum Property {

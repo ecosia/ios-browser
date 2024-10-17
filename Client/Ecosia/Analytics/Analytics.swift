@@ -69,8 +69,7 @@ final class Analytics: AnalyticsProtocol {
         track(event)
     }
     
-    // TODO: Rename to `ntpCustomization` and create specific values section
-    func ntp(_ action: Action, label: Label.NTP) {
+    func ntpCustomisation(_ action: Action.NTPCustomization, label: Label.NTP) {
         track(Structured(category: Category.ntp.rawValue,
                          action: action.rawValue)
             .label(label.rawValue))
