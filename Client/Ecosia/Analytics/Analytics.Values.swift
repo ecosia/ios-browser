@@ -93,6 +93,15 @@ extension Analytics {
             next,
             skip
         }
+        
+        enum Referral: String {
+            case
+            invite,
+            inviteScreen = "invite_screen",
+            learnMore = "learn_more",
+            linkCopying = "link_copying",
+            promo
+        }
     }
     
     enum Action: String {
@@ -171,6 +180,15 @@ extension Analytics {
             click,
             disable,
             enable
+        }
+        
+        enum Referral: String {
+            case
+            claim,
+            click,
+            open,
+            send,
+            view
         }
     }
     

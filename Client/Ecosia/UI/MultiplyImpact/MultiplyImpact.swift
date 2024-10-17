@@ -408,7 +408,7 @@ final class MultiplyImpact: UIViewController, Themeable {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        Analytics.shared.openInvitations()
+        Analytics.shared.referral(action: .view, label: .inviteScreen)
     }
     
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -487,7 +487,7 @@ final class MultiplyImpact: UIViewController, Themeable {
     @objc private func learnMore() {
         delegate?.openLink(url: Environment.current.urlProvider.referHelp)
         dismiss(animated: true)
-        Analytics.shared.inviteLearnMore()
+        Analytics.shared.referral(action: .click, label: .learnMore)
     }
     
     @objc private func hover() {
@@ -503,7 +503,7 @@ final class MultiplyImpact: UIViewController, Themeable {
         guard let message = inviteMessage else { return }
         UIPasteboard.general.setValue(message, forPasteboardType: UTType.plainText.identifier)
         copyText?.text = .localized(.copied)
-        Analytics.shared.inviteCopy()
+        Analytics.shared.referral(action: .click, label: .linkCopying)
     }
     
     @objc private func inviteFriends() {
@@ -529,12 +529,12 @@ final class MultiplyImpact: UIViewController, Themeable {
         share.popoverPresentationController?.sourceView = inviteButton
         share.completionWithItemsHandler = { _, completed, _, _ in
             if completed {
-                Analytics.shared.sendInvite()
+                Analytics.shared.referral(action: .send, label: .invite)
             }
         }
         present(share, animated: true)
 
-        Analytics.shared.startInvite()
+        Analytics.shared.referral(action: .click, label: .invite)
     }
 
     private func showInviteFriendsError(_ error: Referrals.Error) {

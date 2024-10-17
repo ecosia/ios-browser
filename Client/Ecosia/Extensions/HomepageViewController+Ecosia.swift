@@ -51,7 +51,7 @@ extension HomepageViewController: NTPTooltipDelegate {
             case .gotClaimed, .successfulInvite:
                 User.shared.referrals.accept()
             case .referralSpotlight:
-                Analytics.shared.openInvitePromo()
+                Analytics.shared.referral(action: .open, label: .promo)
                 User.shared.hideReferralSpotlight()
             case .collectiveImpactIntro:
                 User.shared.hideImpactIntro()

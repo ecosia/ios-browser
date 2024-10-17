@@ -188,52 +188,10 @@ final class Analytics: AnalyticsProtocol {
             .property(message))
     }
     
-    // TODO: Refactor and group referrals Analytics
-    func openInvitations() {
+    func referral(action: Action.Referral, label: Label.Referral? = nil) {
         track(Structured(category: Category.invitations.rawValue,
-                         action: Action.view.rawValue)
-            .label("invite_screen"))
-    }
-    
-    func startInvite() {
-        track(Structured(category: Category.invitations.rawValue,
-                         action: Action.click.rawValue)
-            .label("invite"))
-    }
-    
-    func sendInvite() {
-        track(Structured(category: Category.invitations.rawValue,
-                         action: Action.send.rawValue)
-            .label("invite"))
-    }
-    
-    func showInvitePromo() {
-        track(Structured(category: Category.invitations.rawValue,
-                         action: Action.view.rawValue)
-            .label("promo"))
-    }
-    
-    func openInvitePromo() {
-        track(Structured(category: Category.invitations.rawValue,
-                         action: Action.open.rawValue)
-            .label("promo"))
-    }
-    
-    func inviteClaimSuccess() {
-        track(Structured(category: Category.invitations.rawValue,
-                         action: Action.claim.rawValue))
-    }
-    
-    func inviteCopy() {
-        track(Structured(category: Category.invitations.rawValue,
-                         action: Action.click.rawValue)
-            .label("link_copying"))
-    }
-    
-    func inviteLearnMore() {
-        track(Structured(category: Category.invitations.rawValue,
-                         action: Action.click.rawValue)
-            .label("learn_more"))
+                         action: action.rawValue)
+            .label(label?.rawValue))
     }
     
     func searchbarChanged(to position: String) {
