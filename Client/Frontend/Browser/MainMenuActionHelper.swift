@@ -612,6 +612,9 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
                                               iconString: nightModeEnabled ? "darkModeSolid" : "darkMode",
                                               isEnabled: nightModeEnabled) { _ in
             NightModeHelper.toggle(tabManager: self.tabManager)
+            
+            // Ecosia: Track dark mode changes
+            Analytics.shared.menuStatus(changed: .darkMode, to: !nightModeEnabled)
 
             if nightModeEnabled {
                 TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .nightModeEnabled)
@@ -827,6 +830,9 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
             self.profile.readingList.createRecordWithURL(url.absoluteString, title: tab.title ?? "", addedBy: UIDevice.current.name)
             TelemetryWrapper.recordEvent(category: .action, method: .add, object: .readingListItem, value: .pageActionMenu)
             self.delegate?.showToast(message: .AppMenu.AddToReadingListConfirmMessage, toastAction: .addToReadingList)
+            
+            // Ecosia: Track add reading list
+            Analytics.shared.menuStatus(changed: .readingList, to: true)
         }
     }
 
@@ -844,6 +850,9 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
                                          method: .delete,
                                          object: .readingListItem,
                                          value: .pageActionMenu)
+            
+            // Ecosia: Track remove reading list
+            Analytics.shared.menuStatus(changed: .readingList, to: false)
         }
     }
 
@@ -887,6 +896,9 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
             // The method in BVC also handles the toast for this use case
             self.delegate?.addBookmark(url: url.absoluteString, title: tab.title)
             TelemetryWrapper.recordEvent(category: .action, method: .add, object: .bookmark, value: .pageActionMenu)
+            
+            // Ecosia: Track add bookmark
+            Analytics.shared.menuStatus(changed: .bookmark, to: true)
         }
     }
 
@@ -904,6 +916,9 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
             }
 
             TelemetryWrapper.recordEvent(category: .action, method: .delete, object: .bookmark, value: .pageActionMenu)
+            
+            // Ecosia: Track remove bookmark
+            Analytics.shared.menuStatus(changed: .bookmark, to: false)
         }
     }
 
@@ -929,6 +944,9 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
             }
 
             TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .pinToTopSites)
+            
+            // Ecosia: Track add shortcut
+            Analytics.shared.menuStatus(changed: .shortcut, to: true)
         }
     }
 
@@ -948,6 +966,9 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
                 }
             }
             TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .removePinnedSite)
+            
+            // Ecosia: Track remove shortcut
+            Analytics.shared.menuStatus(changed: .shortcut, to: false)
         }
     }
 

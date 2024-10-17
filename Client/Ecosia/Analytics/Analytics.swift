@@ -258,6 +258,14 @@ final class Analytics: AnalyticsProtocol {
             .property(content.rawValue)
         track(event)
     }
+    
+    func menuStatus(changed item: Analytics.Label.MenuStatus, to: Bool) {
+        let event = Structured(category: Category.menuStatus.rawValue,
+                               action: Action.click.rawValue)
+            .label(item.rawValue)
+            .value(.init(value: to))
+        track(event)
+    }
 
     func bookmarksPerformImportExport(_ property: Property.Bookmarks) {
         let event = Structured(category: Category.bookmarks.rawValue,

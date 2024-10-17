@@ -15,6 +15,7 @@ extension Analytics {
         invitations,
         ntp,
         menu,
+        menuStatus = "menu_status",
         settings,
         bookmarks
     }
@@ -79,6 +80,14 @@ extension Analytics {
             requestDesktopSite = "request_desktop_site",
             settings,
             zoom
+        }
+        
+        enum MenuStatus: String {
+            case
+            bookmark,
+            darkMode = "dark_mode",
+            readingList = "reading_list",
+            shortcut
         }
     }
     
