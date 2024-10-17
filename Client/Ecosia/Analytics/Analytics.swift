@@ -237,6 +237,13 @@ final class Analytics: AnalyticsProtocol {
             .label("learn_more"))
     }
     
+    func searchbarChanged(to position: String) {
+        track(Structured(category: Category.settings.rawValue,
+                         action: Action.change.rawValue)
+            .label("toolbar")
+            .property(position))
+    }
+    
     func menuClick(_ item: String) {
         let event = Structured(category: Category.menu.rawValue,
                                action: Action.click.rawValue)
