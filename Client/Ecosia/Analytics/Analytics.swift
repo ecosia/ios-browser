@@ -244,10 +244,10 @@ final class Analytics: AnalyticsProtocol {
             .property(position))
     }
     
-    func menuClick(_ item: String) {
+    func menuClick(_ item: Analytics.Label.Menu) {
         let event = Structured(category: Category.menu.rawValue,
                                action: Action.click.rawValue)
-            .label(item)
+            .label(item.rawValue)
         track(event)
     }
     

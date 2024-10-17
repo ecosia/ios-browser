@@ -62,6 +62,24 @@ extension Analytics {
             learnMore = "learn_more",
             `import`
         }
+        
+        enum Menu: String {
+            case
+            bookmarks,
+            copyLink = "copy_link",
+            customizeHomepage = "customize_homepage",
+            downloads,
+            findInPage = "find_in_page",
+            help,
+            history,
+            home,
+            newTab = "new_tab",
+            openInSafari = "open_in_safari",
+            readingList = "reading_list",
+            requestDesktopSite = "request_desktop_site",
+            settings,
+            zoom
+        }
     }
     
     enum Action: String {

@@ -31,19 +31,19 @@ extension BrowserViewController: PageActionsShortcutsDelegate {
     func pageOptionsOpenHome() {
         tabToolbarDidPressHome(toolbar, button: .init())
         dismiss(animated: true)
-        Analytics.shared.menuClick("home")
+        Analytics.shared.menuClick(.home)
     }
 
     func pageOptionsNewTab() {
         openBlankNewTab(focusLocationField: false)
         dismiss(animated: true)
-        Analytics.shared.menuClick("new_tab")
+        Analytics.shared.menuClick(.newTab)
     }
     
     func pageOptionsSettings() {
         homePanelDidRequestToOpenSettings(at: .general)
         dismiss(animated: true)
-        Analytics.shared.menuClick("settings")
+        Analytics.shared.menuClick(.settings)
     }
 
     func pageOptionsShare() {

@@ -194,7 +194,7 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
             let safari = SFSafariViewController(url: url, configuration: config)
             safari.dismissButtonStyle = .close
             navigationController.present(safari, animated: true, completion: nil)
-            Analytics.shared.menuClick("open_in_safari")
+            Analytics.shared.menuClick(.openInSafari)
         }
 
         return model
@@ -415,6 +415,9 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
             let shouldFocusLocationField = NewTabAccessors.getNewTabPage(self.profile.prefs) != .homePage
             self.delegate?.openNewTabFromMenu(focusLocationField: shouldFocusLocationField, isPrivate: tab.isPrivate)
             TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .createNewTab)
+            
+            // Ecosia: Track new tab action
+            Analytics.shared.menuClick(.newTab)
         }.items
     }
 
@@ -423,6 +426,9 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
                                      iconString: StandardImageIdentifiers.Large.history) { _ in
             self.delegate?.showLibrary(panel: .history)
             TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .viewHistoryPanel)
+            
+            // Ecosia: Track history action
+            Analytics.shared.menuClick(.history)
         }.items
     }
 
@@ -431,6 +437,9 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
                                      iconString: StandardImageIdentifiers.Large.download) { _ in
             self.delegate?.showLibrary(panel: .downloads)
             TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .viewDownloadsPanel)
+            
+            // Ecosia: Track downloads action
+            Analytics.shared.menuClick(.downloads)
         }.items
     }
 
@@ -443,6 +452,9 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
         let zoomAction = SingleActionViewModel(title: title,
                                                iconString: ImageIdentifiers.zoomIn) { _ in
             self.delegate?.showZoomPage(tab: tab)
+            
+            // Ecosia: Track zoom action
+            Analytics.shared.menuClick(.zoom)
         }.items
         return zoomAction
     }
@@ -456,6 +468,9 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
                                      iconString: "menu-FindInPageUpdate") { _ in
             TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .findInPage)
             self.delegate?.showFindInPage()
+            
+            // Ecosia: Track find in page action
+            Analytics.shared.menuClick(.findInPage)
         }.items
     }
 
@@ -482,6 +497,9 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
                 tab.toggleChangeUserAgent()
                 Tab.ChangeUserAgent.updateDomainList(forUrl: url, isChangedUA: tab.changedUserAgent, isPrivate: tab.isPrivate)
                 TelemetryWrapper.recordEvent(category: .action, method: .tap, object: siteTypeTelemetryObject)
+                
+                // Ecosia: Track request desktop site action
+                Analytics.shared.menuClick(.requestDesktopSite)
             }
         }.items
     }
@@ -498,6 +516,9 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
                 UIPasteboard.general.url = url
                 self.delegate?.showToast(message: .AppMenu.AppMenuCopyURLConfirmMessage, toastAction: .copyUrl)
             }
+            
+            // Ecosia: Track copy link action
+            Analytics.shared.menuClick(.copyLink)
         }.items
     }
 
@@ -547,6 +568,7 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
             TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .help)
              */
             self.delegate?.openURLInCurrentTab(Environment.current.urlProvider.faq)
+            Analytics.shared.menuClick(.help)
         }.items
     }
 
@@ -555,6 +577,9 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
                                      iconString: StandardImageIdentifiers.Large.edit) { _ in
             self.delegate?.showCustomizeHomePage()
             TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .customizeHomePage)
+            
+            // Ecosia: Track customize homepage action
+            Analytics.shared.menuClick(.customizeHomepage)
         }.items
     }
 
@@ -778,6 +803,9 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
         return SingleActionViewModel(title: .AppMenu.ReadingList,
                                      iconString: "libraryReading") { _ in
             self.delegate?.showLibrary(panel: .readingList)
+            
+            // Ecosia: Track reading list action
+            Analytics.shared.menuClick(.readingList)
         }
     }
 
@@ -837,6 +865,9 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
         return SingleActionViewModel(title: .AppMenu.Bookmarks,
                                      iconString: StandardImageIdentifiers.Large.bookmarkTrayFill) { _ in
             self.delegate?.showLibrary(panel: .bookmarks)
+            
+            // Ecosia: Track reading list action
+            Analytics.shared.menuClick(.bookmarks)
         }
     }
 
