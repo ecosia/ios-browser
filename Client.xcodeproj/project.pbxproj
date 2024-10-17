@@ -384,6 +384,9 @@
 		2CE294492B7CDD78006C22B2 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 2CE294482B7CDD78006C22B2 /* Core */; };
 		2CE2E24D2B9B1FCB00973C16 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 2CE2E24C2B9B1FCB00973C16 /* Core */; };
 		2CF4DA632BB31970001C340A /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 2CF4DA622BB31970001C340A /* Core */; };
+		2CFEFA8B2CC0559700C67E9A /* Auth0.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2CFEFA892CC0559700C67E9A /* Auth0.plist */; };
+		2CFEFA902CC0569800C67E9A /* NTPAccountLoginCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEFA8C2CC0569700C67E9A /* NTPAccountLoginCell.swift */; };
+		2CFEFA912CC0569800C67E9A /* NTPAccountLoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEFA8D2CC0569700C67E9A /* NTPAccountLoginViewModel.swift */; };
 		2CFE600C2CD3AAB6001F35D2 /* OnboardingRemoveExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFE600B2CD3AAB6001F35D2 /* OnboardingRemoveExperiment.swift */; };
 		2F13E79B1AC0C02700D75081 /* StringExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F13E79A1AC0C02700D75081 /* StringExtensionsTests.swift */; };
 		2F44FA1B1A9D426A00FD20CC /* TestHashExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F44FA1A1A9D426A00FD20CC /* TestHashExtensions.swift */; };
@@ -2564,6 +2567,9 @@
 		2CF21D0820A4A163000D08B7 /* PocketTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PocketTests.swift; sourceTree = "<group>"; };
 		2CF449A41E7BFE2C00FD7595 /* NavigationTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationTest.swift; sourceTree = "<group>"; };
 		2CF9D9A920067FA10083DF2A /* BrowsingPDFTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowsingPDFTests.swift; sourceTree = "<group>"; };
+		2CFEFA892CC0559700C67E9A /* Auth0.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Auth0.plist; sourceTree = "<group>"; };
+		2CFEFA8C2CC0569700C67E9A /* NTPAccountLoginCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NTPAccountLoginCell.swift; sourceTree = "<group>"; };
+		2CFEFA8D2CC0569700C67E9A /* NTPAccountLoginViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NTPAccountLoginViewModel.swift; sourceTree = "<group>"; };
 		2CFE600B2CD3AAB6001F35D2 /* OnboardingRemoveExperiment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingRemoveExperiment.swift; sourceTree = "<group>"; };
 		2D434B33B5B653C6602FB516 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		2D4D4136886E42550B1AD716 /* uz */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uz; path = uz.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -8391,6 +8397,7 @@
 		2C61887E2B7A8A21006B70D7 /* Ecosia */ = {
 			isa = PBXGroup;
 			children = (
+				2CFEFA8A2CC0559700C67E9A /* Account */,
 				2C61887F2B7A8A21006B70D7 /* LaunchScreen */,
 				2C6188822B7A8A21006B70D7 /* MMP */,
 				2C6188842B7A8A21006B70D7 /* UI */,
@@ -8489,6 +8496,7 @@
 		2C61889D2B7A8A21006B70D7 /* NTP */ = {
 			isa = PBXGroup;
 			children = (
+				2CFEFA8F2CC0569700C67E9A /* Account */,
 				2C6B5B3C2CAAF27F00F15323 /* ClimateImpactCounter */,
 				2CA995262CA2C053001064CC /* NudgeCards */,
 				2C61889E2B7A8A21006B70D7 /* NTPLayout.swift */,
@@ -8966,6 +8974,23 @@
 				2CD48B7E2C7F7E4100A70908 /* EcosiaOverlayModeManagerTests.swift */,
 			);
 			path = EcosiaTests;
+			sourceTree = "<group>";
+		};
+		2CFEFA8A2CC0559700C67E9A /* Account */ = {
+			isa = PBXGroup;
+			children = (
+				2CFEFA892CC0559700C67E9A /* Auth0.plist */,
+			);
+			path = Account;
+			sourceTree = "<group>";
+		};
+		2CFEFA8F2CC0569700C67E9A /* Account */ = {
+			isa = PBXGroup;
+			children = (
+				2CFEFA8C2CC0569700C67E9A /* NTPAccountLoginCell.swift */,
+				2CFEFA8D2CC0569700C67E9A /* NTPAccountLoginViewModel.swift */,
+			);
+			path = Account;
 			sourceTree = "<group>";
 		};
 		2F44FC551A9E83E200FD20CC /* Settings */ = {
@@ -13132,6 +13157,7 @@
 				E4A961381AC06FA50069AD6F /* ReaderViewLoading.html in Resources */,
 				E1AF3565286DE5F800960045 /* UnitTest.xctestplan in Resources */,
 				2C61893A2B7A8A22006B70D7 /* Ecosia.xcassets in Resources */,
+				2CFEFA8B2CC0559700C67E9A /* Auth0.plist in Resources */,
 				E1AF3564286DE5F800960045 /* SyncIntegrationTestPlan.xctestplan in Resources */,
 				8AEE62C92756BA34003207D1 /* LoginsHelper.js in Resources */,
 				D0E17FB6201F847600F1FCB5 /* FxASignIn.js in Resources */,
@@ -13698,6 +13724,7 @@
 				8C6F94652A972EB300415FF6 /* FakespotAdjustRatingView.swift in Sources */,
 				8A3EF7FD2A2FCFAC00796E3A /* AppReviewPromptSetting.swift in Sources */,
 				2C6189602B7A8A22006B70D7 /* AboutEcosiaSection.swift in Sources */,
+				2CFEFA912CC0569800C67E9A /* NTPAccountLoginViewModel.swift in Sources */,
 				D3B6923F1B9F9A58004B87A4 /* FindInPageHelper.swift in Sources */,
 				E1FE133329C22782002A65FF /* BackgroundNotificationSurfaceUtility.swift in Sources */,
 				8A395552299AF83400B2AFBB /* UIControl+Extension.swift in Sources */,
@@ -14029,6 +14056,7 @@
 				8A57519927AD80B800A84DBF /* ReaderModeStyleViewModel.swift in Sources */,
 				435D7CC5246209AA0043ACB9 /* IntroViewController.swift in Sources */,
 				C855728429AEA3C300AF32B0 /* SurveySurfaceViewModel.swift in Sources */,
+				2CFEFA902CC0569800C67E9A /* NTPAccountLoginCell.swift in Sources */,
 				2C6189562B7A8A22006B70D7 /* NTPNewsCellViewModel.swift in Sources */,
 				CA4ACE4924C8C91600F55894 /* BreachAlertsDetailView.swift in Sources */,
 				C834ACD128D3ACA900203AD1 /* Blurrable.swift in Sources */,
@@ -21446,7 +21474,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = main;
+				branch = "dc-mob-2967-integrate-auth0";
 				kind = branch;
 			};
 		};

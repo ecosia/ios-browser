@@ -10,6 +10,7 @@
 import Foundation
 
 enum HomepageSectionType: Int, CaseIterable {
+    case accountLogin
     case climateImpactCounter
     case logoHeader
     case libraryShortcuts
@@ -21,6 +22,7 @@ enum HomepageSectionType: Int, CaseIterable {
 
     var cellIdentifier: String {
         switch self {
+        case .accountLogin: return  NTPAccountLoginCell.cellIdentifier
         case .climateImpactCounter: return NTPSeedCounterCell.cellIdentifier
         case .logoHeader: return NTPLogoCell.cellIdentifier
         case .libraryShortcuts: return NTPLibraryCell.cellIdentifier
@@ -34,6 +36,7 @@ enum HomepageSectionType: Int, CaseIterable {
 
     static var cellTypes: [ReusableCell.Type] {
         return [
+            NTPAccountLoginCell.self,
             NTPSeedCounterCell.self,
             NTPLogoCell.self,
             TopSiteItemCell.self,
