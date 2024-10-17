@@ -27,6 +27,10 @@ class DefaultBrowserSetting: Setting {
         TelemetryWrapper.gleanRecordEvent(category: .action,
                                           method: .open,
                                           object: .settingsMenuSetAsDefaultBrowser)
+        
+        // Ecosia: Track default browser setting click
+        Analytics.shared.defaultBrowserSettings()
+        
         DefaultApplicationHelper().openSettings()
     }
 }

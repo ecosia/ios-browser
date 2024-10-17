@@ -285,7 +285,7 @@ class HomepageViewModel: FeatureFlaggable {
         
         // Ecosia
         if NTPTooltip.highlight() == .referralSpotlight {
-            Analytics.shared.showInvitePromo()
+            Analytics.shared.referral(action: .view, label: .promo)
         }
                 
         impactViewModel.subscribeToProjections()

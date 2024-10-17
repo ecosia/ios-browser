@@ -49,14 +49,15 @@ final class Analytics: AnalyticsProtocol {
         return SelfDescribingJson(schema: abTestSchema, andDictionary: abTestContext)
     }
     
-    func install() {
-        track(SelfDescribing(schema: Self.installSchema,
-                             payload: ["app_v": Bundle.version as NSObject]))
-    }
-    
     func reset() {
         User.shared.analyticsId = .init()
         tracker = Self.tracker
+    }
+    
+    // MARK: App events
+    func install() {
+        track(SelfDescribing(schema: Self.installSchema,
+                             payload: ["app_v": Bundle.version as NSObject]))
     }
         
     func activity(_ action: Action.Activity) {
@@ -69,14 +70,142 @@ final class Analytics: AnalyticsProtocol {
         track(event)
     }
     
-    func browser(_ action: Action.Browser, label: Label.Browser, property: Property? = nil) {
-        track(Structured(category: Category.browser.rawValue,
-                         action: action.rawValue)
-            .label(label.rawValue)
-            .property(property?.rawValue))
+    /// Sends the analytics event for a given action
+    /// The function is EngagementService agnostic e.g. doesn't have context
+    /// of the engagement service being used (i.e. `Braze`)
+    /// but it does get the `Toggle.Name` from the one
+    /// defined in the `APNConsentUIExperiment`
+    /// so to leverage decoupling.
+    func apnConsent(_ action: Action.APNConsent) {
+        let event = Structured(category: Category.pushNotificationConsent.rawValue,
+                               action: action.rawValue)
+            .label("\(User.shared.apnConsentReminderModel.optInScreenCount)")
+            .property(Property.home.rawValue)
+        
+        // When the user sees the APNConsent
+        // we add the number of search counts as value of the event
+        if action == .view {
+            event.value = NSNumber(integerLiteral: User.shared.searchCount)
+        }
+        
+        // Add context (if any) from current EngagementService enabled
+        if let toggleName = Unleash.Toggle.Name(rawValue: EngagementServiceExperiment.toggleName),
+           let context = Self.getTestContext(from: toggleName) {
+            event.entities.append(context)
+        }
+        
+        track(event)
     }
     
-    func ntp(_ action: Action, label: Label.NTP) {
+    // MARK: Bookmarks
+    func bookmarksPerformImportExport(_ property: Property.Bookmarks) {
+        let event = Structured(category: Category.bookmarks.rawValue,
+                               action: Action.click.rawValue)
+            .label(Label.Bookmarks.importFunctionality.rawValue)
+            .property(property.rawValue)
+        track(event)
+    }
+
+    func bookmarksEmptyLearnMoreClicked() {
+        let event = Structured(category: Category.bookmarks.rawValue,
+                               action: Action.click.rawValue)
+            .label(Label.Bookmarks.learnMore.rawValue)
+            .property(Property.Bookmarks.emptyState.rawValue)
+        track(event)
+    }
+        
+    func bookmarksImportEnded(_ property: Property.Bookmarks) {
+        let event = Structured(category: Category.bookmarks.rawValue,
+                               action: Action.Bookmarks.import.rawValue)
+            .label(Label.Bookmarks.import.rawValue)
+            .property(property.rawValue)
+        track(event)
+    }
+    
+    // MARK: Default Browser
+    func appOpenAsDefaultBrowser() {
+        let event = Structured(category: Category.external.rawValue,
+                               action: Action.receive.rawValue)
+            .label(Label.DefaultBrowser.deeplink.rawValue)
+        
+        track(event)
+    }
+    
+    func defaultBrowser(_ action: Action.Promo) {
+        let event = Structured(category: Category.browser.rawValue,
+                               action: action.rawValue)
+            .label(Label.DefaultBrowser.promo.rawValue)
+            .property(Property.home.rawValue)
+                
+        track(event)
+    }
+    
+    func defaultBrowserSettings() {
+        track(Structured(category: Category.browser.rawValue,
+                         action: Action.open.rawValue)
+            .label(Label.DefaultBrowser.settings.rawValue))
+    }
+    
+    // MARK: Menu
+    func menuClick(_ item: Analytics.Label.Menu) {
+        let event = Structured(category: Category.menu.rawValue,
+                               action: Action.click.rawValue)
+            .label(item.rawValue)
+        track(event)
+    }
+    
+    func menuShare(_ content: Property.ShareContent) {
+        let event = Structured(category: Category.menu.rawValue,
+                               action: Action.click.rawValue)
+            .label(Label.Menu.share.rawValue)
+            .property(content.rawValue)
+        track(event)
+    }
+    
+    func menuStatus(changed item: Analytics.Label.MenuStatus, to: Bool) {
+        let event = Structured(category: Category.menuStatus.rawValue,
+                               action: Action.click.rawValue)
+            .label(item.rawValue)
+            .value(.init(value: to))
+        track(event)
+    }
+    
+    // MARK: Migration
+    func migration(_ success: Bool) {
+        track(Structured(category: Category.migration.rawValue,
+                         action: success ? Action.success.rawValue : Action.error.rawValue))
+    }
+    
+    func migrationError(in migration: Label.Migration, message: String) {
+        track(Structured(category: Category.migration.rawValue,
+                         action: Action.error.rawValue)
+            .label(migration.rawValue)
+            .property(message))
+    }
+    
+    // MARK: Navigation
+    func navigation(_ action: Action, label: Label.Navigation) {
+        track(Structured(category: Category.navigation.rawValue,
+                         action: action.rawValue)
+            .label(label.rawValue))
+    }
+    
+    func navigationOpenNews(_ id: String) {
+        track(Structured(category: Category.navigation.rawValue,
+                         action: Action.open.rawValue)
+            .label(Label.Navigation.news.rawValue)
+            .property(id))
+    }
+    
+    func navigationChangeMarket(_ new: String) {
+        track(Structured(category: Category.navigation.rawValue,
+                         action: Action.change.rawValue)
+            .label(Label.market.rawValue)
+            .property(new))
+    }
+    
+    // MARK: NTP
+    func ntpCustomisation(_ action: Action.NTPCustomization, label: Label.NTP) {
         track(Structured(category: Category.ntp.rawValue,
                          action: action.rawValue)
             .label(label.rawValue))
@@ -113,209 +242,7 @@ final class Analytics: AnalyticsProtocol {
         )
     }
     
-    func navigation(_ action: Action, label: Label.Navigation) {
-        track(Structured(category: Category.navigation.rawValue,
-                         action: action.rawValue)
-            .label(label.rawValue))
-    }
-    
-    func navigationOpenNews(_ id: String) {
-        track(Structured(category: Category.navigation.rawValue,
-                         action: Action.open.rawValue)
-            .label(Label.Navigation.news.rawValue)
-            .property(id))
-    }
-    
-    func navigationChangeMarket(_ new: String) {
-        track(Structured(category: Category.navigation.rawValue,
-                         action: "change")
-            .label("market")
-            .property(new))
-    }
-    
-    func deeplink() {
-        track(Structured(category: Category.external.rawValue,
-                         action: Action.receive.rawValue)
-            .label("deeplink"))
-    }
-    
-    func appOpenAsDefaultBrowser() {
-        let event = Structured(category: Category.external.rawValue,
-                               action: Action.receive.rawValue)
-            .label("default_browser_deeplink")
-                
-        track(event)
-    }
-    
-    func defaultBrowser(_ action: Action.Promo) {
-        let event = Structured(category: Category.browser.rawValue,
-                               action: action.rawValue)
-            .label("default_browser_promo")
-            .property("home")
-                
-        track(event)
-    }
-    
-    /// Sends the analytics event for a given action
-    /// The function is EngagementService agnostic e.g. doesn't have context
-    /// of the engagement service being used (i.e. `Braze`)
-    /// but it does get the `Toggle.Name` from the one
-    /// defined in the `APNConsentUIExperiment`
-    /// so to leverage decoupling.
-    func apnConsent(_ action: Action.APNConsent) {
-        let event = Structured(category: Category.pushNotificationConsent.rawValue,
-                               action: action.rawValue)
-            .label("\(User.shared.apnConsentReminderModel.optInScreenCount)")
-            .property(Property.home.rawValue)
-        
-        // When the user sees the APNConsent
-        // we add the number of search counts as value of the event
-        if action == .view {
-            event.value = NSNumber(integerLiteral: User.shared.searchCount)
-        }
-        
-        // Add context (if any) from current EngagementService enabled
-        if let toggleName = Unleash.Toggle.Name(rawValue: EngagementServiceExperiment.toggleName),
-           let context = Self.getTestContext(from: toggleName) {
-            event.entities.append(context)
-        }
-        
-        track(event)
-    }
-        
-    func defaultBrowserSettings() {
-        track(Structured(category: Category.browser.rawValue,
-                         action: Action.open.rawValue)
-            .label("default_browser_settings"))
-    }
-    
-    func migration(_ success: Bool) {
-        track(Structured(category: Category.migration.rawValue,
-                         action: success ? Action.success.rawValue : Action.error.rawValue))
-    }
-    
-    func migrationError(in migration: Migration, message: String) {
-        track(Structured(category: Category.migration.rawValue,
-                         action: Action.error.rawValue)
-            .label(migration.rawValue)
-            .property(message))
-    }
-    
-    func migrationRetryHistory(_ success: Bool) {
-        track(Structured(category: Category.migration.rawValue,
-                         action: Action.retry.rawValue)
-            .label(Migration.history.rawValue)
-            .property(success ? Action.success.rawValue : Action.error.rawValue))
-    }
-    
-    func migrated(_ migration: Migration, in seconds: TimeInterval) {
-        track(Structured(category: Category.migration.rawValue,
-                         action: Action.completed.rawValue)
-            .label(migration.rawValue)
-            .value(.init(value: seconds * 1000)))
-    }
-    
-    func openInvitations() {
-        track(Structured(category: Category.invitations.rawValue,
-                         action: Action.view.rawValue)
-            .label("invite_screen"))
-    }
-    
-    func startInvite() {
-        track(Structured(category: Category.invitations.rawValue,
-                         action: Action.click.rawValue)
-            .label("invite"))
-    }
-    
-    func sendInvite() {
-        track(Structured(category: Category.invitations.rawValue,
-                         action: Action.send.rawValue)
-            .label("invite"))
-    }
-    
-    func showInvitePromo() {
-        track(Structured(category: Category.invitations.rawValue,
-                         action: Action.view.rawValue)
-            .label("promo"))
-    }
-    
-    func openInvitePromo() {
-        track(Structured(category: Category.invitations.rawValue,
-                         action: Action.open.rawValue)
-            .label("promo"))
-    }
-    
-    func inviteClaimSuccess() {
-        track(Structured(category: Category.invitations.rawValue,
-                         action: Action.claim.rawValue))
-    }
-    
-    func inviteCopy() {
-        track(Structured(category: Category.invitations.rawValue,
-                         action: Action.click.rawValue)
-            .label("link_copying"))
-    }
-    
-    func inviteLearnMore() {
-        track(Structured(category: Category.invitations.rawValue,
-                         action: Action.click.rawValue)
-            .label("learn_more"))
-    }
-    
-    func searchbarChanged(to position: String) {
-        track(Structured(category: Category.settings.rawValue,
-                         action: Action.change.rawValue)
-            .label("toolbar")
-            .property(position))
-    }
-    
-    func menuClick(_ item: String) {
-        let event = Structured(category: Category.menu.rawValue,
-                               action: Action.click.rawValue)
-            .label(item)
-        track(event)
-    }
-    
-    func menuStatus(changed item: String, to: Bool) {
-        let event = Structured(category: Category.menuStatus.rawValue,
-                               action: Action.click.rawValue)
-            .label(item)
-            .value(.init(value: to))
-        track(event)
-    }
-    
-    func menuShare(_ content: ShareContent) {
-        let event = Structured(category: Category.menu.rawValue,
-                               action: Action.click.rawValue)
-            .label("share")
-            .property(content.rawValue)
-        track(event)
-    }
-
-    func bookmarksPerformImportExport(_ property: Property.Bookmarks) {
-        let event = Structured(category: Category.bookmarks.rawValue,
-                               action: Action.click.rawValue)
-            .label(Label.Bookmarks.importFunctionality.rawValue)
-            .property(property.rawValue)
-        track(event)
-    }
-
-    func bookmarksEmptyLearnMoreClicked() {
-        let event = Structured(category: Category.bookmarks.rawValue,
-                               action: Action.click.rawValue)
-            .label(Label.Bookmarks.learnMore.rawValue)
-            .property(Property.Bookmarks.emptyState.rawValue)
-        track(event)
-    }
-        
-    func bookmarksImportEnded(_ property: Property.Bookmarks) {
-        let event = Structured(category: Category.bookmarks.rawValue,
-                               action: Action.Bookmarks.import.rawValue)
-            .label(Label.Bookmarks.import.rawValue)
-            .property(property.rawValue)
-        track(event)
-    }
-    
+    // MARK: Onboarding
     func introDisplaying(page: Property.OnboardingPage?, at index: Int) {
         guard let page else {
             return
@@ -327,7 +254,7 @@ final class Analytics: AnalyticsProtocol {
         track(event)
     }
     
-    func introClick(_ label: Label.Navigation, page: Property.OnboardingPage?, index: Int) {
+    func introClick(_ label: Label.Onboarding, page: Property.OnboardingPage?, index: Int) {
         guard let page else {
             return
         }
@@ -339,13 +266,28 @@ final class Analytics: AnalyticsProtocol {
         track(event)
     }
     
+    // MARK: Referrals
+    func referral(action: Action.Referral, label: Label.Referral? = nil) {
+        track(Structured(category: Category.invitations.rawValue,
+                         action: action.rawValue)
+            .label(label?.rawValue))
+    }
+    
+    // MARK: Settings
+    func searchbarChanged(to position: String) {
+        track(Structured(category: Category.settings.rawValue,
+                         action: Action.change.rawValue)
+            .label(Label.toolbar.rawValue)
+            .property(position))
+    }
+    
     func sendAnonymousUsageDataSetting(enabled: Bool) {
         // This is the only place where the tracker should be directly
         // used since we want to send this just as the user opts out
         _ = tracker.track(Structured(category: Category.settings.rawValue,
                                      action: Action.change.rawValue)
-            .label("analytics")
-            .property(enabled ? "enable" : "disable"))
+            .label(Label.analytics.rawValue)
+            .property(enabled ? Property.enable.rawValue : Property.disable.rawValue))
     }
 }
 

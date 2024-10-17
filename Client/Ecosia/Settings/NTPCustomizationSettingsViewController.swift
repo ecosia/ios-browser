@@ -64,6 +64,6 @@ final class NTPCustomizationSetting: BoolSetting {
 
     override func writeBool(_ control: UISwitch) {
         config.persistedFlag = control.isOn
-        Analytics.shared.ntp(control.isOn ? .enable : .disable, label: config.analyticsLabel)
+        Analytics.shared.ntpCustomisation(control.isOn ? .enable : .disable, label: config.analyticsLabel)
     }
 }
