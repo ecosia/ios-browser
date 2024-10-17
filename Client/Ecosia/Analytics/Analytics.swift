@@ -154,7 +154,7 @@ final class Analytics: AnalyticsProtocol {
         track(event)
     }
     
-    func menuShare(_ content: ShareContent) {
+    func menuShare(_ content: Property.ShareContent) {
         let event = Structured(category: Category.menu.rawValue,
                                action: Action.click.rawValue)
             .label(Label.Menu.share.rawValue)
@@ -176,7 +176,7 @@ final class Analytics: AnalyticsProtocol {
                          action: success ? Action.success.rawValue : Action.error.rawValue))
     }
     
-    func migrationError(in migration: Migration, message: String) {
+    func migrationError(in migration: Label.Migration, message: String) {
         track(Structured(category: Category.migration.rawValue,
                          action: Action.error.rawValue)
             .label(migration.rawValue)

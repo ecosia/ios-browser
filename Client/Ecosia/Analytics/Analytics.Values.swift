@@ -4,20 +4,18 @@ extension Analytics {
     enum Category: String {
         case
         activity,
-        abTest = "ab_Test",
+        bookmarks,
         browser,
-        pushNotificationConsent = "push_notification_consent",
         external,
-        migration,
-        navigation,
-        onboarding,
         intro,
         invitations,
-        ntp,
         menu,
         menuStatus = "menu_status",
-        settings,
-        bookmarks
+        migration,
+        navigation,
+        ntp,
+        pushNotificationConsent = "push_notification_consent",
+        settings
     }
     
     enum Label: String {
@@ -26,52 +24,18 @@ extension Analytics {
         market,
         toolbar
         
-        enum DefaultBrowser: String {
-            case
-            deeplink = "default_browser_deeplink",
-            promo = "default_browser_promo",
-            settings = "default_browser_settings"
-        }
-        
-        enum Navigation: String {
-            case
-            inapp,
-            projects,
-            financialReports = "financial_reports",
-            news,
-            privacy,
-            sendFeedback = "send_feedback",
-            terms
-        }
-        
-        enum NTP: String {
-            case
-            about,
-            customize,
-            topSites = "top_sites",
-            impact,
-            quickActions = "quick_actions",
-            news,
-            onboardingCard = "onboarding_card",
-            climateCounter = "climate_counter"
-        }
-        
-        enum Browser: String {
-            case
-            favourites,
-            history,
-            tabs,
-            settings,
-            newTab = "new_tab",
-            blockImages = "block_images",
-            searchbar = "searchbar"
-        }
-        
         enum Bookmarks: String {
             case
             importFunctionality = "import_functionality",
             learnMore = "learn_more",
             `import`
+        }
+        
+        enum DefaultBrowser: String {
+            case
+            deeplink = "default_browser_deeplink",
+            promo = "default_browser_promo",
+            settings = "default_browser_settings"
         }
         
         enum Menu: String {
@@ -100,6 +64,34 @@ extension Analytics {
             readingList = "reading_list",
             shortcut
         }
+
+        enum Migration: String {
+            case
+            tabs
+        }
+        
+        enum Navigation: String {
+            case
+            inapp,
+            financialReports = "financial_reports",
+            news,
+            privacy,
+            projects,
+            sendFeedback = "send_feedback",
+            terms
+        }
+        
+        enum NTP: String {
+            case
+            about,
+            climateCounter = "climate_counter",
+            customize,
+            impact,
+            news,
+            onboardingCard = "onboarding_card",
+            quickActions = "quick_actions",
+            topSites = "top_sites"
+        }
         
         enum Onboarding: String {
             case
@@ -119,21 +111,17 @@ extension Analytics {
     
     enum Action: String {
         case
-        view,
-        open,
-        receive,
-        error,
-        completed,
-        success,
-        send,
-        claim,
-        click,
         change,
-        display,
-        enable,
+        click,
         disable,
         dismiss,
-        search
+        display,
+        enable,
+        error,
+        open,
+        receive,
+        success,
+        view
         
         enum Activity: String {
             case
@@ -141,34 +129,48 @@ extension Analytics {
             resume
         }
         
-        enum Browser: String {
-            case
-            open,
-            start,
-            complete,
-            enable,
-            disable
-        }
-
-        enum Promo: String {
-            case
-            view,
-            click,
-            close
-        }
-        
         enum APNConsent: String {
             case
-            view,
-            skip,
-            deny,
             allow,
-            dismiss
+            deny,
+            dismiss,
+            skip,
+            view
         }
         
         enum Bookmarks: String {
             case
             `import`
+        }
+        
+        enum NTPCustomization: String {
+            case
+            click,
+            disable,
+            enable
+        }
+
+        enum Promo: String {
+            case
+            click,
+            close,
+            view
+        }
+        
+        enum Referral: String {
+            case
+            claim,
+            click,
+            open,
+            send,
+            view
+        }
+        
+        enum SeedCounter: String {
+            case
+            level,
+            collect,
+            click
         }
         
         enum TopSite: String {
@@ -180,53 +182,13 @@ extension Analytics {
             remove,
             unpin
 		}
-
-        enum SeedCounter: String {
-            case
-            level,
-            collect,
-            click
-        }
-        
-        enum NTPCustomization: String {
-            case
-            click,
-            disable,
-            enable
-        }
-        
-        enum Referral: String {
-            case
-            claim,
-            click,
-            open,
-            send,
-            view
-        }
     }
     
     enum Property: String {
         case
         enable,
         disable,
-        home,
-        menu,
-        toolbar
-        
-        enum Library: String {
-            case
-            bookmarks,
-            downloads,
-            history,
-            readingList = "reading_list"
-        }
-        
-        enum TopSite: String {
-            case
-            `default`,
-            mostVisited = "most_visited",
-            pinned
-        }
+        home
         
         enum Bookmarks: String {
             case
@@ -237,27 +199,35 @@ extension Analytics {
             error
         }
         
+        enum Library: String {
+            case
+            bookmarks,
+            downloads,
+            history,
+            readingList = "reading_list"
+        }
+        
         enum OnboardingPage: String, CaseIterable {
             case
             start,
-            search,
             profits,
             action,
-            privacy,
             greenSearch = "green_search",
             transparentFinances = "transparent_finances"
         }
-    }
-
-    enum Migration: String {
-        case
-        tabs
-    }
-
-    enum ShareContent: String {
-        case
-        ntp,
-        web,
-        file
+        
+        enum ShareContent: String {
+            case
+            ntp,
+            web,
+            file
+        }
+        
+        enum TopSite: String {
+            case
+            `default`,
+            mostVisited = "most_visited",
+            pinned
+        }
     }
 }
