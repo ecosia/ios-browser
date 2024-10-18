@@ -104,4 +104,5 @@ final class AnalyticsSpyTests: XCTestCase {
         wait(for: [expectation], timeout: 1)
     }
     
+    // TODO: Add tests for other events
 }
