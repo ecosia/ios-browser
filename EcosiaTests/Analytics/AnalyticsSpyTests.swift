@@ -7,13 +7,14 @@ import XCTest
 @testable import Client
 
 final class AnalyticsSpy: Analytics {
-//    override init() {
-//        super.init()
-//    }
+    var installCalled = false
+    override func install() {
+        installCalled = true
+    }
     
-    var activityCalled = false
+    var activityActionCalled: Analytics.Action.Activity? = nil
     override func activity(_ action: Analytics.Action.Activity) {
-        activityCalled = true
+        activityActionCalled = action
     }
     
     var menuClickItemCalled: Analytics.Label.Menu?
@@ -46,6 +47,31 @@ final class AnalyticsSpyTests: XCTestCase {
         
         analyticsSpy = nil
         Analytics.shared = Analytics()
+    }
+    
+    // MARK:  AppDelegate
+    var appDelegate: AppDelegate { AppDelegate() }
+    
+    func testTrackLaunchAndInstallOnDidFinishLaunching() async {
+        XCTAssertNil(analyticsSpy.activityActionCalled)
+        
+        let application = await UIApplication.shared
+        let _ = await appDelegate.application(application, didFinishLaunchingWithOptions: nil)
+        
+        
+        XCTAssert(analyticsSpy.installCalled)
+        wait(1) // Wait detached tasks
+        XCTAssertEqual(analyticsSpy.activityActionCalled, .launch)
+    }
+    
+    func testTrackResumeOnDidFinishLaunching() async {
+        XCTAssertNil(analyticsSpy.activityActionCalled)
+        
+        let application = await UIApplication.shared
+        let _ = await appDelegate.applicationDidBecomeActive(application)
+        
+        wait(1) // Wait detached tasks
+        XCTAssertEqual(analyticsSpy.activityActionCalled, .resume)
     }
     
     // MARK:  Menu
