@@ -166,7 +166,7 @@ final class Analytics: AnalyticsProtocol {
         let event = Structured(category: Category.pushNotificationConsent.rawValue,
                                action: action.rawValue)
             .label("\(User.shared.apnConsentReminderModel.optInScreenCount)")
-            .property(Property.home.rawValue)
+            .property(Property.APNConsent.home.rawValue)
         
         // When the user sees the APNConsent
         // we add the number of search counts as value of the event
@@ -180,6 +180,14 @@ final class Analytics: AnalyticsProtocol {
             event.entities.append(context)
         }
         
+        track(event)
+    }
+    
+    func apnConsentOnLaunchExperiment(_ action: Action.APNConsent) {
+        let event = Structured(category: Category.pushNotificationConsent.rawValue,
+                               action: action.rawValue)
+            .property(Property.APNConsent.onLaunchExperiment.rawValue)
+        addABTestContexts(to: event, toggles: [APNConsentOnLaunchExperiment.toggleName])
         track(event)
     }
         

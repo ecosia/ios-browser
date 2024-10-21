@@ -194,6 +194,12 @@ extension Analytics {
             greenSearch = "green_search",
             transparentFinances = "transparent_finances"
         }
+        
+        enum APNConsent: String {
+            case
+            home,
+            onLaunchExperiment = "on_launch_experiment"
+        }
     }
 
     enum Migration: String {

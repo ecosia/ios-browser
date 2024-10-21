@@ -195,6 +195,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             analytics.activity(.launch)
             // Ecosia: Engagement Service Initialization helper
             ClientEngagementService.shared.initializeAndUpdateNotificationRegistrationIfNeeded(notificationCenterDelegate: self)
+            // Ecosia: Experiment that directly asks for consent
+            APNConsentOnLaunchExperiment.requestAPNConsentIfNeeded(delegate: self)
         }
         
         // Ecosia: fetching statistics before they are used
