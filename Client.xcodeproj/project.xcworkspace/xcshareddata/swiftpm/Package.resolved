@@ -68,8 +68,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ecosia/ios-core.git",
       "state" : {
-        "branch" : "ls-mob-2917-apn-consent-on-launch-experiment",
-        "revision" : "a1d7952c326c54a657b91201deb5ecb861efcbfd"
+        "branch" : "main",
+        "revision" : "b2624be79f04a6f78ffbf37100ab75a422cef0b5"
       }
     },
     {

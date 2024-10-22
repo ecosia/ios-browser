@@ -21482,7 +21482,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = "ls-mob-2917-apn-consent-on-launch-experiment";
+				branch = main;
 				kind = branch;
 			};
 		};
