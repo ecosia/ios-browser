@@ -18,9 +18,12 @@ final class NTPAccountLoginCell: UICollectionViewCell, Themeable, ReusableCell {
     // MARK: - Properties
     private var loginButton: UIButton = UIButton()
     
-    // Keeps track of login state
-    private var isLoggedIn: Bool { Auth.isLoggedIn }
-        
+    // Task for managing login/logout async operations
+    private var authTask: Task<Void, Never>? = nil
+    
+    // Keeps track of login state using the Auth instance
+    private var auth = Auth()
+    
     // MARK: - Themeable Properties
     var themeManager: ThemeManager { AppContainer.shared.resolve() }
     var themeObserver: NSObjectProtocol?
@@ -31,7 +34,7 @@ final class NTPAccountLoginCell: UICollectionViewCell, Themeable, ReusableCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
-        listenForLevelUpNotification()
+        updateLoginButton()
     }
 
     required init?(coder: NSCoder) {
@@ -39,9 +42,9 @@ final class NTPAccountLoginCell: UICollectionViewCell, Themeable, ReusableCell {
     }
     
     deinit {
-        NotificationCenter.default.removeObserver(self)
+        // Cancel any ongoing task when the cell is deallocated
+        authTask?.cancel()
     }
-
 
     // MARK: - Setup
 
@@ -65,41 +68,31 @@ final class NTPAccountLoginCell: UICollectionViewCell, Themeable, ReusableCell {
             loginButton.heightAnchor.constraint(equalToConstant: 30),
             loginButton.widthAnchor.constraint(equalToConstant: 100),
         ])
-        updateLoginButton()
     }
     
-    // MARK: - Observer
-
-    private func listenForLevelUpNotification() {
-        NotificationCenter.default.addObserver(forName: Auth.loggedInNotification, object: nil, queue: .main) { [weak self] _ in
-            self?.updateLoginButton()
-        }
-        
-        NotificationCenter.default.addObserver(forName: Auth.loggedOutNotification, object: nil, queue: .main) { [weak self] _ in
-            self?.updateLoginButton()
-        }
-    }
-
     // MARK: - Action
 
     @objc private func toggleAccountState() {
-        Task {
+        // Cancel any existing task before starting a new one
+        authTask?.cancel()
+        authTask = Task {
             await performAuthAction()
         }
     }
     
     @MainActor
     private func performAuthAction() async {
-        if isLoggedIn {
-            await Auth.logout()
+        if auth.isLoggedIn {
+            await auth.logout()
         } else {
-            await Auth.login()
+            await auth.login()
         }
+        updateLoginButton()
     }
 
     private func updateLoginButton() {
         // Update button title and background color based on login state
-        loginButton.setTitle(Auth.isLoggedIn ? "Sign Out" : "Sign In", for: .normal)
+        loginButton.setTitle(auth.isLoggedIn ? "Sign Out" : "Sign In", for: .normal)
         updateButtonTheme()
     }
     
@@ -109,7 +102,6 @@ final class NTPAccountLoginCell: UICollectionViewCell, Themeable, ReusableCell {
     }
     
     func updateButtonTheme() {
-        loginButton.setTitleColor(isLoggedIn ?
-            .red : .legacyTheme.ecosia.primaryButtonActive, for: .normal)
+        loginButton.setTitleColor(auth.isLoggedIn ? .red : .legacyTheme.ecosia.primaryButtonActive, for: .normal)
     }
 }
