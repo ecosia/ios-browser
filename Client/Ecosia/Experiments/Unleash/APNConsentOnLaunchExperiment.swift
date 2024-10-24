@@ -12,7 +12,7 @@ struct APNConsentOnLaunchExperiment {
         .apnConsentOnLaunch
     }
 
-    static var isEnabled: Bool {
+    private static var isEnabled: Bool {
         // Make sure that the other engagement service experiment is not enabled since they are conflicting
         Unleash.isEnabled(toggleName) && !Unleash.isEnabled(.braze)
     }
