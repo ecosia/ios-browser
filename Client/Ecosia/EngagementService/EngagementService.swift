@@ -6,7 +6,7 @@ final class ClientEngagementService {
     private init() {}
     
     static let shared = ClientEngagementService()
-    private let service  = EngagementService(provider: Braze())
+    private let service  = EngagementService(provider: BrazeTest())
     private var parameters: [String: Any] = [:]
     private(set) var notificationAuthorizationStatus: UNAuthorizationStatus?
     
