@@ -150,6 +150,7 @@ extension AppSettingsTableViewController {
             EngagementServiceIdentifierSetting(settings: self),
             FasterInactiveTabs(settings: self, settingsDelegate: self),
             UnleashOnboardingCardNTPSetting(settings: self),
+            UnleashAPNConsentOnLaunchSetting(settings: self),
             UnleashSeedCounterNTPSetting(settings: self)
         ]
         

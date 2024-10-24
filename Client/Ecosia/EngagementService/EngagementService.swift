@@ -14,13 +14,11 @@ final class ClientEngagementService {
         parameters["id"] as? String
     }
     
-    func initialize(parameters: [String: Any]) {
+    func initialize(parameters: [String: Any]) async {
         do {
             try service.initialize(parameters: parameters)
             self.parameters = parameters
-            Task {
-                await retrieveUserCurrentNotificationAuthStatus()
-            }
+            await retrieveUserCurrentNotificationAuthStatus()
         } catch {
             debugPrint(error)
         }
@@ -49,12 +47,9 @@ final class ClientEngagementService {
 
 extension ClientEngagementService {
     
-    func initializeAndUpdateNotificationRegistrationIfNeeded(notificationCenterDelegate: UNUserNotificationCenterDelegate) {
-        guard EngagementServiceExperiment.isEnabled else { return }
-        initialize(parameters: ["id": User.shared.analyticsId.uuidString])
-        Task.detached {
-            await self.refreshAPNRegistrationIfNeeded(notificationCenterDelegate: notificationCenterDelegate)
-        }
+    func initializeAndRefreshNotificationRegistration(notificationCenterDelegate: UNUserNotificationCenterDelegate) async {
+        await initialize(parameters: ["id": User.shared.analyticsId.uuidString])
+        await refreshAPNRegistrationIfNeeded(notificationCenterDelegate: notificationCenterDelegate)
     }
     
     func retrieveUserCurrentNotificationAuthStatus() async {

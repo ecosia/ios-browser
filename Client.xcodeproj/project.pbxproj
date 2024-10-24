@@ -29,6 +29,7 @@
 		0BF1B7E31AC60DEA00A7B407 /* InsetButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF1B7E21AC60DEA00A7B407 /* InsetButton.swift */; };
 		12187B502C89B43D00BA88CA /* OnboardingCardNTPExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12187B4F2C89B43D00BA88CA /* OnboardingCardNTPExperiment.swift */; };
 		12187B532C89E15000BA88CA /* NTPOnboardingCardCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12187B522C89E15000BA88CA /* NTPOnboardingCardCell.swift */; };
+		1285E2B72CC68BF00053506B /* APNConsentOnLaunchExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1285E2B62CC68BF00053506B /* APNConsentOnLaunchExperiment.swift */; };
 		158241282820698B00956B39 /* RustRemoteTabsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 158241272820698B00956B39 /* RustRemoteTabsTests.swift */; };
 		15DE98FD27FCED4F00F1ECDB /* RustRemoteTabs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15DE98FC27FCED4F00F1ECDB /* RustRemoteTabs.swift */; };
 		1B3D99F1270E89D0006E1264 /* Telemetry in Frameworks */ = {isa = PBXBuildFile; productRef = 1B3D99F0270E89D0006E1264 /* Telemetry */; };
@@ -2023,6 +2024,7 @@
 		12674A038346A46589A0AC0B /* el */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = el; path = "el.lproj/Default Browser.strings"; sourceTree = "<group>"; };
 		126A40A4A5AFDFD655B0FDF4 /* ca */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ca; path = ca.lproj/ClearHistoryConfirm.strings; sourceTree = "<group>"; };
 		126F44CCB14373DC7813DE1F /* hr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hr; path = hr.lproj/ClearPrivateDataConfirm.strings; sourceTree = "<group>"; };
+		1285E2B62CC68BF00053506B /* APNConsentOnLaunchExperiment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APNConsentOnLaunchExperiment.swift; sourceTree = "<group>"; };
 		12EA4881BFBE296298150D4A /* bn */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = bn; path = bn.lproj/LoginManager.strings; sourceTree = "<group>"; };
 		12F949169C30744CCC749588 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/HistoryPanel.strings; sourceTree = "<group>"; };
 		1323403C8071FC19BB79C191 /* su */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = su; path = su.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -8713,6 +8715,7 @@
 				2C6188F82B7A8A22006B70D7 /* EngagementServiceExperiment.swift */,
 				12187B4F2C89B43D00BA88CA /* OnboardingCardNTPExperiment.swift */,
 				2C6B5B402CAAF3AA00F15323 /* SeedCounterNTPExperiment.swift */,
+				1285E2B62CC68BF00053506B /* APNConsentOnLaunchExperiment.swift */,
 			);
 			path = Unleash;
 			sourceTree = "<group>";
@@ -13895,6 +13898,7 @@
 				8A2783F1275FFDC50080D29D /* KeyboardPressesHandler.swift in Sources */,
 				E650755C1E37F747006961AC /* Swizzling.m in Sources */,
 				74821FC51DB56A2500EEEA72 /* OpenWithSettingsViewController.swift in Sources */,
+				1285E2B72CC68BF00053506B /* APNConsentOnLaunchExperiment.swift in Sources */,
 				C84656012887A0F700861B4A /* WallpaperMetadataUtility.swift in Sources */,
 				E1B04A9D28E20A8300670E54 /* InstructionsView.swift in Sources */,
 				D3B6923D1B9F9444004B87A4 /* FindInPageBar.swift in Sources */,
