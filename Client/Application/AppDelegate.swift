@@ -194,7 +194,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             // Ecosia: Lifecycle tracking. Needs to happen after Unleash start so that the flags are correctly added to the analytics context.
             analytics.activity(.launch)
             // Ecosia: Engagement Service Initialization helper
-            ClientEngagementService.shared.initializeAndUpdateNotificationRegistrationIfNeeded(notificationCenterDelegate: self)
+            await ClientEngagementService.shared.initializeAndRefreshNotificationRegistration(notificationCenterDelegate: self)
             // Ecosia: Experiment that directly asks for consent
             await APNConsentOnLaunchExperiment.requestAPNConsentIfNeeded(delegate: self)
         }
