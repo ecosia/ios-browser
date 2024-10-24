@@ -199,6 +199,8 @@ final class NTPSeedCounterCell: UICollectionViewCell, Themeable, ReusableCell {
 
     @objc private func openClimateImpactCounter() {
         delegate?.didTapSeedCounter()
+        
+        ClientEngagementService.shared.logCustomEvent(name: "ios_click_seed_counter_test")
     }
 
     // MARK: - Theming
