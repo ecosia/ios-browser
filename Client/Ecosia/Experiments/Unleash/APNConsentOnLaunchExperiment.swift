@@ -18,7 +18,6 @@ struct APNConsentOnLaunchExperiment {
     }
     
     static func requestAPNConsentIfNeeded(delegate: UNUserNotificationCenterDelegate) async {
-        await ClientEngagementService.shared.retrieveUserCurrentNotificationAuthStatus()
         guard isEnabled, ClientEngagementService.shared.notificationAuthorizationStatus == .notDetermined else {
             return
         }
