@@ -76,7 +76,7 @@ final class LoadingScreen: UIViewController {
             do {
                 try await self?.referrals.claim(referrer: code)
                 self?.loadingGroup.leave()
-                Analytics.shared.inviteClaimSuccess()
+                Analytics.shared.referral(action: .claim)
             } catch {
                 self?.showReferralError(error as? Referrals.Error ?? .genericError)
             }

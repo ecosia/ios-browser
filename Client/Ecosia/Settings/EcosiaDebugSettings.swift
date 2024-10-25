@@ -201,6 +201,16 @@ final class UnleashOnboardingCardNTPSetting: UnleashVariantResetSetting {
     }
 }
 
+final class UnleashAPNConsentOnLaunchSetting: UnleashVariantResetSetting {
+    override var titleName: String? {
+        "APN Consent On Launch"
+    }
+    
+    override var variant: Unleash.Variant? {
+        Unleash.getVariant(.apnConsentOnLaunch)
+    }
+}
+
 final class EngagementServiceIdentifierSetting: HiddenSetting {
     override var title: NSAttributedString? {
         return NSAttributedString(string: "Debug: Engagement Service Identifier parameter", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
