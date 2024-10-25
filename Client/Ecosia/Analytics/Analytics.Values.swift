@@ -190,6 +190,12 @@ extension Analytics {
         disable,
         home
         
+        enum APNConsent: String {
+            case
+            home,
+            onLaunchExperiment = "on_launch_experiment"
+        }
+        
         enum Bookmarks: String {
             case
             `import`,
