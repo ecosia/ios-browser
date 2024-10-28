@@ -226,26 +226,20 @@ final class UnleashAPNConsentOnLaunchSetting: UnleashVariantResetSetting {
     }
 }
 
-final class EngagementServiceIdentifierSetting: HiddenSetting {
+final class AnalyticsIdentifierSetting: HiddenSetting {
     override var title: NSAttributedString? {
-        return NSAttributedString(string: "Debug: Engagement Service Identifier parameter", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
+        return NSAttributedString(string: "Debug: Analytics Identifier", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
     }
+    
+    var analyticsIdentifier: String { User.shared.analyticsId.uuidString }
 
     override var status: NSAttributedString? {
-        
         let attributes = [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText]
-        
-        guard let identifier = ClientEngagementService.shared.identifier else {
-            return NSAttributedString(string: "n/a", attributes: attributes)
-        }
-
-        return NSAttributedString(string: "\(identifier) (Click to copy)", attributes: attributes)
+        return NSAttributedString(string: "\(analyticsIdentifier) (Click to copy)", attributes: attributes)
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
-        guard let identifier = ClientEngagementService.shared.identifier else { return }
-        let pasteBoard = UIPasteboard.general
-        pasteBoard.string = identifier
+        UIPasteboard.general.string = analyticsIdentifier
     }
 }
 
