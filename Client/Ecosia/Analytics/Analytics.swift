@@ -277,7 +277,7 @@ extension Analytics {
     private func appendTestContextIfNeeded(_ action: Analytics.Action.Activity, _ event: Structured) {
         switch action {
         case .resume, .launch:
-            addABTestContexts(to: event, toggles: [.onboardingCardNTP])
+            addABTestContexts(to: event, toggles: [.brazeIntegration, .onboardingCardNTP])
             addCookieConsentContext(to: event)
         }
     }
