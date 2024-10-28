@@ -69,7 +69,7 @@
       "location" : "https://github.com/ecosia/ios-core.git",
       "state" : {
         "branch" : "ls-mob-3014-restrict-braze-regions",
-        "revision" : "6d85f8df850f493ea737e65302164366f5828303"
+        "revision" : "87601e2d50b68738ec6748d54d16c9e6c804b7fa"
       }
     },
     {
