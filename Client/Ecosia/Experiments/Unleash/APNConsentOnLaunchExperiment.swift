@@ -13,8 +13,7 @@ struct APNConsentOnLaunchExperiment {
     }
 
     private static var isEnabled: Bool {
-        // Make sure that the other engagement service experiment is not enabled since they are conflicting
-        Unleash.isEnabled(toggleName) && !Unleash.isEnabled(.braze)
+        Unleash.isEnabled(toggleName)
     }
     
     static func requestAPNConsentIfNeeded(delegate: UNUserNotificationCenterDelegate) async {

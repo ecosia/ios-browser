@@ -5,23 +5,19 @@
 import Foundation
 import Core
 
-struct EngagementServiceExperiment {
+struct BrazeIntegrationExperiment {
     
     private init() {}
-    
-    static let minSearches = 3
-    static let searchesBetweenOptIns = 10
-    static let maxOptInShowingAttempts = 3
 
     static var toggleName: String {
-        Unleash.Toggle.Name.braze.rawValue
+        Unleash.Toggle.Name.brazeIntegration.rawValue
     }
 
     static var isEnabled: Bool {
-        Unleash.isEnabled(.braze)
+        Unleash.isEnabled(.brazeIntegration)
     }
 
     static var variantName: String {
-        return Unleash.getVariant(.braze).name
+        return Unleash.getVariant(.brazeIntegration).name
     }
 }

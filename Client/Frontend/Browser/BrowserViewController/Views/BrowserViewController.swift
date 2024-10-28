@@ -193,11 +193,6 @@ class BrowserViewController: UIViewController,
         DefaultBrowser.minPromoSearches <= User.shared.searchCount
     }
     fileprivate var shouldShowWhatsNewPageScreen: Bool { whatsNewDataProvider.shouldShowWhatsNewPage }
-    fileprivate var shouldShowAPNConsentScreen: Bool {
-        EngagementServiceExperiment.isEnabled &&
-        ClientEngagementService.shared.notificationAuthorizationStatus == .notDetermined &&
-        apnConsentOptInReminderManager.shouldDisplayOptInScreen == true
-    }
 
     let whatsNewDataProvider = WhatsNewLocalDataProvider()
     let referrals = Referrals()
@@ -205,12 +200,6 @@ class BrowserViewController: UIViewController,
     // Ecosia: Make `menuHelper` available at class level
     var menuHelper: MainMenuActionHelper?
     
-    // Ecosia: Initialize the OptInReminderManager that handles the APNConsent showing
-    private let apnConsentOptInReminderManager = OptInReminderManager(currentSearchesCount: User.shared.searchCount,
-                                                                      maxOptInScreenCount: EngagementServiceExperiment.maxOptInShowingAttempts,
-                                                                      minSearchesForFirstOptIn: EngagementServiceExperiment.minSearches,
-                                                                      searchesBetweenOptIns: EngagementServiceExperiment.searchesBetweenOptIns,
-                                                                      model: User.shared.apnConsentReminderModel)
     // Ecosia: Add init to separate from Ecosia Properties
     // MARK: - Init
     
@@ -2579,8 +2568,7 @@ extension BrowserViewController {
          */
         let presentationFunctions: [() -> Bool] = [
             presentDefaultBrowserPromoIfNeeded,
-            presentWhatsNewPageIfNeeded,
-            presentAPNConsentIfNeeded
+            presentWhatsNewPageIfNeeded
         ]
 
         _ = presentationFunctions.first(where: { $0() })
@@ -2598,14 +2586,6 @@ extension BrowserViewController {
         return true
     }
     
-    @discardableResult
-    private func presentAPNConsentIfNeeded() -> Bool {
-        guard shouldShowAPNConsentScreen else { return false }
-        let vc = APNConsentViewController(viewModel: UnleashAPNConsentViewModel(optInManager: apnConsentOptInReminderManager), optInManager: apnConsentOptInReminderManager)
-        vc.presentAsSheetFrom(self)
-        return true
-    }
-
     @discardableResult
     private func presentDefaultBrowserPromoIfNeeded() -> Bool {
         guard shouldShowDefaultBrowserPromo else { return false }
