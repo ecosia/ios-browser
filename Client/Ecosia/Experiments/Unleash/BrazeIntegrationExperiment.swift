@@ -9,15 +9,7 @@ struct BrazeIntegrationExperiment {
     
     private init() {}
 
-    static var toggleName: String {
-        Unleash.Toggle.Name.brazeIntegration.rawValue
-    }
-
     static var isEnabled: Bool {
         Unleash.isEnabled(.brazeIntegration)
-    }
-
-    static var variantName: String {
-        return Unleash.getVariant(.brazeIntegration).name
     }
 }
