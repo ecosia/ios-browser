@@ -170,13 +170,9 @@ class UnleashVariantResetSetting: HiddenSetting {
     }
 
     override var status: NSAttributedString? {
-        var statusName = variant?.name ?? ""
-        if statusName == "" {
-            if let unleashEnabled = unleashEnabled {
-                statusName = unleashEnabled ? "enabled" : "disabled"
-            } else {
-                statusName = "Unknown"
-            }
+        var statusName = variant?.name ?? "Unknown"
+        if statusName == "Unknown", let unleashEnabled = unleashEnabled {
+            statusName = unleashEnabled ? "enabled" : "disabled"
         }
         return NSAttributedString(string: "\(statusName) (Click to reset)", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
     }
