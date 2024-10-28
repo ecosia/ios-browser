@@ -30,6 +30,8 @@
 		12187B502C89B43D00BA88CA /* OnboardingCardNTPExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12187B4F2C89B43D00BA88CA /* OnboardingCardNTPExperiment.swift */; };
 		12187B532C89E15000BA88CA /* NTPOnboardingCardCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12187B522C89E15000BA88CA /* NTPOnboardingCardCell.swift */; };
 		1285E2B72CC68BF00053506B /* APNConsentOnLaunchExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1285E2B62CC68BF00053506B /* APNConsentOnLaunchExperiment.swift */; };
+		12E0581E2CCBEC7700E1B308 /* BrazeKit in Frameworks */ = {isa = PBXBuildFile; productRef = 12E0581D2CCBEC7700E1B308 /* BrazeKit */; };
+		12E058202CCBEC7700E1B308 /* BrazeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 12E0581F2CCBEC7700E1B308 /* BrazeUI */; };
 		158241282820698B00956B39 /* RustRemoteTabsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 158241272820698B00956B39 /* RustRemoteTabsTests.swift */; };
 		15DE98FD27FCED4F00F1ECDB /* RustRemoteTabs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15DE98FC27FCED4F00F1ECDB /* RustRemoteTabs.swift */; };
 		1B3D99F1270E89D0006E1264 /* Telemetry in Frameworks */ = {isa = PBXBuildFile; productRef = 1B3D99F0270E89D0006E1264 /* Telemetry */; };
@@ -7808,10 +7810,12 @@
 				E6231C051B90A472005ABB0D /* libxml2.2.tbd in Frameworks */,
 				E6231C011B90A44F005ABB0D /* libz.tbd in Frameworks */,
 				E4B3348A1BBF23F9004E2BFF /* AdSupport.framework in Frameworks */,
+				12E0581E2CCBEC7700E1B308 /* BrazeKit in Frameworks */,
 				5A871488292EA1440039A5BD /* Fuzi in Frameworks */,
 				1B3D99F1270E89D0006E1264 /* Telemetry in Frameworks */,
 				432BD0242790EBD000A0F3C3 /* Adjust in Frameworks */,
 				0B8E0FF41A932BD500161DC3 /* ImageIO.framework in Frameworks */,
+				12E058202CCBEC7700E1B308 /* BrazeUI in Frameworks */,
 				435C85F02788F4D00072B526 /* Glean in Frameworks */,
 				433F87CE2788EAB600693368 /* GCDWebServers in Frameworks */,
 				5A06135A29D6052E008F3D38 /* TabDataStore in Frameworks */,
@@ -12665,6 +12669,8 @@
 				8AF2D0FB2A5F272A00C7DD69 /* ComponentLibrary */,
 				2C6189F02B7B7D5D006B70D7 /* SnowplowTracker */,
 				2CE294462B7CDD56006C22B2 /* Core */,
+				12E0581D2CCBEC7700E1B308 /* BrazeKit */,
+				12E0581F2CCBEC7700E1B308 /* BrazeUI */,
 			);
 			productName = Client;
 			productReference = F84B21BE1A090F8100AAB793 /* Client.app */;
@@ -12970,6 +12976,7 @@
 				2C6189EF2B7B7D48006B70D7 /* XCRemoteSwiftPackageReference "snowplow-ios-tracker" */,
 				2CCFB3D82C0FC4DC00BEDCA0 /* XCRemoteSwiftPackageReference "rust-components-swift" */,
 				2CB172802C612D68008551E2 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */,
+				12E0581C2CCBE67E00E1B308 /* XCRemoteSwiftPackageReference "braze-swift-sdk" */,
 			);
 			productRefGroup = F84B21BF1A090F8100AAB793 /* Products */;
 			projectDirPath = "";
@@ -21470,6 +21477,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		12E0581C2CCBE67E00E1B308 /* XCRemoteSwiftPackageReference "braze-swift-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/braze-inc/braze-swift-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.1.1;
+			};
+		};
 		1B3D99EF270E89D0006E1264 /* XCRemoteSwiftPackageReference "telemetry-ios" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/mozilla-mobile/telemetry-ios";
@@ -21577,6 +21592,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		12E0581D2CCBEC7700E1B308 /* BrazeKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 12E0581C2CCBE67E00E1B308 /* XCRemoteSwiftPackageReference "braze-swift-sdk" */;
+			productName = BrazeKit;
+		};
+		12E0581F2CCBEC7700E1B308 /* BrazeUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 12E0581C2CCBE67E00E1B308 /* XCRemoteSwiftPackageReference "braze-swift-sdk" */;
+			productName = BrazeUI;
+		};
 		1B3D99F0270E89D0006E1264 /* Telemetry */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 1B3D99EF270E89D0006E1264 /* XCRemoteSwiftPackageReference "telemetry-ios" */;
