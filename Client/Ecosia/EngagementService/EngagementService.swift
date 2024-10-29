@@ -14,7 +14,7 @@ final class ClientEngagementService {
         parameters["id"] as? String
     }
     
-    func initialize(parameters: [String: Any]) async {
+    private func initialize(parameters: [String: Any]) async {
         do {
             try service.initialize(parameters: parameters)
             self.parameters = parameters
@@ -38,7 +38,7 @@ final class ClientEngagementService {
         try await service.requestAPNConsent(notificationCenterDelegate: notificationCenterDelegate)
     }
     
-    public func refreshAPNRegistrationIfNeeded(notificationCenterDelegate: UNUserNotificationCenterDelegate) async {
+    func refreshAPNRegistrationIfNeeded(notificationCenterDelegate: UNUserNotificationCenterDelegate) async {
         await service.refreshAPNRegistrationIfNeeded(notificationCenterDelegate: notificationCenterDelegate)
     }
 }
@@ -48,6 +48,8 @@ final class ClientEngagementService {
 extension ClientEngagementService {
     
     func initializeAndRefreshNotificationRegistration(notificationCenterDelegate: UNUserNotificationCenterDelegate) async {
+        guard BrazeIntegrationExperiment.isEnabled else { return }
+        
         await initialize(parameters: ["id": User.shared.analyticsId.uuidString])
         await refreshAPNRegistrationIfNeeded(notificationCenterDelegate: notificationCenterDelegate)
     }
