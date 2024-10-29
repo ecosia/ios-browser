@@ -29,6 +29,9 @@
 		0BF1B7E31AC60DEA00A7B407 /* InsetButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF1B7E21AC60DEA00A7B407 /* InsetButton.swift */; };
 		12187B502C89B43D00BA88CA /* OnboardingCardNTPExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12187B4F2C89B43D00BA88CA /* OnboardingCardNTPExperiment.swift */; };
 		12187B532C89E15000BA88CA /* NTPOnboardingCardCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12187B522C89E15000BA88CA /* NTPOnboardingCardCell.swift */; };
+		124FB35E2CD0F37E00F07200 /* EngagementServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 124FB35D2CD0F37E00F07200 /* EngagementServiceProvider.swift */; };
+		124FB3612CD0F3D200F07200 /* Braze.swift in Sources */ = {isa = PBXBuildFile; fileRef = 124FB3602CD0F3D200F07200 /* Braze.swift */; };
+		124FB3632CD0F58900F07200 /* ClientEngagementService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 124FB3622CD0F58900F07200 /* ClientEngagementService.swift */; };
 		1285E2B72CC68BF00053506B /* APNConsentOnLaunchExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1285E2B62CC68BF00053506B /* APNConsentOnLaunchExperiment.swift */; };
 		12E0581E2CCBEC7700E1B308 /* BrazeKit in Frameworks */ = {isa = PBXBuildFile; productRef = 12E0581D2CCBEC7700E1B308 /* BrazeKit */; };
 		12E058202CCBEC7700E1B308 /* BrazeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 12E0581F2CCBEC7700E1B308 /* BrazeUI */; };
@@ -2023,6 +2026,9 @@
 		12187B4F2C89B43D00BA88CA /* OnboardingCardNTPExperiment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingCardNTPExperiment.swift; sourceTree = "<group>"; };
 		12187B522C89E15000BA88CA /* NTPOnboardingCardCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPOnboardingCardCell.swift; sourceTree = "<group>"; };
 		123045959E0F295753B4B4DB /* lo */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = lo; path = lo.lproj/Today.strings; sourceTree = "<group>"; };
+		124FB35D2CD0F37E00F07200 /* EngagementServiceProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EngagementServiceProvider.swift; sourceTree = "<group>"; };
+		124FB3602CD0F3D200F07200 /* Braze.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Braze.swift; sourceTree = "<group>"; };
+		124FB3622CD0F58900F07200 /* ClientEngagementService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientEngagementService.swift; sourceTree = "<group>"; };
 		12674A038346A46589A0AC0B /* el */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = el; path = "el.lproj/Default Browser.strings"; sourceTree = "<group>"; };
 		126A40A4A5AFDFD655B0FDF4 /* ca */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ca; path = ca.lproj/ClearHistoryConfirm.strings; sourceTree = "<group>"; };
 		126F44CCB14373DC7813DE1F /* hr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hr; path = hr.lproj/ClearPrivateDataConfirm.strings; sourceTree = "<group>"; };
@@ -7973,6 +7979,14 @@
 			path = OnboardingCard;
 			sourceTree = "<group>";
 		};
+		124FB35F2CD0F3C400F07200 /* Braze */ = {
+			isa = PBXGroup;
+			children = (
+				124FB3602CD0F3D200F07200 /* Braze.swift */,
+			);
+			path = Braze;
+			sourceTree = "<group>";
+		};
 		1D7B78952ADF324E0011E9F2 /* Event Queue */ = {
 			isa = PBXGroup;
 			children = (
@@ -8742,7 +8756,10 @@
 		2C6188FD2B7A8A22006B70D7 /* EngagementService */ = {
 			isa = PBXGroup;
 			children = (
+				124FB35F2CD0F3C400F07200 /* Braze */,
 				2C6188FE2B7A8A22006B70D7 /* EngagementService.swift */,
+				124FB35D2CD0F37E00F07200 /* EngagementServiceProvider.swift */,
+				124FB3622CD0F58900F07200 /* ClientEngagementService.swift */,
 			);
 			path = EngagementService;
 			sourceTree = "<group>";
@@ -13631,6 +13648,7 @@
 				45D5EDD2292D89A200311934 /* PinnedSite.swift in Sources */,
 				8A4AC0EC28C929D700439F83 /* URLSessionProtocol.swift in Sources */,
 				C2A72A672A76938C002ACCE2 /* DownloadsCoordinator.swift in Sources */,
+				124FB3612CD0F3D200F07200 /* Braze.swift in Sources */,
 				5FC276552894AEFF00AF2721 /* LibraryPanelHelper.swift in Sources */,
 				E1CD81C5290C6D5800124B27 /* HelpView.swift in Sources */,
 				5A47CFF52860FB8900B2B7BF /* AppLaunchUtil.swift in Sources */,
@@ -13854,6 +13872,7 @@
 				C8BD87622A0C257C00CD803A /* OnboardingCardInfoModelProtocol.swift in Sources */,
 				DA27EEDB28BADF4700DD6F5D /* MenuBuilderHelper.swift in Sources */,
 				E16AD22C2A8A7AE800F0AA58 /* FakespotHighlightsCardView.swift in Sources */,
+				124FB3632CD0F58900F07200 /* ClientEngagementService.swift in Sources */,
 				B2999FF12B194A5800F0FEC1 /* CreditCardPayload.swift in Sources */,
 				E1877A81286E0EFD00F5BDF2 /* WebViewNavigationHandler.swift in Sources */,
 				274A36CC239EB99400A21587 /* LibraryPanelContextMenu.swift in Sources */,
@@ -14407,6 +14426,7 @@
 				D5D237782640BBA600326204 /* ExperimentsSettingsViewController.swift in Sources */,
 				D3972BF31C22412B00035B87 /* ShareExtensionHelper.swift in Sources */,
 				F35B8D2D1D6383E9008E3D61 /* SessionRestoreHelper.swift in Sources */,
+				124FB35E2CD0F37E00F07200 /* EngagementServiceProvider.swift in Sources */,
 				8A19ACB62A3290F9001C2147 /* NotificationsSetting.swift in Sources */,
 				43D16B8229831E6A009F8279 /* CreditCardInputField.swift in Sources */,
 				EB98550124226EF70040F24B /* AppDelegate+SyncSentTabs.swift in Sources */,
