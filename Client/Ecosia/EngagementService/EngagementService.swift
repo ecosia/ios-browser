@@ -14,13 +14,11 @@ final class ClientEngagementService {
         parameters["id"] as? String
     }
     
-    func initialize(parameters: [String: Any]) {
+    private func initialize(parameters: [String: Any]) async {
         do {
             try service.initialize(parameters: parameters)
             self.parameters = parameters
-            Task {
-                await retrieveUserCurrentNotificationAuthStatus()
-            }
+            await retrieveUserCurrentNotificationAuthStatus()
         } catch {
             debugPrint(error)
         }
@@ -40,7 +38,7 @@ final class ClientEngagementService {
         try await service.requestAPNConsent(notificationCenterDelegate: notificationCenterDelegate)
     }
     
-    public func refreshAPNRegistrationIfNeeded(notificationCenterDelegate: UNUserNotificationCenterDelegate) async {
+    func refreshAPNRegistrationIfNeeded(notificationCenterDelegate: UNUserNotificationCenterDelegate) async {
         await service.refreshAPNRegistrationIfNeeded(notificationCenterDelegate: notificationCenterDelegate)
     }
 }
@@ -49,12 +47,11 @@ final class ClientEngagementService {
 
 extension ClientEngagementService {
     
-    func initializeAndUpdateNotificationRegistrationIfNeeded(notificationCenterDelegate: UNUserNotificationCenterDelegate) {
-        guard EngagementServiceExperiment.isEnabled else { return }
-        initialize(parameters: ["id": User.shared.analyticsId.uuidString])
-        Task.detached {
-            await self.refreshAPNRegistrationIfNeeded(notificationCenterDelegate: notificationCenterDelegate)
-        }
+    func initializeAndRefreshNotificationRegistration(notificationCenterDelegate: UNUserNotificationCenterDelegate) async {
+        guard BrazeIntegrationExperiment.isEnabled else { return }
+        
+        await initialize(parameters: ["id": User.shared.analyticsId.uuidString])
+        await refreshAPNRegistrationIfNeeded(notificationCenterDelegate: notificationCenterDelegate)
     }
     
     func retrieveUserCurrentNotificationAuthStatus() async {

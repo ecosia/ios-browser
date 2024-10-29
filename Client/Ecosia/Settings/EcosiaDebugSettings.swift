@@ -163,13 +163,18 @@ final class ChangeSearchCount: HiddenSetting {
 class UnleashVariantResetSetting: HiddenSetting {
     var titleName: String? { return nil }
     var variant: Unleash.Variant? { return nil }
+    var unleashEnabled: Bool? { return nil }
     
     override var title: NSAttributedString? {
         return NSAttributedString(string: "Debug: Unleash \(titleName ?? "Unknown") variant", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
     }
 
     override var status: NSAttributedString? {
-        return NSAttributedString(string: "\(variant?.name ?? "Unknown") (Click to reset)", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
+        var statusName = variant?.name ?? "Unknown"
+        if statusName == "Unknown", let unleashEnabled = unleashEnabled {
+            statusName = unleashEnabled ? "enabled" : "disabled"
+        }
+        return NSAttributedString(string: "\(statusName) (Click to reset)", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
     }
     
     override func onClick(_ navigationController: UINavigationController?) {
@@ -201,26 +206,40 @@ final class UnleashOnboardingCardNTPSetting: UnleashVariantResetSetting {
     }
 }
 
-final class EngagementServiceIdentifierSetting: HiddenSetting {
-    override var title: NSAttributedString? {
-        return NSAttributedString(string: "Debug: Engagement Service Identifier parameter", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
+final class UnleashBrazeIntegrationSetting: UnleashVariantResetSetting {
+    override var titleName: String? {
+        "Braze Integration"
     }
+    
+    override var unleashEnabled: Bool? {
+        Unleash.isEnabled(.brazeIntegration)
+    }
+}
+
+final class UnleashAPNConsentOnLaunchSetting: UnleashVariantResetSetting {
+    override var titleName: String? {
+        "APN Consent On Launch"
+    }
+    
+    override var variant: Unleash.Variant? {
+        Unleash.getVariant(.apnConsentOnLaunch)
+    }
+}
+
+final class AnalyticsIdentifierSetting: HiddenSetting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Analytics Identifier", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
+    }
+    
+    var analyticsIdentifier: String { User.shared.analyticsId.uuidString }
 
     override var status: NSAttributedString? {
-        
         let attributes = [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText]
-        
-        guard let identifier = ClientEngagementService.shared.identifier else {
-            return NSAttributedString(string: "n/a", attributes: attributes)
-        }
-
-        return NSAttributedString(string: "\(identifier) (Click to copy)", attributes: attributes)
+        return NSAttributedString(string: "\(analyticsIdentifier) (Click to copy)", attributes: attributes)
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
-        guard let identifier = ClientEngagementService.shared.identifier else { return }
-        let pasteBoard = UIPasteboard.general
-        pasteBoard.string = identifier
+        UIPasteboard.general.string = analyticsIdentifier
     }
 }
 

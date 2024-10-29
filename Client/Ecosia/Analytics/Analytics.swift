@@ -70,33 +70,6 @@ open class Analytics: AnalyticsProtocol {
         track(event)
     }
     
-    /// Sends the analytics event for a given action
-    /// The function is EngagementService agnostic e.g. doesn't have context
-    /// of the engagement service being used (i.e. `Braze`)
-    /// but it does get the `Toggle.Name` from the one
-    /// defined in the `APNConsentUIExperiment`
-    /// so to leverage decoupling.
-    func apnConsent(_ action: Action.APNConsent) {
-        let event = Structured(category: Category.pushNotificationConsent.rawValue,
-                               action: action.rawValue)
-            .label("\(User.shared.apnConsentReminderModel.optInScreenCount)")
-            .property(Property.home.rawValue)
-        
-        // When the user sees the APNConsent
-        // we add the number of search counts as value of the event
-        if action == .view {
-            event.value = NSNumber(integerLiteral: User.shared.searchCount)
-        }
-        
-        // Add context (if any) from current EngagementService enabled
-        if let toggleName = Unleash.Toggle.Name(rawValue: EngagementServiceExperiment.toggleName),
-           let context = Self.getTestContext(from: toggleName) {
-            event.entities.append(context)
-        }
-        
-        track(event)
-    }
-    
     // MARK: Bookmarks
     func bookmarksPerformImportExport(_ property: Property.Bookmarks) {
         let event = Structured(category: Category.bookmarks.rawValue,
@@ -241,7 +214,7 @@ open class Analytics: AnalyticsProtocol {
             .value(value)
         )
     }
-    
+        
     // MARK: Onboarding
     func introDisplaying(page: Property.OnboardingPage?, at index: Int) {
         guard let page else {
@@ -263,6 +236,15 @@ open class Analytics: AnalyticsProtocol {
             .label(label.rawValue)
             .property(page.rawValue)
             .value(.init(integerLiteral: index))
+        track(event)
+    }
+    
+    // MARK: Push Notifications Consent
+    func apnConsentOnLaunchExperiment(_ action: Action.APNConsent) {
+        let event = Structured(category: Category.pushNotificationConsent.rawValue,
+                               action: action.rawValue)
+            .property(Property.APNConsent.onLaunchExperiment.rawValue)
+        addABTestContexts(to: event, toggles: [APNConsentOnLaunchExperiment.toggleName])
         track(event)
     }
     
@@ -295,7 +277,7 @@ extension Analytics {
     private func appendTestContextIfNeeded(_ action: Analytics.Action.Activity, _ event: Structured) {
         switch action {
         case .resume, .launch:
-            addABTestContexts(to: event, toggles: [.onboardingCardNTP])
+            addABTestContexts(to: event, toggles: [.brazeIntegration, .onboardingCardNTP])
             addCookieConsentContext(to: event)
         }
     }
