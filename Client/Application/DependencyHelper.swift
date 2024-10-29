@@ -6,6 +6,7 @@ import Storage
 import Shared
 import Common
 import TabDataStore
+import Core
 
 class DependencyHelper {
     func bootstrapDependencies() {
@@ -34,6 +35,9 @@ class DependencyHelper {
 
         let windowManager: WindowManager = appDelegate.windowManager
         AppContainer.shared.register(service: windowManager)
+        
+        let auth: Auth = appDelegate.auth
+        AppContainer.shared.register(service: auth)
 
         // Tell the container we are done registering
         AppContainer.shared.bootstrap()

@@ -252,6 +252,12 @@ class LegacyTabManager: NSObject, FeatureFlaggable, TabManager, TabEventHandler 
         if let consentCookie = Cookie.makeConsentCookie() {
             configuration.websiteDataStore.httpCookieStore.setCookie(consentCookie)
         }
+        if let auth: Auth = AppContainer.shared.resolve(),
+           let authCookie = Cookie.makeAuthCookie(from: auth) {
+            configuration.websiteDataStore.httpCookieStore.setCookie(authCookie) {
+                print("Auth cookie set in WKWebView")
+            }
+        }
         return configuration
     }
 
@@ -1000,7 +1006,8 @@ extension LegacyTabManager: WKHTTPCookieStoreObserver {
     func cookiesDidChange(in cookieStore: WKHTTPCookieStore) {
         cookieStore.getAllCookies { cookies in
             DispatchQueue.main.async {
-                Cookie.received(cookies)
+                guard let auth: Auth = AppContainer.shared.resolve() else { return }
+                Cookie.received(cookies, auth0Provider: auth.auth0Provider)
             }
         }
     }

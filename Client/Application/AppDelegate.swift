@@ -28,6 +28,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         sendTabDelegate: UIApplication.shared.sendTabDelegate,
         creditCardAutofillEnabled: creditCardAutofillStatus
     )
+    
+    lazy var auth = Auth()
 
     /* Ecosia: Swap Theme Manager with Ecosia's
     lazy var themeManager: ThemeManager = DefaultThemeManager(sharedContainerIdentifier: AppInfo.sharedContainerIdentifier)
