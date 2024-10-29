@@ -21454,7 +21454,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = "ls-mob-3014-restrict-braze-regions";
+				branch = main;
 				kind = branch;
 			};
 		};

@@ -68,8 +68,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ecosia/ios-core.git",
       "state" : {
-        "branch" : "ls-mob-3014-restrict-braze-regions",
-        "revision" : "87601e2d50b68738ec6748d54d16c9e6c804b7fa"
+        "branch" : "main",
+        "revision" : "bd2517c32a23923ff6db43101a61350d7b486589"
       }
     },
     {
