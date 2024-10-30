@@ -583,10 +583,6 @@ class BrowserCoordinator: BaseCoordinator,
 
         router.present(navigationController)
     }
-    
-    func showOnboarding() {
-        showIntroOnboarding()
-    }
 
     // MARK: - ParentCoordinatorDelegate
     func didFinish(from childCoordinator: Coordinator) {

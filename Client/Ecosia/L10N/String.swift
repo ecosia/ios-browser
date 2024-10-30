@@ -239,12 +239,6 @@ extension String {
         case apnConsentCTAAllowButtonTitle = "Allow push notifications"
         case apnConsentSkipButtonTitle = "Not now"
         case apnConsentLastReminderSkipButtonTitle = "No thanks"
-        case onboardingCardNTPExperimentTitle1 = "Let’s get acquainted"
-        case onboardingCardNTPExperimentDescription1 = "Learn more about Ecosia and our climate action by taking our welcome tour."
-        case onboardingCardNTPExperimentButtonText1 = "Check it out"
-        case onboardingCardNTPExperimentTitle2 = "Wondering how it all works?"
-        case onboardingCardNTPExperimentDescription2 = "Take our welcome tour to learn more about how we contribute to climate action."
-        case onboardingCardNTPExperimentButtonText2 = "Learn more about Ecosia"
         case configurableNudgeCardCloseButtonAccessibilityLabel = "Close card button"
     }
 }

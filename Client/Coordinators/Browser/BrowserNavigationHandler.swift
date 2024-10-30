@@ -72,11 +72,7 @@ protocol BrowserNavigationHandler: AnyObject, QRCodeNavigationHandler {
     func showRequiredPassCode()
 
     /// Shows the Tab Tray View Controller.
-    func showTabTray(selectedPanel: TabTrayPanelType)
-    
-    // Ecosia: Used for `OnboardingCardNTPExperiment`
-    /// Present Onboarding.
-    func showOnboarding()
+    func showTabTray(selectedPanel: TabTrayPanelType)    
 }
 
 extension BrowserNavigationHandler {

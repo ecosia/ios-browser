@@ -13,10 +13,7 @@ class EcosiaNTPTooltipHighlightTests: XCTestCase {
     override func setUpWithError() throws {
         try? FileManager().removeItem(at: FileManager.user)
         user = .init()
-        user.firstTime = false
-        
-        // Ecosia: Mocking `OnboardingCardNTPExperiment` as disabled
-        Unleash.model = Unleash.Model()
+        user.firstTime = false        
     }
 
     func testFirstTimeReturnsNil() throws {
