@@ -21,6 +21,11 @@ final class AnalyticsSpy: Analytics {
     override func menuClick(_ item: Analytics.Label.Menu) {
         menuClickItemCalled = item
     }
+    
+    var menuShareContentCalled: Analytics.Property.ShareContent?
+    override func menuShare(_ content: Analytics.Property.ShareContent) {
+        menuShareContentCalled = content
+    }
 }
 
 final class AnalyticsSpyTests: XCTestCase {
@@ -96,7 +101,6 @@ final class AnalyticsSpyTests: XCTestCase {
             (.readingList, .AppMenu.ReadingList),
             (.bookmarks, .AppMenu.Bookmarks)
         ]
-        
         for (label, title) in testCases {
             analyticsSpy = AnalyticsSpy()
             Analytics.shared = analyticsSpy
@@ -127,5 +131,30 @@ final class AnalyticsSpyTests: XCTestCase {
         }
     }
     
-    // TODO: Add menuStatus and menu share tests
+    func testTrackMenuShare() {
+        let testCases: [(Analytics.Property.ShareContent, URL?)] = [
+            (.ntp, URL(string: "file://example.com")),
+            (.web, URL(string: "https://example.com")),
+            (.ntp, nil)
+        ]
+        for (label, url) in testCases {
+            analyticsSpy = AnalyticsSpy()
+            Analytics.shared = analyticsSpy
+            XCTContext.runActivity(named: "Menu share \(label.rawValue) is tracked") { _ in
+                XCTAssertNil(analyticsSpy.menuShareContentCalled)
+                
+                // Requires valid url to add action
+                tabManagerMock.selectedTab?.url = url
+                
+                let action = menuHelper.getSharingAction().items.first
+                if let action = action {
+                    action.tapHandler!(action)
+                } else {
+                    XCTFail("No sharing action found for url \(url?.absoluteString ?? "nil")")
+                }
+            }
+        }
+    }
+    
+    // TODO: Add menuStatus tests
 }
