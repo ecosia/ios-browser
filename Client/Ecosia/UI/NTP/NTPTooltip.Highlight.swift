@@ -35,7 +35,7 @@ extension NTPTooltip {
     }
 
     class func highlight(for user: Core.User = User.shared) -> NTPTooltip.Highlight? {
-        guard !user.firstTime, !OnboardingCardNTPExperiment.isEnabled else { return nil }
+        guard !user.firstTime else { return nil }
 
         if user.referrals.isNewClaim {
             return .gotClaimed

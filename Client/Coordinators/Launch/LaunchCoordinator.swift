@@ -29,27 +29,8 @@ class LaunchCoordinator: BaseCoordinator,
     func start(with launchType: LaunchType) {
         let isFullScreen = launchType.isFullScreenAvailable(isIphone: isIphone)
         switch launchType {
-        /* Ecosia: Change to support `OnboardingCardNTPExperiment` conditions
          case .intro(let manager):
             presentIntroOnboarding(with: manager, isFullScreen: isFullScreen)
-         */
-        case .intro(let manager, let checkExperiment):
-            guard checkExperiment else {
-                presentIntroOnboarding(with: manager, isFullScreen: isFullScreen)
-                return
-            }
-            // TODO: Refactor `FeatureManagement.fetchConfiguration()` pre-condition - maybe a notification from FeatureManagement?
-            Task {
-                await FeatureManagement.fetchConfiguration()
-                DispatchQueue.main.async { [weak self] in
-                    guard let self = self else { return }
-                    guard !OnboardingCardNTPExperiment.isEnabled else {
-                        self.parentCoordinator?.didFinishLaunch(from: self)
-                        return
-                    }
-                    self.presentIntroOnboarding(with: manager, isFullScreen: isFullScreen)
-                }
-            }
         case .update(let viewModel):
             presentUpdateOnboarding(with: viewModel, isFullScreen: isFullScreen)
         case .defaultBrowser:

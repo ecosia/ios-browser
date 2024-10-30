@@ -161,18 +161,16 @@ final class Welcome: UIViewController {
         stack.addArrangedSubview(UIView())
         stack.addArrangedSubview(cta)
 
-        if !OnboardingCardNTPExperiment.isEnabled {
-            let skipButton = UIButton(type: .system)
-            skipButton.backgroundColor = .clear
-            skipButton.titleLabel?.font = .preferredFont(forTextStyle: .callout)
-            skipButton.titleLabel?.adjustsFontForContentSizeCategory = true
-            skipButton.setTitleColor(.Dark.Text.secondary, for: .normal)
-            skipButton.setTitle(.localized(.skipWelcomeTour), for: .normal)
-            skipButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
-            skipButton.addTarget(self, action: #selector(skip), for: .primaryActionTriggered)
-            
-            stack.addArrangedSubview(skipButton)
-        }
+        let skipButton = UIButton(type: .system)
+        skipButton.backgroundColor = .clear
+        skipButton.titleLabel?.font = .preferredFont(forTextStyle: .callout)
+        skipButton.titleLabel?.adjustsFontForContentSizeCategory = true
+        skipButton.setTitleColor(.Dark.Text.secondary, for: .normal)
+        skipButton.setTitle(.localized(.skipWelcomeTour), for: .normal)
+        skipButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        skipButton.addTarget(self, action: #selector(skip), for: .primaryActionTriggered)
+        
+        stack.addArrangedSubview(skipButton)
 
         if view.traitCollection.userInterfaceIdiom == .phone {
             stack.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16).isActive = true
