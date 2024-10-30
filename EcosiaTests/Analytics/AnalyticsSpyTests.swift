@@ -12,7 +12,7 @@ final class AnalyticsSpy: Analytics {
         installCalled = true
     }
     
-    var activityActionCalled: Analytics.Action.Activity? = nil
+    var activityActionCalled: Analytics.Action.Activity?
     override func activity(_ action: Analytics.Action.Activity) {
         activityActionCalled = action
     }
@@ -49,15 +49,14 @@ final class AnalyticsSpyTests: XCTestCase {
         Analytics.shared = Analytics()
     }
     
-    // MARK:  AppDelegate
+    // MARK: AppDelegate
     var appDelegate: AppDelegate { AppDelegate() }
     
     func testTrackLaunchAndInstallOnDidFinishLaunching() async {
         XCTAssertNil(analyticsSpy.activityActionCalled)
         
         let application = await UIApplication.shared
-        let _ = await appDelegate.application(application, didFinishLaunchingWithOptions: nil)
-        
+        _ = await appDelegate.application(application, didFinishLaunchingWithOptions: nil)
         
         XCTAssert(analyticsSpy.installCalled)
         wait(1) // Wait detached tasks
@@ -68,13 +67,13 @@ final class AnalyticsSpyTests: XCTestCase {
         XCTAssertNil(analyticsSpy.activityActionCalled)
         
         let application = await UIApplication.shared
-        let _ = await appDelegate.applicationDidBecomeActive(application)
+        _ = await appDelegate.applicationDidBecomeActive(application)
         
         wait(1) // Wait detached tasks
         XCTAssertEqual(analyticsSpy.activityActionCalled, .resume)
     }
     
-    // MARK:  Menu
+    // MARK: Menu
     var menuHelper: MainMenuActionHelper {
         MainMenuActionHelper(profile: profileMock,
                              tabManager: tabManagerMock,
