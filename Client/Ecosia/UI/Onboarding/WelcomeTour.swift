@@ -98,24 +98,16 @@ final class WelcomeTour: UIViewController,  Themeable {
         centerControl.priority = .defaultHigh
         centerControl.isActive = true
         
-        if OnboardingCardNTPExperiment.isEnabled {
-            let placeholderView = UIButton(type: .system)
-            placeholderView.widthAnchor.constraint(greaterThanOrEqualToConstant: 74).isActive = true
-            placeholderView.setContentCompressionResistancePriority(.required, for: .horizontal)
-            placeholderView.isAccessibilityElement = false
-            navStack.addArrangedSubview(placeholderView)
-        } else {
-            let skipButton = UIButton(type: .system)
-            skipButton.widthAnchor.constraint(greaterThanOrEqualToConstant: 74).isActive = true
-            skipButton.addTarget(self, action: #selector(skip), for: .primaryActionTriggered)
-            skipButton.setContentCompressionResistancePriority(.required, for: .horizontal)
-            navStack.addArrangedSubview(skipButton)
-            skipButton.setTitle(.localized(.skip), for: .normal)
-            skipButton.accessibilityLabel = .localized(.onboardingSkipTourButtonAccessibility)
-            skipButton.titleLabel?.font = .preferredFont(forTextStyle: .body)
-            skipButton.titleLabel?.adjustsFontForContentSizeCategory = true
-            self.skipButton = skipButton
-        }
+        let skipButton = UIButton(type: .system)
+        skipButton.widthAnchor.constraint(greaterThanOrEqualToConstant: 74).isActive = true
+        skipButton.addTarget(self, action: #selector(skip), for: .primaryActionTriggered)
+        skipButton.setContentCompressionResistancePriority(.required, for: .horizontal)
+        navStack.addArrangedSubview(skipButton)
+        skipButton.setTitle(.localized(.skip), for: .normal)
+        skipButton.accessibilityLabel = .localized(.onboardingSkipTourButtonAccessibility)
+        skipButton.titleLabel?.font = .preferredFont(forTextStyle: .body)
+        skipButton.titleLabel?.adjustsFontForContentSizeCategory = true
+        self.skipButton = skipButton
 
         let waves = UIImageView(image: .init(named: "onboardingWaves"))
         waves.translatesAutoresizingMaskIntoConstraints = false
