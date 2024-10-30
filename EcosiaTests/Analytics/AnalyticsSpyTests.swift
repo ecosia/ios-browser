@@ -82,26 +82,50 @@ final class AnalyticsSpyTests: XCTestCase {
                              themeManager: MockThemeManager())
     }
     
-    func testTrackOpenInSafariAction() {
-        XCTAssertNil(analyticsSpy.menuClickItemCalled)
+    func testTrackMenuAction() {
+        let testCases: [(Analytics.Label.Menu, String)] = [
+            (.openInSafari, .localized(.openInSafari)),
+            (.history, .AppMenu.AppMenuHistory),
+            (.downloads, .AppMenu.AppMenuDownloads),
+            (.zoom, String(format: .AppMenu.ZoomPageTitle, "100%")),
+            (.findInPage, .AppMenu.AppMenuFindInPageTitleString),
+            (.requestDesktopSite, .AppMenu.AppMenuViewDesktopSiteTitleString),
+            (.copyLink, .AppMenu.AppMenuCopyLinkTitleString),
+            (.help, .AppMenu.Help),
+            (.customizeHomepage, .AppMenu.CustomizeHomePage),
+            (.readingList, .AppMenu.ReadingList),
+            (.bookmarks, .AppMenu.Bookmarks)
+        ]
         
-        // Requires valid url to add action
-        tabManagerMock.selectedTab?.url = URL(string: "https://example.com")
-        
-        let expectation = self.expectation(description: "Actions are returned")
-        menuHelper.getToolbarActions(navigationController: .init()) { actions in
-            let openInSafariAction = actions
-                .flatMap { $0 } // Flattens sections
-                .flatMap { $0.items } // Flattens items in sections
-                .first { $0.title == .localized(.openInSafari) }
-            openInSafariAction!.tapHandler!(openInSafariAction!)
-            
-            XCTAssertEqual(self.analyticsSpy.menuClickItemCalled, .openInSafari)
-            expectation.fulfill()
+        for (label, title) in testCases {
+            analyticsSpy = AnalyticsSpy()
+            Analytics.shared = analyticsSpy
+            XCTContext.runActivity(named: "Menu action \(label.rawValue) is tracked") { _ in
+                XCTAssertNil(analyticsSpy.menuClickItemCalled)
+                
+                // Requires valid url to add action
+                tabManagerMock.selectedTab?.url = URL(string: "https://example.com")
+                
+                let expectation = self.expectation(description: "Actions are returned")
+                menuHelper.getToolbarActions(navigationController: .init()) { actions in
+                    let action = actions
+                        .flatMap { $0 } // Flattens sections
+                        .flatMap { $0.items } // Flattens items in sections
+                        .first { $0.title == title }
+                    if let action = action {
+                        action.tapHandler!(action)
+                        
+                        XCTAssertEqual(self.analyticsSpy.menuClickItemCalled, label)
+                    } else {
+                        XCTFail("No action title with \(title) found")
+                    }
+                    
+                    expectation.fulfill()
+                }
+                wait(for: [expectation], timeout: 1)
+            }
         }
-        
-        wait(for: [expectation], timeout: 1)
     }
     
-    // TODO: Add tests for other events
+    // TODO: Add menuStatus and menu share tests
 }
