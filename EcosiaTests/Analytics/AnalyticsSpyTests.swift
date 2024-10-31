@@ -17,6 +17,21 @@ final class AnalyticsSpy: Analytics {
         activityActionCalled = action
     }
     
+    var bookmarksImportExportPropertyCalled: Analytics.Property.Bookmarks?
+    override func bookmarksPerformImportExport(_ property: Analytics.Property.Bookmarks) {
+        bookmarksImportExportPropertyCalled = property
+    }
+    
+    var bookmarksEmptyLearnMoreClickedCalled = false
+    override func bookmarksEmptyLearnMoreClicked() {
+        bookmarksEmptyLearnMoreClickedCalled = true
+    }
+    
+    var bookmarksImportEndedPropertyCalled: Analytics.Property.Bookmarks?
+    override func bookmarksImportEnded(_ property: Analytics.Property.Bookmarks) {
+        bookmarksImportEndedPropertyCalled = property
+    }
+    
     var menuClickItemCalled: Analytics.Label.Menu?
     override func menuClick(_ item: Analytics.Label.Menu) {
         menuClickItemCalled = item
@@ -52,6 +67,7 @@ final class AnalyticsSpyTests: XCTestCase {
         
         analyticsSpy = AnalyticsSpy()
         Analytics.shared = analyticsSpy
+        DependencyHelperMock().bootstrapDependencies()
     }
     
     override func tearDown() {
@@ -59,6 +75,7 @@ final class AnalyticsSpyTests: XCTestCase {
         
         analyticsSpy = nil
         Analytics.shared = Analytics()
+        DependencyHelperMock().reset()
     }
     
     // MARK: AppDelegate
@@ -83,6 +100,37 @@ final class AnalyticsSpyTests: XCTestCase {
         
         wait(1) // Wait detached tasks
         XCTAssertEqual(analyticsSpy.activityActionCalled, .resume)
+    }
+    
+    // MARK: Bookmarks
+    var panel: BookmarksPanel {
+        let viewModel = BookmarksPanelViewModel(profile: profileMock, bookmarkFolderGUID: "TestGuid")
+        return BookmarksPanel(viewModel: viewModel)
+    }
+    
+    func testTrackImportClick() {
+        XCTAssertNil(analyticsSpy.bookmarksImportExportPropertyCalled)
+        
+        panel.importBookmarksActionHandler()
+        
+        XCTAssertEqual(analyticsSpy.bookmarksImportExportPropertyCalled, .import)
+    }
+    
+    func testTrackExportClick() {
+        XCTAssertNil(analyticsSpy.bookmarksImportExportPropertyCalled)
+        
+        panel.exportBookmarksActionHandler()
+        
+        XCTAssertEqual(analyticsSpy.bookmarksImportExportPropertyCalled, .export)
+    }
+    
+    func testTrackLearnMoreClick() {
+        let view = EmptyBookmarksView(initialBottomMargin: 0)
+        XCTAssertFalse(analyticsSpy.bookmarksEmptyLearnMoreClickedCalled)
+        
+        view.onLearnMoreTapped()
+        
+        XCTAssertTrue(analyticsSpy.bookmarksEmptyLearnMoreClickedCalled)
     }
     
     // MARK: Menu
