@@ -59,7 +59,7 @@ private let MinimumInsets: CGFloat = 16
 extension HomepageSectionType {
     var customizableConfig: CustomizableNTPSettingConfig? {
         switch self {
-        case .logoHeader, .libraryShortcuts, .ntpCustomization, .climateImpactCounter: return nil
+        case .logoHeader, .libraryShortcuts, .ntpCustomization, .climateImpactCounter, .accountLogin: return nil
         case .topSites: return .topSites
         case .impact: return .climateImpact
         case .aboutEcosia: return .aboutEcosia
@@ -71,7 +71,7 @@ extension HomepageSectionType {
                        topSpacing: CGFloat = 0,
                        bottomSpacing: CGFloat = 32) -> NSDirectionalEdgeInsets {
         switch self {
-        case .libraryShortcuts, .topSites, .impact, .news, .aboutEcosia, .ntpCustomization:
+        case .libraryShortcuts, .topSites, .impact, .news, .aboutEcosia, .ntpCustomization, .accountLogin:
             guard let window = UIApplication.shared.windows.first(where: \.isKeyWindow) else {
                 return NSDirectionalEdgeInsets(top: 0,
                                                leading: MinimumInsets,
