@@ -951,11 +951,7 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
     }
 
     private func getRemoveShortcutAction() -> SingleActionViewModel {
-        /* Ecosia: Update Image
         return SingleActionViewModel(title: .AppMenu.RemoveFromShortcuts,
-                                     iconString: StandardImageIdentifiers.Large.pinSlash) { _ in
-         */
-        return SingleActionViewModel(title: .AddToShortcutsActionTitle,
                                      iconString: "action_unpin") { _ in
             guard let url = self.selectedTab?.url?.displayURL,
                   let title = self.selectedTab?.displayTitle else { return }
