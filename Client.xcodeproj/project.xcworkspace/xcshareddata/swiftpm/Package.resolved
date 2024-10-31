@@ -69,7 +69,7 @@
       "location" : "https://github.com/ecosia/ios-core.git",
       "state" : {
         "branch" : "main",
-        "revision" : "bd2517c32a23923ff6db43101a61350d7b486589"
+        "revision" : "2106a8ccb6b2acb100d4021df0032479c0fbda2d"
       }
     },
     {
@@ -158,8 +158,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-snapshot-testing",
       "state" : {
-        "revision" : "7b0bbbae90c41f848f90ac7b4df6c4f50068256d",
-        "version" : "1.17.5"
+        "revision" : "42a086182681cf661f5c47c9b7dc3931de18c6d7",
+        "version" : "1.17.6"
       }
     },
     {

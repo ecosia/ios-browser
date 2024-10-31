@@ -279,10 +279,9 @@ class BrowserCoordinator: BaseCoordinator,
         browserViewController.presentIntroViewController()
     }
     
-    // Ecosia: Add `forceSkipExperiment` - used for `OnboardingCardNTPExperiment`
-    private func showIntroOnboarding(skipExperiment: Bool = false) {
+    private func showIntroOnboarding() {
         let introManager = IntroScreenManager(prefs: profile.prefs)
-        let launchType = LaunchType.intro(manager: introManager, checkExperiment: !skipExperiment)
+        let launchType = LaunchType.intro(manager: introManager)
         startLaunch(with: launchType)
     }
 
@@ -583,11 +582,6 @@ class BrowserCoordinator: BaseCoordinator,
         tabTrayCoordinator.start(with: selectedPanel)
 
         router.present(navigationController)
-    }
-    
-    // Ecosia: Used for `OnboardingCardNTPExperiment`
-    func showOnboarding() {
-        showIntroOnboarding(skipExperiment: true)
     }
 
     // MARK: - ParentCoordinatorDelegate

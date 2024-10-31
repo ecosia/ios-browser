@@ -196,16 +196,6 @@ class UnleashVariantResetSetting: HiddenSetting {
     }
 }
 
-final class UnleashOnboardingCardNTPSetting: UnleashVariantResetSetting {
-    override var titleName: String? {
-        "Onboarding card NTP"
-    }
-    
-    override var variant: Unleash.Variant? {
-        Unleash.getVariant(.onboardingCardNTP)
-    }
-}
-
 final class UnleashBrazeIntegrationSetting: UnleashVariantResetSetting {
     override var titleName: String? {
         "Braze Integration"
