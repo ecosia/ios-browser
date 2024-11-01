@@ -89,10 +89,13 @@
       "skippedTests" : [
         "ETPCoverSheetTests",
         "GleanPlumbMessageManagerTests\/testManagerOnMessagePressed_withMalformedURL()",
+        "HistoryDeletionUtilityTests\/testDeletingMultipleSpecificItems()",
         "HistoryHighlightsDataAdaptorTests\/testReloadDataOnNotification()",
         "IntroViewControllerTests\/testBasicSetupReturnsExpectedItems()",
+        "RustSyncManagerTests\/testGetEnginesAndKeys()",
         "RustSyncManagerTests\/testGetEnginesAndKeysWithNoKey()",
         "RustSyncManagerTests\/testUpdateEnginePrefs_bookmarksEnabled()",
+        "RustSyncManagerTests\/testUpdateEnginePrefs_creditCardEnabled()",
         "ShortcutRouteTests\/testOpenLastBookmarkShortcutWithInvalidUrl()",
         "TabManagerTests\/testDeleteSelectedTab()",
         "TabManagerTests\/testPreserveTabsWithManyTabs()",

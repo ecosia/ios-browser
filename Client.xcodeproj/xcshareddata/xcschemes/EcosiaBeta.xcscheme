@@ -64,15 +64,6 @@
             </BuildableReference>
             <SkippedTests>
                <Test
-                  Identifier = "HistoryDeletionUtilityTests/testDeletingMultipleSpecificItems()">
-               </Test>
-               <Test
-                  Identifier = "RustSyncManagerTests/testGetEnginesAndKeys()">
-               </Test>
-               <Test
-                  Identifier = "RustSyncManagerTests/testUpdateEnginePrefs_creditCardEnabled()">
-               </Test>
-               <Test
                   Identifier = "SearchTests/testURIFixupPunyCode()">
                </Test>
                <Test
