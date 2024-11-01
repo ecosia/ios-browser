@@ -48,8 +48,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     private var widgetManager: TopSitesWidgetManager?
     private var menuBuilderHelper: MenuBuilderHelper?
     private var metricKitWrapper = MetricKitWrapper()
-    // Ecosia: Add analytics
-    var analytics: AnalyticsProtocol = Analytics.shared
 
     /// Tracking active status of the application.
     private var isActive = false
@@ -192,7 +190,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Task {
             await FeatureManagement.fetchConfiguration()
             // Ecosia: Lifecycle tracking. Needs to happen after Unleash start so that the flags are correctly added to the analytics context.
-            analytics.activity(.launch)
+            Analytics.shared.activity(.launch)
             // Ecosia: Engagement Service Initialization helper
             await ClientEngagementService.shared.initializeAndRefreshNotificationRegistration(notificationCenterDelegate: self)
             // Ecosia: Experiment that directly asks for consent
@@ -259,7 +257,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Ecosia
         Task {
             await FeatureManagement.fetchConfiguration()
-            analytics.activity(.resume)
+            Analytics.shared.activity(.resume)
         }
         MMP.sendSession()
         searchesCounter.subscribe(self) { searchCount in

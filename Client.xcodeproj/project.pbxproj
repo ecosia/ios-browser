@@ -357,7 +357,7 @@
 		2C6C90902C614A76007D9B43 /* OnboardingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD368492C5BC31700972871 /* OnboardingTests.swift */; };
 		2C728D7E2CBBDCDC00C7684B /* UnleashUserDefaultsSeedProgressManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C728D7D2CBBDCDC00C7684B /* UnleashUserDefaultsSeedProgressManagerTests.swift */; };
 		2C78374B2C1765DF00BBFFEB /* LoadingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCFB3D42C0F1EA500BEDCA0 /* LoadingScreen.swift */; };
-		2C7DBABD2C4EA37200BCD03F /* AnalyticsFeatureManagementIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7DBABB2C4EA17200BCD03F /* AnalyticsFeatureManagementIntegrationTests.swift */; };
+		2C7DBABD2C4EA37200BCD03F /* AppDelegateFeatureManagementIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7DBABB2C4EA17200BCD03F /* AppDelegateFeatureManagementIntegrationTests.swift */; };
 		2C82625A2C64BB9300E2A255 /* DeviceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C8262592C64BB9300E2A255 /* DeviceType.swift */; };
 		2C82625C2C6648D900E2A255 /* LocalizationOverrideTestingBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C82625B2C6648D900E2A255 /* LocalizationOverrideTestingBundle.swift */; };
 		2C82625E2C66661700E2A255 /* EcosiaMockThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C82625D2C66661700E2A255 /* EcosiaMockThemeManager.swift */; };
@@ -374,7 +374,6 @@
 		2CA9952A2CA2C0BB001064CC /* NTPConfigurableNudgeCardCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CA995292CA2C0BB001064CC /* NTPConfigurableNudgeCardCellViewModel.swift */; };
 		2CABD7162C11C9CC00A0750F /* MozillaAppServices in Frameworks */ = {isa = PBXBuildFile; productRef = 2CABD7152C11C9CC00A0750F /* MozillaAppServices */; };
 		2CABD7282C12EF1E00A0750F /* PrivateModeButtonTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CABD7272C12EF1E00A0750F /* PrivateModeButtonTests.swift */; };
-		2CC8AC342C4F887D000A669A /* MockAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC8AC332C4F887D000A669A /* MockAnalytics.swift */; };
 		2CCBB5232CAE9826006E2E10 /* ArcProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCBB5222CAE9826006E2E10 /* ArcProgressView.swift */; };
 		2CCBB5252CAEA9DF006E2E10 /* SeedProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCBB5242CAEA9DF006E2E10 /* SeedProgressView.swift */; };
 		2CCBB5272CAEAD53006E2E10 /* SeedCounterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCBB5262CAEAD53006E2E10 /* SeedCounterView.swift */; };
@@ -2504,7 +2503,7 @@
 		2C6C90822C614A16007D9B43 /* EcosiaSnapshotTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EcosiaSnapshotTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C6E44099EACF7BE5438CEB6 /* ca */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ca; path = ca.lproj/Today.strings; sourceTree = "<group>"; };
 		2C728D7D2CBBDCDC00C7684B /* UnleashUserDefaultsSeedProgressManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnleashUserDefaultsSeedProgressManagerTests.swift; sourceTree = "<group>"; };
-		2C7DBABB2C4EA17200BCD03F /* AnalyticsFeatureManagementIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsFeatureManagementIntegrationTests.swift; sourceTree = "<group>"; };
+		2C7DBABB2C4EA17200BCD03F /* AppDelegateFeatureManagementIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegateFeatureManagementIntegrationTests.swift; sourceTree = "<group>"; };
 		2C8262572C64424300E2A255 /* EcosiaSnapshotTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = EcosiaSnapshotTests.xctestplan; sourceTree = "<group>"; };
 		2C8262592C64BB9300E2A255 /* DeviceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceType.swift; sourceTree = "<group>"; };
 		2C82625B2C6648D900E2A255 /* LocalizationOverrideTestingBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationOverrideTestingBundle.swift; sourceTree = "<group>"; };
@@ -2543,7 +2542,6 @@
 		2CBCAB0D2B88EEE40080AD68 /* EcosiaDebug.WidgetKit.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = EcosiaDebug.WidgetKit.xcconfig; sourceTree = "<group>"; };
 		2CBCAB0E2B88EEE40080AD68 /* EcosiaDebug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = EcosiaDebug.xcconfig; sourceTree = "<group>"; };
 		2CC1B3EF1E9B861400814EEC /* DomainAutocompleteTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DomainAutocompleteTests.swift; sourceTree = "<group>"; };
-		2CC8AC332C4F887D000A669A /* MockAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAnalytics.swift; sourceTree = "<group>"; };
 		2CCB296620A99C9500121DD8 /* LoginsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginsTests.swift; sourceTree = "<group>"; };
 		2CCBB5222CAE9826006E2E10 /* ArcProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArcProgressView.swift; sourceTree = "<group>"; };
 		2CCBB5242CAEA9DF006E2E10 /* SeedProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedProgressView.swift; sourceTree = "<group>"; };
@@ -8871,7 +8869,7 @@
 		2C7DBABA2C4EA14C00BCD03F /* IntegrationTests */ = {
 			isa = PBXGroup;
 			children = (
-				2C7DBABB2C4EA17200BCD03F /* AnalyticsFeatureManagementIntegrationTests.swift */,
+				2C7DBABB2C4EA17200BCD03F /* AppDelegateFeatureManagementIntegrationTests.swift */,
 			);
 			path = IntegrationTests;
 			sourceTree = "<group>";
@@ -8880,7 +8878,6 @@
 			isa = PBXGroup;
 			children = (
 				2C872A532B8CD47600B318A0 /* MockAppVersionInfoProvider.swift */,
-				2CC8AC332C4F887D000A669A /* MockAnalytics.swift */,
 			);
 			path = Mocks;
 			sourceTree = "<group>";
@@ -14576,7 +14573,6 @@
 				3943A81D1E9807C700D4F6DC /* FxAPushMessageTest.swift in Sources */,
 				212985E72A72B39D00546684 /* ThemeSettingsControllerTests.swift in Sources */,
 				8A9E46BD2A6599E5003327D4 /* MockStatusBarScrollDelegate.swift in Sources */,
-				2CC8AC342C4F887D000A669A /* MockAnalytics.swift in Sources */,
 				E1463D0629830E4F0074E16E /* MockUserNotificationCenter.swift in Sources */,
 				439B78182A09721600CAAE37 /* CreditCardHelperTests.swift in Sources */,
 				8ADED7F0276A7788009C19E6 /* CumulativeDaysOfUseCounterTests.swift in Sources */,
@@ -14606,7 +14602,7 @@
 				5AF6254728A58AC100A90253 /* MockHistoryHighlightsDataAdaptor.swift in Sources */,
 				8A7A26E329D4ACF300EA76F1 /* SceneCoordinatorTests.swift in Sources */,
 				39C137972655798A003DC662 /* NimbusIntegrationTests.swift in Sources */,
-				2C7DBABD2C4EA37200BCD03F /* AnalyticsFeatureManagementIntegrationTests.swift in Sources */,
+				2C7DBABD2C4EA37200BCD03F /* AppDelegateFeatureManagementIntegrationTests.swift in Sources */,
 				215B458427DA87FC00E5E800 /* TabMetadataManagerTests.swift in Sources */,
 				2173326A29CCF901007F20C7 /* UIPanGestureRecognizerMock.swift in Sources */,
 				5A9A09D628B01FD500B6F51E /* MockURLBarView.swift in Sources */,

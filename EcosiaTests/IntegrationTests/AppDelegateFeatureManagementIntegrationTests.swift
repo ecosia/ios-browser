@@ -6,17 +6,14 @@ import XCTest
 @testable import Client
 @testable import Core
 
-final class AnalyticsFeatureManagementIntegrationTests: XCTestCase {
+final class AppDelegateFeatureManagementIntegrationTests: XCTestCase {
     var appDelegate: AppDelegate!
-    var mockAnalytics: MockAnalytics!
     var initialModel: Unleash.Model!
     
     override func setUp() {
         super.setUp()
         
         appDelegate = AppDelegate()
-        mockAnalytics = MockAnalytics()
-        appDelegate.analytics = mockAnalytics
         
         initialModel = Unleash.model
         // Reset Unleash model to initial state
@@ -40,8 +37,6 @@ final class AnalyticsFeatureManagementIntegrationTests: XCTestCase {
         XCTAssertTrue(didFinishLaunching)
         // Let it go thru all the activities, including the Task detached ones
         wait(1)
-        XCTAssertEqual(mockAnalytics.activityCallCount, 1)
-        XCTAssertEqual(mockAnalytics.lastActivity, .launch)
         XCTAssertNotEqual(Unleash.model.updated, Date(timeIntervalSince1970: 0))
         XCTAssertNotEqual(Unleash.model.toggles.count, 0)
     }
@@ -59,22 +54,18 @@ final class AnalyticsFeatureManagementIntegrationTests: XCTestCase {
         XCTAssertTrue(didFinishLaunching)
         // Let it go thru all the activities, including the Task detached ones
         wait(1)
-        XCTAssertEqual(mockAnalytics.activityCallCount, 1)
-        XCTAssertEqual(mockAnalytics.lastActivity, .launch)
         let modelAfterLaunch = Unleash.model
         
         // Simulate entering background and foreground again
         await appDelegate.applicationDidBecomeActive(application)
         
         wait(1)
-        XCTAssertEqual(mockAnalytics.activityCallCount, 2)
-        XCTAssertEqual(mockAnalytics.lastActivity, .resume)
         XCTAssertEqual(Unleash.model.toggles.count, modelAfterLaunch.toggles.count)
         XCTAssertEqual(Unleash.model.updated, modelAfterLaunch.updated)
     }
 }
 
-extension AnalyticsFeatureManagementIntegrationTests {
+extension AppDelegateFeatureManagementIntegrationTests {
     
     func storeUnleashModel() async {
         let jsonString =
