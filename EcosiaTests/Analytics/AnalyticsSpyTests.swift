@@ -165,7 +165,7 @@ final class AnalyticsSpyTests: XCTestCase {
                 // Requires valid url to add action
                 tabManagerMock.selectedTab?.url = URL(string: "https://example.com")
                 
-                let expectation = self.expectation(description: "Actions are returned")
+                let expectation = self.expectation(description: "Actions for \(title) are returned")
                 menuHelper.getToolbarActions(navigationController: .init()) { actions in
                     let action = actions
                         .flatMap { $0 } // Flattens sections
@@ -219,7 +219,7 @@ final class AnalyticsSpyTests: XCTestCase {
             // TODO: Investigate why `setBookmark` doesn't work
             // (.bookmark, false, .RemoveBookmarkContextMenuTitle, self.setBookmark),
             (.shortcut, true, .AddToShortcutsActionTitle, nil),
-            (.shortcut, false, .AppMenu.RemoveFromShortcuts, self.setBookmark)
+            (.shortcut, false, .AppMenu.RemoveFromShortcuts, self.setPinnedSite)
         ]
         for (label, value, title, given) in testCases {
             analyticsSpy = AnalyticsSpy()
