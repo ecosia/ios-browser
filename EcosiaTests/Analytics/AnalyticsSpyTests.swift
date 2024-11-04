@@ -87,9 +87,11 @@ final class AnalyticsSpyTests: XCTestCase {
         let application = await UIApplication.shared
         _ = await appDelegate.application(application, didFinishLaunchingWithOptions: nil)
         
-        wait(1) // Wait detached tasks
         XCTAssert(analyticsSpy.installCalled)
-        XCTAssertEqual(analyticsSpy.activityActionCalled, .launch)
+        
+        waitForCondition(timeout: 3) { // Wait detached tasks until launch is called
+            analyticsSpy.activityActionCalled == .launch
+        }
     }
     
     func testTrackResumeOnDidFinishLaunching() async {
