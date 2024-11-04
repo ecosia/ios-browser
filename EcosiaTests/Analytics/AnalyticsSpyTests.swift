@@ -100,8 +100,9 @@ final class AnalyticsSpyTests: XCTestCase {
         let application = await UIApplication.shared
         _ = await appDelegate.applicationDidBecomeActive(application)
         
-        wait(1) // Wait detached tasks
-        XCTAssertEqual(analyticsSpy.activityActionCalled, .resume)
+        waitForCondition(timeout: 2) { // Wait detached tasks until resume is called
+            analyticsSpy.activityActionCalled == .resume
+        }
     }
     
     // MARK: Bookmarks
