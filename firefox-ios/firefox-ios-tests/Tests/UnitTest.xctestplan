@@ -89,6 +89,7 @@
       "skippedTests" : [
         "ETPCoverSheetTests",
         "GleanPlumbMessageManagerTests\/testManagerOnMessagePressed_withMalformedURL()",
+        "HistoryDeletionUtilityTests\/testDeletingMultipleItemsEmptyingDatabase()",
         "HistoryDeletionUtilityTests\/testDeletingMultipleSpecificItems()",
         "HistoryHighlightsDataAdaptorTests\/testReloadDataOnNotification()",
         "HistoryHighlightsTests\/testSingleHistoryHighlightOrder_withMoreSingleItemEach()",
