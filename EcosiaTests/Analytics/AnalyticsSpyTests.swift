@@ -87,8 +87,8 @@ final class AnalyticsSpyTests: XCTestCase {
         let application = await UIApplication.shared
         _ = await appDelegate.application(application, didFinishLaunchingWithOptions: nil)
         
-        XCTAssert(analyticsSpy.installCalled)
         wait(1) // Wait detached tasks
+        XCTAssert(analyticsSpy.installCalled)
         XCTAssertEqual(analyticsSpy.activityActionCalled, .launch)
     }
     
@@ -147,7 +147,7 @@ final class AnalyticsSpyTests: XCTestCase {
             (.openInSafari, .localized(.openInSafari)),
             (.history, .AppMenu.AppMenuHistory),
             (.downloads, .AppMenu.AppMenuDownloads),
-            (.zoom, String(format: .AppMenu.ZoomPageTitle, "100%")),
+            (.zoom, String(format: .AppMenu.ZoomPageTitle, NumberFormatter.localizedString(from: NSNumber(value: 1), number: .percent))),
             (.findInPage, .AppMenu.AppMenuFindInPageTitleString),
             (.requestDesktopSite, .AppMenu.AppMenuViewDesktopSiteTitleString),
             (.copyLink, .AppMenu.AppMenuCopyLinkTitleString),
@@ -212,16 +212,17 @@ final class AnalyticsSpyTests: XCTestCase {
     }
     
     func testTrackMenuStatus() {
-        let testCases: [(Analytics.Label.MenuStatus, Bool, String, ((String) -> Void)?)] = [
-            (.readingList, true, .ShareAddToReadingList, nil),
-            (.readingList, false, .AppMenu.RemoveReadingList, self.setReadingList),
-            (.bookmark, true, .KeyboardShortcuts.AddBookmark, nil),
-            // TODO: Investigate why `setBookmark` doesn't work
-            // (.bookmark, false, .RemoveBookmarkContextMenuTitle, self.setBookmark),
-            (.shortcut, true, .AddToShortcutsActionTitle, nil),
-            (.shortcut, false, .AppMenu.RemoveFromShortcuts, self.setPinnedSite)
+        let testCases: [(Analytics.Label.MenuStatus, Bool, String)] = [
+            // Adding and then removing for each case, this order matters!
+            (.readingList, true, .ShareAddToReadingList),
+            (.readingList, false, .AppMenu.RemoveReadingList),
+            (.bookmark, true, .KeyboardShortcuts.AddBookmark),
+            // Removing bookmark does not work since it requires additional user interaction
+            //(.bookmark, false, .RemoveBookmarkContextMenuTitle),
+            (.shortcut, true, .AddToShortcutsActionTitle),
+            (.shortcut, false, .AppMenu.RemoveFromShortcuts)
         ]
-        for (label, value, title, given) in testCases {
+        for (label, value, title) in testCases {
             analyticsSpy = AnalyticsSpy()
             Analytics.shared = analyticsSpy
             XCTContext.runActivity(named: "Menu share \(label.rawValue) is tracked") { _ in
@@ -229,7 +230,6 @@ final class AnalyticsSpyTests: XCTestCase {
                 XCTAssertNil(analyticsSpy.menuStatusItemChangedTo)
                 
                 let testUrl = "https://example.com"
-                given?(testUrl)
                 tabManagerMock.selectedTab?.url = URL(string: testUrl)
                 
                 let expectation = self.expectation(description: "Actions are returned")
