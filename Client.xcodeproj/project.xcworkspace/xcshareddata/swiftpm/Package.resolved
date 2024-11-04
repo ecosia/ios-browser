@@ -10,21 +10,21 @@
       }
     },
     {
-      "identity" : "braze-swift-sdk",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/braze-inc/braze-swift-sdk",
-      "state" : {
-        "revision" : "36481467bc4f333a0a2e31bcdbf981ad8e526dd0",
-        "version" : "11.2.0"
-      }
-    },
-    {
       "identity" : "dip",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/AliSoftware/Dip.git",
       "state" : {
         "revision" : "c3b601df0ff22b06b6d5ff4943faf05c0bd3f9bb",
         "version" : "7.1.1"
+      }
+    },
+    {
+      "identity" : "fmdb",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ccgus/fmdb",
+      "state" : {
+        "revision" : "1227a3fa2b9916bfd75fe380eb45cd210e69e251",
+        "version" : "2.7.12"
       }
     },
     {
@@ -59,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ecosia/ios-core.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "def9d182ab7c7fd65b092ab5d8044811ac1a3826"
+        "branch" : "ls-mob-2959-braze-ntp-card-newsletter",
+        "revision" : "12fe67a9e1ed8c8d74d1863c9b9cdae054d51100"
       }
     },
     {
@@ -109,15 +109,6 @@
       }
     },
     {
-      "identity" : "sdwebimage",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/SDWebImage/SDWebImage.git",
-      "state" : {
-        "revision" : "10d06f6a33bafae8c164fbfd1f03391f6d4692b3",
-        "version" : "5.20.0"
-      }
-    },
-    {
       "identity" : "sentry-cocoa",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa.git",
@@ -140,8 +131,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/snowplow/snowplow-ios-tracker.git",
       "state" : {
-        "revision" : "bf1495987d63dc3595270df1a1bb516bfef8585f",
-        "version" : "6.0.8"
+        "revision" : "1e16a929cef8e944bd41dc36a1d2779e06bd0a3c",
+        "version" : "5.2.0"
       }
     },
     {
