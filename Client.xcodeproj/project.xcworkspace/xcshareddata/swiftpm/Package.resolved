@@ -68,8 +68,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ecosia/ios-core.git",
       "state" : {
-        "branch" : "dc-mob-3010-onboarding-card-ntp-experiment-remove",
-        "revision" : "0c61e03d5a6b543bbf3e28319d0e8b776f3a6771"
+        "branch" : "main",
+        "revision" : "2a957f6fd4fd4a322ec64c05d770d22ea749689a"
       }
     },
     {

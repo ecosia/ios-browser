@@ -21438,7 +21438,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = "dc-mob-3010-onboarding-card-ntp-experiment-remove";
+				branch = main;
 				kind = branch;
 			};
 		};
