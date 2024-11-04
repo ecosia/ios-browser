@@ -10,15 +10,6 @@
       }
     },
     {
-      "identity" : "braze-swift-sdk",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/braze-inc/braze-swift-sdk",
-      "state" : {
-        "revision" : "66bf1d9b55ec697c82eaa9b499296aa317de26b4",
-        "version" : "11.1.1"
-      }
-    },
-    {
       "identity" : "dip",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/AliSoftware/Dip.git",
@@ -68,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ecosia/ios-core.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "2a957f6fd4fd4a322ec64c05d770d22ea749689a"
+        "branch" : "ls-mob-2959-braze-ntp-card-newsletter",
+        "revision" : "12fe67a9e1ed8c8d74d1863c9b9cdae054d51100"
       }
     },
     {
@@ -115,15 +106,6 @@
       "state" : {
         "branch" : "122.0.2_Glean_dependency_removed",
         "revision" : "b5d49206724ececd346bc1ac1a9474424e2f00df"
-      }
-    },
-    {
-      "identity" : "sdwebimage",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/SDWebImage/SDWebImage.git",
-      "state" : {
-        "revision" : "8a1be70a625683bc04d6903e2935bf23f3c6d609",
-        "version" : "5.19.7"
       }
     },
     {
