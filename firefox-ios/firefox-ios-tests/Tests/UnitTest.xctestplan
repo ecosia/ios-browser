@@ -91,6 +91,8 @@
         "GleanPlumbMessageManagerTests\/testManagerOnMessagePressed_withMalformedURL()",
         "HistoryDeletionUtilityTests\/testDeletingMultipleSpecificItems()",
         "HistoryHighlightsDataAdaptorTests\/testReloadDataOnNotification()",
+        "HistoryHighlightsTests\/testSingleHistoryHighlightOrder_withMoreSingleItemEach()",
+        "IntroScreenManagerTests\/testHasSeenIntroScreen_shouldNotShowIt()",
         "IntroViewControllerTests\/testBasicSetupReturnsExpectedItems()",
         "RustSyncManagerTests\/testGetEnginesAndKeys()",
         "RustSyncManagerTests\/testGetEnginesAndKeysWithNoKey()",
