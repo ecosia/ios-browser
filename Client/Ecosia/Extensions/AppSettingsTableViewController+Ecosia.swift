@@ -151,7 +151,8 @@ extension AppSettingsTableViewController {
             FasterInactiveTabs(settings: self, settingsDelegate: self),
             UnleashBrazeIntegrationSetting(settings: self),
             UnleashAPNConsentOnLaunchSetting(settings: self),
-            UnleashSeedCounterNTPSetting(settings: self)
+            UnleashSeedCounterNTPSetting(settings: self),
+            UnleashOnboardingRemoveSetting(settings: self)
         ]
         
         if SeedCounterNTPExperiment.isEnabled {
