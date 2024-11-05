@@ -6,7 +6,6 @@ import XCTest
 @testable import Client
 
 final class BrazeServiceTests: XCTestCase {
-
     var brazeService: BrazeService!
     
     override func setUp() {

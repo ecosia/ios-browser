@@ -10,7 +10,7 @@ import Core
 final class BrazeService {
     private init() {}
     
-    private var braze: Braze? = nil
+    private var braze: Braze?
     private var userId: String {
         User.shared.analyticsId.uuidString
     }
@@ -58,9 +58,7 @@ final class BrazeService {
         let notificationCenter = UNUserNotificationCenter.current()
         let currentStatus = await notificationCenter.notificationSettings().authorizationStatus
         switch currentStatus {
-            case .authorized,
-                .ephemeral,
-                .provisional:
+            case .authorized, .ephemeral, .provisional:
                 _ = try? await requestAPNConsent(notificationCenterDelegate: notificationCenterDelegate)
             default:
                 break
@@ -69,7 +67,6 @@ final class BrazeService {
 }
 
 extension BrazeService {
-    
     // MARK: - Init Braze
     
     @MainActor
@@ -84,7 +81,6 @@ extension BrazeService {
 }
 
 extension BrazeService {
-
     // MARK: - Notification Center
 
     private func makeNotificationCenter(notificationCenterDelegate: UNUserNotificationCenterDelegate) -> UNUserNotificationCenter {
@@ -103,7 +99,6 @@ extension BrazeService {
 
 
 extension BrazeService {
-
     // MARK: - ID Update
 
     private func updateID(_ id: String?) async {
@@ -118,7 +113,6 @@ extension BrazeService {
 }
 
 extension BrazeService {
-
     // MARK: - Environment Configuration
 
     /// Retrieves the Braze configuration based on the provided parameters.
@@ -136,7 +130,6 @@ extension BrazeService {
     /// - Warning: Ensure that the provided API key is not empty to avoid invalid configurations.
     func getBrazeConfiguration(apiKey: String = BrazeService.apiKey,
                                environment: Environment = Environment.current) throws -> BrazeKit.Braze.Configuration {
-
         guard !apiKey.isEmpty else { throw Error.invalidConfiguration }
 
         let brazeConfiguration = BrazeKit.Braze.Configuration(apiKey: apiKey, endpoint: environment.urlProvider.brazeEndpoint)
