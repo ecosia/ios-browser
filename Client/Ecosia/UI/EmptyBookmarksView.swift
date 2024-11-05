@@ -239,7 +239,7 @@ final class EmptyBookmarksView: UIView, Themeable {
         }
     }
     
-    @objc private func onLearnMoreTapped() {
+    @objc func onLearnMoreTapped() {
         Analytics.shared.bookmarksEmptyLearnMoreClicked()
         delegate?.emptyBookmarksViewLearnMoreTapped(self)
     }
