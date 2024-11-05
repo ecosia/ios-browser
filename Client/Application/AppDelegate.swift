@@ -194,7 +194,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             // Ecosia: Lifecycle tracking. Needs to happen after Unleash start so that the flags are correctly added to the analytics context.
             analytics.activity(.launch)
             // Ecosia: Engagement Service Initialization helper
-            await ClientEngagementService.shared.initializeAndRefreshNotificationRegistration(notificationCenterDelegate: self)
+            await BrazeService.shared.initialize(notificationCenterDelegate: self)
             // Ecosia: Experiment that directly asks for consent
             await APNConsentOnLaunchExperiment.requestAPNConsentIfNeeded(delegate: self)
         }
@@ -404,7 +404,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {}
 
 extension AppDelegate {
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        ClientEngagementService.shared.registerDeviceToken(deviceToken)
+        BrazeService.shared.registerDeviceToken(deviceToken)
     }
 }
 

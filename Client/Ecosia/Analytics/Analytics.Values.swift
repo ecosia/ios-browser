@@ -133,8 +133,7 @@ extension Analytics {
             case
             allow,
             deny,
-            dismiss,
-            skip,
+            error,
             view
         }
         
