@@ -2,11 +2,7 @@ import Foundation
 import SnowplowTracker
 import Core
 
-protocol AnalyticsProtocol {
-    func activity(_ action: Analytics.Action.Activity)
-}
-
-final class Analytics: AnalyticsProtocol {
+open class Analytics {
     static let installSchema = "iglu:org.ecosia/ios_install_event/jsonschema/1-0-0"
     private static let abTestSchema = "iglu:org.ecosia/abtest_context/jsonschema/1-0-1"
     private static let consentSchema = "iglu:org.ecosia/eccc_context/jsonschema/1-0-2"
@@ -23,10 +19,10 @@ final class Analytics: AnalyticsProtocol {
                                                        Self.appResumeDailyTrackingPluginConfiguration])!
     }
     
-    static let shared = Analytics()
+    static var shared = Analytics()
     private var tracker: TrackerController
     
-    private init() {
+    internal init() {
         tracker = Self.tracker
         tracker.installAutotracking = true
         tracker.screenViewAutotracking = false

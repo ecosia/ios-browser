@@ -31,6 +31,8 @@ Want to contribute on the codebase but don't know where to start? Here is a list
 After cloning (for Ecosians)
 -----------
 
+### Git Hooks
+
 This project uses custom Git hooks to enforce commit message formatting and other automated tasks. 
 To ensure that these hooks are installed correctly in your local `.git/hooks` directory, you need to run the provided setup script after cloning the repository.
 
@@ -39,29 +41,35 @@ To ensure that these hooks are installed correctly in your local `.git/hooks` di
 
 This script will copy all the necessary hooks (such as `prepare-commit-msg`) to your local `.git/hooks` directory, ensuring they are executable.
 
+### SwiftLint
+
+We use [SwiftLint](https://github.com/realm/SwiftLint) to enforce Swift style and conventions. Make sure to install it so that linting runs correctly when building.
+
+    brew install swiftlint
+
 Building the code
 -----------------
 
 1. Install the latest [Xcode developer tools](https://developer.apple.com/xcode/downloads/) from Apple.
-1. Install, [Brew](https://brew.sh), Node, and a Python3 virtualenv for localization scripts:
+2. Install, [Brew](https://brew.sh), Node, and a Python3 virtualenv for localization scripts:
     ```shell
     brew update
     brew install node
     pip3 install virtualenv
     ```
-1. Clone the repository:
+3. Clone the repository:
     ```shell
     git clone https://github.com/ecosia/ios-browser
     ```
-1. Install Node.js dependencies, build user scripts and update content blocker:
+4. Install Node.js dependencies, build user scripts and update content blocker:
     ```shell
     cd firefox-ios
     sh ./bootstrap.sh
     ```
-1. Open `Client.xcodeproj` in Xcode.
-1. Make sure to select the `Fennec` [scheme](https://developer.apple.com/documentation/xcode/build-system?changes=_2) in Xcode.
-1. Select the destination device you want to build on.
-1. Run the app with `Cmd + R` or by pressing the `build and run` button.
+5. Open `Client.xcodeproj` in Xcode.
+6. Make sure to select the `Fennec` [scheme](https://developer.apple.com/documentation/xcode/build-system?changes=_2) in Xcode.
+7. Select the destination device you want to build on.
+8. Run the app with `Cmd + R` or by pressing the `build and run` button.
 
 ⚠️ Important: In case you have dependencies issues with SPM, please try the following:
 - Xcode -> File -> Packages -> Reset Package Caches
