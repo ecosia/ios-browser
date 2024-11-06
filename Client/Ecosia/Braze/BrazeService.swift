@@ -19,9 +19,13 @@ final class BrazeService {
     static let shared = BrazeService()
     
     enum Error: Swift.Error {
-       case invalidConfiguration
-       case generic(description: String)
-   }
+        case invalidConfiguration
+        case generic(description: String)
+    }
+    
+    enum CustomEvent: String {
+        case newsletterCardClick = "newsletter_card_click"
+    }
     
     // TODO: Make `BrazeService` directly `UNUserNotificationCenterDelegate`
     func initialize(notificationCenterDelegate: UNUserNotificationCenterDelegate) async {
@@ -40,8 +44,8 @@ final class BrazeService {
         }
     }
     
-    func logCustomEvent(name: String) {
-        self.braze?.logCustomEvent(name: name)
+    func logCustomEvent(_ event: CustomEvent) {
+        self.braze?.logCustomEvent(name: event.rawValue)
     }
     
     // MARK: - APN Consent
@@ -58,10 +62,10 @@ final class BrazeService {
         let notificationCenter = UNUserNotificationCenter.current()
         let currentStatus = await notificationCenter.notificationSettings().authorizationStatus
         switch currentStatus {
-            case .authorized, .ephemeral, .provisional:
-                _ = try? await requestAPNConsent(notificationCenterDelegate: notificationCenterDelegate)
-            default:
-                break
+        case .authorized, .ephemeral, .provisional:
+            _ = try? await requestAPNConsent(notificationCenterDelegate: notificationCenterDelegate)
+        default:
+            break
         }
     }
 }
@@ -96,7 +100,6 @@ extension BrazeService {
         notificationAuthorizationStatus = currentStatus
     }
 }
-
 
 extension BrazeService {
     // MARK: - ID Update

@@ -83,6 +83,24 @@ extension HomepageViewController: NTPLibraryDelegate {
     }
 }
 
+extension HomepageViewController: NTPConfigurableNudgeCardCellDelegate {
+    func nudgeCardRequestToPerformAction(for cardType: HomepageSectionType) {
+        switch cardType {
+        case .newsletterCard:
+            BrazeService.shared.logCustomEvent(.newsletterCardClick)
+            // TODO: Track experiment click
+        default:
+            return
+        }
+        reloadView()
+    }
+    
+    func nudgeCardRequestToDimiss(for cardType: HomepageSectionType) {
+        // TODO: Should we log dismiss to Braze too?
+        // TODO: Track experiment dismiss
+    }
+}
+
 extension HomepageViewController: NTPImpactCellDelegate {
     func impactCellButtonClickedWithInfo(_ info: ClimateImpactInfo) {
         switch info {

@@ -13,44 +13,33 @@ protocol NTPConfigurableNudgeCardCellDelegate: AnyObject {
 
 /// ViewModel for configuring a Nudge Card Cell.
 class NTPConfigurableNudgeCardCellViewModel: HomepageViewModelProtocol {
+    var title: String {
+        fatalError("Must be overridden")
+    }
+    var description: String {
+        fatalError("Must be overridden")
+    }
+    var buttonText: String {
+        fatalError("Must be overridden")
+    }
+    var cardSectionType: HomepageSectionType {
+        fatalError("Must be overridden")
+    }
+    var image: UIImage? {
+        nil
+    }
+    var showsCloseButton: Bool {
+        true
+    }
     
-    var title: String
-    var description: String
-    var buttonText: String
-    var image: UIImage?
-    var showsCloseButton: Bool
-    var cardSectionType: HomepageSectionType
-    var identifier: String?
     var theme: Theme
     weak var delegate: NTPConfigurableNudgeCardCellDelegate?
     
-    /// Initializes the ViewModel with the required properties to configure a card.
+    /// Initializes the ViewModel with a theme. Some properties must be overriden by subclasses.
     /// - Parameters:
-    ///   - title: Title text for the card.
-    ///   - description: Description text for the card.
-    ///   - buttonText: Text to display on the action button.
-    ///   - image: Optional image to display on the card.
-    ///   - showsCloseButton: Boolean to show or hide the close button.
-    ///   - cardType: The associated `HomepageSectionType` for a given card. Used by the NTP to make each card a single section.
-    ///   - identifier: Optional unique identifier for the card.
     ///   - theme: The current theme for styling the card.
-    init(title: String,
-         description: String,
-         buttonText: String,
-         image: UIImage? = nil,
-         showsCloseButton: Bool = true,
-         cardType: HomepageSectionType,
-         identifier: String? = nil,
-         theme: Theme) {
-        
-        self.title = title
-        self.description = description
-        self.buttonText = buttonText
-        self.image = image
-        self.showsCloseButton = showsCloseButton
-        self.cardSectionType = cardType
+    init(theme: Theme) {
         self.theme = theme
-        self.identifier = identifier ?? sectionType.cellIdentifier
     }
     
     func setTheme(theme: Theme) {

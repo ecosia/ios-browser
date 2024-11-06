@@ -12,6 +12,7 @@ import Foundation
 enum HomepageSectionType: Int, CaseIterable {
     case climateImpactCounter
     case logoHeader
+    case newsletterCard
     case libraryShortcuts
     case topSites
     case impact
@@ -23,6 +24,7 @@ enum HomepageSectionType: Int, CaseIterable {
         switch self {
         case .climateImpactCounter: return NTPSeedCounterCell.cellIdentifier
         case .logoHeader: return NTPLogoCell.cellIdentifier
+        case .newsletterCard: return NTPNewsletterCardCell.cellIdentifier
         case .libraryShortcuts: return NTPLibraryCell.cellIdentifier
         case .topSites: return "" // Top sites has more than 1 cell type, dequeuing is done through FxHomeSectionHandler protocol
         case .impact: return NTPImpactCell.cellIdentifier
@@ -36,6 +38,7 @@ enum HomepageSectionType: Int, CaseIterable {
         return [
             NTPSeedCounterCell.self,
             NTPLogoCell.self,
+            NTPNewsletterCardCell.self,
             TopSiteItemCell.self,
             EmptyTopSiteCell.self,
             NTPLibraryCell.self,
@@ -56,7 +59,7 @@ private let MinimumInsets: CGFloat = 16
 extension HomepageSectionType {
     var customizableConfig: CustomizableNTPSettingConfig? {
         switch self {
-        case .logoHeader, .libraryShortcuts, .ntpCustomization, .climateImpactCounter: return nil
+        case .logoHeader, .newsletterCard, .libraryShortcuts, .ntpCustomization, .climateImpactCounter: return nil
         case .topSites: return .topSites
         case .impact: return .climateImpact
         case .aboutEcosia: return .aboutEcosia
@@ -68,7 +71,7 @@ extension HomepageSectionType {
                        topSpacing: CGFloat = 0,
                        bottomSpacing: CGFloat = 32) -> NSDirectionalEdgeInsets {
         switch self {
-        case .libraryShortcuts, .topSites, .impact, .news, .aboutEcosia, .ntpCustomization:
+        case .newsletterCard, .libraryShortcuts, .topSites, .impact, .news, .aboutEcosia, .ntpCustomization:
             guard let window = UIApplication.shared.windows.first(where: \.isKeyWindow) else {
                 return NSDirectionalEdgeInsets(top: 0,
                                                leading: MinimumInsets,
