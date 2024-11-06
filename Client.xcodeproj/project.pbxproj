@@ -29,6 +29,7 @@
 		0BF1B7E31AC60DEA00A7B407 /* InsetButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF1B7E21AC60DEA00A7B407 /* InsetButton.swift */; };
 		12147F2F2CDA3CD00009D300 /* NTPNewsletterCardCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12147F2E2CDA3CD00009D300 /* NTPNewsletterCardCell.swift */; };
 		12147F312CDA3CD80009D300 /* NTPNewsletterCardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12147F302CDA3CD80009D300 /* NTPNewsletterCardViewModel.swift */; };
+		12147F332CDBA7230009D300 /* NewsletterCardExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12147F322CDBA7230009D300 /* NewsletterCardExperiment.swift */; };
 		126509822CD924C00011BA36 /* BrazeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 126509812CD924C00011BA36 /* BrazeService.swift */; };
 		126509852CD925B40011BA36 /* BrazeKit in Frameworks */ = {isa = PBXBuildFile; productRef = 126509842CD925B40011BA36 /* BrazeKit */; };
 		126509872CD925B40011BA36 /* BrazeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 126509862CD925B40011BA36 /* BrazeUI */; };
