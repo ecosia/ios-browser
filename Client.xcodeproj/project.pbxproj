@@ -27,6 +27,8 @@
 		0BB5B30B1AC0AD1F0052877D /* LoginsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BB5B30A1AC0AD1F0052877D /* LoginsHelper.swift */; };
 		0BF0DB941A8545800039F300 /* URLBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF0DB931A8545800039F300 /* URLBarView.swift */; };
 		0BF1B7E31AC60DEA00A7B407 /* InsetButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF1B7E21AC60DEA00A7B407 /* InsetButton.swift */; };
+		12147F2F2CDA3CD00009D300 /* NTPNewsletterCardCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12147F2E2CDA3CD00009D300 /* NTPNewsletterCardCell.swift */; };
+		12147F312CDA3CD80009D300 /* NTPNewsletterCardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12147F302CDA3CD80009D300 /* NTPNewsletterCardViewModel.swift */; };
 		126509822CD924C00011BA36 /* BrazeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 126509812CD924C00011BA36 /* BrazeService.swift */; };
 		126509852CD925B40011BA36 /* BrazeKit in Frameworks */ = {isa = PBXBuildFile; productRef = 126509842CD925B40011BA36 /* BrazeKit */; };
 		126509872CD925B40011BA36 /* BrazeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 126509862CD925B40011BA36 /* BrazeUI */; };
@@ -7958,6 +7960,15 @@
 				047F9B3A24E1FF4000CD7DF7 /* SearchQuickLinks.swift */,
 			);
 			path = SearchQuickLinksMedium;
+			sourceTree = "<group>";
+		};
+		12147F2D2CDA3CB40009D300 /* Newsletter */ = {
+			isa = PBXGroup;
+			children = (
+				12147F2E2CDA3CD00009D300 /* NTPNewsletterCardCell.swift */,
+				12147F302CDA3CD80009D300 /* NTPNewsletterCardViewModel.swift */,
+			);
+			path = Newsletter;
 			sourceTree = "<group>";
 		};
 		126509802CD9249C0011BA36 /* Braze */ = {
