@@ -384,10 +384,10 @@
 		2CE294492B7CDD78006C22B2 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 2CE294482B7CDD78006C22B2 /* Core */; };
 		2CE2E24D2B9B1FCB00973C16 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 2CE2E24C2B9B1FCB00973C16 /* Core */; };
 		2CF4DA632BB31970001C340A /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 2CF4DA622BB31970001C340A /* Core */; };
+		2CFE600C2CD3AAB6001F35D2 /* OnboardingRemoveExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFE600B2CD3AAB6001F35D2 /* OnboardingRemoveExperiment.swift */; };
 		2CFEFA8B2CC0559700C67E9A /* Auth0.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2CFEFA892CC0559700C67E9A /* Auth0.plist */; };
 		2CFEFA902CC0569800C67E9A /* NTPAccountLoginCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEFA8C2CC0569700C67E9A /* NTPAccountLoginCell.swift */; };
 		2CFEFA912CC0569800C67E9A /* NTPAccountLoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEFA8D2CC0569700C67E9A /* NTPAccountLoginViewModel.swift */; };
-		2CFE600C2CD3AAB6001F35D2 /* OnboardingRemoveExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFE600B2CD3AAB6001F35D2 /* OnboardingRemoveExperiment.swift */; };
 		2F13E79B1AC0C02700D75081 /* StringExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F13E79A1AC0C02700D75081 /* StringExtensionsTests.swift */; };
 		2F44FA1B1A9D426A00FD20CC /* TestHashExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F44FA1A1A9D426A00FD20CC /* TestHashExtensions.swift */; };
 		2F44FB2C1A9D5D8500FD20CC /* Library.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F84B22261A09127C00AAB793 /* Library.xcassets */; };
@@ -2567,10 +2567,10 @@
 		2CF21D0820A4A163000D08B7 /* PocketTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PocketTests.swift; sourceTree = "<group>"; };
 		2CF449A41E7BFE2C00FD7595 /* NavigationTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationTest.swift; sourceTree = "<group>"; };
 		2CF9D9A920067FA10083DF2A /* BrowsingPDFTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowsingPDFTests.swift; sourceTree = "<group>"; };
+		2CFE600B2CD3AAB6001F35D2 /* OnboardingRemoveExperiment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingRemoveExperiment.swift; sourceTree = "<group>"; };
 		2CFEFA892CC0559700C67E9A /* Auth0.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Auth0.plist; sourceTree = "<group>"; };
 		2CFEFA8C2CC0569700C67E9A /* NTPAccountLoginCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NTPAccountLoginCell.swift; sourceTree = "<group>"; };
 		2CFEFA8D2CC0569700C67E9A /* NTPAccountLoginViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NTPAccountLoginViewModel.swift; sourceTree = "<group>"; };
-		2CFE600B2CD3AAB6001F35D2 /* OnboardingRemoveExperiment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingRemoveExperiment.swift; sourceTree = "<group>"; };
 		2D434B33B5B653C6602FB516 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		2D4D4136886E42550B1AD716 /* uz */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uz; path = uz.lproj/Localizable.strings; sourceTree = "<group>"; };
 		2D5D468686FEA0B04D7F04CE /* az */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = az; path = az.lproj/Search.strings; sourceTree = "<group>"; };
