@@ -78,7 +78,7 @@
       "location" : "https://github.com/ecosia/ios-core.git",
       "state" : {
         "branch" : "dc-mob-2967-integrate-auth0",
-        "revision" : "909a573a2567e0c1dfe82833ab99aa21b6ab30c1"
+        "revision" : "d05beab42cafd10bc5efae54e3751f2ac33d118d"
       }
     },
     {
