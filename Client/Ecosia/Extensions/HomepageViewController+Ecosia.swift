@@ -98,6 +98,8 @@ extension HomepageViewController: NTPConfigurableNudgeCardCellDelegate {
     func nudgeCardRequestToDimiss(for cardType: HomepageSectionType) {
         // TODO: Should we log dismiss to Braze too?
         // TODO: Track experiment dismiss
+        NewsletterCardExperiment.setDismissed()
+        reloadView()
     }
 }
 

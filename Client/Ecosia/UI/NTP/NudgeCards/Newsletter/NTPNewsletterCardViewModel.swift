@@ -27,7 +27,7 @@ final class NTPNewsletterCardViewModel: NTPConfigurableNudgeCardCellViewModel {
     }
     
     override var isEnabled: Bool {
-        true // TODO: Use experiment
+        NewsletterCardExperiment.shouldShowCard
     }
 
     override func screenWasShown() {
