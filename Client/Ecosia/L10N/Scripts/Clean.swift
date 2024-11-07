@@ -39,7 +39,7 @@ private final class Translations {
             $0 += "\"" + $1 + "\" = \"" + strings[$1]! + "\";\n"
         }
         
-        try! Data(result.utf8).write(to: Translations.strings, options: .atomic)
+        try? Data(result.utf8).write(to: Translations.strings, options: .atomic)
         
         print("Read: \(strings.count); wrote: \(filtered.count) translations!")
     }
@@ -53,7 +53,7 @@ private extension URL {
     }
     
     var content: String {
-        try! String(data: .init(contentsOf: self), encoding: .utf8)!
+        try? String(data: .init(contentsOf: self), encoding: .utf8)!
             .trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }

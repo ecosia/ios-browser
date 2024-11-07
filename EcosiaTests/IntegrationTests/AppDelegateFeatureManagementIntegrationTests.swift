@@ -89,7 +89,7 @@ extension AppDelegateFeatureManagementIntegrationTests {
         }
         """
         let decoder = JSONDecoder()
-        let model = try! decoder.decode(Unleash.Model.self, from: jsonString.data(using: .utf8)!)
-        try? await Unleash.save(model)
+        let model = try? decoder.decode(Unleash.Model.self, from: jsonString.data(using: .utf8)!)
+        try? await Unleash.save(model!)
     }
 }
