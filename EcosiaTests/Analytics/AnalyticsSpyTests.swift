@@ -215,6 +215,7 @@ final class AnalyticsSpyTests: XCTestCase {
     }
     
     func testTrackMenuStatus() {
+        // swiftlint:disable:next large_tuple
         let testCases: [(Analytics.Label.MenuStatus, Bool, String)] = [
             // Adding and then removing for each case, this order matters!
             (.readingList, true, .ShareAddToReadingList),
