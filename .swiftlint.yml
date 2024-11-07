@@ -66,8 +66,7 @@ only_rules: # Only enforce these rules, ignore all others
   - contains_over_first_not_nil
   - contains_over_range_nil_comparison
   - empty_collection_literal
-  # Ecosia: disabled
-  # - empty_count
+  - empty_count
   - empty_string
   - empty_xctest_method
   - explicit_init
