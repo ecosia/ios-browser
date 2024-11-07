@@ -1,15 +1,15 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Core
 import UIKit
 import Common
 
 final class Markets {
-    static private (set) var all: [Market] = {
+    private(set) static var all: [Market] = {
         return (try? JSONDecoder().decode([Market].self, from: Data(contentsOf: Bundle.main.url(forResource: "markets", withExtension: "json")!)))?.sorted(by: { $0.displayName.compare($1.displayName) == .orderedAscending })  ?? []
-    } ()
+    }()
 
     static var current: String? {
         Markets.all.first { User.shared.marketCode == $0.value }.map {

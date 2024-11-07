@@ -22,5 +22,4 @@ extension ErrorPageHandler {
     var noConnectionErrorButtonTitle: String {
         .localized(.noConnectionNSURLErrorRefresh)
     }
-    
 }

@@ -1,6 +1,6 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import UIKit
 import Common
@@ -186,22 +186,22 @@ extension UIImage {
 
 class EcosiaPrimaryButton: UIButton {
     override var isSelected: Bool {
+        get {
+            return super.isSelected
+        }
         set {
             super.isSelected = newValue
             update()
         }
-        get {
-            return super.isSelected
-        }
     }
 
     override var isHighlighted: Bool {
+        get {
+            return super.isHighlighted
+        }
         set {
             super.isHighlighted = newValue
             update()
-        }
-        get {
-            return super.isHighlighted
         }
     }
 

@@ -21,7 +21,7 @@ struct SeedCounterNTPExperiment {
         SeedCounterNTPExperiment.seedCounterConfig != nil
     }
     
-    static private var variant: Variant {
+    private static var variant: Variant {
         Variant(rawValue: Unleash.getVariant(.seedCounterNTP).name) ?? .control
     }
     
@@ -33,18 +33,18 @@ struct SeedCounterNTPExperiment {
             return
         }
         Analytics.shared.ntpSeedCounterExperiment(.collect,
-                                                  value: NSNumber(integerLiteral: 1))
+                                                  value: 1)
         UserDefaults.standard.setValue(true, forKey: seedCollectionExperimentIdentifier)
     }
     
     static func trackTapOnSeedCounter() {
         Analytics.shared.ntpSeedCounterExperiment(.click,
-                                                  value: NSNumber(integerLiteral: progressManagerType.loadTotalSeedsCollected()))
+                                                  value: progressManagerType.loadTotalSeedsCollected() as NSNumber)
     }
     
     static func trackSeedLevellingUp() {
         Analytics.shared.ntpSeedCounterExperiment(.level,
-                                                  value: NSNumber(integerLiteral: progressManagerType.loadCurrentLevel()))
+                                                  value: progressManagerType.loadCurrentLevel() as NSNumber)
     }
     
     static var seedCounterConfig: SeedCounterConfig? {

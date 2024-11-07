@@ -100,7 +100,7 @@ enum QuickLink: Int {
     
     public var textColor: Color {
         switch self {
-            case .search:
+        case .search:
             return .init("PrimaryBackground")
         default:
             return .init("PrimaryText")
@@ -109,7 +109,7 @@ enum QuickLink: Int {
 
     public var iconColor: Color {
         switch self {
-            case .search:
+        case .search:
             return .init("PrimaryBackground")
         default:
             return .init("SecondaryIcon")

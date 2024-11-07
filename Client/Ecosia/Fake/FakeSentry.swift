@@ -1,6 +1,6 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
 
@@ -12,8 +12,8 @@ class Client {
     func crash() {}
     func send(event: Event, completion: SentryRequestFinished?) {}
 
-    var beforeSerializeEvent: ((Event)->())?
-    func snapshotStacktrace(_ finished: () -> ()) {}
+    var beforeSerializeEvent: ((Event) -> Void)?
+    func snapshotStacktrace(_ finished: () -> Void) {}
     func appendStacktrace(to: Event) {}
     var breadcrumbs: Breadcrumb = Breadcrumb(level: .debug, category: "")
 }

@@ -1,6 +1,6 @@
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import UIKit
 import Common
@@ -25,7 +25,7 @@ final class PageActionMenu: UIViewController, UIGestureRecognizerDelegate, Theme
     
     private var tableView = UITableView(frame: .zero, style: .plain)
     private var knob = UIView()
-    private var contentSizeObserver : NSKeyValueObservation?
+    private var contentSizeObserver: NSKeyValueObservation?
     private lazy var swipeDown: UISwipeGestureRecognizer = {
         let swipeDown = UISwipeGestureRecognizer(target: self, action: #selector(close))
         swipeDown.direction = .down

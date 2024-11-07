@@ -405,4 +405,3 @@ extension AppDelegate {
         ClientEngagementService.shared.registerDeviceToken(deviceToken)
     }
 }
-

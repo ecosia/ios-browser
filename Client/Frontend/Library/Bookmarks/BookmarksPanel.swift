@@ -814,5 +814,4 @@ extension BookmarksPanel {
             self.bookmarksTooltip.removeFromSuperview()
         }
     }
-
 }

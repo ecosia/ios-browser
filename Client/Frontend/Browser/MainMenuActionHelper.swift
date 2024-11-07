@@ -200,7 +200,6 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
         return model
     }
 
-
     // MARK: - Update data
 
     private let dataQueue = DispatchQueue(label: "com.moz.mainMenuAction.queue")
@@ -886,7 +885,7 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
 
     private func getAddBookmarkAction() -> SingleActionViewModel {
         // Ecosia: Update Title
-        //return SingleActionViewModel(title: .AppMenu.AddBookmark,
+        // return SingleActionViewModel(title: .AppMenu.AddBookmark,
         return SingleActionViewModel(title: .KeyboardShortcuts.AddBookmark,
                                      iconString: "menu-Bookmark") { _ in
             guard let tab = self.selectedTab,

@@ -1,6 +1,6 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Core
 import UIKit
@@ -49,8 +49,7 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
 
     func createLayout() -> UICollectionViewLayout {
 
-        let layout = UICollectionViewCompositionalLayout { [weak self]
-            (sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
+        let layout = UICollectionViewCompositionalLayout { [weak self] (sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
 
             guard let self = self else { return nil }
 
@@ -129,7 +128,6 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
         cell.configure(items[cellForItemAt.row], images: images, row: cellForItemAt.item, totalCount: items.count)
         return cell
     }
-
 
     func collectionView(_: UICollectionView, didSelectItemAt: IndexPath) {
         let item = items[didSelectItemAt.row]

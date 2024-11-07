@@ -38,7 +38,7 @@ class LegacyTabGroupData: NSObject, Codable, NSCoding {
     
     // Ecosia: Tabs architecture implementation from ~v112 to ~116
     // convenience init() {
-    convenience override init() {
+    override convenience init() {
         self.init(searchTerm: "",
                   searchUrl: "",
                   nextReferralUrl: "",
@@ -64,7 +64,7 @@ class LegacyTabGroupData: NSObject, Codable, NSCoding {
         ]
     }
 
-    required public init?(coder: NSCoder) {
+    public required init?(coder: NSCoder) {
         self.tabAssociatedSearchTerm = coder.decodeObject(forKey: CodingKeys.tabAssociatedSearchTerm.rawValue) as? String ?? ""
         self.tabAssociatedSearchUrl = coder.decodeObject(forKey: CodingKeys.tabAssociatedSearchUrl.rawValue) as? String ?? ""
         self.tabAssociatedNextUrl = coder.decodeObject(forKey: CodingKeys.tabAssociatedNextUrl.rawValue) as? String ?? ""

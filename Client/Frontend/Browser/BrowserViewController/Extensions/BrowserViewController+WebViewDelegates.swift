@@ -927,7 +927,7 @@ private extension BrowserViewController {
         tab.addSnackbar(snackBar)
          */
         let alert = UIAlertController(title: .localized(.openExternalLinkTitle),
-                                      message: String.init(format: .localized(.openExternalLinkDescription), url.absoluteString),
+                                      message: String(format: .localized(.openExternalLinkDescription), url.absoluteString),
                                       preferredStyle: .alert)
         alert.view.tintColor = .legacyTheme.ecosia.primaryButton
         let cancelAction = UIAlertAction(title: .localized(.cancel), style: .default) { _ in

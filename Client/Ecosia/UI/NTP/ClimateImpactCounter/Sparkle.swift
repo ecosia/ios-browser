@@ -1,3 +1,4 @@
+// swiftlint:disable:next disable file_header
 // Source: https://gist.github.com/UnderscoreDavidSmith/60ca0c6727d0c76c9b0012a27dfe1008
 // Modified to get bigger sparkles
 
@@ -38,6 +39,7 @@ struct TwinkleView: View {
             GeometryReader { geo in
                 ZStack {
                     TimelineView(.animation) { context in
+                        // swiftlint:disable:next redundant_discardable_let
                         let _ = magic.update(date: context.date)
                         ForEach(magic.sparkles) { sparkle in
                             SparkleShape()

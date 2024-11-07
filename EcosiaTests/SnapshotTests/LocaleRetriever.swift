@@ -4,8 +4,6 @@
 
 import Foundation
 
-import Foundation
-
 struct LocaleRetriever {
     
     private init() {}

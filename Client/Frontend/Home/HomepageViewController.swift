@@ -282,8 +282,7 @@ class HomepageViewController:
     func createLayout() -> UICollectionViewLayout {
         // Ecosia: Update Layout type
         // let layout = UICollectionViewCompositionalLayout { [weak self]
-        let layout = NTPLayout { [weak self]
-            (sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
+        let layout = NTPLayout { [weak self] (sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
             guard let self = self,
                   let viewModel = self.viewModel.getSectionViewModel(shownSection: sectionIndex),
                   viewModel.shouldShow
@@ -557,7 +556,6 @@ extension HomepageViewController: UICollectionViewDelegate, UICollectionViewData
         let headerViewModel = sectionViewModel.shouldShow ? sectionViewModel.headerViewModel : LabelButtonHeaderViewModel.emptyHeader
         headerView.configure(viewModel: headerViewModel, theme: themeManager.currentTheme)
         return headerView
-
     }
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {

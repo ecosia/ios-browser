@@ -50,4 +50,3 @@ extension PrivateModeButton {
             : UIColor.clear.cgColor
     }
 }
-

@@ -85,8 +85,10 @@ class DefaultBundleImageFetcher: BundleImageFetcher {
 
         let financialReportsURL = Environment.current.urlProvider.financialReports.absoluteString.replacingOccurrences(of: "https://", with: "")
         let privacyURL = Environment.current.urlProvider.privacy.absoluteString.replacingOccurrences(of: "https://", with: "")
-        let urlMap = [financialReportsURL : "blog.ecosia.finance",
-                            privacyURL : "privacy.ecosia"]
+        let urlMap = [
+            financialReportsURL: "blog.ecosia.finance",
+            privacyURL: "privacy.ecosia"
+        ]
         if let matchingKey = urlMap.keys.first(where: { domain.bundleDomains.contains($0) }) {
             return urlMap[matchingKey]
         }

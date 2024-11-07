@@ -158,7 +158,6 @@ extension DefaultTabMigrationUtility {
         return migratedTabs
     }
     
-    
     private func clearDeprecatedArchive() {
         guard let deprecatedPath = legacyTabDataRetriever.tabsStateArchivePath else { return }
 

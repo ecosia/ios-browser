@@ -39,7 +39,7 @@ struct ArcProgressView: View {
     var body: some View {
         SwiftUI.ProgressView(value: progress)
             .progressViewStyle(ArcProgressViewStyle(theme: theme,
-                                                     lineWidth: lineWidth))
+                                                    lineWidth: lineWidth))
     }
 }
 

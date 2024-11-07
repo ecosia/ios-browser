@@ -82,7 +82,7 @@ extension PageActionMenuCell {
             position = .solo
         } else if indexPath.row == 0 {
             position = .first
-        } else if (indexPath.row == actions[indexPath.section].count - 1) {
+        } else if indexPath.row == actions[indexPath.section].count - 1 {
             position = .last
         } else {
             position = .middle
@@ -90,7 +90,6 @@ extension PageActionMenuCell {
         
         return position
     }
-    
 }
 
 extension PageActionMenuCell {

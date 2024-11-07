@@ -1,12 +1,12 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
 
 private final class Translations {
-    private var count = [String : Int]()
-    private let dictionary: [String : String]
+    private var count = [String: Int]()
+    private let dictionary: [String: String]
     private static let directory = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
     private static let url = directory.appendingPathComponent("Client/Ecosia/L10N/String.swift")
     
@@ -28,7 +28,7 @@ private final class Translations {
                 .components(separatedBy: ".localized(")
                 .dropFirst().forEach {
                     count[$0.components(separatedBy: ")").first!.replacingOccurrences(of: ".", with: "")]? += 1
-            }
+                }
         }
         let unused = count.filter { $0.1 == 0 }.keys.sorted()
         print("Unused keys: (\(unused.count))")

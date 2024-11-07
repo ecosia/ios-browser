@@ -221,7 +221,7 @@ final class AnalyticsSpyTests: XCTestCase {
             (.readingList, false, .AppMenu.RemoveReadingList),
             (.bookmark, true, .KeyboardShortcuts.AddBookmark),
             // Removing bookmark does not work since it requires additional user interaction
-            //(.bookmark, false, .RemoveBookmarkContextMenuTitle),
+            // (.bookmark, false, .RemoveBookmarkContextMenuTitle),
             (.shortcut, true, .AddToShortcutsActionTitle),
             (.shortcut, false, .AppMenu.RemoveFromShortcuts)
         ]

@@ -25,8 +25,8 @@ struct SeedProgressView: View {
     var body: some View {
         ZStack(alignment: .top) {
             ArcProgressView(progress: progressValue,
-                             lineWidth: UX.seedLineWidth,
-                             theme: theme
+                            lineWidth: UX.seedLineWidth,
+                            theme: theme
             )
             .offset(y: -UX.seedLineWidth * 2)
             

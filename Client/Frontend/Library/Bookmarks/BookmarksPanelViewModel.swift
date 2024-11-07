@@ -264,7 +264,7 @@ extension BookmarksPanelViewModel: UIDocumentPickerDelegate {
     
     func handlePickedUrl(_ url: URL, in viewController: UIViewController) {
         let scopedResourceAccess = url.startAccessingSecurityScopedResource()
-        var error: NSError? = nil
+        var error: NSError?
         NSFileCoordinator().coordinate(readingItemAt: url, error: &error) { url in
             Task {
                 defer {

@@ -1,12 +1,12 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
 
 private final class Translations {
     private var keys = Set<String>()
-    private let strings: [String : String]
+    private let strings: [String: String]
     private static let directory = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
     private static let strings = directory.appendingPathComponent("Client/Ecosia/L10N/en.lproj/Ecosia.strings")
     private static let keys = directory.appendingPathComponent("Client/Ecosia/L10N/String.swift")

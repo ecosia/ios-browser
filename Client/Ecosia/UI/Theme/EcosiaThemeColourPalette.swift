@@ -127,4 +127,3 @@ private class EcosiaLightColourPalette: ThemeColourPalette {
     // MARK: - Shadow
     var shadowDefault: UIColor { fallbackDefaultThemeManager.currentTheme.colors.shadowDefault }
 }
-

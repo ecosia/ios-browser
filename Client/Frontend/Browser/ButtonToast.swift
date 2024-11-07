@@ -45,7 +45,6 @@ class ButtonToast: Toast {
         stackView.distribution = .fill
         stackView.spacing = 8
         stackView.layer.cornerRadius = UX.standardCornerRadius
-        
     }
 
     private var imageView: UIImageView = .build { imageView in
@@ -65,7 +64,7 @@ class ButtonToast: Toast {
 
     private var titleLabel: UILabel = .build { label in
         label.font = DefaultDynamicFontHelper.preferredFont(withTextStyle: .body,
-                                                                size: UX.titleFontSize)
+                                                            size: UX.titleFontSize)
         label.numberOfLines = 0
         // Ecosia: Review ToastView to look like v104
         label.adjustsFontForContentSizeCategory = true
@@ -75,7 +74,7 @@ class ButtonToast: Toast {
 
     private var descriptionLabel: UILabel = .build { label in
         label.font = DefaultDynamicFontHelper.preferredFont(withTextStyle: .body,
-                                                                size: UX.descriptionFontSize)
+                                                            size: UX.descriptionFontSize)
         label.numberOfLines = 0
     }
 

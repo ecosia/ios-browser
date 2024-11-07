@@ -36,7 +36,8 @@ extension DeviceInfo {
         
         // Retrieve the check result
         guard let match = regex?.firstMatch(in: fullSystemVersionString,
-                                            options: [], range: NSRange(fullSystemVersionString.startIndex..., in: fullSystemVersionString)) else {
+                                            options: [], 
+                                            range: NSRange(fullSystemVersionString.startIndex..., in: fullSystemVersionString)) else {
             return nil
         }
         

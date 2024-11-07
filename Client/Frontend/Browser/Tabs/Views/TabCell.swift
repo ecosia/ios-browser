@@ -337,7 +337,7 @@ extension TabCell {
             // create a frame that is "BorderWidth" size bigger than the cell
             layer.shadowOffset = CGSize(width: -borderWidth, height: -borderWidth)
             layer.shadowColor = activeBGColor.cgColor
-        } else if LegacyThemeManager.instance.current.isDark  {
+        } else if LegacyThemeManager.instance.current.isDark {
             layer.masksToBounds = true
             layer.shadowOpacity = 0
             layer.shadowOffset = .zero

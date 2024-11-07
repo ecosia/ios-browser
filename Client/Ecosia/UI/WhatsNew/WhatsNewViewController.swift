@@ -289,7 +289,7 @@ extension WhatsNewViewController {
         if sheet.traitCollection.userInterfaceIdiom == .pad {
             sheet.modalPresentationStyle = .formSheet
             sheet.preferredContentSize = .init(width: UX.PreferredContentSize.iPadWidth,
-                                         height: UX.PreferredContentSize.iPadHeight)
+                                               height: UX.PreferredContentSize.iPadHeight)
         }
         
         viewController.present(sheet, animated: true, completion: nil)

@@ -101,4 +101,3 @@ extension NTPConfigurableNudgeCardCellViewModel: HomepageSectionHandler {
         return cell
     }
 }
-

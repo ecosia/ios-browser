@@ -57,7 +57,6 @@ class PageActionsShortcutsHeader: UITableViewHeaderFooterView {
             mainView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
         ])
 
-
         // Ecosia: Custom options
         [home, newTab, share, settings].forEach { item in
             let view = NTPLibraryShortcutView()
@@ -108,5 +107,4 @@ class PageActionsShortcutsHeader: UITableViewHeaderFooterView {
             break
         }
     }
-
 }

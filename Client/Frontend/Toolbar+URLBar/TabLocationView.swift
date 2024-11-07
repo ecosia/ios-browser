@@ -44,11 +44,11 @@ class TabLocationView: UIView, FeatureFlaggable {
 
     var notificationCenter: NotificationProtocol = NotificationCenter.default
 
-    /// Tracking protection button, gets updated from tabDidChangeContentBlocking
     /* Ecosia: Update show/hide locker icon based on Firefox v128
      private var blockerStatus: BlockerStatus = .noBlockedURLs
      private var hasSecureContent = false
     */
+    /// Tracking protection button, gets updated from tabDidChangeContentBlocking
     var blockerStatus: BlockerStatus = .noBlockedURLs {
         didSet {
             if oldValue != blockerStatus { setTrackingProtection(theme: themeManager.currentTheme) }
@@ -373,7 +373,6 @@ class TabLocationView: UIView, FeatureFlaggable {
         }
     }
 
-    
     func hideTrackingProtectionButton() {
         ensureMainThread {
             self.trackingProtectionButton.isHidden = true

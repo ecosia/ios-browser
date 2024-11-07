@@ -41,6 +41,6 @@ final class ProgressView: UIView {
                         endAngle: 0.2,
                         clockwise: false)
             return path
-        } (CGMutablePath())
+        }(CGMutablePath())
     }
 }

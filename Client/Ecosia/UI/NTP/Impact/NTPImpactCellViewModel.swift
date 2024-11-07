@@ -28,7 +28,7 @@ final class NTPImpactCellViewModel {
         .totalInvested(value: InvestmentsProjection.shared.totalInvestedAt(.init()))
     }
 
-    private var cells = [Int:NTPImpactCell]()
+    private var cells = [Int: NTPImpactCell]()
     private let referrals: Referrals
     
     var theme: Theme

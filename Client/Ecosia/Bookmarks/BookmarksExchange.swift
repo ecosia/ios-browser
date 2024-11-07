@@ -109,7 +109,7 @@ final class BookmarksExchange: BookmarksExchangable {
         if await hasBookmarks() {
             importGuid = try await createFolder(
                 parentGUID: .mobileBookmarksGUID,
-               title: .init(format: .localized(.importedBookmarkFolderName), dateFormatter.string(from: Date()))
+                title: .init(format: .localized(.importedBookmarkFolderName), dateFormatter.string(from: Date()))
            )
         } else {
             importGuid = .mobileBookmarksGUID

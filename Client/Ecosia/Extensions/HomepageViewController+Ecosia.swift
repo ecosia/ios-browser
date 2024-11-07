@@ -19,7 +19,6 @@ extension HomepageViewController: SharedHomepageCellDelegate {
     }
 }
 
-
 protocol SharedHomepageCellLayoutDelegate: AnyObject {
     func invalidateLayout(at indexPaths: [IndexPath])
 }

@@ -45,7 +45,7 @@ extension Version: Comparable {
     ///   - rhs: Another `Version`.
     ///
     /// - Returns: `true` if both instances represent the same version, `false` otherwise.
-    static func ==(lhs: Version, rhs: Version) -> Bool {
+    static func == (lhs: Version, rhs: Version) -> Bool {
         return lhs.major == rhs.major && lhs.minor == rhs.minor && lhs.patch == rhs.patch
     }
     
@@ -56,7 +56,7 @@ extension Version: Comparable {
     ///   - rhs: Another `Version`.
     ///
     /// - Returns: `true` if the instance on the left should come before the one on the right, `false` otherwise.
-    static func <(lhs: Version, rhs: Version) -> Bool {
+    static func < (lhs: Version, rhs: Version) -> Bool {
         if lhs.major != rhs.major {
             return lhs.major < rhs.major
         }

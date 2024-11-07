@@ -132,7 +132,7 @@ final class NTPImpactRowView: UIView, Themeable {
     }
     
     /// Optional background color for the row.
-    var customBackgroundColor: UIColor? = nil
+    var customBackgroundColor: UIColor?
     
     // MARK: - Themeable Properties
 

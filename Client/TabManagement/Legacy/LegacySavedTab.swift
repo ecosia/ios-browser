@@ -95,7 +95,6 @@ class LegacySavedTab: NSObject, Codable, NSCoding {
         coder.encode(hasHomeScreenshot, forKey: CodingKeys.hasHomeScreenshot.rawValue)
     }
 
-    
     var jsonDictionary: [String: AnyObject] {
         let title: String = self.title ?? "null"
         let faviconURL: String = self.faviconURL ?? "null"

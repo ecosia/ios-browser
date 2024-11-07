@@ -58,7 +58,6 @@ class AppLaunchUtil {
         // has been started.
         // Ecosia: Do not intialize Nimbus
         // initializeExperiments()
-         
         
         // We migrate history from browser db to places if it hasn't already
         DispatchQueue.global().async {

@@ -27,7 +27,6 @@ final class NTPNewsCellViewModel {
             self.dataModelDelegate?.reloadView()
         }
     }
-
 }
 
 // MARK: HomeViewModelProtocol
@@ -108,6 +107,5 @@ extension NTPNewsCellViewModel: HomepageSectionHandler {
         let item = items[index]
         homePanelDelegate?.homePanel(didSelectURL: item.targetUrl, visitType: .link, isGoogleTopSite: false)
         Analytics.shared.navigationOpenNews(item.trackingName)
-
     }
 }

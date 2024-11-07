@@ -1,6 +1,6 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import UIKit
 import Core
@@ -389,7 +389,7 @@ final class MultiplyImpact: UIViewController, Themeable {
         flowTitleStack.rightAnchor.constraint(equalTo: content.rightAnchor, constant: -UX.defaultPadding).isActive = true
         flowTitleStack.topAnchor.constraint(equalTo: sharing.bottomAnchor, constant: UX.Flow.flowTitleStackTopMargin).isActive = true
 
-        flowBackground.topAnchor.constraint(equalTo: flowTitleStack.bottomAnchor,constant: UX.defaultPadding).isActive = true
+        flowBackground.topAnchor.constraint(equalTo: flowTitleStack.bottomAnchor, constant: UX.defaultPadding).isActive = true
         flowBackground.bottomAnchor.constraint(equalTo: content.bottomAnchor, constant: UX.Flow.flowBackgroundBottomMargin).isActive = true
 
         flowStack.leftAnchor.constraint(equalTo: flowBackground.leftAnchor, constant: UX.defaultPadding).isActive = true
@@ -516,7 +516,6 @@ final class MultiplyImpact: UIViewController, Themeable {
                 } catch {
                     self?.showInviteFriendsError(error as? Referrals.Error ?? .genericError)
                 }
-                
             }
             return
         }
@@ -611,15 +610,15 @@ private final class SharingMessage: NSObject, UIActivityItemSource {
         String()
     }
 
-    func activityViewController(_: UIActivityViewController, itemForActivityType: UIActivity.ActivityType?) -> Any? {
+    func activityViewController(_ activityViewController: UIActivityViewController, itemForActivityType: UIActivity.ActivityType?) -> Any? {
         message
     }
 
-    func activityViewController(_: UIActivityViewController, subjectForActivityType: UIActivity.ActivityType?) -> String {
+    func activityViewController(_ activityViewController: UIActivityViewController, subjectForActivityType: UIActivity.ActivityType?) -> String {
         .localized(.plantTreesWithMe)
     }
     
-    func activityViewControllerLinkMetadata(_ : UIActivityViewController) -> LPLinkMetadata? {
+    func activityViewControllerLinkMetadata(_ activityViewController: UIActivityViewController) -> LPLinkMetadata? {
         let metadata = LPLinkMetadata()
         metadata.title = .localized(.plantTreesWithMe)
         return metadata
