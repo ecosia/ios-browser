@@ -110,7 +110,7 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
     /// Overlay mode is the state where the lock/reader icons are hidden, the home panels are shown,
     /// and the Cancel button is visible (allowing the user to leave overlay mode).
     var inOverlayMode = false
-    
+
     // Ecosia: Helper flags
     var isPrivate = false
     var isHome: Bool {
@@ -243,7 +243,7 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
                 updatedUrl = newURL?.ecosified(isIncognitoEnabled: isPrivate)
             }
             locationView.url = updatedUrl
-            
+
             // Ecosia: update visibility of reload/multi-state button
             if !inOverlayMode {
                 setNeedsUpdateConstraints()
@@ -252,7 +252,7 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
     }
 
     var profile: Profile
-    
+
     /* Ecosia: Remove private mode badge
     fileprivate lazy var privateModeBadge = BadgeWithBackdrop(imageName: ImageIdentifiers.privateModeBadge, isPrivateBadge: true)
      */
@@ -287,13 +287,13 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
          multiStateButton, locationContainer, searchIconImageView].forEach {
             addSubview($0)
         }
-        
+
         // Ecosia: ProgressBar sits at the back of the LocationView
         locationView.addSubview(progressBar)
         locationView.sendSubviewToBack(progressBar)
         // Ecosia: Update Search Engine Image
         updateSearchEngineImage()
-        
+
         profile.searchEngines.delegate = self
 
         // Ecosia: Remove private mode badge
@@ -313,7 +313,7 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
             make.top.equalTo(self)
             make.left.right.equalTo(locationContainer)
         }
-        
+
         // Ecosia: ProgressBar fills the entire URL Bar
         progressBar.snp.makeConstraints { make in
             make.edges.equalTo(locationView)
@@ -432,7 +432,7 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
             make.left.right.equalTo(self)
         }
          */
-        
+
         /* Ecosia: Update Overlay / Standard constraints
         if inOverlayMode {
             // Ecosia: Customise alpha
@@ -537,7 +537,7 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
         searchIconImageView.snp.updateConstraints { make in
             make.size.equalTo(width)
         }
-        
+
         // Ecosia: Update search engine image after constraints update
         updateSearchEngineImage()
     }
@@ -706,7 +706,7 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
         // Ecosia: always hide multi state button
         // multiStateButton.alpha = inOverlayMode ? 0 : 1
         multiStateButton.alpha = 0
-        
+
         let borderColor = inOverlayMode ? locationActiveBorderColor : locationBorderColor
         locationContainer.layer.borderColor = borderColor.cgColor
 
@@ -990,7 +990,7 @@ extension URLBarView: ThemeApplicable {
         // line.backgroundColor = theme.colors.borderPrimary
         backgroundColor = .legacyTheme.ecosia.primaryBackground
         line.backgroundColor = .legacyTheme.ecosia.barSeparator
-        
+
         locationBorderColor = theme.colors.borderPrimary
         // Ecosia: Take into account overlay mode for `locationView` background
         // locationView.backgroundColor = theme.colors.layer3
@@ -1012,15 +1012,15 @@ extension URLBarView: ThemeApplicable {
 // MARK: - PrivateModeUI
 extension URLBarView: PrivateModeUI {
     func applyUIMode(isPrivate: Bool, theme: Theme) {
-        
+
         // Ecosia: Save `isPrivate` state
         self.isPrivate = isPrivate
-        
+
         /* Ecosia: Remove private mode badge
         if UIDevice.current.userInterfaceIdiom != .pad {
             privateModeBadge.show(isPrivate)
         }*/
-        
+
         /* Ecosia: Update UI Elements with helper
          let gradientStartColor = isPrivate ? theme.colors.borderAccentPrivate : theme.colors.borderAccent
          let gradientMiddleColor = isPrivate ? nil : theme.colors.iconAccentPink
@@ -1038,7 +1038,7 @@ extension URLBarView: PrivateModeUI {
 
 // Ecosia: Apply Theme via helper
 extension URLBarView {
-    
+
     func updateUIElementsWithTheme(_ theme: Theme) {
         progressBar.backgroundColor = .legacyTheme.ecosia.tertiaryBackground
         progressBar.setGradientColors(startColor: .legacyTheme.ecosia.highlightedBackground,
@@ -1051,7 +1051,7 @@ extension URLBarView {
 
 // Ecosia: Update Search Engine Image
 extension URLBarView {
-    
+
     func updateSearchEngineImage() {
         if inOverlayMode {
             if isPrivate {

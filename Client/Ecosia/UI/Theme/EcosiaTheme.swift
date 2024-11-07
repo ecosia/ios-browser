@@ -37,12 +37,12 @@ class EcosiaTheme {
     var trackingSheetBackground: UIColor { .Light.Background.tertiary }
     var moreNewsButton: UIColor { .Light.Button.secondary }
     var newsPlaceholder: UIColor { .Light.Background.secondary }
-    
+
     var actionSheetBackground: UIColor { .Light.Background.primary }
     var actionSheetCancelButton: UIColor { .Light.Button.primaryActive }
     var modalBackground: UIColor { .Light.Background.tertiary }
     var modalHeader: UIColor { .init(red: 0.153, green: 0.322, blue: 0.263, alpha: 1) }
-    
+
     var whatsNewCloseButton: UIColor { .Light.Text.primary }
 
     var primaryText: UIColor { .Light.Text.primary }
@@ -54,7 +54,7 @@ class EcosiaTheme {
     var primaryIcon: UIColor { .Light.Icon.primary }
     var secondaryIcon: UIColor { .Light.Icon.secondary }
     var decorativeIcon: UIColor { .Light.Icon.decorative }
-    
+
     var highlightedBackground: UIColor { .Light.Background.highlighted }
     var primarySelectedBackground: UIColor { .Light.Background.secondary }
     var secondarySelectedBackground: UIColor { .Light.Background.secondary }
@@ -65,7 +65,7 @@ class EcosiaTheme {
     var secondaryButtonContent: UIColor { .Light.Button.secondaryContent }
     var secondaryButtonBackground: UIColor { .Light.Button.secondaryBackground }
     var activeTransparentBackground: UIColor { .Light.Button.activeTransparentBackground }
-    
+
     var textfieldPlaceholder: UIColor { .Light.Text.secondary }
     var textfieldIconTint: UIColor { .Light.Button.primary }
     var personalCounterSelection: UIColor { UIColor.Photon.Grey20 }
@@ -88,7 +88,7 @@ class EcosiaTheme {
     var autocompleteBackground: UIColor { .Light.Background.primary }
     var welcomeBackground: UIColor { .Light.Background.tertiary }
     var welcomeElementBackground: UIColor { .Light.Background.primary }
-    
+
     var homePanelBackground: UIColor { return .Light.Background.tertiary }
     var peach: UIColor { .init(rgb: 0xFFE6BF) }
 }
@@ -124,7 +124,7 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var actionSheetCancelButton: UIColor { .Dark.Button.primaryActive }
     override var modalBackground: UIColor { .Dark.Background.secondary }
     override var modalHeader: UIColor { .Dark.Background.secondary }
-    
+
     override var whatsNewCloseButton: UIColor { .white }
 
     override var primaryText: UIColor { .Dark.Text.primary}
@@ -136,7 +136,7 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var primaryIcon: UIColor { .Dark.Icon.primary }
     override var secondaryIcon: UIColor { .Dark.Icon.secondary }
     override var decorativeIcon: UIColor { .Dark.Icon.decorative }
-    
+
     override var highlightedBackground: UIColor { .Dark.Background.highlighted }
 
     override var primarySelectedBackground: UIColor { .Dark.Background.tertiary }
@@ -172,7 +172,7 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var autocompleteBackground: UIColor { .Dark.Background.secondary }
     override var welcomeBackground: UIColor { .Dark.Background.secondary }
     override var welcomeElementBackground: UIColor { .Dark.Background.secondary }
-    
+
     override var homePanelBackground: UIColor { return .Dark.Background.secondary }
     override var peach: UIColor { .init(rgb: 0xCC7722) }
 }

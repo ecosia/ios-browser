@@ -7,7 +7,7 @@ import UIKit
 
 /// The `ThemeManager` will be responsible for providing the theme throughout the app
 public final class EcosiaThemeManager: ThemeManager, Notifiable {
-    
+
     // These have been carried over from the legacy system to maintain backwards compatibility
     private enum ThemeKeys {
         static let themeName = "prefKeyThemeName"
@@ -22,7 +22,7 @@ public final class EcosiaThemeManager: ThemeManager, Notifiable {
             static let isOn = "profile.NightModeStatus"
         }
     }
-    
+
     public func setPrivateTheme(isOn: Bool) { }
 
     // MARK: - Variables
@@ -187,7 +187,7 @@ public final class EcosiaThemeManager: ThemeManager, Notifiable {
 }
 
 extension EcosiaThemeManager {
-    
+
     func updateLegacyThemeIfSystemThemeON() {
         if LegacyThemeManager.instance.systemThemeIsOn {
             LegacyThemeManager.updateBasedOnCurrentSystemThemeType()

@@ -162,7 +162,7 @@ class TopSiteItemCell: UICollectionViewCell, ReusableCell {
              */
             rootContainer.widthAnchor.constraint(equalToConstant: UX.imageBackgroundSize.width),
             rootContainer.heightAnchor.constraint(equalToConstant: UX.imageBackgroundSize.height),
-            
+
             imageView.topAnchor.constraint(equalTo: rootContainer.topAnchor,
                                            constant: UX.imageTopSpace),
             imageView.leadingAnchor.constraint(equalTo: rootContainer.leadingAnchor,
@@ -173,7 +173,7 @@ class TopSiteItemCell: UICollectionViewCell, ReusableCell {
                                               constant: -UX.imageBottomSpace),
             imageView.widthAnchor.constraint(equalToConstant: UX.iconSize.width),
             imageView.heightAnchor.constraint(equalToConstant: UX.iconSize.height),
-            
+
             titleLabel.topAnchor.constraint(equalTo: rootContainer.bottomAnchor, constant: UX.titleOffset),
             titleLabel.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: -UX.bottomSpace),
             titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: UX.textSafeSpace),

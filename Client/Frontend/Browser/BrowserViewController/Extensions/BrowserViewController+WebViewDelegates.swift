@@ -574,7 +574,7 @@ extension BrowserViewController: WKNavigationDelegate {
             decisionHandler(.allow)
             return
         }
-        
+
         // Ecosia: Allow MarketplaceKit requests for iOS 17.4+
         if #available(iOS 17.4, *), url.scheme == "marketplace-kit" {
             decisionHandler(.allow)
@@ -594,7 +594,7 @@ extension BrowserViewController: WKNavigationDelegate {
                 }
             }
         }
-        
+
         decisionHandler(.cancel)
     }
 

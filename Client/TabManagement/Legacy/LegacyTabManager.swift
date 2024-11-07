@@ -186,7 +186,7 @@ class LegacyTabManager: NSObject, FeatureFlaggable, TabManager, TabEventHandler 
                 privateConfiguration.websiteDataStore.httpCookieStore.setCookie(Cookie.makeIncognitoCookie())
             }
     }
-    
+
     // MARK: Ecosia: Observing Cookies and Search setting changes
     var searchSettingsObserver: Cancellable?
 

@@ -214,7 +214,7 @@ class AppSettingsTableViewController: SettingsTableViewController,
             BlockPopupSetting(settings: self),
             NoImageModeSetting(settings: self),
         ]
-        
+
         if isSearchBarLocationFeatureEnabled {
             generalSettings.insert(SearchBarSetting(settings: self, settingsDelegate: parentCoordinator), at: 5)
         }
@@ -276,7 +276,7 @@ class AppSettingsTableViewController: SettingsTableViewController,
         privacySettings.append(NotificationsSetting(theme: themeManager.currentTheme,
                                                     profile: profile,
                                                     settingsDelegate: parentCoordinator))
-        
+
         privacySettings += [
             PrivacyPolicySetting(theme: themeManager.currentTheme, settingsDelegate: parentCoordinator)
         ]

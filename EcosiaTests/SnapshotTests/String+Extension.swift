@@ -8,7 +8,7 @@ extension String {
     static func cleanFunctionName(_ name: String) -> String {
         return name.replaceFirstOccurrence(of: "()", with: "")
     }
-    
+
     func camelCaseToSnakeCase() -> String {
         let pattern = "([a-z0-9])([A-Z])"
         let regex = try? NSRegularExpression(pattern: pattern, options: [])

@@ -5,7 +5,7 @@
 import SwiftUI
 
 struct TwinkleView: View {
-    
+
     private func position(in proxy: GeometryProxy, sparkle: Sparkle) -> CGPoint {
         let radius = min(proxy.size.width, proxy.size.height) / 2.0
         let drawnRadius = (radius - 5) * sparkle.position.x
@@ -16,7 +16,7 @@ struct TwinkleView: View {
 
         return CGPoint(x: x, y: y)
     }
-    
+
     private func scaleFor(date: Date, sparkle: Sparkle) -> CGFloat {
         var offset = date.timeIntervalSince(sparkle.startDate)
         offset = max(offset, 0)
@@ -30,10 +30,10 @@ struct TwinkleView: View {
         }
         return value == 0 ? 0.1 : value
     }
-    
+
     var active: Bool // Made active a var so it can change even from UIKit
     @StateObject var magic = SparkleMagic()
-    
+
     var body: some View {
         if active {
             GeometryReader { geo in
@@ -87,7 +87,7 @@ class Sparkle: Identifiable {
 class SparkleMagic: ObservableObject {
     static let sparkleDuration: Double = 2.0
     var sparkles: [Sparkle]
-    
+
     init() {
         let anchor = Date()
         var result: [Sparkle] = []
@@ -98,7 +98,7 @@ class SparkleMagic: ObservableObject {
         }
         self.sparkles = result
     }
-    
+
     func update(date: Date) {
         let anchor = Date()
         var result: [Sparkle] = []

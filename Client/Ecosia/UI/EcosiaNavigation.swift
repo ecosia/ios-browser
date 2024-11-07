@@ -6,9 +6,9 @@ import UIKit
 import Common
 
 final class EcosiaNavigation: UINavigationController, Themeable {
-    
+
     // MARK: - Themeable Properties
-    
+
     var themeManager: ThemeManager { AppContainer.shared.resolve() }
     var themeObserver: NSObjectProtocol?
     var notificationCenter: NotificationProtocol = NotificationCenter.default
@@ -33,7 +33,7 @@ final class EcosiaNavigation: UINavigationController, Themeable {
             modalPresentationCapturesStatusBarAppearance = true
         }
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationBar.setBackgroundImage(UIImage(), for: .default)

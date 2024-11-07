@@ -35,11 +35,11 @@ extension HomepageViewController: NTPTooltipDelegate {
     func ntpTooltipTapped(_ tooltip: NTPTooltip?) {
         handleTooltipTapped(tooltip)
     }
-    
+
     func ntpTooltipCloseTapped(_ tooltip: NTPTooltip?) {
         handleTooltipTapped(tooltip)
     }
-    
+
     private func handleTooltipTapped(_ tooltip: NTPTooltip?) {
         guard let ntpHighlight = NTPTooltip.highlight() else { return }
 

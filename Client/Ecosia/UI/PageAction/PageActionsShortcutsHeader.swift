@@ -25,16 +25,16 @@ class PageActionsShortcutsHeader: UITableViewHeaderFooterView {
 
     var shortcuts: [NTPLibraryShortcutView] = []
 
-    let home = Panel(title: .localized(.home), 
+    let home = Panel(title: .localized(.home),
                      image: UIImage(named: StandardImageIdentifiers.Large.home),
                      tag: 0)
-    let newTab = Panel(title: .AppMenu.NewTab, 
+    let newTab = Panel(title: .AppMenu.NewTab,
                        image: UIImage(named: StandardImageIdentifiers.Large.plus),
                        tag: 1)
-    let share = Panel(title: .AppMenu.Share, 
+    let share = Panel(title: .AppMenu.Share,
                       image: UIImage(named: ImageIdentifiers.share),
                       tag: 2)
-    let settings = Panel(title: .AppMenu.AppMenuSettingsTitleString, 
+    let settings = Panel(title: .AppMenu.AppMenuSettingsTitleString,
                          image: UIImage(named: ImageIdentifiers.settings),
                          tag: 3)
 

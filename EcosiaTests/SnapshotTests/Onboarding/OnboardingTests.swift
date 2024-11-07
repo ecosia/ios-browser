@@ -7,13 +7,13 @@ import XCTest
 @testable import Client
 
 final class OnboardingTests: SnapshotBaseTests {
-    
+
     func testWelcomeScreen() {
         SnapshotTestHelper.assertSnapshot(initializingWith: {
             Welcome(delegate: MockWelcomeDelegate())
         }, wait: 1.0)
     }
-    
+
     func testWelcomeStepsScreens() {
         // Number of steps in the WelcomeTour
         let numberOfSteps = 4

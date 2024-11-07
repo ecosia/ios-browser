@@ -163,7 +163,7 @@ class HomepageViewController:
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         viewModel.recordViewAppeared()
-        
+
         // Ecosia: Refresh referral claims
         Task {
             try? await referrals.refresh()
@@ -186,7 +186,7 @@ class HomepageViewController:
 
         // Ecosia
         viewModel.aboutEcosiaViewModel.deselectExpanded()
-        
+
         jumpBackInContextualHintViewController.stopTimer()
         syncTabContextualHintViewController.stopTimer()
         viewModel.recordViewDisappeared()
@@ -540,7 +540,7 @@ extension HomepageViewController: UICollectionViewDelegate, UICollectionViewData
             tooltip.delegate = self
             return tooltip
         }
-        
+
         // Ecosia: footer for impact
         if sectionViewModel.sectionType == .impact, kind == UICollectionView.elementKindSectionFooter {
             return collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: NTPImpactDividerFooter.cellIdentifier, for: indexPath)

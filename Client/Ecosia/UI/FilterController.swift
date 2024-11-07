@@ -18,9 +18,9 @@ final class FilterController: UIViewController, UITableViewDataSource, UITableVi
     static var current: String? {
         items.first(where: { $0.0 == User.shared.adultFilter }).map { $0.1 }
     }
-    
+
     // MARK: - Themeable Properties
-    
+
     var themeManager: ThemeManager { AppContainer.shared.resolve() }
     var themeObserver: NSObjectProtocol?
     var notificationCenter: NotificationProtocol = NotificationCenter.default
@@ -32,7 +32,7 @@ final class FilterController: UIViewController, UITableViewDataSource, UITableVi
 
         navigationItem.title = .localized(.safeSearch)
         navigationItem.largeTitleDisplayMode = .never
-        
+
         let table = UITableView(frame: .zero, style: .insetGrouped)
         table.translatesAutoresizingMaskIntoConstraints = false
         table.delegate = self
@@ -41,7 +41,7 @@ final class FilterController: UIViewController, UITableViewDataSource, UITableVi
 
         view.addSubview(table)
         self.table = table
-        
+
         table.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
         table.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
         table.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
@@ -60,7 +60,7 @@ final class FilterController: UIViewController, UITableViewDataSource, UITableVi
         cell.accessoryType = User.shared.adultFilter == items[cellForRowAt.row].0 ? .checkmark : .none
         return cell
     }
-    
+
     func tableView(_: UITableView, didSelectRowAt: IndexPath) {
         User.shared.adultFilter = items[didSelectRowAt.row].0
         table.reloadData()

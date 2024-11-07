@@ -11,27 +11,27 @@ final class ArcTheme: ObservableObject {
 
 struct RectangularArcShape: Shape {
     var progress: CGFloat // Progress value between 0 and 1
-    
+
     func path(in rect: CGRect) -> Path {
         var path = Path()
-        
+
         // Calculate the start and end angles for the arc
         let startAngle = Angle(degrees: 180)
         let endAngle = Angle(degrees: 180 + Double(180 * progress))
-        
+
         // Create an arc based on the rectangle's dimensions
         path.addArc(center: CGPoint(x: rect.midX, y: rect.maxY),  // Center at the bottom of the rect
                     radius: min(rect.width, rect.height) / 1.5,     // Use the smaller dimension for the radius
                     startAngle: startAngle,
                     endAngle: endAngle,
                     clockwise: false)
-        
+
         return path
     }
 }
 
 struct ArcProgressView: View {
-    
+
     var progress: CGFloat
     var lineWidth: CGFloat = 10
     @ObservedObject var theme: ArcTheme
@@ -44,7 +44,7 @@ struct ArcProgressView: View {
 }
 
 private struct ArcProgressViewStyle: ProgressViewStyle {
-    
+
     @ObservedObject var theme: ArcTheme
     var lineWidth: CGFloat
 
@@ -57,7 +57,7 @@ private struct ArcProgressViewStyle: ProgressViewStyle {
 
             // Progress arc
             RectangularArcShape(progress: CGFloat(configuration.fractionCompleted ?? 0))
-                .stroke(theme.progressColor, 
+                .stroke(theme.progressColor,
                         style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
                 .animation(.easeInOut(duration: 0.5), value: configuration.fractionCompleted)
         }
@@ -69,17 +69,17 @@ private struct ArcShape: Shape {
 
     func path(in rect: CGRect) -> Path {
         var path = Path()
-        
+
         let radius = rect.width / 2
         let startAngle = Angle(degrees: 180)
         let endAngle = Angle(degrees: 180 + Double(180 * progress))
-        
+
         path.addArc(center: CGPoint(x: rect.midX, y: rect.midY),
                     radius: radius,
                     startAngle: startAngle,
                     endAngle: endAngle,
                     clockwise: false)
-        
+
         return path
     }
 }

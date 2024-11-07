@@ -23,7 +23,7 @@ class TabToolbarHelperTests: XCTestCase {
     // Ecosia: update home image
     // let imageHome = UIImage.templateImageNamed(StandardImageIdentifiers.Large.home)
     let imageHome = UIImage.templateImageNamed("menu-Home")
-    
+
     override func setUp() {
         super.setUp()
         DependencyHelperMock().bootstrapDependencies()
@@ -109,7 +109,7 @@ class MockTabToolbar: TabToolbarProtocol {
     var _addNewTabButton = MockToolbarButton()
     var addNewTabButton: ToolbarButton { return _addNewTabButton }
      */
-    
+
     var _circleButton: Client.CircleButton = CircleButton()
     var circleButton: Client.CircleButton { return _circleButton }
 

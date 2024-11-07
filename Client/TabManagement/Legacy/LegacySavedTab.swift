@@ -10,7 +10,7 @@ import TabDataStore
 // Ecosia: Tabs architecture implementation from ~v112 to ~116
 // class LegacySavedTab: Codable {
 class LegacySavedTab: NSObject, Codable, NSCoding {
-    
+
     var isSelected: Bool
     var title: String?
     var url: URL?
@@ -61,12 +61,12 @@ class LegacySavedTab: NSObject, Codable, NSCoding {
         self.tabGroupData = tabGroupData
         self.createdAt = createdAt
         self.hasHomeScreenshot = hasHomeScreenshot
-        
+
         super.init()
     }
-    
+
     // Ecosia: Implement Tabs architecture from ~v112 to ~116
-    
+
     required init?(coder: NSCoder) {
         self.sessionData = coder.decodeObject(forKey: CodingKeys.sessionData.rawValue) as? LegacySessionData
         self.screenshotUUID = coder.decodeObject(forKey: CodingKeys.screenshotUUID.rawValue) as? UUID
@@ -80,7 +80,7 @@ class LegacySavedTab: NSObject, Codable, NSCoding {
         self.createdAt = coder.decodeObject(forKey: CodingKeys.createdAt.rawValue) as? Timestamp
         self.hasHomeScreenshot = coder.decodeBool(forKey: CodingKeys.hasHomeScreenshot.rawValue)
     }
-    
+
     func encode(with coder: NSCoder) {
         coder.encode(sessionData, forKey: CodingKeys.sessionData.rawValue)
         coder.encode(screenshotUUID, forKey: CodingKeys.screenshotUUID.rawValue)
@@ -119,6 +119,6 @@ class LegacySavedTab: NSObject, Codable, NSCoding {
 
         return json
     }
-    
+
     // Ecosia: End Tabs architecture implementation from ~v112 to ~116
 }

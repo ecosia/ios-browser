@@ -11,37 +11,37 @@ final class AnalyticsSpy: Analytics {
     override func install() {
         installCalled = true
     }
-    
+
     var activityActionCalled: Analytics.Action.Activity?
     override func activity(_ action: Analytics.Action.Activity) {
         activityActionCalled = action
     }
-    
+
     var bookmarksImportExportPropertyCalled: Analytics.Property.Bookmarks?
     override func bookmarksPerformImportExport(_ property: Analytics.Property.Bookmarks) {
         bookmarksImportExportPropertyCalled = property
     }
-    
+
     var bookmarksEmptyLearnMoreClickedCalled = false
     override func bookmarksEmptyLearnMoreClicked() {
         bookmarksEmptyLearnMoreClickedCalled = true
     }
-    
+
     var bookmarksImportEndedPropertyCalled: Analytics.Property.Bookmarks?
     override func bookmarksImportEnded(_ property: Analytics.Property.Bookmarks) {
         bookmarksImportEndedPropertyCalled = property
     }
-    
+
     var menuClickItemCalled: Analytics.Label.Menu?
     override func menuClick(_ item: Analytics.Label.Menu) {
         menuClickItemCalled = item
     }
-    
+
     var menuShareContentCalled: Analytics.Property.ShareContent?
     override func menuShare(_ content: Analytics.Property.ShareContent) {
         menuShareContentCalled = content
     }
-    
+
     var menuStatusItemCalled: Analytics.Label.MenuStatus?
     var menuStatusItemChangedTo: Bool?
     override func menuStatus(changed item: Analytics.Label.MenuStatus, to: Bool) {
@@ -52,7 +52,7 @@ final class AnalyticsSpy: Analytics {
 
 final class AnalyticsSpyTests: XCTestCase {
     var analyticsSpy: AnalyticsSpy!
-    
+
     var profileMock: Profile { MockProfile() }
     var tabManagerMock: TabManager {
         let mock = MockTabManager()
@@ -61,81 +61,81 @@ final class AnalyticsSpyTests: XCTestCase {
         mock.selectedTab?.url = URL(string: "https://example.com")
         return mock
     }
-    
+
     override func setUp() {
         super.setUp()
-        
+
         analyticsSpy = AnalyticsSpy()
         Analytics.shared = analyticsSpy
         DependencyHelperMock().bootstrapDependencies()
     }
-    
+
     override func tearDown() {
         super.tearDown()
-        
+
         analyticsSpy = nil
         Analytics.shared = Analytics()
         DependencyHelperMock().reset()
     }
-    
+
     // MARK: AppDelegate
     var appDelegate: AppDelegate { AppDelegate() }
-    
+
     func testTrackLaunchAndInstallOnDidFinishLaunching() async {
         XCTAssertNil(analyticsSpy.activityActionCalled)
-        
+
         let application = await UIApplication.shared
         _ = await appDelegate.application(application, didFinishLaunchingWithOptions: nil)
-        
+
         XCTAssert(analyticsSpy.installCalled)
-        
+
         waitForCondition(timeout: 3) { // Wait detached tasks until launch is called
             analyticsSpy.activityActionCalled == .launch
         }
     }
-    
+
     func testTrackResumeOnDidFinishLaunching() async {
         XCTAssertNil(analyticsSpy.activityActionCalled)
-        
+
         let application = await UIApplication.shared
         _ = await appDelegate.applicationDidBecomeActive(application)
-        
+
         waitForCondition(timeout: 2) { // Wait detached tasks until resume is called
             analyticsSpy.activityActionCalled == .resume
         }
     }
-    
+
     // MARK: Bookmarks
     var panel: BookmarksPanel {
         let viewModel = BookmarksPanelViewModel(profile: profileMock, bookmarkFolderGUID: "TestGuid")
         return BookmarksPanel(viewModel: viewModel)
     }
-    
+
     func testTrackImportClick() {
         XCTAssertNil(analyticsSpy.bookmarksImportExportPropertyCalled)
-        
+
         panel.importBookmarksActionHandler()
-        
+
         XCTAssertEqual(analyticsSpy.bookmarksImportExportPropertyCalled, .import)
     }
-    
+
     func testTrackExportClick() {
         XCTAssertNil(analyticsSpy.bookmarksImportExportPropertyCalled)
-        
+
         panel.exportBookmarksActionHandler()
-        
+
         XCTAssertEqual(analyticsSpy.bookmarksImportExportPropertyCalled, .export)
     }
-    
+
     func testTrackLearnMoreClick() {
         let view = EmptyBookmarksView(initialBottomMargin: 0)
         XCTAssertFalse(analyticsSpy.bookmarksEmptyLearnMoreClickedCalled)
-        
+
         view.onLearnMoreTapped()
-        
+
         XCTAssertTrue(analyticsSpy.bookmarksEmptyLearnMoreClickedCalled)
     }
-    
+
     // MARK: Menu
     var menuHelper: MainMenuActionHelper {
         MainMenuActionHelper(profile: profileMock,
@@ -144,7 +144,7 @@ final class AnalyticsSpyTests: XCTestCase {
                              toastContainer: .init(),
                              themeManager: MockThemeManager())
     }
-    
+
     func testTrackMenuAction() {
         let testCases: [(Analytics.Label.Menu, String)] = [
             (.openInSafari, .localized(.openInSafari)),
@@ -164,10 +164,10 @@ final class AnalyticsSpyTests: XCTestCase {
             Analytics.shared = analyticsSpy
             XCTContext.runActivity(named: "Menu action \(label.rawValue) is tracked") { _ in
                 XCTAssertNil(analyticsSpy.menuClickItemCalled)
-                
+
                 // Requires valid url to add action
                 tabManagerMock.selectedTab?.url = URL(string: "https://example.com")
-                
+
                 let expectation = self.expectation(description: "Actions for \(title) are returned")
                 menuHelper.getToolbarActions(navigationController: .init()) { actions in
                     let action = actions
@@ -176,19 +176,19 @@ final class AnalyticsSpyTests: XCTestCase {
                         .first { $0.title == title }
                     if let action = action {
                         action.tapHandler!(action)
-                        
+
                         XCTAssertEqual(self.analyticsSpy.menuClickItemCalled, label)
                     } else {
                         XCTFail("No action title with \(title) found")
                     }
-                    
+
                     expectation.fulfill()
                 }
                 wait(for: [expectation], timeout: 1)
             }
         }
     }
-    
+
     func testTrackMenuShare() {
         let testCases: [(Analytics.Property.ShareContent, URL?)] = [
             (.ntp, URL(string: "file://example.com")),
@@ -200,10 +200,10 @@ final class AnalyticsSpyTests: XCTestCase {
             Analytics.shared = analyticsSpy
             XCTContext.runActivity(named: "Menu share \(label.rawValue) is tracked") { _ in
                 XCTAssertNil(analyticsSpy.menuShareContentCalled)
-                
+
                 // Requires valid url to add action
                 tabManagerMock.selectedTab?.url = url
-                
+
                 let action = menuHelper.getSharingAction().items.first
                 if let action = action {
                     action.tapHandler!(action)
@@ -213,7 +213,7 @@ final class AnalyticsSpyTests: XCTestCase {
             }
         }
     }
-    
+
     func testTrackMenuStatus() {
         // swiftlint:disable:next large_tuple
         let testCases: [(Analytics.Label.MenuStatus, Bool, String)] = [
@@ -232,10 +232,10 @@ final class AnalyticsSpyTests: XCTestCase {
             XCTContext.runActivity(named: "Menu share \(label.rawValue) is tracked") { _ in
                 XCTAssertNil(analyticsSpy.menuStatusItemCalled)
                 XCTAssertNil(analyticsSpy.menuStatusItemChangedTo)
-                
+
                 let testUrl = "https://example.com"
                 tabManagerMock.selectedTab?.url = URL(string: testUrl)
-                
+
                 let expectation = self.expectation(description: "Actions are returned")
                 menuHelper.getToolbarActions(navigationController: .init()) { actions in
                     let action = actions
@@ -244,13 +244,13 @@ final class AnalyticsSpyTests: XCTestCase {
                         .first { $0.title == title }
                     if let action = action {
                         action.tapHandler!(action)
-                        
+
                         XCTAssertEqual(self.analyticsSpy.menuStatusItemCalled, label)
                         XCTAssertEqual(self.analyticsSpy.menuStatusItemChangedTo, value)
                     } else {
                         XCTFail("No action title with \(title) found")
                     }
-                    
+
                     expectation.fulfill()
                 }
                 wait(for: [expectation], timeout: 1)

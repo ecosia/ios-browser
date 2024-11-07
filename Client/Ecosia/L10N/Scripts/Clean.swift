@@ -24,7 +24,7 @@ private final class Translations {
                 print("repeated \(key)")
             }
         }
-        
+
         keys = Translations.keys.asLines.filter {
             $0.hasPrefix("case")
         }.reduce(into: []) {
@@ -32,15 +32,15 @@ private final class Translations {
             $0.insert(.init(equals.last!.dropLast()))
         }
     }
-    
+
     func save() {
         let filtered = strings.filter { keys.contains($0.0) }.keys.sorted()
         let result = filtered.reduce(into: "") {
             $0 += "\"" + $1 + "\" = \"" + strings[$1]! + "\";\n"
         }
-        
+
         try? Data(result.utf8).write(to: Translations.strings, options: .atomic)
-        
+
         print("Read: \(strings.count); wrote: \(filtered.count) translations!")
     }
 }
@@ -51,7 +51,7 @@ private extension URL {
             .components(separatedBy: "\n")
             .map { $0.trimmingCharacters(in: .whitespaces) }
     }
-    
+
     var content: String {
         try? String(data: .init(contentsOf: self), encoding: .utf8)!
             .trimmingCharacters(in: .whitespacesAndNewlines)

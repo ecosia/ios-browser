@@ -8,7 +8,7 @@ import Common
 
 /// Reusable Nudge Card Cell that can be configured with any view model.
 class NTPConfigurableNudgeCardCell: UICollectionViewCell, Themeable, ReusableCell {
-    
+
     // MARK: - UX Constants
     private enum UX {
         static let cornerRadius: CGFloat = 10
@@ -21,7 +21,7 @@ class NTPConfigurableNudgeCardCell: UICollectionViewCell, Themeable, ReusableCel
     }
 
     // MARK: - UI Components
-    
+
     private let mainContainerStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -37,7 +37,7 @@ class NTPConfigurableNudgeCardCell: UICollectionViewCell, Themeable, ReusableCel
         stackView.spacing = UX.textSpacing
         return stackView
     }()
-    
+
     private let labelsAndActionButtonStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -46,7 +46,7 @@ class NTPConfigurableNudgeCardCell: UICollectionViewCell, Themeable, ReusableCel
         stackView.spacing = UX.textSpacing
         return stackView
     }()
-    
+
     private let closeButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -57,14 +57,14 @@ class NTPConfigurableNudgeCardCell: UICollectionViewCell, Themeable, ReusableCel
         button.setContentHuggingPriority(.required, for: .horizontal)
         return button
     }()
-    
+
     private lazy var imageView: UIImageView = {
         let image = UIImageView()
         image.translatesAutoresizingMaskIntoConstraints = false
         image.contentMode = .scaleAspectFit
         return image
     }()
-    
+
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -74,7 +74,7 @@ class NTPConfigurableNudgeCardCell: UICollectionViewCell, Themeable, ReusableCel
         label.numberOfLines = 0
         return label
     }()
-    
+
     private let descriptionLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -84,7 +84,7 @@ class NTPConfigurableNudgeCardCell: UICollectionViewCell, Themeable, ReusableCel
         label.numberOfLines = 0
         return label
     }()
-    
+
     private let actionButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -95,23 +95,23 @@ class NTPConfigurableNudgeCardCell: UICollectionViewCell, Themeable, ReusableCel
         button.setInsets(forContentPadding: .init(top: UX.buttonAdditionalSpacing, left: 0, bottom: 0, right: 0), imageTitlePadding: 0)
         return button
     }()
-    
+
     // MARK: - Properties
-    
+
     private var viewModel: NTPConfigurableNudgeCardCellViewModel?
 
     // MARK: - Delegate
-    
+
     weak var delegate: NTPConfigurableNudgeCardCellDelegate?
-    
+
     // MARK: - Themeable Properties
-    
+
     var themeManager: ThemeManager { AppContainer.shared.resolve() }
     var themeObserver: NSObjectProtocol?
     var notificationCenter: NotificationProtocol = NotificationCenter.default
 
     // MARK: - Initializer
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
@@ -122,18 +122,18 @@ class NTPConfigurableNudgeCardCell: UICollectionViewCell, Themeable, ReusableCel
     }
 
     // MARK: - Setup
-    
+
     private func setup() {
         contentView.addSubview(mainContainerStackView)
-                
+
         labelsAndActionButtonStackView.addArrangedSubview(titleLabel)
         labelsAndActionButtonStackView.addArrangedSubview(descriptionLabel)
         labelsAndActionButtonStackView.addArrangedSubview(actionButton)
-        
+
         mainContainerStackView.addArrangedSubview(imageView)
         mainContainerStackView.addArrangedSubview(labelsAndActionButtonStackView)
         mainContainerStackView.addArrangedSubview(closeButton)
-        
+
         NSLayoutConstraint.activate([
             mainContainerStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             mainContainerStackView.topAnchor.constraint(equalTo: contentView.topAnchor),
@@ -144,16 +144,16 @@ class NTPConfigurableNudgeCardCell: UICollectionViewCell, Themeable, ReusableCel
             imageView.heightAnchor.constraint(equalToConstant: UX.imageWidthHeight),
             imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor),
         ])
-        
+
         applyTheme()
         listenForThemeChange(contentView)
     }
 
     // MARK: - Configuration Method
-    
+
     /// Configures the Nudge Card Cell using the ViewModel.
     func configure(with viewModel: NTPConfigurableNudgeCardCellViewModel) {
-        
+
         titleLabel.text = viewModel.title
         descriptionLabel.text = viewModel.description
         actionButton.setTitle(viewModel.buttonText, for: .normal)
@@ -190,12 +190,12 @@ class NTPConfigurableNudgeCardCell: UICollectionViewCell, Themeable, ReusableCel
         descriptionLabel.textColor = .legacyTheme.ecosia.secondaryText
         actionButton.setTitleColor(.legacyTheme.ecosia.primaryButton, for: .normal)
     }
-    
+
     @objc private func closeAction() {
         guard let cardSectionType = viewModel?.cardSectionType else { return }
         delegate?.nudgeCardRequestToDimiss(for: cardSectionType)
     }
-    
+
     @objc private func actionButtonTapped() {
         guard let cardSectionType = viewModel?.cardSectionType else { return }
         delegate?.nudgeCardRequestToPerformAction(for: cardSectionType)

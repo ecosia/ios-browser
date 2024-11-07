@@ -500,7 +500,7 @@ extension TabManagerImplementation {
             return []
         }
     }
-    
+
     private static let restoreMigratedv10TabsMissingUrlKey = "restoreMigratedv10TabsMissingUrl"
     private var shouldRestoreMigratedv10TabsMissingUrl: Bool {
         !UserDefaults.standard.bool(forKey: Self.restoreMigratedv10TabsMissingUrlKey)

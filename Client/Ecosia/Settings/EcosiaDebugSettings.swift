@@ -166,7 +166,7 @@ class UnleashVariantResetSetting: HiddenSetting {
     var titleName: String? { return nil }
     var variant: Unleash.Variant? { return nil }
     var unleashEnabled: Bool? { return nil }
-    
+
     override var title: NSAttributedString? {
         return NSAttributedString(string: "Debug: Unleash \(titleName ?? "Unknown") variant", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
     }
@@ -178,7 +178,7 @@ class UnleashVariantResetSetting: HiddenSetting {
         }
         return NSAttributedString(string: "\(statusName) (Click to reset)", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
     }
-    
+
     override func onClick(_ navigationController: UINavigationController?) {
         Task {
             do {
@@ -202,7 +202,7 @@ final class UnleashBrazeIntegrationSetting: UnleashVariantResetSetting {
     override var titleName: String? {
         "Braze Integration"
     }
-    
+
     override var unleashEnabled: Bool? {
         Unleash.isEnabled(.brazeIntegration)
     }
@@ -212,7 +212,7 @@ final class UnleashAPNConsentOnLaunchSetting: UnleashVariantResetSetting {
     override var titleName: String? {
         "APN Consent On Launch"
     }
-    
+
     override var variant: Unleash.Variant? {
         Unleash.getVariant(.apnConsentOnLaunch)
     }
@@ -222,7 +222,7 @@ final class AnalyticsIdentifierSetting: HiddenSetting {
     override var title: NSAttributedString? {
         return NSAttributedString(string: "Debug: Analytics Identifier", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
     }
-    
+
     var analyticsIdentifier: String { User.shared.analyticsId.uuidString }
 
     override var status: NSAttributedString? {

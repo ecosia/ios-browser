@@ -9,12 +9,12 @@ import Common
 @testable import Client
 
 final class NTPTests: SnapshotBaseTests {
-    
+
     func testNTPShowingImpactIntro() {
         User.shared.showImpactIntro()
         snapshotNTP(impactIntroShown: true)
     }
-    
+
     func testNTPImpactIntroHidden() {
         User.shared.hideImpactIntro()
         snapshotNTP(impactIntroShown: false)
@@ -28,7 +28,7 @@ extension NTPTests {
             let urlBar = URLBarView(profile: self.profile)
             let overlayManager = MockOverlayModeManager()
             overlayManager.setURLBar(urlBarView: urlBar)
-            
+
             let homePageViewController = HomepageViewController(profile: self.profile,
                                                                 toastContainer: UIView(),
                                                                 tabManager: tabManager,

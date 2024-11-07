@@ -64,7 +64,7 @@ final class Welcome: UIViewController {
         fadeIn()
         didAppear = true
         Analytics.shared.introDisplaying(page: .start, at: 0)
-        
+
         MMP.sendEvent(.onboardingStart)
     }
 
@@ -170,7 +170,7 @@ final class Welcome: UIViewController {
         skipButton.setTitle(.localized(.skipWelcomeTour), for: .normal)
         skipButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
         skipButton.addTarget(self, action: #selector(skip), for: .primaryActionTriggered)
-        
+
         stack.addArrangedSubview(skipButton)
 
         if view.traitCollection.userInterfaceIdiom == .phone {

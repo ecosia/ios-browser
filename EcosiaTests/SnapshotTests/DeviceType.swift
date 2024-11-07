@@ -15,7 +15,7 @@ enum DeviceType: String, CaseIterable {
     case iPhone14ProMax_Landscape
     case iPadPro_Portrait
     case iPadPro_Landscape
-    
+
     var config: ViewImageConfig {
         switch self {
         case .iPhoneSE_Portrait:
@@ -36,7 +36,7 @@ enum DeviceType: String, CaseIterable {
             return ViewImageConfig.iPadPro12_9(.landscape)
         }
     }
-    
+
     /// Returns a `DeviceType` based on the provided device name and orientation.
     ///
     /// - Parameters:

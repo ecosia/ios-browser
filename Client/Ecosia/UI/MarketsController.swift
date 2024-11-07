@@ -39,12 +39,12 @@ final class MarketsController: ThemedTableViewController {
         navigationItem.title = .localized(.searchRegion)
         navigationItem.largeTitleDisplayMode = .never
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         applyTheme()
     }
-    
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         Markets.all.firstIndex { User.shared.marketCode == $0.value }.map {
@@ -64,7 +64,7 @@ final class MarketsController: ThemedTableViewController {
         cell.accessoryType = User.shared.marketCode == Markets.all[cellForRowAt.row].value ? .checkmark : .none
         return cell
     }
-    
+
     override func tableView(_ tableView: UITableView, didSelectRowAt: IndexPath) {
         guard Markets.all[didSelectRowAt.row].value != User.shared.marketCode else { return }
         User.shared.marketCode = Markets.all[didSelectRowAt.row].value

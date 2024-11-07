@@ -45,7 +45,7 @@ extension HomeLogoHeaderViewModel: HomepageViewModelProtocol, FeatureFlaggable {
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: item, count: 1)
 
         let section = NSCollectionLayoutSection(group: group)
-        
+
         /* Ecosia: Migrate the top edge inset calculation from older app version
         let leadingInset = HomepageViewModel.UX.leadingInset(traitCollection: traitCollection)
         section.contentInsets = NSDirectionalEdgeInsets(
@@ -84,7 +84,7 @@ extension HomeLogoHeaderViewModel: HomepageViewModelProtocol, FeatureFlaggable {
 }
 
 extension HomeLogoHeaderViewModel: HomepageSectionHandler {
-    
+
     func configure(_ cell: UICollectionViewCell, at indexPath: IndexPath) -> UICollectionViewCell {
         // Ecosia: cell as NTPLogoCell
         // guard let logoHeaderCell = cell as? HomeLogoHeaderCell else { return UICollectionViewCell() }

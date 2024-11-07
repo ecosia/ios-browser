@@ -179,7 +179,7 @@ class BookmarksPanelViewModel: NSObject {
 
 // Ecosia: Import Bookmarks Helper
 extension BookmarksPanelViewModel {
-    
+
     func bookmarkExportSelected(in viewController: BookmarksPanel, onDone: @escaping (Error?) -> Void) {
         Task {
             self.onExportDoneHandler = onDone
@@ -192,7 +192,7 @@ extension BookmarksPanelViewModel {
             }
         }
     }
-    
+
     func bookmarkImportSelected(in viewController: UIViewController, onDone: @escaping (URL?, Error?) -> Void) {
         self.documentPickerPresentingViewController = viewController
         self.onImportDoneHandler = onDone
@@ -210,7 +210,7 @@ extension BookmarksPanelViewModel {
             guard let self = self else {
                 return continuation.resume(returning: [])
             }
-            
+
             profile.places
                 .getBookmarksTree(rootGUID: BookmarkRoots.MobileFolderGUID, recursive: true)
                 .uponQueue(.main) { result in
@@ -227,12 +227,12 @@ extension BookmarksPanelViewModel {
                         .compactMap { bookmarkNode in
                             self.exportNode(bookmarkNode)
                         }
-                    
+
                     continuation.resume(returning: items)
                 }
         }
     }
-    
+
     private func exportNode(_ node: BookmarkNodeData) -> Core.BookmarkItem? {
         if let folder = node as? BookmarkFolderData {
             return .folder(folder.title, folder.children?.compactMap { exportNode($0) } ?? [], .empty)
@@ -242,7 +242,7 @@ extension BookmarksPanelViewModel {
         assertionFailure("This should not happen")
         return nil
     }
-    
+
     @MainActor
     private func notifyExportDone(_ error: Error?) {
         onExportDoneHandler?(error)
@@ -261,7 +261,7 @@ extension BookmarksPanelViewModel: UIDocumentPickerDelegate {
         else { return }
         handlePickedUrl(firstHtmlUrl, in: viewController)
     }
-    
+
     func handlePickedUrl(_ url: URL, in viewController: UIViewController) {
         let scopedResourceAccess = url.startAccessingSecurityScopedResource()
         var error: NSError?
@@ -286,7 +286,7 @@ extension BookmarksPanelViewModel: UIDocumentPickerDelegate {
             }
         }
     }
-    
+
     @MainActor
     private func notifyImportDone(_ url: URL, _ error: Error?) {
         onImportDoneHandler?(url, error)

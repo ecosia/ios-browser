@@ -6,7 +6,7 @@ import Foundation
 import Core
 
 struct BrazeIntegrationExperiment {
-    
+
     private init() {}
 
     static var isEnabled: Bool {

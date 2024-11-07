@@ -10,21 +10,21 @@ struct SeedCounterNTPExperiment {
         case control
         case test
     }
-    
+
     private init() {}
-    
+
     static var progressManagerType: SeedProgressManagerProtocol.Type = UserDefaultsSeedProgressManager.self
-    
+
     static var isEnabled: Bool {
         Unleash.isEnabled(.seedCounterNTP) &&
         variant != .control &&
         SeedCounterNTPExperiment.seedCounterConfig != nil
     }
-    
+
     private static var variant: Variant {
         Variant(rawValue: Unleash.getVariant(.seedCounterNTP).name) ?? .control
     }
-    
+
     // MARK: Analytics
 
     static func trackSeedCollectionIfNewDayAppOpening() {
@@ -36,17 +36,17 @@ struct SeedCounterNTPExperiment {
                                                   value: 1)
         UserDefaults.standard.setValue(true, forKey: seedCollectionExperimentIdentifier)
     }
-    
+
     static func trackTapOnSeedCounter() {
         Analytics.shared.ntpSeedCounterExperiment(.click,
                                                   value: progressManagerType.loadTotalSeedsCollected() as NSNumber)
     }
-    
+
     static func trackSeedLevellingUp() {
         Analytics.shared.ntpSeedCounterExperiment(.level,
                                                   value: progressManagerType.loadCurrentLevel() as NSNumber)
     }
-    
+
     static var seedCounterConfig: SeedCounterConfig? {
         guard let payloadString = Unleash.getVariant(.seedCounterNTP).payload?.value,
               let payloadData = payloadString.data(using: .utf8),
@@ -56,7 +56,7 @@ struct SeedCounterNTPExperiment {
         }
         return seedCounterConfig
     }
-    
+
     static var sparklesAnimationDuration: Double {
         seedCounterConfig?.sparklesAnimationDuration ?? 0.0
     }

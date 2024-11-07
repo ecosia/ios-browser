@@ -175,7 +175,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Ecosia: Update EcosiaInstallType if needed. This should always happen before `FeatureManagement`.
         EcosiaInstallType.evaluateCurrentEcosiaInstallType()
         // Ecosia: Disable BG sync //backgroundSyncUtil = BackgroundSyncUtil(profile: profile, application: application)
-        
+
         /* 
          Ecosia: Feature Management fetch
          We perform the same configuration retrieval in
@@ -196,7 +196,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             // Ecosia: Experiment that directly asks for consent
             await APNConsentOnLaunchExperiment.requestAPNConsentIfNeeded(delegate: self)
         }
-        
+
         // Ecosia: fetching statistics before they are used
         Task.detached {
             try? await Statistics.shared.fetchAndUpdate()
@@ -211,7 +211,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         widgetManager = TopSitesWidgetManager(topSitesProvider: topSitesProvider)
 
         addObservers()
-        
+
         // Ecosia: Send the install event. It happens only once per App install.
         Analytics.shared.install()
 

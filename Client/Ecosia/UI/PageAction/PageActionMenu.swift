@@ -14,15 +14,15 @@ final class PageActionMenu: UIViewController, UIGestureRecognizerDelegate, Theme
         static let shortcuts = "Shortcuts"
         static let rowHeight: CGFloat = 50
     }
-    
+
     // MARK: - Themeable Properties
-    
+
     var themeManager: ThemeManager { AppContainer.shared.resolve() }
     var themeObserver: NSObjectProtocol?
     var notificationCenter: NotificationProtocol = NotificationCenter.default
 
     // MARK: - Properties
-    
+
     private var tableView = UITableView(frame: .zero, style: .plain)
     private var knob = UIView()
     private var contentSizeObserver: NSKeyValueObservation?
@@ -34,7 +34,7 @@ final class PageActionMenu: UIViewController, UIGestureRecognizerDelegate, Theme
         view.addGestureRecognizer(swipeDown)
         return swipeDown
     }()
-    
+
     private let viewModel: PhotonActionSheetViewModel
     private weak var delegate: PageActionsShortcutsDelegate?
 
@@ -89,7 +89,7 @@ final class PageActionMenu: UIViewController, UIGestureRecognizerDelegate, Theme
 // MARK: Swipe down to close in iPhone Landscape
 
 extension PageActionMenu {
-    
+
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         checkSwipeDown()
@@ -103,7 +103,7 @@ extension PageActionMenu {
 // MARK: - Gestures
 
 extension PageActionMenu {
-    
+
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         guard gestureRecognizer === swipeDown else { return false }
         return tableView.contentOffset.y <= 0
@@ -121,7 +121,7 @@ extension PageActionMenu {
 // MARK: - Setup PageActionMenu
 
 extension PageActionMenu {
-        
+
     private func setupTableView() {
         view.addSubview(tableView)
         tableView.estimatedRowHeight = UX.rowHeight
@@ -135,7 +135,7 @@ extension PageActionMenu {
         tableView.separatorStyle = .none
         tableView.translatesAutoresizingMaskIntoConstraints = false
     }
-    
+
     private func setupKnob() {
         guard traitCollection.userInterfaceIdiom == .phone else { return }
         view.addSubview(knob)
@@ -150,9 +150,9 @@ extension PageActionMenu {
             tableView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
         ])
-        
+
         guard traitCollection.userInterfaceIdiom == .phone else { return }
-        
+
         NSLayoutConstraint.activate([
             knob.topAnchor.constraint(equalTo: view.topAnchor, constant: 8),
             knob.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -177,7 +177,7 @@ extension PageActionMenu: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return viewModel.actions[section].count
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: PageActionMenuCell.UX.cellIdentifier, for: indexPath) as! PageActionMenuCell
         cell.determineTableViewCellPositionAt(indexPath, forActions: viewModel.actions)

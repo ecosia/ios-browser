@@ -13,13 +13,13 @@ final class WelcomeTourProfit: UIView, Themeable {
     weak var treeImage: UIImageView!
 
     // MARK: - Themeable Properties
-    
+
     var themeManager: ThemeManager { AppContainer.shared.resolve() }
     var themeObserver: NSObjectProtocol?
     var notificationCenter: NotificationProtocol = NotificationCenter.default
 
     // MARK: - Init
-    
+
     init() {
         super.init(frame: .zero)
         setup()
@@ -115,7 +115,7 @@ final class WelcomeTourProfit: UIView, Themeable {
         afterLabel.textColor = .legacyTheme.ecosia.primaryText
         treeImage.tintColor = .legacyTheme.ecosia.primaryBrand
     }
-    
+
     func updateAccessibilitySettings() {
         isAccessibilityElement = false
         shouldGroupAccessibilityChildren = true
@@ -128,7 +128,7 @@ private final class Dot: UIVisualEffectView {
         super.init(effect: effect)
         setup()
     }
-    
+
     required init?(coder: NSCoder) {  nil }
 
     func setup() {

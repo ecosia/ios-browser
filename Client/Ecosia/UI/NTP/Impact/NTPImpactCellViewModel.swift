@@ -30,19 +30,19 @@ final class NTPImpactCellViewModel {
 
     private var cells = [Int: NTPImpactCell]()
     private let referrals: Referrals
-    
+
     var theme: Theme
-    
+
     init(referrals: Referrals, theme: Theme) {
         self.referrals = referrals
         self.theme = theme
-        
+
         referrals.subscribe(self) { [weak self] _ in
             guard let self = self else { return }
             self.refreshCell(withInfo: self.referralInfo)
         }
     }
-    
+
     deinit {
         referrals.unsubscribe(self)
     }
@@ -58,7 +58,7 @@ final class NTPImpactCellViewModel {
             guard let self = self else { return }
             self.refreshCell(withInfo: self.totalTreesInfo)
         }
-        
+
         InvestmentsProjection.shared.subscribe(self) { [weak self] _ in
             guard let self = self else { return }
             self.refreshCell(withInfo: self.totalInvestedInfo)
@@ -69,7 +69,7 @@ final class NTPImpactCellViewModel {
         TreesProjection.shared.unsubscribe(self)
         InvestmentsProjection.shared.unsubscribe(self)
     }
-    
+
     func refreshCell(withInfo info: ClimateImpactInfo) {
         let indexForInfo = infoItemSections.firstIndex { $0.contains(where: { $0 == info }) }
         guard let index = indexForInfo else { return }
@@ -79,7 +79,7 @@ final class NTPImpactCellViewModel {
 
 // MARK: HomeViewModelProtocol
 extension NTPImpactCellViewModel: HomepageViewModelProtocol {
-    
+
     func setTheme(theme: Theme) {
         self.theme = theme
     }
@@ -106,7 +106,7 @@ extension NTPImpactCellViewModel: HomepageViewModelProtocol {
         let section = NSCollectionLayoutSection(group: group)
 
         section.contentInsets = sectionType.sectionInsets(traitCollection, bottomSpacing: 0)
-        
+
         var supplementaryItems = [NSCollectionLayoutBoundarySupplementaryItem]()
         if NTPTooltip.highlight() != nil {
             supplementaryItems.append(
@@ -123,7 +123,7 @@ extension NTPImpactCellViewModel: HomepageViewModelProtocol {
                       alignment: .top)
             )
         }
-        
+
         supplementaryItems.append(
             .init(layoutSize: .init(widthDimension: .fractionalWidth(1),
                                     heightDimension: .estimated(NTPImpactDividerFooter.UX.estimatedHeight)),
@@ -131,7 +131,7 @@ extension NTPImpactCellViewModel: HomepageViewModelProtocol {
                   alignment: .bottom)
         )
         section.boundarySupplementaryItems = supplementaryItems
-        
+
         return section
     }
 

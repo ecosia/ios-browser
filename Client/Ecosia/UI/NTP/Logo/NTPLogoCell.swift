@@ -13,13 +13,13 @@ final class NTPLogoCell: UICollectionViewCell, ReusableCell, Themeable {
     private weak var logo: UIImageView!
 
     // MARK: - Themeable Properties
-    
+
     var themeManager: ThemeManager { AppContainer.shared.resolve() }
     var themeObserver: NSObjectProtocol?
     var notificationCenter: NotificationProtocol = NotificationCenter.default
 
     // MARK: - Init
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()

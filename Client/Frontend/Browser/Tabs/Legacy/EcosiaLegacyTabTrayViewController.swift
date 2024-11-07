@@ -414,14 +414,14 @@ class LegacyTabTrayViewController: UIViewController, Themeable {
 }
 
 extension LegacyTabTrayViewController: TabTrayController {
-    
+
     func remotePanelDidRequestToSignIn() { }
-    
+
     func remotePanelDidRequestToOpenInNewTab(_ url: URL, isPrivate: Bool) {
         self.openInNewTab?(url, isPrivate)
         self.dismissVC()
     }
-    
+
     func remotePanel(didSelectURL url: URL, visitType: VisitType) {
         self.didSelectUrl?(url, visitType)
         self.dismissVC()
@@ -447,7 +447,7 @@ extension LegacyTabTrayViewController: Notifiable {
 
 // MARK: - Theme protocol
 extension LegacyTabTrayViewController {
-    
+
      @objc func applyTheme() {
          view.backgroundColor = UIColor.legacyTheme.tabTray.background
          // Ecosia: navigationToolbar.barTintColor = UIColor.theme.tabTray.toolbar
@@ -465,7 +465,7 @@ extension LegacyTabTrayViewController {
          addNewTabButton.applyTheme(theme: themeManager.currentTheme)
          // Ecosia: Change close all button title color
          (deleteButton.customView as? UIButton)?.setTitleColor(.legacyTheme.ecosia.warning, for: .normal)
-         
+
          if shouldUseiPadSetup() {
              navigationItem.leftBarButtonItem?.tintColor = UIColor.legacyTheme.ecosia.primaryButton
              navigationItem.rightBarButtonItem?.tintColor = UIColor.legacyTheme.ecosia.primaryButton

@@ -7,13 +7,13 @@ import Shared
 import Common
 
 extension DeviceInfo {
-    
+
     static let manufacturer = "apple"
 
     static var currentLocale: String {
         Locale.current.identifier
     }
-    
+
     static var currentCountry: String? {
         Locale.current.regionIdentifierLowercasedWithFallbackValue
     }
@@ -27,25 +27,25 @@ extension DeviceInfo {
     }
 
     static var osBuildNumber: String? {
-                
+
         // e.g. Version 16.4 (Build 20E247)
         let fullSystemVersionString = ProcessInfo().operatingSystemVersionString
-        
+
         // Regex to extract the build version
         let regex = try? NSRegularExpression(pattern: "\\(Build\\s(.*?)\\)", options: [])
-        
+
         // Retrieve the check result
         guard let match = regex?.firstMatch(in: fullSystemVersionString,
-                                            options: [], 
+                                            options: [],
                                             range: NSRange(fullSystemVersionString.startIndex..., in: fullSystemVersionString)) else {
             return nil
         }
-        
+
         // Retrieve the range
         guard let range = Range(match.range(at: 1), in: fullSystemVersionString) else {
             return nil
         }
-        
+
         // Retrieve the build number
         // e.g 20E247
         return String(fullSystemVersionString[range])

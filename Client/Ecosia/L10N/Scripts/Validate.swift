@@ -9,7 +9,7 @@ private final class Translations {
     private let dictionary: [String: String]
     private static let directory = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
     private static let url = directory.appendingPathComponent("Client/Ecosia/L10N/String.swift")
-    
+
     init() {
         dictionary = Translations.url.asLines.filter {
             $0.hasPrefix("case")
@@ -18,7 +18,7 @@ private final class Translations {
             $0[.init(equals.first!.dropFirst(5))] = .init(equals.last!.dropLast())
         }
     }
-    
+
     func validate() {
         count = dictionary.mapValues { _ in 0 }
         FileManager.default.enumerator(at: Translations.directory, includingPropertiesForKeys: nil, options: [.producesRelativePathURLs, .skipsHiddenFiles, .skipsPackageDescendants])?.forEach {
@@ -44,7 +44,7 @@ private extension URL {
             .components(separatedBy: "\n")
             .map { $0.trimmingCharacters(in: .whitespaces) }
     }
-    
+
     var content: String {
         try? String(data: .init(contentsOf: self), encoding: .utf8)!
             .trimmingCharacters(in: .whitespacesAndNewlines)

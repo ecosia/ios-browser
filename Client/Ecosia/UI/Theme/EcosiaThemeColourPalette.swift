@@ -40,9 +40,9 @@ private class EcosiaDarkColourPalette: EcosiaLightColourPalette {
 }
 
 private class EcosiaLightColourPalette: ThemeColourPalette {
-    
+
     let fallbackDefaultThemeManager: ThemeManager = DefaultThemeManager(sharedContainerIdentifier: AppInfo.sharedContainerIdentifier)
-        
+
     // MARK: - Layers
     var layer1: UIColor { .legacyTheme.ecosia.tertiaryBackground }
     var layer2: UIColor { fallbackDefaultThemeManager.currentTheme.colors.layer2 }

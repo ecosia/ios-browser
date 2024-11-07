@@ -9,17 +9,17 @@ import Common
 
 /// A local data provider for fetching What's New items based on app version updates.
 final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
-        
+
     /// The version from which the app was last updated.
     private var fromVersion: Version? {
         Version(EcosiaInstallType.persistedCurrentVersion())
     }
-    
+
     /// The current version of the app.
     private var toVersion: Version {
         Version(versionProvider.version)!
     }
-    
+
     /// A computed property to determine whether the "What's New" page should be displayed.
     /// - Returns: `true` if the What's New page should be shown; otherwise, `false`.
     var shouldShowWhatsNewPage: Bool {
@@ -27,16 +27,16 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
             markPreviousVersionsAsSeen()
             return false
         }
-        
+
         // Are there items to be shown in the range?
         guard let items = try? getWhatsNewItemsInRange(), !items.isEmpty else { return false }
-        
+
         let shownVersions = User.shared.whatsNewItemsVersionsShown
         let versionsInRange = getVersionRange().map { $0.description }
-        
+
         // Are all versions in the range contained in the shown versions?
         let allVersionsShown = Set(versionsInRange).subtracting(shownVersions).isEmpty
-        
+
         return !allVersionsShown
     }
 
@@ -52,10 +52,10 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
         self.versionProvider = versionProvider
         self.whatsNewItems = whatsNewItems
     }
-    
+
     /// The items we would like to attempt to show in the update sheet
     private var whatsNewItems: [Version: [WhatsNewItem]]
-    
+
     private static let defaultWhatsNewItems = [
         Version("9.0.0")!: [
             WhatsNewItem(image: UIImage(named: "tree"),
@@ -74,7 +74,7 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
                          subtitle: .localized(.whatsNewSecondItemDescription10_0_0))
         ]
     ]
-            
+
     /// Fetches an array of What's New items to display.
     ///
     /// - Throws: An error if fetching fails.
@@ -91,28 +91,28 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
         }
         return items
     }
-        
+
     /// Private helper to fetch version range.
     ///
     /// - Returns: An array of `Version` between from and to, inclusive.
     func getVersionRange() -> [Version] {
-        
+
         // Ensure `fromVersion` is available; otherwise, return an empty version range.
         guard let fromVersion else { return [] }
 
         // Gather all versions
         let allVersions = Array(whatsNewItems.keys).sorted()
-        
+
         // Find the index of the version immediately after `fromVersion`
         guard let fromIndex = allVersions.firstIndex(where: { $0 > fromVersion }) else { return [] }
-        
+
         // Find the index of the version immediately before or equal to `toVersion`
         guard let toIndex = allVersions.lastIndex(where: { $0 <= toVersion }) else { return [] }
-        
+
         // Return the range between `fromIndex` (excluded) and `toIndex` (included)
         return Array(allVersions[fromIndex..<toIndex + 1])
     }
-    
+
     func markPreviousVersionsAsSeen() {
         let previousVersions = whatsNewItems.keys
             .filter { $0 <= toVersion }

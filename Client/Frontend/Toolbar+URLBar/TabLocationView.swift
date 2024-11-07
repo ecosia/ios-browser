@@ -237,7 +237,7 @@ class TabLocationView: UIView, FeatureFlaggable {
 
         menuBadge.add(toParent: contentView)
         menuBadge.show(false)
-        
+
         // Ecosia: Update show/hide locker icon based on Firefox v128
         hideTrackingProtectionButton()
     }
@@ -378,7 +378,7 @@ class TabLocationView: UIView, FeatureFlaggable {
             self.trackingProtectionButton.isHidden = true
         }
     }
-    
+
     // Ecosia: Update show/hide locker icon based on Firefox v128
     func showTrackingProtectionButton(for url: URL?) {
         ensureMainThread {
@@ -397,7 +397,7 @@ class TabLocationView: UIView, FeatureFlaggable {
             self.trackingProtectionButton.isHidden = !isValidHttpUrlProtocol || isReaderModeURL || isFxHomeUrl
         }
     }
-    
+
     private func setTrackingProtection(theme: Theme) {
         var lockImage: UIImage?
         if !hasSecureContent {

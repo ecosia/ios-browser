@@ -126,7 +126,7 @@ class ButtonToast: Toast {
     }
 
     private func createView(viewModel: ButtonToastViewModel) -> UIView {
-        
+
         // Ecosia: Review ToastView to look like v104
         let space = UIView()
         space.widthAnchor.constraint(equalToConstant: UX.padding).isActive = true
@@ -172,7 +172,7 @@ class ButtonToast: Toast {
             horizontalStackView.topAnchor.constraint(equalTo: toastView.topAnchor),
             horizontalStackView.heightAnchor.constraint(equalToConstant: Toast.UX.toastHeight - Toast.UX.toastOffset),
         ])
-        
+
         // Ecosia: Review ToastView to look like v104
         toastView.layer.cornerRadius = UX.standardCornerRadius
         toastView.layer.masksToBounds = true

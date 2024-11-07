@@ -7,7 +7,7 @@ import XCTest
 @testable import Client
 
 final class EcosiaOverlayModeManagerTests: XCTestCase {
-    
+
     private var urlBar: MockURLBarView!
     private var subject: MockOverlayModeManager!
 

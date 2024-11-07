@@ -9,56 +9,56 @@ import XCTest
 final class AppDelegateFeatureManagementIntegrationTests: XCTestCase {
     var appDelegate: AppDelegate!
     var initialModel: Unleash.Model!
-    
+
     override func setUp() {
         super.setUp()
-        
+
         appDelegate = AppDelegate()
-        
+
         initialModel = Unleash.model
         // Reset Unleash model to initial state
         Unleash.model = Unleash.Model()
     }
-    
+
     func testInitialStateOfUnleashModel() {
         XCTAssertEqual(Unleash.model.toggles.count, 0)
         XCTAssertEqual(Unleash.model.updated, Date(timeIntervalSince1970: 0))
     }
-        
+
     func testStateAfterDidFinishLaunchingWithOptions_expectsModelUpdates() async {
         let application = await UIApplication.shared
         let options: [UIApplication.LaunchOptionsKey: Any]? = nil
-        
+
         // Store an updated model so to not let Unleash perform a call
         await storeUnleashModel()
-        
+
         let didFinishLaunching = await appDelegate.application(application, didFinishLaunchingWithOptions: options)
-        
+
         XCTAssertTrue(didFinishLaunching)
         // Let it go thru all the activities, including the Task detached ones
         wait(1)
         XCTAssertNotEqual(Unleash.model.updated, Date(timeIntervalSince1970: 0))
         XCTAssertNotEqual(Unleash.model.toggles.count, 0)
     }
-    
+
     func testStateAfterDidBecomeActive_expectesSameModel_AfterDidFinishLaunchingWithOptions() async {
         let application = await UIApplication.shared
-        
+
         // Store an updated model so to not let Unleash perform a call
         await storeUnleashModel()
 
         // Simulate didFinishLaunchingWithOptions
         let options: [UIApplication.LaunchOptionsKey: Any]? = nil
         let didFinishLaunching = await appDelegate.application(application, didFinishLaunchingWithOptions: options)
-        
+
         XCTAssertTrue(didFinishLaunching)
         // Let it go thru all the activities, including the Task detached ones
         wait(1)
         let modelAfterLaunch = Unleash.model
-        
+
         // Simulate entering background and foreground again
         await appDelegate.applicationDidBecomeActive(application)
-        
+
         wait(1)
         XCTAssertEqual(Unleash.model.toggles.count, modelAfterLaunch.toggles.count)
         XCTAssertEqual(Unleash.model.updated, modelAfterLaunch.updated)
@@ -66,7 +66,7 @@ final class AppDelegateFeatureManagementIntegrationTests: XCTestCase {
 }
 
 extension AppDelegateFeatureManagementIntegrationTests {
-    
+
     func storeUnleashModel() async {
         let jsonString =
         """

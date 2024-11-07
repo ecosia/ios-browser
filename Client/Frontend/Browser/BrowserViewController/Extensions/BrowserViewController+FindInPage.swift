@@ -94,7 +94,7 @@ extension BrowserViewController: FindInPageBarDelegate, FindInPageHelperDelegate
 */
 
 extension BrowserViewController: EcosiaFindInPageBarDelegate, FindInPageHelperDelegate {
-    
+
     func findInPage(_ findInPage: EcosiaFindInPageBar, didTextChange text: String) {
         find(text, function: "find")
     }

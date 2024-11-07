@@ -8,7 +8,7 @@ import ObjectiveC.runtime
 var overriddenLocaleIdentifier: String = ""
 
 final class LocalizationOverrideTestingBundle: Bundle {
-    
+
     override func localizedString(forKey key: String, value: String?, table tableName: String?) -> String {
         // You can dynamically choose the table based on a stored locale or use a predetermined table
         guard let path = Bundle.main.path(forResource: overriddenLocaleIdentifier, ofType: "lproj"),

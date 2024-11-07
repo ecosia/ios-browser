@@ -134,7 +134,7 @@ public struct CustomUserAgentConstant {
     private static let defaultMobileUA = UserAgentBuilder.defaultMobileUserAgent().userAgent()
     private static let customDesktopUA = UserAgentBuilder.defaultDesktopUserAgent().clone(extensions: "Version/\(AppInfo.appVersion) \(UserAgent.uaBitSafari)")
     private static let mobileAdsUA = UserAgentBuilder.defaultMobileUserAgent().clone(extensions: "\(UserAgent.uaBitMobile) \(UserAgent.uaBitSafari)")
-    
+
     // when clicking the videos on nba.com they make requests to
     // demdex.net ,doubleclick.net, amazon-adsystem.com, rfihub.com as well
     // and if the User Agent is different in any of those, the video on nba.com won't work either.
@@ -151,7 +151,7 @@ public struct CustomUserAgentConstant {
         "nba.com": mobileAdsUA,
         "roku.com": mobileAdsUA,
         "disneyplus.com": customDesktopUA]
-    
+
     // Ecosia: Add custom desktop UA
     public static let customDesktopUAFor = [
         URLProvider.production.domain: UserAgent.ecosiaDesktopUA,
@@ -215,7 +215,7 @@ public struct UserAgentBuilder {
 
 // Ecosia: Ecosia Mobile UA + Paypal fix
 extension UserAgentBuilder {
-    
+
     public static func ecosiaMobileUserAgent() -> UserAgentBuilder {
         UserAgentBuilder(product: UserAgent.product,
                          systemInfo: "(\(UIDevice.current.model); CPU iPhone OS \(UIDevice.current.systemVersion.replacingOccurrences(of: ".", with: "_")) like Mac OS X)",
@@ -223,7 +223,7 @@ extension UserAgentBuilder {
                          platformDetails: UserAgent.platformDetails,
                          extensions: "\(UserAgent.uaBitVersion) \(UserAgent.uaBitMobile) \(UserAgent.uaBitSafari) \(UserAgent.uaBitEcosia)")
     }
-    
+
     public static func defaultPayPalMobileUserAgent() -> UserAgentBuilder {
         return UserAgentBuilder(
             product: UserAgent.product,

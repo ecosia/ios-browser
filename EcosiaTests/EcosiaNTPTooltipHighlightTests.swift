@@ -13,7 +13,7 @@ class EcosiaNTPTooltipHighlightTests: XCTestCase {
     override func setUpWithError() throws {
         try? FileManager().removeItem(at: FileManager.user)
         user = .init()
-        user.firstTime = false        
+        user.firstTime = false
     }
 
     func testFirstTimeReturnsNil() throws {

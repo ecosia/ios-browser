@@ -53,7 +53,7 @@ class DefaultTabMigrationUtility: TabMigrationUtility {
     }
 
     func getLegacyTabs() -> [LegacySavedTab] {
-        
+
         // Ecosia: Tabs architecture implementation from ~v112 to ~116
         if let deprecatedMigratedTabs = getDeprecatedTabsToMigrate() {
             return deprecatedMigratedTabs
@@ -138,7 +138,7 @@ class DefaultTabMigrationUtility: TabMigrationUtility {
 // This is temprorary in order to fix a migration error, can be removed after our Ecosia 10.0.0 has been well adopted
 
 extension DefaultTabMigrationUtility {
-    
+
     func getDeprecatedTabsToMigrate() -> [LegacySavedTab]? {
         guard let tabData = legacyTabDataRetriever.getTabData()
         else { return [LegacySavedTab]() }
@@ -157,7 +157,7 @@ extension DefaultTabMigrationUtility {
         }
         return migratedTabs
     }
-    
+
     private func clearDeprecatedArchive() {
         guard let deprecatedPath = legacyTabDataRetriever.tabsStateArchivePath else { return }
 

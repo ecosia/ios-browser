@@ -16,7 +16,7 @@ extension WelcomeTour {
         static var all: [Step] {
             [.green, .profit, .action, .transparent]
         }
-        
+
         var title: String {
             switch self {
             case .green:

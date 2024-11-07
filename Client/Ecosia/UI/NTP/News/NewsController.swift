@@ -14,9 +14,9 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
     private let news = News()
     private let identifier = "news"
     var delegate: SharedHomepageCellDelegate?
-    
+
     // MARK: - Themeable Properties
-    
+
     var themeManager: ThemeManager { AppContainer.shared.resolve() }
     var themeObserver: NSObjectProtocol?
     var notificationCenter: NotificationProtocol = NotificationCenter.default
@@ -31,11 +31,11 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
         title = .localized(.ecosiaNews)
         navigationItem.largeTitleDisplayMode = .always
     }
-    
+
     override func loadView() {
         let indicator = UIActivityIndicatorView(style: .medium)
         indicator.startAnimating()
-        
+
         let collection = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
         collection.delegate = self
         collection.dataSource = self
@@ -81,7 +81,7 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
         }
         return layout
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         news.subscribeAndReceive(self) { [weak self] in
@@ -107,22 +107,22 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
         super.viewDidAppear(animated)
         Analytics.shared.navigation(.view, label: .news)
     }
-    
+
     override func viewWillTransition(to: CGSize, with: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: to, with: with)
         collection?.reloadData()
         collection?.collectionViewLayout.invalidateLayout()
     }
-    
+
     func collectionView(_: UICollectionView, numberOfItemsInSection: Int) -> Int {
         items.count
     }
-    
+
     func collectionView(_: UICollectionView, viewForSupplementaryElementOfKind kind: String, at: IndexPath) -> UICollectionReusableView {
         let header = collection.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: identifier, for: at)
         return header
     }
-    
+
     func collectionView(_: UICollectionView, cellForItemAt: IndexPath) -> UICollectionViewCell {
         let cell = collection.dequeueReusableCell(withReuseIdentifier: identifier, for: cellForItemAt) as! NTPNewsCell
         cell.configure(items[cellForItemAt.row], images: images, row: cellForItemAt.item, totalCount: items.count)
@@ -169,9 +169,9 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
 }
 
 private final class NewsSubHeader: UICollectionReusableView, Themeable {
-    
+
     // MARK: - Themeable Properties
-    
+
     var themeManager: ThemeManager { AppContainer.shared.resolve() }
     var themeObserver: NSObjectProtocol?
     var notificationCenter: NotificationProtocol = NotificationCenter.default
@@ -179,7 +179,7 @@ private final class NewsSubHeader: UICollectionReusableView, Themeable {
     // MARK: - Properties
 
     private weak var subtitle: UILabel!
-    
+
     required init?(coder: NSCoder) { nil }
 
     override init(frame: CGRect) {
@@ -194,7 +194,7 @@ private final class NewsSubHeader: UICollectionReusableView, Themeable {
         subtitle.text = .localized(.keepUpToDate)
         addSubview(subtitle)
         self.subtitle = subtitle
-        
+
         subtitle.topAnchor.constraint(equalTo: topAnchor, constant: 8).isActive = true
         subtitle.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16).isActive = true
         subtitle.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
@@ -217,7 +217,7 @@ extension UICollectionView {
     fileprivate var maxWidth: CGFloat {
         let insets = max(max(safeAreaInsets.left, safeAreaInsets.right), 16) * 2
         let maxWidth = bounds.width - insets
-        
+
         if traitCollection.userInterfaceIdiom == .pad {
             return min(maxWidth, 544)
         } else if traitCollection.verticalSizeClass == .compact {
