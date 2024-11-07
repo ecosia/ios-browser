@@ -34,7 +34,7 @@ final class NTPSeedCounterCell: UICollectionViewCell, Themeable, ReusableCell {
     @State private var showNewSeedCollectedCircleView = false
 
     // Transparent button and TwinkleView
-    private var button: UIButton = UIButton()
+    private var button = UIButton()
     private var twinkleHostingController: UIHostingController<TwinkleView>?
 
     // MARK: - Themeable Properties

@@ -79,7 +79,7 @@ class URLBarView: UIView, URLBarViewProtocol, AlphaDimmable, TopBottomInterchang
     }
     // Ecosia: Update `locationActiveBorderColor`
     // @objc dynamic lazy var locationActiveBorderColor: UIColor = .clear {
-    @objc dynamic lazy var locationActiveBorderColor: UIColor = UIColor.legacyTheme.ecosia.primaryButton {
+    @objc dynamic lazy var locationActiveBorderColor = UIColor.legacyTheme.ecosia.primaryButton {
         didSet {
             if inOverlayMode {
                 locationContainer.layer.borderColor = locationActiveBorderColor.cgColor

@@ -8,9 +8,9 @@ typealias BeforeSerializePingHandler = ([String: Any?]) -> [String: Any?]
 
 class Telemetry {
 
-    static let `default`: Telemetry = Telemetry()
-    static let notificationReportError: Notification.Name = Notification.Name(rawValue: "notificationReportError")
-    let configuration: TelemetryConfiguration = TelemetryConfiguration()
+    static let `default` = Telemetry()
+    static let notificationReportError = Notification.Name(rawValue: "notificationReportError")
+    let configuration = TelemetryConfiguration()
     func beforeSerializePing(pingType: String, handler: @escaping BeforeSerializePingHandler) {}
     func add<T>(pingBuilderType: T.Type) where T: TelemetryPingBuilder {}
 

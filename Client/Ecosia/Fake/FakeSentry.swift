@@ -15,7 +15,7 @@ class Client {
     var beforeSerializeEvent: ((Event) -> Void)?
     func snapshotStacktrace(_ finished: () -> Void) {}
     func appendStacktrace(to: Event) {}
-    var breadcrumbs: Breadcrumb = Breadcrumb(level: .debug, category: "")
+    var breadcrumbs = Breadcrumb(level: .debug, category: "")
 }
 
 public enum SentryLevel: Int {
