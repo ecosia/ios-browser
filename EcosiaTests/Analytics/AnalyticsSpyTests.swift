@@ -4,6 +4,7 @@
 
 import Foundation
 import XCTest
+import Core
 @testable import Client
 
 final class AnalyticsSpy: Analytics {
@@ -79,6 +80,14 @@ final class AnalyticsSpy: Analytics {
     
     override func navigationOpenNews(_ id: String) {
         navigationOpenNewsIdCalled = id
+    }
+    
+    var referralActionCalled: Action.Referral?
+    var referralLabelCalled: Label.Referral?
+
+    override func referral(action: Action.Referral, label: Label.Referral? = nil) {
+        referralActionCalled = action
+        referralLabelCalled = label
     }
 }
 
@@ -488,5 +497,115 @@ final class AnalyticsSpyTests: XCTestCase {
         
         // Verify that navigationOpenNews was called with the correct id
         XCTAssertEqual(analyticsSpy.navigationOpenNewsIdCalled, "example_news_tracking")
+    }
+    
+    // MARK: Multiply Impact - Referrals
+    
+    func testMultiplyImpactViewDidAppearTracksReferralViewInviteScreen() {
+        let referrals = Referrals()
+        let multiplyImpact = MultiplyImpact(referrals: referrals)
+        
+        multiplyImpact.loadViewIfNeeded()
+        multiplyImpact.viewDidAppear(false)
+        
+        XCTAssertEqual(analyticsSpy.referralActionCalled, .view)
+        XCTAssertEqual(analyticsSpy.referralLabelCalled, .inviteScreen)
+    }
+    
+    func testMultiplyImpactLearnMoreButtonTracksReferralClickLearnMore() {
+        let referrals = Referrals()
+        let multiplyImpact = MultiplyImpact(referrals: referrals)
+        
+        multiplyImpact.loadViewIfNeeded()
+        
+        if let learnMoreButton = multiplyImpact.learnMoreButton {
+            learnMoreButton.sendActions(for: .primaryActionTriggered)
+        } else {
+            XCTFail("Learn More button not found")
+        }
+        
+        XCTAssertEqual(analyticsSpy.referralActionCalled, .click)
+        XCTAssertEqual(analyticsSpy.referralLabelCalled, .learnMore)
+    }
+    
+    func testMultiplyImpactCopyCodeTracksReferralClickLinkCopying() {
+        let referrals = Referrals()
+        let multiplyImpact = MultiplyImpact(referrals: referrals)
+        
+        multiplyImpact.loadViewIfNeeded()
+        
+        if let copyControl = multiplyImpact.copyControl {
+            copyControl.sendActions(for: .touchUpInside)
+        } else {
+            XCTFail("Copy Control not found")
+        }
+        
+        XCTAssertEqual(analyticsSpy.referralActionCalled, .click)
+        XCTAssertEqual(analyticsSpy.referralLabelCalled, .linkCopying)
+    }
+    
+    func testMultiplyImpactInviteFriendsTracksReferralClickInvite() {
+        let referrals = Referrals()
+        let multiplyImpact = MultiplyImpact(referrals: referrals)
+        User.shared.referrals.code = "testCode"
+        
+        multiplyImpact.loadViewIfNeeded()
+        
+        if let inviteButton = multiplyImpact.inviteButton {
+            inviteButton.sendActions(for: .touchUpInside)
+        } else {
+            XCTFail("Invite Friends button not found")
+        }
+        
+        XCTAssertEqual(analyticsSpy.referralActionCalled, .click)
+        XCTAssertEqual(analyticsSpy.referralLabelCalled, .invite)
+    }
+    
+    func testMultiplyImpactInviteFriendsCompletionTracksReferralSendInvite() {
+        let referrals = Referrals()
+        let multiplyImpact = MultiplyImpactTestable(referrals: referrals)
+        User.shared.referrals.code = "testCode"
+        
+        multiplyImpact.loadViewIfNeeded()
+        
+        if let inviteButton = multiplyImpact.inviteButton {
+            // Simulate user tapping the "Invite Friends" button
+            inviteButton.sendActions(for: .touchUpInside)
+        } else {
+            XCTFail("Invite Friends button not found")
+        }
+        
+        // Verify initial click analytics
+        XCTAssertEqual(analyticsSpy.referralActionCalled, .click)
+        XCTAssertEqual(analyticsSpy.referralLabelCalled, .invite)
+        
+        // Reset analyticsSpy properties
+        analyticsSpy.referralActionCalled = nil
+        analyticsSpy.referralLabelCalled = nil
+        
+        // Verify that the share sheet is intended to be presented
+        XCTAssertNotNil(multiplyImpact.capturedPresentedViewController, "Expected a view controller to be presented")
+        XCTAssertTrue(multiplyImpact.capturedPresentedViewController is UIActivityViewController, "Expected UIActivityViewController to be presented")
+        
+        // Simulate share completion
+        if let activityVC = multiplyImpact.capturedPresentedViewController as? UIActivityViewController,
+           let completionHandler = activityVC.completionWithItemsHandler {
+            // Simulate user completed the share action
+            completionHandler(nil, true, nil, nil)
+            
+            // Verify that referral(action: .send, label: .invite) was called
+            XCTAssertEqual(analyticsSpy.referralActionCalled, .send)
+            XCTAssertEqual(analyticsSpy.referralLabelCalled, .invite)
+        } else {
+            XCTFail("UIActivityViewController not found or completion handler not set")
+        }
+    }
+}
+
+class MultiplyImpactTestable: MultiplyImpact {
+    var capturedPresentedViewController: UIViewController?
+
+    override func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)? = nil) {
+        capturedPresentedViewController = viewControllerToPresent
     }
 }
