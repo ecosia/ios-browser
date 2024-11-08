@@ -5,6 +5,7 @@
 import Foundation
 import XCTest
 import Core
+import Storage
 @testable import Client
 
 final class AnalyticsSpy: Analytics {
@@ -89,12 +90,22 @@ final class AnalyticsSpy: Analytics {
         referralActionCalled = action
         referralLabelCalled = label
     }
+    
+    var ntpTopSiteActionCalled: Action.TopSite?
+    var ntpTopSitePropertyCalled: Property.TopSite?
+    var ntpTopSitePositionCalled: NSNumber?
+
+    override func ntpTopSite(_ action: Action.TopSite, property: Property.TopSite, position: NSNumber? = nil) {
+        ntpTopSiteActionCalled = action
+        ntpTopSitePropertyCalled = property
+        ntpTopSitePositionCalled = position
+    }
 }
 
 final class AnalyticsSpyTests: XCTestCase {
     var analyticsSpy: AnalyticsSpy!
 
-    var profileMock: Profile { MockProfile() }
+    var profileMock: MockProfile { MockProfile() }
     var tabManagerMock: TabManager {
         let mock = MockTabManager()
         mock.selectedTab = .init(profile: profileMock,
@@ -599,6 +610,82 @@ final class AnalyticsSpyTests: XCTestCase {
         } else {
             XCTFail("UIActivityViewController not found or completion handler not set")
         }
+    }
+    
+    // MARK: Top Sites
+    
+    func testTilePressedTracksAnalyticsForPinnedSite() {
+        let viewModel = TopSitesViewModel(profile: profileMock,
+                                          isZeroSearch: false,
+                                          theme: EcosiaLightTheme(),
+                                          wallpaperManager: WallpaperManager())
+
+        let topSite = TopSite(site: PinnedSite(site: Site(url: "http://www.example.com", title: "Example Site")))
+        let position = 1
+
+        // Act
+        viewModel.tilePressed(site: topSite, position: position)
+
+        // Assert
+        XCTAssertEqual(analyticsSpy.ntpTopSiteActionCalled, .click)
+        XCTAssertEqual(analyticsSpy.ntpTopSitePropertyCalled, .pinned)
+        XCTAssertEqual(analyticsSpy.ntpTopSitePositionCalled, NSNumber(value: position))
+    }
+
+    func testTilePressedTracksAnalyticsForDefaultSite() {
+        // Set up
+        let viewModel = TopSitesViewModel(profile: profileMock,
+                                          isZeroSearch: false,
+                                          theme: EcosiaLightTheme(),
+                                          wallpaperManager: WallpaperManager())
+
+        let topSite = TopSite(site: Site(url: Environment.current.urlProvider.financialReports.absoluteString, title: "Example Site"))
+        let position = 1
+
+        // Act
+        viewModel.tilePressed(site: topSite, position: position)
+
+        // Assert
+        XCTAssertEqual(analyticsSpy.ntpTopSiteActionCalled, .click)
+        XCTAssertEqual(analyticsSpy.ntpTopSitePropertyCalled, .default)
+        XCTAssertEqual(analyticsSpy.ntpTopSitePositionCalled, NSNumber(value: position))
+    }
+
+    func testTilePressedTracksAnalyticsForMostVisitedSite() {
+        // Set up
+        let viewModel = TopSitesViewModel(profile: profileMock,
+                                          isZeroSearch: false,
+                                          theme: EcosiaLightTheme(),
+                                          wallpaperManager: WallpaperManager())
+        
+        let topSite = TopSite(site: Site(url: "http://www.example.org", title: "Example Site"))
+        let position = 1
+
+        // Act
+        viewModel.tilePressed(site: topSite, position: position)
+
+        // Assert
+        XCTAssertEqual(analyticsSpy.ntpTopSiteActionCalled, .click)
+        XCTAssertEqual(analyticsSpy.ntpTopSitePropertyCalled, .mostVisited)
+        XCTAssertEqual(analyticsSpy.ntpTopSitePositionCalled, NSNumber(value: position))
+    }
+
+    func testTrackTopSiteMenuActionTracksAnalytics() {
+        // Set up
+        let viewModel = TopSitesViewModel(profile: profileMock,
+                                          isZeroSearch: false,
+                                          theme: EcosiaLightTheme(),
+                                          wallpaperManager: WallpaperManager())
+        let action: Analytics.Action.TopSite = .remove
+        let site = Site(url: "http://www.example.org", title: "Example Site")
+
+        // Act
+        viewModel.trackTopSiteMenuAction(site: site, action: action)
+
+        // Assert
+        XCTAssertEqual(analyticsSpy.ntpTopSiteActionCalled, action)
+        XCTAssertEqual(analyticsSpy.ntpTopSitePropertyCalled, .mostVisited) // Assuming site is mostVisited
+        XCTAssertNil(analyticsSpy.ntpTopSitePositionCalled)
     }
 }
 
