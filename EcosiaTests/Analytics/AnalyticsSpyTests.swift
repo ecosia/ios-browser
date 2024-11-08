@@ -48,6 +48,24 @@ final class AnalyticsSpy: Analytics {
         menuStatusItemCalled = item
         menuStatusItemChangedTo = to
     }
+    
+    var introDisplayingPageCalled: Property.OnboardingPage?
+    var introDisplayingIndexCalled: Int?
+
+    override func introDisplaying(page: Property.OnboardingPage?, at index: Int) {
+        introDisplayingPageCalled = page
+        introDisplayingIndexCalled = index
+    }
+
+    var introClickLabelCalled: Label.Onboarding?
+    var introClickPageCalled: Property.OnboardingPage?
+    var introClickIndexCalled: Int?
+    
+    override func introClick(_ label: Label.Onboarding, page: Property.OnboardingPage?, index: Int) {
+        introClickLabelCalled = label
+        introClickPageCalled = page
+        introClickIndexCalled = index
+    }
 }
 
 final class AnalyticsSpyTests: XCTestCase {
@@ -255,6 +273,164 @@ final class AnalyticsSpyTests: XCTestCase {
                 }
                 wait(for: [expectation], timeout: 1)
             }
+        }
+    }
+    
+    // MARK: Onboarding / Welcome
+    
+    func testWelcomeViewDidAppearTracksIntroDisplayingAndIntroClickStart() {
+        let welcomeDelegate = MockWelcomeDelegate()
+        let welcome = Welcome(delegate: welcomeDelegate)
+        
+        // Ensure analytics methods have not been called yet
+        XCTAssertNil(analyticsSpy.introDisplayingPageCalled)
+        XCTAssertNil(analyticsSpy.introDisplayingIndexCalled)
+        
+        // Simulate view lifecycle
+        welcome.loadViewIfNeeded()
+        welcome.viewDidAppear(false)
+        
+        // Verify analytics method was called with correct parameters
+        XCTAssertEqual(analyticsSpy.introDisplayingPageCalled, .start)
+        XCTAssertEqual(analyticsSpy.introDisplayingIndexCalled, 0)
+    }
+    
+    func testWelcomeGetStartedTracksIntroClickNext() {
+        let welcomeDelegate = MockWelcomeDelegate()
+        let welcome = Welcome(delegate: welcomeDelegate)
+        
+        // Ensure analytics methods have not been called yet
+        XCTAssertNil(analyticsSpy.introClickLabelCalled)
+        XCTAssertNil(analyticsSpy.introClickPageCalled)
+        XCTAssertNil(analyticsSpy.introClickIndexCalled)
+        
+        // Simulate user tapping "Get Started"
+        welcome.getStarted()
+        
+        // Verify analytics method was called with correct parameters
+        XCTAssertEqual(analyticsSpy.introClickLabelCalled, .next)
+        XCTAssertEqual(analyticsSpy.introClickPageCalled, .start)
+        XCTAssertEqual(analyticsSpy.introClickIndexCalled, 0)
+    }
+    
+    func testWelcomeSkipTracksIntroClickSkip() {
+        let welcomeDelegate = MockWelcomeDelegate()
+        let welcome = Welcome(delegate: welcomeDelegate)
+        
+        // Ensure analytics methods have not been called yet
+        XCTAssertNil(analyticsSpy.introClickLabelCalled)
+        XCTAssertNil(analyticsSpy.introClickPageCalled)
+        XCTAssertNil(analyticsSpy.introClickIndexCalled)
+        
+        // Simulate user tapping "Skip"
+        welcome.skip()
+        
+        // Verify analytics method was called with correct parameters
+        XCTAssertEqual(analyticsSpy.introClickLabelCalled, .skip)
+        XCTAssertEqual(analyticsSpy.introClickPageCalled, .start)
+        XCTAssertEqual(analyticsSpy.introClickIndexCalled, 0)
+    }
+
+    
+    // MARK: Onboarding / Welcome Tour
+
+    func testWelcomeTourViewDidAppearTracksIntroDisplaying() {
+        let welcomeTourDelegate = MockWelcomeTourDelegate()
+        let welcomeTour = WelcomeTour(delegate: welcomeTourDelegate)
+
+        // Ensure analytics methods have not been called yet
+        XCTAssertNil(analyticsSpy.introDisplayingPageCalled)
+        XCTAssertNil(analyticsSpy.introDisplayingIndexCalled)
+
+        // Simulate view lifecycle
+        welcomeTour.loadViewIfNeeded()
+        welcomeTour.viewDidAppear(false)
+
+        // Verify analytics method was called with correct parameters
+        XCTAssertEqual(analyticsSpy.introDisplayingPageCalled, .greenSearch)
+        XCTAssertEqual(analyticsSpy.introDisplayingIndexCalled, 1)
+    }
+
+    func testWelcomeTourNextTracksIntroClickNext() {
+        let welcomeTourDelegate = MockWelcomeTourDelegate()
+        let welcomeTour = WelcomeTour(delegate: welcomeTourDelegate)
+
+        // Ensure analytics methods have not been called yet
+        XCTAssertNil(analyticsSpy.introClickLabelCalled)
+        XCTAssertNil(analyticsSpy.introClickPageCalled)
+        XCTAssertNil(analyticsSpy.introClickIndexCalled)
+
+        // Simulate view lifecycle
+        welcomeTour.loadViewIfNeeded()
+        welcomeTour.viewDidAppear(false)
+
+        // Simulate user navigating to the next screen in WelcomeTour
+        welcomeTour.forward()
+
+        // Verify analytics method was called with correct parameters
+        XCTAssertEqual(analyticsSpy.introClickLabelCalled, .next)
+        XCTAssertEqual(analyticsSpy.introClickPageCalled, .greenSearch)
+        XCTAssertEqual(analyticsSpy.introClickIndexCalled, 1)
+    }
+
+    func testWelcomeTourSkipTracksIntroClickSkip() {
+        let welcomeTourDelegate = MockWelcomeTourDelegate()
+        let welcomeTour = WelcomeTour(delegate: welcomeTourDelegate)
+
+        // Ensure analytics methods have not been called yet
+        XCTAssertNil(analyticsSpy.introClickLabelCalled)
+        XCTAssertNil(analyticsSpy.introClickPageCalled)
+        XCTAssertNil(analyticsSpy.introClickIndexCalled)
+        
+        // Simulate view lifecycle
+        welcomeTour.loadViewIfNeeded()
+        welcomeTour.viewDidAppear(false)
+
+        // Simulate user tapping "Skip" in WelcomeTour
+        welcomeTour.skip()
+
+        // Verify analytics method was called with correct parameters
+        XCTAssertEqual(analyticsSpy.introClickLabelCalled, .skip)
+        XCTAssertEqual(analyticsSpy.introClickPageCalled, .greenSearch)
+        XCTAssertEqual(analyticsSpy.introClickIndexCalled, 1)
+    }
+    
+    func testWelcomeTourTracksAnalyticsForAllPages() {
+        let welcomeTourDelegate = MockWelcomeTourDelegate()
+        let welcomeTour = WelcomeTour(delegate: welcomeTourDelegate)
+
+        // List of pages in the WelcomeTour
+        let pages: [Analytics.Property.OnboardingPage] = [
+            .greenSearch,
+            .profits,
+            .action,
+            .transparentFinances
+        ]
+        
+        // Simulate view lifecycle
+        welcomeTour.loadViewIfNeeded()
+        welcomeTour.viewDidAppear(false)
+
+        for (index, page) in pages.enumerated() {
+
+            // Reset analyticsSpy properties
+            analyticsSpy.introDisplayingPageCalled = nil
+            analyticsSpy.introDisplayingIndexCalled = nil
+            
+            if index < pages.count - 1 {
+                // Simulate user tapping 'Next'
+                welcomeTour.forward()
+
+                // Verify introClick called with 'next'
+                XCTAssertEqual(analyticsSpy.introClickLabelCalled, .next)
+                XCTAssertEqual(analyticsSpy.introClickPageCalled, page)
+                XCTAssertEqual(analyticsSpy.introClickIndexCalled, index + 1)
+            }
+            
+            // Reset analyticsSpy properties
+            analyticsSpy.introClickLabelCalled = nil
+            analyticsSpy.introClickPageCalled = nil
+            analyticsSpy.introClickIndexCalled = nil
         }
     }
 }
