@@ -63,7 +63,7 @@ extension HomepageSectionType {
         case .news: return .ecosiaNews
         }
     }
-    
+
     func sectionInsets(_ traits: UITraitCollection,
                        topSpacing: CGFloat = 0,
                        bottomSpacing: CGFloat = 32) -> NSDirectionalEdgeInsets {

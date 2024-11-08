@@ -646,7 +646,7 @@ class SearchViewController: SiteTableViewController,
                                  for: SearchListSection(rawValue: indexPath.section)!,
                                  indexPath)
     }
-    
+
     // Ecosia: Update cell background
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         cell.backgroundColor = .legacyTheme.ecosia.ntpImpactBackground
@@ -712,7 +712,7 @@ class SearchViewController: SiteTableViewController,
         // Ecosia: It makes sense to call applyTheme here to let it do the first setup and then override the values appropriately
         oneLineCell.applyTheme(theme: themeManager.currentTheme)
         twoLineCell.applyTheme(theme: themeManager.currentTheme)
-        
+
         var cell = UITableViewCell()
         switch section {
         case .searchSuggestions:

@@ -7,13 +7,13 @@ import AdServices
 import Common
 
 extension AppInfo {
-    
+
     public static var ecosiaAppVersion: String {
         return applicationBundle.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
     }
-    
+
     private static let hasAttributedAppleSearchDownloadKey = "hasAttributedAppleSearchDownloadKey"
-    
+
     /// Only available for iOS 14.3 and later (will return nil on earlier versions).
     /// Returns nil after the first time, so that no unwanted new token is generated.
     /// If an error is caught, it will return nil and retry next time it is fetched.
@@ -30,13 +30,13 @@ extension AppInfo {
             return nil
         }
     }
-    
+
     public static var installReceipt: String? {
-        
+
         guard let receiptURL = Bundle.main.appStoreReceiptURL, let receiptData = try? Data(contentsOf: receiptURL) else {
             return nil
         }
-        
+
         return receiptData.base64EncodedString(options: [])
-    }    
+    }
 }

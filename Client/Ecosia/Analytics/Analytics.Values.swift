@@ -1,3 +1,7 @@
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
 import Foundation
 
 extension Analytics {
@@ -17,27 +21,27 @@ extension Analytics {
         pushNotificationConsent = "push_notification_consent",
         settings
     }
-    
+
     enum Label: String {
         case
         analytics,
         market,
         toolbar
-        
+
         enum Bookmarks: String {
             case
             importFunctionality = "import_functionality",
             learnMore = "learn_more",
             `import`
         }
-        
+
         enum DefaultBrowser: String {
             case
             deeplink = "default_browser_deeplink",
             promo = "default_browser_promo",
             settings = "default_browser_settings"
         }
-        
+
         enum Menu: String {
             case
             bookmarks,
@@ -56,7 +60,7 @@ extension Analytics {
             share,
             zoom
         }
-        
+
         enum MenuStatus: String {
             case
             bookmark,
@@ -69,7 +73,7 @@ extension Analytics {
             case
             tabs
         }
-        
+
         enum Navigation: String {
             case
             inapp,
@@ -80,7 +84,7 @@ extension Analytics {
             sendFeedback = "send_feedback",
             terms
         }
-        
+
         enum NTP: String {
             case
             about,
@@ -92,13 +96,13 @@ extension Analytics {
             quickActions = "quick_actions",
             topSites = "top_sites"
         }
-        
+
         enum Onboarding: String {
             case
             next,
             skip
         }
-        
+
         enum Referral: String {
             case
             invite,
@@ -108,7 +112,7 @@ extension Analytics {
             promo
         }
     }
-    
+
     enum Action: String {
         case
         change,
@@ -122,13 +126,13 @@ extension Analytics {
         receive,
         success,
         view
-        
+
         enum Activity: String {
             case
             launch,
             resume
         }
-        
+
         enum APNConsent: String {
             case
             allow,
@@ -137,12 +141,12 @@ extension Analytics {
             skip,
             view
         }
-        
+
         enum Bookmarks: String {
             case
             `import`
         }
-        
+
         enum NTPCustomization: String {
             case
             click,
@@ -156,7 +160,7 @@ extension Analytics {
             close,
             view
         }
-        
+
         enum Referral: String {
             case
             claim,
@@ -165,14 +169,14 @@ extension Analytics {
             send,
             view
         }
-        
+
         enum SeedCounter: String {
             case
             level,
             collect,
             click
         }
-        
+
         enum TopSite: String {
             case
             click,
@@ -183,19 +187,19 @@ extension Analytics {
             unpin
 		}
     }
-    
+
     enum Property: String {
         case
         enable,
         disable,
         home
-        
+
         enum APNConsent: String {
             case
             home,
             onLaunchExperiment = "on_launch_experiment"
         }
-        
+
         enum Bookmarks: String {
             case
             `import`,
@@ -204,7 +208,7 @@ extension Analytics {
             success,
             error
         }
-        
+
         enum Library: String {
             case
             bookmarks,
@@ -212,7 +216,7 @@ extension Analytics {
             history,
             readingList = "reading_list"
         }
-        
+
         enum OnboardingPage: String, CaseIterable {
             case
             start,
@@ -221,14 +225,14 @@ extension Analytics {
             greenSearch = "green_search",
             transparentFinances = "transparent_finances"
         }
-        
+
         enum ShareContent: String {
             case
             ntp,
             web,
             file
         }
-        
+
         enum TopSite: String {
             case
             `default`,

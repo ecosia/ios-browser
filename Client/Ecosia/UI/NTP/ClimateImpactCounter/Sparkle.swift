@@ -1,10 +1,11 @@
+// swiftlint:disable:next disable file_header
 // Source: https://gist.github.com/UnderscoreDavidSmith/60ca0c6727d0c76c9b0012a27dfe1008
 // Modified to get bigger sparkles
 
 import SwiftUI
 
 struct TwinkleView: View {
-    
+
     private func position(in proxy: GeometryProxy, sparkle: Sparkle) -> CGPoint {
         let radius = min(proxy.size.width, proxy.size.height) / 2.0
         let drawnRadius = (radius - 5) * sparkle.position.x
@@ -15,7 +16,7 @@ struct TwinkleView: View {
 
         return CGPoint(x: x, y: y)
     }
-    
+
     private func scaleFor(date: Date, sparkle: Sparkle) -> CGFloat {
         var offset = date.timeIntervalSince(sparkle.startDate)
         offset = max(offset, 0)
@@ -29,15 +30,16 @@ struct TwinkleView: View {
         }
         return value == 0 ? 0.1 : value
     }
-    
+
     var active: Bool // Made active a var so it can change even from UIKit
     @StateObject var magic = SparkleMagic()
-    
+
     var body: some View {
         if active {
             GeometryReader { geo in
                 ZStack {
                     TimelineView(.animation) { context in
+                        // swiftlint:disable:next redundant_discardable_let
                         let _ = magic.update(date: context.date)
                         ForEach(magic.sparkles) { sparkle in
                             SparkleShape()
@@ -85,7 +87,7 @@ class Sparkle: Identifiable {
 class SparkleMagic: ObservableObject {
     static let sparkleDuration: Double = 2.0
     var sparkles: [Sparkle]
-    
+
     init() {
         let anchor = Date()
         var result: [Sparkle] = []
@@ -96,7 +98,7 @@ class SparkleMagic: ObservableObject {
         }
         self.sparkles = result
     }
-    
+
     func update(date: Date) {
         let anchor = Date()
         var result: [Sparkle] = []

@@ -1,6 +1,6 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Core
 import UIKit
@@ -91,9 +91,9 @@ final class NTPNewsCell: UICollectionViewCell, Themeable, ReusableCell {
         return bottomLabel
     }()
     var defaultBackgroundColor: (() -> UIColor) = { .legacyTheme.ecosia.ntpCellBackground }
-    
+
     // MARK: - Themeable Properties
-    
+
     var themeManager: ThemeManager { AppContainer.shared.resolve() }
     var themeObserver: NSObjectProtocol?
     var notificationCenter: NotificationProtocol = NotificationCenter.default
@@ -101,7 +101,7 @@ final class NTPNewsCell: UICollectionViewCell, Themeable, ReusableCell {
     // MARK: - Init
 
     required init?(coder: NSCoder) { nil }
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         let container = UIView()
@@ -131,7 +131,7 @@ final class NTPNewsCell: UICollectionViewCell, Themeable, ReusableCell {
         placeholder.bottomAnchor.constraint(equalTo: image.bottomAnchor).isActive = true
         placeholder.leftAnchor.constraint(equalTo: image.leftAnchor).isActive = true
         placeholder.rightAnchor.constraint(equalTo: image.rightAnchor).isActive = true
-        
+
         image.rightAnchor.constraint(equalTo: background.rightAnchor, constant: -16).isActive = true
 
         let imageHeight = image.widthAnchor.constraint(equalToConstant: 80)
@@ -166,19 +166,19 @@ final class NTPNewsCell: UICollectionViewCell, Themeable, ReusableCell {
         applyTheme()
         listenForThemeChange(contentView)
     }
-    
+
     override var isSelected: Bool {
         didSet {
             hover()
         }
     }
-    
+
     override var isHighlighted: Bool {
         didSet {
             hover()
         }
     }
-    
+
     func configure(_ model: NewsModel, images: Images, row: Int, totalCount: Int) {
         let titleString = model.text.replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression)
         title.text = titleString
@@ -201,7 +201,7 @@ final class NTPNewsCell: UICollectionViewCell, Themeable, ReusableCell {
 
         background.setMaskedCornersUsingPosition(row: row, totalCount: totalCount)
         applyTheme()
-            
+
         isAccessibilityElement = true
         accessibilityIdentifier = "news_item"
         accessibilityLabel = "\(titleString); \(publishDateString)"
@@ -215,7 +215,7 @@ final class NTPNewsCell: UICollectionViewCell, Themeable, ReusableCell {
             self?.image.alpha = 1
         })
     }
-    
+
     private func hover() {
         background.backgroundColor = isSelected || isHighlighted ? .legacyTheme.ecosia.secondarySelectedBackground : defaultBackgroundColor()
     }

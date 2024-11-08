@@ -1,3 +1,7 @@
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
 import SnapshotTesting
 import UIKit
 import Common
@@ -7,14 +11,14 @@ struct ThemeConfiguration {
     enum Theme: String, CaseIterable {
         case light, dark
     }
-    
+
     let theme: Theme
 }
 
 /// A utility class to facilitate snapshot testing across different UI themes and device configurations
 /// for both UIViews and UIViewControllers.
 final class SnapshotTestHelper {
-    
+
     /// Performs a snapshot test on dynamically initialized content within a specified window environment,
     /// applying theme settings and device configurations beforehand.
     ///
@@ -39,7 +43,7 @@ final class SnapshotTestHelper {
             (.light, .light),
             (.dark, .dark)
         ]
-        
+
         guard let testBundle = Bundle(identifier: "com.ecosia.ecosiaapp.EcosiaSnapshotTests"),
               let path = testBundle.path(forResource: "environment", ofType: "json"),
               let data = try? Data(contentsOf: URL(fileURLWithPath: path)),
@@ -49,12 +53,12 @@ final class SnapshotTestHelper {
               let orientation = dict["ORIENTATION"] else {
             fatalError("Script error. Could not retrieve DEVICE_NAME or ORIENTATION")
         }
-                
+
         let deviceType = DeviceType.from(deviceName: deviceName, orientation: orientation)
         let config = deviceType.config
         let themeManager: ThemeManager = AppContainer.shared.resolve()
         let window = UIWindow(frame: CGRect(origin: .zero, size: config.size!))
-        
+
         locales.forEach { locale in
             themes.forEach { theme, suffix in
                 setLocale(locale)
@@ -67,7 +71,7 @@ final class SnapshotTestHelper {
             }
         }
     }
-    
+
     /// Sets the application's locale to the specified locale for testing.
     ///
     /// - Parameter locale: The locale to set for the application.
@@ -78,12 +82,12 @@ final class SnapshotTestHelper {
         UserDefaults.standard.synchronize()
         swizzleMainBundle()  // Swap the main bundle to use your custom bundle
     }
-    
+
     /// Swaps the main bundle to use a custom bundle for localization override during testing.
     private static func swizzleMainBundle() {
         object_setClass(Bundle.main, LocalizationOverrideTestingBundle.self)
     }
-    
+
     /// Updates the window with newly initialized content and makes it visible.
     /// This method initializes content using a provided initializer closure, sets up the content within the specified window,
     /// and makes the window key and visible, ready for interaction or snapshotting.
@@ -96,7 +100,7 @@ final class SnapshotTestHelper {
         setupContent(content, in: window)
         window.makeKeyAndVisible()
     }
-    
+
     /// Changes the current theme to a specified UI style and updates the LegacyThemeManager accordingly.
     /// This method applies a specified theme and updates the global theme settings through a theme manager.
     ///
@@ -108,7 +112,7 @@ final class SnapshotTestHelper {
         LegacyThemeManager.instance.current = suffix == .light ? LegacyNormalTheme() : LegacyDarkTheme()
         themeManager.changeCurrentTheme(suffix == .light ? .light : .dark)
     }
-    
+
     /// Captures snapshots of a `UIViewController` across multiple device configurations.
     ///
     /// - Parameters:
@@ -138,7 +142,7 @@ final class SnapshotTestHelper {
             line: line
         )
     }
-    
+
     /// Captures snapshots of a UIView across multiple device configurations.
     ///
     /// - Parameters:
@@ -168,7 +172,7 @@ final class SnapshotTestHelper {
             line: line
         )
     }
-    
+
     /// Setup function for adding content to a UIWindow, used in snapshot testing.
     ///
     /// - Parameters:
@@ -188,7 +192,7 @@ final class SnapshotTestHelper {
         }
         applyDataReloadAndLayoutIfNeeded(for: window)
     }
-    
+
     /// Recursively searches the view hierarchy starting from the provided view
     /// and applies `reloadData()` and `layoutIfNeeded` on any `UICollectionView` or `UITableView`.
     ///
@@ -201,7 +205,7 @@ final class SnapshotTestHelper {
             tableView.reloadData()
             tableView.layoutIfNeeded()
         }
-        
+
         for subview in view.subviews {
             applyDataReloadAndLayoutIfNeeded(for: subview)
         }

@@ -6,12 +6,12 @@ import Foundation
 import Core
 
 final class AddOneSeedSetting: HiddenSetting {
-    
+
     // This property holds a reference to the type conforming to SeedProgressManagerProtocol
     private let progressManagerType: SeedProgressManagerProtocol.Type
 
     // MARK: - Init
-    init(settings: SettingsTableViewController, 
+    init(settings: SettingsTableViewController,
          progressManagerType: SeedProgressManagerProtocol.Type) {
         self.progressManagerType = progressManagerType
         super.init(settings: settings)
@@ -44,7 +44,7 @@ final class AddOneSeedSetting: HiddenSetting {
 }
 
 final class AddFiveSeedsSetting: HiddenSetting {
-    
+
     // This property holds a reference to the type conforming to SeedProgressManagerProtocol
     private let progressManagerType: SeedProgressManagerProtocol.Type
 
@@ -82,7 +82,7 @@ final class AddFiveSeedsSetting: HiddenSetting {
 }
 
 final class ResetSeedCounterSetting: HiddenSetting {
-    
+
     // This property holds a reference to the type conforming to SeedProgressManagerProtocol
     private let progressManagerType: SeedProgressManagerProtocol.Type
 
@@ -124,7 +124,7 @@ final class UnleashSeedCounterNTPSetting: UnleashVariantResetSetting {
     override var titleName: String? {
         "Seed Counter NTP"
     }
-    
+
     override var variant: Unleash.Variant? {
         Unleash.getVariant(.seedCounterNTP)
     }

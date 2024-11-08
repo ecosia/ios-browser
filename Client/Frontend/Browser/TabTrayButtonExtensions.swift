@@ -7,7 +7,7 @@ import UIKit
 import Shared
 
 class PrivateModeButton: ToggleButton, PrivateModeUI {
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         accessibilityLabel = .TabTrayToggleAccessibilityLabel
@@ -32,7 +32,7 @@ class PrivateModeButton: ToggleButton, PrivateModeUI {
         // tintColor = isPrivate ? theme.colors.iconOnColor : theme.colors.iconPrimary
         tintColor = isPrivate ? .legacyTheme.ecosia.primaryBackground : .legacyTheme.ecosia.primaryText
         imageView?.tintColor = tintColor
-        
+
         // Ecosia: Modify background layer
         backgroundLayer.backgroundColor = isPrivate
             ? UIColor.legacyTheme.ecosia.privateButtonBackground.cgColor

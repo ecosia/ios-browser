@@ -163,7 +163,7 @@ class HomepageViewController:
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         viewModel.recordViewAppeared()
-        
+
         // Ecosia: Refresh referral claims
         Task {
             try? await referrals.refresh()
@@ -186,7 +186,7 @@ class HomepageViewController:
 
         // Ecosia
         viewModel.aboutEcosiaViewModel.deselectExpanded()
-        
+
         jumpBackInContextualHintViewController.stopTimer()
         syncTabContextualHintViewController.stopTimer()
         viewModel.recordViewDisappeared()
@@ -282,8 +282,7 @@ class HomepageViewController:
     func createLayout() -> UICollectionViewLayout {
         // Ecosia: Update Layout type
         // let layout = UICollectionViewCompositionalLayout { [weak self]
-        let layout = NTPLayout { [weak self]
-            (sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
+        let layout = NTPLayout { [weak self] (sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
             guard let self = self,
                   let viewModel = self.viewModel.getSectionViewModel(shownSection: sectionIndex),
                   viewModel.shouldShow
@@ -541,7 +540,7 @@ extension HomepageViewController: UICollectionViewDelegate, UICollectionViewData
             tooltip.delegate = self
             return tooltip
         }
-        
+
         // Ecosia: footer for impact
         if sectionViewModel.sectionType == .impact, kind == UICollectionView.elementKindSectionFooter {
             return collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: NTPImpactDividerFooter.cellIdentifier, for: indexPath)
@@ -557,7 +556,6 @@ extension HomepageViewController: UICollectionViewDelegate, UICollectionViewData
         let headerViewModel = sectionViewModel.shouldShow ? sectionViewModel.headerViewModel : LabelButtonHeaderViewModel.emptyHeader
         headerView.configure(viewModel: headerViewModel, theme: themeManager.currentTheme)
         return headerView
-
     }
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {

@@ -27,7 +27,7 @@ class SiteTableViewController: UIViewController,
     // Ecosia: Branding
     let style: UITableView.Style
 
-    var data: Cursor<Site> = Cursor<Site>(status: .success, msg: "No data set")
+    var data = Cursor<Site>(status: .success, msg: "No data set")
     // Ecosia: Update TableView init to make it grouped
     // lazy var tableView: UITableView = .build { [weak self] table in
     lazy var tableView: UITableView = {

@@ -1,13 +1,13 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import UIKit
 import SwiftUI
 import Core
 import Common
 
-protocol NTPSeedCounterDelegate: NSObject {
+protocol NTPSeedCounterDelegate: NSObjectProtocol {
     func didTapSeedCounter()
 }
 
@@ -22,7 +22,7 @@ final class NTPSeedCounterCell: UICollectionViewCell, Themeable, ReusableCell {
         static let newSeedCircleSize: CGFloat = 20
         static let newSeedCircleAnimationDuration = 2.5
     }
-    
+
     // MARK: - Properties
     private var hostingController: UIHostingController<SeedCounterView>?
     private var containerStackView = UIStackView()
@@ -34,9 +34,9 @@ final class NTPSeedCounterCell: UICollectionViewCell, Themeable, ReusableCell {
     @State private var showNewSeedCollectedCircleView = false
 
     // Transparent button and TwinkleView
-    private var button: UIButton = UIButton()
+    private var button = UIButton()
     private var twinkleHostingController: UIHostingController<TwinkleView>?
-    
+
     // MARK: - Themeable Properties
     var themeManager: ThemeManager { AppContainer.shared.resolve() }
     var themeObserver: NSObjectProtocol?
@@ -88,15 +88,15 @@ final class NTPSeedCounterCell: UICollectionViewCell, Themeable, ReusableCell {
     private func setupTwinkleViewHostingController() {
         let twinkleView = TwinkleView(active: isTwinkleActive)
         twinkleHostingController = UIHostingController(rootView: twinkleView)
-        
+
         guard let twinkleHostingController else { return }
-        
+
         twinkleHostingController.view.backgroundColor = .clear
         twinkleHostingController.view.translatesAutoresizingMaskIntoConstraints = false
         twinkleHostingController.view.isUserInteractionEnabled = false
         twinkleHostingController.view.clipsToBounds = true
         contentView.addSubview(twinkleHostingController.view)
-        
+
         NSLayoutConstraint.activate([
             twinkleHostingController.view.leadingAnchor.constraint(equalTo: containerStackView.leadingAnchor, constant: -UX.twinkleSizeOffset),
             twinkleHostingController.view.trailingAnchor.constraint(equalTo: containerStackView.trailingAnchor, constant: UX.twinkleSizeOffset),
@@ -108,9 +108,9 @@ final class NTPSeedCounterCell: UICollectionViewCell, Themeable, ReusableCell {
     private func setupSeedCounterViewHostingController() {
         let swiftUIView = SeedCounterView(progressManagerType: SeedCounterNTPExperiment.progressManagerType.self)
         hostingController = UIHostingController(rootView: swiftUIView)
-        
+
         guard let hostingController else { return }
-        
+
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         hostingController.view.backgroundColor = .clear
         containerStackView.addArrangedSubview(hostingController.view)
@@ -154,9 +154,9 @@ final class NTPSeedCounterCell: UICollectionViewCell, Themeable, ReusableCell {
             newSeedHostingController.view.removeFromSuperview()
         }
     }
-    
+
     // MARK: - Seed Collection Circle helpers
-    
+
     func showSeedCollectionCircleViewAndAnimateIfNeeded() {
         executeOnMainThreadWithDelayForNonReleaseBuild { [weak self] in
             self?.addNewSeedCollectedCircleView()
@@ -189,7 +189,7 @@ final class NTPSeedCounterCell: UICollectionViewCell, Themeable, ReusableCell {
         NotificationCenter.default.addObserver(forName: UserDefaultsSeedProgressManager.progressUpdatedNotification, object: nil, queue: .main) { [weak self] _ in
             self?.showSeedCollectionCircleViewAndAnimateIfNeeded()
         }
-        
+
         NotificationCenter.default.addObserver(forName: UserDefaultsSeedProgressManager.levelUpNotification, object: nil, queue: .main) { [weak self] _ in
             self?.triggerTwinkleEffect()
         }

@@ -35,7 +35,7 @@ class EmptyPrivateTabsView: UIView {
     }
 
     private lazy var containerView: UIView = .build { _ in }
-    
+
     // Ecosia: Add StackView to center items without corrupting the containerView as affect the ScrollView and its parent view
     private lazy var containerStackView: UIStackView = .build { stackView in
         stackView.spacing = UX.paddingInBetweenItems
@@ -121,7 +121,7 @@ class EmptyPrivateTabsView: UIView {
             scrollView.contentLayoutGuide.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
             scrollView.contentLayoutGuide.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
             scrollView.contentLayoutGuide.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-            
+
             // Ecosia: Update costraints
             containerStackView.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
             containerStackView.centerYAnchor.constraint(equalTo: scrollView.centerYAnchor,

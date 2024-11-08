@@ -110,7 +110,7 @@ class LibraryPanelHelper {
                 accessibilityLabel: .LibraryPanelReadingListAccessibilityLabel,
                 accessibilityIdentifier: AccessibilityIdentifiers.LibraryPanels.readingListView,
                 panelType: .readingList),
-            
+
             LibraryPanelDescriptor(
                 accessibilityLabel: .LibraryPanelDownloadsAccessibilityLabel,
                 accessibilityIdentifier: AccessibilityIdentifiers.LibraryPanels.downloadsView,

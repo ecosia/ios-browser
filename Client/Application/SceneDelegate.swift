@@ -155,7 +155,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             handle(route: route)
         }
     }
-    
+
     private func handle(route: Route) {
         sessionManager.launchSessionProvider.openedFromExternalSource = true
         sceneCoordinator?.findAndHandle(route: route)

@@ -1,6 +1,6 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import UIKit
 import Core
@@ -39,7 +39,7 @@ extension BrowserViewController: PageActionsShortcutsDelegate {
         dismiss(animated: true)
         Analytics.shared.menuClick(.newTab)
     }
-    
+
     func pageOptionsSettings() {
         homePanelDidRequestToOpenSettings(at: .general)
         dismiss(animated: true)
@@ -56,7 +56,7 @@ extension BrowserViewController: PageActionsShortcutsDelegate {
 }
 
 extension BrowserViewController {
-    
+
     func updateURLBarFollowingPrivateModeUI() {
         let isPrivate = tabManager.selectedTab?.isPrivate ?? false
         urlBar.applyUIMode(isPrivate: isPrivate, theme: themeManager.currentTheme)
@@ -64,7 +64,7 @@ extension BrowserViewController {
 }
 
 extension BrowserViewController {
-    
+
     func presentIntroViewController(_ alwaysShow: Bool = false) {
         if showLoadingScreen(for: .shared) {
             presentLoadingScreen()
@@ -72,22 +72,22 @@ extension BrowserViewController {
             handleFirstTimeUserActions()
         }
     }
-    
+
     private func presentLoadingScreen() {
         present(LoadingScreen(profile: profile, referrals: referrals, referralCode: User.shared.referrals.pendingClaim), animated: true)
     }
-    
+
     private func handleFirstTimeUserActions() {
         User.shared.firstTime = false
         User.shared.migrated = true
         User.shared.hideBookmarksImportExportTooltip()
         toolbarContextHintVC.deactivateHintForNewUsers()
     }
-    
+
     private func showLoadingScreen(for user: User) -> Bool {
         user.referrals.pendingClaim != nil
     }
-    
+
     private func isHomePage() -> Bool {
         tabManager.selectedTab?.url.flatMap { InternalURL($0)?.isAboutHomeURL } ?? false
     }

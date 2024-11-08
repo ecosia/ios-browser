@@ -9,7 +9,7 @@ import Common
 final class NTPCustomizationSettingsViewController: SettingsTableViewController {
     init() {
         super.init(style: .insetGrouped)
-        
+
         title = .localized(.homepage)
         navigationItem.rightBarButtonItem = .init(title: .localized(.done),
                                                   style: .done) { [weak self] _ in
@@ -17,11 +17,11 @@ final class NTPCustomizationSettingsViewController: SettingsTableViewController 
             self?.settingsDelegate?.didFinish()
         }
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
-    
+
     override func generateSettings() -> [SettingSection] {
         let customizableSectionConfigs = HomepageSectionType.allCases.compactMap({ $0.customizableConfig })
         let settings: [Setting] = customizableSectionConfigs.map { config in
@@ -34,12 +34,12 @@ final class NTPCustomizationSettingsViewController: SettingsTableViewController 
         }
         return [SettingSection(title: .init(string: .localized(.showOnHomepage)), children: settings)]
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationController?.navigationBar.prefersLargeTitles = false
     }
-    
+
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         settingsDelegate?.reloadHomepage()
@@ -48,10 +48,10 @@ final class NTPCustomizationSettingsViewController: SettingsTableViewController 
 
 final class NTPCustomizationSetting: BoolSetting {
     private var config: CustomizableNTPSettingConfig = .topSites
-    
+
     convenience init(prefs: Prefs, theme: Theme, config: CustomizableNTPSettingConfig) {
         self.init(prefs: prefs,
-                  theme: theme, 
+                  theme: theme,
                   accessibilityIdentifier: config.accessibilityIdentifierPrefix,
                   defaultValue: true,
                   titleText: .localized(config.localizedTitleKey))

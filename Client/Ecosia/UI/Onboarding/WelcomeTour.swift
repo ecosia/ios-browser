@@ -1,6 +1,6 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import UIKit
 import Core
@@ -10,7 +10,7 @@ protocol WelcomeTourDelegate: AnyObject {
     func welcomeTourDidFinish(_ tour: WelcomeTour)
 }
 
-final class WelcomeTour: UIViewController,  Themeable {
+final class WelcomeTour: UIViewController, Themeable {
 
     private weak var navStack: UIStackView!
     private weak var labelStack: UIStackView!
@@ -35,9 +35,9 @@ final class WelcomeTour: UIViewController,  Themeable {
     private var steps: [Step]!
     private var current: Step?
     private weak var delegate: WelcomeTourDelegate?
-    
+
     // MARK: - Themeable Properties
-    
+
     var themeManager: ThemeManager { AppContainer.shared.resolve() }
     var themeObserver: NSObjectProtocol?
     var notificationCenter: NotificationProtocol = NotificationCenter.default
@@ -59,7 +59,7 @@ final class WelcomeTour: UIViewController,  Themeable {
         addStaticViews()
         addDynamicViews()
         applyTheme()
-        
+
         listenForThemeChange(self.view)
     }
 
@@ -97,7 +97,7 @@ final class WelcomeTour: UIViewController,  Themeable {
         let centerControl = pageControl.centerXAnchor.constraint(equalTo: navStack.centerXAnchor)
         centerControl.priority = .defaultHigh
         centerControl.isActive = true
-        
+
         let skipButton = UIButton(type: .system)
         skipButton.widthAnchor.constraint(greaterThanOrEqualToConstant: 74).isActive = true
         skipButton.addTarget(self, action: #selector(skip), for: .primaryActionTriggered)
@@ -186,7 +186,7 @@ final class WelcomeTour: UIViewController,  Themeable {
         ctaButton.leadingAnchor.constraint(equalTo: labelStack.leadingAnchor).isActive = true
         ctaButton.trailingAnchor.constraint(equalTo: labelStack.trailingAnchor).isActive = true
         ctaButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16).isActive = true
-        
+
         let firstTourImageName = WelcomeTour.Step.all.first?.background.image ?? "tour1"
         let imageView = UIImageView(image: .init(named: firstTourImageName))
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -265,11 +265,11 @@ final class WelcomeTour: UIViewController,  Themeable {
                 self.view.layoutIfNeeded()
             }
         }
-        
+
         Analytics.shared.introDisplaying(page: current?.analyticsValue, at: currentAnalyticsIndex)
         updateAccessibilityLabels(step: step)
     }
-    
+
     private func updateAccessibilityLabels(step: Step) {
         titleLabel.accessibilityLabel = step.title
         subtitleLabel.accessibilityLabel = step.text
@@ -323,7 +323,7 @@ final class WelcomeTour: UIViewController,  Themeable {
         display(step: steps[displayingStep])
         UIAccessibility.post(notification: .screenChanged, argument: titleLabel)
     }
-    
+
     private func complete() {
         MMP.sendEvent(.onboardingComplete)
         delegate?.welcomeTourDidFinish(self)
@@ -340,7 +340,7 @@ final class WelcomeTour: UIViewController,  Themeable {
         let index = steps.firstIndex(of: current) ?? 0
         return index
     }
-    
+
     private var currentAnalyticsIndex: Int {
         // Needed since the start screen is considered 0
         return currentIndex + 1

@@ -82,7 +82,7 @@ class ToggleButton: UIButton {
         }
     }
      */
-    
+
     fileprivate func updateMaskPathForSelectedState(_ selected: Bool) {
         let path = CGMutablePath()
         if selected {

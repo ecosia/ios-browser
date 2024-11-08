@@ -6,9 +6,9 @@ import SwiftUI
 import Common
 
 struct SeedProgressView: View {
-    
+
     // MARK: - UX Constants
-    
+
     private enum UX {
         static let seedLineWidth: CGFloat = 3
         static let seedIconWidthHeight: CGFloat = 24
@@ -16,20 +16,20 @@ struct SeedProgressView: View {
     }
 
     // MARK: - Properties
-    
+
     var progressValue: CGFloat
     @ObservedObject var theme: ArcTheme
-    
+
     // MARK: - View
-    
+
     var body: some View {
         ZStack(alignment: .top) {
             ArcProgressView(progress: progressValue,
-                             lineWidth: UX.seedLineWidth,
-                             theme: theme
+                            lineWidth: UX.seedLineWidth,
+                            theme: theme
             )
             .offset(y: -UX.seedLineWidth * 2)
-            
+
             Image("seedIcon")
                 .resizable()
                 .frame(width: UX.seedIconWidthHeight, height: UX.seedIconWidthHeight)

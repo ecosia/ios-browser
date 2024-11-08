@@ -72,7 +72,7 @@ protocol BrowserNavigationHandler: AnyObject, QRCodeNavigationHandler {
     func showRequiredPassCode()
 
     /// Shows the Tab Tray View Controller.
-    func showTabTray(selectedPanel: TabTrayPanelType)    
+    func showTabTray(selectedPanel: TabTrayPanelType)
 }
 
 extension BrowserNavigationHandler {

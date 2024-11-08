@@ -8,14 +8,14 @@ import Common
 @testable import Client
 
 class SnapshotBaseTests: XCTestCase {
-    
+
     var profile: MockProfile!
     var themeManager: ThemeManager!
     private let allThemes: [ThemeConfiguration] = [
         ThemeConfiguration(theme: .light),
         ThemeConfiguration(theme: .dark)
     ]
-    
+
     override func setUp() {
         super.setUp()
         DependencyHelperMock().bootstrapDependencies(themeManager: EcosiaMockThemeManager())
@@ -23,10 +23,10 @@ class SnapshotBaseTests: XCTestCase {
         LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: profile)
         themeManager = AppContainer.shared.resolve()
     }
-    
+
     override func tearDown() {
         super.tearDown()
         AppContainer.shared.reset()
         profile = nil
-    }    
+    }
 }

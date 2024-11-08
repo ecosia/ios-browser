@@ -1,6 +1,6 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Shared
 import UIKit
@@ -18,7 +18,7 @@ class NTPLibraryCell: UICollectionViewCell, Themeable, ReusableCell {
         case history
         case readingList
         case downloads
-        
+
         var title: String {
             switch self {
             case .bookmarks: return .AppMenu.AppMenuBookmarksTitleString
@@ -27,7 +27,7 @@ class NTPLibraryCell: UICollectionViewCell, Themeable, ReusableCell {
             case .downloads: return .AppMenu.AppMenuDownloadsTitleString
             }
         }
-        
+
         var image: UIImage? {
             switch self {
             case .bookmarks: return .init(named: "libraryFavorites")
@@ -36,7 +36,7 @@ class NTPLibraryCell: UICollectionViewCell, Themeable, ReusableCell {
             case .downloads: return .init(named: "libraryDownloads")
             }
         }
-        
+
         var analyticsProperty: Analytics.Property.Library {
             switch self {
             case .bookmarks: return .bookmarks
@@ -48,9 +48,9 @@ class NTPLibraryCell: UICollectionViewCell, Themeable, ReusableCell {
     }
 
     var shortcuts: [NTPLibraryShortcutView] = []
-    
+
     // MARK: - Themeable Properties
-    
+
     var themeManager: ThemeManager { AppContainer.shared.resolve() }
     var themeObserver: NSObjectProtocol?
     var notificationCenter: NotificationProtocol = NotificationCenter.default

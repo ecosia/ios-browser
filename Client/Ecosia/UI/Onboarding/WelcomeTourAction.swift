@@ -1,19 +1,19 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import UIKit
 import Core
 import Common
 
 final class WelcomeTourAction: UIView, Themeable {
-    
+
     // MARK: - Properties
 
     private weak var stack: UIStackView!
-    
+
     // MARK: - Themeable Properties
-    
+
     var themeManager: ThemeManager { AppContainer.shared.resolve() }
     var themeObserver: NSObjectProtocol?
     var notificationCenter: NotificationProtocol = NotificationCenter.default
@@ -54,7 +54,7 @@ final class WelcomeTourAction: UIView, Themeable {
         let countries = "30"
         let activeProjects = "60"
 
-        let top = WelcomeTourRow(image: "trees", 
+        let top = WelcomeTourRow(image: "trees",
                                  title: .init(format: .localized(.numberAsStringWithPlusSymbol), treesPlantedByTheCommunity),
                                  text: .localized(.treesPlantedByEcosiaCapitalized))
         stack.addArrangedSubview(top)
@@ -64,7 +64,7 @@ final class WelcomeTourAction: UIView, Themeable {
                                     text: .localized(.activeProjects))
         stack.addArrangedSubview(middle)
 
-        let bottom = WelcomeTourRow(image: "pins", 
+        let bottom = WelcomeTourRow(image: "pins",
                                     title: .init(format: .localized(.numberAsStringWithPlusSymbol), countries),
                                     text: .localized(.countries))
         stack.addArrangedSubview(bottom)
@@ -75,7 +75,7 @@ final class WelcomeTourAction: UIView, Themeable {
             (view as? Themeable)?.applyTheme()
         }
     }
-    
+
     func updateAccessibilitySettings() {
         isAccessibilityElement = false
         shouldGroupAccessibilityChildren = true

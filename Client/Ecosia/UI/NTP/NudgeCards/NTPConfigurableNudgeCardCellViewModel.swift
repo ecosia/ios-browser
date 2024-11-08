@@ -13,7 +13,7 @@ protocol NTPConfigurableNudgeCardCellDelegate: AnyObject {
 
 /// ViewModel for configuring a Nudge Card Cell.
 class NTPConfigurableNudgeCardCellViewModel: HomepageViewModelProtocol {
-    
+
     var title: String
     var description: String
     var buttonText: String
@@ -23,7 +23,7 @@ class NTPConfigurableNudgeCardCellViewModel: HomepageViewModelProtocol {
     var identifier: String?
     var theme: Theme
     weak var delegate: NTPConfigurableNudgeCardCellDelegate?
-    
+
     /// Initializes the ViewModel with the required properties to configure a card.
     /// - Parameters:
     ///   - title: Title text for the card.
@@ -42,7 +42,7 @@ class NTPConfigurableNudgeCardCellViewModel: HomepageViewModelProtocol {
          cardType: HomepageSectionType,
          identifier: String? = nil,
          theme: Theme) {
-        
+
         self.title = title
         self.description = description
         self.buttonText = buttonText
@@ -52,7 +52,7 @@ class NTPConfigurableNudgeCardCellViewModel: HomepageViewModelProtocol {
         self.theme = theme
         self.identifier = identifier ?? sectionType.cellIdentifier
     }
-    
+
     func setTheme(theme: Theme) {
         self.theme = theme
     }
@@ -88,7 +88,7 @@ class NTPConfigurableNudgeCardCellViewModel: HomepageViewModelProtocol {
     var isEnabled: Bool {
         fatalError("Needs to be implemented")
     }
-    
+
     func screenWasShown() {
         fatalError("Needs to be implemented. Implement empty if not needed")
     }
@@ -101,4 +101,3 @@ extension NTPConfigurableNudgeCardCellViewModel: HomepageSectionHandler {
         return cell
     }
 }
-

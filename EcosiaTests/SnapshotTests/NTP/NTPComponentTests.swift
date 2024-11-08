@@ -11,29 +11,29 @@ import MozillaAppServices
 @testable import Client
 
 final class NTPComponentTests: SnapshotBaseTests {
-    
+
     private let commonWidth = 375
-    
+
     func testNTPLogoCell() {
         SnapshotTestHelper.assertSnapshot(initializingWith: {
             NTPLogoCell(frame: CGRect(x: 0, y: 0, width: self.commonWidth, height: 100))
         })
     }
-    
+
     func testNTPLibraryCell() {
         SnapshotTestHelper.assertSnapshot(initializingWith: {
             NTPLibraryCell(frame: CGRect(x: 0, y: 0, width: self.commonWidth, height: 100))
         })
     }
-    
+
     func testNTPReferralMultipleInvitesCell() {
         impactInfoReferralCellWithInvites(2)
     }
-    
+
     func testNTPReferralSingleInviteCell() {
         impactInfoReferralCellWithInvites(1)
     }
-    
+
     func testNTPTotalTreesCell() {
         SnapshotTestHelper.assertSnapshot(initializingWith: {
             let cell = NTPImpactCell(frame: CGRect(x: 0, y: 0, width: self.commonWidth, height: 100))
@@ -43,7 +43,7 @@ final class NTPComponentTests: SnapshotBaseTests {
             return cell
         })
     }
-    
+
     func testNTPTotalInvestedCell() {
         /*
          Precision to .97 to accommodate differences in Locale formatter
@@ -73,19 +73,19 @@ final class NTPComponentTests: SnapshotBaseTests {
             XCTFail("Failed to create mock NewsModel: \(error)")
         }
     }
-            
+
     func testNTPAboutFinancialReportsEcosiaCell() {
         aboutCellForSection(.financialReports)
     }
-    
+
     func testNTPAboutPrivacyEcosiaCell() {
         aboutCellForSection(.privacy)
     }
-    
+
     func testNTPAboutTreesEcosiaCell() {
         aboutCellForSection(.trees)
     }
-    
+
     func testNTPCustomizationCell() {
         SnapshotTestHelper.assertSnapshot(initializingWith: {
             NTPCustomizationCell(frame: CGRect(x: 0, y: 0, width: self.commonWidth, height: 100))
@@ -94,7 +94,7 @@ final class NTPComponentTests: SnapshotBaseTests {
 }
 
 extension NTPComponentTests {
-    
+
     private func aboutCellForSection(_ aboutEcosiaSection: AboutEcosiaSection) {
         let sectionTitle = aboutEcosiaSection.image.lowercased().camelCaseToSnakeCase()
         SnapshotTestHelper.assertSnapshot(initializingWith: {
@@ -104,7 +104,7 @@ extension NTPComponentTests {
             return cell
         }, testName: "testNTPAboutSection_\(sectionTitle)")
     }
-    
+
     private func impactInfoReferralCellWithInvites(_ invites: Int) {
         let invitesTestNameString = invites > 1 ? "multiple_invites" : "single_invite"
         SnapshotTestHelper.assertSnapshot(initializingWith: {
@@ -114,7 +114,7 @@ extension NTPComponentTests {
             return cell
         }, testName: "testNTPReferralInvitesCell_\(invitesTestNameString)")
     }
-    
+
     private func createMockNewsModel() throws -> NewsModel? {
         let currentTimestamp = Date().timeIntervalSince1970
         let jsonString = """
@@ -130,7 +130,7 @@ extension NTPComponentTests {
         """
         let jsonData = Data(jsonString.utf8)
         let decoder = JSONDecoder()
-        
+
         // Custom date decoding strategy if needed
         decoder.dateDecodingStrategy = .secondsSince1970
         return try decoder.decode(NewsModel.self, from: jsonData)

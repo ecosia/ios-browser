@@ -31,7 +31,11 @@ final class ToggleImpactIntro: HiddenSetting {
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
-        User.shared.shouldShowImpactIntro ? User.shared.hideImpactIntro() : User.shared.showImpactIntro()
+        if User.shared.shouldShowImpactIntro {
+            User.shared.hideImpactIntro()
+        } else {
+            User.shared.showImpactIntro()
+        }
         settings.tableView.reloadData()
     }
 }
@@ -53,7 +57,6 @@ final class ShowTour: HiddenSetting, WelcomeDelegate {
     }
 }
 
-
 final class CreateReferralCode: HiddenSetting {
     override var title: NSAttributedString? {
         return NSAttributedString(string: "Debug: Referral Code \(User.shared.referrals.code ?? "-")", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
@@ -62,7 +65,6 @@ final class CreateReferralCode: HiddenSetting {
     override var status: NSAttributedString? {
         return .init(string: "Toggle to create or erase code")
     }
-
 
     override func onClick(_ navigationController: UINavigationController?) {
 
@@ -164,7 +166,7 @@ class UnleashVariantResetSetting: HiddenSetting {
     var titleName: String? { return nil }
     var variant: Unleash.Variant? { return nil }
     var unleashEnabled: Bool? { return nil }
-    
+
     override var title: NSAttributedString? {
         return NSAttributedString(string: "Debug: Unleash \(titleName ?? "Unknown") variant", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
     }
@@ -176,7 +178,7 @@ class UnleashVariantResetSetting: HiddenSetting {
         }
         return NSAttributedString(string: "\(statusName) (Click to reset)", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
     }
-    
+
     override func onClick(_ navigationController: UINavigationController?) {
         Task {
             do {
@@ -187,8 +189,8 @@ class UnleashVariantResetSetting: HiddenSetting {
             await MainActor.run {
                 self.settings.tableView.reloadData()
                 let alert = AlertController(title: "Unleash reset ✅",
-                                                            message: "The local Unleash cache has been wiped out",
-                                                            preferredStyle: .alert)
+                                            message: "The local Unleash cache has been wiped out",
+                                            preferredStyle: .alert)
                 alert.addAction(.init(title: "Ok", style: .default))
                 navigationController?.topViewController?.present(alert, animated: true)
             }
@@ -200,7 +202,7 @@ final class UnleashBrazeIntegrationSetting: UnleashVariantResetSetting {
     override var titleName: String? {
         "Braze Integration"
     }
-    
+
     override var unleashEnabled: Bool? {
         Unleash.isEnabled(.brazeIntegration)
     }
@@ -210,7 +212,7 @@ final class UnleashAPNConsentOnLaunchSetting: UnleashVariantResetSetting {
     override var titleName: String? {
         "APN Consent On Launch"
     }
-    
+
     override var variant: Unleash.Variant? {
         Unleash.getVariant(.apnConsentOnLaunch)
     }
@@ -220,7 +222,7 @@ final class AnalyticsIdentifierSetting: HiddenSetting {
     override var title: NSAttributedString? {
         return NSAttributedString(string: "Debug: Analytics Identifier", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
     }
-    
+
     var analyticsIdentifier: String { User.shared.analyticsId.uuidString }
 
     override var status: NSAttributedString? {

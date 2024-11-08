@@ -41,7 +41,7 @@ final class EcosiaPerformanceTestHistory: ProfileTest {
             self.addSite(places, url: "https://example\(index).com/", title: "Title \(index)")
         }
     }
-    
+
     private func clear(_ places: RustPlaces) {
         XCTAssertTrue(places.deleteEverythingHistory().value.isSuccess, "History cleared.")
     }
@@ -50,7 +50,7 @@ final class EcosiaPerformanceTestHistory: ProfileTest {
     fileprivate func testGetSitesWithBoundPerformance(limit: Int, entries: Int) {
         withTestProfile { profile in
             let places = profile.places
-            
+
             // Add the specified number of sites
             self.addSites(places, count: entries)
 
@@ -58,19 +58,19 @@ final class EcosiaPerformanceTestHistory: ProfileTest {
                 let expectation = self.expectation(description: "getSitesWithBound completes")
 
                 let startTime = Date()
-                
+
                 let deferred = places.getSitesWithBound(limit: limit, offset: 0, excludedTypes: VisitTransitionSet(0))
                 deferred.upon { cursorResult in
                     let endTime = Date()
                     let duration = endTime.timeIntervalSince(startTime) * 1000 // Convert to milliseconds
-                    
+
                     switch cursorResult {
                     case .success(let cursor):
                         XCTAssertGreaterThan(cursor.count, 0, "No sites were retrieved")
                     case .failure(let error):
                         XCTFail("Failed to retrieve sites: \(error)")
                     }
-                    
+
                     expectation.fulfill()
                 }
 
