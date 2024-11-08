@@ -13,4 +13,6 @@ jobs:
 
     - name: SwiftLint
       run: |
+        swiftlint --version
+        swiftlint --reporter github-actions-logging
         swiftlint --reporter github-actions-logging --strict
