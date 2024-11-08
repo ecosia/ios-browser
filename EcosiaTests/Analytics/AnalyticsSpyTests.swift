@@ -66,6 +66,20 @@ final class AnalyticsSpy: Analytics {
         introClickPageCalled = page
         introClickIndexCalled = index
     }
+    
+    var navigationActionCalled: Action?
+    var navigationLabelCalled: Label.Navigation?
+    
+    override func navigation(_ action: Action, label: Label.Navigation) {
+        navigationActionCalled = action
+        navigationLabelCalled = label
+    }
+
+    var navigationOpenNewsIdCalled: String?
+    
+    override func navigationOpenNews(_ id: String) {
+        navigationOpenNewsIdCalled = id
+    }
 }
 
 final class AnalyticsSpyTests: XCTestCase {
@@ -432,5 +446,47 @@ final class AnalyticsSpyTests: XCTestCase {
             analyticsSpy.introClickPageCalled = nil
             analyticsSpy.introClickIndexCalled = nil
         }
+    }
+    
+    // MARK: News Detail
+    
+    func testNewsControllerViewDidAppearTracksNavigationViewNews() {
+        // Create sample NewsModel
+        let item = try! createMockNewsModel()!
+        let items = [item]
+        let newsController = NewsController(items: items)
+        
+        // Ensure analytics methods have not been called yet
+        XCTAssertNil(analyticsSpy.navigationActionCalled)
+        XCTAssertNil(analyticsSpy.navigationLabelCalled)
+        
+        // Simulate view lifecycle
+        newsController.loadViewIfNeeded()
+        newsController.viewDidAppear(false)
+        
+        // Verify that navigation(.view, label: .news) was called
+        XCTAssertEqual(analyticsSpy.navigationActionCalled, .view)
+        XCTAssertEqual(analyticsSpy.navigationLabelCalled, .news)
+    }
+    
+    func testNewsControllerDidSelectItemTracksNavigationOpenNews() {
+        // Create sample NewsModel
+        let item = try! createMockNewsModel()!
+        let items = [item]
+        let newsController = NewsController(items: items)
+        
+        // Ensure analytics methods have not been called yet
+        XCTAssertNil(analyticsSpy.navigationOpenNewsIdCalled)
+        
+        // Simulate view loading
+        newsController.loadView()
+        newsController.collection.reloadData()
+        
+        // Simulate item selection
+        let indexPath = IndexPath(row: 0, section: 0)
+        newsController.collectionView(newsController.collection, didSelectItemAt: indexPath)
+        
+        // Verify that navigationOpenNews was called with the correct id
+        XCTAssertEqual(analyticsSpy.navigationOpenNewsIdCalled, "example_news_tracking")
     }
 }

@@ -370,6 +370,7 @@
 		2C872A632B8CD7E000B318A0 /* WhatsNewLocalDataProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE2946B2B7FC5A5006C22B2 /* WhatsNewLocalDataProviderTests.swift */; };
 		2C872A642B8CD7E000B318A0 /* EcosiaHomeViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C872A562B8CD65100B318A0 /* EcosiaHomeViewModelTests.swift */; };
 		2C9A62C02CDE1F7600CDA7D1 /* MockWelcomeDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9A62BF2CDE1F7600CDA7D1 /* MockWelcomeDelegate.swift */; };
+		2C9A62C22CDE4A3B00CDA7D1 /* MockNewsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9A62C12CDE4A3B00CDA7D1 /* MockNewsModel.swift */; };
 		2CA995282CA2C06A001064CC /* NTPConfigurableNudgeCardCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CA995272CA2C06A001064CC /* NTPConfigurableNudgeCardCell.swift */; };
 		2CA9952A2CA2C0BB001064CC /* NTPConfigurableNudgeCardCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CA995292CA2C0BB001064CC /* NTPConfigurableNudgeCardCellViewModel.swift */; };
 		2CABD7162C11C9CC00A0750F /* MozillaAppServices in Frameworks */ = {isa = PBXBuildFile; productRef = 2CABD7152C11C9CC00A0750F /* MozillaAppServices */; };
@@ -2514,6 +2515,7 @@
 		2C9144B0B15218D8A0FCD538 /* es-AR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-AR"; path = "es-AR.lproj/ClearPrivateData.strings"; sourceTree = "<group>"; };
 		2C97EC701E72C80E0092EC18 /* TopTabsTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TopTabsTest.swift; sourceTree = "<group>"; };
 		2C9A62BF2CDE1F7600CDA7D1 /* MockWelcomeDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockWelcomeDelegate.swift; sourceTree = "<group>"; };
+		2C9A62C12CDE4A3B00CDA7D1 /* MockNewsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockNewsModel.swift; sourceTree = "<group>"; };
 		2CA16FDD1E5F089100332277 /* SearchTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchTest.swift; sourceTree = "<group>"; };
 		2CA995272CA2C06A001064CC /* NTPConfigurableNudgeCardCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPConfigurableNudgeCardCell.swift; sourceTree = "<group>"; };
 		2CA995292CA2C0BB001064CC /* NTPConfigurableNudgeCardCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPConfigurableNudgeCardCellViewModel.swift; sourceTree = "<group>"; };
@@ -8881,6 +8883,7 @@
 			children = (
 				2C872A532B8CD47600B318A0 /* MockAppVersionInfoProvider.swift */,
 				2C9A62BF2CDE1F7600CDA7D1 /* MockWelcomeDelegate.swift */,
+				2C9A62C12CDE4A3B00CDA7D1 /* MockNewsModel.swift */,
 			);
 			path = Mocks;
 			sourceTree = "<group>";
@@ -14486,6 +14489,7 @@
 				C29B64872AD69D0200F3244B /* QRCodeCoordinatorTests.swift in Sources */,
 				0BA8964B1A250E6500C1010C /* ProfileTest.swift in Sources */,
 				8AE80BAF2891960300BC12EA /* MockTraitCollection.swift in Sources */,
+				2C9A62C22CDE4A3B00CDA7D1 /* MockNewsModel.swift in Sources */,
 				E19443F82AF953B000964EA5 /* MockSidebarEnabledView.swift in Sources */,
 				8A832A9729DCBD3C0025D5DD /* LaunchTypeTests.swift in Sources */,
 				8A28C628291028870078A81A /* CanRemoveQuickActionBookmarkTests.swift in Sources */,
