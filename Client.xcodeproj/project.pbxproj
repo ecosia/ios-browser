@@ -21454,8 +21454,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/snowplow/snowplow-ios-tracker.git";
 			requirement = {
-				kind = exactVersion;
-				version = 5.2.0;
+				kind = upToNextMinorVersion;
+				minimumVersion = 6.0.8;
 			};
 		};
 		2CB172802C612D68008551E2 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */ = {

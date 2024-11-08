@@ -20,7 +20,7 @@ open class Analytics {
                                       configurations: [Self.trackerConfiguration,
                                                        Self.subjectConfiguration,
                                                        Self.appInstallTrackingPluginConfiguration,
-                                                       Self.appResumeDailyTrackingPluginConfiguration])!
+                                                       Self.appResumeDailyTrackingPluginConfiguration])
     }
 
     static var shared = Analytics()
@@ -31,6 +31,7 @@ open class Analytics {
         tracker.installAutotracking = true
         tracker.screenViewAutotracking = false
         tracker.lifecycleAutotracking = false
+        tracker.screenEngagementAutotracking = false
         tracker.exceptionAutotracking = false
         tracker.diagnosticAutotracking = false
     }
@@ -279,7 +280,7 @@ extension Analytics {
     private func addABTestContexts(to event: Structured, toggles: [Unleash.Toggle.Name]) {
         toggles.forEach { toggle in
             if let context = Self.getTestContext(from: toggle) {
-                event.contexts.append(context)
+                event.entities.append(context)
             }
         }
     }
@@ -288,7 +289,7 @@ extension Analytics {
         if let consentValue = User.shared.cookieConsentValue {
             let consentContext = SelfDescribingJson(schema: Self.consentSchema,
                                                     andDictionary: ["cookie_consent": consentValue])
-            event.contexts.append(consentContext)
+            event.entities.append(consentContext)
         }
     }
 }
