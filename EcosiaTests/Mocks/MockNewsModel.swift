@@ -20,7 +20,7 @@ func createMockNewsModel() throws -> NewsModel? {
     """
     let jsonData = Data(jsonString.utf8)
     let decoder = JSONDecoder()
-    
+
     // Custom date decoding strategy if needed
     decoder.dateDecodingStrategy = .secondsSince1970
     return try decoder.decode(NewsModel.self, from: jsonData)

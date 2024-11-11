@@ -8,9 +8,9 @@ import Storage
 @testable import Client
 
 final class AnalyticsSpy: Analytics {
-    
+
     // MARK: - AnalyticsSpy Properties to Capture Calls
-    
+
     var installCalled = false
     override func install() {
         installCalled = true
@@ -52,14 +52,14 @@ final class AnalyticsSpy: Analytics {
         menuStatusItemCalled = item
         menuStatusItemChangedTo = to
     }
-    
+
     var introDisplayingPageCalled: Property.OnboardingPage?
     var introDisplayingIndexCalled: Int?
     override func introDisplaying(page: Property.OnboardingPage?, at index: Int) {
         introDisplayingPageCalled = page
         introDisplayingIndexCalled = index
     }
-    
+
     var introClickLabelCalled: Label.Onboarding?
     var introClickPageCalled: Property.OnboardingPage?
     var introClickIndexCalled: Int?
@@ -68,26 +68,31 @@ final class AnalyticsSpy: Analytics {
         introClickPageCalled = page
         introClickIndexCalled = index
     }
-    
+
     var navigationActionCalled: Action?
     var navigationLabelCalled: Label.Navigation?
     override func navigation(_ action: Action, label: Label.Navigation) {
         navigationActionCalled = action
         navigationLabelCalled = label
     }
-    
+
     var navigationOpenNewsIdCalled: String?
     override func navigationOpenNews(_ id: String) {
         navigationOpenNewsIdCalled = id
     }
-    
+
     var referralActionCalled: Action.Referral?
     var referralLabelCalled: Label.Referral?
+
+    // Added property for expectation
+    var referralExpectation: XCTestExpectation?
+
     override func referral(action: Action.Referral, label: Label.Referral? = nil) {
         referralActionCalled = action
         referralLabelCalled = label
+        referralExpectation?.fulfill()
     }
-    
+
     var ntpTopSiteActionCalled: Action.TopSite?
     var ntpTopSitePropertyCalled: Property.TopSite?
     var ntpTopSitePositionCalled: NSNumber?
@@ -99,11 +104,11 @@ final class AnalyticsSpy: Analytics {
 }
 
 final class AnalyticsSpyTests: XCTestCase {
-    
+
     // MARK: - Properties and Setup
-    
+
     var analyticsSpy: AnalyticsSpy!
-    
+
     var profileMock: MockProfile { MockProfile() }
     var tabManagerMock: TabManager {
         let mock = MockTabManager()
@@ -125,23 +130,23 @@ final class AnalyticsSpyTests: XCTestCase {
         Analytics.shared = Analytics()
         DependencyHelperMock().reset()
     }
-    
+
     // MARK: - AppDelegate Tests
-    
+
     var appDelegate: AppDelegate { AppDelegate() }
 
     func testTrackLaunchAndInstallOnDidFinishLaunching() async {
         // Arrange
         XCTAssertNil(analyticsSpy.activityActionCalled)
         let application = await UIApplication.shared
-        
+
         // Act
         _ = await appDelegate.application(application, didFinishLaunchingWithOptions: nil)
-        
+
         // Assert
         XCTAssert(analyticsSpy.installCalled)
         waitForCondition(timeout: 3) { // Wait detached tasks until launch is called
-            analyticsSpy.activityActionCalled == .launch
+            self.analyticsSpy.activityActionCalled == .launch
         }
     }
 
@@ -149,18 +154,18 @@ final class AnalyticsSpyTests: XCTestCase {
         // Arrange
         XCTAssertNil(analyticsSpy.activityActionCalled)
         let application = await UIApplication.shared
-        
+
         // Act
         _ = await appDelegate.applicationDidBecomeActive(application)
-        
+
         // Assert
         waitForCondition(timeout: 2) { // Wait detached tasks until resume is called
-            analyticsSpy.activityActionCalled == .resume
+            self.analyticsSpy.activityActionCalled == .resume
         }
     }
-    
+
     // MARK: - Bookmarks Tests
-    
+
     var panel: BookmarksPanel {
         let viewModel = BookmarksPanelViewModel(profile: profileMock, bookmarkFolderGUID: "TestGuid")
         return BookmarksPanel(viewModel: viewModel)
@@ -169,10 +174,10 @@ final class AnalyticsSpyTests: XCTestCase {
     func testTrackImportClick() {
         // Arrange
         XCTAssertNil(analyticsSpy.bookmarksImportExportPropertyCalled)
-        
+
         // Act
         panel.importBookmarksActionHandler()
-        
+
         // Assert
         XCTAssertEqual(analyticsSpy.bookmarksImportExportPropertyCalled, .import)
     }
@@ -180,10 +185,10 @@ final class AnalyticsSpyTests: XCTestCase {
     func testTrackExportClick() {
         // Arrange
         XCTAssertNil(analyticsSpy.bookmarksImportExportPropertyCalled)
-        
+
         // Act
         panel.exportBookmarksActionHandler()
-        
+
         // Assert
         XCTAssertEqual(analyticsSpy.bookmarksImportExportPropertyCalled, .export)
     }
@@ -192,16 +197,16 @@ final class AnalyticsSpyTests: XCTestCase {
         // Arrange
         let view = EmptyBookmarksView(initialBottomMargin: 0)
         XCTAssertFalse(analyticsSpy.bookmarksEmptyLearnMoreClickedCalled)
-        
+
         // Act
         view.onLearnMoreTapped()
-        
+
         // Assert
         XCTAssertTrue(analyticsSpy.bookmarksEmptyLearnMoreClickedCalled)
     }
-    
+
     // MARK: - Menu Tests
-    
+
     var menuHelper: MainMenuActionHelper {
         MainMenuActionHelper(profile: profileMock,
                              tabManager: tabManagerMock,
@@ -232,7 +237,7 @@ final class AnalyticsSpyTests: XCTestCase {
                 XCTAssertNil(analyticsSpy.menuClickItemCalled)
                 tabManagerMock.selectedTab?.url = URL(string: "https://example.com")
                 let expectation = self.expectation(description: "Actions for \(title) are returned")
-                
+
                 // Act
                 menuHelper.getToolbarActions(navigationController: .init()) { actions in
                     let action = actions
@@ -266,11 +271,14 @@ final class AnalyticsSpyTests: XCTestCase {
                 // Arrange
                 XCTAssertNil(analyticsSpy.menuShareContentCalled)
                 tabManagerMock.selectedTab?.url = url
-                
+
                 // Act
                 let action = menuHelper.getSharingAction().items.first
                 if let action = action {
                     action.tapHandler!(action)
+                    // Since the share action may be asynchronous, ensure any asynchronous tasks are completed
+                    // For this example, assume the share action calls the analytics synchronously
+                    // Otherwise, use expectations to wait for the analytics call
                 } else {
                     XCTFail("No sharing action found for url \(url?.absoluteString ?? "nil")")
                 }
@@ -279,28 +287,34 @@ final class AnalyticsSpyTests: XCTestCase {
     }
 
     func testTrackMenuStatus() {
-        // swiftlint:disable:next large_tuple
-        let testCases: [(Analytics.Label.MenuStatus, Bool, String)] = [
-            // Adding and then removing for each case; this order matters!
-            (.readingList, true, .ShareAddToReadingList),
-            (.readingList, false, .AppMenu.RemoveReadingList),
-            (.bookmark, true, .KeyboardShortcuts.AddBookmark),
-            // Removing bookmark does not work since it requires additional user interaction
-            // (.bookmark, false, .RemoveBookmarkContextMenuTitle),
-            (.shortcut, true, .AddToShortcutsActionTitle),
-            (.shortcut, false, .AppMenu.RemoveFromShortcuts)
+        struct MenuStatusTestCase {
+            let label: Analytics.Label.MenuStatus
+            let value: Bool
+            let title: String
+        }
+
+        let testCases: [MenuStatusTestCase] = [
+            MenuStatusTestCase(label: .readingList, value: true, title: .ShareAddToReadingList),
+            MenuStatusTestCase(label: .readingList, value: false, title: .AppMenu.RemoveReadingList),
+            MenuStatusTestCase(label: .bookmark, value: true, title: .KeyboardShortcuts.AddBookmark),
+            MenuStatusTestCase(label: .shortcut, value: true, title: .AddToShortcutsActionTitle),
+            MenuStatusTestCase(label: .shortcut, value: false, title: .AppMenu.RemoveFromShortcuts)
         ]
-        for (label, value, title) in testCases {
+
+        for testCase in testCases {
             analyticsSpy = AnalyticsSpy()
             Analytics.shared = analyticsSpy
-            XCTContext.runActivity(named: "Menu share \(label.rawValue) is tracked") { _ in
+            let label = testCase.label
+            let value = testCase.value
+            let title = testCase.title
+            XCTContext.runActivity(named: "Menu status change \(label.rawValue) to \(value) is tracked") { _ in
                 // Arrange
                 XCTAssertNil(analyticsSpy.menuStatusItemCalled)
                 XCTAssertNil(analyticsSpy.menuStatusItemChangedTo)
                 let testUrl = "https://example.com"
                 tabManagerMock.selectedTab?.url = URL(string: testUrl)
                 let expectation = self.expectation(description: "Actions are returned")
-                
+
                 // Act
                 menuHelper.getToolbarActions(navigationController: .init()) { actions in
                     let action = actions
@@ -321,25 +335,25 @@ final class AnalyticsSpyTests: XCTestCase {
             }
         }
     }
-    
+
     // MARK: - Onboarding / Welcome Tests
-    
+
     func testWelcomeViewDidAppearTracksIntroDisplayingAndIntroClickStart() {
         // Arrange
         let welcomeDelegate = MockWelcomeDelegate()
         let welcome = Welcome(delegate: welcomeDelegate)
         XCTAssertNil(analyticsSpy.introDisplayingPageCalled)
         XCTAssertNil(analyticsSpy.introDisplayingIndexCalled)
-        
+
         // Act
         welcome.loadViewIfNeeded()
         welcome.viewDidAppear(false)
-        
+
         // Assert
         XCTAssertEqual(analyticsSpy.introDisplayingPageCalled, .start)
         XCTAssertEqual(analyticsSpy.introDisplayingIndexCalled, 0)
     }
-    
+
     func testWelcomeGetStartedTracksIntroClickNext() {
         // Arrange
         let welcomeDelegate = MockWelcomeDelegate()
@@ -347,16 +361,16 @@ final class AnalyticsSpyTests: XCTestCase {
         XCTAssertNil(analyticsSpy.introClickLabelCalled)
         XCTAssertNil(analyticsSpy.introClickPageCalled)
         XCTAssertNil(analyticsSpy.introClickIndexCalled)
-        
+
         // Act
         welcome.getStarted()
-        
+
         // Assert
         XCTAssertEqual(analyticsSpy.introClickLabelCalled, .next)
         XCTAssertEqual(analyticsSpy.introClickPageCalled, .start)
         XCTAssertEqual(analyticsSpy.introClickIndexCalled, 0)
     }
-    
+
     func testWelcomeSkipTracksIntroClickSkip() {
         // Arrange
         let welcomeDelegate = MockWelcomeDelegate()
@@ -364,34 +378,34 @@ final class AnalyticsSpyTests: XCTestCase {
         XCTAssertNil(analyticsSpy.introClickLabelCalled)
         XCTAssertNil(analyticsSpy.introClickPageCalled)
         XCTAssertNil(analyticsSpy.introClickIndexCalled)
-        
+
         // Act
         welcome.skip()
-        
+
         // Assert
         XCTAssertEqual(analyticsSpy.introClickLabelCalled, .skip)
         XCTAssertEqual(analyticsSpy.introClickPageCalled, .start)
         XCTAssertEqual(analyticsSpy.introClickIndexCalled, 0)
     }
-    
+
     // MARK: - Onboarding / Welcome Tour Tests
-    
+
     func testWelcomeTourViewDidAppearTracksIntroDisplaying() {
         // Arrange
         let welcomeTourDelegate = MockWelcomeTourDelegate()
         let welcomeTour = WelcomeTour(delegate: welcomeTourDelegate)
         XCTAssertNil(analyticsSpy.introDisplayingPageCalled)
         XCTAssertNil(analyticsSpy.introDisplayingIndexCalled)
-        
+
         // Act
         welcomeTour.loadViewIfNeeded()
         welcomeTour.viewDidAppear(false)
-        
+
         // Assert
         XCTAssertEqual(analyticsSpy.introDisplayingPageCalled, .greenSearch)
         XCTAssertEqual(analyticsSpy.introDisplayingIndexCalled, 1)
     }
-    
+
     func testWelcomeTourNextTracksIntroClickNext() {
         // Arrange
         let welcomeTourDelegate = MockWelcomeTourDelegate()
@@ -399,18 +413,18 @@ final class AnalyticsSpyTests: XCTestCase {
         XCTAssertNil(analyticsSpy.introClickLabelCalled)
         XCTAssertNil(analyticsSpy.introClickPageCalled)
         XCTAssertNil(analyticsSpy.introClickIndexCalled)
-        
+
         // Act
         welcomeTour.loadViewIfNeeded()
         welcomeTour.viewDidAppear(false)
         welcomeTour.forward()
-        
+
         // Assert
         XCTAssertEqual(analyticsSpy.introClickLabelCalled, .next)
         XCTAssertEqual(analyticsSpy.introClickPageCalled, .greenSearch)
         XCTAssertEqual(analyticsSpy.introClickIndexCalled, 1)
     }
-    
+
     func testWelcomeTourSkipTracksIntroClickSkip() {
         // Arrange
         let welcomeTourDelegate = MockWelcomeTourDelegate()
@@ -418,18 +432,18 @@ final class AnalyticsSpyTests: XCTestCase {
         XCTAssertNil(analyticsSpy.introClickLabelCalled)
         XCTAssertNil(analyticsSpy.introClickPageCalled)
         XCTAssertNil(analyticsSpy.introClickIndexCalled)
-        
+
         // Act
         welcomeTour.loadViewIfNeeded()
         welcomeTour.viewDidAppear(false)
         welcomeTour.skip()
-        
+
         // Assert
         XCTAssertEqual(analyticsSpy.introClickLabelCalled, .skip)
         XCTAssertEqual(analyticsSpy.introClickPageCalled, .greenSearch)
         XCTAssertEqual(analyticsSpy.introClickIndexCalled, 1)
     }
-    
+
     func testWelcomeTourTracksAnalyticsForAllPages() {
         // Arrange
         let welcomeTourDelegate = MockWelcomeTourDelegate()
@@ -442,31 +456,31 @@ final class AnalyticsSpyTests: XCTestCase {
         ]
         welcomeTour.loadViewIfNeeded()
         welcomeTour.viewDidAppear(false)
-        
+
         for (index, page) in pages.enumerated() {
             // Reset analyticsSpy properties
             analyticsSpy.introDisplayingPageCalled = nil
             analyticsSpy.introDisplayingIndexCalled = nil
-            
+
             if index < pages.count - 1 {
                 // Act
                 welcomeTour.forward()
-                
+
                 // Assert
                 XCTAssertEqual(analyticsSpy.introClickLabelCalled, .next)
                 XCTAssertEqual(analyticsSpy.introClickPageCalled, page)
                 XCTAssertEqual(analyticsSpy.introClickIndexCalled, index + 1)
             }
-            
+
             // Reset analyticsSpy properties
             analyticsSpy.introClickLabelCalled = nil
             analyticsSpy.introClickPageCalled = nil
             analyticsSpy.introClickIndexCalled = nil
         }
     }
-    
+
     // MARK: - News Detail Tests
-    
+
     func testNewsControllerViewDidAppearTracksNavigationViewNews() {
         // Arrange
         let item = try! createMockNewsModel()!
@@ -474,16 +488,16 @@ final class AnalyticsSpyTests: XCTestCase {
         let newsController = NewsController(items: items)
         XCTAssertNil(analyticsSpy.navigationActionCalled)
         XCTAssertNil(analyticsSpy.navigationLabelCalled)
-        
+
         // Act
         newsController.loadViewIfNeeded()
         newsController.viewDidAppear(false)
-        
+
         // Assert
         XCTAssertEqual(analyticsSpy.navigationActionCalled, .view)
         XCTAssertEqual(analyticsSpy.navigationLabelCalled, .news)
     }
-    
+
     func testNewsControllerDidSelectItemTracksNavigationOpenNews() {
         // Arrange
         let item = try! createMockNewsModel()!
@@ -493,117 +507,121 @@ final class AnalyticsSpyTests: XCTestCase {
         newsController.loadView()
         newsController.collection.reloadData()
         let indexPath = IndexPath(row: 0, section: 0)
-        
+
         // Act
         newsController.collectionView(newsController.collection, didSelectItemAt: indexPath)
-        
+
         // Assert
         XCTAssertEqual(analyticsSpy.navigationOpenNewsIdCalled, "example_news_tracking")
     }
-    
+
     // MARK: - Multiply Impact - Referrals Tests
-    
+
     func testMultiplyImpactViewDidAppearTracksReferralViewInviteScreen() {
         // Arrange
         let referrals = Referrals()
         let multiplyImpact = MultiplyImpact(referrals: referrals)
         multiplyImpact.loadViewIfNeeded()
-        
+
         // Act
         multiplyImpact.viewDidAppear(false)
-        
+
         // Assert
         XCTAssertEqual(analyticsSpy.referralActionCalled, .view)
         XCTAssertEqual(analyticsSpy.referralLabelCalled, .inviteScreen)
     }
-    
+
     func testMultiplyImpactLearnMoreButtonTracksReferralClickLearnMore() {
         // Arrange
         let referrals = Referrals()
         let multiplyImpact = MultiplyImpact(referrals: referrals)
         multiplyImpact.loadViewIfNeeded()
-        
+
         // Act
         if let learnMoreButton = multiplyImpact.learnMoreButton {
             learnMoreButton.sendActions(for: .primaryActionTriggered)
         } else {
             XCTFail("Learn More button not found")
         }
-        
+
         // Assert
         XCTAssertEqual(analyticsSpy.referralActionCalled, .click)
         XCTAssertEqual(analyticsSpy.referralLabelCalled, .learnMore)
     }
-    
+
     func testMultiplyImpactCopyCodeTracksReferralClickLinkCopying() {
         // Arrange
         let referrals = Referrals()
         let multiplyImpact = MultiplyImpact(referrals: referrals)
         multiplyImpact.loadViewIfNeeded()
-        
+        XCTAssertNotNil(multiplyImpact.copyControl, "copyControl should not be nil after view is loaded")
+
+        // Create an expectation
+        let expectation = self.expectation(description: "Analytics referral called")
+        analyticsSpy.referralExpectation = expectation
+
         // Act
-        if let copyControl = multiplyImpact.copyControl {
-            copyControl.sendActions(for: .touchUpInside)
-        } else {
-            XCTFail("Copy Control not found")
-        }
-        
+        multiplyImpact.copyControl?.sendActions(for: .touchUpInside)
+
+        // Wait for the expectation
+        waitForExpectations(timeout: 1)
+
         // Assert
         XCTAssertEqual(analyticsSpy.referralActionCalled, .click)
         XCTAssertEqual(analyticsSpy.referralLabelCalled, .linkCopying)
     }
-    
+
     func testMultiplyImpactInviteFriendsTracksReferralClickInvite() {
         // Arrange
         let referrals = Referrals()
         let multiplyImpact = MultiplyImpact(referrals: referrals)
         User.shared.referrals.code = "testCode"
         multiplyImpact.loadViewIfNeeded()
-        
+
         // Act
         if let inviteButton = multiplyImpact.inviteButton {
             inviteButton.sendActions(for: .touchUpInside)
         } else {
             XCTFail("Invite Friends button not found")
         }
-        
+
         // Assert
         XCTAssertEqual(analyticsSpy.referralActionCalled, .click)
         XCTAssertEqual(analyticsSpy.referralLabelCalled, .invite)
     }
-    
+
     func testMultiplyImpactInviteFriendsCompletionTracksReferralSendInvite() {
         // Arrange
         let referrals = Referrals()
         let multiplyImpact = MultiplyImpactTestable(referrals: referrals)
         User.shared.referrals.code = "testCode"
         multiplyImpact.loadViewIfNeeded()
-        
+
         // Act
         if let inviteButton = multiplyImpact.inviteButton {
             inviteButton.sendActions(for: .touchUpInside)
         } else {
             XCTFail("Invite Friends button not found")
         }
-        
+
         // Verify initial click analytics
         XCTAssertEqual(analyticsSpy.referralActionCalled, .click)
         XCTAssertEqual(analyticsSpy.referralLabelCalled, .invite)
-        
+
         // Reset analyticsSpy properties
         analyticsSpy.referralActionCalled = nil
         analyticsSpy.referralLabelCalled = nil
-        
+
         // Assert that the share sheet is intended to be presented
         XCTAssertNotNil(multiplyImpact.capturedPresentedViewController, "Expected a view controller to be presented")
         XCTAssertTrue(multiplyImpact.capturedPresentedViewController is UIActivityViewController, "Expected UIActivityViewController to be presented")
-        
+
         // Simulate share completion
         if let activityVC = multiplyImpact.capturedPresentedViewController as? UIActivityViewController,
            let completionHandler = activityVC.completionWithItemsHandler {
             // Simulate user completed the share action
             completionHandler(nil, true, nil, nil)
-            
+
             // Assert
             XCTAssertEqual(analyticsSpy.referralActionCalled, .send)
             XCTAssertEqual(analyticsSpy.referralLabelCalled, .invite)
@@ -611,9 +629,9 @@ final class AnalyticsSpyTests: XCTestCase {
             XCTFail("UIActivityViewController not found or completion handler not set")
         }
     }
-    
+
     // MARK: - Top Sites Tests
-    
+
     func testTilePressedTracksAnalyticsForPinnedSite() {
         // Arrange
         let viewModel = TopSitesViewModel(profile: profileMock,
@@ -622,16 +640,16 @@ final class AnalyticsSpyTests: XCTestCase {
                                           wallpaperManager: WallpaperManager())
         let topSite = TopSite(site: PinnedSite(site: Site(url: "http://www.example.com", title: "Example Site")))
         let position = 1
-        
+
         // Act
         viewModel.tilePressed(site: topSite, position: position)
-        
+
         // Assert
         XCTAssertEqual(analyticsSpy.ntpTopSiteActionCalled, .click)
         XCTAssertEqual(analyticsSpy.ntpTopSitePropertyCalled, .pinned)
         XCTAssertEqual(analyticsSpy.ntpTopSitePositionCalled, NSNumber(value: position))
     }
-    
+
     func testTilePressedTracksAnalyticsForDefaultSite() {
         // Arrange
         let viewModel = TopSitesViewModel(profile: profileMock,
@@ -640,16 +658,16 @@ final class AnalyticsSpyTests: XCTestCase {
                                           wallpaperManager: WallpaperManager())
         let topSite = TopSite(site: Site(url: Environment.current.urlProvider.financialReports.absoluteString, title: "Example Site"))
         let position = 1
-        
+
         // Act
         viewModel.tilePressed(site: topSite, position: position)
-        
+
         // Assert
         XCTAssertEqual(analyticsSpy.ntpTopSiteActionCalled, .click)
         XCTAssertEqual(analyticsSpy.ntpTopSitePropertyCalled, .default)
         XCTAssertEqual(analyticsSpy.ntpTopSitePositionCalled, NSNumber(value: position))
     }
-    
+
     func testTilePressedTracksAnalyticsForMostVisitedSite() {
         // Arrange
         let viewModel = TopSitesViewModel(profile: profileMock,
@@ -658,16 +676,16 @@ final class AnalyticsSpyTests: XCTestCase {
                                           wallpaperManager: WallpaperManager())
         let topSite = TopSite(site: Site(url: "http://www.example.org", title: "Example Site"))
         let position = 1
-        
+
         // Act
         viewModel.tilePressed(site: topSite, position: position)
-        
+
         // Assert
         XCTAssertEqual(analyticsSpy.ntpTopSiteActionCalled, .click)
         XCTAssertEqual(analyticsSpy.ntpTopSitePropertyCalled, .mostVisited)
         XCTAssertEqual(analyticsSpy.ntpTopSitePositionCalled, NSNumber(value: position))
     }
-    
+
     func testTrackTopSiteMenuActionTracksAnalytics() {
         // Arrange
         let viewModel = TopSitesViewModel(profile: profileMock,
@@ -676,46 +694,46 @@ final class AnalyticsSpyTests: XCTestCase {
                                           wallpaperManager: WallpaperManager())
         let action: Analytics.Action.TopSite = .remove
         let site = Site(url: "http://www.example.org", title: "Example Site")
-        
+
         // Act
         viewModel.trackTopSiteMenuAction(site: site, action: action)
-        
+
         // Assert
         XCTAssertEqual(analyticsSpy.ntpTopSiteActionCalled, action)
         XCTAssertEqual(analyticsSpy.ntpTopSitePropertyCalled, .mostVisited) // Assuming site is mostVisited
         XCTAssertNil(analyticsSpy.ntpTopSitePositionCalled)
     }
-    
+
     func testNTPAboutEcosiaCellLearnMoreActionTracksNavigationOpen() {
         // Arrange
-        
+
         // Create an instance of the real NTPAboutEcosiaCellViewModel
         let aboutViewModel = NTPAboutEcosiaCellViewModel(theme: EcosiaLightTheme())
         let sections = aboutViewModel.sections
-        
+
         // Ensure that there are sections available
         guard let testSection = sections.first else {
             XCTFail("No sections available in NTPAboutEcosiaCellViewModel")
             return
         }
-        
+
         // Create an instance of NTPAboutEcosiaCell
         let aboutCell = NTPAboutEcosiaCell(frame: CGRect(x: 0, y: 0, width: 320, height: 64))
-        
+
         // Configure the cell with the real section and view model
         aboutCell.configure(section: testSection, viewModel: aboutViewModel)
-        
+
         // Ensure that the analytics methods have not been called yet
         XCTAssertNil(analyticsSpy.navigationActionCalled)
         XCTAssertNil(analyticsSpy.navigationLabelCalled)
-        
+
         // Act
-        
+
         // Simulate tapping the "Learn More" button by sending the touchUpInside action
         aboutCell.learnMoreButton.sendActions(for: .touchUpInside)
-        
+
         // Assert
-        
+
         // Verify that the analytics event was called with the correct action and label
         XCTAssertEqual(analyticsSpy.navigationActionCalled, .open)
         XCTAssertEqual(analyticsSpy.navigationLabelCalled, testSection.label)
@@ -726,7 +744,7 @@ final class AnalyticsSpyTests: XCTestCase {
 
 class MultiplyImpactTestable: MultiplyImpact {
     var capturedPresentedViewController: UIViewController?
-    
+
     override func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)? = nil) {
         capturedPresentedViewController = viewControllerToPresent
     }

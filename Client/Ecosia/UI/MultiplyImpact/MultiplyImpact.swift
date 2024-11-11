@@ -10,7 +10,7 @@ import LinkPresentation
 import Common
 
 class MultiplyImpact: UIViewController, Themeable {
-    
+
     // MARK: - UX
 
     private struct UX {
@@ -86,9 +86,9 @@ class MultiplyImpact: UIViewController, Themeable {
     private weak var copyDividerRight: UIView?
     private weak var moreSharingMethods: UILabel?
     private(set) weak var inviteButton: EcosiaPrimaryButton!
-    
+
     private(set) weak var learnMoreButton: UIButton?
-    
+
     private weak var flowTitle: UILabel?
     private weak var flowBackground: UIView?
     private weak var flowStack: UIStackView?
