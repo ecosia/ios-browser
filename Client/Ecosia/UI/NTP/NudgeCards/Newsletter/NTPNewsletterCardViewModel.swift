@@ -31,6 +31,6 @@ final class NTPNewsletterCardViewModel: NTPConfigurableNudgeCardCellViewModel {
     }
 
     override func screenWasShown() {
-        // TODO: Track experiment impression
+        NewsletterCardExperiment.trackExperimentImpression()
     }
 }

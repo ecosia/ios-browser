@@ -16,6 +16,16 @@ struct NewsletterCardExperiment {
         isEnabled && !isDismissed
     }
     
+    /// Send onboarding card view analytics event, but just the first time it's called.
+    static func trackExperimentImpression() {
+        let trackExperimentImpressionKey = "newsletterCardExperimentImpression"
+        guard !UserDefaults.standard.bool(forKey: trackExperimentImpressionKey) else {
+            return
+        }
+        Analytics.shared.newsletterCardExperiment(action: .view, label: .ntpCard)
+        UserDefaults.standard.setValue(true, forKey: trackExperimentImpressionKey)
+    }
+    
     // MARK: Dismissed
     private static let dismissedKey = "newsletterCardExperimentDismissed"
     
