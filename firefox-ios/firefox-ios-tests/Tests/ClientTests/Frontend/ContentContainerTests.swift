@@ -105,7 +105,7 @@ final class ContentContainerTests: XCTestCase {
         return HomepageViewController(profile: profile,
                                       toastContainer: UIView(),
                                       tabManager: MockTabManager(),
-                                      overlayManager: overlayModeManager, 
+                                      overlayManager: overlayModeManager,
                                       referrals: .init(),
                                       delegate: nil)
     }

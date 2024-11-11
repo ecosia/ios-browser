@@ -33,7 +33,7 @@ class EcosiaHomeViewModelTests: XCTestCase {
     func testNumberOfSection_withoutUpdatingData_has5Sections() {
         // Ecosia: Update Viewmodel
         let viewModel = HomepageViewModel(profile: profile,
-                                          isPrivate: false, 
+                                          isPrivate: false,
                                           tabManager: MockTabManager(),
                                           referrals: .init(),
                                           theme: EcosiaLightTheme())

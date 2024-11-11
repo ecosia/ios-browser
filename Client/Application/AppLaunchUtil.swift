@@ -42,7 +42,7 @@ class AppLaunchUtil {
         KeyboardHelper.defaultHelper.startObserving()
         LegacyDynamicFontHelper.defaultHelper.startObserving()
         MenuHelper.defaultHelper.setItems()
-        
+
         /* Ecosia: Do not intialize Firefox-specific SkAdNetwork and legacy feature flag manager
         // Initialize conversion value by specifying fineValue and coarseValue.
         // Call update postback conversion value for install event.
@@ -58,8 +58,7 @@ class AppLaunchUtil {
         // has been started.
         // Ecosia: Do not intialize Nimbus
         // initializeExperiments()
-         
-        
+
         // We migrate history from browser db to places if it hasn't already
         DispatchQueue.global().async {
             self.runAppServicesHistoryMigration()
@@ -81,7 +80,7 @@ class AppLaunchUtil {
         }
          */
         AppEventQueue.signal(event: .accountManagerInitialized)
-        
+
         // Add swizzle on UIViewControllers to automatically log when there's a new view showing
         UIViewController.loggerSwizzle()
 
@@ -160,7 +159,7 @@ class AppLaunchUtil {
             logger.log("Migrating Application services history",
                        level: .info,
                        category: .sync)
-            
+
             /* Ecosia: remove Glean dependency
             let id = GleanMetrics.PlacesHistoryMigration.duration.start()
             // We mark that the migration started

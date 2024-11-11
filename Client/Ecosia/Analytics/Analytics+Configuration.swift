@@ -7,7 +7,7 @@ import SnowplowTracker
 import Core
 
 extension Analytics {
-    
+
     /// Configuration for the Snowplow tracker.
     /// - Includes settings such as application ID, session context, application context, platform context, and geolocation context.
     /// - This configuration also enables tracking of minimal device properties like Apple ID for vendors (IDFV).
@@ -20,7 +20,7 @@ extension Analytics {
         .geoLocationContext(true)
         .deepLinkContext(false)
         .screenContext(false)
-    
+
     /// Configuration for the Snowplow subject.
     /// - Sets the user ID using the unique analytics ID associated with the user.
     static let subjectConfiguration = SubjectConfiguration()
@@ -39,15 +39,15 @@ extension Analytics {
             let isInAppLabel = event.payload["se_la"] as? String == Analytics.Label.Navigation.inapp.rawValue
             let isResumeEvent = event.payload["se_ac"] as? String == Analytics.Action.Activity.resume.rawValue
             let isInAppResumeEvent = isInAppLabel && isResumeEvent
-            
+
             guard isInAppResumeEvent else {
                 return true
             }
-            
+
             return Self.hasDayPassedSinceLastCheck(for: identifier)
         }
     }
-    
+
     /// Configuration for the install tracking plugin.
     /// - This plugin filters install events, allowing them to be tracked only if it's the first installation.
     /// - Returns: A configured `PluginConfiguration` that determines whether the event should be tracked.
@@ -63,7 +63,7 @@ extension Analytics {
 }
 
 extension Analytics {
-    
+
     /// Checks if the current installation is the first time the app has been installed.
     /// - Parameter identifier: A unique identifier used to store and retrieve the first install check status from `UserDefaults`.
     /// - Returns: A Boolean value indicating whether the app is being installed for the first time.
@@ -78,20 +78,20 @@ extension Analytics {
 }
 
 extension Analytics {
-    
+
     /// Checks if a day has passed since the last check for a specific event.
     /// - Parameter identifier: A unique identifier used to store and retrieve the last check date from `UserDefaults`.
     /// - Returns: A Boolean value indicating whether a day has passed since the last check. If no previous check exists, returns `true` and records the current date.
     static func hasDayPassedSinceLastCheck(for identifier: String) -> Bool {
         let now = Date()
         let defaults = UserDefaults.standard
-        
+
         // Retrieve the last check date from UserDefaults
         if let lastCheck = defaults.object(forKey: identifier) as? Date {
             // Calculate the number of days between the last check and now
             let calendar = Calendar.current
             let components = calendar.dateComponents([.day], from: lastCheck, to: now)
-            
+
             if let day = components.day {
                 // if a day or more has passed
                 if day >= 1 {
@@ -107,7 +107,7 @@ extension Analytics {
             defaults.set(now, forKey: identifier)
             return true
         }
-        
+
         return false
     }
 }

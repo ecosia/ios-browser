@@ -114,7 +114,7 @@ class HomepageViewModel: FeatureFlaggable {
         // Ecosia: Remove message Card  from HomePage
         // return messageCardViewModel.shouldDisplayMessageCard
     }
-    
+
     // Ecosia: Add Ecosia's ViewModels
     var libraryViewModel: NTPLibraryCellViewModel
     var newsletterCardViewModel: NTPNewsletterCardViewModel
@@ -201,7 +201,7 @@ class HomepageViewModel: FeatureFlaggable {
          */
         // Ecosia: Remove `customizeHome` reference
         // self.customizeButtonViewModel = CustomizeHomepageSectionViewModel(theme: theme)
-        
+
         /* 
          Ecosia: Replace view models.
         self.childViewModels = [headerViewModel,
@@ -277,12 +277,12 @@ class HomepageViewModel: FeatureFlaggable {
                 viewModel.screenWasShown()
             }
         }
-        
+
         // Ecosia
         if NTPTooltip.highlight() == .referralSpotlight {
             Analytics.shared.referral(action: .view, label: .promo)
         }
-                
+
         impactViewModel.subscribeToProjections()
     }
 
@@ -296,7 +296,7 @@ class HomepageViewModel: FeatureFlaggable {
 
     func updateEnabledSections() {
         shownSections.removeAll()
-        
+
         /* Ecosia: Handle priority of cards view models
          childViewModels.forEach {
              if $0.shouldShow { shownSections.append($0.sectionType) }

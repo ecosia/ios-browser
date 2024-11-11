@@ -17,7 +17,7 @@ class RouteTests: XCTestCase {
 
     func testSearchRouteWithEncodedUrl() {
         let subject = createSubject()
-        
+
         // Ecosia: Update url
         // let url = URL(string: "firefox://open-url?private=true")!
         let url = URL(string: "ecosia://open-url?url=http%3A%2F%2Fgoogle.com%3Fa%3D1%26b%3D2%26c%3Dfoo%2520bar")!

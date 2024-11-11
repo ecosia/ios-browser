@@ -196,13 +196,13 @@ class BrowserViewController: UIViewController,
 
     let whatsNewDataProvider = WhatsNewLocalDataProvider()
     let referrals = Referrals()
-    
+
     // Ecosia: Make `menuHelper` available at class level
     var menuHelper: MainMenuActionHelper?
-    
+
     // Ecosia: Add init to separate from Ecosia Properties
     // MARK: - Init
-    
+
     init(
         profile: Profile,
         tabManager: TabManager,
@@ -396,7 +396,7 @@ class BrowserViewController: UIViewController,
             navigationToolbar.updateBackStatus(webView.canGoBack)
             navigationToolbar.updateForwardStatus(webView.canGoForward)
         }
-        
+
         // Ecosia: Update toolbar search/add button
         toolbar.circleButton.config = isBottomSearchBar ? .newTab : .search
     }
@@ -1040,7 +1040,7 @@ class BrowserViewController: UIViewController,
         }
     }
      */
-    
+
     // MARK: - Manage embedded content
 
     func frontEmbeddedContent(_ viewController: ContentContainable) {
@@ -1579,7 +1579,7 @@ class BrowserViewController: UIViewController,
         tabManager.selectTab(tab)
         return tab
     }
-    
+
     /*
      Ecosia: Add ToolBarActionMenuDelegate additional delegate function
      to handle the opening of URLs as part of the current tab
@@ -1956,12 +1956,12 @@ class BrowserViewController: UIViewController,
         statusBarOverlay.hasTopTabs = shouldShowTopTabsForTraitCollection(traitCollection)
         // Ecosia: update background
         // keyboardBackdrop?.backgroundColor = currentTheme.colors.layer1
-        
+
         // Ecosia: background additions
         keyboardBackdrop?.backgroundColor = .legacyTheme.browser.background
         navigationController?.view.backgroundColor = .legacyTheme.browser.background
         header.backgroundColor = statusBarOverlay.backgroundColor
-        
+
         setNeedsStatusBarAppearanceUpdate()
 
         // Update the `background-color` of any blank webviews.
@@ -1975,7 +1975,7 @@ class BrowserViewController: UIViewController,
 
         guard let contentScript = tabManager.selectedTab?.getContentScript(name: ReaderMode.name()) else { return }
         applyThemeForPreferences(profile.prefs, contentScript: contentScript)
-        
+
         // Ecosia: Update URLBar following PrivateModeUI
         updateURLBarFollowingPrivateModeUI()
     }
@@ -2518,7 +2518,7 @@ extension BrowserViewController: UIAdaptivePresentationControllerDelegate {
 }
 
 extension BrowserViewController {
-    
+
     public func showBottomSheetCardViewController(creditCard: CreditCard?,
                                                   decryptedCard: UnencryptedCreditCardFields?,
                                                   viewType state: CreditCardBottomSheetState,
@@ -2556,7 +2556,7 @@ extension BrowserViewController {
     func presentInsightfulSheetsIfNeeded() {
         guard isHomePage(),
               !showLoadingScreen(for: .shared) else { return }
-        
+
         // TODO: To review this logic as part of the upgrade
         /*
          We are not fan of this one, but given the current approach a refactor
@@ -2585,11 +2585,11 @@ extension BrowserViewController {
         WhatsNewViewController.presentOn(self, viewModel: viewModel)
         return true
     }
-    
+
     @discardableResult
     private func presentDefaultBrowserPromoIfNeeded() -> Bool {
         guard shouldShowDefaultBrowserPromo else { return false }
-        
+
         if #available(iOS 14, *) {
             let defaultPromo = DefaultBrowser(delegate: self)
             present(defaultPromo, animated: true)
@@ -2798,7 +2798,7 @@ extension BrowserViewController {
 
 // Ecosia
 extension BrowserViewController {
-    
+
     // Ecosia: Handle Referral
     func openBlankNewTabAndClaimReferral(code: String) {
         User.shared.referrals.pendingClaim = code

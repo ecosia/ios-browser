@@ -6,11 +6,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/realm/swiftlint:5.5-latest
+      image: ghcr.io/realm/swiftlint:latest
 
     steps:
     - uses: actions/checkout@v3
 
     - name: SwiftLint
       run: |
-        swiftlint --reporter github-actions-logging
+        swiftlint --reporter github-actions-logging --strict

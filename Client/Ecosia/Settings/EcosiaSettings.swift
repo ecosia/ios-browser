@@ -1,6 +1,6 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
 import Core
@@ -32,7 +32,7 @@ final class SearchAreaSetting: Setting {
     override func onClick(_ navigationController: UINavigationController?) {
         navigationController?.pushViewController(MarketsController(style: .insetGrouped), animated: true)
     }
-    
+
     override func onConfigureCell(_ cell: UITableViewCell, theme: Theme) {
         super.onConfigureCell(cell, theme: theme)
         cell.detailTextLabel?.numberOfLines = 2
@@ -69,13 +69,15 @@ final class SafeSearchSettings: Setting {
 
 final class AutoCompleteSettings: BoolSetting {
     convenience init(prefs: Prefs, theme: Theme) {
-        self.init(prefs: prefs, theme: theme, prefKey: "", defaultValue: true,
-                titleText: .localized(.autocomplete),
-                statusText: .localized(.shownUnderSearchField), settingDidChange: { value in
-
-                    User.shared.autoComplete = value
-
-                })
+        self.init(prefs: prefs,
+                  theme: theme,
+                  prefKey: "",
+                  defaultValue: true,
+                  titleText: .localized(.autocomplete),
+                  statusText: .localized(.shownUnderSearchField),
+                  settingDidChange: { value in
+            User.shared.autoComplete = value
+        })
     }
 
     override func displayBool(_ control: UISwitch) {
@@ -89,11 +91,15 @@ final class AutoCompleteSettings: BoolSetting {
 
 final class PersonalSearchSettings: BoolSetting {
     convenience init(prefs: Prefs, theme: Theme) {
-        self.init(prefs: prefs, theme: theme, prefKey: "", defaultValue: false,
-                titleText: .localized(.personalizedResults),
-                statusText: .localized(.relevantResults), settingDidChange: { value in
-                    User.shared.personalized = value
-                })
+        self.init(prefs: prefs,
+                  theme: theme,
+                  prefKey: "",
+                  defaultValue: false,
+                  titleText: .localized(.personalizedResults),
+                  statusText: .localized(.relevantResults),
+                  settingDidChange: { value in
+            User.shared.personalized = value
+        })
     }
 
     override func displayBool(_ control: UISwitch) {
@@ -171,7 +177,8 @@ final class EcosiaTermsSetting: Setting {
 
 final class EcosiaSendAnonymousUsageDataSetting: BoolSetting {
     convenience init(prefs: Prefs, theme: Theme) {
-        self.init(prefs: prefs, theme: theme,
+        self.init(prefs: prefs,
+                  theme: theme,
                   prefKey: "",
                   defaultValue: true,
                   titleText: .localized(.sendUsageDataSettingsTitle),

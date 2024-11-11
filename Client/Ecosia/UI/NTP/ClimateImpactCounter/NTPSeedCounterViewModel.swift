@@ -59,7 +59,7 @@ extension NTPSeedCounterViewModel: HomepageViewModelProtocol, FeatureFlaggable {
     var isEnabled: Bool {
         SeedCounterNTPExperiment.isEnabled
     }
-    
+
     func screenWasShown() {
         SeedCounterNTPExperiment.trackSeedCollectionIfNewDayAppOpening()
         SeedCounterNTPExperiment.progressManagerType.collectDailySeed()
@@ -71,7 +71,7 @@ extension NTPSeedCounterViewModel: HomepageViewModelProtocol, FeatureFlaggable {
 }
 
 extension NTPSeedCounterViewModel: HomepageSectionHandler {
-    
+
     func configure(_ cell: UICollectionViewCell, at indexPath: IndexPath) -> UICollectionViewCell {
         guard let seedCounterCell = cell as? NTPSeedCounterCell else { return UICollectionViewCell() }
         seedCounterCell.delegate = delegate

@@ -75,7 +75,7 @@ struct SeedCounterView: View {
 }
 struct NewSeedCollectedCircleView: View {
     var seedsCollected: Int
-    
+
     var body: some View {
         ZStack {
             Circle()
@@ -91,7 +91,7 @@ struct AppearFromBottomEffectModifier: ViewModifier {
     var reduceMotionEnabled: Bool
     var duration: Double
     var parentViewHeight: Double
-    
+
     func body(content: Content) -> some View {
         content
             .offset(y: isAppeared ? -parentViewHeight/2 : 0)
@@ -115,7 +115,7 @@ struct AppearFromBottomEffectModifier: ViewModifier {
 struct TextAnimationModifier: ViewModifier {
     var seedsCollected: Int
     var reduceMotionEnabled: Bool
-    
+
     func body(content: Content) -> some View {
         if #available(iOS 17.0, *) {
             if reduceMotionEnabled {

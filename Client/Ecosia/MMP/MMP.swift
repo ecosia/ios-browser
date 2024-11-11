@@ -9,9 +9,9 @@ import AdServices
 import Common
 
 struct MMP {
-    
+
     private init() {}
-    
+
     static var appDeviceInfo: AppDeviceInfo {
         /// We are hardcoding `iOS` as per the platform parameter
         /// as `Singular` MMP doesn't currently support others like `iPadOS`
@@ -28,10 +28,10 @@ struct MMP {
                       installReceipt: AppInfo.installReceipt,
                       adServicesAttributionToken: AppInfo.adServicesAttributionToken)
     }
-        
+
     static func sendSession() {
         guard User.shared.sendAnonymousUsageData else { return }
-        
+
         Task {
             do {
                 let mmpProvider: MMPProvider = Singular(includeSKAN: true)
@@ -41,10 +41,10 @@ struct MMP {
             }
         }
     }
-    
+
     static func sendEvent(_ event: MMPEvent) {
         guard User.shared.sendAnonymousUsageData else { return }
-        
+
         Task {
             do {
                 let mmpProvider: MMPProvider = Singular(includeSKAN: true)
@@ -54,7 +54,7 @@ struct MMP {
             }
         }
     }
-    
+
     static func handleSearchEvent(_ count: Int) {
         let eventMap: [Int: MMPEvent] = [1: .firstSearch, 5: .fifthSearch, 10: .tenthSearch]
         if let event = eventMap[count] {

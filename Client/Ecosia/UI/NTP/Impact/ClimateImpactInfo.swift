@@ -9,7 +9,7 @@ enum ClimateImpactInfo: Equatable {
     case referral(value: Int)
     case totalTrees(value: Int)
     case totalInvested(value: Int)
-    
+
     var title: String {
         switch self {
         case .referral(let value):
@@ -22,7 +22,7 @@ enum ClimateImpactInfo: Equatable {
                 .string(from: .init(integerLiteral: value)) ?? ""
         }
     }
-    
+
     var subtitle: String {
         switch self {
         case .referral(let value):
@@ -33,7 +33,7 @@ enum ClimateImpactInfo: Equatable {
             return .localized(.dedicatedToClimateAction)
         }
     }
-    
+
     var accessibilityLabel: String {
         switch self {
         case .referral(let value):
@@ -44,7 +44,7 @@ enum ClimateImpactInfo: Equatable {
             return value.spelledOutString + " " + .localized(.dedicatedToClimateAction)
         }
     }
-    
+
     var accessibilityIdentifier: String? {
         switch self {
         case .referral:
@@ -55,7 +55,7 @@ enum ClimateImpactInfo: Equatable {
             "total_invested_count"
         }
     }
-    
+
     var image: UIImage? {
         switch self {
         case .referral:
@@ -66,7 +66,7 @@ enum ClimateImpactInfo: Equatable {
             return .init(named: "financialReports")
         }
     }
-    
+
     var buttonTitle: String? {
         switch self {
         case .referral:
@@ -75,7 +75,7 @@ enum ClimateImpactInfo: Equatable {
             return nil
         }
     }
-    
+
     var accessibilityHint: String? {
         switch self {
         case .referral:
@@ -84,7 +84,7 @@ enum ClimateImpactInfo: Equatable {
             return nil
         }
     }
-    
+
     var imageAccessibilityIdentifier: String? {
         switch self {
         case .referral:
@@ -95,7 +95,7 @@ enum ClimateImpactInfo: Equatable {
             "total_invested_image"
         }
     }
-        
+
     /// Created to be used for comparison without taking the associated types arguments into consideration.
     var rawValue: Int {
         switch self {
@@ -107,7 +107,7 @@ enum ClimateImpactInfo: Equatable {
             return 2
         }
     }
-    
+
     private func accessiblityLabelTreesPlanted(value: Int) -> String {
         value.spelledOutString + " " + .localizedPlural(.treesPlanted, num: value) + ";"
     }

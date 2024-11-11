@@ -101,8 +101,8 @@ final class BrowserCoordinatorTests: XCTestCase {
                                                     overlayManager: overlayModeManager)
          */
         let secondHomepage = HomepageViewController(profile: profile,
-                                                               toastContainer: UIView(),
-                                                               tabManager: tabManager,
+                                                    toastContainer: UIView(),
+                                                    tabManager: tabManager,
                                                     overlayManager: overlayModeManager,
                                                     referrals: .init(),
                                                     delegate: nil)

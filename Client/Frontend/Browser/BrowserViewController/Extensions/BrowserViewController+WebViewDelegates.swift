@@ -574,7 +574,7 @@ extension BrowserViewController: WKNavigationDelegate {
             decisionHandler(.allow)
             return
         }
-        
+
         // Ecosia: Allow MarketplaceKit requests for iOS 17.4+
         if #available(iOS 17.4, *), url.scheme == "marketplace-kit" {
             decisionHandler(.allow)
@@ -594,7 +594,7 @@ extension BrowserViewController: WKNavigationDelegate {
                 }
             }
         }
-        
+
         decisionHandler(.cancel)
     }
 
@@ -927,7 +927,7 @@ private extension BrowserViewController {
         tab.addSnackbar(snackBar)
          */
         let alert = UIAlertController(title: .localized(.openExternalLinkTitle),
-                                      message: String.init(format: .localized(.openExternalLinkDescription), url.absoluteString),
+                                      message: String(format: .localized(.openExternalLinkDescription), url.absoluteString),
                                       preferredStyle: .alert)
         alert.view.tintColor = .legacyTheme.ecosia.primaryButton
         let cancelAction = UIAlertAction(title: .localized(.cancel), style: .default) { _ in

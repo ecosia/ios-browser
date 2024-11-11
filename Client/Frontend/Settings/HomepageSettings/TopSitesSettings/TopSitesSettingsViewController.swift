@@ -46,7 +46,7 @@ class TopSitesSettingsViewController: SettingsTableViewController, FeatureFlagga
         )
         sections.append(sponsoredShortcutSetting)
          */
-        let topSitesSetting = NTPCustomizationSetting(prefs: profile.prefs, 
+        let topSitesSetting = NTPCustomizationSetting(prefs: profile.prefs,
                                                       theme: themeManager.currentTheme,
                                                       config: .topSites)
         sections.append(topSitesSetting)

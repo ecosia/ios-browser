@@ -18,7 +18,7 @@ final class NTPNewsCellViewModel {
     weak var delegate: NTPNewsCellDelegate?
     weak var dataModelDelegate: HomepageDataModelDelegate?
     var theme: Theme
-    
+
     init(theme: Theme) {
         self.theme = theme
         news.subscribeAndReceive(self) { [weak self] in
@@ -27,12 +27,11 @@ final class NTPNewsCellViewModel {
             self.dataModelDelegate?.reloadView()
         }
     }
-
 }
 
 // MARK: HomeViewModelProtocol
 extension NTPNewsCellViewModel: HomepageViewModelProtocol {
-    
+
     func setTheme(theme: Theme) {
         self.theme = theme
     }
@@ -67,7 +66,7 @@ extension NTPNewsCellViewModel: HomepageViewModelProtocol {
         let section = NSCollectionLayoutSection(group: group)
 
         section.contentInsets = sectionType.sectionInsets(traitCollection)
-        
+
         let size = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
                                           heightDimension: .estimated(100.0))
         let header = NSCollectionLayoutBoundarySupplementaryItem(
@@ -85,7 +84,7 @@ extension NTPNewsCellViewModel: HomepageViewModelProtocol {
     var hasData: Bool {
         numberOfItemsInSection() > 0
     }
-    
+
     func refreshData(for traitCollection: UITraitCollection, size: CGSize, isPortrait: Bool, device: UIUserInterfaceIdiom) {
         news.load(session: .shared, force: !hasData)
     }
@@ -108,6 +107,5 @@ extension NTPNewsCellViewModel: HomepageSectionHandler {
         let item = items[index]
         homePanelDelegate?.homePanel(didSelectURL: item.targetUrl, visitType: .link, isGoogleTopSite: false)
         Analytics.shared.navigationOpenNews(item.trackingName)
-
     }
 }

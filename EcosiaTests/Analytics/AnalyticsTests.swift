@@ -16,16 +16,16 @@ final class AnalyticsTests: XCTestCase {
         defaults.removeObject(forKey: "dayPassedCheckIdentifier")
         defaults.removeObject(forKey: "installCheckIdentifier")
     }
-    
+
     // MARK: - hasDayPassedSinceLastCheck Tests
-    
+
     func testFirstCheckAlwaysReturnsTrue() throws {
         // Given: No previous date exists in UserDefaults for the identifier
         // (Handled by setUpWithError)
-        
+
         // When: The method is called for the first time
         let result = Analytics.hasDayPassedSinceLastCheck(for: "dayPassedCheckIdentifier")
-        
+
         // Then: The result should be true because no previous date exists
         XCTAssertTrue(result, "The first check should return true because no previous date exists.")
     }
@@ -34,10 +34,10 @@ final class AnalyticsTests: XCTestCase {
         // Given: The current date is saved as the last check date
         let defaults = UserDefaults.standard
         defaults.set(Date(), forKey: "dayPassedCheckIdentifier")
-        
+
         // When: The method is called within the same day
         let result = Analytics.hasDayPassedSinceLastCheck(for: "dayPassedCheckIdentifier")
-        
+
         // Then: The result should be false since less than a day has passed
         XCTAssertFalse(result, "The check should return false if it's been less than a day since the last check.")
     }
@@ -47,10 +47,10 @@ final class AnalyticsTests: XCTestCase {
         let defaults = UserDefaults.standard
         let moreThanADayAgo = Calendar.current.date(byAdding: .day, value: -2, to: Date())!
         defaults.set(moreThanADayAgo, forKey: "dayPassedCheckIdentifier")
-        
+
         // When: The method is called after more than a day has passed
         let result = Analytics.hasDayPassedSinceLastCheck(for: "dayPassedCheckIdentifier")
-        
+
         // Then: The method should return true and update the last check date to today
         XCTAssertTrue(result, "The check should return true since more than a day has passed.")
         let updatedDate = defaults.object(forKey: "dayPassedCheckIdentifier") as? Date
@@ -62,17 +62,17 @@ final class AnalyticsTests: XCTestCase {
         // Given: Corrupted data (e.g., a string instead of a Date) is saved in UserDefaults
         let defaults = UserDefaults.standard
         defaults.set("corruptedData", forKey: "dayPassedCheckIdentifier")
-        
+
         // When: The method is called
         let result = Analytics.hasDayPassedSinceLastCheck(for: "dayPassedCheckIdentifier")
-        
+
         // Then: The method should return true, treat it as the first check, and reset the last check date to today
         XCTAssertTrue(result, "The method should handle corrupted data gracefully and treat it as the first check.")
         let updatedDate = defaults.object(forKey: "dayPassedCheckIdentifier") as? Date
         XCTAssertNotNil(updatedDate, "The date should be reset in UserDefaults after detecting corrupted data.")
         XCTAssertTrue(Calendar.current.isDateInToday(updatedDate!), "The last check date should be updated to today's date after handling corrupted data.")
     }
-    
+
     // MARK: - isFirstInstall Tests
 
     func testIsFirstInstall_FirstCall_ReturnsTrue() {
@@ -81,13 +81,13 @@ final class AnalyticsTests: XCTestCase {
         let defaults = UserDefaults.standard
         defaults.removeObject(forKey: "installCheckIdentifier")
         defaults.removeObject(forKey: EcosiaInstallType.installTypeKey)
-        
+
         // Set EcosiaInstallType to .fresh to simulate a fresh install
         EcosiaInstallType.set(type: .fresh)
-        
+
         // When: The method is called for the first time
         let result = Analytics.isFirstInstall(for: "installCheckIdentifier")
-        
+
         // Then: The result should be true indicating the first install
         XCTAssertTrue(result, "The first install should return TRUE when not an upgrade")
     }
@@ -97,16 +97,16 @@ final class AnalyticsTests: XCTestCase {
         let defaults = UserDefaults.standard
         defaults.removeObject(forKey: "installCheckIdentifier")
         defaults.removeObject(forKey: EcosiaInstallType.installTypeKey)
-        
+
         // Set EcosiaInstallType to .fresh to simulate a fresh install
         EcosiaInstallType.set(type: .fresh)
-        
+
         // First call to set the flag
         _ = Analytics.isFirstInstall(for: "installCheckIdentifier")
-        
+
         // When: The method is called again
         let result = Analytics.isFirstInstall(for: "installCheckIdentifier")
-        
+
         // Then: The result should be false indicating it is no longer the first install
         XCTAssertFalse(result, "The second call should return FALSE as the app is no longer on its first install")
     }
@@ -116,15 +116,15 @@ final class AnalyticsTests: XCTestCase {
         let defaults = UserDefaults.standard
         defaults.removeObject(forKey: "installCheckIdentifier")
         defaults.removeObject(forKey: EcosiaInstallType.installTypeKey)
-        
+
         // Set EcosiaInstallType to .fresh to simulate a fresh install
         EcosiaInstallType.set(type: .fresh)
-        
+
         _ = Analytics.isFirstInstall(for: "installCheckIdentifier")
-        
+
         // When: The value is retrieved from UserDefaults
         let storedValue = defaults.object(forKey: "installCheckIdentifier") as? Bool
-        
+
         // Then: The stored value should be false indicating the first install has been recorded
         XCTAssertNotNil(storedValue, "The value should be stored in UserDefaults")
         XCTAssertEqual(storedValue, false, "The stored value in UserDefaults should be FALSE after the first call")
@@ -136,13 +136,13 @@ final class AnalyticsTests: XCTestCase {
         let defaults = UserDefaults.standard
         defaults.removeObject(forKey: "installCheckIdentifier")
         defaults.removeObject(forKey: EcosiaInstallType.installTypeKey)
-        
+
         // Set EcosiaInstallType to .upgrade to simulate an upgrade scenario
         EcosiaInstallType.set(type: .upgrade)
-        
+
         // When: The method is called for the first time
         let result = Analytics.isFirstInstall(for: "installCheckIdentifier")
-        
+
         // Then: The result should be false because it's an upgrade
         XCTAssertFalse(result, "The first install should return FALSE when it's an upgrade")
     }}

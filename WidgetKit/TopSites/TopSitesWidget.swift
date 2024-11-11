@@ -11,7 +11,7 @@ struct TopSitesWidget: Widget {
 
      var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: TabProvider()) { entry in
-            OpenTabsView(entry: entry)//TopSitesView(entry: entry)
+            OpenTabsView(entry: entry)// TopSitesView(entry: entry)
         }
         .supportedFamilies([.systemMedium])
         .configurationDisplayName(String.TopSitesGalleryTitleV2)

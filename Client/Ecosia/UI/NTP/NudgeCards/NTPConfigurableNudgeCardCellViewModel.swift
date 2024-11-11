@@ -41,7 +41,7 @@ class NTPConfigurableNudgeCardCellViewModel: HomepageViewModelProtocol {
     init(theme: Theme) {
         self.theme = theme
     }
-    
+
     func setTheme(theme: Theme) {
         self.theme = theme
     }
@@ -77,7 +77,7 @@ class NTPConfigurableNudgeCardCellViewModel: HomepageViewModelProtocol {
     var isEnabled: Bool {
         fatalError("Needs to be implemented")
     }
-    
+
     func screenWasShown() {
         fatalError("Needs to be implemented. Implement empty if not needed")
     }
@@ -90,4 +90,3 @@ extension NTPConfigurableNudgeCardCellViewModel: HomepageSectionHandler {
         return cell
     }
 }
-

@@ -88,5 +88,5 @@ class MockBrowserCoordinator: BrowserNavigationHandler, ParentCoordinatorDelegat
                                sidebarContainer: SidebarEnabledViewProtocol,
                                parentViewController: UIViewController) {
         updateFakespotSidebarCalled += 1
-    }    
+    }
 }

@@ -4,12 +4,10 @@
 
 import Foundation
 
-import Foundation
-
 struct LocaleRetriever {
-    
+
     private init() {}
-    
+
     // Function to get locales from the JSON file
     static func getLocales() -> [Locale] {
         // Load the JSON file from the app bundle

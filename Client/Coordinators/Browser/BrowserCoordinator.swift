@@ -116,7 +116,7 @@ class BrowserCoordinator: BaseCoordinator,
         homepageController.scrollToTop()
         // We currently don't support full page screenshot of the homepage
         screenshotService.screenshotableView = nil
-        
+
         // Ecosia: show any of the insighful sheets if needed
         // Workaround for time of experiment
         // -> delay of 0.5s to wait for animations and dismissals to finish
@@ -269,7 +269,7 @@ class BrowserCoordinator: BaseCoordinator,
             openBlankNewTabAndClaimReferral(code: code)
         }
     }
-    
+
     private func openBlankNewTabAndClaimReferral(code: String) {
         User.shared.referrals.pendingClaim = code
         // on first start, browser is not in view hierarchy yet
@@ -278,7 +278,7 @@ class BrowserCoordinator: BaseCoordinator,
         // Intro logic will trigger claiming referral
         browserViewController.presentIntroViewController()
     }
-    
+
     // Ecosia: Add `forceSkipExperiment` - used for `OnboardingRemoveExperiment`
     // private func showIntroOnboarding() {
     private func showIntroOnboarding(skipExperiment: Bool = false) {
@@ -396,7 +396,7 @@ class BrowserCoordinator: BaseCoordinator,
         remove(child: coordinator)
     }
 
-    func openDebugTestTabs(count: Int) {        
+    func openDebugTestTabs(count: Int) {
         // Ecosia: Update URL
         // guard let url = URL(string: "https://www.mozilla.org") else { return }
         guard let url = URL(string: "https://www.ecosia.org") else { return }

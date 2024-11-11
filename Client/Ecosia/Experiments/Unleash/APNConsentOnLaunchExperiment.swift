@@ -7,7 +7,7 @@ import Core
 
 struct APNConsentOnLaunchExperiment {
     private init() {}
-    
+
     static var toggleName: Unleash.Toggle.Name {
         .apnConsentOnLaunch
     }
@@ -16,7 +16,7 @@ struct APNConsentOnLaunchExperiment {
         // Depends on Braze Integration being enabled - we should make sure targets on Unleash match
         Unleash.isEnabled(toggleName) && BrazeIntegrationExperiment.isEnabled
     }
-    
+
     static func requestAPNConsentIfNeeded(delegate: UNUserNotificationCenterDelegate) async {
         guard isEnabled, BrazeService.shared.notificationAuthorizationStatus == .notDetermined else {
             return

@@ -5,26 +5,26 @@
 import Foundation
 
 final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol {
-    
+
     private static let className = String(describing: SeedCounterNTPExperiment.progressManagerType.self)
     static var progressUpdatedNotification: Notification.Name { .init("\(className).SeedProgressUpdated") }
     static var levelUpNotification: Notification.Name { .init("\(className).SeedLevelUp") }
     private static let numberOfSeedsAtStart = 1
-    
+
     // UserDefaults keys
     private static let totalSeedsCollectedKey = "TotalSeedsCollected"
     private static let currentLevelKey = "CurrentLevel"
     private static let lastAppOpenDateKey = "LastAppOpenDate"
-    
+
     static var seedCounterConfig: SeedCounterConfig? = SeedCounterNTPExperiment.seedCounterConfig
     private static var seedLevels: [SeedCounterConfig.SeedLevel] { seedCounterConfig?.levels.compactMap { $0 } ?? [] }
-    
+
     // Fetch max level and max seeds from remote configuration if provided
     private static let maxCappedLevel = seedCounterConfig?.maxCappedLevel
     private static let maxCappedSeeds = seedCounterConfig?.maxCappedSeeds
-    
+
     private init() {}
-    
+
     // MARK: - Static Methods
 
     // Load the current level from UserDefaults
@@ -43,7 +43,7 @@ final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol {
     static func loadLastAppOpenDate() -> Date {
         return UserDefaults.standard.object(forKey: lastAppOpenDateKey) as? Date ?? .now
     }
-    
+
     // Save the seed progress and level to UserDefaults
     static func saveProgress(totalSeeds: Int, currentLevel: Int, lastAppOpenDate: Date) {
         let defaults = UserDefaults.standard
@@ -81,7 +81,7 @@ final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol {
         // Return progress as a fraction (between 0 and 1)
         return CGFloat(progressInCurrentLevel) / CGFloat(requiredSeedsForCurrentLevel)
     }
-    
+
     // Add seeds to the counter and handle level progression
     static func addSeeds(_ count: Int) {
         addSeeds(count, relativeToDate: loadLastAppOpenDate())
@@ -91,7 +91,7 @@ final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol {
     static func addSeeds(_ count: Int, relativeToDate date: Date) {
         // Load total seeds and current level from User Defaults
         var totalSeeds = loadTotalSeedsCollected()
-                
+
         // Fetch the maximum seeds required for the current progression context
         let standardMaxRequiredSeeds = seedLevels.last?.requiredSeeds ?? 0
 
@@ -109,7 +109,7 @@ final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol {
         let thresholdForNextLevel = requiredSeedsForLevel(currentLevel + 1)
 
         totalSeeds += count
-        
+
         /* 
          If the number of seeds being added (e.g. via "add 5 seeds" debug function) exceeds the max required seeds
          cap the totalSeeds to the maximum required.
@@ -125,7 +125,7 @@ final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol {
                 currentLevel += 1
                 leveledUp = true
         }
-        
+
         // Save progress with updated total seeds and current level
         saveProgress(totalSeeds: totalSeeds, currentLevel: currentLevel, lastAppOpenDate: date)
 
@@ -134,7 +134,7 @@ final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol {
             NotificationCenter.default.post(name: levelUpNotification, object: nil)
         }
     }
-    
+
     // Reset the counter to the initial state
     static func resetCounter() {
         saveProgress(totalSeeds: numberOfSeedsAtStart,
@@ -147,11 +147,11 @@ final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol {
         let currentDate = Date()
         let lastOpenDate = loadLastAppOpenDate()
         let calendar = Calendar.current
-        
+
         if calendar.isDateInToday(lastOpenDate) {
             return // Seed already collected today
         }
-        
+
         // Add 1 seed and save the last open date as today
         addSeeds(1, relativeToDate: currentDate)
     }

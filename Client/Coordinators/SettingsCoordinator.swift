@@ -171,7 +171,7 @@ class SettingsCoordinator: BaseCoordinator,
     func didFinish() {
         parentCoordinator?.didFinishSettings(from: self)
     }
-    
+
     // Ecosia: SettingsDelegate
     func reloadHomepage() {
         (parentCoordinator as? BrowserCoordinator)?.homepageViewController?.reloadView()

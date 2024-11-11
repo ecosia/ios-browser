@@ -5,13 +5,13 @@
 @testable import Client
 
 struct MockAppVersionInfoProvider: AppVersionInfoProvider {
-    
+
     var mockedAppVersion: String
-    
+
     init(mockedAppVersion: String) {
         self.mockedAppVersion = mockedAppVersion
     }
-    
+
     var version: String {
         mockedAppVersion
     }

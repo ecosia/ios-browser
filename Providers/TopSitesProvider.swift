@@ -123,7 +123,7 @@ private extension TopSitesProviderImplementation {
         let unionOnURL = { (site: Site) -> String in
             return URL(string: site.url, invalidCharacters: false)?.normalizedHost ?? ""
         }
-        
+
         /* Ecosia: Merge default sites including path to keep blog.ecosia.org + blog.ecosia.org/financial-results */
         let unionOnURLAndPath = { (site: Site) -> String in
             return URL(string: site.url)?.normalizedHostAndPath ?? ""

@@ -1,6 +1,6 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
 import Core
@@ -9,15 +9,15 @@ extension String {
     static func localized(_ key: Key) -> String {
         localized(key.rawValue)
     }
-    
+
     static func localized(_ string: String) -> String {
         NSLocalizedString(string, tableName: "Ecosia", comment: "")
     }
-    
+
     static func localizedPlural(_ key: Key, num: Int) -> String {
         String(format: NSLocalizedString(key.rawValue, tableName: "Plurals", comment: ""), num)
     }
-    
+
     enum Key: String {
         case allRegions = "All regions"
         case autocomplete = "Autocomplete"

@@ -10,7 +10,7 @@ enum AboutEcosiaSection: Int, CaseIterable {
     financialReports,
     trees,
     privacy
-    
+
     var title: String {
         switch self {
         case .financialReports:
@@ -21,7 +21,7 @@ enum AboutEcosiaSection: Int, CaseIterable {
             return .localized(.privacy)
         }
     }
-    
+
     var subtitle: String {
         switch self {
         case .financialReports:
@@ -65,7 +65,7 @@ enum AboutEcosiaSection: Int, CaseIterable {
             return .privacy
         }
     }
-        
+
     var accessibilityIdentifierPrefix: String {
         switch self {
         case .financialReports:

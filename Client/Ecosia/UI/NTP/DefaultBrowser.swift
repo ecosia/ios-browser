@@ -1,6 +1,6 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import UIKit
 import Common
@@ -12,10 +12,10 @@ protocol DefaultBrowserDelegate: AnyObject {
 
 @available(iOS 14, *)
 final class DefaultBrowser: UIViewController, Themeable {
-    
+
     /// The minimum amount of searches required to show the Default Browser
     static var minPromoSearches = 50
-    
+
     weak var content: UIView!
     weak var image: UIImageView!
     weak var waves: UIImageView!
@@ -27,9 +27,9 @@ final class DefaultBrowser: UIViewController, Themeable {
     weak var cta: UIButton!
     weak var skip: UIButton!
     weak var delegate: DefaultBrowserDelegate?
-    
+
     // MARK: - Themeable Properties
-    
+
     var themeManager: ThemeManager { AppContainer.shared.resolve() }
     var themeObserver: NSObjectProtocol?
     var notificationCenter: NotificationProtocol = NotificationCenter.default

@@ -1,6 +1,6 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import UIKit
 import Core
@@ -58,12 +58,13 @@ final class Welcome: UIViewController {
 
     private var didAppear = false
     override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         guard !didAppear else { return }
         addMask()
         fadeIn()
         didAppear = true
         Analytics.shared.introDisplaying(page: .start, at: 0)
-        
+
         MMP.sendEvent(.onboardingStart)
     }
 
@@ -169,7 +170,7 @@ final class Welcome: UIViewController {
         skipButton.setTitle(.localized(.skipWelcomeTour), for: .normal)
         skipButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
         skipButton.addTarget(self, action: #selector(skip), for: .primaryActionTriggered)
-        
+
         stack.addArrangedSubview(skipButton)
 
         if view.traitCollection.userInterfaceIdiom == .phone {
@@ -247,7 +248,7 @@ final class Welcome: UIViewController {
             self.stackBottonConstraint.isActive = true
             self.view.layoutIfNeeded()
             self.setNeedsStatusBarAppearanceUpdate()
-        } completion: { _ in }
+        }
     }
 
     // MARK: Helper

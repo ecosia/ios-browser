@@ -38,7 +38,7 @@ class HomepageViewControllerTests: XCTestCase {
         let firefoxHomeViewController = HomepageViewController(profile: profile,
                                                                toastContainer: UIView(),
                                                                tabManager: tabManager,
-                                                               overlayManager: overlayManager, 
+                                                               overlayManager: overlayManager,
                                                                referrals: .init(),
                                                                delegate: nil)
 

@@ -500,7 +500,7 @@ extension TabManagerImplementation {
             return []
         }
     }
-    
+
     private static let restoreMigratedv10TabsMissingUrlKey = "restoreMigratedv10TabsMissingUrl"
     private var shouldRestoreMigratedv10TabsMissingUrl: Bool {
         !UserDefaults.standard.bool(forKey: Self.restoreMigratedv10TabsMissingUrlKey)
@@ -520,7 +520,7 @@ extension TabManagerImplementation {
         }
         // We only restore if there are actually any tabs with empty url.
         guard let window = window,
-              window.tabData.filter({ $0.siteUrl.isEmpty }).count > 0 else {
+              window.tabData.contains(where: { $0.siteUrl.isEmpty }) else {
             return window
         }
         let sites = await fetchLastVisitedSitesFromDB(count: 1000)

@@ -82,7 +82,7 @@ extension AppInfo {
     public static var ecosiaSharedContainerIdentifier: String {
         return "\("group.")\(baseBundleIdentifier)"
     }
-    
+
     /// Return the keychain access group.
     public static func ecosiaKeychainAccessGroupWithPrefix(_ prefix: String) -> String {
         return "\(prefix).\(baseBundleIdentifier)"
