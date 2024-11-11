@@ -266,7 +266,7 @@ final class UnleashNewsletterCardSetting: UnleashVariantResetSetting {
     override var titleName: String? {
         "Newsletter Card"
     }
-    
+
     override var unleashEnabled: Bool? {
         Unleash.isEnabled(.newsletterCard)
     }
