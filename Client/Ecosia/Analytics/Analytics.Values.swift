@@ -85,13 +85,13 @@ extension Analytics {
             sendFeedback = "send_feedback",
             terms
         }
-        
+
         enum NewsletterCardExperiment: String {
             case
             brazeIAM = "braze_iam",
             ntpCard = "ntp_card"
         }
-        
+
         enum NTP: String {
             case
             about,
@@ -152,7 +152,7 @@ extension Analytics {
             case
             `import`
         }
-        
+
         enum NewsletterCardExperiment: String {
             case
             click,
@@ -160,7 +160,7 @@ extension Analytics {
             signUp = "sign_up",
             view
         }
-        
+
         enum NTPCustomization: String {
             case
             click,

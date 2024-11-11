@@ -11,11 +11,11 @@ struct NewsletterCardExperiment {
     static var isEnabled: Bool {
         Unleash.isEnabled(.newsletterCard)
     }
-    
+
     static var shouldShowCard: Bool {
         isEnabled && !isDismissed
     }
-    
+
     /// Send onboarding card view analytics event, but just the first time it's called.
     static func trackExperimentImpression() {
         let trackExperimentImpressionKey = "newsletterCardExperimentImpression"
@@ -25,18 +25,18 @@ struct NewsletterCardExperiment {
         Analytics.shared.newsletterCardExperiment(action: .view, label: .ntpCard)
         UserDefaults.standard.setValue(true, forKey: trackExperimentImpressionKey)
     }
-    
+
     // MARK: Dismissed
     private static let dismissedKey = "newsletterCardExperimentDismissed"
-    
+
     static var isDismissed: Bool {
         UserDefaults.standard.bool(forKey: dismissedKey)
     }
-    
+
     static func setDismissed() {
         UserDefaults.standard.set(true, forKey: dismissedKey)
     }
-    
+
     /// Should only be used in Debug!
     static func unsetDismissed() {
         UserDefaults.standard.removeObject(forKey: dismissedKey)

@@ -31,10 +31,10 @@ class NTPConfigurableNudgeCardCellViewModel: HomepageViewModelProtocol {
     var showsCloseButton: Bool {
         true
     }
-    
+
     var theme: Theme
     weak var delegate: NTPConfigurableNudgeCardCellDelegate?
-    
+
     /// Initializes the ViewModel with a theme. Some properties must be overriden by subclasses.
     /// - Parameters:
     ///   - theme: The current theme for styling the card.

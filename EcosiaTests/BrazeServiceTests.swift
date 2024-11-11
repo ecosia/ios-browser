@@ -7,17 +7,17 @@ import XCTest
 
 final class BrazeServiceTests: XCTestCase {
     var brazeService: BrazeService!
-    
+
     override func setUp() {
         super.setUp()
         brazeService = BrazeService.shared
     }
-    
+
     override func tearDown() {
         super.tearDown()
         brazeService = nil
     }
-    
+
     func testConfigurationWithStagingEnvironment() {
         // Set up your test environment for staging
         let apiKey = "staging_api_key"

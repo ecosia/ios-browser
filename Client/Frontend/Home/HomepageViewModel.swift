@@ -128,7 +128,7 @@ class HomepageViewModel: FeatureFlaggable {
      The earlier a section type appears in the array, the higher its priority.
      */
     private let cardsPrioritySectionTypes: [HomepageSectionType] = [] // TODO: Check if priority needed
-    
+
     // MARK: - Initializers
     init(profile: Profile,
          isPrivate: Bool,

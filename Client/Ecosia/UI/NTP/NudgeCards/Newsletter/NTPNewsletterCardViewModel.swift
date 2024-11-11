@@ -9,23 +9,23 @@ final class NTPNewsletterCardViewModel: NTPConfigurableNudgeCardCellViewModel {
     override var title: String {
         "Subscribe to our newsletter"
     }
-    
+
     override var description: String {
         "Be the first to know about climate impact updates and exciting new features."
     }
-    
+
     override var buttonText: String {
         "Subscribe now"
     }
-    
+
     override var cardSectionType: HomepageSectionType {
         .newsletterCard
     }
-    
+
     override var image: UIImage? {
         .init(named: "newsletterCardImage")
     }
-    
+
     override var isEnabled: Bool {
         NewsletterCardExperiment.shouldShowCard
     }

@@ -9,7 +9,7 @@ import Core
 
 final class BrazeService {
     private init() {}
-    
+
     private var braze: Braze?
     private var userId: String {
         User.shared.analyticsId.uuidString
@@ -17,16 +17,16 @@ final class BrazeService {
     private(set) var notificationAuthorizationStatus: UNAuthorizationStatus?
     private static var apiKey = EnvironmentFetcher.valueFromMainBundleOrProcessInfo(forKey: "BRAZE_API_KEY") ?? ""
     static let shared = BrazeService()
-    
+
     enum Error: Swift.Error {
         case invalidConfiguration
         case generic(description: String)
     }
-    
+
     enum CustomEvent: String {
         case newsletterCardClick = "newsletter_card_click"
     }
-    
+
     // TODO: Make `BrazeService` directly `UNUserNotificationCenterDelegate`
     func initialize(notificationCenterDelegate: UNUserNotificationCenterDelegate) async {
         do {
@@ -36,18 +36,18 @@ final class BrazeService {
             debugPrint(error)
         }
     }
-    
+
     func registerDeviceToken(_ deviceToken: Data) {
         braze?.notifications.register(deviceToken: deviceToken)
         Task.detached(priority: .medium) { [weak self] in
             await self?.updateID(self?.userId)
         }
     }
-    
+
     func logCustomEvent(_ event: CustomEvent) {
         self.braze?.logCustomEvent(name: event.rawValue)
     }
-    
+
     // MARK: - APN Consent
 
     func requestAPNConsent(notificationCenterDelegate: UNUserNotificationCenterDelegate) async throws -> Bool {
@@ -72,7 +72,7 @@ final class BrazeService {
 
 extension BrazeService {
     // MARK: - Init Braze
-    
+
     @MainActor
     private func initBraze(userId: String) throws {
         self.braze = Braze(configuration: try getBrazeConfiguration())
@@ -93,7 +93,7 @@ extension BrazeService {
         center.delegate = notificationCenterDelegate
         return center
     }
-    
+
     private func retrieveUserCurrentNotificationAuthStatus() async {
         let notificationCenter = UNUserNotificationCenter.current()
         let currentStatus = await notificationCenter.notificationSettings().authorizationStatus

@@ -177,14 +177,14 @@ open class Analytics {
             .label(Label.market.rawValue)
             .property(new))
     }
-    
+
     // MARK: `NewsletterCardExperiment`
     func newsletterCardExperiment(action: Action.NewsletterCardExperiment, label: Label.NewsletterCardExperiment) {
         track(Structured(category: Category.newsletterExperiment.rawValue,
                          action: action.rawValue)
             .label(label.rawValue))
     }
-    
+
     // MARK: NTP
     func ntpCustomisation(_ action: Action.NTPCustomization, label: Label.NTP) {
         track(Structured(category: Category.ntp.rawValue,
