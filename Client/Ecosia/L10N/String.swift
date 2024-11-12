@@ -240,5 +240,8 @@ extension String {
         case apnConsentSkipButtonTitle = "Not now"
         case apnConsentLastReminderSkipButtonTitle = "No thanks"
         case configurableNudgeCardCloseButtonAccessibilityLabel = "Close card button"
+        case newsletterNTPCardExperimentTitle = "Be the first to know"
+        case newsletterNTPCardExperimentDescription = "Subscribe to our newsletter for updates on our climate impact and newest features."
+        case newsletterNTPCardExperimentButton = "Sign up"
     }
 }
