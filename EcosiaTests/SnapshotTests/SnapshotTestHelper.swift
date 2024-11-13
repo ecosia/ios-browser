@@ -74,6 +74,7 @@ final class SnapshotTestHelper {
             let config = deviceType.config
             let deviceName = deviceType.name
             let window = UIWindow(frame: CGRect(origin: .zero, size: config.size!))
+            let traits: UITraitCollection = .init(traitsFrom: [config.traits])
 
             for locale in locales {
                 for (themeStyle, themeSuffix) in themes {
@@ -81,32 +82,29 @@ final class SnapshotTestHelper {
                         config.traits,
                         .init(userInterfaceStyle: themeStyle)
                     ]
-                    let traits: UITraitCollection = .init(traitsFrom: traitsArray)
-                    
-                    traits.performAsCurrent {
-                        setLocale(locale)
-                        changeThemeTo(themeStyle, suffix: themeSuffix, themeManager: themeManager)
-                        updateContentInitializingWith(initializer, inWindow: window)
-                        RunLoop.current.run(until: Date(timeIntervalSinceNow: wait))
 
-                        let isCurrentDeviceMatchingSimulator = deviceName == simulatorDeviceName
+                    setLocale(locale)
+                    changeThemeTo(themeStyle, suffix: themeSuffix, themeManager: themeManager)
+                    updateContentInitializingWith(initializer, inWindow: window)
+                    RunLoop.current.run(until: Date(timeIntervalSinceNow: wait))
 
-                        let snapshotting = Snapshotting<UIView, UIImage>.image(
-                            precision: Float(precision),
-                            size: isCurrentDeviceMatchingSimulator ? nil : config.size!,
-                            traits: traits
-                        )
+                    let isCurrentDeviceMatchingSimulator = deviceName == simulatorDeviceName
 
-                        let snapshotName = "\(String.cleanFunctionName(testName))_\(themeSuffix.rawValue)_\(deviceType.rawValue)_\(locale.identifier)"
+                    let snapshotting = Snapshotting<UIView, UIImage>.image(
+                        precision: Float(precision),
+                        size: isCurrentDeviceMatchingSimulator ? nil : config.size!,
+                        traits: traits
+                    )
 
-                        SnapshotTesting.assertSnapshot(
-                            of: window,
-                            as: snapshotting,
-                            file: file,
-                            testName: snapshotName,
-                            line: line
-                        )
-                    }
+                    let snapshotName = "\(String.cleanFunctionName(testName))_\(themeSuffix.rawValue)_\(deviceType.rawValue)_\(locale.identifier)"
+
+                    SnapshotTesting.assertSnapshot(
+                        of: window,
+                        as: snapshotting,
+                        file: file,
+                        testName: snapshotName,
+                        line: line
+                    )
                 }
             }
         }

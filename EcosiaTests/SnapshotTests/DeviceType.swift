@@ -9,10 +9,10 @@ import UIKit
 enum DeviceType: String, CaseIterable {
     case iPhoneSE_Portrait
     case iPhoneSE_Landscape
-    case iPhone14Pro_Portrait
-    case iPhone14Pro_Landscape
-    case iPhone14ProMax_Portrait
-    case iPhone14ProMax_Landscape
+    case iPhone15Pro_Portrait
+    case iPhone15Pro_Landscape
+    case iPhone15ProMax_Portrait
+    case iPhone15ProMax_Landscape
     case iPadPro_Portrait
     case iPadPro_Landscape
 
@@ -22,13 +22,13 @@ enum DeviceType: String, CaseIterable {
             return ViewImageConfig.iPhone8(.portrait)
         case .iPhoneSE_Landscape:
             return ViewImageConfig.iPhone8(.landscape)
-        case .iPhone14Pro_Portrait:
+        case .iPhone15Pro_Portrait:
             return ViewImageConfig.iPhone13Pro(.portrait)
-        case .iPhone14Pro_Landscape:
+        case .iPhone15Pro_Landscape:
             return ViewImageConfig.iPhone13Pro(.landscape)
-        case .iPhone14ProMax_Portrait:
+        case .iPhone15ProMax_Portrait:
             return ViewImageConfig.iPhone13ProMax(.portrait)
-        case .iPhone14ProMax_Landscape:
+        case .iPhone15ProMax_Landscape:
             return ViewImageConfig.iPhone13ProMax(.landscape)
         case .iPadPro_Portrait:
             return ViewImageConfig.iPadPro12_9(.portrait)
@@ -41,10 +41,10 @@ enum DeviceType: String, CaseIterable {
         switch self {
         case .iPhoneSE_Portrait, .iPhoneSE_Landscape:
             return "iPhone SE (3rd generation)"
-        case .iPhone14Pro_Portrait, .iPhone14Pro_Landscape:
-            return "iPhone 14 Pro"
-        case .iPhone14ProMax_Portrait, .iPhone14ProMax_Landscape:
-            return "iPhone 14 Pro Max"
+        case .iPhone15Pro_Portrait, .iPhone15Pro_Landscape:
+            return "iPhone 15 Pro"
+        case .iPhone15ProMax_Portrait, .iPhone15ProMax_Landscape:
+            return "iPhone 15 Pro Max"
         case .iPadPro_Portrait, .iPadPro_Landscape:
             return "iPad Pro (12.9-inch) (6th generation)"
         }
@@ -62,14 +62,14 @@ enum DeviceType: String, CaseIterable {
             return .iPhoneSE_Portrait
         case ("iPhone SE (3rd generation)", "landscape"):
             return .iPhoneSE_Landscape
-        case ("iPhone 14 Pro", "portrait"):
-            return .iPhone14Pro_Portrait
-        case ("iPhone 14 Pro", "landscape"):
-            return .iPhone14Pro_Landscape
-        case ("iPhone 14 Pro Max", "portrait"):
-            return .iPhone14ProMax_Portrait
-        case ("iPhone 14 Pro Max", "landscape"):
-            return .iPhone14ProMax_Landscape
+        case ("iPhone 15 Pro", "portrait"):
+            return .iPhone15Pro_Portrait
+        case ("iPhone 15 Pro", "landscape"):
+            return .iPhone15Pro_Landscape
+        case ("iPhone 15 Pro Max", "portrait"):
+            return .iPhone15ProMax_Portrait
+        case ("iPhone 15 Pro Max", "landscape"):
+            return .iPhone15ProMax_Landscape
         case ("iPad Pro (12.9-inch) (6th generation)", "portrait"):
             return .iPadPro_Portrait
         case ("iPad Pro (12.9-inch) (6th generation)", "landscape"):
@@ -78,4 +78,181 @@ enum DeviceType: String, CaseIterable {
             fatalError("Device Name \(deviceName) and Orientation \(orientation) not found. Please add them correctly.")
         }
     }
+}
+
+// From: https://github.com/pointfreeco/swift-snapshot-testing/pull/839
+
+extension ViewImageConfig {
+
+    // https://useyourloaf.com/blog/iphone-15-screen-sizes/
+    public static let iPhone15 = ViewImageConfig.iPhone15(.portrait)
+
+    public static func iPhone15(_ orientation: Orientation) -> ViewImageConfig {
+        let safeArea: UIEdgeInsets
+        let size: CGSize
+        switch orientation {
+            case .landscape:
+                safeArea = .init(top: 0, left: 59, bottom: 21, right: 59)
+                size = .init(width: 852, height: 393)
+            case .portrait:
+                safeArea = .init(top: 59, left: 0, bottom: 34, right: 0)
+                size = .init(width: 393, height: 852)
+        }
+
+        return .init(safeArea: safeArea, size: size, traits: .iPhone15(orientation))
+    }
+
+    public static let iPhone15Plus = ViewImageConfig.iPhone15Plus(.portrait)
+
+    public static func iPhone15Plus(_ orientation: Orientation) -> ViewImageConfig {
+        let safeArea: UIEdgeInsets
+        let size: CGSize
+        switch orientation {
+            case .landscape:
+                safeArea = .init(top: 0, left: 59, bottom: 21, right: 59)
+                size = .init(width: 932, height: 430)
+            case .portrait:
+                safeArea = .init(top: 59, left: 0, bottom: 34, right: 0)
+                size = .init(width: 430, height: 932)
+        }
+
+        return .init(safeArea: safeArea, size: size, traits: .iPhone15Plus(orientation))
+    }
+
+    public static let iPhone15Pro = ViewImageConfig.iPhone15Pro(.portrait)
+
+    public static func iPhone15Pro(_ orientation: Orientation) -> ViewImageConfig {
+      let safeArea: UIEdgeInsets
+      let size: CGSize
+      switch orientation {
+      case .landscape:
+        safeArea = .init(top: 0, left: 59, bottom: 21, right: 59)
+        size = .init(width: 852, height: 393)
+      case .portrait:
+        safeArea = .init(top: 59, left: 0, bottom: 34, right: 0)
+         size = .init(width: 393, height: 852)
+      }
+
+      return .init(safeArea: safeArea, size: size, traits: .iPhone15Pro(orientation))
+    }
+
+    public static let iPhone15ProMax = ViewImageConfig.iPhone15ProMax(.portrait)
+
+    public static func iPhone15ProMax(_ orientation: Orientation) -> ViewImageConfig {
+      let safeArea: UIEdgeInsets
+      let size: CGSize
+      switch orientation {
+      case .landscape:
+        safeArea = .init(top: 0, left: 59, bottom: 21, right: 59)
+        size = .init(width: 932, height: 430)
+      case .portrait:
+        safeArea = .init(top: 59, left: 0, bottom: 34, right: 0)
+        size = .init(width: 430, height: 932)
+      }
+
+      return .init(safeArea: safeArea, size: size, traits: .iPhone15ProMax(orientation))
+    }
+}
+
+extension UITraitCollection {
+
+    public static func iPhone15(_ orientation: ViewImageConfig.Orientation) -> UITraitCollection {
+        let base: [UITraitCollection] = [
+          .init(forceTouchCapability: .unavailable),
+          .init(layoutDirection: .leftToRight),
+          .init(preferredContentSizeCategory: .medium),
+          .init(userInterfaceIdiom: .phone)
+        ]
+        switch orientation {
+        case .landscape:
+          return .init(
+            traitsFrom: base + [
+              .init(horizontalSizeClass: .regular),
+              .init(verticalSizeClass: .compact)
+            ]
+          )
+        case .portrait:
+          return .init(
+            traitsFrom: base + [
+              .init(horizontalSizeClass: .compact),
+              .init(verticalSizeClass: .regular)
+            ]
+          )
+        }
+      }
+
+      public static func iPhone15Plus(_ orientation: ViewImageConfig.Orientation) -> UITraitCollection {
+        let base: [UITraitCollection] = [
+          .init(forceTouchCapability: .unavailable),
+          .init(layoutDirection: .leftToRight),
+          .init(preferredContentSizeCategory: .medium),
+          .init(userInterfaceIdiom: .phone)
+        ]
+        switch orientation {
+        case .landscape:
+          return .init(
+            traitsFrom: base + [
+              .init(horizontalSizeClass: .regular),
+              .init(verticalSizeClass: .compact)
+            ]
+          )
+        case .portrait:
+          return .init(
+            traitsFrom: base + [
+              .init(horizontalSizeClass: .compact),
+              .init(verticalSizeClass: .regular)
+            ]
+          )
+        }
+      }
+
+      public static func iPhone15Pro(_ orientation: ViewImageConfig.Orientation) -> UITraitCollection {
+        let base: [UITraitCollection] = [
+          .init(forceTouchCapability: .unavailable),
+          .init(layoutDirection: .leftToRight),
+          .init(preferredContentSizeCategory: .medium),
+          .init(userInterfaceIdiom: .phone)
+        ]
+        switch orientation {
+        case .landscape:
+          return .init(
+            traitsFrom: base + [
+              .init(horizontalSizeClass: .regular),
+              .init(verticalSizeClass: .compact)
+            ]
+          )
+        case .portrait:
+          return .init(
+            traitsFrom: base + [
+              .init(horizontalSizeClass: .compact),
+              .init(verticalSizeClass: .regular)
+            ]
+          )
+        }
+      }
+
+      public static func iPhone15ProMax(_ orientation: ViewImageConfig.Orientation) -> UITraitCollection {
+        let base: [UITraitCollection] = [
+          .init(forceTouchCapability: .unavailable),
+          .init(layoutDirection: .leftToRight),
+          .init(preferredContentSizeCategory: .medium),
+          .init(userInterfaceIdiom: .phone)
+        ]
+        switch orientation {
+        case .landscape:
+          return .init(
+            traitsFrom: base + [
+              .init(horizontalSizeClass: .regular),
+              .init(verticalSizeClass: .compact)
+            ]
+          )
+        case .portrait:
+          return .init(
+            traitsFrom: base + [
+              .init(horizontalSizeClass: .compact),
+              .init(verticalSizeClass: .regular)
+            ]
+          )
+        }
+      }
 }

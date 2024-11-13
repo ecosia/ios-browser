@@ -19,13 +19,13 @@ fi
 
 # Check if the required parameters are passed
 if [ "$#" -lt 4 ]; then
-  echo "Usage: ./perform_snapshot_tests.sh <config_file> <environment_file_base> <results_dir> <scheme>"
-  echo "Example: ./perform_snapshot_tests.sh config.json env_base.json Results SchemeName"
+  echo "Usage: ./perform_snapshot_tests.sh <config_file> <environment_file> <results_dir> <scheme>"
+  echo "Example: ./perform_snapshot_tests.sh config.json environment.json Results SchemeName"
   exit 1
 fi
 
 config_file="$1"
-environment_file_base="$2"  # Base name for environment files
+environment_file="$2"  # Fixed environment file path
 results_dir="$3"
 scheme="$4"
 
@@ -115,7 +115,7 @@ create_device_set_key() {
   echo "$(printf '%s|' "${sorted_devices[@]}")" | sed 's/|$//'
 }
 
-# Function to sanitize device set key for filenames
+# Function to sanitize device set key for filenames (if needed)
 sanitize_filename() {
   local filename="$1"
   # Replace spaces, parentheses, slashes, and other special characters with underscores
@@ -274,6 +274,9 @@ done <<< "$tests_json"
 # Execute Tests with xcodebuild
 # ================================
 
+# Verify all device sets are to be processed
+echo "All device_set_keys: ${!device_set_tests[@]}"
+
 # Iterate over each device set group and run xcodebuild
 for device_set_key in "${!device_set_tests[@]}"; do
   test_classes_str="${device_set_tests[$device_set_key]}"
@@ -355,11 +358,7 @@ for device_set_key in "${!device_set_tests[@]}"; do
   simulator_device_name="$device_name"
   echo " - Simulator Device Name: $simulator_device_name"
 
-  # Create a unique environment file name based on the device set key
-  sanitized_device_set_key=$(sanitize_filename "$device_set_key")
-  environment_file="${environment_file_base}_${sanitized_device_set_key}.json"
-
-  # Create the JSON file with the environment variables
+  # Overwrite the fixed environment.json with current device set
   locales_json_array=$(printf '%s\n' "${all_locales[@]}" | jq -R . | jq -s .)
   echo " - Locales JSON Array: $locales_json_array"
 
