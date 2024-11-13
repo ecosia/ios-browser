@@ -312,6 +312,56 @@ Do not forget to also declare the new device in the `snapshot_configuration.json
 </details>
 
 <details>
+<summary> What if I want to perform a certain test class against all devices in portrait orientation? </summary>
+
+You can specify the requirements as part of the devices list of that test class. The script will take care of selecting only the devices matching the desired orientation.
+
+```json
+{
+  "locales": [
+    "en",
+    "it",
+    "de",
+    "es",
+    "nl"
+  ],
+  "devices": [
+    {
+      "name": "iPhone SE (2nd generation)",
+      "orientation": "portrait",
+      "os": "17.5"
+    },
+    {
+      "name": "iPhone 15 Pro",
+      "orientation": "portrait",
+      "os": "17.5"
+    },
+    {
+      "name": "iPhone 12 Pro",
+      "orientation": "landscape",
+      "os": "17.5"
+    }
+    ...
+  ],
+  "testPlans": [
+    {
+      "name": "EcosiaSnapshotTests",
+      "testClasses": [
+        {
+          "name": "OnboardingTests",
+          "devices": ["all", "portrait"],
+          "locales": ["all"]
+        }
+        ...
+      ]
+    }
+  ]
+}
+```
+
+</details>
+
+<details>
 <summary> How does the compare logic work? </summary>
 
 The SnapshotTesting library captures screenshots of your UI components and compares these images against reference images stored in your project. If a reference image does not exist, it is created on the first run, meaning the initial test will always “pass” by creating the needed baseline images.
