@@ -10,23 +10,46 @@ runs:
   using: "composite"
   steps:
 
-    - name: Set up environment
-      shell: bash
-      run: |
-        brew install jq
+      - name: Set up Homebrew and Install Dependencies
+        shell: bash
+        run: |
+          # Update Homebrew to ensure formulae are up to date
+          brew update
 
-    - name: Run Snapshot Tests
-      shell: bash
-      run: |
-        mkdir -p EcosiaTests/Results/
-        sh ./perform_snapshot_tests.sh "EcosiaTests/SnapshotTests/snapshot_configuration.json" "EcosiaTests/SnapshotTests/environment.json" "EcosiaTests/Results" "EcosiaSnapshotTests"
+          # Install jq and the latest bash
+          brew install jq bash
 
-    - name: Process xcresult files
-      uses: kishikawakatsumi/xcresulttool@v1
-      with:
-        path: 'EcosiaTests/Results/all_tests.xcresult'
-        token: ${{ inputs.github-token }}
-        show-passed-tests: false
-        show-code-coverage: false
-        upload-bundles: 'failure'
-      if: success() || failure()
+          # Determine Homebrew's installation prefix
+          HOMEBREW_PREFIX=$(brew --prefix)
+
+          # Add Homebrew's bash to the beginning of PATH
+          export PATH="$HOMEBREW_PREFIX/bin:$PATH"
+
+          # Verify the installation and Bash version
+          echo "Bash version:"
+          bash --version
+
+          echo "jq version:"
+          jq --version
+
+      - name: Validate JSON Configuration
+        shell: bash
+        run: |
+          jq empty "EcosiaTests/SnapshotTests/snapshot_configuration.json"
+          echo "JSON configuration is valid."
+
+      - name: Run Snapshot Tests
+        shell: bash
+        run: |
+          mkdir -p EcosiaTests/Results/
+          ./perform_snapshot_tests.sh "EcosiaTests/SnapshotTests/snapshot_configuration.json" "EcosiaTests/SnapshotTests/environment.json" "EcosiaTests/Results" "EcosiaSnapshotTests"
+
+      - name: Process xcresult files
+        uses: kishikawakatsumi/xcresulttool@v1
+        with:
+          path: 'EcosiaTests/Results/all_tests.xcresult'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          show-passed-tests: false
+          show-code-coverage: false
+          upload-bundles: 'failure'
+        if: success() || failure()
