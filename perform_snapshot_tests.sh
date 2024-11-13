@@ -398,6 +398,23 @@ for device_set_key in "${!device_set_tests[@]}"; do
 done
 
 # ================================
+# Combine Test Results
+# ================================
+
+# Combine all xcresult files into one
+combined_result_path="$results_dir/all_tests.xcresult"
+# Define the Xcode path based on the CI environment variable
+if [ "$CI" = "true" ]; then
+    xcresulttool_path="/Applications/Xcode_15.4.app/Contents/Developer/usr/bin/xcresulttool"
+else
+    xcresulttool_path="/Applications/Xcode.app/Contents/Developer/usr/bin/xcresulttool"
+fi
+
+# Run the xcresulttool merge command using the determined path
+$xcresulttool_path merge $(find "$results_dir" -name "*.xcresult") --output-path "$combined_result_path"
+echo "Combined xcresult created at: $combined_result_path"
+
+# ================================
 # Final Output
 # ================================
 
