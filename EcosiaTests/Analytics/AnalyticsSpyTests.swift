@@ -590,7 +590,7 @@ final class AnalyticsSpyTests: XCTestCase {
         analyticsSpy.referralExpectation = expectation
 
         // Act
-        multiplyImpact.learnMoreButton.sendActions(for: .primaryActionTriggered)
+        multiplyImpact.learnMoreButton?.sendActions(for: .primaryActionTriggered)
 
         // Wait for the expectation
         waitForExpectations(timeout: 1)
@@ -612,7 +612,7 @@ final class AnalyticsSpyTests: XCTestCase {
         analyticsSpy.referralExpectation = expectation
 
         // Act
-        multiplyImpact.copyControl!.sendActions(for: .touchUpInside)
+        multiplyImpact.copyControl?.sendActions(for: .touchUpInside)
 
         // Wait for the expectation
         waitForExpectations(timeout: 1)
