@@ -27,7 +27,6 @@ final class BrazeService {
         case newsletterCardClick = "newsletter_card_click"
     }
 
-    // TODO: Make `BrazeService` directly `UNUserNotificationCenterDelegate`
     func initialize(notificationCenterDelegate: UNUserNotificationCenterDelegate) async {
         do {
             try await initBraze(userId: userId)
