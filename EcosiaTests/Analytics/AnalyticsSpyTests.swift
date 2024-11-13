@@ -7,6 +7,8 @@ import Core
 import Storage
 @testable import Client
 
+// MARK: - AnalyticsSpy
+
 final class AnalyticsSpy: Analytics {
 
     // MARK: - AnalyticsSpy Properties to Capture Calls
@@ -106,6 +108,8 @@ final class AnalyticsSpy: Analytics {
     }
 }
 
+// MARK: - AnalyticsSpyTests
+
 final class AnalyticsSpyTests: XCTestCase {
 
     // MARK: - Properties and Setup
@@ -137,7 +141,7 @@ final class AnalyticsSpyTests: XCTestCase {
     // MARK: - Helper Functions
 
     /// Helper function to wait for a condition with a timeout
-    func waitForCondition(timeout: TimeInterval, condition: @escaping () -> Bool) {
+    func waitForCustomCondition(timeout: TimeInterval, condition: @escaping () -> Bool) {
         let expectation = self.expectation(description: "Waiting for condition")
         let checkInterval: TimeInterval = 0.05
         var timeElapsed: TimeInterval = 0
@@ -171,7 +175,7 @@ final class AnalyticsSpyTests: XCTestCase {
 
         // Assert
         XCTAssert(analyticsSpy.installCalled)
-        waitForCondition(timeout: 3) { // Wait detached tasks until launch is called
+        waitForCustomCondition(timeout: 3) { // Wait detached tasks until launch is called
             self.analyticsSpy.activityActionCalled == .launch
         }
     }
@@ -185,7 +189,7 @@ final class AnalyticsSpyTests: XCTestCase {
         _ = await appDelegate.applicationDidBecomeActive(application)
 
         // Assert
-        waitForCondition(timeout: 2) { // Wait detached tasks until resume is called
+        waitForCustomCondition(timeout: 2) { // Wait detached tasks until resume is called
             self.analyticsSpy.activityActionCalled == .resume
         }
     }
@@ -298,9 +302,7 @@ final class AnalyticsSpyTests: XCTestCase {
                 XCTAssertNil(analyticsSpy.menuShareContentCalled)
                 tabManagerMock.selectedTab?.url = url
 
-                // Create an expectation if the analytics call is asynchronous
-                // If not, this can be omitted
-                // For safety, we include it
+                // Create an expectation
                 let expectation = self.expectation(description: "Analytics menuShare called")
                 analyticsSpy.referralExpectation = expectation
 
@@ -610,7 +612,7 @@ final class AnalyticsSpyTests: XCTestCase {
         analyticsSpy.referralExpectation = expectation
 
         // Act
-        multiplyImpact.copyControl?.sendActions(for: .touchUpInside)
+        multiplyImpact.copyControl!.sendActions(for: .touchUpInside)
 
         // Wait for the expectation
         waitForExpectations(timeout: 1)
