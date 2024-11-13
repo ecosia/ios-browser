@@ -87,7 +87,7 @@ extension HomepageViewController: NTPConfigurableNudgeCardCellDelegate {
         switch cardType {
         case .newsletterCard:
             BrazeService.shared.logCustomEvent(.newsletterCardClick)
-            Analytics.shared.newsletterCardExperiment(action: .click, label: .ntpCard)
+            Analytics.shared.newsletterCardExperiment(action: .click)
             NewsletterCardExperiment.setDismissed()
         default:
             return
@@ -96,8 +96,7 @@ extension HomepageViewController: NTPConfigurableNudgeCardCellDelegate {
     }
 
     func nudgeCardRequestToDimiss(for cardType: HomepageSectionType) {
-        // TODO: Should we log dismiss to Braze too?
-        Analytics.shared.newsletterCardExperiment(action: .dismiss, label: .ntpCard)
+        Analytics.shared.newsletterCardExperiment(action: .dismiss)
         NewsletterCardExperiment.setDismissed()
         reloadView()
     }

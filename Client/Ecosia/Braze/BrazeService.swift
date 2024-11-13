@@ -77,6 +77,7 @@ extension BrazeService {
     private func initBraze(userId: String) throws {
         self.braze = Braze(configuration: try getBrazeConfiguration())
         let inAppMessageUI = BrazeInAppMessageUI()
+        inAppMessageUI.delegate = self
         self.braze?.inAppMessagePresenter = inAppMessageUI
         Task.detached(priority: .medium) { [weak self] in
             await self?.updateID(self?.userId)
@@ -140,5 +141,21 @@ extension BrazeService {
         brazeConfiguration.logger.level = .debug
         #endif
         return brazeConfiguration
+    }
+}
+
+extension BrazeService: BrazeInAppMessageUIDelegate {
+
+    func inAppMessage(_ ui: BrazeInAppMessageUI, didPresent message: Braze.InAppMessage, view: any InAppMessageView) {
+        Analytics.shared.brazeIAM(action: .view, messageOrButtonId: message.id)
+    }
+
+    func inAppMessage(_ ui: BrazeInAppMessageUI, didDismiss message: Braze.InAppMessage, view: any InAppMessageView) {
+        Analytics.shared.brazeIAM(action: .dismiss, messageOrButtonId: message.id)
+    }
+
+    func inAppMessage(_ ui: BrazeInAppMessageUI, shouldProcess clickAction: Braze.InAppMessage.ClickAction, buttonId: String?, message: Braze.InAppMessage, view: any InAppMessageView) -> Bool {
+        Analytics.shared.brazeIAM(action: .click, messageOrButtonId: buttonId)
+        return true
     }
 }

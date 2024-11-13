@@ -96,6 +96,13 @@ open class Analytics {
         track(event)
     }
 
+    // MARK: Braze IAM
+    func brazeIAM(action: Action.BrazeIAM, messageOrButtonId: String?) {
+        track(Structured(category: Category.brazeIAM.rawValue,
+                         action: action.rawValue)
+            .property(messageOrButtonId))
+    }
+
     // MARK: Default Browser
     func appOpenAsDefaultBrowser() {
         let event = Structured(category: Category.external.rawValue,
@@ -179,10 +186,10 @@ open class Analytics {
     }
 
     // MARK: `NewsletterCardExperiment`
-    func newsletterCardExperiment(action: Action.NewsletterCardExperiment, label: Label.NewsletterCardExperiment) {
+    func newsletterCardExperiment(action: Action.NewsletterCardExperiment) {
         track(Structured(category: Category.newsletterExperiment.rawValue,
                          action: action.rawValue)
-            .label(label.rawValue))
+            .label(Label.NewsletterCardExperiment.ntpCard.rawValue))
     }
 
     // MARK: NTP

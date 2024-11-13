@@ -9,6 +9,7 @@ extension Analytics {
         case
         activity,
         bookmarks,
+        brazeIAM = "braze_iam",
         browser,
         external,
         intro,
@@ -88,7 +89,6 @@ extension Analytics {
 
         enum NewsletterCardExperiment: String {
             case
-            brazeIAM = "braze_iam",
             ntpCard = "ntp_card"
         }
 
@@ -153,11 +153,17 @@ extension Analytics {
             `import`
         }
 
+        enum BrazeIAM: String {
+            case
+            click,
+            dismiss,
+            view
+        }
+
         enum NewsletterCardExperiment: String {
             case
             click,
             dismiss,
-            signUp = "sign_up",
             view
         }
 

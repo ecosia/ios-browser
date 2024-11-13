@@ -22,7 +22,7 @@ struct NewsletterCardExperiment {
         guard !UserDefaults.standard.bool(forKey: trackExperimentImpressionKey) else {
             return
         }
-        Analytics.shared.newsletterCardExperiment(action: .view, label: .ntpCard)
+        Analytics.shared.newsletterCardExperiment(action: .view)
         UserDefaults.standard.setValue(true, forKey: trackExperimentImpressionKey)
     }
 
