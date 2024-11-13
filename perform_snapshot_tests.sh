@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
+# Uncomment the following line to enable debug mode for troubleshooting
+# set -x
 
 # ================================
 # Ensure the script runs with Bash
@@ -17,12 +19,13 @@ fi
 
 # Check if the required parameters are passed
 if [ "$#" -lt 4 ]; then
-  echo "Usage: ./perform_snapshot_tests.sh <config_file> <environment_file> <results_dir> <scheme>"
+  echo "Usage: ./perform_snapshot_tests.sh <config_file> <environment_file_base> <results_dir> <scheme>"
+  echo "Example: ./perform_snapshot_tests.sh config.json env_base.json Results SchemeName"
   exit 1
 fi
 
 config_file="$1"
-environment_file="$2"
+environment_file_base="$2"  # Base name for environment files
 results_dir="$3"
 scheme="$4"
 
@@ -31,7 +34,7 @@ scheme="$4"
 # ================================
 
 # Validate JSON configuration
-if ! jq empty "$config_file"; then
+if ! jq empty "$config_file" >/dev/null 2>&1; then
   echo "Error: Invalid JSON in configuration file."
   exit 1
 fi
@@ -109,7 +112,14 @@ declare -A device_set_devices
 create_device_set_key() {
   local devices=("$@")
   IFS=$'\n' sorted_devices=($(printf '%s\n' "${devices[@]}" | sort))
-  echo "$(printf '%s|' "${sorted_devices[@]}")"
+  echo "$(printf '%s|' "${sorted_devices[@]}")" | sed 's/|$//'
+}
+
+# Function to sanitize device set key for filenames
+sanitize_filename() {
+  local filename="$1"
+  # Replace spaces, parentheses, slashes, and other special characters with underscores
+  echo "$filename" | tr ' /()' '_' | tr -cd '[:alnum:]_'
 }
 
 # Function to get the test target for a given test class
@@ -345,6 +355,10 @@ for device_set_key in "${!device_set_tests[@]}"; do
   simulator_device_name="$device_name"
   echo " - Simulator Device Name: $simulator_device_name"
 
+  # Create a unique environment file name based on the device set key
+  sanitized_device_set_key=$(sanitize_filename "$device_set_key")
+  environment_file="${environment_file_base}_${sanitized_device_set_key}.json"
+
   # Create the JSON file with the environment variables
   locales_json_array=$(printf '%s\n' "${all_locales[@]}" | jq -R . | jq -s .)
   echo " - Locales JSON Array: $locales_json_array"
@@ -357,6 +371,12 @@ for device_set_key in "${!device_set_tests[@]}"; do
 
   echo " - Environment file created at: $environment_file"
   cat "$environment_file"  # Print the contents of the file for verification
+
+  # Validate the generated environment.json
+  if ! jq empty "$environment_file" >/dev/null 2>&1; then
+    echo "Error: Generated environment.json ($environment_file) is invalid."
+    exit 1
+  fi
 
   # Find index of the device to get OS version
   os_version=""
@@ -401,17 +421,35 @@ done
 # Combine Test Results
 # ================================
 
-# Combine all xcresult files into one
+echo "Combining all xcresult files into a single xcresult..."
+
 combined_result_path="$results_dir/all_tests.xcresult"
+
 # Define the Xcode path based on the CI environment variable
-if [ "$CI" = "true" ]; then
+if [ "${CI:-false}" = "true" ]; then
     xcresulttool_path="/Applications/Xcode_15.4.app/Contents/Developer/usr/bin/xcresulttool"
 else
     xcresulttool_path="/Applications/Xcode.app/Contents/Developer/usr/bin/xcresulttool"
 fi
 
-# Run the xcresulttool merge command using the determined path
-$xcresulttool_path merge $(find "$results_dir" -name "*.xcresult") --output-path "$combined_result_path"
+# Verify that xcresulttool exists
+if [ ! -x "$xcresulttool_path" ]; then
+  echo "Error: xcresulttool not found at $xcresulttool_path"
+  exit 1
+fi
+
+# Find all xcresult files in the results directory
+xcresult_files=($(find "$results_dir" -name "*.xcresult"))
+
+# Check if any xcresult files were found
+if [ "${#xcresult_files[@]}" -eq 0 ]; then
+  echo "Error: No xcresult files found in $results_dir to combine."
+  exit 1
+fi
+
+# Merge the xcresult files
+$xcresulttool_path merge "${xcresult_files[@]}" --output-path "$combined_result_path"
+
 echo "Combined xcresult created at: $combined_result_path"
 
 # ================================
