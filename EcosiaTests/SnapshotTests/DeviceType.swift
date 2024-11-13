@@ -37,6 +37,19 @@ enum DeviceType: String, CaseIterable {
         }
     }
 
+    var name: String {
+        switch self {
+        case .iPhoneSE_Portrait, .iPhoneSE_Landscape:
+            return "iPhone SE (3rd generation)"
+        case .iPhone14Pro_Portrait, .iPhone14Pro_Landscape:
+            return "iPhone 14 Pro"
+        case .iPhone14ProMax_Portrait, .iPhone14ProMax_Landscape:
+            return "iPhone 14 Pro Max"
+        case .iPadPro_Portrait, .iPadPro_Landscape:
+            return "iPad Pro (12.9-inch) (6th generation)"
+        }
+    }
+
     /// Returns a `DeviceType` based on the provided device name and orientation.
     ///
     /// - Parameters:
