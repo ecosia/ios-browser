@@ -27,7 +27,7 @@ jobs:
           core-token: ${{ secrets.IOS_CORE_TOKEN }}
 
       - name: Perform Snapshot Tests and Publish Test reports
-        if : ( steps.check_marketing_version.outputs.skipnext  != 'true' )
+        # if : ( steps.check_marketing_version.outputs.skipnext  != 'true' )
         id: perform-snapshot-tests
         uses: ./.github/actions/perform_snapshot_tests
         with:
