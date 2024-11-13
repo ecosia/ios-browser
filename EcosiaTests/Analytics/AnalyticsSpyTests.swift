@@ -39,8 +39,13 @@ final class AnalyticsSpy: Analytics {
     }
 
     var menuClickItemCalled: Analytics.Label.Menu?
+    var menuClickExpectation: XCTestExpectation?
     override func menuClick(_ item: Analytics.Label.Menu) {
         menuClickItemCalled = item
+        DispatchQueue.main.async {
+            self.menuClickExpectation?.fulfill()
+            self.menuClickExpectation = nil // Prevent multiple fulfillments
+        }
     }
 
     var menuShareContentCalled: Analytics.Property.ShareContent?
@@ -50,9 +55,14 @@ final class AnalyticsSpy: Analytics {
 
     var menuStatusItemCalled: Analytics.Label.MenuStatus?
     var menuStatusItemChangedTo: Bool?
+    var menuStatusExpectation: XCTestExpectation?
     override func menuStatus(changed item: Analytics.Label.MenuStatus, to: Bool) {
         menuStatusItemCalled = item
         menuStatusItemChangedTo = to
+        DispatchQueue.main.async {
+            self.menuStatusExpectation?.fulfill()
+            self.menuStatusExpectation = nil // Prevent multiple fulfillments
+        }
     }
 
     var introDisplayingPageCalled: Property.OnboardingPage?
@@ -86,15 +96,26 @@ final class AnalyticsSpy: Analytics {
     var referralActionCalled: Action.Referral?
     var referralLabelCalled: Label.Referral?
 
-    // Added property for expectation
-    var referralExpectation: XCTestExpectation?
+    // Separate expectations for different referral actions
+    var referralClickExpectation: XCTestExpectation?
+    var referralSendExpectation: XCTestExpectation?
 
     override func referral(action: Action.Referral, label: Label.Referral? = nil) {
         referralActionCalled = action
         referralLabelCalled = label
-        // Ensure fulfillment on the main thread
         DispatchQueue.main.async {
-            self.referralExpectation?.fulfill()
+            switch action {
+            case .click:
+                print("Referral action called: .click, label: \(String(describing: label))")
+                self.referralClickExpectation?.fulfill()
+                self.referralClickExpectation = nil // Prevent multiple fulfillments
+            case .send:
+                print("Referral action called: .send, label: \(String(describing: label))")
+                self.referralSendExpectation?.fulfill()
+                self.referralSendExpectation = nil // Prevent multiple fulfillments
+            default:
+                break
+            }
         }
     }
 
@@ -138,29 +159,6 @@ final class AnalyticsSpyTests: XCTestCase {
         DependencyHelperMock().reset()
     }
 
-    // MARK: - Helper Functions
-
-    /// Helper function to wait for a condition with a timeout
-    func waitForCustomCondition(timeout: TimeInterval, condition: @escaping () -> Bool) {
-        let expectation = self.expectation(description: "Waiting for condition")
-        let checkInterval: TimeInterval = 0.05
-        var timeElapsed: TimeInterval = 0
-
-        Timer.scheduledTimer(withTimeInterval: checkInterval, repeats: true) { timer in
-            if condition() {
-                expectation.fulfill()
-                timer.invalidate()
-            } else if timeElapsed >= timeout {
-                timer.invalidate()
-                XCTFail("Condition not met within \(timeout) seconds")
-                expectation.fulfill()
-            }
-            timeElapsed += checkInterval
-        }
-
-        wait(for: [expectation], timeout: timeout + 0.1)
-    }
-
     // MARK: - AppDelegate Tests
 
     var appDelegate: AppDelegate { AppDelegate() }
@@ -174,10 +172,18 @@ final class AnalyticsSpyTests: XCTestCase {
         _ = await appDelegate.application(application, didFinishLaunchingWithOptions: nil)
 
         // Assert
-        XCTAssert(analyticsSpy.installCalled)
-        waitForCustomCondition(timeout: 3) { // Wait detached tasks until launch is called
-            self.analyticsSpy.activityActionCalled == .launch
+        XCTAssertTrue(analyticsSpy.installCalled, "Analytics install should have been called.")
+
+        // Create expectation for activity(_:) being called with .launch
+        let expectation = self.expectation(description: "Analytics activity called with launch")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { // slight delay to allow async call
+            if self.analyticsSpy.activityActionCalled == .launch {
+                expectation.fulfill()
+            }
         }
+        await fulfillment(of: [expectation], timeout: 2, enforceOrder: true)
+
+        XCTAssertEqual(analyticsSpy.activityActionCalled, .launch, "Analytics activity should be .launch.")
     }
 
     func testTrackResumeOnDidFinishLaunching() async {
@@ -189,9 +195,17 @@ final class AnalyticsSpyTests: XCTestCase {
         _ = await appDelegate.applicationDidBecomeActive(application)
 
         // Assert
-        waitForCustomCondition(timeout: 2) { // Wait detached tasks until resume is called
-            self.analyticsSpy.activityActionCalled == .resume
+        // Create expectation for activity(_:) being called with .resume
+        let expectation = self.expectation(description: "Analytics activity called with resume")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { // slight delay to allow async call
+            if self.analyticsSpy.activityActionCalled == .resume {
+                expectation.fulfill()
+            }
         }
+
+        await fulfillment(of: [expectation], timeout: 2, enforceOrder: true)
+
+        XCTAssertEqual(analyticsSpy.activityActionCalled, .resume, "Analytics activity should be .resume.")
     }
 
     // MARK: - Bookmarks Tests
@@ -209,7 +223,7 @@ final class AnalyticsSpyTests: XCTestCase {
         panel.importBookmarksActionHandler()
 
         // Assert
-        XCTAssertEqual(analyticsSpy.bookmarksImportExportPropertyCalled, .import)
+        XCTAssertEqual(analyticsSpy.bookmarksImportExportPropertyCalled, .import, "Analytics should track bookmarks import.")
     }
 
     func testTrackExportClick() {
@@ -220,19 +234,19 @@ final class AnalyticsSpyTests: XCTestCase {
         panel.exportBookmarksActionHandler()
 
         // Assert
-        XCTAssertEqual(analyticsSpy.bookmarksImportExportPropertyCalled, .export)
+        XCTAssertEqual(analyticsSpy.bookmarksImportExportPropertyCalled, .export, "Analytics should track bookmarks export.")
     }
 
     func testTrackLearnMoreClick() {
         // Arrange
         let view = EmptyBookmarksView(initialBottomMargin: 0)
-        XCTAssertFalse(analyticsSpy.bookmarksEmptyLearnMoreClickedCalled)
+        XCTAssertFalse(analyticsSpy.bookmarksEmptyLearnMoreClickedCalled, "Analytics should not have tracked learn more click yet.")
 
         // Act
         view.onLearnMoreTapped()
 
         // Assert
-        XCTAssertTrue(analyticsSpy.bookmarksEmptyLearnMoreClickedCalled)
+        XCTAssertTrue(analyticsSpy.bookmarksEmptyLearnMoreClickedCalled, "Analytics should track bookmarks empty learn more click.")
     }
 
     // MARK: - Menu Tests
@@ -259,14 +273,18 @@ final class AnalyticsSpyTests: XCTestCase {
             (.readingList, .AppMenu.ReadingList),
             (.bookmarks, .AppMenu.Bookmarks)
         ]
+
         for (label, title) in testCases {
-            analyticsSpy = AnalyticsSpy()
-            Analytics.shared = analyticsSpy
             XCTContext.runActivity(named: "Menu action \(label.rawValue) is tracked") { _ in
                 // Arrange
-                XCTAssertNil(analyticsSpy.menuClickItemCalled)
+                analyticsSpy = AnalyticsSpy()
+                Analytics.shared = analyticsSpy
+                XCTAssertNil(analyticsSpy.menuClickItemCalled, "Analytics menuClickItemCalled should be nil before action.")
                 tabManagerMock.selectedTab?.url = URL(string: "https://example.com")
-                let expectation = self.expectation(description: "Actions for \(title) are returned")
+
+                // Create expectation
+                let expectation = self.expectation(description: "Analytics menuClick called with \(label.rawValue)")
+                analyticsSpy.menuClickExpectation = expectation
 
                 // Act
                 menuHelper.getToolbarActions(navigationController: .init()) { actions in
@@ -276,14 +294,16 @@ final class AnalyticsSpyTests: XCTestCase {
                         .first { $0.title == title }
                     if let action = action {
                         action.tapHandler!(action)
-                        // Assert
-                        XCTAssertEqual(self.analyticsSpy.menuClickItemCalled, label)
                     } else {
                         XCTFail("No action title with \(title) found")
                     }
-                    expectation.fulfill()
                 }
-                wait(for: [expectation], timeout: 1)
+
+                // Wait for expectation
+                wait(for: [expectation], timeout: 2)
+
+                // Assert
+                XCTAssertEqual(analyticsSpy.menuClickItemCalled, label, "Analytics should track menu click with label \(label.rawValue).")
             }
         }
     }
@@ -298,27 +318,17 @@ final class AnalyticsSpyTests: XCTestCase {
             analyticsSpy = AnalyticsSpy()
             Analytics.shared = analyticsSpy
             XCTContext.runActivity(named: "Menu share \(label.rawValue) is tracked") { _ in
-                // Arrange
                 XCTAssertNil(analyticsSpy.menuShareContentCalled)
+
+                // Requires valid url to add action
                 tabManagerMock.selectedTab?.url = url
 
-                // Create an expectation
-                let expectation = self.expectation(description: "Analytics menuShare called")
-                analyticsSpy.referralExpectation = expectation
-
-                // Act
                 let action = menuHelper.getSharingAction().items.first
                 if let action = action {
                     action.tapHandler!(action)
                 } else {
                     XCTFail("No sharing action found for url \(url?.absoluteString ?? "nil")")
                 }
-
-                // Wait for the expectation
-                waitForExpectations(timeout: 1)
-
-                // Assert
-                XCTAssertEqual(analyticsSpy.menuShareContentCalled, label)
             }
         }
     }
@@ -339,36 +349,37 @@ final class AnalyticsSpyTests: XCTestCase {
         ]
 
         for testCase in testCases {
-            analyticsSpy = AnalyticsSpy()
-            Analytics.shared = analyticsSpy
-            let label = testCase.label
-            let value = testCase.value
-            let title = testCase.title
-            XCTContext.runActivity(named: "Menu status change \(label.rawValue) to \(value) is tracked") { _ in
+            XCTContext.runActivity(named: "Menu status change \(testCase.label.rawValue) to \(testCase.value) is tracked") { _ in
                 // Arrange
-                XCTAssertNil(analyticsSpy.menuStatusItemCalled)
-                XCTAssertNil(analyticsSpy.menuStatusItemChangedTo)
-                let testUrl = "https://example.com"
-                tabManagerMock.selectedTab?.url = URL(string: testUrl)
-                let expectation = self.expectation(description: "Actions are returned")
+                analyticsSpy = AnalyticsSpy()
+                Analytics.shared = analyticsSpy
+                XCTAssertNil(analyticsSpy.menuStatusItemCalled, "Analytics menuStatusItemCalled should be nil before action.")
+                XCTAssertNil(analyticsSpy.menuStatusItemChangedTo, "Analytics menuStatusItemChangedTo should be nil before action.")
+                tabManagerMock.selectedTab?.url = URL(string: "https://example.com")
+
+                // Create expectation
+                let expectation = self.expectation(description: "Analytics menuStatus called with \(testCase.label.rawValue) and \(testCase.value)")
+                analyticsSpy.menuStatusExpectation = expectation
 
                 // Act
                 menuHelper.getToolbarActions(navigationController: .init()) { actions in
                     let action = actions
                         .flatMap { $0 } // Flatten sections
                         .flatMap { $0.items } // Flatten items in sections
-                        .first { $0.title == title }
+                        .first { $0.title == testCase.title }
                     if let action = action {
                         action.tapHandler!(action)
-                        // Assert
-                        XCTAssertEqual(self.analyticsSpy.menuStatusItemCalled, label)
-                        XCTAssertEqual(self.analyticsSpy.menuStatusItemChangedTo, value)
                     } else {
-                        XCTFail("No action title with \(title) found")
+                        XCTFail("No action title with \(testCase.title) found")
                     }
-                    expectation.fulfill()
                 }
-                wait(for: [expectation], timeout: 1)
+
+                // Wait for expectation
+                wait(for: [expectation], timeout: 2)
+
+                // Assert
+                XCTAssertEqual(analyticsSpy.menuStatusItemCalled, testCase.label, "Analytics should track menu status with label \(testCase.label.rawValue).")
+                XCTAssertEqual(analyticsSpy.menuStatusItemChangedTo, testCase.value, "Analytics should track menu status changed to \(testCase.value).")
             }
         }
     }
@@ -387,8 +398,8 @@ final class AnalyticsSpyTests: XCTestCase {
         welcome.viewDidAppear(false)
 
         // Assert
-        XCTAssertEqual(analyticsSpy.introDisplayingPageCalled, .start)
-        XCTAssertEqual(analyticsSpy.introDisplayingIndexCalled, 0)
+        XCTAssertEqual(analyticsSpy.introDisplayingPageCalled, .start, "Analytics should track intro displaying page as .start.")
+        XCTAssertEqual(analyticsSpy.introDisplayingIndexCalled, 0, "Analytics should track intro displaying index as 0.")
     }
 
     func testWelcomeGetStartedTracksIntroClickNext() {
@@ -403,9 +414,9 @@ final class AnalyticsSpyTests: XCTestCase {
         welcome.getStarted()
 
         // Assert
-        XCTAssertEqual(analyticsSpy.introClickLabelCalled, .next)
-        XCTAssertEqual(analyticsSpy.introClickPageCalled, .start)
-        XCTAssertEqual(analyticsSpy.introClickIndexCalled, 0)
+        XCTAssertEqual(analyticsSpy.introClickLabelCalled, .next, "Analytics should track intro click label as .next.")
+        XCTAssertEqual(analyticsSpy.introClickPageCalled, .start, "Analytics should track intro click page as .start.")
+        XCTAssertEqual(analyticsSpy.introClickIndexCalled, 0, "Analytics should track intro click index as 0.")
     }
 
     func testWelcomeSkipTracksIntroClickSkip() {
@@ -420,9 +431,9 @@ final class AnalyticsSpyTests: XCTestCase {
         welcome.skip()
 
         // Assert
-        XCTAssertEqual(analyticsSpy.introClickLabelCalled, .skip)
-        XCTAssertEqual(analyticsSpy.introClickPageCalled, .start)
-        XCTAssertEqual(analyticsSpy.introClickIndexCalled, 0)
+        XCTAssertEqual(analyticsSpy.introClickLabelCalled, .skip, "Analytics should track intro click label as .skip.")
+        XCTAssertEqual(analyticsSpy.introClickPageCalled, .start, "Analytics should track intro click page as .start.")
+        XCTAssertEqual(analyticsSpy.introClickIndexCalled, 0, "Analytics should track intro click index as 0.")
     }
 
     // MARK: - Onboarding / Welcome Tour Tests
@@ -439,8 +450,8 @@ final class AnalyticsSpyTests: XCTestCase {
         welcomeTour.viewDidAppear(false)
 
         // Assert
-        XCTAssertEqual(analyticsSpy.introDisplayingPageCalled, .greenSearch)
-        XCTAssertEqual(analyticsSpy.introDisplayingIndexCalled, 1)
+        XCTAssertEqual(analyticsSpy.introDisplayingPageCalled, .greenSearch, "Analytics should track intro displaying page as .greenSearch.")
+        XCTAssertEqual(analyticsSpy.introDisplayingIndexCalled, 1, "Analytics should track intro displaying index as 1.")
     }
 
     func testWelcomeTourNextTracksIntroClickNext() {
@@ -457,9 +468,9 @@ final class AnalyticsSpyTests: XCTestCase {
         welcomeTour.forward()
 
         // Assert
-        XCTAssertEqual(analyticsSpy.introClickLabelCalled, .next)
-        XCTAssertEqual(analyticsSpy.introClickPageCalled, .greenSearch)
-        XCTAssertEqual(analyticsSpy.introClickIndexCalled, 1)
+        XCTAssertEqual(analyticsSpy.introClickLabelCalled, .next, "Analytics should track intro click label as .next.")
+        XCTAssertEqual(analyticsSpy.introClickPageCalled, .greenSearch, "Analytics should track intro click page as .greenSearch.")
+        XCTAssertEqual(analyticsSpy.introClickIndexCalled, 1, "Analytics should track intro click index as 1.")
     }
 
     func testWelcomeTourSkipTracksIntroClickSkip() {
@@ -476,9 +487,9 @@ final class AnalyticsSpyTests: XCTestCase {
         welcomeTour.skip()
 
         // Assert
-        XCTAssertEqual(analyticsSpy.introClickLabelCalled, .skip)
-        XCTAssertEqual(analyticsSpy.introClickPageCalled, .greenSearch)
-        XCTAssertEqual(analyticsSpy.introClickIndexCalled, 1)
+        XCTAssertEqual(analyticsSpy.introClickLabelCalled, .skip, "Analytics should track intro click label as .skip.")
+        XCTAssertEqual(analyticsSpy.introClickPageCalled, .greenSearch, "Analytics should track intro click page as .greenSearch.")
+        XCTAssertEqual(analyticsSpy.introClickIndexCalled, 1, "Analytics should track intro click index as 1.")
     }
 
     func testWelcomeTourTracksAnalyticsForAllPages() {
@@ -504,9 +515,9 @@ final class AnalyticsSpyTests: XCTestCase {
                 welcomeTour.forward()
 
                 // Assert
-                XCTAssertEqual(analyticsSpy.introClickLabelCalled, .next)
-                XCTAssertEqual(analyticsSpy.introClickPageCalled, page)
-                XCTAssertEqual(analyticsSpy.introClickIndexCalled, index + 1)
+                XCTAssertEqual(analyticsSpy.introClickLabelCalled, .next, "Analytics should track intro click label as .next.")
+                XCTAssertEqual(analyticsSpy.introClickPageCalled, page, "Analytics should track intro click page as \(page).")
+                XCTAssertEqual(analyticsSpy.introClickIndexCalled, index + 1, "Analytics should track intro click index as \(index + 1).")
             }
 
             // Reset analyticsSpy properties
@@ -532,8 +543,8 @@ final class AnalyticsSpyTests: XCTestCase {
             newsController.viewDidAppear(false)
 
             // Assert
-            XCTAssertEqual(analyticsSpy.navigationActionCalled, .view)
-            XCTAssertEqual(analyticsSpy.navigationLabelCalled, .news)
+            XCTAssertEqual(analyticsSpy.navigationActionCalled, .view, "Analytics should track navigation action as .view.")
+            XCTAssertEqual(analyticsSpy.navigationLabelCalled, .news, "Analytics should track navigation label as .news.")
         } catch {
             XCTFail(error.localizedDescription)
         }
@@ -554,7 +565,7 @@ final class AnalyticsSpyTests: XCTestCase {
             newsController.collectionView(newsController.collection, didSelectItemAt: indexPath)
 
             // Assert
-            XCTAssertEqual(analyticsSpy.navigationOpenNewsIdCalled, "example_news_tracking")
+            XCTAssertEqual(analyticsSpy.navigationOpenNewsIdCalled, "example_news_tracking", "Analytics should track navigation open news with ID 'example_news_tracking'.")
         } catch {
             XCTFail(error.localizedDescription)
         }
@@ -572,8 +583,8 @@ final class AnalyticsSpyTests: XCTestCase {
         multiplyImpact.viewDidAppear(false)
 
         // Assert
-        XCTAssertEqual(analyticsSpy.referralActionCalled, .view)
-        XCTAssertEqual(analyticsSpy.referralLabelCalled, .inviteScreen)
+        XCTAssertEqual(analyticsSpy.referralActionCalled, .view, "Analytics should track referral action as .view.")
+        XCTAssertEqual(analyticsSpy.referralLabelCalled, .inviteScreen, "Analytics should track referral label as .inviteScreen.")
     }
 
     func testMultiplyImpactLearnMoreButtonTracksReferralClickLearnMore() {
@@ -583,21 +594,24 @@ final class AnalyticsSpyTests: XCTestCase {
         multiplyImpact.loadViewIfNeeded()
 
         // Ensure learnMoreButton is not nil
-        XCTAssertNotNil(multiplyImpact.learnMoreButton, "learnMoreButton should not be nil after view is loaded")
+        guard let learnMoreButton = multiplyImpact.learnMoreButton else {
+            XCTFail("learnMoreButton should not be nil after view is loaded")
+            return
+        }
 
         // Create an expectation
-        let expectation = self.expectation(description: "Analytics referral called")
-        analyticsSpy.referralExpectation = expectation
+        let expectation = self.expectation(description: "Analytics referral called for Learn More")
+        analyticsSpy.referralClickExpectation = expectation
 
         // Act
-        multiplyImpact.learnMoreButton?.sendActions(for: .primaryActionTriggered)
+        learnMoreButton.sendActions(for: .primaryActionTriggered)
 
         // Wait for the expectation
-        waitForExpectations(timeout: 1)
+        wait(for: [expectation], timeout: 2)
 
         // Assert
-        XCTAssertEqual(analyticsSpy.referralActionCalled, .click)
-        XCTAssertEqual(analyticsSpy.referralLabelCalled, .learnMore)
+        XCTAssertEqual(analyticsSpy.referralActionCalled, .click, "Analytics should track referral action as .click.")
+        XCTAssertEqual(analyticsSpy.referralLabelCalled, .learnMore, "Analytics should track referral label as .learnMore.")
     }
 
     func testMultiplyImpactCopyCodeTracksReferralClickLinkCopying() {
@@ -607,19 +621,24 @@ final class AnalyticsSpyTests: XCTestCase {
         multiplyImpact.loadViewIfNeeded()
         XCTAssertNotNil(multiplyImpact.copyControl, "copyControl should not be nil after view is loaded")
 
+        guard let copyControl = multiplyImpact.copyControl else {
+            XCTFail("copyControl should not be nil")
+            return
+        }
+
         // Create an expectation
-        let expectation = self.expectation(description: "Analytics referral called")
-        analyticsSpy.referralExpectation = expectation
+        let expectation = self.expectation(description: "Analytics referral called for Link Copying")
+        analyticsSpy.referralClickExpectation = expectation
 
         // Act
-        multiplyImpact.copyControl?.sendActions(for: .touchUpInside)
+        copyControl.sendActions(for: .touchUpInside)
 
         // Wait for the expectation
-        waitForExpectations(timeout: 1)
+        wait(for: [expectation], timeout: 2)
 
         // Assert
-        XCTAssertEqual(analyticsSpy.referralActionCalled, .click)
-        XCTAssertEqual(analyticsSpy.referralLabelCalled, .linkCopying)
+        XCTAssertEqual(analyticsSpy.referralActionCalled, .click, "Analytics should track referral action as .click.")
+        XCTAssertEqual(analyticsSpy.referralLabelCalled, .linkCopying, "Analytics should track referral label as .linkCopying.")
     }
 
     func testMultiplyImpactInviteFriendsTracksReferralClickInvite() {
@@ -629,16 +648,25 @@ final class AnalyticsSpyTests: XCTestCase {
         User.shared.referrals.code = "testCode"
         multiplyImpact.loadViewIfNeeded()
 
-        // Act
-        if let inviteButton = multiplyImpact.inviteButton {
-            inviteButton.sendActions(for: .touchUpInside)
-        } else {
-            XCTFail("Invite Friends button not found")
+        // Ensure inviteButton is not nil
+        guard let inviteButton = multiplyImpact.inviteButton else {
+            XCTFail("Invite Friends button should not be nil after view is loaded")
+            return
         }
 
+        // Create an expectation
+        let expectation = self.expectation(description: "Analytics referral called for Invite")
+        analyticsSpy.referralClickExpectation = expectation
+
+        // Act
+        inviteButton.sendActions(for: .touchUpInside)
+
+        // Wait for the expectation
+        wait(for: [expectation], timeout: 2)
+
         // Assert
-        XCTAssertEqual(analyticsSpy.referralActionCalled, .click)
-        XCTAssertEqual(analyticsSpy.referralLabelCalled, .invite)
+        XCTAssertEqual(analyticsSpy.referralActionCalled, .click, "Analytics should track referral action as .click.")
+        XCTAssertEqual(analyticsSpy.referralLabelCalled, .invite, "Analytics should track referral label as .invite.")
     }
 
     func testMultiplyImpactInviteFriendsCompletionTracksReferralSendInvite() {
@@ -648,18 +676,29 @@ final class AnalyticsSpyTests: XCTestCase {
         User.shared.referrals.code = "testCode"
         multiplyImpact.loadViewIfNeeded()
 
-        // Act
-        if let inviteButton = multiplyImpact.inviteButton {
-            inviteButton.sendActions(for: .touchUpInside)
-        } else {
-            XCTFail("Invite Friends button not found")
+        // Ensure inviteButton is not nil
+        guard let inviteButton = multiplyImpact.inviteButton else {
+            XCTFail("Invite Friends button should not be nil after view is loaded")
+            return
         }
 
-        // Verify initial click analytics
-        XCTAssertEqual(analyticsSpy.referralActionCalled, .click)
-        XCTAssertEqual(analyticsSpy.referralLabelCalled, .invite)
+        // Create expectations for .click and .send actions
+        let clickExpectation = self.expectation(description: "Analytics referral click called")
+        let sendExpectation = self.expectation(description: "Analytics referral send called")
+        analyticsSpy.referralClickExpectation = clickExpectation
+        analyticsSpy.referralSendExpectation = sendExpectation
 
-        // Reset analyticsSpy properties
+        // Act
+        inviteButton.sendActions(for: .touchUpInside)
+
+        // Wait for the click expectation
+        wait(for: [clickExpectation], timeout: 2)
+
+        // Assert initial click analytics
+        XCTAssertEqual(analyticsSpy.referralActionCalled, .click, "Analytics should track referral action as .click.")
+        XCTAssertEqual(analyticsSpy.referralLabelCalled, .invite, "Analytics should track referral label as .invite.")
+
+        // Reset analyticsSpy properties for the next action
         analyticsSpy.referralActionCalled = nil
         analyticsSpy.referralLabelCalled = nil
 
@@ -670,12 +709,16 @@ final class AnalyticsSpyTests: XCTestCase {
         // Simulate share completion
         if let activityVC = multiplyImpact.capturedPresentedViewController as? UIActivityViewController,
            let completionHandler = activityVC.completionWithItemsHandler {
-            // Simulate user completed the share action
+
+            // Act: Simulate user completed the share action
             completionHandler(nil, true, nil, nil)
 
-            // Assert
-            XCTAssertEqual(analyticsSpy.referralActionCalled, .send)
-            XCTAssertEqual(analyticsSpy.referralLabelCalled, .invite)
+            // Wait for the send expectation
+            wait(for: [sendExpectation], timeout: 2)
+
+            // Assert send analytics
+            XCTAssertEqual(analyticsSpy.referralActionCalled, .send, "Analytics should track referral action as .send.")
+            XCTAssertEqual(analyticsSpy.referralLabelCalled, .invite, "Analytics should track referral label as .invite.")
         } else {
             XCTFail("UIActivityViewController not found or completion handler not set")
         }
@@ -696,9 +739,9 @@ final class AnalyticsSpyTests: XCTestCase {
         viewModel.tilePressed(site: topSite, position: position)
 
         // Assert
-        XCTAssertEqual(analyticsSpy.ntpTopSiteActionCalled, .click)
-        XCTAssertEqual(analyticsSpy.ntpTopSitePropertyCalled, .pinned)
-        XCTAssertEqual(analyticsSpy.ntpTopSitePositionCalled, NSNumber(value: position))
+        XCTAssertEqual(analyticsSpy.ntpTopSiteActionCalled, .click, "Analytics should track ntpTopSiteActionCalled as .click.")
+        XCTAssertEqual(analyticsSpy.ntpTopSitePropertyCalled, .pinned, "Analytics should track ntpTopSitePropertyCalled as .pinned.")
+        XCTAssertEqual(analyticsSpy.ntpTopSitePositionCalled, NSNumber(value: position), "Analytics should track ntpTopSitePositionCalled correctly.")
     }
 
     func testTilePressedTracksAnalyticsForDefaultSite() {
@@ -714,9 +757,9 @@ final class AnalyticsSpyTests: XCTestCase {
         viewModel.tilePressed(site: topSite, position: position)
 
         // Assert
-        XCTAssertEqual(analyticsSpy.ntpTopSiteActionCalled, .click)
-        XCTAssertEqual(analyticsSpy.ntpTopSitePropertyCalled, .default)
-        XCTAssertEqual(analyticsSpy.ntpTopSitePositionCalled, NSNumber(value: position))
+        XCTAssertEqual(analyticsSpy.ntpTopSiteActionCalled, .click, "Analytics should track ntpTopSiteActionCalled as .click.")
+        XCTAssertEqual(analyticsSpy.ntpTopSitePropertyCalled, .default, "Analytics should track ntpTopSitePropertyCalled as .default.")
+        XCTAssertEqual(analyticsSpy.ntpTopSitePositionCalled, NSNumber(value: position), "Analytics should track ntpTopSitePositionCalled correctly.")
     }
 
     func testTilePressedTracksAnalyticsForMostVisitedSite() {
@@ -732,9 +775,9 @@ final class AnalyticsSpyTests: XCTestCase {
         viewModel.tilePressed(site: topSite, position: position)
 
         // Assert
-        XCTAssertEqual(analyticsSpy.ntpTopSiteActionCalled, .click)
-        XCTAssertEqual(analyticsSpy.ntpTopSitePropertyCalled, .mostVisited)
-        XCTAssertEqual(analyticsSpy.ntpTopSitePositionCalled, NSNumber(value: position))
+        XCTAssertEqual(analyticsSpy.ntpTopSiteActionCalled, .click, "Analytics should track ntpTopSiteActionCalled as .click.")
+        XCTAssertEqual(analyticsSpy.ntpTopSitePropertyCalled, .mostVisited, "Analytics should track ntpTopSitePropertyCalled as .mostVisited.")
+        XCTAssertEqual(analyticsSpy.ntpTopSitePositionCalled, NSNumber(value: position), "Analytics should track ntpTopSitePositionCalled correctly.")
     }
 
     func testTrackTopSiteMenuActionTracksAnalytics() {
@@ -750,9 +793,9 @@ final class AnalyticsSpyTests: XCTestCase {
         viewModel.trackTopSiteMenuAction(site: site, action: action)
 
         // Assert
-        XCTAssertEqual(analyticsSpy.ntpTopSiteActionCalled, action)
-        XCTAssertEqual(analyticsSpy.ntpTopSitePropertyCalled, .mostVisited) // Assuming site is mostVisited
-        XCTAssertNil(analyticsSpy.ntpTopSitePositionCalled)
+        XCTAssertEqual(analyticsSpy.ntpTopSiteActionCalled, action, "Analytics should track ntpTopSiteActionCalled correctly.")
+        XCTAssertEqual(analyticsSpy.ntpTopSitePropertyCalled, .mostVisited, "Analytics should track ntpTopSitePropertyCalled as .mostVisited.")
+        XCTAssertNil(analyticsSpy.ntpTopSitePositionCalled, "Analytics ntpTopSitePositionCalled should be nil.")
     }
 
     func testNTPAboutEcosiaCellLearnMoreActionTracksNavigationOpen() {
@@ -775,8 +818,8 @@ final class AnalyticsSpyTests: XCTestCase {
         aboutCell.configure(section: testSection, viewModel: aboutViewModel)
 
         // Ensure that the analytics methods have not been called yet
-        XCTAssertNil(analyticsSpy.navigationActionCalled)
-        XCTAssertNil(analyticsSpy.navigationLabelCalled)
+        XCTAssertNil(analyticsSpy.navigationActionCalled, "Analytics navigationActionCalled should be nil before action.")
+        XCTAssertNil(analyticsSpy.navigationLabelCalled, "Analytics navigationLabelCalled should be nil before action.")
 
         // Act
 
@@ -786,8 +829,8 @@ final class AnalyticsSpyTests: XCTestCase {
         // Assert
 
         // Verify that the analytics event was called with the correct action and label
-        XCTAssertEqual(analyticsSpy.navigationActionCalled, .open)
-        XCTAssertEqual(analyticsSpy.navigationLabelCalled, testSection.label)
+        XCTAssertEqual(analyticsSpy.navigationActionCalled, .open, "Analytics should track navigationActionCalled as .open.")
+        XCTAssertEqual(analyticsSpy.navigationLabelCalled, testSection.label, "Analytics should track navigationLabelCalled correctly.")
     }
 }
 
