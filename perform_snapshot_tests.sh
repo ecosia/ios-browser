@@ -383,6 +383,7 @@ for device_set_key in "${!device_set_tests[@]}"; do
   # Prepare the xcodebuild command
   xcodebuild_cmd="xcodebuild test \
     -scheme \"$scheme\" \
+    -clonedSourcePackagesDirPath \"SourcePackages/\" \
     -destination \"platform=iOS Simulator,name=$device_name,OS=$os_version\" \
     $only_testing_params \
     -resultBundlePath \"$result_path\""
