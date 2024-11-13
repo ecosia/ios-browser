@@ -59,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ecosia/ios-core.git",
       "state" : {
-        "branch" : "ls-mob-2959-braze-ntp-card-newsletter",
-        "revision" : "c65d3407196a6682b2e5f07ace2d0c0cd3c7c455"
+        "branch" : "main",
+        "revision" : "55fd76f4646b925b39168a1158396f36c6fd6f6f"
       }
     },
     {
