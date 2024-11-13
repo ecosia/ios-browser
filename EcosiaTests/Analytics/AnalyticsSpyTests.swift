@@ -90,7 +90,10 @@ final class AnalyticsSpy: Analytics {
     override func referral(action: Action.Referral, label: Label.Referral? = nil) {
         referralActionCalled = action
         referralLabelCalled = label
-        referralExpectation?.fulfill()
+        // Ensure fulfillment on the main thread
+        DispatchQueue.main.async {
+            self.referralExpectation?.fulfill()
+        }
     }
 
     var ntpTopSiteActionCalled: Action.TopSite?
@@ -129,6 +132,29 @@ final class AnalyticsSpyTests: XCTestCase {
         analyticsSpy = nil
         Analytics.shared = Analytics()
         DependencyHelperMock().reset()
+    }
+
+    // MARK: - Helper Functions
+
+    /// Helper function to wait for a condition with a timeout
+    func waitForCondition(timeout: TimeInterval, condition: @escaping () -> Bool) {
+        let expectation = self.expectation(description: "Waiting for condition")
+        let checkInterval: TimeInterval = 0.05
+        var timeElapsed: TimeInterval = 0
+
+        Timer.scheduledTimer(withTimeInterval: checkInterval, repeats: true) { timer in
+            if condition() {
+                expectation.fulfill()
+                timer.invalidate()
+            } else if timeElapsed >= timeout {
+                timer.invalidate()
+                XCTFail("Condition not met within \(timeout) seconds")
+                expectation.fulfill()
+            }
+            timeElapsed += checkInterval
+        }
+
+        wait(for: [expectation], timeout: timeout + 0.1)
     }
 
     // MARK: - AppDelegate Tests
@@ -272,16 +298,25 @@ final class AnalyticsSpyTests: XCTestCase {
                 XCTAssertNil(analyticsSpy.menuShareContentCalled)
                 tabManagerMock.selectedTab?.url = url
 
+                // Create an expectation if the analytics call is asynchronous
+                // If not, this can be omitted
+                // For safety, we include it
+                let expectation = self.expectation(description: "Analytics menuShare called")
+                analyticsSpy.referralExpectation = expectation
+
                 // Act
                 let action = menuHelper.getSharingAction().items.first
                 if let action = action {
                     action.tapHandler!(action)
-                    // Since the share action may be asynchronous, ensure any asynchronous tasks are completed
-                    // For this example, assume the share action calls the analytics synchronously
-                    // Otherwise, use expectations to wait for the analytics call
                 } else {
                     XCTFail("No sharing action found for url \(url?.absoluteString ?? "nil")")
                 }
+
+                // Wait for the expectation
+                waitForExpectations(timeout: 1)
+
+                // Assert
+                XCTAssertEqual(analyticsSpy.menuShareContentCalled, label)
             }
         }
     }
@@ -318,8 +353,8 @@ final class AnalyticsSpyTests: XCTestCase {
                 // Act
                 menuHelper.getToolbarActions(navigationController: .init()) { actions in
                     let action = actions
-                        .flatMap { $0 } // Flattens sections
-                        .flatMap { $0.items } // Flattens items in sections
+                        .flatMap { $0 } // Flatten sections
+                        .flatMap { $0.items } // Flatten items in sections
                         .first { $0.title == title }
                     if let action = action {
                         action.tapHandler!(action)
@@ -493,13 +528,13 @@ final class AnalyticsSpyTests: XCTestCase {
             // Act
             newsController.loadViewIfNeeded()
             newsController.viewDidAppear(false)
+
+            // Assert
+            XCTAssertEqual(analyticsSpy.navigationActionCalled, .view)
+            XCTAssertEqual(analyticsSpy.navigationLabelCalled, .news)
         } catch {
             XCTFail(error.localizedDescription)
         }
-
-        // Assert
-        XCTAssertEqual(analyticsSpy.navigationActionCalled, .view)
-        XCTAssertEqual(analyticsSpy.navigationLabelCalled, .news)
     }
 
     func testNewsControllerDidSelectItemTracksNavigationOpenNews() {
@@ -515,12 +550,12 @@ final class AnalyticsSpyTests: XCTestCase {
 
             // Act
             newsController.collectionView(newsController.collection, didSelectItemAt: indexPath)
+
+            // Assert
+            XCTAssertEqual(analyticsSpy.navigationOpenNewsIdCalled, "example_news_tracking")
         } catch {
             XCTFail(error.localizedDescription)
         }
-
-        // Assert
-        XCTAssertEqual(analyticsSpy.navigationOpenNewsIdCalled, "example_news_tracking")
     }
 
     // MARK: - Multiply Impact - Referrals Tests
@@ -545,12 +580,18 @@ final class AnalyticsSpyTests: XCTestCase {
         let multiplyImpact = MultiplyImpact(referrals: referrals)
         multiplyImpact.loadViewIfNeeded()
 
+        // Ensure learnMoreButton is not nil
+        XCTAssertNotNil(multiplyImpact.learnMoreButton, "learnMoreButton should not be nil after view is loaded")
+
+        // Create an expectation
+        let expectation = self.expectation(description: "Analytics referral called")
+        analyticsSpy.referralExpectation = expectation
+
         // Act
-        if let learnMoreButton = multiplyImpact.learnMoreButton {
-            learnMoreButton.sendActions(for: .primaryActionTriggered)
-        } else {
-            XCTFail("Learn More button not found")
-        }
+        multiplyImpact.learnMoreButton.sendActions(for: .primaryActionTriggered)
+
+        // Wait for the expectation
+        waitForExpectations(timeout: 1)
 
         // Assert
         XCTAssertEqual(analyticsSpy.referralActionCalled, .click)
