@@ -5,17 +5,16 @@
 import Foundation
 
 final class NTPNewsletterCardViewModel: NTPConfigurableNudgeCardCellViewModel {
-    // TODO: Use localised strings once copy is final
     override var title: String {
-        "Subscribe to our newsletter"
+        .localized(.newsletterNTPCardExperimentTitle)
     }
 
     override var description: String {
-        "Be the first to know about climate impact updates and exciting new features."
+        .localized(.newsletterNTPCardExperimentDescription)
     }
 
     override var buttonText: String {
-        "Subscribe now"
+        .localized(.newsletterNTPCardExperimentButton)
     }
 
     override var cardSectionType: HomepageSectionType {
