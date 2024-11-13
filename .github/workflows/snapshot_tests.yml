@@ -1,9 +1,11 @@
 name: Snapshot Tests
 
 on:
-  pull_request:
-    paths:
-      - 'Client/Configuration/Common.xcconfig'
+  push:
+    branches: [ dc-mob-3026-snapshot-testing-improvements ]
+  # pull_request:
+  #   paths:
+  #     - 'Client/Configuration/Common.xcconfig'
 
 jobs:
   execute_snapshot_tests:
@@ -14,12 +16,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Check for MARKETING_VERSION change
-        id: check_marketing_version
-        run: sh ./check_marketing_version.sh
+      # - name: Check for MARKETING_VERSION change
+      #   id: check_marketing_version
+      #   run: sh ./check_marketing_version.sh
 
       - name: Prepare environment
-        if : ( steps.check_marketing_version.outputs.skipnext  != 'true' )
+        # if : ( steps.check_marketing_version.outputs.skipnext  != 'true' )
         uses: ./.github/actions/prepare_environment
         with:
           core-token: ${{ secrets.IOS_CORE_TOKEN }}
