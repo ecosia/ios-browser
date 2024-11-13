@@ -483,15 +483,19 @@ final class AnalyticsSpyTests: XCTestCase {
 
     func testNewsControllerViewDidAppearTracksNavigationViewNews() {
         // Arrange
-        let item = try! createMockNewsModel()!
-        let items = [item]
-        let newsController = NewsController(items: items)
-        XCTAssertNil(analyticsSpy.navigationActionCalled)
-        XCTAssertNil(analyticsSpy.navigationLabelCalled)
+        do {
+            let item = try createMockNewsModel()!
+            let items = [item]
+            let newsController = NewsController(items: items)
+            XCTAssertNil(analyticsSpy.navigationActionCalled)
+            XCTAssertNil(analyticsSpy.navigationLabelCalled)
 
-        // Act
-        newsController.loadViewIfNeeded()
-        newsController.viewDidAppear(false)
+            // Act
+            newsController.loadViewIfNeeded()
+            newsController.viewDidAppear(false)
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
 
         // Assert
         XCTAssertEqual(analyticsSpy.navigationActionCalled, .view)
@@ -500,16 +504,20 @@ final class AnalyticsSpyTests: XCTestCase {
 
     func testNewsControllerDidSelectItemTracksNavigationOpenNews() {
         // Arrange
-        let item = try! createMockNewsModel()!
-        let items = [item]
-        let newsController = NewsController(items: items)
-        XCTAssertNil(analyticsSpy.navigationOpenNewsIdCalled)
-        newsController.loadView()
-        newsController.collection.reloadData()
-        let indexPath = IndexPath(row: 0, section: 0)
+        do {
+            let item = try createMockNewsModel()!
+            let items = [item]
+            let newsController = NewsController(items: items)
+            XCTAssertNil(analyticsSpy.navigationOpenNewsIdCalled)
+            newsController.loadView()
+            newsController.collection.reloadData()
+            let indexPath = IndexPath(row: 0, section: 0)
 
-        // Act
-        newsController.collectionView(newsController.collection, didSelectItemAt: indexPath)
+            // Act
+            newsController.collectionView(newsController.collection, didSelectItemAt: indexPath)
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
 
         // Assert
         XCTAssertEqual(analyticsSpy.navigationOpenNewsIdCalled, "example_news_tracking")
