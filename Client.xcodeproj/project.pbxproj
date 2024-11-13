@@ -21486,7 +21486,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = "ls-mob-2959-braze-ntp-card-newsletter";
+				branch = main;
 				kind = branch;
 			};
 		};
