@@ -171,22 +171,16 @@ final class AnalyticsSpyTests: XCTestCase {
         // Act
         _ = await appDelegate.application(application, didFinishLaunchingWithOptions: nil)
 
-        // Assert
-        XCTAssertTrue(analyticsSpy.installCalled, "Analytics install should have been called.")
-
-        // Create expectation for activity(_:) being called with .launch
-        let expectation = self.expectation(description: "Analytics activity called with launch")
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { // slight delay to allow async call
-            if self.analyticsSpy.activityActionCalled == .launch {
-                expectation.fulfill()
-            }
+        waitForCondition(timeout: 3) { // Wait detached tasks until launch is called
+            analyticsSpy.activityActionCalled == .launch
         }
-        await fulfillment(of: [expectation], timeout: 2, enforceOrder: true)
-
-        XCTAssertEqual(analyticsSpy.activityActionCalled, .launch, "Analytics activity should be .launch.")
+        
+        // Assert
+        XCTAssertEqual(analyticsSpy.activityActionCalled, .launch)
+        XCTAssertTrue(analyticsSpy.installCalled)
     }
 
-    func testTrackResumeOnDidFinishLaunching() async {
+    func testTrackResumeOnDidBecomeActive() async {
         // Arrange
         XCTAssertNil(analyticsSpy.activityActionCalled)
         let application = await UIApplication.shared
@@ -194,18 +188,12 @@ final class AnalyticsSpyTests: XCTestCase {
         // Act
         _ = await appDelegate.applicationDidBecomeActive(application)
 
-        // Assert
-        // Create expectation for activity(_:) being called with .resume
-        let expectation = self.expectation(description: "Analytics activity called with resume")
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { // slight delay to allow async call
-            if self.analyticsSpy.activityActionCalled == .resume {
-                expectation.fulfill()
-            }
+        waitForCondition(timeout: 2) { // Wait detached tasks until resume is called
+            analyticsSpy.activityActionCalled == .resume
         }
-
-        await fulfillment(of: [expectation], timeout: 2, enforceOrder: true)
-
-        XCTAssertEqual(analyticsSpy.activityActionCalled, .resume, "Analytics activity should be .resume.")
+        
+        // Assert
+        XCTAssertEqual(analyticsSpy.activityActionCalled, .resume)
     }
 
     // MARK: - Bookmarks Tests
