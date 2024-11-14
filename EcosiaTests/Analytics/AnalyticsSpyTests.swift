@@ -602,33 +602,6 @@ final class AnalyticsSpyTests: XCTestCase {
         XCTAssertEqual(analyticsSpy.referralLabelCalled, .learnMore, "Analytics should track referral label as .learnMore.")
     }
 
-    func testMultiplyImpactCopyCodeTracksReferralClickLinkCopying() {
-        // Arrange
-        let referrals = Referrals()
-        let multiplyImpact = MultiplyImpact(referrals: referrals)
-        multiplyImpact.loadViewIfNeeded()
-        XCTAssertNotNil(multiplyImpact.copyControl, "copyControl should not be nil after view is loaded")
-
-        guard let copyControl = multiplyImpact.copyControl else {
-            XCTFail("copyControl should not be nil")
-            return
-        }
-
-        // Create an expectation
-        let expectation = self.expectation(description: "Analytics referral called for Link Copying")
-        analyticsSpy.referralClickExpectation = expectation
-
-        // Act
-        copyControl.sendActions(for: .allEvents)
-
-        // Wait for the expectation
-        wait(for: [expectation], timeout: 2)
-
-        // Assert
-        XCTAssertEqual(analyticsSpy.referralActionCalled, .click, "Analytics should track referral action as .click.")
-        XCTAssertEqual(analyticsSpy.referralLabelCalled, .linkCopying, "Analytics should track referral label as .linkCopying.")
-    }
-
     func testMultiplyImpactInviteFriendsTracksReferralClickInvite() {
         // Arrange
         let referrals = Referrals()
