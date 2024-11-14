@@ -631,7 +631,7 @@ final class AnalyticsSpyTests: XCTestCase {
         analyticsSpy.referralClickExpectation = expectation
 
         // Act
-        copyControl.sendActions(for: .touchUpInside)
+        copyControl.sendActions(for: .allEvents)
 
         // Wait for the expectation
         wait(for: [expectation], timeout: 2)
