@@ -174,7 +174,7 @@ final class AnalyticsSpyTests: XCTestCase {
         waitForCondition(timeout: 3) { // Wait detached tasks until launch is called
             analyticsSpy.activityActionCalled == .launch
         }
-        
+
         // Assert
         XCTAssertEqual(analyticsSpy.activityActionCalled, .launch)
         XCTAssertTrue(analyticsSpy.installCalled)
@@ -191,7 +191,7 @@ final class AnalyticsSpyTests: XCTestCase {
         waitForCondition(timeout: 2) { // Wait detached tasks until resume is called
             analyticsSpy.activityActionCalled == .resume
         }
-        
+
         // Assert
         XCTAssertEqual(analyticsSpy.activityActionCalled, .resume)
     }
