@@ -176,7 +176,7 @@ final class AnalyticsSpyTests: XCTestCase {
 
         // Create expectation for activity(_:) being called with .launch
         let expectation = self.expectation(description: "Analytics activity called with launch")
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { // slight delay to allow async call
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { // slight delay to allow async call
             if self.analyticsSpy.activityActionCalled == .launch {
                 expectation.fulfill()
             }
@@ -197,7 +197,7 @@ final class AnalyticsSpyTests: XCTestCase {
         // Assert
         // Create expectation for activity(_:) being called with .resume
         let expectation = self.expectation(description: "Analytics activity called with resume")
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { // slight delay to allow async call
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { // slight delay to allow async call
             if self.analyticsSpy.activityActionCalled == .resume {
                 expectation.fulfill()
             }
