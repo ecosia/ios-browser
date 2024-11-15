@@ -5,6 +5,7 @@
 import UIKit
 import Core
 import Common
+import Ecosia
 
 protocol WelcomeTourDelegate: AnyObject {
     func welcomeTourDidFinish(_ tour: WelcomeTour)

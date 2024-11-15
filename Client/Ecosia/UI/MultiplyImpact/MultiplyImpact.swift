@@ -8,6 +8,7 @@ import UniformTypeIdentifiers
 import MobileCoreServices
 import LinkPresentation
 import Common
+import Ecosia
 
 final class MultiplyImpact: UIViewController, Themeable {
 

@@ -6,6 +6,7 @@ import Foundation
 import Core
 import Shared
 import Common
+import Ecosia
 
 var ecosiaDisclosureIndicator: UIImageView {
     let config = UIImage.SymbolConfiguration(pointSize: 16)

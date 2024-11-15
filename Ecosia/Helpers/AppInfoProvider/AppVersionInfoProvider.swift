@@ -4,6 +4,6 @@
 
 import Foundation
 
-protocol AppVersionInfoProvider {
+public protocol AppVersionInfoProvider {
     var version: String { get }
 }

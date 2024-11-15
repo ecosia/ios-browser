@@ -4,6 +4,7 @@
 
 import Foundation
 import Common
+import Ecosia
 
 final class NTPAboutEcosiaCell: UICollectionViewCell, ReusableCell {
     struct UX {

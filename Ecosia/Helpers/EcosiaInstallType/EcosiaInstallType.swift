@@ -5,7 +5,7 @@
 import Foundation
 
 /// Represents the type of Ecosia installation.
-enum EcosiaInstallType: String {
+public enum EcosiaInstallType: String {
 
     /// Represents a fresh installation of Ecosia.
     case fresh
@@ -29,7 +29,7 @@ enum EcosiaInstallType: String {
     /// Retrieves the current Ecosia install type from UserDefaults.
     ///
     /// - Returns: The current Ecosia install type. If not found, returns `.unknown`.
-    static func get() -> EcosiaInstallType {
+    public static func get() -> EcosiaInstallType {
         guard let rawValue = UserDefaults.standard.string(forKey: Self.installTypeKey),
               let type = EcosiaInstallType(rawValue: rawValue)
         else { return unknown }
@@ -47,7 +47,7 @@ enum EcosiaInstallType: String {
     /// Retrieves the persisted current version of Ecosia from UserDefaults.
     ///
     /// - Returns: The persisted current version. If not found, returns an empty string.
-    static func persistedCurrentVersion() -> String {
+    public static func persistedCurrentVersion() -> String {
         guard let currentVersion = UserDefaults.standard.string(forKey: Self.currentInstalledVersionKey) else { return "" }
         return currentVersion
     }

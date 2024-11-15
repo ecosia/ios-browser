@@ -4,12 +4,12 @@
 
 import Foundation
 import Core
-import Ecosia
+import NotificationCenter
 
-struct APNConsentOnLaunchExperiment {
+public struct APNConsentOnLaunchExperiment {
     private init() {}
 
-    static var toggleName: Unleash.Toggle.Name {
+    public static var toggleName: Unleash.Toggle.Name {
         .apnConsentOnLaunch
     }
 
@@ -18,7 +18,7 @@ struct APNConsentOnLaunchExperiment {
         Unleash.isEnabled(toggleName) && BrazeIntegrationExperiment.isEnabled
     }
 
-    static func requestAPNConsentIfNeeded(delegate: UNUserNotificationCenterDelegate) async {
+    public static func requestAPNConsentIfNeeded(delegate: UNUserNotificationCenterDelegate) async {
         guard isEnabled, BrazeService.shared.notificationAuthorizationStatus == .notDetermined else {
             return
         }
