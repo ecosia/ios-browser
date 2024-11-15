@@ -146,15 +146,15 @@ extension BrazeService {
 extension BrazeService: BrazeInAppMessageUIDelegate {
 
     public func inAppMessage(_ ui: BrazeInAppMessageUI, didPresent message: Braze.InAppMessage, view: any InAppMessageView) {
-//        Analytics.shared.brazeIAM(action: .view, messageOrButtonId: message.id)
+        Analytics.shared.brazeIAM(action: .view, messageOrButtonId: message.id)
     }
 
     public func inAppMessage(_ ui: BrazeInAppMessageUI, didDismiss message: Braze.InAppMessage, view: any InAppMessageView) {
-//        Analytics.shared.brazeIAM(action: .dismiss, messageOrButtonId: message.id)
+        Analytics.shared.brazeIAM(action: .dismiss, messageOrButtonId: message.id)
     }
 
     public func inAppMessage(_ ui: BrazeInAppMessageUI, shouldProcess clickAction: Braze.InAppMessage.ClickAction, buttonId: String?, message: Braze.InAppMessage, view: any InAppMessageView) -> Bool {
-//        Analytics.shared.brazeIAM(action: .click, messageOrButtonId: buttonId)
+        Analytics.shared.brazeIAM(action: .click, messageOrButtonId: buttonId)
         return true
     }
 }

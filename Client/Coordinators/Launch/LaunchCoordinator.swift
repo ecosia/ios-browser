@@ -4,6 +4,7 @@
 
 import Common
 import Foundation
+import Ecosia
 
 protocol LaunchCoordinatorDelegate: AnyObject {
     func didFinishLaunch(from coordinator: LaunchCoordinator)

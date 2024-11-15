@@ -5,19 +5,19 @@
 import Foundation
 import Core
 
-struct NewsletterCardExperiment {
+public struct NewsletterCardExperiment {
     private init() {}
 
-    static var isEnabled: Bool {
+    public static var isEnabled: Bool {
         Unleash.isEnabled(.newsletterCard)
     }
 
-    static var shouldShowCard: Bool {
+    public static var shouldShowCard: Bool {
         isEnabled && !isDismissed
     }
 
     /// Send onboarding card view analytics event, but just the first time it's called.
-    static func trackExperimentImpression() {
+    public static func trackExperimentImpression() {
         let trackExperimentImpressionKey = "newsletterCardExperimentImpression"
         guard !UserDefaults.standard.bool(forKey: trackExperimentImpressionKey) else {
             return
@@ -29,16 +29,16 @@ struct NewsletterCardExperiment {
     // MARK: Dismissed
     private static let dismissedKey = "newsletterCardExperimentDismissed"
 
-    static var isDismissed: Bool {
+    public static var isDismissed: Bool {
         UserDefaults.standard.bool(forKey: dismissedKey)
     }
 
-    static func setDismissed() {
+    public static func setDismissed() {
         UserDefaults.standard.set(true, forKey: dismissedKey)
     }
 
     /// Should only be used in Debug!
-    static func unsetDismissed() {
+    public static func unsetDismissed() {
         UserDefaults.standard.removeObject(forKey: dismissedKey)
     }
 }

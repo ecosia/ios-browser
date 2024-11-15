@@ -7,7 +7,7 @@ import Foundation
 /// Represents a semantic version of an app.
 ///
 /// A semantic version is typically represented as a series of numbers separated by dots, e.g., "1.0.0".
-struct Version: CustomStringConvertible {
+public struct Version: CustomStringConvertible {
 
     var major: Int
     var minor: Int
@@ -16,7 +16,7 @@ struct Version: CustomStringConvertible {
     /// Initializes a new `Version` from a string representation.
     ///
     /// - Parameter versionString: A string containing the semantic version, e.g., "1.0.0".
-    init?(_ versionString: String) {
+    public init?(_ versionString: String) {
         let components = versionString.split(separator: ".")
         guard components.count == 3,
               let major = Int(components[0]),
@@ -31,7 +31,7 @@ struct Version: CustomStringConvertible {
     }
 
     /// A string representation of the `Version`.
-    var description: String {
+    public var description: String {
         return "\(major).\(minor).\(patch)"
     }
 }
@@ -45,7 +45,7 @@ extension Version: Comparable {
     ///   - rhs: Another `Version`.
     ///
     /// - Returns: `true` if both instances represent the same version, `false` otherwise.
-    static func == (lhs: Version, rhs: Version) -> Bool {
+    public static func == (lhs: Version, rhs: Version) -> Bool {
         return lhs.major == rhs.major && lhs.minor == rhs.minor && lhs.patch == rhs.patch
     }
 
@@ -56,7 +56,7 @@ extension Version: Comparable {
     ///   - rhs: Another `Version`.
     ///
     /// - Returns: `true` if the instance on the left should come before the one on the right, `false` otherwise.
-    static func < (lhs: Version, rhs: Version) -> Bool {
+    public static func < (lhs: Version, rhs: Version) -> Bool {
         if lhs.major != rhs.major {
             return lhs.major < rhs.major
         }
@@ -72,7 +72,7 @@ extension Version: Hashable {
     /// Adds this value to the given hasher.
     ///
     /// - Parameter hasher: The hasher to use when combining the components of this instance.
-    func hash(into hasher: inout Hasher) {
+    public func hash(into hasher: inout Hasher) {
         hasher.combine(major)
         hasher.combine(minor)
         hasher.combine(patch)

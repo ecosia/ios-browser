@@ -5,7 +5,7 @@
 import Foundation
 
 extension Analytics {
-    enum Category: String {
+    public enum Category: String {
         case
         activity,
         bookmarks,
@@ -24,27 +24,27 @@ extension Analytics {
         settings
     }
 
-    enum Label: String {
+    public enum Label: String {
         case
         analytics,
         market,
         toolbar
 
-        enum Bookmarks: String {
+        public enum Bookmarks: String {
             case
             importFunctionality = "import_functionality",
             learnMore = "learn_more",
             `import`
         }
 
-        enum DefaultBrowser: String {
+        public enum DefaultBrowser: String {
             case
             deeplink = "default_browser_deeplink",
             promo = "default_browser_promo",
             settings = "default_browser_settings"
         }
 
-        enum Menu: String {
+        public enum Menu: String {
             case
             bookmarks,
             copyLink = "copy_link",
@@ -63,7 +63,7 @@ extension Analytics {
             zoom
         }
 
-        enum MenuStatus: String {
+        public enum MenuStatus: String {
             case
             bookmark,
             darkMode = "dark_mode",
@@ -71,12 +71,12 @@ extension Analytics {
             shortcut
         }
 
-        enum Migration: String {
+        public enum Migration: String {
             case
             tabs
         }
 
-        enum Navigation: String {
+        public enum Navigation: String {
             case
             inapp,
             financialReports = "financial_reports",
@@ -87,12 +87,12 @@ extension Analytics {
             terms
         }
 
-        enum NewsletterCardExperiment: String {
+        public enum NewsletterCardExperiment: String {
             case
             ntpCard = "ntp_card"
         }
 
-        enum NTP: String {
+        public enum NTP: String {
             case
             about,
             climateCounter = "climate_counter",
@@ -104,13 +104,13 @@ extension Analytics {
             topSites = "top_sites"
         }
 
-        enum Onboarding: String {
+        public enum Onboarding: String {
             case
             next,
             skip
         }
 
-        enum Referral: String {
+        public enum Referral: String {
             case
             invite,
             inviteScreen = "invite_screen",
@@ -120,7 +120,7 @@ extension Analytics {
         }
     }
 
-    enum Action: String {
+    public enum Action: String {
         case
         change,
         click,
@@ -134,13 +134,13 @@ extension Analytics {
         success,
         view
 
-        enum Activity: String {
+        public enum Activity: String {
             case
             launch,
             resume
         }
 
-        enum APNConsent: String {
+        public enum APNConsent: String {
             case
             allow,
             deny,
@@ -148,40 +148,40 @@ extension Analytics {
             view
         }
 
-        enum Bookmarks: String {
+        public enum Bookmarks: String {
             case
             `import`
         }
 
-        enum BrazeIAM: String {
+        public enum BrazeIAM: String {
             case
             click,
             dismiss,
             view
         }
 
-        enum NewsletterCardExperiment: String {
+        public enum NewsletterCardExperiment: String {
             case
             click,
             dismiss,
             view
         }
 
-        enum NTPCustomization: String {
+        public enum NTPCustomization: String {
             case
             click,
             disable,
             enable
         }
 
-        enum Promo: String {
+        public enum Promo: String {
             case
             click,
             close,
             view
         }
 
-        enum Referral: String {
+        public enum Referral: String {
             case
             claim,
             click,
@@ -190,14 +190,14 @@ extension Analytics {
             view
         }
 
-        enum SeedCounter: String {
+        public enum SeedCounter: String {
             case
             level,
             collect,
             click
         }
 
-        enum TopSite: String {
+        public enum TopSite: String {
             case
             click,
             openNewTab = "open_new_tab",
@@ -208,19 +208,19 @@ extension Analytics {
 		}
     }
 
-    enum Property: String {
+    public enum Property: String {
         case
         enable,
         disable,
         home
 
-        enum APNConsent: String {
+        public enum APNConsent: String {
             case
             home,
             onLaunchPrompt = "on_launch_prompt"
         }
 
-        enum Bookmarks: String {
+        public enum Bookmarks: String {
             case
             `import`,
             export,
@@ -229,7 +229,7 @@ extension Analytics {
             error
         }
 
-        enum Library: String {
+        public enum Library: String {
             case
             bookmarks,
             downloads,
@@ -237,7 +237,7 @@ extension Analytics {
             readingList = "reading_list"
         }
 
-        enum OnboardingPage: String, CaseIterable {
+        public enum OnboardingPage: String, CaseIterable {
             case
             start,
             profits,
@@ -246,14 +246,14 @@ extension Analytics {
             transparentFinances = "transparent_finances"
         }
 
-        enum ShareContent: String {
+        public enum ShareContent: String {
             case
             ntp,
             web,
             file
         }
 
-        enum TopSite: String {
+        public enum TopSite: String {
             case
             `default`,
             mostVisited = "most_visited",
