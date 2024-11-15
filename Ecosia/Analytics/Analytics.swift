@@ -214,8 +214,7 @@ open class Analytics {
             .property(property.rawValue))
     }
 
-    public func ntpSeedCounterExperiment(_ action: Action.SeedCounter,
-                                  value: NSNumber) {
+    public func ntpSeedCounterExperiment(_ action: Action.SeedCounter, value: NSNumber) {
         track(Structured(category: Category.ntp.rawValue,
                          action: action.rawValue)
             .label(Label.NTP.climateCounter.rawValue)
