@@ -11,6 +11,7 @@ import Redux
 import TabDataStore
 // Ecosia: Import Core
 import Core
+import Ecosia
 
 class BrowserCoordinator: BaseCoordinator,
                           LaunchCoordinatorDelegate,

@@ -6,6 +6,7 @@ import Foundation
 import Core
 import Shared
 import Storage
+import Ecosia
 
 protocol BookmarksExchangable {
     func export(bookmarks: [Core.BookmarkItem], in viewController: UIViewController, barButtonItem: UIBarButtonItem) async throws

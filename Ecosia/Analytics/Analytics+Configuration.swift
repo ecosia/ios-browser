@@ -82,7 +82,7 @@ extension Analytics {
     /// Checks if a day has passed since the last check for a specific event.
     /// - Parameter identifier: A unique identifier used to store and retrieve the last check date from `UserDefaults`.
     /// - Returns: A Boolean value indicating whether a day has passed since the last check. If no previous check exists, returns `true` and records the current date.
-    static func hasDayPassedSinceLastCheck(for identifier: String) -> Bool {
+    public static func hasDayPassedSinceLastCheck(for identifier: String) -> Bool {
         let now = Date()
         let defaults = UserDefaults.standard
 

@@ -4,6 +4,7 @@
 
 import UIKit
 import Core
+import Ecosia
 
 extension WelcomeTour {
 

@@ -5,6 +5,7 @@
 import Common
 import UIKit
 import Shared
+import Ecosia
 
 extension AppSettingsTableViewController {
 

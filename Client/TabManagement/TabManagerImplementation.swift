@@ -7,6 +7,7 @@ import TabDataStore
 import Storage
 import Common
 import Shared
+import Ecosia
 
 // This class subclasses the legacy tab manager temporarily so we can
 // gradually migrate to the new system

@@ -4,6 +4,7 @@
 
 import Foundation
 import Core
+import Ecosia
 
 enum CustomizableNTPSettingConfig: CaseIterable {
     case topSites

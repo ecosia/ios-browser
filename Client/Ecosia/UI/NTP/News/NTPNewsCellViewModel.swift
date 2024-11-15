@@ -6,6 +6,7 @@ import Foundation
 import Shared
 import Core
 import Common
+import Ecosia
 
 protocol NTPNewsCellDelegate: AnyObject {
     func openSeeAllNews()

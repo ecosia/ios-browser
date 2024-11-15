@@ -5,6 +5,7 @@
 import UIKit
 import Core
 import Shared
+import Ecosia
 
 extension BrowserViewController: HomepageViewControllerDelegate {
     func homeDidTapSearchButton(_ home: HomepageViewController) {

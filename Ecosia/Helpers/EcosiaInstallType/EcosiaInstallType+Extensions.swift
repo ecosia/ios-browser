@@ -17,7 +17,7 @@ extension EcosiaInstallType {
     ///
     /// - Warning: Ensure that `User.shared.firstTime` and `versionProvider.version` are correctly initialized before calling this function.
     ///
-    static func evaluateCurrentEcosiaInstallType(withVersionProvider versionProvider: AppVersionInfoProvider = DefaultAppVersionInfoProvider(), storeUpgradeVersion: Bool = false) {
+    public static func evaluateCurrentEcosiaInstallType(withVersionProvider versionProvider: AppVersionInfoProvider = DefaultAppVersionInfoProvider(), storeUpgradeVersion: Bool = false) {
 
         if User.shared.firstTime &&
             EcosiaInstallType.get() == .unknown {

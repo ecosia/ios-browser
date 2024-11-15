@@ -5,6 +5,7 @@
 import Core
 import UIKit
 import Common
+import Ecosia
 
 final class NewsController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource,
     UICollectionViewDelegateFlowLayout, Themeable {
