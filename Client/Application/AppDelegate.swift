@@ -11,6 +11,7 @@ import Common
 import TabDataStore
 // Ecosia: Import Core
 import Core
+import Ecosia
 
 class AppDelegate: UIResponder, UIApplicationDelegate {
     let logger = DefaultLogger.shared

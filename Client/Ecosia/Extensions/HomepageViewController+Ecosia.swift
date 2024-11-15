@@ -4,6 +4,7 @@
 
 import UIKit
 import Core
+import Ecosia
 
 protocol HomepageViewControllerDelegate: AnyObject {
     func homeDidTapSearchButton(_ home: HomepageViewController)
