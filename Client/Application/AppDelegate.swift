@@ -192,9 +192,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             // Ecosia: Lifecycle tracking. Needs to happen after Unleash start so that the flags are correctly added to the analytics context.
             Analytics.shared.activity(.launch)
             // Ecosia: Engagement Service Initialization helper
-            await BrazeService.shared.initialize(notificationCenterDelegate: self)
+            await BrazeService.shared.initialize()
             // Ecosia: Experiment that directly asks for consent
-            await APNConsentOnLaunchExperiment.requestAPNConsentIfNeeded(delegate: self)
+            await APNConsentOnLaunchExperiment.requestAPNConsentIfNeeded()
         }
 
         // Ecosia: fetching statistics before they are used
@@ -393,10 +393,6 @@ extension AppDelegate {
         return configuration
     }
 }
-
-// Ecosia: Conformance to UNUserNotificationCenterDelegate to enable APN
-
-extension AppDelegate: UNUserNotificationCenterDelegate {}
 
 // Ecosia: Register the APN device token
 

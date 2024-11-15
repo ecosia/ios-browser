@@ -7,8 +7,8 @@ import BrazeKit
 import BrazeUI
 import Core
 
-final class BrazeService {
-    private init() {}
+final class BrazeService: NSObject {
+    override private init() {}
 
     private var braze: Braze?
     private var userId: String {
@@ -27,10 +27,10 @@ final class BrazeService {
         case newsletterCardClick = "newsletter_card_click"
     }
 
-    func initialize(notificationCenterDelegate: UNUserNotificationCenterDelegate) async {
+    func initialize() async {
         do {
             try await initBraze(userId: userId)
-            await refreshAPNRegistrationIfNeeded(notificationCenterDelegate: notificationCenterDelegate)
+            await refreshAPNRegistrationIfNeeded()
         } catch {
             debugPrint(error)
         }
@@ -49,20 +49,20 @@ final class BrazeService {
 
     // MARK: - APN Consent
 
-    func requestAPNConsent(notificationCenterDelegate: UNUserNotificationCenterDelegate) async throws -> Bool {
+    func requestAPNConsent() async throws -> Bool {
         await UIApplication.shared.registerForRemoteNotifications()
-        let notificationCenter = makeNotificationCenter(notificationCenterDelegate: notificationCenterDelegate)
+        let notificationCenter = makeNotificationCenter()
         let granted = try await notificationCenter.requestAuthorization()
         await retrieveUserCurrentNotificationAuthStatus() // Make sure status is always updated
         return granted
     }
 
-    func refreshAPNRegistrationIfNeeded(notificationCenterDelegate: UNUserNotificationCenterDelegate) async {
+    func refreshAPNRegistrationIfNeeded() async {
         let notificationCenter = UNUserNotificationCenter.current()
         let currentStatus = await notificationCenter.notificationSettings().authorizationStatus
         switch currentStatus {
         case .authorized, .ephemeral, .provisional:
-            _ = try? await requestAPNConsent(notificationCenterDelegate: notificationCenterDelegate)
+            _ = try? await requestAPNConsent()
         default:
             break
         }
@@ -87,10 +87,10 @@ extension BrazeService {
 extension BrazeService {
     // MARK: - Notification Center
 
-    private func makeNotificationCenter(notificationCenterDelegate: UNUserNotificationCenterDelegate) -> UNUserNotificationCenter {
+    private func makeNotificationCenter() -> UNUserNotificationCenter {
         let center = UNUserNotificationCenter.current()
         center.setNotificationCategories(BrazeKit.Braze.Notifications.categories)
-        center.delegate = notificationCenterDelegate
+        center.delegate = self
         return center
     }
 
@@ -158,3 +158,5 @@ extension BrazeService: BrazeInAppMessageUIDelegate {
         return true
     }
 }
+
+extension BrazeService: UNUserNotificationCenterDelegate {}
