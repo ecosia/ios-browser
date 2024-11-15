@@ -4,6 +4,7 @@
 
 import Foundation
 import Core
+import Ecosia
 
 struct APNConsentOnLaunchExperiment {
     private init() {}

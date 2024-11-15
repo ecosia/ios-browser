@@ -6,28 +6,29 @@ import Foundation
 import BrazeKit
 import BrazeUI
 import Core
+import NotificationCenter
 
-final class BrazeService {
+public final class BrazeService {
     private init() {}
 
     private var braze: Braze?
     private var userId: String {
         User.shared.analyticsId.uuidString
     }
-    private(set) var notificationAuthorizationStatus: UNAuthorizationStatus?
+    public private(set) var notificationAuthorizationStatus: UNAuthorizationStatus?
     private static var apiKey = EnvironmentFetcher.valueFromMainBundleOrProcessInfo(forKey: "BRAZE_API_KEY") ?? ""
-    static let shared = BrazeService()
+    public static let shared = BrazeService()
 
-    enum Error: Swift.Error {
+    public enum Error: Swift.Error {
         case invalidConfiguration
         case generic(description: String)
     }
 
-    enum CustomEvent: String {
+    public enum CustomEvent: String {
         case newsletterCardClick = "newsletter_card_click"
     }
 
-    func initialize(notificationCenterDelegate: UNUserNotificationCenterDelegate) async {
+    public func initialize(notificationCenterDelegate: UNUserNotificationCenterDelegate) async {
         do {
             try await initBraze(userId: userId)
             await refreshAPNRegistrationIfNeeded(notificationCenterDelegate: notificationCenterDelegate)
@@ -36,20 +37,20 @@ final class BrazeService {
         }
     }
 
-    func registerDeviceToken(_ deviceToken: Data) {
+    public func registerDeviceToken(_ deviceToken: Data) {
         braze?.notifications.register(deviceToken: deviceToken)
         Task.detached(priority: .medium) { [weak self] in
             await self?.updateID(self?.userId)
         }
     }
 
-    func logCustomEvent(_ event: CustomEvent) {
+    public func logCustomEvent(_ event: CustomEvent) {
         self.braze?.logCustomEvent(name: event.rawValue)
     }
 
     // MARK: - APN Consent
 
-    func requestAPNConsent(notificationCenterDelegate: UNUserNotificationCenterDelegate) async throws -> Bool {
+    public func requestAPNConsent(notificationCenterDelegate: UNUserNotificationCenterDelegate) async throws -> Bool {
         await UIApplication.shared.registerForRemoteNotifications()
         let notificationCenter = makeNotificationCenter(notificationCenterDelegate: notificationCenterDelegate)
         let granted = try await notificationCenter.requestAuthorization()
@@ -57,7 +58,7 @@ final class BrazeService {
         return granted
     }
 
-    func refreshAPNRegistrationIfNeeded(notificationCenterDelegate: UNUserNotificationCenterDelegate) async {
+    public func refreshAPNRegistrationIfNeeded(notificationCenterDelegate: UNUserNotificationCenterDelegate) async {
         let notificationCenter = UNUserNotificationCenter.current()
         let currentStatus = await notificationCenter.notificationSettings().authorizationStatus
         switch currentStatus {
@@ -145,16 +146,16 @@ extension BrazeService {
 
 extension BrazeService: BrazeInAppMessageUIDelegate {
 
-    func inAppMessage(_ ui: BrazeInAppMessageUI, didPresent message: Braze.InAppMessage, view: any InAppMessageView) {
-        Analytics.shared.brazeIAM(action: .view, messageOrButtonId: message.id)
+    public func inAppMessage(_ ui: BrazeInAppMessageUI, didPresent message: Braze.InAppMessage, view: any InAppMessageView) {
+//        Analytics.shared.brazeIAM(action: .view, messageOrButtonId: message.id)
     }
 
-    func inAppMessage(_ ui: BrazeInAppMessageUI, didDismiss message: Braze.InAppMessage, view: any InAppMessageView) {
-        Analytics.shared.brazeIAM(action: .dismiss, messageOrButtonId: message.id)
+    public func inAppMessage(_ ui: BrazeInAppMessageUI, didDismiss message: Braze.InAppMessage, view: any InAppMessageView) {
+//        Analytics.shared.brazeIAM(action: .dismiss, messageOrButtonId: message.id)
     }
 
-    func inAppMessage(_ ui: BrazeInAppMessageUI, shouldProcess clickAction: Braze.InAppMessage.ClickAction, buttonId: String?, message: Braze.InAppMessage, view: any InAppMessageView) -> Bool {
-        Analytics.shared.brazeIAM(action: .click, messageOrButtonId: buttonId)
+    public func inAppMessage(_ ui: BrazeInAppMessageUI, shouldProcess clickAction: Braze.InAppMessage.ClickAction, buttonId: String?, message: Braze.InAppMessage, view: any InAppMessageView) -> Bool {
+//        Analytics.shared.brazeIAM(action: .click, messageOrButtonId: buttonId)
         return true
     }
 }
