@@ -52,7 +52,7 @@ final class BrazeService: NSObject {
     func requestAPNConsent() async throws -> Bool {
         await UIApplication.shared.registerForRemoteNotifications()
         let notificationCenter = makeNotificationCenter()
-        let granted = try await notificationCenter.requestAuthorization()
+        let granted = try await notificationCenter.requestAuthorization(options: [.badge, .sound, .alert])
         await retrieveUserCurrentNotificationAuthStatus() // Make sure status is always updated
         return granted
     }
