@@ -9,6 +9,7 @@ extension Analytics {
         case
         activity,
         bookmarks,
+        brazeIAM = "braze_iam",
         browser,
         external,
         intro,
@@ -17,6 +18,7 @@ extension Analytics {
         menuStatus = "menu_status",
         migration,
         navigation,
+        newsletterExperiment = "newsletter_experiment",
         ntp,
         pushNotificationConsent = "push_notification_consent",
         settings
@@ -85,6 +87,11 @@ extension Analytics {
             terms
         }
 
+        enum NewsletterCardExperiment: String {
+            case
+            ntpCard = "ntp_card"
+        }
+
         enum NTP: String {
             case
             about,
@@ -137,14 +144,27 @@ extension Analytics {
             case
             allow,
             deny,
-            dismiss,
-            skip,
+            error,
             view
         }
 
         enum Bookmarks: String {
             case
             `import`
+        }
+
+        enum BrazeIAM: String {
+            case
+            click,
+            dismiss,
+            view
+        }
+
+        enum NewsletterCardExperiment: String {
+            case
+            click,
+            dismiss,
+            view
         }
 
         enum NTPCustomization: String {

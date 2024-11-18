@@ -17,13 +17,16 @@ struct APNConsentOnLaunchExperiment {
         Unleash.isEnabled(toggleName) && BrazeIntegrationExperiment.isEnabled
     }
 
-    static func requestAPNConsentIfNeeded(delegate: UNUserNotificationCenterDelegate) async {
-        guard isEnabled, ClientEngagementService.shared.notificationAuthorizationStatus == .notDetermined else {
+    static func requestAPNConsentIfNeeded() async {
+        guard isEnabled, BrazeService.shared.notificationAuthorizationStatus == .notDetermined else {
             return
         }
         Analytics.shared.apnConsentOnLaunchExperiment(.view)
-        ClientEngagementService.shared.requestAPNConsent(notificationCenterDelegate: delegate) { granted, error in
+        do {
+            let granted = try await BrazeService.shared.requestAPNConsent()
             Analytics.shared.apnConsentOnLaunchExperiment(granted ? .allow : .deny)
+        } catch {
+            Analytics.shared.apnConsentOnLaunchExperiment(.error)
         }
     }
 }
