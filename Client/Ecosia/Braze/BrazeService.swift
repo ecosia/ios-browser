@@ -64,6 +64,7 @@ final class BrazeService: NSObject {
         case .authorized, .ephemeral, .provisional:
             _ = try? await requestAPNConsent()
         default:
+            await retrieveUserCurrentNotificationAuthStatus() // Update status if not refreshed
             break
         }
     }
