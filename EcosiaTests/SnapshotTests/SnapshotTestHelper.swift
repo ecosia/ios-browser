@@ -45,29 +45,67 @@ final class SnapshotTestHelper {
         ]
 
         guard let testBundle = Bundle(identifier: "com.ecosia.ecosiaapp.EcosiaSnapshotTests"),
-              let path = testBundle.path(forResource: "environment", ofType: "json"),
-              let data = try? Data(contentsOf: URL(fileURLWithPath: path)),
-              let json = try? JSONSerialization.jsonObject(with: data, options: []),
-              let dict = json as? [String: String],
-              let deviceName = dict["DEVICE_NAME"],
-              let orientation = dict["ORIENTATION"] else {
-            fatalError("Script error. Could not retrieve DEVICE_NAME or ORIENTATION")
+              let envPath = testBundle.path(forResource: "environment", ofType: "json"),
+              let envData = try? Data(contentsOf: URL(fileURLWithPath: envPath)),
+              let envJson = try? JSONSerialization.jsonObject(with: envData, options: []),
+              let envDict = envJson as? [String: Any],
+              let devicesArray = envDict["DEVICES"] as? [[String: Any]],
+              let localesArray = envDict["LOCALES"] as? [String],
+              let simulatorDeviceName = envDict["SIMULATOR_DEVICE_NAME"] as? String else {
+            fatalError("Could not retrieve devices and locales from environment.json")
         }
 
-        let deviceType = DeviceType.from(deviceName: deviceName, orientation: orientation)
-        let config = deviceType.config
         let themeManager: ThemeManager = AppContainer.shared.resolve()
-        let window = UIWindow(frame: CGRect(origin: .zero, size: config.size!))
 
-        locales.forEach { locale in
-            themes.forEach { theme, suffix in
-                setLocale(locale)
-                changeThemeTo(theme, suffix: suffix, themeManager: themeManager)
-                updateContentInitializingWith(initializer, inWindow: window)
-                RunLoop.current.run(until: Date(timeIntervalSinceNow: wait))
-                let snapshotting = Snapshotting<UIView, UIImage>.image(precision: Float(precision), traits: config.traits)
-                let snapshotName = "\(String.cleanFunctionName(testName))_\(suffix.rawValue)_\(deviceName)_\(locale.identifier)"
-                SnapshotTesting.assertSnapshot(of: window, as: snapshotting, file: file, testName: snapshotName, line: line)
+        // Map devices from environment.json
+        let devicesToTest: [DeviceType] = devicesArray.compactMap { deviceDict in
+            guard let deviceName = deviceDict["name"] as? String,
+                  let orientation = deviceDict["orientation"] as? String else {
+                print("Invalid device entry: \(deviceDict)")
+                return nil
+            }
+            return DeviceType.from(deviceName: deviceName, orientation: orientation)
+        }
+
+        // Map locales from environment.json
+        let locales = localesArray.map { Locale(identifier: $0) }
+
+        for deviceType in devicesToTest {
+            let config = deviceType.config
+            let deviceName = deviceType.name
+            let window = UIWindow(frame: CGRect(origin: .zero, size: config.size!))
+            let traits: UITraitCollection = .init(traitsFrom: [config.traits])
+
+            for locale in locales {
+                for (themeStyle, themeSuffix) in themes {
+                    let traitsArray: [UITraitCollection] = [
+                        config.traits,
+                        .init(userInterfaceStyle: themeStyle)
+                    ]
+
+                    setLocale(locale)
+                    changeThemeTo(themeStyle, suffix: themeSuffix, themeManager: themeManager)
+                    updateContentInitializingWith(initializer, inWindow: window)
+                    RunLoop.current.run(until: Date(timeIntervalSinceNow: wait))
+
+                    let isCurrentDeviceMatchingSimulator = deviceName == simulatorDeviceName
+
+                    let snapshotting = Snapshotting<UIView, UIImage>.image(
+                        precision: Float(precision),
+                        size: isCurrentDeviceMatchingSimulator ? nil : config.size!,
+                        traits: traits
+                    )
+
+                    let snapshotName = "\(String.cleanFunctionName(testName))_\(themeSuffix.rawValue)_\(deviceType.rawValue)_\(locale.identifier)"
+
+                    SnapshotTesting.assertSnapshot(
+                        of: window,
+                        as: snapshotting,
+                        file: file,
+                        testName: snapshotName,
+                        line: line
+                    )
+                }
             }
         }
     }
@@ -182,11 +220,9 @@ final class SnapshotTestHelper {
         if let view = content as? UIView {
             window.addSubview(view)
             window.bounds = view.bounds
-            view.frame = window.bounds
         } else if let viewController = content as? UIViewController {
             window.rootViewController = viewController
             window.bounds = viewController.view.bounds
-            viewController.view.frame = window.bounds
             viewController.loadViewIfNeeded()
             viewController.view.layoutIfNeeded()
         }

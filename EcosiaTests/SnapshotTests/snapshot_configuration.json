@@ -13,12 +13,13 @@
       "os": "17.5"
     },
     {
-      "name": "iPhone 14 Pro",
+      "name": "iPhone 15 Pro",
       "orientation": "portrait",
-      "os": "17.5"
+      "os": "17.5",
+      "isDefaultTestDevice": true
     },
     {
-      "name": "iPhone 14 Pro Max",
+      "name": "iPhone 15 Pro Max",
       "orientation": "landscape"
     },
     {
@@ -32,16 +33,13 @@
       "testClasses": [
         {
           "name": "OnboardingTests",
-          "devices": ["all"],
+          "devices": ["all", "portrait"],
           "locales": ["all"]
         },
         {
           "name": "NTPComponentTests",
-          "devices": ["iPhone 14 Pro"],
-          "locales": [
-            "en",
-            "es"
-          ]
+          "devices": ["iPhone 15 Pro"],
+          "locales": ["all"]
         }
       ]
     }
