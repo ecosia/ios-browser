@@ -106,11 +106,9 @@ final class AnalyticsSpy: Analytics {
         DispatchQueue.main.async {
             switch action {
             case .click:
-                print("Referral action called: .click, label: \(String(describing: label))")
                 self.referralClickExpectation?.fulfill()
                 self.referralClickExpectation = nil // Prevent multiple fulfillments
             case .send:
-                print("Referral action called: .send, label: \(String(describing: label))")
                 self.referralSendExpectation?.fulfill()
                 self.referralSendExpectation = nil // Prevent multiple fulfillments
             default:
