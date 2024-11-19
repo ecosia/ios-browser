@@ -8827,6 +8827,7 @@
 				2C6188F82B7A8A22006B70D7 /* BrazeIntegrationExperiment.swift */,
 				12147F322CDBA7230009D300 /* NewsletterCardExperiment.swift */,
 				2CFE600B2CD3AAB6001F35D2 /* OnboardingRemoveExperiment.swift */,
+				12147F322CDBA7230009D300 /* NewsletterCardExperiment.swift */,
 			);
 			path = Unleash;
 			sourceTree = "<group>";
@@ -9084,6 +9085,7 @@
 				2CABD7272C12EF1E00A0750F /* PrivateModeButtonTests.swift */,
 				2C2349A22C57E5BC007A5894 /* EcosiaPerformanceTestHistory.swift */,
 				2CD48B7E2C7F7E4100A70908 /* EcosiaOverlayModeManagerTests.swift */,
+				126509882CDA31890011BA36 /* BrazeServiceTests.swift */,
 			);
 			path = EcosiaTests;
 			sourceTree = "<group>";
@@ -13873,6 +13875,7 @@
 				8A19ACB02A329078001C2147 /* AutofillCreditCardSettings.swift in Sources */,
 				2C61895D2B7A8A22006B70D7 /* NTPImpactRowView.swift in Sources */,
 				E1E5BE252A28F7BE00248F77 /* PasswordDetailViewControllerModel.swift in Sources */,
+				12147F332CDBA7230009D300 /* NewsletterCardExperiment.swift in Sources */,
 				E1FE133129C22726002A65FF /* BackgroundFetchAndProcessingUtility.swift in Sources */,
 				8AD40FD527BB1C1000672675 /* LockButton.swift in Sources */,
 				5F130D2E2483508E00B0F7D0 /* FxAWebViewModel.swift in Sources */,
@@ -14401,6 +14404,7 @@
 				74F80D342A0A52D700013C3D /* PrivacyPolicyViewController.swift in Sources */,
 				2C61894F2B7A8A22006B70D7 /* NTPLibaryCellViewModel.swift in Sources */,
 				274A36CE239EB9EC00A21587 /* LibraryViewController+LibraryPanelDelegate.swift in Sources */,
+				126509822CD924C00011BA36 /* BrazeService.swift in Sources */,
 				C869912D28917688007ACC5C /* WallpaperImageLoader.swift in Sources */,
 				96A5F73829928B3700234E5F /* GeneralizedImageFetcher.swift in Sources */,
 				1D7B78992ADF328E0011E9F2 /* AppEvent.swift in Sources */,
@@ -14921,6 +14925,7 @@
 				ABB507CF2A136FB2009CAA67 /* UserConversionMetricsTests.swift in Sources */,
 				21FA8FB22AE856EB0013B815 /* MockTabTrayCoordinatorDelegate.swift in Sources */,
 				C8699152289177F5007ACC5C /* WallpaperNetworkingTests.swift in Sources */,
+				1265098A2CDA32790011BA36 /* BrazeServiceTests.swift in Sources */,
 				E1AEC178286E0CF500062E29 /* HomepageViewControllerTests.swift in Sources */,
 				8ADEC6832A40F208002D2ED8 /* AppSettingsTableViewControllerTests.swift in Sources */,
 				5A475E8E29DB89C7009C13FD /* TabManagerTests.swift in Sources */,
