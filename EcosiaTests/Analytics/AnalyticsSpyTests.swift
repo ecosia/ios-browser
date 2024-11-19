@@ -44,7 +44,6 @@ final class AnalyticsSpy: Analytics {
         menuClickItemCalled = item
         DispatchQueue.main.async {
             self.menuClickExpectation?.fulfill()
-            self.menuClickExpectation = nil // Prevent multiple fulfillments
         }
     }
 
@@ -61,7 +60,6 @@ final class AnalyticsSpy: Analytics {
         menuStatusItemChangedTo = to
         DispatchQueue.main.async {
             self.menuStatusExpectation?.fulfill()
-            self.menuStatusExpectation = nil // Prevent multiple fulfillments
         }
     }
 
@@ -107,10 +105,8 @@ final class AnalyticsSpy: Analytics {
             switch action {
             case .click:
                 self.referralClickExpectation?.fulfill()
-                self.referralClickExpectation = nil // Prevent multiple fulfillments
             case .send:
                 self.referralSendExpectation?.fulfill()
-                self.referralSendExpectation = nil // Prevent multiple fulfillments
             default:
                 break
             }
