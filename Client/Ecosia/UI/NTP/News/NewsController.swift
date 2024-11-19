@@ -8,7 +8,7 @@ import Common
 
 final class NewsController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource,
     UICollectionViewDelegateFlowLayout, Themeable {
-    private weak var collection: UICollectionView!
+    private(set) weak var collection: UICollectionView!
     private var items = [NewsModel]()
     private let images = Images(.init(configuration: .ephemeral))
     private let news = News()
