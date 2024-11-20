@@ -32,7 +32,7 @@
 		122935742CE78D0A00EC1297 /* Ecosia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1229356A2CE78D0A00EC1297 /* Ecosia.framework */; };
 		1229357C2CE78D0A00EC1297 /* Ecosia.h in Headers */ = {isa = PBXBuildFile; fileRef = 1229356C2CE78D0A00EC1297 /* Ecosia.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1229357F2CE78D0A00EC1297 /* Ecosia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1229356A2CE78D0A00EC1297 /* Ecosia.framework */; };
-		122935802CE78D0A00EC1297 /* Ecosia.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 1229356A2CE78D0A00EC1297 /* Ecosia.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		122935802CE78D0A00EC1297 /* Ecosia.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 1229356A2CE78D0A00EC1297 /* Ecosia.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		1229358D2CE78D5D00EC1297 /* BrazeServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 126509882CDA31890011BA36 /* BrazeServiceTests.swift */; };
 		1229358F2CE78EC400EC1297 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 1229358E2CE78EC400EC1297 /* Core */; };
 		122935912CE78ED500EC1297 /* BrazeKit in Frameworks */ = {isa = PBXBuildFile; productRef = 122935902CE78ED500EC1297 /* BrazeKit */; };
@@ -8040,6 +8040,7 @@
 				122935A12CE79A8600EC1297 /* Helpers */,
 				1229356C2CE78D0A00EC1297 /* Ecosia.h */,
 				1229359D2CE792B700EC1297 /* README.md */,
+				12E604442CECADDA009A7BEC /* Info.plist */,
 			);
 			path = Ecosia;
 			sourceTree = "<group>";
@@ -8832,7 +8833,6 @@
 			children = (
 				1285E2B62CC68BF00053506B /* APNConsentOnLaunchExperiment.swift */,
 				2C6188F82B7A8A22006B70D7 /* BrazeIntegrationExperiment.swift */,
-				12147F322CDBA7230009D300 /* NewsletterCardExperiment.swift */,
 				2CFE600B2CD3AAB6001F35D2 /* OnboardingRemoveExperiment.swift */,
 			);
 			path = Unleash;
@@ -19824,11 +19824,10 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_MODULE_VERIFIER = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -19848,7 +19847,8 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Ecosia/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "$(MOZ_BUNDLE_DISPLAY_NAME)";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Firefox uses your camera to scan QR codes and take photos and video.";
@@ -19871,7 +19871,6 @@
 					"@loader_path/Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -19887,7 +19886,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
+				VERSIONING_SYSTEM = "";
 				VERSION_INFO_PREFIX = "";
 			};
 			name = Debug;
@@ -19929,14 +19928,13 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 33YMRSYD2L;
 				"DEVELOPMENT_TEAM[sdk=macosx*]" = 33YMRSYD2L;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_MODULE_VERIFIER = YES;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -19950,7 +19948,8 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Ecosia/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "$(MOZ_BUNDLE_DISPLAY_NAME)";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Firefox uses your camera to scan QR codes and take photos and video.";
@@ -19973,7 +19972,6 @@
 					"@loader_path/Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -19989,7 +19987,7 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
+				VERSIONING_SYSTEM = "";
 				VERSION_INFO_PREFIX = "";
 			};
 			name = BetaDebug;
@@ -20031,11 +20029,10 @@
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_MODULE_VERIFIER = YES;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -20049,7 +20046,8 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Ecosia/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "$(MOZ_BUNDLE_DISPLAY_NAME)";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Firefox uses your camera to scan QR codes and take photos and video.";
@@ -20072,7 +20070,6 @@
 					"@loader_path/Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -20087,7 +20084,7 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
+				VERSIONING_SYSTEM = "";
 				VERSION_INFO_PREFIX = "";
 			};
 			name = Release;
@@ -20129,11 +20126,10 @@
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_MODULE_VERIFIER = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -20153,7 +20149,8 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Ecosia/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "$(MOZ_BUNDLE_DISPLAY_NAME)";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Firefox uses your camera to scan QR codes and take photos and video.";
@@ -20176,7 +20173,6 @@
 					"@loader_path/Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -20192,7 +20188,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
+				VERSIONING_SYSTEM = "";
 				VERSION_INFO_PREFIX = "";
 			};
 			name = Development_TestFlight;
@@ -20234,11 +20230,10 @@
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_MODULE_VERIFIER = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -20258,7 +20253,8 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Ecosia/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "$(MOZ_BUNDLE_DISPLAY_NAME)";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Firefox uses your camera to scan QR codes and take photos and video.";
@@ -20281,7 +20277,6 @@
 					"@loader_path/Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -20297,7 +20292,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
+				VERSIONING_SYSTEM = "";
 				VERSION_INFO_PREFIX = "";
 			};
 			name = Development_AppCenter;
