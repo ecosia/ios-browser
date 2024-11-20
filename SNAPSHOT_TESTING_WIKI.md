@@ -128,21 +128,22 @@ SnapshotTestHelper will take care of retrieving all the details and configure th
   ],
   "devices": [
     {
-      "name": "iPhone SE (2nd generation)",
+      "name": "iPhone SE (3rd generation)",
       "orientation": "portrait",
       "os": "17.5"
     },
     {
-      "name": "iPhone 12 Pro",
+      "name": "iPhone 15 Pro",
       "orientation": "portrait",
-      "os": "17.5"
+      "os": "17.5",
+      "isDefaultTestDevice": true
     },
     {
-      "name": "iPhone 13 Pro Max",
+      "name": "iPhone 15 Pro Max",
       "orientation": "landscape"
     },
     {
-      "name": "iPad Pro (12.9-inch) (4th generation)",
+      "name": "iPad Pro (12.9-inch) (6th generation)",
       "orientation": "portrait"
     }
   ],
@@ -152,14 +153,13 @@ SnapshotTestHelper will take care of retrieving all the details and configure th
       "testClasses": [
         {
           "name": "OnboardingTests",
-          "devices": [
-            "iPhone SE (2nd generation)", 
-            "iPad Pro (12.9-inch) (4th generation)"
-            ],
-          "locales": [
-            "en", 
-            "es"
-            ]
+          "devices": ["all", "portrait"],
+          "locales": ["all"]
+        },
+        {
+          "name": "NTPComponentTests",
+          "devices": ["iPhone 15 Pro"],
+          "locales": ["all"]
         }
       ]
     }
@@ -187,21 +187,22 @@ SnapshotTestHelper will take care of retrieving all the details and configure th
   ],
   "devices": [
     {
-      "name": "iPhone SE (2nd generation)",
+      "name": "iPhone SE (3rd generation)",
       "orientation": "portrait",
       "os": "17.5"
     },
     {
-      "name": "iPhone 12 Pro",
+      "name": "iPhone 15 Pro",
       "orientation": "portrait",
-      "os": "17.5"
+      "os": "17.5",
+      "isDefaultTestDevice": true
     },
     {
-      "name": "iPhone 13 Pro Max",
+      "name": "iPhone 15 Pro Max",
       "orientation": "landscape"
     },
     {
-      "name": "iPad Pro (12.9-inch) (4th generation)",
+      "name": "iPad Pro (12.9-inch) (6th generation)",
       "orientation": "portrait"
     }
   ],
@@ -220,6 +221,11 @@ SnapshotTestHelper will take care of retrieving all the details and configure th
             "it",
             "es"
             ]
+        },
+        {
+          "name": "NTPComponentTests",
+          "devices": ["iPhone 15 Pro"],
+          "locales": ["all"]
         }
       ]
     }
@@ -303,6 +309,56 @@ Do not forget to also declare the new device in the `snapshot_configuration.json
   ]
 }
 ```
+</details>
+
+<details>
+<summary> What if I want to perform a certain test class against all devices in portrait orientation? </summary>
+
+You can specify the requirements as part of the devices list of that test class. The script will take care of selecting only the devices matching the desired orientation.
+
+```json
+{
+  "locales": [
+    "en",
+    "it",
+    "de",
+    "es",
+    "nl"
+  ],
+  "devices": [
+    {
+      "name": "iPhone SE (2nd generation)",
+      "orientation": "portrait",
+      "os": "17.5"
+    },
+    {
+      "name": "iPhone 15 Pro",
+      "orientation": "portrait",
+      "os": "17.5"
+    },
+    {
+      "name": "iPhone 12 Pro",
+      "orientation": "landscape",
+      "os": "17.5"
+    }
+    ...
+  ],
+  "testPlans": [
+    {
+      "name": "EcosiaSnapshotTests",
+      "testClasses": [
+        {
+          "name": "OnboardingTests",
+          "devices": ["all", "portrait"],
+          "locales": ["all"]
+        }
+        ...
+      ]
+    }
+  ]
+}
+```
+
 </details>
 
 <details>

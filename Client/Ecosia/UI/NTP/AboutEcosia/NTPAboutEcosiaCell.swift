@@ -61,7 +61,7 @@ final class NTPAboutEcosiaCell: UICollectionViewCell, ReusableCell {
         label.setContentCompressionResistancePriority(.init(rawValue: 0), for: .horizontal)
         return label
     }()
-    private lazy var learnMoreButton: UIButton = {
+    private(set) lazy var learnMoreButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.layer.borderWidth = 1

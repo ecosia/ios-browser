@@ -9,7 +9,7 @@ import MobileCoreServices
 import LinkPresentation
 import Common
 
-final class MultiplyImpact: UIViewController, Themeable {
+class MultiplyImpact: UIViewController, Themeable {
 
     // MARK: - UX
 
@@ -79,15 +79,15 @@ final class MultiplyImpact: UIViewController, Themeable {
 
     private weak var sharingYourLink: UILabel?
     private weak var sharing: UIView?
-    private weak var copyControl: UIControl?
+    private(set) weak var copyControl: UIControl?
     private weak var copyLink: UILabel?
     private weak var copyText: UILabel?
     private weak var copyDividerLeft: UIView?
     private weak var copyDividerRight: UIView?
     private weak var moreSharingMethods: UILabel?
-    private weak var inviteButton: EcosiaPrimaryButton!
+    private(set) weak var inviteButton: EcosiaPrimaryButton!
 
-    private weak var learnMoreButton: UIButton?
+    private(set) weak var learnMoreButton: UIButton?
 
     private weak var flowTitle: UILabel?
     private weak var flowBackground: UIView?
