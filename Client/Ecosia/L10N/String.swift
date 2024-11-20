@@ -241,7 +241,7 @@ extension String {
         case apnConsentLastReminderSkipButtonTitle = "No thanks"
         case configurableNudgeCardCloseButtonAccessibilityLabel = "Close card button"
         case newsletterNTPCardExperimentTitle = "Be the first to know"
-        case newsletterNTPCardExperimentDescription = "Subscribe to our newsletter for updates on our climate impact and newest features."
+        case newsletterNTPCardExperimentDescription = "Subscribe to our monthly newsletter for updates on your climate impact."
         case newsletterNTPCardExperimentButton = "Sign up"
     }
 }
