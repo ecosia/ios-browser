@@ -5,6 +5,7 @@
 import XCTest
 import Core
 import Storage
+import SnowplowTracker
 @testable import Client
 
 // MARK: - AnalyticsSpy
@@ -786,6 +787,61 @@ final class AnalyticsSpyTests: XCTestCase {
         // Verify that the analytics event was called with the correct action and label
         XCTAssertEqual(analyticsSpy.navigationActionCalled, .open, "Analytics should track navigationActionCalled as .open.")
         XCTAssertEqual(analyticsSpy.navigationLabelCalled, testSection.label, "Analytics should track navigationLabelCalled correctly.")
+    }
+
+    // MARK: - Analytics Context Tests
+    
+    func testAddUserStateContextOnResumeEvent() {
+        // Arrange
+        let analyticsSpy = makeAnalyticsSpyContextSUT(status: .ephemeral)
+        let expectation = self.expectation(description: "Event tracked")
+        let event = Structured(category: "",
+                               action: Analytics.Action.Activity.resume.rawValue)
+
+        // Act
+        analyticsSpy.appendTestContextIfNeeded(.resume, event) {
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: 1.0, handler: nil)
+
+        // Assert
+        let userContext = event.entities.first { $0.schema == Analytics.userSchema }
+        XCTAssertNotNil(userContext, "User state context not found in event entities")
+        if let userContext = userContext {
+            XCTAssertEqual(userContext.data["push_notification_state"] as? String, "enabled")
+        }
+    }
+    
+    func testAddUserStateContextOnLaunchEvent() {
+        // Arrange
+        let analyticsSpy = makeAnalyticsSpyContextSUT(status: .denied)
+        let expectation = self.expectation(description: "Event tracked")
+        let event = Structured(category: "",
+                               action: Analytics.Action.Activity.launch.rawValue)
+
+        // Act
+        analyticsSpy.appendTestContextIfNeeded(.resume, event) {
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: 1.0, handler: nil)
+
+        // Assert
+        let userContext = event.entities.first { $0.schema == Analytics.userSchema }
+        XCTAssertNotNil(userContext, "User state context not found in event entities")
+        if let userContext = userContext {
+            XCTAssertEqual(userContext.data["push_notification_state"] as? String, "disabled")
+        }
+    }
+}
+
+// MARK: - Helper SUTs
+extension AnalyticsSpyTests {
+    
+    func makeAnalyticsSpyContextSUT(status: UNAuthorizationStatus = .notDetermined) -> AnalyticsSpy {
+        let mockSettings = MockUNNotificationSettings(authorizationStatus: status)
+        let mockNotificationCenter = MockAnalyticsUserNotificationCenter(mockSettings: mockSettings)
+        let analyticsSpy = AnalyticsSpy(notificationCenter: mockNotificationCenter)
+        return analyticsSpy
     }
 }
 
