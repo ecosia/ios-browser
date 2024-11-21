@@ -790,7 +790,7 @@ final class AnalyticsSpyTests: XCTestCase {
     }
 
     // MARK: - Analytics Context Tests
-    
+
     func testAddUserStateContextOnResumeEvent() {
         // Arrange
         let analyticsSpy = makeAnalyticsSpyContextSUT(status: .ephemeral)
@@ -811,7 +811,7 @@ final class AnalyticsSpyTests: XCTestCase {
             XCTAssertEqual(userContext.data["push_notification_state"] as? String, "enabled")
         }
     }
-    
+
     func testAddUserStateContextOnLaunchEvent() {
         // Arrange
         let analyticsSpy = makeAnalyticsSpyContextSUT(status: .denied)
@@ -836,7 +836,7 @@ final class AnalyticsSpyTests: XCTestCase {
 
 // MARK: - Helper SUTs
 extension AnalyticsSpyTests {
-    
+
     func makeAnalyticsSpyContextSUT(status: UNAuthorizationStatus = .notDetermined) -> AnalyticsSpy {
         let mockSettings = MockUNNotificationSettings(authorizationStatus: status)
         let mockNotificationCenter = MockAnalyticsUserNotificationCenter(mockSettings: mockSettings)
