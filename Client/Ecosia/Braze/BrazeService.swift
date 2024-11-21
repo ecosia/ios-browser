@@ -58,13 +58,11 @@ final class BrazeService: NSObject {
     }
 
     func refreshAPNRegistrationIfNeeded() async {
-        let notificationCenter = UNUserNotificationCenter.current()
-        let currentStatus = await notificationCenter.notificationSettings().authorizationStatus
-        switch currentStatus {
+        await retrieveUserCurrentNotificationAuthStatus()
+        switch notificationAuthorizationStatus {
         case .authorized, .ephemeral, .provisional:
             _ = try? await requestAPNConsent()
         default:
-            await retrieveUserCurrentNotificationAuthStatus() // Update status if not refreshed
             break
         }
     }
