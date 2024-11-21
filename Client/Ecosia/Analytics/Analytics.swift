@@ -10,6 +10,7 @@ open class Analytics {
     static let installSchema = "iglu:org.ecosia/ios_install_event/jsonschema/1-0-0"
     private static let abTestSchema = "iglu:org.ecosia/abtest_context/jsonschema/1-0-1"
     private static let consentSchema = "iglu:org.ecosia/eccc_context/jsonschema/1-0-2"
+    private static let userSchema = "iglu:org.ecosia/app_user_state_context/jsonschema/1-0-3"
     private static let abTestRoot = "ab_tests"
     private static let namespace = "ios_sp"
 
@@ -288,6 +289,7 @@ extension Analytics {
             // Add `onboardingRemove` - used for `OnboardingRemoveExperiment` AB Test
             addABTestContexts(to: event, toggles: [.brazeIntegration, .onboardingRemove])
             addCookieConsentContext(to: event)
+            addUserStateContext(to: event)
         }
     }
 
@@ -304,6 +306,16 @@ extension Analytics {
             let consentContext = SelfDescribingJson(schema: Self.consentSchema,
                                                     andDictionary: ["cookie_consent": consentValue])
             event.entities.append(consentContext)
+        }
+    }
+
+    private func addUserStateContext(to event: Structured) {
+        let notificationCenter = UNUserNotificationCenter.current()
+        notificationCenter.getNotificationSettings { settings in
+            User.shared.updatePushNotificationUserStateWithAnalytics(from: settings.authorizationStatus)
+            let userContext = SelfDescribingJson(schema: Self.userSchema,
+                                                 andDictionary: User.shared.analyticsUserState.dictionary)
+            event.entities.append(userContext)
         }
     }
 }
