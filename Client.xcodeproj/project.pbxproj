@@ -21493,7 +21493,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = main;
+				branch = "dc-mob-3051-user-state-analytics-tracking";
 				kind = branch;
 			};
 		};
