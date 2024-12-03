@@ -5,6 +5,7 @@
 import Foundation
 import Shared
 import Common
+import UIKit
 
 extension DeviceInfo {
 

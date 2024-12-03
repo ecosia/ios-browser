@@ -6,7 +6,7 @@ import Foundation
 import Common
 import Core
 
-struct FeatureManagement {
+public struct FeatureManagement {
 
     // MARK: - Initialization
 
@@ -15,7 +15,7 @@ struct FeatureManagement {
     // MARK: - Configuration
 
     /// Fetches the feature configuration asynchronously.
-    static func fetchConfiguration() async {
+    public static func fetchConfiguration() async {
         do {
             try await start()
         } catch {

@@ -39,7 +39,7 @@ open class Analytics {
         self.notificationCenter = notificationCenter
     }
 
-    private func track(_ event: Event) {
+    private func track(_ event: SnowplowTracker.Event) {
         guard User.shared.sendAnonymousUsageData else { return }
         _ = tracker.track(event)
     }

@@ -8,7 +8,7 @@ import Shared
 import AdServices
 import Common
 
-struct MMP {
+public struct MMP {
 
     private init() {}
 
@@ -29,7 +29,7 @@ struct MMP {
                       adServicesAttributionToken: AppInfo.adServicesAttributionToken)
     }
 
-    static func sendSession() {
+    public static func sendSession() {
         guard User.shared.sendAnonymousUsageData else { return }
 
         Task {
@@ -42,7 +42,7 @@ struct MMP {
         }
     }
 
-    static func sendEvent(_ event: MMPEvent) {
+    public static func sendEvent(_ event: MMPEvent) {
         guard User.shared.sendAnonymousUsageData else { return }
 
         Task {
@@ -55,7 +55,7 @@ struct MMP {
         }
     }
 
-    static func handleSearchEvent(_ count: Int) {
+    public static func handleSearchEvent(_ count: Int) {
         let eventMap: [Int: MMPEvent] = [1: .firstSearch, 5: .fifthSearch, 10: .tenthSearch]
         if let event = eventMap[count] {
             self.sendEvent(event)

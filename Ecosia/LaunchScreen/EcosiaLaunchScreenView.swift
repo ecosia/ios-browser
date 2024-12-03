@@ -5,10 +5,10 @@
 import UIKit
 
 /// LaunchScreen is the LaunchScreen.xib we show at launch, but loaded programmatically
-class EcosiaLaunchScreenView: UIView {
+public class EcosiaLaunchScreenView: UIView {
     private static let viewName = "EcosiaLaunchScreen"
 
-    class func fromNib() -> UIView {
+    public class func fromNib() -> UIView {
         return Bundle.main.loadNibNamed(EcosiaLaunchScreenView.viewName,
                                         owner: nil,
                                         options: nil)![0] as! UIView
