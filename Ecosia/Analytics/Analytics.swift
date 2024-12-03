@@ -36,7 +36,7 @@ open class Analytics {
         tracker.diagnosticAutotracking = false
     }
 
-    private func track(_ event: Event) {
+    private func track(_ event: SnowplowTracker.Event) {
         guard User.shared.sendAnonymousUsageData else { return }
         _ = tracker.track(event)
     }

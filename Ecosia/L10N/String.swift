@@ -6,19 +6,19 @@ import Foundation
 import Core
 
 extension String {
-    static func localized(_ key: Key) -> String {
+    public static func localized(_ key: Key) -> String {
         localized(key.rawValue)
     }
 
-    static func localized(_ string: String) -> String {
+    public static func localized(_ string: String) -> String {
         NSLocalizedString(string, tableName: "Ecosia", comment: "")
     }
 
-    static func localizedPlural(_ key: Key, num: Int) -> String {
+    public static func localizedPlural(_ key: Key, num: Int) -> String {
         String(format: NSLocalizedString(key.rawValue, tableName: "Plurals", comment: ""), num)
     }
 
-    enum Key: String {
+    public enum Key: String {
         case allRegions = "All regions"
         case autocomplete = "Autocomplete"
         case climateImpact = "Climate Impact"

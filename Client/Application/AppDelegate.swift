@@ -11,6 +11,7 @@ import Common
 import TabDataStore
 // Ecosia: Import Core
 import Core
+// Ecosia: Import Ecosia Framework
 import Ecosia
 
 class AppDelegate: UIResponder, UIApplicationDelegate {
