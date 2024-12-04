@@ -15,6 +15,10 @@
 	</array>
 	<key>BRAZE_API_KEY</key>
 	<string>$(BRAZE_API_KEY)</string>
+	<!--
+	Ecosia
+	Add requirement info plist variables specifiers after creating Ecosia.xcframework
+	-->
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -23,6 +27,14 @@
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
 	<string>$(MARKETING_VERSION)</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>UILaunchStoryboardName</key>
+	<string>EcosiaLaunchScreen.xib</string>
+	<!--
+	Ecosia
+	Finish additions
+	-->
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
@@ -39,8 +51,6 @@
 			</array>
 		</dict>
 	</array>
-	<key>CFBundleVersion</key>
-	<string>1</string>
 	<key>CF_ACCESS_CLIENT_ID</key>
 	<string>$(CF_ACCESS_CLIENT_ID)</string>
 	<key>CF_ACCESS_CLIENT_SECRET</key>
@@ -158,8 +168,6 @@
 	</array>
 	<key>UIFileSharingEnabled</key>
 	<true/>
-	<key>UILaunchStoryboardName</key>
-	<string>EcosiaLaunchScreen.xib</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
 	<key>UTImportedTypeDeclarations</key>
