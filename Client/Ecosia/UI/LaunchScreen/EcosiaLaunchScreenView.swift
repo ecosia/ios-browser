@@ -4,7 +4,7 @@
 
 import UIKit
 
-/// LaunchScreen is the LaunchScreen.xib we show at launch, but loaded programmatically
+/// LaunchScreen is the EcosiaLaunchScreen.xib we show at launch, but loaded programmatically
 public class EcosiaLaunchScreenView: UIView {
     private static let viewName = "EcosiaLaunchScreen"
 

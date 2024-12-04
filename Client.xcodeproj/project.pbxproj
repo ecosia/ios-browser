@@ -233,6 +233,9 @@
 		2C6C908F2C614A6C007D9B43 /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = 2C6C908E2C614A6C007D9B43 /* SnapshotTesting */; };
 		2C872A552B8CD58200B318A0 /* ContileProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A7A93ED2810ADF2005E7E1B /* ContileProviderTests.swift */; };
 		2CABD7162C11C9CC00A0750F /* MozillaAppServices in Frameworks */ = {isa = PBXBuildFile; productRef = 2CABD7152C11C9CC00A0750F /* MozillaAppServices */; };
+		2CAF5AE32D00AAEE00D3DCDD /* Bundle+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CAF5AE22D00AAEE00D3DCDD /* Bundle+Ecosia.swift */; };
+		2CAF5AE72D00B1D300D3DCDD /* EcosiaLaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2CAF5AE42D00B1D300D3DCDD /* EcosiaLaunchScreen.xib */; };
+		2CAF5AE82D00B1D300D3DCDD /* EcosiaLaunchScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CAF5AE52D00B1D300D3DCDD /* EcosiaLaunchScreenView.swift */; };
 		2CCFB3D72C0FBEE800BEDCA0 /* TabToolbarHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D815A3A724A53F3200AAB221 /* TabToolbarHelperTests.swift */; };
 		2CD262A92CFDC5EB00A040A7 /* EcosiaMockThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD261842CFDC5E900A040A7 /* EcosiaMockThemeManager.swift */; };
 		2CD262AA2CFDC5EB00A040A7 /* Welcome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD261852CFDC5E900A040A7 /* Welcome.swift */; };
@@ -537,8 +540,6 @@
 		2CD264A12CFDC76A00A040A7 /* Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD263EC2CFDC76800A040A7 /* Analytics.swift */; };
 		2CD264A22CFDC76A00A040A7 /* Analytics.Values.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD263ED2CFDC76800A040A7 /* Analytics.Values.swift */; };
 		2CD264A32CFDC76A00A040A7 /* Analytics+Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD263EE2CFDC76800A040A7 /* Analytics+Configuration.swift */; };
-		2CD264A42CFDC76A00A040A7 /* EcosiaLaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2CD263F02CFDC76800A040A7 /* EcosiaLaunchScreen.xib */; };
-		2CD264A52CFDC76A00A040A7 /* EcosiaLaunchScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD263F12CFDC76800A040A7 /* EcosiaLaunchScreenView.swift */; };
 		2CD264A92CFDC76A00A040A7 /* markets.json in Resources */ = {isa = PBXBuildFile; fileRef = 2CD263F72CFDC76900A040A7 /* markets.json */; };
 		2CD264AC2CFDC76A00A040A7 /* FeatureManagement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD263FE2CFDC76900A040A7 /* FeatureManagement.swift */; };
 		2CD264AD2CFDC76A00A040A7 /* MMP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD264002CFDC76900A040A7 /* MMP.swift */; };
@@ -2673,6 +2674,9 @@
 		2C97EC701E72C80E0092EC18 /* TopTabsTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TopTabsTest.swift; sourceTree = "<group>"; };
 		2CA16FDD1E5F089100332277 /* SearchTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchTest.swift; sourceTree = "<group>"; };
 		2CAE4511992E91A32AB7D7C7 /* th */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = th; path = th.lproj/Today.strings; sourceTree = "<group>"; };
+		2CAF5AE22D00AAEE00D3DCDD /* Bundle+Ecosia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+Ecosia.swift"; sourceTree = "<group>"; };
+		2CAF5AE42D00B1D300D3DCDD /* EcosiaLaunchScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = EcosiaLaunchScreen.xib; sourceTree = "<group>"; };
+		2CAF5AE52D00B1D300D3DCDD /* EcosiaLaunchScreenView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EcosiaLaunchScreenView.swift; sourceTree = "<group>"; };
 		2CB1728B2C61336D008551E2 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.5.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
 		2CB1A6591FDEA8B60084E96D /* NewTabSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTabSettings.swift; sourceTree = "<group>"; };
 		2CB56E3E1E926BFB00AF7586 /* ToolbarTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToolbarTest.swift; sourceTree = "<group>"; };
@@ -3004,8 +3008,6 @@
 		2CD263EC2CFDC76800A040A7 /* Analytics.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Analytics.swift; sourceTree = "<group>"; };
 		2CD263ED2CFDC76800A040A7 /* Analytics.Values.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Analytics.Values.swift; sourceTree = "<group>"; };
 		2CD263EE2CFDC76800A040A7 /* Analytics+Configuration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Analytics+Configuration.swift"; sourceTree = "<group>"; };
-		2CD263F02CFDC76800A040A7 /* EcosiaLaunchScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = EcosiaLaunchScreen.xib; sourceTree = "<group>"; };
-		2CD263F12CFDC76800A040A7 /* EcosiaLaunchScreenView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EcosiaLaunchScreenView.swift; sourceTree = "<group>"; };
 		2CD263F72CFDC76900A040A7 /* markets.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = markets.json; sourceTree = "<group>"; };
 		2CD263FE2CFDC76900A040A7 /* FeatureManagement.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeatureManagement.swift; sourceTree = "<group>"; };
 		2CD264002CFDC76900A040A7 /* MMP.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MMP.swift; sourceTree = "<group>"; };
@@ -8547,7 +8549,6 @@
 				2CD263FF2CFDC76900A040A7 /* FeatureManagement */,
 				2CD263EB2CFDC76800A040A7 /* Helpers */,
 				2CD263E12CFDC76800A040A7 /* L10N */,
-				2CD263F22CFDC76800A040A7 /* LaunchScreen */,
 				2CD263F72CFDC76900A040A7 /* markets.json */,
 				2CD264012CFDC76900A040A7 /* MMP */,
 				1229356C2CE78D0A00EC1297 /* Ecosia.h */,
@@ -8993,6 +8994,15 @@
 				2C0360D92C1747E6006706F2 /* FxNimbus.swift */,
 			);
 			path = PersistedGenerated;
+			sourceTree = "<group>";
+		};
+		2CAF5AE62D00B1D300D3DCDD /* LaunchScreen */ = {
+			isa = PBXGroup;
+			children = (
+				2CAF5AE42D00B1D300D3DCDD /* EcosiaLaunchScreen.xib */,
+				2CAF5AE52D00B1D300D3DCDD /* EcosiaLaunchScreenView.swift */,
+			);
+			path = LaunchScreen;
 			sourceTree = "<group>";
 		};
 		2CBCAAFA2B88EEE40080AD68 /* Configuration */ = {
@@ -9476,15 +9486,6 @@
 			path = Analytics;
 			sourceTree = "<group>";
 		};
-		2CD263F22CFDC76800A040A7 /* LaunchScreen */ = {
-			isa = PBXGroup;
-			children = (
-				2CD263F02CFDC76800A040A7 /* EcosiaLaunchScreen.xib */,
-				2CD263F12CFDC76800A040A7 /* EcosiaLaunchScreenView.swift */,
-			);
-			path = LaunchScreen;
-			sourceTree = "<group>";
-		};
 		2CD263FF2CFDC76900A040A7 /* FeatureManagement */ = {
 			isa = PBXGroup;
 			children = (
@@ -9786,6 +9787,7 @@
 		2CD265C32CFE382C00A040A7 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				2CAF5AE62D00B1D300D3DCDD /* LaunchScreen */,
 				2CD265672CFE382C00A040A7 /* MultiplyImpact */,
 				2CD2659C2CFE382C00A040A7 /* NTP */,
 				2CD265A62CFE382C00A040A7 /* Onboarding */,
@@ -9900,6 +9902,7 @@
 			children = (
 				2CD2663D2CFF4ED000A040A7 /* DeviceInfo+Ecosia.swift */,
 				2CD2663B2CFE423D00A040A7 /* AppInfo+Ecosia.swift */,
+				2CAF5AE22D00AAEE00D3DCDD /* Bundle+Ecosia.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -14007,7 +14010,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				2CD264972CFDC76A00A040A7 /* Plurals.stringsdict in Resources */,
-				2CD264A42CFDC76A00A040A7 /* EcosiaLaunchScreen.xib in Resources */,
 				2CD264982CFDC76A00A040A7 /* Plurals.stringsdict in Resources */,
 				2CD264992CFDC76A00A040A7 /* Plurals.stringsdict in Resources */,
 				2CD264922CFDC76A00A040A7 /* Ecosia.strings in Resources */,
@@ -14397,6 +14399,7 @@
 				F35B8D2B1D6380EA008E3D61 /* SessionRestore.html in Resources */,
 				7B42406E1CA04CAC009B5C28 /* Menu.xcassets in Resources */,
 				4336FAD2264B169000A6B076 /* WebcompatAllFramesAtDocumentStart.js in Resources */,
+				2CAF5AE72D00B1D300D3DCDD /* EcosiaLaunchScreen.xib in Resources */,
 				23BEA767251A99ED00A014BF /* NewYorkMedium-Bold.otf in Resources */,
 				3BC659591E5BA505006D560F /* bundle_sites.json in Resources */,
 				E4CD9F541A71506400318571 /* Reader.html in Resources */,
@@ -14646,7 +14649,6 @@
 				2CD265012CFDC76A00A040A7 /* FakeTelemetry.swift in Sources */,
 				2CD2649B2CFDC76A00A040A7 /* AppVersionInfoProvider.swift in Sources */,
 				2CD266332CFE403800A040A7 /* BrazeIntegrationExperiment.swift in Sources */,
-				2CD264A52CFDC76A00A040A7 /* EcosiaLaunchScreenView.swift in Sources */,
 				2CD2649F2CFDC76A00A040A7 /* Version.swift in Sources */,
 				2CD264A32CFDC76A00A040A7 /* Analytics+Configuration.swift in Sources */,
 				2CD2649D2CFDC76A00A040A7 /* EcosiaInstallType.swift in Sources */,
@@ -14654,6 +14656,7 @@
 				2CD265002CFDC76A00A040A7 /* FakeSentry.swift in Sources */,
 				2CD2649E2CFDC76A00A040A7 /* EcosiaInstallType+Extensions.swift in Sources */,
 				2CD264A22CFDC76A00A040A7 /* Analytics.Values.swift in Sources */,
+				2CAF5AE32D00AAEE00D3DCDD /* Bundle+Ecosia.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -15702,6 +15705,7 @@
 				D5D237782640BBA600326204 /* ExperimentsSettingsViewController.swift in Sources */,
 				2CD266072CFE382C00A040A7 /* EcosiaNavigation.swift in Sources */,
 				D3972BF31C22412B00035B87 /* ShareExtensionHelper.swift in Sources */,
+				2CAF5AE82D00B1D300D3DCDD /* EcosiaLaunchScreenView.swift in Sources */,
 				F35B8D2D1D6383E9008E3D61 /* SessionRestoreHelper.swift in Sources */,
 				8A19ACB62A3290F9001C2147 /* NotificationsSetting.swift in Sources */,
 				43D16B8229831E6A009F8279 /* CreditCardInputField.swift in Sources */,
