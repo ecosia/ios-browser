@@ -4,6 +4,7 @@
 
 import UIKit
 import Core
+import Ecosia
 
 final class LoadingScreen: UIViewController {
     private weak var profile: Profile!

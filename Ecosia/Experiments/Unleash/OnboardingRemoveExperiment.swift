@@ -5,7 +5,7 @@
 import Foundation
 import Core
 
-struct OnboardingRemoveExperiment {
+public struct OnboardingRemoveExperiment {
 
     private init() {}
 
@@ -22,7 +22,7 @@ struct OnboardingRemoveExperiment {
         Unleash.isEnabled(.onboardingRemove)
     }
 
-    static var shouldRemoveOnboarding: Bool {
+    public static var shouldRemoveOnboarding: Bool {
         isEnabled && variant != .control
     }
 }

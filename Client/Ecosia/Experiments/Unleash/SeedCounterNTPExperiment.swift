@@ -4,6 +4,7 @@
 
 import Foundation
 import Core
+import Ecosia
 
 struct SeedCounterNTPExperiment {
     private enum Variant: String {
