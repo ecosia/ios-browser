@@ -1,4 +1,4 @@
-@testable import Core
+@testable import Ecosia
 import XCTest
 
 final class ProductionURLProviderTests: XCTestCase {

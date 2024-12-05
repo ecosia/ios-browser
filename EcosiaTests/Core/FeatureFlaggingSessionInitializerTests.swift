@@ -1,6 +1,6 @@
 import XCTest
 import Foundation
-@testable import Core
+@testable import Ecosia
 
 class FeatureManagementSessiontInitializerTests: XCTestCase {
 

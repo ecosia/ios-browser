@@ -1,5 +1,5 @@
 import Foundation
-@testable import Core
+@testable import Ecosia
 
 // Needed in spite of the already existing MockURLSession
 // since URLSession's async methods are not open

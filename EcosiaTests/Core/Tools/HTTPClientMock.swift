@@ -1,4 +1,4 @@
-@testable import Core
+@testable import Ecosia
 import Foundation
 
 class HTTPClientMock: HTTPClient {

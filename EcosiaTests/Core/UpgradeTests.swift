@@ -1,5 +1,5 @@
 import XCTest
-@testable import Core
+@testable import Ecosia
 
 final class UpgradeTests: XCTestCase {
     override func setUp() {
