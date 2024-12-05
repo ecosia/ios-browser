@@ -1,6 +1,6 @@
 import Foundation
 
-@testable import Core
+@testable import Ecosia
 import XCTest
 
 final class UnleashRefreshConfiguratorTests: XCTestCase {

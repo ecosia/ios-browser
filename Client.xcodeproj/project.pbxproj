@@ -340,7 +340,6 @@
 		2CAF5BF02D00D1AB00D3DCDD /* ReferralsModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CAF5BBC2D00D1A800D3DCDD /* ReferralsModelTests.swift */; };
 		2CAF5BF12D00D1AB00D3DCDD /* HistoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CAF5BBD2D00D1A800D3DCDD /* HistoryTests.swift */; };
 		2CAF5BF22D00D1AB00D3DCDD /* BookmarkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CAF5BBE2D00D1A800D3DCDD /* BookmarkTests.swift */; };
-		2CAF5BF32D00D1AB00D3DCDD /* SnapshotsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CAF5BBF2D00D1A800D3DCDD /* SnapshotsTests.swift */; };
 		2CAF5BF42D00D1AB00D3DCDD /* LocalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CAF5BC02D00D1A800D3DCDD /* LocalTests.swift */; };
 		2CAF5BF52D00D1AB00D3DCDD /* SingularAdNetworkHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CAF5BC12D00D1A900D3DCDD /* SingularAdNetworkHelperTests.swift */; };
 		2CAF5BF62D00D1AB00D3DCDD /* TabsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CAF5BC22D00D1A900D3DCDD /* TabsTests.swift */; };
@@ -367,272 +366,14 @@
 		2CAF5C1F2D01B44400D3DCDD /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = 2CAF5C1E2D01B44400D3DCDD /* Sentry */; };
 		2CAF5C212D01B5F300D3DCDD /* Common in Frameworks */ = {isa = PBXBuildFile; productRef = 2CAF5C202D01B5F300D3DCDD /* Common */; };
 		2CAF5C222D01B62900D3DCDD /* Ecosia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1229356A2CE78D0A00EC1297 /* Ecosia.framework */; };
+		2CAF5C232D01C2F300D3DCDD /* NTPComponentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD261B92CFDC5E900A040A7 /* NTPComponentTests.swift */; };
+		2CAF5C242D01C30B00D3DCDD /* OnboardingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD262862CFDC5E900A040A7 /* OnboardingTests.swift */; };
+		2CAF5C252D01C31900D3DCDD /* NTPTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD261BA2CFDC5E900A040A7 /* NTPTests.swift */; };
+		2CAF5C262D01C32C00D3DCDD /* Welcome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD261852CFDC5E900A040A7 /* Welcome.swift */; };
+		2CAF5C272D01C33300D3DCDD /* EcosiaMockThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD261842CFDC5E900A040A7 /* EcosiaMockThemeManager.swift */; };
 		2CCFB3D72C0FBEE800BEDCA0 /* TabToolbarHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D815A3A724A53F3200AAB221 /* TabToolbarHelperTests.swift */; };
-		2CD262A92CFDC5EB00A040A7 /* EcosiaMockThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD261842CFDC5E900A040A7 /* EcosiaMockThemeManager.swift */; };
-		2CD262AA2CFDC5EB00A040A7 /* Welcome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD261852CFDC5E900A040A7 /* Welcome.swift */; };
-		2CD262AB2CFDC5EB00A040A7 /* testNTPAboutSection_financialreports_dark_iPhone-14-Pro_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261872CFDC5E900A040A7 /* testNTPAboutSection_financialreports_dark_iPhone-14-Pro_en.1.png */; };
-		2CD262AC2CFDC5EB00A040A7 /* testNTPAboutSection_financialreports_dark_iPhone-14-Pro_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261882CFDC5E900A040A7 /* testNTPAboutSection_financialreports_dark_iPhone-14-Pro_es.1.png */; };
-		2CD262AD2CFDC5EB00A040A7 /* testNTPAboutSection_financialreports_light_iPhone-14-Pro_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261892CFDC5E900A040A7 /* testNTPAboutSection_financialreports_light_iPhone-14-Pro_en.1.png */; };
-		2CD262AE2CFDC5EB00A040A7 /* testNTPAboutSection_financialreports_light_iPhone-14-Pro_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2618A2CFDC5E900A040A7 /* testNTPAboutSection_financialreports_light_iPhone-14-Pro_es.1.png */; };
-		2CD262AF2CFDC5EB00A040A7 /* testNTPAboutSection_privacy_dark_iPhone-14-Pro_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2618B2CFDC5E900A040A7 /* testNTPAboutSection_privacy_dark_iPhone-14-Pro_en.1.png */; };
-		2CD262B02CFDC5EB00A040A7 /* testNTPAboutSection_privacy_dark_iPhone-14-Pro_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2618C2CFDC5E900A040A7 /* testNTPAboutSection_privacy_dark_iPhone-14-Pro_es.1.png */; };
-		2CD262B12CFDC5EB00A040A7 /* testNTPAboutSection_privacy_light_iPhone-14-Pro_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2618D2CFDC5E900A040A7 /* testNTPAboutSection_privacy_light_iPhone-14-Pro_en.1.png */; };
-		2CD262B22CFDC5EB00A040A7 /* testNTPAboutSection_privacy_light_iPhone-14-Pro_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2618E2CFDC5E900A040A7 /* testNTPAboutSection_privacy_light_iPhone-14-Pro_es.1.png */; };
-		2CD262B32CFDC5EB00A040A7 /* testNTPAboutSection_treesupdate_dark_iPhone-14-Pro_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2618F2CFDC5E900A040A7 /* testNTPAboutSection_treesupdate_dark_iPhone-14-Pro_en.1.png */; };
-		2CD262B42CFDC5EB00A040A7 /* testNTPAboutSection_treesupdate_dark_iPhone-14-Pro_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261902CFDC5E900A040A7 /* testNTPAboutSection_treesupdate_dark_iPhone-14-Pro_es.1.png */; };
-		2CD262B52CFDC5EB00A040A7 /* testNTPAboutSection_treesupdate_light_iPhone-14-Pro_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261912CFDC5E900A040A7 /* testNTPAboutSection_treesupdate_light_iPhone-14-Pro_en.1.png */; };
-		2CD262B62CFDC5EB00A040A7 /* testNTPAboutSection_treesupdate_light_iPhone-14-Pro_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261922CFDC5E900A040A7 /* testNTPAboutSection_treesupdate_light_iPhone-14-Pro_es.1.png */; };
-		2CD262B72CFDC5EB00A040A7 /* testNTPBookmarkNudgeCell_dark_iPhone-14-Pro_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261932CFDC5E900A040A7 /* testNTPBookmarkNudgeCell_dark_iPhone-14-Pro_en.1.png */; };
-		2CD262B82CFDC5EB00A040A7 /* testNTPBookmarkNudgeCell_dark_iPhone-14-Pro_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261942CFDC5E900A040A7 /* testNTPBookmarkNudgeCell_dark_iPhone-14-Pro_es.1.png */; };
-		2CD262B92CFDC5EB00A040A7 /* testNTPBookmarkNudgeCell_light_iPhone-14-Pro_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261952CFDC5E900A040A7 /* testNTPBookmarkNudgeCell_light_iPhone-14-Pro_en.1.png */; };
-		2CD262BA2CFDC5EB00A040A7 /* testNTPBookmarkNudgeCell_light_iPhone-14-Pro_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261962CFDC5E900A040A7 /* testNTPBookmarkNudgeCell_light_iPhone-14-Pro_es.1.png */; };
-		2CD262BB2CFDC5EB00A040A7 /* testNTPCustomizationCell_dark_iPhone-14-Pro_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261972CFDC5E900A040A7 /* testNTPCustomizationCell_dark_iPhone-14-Pro_en.1.png */; };
-		2CD262BC2CFDC5EB00A040A7 /* testNTPCustomizationCell_dark_iPhone-14-Pro_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261982CFDC5E900A040A7 /* testNTPCustomizationCell_dark_iPhone-14-Pro_es.1.png */; };
-		2CD262BD2CFDC5EB00A040A7 /* testNTPCustomizationCell_light_iPhone-14-Pro_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261992CFDC5E900A040A7 /* testNTPCustomizationCell_light_iPhone-14-Pro_en.1.png */; };
-		2CD262BE2CFDC5EB00A040A7 /* testNTPCustomizationCell_light_iPhone-14-Pro_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2619A2CFDC5E900A040A7 /* testNTPCustomizationCell_light_iPhone-14-Pro_es.1.png */; };
-		2CD262BF2CFDC5EB00A040A7 /* testNTPLibraryCell_dark_iPhone-14-Pro_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2619B2CFDC5E900A040A7 /* testNTPLibraryCell_dark_iPhone-14-Pro_en.1.png */; };
-		2CD262C02CFDC5EB00A040A7 /* testNTPLibraryCell_dark_iPhone-14-Pro_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2619C2CFDC5E900A040A7 /* testNTPLibraryCell_dark_iPhone-14-Pro_es.1.png */; };
-		2CD262C12CFDC5EB00A040A7 /* testNTPLibraryCell_light_iPhone-14-Pro_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2619D2CFDC5E900A040A7 /* testNTPLibraryCell_light_iPhone-14-Pro_en.1.png */; };
-		2CD262C22CFDC5EB00A040A7 /* testNTPLibraryCell_light_iPhone-14-Pro_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2619E2CFDC5E900A040A7 /* testNTPLibraryCell_light_iPhone-14-Pro_es.1.png */; };
-		2CD262C32CFDC5EB00A040A7 /* testNTPLogoCell_dark_iPhone-14-Pro_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2619F2CFDC5E900A040A7 /* testNTPLogoCell_dark_iPhone-14-Pro_en.1.png */; };
-		2CD262C42CFDC5EB00A040A7 /* testNTPLogoCell_dark_iPhone-14-Pro_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261A02CFDC5E900A040A7 /* testNTPLogoCell_dark_iPhone-14-Pro_es.1.png */; };
-		2CD262C52CFDC5EB00A040A7 /* testNTPLogoCell_light_iPhone-14-Pro_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261A12CFDC5E900A040A7 /* testNTPLogoCell_light_iPhone-14-Pro_en.1.png */; };
-		2CD262C62CFDC5EB00A040A7 /* testNTPLogoCell_light_iPhone-14-Pro_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261A22CFDC5E900A040A7 /* testNTPLogoCell_light_iPhone-14-Pro_es.1.png */; };
-		2CD262C72CFDC5EB00A040A7 /* testNTPNewsCell_dark_iPhone-14-Pro_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261A32CFDC5E900A040A7 /* testNTPNewsCell_dark_iPhone-14-Pro_en.1.png */; };
-		2CD262C82CFDC5EB00A040A7 /* testNTPNewsCell_dark_iPhone-14-Pro_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261A42CFDC5E900A040A7 /* testNTPNewsCell_dark_iPhone-14-Pro_es.1.png */; };
-		2CD262C92CFDC5EB00A040A7 /* testNTPNewsCell_light_iPhone-14-Pro_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261A52CFDC5E900A040A7 /* testNTPNewsCell_light_iPhone-14-Pro_en.1.png */; };
-		2CD262CA2CFDC5EB00A040A7 /* testNTPNewsCell_light_iPhone-14-Pro_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261A62CFDC5E900A040A7 /* testNTPNewsCell_light_iPhone-14-Pro_es.1.png */; };
-		2CD262CB2CFDC5EB00A040A7 /* testNTPReferralInvitesCell_multiple_invites_dark_iPhone-14-Pro_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261A72CFDC5E900A040A7 /* testNTPReferralInvitesCell_multiple_invites_dark_iPhone-14-Pro_en.1.png */; };
-		2CD262CC2CFDC5EB00A040A7 /* testNTPReferralInvitesCell_multiple_invites_dark_iPhone-14-Pro_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261A82CFDC5E900A040A7 /* testNTPReferralInvitesCell_multiple_invites_dark_iPhone-14-Pro_es.1.png */; };
-		2CD262CD2CFDC5EB00A040A7 /* testNTPReferralInvitesCell_multiple_invites_light_iPhone-14-Pro_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261A92CFDC5E900A040A7 /* testNTPReferralInvitesCell_multiple_invites_light_iPhone-14-Pro_en.1.png */; };
-		2CD262CE2CFDC5EB00A040A7 /* testNTPReferralInvitesCell_multiple_invites_light_iPhone-14-Pro_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261AA2CFDC5E900A040A7 /* testNTPReferralInvitesCell_multiple_invites_light_iPhone-14-Pro_es.1.png */; };
-		2CD262CF2CFDC5EB00A040A7 /* testNTPReferralInvitesCell_single_invite_dark_iPhone-14-Pro_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261AB2CFDC5E900A040A7 /* testNTPReferralInvitesCell_single_invite_dark_iPhone-14-Pro_en.1.png */; };
-		2CD262D02CFDC5EB00A040A7 /* testNTPReferralInvitesCell_single_invite_dark_iPhone-14-Pro_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261AC2CFDC5E900A040A7 /* testNTPReferralInvitesCell_single_invite_dark_iPhone-14-Pro_es.1.png */; };
-		2CD262D12CFDC5EB00A040A7 /* testNTPReferralInvitesCell_single_invite_light_iPhone-14-Pro_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261AD2CFDC5E900A040A7 /* testNTPReferralInvitesCell_single_invite_light_iPhone-14-Pro_en.1.png */; };
-		2CD262D22CFDC5EB00A040A7 /* testNTPReferralInvitesCell_single_invite_light_iPhone-14-Pro_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261AE2CFDC5E900A040A7 /* testNTPReferralInvitesCell_single_invite_light_iPhone-14-Pro_es.1.png */; };
-		2CD262D32CFDC5EB00A040A7 /* testNTPTotalInvestedCell_dark_iPhone-14-Pro_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261AF2CFDC5E900A040A7 /* testNTPTotalInvestedCell_dark_iPhone-14-Pro_en.1.png */; };
-		2CD262D42CFDC5EB00A040A7 /* testNTPTotalInvestedCell_dark_iPhone-14-Pro_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261B02CFDC5E900A040A7 /* testNTPTotalInvestedCell_dark_iPhone-14-Pro_es.1.png */; };
-		2CD262D52CFDC5EB00A040A7 /* testNTPTotalInvestedCell_light_iPhone-14-Pro_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261B12CFDC5E900A040A7 /* testNTPTotalInvestedCell_light_iPhone-14-Pro_en.1.png */; };
-		2CD262D62CFDC5EB00A040A7 /* testNTPTotalInvestedCell_light_iPhone-14-Pro_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261B22CFDC5E900A040A7 /* testNTPTotalInvestedCell_light_iPhone-14-Pro_es.1.png */; };
-		2CD262D72CFDC5EB00A040A7 /* testNTPTotalTreesCell_dark_iPhone-14-Pro_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261B32CFDC5E900A040A7 /* testNTPTotalTreesCell_dark_iPhone-14-Pro_en.1.png */; };
-		2CD262D82CFDC5EB00A040A7 /* testNTPTotalTreesCell_dark_iPhone-14-Pro_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261B42CFDC5E900A040A7 /* testNTPTotalTreesCell_dark_iPhone-14-Pro_es.1.png */; };
-		2CD262D92CFDC5EB00A040A7 /* testNTPTotalTreesCell_light_iPhone-14-Pro_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261B52CFDC5E900A040A7 /* testNTPTotalTreesCell_light_iPhone-14-Pro_en.1.png */; };
-		2CD262DA2CFDC5EB00A040A7 /* testNTPTotalTreesCell_light_iPhone-14-Pro_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261B62CFDC5E900A040A7 /* testNTPTotalTreesCell_light_iPhone-14-Pro_es.1.png */; };
-		2CD262DB2CFDC5EB00A040A7 /* NTPComponentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD261B92CFDC5E900A040A7 /* NTPComponentTests.swift */; };
-		2CD262DC2CFDC5EB00A040A7 /* NTPTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD261BA2CFDC5E900A040A7 /* NTPTests.swift */; };
-		2CD262DD2CFDC5EB00A040A7 /* testWelcomeScreen_dark_iPad-Pro-12-9-inch-6th-generation-_de.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261BC2CFDC5E900A040A7 /* testWelcomeScreen_dark_iPad-Pro-12-9-inch-6th-generation-_de.1.png */; };
-		2CD262DE2CFDC5EB00A040A7 /* testWelcomeScreen_dark_iPad-Pro-12-9-inch-6th-generation-_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261BD2CFDC5E900A040A7 /* testWelcomeScreen_dark_iPad-Pro-12-9-inch-6th-generation-_en.1.png */; };
-		2CD262DF2CFDC5EB00A040A7 /* testWelcomeScreen_dark_iPad-Pro-12-9-inch-6th-generation-_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261BE2CFDC5E900A040A7 /* testWelcomeScreen_dark_iPad-Pro-12-9-inch-6th-generation-_es.1.png */; };
-		2CD262E02CFDC5EB00A040A7 /* testWelcomeScreen_dark_iPad-Pro-12-9-inch-6th-generation-_it.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261BF2CFDC5E900A040A7 /* testWelcomeScreen_dark_iPad-Pro-12-9-inch-6th-generation-_it.1.png */; };
-		2CD262E12CFDC5EB00A040A7 /* testWelcomeScreen_dark_iPad-Pro-12-9-inch-6th-generation-_nl.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261C02CFDC5E900A040A7 /* testWelcomeScreen_dark_iPad-Pro-12-9-inch-6th-generation-_nl.1.png */; };
-		2CD262E22CFDC5EB00A040A7 /* testWelcomeScreen_dark_iPhone-14-Pro_de.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261C12CFDC5E900A040A7 /* testWelcomeScreen_dark_iPhone-14-Pro_de.1.png */; };
-		2CD262E32CFDC5EB00A040A7 /* testWelcomeScreen_dark_iPhone-14-Pro_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261C22CFDC5E900A040A7 /* testWelcomeScreen_dark_iPhone-14-Pro_en.1.png */; };
-		2CD262E42CFDC5EB00A040A7 /* testWelcomeScreen_dark_iPhone-14-Pro_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261C32CFDC5E900A040A7 /* testWelcomeScreen_dark_iPhone-14-Pro_es.1.png */; };
-		2CD262E52CFDC5EB00A040A7 /* testWelcomeScreen_dark_iPhone-14-Pro_it.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261C42CFDC5E900A040A7 /* testWelcomeScreen_dark_iPhone-14-Pro_it.1.png */; };
-		2CD262E62CFDC5EB00A040A7 /* testWelcomeScreen_dark_iPhone-14-Pro_nl.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261C52CFDC5E900A040A7 /* testWelcomeScreen_dark_iPhone-14-Pro_nl.1.png */; };
-		2CD262E72CFDC5EB00A040A7 /* testWelcomeScreen_dark_iPhone-14-Pro-Max_de.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261C62CFDC5E900A040A7 /* testWelcomeScreen_dark_iPhone-14-Pro-Max_de.1.png */; };
-		2CD262E82CFDC5EB00A040A7 /* testWelcomeScreen_dark_iPhone-14-Pro-Max_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261C72CFDC5E900A040A7 /* testWelcomeScreen_dark_iPhone-14-Pro-Max_en.1.png */; };
-		2CD262E92CFDC5EB00A040A7 /* testWelcomeScreen_dark_iPhone-14-Pro-Max_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261C82CFDC5E900A040A7 /* testWelcomeScreen_dark_iPhone-14-Pro-Max_es.1.png */; };
-		2CD262EA2CFDC5EB00A040A7 /* testWelcomeScreen_dark_iPhone-14-Pro-Max_it.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261C92CFDC5E900A040A7 /* testWelcomeScreen_dark_iPhone-14-Pro-Max_it.1.png */; };
-		2CD262EB2CFDC5EB00A040A7 /* testWelcomeScreen_dark_iPhone-14-Pro-Max_nl.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261CA2CFDC5E900A040A7 /* testWelcomeScreen_dark_iPhone-14-Pro-Max_nl.1.png */; };
-		2CD262EC2CFDC5EB00A040A7 /* testWelcomeScreen_dark_iPhone-SE-3rd-generation-_de.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261CB2CFDC5E900A040A7 /* testWelcomeScreen_dark_iPhone-SE-3rd-generation-_de.1.png */; };
-		2CD262ED2CFDC5EB00A040A7 /* testWelcomeScreen_dark_iPhone-SE-3rd-generation-_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261CC2CFDC5E900A040A7 /* testWelcomeScreen_dark_iPhone-SE-3rd-generation-_en.1.png */; };
-		2CD262EE2CFDC5EB00A040A7 /* testWelcomeScreen_dark_iPhone-SE-3rd-generation-_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261CD2CFDC5E900A040A7 /* testWelcomeScreen_dark_iPhone-SE-3rd-generation-_es.1.png */; };
-		2CD262EF2CFDC5EB00A040A7 /* testWelcomeScreen_dark_iPhone-SE-3rd-generation-_it.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261CE2CFDC5E900A040A7 /* testWelcomeScreen_dark_iPhone-SE-3rd-generation-_it.1.png */; };
-		2CD262F02CFDC5EB00A040A7 /* testWelcomeScreen_dark_iPhone-SE-3rd-generation-_nl.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261CF2CFDC5E900A040A7 /* testWelcomeScreen_dark_iPhone-SE-3rd-generation-_nl.1.png */; };
-		2CD262F12CFDC5EB00A040A7 /* testWelcomeScreen_light_iPad-Pro-12-9-inch-6th-generation-_de.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261D02CFDC5E900A040A7 /* testWelcomeScreen_light_iPad-Pro-12-9-inch-6th-generation-_de.1.png */; };
-		2CD262F22CFDC5EB00A040A7 /* testWelcomeScreen_light_iPad-Pro-12-9-inch-6th-generation-_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261D12CFDC5E900A040A7 /* testWelcomeScreen_light_iPad-Pro-12-9-inch-6th-generation-_en.1.png */; };
-		2CD262F32CFDC5EB00A040A7 /* testWelcomeScreen_light_iPad-Pro-12-9-inch-6th-generation-_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261D22CFDC5E900A040A7 /* testWelcomeScreen_light_iPad-Pro-12-9-inch-6th-generation-_es.1.png */; };
-		2CD262F42CFDC5EB00A040A7 /* testWelcomeScreen_light_iPad-Pro-12-9-inch-6th-generation-_it.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261D32CFDC5E900A040A7 /* testWelcomeScreen_light_iPad-Pro-12-9-inch-6th-generation-_it.1.png */; };
-		2CD262F52CFDC5EB00A040A7 /* testWelcomeScreen_light_iPad-Pro-12-9-inch-6th-generation-_nl.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261D42CFDC5E900A040A7 /* testWelcomeScreen_light_iPad-Pro-12-9-inch-6th-generation-_nl.1.png */; };
-		2CD262F62CFDC5EB00A040A7 /* testWelcomeScreen_light_iPhone-14-Pro_de.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261D52CFDC5E900A040A7 /* testWelcomeScreen_light_iPhone-14-Pro_de.1.png */; };
-		2CD262F72CFDC5EB00A040A7 /* testWelcomeScreen_light_iPhone-14-Pro_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261D62CFDC5E900A040A7 /* testWelcomeScreen_light_iPhone-14-Pro_en.1.png */; };
-		2CD262F82CFDC5EB00A040A7 /* testWelcomeScreen_light_iPhone-14-Pro_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261D72CFDC5E900A040A7 /* testWelcomeScreen_light_iPhone-14-Pro_es.1.png */; };
-		2CD262F92CFDC5EB00A040A7 /* testWelcomeScreen_light_iPhone-14-Pro_it.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261D82CFDC5E900A040A7 /* testWelcomeScreen_light_iPhone-14-Pro_it.1.png */; };
-		2CD262FA2CFDC5EB00A040A7 /* testWelcomeScreen_light_iPhone-14-Pro_nl.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261D92CFDC5E900A040A7 /* testWelcomeScreen_light_iPhone-14-Pro_nl.1.png */; };
-		2CD262FB2CFDC5EB00A040A7 /* testWelcomeScreen_light_iPhone-14-Pro-Max_de.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261DA2CFDC5E900A040A7 /* testWelcomeScreen_light_iPhone-14-Pro-Max_de.1.png */; };
-		2CD262FC2CFDC5EB00A040A7 /* testWelcomeScreen_light_iPhone-14-Pro-Max_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261DB2CFDC5E900A040A7 /* testWelcomeScreen_light_iPhone-14-Pro-Max_en.1.png */; };
-		2CD262FD2CFDC5EB00A040A7 /* testWelcomeScreen_light_iPhone-14-Pro-Max_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261DC2CFDC5E900A040A7 /* testWelcomeScreen_light_iPhone-14-Pro-Max_es.1.png */; };
-		2CD262FE2CFDC5EB00A040A7 /* testWelcomeScreen_light_iPhone-14-Pro-Max_it.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261DD2CFDC5E900A040A7 /* testWelcomeScreen_light_iPhone-14-Pro-Max_it.1.png */; };
-		2CD262FF2CFDC5EB00A040A7 /* testWelcomeScreen_light_iPhone-14-Pro-Max_nl.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261DE2CFDC5E900A040A7 /* testWelcomeScreen_light_iPhone-14-Pro-Max_nl.1.png */; };
-		2CD263002CFDC5EB00A040A7 /* testWelcomeScreen_light_iPhone-SE-3rd-generation-_de.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261DF2CFDC5E900A040A7 /* testWelcomeScreen_light_iPhone-SE-3rd-generation-_de.1.png */; };
-		2CD263012CFDC5EB00A040A7 /* testWelcomeScreen_light_iPhone-SE-3rd-generation-_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261E02CFDC5E900A040A7 /* testWelcomeScreen_light_iPhone-SE-3rd-generation-_en.1.png */; };
-		2CD263022CFDC5EB00A040A7 /* testWelcomeScreen_light_iPhone-SE-3rd-generation-_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261E12CFDC5E900A040A7 /* testWelcomeScreen_light_iPhone-SE-3rd-generation-_es.1.png */; };
-		2CD263032CFDC5EB00A040A7 /* testWelcomeScreen_light_iPhone-SE-3rd-generation-_it.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261E22CFDC5E900A040A7 /* testWelcomeScreen_light_iPhone-SE-3rd-generation-_it.1.png */; };
-		2CD263042CFDC5EB00A040A7 /* testWelcomeScreen_light_iPhone-SE-3rd-generation-_nl.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261E32CFDC5E900A040A7 /* testWelcomeScreen_light_iPhone-SE-3rd-generation-_nl.1.png */; };
-		2CD263052CFDC5EB00A040A7 /* testWelcomeScreen_step_1_dark_iPad-Pro-12-9-inch-6th-generation-_de.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261E42CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPad-Pro-12-9-inch-6th-generation-_de.1.png */; };
-		2CD263062CFDC5EB00A040A7 /* testWelcomeScreen_step_1_dark_iPad-Pro-12-9-inch-6th-generation-_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261E52CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPad-Pro-12-9-inch-6th-generation-_en.1.png */; };
-		2CD263072CFDC5EB00A040A7 /* testWelcomeScreen_step_1_dark_iPad-Pro-12-9-inch-6th-generation-_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261E62CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPad-Pro-12-9-inch-6th-generation-_es.1.png */; };
-		2CD263082CFDC5EB00A040A7 /* testWelcomeScreen_step_1_dark_iPad-Pro-12-9-inch-6th-generation-_it.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261E72CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPad-Pro-12-9-inch-6th-generation-_it.1.png */; };
-		2CD263092CFDC5EB00A040A7 /* testWelcomeScreen_step_1_dark_iPad-Pro-12-9-inch-6th-generation-_nl.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261E82CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPad-Pro-12-9-inch-6th-generation-_nl.1.png */; };
-		2CD2630A2CFDC5EB00A040A7 /* testWelcomeScreen_step_1_dark_iPhone-14-Pro_de.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261E92CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPhone-14-Pro_de.1.png */; };
-		2CD2630B2CFDC5EB00A040A7 /* testWelcomeScreen_step_1_dark_iPhone-14-Pro_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261EA2CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPhone-14-Pro_en.1.png */; };
-		2CD2630C2CFDC5EB00A040A7 /* testWelcomeScreen_step_1_dark_iPhone-14-Pro_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261EB2CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPhone-14-Pro_es.1.png */; };
-		2CD2630D2CFDC5EB00A040A7 /* testWelcomeScreen_step_1_dark_iPhone-14-Pro_it.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261EC2CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPhone-14-Pro_it.1.png */; };
-		2CD2630E2CFDC5EB00A040A7 /* testWelcomeScreen_step_1_dark_iPhone-14-Pro_nl.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261ED2CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPhone-14-Pro_nl.1.png */; };
-		2CD2630F2CFDC5EB00A040A7 /* testWelcomeScreen_step_1_dark_iPhone-14-Pro-Max_de.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261EE2CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPhone-14-Pro-Max_de.1.png */; };
-		2CD263102CFDC5EB00A040A7 /* testWelcomeScreen_step_1_dark_iPhone-14-Pro-Max_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261EF2CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPhone-14-Pro-Max_en.1.png */; };
-		2CD263112CFDC5EB00A040A7 /* testWelcomeScreen_step_1_dark_iPhone-14-Pro-Max_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261F02CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPhone-14-Pro-Max_es.1.png */; };
-		2CD263122CFDC5EB00A040A7 /* testWelcomeScreen_step_1_dark_iPhone-14-Pro-Max_it.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261F12CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPhone-14-Pro-Max_it.1.png */; };
-		2CD263132CFDC5EB00A040A7 /* testWelcomeScreen_step_1_dark_iPhone-14-Pro-Max_nl.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261F22CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPhone-14-Pro-Max_nl.1.png */; };
-		2CD263142CFDC5EB00A040A7 /* testWelcomeScreen_step_1_dark_iPhone-SE-3rd-generation-_de.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261F32CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPhone-SE-3rd-generation-_de.1.png */; };
-		2CD263152CFDC5EB00A040A7 /* testWelcomeScreen_step_1_dark_iPhone-SE-3rd-generation-_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261F42CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPhone-SE-3rd-generation-_en.1.png */; };
-		2CD263162CFDC5EB00A040A7 /* testWelcomeScreen_step_1_dark_iPhone-SE-3rd-generation-_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261F52CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPhone-SE-3rd-generation-_es.1.png */; };
-		2CD263172CFDC5EB00A040A7 /* testWelcomeScreen_step_1_dark_iPhone-SE-3rd-generation-_it.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261F62CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPhone-SE-3rd-generation-_it.1.png */; };
-		2CD263182CFDC5EB00A040A7 /* testWelcomeScreen_step_1_dark_iPhone-SE-3rd-generation-_nl.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261F72CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPhone-SE-3rd-generation-_nl.1.png */; };
-		2CD263192CFDC5EB00A040A7 /* testWelcomeScreen_step_1_light_iPad-Pro-12-9-inch-6th-generation-_de.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261F82CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPad-Pro-12-9-inch-6th-generation-_de.1.png */; };
-		2CD2631A2CFDC5EB00A040A7 /* testWelcomeScreen_step_1_light_iPad-Pro-12-9-inch-6th-generation-_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261F92CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPad-Pro-12-9-inch-6th-generation-_en.1.png */; };
-		2CD2631B2CFDC5EB00A040A7 /* testWelcomeScreen_step_1_light_iPad-Pro-12-9-inch-6th-generation-_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261FA2CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPad-Pro-12-9-inch-6th-generation-_es.1.png */; };
-		2CD2631C2CFDC5EB00A040A7 /* testWelcomeScreen_step_1_light_iPad-Pro-12-9-inch-6th-generation-_it.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261FB2CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPad-Pro-12-9-inch-6th-generation-_it.1.png */; };
-		2CD2631D2CFDC5EB00A040A7 /* testWelcomeScreen_step_1_light_iPad-Pro-12-9-inch-6th-generation-_nl.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261FC2CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPad-Pro-12-9-inch-6th-generation-_nl.1.png */; };
-		2CD2631E2CFDC5EB00A040A7 /* testWelcomeScreen_step_1_light_iPhone-14-Pro_de.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261FD2CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPhone-14-Pro_de.1.png */; };
-		2CD2631F2CFDC5EB00A040A7 /* testWelcomeScreen_step_1_light_iPhone-14-Pro_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261FE2CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPhone-14-Pro_en.1.png */; };
-		2CD263202CFDC5EB00A040A7 /* testWelcomeScreen_step_1_light_iPhone-14-Pro_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD261FF2CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPhone-14-Pro_es.1.png */; };
-		2CD263212CFDC5EB00A040A7 /* testWelcomeScreen_step_1_light_iPhone-14-Pro_it.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262002CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPhone-14-Pro_it.1.png */; };
-		2CD263222CFDC5EB00A040A7 /* testWelcomeScreen_step_1_light_iPhone-14-Pro_nl.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262012CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPhone-14-Pro_nl.1.png */; };
-		2CD263232CFDC5EB00A040A7 /* testWelcomeScreen_step_1_light_iPhone-14-Pro-Max_de.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262022CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPhone-14-Pro-Max_de.1.png */; };
-		2CD263242CFDC5EB00A040A7 /* testWelcomeScreen_step_1_light_iPhone-14-Pro-Max_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262032CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPhone-14-Pro-Max_en.1.png */; };
-		2CD263252CFDC5EB00A040A7 /* testWelcomeScreen_step_1_light_iPhone-14-Pro-Max_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262042CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPhone-14-Pro-Max_es.1.png */; };
-		2CD263262CFDC5EB00A040A7 /* testWelcomeScreen_step_1_light_iPhone-14-Pro-Max_it.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262052CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPhone-14-Pro-Max_it.1.png */; };
-		2CD263272CFDC5EB00A040A7 /* testWelcomeScreen_step_1_light_iPhone-14-Pro-Max_nl.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262062CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPhone-14-Pro-Max_nl.1.png */; };
-		2CD263282CFDC5EB00A040A7 /* testWelcomeScreen_step_1_light_iPhone-SE-3rd-generation-_de.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262072CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPhone-SE-3rd-generation-_de.1.png */; };
-		2CD263292CFDC5EB00A040A7 /* testWelcomeScreen_step_1_light_iPhone-SE-3rd-generation-_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262082CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPhone-SE-3rd-generation-_en.1.png */; };
-		2CD2632A2CFDC5EB00A040A7 /* testWelcomeScreen_step_1_light_iPhone-SE-3rd-generation-_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262092CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPhone-SE-3rd-generation-_es.1.png */; };
-		2CD2632B2CFDC5EB00A040A7 /* testWelcomeScreen_step_1_light_iPhone-SE-3rd-generation-_it.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2620A2CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPhone-SE-3rd-generation-_it.1.png */; };
-		2CD2632C2CFDC5EB00A040A7 /* testWelcomeScreen_step_1_light_iPhone-SE-3rd-generation-_nl.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2620B2CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPhone-SE-3rd-generation-_nl.1.png */; };
-		2CD2632D2CFDC5EB00A040A7 /* testWelcomeScreen_step_2_dark_iPad-Pro-12-9-inch-6th-generation-_de.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2620C2CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPad-Pro-12-9-inch-6th-generation-_de.1.png */; };
-		2CD2632E2CFDC5EB00A040A7 /* testWelcomeScreen_step_2_dark_iPad-Pro-12-9-inch-6th-generation-_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2620D2CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPad-Pro-12-9-inch-6th-generation-_en.1.png */; };
-		2CD2632F2CFDC5EB00A040A7 /* testWelcomeScreen_step_2_dark_iPad-Pro-12-9-inch-6th-generation-_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2620E2CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPad-Pro-12-9-inch-6th-generation-_es.1.png */; };
-		2CD263302CFDC5EB00A040A7 /* testWelcomeScreen_step_2_dark_iPad-Pro-12-9-inch-6th-generation-_it.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2620F2CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPad-Pro-12-9-inch-6th-generation-_it.1.png */; };
-		2CD263312CFDC5EB00A040A7 /* testWelcomeScreen_step_2_dark_iPad-Pro-12-9-inch-6th-generation-_nl.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262102CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPad-Pro-12-9-inch-6th-generation-_nl.1.png */; };
-		2CD263322CFDC5EB00A040A7 /* testWelcomeScreen_step_2_dark_iPhone-14-Pro_de.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262112CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPhone-14-Pro_de.1.png */; };
-		2CD263332CFDC5EB00A040A7 /* testWelcomeScreen_step_2_dark_iPhone-14-Pro_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262122CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPhone-14-Pro_en.1.png */; };
-		2CD263342CFDC5EB00A040A7 /* testWelcomeScreen_step_2_dark_iPhone-14-Pro_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262132CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPhone-14-Pro_es.1.png */; };
-		2CD263352CFDC5EB00A040A7 /* testWelcomeScreen_step_2_dark_iPhone-14-Pro_it.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262142CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPhone-14-Pro_it.1.png */; };
-		2CD263362CFDC5EB00A040A7 /* testWelcomeScreen_step_2_dark_iPhone-14-Pro_nl.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262152CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPhone-14-Pro_nl.1.png */; };
-		2CD263372CFDC5EB00A040A7 /* testWelcomeScreen_step_2_dark_iPhone-14-Pro-Max_de.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262162CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPhone-14-Pro-Max_de.1.png */; };
-		2CD263382CFDC5EB00A040A7 /* testWelcomeScreen_step_2_dark_iPhone-14-Pro-Max_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262172CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPhone-14-Pro-Max_en.1.png */; };
-		2CD263392CFDC5EB00A040A7 /* testWelcomeScreen_step_2_dark_iPhone-14-Pro-Max_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262182CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPhone-14-Pro-Max_es.1.png */; };
-		2CD2633A2CFDC5EB00A040A7 /* testWelcomeScreen_step_2_dark_iPhone-14-Pro-Max_it.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262192CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPhone-14-Pro-Max_it.1.png */; };
-		2CD2633B2CFDC5EB00A040A7 /* testWelcomeScreen_step_2_dark_iPhone-14-Pro-Max_nl.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2621A2CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPhone-14-Pro-Max_nl.1.png */; };
-		2CD2633C2CFDC5EB00A040A7 /* testWelcomeScreen_step_2_dark_iPhone-SE-3rd-generation-_de.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2621B2CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPhone-SE-3rd-generation-_de.1.png */; };
-		2CD2633D2CFDC5EB00A040A7 /* testWelcomeScreen_step_2_dark_iPhone-SE-3rd-generation-_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2621C2CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPhone-SE-3rd-generation-_en.1.png */; };
-		2CD2633E2CFDC5EB00A040A7 /* testWelcomeScreen_step_2_dark_iPhone-SE-3rd-generation-_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2621D2CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPhone-SE-3rd-generation-_es.1.png */; };
-		2CD2633F2CFDC5EB00A040A7 /* testWelcomeScreen_step_2_dark_iPhone-SE-3rd-generation-_it.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2621E2CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPhone-SE-3rd-generation-_it.1.png */; };
-		2CD263402CFDC5EB00A040A7 /* testWelcomeScreen_step_2_dark_iPhone-SE-3rd-generation-_nl.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2621F2CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPhone-SE-3rd-generation-_nl.1.png */; };
-		2CD263412CFDC5EB00A040A7 /* testWelcomeScreen_step_2_light_iPad-Pro-12-9-inch-6th-generation-_de.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262202CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPad-Pro-12-9-inch-6th-generation-_de.1.png */; };
-		2CD263422CFDC5EB00A040A7 /* testWelcomeScreen_step_2_light_iPad-Pro-12-9-inch-6th-generation-_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262212CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPad-Pro-12-9-inch-6th-generation-_en.1.png */; };
-		2CD263432CFDC5EB00A040A7 /* testWelcomeScreen_step_2_light_iPad-Pro-12-9-inch-6th-generation-_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262222CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPad-Pro-12-9-inch-6th-generation-_es.1.png */; };
-		2CD263442CFDC5EB00A040A7 /* testWelcomeScreen_step_2_light_iPad-Pro-12-9-inch-6th-generation-_it.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262232CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPad-Pro-12-9-inch-6th-generation-_it.1.png */; };
-		2CD263452CFDC5EB00A040A7 /* testWelcomeScreen_step_2_light_iPad-Pro-12-9-inch-6th-generation-_nl.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262242CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPad-Pro-12-9-inch-6th-generation-_nl.1.png */; };
-		2CD263462CFDC5EB00A040A7 /* testWelcomeScreen_step_2_light_iPhone-14-Pro_de.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262252CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPhone-14-Pro_de.1.png */; };
-		2CD263472CFDC5EB00A040A7 /* testWelcomeScreen_step_2_light_iPhone-14-Pro_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262262CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPhone-14-Pro_en.1.png */; };
-		2CD263482CFDC5EB00A040A7 /* testWelcomeScreen_step_2_light_iPhone-14-Pro_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262272CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPhone-14-Pro_es.1.png */; };
-		2CD263492CFDC5EB00A040A7 /* testWelcomeScreen_step_2_light_iPhone-14-Pro_it.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262282CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPhone-14-Pro_it.1.png */; };
-		2CD2634A2CFDC5EB00A040A7 /* testWelcomeScreen_step_2_light_iPhone-14-Pro_nl.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262292CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPhone-14-Pro_nl.1.png */; };
-		2CD2634B2CFDC5EB00A040A7 /* testWelcomeScreen_step_2_light_iPhone-14-Pro-Max_de.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2622A2CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPhone-14-Pro-Max_de.1.png */; };
-		2CD2634C2CFDC5EB00A040A7 /* testWelcomeScreen_step_2_light_iPhone-14-Pro-Max_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2622B2CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPhone-14-Pro-Max_en.1.png */; };
-		2CD2634D2CFDC5EB00A040A7 /* testWelcomeScreen_step_2_light_iPhone-14-Pro-Max_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2622C2CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPhone-14-Pro-Max_es.1.png */; };
-		2CD2634E2CFDC5EB00A040A7 /* testWelcomeScreen_step_2_light_iPhone-14-Pro-Max_it.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2622D2CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPhone-14-Pro-Max_it.1.png */; };
-		2CD2634F2CFDC5EB00A040A7 /* testWelcomeScreen_step_2_light_iPhone-14-Pro-Max_nl.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2622E2CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPhone-14-Pro-Max_nl.1.png */; };
-		2CD263502CFDC5EB00A040A7 /* testWelcomeScreen_step_2_light_iPhone-SE-3rd-generation-_de.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2622F2CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPhone-SE-3rd-generation-_de.1.png */; };
-		2CD263512CFDC5EB00A040A7 /* testWelcomeScreen_step_2_light_iPhone-SE-3rd-generation-_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262302CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPhone-SE-3rd-generation-_en.1.png */; };
-		2CD263522CFDC5EB00A040A7 /* testWelcomeScreen_step_2_light_iPhone-SE-3rd-generation-_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262312CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPhone-SE-3rd-generation-_es.1.png */; };
-		2CD263532CFDC5EB00A040A7 /* testWelcomeScreen_step_2_light_iPhone-SE-3rd-generation-_it.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262322CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPhone-SE-3rd-generation-_it.1.png */; };
-		2CD263542CFDC5EB00A040A7 /* testWelcomeScreen_step_2_light_iPhone-SE-3rd-generation-_nl.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262332CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPhone-SE-3rd-generation-_nl.1.png */; };
-		2CD263552CFDC5EB00A040A7 /* testWelcomeScreen_step_3_dark_iPad-Pro-12-9-inch-6th-generation-_de.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262342CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPad-Pro-12-9-inch-6th-generation-_de.1.png */; };
-		2CD263562CFDC5EB00A040A7 /* testWelcomeScreen_step_3_dark_iPad-Pro-12-9-inch-6th-generation-_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262352CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPad-Pro-12-9-inch-6th-generation-_en.1.png */; };
-		2CD263572CFDC5EB00A040A7 /* testWelcomeScreen_step_3_dark_iPad-Pro-12-9-inch-6th-generation-_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262362CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPad-Pro-12-9-inch-6th-generation-_es.1.png */; };
-		2CD263582CFDC5EB00A040A7 /* testWelcomeScreen_step_3_dark_iPad-Pro-12-9-inch-6th-generation-_it.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262372CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPad-Pro-12-9-inch-6th-generation-_it.1.png */; };
-		2CD263592CFDC5EB00A040A7 /* testWelcomeScreen_step_3_dark_iPad-Pro-12-9-inch-6th-generation-_nl.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262382CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPad-Pro-12-9-inch-6th-generation-_nl.1.png */; };
-		2CD2635A2CFDC5EB00A040A7 /* testWelcomeScreen_step_3_dark_iPhone-14-Pro_de.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262392CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPhone-14-Pro_de.1.png */; };
-		2CD2635B2CFDC5EB00A040A7 /* testWelcomeScreen_step_3_dark_iPhone-14-Pro_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2623A2CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPhone-14-Pro_en.1.png */; };
-		2CD2635C2CFDC5EB00A040A7 /* testWelcomeScreen_step_3_dark_iPhone-14-Pro_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2623B2CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPhone-14-Pro_es.1.png */; };
-		2CD2635D2CFDC5EB00A040A7 /* testWelcomeScreen_step_3_dark_iPhone-14-Pro_it.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2623C2CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPhone-14-Pro_it.1.png */; };
-		2CD2635E2CFDC5EB00A040A7 /* testWelcomeScreen_step_3_dark_iPhone-14-Pro_nl.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2623D2CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPhone-14-Pro_nl.1.png */; };
-		2CD2635F2CFDC5EB00A040A7 /* testWelcomeScreen_step_3_dark_iPhone-14-Pro-Max_de.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2623E2CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPhone-14-Pro-Max_de.1.png */; };
-		2CD263602CFDC5EB00A040A7 /* testWelcomeScreen_step_3_dark_iPhone-14-Pro-Max_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2623F2CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPhone-14-Pro-Max_en.1.png */; };
-		2CD263612CFDC5EB00A040A7 /* testWelcomeScreen_step_3_dark_iPhone-14-Pro-Max_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262402CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPhone-14-Pro-Max_es.1.png */; };
-		2CD263622CFDC5EB00A040A7 /* testWelcomeScreen_step_3_dark_iPhone-14-Pro-Max_it.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262412CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPhone-14-Pro-Max_it.1.png */; };
-		2CD263632CFDC5EB00A040A7 /* testWelcomeScreen_step_3_dark_iPhone-14-Pro-Max_nl.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262422CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPhone-14-Pro-Max_nl.1.png */; };
-		2CD263642CFDC5EB00A040A7 /* testWelcomeScreen_step_3_dark_iPhone-SE-3rd-generation-_de.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262432CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPhone-SE-3rd-generation-_de.1.png */; };
-		2CD263652CFDC5EB00A040A7 /* testWelcomeScreen_step_3_dark_iPhone-SE-3rd-generation-_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262442CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPhone-SE-3rd-generation-_en.1.png */; };
-		2CD263662CFDC5EB00A040A7 /* testWelcomeScreen_step_3_dark_iPhone-SE-3rd-generation-_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262452CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPhone-SE-3rd-generation-_es.1.png */; };
-		2CD263672CFDC5EB00A040A7 /* testWelcomeScreen_step_3_dark_iPhone-SE-3rd-generation-_it.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262462CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPhone-SE-3rd-generation-_it.1.png */; };
-		2CD263682CFDC5EB00A040A7 /* testWelcomeScreen_step_3_dark_iPhone-SE-3rd-generation-_nl.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262472CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPhone-SE-3rd-generation-_nl.1.png */; };
-		2CD263692CFDC5EB00A040A7 /* testWelcomeScreen_step_3_light_iPad-Pro-12-9-inch-6th-generation-_de.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262482CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPad-Pro-12-9-inch-6th-generation-_de.1.png */; };
-		2CD2636A2CFDC5EB00A040A7 /* testWelcomeScreen_step_3_light_iPad-Pro-12-9-inch-6th-generation-_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262492CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPad-Pro-12-9-inch-6th-generation-_en.1.png */; };
-		2CD2636B2CFDC5EB00A040A7 /* testWelcomeScreen_step_3_light_iPad-Pro-12-9-inch-6th-generation-_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2624A2CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPad-Pro-12-9-inch-6th-generation-_es.1.png */; };
-		2CD2636C2CFDC5EB00A040A7 /* testWelcomeScreen_step_3_light_iPad-Pro-12-9-inch-6th-generation-_it.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2624B2CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPad-Pro-12-9-inch-6th-generation-_it.1.png */; };
-		2CD2636D2CFDC5EB00A040A7 /* testWelcomeScreen_step_3_light_iPad-Pro-12-9-inch-6th-generation-_nl.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2624C2CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPad-Pro-12-9-inch-6th-generation-_nl.1.png */; };
-		2CD2636E2CFDC5EB00A040A7 /* testWelcomeScreen_step_3_light_iPhone-14-Pro_de.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2624D2CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPhone-14-Pro_de.1.png */; };
-		2CD2636F2CFDC5EB00A040A7 /* testWelcomeScreen_step_3_light_iPhone-14-Pro_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2624E2CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPhone-14-Pro_en.1.png */; };
-		2CD263702CFDC5EB00A040A7 /* testWelcomeScreen_step_3_light_iPhone-14-Pro_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2624F2CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPhone-14-Pro_es.1.png */; };
-		2CD263712CFDC5EB00A040A7 /* testWelcomeScreen_step_3_light_iPhone-14-Pro_it.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262502CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPhone-14-Pro_it.1.png */; };
-		2CD263722CFDC5EB00A040A7 /* testWelcomeScreen_step_3_light_iPhone-14-Pro_nl.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262512CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPhone-14-Pro_nl.1.png */; };
-		2CD263732CFDC5EB00A040A7 /* testWelcomeScreen_step_3_light_iPhone-14-Pro-Max_de.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262522CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPhone-14-Pro-Max_de.1.png */; };
-		2CD263742CFDC5EB00A040A7 /* testWelcomeScreen_step_3_light_iPhone-14-Pro-Max_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262532CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPhone-14-Pro-Max_en.1.png */; };
-		2CD263752CFDC5EB00A040A7 /* testWelcomeScreen_step_3_light_iPhone-14-Pro-Max_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262542CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPhone-14-Pro-Max_es.1.png */; };
-		2CD263762CFDC5EB00A040A7 /* testWelcomeScreen_step_3_light_iPhone-14-Pro-Max_it.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262552CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPhone-14-Pro-Max_it.1.png */; };
-		2CD263772CFDC5EB00A040A7 /* testWelcomeScreen_step_3_light_iPhone-14-Pro-Max_nl.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262562CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPhone-14-Pro-Max_nl.1.png */; };
-		2CD263782CFDC5EB00A040A7 /* testWelcomeScreen_step_3_light_iPhone-SE-3rd-generation-_de.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262572CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPhone-SE-3rd-generation-_de.1.png */; };
-		2CD263792CFDC5EB00A040A7 /* testWelcomeScreen_step_3_light_iPhone-SE-3rd-generation-_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262582CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPhone-SE-3rd-generation-_en.1.png */; };
-		2CD2637A2CFDC5EB00A040A7 /* testWelcomeScreen_step_3_light_iPhone-SE-3rd-generation-_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262592CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPhone-SE-3rd-generation-_es.1.png */; };
-		2CD2637B2CFDC5EB00A040A7 /* testWelcomeScreen_step_3_light_iPhone-SE-3rd-generation-_it.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2625A2CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPhone-SE-3rd-generation-_it.1.png */; };
-		2CD2637C2CFDC5EB00A040A7 /* testWelcomeScreen_step_3_light_iPhone-SE-3rd-generation-_nl.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2625B2CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPhone-SE-3rd-generation-_nl.1.png */; };
-		2CD2637D2CFDC5EB00A040A7 /* testWelcomeScreen_step_4_dark_iPad-Pro-12-9-inch-6th-generation-_de.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2625C2CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPad-Pro-12-9-inch-6th-generation-_de.1.png */; };
-		2CD2637E2CFDC5EB00A040A7 /* testWelcomeScreen_step_4_dark_iPad-Pro-12-9-inch-6th-generation-_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2625D2CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPad-Pro-12-9-inch-6th-generation-_en.1.png */; };
-		2CD2637F2CFDC5EB00A040A7 /* testWelcomeScreen_step_4_dark_iPad-Pro-12-9-inch-6th-generation-_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2625E2CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPad-Pro-12-9-inch-6th-generation-_es.1.png */; };
-		2CD263802CFDC5EB00A040A7 /* testWelcomeScreen_step_4_dark_iPad-Pro-12-9-inch-6th-generation-_it.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2625F2CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPad-Pro-12-9-inch-6th-generation-_it.1.png */; };
-		2CD263812CFDC5EB00A040A7 /* testWelcomeScreen_step_4_dark_iPad-Pro-12-9-inch-6th-generation-_nl.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262602CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPad-Pro-12-9-inch-6th-generation-_nl.1.png */; };
-		2CD263822CFDC5EB00A040A7 /* testWelcomeScreen_step_4_dark_iPhone-14-Pro_de.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262612CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPhone-14-Pro_de.1.png */; };
-		2CD263832CFDC5EB00A040A7 /* testWelcomeScreen_step_4_dark_iPhone-14-Pro_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262622CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPhone-14-Pro_en.1.png */; };
-		2CD263842CFDC5EB00A040A7 /* testWelcomeScreen_step_4_dark_iPhone-14-Pro_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262632CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPhone-14-Pro_es.1.png */; };
-		2CD263852CFDC5EB00A040A7 /* testWelcomeScreen_step_4_dark_iPhone-14-Pro_it.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262642CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPhone-14-Pro_it.1.png */; };
-		2CD263862CFDC5EB00A040A7 /* testWelcomeScreen_step_4_dark_iPhone-14-Pro_nl.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262652CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPhone-14-Pro_nl.1.png */; };
-		2CD263872CFDC5EB00A040A7 /* testWelcomeScreen_step_4_dark_iPhone-14-Pro-Max_de.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262662CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPhone-14-Pro-Max_de.1.png */; };
-		2CD263882CFDC5EB00A040A7 /* testWelcomeScreen_step_4_dark_iPhone-14-Pro-Max_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262672CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPhone-14-Pro-Max_en.1.png */; };
-		2CD263892CFDC5EB00A040A7 /* testWelcomeScreen_step_4_dark_iPhone-14-Pro-Max_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262682CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPhone-14-Pro-Max_es.1.png */; };
-		2CD2638A2CFDC5EB00A040A7 /* testWelcomeScreen_step_4_dark_iPhone-14-Pro-Max_it.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262692CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPhone-14-Pro-Max_it.1.png */; };
-		2CD2638B2CFDC5EB00A040A7 /* testWelcomeScreen_step_4_dark_iPhone-14-Pro-Max_nl.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2626A2CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPhone-14-Pro-Max_nl.1.png */; };
-		2CD2638C2CFDC5EB00A040A7 /* testWelcomeScreen_step_4_dark_iPhone-SE-3rd-generation-_de.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2626B2CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPhone-SE-3rd-generation-_de.1.png */; };
-		2CD2638D2CFDC5EB00A040A7 /* testWelcomeScreen_step_4_dark_iPhone-SE-3rd-generation-_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2626C2CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPhone-SE-3rd-generation-_en.1.png */; };
-		2CD2638E2CFDC5EB00A040A7 /* testWelcomeScreen_step_4_dark_iPhone-SE-3rd-generation-_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2626D2CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPhone-SE-3rd-generation-_es.1.png */; };
-		2CD2638F2CFDC5EB00A040A7 /* testWelcomeScreen_step_4_dark_iPhone-SE-3rd-generation-_it.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2626E2CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPhone-SE-3rd-generation-_it.1.png */; };
-		2CD263902CFDC5EB00A040A7 /* testWelcomeScreen_step_4_dark_iPhone-SE-3rd-generation-_nl.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2626F2CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPhone-SE-3rd-generation-_nl.1.png */; };
-		2CD263912CFDC5EB00A040A7 /* testWelcomeScreen_step_4_light_iPad-Pro-12-9-inch-6th-generation-_de.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262702CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPad-Pro-12-9-inch-6th-generation-_de.1.png */; };
-		2CD263922CFDC5EB00A040A7 /* testWelcomeScreen_step_4_light_iPad-Pro-12-9-inch-6th-generation-_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262712CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPad-Pro-12-9-inch-6th-generation-_en.1.png */; };
-		2CD263932CFDC5EB00A040A7 /* testWelcomeScreen_step_4_light_iPad-Pro-12-9-inch-6th-generation-_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262722CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPad-Pro-12-9-inch-6th-generation-_es.1.png */; };
-		2CD263942CFDC5EB00A040A7 /* testWelcomeScreen_step_4_light_iPad-Pro-12-9-inch-6th-generation-_it.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262732CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPad-Pro-12-9-inch-6th-generation-_it.1.png */; };
-		2CD263952CFDC5EB00A040A7 /* testWelcomeScreen_step_4_light_iPad-Pro-12-9-inch-6th-generation-_nl.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262742CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPad-Pro-12-9-inch-6th-generation-_nl.1.png */; };
-		2CD263962CFDC5EB00A040A7 /* testWelcomeScreen_step_4_light_iPhone-14-Pro_de.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262752CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPhone-14-Pro_de.1.png */; };
-		2CD263972CFDC5EB00A040A7 /* testWelcomeScreen_step_4_light_iPhone-14-Pro_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262762CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPhone-14-Pro_en.1.png */; };
-		2CD263982CFDC5EB00A040A7 /* testWelcomeScreen_step_4_light_iPhone-14-Pro_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262772CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPhone-14-Pro_es.1.png */; };
-		2CD263992CFDC5EB00A040A7 /* testWelcomeScreen_step_4_light_iPhone-14-Pro_it.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262782CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPhone-14-Pro_it.1.png */; };
-		2CD2639A2CFDC5EB00A040A7 /* testWelcomeScreen_step_4_light_iPhone-14-Pro_nl.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262792CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPhone-14-Pro_nl.1.png */; };
-		2CD2639B2CFDC5EB00A040A7 /* testWelcomeScreen_step_4_light_iPhone-14-Pro-Max_de.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2627A2CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPhone-14-Pro-Max_de.1.png */; };
-		2CD2639C2CFDC5EB00A040A7 /* testWelcomeScreen_step_4_light_iPhone-14-Pro-Max_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2627B2CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPhone-14-Pro-Max_en.1.png */; };
-		2CD2639D2CFDC5EB00A040A7 /* testWelcomeScreen_step_4_light_iPhone-14-Pro-Max_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2627C2CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPhone-14-Pro-Max_es.1.png */; };
-		2CD2639E2CFDC5EB00A040A7 /* testWelcomeScreen_step_4_light_iPhone-14-Pro-Max_it.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2627D2CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPhone-14-Pro-Max_it.1.png */; };
-		2CD2639F2CFDC5EB00A040A7 /* testWelcomeScreen_step_4_light_iPhone-14-Pro-Max_nl.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2627E2CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPhone-14-Pro-Max_nl.1.png */; };
-		2CD263A02CFDC5EB00A040A7 /* testWelcomeScreen_step_4_light_iPhone-SE-3rd-generation-_de.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2627F2CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPhone-SE-3rd-generation-_de.1.png */; };
-		2CD263A12CFDC5EB00A040A7 /* testWelcomeScreen_step_4_light_iPhone-SE-3rd-generation-_en.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262802CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPhone-SE-3rd-generation-_en.1.png */; };
-		2CD263A22CFDC5EB00A040A7 /* testWelcomeScreen_step_4_light_iPhone-SE-3rd-generation-_es.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262812CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPhone-SE-3rd-generation-_es.1.png */; };
-		2CD263A32CFDC5EB00A040A7 /* testWelcomeScreen_step_4_light_iPhone-SE-3rd-generation-_it.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262822CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPhone-SE-3rd-generation-_it.1.png */; };
-		2CD263A42CFDC5EB00A040A7 /* testWelcomeScreen_step_4_light_iPhone-SE-3rd-generation-_nl.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262832CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPhone-SE-3rd-generation-_nl.1.png */; };
-		2CD263A52CFDC5EB00A040A7 /* OnboardingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD262862CFDC5E900A040A7 /* OnboardingTests.swift */; };
-		2CD263A62CFDC5EB00A040A7 /* DeviceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD262882CFDC5E900A040A7 /* DeviceType.swift */; };
-		2CD263A72CFDC5EB00A040A7 /* EcosiaSnapshotTests.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262892CFDC5E900A040A7 /* EcosiaSnapshotTests.xctestplan */; };
 		2CD263A82CFDC5EB00A040A7 /* environment.json in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2628A2CFDC5E900A040A7 /* environment.json */; };
-		2CD263A92CFDC5EB00A040A7 /* LocaleRetriever.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD2628B2CFDC5E900A040A7 /* LocaleRetriever.swift */; };
-		2CD263AA2CFDC5EB00A040A7 /* LocalizationOverrideTestingBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD2628C2CFDC5E900A040A7 /* LocalizationOverrideTestingBundle.swift */; };
-		2CD263AB2CFDC5EB00A040A7 /* snapshot_configuration.json in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2628D2CFDC5E900A040A7 /* snapshot_configuration.json */; };
-		2CD263AC2CFDC5EB00A040A7 /* SnapshotBaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD2628E2CFDC5E900A040A7 /* SnapshotBaseTests.swift */; };
-		2CD263AD2CFDC5EB00A040A7 /* SnapshotTestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD2628F2CFDC5E900A040A7 /* SnapshotTestHelper.swift */; };
-		2CD263AE2CFDC5EB00A040A7 /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD262902CFDC5E900A040A7 /* String+Extension.swift */; };
 		2CD263AF2CFDC5EB00A040A7 /* VersionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD262922CFDC5E900A040A7 /* VersionTests.swift */; };
-		2CD263B02CFDC5EB00A040A7 /* NTPComponentTests_tests.xcresult in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262932CFDC5E900A040A7 /* NTPComponentTests_tests.xcresult */; };
-		2CD263B12CFDC5EB00A040A7 /* OnboardingTests_tests.xcresult in Resources */ = {isa = PBXBuildFile; fileRef = 2CD262942CFDC5E900A040A7 /* OnboardingTests_tests.xcresult */; };
 		2CD263B22CFDC5EB00A040A7 /* WhatsNewLocalDataProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD262962CFDC5E900A040A7 /* WhatsNewLocalDataProviderTests.swift */; };
 		2CD263B32CFDC5EB00A040A7 /* AppDelegateFeatureManagementIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD262972CFDC5EA00A040A7 /* AppDelegateFeatureManagementIntegrationTests.swift */; };
 		2CD263B42CFDC5EB00A040A7 /* EcosiaInstallTypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD262992CFDC5EA00A040A7 /* EcosiaInstallTypeTests.swift */; };
@@ -2969,256 +2710,8 @@
 		2CCF17522105E4FD00705AE5 /* DisplaySettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplaySettingsTests.swift; sourceTree = "<group>"; };
 		2CD261842CFDC5E900A040A7 /* EcosiaMockThemeManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EcosiaMockThemeManager.swift; sourceTree = "<group>"; };
 		2CD261852CFDC5E900A040A7 /* Welcome.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Welcome.swift; sourceTree = "<group>"; };
-		2CD261872CFDC5E900A040A7 /* testNTPAboutSection_financialreports_dark_iPhone-14-Pro_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testNTPAboutSection_financialreports_dark_iPhone-14-Pro_en.1.png"; sourceTree = "<group>"; };
-		2CD261882CFDC5E900A040A7 /* testNTPAboutSection_financialreports_dark_iPhone-14-Pro_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testNTPAboutSection_financialreports_dark_iPhone-14-Pro_es.1.png"; sourceTree = "<group>"; };
-		2CD261892CFDC5E900A040A7 /* testNTPAboutSection_financialreports_light_iPhone-14-Pro_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testNTPAboutSection_financialreports_light_iPhone-14-Pro_en.1.png"; sourceTree = "<group>"; };
-		2CD2618A2CFDC5E900A040A7 /* testNTPAboutSection_financialreports_light_iPhone-14-Pro_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testNTPAboutSection_financialreports_light_iPhone-14-Pro_es.1.png"; sourceTree = "<group>"; };
-		2CD2618B2CFDC5E900A040A7 /* testNTPAboutSection_privacy_dark_iPhone-14-Pro_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testNTPAboutSection_privacy_dark_iPhone-14-Pro_en.1.png"; sourceTree = "<group>"; };
-		2CD2618C2CFDC5E900A040A7 /* testNTPAboutSection_privacy_dark_iPhone-14-Pro_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testNTPAboutSection_privacy_dark_iPhone-14-Pro_es.1.png"; sourceTree = "<group>"; };
-		2CD2618D2CFDC5E900A040A7 /* testNTPAboutSection_privacy_light_iPhone-14-Pro_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testNTPAboutSection_privacy_light_iPhone-14-Pro_en.1.png"; sourceTree = "<group>"; };
-		2CD2618E2CFDC5E900A040A7 /* testNTPAboutSection_privacy_light_iPhone-14-Pro_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testNTPAboutSection_privacy_light_iPhone-14-Pro_es.1.png"; sourceTree = "<group>"; };
-		2CD2618F2CFDC5E900A040A7 /* testNTPAboutSection_treesupdate_dark_iPhone-14-Pro_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testNTPAboutSection_treesupdate_dark_iPhone-14-Pro_en.1.png"; sourceTree = "<group>"; };
-		2CD261902CFDC5E900A040A7 /* testNTPAboutSection_treesupdate_dark_iPhone-14-Pro_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testNTPAboutSection_treesupdate_dark_iPhone-14-Pro_es.1.png"; sourceTree = "<group>"; };
-		2CD261912CFDC5E900A040A7 /* testNTPAboutSection_treesupdate_light_iPhone-14-Pro_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testNTPAboutSection_treesupdate_light_iPhone-14-Pro_en.1.png"; sourceTree = "<group>"; };
-		2CD261922CFDC5E900A040A7 /* testNTPAboutSection_treesupdate_light_iPhone-14-Pro_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testNTPAboutSection_treesupdate_light_iPhone-14-Pro_es.1.png"; sourceTree = "<group>"; };
-		2CD261932CFDC5E900A040A7 /* testNTPBookmarkNudgeCell_dark_iPhone-14-Pro_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testNTPBookmarkNudgeCell_dark_iPhone-14-Pro_en.1.png"; sourceTree = "<group>"; };
-		2CD261942CFDC5E900A040A7 /* testNTPBookmarkNudgeCell_dark_iPhone-14-Pro_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testNTPBookmarkNudgeCell_dark_iPhone-14-Pro_es.1.png"; sourceTree = "<group>"; };
-		2CD261952CFDC5E900A040A7 /* testNTPBookmarkNudgeCell_light_iPhone-14-Pro_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testNTPBookmarkNudgeCell_light_iPhone-14-Pro_en.1.png"; sourceTree = "<group>"; };
-		2CD261962CFDC5E900A040A7 /* testNTPBookmarkNudgeCell_light_iPhone-14-Pro_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testNTPBookmarkNudgeCell_light_iPhone-14-Pro_es.1.png"; sourceTree = "<group>"; };
-		2CD261972CFDC5E900A040A7 /* testNTPCustomizationCell_dark_iPhone-14-Pro_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testNTPCustomizationCell_dark_iPhone-14-Pro_en.1.png"; sourceTree = "<group>"; };
-		2CD261982CFDC5E900A040A7 /* testNTPCustomizationCell_dark_iPhone-14-Pro_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testNTPCustomizationCell_dark_iPhone-14-Pro_es.1.png"; sourceTree = "<group>"; };
-		2CD261992CFDC5E900A040A7 /* testNTPCustomizationCell_light_iPhone-14-Pro_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testNTPCustomizationCell_light_iPhone-14-Pro_en.1.png"; sourceTree = "<group>"; };
-		2CD2619A2CFDC5E900A040A7 /* testNTPCustomizationCell_light_iPhone-14-Pro_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testNTPCustomizationCell_light_iPhone-14-Pro_es.1.png"; sourceTree = "<group>"; };
-		2CD2619B2CFDC5E900A040A7 /* testNTPLibraryCell_dark_iPhone-14-Pro_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testNTPLibraryCell_dark_iPhone-14-Pro_en.1.png"; sourceTree = "<group>"; };
-		2CD2619C2CFDC5E900A040A7 /* testNTPLibraryCell_dark_iPhone-14-Pro_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testNTPLibraryCell_dark_iPhone-14-Pro_es.1.png"; sourceTree = "<group>"; };
-		2CD2619D2CFDC5E900A040A7 /* testNTPLibraryCell_light_iPhone-14-Pro_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testNTPLibraryCell_light_iPhone-14-Pro_en.1.png"; sourceTree = "<group>"; };
-		2CD2619E2CFDC5E900A040A7 /* testNTPLibraryCell_light_iPhone-14-Pro_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testNTPLibraryCell_light_iPhone-14-Pro_es.1.png"; sourceTree = "<group>"; };
-		2CD2619F2CFDC5E900A040A7 /* testNTPLogoCell_dark_iPhone-14-Pro_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testNTPLogoCell_dark_iPhone-14-Pro_en.1.png"; sourceTree = "<group>"; };
-		2CD261A02CFDC5E900A040A7 /* testNTPLogoCell_dark_iPhone-14-Pro_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testNTPLogoCell_dark_iPhone-14-Pro_es.1.png"; sourceTree = "<group>"; };
-		2CD261A12CFDC5E900A040A7 /* testNTPLogoCell_light_iPhone-14-Pro_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testNTPLogoCell_light_iPhone-14-Pro_en.1.png"; sourceTree = "<group>"; };
-		2CD261A22CFDC5E900A040A7 /* testNTPLogoCell_light_iPhone-14-Pro_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testNTPLogoCell_light_iPhone-14-Pro_es.1.png"; sourceTree = "<group>"; };
-		2CD261A32CFDC5E900A040A7 /* testNTPNewsCell_dark_iPhone-14-Pro_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testNTPNewsCell_dark_iPhone-14-Pro_en.1.png"; sourceTree = "<group>"; };
-		2CD261A42CFDC5E900A040A7 /* testNTPNewsCell_dark_iPhone-14-Pro_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testNTPNewsCell_dark_iPhone-14-Pro_es.1.png"; sourceTree = "<group>"; };
-		2CD261A52CFDC5E900A040A7 /* testNTPNewsCell_light_iPhone-14-Pro_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testNTPNewsCell_light_iPhone-14-Pro_en.1.png"; sourceTree = "<group>"; };
-		2CD261A62CFDC5E900A040A7 /* testNTPNewsCell_light_iPhone-14-Pro_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testNTPNewsCell_light_iPhone-14-Pro_es.1.png"; sourceTree = "<group>"; };
-		2CD261A72CFDC5E900A040A7 /* testNTPReferralInvitesCell_multiple_invites_dark_iPhone-14-Pro_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testNTPReferralInvitesCell_multiple_invites_dark_iPhone-14-Pro_en.1.png"; sourceTree = "<group>"; };
-		2CD261A82CFDC5E900A040A7 /* testNTPReferralInvitesCell_multiple_invites_dark_iPhone-14-Pro_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testNTPReferralInvitesCell_multiple_invites_dark_iPhone-14-Pro_es.1.png"; sourceTree = "<group>"; };
-		2CD261A92CFDC5E900A040A7 /* testNTPReferralInvitesCell_multiple_invites_light_iPhone-14-Pro_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testNTPReferralInvitesCell_multiple_invites_light_iPhone-14-Pro_en.1.png"; sourceTree = "<group>"; };
-		2CD261AA2CFDC5E900A040A7 /* testNTPReferralInvitesCell_multiple_invites_light_iPhone-14-Pro_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testNTPReferralInvitesCell_multiple_invites_light_iPhone-14-Pro_es.1.png"; sourceTree = "<group>"; };
-		2CD261AB2CFDC5E900A040A7 /* testNTPReferralInvitesCell_single_invite_dark_iPhone-14-Pro_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testNTPReferralInvitesCell_single_invite_dark_iPhone-14-Pro_en.1.png"; sourceTree = "<group>"; };
-		2CD261AC2CFDC5E900A040A7 /* testNTPReferralInvitesCell_single_invite_dark_iPhone-14-Pro_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testNTPReferralInvitesCell_single_invite_dark_iPhone-14-Pro_es.1.png"; sourceTree = "<group>"; };
-		2CD261AD2CFDC5E900A040A7 /* testNTPReferralInvitesCell_single_invite_light_iPhone-14-Pro_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testNTPReferralInvitesCell_single_invite_light_iPhone-14-Pro_en.1.png"; sourceTree = "<group>"; };
-		2CD261AE2CFDC5E900A040A7 /* testNTPReferralInvitesCell_single_invite_light_iPhone-14-Pro_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testNTPReferralInvitesCell_single_invite_light_iPhone-14-Pro_es.1.png"; sourceTree = "<group>"; };
-		2CD261AF2CFDC5E900A040A7 /* testNTPTotalInvestedCell_dark_iPhone-14-Pro_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testNTPTotalInvestedCell_dark_iPhone-14-Pro_en.1.png"; sourceTree = "<group>"; };
-		2CD261B02CFDC5E900A040A7 /* testNTPTotalInvestedCell_dark_iPhone-14-Pro_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testNTPTotalInvestedCell_dark_iPhone-14-Pro_es.1.png"; sourceTree = "<group>"; };
-		2CD261B12CFDC5E900A040A7 /* testNTPTotalInvestedCell_light_iPhone-14-Pro_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testNTPTotalInvestedCell_light_iPhone-14-Pro_en.1.png"; sourceTree = "<group>"; };
-		2CD261B22CFDC5E900A040A7 /* testNTPTotalInvestedCell_light_iPhone-14-Pro_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testNTPTotalInvestedCell_light_iPhone-14-Pro_es.1.png"; sourceTree = "<group>"; };
-		2CD261B32CFDC5E900A040A7 /* testNTPTotalTreesCell_dark_iPhone-14-Pro_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testNTPTotalTreesCell_dark_iPhone-14-Pro_en.1.png"; sourceTree = "<group>"; };
-		2CD261B42CFDC5E900A040A7 /* testNTPTotalTreesCell_dark_iPhone-14-Pro_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testNTPTotalTreesCell_dark_iPhone-14-Pro_es.1.png"; sourceTree = "<group>"; };
-		2CD261B52CFDC5E900A040A7 /* testNTPTotalTreesCell_light_iPhone-14-Pro_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testNTPTotalTreesCell_light_iPhone-14-Pro_en.1.png"; sourceTree = "<group>"; };
-		2CD261B62CFDC5E900A040A7 /* testNTPTotalTreesCell_light_iPhone-14-Pro_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testNTPTotalTreesCell_light_iPhone-14-Pro_es.1.png"; sourceTree = "<group>"; };
 		2CD261B92CFDC5E900A040A7 /* NTPComponentTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NTPComponentTests.swift; sourceTree = "<group>"; };
 		2CD261BA2CFDC5E900A040A7 /* NTPTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NTPTests.swift; sourceTree = "<group>"; };
-		2CD261BC2CFDC5E900A040A7 /* testWelcomeScreen_dark_iPad-Pro-12-9-inch-6th-generation-_de.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_dark_iPad-Pro-12-9-inch-6th-generation-_de.1.png"; sourceTree = "<group>"; };
-		2CD261BD2CFDC5E900A040A7 /* testWelcomeScreen_dark_iPad-Pro-12-9-inch-6th-generation-_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_dark_iPad-Pro-12-9-inch-6th-generation-_en.1.png"; sourceTree = "<group>"; };
-		2CD261BE2CFDC5E900A040A7 /* testWelcomeScreen_dark_iPad-Pro-12-9-inch-6th-generation-_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_dark_iPad-Pro-12-9-inch-6th-generation-_es.1.png"; sourceTree = "<group>"; };
-		2CD261BF2CFDC5E900A040A7 /* testWelcomeScreen_dark_iPad-Pro-12-9-inch-6th-generation-_it.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_dark_iPad-Pro-12-9-inch-6th-generation-_it.1.png"; sourceTree = "<group>"; };
-		2CD261C02CFDC5E900A040A7 /* testWelcomeScreen_dark_iPad-Pro-12-9-inch-6th-generation-_nl.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_dark_iPad-Pro-12-9-inch-6th-generation-_nl.1.png"; sourceTree = "<group>"; };
-		2CD261C12CFDC5E900A040A7 /* testWelcomeScreen_dark_iPhone-14-Pro_de.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_dark_iPhone-14-Pro_de.1.png"; sourceTree = "<group>"; };
-		2CD261C22CFDC5E900A040A7 /* testWelcomeScreen_dark_iPhone-14-Pro_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_dark_iPhone-14-Pro_en.1.png"; sourceTree = "<group>"; };
-		2CD261C32CFDC5E900A040A7 /* testWelcomeScreen_dark_iPhone-14-Pro_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_dark_iPhone-14-Pro_es.1.png"; sourceTree = "<group>"; };
-		2CD261C42CFDC5E900A040A7 /* testWelcomeScreen_dark_iPhone-14-Pro_it.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_dark_iPhone-14-Pro_it.1.png"; sourceTree = "<group>"; };
-		2CD261C52CFDC5E900A040A7 /* testWelcomeScreen_dark_iPhone-14-Pro_nl.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_dark_iPhone-14-Pro_nl.1.png"; sourceTree = "<group>"; };
-		2CD261C62CFDC5E900A040A7 /* testWelcomeScreen_dark_iPhone-14-Pro-Max_de.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_dark_iPhone-14-Pro-Max_de.1.png"; sourceTree = "<group>"; };
-		2CD261C72CFDC5E900A040A7 /* testWelcomeScreen_dark_iPhone-14-Pro-Max_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_dark_iPhone-14-Pro-Max_en.1.png"; sourceTree = "<group>"; };
-		2CD261C82CFDC5E900A040A7 /* testWelcomeScreen_dark_iPhone-14-Pro-Max_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_dark_iPhone-14-Pro-Max_es.1.png"; sourceTree = "<group>"; };
-		2CD261C92CFDC5E900A040A7 /* testWelcomeScreen_dark_iPhone-14-Pro-Max_it.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_dark_iPhone-14-Pro-Max_it.1.png"; sourceTree = "<group>"; };
-		2CD261CA2CFDC5E900A040A7 /* testWelcomeScreen_dark_iPhone-14-Pro-Max_nl.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_dark_iPhone-14-Pro-Max_nl.1.png"; sourceTree = "<group>"; };
-		2CD261CB2CFDC5E900A040A7 /* testWelcomeScreen_dark_iPhone-SE-3rd-generation-_de.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_dark_iPhone-SE-3rd-generation-_de.1.png"; sourceTree = "<group>"; };
-		2CD261CC2CFDC5E900A040A7 /* testWelcomeScreen_dark_iPhone-SE-3rd-generation-_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_dark_iPhone-SE-3rd-generation-_en.1.png"; sourceTree = "<group>"; };
-		2CD261CD2CFDC5E900A040A7 /* testWelcomeScreen_dark_iPhone-SE-3rd-generation-_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_dark_iPhone-SE-3rd-generation-_es.1.png"; sourceTree = "<group>"; };
-		2CD261CE2CFDC5E900A040A7 /* testWelcomeScreen_dark_iPhone-SE-3rd-generation-_it.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_dark_iPhone-SE-3rd-generation-_it.1.png"; sourceTree = "<group>"; };
-		2CD261CF2CFDC5E900A040A7 /* testWelcomeScreen_dark_iPhone-SE-3rd-generation-_nl.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_dark_iPhone-SE-3rd-generation-_nl.1.png"; sourceTree = "<group>"; };
-		2CD261D02CFDC5E900A040A7 /* testWelcomeScreen_light_iPad-Pro-12-9-inch-6th-generation-_de.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_light_iPad-Pro-12-9-inch-6th-generation-_de.1.png"; sourceTree = "<group>"; };
-		2CD261D12CFDC5E900A040A7 /* testWelcomeScreen_light_iPad-Pro-12-9-inch-6th-generation-_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_light_iPad-Pro-12-9-inch-6th-generation-_en.1.png"; sourceTree = "<group>"; };
-		2CD261D22CFDC5E900A040A7 /* testWelcomeScreen_light_iPad-Pro-12-9-inch-6th-generation-_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_light_iPad-Pro-12-9-inch-6th-generation-_es.1.png"; sourceTree = "<group>"; };
-		2CD261D32CFDC5E900A040A7 /* testWelcomeScreen_light_iPad-Pro-12-9-inch-6th-generation-_it.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_light_iPad-Pro-12-9-inch-6th-generation-_it.1.png"; sourceTree = "<group>"; };
-		2CD261D42CFDC5E900A040A7 /* testWelcomeScreen_light_iPad-Pro-12-9-inch-6th-generation-_nl.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_light_iPad-Pro-12-9-inch-6th-generation-_nl.1.png"; sourceTree = "<group>"; };
-		2CD261D52CFDC5E900A040A7 /* testWelcomeScreen_light_iPhone-14-Pro_de.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_light_iPhone-14-Pro_de.1.png"; sourceTree = "<group>"; };
-		2CD261D62CFDC5E900A040A7 /* testWelcomeScreen_light_iPhone-14-Pro_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_light_iPhone-14-Pro_en.1.png"; sourceTree = "<group>"; };
-		2CD261D72CFDC5E900A040A7 /* testWelcomeScreen_light_iPhone-14-Pro_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_light_iPhone-14-Pro_es.1.png"; sourceTree = "<group>"; };
-		2CD261D82CFDC5E900A040A7 /* testWelcomeScreen_light_iPhone-14-Pro_it.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_light_iPhone-14-Pro_it.1.png"; sourceTree = "<group>"; };
-		2CD261D92CFDC5E900A040A7 /* testWelcomeScreen_light_iPhone-14-Pro_nl.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_light_iPhone-14-Pro_nl.1.png"; sourceTree = "<group>"; };
-		2CD261DA2CFDC5E900A040A7 /* testWelcomeScreen_light_iPhone-14-Pro-Max_de.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_light_iPhone-14-Pro-Max_de.1.png"; sourceTree = "<group>"; };
-		2CD261DB2CFDC5E900A040A7 /* testWelcomeScreen_light_iPhone-14-Pro-Max_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_light_iPhone-14-Pro-Max_en.1.png"; sourceTree = "<group>"; };
-		2CD261DC2CFDC5E900A040A7 /* testWelcomeScreen_light_iPhone-14-Pro-Max_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_light_iPhone-14-Pro-Max_es.1.png"; sourceTree = "<group>"; };
-		2CD261DD2CFDC5E900A040A7 /* testWelcomeScreen_light_iPhone-14-Pro-Max_it.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_light_iPhone-14-Pro-Max_it.1.png"; sourceTree = "<group>"; };
-		2CD261DE2CFDC5E900A040A7 /* testWelcomeScreen_light_iPhone-14-Pro-Max_nl.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_light_iPhone-14-Pro-Max_nl.1.png"; sourceTree = "<group>"; };
-		2CD261DF2CFDC5E900A040A7 /* testWelcomeScreen_light_iPhone-SE-3rd-generation-_de.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_light_iPhone-SE-3rd-generation-_de.1.png"; sourceTree = "<group>"; };
-		2CD261E02CFDC5E900A040A7 /* testWelcomeScreen_light_iPhone-SE-3rd-generation-_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_light_iPhone-SE-3rd-generation-_en.1.png"; sourceTree = "<group>"; };
-		2CD261E12CFDC5E900A040A7 /* testWelcomeScreen_light_iPhone-SE-3rd-generation-_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_light_iPhone-SE-3rd-generation-_es.1.png"; sourceTree = "<group>"; };
-		2CD261E22CFDC5E900A040A7 /* testWelcomeScreen_light_iPhone-SE-3rd-generation-_it.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_light_iPhone-SE-3rd-generation-_it.1.png"; sourceTree = "<group>"; };
-		2CD261E32CFDC5E900A040A7 /* testWelcomeScreen_light_iPhone-SE-3rd-generation-_nl.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_light_iPhone-SE-3rd-generation-_nl.1.png"; sourceTree = "<group>"; };
-		2CD261E42CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPad-Pro-12-9-inch-6th-generation-_de.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_1_dark_iPad-Pro-12-9-inch-6th-generation-_de.1.png"; sourceTree = "<group>"; };
-		2CD261E52CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPad-Pro-12-9-inch-6th-generation-_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_1_dark_iPad-Pro-12-9-inch-6th-generation-_en.1.png"; sourceTree = "<group>"; };
-		2CD261E62CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPad-Pro-12-9-inch-6th-generation-_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_1_dark_iPad-Pro-12-9-inch-6th-generation-_es.1.png"; sourceTree = "<group>"; };
-		2CD261E72CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPad-Pro-12-9-inch-6th-generation-_it.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_1_dark_iPad-Pro-12-9-inch-6th-generation-_it.1.png"; sourceTree = "<group>"; };
-		2CD261E82CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPad-Pro-12-9-inch-6th-generation-_nl.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_1_dark_iPad-Pro-12-9-inch-6th-generation-_nl.1.png"; sourceTree = "<group>"; };
-		2CD261E92CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPhone-14-Pro_de.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_1_dark_iPhone-14-Pro_de.1.png"; sourceTree = "<group>"; };
-		2CD261EA2CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPhone-14-Pro_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_1_dark_iPhone-14-Pro_en.1.png"; sourceTree = "<group>"; };
-		2CD261EB2CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPhone-14-Pro_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_1_dark_iPhone-14-Pro_es.1.png"; sourceTree = "<group>"; };
-		2CD261EC2CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPhone-14-Pro_it.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_1_dark_iPhone-14-Pro_it.1.png"; sourceTree = "<group>"; };
-		2CD261ED2CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPhone-14-Pro_nl.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_1_dark_iPhone-14-Pro_nl.1.png"; sourceTree = "<group>"; };
-		2CD261EE2CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPhone-14-Pro-Max_de.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_1_dark_iPhone-14-Pro-Max_de.1.png"; sourceTree = "<group>"; };
-		2CD261EF2CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPhone-14-Pro-Max_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_1_dark_iPhone-14-Pro-Max_en.1.png"; sourceTree = "<group>"; };
-		2CD261F02CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPhone-14-Pro-Max_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_1_dark_iPhone-14-Pro-Max_es.1.png"; sourceTree = "<group>"; };
-		2CD261F12CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPhone-14-Pro-Max_it.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_1_dark_iPhone-14-Pro-Max_it.1.png"; sourceTree = "<group>"; };
-		2CD261F22CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPhone-14-Pro-Max_nl.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_1_dark_iPhone-14-Pro-Max_nl.1.png"; sourceTree = "<group>"; };
-		2CD261F32CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPhone-SE-3rd-generation-_de.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_1_dark_iPhone-SE-3rd-generation-_de.1.png"; sourceTree = "<group>"; };
-		2CD261F42CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPhone-SE-3rd-generation-_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_1_dark_iPhone-SE-3rd-generation-_en.1.png"; sourceTree = "<group>"; };
-		2CD261F52CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPhone-SE-3rd-generation-_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_1_dark_iPhone-SE-3rd-generation-_es.1.png"; sourceTree = "<group>"; };
-		2CD261F62CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPhone-SE-3rd-generation-_it.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_1_dark_iPhone-SE-3rd-generation-_it.1.png"; sourceTree = "<group>"; };
-		2CD261F72CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPhone-SE-3rd-generation-_nl.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_1_dark_iPhone-SE-3rd-generation-_nl.1.png"; sourceTree = "<group>"; };
-		2CD261F82CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPad-Pro-12-9-inch-6th-generation-_de.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_1_light_iPad-Pro-12-9-inch-6th-generation-_de.1.png"; sourceTree = "<group>"; };
-		2CD261F92CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPad-Pro-12-9-inch-6th-generation-_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_1_light_iPad-Pro-12-9-inch-6th-generation-_en.1.png"; sourceTree = "<group>"; };
-		2CD261FA2CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPad-Pro-12-9-inch-6th-generation-_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_1_light_iPad-Pro-12-9-inch-6th-generation-_es.1.png"; sourceTree = "<group>"; };
-		2CD261FB2CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPad-Pro-12-9-inch-6th-generation-_it.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_1_light_iPad-Pro-12-9-inch-6th-generation-_it.1.png"; sourceTree = "<group>"; };
-		2CD261FC2CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPad-Pro-12-9-inch-6th-generation-_nl.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_1_light_iPad-Pro-12-9-inch-6th-generation-_nl.1.png"; sourceTree = "<group>"; };
-		2CD261FD2CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPhone-14-Pro_de.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_1_light_iPhone-14-Pro_de.1.png"; sourceTree = "<group>"; };
-		2CD261FE2CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPhone-14-Pro_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_1_light_iPhone-14-Pro_en.1.png"; sourceTree = "<group>"; };
-		2CD261FF2CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPhone-14-Pro_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_1_light_iPhone-14-Pro_es.1.png"; sourceTree = "<group>"; };
-		2CD262002CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPhone-14-Pro_it.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_1_light_iPhone-14-Pro_it.1.png"; sourceTree = "<group>"; };
-		2CD262012CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPhone-14-Pro_nl.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_1_light_iPhone-14-Pro_nl.1.png"; sourceTree = "<group>"; };
-		2CD262022CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPhone-14-Pro-Max_de.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_1_light_iPhone-14-Pro-Max_de.1.png"; sourceTree = "<group>"; };
-		2CD262032CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPhone-14-Pro-Max_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_1_light_iPhone-14-Pro-Max_en.1.png"; sourceTree = "<group>"; };
-		2CD262042CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPhone-14-Pro-Max_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_1_light_iPhone-14-Pro-Max_es.1.png"; sourceTree = "<group>"; };
-		2CD262052CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPhone-14-Pro-Max_it.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_1_light_iPhone-14-Pro-Max_it.1.png"; sourceTree = "<group>"; };
-		2CD262062CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPhone-14-Pro-Max_nl.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_1_light_iPhone-14-Pro-Max_nl.1.png"; sourceTree = "<group>"; };
-		2CD262072CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPhone-SE-3rd-generation-_de.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_1_light_iPhone-SE-3rd-generation-_de.1.png"; sourceTree = "<group>"; };
-		2CD262082CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPhone-SE-3rd-generation-_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_1_light_iPhone-SE-3rd-generation-_en.1.png"; sourceTree = "<group>"; };
-		2CD262092CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPhone-SE-3rd-generation-_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_1_light_iPhone-SE-3rd-generation-_es.1.png"; sourceTree = "<group>"; };
-		2CD2620A2CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPhone-SE-3rd-generation-_it.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_1_light_iPhone-SE-3rd-generation-_it.1.png"; sourceTree = "<group>"; };
-		2CD2620B2CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPhone-SE-3rd-generation-_nl.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_1_light_iPhone-SE-3rd-generation-_nl.1.png"; sourceTree = "<group>"; };
-		2CD2620C2CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPad-Pro-12-9-inch-6th-generation-_de.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_2_dark_iPad-Pro-12-9-inch-6th-generation-_de.1.png"; sourceTree = "<group>"; };
-		2CD2620D2CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPad-Pro-12-9-inch-6th-generation-_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_2_dark_iPad-Pro-12-9-inch-6th-generation-_en.1.png"; sourceTree = "<group>"; };
-		2CD2620E2CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPad-Pro-12-9-inch-6th-generation-_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_2_dark_iPad-Pro-12-9-inch-6th-generation-_es.1.png"; sourceTree = "<group>"; };
-		2CD2620F2CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPad-Pro-12-9-inch-6th-generation-_it.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_2_dark_iPad-Pro-12-9-inch-6th-generation-_it.1.png"; sourceTree = "<group>"; };
-		2CD262102CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPad-Pro-12-9-inch-6th-generation-_nl.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_2_dark_iPad-Pro-12-9-inch-6th-generation-_nl.1.png"; sourceTree = "<group>"; };
-		2CD262112CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPhone-14-Pro_de.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_2_dark_iPhone-14-Pro_de.1.png"; sourceTree = "<group>"; };
-		2CD262122CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPhone-14-Pro_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_2_dark_iPhone-14-Pro_en.1.png"; sourceTree = "<group>"; };
-		2CD262132CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPhone-14-Pro_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_2_dark_iPhone-14-Pro_es.1.png"; sourceTree = "<group>"; };
-		2CD262142CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPhone-14-Pro_it.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_2_dark_iPhone-14-Pro_it.1.png"; sourceTree = "<group>"; };
-		2CD262152CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPhone-14-Pro_nl.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_2_dark_iPhone-14-Pro_nl.1.png"; sourceTree = "<group>"; };
-		2CD262162CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPhone-14-Pro-Max_de.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_2_dark_iPhone-14-Pro-Max_de.1.png"; sourceTree = "<group>"; };
-		2CD262172CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPhone-14-Pro-Max_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_2_dark_iPhone-14-Pro-Max_en.1.png"; sourceTree = "<group>"; };
-		2CD262182CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPhone-14-Pro-Max_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_2_dark_iPhone-14-Pro-Max_es.1.png"; sourceTree = "<group>"; };
-		2CD262192CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPhone-14-Pro-Max_it.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_2_dark_iPhone-14-Pro-Max_it.1.png"; sourceTree = "<group>"; };
-		2CD2621A2CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPhone-14-Pro-Max_nl.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_2_dark_iPhone-14-Pro-Max_nl.1.png"; sourceTree = "<group>"; };
-		2CD2621B2CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPhone-SE-3rd-generation-_de.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_2_dark_iPhone-SE-3rd-generation-_de.1.png"; sourceTree = "<group>"; };
-		2CD2621C2CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPhone-SE-3rd-generation-_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_2_dark_iPhone-SE-3rd-generation-_en.1.png"; sourceTree = "<group>"; };
-		2CD2621D2CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPhone-SE-3rd-generation-_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_2_dark_iPhone-SE-3rd-generation-_es.1.png"; sourceTree = "<group>"; };
-		2CD2621E2CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPhone-SE-3rd-generation-_it.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_2_dark_iPhone-SE-3rd-generation-_it.1.png"; sourceTree = "<group>"; };
-		2CD2621F2CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPhone-SE-3rd-generation-_nl.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_2_dark_iPhone-SE-3rd-generation-_nl.1.png"; sourceTree = "<group>"; };
-		2CD262202CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPad-Pro-12-9-inch-6th-generation-_de.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_2_light_iPad-Pro-12-9-inch-6th-generation-_de.1.png"; sourceTree = "<group>"; };
-		2CD262212CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPad-Pro-12-9-inch-6th-generation-_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_2_light_iPad-Pro-12-9-inch-6th-generation-_en.1.png"; sourceTree = "<group>"; };
-		2CD262222CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPad-Pro-12-9-inch-6th-generation-_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_2_light_iPad-Pro-12-9-inch-6th-generation-_es.1.png"; sourceTree = "<group>"; };
-		2CD262232CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPad-Pro-12-9-inch-6th-generation-_it.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_2_light_iPad-Pro-12-9-inch-6th-generation-_it.1.png"; sourceTree = "<group>"; };
-		2CD262242CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPad-Pro-12-9-inch-6th-generation-_nl.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_2_light_iPad-Pro-12-9-inch-6th-generation-_nl.1.png"; sourceTree = "<group>"; };
-		2CD262252CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPhone-14-Pro_de.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_2_light_iPhone-14-Pro_de.1.png"; sourceTree = "<group>"; };
-		2CD262262CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPhone-14-Pro_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_2_light_iPhone-14-Pro_en.1.png"; sourceTree = "<group>"; };
-		2CD262272CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPhone-14-Pro_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_2_light_iPhone-14-Pro_es.1.png"; sourceTree = "<group>"; };
-		2CD262282CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPhone-14-Pro_it.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_2_light_iPhone-14-Pro_it.1.png"; sourceTree = "<group>"; };
-		2CD262292CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPhone-14-Pro_nl.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_2_light_iPhone-14-Pro_nl.1.png"; sourceTree = "<group>"; };
-		2CD2622A2CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPhone-14-Pro-Max_de.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_2_light_iPhone-14-Pro-Max_de.1.png"; sourceTree = "<group>"; };
-		2CD2622B2CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPhone-14-Pro-Max_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_2_light_iPhone-14-Pro-Max_en.1.png"; sourceTree = "<group>"; };
-		2CD2622C2CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPhone-14-Pro-Max_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_2_light_iPhone-14-Pro-Max_es.1.png"; sourceTree = "<group>"; };
-		2CD2622D2CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPhone-14-Pro-Max_it.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_2_light_iPhone-14-Pro-Max_it.1.png"; sourceTree = "<group>"; };
-		2CD2622E2CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPhone-14-Pro-Max_nl.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_2_light_iPhone-14-Pro-Max_nl.1.png"; sourceTree = "<group>"; };
-		2CD2622F2CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPhone-SE-3rd-generation-_de.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_2_light_iPhone-SE-3rd-generation-_de.1.png"; sourceTree = "<group>"; };
-		2CD262302CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPhone-SE-3rd-generation-_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_2_light_iPhone-SE-3rd-generation-_en.1.png"; sourceTree = "<group>"; };
-		2CD262312CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPhone-SE-3rd-generation-_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_2_light_iPhone-SE-3rd-generation-_es.1.png"; sourceTree = "<group>"; };
-		2CD262322CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPhone-SE-3rd-generation-_it.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_2_light_iPhone-SE-3rd-generation-_it.1.png"; sourceTree = "<group>"; };
-		2CD262332CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPhone-SE-3rd-generation-_nl.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_2_light_iPhone-SE-3rd-generation-_nl.1.png"; sourceTree = "<group>"; };
-		2CD262342CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPad-Pro-12-9-inch-6th-generation-_de.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_3_dark_iPad-Pro-12-9-inch-6th-generation-_de.1.png"; sourceTree = "<group>"; };
-		2CD262352CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPad-Pro-12-9-inch-6th-generation-_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_3_dark_iPad-Pro-12-9-inch-6th-generation-_en.1.png"; sourceTree = "<group>"; };
-		2CD262362CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPad-Pro-12-9-inch-6th-generation-_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_3_dark_iPad-Pro-12-9-inch-6th-generation-_es.1.png"; sourceTree = "<group>"; };
-		2CD262372CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPad-Pro-12-9-inch-6th-generation-_it.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_3_dark_iPad-Pro-12-9-inch-6th-generation-_it.1.png"; sourceTree = "<group>"; };
-		2CD262382CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPad-Pro-12-9-inch-6th-generation-_nl.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_3_dark_iPad-Pro-12-9-inch-6th-generation-_nl.1.png"; sourceTree = "<group>"; };
-		2CD262392CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPhone-14-Pro_de.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_3_dark_iPhone-14-Pro_de.1.png"; sourceTree = "<group>"; };
-		2CD2623A2CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPhone-14-Pro_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_3_dark_iPhone-14-Pro_en.1.png"; sourceTree = "<group>"; };
-		2CD2623B2CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPhone-14-Pro_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_3_dark_iPhone-14-Pro_es.1.png"; sourceTree = "<group>"; };
-		2CD2623C2CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPhone-14-Pro_it.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_3_dark_iPhone-14-Pro_it.1.png"; sourceTree = "<group>"; };
-		2CD2623D2CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPhone-14-Pro_nl.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_3_dark_iPhone-14-Pro_nl.1.png"; sourceTree = "<group>"; };
-		2CD2623E2CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPhone-14-Pro-Max_de.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_3_dark_iPhone-14-Pro-Max_de.1.png"; sourceTree = "<group>"; };
-		2CD2623F2CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPhone-14-Pro-Max_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_3_dark_iPhone-14-Pro-Max_en.1.png"; sourceTree = "<group>"; };
-		2CD262402CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPhone-14-Pro-Max_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_3_dark_iPhone-14-Pro-Max_es.1.png"; sourceTree = "<group>"; };
-		2CD262412CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPhone-14-Pro-Max_it.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_3_dark_iPhone-14-Pro-Max_it.1.png"; sourceTree = "<group>"; };
-		2CD262422CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPhone-14-Pro-Max_nl.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_3_dark_iPhone-14-Pro-Max_nl.1.png"; sourceTree = "<group>"; };
-		2CD262432CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPhone-SE-3rd-generation-_de.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_3_dark_iPhone-SE-3rd-generation-_de.1.png"; sourceTree = "<group>"; };
-		2CD262442CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPhone-SE-3rd-generation-_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_3_dark_iPhone-SE-3rd-generation-_en.1.png"; sourceTree = "<group>"; };
-		2CD262452CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPhone-SE-3rd-generation-_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_3_dark_iPhone-SE-3rd-generation-_es.1.png"; sourceTree = "<group>"; };
-		2CD262462CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPhone-SE-3rd-generation-_it.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_3_dark_iPhone-SE-3rd-generation-_it.1.png"; sourceTree = "<group>"; };
-		2CD262472CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPhone-SE-3rd-generation-_nl.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_3_dark_iPhone-SE-3rd-generation-_nl.1.png"; sourceTree = "<group>"; };
-		2CD262482CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPad-Pro-12-9-inch-6th-generation-_de.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_3_light_iPad-Pro-12-9-inch-6th-generation-_de.1.png"; sourceTree = "<group>"; };
-		2CD262492CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPad-Pro-12-9-inch-6th-generation-_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_3_light_iPad-Pro-12-9-inch-6th-generation-_en.1.png"; sourceTree = "<group>"; };
-		2CD2624A2CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPad-Pro-12-9-inch-6th-generation-_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_3_light_iPad-Pro-12-9-inch-6th-generation-_es.1.png"; sourceTree = "<group>"; };
-		2CD2624B2CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPad-Pro-12-9-inch-6th-generation-_it.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_3_light_iPad-Pro-12-9-inch-6th-generation-_it.1.png"; sourceTree = "<group>"; };
-		2CD2624C2CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPad-Pro-12-9-inch-6th-generation-_nl.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_3_light_iPad-Pro-12-9-inch-6th-generation-_nl.1.png"; sourceTree = "<group>"; };
-		2CD2624D2CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPhone-14-Pro_de.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_3_light_iPhone-14-Pro_de.1.png"; sourceTree = "<group>"; };
-		2CD2624E2CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPhone-14-Pro_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_3_light_iPhone-14-Pro_en.1.png"; sourceTree = "<group>"; };
-		2CD2624F2CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPhone-14-Pro_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_3_light_iPhone-14-Pro_es.1.png"; sourceTree = "<group>"; };
-		2CD262502CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPhone-14-Pro_it.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_3_light_iPhone-14-Pro_it.1.png"; sourceTree = "<group>"; };
-		2CD262512CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPhone-14-Pro_nl.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_3_light_iPhone-14-Pro_nl.1.png"; sourceTree = "<group>"; };
-		2CD262522CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPhone-14-Pro-Max_de.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_3_light_iPhone-14-Pro-Max_de.1.png"; sourceTree = "<group>"; };
-		2CD262532CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPhone-14-Pro-Max_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_3_light_iPhone-14-Pro-Max_en.1.png"; sourceTree = "<group>"; };
-		2CD262542CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPhone-14-Pro-Max_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_3_light_iPhone-14-Pro-Max_es.1.png"; sourceTree = "<group>"; };
-		2CD262552CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPhone-14-Pro-Max_it.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_3_light_iPhone-14-Pro-Max_it.1.png"; sourceTree = "<group>"; };
-		2CD262562CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPhone-14-Pro-Max_nl.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_3_light_iPhone-14-Pro-Max_nl.1.png"; sourceTree = "<group>"; };
-		2CD262572CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPhone-SE-3rd-generation-_de.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_3_light_iPhone-SE-3rd-generation-_de.1.png"; sourceTree = "<group>"; };
-		2CD262582CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPhone-SE-3rd-generation-_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_3_light_iPhone-SE-3rd-generation-_en.1.png"; sourceTree = "<group>"; };
-		2CD262592CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPhone-SE-3rd-generation-_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_3_light_iPhone-SE-3rd-generation-_es.1.png"; sourceTree = "<group>"; };
-		2CD2625A2CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPhone-SE-3rd-generation-_it.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_3_light_iPhone-SE-3rd-generation-_it.1.png"; sourceTree = "<group>"; };
-		2CD2625B2CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPhone-SE-3rd-generation-_nl.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_3_light_iPhone-SE-3rd-generation-_nl.1.png"; sourceTree = "<group>"; };
-		2CD2625C2CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPad-Pro-12-9-inch-6th-generation-_de.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_4_dark_iPad-Pro-12-9-inch-6th-generation-_de.1.png"; sourceTree = "<group>"; };
-		2CD2625D2CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPad-Pro-12-9-inch-6th-generation-_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_4_dark_iPad-Pro-12-9-inch-6th-generation-_en.1.png"; sourceTree = "<group>"; };
-		2CD2625E2CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPad-Pro-12-9-inch-6th-generation-_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_4_dark_iPad-Pro-12-9-inch-6th-generation-_es.1.png"; sourceTree = "<group>"; };
-		2CD2625F2CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPad-Pro-12-9-inch-6th-generation-_it.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_4_dark_iPad-Pro-12-9-inch-6th-generation-_it.1.png"; sourceTree = "<group>"; };
-		2CD262602CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPad-Pro-12-9-inch-6th-generation-_nl.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_4_dark_iPad-Pro-12-9-inch-6th-generation-_nl.1.png"; sourceTree = "<group>"; };
-		2CD262612CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPhone-14-Pro_de.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_4_dark_iPhone-14-Pro_de.1.png"; sourceTree = "<group>"; };
-		2CD262622CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPhone-14-Pro_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_4_dark_iPhone-14-Pro_en.1.png"; sourceTree = "<group>"; };
-		2CD262632CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPhone-14-Pro_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_4_dark_iPhone-14-Pro_es.1.png"; sourceTree = "<group>"; };
-		2CD262642CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPhone-14-Pro_it.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_4_dark_iPhone-14-Pro_it.1.png"; sourceTree = "<group>"; };
-		2CD262652CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPhone-14-Pro_nl.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_4_dark_iPhone-14-Pro_nl.1.png"; sourceTree = "<group>"; };
-		2CD262662CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPhone-14-Pro-Max_de.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_4_dark_iPhone-14-Pro-Max_de.1.png"; sourceTree = "<group>"; };
-		2CD262672CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPhone-14-Pro-Max_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_4_dark_iPhone-14-Pro-Max_en.1.png"; sourceTree = "<group>"; };
-		2CD262682CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPhone-14-Pro-Max_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_4_dark_iPhone-14-Pro-Max_es.1.png"; sourceTree = "<group>"; };
-		2CD262692CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPhone-14-Pro-Max_it.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_4_dark_iPhone-14-Pro-Max_it.1.png"; sourceTree = "<group>"; };
-		2CD2626A2CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPhone-14-Pro-Max_nl.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_4_dark_iPhone-14-Pro-Max_nl.1.png"; sourceTree = "<group>"; };
-		2CD2626B2CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPhone-SE-3rd-generation-_de.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_4_dark_iPhone-SE-3rd-generation-_de.1.png"; sourceTree = "<group>"; };
-		2CD2626C2CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPhone-SE-3rd-generation-_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_4_dark_iPhone-SE-3rd-generation-_en.1.png"; sourceTree = "<group>"; };
-		2CD2626D2CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPhone-SE-3rd-generation-_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_4_dark_iPhone-SE-3rd-generation-_es.1.png"; sourceTree = "<group>"; };
-		2CD2626E2CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPhone-SE-3rd-generation-_it.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_4_dark_iPhone-SE-3rd-generation-_it.1.png"; sourceTree = "<group>"; };
-		2CD2626F2CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPhone-SE-3rd-generation-_nl.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_4_dark_iPhone-SE-3rd-generation-_nl.1.png"; sourceTree = "<group>"; };
-		2CD262702CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPad-Pro-12-9-inch-6th-generation-_de.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_4_light_iPad-Pro-12-9-inch-6th-generation-_de.1.png"; sourceTree = "<group>"; };
-		2CD262712CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPad-Pro-12-9-inch-6th-generation-_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_4_light_iPad-Pro-12-9-inch-6th-generation-_en.1.png"; sourceTree = "<group>"; };
-		2CD262722CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPad-Pro-12-9-inch-6th-generation-_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_4_light_iPad-Pro-12-9-inch-6th-generation-_es.1.png"; sourceTree = "<group>"; };
-		2CD262732CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPad-Pro-12-9-inch-6th-generation-_it.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_4_light_iPad-Pro-12-9-inch-6th-generation-_it.1.png"; sourceTree = "<group>"; };
-		2CD262742CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPad-Pro-12-9-inch-6th-generation-_nl.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_4_light_iPad-Pro-12-9-inch-6th-generation-_nl.1.png"; sourceTree = "<group>"; };
-		2CD262752CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPhone-14-Pro_de.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_4_light_iPhone-14-Pro_de.1.png"; sourceTree = "<group>"; };
-		2CD262762CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPhone-14-Pro_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_4_light_iPhone-14-Pro_en.1.png"; sourceTree = "<group>"; };
-		2CD262772CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPhone-14-Pro_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_4_light_iPhone-14-Pro_es.1.png"; sourceTree = "<group>"; };
-		2CD262782CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPhone-14-Pro_it.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_4_light_iPhone-14-Pro_it.1.png"; sourceTree = "<group>"; };
-		2CD262792CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPhone-14-Pro_nl.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_4_light_iPhone-14-Pro_nl.1.png"; sourceTree = "<group>"; };
-		2CD2627A2CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPhone-14-Pro-Max_de.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_4_light_iPhone-14-Pro-Max_de.1.png"; sourceTree = "<group>"; };
-		2CD2627B2CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPhone-14-Pro-Max_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_4_light_iPhone-14-Pro-Max_en.1.png"; sourceTree = "<group>"; };
-		2CD2627C2CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPhone-14-Pro-Max_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_4_light_iPhone-14-Pro-Max_es.1.png"; sourceTree = "<group>"; };
-		2CD2627D2CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPhone-14-Pro-Max_it.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_4_light_iPhone-14-Pro-Max_it.1.png"; sourceTree = "<group>"; };
-		2CD2627E2CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPhone-14-Pro-Max_nl.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_4_light_iPhone-14-Pro-Max_nl.1.png"; sourceTree = "<group>"; };
-		2CD2627F2CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPhone-SE-3rd-generation-_de.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_4_light_iPhone-SE-3rd-generation-_de.1.png"; sourceTree = "<group>"; };
-		2CD262802CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPhone-SE-3rd-generation-_en.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_4_light_iPhone-SE-3rd-generation-_en.1.png"; sourceTree = "<group>"; };
-		2CD262812CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPhone-SE-3rd-generation-_es.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_4_light_iPhone-SE-3rd-generation-_es.1.png"; sourceTree = "<group>"; };
-		2CD262822CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPhone-SE-3rd-generation-_it.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_4_light_iPhone-SE-3rd-generation-_it.1.png"; sourceTree = "<group>"; };
-		2CD262832CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPhone-SE-3rd-generation-_nl.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "testWelcomeScreen_step_4_light_iPhone-SE-3rd-generation-_nl.1.png"; sourceTree = "<group>"; };
 		2CD262862CFDC5E900A040A7 /* OnboardingTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingTests.swift; sourceTree = "<group>"; };
 		2CD262882CFDC5E900A040A7 /* DeviceType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceType.swift; sourceTree = "<group>"; };
 		2CD262892CFDC5E900A040A7 /* EcosiaSnapshotTests.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EcosiaSnapshotTests.xctestplan; sourceTree = "<group>"; };
@@ -3230,8 +2723,6 @@
 		2CD2628F2CFDC5E900A040A7 /* SnapshotTestHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnapshotTestHelper.swift; sourceTree = "<group>"; };
 		2CD262902CFDC5E900A040A7 /* String+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Extension.swift"; sourceTree = "<group>"; };
 		2CD262922CFDC5E900A040A7 /* VersionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VersionTests.swift; sourceTree = "<group>"; };
-		2CD262932CFDC5E900A040A7 /* NTPComponentTests_tests.xcresult */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = NTPComponentTests_tests.xcresult; sourceTree = "<group>"; };
-		2CD262942CFDC5E900A040A7 /* OnboardingTests_tests.xcresult */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = OnboardingTests_tests.xcresult; sourceTree = "<group>"; };
 		2CD262962CFDC5E900A040A7 /* WhatsNewLocalDataProviderTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WhatsNewLocalDataProviderTests.swift; sourceTree = "<group>"; };
 		2CD262972CFDC5EA00A040A7 /* AppDelegateFeatureManagementIntegrationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegateFeatureManagementIntegrationTests.swift; sourceTree = "<group>"; };
 		2CD262992CFDC5EA00A040A7 /* EcosiaInstallTypeTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EcosiaInstallTypeTests.swift; sourceTree = "<group>"; };
@@ -8824,7 +8315,6 @@
 				2CD262A22CFDC5EA00A040A7 /* ClimateImpactCounter */,
 				2CD262982CFDC5EA00A040A7 /* IntegrationTests */,
 				2CD2629C2CFDC5EA00A040A7 /* Mocks */,
-				2CD262952CFDC5E900A040A7 /* Results */,
 				2CD262912CFDC5E900A040A7 /* SnapshotTests */,
 				2CD2629F2CFDC5EA00A040A7 /* EcosiaHomeViewModelTests.swift */,
 				2CD262992CFDC5EA00A040A7 /* EcosiaInstallTypeTests.swift */,
@@ -9631,298 +9121,18 @@
 			path = Mocks;
 			sourceTree = "<group>";
 		};
-		2CD261B72CFDC5E900A040A7 /* NTPComponentTests */ = {
-			isa = PBXGroup;
-			children = (
-				2CD261872CFDC5E900A040A7 /* testNTPAboutSection_financialreports_dark_iPhone-14-Pro_en.1.png */,
-				2CD261882CFDC5E900A040A7 /* testNTPAboutSection_financialreports_dark_iPhone-14-Pro_es.1.png */,
-				2CD261892CFDC5E900A040A7 /* testNTPAboutSection_financialreports_light_iPhone-14-Pro_en.1.png */,
-				2CD2618A2CFDC5E900A040A7 /* testNTPAboutSection_financialreports_light_iPhone-14-Pro_es.1.png */,
-				2CD2618B2CFDC5E900A040A7 /* testNTPAboutSection_privacy_dark_iPhone-14-Pro_en.1.png */,
-				2CD2618C2CFDC5E900A040A7 /* testNTPAboutSection_privacy_dark_iPhone-14-Pro_es.1.png */,
-				2CD2618D2CFDC5E900A040A7 /* testNTPAboutSection_privacy_light_iPhone-14-Pro_en.1.png */,
-				2CD2618E2CFDC5E900A040A7 /* testNTPAboutSection_privacy_light_iPhone-14-Pro_es.1.png */,
-				2CD2618F2CFDC5E900A040A7 /* testNTPAboutSection_treesupdate_dark_iPhone-14-Pro_en.1.png */,
-				2CD261902CFDC5E900A040A7 /* testNTPAboutSection_treesupdate_dark_iPhone-14-Pro_es.1.png */,
-				2CD261912CFDC5E900A040A7 /* testNTPAboutSection_treesupdate_light_iPhone-14-Pro_en.1.png */,
-				2CD261922CFDC5E900A040A7 /* testNTPAboutSection_treesupdate_light_iPhone-14-Pro_es.1.png */,
-				2CD261932CFDC5E900A040A7 /* testNTPBookmarkNudgeCell_dark_iPhone-14-Pro_en.1.png */,
-				2CD261942CFDC5E900A040A7 /* testNTPBookmarkNudgeCell_dark_iPhone-14-Pro_es.1.png */,
-				2CD261952CFDC5E900A040A7 /* testNTPBookmarkNudgeCell_light_iPhone-14-Pro_en.1.png */,
-				2CD261962CFDC5E900A040A7 /* testNTPBookmarkNudgeCell_light_iPhone-14-Pro_es.1.png */,
-				2CD261972CFDC5E900A040A7 /* testNTPCustomizationCell_dark_iPhone-14-Pro_en.1.png */,
-				2CD261982CFDC5E900A040A7 /* testNTPCustomizationCell_dark_iPhone-14-Pro_es.1.png */,
-				2CD261992CFDC5E900A040A7 /* testNTPCustomizationCell_light_iPhone-14-Pro_en.1.png */,
-				2CD2619A2CFDC5E900A040A7 /* testNTPCustomizationCell_light_iPhone-14-Pro_es.1.png */,
-				2CD2619B2CFDC5E900A040A7 /* testNTPLibraryCell_dark_iPhone-14-Pro_en.1.png */,
-				2CD2619C2CFDC5E900A040A7 /* testNTPLibraryCell_dark_iPhone-14-Pro_es.1.png */,
-				2CD2619D2CFDC5E900A040A7 /* testNTPLibraryCell_light_iPhone-14-Pro_en.1.png */,
-				2CD2619E2CFDC5E900A040A7 /* testNTPLibraryCell_light_iPhone-14-Pro_es.1.png */,
-				2CD2619F2CFDC5E900A040A7 /* testNTPLogoCell_dark_iPhone-14-Pro_en.1.png */,
-				2CD261A02CFDC5E900A040A7 /* testNTPLogoCell_dark_iPhone-14-Pro_es.1.png */,
-				2CD261A12CFDC5E900A040A7 /* testNTPLogoCell_light_iPhone-14-Pro_en.1.png */,
-				2CD261A22CFDC5E900A040A7 /* testNTPLogoCell_light_iPhone-14-Pro_es.1.png */,
-				2CD261A32CFDC5E900A040A7 /* testNTPNewsCell_dark_iPhone-14-Pro_en.1.png */,
-				2CD261A42CFDC5E900A040A7 /* testNTPNewsCell_dark_iPhone-14-Pro_es.1.png */,
-				2CD261A52CFDC5E900A040A7 /* testNTPNewsCell_light_iPhone-14-Pro_en.1.png */,
-				2CD261A62CFDC5E900A040A7 /* testNTPNewsCell_light_iPhone-14-Pro_es.1.png */,
-				2CD261A72CFDC5E900A040A7 /* testNTPReferralInvitesCell_multiple_invites_dark_iPhone-14-Pro_en.1.png */,
-				2CD261A82CFDC5E900A040A7 /* testNTPReferralInvitesCell_multiple_invites_dark_iPhone-14-Pro_es.1.png */,
-				2CD261A92CFDC5E900A040A7 /* testNTPReferralInvitesCell_multiple_invites_light_iPhone-14-Pro_en.1.png */,
-				2CD261AA2CFDC5E900A040A7 /* testNTPReferralInvitesCell_multiple_invites_light_iPhone-14-Pro_es.1.png */,
-				2CD261AB2CFDC5E900A040A7 /* testNTPReferralInvitesCell_single_invite_dark_iPhone-14-Pro_en.1.png */,
-				2CD261AC2CFDC5E900A040A7 /* testNTPReferralInvitesCell_single_invite_dark_iPhone-14-Pro_es.1.png */,
-				2CD261AD2CFDC5E900A040A7 /* testNTPReferralInvitesCell_single_invite_light_iPhone-14-Pro_en.1.png */,
-				2CD261AE2CFDC5E900A040A7 /* testNTPReferralInvitesCell_single_invite_light_iPhone-14-Pro_es.1.png */,
-				2CD261AF2CFDC5E900A040A7 /* testNTPTotalInvestedCell_dark_iPhone-14-Pro_en.1.png */,
-				2CD261B02CFDC5E900A040A7 /* testNTPTotalInvestedCell_dark_iPhone-14-Pro_es.1.png */,
-				2CD261B12CFDC5E900A040A7 /* testNTPTotalInvestedCell_light_iPhone-14-Pro_en.1.png */,
-				2CD261B22CFDC5E900A040A7 /* testNTPTotalInvestedCell_light_iPhone-14-Pro_es.1.png */,
-				2CD261B32CFDC5E900A040A7 /* testNTPTotalTreesCell_dark_iPhone-14-Pro_en.1.png */,
-				2CD261B42CFDC5E900A040A7 /* testNTPTotalTreesCell_dark_iPhone-14-Pro_es.1.png */,
-				2CD261B52CFDC5E900A040A7 /* testNTPTotalTreesCell_light_iPhone-14-Pro_en.1.png */,
-				2CD261B62CFDC5E900A040A7 /* testNTPTotalTreesCell_light_iPhone-14-Pro_es.1.png */,
-			);
-			path = NTPComponentTests;
-			sourceTree = "<group>";
-		};
-		2CD261B82CFDC5E900A040A7 /* __Snapshots__ */ = {
-			isa = PBXGroup;
-			children = (
-				2CD261B72CFDC5E900A040A7 /* NTPComponentTests */,
-			);
-			path = __Snapshots__;
-			sourceTree = "<group>";
-		};
 		2CD261BB2CFDC5E900A040A7 /* NTP */ = {
 			isa = PBXGroup;
 			children = (
-				2CD261B82CFDC5E900A040A7 /* __Snapshots__ */,
 				2CD261B92CFDC5E900A040A7 /* NTPComponentTests.swift */,
 				2CD261BA2CFDC5E900A040A7 /* NTPTests.swift */,
 			);
 			path = NTP;
 			sourceTree = "<group>";
 		};
-		2CD262842CFDC5E900A040A7 /* OnboardingTests */ = {
-			isa = PBXGroup;
-			children = (
-				2CD261BC2CFDC5E900A040A7 /* testWelcomeScreen_dark_iPad-Pro-12-9-inch-6th-generation-_de.1.png */,
-				2CD261BD2CFDC5E900A040A7 /* testWelcomeScreen_dark_iPad-Pro-12-9-inch-6th-generation-_en.1.png */,
-				2CD261BE2CFDC5E900A040A7 /* testWelcomeScreen_dark_iPad-Pro-12-9-inch-6th-generation-_es.1.png */,
-				2CD261BF2CFDC5E900A040A7 /* testWelcomeScreen_dark_iPad-Pro-12-9-inch-6th-generation-_it.1.png */,
-				2CD261C02CFDC5E900A040A7 /* testWelcomeScreen_dark_iPad-Pro-12-9-inch-6th-generation-_nl.1.png */,
-				2CD261C12CFDC5E900A040A7 /* testWelcomeScreen_dark_iPhone-14-Pro_de.1.png */,
-				2CD261C22CFDC5E900A040A7 /* testWelcomeScreen_dark_iPhone-14-Pro_en.1.png */,
-				2CD261C32CFDC5E900A040A7 /* testWelcomeScreen_dark_iPhone-14-Pro_es.1.png */,
-				2CD261C42CFDC5E900A040A7 /* testWelcomeScreen_dark_iPhone-14-Pro_it.1.png */,
-				2CD261C52CFDC5E900A040A7 /* testWelcomeScreen_dark_iPhone-14-Pro_nl.1.png */,
-				2CD261C62CFDC5E900A040A7 /* testWelcomeScreen_dark_iPhone-14-Pro-Max_de.1.png */,
-				2CD261C72CFDC5E900A040A7 /* testWelcomeScreen_dark_iPhone-14-Pro-Max_en.1.png */,
-				2CD261C82CFDC5E900A040A7 /* testWelcomeScreen_dark_iPhone-14-Pro-Max_es.1.png */,
-				2CD261C92CFDC5E900A040A7 /* testWelcomeScreen_dark_iPhone-14-Pro-Max_it.1.png */,
-				2CD261CA2CFDC5E900A040A7 /* testWelcomeScreen_dark_iPhone-14-Pro-Max_nl.1.png */,
-				2CD261CB2CFDC5E900A040A7 /* testWelcomeScreen_dark_iPhone-SE-3rd-generation-_de.1.png */,
-				2CD261CC2CFDC5E900A040A7 /* testWelcomeScreen_dark_iPhone-SE-3rd-generation-_en.1.png */,
-				2CD261CD2CFDC5E900A040A7 /* testWelcomeScreen_dark_iPhone-SE-3rd-generation-_es.1.png */,
-				2CD261CE2CFDC5E900A040A7 /* testWelcomeScreen_dark_iPhone-SE-3rd-generation-_it.1.png */,
-				2CD261CF2CFDC5E900A040A7 /* testWelcomeScreen_dark_iPhone-SE-3rd-generation-_nl.1.png */,
-				2CD261D02CFDC5E900A040A7 /* testWelcomeScreen_light_iPad-Pro-12-9-inch-6th-generation-_de.1.png */,
-				2CD261D12CFDC5E900A040A7 /* testWelcomeScreen_light_iPad-Pro-12-9-inch-6th-generation-_en.1.png */,
-				2CD261D22CFDC5E900A040A7 /* testWelcomeScreen_light_iPad-Pro-12-9-inch-6th-generation-_es.1.png */,
-				2CD261D32CFDC5E900A040A7 /* testWelcomeScreen_light_iPad-Pro-12-9-inch-6th-generation-_it.1.png */,
-				2CD261D42CFDC5E900A040A7 /* testWelcomeScreen_light_iPad-Pro-12-9-inch-6th-generation-_nl.1.png */,
-				2CD261D52CFDC5E900A040A7 /* testWelcomeScreen_light_iPhone-14-Pro_de.1.png */,
-				2CD261D62CFDC5E900A040A7 /* testWelcomeScreen_light_iPhone-14-Pro_en.1.png */,
-				2CD261D72CFDC5E900A040A7 /* testWelcomeScreen_light_iPhone-14-Pro_es.1.png */,
-				2CD261D82CFDC5E900A040A7 /* testWelcomeScreen_light_iPhone-14-Pro_it.1.png */,
-				2CD261D92CFDC5E900A040A7 /* testWelcomeScreen_light_iPhone-14-Pro_nl.1.png */,
-				2CD261DA2CFDC5E900A040A7 /* testWelcomeScreen_light_iPhone-14-Pro-Max_de.1.png */,
-				2CD261DB2CFDC5E900A040A7 /* testWelcomeScreen_light_iPhone-14-Pro-Max_en.1.png */,
-				2CD261DC2CFDC5E900A040A7 /* testWelcomeScreen_light_iPhone-14-Pro-Max_es.1.png */,
-				2CD261DD2CFDC5E900A040A7 /* testWelcomeScreen_light_iPhone-14-Pro-Max_it.1.png */,
-				2CD261DE2CFDC5E900A040A7 /* testWelcomeScreen_light_iPhone-14-Pro-Max_nl.1.png */,
-				2CD261DF2CFDC5E900A040A7 /* testWelcomeScreen_light_iPhone-SE-3rd-generation-_de.1.png */,
-				2CD261E02CFDC5E900A040A7 /* testWelcomeScreen_light_iPhone-SE-3rd-generation-_en.1.png */,
-				2CD261E12CFDC5E900A040A7 /* testWelcomeScreen_light_iPhone-SE-3rd-generation-_es.1.png */,
-				2CD261E22CFDC5E900A040A7 /* testWelcomeScreen_light_iPhone-SE-3rd-generation-_it.1.png */,
-				2CD261E32CFDC5E900A040A7 /* testWelcomeScreen_light_iPhone-SE-3rd-generation-_nl.1.png */,
-				2CD261E42CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPad-Pro-12-9-inch-6th-generation-_de.1.png */,
-				2CD261E52CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPad-Pro-12-9-inch-6th-generation-_en.1.png */,
-				2CD261E62CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPad-Pro-12-9-inch-6th-generation-_es.1.png */,
-				2CD261E72CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPad-Pro-12-9-inch-6th-generation-_it.1.png */,
-				2CD261E82CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPad-Pro-12-9-inch-6th-generation-_nl.1.png */,
-				2CD261E92CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPhone-14-Pro_de.1.png */,
-				2CD261EA2CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPhone-14-Pro_en.1.png */,
-				2CD261EB2CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPhone-14-Pro_es.1.png */,
-				2CD261EC2CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPhone-14-Pro_it.1.png */,
-				2CD261ED2CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPhone-14-Pro_nl.1.png */,
-				2CD261EE2CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPhone-14-Pro-Max_de.1.png */,
-				2CD261EF2CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPhone-14-Pro-Max_en.1.png */,
-				2CD261F02CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPhone-14-Pro-Max_es.1.png */,
-				2CD261F12CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPhone-14-Pro-Max_it.1.png */,
-				2CD261F22CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPhone-14-Pro-Max_nl.1.png */,
-				2CD261F32CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPhone-SE-3rd-generation-_de.1.png */,
-				2CD261F42CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPhone-SE-3rd-generation-_en.1.png */,
-				2CD261F52CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPhone-SE-3rd-generation-_es.1.png */,
-				2CD261F62CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPhone-SE-3rd-generation-_it.1.png */,
-				2CD261F72CFDC5E900A040A7 /* testWelcomeScreen_step_1_dark_iPhone-SE-3rd-generation-_nl.1.png */,
-				2CD261F82CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPad-Pro-12-9-inch-6th-generation-_de.1.png */,
-				2CD261F92CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPad-Pro-12-9-inch-6th-generation-_en.1.png */,
-				2CD261FA2CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPad-Pro-12-9-inch-6th-generation-_es.1.png */,
-				2CD261FB2CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPad-Pro-12-9-inch-6th-generation-_it.1.png */,
-				2CD261FC2CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPad-Pro-12-9-inch-6th-generation-_nl.1.png */,
-				2CD261FD2CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPhone-14-Pro_de.1.png */,
-				2CD261FE2CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPhone-14-Pro_en.1.png */,
-				2CD261FF2CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPhone-14-Pro_es.1.png */,
-				2CD262002CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPhone-14-Pro_it.1.png */,
-				2CD262012CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPhone-14-Pro_nl.1.png */,
-				2CD262022CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPhone-14-Pro-Max_de.1.png */,
-				2CD262032CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPhone-14-Pro-Max_en.1.png */,
-				2CD262042CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPhone-14-Pro-Max_es.1.png */,
-				2CD262052CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPhone-14-Pro-Max_it.1.png */,
-				2CD262062CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPhone-14-Pro-Max_nl.1.png */,
-				2CD262072CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPhone-SE-3rd-generation-_de.1.png */,
-				2CD262082CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPhone-SE-3rd-generation-_en.1.png */,
-				2CD262092CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPhone-SE-3rd-generation-_es.1.png */,
-				2CD2620A2CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPhone-SE-3rd-generation-_it.1.png */,
-				2CD2620B2CFDC5E900A040A7 /* testWelcomeScreen_step_1_light_iPhone-SE-3rd-generation-_nl.1.png */,
-				2CD2620C2CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPad-Pro-12-9-inch-6th-generation-_de.1.png */,
-				2CD2620D2CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPad-Pro-12-9-inch-6th-generation-_en.1.png */,
-				2CD2620E2CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPad-Pro-12-9-inch-6th-generation-_es.1.png */,
-				2CD2620F2CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPad-Pro-12-9-inch-6th-generation-_it.1.png */,
-				2CD262102CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPad-Pro-12-9-inch-6th-generation-_nl.1.png */,
-				2CD262112CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPhone-14-Pro_de.1.png */,
-				2CD262122CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPhone-14-Pro_en.1.png */,
-				2CD262132CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPhone-14-Pro_es.1.png */,
-				2CD262142CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPhone-14-Pro_it.1.png */,
-				2CD262152CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPhone-14-Pro_nl.1.png */,
-				2CD262162CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPhone-14-Pro-Max_de.1.png */,
-				2CD262172CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPhone-14-Pro-Max_en.1.png */,
-				2CD262182CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPhone-14-Pro-Max_es.1.png */,
-				2CD262192CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPhone-14-Pro-Max_it.1.png */,
-				2CD2621A2CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPhone-14-Pro-Max_nl.1.png */,
-				2CD2621B2CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPhone-SE-3rd-generation-_de.1.png */,
-				2CD2621C2CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPhone-SE-3rd-generation-_en.1.png */,
-				2CD2621D2CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPhone-SE-3rd-generation-_es.1.png */,
-				2CD2621E2CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPhone-SE-3rd-generation-_it.1.png */,
-				2CD2621F2CFDC5E900A040A7 /* testWelcomeScreen_step_2_dark_iPhone-SE-3rd-generation-_nl.1.png */,
-				2CD262202CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPad-Pro-12-9-inch-6th-generation-_de.1.png */,
-				2CD262212CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPad-Pro-12-9-inch-6th-generation-_en.1.png */,
-				2CD262222CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPad-Pro-12-9-inch-6th-generation-_es.1.png */,
-				2CD262232CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPad-Pro-12-9-inch-6th-generation-_it.1.png */,
-				2CD262242CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPad-Pro-12-9-inch-6th-generation-_nl.1.png */,
-				2CD262252CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPhone-14-Pro_de.1.png */,
-				2CD262262CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPhone-14-Pro_en.1.png */,
-				2CD262272CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPhone-14-Pro_es.1.png */,
-				2CD262282CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPhone-14-Pro_it.1.png */,
-				2CD262292CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPhone-14-Pro_nl.1.png */,
-				2CD2622A2CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPhone-14-Pro-Max_de.1.png */,
-				2CD2622B2CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPhone-14-Pro-Max_en.1.png */,
-				2CD2622C2CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPhone-14-Pro-Max_es.1.png */,
-				2CD2622D2CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPhone-14-Pro-Max_it.1.png */,
-				2CD2622E2CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPhone-14-Pro-Max_nl.1.png */,
-				2CD2622F2CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPhone-SE-3rd-generation-_de.1.png */,
-				2CD262302CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPhone-SE-3rd-generation-_en.1.png */,
-				2CD262312CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPhone-SE-3rd-generation-_es.1.png */,
-				2CD262322CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPhone-SE-3rd-generation-_it.1.png */,
-				2CD262332CFDC5E900A040A7 /* testWelcomeScreen_step_2_light_iPhone-SE-3rd-generation-_nl.1.png */,
-				2CD262342CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPad-Pro-12-9-inch-6th-generation-_de.1.png */,
-				2CD262352CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPad-Pro-12-9-inch-6th-generation-_en.1.png */,
-				2CD262362CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPad-Pro-12-9-inch-6th-generation-_es.1.png */,
-				2CD262372CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPad-Pro-12-9-inch-6th-generation-_it.1.png */,
-				2CD262382CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPad-Pro-12-9-inch-6th-generation-_nl.1.png */,
-				2CD262392CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPhone-14-Pro_de.1.png */,
-				2CD2623A2CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPhone-14-Pro_en.1.png */,
-				2CD2623B2CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPhone-14-Pro_es.1.png */,
-				2CD2623C2CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPhone-14-Pro_it.1.png */,
-				2CD2623D2CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPhone-14-Pro_nl.1.png */,
-				2CD2623E2CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPhone-14-Pro-Max_de.1.png */,
-				2CD2623F2CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPhone-14-Pro-Max_en.1.png */,
-				2CD262402CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPhone-14-Pro-Max_es.1.png */,
-				2CD262412CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPhone-14-Pro-Max_it.1.png */,
-				2CD262422CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPhone-14-Pro-Max_nl.1.png */,
-				2CD262432CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPhone-SE-3rd-generation-_de.1.png */,
-				2CD262442CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPhone-SE-3rd-generation-_en.1.png */,
-				2CD262452CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPhone-SE-3rd-generation-_es.1.png */,
-				2CD262462CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPhone-SE-3rd-generation-_it.1.png */,
-				2CD262472CFDC5E900A040A7 /* testWelcomeScreen_step_3_dark_iPhone-SE-3rd-generation-_nl.1.png */,
-				2CD262482CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPad-Pro-12-9-inch-6th-generation-_de.1.png */,
-				2CD262492CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPad-Pro-12-9-inch-6th-generation-_en.1.png */,
-				2CD2624A2CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPad-Pro-12-9-inch-6th-generation-_es.1.png */,
-				2CD2624B2CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPad-Pro-12-9-inch-6th-generation-_it.1.png */,
-				2CD2624C2CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPad-Pro-12-9-inch-6th-generation-_nl.1.png */,
-				2CD2624D2CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPhone-14-Pro_de.1.png */,
-				2CD2624E2CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPhone-14-Pro_en.1.png */,
-				2CD2624F2CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPhone-14-Pro_es.1.png */,
-				2CD262502CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPhone-14-Pro_it.1.png */,
-				2CD262512CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPhone-14-Pro_nl.1.png */,
-				2CD262522CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPhone-14-Pro-Max_de.1.png */,
-				2CD262532CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPhone-14-Pro-Max_en.1.png */,
-				2CD262542CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPhone-14-Pro-Max_es.1.png */,
-				2CD262552CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPhone-14-Pro-Max_it.1.png */,
-				2CD262562CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPhone-14-Pro-Max_nl.1.png */,
-				2CD262572CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPhone-SE-3rd-generation-_de.1.png */,
-				2CD262582CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPhone-SE-3rd-generation-_en.1.png */,
-				2CD262592CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPhone-SE-3rd-generation-_es.1.png */,
-				2CD2625A2CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPhone-SE-3rd-generation-_it.1.png */,
-				2CD2625B2CFDC5E900A040A7 /* testWelcomeScreen_step_3_light_iPhone-SE-3rd-generation-_nl.1.png */,
-				2CD2625C2CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPad-Pro-12-9-inch-6th-generation-_de.1.png */,
-				2CD2625D2CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPad-Pro-12-9-inch-6th-generation-_en.1.png */,
-				2CD2625E2CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPad-Pro-12-9-inch-6th-generation-_es.1.png */,
-				2CD2625F2CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPad-Pro-12-9-inch-6th-generation-_it.1.png */,
-				2CD262602CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPad-Pro-12-9-inch-6th-generation-_nl.1.png */,
-				2CD262612CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPhone-14-Pro_de.1.png */,
-				2CD262622CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPhone-14-Pro_en.1.png */,
-				2CD262632CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPhone-14-Pro_es.1.png */,
-				2CD262642CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPhone-14-Pro_it.1.png */,
-				2CD262652CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPhone-14-Pro_nl.1.png */,
-				2CD262662CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPhone-14-Pro-Max_de.1.png */,
-				2CD262672CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPhone-14-Pro-Max_en.1.png */,
-				2CD262682CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPhone-14-Pro-Max_es.1.png */,
-				2CD262692CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPhone-14-Pro-Max_it.1.png */,
-				2CD2626A2CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPhone-14-Pro-Max_nl.1.png */,
-				2CD2626B2CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPhone-SE-3rd-generation-_de.1.png */,
-				2CD2626C2CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPhone-SE-3rd-generation-_en.1.png */,
-				2CD2626D2CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPhone-SE-3rd-generation-_es.1.png */,
-				2CD2626E2CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPhone-SE-3rd-generation-_it.1.png */,
-				2CD2626F2CFDC5E900A040A7 /* testWelcomeScreen_step_4_dark_iPhone-SE-3rd-generation-_nl.1.png */,
-				2CD262702CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPad-Pro-12-9-inch-6th-generation-_de.1.png */,
-				2CD262712CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPad-Pro-12-9-inch-6th-generation-_en.1.png */,
-				2CD262722CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPad-Pro-12-9-inch-6th-generation-_es.1.png */,
-				2CD262732CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPad-Pro-12-9-inch-6th-generation-_it.1.png */,
-				2CD262742CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPad-Pro-12-9-inch-6th-generation-_nl.1.png */,
-				2CD262752CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPhone-14-Pro_de.1.png */,
-				2CD262762CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPhone-14-Pro_en.1.png */,
-				2CD262772CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPhone-14-Pro_es.1.png */,
-				2CD262782CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPhone-14-Pro_it.1.png */,
-				2CD262792CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPhone-14-Pro_nl.1.png */,
-				2CD2627A2CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPhone-14-Pro-Max_de.1.png */,
-				2CD2627B2CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPhone-14-Pro-Max_en.1.png */,
-				2CD2627C2CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPhone-14-Pro-Max_es.1.png */,
-				2CD2627D2CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPhone-14-Pro-Max_it.1.png */,
-				2CD2627E2CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPhone-14-Pro-Max_nl.1.png */,
-				2CD2627F2CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPhone-SE-3rd-generation-_de.1.png */,
-				2CD262802CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPhone-SE-3rd-generation-_en.1.png */,
-				2CD262812CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPhone-SE-3rd-generation-_es.1.png */,
-				2CD262822CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPhone-SE-3rd-generation-_it.1.png */,
-				2CD262832CFDC5E900A040A7 /* testWelcomeScreen_step_4_light_iPhone-SE-3rd-generation-_nl.1.png */,
-			);
-			path = OnboardingTests;
-			sourceTree = "<group>";
-		};
-		2CD262852CFDC5E900A040A7 /* __Snapshots__ */ = {
-			isa = PBXGroup;
-			children = (
-				2CD262842CFDC5E900A040A7 /* OnboardingTests */,
-			);
-			path = __Snapshots__;
-			sourceTree = "<group>";
-		};
 		2CD262872CFDC5E900A040A7 /* Onboarding */ = {
 			isa = PBXGroup;
 			children = (
-				2CD262852CFDC5E900A040A7 /* __Snapshots__ */,
 				2CD262862CFDC5E900A040A7 /* OnboardingTests.swift */,
 			);
 			path = Onboarding;
@@ -9945,15 +9155,6 @@
 				2CD262902CFDC5E900A040A7 /* String+Extension.swift */,
 			);
 			path = SnapshotTests;
-			sourceTree = "<group>";
-		};
-		2CD262952CFDC5E900A040A7 /* Results */ = {
-			isa = PBXGroup;
-			children = (
-				2CD262932CFDC5E900A040A7 /* NTPComponentTests_tests.xcresult */,
-				2CD262942CFDC5E900A040A7 /* OnboardingTests_tests.xcresult */,
-			);
-			path = Results;
 			sourceTree = "<group>";
 		};
 		2CD262982CFDC5EA00A040A7 /* IntegrationTests */ = {
@@ -14597,268 +13798,16 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2CD263702CFDC5EB00A040A7 /* testWelcomeScreen_step_3_light_iPhone-14-Pro_es.1.png in Resources */,
-				2CD263342CFDC5EB00A040A7 /* testWelcomeScreen_step_2_dark_iPhone-14-Pro_es.1.png in Resources */,
-				2CD262CC2CFDC5EB00A040A7 /* testNTPReferralInvitesCell_multiple_invites_dark_iPhone-14-Pro_es.1.png in Resources */,
-				2CD262F42CFDC5EB00A040A7 /* testWelcomeScreen_light_iPad-Pro-12-9-inch-6th-generation-_it.1.png in Resources */,
-				2CD262FD2CFDC5EB00A040A7 /* testWelcomeScreen_light_iPhone-14-Pro-Max_es.1.png in Resources */,
-				2CD2635B2CFDC5EB00A040A7 /* testWelcomeScreen_step_3_dark_iPhone-14-Pro_en.1.png in Resources */,
-				2CD263452CFDC5EB00A040A7 /* testWelcomeScreen_step_2_light_iPad-Pro-12-9-inch-6th-generation-_nl.1.png in Resources */,
-				2CD2634F2CFDC5EB00A040A7 /* testWelcomeScreen_step_2_light_iPhone-14-Pro-Max_nl.1.png in Resources */,
-				2CD2631A2CFDC5EB00A040A7 /* testWelcomeScreen_step_1_light_iPad-Pro-12-9-inch-6th-generation-_en.1.png in Resources */,
-				2CD262EF2CFDC5EB00A040A7 /* testWelcomeScreen_dark_iPhone-SE-3rd-generation-_it.1.png in Resources */,
-				2CD2639F2CFDC5EB00A040A7 /* testWelcomeScreen_step_4_light_iPhone-14-Pro-Max_nl.1.png in Resources */,
-				2CD2635C2CFDC5EB00A040A7 /* testWelcomeScreen_step_3_dark_iPhone-14-Pro_es.1.png in Resources */,
-				2CD2639A2CFDC5EB00A040A7 /* testWelcomeScreen_step_4_light_iPhone-14-Pro_nl.1.png in Resources */,
-				2CD2632F2CFDC5EB00A040A7 /* testWelcomeScreen_step_2_dark_iPad-Pro-12-9-inch-6th-generation-_es.1.png in Resources */,
 				2CAF5BE02D00D1AB00D3DCDD /* import_input_bookmark_firefox.html in Resources */,
-				2CD2632E2CFDC5EB00A040A7 /* testWelcomeScreen_step_2_dark_iPad-Pro-12-9-inch-6th-generation-_en.1.png in Resources */,
-				2CD262C22CFDC5EB00A040A7 /* testNTPLibraryCell_light_iPhone-14-Pro_es.1.png in Resources */,
-				2CD263122CFDC5EB00A040A7 /* testWelcomeScreen_step_1_dark_iPhone-14-Pro-Max_it.1.png in Resources */,
-				2CD263112CFDC5EB00A040A7 /* testWelcomeScreen_step_1_dark_iPhone-14-Pro-Max_es.1.png in Resources */,
-				2CD262FF2CFDC5EB00A040A7 /* testWelcomeScreen_light_iPhone-14-Pro-Max_nl.1.png in Resources */,
-				2CD263002CFDC5EB00A040A7 /* testWelcomeScreen_light_iPhone-SE-3rd-generation-_de.1.png in Resources */,
-				2CD263B12CFDC5EB00A040A7 /* OnboardingTests_tests.xcresult in Resources */,
-				2CD262D32CFDC5EB00A040A7 /* testNTPTotalInvestedCell_dark_iPhone-14-Pro_en.1.png in Resources */,
-				2CD2633E2CFDC5EB00A040A7 /* testWelcomeScreen_step_2_dark_iPhone-SE-3rd-generation-_es.1.png in Resources */,
-				2CD263612CFDC5EB00A040A7 /* testWelcomeScreen_step_3_dark_iPhone-14-Pro-Max_es.1.png in Resources */,
-				2CD2631D2CFDC5EB00A040A7 /* testWelcomeScreen_step_1_light_iPad-Pro-12-9-inch-6th-generation-_nl.1.png in Resources */,
-				2CD263A42CFDC5EB00A040A7 /* testWelcomeScreen_step_4_light_iPhone-SE-3rd-generation-_nl.1.png in Resources */,
-				2CD262C62CFDC5EB00A040A7 /* testNTPLogoCell_light_iPhone-14-Pro_es.1.png in Resources */,
-				2CD262C52CFDC5EB00A040A7 /* testNTPLogoCell_light_iPhone-14-Pro_en.1.png in Resources */,
-				2CD263352CFDC5EB00A040A7 /* testWelcomeScreen_step_2_dark_iPhone-14-Pro_it.1.png in Resources */,
-				2CD262E62CFDC5EB00A040A7 /* testWelcomeScreen_dark_iPhone-14-Pro_nl.1.png in Resources */,
-				2CD2638F2CFDC5EB00A040A7 /* testWelcomeScreen_step_4_dark_iPhone-SE-3rd-generation-_it.1.png in Resources */,
-				2CD263742CFDC5EB00A040A7 /* testWelcomeScreen_step_3_light_iPhone-14-Pro-Max_en.1.png in Resources */,
-				2CD2633F2CFDC5EB00A040A7 /* testWelcomeScreen_step_2_dark_iPhone-SE-3rd-generation-_it.1.png in Resources */,
 				2CAF5BE62D00D1AB00D3DCDD /* referrals.json in Resources */,
-				2CD2639B2CFDC5EB00A040A7 /* testWelcomeScreen_step_4_light_iPhone-14-Pro-Max_de.1.png in Resources */,
-				2CD263662CFDC5EB00A040A7 /* testWelcomeScreen_step_3_dark_iPhone-SE-3rd-generation-_es.1.png in Resources */,
-				2CD262B42CFDC5EB00A040A7 /* testNTPAboutSection_treesupdate_dark_iPhone-14-Pro_es.1.png in Resources */,
-				2CD262E32CFDC5EB00A040A7 /* testWelcomeScreen_dark_iPhone-14-Pro_en.1.png in Resources */,
-				2CD2632B2CFDC5EB00A040A7 /* testWelcomeScreen_step_1_light_iPhone-SE-3rd-generation-_it.1.png in Resources */,
-				2CD263622CFDC5EB00A040A7 /* testWelcomeScreen_step_3_dark_iPhone-14-Pro-Max_it.1.png in Resources */,
-				2CD263542CFDC5EB00A040A7 /* testWelcomeScreen_step_2_light_iPhone-SE-3rd-generation-_nl.1.png in Resources */,
-				2CD262C82CFDC5EB00A040A7 /* testNTPNewsCell_dark_iPhone-14-Pro_es.1.png in Resources */,
-				2CD263162CFDC5EB00A040A7 /* testWelcomeScreen_step_1_dark_iPhone-SE-3rd-generation-_es.1.png in Resources */,
-				2CD263012CFDC5EB00A040A7 /* testWelcomeScreen_light_iPhone-SE-3rd-generation-_en.1.png in Resources */,
-				2CD262CF2CFDC5EB00A040A7 /* testNTPReferralInvitesCell_single_invite_dark_iPhone-14-Pro_en.1.png in Resources */,
-				2CD2638A2CFDC5EB00A040A7 /* testWelcomeScreen_step_4_dark_iPhone-14-Pro-Max_it.1.png in Resources */,
-				2CD263442CFDC5EB00A040A7 /* testWelcomeScreen_step_2_light_iPad-Pro-12-9-inch-6th-generation-_it.1.png in Resources */,
-				2CD2630D2CFDC5EB00A040A7 /* testWelcomeScreen_step_1_dark_iPhone-14-Pro_it.1.png in Resources */,
-				2CD262D82CFDC5EB00A040A7 /* testNTPTotalTreesCell_dark_iPhone-14-Pro_es.1.png in Resources */,
-				2CD262BF2CFDC5EB00A040A7 /* testNTPLibraryCell_dark_iPhone-14-Pro_en.1.png in Resources */,
-				2CD263172CFDC5EB00A040A7 /* testWelcomeScreen_step_1_dark_iPhone-SE-3rd-generation-_it.1.png in Resources */,
-				2CD263592CFDC5EB00A040A7 /* testWelcomeScreen_step_3_dark_iPad-Pro-12-9-inch-6th-generation-_nl.1.png in Resources */,
-				2CD263382CFDC5EB00A040A7 /* testWelcomeScreen_step_2_dark_iPhone-14-Pro-Max_en.1.png in Resources */,
-				2CD262B82CFDC5EB00A040A7 /* testNTPBookmarkNudgeCell_dark_iPhone-14-Pro_es.1.png in Resources */,
-				2CD262F62CFDC5EB00A040A7 /* testWelcomeScreen_light_iPhone-14-Pro_de.1.png in Resources */,
-				2CD2638C2CFDC5EB00A040A7 /* testWelcomeScreen_step_4_dark_iPhone-SE-3rd-generation-_de.1.png in Resources */,
-				2CD2636C2CFDC5EB00A040A7 /* testWelcomeScreen_step_3_light_iPad-Pro-12-9-inch-6th-generation-_it.1.png in Resources */,
-				2CD263792CFDC5EB00A040A7 /* testWelcomeScreen_step_3_light_iPhone-SE-3rd-generation-_en.1.png in Resources */,
-				2CD263062CFDC5EB00A040A7 /* testWelcomeScreen_step_1_dark_iPad-Pro-12-9-inch-6th-generation-_en.1.png in Resources */,
-				2CD262BA2CFDC5EB00A040A7 /* testNTPBookmarkNudgeCell_light_iPhone-14-Pro_es.1.png in Resources */,
-				2CD262E12CFDC5EB00A040A7 /* testWelcomeScreen_dark_iPad-Pro-12-9-inch-6th-generation-_nl.1.png in Resources */,
-				2CD2639E2CFDC5EB00A040A7 /* testWelcomeScreen_step_4_light_iPhone-14-Pro-Max_it.1.png in Resources */,
-				2CD263722CFDC5EB00A040A7 /* testWelcomeScreen_step_3_light_iPhone-14-Pro_nl.1.png in Resources */,
-				2CD262D52CFDC5EB00A040A7 /* testNTPTotalInvestedCell_light_iPhone-14-Pro_en.1.png in Resources */,
-				2CD262DA2CFDC5EB00A040A7 /* testNTPTotalTreesCell_light_iPhone-14-Pro_es.1.png in Resources */,
-				2CD263802CFDC5EB00A040A7 /* testWelcomeScreen_step_4_dark_iPad-Pro-12-9-inch-6th-generation-_it.1.png in Resources */,
-				2CD263952CFDC5EB00A040A7 /* testWelcomeScreen_step_4_light_iPad-Pro-12-9-inch-6th-generation-_nl.1.png in Resources */,
-				2CD262BC2CFDC5EB00A040A7 /* testNTPCustomizationCell_dark_iPhone-14-Pro_es.1.png in Resources */,
-				2CD262B62CFDC5EB00A040A7 /* testNTPAboutSection_treesupdate_light_iPhone-14-Pro_es.1.png in Resources */,
-				2CD262F02CFDC5EB00A040A7 /* testWelcomeScreen_dark_iPhone-SE-3rd-generation-_nl.1.png in Resources */,
-				2CD2632D2CFDC5EB00A040A7 /* testWelcomeScreen_step_2_dark_iPad-Pro-12-9-inch-6th-generation-_de.1.png in Resources */,
-				2CD263882CFDC5EB00A040A7 /* testWelcomeScreen_step_4_dark_iPhone-14-Pro-Max_en.1.png in Resources */,
-				2CD2633B2CFDC5EB00A040A7 /* testWelcomeScreen_step_2_dark_iPhone-14-Pro-Max_nl.1.png in Resources */,
-				2CD262D02CFDC5EB00A040A7 /* testNTPReferralInvitesCell_single_invite_dark_iPhone-14-Pro_es.1.png in Resources */,
-				2CD263B02CFDC5EB00A040A7 /* NTPComponentTests_tests.xcresult in Resources */,
-				2CD2637C2CFDC5EB00A040A7 /* testWelcomeScreen_step_3_light_iPhone-SE-3rd-generation-_nl.1.png in Resources */,
-				2CD2633C2CFDC5EB00A040A7 /* testWelcomeScreen_step_2_dark_iPhone-SE-3rd-generation-_de.1.png in Resources */,
-				2CD263AB2CFDC5EB00A040A7 /* snapshot_configuration.json in Resources */,
-				2CD263292CFDC5EB00A040A7 /* testWelcomeScreen_step_1_light_iPhone-SE-3rd-generation-_en.1.png in Resources */,
-				2CD2638E2CFDC5EB00A040A7 /* testWelcomeScreen_step_4_dark_iPhone-SE-3rd-generation-_es.1.png in Resources */,
-				2CD263602CFDC5EB00A040A7 /* testWelcomeScreen_step_3_dark_iPhone-14-Pro-Max_en.1.png in Resources */,
-				2CD263492CFDC5EB00A040A7 /* testWelcomeScreen_step_2_light_iPhone-14-Pro_it.1.png in Resources */,
-				2CD262EB2CFDC5EB00A040A7 /* testWelcomeScreen_dark_iPhone-14-Pro-Max_nl.1.png in Resources */,
-				2CD263582CFDC5EB00A040A7 /* testWelcomeScreen_step_3_dark_iPad-Pro-12-9-inch-6th-generation-_it.1.png in Resources */,
-				2CD262E22CFDC5EB00A040A7 /* testWelcomeScreen_dark_iPhone-14-Pro_de.1.png in Resources */,
-				2CD262E72CFDC5EB00A040A7 /* testWelcomeScreen_dark_iPhone-14-Pro-Max_de.1.png in Resources */,
-				2CD2637D2CFDC5EB00A040A7 /* testWelcomeScreen_step_4_dark_iPad-Pro-12-9-inch-6th-generation-_de.1.png in Resources */,
-				2CD263502CFDC5EB00A040A7 /* testWelcomeScreen_step_2_light_iPhone-SE-3rd-generation-_de.1.png in Resources */,
-				2CD263082CFDC5EB00A040A7 /* testWelcomeScreen_step_1_dark_iPad-Pro-12-9-inch-6th-generation-_it.1.png in Resources */,
-				2CD263572CFDC5EB00A040A7 /* testWelcomeScreen_step_3_dark_iPad-Pro-12-9-inch-6th-generation-_es.1.png in Resources */,
-				2CD262AE2CFDC5EB00A040A7 /* testNTPAboutSection_financialreports_light_iPhone-14-Pro_es.1.png in Resources */,
 				2CAF5BDF2D00D1AB00D3DCDD /* import_input_bookmark_chrome.html in Resources */,
 				2CAF5BE22D00D1AB00D3DCDD /* import_output_bookmark_chrome.txt in Resources */,
-				2CD2631F2CFDC5EB00A040A7 /* testWelcomeScreen_step_1_light_iPhone-14-Pro_en.1.png in Resources */,
-				2CD263132CFDC5EB00A040A7 /* testWelcomeScreen_step_1_dark_iPhone-14-Pro-Max_nl.1.png in Resources */,
-				2CD262E42CFDC5EB00A040A7 /* testWelcomeScreen_dark_iPhone-14-Pro_es.1.png in Resources */,
-				2CD262BE2CFDC5EB00A040A7 /* testNTPCustomizationCell_light_iPhone-14-Pro_es.1.png in Resources */,
-				2CD262D42CFDC5EB00A040A7 /* testNTPTotalInvestedCell_dark_iPhone-14-Pro_es.1.png in Resources */,
-				2CD262BB2CFDC5EB00A040A7 /* testNTPCustomizationCell_dark_iPhone-14-Pro_en.1.png in Resources */,
-				2CD263842CFDC5EB00A040A7 /* testWelcomeScreen_step_4_dark_iPhone-14-Pro_es.1.png in Resources */,
-				2CD262CA2CFDC5EB00A040A7 /* testNTPNewsCell_light_iPhone-14-Pro_es.1.png in Resources */,
-				2CD263072CFDC5EB00A040A7 /* testWelcomeScreen_step_1_dark_iPad-Pro-12-9-inch-6th-generation-_es.1.png in Resources */,
-				2CD262F12CFDC5EB00A040A7 /* testWelcomeScreen_light_iPad-Pro-12-9-inch-6th-generation-_de.1.png in Resources */,
-				2CD263212CFDC5EB00A040A7 /* testWelcomeScreen_step_1_light_iPhone-14-Pro_it.1.png in Resources */,
-				2CD263092CFDC5EB00A040A7 /* testWelcomeScreen_step_1_dark_iPad-Pro-12-9-inch-6th-generation-_nl.1.png in Resources */,
-				2CD263302CFDC5EB00A040A7 /* testWelcomeScreen_step_2_dark_iPad-Pro-12-9-inch-6th-generation-_it.1.png in Resources */,
-				2CD263762CFDC5EB00A040A7 /* testWelcomeScreen_step_3_light_iPhone-14-Pro-Max_it.1.png in Resources */,
-				2CD263732CFDC5EB00A040A7 /* testWelcomeScreen_step_3_light_iPhone-14-Pro-Max_de.1.png in Resources */,
-				2CD2637F2CFDC5EB00A040A7 /* testWelcomeScreen_step_4_dark_iPad-Pro-12-9-inch-6th-generation-_es.1.png in Resources */,
-				2CD263912CFDC5EB00A040A7 /* testWelcomeScreen_step_4_light_iPad-Pro-12-9-inch-6th-generation-_de.1.png in Resources */,
-				2CD263822CFDC5EB00A040A7 /* testWelcomeScreen_step_4_dark_iPhone-14-Pro_de.1.png in Resources */,
-				2CD262B72CFDC5EB00A040A7 /* testNTPBookmarkNudgeCell_dark_iPhone-14-Pro_en.1.png in Resources */,
-				2CD2630B2CFDC5EB00A040A7 /* testWelcomeScreen_step_1_dark_iPhone-14-Pro_en.1.png in Resources */,
-				2CD262C72CFDC5EB00A040A7 /* testNTPNewsCell_dark_iPhone-14-Pro_en.1.png in Resources */,
-				2CD262DE2CFDC5EB00A040A7 /* testWelcomeScreen_dark_iPad-Pro-12-9-inch-6th-generation-_en.1.png in Resources */,
-				2CD2636F2CFDC5EB00A040A7 /* testWelcomeScreen_step_3_light_iPhone-14-Pro_en.1.png in Resources */,
-				2CD262B22CFDC5EB00A040A7 /* testNTPAboutSection_privacy_light_iPhone-14-Pro_es.1.png in Resources */,
-				2CD262E92CFDC5EB00A040A7 /* testWelcomeScreen_dark_iPhone-14-Pro-Max_es.1.png in Resources */,
-				2CD263262CFDC5EB00A040A7 /* testWelcomeScreen_step_1_light_iPhone-14-Pro-Max_it.1.png in Resources */,
-				2CD263782CFDC5EB00A040A7 /* testWelcomeScreen_step_3_light_iPhone-SE-3rd-generation-_de.1.png in Resources */,
-				2CD263852CFDC5EB00A040A7 /* testWelcomeScreen_step_4_dark_iPhone-14-Pro_it.1.png in Resources */,
-				2CD263812CFDC5EB00A040A7 /* testWelcomeScreen_step_4_dark_iPad-Pro-12-9-inch-6th-generation-_nl.1.png in Resources */,
-				2CD263022CFDC5EB00A040A7 /* testWelcomeScreen_light_iPhone-SE-3rd-generation-_es.1.png in Resources */,
-				2CD262BD2CFDC5EB00A040A7 /* testNTPCustomizationCell_light_iPhone-14-Pro_en.1.png in Resources */,
-				2CD263562CFDC5EB00A040A7 /* testWelcomeScreen_step_3_dark_iPad-Pro-12-9-inch-6th-generation-_en.1.png in Resources */,
-				2CD263692CFDC5EB00A040A7 /* testWelcomeScreen_step_3_light_iPad-Pro-12-9-inch-6th-generation-_de.1.png in Resources */,
-				2CD2635A2CFDC5EB00A040A7 /* testWelcomeScreen_step_3_dark_iPhone-14-Pro_de.1.png in Resources */,
-				2CD2635D2CFDC5EB00A040A7 /* testWelcomeScreen_step_3_dark_iPhone-14-Pro_it.1.png in Resources */,
-				2CD263402CFDC5EB00A040A7 /* testWelcomeScreen_step_2_dark_iPhone-SE-3rd-generation-_nl.1.png in Resources */,
-				2CD263182CFDC5EB00A040A7 /* testWelcomeScreen_step_1_dark_iPhone-SE-3rd-generation-_nl.1.png in Resources */,
-				2CD263412CFDC5EB00A040A7 /* testWelcomeScreen_step_2_light_iPad-Pro-12-9-inch-6th-generation-_de.1.png in Resources */,
-				2CD263772CFDC5EB00A040A7 /* testWelcomeScreen_step_3_light_iPhone-14-Pro-Max_nl.1.png in Resources */,
-				2CD263862CFDC5EB00A040A7 /* testWelcomeScreen_step_4_dark_iPhone-14-Pro_nl.1.png in Resources */,
-				2CD263482CFDC5EB00A040A7 /* testWelcomeScreen_step_2_light_iPhone-14-Pro_es.1.png in Resources */,
-				2CD2634C2CFDC5EB00A040A7 /* testWelcomeScreen_step_2_light_iPhone-14-Pro-Max_en.1.png in Resources */,
-				2CD262EC2CFDC5EB00A040A7 /* testWelcomeScreen_dark_iPhone-SE-3rd-generation-_de.1.png in Resources */,
-				2CD2635F2CFDC5EB00A040A7 /* testWelcomeScreen_step_3_dark_iPhone-14-Pro-Max_de.1.png in Resources */,
-				2CD263462CFDC5EB00A040A7 /* testWelcomeScreen_step_2_light_iPhone-14-Pro_de.1.png in Resources */,
-				2CD262D12CFDC5EB00A040A7 /* testNTPReferralInvitesCell_single_invite_light_iPhone-14-Pro_en.1.png in Resources */,
-				2CD2634E2CFDC5EB00A040A7 /* testWelcomeScreen_step_2_light_iPhone-14-Pro-Max_it.1.png in Resources */,
-				2CD2639C2CFDC5EB00A040A7 /* testWelcomeScreen_step_4_light_iPhone-14-Pro-Max_en.1.png in Resources */,
-				2CD2631E2CFDC5EB00A040A7 /* testWelcomeScreen_step_1_light_iPhone-14-Pro_de.1.png in Resources */,
-				2CD262D72CFDC5EB00A040A7 /* testNTPTotalTreesCell_dark_iPhone-14-Pro_en.1.png in Resources */,
-				2CD263252CFDC5EB00A040A7 /* testWelcomeScreen_step_1_light_iPhone-14-Pro-Max_es.1.png in Resources */,
-				2CD263272CFDC5EB00A040A7 /* testWelcomeScreen_step_1_light_iPhone-14-Pro-Max_nl.1.png in Resources */,
-				2CD262AF2CFDC5EB00A040A7 /* testNTPAboutSection_privacy_dark_iPhone-14-Pro_en.1.png in Resources */,
-				2CD262B52CFDC5EB00A040A7 /* testNTPAboutSection_treesupdate_light_iPhone-14-Pro_en.1.png in Resources */,
-				2CD262F72CFDC5EB00A040A7 /* testWelcomeScreen_light_iPhone-14-Pro_en.1.png in Resources */,
-				2CD263992CFDC5EB00A040A7 /* testWelcomeScreen_step_4_light_iPhone-14-Pro_it.1.png in Resources */,
-				2CD263512CFDC5EB00A040A7 /* testWelcomeScreen_step_2_light_iPhone-SE-3rd-generation-_en.1.png in Resources */,
-				2CD2630E2CFDC5EB00A040A7 /* testWelcomeScreen_step_1_dark_iPhone-14-Pro_nl.1.png in Resources */,
-				2CD262CE2CFDC5EB00A040A7 /* testNTPReferralInvitesCell_multiple_invites_light_iPhone-14-Pro_es.1.png in Resources */,
-				2CD2636B2CFDC5EB00A040A7 /* testWelcomeScreen_step_3_light_iPad-Pro-12-9-inch-6th-generation-_es.1.png in Resources */,
-				2CD262DD2CFDC5EB00A040A7 /* testWelcomeScreen_dark_iPad-Pro-12-9-inch-6th-generation-_de.1.png in Resources */,
-				2CD262E82CFDC5EB00A040A7 /* testWelcomeScreen_dark_iPhone-14-Pro-Max_en.1.png in Resources */,
 				2CAF5BE12D00D1AB00D3DCDD /* import_input_bookmark_safari.html in Resources */,
 				2CAF5BE32D00D1AB00D3DCDD /* import_output_bookmark_firefox.txt in Resources */,
-				2CD2634A2CFDC5EB00A040A7 /* testWelcomeScreen_step_2_light_iPhone-14-Pro_nl.1.png in Resources */,
-				2CD263832CFDC5EB00A040A7 /* testWelcomeScreen_step_4_dark_iPhone-14-Pro_en.1.png in Resources */,
-				2CD2634D2CFDC5EB00A040A7 /* testWelcomeScreen_step_2_light_iPhone-14-Pro-Max_es.1.png in Resources */,
-				2CD263242CFDC5EB00A040A7 /* testWelcomeScreen_step_1_light_iPhone-14-Pro-Max_en.1.png in Resources */,
-				2CD262CB2CFDC5EB00A040A7 /* testNTPReferralInvitesCell_multiple_invites_dark_iPhone-14-Pro_en.1.png in Resources */,
-				2CD2636A2CFDC5EB00A040A7 /* testWelcomeScreen_step_3_light_iPad-Pro-12-9-inch-6th-generation-_en.1.png in Resources */,
-				2CD262E02CFDC5EB00A040A7 /* testWelcomeScreen_dark_iPad-Pro-12-9-inch-6th-generation-_it.1.png in Resources */,
-				2CD263142CFDC5EB00A040A7 /* testWelcomeScreen_step_1_dark_iPhone-SE-3rd-generation-_de.1.png in Resources */,
-				2CD262B32CFDC5EB00A040A7 /* testNTPAboutSection_treesupdate_dark_iPhone-14-Pro_en.1.png in Resources */,
-				2CD2636E2CFDC5EB00A040A7 /* testWelcomeScreen_step_3_light_iPhone-14-Pro_de.1.png in Resources */,
-				2CD263932CFDC5EB00A040A7 /* testWelcomeScreen_step_4_light_iPad-Pro-12-9-inch-6th-generation-_es.1.png in Resources */,
-				2CD262C32CFDC5EB00A040A7 /* testNTPLogoCell_dark_iPhone-14-Pro_en.1.png in Resources */,
-				2CD263A72CFDC5EB00A040A7 /* EcosiaSnapshotTests.xctestplan in Resources */,
-				2CD263102CFDC5EB00A040A7 /* testWelcomeScreen_step_1_dark_iPhone-14-Pro-Max_en.1.png in Resources */,
-				2CD2633D2CFDC5EB00A040A7 /* testWelcomeScreen_step_2_dark_iPhone-SE-3rd-generation-_en.1.png in Resources */,
-				2CD262D92CFDC5EB00A040A7 /* testNTPTotalTreesCell_light_iPhone-14-Pro_en.1.png in Resources */,
-				2CD263672CFDC5EB00A040A7 /* testWelcomeScreen_step_3_dark_iPhone-SE-3rd-generation-_it.1.png in Resources */,
-				2CD263652CFDC5EB00A040A7 /* testWelcomeScreen_step_3_dark_iPhone-SE-3rd-generation-_en.1.png in Resources */,
-				2CD263712CFDC5EB00A040A7 /* testWelcomeScreen_step_3_light_iPhone-14-Pro_it.1.png in Resources */,
-				2CD2638D2CFDC5EB00A040A7 /* testWelcomeScreen_step_4_dark_iPhone-SE-3rd-generation-_en.1.png in Resources */,
-				2CD263902CFDC5EB00A040A7 /* testWelcomeScreen_step_4_dark_iPhone-SE-3rd-generation-_nl.1.png in Resources */,
-				2CD2631C2CFDC5EB00A040A7 /* testWelcomeScreen_step_1_light_iPad-Pro-12-9-inch-6th-generation-_it.1.png in Resources */,
-				2CD2636D2CFDC5EB00A040A7 /* testWelcomeScreen_step_3_light_iPad-Pro-12-9-inch-6th-generation-_nl.1.png in Resources */,
-				2CD263922CFDC5EB00A040A7 /* testWelcomeScreen_step_4_light_iPad-Pro-12-9-inch-6th-generation-_en.1.png in Resources */,
-				2CD263472CFDC5EB00A040A7 /* testWelcomeScreen_step_2_light_iPhone-14-Pro_en.1.png in Resources */,
-				2CD263552CFDC5EB00A040A7 /* testWelcomeScreen_step_3_dark_iPad-Pro-12-9-inch-6th-generation-_de.1.png in Resources */,
-				2CD262B02CFDC5EB00A040A7 /* testNTPAboutSection_privacy_dark_iPhone-14-Pro_es.1.png in Resources */,
-				2CD263332CFDC5EB00A040A7 /* testWelcomeScreen_step_2_dark_iPhone-14-Pro_en.1.png in Resources */,
-				2CD263682CFDC5EB00A040A7 /* testWelcomeScreen_step_3_dark_iPhone-SE-3rd-generation-_nl.1.png in Resources */,
-				2CD2632C2CFDC5EB00A040A7 /* testWelcomeScreen_step_1_light_iPhone-SE-3rd-generation-_nl.1.png in Resources */,
-				2CD263A32CFDC5EB00A040A7 /* testWelcomeScreen_step_4_light_iPhone-SE-3rd-generation-_it.1.png in Resources */,
-				2CD263752CFDC5EB00A040A7 /* testWelcomeScreen_step_3_light_iPhone-14-Pro-Max_es.1.png in Resources */,
-				2CD262D22CFDC5EB00A040A7 /* testNTPReferralInvitesCell_single_invite_light_iPhone-14-Pro_es.1.png in Resources */,
-				2CD263032CFDC5EB00A040A7 /* testWelcomeScreen_light_iPhone-SE-3rd-generation-_it.1.png in Resources */,
-				2CD263432CFDC5EB00A040A7 /* testWelcomeScreen_step_2_light_iPad-Pro-12-9-inch-6th-generation-_es.1.png in Resources */,
-				2CD263392CFDC5EB00A040A7 /* testWelcomeScreen_step_2_dark_iPhone-14-Pro-Max_es.1.png in Resources */,
 				2CD263A82CFDC5EB00A040A7 /* environment.json in Resources */,
-				2CD263A12CFDC5EB00A040A7 /* testWelcomeScreen_step_4_light_iPhone-SE-3rd-generation-_en.1.png in Resources */,
-				2CD2637A2CFDC5EB00A040A7 /* testWelcomeScreen_step_3_light_iPhone-SE-3rd-generation-_es.1.png in Resources */,
-				2CD262DF2CFDC5EB00A040A7 /* testWelcomeScreen_dark_iPad-Pro-12-9-inch-6th-generation-_es.1.png in Resources */,
-				2CD262C42CFDC5EB00A040A7 /* testNTPLogoCell_dark_iPhone-14-Pro_es.1.png in Resources */,
-				2CD2630A2CFDC5EB00A040A7 /* testWelcomeScreen_step_1_dark_iPhone-14-Pro_de.1.png in Resources */,
-				2CD263152CFDC5EB00A040A7 /* testWelcomeScreen_step_1_dark_iPhone-SE-3rd-generation-_en.1.png in Resources */,
-				2CD262AC2CFDC5EB00A040A7 /* testNTPAboutSection_financialreports_dark_iPhone-14-Pro_es.1.png in Resources */,
-				2CD2630C2CFDC5EB00A040A7 /* testWelcomeScreen_step_1_dark_iPhone-14-Pro_es.1.png in Resources */,
-				2CD263942CFDC5EB00A040A7 /* testWelcomeScreen_step_4_light_iPad-Pro-12-9-inch-6th-generation-_it.1.png in Resources */,
-				2CD262C12CFDC5EB00A040A7 /* testNTPLibraryCell_light_iPhone-14-Pro_en.1.png in Resources */,
-				2CD262FA2CFDC5EB00A040A7 /* testWelcomeScreen_light_iPhone-14-Pro_nl.1.png in Resources */,
-				2CD262F82CFDC5EB00A040A7 /* testWelcomeScreen_light_iPhone-14-Pro_es.1.png in Resources */,
-				2CD263282CFDC5EB00A040A7 /* testWelcomeScreen_step_1_light_iPhone-SE-3rd-generation-_de.1.png in Resources */,
-				2CD263422CFDC5EB00A040A7 /* testWelcomeScreen_step_2_light_iPad-Pro-12-9-inch-6th-generation-_en.1.png in Resources */,
-				2CD263982CFDC5EB00A040A7 /* testWelcomeScreen_step_4_light_iPhone-14-Pro_es.1.png in Resources */,
-				2CD262FC2CFDC5EB00A040A7 /* testWelcomeScreen_light_iPhone-14-Pro-Max_en.1.png in Resources */,
-				2CD2633A2CFDC5EB00A040A7 /* testWelcomeScreen_step_2_dark_iPhone-14-Pro-Max_it.1.png in Resources */,
-				2CD2635E2CFDC5EB00A040A7 /* testWelcomeScreen_step_3_dark_iPhone-14-Pro_nl.1.png in Resources */,
-				2CD262C02CFDC5EB00A040A7 /* testNTPLibraryCell_dark_iPhone-14-Pro_es.1.png in Resources */,
-				2CD2639D2CFDC5EB00A040A7 /* testWelcomeScreen_step_4_light_iPhone-14-Pro-Max_es.1.png in Resources */,
-				2CD263892CFDC5EB00A040A7 /* testWelcomeScreen_step_4_dark_iPhone-14-Pro-Max_es.1.png in Resources */,
-				2CD263632CFDC5EB00A040A7 /* testWelcomeScreen_step_3_dark_iPhone-14-Pro-Max_nl.1.png in Resources */,
-				2CD263222CFDC5EB00A040A7 /* testWelcomeScreen_step_1_light_iPhone-14-Pro_nl.1.png in Resources */,
-				2CD2632A2CFDC5EB00A040A7 /* testWelcomeScreen_step_1_light_iPhone-SE-3rd-generation-_es.1.png in Resources */,
-				2CD262AB2CFDC5EB00A040A7 /* testNTPAboutSection_financialreports_dark_iPhone-14-Pro_en.1.png in Resources */,
-				2CD262F92CFDC5EB00A040A7 /* testWelcomeScreen_light_iPhone-14-Pro_it.1.png in Resources */,
-				2CD262AD2CFDC5EB00A040A7 /* testNTPAboutSection_financialreports_light_iPhone-14-Pro_en.1.png in Resources */,
-				2CD262F32CFDC5EB00A040A7 /* testWelcomeScreen_light_iPad-Pro-12-9-inch-6th-generation-_es.1.png in Resources */,
-				2CD262D62CFDC5EB00A040A7 /* testNTPTotalInvestedCell_light_iPhone-14-Pro_es.1.png in Resources */,
-				2CD263972CFDC5EB00A040A7 /* testWelcomeScreen_step_4_light_iPhone-14-Pro_en.1.png in Resources */,
-				2CD263202CFDC5EB00A040A7 /* testWelcomeScreen_step_1_light_iPhone-14-Pro_es.1.png in Resources */,
-				2CD262F22CFDC5EB00A040A7 /* testWelcomeScreen_light_iPad-Pro-12-9-inch-6th-generation-_en.1.png in Resources */,
-				2CD262EE2CFDC5EB00A040A7 /* testWelcomeScreen_dark_iPhone-SE-3rd-generation-_es.1.png in Resources */,
-				2CD262B12CFDC5EB00A040A7 /* testNTPAboutSection_privacy_light_iPhone-14-Pro_en.1.png in Resources */,
-				2CD2637E2CFDC5EB00A040A7 /* testWelcomeScreen_step_4_dark_iPad-Pro-12-9-inch-6th-generation-_en.1.png in Resources */,
-				2CD263362CFDC5EB00A040A7 /* testWelcomeScreen_step_2_dark_iPhone-14-Pro_nl.1.png in Resources */,
-				2CD2637B2CFDC5EB00A040A7 /* testWelcomeScreen_step_3_light_iPhone-SE-3rd-generation-_it.1.png in Resources */,
-				2CD262C92CFDC5EB00A040A7 /* testNTPNewsCell_light_iPhone-14-Pro_en.1.png in Resources */,
-				2CD263962CFDC5EB00A040A7 /* testWelcomeScreen_step_4_light_iPhone-14-Pro_de.1.png in Resources */,
-				2CD262F52CFDC5EB00A040A7 /* testWelcomeScreen_light_iPad-Pro-12-9-inch-6th-generation-_nl.1.png in Resources */,
-				2CD263A02CFDC5EB00A040A7 /* testWelcomeScreen_step_4_light_iPhone-SE-3rd-generation-_de.1.png in Resources */,
-				2CD262E52CFDC5EB00A040A7 /* testWelcomeScreen_dark_iPhone-14-Pro_it.1.png in Resources */,
-				2CD263052CFDC5EB00A040A7 /* testWelcomeScreen_step_1_dark_iPad-Pro-12-9-inch-6th-generation-_de.1.png in Resources */,
-				2CD262ED2CFDC5EB00A040A7 /* testWelcomeScreen_dark_iPhone-SE-3rd-generation-_en.1.png in Resources */,
-				2CD263312CFDC5EB00A040A7 /* testWelcomeScreen_step_2_dark_iPad-Pro-12-9-inch-6th-generation-_nl.1.png in Resources */,
-				2CD263522CFDC5EB00A040A7 /* testWelcomeScreen_step_2_light_iPhone-SE-3rd-generation-_es.1.png in Resources */,
-				2CD2634B2CFDC5EB00A040A7 /* testWelcomeScreen_step_2_light_iPhone-14-Pro-Max_de.1.png in Resources */,
-				2CD2630F2CFDC5EB00A040A7 /* testWelcomeScreen_step_1_dark_iPhone-14-Pro-Max_de.1.png in Resources */,
-				2CD2638B2CFDC5EB00A040A7 /* testWelcomeScreen_step_4_dark_iPhone-14-Pro-Max_nl.1.png in Resources */,
-				2CD262CD2CFDC5EB00A040A7 /* testNTPReferralInvitesCell_multiple_invites_light_iPhone-14-Pro_en.1.png in Resources */,
 				2CAF5BE42D00D1AB00D3DCDD /* import_output_bookmark_safari.txt in Resources */,
-				2CD263192CFDC5EB00A040A7 /* testWelcomeScreen_step_1_light_iPad-Pro-12-9-inch-6th-generation-_de.1.png in Resources */,
-				2CD263532CFDC5EB00A040A7 /* testWelcomeScreen_step_2_light_iPhone-SE-3rd-generation-_it.1.png in Resources */,
-				2CD263642CFDC5EB00A040A7 /* testWelcomeScreen_step_3_dark_iPhone-SE-3rd-generation-_de.1.png in Resources */,
 				2CAF5BE52D00D1AB00D3DCDD /* notifications.json in Resources */,
-				2CD263042CFDC5EB00A040A7 /* testWelcomeScreen_light_iPhone-SE-3rd-generation-_nl.1.png in Resources */,
-				2CD262FE2CFDC5EB00A040A7 /* testWelcomeScreen_light_iPhone-14-Pro-Max_it.1.png in Resources */,
 				2CAF5BDE2D00D1AB00D3DCDD /* export_bookmark_ecosia.html in Resources */,
-				2CD262B92CFDC5EB00A040A7 /* testNTPBookmarkNudgeCell_light_iPhone-14-Pro_en.1.png in Resources */,
-				2CD263322CFDC5EB00A040A7 /* testWelcomeScreen_step_2_dark_iPhone-14-Pro_de.1.png in Resources */,
-				2CD263872CFDC5EB00A040A7 /* testWelcomeScreen_step_4_dark_iPhone-14-Pro-Max_de.1.png in Resources */,
-				2CD263232CFDC5EB00A040A7 /* testWelcomeScreen_step_1_light_iPhone-14-Pro-Max_de.1.png in Resources */,
-				2CD263372CFDC5EB00A040A7 /* testWelcomeScreen_step_2_dark_iPhone-14-Pro-Max_de.1.png in Resources */,
-				2CD262FB2CFDC5EB00A040A7 /* testWelcomeScreen_light_iPhone-14-Pro-Max_de.1.png in Resources */,
-				2CD2631B2CFDC5EB00A040A7 /* testWelcomeScreen_step_1_light_iPad-Pro-12-9-inch-6th-generation-_es.1.png in Resources */,
-				2CD263A22CFDC5EB00A040A7 /* testWelcomeScreen_step_4_light_iPhone-SE-3rd-generation-_es.1.png in Resources */,
-				2CD262EA2CFDC5EB00A040A7 /* testWelcomeScreen_dark_iPhone-14-Pro-Max_it.1.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -15320,10 +14269,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2CD263A92CFDC5EB00A040A7 /* LocaleRetriever.swift in Sources */,
 				2CD263BF2CFDC5EB00A040A7 /* AnalyticsSpyTests.swift in Sources */,
 				2CAF5BF12D00D1AB00D3DCDD /* HistoryTests.swift in Sources */,
-				2CAF5BF32D00D1AB00D3DCDD /* SnapshotsTests.swift in Sources */,
 				2CAF5BDA2D00D1AB00D3DCDD /* MockURLSessionProtocol.swift in Sources */,
 				2CAF5BE82D00D1AB00D3DCDD /* SingularServiceTests.swift in Sources */,
 				2CD263C02CFDC5EB00A040A7 /* AnalyticsTests.swift in Sources */,
@@ -15333,17 +14280,13 @@
 				2CAF5BD92D00D1AB00D3DCDD /* MockURLSession.swift in Sources */,
 				2CAF5BEB2D00D1AB00D3DCDD /* BookmarkParserTests.swift in Sources */,
 				2CAF5BD52D00D1AB00D3DCDD /* User5_3.swift in Sources */,
-				2CD263A52CFDC5EB00A040A7 /* OnboardingTests.swift in Sources */,
 				2CAF5BE92D00D1AB00D3DCDD /* UpgradeTests.swift in Sources */,
 				2CAF5BDC2D00D1AB00D3DCDD /* URLTests.swift in Sources */,
 				2CAF5C032D00D1AB00D3DCDD /* UnleashRefreshConfiguratorTests.swift in Sources */,
-				2CD263AC2CFDC5EB00A040A7 /* SnapshotBaseTests.swift in Sources */,
 				2CD263B32CFDC5EB00A040A7 /* AppDelegateFeatureManagementIntegrationTests.swift in Sources */,
 				1229358D2CE78D5D00EC1297 /* BrazeServiceTests.swift in Sources */,
 				2CAF5BFE2D00D1AB00D3DCDD /* ReferralsTests.swift in Sources */,
-				2CD263AE2CFDC5EB00A040A7 /* String+Extension.swift in Sources */,
 				2CAF5BED2D00D1AB00D3DCDD /* BookmarkSerializerTests.swift in Sources */,
-				2CD262AA2CFDC5EB00A040A7 /* Welcome.swift in Sources */,
 				2CD263B52CFDC5EB00A040A7 /* EcosiaPerformanceTestHistory.swift in Sources */,
 				2CAF5C012D00D1AB00D3DCDD /* InvestmentsProjectionTests.swift in Sources */,
 				2CAF5BDB2D00D1AB00D3DCDD /* ListTests.swift in Sources */,
@@ -15366,8 +14309,6 @@
 				2CD263BB2CFDC5EB00A040A7 /* UserDefaultsSeedProgressManagerTests.swift in Sources */,
 				2CD263B22CFDC5EB00A040A7 /* WhatsNewLocalDataProviderTests.swift in Sources */,
 				2CAF5BFF2D00D1AB00D3DCDD /* FinancialReportsTests.swift in Sources */,
-				2CD263A62CFDC5EB00A040A7 /* DeviceType.swift in Sources */,
-				2CD263AA2CFDC5EB00A040A7 /* LocalizationOverrideTestingBundle.swift in Sources */,
 				2CAF5BFA2D00D1AB00D3DCDD /* StagingURLProviderTests.swift in Sources */,
 				2CAF5BEF2D00D1AB00D3DCDD /* StatisticsTests.swift in Sources */,
 				2CAF5BF62D00D1AB00D3DCDD /* TabsTests.swift in Sources */,
@@ -15375,17 +14316,13 @@
 				2CAF5BDD2D00D1AB00D3DCDD /* FeatureFlaggingSessionInitializerTests.swift in Sources */,
 				2CAF5BF52D00D1AB00D3DCDD /* SingularAdNetworkHelperTests.swift in Sources */,
 				2CD263B82CFDC5EB00A040A7 /* EcosiaNTPTooltipHighlightTests.swift in Sources */,
-				2CD262DB2CFDC5EB00A040A7 /* NTPComponentTests.swift in Sources */,
 				2CAF5BF42D00D1AB00D3DCDD /* LocalTests.swift in Sources */,
 				2CAF5BD72D00D1AB00D3DCDD /* HTTPClientMock.swift in Sources */,
 				2CAF5BFD2D00D1AB00D3DCDD /* SearchesCounterTests.swift in Sources */,
-				2CD262DC2CFDC5EB00A040A7 /* NTPTests.swift in Sources */,
 				2CD263B92CFDC5EB00A040A7 /* EcosiaHomeViewModelTests.swift in Sources */,
 				2CD263BC2CFDC5EB00A040A7 /* EcosiaTopSitesHelperTests.swift in Sources */,
 				2CAF5C052D00D1AB00D3DCDD /* LanguageTests.swift in Sources */,
 				2CD263BA2CFDC5EB00A040A7 /* UnleashUserDefaultsSeedProgressManagerTests.swift in Sources */,
-				2CD263AD2CFDC5EB00A040A7 /* SnapshotTestHelper.swift in Sources */,
-				2CD262A92CFDC5EB00A040A7 /* EcosiaMockThemeManager.swift in Sources */,
 				2CAF5BF92D00D1AB00D3DCDD /* ProductionURLProviderTests.swift in Sources */,
 				2CAF5BD82D00D1AB00D3DCDD /* MockTimestampProvider.swift in Sources */,
 				2CAF5BFC2D00D1AB00D3DCDD /* UserStateTests.swift in Sources */,
@@ -15477,6 +14414,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2CAF5C272D01C33300D3DCDD /* EcosiaMockThemeManager.swift in Sources */,
+				2CAF5C262D01C32C00D3DCDD /* Welcome.swift in Sources */,
+				2CAF5C252D01C31900D3DCDD /* NTPTests.swift in Sources */,
+				2CAF5C242D01C30B00D3DCDD /* OnboardingTests.swift in Sources */,
+				2CAF5C232D01C2F300D3DCDD /* NTPComponentTests.swift in Sources */,
 				2C69DA7D2C6244BE00D7F69F /* MockTabDataStore.swift in Sources */,
 				2C69DA782C62259D00D7F69F /* MockProfile.swift in Sources */,
 				2C69DA792C6225AE00D7F69F /* DependencyHelperMock.swift in Sources */,

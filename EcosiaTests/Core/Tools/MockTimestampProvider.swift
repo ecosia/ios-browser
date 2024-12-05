@@ -1,5 +1,5 @@
 import Foundation
-@testable import Core
+@testable import Ecosia
 
 final class MockTimestampProvider: TimestampProvider {
 

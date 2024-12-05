@@ -1,5 +1,5 @@
 import Foundation
-@testable import Core
+@testable import Ecosia
 
 struct User5_3: Codable {
     var install: Date?
