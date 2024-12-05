@@ -697,7 +697,6 @@
 		2CD265C72CFE382C00A040A7 /* AboutEcosiaSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD265682CFE382C00A040A7 /* AboutEcosiaSection.swift */; };
 		2CD265C82CFE382C00A040A7 /* NTPAboutEcosiaCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD265692CFE382C00A040A7 /* NTPAboutEcosiaCell.swift */; };
 		2CD265C92CFE382C00A040A7 /* NTPAboutEcosiaCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD2656A2CFE382C00A040A7 /* NTPAboutEcosiaCellViewModel.swift */; };
-		2CD265CA2CFE382C00A040A7 /* SeedCounter.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 2CD2656D2CFE382C00A040A7 /* SeedCounter.xcdatamodeld */; };
 		2CD265CB2CFE382C00A040A7 /* SeedProgressManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD2656F2CFE382C00A040A7 /* SeedProgressManagerProtocol.swift */; };
 		2CD265CC2CFE382C00A040A7 /* UserDefaultsSeedProgressManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD265702CFE382C00A040A7 /* UserDefaultsSeedProgressManager.swift */; };
 		2CD265CD2CFE382C00A040A7 /* ArcProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD265722CFE382C00A040A7 /* ArcProgressView.swift */; };
@@ -3372,7 +3371,6 @@
 		2CD265C02CFE382C00A040A7 /* LoadingScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingScreen.swift; sourceTree = "<group>"; };
 		2CD265C12CFE382C00A040A7 /* MarketsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MarketsController.swift; sourceTree = "<group>"; };
 		2CD265C22CFE382C00A040A7 /* SemanticColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SemanticColor.swift; sourceTree = "<group>"; };
-		2CD265C42CFE382C00A040A7 /* SeedCounter.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = SeedCounter.xcdatamodel; sourceTree = "<group>"; };
 		2CD266102CFE38AD00A040A7 /* EcosiaTopSiteItemCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EcosiaTopSiteItemCell.swift; sourceTree = "<group>"; };
 		2CD266132CFE38AD00A040A7 /* EcosiaHomepageSectionType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EcosiaHomepageSectionType.swift; sourceTree = "<group>"; };
 		2CD266162CFE38AD00A040A7 /* EcosiaDebugSettings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EcosiaDebugSettings.swift; sourceTree = "<group>"; };
@@ -10184,14 +10182,6 @@
 			path = Account;
 			sourceTree = "<group>";
 		};
-		2CD2656E2CFE382C00A040A7 /* CoreData */ = {
-			isa = PBXGroup;
-			children = (
-				2CD2656D2CFE382C00A040A7 /* SeedCounter.xcdatamodeld */,
-			);
-			path = CoreData;
-			sourceTree = "<group>";
-		};
 		2CD265712CFE382C00A040A7 /* SeedProgressManager */ = {
 			isa = PBXGroup;
 			children = (
@@ -10204,7 +10194,6 @@
 		2CD2657A2CFE382C00A040A7 /* ClimateImpactCounter */ = {
 			isa = PBXGroup;
 			children = (
-				2CD2656E2CFE382C00A040A7 /* CoreData */,
 				2CD265712CFE382C00A040A7 /* SeedProgressManager */,
 				2CD265722CFE382C00A040A7 /* ArcProgressView.swift */,
 				2CD265732CFE382C00A040A7 /* NTPSeedCounterCell.swift */,
@@ -15705,7 +15694,6 @@
 				2109478928AFD24C00B73D44 /* OnboardingViewControllerProtocol.swift in Sources */,
 				D0FCF7F51FE45842004A7995 /* UserScriptManager.swift in Sources */,
 				8AB8573027D94CAD0075C173 /* HomepageViewModelProtocol.swift in Sources */,
-				2CD265CA2CFE382C00A040A7 /* SeedCounter.xcdatamodeld in Sources */,
 				5A9F83422B2B796800272819 /* TabPeekState.swift in Sources */,
 				21E77E522AA8BE5C00FABA10 /* TabTrayFlagManager.swift in Sources */,
 				CA8226F324C11DB7008A6F38 /* PasswordManagerTableViewCell.swift in Sources */,
@@ -24784,20 +24772,6 @@
 			productName = Sentry;
 		};
 /* End XCSwiftPackageProductDependency section */
-
-/* Begin XCVersionGroup section */
-		2CD2656D2CFE382C00A040A7 /* SeedCounter.xcdatamodeld */ = {
-			isa = XCVersionGroup;
-			children = (
-				2CD265C42CFE382C00A040A7 /* SeedCounter.xcdatamodel */,
-			);
-			currentVersion = 2CD265C42CFE382C00A040A7 /* SeedCounter.xcdatamodel */;
-			name = SeedCounter.xcdatamodeld;
-			path = "/Users/dariocarlomagno/Workspace/ecosia/ios-browser/Client/Ecosia/UI/NTP/ClimateImpactCounter/CoreData/SeedCounter.xcdatamodeld";
-			sourceTree = "<group>";
-			versionGroupType = wrapper.xcdatamodel;
-		};
-/* End XCVersionGroup section */
 	};
 	rootObject = F84B21B61A090F8100AAB793 /* Project object */;
 }
