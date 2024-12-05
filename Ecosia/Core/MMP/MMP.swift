@@ -3,10 +3,16 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
-import Core
-import Shared
 import AdServices
 import Common
+
+public enum MMPEvent: String {
+    case onboardingStart = "onboarding_start"
+    case onboardingComplete = "onboarding_complete"
+    case firstSearch = "first_search"
+    case fifthSearch = "fifth_search"
+    case tenthSearch = "tenth_search"
+}
 
 public struct MMP {
 

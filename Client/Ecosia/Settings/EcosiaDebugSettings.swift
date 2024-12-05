@@ -4,7 +4,7 @@
 
 import Foundation
 import UIKit
-import Core
+
 import Shared
 import Common
 import Ecosia

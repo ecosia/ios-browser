@@ -1,0 +1,29 @@
+@testable import Core
+import XCTest
+
+final class LocalTests: XCTestCase {
+    func testCurrent() {
+        XCTAssertEqual("en-us", Language.current.locale.rawValue)
+    }
+
+    func testCountryCode() {
+        let locale = NSLocale(localeIdentifier: "it-DE")
+        XCTAssertEqual("DE", locale.countryCode)
+        XCTAssertEqual(.de_de, Local.make(for: locale as Locale))
+    }
+
+    func testRegion() {
+        XCTAssertEqual(.de_de, Local.make(for: .init(identifier: "en-DE")))
+        XCTAssertEqual(.es_mx, Local.make(for: .init(identifier: "de-MX")))
+        XCTAssertEqual(.es_es, Local.make(for: .init(identifier: "es-ES")))
+        XCTAssertEqual(.es_mx, Local.make(for: .init(identifier: "es-MX")))
+        XCTAssertEqual(.en_us, Local.make(for: .init(identifier: "en-US")))
+        XCTAssertEqual(.es_us, Local.make(for: .init(identifier: "es-US")))
+        XCTAssertEqual(.en_us, Local.make(for: .init(identifier: "Invalid")))
+    }
+
+    func testIdentifier() {
+        XCTAssertEqual("en-us", Local.en_us.rawValue)
+        XCTAssertEqual("de-de", Local.de_de.rawValue)
+    }
+}

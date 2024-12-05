@@ -4,8 +4,8 @@
 
 import UIKit
 import Common
-// Ecosia: Import Core
-import Core
+// Ecosia: Import Ecosia Framework
+import Ecosia
 
 protocol BundleImageFetcher {
     /// Fetches from the bundle
@@ -83,8 +83,8 @@ class DefaultBundleImageFetcher: BundleImageFetcher {
          into the BrowserKit package, this would have resulted into macking a lot of changes into accessors to be able to make our own file outside of the BrowserKit context.
          */
 
-        let financialReportsURL = Environment.current.urlProvider.financialReports.absoluteString.replacingOccurrences(of: "https://", with: "")
-        let privacyURL = Environment.current.urlProvider.privacy.absoluteString.replacingOccurrences(of: "https://", with: "")
+        let financialReportsURL = Ecosia.Environment.current.urlProvider.financialReports.absoluteString.replacingOccurrences(of: "https://", with: "")
+        let privacyURL = Ecosia.Environment.current.urlProvider.privacy.absoluteString.replacingOccurrences(of: "https://", with: "")
         let urlMap = [
             financialReportsURL: "blog.ecosia.finance",
             privacyURL: "privacy.ecosia"
