@@ -5,7 +5,7 @@
 import Common
 import MozillaAppServices
 import Shared
-import Core
+
 import Ecosia
 
 protocol HomepageViewModelDelegate: AnyObject {

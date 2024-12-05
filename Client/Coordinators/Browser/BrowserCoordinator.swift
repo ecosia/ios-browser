@@ -9,10 +9,8 @@ import Shared
 import Storage
 import Redux
 import TabDataStore
-// Ecosia: Import Core
-import Core
+// Ecosia: Import Ecosia Framework
 import Ecosia
-
 class BrowserCoordinator: BaseCoordinator,
                           LaunchCoordinatorDelegate,
                           BrowserDelegate,

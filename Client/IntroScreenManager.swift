@@ -4,8 +4,8 @@
 
 import Foundation
 import Shared
-// Ecosia: Import Core
-import Core
+// Ecosia: Import Ecosia Framework
+import Ecosia
 
 struct IntroScreenManager {
     var prefs: Prefs

@@ -4,7 +4,6 @@
 
 import Foundation
 import SnowplowTracker
-import Core
 
 extension Analytics {
 

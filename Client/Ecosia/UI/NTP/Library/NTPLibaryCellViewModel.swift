@@ -4,7 +4,7 @@
 
 import Foundation
 import Shared
-import Core
+
 import Common
 
 protocol NTPLibraryDelegate: AnyObject {
