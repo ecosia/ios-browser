@@ -2,7 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
-import Core
+import Foundation
 
 /// This extension provides functionality to evaluate the current Ecosia installation type based on the provided app version information.
 extension EcosiaInstallType {

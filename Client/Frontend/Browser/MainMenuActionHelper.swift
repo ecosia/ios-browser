@@ -10,7 +10,7 @@ import Storage
 import UIKit
 import SwiftUI
 import Common
-import Core
+
 // Ecosia: Need SafariServices to enable "open in safari" action
 import SafariServices
 import Ecosia

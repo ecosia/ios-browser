@@ -9,8 +9,6 @@ import UIKit
 import Common
 // Ecosia: remove Glean dependency // import Glean
 import TabDataStore
-// Ecosia: Import Core
-import Core
 // Ecosia: Import Ecosia Framework
 import Ecosia
 

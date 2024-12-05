@@ -6,7 +6,8 @@ import Foundation
 import Common
 import Storage
 import Shared
-import Core
+// Ecosia: Import Ecosia Framework
+import Ecosia
 
 class BookmarksPanelViewModel: NSObject {
     enum BookmarksSection: Int, CaseIterable {
@@ -205,7 +206,7 @@ extension BookmarksPanelViewModel {
     }
 
     // MARK: - Private
-    private func getBookmarksForExport() async throws -> [Core.BookmarkItem] {
+    private func getBookmarksForExport() async throws -> [Ecosia.BookmarkItem] {
         return try await withCheckedThrowingContinuation { [weak self] continuation in
             guard let self = self else {
                 return continuation.resume(returning: [])
@@ -222,7 +223,7 @@ extension BookmarksPanelViewModel {
                     self.bookmarkFolder = mobileFolder
                     let bookmarkNodes = mobileFolder.fxChildren ?? []
 
-                    let items: [Core.BookmarkItem] = bookmarkNodes
+                    let items: [Ecosia.BookmarkItem] = bookmarkNodes
                         .compactMap { $0 as? BookmarkNodeData }
                         .compactMap { bookmarkNode in
                             self.exportNode(bookmarkNode)
@@ -233,7 +234,7 @@ extension BookmarksPanelViewModel {
         }
     }
 
-    private func exportNode(_ node: BookmarkNodeData) -> Core.BookmarkItem? {
+    private func exportNode(_ node: BookmarkNodeData) -> Ecosia.BookmarkItem? {
         if let folder = node as? BookmarkFolderData {
             return .folder(folder.title, folder.children?.compactMap { exportNode($0) } ?? [], .empty)
         } else if let bookmark = node as? BookmarkItemData {

@@ -4,7 +4,7 @@
 
 import UIKit
 import SwiftUI
-import Core
+
 import Common
 
 protocol NTPSeedCounterDelegate: NSObjectProtocol {

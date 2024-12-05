@@ -5,7 +5,6 @@
 import Foundation
 import BrazeKit
 import BrazeUI
-import Core
 import NotificationCenter
 
 final class BrazeService: NSObject {

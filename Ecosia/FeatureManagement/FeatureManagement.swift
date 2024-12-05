@@ -4,7 +4,6 @@
 
 import Foundation
 import Common
-import Core
 
 public struct FeatureManagement {
 
