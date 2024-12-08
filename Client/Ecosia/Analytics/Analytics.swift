@@ -10,6 +10,7 @@ open class Analytics {
     static let installSchema = "iglu:org.ecosia/ios_install_event/jsonschema/1-0-0"
     private static let abTestSchema = "iglu:org.ecosia/abtest_context/jsonschema/1-0-1"
     private static let consentSchema = "iglu:org.ecosia/eccc_context/jsonschema/1-0-2"
+    static let userSchema = "iglu:org.ecosia/app_user_state_context/jsonschema/1-0-3"
     private static let abTestRoot = "ab_tests"
     private static let namespace = "ios_sp"
 
@@ -25,8 +26,9 @@ open class Analytics {
 
     static var shared = Analytics()
     private var tracker: TrackerController
+    private let notificationCenter: AnalyticsUserNotificationCenterProtocol
 
-    internal init() {
+    internal init(notificationCenter: AnalyticsUserNotificationCenterProtocol = AnalyticsUserNotificationCenterWrapper()) {
         tracker = Self.tracker
         tracker.installAutotracking = true
         tracker.screenViewAutotracking = false
@@ -34,6 +36,7 @@ open class Analytics {
         tracker.screenEngagementAutotracking = false
         tracker.exceptionAutotracking = false
         tracker.diagnosticAutotracking = false
+        self.notificationCenter = notificationCenter
     }
 
     private func track(_ event: Event) {
@@ -66,9 +69,9 @@ open class Analytics {
                                action: action.rawValue)
             .label(Analytics.Label.Navigation.inapp.rawValue)
 
-        appendTestContextIfNeeded(action, event)
-
-        track(event)
+        appendTestContextIfNeeded(action, event) { [weak self] in
+            self?.track(event)
+        }
     }
 
     // MARK: Bookmarks
@@ -282,12 +285,13 @@ open class Analytics {
 }
 
 extension Analytics {
-    private func appendTestContextIfNeeded(_ action: Analytics.Action.Activity, _ event: Structured) {
+    func appendTestContextIfNeeded(_ action: Analytics.Action.Activity, _ event: Structured, completion: @escaping () -> Void) {
         switch action {
         case .resume, .launch:
             // Add `onboardingRemove` - used for `OnboardingRemoveExperiment` AB Test
             addABTestContexts(to: event, toggles: [.brazeIntegration, .onboardingRemove])
             addCookieConsentContext(to: event)
+            addUserStateContext(to: event, completion: completion)
         }
     }
 
@@ -304,6 +308,16 @@ extension Analytics {
             let consentContext = SelfDescribingJson(schema: Self.consentSchema,
                                                     andDictionary: ["cookie_consent": consentValue])
             event.entities.append(consentContext)
+        }
+    }
+
+    private func addUserStateContext(to event: Structured, completion: @escaping () -> Void) {
+        notificationCenter.getNotificationSettingsProtocol { settings in
+            User.shared.updatePushNotificationUserStateWithAnalytics(from: settings.authorizationStatus)
+            let userContext = SelfDescribingJson(schema: Self.userSchema,
+                                                 andDictionary: User.shared.analyticsUserState.dictionary)
+            event.entities.append(userContext)
+            completion()
         }
     }
 }

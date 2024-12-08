@@ -189,12 +189,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
          */
         Task {
             await FeatureManagement.fetchConfiguration()
-            // Ecosia: Lifecycle tracking. Needs to happen after Unleash start so that the flags are correctly added to the analytics context.
-            Analytics.shared.activity(.launch)
-            // Ecosia: Engagement Service Initialization helper
+            // Ecosia: Braze Service Initialization helper
             await BrazeService.shared.initialize()
             // Ecosia: Experiment that directly asks for consent
             await APNConsentOnLaunchExperiment.requestAPNConsentIfNeeded()
+            // Ecosia: Lifecycle tracking. Needs to happen after Unleash start so that the flags are correctly added to the analytics context.
+            Analytics.shared.activity(.launch)
         }
 
         // Ecosia: fetching statistics before they are used
