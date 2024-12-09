@@ -21497,7 +21497,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = "dc-mob-3051-user-state-analytics-tracking";
+				branch = "dc-mob-3094-cleanup-onbaording-remove-experiment";
 				kind = branch;
 			};
 		};
