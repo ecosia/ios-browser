@@ -288,8 +288,7 @@ extension Analytics {
     func appendTestContextIfNeeded(_ action: Analytics.Action.Activity, _ event: Structured, completion: @escaping () -> Void) {
         switch action {
         case .resume, .launch:
-            // Add `onboardingRemove` - used for `OnboardingRemoveExperiment` AB Test
-            addABTestContexts(to: event, toggles: [.brazeIntegration, .onboardingRemove])
+            addABTestContexts(to: event, toggles: [.brazeIntegration])
             addCookieConsentContext(to: event)
             addUserStateContext(to: event, completion: completion)
         }

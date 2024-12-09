@@ -152,7 +152,6 @@ extension AppSettingsTableViewController {
             UnleashBrazeIntegrationSetting(settings: self),
             UnleashAPNConsentOnLaunchSetting(settings: self),
             UnleashSeedCounterNTPSetting(settings: self),
-            UnleashOnboardingRemoveSetting(settings: self),
             UnleashNewsletterCardSetting(settings: self)
         ]
 

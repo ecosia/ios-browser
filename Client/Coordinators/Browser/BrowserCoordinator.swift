@@ -279,9 +279,7 @@ class BrowserCoordinator: BaseCoordinator,
         browserViewController.presentIntroViewController()
     }
 
-    // Ecosia: Add `forceSkipExperiment` - used for `OnboardingRemoveExperiment`
-    // private func showIntroOnboarding() {
-    private func showIntroOnboarding(skipExperiment: Bool = false) {
+    private func showIntroOnboarding() {
         let introManager = IntroScreenManager(prefs: profile.prefs)
         let launchType = LaunchType.intro(manager: introManager)
         startLaunch(with: launchType)
