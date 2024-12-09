@@ -21497,7 +21497,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = "dc-mob-3094-cleanup-onbaording-remove-experiment";
+				branch = main;
 				kind = branch;
 			};
 		};
