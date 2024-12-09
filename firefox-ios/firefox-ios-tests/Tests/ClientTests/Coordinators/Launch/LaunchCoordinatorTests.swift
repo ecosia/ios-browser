@@ -40,8 +40,7 @@ final class LaunchCoordinatorTests: XCTestCase {
     func testStart_introNotIphone_present() throws {
         let introScreenManager = IntroScreenManager(prefs: profile.prefs)
         let subject = createSubject(isIphone: false)
-        // Ecosia: Add `checkExperiment` - used for `OnboardingRemoveExperiment`
-        subject.start(with: .intro(manager: introScreenManager, checkExperiment: false))
+        subject.start(with: .intro(manager: introScreenManager))
         XCTAssertEqual(mockRouter.presentCalled, 1)
         XCTAssertEqual(mockRouter.setRootViewControllerCalled, 0)
         let presentedViewController = try XCTUnwrap(mockRouter.presentedViewController)
@@ -53,8 +52,7 @@ final class LaunchCoordinatorTests: XCTestCase {
     func testStart_introIsIphone_setRootView() throws {
         let introScreenManager = IntroScreenManager(prefs: profile.prefs)
         let subject = createSubject(isIphone: true)
-        // Ecosia: Add `checkExperiment` - used for `OnboardingRemoveExperiment`
-        subject.start(with: .intro(manager: introScreenManager, checkExperiment: false))
+        subject.start(with: .intro(manager: introScreenManager))
         XCTAssertEqual(mockRouter.presentCalled, 1)
         XCTAssertEqual(mockRouter.setRootViewControllerCalled, 0)
         let pushedVC = try XCTUnwrap(mockRouter.presentedViewController)

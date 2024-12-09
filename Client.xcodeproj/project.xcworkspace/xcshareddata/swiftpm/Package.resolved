@@ -59,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ecosia/ios-core.git",
       "state" : {
-        "branch" : "dc-mob-3051-user-state-analytics-tracking",
-        "revision" : "816b04263f8e4fdf0c305512ee2292e523b24b44"
+        "branch" : "main",
+        "revision" : "e22caeb00d49eb2febb36ebd7252f2cc461e86b9"
       }
     },
     {

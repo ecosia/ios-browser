@@ -235,16 +235,6 @@ final class AnalyticsIdentifierSetting: HiddenSetting {
     }
 }
 
-final class UnleashOnboardingRemoveSetting: UnleashVariantResetSetting {
-    override var titleName: String? {
-        "Onboarding Remove Experiment"
-    }
-
-    override var variant: Unleash.Variant? {
-        Unleash.getVariant(.onboardingRemove)
-    }
-}
-
 final class UnleashNewsletterCardSetting: UnleashVariantResetSetting {
     override var titleName: String? {
         "Newsletter Card"
