@@ -217,7 +217,7 @@ extension Analytics {
         enum APNConsent: String {
             case
             home,
-            onLaunchRollout = "on_launch_rollout"
+            onLaunchPrompt = "on_launch_prompt"
         }
 
         enum Bookmarks: String {

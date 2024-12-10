@@ -254,7 +254,7 @@ open class Analytics {
     func apnConsent(_ action: Action.APNConsent) {
         let event = Structured(category: Category.pushNotificationConsent.rawValue,
                                action: action.rawValue)
-            .property(Property.APNConsent.onLaunchRollout.rawValue)
+            .property(Property.APNConsent.onLaunchPrompt.rawValue)
         track(event)
     }
 
