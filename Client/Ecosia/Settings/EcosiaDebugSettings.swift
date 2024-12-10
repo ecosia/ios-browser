@@ -208,13 +208,13 @@ final class UnleashBrazeIntegrationSetting: UnleashVariantResetSetting {
     }
 }
 
-final class UnleashAPNConsentOnLaunchSetting: UnleashVariantResetSetting {
+final class UnleashAPNConsent: UnleashVariantResetSetting {
     override var titleName: String? {
-        "APN Consent On Launch"
+        "APN Consent Feature Rollout"
     }
 
     override var variant: Unleash.Variant? {
-        Unleash.getVariant(.apnConsentOnLaunch)
+        Unleash.getVariant(.apnConsent)
     }
 }
 

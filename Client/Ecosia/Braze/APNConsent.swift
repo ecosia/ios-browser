@@ -9,7 +9,7 @@ struct APNConsent {
     private init() {}
 
     private static var toggleName: Unleash.Toggle.Name {
-        .apnConsentOnLaunch
+        .apnConsent
     }
 
     private static var isEnabled: Bool {
