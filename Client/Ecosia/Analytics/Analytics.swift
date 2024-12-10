@@ -250,15 +250,6 @@ open class Analytics {
         track(event)
     }
 
-    // MARK: Push Notifications Consent
-    func apnConsentOnLaunchExperiment(_ action: Action.APNConsent) {
-        let event = Structured(category: Category.pushNotificationConsent.rawValue,
-                               action: action.rawValue)
-            .property(Property.APNConsent.onLaunchExperiment.rawValue)
-        addABTestContexts(to: event, toggles: [APNConsentOnLaunchExperiment.toggleName])
-        track(event)
-    }
-
     // MARK: Referrals
     func referral(action: Action.Referral, label: Label.Referral? = nil) {
         track(Structured(category: Category.invitations.rawValue,
