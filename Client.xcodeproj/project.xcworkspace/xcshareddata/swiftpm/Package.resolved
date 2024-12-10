@@ -59,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ecosia/ios-core.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "e22caeb00d49eb2febb36ebd7252f2cc461e86b9"
+        "branch" : "dc-mob-3049-cleanup-push-notification-prompt-experiment",
+        "revision" : "c18128abfb5b702afd500d5b78fb5d8103ae3a21"
       }
     },
     {
