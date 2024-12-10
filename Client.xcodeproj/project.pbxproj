@@ -21497,7 +21497,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ecosia/ios-core.git";
 			requirement = {
-				branch = main;
+				branch = "dc-mob-3050-display-push-consent-experiment";
 				kind = branch;
 			};
 		};
