@@ -208,6 +208,16 @@ final class UnleashBrazeIntegrationSetting: UnleashVariantResetSetting {
     }
 }
 
+final class UnleashAPNConsent: UnleashVariantResetSetting {
+    override var titleName: String? {
+        "APN Consent Feature Rollout"
+    }
+
+    override var variant: Unleash.Variant? {
+        Unleash.getVariant(.apnConsent)
+    }
+}
+
 final class AnalyticsIdentifierSetting: HiddenSetting {
     override var title: NSAttributedString? {
         return NSAttributedString(string: "Debug: Analytics Identifier", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])

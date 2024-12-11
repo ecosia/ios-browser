@@ -250,6 +250,14 @@ open class Analytics {
         track(event)
     }
 
+    // MARK: Push Notifications Consent
+    func apnConsent(_ action: Action.APNConsent) {
+        let event = Structured(category: Category.pushNotificationConsent.rawValue,
+                               action: action.rawValue)
+            .property(Property.APNConsent.onLaunchPrompt.rawValue)
+        track(event)
+    }
+
     // MARK: Referrals
     func referral(action: Action.Referral, label: Label.Referral? = nil) {
         track(Structured(category: Category.invitations.rawValue,
