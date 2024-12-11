@@ -7,6 +7,7 @@ import Core
 import Storage
 import SnowplowTracker
 @testable import Client
+@testable import Ecosia
 
 // MARK: - AnalyticsSpy
 

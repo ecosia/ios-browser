@@ -1,4 +1,5 @@
 import Foundation
+@testable import Ecosia
 
 enum BookmarkFixtures {
     enum Browser: String {
@@ -11,12 +12,12 @@ enum BookmarkFixtures {
         switch self {
         case let .html(browser):
             return String(
-                data: try! Data(contentsOf: Bundle.module.url(forResource: "import_input_bookmark_\(browser.rawValue)", withExtension: "html")!),
+                data: try! Data(contentsOf: Bundle.ecosiaTests.url(forResource: "import_input_bookmark_\(browser.rawValue)", withExtension: "html")!),
                 encoding: .utf8
             )!.trimmingCharacters(in: .newlines)
         case let .debugString(browser):
             return String(
-                data: try! Data(contentsOf: Bundle.module.url(forResource: "import_output_bookmark_\(browser.rawValue)", withExtension: "txt")!),
+                data: try! Data(contentsOf: Bundle.ecosiaTests.url(forResource: "import_output_bookmark_\(browser.rawValue)", withExtension: "txt")!),
                 encoding: .utf8
             )!.trimmingCharacters(in: .newlines)
         }
@@ -24,7 +25,7 @@ enum BookmarkFixtures {
 
     static var ecosiaExportedHtml: String {
         String(
-            data: try! Data(contentsOf: Bundle.module.url(forResource: "export_bookmark_ecosia", withExtension: "html")!),
+            data: try! Data(contentsOf: Bundle.ecosiaTests.url(forResource: "export_bookmark_ecosia", withExtension: "html")!),
             encoding: .utf8
         )!.trimmingCharacters(in: .newlines)
     }

@@ -144,7 +144,7 @@ extension UnleashTests {
             .staging
         }
 
-        var method: Core.HTTPMethod {
+        var method: Ecosia.HTTPMethod {
             .get
         }
 
@@ -183,7 +183,7 @@ extension UnleashTests {
             .production
         }
 
-        var method: Core.HTTPMethod {
+        var method: Ecosia.HTTPMethod {
             .get
         }
 

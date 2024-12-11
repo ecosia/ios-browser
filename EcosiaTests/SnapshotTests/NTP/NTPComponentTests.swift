@@ -6,7 +6,7 @@ import SnapshotTesting
 import XCTest
 import Common
 import Shared
-import Core
+import Ecosia
 import MozillaAppServices
 @testable import Client
 

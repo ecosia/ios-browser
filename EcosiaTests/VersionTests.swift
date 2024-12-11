@@ -4,6 +4,7 @@
 
 import XCTest
 @testable import Client
+@testable import Ecosia
 
 final class VersionTests: XCTestCase {
 

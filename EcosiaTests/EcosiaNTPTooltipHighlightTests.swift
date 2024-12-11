@@ -8,7 +8,7 @@ import XCTest
 
 class EcosiaNTPTooltipHighlightTests: XCTestCase {
 
-    var user: Core.User!
+    var user: Ecosia.User!
 
     override func setUpWithError() throws {
         try? FileManager().removeItem(at: FileManager.user)

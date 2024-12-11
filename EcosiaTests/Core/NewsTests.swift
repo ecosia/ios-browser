@@ -65,7 +65,7 @@ final class NewsTests: XCTestCase {
 
         let expect = expectation(description: "")
         let session = MockURLSession()
-        session.data = [try! .init(contentsOf: Bundle.module.url(forResource: "notifications", withExtension: "json")!)]
+        session.data = [try! .init(contentsOf: Bundle.ecosiaTests.url(forResource: "notifications", withExtension: "json")!)]
 
         let notifications = News()
         notifications.subscribe(self) {
@@ -143,7 +143,7 @@ final class NewsTests: XCTestCase {
     func testCleanTextFromNetwork() {
         let expect = expectation(description: "")
         let session = MockURLSession()
-        session.data = [try! .init(contentsOf: Bundle.module.url(forResource: "notifications", withExtension: "json")!)]
+        session.data = [try! .init(contentsOf: Bundle.ecosiaTests.url(forResource: "notifications", withExtension: "json")!)]
         let notifications = News()
         notifications.subscribe(self) {
             $0.forEach {

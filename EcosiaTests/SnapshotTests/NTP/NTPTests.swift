@@ -4,7 +4,7 @@
 
 import SnapshotTesting
 import XCTest
-import Core
+import Ecosia
 import Common
 @testable import Client
 
