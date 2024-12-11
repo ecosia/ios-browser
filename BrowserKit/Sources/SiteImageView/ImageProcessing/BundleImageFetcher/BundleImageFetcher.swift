@@ -66,7 +66,7 @@ class DefaultBundleImageFetcher: BundleImageFetcher {
     // MARK: - Private
 
     private func getBundleDomain(domain: ImageDomain) -> String? {
-        /* Ecosia: Allor Favicon to import the correct financial one
+        /* Ecosia: Allow Favicon to import the correct financial one
          OLD Implementation:
            return domain.bundleDomains.first(where: { bundledImages[$0] != nil })
          
