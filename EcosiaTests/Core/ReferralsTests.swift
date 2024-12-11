@@ -15,7 +15,7 @@ final class ReferralsTests: XCTestCase {
         try? FileManager.default.removeItem(at: FileManager.user)
 
         httpClientMock = HTTPClientMock()
-        httpClientMock.data = try! Data(contentsOf: Bundle.module.url(forResource: "referrals", withExtension: "json")!)
+        httpClientMock.data = try! Data(contentsOf: Bundle.ecosiaTests.url(forResource: "referrals", withExtension: "json")!)
         httpClientMock.response = failureResponse
 
         // Force clean state
