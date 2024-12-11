@@ -1,9 +1,8 @@
 name: Snapshot Tests
 
-on:
-  pull_request:
-    paths:
-      - 'Client/Configuration/Common.xcconfig'
+on: push
+  # pull_request:
+  #   branches: [ main ]
 
 jobs:
   execute_snapshot_tests:
