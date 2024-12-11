@@ -31,8 +31,8 @@ public struct Singular: MMPProvider {
         if let skanHelper = skanHelper {
             if skanHelper.isRegistered {
                 try? await skanHelper.fetchFromSingularServerAndUpdate(forEvent: .session,
-                                                                      sessionIdentifier: sessionIdentifier,
-                                                                      appDeviceInfo: appDeviceInfo)
+                                                                       sessionIdentifier: sessionIdentifier,
+                                                                       appDeviceInfo: appDeviceInfo)
             } else {
                 try? await skanHelper.registerAppForAdNetworkAttribution()
             }
