@@ -25,5 +25,6 @@ jobs:
           github_action_config.auto_describe: "false" 
           github_action_config.auto_improve: "true" 
           github_action_config.enable_output: "false"
-          PR_REVIEWER.INLINE_CODE_COMMENTS: "true" 
-          PR_REVIEWER.ENABLE_REVIEW_LABELS_EFFORT: "false" 
+          pr_reviewer.inline_code_comments: "true" 
+          pr_reviewer.num_code_suggestions: 5
+          pr_reviewer.enable_review_labels_effort: "false" 
