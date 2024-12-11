@@ -375,7 +375,6 @@
 		2CAF5C262D01C32C00D3DCDD /* Welcome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD261852CFDC5E900A040A7 /* Welcome.swift */; };
 		2CAF5C272D01C33300D3DCDD /* EcosiaMockThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD261842CFDC5E900A040A7 /* EcosiaMockThemeManager.swift */; };
 		2CCFB3D72C0FBEE800BEDCA0 /* TabToolbarHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D815A3A724A53F3200AAB221 /* TabToolbarHelperTests.swift */; };
-		2CD263A82CFDC5EB00A040A7 /* environment.json in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2628A2CFDC5E900A040A7 /* environment.json */; };
 		2CD263AF2CFDC5EB00A040A7 /* VersionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD262922CFDC5E900A040A7 /* VersionTests.swift */; };
 		2CD263B22CFDC5EB00A040A7 /* WhatsNewLocalDataProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD262962CFDC5E900A040A7 /* WhatsNewLocalDataProviderTests.swift */; };
 		2CD263B32CFDC5EB00A040A7 /* AppDelegateFeatureManagementIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD262972CFDC5EA00A040A7 /* AppDelegateFeatureManagementIntegrationTests.swift */; };
@@ -553,6 +552,8 @@
 		2CD7E6052D09E43B0003B02B /* MockTabDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A475E8C29DB888E009C13FD /* MockTabDataStore.swift */; };
 		2CD7E6072D09E47E0003B02B /* Bundle+EcosiaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD7E6062D09E47E0003B02B /* Bundle+EcosiaTests.swift */; };
 		2CD7E6082D09E5DF0003B02B /* RustMozillaAppServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43BE578A278BA4D900491291 /* RustMozillaAppServices.framework */; };
+		2CD7E60A2D09E8B00003B02B /* environment.json in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2628A2CFDC5E900A040A7 /* environment.json */; };
+		2CD7E60B2D09E9D60003B02B /* snapshot_configuration.json in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2628D2CFDC5E900A040A7 /* snapshot_configuration.json */; };
 		2F13E79B1AC0C02700D75081 /* StringExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F13E79A1AC0C02700D75081 /* StringExtensionsTests.swift */; };
 		2F44FA1B1A9D426A00FD20CC /* TestHashExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F44FA1A1A9D426A00FD20CC /* TestHashExtensions.swift */; };
 		2F44FB2C1A9D5D8500FD20CC /* Library.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F84B22261A09127C00AAB793 /* Library.xcassets */; };
@@ -13833,7 +13834,6 @@
 				2CAF5BE22D00D1AB00D3DCDD /* import_output_bookmark_chrome.txt in Resources */,
 				2CAF5BE12D00D1AB00D3DCDD /* import_input_bookmark_safari.html in Resources */,
 				2CAF5BE32D00D1AB00D3DCDD /* import_output_bookmark_firefox.txt in Resources */,
-				2CD263A82CFDC5EB00A040A7 /* environment.json in Resources */,
 				2CAF5BE42D00D1AB00D3DCDD /* import_output_bookmark_safari.txt in Resources */,
 				2CAF5BE52D00D1AB00D3DCDD /* notifications.json in Resources */,
 				2CAF5BDE2D00D1AB00D3DCDD /* export_bookmark_ecosia.html in Resources */,
@@ -13915,6 +13915,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2CD7E60B2D09E9D60003B02B /* snapshot_configuration.json in Resources */,
+				2CD7E60A2D09E8B00003B02B /* environment.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
