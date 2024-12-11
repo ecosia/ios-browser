@@ -59,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ecosia/ios-core.git",
       "state" : {
-        "branch" : "dc-mob-3050-display-push-consent-experiment",
-        "revision" : "009e184b4ea98704a70cba69554c364a7a496ae9"
+        "branch" : "main",
+        "revision" : "def9d182ab7c7fd65b092ab5d8044811ac1a3826"
       }
     },
     {
