@@ -62,9 +62,10 @@ public final class News: StatePublisher {
     private func save() {
         dispatch.async { [weak self] in
             guard let items = self?.items, !items.isEmpty else { return }
-            if let _ = try? JSONEncoder().encode(items).write(to: FileManager.news, options: .atomic) {
+            do {
+                try JSONEncoder().encode(items).write(to: FileManager.news, options: .atomic)
                 User.shared.news = Date()
-            }
+            } catch {}
         }
     }
 

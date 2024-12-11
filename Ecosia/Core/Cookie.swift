@@ -126,32 +126,39 @@ public enum Cookie: String {
     private func extractECFG(_ properties: [String: String]) {
         var user = User.shared
 
-        properties[MainCookieProperties.userId].map {
-            user.id = $0
+        if let userId = properties[MainCookieProperties.userId] {
+            user.id = userId
         }
 
-        properties[MainCookieProperties.treeCount].flatMap(Int.init).map {
-            // tree count should only increase or be reset to 0 on logout
-            if $0 == 0 || $0 > user.searchCount {
-                user.searchCount = $0
-            }
+        if let treeCount = properties[MainCookieProperties.treeCount]?
+            .compactMap({ Int(.init($0)) })
+            .first, treeCount == 0 || treeCount > user.searchCount {
+            user.searchCount = treeCount
         }
 
-        properties[MainCookieProperties.marketCode].flatMap(Local.init).map {
-            user.marketCode = $0
+        if let marketCode = properties[MainCookieProperties.marketCode]?
+            .compactMap({ Local(rawValue: .init($0)) })
+            .first {
+            user.marketCode = marketCode
         }
 
-        properties[MainCookieProperties.adultFilter].flatMap(AdultFilter.init).map({
-            user.adultFilter = $0
-        })
+        if let adultFilter = properties[MainCookieProperties.adultFilter]?
+            .compactMap({ AdultFilter(rawValue: .init($0)) })
+            .first {
+            user.adultFilter = adultFilter
+        }
 
-        properties[MainCookieProperties.personalized].flatMap(Int.init).flatMap(NSNumber.init).flatMap(Bool.init).map({
-            user.personalized = $0
-        })
+        if let personalized = properties[MainCookieProperties.personalized]?
+            .compactMap({ Int(.init($0)) })
+            .compactMap({ NSNumber(value: $0) })
+            .compactMap({ Bool(truncating: $0) })
+            .first {
+            user.personalized = personalized
+        }
 
-        properties[MainCookieProperties.suggestions].map({
-            user.autoComplete = ($0 as NSString).boolValue
-        })
+        if let suggestions = properties[MainCookieProperties.suggestions] {
+            user.autoComplete = (suggestions as NSString).boolValue
+        }
 
         User.shared = user
     }

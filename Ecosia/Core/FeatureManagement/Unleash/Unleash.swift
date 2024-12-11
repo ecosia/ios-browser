@@ -148,6 +148,6 @@ public enum Unleash: UnleashProtocol {
 
     /// Determines whether the model should be refreshed based on its refreshing context providers.
     static var shouldRefresh: Bool {
-        return rules.first { $0.shouldRefresh == true } != nil
+        return rules.contains(where: { $0.shouldRefresh })
     }
 }
