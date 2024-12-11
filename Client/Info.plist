@@ -31,6 +31,8 @@
 	<string>1</string>
 	<key>UILaunchStoryboardName</key>
 	<string>EcosiaLaunchScreen.xib</string>
+    <key>CFBundleDisplayName</key>
+    <string>$(MOZ_BUNDLE_DISPLAY_NAME)</string>
 	<!--
 	Ecosia
 	Finish additions
