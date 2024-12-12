@@ -15,13 +15,6 @@
     {
       "target" : {
         "containerPath" : "container:Client.xcodeproj",
-        "identifier" : "2C6C90812C614A16007D9B43",
-        "name" : "EcosiaSnapshotTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:Client.xcodeproj",
         "identifier" : "122935722CE78D0A00EC1297",
         "name" : "EcosiaTests"
       }
