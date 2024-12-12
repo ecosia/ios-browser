@@ -466,7 +466,7 @@
             parallelizable = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "2CE2945A2B7FC51A006C22B2"
+               BlueprintIdentifier = "122935722CE78D0A00EC1297"
                BuildableName = "EcosiaTests.xctest"
                BlueprintName = "EcosiaTests"
                ReferencedContainer = "container:Client.xcodeproj">
