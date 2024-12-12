@@ -6,7 +6,6 @@ import Foundation
 import Shared
 import Storage
 import WebKit
-// Ecosia:
 
 class MetadataParserHelper: TabEventHandler {
     init() {
