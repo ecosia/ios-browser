@@ -1,0 +1,31 @@
+{
+  "configurations" : [
+    {
+      "id" : "9989C302-1D94-43E1-BC80-01AAA064C73B",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:Client.xcodeproj",
+        "identifier" : "2C6C90812C614A16007D9B43",
+        "name" : "EcosiaSnapshotTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Client.xcodeproj",
+        "identifier" : "122935722CE78D0A00EC1297",
+        "name" : "EcosiaTests"
+      }
+    }
+  ],
+  "version" : 1
+}
