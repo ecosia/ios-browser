@@ -4,8 +4,6 @@
 
 import UIKit
 import Common
-// Ecosia: Import Ecosia Framework
-import Ecosia
 
 protocol BundleImageFetcher {
     /// Fetches from the bundle
@@ -82,17 +80,11 @@ class DefaultBundleImageFetcher: BundleImageFetcher {
          However, as per this class and all other dependencies being wrapped
          into the BrowserKit package, this would have resulted into macking a lot of changes into accessors to be able to make our own file outside of the BrowserKit context.
          */
-
-        let financialReportsURL = Ecosia.Environment.current.urlProvider.financialReports.absoluteString.replacingOccurrences(of: "https://", with: "")
-        let privacyURL = Ecosia.Environment.current.urlProvider.privacy.absoluteString.replacingOccurrences(of: "https://", with: "")
-        let urlMap = [
-            financialReportsURL: "blog.ecosia.finance",
-            privacyURL: "privacy.ecosia"
-        ]
-        if let matchingKey = urlMap.keys.first(where: { domain.bundleDomains.contains($0) }) {
-            return urlMap[matchingKey]
+        if let ecosiaBundleDomain = EcosiaURLProvider.getBundleDomain(for: domain) {
+            return ecosiaBundleDomain
+        } else {
+            return domain.bundleDomains.first(where: { bundledImages[$0] != nil })
         }
-        return domain.bundleDomains.first(where: { bundledImages[$0] != nil })
     }
 
     private func retrieveBundledImages() -> [String: FormattedBundledImage] {
@@ -161,5 +153,57 @@ class DefaultBundleImageFetcher: BundleImageFetcher {
         ctx.draw(cgImage, in: imageRect)
 
         return UIGraphicsGetImageFromCurrentImageContext() ?? image
+    }
+}
+// Ecosia: Make custom, dedicated, URLProvider for Browserkit only
+struct EcosiaURLProvider {
+
+    // Static variables for privacy and financial reports URLs
+    private static let privacyURL = URL(string: "https://www.ecosia.org/privacy")!
+
+    private static var financialReportsURL: URL {
+        let locale = Locale.current
+        let blog: URL!
+
+        switch locale.languageCode {
+        case "de":
+            blog = URL(string: "https://de.blog.ecosia.org/")!
+        case "fr":
+            blog = URL(string: "https://fr.blog.ecosia.org/")!
+        default:
+            blog = URL(string: "https://blog.ecosia.org/")!
+        }
+
+        switch locale.languageCode {
+        case "de":
+            return blog.appendingPathComponent("ecosia-finanzberichte-baumplanzbelege/")
+        case "fr":
+            return blog.appendingPathComponent("rapports-financiers-recus-de-plantations-arbres/")
+        default:
+            return blog.appendingPathComponent("ecosia-financial-reports-tree-planting-receipts/")
+        }
+    }
+
+    // Utility function to create a domain part from URL (removes "https://")
+    private static func getURLDomain(_ url: URL) -> String {
+        return url.absoluteString.replacingOccurrences(of: "https://", with: "")
+    }
+
+    // Static method to get the appropriate bundle domain
+    static func getBundleDomain(for domain: ImageDomain) -> String? {
+        let financialReportsDomain = getURLDomain(financialReportsURL)
+        let privacyDomain = getURLDomain(privacyURL)
+
+        let urlMap: [String: String] = [
+            financialReportsDomain: "blog.ecosia.finance",
+            privacyDomain: "privacy.ecosia"
+        ]
+
+        // Check for the first matching domain
+        if let matchingKey = urlMap.keys.first(where: { domain.bundleDomains.contains($0) }) {
+            return urlMap[matchingKey]
+        }
+
+        return nil
     }
 }
