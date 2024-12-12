@@ -3,21 +3,12 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
-import NotificationCenter
 
-<<<<<<<< HEAD:Ecosia/Braze/APNConsent.swift
-struct APNConsent {
+public struct APNConsent {
     private init() {}
 
     private static var toggleName: Unleash.Toggle.Name {
         .apnConsent
-========
-public struct APNConsentOnLaunchExperiment {
-    private init() {}
-
-    public static var toggleName: Unleash.Toggle.Name {
-        .apnConsentOnLaunch
->>>>>>>> e5bca0a4d ([MOB-3028] Move Analytics and dependencies to Ecosia framework):Ecosia/Experiments/Unleash/APNConsentOnLaunchExperiment.swift
     }
 
     private static var isEnabled: Bool {
@@ -25,11 +16,7 @@ public struct APNConsentOnLaunchExperiment {
         Unleash.isEnabled(toggleName) && BrazeIntegrationExperiment.isEnabled
     }
 
-<<<<<<<< HEAD:Ecosia/Braze/APNConsent.swift
-    static func requestIfNeeded() async {
-========
-    public static func requestAPNConsentIfNeeded(delegate: UNUserNotificationCenterDelegate) async {
->>>>>>>> e5bca0a4d ([MOB-3028] Move Analytics and dependencies to Ecosia framework):Ecosia/Experiments/Unleash/APNConsentOnLaunchExperiment.swift
+    public static func requestIfNeeded() async {
         guard isEnabled, BrazeService.shared.notificationAuthorizationStatus == .notDetermined else {
             return
         }

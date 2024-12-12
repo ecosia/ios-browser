@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/braze-inc/braze-swift-sdk",
       "state" : {
-        "revision" : "2852dfb0e63b68b4bcb804b05bff02609fa1f03c",
-        "version" : "11.3.0"
+        "revision" : "fc575bee323c5ce58e0608b0168fdc3ac8727443",
+        "version" : "11.4.0"
       }
     },
     {
@@ -25,15 +25,6 @@
       "state" : {
         "revision" : "c3b601df0ff22b06b6d5ff4943faf05c0bd3f9bb",
         "version" : "7.1.1"
-      }
-    },
-    {
-      "identity" : "fmdb",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/ccgus/fmdb",
-      "state" : {
-        "revision" : "1227a3fa2b9916bfd75fe380eb45cd210e69e251",
-        "version" : "2.7.12"
       }
     },
     {

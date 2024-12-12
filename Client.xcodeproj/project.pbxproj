@@ -27,7 +27,6 @@
 		0BB5B30B1AC0AD1F0052877D /* LoginsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BB5B30A1AC0AD1F0052877D /* LoginsHelper.swift */; };
 		0BF0DB941A8545800039F300 /* URLBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF0DB931A8545800039F300 /* URLBarView.swift */; };
 		0BF1B7E31AC60DEA00A7B407 /* InsetButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF1B7E21AC60DEA00A7B407 /* InsetButton.swift */; };
-		122935742CE78D0A00EC1297 /* Ecosia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1229356A2CE78D0A00EC1297 /* Ecosia.framework */; };
 		1229357C2CE78D0A00EC1297 /* Ecosia.h in Headers */ = {isa = PBXBuildFile; fileRef = 1229356C2CE78D0A00EC1297 /* Ecosia.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1229357F2CE78D0A00EC1297 /* Ecosia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1229356A2CE78D0A00EC1297 /* Ecosia.framework */; };
 		122935802CE78D0A00EC1297 /* Ecosia.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 1229356A2CE78D0A00EC1297 /* Ecosia.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -207,6 +206,13 @@
 		2C1298A72BF5EB1F005AE4E4 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 2C1298A42BF5EB16005AE4E4 /* PrivacyInfo.xcprivacy */; };
 		2C1298A82BF5EE23005AE4E4 /* libStorage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FCAE21A1ABB51F800877008 /* libStorage.a */; };
 		2C1298AF2BF602D3005AE4E4 /* DefaultSuggestedSites.swift in Sources */ = {isa = PBXBuildFile; fileRef = 394CF6CE1BAA493C00906917 /* DefaultSuggestedSites.swift */; };
+		2C21011D2D0B042300CBE7EC /* AnalyticsNotificationSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C21011C2D0B042300CBE7EC /* AnalyticsNotificationSettings.swift */; };
+		2C2101212D0B04E800CBE7EC /* APNConsent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C21011E2D0B04E800CBE7EC /* APNConsent.swift */; };
+		2C2101222D0B04E800CBE7EC /* BrazeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C21011F2D0B04E800CBE7EC /* BrazeService.swift */; };
+		2C2101272D0B0D9B00CBE7EC /* MockNewsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2101242D0B0D9B00CBE7EC /* MockNewsModel.swift */; };
+		2C2101282D0B0D9B00CBE7EC /* MockWelcomeDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2101252D0B0D9B00CBE7EC /* MockWelcomeDelegate.swift */; };
+		2C2101292D0B0D9B00CBE7EC /* MockUNNotificationSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2101262D0B0D9B00CBE7EC /* MockUNNotificationSettings.swift */; };
+		2C21012B2D0B0F3700CBE7EC /* SnowplowTracker in Frameworks */ = {isa = PBXBuildFile; productRef = 2C21012A2D0B0F3700CBE7EC /* SnowplowTracker */; };
 		2C423E272D0202530043D407 /* SnapshotBaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD2628E2CFDC5E900A040A7 /* SnapshotBaseTests.swift */; };
 		2C423E282D0202530043D407 /* SnapshotTestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD2628F2CFDC5E900A040A7 /* SnapshotTestHelper.swift */; };
 		2C423E292D02029C0043D407 /* LocaleRetriever.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD2628B2CFDC5E900A040A7 /* LocaleRetriever.swift */; };
@@ -391,7 +397,6 @@
 		2CD263BE2CFDC5EB00A040A7 /* EcosiaPageActionMenuCellTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD262A52CFDC5EB00A040A7 /* EcosiaPageActionMenuCellTests.swift */; };
 		2CD263BF2CFDC5EB00A040A7 /* AnalyticsSpyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD262A62CFDC5EB00A040A7 /* AnalyticsSpyTests.swift */; };
 		2CD263C02CFDC5EB00A040A7 /* AnalyticsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD262A72CFDC5EB00A040A7 /* AnalyticsTests.swift */; };
-		2CD2648A2CFDC76A00A040A7 /* BrazeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD263C12CFDC76800A040A7 /* BrazeService.swift */; };
 		2CD2648E2CFDC76A00A040A7 /* Ecosia.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2CD263C92CFDC76800A040A7 /* Ecosia.strings */; };
 		2CD2648F2CFDC76A00A040A7 /* Ecosia.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2CD263CB2CFDC76800A040A7 /* Ecosia.strings */; };
 		2CD264902CFDC76A00A040A7 /* Ecosia.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2CD263CD2CFDC76800A040A7 /* Ecosia.strings */; };
@@ -517,10 +522,8 @@
 		2CD266202CFE39E300A040A7 /* EcosiaPrimaryButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD2661F2CFE39E300A040A7 /* EcosiaPrimaryButton.swift */; };
 		2CD266232CFE3ADA00A040A7 /* BookmarksExchange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD266212CFE3AD900A040A7 /* BookmarksExchange.swift */; };
 		2CD2662B2CFE402000A040A7 /* SeedCounterNTPExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD2662A2CFE402000A040A7 /* SeedCounterNTPExperiment.swift */; };
-		2CD266322CFE403800A040A7 /* APNConsentOnLaunchExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD2662C2CFE403800A040A7 /* APNConsentOnLaunchExperiment.swift */; };
 		2CD266332CFE403800A040A7 /* BrazeIntegrationExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD2662D2CFE403800A040A7 /* BrazeIntegrationExperiment.swift */; };
 		2CD266342CFE403800A040A7 /* NewsletterCardExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD2662E2CFE403800A040A7 /* NewsletterCardExperiment.swift */; };
-		2CD266352CFE403800A040A7 /* OnboardingRemoveExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD2662F2CFE403800A040A7 /* OnboardingRemoveExperiment.swift */; };
 		2CD2663C2CFE423D00A040A7 /* AppInfo+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD2663B2CFE423D00A040A7 /* AppInfo+Ecosia.swift */; };
 		2CD2663E2CFF4ED000A040A7 /* DeviceInfo+Ecosia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD2663D2CFF4ED000A040A7 /* DeviceInfo+Ecosia.swift */; };
 		2CD2663F2CFF4FA300A040A7 /* EcosiaTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD265AB2CFE382C00A040A7 /* EcosiaTheme.swift */; };
@@ -1778,20 +1781,6 @@
 			remoteGlobalIDString = 047F9B2624E1FE1C00CD7DF7;
 			remoteInfo = WidgetKitExtension;
 		};
-		122935752CE78D0A00EC1297 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F84B21B61A090F8100AAB793 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 122935692CE78D0A00EC1297;
-			remoteInfo = Ecosia;
-		};
-		122935772CE78D0A00EC1297 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F84B21B61A090F8100AAB793 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = F84B21BD1A090F8100AAB793;
-			remoteInfo = Client;
-		};
 		1229357D2CE78D0A00EC1297 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F84B21B61A090F8100AAB793 /* Project object */;
@@ -1826,6 +1815,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 2FCAE2191ABB51F800877008;
 			remoteInfo = Storage;
+		};
+		2C21012C2D0B0FAF00CBE7EC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F84B21B61A090F8100AAB793 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F84B21BD1A090F8100AAB793;
+			remoteInfo = Client;
 		};
 		2C6C90862C614A17007D9B43 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -2550,6 +2546,12 @@
 		2BAB4A40A318F5A577488909 /* mr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = mr; path = mr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		2C0360D92C1747E6006706F2 /* FxNimbus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FxNimbus.swift; sourceTree = "<group>"; };
 		2C1298A42BF5EB16005AE4E4 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		2C21011C2D0B042300CBE7EC /* AnalyticsNotificationSettings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsNotificationSettings.swift; sourceTree = "<group>"; };
+		2C21011E2D0B04E800CBE7EC /* APNConsent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APNConsent.swift; sourceTree = "<group>"; };
+		2C21011F2D0B04E800CBE7EC /* BrazeService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BrazeService.swift; sourceTree = "<group>"; };
+		2C2101242D0B0D9B00CBE7EC /* MockNewsModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockNewsModel.swift; sourceTree = "<group>"; };
+		2C2101252D0B0D9B00CBE7EC /* MockWelcomeDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockWelcomeDelegate.swift; sourceTree = "<group>"; };
+		2C2101262D0B0D9B00CBE7EC /* MockUNNotificationSettings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockUNNotificationSettings.swift; sourceTree = "<group>"; };
 		2C26401D9CCB8C2671EA2431 /* ta */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ta; path = ta.lproj/3DTouchActions.strings; sourceTree = "<group>"; };
 		2C2A5EF31E68469500F02659 /* PrivateBrowsingTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PrivateBrowsingTest.swift; sourceTree = "<group>"; };
 		2C2A91281FA2410D002E36BD /* HistoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryTests.swift; sourceTree = "<group>"; };
@@ -2758,7 +2760,6 @@
 		2CD262A52CFDC5EB00A040A7 /* EcosiaPageActionMenuCellTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EcosiaPageActionMenuCellTests.swift; sourceTree = "<group>"; };
 		2CD262A62CFDC5EB00A040A7 /* AnalyticsSpyTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsSpyTests.swift; sourceTree = "<group>"; };
 		2CD262A72CFDC5EB00A040A7 /* AnalyticsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsTests.swift; sourceTree = "<group>"; };
-		2CD263C12CFDC76800A040A7 /* BrazeService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BrazeService.swift; sourceTree = "<group>"; };
 		2CD263C52CFDC76800A040A7 /* Clean.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Clean.swift; sourceTree = "<group>"; };
 		2CD263C62CFDC76800A040A7 /* Validate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Validate.swift; sourceTree = "<group>"; };
 		2CD263C82CFDC76800A040A7 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Ecosia.strings; sourceTree = "<group>"; };
@@ -2890,10 +2891,8 @@
 		2CD2661F2CFE39E300A040A7 /* EcosiaPrimaryButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaPrimaryButton.swift; sourceTree = "<group>"; };
 		2CD266212CFE3AD900A040A7 /* BookmarksExchange.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BookmarksExchange.swift; sourceTree = "<group>"; };
 		2CD2662A2CFE402000A040A7 /* SeedCounterNTPExperiment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SeedCounterNTPExperiment.swift; sourceTree = "<group>"; };
-		2CD2662C2CFE403800A040A7 /* APNConsentOnLaunchExperiment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APNConsentOnLaunchExperiment.swift; sourceTree = "<group>"; };
 		2CD2662D2CFE403800A040A7 /* BrazeIntegrationExperiment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BrazeIntegrationExperiment.swift; sourceTree = "<group>"; };
 		2CD2662E2CFE403800A040A7 /* NewsletterCardExperiment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewsletterCardExperiment.swift; sourceTree = "<group>"; };
-		2CD2662F2CFE403800A040A7 /* OnboardingRemoveExperiment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingRemoveExperiment.swift; sourceTree = "<group>"; };
 		2CD2663B2CFE423D00A040A7 /* AppInfo+Ecosia.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AppInfo+Ecosia.swift"; sourceTree = "<group>"; };
 		2CD2663D2CFF4ED000A040A7 /* DeviceInfo+Ecosia.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DeviceInfo+Ecosia.swift"; sourceTree = "<group>"; };
 		2CD2664E2CFF56CB00A040A7 /* ConnectionStatusImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectionStatusImage.swift; sourceTree = "<group>"; };
@@ -8098,8 +8097,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2C21012B2D0B0F3700CBE7EC /* SnowplowTracker in Frameworks */,
 				2CD7E6082D09E5DF0003B02B /* RustMozillaAppServices.framework in Frameworks */,
-				122935742CE78D0A00EC1297 /* Ecosia.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8310,6 +8309,7 @@
 		1229356B2CE78D0A00EC1297 /* Ecosia */ = {
 			isa = PBXGroup;
 			children = (
+				2C2101202D0B04E800CBE7EC /* Braze */,
 				2CAF5AE92D00D14300D3DCDD /* Core */,
 				2CD2663A2CFE421C00A040A7 /* Extensions */,
 				2CD266312CFE403800A040A7 /* Experiments */,
@@ -8758,6 +8758,15 @@
 			path = Extensions;
 			sourceTree = "<group>";
 		};
+		2C2101202D0B04E800CBE7EC /* Braze */ = {
+			isa = PBXGroup;
+			children = (
+				2C21011E2D0B04E800CBE7EC /* APNConsent.swift */,
+				2C21011F2D0B04E800CBE7EC /* BrazeService.swift */,
+			);
+			path = Braze;
+			sourceTree = "<group>";
+		};
 		2C423E2B2D0203580043D407 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
@@ -8825,7 +8834,6 @@
 				2CAF5B332D00D16900D3DCDD /* URLRequest+Extensions.swift */,
 				2CAF5B352D00D16A00D3DCDD /* User.swift */,
 				2CAF5B442D00D16B00D3DCDD /* UserDefaults+ObjectPersister.swift */,
-				2CD263C22CFDC76800A040A7 /* Braze */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -9197,6 +9205,9 @@
 		2CD2629C2CFDC5EA00A040A7 /* Mocks */ = {
 			isa = PBXGroup;
 			children = (
+				2C2101242D0B0D9B00CBE7EC /* MockNewsModel.swift */,
+				2C2101262D0B0D9B00CBE7EC /* MockUNNotificationSettings.swift */,
+				2C2101252D0B0D9B00CBE7EC /* MockWelcomeDelegate.swift */,
 				2CD2629B2CFDC5EA00A040A7 /* MockAppVersionInfoProvider.swift */,
 			);
 			path = Mocks;
@@ -9218,14 +9229,6 @@
 				2CD262A72CFDC5EB00A040A7 /* AnalyticsTests.swift */,
 			);
 			path = Analytics;
-			sourceTree = "<group>";
-		};
-		2CD263C22CFDC76800A040A7 /* Braze */ = {
-			isa = PBXGroup;
-			children = (
-				2CD263C12CFDC76800A040A7 /* BrazeService.swift */,
-			);
-			path = Braze;
 			sourceTree = "<group>";
 		};
 		2CD263C72CFDC76800A040A7 /* Scripts */ = {
@@ -9298,6 +9301,7 @@
 		2CD263EF2CFDC76800A040A7 /* Analytics */ = {
 			isa = PBXGroup;
 			children = (
+				2C21011C2D0B042300CBE7EC /* AnalyticsNotificationSettings.swift */,
 				2CD263EC2CFDC76800A040A7 /* Analytics.swift */,
 				2CD263ED2CFDC76800A040A7 /* Analytics.Values.swift */,
 				2CD263EE2CFDC76800A040A7 /* Analytics+Configuration.swift */,
@@ -9684,10 +9688,8 @@
 		2CD266302CFE403800A040A7 /* Unleash */ = {
 			isa = PBXGroup;
 			children = (
-				2CD2662C2CFE403800A040A7 /* APNConsentOnLaunchExperiment.swift */,
 				2CD2662D2CFE403800A040A7 /* BrazeIntegrationExperiment.swift */,
 				2CD2662E2CFE403800A040A7 /* NewsletterCardExperiment.swift */,
-				2CD2662F2CFE403800A040A7 /* OnboardingRemoveExperiment.swift */,
 			);
 			path = Unleash;
 			sourceTree = "<group>";
@@ -13135,10 +13137,12 @@
 			buildRules = (
 			);
 			dependencies = (
-				122935762CE78D0A00EC1297 /* PBXTargetDependency */,
-				122935782CE78D0A00EC1297 /* PBXTargetDependency */,
+				2C21012D2D0B0FAF00CBE7EC /* PBXTargetDependency */,
 			);
 			name = EcosiaTests;
+			packageProductDependencies = (
+				2C21012A2D0B0F3700CBE7EC /* SnowplowTracker */,
+			);
 			productName = EcosiaTests;
 			productReference = 122935732CE78D0A00EC1297 /* EcosiaTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -14207,7 +14211,6 @@
 				2CAF5B982D00D16C00D3DCDD /* Bundle.swift in Sources */,
 				2CD264AD2CFDC76A00A040A7 /* MMP.swift in Sources */,
 				2CAF5B7E2D00D16C00D3DCDD /* Tabs.swift in Sources */,
-				2CD2648A2CFDC76A00A040A7 /* BrazeService.swift in Sources */,
 				2CD264AC2CFDC76A00A040A7 /* FeatureManagement.swift in Sources */,
 				2CAF5B9B2D00D16C00D3DCDD /* Locale+Extensions.swift in Sources */,
 				2CAF5B802D00D16C00D3DCDD /* NewsModel.swift in Sources */,
@@ -14221,14 +14224,16 @@
 				2CAF5B862D00D16C00D3DCDD /* Encodable+Dictionary.swift in Sources */,
 				2CD2663E2CFF4ED000A040A7 /* DeviceInfo+Ecosia.swift in Sources */,
 				2CAF5B5A2D00D16C00D3DCDD /* ReferralRefreshCodeRequest.swift in Sources */,
-				2CD266322CFE403800A040A7 /* APNConsentOnLaunchExperiment.swift in Sources */,
+				2C21011D2D0B042300CBE7EC /* AnalyticsNotificationSettings.swift in Sources */,
 				2CAF5B562D00D16C00D3DCDD /* URLSessionProtocol.swift in Sources */,
 				2CAF5B912D00D16C00D3DCDD /* List.swift in Sources */,
 				2CAF5B962D00D16C00D3DCDD /* FileManager.swift in Sources */,
+				2C2101212D0B04E800CBE7EC /* APNConsent.swift in Sources */,
 				2CAF5B4E2D00D16C00D3DCDD /* BookmarkSerializer.swift in Sources */,
 				2CAF5B8D2D00D16C00D3DCDD /* EnvironmentFetcher.swift in Sources */,
 				2CAF5B7F2D00D16C00D3DCDD /* News.swift in Sources */,
 				2CAF5B6A2D00D16C00D3DCDD /* MMPProvider.swift in Sources */,
+				2C2101222D0B04E800CBE7EC /* BrazeService.swift in Sources */,
 				2CAF5B6B2D00D16C00D3DCDD /* SKAdNetworkProtocol.swift in Sources */,
 				2CAF5B652D00D16C00D3DCDD /* SingularSessionInfoSendRequest.swift in Sources */,
 				2CAF5B6D2D00D16C00D3DCDD /* Environment.Auth.swift in Sources */,
@@ -14252,7 +14257,6 @@
 				2CAF5B7D2D00D16C00D3DCDD /* Tab.swift in Sources */,
 				2CD2663C2CFE423D00A040A7 /* AppInfo+Ecosia.swift in Sources */,
 				2CAF5B4D2D00D16C00D3DCDD /* BookmarkParser.swift in Sources */,
-				2CD266352CFE403800A040A7 /* OnboardingRemoveExperiment.swift in Sources */,
 				2CAF5B712D00D16C00D3DCDD /* History.swift in Sources */,
 				2CAF5B7B2D00D16C00D3DCDD /* UnleashStartRequest.swift in Sources */,
 				2CAF5B662D00D16C00D3DCDD /* Singular.swift in Sources */,
@@ -14311,6 +14315,7 @@
 				2CD7E5FE2D09E1A80003B02B /* MockTabManager.swift in Sources */,
 				2CD7E6002D09E3A50003B02B /* DependencyHelperMock.swift in Sources */,
 				2CAF5BF02D00D1AB00D3DCDD /* ReferralsModelTests.swift in Sources */,
+				2C2101282D0B0D9B00CBE7EC /* MockWelcomeDelegate.swift in Sources */,
 				2CAF5C022D00D1AB00D3DCDD /* PublishersTests.swift in Sources */,
 				2CAF5C062D00D1AB00D3DCDD /* FavouritesTests.swift in Sources */,
 				2CD7E6022D09E3C20003B02B /* MockThemeManager.swift in Sources */,
@@ -14342,11 +14347,13 @@
 				2CD263AF2CFDC5EB00A040A7 /* VersionTests.swift in Sources */,
 				2CAF5BE72D00D1AB00D3DCDD /* SingularTests.swift in Sources */,
 				2CAF5BFB2D00D1AB00D3DCDD /* URLProviderTests.swift in Sources */,
+				2C2101272D0B0D9B00CBE7EC /* MockNewsModel.swift in Sources */,
 				2CAF5BEC2D00D1AB00D3DCDD /* NewsTests.swift in Sources */,
 				2CD263BD2CFDC5EB00A040A7 /* EcosiaOverlayModeManagerTests.swift in Sources */,
 				2CAF5BD62D00D1AB00D3DCDD /* BookmarkFixtures.swift in Sources */,
 				2CD263BB2CFDC5EB00A040A7 /* UserDefaultsSeedProgressManagerTests.swift in Sources */,
 				2CD263B22CFDC5EB00A040A7 /* WhatsNewLocalDataProviderTests.swift in Sources */,
+				2C2101292D0B0D9B00CBE7EC /* MockUNNotificationSettings.swift in Sources */,
 				2CAF5BFF2D00D1AB00D3DCDD /* FinancialReportsTests.swift in Sources */,
 				2CAF5BFA2D00D1AB00D3DCDD /* StagingURLProviderTests.swift in Sources */,
 				2CAF5BEF2D00D1AB00D3DCDD /* StatisticsTests.swift in Sources */,
@@ -15785,16 +15792,6 @@
 			target = 047F9B2624E1FE1C00CD7DF7 /* WidgetKitExtension */;
 			targetProxy = 047F9B3024E1FE1F00CD7DF7 /* PBXContainerItemProxy */;
 		};
-		122935762CE78D0A00EC1297 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 122935692CE78D0A00EC1297 /* Ecosia */;
-			targetProxy = 122935752CE78D0A00EC1297 /* PBXContainerItemProxy */;
-		};
-		122935782CE78D0A00EC1297 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = F84B21BD1A090F8100AAB793 /* Client */;
-			targetProxy = 122935772CE78D0A00EC1297 /* PBXContainerItemProxy */;
-		};
 		1229357E2CE78D0A00EC1297 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 122935692CE78D0A00EC1297 /* Ecosia */;
@@ -15819,6 +15816,11 @@
 			isa = PBXTargetDependency;
 			target = 2FCAE2191ABB51F800877008 /* Storage */;
 			targetProxy = 2C1298A92BF5EE23005AE4E4 /* PBXContainerItemProxy */;
+		};
+		2C21012D2D0B0FAF00CBE7EC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F84B21BD1A090F8100AAB793 /* Client */;
+			targetProxy = 2C21012C2D0B0FAF00CBE7EC /* PBXContainerItemProxy */;
 		};
 		2C6C90872C614A17007D9B43 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -23587,6 +23589,11 @@
 		216A0D752A40E7AB008077BA /* Redux */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Redux;
+		};
+		2C21012A2D0B0F3700CBE7EC /* SnowplowTracker */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2C6189EF2B7B7D48006B70D7 /* XCRemoteSwiftPackageReference "snowplow-ios-tracker" */;
+			productName = SnowplowTracker;
 		};
 		2C6189F02B7B7D5D006B70D7 /* SnowplowTracker */ = {
 			isa = XCSwiftPackageProductDependency;
