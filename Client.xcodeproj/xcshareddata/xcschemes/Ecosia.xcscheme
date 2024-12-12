@@ -136,20 +136,6 @@
                ReferencedContainer = "container:FxA/FxA.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "NO"
-            buildForRunning = "NO"
-            buildForProfiling = "NO"
-            buildForArchiving = "NO"
-            buildForAnalyzing = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "2C6C90812C614A16007D9B43"
-               BuildableName = "EcosiaSnapshotTests.xctest"
-               BlueprintName = "EcosiaSnapshotTests"
-               ReferencedContainer = "container:Client.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -458,28 +444,6 @@
                BlueprintIdentifier = "D39FA15E1A83E0EC00EE869C"
                BuildableName = "UITests.xctest"
                BlueprintName = "UITests"
-               ReferencedContainer = "container:Client.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO"
-            parallelizable = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "122935722CE78D0A00EC1297"
-               BuildableName = "EcosiaTests.xctest"
-               BlueprintName = "EcosiaTests"
-               ReferencedContainer = "container:Client.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO"
-            parallelizable = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "2C8F5AB72C613F8800000D12"
-               BuildableName = "EcosiaSnapshotsTests.xctest"
-               BlueprintName = "EcosiaSnapshotsTests"
                ReferencedContainer = "container:Client.xcodeproj">
             </BuildableReference>
          </TestableReference>
