@@ -554,7 +554,6 @@
 		2CD7E6082D09E5DF0003B02B /* RustMozillaAppServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43BE578A278BA4D900491291 /* RustMozillaAppServices.framework */; };
 		2CD7E60A2D09E8B00003B02B /* environment.json in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2628A2CFDC5E900A040A7 /* environment.json */; };
 		2CD7E60B2D09E9D60003B02B /* snapshot_configuration.json in Resources */ = {isa = PBXBuildFile; fileRef = 2CD2628D2CFDC5E900A040A7 /* snapshot_configuration.json */; };
-		2CEFBCFD2D09F5A8009229EA /* Ecosia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1229356A2CE78D0A00EC1297 /* Ecosia.framework */; };
 		2F13E79B1AC0C02700D75081 /* StringExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F13E79A1AC0C02700D75081 /* StringExtensionsTests.swift */; };
 		2F44FA1B1A9D426A00FD20CC /* TestHashExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F44FA1A1A9D426A00FD20CC /* TestHashExtensions.swift */; };
 		2F44FB2C1A9D5D8500FD20CC /* Library.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F84B22261A09127C00AAB793 /* Library.xcassets */; };
@@ -8129,7 +8128,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2CEFBCFD2D09F5A8009229EA /* Ecosia.framework in Frameworks */,
 				43A878FD27AB4A110071C372 /* RustMozillaAppServices.framework in Frameworks */,
 				8A88815C2B2103AD009635AE /* WebEngine in Frameworks */,
 				8A88815A2B20FFE0009635AE /* GCDWebServers in Frameworks */,
