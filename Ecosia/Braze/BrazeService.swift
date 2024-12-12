@@ -3,22 +3,23 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
+import UIKit
+import UserNotifications
 import BrazeKit
 import BrazeUI
-import NotificationCenter
 
-final class BrazeService: NSObject {
+public final class BrazeService: NSObject {
     override private init() {}
 
     private var braze: Braze?
     private var userId: String {
         User.shared.analyticsId.uuidString
     }
-    public private(set) var notificationAuthorizationStatus: UNAuthorizationStatus?
+    private(set) var notificationAuthorizationStatus: UNAuthorizationStatus?
     private static var apiKey = EnvironmentFetcher.valueFromMainBundleOrProcessInfo(forKey: "BRAZE_API_KEY") ?? ""
     public static let shared = BrazeService()
 
-    public enum Error: Swift.Error {
+    enum Error: Swift.Error {
         case invalidConfiguration
         case generic(description: String)
     }
@@ -27,7 +28,7 @@ final class BrazeService: NSObject {
         case newsletterCardClick = "newsletter_card_click"
     }
 
-    func initialize() async {
+    public func initialize() async {
         do {
             try await initBraze(userId: userId)
             await refreshAPNRegistrationIfNeeded()
