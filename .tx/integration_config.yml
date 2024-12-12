@@ -4,10 +4,10 @@ filters:
     source_language: en
     source_file: Ecosia/L10N/en.lproj/Ecosia.strings
     file_format: STRINGS
-    translation_files_expression: 'Client/Ecosia/L10N/<lang>.lproj/Ecosia.strings'
+    translation_files_expression: 'Ecosia/L10N/<lang>.lproj/Ecosia.strings'
 
   - filter_type: file
     source_language: en
     source_file: Ecosia/L10N/en.lproj/Plurals.stringsdict
     file_format: STRINGSDICT
-    translation_files_expression: 'Client/Ecosia/L10N/<lang>.lproj/Plurals.stringsdict'
+    translation_files_expression: 'Ecosia/L10N/<lang>.lproj/Plurals.stringsdict'
