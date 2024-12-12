@@ -5,7 +5,7 @@
 import XCTest
 
 @testable import Client
-@testable import Core
+@testable import Ecosia
 
 class EcosiaHomeViewModelTests: XCTestCase {
 

@@ -5,13 +5,7 @@
 import UIKit
 import Common
 
-extension LegacyTheme {
-    var isDark: Bool {
-        return type(of: self) == DarkTheme.self
-    }
-}
-
-class EcosiaTheme {
+public class EcosiaTheme {
     var primaryBrand: UIColor { .Light.Brand.primary}
     var secondaryBrand: UIColor { UIColor.Photon.Grey60 }
     var border: UIColor { .Light.border }
@@ -93,7 +87,7 @@ class EcosiaTheme {
     var peach: UIColor { .init(rgb: 0xFFE6BF) }
 }
 
-final class DarkEcosiaTheme: EcosiaTheme {
+public final class DarkEcosiaTheme: EcosiaTheme {
     override var primaryBrand: UIColor { .Dark.Brand.primary}
     override var secondaryBrand: UIColor { .white }
     override var border: UIColor { .Dark.border }
@@ -175,37 +169,4 @@ final class DarkEcosiaTheme: EcosiaTheme {
 
     override var homePanelBackground: UIColor { return .Dark.Background.secondary }
     override var peach: UIColor { .init(rgb: 0xCC7722) }
-}
-
-extension UIImage {
-    convenience init?(themed name: String) {
-        let suffix = LegacyThemeManager.instance.current.isDark ? "Dark" : ""
-        self.init(named: name + suffix)
-    }
-}
-
-class EcosiaPrimaryButton: UIButton {
-    override var isSelected: Bool {
-        get {
-            return super.isSelected
-        }
-        set {
-            super.isSelected = newValue
-            update()
-        }
-    }
-
-    override var isHighlighted: Bool {
-        get {
-            return super.isHighlighted
-        }
-        set {
-            super.isHighlighted = newValue
-            update()
-        }
-    }
-
-    private func update() {
-        backgroundColor = (isSelected || isHighlighted) ? .legacyTheme.ecosia.primaryButtonActive : .legacyTheme.ecosia.primaryButton
-    }
 }

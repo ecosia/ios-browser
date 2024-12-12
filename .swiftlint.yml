@@ -55,7 +55,7 @@ only_rules: # Only enforce these rules, ignore all others
   - vertical_whitespace
   - void_function_in_ternary
   - void_return
-  - file_header
+  # - file_header
   - redundant_type_annotation
   # Ecosia: disabled
   # - attributes
@@ -151,6 +151,8 @@ excluded: # paths to ignore during linting. Takes precedence over `included`.
   - BrowserKit/.build/
   # Ecosia: Exclude Swift Packages
   - SourcePackages
+  # Ecosia; Excluding Core's EcosiaTests as we have some force unwraps
+  - EcosiaTests/Core
 
 included:
   - /Users/vagrant/git

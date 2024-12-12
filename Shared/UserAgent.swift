@@ -5,8 +5,8 @@
 import Common
 import WebKit
 import UIKit
-// Ecosia: importing Core
-import Core
+// Ecosia: Import Ecosia Framework
+import Ecosia
 
 open class UserAgent {
     public static let uaBitSafari = "Safari/605.1.15"
