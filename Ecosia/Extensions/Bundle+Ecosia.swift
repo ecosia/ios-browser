@@ -5,7 +5,7 @@
 import Foundation
 
 extension Bundle {
-    static var ecosia: Bundle {
+    public static var ecosia: Bundle {
         Bundle(identifier: "com.ecosia.framework.Ecosia")!
     }
 }
