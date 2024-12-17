@@ -8769,13 +8769,6 @@
 			path = Braze;
 			sourceTree = "<group>";
 		};
-		2C423E2B2D0203580043D407 /* Tests */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Tests;
-			sourceTree = "<group>";
-		};
 		2CABD71A2C11E07300A0750F /* PersistedGenerated */ = {
 			isa = PBXGroup;
 			children = (
@@ -9358,7 +9351,6 @@
 		2CD265162CFDCB8A00A040A7 /* Ecosia */ = {
 			isa = PBXGroup;
 			children = (
-				2C423E2B2D0203580043D407 /* Tests */,
 				2CD266542CFF56EA00A040A7 /* Network */,
 				2CD266242CFE3E8500A040A7 /* Experiments */,
 				2CD266222CFE3AD900A040A7 /* Bookmarks */,
