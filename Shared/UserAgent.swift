@@ -5,7 +5,6 @@
 import Common
 import WebKit
 import UIKit
-// Ecosia: Import Ecosia Framework
 import Ecosia
 
 open class UserAgent {

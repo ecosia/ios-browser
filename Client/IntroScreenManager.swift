@@ -4,7 +4,6 @@
 
 import Foundation
 import Shared
-// Ecosia: Import Ecosia Framework
 import Ecosia
 
 struct IntroScreenManager {

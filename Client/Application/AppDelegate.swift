@@ -9,7 +9,6 @@ import UIKit
 import Common
 // Ecosia: remove Glean dependency // import Glean
 import TabDataStore
-// Ecosia: Import Ecosia Framework
 import Ecosia
 
 class AppDelegate: UIResponder, UIApplicationDelegate {

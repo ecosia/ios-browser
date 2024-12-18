@@ -6,7 +6,6 @@ import Foundation
 import Common
 import Storage
 import Shared
-// Ecosia: Import Ecosia Framework
 import Ecosia
 
 class BookmarksPanelViewModel: NSObject {
