@@ -7,7 +7,6 @@ import UIKit
 import Storage
 import Shared
 import SiteImageView
-// Ecosia: Import Ecosia Framework
 import Ecosia
 
 let LocalizedRootBookmarkFolderStrings = [

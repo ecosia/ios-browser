@@ -3,7 +3,6 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import WebKit
-// Ecosia: Import Ecosia Framework
 import Ecosia
 
 class UserScriptManager: FeatureFlaggable {

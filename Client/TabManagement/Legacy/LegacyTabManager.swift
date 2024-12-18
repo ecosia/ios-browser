@@ -7,7 +7,6 @@ import Foundation
 import WebKit
 import Storage
 import Shared
-// Ecosia: Import Ecosia Framework
 import Ecosia
 import Combine
 

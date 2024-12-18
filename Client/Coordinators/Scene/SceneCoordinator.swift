@@ -6,7 +6,6 @@ import Common
 import UIKit
 import Shared
 import Storage
-// Ecosia: Import Ecosia Framework
 import Ecosia
 
 /// Each scene has it's own scene coordinator, which is the root coordinator for a scene.

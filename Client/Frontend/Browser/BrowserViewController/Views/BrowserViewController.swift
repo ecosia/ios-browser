@@ -15,7 +15,6 @@ import Telemetry
 import Common
 import ComponentLibrary
 import Redux
-// Ecosia: Import Ecosia Framework
 import Ecosia
 
 class BrowserViewController: UIViewController,

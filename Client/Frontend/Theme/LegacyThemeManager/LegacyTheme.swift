@@ -5,7 +5,6 @@
 import Common
 import UIKit
 import Shared
-// Ecosia: import Ecosia Framework
 import Ecosia
 
 protocol PrivateModeUI {

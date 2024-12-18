@@ -4,7 +4,6 @@
 
 import Common
 import Foundation
-// Ecosia: Import Ecosia Framework
 import Ecosia
 
 class LaunchScreenViewController: UIViewController, LaunchFinishedLoadingDelegate {
