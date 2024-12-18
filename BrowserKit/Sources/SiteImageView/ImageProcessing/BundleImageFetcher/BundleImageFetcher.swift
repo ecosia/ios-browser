@@ -155,7 +155,15 @@ class DefaultBundleImageFetcher: BundleImageFetcher {
         return UIGraphicsGetImageFromCurrentImageContext() ?? image
     }
 }
-// Ecosia: Make custom, dedicated, URLProvider for Browserkit only
+/* Ecosia
+ There was an annoying dependency on Core in BrowserKit as part of the BundleImageFetcher.swift that would lead to a flaky build step.
+ This is noticeable especially when checking out between branches without cleaning up your DerivedData.
+ With the advent of our EcosiaFramework, this flakiness became even more noticeable. To get a Build Successful, you had to first // comment out the Ecosia-related code as part of that file, let it build, uncomment, and build again.
+ This process is far from being ideal and we want as less dependencies/code changes in BrowserKit as possible.
+
+ After spending a considerable amount of time looking for a robust solution, I realized that the best approach in this very niche scenario would be to directly implement a part of our Ecosia.Environment.swift directly in the file.
+ I'm conscious this is not ideal, but that's the only approach so far that guarantees the expected Favicon's workaround to work solidly.
+ */
 struct EcosiaURLProvider {
 
     // Static variables for privacy and financial reports URLs
