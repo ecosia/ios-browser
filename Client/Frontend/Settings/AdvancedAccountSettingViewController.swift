@@ -4,7 +4,6 @@
 
 import UIKit
 import Shared
-
 import Account
 
 private class CustomFxAContentServerEnableSetting: BoolSetting {
