@@ -167,25 +167,24 @@ class DefaultBundleImageFetcher: BundleImageFetcher {
 struct EcosiaURLProvider {
 
     // Static variables for privacy and financial reports URLs
-    private static let privacyURL = URL(string: "https://www.ecosia.org/privacy")!
+    static let privacyURL = URL(string: "https://www.ecosia.org/privacy")!
 
-    private static var financialReportsURL: URL {
-        let locale = Locale.current
+    static var financialReportsURL: URL {
         let blog: URL!
 
-        switch locale.languageCode {
-        case "de":
+        switch Language.current {
+        case .de:
             blog = URL(string: "https://de.blog.ecosia.org/")!
-        case "fr":
+        case .fr:
             blog = URL(string: "https://fr.blog.ecosia.org/")!
         default:
             blog = URL(string: "https://blog.ecosia.org/")!
         }
 
-        switch locale.languageCode {
-        case "de":
+        switch Language.current {
+        case .de:
             return blog.appendingPathComponent("ecosia-finanzberichte-baumplanzbelege/")
-        case "fr":
+        case .fr:
             return blog.appendingPathComponent("rapports-financiers-recus-de-plantations-arbres/")
         default:
             return blog.appendingPathComponent("ecosia-financial-reports-tree-planting-receipts/")
@@ -213,5 +212,26 @@ struct EcosiaURLProvider {
         }
 
         return nil
+    }
+    
+    public enum Language: String, Codable, CaseIterable {
+        case
+        de,
+        en,
+        fr
+
+        public internal(set) static var current = make(for: .current)
+
+        static func make(for locale: Locale) -> Self {
+            locale.withLanguage ?? .en
+        }
+    }
+}
+
+private extension Locale {
+    var withLanguage: EcosiaURLProvider.Language? {
+        languageCode.flatMap {
+            EcosiaURLProvider.Language(rawValue: $0.lowercased())
+        }
     }
 }
