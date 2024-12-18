@@ -28,8 +28,11 @@ public enum Language: String, Codable, CaseIterable {
         }
     }
 
+    private static let queue = DispatchQueue(label: "\(Bundle.ecosia.bundleIdentifier!).LanguageQueue")
     static func make(for locale: Locale) -> Self {
-        locale.withLanguage ?? .en
+        return queue.sync {
+            locale.withLanguage ?? .en
+        }
     }
 }
 
