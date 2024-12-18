@@ -213,7 +213,7 @@ struct EcosiaURLProvider {
 
         return nil
     }
-    
+
     public enum Language: String, Codable, CaseIterable {
         case
         de,
