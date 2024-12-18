@@ -4,8 +4,6 @@
 
 import UIKit
 import Common
-// Ecosia: Import Core
-import Core
 
 protocol BundleImageFetcher {
     /// Fetches from the bundle
@@ -66,7 +64,7 @@ class DefaultBundleImageFetcher: BundleImageFetcher {
     // MARK: - Private
 
     private func getBundleDomain(domain: ImageDomain) -> String? {
-        /* Ecosia: Allor Favicon to import the correct financial one
+        /* Ecosia: Allow Favicon to import the correct financial one
          OLD Implementation:
            return domain.bundleDomains.first(where: { bundledImages[$0] != nil })
          
@@ -82,17 +80,11 @@ class DefaultBundleImageFetcher: BundleImageFetcher {
          However, as per this class and all other dependencies being wrapped
          into the BrowserKit package, this would have resulted into macking a lot of changes into accessors to be able to make our own file outside of the BrowserKit context.
          */
-
-        let financialReportsURL = Environment.current.urlProvider.financialReports.absoluteString.replacingOccurrences(of: "https://", with: "")
-        let privacyURL = Environment.current.urlProvider.privacy.absoluteString.replacingOccurrences(of: "https://", with: "")
-        let urlMap = [
-            financialReportsURL: "blog.ecosia.finance",
-            privacyURL: "privacy.ecosia"
-        ]
-        if let matchingKey = urlMap.keys.first(where: { domain.bundleDomains.contains($0) }) {
-            return urlMap[matchingKey]
+        if let ecosiaBundleDomain = EcosiaURLProvider.getBundleDomain(for: domain) {
+            return ecosiaBundleDomain
+        } else {
+            return domain.bundleDomains.first(where: { bundledImages[$0] != nil })
         }
-        return domain.bundleDomains.first(where: { bundledImages[$0] != nil })
     }
 
     private func retrieveBundledImages() -> [String: FormattedBundledImage] {
@@ -161,5 +153,88 @@ class DefaultBundleImageFetcher: BundleImageFetcher {
         ctx.draw(cgImage, in: imageRect)
 
         return UIGraphicsGetImageFromCurrentImageContext() ?? image
+    }
+}
+/* Ecosia
+ There was an annoying dependency on Core in BrowserKit as part of the BundleImageFetcher.swift that would lead to a flaky build step.
+ This is noticeable especially when checking out between branches without cleaning up your DerivedData.
+ With the advent of our EcosiaFramework, this flakiness became even more noticeable. To get a Build Successful, you had to first // comment out the Ecosia-related code as part of that file, let it build, uncomment, and build again.
+ This process is far from being ideal and we want as less dependencies/code changes in BrowserKit as possible.
+
+ After spending a considerable amount of time looking for a robust solution, I realized that the best approach in this very niche scenario would be to directly implement a part of our Ecosia.Environment.swift directly in the file.
+ I'm conscious this is not ideal, but that's the only approach so far that guarantees the expected Favicon's workaround to work solidly.
+ */
+struct EcosiaURLProvider {
+
+    // Static variables for privacy and financial reports URLs
+    static let privacyURL = URL(string: "https://www.ecosia.org/privacy")!
+
+    static var financialReportsURL: URL {
+        let blog: URL!
+
+        switch Language.current {
+        case .de:
+            blog = URL(string: "https://de.blog.ecosia.org/")!
+        case .fr:
+            blog = URL(string: "https://fr.blog.ecosia.org/")!
+        default:
+            blog = URL(string: "https://blog.ecosia.org/")!
+        }
+
+        switch Language.current {
+        case .de:
+            return blog.appendingPathComponent("ecosia-finanzberichte-baumplanzbelege/")
+        case .fr:
+            return blog.appendingPathComponent("rapports-financiers-recus-de-plantations-arbres/")
+        default:
+            return blog.appendingPathComponent("ecosia-financial-reports-tree-planting-receipts/")
+        }
+    }
+
+    // Utility function to create a domain part from URL (removes "https://")
+    private static func getURLDomain(_ url: URL) -> String {
+        return url.absoluteString.replacingOccurrences(of: "https://", with: "")
+    }
+
+    // Static method to get the appropriate bundle domain
+    static func getBundleDomain(for domain: ImageDomain) -> String? {
+        let financialReportsDomain = getURLDomain(financialReportsURL)
+        let privacyDomain = getURLDomain(privacyURL)
+
+        let urlMap: [String: String] = [
+            financialReportsDomain: "blog.ecosia.finance",
+            privacyDomain: "privacy.ecosia"
+        ]
+
+        // Check for the first matching domain
+        if let matchingKey = urlMap.keys.first(where: { domain.bundleDomains.contains($0) }) {
+            return urlMap[matchingKey]
+        }
+
+        return nil
+    }
+
+    public enum Language: String, Codable, CaseIterable {
+        case
+        de,
+        en,
+        fr
+
+        public internal(set) static var current = make(for: .current)
+
+        private static let queue = DispatchQueue(label: "\(Bundle.main.bundleIdentifier!).LanguageQueue")
+        static func make(for locale: Locale) -> Self {
+            return queue.sync {
+                locale.withLanguage ?? .en
+            }
+        }
+    }
+}
+
+private extension Locale {
+    var withLanguage: EcosiaURLProvider.Language? {
+        languageCode.flatMap {
+            EcosiaURLProvider.Language(rawValue: $0.lowercased())
+        }
     }
 }

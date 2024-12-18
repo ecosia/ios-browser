@@ -44,6 +44,12 @@ runs:
           mkdir -p EcosiaTests/Results/
           ./perform_snapshot_tests.sh "EcosiaTests/SnapshotTests/snapshot_configuration.json" "EcosiaTests/SnapshotTests/environment.json" "EcosiaTests/Results" "EcosiaSnapshotTests"
 
+      - name: Upload test result as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-result
+          path: 'EcosiaTests/Results/all_tests.xcresult'
+
       - name: Process xcresult files
         uses: kishikawakatsumi/xcresulttool@v1
         with:

@@ -4,9 +4,9 @@
 
 import Foundation
 import UIKit
-import Core
 import Shared
 import Common
+import Ecosia
 
 final class PushBackInstallation: HiddenSetting {
     override var title: NSAttributedString? {

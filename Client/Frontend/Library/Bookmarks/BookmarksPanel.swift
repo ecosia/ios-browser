@@ -7,7 +7,7 @@ import UIKit
 import Storage
 import Shared
 import SiteImageView
-import Core
+import Ecosia
 
 let LocalizedRootBookmarkFolderStrings = [
     BookmarkRoots.MenuFolderGUID: String.BookmarksFolderTitleMenu,
