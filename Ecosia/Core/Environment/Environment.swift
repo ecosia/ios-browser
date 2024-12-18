@@ -12,7 +12,7 @@ public enum Environment: Equatable {
 extension Environment {
 
     public static var current: Environment {
-        #if PRODUCTION
+        #if MOZ_CHANNEL_RELEASE
         return .production
         #else
         return .staging
