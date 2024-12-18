@@ -2,7 +2,8 @@
 import XCTest
 
 final class LanguageTests: XCTestCase {
-    func testCurrent() {
+    func testSettingLanguageCurrentToUnexpectedLanguageReturnsDefault() {
+        Language.current = Language.make(for: Locale(identifier: "nz"))
         XCTAssertEqual(.en, Language.current)
     }
 

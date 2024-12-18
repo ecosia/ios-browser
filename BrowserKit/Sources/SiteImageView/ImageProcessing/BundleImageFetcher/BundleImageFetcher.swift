@@ -222,8 +222,11 @@ struct EcosiaURLProvider {
 
         public internal(set) static var current = make(for: .current)
 
+        private static let queue = DispatchQueue(label: "\(Bundle.main.bundleIdentifier!).LanguageQueue")
         static func make(for locale: Locale) -> Self {
-            locale.withLanguage ?? .en
+            return queue.sync {
+                locale.withLanguage ?? .en
+            }
         }
     }
 }

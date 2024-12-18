@@ -3,6 +3,7 @@ import XCTest
 
 final class LocalTests: XCTestCase {
     func testCurrent() {
+        Language.current = .en
         XCTAssertEqual("en-us", Language.current.locale.rawValue)
     }
 
