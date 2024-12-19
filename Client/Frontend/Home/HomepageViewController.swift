@@ -887,8 +887,10 @@ extension HomepageViewController: Notifiable {
 
             // Ecosia: Seed Counter Experiment
             case SeedCounterNTPExperiment.progressManagerType.levelUpNotification:
+                guard SeedCounterNTPExperiment.isEnabled else { return }
                 SeedCounterNTPExperiment.trackSeedLevellingUp()
             case UIApplication.didBecomeActiveNotification:
+                guard SeedCounterNTPExperiment.isEnabled else { return }
                 SeedCounterNTPExperiment.trackSeedCollectionIfNewDayAppOpening()
                 SeedCounterNTPExperiment.progressManagerType.collectDailySeed()
             default: break
