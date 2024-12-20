@@ -15,8 +15,7 @@ import Telemetry
 import Common
 import ComponentLibrary
 import Redux
-// Ecosia: Import Core
-import Core
+import Ecosia
 
 class BrowserViewController: UIViewController,
                              SearchBarLocationProvider,

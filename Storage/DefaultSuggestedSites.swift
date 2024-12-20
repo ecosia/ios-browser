@@ -3,8 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
-// Ecosia: Core import
-import Core
+import Ecosia
 
 open class DefaultSuggestedSites {
     /* Ecosia: Replace Default Suggested Sites

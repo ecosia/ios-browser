@@ -5,6 +5,7 @@
 import Common
 import UIKit
 import Shared
+import Ecosia
 
 protocol PrivateModeUI {
     func applyUIMode(isPrivate: Bool, theme: Theme)
@@ -60,4 +61,11 @@ class LegacyNormalTheme: LegacyTheme {
     var tabTray: TabTrayColor { return TabTrayColor() }
     // Ecosia: Adapt theme
     var ecosia: EcosiaTheme { return EcosiaTheme() }
+}
+
+// Ecosia: Add `isDark` extension as previously part of the `EcosiaTheme` class
+extension LegacyTheme {
+    var isDark: Bool {
+        return type(of: self) == DarkTheme.self
+    }
 }

@@ -4,6 +4,7 @@
 
 import Common
 import Foundation
+import Ecosia
 
 class LaunchScreenViewController: UIViewController, LaunchFinishedLoadingDelegate {
     // Ecosia: Custom launch screen

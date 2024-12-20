@@ -3,10 +3,10 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import XCTest
-import Core
 import Storage
 import SnowplowTracker
 @testable import Client
+@testable import Ecosia
 
 // MARK: - AnalyticsSpy
 

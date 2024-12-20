@@ -9,8 +9,7 @@ import Shared
 import Storage
 import Redux
 import UIKit
-// Ecosia: Import Core
-import Core
+import Ecosia
 
 class HomepageViewController:
     UIViewController,
