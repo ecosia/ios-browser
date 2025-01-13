@@ -151,13 +151,8 @@ extension AppSettingsTableViewController {
             FasterInactiveTabs(settings: self, settingsDelegate: self),
             UnleashBrazeIntegrationSetting(settings: self),
             UnleashAPNConsent(settings: self),
-            UnleashSeedCounterNTPSetting(settings: self),
-            UnleashNewsletterCardSetting(settings: self)
+            UnleashSeedCounterNTPSetting(settings: self)
         ]
-
-        if NewsletterCardExperiment.isEnabled {
-            hiddenDebugSettings.append(NewsletterCardDismissSetting(settings: self))
-        }
 
         if SeedCounterNTPExperiment.isEnabled {
             hiddenDebugSettings.append(AddOneSeedSetting(settings: self,
