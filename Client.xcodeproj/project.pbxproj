@@ -27,8 +27,6 @@
 		0BB5B30B1AC0AD1F0052877D /* LoginsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BB5B30A1AC0AD1F0052877D /* LoginsHelper.swift */; };
 		0BF0DB941A8545800039F300 /* URLBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF0DB931A8545800039F300 /* URLBarView.swift */; };
 		0BF1B7E31AC60DEA00A7B407 /* InsetButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF1B7E21AC60DEA00A7B407 /* InsetButton.swift */; };
-		12147F2F2CDA3CD00009D300 /* NTPNewsletterCardCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12147F2E2CDA3CD00009D300 /* NTPNewsletterCardCell.swift */; };
-		12147F312CDA3CD80009D300 /* NTPNewsletterCardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12147F302CDA3CD80009D300 /* NTPNewsletterCardViewModel.swift */; };
 		12147F332CDBA7230009D300 /* NewsletterCardExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12147F322CDBA7230009D300 /* NewsletterCardExperiment.swift */; };
 		126509822CD924C00011BA36 /* BrazeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 126509812CD924C00011BA36 /* BrazeService.swift */; };
 		126509852CD925B40011BA36 /* BrazeKit in Frameworks */ = {isa = PBXBuildFile; productRef = 126509842CD925B40011BA36 /* BrazeKit */; };
@@ -2020,8 +2018,6 @@
 		10CD44F0A402C84BB31E5474 /* gu-IN */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "gu-IN"; path = "gu-IN.lproj/Intro.strings"; sourceTree = "<group>"; };
 		11F747589EB8A55A47647C93 /* bn */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = bn; path = bn.lproj/ClearPrivateData.strings; sourceTree = "<group>"; };
 		120F42119EB30F217AB9493E /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/FindInPage.strings; sourceTree = "<group>"; };
-		12147F2E2CDA3CD00009D300 /* NTPNewsletterCardCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPNewsletterCardCell.swift; sourceTree = "<group>"; };
-		12147F302CDA3CD80009D300 /* NTPNewsletterCardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPNewsletterCardViewModel.swift; sourceTree = "<group>"; };
 		12147F322CDBA7230009D300 /* NewsletterCardExperiment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsletterCardExperiment.swift; sourceTree = "<group>"; };
 		123045959E0F295753B4B4DB /* lo */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = lo; path = lo.lproj/Today.strings; sourceTree = "<group>"; };
 		126509812CD924C00011BA36 /* BrazeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrazeService.swift; sourceTree = "<group>"; };
@@ -7964,15 +7960,6 @@
 			path = SearchQuickLinksMedium;
 			sourceTree = "<group>";
 		};
-		12147F2D2CDA3CB40009D300 /* Newsletter */ = {
-			isa = PBXGroup;
-			children = (
-				12147F2E2CDA3CD00009D300 /* NTPNewsletterCardCell.swift */,
-				12147F302CDA3CD80009D300 /* NTPNewsletterCardViewModel.swift */,
-			);
-			path = Newsletter;
-			sourceTree = "<group>";
-		};
 		126509802CD9249C0011BA36 /* Braze */ = {
 			isa = PBXGroup;
 			children = (
@@ -8916,7 +8903,6 @@
 		2CA995262CA2C053001064CC /* NudgeCards */ = {
 			isa = PBXGroup;
 			children = (
-				12147F2D2CDA3CB40009D300 /* Newsletter */,
 				2CA995272CA2C06A001064CC /* NTPConfigurableNudgeCardCell.swift */,
 				2CA995292CA2C0BB001064CC /* NTPConfigurableNudgeCardCellViewModel.swift */,
 			);
@@ -14011,7 +13997,6 @@
 				964FA97528A1A8F20024BB3B /* ContextualHintEligibilityUtility.swift in Sources */,
 				439C489C29760575007C3DCD /* CreditCardValidator.swift in Sources */,
 				8ADC2A122A3375B900543DAA /* FxAEntryPoint.swift in Sources */,
-				12147F312CDA3CD80009D300 /* NTPNewsletterCardViewModel.swift in Sources */,
 				216A0D7B2A40F08B008077BA /* ThemeSettingsAction.swift in Sources */,
 				2C6189A22B7A8A22006B70D7 /* DefaultAppVersionInfoProvider.swift in Sources */,
 				C2506C932A6A863600F2B76E /* HistoryCoordinator.swift in Sources */,
@@ -14383,7 +14368,6 @@
 				4393932029AC6CE900DC5A85 /* EnvironmentValues+Extension.swift in Sources */,
 				ABEF80D12A24D2BE003F52C4 /* CreditCardBottomSheetViewModel.swift in Sources */,
 				21AFCFF02AE80D370027E9CE /* RemoteTabsCoordinator.swift in Sources */,
-				12147F2F2CDA3CD00009D300 /* NTPNewsletterCardCell.swift in Sources */,
 				43162A2F2492DB7800F91658 /* EmptyPrivateTabsView.swift in Sources */,
 				E1380B8D2AEA897C00630AFA /* SidebarEnabledView.swift in Sources */,
 				D0625C98208E87F10081F3B2 /* DownloadQueue.swift in Sources */,

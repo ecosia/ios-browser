@@ -82,26 +82,6 @@ extension HomepageViewController: NTPLibraryDelegate {
     }
 }
 
-extension HomepageViewController: NTPConfigurableNudgeCardCellDelegate {
-    func nudgeCardRequestToPerformAction(for cardType: HomepageSectionType) {
-        switch cardType {
-        case .newsletterCard:
-            BrazeService.shared.logCustomEvent(.newsletterCardClick)
-            Analytics.shared.newsletterCardExperiment(action: .click)
-            NewsletterCardExperiment.setDismissed()
-        default:
-            return
-        }
-        reloadView()
-    }
-
-    func nudgeCardRequestToDimiss(for cardType: HomepageSectionType) {
-        Analytics.shared.newsletterCardExperiment(action: .dismiss)
-        NewsletterCardExperiment.setDismissed()
-        reloadView()
-    }
-}
-
 extension HomepageViewController: NTPImpactCellDelegate {
     func impactCellButtonClickedWithInfo(_ info: ClimateImpactInfo) {
         switch info {
