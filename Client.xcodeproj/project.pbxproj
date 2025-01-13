@@ -27,7 +27,6 @@
 		0BB5B30B1AC0AD1F0052877D /* LoginsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BB5B30A1AC0AD1F0052877D /* LoginsHelper.swift */; };
 		0BF0DB941A8545800039F300 /* URLBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF0DB931A8545800039F300 /* URLBarView.swift */; };
 		0BF1B7E31AC60DEA00A7B407 /* InsetButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF1B7E21AC60DEA00A7B407 /* InsetButton.swift */; };
-		12147F332CDBA7230009D300 /* NewsletterCardExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12147F322CDBA7230009D300 /* NewsletterCardExperiment.swift */; };
 		126509822CD924C00011BA36 /* BrazeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 126509812CD924C00011BA36 /* BrazeService.swift */; };
 		126509852CD925B40011BA36 /* BrazeKit in Frameworks */ = {isa = PBXBuildFile; productRef = 126509842CD925B40011BA36 /* BrazeKit */; };
 		126509872CD925B40011BA36 /* BrazeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 126509862CD925B40011BA36 /* BrazeUI */; };
@@ -2018,7 +2017,6 @@
 		10CD44F0A402C84BB31E5474 /* gu-IN */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "gu-IN"; path = "gu-IN.lproj/Intro.strings"; sourceTree = "<group>"; };
 		11F747589EB8A55A47647C93 /* bn */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = bn; path = bn.lproj/ClearPrivateData.strings; sourceTree = "<group>"; };
 		120F42119EB30F217AB9493E /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/FindInPage.strings; sourceTree = "<group>"; };
-		12147F322CDBA7230009D300 /* NewsletterCardExperiment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsletterCardExperiment.swift; sourceTree = "<group>"; };
 		123045959E0F295753B4B4DB /* lo */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = lo; path = lo.lproj/Today.strings; sourceTree = "<group>"; };
 		126509812CD924C00011BA36 /* BrazeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrazeService.swift; sourceTree = "<group>"; };
 		126509882CDA31890011BA36 /* BrazeServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrazeServiceTests.swift; sourceTree = "<group>"; };
@@ -8710,7 +8708,6 @@
 			children = (
 				2C6188F82B7A8A22006B70D7 /* BrazeIntegrationExperiment.swift */,
 				2C6B5B402CAAF3AA00F15323 /* SeedCounterNTPExperiment.swift */,
-				12147F322CDBA7230009D300 /* NewsletterCardExperiment.swift */,
 			);
 			path = Unleash;
 			sourceTree = "<group>";
@@ -13660,7 +13657,6 @@
 				8A19ACB02A329078001C2147 /* AutofillCreditCardSettings.swift in Sources */,
 				2C61895D2B7A8A22006B70D7 /* NTPImpactRowView.swift in Sources */,
 				E1E5BE252A28F7BE00248F77 /* PasswordDetailViewControllerModel.swift in Sources */,
-				12147F332CDBA7230009D300 /* NewsletterCardExperiment.swift in Sources */,
 				E1FE133129C22726002A65FF /* BackgroundFetchAndProcessingUtility.swift in Sources */,
 				8AD40FD527BB1C1000672675 /* LockButton.swift in Sources */,
 				2C61898F2B7A8A22006B70D7 /* AppInfo+Ecosia.swift in Sources */,
