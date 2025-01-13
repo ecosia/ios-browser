@@ -87,11 +87,6 @@ extension Analytics {
             terms
         }
 
-        enum NewsletterCardExperiment: String {
-            case
-            ntpCard = "ntp_card"
-        }
-
         enum NTP: String {
             case
             about,
@@ -154,13 +149,6 @@ extension Analytics {
         }
 
         enum BrazeIAM: String {
-            case
-            click,
-            dismiss,
-            view
-        }
-
-        enum NewsletterCardExperiment: String {
             case
             click,
             dismiss,

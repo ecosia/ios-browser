@@ -24,7 +24,7 @@ final class BrazeService: NSObject {
     }
 
     enum CustomEvent: String {
-        case newsletterCardClick = "newsletter_card_click"
+        case empty = ""
     }
 
     func initialize() async {

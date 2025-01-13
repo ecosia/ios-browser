@@ -234,30 +234,3 @@ final class AnalyticsIdentifierSetting: HiddenSetting {
         UIPasteboard.general.string = analyticsIdentifier
     }
 }
-
-final class UnleashNewsletterCardSetting: UnleashVariantResetSetting {
-    override var titleName: String? {
-        "Newsletter Card"
-    }
-
-    override var unleashEnabled: Bool? {
-        Unleash.isEnabled(.newsletterCard)
-    }
-}
-
-final class NewsletterCardDismissSetting: HiddenSetting {
-    override var title: NSAttributedString? {
-        return NSAttributedString(string: "Debug: Unset Newsletter card dismissed", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
-    }
-
-    override var status: NSAttributedString? {
-        let attributes = [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText]
-        let hintText = NewsletterCardExperiment.isDismissed ? "dismissed (Click to unset)" : "showing (Nothing to do here)"
-        return NSAttributedString(string: "Card is currently \(hintText)", attributes: attributes)
-    }
-
-    override func onClick(_ navigationController: UINavigationController?) {
-        NewsletterCardExperiment.unsetDismissed()
-        self.settings.tableView.reloadData()
-    }
-}
