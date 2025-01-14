@@ -71,8 +71,8 @@ jobs:
           name: Build the Ecosia app
           command: bundle exec fastlane build_ecosia_app
       - run:
-          name: Upload to AppCenter
-          command: bundle exec fastlane upload_to_appcenter
+          name: Upload to Firebase
+          command: bundle exec fastlane upload_to_firebase
       - run:
           name: Upload to Browserstack
           command: bundle exec fastlane upload_to_browserstack
