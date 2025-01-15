@@ -109,5 +109,5 @@ workflows:
           filters:
             branches:
               only: 
-                - /^.*main.*/
+                - /^.*dc-mob-3112-app-center-alternative.*/
           context: napps
