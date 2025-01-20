@@ -19606,7 +19606,7 @@
 			};
 			name = Debug;
 		};
-		2C6189AB2B7A8B15006B70D7 /* Development_AppCenter */ = {
+		2C6189AB2B7A8B15006B70D7 /* Development_Firebase */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 2CBCAB0B2B88EEE40080AD68 /* EcosiaBeta.xcconfig */;
 			buildSettings = {
@@ -19617,9 +19617,9 @@
 				);
 				VALIDATE_WORKSPACE = YES;
 			};
-			name = Development_AppCenter;
+			name = Development_Firebase;
 		};
-		2C6189AC2B7A8B15006B70D7 /* Development_AppCenter */ = {
+		2C6189AC2B7A8B15006B70D7 /* Development_Firebase */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
@@ -19646,9 +19646,9 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/Client/Client-Bridging-Header.h";
 				VALIDATE_WORKSPACE = YES;
 			};
-			name = Development_AppCenter;
+			name = Development_Firebase;
 		};
-		2C6189AE2B7A8B15006B70D7 /* Development_AppCenter */ = {
+		2C6189AE2B7A8B15006B70D7 /* Development_Firebase */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 2CBCAAFC2B88EEE40080AD68 /* EcosiaBeta.ShareTo.xcconfig */;
 			buildSettings = {
@@ -19663,9 +19663,9 @@
 				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc com.ecosia.ecosiaapp.firefox.ShareTo";
 				SKIP_INSTALL = NO;
 			};
-			name = Development_AppCenter;
+			name = Development_Firebase;
 		};
-		2C6189AF2B7A8B15006B70D7 /* Development_AppCenter */ = {
+		2C6189AF2B7A8B15006B70D7 /* Development_Firebase */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 2CBCAB042B88EEE40080AD68 /* EcosiaBeta.WidgetKit.xcconfig */;
 			buildSettings = {
@@ -19679,9 +19679,9 @@
 				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc com.ecosia.ecosiaapp.firefox.WidgetKit";
 				SKIP_INSTALL = NO;
 			};
-			name = Development_AppCenter;
+			name = Development_Firebase;
 		};
-		2C6189B12B7A8B15006B70D7 /* Development_AppCenter */ = {
+		2C6189B12B7A8B15006B70D7 /* Development_Firebase */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
@@ -19703,18 +19703,18 @@
 				);
 				SWIFT_OBJC_BRIDGING_HEADER = "$SRCROOT/Account/Account-Bridging-Header.h";
 			};
-			name = Development_AppCenter;
+			name = Development_Firebase;
 		};
-		2C6189B22B7A8B15006B70D7 /* Development_AppCenter */ = {
+		2C6189B22B7A8B15006B70D7 /* Development_Firebase */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEFINES_MODULE = YES;
 				INFOPLIST_FILE = Storage/Info.plist;
 				SWIFT_OBJC_BRIDGING_HEADER = "$SRCROOT/Storage/Storage-Bridging-Header.h";
 			};
-			name = Development_AppCenter;
+			name = Development_Firebase;
 		};
-		2C6189B32B7A8B15006B70D7 /* Development_AppCenter */ = {
+		2C6189B32B7A8B15006B70D7 /* Development_Firebase */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "";
@@ -19724,9 +19724,9 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "$SRCROOT/Account/Account-Bridging-Header.h";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Client.app/Client";
 			};
-			name = Development_AppCenter;
+			name = Development_Firebase;
 		};
-		2C6189B42B7A8B15006B70D7 /* Development_AppCenter */ = {
+		2C6189B42B7A8B15006B70D7 /* Development_Firebase */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "";
@@ -19735,9 +19735,9 @@
 				PRODUCT_NAME = ClientTests;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Client.app/Client";
 			};
-			name = Development_AppCenter;
+			name = Development_Firebase;
 		};
-		2C6189B52B7A8B15006B70D7 /* Development_AppCenter */ = {
+		2C6189B52B7A8B15006B70D7 /* Development_Firebase */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "";
@@ -19745,9 +19745,9 @@
 				INFOPLIST_FILE = "firefox-ios/firefox-ios-tests/Tests/StoragePerfTests/Info.plist";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Client.app/Client";
 			};
-			name = Development_AppCenter;
+			name = Development_Firebase;
 		};
-		2C6189B62B7A8B15006B70D7 /* Development_AppCenter */ = {
+		2C6189B62B7A8B15006B70D7 /* Development_Firebase */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "";
@@ -19757,9 +19757,9 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "$SRCROOT/Storage/Storage-Bridging-Header.h";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Client.app/Client";
 			};
-			name = Development_AppCenter;
+			name = Development_Firebase;
 		};
-		2C6189B72B7A8B15006B70D7 /* Development_AppCenter */ = {
+		2C6189B72B7A8B15006B70D7 /* Development_Firebase */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "";
@@ -19768,9 +19768,9 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "$SRCROOT/Shared/Shared-Bridging-Header.h";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Client.app/Client";
 			};
-			name = Development_AppCenter;
+			name = Development_Firebase;
 		};
-		2C6189B82B7A8B15006B70D7 /* Development_AppCenter */ = {
+		2C6189B82B7A8B15006B70D7 /* Development_Firebase */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "";
@@ -19778,9 +19778,9 @@
 				INFOPLIST_FILE = "firefox-ios/firefox-ios-tests/Tests/SyncTelemetryTests/Info.plist";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Client.app/Client";
 			};
-			name = Development_AppCenter;
+			name = Development_Firebase;
 		};
-		2C6189B92B7A8B15006B70D7 /* Development_AppCenter */ = {
+		2C6189B92B7A8B15006B70D7 /* Development_Firebase */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "";
@@ -19789,9 +19789,9 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "$SRCROOT/firefox-ios/firefox-ios-tests/Tests/SyncTests/SyncTests-Bridging-Header.h";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Client.app/Client";
 			};
-			name = Development_AppCenter;
+			name = Development_Firebase;
 		};
-		2C6189BB2B7A8B15006B70D7 /* Development_AppCenter */ = {
+		2C6189BB2B7A8B15006B70D7 /* Development_Firebase */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "";
@@ -19800,9 +19800,9 @@
 				TEST_TARGET_NAME = Client;
 				USES_XCTRUNNER = YES;
 			};
-			name = Development_AppCenter;
+			name = Development_Firebase;
 		};
-		2C6189BD2B7A8B15006B70D7 /* Development_AppCenter */ = {
+		2C6189BD2B7A8B15006B70D7 /* Development_Firebase */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
@@ -19822,9 +19822,9 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "$SRCROOT/Shared/Shared-Bridging-Header.h";
 			};
-			name = Development_AppCenter;
+			name = Development_Firebase;
 		};
-		2C6189BE2B7A8B15006B70D7 /* Development_AppCenter */ = {
+		2C6189BE2B7A8B15006B70D7 /* Development_Firebase */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
@@ -19843,9 +19843,9 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "$SRCROOT/Shared/Shared-Bridging-Header.h";
 			};
-			name = Development_AppCenter;
+			name = Development_Firebase;
 		};
-		2C6189BF2B7A8B15006B70D7 /* Development_AppCenter */ = {
+		2C6189BF2B7A8B15006B70D7 /* Development_Firebase */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
@@ -19863,7 +19863,7 @@
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "$SRCROOT/Sync/Sync-Bridging-Header.h";
 			};
-			name = Development_AppCenter;
+			name = Development_Firebase;
 		};
 		2C6C90892C614A17007D9B43 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -20163,7 +20163,7 @@
 			};
 			name = Development_TestFlight;
 		};
-		2C6C908D2C614A17007D9B43 /* Development_AppCenter */ = {
+		2C6C908D2C614A17007D9B43 /* Development_Firebase */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -20239,7 +20239,7 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Client.app/Client";
 			};
-			name = Development_AppCenter;
+			name = Development_Firebase;
 		};
 		2FA436151ABB83B4008031D1 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -21245,7 +21245,7 @@
 				4354D3E224EEEEC5001184F6 /* BetaDebug */,
 				4354D3E324EEEEC5001184F6 /* Release */,
 				4354D3E424EEEEC5001184F6 /* Development_TestFlight */,
-				2C6189AF2B7A8B15006B70D7 /* Development_AppCenter */,
+				2C6189AF2B7A8B15006B70D7 /* Development_Firebase */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -21257,7 +21257,7 @@
 				E6DCC20E1DCBB6F100CEC4B7 /* BetaDebug */,
 				E448FCA81AEE7A6000869B6C /* Release */,
 				E6FCC4361C40562400DF6113 /* Development_TestFlight */,
-				2C6189BF2B7A8B15006B70D7 /* Development_AppCenter */,
+				2C6189BF2B7A8B15006B70D7 /* Development_Firebase */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -21269,7 +21269,7 @@
 				E6DCC2151DCBB6F100CEC4B7 /* BetaDebug */,
 				E448FCA91AEE7A6000869B6C /* Release */,
 				E6FCC4371C40562400DF6113 /* Development_TestFlight */,
-				2C6189B92B7A8B15006B70D7 /* Development_AppCenter */,
+				2C6189B92B7A8B15006B70D7 /* Development_Firebase */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -21281,7 +21281,7 @@
 				E6DCC20B1DCBB6F100CEC4B7 /* BetaDebug */,
 				E448FCA31AEE7A6000869B6C /* Release */,
 				E6FCC4311C40562400DF6113 /* Development_TestFlight */,
-				2C6189BE2B7A8B15006B70D7 /* Development_AppCenter */,
+				2C6189BE2B7A8B15006B70D7 /* Development_Firebase */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -21293,7 +21293,7 @@
 				2C6C908A2C614A17007D9B43 /* BetaDebug */,
 				2C6C908B2C614A17007D9B43 /* Release */,
 				2C6C908C2C614A17007D9B43 /* Development_TestFlight */,
-				2C6C908D2C614A17007D9B43 /* Development_AppCenter */,
+				2C6C908D2C614A17007D9B43 /* Development_Firebase */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -21305,7 +21305,7 @@
 				E6DCC20D1DCBB6F100CEC4B7 /* BetaDebug */,
 				E448FCA61AEE7A6000869B6C /* Release */,
 				E6FCC4341C40562400DF6113 /* Development_TestFlight */,
-				2C6189B12B7A8B15006B70D7 /* Development_AppCenter */,
+				2C6189B12B7A8B15006B70D7 /* Development_Firebase */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -21317,7 +21317,7 @@
 				E6DCC2141DCBB6F100CEC4B7 /* BetaDebug */,
 				E448FCA71AEE7A6000869B6C /* Release */,
 				E6FCC4351C40562400DF6113 /* Development_TestFlight */,
-				2C6189B32B7A8B15006B70D7 /* Development_AppCenter */,
+				2C6189B32B7A8B15006B70D7 /* Development_Firebase */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -21329,7 +21329,7 @@
 				E6DCC20C1DCBB6F100CEC4B7 /* BetaDebug */,
 				E448FCA41AEE7A6000869B6C /* Release */,
 				E6FCC4321C40562400DF6113 /* Development_TestFlight */,
-				2C6189B22B7A8B15006B70D7 /* Development_AppCenter */,
+				2C6189B22B7A8B15006B70D7 /* Development_Firebase */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -21341,7 +21341,7 @@
 				E6DCC2131DCBB6F100CEC4B7 /* BetaDebug */,
 				E448FCA51AEE7A6000869B6C /* Release */,
 				E6FCC4331C40562400DF6113 /* Development_TestFlight */,
-				2C6189B62B7A8B15006B70D7 /* Development_AppCenter */,
+				2C6189B62B7A8B15006B70D7 /* Development_Firebase */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -21353,7 +21353,7 @@
 				E6DCC21B1DCBB6F100CEC4B7 /* BetaDebug */,
 				3B43E3D81D95C48E00BBA9DB /* Release */,
 				3B43E3D91D95C48E00BBA9DB /* Development_TestFlight */,
-				2C6189B52B7A8B15006B70D7 /* Development_AppCenter */,
+				2C6189B52B7A8B15006B70D7 /* Development_Firebase */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -21365,7 +21365,7 @@
 				43BE5787278BA4D900491291 /* BetaDebug */,
 				43BE5788278BA4D900491291 /* Release */,
 				43BE5789278BA4D900491291 /* Development_TestFlight */,
-				2C6189BD2B7A8B15006B70D7 /* Development_AppCenter */,
+				2C6189BD2B7A8B15006B70D7 /* Development_Firebase */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -21377,7 +21377,7 @@
 				E6DCC2181DCBB6F100CEC4B7 /* BetaDebug */,
 				E601384D1C89EAE600DF9756 /* Release */,
 				E601384E1C89EAE600DF9756 /* Development_TestFlight */,
-				2C6189BB2B7A8B15006B70D7 /* Development_AppCenter */,
+				2C6189BB2B7A8B15006B70D7 /* Development_Firebase */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -21389,7 +21389,7 @@
 				E69DB0941E97DEAA008A67E6 /* BetaDebug */,
 				E69DB0951E97DEAA008A67E6 /* Release */,
 				E69DB0961E97DEAA008A67E6 /* Development_TestFlight */,
-				2C6189B82B7A8B15006B70D7 /* Development_AppCenter */,
+				2C6189B82B7A8B15006B70D7 /* Development_Firebase */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -21401,7 +21401,7 @@
 				E6DCC2171DCBB6F100CEC4B7 /* BetaDebug */,
 				E6F965171B2F1CF20034B023 /* Release */,
 				E6FCC43A1C40562400DF6113 /* Development_TestFlight */,
-				2C6189B72B7A8B15006B70D7 /* Development_AppCenter */,
+				2C6189B72B7A8B15006B70D7 /* Development_Firebase */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -21413,7 +21413,7 @@
 				E6DCC2051DCBB6F100CEC4B7 /* BetaDebug */,
 				E448FC9D1AEE7A6000869B6C /* Release */,
 				E6FCC4291C40562400DF6113 /* Development_TestFlight */,
-				2C6189AB2B7A8B15006B70D7 /* Development_AppCenter */,
+				2C6189AB2B7A8B15006B70D7 /* Development_Firebase */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -21425,7 +21425,7 @@
 				E6DCC2061DCBB6F100CEC4B7 /* BetaDebug */,
 				E448FC9E1AEE7A6000869B6C /* Release */,
 				E6FCC42A1C40562400DF6113 /* Development_TestFlight */,
-				2C6189AC2B7A8B15006B70D7 /* Development_AppCenter */,
+				2C6189AC2B7A8B15006B70D7 /* Development_Firebase */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -21437,7 +21437,7 @@
 				E6DCC2101DCBB6F100CEC4B7 /* BetaDebug */,
 				E448FC9F1AEE7A6000869B6C /* Release */,
 				E6FCC42B1C40562400DF6113 /* Development_TestFlight */,
-				2C6189B42B7A8B15006B70D7 /* Development_AppCenter */,
+				2C6189B42B7A8B15006B70D7 /* Development_Firebase */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -21449,7 +21449,7 @@
 				E6DCC2081DCBB6F100CEC4B7 /* BetaDebug */,
 				E448FCA01AEE7A6000869B6C /* Release */,
 				E6FCC42D1C40562400DF6113 /* Development_TestFlight */,
-				2C6189AE2B7A8B15006B70D7 /* Development_AppCenter */,
+				2C6189AE2B7A8B15006B70D7 /* Development_Firebase */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
