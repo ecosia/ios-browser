@@ -440,8 +440,6 @@ class SearchViewController: SiteTableViewController,
         }
     }
 
-    // TODO Ecosia Upgrade: Where should we hardcode config? Code used to be here
-    // let searchInContent = searchTerms.find { $0.count >= 3 } != nil
     // MARK: - Table view delegate
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
