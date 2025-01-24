@@ -151,7 +151,7 @@ final class Welcome: UIViewController {
         stack.addArrangedSubview(label)
 
         let cta = UIButton(type: .system)
-        cta.backgroundColor = .Light.Button.secondary
+        cta.backgroundColor = .Light.Button.backgroundSecondary
         cta.setTitle(.localized(.getStarted), for: .normal)
         cta.titleLabel?.font = .preferredFont(forTextStyle: .callout)
         cta.titleLabel?.adjustsFontForContentSizeCategory = true

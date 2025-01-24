@@ -24,7 +24,7 @@ class TableViewColor {
     // Ecosia: Re enabling legacy colo references
     var accessoryViewTint: UIColor { return .Light.Text.secondary }
     var headerBackground: UIColor { .Light.Background.tertiary }
-    var separator: UIColor { .Light.border }
+    var separator: UIColor { .Light.Border.decorative }
     var rowBackground: UIColor { return .Light.Background.primary }
 }
 

@@ -14,7 +14,7 @@ private class DarkTableViewColor: TableViewColor {
     // Ecosia: Re enabling legacy colo references
     override var accessoryViewTint: UIColor { return .Dark.Text.secondary }
     override var headerBackground: UIColor { .Dark.Background.primary }
-    override var separator: UIColor { .Dark.border }
+    override var separator: UIColor { .Dark.Border.decorative }
     override var rowBackground: UIColor { return .Dark.Background.secondary }
 }
 

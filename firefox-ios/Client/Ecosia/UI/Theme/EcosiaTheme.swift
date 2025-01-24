@@ -14,7 +14,7 @@ extension LegacyTheme {
 class EcosiaTheme {
     var primaryBrand: UIColor { .Light.Brand.primary}
     var secondaryBrand: UIColor { UIColor.Photon.Grey60 }
-    var border: UIColor { .Light.border }
+    var border: UIColor { .Light.Border.decorative }
 
     var primaryBackground: UIColor { .Light.Background.primary }
     var secondaryBackground: UIColor { .Light.Background.secondary }
@@ -35,11 +35,11 @@ class EcosiaTheme {
 
     var impactMultiplyCardBackground: UIColor { .Light.Background.primary }
     var trackingSheetBackground: UIColor { .Light.Background.tertiary }
-    var moreNewsButton: UIColor { .Light.Button.secondary }
+    var moreNewsButton: UIColor { .Light.Button.backgroundSecondary }
     var newsPlaceholder: UIColor { .Light.Background.secondary }
 
     var actionSheetBackground: UIColor { .Light.Background.primary }
-    var actionSheetCancelButton: UIColor { .Light.Button.primaryActive }
+    var actionSheetCancelButton: UIColor { .Light.Button.backgroundPrimaryActive }
     var modalBackground: UIColor { .Light.Background.tertiary }
     var modalHeader: UIColor { .init(red: 0.153, green: 0.322, blue: 0.263, alpha: 1) }
 
@@ -59,15 +59,15 @@ class EcosiaTheme {
     var primarySelectedBackground: UIColor { .Light.Background.secondary }
     var secondarySelectedBackground: UIColor { .Light.Background.secondary }
 
-    var primaryButton: UIColor { .Light.Button.primary }
-    var primaryButtonActive: UIColor { .Light.Button.primaryActive }
-    var secondaryButton: UIColor { .Light.Button.secondary }
-    var secondaryButtonContent: UIColor { .Light.Button.secondaryContent }
+    var primaryButton: UIColor { .Light.Button.backgroundPrimary }
+    var primaryButtonActive: UIColor { .Light.Button.backgroundPrimaryActive }
+    var secondaryButton: UIColor { .Light.Button.backgroundSecondary }
+    var secondaryButtonContent: UIColor { .Light.Button.contentSecondary }
     var secondaryButtonBackground: UIColor { .Light.Button.secondaryBackground }
-    var activeTransparentBackground: UIColor { .Light.Button.activeTransparentBackground }
+    var activeTransparentBackground: UIColor { .Light.Button.backgroundTransparentActive }
 
     var textfieldPlaceholder: UIColor { .Light.Text.secondary }
-    var textfieldIconTint: UIColor { .Light.Button.primary }
+    var textfieldIconTint: UIColor { .Light.Button.backgroundPrimary }
     var personalCounterSelection: UIColor { UIColor.Photon.Grey20 }
     var privateButtonBackground: UIColor { UIColor.Photon.Grey70 }
 
@@ -76,12 +76,12 @@ class EcosiaTheme {
     var segmentSelectedText: UIColor { .Light.Text.primary }
     var segmentBackground: UIColor { .Light.Background.secondary }
 
-    var warning: UIColor { .Light.State.warning }
+    var warning: UIColor { .Light.State.error }
     var information: UIColor { .Light.State.information }
     var disabled: UIColor { .Light.State.disabled }
 
     var tabBackground: UIColor { .Light.Background.primary }
-    var tabSelectedBackground: UIColor { .Light.Button.primary }
+    var tabSelectedBackground: UIColor { .Light.Button.backgroundPrimary }
     var tabSelectedPrivateBackground: UIColor { .Dark.Background.secondary }
 
     var toastImageTint: UIColor { .init(red: 0.847, green: 1, blue: 0.502, alpha: 1) }
@@ -96,7 +96,7 @@ class EcosiaTheme {
 final class DarkEcosiaTheme: EcosiaTheme {
     override var primaryBrand: UIColor { .Dark.Brand.primary}
     override var secondaryBrand: UIColor { .white }
-    override var border: UIColor { .Dark.border }
+    override var border: UIColor { .Dark.Border.decorative }
 
     override var primaryBackground: UIColor { .Dark.Background.primary }
     override var secondaryBackground: UIColor { .Dark.Background.secondary }
@@ -121,7 +121,7 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var newsPlaceholder: UIColor { .Grey.fifty }
 
     override var actionSheetBackground: UIColor { .Dark.Background.secondary }
-    override var actionSheetCancelButton: UIColor { .Dark.Button.primaryActive }
+    override var actionSheetCancelButton: UIColor { .Dark.Button.backgroundPrimaryActive }
     override var modalBackground: UIColor { .Dark.Background.secondary }
     override var modalHeader: UIColor { .Dark.Background.secondary }
 
@@ -142,15 +142,15 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var primarySelectedBackground: UIColor { .Dark.Background.tertiary }
     override var secondarySelectedBackground: UIColor { .init(red: 0.227, green: 0.227, blue: 0.227, alpha: 1) }
 
-    override var primaryButton: UIColor { .Dark.Button.primary }
-    override var primaryButtonActive: UIColor { .Dark.Button.primaryActive }
-    override var secondaryButton: UIColor { .Dark.Button.secondary }
-    override var secondaryButtonContent: UIColor { .Dark.Button.secondaryContent }
+    override var primaryButton: UIColor { .Dark.Button.backgroundPrimary }
+    override var primaryButtonActive: UIColor { .Dark.Button.backgroundPrimaryActive }
+    override var secondaryButton: UIColor { .Dark.Button.backgroundSecondary }
+    override var secondaryButtonContent: UIColor { .Dark.Button.contentSecondary }
     override var secondaryButtonBackground: UIColor { .Dark.Button.secondaryBackground }
-    override var activeTransparentBackground: UIColor { .Dark.Button.activeTransparentBackground }
+    override var activeTransparentBackground: UIColor { .Dark.Button.backgroundTransparentActive }
 
     override var textfieldPlaceholder: UIColor { .Dark.Text.secondary }
-    override var textfieldIconTint: UIColor { .Dark.Button.primary }
+    override var textfieldIconTint: UIColor { .Dark.Button.backgroundPrimary }
 
     override var personalCounterSelection: UIColor { UIColor.Photon.Grey60 }
     override var privateButtonBackground: UIColor { .white }
@@ -160,12 +160,12 @@ final class DarkEcosiaTheme: EcosiaTheme {
     override var segmentSelectedText: UIColor { UIColor.Photon.Grey90 }
     override var segmentBackground: UIColor { .Dark.Background.tertiary }
 
-    override var warning: UIColor { .Dark.State.warning }
+    override var warning: UIColor { .Dark.State.error }
     override var information: UIColor { .Dark.State.information }
     override var disabled: UIColor { .Dark.State.disabled }
 
     override var tabBackground: UIColor { .Dark.Background.tertiary }
-    override var tabSelectedBackground: UIColor { .Dark.Button.primary }
+    override var tabSelectedBackground: UIColor { .Dark.Button.backgroundPrimary }
     override var tabSelectedPrivateBackground: UIColor { .white}
 
     override var toastImageTint: UIColor { .init(red: 0.153, green: 0.322, blue: 0.263, alpha: 1) }

@@ -68,6 +68,8 @@
 		0EC57D082CA6FCA5002E3F04 /* PasswordGeneratorHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EC57D072CA6FCA5002E3F04 /* PasswordGeneratorHeaderView.swift */; };
 		0EC57D0A2CA6FCC5002E3F04 /* PasswordGeneratorPasswordFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EC57D092CA6FCC5002E3F04 /* PasswordGeneratorPasswordFieldView.swift */; };
 		0ECB6B6D2CCFF718006A7C82 /* DateGroupedTableDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ECB6B672CCFE663006A7C82 /* DateGroupedTableDataTests.swift */; };
+		120251112D439F4000039A2F /* EcosiaColorPrimitive.swift in Sources */ = {isa = PBXBuildFile; fileRef = 120251102D439F3600039A2F /* EcosiaColorPrimitive.swift */; };
+		120251122D439F4000039A2F /* EcosiaColorPrimitive.swift in Sources */ = {isa = PBXBuildFile; fileRef = 120251102D439F3600039A2F /* EcosiaColorPrimitive.swift */; };
 		121E65DF2D36514E00DFBFA2 /* BaseTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BF4B8E81D38497A00493393 /* BaseTestCase.swift */; };
 		121E65E02D36515700DFBFA2 /* FxScreenGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39EB46981E26DDB4006346E8 /* FxScreenGraph.swift */; };
 		121E65E12D36585A00DFBFA2 /* LaunchArguments.swift in Sources */ = {isa = PBXBuildFile; fileRef = E65075861E37F7AB006961AC /* LaunchArguments.swift */; };
@@ -2415,6 +2417,7 @@
 		109E4D959F25FF2F13848417 /* jv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = jv; path = jv.lproj/AuthenticationManager.strings; sourceTree = "<group>"; };
 		10CD44F0A402C84BB31E5474 /* gu-IN */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "gu-IN"; path = "gu-IN.lproj/Intro.strings"; sourceTree = "<group>"; };
 		11F747589EB8A55A47647C93 /* bn */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = bn; path = bn.lproj/ClearPrivateData.strings; sourceTree = "<group>"; };
+		120251102D439F3600039A2F /* EcosiaColorPrimitive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaColorPrimitive.swift; sourceTree = "<group>"; };
 		120F42119EB30F217AB9493E /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/FindInPage.strings; sourceTree = "<group>"; };
 		123045959E0F295753B4B4DB /* lo */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = lo; path = lo.lproj/Today.strings; sourceTree = "<group>"; };
 		124DAE792D2FD1330050104C /* LegacyDarkTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyDarkTheme.swift; sourceTree = "<group>"; };
@@ -10657,6 +10660,7 @@
 		2C7DC2392B16352200C049C8 /* Theme */ = {
 			isa = PBXGroup;
 			children = (
+				120251102D439F3600039A2F /* EcosiaColorPrimitive.swift */,
 				2CB288E52B07C8F000A8FCB3 /* EcosiaTheme.swift */,
 				12C11E782D2825AF00E4DDBF /* EcosiaThemeColourPalette.swift */,
 				12C11E792D2825AF00E4DDBF /* EcosiaThemeManager.swift */,
@@ -16534,6 +16538,7 @@
 				EBF47E701F7979DF00899189 /* TelemetryWrapper.swift in Sources */,
 				8AD40FCF27BADC6B00672675 /* URLTextField.swift in Sources */,
 				31ADB5DA1E58CEC300E87909 /* ClipboardBarDisplayHandler.swift in Sources */,
+				120251112D439F4000039A2F /* EcosiaColorPrimitive.swift in Sources */,
 				8AD1980F27BEB3F100D64B0E /* PhotonActionSheetViewModel.swift in Sources */,
 				EB9A179D20E69A7F00B12184 /* LegacyTheme.swift in Sources */,
 				2128E2802934FBB400FB91BE /* CopyLinkActivity.swift in Sources */,
@@ -17897,6 +17902,7 @@
 				210E0EBB298D9D6600BB4F33 /* OpenSearchEngine.swift in Sources */,
 				2128E27C2930216F00FB91BE /* SendToDeviceHelper.swift in Sources */,
 				E136D41A2B19D35D003D0302 /* EmbeddedNavController.swift in Sources */,
+				120251122D439F4000039A2F /* EcosiaColorPrimitive.swift in Sources */,
 				124DAE822D350EFD0050104C /* String+Punycode.swift in Sources */,
 				E1CD81C0290C5C9800124B27 /* DevicePickerTableViewCell.swift in Sources */,
 				E1CD81BA290C4ED900124B27 /* AccessibilityIdentifiers.swift in Sources */,
