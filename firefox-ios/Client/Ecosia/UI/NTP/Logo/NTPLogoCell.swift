@@ -6,7 +6,7 @@ import UIKit
 import Core
 import Common
 
-final class NTPLogoCell: UICollectionViewCell, ReusableCell, ThemeApplicable {
+final class NTPLogoCell: UICollectionViewCell, ReusableCell, Themeable {
     static let bottomMargin: CGFloat = 6
     static let width: CGFloat = 144
 
@@ -50,9 +50,12 @@ final class NTPLogoCell: UICollectionViewCell, ReusableCell, ThemeApplicable {
         logo.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
         logo.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
         logo.widthAnchor.constraint(equalToConstant: Self.width).isActive = true
+        
+        listenForThemeChange(contentView)
     }
 
-    func applyTheme(theme: Theme) {
+    func applyTheme() {
+        let theme = themeManager.getCurrentTheme(for: currentWindowUUID)
         logo.tintColor = theme.colors.ecosia.brandPrimary
     }
 }

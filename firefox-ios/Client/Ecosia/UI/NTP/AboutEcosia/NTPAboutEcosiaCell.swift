@@ -235,10 +235,11 @@ final class NTPAboutEcosiaCell: UICollectionViewCell, ReusableCell {
 extension NTPAboutEcosiaCell: Themeable {
 
     func applyTheme() {
+        let theme = themeManager.getCurrentTheme(for: currentWindowUUID)
         outlineView.backgroundColor = .legacyTheme.ecosia.ntpCellBackground
         titleLabel.textColor = .legacyTheme.ecosia.primaryText
         indicatorImageView.tintColor = .legacyTheme.ecosia.secondaryText
-        dividerView.backgroundColor = .legacyTheme.ecosia.border
+        dividerView.backgroundColor = theme.colors.ecosia.borderDecorative
         disclosureView.backgroundColor = .legacyTheme.ecosia.quarternaryBackground
         subtitleLabel.textColor = .legacyTheme.ecosia.primaryTextInverted
         learnMoreButton.layer.borderColor = UIColor.legacyTheme.ecosia.primaryTextInverted.cgColor

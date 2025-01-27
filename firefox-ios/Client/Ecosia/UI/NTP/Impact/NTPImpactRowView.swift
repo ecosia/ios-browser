@@ -155,6 +155,7 @@ final class NTPImpactRowView: UIView, Themeable {
         setupView()
         setupConstraints()
         applyTheme()
+        listenForThemeChange(self)
     }
 
     /// Not supported, as `NTPImpactRowView` requires `ClimateImpactInfo` during initialization.
@@ -238,11 +239,12 @@ final class NTPImpactRowView: UIView, Themeable {
 
     /// Applies the current theme to the view, updating colors and styles as needed.
     func applyTheme() {
+        let theme = themeManager.getCurrentTheme(for: currentWindowUUID)
         backgroundColor = customBackgroundColor ?? .legacyTheme.ecosia.secondaryBackground
         titleLabel.textColor = .legacyTheme.ecosia.primaryText
         subtitleLabel.textColor = .legacyTheme.ecosia.secondaryText
         actionButton.setTitleColor(.legacyTheme.ecosia.primaryButton, for: .normal)
-        dividerView.backgroundColor = .legacyTheme.ecosia.border
+        dividerView.backgroundColor = theme.colors.ecosia.borderDecorative
         totalProgressView.color = .legacyTheme.ecosia.ntpBackground
         currentProgressView.color = .legacyTheme.ecosia.treeCounterProgressCurrent
     }

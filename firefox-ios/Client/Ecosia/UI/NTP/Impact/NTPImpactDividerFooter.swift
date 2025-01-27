@@ -48,6 +48,7 @@ final class NTPImpactDividerFooter: UICollectionReusableView, ReusableCell, Them
     }
 
     @objc func applyTheme() {
-        dividerView.backgroundColor = .legacyTheme.ecosia.border
+        let theme = themeManager.getCurrentTheme(for: currentWindowUUID)
+        dividerView.backgroundColor = theme.colors.ecosia.borderDecorative
     }
 }

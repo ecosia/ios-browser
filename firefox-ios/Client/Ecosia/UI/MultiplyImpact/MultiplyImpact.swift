@@ -436,7 +436,7 @@ class MultiplyImpact: UIViewController, Themeable {
         forestOverlay?.backgroundColor = .legacyTheme.ecosia.modalBackground
         subtitle?.textColor = .Dark.Text.primary
         copyControl?.backgroundColor = .legacyTheme.ecosia.secondaryBackground
-        copyControl?.layer.borderColor = UIColor.legacyTheme.ecosia.border.cgColor
+        copyControl?.layer.borderColor = theme.colors.ecosia.borderDecorative.cgColor
         moreSharingMethods?.textColor = .legacyTheme.ecosia.secondaryText
         copyText?.textColor = theme.colors.ecosia.brandPrimary
 
@@ -453,7 +453,7 @@ class MultiplyImpact: UIViewController, Themeable {
         }
 
         [copyDividerLeft, copyDividerRight].forEach {
-            $0?.backgroundColor = .legacyTheme.ecosia.border
+            $0?.backgroundColor = theme.colors.ecosia.borderDecorative
         }
 
         referralImpactRowView.customBackgroundColor = .legacyTheme.ecosia.impactMultiplyCardBackground

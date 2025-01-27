@@ -159,6 +159,7 @@ final class EcosiaFindInPageBar: UIView, Themeable {
     }
 
     @objc func applyTheme() {
+        let theme = themeManager.getCurrentTheme(for: currentWindowUUID)
         backgroundColor = .legacyTheme.ecosia.secondaryBackground
         searchView.backgroundColor = .legacyTheme.ecosia.tertiaryBackground
         searchTextField.textColor = .legacyTheme.ecosia.primaryText
@@ -168,7 +169,7 @@ final class EcosiaFindInPageBar: UIView, Themeable {
         previousButton.tintColor = .legacyTheme.ecosia.primaryIcon
         nextButton.tintColor = .legacyTheme.ecosia.primaryIcon
         closeButton.setTitleColor(.legacyTheme.ecosia.primaryButton, for: .normal)
-        topBorder.backgroundColor = .legacyTheme.ecosia.border
+        topBorder.backgroundColor = theme.colors.ecosia.borderDecorative
     }
 
     private func setupConstraints() {

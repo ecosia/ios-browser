@@ -138,7 +138,7 @@ extension PageActionMenuCell {
     }
 
     /// Adds the custom separator view
-    private func addCustomGroupedStyleLikeSeparator() {
+    private func addCustomGroupedStyleLikeSeparator(theme: Theme) {
 
         if separatorView == nil {
             separatorView = UIView()
@@ -147,7 +147,7 @@ extension PageActionMenuCell {
         guard let separatorView else { return }
 
         separatorView.translatesAutoresizingMaskIntoConstraints = false
-        separatorView.backgroundColor = .legacyTheme.ecosia.border
+        separatorView.backgroundColor = theme.colors.ecosia.borderDecorative
 
         contentView.addSubview(separatorView)
         contentView.bringSubviewToFront(separatorView)
@@ -174,7 +174,9 @@ extension PageActionMenuCell {
     /// - Parameters:
     ///   - viewModel: The`PhotonActionSheetViewModel`'s View Model
     ///   - indexPath: The TableView's index path
-    func configure(with viewModel: PhotonActionSheetViewModel, at indexPath: IndexPath, theme: Theme) {
+    func configure(with viewModel: PhotonActionSheetViewModel,
+                   at indexPath: IndexPath,
+                   theme: Theme) {
 
         backgroundColor = .legacyTheme.ecosia.impactMultiplyCardBackground
         let actions = viewModel.actions[indexPath.section][indexPath.row]
@@ -198,7 +200,7 @@ extension PageActionMenuCell {
         isNew(actions.items.first?.isNew == true)
 
         if separatorCellsPositions.contains(position) {
-            addCustomGroupedStyleLikeSeparator()
+            addCustomGroupedStyleLikeSeparator(theme: theme)
         }
 
         applyTheme(theme: theme)

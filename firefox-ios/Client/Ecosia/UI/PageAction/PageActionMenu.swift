@@ -5,7 +5,7 @@
 import UIKit
 import Common
 
-final class PageActionMenu: UIViewController, UIGestureRecognizerDelegate, Themeable {
+final class PageActionMenu: UIViewController, UIGestureRecognizerDelegate {
 
     // MARK: - UX
 
@@ -221,13 +221,17 @@ extension PageActionMenu: UITableViewDataSource, UITableViewDelegate {
 
 // MARK: - Themeable
 
-extension PageActionMenu {
+extension PageActionMenu: Themeable {
 
     func applyTheme() {
+        let theme = themeManager.getCurrentTheme(for: windowUUID)
         tableView.reloadData()
         view.backgroundColor = .legacyTheme.ecosia.modalBackground
         tableView.backgroundColor = .legacyTheme.ecosia.modalBackground
-        tableView.separatorColor = .legacyTheme.ecosia.border
+        tableView.separatorColor = theme.colors.ecosia.borderDecorative
         knob.backgroundColor = .legacyTheme.ecosia.secondaryText
+        tableView.visibleCells.forEach {
+            ($0 as? ThemeApplicable)?.applyTheme(theme: theme)
+        }
     }
 }
