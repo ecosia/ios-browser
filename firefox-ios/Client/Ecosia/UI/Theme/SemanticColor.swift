@@ -4,6 +4,8 @@
 
 import UIKit
 
+// TODO: Remove this file once migrated to `EcosiaSemanticColors` inside `EcosiaThemeColourPalette`
+
 // This file contains all of Ecosia official semantic color tokens referenced in the link below.
 // https://www.figma.com/design/8T2rTBVwynJKSdY6MQo5PQ/%E2%9A%9B%EF%B8%8F--Foundations?node-id=2237-3418&t=UKHtrxcc9UtOihsm-0
 // They should use `EcosiaColorPrimitives` and should be called from a theme within the theme manager.

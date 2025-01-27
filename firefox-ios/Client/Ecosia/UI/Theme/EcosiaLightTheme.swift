@@ -1,0 +1,142 @@
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Common
+import UIKit
+
+struct EcosiaLightTheme: Theme {
+    public var type: ThemeType = .light
+    public var colors: ThemeColourPalette = EcosiaLightColourPalette()
+}
+
+class EcosiaLightColourPalette: EcosiaThemeColourPalette {
+    var ecosia: EcosiaSemanticColors {
+        EcosiaLightSemanticColors()
+    }
+
+    // TODO Ecosia Upgrade: Review new colors and older ones that are no longer on the protocol [MOB-3152]
+    var layerInformation: UIColor { fallbackTheme.colors.layerInformation }
+    var layerSuccess: UIColor { fallbackTheme.colors.layerSuccess }
+    var layerCritical: UIColor { fallbackTheme.colors.layerCritical }
+    var layerSelectedText: UIColor { fallbackTheme.colors.layerSelectedText }
+    var layerAutofillText: UIColor { fallbackTheme.colors.layerAutofillText }
+    var actionPrimaryDisabled: UIColor { fallbackTheme.colors.actionPrimaryDisabled }
+    var actionSuccess: UIColor { fallbackTheme.colors.actionSuccess }
+    var actionCritical: UIColor { fallbackTheme.colors.actionCritical }
+    var actionInformation: UIColor { fallbackTheme.colors.actionInformation }
+    var textCritical: UIColor { fallbackTheme.colors.textCritical }
+    var textInvertedDisabled: UIColor { fallbackTheme.colors.textInvertedDisabled }
+    var iconAccent: UIColor { fallbackTheme.colors.iconAccent }
+    var iconCritical: UIColor { fallbackTheme.colors.iconCritical }
+    var iconRatingNeutral: UIColor { fallbackTheme.colors.iconRatingNeutral }
+
+    /* TODO Ecosia Upgrade: Review if ok to switch to directly linking fallback theme. [MOB-3152]
+    // The alternative is receiving window here since `getCurrentTheme` now requires it.
+     let fallbackDefaultThemeManager: ThemeManager = DefaultThemeManager(sharedContainerIdentifier: AppInfo.sharedContainerIdentifier)
+     */
+    var fallbackTheme: Theme {
+        LightTheme()
+    }
+
+    // MARK: - Layers
+    var layer1: UIColor { .legacyTheme.ecosia.tertiaryBackground }
+    var layer2: UIColor { fallbackTheme.colors.layer2 }
+    var layer3: UIColor { .legacyTheme.ecosia.ntpBackground }
+    var layer4: UIColor { fallbackTheme.colors.layer4 }
+    var layer5: UIColor { .legacyTheme.ecosia.secondaryBackground }
+    var layer6: UIColor { .legacyTheme.ecosia.homePanelBackground }
+    var layer5Hover: UIColor { .legacyTheme.ecosia.secondarySelectedBackground }
+    var layerScrim: UIColor { fallbackTheme.colors.layerScrim }
+    var layerGradient: Common.Gradient { fallbackTheme.colors.layerGradient }
+    var layerGradientOverlay: Common.Gradient { fallbackTheme.colors.layerGradientOverlay }
+    var layerAccentNonOpaque: UIColor { .legacyTheme.ecosia.primaryButton }
+    var layerAccentPrivate: UIColor { fallbackTheme.colors.layerAccentPrivate }
+    var layerAccentPrivateNonOpaque: UIColor { .legacyTheme.ecosia.primaryText }
+    var layerSepia: UIColor { fallbackTheme.colors.layerSepia }
+    var layerWarning: UIColor { .legacyTheme.ecosia.warning }
+    var layerRatingA: UIColor { fallbackTheme.colors.layerRatingA }
+    var layerRatingASubdued: UIColor { fallbackTheme.colors.layerRatingASubdued }
+    var layerRatingB: UIColor { fallbackTheme.colors.layerRatingB }
+    var layerRatingBSubdued: UIColor { fallbackTheme.colors.layerRatingBSubdued }
+    var layerRatingC: UIColor { fallbackTheme.colors.layerRatingC }
+    var layerRatingCSubdued: UIColor { fallbackTheme.colors.layerRatingCSubdued }
+    var layerRatingD: UIColor { fallbackTheme.colors.layerRatingD }
+    var layerRatingDSubdued: UIColor { fallbackTheme.colors.layerRatingDSubdued }
+    var layerRatingF: UIColor { fallbackTheme.colors.layerRatingF }
+    var layerRatingFSubdued: UIColor { fallbackTheme.colors.layerRatingFSubdued }
+    var layerHomepage: Common.Gradient { fallbackTheme.colors.layerHomepage }
+    var layerSearch: UIColor { fallbackTheme.colors.layerSearch }
+    var layerGradientURL: Common.Gradient { fallbackTheme.colors.layerGradientURL }
+    var actionTabActive: UIColor { fallbackTheme.colors.actionTabActive }
+    var actionTabInactive: UIColor { fallbackTheme.colors.actionTabInactive }
+    var borderToolbarDivider: UIColor { fallbackTheme.colors.borderToolbarDivider }
+
+    // MARK: - Actions
+    var actionPrimary: UIColor { .legacyTheme.ecosia.primaryButton }
+    var actionPrimaryHover: UIColor { .legacyTheme.ecosia.primaryButtonActive }
+    var actionSecondary: UIColor { .legacyTheme.ecosia.secondaryButton }
+    var actionSecondaryHover: UIColor { fallbackTheme.colors.actionSecondaryHover }
+    var formSurfaceOff: UIColor { fallbackTheme.colors.formSurfaceOff }
+    var formKnob: UIColor { fallbackTheme.colors.formKnob }
+    var indicatorActive: UIColor { fallbackTheme.colors.indicatorActive }
+    var indicatorInactive: UIColor { fallbackTheme.colors.indicatorInactive }
+    var actionWarning: UIColor { .legacyTheme.ecosia.warning }
+
+    // MARK: - Text
+    var textPrimary: UIColor { .legacyTheme.ecosia.primaryText }
+    var textSecondary: UIColor { .legacyTheme.ecosia.secondaryText }
+    var textDisabled: UIColor { fallbackTheme.colors.textDisabled }
+    var textAccent: UIColor { .legacyTheme.ecosia.primaryButton }
+    var textOnDark: UIColor { fallbackTheme.colors.textOnDark }
+    var textOnLight: UIColor { fallbackTheme.colors.textOnLight }
+    var textInverted: UIColor { .legacyTheme.ecosia.primaryTextInverted }
+
+    // MARK: - Icons
+    var iconPrimary: UIColor { .legacyTheme.ecosia.primaryIcon }
+    var iconSecondary: UIColor { .legacyTheme.ecosia.secondaryIcon }
+    var iconDisabled: UIColor { fallbackTheme.colors.iconDisabled }
+    var iconOnColor: UIColor { fallbackTheme.colors.iconOnColor }
+    var iconWarning: UIColor { .legacyTheme.ecosia.warning }
+    var iconSpinner: UIColor { fallbackTheme.colors.iconSpinner }
+    var iconAccentViolet: UIColor { fallbackTheme.colors.iconAccentViolet }
+    var iconAccentBlue: UIColor { fallbackTheme.colors.iconAccentBlue }
+    var iconAccentPink: UIColor { fallbackTheme.colors.iconAccentPink }
+    var iconAccentGreen: UIColor { fallbackTheme.colors.iconAccentGreen }
+    var iconAccentYellow: UIColor { fallbackTheme.colors.iconAccentYellow }
+
+    // MARK: - Border
+    var borderPrimary: UIColor { .legacyTheme.ecosia.barSeparator }
+    var borderAccent: UIColor { actionPrimary }
+    var borderAccentNonOpaque: UIColor { actionPrimary }
+    var borderAccentPrivate: UIColor { actionPrimary }
+    var borderInverted: UIColor { fallbackTheme.colors.borderInverted }
+
+    // MARK: - Shadow
+    var shadowDefault: UIColor { fallbackTheme.colors.shadowDefault }
+}
+
+
+private class EcosiaLightSemanticColors: EcosiaSemanticColors {
+    var backgroundPrimary: UIColor = EcosiaColorPrimitive.White
+    var backgroundSecondary: UIColor = EcosiaColorPrimitive.Gray10
+    var backgroundTertiary: UIColor = EcosiaColorPrimitive.Gray20
+    var backgroundQuaternary: UIColor = EcosiaColorPrimitive.DarkGreen50
+    var borderDecorative: UIColor = EcosiaColorPrimitive.Gray30
+    var brandPrimary: UIColor = EcosiaColorPrimitive.Green50
+    var buttonBackgroundPrimary: UIColor = EcosiaColorPrimitive.Green50
+    var buttonBackgroundPrimaryActive: UIColor = EcosiaColorPrimitive.Green70
+    var buttonBackgroundSecondary: UIColor = EcosiaColorPrimitive.White
+    var buttonBackgroundSecondaryHover: UIColor = EcosiaColorPrimitive.Gray10
+    var buttonContentSecondary: UIColor = EcosiaColorPrimitive.Gray70
+    var buttonBackgroundTransparentActive: UIColor = EcosiaColorPrimitive.Green70.withAlphaComponent(0.24)
+    var iconPrimary: UIColor = EcosiaColorPrimitive.Black
+    var iconSecondary: UIColor = EcosiaColorPrimitive.Green60
+    var iconDecorative: UIColor = EcosiaColorPrimitive.Gray50
+    var stateError: UIColor = EcosiaColorPrimitive.Red40
+    var stateInformation: UIColor = EcosiaColorPrimitive.Blue50
+    var stateDisabled: UIColor = EcosiaColorPrimitive.Gray30
+    var textPrimary: UIColor = EcosiaColorPrimitive.Black
+    var textSecondary: UIColor = EcosiaColorPrimitive.Gray50
+    var textTertiary: UIColor = EcosiaColorPrimitive.White
+}
