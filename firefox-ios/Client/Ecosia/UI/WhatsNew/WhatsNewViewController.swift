@@ -256,7 +256,7 @@ extension WhatsNewViewController {
     func applyTheme() {
         let theme = themeManager.getCurrentTheme(for: windowUUID)
         view.backgroundColor = theme.colors.ecosia.backgroundPrimary
-        topContainerView.backgroundColor = .legacyTheme.ecosia.tertiaryBackground
+        topContainerView.backgroundColor = theme.colors.ecosia.backgroundTertiary
         tableView.backgroundColor = theme.colors.ecosia.backgroundPrimary
         tableView.separatorColor = .clear
         knob.backgroundColor = .legacyTheme.ecosia.secondaryText

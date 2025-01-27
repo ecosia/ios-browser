@@ -40,7 +40,7 @@ class EcosiaLightColourPalette: EcosiaThemeColourPalette {
     }
 
     // MARK: - Layers
-    var layer1: UIColor { .legacyTheme.ecosia.tertiaryBackground }
+    var layer1: UIColor { ecosia.backgroundTertiary }
     var layer2: UIColor { fallbackTheme.colors.layer2 }
     var layer3: UIColor { .legacyTheme.ecosia.ntpBackground }
     var layer4: UIColor { fallbackTheme.colors.layer4 }

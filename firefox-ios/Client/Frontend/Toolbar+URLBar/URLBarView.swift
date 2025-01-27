@@ -1071,7 +1071,7 @@ extension URLBarView: ThemeApplicable {
         locationView.backgroundColor = theme.colors.layer3
         locationContainer.backgroundColor = theme.colors.layer3
          */
-        locationView.backgroundColor = inOverlayMode ? theme.colors.ecosia.backgroundPrimary : .legacyTheme.ecosia.tertiaryBackground
+        locationView.backgroundColor = inOverlayMode ? theme.colors.ecosia.backgroundPrimary : theme.colors.ecosia.backgroundTertiary
         locationContainer.backgroundColor = locationView.backgroundColor
 
         /* Ecosia: Remove private mode badge
@@ -1118,7 +1118,7 @@ extension URLBarView: PrivateModeUI {
 extension URLBarView {
 
     func updateUIElementsWithTheme(_ theme: Theme) {
-        progressBar.backgroundColor = .legacyTheme.ecosia.tertiaryBackground
+        progressBar.backgroundColor = theme.colors.ecosia.backgroundTertiary
         progressBar.setGradientColors(startColor: .legacyTheme.ecosia.highlightedBackground,
                                       middleColor: .legacyTheme.ecosia.highlightedBackground,
                                       endColor: .legacyTheme.ecosia.highlightedBackground)
