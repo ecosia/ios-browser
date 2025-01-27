@@ -1,6 +1,3 @@
-/* This value is used as the title for the Manage Cards button from the update credit card page */
-"CreditCard.UpdateCard.ManageCardsButtonTitle.v115" = "ຈັດການບັດ";
-
-/* This value is used as the title for the Not Now button in the update credit card page */
-"CreditCard.UpdateCard.NotNowButtonTitle.v115" = "ບໍ່ແມ່ນຕອນນີ້";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:435e45997ac444d5996d5d25145cdfc5f7bff0f05c646c0da8846cdd0c2a65c0
+size 370

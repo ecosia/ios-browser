@@ -1,12 +1,3 @@
-/* Done button in Find in Page Toolbar. */
-"Done" = "పూర్తయింది";
-
-/* Text selection menu item */
-"Find in Page" = "పేజీలో వెతకండి";
-
-/* Accessibility label for next result button in Find in Page Toolbar. */
-"Next in-page result" = "తదుపరి పేజీలో ఫలితం";
-
-/* Accessibility label for previous result button in Find in Page Toolbar. */
-"Previous in-page result" = "మునుపటి పేజీలో ఫలితం";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:e7241f9eac8a9f5408a5543dfac707d0e291b8f2168d5cfd4f499cfe8158ec17
+size 503

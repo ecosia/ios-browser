@@ -1,28 +1,3 @@
-# This Source Code Form is subject to the terms of the Mozilla Public
-# License, v. 2.0. If a copy of the MPL was not distributed with this
-# file, You can obtain one at http://mozilla.org/MPL/2.0/.
-
-urls:
-  stage_server: "https://stage.experimenter.nonprod.dataops.mozgcp.net"
-  prod_server: "https://experimenter.services.mozilla.com"
-  telemetry_server: "http://10.10.1.198:5000" # must be changed
-smoke_tests:
-  - BookmarksTests
-  - HomePageSettingsUITest
-  - NavigationTest
-  - NewTabSettings
-  - SearchTest
-  - ToolbarTest
-  - TopTabsTest
-  - ClipBoardTests
-  - CreditCardsTests
-  - DownloadsTests
-  - FindInPageTests
-  - HistoryTests
-  - OnboardingTests
-  - PrivateBrowsingTestIphone
-  - SettingsTests
-  - TabCounterTests
-  - ToolbarMenuTests
-  - UrlBarTests
-  - ZoomingTests
+version https://git-lfs.github.com/spec/v1
+oid sha256:3c4b4fd2ad1c343663f9513c30f04695dd739a11a324d9a3cb6f3c0b038a282e
+size 783

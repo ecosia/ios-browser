@@ -1,29 +1,3 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-
-import UIKit
-
-class SettingsTableViewCell: UITableViewCell {
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        selectionStyle = .gray
-        contentView.layoutMargins = UIEdgeInsets(top: 0, left: UIConstants.layout.settingsCellLeftInset, bottom: 0, right: 0)
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    internal func setupDynamicFont(forLabels labels: [UILabel], addObserver: Bool = false) {
-        for label in labels {
-            label.font = UIFont.preferredFont(forTextStyle: UIFont.TextStyle.body)
-            label.adjustsFontForContentSizeCategory = true
-        }
-
-        NotificationCenter.default.addObserver(forName: UIContentSizeCategory.didChangeNotification, object: nil, queue: nil) { [weak self] _ in
-            guard let self = self else { return }
-            self.setupDynamicFont(forLabels: labels)
-        }
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:d2146e3dd00e9b211165eea614116c5919a2e965a9d6be07bc3802de6f1d7bb4
+size 1233

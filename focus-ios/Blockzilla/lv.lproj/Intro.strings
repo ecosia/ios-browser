@@ -1,6 +1,3 @@
-/* Button to go to the next card in Focus onboarding. */
-"Intro.Slides.Next.Button" = "Turpināt";
-
-/* Button to skip onboarding in Focus */
-"Intro.Slides.Skip.Button" = "Izlaist";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:2ee754eca5dcb279d5313a635733baeeae736978352838da1bd955cf985c7119
+size 182

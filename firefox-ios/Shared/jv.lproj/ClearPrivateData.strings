@@ -1,15 +1,3 @@
-/* Settings item for clearing browsing history */
-"Browsing History" = "Riwayat Djalahan";
-
-/* Settings item for clearing the cache */
-"Cache" = "Ampiran";
-
-/* Settings item for clearing cookies */
-"Cookies" = "Kuki";
-
-/* Settings item for deleting downloaded files */
-"Downloaded Files" = "Berkas Undhuhan";
-
-/* Settings item for clearing passwords and login data */
-"Saved Logins" = "Info Log Mlebu Kasimpen";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:2cc75bbaa958dc01e7acb96449052fb45a76dc53d836bc9537bdc21db91066dc
+size 413

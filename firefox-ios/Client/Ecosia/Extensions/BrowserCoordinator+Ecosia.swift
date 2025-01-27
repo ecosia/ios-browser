@@ -1,9 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-import Shared
-import Core
-
-extension BrowserCoordinator { }
+version https://git-lfs.github.com/spec/v1
+oid sha256:b4778b6c3825c02817248c5242b3db2ab8dfc6786aeaef2cf63b39a4700dfda1
+size 268

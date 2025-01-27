@@ -1,8 +1,3 @@
-#ifndef Client_Shared_Bridging_Header_h
-#define Client_Shared_Bridging_Header_h
-
-#import <Foundation/Foundation.h>
-#import <CommonCrypto/CommonCrypto.h>
-#import "FSUtils.h"
-
-#endif
+version https://git-lfs.github.com/spec/v1
+oid sha256:a6913bab293dbf0be437a74eeb24ef7b48041f6e5bb4b26ebf185511fdd3b247
+size 181

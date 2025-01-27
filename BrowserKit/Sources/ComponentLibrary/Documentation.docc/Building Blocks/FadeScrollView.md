@@ -1,13 +1,3 @@
-# ``ComponentLibrary/FadeScrollView``
-
-A scroll view that adds a fade at top or bottom when it scroll to indicate more content is available to user.
-
-## Overview
-
-The `FadeScrollView` is a subclass of the `UIScrollView`. This scroll view adds a gradient layer either at it's top, bottom or both depending of how much content there is to scroll. This indicates to the users that more content is available. This can be particularly useful with dynamic type since content often overflow with bigger font sizes. There is no configuration to be made to this scroll view, you can use it as an ordinary one.
-
-## Illustration
-
-> This image are illustrative only. For precise examples of iOS implementation, please run the SampleApplication.
-
-![The FadeScrollView on iOS](FadeScrollView)
+version https://git-lfs.github.com/spec/v1
+oid sha256:5b6d306d6d8e4a366c875858bb4f6dfda187827d28b61633d2b1fd8e5378c022
+size 779

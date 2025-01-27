@@ -1,9 +1,3 @@
-/* Sub label error string that gets shown when user enters incorrect input for their expiration date on their credit card in the text box. */
-"CreditCard.ErrorState.CardExpirationDateSublabel.v112" = "كۈچكە ئىگە مۇددىتىنى كىرگۈزۈڭ";
-
-/* Sub label error string that gets shown when user enters incorrect input for their number printed on their credit card in the text box. */
-"CreditCard.ErrorState.CardNumberSublabel.v112" = "توغرا كارتا نومۇرىنى كىرگۈزۈڭ";
-
-/* Sub label error string that gets shown when user enters incorrect input for their name printed on their credit card in the text box. */
-"CreditCard.ErrorState.NameOnCardSublabel.v112" = "ئات قوشۇڭ";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:e5c868dcdbfddefee78f6dc4bcf789dd660fa0819b63c3d04c8ec32b9e3f2ce7
+size 722

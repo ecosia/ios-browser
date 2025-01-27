@@ -1,6 +1,3 @@
-/* Error message shown in the remote tabs panel */
-"SendTo.NoDevicesFound.Message.v119" = "Bu hesaba bağlanmış ve eşitleme yapabileceğiniz başka cihazınız yok.";
-
-/* This message appears when a user tries to use 'Send Link to Device' action while not logged in */
-"SendTo.NotSignedIn.Title.v119" = "Hesabınıza giriş yapmadınız.";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:0fb5d2e41195a7f05fa38fa2116388d6071427d2ec4fc2870c4c966626412619
+size 344

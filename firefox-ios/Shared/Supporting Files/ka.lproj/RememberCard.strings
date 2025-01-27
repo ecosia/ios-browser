@@ -1,6 +1,3 @@
-/* This value is used as the title for the Not Now button in the remember credit card page */
-"CreditCard.RememberCard.SecondaryButtonTitle.v115" = "ახლა არა";
-
-/* This value is used as the toast message for the saving success alert in the remember credit card page */
-"CreditCard.RememberCard.SecondaryButtonTitle.v116" = "ახალი ბარათი შენახულია";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:5da8efca43ecd2800841312b5e2083d51800b32e40b2f88035c74475bbb931a6
+size 404

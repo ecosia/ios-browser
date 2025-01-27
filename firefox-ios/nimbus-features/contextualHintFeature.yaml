@@ -1,27 +1,3 @@
-features:
-  contextual-hint-feature:
-    description: This set holds all features pertaining to contextual hints.
-    variables:
-      features-enabled:
-        description: >
-          This property provides a lookup table of whether
-          specific contextual hints are enabled.
-        type: Map<ContextualHint, Boolean>
-        default:
-           toolbar-hint: true
-    defaults:
-      - channel: developer
-        value:
-           features-enabled:
-             toolbar-hint: true
-      - channel: beta
-        value:
-           features-enabled:
-            toolbar-hint: true
-
-enums:
-  ContextualHint:
-    description: The identifiers for a individual contextual hints.
-    variants:
-      toolbar-hint:
-        description: The contextual hint bubble that appears to provide a hint about the toolbar.
+version https://git-lfs.github.com/spec/v1
+oid sha256:97c9f3ca9e568c3d12c8740fe6f8156a70f8fed20e3f6b51112bd793f1cb7e84
+size 814

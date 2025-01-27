@@ -1,12 +1,3 @@
-{
-  "images" : [
-    {
-      "filename" : "tree.pdf",
-      "idiom" : "universal"
-    }
-  ],
-  "info" : {
-    "author" : "xcode",
-    "version" : 1
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:cb92484824ed803f80adea9e7c60e203cd1cf347b3277bcf91b6fe092c6bb658
+size 154

@@ -1,33 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import XCTest
-@testable import MenuKit
-
-final class MenuKitTests: XCTestCase {
-    func testMenuElement_initializesCorrectly() {
-        let subject = MenuElement(
-            title: "test",
-            iconName: "test",
-            isEnabled: true,
-            isActive: true,
-            a11yLabel: "test",
-            a11yHint: nil,
-            a11yId: "test",
-            action: nil
-        )
-        let expectedResult = MenuElement(
-            title: "test",
-            iconName: "test",
-            isEnabled: true,
-            isActive: true,
-            a11yLabel: "test",
-            a11yHint: nil,
-            a11yId: "test",
-            action: nil
-        )
-
-        XCTAssertEqual(subject, expectedResult)
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:a2f2c8324024ae4d22c617c56db8cac3c70980c330381d01354462ac7263702f
+size 933

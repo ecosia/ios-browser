@@ -1,2 +1,3 @@
-requests
-pygithub
+version https://git-lfs.github.com/spec/v1
+oid sha256:5e918e20e96b8c9507c397d1dcbce8bdf45c2a7a9595dce08c6ffc9f466ab2c4
+size 17

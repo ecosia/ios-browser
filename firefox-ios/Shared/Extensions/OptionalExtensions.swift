@@ -1,18 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-/* A smarter ?? operator which allows the left hand/right hand arguments to not be
- * the same type. This is useful where we want to print the string representation
- * of an optional value that is not a string but want to return a string value when
- * a value is absent.
- *
- * For more informatin, check out Oleb's post:
- * https://oleb.net/blog/2016/12/optionals-string-interpolation/ */
-
-infix operator ???: NilCoalescingPrecedence
-public func ??? <T> (optional: T?, defaultValue: @autoclosure () -> String) -> String {
-    return optional.map { String(describing: $0) } ?? defaultValue()
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:95f2e872624746b60bfe348a3cb92b4f1cc9a2af3cd1eadf03ca4722921dbf50
+size 814

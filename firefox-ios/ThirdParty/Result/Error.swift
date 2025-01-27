@@ -1,11 +1,3 @@
-//
-//  Error.swift
-//  Result
-//
-//  Created by John Gallagher on 9/12/14.
-//  Copyright (c) 2014 Big Nerd Ranch. All rights reserved.
-//
-
-import Foundation
-
-public typealias MaybeErrorType = Error & CustomStringConvertible
+version https://git-lfs.github.com/spec/v1
+oid sha256:74eed88964d8c9357cd6d9663a2da96a957cb0ff7e3240acfe57639c371621fb
+size 224

@@ -1,18 +1,3 @@
-/* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Điều này cho phép bạn chụp và tải hình ảnh lên.";
-
-/* Privacy - Face ID Usage Description */
-"NSFaceIDUsageDescription" = "Điều này cho phép bạn mở khóa ứng dụng.";
-
-/* Privacy - Location When In Use Usage Description */
-"NSLocationWhenInUseUsageDescription" = "Trang web bạn truy cập có thể yêu cầu vị trí của bạn.";
-
-/* Privacy - Microphone Usage Description */
-"NSMicrophoneUsageDescription" = "Điều này cho phép bạn quay và tải video lên.";
-
-/* Privacy - Photo Library Additions Usage Description */
-"NSPhotoLibraryAddUsageDescription" = "Điều này cho phép bạn lưu và tải hình ảnh lên.";
-
-/* This is the menu item that appears when you long press the Focus icon on the phone home screen. */
-"UIApplicationShortcutItemTitle.EraseAndOpen" = "Xóa và mở";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:2546b4a2c79ecdfbba372913b8348e6d859b6d20266b0e17ff4f6d7fa3663d66
+size 905

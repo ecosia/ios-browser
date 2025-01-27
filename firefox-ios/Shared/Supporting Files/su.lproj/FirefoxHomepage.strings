@@ -1,12 +1,3 @@
-/* When the user ends their private session, they are returned to the private mode homepage, and a toastbar popups confirming that their data has been erased. This is the label for that toast. */
-"FirefoxHomepage.FeltDeletion.Link.v122" = "Data panyungsi pribadi dipupus";
-
-/* The body of the message for the card that educates users about how private mode works. The card shows up on the homepage when in the new privacy mode. Placeholder refers to app name. */
-"FirefoxHomepage.FeltPrivacyUI.Body.v122" = "%@ mupus réréméh, jujutan, jeung data loka anjeun nalika anjeun nutup sakabéh tab nyamuni.";
-
-/* The link for the card that educates users about how private mode works. The link redirects to an external site for more information. The card shows up on the homepage when in the new privacy mode. */
-"FirefoxHomepage.FeltPrivacyUI.Link.v122" = "Saha kira-kirana anu bisa nempo kagiatan kuring?";
-
-/* The title for the card that educates users about how private mode works. The card shows up on the homepage when in the new privacy mode. */
-"FirefoxHomepage.FeltPrivacyUI.Title.v122" = "Hapus tapak dina ieu parabot";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:b22690d5ba6d089471b2ac721771fe3f6962b455a4d1b087de519a6ce3b2dc82
+size 1127

@@ -1,24 +1,3 @@
-/* (No Comment) */
-"New Private Tab" = "Nowy priwatny rajtark";
-
-/* (No Comment) */
-"New Tab" = "Nowy rajtark";
-
-/* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Ecosia wašu kameru wužiwa, zo by QR-kody skenował a fota činił a wideja natočił.";
-
-/* Privacy - Face ID Usage Description */
-"NSFaceIDUsageDescription" = "Ecosia Face ID trjeba, zo by přistup k wašim składowanym hesłam a płaćenskim metodam měł.";
-
-/* Privacy - Location When In Use Usage Description */
-"NSLocationWhenInUseUsageDescription" = "Websydła, kotrež wopytujeće, snano waše stejnišćo žadaja.";
-
-/* Privacy - Microphone Usage Description */
-"NSMicrophoneUsageDescription" = "Ecosia waš mikrofon wužiwa, zo by awdio natočił a nahrał.";
-
-/* Privacy - Photo Library Additions Usage Description */
-"NSPhotoLibraryAddUsageDescription" = "Z tym móžeće fota składować.";
-
-/* (No Comment) */
-"Scan QR Code" = "QR-kod skenować";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:f85f0b3bdbd1ab471dec92bee0f01e4a159b6bfba1f872b103e8378e28787884
+size 948

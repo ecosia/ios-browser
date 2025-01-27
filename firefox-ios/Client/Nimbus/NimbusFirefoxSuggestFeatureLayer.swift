@@ -1,35 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-import enum MozillaAppServices.SuggestionProvider
-
-protocol NimbusFirefoxSuggestFeatureLayerProtocol {
-    var config: [SuggestionType: Bool] { get }
-    func isSuggestionProviderAvailable(_ provider: SuggestionProvider) -> Bool
-}
-
-/// A translation layer for the `firefoxSuggestFeature.fml`
-/// Responsible for creating a model for suggestion information available in the fml.
-class NimbusFirefoxSuggestFeatureLayer: NimbusFirefoxSuggestFeatureLayerProtocol {
-    let nimbus: FxNimbus
-
-    var config: [SuggestionType: Bool] {
-        nimbus.features.firefoxSuggestFeature.value().availableSuggestionsTypes
-    }
-
-    init(nimbus: FxNimbus = .shared) {
-        self.nimbus = nimbus
-    }
-
-    func isSuggestionProviderAvailable(_ provider: SuggestionProvider) -> Bool {
-        return switch provider {
-        case .amp: config[.amp] ?? false
-        case .ampMobile: config[.ampMobile] ?? false
-        case .wikipedia: config[.wikipedia] ?? false
-        default: false
-        }
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:ba90e07eb3c10220c999a15740834808b1896176605c12266de662225d103ebc
+size 1213

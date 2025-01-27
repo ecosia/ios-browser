@@ -1,12 +1,3 @@
-/* Button label to cancel deletion when the user tried to delete a non-empty folder. */
-"Bookmarks.DeleteFolderWarning.CancelButton.Label" = "ביטול";
-
-/* Button label for the button that deletes a folder and all of its children. */
-"Bookmarks.DeleteFolderWarning.DeleteButton.Label" = "מחיקה";
-
-/* Main body of the confirmation alert when the user tries to delete a folder that still contains bookmarks and/or folders. */
-"Bookmarks.DeleteFolderWarning.Description" = "האם ברצונך למחוק את התיקייה ואת תכולתה?";
-
-/* Title of the confirmation alert when the user tries to delete a folder that still contains bookmarks and/or folders. */
-"Bookmarks.DeleteFolderWarning.Title" = "תיקייה זו אינה ריקה.";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:a8acaae516bce7535b6130e82a35ded1f514f6389a71c5e09763c0db45e0bfc2
+size 758

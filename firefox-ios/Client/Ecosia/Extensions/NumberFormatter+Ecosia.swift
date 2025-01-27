@@ -1,24 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-extension NumberFormatter {
-    static func ecosiaCurrency(withoutEuroSymbol: Bool = false) -> NumberFormatter {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.currencySymbol = withoutEuroSymbol ? "" : "€"
-        formatter.maximumFractionDigits = 0
-        formatter.usesGroupingSeparator = true
-        formatter.currencyGroupingSeparator = ","
-        return formatter
-    }
-
-    static func ecosiaDecimalNumberFormatter() -> NumberFormatter {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        formatter.usesGroupingSeparator = true
-        return formatter
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:e55b49363a4809f3066750e0720a0a557103732e88094503cadb01c03b166611
+size 888

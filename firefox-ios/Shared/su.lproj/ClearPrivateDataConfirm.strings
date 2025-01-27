@@ -1,9 +1,3 @@
-/* The cancel button when confirming clear private data. */
-"Cancel" = "Bolay";
-
-/* The button that clears private data. */
-"OK" = "OKÉH";
-
-/* Description of the confirmation dialog shown when a user tries to clear their private data. */
-"This action will clear all of your private data. It cannot be undone." = "Ieu peta rék meresihan sakumna data pribadi anjeun. Ieu teu bisa dibedokeun.";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:a44448ab719303fa90ad23624c1140d21ce348cbb31f90989e3a5ca4798b0211
+size 395

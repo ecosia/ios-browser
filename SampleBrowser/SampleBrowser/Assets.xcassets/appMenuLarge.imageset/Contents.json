@@ -1,15 +1,3 @@
-{
-  "images" : [
-    {
-      "filename" : "appMenuLarge.pdf",
-      "idiom" : "universal"
-    }
-  ],
-  "info" : {
-    "author" : "xcode",
-    "version" : 1
-  },
-  "properties" : {
-    "preserves-vector-representation" : true
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:be9582675f06a877b61c94282d4cb599a7003195bf69fc673f032474ad82713b
+size 231

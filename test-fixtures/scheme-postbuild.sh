@@ -1,14 +1,3 @@
-#
-# UITests and XCUITests run this as a post-build step, to copy all files from
-# test-fixtures into the app bundle, so they can be loaded by Client.app under
-# test, for instance for having pregenerated prefs or pregenerated browser.db. 
-#
-# XCUITests in particular need this method of due to black-boxing of the host app.
-# The Xcode-provided method to load test bundles does not work for App Groups.
-#
-
-echo "••• Populate test-fixtures dir in Client.app bundle •••"
-fixtures="${SRCROOT}/../test-fixtures"
-[[ -e $fixtures ]] || exit 1
-outpath="${TARGET_BUILD_DIR}/Client.app"
-rsync -zvrt --update "$fixtures" "$outpath" 
+version https://git-lfs.github.com/spec/v1
+oid sha256:b8697f23f8bb466580f9735915713dd3903f2fd4b0924e043b82af140f8e8a01
+size 635

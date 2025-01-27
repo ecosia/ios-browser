@@ -1,21 +1,3 @@
-/* Label for the button, displayed in the menu, used to close all tabs currently open. */
-"Menu.CloseAllTabsAction.Title" = "Tutup Kabèh Tab";
-
-/* Label for the button, displayed in the menu, used to open the toolbar to search for text within the current page. */
-"Menu.FindInPageAction.Title" = "Golèk ing Kaca";
-
-/* Label for the button, displayed in the menu, used to open a new private tab. */
-"Menu.NewPrivateTabAction.Title" = "Bukak Tab Pribadi Anyar";
-
-/* Label for the button, displayed in the menu, used to open a new tab */
-"Menu.NewTabAction.Title" = "Bukak Tab Anyar";
-
-/* Label for the button, displayed in the menu, used to open the Settings menu. */
-"Menu.OpenSettingsAction.Title" = "Setélan";
-
-/* Label for the button, displayed in the menu, used to request the desktop version of the current website. */
-"Menu.ViewDekstopSiteAction.Title" = "Jaluk Situs Desktop";
-
-/* Label for the button, displayed in the menu, used to request the mobile version of the current website. */
-"Menu.ViewMobileSiteAction.Title" = "Jaluk Situs Sèlulèr";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:d935c1e44e66fbd7e6bee086e1a22bc2ea26d320a71354408809e341adaa70f0
+size 1059

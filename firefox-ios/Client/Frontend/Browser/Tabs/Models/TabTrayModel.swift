@@ -1,12 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-struct TabTrayModel: Equatable {
-    var isPrivateMode: Bool
-    var selectedPanel: TabTrayPanelType
-    var normalTabsCount: String
-    var hasSyncableAccount: Bool
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:16c4529bbbef75b11d5d86405722270f04877db8eb6ad4f18e6639230e5d10a6
+size 389

@@ -1,6 +1,3 @@
-/* Error message shown in the remote tabs panel */
-"SendTo.NoDevicesFound.Message.v119" = "このアカウントに接続された端末が見つかりませんでした。";
-
-/* This message appears when a user tries to use 'Send Link to Device' action while not logged in */
-"SendTo.NotSignedIn.Title.v119" = "アカウントにログインしていません。";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:44f19bccf1b7f669adf7f9fd7c627e5393e128a0aae464c962574207624187cd
+size 367

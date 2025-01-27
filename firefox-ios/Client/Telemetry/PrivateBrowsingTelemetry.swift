@@ -1,17 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-/* Ecosia: Remove Glean
-import Glean
- */
-
-struct PrivateBrowsingTelemetry {
-    func sendDataClearanceTappedTelemetry(didConfirm: Bool) {
-        /* Ecosia: Remove Glean
-        let didConfirmExtra = GleanMetrics.PrivateBrowsing.DataClearanceIconTappedExtra(didConfirm: didConfirm)
-        GleanMetrics.PrivateBrowsing.dataClearanceIconTapped.record(didConfirmExtra)
-         */
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:2636928d83110591fa7b484742b5f2d0cba19078121c4f180f85e9c9a01de824
+size 607

@@ -1,20 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-@testable import Client
-
-class MockAppSessionManager: AppSessionProvider {
-    var tabUpdateState: TabUpdateState = .coldStart
-    var launchSessionProvider: LaunchSessionProviderProtocol
-    var downloadQueue: DownloadQueue
-
-    init(
-        launchSessionProvider: LaunchSessionProviderProtocol = MockLaunchSessionProvider(),
-        downloadQueue: DownloadQueue = DownloadQueue()
-    ) {
-        self.launchSessionProvider = launchSessionProvider
-        self.downloadQueue = downloadQueue
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:37694aafc118f40ecbdb1d3db85f4975192d151600e550b3d2e84456064cee46
+size 721

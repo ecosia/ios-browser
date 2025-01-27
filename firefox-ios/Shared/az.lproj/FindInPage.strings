@@ -1,12 +1,3 @@
-/* Done button in Find in Page Toolbar. */
-"Done" = "Tamam";
-
-/* Text selection menu item */
-"Find in Page" = "Səhifədə Tap";
-
-/* Accessibility label for next result button in Find in Page Toolbar. */
-"Next in-page result" = "Səhifə nəticələrində növbəti";
-
-/* Accessibility label for previous result button in Find in Page Toolbar. */
-"Previous in-page result" = "Səhifə nəticələrində əvvəlki";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:a86c313d13fc54d5b7e469170b543e22cb4ed7979f16fa955e9abf3ff79c0320
+size 416

@@ -1,24 +1,3 @@
-/* Description for the 'History' panel in the First Run tour. */
-"Intro.Slides.History.Description" = "Slett heile nettlesarhistorikken din, passord, infokapslar når som helst med eitt trykk.";
-
-/* Title for the third  panel 'History' in the First Run tour. */
-"Intro.Slides.History.Title" = "Historikken din er historie";
-
-/* Button to go to the next card in Focus onboarding. */
-"Intro.Slides.Next.Button" = "Neste";
-
-/* Description for the 'Favorite Search Engine' panel in the First Run tour. */
-"Intro.Slides.Search.Description" = "Leitar du etter noko anna? Vel ein annan søkjemotor.";
-
-/* Title for the second  panel 'Search' in the First Run tour. */
-"Intro.Slides.Search.Title" = "Søk som du vil";
-
-/* Button to skip onboarding in Focus */
-"Intro.Slides.Skip.Button" = "Hopp over";
-
-/* Description for the 'Welcome' panel in the First Run tour. */
-"Intro.Slides.Welcome.Description" = "Ta privat surfning till nesta nivå. Blokker annonsar og anna innhald som kan spore deg på nettsider og sakke ned lastinga av nettsider.";
-
-/* Title for the first panel 'Welcome' in the First Run tour. */
-"Intro.Slides.Welcome.Title" = "Styrk personvernet ditt";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:1b34e0139eca06d19ebae3d13c68dfa70b87b0bc10bd7bdb5d19af4c629e462a
+size 1163

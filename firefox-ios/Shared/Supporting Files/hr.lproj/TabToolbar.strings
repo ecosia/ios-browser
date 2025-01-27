@@ -1,3 +1,3 @@
-/* Accessibility label for the tab toolbar fire button in private mode, used to provide users a way to end and delete their private session data. */
-"TabToolbar.Accessibility.DataClearance.v122" = "Brisanje podataka";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:ade8f1da3b67204db0d56dbb38868c57f466f7594734a75339021e66ac532012
+size 219

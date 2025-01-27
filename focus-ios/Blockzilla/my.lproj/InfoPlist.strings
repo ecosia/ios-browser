@@ -1,15 +1,3 @@
-/* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "ဓါတ်ပုံရိုက်ခြင်းနှင့် တင်ပို့ခြင်းတို့ကို ဆောင်ရွက်နိုင်စေသည်။";
-
-/* Privacy - Face ID Usage Description */
-"NSFaceIDUsageDescription" = "၎င်းသည် သင့်အက်ပ်ကို ပွင့်စေသည်";
-
-/* Privacy - Location When In Use Usage Description */
-"NSLocationWhenInUseUsageDescription" = "သင်ကြည့်ရှုနေသော ဝဘ်ဆိုက်များသည် သင့်တည်နေရာကို တောင်းဆိုကောင်း တောင်းဆိုပါလိမ့်မည်။";
-
-/* Privacy - Microphone Usage Description */
-"NSMicrophoneUsageDescription" = "ဗီဒီယိုရိုက်ခြင်းနှင့် တင်ပို့ခြင်းတို့ကို ဆောင်ရွက်နိုင်စေသည်။";
-
-/* Privacy - Photo Library Additions Usage Description */
-"NSPhotoLibraryAddUsageDescription" = "ဓါတ်ပုံသိမ်းခြင်းနှင့် တင်ပို့ခြင်းတို့ကို ဆောင်ရွက်နိုင်စေသည်။";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:7ac7080cb8a0b4517fb597d4a563b96ffdaf7fca8c6165511dcfd38c6dd495dd
+size 1323

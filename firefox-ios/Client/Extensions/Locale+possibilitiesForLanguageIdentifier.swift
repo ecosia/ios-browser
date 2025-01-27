@@ -1,26 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-extension Locale {
-    func possibilitiesForLanguageIdentifier() -> [String] {
-        var possibilities: [String] = []
-        let components = identifier.components(separatedBy: "-")
-
-        possibilities.append(identifier)
-
-        if components.count == 3,
-           let first = components.first,
-           let last = components.last {
-            possibilities.append("\(first)-\(last)")
-        }
-        if components.count >= 2,
-            let first = components.first {
-            possibilities.append("\(first)")
-        }
-
-        return possibilities
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:e1cad55d0d3511ebfc6a0a18aaaebdb3a752dc91dd720b02925b92007f49bdb5
+size 797

@@ -1,9 +1,3 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-
-import Foundation
-
-protocol SystemThemeDelegate: AnyObject {
-    func didEnableSystemTheme(_ isEnabled: Bool)
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:a214f059b6cfce9c272d20677e7b7c71e49ebe9e0cc8fce0c7564ba2df3b65ec
+size 318

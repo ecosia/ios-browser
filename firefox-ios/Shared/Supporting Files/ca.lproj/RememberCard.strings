@@ -1,15 +1,3 @@
-/* This value is used as the header for the remember card page. The placeholder is for the app name. */
-"CreditCard.RememberCard.Header.v122" = "El %@ xifra el número de la targeta. El codi de seguretat no es desarà.";
-
-/* This value is used as the title for the Yes button in the remember credit card page */
-"CreditCard.RememberCard.MainButtonTitle.v122" = "Desa";
-
-/* This value is used as the title for the remember credit card page */
-"CreditCard.RememberCard.MainTitle.v122" = "Voleu desar aquesta targeta de forma segura?";
-
-/* This value is used as the title for the Not Now button in the remember credit card page */
-"CreditCard.RememberCard.SecondaryButtonTitle.v115" = "Ara no";
-
-/* This value is used as the toast message for the saving success alert in the remember credit card page */
-"CreditCard.RememberCard.SecondaryButtonTitle.v116" = "S'ha desat la targeta nova";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:9b5df0815d1c25f20c74687f6c23a87e6094f9e7d83aa8133c2121c39e26c04c
+size 886

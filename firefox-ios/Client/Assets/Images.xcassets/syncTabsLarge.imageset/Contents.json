@@ -1,15 +1,3 @@
-{
-  "images" : [
-    {
-      "filename" : "syncTabsLarge.pdf",
-      "idiom" : "universal"
-    }
-  ],
-  "info" : {
-    "author" : "xcode",
-    "version" : 1
-  },
-  "properties" : {
-    "preserves-vector-representation" : true
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:2e1a0a7047e14d48dca266d71edac6ce99654b1346749aeeaec12326f760dba2
+size 232

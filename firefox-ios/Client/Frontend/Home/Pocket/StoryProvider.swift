@@ -1,24 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-class StoryProvider: FeatureFlaggable {
-    private let numberOfPocketStories: Int
-    private let pocketAPI: PocketStoriesProviding
-
-    init(
-        pocketAPI: PocketStoriesProviding,
-        numberOfPocketStories: Int = 11
-    ) {
-        self.pocketAPI = pocketAPI
-        self.numberOfPocketStories = numberOfPocketStories
-    }
-
-    func fetchPocketStories() async -> [PocketStory] {
-        let global = (try? await pocketAPI.fetchStories(items: numberOfPocketStories)) ?? []
-        // Convert global feed to PocketStory
-        return global.map(PocketStory.init)
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:09242aeb97950da6d069529f6af074a1376766e1675ff5546fa3d448318db20a
+size 803

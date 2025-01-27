@@ -1,18 +1,3 @@
-/* Settings item for clearing browsing history */
-"Browsing History" = "Ceeciyan taariki";
-
-/* Settings item for clearing the cache */
-"Cache" = "Tugudoo";
-
-/* Settings item for clearing cookies */
-"Cookies" = "Aleewa";
-
-/* Settings item for deleting downloaded files */
-"Downloaded Files" = "Tuku zumantey";
-
-/* Settings item for clearing website data */
-"Offline Website Data" = "Interneti daabante nungu bayhaya";
-
-/* Settings item for clearing passwords and login data */
-"Saved Logins" = "Huruyan maa gaabuntey";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:92d49a64e1b9aa02bef4c591018ab76615ece6cec8b4f3e8ef8a26f2ff2ce69e
+size 519

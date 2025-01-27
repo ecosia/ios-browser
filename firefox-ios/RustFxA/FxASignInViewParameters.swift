@@ -1,12 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-/// Used to determine the sign in flow, used mostly with deeplinks
-struct FxASignInViewParameters: Equatable {
-    var launchParameters: FxALaunchParams
-    var flowType: FxAPageType
-    var referringPage: ReferringPage
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:171fb5b4607ff9d329fcc126e7afc1ad58c923ee3b8d7a05fbb3fec1a807c433
+size 443

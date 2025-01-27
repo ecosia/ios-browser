@@ -1,9 +1,3 @@
-/* On the Research Survey popup, the text that explains what the screen is about. Placeholder is for the app name. */
-"Body.Text.v112" = "Vui lòng giúp cải thiện %@ bằng cách tham gia một cuộc khảo sát ngắn.";
-
-/* On the Research Survey popup, the text for the button that, when tapped, will dismiss the popup and take the user to a survey. */
-"PrimaryButton.Label.v112" = "Thực hiện khảo sát";
-
-/* On the Research Survey popup, the text for the button that, when tapped, will dismiss this screen, and the user will not be taken to the survey. */
-"SecondaryButton.Label.v112" = "Không, cảm ơn";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:3be680520f784b754c1231c90e6db9601ad85b67a50ee3c0f1c6ac766c9f2e50
+size 625

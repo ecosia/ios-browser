@@ -1,12 +1,3 @@
-/* Done button in Find in Page Toolbar. */
-"Done" = "Dokónčeny";
-
-/* Text selection menu item */
-"Find in Page" = "Na stronje pytać";
-
-/* Accessibility label for next result button in Find in Page Toolbar. */
-"Next in-page result" = "Přichodny wuslědk na stronje";
-
-/* Accessibility label for previous result button in Find in Page Toolbar. */
-"Previous in-page result" = "Předchadny wuslědk na stronje";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:3a40da0219bb25ac795dadc71fd1bf13b1a21803ba4c95af7eb165a657fb9314
+size 413

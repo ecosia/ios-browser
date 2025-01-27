@@ -1,12 +1,3 @@
----
-name: New issue
-about: Create a report to help us improve
-title: ''
-labels: ''
-assignees: ''
-
----
-
-Hey there! Thanks for using Firefox!
-
-If you are having issues with using Firefox make sure to check https://support.mozilla.org/en-US/products/ios first
+version https://git-lfs.github.com/spec/v1
+oid sha256:678dbb98108ba9d0d18023a83b6b175d8dabcf187bc683996bbfe34f0c7ceb21
+size 257

@@ -1,6 +1,3 @@
-/* Accessibility label for next button that is displayed above the keyboard when a form field on a website was tapped. */
-"KeyboardAccessory.NextButton.Accessibility.Label.v124" = "次のフォームフィールド";
-
-/* Accessibility label for previous button that is displayed above the keyboard when a form field on a website was tapped. */
-"KeyboardAccessory.PreviousButton.Accessibility.Label.v124" = "前のフォームフィールド";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:7a4dcfff9b6826ea967e1207df9e338a83e940963400304749bd938eb59cb59b
+size 444

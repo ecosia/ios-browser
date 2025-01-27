@@ -1,11 +1,3 @@
-<SearchOverlay>
-  <replace target="//search:Param[@name='pc' and @value='MOZB']">
-    <Param name="pc" value="MOZW"/>
-  </replace>
-  <replace target="//search:Param[@name='form' and @value='MOZMBA']">
-    <Param name="form" value="MOZWSB"/>
-  </replace>
-  <replace target="//search:Url[@type='application/x-moz-tabletsearch']">
-    <!-- tablet search not supported -->
-  </replace>
-</SearchOverlay>
+version https://git-lfs.github.com/spec/v1
+oid sha256:7a4f837bed770478d2002354866f7b355a5e86621f072beb3462753abed20ee6
+size 399

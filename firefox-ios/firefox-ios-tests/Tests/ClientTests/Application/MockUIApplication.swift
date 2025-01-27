@@ -1,14 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-@testable import Client
-
-class MockUIApplication: UIApplicationInterface {
-    var mockDefaultApplicationValue = false
-
-    @available(iOS 18.2, *)
-    func isDefault(_ category: UIApplication.Category) throws -> Bool {
-        return mockDefaultApplicationValue
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:17a9f5b52b5d797fb52314a0a9ccec02800a8fc02ecee2fee0d643cedc04e369
+size 473

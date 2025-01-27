@@ -1,16 +1,3 @@
-import time
-
-import pytest
-
-
-@pytest.mark.smoke
-def test_experiment_unenrolls_after_studies_toggle(xcodebuild, setup_experiment, start_app, load_branches):
-    xcodebuild.install(boot=False)
-    xcodebuild.test("XCUITests/ExperimentIntegrationTests/testAppStartup", build=False, erase=False)
-    setup_experiment()
-    time.sleep(5)
-    xcodebuild.test("XCUITests/ExperimentIntegrationTests/testVerifyExperimentEnrolled", build=False, erase=False)
-    start_app()
-    xcodebuild.test(
-        "XCUITests/ExperimentIntegrationTests/testStudiesToggleDisablesExperiment", build=False, erase=False
-    )
+version https://git-lfs.github.com/spec/v1
+oid sha256:d06b8c46eb72fab1d49807e4ea97011f58cd1ff27f2b9d0c80b615463ce6e3b8
+size 600

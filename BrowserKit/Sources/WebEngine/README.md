@@ -1,8 +1,3 @@
-#  WebEngine
-
-> ⚠️ This is a package under development
-
-The purpose of this package is create a layer of abstraction to interact with a web engine.
-
-To use this package you need to import WebEngine.
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:89324a58b535d234125f4ea9ae523ca3792b8437c3e7de6fc004e845cd08f01c
+size 204

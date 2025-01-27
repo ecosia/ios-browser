@@ -1,12 +1,3 @@
-{
-  "images" : [
-    {
-      "filename" : "toolbarbottom.pdf",
-      "idiom" : "universal"
-    }
-  ],
-  "info" : {
-    "author" : "xcode",
-    "version" : 1
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:7aeb72ee538b9546641cf1a8a5dc57f49594f671a5e075e7f55022d6bdee424d
+size 163

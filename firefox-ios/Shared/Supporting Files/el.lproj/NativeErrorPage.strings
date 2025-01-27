@@ -1,15 +1,3 @@
-/* On error page, this is the text on a button that will try to load the page again. */
-"NativeErrorPage.ButtonLabel.v131" = "Ανανέωση";
-
-/* On error page, this is the description for generic error. */
-"NativeErrorPage.GenericError.Description.v131" = "Προέκυψε σφάλμα SSL και δεν ήταν δυνατή η ασφαλής σύνδεση με τον διακομιστή.";
-
-/* On error page, this is the title for generic error. */
-"NativeErrorPage.GenericError.TitleLabel.v131" = "Να προσέχετε. Κάτι δεν πάει καλά.";
-
-/* On error page, this is the description for no internet connection. */
-"NativeErrorPage.NoInternetConnection.Description.v131" = "Δοκιμάστε να συνδεθείτε από διαφορετική συσκευή. Ελέγξτε το modem ή το router σας. Αποσυνδέστε και επανασυνδέστε το Wi-Fi.";
-
-/* On error page, this is the title for no internet connection */
-"NativeErrorPage.NoInternetConnection.TitleLabel.v131" = "Φαίνεται ότι υπάρχει κάποιο πρόβλημα με τη σύνδεσή σας στο διαδίκτυο.";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:3b3c9d3f3c802d7c82e907228c1d174277126d7705118b3e6ab34c2643c3b3fc
+size 1171

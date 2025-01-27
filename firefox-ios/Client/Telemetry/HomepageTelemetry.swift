@@ -1,17 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-/* Ecosia: Remove Glean
-import Glean
- */
-
-struct HomepageTelemetry {
-    func sendHomepageTappedTelemetry(enteringPrivateMode: Bool) {
-        /* Ecosia: Remove Glean
-        let isPrivateModeExtra = GleanMetrics.Homepage.PrivateModeToggleExtra(isPrivateMode: enteringPrivateMode)
-        GleanMetrics.Homepage.privateModeToggle.record(isPrivateModeExtra)
-         */
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:d83eb38a9c7b92f994c399a2b4f9ca6924e84cc776e4bb6f0c3426a727be3f7c
+size 596

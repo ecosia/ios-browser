@@ -1,24 +1,3 @@
-{
-    "last-updated-date": "I am a bad date",
-    "collections": [
-        {
-            "id": "firefox",
-            "description": null,
-            "heading": null,
-            "learn-more-url": "https://www.mozilla.com",
-            "available-locales": ["en-US", "es-US", "en-CA", "fr-CA"],
-            "availability-range": {
-                "start": "2002-11-28",
-                "end": "2022-09-10"
-            },
-            "wallpapers": [
-                {
-                    "id": "beachVibes",
-                    "text-color": "ADD8E6",
-                    "card-color": "ADD8E6",
-                    "logo-text-color": "ADD8E6",
-                }
-            ]
-        }
-    ]
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:9ba44c2c02bc970737ef7fef16f9bb696fe68c04f67c4bb2cbab3fc72d5ffff7
+size 695

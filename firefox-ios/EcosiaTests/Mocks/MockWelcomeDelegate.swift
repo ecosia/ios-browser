@@ -1,13 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-@testable import Client
-
-final class MockWelcomeDelegate: WelcomeDelegate {
-    func welcomeDidFinish(_ welcome: Welcome) {}
-}
-
-final class MockWelcomeTourDelegate: WelcomeTourDelegate {
-    func welcomeTourDidFinish(_ tour: WelcomeTour) {}
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:1bbb72f424a497b4d13bfa669904641d78861fe579bcf7976294991823a22b90
+size 445

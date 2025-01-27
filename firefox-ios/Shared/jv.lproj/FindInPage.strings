@@ -1,12 +1,3 @@
-/* Done button in Find in Page Toolbar. */
-"Done" = "Rampung";
-
-/* Text selection menu item */
-"Find in Page" = "Golèk ing Kaca";
-
-/* Accessibility label for next result button in Find in Page Toolbar. */
-"Next in-page result" = "Kasil kaca-sabanjure";
-
-/* Accessibility label for previous result button in Find in Page Toolbar. */
-"Previous in-page result" = "Kasil kaca-sadurunge";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:be31485212bb75fbffa2829c3d2355616e3d8e4186ca671dd86b469da5d84d8b
+size 386

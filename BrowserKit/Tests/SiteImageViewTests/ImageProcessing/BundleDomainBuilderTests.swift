@@ -1,20 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import XCTest
-@testable import SiteImageView
-
-final class BundleDomainBuilderTests: XCTestCase {
-    func testMobileBundleSite() {
-        let subject = BundleDomainBuilder()
-        let result = subject.buildDomains(for: URL(string: "https://m.example.com")!)
-        XCTAssertEqual(result, ["example", "m.example.com", "example.com"])
-    }
-
-    func testPathSite() {
-        let subject = BundleDomainBuilder()
-        let result = subject.buildDomains(for: URL(string: "https://example.com/to/something")!)
-        XCTAssertEqual(result, ["example", "example.com/to/something", "example.com"])
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:083c4b430bfc632cb01f76760017977670fc46674c18ddc99a796a54a9aebb97
+size 808

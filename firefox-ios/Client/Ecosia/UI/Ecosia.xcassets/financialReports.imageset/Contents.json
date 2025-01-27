@@ -1,16 +1,3 @@
-{
-  "images" : [
-    {
-      "filename" : "financialReports.pdf",
-      "idiom" : "universal"
-    }
-  ],
-  "info" : {
-    "author" : "xcode",
-    "version" : 1
-  },
-  "properties" : {
-    "preserves-vector-representation" : true,
-    "template-rendering-intent" : "original"
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:2441471ba1bd97520f6b9537ddeb2bc77a8049749f129b1f52f18ed501242377
+size 281

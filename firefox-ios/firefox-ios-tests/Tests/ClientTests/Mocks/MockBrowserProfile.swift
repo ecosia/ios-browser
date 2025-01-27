@@ -1,9 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-@testable import Client
-
-class MockBrowserProfile: BrowserProfile {}
+version https://git-lfs.github.com/spec/v1
+oid sha256:1f3b4d92a70fb02bb7e6df2c44669bbd34aee2e52e8e64619df3455c183c1094
+size 290

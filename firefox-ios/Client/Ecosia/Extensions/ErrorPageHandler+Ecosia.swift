@@ -1,25 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-/// These strings modify the default title, message and button text
-/// of the Firefox no connection error page
-/// when the error is `NSURLErrorDomain`
-/// more info in `ErrorPageHandler`
-
-extension ErrorPageHandler {
-
-    var noConnectionErrorTitle: String {
-        .localized(.noConnectionNSURLErrorTitle)
-    }
-
-    var noConnectionErrorMessage: String {
-        .localized(.noConnectionNSURLErrorMessage)
-    }
-
-    var noConnectionErrorButtonTitle: String {
-        .localized(.noConnectionNSURLErrorRefresh)
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:fc5fdc4c64e3929b3772f52930c7f823b5474b7acf6909158bc8fd1e62870ba8
+size 745

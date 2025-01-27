@@ -1,16 +1,3 @@
-{
-  "images" : [
-    {
-      "filename" : "shoppingLarge.pdf",
-      "idiom" : "universal",
-      "language-direction" : "left-to-right"
-    }
-  ],
-  "info" : {
-    "author" : "xcode",
-    "version" : 1
-  },
-  "properties" : {
-    "preserves-vector-representation" : true
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:f23676b7a66fc81ed71955eca57c4daccadf0efc7d9f7cb9a3bdef83b5ea3790
+size 278

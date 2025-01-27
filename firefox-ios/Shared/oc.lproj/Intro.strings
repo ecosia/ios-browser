@@ -1,9 +1,3 @@
-/* Sign in to Firefox account button on second intro screen. */
-"Intro.Slides.Button.SignIn" = "Se connectar";
-
-/* Title for the first panel 'Welcome' in the First Run tour. */
-"Intro.Slides.Welcome.Title.v2" = "Benvenguda dins Ecosia";
-
-/* See http://mzl.la/1T8gxwo */
-"Start Browsing" = "Començar de navegar";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:f7d207d1fee6a2adb9ff167fc39ebe7ba593984885229752955392c77273a200
+size 314

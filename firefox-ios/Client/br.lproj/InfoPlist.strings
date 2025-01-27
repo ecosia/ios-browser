@@ -1,24 +1,3 @@
-/* (No Comment) */
-"New Private Tab" = "Ivinell prevez nevez";
-
-/* (No Comment) */
-"New Tab" = "Ivinell nevez";
-
-/* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Gant se e c’hallit kemer ha pellgas luc’hskeudennoù.";
-
-/* Privacy - Face ID Usage Description */
-"NSFaceIDUsageDescription" = "Face ID a zo rekis evit ma c’hallfe kaout Firefox ho kerioù-tremen enrollet hag ho toareoù paeañ.";
-
-/* Privacy - Location When In Use Usage Description */
-"NSLocationWhenInUseUsageDescription" = "Lec’hiennoù web a weladennit a c’hall azgoulenn ho lec’hiadur.";
-
-/* Privacy - Microphone Usage Description */
-"NSMicrophoneUsageDescription" = "Gant se e c’hallit kemer ha pellgas videoioù.";
-
-/* Privacy - Photo Library Additions Usage Description */
-"NSPhotoLibraryAddUsageDescription" = "Reiñ a ra tro deoc’h da enrollañ skeudennoù.";
-
-/* (No Comment) */
-"Scan QR Code" = "C’hwilerviñ ur boneg QR";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:cf2664798bc31c11dbebbb9e9b6349baa9f65db9cb3a46b80c8fcd5279c17799
+size 940

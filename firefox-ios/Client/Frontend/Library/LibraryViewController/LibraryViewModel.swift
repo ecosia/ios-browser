@@ -1,24 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Common
-import Foundation
-
-class LibraryViewModel {
-    let profile: Profile
-    let panelDescriptors: [LibraryPanelDescriptor]
-    var selectedPanel: LibraryPanelType?
-
-    var segmentedControlItems: [UIImage] {
-        [UIImage(named: StandardImageIdentifiers.Large.bookmarkTrayFill) ?? UIImage(),
-         UIImage(named: StandardImageIdentifiers.Large.history) ?? UIImage(),
-         UIImage(named: StandardImageIdentifiers.Large.download) ?? UIImage(),
-         UIImage(named: StandardImageIdentifiers.Large.readingList) ?? UIImage()]
-    }
-
-    init(withProfile profile: Profile) {
-        self.profile = profile
-        self.panelDescriptors = LibraryPanelHelper(profile: profile).enabledPanels
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:25aedbb6ea142cff7d8c426107d16e9b5bccd8cbe5419d98cfb4261292f0a998
+size 917

@@ -1,18 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Shared
-import XCTest
-
-// Trivial test for using Result.
-class ResultTests: XCTestCase {
-    func testResult() {
-        let r = Maybe<Int>(success: 5)
-        if let i = r.successValue {
-            XCTAssertEqual(5, i)
-        } else {
-            XCTFail("Expected success.")
-        }
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:31e70b6c992eaed8817c059247d08a037897ea9b056dbc2144ee0f1537c73049
+size 505

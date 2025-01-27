@@ -1,10 +1,3 @@
-scheme("Ecosia")
-configuration("BetaDebug")
-project("Client.xcodeproj")
-destination("platform=iOS Simulator,name=iPhone 15,OS=17.4")
-skip_detect_devices(true)
-output_types("junit")
-output_directory("test_output/xml")
-cloned_source_packages_path("SourcePackages")
-disable_concurrent_testing(true)
-fail_build(true)
+version https://git-lfs.github.com/spec/v1
+oid sha256:663142896a1b6c37b46276ea9726cdf6e46adaa6fc8ba409e62b9639db483232
+size 312

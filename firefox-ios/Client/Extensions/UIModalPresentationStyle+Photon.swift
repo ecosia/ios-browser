@@ -1,18 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import UIKit
-
-extension UIModalPresentationStyle {
-    func getPhotonPresentationStyle() -> PresentationStyle {
-        switch self {
-        case .popover:
-            return .popover
-        case .overFullScreen:
-            return .centered
-        default:
-            return .bottom
-        }
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:f03d9df1078848d5d26b1dbb30e8154f9b6c0882503ccd7896f448e9f850c866
+size 508

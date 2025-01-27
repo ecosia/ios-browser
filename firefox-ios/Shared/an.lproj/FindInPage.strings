@@ -1,12 +1,3 @@
-/* Done button in Find in Page Toolbar. */
-"Done" = "Feito";
-
-/* Text selection menu item */
-"Find in Page" = "Trobar en a pachina";
-
-/* Accessibility label for next result button in Find in Page Toolbar. */
-"Next in-page result" = "Siguient resultau en a pachina";
-
-/* Accessibility label for previous result button in Find in Page Toolbar. */
-"Previous in-page result" = "Resultau anterior en a pachina";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:37b87794f67ffc2627210f868e8f56dffe8ed9a4d174816a5ad130a7a35ba031
+size 408

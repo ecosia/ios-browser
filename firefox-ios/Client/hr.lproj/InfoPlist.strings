@@ -1,24 +1,3 @@
-/* (No Comment) */
-"New Private Tab" = "Nova privatna kartica";
-
-/* (No Comment) */
-"New Tab" = "Nova kartica";
-
-/* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Firefox koristi tvoju kameru za snimanje QR kodova, fotografija i videa.";
-
-/* Privacy - Face ID Usage Description */
-"NSFaceIDUsageDescription" = "Firefox zahtijeva Face ID za pristup tvojim spremljenim lozinkama i načinima plaćanja.";
-
-/* Privacy - Location When In Use Usage Description */
-"NSLocationWhenInUseUsageDescription" = "Web stranice koje posjećuješ mogu zatražiti tvoju lokaciju.";
-
-/* Privacy - Microphone Usage Description */
-"NSMicrophoneUsageDescription" = "Firefox koristi tvoj mikrofon za snimanje i prijenos audiosnimaka.";
-
-/* Privacy - Photo Library Additions Usage Description */
-"NSPhotoLibraryAddUsageDescription" = "Ovo omogućuje spremanje fotografija.";
-
-/* (No Comment) */
-"Scan QR Code" = "Snimi QR kod";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:a5adf3534de34f038d9c4175bee13f66ca013ce3751f2e3e98916e7cb4a05d66
+size 926

@@ -1,26 +1,3 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-
-import UIKit
-
-class InsetTextField: UITextField {
-    private let insetBy: CGFloat
-
-    init(insetBy: CGFloat) {
-        self.insetBy = insetBy
-        super.init(frame: .zero)
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init?(coder:) not implemented!")
-    }
-
-    override func textRect(forBounds bounds: CGRect) -> CGRect {
-        return bounds.insetBy(dx: insetBy, dy: insetBy)
-    }
-
-    override func editingRect(forBounds bounds: CGRect) -> CGRect {
-        return bounds.insetBy(dx: insetBy, dy: insetBy)
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:9e095e1e87cefb801a2c44114f8a9b8ef9e1f35c4b5b352adb360e602102aea4
+size 756

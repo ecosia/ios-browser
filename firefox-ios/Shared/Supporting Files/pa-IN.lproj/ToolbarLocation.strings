@@ -1,9 +1,3 @@
-/* Contextual hints are little popups that appear for the users informing them of new features. This one indicates a user can navigate to the Settings page to move the search bar to the top. */
-"ContextualHints.Toolbar.Bottom.Description.v107" = "ਜੇ ਤੁਹਾਨੂੰ ਪਸੰਦ ਹੋਵੇ ਤਾਂ ਟੂਲਬਾਰ ਨੂੰ ਉੱਤੇ ਭੇਜੋ।";
-
-/* Contextual hints are little popups that appear for the users informing them of new features. This one indicates a user can press and hold either the back or forward web navigation buttons to quickly navigate their back/forward history */
-"ContextualHints.Toolbar.Navigation.Description.v132" = "ਇਸ ਟੈਬ ਦੇ ਅਤੀਤ ਵਿਚਲੇ ਸਫ਼ਿਆਂ ਵਿੱਚ ਜਾਣ ਲਈ ਤੀਰ ਦੇ ਨਿਸ਼ਾਨਾਂ ਨੂੰ ਛੂਹ ਕੇ ਰੱਖੋ।";
-
-/* Contextual hints are little popups that appear for the users informing them of new features. This one indicates a user can navigate to the Settings page to move the search bar to the bottom. */
-"ContextualHints.Toolbar.Top.Description.v107" = "ਜੇ ਤੁਹਾਨੂੰ ਪਸੰਦ ਹੋਵੇ ਤਾਂ ਟੂਲਬਾਰ ਨੂੰ ਹੇਠਾਂ ਭੇਜੋ।";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:77a970b97ac48c1669ce9908f38d57c68215317dfbd57168347ee489dee49416
+size 1231

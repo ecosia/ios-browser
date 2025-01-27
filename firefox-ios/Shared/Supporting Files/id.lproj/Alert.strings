@@ -1,12 +1,3 @@
-/* Button text to dismiss the dialog box that gets presented as a confirmation to remove card and cancel the operation. */
-"CreditCard.SnackBar.CancelRemoveCardButton.v112" = "Batal";
-
-/* Sub label for the dialog box that gets presented as a confirmation to ask user if they would like to remove the saved credit card from local as well as all their synced devices */
-"CreditCard.SnackBar.RemoveCardSublabel.v112" = "Ini akan menghapus kartu dari semua perangkat Anda yang disinkronkan.";
-
-/* Title label for the dialog box that gets presented as a confirmation to ask user if they would like to remove the saved credit card */
-"CreditCard.SnackBar.RemoveCardTitle.v122" = "Hapus Kartu?";
-
-/* Button text to dismiss the dialog box that gets presented as a confirmation to remove card and perform the operation of removing the credit card. */
-"CreditCard.SnackBar.RemovedCardButton.v112" = "Hapus";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:fbfe11213de147f9acb1b4947252f0fa32ccc96aaf48335981a0ae18997ac6fe
+size 899

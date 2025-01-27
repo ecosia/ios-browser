@@ -1,21 +1,3 @@
-/* (No Comment) */
-"New Private Tab" = "ახალი პირადი ჩანართი";
-
-/* (No Comment) */
-"New Tab" = "ახალი ჩანართი";
-
-/* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "საშუალებას გაძლევთ, სურათის გადაღებისა და ატვირთვის.";
-
-/* Privacy - Location When In Use Usage Description */
-"NSLocationWhenInUseUsageDescription" = "ვებსაიტებმა, შესაძლოა მოითხოვოს თქვენი მდებარეობის მონაცემები.";
-
-/* Privacy - Microphone Usage Description */
-"NSMicrophoneUsageDescription" = "საშუალებას გაძლევთ, ვიდეოს გადაღებისა და ატვირთვის.";
-
-/* Privacy - Photo Library Additions Usage Description */
-"NSPhotoLibraryAddUsageDescription" = "სურათების შენახვის საშუალებას იძლევა.";
-
-/* (No Comment) */
-"Scan QR Code" = "QR კოდის წაკითხვა";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:826c955dcbf879d9681e7d78e6c580168adb15d8c6774faaa20175e6e33ed6fa
+size 1172

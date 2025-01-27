@@ -1,16 +1,3 @@
-{
-  "images" : [
-    {
-      "filename" : "howItWorksDark.pdf",
-      "idiom" : "universal"
-    }
-  ],
-  "info" : {
-    "author" : "xcode",
-    "version" : 1
-  },
-  "properties" : {
-    "preserves-vector-representation" : true,
-    "template-rendering-intent" : "original"
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:d706b1c44e1016ed232765b2bb1e66026448b1e04a2fe863d37bf6109f95c9ee
+size 279

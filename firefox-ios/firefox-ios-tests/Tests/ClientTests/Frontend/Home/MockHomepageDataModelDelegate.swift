@@ -1,13 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-@testable import Client
-
-class MockHomepageDataModelDelegate: HomepageDataModelDelegate {
-    var reloadViewCallCount = 0
-
-    func reloadView() {
-        reloadViewCallCount += 1
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:77ba6fa6c03e93dc727cf229a80751387e3e83b95f93cd405cb312d1faa2ecc3
+size 390

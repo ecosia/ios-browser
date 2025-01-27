@@ -1,18 +1,3 @@
-/* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Ez lehetővé teszi, hogy fényképeket készítsen és töltsön fel.";
-
-/* Privacy - Face ID Usage Description */
-"NSFaceIDUsageDescription" = "Ezzel kinyithatja az alkalmazást.";
-
-/* Privacy - Location When In Use Usage Description */
-"NSLocationWhenInUseUsageDescription" = "A meglátogatott oldalak kérhetik az Ön helyét.";
-
-/* Privacy - Microphone Usage Description */
-"NSMicrophoneUsageDescription" = "Ez lehetővé teszi, hogy videókat készítsen és töltsön fel.";
-
-/* Privacy - Photo Library Additions Usage Description */
-"NSPhotoLibraryAddUsageDescription" = "Ez lehetővé teszi, hogy fényképeket mentsen és töltsön fel.";
-
-/* This is the menu item that appears when you long press the Focus icon on the phone home screen. */
-"UIApplicationShortcutItemTitle.EraseAndOpen" = "Törlés és megnyitás";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:9346d686bf216be760e9b2828a58a82af50e44c57c99a9667e92ee01fd6a78f3
+size 899

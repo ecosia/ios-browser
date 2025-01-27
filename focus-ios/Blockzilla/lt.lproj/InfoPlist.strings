@@ -1,18 +1,3 @@
-/* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Bus galima fotografuoti ir įkelti nuotraukas.";
-
-/* Privacy - Face ID Usage Description */
-"NSFaceIDUsageDescription" = "Bus galima atrakinti programą.";
-
-/* Privacy - Location When In Use Usage Description */
-"NSLocationWhenInUseUsageDescription" = "Lankomos svetainės gali prašyti jūsų buvimo vietos.";
-
-/* Privacy - Microphone Usage Description */
-"NSMicrophoneUsageDescription" = "Bus galima filmuoti ir įkelti vaizdo įrašus.";
-
-/* Privacy - Photo Library Additions Usage Description */
-"NSPhotoLibraryAddUsageDescription" = "Bus galima įrašyti ir įkelti nuotraukas.";
-
-/* This is the menu item that appears when you long press the Focus icon on the phone home screen. */
-"UIApplicationShortcutItemTitle.EraseAndOpen" = "Išvalyti ir atverti";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:369d8a6d805387b9725bbc24696699a1b84a5bb3c6665c020fc1e5eef9681a88
+size 832

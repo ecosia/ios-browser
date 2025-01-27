@@ -1,15 +1,3 @@
-{
-  "images" : [
-    {
-      "filename" : "loginLarge.pdf",
-      "idiom" : "universal"
-    }
-  ],
-  "info" : {
-    "author" : "xcode",
-    "version" : 1
-  },
-  "properties" : {
-    "preserves-vector-representation" : true
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:a5992daf6e124c137c1f87d523baf33f1da0aa4e7105662e6042d32fb97d878a
+size 229

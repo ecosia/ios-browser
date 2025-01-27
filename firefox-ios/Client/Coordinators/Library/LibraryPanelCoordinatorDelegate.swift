@@ -1,10 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-/// Share navigation across the library panels
-protocol LibraryPanelCoordinatorDelegate: AnyObject {
-    func shareLibraryItem(url: URL, sourceView: UIView)
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:4224752114fc2540b2406ae607dc1d09c6616351f6b9d4032ee565153049d0a0
+size 380

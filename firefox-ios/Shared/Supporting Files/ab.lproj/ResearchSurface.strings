@@ -1,9 +1,3 @@
-/* On the Research Survey popup, the text that explains what the screen is about. Placeholder is for the app name. */
-"Body.Text.v112" = "Ҳаҳәоит, ҳҭҵаара кьаҿ ала %@ еиӷьтәырц шәҳацхраа.";
-
-/* On the Research Survey popup, the text for the button that, when tapped, will dismiss the popup and take the user to a survey. */
-"PrimaryButton.Label.v112" = "Аҭҵаара амҩаԥгара";
-
-/* On the Research Survey popup, the text for the button that, when tapped, will dismiss this screen, and the user will not be taken to the survey. */
-"SecondaryButton.Label.v112" = "Мап иҭабуп";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:9fb9ceff462d7f17e1311d2fa9ee40a2445157d30ae204f9ad4ea390cfe472d4
+size 636

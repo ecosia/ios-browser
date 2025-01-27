@@ -1,15 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-import Shared
-
-enum HomePanelType: Int {
-    case topSites = 0
-
-    var internalUrl: URL {
-        let aboutUrl: URL! = URL(string: "\(InternalURL.baseUrl)/\(AboutHomeHandler.path)", invalidCharacters: false)
-        return URL(string: "#panel=\(self.rawValue)", relativeTo: aboutUrl)!
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:c33d7fdbab444935a5038134003373bcd2c89befcef81447e071af33328db724
+size 514

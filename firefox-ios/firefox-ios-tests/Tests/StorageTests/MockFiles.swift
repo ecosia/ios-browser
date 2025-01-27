@@ -1,21 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-@testable import Storage
-import XCTest
-
-class MockFiles: FileAccessor {
-    init() {
-        let docPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
-        super.init(rootPath: (docPath as NSString).appendingPathComponent("testing"))
-    }
-}
-
-class SupportingFiles: FileAccessor {
-    init() {
-        let path = Bundle.main.bundlePath + "/PlugIns/StorageTests.xctest/"
-        super.init(rootPath: path)
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:6851fa40218cf5d3808aa180033f0d8ecf94f33dd47aa3403e28b64e8ca62de8
+size 674

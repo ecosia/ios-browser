@@ -1,21 +1,3 @@
-/* (No Comment) */
-"New Private Tab" = "Cluaisín Nua Príobháideach";
-
-/* (No Comment) */
-"New Tab" = "Cluaisín Nua";
-
-/* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Ligeann seo duit pictiúir a thógáil agus a uaslódáil.";
-
-/* Privacy - Location When In Use Usage Description */
-"NSLocationWhenInUseUsageDescription" = "D'fhéadfadh suíomhanna a dtugann tú cuairt orthu do láthair a iarraidh.";
-
-/* Privacy - Microphone Usage Description */
-"NSMicrophoneUsageDescription" = "Ligeann seo duit físeáin a thógáil agus a uaslódáil.";
-
-/* Privacy - Photo Library Additions Usage Description */
-"NSPhotoLibraryAddUsageDescription" = "Thug seo cumas duit pictiúir a shábháil.";
-
-/* (No Comment) */
-"Scan QR Code" = "Scan an cód QR";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:6f258c8c7cf8a3f7caf6a11db448101ebf6d956de02cd09112b3c66a3ec10dbc
+size 771

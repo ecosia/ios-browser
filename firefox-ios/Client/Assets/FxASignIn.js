@@ -1,18 +1,3 @@
-/* vim: set ts=2 sts=2 sw=2 et tw=80: */
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-(function() {
-"use strict";
-
-/**
- * Transport postMessage events from the fxa-content-server to the embedding
- * webview.
- */
-function handleAccountsCommand(evt) {
-  webkit.messageHandlers.accountsCommandHandler.postMessage({ type: evt.type, detail: evt.detail });
-};
-window.addEventListener("WebChannelMessageToChrome", handleAccountsCommand);
-
-})();
+version https://git-lfs.github.com/spec/v1
+oid sha256:8949c77a3f9d66cca1674e1ee921945b3047b0f2222a2fabee351c97c2185098
+size 595

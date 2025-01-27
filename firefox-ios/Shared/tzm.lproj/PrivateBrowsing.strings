@@ -1,6 +1,3 @@
-/* Setting for closing private tabs */
-"Close Private Tabs" = "ⵔⴳⵍ ⵉⵙⴽⵙⴰⵍ ⵓⵙⵍⵉⴳⵏ";
-
-/* Text button displayed when there are no tabs open while in private mode */
-"Learn More" = "ⵙⵙⵏ ⵓⴳⴳⴰⵔ";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:a313f1c126cc94ba3513a58cc4fe737e831d7b58c0eec049b20584b9d5dd03f4
+size 237

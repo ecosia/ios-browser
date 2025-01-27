@@ -1,11 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-/// The domains associated with the image
-struct ImageDomain: Codable {
-    /// Used to retrieve from the bundle, more than one domain can be used to retrieve. See `BundleDomainBuilder`
-    var bundleDomains: [String]
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:1b78b5a638c97c4395986b5f0cd0e09cf19e476fde164fe3f86b4e68d08c6890
+size 441

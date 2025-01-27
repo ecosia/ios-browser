@@ -1,6 +1,3 @@
-/* Accessibility label for next button that is displayed above the keyboard when a form field on a website was tapped. */
-"KeyboardAccessory.NextButton.Accessibility.Label.v124" = "Hurrengo inprimaki-eremua";
-
-/* Accessibility label for previous button that is displayed above the keyboard when a form field on a website was tapped. */
-"KeyboardAccessory.PreviousButton.Accessibility.Label.v124" = "Aurreko inprimaki-eremua";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:a132fc8f4c00c77af0ec0577d3296271987411e70a4ed5eab1ed6f23272dbaa5
+size 427

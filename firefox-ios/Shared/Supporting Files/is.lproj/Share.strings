@@ -1,6 +1,3 @@
-/* Error message shown in the remote tabs panel */
-"SendTo.NoDevicesFound.Message.v119" = "Þú ert ekki með önnur tæki tengd við þennan reikning sem hægt er að samstilla.";
-
-/* This message appears when a user tries to use 'Send Link to Device' action while not logged in */
-"SendTo.NotSignedIn.Title.v119" = "Þú ert ekki skráð/ur inn á reikninginn þinn.";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:04dcbc7c902199b4eb64a84f50b84ca3ae04637db9bd1361fea5c5476126f74b
+size 372

@@ -1,10 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-struct OnboardingLinkInfoModel {
-    let title: String
-    let url: URL
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:ab777c5151b40b8e0473af8159f72b22728a65652dd3323eb2ec89d1e05528f7
+size 295

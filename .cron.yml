@@ -1,26 +1,3 @@
-# Definitions for jobs that run periodically.  For details on the format, see
-# `taskcluster/taskgraph/cron/schema.py`.  For documentation, see
-# `taskcluster/docs/cron.rst`.
----
-
-jobs:
-    - name: l10-screenshots
-      job:
-          type: decision-task
-          target-tasks-method: l10n_screenshots
-          treeherder-symbol: l10-screenshots
-      when: []  # Manual trigger only
-    - name: bitrise-performance-test
-      job:
-          type: decision-task
-          target-tasks-method: bitrise_performance_test
-          treeherder-symbol: bitrise-performance
-      when: 
-        - {hour: 22, minute: 0}
-    - name: firebase-performance-test
-      job:
-          type: decision-task
-          target-tasks-method: firebase_performance_test
-          treeherder-symbol: firebase-performance
-      when: 
-        - {hour: 22, minute: 0}
+version https://git-lfs.github.com/spec/v1
+oid sha256:f74b045a89b53c20eb3cde308e57ac56a2bfaccdb49c084c34873aa82937e29a
+size 844

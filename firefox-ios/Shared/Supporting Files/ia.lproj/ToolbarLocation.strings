@@ -1,9 +1,3 @@
-/* Contextual hints are little popups that appear for the users informing them of new features. This one indicates a user can navigate to the Settings page to move the search bar to the top. */
-"ContextualHints.Toolbar.Bottom.Description.v107" = "Move le barra del instrumentos al summitate si illo es plus tu stilo.";
-
-/* Contextual hints are little popups that appear for the users informing them of new features. This one indicates a user can press and hold either the back or forward web navigation buttons to quickly navigate their back/forward history */
-"ContextualHints.Toolbar.Navigation.Description.v132" = "Tocca e retene le flechas pro saltar inter paginas in iste chronologia del scheda.";
-
-/* Contextual hints are little popups that appear for the users informing them of new features. This one indicates a user can navigate to the Settings page to move the search bar to the bottom. */
-"ContextualHints.Toolbar.Top.Description.v107" = "Move le barra del instrumentos al fundo si illo es plus tu stilo.";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:ec2df55c1b378883eea3b46a41e5955fccad2082a3c41cbf24dd2d057a61f944
+size 1020

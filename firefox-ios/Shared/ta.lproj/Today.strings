@@ -1,9 +1,3 @@
-/* Go to link pasted on the clipboard */
-"TodayWidget.GoToCopiedLinkLabelV1" = "நகலெடுத்த தொடுப்பிற்கு செல்க";
-
-/* Open New Tab button label */
-"TodayWidget.NewTabButtonLabelV1" = "புதிய தேடல்";
-
-/* Open New Private Tab button label */
-"TodayWidget.PrivateTabButtonLabelV1" = "கமுக்கத் தேடல்";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:4b3c1451be5159c7a3f9127a6a4b196e64379ef58736732663089570f442d99e
+size 393

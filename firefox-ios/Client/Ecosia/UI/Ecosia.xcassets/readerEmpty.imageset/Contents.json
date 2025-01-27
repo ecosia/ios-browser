@@ -1,16 +1,3 @@
-{
-  "images" : [
-    {
-      "filename" : "readerEmpty.pdf",
-      "idiom" : "universal"
-    }
-  ],
-  "info" : {
-    "author" : "xcode",
-    "version" : 1
-  },
-  "properties" : {
-    "preserves-vector-representation" : true,
-    "template-rendering-intent" : "template"
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:fcbd8fa847100bfcc4930c462f4c610511bfb3eae3d6c29ebcaa417b0a010431
+size 276

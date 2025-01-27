@@ -1,23 +1,3 @@
-{
-  "images" : [
-    {
-      "idiom" : "universal",
-      "filename" : "FRUE 4.png",
-      "scale" : "1x"
-    },
-    {
-      "idiom" : "universal",
-      "filename" : "FRUE 4@2x.png",
-      "scale" : "2x"
-    },
-    {
-      "idiom" : "universal",
-      "filename" : "FRUE 4@3x.png",
-      "scale" : "3x"
-    }
-  ],
-  "info" : {
-    "version" : 1,
-    "author" : "xcode"
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:37d9913f8be6cd6b28ab8d72fa8369f157ed16d192b5bb034ead3aa4d65db723
+size 375

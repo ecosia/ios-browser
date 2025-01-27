@@ -1,12 +1,3 @@
-/* Button text to dismiss the dialog box that gets presented as a confirmation to remove card and cancel the operation. */
-"CreditCard.SnackBar.CancelRemoveCardButton.v112" = "Отмена";
-
-/* Sub label for the dialog box that gets presented as a confirmation to ask user if they would like to remove the saved credit card from local as well as all their synced devices */
-"CreditCard.SnackBar.RemoveCardSublabel.v112" = "Это удалит карту со всех ваших синхронизированных устройств.";
-
-/* Title label for the dialog box that gets presented as a confirmation to ask user if they would like to remove the saved credit card */
-"CreditCard.SnackBar.RemoveCardTitle.v122" = "Удалить карту?";
-
-/* Button text to dismiss the dialog box that gets presented as a confirmation to remove card and perform the operation of removing the credit card. */
-"CreditCard.SnackBar.RemovedCardButton.v112" = "Удалить";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:113e50bdeaa8b1bfc682b70a50f58c2284c36ba79ad0113ef63da5b6160b5a7c
+size 972

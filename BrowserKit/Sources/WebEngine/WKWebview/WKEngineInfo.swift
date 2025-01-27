@@ -1,10 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-/// The specific information related to the WK session and view
-struct WKEngineInfo {
-    static var webserverPort = 6571
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:264fdcf388a1cdc5ab8794e3546ca2c09601e7c47e304be0ef6305f379812093
+size 345

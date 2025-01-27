@@ -1,9 +1,3 @@
-/* Button string to open settings that allows user to switch their default browser to Firefox. */
-"DefaultBrowserOnboarding.Button" = "Anar als paramètres";
-
-/* Description for default browser onboarding card. */
-"DefaultBrowserOnboarding.Description1" = "1. Anar als paramètres";
-
-/* Menu option for setting Firefox as default browser. */
-"Settings.DefaultBrowserMenuItem" = "Definir coma navegador per defaut";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:df9070cf3b1fb3f84225a351ac0cb21823fbfe9e7da89e464a7380e56dcf2a72
+size 416

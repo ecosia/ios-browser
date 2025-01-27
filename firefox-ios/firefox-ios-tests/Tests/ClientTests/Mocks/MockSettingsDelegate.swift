@@ -1,14 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-@testable import Client
-
-class MockSettingsDelegate: SettingsDelegate {
-    // Ecosia: meet new conformance for SettingsDelegate
-    func reloadHomepage() {}
-    func settingsOpenURLInNewTab(_ url: URL) { }
-    func didFinish() {}
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:e69be05b22669c4e7a33e56361ef9f8aaec6b4c557665a92dfb9329d3a87f630
+size 454

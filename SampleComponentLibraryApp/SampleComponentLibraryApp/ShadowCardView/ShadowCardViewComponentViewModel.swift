@@ -1,15 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-import UIKit
-
-struct ShadowCardViewComponentViewModel: ComponentViewModel {
-    var title = "ShadowCardView"
-    var viewController: UIViewController = ShadowCardViewViewController()
-
-    func present(with presenter: Presenter?) {
-        presenter?.push(viewController: viewController)
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:1cf340cd79afdba21ad79a7d64fd4e18791e3a7f9f86267615f162be1bf79b7d
+size 515

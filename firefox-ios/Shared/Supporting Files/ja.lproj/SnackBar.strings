@@ -1,9 +1,3 @@
-/* Label text that gets presented as a confirmation at the bottom of screen when the credit card is successfully removed. */
-"CreditCard.SnackBar.RemovedCardLabel.v112" = "カード情報が削除されました";
-
-/* Label text that gets presented as a confirmation at the bottom of screen when credit card information gets saved successfully */
-"CreditCard.SnackBar.SavedCardLabel.v112" = "新規カード情報が保存されました";
-
-/* Label text that gets presented as a confirmation at the bottom of screen when credit card information gets updated successfully */
-"CreditCard.SnackBar.UpdatedCardLabel.v122" = "カード情報が更新されました";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:990c71e9b3be17dedc2fa695436b523dbdec2b7d7ba0df2eba2ab74cbe143b73
+size 665

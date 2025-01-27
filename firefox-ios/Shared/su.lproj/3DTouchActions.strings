@@ -1,21 +1,3 @@
-/* Label for preview action on Tab Tray Tab to add current tab to Bookmarks */
-"Add to Bookmarks" = "Tambahkeun kana Markah";
-
-/* Label for preview action on Tab Tray Tab to close the current tab */
-"Close Tab" = "Tutup Tab";
-
-/* Label for preview action on Tab Tray Tab to copy the URL of the current tab to clipboard */
-"Copy URL" = "Tiron URL";
-
-/* Label for preview action on Tab Tray Tab to send the current link to another device */
-"Menu.SendLinkToDevice" = "Kirim Tutumbu ka Parabot";
-
-/* String describing the action of opening the last added bookmark from the home screen Quick Actions via 3D Touch */
-"Open Last Bookmark" = "Buka Markah Panungtung";
-
-/* Accessibility label, associated to the 3D Touch action on the current tab in the tab tray, used to display a larger preview of the tab. */
-"Preview of %@" = "Pramidang tina %@";
-
-/* Label for preview action on Tab Tray Tab to send the current tab to another device */
-"Send to Device" = "Kirim ka Parangkat";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:d3978b5db76713d3b6157d836242f05a2e0127e82e6bf48e4a2d844161eb61ef
+size 975

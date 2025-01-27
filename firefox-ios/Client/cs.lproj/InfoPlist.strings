@@ -1,24 +1,3 @@
-/* (No Comment) */
-"New Private Tab" = "Nový anonymní panel";
-
-/* (No Comment) */
-"New Tab" = "Nový panel";
-
-/* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Ecosia používá váš fotoaparát ke skenování QR kódů a pořizování fotografií a videí.";
-
-/* Privacy - Face ID Usage Description */
-"NSFaceIDUsageDescription" = "Ecosia vyžaduje Face ID pro přístup k uloženým heslům a platebním metodám.";
-
-/* Privacy - Location When In Use Usage Description */
-"NSLocationWhenInUseUsageDescription" = "Servery, které navštěvujete, mohou chtít znát vaše umístění.";
-
-/* Privacy - Microphone Usage Description */
-"NSMicrophoneUsageDescription" = "Ecosia používá váš mikrofon k zaznamenávání a odesílání zvuku.";
-
-/* Privacy - Photo Library Additions Usage Description */
-"NSPhotoLibraryAddUsageDescription" = "Toto vám umožní ukládat fotografie.";
-
-/* (No Comment) */
-"Scan QR Code" = "Skenovat QR kód";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:2ba9d0a51f935edc86dadb21372ba817df691d4517057ee8434f355d27e1f31d
+size 965

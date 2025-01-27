@@ -1,25 +1,3 @@
-{
-  "images" : [
-    {
-      "filename" : "Find Next.pdf",
-      "idiom" : "universal"
-    },
-    {
-      "appearances" : [
-        {
-          "appearance" : "luminosity",
-          "value" : "dark"
-        }
-      ],
-      "filename" : "find_next.pdf",
-      "idiom" : "universal"
-    }
-  ],
-  "info" : {
-    "author" : "xcode",
-    "version" : 1
-  },
-  "properties" : {
-    "preserves-vector-representation" : true
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:b169b6455a6ae4b7487fa4a7e6dd68ce8a7cfee0c727d5c57cb537eac2481647
+size 424

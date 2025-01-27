@@ -1,15 +1,3 @@
-/* This value is used as the header for the remember card page. The placeholder is for the app name. */
-"CreditCard.RememberCard.Header.v122" = "%@ waš kórtowy numer koděrujo. Waš wěstotny kod njebuźo se składowaś.";
-
-/* This value is used as the title for the Yes button in the remember credit card page */
-"CreditCard.RememberCard.MainButtonTitle.v122" = "Składowaś";
-
-/* This value is used as the title for the remember credit card page */
-"CreditCard.RememberCard.MainTitle.v122" = "Toś tu kórtu wěsće składowaś?";
-
-/* This value is used as the title for the Not Now button in the remember credit card page */
-"CreditCard.RememberCard.SecondaryButtonTitle.v115" = "Nic něnto";
-
-/* This value is used as the toast message for the saving success alert in the remember credit card page */
-"CreditCard.RememberCard.SecondaryButtonTitle.v116" = "Nowa kórta jo se składła";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:aa124641e996ebf5526627e7e44e14a028ce5f978a1efb8a7f80040f821e2576
+size 893

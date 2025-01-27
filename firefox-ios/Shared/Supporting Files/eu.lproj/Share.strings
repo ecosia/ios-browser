@@ -1,6 +1,3 @@
-/* Error message shown in the remote tabs panel */
-"SendTo.NoDevicesFound.Message.v119" = "Ez daukazu kontu honetara sinkronizatzeko konektatutako beste gailurik.";
-
-/* This message appears when a user tries to use 'Send Link to Device' action while not logged in */
-"SendTo.NotSignedIn.Title.v119" = "Ez duzu zure kontuan saiorik hasi.";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:f6f6094825a36a018d5ac3001e7696aac65a7b3b9fa03ec31e487229a79c51cf
+size 340

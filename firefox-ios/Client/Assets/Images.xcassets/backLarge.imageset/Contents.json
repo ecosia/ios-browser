@@ -1,15 +1,3 @@
-{
-  "images" : [
-    {
-      "filename" : "backLarge.pdf",
-      "idiom" : "universal"
-    }
-  ],
-  "info" : {
-    "author" : "xcode",
-    "version" : 1
-  },
-  "properties" : {
-    "preserves-vector-representation" : true
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:076ba3dcdf66c8d378e11cfaf4f8d37326f1d6a9444db4530d683971384615ac
+size 228

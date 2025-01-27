@@ -1,13 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-enum EngineError: Error, CustomStringConvertible {
-    case sessionNotCreated
-
-    var description: String {
-        return "The engine session could not be created due to a initialization error"
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:0d3997f8fecff80cff2dda120d99d390b190e30c8d96d3abad14722f2dc39222
+size 425

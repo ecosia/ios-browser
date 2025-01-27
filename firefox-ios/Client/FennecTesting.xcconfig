@@ -1,8 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-// Configuration settings file format documentation can be found at:
-// https://help.apple.com/xcode/#/dev745c5c974
-
-SWIFT_ACTIVE_COMPILATION_CONDITIONS = TESTING;
+version https://git-lfs.github.com/spec/v1
+oid sha256:1a3613dc769163ffb82a626f70ae49753153d6f8a82417b7a4192d8da579a0cd
+size 366

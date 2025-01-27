@@ -1,9 +1,3 @@
-/* The cancel button when confirming clear private data. */
-"Cancel" = "မဆောင်ရွက်တော့ပါ";
-
-/* The button that clears private data. */
-"OK" = "အိုကေ";
-
-/* Description of the confirmation dialog shown when a user tries to clear their private data. */
-"This action will clear all of your private data. It cannot be undone." = "ဒီလုပ်ဆောင်မှုသည် သင့်သီးသန့်ဒေတာအားလုံးကို ရှင်းလင်းမည် ဖြစ်သည်။ ဖျက်ပြီးလျှင် ၄င်းအချက်အလက်များကို ပြန်လည်အသုံးပြုနိုင်မည် မဟုတ်ပါ။";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:d3b8b6bb162005662c1b2bb40b22dd19d63613138cce43401b60a7de1e98d76b
+size 756

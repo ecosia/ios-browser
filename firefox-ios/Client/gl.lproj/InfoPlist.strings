@@ -1,24 +1,3 @@
-/* (No Comment) */
-"New Private Tab" = "Nova lapela privada";
-
-/* (No Comment) */
-"New Tab" = "Nova lapela";
-
-/* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Isto permítelle facer fotos e subilas.";
-
-/* Privacy - Face ID Usage Description */
-"NSFaceIDUsageDescription" = "Firefox require Face ID para acceder aos teus contrasinais e aos métodos de pago gardados.";
-
-/* Privacy - Location When In Use Usage Description */
-"NSLocationWhenInUseUsageDescription" = "Os sitios web que visita poden solicitar a súa localización.";
-
-/* Privacy - Microphone Usage Description */
-"NSMicrophoneUsageDescription" = "Isto permítelle facer vídeos e subilos.";
-
-/* Privacy - Photo Library Additions Usage Description */
-"NSPhotoLibraryAddUsageDescription" = "Isto permítelle gardar fotos.";
-
-/* (No Comment) */
-"Scan QR Code" = "Examinar código QR";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:fe4262cf2fe27411f5f374e0e2e0b5ffe851e9f42eac79fdea84c8bb2286b1c7
+size 868

@@ -1,19 +1,3 @@
-features:
-  tabTrayFeature:
-    description: The tab tray screen that the user goes to when they open the tab tray.
-    variables:
-      sections-enabled:
-        description: "This property provides a lookup table of whether or not the given section should be enabled.
-          If the section is enabled, it should be toggleable in the settings screen, and on by default."
-        type: Map<TabTraySection, Boolean>
-        default:
-          {
-            "inactive-tabs": true,
-          }
-
-enums:
-  TabTraySection:
-    description: The identifiers for the sections of the tab tray.
-    variants:
-      inactive-tabs:
-        description: Tabs that have been automatically closed for the user.
+version https://git-lfs.github.com/spec/v1
+oid sha256:7c506bf24b3b571f17bbba75f2bb7ff6e01129de9ee2a7b2b68b9a1b7ca25883
+size 698

@@ -1,11 +1,3 @@
-[[source]]
-url = "https://pypi.org/simple"
-verify_ssl = true
-name = "pypi"
-
-[packages]
-
-[dev-packages]
-
-[requires]
-python_version = "3.11"
+version https://git-lfs.github.com/spec/v1
+oid sha256:ba52b08525d2e67e456d730d0f588f122fd93a435b9cbd916b7acf6308fdb8cc
+size 139

@@ -1,18 +1,3 @@
-/* Settings item for clearing browsing history */
-"Browsing History" = "Səyahət Tarixçəsi";
-
-/* Settings item for clearing the cache */
-"Cache" = "Keş";
-
-/* Settings item for clearing cookies */
-"Cookies" = "Çərəzlər";
-
-/* Settings item for deleting downloaded files */
-"Downloaded Files" = "Endirilmiş Fayllar";
-
-/* Settings item for clearing website data */
-"Offline Website Data" = "Oflayn sayt məlumatları";
-
-/* Settings item for clearing passwords and login data */
-"Saved Logins" = "Saxlanılmış daxil olmalar";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:f359c6061144c6371b7d7363e0ca6f301ccf5824cb8131f29a86f0cd9f31cddb
+size 533

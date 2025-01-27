@@ -1,32 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Redux
-import Common
-
-class TabPeekAction: Action {
-    let tabUUID: TabUUID?
-    let tabPeekModel: TabPeekModel?
-
-    init(tabUUID: TabUUID? = nil,
-         tabPeekModel: TabPeekModel? = nil,
-         windowUUID: WindowUUID,
-         actionType: ActionType) {
-        self.tabUUID = tabUUID
-        self.tabPeekModel = tabPeekModel
-        super.init(windowUUID: windowUUID,
-                   actionType: actionType)
-    }
-}
-
-enum TabPeekActionType: ActionType {
-    // MARK: - View Actions
-    case didLoadTabPeek
-    case addToBookmarks
-    case copyURL
-    case closeTab
-
-    // MARK: - Middleware Actions
-    case loadTabPeek
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:8865a4085e7eb9d8bdcad999bed97de9e1219934f9f1074c6a0bfae8cb6e9791
+size 842

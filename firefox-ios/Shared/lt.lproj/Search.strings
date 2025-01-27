@@ -1,6 +1,3 @@
-/* Label for search engine buttons. The argument corresponds to the name of the search engine. */
-"%@ search" = "„%@“ paieška";
-
-/* Label for search settings button. */
-"Search Settings" = "Paieškos nuostatos";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:dcfaa5374e12fda32ed82de3695956b4053153835a86abd966d94fd0fe2835d5
+size 218

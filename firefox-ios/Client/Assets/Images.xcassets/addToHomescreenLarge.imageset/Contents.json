@@ -1,15 +1,3 @@
-{
-  "images" : [
-    {
-      "filename" : "addToHomescreenLarge.pdf",
-      "idiom" : "universal"
-    }
-  ],
-  "info" : {
-    "author" : "xcode",
-    "version" : 1
-  },
-  "properties" : {
-    "preserves-vector-representation" : true
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:5cbf54b1e51f6a05703f79e4022c9fe3ce301394d3a4069ed39ce028be014bc3
+size 239

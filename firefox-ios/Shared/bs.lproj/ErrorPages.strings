@@ -1,6 +1,3 @@
-/* Shown in error pages for files that can't be shown and need to be downloaded. */
-"Open in Safari" = "Otvori u Safariju";
-
-/* Shown in error pages on a button that will try to load the page again */
-"Try again" = "Pokušaj ponovo";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:0e29d3a240eff965229cce41fb86bf4e91f64f524c89bd199c2a08296fe9289f
+size 235

@@ -1,12 +1,3 @@
-/* Done button in Find in Page Toolbar. */
-"Done" = "Déanta";
-
-/* Text selection menu item */
-"Find in Page" = "Aimsigh sa Leathanach";
-
-/* Accessibility label for next result button in Find in Page Toolbar. */
-"Next in-page result" = "An chéad toradh eile sa leathanach";
-
-/* Accessibility label for previous result button in Find in Page Toolbar. */
-"Previous in-page result" = "An toradh roimhe seo sa leathanach";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:b4d3ac3f5e62c1f1be3f7812535c1124823a385e084ab1eab4d33ed79890968e
+size 421

@@ -1,15 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-class SearchModel {
-    var searchTerm: String
-    var suggestions: [String]
-
-    init(searchTerm: String, suggestions: [String]) {
-        self.searchTerm = searchTerm
-        self.suggestions = suggestions
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:b463afbe032d922c3605892f45c2a60fdc9fd2b741eb227b1416e147a1c4e9c5
+size 437

@@ -1,8 +1,3 @@
-features:
-  glean-server-knobs:
-    description: "A feature that provides server-side configurations for Glean metrics (aka Server Knobs)."
-    variables:
-      metrics-enabled:
-        description: "A map of metric base-identifiers to booleans representing the state of the 'enabled' flag for that metric."
-        type: Map<String, Boolean>
-        default: {}
+version https://git-lfs.github.com/spec/v1
+oid sha256:ab2eca66657ae48a9c66762ed4f8dfdc97fdf5475f457d4c9f238a518a4e3f61
+size 363

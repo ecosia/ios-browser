@@ -1,9 +1,3 @@
-/* Label text that gets presented as a confirmation at the bottom of screen when the credit card is successfully removed. */
-"CreditCard.SnackBar.RemovedCardLabel.v112" = "පත ඉවත් කෙරිණි";
-
-/* Label text that gets presented as a confirmation at the bottom of screen when credit card information gets saved successfully */
-"CreditCard.SnackBar.SavedCardLabel.v112" = "නව පත සුරැකිණි";
-
-/* Label text that gets presented as a confirmation at the bottom of screen when credit card information gets updated successfully */
-"CreditCard.SnackBar.UpdatedCardLabel.v122" = "පතෙහි තොරතුරු යාවත්කාල විය";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:1482927697d8c2344de9f487b5a968bf3c89182f116b226b80366ef3b65e2c69
+size 690

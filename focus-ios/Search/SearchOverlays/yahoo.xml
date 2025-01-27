@@ -1,14 +1,3 @@
-<SearchOverlay>
-  <append parent="//search:Url[@type='text/html']">
-    <Param name="type" value="ios"/>
-  </append>
-  <replace target="//search:Url[@type='application/x-moz-tabletsearch']">
-    <!-- tablet search not supported -->
-  </replace>
-  <replace target="//search:Url[@type='text/html' and @rel='mobile']">
-    <!-- phone search activity not supported -->
-  </replace>
-  <replace target="//search:Url[@type='application/x-moz-tabletsearch' and @rel='mobile']">
-    <!-- tablet search activity not supported -->
-  </replace>
-</SearchOverlay>
+version https://git-lfs.github.com/spec/v1
+oid sha256:3370e6b3b7255d22f79381262717ca96b4311fa818ce1f023ed30d877fd283a2
+size 550

@@ -1,8 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-public enum SiteImageType: String {
-    case favicon
-    case heroImage
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:c140626d2c4629824f3a6da399ff9815bcdcb213704d3a3621fd28323053474f
+size 276

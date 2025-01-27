@@ -1,18 +1,3 @@
-/* Setting for closing private tabs */
-"Close Private Tabs" = "Tutup Tab Pribadi";
-
-/* Text button displayed when there are no tabs open while in private mode */
-"Learn More" = "Sinaoni Manèh";
-
-/* Toggled OFF accessibility value */
-"Off" = "Mati";
-
-/* Toggled ON accessibility value */
-"On" = "Murub";
-
-/* Title displayed for when there are no open tabs while in private mode */
-"Private Browsing" = "Ndlajah Pribadi";
-
-/* Accessibility label for toggling on/off private mode */
-"Private Mode" = "Modhe Pribadi";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:bbf0806c72ae28352bf66267865913b4aa7bfb1c572abda9fd93761e24873559
+size 516

@@ -1,9 +1,3 @@
-/* Sub label error string that gets shown when user enters incorrect input for their expiration date on their credit card in the text box. */
-"CreditCard.ErrorState.CardExpirationDateSublabel.v112" = "Idatzi baliozko iraungitze-data";
-
-/* Sub label error string that gets shown when user enters incorrect input for their number printed on their credit card in the text box. */
-"CreditCard.ErrorState.CardNumberSublabel.v112" = "Idatzi baliozko txartel-zenbakia";
-
-/* Sub label error string that gets shown when user enters incorrect input for their name printed on their credit card in the text box. */
-"CreditCard.ErrorState.NameOnCardSublabel.v112" = "Gehitu izena";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:1f9132633b2dd814d388319677e6fdc4a47a2b5786e177676236dddc151c2693
+size 670

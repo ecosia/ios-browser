@@ -1,18 +1,3 @@
-/* When the user taps the search engine icon in the toolbar, a sheet with a list of alternative search engines appears. This is the accessibility label for the sheet's close button. */
-"UnifiedSearch.SearchEngineSelection.AccessibilityLabels.CloseButton.Label.v133" = "Kapat";
-
-/* When the user taps the search engine icon in the toolbar, a sheet with a list of alternative search engines appears. This is the accessibility hint for tapping the search settings row at the bottom of the list, which opens the app's search settings screen. */
-"UnifiedSearch.SearchEngineSelection.AccessibilityLabels.SearchSettings.Hint.v133" = "Arama ayarlarını açar";
-
-/* When the user taps the search engine icon in the toolbar, a sheet with a list of alternative search engines appears. This string is the label for the row at the bottom of the list. When this row is tapped, the app's search settings screen appears. */
-"UnifiedSearch.SearchEngineSelection.AccessibilityLabels.SearchSettings.Label.v133" = "Arama ayarları";
-
-/* When the user taps the search engine icon in the toolbar, a sheet with a list of alternative search engines appears. This is the accessibility label for the title of that sheet. */
-"UnifiedSearch.SearchEngineSelection.AccessibilityLabels.TopTitle.Label.v133" = "Burada ara:";
-
-/* When the user taps the search engine icon in the toolbar, a sheet with a list of alternative search engines appears. This string is the label for the button at the bottom of the list. When this row is tapped, the app's search settings screen appears. */
-"UnifiedSearch.SearchEngineSelection.SearchSettings.Title.v133" = "Arama ayarları";
-
-/* When the user taps the search engine icon in the toolbar, a sheet with a list of alternative search engines appears. This is the title for the sheet. */
-"UnifiedSearch.SearchEngineSelection.TopTitle.Title.v133" = "Burada ara:";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:75215a4e05936c78a042f8cdaa1bc67bc9a86a006b88239d6ec69a279cd01298
+size 1870

@@ -1,9 +1,3 @@
-/* Go to link pasted on the clipboard */
-"TodayWidget.GoToCopiedLinkLabelV1" = "ನಕಲಿಸಿದ ಕೊಂಡಿಗೆ ಸಾಗು";
-
-/* Open New Tab button label */
-"TodayWidget.NewTabButtonLabelV1" = "ಹೊಸ ಹುಡುಕಾಟ";
-
-/* Open New Private Tab button label */
-"TodayWidget.PrivateTabButtonLabelV1" = "ಖಾಸಗಿ ಹುಡುಕಾಟ";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:6b884df6b987038262dc40deaf18b19949eb6c327da8e1e3d265dfbb4809f004
+size 366

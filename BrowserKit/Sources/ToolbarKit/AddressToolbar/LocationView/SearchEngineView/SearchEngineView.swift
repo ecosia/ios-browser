@@ -1,12 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import UIKit
-import Common
-
-/// Protocol for a view which displays the current search engine inside the toolbar.
-protocol SearchEngineView: UIView {
-    func configure(_ state: LocationViewState, delegate: LocationViewDelegate)
-    func applyTheme(theme: Theme)
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:7c0a0b37562533efbcd11195c26d122a1b051171529b1025c197691392f64d0e
+size 466

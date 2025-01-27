@@ -1,24 +1,3 @@
-/* (No Comment) */
-"New Private Tab" = "يېڭى شەخسىي بەتكۈچ";
-
-/* (No Comment) */
-"New Tab" = "يېڭى بەتكۈچ";
-
-/* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Ecosia كامېرا ئارقىلىق QR كودىنى تارايدۇ ھەمدە سۈرەت تارتىپ ۋە سىنغا ئالىدۇ.";
-
-/* Privacy - Face ID Usage Description */
-"NSFaceIDUsageDescription" = "Ecosia ساقلانغان ئىم ۋە پۇل تۆلەش ئۇسۇلىڭىزنى زىيارەت قىلىش ئۈچۈن چىراي كىملىكىنى تەلەپ قىلىدۇ.";
-
-/* Privacy - Location When In Use Usage Description */
-"NSLocationWhenInUseUsageDescription" = "سىز زىيارەت قىلغان تور بېكەتلەر ئورنىڭىزنى تەلەپ قىلىشى مۇمكىن.";
-
-/* Privacy - Microphone Usage Description */
-"NSMicrophoneUsageDescription" = "Ecosia مىكروفونىڭىزنى ئىشلىتىپ ئۈنگە ئالىدۇ ۋە يۈكلەيدۇ.";
-
-/* Privacy - Photo Library Additions Usage Description */
-"NSPhotoLibraryAddUsageDescription" = "بۇ ئارقىلىق سۈرەتلەرنى ساقلىغىلى بولىدۇ.";
-
-/* (No Comment) */
-"Scan QR Code" = "QR كودىنى تارا";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:a3c7df2218f087c192e5f8474118186c647ef7e2b40bab67b281ae2603b76028
+size 1228

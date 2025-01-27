@@ -1,6 +1,3 @@
-/* (No Comment) */
-"Intents.Erase.Description" = "Surf-Sitzung löschen";
-
-/* (No Comment) */
-"Intents.Erase.Title" = "Löschen";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:20ce45103739d9da49533aa97d4732dee0c33a9c75af996a7c1454f1858ce2b4
+size 131

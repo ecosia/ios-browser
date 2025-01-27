@@ -1,18 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-class ForceCrashSetting: HiddenSetting {
-    override var title: NSAttributedString? {
-        return NSAttributedString(
-            string: "Force Crash 💥",
-            attributes: [NSAttributedString.Key.foregroundColor: theme.colors.textPrimary]
-        )
-    }
-
-    override func onClick(_ navigationController: UINavigationController?) {
-        fatalError("Force crash")
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:08a56b0faf193ee5b0dcb2fe17b2b3080054e0b132a63feee1d45d48c38b78f3
+size 610

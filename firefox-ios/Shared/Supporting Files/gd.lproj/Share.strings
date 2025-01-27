@@ -1,6 +1,3 @@
-/* Error message shown in the remote tabs panel */
-"SendTo.NoDevicesFound.Message.v119" = "Cha do cheangail thu uidheam sam bith eile ris a’ chunntas seo as urrainn dhut sioncronachadh.";
-
-/* This message appears when a user tries to use 'Send Link to Device' action while not logged in */
-"SendTo.NotSignedIn.Title.v119" = "Cha do rinn thu clàradh a-steach dhan chunntas agad.";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:5fea40f2c596f39992e349d100c713e9593f036f57763d0907cf903bd4c97f89
+size 384

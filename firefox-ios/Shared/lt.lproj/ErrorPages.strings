@@ -1,6 +1,3 @@
-/* Shown in error pages for files that can't be shown and need to be downloaded. */
-"Open in Safari" = "Atverti naudojant „Safari“";
-
-/* Shown in error pages on a button that will try to load the page again */
-"Try again" = "Bandyti dar kartą";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:0558cd1892a2620e1862b084b7087866cff5410665e636611eff796ca44db8cf
+size 251

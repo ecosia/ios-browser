@@ -1,24 +1,3 @@
-/* (No Comment) */
-"New Private Tab" = "Nowa karta prywatna";
-
-/* (No Comment) */
-"New Tab" = "Nowa karta";
-
-/* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Ecosia używa aparatu do skanowania kodów QR, robienia zdjęć i nagrywania filmów.";
-
-/* Privacy - Face ID Usage Description */
-"NSFaceIDUsageDescription" = "Ecosia wymaga Face ID, by uzyskać dostęp do zachowanych haseł i metod płatności.";
-
-/* Privacy - Location When In Use Usage Description */
-"NSLocationWhenInUseUsageDescription" = "Pozwoli to odwiedzanym stronom żądać informacji o położeniu.";
-
-/* Privacy - Microphone Usage Description */
-"NSMicrophoneUsageDescription" = "Ecosia używa mikrofonu do nagrywania i przesyłania dźwięku.";
-
-/* Privacy - Photo Library Additions Usage Description */
-"NSPhotoLibraryAddUsageDescription" = "Pozwoli to zachowywać zdjęcia.";
-
-/* (No Comment) */
-"Scan QR Code" = "Skanuj kod QR";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:6014824c8922c2d7d43afac5a0486776d9f15dd02466739cff122ad477eafbd5
+size 933

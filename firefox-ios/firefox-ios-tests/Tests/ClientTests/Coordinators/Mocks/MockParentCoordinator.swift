@@ -1,14 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-@testable import Client
-
-class MockParentCoordinator: ParentCoordinatorDelegate {
-    var didFinishCalled = 0
-
-    func didFinish(from childCoordinator: Coordinator) {
-        didFinishCalled += 1
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:97c437c52ff67b979644d92014486491f62969a555e8259236153bcb82c47855
+size 425

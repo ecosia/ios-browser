@@ -1,9 +1,3 @@
-/* The cancel button when confirming clear history. */
-"Cancel" = "Cealaigh";
-
-/* The confirmation button that clears history even when Sync is connected. */
-"OK" = "OK";
-
-/* Description of the confirmation dialog shown when a user tries to clear history that's synced to another device. */
-"This action will clear all of your private data, including history from your synced devices." = "Gheofar réidh le do shonraí pearsanta má dhéanfar seo, stair do ghléasanna sioncronaithe san áireamh.";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:6f00d4d8fb9a20eaaa01900cb28115a71a74ece50b9d7a6f6f05f8732fd6de5b
+size 500

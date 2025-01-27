@@ -1,16 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-/// Protocol representing an address toolbar.
-public protocol AddressToolbar {
-    func configure(state: AddressToolbarState,
-                   toolbarDelegate: AddressToolbarDelegate,
-                   leadingSpace: CGFloat,
-                   trailingSpace: CGFloat,
-                   isUnifiedSearchEnabled: Bool)
-
-    func setAutocompleteSuggestion(_ suggestion: String?)
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:05e9fa653a07e0328f54a1d49ed8a32ccd711e59aaee81ab87b5cfdb139bb9eb
+size 602

@@ -1,15 +1,3 @@
-/* Settings item for clearing browsing history */
-"Browsing History" = "Blaaigeskiedenis";
-
-/* Settings item for clearing the cache */
-"Cache" = "Kas";
-
-/* Settings item for clearing cookies */
-"Cookies" = "Koekies";
-
-/* Settings item for clearing website data */
-"Offline Website Data" = "Vanlyn webwerfdata";
-
-/* Settings item for clearing passwords and login data */
-"Saved Logins" = "Gestoorde aanmeldings";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:0dceccb8a2923bb90d6ac79b0f2ac8dc28e5e0e04a1c5e0b6b9319a7354674a1
+size 413

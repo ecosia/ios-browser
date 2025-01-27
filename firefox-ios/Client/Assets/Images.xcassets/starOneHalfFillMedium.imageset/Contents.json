@@ -1,25 +1,3 @@
-{
-  "images" : [
-    {
-      "filename" : "starOneHalfFillMediumLight.pdf",
-      "idiom" : "universal"
-    },
-    {
-      "appearances" : [
-        {
-          "appearance" : "luminosity",
-          "value" : "dark"
-        }
-      ],
-      "filename" : "starOneHalfFillMediumDark.pdf",
-      "idiom" : "universal"
-    }
-  ],
-  "info" : {
-    "author" : "xcode",
-    "version" : 1
-  },
-  "properties" : {
-    "preserves-vector-representation" : true
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:e9aec64c7c1056c887cf75bda1dc784eeebed9ff054024235c782cbdda3e5d91
+size 457

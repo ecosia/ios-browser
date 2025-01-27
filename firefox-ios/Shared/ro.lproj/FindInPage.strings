@@ -1,12 +1,3 @@
-/* Done button in Find in Page Toolbar. */
-"Done" = "Gata";
-
-/* Text selection menu item */
-"Find in Page" = "Caută în pagină";
-
-/* Accessibility label for next result button in Find in Page Toolbar. */
-"Next in-page result" = "Rezultatul următor din pagină";
-
-/* Accessibility label for previous result button in Find in Page Toolbar. */
-"Previous in-page result" = "Rezultatul anterior din pagină";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:29733c359e0f1ac717a3c8fa59877f9b77667799d6169da35c044b15f8ccf0b8
+size 408

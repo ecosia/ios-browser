@@ -1,27 +1,3 @@
-/* Any copyright is dedicated to the Public Domain.
-   http://creativecommons.org/publicdomain/zero/1.0/ */
-
-/*
- * The list of phases mapped to their corresponding profiles.  The object
- * here must be in strict JSON format, as it will get parsed by the Python
- * testrunner (no single quotes, extra comma's, etc).
- */
-EnableEngines(["history"]);
-
-var phases = { "phase1": "profile1" };
-
-
-// expected history state
-var historyExpected = [
-    { uri: "http://www.example.com/",
-      visits: [
-        { type: 1 }
-      ]
-    }
-];
-
-// sync and verify history
-Phase("phase1", [
-  [Sync],
-  [History.verify, historyExpected]
-]);
+version https://git-lfs.github.com/spec/v1
+oid sha256:4bf9fea0aedf278daf5011d0dbd983b7ecda43fd6064667e42c48ccde6ba15d9
+size 626

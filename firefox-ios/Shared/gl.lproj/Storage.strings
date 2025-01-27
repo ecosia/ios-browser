@@ -1,12 +1,3 @@
-/* The name of the folder that contains desktop bookmarks in the menu. This should match bookmarks.folder.menu.label on Android. */
-"Bookmarks Menu" = "Menú dos marcadores";
-
-/* The name of the folder that contains desktop bookmarks in the toolbar. This should match bookmarks.folder.toolbar.label on Android. */
-"Bookmarks Toolbar" = "Barra de marcadores";
-
-/* The title of the folder that contains mobile bookmarks. This should match bookmarks.folder.mobile.label on Android. */
-"Mobile Bookmarks" = "Marcadores do móbil";
-
-/* The name of the folder that contains unsorted desktop bookmarks. This should match bookmarks.folder.unfiled.label on Android. */
-"Unsorted Bookmarks" = "Marcadores sen ordenar";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:d9549e90fcbeb014fdf2580715c5788747531fbf6b682c9ae4376bf95fc9dfbe
+size 710

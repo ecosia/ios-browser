@@ -1,6 +1,3 @@
-/* Error message shown in the remote tabs panel */
-"SendTo.NoDevicesFound.Message.v119" = "Njejsu žane druhe graty z tutym kontom zwjazane, kotrež bychu so dali synchronizować.";
-
-/* This message appears when a user tries to use 'Send Link to Device' action while not logged in */
-"SendTo.NotSignedIn.Title.v119" = "Njejsće pola swojeho konta přizjewjeny.";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:5ff19fa108c77950cf6f5633bf07626f4c2b3abb37ab477092f2770e29fc8ae8
+size 364

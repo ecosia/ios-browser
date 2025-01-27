@@ -1,3 +1,3 @@
-/* This label is meant to signify the section containing a group of items from the past hour. This is primarily used in the history library panel when grouping sites that have been visited in the last hour. */
-"LibraryPanel.Sections.LastHour.v134" = "Остання година";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:6cdbc33836fce6483c38d039d672d65a11dc5e0358e11b27400518221650c5af
+size 282

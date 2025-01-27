@@ -1,15 +1,3 @@
-/* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Ciri ini membolehkan anda mengambil dan memuat naik foto.";
-
-/* Privacy - Face ID Usage Description */
-"NSFaceIDUsageDescription" = "Ini membolehkan anda membuka aplikasi.";
-
-/* Privacy - Location When In Use Usage Description */
-"NSLocationWhenInUseUsageDescription" = "Laman web yang anda lawati mungkin meminta lokasi anda.";
-
-/* Privacy - Microphone Usage Description */
-"NSMicrophoneUsageDescription" = "Ciri ini membolehkan anda mengambil dan memuat naik video.";
-
-/* Privacy - Photo Library Additions Usage Description */
-"NSPhotoLibraryAddUsageDescription" = "Ciri ini membolehkan anda menyimpan dan memuat naik foto.";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:9e4c5ddccf59b54c1a31c6b6c6e6c4a8872d7990720ca832e564be2487fe4727
+size 700

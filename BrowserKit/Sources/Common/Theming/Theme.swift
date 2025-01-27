@@ -1,16 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-/// The `Theme` protocol, which contains the implementation of themes,
-/// which comprise of a set of standardized colours (including light and
-/// dark mode) and fonts for the application.
-public protocol Theme {
-    var type: ThemeType { get }
-    /* Ecosia: Use Ecosia color palette subclass
-    var colors: ThemeColourPalette { get }
-     */
-    var colors: EcosiaThemeColourPalette { get }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:911519ceda9a3f732ad9034c72af729588c88facaa1a60847329d46a8b9ff820
+size 618

@@ -1,18 +1,3 @@
-/* Settings item for clearing browsing history */
-"Browsing History" = "Sejarah Pelayaran";
-
-/* Settings item for clearing the cache */
-"Cache" = "Cache";
-
-/* Settings item for clearing cookies */
-"Cookies" = "Kuki";
-
-/* Settings item for deleting downloaded files */
-"Downloaded Files" = "Fail Dimuat Turun";
-
-/* Settings item for clearing website data */
-"Offline Website Data" = "Data Laman web Luar talian";
-
-/* Settings item for clearing passwords and login data */
-"Saved Logins" = "Log Masuk Tersimpan";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:6bcc85ef1d80a8d774d49804125a48521341c85fd17ee7ef500da9ac269dd2cc
+size 512

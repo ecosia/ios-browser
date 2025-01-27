@@ -1,26 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Common
-import Foundation
-import UIKit
-
-class ComponentDataSource: NSObject, UITableViewDataSource {
-    var componentData = ComponentData()
-    var theme: Theme = LightTheme()
-
-    // MARK: UITableViewDataSource
-
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return componentData.data.count
-    }
-
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: ComponentCell.cellIdentifier)
-        guard let cell = cell as? ComponentCell else { return UITableViewCell() }
-        cell.setup(componentData.data[indexPath.row])
-        cell.applyTheme(theme: theme)
-        return cell
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:d1c15b185ad9f169c019ec5862e58a3ca5c604c44e0124d80f6594162c00c01b
+size 957

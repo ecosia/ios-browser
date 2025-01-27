@@ -1,6 +1,3 @@
-/* When making a new search from the awesome bar, search results appear as the user write new letters in their search. Different sections with results from the selected search engine will appear. This string will be used as a header to separate the selected engine search results from current search query. */
-"Search.EngineSection.Title.v108" = "Szukaj w %@";
-
-/* When making a new search from the awesome bar, search results appear as the user write new letters in their search. This string will be used as a header for Google search results listed as suggestions. */
-"Search.Google.Title.v108" = "Szukaj w Google";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:379919faad22e8630f3a11b1a87cca35762c51cc2fbcf4a1259ba289d5df1e4f
+size 621

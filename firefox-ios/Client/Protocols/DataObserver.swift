@@ -1,13 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-protocol DataObserver {
-    var delegate: DataObserverDelegate? { get set }
-}
-
-protocol DataObserverDelegate: AnyObject {
-    func didInvalidateDataSource(forceRefresh forced: Bool)
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:e3e31a4d9c0300d823b9f840ec467c5798914edc92312b71d1ee7ed691dafcb8
+size 405

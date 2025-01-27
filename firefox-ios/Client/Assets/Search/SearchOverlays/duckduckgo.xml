@@ -1,8 +1,3 @@
-<SearchOverlay>
-  <replace target="//search:Param[@name='t' and @value='fpas']">
-    <Param name="t" value="ffip"/>
-  </replace>
-  <replace target="//search:Param[@name='t' and @value='ftas']">
-    <Param name="t" value="ffit"/>
-  </replace>
-</SearchOverlay>
+version https://git-lfs.github.com/spec/v1
+oid sha256:6e77561232f0402e3a8d69cfd7d101c57353ec311b1a6dcaf063d471d6dd7d16
+size 259

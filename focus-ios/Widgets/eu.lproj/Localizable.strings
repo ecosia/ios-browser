@@ -1,12 +1,3 @@
-/* Description for small size widget to add it to home screen. %@ is the name of the app(Focus/Klar). */
-"TodayWidget.QuickActionGalleryDescription" = "Gehitu %@(e)rako lasterbidea zure hasierako pantailan. Widgeta gehitu bezain laster, sakatu eta mantendu lasterbidea editatu eta beste bat hautatzeko.";
-
-/* Description for small size widget to add it to home screen. %@ is the name of the app(Focus/Klar). */
-"TodayWidget.QuickActionGalleryDescriptionV2" = "Hasi %@ bilaketa pribatu batekin zure bilaketa-motor lehenetsia erabiliz.";
-
-/* Quick Actions title when widget enters edit mode */
-"TodayWidget.QuickActionsGalleryTitle" = "Ekintza bizkorrak";
-
-/* Text shown on quick action widget inviting the user to browse in the app. %@ is the name of the app (Focus/Klar). */
-"TodayWidget.SearchInApp" = "Bilatu %@ erabiliz";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:e47de3dc60c468316f61ed4f5928c4fefc9f36adf022d67ddd721bd796017371
+size 826

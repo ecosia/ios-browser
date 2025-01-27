@@ -1,13 +1,3 @@
----
-name: "💔 Intermittent UI Test Issue"
-about: Create an issue to help log a UI test failure
-labels: "eng:intermittent-test"
-
----
-
-### Bitrise Test Run:
-Provide a Bitrise test run report link here showcasing the problem
-
-### Stacktrace:
-
-### Build:
+version https://git-lfs.github.com/spec/v1
+oid sha256:f468834afc7845677c487bd7374cc3c8d213c71b61a353b7e090cd157856c707
+size 253

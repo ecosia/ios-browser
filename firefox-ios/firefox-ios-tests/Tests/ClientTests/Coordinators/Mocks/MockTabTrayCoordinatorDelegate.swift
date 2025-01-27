@@ -1,14 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-@testable import Client
-
-class MockTabTrayCoordinatorDelegate: TabTrayCoordinatorDelegate {
-    var didDismissWasCalled = 0
-
-    func didDismissTabTray(from coordinator: TabTrayCoordinator) {
-        didDismissWasCalled += 1
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:94722b2005dddb19661010b45198547e02209afc58611e923dc19f09b8603e36
+size 453

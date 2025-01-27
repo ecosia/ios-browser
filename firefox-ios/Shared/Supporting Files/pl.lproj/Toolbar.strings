@@ -1,6 +1,3 @@
-/* Accessibility label for the new tab button that can be displayed in the navigation or address toolbar. */
-"Toolbar.NewTab.Button.v130" = "Nowa karta";
-
-/* Label for button on action sheet, accessed via long pressing tab toolbar button, that closes the current tab when pressed */
-"Toolbar.Tab.CloseThisTab.Button.v130" = "Zamknij tę kartę";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:283854921b3ed64b349a8d5184279274fc8d5f30a3595c7c83a40ec3a7c7e091
+size 347

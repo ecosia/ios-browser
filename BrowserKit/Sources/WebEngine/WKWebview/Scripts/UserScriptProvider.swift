@@ -1,19 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-protocol UserScriptProvider {
-    func getScript(for name: String) -> String?
-}
-
-class DefaultUserScriptProvider: UserScriptProvider {
-    func getScript(for name: String) -> String? {
-        guard let path = Bundle.main.path(forResource: name, ofType: "js"),
-              let source = try? NSString(contentsOfFile: path, encoding: String.Encoding.utf8.rawValue) as String
-        else { return nil }
-
-        return source
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:02231ffdd7df28a2c2768b7d2a6e740c4ec285aa9dae9c3af4f2a218048ab9bc
+size 655

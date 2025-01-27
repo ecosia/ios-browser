@@ -1,17 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-struct DebugSettingsBundleOptions {
-    /// Save logs to `~/Documents` folder
-    static var saveLogsToDocuments: Bool {
-        return UserDefaults.standard.bool(forKey: "SettingsBundleSaveLogsToDocuments")
-    }
-
-    /// Don't restore tabs on app launch
-    static var skipSessionRestore: Bool {
-        return UserDefaults.standard.bool(forKey: "SettingsBundleSkipSessionRestore")
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:fd0bb5856b78a80007810d2d5b2f325ed06ef606414274ffbc91415d7a02a219
+size 613

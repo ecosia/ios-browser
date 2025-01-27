@@ -1,24 +1,3 @@
-/* (No Comment) */
-"New Private Tab" = "Tab Preifat Newydd";
-
-/* (No Comment) */
-"New Tab" = "Tab Newydd";
-
-/* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Mae hwn yn caniatáu i chi gymryd lluniau a'u llwytho i fyny.";
-
-/* Privacy - Face ID Usage Description */
-"NSFaceIDUsageDescription" = "Mae Ecosia angen Face ID i gael mynediad i'ch cyfrineiriau a'ch dulliau talu sydd wedi'u cadw.";
-
-/* Privacy - Location When In Use Usage Description */
-"NSLocationWhenInUseUsageDescription" = "Efallai y bydd gwefannau rydych yn ymweld â nhw'n gofyn am eich lleoliad.";
-
-/* Privacy - Microphone Usage Description */
-"NSMicrophoneUsageDescription" = "Mae hyn yn caniatáu i chi gymryd a llwytho fideos.";
-
-/* Privacy - Photo Library Additions Usage Description */
-"NSPhotoLibraryAddUsageDescription" = "Mae hyn yn gadael i chi gadw lluniau.";
-
-/* (No Comment) */
-"Scan QR Code" = "Sganiwch y Cod QR";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:9db43bfd20bddd2993bdf18d5196e68d463ba196df2c1e6a6fac9b07b16de6f5
+size 918

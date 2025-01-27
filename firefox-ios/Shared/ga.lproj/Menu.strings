@@ -1,12 +1,3 @@
-/* Label for the button, displayed in the menu, used to close all tabs currently open. */
-"Menu.CloseAllTabsAction.Title" = "Dún Gach Cluaisín";
-
-/* Label for the button, displayed in the menu, used to open the Settings menu. */
-"Menu.OpenSettingsAction.Title" = "Socruithe";
-
-/* Label for the button, displayed in the menu, used to request the desktop version of the current website. */
-"Menu.ViewDekstopSiteAction.Title" = "Iarr Suíomh an Ríomhaire";
-
-/* Label for the button, displayed in the menu, used to request the mobile version of the current website. */
-"Menu.ViewMobileSiteAction.Title" = "Iarr an Suíomh Soghluaiste";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:fdf64efeea6f1fb1ec29846abc29cc2e8b2395fd2565c2f8af75d2acf95e0ccf
+size 636

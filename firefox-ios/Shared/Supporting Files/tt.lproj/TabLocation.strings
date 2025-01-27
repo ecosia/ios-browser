@@ -1,12 +1,3 @@
-/* Accessibility label for the security icon in url bar */
-"TabLocation.ETP.On.NotSecure.A11y.Label.v119" = "Бәйләнеш хәвефсез түгел";
-
-/* Accessibility label for the security icon in url bar */
-"TabLocation.ETP.On.Secure.A11y.Label.v119" = "Хәвефсез бәйләнеш";
-
-/* Accessibility label for the share button in url bar */
-"TabLocation.Share.A11y.Label.v119" = "Бу битне уртаклашу";
-
-/* Accessibility label for the shopping button in url bar */
-"TabLocation.Shopping.A11y.Label.v120" = "Бәяләмәләрне тикшерүче";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:ba78b0148346cda0d9aa848e53b13694de34f2fa85f661773db9d67f502bcbc6
+size 585

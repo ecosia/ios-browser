@@ -1,6 +1,3 @@
-/* Error message shown in the remote tabs panel */
-"SendTo.NoDevicesFound.Message.v119" = "您的账户中没有其他设备可供同步。";
-
-/* This message appears when a user tries to use 'Send Link to Device' action while not logged in */
-"SendTo.NotSignedIn.Title.v119" = "您尚未登录账户。";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:d06a80d3b6df952fd41949b4e853aecbe2a5dc7f75eaf38c64b7c9aae836bebc
+size 307

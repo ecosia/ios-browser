@@ -1,6 +1,3 @@
-/* This is the learn more text of the Pocket footer on Firefox Homepage. */
-"FirefoxHomepage.Pocket.Footer.LearnMore.v115" = "Więcej informacji";
-
-/* This is the title of the Pocket footer on Firefox Homepage. The first placeholder is for the Pocket app name and the second placeholder for the app name */
-"FirefoxHomepage.Pocket.Footer.Title.v116" = "Dostarczane przez %1$@. Część rodziny produktów %2$@.";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:7b61ff3fbf631ddd4b1883a72e214a3c3e67f3a190ed2e744d5130170ba84a54
+size 414

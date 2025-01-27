@@ -1,6 +1,3 @@
-/* Shown in error pages for files that can't be shown and need to be downloaded. */
-"Open in Safari" = "Safari brauzerida ochish";
-
-/* Shown in error pages on a button that will try to load the page again */
-"Try again" = "Yana urinib koʻrish";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:e78969088d7abe15a84058c50ae7eb754e2090dcef8e7993ce81e534a4d96650
+size 247

@@ -1,12 +1,3 @@
-{
-  "images" : [
-    {
-      "filename" : "themeLight.pdf",
-      "idiom" : "universal"
-    }
-  ],
-  "info" : {
-    "author" : "xcode",
-    "version" : 1
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:974ad58b57a382e094df07f20598d6869accf50a5f9a028f106c960cd16b58c1
+size 160

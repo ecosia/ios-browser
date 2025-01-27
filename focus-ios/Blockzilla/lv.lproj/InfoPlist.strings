@@ -1,15 +1,3 @@
-/* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Tas ļauj jums uzņemt un augšupielādēt fotoattēlus.";
-
-/* Privacy - Face ID Usage Description */
-"NSFaceIDUsageDescription" = "Tas ļauj jums atbloķēt lietotni.";
-
-/* Privacy - Location When In Use Usage Description */
-"NSLocationWhenInUseUsageDescription" = "Vietnes, ko apmeklējat, var pieprasīt jūsu atrašanās vietu.";
-
-/* Privacy - Microphone Usage Description */
-"NSMicrophoneUsageDescription" = "Tas ļauj jums uzņemt un augšupielādēt videoklipus.";
-
-/* Privacy - Photo Library Additions Usage Description */
-"NSPhotoLibraryAddUsageDescription" = "Tas ļauj saglabāt un augšupielādēt fotoattēlus.";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:452185ad2f5aaab5a88834f771600f4f5626cc1b069f2de070f4c997769c6022
+size 698

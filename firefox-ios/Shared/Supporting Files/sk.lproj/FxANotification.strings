@@ -1,6 +1,3 @@
-/* Title of notification shown when a remote device has requested to close a number of tabs. First parameter is the app name and the second parameter is the number of tabs. */
-"CloseTab.ArrivingNotification.title.v133" = "Zatvorené karty %1$@u: %2$@";
-
-/* Label for an action used to view recently closed tabs. */
-"CloseTab.ViewAction.title.v133" = "Zobraziť nedávno zatvorené karty";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:6d9b8417dd2eeb470ac70bac8714010df5658676b045d9817b00d1e1e73b423a
+size 390

@@ -1,6 +1,3 @@
-/* Accessibility label for next button that is displayed above the keyboard when a form field on a website was tapped. */
-"KeyboardAccessory.NextButton.Accessibility.Label.v124" = "다음 서식 필드";
-
-/* Accessibility label for previous button that is displayed above the keyboard when a form field on a website was tapped. */
-"KeyboardAccessory.PreviousButton.Accessibility.Label.v124" = "이전 서식 필드";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:f943e3654a3ec288280cd5127b44cbbf6c386840be335dc3d80d8aa7e5aa971a
+size 418

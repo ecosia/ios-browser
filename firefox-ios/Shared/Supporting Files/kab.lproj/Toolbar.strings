@@ -1,6 +1,3 @@
-/* Accessibility label for the new tab button that can be displayed in the navigation or address toolbar. */
-"Toolbar.NewTab.Button.v130" = "Iccer amaynut";
-
-/* Label for button on action sheet, accessed via long pressing tab toolbar button, that closes the current tab when pressed */
-"Toolbar.Tab.CloseThisTab.Button.v130" = "Mdel iccer-a";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:1a6189a645e3d04e8f87cee7cc3dbd84340a7434f364d8f5bd6f71055c079560
+size 344

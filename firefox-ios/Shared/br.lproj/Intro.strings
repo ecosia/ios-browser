@@ -1,9 +1,3 @@
-/* Sign in to Firefox account button on second intro screen. */
-"Intro.Slides.Button.SignIn" = "Kennaskañ";
-
-/* Title for the first panel 'Welcome' in the First Run tour. */
-"Intro.Slides.Welcome.Title.v2" = "Donemat e Ecosia";
-
-/* See http://mzl.la/1T8gxwo */
-"Start Browsing" = "Kregiñ gant ar merdeiñ";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:d9a0527d3bf3d2647c6438264c181fffb905b07a67aab1b8f31f5e838d4e7d72
+size 310

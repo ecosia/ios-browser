@@ -1,12 +1,3 @@
-/* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Սա հնարավորություն է տալիս ստանալ և վերբեռնել լուսանկարներ:";
-
-/* Privacy - Location When In Use Usage Description */
-"NSLocationWhenInUseUsageDescription" = "Ձեր այցելած կայքերը կարող են հարցնել ձեր տեղադրությունը:";
-
-/* Privacy - Microphone Usage Description */
-"NSMicrophoneUsageDescription" = "Սա հնարավորություն է տալիս ստանալ և վերբեռնել լուսանկարներ:";
-
-/* Privacy - Photo Library Additions Usage Description */
-"NSPhotoLibraryAddUsageDescription" = "Հնարավորություն է տալիս պահպանել և վերբեռնել լուսանկարները:";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:b0c4d4cde6cf359d14f723c33cbdccbee09d0b568ac13f15c3103b97fd81a80b
+size 794

@@ -1,3 +1,3 @@
-/* When a user is in the process of entering an address, a screen pops up prompting the user if they want to use a saved address. This string is used as the title label of the screen. */
-"Addresses.BottomSheet.UseSavedAddressBottomSheet.v124" = "Koristiti sačuvanu adresu?";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:1a54720057a7126554b0d23a7a9678df83f57c283fce827cae51b529fab76d74
+size 277

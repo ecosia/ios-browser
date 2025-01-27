@@ -1,24 +1,3 @@
-/* (No Comment) */
-"New Private Tab" = "لسان خاص جديد";
-
-/* (No Comment) */
-"New Tab" = "لسان جديد";
-
-/* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "يستعمل Firefox كاميراتك لمسح رموز QR رقميًا ولالتقاط الصور والڤِديوهات.";
-
-/* Privacy - Face ID Usage Description */
-"NSFaceIDUsageDescription" = "يتطلب Firefox تفعيل بصمة الوجه للوصول إلى كلمات المرور وطرق الدفع المحفوظة لديك.";
-
-/* Privacy - Location When In Use Usage Description */
-"NSLocationWhenInUseUsageDescription" = "يمكن أن تطلب منك المواقع التي تزورها معرفة مكانك.";
-
-/* Privacy - Microphone Usage Description */
-"NSMicrophoneUsageDescription" = "يستعمل Ecosia الميكروفون لتسجيل الصوت ورفعه.";
-
-/* Privacy - Photo Library Additions Usage Description */
-"NSPhotoLibraryAddUsageDescription" = "يتيح لك هذا حفظ الصور.";
-
-/* (No Comment) */
-"Scan QR Code" = "امسح رمز QR ضوئيا";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:9e05a8d3002b61695e5b888e08ceb8bf86a8a9b14627ce4bcc6a849c5fa4aa98
+size 1093

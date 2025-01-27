@@ -1,9 +1,3 @@
-/* The cancel button when confirming clear history. */
-"Cancel" = "Kanselahin";
-
-/* The confirmation button that clears history even when Sync is connected. */
-"OK" = "OK";
-
-/* Description of the confirmation dialog shown when a user tries to clear history that's synced to another device. */
-"This action will clear all of your private data, including history from your synced devices." = "Buburahin nito lahat ng iyong pribadong data kasama ang history ng iyong mga synced devices";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:8eaeb2e8bafe2bd2107a102f455f935bcf9dc808decd54438b1fde4c0f253063
+size 486

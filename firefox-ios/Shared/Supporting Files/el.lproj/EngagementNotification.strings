@@ -1,18 +1,3 @@
-/* Body of notification send to user after inactivity to encourage them to use the search feature. */
-"Engagement.Notification.Body.v112" = "Βρείτε κάτι κοντά σας. Ή ανακαλύψτε κάτι διασκεδαστικό.";
-
-/* Title of notification send to user after inactivity to encourage them to use the search feature. */
-"Engagement.Notification.Title.v112" = "Κάντε την πρώτη σας αναζήτηση";
-
-/* Body of notification send to user after inactivity to encourage them to use the private browsing feature. Placeholder is app name. */
-"Engagement.Notification.Treatment.A.Body.v114" = "Η ιδιωτική περιήγηση στο %@ δεν αποθηκεύει τις πληροφορίες σας και αποκλείει κρυφούς ιχνηλάτες.";
-
-/* Title of notification send to user after inactivity to encourage them to use the private browsing feature. */
-"Engagement.Notification.Treatment.A.Title.v114" = "Περιηγηθείτε χωρίς να αφήσετε ίχνη";
-
-/* Body of notification send to user after inactivity to encourage them to use the private browsing feature. Placeholder is the app name. */
-"Engagement.Notification.Treatment.B.Body.v114" = "Περιηγηθείτε χωρίς αποθηκευμένα cookie ή ιστορικό στο %@.";
-
-/* Title of notification send to user after inactivity to encourage them to use the private browsing feature. */
-"Engagement.Notification.Treatment.B.Title.v114" = "Δοκιμάστε την ιδιωτική περιήγηση";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:95027436cb31b5827f95f13b7b601f8d57414fb5c4518788ecda630d7576cc48
+size 1570

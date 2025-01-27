@@ -1,1 +1,3 @@
-Nous avons résolu quelques problèmes et ajouté des améliorations en termes de stabilité.
+version https://git-lfs.github.com/spec/v1
+oid sha256:ef462fef6b6fc6ba35b42786092db1ff73a63a4a6de2ced8765b2eb5ed8f8024
+size 93

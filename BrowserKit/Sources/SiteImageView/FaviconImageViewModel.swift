@@ -1,19 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import UIKit
-
-public struct FaviconImageViewModel {
-    var siteURLString: String?
-    var siteResource: SiteResource?
-    var faviconCornerRadius: CGFloat
-
-    public init(siteURLString: String? = nil,
-                siteResource: SiteResource? = nil,
-                faviconCornerRadius: CGFloat = 4) {
-        self.siteURLString = siteURLString
-        self.siteResource = siteResource
-        self.faviconCornerRadius = faviconCornerRadius
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:cc8c4117f85a8c73931f26ff7d150d79fc6f32e769e690a144a5a818d375194d
+size 655

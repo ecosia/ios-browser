@@ -1,19 +1,3 @@
-//
-//  DeferredMac.h
-//  DeferredMac
-//
-//  Created by John Gallagher on 9/12/14.
-//  Copyright (c) 2014 Big Nerd Ranch. All rights reserved.
-//
-
-#import <Cocoa/Cocoa.h>
-
-//! Project version number for DeferredMac.
-FOUNDATION_EXPORT double DeferredMacVersionNumber;
-
-//! Project version string for DeferredMac.
-FOUNDATION_EXPORT const unsigned char DeferredMacVersionString[];
-
-// In this header, you should import all the public headers of your framework using statements like #import <DeferredMac/PublicHeader.h>
-
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:b0a1fdea948f80058ac94199db2bfd8eb5e73bf0ba3ee0396c6ecc887a7cbe30
+size 517

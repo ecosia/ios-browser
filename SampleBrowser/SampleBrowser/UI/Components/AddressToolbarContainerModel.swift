@@ -1,31 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Common
-import Foundation
-import ToolbarKit
-
-struct AddressToolbarContainerModel {
-    let toolbarPosition: AddressToolbarPosition
-    let scrollY: CGFloat
-    let isPrivate: Bool
-    let locationViewState: LocationViewState
-    let navigationActions: [ToolbarElement]
-    let pageActions: [ToolbarElement]
-    let browserActions: [ToolbarElement]
-    var manager: ToolbarManager = DefaultToolbarManager()
-
-    var state: AddressToolbarState {
-        return AddressToolbarState(
-            locationViewState: locationViewState,
-            navigationActions: navigationActions,
-            pageActions: pageActions,
-            browserActions: browserActions,
-            borderPosition: borderPosition)
-    }
-
-    private var borderPosition: AddressToolbarBorderPosition? {
-        manager.getAddressBorderPosition(for: .top, isPrivate: false, scrollY: scrollY)
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:d6fb1a0d2eccd46c6dcab21ab4cac592cb3944eb5df8a0666e1de0d4a0a416b8
+size 1081

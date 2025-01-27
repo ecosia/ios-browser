@@ -1,27 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Storage
-import Shared
-import Common
-
-import enum MozillaAppServices.VisitType
-
-extension LibraryViewController: LibraryPanelDelegate {
-    func libraryPanelDidRequestToOpenInNewTab(_ url: URL, isPrivate: Bool) {
-        delegate?.libraryPanelDidRequestToOpenInNewTab(url, isPrivate: isPrivate)
-        DispatchQueue.main.async {
-            self.dismiss(animated: true, completion: nil)
-        }
-    }
-
-    func libraryPanel(didSelectURL url: URL, visitType: VisitType) {
-        delegate?.libraryPanel(didSelectURL: url, visitType: visitType)
-        dismiss(animated: true, completion: nil)
-    }
-
-    var libraryPanelWindowUUID: WindowUUID {
-        return windowUUID
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:efaae12b2534c1c507191bdfb5a7df2bfa6abe7ed773280ba549b140156fdc9a
+size 889

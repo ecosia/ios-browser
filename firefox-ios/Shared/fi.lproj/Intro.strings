@@ -1,9 +1,3 @@
-/* Sign in to Firefox account button on second intro screen. */
-"Intro.Slides.Button.SignIn" = "Kirjaudu sisään";
-
-/* Title for the first panel 'Welcome' in the First Run tour. */
-"Intro.Slides.Welcome.Title.v2" = "Tervetuloa Ecosiaiin";
-
-/* See http://mzl.la/1T8gxwo */
-"Start Browsing" = "Aloita selaaminen";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:188cc7a513456a7ae50faf4bd818eee697423a8bc3e33e3eabd0ffcb18c4cc97
+size 314

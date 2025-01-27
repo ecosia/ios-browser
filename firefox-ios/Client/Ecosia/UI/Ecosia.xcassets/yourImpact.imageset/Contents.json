@@ -1,26 +1,3 @@
-{
-  "images" : [
-    {
-      "filename" : "yourImpact.pdf",
-      "idiom" : "universal"
-    },
-    {
-      "appearances" : [
-        {
-          "appearance" : "luminosity",
-          "value" : "dark"
-        }
-      ],
-      "filename" : "yourImpactDark.pdf",
-      "idiom" : "universal"
-    }
-  ],
-  "info" : {
-    "author" : "xcode",
-    "version" : 1
-  },
-  "properties" : {
-    "preserves-vector-representation" : true,
-    "template-rendering-intent" : "original"
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:e6b8a3663601d8e5abf148f1fb276fbf453a4d060cbf9c049b3fe33b522186b2
+size 476

@@ -1,12 +1,3 @@
-/* Button to go to the next card in Focus onboarding. */
-"Intro.Slides.Next.Button" = "આગળ";
-
-/* Description for the 'Favorite Search Engine' panel in the First Run tour. */
-"Intro.Slides.Search.Description" = "કંઈક અલગ શોધી રહ્યાં છો? કોઈ અલગ શોધ એન્જિન પસંદ કરો.";
-
-/* Title for the second  panel 'Search' in the First Run tour. */
-"Intro.Slides.Search.Title" = "તમારી શોધ, તમારી રીત";
-
-/* Button to skip onboarding in Focus */
-"Intro.Slides.Skip.Button" = "છોડો";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:e4fbc3dddc23168228583b0ee58ce629da63473048d9776fc622560689784402
+size 596

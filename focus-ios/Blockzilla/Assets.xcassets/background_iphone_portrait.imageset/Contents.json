@@ -1,25 +1,3 @@
-{
-  "images" : [
-    {
-      "filename" : "iPhone - Splash@2x.png",
-      "idiom" : "universal"
-    },
-    {
-      "appearances" : [
-        {
-          "appearance" : "luminosity",
-          "value" : "dark"
-        }
-      ],
-      "filename" : "iPhone_Production_Mode_Portrait.png",
-      "idiom" : "universal"
-    }
-  ],
-  "info" : {
-    "author" : "xcode",
-    "version" : 1
-  },
-  "properties" : {
-    "preserves-vector-representation" : true
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:ff6d94c4ef5d0ad8b479be17c2d233e872e0c4c030548f8f077353f627e513d1
+size 455

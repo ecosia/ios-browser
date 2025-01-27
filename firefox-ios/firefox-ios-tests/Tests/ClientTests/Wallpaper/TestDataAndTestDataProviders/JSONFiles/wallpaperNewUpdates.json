@@ -1,24 +1,3 @@
-{
-    "last-updated-date": "2022-02-01",
-    "collections": [
-        {
-            "id": "firefox",
-            "description": null,
-            "heading": null,
-            "learn-more-url": "https://www.mozilla.com",
-            "available-locales": ["en-US", "es-US", "en-CA", "fr-CA"],
-            "availability-range": {
-                "start": "2022-06-27",
-                "end": "2022-09-30"
-            },
-            "wallpapers": [
-                {
-                    "id": "beachVibes",
-                    "text-color": "ADD8E6",
-                    "card-color": "ADD8E6",
-                    "logo-text-color": "ADD8E6",
-                }
-            ]
-        }
-    ]
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:52434ea4910dd2f0ce3d066040a4128c9621fb7c0b1db6f4329eb412d980ed89
+size 690

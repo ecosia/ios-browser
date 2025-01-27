@@ -1,10 +1,3 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-
-import Foundation
-
-struct SecureConnectionStatus: Equatable {
-    let url: URL
-    let isSecureConnection: Bool
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:276833a7784f7759708e57e55733ee75c00fde2db2afc3a95444efe4f6c22643
+size 320

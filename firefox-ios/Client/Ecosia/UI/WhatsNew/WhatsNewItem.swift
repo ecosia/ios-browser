@@ -1,11 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-struct WhatsNewItem {
-    let image: UIImage?
-    let title: String
-    let subtitle: String
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:6786c4ea98ea19cd4ad8b9ef707dc0531ecc5215bbb1362700e85fe809f5acfe
+size 316

@@ -1,5 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
+version https://git-lfs.github.com/spec/v1
+oid sha256:f152d62352fff6d646ba93f3a63411053e799d672fd238acb665037f83b75d5f
+size 220

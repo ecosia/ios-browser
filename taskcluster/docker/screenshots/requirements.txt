@@ -1,3 +1,3 @@
-aiohttp-retry
-PyYAML
-taskcluster
+version https://git-lfs.github.com/spec/v1
+oid sha256:c33bfff580c09287916637df2a08741def4307fc363d5169085cbbe34d50ab7c
+size 33

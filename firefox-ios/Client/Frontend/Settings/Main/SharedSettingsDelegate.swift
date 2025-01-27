@@ -1,12 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-import Shared
-
-/// The actions used by multiple child settings
-protocol SharedSettingsDelegate: AnyObject {
-    func askedToReload()
-    func askedToShow(alert: AlertController)
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:a49701cbf870fbe1437037b21b66bba7f9e86f6cb40efd1fa0f7a9ba55d11741
+size 400

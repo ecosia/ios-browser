@@ -1,6 +1,3 @@
-/* Accessibility label for next button that is displayed above the keyboard when a form field on a website was tapped. */
-"KeyboardAccessory.NextButton.Accessibility.Label.v124" = "Maes ffurflen nesaf";
-
-/* Accessibility label for previous button that is displayed above the keyboard when a form field on a website was tapped. */
-"KeyboardAccessory.PreviousButton.Accessibility.Label.v124" = "Maes ffurflen flaenorol";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:7f567c5a35598ed8ed65a8e176d8a6000ce47b067276f7fe689e7a2b5ba9e375
+size 420

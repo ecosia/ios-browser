@@ -1,13 +1,3 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-
-import Foundation
-
-extension PhotonActionSheetItem {
-    init(_ menuAction: MenuAction) {
-        self.init(title: menuAction.title, iconString: menuAction.image) { _ in
-            menuAction.action()
-        }
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:2f84b57bf3ac4b78e48b9c0bad089ab30960ab7e629f9d19aacda37a6103804a
+size 426

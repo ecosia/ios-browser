@@ -1,12 +1,3 @@
-/* Done button in Find in Page Toolbar. */
-"Done" = "Fet";
-
-/* Text selection menu item */
-"Find in Page" = "Cerca a la pàgina";
-
-/* Accessibility label for next result button in Find in Page Toolbar. */
-"Next in-page result" = "Resultat següent de la cerca a la pàgina";
-
-/* Accessibility label for previous result button in Find in Page Toolbar. */
-"Previous in-page result" = "Resultat anterior de la cerca a la pàgina";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:6b713a2cf548f81392c1c6eaaeb4a2a215f748d7b7e30e21d2bb264d60d7940c
+size 429

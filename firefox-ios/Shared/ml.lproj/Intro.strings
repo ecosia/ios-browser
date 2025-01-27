@@ -1,9 +1,3 @@
-/* Sign in to Firefox account button on second intro screen. */
-"Intro.Slides.Button.SignIn" = "പ്രവേശിക്കുക";
-
-/* Title for the first panel 'Welcome' in the First Run tour. */
-"Intro.Slides.Welcome.Title.v2" = "ഫയർ‌ഫോക്സിലേക്ക് സ്വാഗതം";
-
-/* See http://mzl.la/1T8gxwo */
-"Start Browsing" = "ബ്രൗസിങ് തുടങ്ങൂക";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:f64c4894c29f1b820ca2e4f00a5bf62d9298f8f2ac75dbee9a5c4a364954c4f0
+size 415

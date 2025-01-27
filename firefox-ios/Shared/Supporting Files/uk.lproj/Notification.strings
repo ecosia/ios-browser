@@ -1,3 +1,3 @@
-/* Fallback Title of notification if no notification title was configured. The notification is an advise to the user. The argument is the app name. */
-"Notification.Fallback.Title.v113" = "Порада від %@";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:1eb8c51c59175e7cd1af4fda6e708e5977a49f3067ba09e9ee1c963b7df3ad32
+size 215

@@ -1,18 +1,3 @@
-/* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "U rasmga tushirish va internetga yuklashda yordam beradi.";
-
-/* Privacy - Face ID Usage Description */
-"NSFaceIDUsageDescription" = "Ilova qulfi ochiladi.";
-
-/* Privacy - Location When In Use Usage Description */
-"NSLocationWhenInUseUsageDescription" = "Sahifalarda joylashuvingiz so‘ralishi mumkin.";
-
-/* Privacy - Microphone Usage Description */
-"NSMicrophoneUsageDescription" = "U videoga olish va internetga yuklash imkonini beradi.";
-
-/* Privacy - Photo Library Additions Usage Description */
-"NSPhotoLibraryAddUsageDescription" = "This lets you save and upload photos.";
-
-/* This is the menu item that appears when you long press the Focus icon on the phone home screen. */
-"UIApplicationShortcutItemTitle.EraseAndOpen" = "Oʻchirish va ochish";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:7d92c53f0eaf04f3477cc17b559df0cec319caf5032f8a5212719ebd5bc12be5
+size 826

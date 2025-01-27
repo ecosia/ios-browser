@@ -1,16 +1,3 @@
-{
-  "images" : [
-    {
-      "filename" : "news.pdf",
-      "idiom" : "universal"
-    }
-  ],
-  "info" : {
-    "author" : "xcode",
-    "version" : 1
-  },
-  "properties" : {
-    "preserves-vector-representation" : true,
-    "template-rendering-intent" : "template"
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:0c3f35ccaf45bd5755220cb76cee75a272e629585f5aef8ea812d5e465d4c84b
+size 269

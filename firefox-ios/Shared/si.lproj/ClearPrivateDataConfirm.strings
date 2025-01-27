@@ -1,9 +1,3 @@
-/* The cancel button when confirming clear private data. */
-"Cancel" = "අවලංගු";
-
-/* The button that clears private data. */
-"OK" = "හරි";
-
-/* Description of the confirmation dialog shown when a user tries to clear their private data. */
-"This action will clear all of your private data. It cannot be undone." = "මෙම ක්‍රියාමාර්ගය ඔබගේ සියළුම පෞද්. දත්ත මකා දමනු ඇත. එය අප්‍රතිවර්ත්‍යයි.";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:bd96617ae8d39705cf3d927280b416637e726118657f7640e88d550f2b5241fd
+size 531

@@ -1,6 +1,3 @@
-/* Biometric authentication is when the system prompts users for Face ID or fingerprint before accessing protected information. This string asks the user to enter their device passcode to access the protected screen. */
-"Biometry.Screen.UniversalAuthenticationReason.v115" = "Pro přístup k heslům se autentizujte.";
-
-/* Biometric authentication is when the system prompts users for Face ID or fingerprint before accessing protected information. This string asks the user to enter their device passcode to access the protected screen for logins and encrypted cards. */
-"Biometry.Screen.UniversalAuthenticationReason.v122" = "Ověřením získáte přístup k uloženým heslům a platebním metodám.";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:5e6e30ec3c6bd14e2376f21eed585a2c5a1bfa5d9c227adc1fabfd4ee979e58c
+size 706

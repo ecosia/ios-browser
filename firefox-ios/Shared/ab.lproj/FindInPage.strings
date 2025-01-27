@@ -1,12 +1,3 @@
-/* Done button in Find in Page Toolbar. */
-"Done" = "Амазеи";
-
-/* Text selection menu item */
-"Find in Page" = "Адаҟьаҿы аԥшаара";
-
-/* Accessibility label for next result button in Find in Page Toolbar. */
-"Next in-page result" = "Анаҩстәи аҭак адаҟьаҿы";
-
-/* Accessibility label for previous result button in Find in Page Toolbar. */
-"Previous in-page result" = "Уаанӡатәи алҵшәа адаҟьаҿы";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:a34c2a908db926da82c0ac584040a5fef180da6ed2d958b7a422135bbe4a6302
+size 457

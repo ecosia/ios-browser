@@ -1,18 +1,3 @@
-/* The accessibility label for the back button in the Main menu header navigation view. */
-"MainMenu.Account.AccessibilityLabels.BackButton.v132" = "ກັບຄືນ";
-
-/* The accessibility label for the close button in the Main menu. */
-"MainMenu.Account.AccessibilityLabels.CloseButton.v132" = "ປິດ";
-
-/* On the main menu, at the top, when the user is signed out. The title for the sign in action */
-"MainMenu.Account.SignedOut.Title.v131" = "ລົງຊື່ເຂົ້າໃຊ້";
-
-/* On the main menu, at the top, when the user is signed in but there was an error syncing. The description subtitle for the sync error state. */
-"MainMenu.Account.SyncError.Description.v131" = "ຢຸດການຊິງຄ໌ໄວ້ຊົ່ວຄາວ";
-
-/* On the main menu, the title for the action that will take the user to a website to get help from Mozilla. */
-"MainMenu.SettingsSection.GetHelp.Title.v131" = "ຂໍຄວາມຊ່ວຍເຫລືອ";
-
-/* On the main menu, the title for the action that will take the user to the Settings menu. */
-"MainMenu.SettingsSection.Settings.Title.v131" = "ການຕັ້ງຄ່າ";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:9c6edfc937c2735c7accc6ff71b0db61f1328901f23d65de0ac67262006578da
+size 1150

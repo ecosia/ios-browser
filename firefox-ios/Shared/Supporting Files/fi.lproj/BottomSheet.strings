@@ -1,3 +1,3 @@
-/* When a user is in the process of entering an address, a screen pops up prompting the user if they want to use a saved address. This string is used as the title label of the screen. */
-"Addresses.BottomSheet.UseSavedAddressBottomSheet.v124" = "Käytetäänkö tallennettua osoitetta?";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:5c59915e03996c6cc09d14e0bc4f1d90fbf7cb1a64d89cd09ad8d7712289a11a
+size 289

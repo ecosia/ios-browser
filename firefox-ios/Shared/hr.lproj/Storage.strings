@@ -1,12 +1,3 @@
-/* The name of the folder that contains desktop bookmarks in the menu. This should match bookmarks.folder.menu.label on Android. */
-"Bookmarks Menu" = "Meni zabilješki";
-
-/* The name of the folder that contains desktop bookmarks in the toolbar. This should match bookmarks.folder.toolbar.label on Android. */
-"Bookmarks Toolbar" = "Alatna traka za zabilješke";
-
-/* The title of the folder that contains mobile bookmarks. This should match bookmarks.folder.mobile.label on Android. */
-"Mobile Bookmarks" = "Zabilješke mobitela";
-
-/* The name of the folder that contains unsorted desktop bookmarks. This should match bookmarks.folder.unfiled.label on Android. */
-"Unsorted Bookmarks" = "Nerazvrstane zabilješke";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:de5afacb4e30fa95696080bed0ea5fd78ac9974082ee21e67e27663b93a8e152
+size 716

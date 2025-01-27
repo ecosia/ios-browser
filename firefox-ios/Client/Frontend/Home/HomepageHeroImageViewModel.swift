@@ -1,16 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-import SiteImageView
-
-struct HomepageHeroImageViewModel: HeroImageViewModel {
-    let urlStringRequest: String
-    let type: SiteImageView.SiteImageType = .heroImage
-    let generalCornerRadius: CGFloat = HomepageViewModel.UX.generalCornerRadius
-    let faviconCornerRadius: CGFloat = HomepageViewModel.UX.generalCornerRadius
-    let faviconBorderWidth: CGFloat = HomepageViewModel.UX.generalBorderWidth
-    let heroImageSize: CGSize
-    let fallbackFaviconSize: CGSize = HomepageViewModel.UX.fallbackFaviconSize
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:0eca1aef7fd1bf4dad4005fa7af7c70bebf0d84f1e5fab827c8386eeeca5114f
+size 735

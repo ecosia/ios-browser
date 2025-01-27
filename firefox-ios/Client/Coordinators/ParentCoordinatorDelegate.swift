@@ -1,10 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-protocol ParentCoordinatorDelegate: AnyObject {
-    /// Notifies the parent coordinator that a child coordinator has finished his session.
-    func didFinish(from childCoordinator: Coordinator)
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:204dafcc82621f7073a82833c7af33ebcf04a2c4f97efbdd7f1f2eecf3a19716
+size 417

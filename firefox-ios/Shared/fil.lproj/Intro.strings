@@ -1,9 +1,3 @@
-/* Sign in to Firefox account button on second intro screen. */
-"Intro.Slides.Button.SignIn" = "Mag sign-in";
-
-/* Title for the first panel 'Welcome' in the First Run tour. */
-"Intro.Slides.Welcome.Title.v2" = "Maligayang pagdating sa Ecosia";
-
-/* See http://mzl.la/1T8gxwo */
-"Start Browsing" = "Simulang mag-Browse";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:155caae271e6da2b632bd95405025f151e26f1a0cf95b8088a21e8e25c6ec33b
+size 320

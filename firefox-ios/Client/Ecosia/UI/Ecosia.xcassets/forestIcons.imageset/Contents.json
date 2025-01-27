@@ -1,15 +1,3 @@
-{
-  "images" : [
-    {
-      "filename" : "Forest.pdf",
-      "idiom" : "universal"
-    }
-  ],
-  "info" : {
-    "author" : "xcode",
-    "version" : 1
-  },
-  "properties" : {
-    "preserves-vector-representation" : true
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:f2f40500b0d6e2e98edd33daf1ff384a9ab6e224dc887c95d1518c909ad12d50
+size 225

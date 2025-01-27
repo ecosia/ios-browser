@@ -1,9 +1,3 @@
-/* Toggle for address autofill syncing setting */
-"FirefoxSync.AddressAutofillEngine.v124" = "Cyfeiriadau";
-
-/* Toggle for credit cards syncing setting */
-"FirefoxSync.CreditCardsEngine.v122" = "Dulliau Talu";
-
-/* Toggle passwords syncing setting, in the Settings > Sync Data menu of the app. */
-"Sync.LoginsEngine.Title.v122" = "Cyfrineiriau";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:42c904b229bedbf52027fc9ef63f3d986811d6fd972250c05e9cdf2e0aa57c0c
+size 346

@@ -1,6 +1,3 @@
-/* Title of notification shown when a remote device has requested to close a number of tabs. First parameter is the app name and the second parameter is the number of tabs. */
-"CloseTab.ArrivingNotification.title.v133" = "%1$@ lét att %2$@ faner";
-
-/* Label for an action used to view recently closed tabs. */
-"CloseTab.ViewAction.title.v133" = "Vis nyleg attlatne faner";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:bb88b817b153ba0a5eb9ac8acdda5f309d0020deaee146e33d7f55e4de62ffb3
+size 375

@@ -1,6 +1,3 @@
-/* Text displayed above the input field when changing the existing passcode */
-"Enter passcode" = "パスコードを入力してください";
-
-/* Touch ID prompt subtitle when accessing logins */
-"Use your fingerprint to access Logins now." = "指紋認証を利用してログインする。";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:115a07201c0a917ca92f64e0aba51ef16259c2fc8e47a11a70c71ec46e4d8a2f
+size 298

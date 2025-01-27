@@ -1,6 +1,3 @@
-/* Text displayed above the input field when changing the existing passcode */
-"Enter passcode" = "Jepni kodkalim";
-
-/* Touch ID prompt subtitle when accessing logins */
-"Use your fingerprint to access Logins now." = "Përdorni shenja gishtash tuajat që të hyni te Kredenciale Hyrjesh.";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:0993b2e7133dd60d604daf474d84dd82b73201cd23b8dcaf5d3c93b96c17f1fe
+size 291

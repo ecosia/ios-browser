@@ -1,16 +1,3 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-
-import Intents
-
-class IntentHandler: INExtension, EraseIntentHandling {
-    func handle(intent: EraseIntent, completion: @escaping (EraseIntentResponse) -> Void) {
-        Settings.setSiriRequestErase(to: true)
-        completion(EraseIntentResponse(code: .success, userActivity: nil ))
-    }
-
-    override func handler(for intent: INIntent) -> Any {
-        return self
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:c5af74e3426bf8bb8b1b4a668d3c7b720e76110571d2c07967e4dcfcceebe72f
+size 585

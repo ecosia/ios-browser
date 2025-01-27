@@ -1,16 +1,3 @@
-{
-  "images" : [
-    {
-      "filename" : "privateSearch.pdf",
-      "idiom" : "universal"
-    }
-  ],
-  "info" : {
-    "author" : "xcode",
-    "version" : 1
-  },
-  "properties" : {
-    "preserves-vector-representation" : true,
-    "template-rendering-intent" : "template"
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:796305f7951b242a15fcc6dc3efe29d3d285c725f0fce1f43eec94201b021d9f
+size 278

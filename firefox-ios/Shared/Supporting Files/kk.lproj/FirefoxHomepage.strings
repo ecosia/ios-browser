@@ -1,12 +1,3 @@
-/* When the user ends their private session, they are returned to the private mode homepage, and a toastbar popups confirming that their data has been erased. This is the label for that toast. */
-"FirefoxHomepage.FeltDeletion.Link.v122" = "Жекелік шолу деректері өшірілді";
-
-/* The body of the message for the card that educates users about how private mode works. The card shows up on the homepage when in the new privacy mode. Placeholder refers to app name. */
-"FirefoxHomepage.FeltPrivacyUI.Body.v122" = "Барлық жеке беттерді жапқанда, %@ cookie файлдарын, тарихты және сайт деректерін өшіреді.";
-
-/* The link for the card that educates users about how private mode works. The link redirects to an external site for more information. The card shows up on the homepage when in the new privacy mode. */
-"FirefoxHomepage.FeltPrivacyUI.Link.v122" = "Менің белсенділігімді кім көре алады?";
-
-/* The title for the card that educates users about how private mode works. The card shows up on the homepage when in the new privacy mode. */
-"FirefoxHomepage.FeltPrivacyUI.Title.v122" = "Бұл құрылғыда із қалдырмау";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:b73f4ac455bba105168bc7ee1375ad875019d44e3ebe6c6b998081b7ef8b5f7b
+size 1260

@@ -1,25 +1,3 @@
-{
-  "images" : [
-    {
-      "filename" : "Add Shortcut.pdf",
-      "idiom" : "universal"
-    },
-    {
-      "appearances" : [
-        {
-          "appearance" : "luminosity",
-          "value" : "dark"
-        }
-      ],
-      "filename" : "icon_shortcuts.pdf",
-      "idiom" : "universal"
-    }
-  ],
-  "info" : {
-    "author" : "xcode",
-    "version" : 1
-  },
-  "properties" : {
-    "preserves-vector-representation" : true
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:2a440cc44fb18b6320cb6de9668f865557fabf4a5a280246afce4a63fec2b48b
+size 432
