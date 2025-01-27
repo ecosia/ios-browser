@@ -139,4 +139,7 @@ private class EcosiaLightSemanticColors: EcosiaSemanticColors {
     var textPrimary: UIColor = EcosiaColorPrimitive.Black
     var textSecondary: UIColor = EcosiaColorPrimitive.Gray50
     var textTertiary: UIColor = EcosiaColorPrimitive.White
+
+    // MARK: Unmapped Snowflakes
+    var barBackground: UIColor = EcosiaColorPrimitive.White
 }

@@ -680,7 +680,7 @@ class SearchViewController: SiteTableViewController,
         /* Ecosia: Update background
         searchEngineContainerView.layer.backgroundColor = currentTheme().colors.layer1.cgColor
         */
-        searchEngineContainerView.layer.backgroundColor = UIColor.legacyTheme.ecosia.barBackground.withAlphaComponent(0.8).cgColor
+        searchEngineContainerView.layer.backgroundColor = currentTheme().colors.ecosia.barBackground.withAlphaComponent(0.8).cgColor
 
         searchEngineContainerView.layer.shadowColor = currentTheme().colors.shadowDefault.cgColor
         reloadData()

@@ -29,13 +29,7 @@ public protocol EcosiaSemanticColors {
     var buttonContentSecondary: UIColor { get }
     var buttonBackgroundTransparentActive: UIColor { get }
 
-    // MARK: - Icon
-    var iconPrimary: UIColor { get }
-    var iconSecondary: UIColor { get }
-    var iconDecorative: UIColor { get }
-
     // MARK: - State
-    var stateError: UIColor { get }
     var stateInformation: UIColor { get }
     var stateDisabled: UIColor { get }
 
@@ -43,6 +37,15 @@ public protocol EcosiaSemanticColors {
     var textPrimary: UIColor { get }
     var textSecondary: UIColor { get }
     var textTertiary: UIColor { get }
+
+    // MARK: - Snowflakes ⚠️ to be assessed ⚠️
+    var iconPrimary: UIColor { get }
+    var iconSecondary: UIColor { get }
+    var iconDecorative: UIColor { get }
+    var stateError: UIColor { get }
+
+    // MARK: Unmapped Snowflakes
+    var barBackground: UIColor { get }
 }
 
 public protocol EcosiaThemeColourPalette: ThemeColourPalette {
@@ -73,4 +76,5 @@ class FakeEcosiaSemanticColors: EcosiaSemanticColors {
     var textPrimary: UIColor = .systemGray
     var textSecondary: UIColor = .systemGray
     var textTertiary: UIColor = .systemGray
+    var barBackground: UIColor = .systemGray
 }
