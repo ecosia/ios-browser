@@ -445,7 +445,7 @@ class MultiplyImpact: UIViewController, Themeable {
         }
 
         [sharing, flowBackground].forEach {
-            $0?.backgroundColor = .legacyTheme.ecosia.impactMultiplyCardBackground
+            $0?.backgroundColor = theme.colors.ecosia.impactMultiplyCardBackground
         }
 
         [firstStep, secondStep, thirdStep, fourthStep].forEach {
@@ -456,7 +456,7 @@ class MultiplyImpact: UIViewController, Themeable {
             $0?.backgroundColor = theme.colors.ecosia.borderDecorative
         }
 
-        referralImpactRowView.customBackgroundColor = .legacyTheme.ecosia.impactMultiplyCardBackground
+        referralImpactRowView.customBackgroundColor = theme.colors.ecosia.impactMultiplyCardBackground
         referralImpactRowView.applyTheme()
 
         updateBarAppearance(theme: theme)

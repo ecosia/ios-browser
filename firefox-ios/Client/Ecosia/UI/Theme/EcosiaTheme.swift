@@ -12,7 +12,6 @@ extension LegacyTheme {
 }
 
 class EcosiaTheme {
-    var impactMultiplyCardBackground: UIColor { .Light.Background.primary }
     var trackingSheetBackground: UIColor { .Light.Background.tertiary }
     var moreNewsButton: UIColor { .Light.Button.backgroundSecondary }
     var newsPlaceholder: UIColor { .Light.Background.secondary }
@@ -73,7 +72,6 @@ class EcosiaTheme {
 }
 
 final class DarkEcosiaTheme: EcosiaTheme {
-    override var impactMultiplyCardBackground: UIColor { .Dark.Background.tertiary }
     override var trackingSheetBackground: UIColor { .Dark.Background.secondary }
     override var moreNewsButton: UIColor { .Dark.Background.primary }
     override var newsPlaceholder: UIColor { .Grey.fifty }

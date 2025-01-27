@@ -22,6 +22,7 @@ final class PageActionMenu: UIViewController, UIGestureRecognizerDelegate {
     var themeManager: ThemeManager
     var themeObserver: NSObjectProtocol?
     var notificationCenter: NotificationProtocol = NotificationCenter.default
+    var currentTheme: Theme { themeManager.getCurrentTheme(for: windowUUID) }
 
     // MARK: - Properties
 
@@ -188,8 +189,7 @@ extension PageActionMenu: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: PageActionMenuCell.UX.cellIdentifier, for: indexPath) as! PageActionMenuCell
         cell.determineTableViewCellPositionAt(indexPath, forActions: viewModel.actions)
-        let theme = themeManager.getCurrentTheme(for: windowUUID)
-        cell.configure(with: viewModel, at: indexPath, theme: theme)
+        cell.configure(with: viewModel, at: indexPath, theme: currentTheme)
         return cell
     }
 
@@ -205,6 +205,7 @@ extension PageActionMenu: UITableViewDataSource, UITableViewDelegate {
 
         let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: UX.shortcuts) as! PageActionsShortcutsHeader
         header.delegate = delegate
+        header.applyTheme(theme: currentTheme)
         return header
     }
 
@@ -224,14 +225,13 @@ extension PageActionMenu: UITableViewDataSource, UITableViewDelegate {
 extension PageActionMenu: Themeable {
 
     func applyTheme() {
-        let theme = themeManager.getCurrentTheme(for: windowUUID)
         tableView.reloadData()
         view.backgroundColor = .legacyTheme.ecosia.modalBackground
         tableView.backgroundColor = .legacyTheme.ecosia.modalBackground
-        tableView.separatorColor = theme.colors.ecosia.borderDecorative
+        tableView.separatorColor = currentTheme.colors.ecosia.borderDecorative
         knob.backgroundColor = .legacyTheme.ecosia.secondaryText
         tableView.visibleCells.forEach {
-            ($0 as? ThemeApplicable)?.applyTheme(theme: theme)
+            ($0 as? ThemeApplicable)?.applyTheme(theme: currentTheme)
         }
     }
 }

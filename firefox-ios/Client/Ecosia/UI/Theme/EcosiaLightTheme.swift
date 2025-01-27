@@ -141,8 +141,9 @@ private class EcosiaLightSemanticColors: EcosiaSemanticColors {
 
     // MARK: Unmapped Snowflakes
     var barBackground: UIColor = EcosiaColorPrimitive.White
-    var barSeparator: UIColor = UIColor.Photon.Grey20
+    var barSeparator: UIColor = .Photon.Grey20
     var ntpCellBackground: UIColor = EcosiaColorPrimitive.White
     var ntpBackground: UIColor = EcosiaColorPrimitive.Gray20
     var ntpIntroBackground: UIColor = EcosiaColorPrimitive.White
+    var impactMultiplyCardBackground: UIColor = EcosiaColorPrimitive.White
 }

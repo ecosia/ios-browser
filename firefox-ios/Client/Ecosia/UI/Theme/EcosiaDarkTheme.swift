@@ -59,8 +59,9 @@ private class EcosiaDarkSemanticColors: EcosiaSemanticColors {
 
     // MARK: Unmapped Snowflakes
     var barBackground: UIColor = EcosiaColorPrimitive.Gray80
-    var barSeparator: UIColor = UIColor.Photon.Grey60
+    var barSeparator: UIColor = .Photon.Grey60
     var ntpCellBackground: UIColor = EcosiaColorPrimitive.Gray70
     var ntpBackground: UIColor = EcosiaColorPrimitive.Gray90
     var ntpIntroBackground: UIColor = EcosiaColorPrimitive.Gray80
+    var impactMultiplyCardBackground: UIColor = EcosiaColorPrimitive.Gray70
 }
