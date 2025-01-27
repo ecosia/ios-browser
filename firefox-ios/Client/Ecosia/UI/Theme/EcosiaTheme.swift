@@ -12,7 +12,6 @@ extension LegacyTheme {
 }
 
 class EcosiaTheme {
-    var barSeparator: UIColor { UIColor.Photon.Grey20 }
     var impactBackground: UIColor { .Light.Background.primary }
     var impactSeparator: UIColor { UIColor.Photon.Grey40 }
     var treeCounterProgressTotal: UIColor { .Light.Background.tertiary }
@@ -85,7 +84,6 @@ class EcosiaTheme {
 }
 
 final class DarkEcosiaTheme: EcosiaTheme {
-    override var barSeparator: UIColor { UIColor.Photon.Grey60 }
     override var impactBackground: UIColor { .Dark.Background.tertiary }
     override var impactSeparator: UIColor { UIColor.Photon.Grey60 }
     override var treeCounterProgressTotal: UIColor { .Dark.Background.secondary }

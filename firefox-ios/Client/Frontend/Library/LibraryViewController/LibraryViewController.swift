@@ -331,7 +331,7 @@ class LibraryViewController: UIViewController, Themeable {
         */
         standardAppearance.backgroundColor = theme.colors.layer6
         standardAppearance.backgroundColor = theme.colors.ecosia.barBackground
-        standardAppearance.shadowColor = .legacyTheme.ecosia.barSeparator
+        standardAppearance.shadowColor = theme.colors.ecosia.barSeparator
 
         navigationController?.toolbar.standardAppearance = standardAppearance
         navigationController?.toolbar.compactAppearance = standardAppearance

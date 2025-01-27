@@ -106,7 +106,7 @@ class EcosiaLightColourPalette: EcosiaThemeColourPalette {
     var iconAccentYellow: UIColor { fallbackTheme.colors.iconAccentYellow }
 
     // MARK: - Border
-    var borderPrimary: UIColor { .legacyTheme.ecosia.barSeparator }
+    var borderPrimary: UIColor { ecosia.barSeparator }
     var borderAccent: UIColor { actionPrimary }
     var borderAccentNonOpaque: UIColor { actionPrimary }
     var borderAccentPrivate: UIColor { actionPrimary }
@@ -115,7 +115,6 @@ class EcosiaLightColourPalette: EcosiaThemeColourPalette {
     // MARK: - Shadow
     var shadowDefault: UIColor { fallbackTheme.colors.shadowDefault }
 }
-
 
 private class EcosiaLightSemanticColors: EcosiaSemanticColors {
     var backgroundPrimary: UIColor = EcosiaColorPrimitive.White
@@ -142,4 +141,5 @@ private class EcosiaLightSemanticColors: EcosiaSemanticColors {
 
     // MARK: Unmapped Snowflakes
     var barBackground: UIColor = EcosiaColorPrimitive.White
+    var barSeparator: UIColor = UIColor.Photon.Grey20
 }
