@@ -90,7 +90,10 @@ final class NTPNewsCell: UICollectionViewCell, Themeable, ReusableCell {
         bottomLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
         return bottomLabel
     }()
-    var defaultBackgroundColor: (() -> UIColor) = { .legacyTheme.ecosia.ntpCellBackground }
+    lazy var defaultBackgroundColor: (() -> UIColor) = {
+        let theme = self.themeManager.getCurrentTheme(for: self.currentWindowUUID)
+        return theme.colors.ecosia.ntpCellBackground
+    }
 
     // MARK: - Themeable Properties
 

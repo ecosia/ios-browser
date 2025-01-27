@@ -237,14 +237,15 @@ final class DefaultBrowser: UIViewController, Themeable {
     }
 
     @objc func applyTheme() {
+        let theme = themeManager.getCurrentTheme(for: windowUUID)
         view.backgroundColor = .clear
         headline.textColor = .legacyTheme.ecosia.primaryText
         text1.textColor = .legacyTheme.ecosia.secondaryText
         text2.textColor = .legacyTheme.ecosia.secondaryText
         arrow1.tintColor = .legacyTheme.ecosia.primaryButton
         arrow2.tintColor = .legacyTheme.ecosia.primaryButton
-        content.backgroundColor = .legacyTheme.ecosia.ntpIntroBackground
-        waves.tintColor = .legacyTheme.ecosia.ntpIntroBackground
+        content.backgroundColor = theme.colors.ecosia.ntpIntroBackground
+        waves.tintColor = theme.colors.ecosia.ntpIntroBackground
         cta.setTitleColor(.legacyTheme.ecosia.primaryTextInverted, for: .normal)
         skip.setTitleColor(.legacyTheme.ecosia.primaryButton, for: .normal)
         cta.backgroundColor = .legacyTheme.ecosia.primaryButton

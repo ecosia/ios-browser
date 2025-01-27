@@ -47,6 +47,9 @@ public protocol EcosiaSemanticColors {
     // MARK: Unmapped Snowflakes
     var barBackground: UIColor { get }
     var barSeparator: UIColor { get }
+    var ntpCellBackground: UIColor { get }
+    var ntpBackground: UIColor { get }
+    var ntpIntroBackground: UIColor { get }
 }
 
 public protocol EcosiaThemeColourPalette: ThemeColourPalette {
@@ -79,4 +82,7 @@ class FakeEcosiaSemanticColors: EcosiaSemanticColors {
     var textTertiary: UIColor = .systemGray
     var barBackground: UIColor = .systemGray
     var barSeparator: UIColor = .systemGray
+    var ntpCellBackground: UIColor = .systemGray
+    var ntpBackground: UIColor = .systemGray
+    var ntpIntroBackground: UIColor = .systemGray
 }

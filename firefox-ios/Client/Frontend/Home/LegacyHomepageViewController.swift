@@ -430,9 +430,10 @@ class LegacyHomepageViewController:
     func applyTheme() {
         let theme = themeManager.getCurrentTheme(for: windowUUID)
         viewModel.theme = theme
-        // Ecosia: Update NTP background
-        // view.backgroundColor = theme.colors.layer1
-        view.backgroundColor = .legacyTheme.ecosia.ntpBackground
+        /* Ecosia: Update NTP background
+        view.backgroundColor = theme.colors.layer1
+         */
+        view.backgroundColor = theme.colors.ecosia.ntpBackground
     }
 
     // called when the homepage is displayed to make sure it's scrolled to top

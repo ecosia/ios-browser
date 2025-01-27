@@ -12,11 +12,6 @@ extension LegacyTheme {
 }
 
 class EcosiaTheme {
-    var ntpCellBackground: UIColor { .Light.Background.primary }
-    var ntpBackground: UIColor { .Light.Background.tertiary }
-    var ntpIntroBackground: UIColor { .Light.Background.primary }
-    var ntpImpactBackground: UIColor { .Light.Background.primary }
-
     var impactMultiplyCardBackground: UIColor { .Light.Background.primary }
     var trackingSheetBackground: UIColor { .Light.Background.tertiary }
     var moreNewsButton: UIColor { .Light.Button.backgroundSecondary }
@@ -78,11 +73,6 @@ class EcosiaTheme {
 }
 
 final class DarkEcosiaTheme: EcosiaTheme {
-    override var ntpCellBackground: UIColor { .Dark.Background.tertiary }
-    override var ntpBackground: UIColor { .Dark.Background.primary }
-    override var ntpImpactBackground: UIColor { .Dark.Background.secondary}
-    override var ntpIntroBackground: UIColor { .Dark.Background.tertiary }
-
     override var impactMultiplyCardBackground: UIColor { .Dark.Background.tertiary }
     override var trackingSheetBackground: UIColor { .Dark.Background.secondary }
     override var moreNewsButton: UIColor { .Dark.Background.primary }

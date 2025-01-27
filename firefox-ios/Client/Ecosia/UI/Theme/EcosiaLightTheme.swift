@@ -42,7 +42,7 @@ class EcosiaLightColourPalette: EcosiaThemeColourPalette {
     // MARK: - Layers
     var layer1: UIColor { ecosia.backgroundTertiary }
     var layer2: UIColor { fallbackTheme.colors.layer2 }
-    var layer3: UIColor { .legacyTheme.ecosia.ntpBackground }
+    var layer3: UIColor { ecosia.ntpBackground }
     var layer4: UIColor { fallbackTheme.colors.layer4 }
     var layer5: UIColor { ecosia.backgroundSecondary }
     var layer6: UIColor { .legacyTheme.ecosia.homePanelBackground }
@@ -142,4 +142,7 @@ private class EcosiaLightSemanticColors: EcosiaSemanticColors {
     // MARK: Unmapped Snowflakes
     var barBackground: UIColor = EcosiaColorPrimitive.White
     var barSeparator: UIColor = UIColor.Photon.Grey20
+    var ntpCellBackground: UIColor = EcosiaColorPrimitive.White
+    var ntpBackground: UIColor = EcosiaColorPrimitive.Gray20
+    var ntpIntroBackground: UIColor = EcosiaColorPrimitive.White
 }
