@@ -7,7 +7,7 @@ import UIKit
 
 struct EcosiaLightTheme: Theme {
     public var type: ThemeType = .light
-    public var colors: ThemeColourPalette = EcosiaLightColourPalette()
+    public var colors: EcosiaThemeColourPalette = EcosiaLightColourPalette()
 }
 
 class EcosiaLightColourPalette: EcosiaThemeColourPalette {
