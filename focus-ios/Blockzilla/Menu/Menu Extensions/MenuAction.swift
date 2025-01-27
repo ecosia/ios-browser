@@ -1,11 +1,3 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-
-import UIKit
-
-struct MenuAction {
-    let title: String
-    let image: String?
-    let action: () -> Void
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:6dadf00f9ff2ed2cfb97ef553017bedeab33c90201e9b1431eafab8687f2a914
+size 314

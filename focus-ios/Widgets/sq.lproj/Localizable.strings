@@ -1,12 +1,3 @@
-/* Description for small size widget to add it to home screen. %@ is the name of the app(Focus/Klar). */
-"TodayWidget.QuickActionGalleryDescription" = "Shtoni një shkurtore %@ për te skena juaj Kreu. Pasi të shtohet widget-i, prekeni dhe mbajeni të prekur, që ta përpunoni dhe të përzgjidhni një tjetër shkurtore.";
-
-/* Description for small size widget to add it to home screen. %@ is the name of the app(Focus/Klar). */
-"TodayWidget.QuickActionGalleryDescriptionV2" = "Filloni një kërkim privat në %@ me motorin tuaj parazgjedhje për kërkime.";
-
-/* Quick Actions title when widget enters edit mode */
-"TodayWidget.QuickActionsGalleryTitle" = "Veprime të Shpejta";
-
-/* Text shown on quick action widget inviting the user to browse in the app. %@ is the name of the app (Focus/Klar). */
-"TodayWidget.SearchInApp" = "Kërkoni në %@";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:1cd2dab7fad594d615b3bb77a9a4acc798f9ef7bc0c4291d649f9d3491851b93
+size 851

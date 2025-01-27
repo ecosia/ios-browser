@@ -1,19 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-@testable import Client
-
-class MockUIDevice: UIDeviceInterface {
-    var isiPad: Bool
-
-    var userInterfaceIdiom: UIUserInterfaceIdiom {
-        return isiPad ? .pad : .phone
-    }
-
-    init(isIpad: Bool) {
-        self.isiPad = isIpad
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:12dc28e6c688f1a730ee432e95d51d05cc400f4d84880cf8e54b9de9baca529d
+size 466

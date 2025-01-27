@@ -1,21 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-/// A hidden setting for accessing the Feature Flags debug settings.
-final class FeatureFlagsSettings: HiddenSetting {
-    private weak var settingsDelegate: DebugSettingsDelegate?
-
-    override var title: NSAttributedString? { return NSAttributedString(string: "Feature Flags") }
-
-    init(settings: SettingsTableViewController, settingsDelegate: DebugSettingsDelegate) {
-        self.settingsDelegate = settingsDelegate
-        super.init(settings: settings)
-    }
-
-    override func onClick(_: UINavigationController?) {
-        settingsDelegate?.pressedDebugFeatureFlags()
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:f2486e3818aeb1e678a61524ee9443fabef988a0ea55930c6eaf18861349bfbb
+size 806

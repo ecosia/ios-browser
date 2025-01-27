@@ -1,23 +1,3 @@
-# ``ComponentLibrary/PaddedSwitch``
-
-The button which is used for toggle actions.
-
-## Overview
-
-The `PaddedSwitch` is a subclass of the `UIView`. It contains a ``ThemedSwitch``, adding some padding for the width of that control. This switch view should be configured through it's view model ``PaddedSwitchViewModel``.
-
-## Illustration
-
-> This image is illustrative only. For precise examples of iOS implementation, please run the SampleApplication.
-
-![The PaddedSwitch different states on iOS](PaddedSwitch)
-
-## Topics
-
-### Switch
-
-- ``ThemedSwitch``
-
-### View Model
-
-- ``PaddedSwitchViewModel``
+version https://git-lfs.github.com/spec/v1
+oid sha256:1154c2a0f366fa619dc161f92d44b574e4c2fff675e34f1c8b6ba4ae242db536
+size 596

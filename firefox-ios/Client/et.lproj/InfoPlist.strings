@@ -1,21 +1,3 @@
-/* (No Comment) */
-"New Private Tab" = "Uus privaatne kaart";
-
-/* (No Comment) */
-"New Tab" = "Uus kaart";
-
-/* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Ecosia kasutab sinu kaamerat QR-koodide skannimiseks ning fotode ja videote tegemiseks.";
-
-/* Privacy - Location When In Use Usage Description */
-"NSLocationWhenInUseUsageDescription" = "Külastatavad saidid võivad küsida sinu asukohta.";
-
-/* Privacy - Microphone Usage Description */
-"NSMicrophoneUsageDescription" = "Ecosia kasutab mikrofoni heli salvestamiseks ja üleslaadimiseks.";
-
-/* Privacy - Photo Library Additions Usage Description */
-"NSPhotoLibraryAddUsageDescription" = "See võimaldab sul salvestada fotosid.";
-
-/* (No Comment) */
-"Scan QR Code" = "Skanni QR-kood";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:5ad6e04565e7436666d10d117ac4ac96ed27a86c7961c65a042067265e953842
+size 763

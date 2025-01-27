@@ -1,12 +1,3 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-
-import UIKit
-
-public extension UILabel {
-    func setupShrinkage() {
-        adjustsFontSizeToFitWidth = true
-        minimumScaleFactor = 0.6 // Arbitrarily set to 60%
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:ca9be28a9998bbf4c93ad1fb33df0e1a6dfea4e0a475ce617ad481fd862102bf
+size 383

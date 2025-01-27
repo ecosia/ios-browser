@@ -1,14 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-final class WhatsNewViewModel {
-    var items: [WhatsNewItem]
-
-    init(provider: WhatsNewDataProvider) {
-        let providerItems = try? provider.getWhatsNewItemsInRange()
-        self.items = providerItems ?? []
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:9a019e1a0b3c587ab9b1c6caa14d5a31b78ed8f3be9c09a88139333382556f41
+size 444

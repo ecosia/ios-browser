@@ -1,12 +1,3 @@
-/* Accessibility label for the address field in the address toolbar. */
-"AddressToolbar.Location.A11y.Label.v128" = "Buscar ou escribir o enderezo";
-
-/* Placeholder for the address field in the address toolbar. */
-"AddressToolbar.Location.Placeholder.v128" = "Buscar ou escribir o enderezo";
-
-/* Accessibility label for the lock icon button in the address field of the address toolbar, responsible with Privacy & Security Settings. */
-"AddressToolbar.PrivacyAndSecuriySettings.A11y.Label.v128" = "Configuración de privacidade e seguridade";
-
-/* Accessibility label for the search engine icon in the address field of the address toolbar. The placeholder is getting replaced with the name of the search engine (e.g. Google). */
-"AddressToolbar.SearchEngine.A11y.Label.v128" = "Buscador: %@";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:b6a5f12dfad6a716968cd8301377137e2789f37701776609bb725d1cb58e0f80
+size 792

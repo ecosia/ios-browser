@@ -1,15 +1,3 @@
-{
-  "images" : [
-    {
-      "filename" : "checkmarkLarge.pdf",
-      "idiom" : "universal"
-    }
-  ],
-  "info" : {
-    "author" : "xcode",
-    "version" : 1
-  },
-  "properties" : {
-    "preserves-vector-representation" : true
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:33a53e2f742f6421c587d35eb9bd4c011a8891bbc716fc04dc756084252cb9f3
+size 233

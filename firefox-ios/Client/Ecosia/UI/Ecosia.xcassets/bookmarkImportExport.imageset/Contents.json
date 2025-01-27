@@ -1,12 +1,3 @@
-{
-  "images" : [
-    {
-      "filename" : "Component 1.svg",
-      "idiom" : "universal"
-    }
-  ],
-  "info" : {
-    "author" : "xcode",
-    "version" : 1
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:143d3ef4e6137a738e1c4a21c9116cb7473ebce86238fe3f70176545006b6ba5
+size 161

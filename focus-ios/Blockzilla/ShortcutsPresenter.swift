@@ -1,17 +1,3 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-
-import Foundation
-
-class ShortcutsPresenter {
-    public enum ShortcutsState {
-        case createShortcutViews
-        case onHomeView
-        case editingURL(text: String)
-        case activeURLBar
-        case dismissedURLBar
-    }
-
-    @Published public var shortcutsState: ShortcutsState?
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:a01f996cff58611f9547dee0ad7a25400aa22c028bd27ff2da7f27f53333f76b
+size 502

@@ -1,9 +1,3 @@
-/* Label for search engine buttons. The argument corresponds to the name of the search engine. */
-"%@ search" = "%@ іздеу";
-
-/* Label for search settings button. */
-"Search Settings" = "Іздеу баптаулары";
-
-/* When making a new search from the awesome bar, suggestions appear to the user as they write new letters in their search. Different types of suggestions can appear. This string will be used as a label for sponsored Firefox suggestions. */
-"Search.SponsoredSuggestionDescription.v119" = "Демеуленген";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:fb48b888198742b0a4ce6a1160dd6d0db5d68f84cbeb2da788f810c8a7db73d0
+size 541

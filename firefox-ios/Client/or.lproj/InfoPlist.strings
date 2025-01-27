@@ -1,21 +1,3 @@
-/* (No Comment) */
-"New Private Tab" = "ନୂତନ ବ୍ଯକ୍ତିଗତ ଟ୍ୟାବ";
-
-/* (No Comment) */
-"New Tab" = "ନୂତନ ଟ୍ୟାବ";
-
-/* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "ଏହା ଆପଣକୁ ଫଟୋ ଉଠାଇବା ଓ ଅପଲୋଡ଼ କରିବାର ସୁଯୋଗ ଦେବ ।";
-
-/* Privacy - Location When In Use Usage Description */
-"NSLocationWhenInUseUsageDescription" = "ଆପଣ ଦେଖୁଥିବା ୱେବସାଇଟସବୁ ଆପଣଙ୍କ ଅବସ୍ଥିତି ମାଗିପାରନ୍ତି ।";
-
-/* Privacy - Microphone Usage Description */
-"NSMicrophoneUsageDescription" = "ଏହା ଆପଣକୁ ଭିଡ଼ିଓ ଉଠାଇବା ଏବଂ ଅପଲୋଡ଼ କରିବାର ସୁଯୋଗ ଦେବ ।";
-
-/* Privacy - Photo Library Additions Usage Description */
-"NSPhotoLibraryAddUsageDescription" = "ଏହା ଆପଣକୁ ଫଟୋ ସାଇତିବାର ସୁଯୋଗ ଦେବ ।";
-
-/* (No Comment) */
-"Scan QR Code" = "QR କୋଡ ସ୍କାନକରନ୍ତୁ";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:818f2fbaf95f6acb5656e9d57293ba9a5d907707796e9e3707f559b259b4f415
+size 1114

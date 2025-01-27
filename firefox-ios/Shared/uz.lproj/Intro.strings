@@ -1,9 +1,3 @@
-/* Sign in to Firefox account button on second intro screen. */
-"Intro.Slides.Button.SignIn" = "Kirish";
-
-/* Title for the first panel 'Welcome' in the First Run tour. */
-"Intro.Slides.Welcome.Title.v2" = "\"Ecosia\"ga xush kelibsiz";
-
-/* See http://mzl.la/1T8gxwo */
-"Start Browsing" = "Gezinmeye başla";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:cf6acd69bd56b1642775317d472f9fdb83b97096346ffa7d93bc996d04e9177a
+size 308

@@ -1,6 +1,3 @@
-/* Accessibility label for the new tab button that can be displayed in the navigation or address toolbar. */
-"Toolbar.NewTab.Button.v130" = "Ny flik";
-
-/* Label for button on action sheet, accessed via long pressing tab toolbar button, that closes the current tab when pressed */
-"Toolbar.Tab.CloseThisTab.Button.v130" = "Stäng denna flik";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:2034b992b6d177b69bb3781f6028901ffc4e82ee5ed6ed95bb2884339ee4e407
+size 343

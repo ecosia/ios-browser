@@ -1,11 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-/// `TabUpdateState` relates to the Inactive Tabs feature.
-enum TabUpdateState {
-    case coldStart
-    case sameSession
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:b7642a9990a7f52b038b9682f097b417e73c0c28541c570c94664696af87dfcc
+size 344

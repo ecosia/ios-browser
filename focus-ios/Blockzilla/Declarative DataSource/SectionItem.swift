@@ -1,23 +1,3 @@
-import UIKit
-
-struct SectionItem {
-    let id = UUID()
-
-    let configureCell: (UITableView, IndexPath) -> UITableViewCell
-    let action: (() -> Void)?
-
-    init(configureCell: @escaping (UITableView, IndexPath) -> UITableViewCell, action: (() -> Void)? = nil) {
-        self.configureCell = configureCell
-        self.action = action
-    }
-}
-
-extension SectionItem: Hashable {
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(self.id)
-    }
-
-    static func == (lhs: Self, rhs: Self) -> Bool {
-        return lhs.id == rhs.id
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:f6d6868d02b466c5a705eb751ca70028cc9cb063b94320003708179621e92f44
+size 553

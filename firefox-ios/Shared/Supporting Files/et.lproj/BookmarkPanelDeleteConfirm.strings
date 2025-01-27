@@ -1,12 +1,3 @@
-/* Button label to cancel deletion when the user tried to delete a non-empty folder. */
-"Bookmarks.DeleteFolderWarning.CancelButton.Label" = "Loobu";
-
-/* Button label for the button that deletes a folder and all of its children. */
-"Bookmarks.DeleteFolderWarning.DeleteButton.Label" = "Kustuta";
-
-/* Main body of the confirmation alert when the user tries to delete a folder that still contains bookmarks and/or folders. */
-"Bookmarks.DeleteFolderWarning.Description" = "Kas oled kindel, et soovid selle koos sisuga kustutada?";
-
-/* Title of the confirmation alert when the user tries to delete a folder that still contains bookmarks and/or folders. */
-"Bookmarks.DeleteFolderWarning.Title" = "See kaust pole tühi.";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:d3cd8a8301b5dcd6c31690daad1e92de724e8cd09830d3e5e1766c528794909e
+size 719

@@ -1,26 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-// We need a subclass so we can setup the shadows correctly
-// This subclass creates a strong shadow on the URLBar
-class TabLocationContainerView: UIView {
-    private struct LocationContainerUX {
-        // Ecosia: Update `CornerRadius`
-        // static let CornerRadius: CGFloat = 8
-        static let CornerRadius: CGFloat = 22
-    }
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        let layer = self.layer
-        layer.cornerRadius = LocationContainerUX.CornerRadius
-        layer.masksToBounds = false
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:6b2c47aa363f9ff6066500b9ab51a3e7cb37a1c540c66a4504bdf7da8ff016a2
+size 878

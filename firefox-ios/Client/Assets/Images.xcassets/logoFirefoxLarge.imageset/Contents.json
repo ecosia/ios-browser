@@ -1,15 +1,3 @@
-{
-  "images" : [
-    {
-      "filename" : "logoFirefoxLarge.pdf",
-      "idiom" : "universal"
-    }
-  ],
-  "info" : {
-    "author" : "xcode",
-    "version" : 1
-  },
-  "properties" : {
-    "preserves-vector-representation" : true
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:52af6663361f4ffe603d0a6c0686830f07ce30b1ae9c53ea38328a4ac1126e05
+size 235

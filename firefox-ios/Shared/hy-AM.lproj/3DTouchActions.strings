@@ -1,21 +1,3 @@
-/* Label for preview action on Tab Tray Tab to add current tab to Bookmarks */
-"Add to Bookmarks" = "Ավելացնել Էջանիշերին";
-
-/* Label for preview action on Tab Tray Tab to close the current tab */
-"Close Tab" = "Փակել ներդիրը";
-
-/* Label for preview action on Tab Tray Tab to copy the URL of the current tab to clipboard */
-"Copy URL" = "Պատճենել URL-ն";
-
-/* Label for preview action on Tab Tray Tab to send the current link to another device */
-"Menu.SendLinkToDevice" = "Ուղարկել հղումը սարքին";
-
-/* String describing the action of opening the last added bookmark from the home screen Quick Actions via 3D Touch */
-"Open Last Bookmark" = "Բացել վերջին Էջանիշը";
-
-/* Accessibility label, associated to the 3D Touch action on the current tab in the tab tray, used to display a larger preview of the tab. */
-"Preview of %@" = "%@-ի նախատեսքը";
-
-/* Label for preview action on Tab Tray Tab to send the current tab to another device */
-"Send to Device" = "Ուղարկել սարքի";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:007a7121223cb25fc6a16b10ac3f670654e944f526701d2bab48f3d44cdd3cdc
+size 1072

@@ -1,11 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-struct FaviconURL: Codable {
-    let cacheKey: String
-    let faviconURL: String
-    var createdAt: Date
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:7c3e27507933d2650fbe85e0799064e8a4921a294e9758739f16aa0729334eba
+size 328

@@ -1,6 +1,3 @@
-/* Text displayed above the input field when changing the existing passcode */
-"Enter passcode" = "Иҭажәгал амашәыртә код";
-
-/* Touch ID prompt subtitle when accessing logins */
-"Use your fingerprint to access Logins now." = "Аҭаларақәа рахь анеиразы, уажәы шәнацәашьҭа шәхы иашәырхәа.";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:ecddcaf640cc921c16c7b02185638f204313ba2d518c2e568493287a402ed513
+size 360

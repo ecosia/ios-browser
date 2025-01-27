@@ -1,6 +1,3 @@
-/* (No Comment) */
-"Intents.Erase.Description" = "清除浏览会话";
-
-/* (No Comment) */
-"Intents.Erase.Title" = "清除";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:3d0493f7c1963f5e2b9c6aa12ee57c24d00e3872477e7e84c535e0dc62f6c988
+size 126

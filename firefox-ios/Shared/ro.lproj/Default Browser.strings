@@ -1,9 +1,3 @@
-/* Description for small home tab banner shown that allows user to switch their default browser to Firefox. */
-"DefaultBrowserCard.Description" = "Setează linkurile de pe site-uri web, din mesaje de pe e-mail și din Mesaje ca să se deschidă automat cu Ecosia.";
-
-/* Title for small home tab banner shown that allows user to switch their default browser to Firefox. */
-"DefaultBrowserCard.Title" = "Schimbă browserul implicit";
-
-/* Menu option for setting Firefox as default browser. */
-"Settings.DefaultBrowserMenuItem" = "Setează ca browser implicit";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:0ec86bf3b9c1e3ba68440b1ef337db38a6f6b715b20b296eec5963215c6bc1ef
+size 560

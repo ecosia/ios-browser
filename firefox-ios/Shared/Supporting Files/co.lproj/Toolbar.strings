@@ -1,6 +1,3 @@
-/* Accessibility label for the new tab button that can be displayed in the navigation or address toolbar. */
-"Toolbar.NewTab.Button.v130" = "Unghjetta nova";
-
-/* Label for button on action sheet, accessed via long pressing tab toolbar button, that closes the current tab when pressed */
-"Toolbar.Tab.CloseThisTab.Button.v130" = "Chjode st’unghjetta";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:b7283d09047bee4802b6f60e32870510ecf0993818890decce93c6f31eb9681e
+size 354

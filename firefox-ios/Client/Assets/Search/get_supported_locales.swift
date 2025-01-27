@@ -1,13 +1,3 @@
-#!/usr/bin/env swift
-
-import Foundation
-
-var allLocales = NSLocale.availableLocaleIdentifiers()
-
-// iOS doesn't directly support zh-CN/zh-TW; instead, it supports zh-Hans-CN and zh-Hant-TW, respectively.
-// These transformations are done in SearchEngines.swift. Add them to the list of supported engines so
-// that we download them.
-allLocales.append("zh_CN")
-allLocales.append("zh_TW")
-
-print(allLocales)
+version https://git-lfs.github.com/spec/v1
+oid sha256:8743e488b997f3ccc366bf2551259131ded4c6df38a033d32e1a01922c855a18
+size 406

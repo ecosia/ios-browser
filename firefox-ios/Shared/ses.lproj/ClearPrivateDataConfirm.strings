@@ -1,9 +1,3 @@
-/* The cancel button when confirming clear private data. */
-"Cancel" = "Naŋ";
-
-/* The button that clears private data. */
-"OK" = "Ayyo";
-
-/* Description of the confirmation dialog shown when a user tries to clear their private data. */
-"This action will clear all of your private data. It cannot be undone." = "Goyoo woo ga war boŋ bayhayey kul tuusu. A ši hin ka taafeeri.";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:b48c6edf1354467b7ae9d1d35ea5cbc29dd86ffc60038e9cba161c7694dac5d2
+size 380

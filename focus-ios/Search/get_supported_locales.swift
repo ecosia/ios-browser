@@ -1,15 +1,3 @@
-#!/usr/bin/env swift
-
-import Foundation
-
-var allLocales = Locale.availableIdentifiers
-
-// iOS doesn't directly support zh-CN/zh-TW; instead, it supports zh-Hans-CN
-// and zh-Hant-TW, where Hans/Hant are script tags. Remove them so we match
-// the expected format.
-allLocales = allLocales.map { locale in
-    return locale.replacingOccurrences(of: "_Hans", with: "")
-                 .replacingOccurrences(of: "_Hant", with: "")
-}
-
-print(allLocales)
+version https://git-lfs.github.com/spec/v1
+oid sha256:ac6303f5a78687ede68f8ad33b7762b74dd8877d19a7d119ec673f5a8121f452
+size 449

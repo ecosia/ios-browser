@@ -1,9 +1,3 @@
-/* Button to not save the user's password in the logins helper */
-"LoginsHelper.DontSave.Button.v122" = "Micca subitu";
-
-/* Button to not update the user's password in the logins helper */
-"LoginsHelper.DontUpdate.Button.v122" = "Micca subitu";
-
-/* Button to save the user's password */
-"LoginsHelper.SaveLogin.Button.v122" = "Arregistrà";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:a2de4a5dc25edf97573096fe73e4a64d67137ea15eb5e1671d49cbcd65098470
+size 342

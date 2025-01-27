@@ -1,24 +1,3 @@
-/* (No Comment) */
-"New Private Tab" = "Nýr huliðsflipi";
-
-/* (No Comment) */
-"New Tab" = "Nýr flipi";
-
-/* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Ecosia notar myndavélina þína til að skanna QR-kóða og taka myndir og myndskeið.";
-
-/* Privacy - Face ID Usage Description */
-"NSFaceIDUsageDescription" = "Ecosia krefst notkunar Face ID til að fá aðgang að vistuðum lykilorðum þínum og greiðslumátum.";
-
-/* Privacy - Location When In Use Usage Description */
-"NSLocationWhenInUseUsageDescription" = "Vefsvæði sem þú skoðar gætu beðið um staðsetninguna þína.";
-
-/* Privacy - Microphone Usage Description */
-"NSMicrophoneUsageDescription" = "Ecosia notar hljóðnemann þinn til að taka upp og senda inn hljóð.";
-
-/* Privacy - Photo Library Additions Usage Description */
-"NSPhotoLibraryAddUsageDescription" = "Hér getur þú vistað myndir.";
-
-/* (No Comment) */
-"Scan QR Code" = "Skanna QR-kóða";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:50851420bc523d012c03b4b03b6207c4197fd9094da3e278fda084c5fad4db6e
+size 960

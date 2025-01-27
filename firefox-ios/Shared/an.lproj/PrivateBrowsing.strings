@@ -1,30 +1,3 @@
-/* Setting for closing private tabs */
-"Close Private Tabs" = "Zarrar pestanyas privadas";
-
-/* Context menu option for opening a link in a new private tab */
-"ContextMenu.OpenInNewPrivateTabButtonTitle" = "Ubrir en Nueva pestanya privada";
-
-/* Description text displayed when there are no open tabs while in private mode */
-"Firefox won’t remember any of your history or cookies, but new bookmarks will be saved." = "Firefox no recordará lo tuyo historial ni los tuyos cookies, pero alzará los marcadors nuevos.";
-
-/* Text button displayed when there are no tabs open while in private mode */
-"Learn More" = "Saber-ne mas";
-
-/* Toggled OFF accessibility value */
-"Off" = "Desactivau";
-
-/* Toggled ON accessibility value */
-"On" = "Activau";
-
-/* Title displayed for when there are no open tabs while in private mode */
-"Private Browsing" = "Navegación privada";
-
-/* Accessibility label for toggling on/off private mode */
-"Private Mode" = "Modo privau";
-
-/* Accessiblity hint for toggling on/off private mode */
-"Turns private mode on or off" = "Activa u desactiva lo modo privau";
-
-/* Will be displayed in Settings under 'Close Private Tabs' */
-"When Leaving Private Browsing" = "Quan salgas d'a navegación privada";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:b6d39e75554b917889eb10f15c4f3554933396ebb90c8b6c966bc26e160cfd06
+size 1224

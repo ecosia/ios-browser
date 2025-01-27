@@ -1,30 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-public class WKEngine: Engine {
-    private let userScriptManager: WKUserScriptManager
-
-    public static func factory() -> WKEngine {
-        return WKEngine()
-    }
-
-    init(userScriptManager: WKUserScriptManager = DefaultUserScriptManager()) {
-        self.userScriptManager = userScriptManager
-    }
-
-    public func createView() -> EngineView {
-        return WKEngineView(frame: .zero)
-    }
-
-    public func createSession(dependencies: EngineSessionDependencies?) throws -> EngineSession {
-        guard let session = WKEngineSession(userScriptManager: userScriptManager,
-                                            telemetryProxy: dependencies?.telemetryProxy) else {
-            throw EngineError.sessionNotCreated
-        }
-
-        return session
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:f11d2e2c5b7ea6f23e99585915d3062f1f20e272ab491dad4021a361e4721a23
+size 988

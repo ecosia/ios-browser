@@ -1,6 +1,3 @@
-/* Shown in error pages for files that can't be shown and need to be downloaded. */
-"Open in Safari" = "Safari मेॅ खोलहोॅ";
-
-/* Shown in error pages on a button that will try to load the page again */
-"Try again" = "फेनु प्रयास करोॅ";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:dda58144bcc921d44a1f1af4eb47d24e7a5f9c87d94e858540f4b68ce702cb95
+size 282

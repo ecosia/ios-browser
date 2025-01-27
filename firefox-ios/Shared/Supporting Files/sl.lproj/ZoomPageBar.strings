@@ -1,12 +1,3 @@
-/* Accessibility label for closing the zoom panel in Zoom Page Bar */
-"Menu.ZoomPage.Close.AccessibilityLabel.v113" = "Zapri ploščo Povečava";
-
-/* Accessibility label for current zoom level in Zoom Page Bar. The placeholder represents the zoom level */
-"Menu.ZoomPage.CurrentZoomLevel.AccessibilityLabel.v113" = "Trenutna stopnja povečave: %@";
-
-/* Accessibility label for decreasing the zoom level in Zoom Page Bar */
-"Menu.ZoomPage.DecreaseZoom.AccessibilityLabel.v113" = "Zmanjšaj stopnjo povečave";
-
-/* Accessibility label for increasing the zoom level in Zoom Page Bar */
-"Menu.ZoomPage.IncreaseZoom.AccessibilityLabel.v113" = "Povečaj stopnjo povečave";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:4174c367bf5544c6f5c82e847ef2a9d2bcb307a2f73706cd10d5eb7ef72ecd38
+size 669

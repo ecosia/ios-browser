@@ -1,15 +1,3 @@
-/* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Acest lucru îți permite să realizezi și să încarci fotografii.";
-
-/* Privacy - Face ID Usage Description */
-"NSFaceIDUsageDescription" = "Acest lucru îți permite să deblochezi aplicația.";
-
-/* Privacy - Location When In Use Usage Description */
-"NSLocationWhenInUseUsageDescription" = "Site-urile web pe care le vizitezi îți pot solicita locația.";
-
-/* Privacy - Microphone Usage Description */
-"NSMicrophoneUsageDescription" = "Acest lucru îți permite să realizezi și să încarci videoclipuri.";
-
-/* Privacy - Photo Library Additions Usage Description */
-"NSPhotoLibraryAddUsageDescription" = "Acest lucru îți permite să salvezi și să încarci fotografii.";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:b596253b7d81d9c76a28432aa160d867a5a20257b58f5c609f0319669a7f0a52
+size 754

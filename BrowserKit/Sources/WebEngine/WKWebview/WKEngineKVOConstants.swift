@@ -1,17 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-/// Constants use to monitor WKEngineWebView changes with KVO
-enum WKEngineKVOConstants: String, CaseIterable {
-    case loading
-    case estimatedProgress
-    case URL
-    case title
-    case canGoBack
-    case canGoForward
-    case contentSize
-    case hasOnlySecureContent
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:ef369827405d1d28f77a92b7f5e2ee33a73d39599904f6eea6639a430d2c1ab6
+size 499

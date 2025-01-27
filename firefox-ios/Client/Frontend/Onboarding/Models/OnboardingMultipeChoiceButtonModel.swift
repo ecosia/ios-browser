@@ -1,11 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-struct OnboardingMultipleChoiceButtonModel: Equatable {
-    let title: String
-    let action: OnboardingMultipleChoiceAction
-    var imageID: String
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:01adc2a26ce05bbead3f425b06de1659097e45425c8d0f5ef5629847a2b2cd36
+size 372

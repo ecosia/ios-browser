@@ -1,18 +1,3 @@
-# The configuration for the zoomFeature feature
-features:
-  zoom-feature:
-    description: >
-      The configuration for the status of the zoom feature
-    variables:
-      status:
-        description: >
-          Whether the page zoom feature is enabled or not
-        type: Boolean
-        default: true
-    defaults:
-      - channel: beta
-        value:
-          status: true
-      - channel: developer
-        value:
-          status: true
+version https://git-lfs.github.com/spec/v1
+oid sha256:dc703123a49b695bf826a033783db30005db751b7480fee3e514c19136bf32ca
+size 445

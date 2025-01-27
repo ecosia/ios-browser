@@ -1,12 +1,3 @@
-/* Done button in Find in Page Toolbar. */
-"Done" = "მზადაა";
-
-/* Text selection menu item */
-"Find in Page" = "პოვნა გვერდზე";
-
-/* Accessibility label for next result button in Find in Page Toolbar. */
-"Next in-page result" = "შემდეგი შედეგი";
-
-/* Accessibility label for previous result button in Find in Page Toolbar. */
-"Previous in-page result" = "წინა შედეგი";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:dcd309f75f02e747696817aad1a4360cb385e0cae23952e13887252a7d8fc31b
+size 450

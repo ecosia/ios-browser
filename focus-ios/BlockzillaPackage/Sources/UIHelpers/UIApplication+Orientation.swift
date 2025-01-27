@@ -1,24 +1,3 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-
-import UIKit
-
-public extension UIApplication {
-    var orientation: UIInterfaceOrientation? {
-        UIApplication
-            .shared
-            .windows
-            .first(where: { $0.isKeyWindow })?
-            .windowScene?
-            .interfaceOrientation
-    }
-
-    static var textInputMode: UITextInputMode? {
-        UIApplication
-            .shared
-            .delegate?
-            .window??
-            .textInputMode
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:c47e83212c074d34bd0f793065faba5e0691a7612eec6f8cbd59691a7907a309
+size 648

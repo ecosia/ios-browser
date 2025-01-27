@@ -1,15 +1,3 @@
-/* Accessibility label for the address field in the address toolbar. */
-"AddressToolbar.Location.A11y.Label.v128" = "Arama yap veya adres yaz";
-
-/* Placeholder for the address field in the address toolbar. */
-"AddressToolbar.Location.Placeholder.v128" = "Arama yap veya adres yaz";
-
-/* Accessibility label for the lock icon button in the address field of the address toolbar, responsible with Privacy & Security Settings. */
-"AddressToolbar.PrivacyAndSecuriySettings.A11y.Label.v128" = "Gizlilik ve güvenlik ayarları";
-
-/* When the user taps the search engine icon in the toolbar, a sheet with a list of alternative search engines appears. This is the accessibility hint describing what tapping the search engine icon does. */
-"AddressToolbar.SearchEngine.A11y.Hint.v133" = "Arama motoru seçimini açar";
-
-/* Accessibility label for the search engine icon in the address field of the address toolbar. The placeholder is getting replaced with the name of the search engine (e.g. Google). */
-"AddressToolbar.SearchEngine.A11y.Label.v128" = "Arama motoru: %@";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:056199d3e5b4475c143e16a865fa757ab25c98fe9338625e5853ac50ae24b68a
+size 1062

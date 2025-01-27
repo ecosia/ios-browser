@@ -1,25 +1,3 @@
-{
-  "images" : [
-    {
-      "filename" : "Add.pdf",
-      "idiom" : "universal"
-    },
-    {
-      "appearances" : [
-        {
-          "appearance" : "luminosity",
-          "value" : "dark"
-        }
-      ],
-      "filename" : "icon_add_to_autocomplete.pdf",
-      "idiom" : "universal"
-    }
-  ],
-  "info" : {
-    "author" : "xcode",
-    "version" : 1
-  },
-  "properties" : {
-    "preserves-vector-representation" : true
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:cac223fcb0746a94eeb29b509abe107fa7d47f89fd47b7f8bb247f67231e3412
+size 433

@@ -1,17 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-import UIKit
-
-protocol ComponentViewModel {
-    // The title of that component
-    var title: String { get }
-
-    // The view controller to present for that component
-    var viewController: UIViewController { get }
-
-    // Some view controller needs to be push or present, handle this here case by case
-    func present(with presenter: Presenter?)
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:9258187f789a730aa9350739d59415f4cf68c665b4b1aa09226aa0951efa006c
+size 571

@@ -1,18 +1,3 @@
-/* Prompt for saving the username in the Save Logins prompt. */
-"LoginsHelper.PromptSaveLogin.Title.v122" = "Czy zachować nazwę użytkownika?";
-
-/* Prompt for saving a password in the Save Logins prompt. */
-"LoginsHelper.PromptSavePassword.Title.v122" = "Czy zachować hasło?";
-
-/* Prompt for updating the password in the Update Password prompt. */
-"LoginsHelper.PromptUpdateLogin.Title.OneArg.v122" = "Czy uaktualnić hasło?";
-
-/* Prompt for updating a password in the Update Password prompt. */
-"LoginsHelper.PromptUpdateLogin.Title.TwoArg.v122" = "Czy uaktualnić hasło?";
-
-/* Placeholder text for search box in logins list view. */
-"LoginsList.LoginsListSearchPlaceholder.v122" = "Szukaj haseł";
-
-/* Title for the list of logins saved by the app */
-"LoginsList.Title.v122" = "Zachowane hasła";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:0bdbfa1f93e58d7a668376fec3ec9efd58830bcaab3d4278605cc0e1235c2e9f
+size 806

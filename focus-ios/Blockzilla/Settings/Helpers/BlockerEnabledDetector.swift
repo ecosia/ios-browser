@@ -1,24 +1,3 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-
-import Foundation
-import SafariServices
-
-typealias EnabledCallback = (Bool) -> Void
-
-class BlockerEnabledDetector {
-    func detectEnabled(_ parentView: UIView, callback: @escaping EnabledCallback) {
-        SFContentBlockerManager.getStateOfContentBlocker(withIdentifier: AppInfo.contentBlockerBundleIdentifier) { state, error in
-            DispatchQueue.main.async {
-                guard let state = state else {
-                    print("Detection error: \(error!.localizedDescription)")
-                    callback(false)
-                    return
-                }
-
-                callback(state.isEnabled)
-            }
-        }
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:f5db734e48a9e5a54001770d9ce7ebc22796f27bb11de3db97e642eb618a1f08
+size 856

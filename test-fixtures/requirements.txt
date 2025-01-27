@@ -1,6 +1,3 @@
-semver
-requests
-ruamel.yaml
-pygithub
-pbxproj
-inquirer
+version https://git-lfs.github.com/spec/v1
+oid sha256:14509c91370da704c70f5c149637e5db300e724f1cfad2c03c6efff27058fe9d
+size 53

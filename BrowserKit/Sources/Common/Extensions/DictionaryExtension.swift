@@ -1,11 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-public extension Dictionary {
-    func merge(with dictionary: Dictionary) -> Dictionary {
-        return self.merging(dictionary) { (_, new) in new }
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:3baf7179d4d7b9d655a7671f45b7356b256454946fc98adb9c8405ff8662af7a
+size 379

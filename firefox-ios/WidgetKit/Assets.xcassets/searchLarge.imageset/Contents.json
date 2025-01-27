@@ -1,16 +1,3 @@
-{
-  "images" : [
-    {
-      "filename" : "searchLarge.pdf",
-      "idiom" : "universal"
-    }
-  ],
-  "info" : {
-    "author" : "xcode",
-    "version" : 1
-  },
-  "properties" : {
-    "preserves-vector-representation" : true,
-    "template-rendering-intent" : "template"
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:f27927d76555b523a03363276e650cdd590277287301ce1959fe587dd3c8d579
+size 276

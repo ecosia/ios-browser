@@ -1,15 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-@testable import Account
-@testable import Client
-import Foundation
-
-import XCTest
-
-class FxAPushMessageTest: XCTestCase {
-    func createHandler(_ profile: Profile = MockProfile()) -> FxAPushMessageHandler {
-        return FxAPushMessageHandler(with: profile)
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:75ad2aeeb880bd52d5e0b3a5f661768079566a327cf54ff7c5604c30aceaec09
+size 470

@@ -1,6 +1,3 @@
-/* Text displayed above the input field when changing the existing passcode */
-"Enter passcode" = "បញ្ចូល​​លេខកូដ";
-
-/* Touch ID prompt subtitle when accessing logins */
-"Use your fingerprint to access Logins now." = "ប្រើ​ស្នាម​ម្រាមដៃ​ដើម្បី​ចូល​ឥឡូវ​នេះ។";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:32e5175e3d0def80b8ea8720f1baa119ba30d7b7cbc7e1e3dfdfed1d568dcd17
+size 367

@@ -1,6 +1,3 @@
-/* (No Comment) */
-"Intents.Erase.Description" = "ลบวาระการเรียกดูเว็บ";
-
-/* (No Comment) */
-"Intents.Erase.Title" = "ล้าง";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:68b40a12c73357883216563bcf4db240d6d69992284b38f9f38d884dd5b493b4
+size 174

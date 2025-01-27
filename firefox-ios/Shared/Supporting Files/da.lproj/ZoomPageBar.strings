@@ -1,12 +1,3 @@
-/* Accessibility label for closing the zoom panel in Zoom Page Bar */
-"Menu.ZoomPage.Close.AccessibilityLabel.v113" = "Luk zoom-panel";
-
-/* Accessibility label for current zoom level in Zoom Page Bar. The placeholder represents the zoom level */
-"Menu.ZoomPage.CurrentZoomLevel.AccessibilityLabel.v113" = "Nuværende zoom-niveau: %@";
-
-/* Accessibility label for decreasing the zoom level in Zoom Page Bar */
-"Menu.ZoomPage.DecreaseZoom.AccessibilityLabel.v113" = "Formindsk zoom-niveau";
-
-/* Accessibility label for increasing the zoom level in Zoom Page Bar */
-"Menu.ZoomPage.IncreaseZoom.AccessibilityLabel.v113" = "Forøg zoom-niveau";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:74e1dc46ec0e8eabdd8fc7534a56eab97a519ed90bb7ac57569de3637fbe96b0
+size 641

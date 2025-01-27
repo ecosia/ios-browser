@@ -1,9 +1,3 @@
-/* Allow button to open URL from scanned QR Code */
-"ScanQRCode.ConfirmOpenURL.AllowButton.v129" = "Ceadaich";
-
-/* Deny button to cancel opening URL from scanned QR Code */
-"ScanQRCode.ConfirmOpenURL.DenyButton.v129" = "Diùlt";
-
-/* Text of the prompt to ask user permission to open a URL from a scanned QR code. Placeholder is app name. */
-"ScanQRCode.ConfirmOpenURL.Message.v129" = "A bheil thu airson cead fosglaidh a thoirt dha %@?";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:850379bc76efc76e0d6f3818d42b58857c077ed3b78169a2d9bb4fb8b137d4a9
+size 439

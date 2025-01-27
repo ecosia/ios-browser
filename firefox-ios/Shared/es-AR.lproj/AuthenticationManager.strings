@@ -1,6 +1,3 @@
-/* Text displayed above the input field when changing the existing passcode */
-"Enter passcode" = "Ingresar código de acceso";
-
-/* Touch ID prompt subtitle when accessing logins */
-"Use your fingerprint to access Logins now." = "Usá tu huella digital para acceder a los inicios de sesión ahora.";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:b62466bd5b16d49800dddc6b85f883480fe11c267f87db6eb0ea7b120ac957b2
+size 301

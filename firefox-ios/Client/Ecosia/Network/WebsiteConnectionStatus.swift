@@ -1,10 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-public enum WebsiteConnectionTypeStatus {
-    case secure
-    case unsecure
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:87b87a403812b55d05747e18911f90c7edee81b71f869928d28a72f83ce27891
+size 299

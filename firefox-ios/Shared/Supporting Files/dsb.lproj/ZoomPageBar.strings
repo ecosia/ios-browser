@@ -1,12 +1,3 @@
-/* Accessibility label for closing the zoom panel in Zoom Page Bar */
-"Menu.ZoomPage.Close.AccessibilityLabel.v113" = "Wobceŕk měritka zacyniś";
-
-/* Accessibility label for current zoom level in Zoom Page Bar. The placeholder represents the zoom level */
-"Menu.ZoomPage.CurrentZoomLevel.AccessibilityLabel.v113" = "Aktualne měritko: %@";
-
-/* Accessibility label for decreasing the zoom level in Zoom Page Bar */
-"Menu.ZoomPage.DecreaseZoom.AccessibilityLabel.v113" = "Měritko pómjeńšyś";
-
-/* Accessibility label for increasing the zoom level in Zoom Page Bar */
-"Menu.ZoomPage.IncreaseZoom.AccessibilityLabel.v113" = "Měritko pówětšyś";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:1790b04ed0e079aa260cc204d4a19179b5a77502b2ac5b2c11fe1d021e7ddf49
+size 652

@@ -1,34 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Common
-import UIKit
-
-@main
-class AppDelegate: UIResponder, UIApplicationDelegate {
-    lazy var themeManager: ThemeManager = DefaultThemeManager(
-        sharedContainerIdentifier: DependencyHelper.baseBundleIdentifier
-    )
-
-    func application(_ application: UIApplication,
-                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
-    ) -> Bool {
-        DependencyHelper().bootstrapDependencies()
-        AppLaunchUtil().setUpPreLaunchDependencies()
-
-        // Override point for customization after application launch.
-        return true
-    }
-
-    // MARK: UISceneSession Lifecycle
-
-    func application(_ application: UIApplication,
-                     configurationForConnecting connectingSceneSession: UISceneSession,
-                     options: UIScene.ConnectionOptions
-    ) -> UISceneConfiguration {
-        // Called when a new scene session is being created.
-        // Use this method to select a configuration to create the new scene with.
-        return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:6ae31e4e51851646f54dc5c464e9052f601ae88c20c56c6002a9eb79ada8a879
+size 1336

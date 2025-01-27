@@ -1,21 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import SwiftUI
-
-public extension Image {
-    static let logo = Image("icon_logo", bundle: Bundle.module)
-    static let close = Image("icon_close", bundle: Bundle.module)
-    static let background = Image("icon_background", bundle: Bundle.module)
-    static let jiggleModeImage = Image("jiggle_mode_image", bundle: Bundle.module)
-    static let huggingFocus = Image("icon_hugging_focus", bundle: .module)
-    static let stepOneImage = Image(systemName: "1.circle.fill")
-    static let stepTwoImage = Image(systemName: "2.circle.fill")
-    static let stepThreeImage = Image(systemName: "3.circle.fill")
-    static let magnifyingGlass = Image(systemName: "magnifyingglass")
-}
-
-extension Gradient {
-    static let quickAccessWidget = Gradient(colors: [Color("GradientFirst", bundle: Bundle.module), Color("GradientSecond", bundle: Bundle.module)])
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:43450e3ced0348b979ae3dc61d5cfe0d858525124dd2bc462f23646ae9bfdad9
+size 1049

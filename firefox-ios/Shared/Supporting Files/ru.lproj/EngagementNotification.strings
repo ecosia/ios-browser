@@ -1,18 +1,3 @@
-/* Body of notification send to user after inactivity to encourage them to use the search feature. */
-"Engagement.Notification.Body.v112" = "Найдите что-нибудь поблизости. Или откройте для себя что-либо интересное.";
-
-/* Title of notification send to user after inactivity to encourage them to use the search feature. */
-"Engagement.Notification.Title.v112" = "Начните свой первый поиск";
-
-/* Body of notification send to user after inactivity to encourage them to use the private browsing feature. Placeholder is app name. */
-"Engagement.Notification.Treatment.A.Body.v114" = "Приватный просмотр в %@ не сохраняет вашу информацию и блокирует скрытые трекеры.";
-
-/* Title of notification send to user after inactivity to encourage them to use the private browsing feature. */
-"Engagement.Notification.Treatment.A.Title.v114" = "Просматривайте сеть, не оставляя следа";
-
-/* Body of notification send to user after inactivity to encourage them to use the private browsing feature. Placeholder is the app name. */
-"Engagement.Notification.Treatment.B.Body.v114" = "Просматривайте без сохранённых кук или истории в %@.";
-
-/* Title of notification send to user after inactivity to encourage them to use the private browsing feature. */
-"Engagement.Notification.Treatment.B.Title.v114" = "Попробуйте приватный просмотр";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:8731a1dbe8fd9522a31a054dea7aab4b66b6c4034db0512b12cc7d4f1bf4298c
+size 1568

@@ -1,11 +1,3 @@
-{
-  "rules": [
-    {
-      "name": "Password Rules",
-      "url": "https://firefox.settings.services.mozilla.com/v1/buckets/main/collections/password-rules/records",
-      "file": "./firefox-ios/Client/Assets/RemoteSettingsData/RemotePasswordRules.json",
-      "bucket_id": "main",
-      "collections_id": "password-rules"
-    }
-  ]
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:b7822b48cb6227a387e92ce4a226b301cd154a65434e05b78ee1665a74240238
+size 335

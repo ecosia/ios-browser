@@ -1,7 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Redux
-
-class SearchSettingsAction: Action {}
+version https://git-lfs.github.com/spec/v1
+oid sha256:a73eb4766d4cd93056a5ef9ff366b22c15016ab399272b61ce299acaec89c492
+size 254

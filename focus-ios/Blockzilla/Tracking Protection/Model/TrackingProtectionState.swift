@@ -1,11 +1,3 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-
-import Foundation
-
-enum TrackingProtectionState: Equatable {
-    case browsing(status: SecureConnectionStatus)
-    case homescreen
-    case settings
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:fb9a5d0cfbbd137a846bc15322c94099abe31d60d829435bcd34264f3e0054fe
+size 357

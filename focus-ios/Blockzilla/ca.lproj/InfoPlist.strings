@@ -1,18 +1,3 @@
-/* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Això permet fer fotos i pujar-les.";
-
-/* Privacy - Face ID Usage Description */
-"NSFaceIDUsageDescription" = "Això us permet desblocar l'aplicació.";
-
-/* Privacy - Location When In Use Usage Description */
-"NSLocationWhenInUseUsageDescription" = "Els llocs web que visiteu poden sol·licitar la vostra ubicació.";
-
-/* Privacy - Microphone Usage Description */
-"NSMicrophoneUsageDescription" = "Això permet fer vídeos i pujar-los.";
-
-/* Privacy - Photo Library Additions Usage Description */
-"NSPhotoLibraryAddUsageDescription" = "Això permet desar fotos i pujar-les.";
-
-/* This is the menu item that appears when you long press the Focus icon on the phone home screen. */
-"UIApplicationShortcutItemTitle.EraseAndOpen" = "Esborra i obre";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:85facd78a5ffe4b31957d74b06d0ccd5df359065c3121b2a89c19dfb03efdb58
+size 817

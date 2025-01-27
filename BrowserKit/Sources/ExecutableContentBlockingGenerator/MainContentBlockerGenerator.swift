@@ -1,16 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import ContentBlockingGenerator
-
-@main
-public struct MainContentBlockerGenerator {
-    static let generator = ContentBlockerGenerator.factory()
-
-    // Static main needs to be used for executable, providing an instance so we can
-    // call it from a terminal
-    public static func main() {
-        generator.generateLists()
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:659fb5eea4caa4d458213e0786c395568bee829f0ff8de4efb2fed0db387cb4c
+size 536

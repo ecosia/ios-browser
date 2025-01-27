@@ -1,32 +1,3 @@
-name: Snapshot Tests
-
-on:
-  pull_request:
-    paths:
-      - 'Client/Configuration/Common.xcconfig'
-
-jobs:
-  execute_snapshot_tests:
-    runs-on: macos-14
-    name: Execute Snapshot Tests
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Check for MARKETING_VERSION change
-        id: check_marketing_version
-        run: sh ./check_marketing_version.sh
-
-      - name: Prepare environment
-        if : ( steps.check_marketing_version.outputs.skipnext  != 'true' )
-        uses: ./.github/actions/prepare_environment
-        with:
-          core-token: ${{ secrets.IOS_CORE_TOKEN }}
-
-      - name: Perform Snapshot Tests and Publish Test reports
-        if : ( steps.check_marketing_version.outputs.skipnext  != 'true' )
-        id: perform-snapshot-tests
-        uses: ./.github/actions/perform_snapshot_tests
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+version https://git-lfs.github.com/spec/v1
+oid sha256:690c64e3b59675ec64ea007a03d1a49b7118c7384e7d296f25205c039c78bc17
+size 909

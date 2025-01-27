@@ -1,12 +1,3 @@
-/* Accessibility label for closing the zoom panel in Zoom Page Bar */
-"Menu.ZoomPage.Close.AccessibilityLabel.v113" = "Κλείσιμο πίνακα ζουμ";
-
-/* Accessibility label for current zoom level in Zoom Page Bar. The placeholder represents the zoom level */
-"Menu.ZoomPage.CurrentZoomLevel.AccessibilityLabel.v113" = "Τρέχον επίπεδο ζουμ: %@";
-
-/* Accessibility label for decreasing the zoom level in Zoom Page Bar */
-"Menu.ZoomPage.DecreaseZoom.AccessibilityLabel.v113" = "Μείωση επιπέδου ζουμ";
-
-/* Accessibility label for increasing the zoom level in Zoom Page Bar */
-"Menu.ZoomPage.IncreaseZoom.AccessibilityLabel.v113" = "Αύξηση επιπέδου ζουμ";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:9c82e5322894b24a463404a2275beab5bdbcbe9871491880c19ea447aad6b24a
+size 716

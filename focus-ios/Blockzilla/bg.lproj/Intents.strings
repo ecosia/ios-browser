@@ -1,6 +1,3 @@
-/* (No Comment) */
-"Intents.Erase.Description" = "Изтриване на сесия на сърфиране";
-
-/* (No Comment) */
-"Intents.Erase.Title" = "Заличаване";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:d042b251993b0b6117c9a820a415b6524fd600eb6d75f069cb76779fbe5aa063
+size 180

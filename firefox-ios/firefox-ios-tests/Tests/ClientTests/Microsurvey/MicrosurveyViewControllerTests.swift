@@ -1,27 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import XCTest
-import Common
-
-@testable import Client
-
-final class MicrosurveyViewControllerTests: XCTestCase {
-    let windowUUID: WindowUUID = .XCTestDefaultUUID
-
-    override func setUp() {
-        super.setUp()
-        DependencyHelperMock().bootstrapDependencies()
-    }
-
-    override func tearDown() {
-        DependencyHelperMock().reset()
-        super.tearDown()
-    }
-
-    func testMicrosurveyViewController_simpleCreation_hasNoLeaks() {
-        let microsurveyViewController = MicrosurveyViewController(model: MicrosurveyMock.model, windowUUID: windowUUID)
-        trackForMemoryLeaks(microsurveyViewController)
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:d18c27c4dd94e33e382a2173e3ed236a5ed8a3eaf8c70f3a22623b7ecd39f832
+size 832

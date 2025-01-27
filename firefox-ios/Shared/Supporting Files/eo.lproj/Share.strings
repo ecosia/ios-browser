@@ -1,6 +1,3 @@
-/* Error message shown in the remote tabs panel */
-"SendTo.NoDevicesFound.Message.v119" = "Vi ne havas alian aparaton konektita al tiu ĉi konto, kiu estu disponebla por speguli.";
-
-/* This message appears when a user tries to use 'Send Link to Device' action while not logged in */
-"SendTo.NotSignedIn.Title.v119" = "Vi ne komencis seancon en via konto.";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:d4ceadd5bf3497f9668622848f7923904e4b20dbdf0085dc13aecb032a07c296
+size 358

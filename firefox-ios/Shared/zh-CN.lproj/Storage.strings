@@ -1,12 +1,3 @@
-/* The name of the folder that contains desktop bookmarks in the menu. This should match bookmarks.folder.menu.label on Android. */
-"Bookmarks Menu" = "书签菜单";
-
-/* The name of the folder that contains desktop bookmarks in the toolbar. This should match bookmarks.folder.toolbar.label on Android. */
-"Bookmarks Toolbar" = "书签工具栏";
-
-/* The title of the folder that contains mobile bookmarks. This should match bookmarks.folder.mobile.label on Android. */
-"Mobile Bookmarks" = "移动版书签";
-
-/* The name of the folder that contains unsorted desktop bookmarks. This should match bookmarks.folder.unfiled.label on Android. */
-"Unsorted Bookmarks" = "未分类书签";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:af9c4997019adf5fd86aa35903b5cd6f0f5eac93f82fc5c27e94db35f37bab14
+size 686

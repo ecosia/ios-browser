@@ -1,3 +1,3 @@
-/* The title for the card that educates users about how private mode works. The card shows up on the homepage when in the new privacy mode. */
-"FirefoxHomepage.FeltPrivacyUI.Title.v122" = "Nu lăsa urme pe acest dispozitiv";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:6a5395e75e81c5ce578e16473b553f9ca597de17436b20ac34ed6fc3aebba18e
+size 226

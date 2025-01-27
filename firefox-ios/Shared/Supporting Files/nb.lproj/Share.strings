@@ -1,6 +1,3 @@
-/* Error message shown in the remote tabs panel */
-"SendTo.NoDevicesFound.Message.v119" = "Du har ingen andre enheter koblet til denne kontoen tilgjengelig for synkronisering.";
-
-/* This message appears when a user tries to use 'Send Link to Device' action while not logged in */
-"SendTo.NotSignedIn.Title.v119" = "Du er ikke logget inn på kontoen din.";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:481e7512593c87518d4bf78201b8b825c01c419e2800e5cd16313d152ea03f63
+size 357

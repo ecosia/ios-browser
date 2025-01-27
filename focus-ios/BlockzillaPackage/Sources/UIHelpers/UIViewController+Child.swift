@@ -1,29 +1,3 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-
-import UIKit
-
-public extension UIViewController {
-    func install(_ child: UIViewController, on view: UIView) {
-        addChild(child)
-
-        child.view.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(child.view)
-
-        NSLayoutConstraint.activate([
-            child.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            child.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            child.view.topAnchor.constraint(equalTo: view.topAnchor),
-            child.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
-
-        child.didMove(toParent: self)
-    }
-
-    func removeAsChild() {
-        self.view.removeFromSuperview()
-        self.removeFromParent()
-        self.didMove(toParent: nil)
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:06dd18d432add4ca3a8c70bbfb455d007bef75df6388e3a5dbdb7b541f3760f0
+size 991

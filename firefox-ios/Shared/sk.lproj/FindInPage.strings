@@ -1,12 +1,3 @@
-/* Done button in Find in Page Toolbar. */
-"Done" = "Hotovo";
-
-/* Text selection menu item */
-"Find in Page" = "Hľadať na stránke";
-
-/* Accessibility label for next result button in Find in Page Toolbar. */
-"Next in-page result" = "Ďalší výskyt na stránke";
-
-/* Accessibility label for previous result button in Find in Page Toolbar. */
-"Previous in-page result" = "Predchádzajúci výskyt na stránke";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:df9f70bf59c2541f2ba7c68a5310fa2f0900eeaf730a67e2b0ca1074fffe2a9d
+size 414

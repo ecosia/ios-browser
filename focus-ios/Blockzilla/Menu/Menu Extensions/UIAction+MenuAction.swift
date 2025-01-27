@@ -1,14 +1,3 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-
-import UIKit
-
-extension UIAction {
-    convenience init(_ menuAction: MenuAction) {
-        let image = menuAction.image.flatMap(UIImage.init(named:))
-        self.init(title: menuAction.title, image: image) { _ in
-            menuAction.action()
-        }
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:7108b303504304f45c101ea817ccdce8c3effbbef4e9c52bf8dea40446dfe0b3
+size 471

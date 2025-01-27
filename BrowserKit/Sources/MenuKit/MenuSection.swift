@@ -1,13 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-public struct MenuSection: Equatable {
-    public let options: [MenuElement]
-
-    public init(options: [MenuElement]) {
-        self.options = options
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:7a279fcdf03f5525e4000c62cb060f473f54aa101a4e23d0a6b09fdd63ff1d79
+size 380

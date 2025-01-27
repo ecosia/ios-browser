@@ -1,6 +1,3 @@
-/* Label for search engine buttons. The argument corresponds to the name of the search engine. */
-"%@ search" = "%@ శోధన";
-
-/* Label for search settings button. */
-"Search Settings" = "వెతుకుడు అమరికలు";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:9bbb4202fff3434922ffb6de8b01c4acc12ee07bd8c45e8c9561d58e344c5b40
+size 243

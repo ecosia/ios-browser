@@ -1,3 +1,3 @@
-/* Contextual hints are little popups that appear for the users informing them of new features. This is a call to action for the popup that appears to educate users about what the fire button in the toolbar does, when in private mode. */
-"ContextualHints.FeltDeletion.Body.v122" = "Tuŝetu ĉi tie por komenci novan freŝan privatan seancon. Forigu vian historion, kuketojn — ĉion.";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:6ffd4baba02c1a6faf738ab43aa771c573c66bb236dcfa9371608730ece2cec7
+size 388

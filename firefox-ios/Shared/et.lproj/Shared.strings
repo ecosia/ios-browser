@@ -1,3 +1,3 @@
-/* A brief descriptive name for this app on this device, used for Send Tab and Synced Tabs. The first argument is the app name. The second argument is the device name. */
-"%@ on %@" = "%1$@ seadmes %2$@";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:9ac89d502fc31390752f1f432bf343d8f83d84c81e4878ee77b82b0976104318
+size 206

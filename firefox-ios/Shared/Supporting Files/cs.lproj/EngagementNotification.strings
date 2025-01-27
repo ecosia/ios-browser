@@ -1,18 +1,3 @@
-/* Body of notification send to user after inactivity to encourage them to use the search feature. */
-"Engagement.Notification.Body.v112" = "Najděte něco v okolí, nebo objevte něco zábavného.";
-
-/* Title of notification send to user after inactivity to encourage them to use the search feature. */
-"Engagement.Notification.Title.v112" = "Začnete své první vyhledávání";
-
-/* Body of notification send to user after inactivity to encourage them to use the private browsing feature. Placeholder is app name. */
-"Engagement.Notification.Treatment.A.Body.v114" = "Anonymní prohlížení v prohlížeči %@ neukládá vaše informace a blokuje skryté sledovací prvky.";
-
-/* Title of notification send to user after inactivity to encourage them to use the private browsing feature. */
-"Engagement.Notification.Treatment.A.Title.v114" = "Prohlížejte beze stop";
-
-/* Body of notification send to user after inactivity to encourage them to use the private browsing feature. Placeholder is the app name. */
-"Engagement.Notification.Treatment.B.Body.v114" = "Prohlížejte web bez ukládání cookies a historie v aplikaci %@.";
-
-/* Title of notification send to user after inactivity to encourage them to use the private browsing feature. */
-"Engagement.Notification.Treatment.B.Title.v114" = "Vyzkoušejte anonymní prohlížení";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:f3184f3f9837e1aa5b08635689b1c4dfe5abe3bc972c590b0881b957f717ef21
+size 1340

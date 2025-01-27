@@ -1,16 +1,3 @@
-{
-  "images" : [
-    {
-      "filename" : "logo_amex.pdf",
-      "idiom" : "universal"
-    }
-  ],
-  "info" : {
-    "author" : "xcode",
-    "version" : 1
-  },
-  "properties" : {
-    "preserves-vector-representation" : true,
-    "template-rendering-intent" : "template"
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:a751a23f741686944e53b0c777687a69eeebd1d71fb506b9835690eb566dd913
+size 274

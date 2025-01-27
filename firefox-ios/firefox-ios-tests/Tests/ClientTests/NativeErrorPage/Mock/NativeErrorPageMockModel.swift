@@ -1,16 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-@testable import Client
-
-final class NativeErrorPageMock {
-    static var model: ErrorPageModel {
-        return ErrorPageModel(
-            errorTitle: "NoInternetConnection",
-            errorDecription: "There’s a problem with your internet connection.",
-            errorCode: "-1009"
-        )
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:7d1472be2a875054cffea0d48aac7673a423cd3bb5115acc30bc714163a442a0
+size 529

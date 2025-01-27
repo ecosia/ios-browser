@@ -1,6 +1,3 @@
-/* Shown in error pages for files that can't be shown and need to be downloaded. */
-"Open in Safari" = "Bukak ing Safari";
-
-/* Shown in error pages on a button that will try to load the page again */
-"Try again" = "Coba manèh";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:283d15966ce5240163dcd289dc37fa5109e34c4b7cba2d2e90bb95ef152169a3
+size 230

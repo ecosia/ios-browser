@@ -1,15 +1,3 @@
-/* Label for preview action on Tab Tray Tab to add current tab to Bookmarks */
-"Add to Bookmarks" = "Voeg by boekmerke";
-
-/* Label for preview action on Tab Tray Tab to close the current tab */
-"Close Tab" = "Sluit oortjie";
-
-/* Label for preview action on Tab Tray Tab to copy the URL of the current tab to clipboard */
-"Copy URL" = "Kopieer URL";
-
-/* Accessibility label, associated to the 3D Touch action on the current tab in the tab tray, used to display a larger preview of the tab. */
-"Preview of %@" = "Voorskou van %@";
-
-/* Label for preview action on Tab Tray Tab to send the current tab to another device */
-"Send to Device" = "Stuur na toestel";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:34936fa7c57936c16fc75c0a073f1ab3f1ebeb0559ce256b4f363291021a656a
+size 659

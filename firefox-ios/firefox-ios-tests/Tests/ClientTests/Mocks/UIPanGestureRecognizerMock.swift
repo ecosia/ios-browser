@@ -1,24 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import UIKit
-
-class UIPanGestureRecognizerMock: UIPanGestureRecognizer {
-    var gestureTranslation: CGPoint?
-    var gestureVelocity: CGPoint?
-
-    override func translation(in view: UIView?) -> CGPoint {
-        if let gestureTranslation = gestureTranslation {
-            return gestureTranslation
-        }
-        return super.translation(in: view)
-    }
-
-    override func velocity(in view: UIView?) -> CGPoint {
-        if let gestureVelocity = gestureVelocity {
-            return gestureVelocity
-        }
-        return super.velocity(in: view)
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:960ca1f812ed743be0c616a8e02d71c9a48701117bda297d143504508d91d0fa
+size 765

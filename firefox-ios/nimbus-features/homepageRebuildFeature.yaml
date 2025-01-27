@@ -1,18 +1,3 @@
-# The configuration for the homepageRebuildFeature feature
-features:
-  homepage-rebuild-feature:
-    description: >
-      This feature is for managing the roll out of the Homepage rebuild feature
-    variables:
-      enabled:
-        description: >
-          If true, enables the feature
-        type: Boolean
-        default: false
-    defaults:
-      - channel: beta
-        value:
-          enabled: false
-      - channel: developer
-        value:
-          enabled: false
+version https://git-lfs.github.com/spec/v1
+oid sha256:5dea0ac300eb4c9a175f2b99200b43d009fd76e5dfa237213ebcf6f4a8aa34c4
+size 476

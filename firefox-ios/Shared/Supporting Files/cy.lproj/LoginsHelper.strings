@@ -1,9 +1,3 @@
-/* Button to not save the user's password in the logins helper */
-"LoginsHelper.DontSave.Button.v122" = "Nid Nawr";
-
-/* Button to not update the user's password in the logins helper */
-"LoginsHelper.DontUpdate.Button.v122" = "Nid Nawr";
-
-/* Button to save the user's password */
-"LoginsHelper.SaveLogin.Button.v122" = "Cadw";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:4009155d44425e5a2c02225bb0694af4300ed08c03cb74b6054f3e5f076a20d1
+size 327

@@ -1,6 +1,3 @@
-/* Text displayed above the input field when changing the existing passcode */
-"Enter passcode" = "கடவுக்குறியீட்டை உள்ளிடுக";
-
-/* Touch ID prompt subtitle when accessing logins */
-"Use your fingerprint to access Logins now." = "கைரேகை கொண்டு உள்நுழைவுகளை அணுகவும்.";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:e22b35ad4cd9417466011abf69b139b8f2561812e991d129745641aceb734d37
+size 381

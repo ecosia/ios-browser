@@ -1,18 +1,3 @@
-/* Body of notification send to user after inactivity to encourage them to use the search feature. */
-"Engagement.Notification.Body.v112" = "Serĉu ion proksime. Aŭ malkovru ion amuzan.";
-
-/* Title of notification send to user after inactivity to encourage them to use the search feature. */
-"Engagement.Notification.Title.v112" = "Komencu vian unua serĉon";
-
-/* Body of notification send to user after inactivity to encourage them to use the private browsing feature. Placeholder is app name. */
-"Engagement.Notification.Treatment.A.Body.v114" = "Privata retumo en %@ ne konservas viajn informojn kaj blokas kaŝitajn spurilojn.";
-
-/* Title of notification send to user after inactivity to encourage them to use the private browsing feature. */
-"Engagement.Notification.Treatment.A.Title.v114" = "Retumu sen lasi spurojn";
-
-/* Body of notification send to user after inactivity to encourage them to use the private browsing feature. Placeholder is the app name. */
-"Engagement.Notification.Treatment.B.Body.v114" = "Retumu per %@ sen konservitaj kuketoj aŭ historio.";
-
-/* Title of notification send to user after inactivity to encourage them to use the private browsing feature. */
-"Engagement.Notification.Treatment.B.Title.v114" = "Provu la privatan retumon";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:80f0b802c76d21f3def66721a358f821ac408f5c6bfe4d78a225e457349fd087
+size 1268

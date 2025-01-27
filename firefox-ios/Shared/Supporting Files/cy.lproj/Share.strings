@@ -1,6 +1,3 @@
-/* Error message shown in the remote tabs panel */
-"SendTo.NoDevicesFound.Message.v119" = "Nid oes gennych unrhyw ddyfeisiau eraill wedi eu cysylltu i'r Cyfrif Ecosia hwn i'w cydweddu nhw.";
-
-/* This message appears when a user tries to use 'Send Link to Device' action while not logged in */
-"SendTo.NotSignedIn.Title.v119" = "Nid ydych wedi mewngofnodi i'ch cyfrif.";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:93fb836f5c9cf23e654ce5a140f1725fb0bffe85cd74a2345ac01d2a01c649cc
+size 371

@@ -1,6 +1,3 @@
-/* Accessibility label for next button that is displayed above the keyboard when a form field on a website was tapped. */
-"KeyboardAccessory.NextButton.Accessibility.Label.v124" = "Następne pole formularza";
-
-/* Accessibility label for previous button that is displayed above the keyboard when a form field on a website was tapped. */
-"KeyboardAccessory.PreviousButton.Accessibility.Label.v124" = "Poprzednie pole formularza";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:de12cd132476d5236ffe5590f67eb084ad8489ae7371e1ef90c5ed11e34220ca
+size 429

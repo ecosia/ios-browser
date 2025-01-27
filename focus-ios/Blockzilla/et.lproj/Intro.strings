@@ -1,24 +1,3 @@
-/* Description for the 'History' panel in the First Run tour. */
-"Intro.Slides.History.Description" = "Kustuta ühe puudutusega kogu lehitsemise seansi ajalugu, paroolid ja küpsised.";
-
-/* Title for the third  panel 'History' in the First Run tour. */
-"Intro.Slides.History.Title" = "Sinu ajalugu on ajalugu";
-
-/* Button to go to the next card in Focus onboarding. */
-"Intro.Slides.Next.Button" = "Edasi";
-
-/* Description for the 'Favorite Search Engine' panel in the First Run tour. */
-"Intro.Slides.Search.Description" = "Otsid midagi muud? Vali mõni muu otsingumootor.";
-
-/* Title for the second  panel 'Search' in the First Run tour. */
-"Intro.Slides.Search.Title" = "Sinu otsing, sinu moodi";
-
-/* Button to skip onboarding in Focus */
-"Intro.Slides.Skip.Button" = "Jäta vahele";
-
-/* Description for the 'Welcome' panel in the First Run tour. */
-"Intro.Slides.Welcome.Description" = "Vii privaatne veebilehitsemine uuele tasemele. Bloki reklaamid ja muu sisu, mis võib sinu tegevust erinevatel saitidel jälitada ja lehtede laadimist aeglustada.";
-
-/* Title for the first panel 'Welcome' in the First Run tour. */
-"Intro.Slides.Welcome.Title" = "Tugevda oma privaatsust";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:c47fdba1c043641ed46891b3f2944146579d8a284195b92c2fa925ccd05881af
+size 1181

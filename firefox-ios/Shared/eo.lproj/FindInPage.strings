@@ -1,12 +1,3 @@
-/* Done button in Find in Page Toolbar. */
-"Done" = "Farita";
-
-/* Text selection menu item */
-"Find in Page" = "Serĉi en paĝo";
-
-/* Accessibility label for next result button in Find in Page Toolbar. */
-"Next in-page result" = "Venonta rezulto en paĝo";
-
-/* Accessibility label for previous result button in Find in Page Toolbar. */
-"Previous in-page result" = "Antaŭa rezulto en paĝo";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:61906f37503315c4b9121e652c6c1739b992e1fafaf42525ec73f2cc712bcf84
+size 393

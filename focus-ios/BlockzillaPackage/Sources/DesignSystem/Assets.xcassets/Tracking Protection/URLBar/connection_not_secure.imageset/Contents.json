@@ -1,22 +1,3 @@
-{
-  "images" : [
-    {
-      "filename" : "connection_not_secure.pdf",
-      "idiom" : "universal"
-    },
-    {
-      "appearances" : [
-        {
-          "appearance" : "luminosity",
-          "value" : "dark"
-        }
-      ],
-      "filename" : "connection_not_secure_dark.pdf",
-      "idiom" : "universal"
-    }
-  ],
-  "info" : {
-    "author" : "xcode",
-    "version" : 1
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:0e4fde6b986256643d71ef3a6216cb5a9a99f17c805da72709aa9b064dfabeb0
+size 384

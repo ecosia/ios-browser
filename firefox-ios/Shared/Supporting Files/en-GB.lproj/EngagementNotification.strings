@@ -1,18 +1,3 @@
-/* Body of notification send to user after inactivity to encourage them to use the search feature. */
-"Engagement.Notification.Body.v112" = "Find something nearby. Or discover something fun.";
-
-/* Title of notification send to user after inactivity to encourage them to use the search feature. */
-"Engagement.Notification.Title.v112" = "Start your first search";
-
-/* Body of notification send to user after inactivity to encourage them to use the private browsing feature. Placeholder is app name. */
-"Engagement.Notification.Treatment.A.Body.v114" = "Private browsing in %@ doesn’t save your info and blocks hidden trackers.";
-
-/* Title of notification send to user after inactivity to encourage them to use the private browsing feature. */
-"Engagement.Notification.Treatment.A.Title.v114" = "Browse without a trace";
-
-/* Body of notification send to user after inactivity to encourage them to use the private browsing feature. Placeholder is the app name. */
-"Engagement.Notification.Treatment.B.Body.v114" = "Browse with no saved cookies or history in %@.";
-
-/* Title of notification send to user after inactivity to encourage them to use the private browsing feature. */
-"Engagement.Notification.Treatment.B.Title.v114" = "Try private browsing";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:0af2b3db0140556c11d403ba321977fce45e11aeee5e13bddce360048babb55b
+size 1253

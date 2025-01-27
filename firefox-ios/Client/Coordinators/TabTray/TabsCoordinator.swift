@@ -1,16 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-class TabsCoordinator: BaseCoordinator {
-    // MARK: - Properties
-    weak var parentCoordinator: ParentCoordinatorDelegate?
-
-    // MARK: - Initializers
-
-    init(router: Router) {
-        super.init(router: router)
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:bf8f5546187bb93cf863f0118db6ca8ca406b98a16958ed2e02573aae2c08f5a
+size 447

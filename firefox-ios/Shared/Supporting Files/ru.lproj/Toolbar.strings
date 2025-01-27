@@ -1,6 +1,3 @@
-/* Accessibility label for the new tab button that can be displayed in the navigation or address toolbar. */
-"Toolbar.NewTab.Button.v130" = "Новая вкладка";
-
-/* Label for button on action sheet, accessed via long pressing tab toolbar button, that closes the current tab when pressed */
-"Toolbar.Tab.CloseThisTab.Button.v130" = "Закрыть эту вкладку";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:3ec9c356d819683c72882a99024cac97f58e540720ba707e6baff7e395adfd31
+size 380

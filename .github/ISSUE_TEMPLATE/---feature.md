@@ -1,12 +1,3 @@
----
-name: "🎁 Feature request"
-about: Suggest an idea for this project
-labels: "Feature-Request"
-
----
-
-### User Problem
-> Why should we implement this? What is the user benefit?
-
-### Ideas for Solution
-> Let us know if you have an idea on how to solve this user problem
+version https://git-lfs.github.com/spec/v1
+oid sha256:43cb2f055d124270799d1c02688d306d82d7828a77f99f3e6b2eec580f091364
+size 272

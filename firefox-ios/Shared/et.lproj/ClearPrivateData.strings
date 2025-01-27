@@ -1,21 +1,3 @@
-/* Settings item for clearing browsing history */
-"Browsing History" = "Lehitsemise ajalugu";
-
-/* Settings item for clearing the cache */
-"Cache" = "Vahemälu";
-
-/* Settings item for clearing cookies */
-"Cookies" = "Küpsised";
-
-/* Settings item for deleting downloaded files */
-"Downloaded Files" = "Allalaaditud failid";
-
-/* Settings item for clearing website data */
-"Offline Website Data" = "Võrguta režiimis töötavate lehtede andmed";
-
-/* Settings item for clearing passwords and login data */
-"Saved Logins" = "Salvestatud kasutajakontod";
-
-/* A settings item that allows a user to use Apple's \"Spotlight Search\" in Data Management's Website Data option to search for and select an item to delete. */
-"Spotlight Index" = "Spotlighti indeks";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:b9375716a8f99c398cc95740b82ef10602b3e650d05de1b10c2341acd3133b81
+size 755

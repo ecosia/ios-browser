@@ -1,6 +1,3 @@
-/* The text for the clear cookies and site data alert button inside the enhanced tracking protection screen. */
-"Menu.EnhancedTrackingProtection.ClearData.AlertCancelButton.v128" = "අවලංගු";
-
-/* The text for the clear cookies and site data alert button inside the enhanced tracking protection screen. */
-"Menu.EnhancedTrackingProtection.ClearData.AlertOkButton.v128" = "මකන්න";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:76ce86e1e39aa84b8cdd7915d1179e9b472a3927224adcef96c5d1b621dbc7c8
+size 401

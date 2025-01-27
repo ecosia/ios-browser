@@ -1,6 +1,3 @@
-/* Text displayed above the input field when changing the existing passcode */
-"Enter passcode" = "পাসকোড প্রবেশ করুন";
-
-/* Touch ID prompt subtitle when accessing logins */
-"Use your fingerprint to access Logins now." = "এখন লগ-ইন করতে আপনার অঙ্গুলাঙ্ক ব্যাবহার করুন।";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:226e047fc5047dc7a9f96ec4009461266304c781d4e8107ade2ffad65d62905b
+size 382

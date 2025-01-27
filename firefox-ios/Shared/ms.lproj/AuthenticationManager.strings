@@ -1,6 +1,3 @@
-/* Text displayed above the input field when changing the existing passcode */
-"Enter passcode" = "Masukkan kod laluan";
-
-/* Touch ID prompt subtitle when accessing logins */
-"Use your fingerprint to access Logins now." = "Gunakan cap jari anda untuk mengakses Log masuk sekarang.";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:4e7ea656b5278e52fcf39b2b5b0581b0e8987ef9f58a828c5f4526b76fe2157d
+size 284

@@ -1,9 +1,3 @@
-/* Allow button to open URL from scanned QR Code */
-"ScanQRCode.ConfirmOpenURL.AllowButton.v129" = "Engedélyezés";
-
-/* Deny button to cancel opening URL from scanned QR Code */
-"ScanQRCode.ConfirmOpenURL.DenyButton.v129" = "Tiltás";
-
-/* Text of the prompt to ask user permission to open a URL from a scanned QR code. Placeholder is app name. */
-"ScanQRCode.ConfirmOpenURL.Message.v129" = "Engedélyezi, hogy a(z) %@ megnyissa?";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:7868d3a6b234ea7d42489fb8a0172a41d4b29b56b3b965e73b71686497b45a14
+size 433

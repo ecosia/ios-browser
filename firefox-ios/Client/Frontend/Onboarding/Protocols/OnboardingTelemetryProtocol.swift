@@ -1,17 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-protocol OnboardingTelemetryProtocol: AnyObject {
-    func sendCardViewTelemetry(from cardName: String)
-    func sendButtonActionTelemetry(from cardName: String,
-                                   with action: OnboardingActions,
-                                   and primaryButton: Bool)
-    func sendMultipleChoiceButtonActionTelemetry(
-        from cardName: String,
-        with action: OnboardingMultipleChoiceAction
-    )
-    func sendDismissOnboardingTelemetry(from cardName: String)
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:bd07f6a1cf26525acec95d2d7acc3051f12544ab3578c39be735530897af2225
+size 714

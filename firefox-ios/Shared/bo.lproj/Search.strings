@@ -1,6 +1,3 @@
-/* Label for search engine buttons. The argument corresponds to the name of the search engine. */
-"%@ search" = "%@ འཚོལ་བཤེར།";
-
-/* Label for search settings button. */
-"Search Settings" = "འཚོལ་བཤེར་སྒྲིག་བཟོ།";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:ea043f5929ce3e2b4752e2129f3c2aff79347b2fb5655d4d09193ba08d7144b3
+size 275

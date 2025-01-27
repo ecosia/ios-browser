@@ -1,13 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-@testable import Client
-
-class MockHistoryHighlightsDelegate: HistoryHighlightsDelegate {
-    var didLoadNewDataCallCount = 0
-
-    func didLoadNewData() {
-        didLoadNewDataCallCount += 1
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:97bc8ce2f9f2410541a33b32a74940e0694de5b718230c6e1d97971ed3c66075
+size 402

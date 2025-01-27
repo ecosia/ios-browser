@@ -1,21 +1,3 @@
-/* Settings item for clearing browsing history */
-"Browsing History" = "Browsing History";
-
-/* Settings item for clearing the cache */
-"Cache" = "Cache";
-
-/* Settings item for clearing cookies */
-"Cookies" = "Cookies";
-
-/* Settings item for deleting downloaded files */
-"Downloaded Files" = "Downloaded Files";
-
-/* Settings item for clearing website data */
-"Offline Website Data" = "Offline Web Site Data";
-
-/* Settings item for clearing passwords and login data */
-"Saved Logins" = "Saved Logins";
-
-/* A settings item that allows a user to use Apple's \"Spotlight Search\" in Data Management's Website Data option to search for and select an item to delete. */
-"Spotlight Index" = "Spotlight Index";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:4c8610ea029c08bd54d4374e79de33c801242f1ba2b36c216a0bce63290179bb
+size 703

@@ -1,12 +1,3 @@
-/* Accessibility label for closing the zoom panel in Zoom Page Bar */
-"Menu.ZoomPage.Close.AccessibilityLabel.v113" = "Mbyll Paneli Zoom-i";
-
-/* Accessibility label for current zoom level in Zoom Page Bar. The placeholder represents the zoom level */
-"Menu.ZoomPage.CurrentZoomLevel.AccessibilityLabel.v113" = "Shkallë e Tanishme Zoom-i: %@";
-
-/* Accessibility label for decreasing the zoom level in Zoom Page Bar */
-"Menu.ZoomPage.DecreaseZoom.AccessibilityLabel.v113" = "Zvogëloni Shkallën e Zoom-it";
-
-/* Accessibility label for increasing the zoom level in Zoom Page Bar */
-"Menu.ZoomPage.IncreaseZoom.AccessibilityLabel.v113" = "Zmadhojeni Shkallën e Zoom-it";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:cec1b7cdff37e017da8b034a7b2448f18d24ea0ae383d1dea234f7af7bc51b35
+size 671

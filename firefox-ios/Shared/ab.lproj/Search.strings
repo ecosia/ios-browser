@@ -1,9 +1,3 @@
-/* Label for search engine buttons. The argument corresponds to the name of the search engine. */
-"%@ search" = "Аԥшаара %@ аҟны";
-
-/* Label for search settings button. */
-"Search Settings" = "Аԥшаара авариантқәа";
-
-/* When making a new search from the awesome bar, suggestions appear to the user as they write new letters in their search. Different types of suggestions can appear. This string will be used as a label for sponsored Firefox suggestions. */
-"Search.SponsoredSuggestionDescription.v119" = "Аспонсортә";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:e001bfbdc0fc9424f124f3223d5d1ed60d74f231f56a820d695e90850cb35702
+size 558

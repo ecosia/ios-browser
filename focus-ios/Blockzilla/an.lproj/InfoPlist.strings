@@ -1,12 +1,3 @@
-/* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Esto te permite de fer y cargar fotos.";
-
-/* Privacy - Location When In Use Usage Description */
-"NSLocationWhenInUseUsageDescription" = "Los puestos web que vesites pueden demandar la tuya ubicación.";
-
-/* Privacy - Microphone Usage Description */
-"NSMicrophoneUsageDescription" = "Esto te permite de fer y cargar videos.";
-
-/* Privacy - Photo Library Additions Usage Description */
-"NSPhotoLibraryAddUsageDescription" = "Esto de permite d'alzar y cargar fotos.";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:58eb5b2d97e6a9484bbe8b201836c53cb4fa72253d43387df4a52686a2078476
+size 538

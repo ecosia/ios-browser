@@ -1,9 +1,3 @@
-/* The cancel button when confirming clear private data. */
-"Cancel" = "Cealaigh";
-
-/* The button that clears private data. */
-"OK" = "OK";
-
-/* Description of the confirmation dialog shown when a user tries to clear their private data. */
-"This action will clear all of your private data. It cannot be undone." = "Glanfar do shonraí pearsanta má dhéantar seo. Ní féidir na sonraí a aischur.";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:bb922d703cd75504a2a7fc0e0d1af85c05951cc8717ca5d4fa028d232fcf9e5d
+size 400

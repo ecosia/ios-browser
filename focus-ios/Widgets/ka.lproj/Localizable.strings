@@ -1,12 +1,3 @@
-/* Description for small size widget to add it to home screen. %@ is the name of the app(Focus/Klar). */
-"TodayWidget.QuickActionGalleryDescription" = "დაამატეთ %@-მალსახმობი მთავარ ეკრანზე. დამატების შემდგომ დიდხანს შეეხეთ ჩასასწორებლად ან სხვა მალსახმობის შესარჩევად.";
-
-/* Description for small size widget to add it to home screen. %@ is the name of the app(Focus/Klar). */
-"TodayWidget.QuickActionGalleryDescriptionV2" = "გამოიყენეთ %@-ის პირადი ფანჯარა სასურველი საძიებოთი.";
-
-/* Quick Actions title when widget enters edit mode */
-"TodayWidget.QuickActionsGalleryTitle" = "სწრაფი მოქმედებები";
-
-/* Text shown on quick action widget inviting the user to browse in the app. %@ is the name of the app (Focus/Klar). */
-"TodayWidget.SearchInApp" = "ძიება – %@";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:2f7d68e2f3c785aaa0a2eb4f671371cbacdb562c1c8e1bffaa2ff9ab90bfb19e
+size 1097

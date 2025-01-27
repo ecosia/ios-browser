@@ -1,6 +1,3 @@
-/* Accessibility label for the new tab button that can be displayed in the navigation or address toolbar. */
-"Toolbar.NewTab.Button.v130" = "Nueva pestaña";
-
-/* Label for button on action sheet, accessed via long pressing tab toolbar button, that closes the current tab when pressed */
-"Toolbar.Tab.CloseThisTab.Button.v130" = "Cerrar esta pestaña";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:45205f85a9ffc90d2d9078e69f8811bb404fcc3151f8319fe58d009fb1e35c73
+size 353

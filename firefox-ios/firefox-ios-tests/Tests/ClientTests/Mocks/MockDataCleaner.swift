@@ -1,25 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-import Shared
-@testable import Client
-
-class MockCookiesClearable: CookiesClearable {
-    var isSucceed: Success?
-
-    override func clear() -> Success {
-        isSucceed = succeed()
-        return succeed()
-    }
-}
-
-class MockSiteDataClearable: SiteDataClearable {
-    var isSucceed: Success?
-
-    override func clear() -> Success {
-        isSucceed = succeed()
-        return succeed()
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:2e9a17cbe10cae93077bb93b2e840bbac08eca243a18793f0d01ee2348315e4c
+size 618

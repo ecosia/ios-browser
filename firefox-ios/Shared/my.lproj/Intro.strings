@@ -1,9 +1,3 @@
-/* Sign in to Firefox account button on second intro screen. */
-"Intro.Slides.Button.SignIn" = "၀င်ပါ";
-
-/* Title for the first panel 'Welcome' in the First Run tour. */
-"Intro.Slides.Welcome.Title.v2" = "Firefox က ကြိုဆိုပါသည်";
-
-/* See http://mzl.la/1T8gxwo */
-"Start Browsing" = "စတင် သုံးစွဲမည်";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:906e1e1b453def7674cebeb65b058a9d036726674c548f386093c1ce502166ff
+size 366

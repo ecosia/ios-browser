@@ -1,18 +1,3 @@
----
-name: "\U0001F41E Bug report"
-about: Create a report to help us improve
-labels: "Bug 🐞"
-
----
-
-## Steps to reproduce
-
-### Expected behavior
-
-### Actual behavior
-
-### Device & build information
-* Device: ?
-* Build version: ?
-### Notes
-Attachments: 
+version https://git-lfs.github.com/spec/v1
+oid sha256:9d7ca377c51afd6cad5d80f5b0baca4f7569b88400f02f1280d38453f55488c0
+size 254

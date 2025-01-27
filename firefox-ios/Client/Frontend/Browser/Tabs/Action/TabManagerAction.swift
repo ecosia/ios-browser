@@ -1,9 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Redux
-
-enum TabManagerAction: Action {
-    case tabManagerDidConnectToScene(TabManager)
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:808b6bdaf20b08d5ab1efb8d95bf306d4115b0b6dc049958ceb176c52e0ba647
+size 299

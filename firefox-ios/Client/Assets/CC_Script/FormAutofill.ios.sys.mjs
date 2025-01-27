@@ -1,17 +1,3 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-
-import { FormAutofill } from "resource://autofill/FormAutofill.sys.mjs";
-
-FormAutofill.defineLogGetter = (_scope, _logPrefix) => ({
-  // TODO: Bug 1828405. Explore how logging should be handled.
-  // Maybe it makes more sense to do it on swift side and have JS just send messages.
-  info: () => {},
-  error: () => {},
-  warn: () => {},
-  debug: () => {},
-});
-
-export { FormAutofill };
-export default FormAutofill;
+version https://git-lfs.github.com/spec/v1
+oid sha256:e194ba7f2182d809d7d9064f8f9d9bd1b54fa6345fed98c9015981fafadbf944
+size 620

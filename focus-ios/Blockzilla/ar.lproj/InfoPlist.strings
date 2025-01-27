@@ -1,18 +1,3 @@
-/* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "يتيح لك هذا أخذ الصور و رفعها.";
-
-/* Privacy - Face ID Usage Description */
-"NSFaceIDUsageDescription" = "يتيح لك هذا إلغاء قفل التطبيق.";
-
-/* Privacy - Location When In Use Usage Description */
-"NSLocationWhenInUseUsageDescription" = "المواقع التي تزورها يمكن أن تطلب معرفة مكانك.";
-
-/* Privacy - Microphone Usage Description */
-"NSMicrophoneUsageDescription" = "يتيح لك هذا تصوير الڤديو و رفعه.";
-
-/* Privacy - Photo Library Additions Usage Description */
-"NSPhotoLibraryAddUsageDescription" = "يتيح لك هذا حفظ الصور و رفعها.";
-
-/* This is the menu item that appears when you long press the Focus icon on the phone home screen. */
-"UIApplicationShortcutItemTitle.EraseAndOpen" = "امسح وافتح";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:f0dcb3fb289786a28959f0df651ce4d9d2c5b5530829d7eed7520f91b9cf5816
+size 911

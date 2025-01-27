@@ -1,17 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-extension UIConstants {
-    static var BottomToolbarHeight: CGFloat { return ToolbarHeight + BottomInset }
-
-    static var BottomInset: CGFloat {
-        var bottomInset: CGFloat = 0.0
-        if let window = UIWindow.attachedKeyWindow {
-            bottomInset = window.safeAreaInsets.bottom
-        }
-        return bottomInset
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:e6f35018c945cf62e1e82957b7b6c2105359a222bf9f0c29fbd44ecd2dd45606
+size 559

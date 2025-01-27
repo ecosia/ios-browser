@@ -1,15 +1,3 @@
-/* This value is used as the toast message for the saving success alert in the remember credit card page */
-"CreditCard.RememberCard.SecondaryButtonTitle.v116" = "Podatki o kartici posodobljeni";
-
-/* This value is used as the title for the update card page */
-"CreditCard.UpdateCard.MainTitle.v122" = "Posodobim kartico?";
-
-/* This value is used as the title for the Manage Cards button from the update credit card page */
-"CreditCard.UpdateCard.ManageCardsButtonTitle.v115" = "Upravljanje kartic";
-
-/* This value is used as the title for the Not Now button in the update credit card page */
-"CreditCard.UpdateCard.NotNowButtonTitle.v115" = "Ne zdaj";
-
-/* This value is used as the title for the button in the update credit card page. It indicates the action to update the details f9 the card. */
-"CreditCard.UpdateCard.YesButtonTitle.v122" = "Posodobi";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:0859d1da28193e2355f8896a286e9e360dfedf99e0adb4b0e8bc7f7de0f4d3df
+size 856

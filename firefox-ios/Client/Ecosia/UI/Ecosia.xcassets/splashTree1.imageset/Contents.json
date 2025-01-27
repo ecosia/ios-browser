@@ -1,15 +1,3 @@
-{
-  "images" : [
-    {
-      "filename" : "Vector-2.pdf",
-      "idiom" : "universal"
-    }
-  ],
-  "info" : {
-    "author" : "xcode",
-    "version" : 1
-  },
-  "properties" : {
-    "preserves-vector-representation" : true
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:7d5d144a7f715dbb83eb9877fc487755dfaa4aa01e590e7acecce92b4f765d0f
+size 227

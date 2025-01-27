@@ -1,12 +1,3 @@
-{
-  "images" : [
-    {
-      "filename" : "lockMedium.pdf",
-      "idiom" : "universal"
-    }
-  ],
-  "info" : {
-    "author" : "xcode",
-    "version" : 1
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:4feecdb865334b6c6240c3f866009c90461b038c1f292b41d3d4b5d500807ebc
+size 160

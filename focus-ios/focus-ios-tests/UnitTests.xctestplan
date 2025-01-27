@@ -1,24 +1,3 @@
-{
-  "configurations" : [
-    {
-      "id" : "3632BCFC-2A2F-4D7A-867C-5F63C824DA9E",
-      "name" : "Configuration 1",
-      "options" : {
-
-      }
-    }
-  ],
-  "defaultOptions" : {
-
-  },
-  "testTargets" : [
-    {
-      "target" : {
-        "containerPath" : "container:Blockzilla.xcodeproj",
-        "identifier" : "D8E0155B1FCF409F00CA3B9F",
-        "name" : "ClientTests"
-      }
-    }
-  ],
-  "version" : 1
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:b16784b3f8c88dcbd8f5ee409c9ed70953b3ce152ab5c3cf29618967c7235eab
+size 411

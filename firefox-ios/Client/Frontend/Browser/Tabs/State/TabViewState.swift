@@ -1,34 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-struct TabViewState: Equatable {
-    var isPrivateMode: Bool
-    var tabs: [TabCellState]
-
-    // MARK: Inactive tabs
-    var inactiveTabs: [String]
-    var isInactiveTabsExpanded = true
-
-    var isPrivateTabsEmpty: Bool {
-        guard isPrivateMode else { return false }
-        return tabs.isEmpty
-    }
-
-    // For test and mock purposes will be deleted once Redux is integrated
-    static func getMockState(isPrivateMode: Bool) -> TabViewState {
-        var tabs = [TabCellState]()
-
-        for index in 0...4 {
-            let cellState = TabCellState.emptyTabState(title: "Tab \(index)")
-            tabs.append(cellState)
-        }
-        return TabViewState(isPrivateMode: isPrivateMode,
-                            tabs: tabs,
-                            inactiveTabs: ["Tab1",
-                                           "Tab2",
-                                           "Tab3"])
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:7ff6514921a34b5f9335c2c16d29048bc5690f90517bf01edf08754a0a26a3fb
+size 1121

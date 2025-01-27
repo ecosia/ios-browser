@@ -1,33 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-/// Opens the on-boarding screen again
-class ShowIntroductionSetting: Setting {
-    private weak var settingsDelegate: DebugSettingsDelegate?
-
-    override var accessibilityIdentifier: String? {
-        return AccessibilityIdentifiers.Settings.ShowIntroduction.title
-    }
-
-    init(settings: SettingsTableViewController,
-         settingsDelegate: DebugSettingsDelegate?) {
-        self.settingsDelegate = settingsDelegate
-        let theme = settings.themeManager.getCurrentTheme(for: settings.windowUUID)
-        let attributes = [NSAttributedString.Key.foregroundColor: theme.colors.textPrimary]
-        super.init(title: NSAttributedString(string: .AppSettingsShowTour,
-                                             attributes: attributes))
-    }
-
-    override func onClick(_ navigationController: UINavigationController?) {
-        TelemetryWrapper.recordEvent(
-            category: .action,
-            method: .tap,
-            object: .settingsMenuShowTour
-        )
-
-        settingsDelegate?.pressedShowTour()
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:cd092e321442b634c425e8e0d34fd9180db2d4e07bcbcc5260d8a34a1bb71d35
+size 1250

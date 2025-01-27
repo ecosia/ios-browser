@@ -1,18 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-#if canImport(WidgetKit)
-import WidgetKit
-import SwiftUI
-
-@main
-struct FirefoxWidgets: WidgetBundle {
-    @WidgetBundleBuilder var body: some Widget {
-        SmallQuickLinkWidget()
-        SearchQuickLinksWidget()
-        OpenTabsWidget()
-        TopSitesWidget()
-    }
-}
-#endif
+version https://git-lfs.github.com/spec/v1
+oid sha256:25b765ebd55b3e562d70e0f77446c2ad56e2ef7ff623fad6774c7378c062751b
+size 482

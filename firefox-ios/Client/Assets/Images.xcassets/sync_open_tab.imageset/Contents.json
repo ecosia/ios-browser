@@ -1,15 +1,3 @@
-{
-  "images" : [
-    {
-      "filename" : "Group 349.pdf",
-      "idiom" : "universal"
-    }
-  ],
-  "info" : {
-    "author" : "xcode",
-    "version" : 1
-  },
-  "properties" : {
-    "preserves-vector-representation" : true
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:3fe6e5db46697ea27521b811d685d2cf764dd7306eefc8f123bd1c6b72bfee71
+size 228

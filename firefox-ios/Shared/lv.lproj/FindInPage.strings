@@ -1,12 +1,3 @@
-/* Done button in Find in Page Toolbar. */
-"Done" = "Gatavs";
-
-/* Text selection menu item */
-"Find in Page" = "Meklēt lapā";
-
-/* Accessibility label for next result button in Find in Page Toolbar. */
-"Next in-page result" = "Nākamais rezultāts";
-
-/* Accessibility label for previous result button in Find in Page Toolbar. */
-"Previous in-page result" = "Iepriekšējais rezultāts";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:1457c383029423cdc114decb4d4c754b3416178ad02808b4317b7cc04e2d99ab
+size 389

@@ -1,9 +1,3 @@
-/* Toggle for address autofill syncing setting */
-"FirefoxSync.AddressAutofillEngine.v124" = "ਸਿਰਨਾਵੇਂ";
-
-/* Toggle for credit cards syncing setting */
-"FirefoxSync.CreditCardsEngine.v122" = "ਭੁਗਤਾਨ ਢੰਗ";
-
-/* Toggle passwords syncing setting, in the Settings > Sync Data menu of the app. */
-"Sync.LoginsEngine.Title.v122" = "ਪਾਸਵਰਡ";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:4dff71602ee018b2fa0fe3356c7f3835fc4ff9c689622e07eef969bff9839ecf
+size 381

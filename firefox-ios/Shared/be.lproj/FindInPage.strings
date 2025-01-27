@@ -1,12 +1,3 @@
-/* Done button in Find in Page Toolbar. */
-"Done" = "Гатова";
-
-/* Text selection menu item */
-"Find in Page" = "Знайсці на старонцы";
-
-/* Accessibility label for next result button in Find in Page Toolbar. */
-"Next in-page result" = "Наступны вынік на старонцы";
-
-/* Accessibility label for previous result button in Find in Page Toolbar. */
-"Previous in-page result" = "Папярэдні вынік на старонцы";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:7ad6d58c6a197ccb21ff267213e934d8380463011bf18a1c4567652d5dd4bc69
+size 472

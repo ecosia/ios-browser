@@ -1,9 +1,3 @@
-/* Label text that gets presented as a confirmation at the bottom of screen when the credit card is successfully removed. */
-"CreditCard.SnackBar.RemovedCardLabel.v112" = "Tarjeta eliminada";
-
-/* Label text that gets presented as a confirmation at the bottom of screen when credit card information gets saved successfully */
-"CreditCard.SnackBar.SavedCardLabel.v112" = "Nueva tarjeta guardada";
-
-/* Label text that gets presented as a confirmation at the bottom of screen when credit card information gets updated successfully */
-"CreditCard.SnackBar.UpdatedCardLabel.v122" = "Información de la tarjeta actualizada";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:832db110d615bc41e685f99d044ed8fd8669812e938d77906d8a9116b47d11f3
+size 619

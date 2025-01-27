@@ -1,9 +1,3 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-
-#import <Foundation/Foundation.h>
-
-@interface Try : NSObject
-- (id) initWithTry: (void(^)(void)) tryBlock catch: (void(^)(NSException *exception)) catchBlock;
-@end
+version https://git-lfs.github.com/spec/v1
+oid sha256:ea5ece4ce4e83fff7a7af6b781e900a0af3c392a88d111b1d0c0cf19a1e3fee6
+size 370

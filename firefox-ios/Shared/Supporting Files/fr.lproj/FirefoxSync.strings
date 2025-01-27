@@ -1,9 +1,3 @@
-/* Toggle for address autofill syncing setting */
-"FirefoxSync.AddressAutofillEngine.v124" = "Adresses";
-
-/* Toggle for credit cards syncing setting */
-"FirefoxSync.CreditCardsEngine.v122" = "Moyens de paiement";
-
-/* Toggle passwords syncing setting, in the Settings > Sync Data menu of the app. */
-"Sync.LoginsEngine.Title.v122" = "Mots de passe";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:5322a3a0d115f2ceed41f57d7dfe6c65094a8dd269b837d22dfe075cb3fa1ae3
+size 350

@@ -1,6 +1,3 @@
-/* Accessibility label for the new tab button that can be displayed in the navigation or address toolbar. */
-"Toolbar.NewTab.Button.v130" = "Novo separador";
-
-/* Label for button on action sheet, accessed via long pressing tab toolbar button, that closes the current tab when pressed */
-"Toolbar.Tab.CloseThisTab.Button.v130" = "Fechar este separador";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:2f96792bb971c4d57c3c552d42d75421beb465342703cef0424d887ba1dcc5f1
+size 354

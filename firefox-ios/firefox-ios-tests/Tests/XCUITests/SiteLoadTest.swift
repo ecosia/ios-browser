@@ -1,36 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import XCTest
-
-// NOTE: This test should be DISABLED on XCUITEST/UITEST scheme. This test should be run in conjunction with
-// XCode Profiler to measure the memory/CPU load
-class SiteLoadTest: BaseTestCase {
-    func testLoadSite() {
-        let site = ["http://www.forbes.com", "http://www.amazon.com", "http://theguardian.com", "http://www.reddit.com", "http://cnn.com"]
-        let durationInHrs = 1
-        let futureDate = Date().addingTimeInterval(TimeInterval(60 * 60 * durationInHrs))
-        var counter = 0
-        while Date() < futureDate {
-            navigator.goto(URLBarOpen)
-            navigator.openURL(site[counter % 5])
-            sleep(5)
-
-            navigator.nowAt(BrowserTab)
-            navigator.goto(TabTray)
-
-            navigator.performAction(Action.AcceptRemovingAllTabs)
-            navigator.goto(BrowserTab)
-            mozWaitForElementToNotExist(app.staticTexts["1 tab(s) closed"])
-
-            // clear the cache
-            navigator.goto(ClearPrivateDataSettings)
-            app.tables.staticTexts["Clear Private Data"].tap()
-            app.alerts.buttons["OK"].waitAndTap()
-            navigator.goto(BrowserTab)
-            mozWaitForElementToExist(app.textFields[AccessibilityIdentifiers.Browser.UrlBar.url])
-            counter += 1
-        }
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:0f67d6f859f56d0acc0c02fd37b307d94ad31880af48deb2ca9c2bbf28c3d07e
+size 1501

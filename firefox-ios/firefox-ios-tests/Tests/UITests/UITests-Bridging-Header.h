@@ -1,14 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-#ifndef Client_UITests_Bridging_Header_h
-#define Client_UITests_Bridging_Header_h
-
-#import <KIF/KIF.h>
-#import <KIF/KIFUITestActor-IdentifierTests.h>
-#import <KIF/UIApplication-KIFAdditions.h>
-#import <KIF/UIAccessibilityElement-KIFAdditions.h>
-#import <KIF/UIWindow-KIFAdditions.h>
-
-#endif
+version https://git-lfs.github.com/spec/v1
+oid sha256:b57f8d9620d2e26f8b9974b2db0181e28aa8fe038b4647a64e768cc0ac00424a
+size 493

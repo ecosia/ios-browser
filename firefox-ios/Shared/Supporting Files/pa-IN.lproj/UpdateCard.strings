@@ -1,15 +1,3 @@
-/* This value is used as the toast message for the saving success alert in the remember credit card page */
-"CreditCard.RememberCard.SecondaryButtonTitle.v116" = "ਕਾਰਡ ਦੀ ਜਾਣਕਾਰੀ ਅੱਪਡੇਟ ਕੀਤੀ ਗਈ";
-
-/* This value is used as the title for the update card page */
-"CreditCard.UpdateCard.MainTitle.v122" = "ਕਾਰਡ ਅੱਪਡੇਟ ਕਰਨਾ ਹੈ?";
-
-/* This value is used as the title for the Manage Cards button from the update credit card page */
-"CreditCard.UpdateCard.ManageCardsButtonTitle.v115" = "ਕਾਰਡਾਂ ਦਾ ਇੰਤਜ਼ਾਮ ਕਰੋ";
-
-/* This value is used as the title for the Not Now button in the update credit card page */
-"CreditCard.UpdateCard.NotNowButtonTitle.v115" = "ਹੁਣੇ ਨਹੀਂ";
-
-/* This value is used as the title for the button in the update credit card page. It indicates the action to update the details f9 the card. */
-"CreditCard.UpdateCard.YesButtonTitle.v122" = "ਅੱਪਡੇਟ ਕਰੋ";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:b58e8052423129834e44aa482a943f6cbaf64d2f1b9401f7f048571c12b50384
+size 1014

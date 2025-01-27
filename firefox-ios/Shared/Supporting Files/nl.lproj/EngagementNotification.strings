@@ -1,18 +1,3 @@
-/* Body of notification send to user after inactivity to encourage them to use the search feature. */
-"Engagement.Notification.Body.v112" = "Zoek iets in de buurt. Of ontdek iets leuks.";
-
-/* Title of notification send to user after inactivity to encourage them to use the search feature. */
-"Engagement.Notification.Title.v112" = "Start uw eerste zoekopdracht";
-
-/* Body of notification send to user after inactivity to encourage them to use the private browsing feature. Placeholder is app name. */
-"Engagement.Notification.Treatment.A.Body.v114" = "Privénavigatie in %@ slaat uw informatie niet op en blokkeert verborgen trackers.";
-
-/* Title of notification send to user after inactivity to encourage them to use the private browsing feature. */
-"Engagement.Notification.Treatment.A.Title.v114" = "Surf zonder sporen achter te laten";
-
-/* Body of notification send to user after inactivity to encourage them to use the private browsing feature. Placeholder is the app name. */
-"Engagement.Notification.Treatment.B.Body.v114" = "Surf zonder opgeslagen cookies of geschiedenis in %@.";
-
-/* Title of notification send to user after inactivity to encourage them to use the private browsing feature. */
-"Engagement.Notification.Treatment.B.Title.v114" = "Probeer privénavigatie";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:2797c95816704962de8969724558fa8fe09c3ffbcfa0edcd707a2bb47ce8aba1
+size 1282

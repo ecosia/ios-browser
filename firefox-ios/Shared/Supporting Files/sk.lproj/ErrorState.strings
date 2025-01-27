@@ -1,9 +1,3 @@
-/* Sub label error string that gets shown when user enters incorrect input for their expiration date on their credit card in the text box. */
-"CreditCard.ErrorState.CardExpirationDateSublabel.v112" = "Zadajte platný dátum vypršania platnosti";
-
-/* Sub label error string that gets shown when user enters incorrect input for their number printed on their credit card in the text box. */
-"CreditCard.ErrorState.CardNumberSublabel.v112" = "Zadajte platné číslo karty";
-
-/* Sub label error string that gets shown when user enters incorrect input for their name printed on their credit card in the text box. */
-"CreditCard.ErrorState.NameOnCardSublabel.v112" = "Zadajte meno";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:0dfc68d1f85cf02f7664720b8d77c0c62c188e605cafc4fef1e0487ed079e16c
+size 679

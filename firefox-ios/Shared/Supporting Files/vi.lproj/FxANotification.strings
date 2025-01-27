@@ -1,6 +1,3 @@
-/* Title of notification shown when a remote device has requested to close a number of tabs. First parameter is the app name and the second parameter is the number of tabs. */
-"CloseTab.ArrivingNotification.title.v133" = "%2$@ thẻ %1$@ đã đóng";
-
-/* Label for an action used to view recently closed tabs. */
-"CloseTab.ViewAction.title.v133" = "Xem thẻ đã đóng gần đây";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:fe0b9958b7dc067d2d0b3c43955e786baa513384b18ad920b8c5386488e1feec
+size 387

@@ -1,12 +1,3 @@
-/* The name of the folder that contains desktop bookmarks in the menu. This should match bookmarks.folder.menu.label on Android. */
-"Bookmarks Menu" = "სანიშნების მენიუ";
-
-/* The name of the folder that contains desktop bookmarks in the toolbar. This should match bookmarks.folder.toolbar.label on Android. */
-"Bookmarks Toolbar" = "სანიშნების ხელსაწყოთა ზოლი";
-
-/* The title of the folder that contains mobile bookmarks. This should match bookmarks.folder.mobile.label on Android. */
-"Mobile Bookmarks" = "მობილურის სანიშნები";
-
-/* The name of the folder that contains unsorted desktop bookmarks. This should match bookmarks.folder.unfiled.label on Android. */
-"Unsorted Bookmarks" = "დაუხარისხებელი სანიშნები";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:222f0417b1d39a6f4cad40ce8db61626416a67a30a163031d78bf5c14023bb29
+size 874

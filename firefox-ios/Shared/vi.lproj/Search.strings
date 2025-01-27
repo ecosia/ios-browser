@@ -1,9 +1,3 @@
-/* Label for search engine buttons. The argument corresponds to the name of the search engine. */
-"%@ search" = "Tìm kiếm %@";
-
-/* Label for search settings button. */
-"Search Settings" = "Cài đặt tìm kiếm";
-
-/* When making a new search from the awesome bar, suggestions appear to the user as they write new letters in their search. Different types of suggestions can appear. This string will be used as a label for sponsored Firefox suggestions. */
-"Search.SponsoredSuggestionDescription.v119" = "Được tài trợ";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:f81b066e4350779127f37e57b6940ee32bfa171b66ec4aa22160b355a7edb49f
+size 531

@@ -1,3 +1,3 @@
-/* Fallback Title of notification if no notification title was configured. The notification is an advise to the user. The argument is the app name. */
-"Notification.Fallback.Title.v113" = "Dica %@";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:5a7c8f6f0b4ed1addbf46ec0fd1d3d6a539cb59af874bc92540ee4b7643710f5
+size 200

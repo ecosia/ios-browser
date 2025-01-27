@@ -1,11 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import UIKit
-
-final class WelcomeNavigation: UINavigationController {
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        topViewController is Welcome ? .portrait : .all
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:91dcee7f7e956bc3c8425608879eb9396d6d538870e2225f4caa3a9d680ea7ef
+size 414

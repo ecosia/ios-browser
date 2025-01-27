@@ -1,10 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-enum TabScrollBehavior: Equatable {
-    case scrollToSelectedTab(shouldAnimate: Bool)
-    case scrollToTab(withTabUUID: TabUUID, shouldAnimate: Bool)
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:b383a680095121f536227937d6bc80c915a0fcffa8d907f1a9abdc47d4ef8293
+size 373

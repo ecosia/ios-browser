@@ -1,6 +1,3 @@
-/* Text displayed above the input field when changing the existing passcode */
-"Enter passcode" = "Въвеждане на парола";
-
-/* Touch ID prompt subtitle when accessing logins */
-"Use your fingerprint to access Logins now." = "Използвайте вашия пръстов отпечатък за достъп до входящи данни сега.";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:f0325845e0c38cf3f40df83977375a51a13129aecd8c8d497b60fa6f9777b31e
+size 370

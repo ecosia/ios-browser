@@ -1,34 +1,3 @@
-features:
-  credit-card-autofill:
-    description: This property defines the credit card autofill feature
-    variables:
-      credit-card-autofill-status:
-        description: If true, we will allow user to use the credit autofill feature
-        type: Boolean
-        default: true
-    defaults:
-      - channel: developer
-        value: {
-            "credit-card-autofill-status": true
-        }
-      - channel: beta
-        value: {
-            "credit-card-autofill-status": true
-        }
-  login-autofill:
-    description: This property defines the login autofill feature for automatically filling in usernames and passwords.
-    variables:
-      login-autofill-status:
-        description: If true, allows the user to use the login autofill feature for usernames and passwords.
-        type: Boolean
-        default: true
-    defaults:
-      - channel: developer
-        value: {
-            "login-autofill-status": true
-        }
-      - channel: beta
-        value: {
-            "login-autofill-status": true
-        }
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:4c3b19dcef5f495f15d824faf9b54ccc0784f5eaae3b649a252f95688803aa6e
+size 1034

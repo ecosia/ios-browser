@@ -1,6 +1,3 @@
-/* Error message shown in the remote tabs panel */
-"SendTo.NoDevicesFound.Message.v119" = "بۇ ھېساباتقا باغلانغان قەدەمداشلىنىدىغان باشقا ئۈسكۈنە يوق.";
-
-/* This message appears when a user tries to use 'Send Link to Device' action while not logged in */
-"SendTo.NotSignedIn.Title.v119" = "سىز تېخى ھېساباتىڭىزغا كىرمىدىڭىز.";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:17b14296d6d9a6a96899f30ff464c3e0b5def4b84eef66713257077a80d88781
+size 410

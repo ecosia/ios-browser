@@ -1,12 +1,3 @@
-/* Done button in Find in Page Toolbar. */
-"Done" = "تمّ";
-
-/* Text selection menu item */
-"Find in Page" = "ابحث في الصفحة";
-
-/* Accessibility label for next result button in Find in Page Toolbar. */
-"Next in-page result" = "النتيجة التالية في الصفحة";
-
-/* Accessibility label for previous result button in Find in Page Toolbar. */
-"Previous in-page result" = "النتيجة السابقة في الصفحة";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:5da9f7b89608b89fda28f06dc1892e6e893ae1341d8c720114e92e137c5ef131
+size 450

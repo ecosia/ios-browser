@@ -1,12 +1,3 @@
-/* Description for small size widget to add it to home screen. %@ is the name of the app(Focus/Klar). */
-"TodayWidget.QuickActionGalleryDescription" = "Дадайце цэтлік %@ на галоўны экран. Пасля дадавання віджэта, націсніце і ўтрымлівайце, каб адрэдагаваць яго і выбраць іншы цэтлік.";
-
-/* Description for small size widget to add it to home screen. %@ is the name of the app(Focus/Klar). */
-"TodayWidget.QuickActionGalleryDescriptionV2" = "Пачніце прыватны пошук у %@ з дапамогай прадвызначанай пошукавай сістэмы.";
-
-/* Quick Actions title when widget enters edit mode */
-"TodayWidget.QuickActionsGalleryTitle" = "Хуткія дзеянні";
-
-/* Text shown on quick action widget inviting the user to browse in the app. %@ is the name of the app (Focus/Klar). */
-"TodayWidget.SearchInApp" = "Шукаць у %@";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:2755eb52a05c3c287be659f5faaabef6a39768179fb3e23ce098ff60eb43feeb
+size 983

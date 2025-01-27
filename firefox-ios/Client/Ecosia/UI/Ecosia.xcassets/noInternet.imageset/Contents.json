@@ -1,12 +1,3 @@
-{
-  "images" : [
-    {
-      "filename" : "noInternet.pdf",
-      "idiom" : "universal"
-    }
-  ],
-  "info" : {
-    "author" : "xcode",
-    "version" : 1
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:2f9a7958090464cc7aecae6aab93a997956d1c8dab3d68e6bdbf6c2bfe7f067c
+size 160

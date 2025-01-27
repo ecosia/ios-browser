@@ -1,18 +1,3 @@
-/* Prompt for saving the username in the Save Logins prompt. */
-"LoginsHelper.PromptSaveLogin.Title.v122" = "Simpen sandiasma?";
-
-/* Prompt for saving a password in the Save Logins prompt. */
-"LoginsHelper.PromptSavePassword.Title.v122" = "Simpen sandi?";
-
-/* Prompt for updating the password in the Update Password prompt. */
-"LoginsHelper.PromptUpdateLogin.Title.OneArg.v122" = "Anyarkeun sandi?";
-
-/* Prompt for updating a password in the Update Password prompt. */
-"LoginsHelper.PromptUpdateLogin.Title.TwoArg.v122" = "Anyarkeun sandi?";
-
-/* Placeholder text for search box in logins list view. */
-"LoginsList.LoginsListSearchPlaceholder.v122" = "Téangan kecap sandi";
-
-/* Title for the list of logins saved by the app */
-"LoginsList.Title.v122" = "KECAP SANDI NU DISIMPEN";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:07f33423c9fbaf93ad0ffb3b0cb07784feecbb55323c1b51c08ba841ae658ef3
+size 781

@@ -1,6 +1,3 @@
-/* Error message shown in the remote tabs panel */
-"SendTo.NoDevicesFound.Message.v119" = "У вас нет других устройств, подключенных к этому аккаунту, доступных для синхронизации.";
-
-/* This message appears when a user tries to use 'Send Link to Device' action while not logged in */
-"SendTo.NotSignedIn.Title.v119" = "Вы не вошли в свой аккаунт.";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:68896d810e43db792e14e9aa970596b94ccb6255e09eaac68587e9c47bd8c937
+size 443

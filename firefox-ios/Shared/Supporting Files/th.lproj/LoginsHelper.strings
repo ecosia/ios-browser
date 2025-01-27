@@ -1,9 +1,3 @@
-/* Button to not save the user's password in the logins helper */
-"LoginsHelper.DontSave.Button.v122" = "ไม่ใช่ตอนนี้";
-
-/* Button to not update the user's password in the logins helper */
-"LoginsHelper.DontUpdate.Button.v122" = "ไม่ใช่ตอนนี้";
-
-/* Button to save the user's password */
-"LoginsHelper.SaveLogin.Button.v122" = "บันทึก";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:7430a8ce296db630aa4c6173db2c36d4ad490836dec742fd7862b2fc6f65ec2c
+size 397

@@ -1,12 +1,3 @@
-/* Done button in Find in Page Toolbar. */
-"Done" = "Gereed";
-
-/* Text selection menu item */
-"Find in Page" = "Zoeken op pagina";
-
-/* Accessibility label for next result button in Find in Page Toolbar. */
-"Next in-page result" = "Volgende resultaat op pagina";
-
-/* Accessibility label for previous result button in Find in Page Toolbar. */
-"Previous in-page result" = "Vorige resultaat op pagina";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:721b390b28c393f89ba030d7da8ad73b81d346e2de378502e03c412808b489c8
+size 400

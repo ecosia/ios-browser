@@ -1,9 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-protocol Autocompletable: UIView {
-    func setAutocompleteSuggestion(_ suggestion: String?)
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:1713e4a32816122cca66f4353b792cb1605835a1f72d8b9b2a5068b7e33bb77d
+size 316

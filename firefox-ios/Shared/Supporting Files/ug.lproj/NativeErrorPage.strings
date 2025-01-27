@@ -1,15 +1,3 @@
-/* On error page, this is the text on a button that will try to load the page again. */
-"NativeErrorPage.ButtonLabel.v131" = "قايتا يۈكلە";
-
-/* On error page, this is the description for generic error. */
-"NativeErrorPage.GenericError.Description.v131" = "SSL خاتالىقى يۈز بەردى، مۇلازىمېتىرغا بىخەتەر باغلىنالمايدۇ.";
-
-/* On error page, this is the title for generic error. */
-"NativeErrorPage.GenericError.TitleLabel.v131" = "ئېھتىيات قىلىڭ. بىرەر نەرسە توغرا ئەمەستەك قىلىدۇ.";
-
-/* On error page, this is the description for no internet connection. */
-"NativeErrorPage.NoInternetConnection.Description.v131" = "باشقا ئۈسكۈنىگە باغلاپ سىناپ بېقىڭ. مودېمىڭىز ياكى يېتەكلىگۈچىڭىزنى تەكشۈرۈڭ. باغلىنىشنى ئۈزۈپ ئاندىن سىمسىز تور يەنى Wi-Fi غا قايتا باغلاڭ.";
-
-/* On error page, this is the title for no internet connection */
-"NativeErrorPage.NoInternetConnection.TitleLabel.v131" = "ئىنتېرنېت باغلىنىشىڭىزدا مەسىلە باردەك قىلىدۇ.";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:456bd9fedb443fa8de220fac824db5d0ed9fb7345e9e70f50fb4d33c0a01b757
+size 1189

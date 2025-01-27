@@ -1,12 +1,3 @@
-/* Description for small size widget to add it to home screen. %@ is the name of the app(Focus/Klar). */
-"TodayWidget.QuickActionGalleryDescription" = "Voeg een %@-snelkoppeling toe aan uw startscherm. Houd, nadat u deze hebt toegevoegd, de widget ingedrukt om deze te bewerken en een andere snelkoppeling te selecteren.";
-
-/* Description for small size widget to add it to home screen. %@ is the name of the app(Focus/Klar). */
-"TodayWidget.QuickActionGalleryDescriptionV2" = "Een privézoekopdracht in %@ met uw standaardzoekmachine starten.";
-
-/* Quick Actions title when widget enters edit mode */
-"TodayWidget.QuickActionsGalleryTitle" = "Snelle acties";
-
-/* Text shown on quick action widget inviting the user to browse in the app. %@ is the name of the app (Focus/Klar). */
-"TodayWidget.SearchInApp" = "Zoeken in %@";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:d6fab770ebb62de391f56bd844b3ec306697381360b15e24677ffc0298c086af
+size 826

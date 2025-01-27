@@ -1,12 +1,3 @@
-{
-  "images" : [
-    {
-      "filename" : "tourTree.pdf",
-      "idiom" : "universal"
-    }
-  ],
-  "info" : {
-    "author" : "xcode",
-    "version" : 1
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:a3ded1168e1b68a8cfd2da52a1e36b899f09709f0bd237d2bb7fb556ee76c7dc
+size 158

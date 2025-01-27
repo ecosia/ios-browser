@@ -1,12 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-enum BrowserViewType {
-    case nativeErrorPage
-    case normalHomepage
-    case privateHomepage
-    case webview
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:d96008b0f6b3192ee04985e78c6cb0722ccbff2a45a3ddab1f8041c31c985863
+size 337

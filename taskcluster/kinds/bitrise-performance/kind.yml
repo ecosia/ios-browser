@@ -1,25 +1,3 @@
-# This Source Code Form is subject to the terms of the Mozilla Public
-# License, v. 2.0. If a copy of the MPL was not distributed with this
-# file, You can obtain one at http://mozilla.org/MPL/2.0/.
----
-loader: taskgraph.loader.transform:loader
-
-transforms:
-    - ffios_taskgraph.transforms.bitrise
-    - taskgraph.transforms.task
-
-
-tasks:
-    tests:
-        description: Run Performance Tests on iOS Simulator in Bitrise
-        run-on-tasks-for: []
-        treeherder:
-            symbol: bitrise-perf
-            kind: test
-            platform: ios-simulator-iphone14-16-4/opt
-            tier: 1
-        worker-type: bitrise
-        bitrise:
-            artifact_prefix: public
-            workflows:
-                - Bitrise_Performance_Test
+version https://git-lfs.github.com/spec/v1
+oid sha256:b39aab2a5c7fdae809f300e04d01afb955274cc81da2de93390cba0f4bbcf96c
+size 749

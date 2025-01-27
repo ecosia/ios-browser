@@ -1,19 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import UIKit
-
-class UnitTestSceneDelegate: UIResponder, UIWindowSceneDelegate {
-    var window: UIWindow?
-
-    func scene(_ scene: UIScene,
-               willConnectTo session: UISceneSession,
-               options connectionOptions: UIScene.ConnectionOptions) {
-        guard let windowScene = (scene as? UIWindowScene) else { return }
-
-        window = UIWindow(windowScene: windowScene)
-        window?.rootViewController = UIViewController()
-        window?.makeKeyAndVisible()
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:3d16ed6eb9ae4a18c1eefb6f3a1381c036462855bd59d0aec3d1ddf8785f960e
+size 694

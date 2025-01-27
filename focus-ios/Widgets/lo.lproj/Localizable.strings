@@ -1,12 +1,3 @@
-/* Description for small size widget to add it to home screen. %@ is the name of the app(Focus/Klar). */
-"TodayWidget.QuickActionGalleryDescription" = "ເພີ່ມທາງລັດ %@ ໃສ່ໜ້າຈໍຫຼັກຂອງທ່ານ. ຫຼັງຈາກເພີ່ມວິດເຈັດ, ແຕະຄ້າງໄວ້ເພື່ອແກ້ໄຂ ແລະເລືອກທາງລັດອື່ນ.";
-
-/* Description for small size widget to add it to home screen. %@ is the name of the app(Focus/Klar). */
-"TodayWidget.QuickActionGalleryDescriptionV2" = "ເລີ່ມການຄົ້ນຫາສ່ວນຕົວໃນ %@ ດ້ວຍເຄື່ອງຈັກຊອກຫາເລີ່ມຕົ້ນຂອງທ່ານ.";
-
-/* Quick Actions title when widget enters edit mode */
-"TodayWidget.QuickActionsGalleryTitle" = "ການກະທຳດ່ວນ";
-
-/* Text shown on quick action widget inviting the user to browse in the app. %@ is the name of the app (Focus/Klar). */
-"TodayWidget.SearchInApp" = "ຊອກຫາໃນ %@";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:d25475a0f5874d00dca44814e46c9d94235d9294d88f101d16cc38123f81dcf9
+size 1072

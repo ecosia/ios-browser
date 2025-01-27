@@ -1,6 +1,3 @@
-/* Accessibility label for the new tab button that can be displayed in the navigation or address toolbar. */
-"Toolbar.NewTab.Button.v130" = "Taba ùr";
-
-/* Label for button on action sheet, accessed via long pressing tab toolbar button, that closes the current tab when pressed */
-"Toolbar.Tab.CloseThisTab.Button.v130" = "Dùin an taba seo";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:dbfd62bebdac1c493ff62cc3f0100e2c622e3dd1c71a3f819115b46c89cfe361
+size 344

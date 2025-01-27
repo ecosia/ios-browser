@@ -1,6 +1,3 @@
-/* Shown in error pages for files that can't be shown and need to be downloaded. */
-"Open in Safari" = "Digeriñ e Safari";
-
-/* Shown in error pages on a button that will try to load the page again */
-"Try again" = "Klaskit en-dro";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:291e64277d7c5ee8c5b48a591fee6d564d3f927f55c07406926d0b48256e30a7
+size 234

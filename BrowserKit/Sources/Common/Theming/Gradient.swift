@@ -1,17 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import UIKit
-
-public struct Gradient {
-    public var colors: [UIColor]
-
-    public var cgColors: [CGColor] {
-        return colors.map { $0.cgColor }
-    }
-
-    public init(colors: [UIColor]) {
-        self.colors = colors
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:4e1dd3c16dc45a9774aa30128e3feb3d05d51836619513e04b3b2cebb89a1e15
+size 434

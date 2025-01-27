@@ -1,24 +1,3 @@
-/* (No Comment) */
-"New Private Tab" = "Νέα ιδιωτική καρτέλα";
-
-/* (No Comment) */
-"New Tab" = "Νέα καρτέλα";
-
-/* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Το Ecosia χρησιμοποιεί την κάμερα για τη σάρωση κωδικών QR και τη λήψη φωτογραφιών και βίντεο.";
-
-/* Privacy - Face ID Usage Description */
-"NSFaceIDUsageDescription" = "Το Ecosia απαιτεί το Face ID για την πρόσβαση σε αποθηκευμένους κωδικούς πρόσβασης και μεθόδους πληρωμής.";
-
-/* Privacy - Location When In Use Usage Description */
-"NSLocationWhenInUseUsageDescription" = "Οι ιστότοποι που επισκέπτεστε ενδέχεται να ζητήσουν την τοποθεσία σας.";
-
-/* Privacy - Microphone Usage Description */
-"NSMicrophoneUsageDescription" = "Το Ecosia χρησιμοποιεί το μικρόφωνο για την καταγραφή και τη μεταφόρτωση ήχου.";
-
-/* Privacy - Photo Library Additions Usage Description */
-"NSPhotoLibraryAddUsageDescription" = "Επιτρέπει την αποθήκευση φωτογραφιών.";
-
-/* (No Comment) */
-"Scan QR Code" = "Σάρωση κωδικού QR";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:60efdcbf555b9f82dceb6da19c1e99f5c95538bd3067a79e2067ba672fd01158
+size 1329

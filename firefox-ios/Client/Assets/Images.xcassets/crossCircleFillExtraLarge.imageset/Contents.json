@@ -1,25 +1,3 @@
-{
-  "images" : [
-    {
-      "filename" : "crossCircleFillExtraLargeLight.pdf",
-      "idiom" : "universal"
-    },
-    {
-      "appearances" : [
-        {
-          "appearance" : "luminosity",
-          "value" : "dark"
-        }
-      ],
-      "filename" : "crossCircleFillExtraLargeDark.pdf",
-      "idiom" : "universal"
-    }
-  ],
-  "info" : {
-    "author" : "xcode",
-    "version" : 1
-  },
-  "properties" : {
-    "preserves-vector-representation" : true
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:ba1e372e8d13ed190671c43e096f43e86b90227091bc509a540e3b46f017c0ac
+size 465

@@ -1,16 +1,3 @@
-{
-  "images" : [
-    {
-      "filename" : "friends.pdf",
-      "idiom" : "universal"
-    }
-  ],
-  "info" : {
-    "author" : "xcode",
-    "version" : 1
-  },
-  "properties" : {
-    "preserves-vector-representation" : true,
-    "template-rendering-intent" : "original"
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:98705fba4ea09919e1f08129079aae586cdd9fcfc3d8de7bac8c7553f0b97f8c
+size 272

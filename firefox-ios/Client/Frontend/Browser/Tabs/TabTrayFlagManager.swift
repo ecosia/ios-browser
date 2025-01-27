@@ -1,13 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-/// This is a temporary struct made to manage the feature flag for convenience
-struct TabTrayFlagManager {
-    static var isRefactorEnabled: Bool {
-        return LegacyFeatureFlagsManager.shared.isFeatureEnabled(.tabTrayRefactor,
-                                                                 checking: .buildOnly)
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:3c0ca2f0574d11593eeb769446260cda4d77592fa1a87a9eaf4be97a46af3338
+size 547

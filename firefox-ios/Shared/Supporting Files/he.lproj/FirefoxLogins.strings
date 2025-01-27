@@ -1,18 +1,3 @@
-/* Prompt for saving the username in the Save Logins prompt. */
-"LoginsHelper.PromptSaveLogin.Title.v122" = "לשמור את שם המשתמש?";
-
-/* Prompt for saving a password in the Save Logins prompt. */
-"LoginsHelper.PromptSavePassword.Title.v122" = "לשמור את הססמה?";
-
-/* Prompt for updating the password in the Update Password prompt. */
-"LoginsHelper.PromptUpdateLogin.Title.OneArg.v122" = "לעדכן את הססמה?";
-
-/* Prompt for updating a password in the Update Password prompt. */
-"LoginsHelper.PromptUpdateLogin.Title.TwoArg.v122" = "לעדכן את הססמה?";
-
-/* Placeholder text for search box in logins list view. */
-"LoginsList.LoginsListSearchPlaceholder.v122" = "חיפוש ססמאות";
-
-/* Title for the list of logins saved by the app */
-"LoginsList.Title.v122" = "ססמאות שמורות";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:0703a324a45122f85aa79304a0752935859c65e2e46ecd91cc4de4062412a927
+size 839

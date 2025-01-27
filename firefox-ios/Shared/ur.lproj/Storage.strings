@@ -1,12 +1,3 @@
-/* The name of the folder that contains desktop bookmarks in the menu. This should match bookmarks.folder.menu.label on Android. */
-"Bookmarks Menu" = "بک مارکس مینیو";
-
-/* The name of the folder that contains desktop bookmarks in the toolbar. This should match bookmarks.folder.toolbar.label on Android. */
-"Bookmarks Toolbar" = "بک مارکس ٹول بار";
-
-/* The title of the folder that contains mobile bookmarks. This should match bookmarks.folder.mobile.label on Android. */
-"Mobile Bookmarks" = "موبائل بک مارکس";
-
-/* The name of the folder that contains unsorted desktop bookmarks. This should match bookmarks.folder.unfiled.label on Android. */
-"Unsorted Bookmarks" = "غیر ترتیب شدہ بک مارکس";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:00fa34cc78f1ce6cd2a64b70e22765f7b12e6085a39243af1273afa66026c991
+size 752

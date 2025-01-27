@@ -1,25 +1,3 @@
-{
-  "images" : [
-    {
-      "filename" : "lockSlashFillLargeLight.pdf",
-      "idiom" : "universal"
-    },
-    {
-      "appearances" : [
-        {
-          "appearance" : "luminosity",
-          "value" : "dark"
-        }
-      ],
-      "filename" : "lockSlashFillLargeDark.pdf",
-      "idiom" : "universal"
-    }
-  ],
-  "info" : {
-    "author" : "xcode",
-    "version" : 1
-  },
-  "properties" : {
-    "preserves-vector-representation" : true
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:167ef885c86181e6076e6e95289e38c97f1cd059d61c5fb6d595d015c64bc11e
+size 451

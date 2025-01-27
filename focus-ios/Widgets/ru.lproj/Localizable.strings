@@ -1,12 +1,3 @@
-/* Description for small size widget to add it to home screen. %@ is the name of the app(Focus/Klar). */
-"TodayWidget.QuickActionGalleryDescription" = "Добавить ярлык %@ на Домашний экран. После добавления виджета совершите долгое нажатие, чтобы отредактировать его и выбрать другой ярлык.";
-
-/* Description for small size widget to add it to home screen. %@ is the name of the app(Focus/Klar). */
-"TodayWidget.QuickActionGalleryDescriptionV2" = "Запустите приватный поиск в %@ с помощью поисковой системы по умолчанию.";
-
-/* Quick Actions title when widget enters edit mode */
-"TodayWidget.QuickActionsGalleryTitle" = "Быстрые действия";
-
-/* Text shown on quick action widget inviting the user to browse in the app. %@ is the name of the app (Focus/Klar). */
-"TodayWidget.SearchInApp" = "Поиск в %@";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:1dec7da84cbc45b0f41e9c0eae83bf857285f1fa26a87a24bdf15719678e18ae
+size 997

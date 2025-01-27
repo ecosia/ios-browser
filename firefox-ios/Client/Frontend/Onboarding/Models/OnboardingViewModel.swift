@@ -1,10 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-struct OnboardingViewModel {
-    let cards: [OnboardingCardInfoModel]
-    let isDismissable: Bool
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:7b681b8de4fbc934ec1e5f4842be4e386b15f7df77912b6cffda6c4f2430545e
+size 321

@@ -1,15 +1,3 @@
-# The configuration for the tabStorageRefactorFeature feature
-features:
-  tab-tray-refactor-feature:
-    description: >
-      This feature is for managing the roll out of the Tab Tray refactor feature
-    variables:
-      enabled:
-        description: >
-          Enables the feature
-        type: Boolean
-        default: true
-    defaults:
-      - channel: developer, beta, release
-        value:
-          enabled: true
+version https://git-lfs.github.com/spec/v1
+oid sha256:73f502f02b1f21926879ff91f43c1d06282507cd95aa8cc05aa5182f4a8acea5
+size 423

@@ -1,11 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-protocol AboutSettingsDelegate: AnyObject {
-    func pressedRateApp()
-    func pressedLicense(url: URL, title: NSAttributedString)
-    func pressedYourRights(url: URL, title: NSAttributedString)
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:e3bec5a819d137d5e2e013a17f3e9e0d0ce9ad28f75f06c7b265a35ddfc9749a
+size 418

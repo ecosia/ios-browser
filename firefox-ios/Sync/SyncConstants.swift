@@ -1,11 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-public struct SyncConstants {
-    // Suitable for use in dispatch_time().
-    public static let SyncOnForegroundMinimumDelayMillis: UInt64 = 5 * 60 * 1000
-    public static let SyncOnForegroundAfterMillis: Int64 = 10000
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:f85a433e94bcedf7db3f98e799d3c34a070023fa26b8370291f8bd119b53eac5
+size 443

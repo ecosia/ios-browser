@@ -1,4 +1,3 @@
----
-includes:
-  - messaging/messaging-evergreen-messages.fml.yaml
-  - messaging/messaging-firefox-ios.fml.yaml
+version https://git-lfs.github.com/spec/v1
+oid sha256:2149ef1fee22de63b5f6c56ca6c92b1266dc18422b6e90d51ea68509005d7498
+size 111

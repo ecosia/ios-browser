@@ -1,25 +1,3 @@
-{
-  "images" : [
-    {
-      "filename" : "Desktop.pdf",
-      "idiom" : "universal"
-    },
-    {
-      "appearances" : [
-        {
-          "appearance" : "luminosity",
-          "value" : "dark"
-        }
-      ],
-      "filename" : "request_desktop_site_activity.pdf",
-      "idiom" : "universal"
-    }
-  ],
-  "info" : {
-    "author" : "xcode",
-    "version" : 1
-  },
-  "properties" : {
-    "preserves-vector-representation" : true
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:eae88ad118b385d09a5725a6631379de8e0ed47400cb58195aaacc6e7488d991
+size 442

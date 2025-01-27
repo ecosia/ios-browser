@@ -1,6 +1,3 @@
-/* Error message shown in the remote tabs panel */
-"SendTo.NoDevicesFound.Message.v119" = "Ur tesɛiḍ ara ibenkan niḍen yeqqnen ɣer umiḍan-a i wejden i umtawi.";
-
-/* This message appears when a user tries to use 'Send Link to Device' action while not logged in */
-"SendTo.NotSignedIn.Title.v119" = "Aql-ak ur teqqineḍ ara ɣer umiḍan-ik.";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:e751aefffb7a5a9acd5055c68553ffd4f97d097242da435fbdaca5915e810328
+size 352

@@ -1,11 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-/// Used to open a URL from another application with `urlFromAnotherApp` method
-struct UrlToOpenModel {
-    var url: URL?
-    var isPrivate: Bool
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:30fae26ffed4d0268d263eef12629b2a8ba6ce6a3fbe63d9579797d7022b5f4c
+size 369

@@ -1,6 +1,3 @@
-/* Error message shown in the remote tabs panel */
-"SendTo.NoDevicesFound.Message.v119" = "S tem računom nimate povezanih drugih naprav na voljo za sinhronizacijo.";
-
-/* This message appears when a user tries to use 'Send Link to Device' action while not logged in */
-"SendTo.NotSignedIn.Title.v119" = "Niste prijavljeni v svoj račun.";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:54763f4b0e42f4a2ecedac71f612b00c99c060b1d66e3b9385ad16f429051487
+size 340

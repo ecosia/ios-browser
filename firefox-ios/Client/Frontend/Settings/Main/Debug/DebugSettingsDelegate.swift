@@ -1,16 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-import Shared
-
-/// Child settings pages debug actions
-protocol DebugSettingsDelegate: AnyObject, SharedSettingsDelegate {
-    func pressedVersion()
-    func pressedShowTour()
-    func pressedExperiments()
-    func pressedFirefoxSuggest()
-    func pressedOpenFiftyTabs()
-    func pressedDebugFeatureFlags()
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:101e4116768d4f49373bb73484a0fff72b49cfddb5496751ac99d0d79d7b7c42
+size 528

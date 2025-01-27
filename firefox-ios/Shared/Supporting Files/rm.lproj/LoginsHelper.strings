@@ -1,9 +1,3 @@
-/* Button to not save the user's password in the logins helper */
-"LoginsHelper.DontSave.Button.v122" = "Betg ussa";
-
-/* Button to not update the user's password in the logins helper */
-"LoginsHelper.DontUpdate.Button.v122" = "Betg ussa";
-
-/* Button to save the user's password */
-"LoginsHelper.SaveLogin.Button.v122" = "Memorisar";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:7ed191ff6e10d9d7b69ed5878787300c77bf64e1d79d56bea51597221cb592c4
+size 334

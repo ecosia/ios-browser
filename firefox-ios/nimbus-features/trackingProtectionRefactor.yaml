@@ -1,18 +1,3 @@
-# The configuration for the trackingProtection feature
-features:
-  tracking-protection-refactor:
-    description: >
-     The Enhanced Tracking Protection refactor
-    variables:
-      enabled:
-        description: >
-          Whether the Enhanced Tracking Protection refactor is enabled or not
-        type: Boolean
-        default: false
-    defaults:
-      - channel: beta
-        value:
-          enabled: false
-      - channel: developer
-        value:
-          enabled: true
+version https://git-lfs.github.com/spec/v1
+oid sha256:134051e7dca333f9370cdb111d10f0cd30b7de2d663feb612220ec6c4ddaf858
+size 481

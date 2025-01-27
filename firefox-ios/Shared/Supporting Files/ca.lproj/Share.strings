@@ -1,6 +1,3 @@
-/* Error message shown in the remote tabs panel */
-"SendTo.NoDevicesFound.Message.v119" = "No hi ha cap altre dispositiu connectat a aquest compte disponible per sincronitzar.";
-
-/* This message appears when a user tries to use 'Send Link to Device' action while not logged in */
-"SendTo.NotSignedIn.Title.v119" = "No heu iniciat la sessió en el vostre compte.";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:11dce86b8a750402637ae1a8fc6125766443a1ff781e6f3eb64173833539cd4b
+size 365

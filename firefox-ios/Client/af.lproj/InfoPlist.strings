@@ -1,21 +1,3 @@
-/* (No Comment) */
-"New Private Tab" = "Nuwe private oortjie";
-
-/* (No Comment) */
-"New Tab" = "Nuwe oortjie";
-
-/* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Hierdie laat mens foto’s neem en oplaai.";
-
-/* Privacy - Location When In Use Usage Description */
-"NSLocationWhenInUseUsageDescription" = "Webwerwe wat u besoek kan dalk u ligging vra.";
-
-/* Privacy - Microphone Usage Description */
-"NSMicrophoneUsageDescription" = "Hierdie laat mens video’s neem en oplaai.";
-
-/* Privacy - Photo Library Additions Usage Description */
-"NSPhotoLibraryAddUsageDescription" = "This lets you save photos.";
-
-/* (No Comment) */
-"Scan QR Code" = "Scan QR Code";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:bb64753380f8df3b1db7acada7d2edd84fd7eebfa25da7b1fd97c6376ac156ee
+size 680

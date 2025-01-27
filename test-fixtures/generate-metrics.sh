@@ -1,24 +1,3 @@
-#! /usr/bin/env bash
-# set -x # For debug
-set -e
-
-BUILD_LOG_FILE="$1"
-TYPE_LOG_FILE="$2"
-THRESHOLD_UNIT_TEST=28
-THRESHOLD_XCUITEST=28
-
-WARNING_COUNT=$(grep -E -v "SourcePackages/checkouts" "$BUILD_LOG_FILE" | grep -E "(^|:)[0-9]+:[0-9]+:|warning:|ld: warning:|<unknown>:0: warning:|fatal|===" | uniq | wc -l)
-
-if  [ $2 == "unit-test" ]; then
-    if [ $WARNING_COUNT -ge $THRESHOLD_UNIT_TEST ]; then
-        echo "Number of warnings is: $WARNING_COUNT. This is greater than unit-test threshold: $THRESHOLD_UNIT_TEST"
-    else
-        echo "Number of warnings is: $WARNING_COUNT. This is lower than unit-test threshold: $THRESHOLD_UNIT_TEST"
-    fi
-else
-    if [ $WARNING_COUNT -ge $THRESHOLD_XCUITEST ]; then
-        echo "Number of warnings is: $WARNING_COUNT. This is greater than build threshold: $THRESHOLD_XCUITEST"
-    else
-        echo "Number of warnings is: $WARNING_COUNT. This is lower than build threshold: $THRESHOLD_XCUITEST"
-    fi
-fi
+version https://git-lfs.github.com/spec/v1
+oid sha256:d237f487855aed90810235423a73449b3773aceb3c88c6d8eb00e44658f638a1
+size 949

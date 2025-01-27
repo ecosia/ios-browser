@@ -1,9 +1,3 @@
-/* The cancel button when confirming clear history. */
-"Cancel" = "Ləğv et";
-
-/* The confirmation button that clears history even when Sync is connected. */
-"OK" = "Tamam";
-
-/* Description of the confirmation dialog shown when a user tries to clear history that's synced to another device. */
-"This action will clear all of your private data, including history from your synced devices." = "Bu əməliyyat sinxronlaşdırılmış cihazlarınızın tarixçəsi daxil bütün şəxsi məlumatlarınızı siləcək.";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:d8532780226e3bf021d8cb09086148c7eef82b620fc6ad59c66edb6790e6dd02
+size 518

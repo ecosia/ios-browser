@@ -1,9 +1,3 @@
-/* Label text that gets presented as a confirmation at the bottom of screen when the credit card is successfully removed. */
-"CreditCard.SnackBar.RemovedCardLabel.v112" = "Karta byla odebrána";
-
-/* Label text that gets presented as a confirmation at the bottom of screen when credit card information gets saved successfully */
-"CreditCard.SnackBar.SavedCardLabel.v112" = "Nová karta byla uložena";
-
-/* Label text that gets presented as a confirmation at the bottom of screen when credit card information gets updated successfully */
-"CreditCard.SnackBar.UpdatedCardLabel.v122" = "Informace o kartě byla aktualizována";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:814cce26dd655b004d52ece01d08ab62cbe6ee8ea460123f80e546cf39a1ca5c
+size 625

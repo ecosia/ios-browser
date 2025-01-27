@@ -1,24 +1,3 @@
-/* (No Comment) */
-"New Private Tab" = "Nueva pestanya privada";
-
-/* (No Comment) */
-"New Tab" = "Nueva pestanya";
-
-/* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Firefox usa a tuya camara ta escanear QRs y fer fotos y video.";
-
-/* Privacy - Face ID Usage Description */
-"NSFaceIDUsageDescription" = "Firefox necesita Face ID pa acceder a os tuyos logins guardaus.";
-
-/* Privacy - Location When In Use Usage Description */
-"NSLocationWhenInUseUsageDescription" = "Los puestos web que vesites pueden solicitar conoixer lo tuyo plazamiento.";
-
-/* Privacy - Microphone Usage Description */
-"NSMicrophoneUsageDescription" = "Esto te permitede fer y puyar videos.";
-
-/* Privacy - Photo Library Additions Usage Description */
-"NSPhotoLibraryAddUsageDescription" = "Esto te permite d'alzar fotos.";
-
-/* (No Comment) */
-"Scan QR Code" = "Escaniar codigo QR";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:f877341fa11dcd331bfcdc13e087094fc540413cbd2b423b048cf44bec5f2050
+size 876

@@ -1,23 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-import SwiftUI
-
-struct ErrorTextStyle: ViewModifier {
-    var color: Color
-
-    func body(content: Content) -> some View {
-        content
-            .preferredBodyFont(size: 15)
-            .padding(.leading, 10)
-            .foregroundColor(color)
-    }
-}
-
-extension View {
-    func errorTextStyle(color: Color) -> some View {
-        modifier(ErrorTextStyle(color: color))
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:c96e0fcc61c5b416903ea9aef9c0a7f298a6643ef8e18997bdb29ea0974ab5f3
+size 605

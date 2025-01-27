@@ -1,21 +1,3 @@
-name: 'Restore Derived data'
-description: 'This action contains all the logic needed to restore the derived data cache'
-
-runs:
-  using: "composite"
-  steps:
-    - name: Get Derived Data cache expiration Date
-      shell: bash
-      id: check-derived-data-cache-date
-      run: |
-        echo "::set-output name=date::$(date -v-5d '+%Y-%m-%d')"
-
-    - name: Restore derived data main branch cache
-      uses: actions/cache/restore@v3
-      with:
-        path: DerivedData/
-        key: ${{ runner.os }}-derived-data-cache-${{ steps.check-derived-data-cache-date.outputs.date }}
-
-    - name: Untar derived data main brach
-      shell: bash
-      run: if [ -f DerivedData/dd.tar ]; then tar xvPpf DerivedData/dd.tar; else echo "No cache file"; fi
+version https://git-lfs.github.com/spec/v1
+oid sha256:64772cf325037887c50304ba2a4d5688a1428d33a78bc2eb813e8e7857d8b2a2
+size 743

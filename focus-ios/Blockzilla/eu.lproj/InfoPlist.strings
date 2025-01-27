@@ -1,18 +1,3 @@
-/* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Honekin argazkiak atera eta igo ditzakezu.";
-
-/* Privacy - Face ID Usage Description */
-"NSFaceIDUsageDescription" = "Honekin aplikazioa desblokea dezakezu.";
-
-/* Privacy - Location When In Use Usage Description */
-"NSLocationWhenInUseUsageDescription" = "Bisitatutako webguneek zure kokapena eska lezakete.";
-
-/* Privacy - Microphone Usage Description */
-"NSMicrophoneUsageDescription" = "Honekin bideoak graba eta igo ditzakezu.";
-
-/* Privacy - Photo Library Additions Usage Description */
-"NSPhotoLibraryAddUsageDescription" = "Honekin argazkiak gorde eta igo ditzakezu.";
-
-/* This is the menu item that appears when you long press the Focus icon on the phone home screen. */
-"UIApplicationShortcutItemTitle.EraseAndOpen" = "Ezabatu eta ireki";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:a09cdf12f52163d11e4fc0bd4e617659c4dfe1bff63eb95d9248e9a1e5282f8d
+size 820

@@ -1,6 +1,3 @@
-/* (No Comment) */
-"Intents.Erase.Description" = "Cancellar le session de navigation";
-
-/* (No Comment) */
-"Intents.Erase.Title" = "Rader";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:cdd0073f83c5d10ce27c7f2f28fdef3edc0dd01ab52f312107b68507fd325e81
+size 141

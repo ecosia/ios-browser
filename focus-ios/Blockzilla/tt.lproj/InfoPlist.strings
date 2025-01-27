@@ -1,18 +1,3 @@
-/* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Бу Cезгә фотога төшәргә һәм аларны йөкләргә мөмкинлек бирә.";
-
-/* Privacy - Face ID Usage Description */
-"NSFaceIDUsageDescription" = "Бу Сезгә кушымтаның йозагын ачуга мөмкинлек бирә.";
-
-/* Privacy - Location When In Use Usage Description */
-"NSLocationWhenInUseUsageDescription" = "Сез ачкан вебсайтлар урнашуыгызны сорый ала.";
-
-/* Privacy - Microphone Usage Description */
-"NSMicrophoneUsageDescription" = "Бу сезгә видео яздырырга һәм йөкләргә мөмкинлек бирә.";
-
-/* Privacy - Photo Library Additions Usage Description */
-"NSPhotoLibraryAddUsageDescription" = "Бу сезгә фотоларны сакларга һәм йөкләргә мөмкинлек бирә.";
-
-/* This is the menu item that appears when you long press the Focus icon on the phone home screen. */
-"UIApplicationShortcutItemTitle.EraseAndOpen" = "Чистарту һәм ачу";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:50bf1223c01da211ff151bd9192893fec02251cc46d19c78cf86e50c1bbd65e7
+size 1103

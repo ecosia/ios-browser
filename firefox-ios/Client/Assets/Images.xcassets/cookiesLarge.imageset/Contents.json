@@ -1,15 +1,3 @@
-{
-  "images" : [
-    {
-      "filename" : "cookiesLarge.pdf",
-      "idiom" : "universal"
-    }
-  ],
-  "info" : {
-    "author" : "xcode",
-    "version" : 1
-  },
-  "properties" : {
-    "preserves-vector-representation" : true
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:72e24705f7ffab99c7bf2704e1b695f0128aa5eb1e8c7268f35e3bf550bac066
+size 231

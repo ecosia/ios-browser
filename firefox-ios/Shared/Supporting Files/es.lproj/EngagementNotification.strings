@@ -1,18 +1,3 @@
-/* Body of notification send to user after inactivity to encourage them to use the search feature. */
-"Engagement.Notification.Body.v112" = "Encuentra algo cerca. O descubre algo divertido.";
-
-/* Title of notification send to user after inactivity to encourage them to use the search feature. */
-"Engagement.Notification.Title.v112" = "Inicia tu primera búsqueda";
-
-/* Body of notification send to user after inactivity to encourage them to use the private browsing feature. Placeholder is app name. */
-"Engagement.Notification.Treatment.A.Body.v114" = "La navegación privada en %@ no guarda tu información y bloquea los rastreadores ocultos.";
-
-/* Title of notification send to user after inactivity to encourage them to use the private browsing feature. */
-"Engagement.Notification.Treatment.A.Title.v114" = "Navega sin dejar rastro";
-
-/* Body of notification send to user after inactivity to encourage them to use the private browsing feature. Placeholder is the app name. */
-"Engagement.Notification.Treatment.B.Body.v114" = "Navega sin guardar cookies ni historial en %@.";
-
-/* Title of notification send to user after inactivity to encourage them to use the private browsing feature. */
-"Engagement.Notification.Treatment.B.Title.v114" = "Prueba la navegación privada";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:35c56047bb1448450fe14c014951f68e14a0bddd16fffd884398a176ed0d450f
+size 1281

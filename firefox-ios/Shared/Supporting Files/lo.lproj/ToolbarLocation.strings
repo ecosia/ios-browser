@@ -1,6 +1,3 @@
-/* Contextual hints are little popups that appear for the users informing them of new features. This one indicates a user can navigate to the Settings page to move the search bar to the top. */
-"ContextualHints.Toolbar.Bottom.Description.v107" = "ຍ້າຍແຖບເຄື່ອງມືໄປເທິງສຸດ ຖ້ານັ້ນເປັນແບບຂອງເຈົ້າຫຼາຍກວ່ານັ້ນ.";
-
-/* Contextual hints are little popups that appear for the users informing them of new features. This one indicates a user can navigate to the Settings page to move the search bar to the bottom. */
-"ContextualHints.Toolbar.Top.Description.v107" = "ຍ້າຍແຖບເຄື່ອງມືໄປລຸ່ມສຸດ ຖ້ານັ້ນເປັນແບບຂອງເຈົ້າຫຼາຍກວ່ານັ້ນ.";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:b8a36ed39d655fe9c3e571ec01ffdbc8d4e6defd9e3076c8c8dcf0cf6e907661
+size 854

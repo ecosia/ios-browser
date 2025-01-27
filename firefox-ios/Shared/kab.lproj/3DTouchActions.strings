@@ -1,21 +1,3 @@
-/* Label for preview action on Tab Tray Tab to add current tab to Bookmarks */
-"Add to Bookmarks" = "Rnu γer tecraḍ";
-
-/* Label for preview action on Tab Tray Tab to close the current tab */
-"Close Tab" = "Mdel Iccer";
-
-/* Label for preview action on Tab Tray Tab to copy the URL of the current tab to clipboard */
-"Copy URL" = "Nɣel tansa URL";
-
-/* Label for preview action on Tab Tray Tab to send the current link to another device */
-"Menu.SendLinkToDevice" = "Azen aseɣwen ɣer yibenk";
-
-/* String describing the action of opening the last added bookmark from the home screen Quick Actions via 3D Touch */
-"Open Last Bookmark" = "Ldi tacreḍṭ taneggarut";
-
-/* Accessibility label, associated to the 3D Touch action on the current tab in the tab tray, used to display a larger preview of the tab. */
-"Preview of %@" = "Taskant n %@";
-
-/* Label for preview action on Tab Tray Tab to send the current tab to another device */
-"Send to Device" = "Azen γer yibenk";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:8178f848dcf69cb515d9d7cd883ad03e7b884dd4f2f8f3b797c57233f3dfb394
+size 975

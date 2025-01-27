@@ -1,18 +1,3 @@
-/* Settings item for clearing browsing history */
-"Browsing History" = "Istoric de navigare";
-
-/* Settings item for clearing the cache */
-"Cache" = "Cache";
-
-/* Settings item for clearing cookies */
-"Cookies" = "Cookie-uri";
-
-/* Settings item for deleting downloaded files */
-"Downloaded Files" = "Fișiere descărcate";
-
-/* Settings item for clearing website data */
-"Offline Website Data" = "Date offline ale site-urilor web";
-
-/* Settings item for clearing passwords and login data */
-"Saved Logins" = "Date de autentificare salvate";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:8ca966691cb2fe17c6656ab2a341e480d75fabeaa78a90efcb809cecedfdba30
+size 539

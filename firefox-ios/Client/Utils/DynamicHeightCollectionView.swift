@@ -1,18 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import UIKit
-
-class DynamicHeightCollectionView: UICollectionView {
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        if !__CGSizeEqualToSize(bounds.size, self.intrinsicContentSize) {
-            self.invalidateIntrinsicContentSize()
-        }
-    }
-
-    override var intrinsicContentSize: CGSize {
-        return contentSize
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:9977b32bdbb381261890df9a7e29f0842808bf103d00089226cd12d1fc293295
+size 562

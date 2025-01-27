@@ -1,9 +1,3 @@
-/* Sub label error string that gets shown when user enters incorrect input for their expiration date on their credit card in the text box. */
-"CreditCard.ErrorState.CardExpirationDateSublabel.v112" = "Ange ett giltigt utgångsdatum";
-
-/* Sub label error string that gets shown when user enters incorrect input for their number printed on their credit card in the text box. */
-"CreditCard.ErrorState.CardNumberSublabel.v112" = "Ange ett giltigt kortnummer";
-
-/* Sub label error string that gets shown when user enters incorrect input for their name printed on their credit card in the text box. */
-"CreditCard.ErrorState.NameOnCardSublabel.v112" = "Lägg till ett namn";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:99706a458790785a454312dc6a4adbdafd0347483501e1c1f65ad1280c0b2af8
+size 671

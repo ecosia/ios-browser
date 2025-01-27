@@ -1,14 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-extension URLRequest {
-    var isPrivileged: Bool {
-        if let url = url, let internalUrl = WKInternalURL(url) {
-            return internalUrl.isAuthorized
-        }
-        return false
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:dfe434a4db965189a6839dc30089f8aa0d6fad40575b8cbb9d3d9ddcfd83169b
+size 421

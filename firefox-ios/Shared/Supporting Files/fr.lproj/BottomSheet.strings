@@ -1,3 +1,3 @@
-/* When a user is in the process of entering an address, a screen pops up prompting the user if they want to use a saved address. This string is used as the title label of the screen. */
-"Addresses.BottomSheet.UseSavedAddressBottomSheet.v124" = "Utiliser une adresse enregistrée ?";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:4155701f0740361ed680f7d56262b732e3a8164f7b878364b2aaf276995907b0
+size 286

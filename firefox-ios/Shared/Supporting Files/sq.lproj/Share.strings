@@ -1,6 +1,3 @@
-/* Error message shown in the remote tabs panel */
-"SendTo.NoDevicesFound.Message.v119" = "S’keni ndonjë pajisje tjetër të lidhur te kjo llogari, të gatshme për njëkohësim.";
-
-/* This message appears when a user tries to use 'Send Link to Device' action while not logged in */
-"SendTo.NotSignedIn.Title.v119" = "S’keni bërë hyrjen te llogaria juaj.";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:55987bdd610fcbf2a70c1996fbd21ce80dffd88a35539c7f99c2b9b5d01e0d07
+size 365

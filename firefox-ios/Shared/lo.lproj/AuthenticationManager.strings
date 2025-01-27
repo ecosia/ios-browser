@@ -1,6 +1,3 @@
-/* Text displayed above the input field when changing the existing passcode */
-"Enter passcode" = "ປ້ອນ Passcode";
-
-/* Touch ID prompt subtitle when accessing logins */
-"Use your fingerprint to access Logins now." = "ໃຊ້ລາຍນີ້ວມືຂອງທ່ານເພື່ອເຂົ້ານຳໃຊ້ການເຂົ້າສູ່ລະບົບດຽວນີ້ເລີຍ.";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:32d9e3886385e33b18883c0ad221b23fc42d4a20c01bcbc408e24d33e30276c3
+size 410

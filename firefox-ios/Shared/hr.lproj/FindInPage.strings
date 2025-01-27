@@ -1,12 +1,3 @@
-/* Done button in Find in Page Toolbar. */
-"Done" = "Gotovo";
-
-/* Text selection menu item */
-"Find in Page" = "Pronađi na stranici";
-
-/* Accessibility label for next result button in Find in Page Toolbar. */
-"Next in-page result" = "Sljedeći rezultat na stranici";
-
-/* Accessibility label for previous result button in Find in Page Toolbar. */
-"Previous in-page result" = "Prethodni rezultat na stranici";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:f88a15c7fb5251c16ee54af270cc0a3fb52d1d24aaebcef5c9b160e2ae9e5829
+size 410

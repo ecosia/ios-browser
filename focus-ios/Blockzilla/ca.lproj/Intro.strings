@@ -1,24 +1,3 @@
-/* Description for the 'History' panel in the First Run tour. */
-"Intro.Slides.History.Description" = "Esborreu l'historial de navegació, les contrasenyes i les galetes quan vulgueu amb un sol toc.";
-
-/* Title for the third  panel 'History' in the First Run tour. */
-"Intro.Slides.History.Title" = "El vostre historial és història";
-
-/* Button to go to the next card in Focus onboarding. */
-"Intro.Slides.Next.Button" = "Següent";
-
-/* Description for the 'Favorite Search Engine' panel in the First Run tour. */
-"Intro.Slides.Search.Description" = "Busqueu una altra cosa? Trieu un altre motor de cerca.";
-
-/* Title for the second  panel 'Search' in the First Run tour. */
-"Intro.Slides.Search.Title" = "Cerqueu com vulgueu";
-
-/* Button to skip onboarding in Focus */
-"Intro.Slides.Skip.Button" = "Omet";
-
-/* Description for the 'Welcome' panel in the First Run tour. */
-"Intro.Slides.Welcome.Description" = "Porteu la navegació privada a un altre nivell. Bloqueu anuncis i altre contingut que us fan el seguiment i alenteixen la càrrega de les pàgines.";
-
-/* Title for the first panel 'Welcome' in the First Run tour. */
-"Intro.Slides.Welcome.Title" = "Potencieu la privadesa";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:80dbc673506bed44cf27c69880aa2113a6879d6f5ec3fa161c878d3682028169
+size 1187

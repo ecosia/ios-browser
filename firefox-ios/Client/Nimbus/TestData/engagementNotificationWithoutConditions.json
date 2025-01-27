@@ -1,15 +1,3 @@
-{
-  "message-under-experiment": "engagement-notification",
-  "messages": {
-    "engagement-notification": {
-      "title": "EngagementNotification/Engagement.Notification.Title.v112",
-      "text": "EngagementNotification/Engagement.Notification.Body.v112",
-      "surface": "notification",
-      "style": "NOTIFICATION",
-      "action": "https://mozilla.com",
-      "trigger": [
-        "ALWAYS"
-      ]
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:989fd9d1d5c765707c6ed9696f666a65c4dfb97042a6231891f989a46c593982
+size 417

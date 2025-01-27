@@ -1,11 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-protocol UIDeviceInterface {
-    var userInterfaceIdiom: UIUserInterfaceIdiom { get }
-}
-
-extension UIDevice: UIDeviceInterface {}
+version https://git-lfs.github.com/spec/v1
+oid sha256:223884050842f9c401a16ee3ec56c68f841ab8b25d315ee9c570bc66b4576ee7
+size 351

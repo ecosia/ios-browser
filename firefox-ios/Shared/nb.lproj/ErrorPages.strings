@@ -1,6 +1,3 @@
-/* Shown in error pages for files that can't be shown and need to be downloaded. */
-"Open in Safari" = "Åpne i Safari";
-
-/* Shown in error pages on a button that will try to load the page again */
-"Try again" = "Prøv igjen";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:d49d34780ee8dfb086ee87ad8558b7533683d36b8827a1a339678279799ae867
+size 228

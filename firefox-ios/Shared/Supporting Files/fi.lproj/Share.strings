@@ -1,6 +1,3 @@
-/* Error message shown in the remote tabs panel */
-"SendTo.NoDevicesFound.Message.v119" = "Sinulla ei ole muita tähän tiliin yhdistettyjä laitteita synkronoitavaksi.";
-
-/* This message appears when a user tries to use 'Send Link to Device' action while not logged in */
-"SendTo.NotSignedIn.Title.v119" = "Et ole kirjautunut tilillesi.";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:7b15b29c04ae8700605769866ee81ed1fc037778df3d6c058929608aa1b7ee5c
+size 341

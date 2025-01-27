@@ -1,18 +1,3 @@
-/* Prompt for saving the username in the Save Logins prompt. */
-"LoginsHelper.PromptSaveLogin.Title.v122" = "Salvar le nomine de usator?";
-
-/* Prompt for saving a password in the Save Logins prompt. */
-"LoginsHelper.PromptSavePassword.Title.v122" = "Salvar le contrasigno?";
-
-/* Prompt for updating the password in the Update Password prompt. */
-"LoginsHelper.PromptUpdateLogin.Title.OneArg.v122" = "Actualisar le contrasigno?";
-
-/* Prompt for updating a password in the Update Password prompt. */
-"LoginsHelper.PromptUpdateLogin.Title.TwoArg.v122" = "Actualisar le contrasigno?";
-
-/* Placeholder text for search box in logins list view. */
-"LoginsList.LoginsListSearchPlaceholder.v122" = "Cercar contrasignos";
-
-/* Title for the list of logins saved by the app */
-"LoginsList.Title.v122" = "CONTRASIGNOS SALVATE";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:7ad3956920e3603809baad17ee278bcae7e1c929eaf963fd653c9c2fd1ca24b6
+size 816

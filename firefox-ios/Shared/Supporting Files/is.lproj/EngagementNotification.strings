@@ -1,18 +1,3 @@
-/* Body of notification send to user after inactivity to encourage them to use the search feature. */
-"Engagement.Notification.Body.v112" = "Finndu eitthvað í nágrenninu. Eða uppgötvaðu eitthvað skemmtilegt.";
-
-/* Title of notification send to user after inactivity to encourage them to use the search feature. */
-"Engagement.Notification.Title.v112" = "Byrjaðu fyrstu leitina þína";
-
-/* Body of notification send to user after inactivity to encourage them to use the private browsing feature. Placeholder is app name. */
-"Engagement.Notification.Treatment.A.Body.v114" = "Huliðsleit í %@ vistar ekki upplýsingar um þig og lokar á falda rekjara.";
-
-/* Title of notification send to user after inactivity to encourage them to use the private browsing feature. */
-"Engagement.Notification.Treatment.A.Title.v114" = "Vafraðu án ummerkja";
-
-/* Body of notification send to user after inactivity to encourage them to use the private browsing feature. Placeholder is the app name. */
-"Engagement.Notification.Treatment.B.Body.v114" = "Vafraðu án þess að vista vefkökur eða aðgerðaferil í %@.";
-
-/* Title of notification send to user after inactivity to encourage them to use the private browsing feature. */
-"Engagement.Notification.Treatment.B.Title.v114" = "Prófaðu huliðsvafur";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:3cdb7527047de94d1cd19deea1f4c51f9ef44263d149827f55ddec26873de95a
+size 1306

@@ -1,12 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-import UIKit
-
-extension UISearchBar {
-    var lowercased: String? {
-        return self.text?.lowercased()
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:67c2ee205028e9ff0f721469fbfe84dcd655c13f68060a12f3464a9e79cab09c
+size 335

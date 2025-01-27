@@ -1,11 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-protocol URLSessionDataTaskProtocol {
-    func resume()
-}
-
-extension URLSessionDataTask: URLSessionDataTaskProtocol {}
+version https://git-lfs.github.com/spec/v1
+oid sha256:f13786cca0d1bc56d2aedc148d3052688a65e7faf8d73b45401e1c087809c57b
+size 340

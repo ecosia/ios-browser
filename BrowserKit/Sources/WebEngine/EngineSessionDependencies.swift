@@ -1,14 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-/// Dependencies injected during engine session creation.
-public struct EngineSessionDependencies {
-    var telemetryProxy: EngineTelemetryProxy?
-
-    public init(telemetryProxy: EngineTelemetryProxy? = nil) {
-        self.telemetryProxy = telemetryProxy
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:9e55fbdce27cc779e1fa7ad0b6528f401fe47e862f1ac8535fb506fb8bbac25b
+size 484

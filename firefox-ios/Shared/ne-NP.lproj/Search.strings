@@ -1,6 +1,3 @@
-/* Label for search engine buttons. The argument corresponds to the name of the search engine. */
-"%@ search" = "%@ मा खोज्नुहोस्";
-
-/* Label for search settings button. */
-"Search Settings" = "सेटिङ्गहरू खोजी गर्नुहोस्";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:7d074b914607d66169789a2f87997040c8bd4867c10443a0aa8b76f661a77933
+size 293

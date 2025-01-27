@@ -1,10 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-struct SettingsCellViewModel {
-    var settingType: SettingsType
-    var title: String
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:6c36e6d6475fd120d6cd10f725832b9388f89dcc7ada252e47d029b3a646c0ae
+size 310

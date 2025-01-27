@@ -1,10 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-
-struct Entity {
-    var properties: [String]
-    var resources: [String]
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:9eb93d014b3bf87279f8f0ff768a9f1a49ed29a48b318373e85af258d3a91b99
+size 296

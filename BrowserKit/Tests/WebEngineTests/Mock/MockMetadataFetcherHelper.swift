@@ -1,17 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-@testable import WebEngine
-
-class MockMetadataFetcherHelper: MetadataFetcherHelper {
-    weak var delegate: MetadataFetcherDelegate?
-    var fetchFromSessionCalled = 0
-    var savedURL: URL?
-
-    func fetch(fromSession session: WKEngineSession, url: URL) {
-        fetchFromSessionCalled += 1
-        savedURL = url
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:26ab0cd178fc515ae4b460a9ab7d6158d4a1911e5742b4246b5060c9e0152f37
+size 544

@@ -1,6 +1,3 @@
-/* Label for search engine buttons. The argument corresponds to the name of the search engine. */
-"%@ search" = "Otsingumootor %@";
-
-/* Label for search settings button. */
-"Search Settings" = "Otsingusätted";
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:0bf254895d23f00fc29432392c90ef572407f3cd5ca1757df7f4ad112d4a1ead
+size 212

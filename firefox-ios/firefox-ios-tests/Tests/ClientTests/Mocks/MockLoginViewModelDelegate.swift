@@ -1,18 +1,3 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/
-
-import Foundation
-@testable import Client
-
-class MockLoginViewModelDelegate: LoginViewModelDelegate {
-    var loginSectionsDidUpdateCalledCount = 0
-    var breachPathDidUpdateCalledCount = 0
-    func loginSectionsDidUpdate() {
-        loginSectionsDidUpdateCalledCount += 1
-    }
-
-    func breachPathDidUpdate() {
-        breachPathDidUpdateCalledCount += 1
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:a0a0919ed18f26881dadc3ab6f70d030cd4d9d450714b0c5e7828c37ea9c6db0
+size 568
