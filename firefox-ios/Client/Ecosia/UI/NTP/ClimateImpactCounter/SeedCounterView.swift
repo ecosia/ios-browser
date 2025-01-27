@@ -60,7 +60,7 @@ struct SeedCounterView: View {
     // MARK: - Helpers
 
     func applyTheme(theme: Theme) {
-        self.theme.backgroundColor = Color(.legacyTheme.ecosia.primaryBackground)
+        self.theme.backgroundColor = Color(theme.colors.ecosia.backgroundPrimary)
         self.theme.progressColor = Color(.legacyTheme.ecosia.primaryButtonActive)
     }
 

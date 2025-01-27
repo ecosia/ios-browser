@@ -683,7 +683,7 @@ class HistoryPanel: UIViewController,
         */
         searchbar.barTintColor = tableView.backgroundColor
         searchbar.backgroundColor = tableView.backgroundColor
-        searchbar.searchTextField.backgroundColor = .legacyTheme.ecosia.primaryBackground
+        searchbar.searchTextField.backgroundColor = theme.colors.ecosia.backgroundPrimary
 
         /* Ecosia: Update search bar image
         let tintColor = theme.colors.textPrimary

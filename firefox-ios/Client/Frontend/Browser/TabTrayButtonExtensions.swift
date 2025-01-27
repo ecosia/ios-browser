@@ -26,9 +26,10 @@ class PrivateModeButton: ToggleButton, PrivateModeUI {
     func applyUIMode(isPrivate: Bool, theme: Theme) {
         isSelected = isPrivate
 
-        // Ecosia: Update tint
-        // tintColor = isPrivate ? theme.colors.iconOnColor : theme.colors.iconPrimary
-        tintColor = isPrivate ? .legacyTheme.ecosia.primaryBackground : .legacyTheme.ecosia.primaryText
+        /* Ecosia: Update tint
+        tintColor = isPrivate ? theme.colors.iconOnColor : theme.colors.iconPrimary
+         */
+        tintColor = isPrivate ? theme.colors.ecosia.backgroundPrimary : .legacyTheme.ecosia.primaryText
         imageView?.tintColor = tintColor
 
         // Ecosia: Modify background layer

@@ -255,17 +255,17 @@ extension WhatsNewViewController {
 
     func applyTheme() {
         let theme = themeManager.getCurrentTheme(for: windowUUID)
-        view.backgroundColor = .legacyTheme.ecosia.primaryBackground
+        view.backgroundColor = theme.colors.ecosia.backgroundPrimary
         topContainerView.backgroundColor = .legacyTheme.ecosia.tertiaryBackground
-        tableView.backgroundColor = .legacyTheme.ecosia.primaryBackground
+        tableView.backgroundColor = theme.colors.ecosia.backgroundPrimary
         tableView.separatorColor = .clear
         knob.backgroundColor = .legacyTheme.ecosia.secondaryText
-        closeButton.backgroundColor = .legacyTheme.ecosia.primaryBackground
+        closeButton.backgroundColor = theme.colors.ecosia.backgroundPrimary
         closeButton.tintColor = .legacyTheme.ecosia.whatsNewCloseButton
         footerButton.backgroundColor = theme.colors.ecosia.brandPrimary
         footerButton.setTitleColor(.legacyTheme.ecosia.primaryTextInverted, for: .normal)
-        headerLabelContainerView.backgroundColor = .legacyTheme.ecosia.primaryBackground
-        secondImageView.tintColor = .legacyTheme.ecosia.primaryBackground
+        headerLabelContainerView.backgroundColor = theme.colors.ecosia.backgroundPrimary
+        secondImageView.tintColor = theme.colors.ecosia.backgroundPrimary
     }
 }
 

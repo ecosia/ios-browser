@@ -1059,17 +1059,19 @@ extension URLBarView: ThemeApplicable {
 
         cancelTintColor = theme.colors.textPrimary
         showQRButtonTintColor = theme.colors.textPrimary
-        // Ecosia: update background
-        // backgroundColor = theme.colors.layer1
-        // line.backgroundColor = theme.colors.borderPrimary
-        backgroundColor = .legacyTheme.ecosia.primaryBackground
+        /* Ecosia: update background
+        backgroundColor = theme.colors.layer1
+        line.backgroundColor = theme.colors.borderPrimary
+         */
+        backgroundColor = theme.colors.ecosia.backgroundPrimary
         line.backgroundColor = .legacyTheme.ecosia.barSeparator
 
         locationBorderColor = theme.colors.borderPrimary
-        // Ecosia: Take into account overlay mode for `locationView` background
-        // locationView.backgroundColor = theme.colors.layer3
-        // locationContainer.backgroundColor = theme.colors.layer3
-        locationView.backgroundColor = inOverlayMode ? .legacyTheme.ecosia.primaryBackground : .legacyTheme.ecosia.tertiaryBackground
+        /* Ecosia: Take into account overlay mode for `locationView` background
+        locationView.backgroundColor = theme.colors.layer3
+        locationContainer.backgroundColor = theme.colors.layer3
+         */
+        locationView.backgroundColor = inOverlayMode ? theme.colors.ecosia.backgroundPrimary : .legacyTheme.ecosia.tertiaryBackground
         locationContainer.backgroundColor = locationView.backgroundColor
 
         /* Ecosia: Remove private mode badge

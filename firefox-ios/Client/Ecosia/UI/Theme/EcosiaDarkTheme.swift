@@ -31,7 +31,7 @@ private class EcosiaDarkColourPalette: EcosiaLightColourPalette {
         DarkTheme()
     }
 
-    override var layer1: UIColor { .legacyTheme.ecosia.primaryBackground }
+    override var layer1: UIColor { ecosia.backgroundPrimary }
 }
 
 private class EcosiaDarkSemanticColors: EcosiaSemanticColors {
