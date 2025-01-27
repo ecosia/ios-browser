@@ -68,14 +68,18 @@ final class WhatsNewViewController: UIViewController, Themeable {
 
     let windowUUID: WindowUUID
     var currentWindowUUID: WindowUUID? { return windowUUID }
-    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeManager: ThemeManager
     var themeObserver: NSObjectProtocol?
     var notificationCenter: NotificationProtocol = NotificationCenter.default
 
     // MARK: - Init
 
-    init(viewModel: WhatsNewViewModel, delegate: WhatsNewViewDelegate?, windowUUID: WindowUUID) {
+    init(viewModel: WhatsNewViewModel,
+         delegate: WhatsNewViewDelegate?,
+         windowUUID: WindowUUID,
+         themeManager: ThemeManager = AppContainer.shared.resolve()) {
         self.windowUUID = windowUUID
+        self.themeManager = themeManager
         super.init(nibName: nil, bundle: nil)
         self.viewModel = viewModel
         self.delegate = delegate
@@ -250,6 +254,7 @@ extension WhatsNewViewController: UITableViewDataSource {
 extension WhatsNewViewController {
 
     func applyTheme() {
+        let theme = themeManager.getCurrentTheme(for: windowUUID)
         view.backgroundColor = .legacyTheme.ecosia.primaryBackground
         topContainerView.backgroundColor = .legacyTheme.ecosia.tertiaryBackground
         tableView.backgroundColor = .legacyTheme.ecosia.primaryBackground
@@ -257,7 +262,7 @@ extension WhatsNewViewController {
         knob.backgroundColor = .legacyTheme.ecosia.secondaryText
         closeButton.backgroundColor = .legacyTheme.ecosia.primaryBackground
         closeButton.tintColor = .legacyTheme.ecosia.whatsNewCloseButton
-        footerButton.backgroundColor = .legacyTheme.ecosia.primaryBrand
+        footerButton.backgroundColor = theme.colors.ecosia.brandPrimary
         footerButton.setTitleColor(.legacyTheme.ecosia.primaryTextInverted, for: .normal)
         headerLabelContainerView.backgroundColor = .legacyTheme.ecosia.primaryBackground
         secondImageView.tintColor = .legacyTheme.ecosia.primaryBackground

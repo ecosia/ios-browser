@@ -6,6 +6,7 @@ import Foundation
 import Core
 import Shared
 import Storage
+import Common
 
 import class MozillaAppServices.BookmarkFolderData
 
@@ -36,8 +37,11 @@ final class BookmarksExchange: BookmarksExchangable {
     func export(bookmarks: [Core.BookmarkItem], in viewController: UIViewController, barButtonItem: UIBarButtonItem) async throws {
         guard let view = viewController.view else { return }
 
+        let themeManager: ThemeManager = AppContainer.shared.resolve()
+        let theme = themeManager.getCurrentTheme(for: view.currentWindowUUID)
+
         let activityIndicator = UIActivityIndicatorView(style: .medium)
-        activityIndicator.color = UIColor.legacyTheme.ecosia.primaryBrand
+        activityIndicator.color = theme.colors.ecosia.brandPrimary
         activityIndicator.startAnimating()
 
         let toast = SimpleToast()

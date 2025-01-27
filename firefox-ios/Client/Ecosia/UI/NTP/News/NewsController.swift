@@ -20,7 +20,7 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
 
     let windowUUID: WindowUUID
     var currentWindowUUID: Common.WindowUUID? { return windowUUID }
-    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeManager: ThemeManager
     var themeObserver: NSObjectProtocol?
     var notificationCenter: NotificationProtocol = NotificationCenter.default
 
@@ -28,8 +28,11 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
 
     required init?(coder: NSCoder) { nil }
 
-    init(windowUUID: WindowUUID, items: [NewsModel]) {
+    init(items: [NewsModel],
+         windowUUID: WindowUUID,
+         themeManager: ThemeManager = AppContainer.shared.resolve()) {
         self.windowUUID = windowUUID
+        self.themeManager = themeManager
         super.init(nibName: nil, bundle: nil)
         self.items = items
         title = .localized(.ecosiaNews)
@@ -158,12 +161,13 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
 
     private func updateBarAppearance() {
         guard let appearance = navigationController?.navigationBar.standardAppearance else { return }
+        let theme = themeManager.getCurrentTheme(for: windowUUID)
         appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.legacyTheme.ecosia.primaryText]
         appearance.titleTextAttributes = [.foregroundColor: UIColor.legacyTheme.ecosia.primaryText]
         appearance.backgroundColor = .legacyTheme.ecosia.modalBackground
         navigationItem.standardAppearance = appearance
         navigationController?.navigationBar.backgroundColor = .legacyTheme.ecosia.modalBackground
-        navigationController?.navigationBar.tintColor = .legacyTheme.ecosia.primaryBrand
+        navigationController?.navigationBar.tintColor = theme.colors.ecosia.brandPrimary
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {

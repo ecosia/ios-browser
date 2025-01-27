@@ -3,8 +3,9 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import UIKit
+import Common
 
-final class PageActionMenuCell: UITableViewCell {
+final class PageActionMenuCell: UITableViewCell, ThemeApplicable {
 
     struct UX {
 
@@ -65,6 +66,10 @@ final class PageActionMenuCell: UITableViewCell {
         separatorView = nil
         textLabel?.text = nil
         imageView?.image = nil
+    }
+
+    func applyTheme(theme: Theme) {
+        badge?.backgroundColor = theme.colors.ecosia.brandPrimary
     }
 }
 
@@ -169,7 +174,7 @@ extension PageActionMenuCell {
     /// - Parameters:
     ///   - viewModel: The`PhotonActionSheetViewModel`'s View Model
     ///   - indexPath: The TableView's index path
-    func configure(with viewModel: PhotonActionSheetViewModel, at indexPath: IndexPath) {
+    func configure(with viewModel: PhotonActionSheetViewModel, at indexPath: IndexPath, theme: Theme) {
 
         backgroundColor = .legacyTheme.ecosia.impactMultiplyCardBackground
         let actions = viewModel.actions[indexPath.section][indexPath.row]
@@ -195,6 +200,8 @@ extension PageActionMenuCell {
         if separatorCellsPositions.contains(position) {
             addCustomGroupedStyleLikeSeparator()
         }
+
+        applyTheme(theme: theme)
     }
 }
 
@@ -229,7 +236,6 @@ extension PageActionMenuCell {
             let height = size.height + 5
             badge?.layer.cornerRadius = height / 2
             badge?.frame.size = .init(width: size.width + 16, height: height)
-            badge?.backgroundColor = .legacyTheme.ecosia.primaryBrand
             badgeLabel?.textColor = .legacyTheme.ecosia.primaryTextInverted
         } else {
             accessoryView = nil

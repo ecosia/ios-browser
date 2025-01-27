@@ -12,7 +12,6 @@ extension LegacyTheme {
 }
 
 class EcosiaTheme {
-    var primaryBrand: UIColor { .Light.Brand.primary}
     var secondaryBrand: UIColor { UIColor.Photon.Grey60 }
     var border: UIColor { .Light.Border.decorative }
 
@@ -94,7 +93,6 @@ class EcosiaTheme {
 }
 
 final class DarkEcosiaTheme: EcosiaTheme {
-    override var primaryBrand: UIColor { .Dark.Brand.primary}
     override var secondaryBrand: UIColor { .white }
     override var border: UIColor { .Dark.Border.decorative }
 

@@ -19,7 +19,7 @@ final class PageActionMenu: UIViewController, UIGestureRecognizerDelegate, Theme
 
     let windowUUID: WindowUUID
     var currentWindowUUID: WindowUUID? { return windowUUID }
-    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeManager: ThemeManager
     var themeObserver: NSObjectProtocol?
     var notificationCenter: NotificationProtocol = NotificationCenter.default
 
@@ -42,10 +42,14 @@ final class PageActionMenu: UIViewController, UIGestureRecognizerDelegate, Theme
 
     // MARK: - Init
 
-    init(viewModel: PhotonActionSheetViewModel, delegate: PageActionsShortcutsDelegate, windowUUID: WindowUUID) {
+    init(viewModel: PhotonActionSheetViewModel,
+         delegate: PageActionsShortcutsDelegate,
+         windowUUID: WindowUUID,
+         themeManager: ThemeManager = AppContainer.shared.resolve()) {
         self.viewModel = viewModel
         self.delegate = delegate
         self.windowUUID = windowUUID
+        self.themeManager = themeManager
         super.init(nibName: nil, bundle: nil)
 
         title = viewModel.title
@@ -184,7 +188,8 @@ extension PageActionMenu: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: PageActionMenuCell.UX.cellIdentifier, for: indexPath) as! PageActionMenuCell
         cell.determineTableViewCellPositionAt(indexPath, forActions: viewModel.actions)
-        cell.configure(with: viewModel, at: indexPath)
+        let theme = themeManager.getCurrentTheme(for: windowUUID)
+        cell.configure(with: viewModel, at: indexPath, theme: theme)
         return cell
     }
 
