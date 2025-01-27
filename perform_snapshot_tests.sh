@@ -409,8 +409,14 @@ for device_set_key in "${!device_set_tests[@]}"; do
 
   echo " - Running xcodebuild Command: $xcodebuild_cmd"
 
+  # Disable 'set -e' temporarily to ensure the script continues even if the test fails
+  set +e
+
   # Run the xcodebuild command
   eval $xcodebuild_cmd
+
+  # Re-enable 'set -e'
+  set -e
 
   # Increment xcodebuild execution counter
   xcodebuild_count=$((xcodebuild_count + 1))
@@ -446,14 +452,7 @@ if [ "${#xcresult_files[@]}" -eq 0 ]; then
   exit 1
 fi
 
-# Merge the xcresult files
+# Merge the xcresult files into one
 $xcresulttool_path merge "${xcresult_files[@]}" --output-path "$combined_result_path"
 
 echo "Combined xcresult created at: $combined_result_path"
-
-# ================================
-# Final Output
-# ================================
-
-# Print the total number of times xcodebuild was executed
-echo "Total xcodebuild commands executed: $xcodebuild_count"

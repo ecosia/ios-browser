@@ -18,7 +18,7 @@ class SnapshotBaseTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        DependencyHelperMock().bootstrapDependencies(themeManager: EcosiaMockThemeManager())
+        DependencyHelperMock().bootstrapDependencies(themeManager: EcosiaMockThemeManager(sharedContainerIdentifier: ""))
         profile = MockProfile()
         LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: profile)
         themeManager = AppContainer.shared.resolve()

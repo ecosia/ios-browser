@@ -6,7 +6,7 @@ import SnapshotTesting
 import XCTest
 import Common
 import Shared
-import Core
+import Ecosia
 import MozillaAppServices
 @testable import Client
 
@@ -99,7 +99,7 @@ extension NTPComponentTests {
         let sectionTitle = aboutEcosiaSection.image.lowercased().camelCaseToSnakeCase()
         SnapshotTestHelper.assertSnapshot(initializingWith: {
             let cell = NTPAboutEcosiaCell(frame: CGRect(x: 0, y: 0, width: self.commonWidth, height: 240))
-            let viewModel = NTPAboutEcosiaCellViewModel(theme: self.themeManager.currentTheme)
+            let viewModel = NTPAboutEcosiaCellViewModel(theme: self.themeManager.getCurrentTheme(for: WindowUUID(uuidString: UUID().uuidString)))
             cell.configure(section: aboutEcosiaSection, viewModel: viewModel)
             return cell
         }, testName: "testNTPAboutSection_\(sectionTitle)")
