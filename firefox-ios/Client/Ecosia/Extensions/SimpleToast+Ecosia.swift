@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
+import Common
 
 extension SimpleToast {
 
@@ -16,9 +17,10 @@ extension SimpleToast {
         _ text: String,
         image: AccessoryImage,
         bottomContainer: UIView,
+        theme: Theme,
         bottomInset: CGFloat? = nil
     ) -> SimpleToast {
-        let toast = self.createView(text: text, image: image)
+        let toast = self.createView(text: text, image: image, theme: theme)
         toast.layer.cornerRadius = 10
         toast.layer.masksToBounds = true
 
@@ -33,14 +35,16 @@ extension SimpleToast {
         return self
     }
 
-    fileprivate func createView(text: String, image: AccessoryImage) -> UIStackView {
+    fileprivate func createView(text: String,
+                                image: AccessoryImage,
+                                theme: Theme) -> UIStackView {
         let stack = UIStackView()
         stack.axis = .horizontal
         stack.alignment = .center
         stack.distribution = .fill
         stack.spacing = 8
         stack.layer.cornerRadius = 10
-        stack.backgroundColor = UIColor.legacyTheme.ecosia.quarternaryBackground
+        stack.backgroundColor = theme.colors.ecosia.backgroundQuaternary
 
         let toast = UILabel()
         toast.text = text

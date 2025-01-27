@@ -169,8 +169,9 @@ final class NTPTooltip: UICollectionReusableView, Themeable {
     }
 
     @objc func applyTheme() {
-        tail.tintColor = UIColor.legacyTheme.ecosia.quarternaryBackground
-        background.backgroundColor = UIColor.legacyTheme.ecosia.quarternaryBackground
+        let theme = themeManager.getCurrentTheme(for: currentWindowUUID)
+        tail.tintColor = theme.colors.ecosia.backgroundQuaternary
+        background.backgroundColor = theme.colors.ecosia.backgroundQuaternary
         textLabel.textColor = .legacyTheme.ecosia.primaryTextInverted
         closeButton.tintColor = .legacyTheme.ecosia.primaryTextInverted
     }
