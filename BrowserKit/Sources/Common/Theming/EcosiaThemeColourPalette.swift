@@ -5,7 +5,7 @@
 import UIKit
 
 // This file is owned by Ecosia, it is only part of BrowserKit.Common since it needs to be used inside it.
-// It contains all of Ecosia official semantic color tokens referenced in the link below.
+// It contains all of Ecosia official semantic color tokens referenced in the link below. Do not add a color that is not mapped there!
 // https://www.figma.com/design/8T2rTBVwynJKSdY6MQo5PQ/%E2%9A%9B%EF%B8%8F--Foundations?node-id=2237-3418&t=UKHtrxcc9UtOihsm-0
 // They are adopted by `EcosiaLightTheme` and `EcosiaDarkTheme` and should use `EcosiaColorPrimitive`.
 public protocol EcosiaSemanticColors {

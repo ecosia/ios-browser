@@ -12,12 +12,6 @@ extension LegacyTheme {
 }
 
 class EcosiaTheme {
-    var impactBackground: UIColor { .Light.Background.primary }
-    var impactSeparator: UIColor { UIColor.Photon.Grey40 }
-    var treeCounterProgressTotal: UIColor { .Light.Background.tertiary }
-    var treeCounterProgressCurrent: UIColor { .Light.Brand.primary }
-    var treeCounterProgressBorder: UIColor { .Light.Background.tertiary }
-
     var ntpCellBackground: UIColor { .Light.Background.primary }
     var ntpBackground: UIColor { .Light.Background.tertiary }
     var ntpIntroBackground: UIColor { .Light.Background.primary }
@@ -84,12 +78,6 @@ class EcosiaTheme {
 }
 
 final class DarkEcosiaTheme: EcosiaTheme {
-    override var impactBackground: UIColor { .Dark.Background.tertiary }
-    override var impactSeparator: UIColor { UIColor.Photon.Grey60 }
-    override var treeCounterProgressTotal: UIColor { .Dark.Background.secondary }
-    override var treeCounterProgressCurrent: UIColor { .Dark.Brand.primary }
-    override var treeCounterProgressBorder: UIColor { .Dark.Background.tertiary }
-
     override var ntpCellBackground: UIColor { .Dark.Background.tertiary }
     override var ntpBackground: UIColor { .Dark.Background.primary }
     override var ntpImpactBackground: UIColor { .Dark.Background.secondary}
