@@ -204,6 +204,7 @@ final class NTPSeedCounterCell: UICollectionViewCell, Themeable, ReusableCell {
 
     // MARK: - Theming
     @objc func applyTheme() {
-        containerStackView.backgroundColor = .legacyTheme.ecosia.secondaryBackground
+        let theme = themeManager.getCurrentTheme(for: currentWindowUUID)
+        containerStackView.backgroundColor = theme.colors.ecosia.backgroundSecondary
     }
 }

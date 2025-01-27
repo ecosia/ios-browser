@@ -12,7 +12,6 @@ extension LegacyTheme {
 }
 
 class EcosiaTheme {
-    var secondaryBackground: UIColor { .Light.Background.secondary }
     var tertiaryBackground: UIColor { .Light.Background.tertiary }
     var quarternaryBackground: UIColor { .Light.Background.quarternary }
     var barBackground: UIColor { .white }
@@ -89,7 +88,6 @@ class EcosiaTheme {
 }
 
 final class DarkEcosiaTheme: EcosiaTheme {
-    override var secondaryBackground: UIColor { .Dark.Background.secondary }
     override var tertiaryBackground: UIColor { .Dark.Background.tertiary }
     override var quarternaryBackground: UIColor { .Dark.Background.quarternary }
     override var barBackground: UIColor { .Dark.Background.secondary }

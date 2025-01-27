@@ -435,7 +435,7 @@ class MultiplyImpact: UIViewController, Themeable {
         topBackground?.backgroundColor = .legacyTheme.ecosia.modalHeader
         forestOverlay?.backgroundColor = .legacyTheme.ecosia.modalBackground
         subtitle?.textColor = .Dark.Text.primary
-        copyControl?.backgroundColor = .legacyTheme.ecosia.secondaryBackground
+        copyControl?.backgroundColor = theme.colors.ecosia.backgroundSecondary
         copyControl?.layer.borderColor = theme.colors.ecosia.borderDecorative.cgColor
         moreSharingMethods?.textColor = .legacyTheme.ecosia.secondaryText
         copyText?.textColor = theme.colors.ecosia.brandPrimary

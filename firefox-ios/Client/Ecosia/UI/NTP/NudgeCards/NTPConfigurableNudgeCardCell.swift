@@ -183,8 +183,8 @@ class NTPConfigurableNudgeCardCell: UICollectionViewCell, Themeable, ReusableCel
 
     // MARK: - Theming
     @objc func applyTheme() {
-        // Apply theming based on the provided theme from the ViewModel
-        mainContainerStackView.backgroundColor = .legacyTheme.ecosia.secondaryBackground
+        let theme = themeManager.getCurrentTheme(for: currentWindowUUID)
+        mainContainerStackView.backgroundColor = theme.colors.ecosia.backgroundSecondary
         closeButton.tintColor = .legacyTheme.ecosia.decorativeIcon
         titleLabel.textColor = .legacyTheme.ecosia.primaryText
         descriptionLabel.textColor = .legacyTheme.ecosia.secondaryText

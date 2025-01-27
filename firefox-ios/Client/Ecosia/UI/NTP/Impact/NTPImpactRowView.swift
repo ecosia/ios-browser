@@ -240,7 +240,7 @@ final class NTPImpactRowView: UIView, Themeable {
     /// Applies the current theme to the view, updating colors and styles as needed.
     func applyTheme() {
         let theme = themeManager.getCurrentTheme(for: currentWindowUUID)
-        backgroundColor = customBackgroundColor ?? .legacyTheme.ecosia.secondaryBackground
+        backgroundColor = customBackgroundColor ?? theme.colors.ecosia.backgroundSecondary
         titleLabel.textColor = .legacyTheme.ecosia.primaryText
         subtitleLabel.textColor = .legacyTheme.ecosia.secondaryText
         actionButton.setTitleColor(.legacyTheme.ecosia.primaryButton, for: .normal)
