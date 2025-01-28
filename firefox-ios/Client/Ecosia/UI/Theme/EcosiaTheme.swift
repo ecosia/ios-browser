@@ -12,9 +12,6 @@ extension LegacyTheme {
 }
 
 class EcosiaTheme {
-    var segmentSelectedText: UIColor { .Light.Text.primary }
-    var segmentBackground: UIColor { .Light.Background.secondary }
-
     var warning: UIColor { .Light.State.error }
     var information: UIColor { .Light.State.information }
     var disabled: UIColor { .Light.State.disabled }
@@ -33,9 +30,6 @@ class EcosiaTheme {
 }
 
 final class DarkEcosiaTheme: EcosiaTheme {
-    override var segmentSelectedText: UIColor { UIColor.Photon.Grey90 }
-    override var segmentBackground: UIColor { .Dark.Background.tertiary }
-
     override var warning: UIColor { .Dark.State.error }
     override var information: UIColor { .Dark.State.information }
     override var disabled: UIColor { .Dark.State.disabled }

@@ -2980,7 +2980,6 @@
 		2CCF17522105E4FD00705AE5 /* DisplaySettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplaySettingsTests.swift; sourceTree = "<group>"; };
 		2CD368492C5BC31700972871 /* OnboardingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingTests.swift; sourceTree = "<group>"; };
 		2CD48B7E2C7F7E4100A70908 /* EcosiaOverlayModeManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaOverlayModeManagerTests.swift; sourceTree = "<group>"; };
-		2CDF61902B56E7B6001186DB /* EcosiaLegacyTabTrayViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaLegacyTabTrayViewController.swift; sourceTree = "<group>"; };
 		2CE294672B7FC5A4006C22B2 /* EcosiaInstallTypeTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EcosiaInstallTypeTests.swift; sourceTree = "<group>"; };
 		2CE294692B7FC5A5006C22B2 /* AnalyticsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsTests.swift; sourceTree = "<group>"; };
 		2CE2946B2B7FC5A5006C22B2 /* WhatsNewLocalDataProviderTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WhatsNewLocalDataProviderTests.swift; sourceTree = "<group>"; };
@@ -10202,7 +10201,6 @@
 				C81AC6B526160091007800C5 /* LegacyTabTrayViewModel.swift */,
 				968BD7EA27DFF0F8003148B3 /* ASGroup.swift */,
 				216C133D29DCA8FF0097533B /* LegacyTabLayoutDelegate.swift */,
-				2CDF61902B56E7B6001186DB /* EcosiaLegacyTabTrayViewController.swift */,
 			);
 			path = Legacy;
 			sourceTree = "<group>";
