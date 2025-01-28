@@ -229,7 +229,7 @@ extension PageActionMenu: Themeable {
         view.backgroundColor = currentTheme.colors.ecosia.modalBackground
         tableView.backgroundColor = currentTheme.colors.ecosia.modalBackground
         tableView.separatorColor = currentTheme.colors.ecosia.borderDecorative
-        knob.backgroundColor = .legacyTheme.ecosia.secondaryText
+        knob.backgroundColor = currentTheme.colors.ecosia.textSecondary
         tableView.visibleCells.forEach {
             ($0 as? ThemeApplicable)?.applyTheme(theme: currentTheme)
         }

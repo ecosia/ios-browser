@@ -242,7 +242,7 @@ final class NTPImpactRowView: UIView, Themeable {
         let theme = themeManager.getCurrentTheme(for: currentWindowUUID)
         backgroundColor = customBackgroundColor ?? theme.colors.ecosia.backgroundSecondary
         titleLabel.textColor = theme.colors.ecosia.textPrimary
-        subtitleLabel.textColor = .legacyTheme.ecosia.secondaryText
+        subtitleLabel.textColor = theme.colors.ecosia.textSecondary
         actionButton.setTitleColor(.legacyTheme.ecosia.primaryButton, for: .normal)
         dividerView.backgroundColor = theme.colors.ecosia.borderDecorative
         totalProgressView.color = theme.colors.ecosia.ntpBackground

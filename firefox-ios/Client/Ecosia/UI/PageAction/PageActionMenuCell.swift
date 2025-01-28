@@ -185,14 +185,14 @@ extension PageActionMenuCell {
         textLabel?.text = item.currentTitle
         textLabel?.textColor = theme.colors.ecosia.textPrimary
         detailTextLabel?.text = item.text
-        detailTextLabel?.textColor = .legacyTheme.ecosia.secondaryText
+        detailTextLabel?.textColor = theme.colors.ecosia.textSecondary
 
         accessibilityIdentifier = item.iconString ?? item.accessibilityId
         accessibilityLabel = item.currentTitle
 
         if let iconName = item.iconString {
             imageView?.image = UIImage(named: iconName)?.withRenderingMode(.alwaysTemplate)
-            imageView?.tintColor = .legacyTheme.ecosia.secondaryText
+            imageView?.tintColor = theme.colors.ecosia.textSecondary
         } else {
             imageView?.image = nil
         }

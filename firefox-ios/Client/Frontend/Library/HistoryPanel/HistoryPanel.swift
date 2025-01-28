@@ -691,7 +691,7 @@ class HistoryPanel: UIViewController,
             .withRenderingMode(.alwaysTemplate)
             .tinted(withColor: tintColor)
         */
-        let searchBarImage = UIImage(named: "search")?.tinted(withColor: .legacyTheme.ecosia.secondaryText).createScaled(.init(width: 16, height: 16))
+        let searchBarImage = UIImage(named: "search")?.tinted(withColor: theme.colors.ecosia.textSecondary).createScaled(.init(width: 16, height: 16))
 
         searchbar.setImage(searchBarImage, for: .search, state: .normal)
 

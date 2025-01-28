@@ -12,10 +12,6 @@ extension LegacyTheme {
 }
 
 class EcosiaTheme {
-    var secondaryText: UIColor { .Light.Text.secondary }
-    var navigationBarText: UIColor { .Light.Text.primary }
-    var tertiaryText: UIColor { .Light.Text.tertiary }
-
     var primaryIcon: UIColor { .Light.Icon.primary }
     var secondaryIcon: UIColor { .Light.Icon.secondary }
     var decorativeIcon: UIColor { .Light.Icon.decorative }
@@ -57,10 +53,6 @@ class EcosiaTheme {
 }
 
 final class DarkEcosiaTheme: EcosiaTheme {
-    override var secondaryText: UIColor { .Dark.Text.secondary }
-    override var navigationBarText: UIColor { .Dark.Text.primary }
-    override var tertiaryText: UIColor { .Dark.Text.tertiary }
-
     override var primaryIcon: UIColor { .Dark.Icon.primary }
     override var secondaryIcon: UIColor { .Dark.Icon.secondary }
     override var decorativeIcon: UIColor { .Dark.Icon.decorative }

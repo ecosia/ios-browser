@@ -80,6 +80,6 @@ final class WelcomeTourRow: UIView, Themeable {
         let theme = themeManager.getCurrentTheme(for: currentWindowUUID)
         backgroundColor = .legacyTheme.ecosia.welcomeElementBackground
         titleLabel.textColor = theme.colors.ecosia.textPrimary
-        textLabel.textColor = .legacyTheme.ecosia.secondaryText
+        textLabel.textColor = theme.colors.ecosia.textSecondary
     }
 }

@@ -60,10 +60,11 @@ final class WelcomeTourTransparent: UIView, Themeable {
     }
 
     func applyTheme() {
+        let theme = themeManager.getCurrentTheme(for: currentWindowUUID)
         stack.arrangedSubviews.forEach { view in
             (view as? Themeable)?.applyTheme()
         }
-        applyThemeToMonthView()
+        applyThemeToMonthView(theme: theme)
     }
 
     func updateAccessibilitySettings() {
@@ -107,8 +108,8 @@ final class WelcomeTourTransparent: UIView, Themeable {
         parentStack.addArrangedSubview(UIView(frame: .init(width: 0, height: 8)))
     }
 
-    func applyThemeToMonthView() {
+    func applyThemeToMonthView(theme: Theme) {
         monthView.backgroundColor = .legacyTheme.ecosia.primaryButton
-        monthViewLabel.textColor = .legacyTheme.ecosia.tertiaryText
+        monthViewLabel.textColor = theme.colors.ecosia.textTertiary
     }
 }

@@ -259,7 +259,7 @@ extension WhatsNewViewController {
         topContainerView.backgroundColor = theme.colors.ecosia.backgroundTertiary
         tableView.backgroundColor = theme.colors.ecosia.backgroundPrimary
         tableView.separatorColor = .clear
-        knob.backgroundColor = .legacyTheme.ecosia.secondaryText
+        knob.backgroundColor = theme.colors.ecosia.textSecondary
         closeButton.backgroundColor = theme.colors.ecosia.backgroundPrimary
         closeButton.tintColor = theme.colors.ecosia.textPrimary
         footerButton.backgroundColor = theme.colors.ecosia.brandPrimary

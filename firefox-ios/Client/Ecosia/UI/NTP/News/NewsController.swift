@@ -219,7 +219,7 @@ private final class NewsSubHeader: UICollectionReusableView, Themeable {
     func applyTheme() {
         let theme = themeManager.getCurrentTheme(for: currentWindowUUID)
         backgroundColor = theme.colors.ecosia.modalBackground
-        subtitle.textColor = UIColor.legacyTheme.ecosia.secondaryText
+        subtitle.textColor = theme.colors.ecosia.textSecondary
     }
 }
 

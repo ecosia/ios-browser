@@ -361,7 +361,7 @@ final class WelcomeTour: UIViewController, Themeable {
         view.backgroundColor = .legacyTheme.ecosia.welcomeBackground
         waves.tintColor = .legacyTheme.ecosia.welcomeBackground
         titleLabel.textColor = theme.colors.ecosia.textPrimary
-        subtitleLabel.textColor = .legacyTheme.ecosia.secondaryText
+        subtitleLabel.textColor = theme.colors.ecosia.textSecondary
         skipButton?.tintColor = .legacyTheme.ecosia.primaryButton
         backButton.tintColor = .legacyTheme.ecosia.primaryButton
         pageControl.pageIndicatorTintColor = .legacyTheme.ecosia.disabled

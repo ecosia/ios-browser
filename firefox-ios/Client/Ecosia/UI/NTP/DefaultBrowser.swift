@@ -240,8 +240,8 @@ final class DefaultBrowser: UIViewController, Themeable {
         let theme = themeManager.getCurrentTheme(for: windowUUID)
         view.backgroundColor = .clear
         headline.textColor = theme.colors.ecosia.textPrimary
-        text1.textColor = .legacyTheme.ecosia.secondaryText
-        text2.textColor = .legacyTheme.ecosia.secondaryText
+        text1.textColor = theme.colors.ecosia.textSecondary
+        text2.textColor = theme.colors.ecosia.textSecondary
         arrow1.tintColor = .legacyTheme.ecosia.primaryButton
         arrow2.tintColor = .legacyTheme.ecosia.primaryButton
         content.backgroundColor = theme.colors.ecosia.ntpIntroBackground

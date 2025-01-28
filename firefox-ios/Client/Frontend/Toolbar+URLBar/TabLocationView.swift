@@ -99,10 +99,7 @@ class TabLocationView: UIView, FeatureFlaggable {
     }
 
     private func setURLTextfieldPlaceholder(theme: Theme) {
-        /* Ecosia: Update Placeholder attributes
         let attributes = [NSAttributedString.Key.foregroundColor: theme.colors.textSecondary]
-        */
-        let attributes = [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.ecosia.secondaryText]
         urlTextField.attributedPlaceholder = NSAttributedString(
             string: .TabLocationURLPlaceholder,
             attributes: attributes

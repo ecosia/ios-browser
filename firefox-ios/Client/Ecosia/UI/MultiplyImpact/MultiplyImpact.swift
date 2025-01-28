@@ -437,7 +437,7 @@ class MultiplyImpact: UIViewController, Themeable {
         subtitle?.textColor = .Dark.Text.primary
         copyControl?.backgroundColor = theme.colors.ecosia.backgroundSecondary
         copyControl?.layer.borderColor = theme.colors.ecosia.borderDecorative.cgColor
-        moreSharingMethods?.textColor = .legacyTheme.ecosia.secondaryText
+        moreSharingMethods?.textColor = theme.colors.ecosia.textSecondary
         copyText?.textColor = theme.colors.ecosia.brandPrimary
 
         [yourInvites, sharingYourLink, flowTitle, copyLink].forEach {

@@ -108,7 +108,7 @@ final class WelcomeTourGreen: UIView, Themeable {
         let theme = themeManager.getCurrentTheme(for: currentWindowUUID)
         searchLabel.textColor = theme.colors.ecosia.textPrimary
         counterLabel.textColor = theme.colors.ecosia.textPrimary
-        counterSubtitleLabel.textColor = .legacyTheme.ecosia.secondaryText
+        counterSubtitleLabel.textColor = theme.colors.ecosia.textSecondary
     }
 
     func updateAccessibilitySettings() {

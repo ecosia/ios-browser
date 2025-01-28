@@ -85,7 +85,7 @@ class EcosiaLightColourPalette: EcosiaThemeColourPalette {
 
     // MARK: - Text
     var textPrimary: UIColor { ecosia.textPrimary }
-    var textSecondary: UIColor { .legacyTheme.ecosia.secondaryText }
+    var textSecondary: UIColor { ecosia.textSecondary }
     var textDisabled: UIColor { fallbackTheme.colors.textDisabled }
     var textAccent: UIColor { .legacyTheme.ecosia.primaryButton }
     var textOnDark: UIColor { fallbackTheme.colors.textOnDark }

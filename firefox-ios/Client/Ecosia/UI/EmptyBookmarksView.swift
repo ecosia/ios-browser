@@ -280,12 +280,13 @@ final class EmptyBookmarksView: UIView, Themeable {
             }
         }
 
+        let theme = themeManager.getCurrentTheme(for: currentWindowUUID)
         finalResult.forEach {
             switch $0 {
             case let label as UILabel:
-                label.textColor = .legacyTheme.ecosia.secondaryText
+                label.textColor = theme.colors.ecosia.textSecondary
             default:
-                $0.tintColor = .legacyTheme.ecosia.secondaryText
+                $0.tintColor = theme.colors.ecosia.textSecondary
                 break
             }
         }
