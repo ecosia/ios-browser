@@ -12,9 +12,6 @@ extension LegacyTheme {
 }
 
 class EcosiaTheme {
-    var textfieldPlaceholder: UIColor { .Light.Text.secondary }
-    var textfieldIconTint: UIColor { .Light.Button.backgroundPrimary }
-    var personalCounterSelection: UIColor { UIColor.Photon.Grey20 }
     var privateButtonBackground: UIColor { UIColor.Photon.Grey70 }
 
     var segmentSelectedText: UIColor { .Light.Text.primary }
@@ -38,10 +35,6 @@ class EcosiaTheme {
 }
 
 final class DarkEcosiaTheme: EcosiaTheme {
-    override var textfieldPlaceholder: UIColor { .Dark.Text.secondary }
-    override var textfieldIconTint: UIColor { .Dark.Button.backgroundPrimary }
-
-    override var personalCounterSelection: UIColor { UIColor.Photon.Grey60 }
     override var privateButtonBackground: UIColor { .white }
 
     override var segmentSelectedText: UIColor { UIColor.Photon.Grey90 }

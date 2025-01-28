@@ -1075,7 +1075,7 @@ extension URLBarView: ThemeApplicable {
         */
 
         // Ecosia: Update Search Image Color
-        searchIconImageView.tintColor = isPrivate ? theme.colors.ecosia.textPrimary : UIColor.legacyTheme.ecosia.textfieldIconTint
+        searchIconImageView.tintColor = isPrivate ? theme.colors.ecosia.textPrimary : theme.colors.ecosia.buttonBackgroundPrimary
 
         warningMenuBadge.badge.tintBackground(color: theme.colors.layer1)
         // Ecosia: Update UI Elements with helper
