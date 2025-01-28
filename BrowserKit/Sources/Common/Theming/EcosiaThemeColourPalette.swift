@@ -47,7 +47,7 @@ public protocol EcosiaSemanticColors {
     var backgroundHighlighted: UIColor { get } // Mapped as "loading"
 
     // MARK: Unmapped Snowflakes
-    var barBackground: UIColor { get }
+    var barBackground: UIColor { get } // backgroundPrimary | backgroundSecondary
     var barSeparator: UIColor { get }
     var ntpCellBackground: UIColor { get }
     var ntpBackground: UIColor { get }

@@ -752,7 +752,7 @@ class SearchViewController: SiteTableViewController,
                 oneLineCell.accessoryView = indexPath.row > 0 ? appendButton : nil
 
                 // Ecosia: Enrich background
-                oneLineCell.backgroundColor = .legacyTheme.ecosia.autocompleteBackground
+                oneLineCell.backgroundColor = currentTheme().colors.ecosia.barBackground
                 cell = oneLineCell
             }
         case .openedTabs:
@@ -768,7 +768,7 @@ class SearchViewController: SiteTableViewController,
                     twoLineCell.leftImageView.setFavicon(FaviconImageViewModel(siteURLString: urlString))
                 }
                 // Ecosia: Enrich background
-                twoLineCell.backgroundColor = .legacyTheme.ecosia.autocompleteBackground
+                twoLineCell.backgroundColor = currentTheme().colors.ecosia.barBackground
                 twoLineCell.accessoryView = nil
                 cell = twoLineCell
             }
@@ -786,7 +786,7 @@ class SearchViewController: SiteTableViewController,
                 let urlString = remoteTab.URL.absoluteString
                 twoLineCell.leftImageView.setFavicon(FaviconImageViewModel(siteURLString: urlString))
                 // Ecosia: Enrich background
-                twoLineCell.backgroundColor = .legacyTheme.ecosia.autocompleteBackground
+                twoLineCell.backgroundColor = currentTheme().colors.ecosia.barBackground
                 twoLineCell.accessoryView = nil
                 cell = twoLineCell
             }
