@@ -24,6 +24,8 @@ if [ "$#" -lt 4 ]; then
   exit 1
 fi
 
+cd firefox-ios
+
 config_file="$1"
 environment_file="$2"  # Fixed environment file path
 results_dir="$3"
