@@ -364,7 +364,7 @@ final class WelcomeTour: UIViewController, Themeable {
         subtitleLabel.textColor = theme.colors.ecosia.textSecondary
         skipButton?.tintColor = theme.colors.ecosia.buttonBackgroundPrimary
         backButton.tintColor = theme.colors.ecosia.buttonBackgroundPrimary
-        pageControl.pageIndicatorTintColor = .legacyTheme.ecosia.disabled
+        pageControl.pageIndicatorTintColor = theme.colors.ecosia.stateDisabled
         pageControl.currentPageIndicatorTintColor = theme.colors.ecosia.buttonBackgroundPrimary
         ctaButton.backgroundColor = .Light.Button.backgroundSecondary
         ctaButton.setTitleColor(.Light.Text.primary, for: .normal)

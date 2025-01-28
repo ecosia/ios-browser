@@ -709,7 +709,7 @@ class HistoryPanel: UIViewController,
         bottomDeleteButton.tintColor = theme.colors.iconPrimary
         */
         bottomSearchButton.tintColor = theme.colors.ecosia.textPrimary
-        bottomDeleteButton.tintColor = .legacyTheme.ecosia.warning
+        bottomDeleteButton.tintColor = theme.colors.ecosia.stateError
 
         applyEmptyStateViewTheme(theme)
 

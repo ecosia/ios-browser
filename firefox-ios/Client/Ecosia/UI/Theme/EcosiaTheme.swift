@@ -12,10 +12,6 @@ extension LegacyTheme {
 }
 
 class EcosiaTheme {
-    var warning: UIColor { .Light.State.error }
-    var information: UIColor { .Light.State.information }
-    var disabled: UIColor { .Light.State.disabled }
-
     var tabBackground: UIColor { .Light.Background.primary }
     var tabSelectedBackground: UIColor { .Light.Button.backgroundPrimary }
     var tabSelectedPrivateBackground: UIColor { .Dark.Background.secondary }
@@ -30,10 +26,6 @@ class EcosiaTheme {
 }
 
 final class DarkEcosiaTheme: EcosiaTheme {
-    override var warning: UIColor { .Dark.State.error }
-    override var information: UIColor { .Dark.State.information }
-    override var disabled: UIColor { .Dark.State.disabled }
-
     override var tabBackground: UIColor { .Dark.Background.tertiary }
     override var tabSelectedBackground: UIColor { .Dark.Button.backgroundPrimary }
     override var tabSelectedPrivateBackground: UIColor { .white}

@@ -54,7 +54,7 @@ class EcosiaLightColourPalette: EcosiaThemeColourPalette {
     var layerAccentPrivate: UIColor { fallbackTheme.colors.layerAccentPrivate }
     var layerAccentPrivateNonOpaque: UIColor { ecosia.textPrimary }
     var layerSepia: UIColor { fallbackTheme.colors.layerSepia }
-    var layerWarning: UIColor { .legacyTheme.ecosia.warning }
+    var layerWarning: UIColor { ecosia.stateError }
     var layerRatingA: UIColor { fallbackTheme.colors.layerRatingA }
     var layerRatingASubdued: UIColor { fallbackTheme.colors.layerRatingASubdued }
     var layerRatingB: UIColor { fallbackTheme.colors.layerRatingB }
@@ -81,7 +81,7 @@ class EcosiaLightColourPalette: EcosiaThemeColourPalette {
     var formKnob: UIColor { fallbackTheme.colors.formKnob }
     var indicatorActive: UIColor { fallbackTheme.colors.indicatorActive }
     var indicatorInactive: UIColor { fallbackTheme.colors.indicatorInactive }
-    var actionWarning: UIColor { .legacyTheme.ecosia.warning }
+    var actionWarning: UIColor { ecosia.stateError }
 
     // MARK: - Text
     var textPrimary: UIColor { ecosia.textPrimary }
@@ -97,7 +97,7 @@ class EcosiaLightColourPalette: EcosiaThemeColourPalette {
     var iconSecondary: UIColor { ecosia.iconSecondary }
     var iconDisabled: UIColor { fallbackTheme.colors.iconDisabled }
     var iconOnColor: UIColor { fallbackTheme.colors.iconOnColor }
-    var iconWarning: UIColor { .legacyTheme.ecosia.warning }
+    var iconWarning: UIColor { ecosia.stateError }
     var iconSpinner: UIColor { fallbackTheme.colors.iconSpinner }
     var iconAccentViolet: UIColor { fallbackTheme.colors.iconAccentViolet }
     var iconAccentBlue: UIColor { fallbackTheme.colors.iconAccentBlue }
