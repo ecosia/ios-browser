@@ -153,4 +153,5 @@ private class EcosiaLightSemanticColors: EcosiaSemanticColors {
     var modalHeader: UIColor = EcosiaColorPrimitive.DarkGreen50
     var secondarySelectedBackground: UIColor = EcosiaColorPrimitive.Gray10
     var buttonBackgroundNTPCustomization: UIColor = EcosiaColorPrimitive.Gray10
+    var privateButtonBackground: UIColor = .Photon.Grey70
 }

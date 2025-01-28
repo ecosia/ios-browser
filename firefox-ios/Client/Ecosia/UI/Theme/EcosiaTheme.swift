@@ -12,8 +12,6 @@ extension LegacyTheme {
 }
 
 class EcosiaTheme {
-    var privateButtonBackground: UIColor { UIColor.Photon.Grey70 }
-
     var segmentSelectedText: UIColor { .Light.Text.primary }
     var segmentBackground: UIColor { .Light.Background.secondary }
 
@@ -35,8 +33,6 @@ class EcosiaTheme {
 }
 
 final class DarkEcosiaTheme: EcosiaTheme {
-    override var privateButtonBackground: UIColor { .white }
-
     override var segmentSelectedText: UIColor { UIColor.Photon.Grey90 }
     override var segmentBackground: UIColor { .Dark.Background.tertiary }
 

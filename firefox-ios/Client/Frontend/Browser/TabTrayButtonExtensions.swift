@@ -34,7 +34,7 @@ class PrivateModeButton: ToggleButton, PrivateModeUI {
 
         // Ecosia: Modify background layer
         backgroundLayer.backgroundColor = isPrivate
-            ? UIColor.legacyTheme.ecosia.privateButtonBackground.cgColor
+            ? theme.colors.ecosia.privateButtonBackground.cgColor
             : UIColor.clear.cgColor
 
         accessibilityValue = isSelected ? .TabTrayToggleAccessibilityValueOn : .TabTrayToggleAccessibilityValueOff

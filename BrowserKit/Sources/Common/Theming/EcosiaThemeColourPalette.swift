@@ -58,6 +58,7 @@ public protocol EcosiaSemanticColors {
     var modalHeader: UIColor { get }
     var secondarySelectedBackground: UIColor { get }
     var buttonBackgroundNTPCustomization: UIColor { get }
+    var privateButtonBackground: UIColor { get }
 }
 
 public protocol EcosiaThemeColourPalette: ThemeColourPalette {
@@ -101,4 +102,5 @@ class FakeEcosiaSemanticColors: EcosiaSemanticColors {
     var modalHeader: UIColor = .systemGray
     var secondarySelectedBackground: UIColor = .systemGray
     var buttonBackgroundNTPCustomization: UIColor = .systemGray
+    var privateButtonBackground: UIColor = .systemGray
 }
