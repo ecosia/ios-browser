@@ -329,9 +329,9 @@ extension TabCell {
 
         let isPrivate = tabModel?.isPrivate == true
         let activeBGColor = isPrivate ?
-            UIColor.legacyTheme.ecosia.tabSelectedPrivateBackground :
-            UIColor.legacyTheme.ecosia.tabSelectedBackground
-        headerView.backgroundColor = isSelectedTab ? activeBGColor : UIColor.legacyTheme.ecosia.tabBackground
+            theme.colors.ecosia.tabSelectedPrivateBackground :
+            theme.colors.ecosia.buttonBackgroundPrimary
+        headerView.backgroundColor = isSelectedTab ? activeBGColor : theme.colors.ecosia.ntpCellBackground
 
         titleText.textColor = isSelectedTab ? theme.colors.ecosia.textInversePrimary : theme.colors.ecosia.textPrimary
         favicon.tintColor = isSelectedTab ? theme.colors.ecosia.textInversePrimary : theme.colors.ecosia.textPrimary

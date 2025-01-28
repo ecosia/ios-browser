@@ -154,4 +154,5 @@ private struct EcosiaLightSemanticColors: EcosiaSemanticColors {
     var secondarySelectedBackground: UIColor = EcosiaColor.Gray10
     var buttonBackgroundNTPCustomization: UIColor = EcosiaColor.Gray10
     var privateButtonBackground: UIColor = .Photon.Grey70
+    var tabSelectedPrivateBackground: UIColor = EcosiaColor.Gray80
 }
