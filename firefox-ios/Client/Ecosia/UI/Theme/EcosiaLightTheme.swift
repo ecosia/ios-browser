@@ -93,8 +93,8 @@ class EcosiaLightColourPalette: EcosiaThemeColourPalette {
     var textInverted: UIColor { ecosia.textInversePrimary }
 
     // MARK: - Icons
-    var iconPrimary: UIColor { .legacyTheme.ecosia.primaryIcon }
-    var iconSecondary: UIColor { .legacyTheme.ecosia.secondaryIcon }
+    var iconPrimary: UIColor { ecosia.iconPrimary }
+    var iconSecondary: UIColor { ecosia.iconSecondary }
     var iconDisabled: UIColor { fallbackTheme.colors.iconDisabled }
     var iconOnColor: UIColor { fallbackTheme.colors.iconOnColor }
     var iconWarning: UIColor { .legacyTheme.ecosia.warning }

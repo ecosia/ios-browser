@@ -84,12 +84,13 @@ final class WhatsNewCell: UITableViewCell, Themeable {
 extension WhatsNewCell {
 
     func applyTheme() {
+        let theme = themeManager.getCurrentTheme(for: currentWindowUUID)
         if #available(iOS 14, *) {
             guard var updatedConfiguration = contentConfigurationToUpdate as? UIListContentConfiguration else { return }
-            updatedConfiguration.image = item.image?.tinted(withColor: .legacyTheme.ecosia.secondaryIcon)
+            updatedConfiguration.image = item.image?.tinted(withColor: theme.colors.ecosia.iconSecondary)
             contentConfiguration = updatedConfiguration
         } else {
-            imageView?.image = item.image?.tinted(withColor: .legacyTheme.ecosia.secondaryIcon)
+            imageView?.image = item.image?.tinted(withColor: theme.colors.ecosia.iconSecondary)
         }
     }
 }

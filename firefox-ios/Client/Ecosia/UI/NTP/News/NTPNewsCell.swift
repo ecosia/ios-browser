@@ -226,7 +226,7 @@ final class NTPNewsCell: UICollectionViewCell, Themeable, ReusableCell {
     func applyTheme() {
         let theme = themeManager.getCurrentTheme(for: currentWindowUUID)
         background.backgroundColor = defaultBackgroundColor()
-        placeholder.tintColor = .legacyTheme.ecosia.decorativeIcon
+        placeholder.tintColor = theme.colors.ecosia.iconDecorative
         placeholder.backgroundColor = theme.colors.ecosia.newsPlaceholder
         border.backgroundColor = theme.colors.ecosia.borderDecorative
         title.textColor = theme.colors.ecosia.textPrimary
