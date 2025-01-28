@@ -12,11 +12,9 @@ extension LegacyTheme {
 }
 
 class EcosiaTheme {
-    var peach: UIColor { .init(rgb: 0xFFE6BF) }
 }
 
 final class DarkEcosiaTheme: EcosiaTheme {
-    override var peach: UIColor { .init(rgb: 0xCC7722) }
 }
 
 extension UIImage {

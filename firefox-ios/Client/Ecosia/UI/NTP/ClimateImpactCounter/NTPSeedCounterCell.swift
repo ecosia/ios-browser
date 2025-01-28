@@ -132,7 +132,7 @@ final class NTPSeedCounterCell: UICollectionViewCell, Themeable, ReusableCell {
 
     private func addNewSeedCollectedCircleView() {
         let duration = UX.newSeedCircleAnimationDuration
-        let newSeedView = NewSeedCollectedCircleView(seedsCollected: 1)
+        let newSeedView = NewSeedCollectedCircleView(windowUUID: currentWindowUUID, seedsCollected: 1)
             .frame(width: UX.newSeedCircleSize, height: UX.newSeedCircleSize)
             .modifier(AppearFromBottomEffectModifier(reduceMotionEnabled: UIAccessibility.isReduceMotionEnabled,
                                                      duration: duration,
