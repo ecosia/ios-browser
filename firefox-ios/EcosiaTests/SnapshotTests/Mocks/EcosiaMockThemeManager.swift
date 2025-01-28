@@ -7,7 +7,7 @@ import Shared
 @testable import Client
 
 final class EcosiaMockThemeManager: ThemeManager {
-    
+
     // These have been carried over from the legacy system to maintain backwards compatibility
     private enum ThemeKeys {
         static let themeName = "prefKeyThemeName"

@@ -133,7 +133,7 @@ open class DefaultSuggestedSites {
         ]
     ]
      */
-    
+
     public static let sites = [
             SuggestedSite(
                 url: Ecosia.Environment.current.urlProvider.financialReports.absoluteString,
