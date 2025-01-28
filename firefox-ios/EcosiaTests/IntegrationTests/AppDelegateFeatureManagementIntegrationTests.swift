@@ -14,7 +14,7 @@ final class AppDelegateFeatureManagementIntegrationTests: XCTestCase {
         super.setUp()
 
         appDelegate = AppDelegate()
-
+        DependencyHelperMock().bootstrapDependencies()
         initialModel = Unleash.model
         // Reset Unleash model to initial state
         Unleash.model = Unleash.Model()

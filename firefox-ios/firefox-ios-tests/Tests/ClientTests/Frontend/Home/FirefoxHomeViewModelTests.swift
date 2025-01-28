@@ -39,11 +39,14 @@ class FirefoxHomeViewModelTests: XCTestCase {
                                           // Ecosia: Add referrals
                                           referrals: Referrals(),
                                           theme: LightTheme())
+        /* Ecosia: Udpate number of sections
         XCTAssertEqual(viewModel.shownSections.count, 2)
+         */
+        XCTAssertEqual(viewModel.shownSections.count, 5)
         XCTAssertEqual(viewModel.shownSections[0], HomepageSectionType.homepageHeader)
         /* Ecosia: Update section type
         XCTAssertEqual(viewModel.shownSections[1], HomepageSectionType.customizeHome)
          */
-        XCTAssertEqual(viewModel.shownSections[1], HomepageSectionType.ntpCustomization)
+        XCTAssertEqual(viewModel.shownSections[1], HomepageSectionType.libraryShortcuts)
     }
 }
