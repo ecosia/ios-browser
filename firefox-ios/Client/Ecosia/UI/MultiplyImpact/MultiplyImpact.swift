@@ -427,9 +427,9 @@ class MultiplyImpact: UIViewController, Themeable {
         view.backgroundColor = theme.colors.ecosia.modalBackground
         topBackground?.backgroundColor = theme.colors.ecosia.brandPrimary.withAlphaComponent(0.2)
         inviteButton.backgroundColor = theme.colors.ecosia.brandPrimary
-        inviteButton.setTitleColor(.legacyTheme.ecosia.primaryTextInverted, for: .normal)
-        inviteButton.setTitleColor(.legacyTheme.ecosia.primaryTextInverted, for: .highlighted)
-        inviteButton.setTitleColor(.legacyTheme.ecosia.primaryTextInverted, for: .selected)
+        inviteButton.setTitleColor(theme.colors.ecosia.textInversePrimary, for: .normal)
+        inviteButton.setTitleColor(theme.colors.ecosia.textInversePrimary, for: .highlighted)
+        inviteButton.setTitleColor(theme.colors.ecosia.textInversePrimary, for: .selected)
         learnMoreButton?.setTitleColor(theme.colors.ecosia.brandPrimary, for: .normal)
         waves?.tintColor = theme.colors.ecosia.modalBackground
         topBackground?.backgroundColor = theme.colors.ecosia.modalBackground

@@ -263,7 +263,7 @@ extension WhatsNewViewController {
         closeButton.backgroundColor = theme.colors.ecosia.backgroundPrimary
         closeButton.tintColor = theme.colors.ecosia.textPrimary
         footerButton.backgroundColor = theme.colors.ecosia.brandPrimary
-        footerButton.setTitleColor(.legacyTheme.ecosia.primaryTextInverted, for: .normal)
+        footerButton.setTitleColor(theme.colors.ecosia.textInversePrimary, for: .normal)
         headerLabelContainerView.backgroundColor = theme.colors.ecosia.backgroundPrimary
         secondImageView.tintColor = theme.colors.ecosia.backgroundPrimary
     }

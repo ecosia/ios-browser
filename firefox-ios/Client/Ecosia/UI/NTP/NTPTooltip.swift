@@ -149,10 +149,11 @@ final class NTPTooltip: UICollectionReusableView, Themeable {
     }
 
     func setLinkTitle(_ text: String) {
+        let theme = themeManager.getCurrentTheme(for: currentWindowUUID)
         let titleString = NSMutableAttributedString(string: text)
         titleString.addAttributes([
             .font: UIFont.preferredFont(forTextStyle: .callout).bold(),
-            .foregroundColor: UIColor.legacyTheme.ecosia.primaryTextInverted
+            .foregroundColor: theme.colors.ecosia.textInversePrimary
         ], range: NSRange(location: 0, length: text.count))
         linkButton.setAttributedTitle(titleString, for: .normal)
         linkButton.isHidden = false
@@ -172,8 +173,8 @@ final class NTPTooltip: UICollectionReusableView, Themeable {
         let theme = themeManager.getCurrentTheme(for: currentWindowUUID)
         tail.tintColor = theme.colors.ecosia.backgroundQuaternary
         background.backgroundColor = theme.colors.ecosia.backgroundQuaternary
-        textLabel.textColor = .legacyTheme.ecosia.primaryTextInverted
-        closeButton.tintColor = .legacyTheme.ecosia.primaryTextInverted
+        textLabel.textColor = theme.colors.ecosia.textInversePrimary
+        closeButton.tintColor = theme.colors.ecosia.textInversePrimary
     }
 
     @objc func tapped() {

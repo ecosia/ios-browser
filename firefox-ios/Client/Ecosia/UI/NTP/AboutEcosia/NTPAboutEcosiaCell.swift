@@ -241,8 +241,8 @@ extension NTPAboutEcosiaCell: Themeable {
         indicatorImageView.tintColor = .legacyTheme.ecosia.secondaryText
         dividerView.backgroundColor = theme.colors.ecosia.borderDecorative
         disclosureView.backgroundColor = theme.colors.ecosia.backgroundQuaternary
-        subtitleLabel.textColor = .legacyTheme.ecosia.primaryTextInverted
-        learnMoreButton.layer.borderColor = UIColor.legacyTheme.ecosia.primaryTextInverted.cgColor
-        learnMoreLabel.textColor = .legacyTheme.ecosia.primaryTextInverted
+        subtitleLabel.textColor = theme.colors.ecosia.textInversePrimary
+        learnMoreButton.layer.borderColor = theme.colors.ecosia.textInversePrimary.cgColor
+        learnMoreLabel.textColor = theme.colors.ecosia.textInversePrimary
     }
 }

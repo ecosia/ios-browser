@@ -35,6 +35,7 @@ public protocol EcosiaSemanticColors {
 
     // MARK: - Text
     var textPrimary: UIColor { get }
+    var textInversePrimary: UIColor { get }
     var textSecondary: UIColor { get }
     var textTertiary: UIColor { get }
 
@@ -82,6 +83,7 @@ class FakeEcosiaSemanticColors: EcosiaSemanticColors {
     var stateInformation: UIColor = .systemGray
     var stateDisabled: UIColor = .systemGray
     var textPrimary: UIColor = .systemGray
+    var textInversePrimary: UIColor = .systemGray
     var textSecondary: UIColor = .systemGray
     var textTertiary: UIColor = .systemGray
     var barBackground: UIColor = .systemGray

@@ -333,9 +333,9 @@ extension TabCell {
             UIColor.legacyTheme.ecosia.tabSelectedBackground
         headerView.backgroundColor = isSelectedTab ? activeBGColor : UIColor.legacyTheme.ecosia.tabBackground
 
-        titleText.textColor = isSelectedTab ? UIColor.legacyTheme.ecosia.primaryTextInverted : theme.colors.ecosia.textPrimary
-        favicon.tintColor = isSelectedTab ? UIColor.legacyTheme.ecosia.primaryTextInverted : theme.colors.ecosia.textPrimary
-        closeButton.tintColor = isSelectedTab ? UIColor.legacyTheme.ecosia.primaryTextInverted : theme.colors.ecosia.textPrimary
+        titleText.textColor = isSelectedTab ? theme.colors.ecosia.textInversePrimary : theme.colors.ecosia.textPrimary
+        favicon.tintColor = isSelectedTab ? theme.colors.ecosia.textInversePrimary : theme.colors.ecosia.textPrimary
+        closeButton.tintColor = isSelectedTab ? theme.colors.ecosia.textInversePrimary : theme.colors.ecosia.textPrimary
 
         let borderWidth: CGFloat = 3
 

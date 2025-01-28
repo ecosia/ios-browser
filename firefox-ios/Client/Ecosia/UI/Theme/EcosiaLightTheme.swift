@@ -90,7 +90,7 @@ class EcosiaLightColourPalette: EcosiaThemeColourPalette {
     var textAccent: UIColor { .legacyTheme.ecosia.primaryButton }
     var textOnDark: UIColor { fallbackTheme.colors.textOnDark }
     var textOnLight: UIColor { fallbackTheme.colors.textOnLight }
-    var textInverted: UIColor { .legacyTheme.ecosia.primaryTextInverted }
+    var textInverted: UIColor { ecosia.textInversePrimary }
 
     // MARK: - Icons
     var iconPrimary: UIColor { .legacyTheme.ecosia.primaryIcon }
@@ -124,18 +124,19 @@ private class EcosiaLightSemanticColors: EcosiaSemanticColors {
     var borderDecorative: UIColor = EcosiaColorPrimitive.Gray30
     var brandPrimary: UIColor = EcosiaColorPrimitive.Green50
     var buttonBackgroundPrimary: UIColor = EcosiaColorPrimitive.Green50
-    var buttonBackgroundPrimaryActive: UIColor = EcosiaColorPrimitive.Green70
+    var buttonBackgroundPrimaryActive: UIColor = EcosiaColorPrimitive.Green70 // ⚠️ Mismatch
     var buttonBackgroundSecondary: UIColor = EcosiaColorPrimitive.White
-    var buttonBackgroundSecondaryHover: UIColor = EcosiaColorPrimitive.Gray10
+    var buttonBackgroundSecondaryHover: UIColor = EcosiaColorPrimitive.Gray10 // ⚠️ Mismatch
     var buttonContentSecondary: UIColor = EcosiaColorPrimitive.Gray70
     var buttonBackgroundTransparentActive: UIColor = EcosiaColorPrimitive.Green70.withAlphaComponent(0.24)
-    var iconPrimary: UIColor = EcosiaColorPrimitive.Black
-    var iconSecondary: UIColor = EcosiaColorPrimitive.Green60
+    var iconPrimary: UIColor = EcosiaColorPrimitive.Black // ⚠️ Mismatch
+    var iconSecondary: UIColor = EcosiaColorPrimitive.Green60 // ⚠️ Mismatch
     var iconDecorative: UIColor = EcosiaColorPrimitive.Gray50
     var stateError: UIColor = EcosiaColorPrimitive.Red40
-    var stateInformation: UIColor = EcosiaColorPrimitive.Blue50
+    var stateInformation: UIColor = EcosiaColorPrimitive.Blue50 // ⚠️ No match
     var stateDisabled: UIColor = EcosiaColorPrimitive.Gray30
-    var textPrimary: UIColor = EcosiaColorPrimitive.Black
+    var textPrimary: UIColor = EcosiaColorPrimitive.Black // ⚠️ Mismatch
+    var textInversePrimary: UIColor = EcosiaColorPrimitive.White
     var textSecondary: UIColor = EcosiaColorPrimitive.Gray50
     var textTertiary: UIColor = EcosiaColorPrimitive.White
 

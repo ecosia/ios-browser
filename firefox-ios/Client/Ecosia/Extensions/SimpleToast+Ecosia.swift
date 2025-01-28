@@ -49,7 +49,7 @@ extension SimpleToast {
         let toast = UILabel()
         toast.text = text
         toast.numberOfLines = 1
-        toast.textColor = UIColor.legacyTheme.ecosia.primaryTextInverted
+        toast.textColor = theme.colors.ecosia.textInversePrimary
         toast.font = UIFont.preferredFont(forTextStyle: .body)
         toast.adjustsFontForContentSizeCategory = true
         toast.adjustsFontSizeToFitWidth = true

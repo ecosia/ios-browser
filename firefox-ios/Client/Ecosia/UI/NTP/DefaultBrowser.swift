@@ -246,7 +246,7 @@ final class DefaultBrowser: UIViewController, Themeable {
         arrow2.tintColor = .legacyTheme.ecosia.primaryButton
         content.backgroundColor = theme.colors.ecosia.ntpIntroBackground
         waves.tintColor = theme.colors.ecosia.ntpIntroBackground
-        cta.setTitleColor(.legacyTheme.ecosia.primaryTextInverted, for: .normal)
+        cta.setTitleColor(theme.colors.ecosia.textInversePrimary, for: .normal)
         skip.setTitleColor(.legacyTheme.ecosia.primaryButton, for: .normal)
         cta.backgroundColor = .legacyTheme.ecosia.primaryButton
     }

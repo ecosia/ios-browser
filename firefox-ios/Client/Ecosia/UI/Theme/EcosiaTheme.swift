@@ -12,7 +12,6 @@ extension LegacyTheme {
 }
 
 class EcosiaTheme {
-    var primaryTextInverted: UIColor { .Dark.Text.primary }
     var secondaryText: UIColor { .Light.Text.secondary }
     var navigationBarText: UIColor { .Light.Text.primary }
     var tertiaryText: UIColor { .Light.Text.tertiary }
@@ -58,7 +57,6 @@ class EcosiaTheme {
 }
 
 final class DarkEcosiaTheme: EcosiaTheme {
-    override var primaryTextInverted: UIColor { .Light.Text.primary }
     override var secondaryText: UIColor { .Dark.Text.secondary }
     override var navigationBarText: UIColor { .Dark.Text.primary }
     override var tertiaryText: UIColor { .Dark.Text.tertiary }

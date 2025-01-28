@@ -42,20 +42,21 @@ private class EcosiaDarkSemanticColors: EcosiaSemanticColors {
     var borderDecorative: UIColor = EcosiaColorPrimitive.Gray60
     var brandPrimary: UIColor = EcosiaColorPrimitive.Green30
     var buttonBackgroundPrimary: UIColor = EcosiaColorPrimitive.Green30
-    var buttonBackgroundPrimaryActive: UIColor = EcosiaColorPrimitive.Green50
-    var buttonBackgroundSecondary: UIColor = EcosiaColorPrimitive.Gray70
+    var buttonBackgroundPrimaryActive: UIColor = EcosiaColorPrimitive.Green50 // ⚠️ Mismatch
+    var buttonBackgroundSecondary: UIColor = EcosiaColorPrimitive.Gray70 // ⚠️ Mismatch
     var buttonBackgroundSecondaryHover: UIColor = EcosiaColorPrimitive.Gray70
     var buttonContentSecondary: UIColor = EcosiaColorPrimitive.White
     var buttonBackgroundTransparentActive: UIColor = EcosiaColorPrimitive.Gray30.withAlphaComponent(0.32)
     var iconPrimary: UIColor = EcosiaColorPrimitive.White
     var iconSecondary: UIColor = EcosiaColorPrimitive.Green30
-    var iconDecorative: UIColor = EcosiaColorPrimitive.Gray40
+    var iconDecorative: UIColor = EcosiaColorPrimitive.Gray40 // ⚠️ Mismatch
     var stateError: UIColor = EcosiaColorPrimitive.Red30
-    var stateInformation: UIColor = EcosiaColorPrimitive.Blue30
+    var stateInformation: UIColor = EcosiaColorPrimitive.Blue30 // ⚠️ No match
     var stateDisabled: UIColor = EcosiaColorPrimitive.Gray50
     var textPrimary: UIColor = EcosiaColorPrimitive.White
+    var textInversePrimary: UIColor = EcosiaColorPrimitive.Black // ⚠️ Mismatch
     var textSecondary: UIColor = EcosiaColorPrimitive.Gray30
-    var textTertiary: UIColor = EcosiaColorPrimitive.Gray70
+    var textTertiary: UIColor = EcosiaColorPrimitive.Gray70 // ⚠️ Mismatch
 
     // MARK: Unmapped Snowflakes
     var barBackground: UIColor = EcosiaColorPrimitive.Gray80

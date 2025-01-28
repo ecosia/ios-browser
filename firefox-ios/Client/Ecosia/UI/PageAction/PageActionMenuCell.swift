@@ -238,7 +238,7 @@ extension PageActionMenuCell {
             let height = size.height + 5
             badge?.layer.cornerRadius = height / 2
             badge?.frame.size = .init(width: size.width + 16, height: height)
-            badgeLabel?.textColor = .legacyTheme.ecosia.primaryTextInverted
+            badgeLabel?.textColor = theme.colors.ecosia.textInversePrimary
         } else {
             accessoryView = nil
         }
