@@ -3,6 +3,8 @@ name: Merge Unit Tests
 on:
   pull_request:
     branches: [ main, mob-3113-firefox-upgrade-133 ]
+  push:
+    branches: [ mob-3113-3151-firefox-upgrade-133-with-ecosia-framework-and-cleaned-tests ]
 
 jobs:
   execute_merge_tests:
