@@ -424,16 +424,16 @@ class MultiplyImpact: UIViewController, Themeable {
     func applyTheme() {
         let theme = themeManager.getCurrentTheme(for: windowUUID)
 
-        view.backgroundColor = .legacyTheme.ecosia.modalBackground
+        view.backgroundColor = theme.colors.ecosia.modalBackground
         topBackground?.backgroundColor = theme.colors.ecosia.brandPrimary.withAlphaComponent(0.2)
         inviteButton.backgroundColor = theme.colors.ecosia.brandPrimary
         inviteButton.setTitleColor(.legacyTheme.ecosia.primaryTextInverted, for: .normal)
         inviteButton.setTitleColor(.legacyTheme.ecosia.primaryTextInverted, for: .highlighted)
         inviteButton.setTitleColor(.legacyTheme.ecosia.primaryTextInverted, for: .selected)
         learnMoreButton?.setTitleColor(theme.colors.ecosia.brandPrimary, for: .normal)
-        waves?.tintColor = .legacyTheme.ecosia.modalBackground
-        topBackground?.backgroundColor = .legacyTheme.ecosia.modalHeader
-        forestOverlay?.backgroundColor = .legacyTheme.ecosia.modalBackground
+        waves?.tintColor = theme.colors.ecosia.modalBackground
+        topBackground?.backgroundColor = theme.colors.ecosia.modalBackground
+        forestOverlay?.backgroundColor = theme.colors.ecosia.modalBackground
         subtitle?.textColor = .Dark.Text.primary
         copyControl?.backgroundColor = theme.colors.ecosia.backgroundSecondary
         copyControl?.layer.borderColor = theme.colors.ecosia.borderDecorative.cgColor
@@ -467,11 +467,11 @@ class MultiplyImpact: UIViewController, Themeable {
         appearance.configureWithOpaqueBackground()
         appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.Dark.Text.primary]
         appearance.titleTextAttributes = [.foregroundColor: UIColor.Dark.Text.primary]
-        appearance.backgroundColor = .legacyTheme.ecosia.modalHeader
+        appearance.backgroundColor = theme.colors.ecosia.modalBackground
         appearance.shadowColor = nil
         navigationItem.standardAppearance = appearance
         navigationItem.scrollEdgeAppearance = appearance
-        navigationController?.navigationBar.backgroundColor = .legacyTheme.ecosia.modalHeader
+        navigationController?.navigationBar.backgroundColor = theme.colors.ecosia.modalBackground
         navigationController?.navigationBar.tintColor = theme.type == .light ? UIColor.Dark.Text.primary : theme.colors.ecosia.brandPrimary
     }
 

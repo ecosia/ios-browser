@@ -226,8 +226,8 @@ extension PageActionMenu: Themeable {
 
     func applyTheme() {
         tableView.reloadData()
-        view.backgroundColor = .legacyTheme.ecosia.modalBackground
-        tableView.backgroundColor = .legacyTheme.ecosia.modalBackground
+        view.backgroundColor = currentTheme.colors.ecosia.modalBackground
+        tableView.backgroundColor = currentTheme.colors.ecosia.modalBackground
         tableView.separatorColor = currentTheme.colors.ecosia.borderDecorative
         knob.backgroundColor = .legacyTheme.ecosia.secondaryText
         tableView.visibleCells.forEach {

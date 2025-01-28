@@ -12,9 +12,6 @@ extension LegacyTheme {
 }
 
 class EcosiaTheme {
-    var modalBackground: UIColor { .Light.Background.tertiary }
-    var modalHeader: UIColor { .init(red: 0.153, green: 0.322, blue: 0.263, alpha: 1) }
-
     var whatsNewCloseButton: UIColor { .Light.Text.primary }
 
     var primaryText: UIColor { .Light.Text.primary }
@@ -43,8 +40,6 @@ class EcosiaTheme {
     var personalCounterSelection: UIColor { UIColor.Photon.Grey20 }
     var privateButtonBackground: UIColor { UIColor.Photon.Grey70 }
 
-    var modalOverlayBackground: UIColor { UIColor(rgb: 0x333333).withAlphaComponent(0.4) }
-
     var segmentSelectedText: UIColor { .Light.Text.primary }
     var segmentBackground: UIColor { .Light.Background.secondary }
 
@@ -66,9 +61,6 @@ class EcosiaTheme {
 }
 
 final class DarkEcosiaTheme: EcosiaTheme {
-    override var modalBackground: UIColor { .Dark.Background.secondary }
-    override var modalHeader: UIColor { .Dark.Background.secondary }
-
     override var whatsNewCloseButton: UIColor { .white }
 
     override var primaryText: UIColor { .Dark.Text.primary}
@@ -98,8 +90,6 @@ final class DarkEcosiaTheme: EcosiaTheme {
 
     override var personalCounterSelection: UIColor { UIColor.Photon.Grey60 }
     override var privateButtonBackground: UIColor { .white }
-
-    override var modalOverlayBackground: UIColor { UIColor(rgb: 0x333333).withAlphaComponent(0.6) }
 
     override var segmentSelectedText: UIColor { UIColor.Photon.Grey90 }
     override var segmentBackground: UIColor { .Dark.Background.tertiary }

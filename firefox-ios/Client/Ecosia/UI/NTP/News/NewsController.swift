@@ -150,7 +150,8 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
         collection.visibleCells.forEach({
             ($0 as? Themeable)?.applyTheme()
         })
-        collection.backgroundColor = UIColor.legacyTheme.ecosia.modalBackground
+        let theme = themeManager.getCurrentTheme(for: windowUUID)
+        collection.backgroundColor = theme.colors.ecosia.modalBackground
         updateBarAppearance()
 
         if traitCollection.userInterfaceIdiom == .pad {
@@ -164,9 +165,9 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
         let theme = themeManager.getCurrentTheme(for: windowUUID)
         appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.legacyTheme.ecosia.primaryText]
         appearance.titleTextAttributes = [.foregroundColor: UIColor.legacyTheme.ecosia.primaryText]
-        appearance.backgroundColor = .legacyTheme.ecosia.modalBackground
+        appearance.backgroundColor = theme.colors.ecosia.modalBackground
         navigationItem.standardAppearance = appearance
-        navigationController?.navigationBar.backgroundColor = .legacyTheme.ecosia.modalBackground
+        navigationController?.navigationBar.backgroundColor = theme.colors.ecosia.modalBackground
         navigationController?.navigationBar.tintColor = theme.colors.ecosia.brandPrimary
     }
 
@@ -216,7 +217,8 @@ private final class NewsSubHeader: UICollectionReusableView, Themeable {
     }
 
     func applyTheme() {
-        backgroundColor = UIColor.legacyTheme.ecosia.modalBackground
+        let theme = themeManager.getCurrentTheme(for: currentWindowUUID)
+        backgroundColor = theme.colors.ecosia.modalBackground
         subtitle.textColor = UIColor.legacyTheme.ecosia.secondaryText
     }
 }
