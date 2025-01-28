@@ -208,8 +208,9 @@ public struct UserAgentBuilder {
             systemInfo: "(\(UIDevice.current.model); CPU iPhone OS \(UIDevice.current.systemVersion.replacingOccurrences(of: ".", with: "_")) like Mac OS X)",
             platform: UserAgent.platform,
             platformDetails: UserAgent.platformDetails,
-            // Ecosia: Update extension
-            // extensions: "FxiOS/\(AppInfo.appVersion)  \(UserAgent.uaBitMobile) \(UserAgent.uaBitSafari)")
+            /* Ecosia: Update extension
+            extensions: "FxiOS/\(AppInfo.appVersion)  \(UserAgent.uaBitMobile) \(UserAgent.uaBitSafari)")
+             */
             extensions: "Ecosia/\(AppInfo.appVersion)  \(UserAgent.uaBitMobile) \(UserAgent.uaBitSafari)")
     }
 
@@ -219,8 +220,9 @@ public struct UserAgentBuilder {
             systemInfo: "(Macintosh; Intel Mac OS X 10.15)",
             platform: UserAgent.platform,
             platformDetails: UserAgent.platformDetails,
-            // Ecosia: Update extension
-            // extensions: "FxiOS/\(AppInfo.appVersion) \(UserAgent.uaBitSafari)")
+            /* Ecosia: Update extension
+            extensions: "FxiOS/\(AppInfo.appVersion) \(UserAgent.uaBitSafari)")
+             */
             extensions: "\(UserAgent.uaBitVersion) \(UserAgent.uaBitMobile) \(UserAgent.uaBitSafari)")
     }
 }
