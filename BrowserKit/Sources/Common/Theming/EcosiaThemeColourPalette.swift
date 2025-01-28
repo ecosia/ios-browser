@@ -44,6 +44,7 @@ public protocol EcosiaSemanticColors {
     var iconSecondary: UIColor { get }
     var iconDecorative: UIColor { get }
     var stateError: UIColor { get }
+    var backgroundHighlighted: UIColor { get } // Mapped as "loading"
 
     // MARK: Unmapped Snowflakes
     var barBackground: UIColor { get }
@@ -55,6 +56,7 @@ public protocol EcosiaSemanticColors {
     var newsPlaceholder: UIColor { get }
     var modalBackground: UIColor { get }
     var modalHeader: UIColor { get }
+    var secondarySelectedBackground: UIColor { get }
 }
 
 public protocol EcosiaThemeColourPalette: ThemeColourPalette {
@@ -86,6 +88,7 @@ class FakeEcosiaSemanticColors: EcosiaSemanticColors {
     var textInversePrimary: UIColor = .systemGray
     var textSecondary: UIColor = .systemGray
     var textTertiary: UIColor = .systemGray
+    var backgroundHighlighted: UIColor = .systemGray
     var barBackground: UIColor = .systemGray
     var barSeparator: UIColor = .systemGray
     var ntpCellBackground: UIColor = .systemGray
@@ -95,4 +98,5 @@ class FakeEcosiaSemanticColors: EcosiaSemanticColors {
     var newsPlaceholder: UIColor = .systemGray
     var modalBackground: UIColor = .systemGray
     var modalHeader: UIColor = .systemGray
+    var secondarySelectedBackground: UIColor = .systemGray
 }

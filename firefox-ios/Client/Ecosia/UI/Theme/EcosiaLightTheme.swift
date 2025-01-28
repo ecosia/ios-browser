@@ -46,7 +46,7 @@ class EcosiaLightColourPalette: EcosiaThemeColourPalette {
     var layer4: UIColor { fallbackTheme.colors.layer4 }
     var layer5: UIColor { ecosia.backgroundSecondary }
     var layer6: UIColor { .legacyTheme.ecosia.homePanelBackground }
-    var layer5Hover: UIColor { .legacyTheme.ecosia.secondarySelectedBackground }
+    var layer5Hover: UIColor { ecosia.secondarySelectedBackground }
     var layerScrim: UIColor { fallbackTheme.colors.layerScrim }
     var layerGradient: Common.Gradient { fallbackTheme.colors.layerGradient }
     var layerGradientOverlay: Common.Gradient { fallbackTheme.colors.layerGradientOverlay }
@@ -129,6 +129,7 @@ private class EcosiaLightSemanticColors: EcosiaSemanticColors {
     var buttonBackgroundSecondaryHover: UIColor = EcosiaColorPrimitive.Gray10 // ⚠️ Mismatch
     var buttonContentSecondary: UIColor = EcosiaColorPrimitive.Gray70
     var buttonBackgroundTransparentActive: UIColor = EcosiaColorPrimitive.Green70.withAlphaComponent(0.24)
+    var backgroundHighlighted: UIColor = EcosiaColorPrimitive.Green10
     var iconPrimary: UIColor = EcosiaColorPrimitive.Black // ⚠️ Mismatch
     var iconSecondary: UIColor = EcosiaColorPrimitive.Green60 // ⚠️ Mismatch
     var iconDecorative: UIColor = EcosiaColorPrimitive.Gray50
@@ -150,4 +151,5 @@ private class EcosiaLightSemanticColors: EcosiaSemanticColors {
     var newsPlaceholder: UIColor = EcosiaColorPrimitive.Gray10
     var modalBackground: UIColor = EcosiaColorPrimitive.Gray20
     var modalHeader: UIColor = EcosiaColorPrimitive.DarkGreen50
+    var secondarySelectedBackground: UIColor = EcosiaColorPrimitive.Gray10
 }

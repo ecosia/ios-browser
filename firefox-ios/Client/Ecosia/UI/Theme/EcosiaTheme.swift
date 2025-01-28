@@ -12,10 +12,6 @@ extension LegacyTheme {
 }
 
 class EcosiaTheme {
-    var highlightedBackground: UIColor { .Light.Background.highlighted }
-    var primarySelectedBackground: UIColor { .Light.Background.secondary }
-    var secondarySelectedBackground: UIColor { .Light.Background.secondary }
-
     var primaryButton: UIColor { .Light.Button.backgroundPrimary }
     var primaryButtonActive: UIColor { .Light.Button.backgroundPrimaryActive }
     var secondaryButton: UIColor { .Light.Button.backgroundSecondary }
@@ -49,11 +45,6 @@ class EcosiaTheme {
 }
 
 final class DarkEcosiaTheme: EcosiaTheme {
-    override var highlightedBackground: UIColor { .Dark.Background.highlighted }
-
-    override var primarySelectedBackground: UIColor { .Dark.Background.tertiary }
-    override var secondarySelectedBackground: UIColor { .init(red: 0.227, green: 0.227, blue: 0.227, alpha: 1) }
-
     override var primaryButton: UIColor { .Dark.Button.backgroundPrimary }
     override var primaryButtonActive: UIColor { .Dark.Button.backgroundPrimaryActive }
     override var secondaryButton: UIColor { .Dark.Button.backgroundSecondary }

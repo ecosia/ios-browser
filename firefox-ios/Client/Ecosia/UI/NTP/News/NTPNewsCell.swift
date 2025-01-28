@@ -220,7 +220,8 @@ final class NTPNewsCell: UICollectionViewCell, Themeable, ReusableCell {
     }
 
     private func hover() {
-        background.backgroundColor = isSelected || isHighlighted ? .legacyTheme.ecosia.secondarySelectedBackground : defaultBackgroundColor()
+        let theme = themeManager.getCurrentTheme(for: currentWindowUUID)
+        background.backgroundColor = isSelected || isHighlighted ? theme.colors.ecosia.secondarySelectedBackground : defaultBackgroundColor()
     }
 
     func applyTheme() {

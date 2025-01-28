@@ -47,6 +47,7 @@ private class EcosiaDarkSemanticColors: EcosiaSemanticColors {
     var buttonBackgroundSecondaryHover: UIColor = EcosiaColorPrimitive.Gray70
     var buttonContentSecondary: UIColor = EcosiaColorPrimitive.White
     var buttonBackgroundTransparentActive: UIColor = EcosiaColorPrimitive.Gray30.withAlphaComponent(0.32)
+    var backgroundHighlighted: UIColor = EcosiaColorPrimitive.DarkGreen30
     var iconPrimary: UIColor = EcosiaColorPrimitive.White
     var iconSecondary: UIColor = EcosiaColorPrimitive.Green30
     var iconDecorative: UIColor = EcosiaColorPrimitive.Gray40 // ⚠️ Mismatch
@@ -68,4 +69,5 @@ private class EcosiaDarkSemanticColors: EcosiaSemanticColors {
     var newsPlaceholder: UIColor = EcosiaColorPrimitive.Gray50
     var modalBackground: UIColor = EcosiaColorPrimitive.Gray80
     var modalHeader: UIColor = EcosiaColorPrimitive.Gray80
+    var secondarySelectedBackground: UIColor = .init(rgb: 0x3A3A3A)
 }
