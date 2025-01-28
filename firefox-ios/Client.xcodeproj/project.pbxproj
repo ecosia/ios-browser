@@ -9553,8 +9553,6 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
-				L10N/Scripts/Clean.swift,
-				L10N/Scripts/Validate.swift,
 			);
 			publicHeaders = (
 				Ecosia.h,
@@ -9564,7 +9562,6 @@
 		2CFE9FC12D4534A100B25CE0 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Results/NTPTests_tests.xcresult,
 				SnapshotTests/DeviceType.swift,
 				SnapshotTests/environment.json,
 				SnapshotTests/LocaleRetriever.swift,
