@@ -10,12 +10,12 @@
     {
       "name": "iPhone SE (3rd generation)",
       "orientation": "portrait",
-      "os": "17.5"
+      "os": "18.2"
     },
     {
       "name": "iPhone 15 Pro",
       "orientation": "portrait",
-      "os": "17.5",
+      "os": "18.2",
       "isDefaultTestDevice": true
     },
     {
