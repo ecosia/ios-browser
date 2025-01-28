@@ -86,9 +86,7 @@ class URLBarView: UIView,
             }
         }
     }
-    // Ecosia: Update `locationActiveBorderColor`
-    // @objc dynamic lazy var locationActiveBorderColor: UIColor = .clear {
-    @objc dynamic lazy var locationActiveBorderColor = UIColor.legacyTheme.ecosia.primaryButton {
+    @objc dynamic lazy var locationActiveBorderColor: UIColor = .clear {
         didSet {
             if inOverlayMode {
                 locationContainer.layer.borderColor = locationActiveBorderColor.cgColor
@@ -338,8 +336,6 @@ class URLBarView: UIView,
         // Ecosia: ProgressBar sits at the back of the LocationView
         locationView.addSubview(progressBar)
         locationView.sendSubviewToBack(progressBar)
-        // Ecosia: Update Search Engine Image
-        updateSearchEngineImage()
 
         profile.searchEnginesManager.delegate = self
 
@@ -1084,6 +1080,8 @@ extension URLBarView: ThemeApplicable {
         warningMenuBadge.badge.tintBackground(color: theme.colors.layer1)
         // Ecosia: Update UI Elements with helper
         updateUIElementsWithTheme(theme)
+        // Ecosia: Update Search Engine Image
+        updateSearchEngineImage()
     }
 }
 
@@ -1124,6 +1122,7 @@ extension URLBarView {
                                       endColor: theme.colors.ecosia.backgroundHighlighted)
         locationTextField?.applyUIMode(isPrivate: isPrivate, theme: theme)
         locationTextField?.applyTheme(theme: theme)
+        locationActiveBorderColor = theme.colors.ecosia.buttonBackgroundPrimary
     }
 }
 

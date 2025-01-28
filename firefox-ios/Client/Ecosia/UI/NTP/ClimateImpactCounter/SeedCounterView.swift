@@ -61,7 +61,7 @@ struct SeedCounterView: View {
 
     func applyTheme(theme: Theme) {
         self.theme.backgroundColor = Color(theme.colors.ecosia.backgroundPrimary)
-        self.theme.progressColor = Color(.legacyTheme.ecosia.primaryButtonActive)
+        self.theme.progressColor = Color(theme.colors.ecosia.buttonBackgroundPrimaryActive)
     }
 
     private func triggerUpdateValues() {

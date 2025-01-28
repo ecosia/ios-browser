@@ -50,7 +50,7 @@ class EcosiaLightColourPalette: EcosiaThemeColourPalette {
     var layerScrim: UIColor { fallbackTheme.colors.layerScrim }
     var layerGradient: Common.Gradient { fallbackTheme.colors.layerGradient }
     var layerGradientOverlay: Common.Gradient { fallbackTheme.colors.layerGradientOverlay }
-    var layerAccentNonOpaque: UIColor { .legacyTheme.ecosia.primaryButton }
+    var layerAccentNonOpaque: UIColor { ecosia.buttonBackgroundPrimary }
     var layerAccentPrivate: UIColor { fallbackTheme.colors.layerAccentPrivate }
     var layerAccentPrivateNonOpaque: UIColor { ecosia.textPrimary }
     var layerSepia: UIColor { fallbackTheme.colors.layerSepia }
@@ -73,8 +73,8 @@ class EcosiaLightColourPalette: EcosiaThemeColourPalette {
     var borderToolbarDivider: UIColor { fallbackTheme.colors.borderToolbarDivider }
 
     // MARK: - Actions
-    var actionPrimary: UIColor { .legacyTheme.ecosia.primaryButton }
-    var actionPrimaryHover: UIColor { .legacyTheme.ecosia.primaryButtonActive }
+    var actionPrimary: UIColor { ecosia.buttonBackgroundPrimary }
+    var actionPrimaryHover: UIColor { ecosia.buttonBackgroundPrimaryActive }
     var actionSecondary: UIColor { .legacyTheme.ecosia.secondaryButton }
     var actionSecondaryHover: UIColor { fallbackTheme.colors.actionSecondaryHover }
     var formSurfaceOff: UIColor { fallbackTheme.colors.formSurfaceOff }
@@ -87,7 +87,7 @@ class EcosiaLightColourPalette: EcosiaThemeColourPalette {
     var textPrimary: UIColor { ecosia.textPrimary }
     var textSecondary: UIColor { ecosia.textSecondary }
     var textDisabled: UIColor { fallbackTheme.colors.textDisabled }
-    var textAccent: UIColor { .legacyTheme.ecosia.primaryButton }
+    var textAccent: UIColor { ecosia.buttonBackgroundPrimary }
     var textOnDark: UIColor { fallbackTheme.colors.textOnDark }
     var textOnLight: UIColor { fallbackTheme.colors.textOnLight }
     var textInverted: UIColor { ecosia.textInversePrimary }

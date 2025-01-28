@@ -223,7 +223,7 @@ class MultiplyImpact: UIViewController, Themeable {
         sharing.addSubview(moreSharingMethods)
         self.moreSharingMethods = moreSharingMethods
 
-        let inviteFriends = EcosiaPrimaryButton(type: .custom)
+        let inviteFriends = EcosiaPrimaryButton(windowUUID: windowUUID)
         inviteFriends.setTitle(.localized(.inviteFriends), for: [])
         inviteFriends.titleLabel!.font = .preferredFont(forTextStyle: .callout)
         inviteFriends.titleLabel!.adjustsFontForContentSizeCategory = true

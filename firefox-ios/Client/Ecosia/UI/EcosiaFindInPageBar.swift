@@ -168,7 +168,7 @@ final class EcosiaFindInPageBar: UIView, Themeable {
         matchCountLabel.textColor = theme.colors.ecosia.textSecondary
         previousButton.tintColor = theme.colors.ecosia.iconPrimary
         nextButton.tintColor = theme.colors.ecosia.iconPrimary
-        closeButton.setTitleColor(.legacyTheme.ecosia.primaryButton, for: .normal)
+        closeButton.setTitleColor(theme.colors.ecosia.buttonBackgroundPrimary, for: .normal)
         topBorder.backgroundColor = theme.colors.ecosia.borderDecorative
     }
 

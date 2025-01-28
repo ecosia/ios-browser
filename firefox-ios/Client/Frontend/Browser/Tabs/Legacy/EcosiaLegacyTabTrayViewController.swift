@@ -457,7 +457,7 @@ extension LegacyTabTrayViewController {
 
          // Ecosia
          if traitCollection.userInterfaceIdiom == .phone {
-             navigationController?.navigationBar.tintColor = UIColor.legacyTheme.ecosia.primaryButton
+             navigationController?.navigationBar.tintColor = themeManager.currentTheme.colors.ecosia.buttonBackgroundPrimary
          }
          maskButton.applyUIMode(isPrivate: maskButton.isSelected, theme: themeManager.currentTheme)
          // Ecosia: Update `addNewTabButton.applyTheme`
@@ -467,8 +467,8 @@ extension LegacyTabTrayViewController {
          (deleteButton.customView as? UIButton)?.setTitleColor(.legacyTheme.ecosia.warning, for: .normal)
 
          if shouldUseiPadSetup() {
-             navigationItem.leftBarButtonItem?.tintColor = UIColor.legacyTheme.ecosia.primaryButton
-             navigationItem.rightBarButtonItem?.tintColor = UIColor.legacyTheme.ecosia.primaryButton
+             navigationItem.leftBarButtonItem?.tintColor = themeManager.currentTheme.colors.ecosia.buttonBackgroundPrimary
+             navigationItem.rightBarButtonItem?.tintColor = themeManager.currentTheme.colors.ecosia.buttonBackgroundPrimary
              navigationMenu.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: themeManger.currentTheme.colors.ecosia.textPrimary], for: .normal)
              navigationMenu.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.ecosia.segmentSelectedText], for: .selected)
          }

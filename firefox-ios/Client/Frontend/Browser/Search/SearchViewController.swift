@@ -731,7 +731,7 @@ class SearchViewController: SiteTableViewController,
                 /* Ecosia: Update tintColor
                 oneLineCell.leftImageView.tintColor = currentTheme().colors.iconPrimary
                 */
-                oneLineCell.leftImageView.tintColor = .legacyTheme.ecosia.primaryButton
+                oneLineCell.leftImageView.tintColor = currentTheme().colors.ecosia.buttonBackgroundPrimary
 
                 oneLineCell.leftImageView.backgroundColor = nil
                 let appendButton = UIButton(type: .roundedRect)

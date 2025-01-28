@@ -188,7 +188,7 @@ class NTPConfigurableNudgeCardCell: UICollectionViewCell, Themeable, ReusableCel
         closeButton.tintColor = theme.colors.ecosia.iconDecorative
         titleLabel.textColor = theme.colors.ecosia.textPrimary
         descriptionLabel.textColor = theme.colors.ecosia.textSecondary
-        actionButton.setTitleColor(.legacyTheme.ecosia.primaryButton, for: .normal)
+        actionButton.setTitleColor(theme.colors.ecosia.buttonBackgroundPrimary, for: .normal)
     }
 
     @objc private func closeAction() {

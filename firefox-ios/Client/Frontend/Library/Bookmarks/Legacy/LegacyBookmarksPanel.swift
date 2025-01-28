@@ -800,7 +800,7 @@ extension LegacyBookmarksPanel {
             self?.moreButton.isEnabled = true
         }
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        alert.view.tintColor = UIColor.legacyTheme.ecosia.primaryButton
+        alert.view.tintColor = currentTheme().colors.ecosia.buttonBackgroundPrimary
         alert.popoverPresentationController?.barButtonItem = moreButton
         [importAction, exportAction, cancelAction].forEach(alert.addAction)
         present(alert, animated: true)

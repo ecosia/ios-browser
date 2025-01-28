@@ -362,10 +362,10 @@ final class WelcomeTour: UIViewController, Themeable {
         waves.tintColor = .legacyTheme.ecosia.welcomeBackground
         titleLabel.textColor = theme.colors.ecosia.textPrimary
         subtitleLabel.textColor = theme.colors.ecosia.textSecondary
-        skipButton?.tintColor = .legacyTheme.ecosia.primaryButton
-        backButton.tintColor = .legacyTheme.ecosia.primaryButton
+        skipButton?.tintColor = theme.colors.ecosia.buttonBackgroundPrimary
+        backButton.tintColor = theme.colors.ecosia.buttonBackgroundPrimary
         pageControl.pageIndicatorTintColor = .legacyTheme.ecosia.disabled
-        pageControl.currentPageIndicatorTintColor = .legacyTheme.ecosia.primaryButton
+        pageControl.currentPageIndicatorTintColor = theme.colors.ecosia.buttonBackgroundPrimary
         ctaButton.backgroundColor = .Light.Button.backgroundSecondary
         ctaButton.setTitleColor(.Light.Text.primary, for: .normal)
         container.subviews.forEach({ ($0 as? Themeable)?.applyTheme() })

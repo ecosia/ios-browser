@@ -202,7 +202,7 @@ final class DefaultBrowser: UIViewController, Themeable {
         line2.addArrangedSubview(text2)
         self.text2 = text2
 
-        let cta = EcosiaPrimaryButton()
+        let cta = EcosiaPrimaryButton(windowUUID: windowUUID)
         cta.contentEdgeInsets = .init(top: 0, left: 16, bottom: 0, right: 16)
         cta.translatesAutoresizingMaskIntoConstraints = false
         cta.setTitle(.localized(.openSettings), for: .normal)
@@ -242,13 +242,13 @@ final class DefaultBrowser: UIViewController, Themeable {
         headline.textColor = theme.colors.ecosia.textPrimary
         text1.textColor = theme.colors.ecosia.textSecondary
         text2.textColor = theme.colors.ecosia.textSecondary
-        arrow1.tintColor = .legacyTheme.ecosia.primaryButton
-        arrow2.tintColor = .legacyTheme.ecosia.primaryButton
+        arrow1.tintColor = theme.colors.ecosia.buttonBackgroundPrimary
+        arrow2.tintColor = theme.colors.ecosia.buttonBackgroundPrimary
         content.backgroundColor = theme.colors.ecosia.ntpIntroBackground
         waves.tintColor = theme.colors.ecosia.ntpIntroBackground
         cta.setTitleColor(theme.colors.ecosia.textInversePrimary, for: .normal)
-        skip.setTitleColor(.legacyTheme.ecosia.primaryButton, for: .normal)
-        cta.backgroundColor = .legacyTheme.ecosia.primaryButton
+        skip.setTitleColor(theme.colors.ecosia.buttonBackgroundPrimary, for: .normal)
+        cta.backgroundColor = theme.colors.ecosia.buttonBackgroundPrimary
     }
 
     @objc private func skipTapped() {

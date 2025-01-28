@@ -72,6 +72,7 @@
 		120251122D439F4000039A2F /* EcosiaColorPrimitive.swift in Sources */ = {isa = PBXBuildFile; fileRef = 120251102D439F3600039A2F /* EcosiaColorPrimitive.swift */; };
 		1202511E2D47885D00039A2F /* EcosiaLightTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1202511D2D47885700039A2F /* EcosiaLightTheme.swift */; };
 		1202511F2D47885D00039A2F /* EcosiaLightTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1202511D2D47885700039A2F /* EcosiaLightTheme.swift */; };
+		120251212D48EF8D00039A2F /* EcosiaPrimaryButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 120251202D48EF8600039A2F /* EcosiaPrimaryButton.swift */; };
 		121E65DF2D36514E00DFBFA2 /* BaseTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BF4B8E81D38497A00493393 /* BaseTestCase.swift */; };
 		121E65E02D36515700DFBFA2 /* FxScreenGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39EB46981E26DDB4006346E8 /* FxScreenGraph.swift */; };
 		121E65E12D36585A00DFBFA2 /* LaunchArguments.swift in Sources */ = {isa = PBXBuildFile; fileRef = E65075861E37F7AB006961AC /* LaunchArguments.swift */; };
@@ -2419,6 +2420,7 @@
 		11F747589EB8A55A47647C93 /* bn */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = bn; path = bn.lproj/ClearPrivateData.strings; sourceTree = "<group>"; };
 		120251102D439F3600039A2F /* EcosiaColorPrimitive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaColorPrimitive.swift; sourceTree = "<group>"; };
 		1202511D2D47885700039A2F /* EcosiaLightTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaLightTheme.swift; sourceTree = "<group>"; };
+		120251202D48EF8600039A2F /* EcosiaPrimaryButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosiaPrimaryButton.swift; sourceTree = "<group>"; };
 		120F42119EB30F217AB9493E /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/FindInPage.strings; sourceTree = "<group>"; };
 		123045959E0F295753B4B4DB /* lo */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = lo; path = lo.lproj/Today.strings; sourceTree = "<group>"; };
 		124DAE792D2FD1330050104C /* LegacyDarkTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyDarkTheme.swift; sourceTree = "<group>"; };
@@ -10717,6 +10719,7 @@
 		2CB288DC2B07C8EF00A8FCB3 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				120251202D48EF8600039A2F /* EcosiaPrimaryButton.swift */,
 				12C11E2A2D281E7600E4DDBF /* LoadingScreen.swift */,
 				2CB288DE2B07C8EF00A8FCB3 /* PageAction */,
 				2CB288E22B07C8EF00A8FCB3 /* EmptyBookmarksViewDelegate.swift */,
@@ -16812,6 +16815,7 @@
 				E19B38B328A42D5E00D8C541 /* WallpaperCollectionViewCell.swift in Sources */,
 				0BB5B30B1AC0AD1F0052877D /* LoginsHelper.swift in Sources */,
 				12C11E342D28205E00E4DDBF /* EmptyHeader.swift in Sources */,
+				120251212D48EF8D00039A2F /* EcosiaPrimaryButton.swift in Sources */,
 				8A3EF8092A2FD02B00796E3A /* ExperimentsSettings.swift in Sources */,
 				C87DF9DB267247190097E707 /* UIConstants+BottomInset.swift in Sources */,
 				8AD08D1527E9198E00B8E907 /* TabsTelemetry.swift in Sources */,

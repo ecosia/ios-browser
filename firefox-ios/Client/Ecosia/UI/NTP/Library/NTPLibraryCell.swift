@@ -107,7 +107,7 @@ class NTPLibraryCell: UICollectionViewCell, Themeable, ReusableCell {
         let theme = themeManager.getCurrentTheme(for: currentWindowUUID)
         shortcuts.forEach { item in
             item.title.textColor = theme.colors.ecosia.textPrimary
-            item.button.tintColor = .legacyTheme.ecosia.primaryButton
+            item.button.tintColor = theme.colors.ecosia.buttonBackgroundPrimary
             item.button.backgroundColor = .legacyTheme.ecosia.secondaryButton
         }
     }
