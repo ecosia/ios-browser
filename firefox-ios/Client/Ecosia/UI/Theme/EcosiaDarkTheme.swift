@@ -64,4 +64,5 @@ private class EcosiaDarkSemanticColors: EcosiaSemanticColors {
     var ntpBackground: UIColor = EcosiaColorPrimitive.Gray90
     var ntpIntroBackground: UIColor = EcosiaColorPrimitive.Gray80
     var impactMultiplyCardBackground: UIColor = EcosiaColorPrimitive.Gray70
+    var newsPlaceholder: UIColor = EcosiaColorPrimitive.Gray50
 }

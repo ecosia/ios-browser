@@ -51,6 +51,7 @@ public protocol EcosiaSemanticColors {
     var ntpBackground: UIColor { get }
     var ntpIntroBackground: UIColor { get } // == barBackground
     var impactMultiplyCardBackground: UIColor { get } // == ntpCellBackground
+    var newsPlaceholder: UIColor { get }
 }
 
 public protocol EcosiaThemeColourPalette: ThemeColourPalette {
@@ -87,4 +88,5 @@ class FakeEcosiaSemanticColors: EcosiaSemanticColors {
     var ntpBackground: UIColor = .systemGray
     var ntpIntroBackground: UIColor = .systemGray
     var impactMultiplyCardBackground: UIColor = .systemGray
+    var newsPlaceholder: UIColor = .systemGray
 }

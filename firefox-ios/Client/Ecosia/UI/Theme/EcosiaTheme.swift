@@ -12,10 +12,6 @@ extension LegacyTheme {
 }
 
 class EcosiaTheme {
-    var trackingSheetBackground: UIColor { .Light.Background.tertiary }
-    var moreNewsButton: UIColor { .Light.Button.backgroundSecondary }
-    var newsPlaceholder: UIColor { .Light.Background.secondary }
-
     var actionSheetBackground: UIColor { .Light.Background.primary }
     var actionSheetCancelButton: UIColor { .Light.Button.backgroundPrimaryActive }
     var modalBackground: UIColor { .Light.Background.tertiary }
@@ -72,10 +68,6 @@ class EcosiaTheme {
 }
 
 final class DarkEcosiaTheme: EcosiaTheme {
-    override var trackingSheetBackground: UIColor { .Dark.Background.secondary }
-    override var moreNewsButton: UIColor { .Dark.Background.primary }
-    override var newsPlaceholder: UIColor { .Grey.fifty }
-
     override var actionSheetBackground: UIColor { .Dark.Background.secondary }
     override var actionSheetCancelButton: UIColor { .Dark.Button.backgroundPrimaryActive }
     override var modalBackground: UIColor { .Dark.Background.secondary }
