@@ -116,42 +116,42 @@ class EcosiaLightColourPalette: EcosiaThemeColourPalette {
     var shadowDefault: UIColor { fallbackTheme.colors.shadowDefault }
 }
 
-private class EcosiaLightSemanticColors: EcosiaSemanticColors {
-    var backgroundPrimary: UIColor = EcosiaColorPrimitive.White
-    var backgroundSecondary: UIColor = EcosiaColorPrimitive.Gray10
-    var backgroundTertiary: UIColor = EcosiaColorPrimitive.Gray20
-    var backgroundQuaternary: UIColor = EcosiaColorPrimitive.DarkGreen50
-    var borderDecorative: UIColor = EcosiaColorPrimitive.Gray30
-    var brandPrimary: UIColor = EcosiaColorPrimitive.Green50
-    var buttonBackgroundPrimary: UIColor = EcosiaColorPrimitive.Green50
-    var buttonBackgroundPrimaryActive: UIColor = EcosiaColorPrimitive.Green70 // ⚠️ Mismatch
-    var buttonBackgroundSecondary: UIColor = EcosiaColorPrimitive.White
-    var buttonBackgroundSecondaryHover: UIColor = EcosiaColorPrimitive.Gray10 // ⚠️ Mismatch
-    var buttonContentSecondary: UIColor = EcosiaColorPrimitive.Gray70
-    var buttonBackgroundTransparentActive: UIColor = EcosiaColorPrimitive.Green70.withAlphaComponent(0.24)
-    var backgroundHighlighted: UIColor = EcosiaColorPrimitive.Green10
-    var iconPrimary: UIColor = EcosiaColorPrimitive.Black // ⚠️ Mismatch
-    var iconSecondary: UIColor = EcosiaColorPrimitive.Green60 // ⚠️ Mismatch
-    var iconDecorative: UIColor = EcosiaColorPrimitive.Gray50
-    var stateError: UIColor = EcosiaColorPrimitive.Red40
-    var stateInformation: UIColor = EcosiaColorPrimitive.Blue50 // ⚠️ No match
-    var stateDisabled: UIColor = EcosiaColorPrimitive.Gray30
-    var textPrimary: UIColor = EcosiaColorPrimitive.Black // ⚠️ Mismatch
-    var textInversePrimary: UIColor = EcosiaColorPrimitive.White
-    var textSecondary: UIColor = EcosiaColorPrimitive.Gray50
-    var textTertiary: UIColor = EcosiaColorPrimitive.White
+private struct EcosiaLightSemanticColors: EcosiaSemanticColors {
+    var backgroundPrimary: UIColor = EcosiaColor.White
+    var backgroundSecondary: UIColor = EcosiaColor.Gray10
+    var backgroundTertiary: UIColor = EcosiaColor.Gray20
+    var backgroundQuaternary: UIColor = EcosiaColor.DarkGreen50
+    var borderDecorative: UIColor = EcosiaColor.Gray30
+    var brandPrimary: UIColor = EcosiaColor.Green50
+    var buttonBackgroundPrimary: UIColor = EcosiaColor.Green50
+    var buttonBackgroundPrimaryActive: UIColor = EcosiaColor.Green70 // ⚠️ Mismatch
+    var buttonBackgroundSecondary: UIColor = EcosiaColor.White
+    var buttonBackgroundSecondaryHover: UIColor = EcosiaColor.Gray10 // ⚠️ Mismatch
+    var buttonContentSecondary: UIColor = EcosiaColor.Gray70
+    var buttonBackgroundTransparentActive: UIColor = EcosiaColor.Green70.withAlphaComponent(0.24)
+    var backgroundHighlighted: UIColor = EcosiaColor.Green10
+    var iconPrimary: UIColor = EcosiaColor.Black // ⚠️ Mismatch
+    var iconSecondary: UIColor = EcosiaColor.Green60 // ⚠️ Mismatch
+    var iconDecorative: UIColor = EcosiaColor.Gray50
+    var stateError: UIColor = EcosiaColor.Red40
+    var stateInformation: UIColor = EcosiaColor.Blue50 // ⚠️ No match
+    var stateDisabled: UIColor = EcosiaColor.Gray30
+    var textPrimary: UIColor = EcosiaColor.Black // ⚠️ Mismatch
+    var textInversePrimary: UIColor = EcosiaColor.White
+    var textSecondary: UIColor = EcosiaColor.Gray50
+    var textTertiary: UIColor = EcosiaColor.White
 
     // MARK: Unmapped Snowflakes
-    var barBackground: UIColor = EcosiaColorPrimitive.White
+    var barBackground: UIColor = EcosiaColor.White
     var barSeparator: UIColor = .Photon.Grey20
-    var ntpCellBackground: UIColor = EcosiaColorPrimitive.White
-    var ntpBackground: UIColor = EcosiaColorPrimitive.Gray20
-    var ntpIntroBackground: UIColor = EcosiaColorPrimitive.White
-    var impactMultiplyCardBackground: UIColor = EcosiaColorPrimitive.White
-    var newsPlaceholder: UIColor = EcosiaColorPrimitive.Gray10
-    var modalBackground: UIColor = EcosiaColorPrimitive.Gray20
-    var modalHeader: UIColor = EcosiaColorPrimitive.DarkGreen50
-    var secondarySelectedBackground: UIColor = EcosiaColorPrimitive.Gray10
-    var buttonBackgroundNTPCustomization: UIColor = EcosiaColorPrimitive.Gray10
+    var ntpCellBackground: UIColor = EcosiaColor.White
+    var ntpBackground: UIColor = EcosiaColor.Gray20
+    var ntpIntroBackground: UIColor = EcosiaColor.White
+    var impactMultiplyCardBackground: UIColor = EcosiaColor.White
+    var newsPlaceholder: UIColor = EcosiaColor.Gray10
+    var modalBackground: UIColor = EcosiaColor.Gray20
+    var modalHeader: UIColor = EcosiaColor.DarkGreen50
+    var secondarySelectedBackground: UIColor = EcosiaColor.Gray10
+    var buttonBackgroundNTPCustomization: UIColor = EcosiaColor.Gray10
     var privateButtonBackground: UIColor = .Photon.Grey70
 }

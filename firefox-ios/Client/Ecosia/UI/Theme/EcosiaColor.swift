@@ -4,11 +4,11 @@
 
 import UIKit
 
-// This class contains all of Ecosia official primite color tokens referenced in the link below.
+// This class contains all of Ecosia official primitive color tokens referenced in the link below.
 // https://www.figma.com/design/8T2rTBVwynJKSdY6MQo5PQ/%E2%9A%9B%EF%B8%8F--Foundations?node-id=1239-9385&t=UKHtrxcc9UtOihsm-4
 // You should never call those colors directly, they should only be called from a theme within the theme manager.
 // This is the equivalent to Firefox's `FXColors`.
-class EcosiaColorPrimitive {
+struct EcosiaColor {
     // MARK: - Black & White
     static let Black = UIColor(rgb: 0x000000)
     static let White = UIColor(rgb: 0xFFFFFF)

@@ -12,97 +12,97 @@ import UIKit
 extension UIColor {
     struct Light {
         struct Background {
-            static let primary = EcosiaColorPrimitive.White
-            static let secondary = EcosiaColorPrimitive.Gray10
-            static let tertiary = EcosiaColorPrimitive.Gray20
-            static let quarternary = EcosiaColorPrimitive.DarkGreen50
-            static let highlighted = EcosiaColorPrimitive.Green10 // ⚠️ No match
+            static let primary = EcosiaColor.White
+            static let secondary = EcosiaColor.Gray10
+            static let tertiary = EcosiaColor.Gray20
+            static let quarternary = EcosiaColor.DarkGreen50
+            static let highlighted = EcosiaColor.Green10 // ⚠️ No match
         }
 
         struct Brand {
-            static let primary = EcosiaColorPrimitive.Green50
+            static let primary = EcosiaColor.Green50
         }
 
         struct Border {
-            static let decorative = EcosiaColorPrimitive.Gray30
+            static let decorative = EcosiaColor.Gray30
         }
 
         struct Button {
-            static let backgroundPrimary = EcosiaColorPrimitive.Green50
-            static let backgroundPrimaryActive = EcosiaColorPrimitive.Green70 // ⚠️ Mismatch
-            static let backgroundSecondary = EcosiaColorPrimitive.White
-            static let backgroundSecondaryHover = EcosiaColorPrimitive.Gray10 // ⚠️ Mismatch
-            static let contentSecondary = EcosiaColorPrimitive.Gray70
-            static let secondaryBackground = EcosiaColorPrimitive.Gray10 // ⚠️ Mismatch & duplicate
-            static let backgroundTransparentActive = EcosiaColorPrimitive.Green70.withAlphaComponent(0.24)
+            static let backgroundPrimary = EcosiaColor.Green50
+            static let backgroundPrimaryActive = EcosiaColor.Green70 // ⚠️ Mismatch
+            static let backgroundSecondary = EcosiaColor.White
+            static let backgroundSecondaryHover = EcosiaColor.Gray10 // ⚠️ Mismatch
+            static let contentSecondary = EcosiaColor.Gray70
+            static let secondaryBackground = EcosiaColor.Gray10 // ⚠️ Mismatch & duplicate
+            static let backgroundTransparentActive = EcosiaColor.Green70.withAlphaComponent(0.24)
         }
 
         struct Icon {
-            static let primary = EcosiaColorPrimitive.Black // ⚠️ Mobile snowflake & mismatch
-            static let secondary = EcosiaColorPrimitive.Green60 // ⚠️ Mobile snowflake & mismatch
-            static let decorative = EcosiaColorPrimitive.Gray50 // ⚠️ Mobile snowflake
+            static let primary = EcosiaColor.Black // ⚠️ Mobile snowflake & mismatch
+            static let secondary = EcosiaColor.Green60 // ⚠️ Mobile snowflake & mismatch
+            static let decorative = EcosiaColor.Gray50 // ⚠️ Mobile snowflake
         }
 
         struct State {
-            static let error = EcosiaColorPrimitive.Red40 // ⚠️ Mobile snowflake
-            static let information = EcosiaColorPrimitive.Blue50 // ⚠️ No match
-            static let disabled = EcosiaColorPrimitive.Gray30
+            static let error = EcosiaColor.Red40 // ⚠️ Mobile snowflake
+            static let information = EcosiaColor.Blue50 // ⚠️ No match
+            static let disabled = EcosiaColor.Gray30
         }
 
         struct Text {
-            static let primary = EcosiaColorPrimitive.Black // ⚠️ Mismatch
-            static let secondary = EcosiaColorPrimitive.Gray50
-            static let tertiary = EcosiaColorPrimitive.White
+            static let primary = EcosiaColor.Black // ⚠️ Mismatch
+            static let secondary = EcosiaColor.Gray50
+            static let tertiary = EcosiaColor.White
         }
     }
 
     struct Dark {
         struct Background {
-            static let primary = EcosiaColorPrimitive.Gray90
-            static let secondary = EcosiaColorPrimitive.Gray80
-            static let tertiary = EcosiaColorPrimitive.Gray70
-            static let quarternary = EcosiaColorPrimitive.Green20
-            static let highlighted = EcosiaColorPrimitive.DarkGreen30 // ⚠️ No match
+            static let primary = EcosiaColor.Gray90
+            static let secondary = EcosiaColor.Gray80
+            static let tertiary = EcosiaColor.Gray70
+            static let quarternary = EcosiaColor.Green20
+            static let highlighted = EcosiaColor.DarkGreen30 // ⚠️ No match
         }
 
         struct Brand {
-            static let primary = EcosiaColorPrimitive.Green30
+            static let primary = EcosiaColor.Green30
         }
 
         struct Border {
-            static let decorative = EcosiaColorPrimitive.Gray60
+            static let decorative = EcosiaColor.Gray60
         }
 
         struct Button {
-            static let backgroundPrimary = EcosiaColorPrimitive.Green30
-            static let backgroundPrimaryActive = EcosiaColorPrimitive.Green50 // ⚠️ Mismatch
-            static let backgroundSecondary = EcosiaColorPrimitive.Gray70 // ⚠️ Mismatch
-            static let backgroundSecondaryHover = EcosiaColorPrimitive.Gray70
-            static let contentSecondary = EcosiaColorPrimitive.White
-            static let secondaryBackground = EcosiaColorPrimitive.Gray80 // ⚠️ Mismatch & duplicate
-            static let backgroundTransparentActive = EcosiaColorPrimitive.Gray30.withAlphaComponent(0.32)
+            static let backgroundPrimary = EcosiaColor.Green30
+            static let backgroundPrimaryActive = EcosiaColor.Green50 // ⚠️ Mismatch
+            static let backgroundSecondary = EcosiaColor.Gray70 // ⚠️ Mismatch
+            static let backgroundSecondaryHover = EcosiaColor.Gray70
+            static let contentSecondary = EcosiaColor.White
+            static let secondaryBackground = EcosiaColor.Gray80 // ⚠️ Mismatch & duplicate
+            static let backgroundTransparentActive = EcosiaColor.Gray30.withAlphaComponent(0.32)
         }
 
         struct Icon {
-            static let primary = EcosiaColorPrimitive.White // ⚠️ Mobile snowflake
-            static let secondary = EcosiaColorPrimitive.Green30 // ⚠️ Mobile snowflake
-            static let decorative = EcosiaColorPrimitive.Gray40 // ⚠️ Mobile snowflake & mismatch
+            static let primary = EcosiaColor.White // ⚠️ Mobile snowflake
+            static let secondary = EcosiaColor.Green30 // ⚠️ Mobile snowflake
+            static let decorative = EcosiaColor.Gray40 // ⚠️ Mobile snowflake & mismatch
         }
 
         struct State {
-            static let error = EcosiaColorPrimitive.Red30 // ⚠️ Mobile snowflake
-            static let information = EcosiaColorPrimitive.Blue30 // ⚠️ No match
-            static let disabled = EcosiaColorPrimitive.Gray50
+            static let error = EcosiaColor.Red30 // ⚠️ Mobile snowflake
+            static let information = EcosiaColor.Blue30 // ⚠️ No match
+            static let disabled = EcosiaColor.Gray50
         }
 
         struct Text {
-            static let primary = EcosiaColorPrimitive.White
-            static let secondary = EcosiaColorPrimitive.Gray30
-            static let tertiary = EcosiaColorPrimitive.Gray70 // ⚠️ Mismatch
+            static let primary = EcosiaColor.White
+            static let secondary = EcosiaColor.Gray30
+            static let tertiary = EcosiaColor.Gray70 // ⚠️ Mismatch
         }
     }
 
     struct Grey {
-        static let fifty = EcosiaColorPrimitive.Gray50
+        static let fifty = EcosiaColor.Gray50
     }
 }
