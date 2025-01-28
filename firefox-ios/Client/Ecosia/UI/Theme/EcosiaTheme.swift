@@ -12,8 +12,6 @@ extension LegacyTheme {
 }
 
 class EcosiaTheme {
-    var actionSheetBackground: UIColor { .Light.Background.primary }
-    var actionSheetCancelButton: UIColor { .Light.Button.backgroundPrimaryActive }
     var modalBackground: UIColor { .Light.Background.tertiary }
     var modalHeader: UIColor { .init(red: 0.153, green: 0.322, blue: 0.263, alpha: 1) }
 
@@ -68,8 +66,6 @@ class EcosiaTheme {
 }
 
 final class DarkEcosiaTheme: EcosiaTheme {
-    override var actionSheetBackground: UIColor { .Dark.Background.secondary }
-    override var actionSheetCancelButton: UIColor { .Dark.Button.backgroundPrimaryActive }
     override var modalBackground: UIColor { .Dark.Background.secondary }
     override var modalHeader: UIColor { .Dark.Background.secondary }
 
