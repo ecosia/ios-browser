@@ -70,9 +70,10 @@ final class EmptyHeader: UITableViewHeaderFooterView, Themeable {
     // MARK: - Themeable
 
     func applyTheme() {
+        let theme = themeManager.getCurrentTheme(for: currentWindowUUID)
         image?.image = .init(named: icon)?.withRenderingMode(.alwaysTemplate)
         image?.tintColor = UIColor.legacyTheme.ecosia.secondaryText
-        labelTitle?.textColor = .legacyTheme.ecosia.primaryText
+        labelTitle?.textColor = theme.colors.ecosia.textPrimary
         labelSubtitle?.textColor = .legacyTheme.ecosia.secondaryText
     }
 }

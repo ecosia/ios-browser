@@ -55,7 +55,7 @@ final class LoadingScreen: UIViewController {
         message.font = .preferredFont(forTextStyle: .footnote)
         message.numberOfLines = 0
         message.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-        message.textColor = UIColor.legacyTheme.ecosia.primaryText
+        message.textColor = theme.colors.ecosia.textPrimary
         message.textAlignment = .center
         view.addSubview(message)
 

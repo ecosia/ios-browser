@@ -163,8 +163,8 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
     private func updateBarAppearance() {
         guard let appearance = navigationController?.navigationBar.standardAppearance else { return }
         let theme = themeManager.getCurrentTheme(for: windowUUID)
-        appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.legacyTheme.ecosia.primaryText]
-        appearance.titleTextAttributes = [.foregroundColor: UIColor.legacyTheme.ecosia.primaryText]
+        appearance.largeTitleTextAttributes = [.foregroundColor: theme.colors.ecosia.textPrimary]
+        appearance.titleTextAttributes = [.foregroundColor: theme.colors.ecosia.textPrimary]
         appearance.backgroundColor = theme.colors.ecosia.modalBackground
         navigationItem.standardAppearance = appearance
         navigationController?.navigationBar.backgroundColor = theme.colors.ecosia.modalBackground

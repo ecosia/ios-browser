@@ -528,9 +528,9 @@ extension TabLocationView: AccessibilityActionsSource {
 extension TabLocationView: ThemeApplicable {
     func applyTheme(theme: Theme) {
         setURLTextfieldPlaceholder(theme: theme)
+        urlTextField.textColor = theme.colors.textPrimary
+
         // Ecosia: Update `urlTextField` theme
-        // urlTextField.textColor = theme.colors.textPrimary
-        urlTextField.textColor = UIColor.legacyTheme.ecosia.primaryText
         urlTextField.tintColor = .legacyTheme.ecosia.information
 
         readerModeButton.applyTheme(theme: theme)

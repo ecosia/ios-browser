@@ -229,7 +229,7 @@ final class NTPNewsCell: UICollectionViewCell, Themeable, ReusableCell {
         placeholder.tintColor = .legacyTheme.ecosia.decorativeIcon
         placeholder.backgroundColor = theme.colors.ecosia.newsPlaceholder
         border.backgroundColor = theme.colors.ecosia.borderDecorative
-        title.textColor = .legacyTheme.ecosia.primaryText
+        title.textColor = theme.colors.ecosia.textPrimary
         bottomLabel.textColor = .legacyTheme.ecosia.secondaryText
         highlightLabel.textColor = .legacyTheme.ecosia.secondaryText
     }

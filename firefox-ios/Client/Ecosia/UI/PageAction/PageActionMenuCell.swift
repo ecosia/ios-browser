@@ -183,7 +183,7 @@ extension PageActionMenuCell {
         guard let item = actions.items.first else { return }
 
         textLabel?.text = item.currentTitle
-        textLabel?.textColor = .legacyTheme.ecosia.primaryText
+        textLabel?.textColor = theme.colors.ecosia.textPrimary
         detailTextLabel?.text = item.text
         detailTextLabel?.textColor = .legacyTheme.ecosia.secondaryText
 
@@ -197,7 +197,7 @@ extension PageActionMenuCell {
             imageView?.image = nil
         }
 
-        isNew(actions.items.first?.isNew == true)
+        isNew(actions.items.first?.isNew == true, theme: theme)
 
         if separatorCellsPositions.contains(position) {
             addCustomGroupedStyleLikeSeparator(theme: theme)
@@ -213,7 +213,7 @@ extension PageActionMenuCell {
     ///
     /// - Parameters:
     ///    - isNew: A boolean value based on which we create the `badge` view
-    private func isNew(_ isNew: Bool) {
+    private func isNew(_ isNew: Bool, theme: Theme) {
         if isNew {
             if badge == nil {
                 let badge = UIView()

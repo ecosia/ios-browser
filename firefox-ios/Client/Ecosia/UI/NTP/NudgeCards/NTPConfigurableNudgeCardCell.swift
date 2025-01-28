@@ -186,7 +186,7 @@ class NTPConfigurableNudgeCardCell: UICollectionViewCell, Themeable, ReusableCel
         let theme = themeManager.getCurrentTheme(for: currentWindowUUID)
         mainContainerStackView.backgroundColor = theme.colors.ecosia.backgroundSecondary
         closeButton.tintColor = .legacyTheme.ecosia.decorativeIcon
-        titleLabel.textColor = .legacyTheme.ecosia.primaryText
+        titleLabel.textColor = theme.colors.ecosia.textPrimary
         descriptionLabel.textColor = .legacyTheme.ecosia.secondaryText
         actionButton.setTitleColor(.legacyTheme.ecosia.primaryButton, for: .normal)
     }

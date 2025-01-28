@@ -708,7 +708,7 @@ class HistoryPanel: UIViewController,
         bottomSearchButton.tintColor = theme.colors.iconPrimary
         bottomDeleteButton.tintColor = theme.colors.iconPrimary
         */
-        bottomSearchButton.tintColor = .legacyTheme.ecosia.primaryText
+        bottomSearchButton.tintColor = theme.colors.ecosia.textPrimary
         bottomDeleteButton.tintColor = .legacyTheme.ecosia.warning
 
         applyEmptyStateViewTheme(theme)

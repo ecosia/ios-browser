@@ -76,7 +76,7 @@ class CircleButton: ToolbarButton {
 
     override func applyTheme(theme: Theme) {
         circle.backgroundColor = theme.colors.ecosia.backgroundTertiary
-        tintColor = config.shouldHideCircle ? .legacyTheme.ecosia.primaryText : .legacyTheme.ecosia.primaryButton
+        tintColor = config.shouldHideCircle ? theme.colors.ecosia.textPrimary : .legacyTheme.ecosia.primaryButton
         selectedTintColor = .legacyTheme.ecosia.primaryButtonActive
         unselectedTintColor = tintColor
     }

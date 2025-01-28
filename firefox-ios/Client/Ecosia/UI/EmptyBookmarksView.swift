@@ -249,13 +249,14 @@ final class EmptyBookmarksView: UIView, Themeable {
     }
 
     @objc func applyTheme() {
+        let theme = themeManager.getCurrentTheme(for: currentWindowUUID)
         backgroundColor = .legacyTheme.ecosia.homePanelBackground
-        importBookmarksButton.layer.borderColor = UIColor.legacyTheme.ecosia.primaryText.cgColor
-        learnMoreButton.setTitleColor(.legacyTheme.ecosia.primaryText, for: .normal)
+        importBookmarksButton.layer.borderColor = theme.colors.ecosia.textPrimary.cgColor
+        learnMoreButton.setTitleColor(theme.colors.ecosia.textPrimary, for: .normal)
         learnMoreButton.titleLabel?.font = UX.LearnMoreButtonLabelFont
-        importBookmarksButton.setTitleColor(.legacyTheme.ecosia.primaryText, for: .normal)
+        importBookmarksButton.setTitleColor(theme.colors.ecosia.textPrimary, for: .normal)
         importBookmarksButton.titleLabel?.font = UX.ImportButtonLabelFont
-        titleLabel.textColor = .legacyTheme.ecosia.primaryText
+        titleLabel.textColor = theme.colors.ecosia.textPrimary
         applyThemeToSectionsIn(containerStackView)
     }
 

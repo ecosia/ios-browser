@@ -452,7 +452,7 @@ extension LegacyTabTrayViewController {
          view.backgroundColor = UIColor.legacyTheme.tabTray.background
          // Ecosia: navigationToolbar.barTintColor = UIColor.theme.tabTray.toolbar
          // Ecosia: navigationToolbar.tintColor = UIColor.theme.tabTray.toolbarButtonTint
-         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.ecosia.primaryText]
+         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: themeManager.currentTheme.colors.ecosia.textPrimary]
          // viewModel.syncedTabsController.applyTheme()
 
          // Ecosia
@@ -469,7 +469,7 @@ extension LegacyTabTrayViewController {
          if shouldUseiPadSetup() {
              navigationItem.leftBarButtonItem?.tintColor = UIColor.legacyTheme.ecosia.primaryButton
              navigationItem.rightBarButtonItem?.tintColor = UIColor.legacyTheme.ecosia.primaryButton
-             navigationMenu.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.ecosia.primaryText], for: .normal)
+             navigationMenu.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: themeManger.currentTheme.colors.ecosia.textPrimary], for: .normal)
              navigationMenu.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.ecosia.segmentSelectedText], for: .selected)
          }
      }

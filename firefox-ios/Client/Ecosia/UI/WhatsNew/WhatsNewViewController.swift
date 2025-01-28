@@ -261,7 +261,7 @@ extension WhatsNewViewController {
         tableView.separatorColor = .clear
         knob.backgroundColor = .legacyTheme.ecosia.secondaryText
         closeButton.backgroundColor = theme.colors.ecosia.backgroundPrimary
-        closeButton.tintColor = .legacyTheme.ecosia.whatsNewCloseButton
+        closeButton.tintColor = theme.colors.ecosia.textPrimary
         footerButton.backgroundColor = theme.colors.ecosia.brandPrimary
         footerButton.setTitleColor(.legacyTheme.ecosia.primaryTextInverted, for: .normal)
         headerLabelContainerView.backgroundColor = theme.colors.ecosia.backgroundPrimary

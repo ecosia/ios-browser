@@ -237,7 +237,7 @@ extension NTPAboutEcosiaCell: Themeable {
     func applyTheme() {
         let theme = themeManager.getCurrentTheme(for: currentWindowUUID)
         outlineView.backgroundColor = theme.colors.ecosia.ntpCellBackground
-        titleLabel.textColor = .legacyTheme.ecosia.primaryText
+        titleLabel.textColor = theme.colors.ecosia.textPrimary
         indicatorImageView.tintColor = .legacyTheme.ecosia.secondaryText
         dividerView.backgroundColor = theme.colors.ecosia.borderDecorative
         disclosureView.backgroundColor = theme.colors.ecosia.backgroundQuaternary

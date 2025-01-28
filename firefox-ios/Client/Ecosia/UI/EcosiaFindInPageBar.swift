@@ -162,7 +162,7 @@ final class EcosiaFindInPageBar: UIView, Themeable {
         let theme = themeManager.getCurrentTheme(for: currentWindowUUID)
         backgroundColor = theme.colors.ecosia.backgroundSecondary
         searchView.backgroundColor = theme.colors.ecosia.backgroundTertiary
-        searchTextField.textColor = .legacyTheme.ecosia.primaryText
+        searchTextField.textColor = theme.colors.ecosia.textPrimary
         searchTextField.attributedPlaceholder = .init(string: .localized(.findInPage),
                                                       attributes: [.foregroundColor: UIColor.legacyTheme.ecosia.secondaryText])
         matchCountLabel.textColor = .legacyTheme.ecosia.secondaryText

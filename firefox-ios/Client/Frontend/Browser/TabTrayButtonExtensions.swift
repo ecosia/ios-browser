@@ -29,7 +29,7 @@ class PrivateModeButton: ToggleButton, PrivateModeUI {
         /* Ecosia: Update tint
         tintColor = isPrivate ? theme.colors.iconOnColor : theme.colors.iconPrimary
          */
-        tintColor = isPrivate ? theme.colors.ecosia.backgroundPrimary : .legacyTheme.ecosia.primaryText
+        tintColor = isPrivate ? theme.colors.ecosia.backgroundPrimary : theme.colors.ecosia.textPrimary
         imageView?.tintColor = tintColor
 
         // Ecosia: Modify background layer

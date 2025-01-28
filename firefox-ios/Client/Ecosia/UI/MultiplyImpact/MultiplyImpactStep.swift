@@ -69,7 +69,7 @@ final class MultiplyImpactStep: UIView, ThemeApplicable {
 
     func applyTheme(theme: Theme) {
         indicator?.tintColor = theme.colors.ecosia.brandPrimary
-        titleLabel?.textColor = .legacyTheme.ecosia.primaryText
+        titleLabel?.textColor = theme.colors.ecosia.textPrimary
         subtitleLabel?.textColor = .legacyTheme.ecosia.secondaryText
     }
 }

@@ -81,7 +81,7 @@ class PageActionsShortcutsHeader: UITableViewHeaderFooterView, ThemeApplicable {
         backgroundView?.backgroundColor = .clear
 
         shortcuts.forEach { item in
-            item.title.textColor = .legacyTheme.ecosia.primaryText
+            item.title.textColor = theme.colors.ecosia.textPrimary
             item.button.tintColor = .legacyTheme.ecosia.secondaryText
             item.button.backgroundColor = theme.colors.ecosia.impactMultiplyCardBackground
         }

@@ -52,7 +52,7 @@ class EcosiaLightColourPalette: EcosiaThemeColourPalette {
     var layerGradientOverlay: Common.Gradient { fallbackTheme.colors.layerGradientOverlay }
     var layerAccentNonOpaque: UIColor { .legacyTheme.ecosia.primaryButton }
     var layerAccentPrivate: UIColor { fallbackTheme.colors.layerAccentPrivate }
-    var layerAccentPrivateNonOpaque: UIColor { .legacyTheme.ecosia.primaryText }
+    var layerAccentPrivateNonOpaque: UIColor { ecosia.textPrimary }
     var layerSepia: UIColor { fallbackTheme.colors.layerSepia }
     var layerWarning: UIColor { .legacyTheme.ecosia.warning }
     var layerRatingA: UIColor { fallbackTheme.colors.layerRatingA }
@@ -84,7 +84,7 @@ class EcosiaLightColourPalette: EcosiaThemeColourPalette {
     var actionWarning: UIColor { .legacyTheme.ecosia.warning }
 
     // MARK: - Text
-    var textPrimary: UIColor { .legacyTheme.ecosia.primaryText }
+    var textPrimary: UIColor { ecosia.textPrimary }
     var textSecondary: UIColor { .legacyTheme.ecosia.secondaryText }
     var textDisabled: UIColor { fallbackTheme.colors.textDisabled }
     var textAccent: UIColor { .legacyTheme.ecosia.primaryButton }
