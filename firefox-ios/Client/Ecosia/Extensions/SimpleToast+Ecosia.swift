@@ -61,7 +61,7 @@ extension SimpleToast {
         switch image {
         case let .named(name):
             imageView = UIImageView(image: .init(named: name)?.withRenderingMode(.alwaysTemplate))
-            imageView.tintColor = UIColor.legacyTheme.ecosia.toastImageTint
+            imageView.tintColor = theme.colors.ecosia.toastImageTint
             imageView.contentMode = .scaleAspectFit
             imageView.setContentHuggingPriority(.required, for: .horizontal)
         case let .view(view):
