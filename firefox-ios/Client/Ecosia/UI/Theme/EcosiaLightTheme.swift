@@ -75,7 +75,7 @@ class EcosiaLightColourPalette: EcosiaThemeColourPalette {
     // MARK: - Actions
     var actionPrimary: UIColor { ecosia.buttonBackgroundPrimary }
     var actionPrimaryHover: UIColor { ecosia.buttonBackgroundPrimaryActive }
-    var actionSecondary: UIColor { .legacyTheme.ecosia.secondaryButton }
+    var actionSecondary: UIColor { ecosia.buttonBackgroundSecondary }
     var actionSecondaryHover: UIColor { fallbackTheme.colors.actionSecondaryHover }
     var formSurfaceOff: UIColor { fallbackTheme.colors.formSurfaceOff }
     var formKnob: UIColor { fallbackTheme.colors.formKnob }
@@ -152,4 +152,5 @@ private class EcosiaLightSemanticColors: EcosiaSemanticColors {
     var modalBackground: UIColor = EcosiaColorPrimitive.Gray20
     var modalHeader: UIColor = EcosiaColorPrimitive.DarkGreen50
     var secondarySelectedBackground: UIColor = EcosiaColorPrimitive.Gray10
+    var buttonBackgroundNTPCustomization: UIColor = EcosiaColorPrimitive.Gray10
 }

@@ -70,4 +70,5 @@ private class EcosiaDarkSemanticColors: EcosiaSemanticColors {
     var modalBackground: UIColor = EcosiaColorPrimitive.Gray80
     var modalHeader: UIColor = EcosiaColorPrimitive.Gray80
     var secondarySelectedBackground: UIColor = .init(rgb: 0x3A3A3A)
+    var buttonBackgroundNTPCustomization: UIColor = EcosiaColorPrimitive.Gray80
 }

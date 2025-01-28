@@ -12,11 +12,6 @@ extension LegacyTheme {
 }
 
 class EcosiaTheme {
-    var secondaryButton: UIColor { .Light.Button.backgroundSecondary }
-    var secondaryButtonContent: UIColor { .Light.Button.contentSecondary }
-    var secondaryButtonBackground: UIColor { .Light.Button.secondaryBackground }
-    var activeTransparentBackground: UIColor { .Light.Button.backgroundTransparentActive }
-
     var textfieldPlaceholder: UIColor { .Light.Text.secondary }
     var textfieldIconTint: UIColor { .Light.Button.backgroundPrimary }
     var personalCounterSelection: UIColor { UIColor.Photon.Grey20 }
@@ -43,11 +38,6 @@ class EcosiaTheme {
 }
 
 final class DarkEcosiaTheme: EcosiaTheme {
-    override var secondaryButton: UIColor { .Dark.Button.backgroundSecondary }
-    override var secondaryButtonContent: UIColor { .Dark.Button.contentSecondary }
-    override var secondaryButtonBackground: UIColor { .Dark.Button.secondaryBackground }
-    override var activeTransparentBackground: UIColor { .Dark.Button.backgroundTransparentActive }
-
     override var textfieldPlaceholder: UIColor { .Dark.Text.secondary }
     override var textfieldIconTint: UIColor { .Dark.Button.backgroundPrimary }
 
