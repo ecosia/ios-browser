@@ -110,8 +110,8 @@ final class WelcomeTourProfit: UIView, Themeable {
 
     func applyTheme() {
         let theme = themeManager.getCurrentTheme(for: currentWindowUUID)
-        beforeContainer.backgroundColor = .legacyTheme.ecosia.welcomeBackground
-        afterContainer.backgroundColor = .legacyTheme.ecosia.welcomeBackground
+        beforeContainer.backgroundColor = theme.colors.ecosia.modalBackground
+        afterContainer.backgroundColor = theme.colors.ecosia.modalBackground
         beforeLabel.textColor = theme.colors.ecosia.textPrimary
         afterLabel.textColor = theme.colors.ecosia.textPrimary
         treeImage.tintColor = theme.colors.ecosia.brandPrimary

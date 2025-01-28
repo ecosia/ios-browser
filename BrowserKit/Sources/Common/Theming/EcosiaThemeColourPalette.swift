@@ -54,7 +54,7 @@ public protocol EcosiaSemanticColors {
     var ntpIntroBackground: UIColor { get } // == barBackground
     var impactMultiplyCardBackground: UIColor { get } // == ntpCellBackground
     var newsPlaceholder: UIColor { get }
-    var modalBackground: UIColor { get }
+    var modalBackground: UIColor { get } // backgroundTertiary | backgroundSecondary
     var modalHeader: UIColor { get }
     var secondarySelectedBackground: UIColor { get }
     var buttonBackgroundNTPCustomization: UIColor { get }
