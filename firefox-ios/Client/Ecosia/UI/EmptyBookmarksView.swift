@@ -250,7 +250,7 @@ final class EmptyBookmarksView: UIView, Themeable {
 
     @objc func applyTheme() {
         let theme = themeManager.getCurrentTheme(for: currentWindowUUID)
-        backgroundColor = .legacyTheme.ecosia.homePanelBackground
+        backgroundColor = theme.colors.ecosia.modalBackground
         importBookmarksButton.layer.borderColor = theme.colors.ecosia.textPrimary.cgColor
         learnMoreButton.setTitleColor(theme.colors.ecosia.textPrimary, for: .normal)
         learnMoreButton.titleLabel?.font = UX.LearnMoreButtonLabelFont

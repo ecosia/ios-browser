@@ -12,12 +12,10 @@ extension LegacyTheme {
 }
 
 class EcosiaTheme {
-    var homePanelBackground: UIColor { return .Light.Background.tertiary }
     var peach: UIColor { .init(rgb: 0xFFE6BF) }
 }
 
 final class DarkEcosiaTheme: EcosiaTheme {
-    override var homePanelBackground: UIColor { return .Dark.Background.secondary }
     override var peach: UIColor { .init(rgb: 0xCC7722) }
 }
 

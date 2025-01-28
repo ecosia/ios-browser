@@ -45,7 +45,7 @@ class EcosiaLightColourPalette: EcosiaThemeColourPalette {
     var layer3: UIColor { ecosia.ntpBackground }
     var layer4: UIColor { fallbackTheme.colors.layer4 }
     var layer5: UIColor { ecosia.backgroundSecondary }
-    var layer6: UIColor { .legacyTheme.ecosia.homePanelBackground }
+    var layer6: UIColor { ecosia.modalBackground }
     var layer5Hover: UIColor { ecosia.secondarySelectedBackground }
     var layerScrim: UIColor { fallbackTheme.colors.layerScrim }
     var layerGradient: Common.Gradient { fallbackTheme.colors.layerGradient }
