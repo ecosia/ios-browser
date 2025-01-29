@@ -25,6 +25,7 @@ if [ "$#" -lt 4 ]; then
 fi
 
 cd firefox-ios
+mkdir -p EcosiaTests/Results/
 
 config_file="$1"
 environment_file="$2"  # Fixed environment file path
