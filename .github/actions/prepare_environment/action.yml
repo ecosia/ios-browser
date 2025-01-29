@@ -44,13 +44,13 @@ runs:
     - name: Install SPM if cache not found
       shell: bash
       if: steps.restore-spm-cache.outputs.cache-hit != 'true'
-      run: xcodebuild -resolvePackageDependencies -clonedSourcePackagesDirPath "SourcePackages/"
+      run: xcodebuild -resolvePackageDependencies -clonedSourcePackagesDirPath "firefox-ios/SourcePackages/"
 
     - name: Save SPM Cache if needed
       if: steps.restore-spm-cache.outputs.cache-hit != 'true'
       uses: actions/cache/save@v3
       with:
-        path: SourcePackages/
+        path: firefox-ios/SourcePackages/
         key: ${{ runner.os }}-spm-cache-${{ hashFiles('firefox-ios/Client.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}  
 
     - name: Extract Staging XCConfig
