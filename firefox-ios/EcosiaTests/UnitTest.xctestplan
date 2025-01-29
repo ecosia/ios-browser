@@ -15,7 +15,7 @@
     {
       "target" : {
         "containerPath" : "container:Client.xcodeproj",
-        "identifier" : "122935722CE78D0A00EC1297",
+        "identifier" : "2CFE996E2D45329300B25CE0",
         "name" : "EcosiaTests"
       }
     }
