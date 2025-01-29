@@ -83,9 +83,9 @@ final class FilterController: UIViewController, UITableViewDataSource, UITableVi
             ($0 as? Themeable)?.applyTheme()
         }
 
-        view.backgroundColor = UIColor.legacyTheme.tableView.headerBackground
+        view.backgroundColor = theme.colors.ecosia.ntpBackground
         table.tintColor = theme.colors.ecosia.brandPrimary
-        table.separatorColor = UIColor.legacyTheme.tableView.separator
-        table.backgroundColor = UIColor.legacyTheme.tableView.headerBackground
+        table.separatorColor = theme.colors.ecosia.borderDecorative
+        table.backgroundColor = theme.colors.ecosia.ntpBackground
     }
 }

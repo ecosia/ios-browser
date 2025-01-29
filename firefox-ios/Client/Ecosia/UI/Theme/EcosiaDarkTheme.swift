@@ -76,4 +76,5 @@ private struct EcosiaDarkSemanticColors: EcosiaSemanticColors {
     var toastImageTint: UIColor = EcosiaColor.DarkGreen50
     var newSeedCollectedCircle: UIColor = .init(rgb: 0xCC7722)
     var tabTrayScreenshotBackground: UIColor = .Photon.DarkGrey30
+    var tableViewRowText: UIColor = .Photon.Grey10
 }

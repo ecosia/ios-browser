@@ -18,7 +18,7 @@ class DefaultBrowserSetting: Setting {
             )
         )
          */
-        super.init(title: .init(string: .localized(.setAsDefaultBrowser), attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText]))
+        super.init(title: .init(string: .localized(.setAsDefaultBrowser), attributes: [NSAttributedString.Key.foregroundColor: theme.colors.ecosia.tableViewRowText]))
     }
 
     // Ecosia: Override cell config to add image

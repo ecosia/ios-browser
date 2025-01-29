@@ -18,22 +18,10 @@ enum BuiltinThemeName: String {
     case dark
 }
 
-class TableViewColor {
-    var rowText: UIColor { return UIColor.Photon.Grey90 } // textPrimary
-    var disabledRowText: UIColor { return UIColor.Photon.Grey40 } // textDisabled
-    // Ecosia: Re enabling legacy colo references
-    var accessoryViewTint: UIColor { return .Light.Text.secondary }
-    var headerBackground: UIColor { .Light.Background.tertiary }
-    var separator: UIColor { .Light.Border.decorative }
-    var rowBackground: UIColor { return .Light.Background.primary }
-}
-
 protocol LegacyTheme {
     var name: String { get }
-    var tableView: TableViewColor { get }
 }
 
 class LegacyNormalTheme: LegacyTheme {
     var name: String { return BuiltinThemeName.normal.rawValue }
-    var tableView: TableViewColor { return TableViewColor() }
 }

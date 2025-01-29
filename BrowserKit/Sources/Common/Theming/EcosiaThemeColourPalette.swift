@@ -47,14 +47,14 @@ public protocol EcosiaSemanticColors {
     var backgroundHighlighted: UIColor { get } // Mapped as "loading"
 
     // MARK: Unmapped Snowflakes
-    var barBackground: UIColor { get } // backgroundPrimary | backgroundSecondary
+    var barBackground: UIColor { get } // Light.backgroundPrimary + Dark.backgroundSecondary
     var barSeparator: UIColor { get }
     var ntpCellBackground: UIColor { get }
-    var ntpBackground: UIColor { get }
+    var ntpBackground: UIColor { get } // Light.backgroundTertiary + Dark.backgroundPrimary
     var ntpIntroBackground: UIColor { get } // == barBackground
     var impactMultiplyCardBackground: UIColor { get } // == ntpCellBackground
     var newsPlaceholder: UIColor { get }
-    var modalBackground: UIColor { get } // backgroundTertiary | backgroundSecondary
+    var modalBackground: UIColor { get } // Light.backgroundTertiary + Dark.backgroundSecondary
     var modalHeader: UIColor { get }
     var secondarySelectedBackground: UIColor { get }
     var buttonBackgroundNTPCustomization: UIColor { get }
@@ -63,6 +63,7 @@ public protocol EcosiaSemanticColors {
     var toastImageTint: UIColor { get }
     var newSeedCollectedCircle: UIColor { get }
     var tabTrayScreenshotBackground: UIColor { get }
+    var tableViewRowText: UIColor { get }
 }
 
 public protocol EcosiaThemeColourPalette: ThemeColourPalette {
@@ -111,4 +112,5 @@ class FakeEcosiaSemanticColors: EcosiaSemanticColors {
     var toastImageTint: UIColor = .systemGray
     var newSeedCollectedCircle: UIColor = .systemGray
     var tabTrayScreenshotBackground: UIColor = .systemGray
+    var tableViewRowText: UIColor = .systemGray
 }
