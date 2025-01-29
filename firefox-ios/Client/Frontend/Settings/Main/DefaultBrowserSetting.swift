@@ -24,7 +24,7 @@ class DefaultBrowserSetting: Setting {
     // Ecosia: Override cell config to add image
     override func onConfigureCell(_ cell: UITableViewCell, theme: Theme) {
         super.onConfigureCell(cell, theme: theme)
-        cell.imageView?.image = .init(themed: "yourImpact")
+        cell.imageView?.image = .init(named: "yourImpact")
     }
 
     override func onClick(_ navigationController: UINavigationController?) {

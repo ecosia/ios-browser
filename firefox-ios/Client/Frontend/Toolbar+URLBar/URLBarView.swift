@@ -1134,7 +1134,7 @@ extension URLBarView {
             if isPrivate {
                 searchIconImageView.image = .templateImageNamed(StandardImageIdentifiers.Large.privateMode)?.tinted(withColor: locationActiveBorderColor)
             } else {
-                searchIconImageView.image = .init(themed: "searchLogo")
+                searchIconImageView.image = .init(named: "searchLogo")
             }
         } else {
             searchIconImageView.image = .templateImageNamed("searchUrl")
