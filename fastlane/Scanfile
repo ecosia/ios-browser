@@ -1,5 +1,5 @@
 scheme("Ecosia")
-configuration("BetaDebug")
+configuration("Testing")
 project("firefox-ios/Client.xcodeproj")
 destination("platform=iOS Simulator,name=iPhone 16,OS=18.2")
 skip_detect_devices(true)
