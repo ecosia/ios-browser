@@ -109,5 +109,5 @@ workflows:
           filters:
             branches:
               only: 
-                - /^.*mob-3113-firefox-upgrade-133.*/
+                - /^.*mob-3113-firefox-upgrade-133-with-ecosia-framework.*/
           context: napps
