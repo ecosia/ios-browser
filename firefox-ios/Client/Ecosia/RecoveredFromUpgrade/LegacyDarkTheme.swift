@@ -14,17 +14,7 @@ private class DarkTableViewColor: TableViewColor {
     override var rowBackground: UIColor { return .Dark.Background.secondary }
 }
 
-private class DarkTabTrayColor: TabTrayColor {
-    override var tabTitleBlur: UIBlurEffect.Style { return UIBlurEffect.Style.dark }
-    // Ecosia: Add legacy color references from 9.1.0 App Version
-    override var screenshotBackground: UIColor { return UIColor.Photon.DarkGrey30 }
-    override var cellBackground: UIColor { return UIColor.Dark.Background.primary }
-    override var background: UIColor { return UIColor.Photon.Grey80 }
-    override var tabTitleText: UIColor { return UIColor.Dark.Text.primary }
-}
-
 class LegacyDarkTheme: LegacyNormalTheme {
     override var name: String { return BuiltinThemeName.dark.rawValue }
     override var tableView: TableViewColor { return DarkTableViewColor() }
-    override var tabTray: TabTrayColor { return DarkTabTrayColor() }
 }

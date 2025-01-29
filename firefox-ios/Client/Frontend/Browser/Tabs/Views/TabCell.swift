@@ -324,8 +324,8 @@ extension TabCell {
 
     func ecosiaApplyTheme(theme: Theme) {
 
-        backgroundHolder.backgroundColor = UIColor.legacyTheme.tabTray.cellBackground
-        screenshotView.backgroundColor = UIColor.legacyTheme.tabTray.screenshotBackground
+        backgroundHolder.backgroundColor = theme.colors.ecosia.backgroundPrimary
+        screenshotView.backgroundColor = theme.colors.ecosia.tabTrayScreenshotBackground
 
         let isPrivate = tabModel?.isPrivate == true
         let activeBGColor = isPrivate ?

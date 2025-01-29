@@ -28,23 +28,12 @@ class TableViewColor {
     var rowBackground: UIColor { return .Light.Background.primary }
 }
 
-class TabTrayColor {
-    var tabTitleBlur: UIBlurEffect.Style { return UIBlurEffect.Style.extraLight }
-    // Ecosia: Add legacy color references from 9.1.0 App Version
-    var cellBackground: UIColor { return UIColor.white }
-    var screenshotBackground: UIColor { return UIColor.white }
-    var background: UIColor { return UIColor.Photon.Grey10 }
-    var tabTitleText: UIColor { return UIColor.black }
-}
-
 protocol LegacyTheme {
     var name: String { get }
     var tableView: TableViewColor { get }
-    var tabTray: TabTrayColor { get }
 }
 
 class LegacyNormalTheme: LegacyTheme {
     var name: String { return BuiltinThemeName.normal.rawValue }
     var tableView: TableViewColor { return TableViewColor() }
-    var tabTray: TabTrayColor { return TabTrayColor() }
 }

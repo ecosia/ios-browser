@@ -62,6 +62,7 @@ public protocol EcosiaSemanticColors {
     var tabSelectedPrivateBackground: UIColor { get }
     var toastImageTint: UIColor { get }
     var newSeedCollectedCircle: UIColor { get }
+    var tabTrayScreenshotBackground: UIColor { get }
 }
 
 public protocol EcosiaThemeColourPalette: ThemeColourPalette {
@@ -109,4 +110,5 @@ class FakeEcosiaSemanticColors: EcosiaSemanticColors {
     var tabSelectedPrivateBackground: UIColor = .systemGray
     var toastImageTint: UIColor = .systemGray
     var newSeedCollectedCircle: UIColor = .systemGray
+    var tabTrayScreenshotBackground: UIColor = .systemGray
 }
