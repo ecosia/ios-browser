@@ -23799,6 +23799,7 @@
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ecosia.ecosiaapp.EcosiaSnapshotTests;
 				PRODUCT_NAME = EcosiaSnapshotTests;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Client.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Client";
 			};
@@ -23811,6 +23812,7 @@
 				CODE_SIGN_IDENTITY = "";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				PRODUCT_BUNDLE_IDENTIFIER = com.ecosia.ecosiaapp.EcosiaSnapshotTests;
 				PRODUCT_NAME = EcosiaSnapshotTests;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Client.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Client";
 			};
@@ -23821,6 +23823,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_IDENTITY = "";
+				PRODUCT_BUNDLE_IDENTIFIER = com.ecosia.ecosiaapp.EcosiaSnapshotTests;
 				PRODUCT_NAME = EcosiaSnapshotTests;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Client.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Client";
 			};
