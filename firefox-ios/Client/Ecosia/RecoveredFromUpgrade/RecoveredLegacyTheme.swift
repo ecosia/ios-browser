@@ -28,10 +28,6 @@ class TableViewColor {
     var rowBackground: UIColor { return .Light.Background.primary }
 }
 
-class BrowserColor {
-    var background: UIColor { return UIColor.Photon.Grey10 } // layer1
-}
-
 class TabTrayColor {
     var tabTitleBlur: UIBlurEffect.Style { return UIBlurEffect.Style.extraLight }
     // Ecosia: Add legacy color references from 9.1.0 App Version
@@ -41,30 +37,14 @@ class TabTrayColor {
     var tabTitleText: UIColor { return UIColor.black }
 }
 
-class SnackBarColor {
-    // TODO Ecosia Upgrade: UIColor.LegacyDefaults no longer exists, is it needed? [MOB-3152]
-//    var highlight: UIColor { return UIColor.LegacyDefaults.iOSTextHighlightBlue.withAlphaComponent(0.9) }
-    var highlightText: UIColor { return UIColor.Photon.Blue40 }
-    var border: UIColor { return UIColor.Photon.Grey30 }
-    var title: UIColor { return UIColor.Photon.Blue40 }
-}
-
 protocol LegacyTheme {
     var name: String { get }
     var tableView: TableViewColor { get }
-    var browser: BrowserColor { get }
     var tabTray: TabTrayColor { get }
-    var snackbar: SnackBarColor { get }
-    // Ecosia: Adapt theme
-    var ecosia: EcosiaTheme { get }
 }
 
 class LegacyNormalTheme: LegacyTheme {
     var name: String { return BuiltinThemeName.normal.rawValue }
     var tableView: TableViewColor { return TableViewColor() }
-    var browser: BrowserColor { return BrowserColor() }
     var tabTray: TabTrayColor { return TabTrayColor() }
-    var snackbar: SnackBarColor { return SnackBarColor() }
-    // Ecosia: Adapt theme
-    var ecosia: EcosiaTheme { return EcosiaTheme() }
 }
