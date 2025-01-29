@@ -42,9 +42,9 @@ if ! jq empty "$config_file" >/dev/null 2>&1; then
   exit 1
 fi
 
-# Read the devices and test plans from the JSON configuration file
+# Read the devices and test bundles from the JSON configuration file
 devices_json=$(jq -c '.devices[]' "$config_file")
-tests_json=$(jq -c '.testPlans[]' "$config_file")
+tests_json=$(jq -c '.testBundles[]' "$config_file")
 
 # Read all locales into an array
 mapfile -t all_locales < <(jq -r '.locales[]' "$config_file")
@@ -134,15 +134,15 @@ get_test_target() {
 }
 
 # ================================
-# Process Test Plans and Classes
+# Process Test Bundles and Classes
 # ================================
 
-# Loop through each test plan
-while IFS= read -r test_plan; do
-  plan_name=$(echo "$test_plan" | jq -r '.name')
-  test_classes_json=$(echo "$test_plan" | jq -c '.testClasses[]')
+# Loop through each test bundle
+while IFS= read -r test_bundle; do
+  test_bundle_name=$(echo "$test_bundle" | jq -r '.name')
+  test_classes_json=$(echo "$test_bundle" | jq -c '.testClasses[]')
 
-  # Loop through each test class in the test plan
+  # Loop through each test class in the test bundle
   while IFS= read -r test_class; do
     class_name=$(echo "$test_class" | jq -r '.name')
     runs_on_device=$(echo "$test_class" | jq -r '.runsOn // empty')

@@ -27,7 +27,7 @@
       "orientation": "portrait"
     }
   ],
-  "testPlans": [
+  "testBundles": [
     {
       "name": "EcosiaSnapshotTests",
       "testClasses": [
