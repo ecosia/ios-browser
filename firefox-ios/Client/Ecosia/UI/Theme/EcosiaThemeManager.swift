@@ -230,14 +230,3 @@ public final class EcosiaThemeManager: ThemeManager, Notifiable {
         }
     }
 }
-
-/* TODO Ecosia Upgrade: Is this still needed? [MOB-3152]
-extension EcosiaThemeManager {
-
-    func updateLegacyThemeIfSystemThemeON() {
-        if LegacyThemeManager.instance.systemThemeIsOn {
-            LegacyThemeManager.updateBasedOnCurrentSystemThemeType()
-        }
-    }
-}
-*/

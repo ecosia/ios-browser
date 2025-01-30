@@ -293,11 +293,6 @@ final class Welcome: UIViewController {
         Analytics.shared.introClick(.skip, page: .start, index: 0)
         delegate?.welcomeDidFinish(self)
     }
-
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-        LegacyThemeManager.instance.themeChanged(from: previousTraitCollection, to: traitCollection)
-    }
 }
 
 extension Welcome: WelcomeTourDelegate {
