@@ -10,12 +10,6 @@ final class MultiplyImpactStep: UIView, ThemeApplicable {
     private weak var titleLabel: UILabel?
     private weak var subtitleLabel: UILabel?
 
-    // MARK: - Themeable Properties
-
-    var themeManager: ThemeManager { AppContainer.shared.resolve() }
-    var themeObserver: NSObjectProtocol?
-    var notificationCenter: NotificationProtocol = NotificationCenter.default
-
     // MARK: - Init
 
     required init?(coder: NSCoder) { nil }
