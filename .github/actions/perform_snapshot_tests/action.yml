@@ -51,7 +51,7 @@ runs:
       - name: Process xcresult files
         uses: kishikawakatsumi/xcresulttool@v1
         with:
-          path: 'firefox-ios/EcosiaTests/Results/all_tests.xcresult'
+          path: 'EcosiaTests/Results/all_tests.xcresult'
           token: ${{ inputs.github-token }}
           show-passed-tests: false
           show-code-coverage: false

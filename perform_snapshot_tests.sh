@@ -24,7 +24,6 @@ if [ "$#" -lt 4 ]; then
   exit 1
 fi
 
-mkdir -p EcosiaTests/Results/
 cd firefox-ios
 
 config_file="$1"
