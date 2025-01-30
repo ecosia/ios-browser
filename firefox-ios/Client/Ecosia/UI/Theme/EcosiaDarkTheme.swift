@@ -2,18 +2,6 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
-/*
- 
-The purpose of this file is to build an adapter layer and begin to utilize the `ThemeColourPalette` that Firefox provide.
-WHY?
-In the previous releases of Firefox the theming architecture relied on a protocol approach without any sort of dependency injection as part of the `applyTheme()` function.
- However, since the codebase bigger restructure, the Theming has gone thru a major refactor as well.
- By having this adapter in, we can benefit of the `Theme` object being passed as part of the `func applyTheme(theme: Theme)` function so that all the places having it implemented will receive the new colors.
- The setup of these Dark and Light Ecosia's Colour Palette is definted by the `EcosiaThemeManager`.
- However, the need of a `fallbackDefaultThemeManager` of type `DefaultThemeManager` is crucial as we don't have all the colors defined ourselves and we rely on the Firefox ones we can't get access to as part of the `BrowserKit` package.
- Once and if we'll have all the colors defined, we can remove the `fallbackDefaultThemeManager` variable.
-*/
-
 import Common
 import UIKit
 
