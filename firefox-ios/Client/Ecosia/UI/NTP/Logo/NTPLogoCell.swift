@@ -50,7 +50,7 @@ final class NTPLogoCell: UICollectionViewCell, ReusableCell, Themeable {
         logo.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
         logo.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
         logo.widthAnchor.constraint(equalToConstant: Self.width).isActive = true
-        
+
         listenForThemeChange(contentView)
     }
 
