@@ -15,22 +15,6 @@ class EcosiaLightColourPalette: EcosiaThemeColourPalette {
         EcosiaLightSemanticColors()
     }
 
-    // TODO Ecosia Upgrade: Review new colors and older ones that are no longer on the protocol [MOB-3152]
-    var layerInformation: UIColor { fallbackTheme.colors.layerInformation }
-    var layerSuccess: UIColor { fallbackTheme.colors.layerSuccess }
-    var layerCritical: UIColor { fallbackTheme.colors.layerCritical }
-    var layerSelectedText: UIColor { fallbackTheme.colors.layerSelectedText }
-    var layerAutofillText: UIColor { fallbackTheme.colors.layerAutofillText }
-    var actionPrimaryDisabled: UIColor { fallbackTheme.colors.actionPrimaryDisabled }
-    var actionSuccess: UIColor { fallbackTheme.colors.actionSuccess }
-    var actionCritical: UIColor { fallbackTheme.colors.actionCritical }
-    var actionInformation: UIColor { fallbackTheme.colors.actionInformation }
-    var textCritical: UIColor { fallbackTheme.colors.textCritical }
-    var textInvertedDisabled: UIColor { fallbackTheme.colors.textInvertedDisabled }
-    var iconAccent: UIColor { fallbackTheme.colors.iconAccent }
-    var iconCritical: UIColor { fallbackTheme.colors.iconCritical }
-    var iconRatingNeutral: UIColor { fallbackTheme.colors.iconRatingNeutral }
-
     var fallbackTheme: Theme {
         LightTheme()
     }
@@ -44,13 +28,23 @@ class EcosiaLightColourPalette: EcosiaThemeColourPalette {
     var layer6: UIColor { ecosia.modalBackground }
     var layer5Hover: UIColor { ecosia.secondarySelectedBackground }
     var layerScrim: UIColor { fallbackTheme.colors.layerScrim }
-    var layerGradient: Common.Gradient { fallbackTheme.colors.layerGradient }
-    var layerGradientOverlay: Common.Gradient { fallbackTheme.colors.layerGradientOverlay }
+    var layerGradient: Gradient { fallbackTheme.colors.layerGradient }
+    var layerGradientOverlay: Gradient { fallbackTheme.colors.layerGradientOverlay }
     var layerAccentNonOpaque: UIColor { ecosia.buttonBackgroundPrimary }
     var layerAccentPrivate: UIColor { fallbackTheme.colors.layerAccentPrivate }
     var layerAccentPrivateNonOpaque: UIColor { ecosia.textPrimary }
     var layerSepia: UIColor { fallbackTheme.colors.layerSepia }
+    var layerHomepage: Gradient { fallbackTheme.colors.layerHomepage }
+    var layerInformation: UIColor { fallbackTheme.colors.layerInformation }
+    var layerSuccess: UIColor { fallbackTheme.colors.layerSuccess }
     var layerWarning: UIColor { ecosia.stateError }
+    var layerCritical: UIColor { fallbackTheme.colors.layerCritical }
+    var layerSelectedText: UIColor { fallbackTheme.colors.layerSelectedText }
+    var layerAutofillText: UIColor { fallbackTheme.colors.layerAutofillText }
+    var layerSearch: UIColor { fallbackTheme.colors.layerSearch }
+    var layerGradientURL: Gradient { fallbackTheme.colors.layerGradientURL }
+
+    // MARK: - Ratings
     var layerRatingA: UIColor { fallbackTheme.colors.layerRatingA }
     var layerRatingASubdued: UIColor { fallbackTheme.colors.layerRatingASubdued }
     var layerRatingB: UIColor { fallbackTheme.colors.layerRatingB }
@@ -61,45 +55,49 @@ class EcosiaLightColourPalette: EcosiaThemeColourPalette {
     var layerRatingDSubdued: UIColor { fallbackTheme.colors.layerRatingDSubdued }
     var layerRatingF: UIColor { fallbackTheme.colors.layerRatingF }
     var layerRatingFSubdued: UIColor { fallbackTheme.colors.layerRatingFSubdued }
-    var layerHomepage: Common.Gradient { fallbackTheme.colors.layerHomepage }
-    var layerSearch: UIColor { fallbackTheme.colors.layerSearch }
-    var layerGradientURL: Common.Gradient { fallbackTheme.colors.layerGradientURL }
-    var actionTabActive: UIColor { fallbackTheme.colors.actionTabActive }
-    var actionTabInactive: UIColor { fallbackTheme.colors.actionTabInactive }
-    var borderToolbarDivider: UIColor { fallbackTheme.colors.borderToolbarDivider }
 
     // MARK: - Actions
     var actionPrimary: UIColor { ecosia.buttonBackgroundPrimary }
     var actionPrimaryHover: UIColor { ecosia.buttonBackgroundPrimaryActive }
+    var actionPrimaryDisabled: UIColor { fallbackTheme.colors.actionPrimaryDisabled }
     var actionSecondary: UIColor { ecosia.buttonBackgroundSecondary }
     var actionSecondaryHover: UIColor { fallbackTheme.colors.actionSecondaryHover }
     var formSurfaceOff: UIColor { fallbackTheme.colors.formSurfaceOff }
     var formKnob: UIColor { fallbackTheme.colors.formKnob }
     var indicatorActive: UIColor { fallbackTheme.colors.indicatorActive }
     var indicatorInactive: UIColor { fallbackTheme.colors.indicatorInactive }
+    var actionSuccess: UIColor { fallbackTheme.colors.actionSuccess }
     var actionWarning: UIColor { ecosia.stateError }
+    var actionCritical: UIColor { fallbackTheme.colors.actionCritical }
+    var actionInformation: UIColor { fallbackTheme.colors.actionInformation }
+    var actionTabActive: UIColor { fallbackTheme.colors.actionTabActive }
+    var actionTabInactive: UIColor { fallbackTheme.colors.actionTabInactive }
 
     // MARK: - Text
     var textPrimary: UIColor { ecosia.textPrimary }
     var textSecondary: UIColor { ecosia.textSecondary }
     var textDisabled: UIColor { fallbackTheme.colors.textDisabled }
+    var textCritical: UIColor { fallbackTheme.colors.textCritical }
     var textAccent: UIColor { ecosia.buttonBackgroundPrimary }
     var textOnDark: UIColor { fallbackTheme.colors.textOnDark }
     var textOnLight: UIColor { fallbackTheme.colors.textOnLight }
     var textInverted: UIColor { ecosia.textInversePrimary }
+    var textInvertedDisabled: UIColor { fallbackTheme.colors.textInvertedDisabled }
 
     // MARK: - Icons
     var iconPrimary: UIColor { ecosia.iconPrimary }
     var iconSecondary: UIColor { ecosia.iconSecondary }
     var iconDisabled: UIColor { fallbackTheme.colors.iconDisabled }
+    var iconAccent: UIColor { fallbackTheme.colors.iconAccent }
     var iconOnColor: UIColor { fallbackTheme.colors.iconOnColor }
-    var iconWarning: UIColor { ecosia.stateError }
+    var iconCritical: UIColor { ecosia.stateError }
     var iconSpinner: UIColor { fallbackTheme.colors.iconSpinner }
     var iconAccentViolet: UIColor { fallbackTheme.colors.iconAccentViolet }
     var iconAccentBlue: UIColor { fallbackTheme.colors.iconAccentBlue }
     var iconAccentPink: UIColor { fallbackTheme.colors.iconAccentPink }
     var iconAccentGreen: UIColor { fallbackTheme.colors.iconAccentGreen }
     var iconAccentYellow: UIColor { fallbackTheme.colors.iconAccentYellow }
+    var iconRatingNeutral: UIColor { fallbackTheme.colors.iconRatingNeutral }
 
     // MARK: - Border
     var borderPrimary: UIColor { ecosia.barSeparator }
@@ -107,6 +105,7 @@ class EcosiaLightColourPalette: EcosiaThemeColourPalette {
     var borderAccentNonOpaque: UIColor { actionPrimary }
     var borderAccentPrivate: UIColor { actionPrimary }
     var borderInverted: UIColor { fallbackTheme.colors.borderInverted }
+    var borderToolbarDivider: UIColor { fallbackTheme.colors.borderToolbarDivider }
 
     // MARK: - Shadow
     var shadowDefault: UIColor { fallbackTheme.colors.shadowDefault }
