@@ -109,6 +109,15 @@
                   Identifier = "ShortcutRouteTests/testOpenLastBookmarkShortcutWithInvalidUrl()">
                </Test>
                <Test
+                  Identifier = "SyncContentSettingsViewControllerTests">
+               </Test>
+               <Test
+                  Identifier = "SyncContentSettingsViewControllerTests/test_syncContentSettingsViewController_engineSectionForSettings()">
+               </Test>
+               <Test
+                  Identifier = "SyncContentSettingsViewControllerTests/test_syncContentSettingsViewController_generateSettingsCount()">
+               </Test>
+               <Test
                   Identifier = "TabManagerTests">
                </Test>
                <Test
