@@ -31,10 +31,6 @@ class EcosiaLightColourPalette: EcosiaThemeColourPalette {
     var iconCritical: UIColor { fallbackTheme.colors.iconCritical }
     var iconRatingNeutral: UIColor { fallbackTheme.colors.iconRatingNeutral }
 
-    /* TODO Ecosia Upgrade: Review if ok to switch to directly linking fallback theme. [MOB-3152]
-    // The alternative is receiving window here since `getCurrentTheme` now requires it.
-     let fallbackDefaultThemeManager: ThemeManager = DefaultThemeManager(sharedContainerIdentifier: AppInfo.sharedContainerIdentifier)
-     */
     var fallbackTheme: Theme {
         LightTheme()
     }
