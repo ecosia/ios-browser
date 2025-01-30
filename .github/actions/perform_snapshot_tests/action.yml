@@ -35,7 +35,7 @@ runs:
       - name: Validate JSON Configuration
         shell: bash
         run: |
-          jq empty "EcosiaTests/SnapshotTests/snapshot_configuration.json"
+          jq empty "firefox-ios/EcosiaTests/SnapshotTests/snapshot_configuration.json"
           echo "JSON configuration is valid."
 
       - name: Run Snapshot Tests
@@ -46,12 +46,12 @@ runs:
         uses: actions/upload-artifact@v3
         with:
           name: test-result
-          path: 'EcosiaTests/Results/all_tests.xcresult'
+          path: 'firefox-ios/EcosiaTests/Results/all_tests.xcresult'
 
       - name: Process xcresult files
         uses: kishikawakatsumi/xcresulttool@v1
         with:
-          path: 'EcosiaTests/Results/all_tests.xcresult'
+          path: 'firefox-ios/EcosiaTests/Results/all_tests.xcresult'
           token: ${{ inputs.github-token }}
           show-passed-tests: false
           show-code-coverage: false
