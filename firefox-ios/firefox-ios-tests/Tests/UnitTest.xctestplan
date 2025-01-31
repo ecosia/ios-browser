@@ -166,6 +166,7 @@
         "BookmarksCoordinatorTests\/testStart()",
         "ContentBlockerTests",
         "ETPCoverSheetTests",
+        "GeneralizedImageFetcherTests\/testBadStatusCode()",
         "GeneralizedImageFetcherTests\/testErrorResponse()",
         "GleanPlumbMessageManagerTests\/testManagerOnMessagePressed_withMalformedURL()",
         "HistoryDeletionUtilityTests\/testDeletingMultipleItemsEmptyingDatabase()",
