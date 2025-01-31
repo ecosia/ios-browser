@@ -35,16 +35,6 @@ runs:
         shell: bash
         run: ./perform_snapshot_tests.sh "EcosiaTests/SnapshotTests/snapshot_configuration.json" "EcosiaTests/SnapshotTests/environment.json" "EcosiaTests/Results" "EcosiaSnapshotTests"
 
-      - name: Process xcresult files
-        uses: kishikawakatsumi/xcresulttool@v1
-        with:
-          path: 'firefox-ios/EcosiaTests/Results/all_tests.xcresult'
-          token: ${{ inputs.github-token }}
-          show-passed-tests: false
-          show-code-coverage: false
-          upload-bundles: 'failure'
-        if: success() || failure()
-
       - name: Upload test result as artifact
         uses: actions/upload-artifact@v4
         with:
