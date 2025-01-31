@@ -1,11 +1,9 @@
 name: Snapshot Tests
 
 on:
-  # pull_request:
-  #   paths:
-  #     - 'Client/Configuration/Common.xcconfig'
-  push:
-    branches: [ mob-3113-firefox-upgrade-133-with-ecosia-framework ]
+  pull_request:
+    paths:
+      - 'Client/Configuration/Common.xcconfig'
 
 jobs:
   execute_snapshot_tests:
