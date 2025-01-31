@@ -107,7 +107,7 @@ extension HomepageHeaderViewModel: HomepageSectionHandler {
         return headerCell
         */
         guard let logoHeaderCell = cell as? NTPLogoCell else { return UICollectionViewCell() }
-        logoHeaderCell.applyTheme()
+        logoHeaderCell.applyTheme(theme: theme)
         return logoHeaderCell
     }
 }

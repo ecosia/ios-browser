@@ -5,7 +5,7 @@
 import UIKit
 import Common
 
-final class NTPTooltip: UICollectionReusableView, Themeable {
+final class NTPTooltip: UICollectionReusableView, ThemeApplicable {
     enum TailPosition {
         case leading, center
     }
@@ -130,10 +130,7 @@ final class NTPTooltip: UICollectionReusableView, Themeable {
         let tap = UITapGestureRecognizer(target: self, action: #selector(tapped))
         addGestureRecognizer(tap)
 
-        applyTheme()
         addShadows()
-
-        listenForThemeChange(self)
     }
 
     func setText(_ text: String) {
@@ -148,8 +145,7 @@ final class NTPTooltip: UICollectionReusableView, Themeable {
         linkButton.isHidden = true
     }
 
-    func setLinkTitle(_ text: String) {
-        let theme = themeManager.getCurrentTheme(for: currentWindowUUID)
+    func setLinkTitle(_ text: String, theme: Theme) {
         let titleString = NSMutableAttributedString(string: text)
         titleString.addAttributes([
             .font: UIFont.preferredFont(forTextStyle: .callout).bold(),
@@ -169,8 +165,7 @@ final class NTPTooltip: UICollectionReusableView, Themeable {
         }
     }
 
-    @objc func applyTheme() {
-        let theme = themeManager.getCurrentTheme(for: currentWindowUUID)
+    func applyTheme(theme: Theme) {
         tail.tintColor = theme.colors.ecosia.backgroundQuaternary
         background.backgroundColor = theme.colors.ecosia.backgroundQuaternary
         textLabel.textColor = theme.colors.ecosia.textInversePrimary
@@ -187,11 +182,6 @@ final class NTPTooltip: UICollectionReusableView, Themeable {
 
     @objc private func linkButtonTapped() {
         delegate?.ntpTooltipLinkTapped(self)
-    }
-
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        applyTheme()
     }
 
     private func updateTailPosition() {

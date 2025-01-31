@@ -96,6 +96,7 @@ extension NTPNewsCellViewModel: HomepageSectionHandler {
         guard let cell = cell as? NTPNewsCell else { return UICollectionViewCell() }
         let itemCount = numberOfItemsInSection()
         cell.configure(items[indexPath.row], images: images, row: indexPath.row, totalCount: itemCount)
+        cell.applyTheme(theme: theme)
         return cell
     }
 

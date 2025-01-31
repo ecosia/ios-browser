@@ -245,6 +245,7 @@ extension WhatsNewViewController: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: WhatsNewCell.cellIdentifier, for: indexPath) as! WhatsNewCell
         let item = viewModel.items[indexPath.row]
         cell.configure(with: item)
+        cell.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
         return cell
     }
 }

@@ -11,7 +11,7 @@ protocol NTPSeedCounterDelegate: NSObjectProtocol {
     func didTapSeedCounter()
 }
 
-final class NTPSeedCounterCell: UICollectionViewCell, Themeable, ReusableCell {
+final class NTPSeedCounterCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
 
     // MARK: - UX Constants
     private enum UX {
@@ -36,11 +36,6 @@ final class NTPSeedCounterCell: UICollectionViewCell, Themeable, ReusableCell {
     // Transparent button and TwinkleView
     private var button = UIButton()
     private var twinkleHostingController: UIHostingController<TwinkleView>?
-
-    // MARK: - Themeable Properties
-    var themeManager: ThemeManager { AppContainer.shared.resolve() }
-    var themeObserver: NSObjectProtocol?
-    var notificationCenter: NotificationProtocol = NotificationCenter.default
 
     // MARK: - Init
 
@@ -67,8 +62,6 @@ final class NTPSeedCounterCell: UICollectionViewCell, Themeable, ReusableCell {
         setupSeedCounterViewHostingController()
         setupTwinkleViewHostingController()
         setupTransparentButton()
-        applyTheme()
-        listenForThemeChange(contentView)
     }
 
     private func setupTransparentButton() {
@@ -203,8 +196,7 @@ final class NTPSeedCounterCell: UICollectionViewCell, Themeable, ReusableCell {
     }
 
     // MARK: - Theming
-    @objc func applyTheme() {
-        let theme = themeManager.getCurrentTheme(for: currentWindowUUID)
+    func applyTheme(theme: Theme) {
         containerStackView.backgroundColor = theme.colors.ecosia.backgroundSecondary
     }
 }

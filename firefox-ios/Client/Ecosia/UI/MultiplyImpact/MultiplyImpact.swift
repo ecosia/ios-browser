@@ -457,7 +457,7 @@ class MultiplyImpact: UIViewController, Themeable {
         }
 
         referralImpactRowView.customBackgroundColor = theme.colors.ecosia.impactMultiplyCardBackground
-        referralImpactRowView.applyTheme()
+        referralImpactRowView.applyTheme(theme: theme)
 
         updateBarAppearance(theme: theme)
     }

@@ -5,18 +5,12 @@
 import UIKit
 import Common
 
-final class WelcomeTourProfit: UIView, Themeable {
+final class WelcomeTourProfit: UIView, ThemeApplicable {
     weak var beforeContainer: UIView!
     weak var beforeLabel: UILabel!
     weak var afterContainer: UIView!
     weak var afterLabel: UILabel!
     weak var treeImage: UIImageView!
-
-    // MARK: - Themeable Properties
-
-    var themeManager: ThemeManager { AppContainer.shared.resolve() }
-    var themeObserver: NSObjectProtocol?
-    var notificationCenter: NotificationProtocol = NotificationCenter.default
 
     // MARK: - Init
 
@@ -24,7 +18,6 @@ final class WelcomeTourProfit: UIView, Themeable {
         super.init(frame: .zero)
         setup()
         updateAccessibilitySettings()
-        applyTheme()
     }
 
     required init?(coder: NSCoder) {  nil }
@@ -108,8 +101,7 @@ final class WelcomeTourProfit: UIView, Themeable {
         afterDot.centerXAnchor.constraint(equalTo: afterEllipse.leadingAnchor).isActive = true
     }
 
-    func applyTheme() {
-        let theme = themeManager.getCurrentTheme(for: currentWindowUUID)
+    func applyTheme(theme: Theme) {
         beforeContainer.backgroundColor = theme.colors.ecosia.modalBackground
         afterContainer.backgroundColor = theme.colors.ecosia.modalBackground
         beforeLabel.textColor = theme.colors.ecosia.textPrimary

@@ -81,6 +81,7 @@ final class FilterController: UIViewController, UITableViewDataSource, UITableVi
         let theme = themeManager.getCurrentTheme(for: windowUUID)
         table.visibleCells.forEach {
             ($0 as? Themeable)?.applyTheme()
+            ($0 as? ThemeApplicable)?.applyTheme(theme: theme)
         }
 
         view.backgroundColor = theme.colors.ecosia.ntpBackground

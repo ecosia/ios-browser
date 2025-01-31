@@ -6,17 +6,11 @@ import UIKit
 import Core
 import Common
 
-final class NTPLogoCell: UICollectionViewCell, ReusableCell, Themeable {
+final class NTPLogoCell: UICollectionViewCell, ReusableCell, ThemeApplicable {
     static let bottomMargin: CGFloat = 6
     static let width: CGFloat = 144
 
     private weak var logo: UIImageView!
-
-    // MARK: - Themeable Properties
-
-    var themeManager: ThemeManager { AppContainer.shared.resolve() }
-    var themeObserver: NSObjectProtocol?
-    var notificationCenter: NotificationProtocol = NotificationCenter.default
 
     // MARK: - Init
 
@@ -50,12 +44,9 @@ final class NTPLogoCell: UICollectionViewCell, ReusableCell, Themeable {
         logo.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
         logo.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
         logo.widthAnchor.constraint(equalToConstant: Self.width).isActive = true
-
-        listenForThemeChange(contentView)
     }
 
-    func applyTheme() {
-        let theme = themeManager.getCurrentTheme(for: currentWindowUUID)
+    func applyTheme(theme: Theme) {
         logo.tintColor = theme.colors.ecosia.brandPrimary
     }
 }

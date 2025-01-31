@@ -92,29 +92,16 @@ final class NTPAboutEcosiaCell: UICollectionViewCell, ReusableCell {
         disclosureView.frame.maxY + (isLastSection ? 16 : 0)
     }
 
-    // MARK: - Themeable Properties
-
-    var themeManager: ThemeManager { AppContainer.shared.resolve() }
-    var themeObserver: NSObjectProtocol?
-    var notificationCenter: NotificationProtocol = NotificationCenter.default
-
     // MARK: - Init
 
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
-        applyTheme()
     }
 
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         setup()
-        applyTheme()
-    }
-
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        applyTheme()
     }
 
     override func layoutSubviews() {
@@ -186,7 +173,6 @@ final class NTPAboutEcosiaCell: UICollectionViewCell, ReusableCell {
             dividerView.bottomAnchor.constraint(equalTo: outlineView.bottomAnchor),
             dividerView.heightAnchor.constraint(equalToConstant: 1)
         ])
-        listenForThemeChange(contentView)
     }
 
     func rotateIndicator(isExpanded: Bool) {
@@ -232,10 +218,9 @@ final class NTPAboutEcosiaCell: UICollectionViewCell, ReusableCell {
     }
 }
 
-extension NTPAboutEcosiaCell: Themeable {
+extension NTPAboutEcosiaCell: ThemeApplicable {
 
-    func applyTheme() {
-        let theme = themeManager.getCurrentTheme(for: currentWindowUUID)
+    func applyTheme(theme: Theme) {
         outlineView.backgroundColor = theme.colors.ecosia.ntpCellBackground
         titleLabel.textColor = theme.colors.ecosia.textPrimary
         indicatorImageView.tintColor = theme.colors.ecosia.textSecondary

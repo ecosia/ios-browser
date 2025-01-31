@@ -626,7 +626,7 @@ class HistoryPanel: UIViewController,
             // Ecosia: Replace empty header
             // tableView.tableFooterView = emptyStateOverlayView
             tableView.tableFooterView = emptyHeader
-            emptyHeader.applyTheme()
+            emptyHeader.applyTheme(theme: currentTheme())
         } else {
             tableView.alwaysBounceVertical = true
             tableView.tableFooterView = nil

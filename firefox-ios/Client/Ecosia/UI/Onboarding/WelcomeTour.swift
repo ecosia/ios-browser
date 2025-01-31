@@ -38,14 +38,16 @@ final class WelcomeTour: UIViewController, Themeable {
 
     // MARK: - Themeable Properties
 
-    var currentWindowUUID: WindowUUID? { return view.currentWindowUUID }
+    let windowUUID: WindowUUID
+    var currentWindowUUID: WindowUUID? { windowUUID }
     var themeManager: ThemeManager { AppContainer.shared.resolve() }
     var themeObserver: NSObjectProtocol?
     var notificationCenter: NotificationProtocol = NotificationCenter.default
 
     // MARK: - Init
 
-    init(delegate: WelcomeTourDelegate, startingStep: Step? = nil) {
+    init(delegate: WelcomeTourDelegate, windowUUID: WindowUUID, startingStep: Step? = nil) {
+        self.windowUUID = windowUUID
         super.init(nibName: nil, bundle: nil)
         modalPresentationCapturesStatusBarAppearance = true
         self.delegate = delegate
@@ -291,7 +293,7 @@ final class WelcomeTour: UIViewController, Themeable {
         container.subviews.forEach({ $0.removeFromSuperview() })
 
         guard let content = content else { return }
-        (content as? Themeable)?.applyTheme()
+        (content as? ThemeApplicable)?.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
         container.addSubview(content)
         content.translatesAutoresizingMaskIntoConstraints = false
         content.leadingAnchor.constraint(equalTo: container.leadingAnchor).isActive = true
@@ -368,7 +370,7 @@ final class WelcomeTour: UIViewController, Themeable {
         pageControl.currentPageIndicatorTintColor = theme.colors.ecosia.buttonBackgroundPrimary
         ctaButton.backgroundColor = .Light.Button.backgroundSecondary
         ctaButton.setTitleColor(.Light.Text.primary, for: .normal)
-        container.subviews.forEach({ ($0 as? Themeable)?.applyTheme() })
+        container.subviews.forEach({ ($0 as? ThemeApplicable)?.applyTheme(theme: theme) })
 
         imageView.backgroundColor = current?.background.color ?? .clear
         guard let current = current else { return }

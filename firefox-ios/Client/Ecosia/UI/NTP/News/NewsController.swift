@@ -133,6 +133,7 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
     func collectionView(_: UICollectionView, cellForItemAt: IndexPath) -> UICollectionViewCell {
         let cell = collection.dequeueReusableCell(withReuseIdentifier: identifier, for: cellForItemAt) as! NTPNewsCell
         cell.configure(items[cellForItemAt.row], images: images, row: cellForItemAt.item, totalCount: items.count)
+        cell.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
         return cell
     }
 
@@ -144,13 +145,15 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
     }
 
     func applyTheme() {
+        let theme = themeManager.getCurrentTheme(for: windowUUID)
         collection.visibleSupplementaryViews(ofKind: UICollectionView.elementKindSectionHeader).forEach({
             ($0 as? Themeable)?.applyTheme()
+            ($0 as? ThemeApplicable)?.applyTheme(theme: theme)
         })
         collection.visibleCells.forEach({
             ($0 as? Themeable)?.applyTheme()
+            ($0 as? ThemeApplicable)?.applyTheme(theme: theme)
         })
-        let theme = themeManager.getCurrentTheme(for: windowUUID)
         collection.backgroundColor = theme.colors.ecosia.modalBackground
         updateBarAppearance()
 
@@ -177,13 +180,7 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
     }
 }
 
-private final class NewsSubHeader: UICollectionReusableView, Themeable {
-
-    // MARK: - Themeable Properties
-
-    var themeManager: ThemeManager { AppContainer.shared.resolve() }
-    var themeObserver: NSObjectProtocol?
-    var notificationCenter: NotificationProtocol = NotificationCenter.default
+private final class NewsSubHeader: UICollectionReusableView, ThemeApplicable {
 
     // MARK: - Properties
 
@@ -208,16 +205,9 @@ private final class NewsSubHeader: UICollectionReusableView, Themeable {
         subtitle.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16).isActive = true
         subtitle.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
         subtitle.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
-        applyTheme()
     }
 
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        applyTheme()
-    }
-
-    func applyTheme() {
-        let theme = themeManager.getCurrentTheme(for: currentWindowUUID)
+    func applyTheme(theme: Theme) {
         backgroundColor = theme.colors.ecosia.modalBackground
         subtitle.textColor = theme.colors.ecosia.textSecondary
     }

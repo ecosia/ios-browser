@@ -45,8 +45,14 @@ final class ShowTour: HiddenSetting, WelcomeDelegate {
         return NSAttributedString(string: "Debug: Show Intro", attributes: [NSAttributedString.Key.foregroundColor: theme.colors.ecosia.tableViewRowText])
     }
 
+    let windowUUID: WindowUUID
+    init(settings: SettingsTableViewController, windowUUID: WindowUUID) {
+        self.windowUUID = windowUUID
+        super.init(settings: settings)
+    }
+
     override func onClick(_ navigationController: UINavigationController?) {
-        let welcome = Welcome(delegate: self)
+        let welcome = Welcome(delegate: self, windowUUID: windowUUID)
         welcome.modalPresentationStyle = .fullScreen
         welcome.modalTransitionStyle = .coverVertical
         navigationController?.present(welcome, animated: true)
