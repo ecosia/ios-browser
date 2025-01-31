@@ -73,10 +73,8 @@ public final class EcosiaThemeManager: ThemeManager, Notifiable {
     // MARK: - Themeing general functions
     public func getCurrentTheme(for window: WindowUUID?) -> Theme {
         guard let window else {
-            // TODO: Further investigate why there were issues with null windows and if it's ok to make this safer like we did
-            // See https://ecosia.atlassian.net/browse/MOB-3159?focusedCommentId=99835
-            let isDarkUIScreen = UIScreen.main.traitCollection.userInterfaceStyle == .dark
-            return isDarkUIScreen ? EcosiaDarkTheme() : EcosiaLightTheme()
+            assertionFailure("Attempt to get the theme for a nil window UUID.")
+            return EcosiaDarkTheme()
         }
 
         return getThemeFrom(type: determineThemeType(for: window))
