@@ -4,7 +4,7 @@
 
 import SnapshotTesting
 import XCTest
-import Core
+import Ecosia
 import Common
 @testable import Client
 
@@ -24,12 +24,14 @@ final class NTPTests: SnapshotBaseTests {
 extension NTPTests {
     fileprivate func snapshotNTP(impactIntroShown: Bool) {
         SnapshotTestHelper.assertSnapshot(initializingWith: {
-            let tabManager = TabManagerImplementation(profile: self.profile, imageStore: nil)
-            let urlBar = URLBarView(profile: self.profile)
+            let windowUUID = WindowUUID(uuidString: UUID().uuidString)!
+            let tabManager = TabManagerImplementation(profile: self.profile,
+                                                      uuid: ReservedWindowUUID(uuid: windowUUID, isNew: false))
+            let urlBar = URLBarView(profile: self.profile, windowUUID: windowUUID)
             let overlayManager = MockOverlayModeManager()
             overlayManager.setURLBar(urlBarView: urlBar)
 
-            let homePageViewController = HomepageViewController(profile: self.profile,
+            let homePageViewController = LegacyHomepageViewController(profile: self.profile,
                                                                 toastContainer: UIView(),
                                                                 tabManager: tabManager,
                                                                 overlayManager: overlayManager,

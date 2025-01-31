@@ -4,7 +4,7 @@
 
 import Foundation
 import Shared
-import Core
+import Ecosia
 import Common
 
 protocol NTPImpactCellDelegate: AnyObject {

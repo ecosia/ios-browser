@@ -8,39 +8,88 @@ import Shared
 
 final class EcosiaMockThemeManager: ThemeManager {
 
-    var currentTheme: Theme = EcosiaLightTheme()
-    var window: UIWindow?
+    // These have been carried over from the legacy system to maintain backwards compatibility
+    private enum ThemeKeys {
+        static let themeName = "prefKeyThemeName"
+        static let systemThemeIsOn = "prefKeySystemThemeSwitchOnOff"
 
-    func getInterfaceStyle() -> UIUserInterfaceStyle {
-        currentTheme.type.getInterfaceStyle()
-    }
+        enum AutomaticBrightness {
+            static let isOn = "prefKeyAutomaticSwitchOnOff"
+            static let thresholdValue = "prefKeyAutomaticSliderValue"
+        }
 
-    func changeCurrentTheme(_ newTheme: ThemeType) {
-        switch newTheme {
-        case .light:
-            currentTheme = EcosiaLightTheme()
-        case .dark:
-            currentTheme = EcosiaDarkTheme()
-        case .privateMode:
-            currentTheme = PrivateModeTheme()
+        enum NightMode {
+            static let isOn = "profile.NightModeStatus"
         }
     }
 
+    var getCurrentThemeCallCount = 0
+    private var currentThemeStorage: Theme = EcosiaLightTheme()
+
+    func getCurrentTheme(for window: UUID?) -> Theme {
+        getCurrentThemeCallCount += 1
+        return currentThemeStorage
+    }
+
+    var window: UIWindow?
+    let windowUUID: WindowUUID = .XCTestDefaultUUID
+
+    var systemThemeIsOn = true
+
+    var automaticBrightnessIsOn: Bool { return false}
+
+    var automaticBrightnessValue: Float { return 0.4}
+
+    func getInterfaceStyle() -> UIUserInterfaceStyle {
+        return .light
+    }
+
+    func setManualTheme(to newTheme: ThemeType) {
+        switch newTheme {
+        case .light:
+            currentThemeStorage = LightTheme()
+        case .dark:
+            currentThemeStorage = DarkTheme()
+        case .nightMode:
+            currentThemeStorage = NightModeTheme()
+        case .privateMode:
+            currentThemeStorage = PrivateModeTheme()
+        }
+    }
+
+    func applyThemeUpdatesToWindows() { }
+
     func systemThemeChanged() {}
 
-    func setSystemTheme(isOn: Bool) {}
+    func setSystemTheme(isOn: Bool) {
+        systemThemeIsOn = isOn
+    }
 
-    func setPrivateTheme(isOn: Bool) {}
+    func setPrivateTheme(isOn: Bool, for window: UUID) {}
+
+    func getPrivateThemeIsOn(for window: UUID) -> Bool { return false }
 
     func setAutomaticBrightness(isOn: Bool) {}
 
     func setAutomaticBrightnessValue(_ value: Float) {
         let screenLessThanPref = Float(UIScreen.main.brightness) < value
 
-        if screenLessThanPref, currentTheme.type == .light {
-            changeCurrentTheme(.dark)
-        } else if !screenLessThanPref, currentTheme.type == .dark {
-            changeCurrentTheme(.light)
+        if screenLessThanPref, getCurrentTheme(for: windowUUID).type == .light {
+            setManualTheme(to: .dark)
+        } else if !screenLessThanPref, getCurrentTheme(for: windowUUID).type == .dark {
+            setManualTheme(to: .light)
         }
     }
+
+    func updateThemeBasedOnBrightess() { }
+
+    func getUserManualTheme() -> ThemeType { return currentThemeStorage.type }
+
+    func reloadTheme(for window: UUID) { }
+
+    func setWindow(_ window: UIWindow, for uuid: UUID) { }
+
+    func windowDidClose(uuid: UUID) { }
+
+    func windowNonspecificTheme() -> Theme { return currentThemeStorage }
 }

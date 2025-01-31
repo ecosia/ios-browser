@@ -183,29 +183,3 @@ extension UIImage {
         self.init(named: name + suffix)
     }
 }
-
-class EcosiaPrimaryButton: UIButton {
-    override var isSelected: Bool {
-        get {
-            return super.isSelected
-        }
-        set {
-            super.isSelected = newValue
-            update()
-        }
-    }
-
-    override var isHighlighted: Bool {
-        get {
-            return super.isHighlighted
-        }
-        set {
-            super.isHighlighted = newValue
-            update()
-        }
-    }
-
-    private func update() {
-        backgroundColor = (isSelected || isHighlighted) ? .legacyTheme.ecosia.primaryButtonActive : .legacyTheme.ecosia.primaryButton
-    }
-}

@@ -148,7 +148,7 @@ final class SnapshotTestHelper {
     ///   - themeManager: The `ThemeManager` responsible for applying theme changes across the app.
     private static func changeThemeTo(_ theme: UIUserInterfaceStyle, suffix: ThemeConfiguration.Theme, themeManager: ThemeManager) {
         LegacyThemeManager.instance.current = suffix == .light ? LegacyNormalTheme() : LegacyDarkTheme()
-        themeManager.changeCurrentTheme(suffix == .light ? .light : .dark)
+        themeManager.setManualTheme(to: suffix == .light ? .light : .dark)
     }
 
     /// Captures snapshots of a `UIViewController` across multiple device configurations.
