@@ -20,12 +20,11 @@ class EcosiaLightColourPalette: EcosiaThemeColourPalette {
     }
 
     // MARK: - Layers
-    var layer1: UIColor { ecosia.backgroundTertiary }
+    var layer1: UIColor { ecosia.ntpBackground }
     var layer2: UIColor { fallbackTheme.colors.layer2 }
     var layer3: UIColor { ecosia.ntpBackground }
     var layer4: UIColor { fallbackTheme.colors.layer4 }
     var layer5: UIColor { ecosia.backgroundSecondary }
-    var layer6: UIColor { ecosia.modalBackground }
     var layer5Hover: UIColor { ecosia.secondarySelectedBackground }
     var layerScrim: UIColor { fallbackTheme.colors.layerScrim }
     var layerGradient: Gradient { fallbackTheme.colors.layerGradient }

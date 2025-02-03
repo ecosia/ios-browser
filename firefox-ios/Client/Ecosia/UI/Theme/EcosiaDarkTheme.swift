@@ -18,8 +18,6 @@ private class EcosiaDarkColourPalette: EcosiaLightColourPalette {
     override var fallbackTheme: Theme {
         DarkTheme()
     }
-
-    override var layer1: UIColor { ecosia.backgroundPrimary }
 }
 
 private struct EcosiaDarkSemanticColors: EcosiaSemanticColors {
