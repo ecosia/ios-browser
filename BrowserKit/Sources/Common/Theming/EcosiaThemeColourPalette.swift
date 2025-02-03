@@ -55,7 +55,6 @@ public protocol EcosiaSemanticColors {
     var impactMultiplyCardBackground: UIColor { get } // == ntpCellBackground
     var newsPlaceholder: UIColor { get }
     var modalBackground: UIColor { get } // Light.backgroundTertiary + Dark.backgroundSecondary
-    var modalHeader: UIColor { get }
     var secondarySelectedBackground: UIColor { get }
     var buttonBackgroundNTPCustomization: UIColor { get }
     var privateButtonBackground: UIColor { get }
@@ -104,7 +103,6 @@ class FakeEcosiaSemanticColors: EcosiaSemanticColors {
     var impactMultiplyCardBackground: UIColor = .systemGray
     var newsPlaceholder: UIColor = .systemGray
     var modalBackground: UIColor = .systemGray
-    var modalHeader: UIColor = .systemGray
     var secondarySelectedBackground: UIColor = .systemGray
     var buttonBackgroundNTPCustomization: UIColor = .systemGray
     var privateButtonBackground: UIColor = .systemGray

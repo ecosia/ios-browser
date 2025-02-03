@@ -144,7 +144,6 @@ private struct EcosiaLightSemanticColors: EcosiaSemanticColors {
     var impactMultiplyCardBackground: UIColor = EcosiaColor.White
     var newsPlaceholder: UIColor = EcosiaColor.Gray10
     var modalBackground: UIColor = EcosiaColor.Gray20
-    var modalHeader: UIColor = EcosiaColor.DarkGreen50
     var secondarySelectedBackground: UIColor = EcosiaColor.Gray10
     var buttonBackgroundNTPCustomization: UIColor = EcosiaColor.Gray10
     var privateButtonBackground: UIColor = .Photon.Grey70
