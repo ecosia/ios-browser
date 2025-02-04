@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:3c51ddd5d18e6202b87cd64defb276ab8477510b57d5c70bafd67f193bad15e9
-size 529
+/* Accessibility label for next button that is displayed above the keyboard when a form field on a website was tapped. */
+"KeyboardAccessory.NextButton.Accessibility.Label.v124" = "ᱤᱱᱟᱹ ᱛᱟᱭᱚᱢᱟᱜ ᱯᱷᱚᱨᱢ ᱯᱮᱨᱮᱡ ᱡᱟᱭᱜᱟ";
+
+/* Accessibility label for previous button that is displayed above the keyboard when a form field on a website was tapped. */
+"KeyboardAccessory.PreviousButton.Accessibility.Label.v124" = "ᱢᱟᱲᱟᱝᱟᱜ ᱯᱷᱚᱨᱢ ᱯᱮᱨᱮᱡ ᱡᱟᱭᱜᱟ";
+

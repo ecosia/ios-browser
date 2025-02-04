@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:dfebb54eea20670eac0d698a558d7bb4767e6f3fbb8805b68dd720b1359a8671
-size 168
+{
+  "images" : [
+    {
+      "filename" : "nightModeFillLarge.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

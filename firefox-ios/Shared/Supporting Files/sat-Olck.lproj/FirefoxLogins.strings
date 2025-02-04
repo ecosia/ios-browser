@@ -1,3 +1,18 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:d0d2ff9a31232817b8d94e63940df2a15e93c6a56e8d59e53dcccb1e742ef2de
-size 1081
+/* Prompt for saving the username in the Save Logins prompt. */
+"LoginsHelper.PromptSaveLogin.Title.v122" = "ᱵᱮᱵᱷᱟᱨᱤᱭᱟᱹ ᱧᱩᱛᱩᱢ ᱥᱟᱧᱪᱟᱣ ᱟ ?";
+
+/* Prompt for saving a password in the Save Logins prompt. */
+"LoginsHelper.PromptSavePassword.Title.v122" = "ᱫᱟᱱᱟᱝ ᱥᱟᱵᱟᱫᱽ ᱠᱚ ᱥᱟᱺᱪᱟᱣᱟ ?";
+
+/* Prompt for updating the password in the Update Password prompt. */
+"LoginsHelper.PromptUpdateLogin.Title.OneArg.v122" = "ᱫᱟᱱᱟᱝ ᱥᱟᱵᱟᱫᱽ ᱦᱟᱹᱞᱤᱭᱟᱹᱠ ᱟ ?";
+
+/* Prompt for updating a password in the Update Password prompt. */
+"LoginsHelper.PromptUpdateLogin.Title.TwoArg.v122" = "ᱫᱟᱱᱟᱝ ᱥᱟᱵᱟᱫᱽ ᱦᱟᱹᱞᱤᱭᱟᱹᱠ ᱟ ?";
+
+/* Placeholder text for search box in logins list view. */
+"LoginsList.LoginsListSearchPlaceholder.v122" = "ᱫᱟᱱᱟᱝ ᱥᱟᱵᱟᱫᱽ ᱠᱚ ᱫᱮᱠᱷᱟᱣ ᱢᱮ";
+
+/* Title for the list of logins saved by the app */
+"LoginsList.Title.v122" = "ᱥᱟᱧᱪᱟᱣ ᱠᱟᱱ ᱫᱟᱱᱟᱝ ᱥᱟᱵᱟᱫᱠᱚ";
+

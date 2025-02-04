@@ -1,3 +1,97 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:62f0084569f0eea4f83ad0687da1d9885f4330c198ff38d7e04a01294b42f99f
-size 2681
+{
+  "configurations" : [
+    {
+      "id" : "A98C0147-1E50-47C8-8214-6E811BD56870",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false
+  },
+  "testTargets" : [
+    {
+      "skippedTests" : [
+        "ActivityStreamTest",
+        "AuthenticationTest",
+        "BookmarksTests",
+        "BrowsingPDFTests",
+        "ClipBoardTests",
+        "CreditCardsTests",
+        "DataManagementTests",
+        "DatabaseFixtureTest",
+        "DatabaseFixtureTest\/testPerfBookmarks1000openMenu()",
+        "DatabaseFixtureTest\/testPerfBookmarks1000startUp()",
+        "DatabaseFixtureTest\/testPerfHistory4000openMenu()",
+        "DatabaseFixtureTest\/testPerfHistory4000startUp()",
+        "DesktopModeTestsIpad",
+        "DesktopModeTestsIphone",
+        "DisplaySettingTests",
+        "DomainAutocompleteTests",
+        "DownloadsTests",
+        "DragAndDropTestIpad",
+        "DragAndDropTests",
+        "EngagementNotificationTests",
+        "ExperimentIntegrationTests",
+        "FakespotTests",
+        "FindInPageTests",
+        "FirefoxSuggestTest",
+        "FxScreenGraphTests",
+        "HistoryTests",
+        "HomeButtonTests",
+        "HomePageSettingsUITests",
+        "InactiveTabsTest",
+        "IntegrationTests",
+        "IpadOnlyTestCase",
+        "IphoneOnlyTestCase",
+        "JumpBackInTests",
+        "LibraryTestsIpad",
+        "LoginTest",
+        "MicrosurveyTests",
+        "MultiWindowTests",
+        "NavigationTest",
+        "NewTabSettingsTest",
+        "NightModeTests",
+        "OnboardingTests",
+        "OpeningScreenTests",
+        "PerformanceTests\/testPerfTabs_3_20tabTray()",
+        "PerformanceTests\/testPerfTabs_4_1280tabTray()",
+        "PhotonActionSheetTests",
+        "PocketTest",
+        "PocketTests",
+        "PrivateBrowsingTest",
+        "PrivateBrowsingTestIpad",
+        "PrivateBrowsingTestIphone",
+        "ReadingListTests",
+        "ReportSiteTests",
+        "ScreenGraphTest",
+        "SearchSettingsUITests",
+        "SearchTests",
+        "SettingsTests",
+        "SiteLoadTest",
+        "SyncUITests",
+        "TabCounterTests",
+        "ThirdPartySearchTest",
+        "TodayWidgetTests",
+        "ToolbarMenuTests",
+        "ToolbarTests",
+        "TopTabsTest",
+        "TopTabsTestIpad",
+        "TopTabsTestIphone",
+        "TrackingProtectionTests",
+        "URLValidationTests",
+        "UrlBarTests",
+        "WhatsNewTest",
+        "ZoomingTests"
+      ],
+      "target" : {
+        "containerPath" : "container:Client.xcodeproj",
+        "identifier" : "3BFE4B061D342FB800DDF53F",
+        "name" : "XCUITests"
+      }
+    }
+  ],
+  "version" : 1
+}

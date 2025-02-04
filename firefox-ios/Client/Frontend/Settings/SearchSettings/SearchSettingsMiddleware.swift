@@ -1,3 +1,8 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:61e384470c5b152a15ef3b10eb90da2427b789e2996cd76825836dbc99d3639d
-size 256
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+class SearchSettingsMiddleware {
+}

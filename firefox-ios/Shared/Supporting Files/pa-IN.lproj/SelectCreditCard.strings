@@ -1,3 +1,3 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:dcb3515f00e1f30bded17a6ef1012fdf579b2514ea69b6db41cb08e585840c06
-size 206
+/* This value is used as the title for the select a credit card from list of available cards. */
+"CreditCard.SelectCreditCard.MainTitle.v122" = "ਸੰਭਾਲੇ ਕਾਰਡ ਨੂੰ ਵਰਤੋਂ";
+

@@ -1,3 +1,22 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:55c1bce7b31e716f25880e480f458a453e33503f0552b9535744b3c0c5c10078
-size 371
+{
+  "images" : [
+    {
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "filename" : "apnConsentImageTest1@2x.png",
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "filename" : "apnConsentImageTest1@3x.png",
+      "idiom" : "universal",
+      "scale" : "3x"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

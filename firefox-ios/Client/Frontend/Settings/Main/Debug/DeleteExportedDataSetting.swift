@@ -1,3 +1,28 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:563ca77f5795513606d279e38ee49f53d61f9e741dcb6b4b34b59703030554d8
-size 1125
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+class DeleteExportedDataSetting: HiddenSetting {
+    override var title: NSAttributedString? {
+        // Not localized for now.
+        return NSAttributedString(
+            string: "Delete exported databases",
+            attributes: [NSAttributedString.Key.foregroundColor: theme.colors.textPrimary]
+        )
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        let documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
+        let fileManager = FileManager.default
+        do {
+            let files = try fileManager.contentsOfDirectory(atPath: documentsPath)
+            for file in files {
+                if file.hasPrefix("browser.") || file.hasPrefix("logins.") {
+                    try fileManager.removeItemInDirectory(documentsPath, named: file)
+                }
+            }
+        } catch {}
+    }
+}

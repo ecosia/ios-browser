@@ -1,3 +1,18 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:078e79623cb467bea9ffe39fc35eeab1907f7b19af675b9f0b51a99a813ad394
-size 816
+/* Prompt for saving the username in the Save Logins prompt. */
+"LoginsHelper.PromptSaveLogin.Title.v122" = "Lưu tên đăng nhập?";
+
+/* Prompt for saving a password in the Save Logins prompt. */
+"LoginsHelper.PromptSavePassword.Title.v122" = "Lưu mật khẩu?";
+
+/* Prompt for updating the password in the Update Password prompt. */
+"LoginsHelper.PromptUpdateLogin.Title.OneArg.v122" = "Cập nhật mật khẩu?";
+
+/* Prompt for updating a password in the Update Password prompt. */
+"LoginsHelper.PromptUpdateLogin.Title.TwoArg.v122" = "Cập nhật mật khẩu?";
+
+/* Placeholder text for search box in logins list view. */
+"LoginsList.LoginsListSearchPlaceholder.v122" = "Tìm kiếm mật khẩu";
+
+/* Title for the list of logins saved by the app */
+"LoginsList.Title.v122" = "MẬT KHẨU ĐÃ LƯU";
+

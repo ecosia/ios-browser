@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:e038476d7b10572d42fc202000943cca7016cc2997d0ad0396d9eb552491224d
-size 231
+{
+  "images" : [
+    {
+      "filename" : "HuggingFocus.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

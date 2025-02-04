@@ -1,3 +1,3 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:4a8e8825f39f42e47be44014a1a2bdc17b852f9c1231b5f6e0bc831975bf4f0a
-size 132
+/* Label for preview action on Tab Tray Tab to send the current tab to another device */
+"Send to Device" = "Unviar a un preséu";
+

@@ -1,3 +1,32 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:dafdebc9544130ed783599b3393bc730490512ada6944404c24797f3d280bb62
-size 1077
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+import Shared
+
+class SendFeedbackSetting: Setting {
+    private weak var settingsDelegate: SupportSettingsDelegate?
+
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: .AppSettingsSendFeedback,
+                                  attributes: [NSAttributedString.Key.foregroundColor: theme.colors.textPrimary])
+    }
+
+    override var url: URL? {
+        return URL(string: "https://connect.mozilla.org/")
+    }
+
+    override var accessibilityIdentifier: String? {
+        return AccessibilityIdentifiers.Settings.SendFeedback.title
+    }
+
+    init(settingsDelegate: SupportSettingsDelegate?) {
+        self.settingsDelegate = settingsDelegate
+        super.init()
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        settingsDelegate?.askedToOpen(url: url, withTitle: title)
+    }
+}

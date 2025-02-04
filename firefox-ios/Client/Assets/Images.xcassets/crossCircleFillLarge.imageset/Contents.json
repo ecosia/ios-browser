@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:993c174976a9a9f7bed12b71ca7297354dd1e9b489f28e4a64e08daa4833852e
-size 239
+{
+  "images" : [
+    {
+      "filename" : "crossCircleFillLarge.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:ed7267554e3d80749ff1070d8af90e2c546e7cfe217d102ff7a84d6df6134173
-size 687
+/* Label text that gets presented as a confirmation at the bottom of screen when the credit card is successfully removed. */
+"CreditCard.SnackBar.RemovedCardLabel.v112" = "Η κάρτα αφαιρέθηκε";
+
+/* Label text that gets presented as a confirmation at the bottom of screen when credit card information gets saved successfully */
+"CreditCard.SnackBar.SavedCardLabel.v112" = "Η νέα κάρτα αποθηκεύτηκε";
+
+/* Label text that gets presented as a confirmation at the bottom of screen when credit card information gets updated successfully */
+"CreditCard.SnackBar.UpdatedCardLabel.v122" = "Τα στοιχεία της κάρτας ενημερώθηκαν";
+

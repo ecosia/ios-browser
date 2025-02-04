@@ -1,3 +1,18 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:9a64ad9161b82219bdebc58319b9d4308ff84ec41e4aa68cf0fc5762aedf3aa1
-size 865
+/* Privacy - Camera Usage Description */
+"NSCameraUsageDescription" = "Toto vám dovolí pořizovat a nahrávat fotografie.";
+
+/* Privacy - Face ID Usage Description */
+"NSFaceIDUsageDescription" = "Toto vám umožní odemknout aplikaci.";
+
+/* Privacy - Location When In Use Usage Description */
+"NSLocationWhenInUseUsageDescription" = "Servery, které navštěvujete, mohou chtít znát vaše umístění.";
+
+/* Privacy - Microphone Usage Description */
+"NSMicrophoneUsageDescription" = "Toto vám dovolí pořizovat a nahrávat videa.";
+
+/* Privacy - Photo Library Additions Usage Description */
+"NSPhotoLibraryAddUsageDescription" = "Toto vám dovolí ukládat a nahrávat fotografie.";
+
+/* This is the menu item that appears when you long press the Focus icon on the phone home screen. */
+"UIApplicationShortcutItemTitle.EraseAndOpen" = "Vymazat a otevřít";
+

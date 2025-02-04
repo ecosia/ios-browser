@@ -1,3 +1,44 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:c0ad0dc1e4a520bda882c3c1cf6a1e7276dd4ba0cd1759eae5339399d3279251
-size 1708
+---
+# The features to be included in the nimbus.fml will be listed
+# in the `include` block. This should not be a manual process.
+# Please see the documentation in `iOSNimbusFeatureUtility`
+# for more information
+about:
+  description: The root level Feature Manifest for Firefox for iOS
+  ios:
+    class: FxNimbus
+    module: Client
+channels:
+  - developer
+  - beta
+  - release
+include:
+  - nimbus-features/accountSettingsReduxFeature.yaml
+  - nimbus-features/addressAutofillFeature.yaml
+  - nimbus-features/autofillFeature.yaml
+  - nimbus-features/bookmarkRefactorFeature.yaml
+  - nimbus-features/contextualHintFeature.yaml
+  - nimbus-features/fakespotFeature.yaml
+  - nimbus-features/feltPrivacyFeature.yaml
+  - nimbus-features/firefoxSuggestFeature.yaml
+  - nimbus-features/generalFeatures.yaml
+  - nimbus-features/gleanServerKnobs.yaml
+  - nimbus-features/homepageRebuildFeature.yaml
+  - nimbus-features/homescreenFeature.yaml
+  - nimbus-features/menuRefactorFeature.yaml
+  - nimbus-features/messagingFeature.yaml
+  - nimbus-features/microsurveyFeature.yaml
+  - nimbus-features/nativeErrorPageFeature.yaml
+  - nimbus-features/nightModeFeature.yaml
+  - nimbus-features/onboardingFrameworkFeature.yaml
+  - nimbus-features/passwordGeneratorFeature.yaml
+  - nimbus-features/reduxSearchSettingsFeature.yaml
+  - nimbus-features/remoteTabManagement.yaml
+  - nimbus-features/searchFeature.yaml
+  - nimbus-features/splashScreenFeature.yaml
+  - nimbus-features/spotlightSearchFeature.yaml
+  - nimbus-features/tabTrayFeature.yaml
+  - nimbus-features/tabTrayRefactorFeature.yaml
+  - nimbus-features/toolbarRefactorFeature.yaml
+  - nimbus-features/trackingProtectionRefactor.yaml
+  - nimbus-features/zoomFeature.yaml

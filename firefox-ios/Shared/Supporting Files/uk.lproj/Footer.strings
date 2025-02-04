@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:31c4772a0186684e69eea4f8f9bc8a4f5435579d0d196f396a3a2ae07c432456
-size 432
+/* This is the learn more text of the Pocket footer on Firefox Homepage. */
+"FirefoxHomepage.Pocket.Footer.LearnMore.v115" = "Докладніше";
+
+/* This is the title of the Pocket footer on Firefox Homepage. The first placeholder is for the Pocket app name and the second placeholder for the app name */
+"FirefoxHomepage.Pocket.Footer.Title.v116" = "Технологія %1$@. Належить до продуктів %2$@.";
+

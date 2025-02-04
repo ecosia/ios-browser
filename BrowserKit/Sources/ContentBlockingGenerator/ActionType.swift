@@ -1,3 +1,16 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:cb2ab18043cc52c7853972510804fa0f8ca0c766549a4b6229b933c891f9f78b
-size 538
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+/// Those are the actionType that will be used in WebKit
+/// https://developer.apple.com/documentation/safariservices/creating_a_content_blocker
+enum ActionType: String {
+    case blockAll = "block"
+    case blockCookies = "block-cookies"
+
+    var webKitFormat: String {
+        return "\"\(self.rawValue)\""
+    }
+}

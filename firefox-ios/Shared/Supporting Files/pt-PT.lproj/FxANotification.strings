@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:4d98beb5c0915fb5dcfd223c9568ecc13514a3fde9770520517fc9814789095d
-size 395
+/* Title of notification shown when a remote device has requested to close a number of tabs. First parameter is the app name and the second parameter is the number of tabs. */
+"CloseTab.ArrivingNotification.title.v133" = "%1$@ separadores fechados: %2$@";
+
+/* Label for an action used to view recently closed tabs. */
+"CloseTab.ViewAction.title.v133" = "Ver separadores fechados recentemente";
+

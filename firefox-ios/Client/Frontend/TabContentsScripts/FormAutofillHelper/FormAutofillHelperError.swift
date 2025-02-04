@@ -1,3 +1,19 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:d36637b07e0b8c2d2f09b8aa647f929a4cf49e369e2b38217d3c2ab43d517185
-size 1010
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+/// `FormAutofillHelperError` enumerates possible errors that may occur during  Autofill information injection
+/// within the `FormAutofillHelper` class. This conforms to the Swift `Error` protocol, allowing for structured
+/// error handling and providing clear and specific indications of potential issues in the injection process.
+enum FormAutofillHelperError: Error {
+    /// Indicates an issue with the injection process in the context of the `FormAutofillHelper` class.
+    case injectionIssue
+
+    /// Indicates that the credit card information provided for injection contains invalid or missing fields.
+    case injectionInvalidFields
+
+    /// Indicates an issue with the generation or serialization of the JSON payload during the injection process.
+    case injectionInvalidJSON
+}

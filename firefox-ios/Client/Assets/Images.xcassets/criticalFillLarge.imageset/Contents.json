@@ -1,3 +1,16 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:c9a3c8f5feca52fed8b2f1f4043341adaca831dcb560c00a08aebbec2ece3187
-size 282
+{
+  "images" : [
+    {
+      "filename" : "criticalFillLarge.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true,
+    "template-rendering-intent" : "template"
+  }
+}

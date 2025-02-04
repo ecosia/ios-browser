@@ -1,3 +1,3 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:a456735892df2dd9e8c0551074f613485ede8321a0c0e73149c96b9175216faa
-size 160
+/* Human readable description */
+"NSHumanReadableDescription" = "Mozilla-дан эчтәлекне блоклау һәм күзәтелүдән саклау";
+

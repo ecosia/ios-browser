@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:f8824ad30e7f07fc7ab550259fb29899d9f3eda5487631257d8f814a88dabc43
-size 330
+/* Button to not save the user's password in the logins helper */
+"LoginsHelper.DontSave.Button.v122" = "Ahora no";
+
+/* Button to not update the user's password in the logins helper */
+"LoginsHelper.DontUpdate.Button.v122" = "Ahora no";
+
+/* Button to save the user's password */
+"LoginsHelper.SaveLogin.Button.v122" = "Guardar";
+

@@ -1,3 +1,17 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:2cb6751ebb7bbc9e2b6981d9cdc4639d6d763cdfac9f2857645156fe2b068ed2
-size 471
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+struct SearchScreenState: Equatable {
+    private let isInPrivateMode: Bool
+
+    var showSearchSugestionsView: Bool {
+        return !isInPrivateMode
+    }
+
+    init(inPrivateMode: Bool = false) {
+        self.isInPrivateMode = inPrivateMode
+    }
+}

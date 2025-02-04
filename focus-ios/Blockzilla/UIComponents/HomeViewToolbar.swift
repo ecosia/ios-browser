@@ -1,3 +1,28 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:bf477c493d279a2a54fa55049afdad0ac94bb3eb2e5f87a28dcbceb2b473291d
-size 958
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+import UIKit
+
+class HomeViewToolbar: UIView {
+    private let stackView = UIStackView()
+
+    init() {
+        super.init(frame: CGRect.zero)
+        stackView.distribution = .fill
+        stackView.addArrangedSubview(UIView())
+        addSubview(stackView)
+
+        stackView.snp.makeConstraints { make in
+            make.top.equalTo(self)
+            make.left.equalTo(self).offset(UIConstants.layout.urlBarMargin)
+            make.right.equalTo(self).offset(-UIConstants.layout.urlBarMargin)
+            make.height.equalTo(UIConstants.layout.browserToolbarHeight)
+            make.bottom.equalTo(safeAreaLayoutGuide)
+        }
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}

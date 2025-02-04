@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:47b5807b984079d926be9ea19cedad5fdc2cb8c8d4ae5ac6bb8b2c313aca7e6b
-size 718
+/* Button label to cancel deletion when the user tried to delete a non-empty folder. */
+"Bookmarks.DeleteFolderWarning.CancelButton.Label" = "Batal";
+
+/* Button label for the button that deletes a folder and all of its children. */
+"Bookmarks.DeleteFolderWarning.DeleteButton.Label" = "Hapus";
+
+/* Main body of the confirmation alert when the user tries to delete a folder that still contains bookmarks and/or folders. */
+"Bookmarks.DeleteFolderWarning.Description" = "Apakah Anda yakin ingin menghapus ini beserta isinya?";
+
+/* Title of the confirmation alert when the user tries to delete a folder that still contains bookmarks and/or folders. */
+"Bookmarks.DeleteFolderWarning.Title" = "Folder ini tidak kosong.";
+

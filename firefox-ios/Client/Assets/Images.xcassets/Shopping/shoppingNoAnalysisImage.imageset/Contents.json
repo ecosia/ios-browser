@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:947371a38a8aa2b46fa019174dd70c576d873599fe8dc2dd4a7b75ed9cbdafd2
-size 265
+{
+  "images" : [
+    {
+      "filename" : "mobile iOS no-analysis 1x 280x108 72dpi MARGIN.png",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

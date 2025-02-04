@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:f306455e2f683b9779ca59f6cb28939079e3c5e254bbdceb9f531f9931e4e852
-size 234
+{
+  "images" : [
+    {
+      "filename" : "homepage-pocket.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

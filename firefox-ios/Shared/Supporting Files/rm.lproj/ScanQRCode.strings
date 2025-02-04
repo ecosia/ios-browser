@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:42f1882c16ad33aaa113fad4a9d665372d466d7349ae6e1a4ba4e116c294b5e1
-size 416
+/* Allow button to open URL from scanned QR Code */
+"ScanQRCode.ConfirmOpenURL.AllowButton.v129" = "Permetter";
+
+/* Deny button to cancel opening URL from scanned QR Code */
+"ScanQRCode.ConfirmOpenURL.DenyButton.v129" = "Refusar";
+
+/* Text of the prompt to ask user permission to open a URL from a scanned QR code. Placeholder is app name. */
+"ScanQRCode.ConfirmOpenURL.Message.v129" = "Permetter a %@ dad avrir?";
+

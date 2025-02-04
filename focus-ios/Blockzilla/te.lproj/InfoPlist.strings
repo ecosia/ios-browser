@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:fede95088f1443f642295ee350aa459c96e6431a89c126c9942d5fff09042f76
-size 1155
+/* Privacy - Camera Usage Description */
+"NSCameraUsageDescription" = "ఇది మీకు ఫోటోలను తీసుకొని అప్లోడ్ చేయడానికి అనుమతిస్తుంది.";
+
+/* Privacy - Location When In Use Usage Description */
+"NSLocationWhenInUseUsageDescription" = "మీరు సందర్శించే వెబ్ సైట్లు మీ స్థానాన్ని అభ్యర్థించవచ్చు.";
+
+/* Privacy - Microphone Usage Description */
+"NSMicrophoneUsageDescription" = "ఇది మీకు వీడియోలు తీసుకొని అప్లోడ్ చేయడానికి అనుమతిస్తుంది.";
+
+/* Privacy - Photo Library Additions Usage Description */
+"NSPhotoLibraryAddUsageDescription" = "ఇది ఫొటోలని భద్రపరచి ఎక్కించనిస్తుంది.";
+
+/* This is the menu item that appears when you long press the Focus icon on the phone home screen. */
+"UIApplicationShortcutItemTitle.EraseAndOpen" = "తుడిచివేసి తెరువు";
+

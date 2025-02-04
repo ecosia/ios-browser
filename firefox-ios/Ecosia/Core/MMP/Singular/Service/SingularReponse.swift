@@ -1,3 +1,19 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:a64ab4c3d083594aa3d5afb8b1e6d96053413278f7f8bc182565c9891082b2c3
-size 465
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+struct SingularResponse: Codable {
+    let status: String
+    let errorReason: String?
+
+    enum CodingKeys: String, CodingKey {
+        case status
+        case errorReason = "reason"
+    }
+
+    var isOK: Bool {
+        status == "ok"
+    }
+}

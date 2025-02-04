@@ -1,3 +1,25 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:b05386e4d0bfdd7625ab86f9de7b1deed8288e3aa943469ee09c1285cc566acc
-size 462
+{
+  "images" : [
+    {
+      "filename" : "iPhone - Splash1@2x.png",
+      "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "iPhone_Production_Dark Mode_Landscape.png",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

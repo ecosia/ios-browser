@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:7616e532175186aa293d99fc3a491d2dfa189a273b4df362620321ad76d1c765
-size 234
+{
+  "images" : [
+    {
+      "filename" : "personalCounter.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

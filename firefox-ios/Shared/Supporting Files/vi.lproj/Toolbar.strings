@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:24885b4291c140ba038357c8e5ded93843c51ce2cfe0ce5d93b72626ed69b532
-size 347
+/* Accessibility label for the new tab button that can be displayed in the navigation or address toolbar. */
+"Toolbar.NewTab.Button.v130" = "Thẻ mới";
+
+/* Label for button on action sheet, accessed via long pressing tab toolbar button, that closes the current tab when pressed */
+"Toolbar.Tab.CloseThisTab.Button.v130" = "Đóng thẻ này";
+

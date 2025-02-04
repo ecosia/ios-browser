@@ -1,3 +1,17 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:e2db17122bf91afcd0d56af1074399ee5f6e1e0b10735da22ad64ee305cfe4bb
-size 659
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+// We're required to add the javascript event in a user script
+// to be able to get access to the js sandboxed listeners.
+
+"use strict";
+
+const visitOnceButton = document.getElementById(APP_ID_TOKEN + "__firefox__visitOnce")
+
+if (visitOnceButton != null) {
+    visitOnceButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        webkit.messageHandlers.errorPageHelperMessageManager.postMessage({type: "certVisitOnce"})
+    });
+}

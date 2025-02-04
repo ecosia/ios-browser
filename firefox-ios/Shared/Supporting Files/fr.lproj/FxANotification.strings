@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:82c1f5f6d19a1f6962890ba34c9dd2702d9ec1679100e7ddcc833b84a9f6bd96
-size 394
+/* Title of notification shown when a remote device has requested to close a number of tabs. First parameter is the app name and the second parameter is the number of tabs. */
+"CloseTab.ArrivingNotification.title.v133" = "Onglets %1$@ fermés : %2$@";
+
+/* Label for an action used to view recently closed tabs. */
+"CloseTab.ViewAction.title.v133" = "Afficher les onglets récemment fermés";
+

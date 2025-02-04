@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:259cc5dcc53c5472423b5f1fe71f29946a69ff4a42c4afd19292c59b84672998
-size 570
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+// Extend AnyHashable to conform to @unchecked Sendable
+// This is done to bypass compiler errors because we use AnyHashable in diffable data sources,
+// which require the items to be Sendable. This is a temporary solution until we can incrementally
+// update the codebase to ensure all items are properly Sendable.
+extension AnyHashable: @unchecked Swift.Sendable {}

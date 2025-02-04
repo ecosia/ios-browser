@@ -1,3 +1,17 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:0e861ac2b2ec12c5dd9863ecde587c991ced66d2c3da0ac865a674b716c3e25c
-size 530
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import protocol MozillaAppServices.NimbusApi
+
+/// This protocol will give access to the `Experiments` singleton and require
+/// the conforming class to set up an experiment.
+protocol UserResearch {
+    func setupExperiment()
+}
+
+extension UserResearch {
+    var experiments: NimbusApi {
+        return Experiments.shared
+    }
+}

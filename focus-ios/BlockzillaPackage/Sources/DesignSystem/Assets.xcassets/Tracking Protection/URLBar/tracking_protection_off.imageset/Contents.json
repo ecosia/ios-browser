@@ -1,3 +1,25 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:efd236f2c48d898ff6720966925e53d9a66aa30e2010cb2a483de7d8bd7de895
-size 443
+{
+  "images" : [
+    {
+      "filename" : "Shield blocked.pdf",
+      "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "tracking_protection_off.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

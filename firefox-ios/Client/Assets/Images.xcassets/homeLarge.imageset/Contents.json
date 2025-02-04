@@ -1,3 +1,16 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:7846bad0fd09f7fbd659ebf48a31f8fa2abeddbbb9b6a65172766b8b444940b0
-size 274
+{
+  "images" : [
+    {
+      "filename" : "homeLarge.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true,
+    "template-rendering-intent" : "template"
+  }
+}

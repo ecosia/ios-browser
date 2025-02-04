@@ -1,3 +1,18 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:c4e26aee4d1252240bab25e8368bb100cb083053ba726013a2d4a0346b191f5b
-size 850
+/* Privacy - Camera Usage Description */
+"NSCameraUsageDescription" = "To wam zmóžnja, fotografować a fota nahrać.";
+
+/* Privacy - Face ID Usage Description */
+"NSFaceIDUsageDescription" = "Z tym móžeće nałoženje wotewrěć.";
+
+/* Privacy - Location When In Use Usage Description */
+"NSLocationWhenInUseUsageDescription" = "Websydła, kotrež wopytujeće, snano waše stejnišćo žadaja.";
+
+/* Privacy - Microphone Usage Description */
+"NSMicrophoneUsageDescription" = "To wam zmóžnja, wideja natočić a nahrać.";
+
+/* Privacy - Photo Library Additions Usage Description */
+"NSPhotoLibraryAddUsageDescription" = "To wam zmóžnja, fota składować a nahrać.";
+
+/* This is the menu item that appears when you long press the Focus icon on the phone home screen. */
+"UIApplicationShortcutItemTitle.EraseAndOpen" = "Zhašeć a wočinić";
+

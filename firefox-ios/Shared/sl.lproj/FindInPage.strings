@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:9d49e18d303c1a4fae7c12e57b9680be77e1d0ec92f9fb4f366490cab45259dc
-size 400
+/* Done button in Find in Page Toolbar. */
+"Done" = "Končaj";
+
+/* Text selection menu item */
+"Find in Page" = "Najdi na strani";
+
+/* Accessibility label for next result button in Find in Page Toolbar. */
+"Next in-page result" = "Naslednji zadetek na strani";
+
+/* Accessibility label for previous result button in Find in Page Toolbar. */
+"Previous in-page result" = "Prejšnji zadetek na strani";
+

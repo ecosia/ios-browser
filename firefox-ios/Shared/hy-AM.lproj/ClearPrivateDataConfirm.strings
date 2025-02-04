@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:0ca8e863ccf244b23cdc9a4d2cda611e442aa060176970ab9fcc8b1cd8a9cd65
-size 463
+/* The cancel button when confirming clear private data. */
+"Cancel" = "Չեղարկել";
+
+/* The button that clears private data. */
+"OK" = "Լավ";
+
+/* Description of the confirmation dialog shown when a user tries to clear their private data. */
+"This action will clear all of your private data. It cannot be undone." = "Այս գործողությունը կմաքրի ձեր անձնական տվյալները: Այն չի կարող ետարկվել:";
+

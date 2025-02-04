@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:b740564718cd4a528a8501c36e71ba881bc4bc82d51fe083cd61019a378979f8
-size 296
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Common
+
+protocol PrivateModeUI {
+    func applyUIMode(isPrivate: Bool, theme: Theme)
+}

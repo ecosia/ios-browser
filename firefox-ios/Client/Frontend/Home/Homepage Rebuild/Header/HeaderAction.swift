@@ -1,3 +1,17 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:83008ab958390d2dc82810b192e4da88365595dc0a9163d49830ee3807ace670
-size 497
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Common
+import Foundation
+import Redux
+
+final class HeaderAction: Action {
+    override init(windowUUID: WindowUUID, actionType: any ActionType) {
+        super.init(windowUUID: windowUUID, actionType: actionType)
+    }
+}
+
+enum HeaderActionType: ActionType {
+    case toggleHomepageMode
+}

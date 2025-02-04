@@ -1,3 +1,14 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:38928d19d74a07d462425ac25dfce5070689ab01e652445b22988eb6b0149334
-size 493
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import SwiftUI
+
+extension VerticalAlignment {
+    enum MidIconAndLabel: AlignmentID {
+        public static func defaultValue(in context: ViewDimensions) -> CGFloat {
+            context[.top]
+        }
+    }
+    public static let midIconAndLabel = VerticalAlignment(MidIconAndLabel.self)
+}

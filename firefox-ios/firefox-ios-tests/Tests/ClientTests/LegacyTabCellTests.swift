@@ -1,3 +1,14 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:0dc86f9de6c3ca4f06153cf86f428a5d86d293f716d0998a26be4aae952c7ef6
-size 407
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+@testable import Client
+
+import XCTest
+
+class LegacyTabCellTests: XCTestCase {
+    func testTabCellDeinit() {
+        let subject = LegacyTabCell(frame: .zero)
+        trackForMemoryLeaks(subject)
+    }
+}

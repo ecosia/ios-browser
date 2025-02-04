@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:63d1ba47d5d5ada8caa03a4c04ce1f47d56186d75e974d8cabde760bfef5421e
-size 228
+{
+  "images" : [
+    {
+      "filename" : "lockLarge.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

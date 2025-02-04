@@ -1,3 +1,20 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:b3f4437daab2e78b7a4d65bf9c8d57ec0a47152b888626a10e34ce6e5933dfb3
-size 695
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import UIKit
+
+/// Data for identifying and constructing a LibraryPanel.
+class LibraryPanelDescriptor {
+    let accessibilityLabel: String
+    let accessibilityIdentifier: String
+    let panelType: LibraryPanelType
+
+    init(accessibilityLabel: String,
+         accessibilityIdentifier: String,
+         panelType: LibraryPanelType) {
+        self.accessibilityLabel = accessibilityLabel
+        self.accessibilityIdentifier = accessibilityIdentifier
+        self.panelType = panelType
+    }
+}

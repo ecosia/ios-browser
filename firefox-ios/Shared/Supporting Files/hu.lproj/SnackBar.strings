@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:c804cb66a525269b36913221d494c0bc4e440c0322926df44bff3a2530c90b1c
-size 614
+/* Label text that gets presented as a confirmation at the bottom of screen when the credit card is successfully removed. */
+"CreditCard.SnackBar.RemovedCardLabel.v112" = "Kártya eltávolítva";
+
+/* Label text that gets presented as a confirmation at the bottom of screen when credit card information gets saved successfully */
+"CreditCard.SnackBar.SavedCardLabel.v112" = "Új kártya mentve";
+
+/* Label text that gets presented as a confirmation at the bottom of screen when credit card information gets updated successfully */
+"CreditCard.SnackBar.UpdatedCardLabel.v122" = "A kártyainformációk frissítve";
+

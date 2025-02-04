@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:52366bb4a58f965efbe111d35090a909c6b0cf314c26175bfd8d45844684b8df
-size 515
+/* Done button in Find in Page Toolbar. */
+"Done" = "पूर्ण";
+
+/* Text selection menu item */
+"Find in Page" = "पृष्ठामध्ये शोधा";
+
+/* Accessibility label for next result button in Find in Page Toolbar. */
+"Next in-page result" = "पुढील पृष्ठामधील परिणाम";
+
+/* Accessibility label for previous result button in Find in Page Toolbar. */
+"Previous in-page result" = "मागील पृष्ठामधील परिणाम";
+

@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:47d0ed8c7c31feec2c2f0cbbf8176380e85e12e26181da5d3472b21f6e918624
-size 690
+/* Accessibility label for closing the zoom panel in Zoom Page Bar */
+"Menu.ZoomPage.Close.AccessibilityLabel.v113" = "Zavrieť panel priblíženia";
+
+/* Accessibility label for current zoom level in Zoom Page Bar. The placeholder represents the zoom level */
+"Menu.ZoomPage.CurrentZoomLevel.AccessibilityLabel.v113" = "Aktuálna úroveň priblíženia: %@";
+
+/* Accessibility label for decreasing the zoom level in Zoom Page Bar */
+"Menu.ZoomPage.DecreaseZoom.AccessibilityLabel.v113" = "Znížiť úroveň priblíženia";
+
+/* Accessibility label for increasing the zoom level in Zoom Page Bar */
+"Menu.ZoomPage.IncreaseZoom.AccessibilityLabel.v113" = "Zvýšiť úroveň priblíženia";
+

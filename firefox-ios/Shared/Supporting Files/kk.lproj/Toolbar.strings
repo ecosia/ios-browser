@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:4021f01aa463fb0ad0659430efc348c7e7b5a11464034497d163b4db8966d2a6
-size 360
+/* Accessibility label for the new tab button that can be displayed in the navigation or address toolbar. */
+"Toolbar.NewTab.Button.v130" = "Жаңа бет";
+
+/* Label for button on action sheet, accessed via long pressing tab toolbar button, that closes the current tab when pressed */
+"Toolbar.Tab.CloseThisTab.Button.v130" = "Бұл бетті жабу";
+

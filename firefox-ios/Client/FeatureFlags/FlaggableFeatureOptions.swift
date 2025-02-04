@@ -1,3 +1,16 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:ad44b1113bbb42b0e0d57761236928aa3bc1228c40b75c72ca78c6137ddf8162
-size 567
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+/// This file contains enums that serve as options for flaggable features.
+/// Each should be set as an enum and should conform to String type and
+/// the FlaggableFeatureOptions protocol.
+protocol FlaggableFeatureOptions { }
+
+enum StartAtHomeSetting: String, FlaggableFeatureOptions {
+    case afterFourHours
+    case always
+    case disabled
+}

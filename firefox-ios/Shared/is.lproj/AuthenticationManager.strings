@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:aab586c50ac05ead57fe6f2abe31c2b197930510e255f16e7127c8c4586efd2c
-size 293
+/* Text displayed above the input field when changing the existing passcode */
+"Enter passcode" = "Settu inn aðgangskóða";
+
+/* Touch ID prompt subtitle when accessing logins */
+"Use your fingerprint to access Logins now." = "Nota fingraförin þín núna til að tengjast innskráningu.";
+

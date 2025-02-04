@@ -1,3 +1,11 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:95855ffc43604f441014fbcea536712d750eb2be35d4a795602a52b532302235
-size 500
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+extension Bundle {
+    public static let version = marketing + "." + bundle
+    private static let marketing = main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "4.0.20"
+    private static let bundle = main.infoDictionary?["CFBundleVersion"] as? String ?? "840"
+}

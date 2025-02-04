@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:c27a0887f57e9cda6fd1e17ea0b172675c634fe07a47262fd80d682845cb7d10
-size 162
+{
+  "images" : [
+    {
+      "filename" : "facebook-com.png",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

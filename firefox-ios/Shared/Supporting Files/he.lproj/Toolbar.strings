@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:ff0ea808293f91216cb7573a008c3cbe52b79cb83abaebed824566891e30a23a
-size 368
+/* Accessibility label for the new tab button that can be displayed in the navigation or address toolbar. */
+"Toolbar.NewTab.Button.v130" = "לשונית חדשה";
+
+/* Label for button on action sheet, accessed via long pressing tab toolbar button, that closes the current tab when pressed */
+"Toolbar.Tab.CloseThisTab.Button.v130" = "סגירת לשונית זו";
+

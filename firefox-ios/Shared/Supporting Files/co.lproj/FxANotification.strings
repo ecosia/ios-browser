@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:82e122a3d6d046a8536a6bd752b7bd276fefb9bf1b217dd26daa23cdb3336155
-size 397
+/* Title of notification shown when a remote device has requested to close a number of tabs. First parameter is the app name and the second parameter is the number of tabs. */
+"CloseTab.ArrivingNotification.title.v133" = "Unghjette di %1$@ chjose : %2$@";
+
+/* Label for an action used to view recently closed tabs. */
+"CloseTab.ViewAction.title.v133" = "Affissà l’unghjette chjose pocu fà";
+

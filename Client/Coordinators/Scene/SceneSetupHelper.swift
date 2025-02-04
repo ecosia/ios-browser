@@ -1,3 +1,36 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:09a83853924f2e3bfd51a6bbea748a8768b8d1be9b562a506c2cc3e55b039e4b
-size 1403
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Common
+import UIKit
+import Shared
+
+struct SceneSetupHelper {
+    func configureWindowFor(_ scene: UIScene,
+                            screenshotServiceDelegate: UIScreenshotServiceDelegate) -> UIWindow {
+        guard let windowScene = (scene as? UIWindowScene) else {
+            return UIWindow(frame: UIScreen.main.bounds)
+        }
+
+        windowScene.screenshotService?.delegate = screenshotServiceDelegate
+
+        let window = UIWindow(windowScene: windowScene)
+
+        // Setting the initial theme correctly as we don't have a window attached yet to let ThemeManager set it
+        var themeManager: ThemeManager = AppContainer.shared.resolve()
+        themeManager.window = window
+        // Ecosia: Remove `overrideUserInterfaceStyle` window set
+        // window.overrideUserInterfaceStyle = themeManager.currentTheme.type.getInterfaceStyle()
+
+        return window
+    }
+
+    func createNavigationController() -> UINavigationController {
+        let navigationController = UINavigationController()
+        navigationController.isNavigationBarHidden = true
+        navigationController.edgesForExtendedLayout = UIRectEdge(rawValue: 0)
+
+        return navigationController
+    }
+}

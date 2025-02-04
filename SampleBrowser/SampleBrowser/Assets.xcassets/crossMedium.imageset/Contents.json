@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:b49d6257423ba1f8173aa48754b19a8e1e6a081819e66bf768df034ddb9e5d7a
-size 161
+{
+  "images" : [
+    {
+      "filename" : "crossMedium.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

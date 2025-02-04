@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:957570191c05bb2cc6c13da9a83b4cfe9bc87127b9d1a368d3c5ea3085331195
-size 224
+{
+  "images" : [
+    {
+      "filename" : "trees.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

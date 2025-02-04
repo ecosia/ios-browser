@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:e6c13b72295983255f1e9d3336776244ea1224aecdde7340d3227e57fd207134
-size 235
+{
+  "images" : [
+    {
+      "filename" : "shieldSlashLarge.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

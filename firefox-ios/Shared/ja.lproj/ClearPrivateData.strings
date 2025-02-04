@@ -1,3 +1,21 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:1c81a1096dfd8eedd7bb45ad0fc2e4f73d9a1f2bb9711dd1668710a84e1d6a9b
-size 786
+/* Settings item for clearing browsing history */
+"Browsing History" = "閲覧履歴";
+
+/* Settings item for clearing the cache */
+"Cache" = "キャッシュ";
+
+/* Settings item for clearing cookies */
+"Cookies" = "Cookie";
+
+/* Settings item for deleting downloaded files */
+"Downloaded Files" = "ダウンロード済みファイル";
+
+/* Settings item for clearing website data */
+"Offline Website Data" = "オフラインウェブサイトデータ";
+
+/* Settings item for clearing passwords and login data */
+"Saved Logins" = "保存されたログイン情報";
+
+/* A settings item that allows a user to use Apple's \"Spotlight Search\" in Data Management's Website Data option to search for and select an item to delete. */
+"Spotlight Index" = "Spotlight のインデックス";
+

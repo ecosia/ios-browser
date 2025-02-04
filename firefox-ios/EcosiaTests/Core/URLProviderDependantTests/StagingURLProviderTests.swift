@@ -1,3 +1,26 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:7bd6aac38f9386a64d3d88735b6ffd4458c8801c69825b4c50252de590e412b1
-size 870
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+@testable import Ecosia
+import XCTest
+
+final class StagingURLProviderTests: XCTestCase {
+
+    var urlProvider: URLProvider = .staging
+
+    func testStaging() {
+        XCTAssertEqual("https://www.ecosia-staging.xyz", urlProvider.root.absoluteString)
+    }
+
+    func testStagingURLsAreValid() {
+        XCTAssertNotNil(urlProvider.root)
+        XCTAssertNotNil(urlProvider.statistics)
+        XCTAssertNotNil(urlProvider.privacy)
+        XCTAssertNotNil(urlProvider.faq)
+        XCTAssertNotNil(urlProvider.terms)
+        XCTAssertNotNil(urlProvider.aboutCounter)
+        XCTAssertNotNil(urlProvider.snowplow)
+        XCTAssertNotNil(urlProvider.notifications)
+    }
+}

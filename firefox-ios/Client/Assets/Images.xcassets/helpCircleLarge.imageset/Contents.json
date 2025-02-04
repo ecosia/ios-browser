@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:0f77427c9c23f7c599b417222ee07b393e91174bf793719a3ac3613b52952089
-size 234
+{
+  "images" : [
+    {
+      "filename" : "helpCircleLarge.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

@@ -1,3 +1,34 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:08189b76a41372fbd0d0e40e2b073882113014cbc6b13e601b2686586874caf0
-size 1198
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+import Shared
+
+/// Opens the license page in a new tab
+class LicenseAndAcknowledgementsSetting: Setting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: .AppSettingsLicenses,
+                                  attributes: [NSAttributedString.Key.foregroundColor: theme.colors.textPrimary])
+    }
+
+    override var url: URL? {
+        return URL(string: "\(InternalURL.baseUrl)/\(AboutLicenseHandler.path)")
+    }
+
+    override var accessibilityIdentifier: String? {
+        return AccessibilityIdentifiers.Settings.Licenses.title
+    }
+
+    weak var settingsDelegate: AboutSettingsDelegate?
+
+    init(settingsDelegate: AboutSettingsDelegate?) {
+        self.settingsDelegate = settingsDelegate
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        guard let url = self.url,
+              let title = self.title else { return }
+        settingsDelegate?.pressedLicense(url: url, title: title)
+    }
+}

@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:b90078792e6a7d98b6601e027fbb17bb3a5483aae977b40e222964790a4f4ece
-size 232
+{
+  "images" : [
+    {
+      "filename" : "Outline icons.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:6ed20aa3aa8dd6cb6a94a2dcbb14c7df90e2f731313a4eadb3014dcf1a3ad35d
-size 565
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+import { FormAutofillSection } from "resource://autofill/FormAutofillSection.sys.mjs";
+
+// Since we are listening on focus events to ping swift,
+// focusing inputs before filling will cause an infinite loop
+FormAutofillSection.SHOULD_FOCUS_ON_AUTOFILL = false;
+
+export { FormAutofillSection };
+export * from "resource://autofill/FormAutofillSection.sys.mjs";

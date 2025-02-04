@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:2e9236b743a2bbb96727690101ebde1a6b5d3f16690dd73cee3f77403ea6bea5
-size 424
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+enum SearchListSection: Int, CaseIterable {
+    case searchSuggestions
+    case firefoxSuggestions
+    case bookmarks
+    case remoteTabs
+    case history
+    case openedTabs
+    case searchHighlights
+}

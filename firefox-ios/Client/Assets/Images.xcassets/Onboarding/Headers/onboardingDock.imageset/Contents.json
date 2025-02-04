@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:4cb0b55461b5208ab9002a73589932286a38e2dd147531ae0f26c626eadd2ba3
-size 164
+{
+  "images" : [
+    {
+      "filename" : "onboardingDock.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

@@ -1,3 +1,3 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:7343c63691b27831b4d840711e46c4f5859bc0191a05793ad64258caba3a6ee4
-size 142
+/* Toggle for credit cards syncing setting */
+"FirefoxSync.CreditCardsEngine.v115" = "საკრედიტო ბარათები";
+

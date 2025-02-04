@@ -1,3 +1,11 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:3228ecb4a1fed813977a797272b3ab7b5d510aa957bdd56f7224b36a3122936c
-size 361
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+protocol MobileMessageSurfaceProtocol {
+    func handleMessageDisplayed()
+    func handleMessagePressed()
+    func handleMessageDismiss()
+}

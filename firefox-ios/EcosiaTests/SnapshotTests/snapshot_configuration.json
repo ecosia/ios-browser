@@ -1,3 +1,46 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:086facb11a8211347ab204af6d305aa490d2b007d52e4c158bb759e85708a9cc
-size 836
+{
+  "locales": [
+    "en",
+    "it",
+    "de",
+    "es",
+    "nl"
+  ],
+  "devices": [
+    {
+      "name": "iPhone SE (3rd generation)",
+      "orientation": "portrait"
+    },
+    {
+      "name": "iPhone 15 Pro",
+      "orientation": "portrait",
+      "os": "17.5",
+      "isDefaultTestDevice": true
+    },
+    {
+      "name": "iPhone 15 Pro Max",
+      "orientation": "landscape"
+    },
+    {
+      "name": "iPad Pro 11-inch (M4)",
+      "orientation": "portrait"
+    }
+  ],
+  "testBundles": [
+    {
+      "name": "EcosiaSnapshotTests",
+      "testClasses": [
+        {
+          "name": "OnboardingTests",
+          "devices": ["all", "portrait"],
+          "locales": ["all"]
+        },
+        {
+          "name": "NTPComponentTests",
+          "devices": ["iPhone 15 Pro"],
+          "locales": ["all"]
+        }
+      ]
+    }
+  ]
+}

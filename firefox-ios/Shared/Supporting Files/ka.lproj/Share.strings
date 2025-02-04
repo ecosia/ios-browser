@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:2f3926140c9df8490c756573472fb2fb07a0f55199dc061e26c84b2fba5ccac9
-size 543
+/* Error message shown in the remote tabs panel */
+"SendTo.NoDevicesFound.Message.v119" = "არცერთი სხვა მოწყობილობა არ გაქვთ დაკავშირებული ამ ანგარიშთან დასინქრონებისთვის.";
+
+/* This message appears when a user tries to use 'Send Link to Device' action while not logged in */
+"SendTo.NotSignedIn.Title.v119" = "არ ხართ შესული თქვენს ანგარიშზე.";
+

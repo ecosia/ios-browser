@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:8e69130e87b768c13b4059a46b77ade570f2210d658bdb4cd53fbde395f01f76
-size 388
+/* Done button in Find in Page Toolbar. */
+"Done" = "Eginda";
+
+/* Text selection menu item */
+"Find in Page" = "Bilatu orrian";
+
+/* Accessibility label for next result button in Find in Page Toolbar. */
+"Next in-page result" = "Orriko hurrengo emaitza";
+
+/* Accessibility label for previous result button in Find in Page Toolbar. */
+"Previous in-page result" = "Orriko aurreko emaitza";
+

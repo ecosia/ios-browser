@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:c368d642cda6dc73ee1022a99f6cebb5e0bc9ae9f32924b6c0434e4d13e537af
-size 381
+/* Sign in to Firefox account button on second intro screen. */
+"Intro.Slides.Button.SignIn" = "ᱵᱚᱞᱚᱱ ᱥᱩᱦᱤ";
+
+/* Title for the first panel 'Welcome' in the First Run tour. */
+"Intro.Slides.Welcome.Title.v2" = "Firefox ᱨᱮ ᱥᱟᱹᱜᱩᱱ ᱫᱟᱨᱟᱢ";
+
+/* See http://mzl.la/1T8gxwo */
+"Start Browsing" = "ᱯᱟᱱᱛᱮᱭᱟᱠ ᱮᱦᱚᱵ ᱢᱮ";
+

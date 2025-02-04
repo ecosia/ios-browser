@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:d976b1eef8b1fbff01c3dd68b5765f23d0e55f301660f12f0e67d50dbf60e2ff
-size 414
+/* Done button in Find in Page Toolbar. */
+"Done" = "Finì";
+
+/* Text selection menu item */
+"Find in Page" = "Tschertgar sin la pagina";
+
+/* Accessibility label for next result button in Find in Page Toolbar. */
+"Next in-page result" = "Proxim resultat sin la pagina";
+
+/* Accessibility label for previous result button in Find in Page Toolbar. */
+"Previous in-page result" = "Resultat precedent sin la pagina";
+

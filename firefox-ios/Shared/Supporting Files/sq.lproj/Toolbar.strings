@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:08a880b955d3035ccab6436669295610326779da74d08cb3d95db748b3b9b1fc
-size 350
+/* Accessibility label for the new tab button that can be displayed in the navigation or address toolbar. */
+"Toolbar.NewTab.Button.v130" = "Skedë e Re";
+
+/* Label for button on action sheet, accessed via long pressing tab toolbar button, that closes the current tab when pressed */
+"Toolbar.Tab.CloseThisTab.Button.v130" = "Mbylle Këtë Skedë";
+

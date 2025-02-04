@@ -1,3 +1,20 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:ce85c9e4fa9d0286b14848d7f42986b1b568b1e24ff7c14fb4459aaeb3c88871
-size 650
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+public final class SearchesCounter: StatePublisher {
+    public var subscriptions = [Subscription<Int>]()
+    public var state: Int? {
+        return User.shared.searchCount
+    }
+
+    public init() {
+        NotificationCenter.default.addObserver(self, selector: #selector(searchesCounterChanged), name: .searchesCounterChanged, object: nil)
+    }
+
+    @objc private func searchesCounterChanged() {
+        send(state!)
+    }
+}

@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:b2b5e633641a3841f487815e71acdecad3d5dd0c3baeac3363e318b8c240213a
-size 357
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+extension ClosedRange {
+    func clamp(_ value: Bound) -> Bound {
+        return Swift.min(self.upperBound, Swift.max(self.lowerBound, value))
+    }
+}

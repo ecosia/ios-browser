@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:fe032c0e0e3508bf969604e1ef16b5cc6e85986702518f58cc2b8b98cb72ef0c
-size 385
+/* Done button in Find in Page Toolbar. */
+"Done" = "A ben";
+
+/* Text selection menu item */
+"Find in Page" = "Ceeci moɲoo ra";
+
+/* Accessibility label for next result button in Find in Page Toolbar. */
+"Next in-page result" = "Jine moo-kuna hunyan";
+
+/* Accessibility label for previous result button in Find in Page Toolbar. */
+"Previous in-page result" = "Banda moo-kuna hunyan";
+

@@ -1,3 +1,18 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:9e2908e7c971fa2fb1ea5d89690de7095e16d606a6eadb2890acf15fb26eccfe
-size 886
+/* Prompt for saving the username in the Save Logins prompt. */
+"LoginsHelper.PromptSaveLogin.Title.v122" = "ユーザー名を保存しますか？";
+
+/* Prompt for saving a password in the Save Logins prompt. */
+"LoginsHelper.PromptSavePassword.Title.v122" = "パスワードを保存しますか？";
+
+/* Prompt for updating the password in the Update Password prompt. */
+"LoginsHelper.PromptUpdateLogin.Title.OneArg.v122" = "パスワードを更新しますか？";
+
+/* Prompt for updating a password in the Update Password prompt. */
+"LoginsHelper.PromptUpdateLogin.Title.TwoArg.v122" = "パスワードを更新しますか？";
+
+/* Placeholder text for search box in logins list view. */
+"LoginsList.LoginsListSearchPlaceholder.v122" = "パスワードを検索";
+
+/* Title for the list of logins saved by the app */
+"LoginsList.Title.v122" = "保存されたパスワード";
+

@@ -1,3 +1,8 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:06468f7f19fd188578d2f5557bb5b51d058353541cdf04dc5fbb8b5e2fc3f666
-size 337
+/* vim: set ts=2 sts=2 sw=2 et tw=80: */
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+"use strict";
+
+require("../../../../../../Client/ContentBlocker/TrackingProtectionStats.js");

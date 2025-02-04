@@ -1,3 +1,18 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:88c4e3eb8697a1c97d806174e8105042e195f8653aa1c61e7b9e475626d47e1a
-size 480
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+import UIKit
+import UIHelpers
+
+class SmartLabel: UILabel {
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        setupShrinkage()
+    }
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupShrinkage()
+    }
+}

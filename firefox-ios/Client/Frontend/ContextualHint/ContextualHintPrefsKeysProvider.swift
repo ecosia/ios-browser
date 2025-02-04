@@ -1,3 +1,27 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:d880ef2180a2e2e438434d8a723279fd459d1791971b7688bfb3a04c37275a46
-size 1155
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+import Shared
+
+protocol ContextualHintPrefsKeysProvider {
+    func prefsKey(for hintType: ContextualHintType) -> String
+}
+
+extension ContextualHintPrefsKeysProvider {
+    typealias CFRPrefsKeys = PrefsKeys.ContextualHints
+
+    func prefsKey(for hintType: ContextualHintType) -> String {
+        switch hintType {
+        case .dataClearance: return CFRPrefsKeys.dataClearanceKey.rawValue
+        case .inactiveTabs: return CFRPrefsKeys.inactiveTabsKey.rawValue
+        case .jumpBackIn: return CFRPrefsKeys.jumpBackinKey.rawValue
+        case .jumpBackInSyncedTab: return CFRPrefsKeys.jumpBackInSyncedTabKey.rawValue
+        case .toolbarLocation: return CFRPrefsKeys.toolbarOnboardingKey.rawValue
+        case .mainMenu: return CFRPrefsKeys.mainMenuKey.rawValue
+        case .shoppingExperience: return CFRPrefsKeys.shoppingOnboardingKey.rawValue
+        case .navigation: return CFRPrefsKeys.navigationKey.rawValue
+        }
+    }
+}

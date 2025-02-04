@@ -1,3 +1,11 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:72c9b4e74df43d186fa5a6c8c56d114f6212b627a814c904eb9e2149ad5343b0
-size 346
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+extension Bundle {
+    public static var ecosia: Bundle {
+        Bundle(identifier: "com.ecosia.framework.Ecosia")!
+    }
+}

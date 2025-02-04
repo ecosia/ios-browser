@@ -1,3 +1,14 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:2a1d935cbe92370b9c8021fbe710e47acf46662ed86abbe5604d375cdac93259
-size 579
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+import Common
+
+/// Defines the state related to a screen used `AppState` reducer to 
+/// retrieve the state for a specific screen. All ScreenStates should
+/// have the capability of being associated with a specific window,
+/// to ensure screens can be displayed across multiple windows on iPad.
+protocol ScreenState {
+    var windowUUID: WindowUUID { get }
+}

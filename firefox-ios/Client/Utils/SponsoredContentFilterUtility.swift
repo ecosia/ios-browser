@@ -1,3 +1,40 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:21dc92177e0eff081a3f3157f741cefaa00bf93571361485a8bd5c05306dc54e
-size 1461
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+import Storage
+import Shared
+
+import struct MozillaAppServices.HistoryHighlight
+
+// Utility to filter sponsored content out of certain data type
+struct SponsoredContentFilterUtility {
+    /// Hide with search param is defined by adMarketplace, indicates this URL was registered through sponsored clicks
+    /// and should not show in top sites, jump back in or recently visited sections on the homepage
+    private var hideWithSearchParam: String {
+        return "mfadid=adm"
+    }
+
+    func filterSponsoredSites(from sites: [Site]) -> [Site] {
+        return sites.filter { item in
+            guard let url = URL(string: item.url) else { return true }
+
+            return !containsSearchParam(url: url)
+        }
+    }
+
+    func containsSearchParam(url: URL) -> Bool {
+        return url.query?.split(separator: "&").contains { $0 == hideWithSearchParam } ?? false
+    }
+
+    func filterSponsoredTabs(from tabs: [Tab]) -> [Tab] {
+        return tabs.filter { !($0.lastKnownUrl?.absoluteString.contains(hideWithSearchParam) ?? false) }
+    }
+
+    func filterSponsoredHighlights(from items: [HistoryHighlight]) -> [HistoryHighlight] {
+        return items.filter {
+            return !$0.url.contains(hideWithSearchParam)
+        }
+    }
+}

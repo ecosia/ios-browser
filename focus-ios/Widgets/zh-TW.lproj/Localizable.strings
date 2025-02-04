@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:9b14be604ca709a26c2d64d6548e834f4bb97ca51f47fd134ef113aed253089e
-size 751
+/* Description for small size widget to add it to home screen. %@ is the name of the app(Focus/Klar). */
+"TodayWidget.QuickActionGalleryDescription" = "把 %@ 捷徑加到主畫面。新增小工具之後，請長按小工具選擇不同的捷徑。";
+
+/* Description for small size widget to add it to home screen. %@ is the name of the app(Focus/Klar). */
+"TodayWidget.QuickActionGalleryDescriptionV2" = "以 %@ 使用您的預設搜尋引擎進行隱私搜尋。";
+
+/* Quick Actions title when widget enters edit mode */
+"TodayWidget.QuickActionsGalleryTitle" = "快速操作";
+
+/* Text shown on quick action widget inviting the user to browse in the app. %@ is the name of the app (Focus/Klar). */
+"TodayWidget.SearchInApp" = "使用 %@ 搜尋";
+

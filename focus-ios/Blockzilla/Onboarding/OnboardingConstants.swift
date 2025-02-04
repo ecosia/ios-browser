@@ -1,3 +1,13 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:51112389caed596908a8c32c7fd11f2df157e82bcc97816509041bf1a7e872d5
-size 543
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+import Foundation
+
+struct OnboardingConstants {
+    static let onboardingDidAppear = "OnboardingDidAppear"
+    static let alwaysShowOnboarding = "AlwaysShowOnboarding"
+    static let ignoreOnboardingExperiment = "IgnoreOnboardingExperiment"
+    static let showOldOnboarding = "ShowOldOnboarding"
+    static let shownTips = "ShownTips"
+}

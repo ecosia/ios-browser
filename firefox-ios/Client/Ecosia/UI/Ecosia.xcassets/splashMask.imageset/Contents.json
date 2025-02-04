@@ -1,3 +1,16 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:34bce15685cbbdfb2769c3cecf3314666165c77777c725f39f9c8a41b9315e38
-size 269
+{
+  "images" : [
+    {
+      "filename" : "mask.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true,
+    "template-rendering-intent" : "template"
+  }
+}

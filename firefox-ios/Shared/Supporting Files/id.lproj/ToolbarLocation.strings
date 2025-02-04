@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:da49e75678f7668e9c4a9b607016fb4985e462c678a936d23fdbb0ce78698c4d
-size 639
+/* Contextual hints are little popups that appear for the users informing them of new features. This one indicates a user can navigate to the Settings page to move the search bar to the top. */
+"ContextualHints.Toolbar.Bottom.Description.v107" = "Pindahkan bilah alat ke atas jika itu lebih sesuai dengan gaya Anda.";
+
+/* Contextual hints are little popups that appear for the users informing them of new features. This one indicates a user can navigate to the Settings page to move the search bar to the bottom. */
+"ContextualHints.Toolbar.Top.Description.v107" = "Pindahkan bilah alat ke bawah jika itu lebih sesuai dengan gaya Anda.";
+

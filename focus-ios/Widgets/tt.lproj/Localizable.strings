@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:d9884ef0249b2178787b0379dcdf2b03f1fe99a68bc1b8aa8ca5e68c655db9d3
-size 1004
+/* Description for small size widget to add it to home screen. %@ is the name of the app(Focus/Klar). */
+"TodayWidget.QuickActionGalleryDescription" = "Өй экранына %@ ярлыгын өстәгез. Виджетны өстәгәннән соң, аны үзгәртү өчен өстенә басып торыгыз һәм бүтән бер ярлык сайлагыз.";
+
+/* Description for small size widget to add it to home screen. %@ is the name of the app(Focus/Klar). */
+"TodayWidget.QuickActionGalleryDescriptionV2" = "Үзегезнең стандарт эзләү системасы ярдәмендә %@ кушымтасында хосусый эзләү башлагыз.";
+
+/* Quick Actions title when widget enters edit mode */
+"TodayWidget.QuickActionsGalleryTitle" = "Тиз гамәлләр";
+
+/* Text shown on quick action widget inviting the user to browse in the app. %@ is the name of the app (Focus/Klar). */
+"TodayWidget.SearchInApp" = "%@ ярдәмендә эзләү";
+

@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:66aac44865c207d9950080e6f9078111bf9de5a5d9a6f17803118188972a23f2
-size 165
+{
+  "images" : [
+    {
+      "filename" : "bookmarkSuccess.svg",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:f8facfb3dae6795d43c570ef5e26c4a836446c8c1406415cc576a87961373005
-size 211
+/* Label for search engine buttons. The argument corresponds to the name of the search engine. */
+"%@ search" = "%@ ceeci";
+
+/* Label for search settings button. */
+"Search Settings" = "Ceeciyan kayandiyaney";
+

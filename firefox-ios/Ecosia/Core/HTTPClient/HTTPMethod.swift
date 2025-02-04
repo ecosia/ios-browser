@@ -1,3 +1,10 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:c4b1cda28934b0ed042918a1c874e681037f039a7e41d4824426f73cabeb5e29
-size 300
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+public enum HTTPMethod: String {
+    case get = "GET"
+    case post = "POST"
+}

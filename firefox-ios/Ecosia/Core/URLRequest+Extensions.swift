@@ -1,3 +1,22 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:8ebc48112e0a9fb61ee72bd77579990f27a98f5060597ae5f274da1e05cdc1fd
-size 963
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+extension URLRequest {
+
+    public mutating func withAuthParameters(environment: Environment = Environment.current) -> URLRequest {
+        if let auth = environment.auth {
+            setValue(auth.id, forHTTPHeaderField: CloudflareKeyProvider.clientId)
+            setValue(auth.secret, forHTTPHeaderField: CloudflareKeyProvider.clientSecret)
+        }
+        return self
+	}
+
+    /// This function provides an additional HTTP request header when loading SERP through native UI (i.e. submitting a search)
+    /// to help SERP decide which market to serve.
+    public mutating func addLanguageRegionHeader() {
+        setValue(Locale.current.identifierWithDashedLanguageAndRegion, forHTTPHeaderField: "x-ecosia-app-language-region")
+    }
+}

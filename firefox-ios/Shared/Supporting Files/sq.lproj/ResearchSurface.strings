@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:3fc37fb63e01627917c75715e451cf4099ebc9f837de6aae02c6028b05e67ce2
-size 630
+/* On the Research Survey popup, the text that explains what the screen is about. Placeholder is for the app name. */
+"Body.Text.v112" = "Ju lutemi, ndihmoni të bëhet %@-i më i mirë, duke plotësuar këtë pyetësor të shkurtër.";
+
+/* On the Research Survey popup, the text for the button that, when tapped, will dismiss the popup and take the user to a survey. */
+"PrimaryButton.Label.v112" = "Plotësoni Pyetësorin";
+
+/* On the Research Survey popup, the text for the button that, when tapped, will dismiss this screen, and the user will not be taken to the survey. */
+"SecondaryButton.Label.v112" = "Jo, Faleminderit";
+

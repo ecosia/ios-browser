@@ -1,3 +1,25 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:12ff88c857a6a259eb3d4cd8d71e449ded463056c058ed1c38e3f20e2357adf0
-size 429
+{
+  "images" : [
+    {
+      "filename" : "Chevron left.pdf",
+      "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "icon_cancel.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

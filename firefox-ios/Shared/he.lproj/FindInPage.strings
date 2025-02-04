@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:d398f27d5f534d540939d9d2dece2ab11c5b6e287cc7f788791a7c4d28e5f5e7
-size 417
+/* Done button in Find in Page Toolbar. */
+"Done" = "סיום";
+
+/* Text selection menu item */
+"Find in Page" = "חיפוש בדף";
+
+/* Accessibility label for next result button in Find in Page Toolbar. */
+"Next in-page result" = "התוצאה הבאה בעמוד";
+
+/* Accessibility label for previous result button in Find in Page Toolbar. */
+"Previous in-page result" = "התוצאה הקודמת בעמוד";
+

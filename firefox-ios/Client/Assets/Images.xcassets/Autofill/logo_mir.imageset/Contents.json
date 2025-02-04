@@ -1,3 +1,16 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:28cfd90f57f8902b8274a2a647f5ebd7f5a06dd6e1c923c4537b8c010ec3a114
-size 273
+{
+  "images" : [
+    {
+      "filename" : "logo_mir.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true,
+    "template-rendering-intent" : "template"
+  }
+}

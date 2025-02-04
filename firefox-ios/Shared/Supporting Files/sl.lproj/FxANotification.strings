@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:571dc08870cef3d951717a975f8e30d8f6edc341f21b01ccfa0b6ad3484dae77
-size 385
+/* Title of notification shown when a remote device has requested to close a number of tabs. First parameter is the app name and the second parameter is the number of tabs. */
+"CloseTab.ArrivingNotification.title.v133" = "Zaprtih %1$@ zavihkov: %2$@";
+
+/* Label for an action used to view recently closed tabs. */
+"CloseTab.ViewAction.title.v133" = "Prikaži nedavno zaprte zavihke";
+

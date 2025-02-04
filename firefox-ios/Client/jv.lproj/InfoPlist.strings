@@ -1,3 +1,21 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:0f07add6294ab35e8c7cb4c96616de95388f1a91a4f8364046654518486ee1bc
-size 698
+/* (No Comment) */
+"New Private Tab" = "Tab Pribadi Anyar";
+
+/* (No Comment) */
+"New Tab" = "Tab Anyar";
+
+/* Privacy - Camera Usage Description */
+"NSCameraUsageDescription" = "Ngidinké sampéyan njepret lan ngunggah poto.";
+
+/* Privacy - Location When In Use Usage Description */
+"NSLocationWhenInUseUsageDescription" = "Situs kang sampéyan tiliki njaluk lokasi sampéyan.";
+
+/* Privacy - Microphone Usage Description */
+"NSMicrophoneUsageDescription" = "Ngidinké sampéyan ngrekam lan ngunggah video.";
+
+/* Privacy - Photo Library Additions Usage Description */
+"NSPhotoLibraryAddUsageDescription" = "Ngidinké sampeyan nyimpen poto.";
+
+/* (No Comment) */
+"Scan QR Code" = "Pindhai Kode QR";
+

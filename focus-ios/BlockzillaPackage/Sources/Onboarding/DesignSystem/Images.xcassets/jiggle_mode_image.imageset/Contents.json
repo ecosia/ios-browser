@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:a228447d3cac984c73c61de2da481a0fb3f298e2dc44a18ec2947cd3f0275f0d
-size 160
+{
+  "images" : [
+    {
+      "filename" : "JiggleMode.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

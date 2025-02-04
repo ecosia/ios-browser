@@ -1,3 +1,3 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:df6ec6e70ea1e02edf14fa590a0bd3ea6698c23a1fc5945bc34ae8b7f476e588
-size 128
+/* Title for X (formerly Twitter) tile in the suggested sites section of the homepage. */
+"SuggestedSites.X.Title.v131" = "X";
+

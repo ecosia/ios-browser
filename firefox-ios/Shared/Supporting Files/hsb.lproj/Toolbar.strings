@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:911f7c345ff550e979fdd2b6977b6af343910b70250c86c22e994e67f0aeeac1
-size 355
+/* Accessibility label for the new tab button that can be displayed in the navigation or address toolbar. */
+"Toolbar.NewTab.Button.v130" = "Nowy rajtark";
+
+/* Label for button on action sheet, accessed via long pressing tab toolbar button, that closes the current tab when pressed */
+"Toolbar.Tab.CloseThisTab.Button.v130" = "Tutón rajtark začinić";
+

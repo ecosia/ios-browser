@@ -1,3 +1,3 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:5b63a1d721ce477384e827c85985d17ca15b1112d4a974ec0d89f6b90895383a
-size 129
+/* Accessibility label of the QR code button in the toolbar */
+"QRCode.Toolbar.Button.A11y.Title.v128" = "Naskenovať QR kód";
+

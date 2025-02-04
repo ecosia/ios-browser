@@ -1,3 +1,3 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:a6cc322b33fca2eb582ed593a804758060a223683f0581aa0073f6ebfe94f5be
-size 138
+/* Accessibility label of the QR code button in the toolbar */
+"QRCode.Toolbar.Button.A11y.Title.v128" = "C’hwilerviñ ur c’hod QR";
+

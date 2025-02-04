@@ -1,3 +1,21 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:884b4eea9b127df33eb9e4f154c7ff7805338fc96f941f3c687c40a40f67b96e
-size 1015
+/* (No Comment) */
+"New Private Tab" = "नवीन खाजगी टॅब";
+
+/* (No Comment) */
+"New Tab" = "नवीन टॅब";
+
+/* Privacy - Camera Usage Description */
+"NSCameraUsageDescription" = "हे आपल्याला फोटो घेऊ व अपलोड करू देते.";
+
+/* Privacy - Location When In Use Usage Description */
+"NSLocationWhenInUseUsageDescription" = "आपण भेट देता त्या वेबसाइट आपल्या स्थानाची विनंती करू शकतात.";
+
+/* Privacy - Microphone Usage Description */
+"NSMicrophoneUsageDescription" = "यामुळे आपण व्हिडिओ घेऊ व अपलोड करू शकता.";
+
+/* Privacy - Photo Library Additions Usage Description */
+"NSPhotoLibraryAddUsageDescription" = "हे आपल्याला फोटो जतन करू देते.";
+
+/* (No Comment) */
+"Scan QR Code" = "QR कोड स्कॅन करा";
+

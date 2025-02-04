@@ -1,3 +1,25 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:5a35410c11057a8f3d9c2618fe167889a2da86e66c9277d54986ede7e699a5fc
-size 602
+name: Merge Unit Tests
+
+on:
+  pull_request:
+    branches: [ main, mob-3113-firefox-upgrade-133 ]
+
+jobs:
+  execute_merge_tests:
+    runs-on: macos-15
+    name: Execute Merge Tests
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Prepare environment
+        uses: ./.github/actions/prepare_environment
+        with:
+          core-token: ${{ secrets.IOS_CORE_TOKEN }}
+
+      - name: Perform Unit Tests and Publish Test reports
+        id: perform-tests
+        uses: ./.github/actions/perform_unit_tests
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}

@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:23a8452532f1c059c1b5eb94e3f9c85c61f1c26a40dab6e0e728324092a4243c
-size 682
+/* Sub label error string that gets shown when user enters incorrect input for their expiration date on their credit card in the text box. */
+"CreditCard.ErrorState.CardExpirationDateSublabel.v112" = "Anna kelvollinen viimeinen voimassaolopäivä";
+
+/* Sub label error string that gets shown when user enters incorrect input for their number printed on their credit card in the text box. */
+"CreditCard.ErrorState.CardNumberSublabel.v112" = "Anna kelvollinen kortin numero";
+
+/* Sub label error string that gets shown when user enters incorrect input for their name printed on their credit card in the text box. */
+"CreditCard.ErrorState.NameOnCardSublabel.v112" = "Lisää nimi";
+

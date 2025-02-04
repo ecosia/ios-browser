@@ -1,3 +1,18 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:db885d5a4aac6268fc58af8be1d7d93aea752a641cea9f5234005da8accae83c
-size 648
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+import WebKit
+@testable import WebEngine
+
+class MockWKEngineSession: WKEngineSession {
+    let webviewProvider = MockWKWebViewProvider()
+
+    init() {
+        super.init(userScriptManager: MockWKUserScriptManager(),
+                   configurationProvider: MockWKEngineConfigurationProvider(),
+                   webViewProvider: webviewProvider,
+                   contentScriptManager: MockWKContentScriptManager())!
+    }
+}

@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:92e2ddff0594d41fe7214d0b7c233a6e0126b200d232bc056064cd7659bd0ec2
-size 297
+/* String used in the section title of the Bookmarks section on Home Screen. */
+"ActivityStream.Bookmarks.Title.v128" = "Zapołožki";
+
+/* Show all button text for Bookmarks items on the home page, which opens the Bookmarks panel when tapped. */
+"Bookmarks.Actions.More.v128" = "Wšě pokazać";
+

@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:114f9374314043d5311132ed8dd16fbc3b2600e1e60dbfe8269c2cd43fdc8b71
-size 426
+/* Text displayed above the input field when changing the existing passcode */
+"Enter passcode" = "పాస్‌కోడ్ ఇవ్వండి";
+
+/* Touch ID prompt subtitle when accessing logins */
+"Use your fingerprint to access Logins now." = "ఇప్పుడు లాగిన్ యాక్సెస్ చేయడానికి మీ వేలిముద్రను ఉపయోగించండి.";
+

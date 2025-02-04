@@ -1,3 +1,62 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:c83b0ae58179c0a1582219fd11c381b1c1a90b0cd01fb8fea04122888a77c987
-size 2581
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Common
+import Shared
+import Storage
+import TabDataStore
+@testable import Client
+
+class DependencyHelperMock {
+    func bootstrapDependencies(
+        injectedTabManager: TabManager? = nil,
+        injectedMicrosurveyManager: MicrosurveyManager? = nil,
+        themeManager: ThemeManager = MockThemeManager() // Ecosia: Make themeManager injectable
+    ) {
+        AppContainer.shared.reset()
+
+        let profile: Client.Profile = BrowserProfile(
+            localName: "profile"
+        )
+        AppContainer.shared.register(service: profile)
+
+        let diskImageStore: DiskImageStore = DefaultDiskImageStore(
+            files: profile.files,
+            namespace: TabManagerConstants.tabScreenshotNamespace,
+            quality: UIConstants.ScreenshotQuality)
+        AppContainer.shared.register(service: diskImageStore)
+
+        let windowUUID = WindowUUID.XCTestDefaultUUID
+        let windowManager: WindowManager = MockWindowManager(wrappedManager: WindowManagerImplementation())
+        let tabManager: TabManager =
+        injectedTabManager ?? TabManagerImplementation(profile: profile,
+                                                       uuid: ReservedWindowUUID(uuid: windowUUID, isNew: false),
+                                                       windowManager: windowManager)
+
+        let appSessionProvider: AppSessionProvider = AppSessionManager()
+        AppContainer.shared.register(service: appSessionProvider)
+        // Ecosia: Remove themeManager constant
+        // let themeManager: ThemeManager = MockThemeManager()
+        AppContainer.shared.register(service: themeManager)
+
+        let ratingPromptManager = RatingPromptManager(profile: profile)
+        AppContainer.shared.register(service: ratingPromptManager)
+
+        let downloadQueue = DownloadQueue()
+        AppContainer.shared.register(service: downloadQueue)
+
+        AppContainer.shared.register(service: windowManager)
+        windowManager.newBrowserWindowConfigured(AppWindowInfo(tabManager: tabManager), uuid: windowUUID)
+
+        let microsurveyManager: MicrosurveyManager = injectedMicrosurveyManager ?? MockMicrosurveySurfaceManager()
+        AppContainer.shared.register(service: microsurveyManager)
+
+        // Tell the container we are done registering
+        AppContainer.shared.bootstrap()
+    }
+
+    func reset() {
+        AppContainer.shared.reset()
+    }
+}

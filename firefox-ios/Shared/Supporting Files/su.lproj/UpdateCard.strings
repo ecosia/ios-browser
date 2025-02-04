@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:e3c5e9947c506ad54b550e9bbb3ad548c642dde141a67c3c45ea6ab45eb7e006
-size 845
+/* This value is used as the toast message for the saving success alert in the remember credit card page */
+"CreditCard.RememberCard.SecondaryButtonTitle.v116" = "Émbaran kartu dianyarkeun";
+
+/* This value is used as the title for the update card page */
+"CreditCard.UpdateCard.MainTitle.v122" = "Anyarkeun kartu?";
+
+/* This value is used as the title for the Manage Cards button from the update credit card page */
+"CreditCard.UpdateCard.ManageCardsButtonTitle.v115" = "Atur kartu";
+
+/* This value is used as the title for the Not Now button in the update credit card page */
+"CreditCard.UpdateCard.NotNowButtonTitle.v115" = "Moal Waka";
+
+/* This value is used as the title for the button in the update credit card page. It indicates the action to update the details f9 the card. */
+"CreditCard.UpdateCard.YesButtonTitle.v122" = "Anyarkeun";
+

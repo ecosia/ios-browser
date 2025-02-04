@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:378dab32f8a051e3da7a9a58d6105ea87d282c698ec5a34fcf46af46dda1e375
-size 234
+{
+  "images" : [
+    {
+      "filename" : "creditCardLarge.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

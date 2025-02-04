@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:efe051d8c62ae0858dfa9fa6646f4047ce3de70bc46f64fb82982c653920a332
-size 300
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+@testable import Client
+
+struct MockLocale: LocaleInterface {
+    var localeRegionCode: String?
+}

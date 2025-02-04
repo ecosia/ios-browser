@@ -1,3 +1,20 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:bd611e6f45aeefafd79e91571d5fe87eaa9d554cc24ff43995dd03cc9187ab4d
-size 685
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+class PocketManager {
+    private let pocketAPI: PocketStoriesProviding
+    private let storyProvider: StoryProvider
+
+    init(pocketAPI: PocketStoriesProviding) {
+        self.pocketAPI = pocketAPI
+        self.storyProvider = StoryProvider(pocketAPI: pocketAPI)
+    }
+
+    func getPocketItems() async -> [PocketStoryState] {
+        let stories = await storyProvider.fetchPocketStories()
+        return stories.compactMap { PocketStoryState(story: $0) }
+    }
+}

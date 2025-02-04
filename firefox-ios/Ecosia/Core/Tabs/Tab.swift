@@ -1,3 +1,21 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:b4c1a6a9d67c83833f271db1f1e80ffa12c4c8386fce45409b0cc2157129e751
-size 557
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+public struct Tab: Codable, Identifiable {
+    public var page: Page?
+    public let id: UUID
+
+    public init(page: Page?) {
+        self.page = page
+        id = .init()
+    }
+}
+
+public extension Tab {
+    var snapshot: Data? {
+        return try? Data(contentsOf: FileManager.snapshots.appendingPathComponent(id.uuidString))
+    }
+}

@@ -1,3 +1,25 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:7c50dbe78e0e213bfd6731225fddae821fa3b3d2161438ead4a32b562959d8c7
-size 465
+{
+  "images" : [
+    {
+      "filename" : "Tab Strip - iPad - Landscape - Dark@2x.png",
+      "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "Tablet Dark Landscape.png",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

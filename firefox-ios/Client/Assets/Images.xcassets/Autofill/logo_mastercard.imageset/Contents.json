@@ -1,3 +1,16 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:ea2b578435b286673e79e32e0cf315240930070c5e008d61a35b76e60eed33f1
-size 280
+{
+  "images" : [
+    {
+      "filename" : "logo_mastercard.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true,
+    "template-rendering-intent" : "template"
+  }
+}

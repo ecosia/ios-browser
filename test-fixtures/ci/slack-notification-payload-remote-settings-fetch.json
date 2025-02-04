@@ -1,3 +1,39 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:c00030b00bed317fc916463a16f786f556b9f4a04549b7922e0ea23476f4367a
-size 1191
+{
+    "attachments": [
+        {
+            "color": "${{ env.JOB_STATUS_COLOR }}",
+            "blocks": [
+                {
+                    "type": "header",
+                    "text": {
+                        "type": "plain_text",
+                        "text": "GitHub Action :github: remote settings fetch",
+                        "emoji": true
+                    }
+                },
+                {
+                    "type": "divider"
+                },
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": "Status: ${{ env.JOB_STATUS }}\n Logs: <${{ env.JOB_LOG_URL }}|Build Logs>"
+                    }
+                },
+                {
+                    "type": "divider"
+                },
+                {
+                    "type": "context",
+                    "elements": [
+                        {
+                            "type": "mrkdwn",
+                            "text": ":testops-notify: created by <www.go.com|Mobile Test Engineering>"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:b1e19c8fa670cde20274ea5af7e5b80ad88530687dee4395f9f9e18107a8f20b
-size 395
+/* Done button in Find in Page Toolbar. */
+"Done" = "Valmis";
+
+/* Text selection menu item */
+"Find in Page" = "Otsi lehelt";
+
+/* Accessibility label for next result button in Find in Page Toolbar. */
+"Next in-page result" = "Järgmine lehel olev tulemus";
+
+/* Accessibility label for previous result button in Find in Page Toolbar. */
+"Previous in-page result" = "Eelmine lehel olev tulemus";
+

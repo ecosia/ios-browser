@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:59115ddd68c2bc985e2cfaad21350cd16269e9fc4a9496041278de41db1dc6c4
-size 275
+/* Text displayed above the input field when changing the existing passcode */
+"Enter passcode" = "Upiši pristupni kȏd";
+
+/* Touch ID prompt subtitle when accessing logins */
+"Use your fingerprint to access Logins now." = "Koristi otisak prsta za pristupanje prijavama.";
+

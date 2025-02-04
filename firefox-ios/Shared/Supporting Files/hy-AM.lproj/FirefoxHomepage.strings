@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:c96f841abd4f34709309d8570b4fc611d906c5189b60110f7fcdb267f8681224
-size 1303
+/* When the user ends their private session, they are returned to the private mode homepage, and a toastbar popups confirming that their data has been erased. This is the label for that toast. */
+"FirefoxHomepage.FeltDeletion.Link.v122" = "Գաղտնի դիտարկման տվյալները ջնջվեցին";
+
+/* The body of the message for the card that educates users about how private mode works. The card shows up on the homepage when in the new privacy mode. Placeholder refers to app name. */
+"FirefoxHomepage.FeltPrivacyUI.Body.v122" = "%@-ը ջնջում է Ձեր թխուկները, պատմությունը և կայքի տվյալները, երբ փակում եք Ձեր բոլոր գաղտնի ներդիրները:";
+
+/* The link for the card that educates users about how private mode works. The link redirects to an external site for more information. The card shows up on the homepage when in the new privacy mode. */
+"FirefoxHomepage.FeltPrivacyUI.Link.v122" = "Ո՞վ կարող է տեսնել իմ գործունեությունը:";
+
+/* The title for the card that educates users about how private mode works. The card shows up on the homepage when in the new privacy mode. */
+"FirefoxHomepage.FeltPrivacyUI.Title.v122" = "Այս սարքի վրա հետքեր չթողնել";
+

@@ -1,3 +1,11 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:1f54a283be96a2691d717d09bacf8a164754131c70c9a2d03ec2fadf85d37e65
-size 362
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import UIKit
+
+protocol ApplicationStateProvider {
+    var applicationState: UIApplication.State { get }
+}
+
+extension UIApplication: ApplicationStateProvider {}

@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:5f77c56c554b61c4234fb2c4fd91a922c8651fd5912ba1654fb34ddfe8d51fca
-size 526
+/* Privacy - Camera Usage Description */
+"NSCameraUsageDescription" = "Hierdie laat mens foto’s neem en oplaai.";
+
+/* Privacy - Location When In Use Usage Description */
+"NSLocationWhenInUseUsageDescription" = "Webwerwe wat u besoek kan dalk u ligging vra.";
+
+/* Privacy - Microphone Usage Description */
+"NSMicrophoneUsageDescription" = "Hierdie laat mens video’s neem en oplaai.";
+
+/* Privacy - Photo Library Additions Usage Description */
+"NSPhotoLibraryAddUsageDescription" = "This lets you save and upload photos.";
+

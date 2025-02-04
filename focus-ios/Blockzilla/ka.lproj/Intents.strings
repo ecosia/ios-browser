@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:d1c3c355590a3b16c2f53aadb7e5fe3ef73d02433e8f61c462383dcd6eca60b5
-size 242
+/* (No Comment) */
+"Intents.Erase.Description" = "დათვალიერების მონაცემების გასუფთავება";
+
+/* (No Comment) */
+"Intents.Erase.Title" = "გასუფთავება";
+

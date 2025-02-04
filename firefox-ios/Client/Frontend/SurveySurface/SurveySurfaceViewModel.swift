@@ -1,3 +1,33 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:c69d061b4d0d3f401a75f47837fca76e3ecc889fc575ad077fe9033d26fe08b4
-size 830
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+import Shared
+
+class SurveySurfaceViewModel {
+    // MARK: - Properties
+    weak var delegate: SurveySurfaceDelegate?
+    var info: SurveySurfaceInfoProtocol
+
+    // MARK: - Initialization
+    init(with info: SurveySurfaceInfoProtocol,
+         delegate: SurveySurfaceDelegate
+    ) {
+        self.info = info
+        self.delegate = delegate
+    }
+
+    // MARK: - Functionality
+    func didDisplayMessage() {
+        delegate?.didDisplayMessage()
+    }
+
+    func didTapTakeSurvey() {
+        delegate?.didTapTakeSurvey()
+    }
+
+    func didTapDismissSurvey() {
+        delegate?.didTapDismissSurvey()
+    }
+}

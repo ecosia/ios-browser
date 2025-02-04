@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:20050f68bf88d060419ad9d19af646a2403ec02e2e1d0946b0ab9fdd9e293578
-size 460
+/* Accessibility label for next button that is displayed above the keyboard when a form field on a website was tapped. */
+"KeyboardAccessory.NextButton.Accessibility.Label.v124" = "Форманың келесі өрісі";
+
+/* Accessibility label for previous button that is displayed above the keyboard when a form field on a website was tapped. */
+"KeyboardAccessory.PreviousButton.Accessibility.Label.v124" = "Форманың алдыңғы өрісі";
+

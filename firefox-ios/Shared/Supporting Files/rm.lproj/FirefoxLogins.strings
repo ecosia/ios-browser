@@ -1,3 +1,18 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:cd5bd842814c8a71a140784f41450b6275d8fe5253c3dc4cd3a046008f3536b6
-size 828
+/* Prompt for saving the username in the Save Logins prompt. */
+"LoginsHelper.PromptSaveLogin.Title.v122" = "Memorisar il num d’utilisader?";
+
+/* Prompt for saving a password in the Save Logins prompt. */
+"LoginsHelper.PromptSavePassword.Title.v122" = "Memorisar il pled-clav?";
+
+/* Prompt for updating the password in the Update Password prompt. */
+"LoginsHelper.PromptUpdateLogin.Title.OneArg.v122" = "Actualisar il pled-clav?";
+
+/* Prompt for updating a password in the Update Password prompt. */
+"LoginsHelper.PromptUpdateLogin.Title.TwoArg.v122" = "Actualisar il pled-clav?";
+
+/* Placeholder text for search box in logins list view. */
+"LoginsList.LoginsListSearchPlaceholder.v122" = "Tschertgar en ils pleds-clav";
+
+/* Title for the list of logins saved by the app */
+"LoginsList.Title.v122" = "PLEDS-CLAV MEMORISADS";
+

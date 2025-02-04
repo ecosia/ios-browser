@@ -1,3 +1,25 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:fb5673207023d321cee13e090270cbcd41d6a831b64969e6e3173c86b879a4d3
-size 433
+{
+  "images" : [
+    {
+      "filename" : "Append.pdf",
+      "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "icon_go_to_suggestion.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

@@ -1,3 +1,16 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:fe07b718d2585e77edccf36752798b0b7c2b148ba7859cc28f7774bb56a10237
-size 270
+{
+  "images" : [
+    {
+      "filename" : "Group.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true,
+    "template-rendering-intent" : "template"
+  }
+}

@@ -1,3 +1,17 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:192aa654252ea7261f766c7a35881de72b0c09442b9bd0ae363b166f0005f387
-size 471
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+struct ReferralCreateCodeRequest: BaseRequest {
+    var method: HTTPMethod { .post }
+
+    var path: String { "/v1/referrals/referral/" }
+
+    var queryParameters: [String: String]?
+
+    var additionalHeaders: [String: String]?
+
+    var body: Data?
+}

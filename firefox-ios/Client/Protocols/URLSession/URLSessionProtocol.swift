@@ -1,3 +1,39 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:32b2dd69f6eb4fdabfe1c0040ca60837eb92b38f574c36b50c9fa91dc96ce5d1
-size 1374
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+protocol URLSessionProtocol {
+    typealias DataTaskResult = (Data?, URLResponse?, Error?) -> Void
+
+    func data(from url: URL) async throws -> (Data, URLResponse)
+
+    func dataTaskWith(_ url: URL,
+                      completionHandler: @escaping DataTaskResult
+    ) -> URLSessionDataTaskProtocol
+
+    func dataTaskWith(
+        request: URLRequest,
+        completionHandler: @escaping @Sendable (Data?, URLResponse?, Error?) -> Void
+    ) -> URLSessionDataTaskProtocol
+}
+
+extension URLSession: URLSessionProtocol {
+    public func data(from url: URL) async throws -> (Data, URLResponse) {
+        try await data(from: url, delegate: nil)
+    }
+
+    func dataTaskWith(
+        request: URLRequest,
+        completionHandler: @escaping @Sendable (Data?, URLResponse?, Error?) -> Void
+    ) -> URLSessionDataTaskProtocol {
+        return dataTask(with: request, completionHandler: completionHandler)
+    }
+
+    func dataTaskWith(_ url: URL,
+                      completionHandler: @escaping DataTaskResult
+    ) -> URLSessionDataTaskProtocol {
+        dataTask(with: url, completionHandler: completionHandler) as URLSessionDataTaskProtocol
+    }
+}

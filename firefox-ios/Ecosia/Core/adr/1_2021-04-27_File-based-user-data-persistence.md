@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:f42e3d295895246f59439500f983c2fe42b2b3797eb2f1ac74f61d447803a6af
-size 601
+# File based user data persistence
+
+- In the context of: `having persistence for user data and settings`
+- facing: `loading user data via UserDefaults delayed app launch, lacked the ability to scale and were flaky in unit tests`
+- we decided: `to store user data in JSON-encoded files`
+- and neglected: `the use of UserDefaults`
+- to achieve: `ease of use, extensibility, speed of access, consistency and predictable unit test results`
+- accepting that: `we need to implement persistence (storing, loading, caching) of the json-files ourselves`
+
+## Related Code
+
+- [User.swift](../Sources/User.swift)

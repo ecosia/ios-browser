@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:cbae0c26850b2767a75d60a38c0aaa3d158e611efdde4fea409e94cc4400b9bc
-size 412
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+extension UIImage {
+    convenience init?(themed name: String) {
+        let suffix = LegacyThemeManager.instance.current.isDark ? "Dark" : ""
+        self.init(named: name + suffix)
+    }
+}

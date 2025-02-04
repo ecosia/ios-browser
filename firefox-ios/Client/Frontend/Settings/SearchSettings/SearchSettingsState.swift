@@ -1,3 +1,18 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:460ffad181bca31d19a8b937c5ef1f8f95bb1c81b1cd8cc2230d0095e1a32b2e
-size 504
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Redux
+import Common
+
+struct SearchSettingsState: ScreenState, Equatable {
+    let windowUUID: WindowUUID
+
+    init(_ appState: AppState, windowUUID: WindowUUID) {
+        self.windowUUID = windowUUID
+    }
+
+    static let reducer: Reducer<Self> = { state, action in
+        return state
+    }
+}

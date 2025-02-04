@@ -1,3 +1,4 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:ffb650c83e7fb9ce9c2c5872538d6a6296281636585000908b92acd566cced32
-size 102
+[{
+  "action": { "type": "block" },
+  "trigger": { "url-filter": ".*", "resource-type": ["font"] }
+}]

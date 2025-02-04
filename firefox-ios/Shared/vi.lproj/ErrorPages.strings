@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:8ae98210be16520f4bb33f458efc5f0b32a66661b6b7666eeeeeb4c24ca0909b
-size 231
+/* Shown in error pages for files that can't be shown and need to be downloaded. */
+"Open in Safari" = "Mở trong Safari";
+
+/* Shown in error pages on a button that will try to load the page again */
+"Try again" = "Thử lại";
+

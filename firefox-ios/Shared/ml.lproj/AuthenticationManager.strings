@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:04ee4c918e06368532c4e07ea8bf609bc2af4dcb02b5892c0bbd622a1a2c060b
-size 421
+/* Text displayed above the input field when changing the existing passcode */
+"Enter passcode" = "രഹസ്യകോഡ് പോരട്ടെ";
+
+/* Touch ID prompt subtitle when accessing logins */
+"Use your fingerprint to access Logins now." = "പ്രവേശനങ്ങള്‍ ലഭിക്കാനായി താങ്കളുടെ വിരലടയാളം ഉപയോഗിക്കുക.";
+

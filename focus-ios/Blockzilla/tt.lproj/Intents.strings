@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:e1c72ef2b2080534edd603a49c46a9e0b3159960d629432d96cfc5abe6422580
-size 156
+/* (No Comment) */
+"Intents.Erase.Description" = "Гизү утырышын бетерү";
+
+/* (No Comment) */
+"Intents.Erase.Title" = "Чистарту";
+

@@ -1,3 +1,17 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:34abdce3d093bfe6d2438ddee0e03269762cfa018cd8925bcac8eab96a030a58
-size 559
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+struct LoginOnboarding {
+    static let HasSeenLoginOnboardingKey = "HasSeenLoginOnboarding"
+
+    static func shouldShow() -> Bool {
+        return UserDefaults.standard.bool(forKey: HasSeenLoginOnboardingKey) == false
+    }
+
+    static func setShown() {
+        UserDefaults.standard.set(true, forKey: HasSeenLoginOnboardingKey)
+    }
+}

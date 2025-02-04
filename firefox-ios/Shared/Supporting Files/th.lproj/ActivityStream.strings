@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:0cd41f8d3d0778665a33892cedffdc172904a59572f2573a817c2e326332e456
-size 338
+/* String used in the section title of the Bookmarks section on Home Screen. */
+"ActivityStream.Bookmarks.Title.v128" = "ที่คั่นหน้า";
+
+/* Show all button text for Bookmarks items on the home page, which opens the Bookmarks panel when tapped. */
+"Bookmarks.Actions.More.v128" = "แสดงทั้งหมด";
+

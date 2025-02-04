@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:6f1a9a992a5d4190ec26df994faff5db305604e71cccef2af562eb84e4189d66
-size 348
+/* Text displayed above the input field when changing the existing passcode */
+"Enter passcode" = "Кілттік кодты енгізіңіз";
+
+/* Touch ID prompt subtitle when accessing logins */
+"Use your fingerprint to access Logins now." = "Логиндерге қатынау үшін саусақ баспасын қолданыңыз.";
+

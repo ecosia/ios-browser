@@ -1,3 +1,14 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:62c14bbf86262b98e388b3d7e7680bd8fb260c2bedf89c35cc43cab222447fdc
-size 457
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+struct TabDisplayModel: Equatable {
+    var isPrivateMode: Bool
+    var tabs: [TabModel]
+    var normalTabsCount: String
+    var inactiveTabs: [InactiveTabsModel]
+    var isInactiveTabsExpanded: Bool
+    var undoCloseType: ToastType?
+}

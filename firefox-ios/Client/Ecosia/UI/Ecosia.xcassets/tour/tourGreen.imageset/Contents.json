@@ -1,3 +1,22 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:282eb3987f1e8372a3ee51a00c0ce3a242bf8277eea6cdfdf4738175f9accd8b
-size 404
+{
+  "images" : [
+    {
+      "filename" : "Theme=Light, Variant=Green results.pdf",
+      "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "Theme=Dark, Variant=Green results.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

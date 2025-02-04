@@ -1,3 +1,24 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:e8043e74c1757e4056c4888387d875108ba8927afea87e2ac3cc54c6260cc86a
-size 865
+/* (No Comment) */
+"New Private Tab" = "Nova privata langeto";
+
+/* (No Comment) */
+"New Tab" = "Nova langeto";
+
+/* Privacy - Camera Usage Description */
+"NSCameraUsageDescription" = "Tio ĉi permesas al vi preni kaj alŝuti fotojn.";
+
+/* Privacy - Face ID Usage Description */
+"NSFaceIDUsageDescription" = "Ecosia postulas Face ID por aliri viajn konservitajn legitimilojn kaj pagmetodojn.";
+
+/* Privacy - Location When In Use Usage Description */
+"NSLocationWhenInUseUsageDescription" = "Retejoj vizititaj de vi povas peti vian lokon.";
+
+/* Privacy - Microphone Usage Description */
+"NSMicrophoneUsageDescription" = "Tio ĉi permesas al vi preni kaj alŝuti fotojn.";
+
+/* Privacy - Photo Library Additions Usage Description */
+"NSPhotoLibraryAddUsageDescription" = "Tio ĉi permesas al vi konservi fotojn.";
+
+/* (No Comment) */
+"Scan QR Code" = "Skani kodon QR";
+

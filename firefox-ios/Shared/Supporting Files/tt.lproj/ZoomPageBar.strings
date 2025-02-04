@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:232d7a7021f7318746ef2de768bd855cc9d202c537e72b12b4cec74f22b5b843
-size 701
+/* Accessibility label for closing the zoom panel in Zoom Page Bar */
+"Menu.ZoomPage.Close.AccessibilityLabel.v113" = "Масштаб панелен ябу";
+
+/* Accessibility label for current zoom level in Zoom Page Bar. The placeholder represents the zoom level */
+"Menu.ZoomPage.CurrentZoomLevel.AccessibilityLabel.v113" = "Хәзерге масштаб: %@";
+
+/* Accessibility label for decreasing the zoom level in Zoom Page Bar */
+"Menu.ZoomPage.DecreaseZoom.AccessibilityLabel.v113" = "Масштабны кечерәйтү";
+
+/* Accessibility label for increasing the zoom level in Zoom Page Bar */
+"Menu.ZoomPage.IncreaseZoom.AccessibilityLabel.v113" = "Масштабны зурайту";
+

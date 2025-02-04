@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:5e737f8b79a8d9df1b33aef76469685e88d1a24fefb53175083a620ce535ec26
-size 222
+{
+  "images" : [
+    {
+      "filename" : "MAP.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

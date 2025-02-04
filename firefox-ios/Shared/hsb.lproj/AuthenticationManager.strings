@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:62f4cc8741f9e7108c20e55fe6cc37e0bd1ff79dbc907f8fa2f7c372ba3be443
-size 318
+/* Text displayed above the input field when changing the existing passcode */
+"Enter passcode" = "Hesłowy kod zapodać";
+
+/* Touch ID prompt subtitle when accessing logins */
+"Use your fingerprint to access Logins now." = "Wužiwajće swój porstowy wotćišć, zo byšće nětko na přizjewjenja přistup měł.";
+

@@ -1,3 +1,26 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:9d9b2a1299e845d778d965da512e7e449360ced4d80ab189e1b7d1c0ff4262f8
-size 722
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+extension Locale {
+
+    var identifierWithDashedLanguageAndRegion: String {
+        identifier.replacingOccurrences(of: "_", with: "-").lowercased()
+    }
+
+    var regionIdentifier: String? {
+        if #available(iOS 16, macOS 13, *) {
+            return region?.identifier
+        } else {
+            return regionCode
+        }
+    }
+
+    public var regionIdentifierLowercasedWithFallbackValue: String {
+        regionIdentifier?.lowercased() ?? "us"
+    }
+}
+
+extension Locale: RegionLocatable {}

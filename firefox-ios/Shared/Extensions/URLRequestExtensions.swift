@@ -1,3 +1,14 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:735bd8f66f6f28a3bbf728d90c1e437822d72b90069d0fc17d6f28ed9d81e51f
-size 393
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+public extension URLRequest {
+    enum Method: String {
+        case get = "GET"
+        case post = "POST"
+        case delete = "DELETE"
+        case put = "PUT"
+    }
+}

@@ -1,3 +1,3 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:fc6ac29a1b0ca55b4cf367357571a222e20ef9987ffcd260f91804464f426594
-size 205
+/* A brief descriptive name for this app on this device, used for Send Tab and Synced Tabs. The first argument is the app name. The second argument is the device name. */
+"%@ on %@" = "%1$@ លើ %2$@";
+

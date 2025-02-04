@@ -1,3 +1,3 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:f98fa1feb839b18955934fc7c7532ce3a089c3e1adc1b0cb9a7b79be69840b59
-size 166
+/* This value is used as the title for the select a credit card from list of available cards. */
+"CreditCard.SelectCreditCard.MainTitle.v122" = "Nota vistað kort";
+

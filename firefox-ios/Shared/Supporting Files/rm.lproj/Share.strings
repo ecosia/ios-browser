@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:466859af31fd1dc69e2536859f66b844997d022170cbdf9b66afc3bfb5852ae6
-size 363
+/* Error message shown in the remote tabs panel */
+"SendTo.NoDevicesFound.Message.v119" = "Ti n'has connectà nagins auters apparats cun quest conto che pudessan vegnir sincronisads.";
+
+/* This message appears when a user tries to use 'Send Link to Device' action while not logged in */
+"SendTo.NotSignedIn.Title.v119" = "Ti n'es betg annunzià cun tes conto.";
+

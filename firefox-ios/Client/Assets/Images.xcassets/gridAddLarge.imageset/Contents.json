@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:5c4ad0fbfb9bc68b1125adee393aa4b37f593ddd770e02bab3f78609b5ada0d6
-size 231
+{
+  "images" : [
+    {
+      "filename" : "gridAddLarge.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

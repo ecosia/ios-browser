@@ -1,3 +1,21 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:13e31d863f387bc493d5ef2761ca46c7edc62c744e11ff396e85b2bfe0512319
-size 731
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+import UIKit
+
+extension UIImage {
+    public func createScaled(size: CGSize) -> UIImage {
+        let imageRenderer = UIGraphicsImageRenderer(size: size)
+        return imageRenderer.image(actions: { (_) in
+            draw(in: CGRect(origin: .zero, size: size))
+        })
+    }
+
+    func alpha(_ value: CGFloat) -> UIImage {
+        let imageRenderer = UIGraphicsImageRenderer(size: size)
+        return imageRenderer.image(actions: { (_) in
+            draw(at: .zero, blendMode: .normal, alpha: value)
+        })
+    }
+}

@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:924ae773ed63ad058035db2b54a7133330512f5650f6628b0084dbc7c11c3b29
-size 756
+/* Contextual hints are little popups that appear for the users informing them of new features. This one talks about additions to the Firefox homepage regarding a more personalized experience. */
+"ContextualHints.FirefoxHomepage.JumpBackIn.PersonalizedHome" = "Spoznajte svojo prilagojeno domačo stran. Tukaj bodo prikazani nedavni zavihki, zaznamki in zadetki iskanja.";
+
+/* Contextual hints are little popups that appear for the users informing them of new features. When a user is logged in and has a tab synced from desktop, this popup indicates which tab that is within the Jump Back In section. */
+"ContextualHints.FirefoxHomepage.JumpBackIn.SyncedTab.v106" = "Vaši zavihki se sinhronizirajo! Nadaljujte tam, kjer ste končali na drugi napravi.";
+

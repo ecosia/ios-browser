@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:5b4e0a8c47a417c88f74d9cdeeac71bb3e3dc2bc9567a56bb83d69840e4f7939
-size 384
+/* This is the learn more text of the Pocket footer on Firefox Homepage. */
+"FirefoxHomepage.Pocket.Footer.LearnMore.v115" = "Saznaj više";
+
+/* This is the title of the Pocket footer on Firefox Homepage. The first placeholder is for the Pocket app name and the second placeholder for the app name */
+"FirefoxHomepage.Pocket.Footer.Title.v116" = "Pokreće %1$@. Dio %2$@ obitelji.";
+

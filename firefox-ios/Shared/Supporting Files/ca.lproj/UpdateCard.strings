@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:bc8598d35e22e82b7691fee49a3314b9e32de4ec277980796fa62f9013be9455
-size 886
+/* This value is used as the toast message for the saving success alert in the remember credit card page */
+"CreditCard.RememberCard.SecondaryButtonTitle.v116" = "S'ha actualitzat la informació de la targeta";
+
+/* This value is used as the title for the update card page */
+"CreditCard.UpdateCard.MainTitle.v122" = "Voleu actualitzar la targeta?";
+
+/* This value is used as the title for the Manage Cards button from the update credit card page */
+"CreditCard.UpdateCard.ManageCardsButtonTitle.v115" = "Gestiona les targetes";
+
+/* This value is used as the title for the Not Now button in the update credit card page */
+"CreditCard.UpdateCard.NotNowButtonTitle.v115" = "Ara no";
+
+/* This value is used as the title for the button in the update credit card page. It indicates the action to update the details f9 the card. */
+"CreditCard.UpdateCard.YesButtonTitle.v122" = "Actualitza";
+

@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:018a5b774317511e18047eec33d6142e04853c7c97adf444ee31fa95cc200b27
-size 540
+/* Privacy - Camera Usage Description */
+"NSCameraUsageDescription" = "Woo ga naŋ war ma biyey zaa k'i zijandi.";
+
+/* Privacy - Location When In Use Usage Description */
+"NSLocationWhenInUseUsageDescription" = "Interneti nungey kaŋ war g'i naaru ga hin ka war gorodogoo hãa.";
+
+/* Privacy - Microphone Usage Description */
+"NSMicrophoneUsageDescription" = "Woo nda war ga widewo zaa k'a zijandi.";
+
+/* Privacy - Photo Library Additions Usage Description */
+"NSPhotoLibraryAddUsageDescription" = "This lets you save and upload photos.";
+

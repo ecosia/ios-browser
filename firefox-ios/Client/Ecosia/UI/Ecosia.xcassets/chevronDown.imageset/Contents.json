@@ -1,3 +1,16 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:8d3c90976b378356c4e902efa995253d411f58a537d9185b7bbf9e2354452b61
-size 276
+{
+  "images" : [
+    {
+      "filename" : "chevronDown.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true,
+    "template-rendering-intent" : "template"
+  }
+}

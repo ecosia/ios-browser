@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:c6285e3994f3f3726327740741608b4c896a388ca1cd0ecffedcd543b61ac0f9
-size 728
+/* Button label to cancel deletion when the user tried to delete a non-empty folder. */
+"Bookmarks.DeleteFolderWarning.CancelButton.Label" = "Zrušit";
+
+/* Button label for the button that deletes a folder and all of its children. */
+"Bookmarks.DeleteFolderWarning.DeleteButton.Label" = "Smazat";
+
+/* Main body of the confirmation alert when the user tries to delete a folder that still contains bookmarks and/or folders. */
+"Bookmarks.DeleteFolderWarning.Description" = "Opravdu chcete smazat celou tuto složku a její obsah?";
+
+/* Title of the confirmation alert when the user tries to delete a folder that still contains bookmarks and/or folders. */
+"Bookmarks.DeleteFolderWarning.Title" = "Tato složka není prázdná.";
+

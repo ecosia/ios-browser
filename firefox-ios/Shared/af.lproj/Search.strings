@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:d4b5e9d346f02b4eaf0752099699a4e26710a19eb2ac4f4a02ccea993db2880e
-size 203
+/* Label for search engine buttons. The argument corresponds to the name of the search engine. */
+"%@ search" = "%@-soek";
+
+/* Label for search settings button. */
+"Search Settings" = "Soekintellings";
+

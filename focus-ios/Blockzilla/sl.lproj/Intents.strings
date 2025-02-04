@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:2a8c32d1d0aa5a74e2f6d9e46c7bfdddf7201770e183dfac80a60e70a946a59c
-size 132
+/* (No Comment) */
+"Intents.Erase.Description" = "Izbriši sejo brskanja";
+
+/* (No Comment) */
+"Intents.Erase.Title" = "Izbriši";
+

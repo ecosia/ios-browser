@@ -1,3 +1,20 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:deee71b9325f2bd921ebf8746087b8d78588792a771d659d4fd5f207bc4fca26
-size 360
+{
+  "images" : [
+    {
+      "filename" : "onboardingWaves.pdf",
+      "idiom" : "iphone"
+    },
+    {
+      "filename" : "onboardingWaves_iPad.pdf",
+      "idiom" : "ipad"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true,
+    "template-rendering-intent" : "template"
+  }
+}

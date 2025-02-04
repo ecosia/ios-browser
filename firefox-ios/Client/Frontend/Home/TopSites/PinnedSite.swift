@@ -1,3 +1,16 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:881477db15088e03868ac26a77d84f961a708e2ee601fd163cca99025ed88482
-size 533
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+import Storage
+import SiteImageView
+
+open class PinnedSite: Site {
+    let isPinnedSite = true
+
+    init(site: Site, faviconResource: SiteResource?) {
+        super.init(url: site.url, title: site.title, bookmarked: site.bookmarked, faviconResource: faviconResource)
+        self.metadata = site.metadata
+    }
+}

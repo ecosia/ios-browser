@@ -1,3 +1,20 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:22a3ec23197a32962dd245f3b3cb1ddc0d5d2b03b4876f573c10bdef332499d3
-size 562
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+import Common
+
+let defaultSampleComponentUUID = UUID(uuidString: "44BA0B7D-097A-484D-8358-91A6E374451D")!
+
+extension ThemeManager {
+    var currentTheme: Theme {
+        return getCurrentTheme(for: defaultSampleComponentUUID)
+    }
+}
+
+extension Themeable {
+    public var currentWindowUUID: UUID? {
+        defaultSampleComponentUUID
+    }
+}

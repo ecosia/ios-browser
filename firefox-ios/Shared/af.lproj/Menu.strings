@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:53e2b9c399c918d6db41dc237659ebfadd0e36ca77da6f57e797d0acbc800ee1
-size 635
+/* Label for the button, displayed in the menu, used to close all tabs currently open. */
+"Menu.CloseAllTabsAction.Title" = "Sluit alle oortjies";
+
+/* Label for the button, displayed in the menu, used to open the Settings menu. */
+"Menu.OpenSettingsAction.Title" = "Instellings";
+
+/* Label for the button, displayed in the menu, used to request the desktop version of the current website. */
+"Menu.ViewDekstopSiteAction.Title" = "Versoek werf vir rekenaars";
+
+/* Label for the button, displayed in the menu, used to request the mobile version of the current website. */
+"Menu.ViewMobileSiteAction.Title" = "Versoek werf vir selfone";
+

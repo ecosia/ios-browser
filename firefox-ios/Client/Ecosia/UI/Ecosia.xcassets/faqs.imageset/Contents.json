@@ -1,3 +1,16 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:c15f2611a5d0bad34b5975338d221a0dc6772f3cc504f615737da5579abd8795
-size 269
+{
+  "images" : [
+    {
+      "filename" : "faqs.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true,
+    "template-rendering-intent" : "original"
+  }
+}

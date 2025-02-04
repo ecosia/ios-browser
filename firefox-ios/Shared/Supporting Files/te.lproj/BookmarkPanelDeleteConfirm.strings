@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:b8e05a3bf77bc7d28eb6e0ff72c3bbba3858f76faad9a656266214c1ada7a6ac
-size 556
+/* Button label to cancel deletion when the user tried to delete a non-empty folder. */
+"Bookmarks.DeleteFolderWarning.CancelButton.Label" = "రద్దుచేయి";
+
+/* Button label for the button that deletes a folder and all of its children. */
+"Bookmarks.DeleteFolderWarning.DeleteButton.Label" = "తొలగించు";
+
+/* Title of the confirmation alert when the user tries to delete a folder that still contains bookmarks and/or folders. */
+"Bookmarks.DeleteFolderWarning.Title" = "ఈ సంచయం ఖాళీగా లేదు.";
+

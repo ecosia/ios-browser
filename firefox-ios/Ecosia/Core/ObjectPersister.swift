@@ -1,3 +1,10 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:402a3cc4b4c035228de9a05ed23e174ad9cc250202da52989daba31bbfed798f
-size 334
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+protocol ObjectPersister {
+    func set(_ value: Any?, forKey: String)
+    func object(forKey: String) -> Any?
+}

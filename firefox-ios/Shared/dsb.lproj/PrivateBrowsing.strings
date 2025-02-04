@@ -1,3 +1,33 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:7397de2937f40250b050e0cf3179ac4aa4705bb415f5204940c3117e22cc22f8
-size 1383
+/* Setting for closing private tabs */
+"Close Private Tabs" = "Priwatne rejtariki zacyniś";
+
+/* Context menu option for opening a link in a new private tab */
+"ContextMenu.OpenInNewPrivateTabButtonTitle" = "W nowem priwatnem rejtariku wócyniś";
+
+/* Description text displayed when there are no open tabs while in private mode */
+"Firefox won’t remember any of your history or cookies, but new bookmarks will be saved." = "Firefox njebuźo se wašu historiju abo cookieje spomnjeś, ale nowe cytańske znamjenja budu se składowaś.";
+
+/* Text button displayed when there are no tabs open while in private mode */
+"Learn More" = "Dalšne informacije";
+
+/* Toggled OFF accessibility value */
+"Off" = "Wušaltowany";
+
+/* Toggled ON accessibility value */
+"On" = "Zašaltowany";
+
+/* Title displayed for when there are no open tabs while in private mode */
+"Private Browsing" = "Priwatny modus";
+
+/* Accessibility label for toggling on/off private mode */
+"Private Mode" = "Priwatny modus";
+
+/* Accessibility label for toggling on/off private mode */
+"PrivateBrowsing.Toggle.A11y.Label.v132" = "Priwatny modus";
+
+/* Accessiblity hint for toggling on/off private mode */
+"Turns private mode on or off" = "Zašaltujo abo wušaltujo priwatny modus";
+
+/* Will be displayed in Settings under 'Close Private Tabs' */
+"When Leaving Private Browsing" = "Pśi kóńcenju priwatnego modusa";
+

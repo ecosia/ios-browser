@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:4f144eee8dd04659f4f8fa74337bd2051465f01202d7d7198f67f03736b06672
-size 392
+/* Error message shown in the remote tabs panel */
+"SendTo.NoDevicesFound.Message.v119" = "Асинхронизациазы иҟоу даҽа ҳәагак шәымам ари ахыԥхьаӡара иацҵоу.";
+
+/* This message appears when a user tries to use 'Send Link to Device' action while not logged in */
+"SendTo.NotSignedIn.Title.v119" = "Уара ухы иаурхәаӡом.";
+

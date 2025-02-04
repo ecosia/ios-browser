@@ -1,3 +1,8 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:4cbf50c2c47855e00578d59ed0b907707471f086e3a7f82537fde4e7afb7a332
-size 345
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+#pragma once
+
+BOOL SwizzleInstanceMethods(Class class, SEL dstSel, SEL srcSel);
+BOOL SwizzleClassMethods(Class class, SEL dstSel, SEL srcSel);

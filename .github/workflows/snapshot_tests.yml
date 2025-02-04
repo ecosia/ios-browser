@@ -1,3 +1,32 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:6a1faf00209d604cf822eefef95c56edeffabd34fd0408434321c5faef499e61
-size 909
+name: Snapshot Tests
+
+on:
+  pull_request:
+    paths:
+      - 'Client/Configuration/Common.xcconfig'
+
+jobs:
+  execute_snapshot_tests:
+    runs-on: macos-15
+    name: Execute Snapshot Tests
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Check for MARKETING_VERSION change
+        id: check_marketing_version
+        run: sh ./check_marketing_version.sh
+
+      - name: Prepare environment
+        if : ( steps.check_marketing_version.outputs.skipnext  != 'true' )
+        uses: ./.github/actions/prepare_environment
+        with:
+          core-token: ${{ secrets.IOS_CORE_TOKEN }}
+
+      - name: Perform Snapshot Tests and Publish Test reports
+        if : ( steps.check_marketing_version.outputs.skipnext  != 'true' )
+        id: perform-snapshot-tests
+        uses: ./.github/actions/perform_snapshot_tests
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}

@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:1d7aeeb430458f0638d7350ec8073d413a1323e0a51cdfdbd7cd2329ba4e2216
-size 388
+/* The cancel button when confirming clear private data. */
+"Cancel" = "Utzi";
+
+/* The button that clears private data. */
+"OK" = "Ados";
+
+/* Description of the confirmation dialog shown when a user tries to clear their private data. */
+"This action will clear all of your private data. It cannot be undone." = "Ekintza honek zure datu pribatu guztiak garbituko ditu. Ezin da desegin.";
+

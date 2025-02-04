@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:eff2115aed99c7f52ba6fe9f50550ca118d469510b02e3a64a2ddc578ce5ca05
-size 473
+/* The cancel button when confirming clear private data. */
+"Cancel" = "Скасувати";
+
+/* The button that clears private data. */
+"OK" = "OK";
+
+/* Description of the confirmation dialog shown when a user tries to clear their private data. */
+"This action will clear all of your private data. It cannot be undone." = "Ця дія призведе до стирання всіх ваших особистих даних. Її неможливо скасувати.";
+

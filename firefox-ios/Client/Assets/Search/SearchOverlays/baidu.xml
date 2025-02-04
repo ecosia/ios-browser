@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:5a91f3633a61549fec4189d42b175e74b2d9e2f69836b1b5fa4bf6c3de21ce61
-size 359
+<SearchOverlay>
+  <replace target="//search:Param[@name='from' and @value='1000969a']">
+  </replace>
+  <replace target="//search:Url[@type='application/x-moz-tabletsearch']">
+    <Url type="application/x-moz-tabletsearch" method="GET" template="https://m.baidu.com/s">
+      <Param name="word" value="{searchTerms}"/>
+    </Url>
+  </replace>
+</SearchOverlay>

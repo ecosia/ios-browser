@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:f28cd91ba4acf69d23ec65962e4c5135557b7c1960390f37b5574d4deb658cb7
-size 1061
+/* Accessibility label for the address field in the address toolbar. */
+"AddressToolbar.Location.A11y.Label.v128" = "Suche oder Adresse";
+
+/* Placeholder for the address field in the address toolbar. */
+"AddressToolbar.Location.Placeholder.v128" = "Suche oder Adresse";
+
+/* Accessibility label for the lock icon button in the address field of the address toolbar, responsible with Privacy & Security Settings. */
+"AddressToolbar.PrivacyAndSecuriySettings.A11y.Label.v128" = "Datenschutz- und Sicherheitseinstellungen";
+
+/* When the user taps the search engine icon in the toolbar, a sheet with a list of alternative search engines appears. This is the accessibility hint describing what tapping the search engine icon does. */
+"AddressToolbar.SearchEngine.A11y.Hint.v133" = "Öffnet Suchmaschinen-Auswahl";
+
+/* Accessibility label for the search engine icon in the address field of the address toolbar. The placeholder is getting replaced with the name of the search engine (e.g. Google). */
+"AddressToolbar.SearchEngine.A11y.Label.v128" = "Suchmaschine: %@";
+

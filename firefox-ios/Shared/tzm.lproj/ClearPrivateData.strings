@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:7f12a543e61c6e5dbd62a955772377fef828d32d5a1a515694bd7baeafc2aead
-size 321
+/* Settings item for clearing browsing history */
+"Browsing History" = "ⴰⵎⵣⵔⵓⵢ ⵏ ⵓⵙⵜⴰⵔⴰ";
+
+/* Settings item for clearing cookies */
+"Cookies" = "ⵉⴽⵓⴽⵉⵜⵏ";
+
+/* Settings item for deleting downloaded files */
+"Downloaded Files" = "ⵉⴼⵓⵢⵍⴰ ⵜⵜⵢⴰⴳⴰⵎⵏⵉⵏ";
+

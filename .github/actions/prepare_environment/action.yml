@@ -1,3 +1,68 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:4553755344fb0e7e41ea4b16e413e7d112446567bce0d562d96e19d044a66b02
-size 2406
+name: 'Prepare environment'
+description: 'This action contains all the usual steps needed to setup the environment and restore caches when available'
+
+inputs:
+  core-token:
+    description: 'The iOS core token'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Xcode Select Version
+      uses: mobiledevops/xcode-select-version-action@v1
+      with:
+        xcode-select-version: 16.2
+
+    - name: Fix-up private Github URLs
+      shell: bash
+      run: find . -type f \( -name '*.pbxproj' -o -name 'Package.swift' -o -name 'Package.resolved' \) -exec sed -i '' "s/https:\/\/github.com\/${GITHUB_REPOSITORY_OWNER}/https:\/\/${GITHUB_ACCESS_TOKEN}@github.com\/${GITHUB_REPOSITORY_OWNER}/g" {} \;
+      env:
+        GITHUB_ACCESS_TOKEN: ${{ inputs.core-token }}
+
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.12.2'
+        cache: 'pip'
+
+    - name: Install gems
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 3.3
+        bundler-cache: true
+
+    - name: Install npm
+      uses: bahmutov/npm-install@v1
+
+    # lot of people are experiencing the same issue apparently
+    # found a workaround here https://github.com/actions/runner-images/issues/9577
+    - name: Delete Xcode.app
+      shell: bash
+      run: sudo rm -rf /Applications/Xcode.app
+      
+    - name: Restore SPM Cache
+      id: restore-spm-cache
+      uses: actions/cache/restore@v3
+      with:
+        path: SourcePackages/
+        key: ${{ runner.os }}-spm-cache-${{ hashFiles('firefox-ios/Client.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
+
+    - name: Install SPM if cache not found
+      shell: bash
+      if: steps.restore-spm-cache.outputs.cache-hit != 'true'
+      run: xcodebuild -resolvePackageDependencies -clonedSourcePackagesDirPath "firefox-ios/SourcePackages/"
+
+    - name: Save SPM Cache if needed
+      if: steps.restore-spm-cache.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v3
+      with:
+        path: firefox-ios/SourcePackages/
+        key: ${{ runner.os }}-spm-cache-${{ hashFiles('firefox-ios/Client.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}  
+
+    - name: Extract Staging XCConfig
+      shell: bash
+      run: echo "$STAGING_XCCONFIG" | base64 --decode > firefox-ios/Client/Configuration/Staging.xcconfig
+
+    - name: Run bootstrap script
+      shell: bash
+      run: ./bootstrap.sh

@@ -1,3 +1,25 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:8491bc8a4e1f9054f803970a6abf47a8efb6fc2e94f3bc74b342218250413251
-size 433
+{
+  "images" : [
+    {
+      "filename" : "Mozilla.pdf",
+      "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "open_in_firefox_icon.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

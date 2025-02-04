@@ -1,3 +1,10 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:fda82608f1232cb2f9b9cbdd6cf16d1fa36fd9fbdf67259d3072f411e61d379b
-size 506
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+#include "EcosiaBeta.xcconfig"
+
+PROVISIONING_PROFILE_SPECIFIER = match AdHoc com.ecosia.ecosiaapp.firefox.ShareTo
+PRODUCT_BUNDLE_IDENTIFIER = $(MOZ_BUNDLE_ID).$(PRODUCT_NAME)
+CODE_SIGN_ENTITLEMENTS = Ecosia/Entitlements/AppExtensions/EcosiaBeta.entitlements
+MOZ_BUNDLE_ID = com.ecosia.ecosiaapp.firefox

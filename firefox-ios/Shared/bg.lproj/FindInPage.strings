@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:86ace959534dd8660002d5274d3f03b78a2d75e71d74f3fe6df45f46b0561048
-size 438
+/* Done button in Find in Page Toolbar. */
+"Done" = "Готово";
+
+/* Text selection menu item */
+"Find in Page" = "Търсене в страницата";
+
+/* Accessibility label for next result button in Find in Page Toolbar. */
+"Next in-page result" = "Следващ резултат";
+
+/* Accessibility label for previous result button in Find in Page Toolbar. */
+"Previous in-page result" = "Предишен резултат";
+

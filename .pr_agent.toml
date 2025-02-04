@@ -1,3 +1,3 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:ab293ee2c3753d874e9bea3522ec8ac33c02de1470b22e979769d3cbfc2c3326
-size 63
+[github_app]
+handle_pr_actions = []
+handle_push_trigger = false

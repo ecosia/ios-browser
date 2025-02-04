@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:f085d87c4446bd754aabfb6fdfc7a52836d5be30e21cc8e0552fab417606278d
-size 719
+/* Accessibility label for closing the zoom panel in Zoom Page Bar */
+"Menu.ZoomPage.Close.AccessibilityLabel.v113" = "ਜ਼ੂਮ ਪੈਨਲ ਬੰਦ ਕਰੋ";
+
+/* Accessibility label for current zoom level in Zoom Page Bar. The placeholder represents the zoom level */
+"Menu.ZoomPage.CurrentZoomLevel.AccessibilityLabel.v113" = "ਮੌਜੂਦਾ ਜ਼ੂਮ ਪੱਧਰ: %@";
+
+/* Accessibility label for decreasing the zoom level in Zoom Page Bar */
+"Menu.ZoomPage.DecreaseZoom.AccessibilityLabel.v113" = "ਜ਼ੂਮ ਪੱਧਰ ਘਟਾਓ";
+
+/* Accessibility label for increasing the zoom level in Zoom Page Bar */
+"Menu.ZoomPage.IncreaseZoom.AccessibilityLabel.v113" = "ਜ਼ੂਮ ਪੱਧਰ ਵਧਾਓ";
+

@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:dedfd1639a9b9f8657486d83d33ce6d2fc2eddd9dea3fff1e676ad03b69bd007
-size 1006
+/* Contextual hints are little popups that appear for the users informing them of new features. This one indicates a user can navigate to the Settings page to move the search bar to the top. */
+"ContextualHints.Toolbar.Bottom.Description.v107" = "Flytta verktygsfältet till toppen om det är mer din stil.";
+
+/* Contextual hints are little popups that appear for the users informing them of new features. This one indicates a user can press and hold either the back or forward web navigation buttons to quickly navigate their back/forward history */
+"ContextualHints.Toolbar.Navigation.Description.v132" = "Tryck och håll ned pilarna för att hoppa mellan sidor i den här flikens historik.";
+
+/* Contextual hints are little popups that appear for the users informing them of new features. This one indicates a user can navigate to the Settings page to move the search bar to the bottom. */
+"ContextualHints.Toolbar.Top.Description.v107" = "Flytta verktygsfältet till botten om det är mer din stil.";
+

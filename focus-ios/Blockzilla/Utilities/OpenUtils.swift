@@ -1,3 +1,48 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:a4ea0d04947ce7fcd6b541f3060f21fbe01145a5a8944d52c46864ff7a5a0253
-size 1832
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+import UIKit
+
+class OpenUtils: NSObject {
+    private let selectedURL: URL
+    private let webViewController: LegacyWebViewController
+
+    init(url: URL, webViewController: LegacyWebViewController) {
+        self.selectedURL = url
+        self.webViewController = webViewController
+    }
+
+    func buildShareViewController() -> UIActivityViewController {
+        var activityItems: [Any] = [selectedURL]
+
+        let printInfo = UIPrintInfo(dictionary: nil)
+        printInfo.jobName = selectedURL.absoluteString
+        printInfo.outputType = .general
+        activityItems.append(printInfo)
+
+        let renderer = UIPrintPageRenderer()
+        renderer.addPrintFormatter(webViewController.printFormatter, startingAtPageAt: 0)
+        activityItems.append(renderer)
+
+        if let title = webViewController.pageTitle {
+            activityItems.append(TitleActivityItemProvider(title: title))
+        }
+
+        let shareController = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
+
+        shareController.popoverPresentationController?.permittedArrowDirections = .up
+        shareController.completionWithItemsHandler = { activityType, completed, returnedItems, activityError in
+            if !completed {
+                return
+            }
+
+            // Bug 1392418 - When copying a url using the share extension there are 2 urls in the pasteboard.
+            // Make sure the pasteboard only has one url.
+            if let url = UIPasteboard.general.urls?.first {
+                UIPasteboard.general.urls = [url]
+            }
+        }
+        return shareController
+    }
+}

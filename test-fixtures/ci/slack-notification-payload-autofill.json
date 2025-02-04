@@ -1,3 +1,39 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:9688dd348951191edb1f84cafe2266c7db3ec59576ee6e4dc165c5be358bf4f0
-size 1196
+{
+    "attachments": [
+        {
+            "color": "${{ env.JOB_STATUS_COLOR }}",
+            "blocks": [
+                {
+                    "type": "header",
+                    "text": {
+                        "type": "plain_text",
+                        "text": "GitHub Action :github: credential provider script",
+                        "emoji": true
+                    }
+                },
+                {
+                    "type": "divider"
+                },
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": "Status: ${{ env.JOB_STATUS }}\n Logs: <${{ env.JOB_LOG_URL }}|Build Logs>"
+                    }
+                },
+                {
+                    "type": "divider"
+                },
+                {
+                    "type": "context",
+                    "elements": [
+                        {
+                            "type": "mrkdwn",
+                            "text": ":testops-notify: created by <www.go.com|Mobile Test Engineering>"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

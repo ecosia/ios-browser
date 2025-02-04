@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:0e3e8ef602e58b0e64469725803a07478a591e7b5237f8be332fe5845d5a36eb
-size 279
+<SearchOverlay>
+  <!-- Test the append action. -->
+  <append parent="//search:Url[@type='text/html']">
+    <Param name="appended" value="child"/>
+  </append>
+  <append parent="//search:Url[@method='GET']">
+    <Param name="appended" value="child2"/>
+  </append>
+</SearchOverlay>

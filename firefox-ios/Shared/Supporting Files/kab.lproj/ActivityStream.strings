@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:2acf6610f6fbc7417357d12c256e633fdabbb9bab3ea1bc1593dbcc040235bc7
-size 298
+/* String used in the section title of the Bookmarks section on Home Screen. */
+"ActivityStream.Bookmarks.Title.v128" = "Ticraḍ n isebtar";
+
+/* Show all button text for Bookmarks items on the home page, which opens the Bookmarks panel when tapped. */
+"Bookmarks.Actions.More.v128" = "Sken akk";
+

@@ -1,3 +1,16 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:7c071238037788c71d312fba552459d07fd1091a71d6a85ad4e84b3ece9d3079
-size 571
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+/// Child settings pages privacy actions
+protocol PrivacySettingsDelegate: AnyObject {
+    func pressedAddressAutofill()
+    func pressedCreditCard()
+    func pressedClearPrivateData()
+    func pressedContentBlocker()
+    func pressedPasswords()
+    func pressedNotifications()
+    func askedToOpen(url: URL?, withTitle title: NSAttributedString?)
+}

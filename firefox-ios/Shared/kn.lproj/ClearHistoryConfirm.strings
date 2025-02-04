@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:96c09869585ab32c746a7aaa1b506b5ce08acd68aebf5681ce27937e69f9b77f
-size 195
+/* The cancel button when confirming clear history. */
+"Cancel" = "ರದ್ದು ಮಾಡು";
+
+/* The confirmation button that clears history even when Sync is connected. */
+"OK" = "OK‍";
+

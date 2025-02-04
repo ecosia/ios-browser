@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:96b04cd01baeab7c6046caf0cf2701bccd8d1d92463fbbcda49aad894c65534d
-size 223
+{
+  "images" : [
+    {
+      "filename" : "Logo.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

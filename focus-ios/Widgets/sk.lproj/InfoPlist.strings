@@ -1,3 +1,3 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:ff044f0ba8199127a01cd82ec125899ec8793149e0d97f06fe52816a987a4421
-size 120
+/* Copyright (human-readable) */
+"NSHumanReadableCopyright" = "Copyright © 2022 Mozilla. Všetky práva vyhradené.";
+

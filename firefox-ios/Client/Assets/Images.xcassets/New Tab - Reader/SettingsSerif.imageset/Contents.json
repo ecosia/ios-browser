@@ -1,3 +1,26 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:6bb3347917191daec08dc20f9c250527ad4c902205745dd5bfd0d453192b29de
-size 450
+{
+  "images" : [
+    {
+      "idiom" : "universal",
+      "filename" : "AaCharis.png",
+      "scale" : "1x"
+    },
+    {
+      "idiom" : "universal",
+      "filename" : "AaCharis@2x.png",
+      "scale" : "2x"
+    },
+    {
+      "idiom" : "universal",
+      "filename" : "AaCharis@3x.png",
+      "scale" : "3x"
+    }
+  ],
+  "info" : {
+    "version" : 1,
+    "author" : "xcode"
+  },
+  "properties" : {
+    "template-rendering-intent" : "template"
+  }
+}

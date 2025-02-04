@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:51d21e17097e2cecddc43bcefd3458c1ee6afa8339e4cb0e6be40e43d92bd33d
-size 592
+/* Label text that gets presented as a confirmation at the bottom of screen when the credit card is successfully removed. */
+"CreditCard.SnackBar.RemovedCardLabel.v112" = "Card removed";
+
+/* Label text that gets presented as a confirmation at the bottom of screen when credit card information gets saved successfully */
+"CreditCard.SnackBar.SavedCardLabel.v112" = "New card saved";
+
+/* Label text that gets presented as a confirmation at the bottom of screen when credit card information gets updated successfully */
+"CreditCard.SnackBar.UpdatedCardLabel.v122" = "Card Information Updated";
+

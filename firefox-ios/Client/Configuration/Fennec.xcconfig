@@ -1,3 +1,17 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:73127d672eb15363556b7769d6a786bc806376b83f1e68064799cdec4a3ff37c
-size 772
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+#include "Common.xcconfig"
+#include "Debug.xcconfig"
+
+INFOPLIST_FILE = Client/Info.plist
+MOZ_BUNDLE_DISPLAY_NAME = Fennec ($(USER))
+MOZ_BUNDLE_ID = org.mozilla.ios.Fennec
+// Flag to indicate if we want to include the debug settings bundle or not
+INCLUDE_SETTINGS_BUNDLE = YES
+MOZ_TODAY_WIDGET_SEARCH_DISPLAY_NAME = Firefox - Search
+CODE_SIGN_ENTITLEMENTS = Client/Entitlements/FennecApplication.entitlements
+OTHER_SWIFT_FLAGS = $(OTHER_SWIFT_FLAGS_common) -DMOZ_CHANNEL_FENNEC
+MOZ_INTERNAL_URL_SCHEME = fennec
+OTHER_LDFLAGS = -ObjC -fprofile-instr-generate -ld_classic

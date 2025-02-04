@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:4c386ae5ed808ce09c822deff23227461b9e5016a6857af0132dac14352c9680
-size 1236
+/* Privacy - Camera Usage Description */
+"NSCameraUsageDescription" = "ಇದು ನಿಮ್ಮನ್ನು ಫೋಟೊ ತೆಗೆಯಲು ಮತ್ತು ಅಪ್ಲೋಡ್ ಮಾಡಲು ಬಿಡುತ್ತದೆ.";
+
+/* Privacy - Face ID Usage Description */
+"NSFaceIDUsageDescription" = "ಇದು ನಿಮಗೆ ಅಪ್ಲಿಕೇಶನ್ ಅನ್ನು ಅನ್ಲಾಕ್ ಮಾಡಲು ಅನುಮತಿಸುತ್ತದೆ.";
+
+/* Privacy - Location When In Use Usage Description */
+"NSLocationWhenInUseUsageDescription" = "‍ನೀವು ಭೇಟಿ ನೀಡುವ ಜಾಲತಾಣಗಳು ನಿಮ್ಮ ಸ್ಥಳ ಮಾಹಿತಿಯನ್ನು ಕೇಳಬಹುದು.";
+
+/* Privacy - Microphone Usage Description */
+"NSMicrophoneUsageDescription" = "ಇದು ನಿಮ್ಮನ್ನು ಫೋಟೊ ತೆಗೆಯಲು ಮತ್ತು ಅಪ್ಲೋಡ್ ಮಾಡಲು ಬಿಡುತ್ತದೆ.‍";
+
+/* Privacy - Photo Library Additions Usage Description */
+"NSPhotoLibraryAddUsageDescription" = "‍ಇದು ನಿಮ್ಮನ್ನು ಫೋಟೊ‌ಗಳನ್ನು ಉಳಿಸಲು ಮತ್ತು ಅಪ್ಲೋಡ್ ಮಾಡಲು ಬಿಡುತ್ತದೆ.";
+

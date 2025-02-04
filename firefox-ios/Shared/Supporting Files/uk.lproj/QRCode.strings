@@ -1,3 +1,3 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:57a0885d41da68c00b99d24f2ced6dd0bde17b1897d7f32d27f8b1f56568c31a
-size 138
+/* Accessibility label of the QR code button in the toolbar */
+"QRCode.Toolbar.Button.A11y.Title.v128" = "Сканувати QR-код";
+

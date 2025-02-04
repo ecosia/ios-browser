@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:504bc8c6ebb31310bd43634a24ff018a23223df1eb1e9d2425c1885544f9681f
-size 235
+/* Shown in error pages for files that can't be shown and need to be downloaded. */
+"Open in Safari" = "Safari에서 열기";
+
+/* Shown in error pages on a button that will try to load the page again */
+"Try again" = "다시 시도";
+

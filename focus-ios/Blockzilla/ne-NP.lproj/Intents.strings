@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:55c5d23aca63d48cf5a909a96c25e49b56325b5f34a932ead44d2e91d44c6800
-size 225
+/* (No Comment) */
+"Intents.Erase.Description" = "ब्राउजिङ्ग इतिहास खाली गर्नुहोस्";
+
+/* (No Comment) */
+"Intents.Erase.Title" = "मेटाउनुहोस्";
+

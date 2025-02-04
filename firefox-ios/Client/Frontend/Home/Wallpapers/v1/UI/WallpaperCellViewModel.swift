@@ -1,3 +1,11 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:362cc9d2ef44889344443756a726271d625c6b0d1e94fe3f8e06586edcb8c7aa
-size 328
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+struct WallpaperCellViewModel {
+    let image: UIImage?
+    let a11yId: String
+    let a11yLabel: String
+}

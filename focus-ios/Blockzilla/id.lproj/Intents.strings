@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:93178c4e5053601e21dcdad38606e4be7eae060f1b5a627a083ba764a9194a22
-size 130
+/* (No Comment) */
+"Intents.Erase.Description" = "Hapus sesi penjelajahan";
+
+/* (No Comment) */
+"Intents.Erase.Title" = "Hapus";
+

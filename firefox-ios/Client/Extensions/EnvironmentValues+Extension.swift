@@ -1,3 +1,13 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:d86bb842123cf29fec445d06fc6c654eed7f88952c404b2c365ffcdc674bc95e
-size 391
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import SwiftUI
+import Shared
+import Common
+
+extension EnvironmentValues {
+    public var themeManager: ThemeManager {
+        return (AppContainer.shared.resolve() as ThemeManager)
+    }
+}

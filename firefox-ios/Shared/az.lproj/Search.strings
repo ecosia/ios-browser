@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:696d49055795a6bd53daf38834f9df80872b8b6a71147a6f07f94606bfd60925
-size 224
+/* Label for search engine buttons. The argument corresponds to the name of the search engine. */
+"%@ search" = "%@ axtarışı";
+
+/* Label for search settings button. */
+"Search Settings" = "Axtarış Tənzimləmələri";
+

@@ -1,3 +1,16 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:fe90ccce6f64309ad99bef1328f3cb1493e8fc9d6efbfd556ec161da7557807e
-size 274
+{
+  "images" : [
+    {
+      "filename" : "switchTab.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true,
+    "template-rendering-intent" : "template"
+  }
+}

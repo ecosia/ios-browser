@@ -1,3 +1,3 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:5a4aa753e4be879b5244ed0966725098db609cba5dfb9d90b21543eae8efa06e
-size 121
+/* Human readable description */
+"NSHumanReadableDescription" = "Mozilla zaštita od blokiranja i praćenja sadržaja";
+

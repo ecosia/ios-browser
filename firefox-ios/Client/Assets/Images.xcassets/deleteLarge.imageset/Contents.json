@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:5ea5bf9ee6f821886d34cfd13a3962e4d4f0b71870ac016b6aef4805300d778b
-size 230
+{
+  "images" : [
+    {
+      "filename" : "deleteLarge.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

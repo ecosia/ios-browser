@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:ab46a7fa284638a7acfdd4518c72c93e70865eebf0449aeadb18386d6372cde2
-size 163
+{
+  "images" : [
+    {
+      "filename" : "whatsNewTrees.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

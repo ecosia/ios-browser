@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:2150e6ef558da0a0f2d60c2c87b75f1c08d007d3406b6fd089b873ef2c37d751
-size 724
+/* Button label to cancel deletion when the user tried to delete a non-empty folder. */
+"Bookmarks.DeleteFolderWarning.CancelButton.Label" = "Fortryd";
+
+/* Button label for the button that deletes a folder and all of its children. */
+"Bookmarks.DeleteFolderWarning.DeleteButton.Label" = "Slet";
+
+/* Main body of the confirmation alert when the user tries to delete a folder that still contains bookmarks and/or folders. */
+"Bookmarks.DeleteFolderWarning.Description" = "Er du sikker på, at du vil slette mappen og dens indhold?";
+
+/* Title of the confirmation alert when the user tries to delete a folder that still contains bookmarks and/or folders. */
+"Bookmarks.DeleteFolderWarning.Title" = "Denne mappe er ikke tom.";
+

@@ -1,3 +1,18 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:2a265e5491fc93468e4be4aa56a60d692af880e7ba8654313ee77b70f847b7b2
-size 982
+/* Prompt for saving the username in the Save Logins prompt. */
+"LoginsHelper.PromptSaveLogin.Title.v122" = "ਵਰਤੋਂਕਾਰ-ਨਾਂ ਸੰਭਾਲਣਾ ਹੈ?";
+
+/* Prompt for saving a password in the Save Logins prompt. */
+"LoginsHelper.PromptSavePassword.Title.v122" = "ਪਾਸਵਰਡ ਸੰਭਾਲਣਾ ਹੈ?";
+
+/* Prompt for updating the password in the Update Password prompt. */
+"LoginsHelper.PromptUpdateLogin.Title.OneArg.v122" = "ਪਾਸਵਰਡ ਅੱਪਡੇਟ ਕਰਨਾ ਹੈ?";
+
+/* Prompt for updating a password in the Update Password prompt. */
+"LoginsHelper.PromptUpdateLogin.Title.TwoArg.v122" = "ਪਾਸਵਰਡ ਅੱਪਡੇਟ ਕਰਨਾ ਹੈ?";
+
+/* Placeholder text for search box in logins list view. */
+"LoginsList.LoginsListSearchPlaceholder.v122" = "ਪਾਸਵਰਡ ਖੋਜੋ";
+
+/* Title for the list of logins saved by the app */
+"LoginsList.Title.v122" = "ਸੰਭਾਲੇ ਹੋਏ ਪਾਸਵਰਡ";
+

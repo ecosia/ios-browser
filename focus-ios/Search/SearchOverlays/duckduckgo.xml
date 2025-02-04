@@ -1,3 +1,8 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:af95315e7b17b8068a9512433c6315ffbf5ed71ede4c806b28e7f3a2e2e9c3b4
-size 259
+<SearchOverlay>
+  <replace target="//search:Param[@name='t' and @value='fpas']">
+    <Param name="t" value="ffit"/>
+  </replace>
+  <replace target="//search:Param[@name='t' and @value='ftas']">
+    <Param name="t" value="ffit"/>
+  </replace>
+</SearchOverlay>

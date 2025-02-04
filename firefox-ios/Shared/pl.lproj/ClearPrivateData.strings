@@ -1,3 +1,21 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:0fa33a0c17152519e12589ef806922447b0154f57819d2ce8dee4eec121347a4
-size 746
+/* Settings item for clearing browsing history */
+"Browsing History" = "Historia przeglądania";
+
+/* Settings item for clearing the cache */
+"Cache" = "Pamięć podręczna";
+
+/* Settings item for clearing cookies */
+"Cookies" = "Ciasteczka";
+
+/* Settings item for deleting downloaded files */
+"Downloaded Files" = "Pobrane pliki";
+
+/* Settings item for clearing website data */
+"Offline Website Data" = "Dane witryn trybu offline";
+
+/* Settings item for clearing passwords and login data */
+"Saved Logins" = "Zachowane dane logowania";
+
+/* A settings item that allows a user to use Apple's \"Spotlight Search\" in Data Management's Website Data option to search for and select an item to delete. */
+"Spotlight Index" = "Indeksowanie Spotlight";
+

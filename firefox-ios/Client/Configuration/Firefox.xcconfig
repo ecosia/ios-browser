@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:9ffaf57b6c9f2dfd90a620a055bc0276115360a5441e083f2eb302afd8caab90
-size 523
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+#include "Common.xcconfig"
+#include "Release.xcconfig"
+
+MOZ_BUNDLE_DISPLAY_NAME = Firefox
+MOZ_BUNDLE_ID = org.mozilla.ios.Firefox
+CODE_SIGN_ENTITLEMENTS = Client/Entitlements/FirefoxApplication.entitlements
+OTHER_SWIFT_FLAGS = $(OTHER_SWIFT_FLAGS_common) -DMOZ_CHANNEL_RELEASE
+MOZ_INTERNAL_URL_SCHEME = firefox-internal

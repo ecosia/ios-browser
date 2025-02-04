@@ -1,3 +1,22 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:cdbb0e1b7bf185d9a6b59754f701be40ee7ca15f138d8fbada332371724f515a
-size 375
+{
+  "images" : [
+    {
+      "filename" : "Cards-illustrative.pdf",
+      "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "Cards-illustrative 1.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

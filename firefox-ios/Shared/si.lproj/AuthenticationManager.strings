@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:7d4a12f7fb27127b2e08aa5260e0a5b06501737b37b6ccaa0237087f78f616ea
-size 369
+/* Text displayed above the input field when changing the existing passcode */
+"Enter passcode" = "මුරකේතය යොදන්න";
+
+/* Touch ID prompt subtitle when accessing logins */
+"Use your fingerprint to access Logins now." = "පිවිසුම් වෙත ප්‍රවේශයට ඇඟිළි සළකුණ යොදා ගන්න.";
+

@@ -1,3 +1,18 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:53602b642ba786add36d2c6a8d16a8963ca8a5f27c36a07cab1166e20864b997
-size 527
+/* Settings item for clearing browsing history */
+"Browsing History" = "Istoric de navegacion";
+
+/* Settings item for clearing the cache */
+"Cache" = "Escondedor";
+
+/* Settings item for clearing cookies */
+"Cookies" = "Cookies";
+
+/* Settings item for deleting downloaded files */
+"Downloaded Files" = "Fichièrs telecargats";
+
+/* Settings item for clearing website data */
+"Offline Website Data" = "Donadas fòra connexion";
+
+/* Settings item for clearing passwords and login data */
+"Saved Logins" = "Identificants salvats";
+

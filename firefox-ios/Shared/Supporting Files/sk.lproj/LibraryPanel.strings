@@ -1,3 +1,3 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:8d3ac2867787202942fd2be32d4fabe0c796826f94944938dc7d5bf37e7d648f
-size 271
+/* This label is meant to signify the section containing a group of items from the past hour. This is primarily used in the history library panel when grouping sites that have been visited in the last hour. */
+"LibraryPanel.Sections.LastHour.v134" = "Posledná hodina";
+

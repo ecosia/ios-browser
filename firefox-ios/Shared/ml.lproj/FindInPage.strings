@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:c4d84a65bf4ecb7056daed12cf4978a53a011f3039a2128da9689dc4539ae0e1
-size 529
+/* Done button in Find in Page Toolbar. */
+"Done" = "സമ്പൂര്‍ണം";
+
+/* Text selection menu item */
+"Find in Page" = "താളില്‍ തിരയുക";
+
+/* Accessibility label for next result button in Find in Page Toolbar. */
+"Next in-page result" = "അടുത്ത പേജിലെ ഫലം കാണുക";
+
+/* Accessibility label for previous result button in Find in Page Toolbar. */
+"Previous in-page result" = "മുമ്പുള്ള പേജിലെ ഫലം കാണുക";
+

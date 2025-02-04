@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:e94dac4bd17d86c3c69e8eef275058b661c641545d97081ff4a535893eab1415
-size 1122
+/* When the user ends their private session, they are returned to the private mode homepage, and a toastbar popups confirming that their data has been erased. This is the label for that toast. */
+"FirefoxHomepage.FeltDeletion.Link.v122" = "Podatki zasebnega brskanja izbrisani";
+
+/* The body of the message for the card that educates users about how private mode works. The card shows up on the homepage when in the new privacy mode. Placeholder refers to app name. */
+"FirefoxHomepage.FeltPrivacyUI.Body.v122" = "Ko zaprete vse zasebne zavihke, %@ izbriše piškotke, zgodovino in podatke o spletnih mestih.";
+
+/* The link for the card that educates users about how private mode works. The link redirects to an external site for more information. The card shows up on the homepage when in the new privacy mode. */
+"FirefoxHomepage.FeltPrivacyUI.Link.v122" = "Kdo bi lahko videl mojo dejavnost?";
+
+/* The title for the card that educates users about how private mode works. The card shows up on the homepage when in the new privacy mode. */
+"FirefoxHomepage.FeltPrivacyUI.Title.v122" = "Ne pustite sledi na tej napravi";
+

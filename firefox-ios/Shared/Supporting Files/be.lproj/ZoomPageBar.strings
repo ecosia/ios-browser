@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:2c037e5882b516bd4c1777e4444859cd9f303efe4d08a1febe6d93995f8808e3
-size 707
+/* Accessibility label for closing the zoom panel in Zoom Page Bar */
+"Menu.ZoomPage.Close.AccessibilityLabel.v113" = "Закрыць панэль маштабавання";
+
+/* Accessibility label for current zoom level in Zoom Page Bar. The placeholder represents the zoom level */
+"Menu.ZoomPage.CurrentZoomLevel.AccessibilityLabel.v113" = "Дзейны маштаб: %@";
+
+/* Accessibility label for decreasing the zoom level in Zoom Page Bar */
+"Menu.ZoomPage.DecreaseZoom.AccessibilityLabel.v113" = "Паменшыць маштаб";
+
+/* Accessibility label for increasing the zoom level in Zoom Page Bar */
+"Menu.ZoomPage.IncreaseZoom.AccessibilityLabel.v113" = "Павялічыць маштаб";
+

@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:1bf71d1748d3159f6ecdc4a367d7367b9673c8f582659013c4f30be8854ff3b8
-size 312
+/* Sign in to Firefox account button on second intro screen. */
+"Intro.Slides.Button.SignIn" = "Asup";
+
+/* Title for the first panel 'Welcome' in the First Run tour. */
+"Intro.Slides.Welcome.Title.v2" = "Wilujeng sumping di Ecosia";
+
+/* See http://mzl.la/1T8gxwo */
+"Start Browsing" = "Mitembeyan Ngalanglang";
+

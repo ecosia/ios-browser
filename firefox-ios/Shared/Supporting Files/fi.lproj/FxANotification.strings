@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:7fdfcd2a63307da9dc2db9971833bb0e8d8cdaa3745b1d4fac8669022e662927
-size 396
+/* Title of notification shown when a remote device has requested to close a number of tabs. First parameter is the app name and the second parameter is the number of tabs. */
+"CloseTab.ArrivingNotification.title.v133" = "%1$@-välilehtiä suljettu: %2$@";
+
+/* Label for an action used to view recently closed tabs. */
+"CloseTab.ViewAction.title.v133" = "Näytä viimeksi suljetut välilehdet";
+

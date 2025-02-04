@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:5c83ac7db407b9883de81018be842cbad0a7d62e8a82177d1267028dedcb57db
-size 228
+{
+  "images" : [
+    {
+      "filename" : "sunMedium.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

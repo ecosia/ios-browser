@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:aaa9ee1229c3a06fa18783dd12421eebf0a0441c151b340268e2990a219e5af8
-size 237
+{
+  "images" : [
+    {
+      "filename" : "sponsoredStarSmall.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

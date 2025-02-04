@@ -1,3 +1,25 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:5159b8e89be3b8b5b8bbda99100c8023da7dca5ddd1b9d2ffbe2620a9b58c9e5
-size 428
+{
+  "images" : [
+    {
+      "filename" : "Paste.pdf",
+      "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "icon_paste_and_go.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

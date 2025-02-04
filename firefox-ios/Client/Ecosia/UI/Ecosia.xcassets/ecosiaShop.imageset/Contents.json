@@ -1,3 +1,16 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:d8f40fc1f6b3029a4ae95fea240280191d8f3390e57a8238e6246c221f861248
-size 275
+{
+  "images" : [
+    {
+      "filename" : "ecosiaShop.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true,
+    "template-rendering-intent" : "original"
+  }
+}

@@ -1,3 +1,11 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:db34da543019567e623b9ac4e0e8b3242e63a176ca2b5127af579917003d745f
-size 436
+
+echo "\n\n[*] Building tools/Localizations"
+(cd LocalizationTools && swift build)
+
+echo "\n\n[*] Importing Strings - takes a minute. (output in import-strings.log)"
+(cd LocalizationTools && swift run LocalizationTools \
+  --import \
+  --project-path "$PWD/../firefox-ios/Client.xcodeproj" \
+  --l10n-project-path "$PWD/../firefoxios-l10n") > import-strings.log 2>&1
+
+echo "\n\n[!] Strings have been imported. You can now create a PR."

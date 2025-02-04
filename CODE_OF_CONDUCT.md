@@ -1,3 +1,8 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:eddd8ed3d0e38f11dcea4ba6f2936b60c96811465b2deec34c04f424957060bb
-size 494
+# Community Participation Guidelines
+
+This repository is governed by Mozilla's code of conduct and etiquette guidelines. 
+For more details, please read the
+[Mozilla Community Participation Guidelines](https://www.mozilla.org/about/governance/policies/participation/). 
+
+## How to Report
+For more information on how to report violations of the Community Participation Guidelines, please read our '[How to Report](https://www.mozilla.org/about/governance/policies/participation/reporting/)' page.

@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:02541e0e7d1b23124aa7f48e4405ac7c11775454009a954ad60c13a0a6457b47
-size 446
+/* This is the learn more text of the Pocket footer on Firefox Homepage. */
+"FirefoxHomepage.Pocket.Footer.LearnMore.v115" = "Իմանալ ավելին";
+
+/* This is the title of the Pocket footer on Firefox Homepage. The first placeholder is for the Pocket app name and the second placeholder for the app name */
+"FirefoxHomepage.Pocket.Footer.Title.v116" = "Ստեղծված է %1$@-ի կողմից: %2$@ ընտանիքի մասնիկն է:";
+

@@ -1,3 +1,3 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:55bd6dc56813cead5c4acc028c0554e9f87adc5a919096302c6b62a3e6fedbee
-size 103
+/* Action button for deleting history entries in the history panel. */
+"Delete" = "Διαγραφή";
+

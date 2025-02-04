@@ -1,3 +1,25 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:a03fa621cec55478e846aeda1ee5a2361132f5eadaab0e2579d04280796ee59a
-size 551
+<html>
+<head>
+    <link rel="icon" href="image.png"></link>
+    <title>JS Prompt</title>
+    <script>
+    function foo() {
+     alert('Test Alert');
+    }
+    </script>
+</head>
+
+<body onload="setTimeout(foo, 3000)">
+    <div>JS Prompt</div>
+
+    <div>
+    Click the 'Mana' button, sit idle on the auth prompt
+
+    This page will popup alert after 6 seconds
+
+    Click cancel on the auth prompt when focus returns to this page
+    </div>
+
+    <button target="_blank", onclick="window.open('https://mana.mozilla.org')">Open Mana</button>
+</body>
+</html>

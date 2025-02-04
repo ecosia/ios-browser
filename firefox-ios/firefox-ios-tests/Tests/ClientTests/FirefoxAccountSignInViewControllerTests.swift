@@ -1,3 +1,36 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:de67b31580cd64e57140c52370bcbf1e1e1e99fda5a6c18f50a1fc530ea21411
-size 1210
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import XCTest
+import Common
+
+@testable import Client
+
+final class FirefoxAccountSignInViewControllerTests: XCTestCase {
+    let windowUUID: WindowUUID = .XCTestDefaultUUID
+    private var mockProfile: MockProfile!
+    var deeplinkParams: FxALaunchParams!
+
+    override func setUp() {
+        super.setUp()
+        DependencyHelperMock().bootstrapDependencies()
+        mockProfile = MockProfile()
+        deeplinkParams = FxALaunchParams(entrypoint: .browserMenu, query: ["test_key": "test_value"])
+    }
+
+    override func tearDown() {
+        super.tearDown()
+        DependencyHelperMock().reset()
+    }
+
+    func testFirefoxAccountSignInViewController_simpleCreation_hasNoLeaks() {
+        let testFirefoxAccountSignInViewController = FirefoxAccountSignInViewController(
+            profile: mockProfile,
+            parentType: .appMenu,
+            deepLinkParams: deeplinkParams,
+            windowUUID: windowUUID
+        )
+        trackForMemoryLeaks(testFirefoxAccountSignInViewController)
+    }
+}

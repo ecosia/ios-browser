@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:cc22f965b98238c42094f247b68ff3ef7255884b840fbe1f2db694ad342e4276
-size 434
+/* Settings item for clearing browsing history */
+"Browsing History" = "Stair Bhrabhsála";
+
+/* Settings item for clearing the cache */
+"Cache" = "Taisce";
+
+/* Settings item for clearing cookies */
+"Cookies" = "Fianáin";
+
+/* Settings item for clearing website data */
+"Offline Website Data" = "Sonraí Suíomhanna As Líne";
+
+/* Settings item for clearing passwords and login data */
+"Saved Logins" = "Focail fhaire a sábháladh";
+

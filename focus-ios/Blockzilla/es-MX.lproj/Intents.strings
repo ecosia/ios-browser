@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:374a9fb6b9b51d5194852cd24b1c47fdb4fdd66311ed9ce8c872bd579afd677e
-size 139
+/* (No Comment) */
+"Intents.Erase.Description" = "Eliminar sesión de navegación";
+
+/* (No Comment) */
+"Intents.Erase.Title" = "Borrar";
+

@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:819aa15315158b61b589b1f598d786d1cf00d81d4eba44ccc1c58946fd2a2e57
-size 680
+/* Accessibility label for closing the zoom panel in Zoom Page Bar */
+"Menu.ZoomPage.Close.AccessibilityLabel.v113" = "Nagyítási panel bezárása";
+
+/* Accessibility label for current zoom level in Zoom Page Bar. The placeholder represents the zoom level */
+"Menu.ZoomPage.CurrentZoomLevel.AccessibilityLabel.v113" = "Jelenlegi nagyítási szint: %@";
+
+/* Accessibility label for decreasing the zoom level in Zoom Page Bar */
+"Menu.ZoomPage.DecreaseZoom.AccessibilityLabel.v113" = "Nagyítási szint csökkentése";
+
+/* Accessibility label for increasing the zoom level in Zoom Page Bar */
+"Menu.ZoomPage.IncreaseZoom.AccessibilityLabel.v113" = "Nagyítási szint növelése";
+

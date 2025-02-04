@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:83bb6ed337e84656f108e5ad84b645ef9e9b21a127bc797b4700b4fbd9a28de8
-size 739
+/* Button label to cancel deletion when the user tried to delete a non-empty folder. */
+"Bookmarks.DeleteFolderWarning.CancelButton.Label" = "Cancelar";
+
+/* Button label for the button that deletes a folder and all of its children. */
+"Bookmarks.DeleteFolderWarning.DeleteButton.Label" = "Eliminar";
+
+/* Main body of the confirmation alert when the user tries to delete a folder that still contains bookmarks and/or folders. */
+"Bookmarks.DeleteFolderWarning.Description" = "¿Estás seguro que desea eliminar esta carpeta y su contenido?";
+
+/* Title of the confirmation alert when the user tries to delete a folder that still contains bookmarks and/or folders. */
+"Bookmarks.DeleteFolderWarning.Title" = "Esta carpeta no está vacía.";
+

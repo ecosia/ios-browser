@@ -1,3 +1,11 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:299f2441555abde0ba856efd2630dddff2c5597ed6567f954b1c0fc37db854f3
-size 489
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import SwiftUI
+
+public class PortraitHostingController<Content>: UIHostingController<Content> where Content: View {
+    override public var shouldAutorotate: Bool { return false }
+
+    override public var supportedInterfaceOrientations: UIInterfaceOrientationMask { return .portrait }
+}

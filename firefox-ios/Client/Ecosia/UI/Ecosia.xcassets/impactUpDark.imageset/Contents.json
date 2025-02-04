@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:2194c45706dbddb19965939dd9896627ada801c64546dad4058357aee6ffaee5
-size 228
+{
+  "images" : [
+    {
+      "filename" : "Group 407.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

@@ -1,3 +1,3 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:43432f8296f231e232efc25bfe751023e91849182bddd10f3b645bdf7c41207b
-size 132
+/* Accessibility label of the QR code button in the toolbar */
+"QRCode.Toolbar.Button.A11y.Title.v128" = "Digitalizar código QR";
+

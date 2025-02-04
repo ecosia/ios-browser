@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:624eac5ffa7a01b96336aaf1cd467a6b9f65979e0d05c5887c8808a12a1f2099
-size 347
+#ifndef Client_Client_Bridging_Header_h
+#define Client_Client_Bridging_Header_h
+
+#import <Foundation/Foundation.h>
+#import <CommonCrypto/CommonCrypto.h>
+
+#import "FSReadingList.h"
+
+#import "ThirdParty/Apple/UIImage+ImageEffects.h"
+
+#import "Account-Bridging-Header.h"
+#import "Shared-Bridging-Header.h"
+#import "Storage-Bridging-Header.h"
+
+#endif

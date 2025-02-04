@@ -1,3 +1,19 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:74771828d6602ea84dcfac609125c55eeca8d3a1d0222083287183b40b8bc039
-size 643
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+struct SeedCounterConfig {
+    let sparklesAnimationDuration: Double
+    let maxCappedLevel: Int?  // Optional field to cap the level as part of the experiment
+    let maxCappedSeeds: Int? // Optional field to cap the total seeds as part of the experiment
+    let levels: [SeedLevel]
+
+    struct SeedLevel: Codable {
+        let level: Int
+        let requiredSeeds: Int
+    }
+}
+
+extension SeedCounterConfig: Decodable {}

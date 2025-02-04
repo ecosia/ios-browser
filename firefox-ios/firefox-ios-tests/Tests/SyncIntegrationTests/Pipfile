@@ -1,3 +1,19 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:54ac8eda756c12d18f0e1c9a8fd1c70bab60f7524a97f2ceed9ffa1069b3477d
-size 301
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+fxapom = "*"
+mozdownload = "*"
+mozinstall = "*"
+mozprofile = "*"
+mozrunner = "*"
+mozversion = "*"
+pytest = "*"
+pytest-fxa-mte = "1.6.0"
+pytest-html = "*"
+pytest-metadata = "*"
+requests = "*"
+
+[dev-packages]

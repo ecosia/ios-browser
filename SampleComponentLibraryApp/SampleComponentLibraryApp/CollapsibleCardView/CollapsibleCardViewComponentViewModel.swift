@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:384fd762acd1ccc60336f1ed50bf6d693370cf61a5f99df45fa96c21c1f64815
-size 530
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+import UIKit
+
+struct CollapsibleCardViewComponentViewModel: ComponentViewModel {
+    var title = "CollapsibleCardView"
+    var viewController: UIViewController = CollapsibleCardViewViewController()
+
+    func present(with presenter: Presenter?) {
+        presenter?.push(viewController: viewController)
+    }
+}

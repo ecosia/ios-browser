@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:a51ebd44c3e4f1b83d62b9be5b2273649440ceb4300f4abbde8a2b1a2b24d51c
-size 313
+/* Shown in error pages for files that can't be shown and need to be downloaded. */
+"Open in Safari" = "சப்பாரியில் திறக்கவும்";
+
+/* Shown in error pages on a button that will try to load the page again */
+"Try again" = "மீண்டும் முயற்சி";
+

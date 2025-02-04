@@ -1,3 +1,18 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:3143bd91b7d0b714ba10589f88245e7564556b4e3e0d467d0138a311fa26c422
-size 1042
+/* Privacy - Camera Usage Description */
+"NSCameraUsageDescription" = "یہ آُپ کو اپنی تصاویر لینے اور اپلوڈ کرنے دیتا ہے۔";
+
+/* Privacy - Face ID Usage Description */
+"NSFaceIDUsageDescription" = "یہ آُپکو ایپ کھولنے دیتا ہے۔";
+
+/* Privacy - Location When In Use Usage Description */
+"NSLocationWhenInUseUsageDescription" = "ویب سائٹ جن کا آپ دورہ کریں شاید آُپ کے محل وقتع کی درخواست کریں۔";
+
+/* Privacy - Microphone Usage Description */
+"NSMicrophoneUsageDescription" = "۔یہ آُپ کو وڈیوز بنانے اور اپلوڈ کرنے دیتا ہے۔";
+
+/* Privacy - Photo Library Additions Usage Description */
+"NSPhotoLibraryAddUsageDescription" = "یہ آپ کو تصاویراپلوڈ اور محفوظ کرنے دیتا پے۔";
+
+/* This is the menu item that appears when you long press the Focus icon on the phone home screen. */
+"UIApplicationShortcutItemTitle.EraseAndOpen" = "مٹائیں اور کھولیں";
+

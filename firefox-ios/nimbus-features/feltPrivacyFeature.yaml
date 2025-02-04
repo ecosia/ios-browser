@@ -1,3 +1,24 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:ff08b780e65b1f5d9b24116ee628928757ce8815f54fc2aa59edaed58d049f14
-size 710
+# The configuration for the feltPrivacyFeature feature
+features:
+  felt-privacy-feature:
+    description: The feature that enhances private browsing mode
+    variables:
+      simplified-ui-enabled:
+        description: If true, enable simplified UI part of Felt Privacy
+        type: Boolean
+        default: false
+      felt-deletion-enabled:
+        description: If true, enable Felt Deletion part of Felt Privacy
+        type: Boolean
+        default: false
+
+    defaults:
+      - channel: beta
+        value:
+          simplified-ui-enabled: false
+          felt-deletion-enabled: false
+      - channel: developer
+        value:
+          simplified-ui-enabled: true
+          felt-deletion-enabled: true
+

@@ -1,3 +1,18 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:ef67a4918be6403a89b2eecf9d3548913dd5359d15a173146f53a4aed58e12b2
-size 821
+/* Prompt for saving the username in the Save Logins prompt. */
+"LoginsHelper.PromptSaveLogin.Title.v122" = "Wužywaŕske mě składowaś?";
+
+/* Prompt for saving a password in the Save Logins prompt. */
+"LoginsHelper.PromptSavePassword.Title.v122" = "Gronidło składowaś?";
+
+/* Prompt for updating the password in the Update Password prompt. */
+"LoginsHelper.PromptUpdateLogin.Title.OneArg.v122" = "Gronidło aktualizěrowaś?";
+
+/* Prompt for updating a password in the Update Password prompt. */
+"LoginsHelper.PromptUpdateLogin.Title.TwoArg.v122" = "Gronidło aktualizěrowaś?";
+
+/* Placeholder text for search box in logins list view. */
+"LoginsList.LoginsListSearchPlaceholder.v122" = "Gronidła pśepytaś";
+
+/* Title for the list of logins saved by the app */
+"LoginsList.Title.v122" = "SKŁAŹONE GRONIDŁA";
+

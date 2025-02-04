@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:7cfb65e5c758455c6507af80580f73985fe21c4a2580969aa46ee55941926eba
-size 233
+/* Shown in error pages for files that can't be shown and need to be downloaded. */
+"Open in Safari" = "Avaa Safarissa";
+
+/* Shown in error pages on a button that will try to load the page again */
+"Try again" = "Yritä uudelleen";
+

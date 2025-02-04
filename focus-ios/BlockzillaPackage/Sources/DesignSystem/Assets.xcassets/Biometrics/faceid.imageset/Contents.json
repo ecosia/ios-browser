@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:f53dba2c6fff37028829fe98f5f14e3c98a731daab972caddaedbb10f362cc75
-size 225
+{
+  "images" : [
+    {
+      "filename" : "faceid.svg",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

@@ -1,3 +1,32 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:80af3931825fffdd5f913aab5fbe341e0ab3acd6ee817ed8fa2fde274f1f3a06
-size 925
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>aps-environment</key>
+	<string>development</string>
+	<key>com.apple.developer.icloud-container-identifiers</key>
+	<array>
+		<string>iCloud.ecosia</string>
+	</array>
+	<key>com.apple.developer.icloud-services</key>
+	<array>
+		<string>CloudDocuments</string>
+	</array>
+	<key>com.apple.developer.ubiquity-container-identifiers</key>
+	<array>
+		<string>iCloud.ecosia</string>
+	</array>
+	<key>com.apple.developer.web-browser</key>
+	<true/>
+	<key>com.apple.developer.browser.app-installation</key>
+	<true/>
+	<key>com.apple.security.application-groups</key>
+	<array>
+		<string>group.com.ecosia.ecosiaapp</string>
+	</array>
+	<key>keychain-access-groups</key>
+	<array>
+		<string>$(AppIdentifierPrefix)com.ecosia.ecosiaapp</string>
+	</array>
+</dict>
+</plist>

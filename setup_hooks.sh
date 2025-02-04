@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:f84f9950b0bba852dc12d63babdf8e7ffe8fba4e8a6bc16369a87f02e5ed2294
-size 358
+#!/bin/bash
+
+# Check if the .git/hooks directory exists
+if [ ! -d ".git/hooks" ]; then
+  echo ".git/hooks directory does not exist. Creating it now."
+  mkdir -p .git/hooks
+fi
+
+# Copy all custom hooks from hooks/ to .git/hooks/
+cp hooks/* .git/hooks/
+
+# Ensure the hooks are executable
+chmod +x .git/hooks/*
+
+echo "Git hooks have been installed successfully."

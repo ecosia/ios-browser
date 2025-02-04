@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:07a6aa17e18b1d0eb101784fc8fbaacd24f0f35ed3c98059349552cd6b5edf67
-size 381
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+struct CloudflareKeyProvider {
+    static let clientId = "CF-Access-Client-Id"
+    static let clientSecret = "CF-Access-Client-Secret"
+
+    private init() {}
+}

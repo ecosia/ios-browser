@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:9b556339f8f737ec75d44598932f078587f36d1577e239ed08c0f2c032f1abc7
-size 455
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+struct MicrosurveyModel: Equatable {
+    let id: String
+    let promptTitle: String
+    let promptButtonLabel: String
+    let surveyQuestion: String
+    let surveyOptions: [String]
+    let icon: UIImage?
+    let utmContent: String?
+}

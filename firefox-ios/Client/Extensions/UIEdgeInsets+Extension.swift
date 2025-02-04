@@ -1,3 +1,16 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:01f4e12045ff35799274bdfd0d5b8e2e2bc5c4402052166c7146096c55a9547a
-size 497
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import UIKit
+
+extension UIEdgeInsets {
+    init(equalInset inset: CGFloat) {
+        self.init(top: inset, left: inset, bottom: inset, right: inset)
+    }
+
+    // Ecosia: Add extension
+    init(horizontal inset: CGFloat) {
+        self.init(top: 0, left: inset, bottom: 0, right: inset)
+    }
+}

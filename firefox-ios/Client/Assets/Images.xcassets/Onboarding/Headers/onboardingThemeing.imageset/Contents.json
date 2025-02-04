@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:c64c2be6e14945533f2fad633570c5e3e30539fd27a33716600e575d15c2dec8
-size 168
+{
+  "images" : [
+    {
+      "filename" : "onboardingThemeing.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

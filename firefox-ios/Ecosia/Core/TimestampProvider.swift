@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:9eef326965ba45b5eb384daa565b65c2d5e8f6925767b71a97a55363acf1f58a
-size 299
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+protocol TimestampProvider {
+    var currentTimestamp: TimeInterval { get }
+}

@@ -1,3 +1,3 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:e810278ba6cc68fe44aebdacd5716cc178306f196eb48895cd4bf8f5c81bf59c
-size 159
+/* Title label for the view where user can edit their credit card info */
+"CreditCard.EditCard.EditCreditCardTitle.v122" = "පත සංස්කරණය";
+

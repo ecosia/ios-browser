@@ -1,3 +1,30 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:42460646e26785e7c0c27141b95e75db2f169bce2cb5682efb66a1bf9a38e460
-size 922
+name: Release Notes update
+
+on:
+  push:
+    paths:
+      - 'fastlane/metadata/**/release_notes.txt'
+      - '!fastlane/metadata/en-US/**/release_notes.txt'
+    branches: [ main ]
+
+jobs:
+  upload_release_notes_to_appstore:
+    runs-on: ubuntu-latest
+    name: Upload release notes to AppStore
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+          
+      - name: Install gems
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.3.0
+          bundler-cache: true
+    
+      - name: Fastlane upload release notes
+        run: bundle exec fastlane upload_release_notes
+        env:
+          FASTLANE_APPSTORE_CONNECT_KEY_ID: ${{ secrets.FASTLANE_APPSTORE_CONNECT_KEY_ID }}
+          FASTLANE_APPSTORE_CONNECT_KEY_ISSUER_ID: ${{ secrets.FASTLANE_APPSTORE_CONNECT_KEY_ISSUER_ID }}
+          FASTLANE_APPSTORE_CONNECT_KEY_CONTENT: ${{ secrets.FASTLANE_APPSTORE_CONNECT_KEY_CONTENT }}

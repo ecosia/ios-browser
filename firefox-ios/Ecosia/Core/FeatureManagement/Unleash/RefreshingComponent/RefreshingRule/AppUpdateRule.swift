@@ -1,3 +1,18 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:6174f802f361c582fcf136c6751b916719d99f38bc65c6f00f9f723689981566
-size 479
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+struct AppUpdateRule: RefreshingRule {
+
+    private var currentAppVersion: String?
+
+    init(appVersion: String) {
+        self.currentAppVersion = appVersion
+    }
+
+    var shouldRefresh: Bool {
+        currentAppVersion != Unleash.model.appVersion
+    }
+}

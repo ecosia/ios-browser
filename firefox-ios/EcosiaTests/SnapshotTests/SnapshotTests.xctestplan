@@ -1,3 +1,29 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:69ca62eab1d67c40966bda87f9d5ecadb633ea16658d4644926b6ded087f91d9
-size 531
+{
+  "configurations" : [
+    {
+      "id" : "F463F962-D1EE-45DE-BF5E-83E24419C3FD",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "skippedTests" : [
+        "NTPTests",
+        "SnapshotBaseTests"
+      ],
+      "target" : {
+        "containerPath" : "container:Client.xcodeproj",
+        "identifier" : "2C6C90812C614A16007D9B43",
+        "name" : "EcosiaSnapshotTests"
+      }
+    }
+  ],
+  "version" : 1
+}

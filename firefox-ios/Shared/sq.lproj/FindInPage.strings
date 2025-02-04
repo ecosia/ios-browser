@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:5c9c0d1658f03bda700b93c177dba1b5b61e3feefdb3d07d9d2f8e531d5c042a
-size 403
+/* Done button in Find in Page Toolbar. */
+"Done" = "U bë";
+
+/* Text selection menu item */
+"Find in Page" = "Gjej në Faqe";
+
+/* Accessibility label for next result button in Find in Page Toolbar. */
+"Next in-page result" = "Përfundimi pasues në faqe";
+
+/* Accessibility label for previous result button in Find in Page Toolbar. */
+"Previous in-page result" = "Përfundimi i mëparshëm në faqe";
+

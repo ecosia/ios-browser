@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:38563e1e6b8a9d78d978f3ae87b573251db2655c81b9c12add20a545bb69e718
-size 968
+/* This value is used as the header for the remember card page. The placeholder is for the app name. */
+"CreditCard.RememberCard.Header.v122" = "%@ шыфруе нумар вашай карты. Ваш код бяспекі не будзе захаваны.";
+
+/* This value is used as the title for the Yes button in the remember credit card page */
+"CreditCard.RememberCard.MainButtonTitle.v122" = "Захаваць";
+
+/* This value is used as the title for the remember credit card page */
+"CreditCard.RememberCard.MainTitle.v122" = "Захаваць надзейна гэту карту?";
+
+/* This value is used as the title for the Not Now button in the remember credit card page */
+"CreditCard.RememberCard.SecondaryButtonTitle.v115" = "Не зараз";
+
+/* This value is used as the toast message for the saving success alert in the remember credit card page */
+"CreditCard.RememberCard.SecondaryButtonTitle.v116" = "Новая карта захавана";
+

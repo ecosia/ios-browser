@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:828dbb3e75057b9f6bf5026c89c4d525b913a5e8e4d2dd0880641758e655f3a0
-size 233
+{
+  "images" : [
+    {
+      "filename" : "impactDownDark.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

@@ -1,3 +1,21 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:1e09b19eb38f01097cce495f0afe3fdb4842144d05556eedb659af26f57e57cf
-size 735
+/* (No Comment) */
+"New Private Tab" = "Bagong Private Tab";
+
+/* (No Comment) */
+"New Tab" = "Bagong Tab";
+
+/* Privacy - Camera Usage Description */
+"NSCameraUsageDescription" = "Ecosia uses your camera to scan QR codes and take photos and video.";
+
+/* Privacy - Location When In Use Usage Description */
+"NSLocationWhenInUseUsageDescription" = "Maaaring hingiin ang iyong lokasyon ng binibisitang website";
+
+/* Privacy - Microphone Usage Description */
+"NSMicrophoneUsageDescription" = "This lets you take and upload videos.";
+
+/* Privacy - Photo Library Additions Usage Description */
+"NSPhotoLibraryAddUsageDescription" = "Pinapayagan ka nito na i-save ang mga larawan.";
+
+/* (No Comment) */
+"Scan QR Code" = "I-scan ang QR Code";
+

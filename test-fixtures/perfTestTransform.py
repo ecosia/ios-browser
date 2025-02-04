@@ -1,3 +1,23 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:b119aaa94ad3f54332c4808e77adbc1bef31f207716d049ba2ecef4ad2bcd793
-size 741
+import json
+
+PERFHERDER_DATA = {"framework": {"name":"mozperftest"},
+                   "application": {"name": "fennec"},
+                   "suites": []
+                   }
+
+with open('test.json') as json_file:
+    data = json.load(json_file)
+    for p in data:
+        suite = {}
+        suite["name"] = p["testName"]
+        suite["subtests"] = []
+        for key, value in p.items():
+            if key != "testName":
+                subtest = {}
+                subtest["name"] = key
+                subtest["replicates"] = [value]
+                subtest["value"] = float(value)
+                suite["subtests"].append(subtest)
+        PERFHERDER_DATA["suites"].append(suite)
+
+print("PERFHERDER_DATA:", json.dumps(PERFHERDER_DATA))

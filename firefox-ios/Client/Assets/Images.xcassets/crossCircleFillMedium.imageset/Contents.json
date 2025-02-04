@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:84a35fbc1cc916a8172b431cbfe8ab149fa61a7f5d6494e52fd0499dd84c0bc6
-size 240
+{
+  "images" : [
+    {
+      "filename" : "crossCircleFillMedium.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

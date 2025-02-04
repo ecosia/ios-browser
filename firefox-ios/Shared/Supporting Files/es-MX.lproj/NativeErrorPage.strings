@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:2a3e09e98d3148f00ca24f4368d6e51d0ec0e2676b9343112f8e42a3709762bd
-size 939
+/* On error page, this is the text on a button that will try to load the page again. */
+"NativeErrorPage.ButtonLabel.v131" = "Recargar";
+
+/* On error page, this is the description for generic error. */
+"NativeErrorPage.GenericError.Description.v131" = "Se ha producido un error de SSL y no se puede establecer una conexión segura al servidor.";
+
+/* On error page, this is the title for generic error. */
+"NativeErrorPage.GenericError.TitleLabel.v131" = "Ten cuidado. Algo no parece estar bien.";
+
+/* On error page, this is the description for no internet connection. */
+"NativeErrorPage.NoInternetConnection.Description.v131" = "Intenta conectarte en un dispositivo diferente. Verifica tu módem o router. Desconéctate y vuelve a conectarte al Wi-Fi.";
+
+/* On error page, this is the title for no internet connection */
+"NativeErrorPage.NoInternetConnection.TitleLabel.v131" = "Parece que hay un problema con tu conexión a Internet.";
+

@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:920b991e7071b0caea5a5b89537be3a8a4037dc72d05dc6d62cb65f04751ee59
-size 394
+/* The cancel button when confirming clear private data. */
+"Cancel" = "Batal";
+
+/* The button that clears private data. */
+"OK" = "OKÉ";
+
+/* Description of the confirmation dialog shown when a user tries to clear their private data. */
+"This action will clear all of your private data. It cannot be undone." = "Tumindak iki bakal mbusek kabeh data pribadhi sampéyan. Ora bisa dibatalké.";
+

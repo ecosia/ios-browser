@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:411c3828b9f20fb121e6d4750367d0b646b610ad355ff2fe3309ebc9e9306a30
-size 433
+/* Accessibility label for next button that is displayed above the keyboard when a form field on a website was tapped. */
+"KeyboardAccessory.NextButton.Accessibility.Label.v124" = "Přichodne formularowe polo";
+
+/* Accessibility label for previous button that is displayed above the keyboard when a form field on a website was tapped. */
+"KeyboardAccessory.PreviousButton.Accessibility.Label.v124" = "Předchadne formularowe polo";
+

@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:6289908ac84cba8d8d1c6c7fd930f71532d69b0a8877e0941dc12013610b72f7
-size 237
+/* Shown in error pages for files that can't be shown and need to be downloaded. */
+"Open in Safari" = "Avrir en Safari";
+
+/* Shown in error pages on a button that will try to load the page again */
+"Try again" = "Empruvar danovamain";
+

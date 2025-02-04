@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:5642a538f4c778b38277f68077636191935b4de4e2e754077fd9cebfa7268913
-size 228
+{
+  "images" : [
+    {
+      "filename" : "toolLarge.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

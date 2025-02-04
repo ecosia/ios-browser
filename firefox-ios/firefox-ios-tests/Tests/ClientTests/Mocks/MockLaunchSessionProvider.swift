@@ -1,3 +1,10 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:93e89bb6b5192db2f7367703ec1ea983dbb10b18ba83a83df392709d8876f1a2
-size 360
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+@testable import Client
+import Foundation
+
+class MockLaunchSessionProvider: Client.LaunchSessionProviderProtocol {
+    var openedFromExternalSource = false
+}

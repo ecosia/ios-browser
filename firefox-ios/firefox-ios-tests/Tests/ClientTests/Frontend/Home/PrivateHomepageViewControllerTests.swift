@@ -1,3 +1,29 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:3e8b76204abf6fc6148b79d4741b15f57937d79fb78725ccfd802536862bf7fa
-size 907
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import XCTest
+import Common
+
+@testable import Client
+
+final class PrivateHomepageViewControllerTests: XCTestCase {
+    let windowUUID: WindowUUID = .XCTestDefaultUUID
+
+    override class func setUp() {
+        super.setUp()
+        DependencyHelperMock().bootstrapDependencies()
+    }
+
+    override func tearDown() {
+        super.tearDown()
+        DependencyHelperMock().reset()
+    }
+
+    func testPrivateHomepageViewController_simpleCreation_hasNoLeaks() {
+        let overlayManager = MockOverlayModeManager()
+        let privateHomeViewController = PrivateHomepageViewController(windowUUID: windowUUID, overlayManager: overlayManager)
+
+        trackForMemoryLeaks(privateHomeViewController)
+    }
+}

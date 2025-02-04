@@ -1,3 +1,8 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:cfcb03994034628b7d6a4465d16f59fb5c3734e774f99202fd4de348260bd5e0
-size 486
+# ``ComponentLibrary/ResizableButton``
+
+This class is a button that enables resizing with dynamic type.
+
+## Overview
+
+The `ActionButton` is a subclass of the `UIButton` which enables resizing with dynamic type. This is a building block component for development purpose, and isn't the designer component in itself. See ``PrimaryRoundedButton`` and ``SecondaryRoundedButton`` for the designer button components. The `buttonEdgeSpacing` shouldn't normally be adjusted and be kept as is.
+

@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:c649a3e6d6ccd79d2d6249bc99e2b0c83fffaa3b3ebb8f5c96ed004e4e060264
-size 234
+{
+  "images" : [
+    {
+      "filename" : "readerViewLarge.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

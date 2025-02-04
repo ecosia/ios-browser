@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:7a705ca319256f9b575e69f8c9e9ecfbd4ee6833881239ca1f2c00f5d7696bad
-size 236
+{
+  "images" : [
+    {
+      "filename" : "chevronRightLarge.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

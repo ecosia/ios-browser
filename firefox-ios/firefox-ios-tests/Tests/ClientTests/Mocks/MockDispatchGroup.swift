@@ -1,3 +1,27 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:30ca1e0ad316d24a77cc86abc5c9dbe7cc7502b8a8044e9878559f4cfb5571bf
-size 787
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+import Common
+@testable import Client
+
+class MockDispatchGroup: DispatchGroupInterface {
+    func enter() {}
+
+    func leave() {}
+
+    func notify(qos: DispatchQoS,
+                flags: DispatchWorkItemFlags,
+                queue: DispatchQueue,
+                execute work: @escaping @convention(block) () -> Void) {
+        work()
+    }
+
+    func notify(qos: DispatchQoS,
+                flags: DispatchWorkItemFlags,
+                queue: DispatchQueueInterface,
+                execute work: @escaping @convention(block) () -> Void) {
+        work()
+    }
+}

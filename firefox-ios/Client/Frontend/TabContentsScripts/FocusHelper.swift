@@ -1,3 +1,58 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:6657df440ecd71190516ba9f4aa1e0f059e5d39bc29ab884bb010ba133bd6415
-size 1693
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+import Common
+import Shared
+import WebKit
+
+class FocusHelper: TabContentScript {
+    private var logger: Logger
+    private weak var tab: Tab?
+
+    init(tab: Tab,
+         logger: Logger = DefaultLogger.shared) {
+        self.tab = tab
+        self.logger = logger
+    }
+
+    static func name() -> String {
+        return "FocusHelper"
+    }
+
+    func scriptMessageHandlerNames() -> [String]? {
+        return ["focusHelper"]
+    }
+
+    func userContentController(_ userContentController: WKUserContentController,
+                               didReceiveScriptMessage message: WKScriptMessage) {
+        guard let data = message.body as? [String: String] else {
+            logger.log("FocusHelper.js sent wrong type of message",
+                       level: .warning,
+                       category: .webview)
+            return
+        }
+
+        guard data["elementType"] != nil,
+              let eventType = data["eventType"]
+        else {
+            logger.log("FocusHelper.js sent wrong keys for message",
+                       level: .warning,
+                       category: .webview)
+            return
+        }
+
+        switch eventType {
+        case "focus":
+            tab?.isEditing = true
+        case "blur":
+            tab?.isEditing = false
+        default:
+            logger.log("FocusHelper.js sent unhandled eventType",
+                       level: .warning,
+                       category: .webview)
+            return
+        }
+    }
+}

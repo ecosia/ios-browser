@@ -1,3 +1,17 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:2eca83c4124b7b2c7a54dc9d33106e6fe2699974d4d1a9e2adeba333271b7144
-size 676
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+class ToolbarHelper {
+    func shouldShowNavigationToolbar(for traitCollection: UITraitCollection) -> Bool {
+        return traitCollection.verticalSizeClass != .compact
+               && traitCollection.horizontalSizeClass != .regular
+    }
+
+    func shouldShowTopTabs(for traitCollection: UITraitCollection) -> Bool {
+        return traitCollection.verticalSizeClass == .regular
+               && traitCollection.horizontalSizeClass == .regular
+    }
+}

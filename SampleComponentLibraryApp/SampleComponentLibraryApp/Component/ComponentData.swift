@@ -1,3 +1,17 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:839e53736ca44e10cee7b05b3ed54d6bc63128ee2d2ab52af1ee37094c7ff264
-size 646
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+struct ComponentData {
+    var data: [ComponentViewModel] {
+        return [ButtonComponentsViewModel(),
+                FadeScrollViewComponentViewModel(),
+                ContextualHintViewComponentViewModel(),
+                BottomSheetComponentViewModel(),
+                CardViewComponentViewModel(),
+                ShadowCardViewComponentViewModel(),
+                CollapsibleCardViewComponentViewModel()]
+    }
+}

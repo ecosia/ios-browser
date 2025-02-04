@@ -1,3 +1,13 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:316679ef8942520432af37d839c7332513adfd134e60f1a51082e3915f4459ab
-size 453
+filters:
+
+  - filter_type: file
+    source_language: en
+    source_file: Client/Ecosia/L10N/en.lproj/Ecosia.strings
+    file_format: STRINGS
+    translation_files_expression: 'Client/Ecosia/L10N/<lang>.lproj/Ecosia.strings'
+
+  - filter_type: file
+    source_language: en
+    source_file: Client/Ecosia/L10N/en.lproj/Plurals.stringsdict
+    file_format: STRINGSDICT
+    translation_files_expression: 'Client/Ecosia/L10N/<lang>.lproj/Plurals.stringsdict'

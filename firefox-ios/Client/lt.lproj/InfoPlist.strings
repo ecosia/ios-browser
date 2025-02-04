@@ -1,3 +1,21 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:58765e1e49f54d2066eadbf882ea230a7bdfce67ed7f55f67eccc86de4bfbaf1
-size 787
+/* (No Comment) */
+"New Private Tab" = "Nauja privačioji kortelė";
+
+/* (No Comment) */
+"New Tab" = "Nauja kortelė";
+
+/* Privacy - Camera Usage Description */
+"NSCameraUsageDescription" = "„Ecosia“ naudoja jūsų kamerą QR kodų nuskaitymui, nuotraukų darymui, ir vaizdo įrašams.";
+
+/* Privacy - Location When In Use Usage Description */
+"NSLocationWhenInUseUsageDescription" = "Svetainės gali teirautis jūsų buvimo vietos.";
+
+/* Privacy - Microphone Usage Description */
+"NSMicrophoneUsageDescription" = "„Ecosia“ naudoja jūsų mikrofoną garso įrašymui ir įkėlimui.";
+
+/* Privacy - Photo Library Additions Usage Description */
+"NSPhotoLibraryAddUsageDescription" = "Tai jums leis įrašyti nuotraukas.";
+
+/* (No Comment) */
+"Scan QR Code" = "Skenuoti QR kodą";
+

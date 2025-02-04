@@ -1,3 +1,14 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:693051251cdf3a4b762ee643c290f8794c07a1a5553fa31f558549906299894c
-size 390
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+/// Enum used to track flow for telemetry events
+enum ReferringPage: Equatable {
+    case onboarding
+    case appMenu
+    case settings
+    case none
+    case tabTray
+}

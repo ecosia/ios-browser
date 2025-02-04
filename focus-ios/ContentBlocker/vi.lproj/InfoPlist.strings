@@ -1,3 +1,3 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:b9e0eef92b9832c6ee8adc5c292a15609c74bcd4badfa1c80ee7c6c34205dec6
-size 128
+/* Human readable description */
+"NSHumanReadableDescription" = "Trình chặn nội dung và chống theo dõi từ Mozilla";
+

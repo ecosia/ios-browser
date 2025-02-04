@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:8760cfe4f16a2eb7e8e78897a95f64b4e9324d42cafde670af7f5e49428af0a1
-size 311
+/* Sign in to Firefox account button on second intro screen. */
+"Intro.Slides.Button.SignIn" = "Přizjewić";
+
+/* Title for the first panel 'Welcome' in the First Run tour. */
+"Intro.Slides.Welcome.Title.v2" = "Witajće k Ecosia";
+
+/* See http://mzl.la/1T8gxwo */
+"Start Browsing" = "Přehladować započeć";
+

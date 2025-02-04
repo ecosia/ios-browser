@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:f2fef131b77f684e69666bc5078e99d129d957a27ae2f6cf872861135acab8a7
-size 352
+/* Error message shown in the remote tabs panel */
+"SendTo.NoDevicesFound.Message.v119" = "N’ho peus trevnad ebet all kennasket d’ar gont-mañ hegerz evit goubredañ.";
+
+/* This message appears when a user tries to use 'Send Link to Device' action while not logged in */
+"SendTo.NotSignedIn.Title.v119" = "N’hoc’h ket kennasket d’ho kont.";
+

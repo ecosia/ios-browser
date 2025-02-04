@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:7a50943c72f4dd9216e1f344311866aada749aa05f78ad92d64548412873f01d
-size 235
+{
+  "images" : [
+    {
+      "filename" : "readingListLarge.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

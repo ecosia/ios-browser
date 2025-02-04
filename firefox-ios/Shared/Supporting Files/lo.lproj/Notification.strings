@@ -1,3 +1,3 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:a56f1a925a2b6f1a0f010e5bc920d905f172abd5e930fb600aaa08f038ebe87d
-size 217
+/* Fallback Title of notification if no notification title was configured. The notification is an advise to the user. The argument is the app name. */
+"Notification.Fallback.Title.v113" = "%@ ເຄັດລັບ";
+

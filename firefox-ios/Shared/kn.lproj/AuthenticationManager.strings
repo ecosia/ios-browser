@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:1a2d998bc1dc990153aa5fcf8aff0313e975f4764e9a7ec841638dde09ce1fd9
-size 389
+/* Text displayed above the input field when changing the existing passcode */
+"Enter passcode" = "ಗುಪ್ತಸಂಕೇತ ನಮೂದಿಸು";
+
+/* Touch ID prompt subtitle when accessing logins */
+"Use your fingerprint to access Logins now." = "ಈಗ ನಿಮ್ಮ ಬೆರಳಚ್ಚನ್ನು ಲಾಗಿನ್‌ಗಳ ಪ್ರವೇಶಕ್ಕೆ ಬಳಸಿ.";
+

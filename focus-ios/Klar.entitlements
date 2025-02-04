@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:976175bb239044ed26c84339229c7b4772967e658c3c796fc6efb1903edaf842
-size 349
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>com.apple.developer.siri</key>
+	<true/>
+	<key>com.apple.security.application-groups</key>
+	<array>
+		<string>group.org.mozilla.ios.Klar</string>
+	</array>
+</dict>
+</plist>

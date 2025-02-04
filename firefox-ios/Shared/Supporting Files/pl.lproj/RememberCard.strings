@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:cdc07e3fbe597c4364d7022105619e93c34377268ae781385a6654082f459b99
-size 878
+/* This value is used as the header for the remember card page. The placeholder is for the app name. */
+"CreditCard.RememberCard.Header.v122" = "%@ szyfruje numer karty. Kod zabezpieczający nie zostanie zachowany.";
+
+/* This value is used as the title for the Yes button in the remember credit card page */
+"CreditCard.RememberCard.MainButtonTitle.v122" = "Zachowaj";
+
+/* This value is used as the title for the remember credit card page */
+"CreditCard.RememberCard.MainTitle.v122" = "Czy bezpiecznie zachować tę kartę?";
+
+/* This value is used as the title for the Not Now button in the remember credit card page */
+"CreditCard.RememberCard.SecondaryButtonTitle.v115" = "Nie teraz";
+
+/* This value is used as the toast message for the saving success alert in the remember credit card page */
+"CreditCard.RememberCard.SecondaryButtonTitle.v116" = "Zachowano nową kartę";
+

@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:a72958c1a684976ffe41b0e9d652982d514397aa1cd957415bb95420e971a408
-size 616
+/* Label for search engine buttons. The argument corresponds to the name of the search engine. */
+"%@ search" = "%@ ຄົ້ນຫາ";
+
+/* Label for search settings button. */
+"Search Settings" = "ການຕັ້ງຄ່າການຄົ້ນຫາ";
+
+/* When making a new search from the awesome bar, suggestions appear to the user as they write new letters in their search. Different types of suggestions can appear. This string will be used as a label for sponsored Firefox suggestions. */
+"Search.SponsoredSuggestionDescription.v119" = "ໄດ້ຮັບການສະຫນັບສະຫນູນ";
+

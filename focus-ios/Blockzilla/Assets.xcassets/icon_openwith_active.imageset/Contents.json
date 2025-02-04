@@ -1,3 +1,25 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:fb668b2521be5f5d2e2114723815b61331309bad8e9bb96afc8ea9ac26ccbcca
-size 435
+{
+  "images" : [
+    {
+      "filename" : "Share iOS.pdf",
+      "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "icon_openwith_active.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

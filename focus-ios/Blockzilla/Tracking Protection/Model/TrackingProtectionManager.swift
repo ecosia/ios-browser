@@ -1,3 +1,14 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:3b1056496d29fd85e27c32e1a89dcbb346701578b4198ca07967d88c8a4871a5
-size 518
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+import Foundation
+
+class TrackingProtectionManager {
+    @Published var trackingProtectionStatus: TrackingProtectionStatus
+
+    init(isTrackingEnabled: () -> Bool) {
+        let isTrackingEnabled = isTrackingEnabled()
+        self.trackingProtectionStatus = isTrackingEnabled ? .on(TPPageStats()) : .off
+    }
+}

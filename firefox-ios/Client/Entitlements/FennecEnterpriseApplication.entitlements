@@ -1,3 +1,20 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:1fe1f566f2fc733586d56dfddaf6f1a975b4e73a0e931b3a06b62f01715b74bd
-size 659
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>aps-environment</key>
+	<string>development</string>
+	<key>com.apple.developer.authentication-services.autofill-credential-provider</key>
+	<true/>
+	<key>com.apple.developer.networking.multipath</key>
+	<true/>
+	<key>com.apple.security.application-groups</key>
+	<array>
+		<string>group.org.mozilla.ios.Fennec.enterprise</string>
+	</array>
+	<key>keychain-access-groups</key>
+	<array>
+		<string>$(AppIdentifierPrefix)org.mozilla.ios.Fennec.enterprise</string>
+	</array>
+</dict>
+</plist>

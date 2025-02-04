@@ -1,3 +1,21 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:a3f053a70de1fa75f1657f220ae027cbb27a4b6daa67b8c156cce6cd8055c8a7
-size 312
+{
+  "images" : [
+    {
+      "idiom" : "universal",
+      "filename" : "qrcode-scanLine.png",
+      "scale" : "1x"
+    },
+    {
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "idiom" : "universal",
+      "scale" : "3x"
+    }
+  ],
+  "info" : {
+    "version" : 1,
+    "author" : "xcode"
+  }
+}

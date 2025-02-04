@@ -1,3 +1,24 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:ecd97903d419da8d02346fd2e2c7ef8ed9f51007c16f7732c0af0fdd7e4d59ae
-size 407
+{
+  "configurations" : [
+    {
+      "id" : "9989C302-1D94-43E1-BC80-01AAA064C73B",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:Client.xcodeproj",
+        "identifier" : "2CFE996E2D45329300B25CE0",
+        "name" : "EcosiaTests"
+      }
+    }
+  ],
+  "version" : 1
+}

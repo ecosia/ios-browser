@@ -1,3 +1,25 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:228c4e81ae056bb0c183497db5832ac622140d3f4cdba748472b19fbe1dbad12
-size 421
+{
+  "images" : [
+    {
+      "filename" : "Paste.pdf",
+      "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "icon_paste.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

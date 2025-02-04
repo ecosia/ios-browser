@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:5b23eac6b24fd211ee882220c1631fe49fc840b95874d9a121f2e951c6b02dae
-size 473
+/* This is the learn more text of the Pocket footer on Firefox Homepage. */
+"FirefoxHomepage.Pocket.Footer.LearnMore.v115" = "Μάθετε περισσότερα";
+
+/* This is the title of the Pocket footer on Firefox Homepage. The first placeholder is for the Pocket app name and the second placeholder for the app name */
+"FirefoxHomepage.Pocket.Footer.Title.v116" = "Με την υποστήριξη του %1$@. Μέλος της οικογένειας του %2$@.";
+

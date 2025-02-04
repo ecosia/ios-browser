@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:cb1a1bd77dc5e4203c5bbc0f402c9a0d2a1426096082db6fd4f5b4e67682a90d
-size 920
+/* This value is used as the toast message for the saving success alert in the remember credit card page */
+"CreditCard.RememberCard.SecondaryButtonTitle.v116" = "Інфармацыя аб карце абноўлена";
+
+/* This value is used as the title for the update card page */
+"CreditCard.UpdateCard.MainTitle.v122" = "Абнавіць карту?";
+
+/* This value is used as the title for the Manage Cards button from the update credit card page */
+"CreditCard.UpdateCard.ManageCardsButtonTitle.v115" = "Кіраваць картамі";
+
+/* This value is used as the title for the Not Now button in the update credit card page */
+"CreditCard.UpdateCard.NotNowButtonTitle.v115" = "Не зараз";
+
+/* This value is used as the title for the button in the update credit card page. It indicates the action to update the details f9 the card. */
+"CreditCard.UpdateCard.YesButtonTitle.v122" = "Абнавіць";
+

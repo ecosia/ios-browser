@@ -1,3 +1,16 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:2d537f629336392f84fb8dc1017b40b3c303186de83470be4df86d326d3541fb
-size 280
+{
+  "images" : [
+    {
+      "filename" : "groupYourImpact.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true,
+    "template-rendering-intent" : "original"
+  }
+}

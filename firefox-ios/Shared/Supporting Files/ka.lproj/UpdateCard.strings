@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:22d23a0e2bfa38416afa17dc1acc61310facbacff99aa2cc44416db673837565
-size 616
+/* This value is used as the toast message for the saving success alert in the remember credit card page */
+"CreditCard.RememberCard.SecondaryButtonTitle.v116" = "ბარათის მონაცემები განახლდა";
+
+/* This value is used as the title for the Manage Cards button from the update credit card page */
+"CreditCard.UpdateCard.ManageCardsButtonTitle.v115" = "ბარათების მართვა";
+
+/* This value is used as the title for the Not Now button in the update credit card page */
+"CreditCard.UpdateCard.NotNowButtonTitle.v115" = "ახლა არა";
+

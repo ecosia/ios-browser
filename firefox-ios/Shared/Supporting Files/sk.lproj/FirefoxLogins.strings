@@ -1,3 +1,18 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:4ce12e50a076c448b3d7e1a08ba41fd0785a200046006123b2a36112ea6b27c8
-size 800
+/* Prompt for saving the username in the Save Logins prompt. */
+"LoginsHelper.PromptSaveLogin.Title.v122" = "Uložiť používateľské meno?";
+
+/* Prompt for saving a password in the Save Logins prompt. */
+"LoginsHelper.PromptSavePassword.Title.v122" = "Uložiť heslo?";
+
+/* Prompt for updating the password in the Update Password prompt. */
+"LoginsHelper.PromptUpdateLogin.Title.OneArg.v122" = "Aktualizovať heslo?";
+
+/* Prompt for updating a password in the Update Password prompt. */
+"LoginsHelper.PromptUpdateLogin.Title.TwoArg.v122" = "Aktualizovať heslo?";
+
+/* Placeholder text for search box in logins list view. */
+"LoginsList.LoginsListSearchPlaceholder.v122" = "Vyhľadať v heslách";
+
+/* Title for the list of logins saved by the app */
+"LoginsList.Title.v122" = "ULOŽENÉ HESLÁ";
+

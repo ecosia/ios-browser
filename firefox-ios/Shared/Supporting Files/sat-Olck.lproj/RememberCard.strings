@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:1eb8d7a6e3906390f4399d20d16aa6ea947dbbf107b843a0570c68efc66e2fe8
-size 1125
+/* This value is used as the header for the remember card page. The placeholder is for the app name. */
+"CreditCard.RememberCard.Header.v122" = "%@ ᱫᱚ ᱟᱢᱟᱜ ᱠᱟᱰ ᱱᱚᱢᱵᱚᱨ ᱮ ᱮᱱᱠᱨᱤᱯᱴ ᱟ ᱾ ᱟᱢᱟᱜ ᱥᱤᱠᱭᱚᱨᱤᱴᱤ ᱠᱳᱰ ᱵᱟᱭ ᱥᱟᱧᱪᱟᱣᱜ ᱟ ᱾";
+
+/* This value is used as the title for the Yes button in the remember credit card page */
+"CreditCard.RememberCard.MainButtonTitle.v122" = "ᱥᱟᱺᱪᱟᱣ ᱢᱮ";
+
+/* This value is used as the title for the remember credit card page */
+"CreditCard.RememberCard.MainTitle.v122" = "ᱱᱚᱶᱟ ᱠᱟᱰ ᱫᱚ ᱨᱩᱠᱷᱤᱭᱟᱹ ᱥᱟᱹᱦᱤᱡ ᱫᱚᱦᱚᱭ ᱟᱢ ᱥᱮ ?";
+
+/* This value is used as the title for the Not Now button in the remember credit card page */
+"CreditCard.RememberCard.SecondaryButtonTitle.v115" = "ᱱᱤᱛᱚᱜ ᱫᱚ ᱵᱟᱝᱟ";
+
+/* This value is used as the toast message for the saving success alert in the remember credit card page */
+"CreditCard.RememberCard.SecondaryButtonTitle.v116" = "ᱱᱟᱶᱟ ᱠᱟᱰ ᱥᱟᱧᱪᱟᱣ ᱮᱱᱟ";
+

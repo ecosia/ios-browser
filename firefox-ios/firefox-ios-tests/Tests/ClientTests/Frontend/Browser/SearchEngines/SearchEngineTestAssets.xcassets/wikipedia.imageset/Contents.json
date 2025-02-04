@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:71d261b87e29fa145674b3e2558634e5528dffd6c90fa170c890d25b954d770c
-size 232
+{
+  "images" : [
+    {
+      "filename" : "wikipedia-org.png",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "template-rendering-intent" : "original"
+  }
+}

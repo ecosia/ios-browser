@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:e9057c83695326af35a35b564e98aed7caea689aca59ab784e5666e7f74d43a9
-size 119
+/* (No Commment) */
+"CFBundleName" = "$(PRODUCT_NAME)";
+
+/* (No Commment) */
+"CFBundleShortVersionString" = "۱٫۰";
+

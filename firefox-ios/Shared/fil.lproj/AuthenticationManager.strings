@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:48be04f013036e2757e52e9bd2fc2b6df33a2102cf2d4a0ae00f46bc88ce7218
-size 286
+/* Text displayed above the input field when changing the existing passcode */
+"Enter passcode" = "Ipasok ang Passcode";
+
+/* Touch ID prompt subtitle when accessing logins */
+"Use your fingerprint to access Logins now." = "Gamitin ang iyong fingerprint para ma-access ang mga Login.";
+

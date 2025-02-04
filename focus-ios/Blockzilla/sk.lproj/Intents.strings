@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:6b4a1b6314a647c85a1a61ab234dec5c7171e1412499b470821688f3a8a31e7f
-size 140
+/* (No Comment) */
+"Intents.Erase.Description" = "Vymazať reláciu prehliadania";
+
+/* (No Comment) */
+"Intents.Erase.Title" = "Vymazať";
+

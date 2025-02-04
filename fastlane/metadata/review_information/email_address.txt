@@ -1,3 +1,1 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:f949fdf6c4ee95b752867f95f1fad3e5ba10de60ddb271a7602d81bf15053819
-size 24
+joern.ehmann@ecosia.org

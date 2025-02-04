@@ -1,3 +1,11 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:69200322c905e0b71e05189f152314b9db24fdd4efd2af76eb9d9ded84b5364a
-size 422
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+/// Child settings pages support actions
+protocol SupportSettingsDelegate: AnyObject {
+    func pressedOpenSupportPage(url: URL)
+    func askedToOpen(url: URL?, withTitle title: NSAttributedString?)
+}
