@@ -81,7 +81,6 @@
 		124DAE822D350EFD0050104C /* String+Punycode.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6B2AC11D41F02D00429414 /* String+Punycode.swift */; };
 		124DAE832D350F750050104C /* EcosiaThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12C11E792D2825AF00E4DDBF /* EcosiaThemeManager.swift */; };
 		124DAE842D350F8A0050104C /* EcosiaDarkTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12C11E782D2825AF00E4DDBF /* EcosiaDarkTheme.swift */; };
-		124DAE862D3510330050104C /* SemanticColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB288DD2B07C8EF00A8FCB3 /* SemanticColor.swift */; };
 		124DAE8A2D3512FA0050104C /* DispatchQueueHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83821FF1FC7961D00303C12 /* DispatchQueueHelper.swift */; };
 		126509852CD925B40011BA36 /* BrazeKit in Frameworks */ = {isa = PBXBuildFile; productRef = 126509842CD925B40011BA36 /* BrazeKit */; };
 		126509872CD925B40011BA36 /* BrazeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 126509862CD925B40011BA36 /* BrazeUI */; };
@@ -107,7 +106,6 @@
 		12C11E282D281BD100E4DDBF /* EcosiaTopSiteItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12C11E222D281B7A00E4DDBF /* EcosiaTopSiteItemCell.swift */; };
 		12C11E292D281E4D00E4DDBF /* MMP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB288DB2B07C8EF00A8FCB3 /* MMP.swift */; };
 		12C11E2B2D281E7600E4DDBF /* LoadingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12C11E2A2D281E7600E4DDBF /* LoadingScreen.swift */; };
-		12C11E2C2D281E8300E4DDBF /* SemanticColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB288DD2B07C8EF00A8FCB3 /* SemanticColor.swift */; };
 		12C11E2D2D281E8F00E4DDBF /* PageActionMenuCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB288DF2B07C8EF00A8FCB3 /* PageActionMenuCell.swift */; };
 		12C11E2E2D281E9300E4DDBF /* PageActionsShortcutsHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB288E02B07C8EF00A8FCB3 /* PageActionsShortcutsHeader.swift */; };
 		12C11E2F2D281E9700E4DDBF /* PageActionMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB288E12B07C8EF00A8FCB3 /* PageActionMenu.swift */; };
@@ -2870,7 +2868,6 @@
 		2CB288D12B07C6F300A8FCB3 /* EcosiaBetaDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = EcosiaBetaDebug.xcconfig; path = Configuration/EcosiaBetaDebug.xcconfig; sourceTree = "<group>"; };
 		2CB288D32B07C6F400A8FCB3 /* Ecosia.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Ecosia.xcconfig; path = Configuration/Ecosia.xcconfig; sourceTree = "<group>"; };
 		2CB288DB2B07C8EF00A8FCB3 /* MMP.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MMP.swift; sourceTree = "<group>"; };
-		2CB288DD2B07C8EF00A8FCB3 /* SemanticColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SemanticColor.swift; sourceTree = "<group>"; };
 		2CB288DF2B07C8EF00A8FCB3 /* PageActionMenuCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PageActionMenuCell.swift; sourceTree = "<group>"; };
 		2CB288E02B07C8EF00A8FCB3 /* PageActionsShortcutsHeader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PageActionsShortcutsHeader.swift; sourceTree = "<group>"; };
 		2CB288E12B07C8EF00A8FCB3 /* PageActionMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PageActionMenu.swift; sourceTree = "<group>"; };
@@ -10645,7 +10642,6 @@
 				120251102D439F3600039A2F /* EcosiaColor.swift */,
 				12C11E782D2825AF00E4DDBF /* EcosiaDarkTheme.swift */,
 				12C11E792D2825AF00E4DDBF /* EcosiaThemeManager.swift */,
-				2CB288DD2B07C8EF00A8FCB3 /* SemanticColor.swift */,
 			);
 			path = Theme;
 			sourceTree = "<group>";
@@ -16500,7 +16496,6 @@
 				12C11ECE2D282AAB00E4DDBF /* Analytics.Values.swift in Sources */,
 				21E77E522AA8BE5C00FABA10 /* TabTrayFlagManager.swift in Sources */,
 				CA8226F324C11DB7008A6F38 /* PasswordManagerTableViewCell.swift in Sources */,
-				12C11E2C2D281E8300E4DDBF /* SemanticColor.swift in Sources */,
 				8A0A1BA02B2200FD00E8706F /* PrivateHomepageViewController.swift in Sources */,
 				E4A960061ABB9C450069AD6F /* ReaderModeUtils.swift in Sources */,
 				8AD40FCB27BADC4B00672675 /* StatefulButton.swift in Sources */,
@@ -17841,7 +17836,6 @@
 				E1D6F2D828E325D100B2C8CC /* InstructionsView.swift in Sources */,
 				BD2577982C9D85B5007B344C /* AnyHashable.swift in Sources */,
 				E1D6F2D928E32A5300B2C8CC /* ImageIdentifiers.swift in Sources */,
-				124DAE862D3510330050104C /* SemanticColor.swift in Sources */,
 				1202511F2D47885D00039A2F /* EcosiaLightTheme.swift in Sources */,
 				F8A0B08429AD64790091C75B /* RustSyncManager.swift in Sources */,
 				EB6E0C60207E6C3100FBFF7E /* SendToDevice.swift in Sources */,
