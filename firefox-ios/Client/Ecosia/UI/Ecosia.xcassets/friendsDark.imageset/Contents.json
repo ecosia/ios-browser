@@ -1,3 +1,16 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:bf8c44393fcb47a2b71fb555de76a91678bb369fefa1325de8e29a35e4bd55c5
-size 276
+{
+  "images" : [
+    {
+      "filename" : "friendsDark.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true,
+    "template-rendering-intent" : "original"
+  }
+}

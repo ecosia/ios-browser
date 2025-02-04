@@ -1,3 +1,60 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:b5da9531e0a3957914aba5a6eac111cf3ac063a88b6781cbe835f6408ec2e974
-size 1211
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<array>
+	<dict>
+		<key>name</key>
+		<string>Mail</string>
+		<key>scheme</key>
+		<string>mailto:</string>
+	</dict>
+	<dict>
+		<key>name</key>
+		<string>ProtonMail</string>
+		<key>scheme</key>
+		<string>protonmail://</string>
+	</dict>
+	<dict>
+		<key>scheme</key>
+		<string>ms-outlook://</string>
+		<key>name</key>
+		<string>Outlook</string>
+	</dict>
+	<dict>
+		<key>name</key>
+		<string>Airmail</string>
+		<key>scheme</key>
+		<string>airmail://</string>
+	</dict>
+	<dict>
+		<key>name</key>
+		<string>myMail</string>
+		<key>scheme</key>
+		<string>mymail-mailto://</string>
+	</dict>
+	<dict>
+		<key>name</key>
+		<string>Spark</string>
+		<key>scheme</key>
+		<string>readdle-spark://</string>
+	</dict>
+	<dict>
+		<key>name</key>
+		<string>YMail!</string>
+		<key>scheme</key>
+		<string>ymail://</string>
+	</dict>
+	<dict>
+		<key>name</key>
+		<string>Gmail</string>
+		<key>scheme</key>
+		<string>googlegmail://</string>
+	</dict>
+	<dict>
+		<key>name</key>
+		<string>Fastmail</string>
+		<key>scheme</key>
+		<string>fastmail://</string>
+	</dict>
+</array>
+</plist>

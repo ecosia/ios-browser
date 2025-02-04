@@ -1,3 +1,18 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:1edc1dd1491e52468f3070925379ac3e14641a8de4878e8dff95bfc223525349
-size 617
+/* Settings item for clearing browsing history */
+"Browsing History" = "تاریخچه مرور";
+
+/* Settings item for clearing the cache */
+"Cache" = "حافظه نهان";
+
+/* Settings item for clearing cookies */
+"Cookies" = "کوکی‌ها";
+
+/* Settings item for deleting downloaded files */
+"Downloaded Files" = "پرونده‌های دریافت شده";
+
+/* Settings item for clearing website data */
+"Offline Website Data" = "اطلاعات آفلاین پایگا‌ه‌ اینترنتی";
+
+/* Settings item for clearing passwords and login data */
+"Saved Logins" = "ورودهای ذخیره شده";
+

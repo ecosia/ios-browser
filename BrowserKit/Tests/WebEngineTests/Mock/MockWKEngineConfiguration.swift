@@ -1,3 +1,38 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:a4f3b6a3f27835be880e84f6cdc9595e9908aa3562155bbecce7ef82fba783fe
-size 1190
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+import WebKit
+@testable import WebEngine
+
+class MockWKEngineConfiguration: WKEngineConfiguration {
+    var scriptNameAdded: String?
+    var addUserScriptCalled = 0
+    var addInDefaultContentWorldCalled = 0
+    var addInPageContentWorldCalled = 0
+    var removeScriptMessageHandlerCalled = 0
+    var removeAllUserScriptsCalled = 0
+
+    func addUserScript(_ userScript: WKUserScript) {
+        addUserScriptCalled += 1
+    }
+
+    func addInDefaultContentWorld(scriptMessageHandler: WKScriptMessageHandler, name: String) {
+        scriptNameAdded = name
+        addInDefaultContentWorldCalled += 1
+    }
+
+    func addInPageContentWorld(scriptMessageHandler: WKScriptMessageHandler, name: String) {
+        scriptNameAdded = name
+        addInPageContentWorldCalled += 1
+    }
+
+    func removeScriptMessageHandler(forName name: String) {
+        removeScriptMessageHandlerCalled += 1
+    }
+
+    func removeAllUserScripts() {
+        removeAllUserScriptsCalled += 1
+    }
+}

@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:e7898006b33bf933d1c9053da473c7436ad3a4c57af3433592e3399dabf387eb
-size 267
+/* Text displayed above the input field when changing the existing passcode */
+"Enter passcode" = "암호 입력";
+
+/* Touch ID prompt subtitle when accessing logins */
+"Use your fingerprint to access Logins now." = "로그인을 위해 지문을 사용하세요.";
+

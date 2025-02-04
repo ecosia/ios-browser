@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:0ac29a3b0e75895fbd8c01fbb3ad3137b516572963fb5c34a507cb17c106a066
-size 227
+{
+  "images" : [
+    {
+      "filename" : "Icon Set.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

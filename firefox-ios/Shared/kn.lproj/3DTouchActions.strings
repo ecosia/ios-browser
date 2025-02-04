@@ -1,3 +1,18 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:48cf57a2cff08b32ec5b81bce164f96979228974fb51bea16122b96dae096cee
-size 986
+/* Label for preview action on Tab Tray Tab to add current tab to Bookmarks */
+"Add to Bookmarks" = "ಪುಟಗುರುತುಗಳಿಗೆ ಸೇರಿಸು‍";
+
+/* Label for preview action on Tab Tray Tab to close the current tab */
+"Close Tab" = "ಟ್ಯಾಬ್ ಮುಚ್ಚು";
+
+/* Label for preview action on Tab Tray Tab to copy the URL of the current tab to clipboard */
+"Copy URL" = "URL ನಕಲಿಸು";
+
+/* String describing the action of opening the last added bookmark from the home screen Quick Actions via 3D Touch */
+"Open Last Bookmark" = "ಕಡೆಯ ಪುಟಗುರುತು ತೆರೆ";
+
+/* Accessibility label, associated to the 3D Touch action on the current tab in the tab tray, used to display a larger preview of the tab. */
+"Preview of %@" = "‍%@ ನ ಮುನ್ನೋಟ‍";
+
+/* Label for preview action on Tab Tray Tab to send the current tab to another device */
+"Send to Device" = "ಸಾಧನಕ್ಕೆ ಕಳಿಸು‍";
+

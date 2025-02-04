@@ -1,3 +1,24 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:fa619a11939e561bb78fede8d60953297c95adcdd8e1b125115707c8959d0603
-size 1199
+/* (No Comment) */
+"New Private Tab" = "Ахатә абӷьыц ҿыц";
+
+/* (No Comment) */
+"New Tab" = "Абларҭа ҿыц";
+
+/* Privacy - Camera Usage Description */
+"NSCameraUsageDescription" = "Firefox акамера ахархәоит QR-кодқәа рыҭыхразы, насгьы афотосахьақәеи авидеоқәеи рҭыхразы.";
+
+/* Privacy - Face ID Usage Description */
+"NSFaceIDUsageDescription" = "Firefox иаҭахуп Face ID еиқәырханы иҟоу алогинқәеи ишәарҭоу акартақәеи рахь анеиразы.";
+
+/* Privacy - Location When In Use Usage Description */
+"NSLocationWhenInUseUsageDescription" = "Уахьнеиуа асаитқәа уахьыҟоу рҳәар рылшоит.";
+
+/* Privacy - Microphone Usage Description */
+"NSMicrophoneUsageDescription" = "Firefox аудио аҭаҩреи ашьҭыхреи рзы умикрофон ахархәоит.";
+
+/* Privacy - Photo Library Additions Usage Description */
+"NSPhotoLibraryAddUsageDescription" = "Уи шәара ишәылнаршоит афотосахьақәа рыхьчара.";
+
+/* (No Comment) */
+"Scan QR Code" = "Асканер QR акод";
+

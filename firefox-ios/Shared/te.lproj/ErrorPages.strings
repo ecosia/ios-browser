@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:f39099d65887952afe266391409c8ee7197f5b76614177e2d9e33d89d6c9a8a9
-size 301
+/* Shown in error pages for files that can't be shown and need to be downloaded. */
+"Open in Safari" = "సఫారీలో తెరవండి";
+
+/* Shown in error pages on a button that will try to load the page again */
+"Try again" = "మళ్ళీ ప్రయత్నించండి";
+

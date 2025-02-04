@@ -1,3 +1,37 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:8a639152ffc6a3997c5f720a4050f3dbf236968cb8cc2eed0e0262754f51b871
-size 1307
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+protocol OnboardingCardInfoModelProtocol {
+    var cardType: OnboardingCardType { get set }
+    var name: String { get set }
+    var order: Int { get set }
+    var title: String { get set }
+    var body: String { get set }
+    var instructionsPopup: OnboardingInstructionsPopupInfoModel? { get set }
+    var link: OnboardingLinkInfoModel? { get set }
+    var buttons: OnboardingButtons { get set }
+    var multipleChoiceButtons: [OnboardingMultipleChoiceButtonModel] { get set }
+    var onboardingType: OnboardingType { get set }
+    var a11yIdRoot: String { get set }
+    var imageID: String { get set }
+
+    var image: UIImage? { get }
+
+    init(
+        cardType: OnboardingCardType,
+        name: String,
+        order: Int,
+        title: String,
+        body: String,
+        link: OnboardingLinkInfoModel?,
+        buttons: OnboardingButtons,
+        multipleChoiceButtons: [OnboardingMultipleChoiceButtonModel],
+        onboardingType: OnboardingType,
+        a11yIdRoot: String,
+        imageID: String,
+        instructionsPopup: OnboardingInstructionsPopupInfoModel?
+    )
+}

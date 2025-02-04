@@ -1,3 +1,16 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:bee347ba37f652278282d267678b31203f548cac11439242ea7dc1111b8eb10b
-size 482
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import UIKit
+
+extension CGRect {
+    var center: CGPoint {
+        get {
+            return CGPoint(x: size.width / 2, y: size.height / 2)
+        }
+        set {
+            self.origin = CGPoint(x: newValue.x - size.width / 2, y: newValue.y - size.height / 2)
+        }
+    }
+}

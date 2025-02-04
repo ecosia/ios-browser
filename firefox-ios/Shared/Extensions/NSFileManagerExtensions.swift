@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:361bda787b35502b1172ea6fdc1e15e2550b9a929833e3eecece0ed47117739a
-size 464
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+public extension FileManager {
+    func removeItemInDirectory(_ directory: String, named: String) throws {
+        let file = URL(fileURLWithPath: directory).appendingPathComponent(named).path
+        try self.removeItem(atPath: file)
+    }
+}

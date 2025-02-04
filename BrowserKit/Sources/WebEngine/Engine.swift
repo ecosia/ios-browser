@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:02caa3edea505683ad3bc2cc2ddf195a10734c374e46bfb997ce4af8793e1d80
-size 617
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+/// The engine used to create an `EngineView` and `EngineSession`.
+/// There is only when engine view to be created, but multiple sessions can exists.
+public protocol Engine {
+    /// Creates a new view for rendering web content.
+    func createView() -> EngineView
+
+    /// Creates a new engine session.
+    func createSession(dependencies: EngineSessionDependencies?) throws -> EngineSession
+}

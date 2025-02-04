@@ -1,3 +1,18 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:79e6e89bd40cb3820b6dc79db2a2dada8e3cc3b138e207b84625faec00df137d
-size 823
+/* Prompt for saving the username in the Save Logins prompt. */
+"LoginsHelper.PromptSaveLogin.Title.v122" = "Tallennetaanko käyttäjätunnus?";
+
+/* Prompt for saving a password in the Save Logins prompt. */
+"LoginsHelper.PromptSavePassword.Title.v122" = "Tallennetaanko salasana?";
+
+/* Prompt for updating the password in the Update Password prompt. */
+"LoginsHelper.PromptUpdateLogin.Title.OneArg.v122" = "Päivitetäänkö salasana?";
+
+/* Prompt for updating a password in the Update Password prompt. */
+"LoginsHelper.PromptUpdateLogin.Title.TwoArg.v122" = "Päivitetäänkö salasana?";
+
+/* Placeholder text for search box in logins list view. */
+"LoginsList.LoginsListSearchPlaceholder.v122" = "Etsi salasanoja";
+
+/* Title for the list of logins saved by the app */
+"LoginsList.Title.v122" = "TALLENNETUT SALASANAT";
+

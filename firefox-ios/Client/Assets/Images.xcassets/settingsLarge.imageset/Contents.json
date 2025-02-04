@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:c464f5a213b031cad7a63767f52c420427e6c79489db89b4bde0f0d02f133cdd
-size 232
+{
+  "images" : [
+    {
+      "filename" : "settingsLarge.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

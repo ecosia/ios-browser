@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:24f27d4be58be7b8e28b01274d3d2e95c3af4174acf2e351d0739d1a88328790
-size 229
+{
+  "images" : [
+    {
+      "filename" : "cloudLarge.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

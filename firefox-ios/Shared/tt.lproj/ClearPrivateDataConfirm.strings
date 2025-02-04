@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:4eb8da57aedd44e16749843ce5b01946502115d29a806cf880e9701e48eba3fb
-size 493
+/* The cancel button when confirming clear private data. */
+"Cancel" = "Баш тарту";
+
+/* The button that clears private data. */
+"OK" = "ОК";
+
+/* Description of the confirmation dialog shown when a user tries to clear their private data. */
+"This action will clear all of your private data. It cannot be undone." = "Бу гамәл барлык хосусый мәгълүматларыгызны чистартачак. Бу гамәлне кире кайтарып булмый.";
+

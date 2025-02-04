@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:25c05e4d8a99c8ebdec40f7d4e3dfe6c55835e549abff78de762f8be186e6cc2
-size 385
+/* Title of notification shown when a remote device has requested to close a number of tabs. First parameter is the app name and the second parameter is the number of tabs. */
+"CloseTab.ArrivingNotification.title.v133" = "%1$@ lap bezárva: %2$@";
+
+/* Label for an action used to view recently closed tabs. */
+"CloseTab.ViewAction.title.v133" = "Nemrég bezárt lapok megtekintése";
+

@@ -1,3 +1,21 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:f9ce7f3e60fcebc06ac0d537bc4628e12f5bc63dbe752175f8f991ed9e9c66b9
-size 1069
+/* Label for preview action on Tab Tray Tab to add current tab to Bookmarks */
+"Add to Bookmarks" = "اضافه کردن به نشانک‌ها";
+
+/* Label for preview action on Tab Tray Tab to close the current tab */
+"Close Tab" = "بستن زبانه";
+
+/* Label for preview action on Tab Tray Tab to copy the URL of the current tab to clipboard */
+"Copy URL" = "رونوشت از نشانی وب";
+
+/* Label for preview action on Tab Tray Tab to send the current link to another device */
+"Menu.SendLinkToDevice" = "ارسال پیوند به دستگاه";
+
+/* String describing the action of opening the last added bookmark from the home screen Quick Actions via 3D Touch */
+"Open Last Bookmark" = "بازکردن آخرین نشانک";
+
+/* Accessibility label, associated to the 3D Touch action on the current tab in the tab tray, used to display a larger preview of the tab. */
+"Preview of %@" = "نمایش از %@";
+
+/* Label for preview action on Tab Tray Tab to send the current tab to another device */
+"Send to Device" = "ارسال به دستگاه";
+

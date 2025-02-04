@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:2f0f4bd3cd96f6b0c7fbe8d4fe999059008c6db38b6ce239a2917a61f6a1bbeb
-size 144
+/* (No Comment) */
+"Intents.Erase.Description" = "Böngészési munkamenet törlése";
+
+/* (No Comment) */
+"Intents.Erase.Title" = "Törlés";
+

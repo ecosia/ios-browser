@@ -1,3 +1,3 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:82a30deff6dabe359a4994536002d303818af6991798be3951a70dfd969ac4f5
-size 168
+/* This value is used as the title for the select a credit card from list of available cards. */
+"CreditCard.SelectCreditCard.MainTitle.v122" = "Använd sparat kort";
+

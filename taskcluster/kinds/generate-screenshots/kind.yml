@@ -1,3 +1,32 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:f6ae64e092d10e41f436d6fb1a71e392ac68a2453ffd143ba30ed727c48a2212
-size 974
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+---
+loader: ffios_taskgraph.loader.screenshots_locales:loader
+
+transforms:
+    - ffios_taskgraph.transforms.generate_screenshots
+    - ffios_taskgraph.transforms.bitrise
+    - taskgraph.transforms.task
+
+kind-dependencies:
+    - build
+
+not-for-locales:
+    - en-US   # Already built as part of the build task
+
+locales-per-chunk: 6
+
+task-defaults:
+    description: Generate localized screenshots by delegating the work to bitrise.io
+    worker-type: bitrise
+    bitrise:
+        artifact_prefix: public
+        workflows:
+            - L10nScreenshotsTests
+    build-derived-data-path: {artifact-reference: '<build/public/L10nBuild/l10n-screenshots-dd.zip>'}
+    dependencies:
+        build: build-screenshots
+    index:
+        type: l10n-screenshots
+    run-on-tasks-for: []

@@ -1,3 +1,3 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:8d7efb8e83d472c611ea1a1f61fdb7ebb31a81c087b3288f2fb11a5990b6ad71
-size 202
+/* A brief descriptive name for this app on this device, used for Send Tab and Synced Tabs. The first argument is the app name. The second argument is the device name. */
+"%@ on %@" = "%1$@ sin %2$@";
+

@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:6914a4c1d904f75783d6688fb18ca06c9058f072e77e5f63621f612bc7731e29
-size 226
+{
+  "images" : [
+    {
+      "filename" : "Buttons.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:ee7e4ae5abf0f0f5bc7619c5c4765cde937f41dd0320f581f4f18044139f1ef9
-size 241
+{
+  "images" : [
+    {
+      "filename" : "deviceDesktopSendLarge.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

@@ -1,3 +1,35 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:dfd0e3dc962194b3418fcf94f63ac18e2c20551252fc47e6536c05b0583b436b
-size 966
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Shared
+import XCTest
+
+@testable import Client
+
+final class IntroScreenManagerTests: XCTestCase {
+    var prefs: MockProfilePrefs!
+
+    override func setUp() {
+        super.setUp()
+        prefs = MockProfilePrefs()
+    }
+
+    override func tearDown() {
+        super.tearDown()
+        prefs = nil
+    }
+
+    /* Ecosia: we are basing the onboarding/intro on different flags
+    func testHasntSeenIntroScreenYet_shouldShowIt() {
+        let subject = IntroScreenManager(prefs: prefs)
+        XCTAssertTrue(subject.shouldShowIntroScreen)
+    }
+
+    func testHasSeenIntroScreen_shouldNotShowIt() {
+        let subject = IntroScreenManager(prefs: prefs)
+        subject.didSeeIntroScreen()
+        XCTAssertFalse(subject.shouldShowIntroScreen)
+    }
+     */
+}

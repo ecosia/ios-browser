@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:33be515da64113dbc5c93bcec204cc735a3abb7921f9c8e4625f57c68ef26d65
-size 423
+/* Allow button to open URL from scanned QR Code */
+"ScanQRCode.ConfirmOpenURL.AllowButton.v129" = "Baimendu";
+
+/* Deny button to cancel opening URL from scanned QR Code */
+"ScanQRCode.ConfirmOpenURL.DenyButton.v129" = "Ukatu";
+
+/* Text of the prompt to ask user permission to open a URL from a scanned QR code. Placeholder is app name. */
+"ScanQRCode.ConfirmOpenURL.Message.v129" = "Baimendu %@ aplikazioari irekitzea?";
+

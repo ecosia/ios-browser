@@ -1,3 +1,25 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:a757c0fa6ce9915e00bc9899bc9d471f725151706f6bfb87c27a3e38b637ad22
-size 768
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+---
+loader: taskgraph.loader.transform:loader
+
+transforms:
+    - ffios_taskgraph.transforms.bitrise
+    - taskgraph.transforms.task:transforms
+
+
+tasks:
+    tests:
+        description: Run Performance Tests on Physical Devices in Firebase
+        run-on-tasks-for: []
+        treeherder:
+            symbol: firebase-perf
+            kind: test
+            platform: ios-physical-iphone14pro-16-6/opt
+            tier: 1
+        worker-type: bitrise
+        bitrise:
+            artifact_prefix: public
+            workflows:
+                - Firebase_Performance_Test

@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:434a3345617a4ee73295f3f09766806a32d180d89535bd1d5228f79fd10231b1
-size 397
+/* The cancel button when confirming clear private data. */
+"Cancel" = "Nuligi";
+
+/* The button that clears private data. */
+"OK" = "Akcepti";
+
+/* Description of the confirmation dialog shown when a user tries to clear their private data. */
+"This action will clear all of your private data. It cannot be undone." = "Tiu ĉi ago viŝos ĉiujn viajn privatajn datumojn. Ĝi ne estas malfarebla.";
+

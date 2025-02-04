@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:b02174c7ef17cfbf1872e4f5bbdd8001d5de8a33d72f67770ec7a25a5daa3169
-size 227
+{
+  "images" : [
+    {
+      "filename" : "Vector-3.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

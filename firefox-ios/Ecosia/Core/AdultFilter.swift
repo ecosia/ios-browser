@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:936386f159a07b0677ca8956347ec916e713bff5f55f141c1d1a2c3b14a6e9e3
-size 327
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+public enum AdultFilter: String, Codable {
+    case
+    off = "n",
+    moderate = "i",
+    strict = "y"
+}

@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:740431b61f6c1142dd40797f0c47c3ceb71f4a2535198417226afb9ec3476de7
-size 424
+/* Accessibility label for next button that is displayed above the keyboard when a form field on a website was tapped. */
+"KeyboardAccessory.NextButton.Accessibility.Label.v124" = "Sljedeće polje obrasca";
+
+/* Accessibility label for previous button that is displayed above the keyboard when a form field on a website was tapped. */
+"KeyboardAccessory.PreviousButton.Accessibility.Label.v124" = "Prethodno polje obrasca";
+

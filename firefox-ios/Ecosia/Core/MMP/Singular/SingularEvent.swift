@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:063ff7215b8e724e571738a2b6489c45e31410d9d37a967cf64ab5ef868263fd
-size 285
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+enum SingularEvent: String {
+    case session = "__SESSION__"
+}

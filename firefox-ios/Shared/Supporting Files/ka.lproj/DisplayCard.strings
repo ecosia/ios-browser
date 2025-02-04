@@ -1,3 +1,3 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:95d6f2252fb41cb42d9ee79fc97ca24bccc2b66960b3c175d777a56fdfd87281
-size 115
+/* Label for the expiry date of the credit card. */
+"CreditCard.DisplayCard.ExpiresLabel.v115" = "ვადა:";
+

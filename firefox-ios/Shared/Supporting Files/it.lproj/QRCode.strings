@@ -1,3 +1,3 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:4db00d7be3ad5c15f81d4631bc9c4db000b7185c311b0973bbdc8b5df2267428
-size 132
+/* Accessibility label of the QR code button in the toolbar */
+"QRCode.Toolbar.Button.A11y.Title.v128" = "Scansiona il codice QR";
+

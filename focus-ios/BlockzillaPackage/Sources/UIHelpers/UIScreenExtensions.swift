@@ -1,3 +1,11 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:959f976a3b34bba81d59cee67f97a188d2114ab175c11eccd2397db42907b443
-size 350
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+import UIKit
+
+public extension UIScreen {
+    var isSmallScreen: Bool {
+        return min(bounds.size.width, bounds.size.height) < 700
+    }
+}

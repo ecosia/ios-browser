@@ -1,3 +1,3 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:0849fb5ff6fd57efd6e97b68c2d8367bc0f00e4390fd88c42328d0a5f3a3d910
-size 109
+/* Action button for deleting history entries in the history panel. */
+"Delete" = "नष्ट करा";
+

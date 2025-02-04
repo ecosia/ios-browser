@@ -1,3 +1,18 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:95cbf1c1486d5ee874a248fcd48129352cc228d54a8f66af86b90b957748edd7
-size 838
+/* Label for preview action on Tab Tray Tab to add current tab to Bookmarks */
+"Add to Bookmarks" = "Apondre als marcapaginas";
+
+/* Label for preview action on Tab Tray Tab to close the current tab */
+"Close Tab" = "Tampar l'onglet";
+
+/* Label for preview action on Tab Tray Tab to copy the URL of the current tab to clipboard */
+"Copy URL" = "Copiar l'URL";
+
+/* String describing the action of opening the last added bookmark from the home screen Quick Actions via 3D Touch */
+"Open Last Bookmark" = "Darrièr marcapagina";
+
+/* Accessibility label, associated to the 3D Touch action on the current tab in the tab tray, used to display a larger preview of the tab. */
+"Preview of %@" = "Apercebut de %@";
+
+/* Label for preview action on Tab Tray Tab to send the current tab to another device */
+"Send to Device" = "Enviar al periferic";
+

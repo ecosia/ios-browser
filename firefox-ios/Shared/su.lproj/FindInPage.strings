@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:996600f54909154f0168e5325d493a8b3b00674024f0f130868a4f8935c4dd98
-size 401
+/* Done button in Find in Page Toolbar. */
+"Done" = "Anggeus";
+
+/* Text selection menu item */
+"Find in Page" = "Téangan dina Kaca";
+
+/* Accessibility label for next result button in Find in Page Toolbar. */
+"Next in-page result" = "Hasil satuluyna dina kaca";
+
+/* Accessibility label for previous result button in Find in Page Toolbar. */
+"Previous in-page result" = "Hasil saméméhna dina kaca";
+

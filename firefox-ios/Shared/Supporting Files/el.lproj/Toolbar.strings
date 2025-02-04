@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:018c1d8c978405f5fb46581aa7e5d09199cf7dac1e6808a3b1f455e5def79d85
-size 373
+/* Accessibility label for the new tab button that can be displayed in the navigation or address toolbar. */
+"Toolbar.NewTab.Button.v130" = "Νέα καρτέλα";
+
+/* Label for button on action sheet, accessed via long pressing tab toolbar button, that closes the current tab when pressed */
+"Toolbar.Tab.CloseThisTab.Button.v130" = "Κλείσιμο καρτέλας";
+

@@ -1,3 +1,3 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:1d75aafa53a0547739d74b607d53f0d724047724bccd5b4da85e90c5209b363b
-size 275
+/* When a user is in the process of entering an address, a screen pops up prompting the user if they want to use a saved address. This string is used as the title label of the screen. */
+"Addresses.BottomSheet.UseSavedAddressBottomSheet.v124" = "Paké alamat nu disimpen?";
+

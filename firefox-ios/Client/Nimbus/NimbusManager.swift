@@ -1,3 +1,40 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:29369ee15cea56895b52b1654ad8573301b8d102dfebfb042dc4acea09b77ba9
-size 1230
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+protocol HasNimbusFeatureFlags { }
+
+extension HasNimbusFeatureFlags {
+    var nimbusFlags: NimbusFeatureFlagLayer {
+        return NimbusManager.shared.featureFlagLayer
+    }
+}
+
+protocol HasNimbusSearchBar { }
+
+extension HasNimbusSearchBar {
+    var nimbusSearchBar: NimbusSearchBarLayer {
+        return NimbusManager.shared.bottomSearchBarLayer
+    }
+}
+
+class NimbusManager {
+    // MARK: - Singleton
+
+    /// To help with access control, we should use protocols to access the required
+    /// layers. `.shared` should, ideally, never be directly accessed.
+    static let shared = NimbusManager()
+
+    // MARK: - Properties
+    var featureFlagLayer: NimbusFeatureFlagLayer
+    var bottomSearchBarLayer: NimbusSearchBarLayer
+
+    init(with featureFlagLayer: NimbusFeatureFlagLayer = NimbusFeatureFlagLayer(),
+         bottomSearchBarLayer: NimbusSearchBarLayer = NimbusSearchBarLayer()
+    ) {
+        self.featureFlagLayer = featureFlagLayer
+        self.bottomSearchBarLayer = bottomSearchBarLayer
+    }
+}

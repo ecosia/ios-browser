@@ -1,3 +1,3 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:81e5e8490baee3d6de9e3762cab187b9a05cfbd6246370fa81884818b79ef13e
-size 287
+/* When a user is in the process of entering an address, a screen pops up prompting the user if they want to use a saved address. This string is used as the title label of the screen. */
+"Addresses.BottomSheet.UseSavedAddressBottomSheet.v124" = "Defnyddio cyfeiriad sydd wedi'i gadw?";
+

@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:b0696ff0558ddb614b6ea04b5b5219f5fe36f2d4f7fc3f2a3e6606e46b86024b
-size 228
+{
+  "images" : [
+    {
+      "filename" : "linkLarge.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

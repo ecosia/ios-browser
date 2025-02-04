@@ -1,3 +1,10 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:55f4118861991231421d1c717c0d8aa8b6f18c32a5a6efc58638d80f135b5f6a
-size 317
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+extension TimeInterval {
+
+    static let twentyFourHoursTimeInterval: TimeInterval = 24*60*60
+}

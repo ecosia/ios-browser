@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:f0d70385495a364c90ea84dadbd3efdf9219a21dcbd573ac8777cb3060fa8137
-size 338
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+import Foundation
+
+protocol TrackingProtectionDelegate: AnyObject {
+    func trackingProtectionDidToggleProtection(enabled: Bool)
+}

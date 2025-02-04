@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:5d7ff1b11218d6c12e8cb55796acfcb1d561196a652aee1b8e6ea2b3b260e4bf
-size 237
+{
+  "images" : [
+    {
+      "filename" : "dataClearanceLarge.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

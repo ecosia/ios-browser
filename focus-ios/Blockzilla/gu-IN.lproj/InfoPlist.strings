@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:229036b5739e5a7fc7f9b8ff8fc01669e8a6586ddb44debd8b5b0e63223ffc2a
-size 694
+/* Privacy - Camera Usage Description */
+"NSCameraUsageDescription" = "આ તમને ફોટા લેવા અને અપલોડ કરવા દે છે.";
+
+/* Privacy - Location When In Use Usage Description */
+"NSLocationWhenInUseUsageDescription" = "તમે મુલાકાત લો છો તે વેબસાઇટ્સ તમારા સ્થાનની વિનંતી કરી શકે છે.";
+
+/* Privacy - Microphone Usage Description */
+"NSMicrophoneUsageDescription" = "This lets you take and upload videos.";
+
+/* Privacy - Photo Library Additions Usage Description */
+"NSPhotoLibraryAddUsageDescription" = "This lets you save and upload photos.";
+

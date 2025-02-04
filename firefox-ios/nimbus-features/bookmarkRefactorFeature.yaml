@@ -1,3 +1,18 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:68bcf594930682867ce6607619469df9d46f017afe7c230d164622434de036d0
-size 425
+features:
+  bookmark-refactor-feature:
+    description: >
+      The Feature for managing the roll out of the Bookmark refactor feature
+    variables:
+      enabled:
+        description: >
+          Enables the bookmark refactor feature
+        type: Boolean
+        default: false
+    defaults:
+      - channel: beta
+        value:
+          enabled: false
+      - channel: developer
+        value:
+          enabled: false
+

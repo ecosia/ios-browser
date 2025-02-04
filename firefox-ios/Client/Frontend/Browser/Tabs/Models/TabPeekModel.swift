@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:76e4474b25f076286472e1b9dac2601d55338c58e8b811f8c8ead6c6acd438fc
-size 363
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+struct TabPeekModel {
+    let canTabBeSaved: Bool
+    let isSyncEnabled: Bool
+    let screenshot: UIImage
+    let accessiblityLabel: String
+}

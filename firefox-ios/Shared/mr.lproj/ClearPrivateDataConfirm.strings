@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:41576bcdf56345d876d9f4d4a4ddc2a4ce473e7ae39a0ce5c36894bc4b51a716
-size 533
+/* The cancel button when confirming clear private data. */
+"Cancel" = "रद्द करा";
+
+/* The button that clears private data. */
+"OK" = "ठीक आहे";
+
+/* Description of the confirmation dialog shown when a user tries to clear their private data. */
+"This action will clear all of your private data. It cannot be undone." = "यामुळे आपली सर्व खाजगी माहिती नष्ट होईल. ती पूर्ववत मिळवता येणार नाही.";
+

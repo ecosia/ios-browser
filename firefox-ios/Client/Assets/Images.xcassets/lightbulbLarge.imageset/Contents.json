@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:042d5f68d48b4ad885663a1b9ab29acf517c20ba31de6edf69ac479dc8ee875f
-size 233
+{
+  "images" : [
+    {
+      "filename" : "lightbulbLarge.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:fbae3824d875849c79601010488306b1ef6908b5851a2e1d7311f14a8ec6aee9
-size 228
+{
+  "images" : [
+    {
+      "filename" : "editLarge.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

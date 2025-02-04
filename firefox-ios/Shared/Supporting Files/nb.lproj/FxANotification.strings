@@ -1,3 +1,3 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:f5af19a59b22f61892d4cab66ecf7a97b6b9ee4b9998705dc27ebe126295d5c4
-size 124
+/* Label for an action used to view recently closed tabs. */
+"CloseTab.ViewAction.title.v133" = "Vis nylig lukkede faner";
+

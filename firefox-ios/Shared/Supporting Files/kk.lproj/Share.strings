@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:6f475ada9e7a80b4cc80b399036343919513ab3efe1d57ac4e3cb9056995f09a
-size 464
+/* Error message shown in the remote tabs panel */
+"SendTo.NoDevicesFound.Message.v119" = "Бұл тіркелгіңізге байланысқан және синхрондау үшін қолжетімді басқа құрылғыларыңыз жоқ.";
+
+/* This message appears when a user tries to use 'Send Link to Device' action while not logged in */
+"SendTo.NotSignedIn.Title.v119" = "Сіз өз тіркелгіңізге кірген жоқсыз.";
+

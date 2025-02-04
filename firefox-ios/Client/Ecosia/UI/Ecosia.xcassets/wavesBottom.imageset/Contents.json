@@ -1,3 +1,16 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:e9a0b9a22db5fc4d79bcc4eed5aac3762911856eac9f3cc22600556b63d5be9a
-size 276
+{
+  "images" : [
+    {
+      "filename" : "wavesBottom.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true,
+    "template-rendering-intent" : "template"
+  }
+}

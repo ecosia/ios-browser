@@ -1,3 +1,24 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:2d555274239dd4d602c883dbe7ee52662d4f591b05cdfcc75dee144b91d7fa7f
-size 906
+/* (No Comment) */
+"New Private Tab" = "Nov zasebni zavihek";
+
+/* (No Comment) */
+"New Tab" = "Nov zavihek";
+
+/* Privacy - Camera Usage Description */
+"NSCameraUsageDescription" = "Ecosia uporablja vašo kamero za skeniranje QR-kod, fotografiranje in snemanje.";
+
+/* Privacy - Face ID Usage Description */
+"NSFaceIDUsageDescription" = "Firefox za dostop do shranjenih gesel in plačilnih sredstev zahteva Face ID.";
+
+/* Privacy - Location When In Use Usage Description */
+"NSLocationWhenInUseUsageDescription" = "Spletne strani lahko zahtevajo vašo lokacijo.";
+
+/* Privacy - Microphone Usage Description */
+"NSMicrophoneUsageDescription" = "Ecosia uporablja vaš mikrofon za snemanje in nalaganje zvoka.";
+
+/* Privacy - Photo Library Additions Usage Description */
+"NSPhotoLibraryAddUsageDescription" = "To vam omogoča shranjevati fotografije.";
+
+/* (No Comment) */
+"Scan QR Code" = "Skeniraj QR-kodo";
+

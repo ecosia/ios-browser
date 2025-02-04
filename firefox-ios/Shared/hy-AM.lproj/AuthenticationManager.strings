@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:039e6b666390cbd9e5aedd7d8a4a049befcd23b065179c10359227d4ea4032b4
-size 352
+/* Text displayed above the input field when changing the existing passcode */
+"Enter passcode" = "Մուտքագրեք գաղտնաբառը";
+
+/* Touch ID prompt subtitle when accessing logins */
+"Use your fingerprint to access Logins now." = "Օգտագործեք մատնահետք՝ Մուտքագրումներին մատչելու համար:";
+

@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:f684122f2156d414b3d11612ac9adb048667759375c42405c029e3ae1ca38e7d
-size 169
+{
+  "images" : [
+    {
+      "filename" : "radioButtonSelected.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

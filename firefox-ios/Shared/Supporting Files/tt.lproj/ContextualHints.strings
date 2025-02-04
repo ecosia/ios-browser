@@ -1,3 +1,3 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:835f08758cdb7235790476fab9bd5c93e868fd06c75fe7944e36c9a011dc7d83
-size 473
+/* Contextual hints are little popups that appear for the users informing them of new features. This is a call to action for the popup that appears to educate users about what the fire button in the toolbar does, when in private mode. */
+"ContextualHints.FeltDeletion.Body.v122" = "Яңа хосусый гизү сеансы башлау өчен монда басыгыз. Тарихыгызны, кукиларыгызны — барысын да бетерегез.";
+

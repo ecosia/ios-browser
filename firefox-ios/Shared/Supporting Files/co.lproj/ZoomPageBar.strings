@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:761f7b32ebe86063ed04bb0443e4b66b00ffaf027982f41e41ddde7694ff5f85
-size 710
+/* Accessibility label for closing the zoom panel in Zoom Page Bar */
+"Menu.ZoomPage.Close.AccessibilityLabel.v113" = "Chjode u pannellu d’ingrandamentu";
+
+/* Accessibility label for current zoom level in Zoom Page Bar. The placeholder represents the zoom level */
+"Menu.ZoomPage.CurrentZoomLevel.AccessibilityLabel.v113" = "Livellu attuale d’ingrandamentu : %@";
+
+/* Accessibility label for decreasing the zoom level in Zoom Page Bar */
+"Menu.ZoomPage.DecreaseZoom.AccessibilityLabel.v113" = "Diminuisce u livellu d’ingrandamentu";
+
+/* Accessibility label for increasing the zoom level in Zoom Page Bar */
+"Menu.ZoomPage.IncreaseZoom.AccessibilityLabel.v113" = "Aumentà u livellu d’ingrandamentu";
+

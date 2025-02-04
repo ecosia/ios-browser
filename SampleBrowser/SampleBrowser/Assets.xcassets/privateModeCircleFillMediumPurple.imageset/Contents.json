@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:71e2f83602ce953cdfd29958372e19baa48e189d1c323664d4e4a131f681b18b
-size 252
+{
+  "images" : [
+    {
+      "filename" : "privateModeCircleFillMediumPurple.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

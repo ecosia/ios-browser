@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:8f82af53258bee107adfcebc39d3bb39fd363db7e0f10078ff2230b39082d261
-size 229
+{
+  "images" : [
+    {
+      "filename" : "crossLarge.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

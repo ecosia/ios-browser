@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:ac5255e82bca36dc5643ef5c03bb1d1498a053b626044b43a8caf45d983705cd
-size 302
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+@testable import Client
+import MozillaAppServices
+
+class NimbusMock: FxNimbus { }

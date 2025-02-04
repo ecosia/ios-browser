@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:102b90eed2d4d42c8b2e44a9e13d46e7d7adb51e4298870c2cc0a3762244b1c0
-size 229
+/* Shown in error pages for files that can't be shown and need to be downloaded. */
+"Open in Safari" = "Agor yn Safari";
+
+/* Shown in error pages on a button that will try to load the page again */
+"Try again" = "Ceisiwch eto";
+

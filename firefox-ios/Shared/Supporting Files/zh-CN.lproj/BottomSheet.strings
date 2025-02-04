@@ -1,3 +1,3 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:de7dde8a5ffef04f4368adba59ef9765863ac8e8b3832a0eb239a058c9c85836
-size 283
+/* When a user is in the process of entering an address, a screen pops up prompting the user if they want to use a saved address. This string is used as the title label of the screen. */
+"Addresses.BottomSheet.UseSavedAddressBottomSheet.v124" = "要使用已保存的地址吗？";
+

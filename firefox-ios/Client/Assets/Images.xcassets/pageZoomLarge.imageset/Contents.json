@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:ff95348c7f7e4740c0613c90244cf46f276306f7cca3300ad9732a9532dfdfde
-size 232
+{
+  "images" : [
+    {
+      "filename" : "pageZoomLarge.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

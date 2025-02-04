@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:71509a09b676279f312a92bf8720852e397e6bb2a98fb4d435c60d272c5546a8
-size 411
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import UIKit
+
+/// The `WKEngineWebView` scroll view
+protocol WKScrollView {
+    func setContentOffset(
+        _ contentOffset: CGPoint,
+        animated: Bool
+    )
+}
+
+extension UIScrollView: WKScrollView {}

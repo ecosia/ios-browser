@@ -1,3 +1,3 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:1409c4ccd14906decf8e6a2e33790cf27acab2e02011595a00b2ded9c5c1f2f5
-size 176
+/* This value is used as the title for the select a credit card from list of available cards. */
+"CreditCard.SelectCreditCard.MainTitle.v122" = "Utilitza una targeta desada";
+

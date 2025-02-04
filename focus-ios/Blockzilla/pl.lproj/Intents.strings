@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:61141185a8c8dd6be0dc555767927029f993e01606119947196cee5ffd6e9408
-size 133
+/* (No Comment) */
+"Intents.Erase.Description" = "Usuń sesję przeglądania";
+
+/* (No Comment) */
+"Intents.Erase.Title" = "Usuń";
+

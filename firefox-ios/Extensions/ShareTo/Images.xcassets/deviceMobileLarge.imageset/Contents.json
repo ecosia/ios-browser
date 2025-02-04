@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:f0c934651fe59e84ad23845d3bb84c08bcfd14058222ba3e751b53ce7f6f2a82
-size 236
+{
+  "images" : [
+    {
+      "filename" : "deviceMobileLarge.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

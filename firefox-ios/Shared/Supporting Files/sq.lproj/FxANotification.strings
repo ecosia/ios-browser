@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:2a617bb5cc1045f966d278b59d8e6dcb155057a05b4537947288764c1bf7196a
-size 391
+/* Title of notification shown when a remote device has requested to close a number of tabs. First parameter is the app name and the second parameter is the number of tabs. */
+"CloseTab.ArrivingNotification.title.v133" = "Skeda %1$@ të mbyllura: %2$@";
+
+/* Label for an action used to view recently closed tabs. */
+"CloseTab.ViewAction.title.v133" = "Shihni skeda të mbyllura së fundi";
+

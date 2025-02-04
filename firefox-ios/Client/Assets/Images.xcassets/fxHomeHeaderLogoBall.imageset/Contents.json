@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:efba6fe91b45eb2e3321dc5d1f82e2b9c5ea70c4abbd166454674afbfc7bc00b
-size 156
+{
+  "images" : [
+    {
+      "filename" : "fxLogo.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

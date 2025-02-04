@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:ccda70a227ef7f1d6460965f8cc90f1db34a2ad065117f0008fca44fc44bc464
-size 361
+/* Error message shown in the remote tabs panel */
+"SendTo.NoDevicesFound.Message.v119" = "U hebt geen andere aan deze account gekoppelde apparaten beschikbaar voor synchronisatie.";
+
+/* This message appears when a user tries to use 'Send Link to Device' action while not logged in */
+"SendTo.NotSignedIn.Title.v119" = "U bent niet aangemeld bij uw account.";
+

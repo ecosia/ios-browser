@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:e2832b827f084210bb2af85a4fefb8f43e89e33b7e8b24aa37b4c78aaf5adc3b
-size 976
+/* This value is used as the toast message for the saving success alert in the remember credit card page */
+"CreditCard.RememberCard.SecondaryButtonTitle.v116" = "ᱠᱟᱰ ᱥᱟᱦᱴᱟ ᱦᱟᱹᱞᱤᱭᱟᱹᱠ ᱮᱱᱟ";
+
+/* This value is used as the title for the update card page */
+"CreditCard.UpdateCard.MainTitle.v122" = "ᱠᱟᱰ ᱟᱹᱯᱰᱮᱴ ᱟ ᱥᱮ ?";
+
+/* This value is used as the title for the Manage Cards button from the update credit card page */
+"CreditCard.UpdateCard.ManageCardsButtonTitle.v115" = "ᱠᱟᱰ ᱢᱮᱱᱮᱡᱽ ᱢᱮ";
+
+/* This value is used as the title for the Not Now button in the update credit card page */
+"CreditCard.UpdateCard.NotNowButtonTitle.v115" = "ᱱᱤᱛᱚᱜ ᱫᱚ ᱵᱟᱝᱟ";
+
+/* This value is used as the title for the button in the update credit card page. It indicates the action to update the details f9 the card. */
+"CreditCard.UpdateCard.YesButtonTitle.v122" = "ᱦᱟᱹᱞᱤᱭᱟᱹᱠ";
+

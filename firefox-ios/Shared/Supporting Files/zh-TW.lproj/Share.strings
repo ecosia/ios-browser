@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:3850218398211a0be67f2ad3580aa167a51c6e56e3c7dd84ed1a074337ce3581
-size 319
+/* Error message shown in the remote tabs panel */
+"SendTo.NoDevicesFound.Message.v119" = "您沒有其他連結到此帳號的裝置可進行同步。";
+
+/* This message appears when a user tries to use 'Send Link to Device' action while not logged in */
+"SendTo.NotSignedIn.Title.v119" = "您尚未登入帳號。";
+

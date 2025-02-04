@@ -1,3 +1,18 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:f8e6ffe3a456c8e695c5583fd967af25dc055d470f5eec998dc9d02cbd4aaac2
-size 678
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+import Shared
+
+struct OnboardingInstructionsPopupInfoModel: OnboardingDefaultBrowserModelProtocol {
+    var title: String
+    var instructionSteps: [String]
+    var buttonTitle: String
+    var buttonAction: OnboardingInstructionsPopupActions
+    var a11yIdRoot: String
+
+    func getAttributedStrings(with font: UIFont) -> [NSAttributedString] {
+        return instructionSteps.map { MarkupAttributeUtility(baseFont: font).addAttributesTo(text: $0) }
+    }
+}

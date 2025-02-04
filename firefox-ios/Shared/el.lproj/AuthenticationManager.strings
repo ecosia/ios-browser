@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:abd44a0bc2878989a783acfa3365cb6b12c667cbc4ca41da56d6563a5fd2e1a6
-size 351
+/* Text displayed above the input field when changing the existing passcode */
+"Enter passcode" = "Εισαγάγετε συνθηματικό";
+
+/* Touch ID prompt subtitle when accessing logins */
+"Use your fingerprint to access Logins now." = "Αποκτήστε πρόσβαση στις συνδέσεις με το αποτύπωμά σας.";
+

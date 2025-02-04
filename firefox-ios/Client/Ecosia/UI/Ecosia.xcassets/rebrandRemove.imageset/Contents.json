@@ -1,3 +1,16 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:8e428fd66cff01f9d579f2e450a5ccc77499e265e65bc8b9ab882d6bac0b831c
-size 278
+{
+  "images" : [
+    {
+      "filename" : "rebrandRemove.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true,
+    "template-rendering-intent" : "template"
+  }
+}

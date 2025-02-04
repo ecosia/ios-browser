@@ -1,3 +1,10 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:6205a89b46816fd78b1f1164ad533fc3563ae49a2e852e64828e26059170b252
-size 303
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+enum WallpaperCollectionType: String {
+    case classic
+    case limitedEdition
+}

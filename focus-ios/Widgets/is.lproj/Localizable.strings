@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:04027da4a1e3116fa1cfb1f99cd652edfbd4fde4fad6dfd8e515ee92af2a5204
-size 827
+/* Description for small size widget to add it to home screen. %@ is the name of the app(Focus/Klar). */
+"TodayWidget.QuickActionGalleryDescription" = "Bættu %@-flýtileið við upphafsskjáinn þinn. Eftir að græjunni hefur verið bætt við skaltu ýta og halda inni til að breyta henni og velja aðra flýtileið.";
+
+/* Description for small size widget to add it to home screen. %@ is the name of the app(Focus/Klar). */
+"TodayWidget.QuickActionGalleryDescriptionV2" = "Byrjaðu einkaleit í %@ með sjálfgefnu leitarvélinni þinni.";
+
+/* Quick Actions title when widget enters edit mode */
+"TodayWidget.QuickActionsGalleryTitle" = "Flýtiaðgerðir";
+
+/* Text shown on quick action widget inviting the user to browse in the app. %@ is the name of the app (Focus/Klar). */
+"TodayWidget.SearchInApp" = "Leita í %@";
+

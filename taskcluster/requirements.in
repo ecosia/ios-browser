@@ -1,3 +1,5 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:6197c2a7c6eef136580aa207527092c1834b35f1cf603940b8a10d920015633a
-size 193
+# For instructions on managing dependencies, see:
+# https://taskcluster-taskgraph.readthedocs.io/en/latest/howto/bootstrap-taskgraph.html
+
+mozilla-taskgraph>=2.0.2
+taskcluster-taskgraph>=8.0.1

@@ -1,3 +1,3 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:3cb3fc039d1a38328dba4477195eb5db1038568a67562489c49c97100505c079
-size 135
+/* Human readable description */
+"NSHumanReadableDescription" = "Bloqueio de conteúdo e proteção contra rastreamento, da Mozilla";
+

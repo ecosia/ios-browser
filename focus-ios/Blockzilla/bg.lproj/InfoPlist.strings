@@ -1,3 +1,18 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:e629c6dddb0fe196c061cda066c4868c73cea79dd17205dc1cd149af069d590a
-size 1057
+/* Privacy - Camera Usage Description */
+"NSCameraUsageDescription" = "От тук може да правите и качвате снимки.";
+
+/* Privacy - Face ID Usage Description */
+"NSFaceIDUsageDescription" = "Това позволява да отключвате приложението.";
+
+/* Privacy - Location When In Use Usage Description */
+"NSLocationWhenInUseUsageDescription" = "Страниците, които посещавате, може да поискат вашето местоположение.";
+
+/* Privacy - Microphone Usage Description */
+"NSMicrophoneUsageDescription" = "От тук може да заснемате и качвате видео.";
+
+/* Privacy - Photo Library Additions Usage Description */
+"NSPhotoLibraryAddUsageDescription" = "От тук може да запазвате и качвате снимки.";
+
+/* This is the menu item that appears when you long press the Focus icon on the phone home screen. */
+"UIApplicationShortcutItemTitle.EraseAndOpen" = "Заличаване и отваряне";
+

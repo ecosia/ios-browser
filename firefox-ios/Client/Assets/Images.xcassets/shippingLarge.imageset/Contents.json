@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:1a5b87c53a357ee5eb4976001b1e382317927d2c737dc8085157558c55487178
-size 232
+{
+  "images" : [
+    {
+      "filename" : "shippingLarge.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

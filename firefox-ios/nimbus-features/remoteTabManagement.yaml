@@ -1,3 +1,22 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:917d0458eafac9944f87d00eb840a653566db2d0cb51ae87d4875164f037b6c2
-size 795
+# The configuration for the remoteTabManagement feature
+features:
+  remote-tab-management:
+    description: >
+      Features that let users manage tabs on other devices that are
+      connected to the same Mozilla account.
+    variables:
+      close-tabs-enabled:
+        description: >
+          Whether the feature to close synced tabs is enabled. When enabled,
+          this device will allow other devices to close tabs that are open on this device, and
+          show a "close" button for tabs that are currently open on other supported devices
+          in the synced tabs tray.
+        type: Boolean
+        default: false
+    defaults:
+      - channel: beta
+        value:
+          close-tabs-enabled: false
+      - channel: developer
+        value:
+          close-tabs-enabled: true

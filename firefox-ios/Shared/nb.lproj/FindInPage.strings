@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:bb54f3cea7c7f663e4eacb7475ff47d469a054bdb87fe9810b77abf31f66a77f
-size 374
+/* Done button in Find in Page Toolbar. */
+"Done" = "Ferdig";
+
+/* Text selection menu item */
+"Find in Page" = "Søk på siden";
+
+/* Accessibility label for next result button in Find in Page Toolbar. */
+"Next in-page result" = "Neste resultat";
+
+/* Accessibility label for previous result button in Find in Page Toolbar. */
+"Previous in-page result" = "Forrige resultat";
+

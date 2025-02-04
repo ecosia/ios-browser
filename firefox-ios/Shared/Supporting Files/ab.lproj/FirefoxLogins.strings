@@ -1,3 +1,18 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:980751480980ee08ff2cfc815856454baa1975535f17fd11b7b245f2f4e8f602
-size 923
+/* Prompt for saving the username in the Save Logins prompt. */
+"LoginsHelper.PromptSaveLogin.Title.v122" = "Ахархәаҩ ихьӡ еиқәырхатәума?";
+
+/* Prompt for saving a password in the Save Logins prompt. */
+"LoginsHelper.PromptSavePassword.Title.v122" = "Апароль еиқәырхатәума?";
+
+/* Prompt for updating the password in the Update Password prompt. */
+"LoginsHelper.PromptUpdateLogin.Title.OneArg.v122" = "Амаӡажәа арҿыцтәума?";
+
+/* Prompt for updating a password in the Update Password prompt. */
+"LoginsHelper.PromptUpdateLogin.Title.TwoArg.v122" = "Амаӡажәа арҿыцтәума?";
+
+/* Placeholder text for search box in logins list view. */
+"LoginsList.LoginsListSearchPlaceholder.v122" = "Амаӡажәақәа рыԥшаара";
+
+/* Title for the list of logins saved by the app */
+"LoginsList.Title.v122" = "ИХЫРХЫЗ АМАЖӘҚӘАҚӘА";
+

@@ -1,3 +1,16 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:382b90913fa3d21ed0b0a99b4e51d59149ef34ef958207c9a5600bd0476edd00
-size 269
+{
+  "images" : [
+    {
+      "filename" : "Wave.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true,
+    "template-rendering-intent" : "template"
+  }
+}

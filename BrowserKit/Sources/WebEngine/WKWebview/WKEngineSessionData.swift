@@ -1,3 +1,13 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:1b7118e1aaff3a2a0d6ee74ffca8bf40a2da9ac5d9e0f306efd5fa5ed94b5ff3
-size 418
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+/// Struct use to keep in memory the session data
+struct WKEngineSessionData {
+    var url: URL?
+    var lastRequest: URLRequest?
+    var title: String?
+    var pageMetadata: EnginePageMetadata?
+}

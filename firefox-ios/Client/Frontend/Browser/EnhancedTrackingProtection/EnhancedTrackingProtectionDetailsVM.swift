@@ -1,3 +1,17 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:4d67d4d9bde1248dccfd9f3faf03c3845c89dd1008d74110f1d18684339e1d9c
-size 485
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Common
+import Foundation
+import Shared
+
+struct EnhancedTrackingProtectionDetailsVM {
+    let topLevelDomain: String
+    let title: String
+    let URL: String
+
+    let getLockIcon: (ThemeType) -> UIImage
+    let connectionStatusMessage: String
+    let connectionSecure: Bool
+}

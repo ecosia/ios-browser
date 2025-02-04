@@ -1,3 +1,119 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:c551934c8a6617d0c0e8a21e4f3d4ff939a7a82745096836f3bb6173994d6a6a
-size 5066
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Common
+import Storage
+import Shared
+
+protocol LibraryPanelContextMenu {
+    var windowUUID: WindowUUID { get }
+    func getSiteDetails(for indexPath: IndexPath) -> Site?
+    func getContextMenuActions(for site: Site, with indexPath: IndexPath) -> [PhotonRowActions]?
+    func getShareAction(site: Site, sourceView: UIView, delegate: LibraryPanelCoordinatorDelegate?) -> PhotonRowActions
+    func presentContextMenu(for indexPath: IndexPath)
+    func presentContextMenu(
+        for site: Site,
+        with indexPath: IndexPath,
+        completionHandler: @escaping () -> PhotonActionSheet?
+    )
+}
+
+extension LibraryPanelContextMenu {
+    func presentContextMenu(for indexPath: IndexPath) {
+        guard let site = getSiteDetails(for: indexPath) else { return }
+
+        presentContextMenu(for: site, with: indexPath, completionHandler: {
+            return self.contextMenu(for: site, with: indexPath)
+        })
+    }
+
+    func contextMenu(for site: Site, with indexPath: IndexPath) -> PhotonActionSheet? {
+        guard let actions = self.getContextMenuActions(for: site, with: indexPath) else { return nil }
+
+        let viewModel = PhotonActionSheetViewModel(actions: [actions], site: site, modalStyle: .overFullScreen)
+
+        let contextMenu = PhotonActionSheet(viewModel: viewModel, windowUUID: windowUUID)
+        contextMenu.modalTransitionStyle = .crossDissolve
+
+        let generator = UIImpactFeedbackGenerator(style: .heavy)
+        generator.impactOccurred()
+
+        return contextMenu
+    }
+
+    func getRecentlyClosedTabContexMenuActions(
+        for site: Site,
+        recentlyClosedPanelDelegate: RecentlyClosedPanelDelegate?
+    ) -> [PhotonRowActions]? {
+        guard let siteURL = URL(string: site.url, invalidCharacters: false) else { return nil }
+
+        let openInNewTabAction = SingleActionViewModel(
+            title: .OpenInNewTabContextMenuTitle,
+            iconString: StandardImageIdentifiers.Large.plus
+        ) { _ in
+            recentlyClosedPanelDelegate?.openRecentlyClosedSiteInNewTab(siteURL, isPrivate: false)
+        }
+
+        let openInNewPrivateTabAction = SingleActionViewModel(
+            title: .OpenInNewPrivateTabContextMenuTitle,
+            iconString: StandardImageIdentifiers.Large.privateMode
+        ) { _ in
+            recentlyClosedPanelDelegate?.openRecentlyClosedSiteInNewTab(siteURL, isPrivate: true)
+        }
+
+        return [PhotonRowActions(openInNewTabAction), PhotonRowActions(openInNewPrivateTabAction)]
+    }
+
+    func getRemoteTabContextMenuActions(
+        for site: Site,
+        remotePanelDelegate: RemotePanelDelegate?
+    ) -> [PhotonRowActions]? {
+        guard let siteURL = URL(string: site.url, invalidCharacters: false) else { return nil }
+
+        let openInNewTabAction = SingleActionViewModel(
+            title: .OpenInNewTabContextMenuTitle,
+            iconString: StandardImageIdentifiers.Large.plus
+        ) { _ in
+            remotePanelDelegate?.remotePanelDidRequestToOpenInNewTab(siteURL, isPrivate: false)
+        }
+
+        let openInNewPrivateTabAction = SingleActionViewModel(
+            title: .OpenInNewPrivateTabContextMenuTitle,
+            iconString: StandardImageIdentifiers.Large.privateMode
+        ) { _ in
+            remotePanelDelegate?.remotePanelDidRequestToOpenInNewTab(siteURL, isPrivate: true)
+        }
+
+        return [PhotonRowActions(openInNewTabAction), PhotonRowActions(openInNewPrivateTabAction)]
+    }
+
+    func getDefaultContextMenuActions(
+        for site: Site,
+        libraryPanelDelegate: LibraryPanelDelegate?
+    ) -> [PhotonRowActions]? {
+        guard let siteURL = URL(string: site.url, invalidCharacters: false) else { return nil }
+
+        let openInNewTabAction = SingleActionViewModel(title: .OpenInNewTabContextMenuTitle,
+                                                       iconString: StandardImageIdentifiers.Large.plus) { _ in
+            libraryPanelDelegate?.libraryPanelDidRequestToOpenInNewTab(siteURL, isPrivate: false)
+        }.items
+
+        let openInNewPrivateTabAction = SingleActionViewModel(
+            title: .OpenInNewPrivateTabContextMenuTitle,
+            iconString: StandardImageIdentifiers.Large.privateMode) { _ in
+            libraryPanelDelegate?.libraryPanelDidRequestToOpenInNewTab(siteURL, isPrivate: true)
+        }.items
+
+        return [openInNewTabAction, openInNewPrivateTabAction]
+    }
+
+    func getShareAction(site: Site, sourceView: UIView, delegate: LibraryPanelCoordinatorDelegate?) -> PhotonRowActions {
+        return SingleActionViewModel(
+            title: .ShareContextMenuTitle,
+            iconString: StandardImageIdentifiers.Large.share) { _ in
+                guard let siteURL = URL(string: site.url, invalidCharacters: false) else { return }
+                delegate?.shareLibraryItem(url: siteURL, sourceView: sourceView)
+        }.items
+    }
+}

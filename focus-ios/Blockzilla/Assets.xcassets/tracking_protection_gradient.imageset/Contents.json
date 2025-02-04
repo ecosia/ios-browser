@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:e76792ea008f6d8cbcbee4bd07605ebece5ac80a3b88a9d35edbfeca700b244e
-size 247
+{
+  "images" : [
+    {
+      "filename" : "tracking_protection_gradient.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

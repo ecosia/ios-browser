@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:b2fe81fda23d69760440c6e555fd228c383c48d3ddc3224a67105a91a5c887e5
-size 936
+/* On error page, this is the text on a button that will try to load the page again. */
+"NativeErrorPage.ButtonLabel.v131" = "Päivitä";
+
+/* On error page, this is the description for generic error. */
+"NativeErrorPage.GenericError.Description.v131" = "Tapahtui SSL-virhe, eikä suojattua yhteyttä palvelimeen voida muodostaa.";
+
+/* On error page, this is the title for generic error. */
+"NativeErrorPage.GenericError.TitleLabel.v131" = "Ole varovainen. Jokin ei vaikuta olevan oikein.";
+
+/* On error page, this is the description for no internet connection. */
+"NativeErrorPage.NoInternetConnection.Description.v131" = "Yritä muodostaa yhteys toisella laitteella. Tarkista modeemi tai reititin. Katkaise Wi-Fi-yhteys ja yhdistä se uudelleen.";
+
+/* On error page, this is the title for no internet connection */
+"NativeErrorPage.NoInternetConnection.TitleLabel.v131" = "Vaikuttaa siltä, että Internet-yhteydessäsi on ongelma.";
+

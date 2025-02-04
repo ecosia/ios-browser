@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:e0268a266fff5fdffd7f0dde93ce52c086b8bc1863c7003dafa5fe29d1119d9c
-size 287
+/* Text displayed above the input field when changing the existing passcode */
+"Enter passcode" = "Parolni kiriting";
+
+/* Touch ID prompt subtitle when accessing logins */
+"Use your fingerprint to access Logins now." = "Loginlarga hozir kirish uchun barmoq izlaringizdan foydalaning.";
+

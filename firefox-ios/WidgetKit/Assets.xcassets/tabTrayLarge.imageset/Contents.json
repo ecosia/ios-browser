@@ -1,3 +1,16 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:a9d53f2e76fb8e44cb0ba04175adbc502bccae8f1b2680a86fc094e8f87541c0
-size 277
+{
+  "images" : [
+    {
+      "filename" : "tabTrayLarge.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true,
+    "template-rendering-intent" : "template"
+  }
+}

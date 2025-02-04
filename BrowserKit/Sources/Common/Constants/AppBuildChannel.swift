@@ -1,3 +1,14 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:1a481554a236ef12c2e127f9ec398339b044a3ab47f880177192ceb51938a2b9
-size 357
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+public enum AppBuildChannel: String {
+    case release
+    case beta
+    case developer
+
+    // Used for unknown cases
+    case other
+}

@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:dad1d7460bd191a2e629862d192343be0f8c3e60d6ed2d1935e5e3847e7eb26b
-size 386
+/* Text displayed above the input field when changing the existing passcode */
+"Enter passcode" = "შეიყვანეთ შიფრი";
+
+/* Touch ID prompt subtitle when accessing logins */
+"Use your fingerprint to access Logins now." = "ანგარიშების მონაცემებთან წვდომა, თითის ანაბეჭდით.";
+

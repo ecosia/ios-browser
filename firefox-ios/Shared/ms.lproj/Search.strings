@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:1c792eca4d37c2c3e860881cce85f37fc69bb2e92db626bcbe291707ea51e699
-size 205
+/* Label for search engine buttons. The argument corresponds to the name of the search engine. */
+"%@ search" = "%@ carian";
+
+/* Label for search settings button. */
+"Search Settings" = "Tetapan carian";
+

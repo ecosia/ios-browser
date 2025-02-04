@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:62a07811b798584989be793f49db99e25d719dc6492103d05c84f7c9481ec3e3
-size 232
+{
+  "images" : [
+    {
+      "filename" : "sunFillMedium.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

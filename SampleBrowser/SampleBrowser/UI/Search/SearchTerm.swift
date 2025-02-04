@@ -1,3 +1,18 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:4964a5b6366f3f2b159314f62134f0c8c51e0f8bc21d2fb6ae6408e0498c7dcc
-size 479
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+struct SearchTerm {
+    private var baseURL = SearchDataProvider.SearchEndpoints.searchTerm.baseURL
+    var term: String
+
+    init(term: String) {
+        self.term = term
+    }
+
+    var urlWithSearchTerm: String {
+        return "\(baseURL)\(term)"
+    }
+}

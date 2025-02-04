@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:b571437568274818c219fda4f17a198db2e2ad870f1d83d1d41570d7b55dcf09
-size 361
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+
+#import <Foundation/Foundation.h>
+
+
+@interface NSData (SHA)
+
+- (NSData*) SHA1Hash;
+- (NSData*) SHA256Hash;
+- (NSData*) HMACSHA256WithKey: (NSData*) key;
+
+@end

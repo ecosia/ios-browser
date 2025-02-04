@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:6606e3382345abc04011aa4e198a15ad710c04eeb5e0da14571f9d84d02f4382
-size 232
+{
+  "images" : [
+    {
+      "filename" : "whatsNewLarge.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

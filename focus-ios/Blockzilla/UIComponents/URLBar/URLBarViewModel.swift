@@ -1,3 +1,71 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:7ec6ce7493bfa8a07a6c3df7c2c1af71df333e4e62e59aa8415c0178ef5d3b9a
-size 2500
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Combine
+import UIKit
+
+public enum URLViewAction {
+    case contextMenuTap(anchor: UIButton)
+    case backButtonTap
+    case forwardButtonTap
+    case stopButtonTap
+    case reloadButtonTap
+    case deleteButtonTap
+    case shieldIconButtonTap
+    case dragInteractionStarted
+    case pasteAndGo
+}
+
+public enum ShieldIconStatus: Equatable {
+    case on
+    case off
+    case connectionNotSecure
+}
+
+public class URLBarViewModel {
+    @Published public var canGoBack = false
+    @Published public var canGoForward = false
+    @Published public var canDelete = false
+    @Published public var isLoading = false
+    @Published public var connectionState: ShieldIconStatus = .on
+    @Published public var loadingProgres: Double = 0
+
+    internal var viewActionSubject = PassthroughSubject<URLViewAction, Never>()
+    public var viewActionPublisher: AnyPublisher<URLViewAction, Never> { viewActionSubject.eraseToAnyPublisher() }
+
+    lazy var domainCompletion = DomainCompletion(
+        completionSources: [
+            TopDomainsCompletionSource(enableDomainAutocomplete: enableDomainAutocomplete),
+            CustomCompletionSource(
+                enableCustomDomainAutocomplete: enableCustomDomainAutocomplete,
+                getCustomDomainSetting: getCustomDomainSetting,
+                setCustomDomainSetting: setCustomDomainSetting)
+        ]
+    )
+
+    var enableCustomDomainAutocomplete: () -> Bool
+    var getCustomDomainSetting: () -> AutoCompleteSuggestions
+    var setCustomDomainSetting: ([String]) -> Void
+    var enableDomainAutocomplete: () -> Bool
+
+    public init(
+        enableCustomDomainAutocomplete: @escaping () -> Bool,
+        getCustomDomainSetting: @escaping () -> AutoCompleteSuggestions,
+        setCustomDomainSetting: @escaping ([String]) -> Void,
+        enableDomainAutocomplete: @escaping () -> Bool
+    ) {
+        self.enableCustomDomainAutocomplete = enableCustomDomainAutocomplete
+        self.getCustomDomainSetting = getCustomDomainSetting
+        self.setCustomDomainSetting = setCustomDomainSetting
+        self.enableDomainAutocomplete = enableDomainAutocomplete
+    }
+
+    public func resetToDefaults() {
+        canGoBack = false
+        canGoForward = false
+        canDelete = false
+        isLoading = false
+        loadingProgres = 0
+    }
+}

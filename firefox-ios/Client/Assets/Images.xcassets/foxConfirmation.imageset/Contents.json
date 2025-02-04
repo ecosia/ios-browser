@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:9d73f72bd57930a00006c52fca2e15dd774babdd8cb60450539e251715978422
-size 165
+{
+  "images" : [
+    {
+      "filename" : "foxConfirmation.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

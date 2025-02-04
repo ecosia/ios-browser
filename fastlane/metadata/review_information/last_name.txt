@@ -1,3 +1,1 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:c92c4d003c7ec045eae354e8ce5f5b31f381a50413abf2dc9671ffdc4bc4cef7
-size 7
+Ehmann

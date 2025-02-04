@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:8d85806c8b7dce88e0ebc00334b6f0bfb765fdddeb716c8155dc907d08456f43
-size 230
+{
+  "images" : [
+    {
+      "filename" : "Icon-mobile.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

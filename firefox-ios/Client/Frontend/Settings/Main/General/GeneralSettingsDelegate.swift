@@ -1,3 +1,17 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:e09bbc481ee830ab327e34281e107cfbfe05dc6b7580b02127da8c634199f197
-size 511
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+/// Child settings pages general actions
+protocol GeneralSettingsDelegate: AnyObject {
+    func pressedHome()
+    func pressedMailApp()
+    func pressedNewTab()
+    func pressedSearchEngine()
+    func pressedSiri()
+    func pressedToolbar()
+    func pressedTabs()
+    func pressedTheme()
+}

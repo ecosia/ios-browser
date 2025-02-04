@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:01ef76f0fe796ed93da9ce5eda0098303593889f08b3afb03268b42679c58f82
-size 367
+/* Error message shown in the remote tabs panel */
+"SendTo.NoDevicesFound.Message.v119" = "Não tem quaisquer outros dispositivos associados a esta conta disponíveis para sincronizar.";
+
+/* This message appears when a user tries to use 'Send Link to Device' action while not logged in */
+"SendTo.NotSignedIn.Title.v119" = "Não tem sessão iniciada na sua conta.";
+

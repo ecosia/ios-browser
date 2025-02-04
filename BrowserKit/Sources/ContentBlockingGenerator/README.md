@@ -1,3 +1,5 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:f0657c71227d9373352f4d22b167862dfc992e43080a4696a203151d5f164e13
-size 505
+# ContentBlockerGenerator
+Content blocker Generator script is used to generate the files used in the Enhanced Tracking Protection feature. The script takes as an input the files from the [Shavar creation repository](https://github.com/mozilla-services/shavar-list-creation) and parse them following the procedure described in the [wiki](https://github.com/mozilla-mobile/firefox-ios/wiki/Enhanced-Tracking-Protection-(ETP)).
+
+## Building the code
+You can open the package and run the tests through Xcode.

@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:5e754909743273e43b6d236efb94cca968ef7632a87fe12b64b9858e755a9a80
-size 233
+{
+  "images" : [
+    {
+      "filename" : "clipboardLarge.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

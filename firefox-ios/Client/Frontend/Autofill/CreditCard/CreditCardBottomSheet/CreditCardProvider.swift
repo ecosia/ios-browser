@@ -1,3 +1,23 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:d53054a9ce35670a7db18d62fadc59126263d575547a45dde4a7a71f5f786e4d
-size 803
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+import Storage
+import struct MozillaAppServices.CreditCard
+
+protocol CreditCardProvider {
+    func addCreditCard(
+        creditCard: UnencryptedCreditCardFields,
+        completion: @escaping (CreditCard?, Error?) -> Void
+    )
+    func decryptCreditCardNumber(encryptedCCNum: String?) -> String?
+    func listCreditCards(completion: @escaping ([CreditCard]?, Error?) -> Void)
+    func updateCreditCard(
+        id: String,
+        creditCard: UnencryptedCreditCardFields,
+        completion: @escaping (Bool?, Error?) -> Void
+    )
+}
+
+extension RustAutofill: CreditCardProvider {}

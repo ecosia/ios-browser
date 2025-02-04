@@ -1,3 +1,10 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:715f1e952a2be353e02825058354977180a7989e4c8944fa04eb0d5a853934b7
-size 325
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+struct FxALaunchParams: Equatable {
+    let entrypoint: FxAEntrypoint
+    var query: [String: String]
+}

@@ -1,3 +1,24 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:c518cf5b409ff86a54d15f26b734ba7df90c49313a554bd04ee260ba24e88c69
-size 906
+/* (No Comment) */
+"New Private Tab" = "Pestanya privada nova";
+
+/* (No Comment) */
+"New Tab" = "Pestanya nova";
+
+/* Privacy - Camera Usage Description */
+"NSCameraUsageDescription" = "El Ecosia usa la càmera per a escanejar codis QR i fer fotos i vídeos.";
+
+/* Privacy - Face ID Usage Description */
+"NSFaceIDUsageDescription" = "El Firefox necessita el Face ID per accedir a les contrasenyes i formes de pagament que heu desat.";
+
+/* Privacy - Location When In Use Usage Description */
+"NSLocationWhenInUseUsageDescription" = "Els llocs web que visiteu poden sol·licitar la vostra ubicació.";
+
+/* Privacy - Microphone Usage Description */
+"NSMicrophoneUsageDescription" = "Això permet fer vídeos i pujar-los.";
+
+/* Privacy - Photo Library Additions Usage Description */
+"NSPhotoLibraryAddUsageDescription" = "Això permet desar fotos.";
+
+/* (No Comment) */
+"Scan QR Code" = "Escaneja un codi QR";
+

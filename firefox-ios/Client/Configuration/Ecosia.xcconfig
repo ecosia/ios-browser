@@ -1,3 +1,14 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:817cabf20db9f14cf828aba23e1eba541e63919f6dca6a7da010cb7dc13b0b97
-size 558
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+#include "Common.xcconfig"
+#include "Release.xcconfig"
+#include "Production.xcconfig"
+
+MOZ_BUNDLE_DISPLAY_NAME = Ecosia
+MOZ_BUNDLE_ID = com.ecosia.ecosiaapp
+CODE_SIGN_ENTITLEMENTS = Ecosia/Entitlements/Ecosia.entitlements
+OTHER_SWIFT_FLAGS = $(OTHER_SWIFT_FLAGS_common) -DMOZ_CHANNEL_RELEASE
+MOZ_INTERNAL_URL_SCHEME = ecosia
+DEVELOPMENT_TEAM = 33YMRSYD2L

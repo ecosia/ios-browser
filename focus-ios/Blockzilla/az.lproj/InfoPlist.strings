@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:0976d0fb8bb62464e8115404c570e2990084cc2e9696d083e1c3b88056f09fec
-size 725
+/* Privacy - Camera Usage Description */
+"NSCameraUsageDescription" = "Bu, şəkilləri çəkmə və yükləməyinizə imkan verir.";
+
+/* Privacy - Face ID Usage Description */
+"NSFaceIDUsageDescription" = "Bu tətbiqin kilidini açmağınıza kömək edir.";
+
+/* Privacy - Location When In Use Usage Description */
+"NSLocationWhenInUseUsageDescription" = "Ziyarət etdiyiniz saytlar mövqeyinizi istəyə bilər.";
+
+/* Privacy - Microphone Usage Description */
+"NSMicrophoneUsageDescription" = "Bu, videoları çəkməyinizə və yükləməyinizə imkan verir.";
+
+/* Privacy - Photo Library Additions Usage Description */
+"NSPhotoLibraryAddUsageDescription" = "Bu, şəkilləri saxlama və yükləməyinizə imkan verir.";
+

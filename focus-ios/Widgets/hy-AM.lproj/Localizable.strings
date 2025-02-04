@@ -1,3 +1,3 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:21fdb62e547f1de9290420e59f72ab56d77e0e4a843aba40ac5c8b2443e35348
-size 175
+/* Text shown on quick action widget inviting the user to browse in the app. %@ is the name of the app (Focus/Klar). */
+"TodayWidget.SearchInApp" = "Որոնել %@-ում";
+

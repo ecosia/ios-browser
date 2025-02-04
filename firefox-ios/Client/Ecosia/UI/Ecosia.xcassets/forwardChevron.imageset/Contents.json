@@ -1,3 +1,16 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:4ee3bbd762238a58b00286578cc0a105c6574f84ff0c66f24a1ffa10b7dab49f
-size 279
+{
+  "images" : [
+    {
+      "filename" : "forwardChevron.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true,
+    "template-rendering-intent" : "template"
+  }
+}

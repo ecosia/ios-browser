@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:4c681b5008276bb54832e5700d980588cc32405e5d51b145c64106ae68c07ea0
-size 192
+/* The cancel button when confirming clear history. */
+"Cancel" = "འདོར་བ།";
+
+/* The confirmation button that clears history even when Sync is connected. */
+"OK" = "ཆོག";
+

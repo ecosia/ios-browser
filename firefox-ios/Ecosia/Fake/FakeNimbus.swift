@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:6c47aad514d38dfcfdd5477de2dad1e87900c87068abac3c13d58f43f40f3693
-size 276
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+struct FxNimbus {
+    static var shared = FxNimbus()
+}

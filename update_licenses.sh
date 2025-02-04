@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:f681b74151f2307db152c5d743710b1e211ef3ee813bbab5793ba87b400a0359
-size 305
+#!/bin/bash
+
+if ! type "license-plist" > /dev/null; then
+    echo "You need to install license-plist!"
+    echo "Available at: https://github.com/mono0926/LicensePlist/"
+    exit 0
+fi
+
+license-plist --output-path ./Blockzilla/Settings.bundle --config-path ./license_plist.yml --suppress-opening-directory

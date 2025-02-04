@@ -1,3 +1,55 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:a8c2dce14e426fd7e81e252f4ed7b0cf3548a0620325172b9d5d44d6b89c47ab
-size 1354
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+class Client {
+    static var shared: Client?
+    init(dsn: String) throws {}
+    func crashedLastLaunch() -> Bool { return false }
+    func startCrashHandler() throws {}
+    func crash() {}
+    func send(event: Event, completion: SentryRequestFinished?) {}
+
+    var beforeSerializeEvent: ((Event) -> Void)?
+    func snapshotStacktrace(_ finished: () -> Void) {}
+    func appendStacktrace(to: Event) {}
+    var breadcrumbs = Breadcrumb(level: .debug, category: "")
+}
+
+public enum SentryLevel: Int {
+    case fatal = 0
+    case error = 1
+    case warning = 2
+    case info = 3
+    case debug = 4
+}
+
+public class Event {
+    var context: Context?
+    var extra: [String: Any]?
+    var message: SentryMessage?
+    var tags: [String: String]?
+    var debugMeta: String?
+
+    init(level: SentryLevel) {}
+}
+
+public class Context {
+    var appContext: [String: Any]?
+}
+
+public class Breadcrumb {
+    var message: String?
+    init(level: SentryLevel, category: String) {}
+
+    func add(_ b: Breadcrumb) {}
+    func clear() {}
+}
+
+public typealias SentryRequestFinished = ((Error?) -> Void)
+
+struct SentryMessage {
+    let formatted: String
+}

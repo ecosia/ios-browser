@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:35ed2ae40c4e0d585e9dd1bfdcf8095ed2ce1d398b75818b09e5dea950d8c50d
-size 403
+/* Done button in Find in Page Toolbar. */
+"Done" = "Dokóńcony";
+
+/* Text selection menu item */
+"Find in Page" = "Na boku pytaś";
+
+/* Accessibility label for next result button in Find in Page Toolbar. */
+"Next in-page result" = "Pśiducy wuslědk na boku";
+
+/* Accessibility label for previous result button in Find in Page Toolbar. */
+"Previous in-page result" = "Pjerwjejšny wuslědk na boku";
+

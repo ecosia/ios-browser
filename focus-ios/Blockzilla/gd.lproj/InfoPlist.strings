@@ -1,3 +1,18 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:f85ac3fa1fdd128467e7921655caf665994887b84c0dbc216948c223d086b9b3
-size 913
+/* Privacy - Camera Usage Description */
+"NSCameraUsageDescription" = "Bheir seo comas dhut dealbhan a thogail is a luchdadh suas.";
+
+/* Privacy - Face ID Usage Description */
+"NSFaceIDUsageDescription" = "Leigidh seo leat a’ ghlas a thoirt far na h-aplacaid.";
+
+/* Privacy - Location When In Use Usage Description */
+"NSLocationWhenInUseUsageDescription" = "Dh’fhaoidte gun iarr làraichean-lìn air an tadhal thu d’ ionad.";
+
+/* Privacy - Microphone Usage Description */
+"NSMicrophoneUsageDescription" = "Bheir seo comas dhut video a thogail is a luchdadh suas.";
+
+/* Privacy - Photo Library Additions Usage Description */
+"NSPhotoLibraryAddUsageDescription" = "Bheir seo comas dhut dealbhan a shàbhaladh is a luchdadh suas.";
+
+/* This is the menu item that appears when you long press the Focus icon on the phone home screen. */
+"UIApplicationShortcutItemTitle.EraseAndOpen" = "Suath bàn is fosgail";
+

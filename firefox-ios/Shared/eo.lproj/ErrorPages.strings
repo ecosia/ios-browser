@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:4cc5b43e019460ab535b73d82bb11f351192212d692df897d8c947f4571dbd9a
-size 235
+/* Shown in error pages for files that can't be shown and need to be downloaded. */
+"Open in Safari" = "Malfermi en Safari";
+
+/* Shown in error pages on a button that will try to load the page again */
+"Try again" = "Klopodi denove";
+

@@ -1,3 +1,18 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:cdcb5634cbb3dc0efec06c7adc8a0af1daa577f546191b86e77d349b893cb424
-size 1108
+/* Privacy - Camera Usage Description */
+"NSCameraUsageDescription" = "Επιτρέπει τη λήψη και τη μεταφόρτωση φωτογραφιών.";
+
+/* Privacy - Face ID Usage Description */
+"NSFaceIDUsageDescription" = "Επιτρέπει να ξεκλειδώνετε την εφαρμογή.";
+
+/* Privacy - Location When In Use Usage Description */
+"NSLocationWhenInUseUsageDescription" = "Οι ιστότοποι που επισκέπτεστε ενδέχεται να ζητήσουν την τοποθεσία σας.";
+
+/* Privacy - Microphone Usage Description */
+"NSMicrophoneUsageDescription" = "Επιτρέπει τη λήψη και τη μεταφόρτωση βίντεο.";
+
+/* Privacy - Photo Library Additions Usage Description */
+"NSPhotoLibraryAddUsageDescription" = "Επιτρέπει την αποθήκευση και τη μεταφόρτωση φωτογραφιών.";
+
+/* This is the menu item that appears when you long press the Focus icon on the phone home screen. */
+"UIApplicationShortcutItemTitle.EraseAndOpen" = "Διαγραφή και άνοιγμα";
+

@@ -1,3 +1,3 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:b17eef6936c61bfd7ecad3892658c4826ec94e822e01589d4dda38ab5aeaacef
-size 129
+/* Accessibility label of the QR code button in the toolbar */
+"QRCode.Toolbar.Button.A11y.Title.v128" = "Sganaich an còd QR";
+

@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:3180c49669c1f6dcda4ccb5f00532a63163eaf0ec5c9b10f2b2a4049573a2e20
-size 350
+/* Error message shown in the remote tabs panel */
+"SendTo.NoDevicesFound.Message.v119" = "Nincs más, ezzel a fiókkal összekapcsolt eszköze, amellyel szinkronizálhatna.";
+
+/* This message appears when a user tries to use 'Send Link to Device' action while not logged in */
+"SendTo.NotSignedIn.Title.v119" = "Nincs bejelentkezve a fiókjába.";
+

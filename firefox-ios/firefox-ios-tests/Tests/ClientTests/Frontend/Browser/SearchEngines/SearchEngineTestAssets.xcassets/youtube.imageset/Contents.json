@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:4293cea4e5fc89b9449030ed86ce3fb790f6d73e30c941ecc4938a61c29fbe11
-size 230
+{
+  "images" : [
+    {
+      "filename" : "youtube-com.png",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "template-rendering-intent" : "original"
+  }
+}

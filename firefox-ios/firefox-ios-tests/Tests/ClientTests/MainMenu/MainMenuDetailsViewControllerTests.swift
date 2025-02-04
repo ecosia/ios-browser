@@ -1,3 +1,29 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:01d674bbb24a3a60a0d679f2d0e8ecd3c875478c16945e56187c0a4f84bd668f
-size 817
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+import Common
+import MenuKit
+import XCTest
+
+@testable import Client
+
+final class MainMenuDetailsViewControllerTests: XCTestCase {
+    let windowUUID: WindowUUID = .XCTestDefaultUUID
+
+    override func setUp() {
+        super.setUp()
+        DependencyHelperMock().bootstrapDependencies()
+    }
+
+    override func tearDown() {
+        DependencyHelperMock().reset()
+        super.tearDown()
+    }
+
+    func testMainMenuDetailsViewController_simpleCreation_hasNoLeaks() {
+        let controller = MainMenuDetailsViewController(windowUUID: windowUUID)
+        trackForMemoryLeaks(controller)
+    }
+}

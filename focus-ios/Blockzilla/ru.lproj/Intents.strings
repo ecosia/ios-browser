@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:d97ef4d90e97f4e391c3b7c0a138e4613d2ad94120870c7417d924098b110c84
-size 171
+/* (No Comment) */
+"Intents.Erase.Description" = "Стереть сессию просмотра сети";
+
+/* (No Comment) */
+"Intents.Erase.Title" = "Стереть";
+

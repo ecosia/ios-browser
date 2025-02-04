@@ -1,3 +1,10 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:f81c3112a7babe0c447c549e5f4d510ce134d616ef4af74c1d2e632b82539365
-size 296
+source 'https://rubygems.org'
+
+gem 'fastlane'
+gem 'base64'
+
+plugins_path = File.join(File.dirname(__FILE__), 'fastlane', 'Pluginfile')
+eval_gemfile(plugins_path) if File.exist?(plugins_path)
+
+# gem 'danger', :git => 'git@github.com:danger/danger.git', :branch => 'master'
+# gem 'danger-swiftlint'

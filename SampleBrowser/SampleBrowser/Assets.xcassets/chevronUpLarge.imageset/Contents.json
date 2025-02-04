@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:e339abbf3510d56c22ce09fe034fe8d1b657fed469b2adc93079d99e0972f3af
-size 164
+{
+  "images" : [
+    {
+      "filename" : "chevronUpLarge.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:659f3afd01778d6c7a57ef77c6dbf7a58ec5b111623ec1fd7a712cba49970473
-size 265
+# You can validate the YAML config file at http://yaml-online-parser.appspot.com
+
+github:
+  - owner: mozilla-mobile
+    name: focus-ios
+    version: 3.9
+
+rename:
+    focus-ios: Firefox Focus
+    ios_sdk: Adjust
+    sentry-cocoa: Sentry
+    telemetry-ios: Telemetry

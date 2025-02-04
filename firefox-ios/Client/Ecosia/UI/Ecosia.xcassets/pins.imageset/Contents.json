@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:1a5240a1a128a46ff88be893bd13c3ebc01918b9ff7c62fb03e2283a08edd381
-size 223
+{
+  "images" : [
+    {
+      "filename" : "pins.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

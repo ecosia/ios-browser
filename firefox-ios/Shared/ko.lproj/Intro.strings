@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:3195ab7a9bf0578395939943f01dea704fce717921a5655f15c4f023661421e7
-size 327
+/* Sign in to Firefox account button on second intro screen. */
+"Intro.Slides.Button.SignIn" = "로그인";
+
+/* Title for the first panel 'Welcome' in the First Run tour. */
+"Intro.Slides.Welcome.Title.v2" = "Firefox를 선택해 주셔서 감사합니다";
+
+/* See http://mzl.la/1T8gxwo */
+"Start Browsing" = "사용하기";
+

@@ -1,3 +1,61 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:912b37fd7495b5e87a60fa76c48e7aa13c521c765ccd5c6e6aacd1e0160d2d35
-size 1897
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+function videoTags() {
+    return document.getElementsByTagName("video");
+}
+
+function closeFullScreen() {
+    try {
+        var videos = videoTags()
+        for (var i = 0; i < videos.length; i++) {
+            videos.item(i).onplaying = function() {
+                videos.item(i).webkitExitFullScreen()
+            }
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+var isFullScreenEnabled = document.fullscreenEnabled ||
+                                    document.webkitFullscreenEnabled ||
+                                    document.mozFullScreenEnabled ||
+                                    document.msFullscreenEnabled ? true : false;
+
+var isFullscreenVideosSupported = HTMLVideoElement.prototype.webkitEnterFullscreen !== undefined;
+
+if (!isFullScreenEnabled && isFullscreenVideosSupported && !/mobile/i.test(navigator.userAgent)) {
+    
+    HTMLElement.prototype.requestFullscreen = function() {
+        if (this.webkitRequestFullscreen !== undefined) {
+            this.webkitRequestFullscreen();
+            return true;
+        }
+        
+        if (this.webkitEnterFullscreen !== undefined) {
+            this.webkitEnterFullscreen();
+            return true;
+        }
+        
+        var video = this.querySelector("video")
+        if (video !== undefined) {
+            video.webkitEnterFullscreen();
+            return true;
+        }
+        return false;
+    };
+    
+    Object.defineProperty(document, 'fullscreenEnabled', {
+        get: function() {
+            return true;
+        }
+    });
+    
+    Object.defineProperty(document.documentElement, 'fullscreenEnabled', {
+        get: function() {
+            return true;
+        }
+    });
+}

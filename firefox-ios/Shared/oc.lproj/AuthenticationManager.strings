@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:f28994c9d45d33e5e608602352c566b2912a68d992d43c8d1bf5f6c71931c759
-size 279
+/* Text displayed above the input field when changing the existing passcode */
+"Enter passcode" = "Picatz lo senhal";
+
+/* Touch ID prompt subtitle when accessing logins */
+"Use your fingerprint to access Logins now." = "Utilizatz vòstra detada per accedir als identificants.";
+

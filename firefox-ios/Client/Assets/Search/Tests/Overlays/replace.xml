@@ -1,3 +1,7 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:354251a1617bc6fa7247c54ed07253c6d5757e55a4d014b20e58020617759e2c
-size 183
+<SearchOverlay>
+  <replace target="//search:Url[@method='POST']">
+    <Elem name="replaced">
+      <Child>Child of replaced element.</Child>
+    </Elem>
+  </replace>
+</SearchOverlay>

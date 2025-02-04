@@ -1,3 +1,7 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:d97b628190352429ce67dc0ff0d925b41d403ed3986ee59fc65a3fa3f2774eab
-size 153
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "self:Deferred.xcodeproj">
+   </FileRef>
+</Workspace>

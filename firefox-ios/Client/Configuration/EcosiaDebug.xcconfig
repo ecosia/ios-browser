@@ -1,3 +1,22 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:99f99e6a93c596ce2e348b3485eff1e77ff46b6effdf2184f7265215ffa77036
-size 972
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+// This is a debuggable version of the Ecosia config with the same Bundle ID and setup utilized in production.
+// Points to Production as only the `Release` configuration sets the Environment to be PRODUCTION.
+
+#include "Common.xcconfig"
+#include "Debug.xcconfig"
+#include "Staging.xcconfig"
+
+INFOPLIST_FILE = Client/Info.plist
+MOZ_BUNDLE_DISPLAY_NAME = Ecosia
+MOZ_BUNDLE_ID = com.ecosia.ecosiaapp
+INCLUDE_SETTINGS_BUNDLE = YES
+LEANPLUM_ENVIRONMENT = development
+MOZ_TODAY_WIDGET_SEARCH_DISPLAY_NAME = Ecosia - Search
+CODE_SIGN_ENTITLEMENTS = Ecosia/Entitlements/Ecosia.entitlements
+OTHER_SWIFT_FLAGS = $(OTHER_SWIFT_FLAGS_common) -DMOZ_CHANNEL_FENNEC
+MOZ_INTERNAL_URL_SCHEME = ecosia
+OTHER_LDFLAGS = -ObjC -lxml2 -fprofile-instr-generate
+DEVELOPMENT_TEAM = 33YMRSYD2L

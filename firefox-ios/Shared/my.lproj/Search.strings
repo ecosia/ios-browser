@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:203e3d13ef242cfd6bf7c7b6ae0f226a838c93579792ad178d84318e34b58616
-size 261
+/* Label for search engine buttons. The argument corresponds to the name of the search engine. */
+"%@ search" = "%@ ရှာ";
+
+/* Label for search settings button. */
+"Search Settings" = "ရှာဖွေရေး အပြင်အဆင်များ";
+

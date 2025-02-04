@@ -1,3 +1,3 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:a3742b8e4159a897a98e905f2fcd10ccebb28ff0aba1c5260e13384c679c476e
-size 180
+/* This value is used as the title for the select a credit card from list of available cards. */
+"CreditCard.SelectCreditCard.MainTitle.v122" = "Utiliser une carte enregistrée";
+

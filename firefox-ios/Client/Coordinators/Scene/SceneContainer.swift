@@ -1,3 +1,13 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:660bff1ca083ad2dfd0da61ad0165cbe08640332bfccac285f825526f2c452b4
-size 412
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import UIKit
+
+// The root view controller of the application
+class SceneContainer: UIViewController {
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .clear
+    }
+}

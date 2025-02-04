@@ -1,3 +1,25 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:e3aa3fcad880b01f9486d2a6ed5a6c9f5c56e32ef95fbacb38903f48a2a602d1
-size 628
+# The configuration for the menuRefactorFeature feature
+features:
+  menu-refactor-feature:
+    description: >
+      Controls the menu refactor feature
+    variables:
+      enabled:
+        description: >
+          Controls which menu users will see
+        type: Boolean
+        default: false
+      menu-hint:
+        description: >
+          If true, enables the menu contextual hint.
+        type: Boolean
+        default: false
+    defaults:
+      - channel: beta
+        value:
+          enabled: false
+          menu-hint: false
+      - channel: developer
+        value:
+          enabled: false
+          menu-hint: true

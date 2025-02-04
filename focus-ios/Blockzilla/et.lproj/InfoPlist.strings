@@ -1,3 +1,18 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:5a5b33cdef7c1e2bfeea86d63b37172423c46f3ca728787cd53ba6070782bda4
-size 849
+/* Privacy - Camera Usage Description */
+"NSCameraUsageDescription" = "See võimaldab sul pilte teha ja üles laadida.";
+
+/* Privacy - Face ID Usage Description */
+"NSFaceIDUsageDescription" = "See võimaldab sul rakenduse lahti lukustada.";
+
+/* Privacy - Location When In Use Usage Description */
+"NSLocationWhenInUseUsageDescription" = "Külastatavad saidid võivad küsida sinu asukohta.";
+
+/* Privacy - Microphone Usage Description */
+"NSMicrophoneUsageDescription" = "See võimaldab sul videoid teha ja üles laadida.";
+
+/* Privacy - Photo Library Additions Usage Description */
+"NSPhotoLibraryAddUsageDescription" = "See võimaldab sul pilte salvestada ja üles laadida.";
+
+/* This is the menu item that appears when you long press the Focus icon on the phone home screen. */
+"UIApplicationShortcutItemTitle.EraseAndOpen" = "Kustuta ja ava";
+

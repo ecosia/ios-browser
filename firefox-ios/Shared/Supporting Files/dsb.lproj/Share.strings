@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:16dd44059dae7d0d6f44d57ccfa7ed230f55d34bb97b5179ccafb8448aae3178
-size 370
+/* Error message shown in the remote tabs panel */
+"SendTo.NoDevicesFound.Message.v119" = "Njejsu žedne druge rědy z toś tym kontom zwězane, kótarež by se dali synchronizěrowaś.";
+
+/* This message appears when a user tries to use 'Send Link to Device' action while not logged in */
+"SendTo.NotSignedIn.Title.v119" = "Njejsćo pla swójogo konta pśizjawjony.";
+

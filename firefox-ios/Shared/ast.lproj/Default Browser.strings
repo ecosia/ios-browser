@@ -1,3 +1,18 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:6e7a76b3c1bfcf35c49106542692a9dea401af3364c0263d8326df7152cbf1ff
-size 906
+/* Button string to learn how to set your default browser. */
+"DefaultBrowserCard.Button.v2" = "Lleer cómo";
+
+/* Description for small home tab banner shown that allows user to switch their default browser to Firefox. */
+"DefaultBrowserCard.Description" = "Fai que los enllaces de sitios web, correos electrónicos y Mensaxes s'abran automáticamente en Ecosia.";
+
+/* Title for small home tab banner shown that allows user to switch their default browser to Firefox. */
+"DefaultBrowserCard.Title" = "Cambéu del restolador predetermináu";
+
+/* Description for default browser onboarding card. */
+"DefaultBrowserOnboarding.Description1" = "1. Vete p'Axustes";
+
+/* Description for default browser onboarding card. */
+"DefaultBrowserOnboarding.Description3" = "3. Esbilla Ecosia";
+
+/* Menu option for setting Firefox as default browser. */
+"Settings.DefaultBrowserMenuItem" = "Predeterminar el restolador";
+

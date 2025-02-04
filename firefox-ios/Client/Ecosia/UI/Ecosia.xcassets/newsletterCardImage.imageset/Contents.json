@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:a61b1e175953a65ae5a71ed61b950594fcb5498954d243bc71b20c88ee4da3a9
-size 169
+{
+  "images" : [
+    {
+      "filename" : "newsletterCardImage.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

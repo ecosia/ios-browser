@@ -1,3 +1,59 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:9c05c2ac4cd50b27b5b472afbd5506a71265f9b0b61d3e3cae3d0e859f6d137b
-size 1656
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+import Shared
+
+// TODO Ecosia Upgrade: Do we still want the logic to restore tabs? [MOB-3166]
+// https://github.com/ecosia/ios-browser/commit/5e5ab45a1c9c61eb3c863c269292c787c6bfee7e
+
+class LegacySavedTab: Codable {
+    var isSelected: Bool
+    var title: String?
+    var url: URL?
+    var isPrivate: Bool
+    var screenshotUUID: UUID?
+    var faviconURL: String?
+    var UUID: String?
+    var tabGroupData: LegacyTabGroupData?
+    var createdAt: Timestamp?
+    var hasHomeScreenshot: Bool
+
+    enum CodingKeys: String, CodingKey {
+        case isSelected
+        case title
+        case url
+        case isPrivate
+        case screenshotUUID
+        case faviconURL
+        case UUID
+        case tabGroupData
+        case createdAt
+        case hasHomeScreenshot
+    }
+
+    init(
+        screenshotUUID: UUID?,
+        isSelected: Bool,
+        title: String?,
+        isPrivate: Bool,
+        faviconURL: String?,
+        url: URL?,
+        uuid: String,
+        tabGroupData: LegacyTabGroupData?,
+        createdAt: Timestamp?,
+        hasHomeScreenshot: Bool
+    ) {
+        self.screenshotUUID = screenshotUUID
+        self.isSelected = isSelected
+        self.title = title
+        self.isPrivate = isPrivate
+        self.faviconURL = faviconURL
+        self.url = url
+        self.UUID = uuid
+        self.tabGroupData = tabGroupData
+        self.createdAt = createdAt
+        self.hasHomeScreenshot = hasHomeScreenshot
+    }
+}

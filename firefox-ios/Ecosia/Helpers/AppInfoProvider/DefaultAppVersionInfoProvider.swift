@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:cce8cb9b6a518ab812b21863b4f7e95a73dbb4935ae22e44c439900834b7b157
-size 410
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+import Common
+
+public struct DefaultAppVersionInfoProvider: AppVersionInfoProvider {
+
+    public init() { }
+
+    public var version: String {
+        return AppInfo.ecosiaAppVersion
+    }
+}

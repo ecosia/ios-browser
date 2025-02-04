@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:1e94cfc1f8cd315b309e83b881a1e864faf26ddfedd5a6aef3bf297f39654932
-size 273
+/* Text displayed above the input field when changing the existing passcode */
+"Enter passcode" = "Bisayankufal dam";
+
+/* Touch ID prompt subtitle when accessing logins */
+"Use your fingerprint to access Logins now." = "War kanbe-ize šilbaa tee huruyan tammaasa sohõ.";
+

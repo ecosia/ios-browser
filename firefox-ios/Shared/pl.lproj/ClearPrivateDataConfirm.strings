@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:4e334d3a2095cb03ac04db69911c03b5339099903213526705c929d9b2e2f5e5
-size 396
+/* The cancel button when confirming clear private data. */
+"Cancel" = "Anuluj";
+
+/* The button that clears private data. */
+"OK" = "OK";
+
+/* Description of the confirmation dialog shown when a user tries to clear their private data. */
+"This action will clear all of your private data. It cannot be undone." = "Wszystkie dane prywatne zostaną usunięte. Tego działania nie można cofnąć.";
+

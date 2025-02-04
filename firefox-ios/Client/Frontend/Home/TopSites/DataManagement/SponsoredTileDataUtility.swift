@@ -1,3 +1,20 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:3c0ee9990c9ebad3c3549f27fc34908d4fb7bb05c0d9c6ffa97ef0c276ee24c0
-size 800
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+import Storage
+
+protocol SponsoredTileDataUtilityInterface {
+    func shouldAdd(site: Site, with searchEngine: OpenSearchEngine?) -> Bool
+}
+
+struct SponsoredTileDataUtility: SponsoredTileDataUtilityInterface {
+    func shouldAdd(site: Site, with searchEngine: OpenSearchEngine?) -> Bool {
+        guard let defaultSearchEngine = searchEngine,
+              let secondLevelDomain = site.secondLevelDomain else { return true }
+
+        let hasMatchedEngine = defaultSearchEngine.shortName.localizedCaseInsensitiveContains(secondLevelDomain)
+        return !hasMatchedEngine
+    }
+}

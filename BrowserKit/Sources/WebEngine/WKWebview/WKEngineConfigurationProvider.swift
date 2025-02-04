@@ -1,3 +1,21 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:48dbba44b42bf0fb19a3a7ffed1e0bd200d3d4988388da4644803c2fe263bd62
-size 795
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+import WebKit
+
+/// Provider to get a configured `WKEngineConfiguration`
+protocol WKEngineConfigurationProvider {
+    func createConfiguration() -> WKEngineConfiguration
+}
+
+struct DefaultWKEngineConfigurationProvider: WKEngineConfigurationProvider {
+    func createConfiguration() -> WKEngineConfiguration {
+        let configuration = WKWebViewConfiguration()
+        configuration.userContentController = WKUserContentController()
+        configuration.allowsInlineMediaPlayback = true
+
+        return DefaultEngineConfiguration(webViewConfiguration: configuration)
+    }
+}

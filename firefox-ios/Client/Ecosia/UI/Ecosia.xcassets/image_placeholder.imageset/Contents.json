@@ -1,3 +1,16 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:9301c15ffb93e80edef6f9d28e5e2e4c0767bb4aaac1807450c895f9bf091479
-size 282
+{
+  "images" : [
+    {
+      "filename" : "image_placeholder.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true,
+    "template-rendering-intent" : "template"
+  }
+}

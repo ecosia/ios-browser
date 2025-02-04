@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:903988d584f04a164bb220c2344e2de43f55cb3208d4d69412e4ef79824a78a9
-size 704
+/* The name of the folder that contains desktop bookmarks in the menu. This should match bookmarks.folder.menu.label on Android. */
+"Bookmarks Menu" = "Bladwijzermenu";
+
+/* The name of the folder that contains desktop bookmarks in the toolbar. This should match bookmarks.folder.toolbar.label on Android. */
+"Bookmarks Toolbar" = "Bladwijzerwerkbalk";
+
+/* The title of the folder that contains mobile bookmarks. This should match bookmarks.folder.mobile.label on Android. */
+"Mobile Bookmarks" = "Mobiel-bladwijzers";
+
+/* The name of the folder that contains unsorted desktop bookmarks. This should match bookmarks.folder.unfiled.label on Android. */
+"Unsorted Bookmarks" = "Ongesorteerde bladwijzers";
+

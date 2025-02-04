@@ -1,3 +1,30 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:f1b03fc8f6ef839ca8f46d73f4783d5c891ce41006628e544858114034e98a22
-size 1521
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import XCTest
+
+class LibraryTestsIpad: IpadOnlyTestCase {
+    func testLibraryShortcut() {
+        if skipPlatform {return}
+        // Open Library from shortcut
+        // The Bookmark panel is displayed
+        mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.Toolbar.bookmarksButton])
+        let libraryShorcutButton = app.buttons[AccessibilityIdentifiers.Toolbar.bookmarksButton]
+        libraryShorcutButton.tap()
+        navigator.nowAt(HomePanel_Library)
+        mozWaitForElementToExist(app.tables[AccessibilityIdentifiers.LibraryPanels.BookmarksPanel.tableView])
+        // Go to a different panel
+        // The History Panel is displayed
+        navigator.goto(LibraryPanel_History)
+        mozWaitForElementToExist(app.tables[AccessibilityIdentifiers.LibraryPanels.HistoryPanel.tableView])
+        // The Downloads panel is displayed
+        navigator.nowAt(HomePanel_Library)
+        navigator.goto(LibraryPanel_Downloads)
+        mozWaitForElementToExist(app.tables[AccessibilityIdentifiers.LibraryPanels.DownloadsPanel.tableView])
+        // The Reading List panel is displayed
+        navigator.nowAt(HomePanel_Library)
+        navigator.goto(LibraryPanel_ReadingList)
+        mozWaitForElementToExist(app.tables[AccessibilityIdentifiers.LibraryPanels.ReadingListPanel.tableView])
+    }
+}

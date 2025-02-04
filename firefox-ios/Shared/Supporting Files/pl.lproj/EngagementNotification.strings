@@ -1,3 +1,18 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:311d36a7d04f2f5ce06bfffe70f7adefcab489c4fd161daef937a16ba9a0bd62
-size 1313
+/* Body of notification send to user after inactivity to encourage them to use the search feature. */
+"Engagement.Notification.Body.v112" = "Znajdź coś w pobliżu. Albo odkryj coś fajnego.";
+
+/* Title of notification send to user after inactivity to encourage them to use the search feature. */
+"Engagement.Notification.Title.v112" = "Wyszukaj po raz pierwszy";
+
+/* Body of notification send to user after inactivity to encourage them to use the private browsing feature. Placeholder is app name. */
+"Engagement.Notification.Treatment.A.Body.v114" = "Tryb prywatny w przeglądarce %@ nie zachowuje Twoich danych i blokuje ukryte elementy śledzące.";
+
+/* Title of notification send to user after inactivity to encourage them to use the private browsing feature. */
+"Engagement.Notification.Treatment.A.Title.v114" = "Przeglądaj Internet bez śladu";
+
+/* Body of notification send to user after inactivity to encourage them to use the private browsing feature. Placeholder is the app name. */
+"Engagement.Notification.Treatment.B.Body.v114" = "Używaj przeglądarki %@ bez zachowywania ciasteczek ani historii.";
+
+/* Title of notification send to user after inactivity to encourage them to use the private browsing feature. */
+"Engagement.Notification.Treatment.B.Title.v114" = "Wypróbuj tryb prywatny";
+

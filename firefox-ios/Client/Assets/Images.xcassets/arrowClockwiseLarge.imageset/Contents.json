@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:2e32b36c04b9c61c5b611494087554b5724ff39a2e06adbaa1896f383433a0e2
-size 238
+{
+  "images" : [
+    {
+      "filename" : "arrowClockwiseLarge.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

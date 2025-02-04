@@ -1,3 +1,18 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:57dbb982dd2eb1755efb0691fdd1a09131a7a0e300c6fdcda58022e33edb346b
-size 1320
+/* Body of notification send to user after inactivity to encourage them to use the search feature. */
+"Engagement.Notification.Body.v112" = "Pronađi nešto u blizini. Ili otkrij nešto zabavno.";
+
+/* Title of notification send to user after inactivity to encourage them to use the search feature. */
+"Engagement.Notification.Title.v112" = "Započni svoje prvo pretraživanje";
+
+/* Body of notification send to user after inactivity to encourage them to use the private browsing feature. Placeholder is app name. */
+"Engagement.Notification.Treatment.A.Body.v114" = "Privatno pregledavanje u %@ ne sprema tvoje podatke i blokira skrivene programe za praćenje.";
+
+/* Title of notification send to user after inactivity to encourage them to use the private browsing feature. */
+"Engagement.Notification.Treatment.A.Title.v114" = "Pretražuj bez ostavljanja traga";
+
+/* Body of notification send to user after inactivity to encourage them to use the private browsing feature. Placeholder is the app name. */
+"Engagement.Notification.Treatment.B.Body.v114" = "Pregledavaj bez spremljenih kolačića ili povijesti u %@.";
+
+/* Title of notification send to user after inactivity to encourage them to use the private browsing feature. */
+"Engagement.Notification.Treatment.B.Title.v114" = "Isprobaj privatno pretraživanje";
+

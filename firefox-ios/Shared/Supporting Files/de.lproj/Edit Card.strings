@@ -1,3 +1,3 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:cf523469dc87354bd1aae7632d7843e6dc46f7c7855e05781b79db1a3fcab02a
-size 144
+/* Title label for the view where user can edit their credit card info */
+"CreditCard.EditCard.EditCreditCardTitle.v122" = "Karte bearbeiten";
+

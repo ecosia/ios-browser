@@ -1,3 +1,56 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:f4221bae2b0cd638fbad74bf430d173385f5919c2d414e2eb318b82037b501ad
-size 2173
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+/* Ecosia: Remove Glean
+import Glean
+ */
+
+final class TabsTelemetry {
+    /* Ecosia: Remove Glean
+    /// Measure with a time distribution https://mozilla.github.io/glean/book/reference/metrics/timing_distribution.html
+    /// how long it takes to switch to a new tab
+    private var tabSwitchTimerId: GleanTimerId?
+     */
+
+    func startTabSwitchMeasurement() {
+        /* Ecosia: Remove Glean
+        tabSwitchTimerId = GleanMetrics.Tabs.tabSwitch.start()
+         */
+    }
+
+    func stopTabSwitchMeasurement() {
+        /* Ecosia: Remove Glean
+        guard let timerId = tabSwitchTimerId else { return }
+        GleanMetrics.Tabs.tabSwitch.stopAndAccumulate(timerId)
+        tabSwitchTimerId = nil
+         */
+    }
+
+    static func trackTabsQuantity(tabManager: TabManager) {
+        let privateExtra = [
+            TelemetryWrapper.EventExtraKey.tabsQuantity.rawValue: Int64(tabManager.privateTabs.count)
+        ]
+        TelemetryWrapper.recordEvent(category: .information,
+                                     method: .background,
+                                     object: .tabPrivateQuantity,
+                                     extras: privateExtra)
+
+        let normalExtra = [
+            TelemetryWrapper.EventExtraKey.tabsQuantity.rawValue: Int64(tabManager.normalActiveTabs.count)
+        ]
+        TelemetryWrapper.recordEvent(category: .information,
+                                     method: .background,
+                                     object: .tabNormalQuantity,
+                                     extras: normalExtra)
+
+        let inactiveExtra = [
+            TelemetryWrapper.EventExtraKey.tabsQuantity.rawValue: Int64(tabManager.inactiveTabs.count)
+        ]
+        TelemetryWrapper.recordEvent(category: .information,
+                                     method: .background,
+                                     object: .tabInactiveQuantity,
+                                     extras: inactiveExtra)
+    }
+}

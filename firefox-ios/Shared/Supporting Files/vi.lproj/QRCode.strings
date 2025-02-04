@@ -1,3 +1,3 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:72bf198c77e35165d4ede6bb8c26ef5e43f6c02260e54a2cf093f839c5d4207f
-size 122
+/* Accessibility label of the QR code button in the toolbar */
+"QRCode.Toolbar.Button.A11y.Title.v128" = "Quét mã QR";
+

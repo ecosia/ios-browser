@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:587b0f70c2a5f17a28c660157c16e956315dc3cbbab2c951bf21a0564ec06dfb
-size 669
+/* On the Research Survey popup, the text that explains what the screen is about. Placeholder is for the app name. */
+"Body.Text.v112" = "Қысқа сауалнамадан өту арқылы %@ өнімін жақсартуға көмектесіңіз.";
+
+/* On the Research Survey popup, the text for the button that, when tapped, will dismiss the popup and take the user to a survey. */
+"PrimaryButton.Label.v112" = "Сауалнамаға қатысу";
+
+/* On the Research Survey popup, the text for the button that, when tapped, will dismiss this screen, and the user will not be taken to the survey. */
+"SecondaryButton.Label.v112" = "Жоқ, рахмет";
+

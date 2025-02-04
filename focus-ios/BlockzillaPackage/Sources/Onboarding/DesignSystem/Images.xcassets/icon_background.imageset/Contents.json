@@ -1,3 +1,22 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:01a9f5fb7f0717f820013c1ff82c89fcbf77f0952fa665c34ffd5a63538b0e90
-size 383
+{
+  "images" : [
+    {
+      "filename" : "icon_onboarding_background.pdf",
+      "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "background_icon_dark.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

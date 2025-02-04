@@ -1,3 +1,23 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:b592f48dded41c0b877b7422162f13cf33982dc9ec0a6b555c53610d8f56f7e2
-size 841
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+@testable import Client
+@testable import Ecosia
+
+struct MockUNNotificationSettings: AnalyticsUNNotificationSettingsProtocol {
+    var authorizationStatus: UNAuthorizationStatus
+}
+
+class MockAnalyticsUserNotificationCenter: AnalyticsUserNotificationCenterProtocol {
+    private let mockSettings: AnalyticsUNNotificationSettingsProtocol
+
+    init(mockSettings: AnalyticsUNNotificationSettingsProtocol) {
+        self.mockSettings = mockSettings
+    }
+
+    func getNotificationSettingsProtocol(completionHandler: @escaping (AnalyticsUNNotificationSettingsProtocol) -> Void) {
+        completionHandler(mockSettings)
+    }
+}

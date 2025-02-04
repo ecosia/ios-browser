@@ -1,3 +1,10 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:2411aa492d0c075d8eec716e97d14342608cb13e4bd485f2a389d26d7c2ea847
-size 322
+scheme("Ecosia")
+configuration("Testing")
+project("firefox-ios/Client.xcodeproj")
+destination("platform=iOS Simulator,name=iPhone 16,OS=18.2")
+skip_detect_devices(true)
+output_types("junit")
+output_directory("test_output/xml")
+cloned_source_packages_path("SourcePackages")
+disable_concurrent_testing(true)
+fail_build(true)

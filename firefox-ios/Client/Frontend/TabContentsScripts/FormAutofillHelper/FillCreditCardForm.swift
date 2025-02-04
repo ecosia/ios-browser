@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:7510ccce7909e37b360b8f4918655beded1227886504fe85d2fe96c1ff0654aa
-size 458
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+struct FillCreditCardForm: Codable {
+    let creditCardPayload: CreditCardPayload
+    let type: String
+
+    enum CodingKeys: String, CodingKey, CaseIterable {
+        case creditCardPayload = "payload"
+        case type = "type"
+    }
+}

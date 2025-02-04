@@ -1,3 +1,13 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:9c6e3bc529122b24769767d824cb90313f7c5e8cc3ade1554c8fa8bd3d639b14
-size 386
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+@testable import Client
+
+class BookmarksDelegateMock: BookmarksDelegate {
+    var didLoadNewDataCallCount = 0
+
+    func didLoadNewData() {
+        didLoadNewDataCallCount += 1
+    }
+}

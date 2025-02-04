@@ -1,3 +1,20 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:62d6bc90a22b7a9a1ad9a5bdecd05a822d6404b2de71f495757f0ff9da1c1842
-size 326
+{
+  "colors" : [
+    {
+      "color" : {
+        "color-space" : "srgb",
+        "components" : {
+          "alpha" : "1.000",
+          "blue" : "0x3D",
+          "green" : "0x38",
+          "red" : "0x38"
+        }
+      },
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

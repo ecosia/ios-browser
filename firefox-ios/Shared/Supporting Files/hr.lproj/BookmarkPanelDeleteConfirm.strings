@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:efdb7e15f471d5b5d04a2e32b8936d70566202341c161da7ba072f5105429ea2
-size 725
+/* Button label to cancel deletion when the user tried to delete a non-empty folder. */
+"Bookmarks.DeleteFolderWarning.CancelButton.Label" = "Odustani";
+
+/* Button label for the button that deletes a folder and all of its children. */
+"Bookmarks.DeleteFolderWarning.DeleteButton.Label" = "Izbriši";
+
+/* Main body of the confirmation alert when the user tries to delete a folder that still contains bookmarks and/or folders. */
+"Bookmarks.DeleteFolderWarning.Description" = "Sigurno ju želiš izbrisati zajedno s njenim sadržajem?";
+
+/* Title of the confirmation alert when the user tries to delete a folder that still contains bookmarks and/or folders. */
+"Bookmarks.DeleteFolderWarning.Title" = "Ova mapa nije prazna.";
+

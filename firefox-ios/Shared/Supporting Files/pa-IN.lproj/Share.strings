@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:66eff96a1351751c00464a679c53577c0898ae0387050c487114cf704000343f
-size 518
+/* Error message shown in the remote tabs panel */
+"SendTo.NoDevicesFound.Message.v119" = "ਤੁਹਾਡੇ ਕੋਲ ਸਿੰਕ ਕਰਨ ਲਈ ਇਸ ਖਾਤੇ ਨਾਲ ਕੋਈ ਵੀ ਹੋਰ ਡਿਵਾਈਸ ਕਨੈਕਟ ਨਹੀਂ ਹੈ।";
+
+/* This message appears when a user tries to use 'Send Link to Device' action while not logged in */
+"SendTo.NotSignedIn.Title.v119" = "ਤੁਸੀਂ ਆਪਣੇ ਖਾਤੇ ਵਿੱਚ ਸਾਈਨ ਇਨ ਨਹੀਂ ਕੀਤਾ ਹੈ।";
+

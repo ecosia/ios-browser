@@ -1,3 +1,23 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:c27f436f98087e41e5c56eb971fa9ed15c1695dad32b548827b8684e738b1d8f
-size 872
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+protocol SeedProgressManagerProtocol {
+    static var progressUpdatedNotification: Notification.Name { get }
+    static var levelUpNotification: Notification.Name { get }
+    static var seedCounterConfig: SeedCounterConfig? { get set }
+
+    static func loadCurrentLevel() -> Int
+    static func loadTotalSeedsCollected() -> Int
+    static func loadLastAppOpenDate() -> Date
+
+    static func saveProgress(totalSeeds: Int, currentLevel: Int, lastAppOpenDate: Date)
+
+    static func addSeeds(_ count: Int, relativeToDate date: Date)
+    static func resetCounter()
+
+    static func calculateInnerProgress() -> CGFloat
+    static func collectDailySeed()
+}

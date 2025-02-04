@@ -1,3 +1,3 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:6db48eb43e3261f889f2de69ba5411282405725d3c0c2e775b63f3ffbd9e48c9
-size 111
+/* Label for the expiry date of the credit card. */
+"CreditCard.DisplayCard.ExpiresLabel.v115" = "Venciment";
+

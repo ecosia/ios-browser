@@ -1,3 +1,25 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:8b6590745b7b4d6584c1b78a1b99cafa06312367c09425a2bd000c7374f676b8
-size 886
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+import UIKit
+
+class BlockerToggle: Equatable {
+    let toggle = UISwitch()
+    let label: String
+    let setting: SettingsToggle
+    let subtitle: String?
+
+    init(label: String, setting: SettingsToggle, subtitle: String? = nil) {
+        self.label = label
+        self.setting = setting
+        self.subtitle = subtitle
+        toggle.accessibilityIdentifier = "BlockerToggle.\(setting.rawValue)"
+        toggle.onTintColor = .magenta40
+        toggle.tintColor = .grey10.withAlphaComponent(0.2)
+    }
+
+    static func == (lhs: BlockerToggle, rhs: BlockerToggle) -> Bool {
+        return lhs.toggle == rhs.toggle && lhs.label == rhs.label && lhs.setting == rhs.setting
+    }
+}

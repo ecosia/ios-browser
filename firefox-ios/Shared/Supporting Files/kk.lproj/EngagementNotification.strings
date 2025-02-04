@@ -1,3 +1,18 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:199abaedc9bab7b21c7a4df0fdf30a5525f68e6d0f9c45ad7d23b5cc19c93057
-size 1541
+/* Body of notification send to user after inactivity to encourage them to use the search feature. */
+"Engagement.Notification.Body.v112" = "Жақын жерден бірдеңе табыңыз. Немесе қызықты нәрсе табыңыз.";
+
+/* Title of notification send to user after inactivity to encourage them to use the search feature. */
+"Engagement.Notification.Title.v112" = "Бірінші іздеуді бастаңыз";
+
+/* Body of notification send to user after inactivity to encourage them to use the private browsing feature. Placeholder is app name. */
+"Engagement.Notification.Treatment.A.Body.v114" = "%@ ішіндегі жекелік шолу сіздің ақпаратыңызды сақтаймайды және жасырын трекерлерді блоктайды.";
+
+/* Title of notification send to user after inactivity to encourage them to use the private browsing feature. */
+"Engagement.Notification.Treatment.A.Title.v114" = "Із қалдырмай шолу";
+
+/* Body of notification send to user after inactivity to encourage them to use the private browsing feature. Placeholder is the app name. */
+"Engagement.Notification.Treatment.B.Body.v114" = "%@ ішінде сақталған cookie файлдарсыз және тарихсыз шолыңыз.";
+
+/* Title of notification send to user after inactivity to encourage them to use the private browsing feature. */
+"Engagement.Notification.Treatment.B.Title.v114" = "Жекелік шолуды қолданып көріңіз";
+

@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:722b6235a3b9b7128898fb25f3b5d07a65891feef2ae4f03674e46d891134877
-size 724
+/* Button label to cancel deletion when the user tried to delete a non-empty folder. */
+"Bookmarks.DeleteFolderWarning.CancelButton.Label" = "Cancelar";
+
+/* Button label for the button that deletes a folder and all of its children. */
+"Bookmarks.DeleteFolderWarning.DeleteButton.Label" = "Excluir";
+
+/* Main body of the confirmation alert when the user tries to delete a folder that still contains bookmarks and/or folders. */
+"Bookmarks.DeleteFolderWarning.Description" = "Tem certeza que quer excluir isso e seu conteúdo?";
+
+/* Title of the confirmation alert when the user tries to delete a folder that still contains bookmarks and/or folders. */
+"Bookmarks.DeleteFolderWarning.Title" = "Esta pasta não está vazia.";
+

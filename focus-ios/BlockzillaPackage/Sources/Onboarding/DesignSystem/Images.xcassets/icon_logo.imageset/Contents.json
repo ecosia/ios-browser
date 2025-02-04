@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:b4a48ee46b1087f15188dc0a4cdf065251008e51e44427b1bb94f0744085eb79
-size 159
+{
+  "images" : [
+    {
+      "filename" : "icon_logo.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

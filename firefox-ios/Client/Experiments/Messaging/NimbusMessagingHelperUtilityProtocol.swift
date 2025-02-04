@@ -1,3 +1,25 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:daea79e25d99dde0660242825d244fb5a643586c7e50fe1ef43dd98852b4f9a8
-size 875
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+import Common
+import Shared
+
+import protocol MozillaAppServices.NimbusMessagingHelperProtocol
+
+protocol NimbusMessagingHelperUtilityProtocol {
+    func createNimbusMessagingHelper() -> NimbusMessagingHelperProtocol?
+}
+
+class NimbusMessagingHelperUtility: NimbusMessagingHelperUtilityProtocol {
+    private let createMessageHelper: () -> NimbusMessagingHelperProtocol?
+
+    init(createMessageHelper: @escaping () -> NimbusMessagingHelperProtocol? = Experiments.createJexlHelper) {
+        self.createMessageHelper = createMessageHelper
+    }
+
+    func createNimbusMessagingHelper() -> NimbusMessagingHelperProtocol? {
+        createMessageHelper()
+    }
+}

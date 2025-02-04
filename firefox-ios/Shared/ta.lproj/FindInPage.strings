@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:7562bcf436cd907bf67e069c48a281181b7b72b8fddf8345dbd1caaa48f7c835
-size 489
+/* Done button in Find in Page Toolbar. */
+"Done" = "முடிந்தது";
+
+/* Text selection menu item */
+"Find in Page" = "இங்கே தேடு";
+
+/* Accessibility label for next result button in Find in Page Toolbar. */
+"Next in-page result" = "பக்கத்தில் அடத்தது";
+
+/* Accessibility label for previous result button in Find in Page Toolbar. */
+"Previous in-page result" = "பக்கத்தில் முந்தையது";
+

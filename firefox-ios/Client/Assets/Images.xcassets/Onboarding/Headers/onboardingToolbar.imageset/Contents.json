@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:e4b76ae637c1073c125f4ddb5545e48cbd0d5b8cab5cc91aa219af9062f6bf36
-size 163
+{
+  "images" : [
+    {
+      "filename" : "toolbarpicker.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

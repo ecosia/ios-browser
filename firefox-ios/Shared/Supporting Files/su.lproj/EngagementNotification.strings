@@ -1,3 +1,18 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:320ccc8ed1c3d281c58037841153cbeb2f3ddbdf1afe305c99721a3abd1ac841
-size 1273
+/* Body of notification send to user after inactivity to encourage them to use the search feature. */
+"Engagement.Notification.Body.v112" = "Balangsiar di nu deukeut. Atawa panggihan nu pikaresepeun.";
+
+/* Title of notification send to user after inactivity to encourage them to use the search feature. */
+"Engagement.Notification.Title.v112" = "Mitembeyan maluruh";
+
+/* Body of notification send to user after inactivity to encourage them to use the private browsing feature. Placeholder is app name. */
+"Engagement.Notification.Treatment.A.Body.v114" = "Panyungsi pribadi dina %@ henteu nyimpeun informasi jeung nolak palacak nyamuni.";
+
+/* Title of notification send to user after inactivity to encourage them to use the private browsing feature. */
+"Engagement.Notification.Treatment.A.Title.v114" = "Kotéktak tanpa tapak";
+
+/* Body of notification send to user after inactivity to encourage them to use the private browsing feature. Placeholder is the app name. */
+"Engagement.Notification.Treatment.B.Body.v114" = "Nyungsi tanpa neundeun réréméh atawa jujutan dina %@.";
+
+/* Title of notification send to user after inactivity to encourage them to use the private browsing feature. */
+"Engagement.Notification.Treatment.B.Title.v114" = "Cobaan nyungsi nyamuni";
+

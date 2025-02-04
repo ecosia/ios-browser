@@ -1,3 +1,16 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:3110384c6a2be26b6250fe12f6c589b177e8a9b49380c8497f31aae6c6ae71f4
-size 507
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+public enum ToolTipRoute: Equatable, Hashable, Codable {
+    case onboarding(OnboardingVersion)
+    case trackingProtection
+    case trackingProtectionShield(OnboardingVersion)
+    case trash(OnboardingVersion)
+    case searchBar
+    case widget
+    case widgetTutorial
+    case menu
+}

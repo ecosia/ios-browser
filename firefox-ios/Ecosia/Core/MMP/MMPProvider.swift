@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:c9791560a4601b6ad40e24d1261b9fc25b370534da4f5a57b1683a5280a4b0fc
-size 404
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+public protocol MMPProvider {
+
+    func sendSessionInfo(appDeviceInfo: AppDeviceInfo) async throws
+
+    func sendEvent(_ event: MMPEvent, appDeviceInfo: AppDeviceInfo) async throws
+}

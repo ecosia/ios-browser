@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:8e365e56141f8a65c84b8b333e40ae48d5bb88d8b8a8d1173d6f1866315d35cd
-size 722
+/* Contextual hints are little popups that appear for the users informing them of new features. This one indicates a user can navigate to the Settings page to move the search bar to the top. */
+"ContextualHints.Toolbar.Bottom.Description.v107" = "Перамясціце панэль інструментаў уверх, калі вам так зручней.";
+
+/* Contextual hints are little popups that appear for the users informing them of new features. This one indicates a user can navigate to the Settings page to move the search bar to the bottom. */
+"ContextualHints.Toolbar.Top.Description.v107" = "Перамясціце панэль інструментаў уніз, калі вам так зручней.";
+

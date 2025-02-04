@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:aedf72e2b96744f527038cd624edc9ac2d4727e64573a38afbbed32ca312f572
-size 296
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+public protocol AppVersionInfoProvider {
+    var version: String { get }
+}

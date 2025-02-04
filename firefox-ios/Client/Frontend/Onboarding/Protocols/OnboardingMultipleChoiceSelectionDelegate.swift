@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:70f80e313cae6288f4efd177934512808c94e3f0b1aea5cc40f98588fe906857
-size 340
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+protocol OnboardingMultipleChoiceSelectionDelegate: AnyObject {
+    func updateSelectedButton(to buttonName: String)
+}

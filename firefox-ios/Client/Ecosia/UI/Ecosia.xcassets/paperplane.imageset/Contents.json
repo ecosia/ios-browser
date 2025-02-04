@@ -1,3 +1,16 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:f544da9863e5d1d381b72021bfc79c8c5d06b1b49725e2fbe889e3f9f36a22e5
-size 275
+{
+  "images" : [
+    {
+      "filename" : "paperplane.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true,
+    "template-rendering-intent" : "template"
+  }
+}

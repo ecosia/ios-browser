@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:836b757820047c3b170ca464298fc37f05bfc355d177991fde0f3d3472b198ca
-size 404
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+protocol LocaleInterface {
+    var localeRegionCode: String? { get }
+}
+
+extension Locale: LocaleInterface {
+    var localeRegionCode: String? {
+        return self.regionCode
+    }
+}

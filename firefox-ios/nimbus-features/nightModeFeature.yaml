@@ -1,3 +1,19 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:211e03d8d7a906543ebc55e3b429012f884afcec8fbe2236352955e54038c6a0
-size 457
+# The configuration for the nightModeFeature feature
+features:
+  night-mode-feature:
+    description: >
+      Describes the night mode feature's configuration
+    variables:
+      enabled:
+        description: >
+          Whether night mode is available for users or not
+        type: Boolean
+        default: true
+    defaults:
+      - channel: beta
+        value:
+          enabled: true
+      - channel: developer
+        value:
+          enabled: true
+

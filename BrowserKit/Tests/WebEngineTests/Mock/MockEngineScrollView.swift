@@ -1,3 +1,16 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:779f163717362e95e36fcb025ebbae7271dadc952fed9cc71f1975cdf034216a
-size 521
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+@testable import WebEngine
+
+class MockEngineScrollView: WKScrollView {
+    var setContentOffsetCalled = 0
+    var savedContentOffset: CGPoint?
+
+    func setContentOffset(_ contentOffset: CGPoint, animated: Bool) {
+        setContentOffsetCalled += 1
+        savedContentOffset = contentOffset
+    }
+}

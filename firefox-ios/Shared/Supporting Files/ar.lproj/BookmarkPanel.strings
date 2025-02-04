@@ -1,3 +1,3 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:4ddea518f0973fba1fab375fe29b813a64c21cf1d77b54d1c6163557dd1d6304
-size 91
+/* Action button for deleting bookmarks in the bookmarks panel. */
+"Delete" = "احذف";
+

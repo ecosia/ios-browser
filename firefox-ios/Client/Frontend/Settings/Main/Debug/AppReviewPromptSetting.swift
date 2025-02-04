@@ -1,3 +1,28 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:1ece67f9b80861fe555ef788d498e1b3cfc12dd00f0f3cc75e2ba72d29dd5af4
-size 1007
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+import Shared
+
+class AppReviewPromptSetting: HiddenSetting {
+    private weak var settingsDelegate: DebugSettingsDelegate?
+
+    init(settings: SettingsTableViewController,
+         settingsDelegate: DebugSettingsDelegate) {
+        self.settingsDelegate = settingsDelegate
+        super.init(settings: settings)
+    }
+
+    override var title: NSAttributedString? {
+        return NSAttributedString(
+            string: "Toggle App Review (needs tab switch)",
+            attributes: [NSAttributedString.Key.foregroundColor: theme.colors.textPrimary]
+        )
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        UserDefaults.standard.set(true, forKey: PrefsKeys.ForceShowAppReviewPromptOverride)
+        settingsDelegate?.askedToReload()
+    }
+}

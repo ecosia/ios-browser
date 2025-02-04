@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:35786544088ab79b54e96261a7a1b6b0c54022b6ce7c0f2f19d9bc6e0500e1bd
-size 558
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+#import <Foundation/Foundation.h>
+
+//! Project version number for Ecosia.
+FOUNDATION_EXPORT double EcosiaVersionNumber;
+
+//! Project version string for Ecosia.
+FOUNDATION_EXPORT const unsigned char EcosiaVersionString[];
+
+// In this header, you should import all the public headers of your framework using statements like #import <Ecosia/PublicHeader.h>
+
+

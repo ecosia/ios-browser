@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:9ef7cd5344c60813bb075c070e43eedd959cec9eeaeae8f21d147e642aea310d
-size 164
+/* The cancel button when confirming clear private data. */
+"Cancel" = "ರದ್ದು ಮಾಡು";
+
+/* The button that clears private data. */
+"OK" = "OK‍";
+

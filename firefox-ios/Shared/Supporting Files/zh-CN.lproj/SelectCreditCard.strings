@@ -1,3 +1,3 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:d1ed49eb0f361a3225da5cc0c2660e3c2bedd5504257d39007591f47ff7f3997
-size 173
+/* This value is used as the title for the select a credit card from list of available cards. */
+"CreditCard.SelectCreditCard.MainTitle.v122" = "使用保存的信用卡";
+

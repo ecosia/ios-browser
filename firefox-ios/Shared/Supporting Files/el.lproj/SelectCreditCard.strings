@@ -1,3 +1,3 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:5ca3211c423f3820c2fe641ebb6f37f04f203e5420d57e045c2c49d816f8650d
-size 199
+/* This value is used as the title for the select a credit card from list of available cards. */
+"CreditCard.SelectCreditCard.MainTitle.v122" = "Χρήση αποθηκευμένης κάρτας";
+

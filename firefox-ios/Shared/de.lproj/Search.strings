@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:36e3f299c1883b0bb885b1a5006c954b15fe228fb603917f0fefec2416a3f251
-size 510
+/* Label for search engine buttons. The argument corresponds to the name of the search engine. */
+"%@ search" = "%@-Suche";
+
+/* Label for search settings button. */
+"Search Settings" = "Sucheinstellungen";
+
+/* When making a new search from the awesome bar, suggestions appear to the user as they write new letters in their search. Different types of suggestions can appear. This string will be used as a label for sponsored Firefox suggestions. */
+"Search.SponsoredSuggestionDescription.v119" = "Gesponsert";
+

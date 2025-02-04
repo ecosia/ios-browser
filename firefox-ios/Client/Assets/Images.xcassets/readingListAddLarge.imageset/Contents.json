@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:c86d5a00a6d29492fb5919759efcfe583c0a49ef9216e44900eed770c80f85bd
-size 238
+{
+  "images" : [
+    {
+      "filename" : "readingListAddLarge.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

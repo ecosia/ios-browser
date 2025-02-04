@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:82f25af5fe4225f8253ef680ba3de21bf03b82ef672950f66a54d16a57c07a9c
-size 232
+{
+  "images" : [
+    {
+      "filename" : "Illustrations.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:b889ef603be83eeee2cdd0d99af29531857b259f73d9f80f07bbb2f1910328f9
-size 526
+/* Accessibility label for next button that is displayed above the keyboard when a form field on a website was tapped. */
+"KeyboardAccessory.NextButton.Accessibility.Label.v124" = "ඊළඟ ආකෘතිපත්‍ර ක්‍ෂේත්‍රය";
+
+/* Accessibility label for previous button that is displayed above the keyboard when a form field on a website was tapped. */
+"KeyboardAccessory.PreviousButton.Accessibility.Label.v124" = "කලින් ආකෘතිපත්‍ර ක්‍ෂේත්‍රය";
+

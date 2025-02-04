@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:5247aa6daa21bfb5d002399d01dda59c5380c787fa971019487ed922e8b41d6c
-size 337
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import SnapKit
+
+public extension ConstraintPriority {
+
+    static var veryHigh: ConstraintPriority {
+        return .init(999)
+    }
+}

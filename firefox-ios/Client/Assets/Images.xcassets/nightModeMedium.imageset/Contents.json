@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:1147aa0366cd85505c77ece4bff4bc03461356fb2634743055a2a920e423bd38
-size 234
+{
+  "images" : [
+    {
+      "filename" : "nightModeMedium.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

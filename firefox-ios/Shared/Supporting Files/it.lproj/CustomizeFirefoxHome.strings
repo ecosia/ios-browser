@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:3b43cf9bf13703726562e14397a3a9fdbd3397ecb149eca56f27ae12ce109b65
-size 873
+/* In the settings menu, in the Firefox homepage customization section, this is the title for the option that allows users to toggle Bookmarks section on the Firefox homepage on or off */
+"Settings.Home.Option.Bookmarks.v128" = "Segnalibri";
+
+/* In the settings menu, in the Firefox homepage customization section, this is the subtitle for the option that allows users to turn the Pocket Recommendations section on the Firefox homepage on or off. The placeholder is the pocket app name. */
+"Settings.Home.Option.ThoughtProvokingStories.subtitle.v116" = "Articoli selezionati da %@";
+
+/* In the settings menu, in the Firefox homepage customization section, this is the title for the option that allows users to turn the Pocket Recommendations section on the Firefox homepage on or off */
+"Settings.Home.Option.ThoughtProvokingStories.v116" = "Storie che fanno riflettere";
+

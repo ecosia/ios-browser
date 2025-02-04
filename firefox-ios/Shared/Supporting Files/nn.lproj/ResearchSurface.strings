@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:339124b5da0f317cdd6fa2b2f1999141483b514d93c0225dd5d7fbe164517060
-size 596
+/* On the Research Survey popup, the text that explains what the screen is about. Placeholder is for the app name. */
+"Body.Text.v112" = "Bidra til å gjere %@ betre ved å ta ei kort spørjeundersøkjing.";
+
+/* On the Research Survey popup, the text for the button that, when tapped, will dismiss the popup and take the user to a survey. */
+"PrimaryButton.Label.v112" = "Ver med på undersøkinga";
+
+/* On the Research Survey popup, the text for the button that, when tapped, will dismiss this screen, and the user will not be taken to the survey. */
+"SecondaryButton.Label.v112" = "Nei takk";
+

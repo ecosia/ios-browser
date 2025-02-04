@@ -1,3 +1,18 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:18ba76f4ec9d0f736bd6f3ac214dcd3848aedbce31b3b0f6aa46fcc46b409347
-size 789
+/* Prompt for saving the username in the Save Logins prompt. */
+"LoginsHelper.PromptSaveLogin.Title.v122" = "Sačuvati korisničko ime?";
+
+/* Prompt for saving a password in the Save Logins prompt. */
+"LoginsHelper.PromptSavePassword.Title.v122" = "Sačuvati lozinku?";
+
+/* Prompt for updating the password in the Update Password prompt. */
+"LoginsHelper.PromptUpdateLogin.Title.OneArg.v122" = "Ažurirati lozinku?";
+
+/* Prompt for updating a password in the Update Password prompt. */
+"LoginsHelper.PromptUpdateLogin.Title.TwoArg.v122" = "Ažurirati lozinku?";
+
+/* Placeholder text for search box in logins list view. */
+"LoginsList.LoginsListSearchPlaceholder.v122" = "Traži lozinke";
+
+/* Title for the list of logins saved by the app */
+"LoginsList.Title.v122" = "SAČUVANE LOZINKE";
+

@@ -1,3 +1,3 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:749adedb04ee22ea9024f77ca7932e2e90e97280d76d16f0796e6b67ae2e7bfb
-size 180
+/* This value is used as the title for the select a credit card from list of available cards. */
+"CreditCard.SelectCreditCard.MainTitle.v122" = "Impiegà una carta arregistrata";
+

@@ -1,3 +1,24 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:9c29d1ba0d4f1bf6cf8105ee29d335a5a2a9e02b0ce9dc4cbe106d8cb8c2f99d
-size 890
+/* (No Comment) */
+"New Private Tab" = "新建隐私标签页";
+
+/* (No Comment) */
+"New Tab" = "新建标签页";
+
+/* Privacy - Camera Usage Description */
+"NSCameraUsageDescription" = "Ecosia 需要使用您的相机扫码、拍摄照片或视频。";
+
+/* Privacy - Face ID Usage Description */
+"NSFaceIDUsageDescription" = "Ecosia 需进行面容 ID 验证才能访问保存的密码和付款方式。";
+
+/* Privacy - Location When In Use Usage Description */
+"NSLocationWhenInUseUsageDescription" = "您访问的网站可能会请求您的地理位置。";
+
+/* Privacy - Microphone Usage Description */
+"NSMicrophoneUsageDescription" = "Ecosia 需要使用您的麦克风来录制并上传音频。";
+
+/* Privacy - Photo Library Additions Usage Description */
+"NSPhotoLibraryAddUsageDescription" = "让您可以保存照片。";
+
+/* (No Comment) */
+"Scan QR Code" = "扫描二维码";
+

@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:577ebfdd6927426ba0e61ef57b461513a06043faf336e79cb275d06a06c42caa
-size 707
+/* Button label to cancel deletion when the user tried to delete a non-empty folder. */
+"Bookmarks.DeleteFolderWarning.CancelButton.Label" = "Mégse";
+
+/* Button label for the button that deletes a folder and all of its children. */
+"Bookmarks.DeleteFolderWarning.DeleteButton.Label" = "Törlés";
+
+/* Main body of the confirmation alert when the user tries to delete a folder that still contains bookmarks and/or folders. */
+"Bookmarks.DeleteFolderWarning.Description" = "Biztos, hogy törli ezt és a tartalmát?";
+
+/* Title of the confirmation alert when the user tries to delete a folder that still contains bookmarks and/or folders. */
+"Bookmarks.DeleteFolderWarning.Title" = "Ez a mappa nem üres.";
+

@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:e0e0c6e4a771a5ad81c7a320a0346983009d4cea3d20e30d2fc7d0b9a43a638a
-size 433
+/* Done button in Find in Page Toolbar. */
+"Done" = "Дайын";
+
+/* Text selection menu item */
+"Find in Page" = "Беттен табу";
+
+/* Accessibility label for next result button in Find in Page Toolbar. */
+"Next in-page result" = "Беттен келесі нәтиже";
+
+/* Accessibility label for previous result button in Find in Page Toolbar. */
+"Previous in-page result" = "Беттен алдыңғы нәтиже";
+

@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:0c0dbba1d73791b958a3ad312a69b45b8ff49459b03f0871ec40e1e1f90a8271
-size 294
+/* Text displayed above the input field when changing the existing passcode */
+"Enter passcode" = "Roit ar rineg-tremen";
+
+/* Touch ID prompt subtitle when accessing logins */
+"Use your fingerprint to access Logins now." = "Implijit ho roud-biz evit haeziñ an titouroù kennaskañ bremañ.";
+

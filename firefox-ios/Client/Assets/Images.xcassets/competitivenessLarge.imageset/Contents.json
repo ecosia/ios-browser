@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:29f3ea2e01a91260832f982d808775832a0db92fe42dffe2f442e6ebcf28e040
-size 239
+{
+  "images" : [
+    {
+      "filename" : "competitivenessLarge.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:543afc587f5d34b2a0af2520549134ae20a107d6c4866af3d8695f3edeaf73fc
-size 734
+/* Button label to cancel deletion when the user tried to delete a non-empty folder. */
+"Bookmarks.DeleteFolderWarning.CancelButton.Label" = "Annuleren";
+
+/* Button label for the button that deletes a folder and all of its children. */
+"Bookmarks.DeleteFolderWarning.DeleteButton.Label" = "Verwijderen";
+
+/* Main body of the confirmation alert when the user tries to delete a folder that still contains bookmarks and/or folders. */
+"Bookmarks.DeleteFolderWarning.Description" = "Weet u zeker dat u deze map met alle inhoud wilt verwijderen?";
+
+/* Title of the confirmation alert when the user tries to delete a folder that still contains bookmarks and/or folders. */
+"Bookmarks.DeleteFolderWarning.Title" = "Deze map is niet leeg.";
+

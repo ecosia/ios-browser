@@ -1,3 +1,8 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:3468cf73cd948a37bc5cd5dfd83ef3722142e309fdc420c33f9c329274b24feb
-size 437
+
+NSLocationWhenInUseUsageDescription = "Websites you visit may request your location.";
+NSPhotoLibraryAddUsageDescription = "This lets you save photos.";
+NSCameraUsageDescription = "Ecosia uses your camera to scan QR codes and take photos and video.";
+NSMicrophoneUsageDescription = "Ecosia uses your microphone to record and upload audio.";
+"New Tab" = "New Tab";
+"New Private Tab" = "New Private Tab";
+"Scan QR Code" = "Scan QR Code";

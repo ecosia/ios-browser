@@ -1,3 +1,35 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:3c7f8d572402bd0541a142577407198f0dfd2bda313d4125a400ce476fdbedf5
-size 808
+//
+//  LockProtected.swift
+//  ReadWriteLock
+//
+//  Created by John Gallagher on 7/17/14.
+//  Copyright (c) 2014 Big Nerd Ranch. All rights reserved.
+//
+
+import Foundation
+
+public final class LockProtected<T> {
+    private var lock: ReadWriteLock
+    private var item: T
+
+    public convenience init(item: T) {
+        self.init(item: item, lock: CASSpinLock())
+    }
+
+    public init(item: T, lock: ReadWriteLock) {
+        self.item = item
+        self.lock = lock
+    }
+
+    public func withReadLock<U>(block: (T) -> U) -> U {
+        return lock.withReadLock { [unowned self] in
+            return block(self.item)
+        }
+    }
+
+    public func withWriteLock<U>(block: (inout T) -> U) -> U {
+        return lock.withWriteLock { [unowned self] in
+            return block(&self.item)
+        }
+    }
+}

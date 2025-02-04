@@ -1,3 +1,54 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:b5bc8aa7eca0d37e4f96f933667f2b1f378117a7a0dfb644d6ca630100e3658f
-size 1979
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+import Shared
+
+enum InactiveTabStatus: String, Codable {
+    case normal
+    case inactive
+    case shouldBecomeInactive
+}
+
+struct InactiveTabStates: Codable {
+    var currentState: InactiveTabStatus?
+    var nextState: InactiveTabStatus?
+}
+
+struct LegacyInactiveTabModel: Codable {
+    // Contains [TabUUID String : InactiveTabState current or for next launch]
+    var tabWithStatus: [TabUUID: InactiveTabStates] = [TabUUID: InactiveTabStates]()
+
+    static let userDefaults = UserDefaults()
+
+    /// Check to see if we ever ran this feature before, this is mainly
+    /// to avoid tabs automatically going to their state on their first ever run
+    static var hasRunInactiveTabFeatureBefore: Bool {
+        get { return userDefaults.bool(forKey: PrefsKeys.KeyInactiveTabsFirstTimeRun) }
+        set(value) { userDefaults.setValue(value, forKey: PrefsKeys.KeyInactiveTabsFirstTimeRun) }
+    }
+
+    static func save(tabModel: LegacyInactiveTabModel) {
+        userDefaults.removeObject(forKey: PrefsKeys.KeyInactiveTabsModel)
+        let encoder = JSONEncoder()
+        if let encoded = try? encoder.encode(tabModel) {
+            userDefaults.set(encoded, forKey: PrefsKeys.KeyInactiveTabsModel)
+        }
+    }
+
+    static func get() -> LegacyInactiveTabModel? {
+        if let inactiveTabsModel = userDefaults.object(forKey: PrefsKeys.KeyInactiveTabsModel) as? Data {
+            do {
+                let jsonDecoder = JSONDecoder()
+                let inactiveTabModel = try jsonDecoder.decode(LegacyInactiveTabModel.self, from: inactiveTabsModel)
+                return inactiveTabModel
+            } catch {}
+        }
+        return nil
+    }
+
+    static func clear() {
+        userDefaults.removeObject(forKey: PrefsKeys.KeyInactiveTabsModel)
+    }
+}

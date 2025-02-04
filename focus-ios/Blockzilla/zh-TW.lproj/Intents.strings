@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:2c74b772e67fb488230e99bf02f8d421dc3075c40b051b688d3de43438fb5978
-size 138
+/* (No Comment) */
+"Intents.Erase.Description" = "清除瀏覽階段";
+
+/* (No Comment) */
+"Intents.Erase.Title" = "清除上網紀錄";
+

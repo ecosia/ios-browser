@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:0107e272fe42591ee44e91ea482f03674939817d37d51dd63610a86cd7fc297d
-size 166
+{
+  "images" : [
+    {
+      "filename" : "CTD_onboarding_3.png",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

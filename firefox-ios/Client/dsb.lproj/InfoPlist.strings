@@ -1,3 +1,24 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:0106b1988070f98600a063dabc68513a61ff5604ffdcf55d00b8422992ea71d5
-size 955
+/* (No Comment) */
+"New Private Tab" = "Nowy priwatny rejtarik";
+
+/* (No Comment) */
+"New Tab" = "Nowy rejtarik";
+
+/* Privacy - Camera Usage Description */
+"NSCameraUsageDescription" = "Ecosia wašu kameru wužywa, aby QR-kody skannował a fota cynił a wideo nagrał.";
+
+/* Privacy - Face ID Usage Description */
+"NSFaceIDUsageDescription" = "Ecosia Face ID trjeba, aby pśistup k wašym skłaźonym gronidłam a płaśeńskim metodam měł.";
+
+/* Privacy - Location When In Use Usage Description */
+"NSLocationWhenInUseUsageDescription" = "Websedła, kótarež se woglědujośo, pominaju snaź wašo městno.";
+
+/* Privacy - Microphone Usage Description */
+"NSMicrophoneUsageDescription" = "Ecosia waš mikrofon wužywa, aby awdio registrěrował a nagrał.";
+
+/* Privacy - Photo Library Additions Usage Description */
+"NSPhotoLibraryAddUsageDescription" = "Z tym móžośo fota składowaś.";
+
+/* (No Comment) */
+"Scan QR Code" = "QR-kod skannowaś";
+

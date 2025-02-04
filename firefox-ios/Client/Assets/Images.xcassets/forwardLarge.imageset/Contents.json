@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:5997172c7ebee1b5cf036b079320dd427c54d2c0524aa4696ecb295167df2014
-size 231
+{
+  "images" : [
+    {
+      "filename" : "forwardLarge.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

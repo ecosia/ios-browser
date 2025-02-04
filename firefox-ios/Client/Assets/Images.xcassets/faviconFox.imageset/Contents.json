@@ -1,3 +1,23 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:b16163db817eb69ab43f9cf68dc5e64d1f5d75eec9f28a180491391bb8e011f1
-size 402
+{
+  "images" : [
+    {
+      "idiom" : "universal",
+      "filename" : "back-panel-home.png",
+      "scale" : "1x"
+    },
+    {
+      "idiom" : "universal",
+      "filename" : "back-panel-home@2x.png",
+      "scale" : "2x"
+    },
+    {
+      "idiom" : "universal",
+      "filename" : "back-panel-home@3x.png",
+      "scale" : "3x"
+    }
+  ],
+  "info" : {
+    "version" : 1,
+    "author" : "xcode"
+  }
+}

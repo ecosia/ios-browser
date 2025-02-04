@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:625ce5b644a7a7e443bdf608741586bdc2409677872bd9070743678255f6e9b0
-size 686
+/* Accessibility label for closing the zoom panel in Zoom Page Bar */
+"Menu.ZoomPage.Close.AccessibilityLabel.v113" = "Fermi panelon de pligrandigilo";
+
+/* Accessibility label for current zoom level in Zoom Page Bar. The placeholder represents the zoom level */
+"Menu.ZoomPage.CurrentZoomLevel.AccessibilityLabel.v113" = "Nuna pligrandigila nivelo: %@";
+
+/* Accessibility label for decreasing the zoom level in Zoom Page Bar */
+"Menu.ZoomPage.DecreaseZoom.AccessibilityLabel.v113" = "Redukti nivelon de pligrandigilo";
+
+/* Accessibility label for increasing the zoom level in Zoom Page Bar */
+"Menu.ZoomPage.IncreaseZoom.AccessibilityLabel.v113" = "Kreskigi nivelon de pligrandigilo";
+

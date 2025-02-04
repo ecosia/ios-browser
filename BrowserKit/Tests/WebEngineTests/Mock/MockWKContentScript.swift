@@ -1,3 +1,29 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:c9ff69d8c8cc252da9f986f235181a782469d4a963305d154bd165ee4715778a
-size 828
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+@testable import WebEngine
+
+class MockWKContentScript: WKContentScript {
+    var userContentControllerCalled = 0
+    var scriptMessageHandlerNamesCalled = 0
+    var prepareForDeinitCalled = 0
+
+    static func name() -> String {
+        return "MockWKContentScript"
+    }
+
+    func scriptMessageHandlerNames() -> [String] {
+        scriptMessageHandlerNamesCalled += 1
+        return ["MockWKContentScriptHandler"]
+    }
+
+    func userContentController(didReceiveMessage message: Any) {
+        userContentControllerCalled += 1
+    }
+
+    func prepareForDeinit() {
+        prepareForDeinitCalled += 1
+    }
+}

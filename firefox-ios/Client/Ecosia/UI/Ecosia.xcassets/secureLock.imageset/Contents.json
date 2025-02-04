@@ -1,3 +1,16 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:ece0c9a83897f2d6a5468a895fec8a5fa2afd5024232f0d1a971d50118bd33f7
-size 275
+{
+  "images" : [
+    {
+      "filename" : "secureLock.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true,
+    "template-rendering-intent" : "template"
+  }
+}

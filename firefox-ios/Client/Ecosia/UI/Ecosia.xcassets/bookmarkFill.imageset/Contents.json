@@ -1,3 +1,16 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:eb1d3f55ecabe095b475b1ec5b1bdaa615b03d768e26d6fece4920a4565a8d40
-size 276
+{
+  "images" : [
+    {
+      "filename" : "Solid Icons.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true,
+    "template-rendering-intent" : "template"
+  }
+}

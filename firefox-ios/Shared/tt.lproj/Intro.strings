@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:fdbdca665a729616e698b5d3eeadbe7dcad6a70e21422afe9b88a31cb99e0ee5
-size 329
+/* Sign in to Firefox account button on second intro screen. */
+"Intro.Slides.Button.SignIn" = "Керү";
+
+/* Title for the first panel 'Welcome' in the First Run tour. */
+"Intro.Slides.Welcome.Title.v2" = "Firefox-ка рәхим итегез";
+
+/* See http://mzl.la/1T8gxwo */
+"Start Browsing" = "Гизүне башлау";
+

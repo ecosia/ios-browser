@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:df27a7003ff6741429976e91a2555479e4fad295f0c2a3f4a445115020149eb6
-size 350
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>com.apple.developer.siri</key>
+	<true/>
+	<key>com.apple.security.application-groups</key>
+	<array>
+		<string>group.org.mozilla.ios.Focus</string>
+	</array>
+</dict>
+</plist>

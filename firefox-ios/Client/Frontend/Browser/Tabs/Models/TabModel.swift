@@ -1,3 +1,36 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:8df5a1d078feabb492c8b4f959610fa7bba1e5ba0d852307c3fbe10783d6c5bf
-size 973
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+struct TabModel: Equatable, Identifiable, Hashable {
+    var id: String { return tabUUID }
+    let tabUUID: TabUUID
+    let isSelected: Bool
+    let isPrivate: Bool
+    let isFxHomeTab: Bool
+    let tabTitle: String
+    let url: URL?
+
+    let screenshot: UIImage?
+    let hasHomeScreenshot: Bool
+
+    static func emptyState(
+        tabUUID: TabUUID,
+        title: String,
+        isPrivate: Bool = false,
+        isSelected: Bool = false
+    ) -> TabModel {
+        return TabModel(
+            tabUUID: tabUUID,
+            isSelected: isSelected,
+            isPrivate: isPrivate,
+            isFxHomeTab: false,
+            tabTitle: title,
+            url: nil,
+            screenshot: nil,
+            hasHomeScreenshot: false
+        )
+    }
+}

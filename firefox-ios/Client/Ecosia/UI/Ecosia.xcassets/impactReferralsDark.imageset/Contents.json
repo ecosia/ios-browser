@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:43b3a84ca7229cb3d13e3e8e863bff9e2dc1663942424ccc3f6d54561bd15c36
-size 232
+{
+  "images" : [
+    {
+      "filename" : "referralsDark.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

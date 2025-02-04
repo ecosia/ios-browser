@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:cbdbd78e8dcee5c69bb57629de5418993b6eff6cbfed2152c2f3f54175ed0f1f
-size 258
+/* Label for search engine buttons. The argument corresponds to the name of the search engine. */
+"%@ search" = "%@ অনুসন্ধান";
+
+/* Label for search settings button. */
+"Search Settings" = "অনুসন্ধান সেটিংস";
+

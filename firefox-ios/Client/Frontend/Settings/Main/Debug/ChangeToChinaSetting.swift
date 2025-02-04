@@ -1,3 +1,23 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:858665a2dc627b94d69b85a284d0b9c9e32aad444dc94dedb006e027733e18f7
-size 894
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Common
+import Foundation
+
+class ChangeToChinaSetting: HiddenSetting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(
+            string: "Toggle China version (needs restart)",
+            attributes: [NSAttributedString.Key.foregroundColor: theme.colors.textPrimary]
+        )
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        if UserDefaults.standard.bool(forKey: AppInfo.debugPrefIsChinaEdition) {
+            UserDefaults.standard.removeObject(forKey: AppInfo.debugPrefIsChinaEdition)
+        } else {
+            UserDefaults.standard.set(true, forKey: AppInfo.debugPrefIsChinaEdition)
+        }
+    }
+}

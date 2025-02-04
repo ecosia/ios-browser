@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:e89624e6052b624b0902196251a09766f8b89fce2e6eebbdeaa41147bdb827f2
-size 146
+/* (No Comment) */
+"Intents.Erase.Description" = "מחיקת הפעלת הגלישה";
+
+/* (No Comment) */
+"Intents.Erase.Title" = "מחיקה";
+

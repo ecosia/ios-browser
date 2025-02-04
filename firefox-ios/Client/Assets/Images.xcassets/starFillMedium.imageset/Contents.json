@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:36b894a10d882890443e671ba3ceee4d2dd51fdcce7c5cab26a1ffede2be410a
-size 233
+{
+  "images" : [
+    {
+      "filename" : "starFillMedium.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

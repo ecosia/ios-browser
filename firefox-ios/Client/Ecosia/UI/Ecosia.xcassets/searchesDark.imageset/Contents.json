@@ -1,3 +1,16 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:ced0562995f3982d2b81935fb12a044700914e2c18388e1cc605b8b92bbd42fb
-size 277
+{
+  "images" : [
+    {
+      "filename" : "searchesDark.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true,
+    "template-rendering-intent" : "original"
+  }
+}

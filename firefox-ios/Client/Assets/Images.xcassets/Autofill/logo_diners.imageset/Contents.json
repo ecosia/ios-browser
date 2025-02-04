@@ -1,3 +1,16 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:a10980748b7361de63c76b48a9292da4338d854dd076b2becdf932c860a3b554
-size 276
+{
+  "images" : [
+    {
+      "filename" : "logo_diners.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true,
+    "template-rendering-intent" : "template"
+  }
+}

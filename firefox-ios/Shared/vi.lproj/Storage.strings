@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:18048af03df7adfdde50008f8f54ea2e02cf45560a017b842d9cc445daae9e5a
-size 736
+/* The name of the folder that contains desktop bookmarks in the menu. This should match bookmarks.folder.menu.label on Android. */
+"Bookmarks Menu" = "Trình đơn dấu trang";
+
+/* The name of the folder that contains desktop bookmarks in the toolbar. This should match bookmarks.folder.toolbar.label on Android. */
+"Bookmarks Toolbar" = "Thanh dấu trang";
+
+/* The title of the folder that contains mobile bookmarks. This should match bookmarks.folder.mobile.label on Android. */
+"Mobile Bookmarks" = "Dấu trang trên di động";
+
+/* The name of the folder that contains unsorted desktop bookmarks. This should match bookmarks.folder.unfiled.label on Android. */
+"Unsorted Bookmarks" = "Dấu trang chưa được sắp xếp";
+

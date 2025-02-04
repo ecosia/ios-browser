@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:8da56e2fc5a6928e856decbcd2d479a2b8ad47812830fc74d4ef4fd884d2527f
-size 243
+{
+  "images" : [
+    {
+      "filename" : "notificationDotFillLarge.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

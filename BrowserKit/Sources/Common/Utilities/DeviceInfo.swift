@@ -1,3 +1,11 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:f970f5d31b420b739bcc195503e6b30d73f7e279d80b92115688c73f45f5796c
-size 373
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+open class DeviceInfo {
+    open class func isSimulator() -> Bool {
+        return ProcessInfo.processInfo.environment["SIMULATOR_ROOT"] != nil
+    }
+}

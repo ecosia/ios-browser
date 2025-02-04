@@ -1,3 +1,18 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:0c01a4633fef7729d0a00c25ffcf45d0a7ff0fb1613fbb4cd5e8bf195a90bd13
-size 795
+/* Prompt for saving the username in the Save Logins prompt. */
+"LoginsHelper.PromptSaveLogin.Title.v122" = "Cadw enw defnyddiwr?";
+
+/* Prompt for saving a password in the Save Logins prompt. */
+"LoginsHelper.PromptSavePassword.Title.v122" = "Cadw cyfrinair?";
+
+/* Prompt for updating the password in the Update Password prompt. */
+"LoginsHelper.PromptUpdateLogin.Title.OneArg.v122" = "Diweddaru cyfrinair?";
+
+/* Prompt for updating a password in the Update Password prompt. */
+"LoginsHelper.PromptUpdateLogin.Title.TwoArg.v122" = "Diweddaru cyfrinair?";
+
+/* Placeholder text for search box in logins list view. */
+"LoginsList.LoginsListSearchPlaceholder.v122" = "Chwilio cyfrineiriau";
+
+/* Title for the list of logins saved by the app */
+"LoginsList.Title.v122" = "CYFRINEIRIAU WEDI'U CADW";
+

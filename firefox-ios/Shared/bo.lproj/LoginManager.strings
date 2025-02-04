@@ -1,3 +1,18 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:f395ec80239f6f406897d33211b2fc5f2d5682cbcacb1728f862c2dd39bfc9ed
-size 756
+/* Prompt option for cancelling out of deletion */
+"Cancel" = "འདོར་བ།";
+
+/* Accessibility message e.g. spoken by VoiceOver after the user taps the close button in the search field to clear the search and exit search mode */
+"Clear Search" = "འཚོལ་བཤེར་གཙང་བཟོ།";
+
+/* Label for the button used to delete the current login. */
+"Delete" = "འདོར་སུབ།";
+
+/* Label displayed above the password row in Login Detail View. */
+"Password" = "གསང་གྲངས།";
+
+/* Title for the search field at the top of the Logins list screen */
+"Search" = "འཚོལ་བཤེར།";
+
+/* Label displayed above the username row in Login Detail View. */
+"Username" = "ཐོ་མིང་།";
+

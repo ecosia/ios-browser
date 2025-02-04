@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:8fe849f181d241dcdaec42e7d06f7848f749da2a1869d89ceb371be91d417684
-size 527
+/* The cancel button when confirming clear history. */
+"Cancel" = "Pśetergnuś";
+
+/* The confirmation button that clears history even when Sync is connected. */
+"OK" = "W pórěźe";
+
+/* Description of the confirmation dialog shown when a user tries to clear history that's synced to another device. */
+"This action will clear all of your private data, including history from your synced devices." = "Toś ta akcija wšykne z wašych priwatnych datow wulašujo, inkluziwnje historiju z wašych synchronizěrowanych rědow.";
+

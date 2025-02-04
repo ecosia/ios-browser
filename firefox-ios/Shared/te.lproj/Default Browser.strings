@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:957708250c2b8a67eafbc451828e841e20316d040b356ad3b1695bd5c93f51f0
-size 485
+/* Button string to learn how to set your default browser. */
+"DefaultBrowserCard.Button.v2" = "ఎలాగో తెలుసుకోండి";
+
+/* Button string to open settings that allows user to switch their default browser to Firefox. */
+"DefaultBrowserOnboarding.Button" = "అమరికలకు వెళ్ళు";
+
+/* Description for default browser onboarding card. */
+"DefaultBrowserOnboarding.Description1" = "1. అమరికలకు వెళ్ళండి";
+

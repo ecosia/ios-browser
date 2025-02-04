@@ -1,3 +1,10 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:2ac9c7a98add8eccf3c647884776e0c52688a11ff27613c0b9072a01bba5f1e1
-size 314
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+struct OnboardingButtonInfoModel {
+    let title: String
+    let action: OnboardingActions
+}

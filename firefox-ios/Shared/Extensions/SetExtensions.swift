@@ -1,3 +1,84 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:20edb2eeb3e95c559e7d0c4a30972085c64e8ab25b50f6c0e6ce33ebae265a51
-size 1911
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+public extension SetIterator {
+    mutating func take(_ n: Int) -> [Element]? {
+        precondition(n >= 0)
+
+        if n == 0 {
+            return []
+        }
+
+        var count: Int = 0
+        var out: [Element] = []
+
+        while count < n {
+            count += 1
+            guard let val = self.next() else {
+                if out.isEmpty {
+                    return nil
+                }
+                return out
+            }
+            out.append(val)
+        }
+        return out
+    }
+}
+
+public extension Set {
+    func withSubsetsOfSize(_ n: Int, f: (Set<Iterator.Element>) throws -> Void) rethrows {
+        precondition(n > 0)
+
+        if self.isEmpty {
+            return
+        }
+
+        if n > self.count {
+            try f(self)
+            return
+        }
+
+        if n == 1 {
+            try self.forEach { try f(Set([$0])) }
+            return
+        }
+
+        var generator = self.makeIterator()
+        while let next = generator.take(n) {
+            if !next.isEmpty {
+                try f(Set(next))
+            }
+        }
+    }
+
+    func subsetsOfSize(_ n: Int) -> [Set<Iterator.Element>] {
+        precondition(n > 0)
+
+        if self.isEmpty {
+            return []
+        }
+
+        if n > self.count {
+            return [self]
+        }
+
+        if n == 1 {
+            // Special case.
+            return self.map({ Set([$0]) })
+        }
+
+        var generator = self.makeIterator()
+        var out: [Set<Iterator.Element>] = []
+        out.reserveCapacity(self.count / n)
+        while let next = generator.take(n) {
+            if !next.isEmpty {
+                out.append(Set(next))
+            }
+        }
+        return out
+    }
+}

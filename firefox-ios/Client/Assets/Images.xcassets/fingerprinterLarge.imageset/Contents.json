@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:f96e05b4606bb76977337def591c98d7477095de28eec45f526d8b685dc97088
-size 237
+{
+  "images" : [
+    {
+      "filename" : "fingerprinterLarge.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

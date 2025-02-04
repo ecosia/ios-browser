@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:a5189f1e2624269c09690f8efaabdd93c9e481f4c2e97a86223fd6636f9d12e4
-size 344
+/* Error message shown in the remote tabs panel */
+"SendTo.NoDevicesFound.Message.v119" = "Anjeun teu boga parangkat séjén anu nyambung kana akun ieu anu bisa disaluyukeun.";
+
+/* This message appears when a user tries to use 'Send Link to Device' action while not logged in */
+"SendTo.NotSignedIn.Title.v119" = "Anjeun can asup kana akun.";
+

@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:5e87b9c58593725267d028c27e706a5af79d8f564eb1480bcd0f083f93515e8b
-size 624
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+import XCTest
+
+class SupportUtilsTest: XCTestCase {
+    // Try to create a URL for every support topic and make sure that none of them
+    // fall back to the default URL we use in case of failure during URL building.
+    func testSupportTopics() throws {
+        for topic in SupportTopic.allCases {
+            XCTAssertNotEqual(URL(forSupportTopic: topic), URL(string: SupportTopic.fallbackURL)!)
+        }
+    }
+}

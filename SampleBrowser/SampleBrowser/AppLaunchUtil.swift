@@ -1,3 +1,16 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:f35185a1a7dd1631427cf5b8be715b2cd7bb0dcd7b842048aa169e8bf2f3af6d
-size 655
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+import Common
+
+class AppLaunchUtil {
+    func setUpPreLaunchDependencies() {
+        let webViewModel = MenuHelperWebViewModel(searchTitle: "Search with Sample Browser",
+                                                  findInPageTitle: "Find in page")
+        DefaultMenuHelper().setItems(webViewModel: webViewModel,
+                                     loginModel: nil,
+                                     urlBarModel: nil)
+    }
+}

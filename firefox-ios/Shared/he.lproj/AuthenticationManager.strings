@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:0b473c01c1e4dae0d907dabfb1457d360367b89d4dfa95f254c4b20d3e01ddd7
-size 304
+/* Text displayed above the input field when changing the existing passcode */
+"Enter passcode" = "הכנסת ססמה";
+
+/* Touch ID prompt subtitle when accessing logins */
+"Use your fingerprint to access Logins now." = "שימוש בטביעת אצבע כדי לגשת לרשימת הכניסות.";
+

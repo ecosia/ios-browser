@@ -1,3 +1,21 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:84b6cac5dcad962a6484d10026ceab6c86cc23481acb8066c9bd44c61849c856
-size 977
+/* (No Comment) */
+"New Private Tab" = "نیا نجی ٹیب";
+
+/* (No Comment) */
+"New Tab" = "نیا ٹیب";
+
+/* Privacy - Camera Usage Description */
+"NSCameraUsageDescription" = "Ecosia QR کوڈز کو اسکین کرنے اور تصاویر اور ویڈیو لینے کیلئے آپ کے کیمرہ کا استعمال کرتا ہے۔";
+
+/* Privacy - Location When In Use Usage Description */
+"NSLocationWhenInUseUsageDescription" = "جن ویب سائٹ کا آُپ دورہ کریں شاید وہ آُپ سے محل وقوع کی درخواست کر سکتی ہیں۔";
+
+/* Privacy - Microphone Usage Description */
+"NSMicrophoneUsageDescription" = "۔یہ آُپ کو وڈیو لینے اور اپلوڈ کرنے دیتا ہے۔";
+
+/* Privacy - Photo Library Additions Usage Description */
+"NSPhotoLibraryAddUsageDescription" = "یہ آپ کی تصاویر محفوظ کرنے دیتا ہے۔";
+
+/* (No Comment) */
+"Scan QR Code" = "QR کوڈ اسکین کریں";
+

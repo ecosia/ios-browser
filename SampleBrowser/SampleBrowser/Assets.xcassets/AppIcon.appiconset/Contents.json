@@ -1,3 +1,14 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:2800f28cbe831bab0c5c2edb8d6a22861dbd59c22022aa1d326addbab7e207e0
-size 224
+{
+  "images" : [
+    {
+      "filename" : "icon-apple-app-store.png",
+      "idiom" : "universal",
+      "platform" : "ios",
+      "size" : "1024x1024"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

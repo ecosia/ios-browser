@@ -1,3 +1,19 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:af27cda7f818cf5c932b616cb6445c3845a001e793ff69bf91c2f22849a4e69b
-size 524
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import UIKit
+@testable import Client
+
+class MockSearchHandlerRouteCoordinator: BaseCoordinator {
+    override func canHandle(route: Route) -> Bool {
+        switch route {
+        case .search:
+            return true
+        default:
+            return false
+        }
+    }
+
+    override func handle(route: Route) { }
+}

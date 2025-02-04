@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:82b17d4ad0201e5b5759107b556977d2194802542fdc79769f68f1fc0d1829e1
-size 225
+{
+  "images" : [
+    {
+      "filename" : "stroke.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "template-rendering-intent" : "template"
+  }
+}

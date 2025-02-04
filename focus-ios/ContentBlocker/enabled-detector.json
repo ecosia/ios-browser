@@ -1,3 +1,4 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:903c4ec4d5614d533adf130bb6fa06c5d7650f59a52dbd9315bd4e6aa36d951e
-size 127
+[{
+  "action": { "type": "block" },
+  "trigger": { "url-filter": "^http://localhost:[0-9]+/enabled-detector\\?blocked=1$" }
+}]

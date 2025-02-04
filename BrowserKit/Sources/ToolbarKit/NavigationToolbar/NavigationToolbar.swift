@@ -1,3 +1,10 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:544a835dfec7fdf3faee6847d9a1ab785e5f40d4c4f0579d6c2dd2d959bf1fc1
-size 409
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+/// Protocol representing an navigation toolbar.
+public protocol NavigationToolbar {
+    func configure(state: NavigationToolbarState, toolbarDelegate: BrowserNavigationToolbarDelegate)
+}

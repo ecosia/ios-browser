@@ -1,3 +1,23 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:c2a6fcd6cf6747dfaeaf89a44f13f33f46d20a2955dc28b4e7c42891908cc948
-size 542
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Shared
+import XCTest
+
+protocol Succeedable {
+    var isSuccess: Bool { get }
+    var isFailure: Bool { get }
+}
+
+extension Maybe: Succeedable {}
+
+extension Deferred where T: Succeedable {
+    func succeeded() {
+        XCTAssertTrue(self.value.isSuccess)
+    }
+
+    func failed() {
+        XCTAssertTrue(self.value.isFailure)
+    }
+}

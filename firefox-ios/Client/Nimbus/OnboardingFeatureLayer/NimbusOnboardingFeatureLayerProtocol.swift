@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:0d6d4bb031d542a2f24a48889d27f692d96b24210c7c0f524027e249ddc4d1dc
-size 403
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+protocol NimbusOnboardingFeatureLayerProtocol {
+    func getOnboardingModel(
+        for onboardingType: OnboardingType,
+        from nimbus: FxNimbus
+    ) -> OnboardingViewModel
+}

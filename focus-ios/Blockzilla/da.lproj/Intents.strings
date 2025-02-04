@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:e6cb6a3a72e5e4c32f0e6270807fc870be348c1da1a4139725d8dc676ba48e20
-size 127
+/* (No Comment) */
+"Intents.Erase.Description" = "Slet browsing-session";
+
+/* (No Comment) */
+"Intents.Erase.Title" = "Slet";
+

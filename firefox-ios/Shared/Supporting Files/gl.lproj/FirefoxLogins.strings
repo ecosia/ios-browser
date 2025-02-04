@@ -1,3 +1,18 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:19582885d7e7e8a0de3409a3d57ff2ba409160a67b2fd586c7244e40c1dc1eb7
-size 812
+/* Prompt for saving the username in the Save Logins prompt. */
+"LoginsHelper.PromptSaveLogin.Title.v122" = "Gardar o nome de usuario?";
+
+/* Prompt for saving a password in the Save Logins prompt. */
+"LoginsHelper.PromptSavePassword.Title.v122" = "Gardar o contrasinal?";
+
+/* Prompt for updating the password in the Update Password prompt. */
+"LoginsHelper.PromptUpdateLogin.Title.OneArg.v122" = "Actualizar o contrasinal?";
+
+/* Prompt for updating a password in the Update Password prompt. */
+"LoginsHelper.PromptUpdateLogin.Title.TwoArg.v122" = "Actualizar o contrasinal?";
+
+/* Placeholder text for search box in logins list view. */
+"LoginsList.LoginsListSearchPlaceholder.v122" = "Buscar contrasinais";
+
+/* Title for the list of logins saved by the app */
+"LoginsList.Title.v122" = "CONTRASINAIS GARDADOS";
+

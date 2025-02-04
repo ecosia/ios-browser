@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:8037f55ce686f8c6934b8cab7a66424ccdda76a735db3e71147f47dcfae4fa20
-size 477
+/* The cancel button when confirming clear history. */
+"Cancel" = "Sefsex";
+
+/* The confirmation button that clears history even when Sync is connected. */
+"OK" = "IH";
+
+/* Description of the confirmation dialog shown when a user tries to clear history that's synced to another device. */
+"This action will clear all of your private data, including history from your synced devices." = "Tigawt-a ad tesfeḍ akk isefka-inek usligen, ula d amazray seg ibenkan-inek yemtawin.";
+

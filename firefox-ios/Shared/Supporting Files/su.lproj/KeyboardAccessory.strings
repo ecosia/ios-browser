@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:531cea46d2fb198990b344e3a1ea5794b7d55a43ce999fc1600099b61f772908
-size 430
+/* Accessibility label for next button that is displayed above the keyboard when a form field on a website was tapped. */
+"KeyboardAccessory.NextButton.Accessibility.Label.v124" = "Widang formulir satuluyna";
+
+/* Accessibility label for previous button that is displayed above the keyboard when a form field on a website was tapped. */
+"KeyboardAccessory.PreviousButton.Accessibility.Label.v124" = "Widang formulir saméméhna";
+

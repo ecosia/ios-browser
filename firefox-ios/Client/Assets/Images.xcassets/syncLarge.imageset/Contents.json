@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:10552b1f70ca33dfd3cfb3db6e72faf2b67fa0d987a8033a6a574de5bc35c665
-size 228
+{
+  "images" : [
+    {
+      "filename" : "syncLarge.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:1642b8f83393ad0012db4a4df20193990237f9b3798b6c1bab22e88595b0eb43
-size 269
+/* Text displayed above the input field when changing the existing passcode */
+"Enter passcode" = "Asupkeun kodeu rusiah";
+
+/* Touch ID prompt subtitle when accessing logins */
+"Use your fingerprint to access Logins now." = "Paké sidik ramo pikeun Asup log ayeuna.";
+

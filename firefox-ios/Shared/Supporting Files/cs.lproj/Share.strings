@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:b2e6ac38bbf5aeddcea3be8cce0122438ef5f179f637c1b39c23fe5a004912b9
-size 375
+/* Error message shown in the remote tabs panel */
+"SendTo.NoDevicesFound.Message.v119" = "K tomuto účtu nejsou připojena žádná další zařízení, která by bylo možné synchronizovat.";
+
+/* This message appears when a user tries to use 'Send Link to Device' action while not logged in */
+"SendTo.NotSignedIn.Title.v119" = "Nejste přihlášeni ke svému účtu.";
+

@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:38a33c8930375262351b0242a2950b493b4f52d5fcb7660fd195e319cf3346a2
-size 516
+/* Label for search engine buttons. The argument corresponds to the name of the search engine. */
+"%@ search" = "Chwilio gan %@";
+
+/* Label for search settings button. */
+"Search Settings" = "Chwilio'r Gosodiadau";
+
+/* When making a new search from the awesome bar, suggestions appear to the user as they write new letters in their search. Different types of suggestions can appear. This string will be used as a label for sponsored Firefox suggestions. */
+"Search.SponsoredSuggestionDescription.v119" = "Noddwyd";
+

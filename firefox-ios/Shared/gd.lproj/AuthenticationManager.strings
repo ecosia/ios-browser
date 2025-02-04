@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:2d03ef82259573ac58c2264d2e9ac66828d0e3745a3bc1ecad9a35a47ad13c5f
-size 284
+/* Text displayed above the input field when changing the existing passcode */
+"Enter passcode" = "Cuir a-steach abairt-fhaire";
+
+/* Touch ID prompt subtitle when accessing logins */
+"Use your fingerprint to access Logins now." = "Dèan clàradh a‑steach slighe lorg do mheòir.";
+

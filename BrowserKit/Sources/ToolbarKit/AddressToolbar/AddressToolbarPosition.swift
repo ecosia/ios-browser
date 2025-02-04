@@ -1,3 +1,10 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:1c589d9ab9d246d6f8d2013f76a51f7c83365a479b370c4305e190827149c5eb
-size 289
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+public enum AddressToolbarPosition {
+    case bottom
+    case top
+}

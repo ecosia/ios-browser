@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:6c7ccca586259b6b2edc866417f7e25953e6407ef2c119034a95fbb6416f8b8e
-size 351
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+import SnapKit
+
+extension UIView {
+    var safeArea: ConstraintBasicAttributesDSL {
+        return safeAreaLayoutGuide.snp
+    }
+}

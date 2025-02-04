@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:5ac54b4ab159f99672ce0782476ba1ec373d846c63abf5b75dde63ba1a9d6c68
-size 276
+/* Text displayed above the input field when changing the existing passcode */
+"Enter passcode" = "Tajpu la paskodon";
+
+/* Touch ID prompt subtitle when accessing logins */
+"Use your fingerprint to access Logins now." = "Uzi vian fingrospuron por aliri la kreditilojn nun.";
+

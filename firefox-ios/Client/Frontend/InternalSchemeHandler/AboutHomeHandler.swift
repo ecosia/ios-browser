@@ -1,3 +1,39 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:7e46cf22a4b838ba42dfda0dfe8950a926eaa1e6fc43d33ea432f369170826b0
-size 1659
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+class AboutHomeHandler: InternalSchemeResponse {
+    static let path = "about/home"
+
+    // Return a blank page, the webview delegate will look at the current URL and load the home panel based on that
+    func response(forRequest request: URLRequest) -> (URLResponse, Data)? {
+        guard let url = request.url else { return nil }
+        let response = InternalSchemeHandler.response(forUrl: url)
+        let backgroundColor = UIColor.systemGray.hexString
+        // Blank page with a color matching the background of the panels which
+        // is displayed for a split-second until the panel shows.
+        let html = """
+            <!DOCTYPE html>
+            <html>
+              <body style='background-color:\(backgroundColor)'></body>
+            </html>
+        """
+        guard let data = html.data(using: .utf8) else { return nil }
+        return (response, data)
+    }
+}
+
+class AboutLicenseHandler: InternalSchemeResponse {
+    static let path = "about/license"
+
+    func response(forRequest request: URLRequest) -> (URLResponse, Data)? {
+        guard let url = request.url else { return nil }
+        let response = InternalSchemeHandler.response(forUrl: url)
+        guard let path = Bundle.main.path(forResource: "Licenses", ofType: "html"),
+              let html = try? String(contentsOfFile: path, encoding: .utf8),
+              let data = html.data(using: .utf8)
+        else { return nil }
+
+        return (response, data)
+    }
+}

@@ -1,3 +1,23 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:462f1f8219a7b227c7092e0aaa69b4451febfa67b9a36b5fb1f33e05e5cc0ff2
-size 638
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+@testable import SiteImageView
+
+class FaviconURLFetcherMock: FaviconURLFetcher {
+    var url: URL?
+    var error: SiteImageError?
+    var fetchFaviconURLCalledCount = 0
+    var siteURL: URL?
+
+    func fetchFaviconURL(siteURL: URL) async throws -> URL {
+        fetchFaviconURLCalledCount += 1
+        self.siteURL = siteURL
+
+        if let error = error {
+            throw error
+        }
+        return url!
+    }
+}

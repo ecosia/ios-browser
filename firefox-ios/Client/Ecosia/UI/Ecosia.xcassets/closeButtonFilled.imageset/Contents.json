@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:3c0c94735558ca5628a52c25a65df9a3e47c32b246e926e2b018f49ac038d790
-size 230
+{
+  "images" : [
+    {
+      "filename" : "closeButton.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

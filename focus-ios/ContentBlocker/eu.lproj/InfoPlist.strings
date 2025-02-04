@@ -1,3 +1,3 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:cb846c8e9d44966eb53f7fc2f49d21b799a132ecfe03fa48624b72741ba4bf3d
-size 127
+/* Human readable description */
+"NSHumanReadableDescription" = "Edukia blokeatzea eta jarraipenaren babesa, Mozillak egina";
+

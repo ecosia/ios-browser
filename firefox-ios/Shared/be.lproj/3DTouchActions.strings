@@ -1,3 +1,21 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:ddc8a4e52448f16d0f423eca5237e61efcb28d1b5ff35c3bea368f71c13840b0
-size 1093
+/* Label for preview action on Tab Tray Tab to add current tab to Bookmarks */
+"Add to Bookmarks" = "Дадаць у закладкі";
+
+/* Label for preview action on Tab Tray Tab to close the current tab */
+"Close Tab" = "Закрыць картку";
+
+/* Label for preview action on Tab Tray Tab to copy the URL of the current tab to clipboard */
+"Copy URL" = "Капіяваць URL";
+
+/* Label for preview action on Tab Tray Tab to send the current link to another device */
+"Menu.SendLinkToDevice" = "Даслаць спасылку на прыладу";
+
+/* String describing the action of opening the last added bookmark from the home screen Quick Actions via 3D Touch */
+"Open Last Bookmark" = "Адкрыць апошнюю закладку";
+
+/* Accessibility label, associated to the 3D Touch action on the current tab in the tab tray, used to display a larger preview of the tab. */
+"Preview of %@" = "Перадпрагляд %@";
+
+/* Label for preview action on Tab Tray Tab to send the current tab to another device */
+"Send to Device" = "Даслаць на прыладу";
+

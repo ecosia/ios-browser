@@ -1,3 +1,7 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:099726e61d583ba7ef56ef666a23e2d1a40877b21009113ebf5a4772f5336ace
-size 337
+# ``ComponentLibrary/ActionButton``
+
+A convenience button class to add a closure as an action on a button instead of a selector.
+
+## Overview
+
+The `ActionButton` is a subclass of the `ResizableButton`. The purpose of this class is only to be able to use a closure as an action, which is sometimes more convenient than having a selector.

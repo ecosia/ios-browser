@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:85b28a0c9aa41260016bbfa89846ddf90e0d290d47c20b7f04b850da28fe7d88
-size 736
+/* The name of the folder that contains desktop bookmarks in the menu. This should match bookmarks.folder.menu.label on Android. */
+"Bookmarks Menu" = "Doo-šilbawey šilbayboŋ";
+
+/* The name of the folder that contains desktop bookmarks in the toolbar. This should match bookmarks.folder.toolbar.label on Android. */
+"Bookmarks Toolbar" = "Doo-šilbawey goyjinay žeeri";
+
+/* The title of the folder that contains mobile bookmarks. This should match bookmarks.folder.mobile.label on Android. */
+"Mobile Bookmarks" = "Doo-šilbay dirantey";
+
+/* The name of the folder that contains unsorted desktop bookmarks. This should match bookmarks.folder.unfiled.label on Android. */
+"Unsorted Bookmarks" = "Doo-šilbay kaŋyaŋ mana fayandi";
+

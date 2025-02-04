@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:e4ca015161cfdbc412fbe61a7c1c110f8d9287d20f3fc8b36af433963be42673
-size 400
+/* Done button in Find in Page Toolbar. */
+"Done" = "Immed";
+
+/* Text selection menu item */
+"Find in Page" = "Nadi deg usebter";
+
+/* Accessibility label for next result button in Find in Page Toolbar. */
+"Next in-page result" = "Agmuḍ d-iteddun deg usebter";
+
+/* Accessibility label for previous result button in Find in Page Toolbar. */
+"Previous in-page result" = "Agmuḍ yezrin deg usebter";
+

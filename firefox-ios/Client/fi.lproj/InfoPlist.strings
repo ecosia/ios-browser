@@ -1,3 +1,24 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:d50ce9722fd6d12613d88d7b8b30603b7cbb1e585ced804eab124f7cbd4cc9c3
-size 935
+/* (No Comment) */
+"New Private Tab" = "Uusi yksityinen välilehti";
+
+/* (No Comment) */
+"New Tab" = "Uusi välilehti";
+
+/* Privacy - Camera Usage Description */
+"NSCameraUsageDescription" = "Ecosia käyttää kameraasi skannatakseen QR-koodeja ja ottaakseen valokuvia ja videoita.";
+
+/* Privacy - Face ID Usage Description */
+"NSFaceIDUsageDescription" = "Ecosia vaatii Face ID:n käyttääkseen tallennettuja salasanoja ja maksutapoja.";
+
+/* Privacy - Location When In Use Usage Description */
+"NSLocationWhenInUseUsageDescription" = "Vierailemasi sivustot voivat kysyä lupaa sijaintiisi.";
+
+/* Privacy - Microphone Usage Description */
+"NSMicrophoneUsageDescription" = "Ecosia käyttää mikrofoniasi tallentamaan ja lähettämään ääntä.";
+
+/* Privacy - Photo Library Additions Usage Description */
+"NSPhotoLibraryAddUsageDescription" = "Näin voit tallentaa kuvia.";
+
+/* (No Comment) */
+"Scan QR Code" = "Skannaa QR-koodi";
+

@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:dd68a88ce41cf464520badac35fac71f896935957537481d682e495c0036be90
-size 232
+{
+  "images" : [
+    {
+      "filename" : "pinSlashLarge.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

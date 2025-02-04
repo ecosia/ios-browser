@@ -1,3 +1,10 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:e0d508202f1fe1cd0f6cefdbfc5cfd136ef0d76c91f26f165163b8a3230785b4
-size 335
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+public protocol FeatureManagementSessionInitializer {
+
+    func startSession<T: Decodable>() async throws -> T?
+}

@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:3d35deb4e4161763fbf2e697307e983e9bf8d532eb6afba060d16986c601efc1
-size 406
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+
+public struct Page: Codable {
+    public let url: URL
+    public let title: String
+
+    public init(url: URL, title: String) {
+        self.url = url
+        self.title = title
+    }
+}
