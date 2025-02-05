@@ -5,6 +5,7 @@
 import SnapshotTesting
 import UIKit
 import Common
+import XCTest
 @testable import Client
 
 struct ThemeConfiguration {
@@ -93,13 +94,33 @@ final class SnapshotTestHelper {
 
                     let snapshotName = "\(String.cleanFunctionName(testName))_\(themeSuffix.rawValue)_\(deviceType.rawValue)_\(locale.identifier)"
 
-                    SnapshotTesting.assertSnapshot(
+                    let fileUrl = URL(fileURLWithPath: "\(file)", isDirectory: false)
+                    let fileName = fileUrl.deletingPathExtension().lastPathComponent
+                    let domain = fileUrl.deletingLastPathComponent().lastPathComponent
+                    let snapshotDirectoryUrl = fileUrl
+                      .deletingLastPathComponent()
+                      .deletingLastPathComponent()
+                      .appendingPathComponent("SnapshotArtifacts", isDirectory: true)
+                      .appendingPathComponent(domain, isDirectory: true)
+                      .appendingPathComponent(fileName, isDirectory: true)
+
+                    var snapshotDirectory: String!
+                    if #available(iOS 16.0, *) {
+                        snapshotDirectory = snapshotDirectoryUrl.path()
+                    } else {
+                        snapshotDirectory = snapshotDirectoryUrl.path
+                    }
+
+                    let failure = verifySnapshot(
                         of: window,
                         as: snapshotting,
+                        snapshotDirectory: snapshotDirectory,
                         file: file,
-                        testName: snapshotName,
-                        line: line
+                        testName: snapshotName
                     )
+
+                    guard let message = failure else { return }
+                    XCTFail(message, file: file, line: line)
                 }
             }
         }
