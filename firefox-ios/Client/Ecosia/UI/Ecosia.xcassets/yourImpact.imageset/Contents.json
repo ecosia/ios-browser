@@ -3,16 +3,6 @@
     {
       "filename" : "yourImpact.pdf",
       "idiom" : "universal"
-    },
-    {
-      "appearances" : [
-        {
-          "appearance" : "luminosity",
-          "value" : "dark"
-        }
-      ],
-      "filename" : "yourImpactDark.pdf",
-      "idiom" : "universal"
     }
   ],
   "info" : {

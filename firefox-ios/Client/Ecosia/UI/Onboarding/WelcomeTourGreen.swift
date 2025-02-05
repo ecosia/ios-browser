@@ -5,7 +5,7 @@
 import UIKit
 import Common
 
-final class WelcomeTourGreen: UIView, ThemeApplicable {
+final class WelcomeTourGreen: UIView, Themeable {
     private lazy var searchLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -34,12 +34,19 @@ final class WelcomeTourGreen: UIView, ThemeApplicable {
         return label
     }()
 
+    // MARK: - Themeable Properties
+
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeObserver: NSObjectProtocol?
+    var notificationCenter: NotificationProtocol = NotificationCenter.default
+
     // MARK: - Init
 
     init(isCounterEnabled: Bool = false) {
         super.init(frame: .zero)
         setup(isCounterEnabled: isCounterEnabled)
         updateAccessibilitySettings()
+        applyTheme()
     }
 
     required init?(coder: NSCoder) {  nil }
@@ -97,10 +104,10 @@ final class WelcomeTourGreen: UIView, ThemeApplicable {
         }
     }
 
-    func applyTheme(theme: Theme) {
-        searchLabel.textColor = theme.colors.ecosia.textPrimary
-        counterLabel.textColor = theme.colors.ecosia.textPrimary
-        counterSubtitleLabel.textColor = theme.colors.ecosia.textSecondary
+    func applyTheme() {
+        searchLabel.textColor = .legacyTheme.ecosia.primaryText
+        counterLabel.textColor = .legacyTheme.ecosia.primaryText
+        counterSubtitleLabel.textColor = .legacyTheme.ecosia.secondaryText
     }
 
     func updateAccessibilitySettings() {

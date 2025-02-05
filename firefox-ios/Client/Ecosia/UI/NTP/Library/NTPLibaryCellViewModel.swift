@@ -4,7 +4,6 @@
 
 import Foundation
 import Shared
-import Core
 import Common
 
 protocol NTPLibraryDelegate: AnyObject {
@@ -67,11 +66,7 @@ extension NTPLibraryCellViewModel: HomepageViewModelProtocol {
 extension NTPLibraryCellViewModel: HomepageSectionHandler {
 
     func configure(_ cell: UICollectionViewCell, at indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = cell as? NTPLibraryCell else {
-            return UICollectionViewCell()
-        }
-        cell.delegate = delegate
-        cell.applyTheme(theme: theme)
+        (cell as! NTPLibraryCell).delegate = delegate
         return cell
     }
 

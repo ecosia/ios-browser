@@ -3,14 +3,20 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import UIKit
-import Core
+import Ecosia
 import Common
 
-final class WelcomeTourAction: UIView, ThemeApplicable {
+final class WelcomeTourAction: UIView, Themeable {
 
     // MARK: - Properties
 
     private weak var stack: UIStackView!
+
+    // MARK: - Themeable Properties
+
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeObserver: NSObjectProtocol?
+    var notificationCenter: NotificationProtocol = NotificationCenter.default
 
     // MARK: - Init
 
@@ -64,9 +70,9 @@ final class WelcomeTourAction: UIView, ThemeApplicable {
         stack.addArrangedSubview(bottom)
     }
 
-    func applyTheme(theme: Theme) {
+    func applyTheme() {
         stack.arrangedSubviews.forEach { view in
-            (view as? ThemeApplicable)?.applyTheme(theme: theme)
+            (view as? Themeable)?.applyTheme()
         }
     }
 

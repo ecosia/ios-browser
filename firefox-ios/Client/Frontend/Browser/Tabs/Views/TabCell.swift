@@ -160,7 +160,7 @@ class TabCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
         favicon.tintColor = theme.colors.textPrimary
         smallFaviconView.tintColor = theme.colors.textPrimary
          */
-        self.ecosiaApplyTheme(theme: theme)
+        self.ecosiaApplyTheme()
     }
 
     // MARK: - Configuration
@@ -322,20 +322,20 @@ class TabCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
 // Ecosia: Add legacy theme references
 extension TabCell {
 
-    func ecosiaApplyTheme(theme: Theme) {
+    func ecosiaApplyTheme() {
 
-        backgroundHolder.backgroundColor = theme.colors.ecosia.backgroundPrimary
-        screenshotView.backgroundColor = theme.colors.ecosia.tabTrayScreenshotBackground
+        backgroundHolder.backgroundColor = UIColor.legacyTheme.tabTray.cellBackground
+        screenshotView.backgroundColor = UIColor.legacyTheme.tabTray.screenshotBackground
 
         let isPrivate = tabModel?.isPrivate == true
         let activeBGColor = isPrivate ?
-            theme.colors.ecosia.tabSelectedPrivateBackground :
-            theme.colors.ecosia.buttonBackgroundPrimary
-        headerView.backgroundColor = isSelectedTab ? activeBGColor : theme.colors.ecosia.ntpCellBackground
+            UIColor.legacyTheme.ecosia.tabSelectedPrivateBackground :
+            UIColor.legacyTheme.ecosia.tabSelectedBackground
+        headerView.backgroundColor = isSelectedTab ? activeBGColor : UIColor.legacyTheme.ecosia.tabBackground
 
-        titleText.textColor = isSelectedTab ? theme.colors.ecosia.textInversePrimary : theme.colors.ecosia.textPrimary
-        favicon.tintColor = isSelectedTab ? theme.colors.ecosia.textInversePrimary : theme.colors.ecosia.textPrimary
-        closeButton.tintColor = isSelectedTab ? theme.colors.ecosia.textInversePrimary : theme.colors.ecosia.textPrimary
+        titleText.textColor = isSelectedTab ? UIColor.legacyTheme.ecosia.primaryTextInverted : UIColor.legacyTheme.ecosia.primaryText
+        favicon.tintColor = isSelectedTab ? UIColor.legacyTheme.ecosia.primaryTextInverted : UIColor.legacyTheme.ecosia.primaryText
+        closeButton.tintColor = isSelectedTab ? UIColor.legacyTheme.ecosia.primaryTextInverted : UIColor.legacyTheme.ecosia.primaryText
 
         let borderWidth: CGFloat = 3
 
@@ -347,7 +347,7 @@ extension TabCell {
             // create a frame that is "BorderWidth" size bigger than the cell
             layer.shadowOffset = CGSize(width: -borderWidth, height: -borderWidth)
             layer.shadowColor = activeBGColor.cgColor
-        } else if theme.type == .dark {
+        } else if LegacyThemeManager.instance.current.isDark {
             layer.masksToBounds = true
             layer.shadowOpacity = 0
             layer.shadowOffset = .zero

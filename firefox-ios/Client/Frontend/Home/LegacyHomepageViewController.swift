@@ -8,7 +8,7 @@ import Shared
 import Storage
 import Redux
 import UIKit
-import Core
+import Ecosia
 
 import enum MozillaAppServices.VisitType
 
@@ -430,10 +430,9 @@ class LegacyHomepageViewController:
     func applyTheme() {
         let theme = themeManager.getCurrentTheme(for: windowUUID)
         viewModel.theme = theme
-        /* Ecosia: Update NTP background
-        view.backgroundColor = theme.colors.layer1
-         */
-        view.backgroundColor = theme.colors.ecosia.ntpBackground
+        // Ecosia: Update NTP background
+        // view.backgroundColor = theme.colors.layer1
+        view.backgroundColor = .legacyTheme.ecosia.ntpBackground
     }
 
     // called when the homepage is displayed to make sure it's scrolled to top
@@ -661,7 +660,6 @@ extension LegacyHomepageViewController: UICollectionViewDelegate, UICollectionVi
             let text = NTPTooltip.highlight()?.text,
             kind == UICollectionView.elementKindSectionHeader {
             let tooltip = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: NTPTooltip.key, for: indexPath) as! NTPTooltip
-            tooltip.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
             tooltip.setText(text)
             tooltip.delegate = self
             return tooltip
@@ -669,12 +667,7 @@ extension LegacyHomepageViewController: UICollectionViewDelegate, UICollectionVi
 
         // Ecosia: footer for impact
         if sectionViewModel.sectionType == .impact, kind == UICollectionView.elementKindSectionFooter {
-            let dividerFooter = collectionView
-                .dequeueReusableSupplementaryView(ofKind: kind,
-                                                  withReuseIdentifier: NTPImpactDividerFooter.cellIdentifier,
-                                                  for: indexPath) as? NTPImpactDividerFooter
-            dividerFooter?.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
-            return dividerFooter ?? UICollectionReusableView()
+            return collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: NTPImpactDividerFooter.cellIdentifier, for: indexPath)
         }
 
         guard let headerView = collectionView.dequeueReusableSupplementaryView(
@@ -861,7 +854,6 @@ private extension LegacyHomepageViewController {
          */
         // Ecosia: Adjust HomePageViewController's CollectionView
         viewModel.libraryViewModel.delegate = self
-        viewModel.newsletterCardViewModel.delegate = self
         viewModel.impactViewModel.delegate = self
         viewModel.newsViewModel.delegate = self
         viewModel.aboutEcosiaViewModel.delegate = self

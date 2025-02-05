@@ -3,16 +3,8 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import UIKit
-import Common
 
 class EcosiaPrimaryButton: UIButton {
-    let windowUUID: WindowUUID
-    init(windowUUID: WindowUUID) {
-        self.windowUUID = windowUUID
-        super.init(type: .custom)
-    }
-    required init?(coder: NSCoder) { nil }
-
     override var isSelected: Bool {
         get {
             return super.isSelected
@@ -34,8 +26,6 @@ class EcosiaPrimaryButton: UIButton {
     }
 
     private func update() {
-        let themeManager: ThemeManager = AppContainer.shared.resolve()
-        let theme = themeManager.getCurrentTheme(for: windowUUID)
-        backgroundColor = (isSelected || isHighlighted) ? theme.colors.ecosia.buttonBackgroundPrimaryActive : theme.colors.ecosia.buttonBackgroundPrimary
+        backgroundColor = (isSelected || isHighlighted) ? .legacyTheme.ecosia.primaryButtonActive : .legacyTheme.ecosia.primaryButton
     }
 }

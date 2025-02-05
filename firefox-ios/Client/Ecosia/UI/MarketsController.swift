@@ -2,9 +2,9 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
-import Core
 import UIKit
 import Common
+import Ecosia
 
 final class Markets {
     private(set) static var all: [Market] = {
@@ -74,8 +74,7 @@ final class MarketsController: ThemedTableViewController {
 
     override func applyTheme() {
         super.applyTheme()
-        let theme = themeManager.getCurrentTheme(for: windowUUID)
-        tableView.tintColor = theme.colors.ecosia.brandPrimary
-        view.backgroundColor = theme.colors.ecosia.ntpBackground
+        tableView.tintColor = UIColor.legacyTheme.ecosia.primaryBrand
+        view.backgroundColor = UIColor.legacyTheme.tableView.headerBackground
     }
 }

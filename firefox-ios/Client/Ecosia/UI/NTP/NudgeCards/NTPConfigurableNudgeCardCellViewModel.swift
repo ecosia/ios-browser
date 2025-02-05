@@ -86,11 +86,7 @@ class NTPConfigurableNudgeCardCellViewModel: HomepageViewModelProtocol {
 extension NTPConfigurableNudgeCardCellViewModel: HomepageSectionHandler {
 
     func configure(_ cell: UICollectionViewCell, at indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = cell as? NTPConfigurableNudgeCardCell else {
-            return UICollectionViewCell()
-        }
-        cell.configure(with: self)
-        cell.applyTheme(theme: theme)
+        (cell as? NTPConfigurableNudgeCardCell)?.configure(with: self)
         return cell
     }
 }

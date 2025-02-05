@@ -3,15 +3,20 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import UIKit
-import Core
 import Common
 
-final class WhatsNewCell: UITableViewCell {
+final class WhatsNewCell: UITableViewCell, Themeable {
 
     // MARK: - Properties
 
     private var item: WhatsNewItem!
     private var contentConfigurationToUpdate: Any?
+
+    // MARK: - Themeable Properties
+
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeObserver: NSObjectProtocol?
+    var notificationCenter: NotificationProtocol = NotificationCenter.default
 
     // MARK: - Configuration
 
@@ -20,6 +25,8 @@ final class WhatsNewCell: UITableViewCell {
         backgroundColor = .clear
         self.item = item
         configureBasedOnOSVersion()
+        applyTheme()
+        listenForThemeChange(contentView)
     }
 
     private func configureBasedOnOSVersion() {
@@ -73,15 +80,15 @@ final class WhatsNewCell: UITableViewCell {
     }
 }
 
-extension WhatsNewCell: ThemeApplicable {
+extension WhatsNewCell {
 
-    func applyTheme(theme: Theme) {
+    func applyTheme() {
         if #available(iOS 14, *) {
             guard var updatedConfiguration = contentConfigurationToUpdate as? UIListContentConfiguration else { return }
-            updatedConfiguration.image = item.image?.tinted(withColor: theme.colors.ecosia.iconSecondary)
+            updatedConfiguration.image = item.image?.tinted(withColor: .legacyTheme.ecosia.secondaryIcon)
             contentConfiguration = updatedConfiguration
         } else {
-            imageView?.image = item.image?.tinted(withColor: theme.colors.ecosia.iconSecondary)
+            imageView?.image = item.image?.tinted(withColor: .legacyTheme.ecosia.secondaryIcon)
         }
     }
 }

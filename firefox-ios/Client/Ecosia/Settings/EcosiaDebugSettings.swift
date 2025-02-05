@@ -4,13 +4,13 @@
 
 import Foundation
 import UIKit
-import Core
 import Shared
 import Common
+import Ecosia
 
 final class PushBackInstallation: HiddenSetting {
     override var title: NSAttributedString? {
-        return NSAttributedString(string: "Debug: Push back installation by 3 days (needs restart).", attributes: [NSAttributedString.Key.foregroundColor: theme.colors.ecosia.tableViewRowText])
+        return NSAttributedString(string: "Debug: Push back installation by 3 days (needs restart).", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
@@ -22,12 +22,12 @@ final class PushBackInstallation: HiddenSetting {
 
 final class ToggleImpactIntro: HiddenSetting {
     override var title: NSAttributedString? {
-        return NSAttributedString(string: "Debug: Toggle - Show Impact intro", attributes: [NSAttributedString.Key.foregroundColor: theme.colors.ecosia.tableViewRowText])
+        return NSAttributedString(string: "Debug: Toggle - Show Impact intro", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
     }
 
     override var status: NSAttributedString? {
         let isOn = User.shared.shouldShowImpactIntro
-        return NSAttributedString(string: isOn ? "True" : "False", attributes: [NSAttributedString.Key.foregroundColor: theme.colors.ecosia.tableViewRowText])
+        return NSAttributedString(string: isOn ? "True" : "False", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
@@ -42,17 +42,11 @@ final class ToggleImpactIntro: HiddenSetting {
 
 final class ShowTour: HiddenSetting, WelcomeDelegate {
     override var title: NSAttributedString? {
-        return NSAttributedString(string: "Debug: Show Intro", attributes: [NSAttributedString.Key.foregroundColor: theme.colors.ecosia.tableViewRowText])
-    }
-
-    let windowUUID: WindowUUID
-    init(settings: SettingsTableViewController, windowUUID: WindowUUID) {
-        self.windowUUID = windowUUID
-        super.init(settings: settings)
+        return NSAttributedString(string: "Debug: Show Intro", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
-        let welcome = Welcome(delegate: self, windowUUID: windowUUID)
+        let welcome = Welcome(delegate: self)
         welcome.modalPresentationStyle = .fullScreen
         welcome.modalTransitionStyle = .coverVertical
         navigationController?.present(welcome, animated: true)
@@ -65,7 +59,7 @@ final class ShowTour: HiddenSetting, WelcomeDelegate {
 
 final class CreateReferralCode: HiddenSetting {
     override var title: NSAttributedString? {
-        return NSAttributedString(string: "Debug: Referral Code \(User.shared.referrals.code ?? "-")", attributes: [NSAttributedString.Key.foregroundColor: theme.colors.ecosia.tableViewRowText])
+        return NSAttributedString(string: "Debug: Referral Code \(User.shared.referrals.code ?? "-")", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
     }
 
     override var status: NSAttributedString? {
@@ -101,7 +95,7 @@ final class CreateReferralCode: HiddenSetting {
 
 final class AddReferral: HiddenSetting {
     override var title: NSAttributedString? {
-        return NSAttributedString(string: "Debug: Add Referral", attributes: [NSAttributedString.Key.foregroundColor: theme.colors.ecosia.tableViewRowText])
+        return NSAttributedString(string: "Debug: Add Referral", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
@@ -119,7 +113,7 @@ final class AddReferral: HiddenSetting {
 
 final class AddClaim: HiddenSetting {
     override var title: NSAttributedString? {
-        return NSAttributedString(string: "Debug: Add Referral Claim", attributes: [NSAttributedString.Key.foregroundColor: theme.colors.ecosia.tableViewRowText])
+        return NSAttributedString(string: "Debug: Add Referral Claim", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
@@ -138,11 +132,11 @@ final class AddClaim: HiddenSetting {
 
 final class ResetSearchCount: HiddenSetting {
     override var title: NSAttributedString? {
-        return NSAttributedString(string: "Debug: Set search count to 0", attributes: [NSAttributedString.Key.foregroundColor: theme.colors.ecosia.tableViewRowText])
+        return NSAttributedString(string: "Debug: Set search count to 0", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
     }
 
     override var status: NSAttributedString? {
-        return NSAttributedString(string: "\(User.shared.searchCount)", attributes: [NSAttributedString.Key.foregroundColor: theme.colors.ecosia.tableViewRowText])
+        return NSAttributedString(string: "\(User.shared.searchCount)", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
@@ -154,11 +148,11 @@ final class ResetSearchCount: HiddenSetting {
 
 final class ChangeSearchCount: HiddenSetting {
     override var title: NSAttributedString? {
-        return NSAttributedString(string: "Debug: Increase search count by 10", attributes: [NSAttributedString.Key.foregroundColor: theme.colors.ecosia.tableViewRowText])
+        return NSAttributedString(string: "Debug: Increase search count by 10", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
     }
 
     override var status: NSAttributedString? {
-        return NSAttributedString(string: "\(User.shared.searchCount)", attributes: [NSAttributedString.Key.foregroundColor: theme.colors.ecosia.tableViewRowText])
+        return NSAttributedString(string: "\(User.shared.searchCount)", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
@@ -174,7 +168,7 @@ class UnleashVariantResetSetting: HiddenSetting {
     var unleashEnabled: Bool? { return nil }
 
     override var title: NSAttributedString? {
-        return NSAttributedString(string: "Debug: Unleash \(titleName ?? "Unknown") variant", attributes: [NSAttributedString.Key.foregroundColor: theme.colors.ecosia.tableViewRowText])
+        return NSAttributedString(string: "Debug: Unleash \(titleName ?? "Unknown") variant", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
     }
 
     override var status: NSAttributedString? {
@@ -182,7 +176,7 @@ class UnleashVariantResetSetting: HiddenSetting {
         if statusName == "Unknown", let unleashEnabled = unleashEnabled {
             statusName = unleashEnabled ? "enabled" : "disabled"
         }
-        return NSAttributedString(string: "\(statusName) (Click to reset)", attributes: [NSAttributedString.Key.foregroundColor: theme.colors.ecosia.tableViewRowText])
+        return NSAttributedString(string: "\(statusName) (Click to reset)", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
@@ -226,44 +220,17 @@ final class UnleashAPNConsent: UnleashVariantResetSetting {
 
 final class AnalyticsIdentifierSetting: HiddenSetting {
     override var title: NSAttributedString? {
-        return NSAttributedString(string: "Debug: Analytics Identifier", attributes: [NSAttributedString.Key.foregroundColor: theme.colors.ecosia.tableViewRowText])
+        return NSAttributedString(string: "Debug: Analytics Identifier", attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText])
     }
 
     var analyticsIdentifier: String { User.shared.analyticsId.uuidString }
 
     override var status: NSAttributedString? {
-        let attributes = [NSAttributedString.Key.foregroundColor: theme.colors.ecosia.tableViewRowText]
+        let attributes = [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText]
         return NSAttributedString(string: "\(analyticsIdentifier) (Click to copy)", attributes: attributes)
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
         UIPasteboard.general.string = analyticsIdentifier
-    }
-}
-
-final class UnleashNewsletterCardSetting: UnleashVariantResetSetting {
-    override var titleName: String? {
-        "Newsletter Card"
-    }
-
-    override var unleashEnabled: Bool? {
-        Unleash.isEnabled(.newsletterCard)
-    }
-}
-
-final class NewsletterCardDismissSetting: HiddenSetting {
-    override var title: NSAttributedString? {
-        return NSAttributedString(string: "Debug: Unset Newsletter card dismissed", attributes: [NSAttributedString.Key.foregroundColor: theme.colors.ecosia.tableViewRowText])
-    }
-
-    override var status: NSAttributedString? {
-        let attributes = [NSAttributedString.Key.foregroundColor: theme.colors.ecosia.tableViewRowText]
-        let hintText = NewsletterCardExperiment.isDismissed ? "dismissed (Click to unset)" : "showing (Nothing to do here)"
-        return NSAttributedString(string: "Card is currently \(hintText)", attributes: attributes)
-    }
-
-    override func onClick(_ navigationController: UINavigationController?) {
-        NewsletterCardExperiment.unsetDismissed()
-        self.settings.tableView.reloadData()
     }
 }

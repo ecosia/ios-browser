@@ -4,6 +4,7 @@
 
 import Foundation
 import Common
+import Ecosia
 
 final class NTPAboutEcosiaCell: UICollectionViewCell, ReusableCell {
     struct UX {
@@ -92,16 +93,29 @@ final class NTPAboutEcosiaCell: UICollectionViewCell, ReusableCell {
         disclosureView.frame.maxY + (isLastSection ? 16 : 0)
     }
 
+    // MARK: - Themeable Properties
+
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeObserver: NSObjectProtocol?
+    var notificationCenter: NotificationProtocol = NotificationCenter.default
+
     // MARK: - Init
 
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
+        applyTheme()
     }
 
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         setup()
+        applyTheme()
+    }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        applyTheme()
     }
 
     override func layoutSubviews() {
@@ -173,6 +187,7 @@ final class NTPAboutEcosiaCell: UICollectionViewCell, ReusableCell {
             dividerView.bottomAnchor.constraint(equalTo: outlineView.bottomAnchor),
             dividerView.heightAnchor.constraint(equalToConstant: 1)
         ])
+        listenForThemeChange(contentView)
     }
 
     func rotateIndicator(isExpanded: Bool) {
@@ -218,16 +233,16 @@ final class NTPAboutEcosiaCell: UICollectionViewCell, ReusableCell {
     }
 }
 
-extension NTPAboutEcosiaCell: ThemeApplicable {
+extension NTPAboutEcosiaCell: Themeable {
 
-    func applyTheme(theme: Theme) {
-        outlineView.backgroundColor = theme.colors.ecosia.ntpCellBackground
-        titleLabel.textColor = theme.colors.ecosia.textPrimary
-        indicatorImageView.tintColor = theme.colors.ecosia.textSecondary
-        dividerView.backgroundColor = theme.colors.ecosia.borderDecorative
-        disclosureView.backgroundColor = theme.colors.ecosia.backgroundQuaternary
-        subtitleLabel.textColor = theme.colors.ecosia.textInversePrimary
-        learnMoreButton.layer.borderColor = theme.colors.ecosia.textInversePrimary.cgColor
-        learnMoreLabel.textColor = theme.colors.ecosia.textInversePrimary
+    func applyTheme() {
+        outlineView.backgroundColor = .legacyTheme.ecosia.ntpCellBackground
+        titleLabel.textColor = .legacyTheme.ecosia.primaryText
+        indicatorImageView.tintColor = .legacyTheme.ecosia.secondaryText
+        dividerView.backgroundColor = .legacyTheme.ecosia.border
+        disclosureView.backgroundColor = .legacyTheme.ecosia.quarternaryBackground
+        subtitleLabel.textColor = .legacyTheme.ecosia.primaryTextInverted
+        learnMoreButton.layer.borderColor = UIColor.legacyTheme.ecosia.primaryTextInverted.cgColor
+        learnMoreLabel.textColor = .legacyTheme.ecosia.primaryTextInverted
     }
 }

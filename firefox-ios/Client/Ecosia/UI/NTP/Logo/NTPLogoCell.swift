@@ -3,14 +3,19 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import UIKit
-import Core
 import Common
 
-final class NTPLogoCell: UICollectionViewCell, ReusableCell, ThemeApplicable {
+final class NTPLogoCell: UICollectionViewCell, ReusableCell, Themeable {
     static let bottomMargin: CGFloat = 6
     static let width: CGFloat = 144
 
     private weak var logo: UIImageView!
+
+    // MARK: - Themeable Properties
+
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeObserver: NSObjectProtocol?
+    var notificationCenter: NotificationProtocol = NotificationCenter.default
 
     // MARK: - Init
 
@@ -44,9 +49,16 @@ final class NTPLogoCell: UICollectionViewCell, ReusableCell, ThemeApplicable {
         logo.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
         logo.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
         logo.widthAnchor.constraint(equalToConstant: Self.width).isActive = true
+        applyTheme()
+        listenForThemeChange(contentView)
     }
 
-    func applyTheme(theme: Theme) {
-        logo.tintColor = theme.colors.ecosia.brandPrimary
+    func applyTheme() {
+        logo.tintColor = .legacyTheme.ecosia.primaryBrand
+    }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        applyTheme()
     }
 }

@@ -3,11 +3,10 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import UIKit
-import Core
 import Common
 
 /// Reusable Nudge Card Cell that can be configured with any view model.
-class NTPConfigurableNudgeCardCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
+class NTPConfigurableNudgeCardCell: UICollectionViewCell, Themeable, ReusableCell {
 
     // MARK: - UX Constants
     private enum UX {
@@ -104,6 +103,12 @@ class NTPConfigurableNudgeCardCell: UICollectionViewCell, ThemeApplicable, Reusa
 
     weak var delegate: NTPConfigurableNudgeCardCellDelegate?
 
+    // MARK: - Themeable Properties
+
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeObserver: NSObjectProtocol?
+    var notificationCenter: NotificationProtocol = NotificationCenter.default
+
     // MARK: - Initializer
 
     override init(frame: CGRect) {
@@ -138,6 +143,9 @@ class NTPConfigurableNudgeCardCell: UICollectionViewCell, ThemeApplicable, Reusa
             imageView.heightAnchor.constraint(equalToConstant: UX.imageWidthHeight),
             imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor),
         ])
+
+        applyTheme()
+        listenForThemeChange(contentView)
     }
 
     // MARK: - Configuration Method
@@ -173,12 +181,13 @@ class NTPConfigurableNudgeCardCell: UICollectionViewCell, ThemeApplicable, Reusa
     }
 
     // MARK: - Theming
-    func applyTheme(theme: Theme) {
-        mainContainerStackView.backgroundColor = theme.colors.ecosia.backgroundSecondary
-        closeButton.tintColor = theme.colors.ecosia.iconDecorative
-        titleLabel.textColor = theme.colors.ecosia.textPrimary
-        descriptionLabel.textColor = theme.colors.ecosia.textSecondary
-        actionButton.setTitleColor(theme.colors.ecosia.buttonBackgroundPrimary, for: .normal)
+    @objc func applyTheme() {
+        // Apply theming based on the provided theme from the ViewModel
+        mainContainerStackView.backgroundColor = .legacyTheme.ecosia.secondaryBackground
+        closeButton.tintColor = .legacyTheme.ecosia.decorativeIcon
+        titleLabel.textColor = .legacyTheme.ecosia.primaryText
+        descriptionLabel.textColor = .legacyTheme.ecosia.secondaryText
+        actionButton.setTitleColor(.legacyTheme.ecosia.primaryButton, for: .normal)
     }
 
     @objc private func closeAction() {

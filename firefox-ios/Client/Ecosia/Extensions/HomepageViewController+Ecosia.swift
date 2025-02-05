@@ -3,7 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import UIKit
-import Core
+import Ecosia
 
 protocol HomepageViewControllerDelegate: AnyObject {
     func homeDidTapSearchButton(_ home: HomepageViewController)
@@ -82,26 +82,6 @@ extension LegacyHomepageViewController: NTPLibraryDelegate {
     }
 }
 
-extension LegacyHomepageViewController: NTPConfigurableNudgeCardCellDelegate {
-    func nudgeCardRequestToPerformAction(for cardType: HomepageSectionType) {
-        switch cardType {
-        case .newsletterCard:
-            BrazeService.shared.logCustomEvent(.newsletterCardClick)
-            Analytics.shared.newsletterCardExperiment(action: .click)
-            NewsletterCardExperiment.setDismissed()
-        default:
-            return
-        }
-        reloadView()
-    }
-
-    func nudgeCardRequestToDimiss(for cardType: HomepageSectionType) {
-        Analytics.shared.newsletterCardExperiment(action: .dismiss)
-        NewsletterCardExperiment.setDismissed()
-        reloadView()
-    }
-}
-
 extension LegacyHomepageViewController: NTPImpactCellDelegate {
     func impactCellButtonClickedWithInfo(_ info: ClimateImpactInfo) {
         switch info {
@@ -118,8 +98,7 @@ extension LegacyHomepageViewController: NTPImpactCellDelegate {
 
 extension LegacyHomepageViewController: NTPNewsCellDelegate {
     func openSeeAllNews() {
-        let news = NewsController(items: viewModel.newsViewModel.items,
-                                  windowUUID: windowUUID)
+        let news = NewsController(windowUUID: windowUUID, items: viewModel.newsViewModel.items)
         news.delegate = self
         let nav = EcosiaNavigation(rootViewController: news)
         present(nav, animated: true)

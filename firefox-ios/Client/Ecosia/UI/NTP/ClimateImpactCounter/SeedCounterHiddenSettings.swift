@@ -3,7 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
-import Core
+import Ecosia
 
 final class AddOneSeedSetting: HiddenSetting {
 
@@ -21,7 +21,7 @@ final class AddOneSeedSetting: HiddenSetting {
     override var title: NSAttributedString? {
         return NSAttributedString(
             string: "Debug: Add One Seed",
-            attributes: [NSAttributedString.Key.foregroundColor: theme.colors.ecosia.tableViewRowText]
+            attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText]
         )
     }
 
@@ -31,7 +31,7 @@ final class AddOneSeedSetting: HiddenSetting {
         let level = progressManagerType.loadCurrentLevel()
         return NSAttributedString(
             string: "Seeds: \(seedsCollected) | Level: \(level)",
-            attributes: [NSAttributedString.Key.foregroundColor: theme.colors.ecosia.tableViewRowText]
+            attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText]
         )
     }
 
@@ -59,7 +59,7 @@ final class AddFiveSeedsSetting: HiddenSetting {
     override var title: NSAttributedString? {
         return NSAttributedString(
             string: "Debug: Add Five Seeds",
-            attributes: [NSAttributedString.Key.foregroundColor: theme.colors.ecosia.tableViewRowText]
+            attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText]
         )
     }
 
@@ -69,7 +69,7 @@ final class AddFiveSeedsSetting: HiddenSetting {
         let level = progressManagerType.loadCurrentLevel()
         return NSAttributedString(
             string: "Seeds: \(seedsCollected) | Level: \(level)",
-            attributes: [NSAttributedString.Key.foregroundColor: theme.colors.ecosia.tableViewRowText]
+            attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText]
         )
     }
 
@@ -97,7 +97,7 @@ final class ResetSeedCounterSetting: HiddenSetting {
     override var title: NSAttributedString? {
         return NSAttributedString(
             string: "Debug: Reset Seed Counter",
-            attributes: [NSAttributedString.Key.foregroundColor: theme.colors.ecosia.tableViewRowText]
+            attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText]
         )
     }
 
@@ -107,7 +107,7 @@ final class ResetSeedCounterSetting: HiddenSetting {
         let level = progressManagerType.loadCurrentLevel()
         return NSAttributedString(
             string: "Seeds: \(seedsCollected) | Level: \(level)",
-            attributes: [NSAttributedString.Key.foregroundColor: theme.colors.ecosia.tableViewRowText]
+            attributes: [NSAttributedString.Key.foregroundColor: UIColor.legacyTheme.tableView.rowText]
         )
     }
 

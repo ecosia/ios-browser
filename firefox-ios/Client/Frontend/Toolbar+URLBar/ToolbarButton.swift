@@ -83,7 +83,7 @@ extension ToolbarButton: ThemeApplicable {
         selectedTintColor = theme.colors.actionPrimary
         disabledTintColor = theme.colors.iconDisabled
          */
-        selectedTintColor = theme.colors.ecosia.brandPrimary
+        selectedTintColor = .legacyTheme.ecosia.primaryBrand
         disabledTintColor = UIColor.Photon.Grey30
         unselectedTintColor = theme.colors.iconPrimary
         tintColor = isEnabled ? unselectedTintColor : disabledTintColor

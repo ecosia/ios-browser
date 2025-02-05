@@ -5,7 +5,7 @@
 import UIKit
 import Common
 
-final class PageActionMenu: UIViewController, UIGestureRecognizerDelegate {
+final class PageActionMenu: UIViewController, UIGestureRecognizerDelegate, Themeable {
 
     // MARK: - UX
 
@@ -19,10 +19,9 @@ final class PageActionMenu: UIViewController, UIGestureRecognizerDelegate {
 
     let windowUUID: WindowUUID
     var currentWindowUUID: WindowUUID? { return windowUUID }
-    var themeManager: ThemeManager
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
     var themeObserver: NSObjectProtocol?
     var notificationCenter: NotificationProtocol = NotificationCenter.default
-    var currentTheme: Theme { themeManager.getCurrentTheme(for: windowUUID) }
 
     // MARK: - Properties
 
@@ -43,14 +42,10 @@ final class PageActionMenu: UIViewController, UIGestureRecognizerDelegate {
 
     // MARK: - Init
 
-    init(viewModel: PhotonActionSheetViewModel,
-         delegate: PageActionsShortcutsDelegate,
-         windowUUID: WindowUUID,
-         themeManager: ThemeManager = AppContainer.shared.resolve()) {
+    init(viewModel: PhotonActionSheetViewModel, delegate: PageActionsShortcutsDelegate, windowUUID: WindowUUID) {
         self.viewModel = viewModel
         self.delegate = delegate
         self.windowUUID = windowUUID
-        self.themeManager = themeManager
         super.init(nibName: nil, bundle: nil)
 
         title = viewModel.title
@@ -189,7 +184,7 @@ extension PageActionMenu: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: PageActionMenuCell.UX.cellIdentifier, for: indexPath) as! PageActionMenuCell
         cell.determineTableViewCellPositionAt(indexPath, forActions: viewModel.actions)
-        cell.configure(with: viewModel, at: indexPath, theme: currentTheme)
+        cell.configure(with: viewModel, at: indexPath)
         return cell
     }
 
@@ -205,7 +200,6 @@ extension PageActionMenu: UITableViewDataSource, UITableViewDelegate {
 
         let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: UX.shortcuts) as! PageActionsShortcutsHeader
         header.delegate = delegate
-        header.applyTheme(theme: currentTheme)
         return header
     }
 
@@ -222,16 +216,13 @@ extension PageActionMenu: UITableViewDataSource, UITableViewDelegate {
 
 // MARK: - Themeable
 
-extension PageActionMenu: Themeable {
+extension PageActionMenu {
 
     func applyTheme() {
         tableView.reloadData()
-        view.backgroundColor = currentTheme.colors.ecosia.modalBackground
-        tableView.backgroundColor = currentTheme.colors.ecosia.modalBackground
-        tableView.separatorColor = currentTheme.colors.ecosia.borderDecorative
-        knob.backgroundColor = currentTheme.colors.ecosia.textSecondary
-        tableView.visibleCells.forEach {
-            ($0 as? ThemeApplicable)?.applyTheme(theme: currentTheme)
-        }
+        view.backgroundColor = .legacyTheme.ecosia.modalBackground
+        tableView.backgroundColor = .legacyTheme.ecosia.modalBackground
+        tableView.separatorColor = .legacyTheme.ecosia.border
+        knob.backgroundColor = .legacyTheme.ecosia.secondaryText
     }
 }

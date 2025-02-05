@@ -4,8 +4,9 @@
 
 import UIKit
 import Common
+import Ecosia
 
-final class EmptyBookmarksView: UIView, ThemeApplicable {
+final class EmptyBookmarksView: UIView, Themeable {
 
     private enum UX {
         static let TitleLabelFont = UIFontMetrics(forTextStyle: .body).scaledFont(for: .systemFont(ofSize: 17, weight: .semibold))
@@ -68,6 +69,12 @@ final class EmptyBookmarksView: UIView, ThemeApplicable {
     weak var delegate: EmptyBookmarksViewDelegate?
 
     var bottomMarginConstraint: NSLayoutConstraint?
+
+    // MARK: - Themeable Properties
+
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeObserver: NSObjectProtocol?
+    var notificationCenter: NotificationProtocol = NotificationCenter.default
 
     // MARK: - Init
 
@@ -137,6 +144,10 @@ final class EmptyBookmarksView: UIView, ThemeApplicable {
         // setup buttons
         learnMoreButton.addTarget(self, action: #selector(onLearnMoreTapped), for: .touchUpInside)
         importBookmarksButton.addTarget(self, action: #selector(onImportTapped), for: .touchUpInside)
+
+        applyTheme()
+
+        listenForThemeChange(self)
     }
 
     private func addSection(imageNamed: String, text: String, listItems: [String]? = nil) {
@@ -238,18 +249,18 @@ final class EmptyBookmarksView: UIView, ThemeApplicable {
         delegate?.emptyBookmarksViewImportBookmarksTapped(self)
     }
 
-    func applyTheme(theme: Theme) {
-        backgroundColor = theme.colors.ecosia.modalBackground
-        importBookmarksButton.layer.borderColor = theme.colors.ecosia.textPrimary.cgColor
-        learnMoreButton.setTitleColor(theme.colors.ecosia.textPrimary, for: .normal)
+    @objc func applyTheme() {
+        backgroundColor = .legacyTheme.ecosia.homePanelBackground
+        importBookmarksButton.layer.borderColor = UIColor.legacyTheme.ecosia.primaryText.cgColor
+        learnMoreButton.setTitleColor(.legacyTheme.ecosia.primaryText, for: .normal)
         learnMoreButton.titleLabel?.font = UX.LearnMoreButtonLabelFont
-        importBookmarksButton.setTitleColor(theme.colors.ecosia.textPrimary, for: .normal)
+        importBookmarksButton.setTitleColor(.legacyTheme.ecosia.primaryText, for: .normal)
         importBookmarksButton.titleLabel?.font = UX.ImportButtonLabelFont
-        titleLabel.textColor = theme.colors.ecosia.textPrimary
-        applyThemeToSectionsIn(containerStackView, theme: theme)
+        titleLabel.textColor = .legacyTheme.ecosia.primaryText
+        applyThemeToSectionsIn(containerStackView)
     }
 
-    func applyThemeToSectionsIn(_ stackView: UIStackView, theme: Theme) {
+    func applyThemeToSectionsIn(_ stackView: UIStackView) {
         var finalResult = [UIView]()
         var iterateThroughSubviews: ((UIStackView) -> Void)?
 
@@ -272,9 +283,9 @@ final class EmptyBookmarksView: UIView, ThemeApplicable {
         finalResult.forEach {
             switch $0 {
             case let label as UILabel:
-                label.textColor = theme.colors.ecosia.textSecondary
+                label.textColor = .legacyTheme.ecosia.secondaryText
             default:
-                $0.tintColor = theme.colors.ecosia.textSecondary
+                $0.tintColor = .legacyTheme.ecosia.secondaryText
                 break
             }
         }

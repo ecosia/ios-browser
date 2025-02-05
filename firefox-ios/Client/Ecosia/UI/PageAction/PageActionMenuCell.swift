@@ -3,9 +3,8 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import UIKit
-import Common
 
-final class PageActionMenuCell: UITableViewCell, ThemeApplicable {
+final class PageActionMenuCell: UITableViewCell {
 
     struct UX {
 
@@ -66,10 +65,6 @@ final class PageActionMenuCell: UITableViewCell, ThemeApplicable {
         separatorView = nil
         textLabel?.text = nil
         imageView?.image = nil
-    }
-
-    func applyTheme(theme: Theme) {
-        badge?.backgroundColor = theme.colors.ecosia.brandPrimary
     }
 }
 
@@ -138,7 +133,7 @@ extension PageActionMenuCell {
     }
 
     /// Adds the custom separator view
-    private func addCustomGroupedStyleLikeSeparator(theme: Theme) {
+    private func addCustomGroupedStyleLikeSeparator() {
 
         if separatorView == nil {
             separatorView = UIView()
@@ -147,7 +142,7 @@ extension PageActionMenuCell {
         guard let separatorView else { return }
 
         separatorView.translatesAutoresizingMaskIntoConstraints = false
-        separatorView.backgroundColor = theme.colors.ecosia.borderDecorative
+        separatorView.backgroundColor = .legacyTheme.ecosia.border
 
         contentView.addSubview(separatorView)
         contentView.bringSubviewToFront(separatorView)
@@ -174,36 +169,32 @@ extension PageActionMenuCell {
     /// - Parameters:
     ///   - viewModel: The`PhotonActionSheetViewModel`'s View Model
     ///   - indexPath: The TableView's index path
-    func configure(with viewModel: PhotonActionSheetViewModel,
-                   at indexPath: IndexPath,
-                   theme: Theme) {
+    func configure(with viewModel: PhotonActionSheetViewModel, at indexPath: IndexPath) {
 
-        backgroundColor = theme.colors.ecosia.impactMultiplyCardBackground
+        backgroundColor = .legacyTheme.ecosia.impactMultiplyCardBackground
         let actions = viewModel.actions[indexPath.section][indexPath.row]
         guard let item = actions.items.first else { return }
 
         textLabel?.text = item.currentTitle
-        textLabel?.textColor = theme.colors.ecosia.textPrimary
+        textLabel?.textColor = .legacyTheme.ecosia.primaryText
         detailTextLabel?.text = item.text
-        detailTextLabel?.textColor = theme.colors.ecosia.textSecondary
+        detailTextLabel?.textColor = .legacyTheme.ecosia.secondaryText
 
         accessibilityIdentifier = item.iconString ?? item.accessibilityId
         accessibilityLabel = item.currentTitle
 
         if let iconName = item.iconString {
             imageView?.image = UIImage(named: iconName)?.withRenderingMode(.alwaysTemplate)
-            imageView?.tintColor = theme.colors.ecosia.textSecondary
+            imageView?.tintColor = .legacyTheme.ecosia.secondaryText
         } else {
             imageView?.image = nil
         }
 
-        isNew(actions.items.first?.isNew == true, theme: theme)
+        isNew(actions.items.first?.isNew == true)
 
         if separatorCellsPositions.contains(position) {
-            addCustomGroupedStyleLikeSeparator(theme: theme)
+            addCustomGroupedStyleLikeSeparator()
         }
-
-        applyTheme(theme: theme)
     }
 }
 
@@ -213,7 +204,7 @@ extension PageActionMenuCell {
     ///
     /// - Parameters:
     ///    - isNew: A boolean value based on which we create the `badge` view
-    private func isNew(_ isNew: Bool, theme: Theme) {
+    private func isNew(_ isNew: Bool) {
         if isNew {
             if badge == nil {
                 let badge = UIView()
@@ -238,7 +229,8 @@ extension PageActionMenuCell {
             let height = size.height + 5
             badge?.layer.cornerRadius = height / 2
             badge?.frame.size = .init(width: size.width + 16, height: height)
-            badgeLabel?.textColor = theme.colors.ecosia.textInversePrimary
+            badge?.backgroundColor = .legacyTheme.ecosia.primaryBrand
+            badgeLabel?.textColor = .legacyTheme.ecosia.primaryTextInverted
         } else {
             accessoryView = nil
         }

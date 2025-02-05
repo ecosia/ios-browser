@@ -5,7 +5,7 @@
 import UIKit
 import Common
 
-final class NTPTooltip: UICollectionReusableView, ThemeApplicable {
+final class NTPTooltip: UICollectionReusableView, Themeable {
     enum TailPosition {
         case leading, center
     }
@@ -130,7 +130,10 @@ final class NTPTooltip: UICollectionReusableView, ThemeApplicable {
         let tap = UITapGestureRecognizer(target: self, action: #selector(tapped))
         addGestureRecognizer(tap)
 
+        applyTheme()
         addShadows()
+
+        listenForThemeChange(self)
     }
 
     func setText(_ text: String) {
@@ -145,11 +148,11 @@ final class NTPTooltip: UICollectionReusableView, ThemeApplicable {
         linkButton.isHidden = true
     }
 
-    func setLinkTitle(_ text: String, theme: Theme) {
+    func setLinkTitle(_ text: String) {
         let titleString = NSMutableAttributedString(string: text)
         titleString.addAttributes([
             .font: UIFont.preferredFont(forTextStyle: .callout).bold(),
-            .foregroundColor: theme.colors.ecosia.textInversePrimary
+            .foregroundColor: UIColor.legacyTheme.ecosia.primaryTextInverted
         ], range: NSRange(location: 0, length: text.count))
         linkButton.setAttributedTitle(titleString, for: .normal)
         linkButton.isHidden = false
@@ -165,11 +168,11 @@ final class NTPTooltip: UICollectionReusableView, ThemeApplicable {
         }
     }
 
-    func applyTheme(theme: Theme) {
-        tail.tintColor = theme.colors.ecosia.backgroundQuaternary
-        background.backgroundColor = theme.colors.ecosia.backgroundQuaternary
-        textLabel.textColor = theme.colors.ecosia.textInversePrimary
-        closeButton.tintColor = theme.colors.ecosia.textInversePrimary
+    @objc func applyTheme() {
+        tail.tintColor = UIColor.legacyTheme.ecosia.quarternaryBackground
+        background.backgroundColor = UIColor.legacyTheme.ecosia.quarternaryBackground
+        textLabel.textColor = .legacyTheme.ecosia.primaryTextInverted
+        closeButton.tintColor = .legacyTheme.ecosia.primaryTextInverted
     }
 
     @objc func tapped() {
@@ -182,6 +185,11 @@ final class NTPTooltip: UICollectionReusableView, ThemeApplicable {
 
     @objc private func linkButtonTapped() {
         delegate?.ntpTooltipLinkTapped(self)
+    }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        applyTheme()
     }
 
     private func updateTailPosition() {

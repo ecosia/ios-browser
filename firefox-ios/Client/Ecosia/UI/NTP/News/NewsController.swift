@@ -2,9 +2,9 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
-import Core
 import UIKit
 import Common
+import Ecosia
 
 final class NewsController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource,
                             UICollectionViewDelegateFlowLayout, Themeable {
@@ -20,7 +20,7 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
 
     let windowUUID: WindowUUID
     var currentWindowUUID: Common.WindowUUID? { return windowUUID }
-    var themeManager: ThemeManager
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
     var themeObserver: NSObjectProtocol?
     var notificationCenter: NotificationProtocol = NotificationCenter.default
 
@@ -28,11 +28,8 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
 
     required init?(coder: NSCoder) { nil }
 
-    init(items: [NewsModel],
-         windowUUID: WindowUUID,
-         themeManager: ThemeManager = AppContainer.shared.resolve()) {
+    init(windowUUID: WindowUUID, items: [NewsModel]) {
         self.windowUUID = windowUUID
-        self.themeManager = themeManager
         super.init(nibName: nil, bundle: nil)
         self.items = items
         title = .localized(.ecosiaNews)
@@ -133,7 +130,6 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
     func collectionView(_: UICollectionView, cellForItemAt: IndexPath) -> UICollectionViewCell {
         let cell = collection.dequeueReusableCell(withReuseIdentifier: identifier, for: cellForItemAt) as! NTPNewsCell
         cell.configure(items[cellForItemAt.row], images: images, row: cellForItemAt.item, totalCount: items.count)
-        cell.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
         return cell
     }
 
@@ -145,16 +141,13 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
     }
 
     func applyTheme() {
-        let theme = themeManager.getCurrentTheme(for: windowUUID)
         collection.visibleSupplementaryViews(ofKind: UICollectionView.elementKindSectionHeader).forEach({
             ($0 as? Themeable)?.applyTheme()
-            ($0 as? ThemeApplicable)?.applyTheme(theme: theme)
         })
         collection.visibleCells.forEach({
             ($0 as? Themeable)?.applyTheme()
-            ($0 as? ThemeApplicable)?.applyTheme(theme: theme)
         })
-        collection.backgroundColor = theme.colors.ecosia.modalBackground
+        collection.backgroundColor = UIColor.legacyTheme.ecosia.modalBackground
         updateBarAppearance()
 
         if traitCollection.userInterfaceIdiom == .pad {
@@ -165,13 +158,12 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
 
     private func updateBarAppearance() {
         guard let appearance = navigationController?.navigationBar.standardAppearance else { return }
-        let theme = themeManager.getCurrentTheme(for: windowUUID)
-        appearance.largeTitleTextAttributes = [.foregroundColor: theme.colors.ecosia.textPrimary]
-        appearance.titleTextAttributes = [.foregroundColor: theme.colors.ecosia.textPrimary]
-        appearance.backgroundColor = theme.colors.ecosia.modalBackground
+        appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.legacyTheme.ecosia.primaryText]
+        appearance.titleTextAttributes = [.foregroundColor: UIColor.legacyTheme.ecosia.primaryText]
+        appearance.backgroundColor = .legacyTheme.ecosia.modalBackground
         navigationItem.standardAppearance = appearance
-        navigationController?.navigationBar.backgroundColor = theme.colors.ecosia.modalBackground
-        navigationController?.navigationBar.tintColor = theme.colors.ecosia.brandPrimary
+        navigationController?.navigationBar.backgroundColor = .legacyTheme.ecosia.modalBackground
+        navigationController?.navigationBar.tintColor = .legacyTheme.ecosia.primaryBrand
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -180,7 +172,13 @@ final class NewsController: UIViewController, UICollectionViewDelegate, UICollec
     }
 }
 
-private final class NewsSubHeader: UICollectionReusableView, ThemeApplicable {
+private final class NewsSubHeader: UICollectionReusableView, Themeable {
+
+    // MARK: - Themeable Properties
+
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeObserver: NSObjectProtocol?
+    var notificationCenter: NotificationProtocol = NotificationCenter.default
 
     // MARK: - Properties
 
@@ -205,11 +203,17 @@ private final class NewsSubHeader: UICollectionReusableView, ThemeApplicable {
         subtitle.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16).isActive = true
         subtitle.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
         subtitle.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
+        applyTheme()
     }
 
-    func applyTheme(theme: Theme) {
-        backgroundColor = theme.colors.ecosia.modalBackground
-        subtitle.textColor = theme.colors.ecosia.textSecondary
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        applyTheme()
+    }
+
+    func applyTheme() {
+        backgroundColor = UIColor.legacyTheme.ecosia.modalBackground
+        subtitle.textColor = UIColor.legacyTheme.ecosia.secondaryText
     }
 }
 

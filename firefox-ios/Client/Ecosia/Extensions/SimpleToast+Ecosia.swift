@@ -3,7 +3,6 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
-import Common
 
 extension SimpleToast {
 
@@ -17,10 +16,9 @@ extension SimpleToast {
         _ text: String,
         image: AccessoryImage,
         bottomContainer: UIView,
-        theme: Theme,
         bottomInset: CGFloat? = nil
     ) -> SimpleToast {
-        let toast = self.createView(text: text, image: image, theme: theme)
+        let toast = self.createView(text: text, image: image)
         toast.layer.cornerRadius = 10
         toast.layer.masksToBounds = true
 
@@ -35,21 +33,19 @@ extension SimpleToast {
         return self
     }
 
-    fileprivate func createView(text: String,
-                                image: AccessoryImage,
-                                theme: Theme) -> UIStackView {
+    fileprivate func createView(text: String, image: AccessoryImage) -> UIStackView {
         let stack = UIStackView()
         stack.axis = .horizontal
         stack.alignment = .center
         stack.distribution = .fill
         stack.spacing = 8
         stack.layer.cornerRadius = 10
-        stack.backgroundColor = theme.colors.ecosia.backgroundQuaternary
+        stack.backgroundColor = UIColor.legacyTheme.ecosia.quarternaryBackground
 
         let toast = UILabel()
         toast.text = text
         toast.numberOfLines = 1
-        toast.textColor = theme.colors.ecosia.textInversePrimary
+        toast.textColor = UIColor.legacyTheme.ecosia.primaryTextInverted
         toast.font = UIFont.preferredFont(forTextStyle: .body)
         toast.adjustsFontForContentSizeCategory = true
         toast.adjustsFontSizeToFitWidth = true
@@ -61,7 +57,7 @@ extension SimpleToast {
         switch image {
         case let .named(name):
             imageView = UIImageView(image: .init(named: name)?.withRenderingMode(.alwaysTemplate))
-            imageView.tintColor = theme.colors.ecosia.toastImageTint
+            imageView.tintColor = UIColor.legacyTheme.ecosia.toastImageTint
             imageView.contentMode = .scaleAspectFit
             imageView.setContentHuggingPriority(.required, for: .horizontal)
         case let .view(view):

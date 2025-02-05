@@ -5,12 +5,18 @@
 import UIKit
 import Common
 
-final class WelcomeTourProfit: UIView, ThemeApplicable {
+final class WelcomeTourProfit: UIView, Themeable {
     weak var beforeContainer: UIView!
     weak var beforeLabel: UILabel!
     weak var afterContainer: UIView!
     weak var afterLabel: UILabel!
     weak var treeImage: UIImageView!
+
+    // MARK: - Themeable Properties
+
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeObserver: NSObjectProtocol?
+    var notificationCenter: NotificationProtocol = NotificationCenter.default
 
     // MARK: - Init
 
@@ -18,6 +24,7 @@ final class WelcomeTourProfit: UIView, ThemeApplicable {
         super.init(frame: .zero)
         setup()
         updateAccessibilitySettings()
+        applyTheme()
     }
 
     required init?(coder: NSCoder) {  nil }
@@ -101,12 +108,12 @@ final class WelcomeTourProfit: UIView, ThemeApplicable {
         afterDot.centerXAnchor.constraint(equalTo: afterEllipse.leadingAnchor).isActive = true
     }
 
-    func applyTheme(theme: Theme) {
-        beforeContainer.backgroundColor = theme.colors.ecosia.modalBackground
-        afterContainer.backgroundColor = theme.colors.ecosia.modalBackground
-        beforeLabel.textColor = theme.colors.ecosia.textPrimary
-        afterLabel.textColor = theme.colors.ecosia.textPrimary
-        treeImage.tintColor = theme.colors.ecosia.brandPrimary
+    func applyTheme() {
+        beforeContainer.backgroundColor = .legacyTheme.ecosia.welcomeBackground
+        afterContainer.backgroundColor = .legacyTheme.ecosia.welcomeBackground
+        beforeLabel.textColor = .legacyTheme.ecosia.primaryText
+        afterLabel.textColor = .legacyTheme.ecosia.primaryText
+        treeImage.tintColor = .legacyTheme.ecosia.primaryBrand
     }
 
     func updateAccessibilitySettings() {

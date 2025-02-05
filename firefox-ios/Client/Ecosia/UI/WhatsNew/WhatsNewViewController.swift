@@ -3,7 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import UIKit
-import Core
+import Ecosia
 import Common
 
 protocol WhatsNewViewDelegate: AnyObject {
@@ -68,18 +68,14 @@ final class WhatsNewViewController: UIViewController, Themeable {
 
     let windowUUID: WindowUUID
     var currentWindowUUID: WindowUUID? { return windowUUID }
-    var themeManager: ThemeManager
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
     var themeObserver: NSObjectProtocol?
     var notificationCenter: NotificationProtocol = NotificationCenter.default
 
     // MARK: - Init
 
-    init(viewModel: WhatsNewViewModel,
-         delegate: WhatsNewViewDelegate?,
-         windowUUID: WindowUUID,
-         themeManager: ThemeManager = AppContainer.shared.resolve()) {
+    init(viewModel: WhatsNewViewModel, delegate: WhatsNewViewDelegate?, windowUUID: WindowUUID) {
         self.windowUUID = windowUUID
-        self.themeManager = themeManager
         super.init(nibName: nil, bundle: nil)
         self.viewModel = viewModel
         self.delegate = delegate
@@ -245,7 +241,6 @@ extension WhatsNewViewController: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: WhatsNewCell.cellIdentifier, for: indexPath) as! WhatsNewCell
         let item = viewModel.items[indexPath.row]
         cell.configure(with: item)
-        cell.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
         return cell
     }
 }
@@ -255,18 +250,17 @@ extension WhatsNewViewController: UITableViewDataSource {
 extension WhatsNewViewController {
 
     func applyTheme() {
-        let theme = themeManager.getCurrentTheme(for: windowUUID)
-        view.backgroundColor = theme.colors.ecosia.backgroundPrimary
-        topContainerView.backgroundColor = theme.colors.ecosia.backgroundTertiary
-        tableView.backgroundColor = theme.colors.ecosia.backgroundPrimary
+        view.backgroundColor = .legacyTheme.ecosia.primaryBackground
+        topContainerView.backgroundColor = .legacyTheme.ecosia.tertiaryBackground
+        tableView.backgroundColor = .legacyTheme.ecosia.primaryBackground
         tableView.separatorColor = .clear
-        knob.backgroundColor = theme.colors.ecosia.textSecondary
-        closeButton.backgroundColor = theme.colors.ecosia.backgroundPrimary
-        closeButton.tintColor = theme.colors.ecosia.textPrimary
-        footerButton.backgroundColor = theme.colors.ecosia.brandPrimary
-        footerButton.setTitleColor(theme.colors.ecosia.textInversePrimary, for: .normal)
-        headerLabelContainerView.backgroundColor = theme.colors.ecosia.backgroundPrimary
-        secondImageView.tintColor = theme.colors.ecosia.backgroundPrimary
+        knob.backgroundColor = .legacyTheme.ecosia.secondaryText
+        closeButton.backgroundColor = .legacyTheme.ecosia.primaryBackground
+        closeButton.tintColor = .legacyTheme.ecosia.whatsNewCloseButton
+        footerButton.backgroundColor = .legacyTheme.ecosia.primaryBrand
+        footerButton.setTitleColor(.legacyTheme.ecosia.primaryTextInverted, for: .normal)
+        headerLabelContainerView.backgroundColor = .legacyTheme.ecosia.primaryBackground
+        secondImageView.tintColor = .legacyTheme.ecosia.primaryBackground
     }
 }
 

@@ -626,7 +626,7 @@ class HistoryPanel: UIViewController,
             // Ecosia: Replace empty header
             // tableView.tableFooterView = emptyStateOverlayView
             tableView.tableFooterView = emptyHeader
-            emptyHeader.applyTheme(theme: currentTheme())
+            emptyHeader.applyTheme()
         } else {
             tableView.alwaysBounceVertical = true
             tableView.tableFooterView = nil
@@ -674,6 +674,7 @@ class HistoryPanel: UIViewController,
         updateEmptyPanelState()
 
         let theme = currentTheme()
+        // TODO Ecosia Upgrade: Check new background color layer1 [MOB-3152]
         tableView.backgroundColor = theme.colors.layer1
         emptyStateOverlayView.backgroundColor = theme.colors.layer1
 
@@ -682,7 +683,7 @@ class HistoryPanel: UIViewController,
         */
         searchbar.barTintColor = tableView.backgroundColor
         searchbar.backgroundColor = tableView.backgroundColor
-        searchbar.searchTextField.backgroundColor = theme.colors.ecosia.backgroundPrimary
+        searchbar.searchTextField.backgroundColor = .legacyTheme.ecosia.primaryBackground
 
         /* Ecosia: Update search bar image
         let tintColor = theme.colors.textPrimary
@@ -690,7 +691,7 @@ class HistoryPanel: UIViewController,
             .withRenderingMode(.alwaysTemplate)
             .tinted(withColor: tintColor)
         */
-        let searchBarImage = UIImage(named: "search")?.tinted(withColor: theme.colors.ecosia.textSecondary).createScaled(.init(width: 16, height: 16))
+        let searchBarImage = UIImage(named: "search")?.tinted(withColor: .legacyTheme.ecosia.secondaryText).createScaled(.init(width: 16, height: 16))
 
         searchbar.setImage(searchBarImage, for: .search, state: .normal)
 
@@ -707,8 +708,8 @@ class HistoryPanel: UIViewController,
         bottomSearchButton.tintColor = theme.colors.iconPrimary
         bottomDeleteButton.tintColor = theme.colors.iconPrimary
         */
-        bottomSearchButton.tintColor = theme.colors.ecosia.textPrimary
-        bottomDeleteButton.tintColor = theme.colors.ecosia.stateError
+        bottomSearchButton.tintColor = .legacyTheme.ecosia.primaryText
+        bottomDeleteButton.tintColor = .legacyTheme.ecosia.warning
 
         applyEmptyStateViewTheme(theme)
 

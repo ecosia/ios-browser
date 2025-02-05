@@ -3,8 +3,8 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import UIKit
-import Core
 import Shared
+import Ecosia
 
 extension BrowserViewController: HomepageViewControllerDelegate {
     func homeDidTapSearchButton(_ home: HomepageViewController) {
@@ -74,7 +74,7 @@ extension BrowserViewController {
     }
 
     private func presentLoadingScreen() {
-        present(LoadingScreen(profile: profile, referrals: referrals, windowUUID: windowUUID, referralCode: User.shared.referrals.pendingClaim), animated: true)
+        present(LoadingScreen(profile: profile, referrals: referrals, referralCode: User.shared.referrals.pendingClaim), animated: true)
     }
 
     private func handleFirstTimeUserActions() {

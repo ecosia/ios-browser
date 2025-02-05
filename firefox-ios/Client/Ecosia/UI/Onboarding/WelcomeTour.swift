@@ -3,8 +3,8 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import UIKit
-import Core
 import Common
+import Ecosia
 
 protocol WelcomeTourDelegate: AnyObject {
     func welcomeTourDidFinish(_ tour: WelcomeTour)
@@ -38,16 +38,14 @@ final class WelcomeTour: UIViewController, Themeable {
 
     // MARK: - Themeable Properties
 
-    let windowUUID: WindowUUID
-    var currentWindowUUID: WindowUUID? { windowUUID }
+    var currentWindowUUID: WindowUUID? { return view.currentWindowUUID }
     var themeManager: ThemeManager { AppContainer.shared.resolve() }
     var themeObserver: NSObjectProtocol?
     var notificationCenter: NotificationProtocol = NotificationCenter.default
 
     // MARK: - Init
 
-    init(delegate: WelcomeTourDelegate, windowUUID: WindowUUID, startingStep: Step? = nil) {
-        self.windowUUID = windowUUID
+    init(delegate: WelcomeTourDelegate, startingStep: Step? = nil) {
         super.init(nibName: nil, bundle: nil)
         modalPresentationCapturesStatusBarAppearance = true
         self.delegate = delegate
@@ -293,7 +291,7 @@ final class WelcomeTour: UIViewController, Themeable {
         container.subviews.forEach({ $0.removeFromSuperview() })
 
         guard let content = content else { return }
-        (content as? ThemeApplicable)?.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
+        (content as? Themeable)?.applyTheme()
         container.addSubview(content)
         content.translatesAutoresizingMaskIntoConstraints = false
         content.leadingAnchor.constraint(equalTo: container.leadingAnchor).isActive = true
@@ -359,18 +357,17 @@ final class WelcomeTour: UIViewController, Themeable {
 
     // MARK: Theming
     func applyTheme() {
-        let theme = themeManager.getCurrentTheme(for: currentWindowUUID)
-        view.backgroundColor = theme.colors.ecosia.modalBackground
-        waves.tintColor = theme.colors.ecosia.modalBackground
-        titleLabel.textColor = theme.colors.ecosia.textPrimary
-        subtitleLabel.textColor = theme.colors.ecosia.textSecondary
-        skipButton?.tintColor = theme.colors.ecosia.buttonBackgroundPrimary
-        backButton.tintColor = theme.colors.ecosia.buttonBackgroundPrimary
-        pageControl.pageIndicatorTintColor = theme.colors.ecosia.stateDisabled
-        pageControl.currentPageIndicatorTintColor = theme.colors.ecosia.buttonBackgroundPrimary
-        ctaButton.backgroundColor = .Light.Button.backgroundSecondary
+        view.backgroundColor = .legacyTheme.ecosia.welcomeBackground
+        waves.tintColor = .legacyTheme.ecosia.welcomeBackground
+        titleLabel.textColor = .legacyTheme.ecosia.primaryText
+        subtitleLabel.textColor = .legacyTheme.ecosia.secondaryText
+        skipButton?.tintColor = .legacyTheme.ecosia.primaryButton
+        backButton.tintColor = .legacyTheme.ecosia.primaryButton
+        pageControl.pageIndicatorTintColor = .legacyTheme.ecosia.disabled
+        pageControl.currentPageIndicatorTintColor = .legacyTheme.ecosia.primaryButton
+        ctaButton.backgroundColor = .Light.Button.secondary
         ctaButton.setTitleColor(.Light.Text.primary, for: .normal)
-        container.subviews.forEach({ ($0 as? ThemeApplicable)?.applyTheme(theme: theme) })
+        container.subviews.forEach({ ($0 as? Themeable)?.applyTheme() })
 
         imageView.backgroundColor = current?.background.color ?? .clear
         guard let current = current else { return }

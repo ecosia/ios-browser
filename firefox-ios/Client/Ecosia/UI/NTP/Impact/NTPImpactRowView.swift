@@ -7,7 +7,7 @@ import Common
 import ComponentLibrary
 
 /// A view representing an individual impact row, used in the New Tab Page to display environmental impact information.
-final class NTPImpactRowView: UIView, ThemeApplicable {
+final class NTPImpactRowView: UIView, Themeable {
 
     // MARK: - UX Constants
 
@@ -84,7 +84,6 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         button.titleLabel?.textAlignment = .right
         button.contentHorizontalAlignment = .right
         button.contentVerticalAlignment = .center
-        button.buttonEdgeInsets = .init(top: 0, leading: 0, bottom: 0, trailing: 0)
         button.setContentCompressionResistancePriority(.required, for: .horizontal)
         button.addTarget(self, action: #selector(buttonAction), for: .touchUpInside)
         button.clipsToBounds = true
@@ -134,6 +133,12 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
     /// Optional background color for the row.
     var customBackgroundColor: UIColor?
 
+    // MARK: - Themeable Properties
+
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeObserver: NSObjectProtocol?
+    var notificationCenter: NotificationProtocol = NotificationCenter.default
+
     // MARK: - Initialization
 
     /// Initializes a new `NTPImpactRowView` with the provided `ClimateImpactInfo`.
@@ -148,6 +153,7 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         }
         setupView()
         setupConstraints()
+        applyTheme()
     }
 
     /// Not supported, as `NTPImpactRowView` requires `ClimateImpactInfo` during initialization.
@@ -227,16 +233,17 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         ])
     }
 
-    // MARK: - ThemeApplicable
+    // MARK: - Themeable
 
-    func applyTheme(theme: Theme) {
-        backgroundColor = customBackgroundColor ?? theme.colors.ecosia.backgroundSecondary
-        titleLabel.textColor = theme.colors.ecosia.textPrimary
-        subtitleLabel.textColor = theme.colors.ecosia.textSecondary
-        actionButton.setTitleColor(theme.colors.ecosia.buttonBackgroundPrimary, for: .normal)
-        dividerView.backgroundColor = theme.colors.ecosia.borderDecorative
-        totalProgressView.color = theme.colors.ecosia.ntpBackground
-        currentProgressView.color = theme.colors.ecosia.brandPrimary
+    /// Applies the current theme to the view, updating colors and styles as needed.
+    func applyTheme() {
+        backgroundColor = customBackgroundColor ?? .legacyTheme.ecosia.secondaryBackground
+        titleLabel.textColor = .legacyTheme.ecosia.primaryText
+        subtitleLabel.textColor = .legacyTheme.ecosia.secondaryText
+        actionButton.setTitleColor(.legacyTheme.ecosia.primaryButton, for: .normal)
+        dividerView.backgroundColor = .legacyTheme.ecosia.border
+        totalProgressView.color = .legacyTheme.ecosia.ntpBackground
+        currentProgressView.color = .legacyTheme.ecosia.treeCounterProgressCurrent
     }
 
     // MARK: - Actions

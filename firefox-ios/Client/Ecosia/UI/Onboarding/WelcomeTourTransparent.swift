@@ -3,13 +3,19 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import UIKit
-import Core
+import Ecosia
 import Common
 
-final class WelcomeTourTransparent: UIView, ThemeApplicable {
+final class WelcomeTourTransparent: UIView, Themeable {
     private weak var stack: UIStackView!
     private weak var monthView: UIView!
     private weak var monthViewLabel: UILabel!
+
+    // MARK: - Themeable Properties
+
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeObserver: NSObjectProtocol?
+    var notificationCenter: NotificationProtocol = NotificationCenter.default
 
     // MARK: - Init
 
@@ -17,6 +23,7 @@ final class WelcomeTourTransparent: UIView, ThemeApplicable {
         super.init(frame: frame)
         setup()
         updateAccessibilitySettings()
+        applyTheme()
     }
 
     required init?(coder: NSCoder) {  nil }
@@ -52,11 +59,11 @@ final class WelcomeTourTransparent: UIView, ThemeApplicable {
         }
     }
 
-    func applyTheme(theme: Theme) {
+    func applyTheme() {
         stack.arrangedSubviews.forEach { view in
-            (view as? ThemeApplicable)?.applyTheme(theme: theme)
+            (view as? Themeable)?.applyTheme()
         }
-        applyThemeToMonthView(theme: theme)
+        applyThemeToMonthView()
     }
 
     func updateAccessibilitySettings() {
@@ -100,8 +107,8 @@ final class WelcomeTourTransparent: UIView, ThemeApplicable {
         parentStack.addArrangedSubview(UIView(frame: .init(width: 0, height: 8)))
     }
 
-    func applyThemeToMonthView(theme: Theme) {
-        monthView.backgroundColor = theme.colors.ecosia.buttonBackgroundPrimary
-        monthViewLabel.textColor = theme.colors.ecosia.textTertiary
+    func applyThemeToMonthView() {
+        monthView.backgroundColor = .legacyTheme.ecosia.primaryButton
+        monthViewLabel.textColor = .legacyTheme.ecosia.tertiaryText
     }
 }

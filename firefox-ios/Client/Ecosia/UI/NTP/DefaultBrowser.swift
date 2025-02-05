@@ -4,6 +4,7 @@
 
 import UIKit
 import Common
+import Ecosia
 
 @available(iOS 14, *)
 protocol DefaultBrowserDelegate: AnyObject {
@@ -202,7 +203,7 @@ final class DefaultBrowser: UIViewController, Themeable {
         line2.addArrangedSubview(text2)
         self.text2 = text2
 
-        let cta = EcosiaPrimaryButton(windowUUID: windowUUID)
+        let cta = EcosiaPrimaryButton()
         cta.contentEdgeInsets = .init(top: 0, left: 16, bottom: 0, right: 16)
         cta.translatesAutoresizingMaskIntoConstraints = false
         cta.setTitle(.localized(.openSettings), for: .normal)
@@ -237,18 +238,17 @@ final class DefaultBrowser: UIViewController, Themeable {
     }
 
     @objc func applyTheme() {
-        let theme = themeManager.getCurrentTheme(for: windowUUID)
         view.backgroundColor = .clear
-        headline.textColor = theme.colors.ecosia.textPrimary
-        text1.textColor = theme.colors.ecosia.textSecondary
-        text2.textColor = theme.colors.ecosia.textSecondary
-        arrow1.tintColor = theme.colors.ecosia.buttonBackgroundPrimary
-        arrow2.tintColor = theme.colors.ecosia.buttonBackgroundPrimary
-        content.backgroundColor = theme.colors.ecosia.ntpIntroBackground
-        waves.tintColor = theme.colors.ecosia.ntpIntroBackground
-        cta.setTitleColor(theme.colors.ecosia.textInversePrimary, for: .normal)
-        skip.setTitleColor(theme.colors.ecosia.buttonBackgroundPrimary, for: .normal)
-        cta.backgroundColor = theme.colors.ecosia.buttonBackgroundPrimary
+        headline.textColor = .legacyTheme.ecosia.primaryText
+        text1.textColor = .legacyTheme.ecosia.secondaryText
+        text2.textColor = .legacyTheme.ecosia.secondaryText
+        arrow1.tintColor = .legacyTheme.ecosia.primaryButton
+        arrow2.tintColor = .legacyTheme.ecosia.primaryButton
+        content.backgroundColor = .legacyTheme.ecosia.ntpIntroBackground
+        waves.tintColor = .legacyTheme.ecosia.ntpIntroBackground
+        cta.setTitleColor(.legacyTheme.ecosia.primaryTextInverted, for: .normal)
+        skip.setTitleColor(.legacyTheme.ecosia.primaryButton, for: .normal)
+        cta.backgroundColor = .legacyTheme.ecosia.primaryButton
     }
 
     @objc private func skipTapped() {

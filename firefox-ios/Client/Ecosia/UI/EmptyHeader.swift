@@ -5,11 +5,17 @@
 import UIKit
 import Common
 
-final class EmptyHeader: UITableViewHeaderFooterView, ThemeApplicable {
+final class EmptyHeader: UITableViewHeaderFooterView, Themeable {
     private let icon: String
     private weak var labelTitle: UILabel?
     private weak var labelSubtitle: UILabel?
     private weak var image: UIImageView?
+
+    // MARK: - Themeable Properties
+
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeObserver: NSObjectProtocol?
+    var notificationCenter: NotificationProtocol = NotificationCenter.default
 
     // MARK: - Init
 
@@ -61,12 +67,12 @@ final class EmptyHeader: UITableViewHeaderFooterView, ThemeApplicable {
         labelSubtitle.widthAnchor.constraint(lessThanOrEqualToConstant: 180).isActive = true
     }
 
-    // MARK: - ThemeApplicable
+    // MARK: - Themeable
 
-    func applyTheme(theme: Theme) {
+    func applyTheme() {
         image?.image = .init(named: icon)?.withRenderingMode(.alwaysTemplate)
-        image?.tintColor = theme.colors.ecosia.textSecondary
-        labelTitle?.textColor = theme.colors.ecosia.textPrimary
-        labelSubtitle?.textColor = theme.colors.ecosia.textSecondary
+        image?.tintColor = UIColor.legacyTheme.ecosia.secondaryText
+        labelTitle?.textColor = .legacyTheme.ecosia.primaryText
+        labelSubtitle?.textColor = .legacyTheme.ecosia.secondaryText
     }
 }

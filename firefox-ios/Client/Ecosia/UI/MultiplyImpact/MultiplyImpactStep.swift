@@ -5,10 +5,16 @@
 import UIKit
 import Common
 
-final class MultiplyImpactStep: UIView, ThemeApplicable {
+final class MultiplyImpactStep: UIView, Themeable {
     private weak var indicator: UIImageView?
     private weak var titleLabel: UILabel?
     private weak var subtitleLabel: UILabel?
+
+    // MARK: - Themeable Properties
+
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeObserver: NSObjectProtocol?
+    var notificationCenter: NotificationProtocol = NotificationCenter.default
 
     // MARK: - Init
 
@@ -61,9 +67,9 @@ final class MultiplyImpactStep: UIView, ThemeApplicable {
         subtitleLabel.rightAnchor.constraint(lessThanOrEqualTo: rightAnchor, constant: -12).isActive = true
     }
 
-    func applyTheme(theme: Theme) {
-        indicator?.tintColor = theme.colors.ecosia.brandPrimary
-        titleLabel?.textColor = theme.colors.ecosia.textPrimary
-        subtitleLabel?.textColor = theme.colors.ecosia.textSecondary
+    func applyTheme() {
+        indicator?.tintColor = .legacyTheme.ecosia.primaryBrand
+        titleLabel?.textColor = .legacyTheme.ecosia.primaryText
+        subtitleLabel?.textColor = .legacyTheme.ecosia.secondaryText
     }
 }

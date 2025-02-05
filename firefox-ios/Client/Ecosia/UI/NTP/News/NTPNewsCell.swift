@@ -2,11 +2,11 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
-import Core
+import Ecosia
 import UIKit
 import Common
 
-final class NTPNewsCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
+final class NTPNewsCell: UICollectionViewCell, Themeable, ReusableCell {
     private var imageUrl: URL?
     private lazy var background: UIView = {
         let background = UIView()
@@ -90,8 +90,13 @@ final class NTPNewsCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
         bottomLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
         return bottomLabel
     }()
-    var defaultBackgroundColor: UIColor = .clear
-    var selectedBackgroundColor: UIColor = .clear
+    var defaultBackgroundColor: (() -> UIColor) = { .legacyTheme.ecosia.ntpCellBackground }
+
+    // MARK: - Themeable Properties
+
+    var themeManager: ThemeManager { AppContainer.shared.resolve() }
+    var themeObserver: NSObjectProtocol?
+    var notificationCenter: NotificationProtocol = NotificationCenter.default
 
     // MARK: - Init
 
@@ -157,6 +162,9 @@ final class NTPNewsCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
         border.rightAnchor.constraint(equalTo: background.rightAnchor, constant: -16).isActive = true
         border.bottomAnchor.constraint(equalTo: background.bottomAnchor).isActive = true
         border.heightAnchor.constraint(equalToConstant: 1).isActive = true
+
+        applyTheme()
+        listenForThemeChange(contentView)
     }
 
     override var isSelected: Bool {
@@ -192,6 +200,7 @@ final class NTPNewsCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
         border.isHidden = row == totalCount - 1
 
         background.setMaskedCornersUsingPosition(row: row, totalCount: totalCount)
+        applyTheme()
 
         isAccessibilityElement = true
         accessibilityIdentifier = "news_item"
@@ -208,18 +217,16 @@ final class NTPNewsCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
     }
 
     private func hover() {
-        background.backgroundColor = isSelected || isHighlighted ? selectedBackgroundColor : defaultBackgroundColor
+        background.backgroundColor = isSelected || isHighlighted ? .legacyTheme.ecosia.secondarySelectedBackground : defaultBackgroundColor()
     }
 
-    func applyTheme(theme: Theme) {
-        defaultBackgroundColor = theme.colors.ecosia.ntpCellBackground
-        selectedBackgroundColor = theme.colors.ecosia.secondarySelectedBackground
-        background.backgroundColor = defaultBackgroundColor
-        placeholder.tintColor = theme.colors.ecosia.iconDecorative
-        placeholder.backgroundColor = theme.colors.ecosia.newsPlaceholder
-        border.backgroundColor = theme.colors.ecosia.borderDecorative
-        title.textColor = theme.colors.ecosia.textPrimary
-        bottomLabel.textColor = theme.colors.ecosia.textSecondary
-        highlightLabel.textColor = theme.colors.ecosia.textSecondary
+    func applyTheme() {
+        background.backgroundColor = defaultBackgroundColor()
+        placeholder.tintColor = .legacyTheme.ecosia.decorativeIcon
+        placeholder.backgroundColor = .legacyTheme.ecosia.newsPlaceholder
+        border.backgroundColor = .legacyTheme.ecosia.border
+        title.textColor = .legacyTheme.ecosia.primaryText
+        bottomLabel.textColor = .legacyTheme.ecosia.secondaryText
+        highlightLabel.textColor = .legacyTheme.ecosia.secondaryText
     }
 }

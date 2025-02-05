@@ -8,8 +8,7 @@ private struct UX {
     /* Ecosia: Update background color
     static let BackgroundColor = UIColor.Photon.Purple60
     */
-    // TODO: Do we also need to handle `white` on Dark Theme?
-    static let BackgroundColor = UIColor.Photon.Grey60
+    static let BackgroundColor = UIColor.legacyTheme.ecosia.secondaryBrand
 
     // The amount of pixels the toggle button will expand over the normal size.
     // This results in the larger -> contract animation.
