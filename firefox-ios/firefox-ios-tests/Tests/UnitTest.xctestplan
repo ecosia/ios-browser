@@ -96,7 +96,6 @@
   },
   "testTargets" : [
     {
-      "enabled" : false,
       "skippedTests" : [
         "MetaGlobalTests\/testHappyOptimisticStateMachine()",
         "MetaGlobalTests\/testMetaGlobalAndCryptoKeysFresh()",

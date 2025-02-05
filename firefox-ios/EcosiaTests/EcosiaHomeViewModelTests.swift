@@ -3,7 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import XCTest
-
+import Common
 @testable import Client
 @testable import Ecosia
 
@@ -21,6 +21,7 @@ class EcosiaHomeViewModelTests: XCTestCase {
         if let bundleID = Bundle.main.bundleIdentifier {
             UserDefaults.standard.removePersistentDomain(forName: bundleID)
         }
+        DependencyHelperMock().bootstrapDependencies()
     }
 
     override func tearDown() {

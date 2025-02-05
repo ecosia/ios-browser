@@ -149,8 +149,7 @@ extension NTPImpactCellViewModel: HomepageSectionHandler {
     func configure(_ cell: UICollectionViewCell, at indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = cell as? NTPImpactCell else { return UICollectionViewCell() }
         let items = infoItemSections[indexPath.row]
-        cell.configure(items: items)
-        cell.delegate = delegate
+        cell.configure(items: items, delegate: delegate, theme: theme)
         cells[indexPath.row] = cell
         return cell
     }

@@ -24,16 +24,13 @@ final class NTPTests: SnapshotBaseTests {
 extension NTPTests {
     fileprivate func snapshotNTP(impactIntroShown: Bool) {
         SnapshotTestHelper.assertSnapshot(initializingWith: {
-            let windowUUID = WindowUUID(uuidString: UUID().uuidString)!
-            let tabManager = TabManagerImplementation(profile: self.profile,
-                                                      uuid: ReservedWindowUUID(uuid: windowUUID, isNew: false))
-            let urlBar = URLBarView(profile: self.profile, windowUUID: windowUUID)
+            let urlBar = URLBarView(profile: self.profile, windowUUID: .snapshotTestDefaultUUID)
             let overlayManager = MockOverlayModeManager()
             overlayManager.setURLBar(urlBarView: urlBar)
 
             let homePageViewController = LegacyHomepageViewController(profile: self.profile,
                                                                       toastContainer: UIView(),
-                                                                      tabManager: tabManager,
+                                                                      tabManager: MockTabManager(),
                                                                       overlayManager: overlayManager,
                                                                       referrals: .init(),
                                                                       delegate: nil)

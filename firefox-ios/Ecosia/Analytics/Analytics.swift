@@ -3,7 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
-import SnowplowTracker
+internal import SnowplowTracker
 
 open class Analytics {
     static let installSchema = "iglu:org.ecosia/ios_install_event/jsonschema/1-0-0"

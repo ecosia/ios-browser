@@ -32,7 +32,7 @@ final class EcosiaMockThemeManager: ThemeManager {
     }
 
     var window: UIWindow?
-    let windowUUID: WindowUUID = .XCTestDefaultUUID
+    var windowUUID: WindowUUID = .XCTestDefaultUUID
 
     var systemThemeIsOn = true
 
@@ -47,13 +47,13 @@ final class EcosiaMockThemeManager: ThemeManager {
     func setManualTheme(to newTheme: ThemeType) {
         switch newTheme {
         case .light:
-            currentThemeStorage = LightTheme()
+            currentThemeStorage = EcosiaLightTheme()
         case .dark:
-            currentThemeStorage = DarkTheme()
+            currentThemeStorage = EcosiaDarkTheme()
         case .nightMode:
-            currentThemeStorage = NightModeTheme()
+            currentThemeStorage = EcosiaDarkTheme()
         case .privateMode:
-            currentThemeStorage = PrivateModeTheme()
+            currentThemeStorage = EcosiaLightTheme()
         }
     }
 

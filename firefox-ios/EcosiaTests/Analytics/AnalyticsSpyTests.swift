@@ -132,27 +132,25 @@ final class AnalyticsSpyTests: XCTestCase {
     // MARK: - Properties and Setup
 
     var analyticsSpy: AnalyticsSpy!
-    static let analyticsSpyTestsDefaultUUID = WindowUUID(uuidString: "6FC9A5C0-DBE3-11EF-8346-1951622B140F")!
     var profileMock: MockProfile { MockProfile() }
     var tabManagerMock: TabManager {
         let mock = MockTabManager()
-        mock.selectedTab = .init(profile: profileMock, windowUUID: Self.analyticsSpyTestsDefaultUUID)
+        mock.selectedTab = .init(profile: profileMock, windowUUID: .XCTestDefaultUUID)
         mock.selectedTab?.url = URL(string: "https://example.com")
         return mock
     }
 
     override func setUp() {
         super.setUp()
+        DependencyHelperMock().bootstrapDependencies(injectedTabManager: tabManagerMock, themeManager: EcosiaMockThemeManager())
         analyticsSpy = AnalyticsSpy()
         Analytics.shared = analyticsSpy
-        DependencyHelperMock().bootstrapDependencies()
     }
 
     override func tearDown() {
         super.tearDown()
         analyticsSpy = nil
         Analytics.shared = Analytics()
-        DependencyHelperMock().reset()
     }
 
     // MARK: - AppDelegate Tests
@@ -198,7 +196,7 @@ final class AnalyticsSpyTests: XCTestCase {
         let viewModel = BookmarksPanelViewModel(profile: profileMock,
                                                 bookmarksHandler: profileMock.places,
                                                 bookmarkFolderGUID: "TestGuid")
-        return LegacyBookmarksPanel(viewModel: viewModel, windowUUID: Self.analyticsSpyTestsDefaultUUID)
+        return LegacyBookmarksPanel(viewModel: viewModel, windowUUID: .XCTestDefaultUUID)
     }
 
     func testTrackImportClick() {
@@ -374,8 +372,7 @@ final class AnalyticsSpyTests: XCTestCase {
 
     func testWelcomeViewDidAppearTracksIntroDisplayingAndIntroClickStart() {
         // Arrange
-        let welcomeDelegate = MockWelcomeDelegate()
-        let welcome = Welcome(delegate: welcomeDelegate)
+        let welcome = makeWelcome()
         XCTAssertNil(analyticsSpy.introDisplayingPageCalled)
         XCTAssertNil(analyticsSpy.introDisplayingIndexCalled)
 
@@ -390,8 +387,7 @@ final class AnalyticsSpyTests: XCTestCase {
 
     func testWelcomeGetStartedTracksIntroClickNext() {
         // Arrange
-        let welcomeDelegate = MockWelcomeDelegate()
-        let welcome = Welcome(delegate: welcomeDelegate)
+        let welcome = makeWelcome()
         XCTAssertNil(analyticsSpy.introClickLabelCalled)
         XCTAssertNil(analyticsSpy.introClickPageCalled)
         XCTAssertNil(analyticsSpy.introClickIndexCalled)
@@ -407,8 +403,7 @@ final class AnalyticsSpyTests: XCTestCase {
 
     func testWelcomeSkipTracksIntroClickSkip() {
         // Arrange
-        let welcomeDelegate = MockWelcomeDelegate()
-        let welcome = Welcome(delegate: welcomeDelegate)
+        let welcome = makeWelcome()
         XCTAssertNil(analyticsSpy.introClickLabelCalled)
         XCTAssertNil(analyticsSpy.introClickPageCalled)
         XCTAssertNil(analyticsSpy.introClickIndexCalled)
@@ -426,8 +421,7 @@ final class AnalyticsSpyTests: XCTestCase {
 
     func testWelcomeTourViewDidAppearTracksIntroDisplaying() {
         // Arrange
-        let welcomeTourDelegate = MockWelcomeTourDelegate()
-        let welcomeTour = WelcomeTour(delegate: welcomeTourDelegate)
+        let welcomeTour = makeWelcomeTour()
         XCTAssertNil(analyticsSpy.introDisplayingPageCalled)
         XCTAssertNil(analyticsSpy.introDisplayingIndexCalled)
 
@@ -442,8 +436,7 @@ final class AnalyticsSpyTests: XCTestCase {
 
     func testWelcomeTourNextTracksIntroClickNext() {
         // Arrange
-        let welcomeTourDelegate = MockWelcomeTourDelegate()
-        let welcomeTour = WelcomeTour(delegate: welcomeTourDelegate)
+        let welcomeTour = makeWelcomeTour()
         XCTAssertNil(analyticsSpy.introClickLabelCalled)
         XCTAssertNil(analyticsSpy.introClickPageCalled)
         XCTAssertNil(analyticsSpy.introClickIndexCalled)
@@ -461,8 +454,7 @@ final class AnalyticsSpyTests: XCTestCase {
 
     func testWelcomeTourSkipTracksIntroClickSkip() {
         // Arrange
-        let welcomeTourDelegate = MockWelcomeTourDelegate()
-        let welcomeTour = WelcomeTour(delegate: welcomeTourDelegate)
+        let welcomeTour = makeWelcomeTour()
         XCTAssertNil(analyticsSpy.introClickLabelCalled)
         XCTAssertNil(analyticsSpy.introClickPageCalled)
         XCTAssertNil(analyticsSpy.introClickIndexCalled)
@@ -480,8 +472,7 @@ final class AnalyticsSpyTests: XCTestCase {
 
     func testWelcomeTourTracksAnalyticsForAllPages() {
         // Arrange
-        let welcomeTourDelegate = MockWelcomeTourDelegate()
-        let welcomeTour = WelcomeTour(delegate: welcomeTourDelegate)
+        let welcomeTour = makeWelcomeTour()
         let pages: [Analytics.Property.OnboardingPage] = [
             .greenSearch,
             .profits,
@@ -520,7 +511,7 @@ final class AnalyticsSpyTests: XCTestCase {
         do {
             let item = try createMockNewsModel()!
             let items = [item]
-            let newsController = NewsController(windowUUID: Self.analyticsSpyTestsDefaultUUID, items: items)
+            let newsController = NewsController(items: items, windowUUID: .XCTestDefaultUUID)
             XCTAssertNil(analyticsSpy.navigationActionCalled)
             XCTAssertNil(analyticsSpy.navigationLabelCalled)
 
@@ -541,7 +532,7 @@ final class AnalyticsSpyTests: XCTestCase {
         do {
             let item = try createMockNewsModel()!
             let items = [item]
-            let newsController = NewsController(windowUUID: Self.analyticsSpyTestsDefaultUUID, items: items)
+            let newsController = NewsController(items: items, windowUUID: .XCTestDefaultUUID)
             XCTAssertNil(analyticsSpy.navigationOpenNewsIdCalled)
             newsController.loadView()
             newsController.collection.reloadData()
@@ -562,7 +553,7 @@ final class AnalyticsSpyTests: XCTestCase {
     func testMultiplyImpactViewDidAppearTracksReferralViewInviteScreen() {
         // Arrange
         let referrals = Referrals()
-        let multiplyImpact = MultiplyImpact(referrals: referrals, windowUUID: Self.analyticsSpyTestsDefaultUUID)
+        let multiplyImpact = MultiplyImpact(referrals: referrals, windowUUID: .XCTestDefaultUUID)
         multiplyImpact.loadViewIfNeeded()
 
         // Act
@@ -576,7 +567,7 @@ final class AnalyticsSpyTests: XCTestCase {
     func testMultiplyImpactLearnMoreButtonTracksReferralClickLearnMore() {
         // Arrange
         let referrals = Referrals()
-        let multiplyImpact = MultiplyImpact(referrals: referrals, windowUUID: Self.analyticsSpyTestsDefaultUUID)
+        let multiplyImpact = MultiplyImpact(referrals: referrals, windowUUID: .XCTestDefaultUUID)
         multiplyImpact.loadViewIfNeeded()
 
         // Ensure learnMoreButton is not nil
@@ -603,7 +594,7 @@ final class AnalyticsSpyTests: XCTestCase {
     func testMultiplyImpactInviteFriendsTracksReferralClickInvite() {
         // Arrange
         let referrals = Referrals()
-        let multiplyImpact = MultiplyImpact(referrals: referrals, windowUUID: Self.analyticsSpyTestsDefaultUUID)
+        let multiplyImpact = MultiplyImpact(referrals: referrals, windowUUID: .XCTestDefaultUUID)
         User.shared.referrals.code = "testCode"
         multiplyImpact.loadViewIfNeeded()
 
@@ -631,7 +622,7 @@ final class AnalyticsSpyTests: XCTestCase {
     func testMultiplyImpactInviteFriendsCompletionTracksReferralSendInvite() {
         // Arrange
         let referrals = Referrals()
-        let multiplyImpact = MultiplyImpactTestable(referrals: referrals, windowUUID: Self.analyticsSpyTestsDefaultUUID)
+        let multiplyImpact = MultiplyImpactTestable(referrals: referrals, windowUUID: .XCTestDefaultUUID)
         User.shared.referrals.code = "testCode"
         multiplyImpact.loadViewIfNeeded()
 
@@ -845,6 +836,14 @@ extension AnalyticsSpyTests {
         let mockNotificationCenter = MockAnalyticsUserNotificationCenter(mockSettings: mockSettings)
         let analyticsSpy = AnalyticsSpy(notificationCenter: mockNotificationCenter)
         return analyticsSpy
+    }
+
+    func makeWelcomeTour() -> WelcomeTour {
+        WelcomeTour(delegate: MockWelcomeTourDelegate(), windowUUID: .XCTestDefaultUUID)
+    }
+
+    func makeWelcome() -> Welcome {
+        Welcome(delegate: MockWelcomeDelegate(), windowUUID: .XCTestDefaultUUID)
     }
 }
 

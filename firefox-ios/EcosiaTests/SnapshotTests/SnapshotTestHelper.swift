@@ -78,11 +78,6 @@ final class SnapshotTestHelper {
 
             for locale in locales {
                 for (themeStyle, themeSuffix) in themes {
-                    let traitsArray: [UITraitCollection] = [
-                        config.traits,
-                        .init(userInterfaceStyle: themeStyle)
-                    ]
-
                     setLocale(locale)
                     changeThemeTo(themeStyle, suffix: themeSuffix, themeManager: themeManager)
                     updateContentInitializingWith(initializer, inWindow: window)
@@ -147,7 +142,6 @@ final class SnapshotTestHelper {
     ///   - suffix: The `ThemeConfiguration.Theme` that specifies additional theme details, typically used for naming or logging.
     ///   - themeManager: The `ThemeManager` responsible for applying theme changes across the app.
     private static func changeThemeTo(_ theme: UIUserInterfaceStyle, suffix: ThemeConfiguration.Theme, themeManager: ThemeManager) {
-        LegacyThemeManager.instance.current = suffix == .light ? LegacyNormalTheme() : LegacyDarkTheme()
         themeManager.setManualTheme(to: suffix == .light ? .light : .dark)
     }
 

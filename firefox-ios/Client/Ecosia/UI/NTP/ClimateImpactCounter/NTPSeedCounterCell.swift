@@ -10,7 +10,7 @@ protocol NTPSeedCounterDelegate: NSObjectProtocol {
     func didTapSeedCounter()
 }
 
-final class NTPSeedCounterCell: UICollectionViewCell, Themeable, ReusableCell {
+final class NTPSeedCounterCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
 
     // MARK: - UX Constants
     private enum UX {
@@ -35,11 +35,6 @@ final class NTPSeedCounterCell: UICollectionViewCell, Themeable, ReusableCell {
     // Transparent button and TwinkleView
     private var button = UIButton()
     private var twinkleHostingController: UIHostingController<TwinkleView>?
-
-    // MARK: - Themeable Properties
-    var themeManager: ThemeManager { AppContainer.shared.resolve() }
-    var themeObserver: NSObjectProtocol?
-    var notificationCenter: NotificationProtocol = NotificationCenter.default
 
     // MARK: - Init
 
@@ -66,8 +61,6 @@ final class NTPSeedCounterCell: UICollectionViewCell, Themeable, ReusableCell {
         setupSeedCounterViewHostingController()
         setupTwinkleViewHostingController()
         setupTransparentButton()
-        applyTheme()
-        listenForThemeChange(contentView)
     }
 
     private func setupTransparentButton() {
@@ -131,7 +124,7 @@ final class NTPSeedCounterCell: UICollectionViewCell, Themeable, ReusableCell {
 
     private func addNewSeedCollectedCircleView() {
         let duration = UX.newSeedCircleAnimationDuration
-        let newSeedView = NewSeedCollectedCircleView(seedsCollected: 1)
+        let newSeedView = NewSeedCollectedCircleView(windowUUID: currentWindowUUID, seedsCollected: 1)
             .frame(width: UX.newSeedCircleSize, height: UX.newSeedCircleSize)
             .modifier(AppearFromBottomEffectModifier(reduceMotionEnabled: UIAccessibility.isReduceMotionEnabled,
                                                      duration: duration,
@@ -202,7 +195,7 @@ final class NTPSeedCounterCell: UICollectionViewCell, Themeable, ReusableCell {
     }
 
     // MARK: - Theming
-    @objc func applyTheme() {
-        containerStackView.backgroundColor = .legacyTheme.ecosia.secondaryBackground
+    func applyTheme(theme: Theme) {
+        containerStackView.backgroundColor = theme.colors.ecosia.backgroundSecondary
     }
 }
