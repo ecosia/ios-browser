@@ -2308,9 +2308,14 @@ class BrowserViewController: UIViewController,
                 trait: self.traitCollection,
                 isBottomSearchBar: self.isBottomSearchBar
             )
+            // Ecosia: Add `isPhone`
+            let isPhone = self.traitCollection.userInterfaceIdiom == .phone
             let viewModel = PhotonActionSheetViewModel(
                 actions: actions,
+                /* Ecosia: Update modal style for phone
                 modalStyle: .popover,
+                 */
+                modalStyle: isPhone ? .pageSheet : .popover,
                 isMainMenu: true,
                 isMainMenuInverted: shouldInverse
             )
