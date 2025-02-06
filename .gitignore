@@ -147,7 +147,8 @@ vendor/bundle
 Staging.xcconfig
 Production.xcconfig
 .github/workflows/firefox-*.yml
-SourcePackages
+firefox-ios/SourcePackages
 test_output
 .vscode
 firefox-ios/EcosiaTests/Results
+firefox-ios/EcosiaTests/SnapshotTests/SnapshotArtifacts/*
