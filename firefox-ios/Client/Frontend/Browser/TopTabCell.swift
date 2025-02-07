@@ -118,7 +118,7 @@ class TopTabCell: UICollectionViewCell, ThemeApplicable, LegacyTabTrayCell, Reus
 
     func applySelectedStyle(theme: Theme) {
         let colors = theme.colors
-        /* Update theme
+        /* Ecosia: Update theme
         favicon.tintColor = colors.textPrimary
         titleText.textColor = colors.textPrimary
         closeButton.tintColor = colors.textPrimary
