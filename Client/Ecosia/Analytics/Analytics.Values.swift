@@ -27,6 +27,7 @@ extension Analytics {
     enum Label: String {
         case
         analytics,
+        clear,
         market,
         toolbar
 
@@ -246,6 +247,12 @@ extension Analytics {
             `default`,
             mostVisited = "most_visited",
             pinned
+        }
+
+        enum SettingsPrivateDataSection: String {
+            case
+            websites = "websites_data",
+            main = "all_private_data"
         }
     }
 }
