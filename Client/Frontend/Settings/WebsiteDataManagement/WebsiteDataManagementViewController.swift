@@ -200,6 +200,8 @@ class WebsiteDataManagementViewController: UIViewController, UITableViewDataSour
             showMoreButtonEnabled = false
             tableView.reloadData()
         case .clearButton:
+            // Ecosia: Track "Clear Private Data" button click
+            Analytics.shared.clearsDataFromSection(.websites)
             let generator = UIImpactFeedbackGenerator(style: .heavy)
             generator.impactOccurred()
             let alert = viewModel.createAlertToRemove()
