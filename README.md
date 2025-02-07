@@ -1,7 +1,4 @@
-# Ecosia for iOS 🌳
-Head to our [README](firefox-ios/Ecosia/Ecosia.docc/Ecosia.md) to know more.
-
-===============
+Head to our Ecosia's [README](firefox-ios/Ecosia/Ecosia.docc/Ecosia.md) to know more.
 
 # Firefox for iOS and Focus iOS
 
