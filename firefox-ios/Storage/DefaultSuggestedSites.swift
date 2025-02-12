@@ -139,10 +139,9 @@ open class DefaultSuggestedSites {
     public static let sites = [
             SuggestedSite(
                 url: financialReportsURL.absoluteString,
-                title: NSLocalizedString("Financial reports",
-                                         tableName: "Ecosia",
-                                         bundle: .ecosia,
-                                         comment: ""),
+                title: Bundle.ecosia.localizedString(forKey: "Financial reports",
+                                                     value: "",
+                                                     table: "Ecosia"),
                 trackingId: 901,
                 faviconResource: .bundleAsset(
                     name: "financialReports",
@@ -150,10 +149,9 @@ open class DefaultSuggestedSites {
             ),
             SuggestedSite(
                 url: privacyURL.absoluteString,
-                title: NSLocalizedString("Privacy",
-                                         tableName: "Ecosia",
-                                         bundle: .ecosia,
-                                         comment: ""),
+                title: Bundle.ecosia.localizedString(forKey: "Privacy",
+                                                     value: "",
+                                                     table: "Ecosia"),
                 trackingId: 902,
                 faviconResource: .bundleAsset(
                     name: "privacy",
@@ -161,10 +159,9 @@ open class DefaultSuggestedSites {
             ),
             SuggestedSite(
                 url: treesURL.absoluteString,
-                title: NSLocalizedString("Trees update",
-                                         tableName: "Ecosia",
-                                         bundle: .ecosia,
-                                         comment: ""),
+                title: Bundle.ecosia.localizedString(forKey: "Trees update",
+                                                     value: "",
+                                                     table: "Ecosia"),
                 trackingId: 903,
                 faviconResource: .bundleAsset(
                     name: "treesUpdate",
