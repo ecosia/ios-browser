@@ -34,6 +34,7 @@ class FeatureFlagManagerTests: XCTestCase, FeatureFlaggable {
     }
 
     func testDefaultNimbusBoolFlags() {
+        /* Ecosia: Update tests since all feature flags are manually turned off
         // Tests for default settings should be performed on both build and user
         // prefs separately to ensure that we are getting the expected results on both.
         // Technically, at this stage, these should be the same.
@@ -47,6 +48,17 @@ class FeatureFlagManagerTests: XCTestCase, FeatureFlaggable {
         XCTAssertTrue(featureFlags.isFeatureEnabled(.jumpBackIn, checking: .userOnly))
         XCTAssertTrue(featureFlags.isFeatureEnabled(.reportSiteIssue, checking: .buildOnly))
         XCTAssertTrue(featureFlags.isFeatureEnabled(.reportSiteIssue, checking: .userOnly))
+         */
+        XCTAssertFalse(featureFlags.isFeatureEnabled(.bottomSearchBar, checking: .buildOnly))
+        XCTAssertFalse(featureFlags.isFeatureEnabled(.bottomSearchBar, checking: .userOnly))
+        XCTAssertFalse(featureFlags.isFeatureEnabled(.historyHighlights, checking: .buildOnly))
+        XCTAssertFalse(featureFlags.isFeatureEnabled(.historyHighlights, checking: .userOnly))
+        XCTAssertFalse(featureFlags.isFeatureEnabled(.inactiveTabs, checking: .buildOnly))
+        XCTAssertFalse(featureFlags.isFeatureEnabled(.inactiveTabs, checking: .userOnly))
+        XCTAssertFalse(featureFlags.isFeatureEnabled(.jumpBackIn, checking: .buildOnly))
+        XCTAssertFalse(featureFlags.isFeatureEnabled(.jumpBackIn, checking: .userOnly))
+        XCTAssertFalse(featureFlags.isFeatureEnabled(.reportSiteIssue, checking: .buildOnly))
+        XCTAssertFalse(featureFlags.isFeatureEnabled(.reportSiteIssue, checking: .userOnly))
     }
 
     func testDefaultNimbusCustomFlags() {
@@ -60,12 +72,16 @@ class FeatureFlagManagerTests: XCTestCase, FeatureFlaggable {
         mockProfile.prefs.clearAll()
         LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: mockProfile)
 
+        /* Ecosia: Update tests since all feature flags are manually turned off
         XCTAssertTrue(featureFlags.isFeatureEnabled(.jumpBackIn, checking: .buildOnly))
         XCTAssertTrue(featureFlags.isFeatureEnabled(.jumpBackIn, checking: .userOnly))
         // Changing the prefs manually, to make sure settings are respected through
         // the FFMs interface
         mockProfile.prefs.setBool(false, forKey: PrefsKeys.FeatureFlags.JumpBackInSection)
         XCTAssertTrue(featureFlags.isFeatureEnabled(.jumpBackIn, checking: .buildOnly))
+        XCTAssertFalse(featureFlags.isFeatureEnabled(.jumpBackIn, checking: .userOnly))
+         */
+        XCTAssertFalse(featureFlags.isFeatureEnabled(.jumpBackIn, checking: .buildOnly))
         XCTAssertFalse(featureFlags.isFeatureEnabled(.jumpBackIn, checking: .userOnly))
     }
 
@@ -84,10 +100,14 @@ class FeatureFlagManagerTests: XCTestCase, FeatureFlaggable {
     }
 
     func testManagerInterfaceForUpdatingBoolFlags() {
+        /* Ecosia: Update tests since all feature flags are manually turned off
         XCTAssertTrue(featureFlags.isFeatureEnabled(.jumpBackIn, checking: .buildOnly))
         XCTAssertTrue(featureFlags.isFeatureEnabled(.jumpBackIn, checking: .userOnly))
         featureFlags.set(feature: .jumpBackIn, to: false)
         XCTAssertTrue(featureFlags.isFeatureEnabled(.jumpBackIn, checking: .buildOnly))
+        XCTAssertFalse(featureFlags.isFeatureEnabled(.jumpBackIn, checking: .userOnly))
+         */
+        XCTAssertFalse(featureFlags.isFeatureEnabled(.jumpBackIn, checking: .buildOnly))
         XCTAssertFalse(featureFlags.isFeatureEnabled(.jumpBackIn, checking: .userOnly))
     }
 
