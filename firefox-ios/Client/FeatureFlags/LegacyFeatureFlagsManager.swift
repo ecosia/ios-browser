@@ -51,6 +51,7 @@ class LegacyFeatureFlagsManager: HasNimbusFeatureFlags {
     public func isFeatureEnabled(_ featureID: NimbusFeatureFlagID,
                                  checking channelsToCheck: FlaggableFeatureCheckOptions
     ) -> Bool {
+        /* Ecosia: Turn off all feature flags
         let feature = NimbusFlaggableFeature(withID: featureID, and: profile)
         let nimbusSetting = getNimbusOrDebugSetting(with: feature)
         let userSetting = feature.isUserEnabled(using: nimbusFlags)
@@ -63,6 +64,8 @@ class LegacyFeatureFlagsManager: HasNimbusFeatureFlags {
         case .userOnly:
             return userSetting
         }
+         */
+        return false
     }
 
     /// Allows us to override nimbus feature flags for a specific build using the debug menu
