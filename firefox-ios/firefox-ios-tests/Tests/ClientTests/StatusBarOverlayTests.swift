@@ -80,7 +80,7 @@ class StatusBarOverlayTests: XCTestCase {
         /* Ecosia: Update expected background color
         XCTAssertEqual(backgroundColor.cgColor, LightTheme().colors.layer1.withAlphaComponent(1).cgColor)
          */
-        XCTAssertEqual(backgroundColor.cgColor, theme.colors.ecosia.backgroundPrimary.withAlphaComponent(0).cgColor)
+        XCTAssertEqual(backgroundColor.cgColor, theme.colors.ecosia.backgroundPrimary.withAlphaComponent(1).cgColor)
     }
 
     func testOnHomepage_withWallpaperWithTopURLBar_isOpaque() throws {
