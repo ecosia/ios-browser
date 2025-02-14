@@ -5,7 +5,7 @@
 import SwiftUI
 
 extension Color {
-    
+
     /// Returns a `Color` from the Ecosia bundle for a given name.
     ///
     /// This method retrieves a color from the Ecosia resources within the app bundle using the specified name.
