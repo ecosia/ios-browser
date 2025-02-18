@@ -4,7 +4,7 @@
 
 import Foundation
 
-extension Environment {
+public extension Environment {
     struct Auth: Equatable {
         let id: String
         let secret: String
