@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Domain</key>
+	<string>login.ecosia-dev.xyz</string>
+	<key>ClientId</key>
+	<string>FBaIsy0X5hIh2sSmalmf5pACZ512dIYl</string>
+</dict>
+</plist>

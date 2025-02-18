@@ -63,8 +63,6 @@ extension HomepageHeaderViewModel: HomepageViewModelProtocol, FeatureFlaggable {
         let height = max(UIScreen.main.bounds.width, UIScreen.main.bounds.height)
         let pos: SearchBarPosition = LegacyFeatureFlagsManager.shared.getCustomState(for: .searchBarPosition) ?? .top
         let factor = pos == .bottom ? 0.1 : 0.05
-
-        let leadingInset = HomepageViewModel.UX.leadingInset(traitCollection: traitCollection)
         section.contentInsets = NSDirectionalEdgeInsets(
             // Ecosia: Update top inset for Seed Experiment
             // top: height * factor,
