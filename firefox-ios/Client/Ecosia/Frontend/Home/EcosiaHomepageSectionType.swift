@@ -11,6 +11,7 @@ import Foundation
 import Common
 
 enum HomepageSectionType: Int, CaseIterable {
+    case accountLogin
     case climateImpactCounter
     case homepageHeader
     case libraryShortcuts
@@ -22,6 +23,7 @@ enum HomepageSectionType: Int, CaseIterable {
 
     var cellIdentifier: String {
         switch self {
+        case .accountLogin: return  NTPAccountLoginCell.cellIdentifier
         case .climateImpactCounter: return NTPSeedCounterCell.cellIdentifier
         case .homepageHeader: return NTPLogoCell.cellIdentifier
         case .libraryShortcuts: return NTPLibraryCell.cellIdentifier
@@ -35,6 +37,7 @@ enum HomepageSectionType: Int, CaseIterable {
 
     static var cellTypes: [ReusableCell.Type] {
         return [
+            NTPAccountLoginCell.self,
             NTPSeedCounterCell.self,
             NTPLogoCell.self,
             TopSiteItemCell.self,
@@ -57,7 +60,7 @@ private let MinimumInsets: CGFloat = 16
 extension HomepageSectionType {
     var customizableConfig: CustomizableNTPSettingConfig? {
         switch self {
-        case .homepageHeader, .libraryShortcuts, .ntpCustomization, .climateImpactCounter: return nil
+        case .homepageHeader, .libraryShortcuts, .ntpCustomization, .climateImpactCounter, .accountLogin: return nil
         case .topSites: return .topSites
         case .impact: return .climateImpact
         case .aboutEcosia: return .aboutEcosia
@@ -69,7 +72,7 @@ extension HomepageSectionType {
                        topSpacing: CGFloat = 0,
                        bottomSpacing: CGFloat = 32) -> NSDirectionalEdgeInsets {
         switch self {
-        case .libraryShortcuts, .topSites, .impact, .news, .aboutEcosia, .ntpCustomization:
+        case .libraryShortcuts, .topSites, .impact, .news, .aboutEcosia, .ntpCustomization, .accountLogin:
             guard let window = UIApplication.shared.windows.first(where: \.isKeyWindow) else {
                 return NSDirectionalEdgeInsets(top: 0,
                                                leading: MinimumInsets,
