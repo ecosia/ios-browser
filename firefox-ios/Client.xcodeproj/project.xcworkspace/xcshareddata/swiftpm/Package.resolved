@@ -10,6 +10,15 @@
       }
     },
     {
+      "identity" : "auth0.swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/auth0/Auth0.swift",
+      "state" : {
+        "revision" : "9fee002fcd5fa572c0452eaeb9fb7a75be5fa4de",
+        "version" : "2.10.0"
+      }
+    },
+    {
       "identity" : "braze-swift-sdk",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/braze-inc/braze-swift-sdk",
@@ -61,6 +70,15 @@
       "state" : {
         "revision" : "f7a0ad4a9f99fcbfc4c73dcad557ea3c86c5aaf6",
         "version" : "4.37.0"
+      }
+    },
+    {
+      "identity" : "jwtdecode.swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/auth0/JWTDecode.swift.git",
+      "state" : {
+        "revision" : "1e153ef009969543191970c66b7c60163c0b4a65",
+        "version" : "3.2.0"
       }
     },
     {
@@ -124,6 +142,15 @@
       "state" : {
         "revision" : "5575af93efb776414f243e93d6af9f6258dc539a",
         "version" : "8.36.0"
+      }
+    },
+    {
+      "identity" : "simplekeychain",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/auth0/SimpleKeychain.git",
+      "state" : {
+        "revision" : "b694f155907b189bc82e93586695a26f558c742f",
+        "version" : "1.2.0"
       }
     },
     {
