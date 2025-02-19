@@ -6,7 +6,7 @@ import Foundation
 import XCTest
 import Combine
 import Auth0
-@testable import Core
+import Ecosia
 
 /// Test suite for the `Auth` class, validating login, logout, credential storage, and renewal.
 final class AuthTests: XCTestCase {
