@@ -225,7 +225,6 @@ open class Analytics {
         let event = Structured(category: Category.intro.rawValue,
                                action: Action.display.rawValue)
             .property(page.rawValue)
-            .value(.init(integerLiteral: index))
         track(event)
     }
 
@@ -237,7 +236,6 @@ open class Analytics {
                                action: Action.click.rawValue)
             .label(label.rawValue)
             .property(page.rawValue)
-            .value(.init(integerLiteral: index))
         track(event)
     }
 
