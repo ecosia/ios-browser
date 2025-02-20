@@ -8,10 +8,8 @@ import Auth0
 public struct NativeToWebSSOAuth0Provider: Auth0ProviderProtocol {
 
     public var credentialsManager: CredentialsManaging { internalCredetialsManager }
-
-    private var urlSession: URLSessionProtocol
     private var internalCredetialsManager: CredentialsManaging
-
+    private var client: HTTPClient
     public typealias SessionToken = String
 
     enum NativeToWebSSOError: Error, Equatable {
@@ -20,28 +18,14 @@ public struct NativeToWebSSOAuth0Provider: Auth0ProviderProtocol {
         case missingConfiguration(String)
     }
 
-    public init(urlSession: URLSessionProtocol = URLSession.shared,
+    public init(client: HTTPClient = URLSessionHTTPClient(),
                 credentialsManager: CredentialsManaging = Auth.defaultCredentialsManager) {
-        self.urlSession = urlSession
+        self.client = client
         self.internalCredetialsManager = credentialsManager
     }
 }
 
 extension NativeToWebSSOAuth0Provider {
-
-    /// Struct for encoding the JSON request body
-    struct TokenRequest: Codable {
-        let grantType: String
-        let subjectToken: String
-        let subjectTokenType: String
-        let requestedTokenType: String
-        let clientId: String
-    }
-
-    /// Struct for decoding the JSON response
-    struct TokenResponse: Codable {
-        let accessToken: String
-    }
 
     /// Requests the `session_token` with the `refresh_token`.
     ///
@@ -57,23 +41,12 @@ extension NativeToWebSSOAuth0Provider {
             throw NativeToWebSSOError.missingConfiguration("Missing Auth0.plist file")
         }
 
-        let tokenExchangeUrl = URL(string: "https://\(values.domain)/oauth/token")!
-        let tokenRequest = TokenRequest(
-            grantType: "urn:ietf:params:oauth:grant-type:token-exchange",
-            subjectToken: refreshToken,
-            subjectTokenType: "urn:ietf:params:oauth:token-type:refresh_token",
-            requestedTokenType: "urn:auth0:params:oauth:token-type:session_token",
-            clientId: values.clientId
-        )
+        let request = Auth0SessionTokenRequest(domain: values.domain,
+                                               refreshToken: refreshToken,
+                                               clientId: values.clientId)
+        let (data, response) = try await client.perform(request)
 
-        var request = URLRequest(url: tokenExchangeUrl)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpBody = try JSONEncoder().encode(tokenRequest)
-
-        let (data, response) = try await urlSession.data(for: request, delegate: nil)
-
-        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+        guard let httpResponse = response, httpResponse.statusCode == 200 else {
             throw NativeToWebSSOError.invalidResponse
         }
 
@@ -94,7 +67,6 @@ extension NativeToWebSSOAuth0Provider {
 
         guard let clientId = values["ClientId"] as? String, let domain = values["Domain"] as? String else {
             print("Auth0.plist file at \(path) is missing 'ClientId' and/or 'Domain' entries!")
-            print("File currently has the following entries: \(values)")
             return nil
         }
         return (clientId: clientId, domain: domain)

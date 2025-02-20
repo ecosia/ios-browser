@@ -7,7 +7,7 @@ import Auth0
 /// Protocol defining authentication operations for Auth0.
 public protocol Auth0ProviderProtocol {
 
-    /// The `CredentialsManager` final concrete type conforming to the protocol `CredentialsManaging`  to use for storing and retrieving credentials.
+    /// The `CredentialsManager` final concrete type conforming to the protocol `CredentialsManaging` to use for storing and retrieving credentials.
     var credentialsManager: CredentialsManaging { get }
 
     /// Starts the authentication process asynchronously and returns credentials.
@@ -67,9 +67,7 @@ extension Auth0ProviderProtocol {
 /// Default Protocol Implementation
 extension Auth0ProviderProtocol {
 
-    public var credentialsManager: CredentialsManaging {
-        Auth.defaultCredentialsManager
-    }
+    public var credentialsManager: CredentialsManaging { Auth.defaultCredentialsManager }
 
     public func startAuth() async throws -> Credentials {
         return try await httpsWebAuth()

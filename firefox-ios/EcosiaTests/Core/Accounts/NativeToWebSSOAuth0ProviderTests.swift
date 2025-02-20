@@ -9,20 +9,20 @@ import Auth0
 /// Test suite for the `NativeToWebSSOAuth0Provider` class, validating session token retrieval.
 final class NativeToWebSSOAuth0ProviderTests: XCTestCase {
     private var provider: NativeToWebSSOAuth0Provider!
-    private var mockURLSession: NativeToWebSSOAuth0MockURLSession!
+    private var mockHTTPClient: MockHTTPClient!
     private var mockCredentialsManager: MockCredentialsManager!
 
     override func setUp() {
         super.setUp()
-        mockURLSession = NativeToWebSSOAuth0MockURLSession()
+        mockHTTPClient = MockHTTPClient()
         mockCredentialsManager = MockCredentialsManager()
-        provider = NativeToWebSSOAuth0Provider(urlSession: mockURLSession,
+        provider = NativeToWebSSOAuth0Provider(client: mockHTTPClient,
                                                credentialsManager: mockCredentialsManager)
     }
 
     override func tearDown() {
         provider = nil
-        mockURLSession = nil
+        mockHTTPClient = nil
         mockCredentialsManager = nil
         super.tearDown()
     }
@@ -33,13 +33,13 @@ final class NativeToWebSSOAuth0ProviderTests: XCTestCase {
         let mockCredentials = Credentials(accessToken: "accessToken", refreshToken: "refreshToken")
         mockCredentialsManager.store(credentials: mockCredentials)
 
-        mockURLSession.mockResponse = HTTPURLResponse(
+        let response  = HTTPURLResponse(
             url: URL(string: "https://example.com")!,
             statusCode: 200,
             httpVersion: nil,
             headerFields: nil
         )
-        mockURLSession.mockData = try JSONEncoder().encode(NativeToWebSSOAuth0Provider.TokenResponse(accessToken: expectedToken))
+        mockHTTPClient.performResult = (try JSONEncoder().encode(TokenResponse(accessToken: expectedToken)), response)
 
         // Act
         let sessionToken = try await provider.getSessionToken()
@@ -67,12 +67,13 @@ final class NativeToWebSSOAuth0ProviderTests: XCTestCase {
         let mockCredentials = Credentials(accessToken: "accessToken", refreshToken: "refreshToken")
         mockCredentialsManager.store(credentials: mockCredentials)
 
-        mockURLSession.mockResponse = HTTPURLResponse(
+        let response  = HTTPURLResponse(
             url: URL(string: "https://example.com")!,
             statusCode: 400,
             httpVersion: nil,
             headerFields: nil
         )
+        mockHTTPClient.performResult = (Data(), response)
 
         // Act & Assert
         do {
