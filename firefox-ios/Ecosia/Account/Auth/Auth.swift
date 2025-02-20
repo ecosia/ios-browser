@@ -8,6 +8,11 @@ import WebKit
 
 /// The `Auth` class manages user authentication, credential storage, and renewal using Auth0.
 public class Auth {
+
+    public static let defaultCredentialsManager: CredentialsManaging =
+        CredentialsManagerWrapper(manager: CredentialsManager(authentication: Auth0.authentication(bundle: .ecosia),
+                                                              storage: EcosiaKeychainStorage()))
+
     public let auth0Provider: Auth0ProviderProtocol
 
     private(set) var idToken: String?
@@ -20,7 +25,7 @@ public class Auth {
     /// Initializes a new instance of the `Auth` class with a specified authentication provider.
     ///
     /// - Parameter auth0Provider: An object conforming to `Auth0ProviderProtocol`.
-    public init(auth0Provider: Auth0ProviderProtocol = DefaultAuth0Provider()) {
+    public init(auth0Provider: Auth0ProviderProtocol = WebAuth0Provider()) {
         self.auth0Provider = auth0Provider
         Task {
             await self.retrieveStoredCredentials()
