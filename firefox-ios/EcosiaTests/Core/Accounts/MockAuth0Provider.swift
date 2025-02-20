@@ -28,7 +28,7 @@ final class MockAuth0Provider: Auth0ProviderProtocol {
             throw NSError(domain: "MockAuthError", code: 1, userInfo: nil)
         }
     }
-    
+
     @discardableResult
     func storeCredentials(_ credentials: Credentials) throws -> Bool {
         if shouldSucceed {
@@ -45,7 +45,7 @@ final class MockAuth0Provider: Auth0ProviderProtocol {
             throw NSError(domain: "MockAuthError", code: 2, userInfo: nil)
         }
     }
-    
+
     func retrieveCredentials() async throws -> Credentials {
         if shouldSucceed {
             return try await credentialsManager.credentials()
@@ -53,7 +53,7 @@ final class MockAuth0Provider: Auth0ProviderProtocol {
             throw NSError(domain: "MockAuthError", code: 2, userInfo: nil)
         }
     }
-    
+
     @discardableResult
     func clearCredentials() -> Bool {
         credentialsCleared = true
