@@ -91,6 +91,7 @@ final class NTPAccountLoginCell: UICollectionViewCell, ThemeApplicable, Reusable
     // MARK: - Theming
 
     func applyTheme(theme: any Common.Theme) {
+        updateLoginButton()
         loginButton.setTitleColor(auth.isLoggedIn ? .red : theme.colors.ecosia.buttonBackgroundPrimaryActive, for: .normal)
     }
 }
