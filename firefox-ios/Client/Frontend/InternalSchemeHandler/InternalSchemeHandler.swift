@@ -57,6 +57,7 @@ class InternalSchemeHandler: NSObject, WKURLSchemeHandler {
                 urlSchemeTask.didReceive(data)
                 urlSchemeTask.didFinish()
                 return true
+            // Ecosia: Replace placeholder error image
             } else if path.hasSuffix("EcosiaErrorPlaceholderPath.png"),
                       let data = UIImage(named: "noInternet")?.pngData() {
                 urlSchemeTask.didReceive(URLResponse(url: url, mimeType: nil, expectedContentLength: -1, textEncodingName: nil))
