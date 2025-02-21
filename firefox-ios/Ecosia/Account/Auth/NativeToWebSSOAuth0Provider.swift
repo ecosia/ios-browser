@@ -57,7 +57,9 @@ extension NativeToWebSSOAuth0Provider {
             throw NativeToWebSSOError.invalidResponse
         }
 
-        let tokenResponse = try JSONDecoder().decode(TokenResponse.self, from: data)
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        let tokenResponse = try decoder.decode(TokenResponse.self, from: data)
         return tokenResponse.accessToken
     }
 

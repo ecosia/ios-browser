@@ -40,7 +40,10 @@ struct Auth0SessionTokenRequest: BaseRequest {
             requestedTokenType: "urn:auth0:params:oauth:token-type:session_token",
             clientId: clientId
         )
-        self.body = try? JSONEncoder().encode(tokenRequest)
+        
+        let encoder = JSONEncoder()
+        encoder.keyEncodingStrategy = .convertToSnakeCase
+        self.body = try? encoder.encode(tokenRequest)
         self.domain = domain
     }
 }
