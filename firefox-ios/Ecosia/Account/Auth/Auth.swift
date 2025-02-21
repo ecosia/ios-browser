@@ -40,6 +40,10 @@ public class Auth {
             if didStore {
                 isLoggedIn = true
                 print("\(#file).\(#function) - 👤 Auth - Credentials stored successfully.")
+                if let authProvider = auth0Provider as? NativeToWebSSOAuth0Provider {
+                    let sessionToken = try await authProvider.getSessionToken()
+                    print(sessionToken)
+                }
             }
         } catch {
             print("\(#file).\(#function) - 👤 Auth - Login failed with error: \(error)")
