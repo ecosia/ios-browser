@@ -9,6 +9,9 @@ public protocol Auth0ProviderProtocol {
 
     /// The `CredentialsManager` final concrete type conforming to the protocol `CredentialsManaging` to use for storing and retrieving credentials.
     var credentialsManager: CredentialsManaging { get }
+    
+    /// The `WebAuth` instance to use for authentication
+    var webAuth: WebAuth { get }
 
     /// Starts the authentication process asynchronously and returns credentials.
     ///
@@ -55,9 +58,9 @@ public protocol Auth0ProviderProtocol {
 }
 
 extension Auth0ProviderProtocol {
-    /// Helper function
+
     /// - Returns: An HTTPS `WebAuth`
-    func httpsWebAuth() -> WebAuth {
+    func makeHttpsWebAuth() -> WebAuth {
         Auth0
             .webAuth(bundle: .ecosia)
             .useHTTPS()
@@ -68,15 +71,13 @@ extension Auth0ProviderProtocol {
 extension Auth0ProviderProtocol {
 
     public var credentialsManager: CredentialsManaging { Auth.defaultCredentialsManager }
-
+    
     public func startAuth() async throws -> Credentials {
-        return try await httpsWebAuth()
-            .start()
+        return try await webAuth.start()
     }
 
     public func clearSession() async throws {
-        try await httpsWebAuth()
-            .clearSession()
+        try await webAuth.clearSession()
     }
 
     public func storeCredentials(_ credentials: Credentials) throws -> Bool {

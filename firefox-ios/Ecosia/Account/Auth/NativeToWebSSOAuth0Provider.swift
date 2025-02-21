@@ -23,12 +23,15 @@ public struct NativeToWebSSOAuth0Provider: Auth0ProviderProtocol {
         self.client = client
         self.internalCredetialsManager = credentialsManager
     }
+    
+    public var webAuth: WebAuth {
+        makeHttpsWebAuth()
+            .scope("openid profile email offline_access")
+    }
 
     /// The `startAuth` method configured to explicity request the `offline_access` scope in order to obtain a `refresh_token`.
     public func startAuth() async throws -> Credentials {
-        return try await httpsWebAuth()
-            .scope("openid profile email offline_access")
-            .start()
+        return try await webAuth.start()
     }
 }
 
