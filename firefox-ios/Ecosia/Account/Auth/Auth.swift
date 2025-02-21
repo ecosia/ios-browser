@@ -25,7 +25,7 @@ public class Auth {
     /// Initializes a new instance of the `Auth` class with a specified authentication provider.
     ///
     /// - Parameter auth0Provider: An object conforming to `Auth0ProviderProtocol`.
-    public init(auth0Provider: Auth0ProviderProtocol = WebAuth0Provider()) {
+    public init(auth0Provider: Auth0ProviderProtocol = NativeToWebSSOAuth0Provider()) {
         self.auth0Provider = auth0Provider
         Task {
             await self.retrieveStoredCredentials()
