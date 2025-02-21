@@ -57,7 +57,7 @@ public protocol Auth0ProviderProtocol {
 extension Auth0ProviderProtocol {
     /// Helper function
     /// - Returns: An HTTPS `WebAuth`
-    private func httpsWebAuth() -> WebAuth {
+    func httpsWebAuth() -> WebAuth {
         Auth0
             .webAuth(bundle: .ecosia)
             .useHTTPS()
