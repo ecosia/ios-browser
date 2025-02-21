@@ -40,10 +40,7 @@ public class Auth {
             if didStore {
                 isLoggedIn = true
                 print("\(#file).\(#function) - 👤 Auth - Credentials stored successfully.")
-                if let authProvider = auth0Provider as? NativeToWebSSOAuth0Provider {
-                    let sessionToken = try await authProvider.getSessionToken()
-                    print(sessionToken)
-                }
+                _ = await retrieveSessionTokenIfNeeded()
             }
         } catch {
             print("\(#file).\(#function) - 👤 Auth - Login failed with error: \(error)")
@@ -110,5 +107,22 @@ public class Auth {
                 print("Auth cookie cleared in WKWebView.")
             }
         }
+    }
+}
+
+extension Auth  {
+    
+    /// Retrieves the session token if the `auth0Provider` is of type `NativeToWebSSOAuth0Provider`.
+    /// This method ensures that the session token is only retrieved for the specific provider type.
+    /// - Note: This method performs a type check and calls `getSessionToken` on the provider if the type matches.
+    private func retrieveSessionTokenIfNeeded() async -> NativeToWebSSOAuth0Provider.SessionToken? {
+        if let authProvider = auth0Provider as? NativeToWebSSOAuth0Provider {
+            do {
+                return try await authProvider.getSessionToken()
+            } catch {
+                print("\(#file).\(#function) - 👤 Auth - Failed to retrieve session token: \(error)")
+            }
+        }
+        return nil
     }
 }
