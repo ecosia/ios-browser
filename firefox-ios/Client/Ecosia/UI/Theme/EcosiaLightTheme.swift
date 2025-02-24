@@ -87,7 +87,7 @@ class EcosiaLightColourPalette: EcosiaThemeColourPalette {
     var iconPrimary: UIColor { ecosia.iconPrimary }
     var iconSecondary: UIColor { ecosia.iconSecondary }
     var iconDisabled: UIColor { fallbackTheme.colors.iconDisabled }
-    var iconAccent: UIColor { fallbackTheme.colors.iconAccent }
+    var iconAccent: UIColor { ecosia.iconSecondary }
     var iconOnColor: UIColor { fallbackTheme.colors.iconOnColor }
     var iconCritical: UIColor { ecosia.stateError }
     var iconSpinner: UIColor { fallbackTheme.colors.iconSpinner }
