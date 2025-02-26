@@ -107,8 +107,8 @@ public class Auth {
     }
 }
 
-extension Auth  {
-    
+extension Auth {
+
     /// Retrieves the session token if the `auth0Provider` is of type `NativeToWebSSOAuth0Provider`.
     /// This method ensures that the session token is only retrieved for the specific provider type.
     /// - Note: This method performs a type check and calls `getSessionToken` on the provider if the type matches.

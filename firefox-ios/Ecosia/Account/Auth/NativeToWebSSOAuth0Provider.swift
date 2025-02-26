@@ -23,7 +23,7 @@ public struct NativeToWebSSOAuth0Provider: Auth0ProviderProtocol {
         self.client = client
         self.internalCredetialsManager = credentialsManager
     }
-    
+
     public var webAuth: WebAuth {
         makeHttpsWebAuth()
             .scope("openid profile email offline_access")

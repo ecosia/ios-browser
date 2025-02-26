@@ -14,7 +14,7 @@ final class MockAuth0Provider: Auth0ProviderProtocol {
     let mockCredentialsManager = MockCredentialsManager()
     var credentialsManager: CredentialsManagerProtocol { mockCredentialsManager }
     var webAuth: WebAuth { makeHttpsWebAuth() }
-    
+
     func startAuth() async throws -> Credentials {
         if shouldSucceed {
             return Credentials(

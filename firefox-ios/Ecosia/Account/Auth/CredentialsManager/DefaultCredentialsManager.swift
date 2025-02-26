@@ -5,26 +5,26 @@
 import Auth0
 
 struct DefaultCredentialsManager: CredentialsManagerProtocol {
-    
+
     private let credentialManager = CredentialsManager(authentication: Auth0.authentication(bundle: .ecosia),
                                                        storage: EcosiaKeychainStorage())
-    
+
     func store(credentials: Auth0.Credentials) -> Bool {
         credentialManager.store(credentials: credentials)
     }
-    
+
     func credentials() async throws -> Auth0.Credentials {
         try await credentialManager.credentials()
     }
-    
+
     func clear() -> Bool {
         credentialManager.clear()
     }
-    
+
     func canRenew() -> Bool {
         credentialManager.canRenew()
     }
-    
+
     func renew() async throws -> Auth0.Credentials {
         try await credentialManager.renew()
     }

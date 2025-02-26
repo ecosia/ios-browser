@@ -6,7 +6,7 @@ import Auth0
 
 /// Default implementation of `Auth0ProviderProtocol` using Auth0's SDK, utilizing Web Auth Login solely.
 public struct WebAuth0Provider: Auth0ProviderProtocol {
-    
+
     public var webAuth: WebAuth { makeHttpsWebAuth() }
 
     public init() {}

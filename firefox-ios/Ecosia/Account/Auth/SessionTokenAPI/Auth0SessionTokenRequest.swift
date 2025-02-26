@@ -5,7 +5,7 @@
 import Foundation
 
 struct Auth0SessionTokenRequest: BaseRequest {
-    
+
     /// Struct for encoding the JSON request body
     struct TokenRequest: Codable {
         let grantType: String
@@ -16,7 +16,7 @@ struct Auth0SessionTokenRequest: BaseRequest {
     }
 
     private var domain: String
-    
+
     private var refreshToken: String
     private var clientId: String
 
