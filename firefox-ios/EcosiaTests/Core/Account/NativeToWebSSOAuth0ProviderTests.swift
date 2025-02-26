@@ -39,7 +39,7 @@ final class NativeToWebSSOAuth0ProviderTests: XCTestCase {
             httpVersion: nil,
             headerFields: nil
         )
-        mockHTTPClient.performResult = (try JSONEncoder().encode(TokenResponse(accessToken: expectedToken)), response)
+        mockHTTPClient.performResult = (try JSONEncoder().encode(Auth0SessionTokenResponse(accessToken: expectedToken)), response)
 
         // Act
         let sessionToken = try await provider.getSessionToken()

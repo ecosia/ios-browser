@@ -62,7 +62,7 @@ extension NativeToWebSSOAuth0Provider {
 
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
-        let tokenResponse = try decoder.decode(TokenResponse.self, from: data)
+        let tokenResponse = try decoder.decode(Auth0SessionTokenResponse.self, from: data)
         return tokenResponse.accessToken
     }
 
