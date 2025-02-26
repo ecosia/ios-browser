@@ -6,6 +6,13 @@ import Auth0
 
 /// Protocol defining authentication operations for Auth0.
 public protocol Auth0ProviderProtocol {
+
+    /// The `CredentialsManager` final concrete type conforming to the protocol `CredentialsManaging` to use for storing and retrieving credentials.
+    var credentialsManager: CredentialsManagerProtocol { get }
+
+    /// The `WebAuth` instance to use for authentication
+    var webAuth: WebAuth { get }
+
     /// Starts the authentication process asynchronously and returns credentials.
     ///
     /// - Returns: A `Credentials` object upon successful authentication.
@@ -22,6 +29,7 @@ public protocol Auth0ProviderProtocol {
     /// - Parameter credentials: The credentials to store.
     /// - Returns: A boolean indicating whether the credentials were successfully stored.
     /// - Throws: An error if storing credentials fails.
+    @discardableResult
     func storeCredentials(_ credentials: Credentials) throws -> Bool
 
     /// Retrieves stored credentials asynchronously.
@@ -33,6 +41,7 @@ public protocol Auth0ProviderProtocol {
     /// Clears stored credentials.
     ///
     /// - Returns: A boolean indicating whether the credentials were successfully cleared.
+    @discardableResult
     func clearCredentials() -> Bool
 
     /// Checks if stored credentials can be renewed.
@@ -44,5 +53,50 @@ public protocol Auth0ProviderProtocol {
     ///
     /// - Returns: A `Credentials` object upon successful renewal.
     /// - Throws: An error if the credential renewal fails.
+    @discardableResult
     func renewCredentials() async throws -> Credentials
+}
+
+extension Auth0ProviderProtocol {
+
+    /// - Returns: An HTTPS `WebAuth`
+    func makeHttpsWebAuth() -> WebAuth {
+        Auth0
+            .webAuth(bundle: .ecosia)
+            .useHTTPS()
+    }
+}
+
+/// Default Protocol Implementation
+extension Auth0ProviderProtocol {
+
+    public var credentialsManager: CredentialsManagerProtocol { Auth.defaultCredentialsManager }
+
+    public func startAuth() async throws -> Credentials {
+        return try await webAuth.start()
+    }
+
+    public func clearSession() async throws {
+        try await webAuth.clearSession()
+    }
+
+    public func storeCredentials(_ credentials: Credentials) throws -> Bool {
+        return credentialsManager.store(credentials: credentials)
+    }
+
+    public func retrieveCredentials() async throws -> Credentials {
+        return try await credentialsManager.credentials()
+    }
+
+    public func clearCredentials() -> Bool {
+        return credentialsManager.clear()
+    }
+
+    public func canRenewCredentials() -> Bool {
+        return credentialsManager.canRenew()
+    }
+
+    public func renewCredentials() async throws -> Credentials {
+        return try await credentialsManager.renew()
+    }
 }

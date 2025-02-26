@@ -8,27 +8,6 @@ import Foundation
 
 class UnleashFeatureManagementSessionInitializerTests: XCTestCase {
 
-    // MARK: - Test Mocks
-
-    class MockHTTPClient: HTTPClient {
-
-        var performCalled = false
-        var performRequest: BaseRequest?
-        var performResult: HTTPClient.Result?
-        var performError: Error?
-
-        func perform(_ request: BaseRequest) async throws -> HTTPClient.Result {
-            performCalled = true
-            performRequest = request
-
-            if let error = performError {
-                throw error
-            }
-
-            return performResult ?? (Data(), HTTPURLResponse())
-        }
-    }
-
     // MARK: - Test Cases
 
     func testInitializeSession_WithValidData_ReturnsDecodedObject() async throws {

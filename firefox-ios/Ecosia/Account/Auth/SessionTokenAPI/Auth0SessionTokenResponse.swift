@@ -4,8 +4,6 @@
 
 import Foundation
 
-public protocol URLSessionProtocol {
-    func data(from url: URL) async throws -> (Data, URLResponse)
+struct Auth0SessionTokenResponse: Codable {
+    let accessToken: String
 }
-
-extension URLSession: URLSessionProtocol {}
