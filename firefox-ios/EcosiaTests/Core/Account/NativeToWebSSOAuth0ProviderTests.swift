@@ -96,11 +96,4 @@ final class NativeToWebSSOAuth0MockURLSession: URLSessionProtocol {
         }
         return (mockData ?? Data(), mockResponse ?? URLResponse())
     }
-
-    func data(for request: URLRequest, delegate: (any URLSessionTaskDelegate)?) async throws -> (Data, URLResponse) {
-        if let error = mockError {
-            throw error
-        }
-        return (mockData ?? Data(), mockResponse ?? URLResponse())
-    }
 }
