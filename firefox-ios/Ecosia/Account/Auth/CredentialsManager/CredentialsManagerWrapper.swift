@@ -8,7 +8,7 @@ import Auth0
 ///
 /// This class allows `CredentialsManager` to be injected as a dependency
 /// and enables testing by replacing it with a mock implementation.
-final class CredentialsManagerWrapper: CredentialsManaging {
+final class CredentialsManagerWrapper: CredentialsManagerProtocol {
 
     /// The underlying `CredentialsManager` instance.
     private let manager: CredentialsManager

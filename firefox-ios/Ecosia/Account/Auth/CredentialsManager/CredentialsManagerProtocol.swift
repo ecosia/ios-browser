@@ -5,7 +5,7 @@
 import Auth0
 
 /// A protocol for managing authentication credentials.
-public protocol CredentialsManaging {
+public protocol CredentialsManagerProtocol {
 
     /// Stores the provided credentials securely.
     ///

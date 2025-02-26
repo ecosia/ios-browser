@@ -6,7 +6,7 @@ import Auth0
 @testable import Ecosia
 
 /// A mock implementation of `CredentialsManaging` for unit testing.
-final class MockCredentialsManager: CredentialsManaging {
+final class MockCredentialsManager: CredentialsManagerProtocol {
 
     /// The stored credentials, if any.
     private var storedCredentials: Credentials?

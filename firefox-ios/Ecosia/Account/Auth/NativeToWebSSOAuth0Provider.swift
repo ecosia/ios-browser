@@ -7,8 +7,8 @@ import Auth0
 /// Native to Web SSO implementation of `Auth0ProviderProtocol` using Auth0's SDK and performing Native to Web SSO via REST API to perform the session token exchange.
 public struct NativeToWebSSOAuth0Provider: Auth0ProviderProtocol {
 
-    public var credentialsManager: CredentialsManaging { internalCredetialsManager }
-    private var internalCredetialsManager: CredentialsManaging
+    public var credentialsManager: CredentialsManagerProtocol { internalCredetialsManager }
+    private var internalCredetialsManager: CredentialsManagerProtocol
     private var client: HTTPClient
     public typealias SessionToken = String
 
@@ -19,7 +19,7 @@ public struct NativeToWebSSOAuth0Provider: Auth0ProviderProtocol {
     }
 
     public init(client: HTTPClient = URLSessionHTTPClient(),
-                credentialsManager: CredentialsManaging = Auth.defaultCredentialsManager) {
+                credentialsManager: CredentialsManagerProtocol = Auth.defaultCredentialsManager) {
         self.client = client
         self.internalCredetialsManager = credentialsManager
     }
