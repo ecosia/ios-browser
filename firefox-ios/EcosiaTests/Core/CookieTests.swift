@@ -8,6 +8,7 @@ import XCTest
 final class CookieTests: XCTestCase {
 
     var urlProvider: URLProvider = .production
+    var auth0Provider: Auth0ProviderProtocol = MockAuth0Provider()
 
     override func setUp() {
         try? FileManager.default.removeItem(at: FileManager.user)
@@ -247,8 +248,8 @@ final class CookieTests: XCTestCase {
 
 extension CookieTests {
 
-    /// This function calls the original `Cookie.received` injecting the `urlProvider` utilized for tests
+    /// This function calls the original `Cookie.received` injecting the `urlProvider` and the `auth0Provider` utilized for tests
     func extractReceivedCookies(_ cookies: [HTTPCookie]) {
-        Cookie.received(cookies, urlProvider: urlProvider)
+        Cookie.received(cookies, auth0Provider: auth0Provider, urlProvider: urlProvider)
     }
 }
