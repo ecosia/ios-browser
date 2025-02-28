@@ -36,15 +36,7 @@ struct TopSitesProvider: TimelineProvider {
                                                         siteURL: site.tileURL,
                                                         siteResource: site.faviconResource)
                     group.addTask {
-                        /* Update image for Ecosia Default Suggested Sites
                         let image = await siteImageFetcher.getImage(model: siteImageModel)
-                         */
-                        var image: UIImage!
-                        if let defaultSuggestedSiteImage = DefaultSuggestedSites.EcosiaDefaultSuggestedSite.fromURL(site.url) {
-                            image = .init(named: defaultSuggestedSiteImage.faviconName)
-                        } else {
-                           image = await siteImageFetcher.getImage(model: siteImageModel)
-                        }
                         return (site.faviconImageCacheKey, image)
                     }
                 }
