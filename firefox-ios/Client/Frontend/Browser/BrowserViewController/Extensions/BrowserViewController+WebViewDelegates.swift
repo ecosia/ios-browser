@@ -8,6 +8,7 @@ import Common
 import Shared
 import UIKit
 import Photos
+import Ecosia
 
 // MARK: - WKUIDelegate
 extension BrowserViewController: WKUIDelegate {
@@ -386,6 +387,14 @@ extension BrowserViewController: WKNavigationDelegate {
 
     func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
         if tabManager.selectedTab?.webView !== webView { return }
+
+        // TODO: Find a better place for this
+        if webView.url?.isEcosiaSearchQuery() ?? false {
+            if let sessionTokenCookie = Auth.shared.getSessionTokenCookie() {
+                print("[TEST] Auth - Setting session token cookie")
+                webView.configuration.websiteDataStore.httpCookieStore.setCookie(sessionTokenCookie)
+            }
+        }
 
         updateFindInPageVisibility(isVisible: false)
 

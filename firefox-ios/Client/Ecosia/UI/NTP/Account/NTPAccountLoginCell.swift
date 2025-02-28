@@ -16,13 +16,30 @@ final class NTPAccountLoginCell: UICollectionViewCell, ThemeApplicable, Reusable
     }
 
     // MARK: - Properties
-    private var loginButton = UIButton()
-
+    private lazy var loginButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.backgroundColor = .clear
+        button.addTarget(self, action: #selector(toggleAccountState), for: .touchUpInside)
+        button.titleLabel?.font = .preferredFont(forTextStyle: .headline)
+        button.titleLabel?.adjustsFontSizeToFitWidth = true
+        button.titleLabel?.adjustsFontForContentSizeCategory = true
+        button.contentHorizontalAlignment = .trailing
+        return button
+    }()
+    private lazy var sessionTokenButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.backgroundColor = .clear
+        button.addTarget(self, action: #selector(fetchSessionToken), for: .touchUpInside)
+        button.setTitle("Fetch session token", for: .normal)
+        button.titleLabel?.font = .preferredFont(forTextStyle: .subheadline)
+        button.contentHorizontalAlignment = .trailing
+        return button
+    }()
     // Task for managing login/logout async operations
     private var authTask: Task<Void, Never>?
-
-    // Keeps track of login state using the Auth instance
-    private var auth = Auth()
+    private var sessionTokenTask: Task<Void, Never>?
 
     // MARK: - Init
 
@@ -45,21 +62,18 @@ final class NTPAccountLoginCell: UICollectionViewCell, ThemeApplicable, Reusable
 
     private func setup() {
         contentView.addSubview(loginButton)
-        setupLoginButton()
+        contentView.addSubview(sessionTokenButton)
+        setupConstraints()
+        updateLoginButton()
     }
 
-    private func setupLoginButton() {
-        loginButton.translatesAutoresizingMaskIntoConstraints = false
-        loginButton.backgroundColor = .clear
-        loginButton.addTarget(self, action: #selector(toggleAccountState), for: .touchUpInside)
-        loginButton.titleLabel?.font = .preferredFont(forTextStyle: .headline)
-        loginButton.titleLabel?.adjustsFontSizeToFitWidth = true
-        loginButton.titleLabel?.adjustsFontForContentSizeCategory = true
-        loginButton.contentHorizontalAlignment = .trailing
+    private func setupConstraints() {
         NSLayoutConstraint.activate([
             loginButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -UX.insetMargin),
             loginButton.heightAnchor.constraint(equalToConstant: 30),
             loginButton.widthAnchor.constraint(equalToConstant: 100),
+            sessionTokenButton.topAnchor.constraint(equalTo: loginButton.bottomAnchor, constant: 4),
+            sessionTokenButton.trailingAnchor.constraint(equalTo: loginButton.trailingAnchor),
         ])
     }
 
@@ -73,25 +87,32 @@ final class NTPAccountLoginCell: UICollectionViewCell, ThemeApplicable, Reusable
         }
     }
 
+    @objc private func fetchSessionToken() {
+        sessionTokenTask?.cancel()
+        sessionTokenTask = Task {
+            await Auth.shared.fetchSessionToken()
+        }
+    }
+
     @MainActor
     private func performAuthAction() async {
-        if auth.isLoggedIn {
-            await auth.logout()
+        if Auth.shared.isLoggedIn {
+            await Auth.shared.logout()
         } else {
-            await auth.login()
+            await Auth.shared.login()
         }
         updateLoginButton()
     }
 
     private func updateLoginButton() {
         // Update button title and background color based on login state
-        loginButton.setTitle(auth.isLoggedIn ? "Sign Out" : "Sign In", for: .normal)
+        loginButton.setTitle(Auth.shared.isLoggedIn ? "Sign Out" : "Sign In", for: .normal)
     }
 
     // MARK: - Theming
 
     func applyTheme(theme: any Common.Theme) {
-        updateLoginButton()
-        loginButton.setTitleColor(auth.isLoggedIn ? .red : theme.colors.ecosia.buttonBackgroundPrimaryActive, for: .normal)
+        loginButton.setTitleColor(Auth.shared.isLoggedIn ? .red : theme.colors.ecosia.buttonBackgroundPrimaryActive, for: .normal)
+        sessionTokenButton.setTitleColor(Auth.shared.isLoggedIn ? theme.colors.ecosia.buttonBackgroundPrimaryActive : .red, for: .normal)
     }
 }
