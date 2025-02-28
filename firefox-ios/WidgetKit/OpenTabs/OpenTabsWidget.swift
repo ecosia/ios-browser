@@ -7,7 +7,9 @@ import WidgetKit
 import UIKit
 import Combine
 import Common
+// Ecosia: Additional imports for Ecosia framework and suggested sites updates
 import Ecosia
+import Storage
 
 struct OpenTabsWidget: Widget {
     private let kind: String = "Quick View"
@@ -37,6 +39,7 @@ struct OpenTabsView: View {
         let query = widgetFamily == .systemMedium ? "widget-tabs-medium-open-url" : "widget-tabs-large-open-url"
         VStack(alignment: .leading) {
             Link(destination: linkToContainingApp("?uuid=\(tab.uuid)", query: query)) {
+                /* Ecosia: Update default suggested sites entries
                 HStack(alignment: .center, spacing: 15) {
                     if entry.favicons[tab.imageKey] != nil {
                         (entry.favicons[tab.imageKey])!.resizable().frame(width: 16, height: 16)
@@ -52,6 +55,26 @@ struct OpenTabsView: View {
                     Text(tab.title!)
                         // Ecosia: update color
                         // .foregroundColor(Color.white)
+                        .foregroundColor(.ecosiaBundledColorWithName("PrimaryText"))
+                        .multilineTextAlignment(.leading)
+                        .lineLimit(1)
+                        .font(.system(size: 15, weight: .regular, design: .default))
+                }.padding(.horizontal)
+                 */
+                HStack(alignment: .center, spacing: 15) {
+                    if let ecosiaDefaultSuggestedSite = suggestedSite(from: tab.url) {
+                        Image(ecosiaDefaultSuggestedSite.faviconName, bundle: .ecosia)
+                            .resizable()
+                            .frame(width: 16, height: 16)
+                    } else if entry.favicons[tab.imageKey] != nil {
+                        (entry.favicons[tab.imageKey])!.resizable().frame(width: 16, height: 16)
+                    } else {
+                        Image(decorative: StandardImageIdentifiers.Large.globe)
+                            .foregroundColor(.ecosiaBundledColorWithName("PrimaryText"))
+                            .frame(width: 16, height: 16)
+                    }
+
+                    Text(suggestedSite(from: tab.url)?.localizedTitle ?? tab.title!)
                         .foregroundColor(.ecosiaBundledColorWithName("PrimaryText"))
                         .multilineTextAlignment(.leading)
                         .lineLimit(1)
@@ -163,5 +186,14 @@ struct OpenTabsView: View {
     private func linkToContainingApp(_ urlSuffix: String = "", query: String) -> URL {
         let urlString = "\(scheme)://\(query)\(urlSuffix)"
         return URL(string: urlString, invalidCharacters: false)!
+    }
+}
+
+// Ecosia: Helper to get a default suggested site from a URL
+extension OpenTabsView {
+
+    func suggestedSite(from url: URL?) -> DefaultSuggestedSites.EcosiaDefaultSuggestedSite? {
+        guard let url else { return nil }
+        return .fromURL(url.absoluteString)
     }
 }

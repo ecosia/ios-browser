@@ -5,7 +5,9 @@
 import SwiftUI
 import WidgetKit
 import Combine
+// Ecosia: Additional imports for Ecosia framework and suggested sites updates
 import Ecosia
+import Storage
 
 struct TopSitesWidget: Widget {
     private let kind: String = "Top Sites"
@@ -80,7 +82,21 @@ struct TopSitesView: View {
         let url = site.url
         Link(destination: linkToContainingApp("?url=\(url)", query: "widget-medium-topsites-open-url")) {
             Group {
+                /* Ecosia: Update default suggested sites entries
                 if let image = entry.favicons[site.faviconImageCacheKey] {
+                    image
+                        .resizable()
+                        .scaledToFit()
+                } else {
+                    Rectangle()
+                        .fill(UX.emptySquareFillColor)
+                }
+                 */
+                if let ecosiaDefaultSuggestedSite = DefaultSuggestedSites.EcosiaDefaultSuggestedSite.fromURL(url) {
+                    Image(ecosiaDefaultSuggestedSite.faviconName, bundle: .ecosia)
+                        .resizable()
+                        .scaledToFit()
+                } else if let image = entry.favicons[site.faviconImageCacheKey] {
                     image
                         .resizable()
                         .scaledToFit()
