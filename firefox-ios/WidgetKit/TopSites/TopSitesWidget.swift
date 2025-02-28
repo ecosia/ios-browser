@@ -93,7 +93,7 @@ struct TopSitesView: View {
                 }
                  */
                 if let ecosiaDefaultSuggestedSite = DefaultSuggestedSites.EcosiaDefaultSuggestedSite.fromURL(url) {
-                    Image(ecosiaDefaultSuggestedSite.faviconName, bundle: .ecosia)
+                    Image(ecosiaDefaultSuggestedSite.faviconName, bundle: .ecosia, label: Text("Site Favicon"))
                         .resizable()
                         .scaledToFit()
                 } else if let image = entry.favicons[site.faviconImageCacheKey] {

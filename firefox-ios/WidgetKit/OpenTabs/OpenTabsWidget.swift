@@ -63,7 +63,7 @@ struct OpenTabsView: View {
                  */
                 HStack(alignment: .center, spacing: 15) {
                     if let ecosiaDefaultSuggestedSite = suggestedSite(from: tab.url) {
-                        Image(ecosiaDefaultSuggestedSite.faviconName, bundle: .ecosia)
+                        Image(ecosiaDefaultSuggestedSite.faviconName, bundle: .ecosia, label: Text("Site Favicon"))
                             .resizable()
                             .frame(width: 16, height: 16)
                     } else if entry.favicons[tab.imageKey] != nil {
