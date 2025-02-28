@@ -2,8 +2,6 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
-// Ecosia: Disable accessibility label otherwise as it requires a mojor work on Firefox code to support it appropriately
-// swiftlint: disable accessibility_label_for_image
 import SwiftUI
 import WidgetKit
 import Combine
@@ -95,9 +93,12 @@ struct TopSitesView: View {
                 }
                  */
                 if let ecosiaDefaultSuggestedSite = DefaultSuggestedSites.EcosiaDefaultSuggestedSite.fromURL(url) {
+                    // Ecosia: Disable accessibility label otherwise as it requires a mojor work on Firefox code to support it appropriately
+                    // swiftlint:disable accessibility_label_for_image
                     Image(ecosiaDefaultSuggestedSite.faviconName, bundle: .ecosia)
                         .resizable()
                         .scaledToFit()
+                    // swiftlint:enable accessibility_label_for_image
                 } else if let image = entry.favicons[site.faviconImageCacheKey] {
                     image
                         .resizable()

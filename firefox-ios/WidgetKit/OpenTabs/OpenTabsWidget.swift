@@ -2,8 +2,6 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
-// Ecosia: Disable accessibility label otherwise as it requires a mojor work on Firefox code to support it appropriately
-// swiftlint: disable accessibility_label_for_image
 import SwiftUI
 import WidgetKit
 import UIKit
@@ -71,9 +69,12 @@ struct OpenTabsView: View {
                     } else if entry.favicons[tab.imageKey] != nil {
                         (entry.favicons[tab.imageKey])!.resizable().frame(width: 16, height: 16)
                     } else {
+                        // Ecosia: Disable accessibility label otherwise as it requires a mojor work on Firefox code to support it appropriately
+                        // swiftlint:disable accessibility_label_for_image
                         Image(decorative: StandardImageIdentifiers.Large.globe)
                             .foregroundColor(.ecosiaBundledColorWithName("PrimaryText"))
                             .frame(width: 16, height: 16)
+                        // swiftlint:enable accessibility_label_for_image
                     }
 
                     Text(suggestedSite(from: tab.url)?.localizedTitle ?? tab.title!)
