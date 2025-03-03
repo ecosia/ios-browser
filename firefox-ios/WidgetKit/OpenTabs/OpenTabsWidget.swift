@@ -62,7 +62,7 @@ struct OpenTabsView: View {
                 }.padding(.horizontal)
                  */
                 HStack(alignment: .center, spacing: 15) {
-                    // Ecosia: Disable accessibility label otherwise as it requires a mojor work on Firefox code to support it appropriately
+                    // Ecosia: Disable accessibility label otherwise as it requires a major work on Firefox code to support it appropriately
                     // swiftlint:disable accessibility_label_for_image
                     if let ecosiaDefaultSuggestedSite = suggestedSite(from: tab.url) {
                         Image(ecosiaDefaultSuggestedSite.faviconName, bundle: .ecosia)
