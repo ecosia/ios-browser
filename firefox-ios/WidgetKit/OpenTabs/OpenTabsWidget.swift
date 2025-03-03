@@ -62,6 +62,8 @@ struct OpenTabsView: View {
                 }.padding(.horizontal)
                  */
                 HStack(alignment: .center, spacing: 15) {
+                    // Ecosia: Disable accessibility label otherwise as it requires a mojor work on Firefox code to support it appropriately
+                    // swiftlint:disable accessibility_label_for_image
                     if let ecosiaDefaultSuggestedSite = suggestedSite(from: tab.url) {
                         Image(ecosiaDefaultSuggestedSite.faviconName, bundle: .ecosia)
                             .resizable()
@@ -69,8 +71,6 @@ struct OpenTabsView: View {
                     } else if entry.favicons[tab.imageKey] != nil {
                         (entry.favicons[tab.imageKey])!.resizable().frame(width: 16, height: 16)
                     } else {
-                        // Ecosia: Disable accessibility label otherwise as it requires a mojor work on Firefox code to support it appropriately
-                        // swiftlint:disable accessibility_label_for_image
                         Image(decorative: StandardImageIdentifiers.Large.globe)
                             .foregroundColor(.ecosiaBundledColorWithName("PrimaryText"))
                             .frame(width: 16, height: 16)
