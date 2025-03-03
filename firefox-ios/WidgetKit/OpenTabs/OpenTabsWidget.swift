@@ -39,29 +39,23 @@ struct OpenTabsView: View {
         let query = widgetFamily == .systemMedium ? "widget-tabs-medium-open-url" : "widget-tabs-large-open-url"
         VStack(alignment: .leading) {
             Link(destination: linkToContainingApp("?uuid=\(tab.uuid)", query: query)) {
-                /* Ecosia: Update default suggested sites entries
                 HStack(alignment: .center, spacing: 15) {
+                    /* Ecosia: Update default suggested sites entries
                     if entry.favicons[tab.imageKey] != nil {
                         (entry.favicons[tab.imageKey])!.resizable().frame(width: 16, height: 16)
                     } else {
                         Image(decorative: StandardImageIdentifiers.Large.globe)
-                            /* Ecosia: update color
                             .foregroundColor(Color.white)
-                            */
-                            .foregroundColor(.ecosiaBundledColorWithName("PrimaryText"))
                             .frame(width: 16, height: 16)
                     }
 
                     Text(tab.title!)
-                        // Ecosia: update color
-                        // .foregroundColor(Color.white)
-                        .foregroundColor(.ecosiaBundledColorWithName("PrimaryText"))
+                        .foregroundColor(Color.white)
                         .multilineTextAlignment(.leading)
                         .lineLimit(1)
                         .font(.system(size: 15, weight: .regular, design: .default))
                 }.padding(.horizontal)
-                 */
-                HStack(alignment: .center, spacing: 15) {
+                     */
                     // Ecosia: Disable accessibility label otherwise as it requires a major work on Firefox code to support it appropriately
                     // swiftlint:disable accessibility_label_for_image
                     if let ecosiaDefaultSuggestedSite = suggestedSite(from: tab.url) {
@@ -86,8 +80,9 @@ struct OpenTabsView: View {
             }
 
             Rectangle()
-                // Ecosia: update color
-                // .fill(Color(UIColor(red: 0.85, green: 0.85, blue: 0.85, alpha: 0.3)))
+                /* Ecosia: update color
+                .fill(Color(UIColor(red: 0.85, green: 0.85, blue: 0.85, alpha: 0.3)))
+                 */
                 .fill(Color.ecosiaBundledColorWithName("Border"))
                 .frame(height: 0.5)
                 .padding(.leading, 45)
