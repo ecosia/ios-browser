@@ -158,7 +158,7 @@ open class DefaultSuggestedSites {
 }
 
 /*
- Ecosia: We add th default suggested sites representation with an helper enum.
+ Ecosia: We add the default suggested sites representation with an helper enum.
  This enum provides a structured way to define and retrieve default suggested sites
  based on their URL.
  It's an handy way to define and retrieve default suggested sites in a type-safe way.
