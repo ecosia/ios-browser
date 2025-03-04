@@ -51,11 +51,7 @@ struct OpenTabsView: View {
 
                     Text(tab.title!)
                         .foregroundColor(Color.white)
-                        .multilineTextAlignment(.leading)
-                        .lineLimit(1)
-                        .font(.system(size: 15, weight: .regular, design: .default))
-                }.padding(.horizontal)
-                     */
+                     */                    
                     // Ecosia: Disable accessibility label otherwise as it requires a major work on Firefox code to support it appropriately
                     // swiftlint:disable accessibility_label_for_image
                     if let ecosiaDefaultSuggestedSite = suggestedSite(from: tab.url) {
