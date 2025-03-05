@@ -218,7 +218,7 @@ open class Analytics {
     }
 
     // MARK: Onboarding
-    public func introDisplaying(page: Property.OnboardingPage?, at index: Int) {
+    public func introDisplaying(page: Property.OnboardingPage?) {
         guard let page else {
             return
         }
@@ -228,7 +228,7 @@ open class Analytics {
         track(event)
     }
 
-    public func introClick(_ label: Label.Onboarding, page: Property.OnboardingPage?, index: Int) {
+    public func introClick(_ label: Label.Onboarding, page: Property.OnboardingPage?) {
         guard let page else {
             return
         }

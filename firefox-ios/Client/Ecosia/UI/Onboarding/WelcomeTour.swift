@@ -269,7 +269,7 @@ final class WelcomeTour: UIViewController, Themeable {
             }
         }
 
-        Analytics.shared.introDisplaying(page: current?.analyticsValue, at: currentAnalyticsIndex)
+        Analytics.shared.introDisplaying(page: current?.analyticsValue)
         updateAccessibilityLabels(step: step)
     }
 
@@ -308,7 +308,7 @@ final class WelcomeTour: UIViewController, Themeable {
     @objc func back() {
         guard !isFirstStep() else {
             dismiss(animated: true) {
-                Analytics.shared.introDisplaying(page: .start, at: 0)
+                Analytics.shared.introDisplaying(page: .start)
             }
             return
         }
@@ -321,7 +321,7 @@ final class WelcomeTour: UIViewController, Themeable {
             complete()
             return
         }
-        Analytics.shared.introClick(.next, page: current?.analyticsValue, index: currentAnalyticsIndex)
+        Analytics.shared.introClick(.next, page: current?.analyticsValue)
         let displayingStep = currentIndex + 1
         display(step: steps[displayingStep])
         UIAccessibility.post(notification: .screenChanged, argument: titleLabel)
@@ -333,7 +333,7 @@ final class WelcomeTour: UIViewController, Themeable {
     }
 
     @objc func skip() {
-        Analytics.shared.introClick(.skip, page: current?.analyticsValue, index: currentAnalyticsIndex)
+        Analytics.shared.introClick(.skip, page: current?.analyticsValue)
         delegate?.welcomeTourDidFinish(self)
     }
 
