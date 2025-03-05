@@ -388,6 +388,7 @@ final class AnalyticsSpyTests: XCTestCase {
         // Arrange
         let welcome = makeWelcome()
         XCTAssertNil(analyticsSpy.introClickLabelCalled)
+        XCTAssertNil(analyticsSpy.introClickPageCalled)
 
         // Act
         welcome.getStarted()
