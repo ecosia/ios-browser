@@ -8,10 +8,6 @@ import Storage
 import Common
 import Shared
 import WebKit
-import Ecosia
-
-// Ecosia: Used to get last visited sites
-import struct MozillaAppServices.VisitTransitionSet
 
 // This class subclasses the legacy tab manager temporarily so we can
 // gradually migrate to the new system
@@ -113,8 +109,7 @@ class TabManagerImplementation: LegacyTabManager, Notifiable, WindowSimpleTabsPr
         tabs = [Tab]()
         Task {
             // Only attempt a tab data store fetch if we know we should have tabs on disk (ignore new windows)
-            var windowData: WindowData? = windowIsNew ? nil : await self.tabDataStore.fetchWindowData(uuid: windowUUID)
-
+            let windowData: WindowData? = windowIsNew ? nil : await self.tabDataStore.fetchWindowData(uuid: windowUUID)
             await buildTabRestore(window: windowData)
             logger.log("Tabs restore ended after fetching window data", level: .debug, category: .tabs)
             logger.log("Normal tabs count; \(normalTabs.count), Inactive tabs count; \(inactiveTabs.count), Private tabs count; \(privateTabs.count)", level: .debug, category: .tabs)
