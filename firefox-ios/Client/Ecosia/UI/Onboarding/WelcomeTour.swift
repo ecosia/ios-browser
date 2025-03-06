@@ -344,11 +344,6 @@ final class WelcomeTour: UIViewController, Themeable {
         return index
     }
 
-    private var currentAnalyticsIndex: Int {
-        // Needed since the start screen is considered 0
-        return currentIndex + 1
-    }
-
     private func isFirstStep() -> Bool {
         return currentIndex == 0
     }
