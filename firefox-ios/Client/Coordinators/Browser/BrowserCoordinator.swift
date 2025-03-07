@@ -1095,7 +1095,7 @@ extension BrowserCoordinator {
 
     @discardableResult
     private func presentDefaultBrowserPromoIfNeeded() -> Bool {
-//        guard shouldShowDefaultBrowserPromo else { return false }
+        guard shouldShowDefaultBrowserPromo else { return false }
 
         if #available(iOS 14, *) {
             let defaultPromo = DefaultBrowser(windowUUID: windowUUID, delegate: browserViewController)
