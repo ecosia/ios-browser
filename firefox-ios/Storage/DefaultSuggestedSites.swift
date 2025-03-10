@@ -138,6 +138,11 @@ open class DefaultSuggestedSites {
     private static let treesURL = Ecosia.Environment.current.urlProvider.trees
     public static let sites = [
             SuggestedSite(
+                url: "http://local.ecosia-dev.xyz:8100/accounts/sign-in?returnTo=http%3A%2F%2Flocal.ecosia-dev.xyz%3A8100%2Faccounts%3Ffeature-accounts_features_holdout_group%3Dst_accounts_features_treatment%26feature-climate-impact-experience%3Denabled",
+                title: "Accounts Direct Sign In",
+                trackingId: 912
+            ),
+            SuggestedSite(
                 url: financialReportsURL.absoluteString,
                 title: Bundle.ecosia.localizedString(forKey: "Financial reports",
                                                      value: "",
