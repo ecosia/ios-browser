@@ -16,7 +16,8 @@ public class Auth {
     private(set) var idToken: String?
     private(set) var accessToken: String?
     private(set) var refreshToken: String?
-    private(set) var sessionToken: String?
+    private(set) var sessionToken: String? // TODO: Clear session token after used since it's one-time use
+    public var currentSessionToken: String? { sessionToken }
 
     /// Indicates whether the user is currently logged in.
     public private(set) var isLoggedIn: Bool = false

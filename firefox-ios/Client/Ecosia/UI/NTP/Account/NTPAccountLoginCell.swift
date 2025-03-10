@@ -32,7 +32,6 @@ final class NTPAccountLoginCell: UICollectionViewCell, ThemeApplicable, Reusable
         button.translatesAutoresizingMaskIntoConstraints = false
         button.backgroundColor = .clear
         button.addTarget(self, action: #selector(fetchSessionToken), for: .touchUpInside)
-        button.setTitle("Fetch session token", for: .normal)
         button.titleLabel?.font = .preferredFont(forTextStyle: .subheadline)
         button.contentHorizontalAlignment = .trailing
         return button
@@ -65,6 +64,7 @@ final class NTPAccountLoginCell: UICollectionViewCell, ThemeApplicable, Reusable
         contentView.addSubview(sessionTokenButton)
         setupConstraints()
         updateLoginButton()
+        updateSessionTokenButton()
     }
 
     private func setupConstraints() {
@@ -87,13 +87,6 @@ final class NTPAccountLoginCell: UICollectionViewCell, ThemeApplicable, Reusable
         }
     }
 
-    @objc private func fetchSessionToken() {
-        sessionTokenTask?.cancel()
-        sessionTokenTask = Task {
-            await Auth.shared.fetchSessionToken()
-        }
-    }
-
     @MainActor
     private func performAuthAction() async {
         if Auth.shared.isLoggedIn {
@@ -108,10 +101,22 @@ final class NTPAccountLoginCell: UICollectionViewCell, ThemeApplicable, Reusable
         // Update button title and background color based on login state
         loginButton.setTitle(Auth.shared.isLoggedIn ? "Sign Out" : "Sign In", for: .normal)
     }
+    
+    @objc private func fetchSessionToken() {
+        sessionTokenTask?.cancel()
+        sessionTokenTask = Task {
+            await Auth.shared.fetchSessionToken()
+            updateSessionTokenButton()
+        }
+    }
+
+    private func updateSessionTokenButton() {
+        sessionTokenButton.setTitle("Fetch session token: \(Auth.shared.currentSessionToken?.prefix(10) ?? "none")", for: .normal)
+    }
 
     // MARK: - Theming
 
-    func applyTheme(theme: any Common.Theme) {
+    func applyTheme(theme: Theme) {
         loginButton.setTitleColor(Auth.shared.isLoggedIn ? .red : theme.colors.ecosia.buttonBackgroundPrimaryActive, for: .normal)
         sessionTokenButton.setTitleColor(Auth.shared.isLoggedIn ? theme.colors.ecosia.buttonBackgroundPrimaryActive : .red, for: .normal)
     }
