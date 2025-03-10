@@ -389,9 +389,19 @@ extension BrowserViewController: WKNavigationDelegate {
         if tabManager.selectedTab?.webView !== webView { return }
 
         // TODO: Find a better place for this
-        if webView.url?.isEcosiaSearchQuery() ?? false {
+        if let url = webView.url, url.isEcosiaSearchQuery() || url.isEcosiaDevDomain() {
             if let sessionTokenCookie = Auth.shared.getSessionTokenCookie() {
                 print("[TEST] Auth - Setting session token cookie")
+                var existingCookie: HTTPCookie?
+                webView.configuration.websiteDataStore.httpCookieStore.getAllCookies { cookies in
+                    existingCookie = cookies.first { $0.name == "session_token" && $0.domain == ".ecosia-dev.xyz" }
+                }
+                if let cookie = existingCookie {
+                    print("[TEST] Auth - Found cookie \(cookie), deleting now")
+                    Task {
+                        await webView.configuration.websiteDataStore.httpCookieStore.deleteCookie(cookie)
+                    }
+                }
                 webView.configuration.websiteDataStore.httpCookieStore.setCookie(sessionTokenCookie)
             }
         }

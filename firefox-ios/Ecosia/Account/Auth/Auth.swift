@@ -96,8 +96,8 @@ public class Auth {
     }
 
     public func fetchSessionToken() async {
-        guard isLoggedIn, sessionToken == nil else {
-            print("\(#file).\(#function) - 👤 Auth - User not logged in or token already exists")
+        guard isLoggedIn else {
+            print("\(#file).\(#function) - 👤 Auth - User not logged in")
             return
         }
         sessionToken = await retrieveSessionTokenIfNeeded()
@@ -107,7 +107,7 @@ public class Auth {
     /// Returns session token cookie if it can be retrieved
     public func getSessionTokenCookie() -> HTTPCookie? {
         guard isLoggedIn, let token = sessionToken else {
-            print("\(#file).\(#function) - 👤 Auth - User not logged in or token missing")
+            print("\(#file).\(#function) - 👤 Auth - \(isLoggedIn ? "User not logged in" : "Token missing")")
             return nil
         }
         print("[TEST] Auth - Making cookie for \(token)")
@@ -146,11 +146,11 @@ extension Auth {
     private func makeSessionTokenCookie(_ urlProvider: URLProvider = Environment.current.urlProvider, token: String) -> HTTPCookie? {
         HTTPCookie(properties: [
             .name: "session_token",
-            .domain: ".\(urlProvider.domain ?? "")",
+            .domain: ".ecosia-dev.xyz",
             .path: "/",
             .value: token,
             .secure: true,
-            .expires: Date(timeIntervalSince1970: 3600)
+            .expires: Date(timeIntervalSinceNow: 3600)
         ])
     }
 }
