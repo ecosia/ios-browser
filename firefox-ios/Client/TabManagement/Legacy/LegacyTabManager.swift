@@ -262,13 +262,6 @@ class LegacyTabManager: NSObject, FeatureFlaggable, TabManager, TabEventHandler 
         if let consentCookie = Cookie.makeConsentCookie() {
             configuration.websiteDataStore.httpCookieStore.setCookie(consentCookie)
         }
-        // Ecosia: Update Auth Cookie injection
-        if let auth: Auth = AppContainer.shared.resolve(),
-           let authCookie = Cookie.makeAuthCookie(from: auth) {
-            configuration.websiteDataStore.httpCookieStore.setCookie(authCookie) {
-                print("Auth cookie set in WKWebView")
-            }
-        }
         return configuration
     }
 
@@ -1118,11 +1111,11 @@ extension LegacyTabManager: WKNavigationDelegate {
 // Ecosia: Cookie observer
 extension LegacyTabManager: WKHTTPCookieStoreObserver {
     func cookiesDidChange(in cookieStore: WKHTTPCookieStore) {
-        cookieStore.getAllCookies { cookies in
-            DispatchQueue.main.async {
-                guard let auth: Auth = AppContainer.shared.resolve() else { return }
-                Cookie.received(cookies, auth0Provider: auth.auth0Provider)
-            }
-        }
+//        cookieStore.getAllCookies { cookies in
+//            DispatchQueue.main.async {
+//                guard let auth: Auth = AppContainer.shared.resolve() else { return }
+//                Cookie.received(cookies, auth0Provider: auth.auth0Provider)
+//            }
+//        }
     }
 }

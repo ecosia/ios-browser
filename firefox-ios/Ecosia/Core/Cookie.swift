@@ -284,7 +284,8 @@ public enum Cookie: String {
         case .consent:
             extractECCC(cookie.value)
         case .auth:
-            extractAuthCookie(cookie, auth0Provider: auth0Provider)
+            return
+//            extractAuthCookie(cookie, auth0Provider: auth0Provider)
         }
     }
 }
