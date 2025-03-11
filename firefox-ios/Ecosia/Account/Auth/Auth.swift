@@ -115,6 +115,7 @@ public class Auth {
         return makeSessionTokenCookie(token: token)
     }
 
+    // TODO: We'll need this in the future for syncs with web, not used now
 //    /// Clears the auth cookie in WKWebView.
 //    private func clearAuthCookieInWebView() {
 //        // Implement the logic to clear the auth cookie in your WKWebView instances

@@ -388,6 +388,7 @@ extension BrowserViewController: WKNavigationDelegate {
     func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
         if tabManager.selectedTab?.webView !== webView { return }
 
+        // Ecosia: Part of Accounts Spike implementation
         // TODO: Find a better place for this
         if let url = webView.url, url.isEcosiaSearchQuery() || url.isEcosiaDevDomain() {
             if let sessionTokenCookie = Auth.shared.getSessionTokenCookie() {

@@ -38,6 +38,7 @@ final class NTPAccountLoginCell: UICollectionViewCell, ThemeApplicable, Reusable
     }()
     // Task for managing login/logout async operations
     private var authTask: Task<Void, Never>?
+    // Task for managing fetching the session token async operations
     private var sessionTokenTask: Task<Void, Never>?
 
     // MARK: - Init

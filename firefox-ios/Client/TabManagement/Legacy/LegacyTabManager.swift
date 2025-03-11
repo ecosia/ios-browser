@@ -1111,6 +1111,7 @@ extension LegacyTabManager: WKNavigationDelegate {
 // Ecosia: Cookie observer
 extension LegacyTabManager: WKHTTPCookieStoreObserver {
     func cookiesDidChange(in cookieStore: WKHTTPCookieStore) {
+        // TODO: We'll need this in the future for syncs with web, not used now
 //        cookieStore.getAllCookies { cookies in
 //            DispatchQueue.main.async {
 //                guard let auth: Auth = AppContainer.shared.resolve() else { return }
