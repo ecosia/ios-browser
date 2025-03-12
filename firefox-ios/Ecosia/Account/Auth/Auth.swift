@@ -8,6 +8,7 @@ import WebKit
 
 /// The `Auth` class manages user authentication, credential storage, and renewal using Auth0.
 public class Auth {
+    public static var shared = Auth()
 
     public static let defaultCredentialsManager: CredentialsManagerProtocol = DefaultCredentialsManager()
     public let auth0Provider: Auth0ProviderProtocol
@@ -15,6 +16,8 @@ public class Auth {
     private(set) var idToken: String?
     private(set) var accessToken: String?
     private(set) var refreshToken: String?
+    private(set) var sessionToken: String? // TODO: Clear session token after used since it's one-time use
+    public var currentSessionToken: String? { sessionToken }
 
     /// Indicates whether the user is currently logged in.
     public private(set) var isLoggedIn: Bool = false
@@ -37,7 +40,6 @@ public class Auth {
             if didStore {
                 isLoggedIn = true
                 print("\(#file).\(#function) - 👤 Auth - Credentials stored successfully.")
-                _ = await retrieveSessionTokenIfNeeded()
             }
         } catch {
             print("\(#file).\(#function) - 👤 Auth - Login failed with error: \(error)")
@@ -94,17 +96,37 @@ public class Auth {
         }
     }
 
-    /// Clears the auth cookie in WKWebView.
-    private func clearAuthCookieInWebView() {
-        // Implement the logic to clear the auth cookie in your WKWebView instances
-        let dataStore = WKWebsiteDataStore.default()
-        dataStore.fetchDataRecords(ofTypes: [WKWebsiteDataTypeCookies]) { records in
-            let authCookieRecords = records.filter { $0.displayName.contains(Environment.current.urlProvider.root.baseURL!.absoluteString) }
-            dataStore.removeData(ofTypes: [WKWebsiteDataTypeCookies], for: authCookieRecords) {
-                print("Auth cookie cleared in WKWebView.")
-            }
+    public func fetchSessionToken() async {
+        guard isLoggedIn else {
+            print("\(#file).\(#function) - 👤 Auth - User not logged in")
+            return
         }
+        sessionToken = await retrieveSessionTokenIfNeeded()
+        print("\(#file).\(#function) - 👤 Auth - Retrieved sessionToken \(sessionToken!)")
     }
+
+    /// Returns session token cookie if it can be retrieved
+    public func getSessionTokenCookie() -> HTTPCookie? {
+        guard isLoggedIn, let token = sessionToken else {
+            print("\(#file).\(#function) - 👤 Auth - \(isLoggedIn ? "User not logged in" : "Token missing")")
+            return nil
+        }
+        print("[TEST] Auth - Making cookie for \(token)")
+        return makeSessionTokenCookie(token: token)
+    }
+
+    // TODO: We'll need this in the future for syncs with web, not used now
+//    /// Clears the auth cookie in WKWebView.
+//    private func clearAuthCookieInWebView() {
+//        // Implement the logic to clear the auth cookie in your WKWebView instances
+//        let dataStore = WKWebsiteDataStore.default()
+//        dataStore.fetchDataRecords(ofTypes: [WKWebsiteDataTypeCookies]) { records in
+//            let authCookieRecords = records.filter { $0.displayName.contains(Environment.current.urlProvider.root.baseURL!.absoluteString) }
+//            dataStore.removeData(ofTypes: [WKWebsiteDataTypeCookies], for: authCookieRecords) {
+//                print("Auth cookie cleared in WKWebView.")
+//            }
+//        }
+//    }
 }
 
 extension Auth {
@@ -121,5 +143,16 @@ extension Auth {
             }
         }
         return nil
+    }
+
+    private func makeSessionTokenCookie(_ urlProvider: URLProvider = Environment.current.urlProvider, token: String) -> HTTPCookie? {
+        HTTPCookie(properties: [
+            .name: "session_token",
+            .domain: ".ecosia-dev.xyz",
+            .path: "/",
+            .value: token,
+            .secure: true,
+            .expires: Date(timeIntervalSinceNow: 3600)
+        ])
     }
 }
