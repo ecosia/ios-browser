@@ -75,6 +75,9 @@ extension URL {
             return Int(pageNumber)
         }
         return nil
+	}
+    public func isEcosiaDevDomain() -> Bool {
+        return isEcosiaDev()
     }
 
     /// Check whether the URL should be Ecosified. At the moment this is true for every Ecosia URL.
@@ -117,6 +120,13 @@ extension URL {
 
     private func isEcosia(_ urlProvider: URLProvider = Environment.current.urlProvider) -> Bool {
         guard let domain = urlProvider.domain else { return false }
+        let isBrowser = scheme.flatMap(Scheme.init(rawValue:))?.isBrowser == true
+        let hasURLProviderDomainSuffix = host?.hasSuffix(domain) == true
+        return isBrowser && hasURLProviderDomainSuffix
+    }
+
+    private func isEcosiaDev() -> Bool {
+        let domain = "ecosia-dev.xyz"
         let isBrowser = scheme.flatMap(Scheme.init(rawValue:))?.isBrowser == true
         let hasURLProviderDomainSuffix = host?.hasSuffix(domain) == true
         return isBrowser && hasURLProviderDomainSuffix

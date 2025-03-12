@@ -32,9 +32,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         creditCardAutofillEnabled: creditCardAutofillStatus
     )
 
-    // Ecosia: implement Auth0
-    lazy var auth = Auth()
-
     /* Ecosia: Swap Theme Manager with Ecosia's
     lazy var themeManager: ThemeManager = DefaultThemeManager(sharedContainerIdentifier: AppInfo.sharedContainerIdentifier)
      */
