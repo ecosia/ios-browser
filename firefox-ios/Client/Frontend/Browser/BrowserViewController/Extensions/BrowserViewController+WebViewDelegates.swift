@@ -8,6 +8,7 @@ import Common
 import Shared
 import UIKit
 import Photos
+import Ecosia
 
 // MARK: - WKUIDelegate
 extension BrowserViewController: WKUIDelegate {
@@ -575,6 +576,11 @@ extension BrowserViewController: WKNavigationDelegate {
                     webView.load(navigationAction.request)
                     return
                 }
+            }
+
+            if url.isEcosiaSearchVertical() {
+                // TODO: Fix double event on start
+                Analytics.shared.inappSearch(url: url)
             }
 
             decisionHandler(.allow)
