@@ -42,10 +42,6 @@ class DependencyHelper {
         let microsurveyManager: MicrosurveyManager = MicrosurveySurfaceManager()
         AppContainer.shared.register(service: microsurveyManager)
 
-        // Ecosia: Add Auth0 among the dependecies
-        let auth: Auth = appDelegate.auth
-        AppContainer.shared.register(service: auth)
-
         // Tell the container we are done registering
         AppContainer.shared.bootstrap()
     }
