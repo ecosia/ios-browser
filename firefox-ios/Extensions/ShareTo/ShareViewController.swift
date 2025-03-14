@@ -161,7 +161,10 @@ class ShareViewController: UIViewController {
             makeActionRow(
                 addTo: stackView,
                 label: .ShareLoadInBackground,
-                imageName: StandardImageIdentifiers.Large.tabTray,
+                /* Ecosia: Update image iname
+                 imageName: StandardImageIdentifiers.Large.tabTray,
+                 */
+                imageName: "load",
                 action: #selector(actionLoadInBackground),
                 hasNavigation: false
             )
