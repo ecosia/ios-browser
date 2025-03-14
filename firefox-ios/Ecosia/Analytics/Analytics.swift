@@ -267,9 +267,8 @@ open class Analytics {
             "plt_v": Bundle.version as NSObject,
             "search_type": url.getEcosiaSearchVerticalPath()
         ]
-        // TODO: Uncomment when schema is created
-//        track(SelfDescribing(schema: Self.inappSearchSchema,
-//                             payload: payload.compactMapValues({ $0 })))
+        track(SelfDescribing(schema: Self.inappSearchSchema,
+                             payload: payload.compactMapValues({ $0 })))
     }
 
     // MARK: Settings
