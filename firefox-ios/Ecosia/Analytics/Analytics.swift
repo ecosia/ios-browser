@@ -257,7 +257,8 @@ open class Analytics {
 
     // MARK: In-App Search
     public func inappSearch(url: URL) {
-        guard let query = url.getEcosiaSearchQuery() else {
+        guard NativeSRPVAnalyticsExperiment.isEnabled,
+              let query = url.getEcosiaSearchQuery() else {
             return
         }
         let payload: [String: Any?] = [
