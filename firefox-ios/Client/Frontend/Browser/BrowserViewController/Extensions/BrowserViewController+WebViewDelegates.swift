@@ -576,10 +576,6 @@ extension BrowserViewController: WKNavigationDelegate {
                     return
                 }
             }
-//            if url.isEcosiaSearchVertical() {
-//                // TODO: Fix double event on start
-//                Analytics.shared.inappSearch(url: url)
-//            }
 
             decisionHandler(.allow)
             return
