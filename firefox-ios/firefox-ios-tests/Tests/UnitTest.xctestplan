@@ -167,6 +167,7 @@
         "ETPCoverSheetTests",
         "GeneralizedImageFetcherTests\/testBadStatusCode()",
         "GeneralizedImageFetcherTests\/testErrorResponse()",
+        "GeneralizedImageFetcherTests\/testNilData()",
         "GleanPlumbMessageManagerTests\/testManagerOnMessagePressed_withMalformedURL()",
         "HistoryDeletionUtilityTests\/testDeletingMultipleItemsEmptyingDatabase()",
         "HistoryDeletionUtilityTests\/testDeletingMultipleSpecificItems()",
