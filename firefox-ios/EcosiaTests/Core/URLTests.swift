@@ -61,6 +61,42 @@ final class URLTests: XCTestCase {
         XCTAssertTrue(searchEcosiaURL.isEcosiaSearchQuery(urlProvider))
     }
 
+    // MARK: - `isEcosiaSearchVertical` & `getEcosiaSearchVerticalPath`
+
+    func testAssertNotEcosiaSearchVerticalOnNonEcosiaURL() {
+        let nonEcosiaURL = URL(string: "https://www.non-ecosia.com/search")!
+        XCTAssertFalse(nonEcosiaURL.isEcosiaSearchVertical(urlProvider))
+        XCTAssertNil(nonEcosiaURL.getEcosiaSearchVerticalPath(urlProvider))
+    }
+
+    func testAssertNotEcosiaSearchVerticalOnNonSearchPage() {
+        let settingsURL = URL(string: "https://www.ecosia.org/settings")!
+        XCTAssertFalse(settingsURL.isEcosiaSearchVertical(urlProvider))
+        XCTAssertNil(settingsURL.getEcosiaSearchVerticalPath(urlProvider))
+    }
+
+    func testAssertEcosiaSearchVerticalOnEnumCases() {
+        for path in URL.EcosiaSearchVertical.allCases.map(\.rawValue) {
+            let url = URL(string: "https://www.ecosia.org/\(path)?q=test")!
+            XCTAssertTrue(url.isEcosiaSearchVertical(urlProvider))
+            XCTAssertEqual(url.getEcosiaSearchVerticalPath(urlProvider), path)
+        }
+    }
+
+    // MARK: - `getEcosiaSearchQuery` & `getEcosiaSearchPage`
+
+    func testAssertEcosiaSearchQueryAndPageOnNonEcosiaURL() {
+        let nonEcosiaURL = URL(string: "https://www.non-ecosia.com/search?q=test&p=1")!
+        XCTAssertNil(nonEcosiaURL.getEcosiaSearchQuery(urlProvider))
+        XCTAssertNil(nonEcosiaURL.getEcosiaSearchPage(urlProvider))
+    }
+
+    func testAssertEcosiaSearchQueryAndPageOnEcosiaURL() {
+        let ecosiaUrl = URL(string: "https://www.ecosia.org?q=test&p=1")!
+        XCTAssertEqual(ecosiaUrl.getEcosiaSearchQuery(urlProvider), "test")
+        XCTAssertEqual(ecosiaUrl.getEcosiaSearchPage(urlProvider), 1)
+    }
+
     // MARK: - `shouldEcosify`
 
     func testAssertShouldEcosifyOnNonEcosiaURL() {
