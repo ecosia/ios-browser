@@ -92,7 +92,8 @@ workflows:
           filters:
             branches:
               only:
-                - /^.*main.*/
+                - main
+                - /^main-\d+$/
           name: Deploy release version over Testflight if MARKETING_VERSION file updated
           config-path: .circleci/deploy-release.yml
           mapping: |
