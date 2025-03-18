@@ -93,7 +93,7 @@ workflows:
             branches:
               only:
                 - /^.*main.*/
-          name: Deploy release version over Testflight if MARKETING_VERION file updated
+          name: Deploy release version over Testflight if MARKETING_VERSION file updated
           config-path: .circleci/deploy-release.yml
           mapping: |
             firefox-ios/Client/Configuration/Common.xcconfig deploy-release true
