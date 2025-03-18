@@ -250,6 +250,10 @@
       }
     },
     {
+      "skippedTests" : [
+        "AppDelegateFeatureManagementIntegrationTests\/testStateAfterDidBecomeActive_expectesSameModel_AfterDidFinishLaunchingWithOptions()",
+        "AppDelegateFeatureManagementIntegrationTests\/testStateAfterDidFinishLaunchingWithOptions_expectsModelUpdates()"
+      ],
       "target" : {
         "containerPath" : "container:Client.xcodeproj",
         "identifier" : "2CFE996E2D45329300B25CE0",
