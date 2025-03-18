@@ -96,7 +96,7 @@ workflows:
           name: Deploy release version over Testflight if MARKETING_VERION file updated
           config-path: .circleci/deploy-release.yml
           mapping: |
-            Client/Configuration/Common.xcconfig deploy-release true
+            firefox-ios/Client/Configuration/Common.xcconfig deploy-release true
       - build-and-deploy-testflight-beta:
           name: Deploy beta version over Testflight
           filters:
