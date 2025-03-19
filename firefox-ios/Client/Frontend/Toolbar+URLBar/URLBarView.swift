@@ -254,17 +254,17 @@ class URLBarView: UIView,
              */
             let oldURL = currentURL
             var updatedUrl = newURL
-            // Ecosify if needed
+            // Ecosia: Ecosify if needed
             if updatedUrl?.shouldEcosify() ?? false {
                 updatedUrl = newURL?.ecosified(isIncognitoEnabled: isPrivate)
             }
             locationView.url = updatedUrl
-            // Track search if url changed and is Ecosia's vertical
+            // Ecosia: Track search if url changed and is Ecosia's vertical
             // (this has to be done after ecosifying so we properly track only if changed)
             if let updatedUrl = updatedUrl, oldURL != updatedUrl, updatedUrl.isEcosiaSearchVertical() {
                 Analytics.shared.inappSearch(url: updatedUrl)
             }
-            // Update constraints if needed
+            // Ecosia: Update constraints if needed
             if !inOverlayMode {
                 setNeedsUpdateConstraints()
             }
