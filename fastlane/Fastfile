@@ -90,6 +90,7 @@ platform :ios do
     )
     gym(
       scheme: "Ecosia",
+      project: project_path,      
       export_method: "app-store",
       configuration: "Development_TestFlight"
     )
@@ -119,10 +120,9 @@ platform :ios do
       name: 'MARKETING_VERSION'
     )
 
-    ci_run_build_number = ENV["CIRCLE_BUILD_NUM"]
-
-    udpated_build_number = increment_build_number(
-      build_number: ci_run_build_number
+    increment_build_number(
+      build_number: ENV["CIRCLE_BUILD_NUM"],
+      xcodeproj: project_path
     )
 
     match(
@@ -133,6 +133,7 @@ platform :ios do
 
     gym(
       scheme: "Ecosia",
+      project: project_path,      
       export_method: "app-store",
       configuration: "Release"
     )

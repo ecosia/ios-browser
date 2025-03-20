@@ -2744,6 +2744,7 @@
 		2C26401D9CCB8C2671EA2431 /* ta */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ta; path = ta.lproj/3DTouchActions.strings; sourceTree = "<group>"; };
 		2C2A5EF31E68469500F02659 /* PrivateBrowsingTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PrivateBrowsingTest.swift; sourceTree = "<group>"; };
 		2C2A91281FA2410D002E36BD /* HistoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryTests.swift; sourceTree = "<group>"; };
+		2C2BFC622D8C159C00D33F48 /* Production.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Production.xcconfig; path = Configuration/Production.xcconfig; sourceTree = "<group>"; };
 		2C2F32012D46A53000977F55 /* EcosiaTesting.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = EcosiaTesting.xcconfig; path = Configuration/EcosiaTesting.xcconfig; sourceTree = "<group>"; };
 		2C2F32172D46AA2C00977F55 /* EcosiaTesting.ShareTo.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = EcosiaTesting.ShareTo.xcconfig; path = Configuration/EcosiaTesting.ShareTo.xcconfig; sourceTree = "<group>"; };
 		2C2F32182D46AA2C00977F55 /* EcosiaTesting.WidgetKit.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = EcosiaTesting.WidgetKit.xcconfig; path = Configuration/EcosiaTesting.WidgetKit.xcconfig; sourceTree = "<group>"; };
@@ -14070,6 +14071,7 @@
 		E60961841B62B7E100DD640F /* Configuration */ = {
 			isa = PBXGroup;
 			children = (
+				2C2BFC622D8C159C00D33F48 /* Production.xcconfig */,
 				2C2F32172D46AA2C00977F55 /* EcosiaTesting.ShareTo.xcconfig */,
 				2C2F32182D46AA2C00977F55 /* EcosiaTesting.WidgetKit.xcconfig */,
 				2C2F32012D46A53000977F55 /* EcosiaTesting.xcconfig */,
@@ -26109,8 +26111,6 @@
 				CODE_SIGN_ENTITLEMENTS = Ecosia/Entitlements/Ecosia.entitlements;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				EAGER_LINKING = YES;
-				FUSE_BUILD_SCRIPT_PHASES = YES;
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				INFOPLIST_FILE = Client/Info.plist;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -26118,7 +26118,6 @@
 					"-no_application_extension",
 				);
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
-				SWIFT_TREAT_WARNINGS_AS_ERRORS = YES;
 				VALIDATE_WORKSPACE = YES;
 			};
 			name = Release;
@@ -26799,7 +26798,6 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
-				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -26840,7 +26838,6 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = 33YMRSYD2L;
-				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
 				INFOPLIST_FILE = Extensions/ShareTo/Info.plist;
 				OTHER_SWIFT_FLAGS = "-DMOZ_CHANNEL_FENNEC -DMOZ_TARGET_SHARETO";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(inherited)";
