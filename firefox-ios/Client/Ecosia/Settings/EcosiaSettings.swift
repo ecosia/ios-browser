@@ -222,6 +222,39 @@ final class EcosiaSendAnonymousUsageDataSetting: BoolSetting {
     }
 }
 
+final class CustomAppIconSetting: Setting {
+    override var title: NSAttributedString? {
+        NSAttributedString(string: "Customize App Icon", attributes: [NSAttributedString.Key.foregroundColor: theme.colors.ecosia.tableViewRowText])
+    }
+
+    override var accessoryView: UIImageView? { return ecosiaDisclosureIndicator(theme: theme) }
+
+    override var style: UITableViewCell.CellStyle { return .value1 }
+
+    override var status: NSAttributedString { return NSAttributedString(string: User.shared.currentAppIcon.rawValue) }
+
+    override var accessibilityIdentifier: String? { return "MODIFY HERE" }
+
+    let windowUUID: UUID
+    init(settings: SettingsTableViewController) {
+        self.windowUUID = settings.windowUUID
+        super.init()
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        navigationController?.pushViewController(AppIconController(style: .insetGrouped, windowUUID: windowUUID), animated: true)
+    }
+
+    override func onConfigureCell(_ cell: UITableViewCell, theme: Theme) {
+        super.onConfigureCell(cell, theme: theme)
+        cell.detailTextLabel?.numberOfLines = 2
+        cell.detailTextLabel?.adjustsFontSizeToFitWidth = true
+        cell.detailTextLabel?.minimumScaleFactor = 0.8
+        cell.detailTextLabel?.allowsDefaultTighteningForTruncation = true
+        cell.textLabel?.numberOfLines = 2
+    }
+}
+
 final class HomepageSettings: Setting {
     private var profile: Profile
 

@@ -22,5 +22,13 @@
 	<string>1</string>
 	<key>NSPrincipalClass</key>
 	<string></string>
+	<key>CFBundlePrimaryIcon</key>
+	<string>AppIcon</string>
+	<key>CFBundleAlternateIcons</key>
+	<array>
+		<string>AppIcon-Gradient</string>
+		<string>AppIcon-Inverted</string>
+		<string>AppIcon-Rainbow</string>
+	</array>
 </dict>
 </plist>

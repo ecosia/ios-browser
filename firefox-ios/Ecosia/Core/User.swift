@@ -30,6 +30,9 @@ public struct User: Codable, Equatable {
     public var adultFilter = AdultFilter.moderate
     public var autoComplete = true
     public var personalized = false
+    
+    // MARK: Customization
+    public var currentAppIcon: EcosiaIcon = .primary
 
     // MARK: Privacy settings
     public var sendAnonymousUsageData = true
