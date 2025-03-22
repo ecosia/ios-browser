@@ -100,16 +100,6 @@ final class NTPComponentTests: SnapshotBaseTests {
 
 extension NTPComponentTests {
 
-    private func aboutCellForSection(_ aboutEcosiaSection: AboutEcosiaSection) {
-        let sectionTitle = aboutEcosiaSection.image.lowercased().camelCaseToSnakeCase()
-        SnapshotTestHelper.assertSnapshot(initializingWith: {
-            let cell = NTPAboutEcosiaCell(frame: CGRect(x: 0, y: 0, width: self.commonWidth, height: 240))
-            let viewModel = NTPAboutEcosiaCellViewModel(theme: self.themeManager.getCurrentTheme(for: .snapshotTestDefaultUUID))
-            cell.configure(section: aboutEcosiaSection, viewModel: viewModel)
-            return cell
-        }, testName: "testNTPAboutSection_\(sectionTitle)")
-    }
-
     private func impactInfoReferralCellWithInvites(_ invites: Int) {
         let invitesTestNameString = invites > 1 ? "multiple_invites" : "single_invite"
         SnapshotTestHelper.assertSnapshot(initializingWith: {
