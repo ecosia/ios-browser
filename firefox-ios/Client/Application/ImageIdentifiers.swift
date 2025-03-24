@@ -10,7 +10,7 @@ import Foundation
 /// Sing the song if you must.
 public struct ImageIdentifiers {
     public static let badgeMask = "badge-mask"
-    /* Ecosia: Udpdate Firefox brand logos
+    /* Ecosia: Update Firefox brand logos
     public static let firefoxFavicon = "faviconFox"
     public static let foxConfirmation = "foxConfirmation"
     public static let homeHeaderLogoBall = "fxHomeHeaderLogoBall"
