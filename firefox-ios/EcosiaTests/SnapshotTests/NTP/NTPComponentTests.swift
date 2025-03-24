@@ -77,18 +77,6 @@ final class NTPComponentTests: SnapshotBaseTests {
         }
     }
 
-    func testNTPAboutFinancialReportsEcosiaCell() {
-        aboutCellForSection(.financialReports)
-    }
-
-    func testNTPAboutPrivacyEcosiaCell() {
-        aboutCellForSection(.privacy)
-    }
-
-    func testNTPAboutTreesEcosiaCell() {
-        aboutCellForSection(.trees)
-    }
-
     func testNTPCustomizationCell() {
         SnapshotTestHelper.assertSnapshot(initializingWith: {
             let customizationCell = NTPCustomizationCell(frame: CGRect(x: 0, y: 0, width: self.commonWidth, height: 100))
