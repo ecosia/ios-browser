@@ -79,17 +79,13 @@ extension Analytics {
         public enum Navigation: String {
             case
             inapp,
-            financialReports = "financial_reports",
             news,
-            privacy,
             projects,
-            sendFeedback = "send_feedback",
-            terms
+            sendFeedback = "send_feedback"
         }
 
         public enum NTP: String {
             case
-            about,
             climateCounter = "climate_counter",
             customize,
             impact,
