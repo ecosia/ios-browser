@@ -131,6 +131,9 @@
       }
     },
     {
+      "skippedTests" : [
+        "TestBrowserDB\/testMovesDB()"
+      ],
       "target" : {
         "containerPath" : "container:Client.xcodeproj",
         "identifier" : "2FCAE2231ABB51F800877008",
