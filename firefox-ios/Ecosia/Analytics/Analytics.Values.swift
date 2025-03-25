@@ -80,8 +80,10 @@ extension Analytics {
             case
             inapp,
             news,
+            privacy,
             projects,
-            sendFeedback = "send_feedback"
+            sendFeedback = "send_feedback",
+            terms
         }
 
         public enum NTP: String {
