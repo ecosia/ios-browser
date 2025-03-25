@@ -1,8 +1,8 @@
 name: Merge Unit Tests
 
 on:
-  pull_request:
-    branches: [main]
+  push:
+    branches: [dc-mob-3030-investigate-flaky-tests]
 
 jobs:
   execute_merge_tests:
