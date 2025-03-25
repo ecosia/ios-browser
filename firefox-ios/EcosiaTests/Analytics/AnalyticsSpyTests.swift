@@ -368,7 +368,7 @@ final class AnalyticsSpyTests: XCTestCase {
             }
         }
     }
-    
+
     // MARK: - Onboarding / Welcome Tests
 
     func testWelcomeViewDidAppearTracksIntroDisplayingAndIntroClickStart() {
