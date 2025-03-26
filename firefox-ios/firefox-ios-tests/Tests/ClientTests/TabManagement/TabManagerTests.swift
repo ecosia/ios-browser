@@ -1430,28 +1430,14 @@ class TabManagerTests: XCTestCase {
 
     // MARK: - Helper methods
 
-    // Ecosia: Helper method to make sure the TabManagerImplementation is created on the main thread
-    func createSubjectOnMainThread<T>(execute work: @escaping () -> T) -> T {
-        if Thread.isMainThread {
-            return work()
-        } else {
-            return DispatchQueue.main.sync {
-                work()
-            }
-        }
-    }
-
     private func createSubject() -> TabManagerImplementation {
-        // Ecosia: Update to create the subject on the main thread via helper function
-        createSubjectOnMainThread {
-            let subject = TabManagerImplementation(profile: self.mockProfile,
-                                                   imageStore: self.mockDiskImageStore,
-                                                   uuid: ReservedWindowUUID(uuid: self.tabWindowUUID, isNew: false),
-                                                   tabDataStore: self.mockTabStore,
-                                                   tabSessionStore: self.mockSessionStore)
-            self.trackForMemoryLeaks(subject)
-            return subject
-        }
+        let subject = TabManagerImplementation(profile: self.mockProfile,
+                                               imageStore: self.mockDiskImageStore,
+                                               uuid: ReservedWindowUUID(uuid: self.tabWindowUUID, isNew: false),
+                                               tabDataStore: self.mockTabStore,
+                                               tabSessionStore: self.mockSessionStore)
+        self.trackForMemoryLeaks(subject)
+        return subject
     }
 
     enum TabType {
