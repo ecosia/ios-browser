@@ -105,6 +105,7 @@ class TabManagerTests: XCTestCase {
         XCTAssertEqual(subject.tabs.count, 0)
     }
 
+    // Ecosia: Update test to run on the main threads same as other tests
     @MainActor
     func testPreserveTabsWithOneTab() async throws {
         let subject = createSubject()
@@ -116,6 +117,7 @@ class TabManagerTests: XCTestCase {
         XCTAssertEqual(subject.tabs.count, 1)
     }
 
+    // Ecosia: Update test to run on the main threads same as other tests
     @MainActor
     func testPreserveTabsWithManyTabs() async throws {
         let subject = createSubject()
@@ -143,6 +145,7 @@ class TabManagerTests: XCTestCase {
         XCTAssertEqual(mockDiskImageStore.saveImageForKeyCallCount, 0)
     }
 
+    // Ecosia: Update test to run on the main threads same as other tests
     @MainActor
     func testSaveScreenshotWithImage() async throws {
         let subject = createSubject()
@@ -157,6 +160,7 @@ class TabManagerTests: XCTestCase {
         XCTAssertEqual(mockDiskImageStore.saveImageForKeyCallCount, 1)
     }
 
+    // Ecosia: Update test to run on the main threads same as other tests
     @MainActor
     func testRemoveScreenshotWithImage() async throws {
         let subject = createSubject()
@@ -172,6 +176,7 @@ class TabManagerTests: XCTestCase {
         XCTAssertEqual(mockDiskImageStore.deleteImageForKeyCallCount, 1)
     }
 
+    // Ecosia: Update test to run on the main threads same as other tests
     @MainActor
     func testGetActiveAndInactiveTabs() {
         let totalTabCount = 3
@@ -195,6 +200,7 @@ class TabManagerTests: XCTestCase {
         XCTAssertEqual(subject.normalTabs.count, totalTabCount, "The total tab count should not have changed")
     }
 
+    // Ecosia: Update test to run on the main threads same as other tests
     @MainActor
     func test_addTabsForURLs() {
         let subject = createSubject()
@@ -206,6 +212,7 @@ class TabManagerTests: XCTestCase {
         XCTAssertEqual(subject.tabs.first?.isPrivate, false)
     }
 
+    // Ecosia: Update test to run on the main threads same as other tests
     @MainActor
     func test_addTabsForURLs_forPrivateMode() {
         let subject = createSubject()
@@ -218,7 +225,8 @@ class TabManagerTests: XCTestCase {
     }
 
     // MARK: - Test findRightOrLeftTab helper
-
+    
+    // Ecosia: Update test to run on the main threads same as other tests
     @MainActor
     func testFindRightOrLeftTab_forEmptyArray() async throws {
         // Set up a tab array as follows:
@@ -236,6 +244,7 @@ class TabManagerTests: XCTestCase {
         XCTAssertNil(rightOrLeftTab, "Cannot return a tab when the array is empty")
     }
 
+    // Ecosia: Update test to run on the main threads same as other tests
     @MainActor
     func testFindRightOrLeftTab_forSingleTabInArray_ofSameType() async throws {
         // Set up a tab array as follows:
@@ -255,6 +264,7 @@ class TabManagerTests: XCTestCase {
         XCTAssertEqual(rightOrLeftTab, tabManager.tabs[safe: 0], "Should return neighbour of same type, as one exists")
     }
 
+    // Ecosia: Update test to run on the main threads same as other tests
     @MainActor
     func testFindRightOrLeftTab_forSingleTabInArray_ofDifferentType() async throws {
         // Set up a tab array as follows:
@@ -273,6 +283,7 @@ class TabManagerTests: XCTestCase {
         XCTAssertNil(rightOrLeftTab, "Cannot return neighbour tab of same type, as no other private tabs exist")
     }
 
+    // Ecosia: Update test to run on the main threads same as other tests
     @MainActor
     func testFindRightOrLeftTab_forDeletedIndexInMiddle_uniformTabTypes() async throws {
         // Set up a tab array as follows:
@@ -293,6 +304,7 @@ class TabManagerTests: XCTestCase {
         XCTAssertEqual(rightOrLeftTab, tabManager.tabs[safe: 3], "Should pick tab A4 at the same position as deletedIndex")
     }
 
+    // Ecosia: Update test to run on the main threads same as other tests
     @MainActor
     func testFindRightOrLeftTab_forDeletedIndexInMiddle_mixedTabTypes() async throws {
         // Set up a tab array as follows:
@@ -319,6 +331,7 @@ class TabManagerTests: XCTestCase {
         )
     }
 
+    // Ecosia: Update test to run on the main threads same as other tests
     @MainActor
     func testFindRightOrLeftTab_forDeletedIndexAtStart() async throws {
         // Set up a tab array as follows:
@@ -345,6 +358,7 @@ class TabManagerTests: XCTestCase {
         )
     }
 
+    // Ecosia: Update test to run on the main threads same as other tests
     @MainActor
     func testFindRightOrLeftTab_forDeletedIndexAtEnd() async throws {
         // Set up a tab array as follows:
@@ -371,6 +385,7 @@ class TabManagerTests: XCTestCase {
         )
     }
 
+    // Ecosia: Update test to run on the main threads same as other tests
     @MainActor
     func testFindRightOrLeftTab_prefersRightTabOverLeftTab() async throws {
         // Set up a tab array as follows:
