@@ -96,6 +96,7 @@ class TabManagerTests: XCTestCase {
 
     // MARK: - Save tabs
 
+    @MainActor
     func testPreserveTabsWithNoTabs() async throws {
         let subject = createSubject()
         subject.preserveTabs()
@@ -128,6 +129,7 @@ class TabManagerTests: XCTestCase {
 
     // MARK: - Save preview screenshot
 
+    @MainActor
     func testSaveScreenshotWithNoImage() async throws {
         let subject = createSubject()
         addTabs(to: subject, count: 5)
