@@ -96,6 +96,7 @@ class TabManagerTests: XCTestCase {
 
     // MARK: - Save tabs
 
+    // Ecosia: Update test to run on the main threads same as other tests
     @MainActor
     func testPreserveTabsWithNoTabs() async throws {
         let subject = createSubject()
@@ -130,7 +131,7 @@ class TabManagerTests: XCTestCase {
     }
 
     // MARK: - Save preview screenshot
-
+    // Ecosia: Update test to run on the main threads same as other tests
     @MainActor
     func testSaveScreenshotWithNoImage() async throws {
         let subject = createSubject()
