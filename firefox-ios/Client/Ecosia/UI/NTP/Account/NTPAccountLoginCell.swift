@@ -102,7 +102,7 @@ final class NTPAccountLoginCell: UICollectionViewCell, ThemeApplicable, Reusable
         // Update button title and background color based on login state
         loginButton.setTitle(Auth.shared.isLoggedIn ? "Sign Out" : "Sign In", for: .normal)
     }
-    
+
     @objc private func fetchSessionToken() {
         sessionTokenTask?.cancel()
         sessionTokenTask = Task {
