@@ -225,7 +225,7 @@ class TabManagerTests: XCTestCase {
     }
 
     // MARK: - Test findRightOrLeftTab helper
-    
+
     // Ecosia: Update test to run on the main threads same as other tests
     @MainActor
     func testFindRightOrLeftTab_forEmptyArray() async throws {
