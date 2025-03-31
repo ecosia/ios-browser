@@ -18,7 +18,7 @@ protocol LegacyTabPeekDelegate: AnyObject {
 }
 
 class LegacyTabPeekViewController: UIViewController, WKNavigationDelegate {
-    weak var tab: Tab?
+    weak var aTab: Tab?
 
     private weak var delegate: LegacyTabPeekDelegate?
     private var fxaDevicePicker: UINavigationController?
@@ -37,12 +37,12 @@ class LegacyTabPeekViewController: UIViewController, WKNavigationDelegate {
     lazy var previewActions: [UIPreviewActionItem] = {
         var actions = [UIPreviewActionItem]()
 
-        let urlIsTooLongToSave = self.tab?.urlIsTooLong ?? false
-        let isHomeTab = self.tab?.isFxHomeTab ?? false
+        let urlIsTooLongToSave = self.aTab?.urlIsTooLong ?? false
+        let isHomeTab = self.aTab?.isFxHomeTab ?? false
         if !self.ignoreURL && !urlIsTooLongToSave {
             if !self.isBookmarked && !isHomeTab {
                 actions.append(UIPreviewAction(title: .TabPeekAddToBookmarks, style: .default) { [weak self] previewAction, viewController in
-                    guard let wself = self, let tab = wself.tab else { return }
+                    guard let wself = self, let tab = wself.aTab else { return }
                     wself.delegate?.tabPeekDidAddBookmark(tab)
                 })
             }
@@ -56,7 +56,7 @@ class LegacyTabPeekViewController: UIViewController, WKNavigationDelegate {
             // as we are only allowed 4 in total and we always want to display close tab
             if actions.count < 3 {
                 actions.append(UIPreviewAction(title: .TabPeekCopyUrl, style: .default) { [weak self] previewAction, viewController in
-                    guard let wself = self, let url = wself.tab?.canonicalURL else { return }
+                    guard let wself = self, let url = wself.aTab?.canonicalURL else { return }
 
                     UIPasteboard.general.url = url
                     wself.delegate?.tabPeekDidCopyUrl()
@@ -64,7 +64,7 @@ class LegacyTabPeekViewController: UIViewController, WKNavigationDelegate {
             }
         }
         actions.append(UIPreviewAction(title: .TabPeekCloseTab, style: .destructive) { [weak self] previewAction, viewController in
-            guard let wself = self, let tab = wself.tab else { return }
+            guard let wself = self, let tab = wself.aTab else { return }
             wself.delegate?.tabPeekDidCloseTab(tab)
         })
 
@@ -74,14 +74,14 @@ class LegacyTabPeekViewController: UIViewController, WKNavigationDelegate {
     func contextActions(defaultActions: [UIMenuElement]) -> UIMenu {
         var actions = [UIAction]()
 
-        let urlIsTooLongToSave = self.tab?.urlIsTooLong ?? false
-        let isHomeTab = self.tab?.isFxHomeTab ?? false
+        let urlIsTooLongToSave = self.aTab?.urlIsTooLong ?? false
+        let isHomeTab = self.aTab?.isFxHomeTab ?? false
         if !self.ignoreURL && !urlIsTooLongToSave {
             if !self.isBookmarked && !isHomeTab {
                 actions.append(UIAction(title: .TabPeekAddToBookmarks,
                                         image: UIImage.templateImageNamed(StandardImageIdentifiers.Large.bookmark),
                                         identifier: nil) { [weak self] _ in
-                    guard let wself = self, let tab = wself.tab else { return }
+                    guard let wself = self, let tab = wself.aTab else { return }
                     wself.delegate?.tabPeekDidAddBookmark(tab)
                 })
             }
@@ -94,7 +94,7 @@ class LegacyTabPeekViewController: UIViewController, WKNavigationDelegate {
             actions.append(UIAction(title: .TabPeekCopyUrl,
                                     image: UIImage.templateImageNamed(StandardImageIdentifiers.Large.link),
                                     identifier: nil) { [weak self] _ in
-                guard let wself = self, let url = wself.tab?.canonicalURL else { return }
+                guard let wself = self, let url = wself.aTab?.canonicalURL else { return }
 
                 UIPasteboard.general.url = url
                 wself.delegate?.tabPeekDidCopyUrl()
@@ -103,7 +103,7 @@ class LegacyTabPeekViewController: UIViewController, WKNavigationDelegate {
         actions.append(UIAction(title: .TabPeekCloseTab,
                                 image: UIImage.templateImageNamed(StandardImageIdentifiers.Large.cross),
                                 identifier: nil) { [weak self] _ in
-            guard let wself = self, let tab = wself.tab else { return }
+            guard let wself = self, let tab = wself.aTab else { return }
             wself.delegate?.tabPeekDidCloseTab(tab)
         })
 
@@ -111,7 +111,7 @@ class LegacyTabPeekViewController: UIViewController, WKNavigationDelegate {
     }
 
     init(tab: Tab?, delegate: LegacyTabPeekDelegate?) {
-        self.tab = tab
+        self.aTab = tab
         self.delegate = delegate
         super.init(nibName: nil, bundle: nil)
     }
@@ -128,15 +128,15 @@ class LegacyTabPeekViewController: UIViewController, WKNavigationDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        if let webViewAccessibilityLabel = tab?.webView?.accessibilityLabel {
+        if let webViewAccessibilityLabel = aTab?.webView?.accessibilityLabel {
             previewAccessibilityLabel = String(format: .TabPeekPreviewAccessibilityLabel, webViewAccessibilityLabel)
         }
         // if there is no screenshot, load the URL in a web page
         // otherwise just show the screenshot
-        if let screenshot = tab?.screenshot {
+        if let screenshot = aTab?.screenshot {
             setupWithScreenshot(screenshot)
         } else {
-            setupWebView(tab?.webView)
+            setupWebView(aTab?.webView)
         }
     }
 
@@ -183,7 +183,7 @@ class LegacyTabPeekViewController: UIViewController, WKNavigationDelegate {
 
     func setState(withProfile browserProfile: BrowserProfile,
                   clientPickerDelegate: DevicePickerViewControllerDelegate) {
-        guard let tab = self.tab,
+        guard let tab = self.aTab,
               let displayURL = tab.url?.absoluteString,
               !displayURL.isEmpty
         else { return }
@@ -222,8 +222,8 @@ class LegacyTabPeekViewController: UIViewController, WKNavigationDelegate {
             let clientPickerController = DevicePickerViewController(profile: browserProfile)
             clientPickerController.pickerDelegate = clientPickerDelegate
             clientPickerController.profile = browserProfile
-            if let url = tab?.url?.absoluteString {
-                clientPickerController.shareItem = ShareItem(url: url, title: tab?.title ?? "")
+            if let url = aTab?.url?.absoluteString {
+                clientPickerController.shareItem = ShareItem(url: url, title: aTab?.title ?? "")
             }
             self.fxaDevicePicker = UINavigationController(rootViewController: clientPickerController)
     }

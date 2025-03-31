@@ -276,20 +276,7 @@ extension TopSitesViewModel: TopSitesManagerDelegate {
 extension TopSitesViewModel: HomepageSectionHandler {
     func configure(_ collectionView: UICollectionView,
                    at indexPath: IndexPath) -> UICollectionViewCell {
-        if let cell = collectionView.dequeueReusableCell(cellType: TopSiteItemCell.self, for: indexPath),
-           let contentItem = topSites[safe: indexPath.row] {
-            var textColor: UIColor?
-            if wallpaperManager.featureAvailable {
-                textColor = wallpaperManager.currentWallpaper.textColor
-            }
-
-            cell.configure(contentItem,
-                           position: indexPath.row,
-                           theme: theme,
-                           textColor: textColor)
-            sendImpressionTelemetry(contentItem, position: indexPath.row)
-            return cell
-        } else if let cell = collectionView.dequeueReusableCell(cellType: EmptyTopSiteCell.self, for: indexPath) {
+        if let cell = collectionView.dequeueReusableCell(cellType: EmptyTopSiteCell.self, for: indexPath) {
             cell.applyTheme(theme: theme)
             return cell
         }

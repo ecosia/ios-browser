@@ -12,7 +12,7 @@ class TabPeekViewController: UIViewController,
     typealias SubscriberStateType = TabPeekState
     var tabPeekState: TabPeekState
 
-    private var tab: TabModel
+    var aTab: TabModel
     private var previewAccessibilityLabel: String!
     private var ignoreURL = false
     private var isBookmarked = false
@@ -29,7 +29,7 @@ class TabPeekViewController: UIViewController,
 
     init(tab: TabModel) {
         self.tabPeekState = TabPeekState()
-        self.tab = tab
+        self.aTab = tab
         super.init(nibName: nil, bundle: nil)
 
         subscribeToRedux()

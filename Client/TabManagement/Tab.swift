@@ -1013,13 +1013,8 @@ class TabWebView: WKWebView, MenuHelperInterface, ThemeApplicable {
         }
         return super.hitTest(point, with: event)
     }
-
-    /// Override evaluateJavascript - should not be called directly on TabWebViews any longer
-    /// We should only be calling evaluateJavascriptInDefaultContentWorld in the future
-    @available(*,
-                unavailable,
-                message: "Do not call evaluateJavaScript directly on TabWebViews, should only be called on super class")
-    override func evaluateJavaScript(_ javaScriptString: String, completionHandler: ((Any?, Error?) -> Void)? = nil) {
+    
+    override func evaluateJavaScript(_ javaScriptString: String, completionHandler: (@MainActor (Any?, (any Error)?) -> Void)? = nil) {
         super.evaluateJavaScript(javaScriptString, completionHandler: completionHandler)
     }
 

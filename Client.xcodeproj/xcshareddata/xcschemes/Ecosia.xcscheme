@@ -539,7 +539,7 @@
       buildConfiguration = "Debug">
    </AnalyzeAction>
    <ArchiveAction
-      buildConfiguration = "Release"
+      buildConfiguration = "Development_TestFlight"
       revealArchiveInOrganizer = "YES">
       <PreActions>
          <ExecutionAction
