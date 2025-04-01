@@ -451,6 +451,14 @@ extension BrowserViewController: WKNavigationDelegate {
                 tab.adsProviderName = ""
             }
         }
+        
+        if tab.url?.absoluteString.contains("accounts/sign-up") == true {
+            Task {
+                await Auth.shared.login()
+            }
+            decisionHandler(.cancel)
+            return
+        }
 
         if InternalURL.isValid(url: url) {
             if navigationAction.navigationType != .backForward,
