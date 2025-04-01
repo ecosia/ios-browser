@@ -452,7 +452,7 @@ extension BrowserViewController: WKNavigationDelegate {
             }
         }
         
-        if tab.url?.absoluteString.contains("accounts/sign-up") == true {
+        if tab.url?.baseDomain == Environment.current.urlProvider.root.baseDomain, tab.url?.absoluteString.contains("accounts/sign-up") == true {
             Task {
                 await Auth.shared.login()
             }
