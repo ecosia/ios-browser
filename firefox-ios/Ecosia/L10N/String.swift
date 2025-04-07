@@ -24,7 +24,7 @@ extension String {
         case closeAll = "Close all"
         case customizeHomepage = "Customize homepage"
         case daysAgo = "%@ days ago"
-        case defaultBrowserPromptExperimentDescriptionVarA = "Safely open links from other apps (eg. mails, websites and messages) in Ecosia, turning each every tap into action for the planet."
+        case defaultBrowserPromptExperimentDescriptionVarA = "Safely open links from other apps (eg. mails, websites and messages) in Ecosia, turning every tap into action for the planet."
         case defaultBrowserPromptExperimentDescriptionVarB = "People who set Ecosia as their default browser plant %@ per year."
         case defaultBrowserPromptExperimentDescriptionVarC = "If all mobile users set Ecosia as their default browser, we could plant an extra %@ annually."
         case defaultBrowserPromptExperimentDescriptionTitleVarBC = "Did you know?"
