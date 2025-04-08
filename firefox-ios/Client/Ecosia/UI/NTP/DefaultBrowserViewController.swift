@@ -49,13 +49,50 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
         label.setContentCompressionResistancePriority(.required, for: .vertical)
         return label
     }()
-    private lazy var checkItemsStack: UIStackView = {
+    private lazy var variationContentStack: UIStackView = {
         let stack = UIStackView()
         stack.translatesAutoresizingMaskIntoConstraints = false
         stack.axis = .vertical
         stack.spacing = 4
         return stack
     }()
+    private lazy var actionButton: UIButton = {
+        let button = EcosiaPrimaryButton(windowUUID: windowUUID)
+        button.contentEdgeInsets = .init(top: 0, left: 16, bottom: 0, right: 16)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle(DefaultBrowserExperiment.buttonTitle, for: .normal)
+        button.titleLabel?.font = .preferredFont(forTextStyle: .callout)
+        button.titleLabel?.adjustsFontForContentSizeCategory = true
+        button.layer.cornerRadius = 25
+        button.addTarget(self, action: #selector(clickAction), for: .primaryActionTriggered)
+        button.setContentHuggingPriority(.required, for: .vertical)
+        return button
+    }()
+    private lazy var skipButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.backgroundColor = .clear
+        button.titleLabel?.font = .preferredFont(forTextStyle: .callout)
+        button.titleLabel?.adjustsFontForContentSizeCategory = true
+        button.setTitle(.localized(.maybeLater), for: .normal)
+        button.addTarget(self, action: #selector(skipAction), for: .primaryActionTriggered)
+        return button
+    }()
+
+    // MARK: Description variation
+    private lazy var descriptionLabel: UILabel = {
+        let label = UILabel()
+        label.text = DefaultBrowserExperiment.description
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = .preferredFont(forTextStyle: .subheadline)
+        label.adjustsFontForContentSizeCategory = true
+        label.numberOfLines = 0
+        label.setContentCompressionResistancePriority(.required, for: .vertical)
+        label.setContentCompressionResistancePriority(.required, for: .horizontal)
+        return label
+    }()
+
+    // MARK: Checks variation
     private lazy var firstCheckItemLabel: UILabel = {
         let label = UILabel()
         label.text = DefaultBrowserExperiment.checkItems.0
@@ -81,45 +118,24 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
     private lazy var firstCheckImageView: UIImageView = {
         let view = UIImageView(image: .init(systemName: "checkmark"))
         view.contentMode = .scaleAspectFit
+        view.widthAnchor.constraint(equalToConstant: 16).isActive = true
         return view
     }()
     private lazy var secondCheckImageView: UIImageView = {
         let view = UIImageView(image: .init(systemName: "checkmark"))
         view.contentMode = .scaleAspectFit
+        view.widthAnchor.constraint(equalToConstant: 16).isActive = true
         return view
     }()
-    private lazy var actionButton: UIButton = {
-        let button = EcosiaPrimaryButton(windowUUID: windowUUID)
-        button.contentEdgeInsets = .init(top: 0, left: 16, bottom: 0, right: 16)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle(DefaultBrowserExperiment.buttonTitle, for: .normal)
-        button.titleLabel?.font = .preferredFont(forTextStyle: .callout)
-        button.titleLabel?.adjustsFontForContentSizeCategory = true
-        button.layer.cornerRadius = 25
-        button.addTarget(self, action: #selector(clickAction), for: .primaryActionTriggered)
-        button.setContentHuggingPriority(.required, for: .vertical)
-        return button
-    }()
-    private lazy var skipButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.backgroundColor = .clear
-        button.titleLabel?.font = .preferredFont(forTextStyle: .callout)
-        button.titleLabel?.adjustsFontForContentSizeCategory = true
-        button.setTitle(.localized(.maybeLater), for: .normal)
-        button.addTarget(self, action: #selector(skipAction), for: .primaryActionTriggered)
-        return button
-    }()
-    weak var delegate: DefaultBrowserDelegate?
 
-    // MARK: - Themeable Properties
-
+    // MARK: Themeable Properties
     let windowUUID: WindowUUID
     var currentWindowUUID: WindowUUID? { windowUUID }
     var themeManager: ThemeManager { AppContainer.shared.resolve() }
     var themeObserver: NSObjectProtocol?
     var notificationCenter: NotificationProtocol = NotificationCenter.default
 
+    weak var delegate: DefaultBrowserDelegate?
     init(windowUUID: WindowUUID, delegate: DefaultBrowserDelegate) {
         self.windowUUID = windowUUID
         super.init(nibName: nil, bundle: nil)
@@ -170,22 +186,24 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
         contentView.addSubview(titleLabel)
         contentView.addSubview(actionButton)
         contentView.addSubview(skipButton)
+        view.addSubview(variationContentStack)
 
         let type = DefaultBrowserExperiment.contentType
         if case .checks = type {
-            view.addSubview(checkItemsStack)
             let line1 = UIStackView()
             line1.spacing = 10
             line1.axis = .horizontal
-            checkItemsStack.addArrangedSubview(line1)
+            variationContentStack.addArrangedSubview(line1)
             line1.addArrangedSubview(firstCheckImageView)
             line1.addArrangedSubview(firstCheckItemLabel)
             let line2 = UIStackView()
             line2.spacing = 10
             line2.axis = .horizontal
-            checkItemsStack.addArrangedSubview(line2)
+            variationContentStack.addArrangedSubview(line2)
             line2.addArrangedSubview(secondCheckImageView)
             line2.addArrangedSubview(secondCheckItemLabel)
+        } else if case .description = type {
+            variationContentStack.addArrangedSubview(descriptionLabel)
         }
     }
 
@@ -211,7 +229,11 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
             titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             titleLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 100).priority(.defaultLow),
 
-            actionButton.topAnchor.constraint(equalTo: checkItemsStack.bottomAnchor, constant: 24),
+            variationContentStack.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
+            variationContentStack.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor),
+            variationContentStack.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 16),
+
+            actionButton.topAnchor.constraint(equalTo: variationContentStack.bottomAnchor, constant: 24),
             actionButton.heightAnchor.constraint(greaterThanOrEqualToConstant: 50),
             actionButton.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
             actionButton.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor),
@@ -222,33 +244,22 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
             skipButton.heightAnchor.constraint(greaterThanOrEqualToConstant: 50),
             skipButton.bottomAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.bottomAnchor, constant: -16),
         ])
-
-        let type = DefaultBrowserExperiment.contentType
-        if case .checks = type {
-            NSLayoutConstraint.activate([
-                checkItemsStack.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
-                checkItemsStack.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor),
-                checkItemsStack.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 16),
-
-                firstCheckImageView.widthAnchor.constraint(equalToConstant: 16),
-                secondCheckImageView.widthAnchor.constraint(equalToConstant: 16)
-            ])
-        }
     }
 
     @objc func applyTheme() {
         let theme = themeManager.getCurrentTheme(for: windowUUID)
         view.backgroundColor = .clear
         titleLabel.textColor = theme.colors.ecosia.textPrimary
-        firstCheckItemLabel.textColor = theme.colors.ecosia.textSecondary
-        secondCheckItemLabel.textColor = theme.colors.ecosia.textSecondary
-        firstCheckImageView.tintColor = theme.colors.ecosia.buttonBackgroundPrimary
-        secondCheckImageView.tintColor = theme.colors.ecosia.buttonBackgroundPrimary
         contentView.backgroundColor = theme.colors.ecosia.ntpIntroBackground
         waves.tintColor = theme.colors.ecosia.ntpIntroBackground
         actionButton.setTitleColor(theme.colors.ecosia.textInversePrimary, for: .normal)
         skipButton.setTitleColor(theme.colors.ecosia.buttonBackgroundPrimary, for: .normal)
         actionButton.backgroundColor = theme.colors.ecosia.buttonBackgroundPrimary
+        descriptionLabel.textColor = theme.colors.ecosia.textSecondary
+        firstCheckItemLabel.textColor = theme.colors.ecosia.textSecondary
+        secondCheckItemLabel.textColor = theme.colors.ecosia.textSecondary
+        firstCheckImageView.tintColor = theme.colors.ecosia.buttonBackgroundPrimary
+        secondCheckImageView.tintColor = theme.colors.ecosia.buttonBackgroundPrimary
     }
 
     @objc private func skipAction() {

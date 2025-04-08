@@ -38,7 +38,7 @@ public struct DefaultBrowserExperiment {
         case .control:
             return .init(named: "defaultBrowser")
         case .a:
-            return .init(named: "defaultBrowser") // TODO: Update image
+            return .init(named: "defaultBrowserVarA")
         case .b, .c:
             return .init(named: "defaultBrowser") // TODO: Update image
         }
