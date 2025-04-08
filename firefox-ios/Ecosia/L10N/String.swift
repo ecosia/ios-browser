@@ -234,5 +234,13 @@ extension String {
         case newsletterNTPCardExperimentTitle = "Be the first to know"
         case newsletterNTPCardExperimentDescription = "Subscribe to our monthly newsletter for updates on your climate impact."
         case newsletterNTPCardExperimentButton = "Sign up"
+        case defaultBrowserCardExperimentTitle = "Make Ecosia your default browser app"
+        case defaultBrowserCardExperimentDescription = "Safely open all links from other apps in Ecosia"
+        case defaultBrowserCardExperimentModalTitleA = "Set Ecosia as default"
+        case defaultBrowserCardExperimentModalTitleB = "Use Ecosia as default"
+        case defaultBrowserCardExperimentModalInstructionStep1 = "Open **Settings**"
+        case defaultBrowserCardExperimentModalInstructionStep2 = "Select **Default Browser App**"
+        case defaultBrowserCardExperimentModalInstructionStep3 = "Choose **Ecosia**"
+        case defaultBrowserCardExperimentModalButton = "Make default in settings"
     }
 }
