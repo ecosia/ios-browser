@@ -156,24 +156,21 @@ public struct ConfigurableNudgeCardView: View {
     }
 }
 
-struct NudgeCardSwiftUIView_Previews: PreviewProvider {
-    static var previews: some View {
-        let mockViewModel = NudgeCardViewModel(
-            title: "Make ecosia your default browser app",
-            description: "Safely open all links from other apps in Ecosia",
-            buttonText: "Take Action",
-            image: .init(named: "default-browser-card-side-image-koto-illustrations",
-                         in: .ecosia,
-                         with: nil),
-            style: NudgeCardStyle(backgroundColor: .primaryBackground,
-                                  textPrimaryColor: .primaryText,
-                                  textSecondaryColor: .primaryText,
-                                  closeButtonTextColor: .primaryText,
-                                  actionButtonTextColor: .primaryBrand)
-        )
+#Preview{
+    let mockViewModel = NudgeCardViewModel(
+        title: "Make ecosia your default browser app",
+        description: "Safely open all links from other apps in Ecosia",
+        buttonText: "Take Action",
+        image: .init(named: "default-browser-card-side-image-koto-illustrations",
+                     in: .ecosia,
+                     with: nil),
+        style: NudgeCardStyle(backgroundColor: .primaryBackground,
+                              textPrimaryColor: .primaryText,
+                              textSecondaryColor: .primaryText,
+                              closeButtonTextColor: .primaryText,
+                              actionButtonTextColor: .primaryBrand)
+    )
 
-        return ConfigurableNudgeCardView(viewModel: mockViewModel, delegate: nil)
-            .previewLayout(.sizeThatFits)
-            .padding()
-    }
+    ConfigurableNudgeCardView(viewModel: mockViewModel, delegate: nil)
+        .padding()
 }
