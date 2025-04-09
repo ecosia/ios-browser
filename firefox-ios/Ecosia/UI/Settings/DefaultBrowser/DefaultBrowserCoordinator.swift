@@ -50,7 +50,7 @@ public struct DefaultBrowserCoordinator {
                 Analytics.shared.defaultBrowserSettingsViaNudgeCardDetailDismiss()
             }
         }
-            .navigationTitle(String.Key.defaultBrowserCardNavigationTitle.rawValue)
+            .navigationTitle(String.Key.defaultBrowserSettingTitle.rawValue)
 
         let hostingController = UIHostingController(rootView: view)
         hostingController.navigationItem.largeTitleDisplayMode = .never

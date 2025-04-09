@@ -232,7 +232,7 @@ extension String {
         case newsletterNTPCardExperimentTitle = "Be the first to know"
         case newsletterNTPCardExperimentDescription = "Subscribe to our monthly newsletter for updates on your climate impact."
         case newsletterNTPCardExperimentButton = "Sign up"
-        case defaultBrowserCardNavigationTitle = "Default browser"
+        case defaultBrowserSettingTitle = "Default browser"
         case defaultBrowserCardTitle = "Make Ecosia your default browser app"
         case defaultBrowserCardDescription = "Safely open all links from other apps in Ecosia"
         case defaultBrowserCardDetailTitle = "Use Ecosia as default"
