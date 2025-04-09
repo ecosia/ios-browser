@@ -174,3 +174,18 @@ extension AppSettingsTableViewController {
         return SettingSection(title: NSAttributedString(string: "Debug"), children: hiddenDebugSettings)
     }
 }
+
+// MARK: - Default Browser Nudge Card helpers
+
+extension AppSettingsTableViewController {
+    
+    func isDefautlBrowserCell(_ section: Int) -> Bool {
+        settings[section].children.first?.accessibilityIdentifier == "DefaultBrowserSettings"
+    }
+    
+    func shouldShowDefaultBrowserNudgeCardInSection(_ section: Int) -> Bool {
+        isDefautlBrowserCell(section) &&
+        User.shared.shouldShowDefaultBrowserSettingNudgeCard
+    }
+}
+

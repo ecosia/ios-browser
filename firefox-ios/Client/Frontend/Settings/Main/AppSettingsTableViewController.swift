@@ -479,6 +479,7 @@ class AppSettingsTableViewController: SettingsTableViewController,
     // MARK: - UITableViewDelegate
 
     /* Ecosia: Set the header view for the table view with custom handling for the default browser nudge card
+       Adds other overrides after this one to modify the UI logic
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let headerView = super.tableView(
             tableView,
@@ -512,16 +513,6 @@ class AppSettingsTableViewController: SettingsTableViewController,
             return headerView
         }
         return nil
-    }
-
-    // Ecosia: Overrides and helpers for the default browser custom card
-    private func isDefautlBrowserCell(_ section: Int) -> Bool {
-        settings[section].children.first?.accessibilityIdentifier == "DefaultBrowserSettings"
-    }
-
-    private func shouldShowDefaultBrowserNudgeCardInSection(_ section: Int) -> Bool {
-        isDefautlBrowserCell(section) &&
-        User.shared.shouldShowDefaultBrowserSettingNudgeCard
     }
 
     override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
