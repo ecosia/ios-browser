@@ -11,9 +11,15 @@ public final class DefaultBrowserSettingsNudgeCardHeaderView: UITableViewHeaderF
 
     // MARK: - Properties
     var theme: Theme!
-    private var hostingController: UIHostingController<ConfigurableNudgeCardView>?
+    private var hostingController: UIHostingController<AnyView>?
     public var onDismiss: (() -> Void)?
     public var onTap: (() -> Void)?
+    
+    // MARK: - UX Constants
+
+    private enum UX {
+        static let paddingTop: CGFloat = 24
+    }
 
     // MARK: - Initializer
 
@@ -28,7 +34,12 @@ public final class DefaultBrowserSettingsNudgeCardHeaderView: UITableViewHeaderF
     // MARK: - Setup
 
     private func setupHostingControllerForView(_ view: ConfigurableNudgeCardView) {
-        let controller = UIHostingController(rootView: view)
+        let controller = UIHostingController(rootView: AnyView(
+            VStack(spacing: 0) {
+                view
+                    .padding(.top, UX.paddingTop)
+            }
+        ))
         controller.view.translatesAutoresizingMaskIntoConstraints = false
         controller.view.backgroundColor = .clear
         controller.view.isAccessibilityElement = false
