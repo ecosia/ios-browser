@@ -88,7 +88,7 @@ class AppSettingsTableViewController: SettingsTableViewController,
         configureAccessibilityIdentifiers()
 
         // Ecosia: Register Nudge Card if needed
-        if !User.shared.isDefaultBrowserSettingNudgeCardShown {
+        if User.shared.shouldShowDefaultBrowserSettingNudgeCard {
             tableView.register(cellType: DefaultBrowserSettingsNudgeCardViewCell.self)
         }
     }
