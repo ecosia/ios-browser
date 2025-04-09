@@ -111,6 +111,7 @@ struct InstructionStepsView<TopContentView: View>: View {
                     .cornerRadius(InstructionStepsViewLayout.buttonCornerRadius)
                     .accessibilityIdentifier("instruction_cta_button")
                     .accessibilityLabel(Text(buttonTitle))
+                    .accessibilityAddTraits(.isButton)
                 }
                 .padding([.bottom, .leading, .trailing], InstructionStepsViewLayout.screenPadding)
             }
@@ -163,6 +164,7 @@ private struct StepRow: View {
                 .multilineTextAlignment(.leading)
                 .accessibilityIdentifier("instruction_step_\(index + 1)_text")
         }
+        .accessibilityElement(children: .combine)
     }
 }
 

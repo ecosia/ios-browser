@@ -30,7 +30,7 @@ public final class DefaultBrowserSettingsNudgeCardViewCell: UITableViewCell, The
         let controller = UIHostingController(rootView: view)
         controller.view.translatesAutoresizingMaskIntoConstraints = false
         controller.view.backgroundColor = .clear
-
+        controller.view.isAccessibilityElement = false
         contentView.addSubview(controller.view)
 
         NSLayoutConstraint.activate([

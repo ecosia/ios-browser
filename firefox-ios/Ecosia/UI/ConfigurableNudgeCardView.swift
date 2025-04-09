@@ -90,6 +90,7 @@ public struct ConfigurableNudgeCardView: View {
                         .foregroundColor(viewModel?.style.textPrimaryColor)
                         .multilineTextAlignment(.leading)
                         .accessibilityLabel(title)
+                        .accessibilityIdentifier("nudge_card_title")
                 }
 
                 if let description = viewModel?.description {
@@ -98,6 +99,7 @@ public struct ConfigurableNudgeCardView: View {
                         .foregroundColor(viewModel?.style.textSecondaryColor)
                         .multilineTextAlignment(.leading)
                         .accessibilityLabel(description)
+                        .accessibilityIdentifier("nudge_card_description")
                 }
 
                 if let buttonText = viewModel?.buttonText {
@@ -110,6 +112,8 @@ public struct ConfigurableNudgeCardView: View {
                     }
                     .padding(.top, UX.buttonAdditionalSpacing)
                     .accessibilityLabel(buttonText)
+                    .accessibilityIdentifier("nudge_card_cta_button")
+                    .accessibilityAddTraits(.isButton)
                 }
             }
 
@@ -125,9 +129,12 @@ public struct ConfigurableNudgeCardView: View {
                                height: UX.closeButtonWidthHeight)
                         .foregroundStyle(viewModel?.style.closeButtonTextColor ?? .primaryText)
                         .accessibilityLabel(String.localized(.configurableNudgeCardCloseButtonAccessibilityLabel))
+                        .accessibilityIdentifier("nudge_card_close_button")
+                        .accessibilityAddTraits(.isButton)
                 }
             }
         }
+        .accessibilityElement(children: .combine)
         .padding(UX.insetMargin)
         .background(viewModel?.style.backgroundColor)
         .overlay(
