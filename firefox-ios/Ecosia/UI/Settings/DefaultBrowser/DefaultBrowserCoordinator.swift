@@ -81,7 +81,7 @@ extension DefaultBrowserCoordinator {
             stepsBackgroundColor: Color(theme.colors.ecosia.backgroundPrimary),
             textPrimaryColor: Color(theme.colors.ecosia.textPrimary),
             textSecondaryColor: Color(theme.colors.ecosia.textSecondary),
-            buttonBackgroundColor: Color(theme.colors.ecosia.buttonBackgroundPrimaryActive),
+            buttonBackgroundColor: Color(theme.colors.ecosia.buttonBackgroundPrimary),
             buttonTextColor: Color(theme.colors.ecosia.textInversePrimary),
             stepRowStyle: StepRowStyle(
                 stepNumberColor: Color(theme.colors.ecosia.textPrimary),
