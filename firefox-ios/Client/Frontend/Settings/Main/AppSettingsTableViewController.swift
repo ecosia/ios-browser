@@ -89,7 +89,8 @@ class AppSettingsTableViewController: SettingsTableViewController,
 
         // Ecosia: Register Nudge Card if needed
         if User.shared.shouldShowDefaultBrowserSettingNudgeCard {
-            tableView.register(cellType: DefaultBrowserSettingsNudgeCardViewCell.self)
+            tableView.register(DefaultBrowserSettingsNudgeCardHeaderView.self,
+                               forHeaderFooterViewReuseIdentifier: DefaultBrowserSettingsNudgeCardHeaderView.cellIdentifier)
         }
     }
 
@@ -477,12 +478,40 @@ class AppSettingsTableViewController: SettingsTableViewController,
 
     // MARK: - UITableViewDelegate
 
+    /* Ecosia: Set the header view for the table view with custom handling for the default browser nudge card
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let headerView = super.tableView(
             tableView,
             viewForHeaderInSection: section
         ) as! ThemedTableSectionHeaderFooterView
         return headerView
+    }
+     */
+    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        if shouldShowDefaultBrowserNudgeCardInSection(section),
+           let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: DefaultBrowserSettingsNudgeCardHeaderView.cellIdentifier)
+            as? DefaultBrowserSettingsNudgeCardHeaderView {
+            header.onDismiss = { [weak self] in
+                User.shared.hideDefaultBrowserSettingNudgeCard()
+                Analytics.shared.defaultBrowserSettingsViaNudgeCardDismiss()
+                guard let self else { return }
+                guard section < self.settings.count else { return }
+                self.settings.remove(at: section)
+                self.tableView.deleteSections(IndexSet(integer: section), with: .automatic)
+            }
+            header.onTap = { [weak self] in
+                User.shared.hideDefaultBrowserSettingNudgeCard()
+                self?.showDefaultBrowserDetailView()
+            }
+            header.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
+            return header
+        } else if let headerView = super.tableView(
+            tableView,
+            viewForHeaderInSection: section
+        ) as? ThemedTableSectionHeaderFooterView {
+            return headerView
+        }
+        return nil
     }
 
     // Ecosia: Overrides and helpers for the default browser custom card
@@ -502,34 +531,46 @@ class AppSettingsTableViewController: SettingsTableViewController,
         return nil
     }
 
+    override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        guard shouldShowDefaultBrowserNudgeCardInSection(section) else {
+            return super.tableView(tableView, heightForFooterInSection: section)
+        }
+        return 0
+    }
+
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        if shouldShowDefaultBrowserNudgeCardInSection(section) {
+            return UITableView.automaticDimension
+        }
+        return super.tableView(tableView, heightForHeaderInSection: section)
+    }
+
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if shouldShowDefaultBrowserNudgeCardInSection(section) {
+            return 1
+        }
+        return super.tableView(tableView, numberOfRowsInSection: section)
+    }
+
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard shouldShowDefaultBrowserNudgeCardInSection(indexPath.section),
-              let cell = tableView.dequeueReusableCell(withIdentifier: DefaultBrowserSettingsNudgeCardViewCell.cellIdentifier,
-                                                       for: indexPath) as? DefaultBrowserSettingsNudgeCardViewCell
-        else {
-            return super.tableView(tableView, cellForRowAt: indexPath)
+        if shouldShowDefaultBrowserNudgeCardInSection(indexPath.section) {
+            let cell = UITableViewCell()
+            cell.isUserInteractionEnabled = false
+            cell.backgroundColor = .clear
+            cell.contentView.isHidden = true
+            return cell
         }
-        cell.selectionStyle = .none
-        cell.backgroundColor = .clear
-        cell.onDismiss = { [weak self] in
-            guard let self else { return }
-            let section = indexPath.section
-            guard section < self.settings.count else { return }
-            self.settings.remove(at: section)
-            self.tableView.deleteSections(IndexSet(integer: section), with: .automatic)
-        }
-        cell.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
-        return cell
+        return super.tableView(tableView, cellForRowAt: indexPath)
     }
 
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard shouldShowDefaultBrowserNudgeCardInSection(indexPath.section) else {
-            return super.tableView(tableView, didSelectRowAt: indexPath)
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if shouldShowDefaultBrowserNudgeCardInSection(indexPath.section) {
+            return .leastNonzeroMagnitude
         }
-        showDefaultBrowserDetailAndMarkNudgeCardAsShown()
+        return super.tableView(tableView, heightForRowAt: indexPath)
     }
 
-    private func showDefaultBrowserDetailAndMarkNudgeCardAsShown() {
+    private func showDefaultBrowserDetailView() {
         guard let navigationController = self.navigationController else { return }
 
         let theme = themeManager.getCurrentTheme(for: windowUUID)
@@ -552,7 +593,5 @@ class AppSettingsTableViewController: SettingsTableViewController,
                                                     customTopContentViewBackground:
                                                         EcosiaColor.DarkGreen50.color)
         coordinator.showDetailView()
-
-        User.shared.hideDefaultBrowserSettingNudgeCard()
     }
 }

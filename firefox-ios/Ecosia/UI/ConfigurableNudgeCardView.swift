@@ -9,6 +9,7 @@ import Common
 public protocol ConfigurableNudgeCardActionDelegate: AnyObject {
     func nudgeCardRequestToPerformAction()
     func nudgeCardRequestToDimiss()
+    func nudgeCardTapped()
 }
 
 /// A style configuration object for `ConfigurableNudgeCardView`, defining color values for rendering.
@@ -133,6 +134,9 @@ public struct ConfigurableNudgeCardView: View {
                         .accessibilityAddTraits(.isButton)
                 }
             }
+        }
+        .onTapGesture {
+            delegate?.nudgeCardTapped()
         }
         .accessibilityElement(children: .combine)
         .padding(UX.insetMargin)

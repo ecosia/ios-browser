@@ -37,7 +37,7 @@ extension AppSettingsTableViewController {
 
     private func getSearchSection() -> SettingSection {
 
-        var settings: [Setting] = [
+        let settings: [Setting] = [
             SearchAreaSetting(settings: self),
             SafeSearchSettings(settings: self),
             AutoCompleteSettings(prefs: profile.prefs, theme: themeManager.getCurrentTheme(for: windowUUID)),

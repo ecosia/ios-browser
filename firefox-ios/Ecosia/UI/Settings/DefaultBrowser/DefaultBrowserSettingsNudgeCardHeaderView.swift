@@ -6,18 +6,19 @@ import UIKit
 import SwiftUI
 import Common
 
-/// Reusable Nudge Card Cell that can be configured with any view model.
-public final class DefaultBrowserSettingsNudgeCardViewCell: UITableViewCell, ThemeApplicable, ReusableCell {
+/// Reusable Nudge Card Header View that can be configured with any view model.
+public final class DefaultBrowserSettingsNudgeCardHeaderView: UITableViewHeaderFooterView, ThemeApplicable, ReusableCell {
 
     // MARK: - Properties
     var theme: Theme!
     private var hostingController: UIHostingController<ConfigurableNudgeCardView>?
     public var onDismiss: (() -> Void)?
+    public var onTap: (() -> Void)?
 
     // MARK: - Initializer
 
-    override public init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
+    override public init(reuseIdentifier: String?) {
+        super.init(reuseIdentifier: reuseIdentifier)
     }
 
     required init?(coder: NSCoder) {
@@ -45,7 +46,7 @@ public final class DefaultBrowserSettingsNudgeCardViewCell: UITableViewCell, The
 
     // MARK: - Configuration Method
 
-    /// Configures the Nudge Card Cell using the ViewModel.
+    /// Configures the Nudge Card Header View using the ViewModel.
     public func configure(theme: Theme?) {
         self.theme = theme
         guard let theme else { return }
@@ -71,12 +72,15 @@ public final class DefaultBrowserSettingsNudgeCardViewCell: UITableViewCell, The
     }
 }
 
-extension DefaultBrowserSettingsNudgeCardViewCell: ConfigurableNudgeCardActionDelegate {
+extension DefaultBrowserSettingsNudgeCardHeaderView: ConfigurableNudgeCardActionDelegate {
+
     public func nudgeCardRequestToPerformAction() {}
 
     public func nudgeCardRequestToDimiss() {
-        User.shared.hideDefaultBrowserSettingNudgeCard()
-        Analytics.shared.defaultBrowserSettingsViaNudgeCardDismiss()
         onDismiss?()
+    }
+
+    public func nudgeCardTapped() {
+        onTap?()
     }
 }
