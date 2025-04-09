@@ -214,6 +214,7 @@ final class ResetDefaultBrowserNudgeCard: HiddenSetting {
     override func onClick(_ navigationController: UINavigationController?) {
         guard !User.shared.shouldShowDefaultBrowserSettingNudgeCard else { return }
         User.shared.showDefaultBrowserSettingNudgeCard()
+        self.settings.settings = self.settings.generateSettings()
         self.settings.tableView.reloadData()
     }
 }
