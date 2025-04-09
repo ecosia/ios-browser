@@ -117,8 +117,6 @@ extension String {
         case weAreMomentarilyUnable = "We are momentarily unable to load all of your settings."
         case continueMessage = "Continue"
         case retryMessage = "Retry"
-        case setAsDefaultBrowser = "Set Ecosia as default browser"
-        case linksFromWebsites = "Links from websites, emails or messages will automatically open in Ecosia."
         case showTopSites = "Show Top Sites"
         case helpYourFriendsBecome = "Help your friends become climate active and plant trees together"
         case friendsJoined = "%d friend(s) joined"
