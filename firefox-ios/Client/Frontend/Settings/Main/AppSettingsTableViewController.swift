@@ -526,10 +526,10 @@ class AppSettingsTableViewController: SettingsTableViewController,
         guard shouldShowDefaultBrowserNudgeCardInSection(indexPath.section) else {
             return super.tableView(tableView, didSelectRowAt: indexPath)
         }
-        showDefaultBrowserDetail()
+        showDefaultBrowserDetailAndMarkNudgeCardAsShown()
     }
 
-    private func showDefaultBrowserDetail() {
+    private func showDefaultBrowserDetailAndMarkNudgeCardAsShown() {
         guard let navigationController = self.navigationController else { return }
 
         let theme = themeManager.getCurrentTheme(for: windowUUID)
@@ -552,5 +552,7 @@ class AppSettingsTableViewController: SettingsTableViewController,
                                                     customTopContentViewBackground:
                                                         EcosiaColor.DarkGreen50.color)
         coordinator.showDetailView()
+
+        User.shared.hideDefaultBrowserSettingNudgeCard()
     }
 }
