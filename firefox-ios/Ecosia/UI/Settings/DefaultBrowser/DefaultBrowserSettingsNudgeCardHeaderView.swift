@@ -14,7 +14,7 @@ public final class DefaultBrowserSettingsNudgeCardHeaderView: UITableViewHeaderF
     private var hostingController: UIHostingController<AnyView>?
     public var onDismiss: (() -> Void)?
     public var onTap: (() -> Void)?
-    
+
     // MARK: - UX Constants
 
     private enum UX {

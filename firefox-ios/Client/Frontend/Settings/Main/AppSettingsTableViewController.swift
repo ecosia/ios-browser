@@ -557,5 +557,5 @@ class AppSettingsTableViewController: SettingsTableViewController,
             return .leastNonzeroMagnitude
         }
         return super.tableView(tableView, heightForRowAt: indexPath)
-    }    
+    }
 }

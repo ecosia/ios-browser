@@ -18,7 +18,7 @@ extension AppSettingsTableViewController {
             getEcosiaSupportSection(),
             getEcosiaAboutSection()
         ]
-        
+
         if User.shared.shouldShowDefaultBrowserSettingNudgeCard {
             sections.insert(getEcosiaDefaultBrowserSection(), at: 0)
         }
@@ -177,16 +177,16 @@ extension AppSettingsTableViewController {
 // MARK: - Default Browser Nudge Card helpers
 
 extension AppSettingsTableViewController {
-    
+
     func isDefautlBrowserCell(_ section: Int) -> Bool {
         settings[section].children.first?.accessibilityIdentifier == "DefaultBrowserSettings"
     }
-    
+
     func shouldShowDefaultBrowserNudgeCardInSection(_ section: Int) -> Bool {
         isDefautlBrowserCell(section) &&
         User.shared.shouldShowDefaultBrowserSettingNudgeCard
     }
-    
+
     func hideDefaultBrowserNudgeCardInSection(_ section: Int) {
         guard section < settings.count else { return }
         self.settings.remove(at: section)
@@ -199,4 +199,3 @@ extension AppSettingsTableViewController {
                                                                               with: themeManager.getCurrentTheme(for: windowUUID))
     }
 }
-

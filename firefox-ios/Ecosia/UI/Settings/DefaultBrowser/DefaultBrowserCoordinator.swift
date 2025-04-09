@@ -21,16 +21,16 @@ public struct DefaultBrowserCoordinator {
 
     public func showDetailView() {
         let steps = [
-            InstructionStep(text: LocalizedStringKey(String.Key.defaultBrowserCardDetailInstructionStep1.rawValue)),
-            InstructionStep(text: LocalizedStringKey(String.Key.defaultBrowserCardDetailInstructionStep2.rawValue)),
-            InstructionStep(text: LocalizedStringKey(String.Key.defaultBrowserCardDetailInstructionStep3.rawValue))
+            InstructionStep(text: .defaultBrowserCardDetailInstructionStep1),
+            InstructionStep(text: .defaultBrowserCardDetailInstructionStep2),
+            InstructionStep(text: .defaultBrowserCardDetailInstructionStep3)
         ]
 
         let view = NavigationView {
             InstructionStepsView(
-                title: LocalizedStringKey(String.Key.defaultBrowserCardDetailTitle.rawValue),
+                title: .defaultBrowserCardDetailTitle,
                 steps: steps,
-                buttonTitle: LocalizedStringKey(String.Key.defaultBrowserCardDetailButton.rawValue),
+                buttonTitle: .defaultBrowserCardDetailButton,
                 onButtonTap: {
                     Analytics.shared.defaultBrowserSettingsViaNudgeCard()
                     UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: [:])
@@ -69,13 +69,13 @@ public struct DefaultBrowserCoordinator {
 }
 
 extension DefaultBrowserCoordinator {
-    
+
     public static func makeDefaultCoordinatorAndShowDetailViewFrom(_ navigationController: UINavigationController?,
                                                             topViewContentBackground: Color,
                                                             with theme: Theme) {
-        
+
         guard let navigationController = navigationController else { return }
-        
+
         let style = InstructionStepsViewStyle(
             backgroundPrimaryColor: Color(theme.colors.ecosia.backgroundSecondary),
             stepsBackgroundColor: Color(theme.colors.ecosia.backgroundPrimary),

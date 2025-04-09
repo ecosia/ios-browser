@@ -45,16 +45,16 @@ public struct InstructionStepsViewStyle {
 
 /// A reusable instruction screen with a title, steps, and a CTA button.
 struct InstructionStepsView<TopContentView: View>: View {
-    let title: LocalizedStringKey
+    let title: String.Key
     let topContentView: TopContentView
     let steps: [InstructionStep]
-    let buttonTitle: LocalizedStringKey
+    let buttonTitle: String.Key
     let onButtonTap: () -> Void
     let style: InstructionStepsViewStyle
 
-    init(title: LocalizedStringKey,
+    init(title: String.Key,
          steps: [InstructionStep],
-         buttonTitle: LocalizedStringKey,
+         buttonTitle: String.Key,
          onButtonTap: @escaping () -> Void,
          style: InstructionStepsViewStyle,
          @ViewBuilder topContentView: () -> TopContentView) {
@@ -84,7 +84,7 @@ struct InstructionStepsView<TopContentView: View>: View {
                 VStack(spacing: InstructionStepsViewLayout.spacingBetweenSections) {
                     VStack(alignment: .leading,
                            spacing: InstructionStepsViewLayout.spacingBetweenTextStepss) {
-                        Text(title)
+                        EcosiaText(title)
                             .font(.title2.bold())
                             .foregroundColor(style.textPrimaryColor)
                             .accessibilityIdentifier("instruction_title")
@@ -101,7 +101,7 @@ struct InstructionStepsView<TopContentView: View>: View {
                            .cornerRadius(InstructionStepsViewLayout.stepsContainerCornerRadius)
 
                     Button(action: onButtonTap) {
-                        Text(buttonTitle)
+                        EcosiaText(buttonTitle)
                             .font(.body)
                             .foregroundColor(style.buttonTextColor)
                             .frame(maxWidth: .infinity)
@@ -110,7 +110,7 @@ struct InstructionStepsView<TopContentView: View>: View {
                     }
                     .cornerRadius(InstructionStepsViewLayout.buttonCornerRadius)
                     .accessibilityIdentifier("instruction_cta_button")
-                    .accessibilityLabel(Text(buttonTitle))
+                    .accessibilityLabel(Text(buttonTitle.rawValue))
                     .accessibilityAddTraits(.isButton)
                 }
                 .padding([.bottom, .leading, .trailing], InstructionStepsViewLayout.screenPadding)
@@ -158,7 +158,7 @@ private struct StepRow: View {
                 .clipShape(Circle())
                 .accessibilityIdentifier("instruction_step_number")
 
-            Text(step.text)
+            EcosiaText(step.text)
                 .font(.subheadline)
                 .foregroundColor(style.stepTextColor)
                 .multilineTextAlignment(.leading)
@@ -170,20 +170,20 @@ private struct StepRow: View {
 
 /// A single instruction step with its text.
 struct InstructionStep {
-    let text: LocalizedStringKey
+    let text: String.Key
 }
 
 // MARK: - Preview
 
 #Preview {
     InstructionStepsView(
-        title: LocalizedStringKey(String.Key.defaultBrowserCardDetailTitle.rawValue),
+        title: .defaultBrowserCardDetailTitle,
         steps: [
-            InstructionStep(text: LocalizedStringKey(String.Key.defaultBrowserCardDetailInstructionStep1.rawValue)),
-            InstructionStep(text: LocalizedStringKey(String.Key.defaultBrowserCardDetailInstructionStep2.rawValue)),
-            InstructionStep(text: LocalizedStringKey(String.Key.defaultBrowserCardDetailInstructionStep3.rawValue))
+            InstructionStep(text: .defaultBrowserCardDetailInstructionStep1),
+            InstructionStep(text: .defaultBrowserCardDetailInstructionStep2),
+            InstructionStep(text: .defaultBrowserCardDetailInstructionStep3)
         ],
-        buttonTitle: LocalizedStringKey(String.Key.defaultBrowserCardDetailButton.rawValue),
+        buttonTitle: .defaultBrowserCardDetailButton,
         onButtonTap: {},
         style: InstructionStepsViewStyle(
             backgroundPrimaryColor: .tertiaryBackground,
