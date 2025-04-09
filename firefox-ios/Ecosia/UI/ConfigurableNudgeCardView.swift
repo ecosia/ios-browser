@@ -141,6 +141,7 @@ public struct ConfigurableNudgeCardView: View {
         .accessibilityElement(children: .combine)
         .padding(UX.insetMargin)
         .background(viewModel?.style.backgroundColor)
+        .clipShape(RoundedRectangle(cornerRadius: UX.cornerRadius))
         .overlay(
             RoundedRectangle(cornerRadius: UX.cornerRadius)
                 .stroke(.border, lineWidth: 1)
