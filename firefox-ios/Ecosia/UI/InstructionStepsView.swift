@@ -175,13 +175,13 @@ struct InstructionStep {
 
 #Preview {
     InstructionStepsView(
-        title: "Set Ecosia as default",
+        title: LocalizedStringKey(String.Key.defaultBrowserCardDetailTitle.rawValue),
         steps: [
-            InstructionStep(text: "Open **Settings**"),
-            InstructionStep(text: "Select **Default Browser App**"),
-            InstructionStep(text: "Choose **Ecosia**")
+            InstructionStep(text: LocalizedStringKey(String.Key.defaultBrowserCardDetailInstructionStep1.rawValue)),
+            InstructionStep(text: LocalizedStringKey(String.Key.defaultBrowserCardDetailInstructionStep2.rawValue)),
+            InstructionStep(text: LocalizedStringKey(String.Key.defaultBrowserCardDetailInstructionStep3.rawValue))
         ],
-        buttonTitle: "Make default in settings",
+        buttonTitle: LocalizedStringKey(String.Key.defaultBrowserCardDetailButton.rawValue),
         onButtonTap: {},
         style: InstructionStepsViewStyle(
             backgroundPrimaryColor: .tertiaryBackground,
