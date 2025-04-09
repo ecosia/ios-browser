@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import SwiftUI
+import Lottie
 
 private struct InstructionStepsViewLayout {
     static let screenPadding: CGFloat = 24
@@ -69,19 +70,17 @@ struct InstructionStepsView<TopContentView: View>: View {
         ZStack {
             style.backgroundPrimaryColor
                 .ignoresSafeArea()
-            VStack(spacing: 0) {
-                VStack(spacing: -InstructionStepsViewLayout.wavesHeight) {
+            VStack(spacing: InstructionStepsViewLayout.spacingBetweenSections) {
+                ZStack(alignment: .bottom) {
                     topContentView
-                        .aspectRatio(contentMode: .fit)
                     Image("wave-forms-horizontal-1", bundle: .ecosia)
                         .resizable()
                         .renderingMode(.template)
                         .frame(height: InstructionStepsViewLayout.wavesHeight)
-                        .frame(maxWidth: .infinity)
                         .foregroundStyle(style.backgroundPrimaryColor)
                         .accessibilityHidden(true)
                 }
-                
+
                 VStack(spacing: InstructionStepsViewLayout.spacingBetweenSections) {
                     VStack(alignment: .leading,
                            spacing: InstructionStepsViewLayout.spacingBetweenTextStepss) {
@@ -90,7 +89,7 @@ struct InstructionStepsView<TopContentView: View>: View {
                             .foregroundColor(style.textPrimaryColor)
                             .accessibilityIdentifier("instruction_title")
                             .frame(maxWidth: .infinity, alignment: .leading)
-                        
+
                         VStack(alignment: .leading,
                                spacing: InstructionStepsViewLayout.spacingBetweenTextStepss) {
                             renderedSteps
@@ -100,10 +99,10 @@ struct InstructionStepsView<TopContentView: View>: View {
                            .padding(InstructionStepsViewLayout.stepsContainerPadding)
                            .background(style.stepsBackgroundColor)
                            .cornerRadius(InstructionStepsViewLayout.stepsContainerCornerRadius)
-                    
+
                     Button(action: onButtonTap) {
                         Text(buttonTitle)
-                            .font(.headline)
+                            .font(.body)
                             .foregroundColor(style.buttonTextColor)
                             .frame(maxWidth: .infinity)
                             .padding()
@@ -113,9 +112,7 @@ struct InstructionStepsView<TopContentView: View>: View {
                     .accessibilityIdentifier("instruction_cta_button")
                     .accessibilityLabel(Text(buttonTitle))
                 }
-                .padding(InstructionStepsViewLayout.screenPadding)
-                .navigationTitle("")
-                .navigationBarTitleDisplayMode(.inline)
+                .padding([.bottom, .leading, .trailing], InstructionStepsViewLayout.screenPadding)
             }
         }
     }
@@ -176,37 +173,34 @@ struct InstructionStep {
 
 // MARK: - Preview
 
-struct InstructionStepsPreviewContainer: View {
-    var body: some View {
-        InstructionStepsView(
-            title: "Set Ecosia as default",
-            steps: [
-                InstructionStep(text: "Open **Settings**"),
-                InstructionStep(text: "Select **Default Browser App**"),
-                InstructionStep(text: "Choose **Ecosia**")
-            ],
-            buttonTitle: "Make default in settings",
-            onButtonTap: {},
-            style: InstructionStepsViewStyle(
-                backgroundPrimaryColor: .tertiaryBackground,
-                stepsBackgroundColor: .primaryBackground,
-                textPrimaryColor: .primaryText,
-                textSecondaryColor: .primaryText,
-                buttonBackgroundColor: .primaryBrand,
-                buttonTextColor: .primaryBackground,
-                stepRowStyle: StepRowStyle(stepNumberColor: .primary,
-                                           stepNumberBackgroundColor: .secondary,
-                                           stepTextColor: .primaryText)
-            )
-        ) {
-            Image("financialReports", bundle: .ecosia)
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .background(.yellow)
-        }
-    }
-}
-
 #Preview {
-    InstructionStepsPreviewContainer()
+    InstructionStepsView(
+        title: "Set Ecosia as default",
+        steps: [
+            InstructionStep(text: "Open **Settings**"),
+            InstructionStep(text: "Select **Default Browser App**"),
+            InstructionStep(text: "Choose **Ecosia**")
+        ],
+        buttonTitle: "Make default in settings",
+        onButtonTap: {},
+        style: InstructionStepsViewStyle(
+            backgroundPrimaryColor: .tertiaryBackground,
+            stepsBackgroundColor: .primaryBackground,
+            textPrimaryColor: .primaryText,
+            textSecondaryColor: .primaryText,
+            buttonBackgroundColor: .primaryBrand,
+            buttonTextColor: .primaryBackground,
+            stepRowStyle: StepRowStyle(stepNumberColor: .primary,
+                                       stepNumberBackgroundColor: .secondary,
+                                       stepTextColor: .primaryText)
+        )
+    ) {
+        LottieView { try await DotLottieFile.named("default_browser_setup_animation", bundle: .ecosia)
+        }
+        .configuration(LottieConfiguration(renderingEngine: .mainThread))
+        .playing()
+        .offset(y: 16)
+        .aspectRatio(contentMode: .fit)
+        .background(Color(UIColor(rgb: 0x275243)))
+    }
 }

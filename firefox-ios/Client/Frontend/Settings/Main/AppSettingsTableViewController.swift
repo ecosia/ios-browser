@@ -5,6 +5,7 @@
 import Common
 import UIKit
 import Shared
+import Ecosia
 
 // MARK: - Settings Flow Delegate Protocol
 
@@ -85,6 +86,11 @@ class AppSettingsTableViewController: SettingsTableViewController,
 
         setupNavigationBar()
         configureAccessibilityIdentifiers()
+
+        // Ecosia: Register Nudge Card if needed
+        if !User.shared.isDefaultBrowserSettingNudgeCardShown {
+            tableView.register(cellType: DefaultBrowserSettingsNudgeCardViewCell.self)
+        }
     }
 
     /* Ecosia: Move settings reload to `viewWillAppear`
@@ -477,5 +483,74 @@ class AppSettingsTableViewController: SettingsTableViewController,
             viewForHeaderInSection: section
         ) as! ThemedTableSectionHeaderFooterView
         return headerView
+    }
+
+    // Ecosia: Overrides and helpers for the default browser custom card
+    private func isDefautlBrowserCell(_ section: Int) -> Bool {
+        settings[section].children.first?.accessibilityIdentifier == "DefaultBrowserSettings"
+    }
+
+    private func shouldShowDefaultBrowserNudgeCardInSection(_ section: Int) -> Bool {
+        isDefautlBrowserCell(section) &&
+        User.shared.shouldShowDefaultBrowserSettingNudgeCard
+    }
+
+    override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        guard shouldShowDefaultBrowserNudgeCardInSection(section) else {
+            return super.tableView(tableView, viewForFooterInSection: section)
+        }
+        return nil
+    }
+
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard shouldShowDefaultBrowserNudgeCardInSection(indexPath.section),
+              let cell = tableView.dequeueReusableCell(withIdentifier: DefaultBrowserSettingsNudgeCardViewCell.cellIdentifier,
+                                                       for: indexPath) as? DefaultBrowserSettingsNudgeCardViewCell
+        else {
+            return super.tableView(tableView, cellForRowAt: indexPath)
+        }
+        cell.selectionStyle = .none
+        cell.backgroundColor = .clear
+        cell.onDismiss = { [weak self] in
+            guard let self else { return }
+            let section = indexPath.section
+            guard section < self.settings.count else { return }
+            self.settings.remove(at: section)
+            self.tableView.deleteSections(IndexSet(integer: section), with: .automatic)
+        }
+        cell.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
+        return cell
+    }
+
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard shouldShowDefaultBrowserNudgeCardInSection(indexPath.section) else {
+            return super.tableView(tableView, didSelectRowAt: indexPath)
+        }
+        showDefaultBrowserDetail()
+    }
+
+    private func showDefaultBrowserDetail() {
+        guard let navigationController = self.navigationController else { return }
+
+        let theme = themeManager.getCurrentTheme(for: windowUUID)
+        let style = InstructionStepsViewStyle(
+            backgroundPrimaryColor: theme.colors.ecosia.backgroundSecondary.color,
+            stepsBackgroundColor: theme.colors.ecosia.backgroundPrimary.color,
+            textPrimaryColor: theme.colors.ecosia.textPrimary.color,
+            textSecondaryColor: theme.colors.ecosia.textSecondary.color,
+            buttonBackgroundColor: theme.colors.ecosia.buttonBackgroundPrimaryActive.color,
+            buttonTextColor: theme.colors.ecosia.textInversePrimary.color,
+            stepRowStyle: StepRowStyle(
+                stepNumberColor: theme.colors.ecosia.textPrimary.color,
+                stepNumberBackgroundColor: theme.colors.ecosia.backgroundSecondary.color,
+                stepTextColor: theme.colors.ecosia.textPrimary.color
+            )
+        )
+
+        let coordinator = DefaultBrowserCoordinator(navigationController: navigationController,
+                                                    style: style,
+                                                    customTopContentViewBackground:
+                                                        EcosiaColor.DarkGreen50.color)
+        coordinator.showDetailView()
     }
 }

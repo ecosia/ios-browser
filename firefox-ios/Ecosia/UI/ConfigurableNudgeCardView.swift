@@ -34,18 +34,21 @@ public struct NudgeCardStyle {
 
 /// A view model containing the content and style information used to render a `ConfigurableNudgeCardView`.
 public struct NudgeCardViewModel {
-    let title: String?
+    /// A card must have a title.
+    let title: String
+    /// Pass `nil` to hide the description text.
     let description: String?
-    /// Pass `nil` to hide the bottom action button
+    /// Pass `nil` to hide the bottom action button.
     let buttonText: String?
+    /// Pass `nil` to hide the image.
     let image: UIImage?
     let showsCloseButton: Bool
     var style: NudgeCardStyle
 
-    public init(title: String?,
-                description: String?,
-                buttonText: String?,
-                image: UIImage?,
+    public init(title: String,
+                description: String? = nil,
+                buttonText: String? = nil,
+                image: UIImage? = nil,
                 showsCloseButton: Bool = true,
                 style: NudgeCardStyle) {
         self.title = title
