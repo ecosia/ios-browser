@@ -11,7 +11,6 @@ extension AppSettingsTableViewController {
 
     func getEcosiaSettingsSectionsShowingDebug(_ isDebugSectionEnabled: Bool) -> [SettingSection] {
         var sections = [
-            getEcosiaDefaultBrowserSection(),
             getSearchSection(),
             getCustomizationSection(),
             getEcosiaGeneralSection(),
@@ -19,6 +18,10 @@ extension AppSettingsTableViewController {
             getEcosiaSupportSection(),
             getEcosiaAboutSection()
         ]
+        
+        if User.shared.shouldShowDefaultBrowserSettingNudgeCard {
+            sections.insert(getEcosiaDefaultBrowserSection(), at: 0)
+        }
 
         if isDebugSectionEnabled {
             sections.append(getEcosiaDebugSupportSection())
@@ -30,9 +33,9 @@ extension AppSettingsTableViewController {
 
 extension AppSettingsTableViewController {
 
+    // We need this section as a placeholder for the default browser nudge card.
     private func getEcosiaDefaultBrowserSection() -> SettingSection {
-        .init(footerTitle: .init(string: .localized(.linksFromWebsites)),
-              children: [DefaultBrowserSetting(theme: themeManager.getCurrentTheme(for: windowUUID))])
+        .init(children: [DefaultBrowserSetting(theme: themeManager.getCurrentTheme(for: windowUUID))])
     }
 
     private func getSearchSection() -> SettingSection {
