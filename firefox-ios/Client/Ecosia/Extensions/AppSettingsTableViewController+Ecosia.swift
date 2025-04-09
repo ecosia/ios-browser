@@ -41,6 +41,7 @@ extension AppSettingsTableViewController {
     private func getSearchSection() -> SettingSection {
 
         let settings: [Setting] = [
+            EcosiaDefaultBrowserSettings(),
             SearchAreaSetting(settings: self),
             SafeSearchSettings(settings: self),
             AutoCompleteSettings(prefs: profile.prefs, theme: themeManager.getCurrentTheme(for: windowUUID)),
