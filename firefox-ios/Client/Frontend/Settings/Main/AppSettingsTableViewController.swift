@@ -495,10 +495,7 @@ class AppSettingsTableViewController: SettingsTableViewController,
             header.onDismiss = { [weak self] in
                 User.shared.hideDefaultBrowserSettingNudgeCard()
                 Analytics.shared.defaultBrowserSettingsViaNudgeCardDismiss()
-                guard let self else { return }
-                guard section < self.settings.count else { return }
-                self.settings.remove(at: section)
-                self.tableView.deleteSections(IndexSet(integer: section), with: .automatic)
+                self?.hideDefaultBrowserNudgeCardInSection(section)
             }
             header.onTap = { [weak self] in
                 User.shared.hideDefaultBrowserSettingNudgeCard()
@@ -560,30 +557,5 @@ class AppSettingsTableViewController: SettingsTableViewController,
             return .leastNonzeroMagnitude
         }
         return super.tableView(tableView, heightForRowAt: indexPath)
-    }
-
-    private func showDefaultBrowserDetailView() {
-        guard let navigationController = self.navigationController else { return }
-
-        let theme = themeManager.getCurrentTheme(for: windowUUID)
-        let style = InstructionStepsViewStyle(
-            backgroundPrimaryColor: theme.colors.ecosia.backgroundSecondary.color,
-            stepsBackgroundColor: theme.colors.ecosia.backgroundPrimary.color,
-            textPrimaryColor: theme.colors.ecosia.textPrimary.color,
-            textSecondaryColor: theme.colors.ecosia.textSecondary.color,
-            buttonBackgroundColor: theme.colors.ecosia.buttonBackgroundPrimaryActive.color,
-            buttonTextColor: theme.colors.ecosia.textInversePrimary.color,
-            stepRowStyle: StepRowStyle(
-                stepNumberColor: theme.colors.ecosia.textPrimary.color,
-                stepNumberBackgroundColor: theme.colors.ecosia.backgroundSecondary.color,
-                stepTextColor: theme.colors.ecosia.textPrimary.color
-            )
-        )
-
-        let coordinator = DefaultBrowserCoordinator(navigationController: navigationController,
-                                                    style: style,
-                                                    customTopContentViewBackground:
-                                                        EcosiaColor.DarkGreen50.color)
-        coordinator.showDetailView()
-    }
+    }    
 }
