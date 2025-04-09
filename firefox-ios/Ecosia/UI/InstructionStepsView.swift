@@ -108,7 +108,7 @@ struct InstructionStepsView<TopContentView: View>: View {
                             .padding()
                             .background(style.buttonBackgroundColor)
                     }
-                    .cornerRadius(InstructionStepsViewLayout.buttonCornerRadius)
+                    .clipShape(Capsule())
                     .accessibilityIdentifier("instruction_cta_button")
                     .accessibilityLabel(Text(buttonTitle.rawValue))
                     .accessibilityAddTraits(.isButton)
