@@ -25,6 +25,7 @@ final class EcosiaDefaultBrowserSettings: Setting {
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
+        Analytics.shared.defaultBrowserSettings()
         DefaultBrowserCoordinator.makeDefaultCoordinatorAndShowDetailViewFrom(navigationController,
                                                                               topViewContentBackground: EcosiaColor.DarkGreen50.color,
                                                                               with: theme)
