@@ -44,6 +44,7 @@ public struct DefaultBrowserCoordinator {
                 .offset(y: 16)
                 .aspectRatio(contentMode: .fit)
                 .background(customTopContentViewBackground)
+                .accessibilityHidden(true)
             }
             .onDisappear {
                 Analytics.shared.defaultBrowserSettingsViaNudgeCardDetailDismiss()
