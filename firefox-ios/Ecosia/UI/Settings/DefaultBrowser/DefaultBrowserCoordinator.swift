@@ -26,34 +26,32 @@ public struct DefaultBrowserCoordinator {
             InstructionStep(text: .defaultBrowserCardDetailInstructionStep3)
         ]
 
-        let view = NavigationView {
-            InstructionStepsView(
-                title: .defaultBrowserCardDetailTitle,
-                steps: steps,
-                buttonTitle: .defaultBrowserCardDetailButton,
-                onButtonTap: {
-                    Analytics.shared.defaultBrowserSettingsViaNudgeCard()
-                    UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: [:])
-                },
-                style: style
-            ) {
-                LottieView {
-                    try await DotLottieFile.named("default_browser_setup_animation", bundle: .ecosia)
-                }
-                .configuration(LottieConfiguration(renderingEngine: .mainThread))
-                .looping()
-                .offset(y: 16)
-                .aspectRatio(contentMode: .fit)
-                .background(customTopContentViewBackground)
-                .accessibilityHidden(true)
+        let view = InstructionStepsView(
+            title: .defaultBrowserCardDetailTitle,
+            steps: steps,
+            buttonTitle: .defaultBrowserCardDetailButton,
+            onButtonTap: {
+                Analytics.shared.defaultBrowserSettingsViaNudgeCard()
+                UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: [:])
+            },
+            style: style
+        ) {
+            LottieView {
+                try await DotLottieFile.named("default_browser_setup_animation", bundle: .ecosia)
             }
-            .onDisappear {
-                Analytics.shared.defaultBrowserSettingsViaNudgeCardDetailDismiss()
-            }
+            .configuration(LottieConfiguration(renderingEngine: .mainThread))
+            .looping()
+            .offset(y: 16)
+            .aspectRatio(contentMode: .fit)
+            .background(customTopContentViewBackground)
+            .accessibilityHidden(true)
         }
-            .navigationTitle(String.Key.defaultBrowserSettingTitle.rawValue)
+        .onDisappear {
+            Analytics.shared.defaultBrowserSettingsViaNudgeCardDetailDismiss()
+        }
 
         let hostingController = UIHostingController(rootView: view)
+        hostingController.title = .localized(.defaultBrowserSettingTitle)
         hostingController.navigationItem.largeTitleDisplayMode = .never
         let doneHandler = DetailViewDoneHandler {
             self.navigationController.popViewController(animated: true)
