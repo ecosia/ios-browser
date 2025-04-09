@@ -60,6 +60,7 @@ public struct User: Codable, Equatable {
     public internal(set) var id: String?
     public var whatsNewItemsVersionsShown = Set<String>()
     public internal(set) var analyticsUserState = AnalyticsStateContext()
+    public var isDefaultBrowserSettingNudgeCardShown = false
 
     public var searchCount = 0 {
         didSet {
@@ -137,6 +138,7 @@ public struct User: Codable, Equatable {
             personalized = stored.personalized
             sendAnonymousUsageData = stored.sendAnonymousUsageData
             migrated = stored.migrated
+            isDefaultBrowserSettingNudgeCardShown = stored.isDefaultBrowserSettingNudgeCardShown
             state = stored.state
             news = stored.news
             topSitesRows = stored.topSitesRows
@@ -211,13 +213,22 @@ extension User {
         state[Key.bookmarksImportExportTooltipShown.rawValue] = "\(false)"
     }
 
+    public var shouldShowDefaultBrowserSettingNudgeCard: Bool {
+        state[Key.isDefaultBrowserSettingNudgeCardShown.rawValue].map(Bool.init) != true
+    }
+
+    public mutating func hideDefaultBrowserSettingNudgeCard() {
+        state[Key.isDefaultBrowserSettingNudgeCardShown.rawValue] = "\(true)"
+    }
+
     enum Key: String {
         case
         referralSpotlight,
         impactIntro = "counterIntro", // Reusing previous key
         inactiveTabsTooltip,
         bookmarksImportExportTooltipShown,
-        isNewUserSinceBookmarksImportExportHasBeenShipped
+        isNewUserSinceBookmarksImportExportHasBeenShipped,
+        isDefaultBrowserSettingNudgeCardShown
     }
 }
 

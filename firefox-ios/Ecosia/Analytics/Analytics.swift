@@ -132,6 +132,25 @@ open class Analytics {
             .label(Label.DefaultBrowser.settings.rawValue))
     }
 
+    public func defaultBrowserSettingsViaNudgeCard() {
+        track(Structured(category: Category.browser.rawValue,
+                         action: Action.open.rawValue)
+            .label(Label.DefaultBrowser.settingsNudgeCard.rawValue))
+    }
+
+    public func defaultBrowserSettingsViaNudgeCardDismiss() {
+        track(Structured(category: Category.browser.rawValue,
+                         action: Action.dismiss.rawValue)
+            .label(Label.DefaultBrowser.settingsNudgeCard.rawValue))
+    }
+
+    public func defaultBrowserSettingsViaNudgeCardDetailDismiss() {
+        track(Structured(category: Category.browser.rawValue,
+                         action: Action.dismiss.rawValue)
+            .label(Label.DefaultBrowser.settingsNudgeCard.rawValue)
+            .property(Property.detail.rawValue))
+    }
+
     // MARK: Menu
     public func menuClick(_ item: Analytics.Label.Menu) {
         let event = Structured(category: Category.menu.rawValue,
