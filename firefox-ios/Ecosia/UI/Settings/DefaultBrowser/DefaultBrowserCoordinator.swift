@@ -41,7 +41,7 @@ public struct DefaultBrowserCoordinator {
                     try await DotLottieFile.named("default_browser_setup_animation", bundle: .ecosia)
                 }
                 .configuration(LottieConfiguration(renderingEngine: .mainThread))
-                .playing()
+                .playing(.fromProgress(0, toProgress: 0.9, loopMode: .playOnce))
                 .offset(y: 16)
                 .aspectRatio(contentMode: .fit)
                 .background(customTopContentViewBackground)
