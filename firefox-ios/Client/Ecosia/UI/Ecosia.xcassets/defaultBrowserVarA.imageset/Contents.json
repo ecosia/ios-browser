@@ -5,12 +5,12 @@
       "scale" : "1x"
     },
     {
-      "filename" : "Image area 1.png",
+      "filename" : "Step=preview.png",
       "idiom" : "iphone",
       "scale" : "2x"
     },
     {
-      "filename" : "Image area.png",
+      "filename" : "Step=preview-1.png",
       "idiom" : "iphone",
       "scale" : "3x"
     },
@@ -19,7 +19,7 @@
       "scale" : "1x"
     },
     {
-      "filename" : "Image area 2.png",
+      "filename" : "Step=preview-2 1.png",
       "idiom" : "ipad",
       "scale" : "2x"
     }

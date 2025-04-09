@@ -24,9 +24,15 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
         view.clipsToBounds = true
         return view
     }()
+    var imageAspectRatio: CGFloat {
+        guard let image = DefaultBrowserExperiment.image else {
+            return 3/4
+        }
+        return image.size.height / image.size.width
+    }
     private lazy var imageView: UIImageView = {
         let view = UIImageView(image: DefaultBrowserExperiment.image)
-        view.contentMode = .scaleAspectFill
+        view.contentMode = .scaleAspectFit
         view.clipsToBounds = true
         view.translatesAutoresizingMaskIntoConstraints = false
         view.setContentCompressionResistancePriority(.required, for: .vertical)
@@ -254,11 +260,11 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
             contentView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             contentView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             contentView.topAnchor.constraint(greaterThanOrEqualTo: view.topAnchor),
-            contentView.heightAnchor.constraint(equalToConstant: 300).priority(.defaultHigh),
 
             imageView.topAnchor.constraint(equalTo: contentView.topAnchor),
             imageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             imageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor, multiplier: imageAspectRatio),
 
             waves.bottomAnchor.constraint(equalTo: imageView.bottomAnchor),
             waves.heightAnchor.constraint(equalToConstant: 34),
