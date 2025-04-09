@@ -149,6 +149,7 @@ extension AppSettingsTableViewController {
             AddClaim(settings: self),
             ChangeSearchCount(settings: self),
             ResetSearchCount(settings: self),
+            ResetDefaultBrowserNudgeCard(settings: self),
             AnalyticsIdentifierSetting(settings: self),
             FasterInactiveTabs(settings: self, settingsDelegate: self),
             UnleashBrazeIntegrationSetting(settings: self),

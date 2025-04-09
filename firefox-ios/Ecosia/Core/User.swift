@@ -60,7 +60,6 @@ public struct User: Codable, Equatable {
     public internal(set) var id: String?
     public var whatsNewItemsVersionsShown = Set<String>()
     public internal(set) var analyticsUserState = AnalyticsStateContext()
-    public var isDefaultBrowserSettingNudgeCardShown = false
 
     public var searchCount = 0 {
         didSet {
