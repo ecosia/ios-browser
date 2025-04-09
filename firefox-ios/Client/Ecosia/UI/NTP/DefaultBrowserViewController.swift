@@ -39,10 +39,16 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
         view.setContentHuggingPriority(.required, for: .vertical)
         return view
     }()
+    var wavesAspectRatio: CGFloat {
+        guard let image = UIImage(named: "defaultBrowserWaves") else {
+            return 92/800
+        }
+        return image.size.height / image.size.width
+    }
     private lazy var waves: UIImageView = {
-        let view = UIImageView(image: .init(named: "waves"))
+        let view = UIImageView(image: .init(named: "defaultBrowserWaves"))
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.contentMode = .scaleToFill
+        view.contentMode = .scaleAspectFit
         return view
     }()
     private lazy var titleLabel: UILabel = {
@@ -267,7 +273,7 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
             imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor, multiplier: imageAspectRatio),
 
             waves.bottomAnchor.constraint(equalTo: imageView.bottomAnchor),
-            waves.heightAnchor.constraint(equalToConstant: 34),
+            waves.heightAnchor.constraint(equalTo: waves.widthAnchor, multiplier: wavesAspectRatio),
             waves.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             waves.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
 
