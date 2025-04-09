@@ -137,7 +137,6 @@ public struct User: Codable, Equatable {
             personalized = stored.personalized
             sendAnonymousUsageData = stored.sendAnonymousUsageData
             migrated = stored.migrated
-            isDefaultBrowserSettingNudgeCardShown = stored.isDefaultBrowserSettingNudgeCardShown
             state = stored.state
             news = stored.news
             topSitesRows = stored.topSitesRows
@@ -214,6 +213,10 @@ extension User {
 
     public var shouldShowDefaultBrowserSettingNudgeCard: Bool {
         state[Key.isDefaultBrowserSettingNudgeCardShown.rawValue].map(Bool.init) != true
+    }
+
+    public mutating func showDefaultBrowserSettingNudgeCard() {
+        state[Key.isDefaultBrowserSettingNudgeCardShown.rawValue] = "\(false)"
     }
 
     public mutating func hideDefaultBrowserSettingNudgeCard() {

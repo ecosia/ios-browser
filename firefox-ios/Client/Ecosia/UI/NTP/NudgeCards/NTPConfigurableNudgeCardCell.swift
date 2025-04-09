@@ -77,6 +77,7 @@ class NTPConfigurableNudgeCardCell: UICollectionViewCell, ThemeApplicable, Reusa
 }
 
 extension NTPConfigurableNudgeCardCell: ConfigurableNudgeCardActionDelegate {
+
     func nudgeCardRequestToPerformAction() {
         guard let sectionType = viewModel?.sectionType else { return }
         delegate?.nudgeCardRequestToPerformAction(for: sectionType)
@@ -86,4 +87,6 @@ extension NTPConfigurableNudgeCardCell: ConfigurableNudgeCardActionDelegate {
         guard let sectionType = viewModel?.sectionType else { return }
         delegate?.nudgeCardRequestToDimiss(for: sectionType)
     }
+
+    func nudgeCardTapped() {}
 }
