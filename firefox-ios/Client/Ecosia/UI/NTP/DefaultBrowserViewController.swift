@@ -128,6 +128,34 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
         return view
     }()
 
+    // MARK: Trivia variation
+    private lazy var triviaView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.layer.cornerRadius = 10 // TODO: Use global variables
+        view.clipsToBounds = true
+        return view
+    }()
+    private lazy var triviaTitleLabel: UILabel = {
+        let label = UILabel()
+        label.text = .localized(.defaultBrowserPromptExperimentDescriptionTitleVarBC)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = .systemFont(ofSize: 17).bold()
+        label.setContentCompressionResistancePriority(.required, for: .vertical)
+        label.setContentCompressionResistancePriority(.required, for: .horizontal)
+        return label
+    }()
+    private lazy var triviaDecriptionLabel: UILabel = {
+        let label = UILabel()
+        label.attributedText = DefaultBrowserExperiment.trivia
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.adjustsFontForContentSizeCategory = true
+        label.numberOfLines = 0
+        label.setContentCompressionResistancePriority(.required, for: .vertical)
+        label.setContentCompressionResistancePriority(.required, for: .horizontal)
+        return label
+    }()
+
     // MARK: Themeable Properties
     let windowUUID: WindowUUID
     var currentWindowUUID: WindowUUID? { windowUUID }
@@ -204,6 +232,19 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
             line2.addArrangedSubview(secondCheckItemLabel)
         } else if case .description = type {
             variationContentStack.addArrangedSubview(descriptionLabel)
+        } else if case .trivia = type {
+            variationContentStack.addArrangedSubview(triviaView)
+            triviaView.addSubview(triviaTitleLabel)
+            triviaView.addSubview(triviaDecriptionLabel)
+            NSLayoutConstraint.activate([ // TODO: Use global variables
+                triviaTitleLabel.topAnchor.constraint(equalTo: triviaView.topAnchor, constant: 16),
+                triviaDecriptionLabel.topAnchor.constraint(equalTo: triviaTitleLabel.bottomAnchor, constant: 16),
+                triviaDecriptionLabel.bottomAnchor.constraint(equalTo: triviaView.bottomAnchor, constant: -16),
+                triviaTitleLabel.leadingAnchor.constraint(equalTo: triviaView.leadingAnchor, constant: 16),
+                triviaTitleLabel.trailingAnchor.constraint(equalTo: triviaView.trailingAnchor, constant: -16),
+                triviaDecriptionLabel.leadingAnchor.constraint(equalTo: triviaView.leadingAnchor, constant: 16),
+                triviaDecriptionLabel.trailingAnchor.constraint(equalTo: triviaView.trailingAnchor, constant: -16)
+            ])
         }
     }
 
@@ -260,6 +301,9 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
         secondCheckItemLabel.textColor = theme.colors.ecosia.textSecondary
         firstCheckImageView.tintColor = theme.colors.ecosia.buttonBackgroundPrimary
         secondCheckImageView.tintColor = theme.colors.ecosia.buttonBackgroundPrimary
+        triviaView.backgroundColor = theme.colors.ecosia.backgroundSecondary
+        triviaTitleLabel.textColor = theme.colors.ecosia.textPrimary
+        triviaDecriptionLabel.textColor = theme.colors.ecosia.textSecondary
     }
 
     @objc private func skipAction() {

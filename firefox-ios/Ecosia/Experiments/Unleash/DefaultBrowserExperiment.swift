@@ -40,7 +40,7 @@ public struct DefaultBrowserExperiment {
         case .a:
             return .init(named: "defaultBrowserVarA")
         case .b, .c:
-            return .init(named: "defaultBrowser") // TODO: Update image
+            return .init(named: "defaultBrowserVarBC")
         }
     }
 
@@ -91,7 +91,7 @@ public struct DefaultBrowserExperiment {
         }
     }
 
-    public static var trivia: NSMutableAttributedString {
+    public static var trivia: NSAttributedString {
         guard contentType == .trivia else { return .init() }
         var text = ""
         var highlight = ""
@@ -106,15 +106,6 @@ public struct DefaultBrowserExperiment {
             break
         }
         let fullText = String(format: text, highlight)
-        let attributed = NSMutableAttributedString(string: fullText, attributes: [
-            .font: UIFont.systemFont(ofSize: 16)
-        ])
-        if let range = fullText.range(of: highlight) {
-            let nsRange = NSRange(range, in: fullText)
-            attributed.addAttributes([
-                .font: UIFont.boldSystemFont(ofSize: 16)
-            ], range: nsRange)
-        }
-        return attributed
+        return fullText.attributedText(boldString: highlight, font: .systemFont(ofSize: 17))
     }
 }
