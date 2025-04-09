@@ -139,6 +139,7 @@ public struct ConfigurableNudgeCardView: View {
             delegate?.nudgeCardTapped()
         }
         .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(.isButton)
         .padding(UX.insetMargin)
         .background(viewModel?.style.backgroundColor)
         .clipShape(RoundedRectangle(cornerRadius: UX.cornerRadius))
