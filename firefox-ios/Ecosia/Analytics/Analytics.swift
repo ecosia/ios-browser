@@ -124,16 +124,10 @@ open class Analytics {
         track(event)
     }
 
-    public func defaultBrowserSettings() {
+    public func defaultBrowserSettingsShowsDetailViewVia(_ label: Label.DefaultBrowser) {
         track(Structured(category: Category.browser.rawValue,
                          action: Action.open.rawValue)
-            .label(Label.DefaultBrowser.settings.rawValue))
-    }
-
-    public func defaultBrowserSettingsViaNudgeCard() {
-        track(Structured(category: Category.browser.rawValue,
-                         action: Action.open.rawValue)
-            .label(Label.DefaultBrowser.settingsNudgeCard.rawValue))
+            .label(label.rawValue))
     }
 
     public func defaultBrowserSettingsViaNudgeCardDismiss() {
@@ -141,11 +135,18 @@ open class Analytics {
                          action: Action.dismiss.rawValue)
             .label(Label.DefaultBrowser.settingsNudgeCard.rawValue))
     }
+    
+    public func defaultBrowserSettingsOpenNativeSettingsVia(_ label: Label.DefaultBrowser) {
+        track(Structured(category: Category.browser.rawValue,
+                         action: Action.click.rawValue)
+            .label(label.rawValue)
+            .property(Property.nativeSettings.rawValue))
+    }
 
-    public func defaultBrowserSettingsViaNudgeCardDetailDismiss() {
+    public func defaultBrowserSettingsDismissDetailViewVia(_ label: Label.DefaultBrowser) {
         track(Structured(category: Category.browser.rawValue,
                          action: Action.dismiss.rawValue)
-            .label(Label.DefaultBrowser.settingsNudgeCard.rawValue)
+            .label(label.rawValue)
             .property(Property.detail.rawValue))
     }
 

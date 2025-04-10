@@ -207,7 +207,8 @@ extension Analytics {
         enable,
         disable,
         home,
-        detail
+        detail,
+        nativeSettings = "native_settings"
 
         public enum APNConsent: String {
             case
