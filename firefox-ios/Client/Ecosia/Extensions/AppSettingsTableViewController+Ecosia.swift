@@ -180,12 +180,12 @@ extension AppSettingsTableViewController {
 
 extension AppSettingsTableViewController {
 
-    func isDefautlBrowserCell(_ section: Int) -> Bool {
+    func isDefaultBrowserCell(_ section: Int) -> Bool {
         settings[section].children.first?.accessibilityIdentifier == "DefaultBrowserSettings"
     }
 
     func shouldShowDefaultBrowserNudgeCardInSection(_ section: Int) -> Bool {
-        isDefautlBrowserCell(section) &&
+        isDefaultBrowserCell(section) &&
         User.shared.shouldShowDefaultBrowserSettingNudgeCard
     }
 
