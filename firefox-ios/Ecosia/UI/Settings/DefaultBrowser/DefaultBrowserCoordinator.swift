@@ -58,7 +58,8 @@ public struct DefaultBrowserCoordinator {
         }
         objc_setAssociatedObject(hostingController, "detailViewDoneHandler", doneHandler, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         hostingController.navigationItem.rightBarButtonItem = UIBarButtonItem(
-            barButtonSystemItem: .done,
+            title: .localized(.done),
+            style: .done,
             target: doneHandler,
             action: #selector(DetailViewDoneHandler.handleDone)
         )
