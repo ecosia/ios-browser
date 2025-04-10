@@ -75,7 +75,7 @@ public struct DefaultBrowserExperiment {
         guard contentType == .checks else { return ("", "") }
         switch variant {
         case .control:
-            return (.localized(.openAllLinksAutomatically), .localized(.beClimateActive))
+            return (.localized(.defaultBrowserPromptExperimentControlCheck1), .localized(.defaultBrowserPromptExperimentControlCheck2))
         default:
             return ("", "")
         }
@@ -91,7 +91,7 @@ public struct DefaultBrowserExperiment {
         }
     }
 
-    public static var trivia: NSAttributedString {
+    public static func trivia(font: UIFont) -> NSAttributedString {
         guard contentType == .trivia else { return .init() }
         var text = ""
         var highlight = ""
@@ -106,6 +106,6 @@ public struct DefaultBrowserExperiment {
             break
         }
         let fullText = String(format: text, highlight)
-        return fullText.attributedText(boldString: highlight, font: .systemFont(ofSize: 17))
+        return fullText.attributedText(boldString: highlight, font: font)
     }
 }

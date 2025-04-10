@@ -59,9 +59,9 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
         let label = UILabel()
         label.text = DefaultBrowserExperiment.title
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .preferredFont(forTextStyle: .title3).bold()
+        label.font = .preferredFont(forTextStyle: .title2).bold()
         label.adjustsFontForContentSizeCategory = true
-        label.numberOfLines = 0
+        label.adjustsFontSizeToFitWidth = true
         label.setContentCompressionResistancePriority(.required, for: .vertical)
         return label
     }()
@@ -70,27 +70,28 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
         stack.translatesAutoresizingMaskIntoConstraints = false
         stack.axis = .vertical
         stack.spacing = .ecosia.space._1s
+        stack.setContentCompressionResistancePriority(.required, for: .vertical)
         return stack
     }()
     private lazy var actionButton: UIButton = {
         let button = EcosiaPrimaryButton(windowUUID: windowUUID)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle(DefaultBrowserExperiment.buttonTitle, for: .normal)
-        button.titleLabel?.font = .preferredFont(forTextStyle: .callout)
+        button.titleLabel?.font = .preferredFont(forTextStyle: .body)
         button.titleLabel?.adjustsFontForContentSizeCategory = true
         button.layer.cornerRadius = UX.buttonHeight/2
         button.addTarget(self, action: #selector(clickAction), for: .primaryActionTriggered)
-        button.setContentHuggingPriority(.required, for: .vertical)
         return button
     }()
     private lazy var skipButton: UIButton = {
         let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.backgroundColor = .clear
-        button.titleLabel?.font = .preferredFont(forTextStyle: .callout)
+        button.titleLabel?.font = .preferredFont(forTextStyle: .body)
         button.titleLabel?.adjustsFontForContentSizeCategory = true
-        button.setTitle(.localized(.maybeLater), for: .normal)
+        button.setTitle(.localized(.notNow), for: .normal)
         button.addTarget(self, action: #selector(skipAction), for: .primaryActionTriggered)
+        button.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
         return button
     }()
 
@@ -99,11 +100,9 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
         let label = UILabel()
         label.text = DefaultBrowserExperiment.description
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .preferredFont(forTextStyle: .subheadline)
+        label.font = .preferredFont(forTextStyle: .body)
         label.adjustsFontForContentSizeCategory = true
         label.numberOfLines = 0
-        label.setContentCompressionResistancePriority(.required, for: .vertical)
-        label.setContentCompressionResistancePriority(.required, for: .horizontal)
         return label
     }()
 
@@ -112,22 +111,18 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
         let label = UILabel()
         label.text = DefaultBrowserExperiment.checkItems.0
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .preferredFont(forTextStyle: .subheadline)
+        label.font = .preferredFont(forTextStyle: .body)
         label.adjustsFontForContentSizeCategory = true
         label.numberOfLines = 0
-        label.setContentCompressionResistancePriority(.required, for: .vertical)
-        label.setContentCompressionResistancePriority(.required, for: .horizontal)
         return label
     }()
     private lazy var secondCheckItemLabel: UILabel = {
         let label = UILabel()
         label.text = DefaultBrowserExperiment.checkItems.1
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .preferredFont(forTextStyle: .subheadline)
+        label.font = .preferredFont(forTextStyle: .body)
         label.adjustsFontForContentSizeCategory = true
         label.numberOfLines = 0
-        label.setContentCompressionResistancePriority(.required, for: .vertical)
-        label.setContentCompressionResistancePriority(.required, for: .horizontal)
         return label
     }()
     private lazy var firstCheckImageView: UIImageView = {
@@ -155,19 +150,15 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
         let label = UILabel()
         label.text = .localized(.defaultBrowserPromptExperimentDescriptionTitleVarBC)
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .systemFont(ofSize: 17).bold()
-        label.setContentCompressionResistancePriority(.required, for: .vertical)
-        label.setContentCompressionResistancePriority(.required, for: .horizontal)
+        label.font = .preferredFont(forTextStyle: .body).bold()
         return label
     }()
     private lazy var triviaDecriptionLabel: UILabel = {
         let label = UILabel()
-        label.attributedText = DefaultBrowserExperiment.trivia
+        label.attributedText = DefaultBrowserExperiment.trivia(font: .preferredFont(forTextStyle: .body))
         label.translatesAutoresizingMaskIntoConstraints = false
         label.adjustsFontForContentSizeCategory = true
         label.numberOfLines = 0
-        label.setContentCompressionResistancePriority(.required, for: .vertical)
-        label.setContentCompressionResistancePriority(.required, for: .horizontal)
         return label
     }()
 
@@ -289,7 +280,7 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
             variationContentStack.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
             variationContentStack.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor),
 
-            actionButton.topAnchor.constraint(equalTo: variationContentStack.bottomAnchor, constant: .ecosia.space._1l),
+            actionButton.topAnchor.constraint(equalTo: variationContentStack.bottomAnchor, constant: .ecosia.space._1l).priority(.defaultLow),
             actionButton.heightAnchor.constraint(greaterThanOrEqualToConstant: UX.buttonHeight),
             actionButton.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
             actionButton.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor),
