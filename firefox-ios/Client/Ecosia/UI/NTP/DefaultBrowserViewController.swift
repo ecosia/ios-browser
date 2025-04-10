@@ -14,6 +14,8 @@ protocol DefaultBrowserDelegate: AnyObject {
 @available(iOS 14, *)
 final class DefaultBrowserViewController: UIViewController, Themeable {
     struct UX {
+        static let imageHeight: CGFloat = 300
+        static let wavesHeight: CGFloat = 92
         static let buttonHeight: CGFloat = 48
         static let checksSize: CGFloat = 24
     }
@@ -28,31 +30,19 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
         view.clipsToBounds = true
         return view
     }()
-    var imageAspectRatio: CGFloat {
-        guard let image = DefaultBrowserExperiment.image else {
-            return 3/4
-        }
-        return image.size.height / image.size.width
-    }
     private lazy var imageView: UIImageView = {
         let view = UIImageView(image: DefaultBrowserExperiment.image)
-        view.contentMode = .scaleAspectFit
+        view.contentMode = .scaleAspectFill
         view.clipsToBounds = true
         view.translatesAutoresizingMaskIntoConstraints = false
         view.setContentCompressionResistancePriority(.required, for: .vertical)
         view.setContentHuggingPriority(.required, for: .vertical)
         return view
     }()
-    var wavesAspectRatio: CGFloat {
-        guard let image = UIImage(named: "defaultBrowserWaves") else {
-            return 92/800
-        }
-        return image.size.height / image.size.width
-    }
     private lazy var waves: UIImageView = {
         let view = UIImageView(image: .init(named: "defaultBrowserWaves"))
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.contentMode = .scaleAspectFit
+        view.contentMode = .scaleAspectFill
         return view
     }()
     private lazy var titleLabel: UILabel = {
@@ -257,20 +247,20 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
 
     private func setupConstraints() {
         NSLayoutConstraint.activate([
+            contentView.topAnchor.constraint(greaterThanOrEqualTo: view.topAnchor),
             contentView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             contentView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             contentView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            contentView.topAnchor.constraint(greaterThanOrEqualTo: view.topAnchor),
 
             imageView.topAnchor.constraint(equalTo: contentView.topAnchor),
             imageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             imageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor, multiplier: imageAspectRatio),
+            imageView.heightAnchor.constraint(equalToConstant: UX.imageHeight),
 
             waves.bottomAnchor.constraint(equalTo: imageView.bottomAnchor),
-            waves.heightAnchor.constraint(equalTo: waves.widthAnchor, multiplier: wavesAspectRatio),
             waves.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             waves.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            waves.heightAnchor.constraint(equalToConstant: UX.wavesHeight),
 
             titleLabel.topAnchor.constraint(equalTo: waves.bottomAnchor, constant: .ecosia.space._3l),
             titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: .ecosia.space._m),
