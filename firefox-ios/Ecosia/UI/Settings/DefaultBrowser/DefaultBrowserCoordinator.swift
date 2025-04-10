@@ -31,7 +31,9 @@ public struct DefaultBrowserCoordinator {
             buttonTitle: .defaultBrowserCardDetailButton,
             onButtonTap: {
                 Analytics.shared.defaultBrowserSettingsOpenNativeSettingsVia(analyticsLabel)
-                UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: [:])
+                if let settingsURL = URL(string: UIApplication.openSettingsURLString) {
+                    UIApplication.shared.open(settingsURL, options: [:])
+                }
             },
             style: style
         ) {
