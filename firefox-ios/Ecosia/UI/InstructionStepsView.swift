@@ -19,6 +19,7 @@ private struct InstructionStepsViewLayout {
 
 public struct InstructionStepsViewStyle {
     let backgroundPrimaryColor: Color
+    let topContentBackgroundColor: Color
     let stepsBackgroundColor: Color
     let textPrimaryColor: Color
     let textSecondaryColor: Color
@@ -27,6 +28,7 @@ public struct InstructionStepsViewStyle {
     let stepRowStyle: StepRowStyle
 
     public init(backgroundPrimaryColor: Color,
+                topContentBackgroundColor: Color,
                 stepsBackgroundColor: Color,
                 textPrimaryColor: Color,
                 textSecondaryColor: Color,
@@ -34,6 +36,7 @@ public struct InstructionStepsViewStyle {
                 buttonTextColor: Color,
                 stepRowStyle: StepRowStyle) {
         self.backgroundPrimaryColor = backgroundPrimaryColor
+        self.topContentBackgroundColor = topContentBackgroundColor
         self.stepsBackgroundColor = stepsBackgroundColor
         self.textPrimaryColor = textPrimaryColor
         self.textSecondaryColor = textSecondaryColor
@@ -72,6 +75,8 @@ struct InstructionStepsView<TopContentView: View>: View {
                 .ignoresSafeArea()
             VStack(spacing: InstructionStepsViewLayout.spacingBetweenSections) {
                 ZStack(alignment: .bottom) {
+                    style.topContentBackgroundColor
+                        .ignoresSafeArea(edges: .top)
                     topContentView
                     Image("wave-forms-horizontal-1", bundle: .ecosia)
                         .resizable()
@@ -187,6 +192,7 @@ struct InstructionStep {
         onButtonTap: {},
         style: InstructionStepsViewStyle(
             backgroundPrimaryColor: .tertiaryBackground,
+            topContentBackgroundColor: Color(UIColor(rgb: 0x275243)),
             stepsBackgroundColor: .primaryBackground,
             textPrimaryColor: .primaryText,
             textSecondaryColor: .primaryText,
@@ -203,6 +209,5 @@ struct InstructionStep {
         .looping()
         .offset(y: 16)
         .aspectRatio(contentMode: .fit)
-        .background(Color(UIColor(rgb: 0x275243)))
     }
 }
