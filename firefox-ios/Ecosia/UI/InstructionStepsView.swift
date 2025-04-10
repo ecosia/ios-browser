@@ -203,11 +203,19 @@ struct InstructionStep {
                                        stepTextColor: .primaryText)
         )
     ) {
-        LottieView { try await DotLottieFile.named("default_browser_setup_animation", bundle: .ecosia)
+        GeometryReader { geometry in
+            VStack {
+                Spacer()
+                LottieView {
+                    try await DotLottieFile.named("default_browser_setup_animation", bundle: .ecosia)
+                }
+                .configuration(LottieConfiguration(renderingEngine: .mainThread))
+                .looping()
+                .offset(y: UIDevice.current.userInterfaceIdiom == .pad ? 40 : 18)
+                .aspectRatio(contentMode: .fit)
+                .frame(width: geometry.size.width)
+                .clipped()
+            }
         }
-        .configuration(LottieConfiguration(renderingEngine: .mainThread))
-        .looping()
-        .offset(y: 16)
-        .aspectRatio(contentMode: .fit)
     }
 }
