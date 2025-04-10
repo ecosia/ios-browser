@@ -137,7 +137,7 @@ open class Analytics {
                          action: Action.dismiss.rawValue)
             .label(Label.DefaultBrowser.settingsNudgeCard.rawValue))
     }
-    
+
     public func defaultBrowserSettingsOpenNativeSettingsVia(_ label: Label.DefaultBrowser) {
         track(Structured(category: Category.browser.rawValue,
                          action: Action.click.rawValue)
