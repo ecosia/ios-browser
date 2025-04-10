@@ -41,7 +41,7 @@ final class BeforeOrAfterView: UIView, ThemeApplicable {
     private lazy var treeImage: UIImageView = {
         let view = UIImageView()
         view.isHidden = isBefore
-        view.image = .init(named: "tourTree")?.withRenderingMode(.alwaysTemplate)
+        view.image = .init(named: "smallTree")?.withRenderingMode(.alwaysTemplate)
         return view
     }()
     private lazy var ellipse: UIImageView = {
@@ -77,6 +77,7 @@ final class BeforeOrAfterView: UIView, ThemeApplicable {
 
     private func setupConstraints() {
         var constraints: [NSLayoutConstraint] = [
+            widthAnchor.constraint(equalTo: container.widthAnchor),
             container.centerXAnchor.constraint(equalTo: centerXAnchor),
             container.centerYAnchor.constraint(equalTo: centerYAnchor),
             labelStack.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: .ecosia.space._s),
