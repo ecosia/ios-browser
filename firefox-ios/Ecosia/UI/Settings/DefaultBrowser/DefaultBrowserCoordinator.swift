@@ -9,14 +9,11 @@ import Common
 public struct DefaultBrowserCoordinator {
     let navigationController: UINavigationController
     let style: InstructionStepsViewStyle
-    let customTopContentViewBackground: Color
 
     public init(navigationController: UINavigationController,
-                style: InstructionStepsViewStyle,
-                customTopContentViewBackground: Color) {
+                style: InstructionStepsViewStyle) {
         self.navigationController = navigationController
         self.style = style
-        self.customTopContentViewBackground = customTopContentViewBackground
     }
 
     public func showDetailView() {
@@ -43,7 +40,6 @@ public struct DefaultBrowserCoordinator {
             .looping()
             .offset(y: 16)
             .aspectRatio(contentMode: .fit)
-            .background(customTopContentViewBackground)
             .accessibilityHidden(true)
         }
         .onDisappear {
@@ -54,7 +50,7 @@ public struct DefaultBrowserCoordinator {
         hostingController.title = .localized(.defaultBrowserSettingTitle)
         hostingController.navigationItem.largeTitleDisplayMode = .never
         let doneHandler = DetailViewDoneHandler {
-            self.navigationController.popViewController(animated: true)
+            self.navigationController.dismiss(animated: true)
         }
         objc_setAssociatedObject(hostingController, "detailViewDoneHandler", doneHandler, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         hostingController.navigationItem.rightBarButtonItem = UIBarButtonItem(
@@ -70,13 +66,14 @@ public struct DefaultBrowserCoordinator {
 extension DefaultBrowserCoordinator {
 
     public static func makeDefaultCoordinatorAndShowDetailViewFrom(_ navigationController: UINavigationController?,
-                                                            topViewContentBackground: Color,
-                                                            with theme: Theme) {
+                                                                   topViewContentBackground: Color,
+                                                                   with theme: Theme) {
 
         guard let navigationController = navigationController else { return }
 
         let style = InstructionStepsViewStyle(
             backgroundPrimaryColor: Color(theme.colors.ecosia.backgroundSecondary),
+            topContentBackgroundColor: topViewContentBackground,
             stepsBackgroundColor: Color(theme.colors.ecosia.backgroundPrimary),
             textPrimaryColor: Color(theme.colors.ecosia.textPrimary),
             textSecondaryColor: Color(theme.colors.ecosia.textSecondary),
@@ -90,8 +87,7 @@ extension DefaultBrowserCoordinator {
         )
 
         let coordinator = DefaultBrowserCoordinator(navigationController: navigationController,
-                                                    style: style,
-                                                    customTopContentViewBackground: topViewContentBackground)
+                                                    style: style)
         coordinator.showDetailView()
     }
 }
