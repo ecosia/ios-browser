@@ -13,6 +13,10 @@ protocol DefaultBrowserDelegate: AnyObject {
 
 @available(iOS 14, *)
 final class DefaultBrowserViewController: UIViewController, Themeable {
+    struct UX {
+        static let buttonHeight: CGFloat = 48
+        static let checksSize: CGFloat = 24
+    }
 
     /// The minimum amount of searches required to show the Default Browser
     static var minPromoSearches = 50
@@ -65,17 +69,16 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
         let stack = UIStackView()
         stack.translatesAutoresizingMaskIntoConstraints = false
         stack.axis = .vertical
-        stack.spacing = 4
+        stack.spacing = .ecosia.space._1s
         return stack
     }()
     private lazy var actionButton: UIButton = {
         let button = EcosiaPrimaryButton(windowUUID: windowUUID)
-        button.contentEdgeInsets = .init(top: 0, left: 16, bottom: 0, right: 16)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle(DefaultBrowserExperiment.buttonTitle, for: .normal)
         button.titleLabel?.font = .preferredFont(forTextStyle: .callout)
         button.titleLabel?.adjustsFontForContentSizeCategory = true
-        button.layer.cornerRadius = 25
+        button.layer.cornerRadius = UX.buttonHeight/2
         button.addTarget(self, action: #selector(clickAction), for: .primaryActionTriggered)
         button.setContentHuggingPriority(.required, for: .vertical)
         return button
@@ -130,13 +133,13 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
     private lazy var firstCheckImageView: UIImageView = {
         let view = UIImageView(image: .init(systemName: "checkmark"))
         view.contentMode = .scaleAspectFit
-        view.widthAnchor.constraint(equalToConstant: 16).isActive = true
+        view.widthAnchor.constraint(equalToConstant: UX.checksSize).isActive = true
         return view
     }()
     private lazy var secondCheckImageView: UIImageView = {
         let view = UIImageView(image: .init(systemName: "checkmark"))
         view.contentMode = .scaleAspectFit
-        view.widthAnchor.constraint(equalToConstant: 16).isActive = true
+        view.widthAnchor.constraint(equalToConstant: UX.checksSize).isActive = true
         return view
     }()
 
@@ -144,7 +147,7 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
     private lazy var triviaView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.layer.cornerRadius = 10 // TODO: Use global variables
+        view.layer.cornerRadius = .ecosia.borderRadius._l
         view.clipsToBounds = true
         return view
     }()
@@ -231,13 +234,13 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
         let type = DefaultBrowserExperiment.contentType
         if case .checks = type {
             let line1 = UIStackView()
-            line1.spacing = 10
+            line1.spacing = .ecosia.space._1s
             line1.axis = .horizontal
             variationContentStack.addArrangedSubview(line1)
             line1.addArrangedSubview(firstCheckImageView)
             line1.addArrangedSubview(firstCheckItemLabel)
             let line2 = UIStackView()
-            line2.spacing = 10
+            line2.spacing = .ecosia.space._1s
             line2.axis = .horizontal
             variationContentStack.addArrangedSubview(line2)
             line2.addArrangedSubview(secondCheckImageView)
@@ -248,14 +251,15 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
             variationContentStack.addArrangedSubview(triviaView)
             triviaView.addSubview(triviaTitleLabel)
             triviaView.addSubview(triviaDecriptionLabel)
-            NSLayoutConstraint.activate([ // TODO: Use global variables
-                triviaTitleLabel.topAnchor.constraint(equalTo: triviaView.topAnchor, constant: 16),
-                triviaDecriptionLabel.topAnchor.constraint(equalTo: triviaTitleLabel.bottomAnchor, constant: 16),
-                triviaDecriptionLabel.bottomAnchor.constraint(equalTo: triviaView.bottomAnchor, constant: -16),
-                triviaTitleLabel.leadingAnchor.constraint(equalTo: triviaView.leadingAnchor, constant: 16),
-                triviaTitleLabel.trailingAnchor.constraint(equalTo: triviaView.trailingAnchor, constant: -16),
-                triviaDecriptionLabel.leadingAnchor.constraint(equalTo: triviaView.leadingAnchor, constant: 16),
-                triviaDecriptionLabel.trailingAnchor.constraint(equalTo: triviaView.trailingAnchor, constant: -16)
+            let padding: CGFloat = .ecosia.space._m
+            NSLayoutConstraint.activate([
+                triviaTitleLabel.topAnchor.constraint(equalTo: triviaView.topAnchor, constant: padding),
+                triviaDecriptionLabel.topAnchor.constraint(equalTo: triviaTitleLabel.bottomAnchor, constant: padding),
+                triviaDecriptionLabel.bottomAnchor.constraint(equalTo: triviaView.bottomAnchor, constant: -padding),
+                triviaTitleLabel.leadingAnchor.constraint(equalTo: triviaView.leadingAnchor, constant: padding),
+                triviaTitleLabel.trailingAnchor.constraint(equalTo: triviaView.trailingAnchor, constant: -padding),
+                triviaDecriptionLabel.leadingAnchor.constraint(equalTo: triviaView.leadingAnchor, constant: padding),
+                triviaDecriptionLabel.trailingAnchor.constraint(equalTo: triviaView.trailingAnchor, constant: -padding)
             ])
         }
     }
@@ -277,25 +281,24 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
             waves.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             waves.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
 
-            titleLabel.topAnchor.constraint(equalTo: waves.bottomAnchor, constant: 16),
-            titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            titleLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 100).priority(.defaultLow),
+            titleLabel.topAnchor.constraint(equalTo: waves.bottomAnchor, constant: .ecosia.space._3l),
+            titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: .ecosia.space._m),
+            titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -.ecosia.space._m),
 
+            variationContentStack.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: .ecosia.space._m),
             variationContentStack.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
             variationContentStack.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor),
-            variationContentStack.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 16),
 
-            actionButton.topAnchor.constraint(equalTo: variationContentStack.bottomAnchor, constant: 24),
-            actionButton.heightAnchor.constraint(greaterThanOrEqualToConstant: 50),
+            actionButton.topAnchor.constraint(equalTo: variationContentStack.bottomAnchor, constant: .ecosia.space._1l),
+            actionButton.heightAnchor.constraint(greaterThanOrEqualToConstant: UX.buttonHeight),
             actionButton.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
             actionButton.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor),
 
-            skipButton.topAnchor.constraint(equalTo: actionButton.bottomAnchor, constant: 8),
+            skipButton.topAnchor.constraint(equalTo: actionButton.bottomAnchor, constant: .ecosia.space._s),
             skipButton.leadingAnchor.constraint(equalTo: actionButton.leadingAnchor),
             skipButton.trailingAnchor.constraint(equalTo: actionButton.trailingAnchor),
-            skipButton.heightAnchor.constraint(greaterThanOrEqualToConstant: 50),
-            skipButton.bottomAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.bottomAnchor, constant: -16),
+            skipButton.heightAnchor.constraint(greaterThanOrEqualToConstant: UX.buttonHeight),
+            skipButton.bottomAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.bottomAnchor, constant: -.ecosia.space._m),
         ])
     }
 
