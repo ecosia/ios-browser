@@ -197,6 +197,7 @@ extension AppSettingsTableViewController {
 
     func showDefaultBrowserDetailView() {
         DefaultBrowserCoordinator.makeDefaultCoordinatorAndShowDetailViewFrom(navigationController,
+                                                                              analyticsLabel: .settingsNudgeCard,
                                                                               topViewContentBackground: EcosiaColor.DarkGreen50.color,
                                                                               with: themeManager.getCurrentTheme(for: windowUUID))
     }

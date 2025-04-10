@@ -16,7 +16,7 @@ public struct DefaultBrowserCoordinator {
         self.style = style
     }
 
-    public func showDetailView() {
+    public func showDetailView(from analyticsLabel: Analytics.Label.DefaultBrowser) {
         let steps = [
             InstructionStep(text: .defaultBrowserCardDetailInstructionStep1),
             InstructionStep(text: .defaultBrowserCardDetailInstructionStep2),
@@ -30,7 +30,7 @@ public struct DefaultBrowserCoordinator {
             steps: steps,
             buttonTitle: .defaultBrowserCardDetailButton,
             onButtonTap: {
-                Analytics.shared.defaultBrowserSettingsViaNudgeCard()
+                Analytics.shared.defaultBrowserSettingsOpenNativeSettingsVia(analyticsLabel)
                 UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: [:])
             },
             style: style
@@ -51,7 +51,7 @@ public struct DefaultBrowserCoordinator {
             }
         }
         .onDisappear {
-            Analytics.shared.defaultBrowserSettingsViaNudgeCardDetailDismiss()
+            Analytics.shared.defaultBrowserSettingsDismissDetailViewVia(analyticsLabel)
         }
 
         let hostingController = UIHostingController(rootView: view)
@@ -74,6 +74,7 @@ public struct DefaultBrowserCoordinator {
 extension DefaultBrowserCoordinator {
 
     public static func makeDefaultCoordinatorAndShowDetailViewFrom(_ navigationController: UINavigationController?,
+                                                                   analyticsLabel: Analytics.Label.DefaultBrowser,
                                                                    topViewContentBackground: Color,
                                                                    with theme: Theme) {
 
@@ -96,7 +97,7 @@ extension DefaultBrowserCoordinator {
 
         let coordinator = DefaultBrowserCoordinator(navigationController: navigationController,
                                                     style: style)
-        coordinator.showDetailView()
+        coordinator.showDetailView(from: analyticsLabel)
     }
 }
 
