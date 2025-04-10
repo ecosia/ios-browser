@@ -42,7 +42,7 @@ extension Analytics {
             deeplink = "default_browser_deeplink",
             promo = "default_browser_promo",
             settings = "default_browser_settings",
-            settingsNudgeCard = "default_browser_settings_via_nudge_card"
+            settingsNudgeCard = "default_browser_settings_nudge_card"
         }
 
         public enum Menu: String {
