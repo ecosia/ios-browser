@@ -23,6 +23,8 @@ public struct DefaultBrowserCoordinator {
             InstructionStep(text: .defaultBrowserCardDetailInstructionStep3)
         ]
 
+        let lottieViewYOffset: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 40 : 18
+
         let view = InstructionStepsView(
             title: .defaultBrowserCardDetailTitle,
             steps: steps,
@@ -33,14 +35,20 @@ public struct DefaultBrowserCoordinator {
             },
             style: style
         ) {
-            LottieView {
-                try await DotLottieFile.named("default_browser_setup_animation", bundle: .ecosia)
+            GeometryReader { geometry in
+                VStack {
+                    Spacer()
+                    LottieView {
+                        try await DotLottieFile.named("default_browser_setup_animation", bundle: .ecosia)
+                    }
+                    .configuration(LottieConfiguration(renderingEngine: .mainThread))
+                    .looping()
+                    .offset(y: lottieViewYOffset)
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: geometry.size.width)
+                    .clipped()
+                }
             }
-            .configuration(LottieConfiguration(renderingEngine: .mainThread))
-            .looping()
-            .offset(y: 16)
-            .aspectRatio(contentMode: .fit)
-            .accessibilityHidden(true)
         }
         .onDisappear {
             Analytics.shared.defaultBrowserSettingsViaNudgeCardDetailDismiss()
