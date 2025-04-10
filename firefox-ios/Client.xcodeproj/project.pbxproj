@@ -77,6 +77,7 @@
 		12141E6C2D6877EB0097788B /* EcosiaNetError.html in Resources */ = {isa = PBXBuildFile; fileRef = 12141E682D686C030097788B /* EcosiaNetError.html */; };
 		12141E6D2D6877F00097788B /* EcosiaNetError.css in Resources */ = {isa = PBXBuildFile; fileRef = 12141E6A2D686C1C0097788B /* EcosiaNetError.css */; };
 		123475C32DA6730A0017B0C2 /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A6AB4528CA6A4C00EBEBDD /* String+Extension.swift */; };
+		123475CC2DA7D6620017B0C2 /* BeforeOrAfterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 123475CB2DA7D6580017B0C2 /* BeforeOrAfterView.swift */; };
 		124DAE822D350EFD0050104C /* String+Punycode.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6B2AC11D41F02D00429414 /* String+Punycode.swift */; };
 		124DAE8A2D3512FA0050104C /* DispatchQueueHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83821FF1FC7961D00303C12 /* DispatchQueueHelper.swift */; };
 		1251623C2D59FB30005CB958 /* Ecosia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CFE99662D45329200B25CE0 /* Ecosia.framework */; };
@@ -2370,6 +2371,7 @@
 		12141E682D686C030097788B /* EcosiaNetError.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = EcosiaNetError.html; sourceTree = "<group>"; };
 		12141E6A2D686C1C0097788B /* EcosiaNetError.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = EcosiaNetError.css; sourceTree = "<group>"; };
 		123045959E0F295753B4B4DB /* lo */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = lo; path = lo.lproj/Today.strings; sourceTree = "<group>"; };
+		123475CB2DA7D6580017B0C2 /* BeforeOrAfterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeforeOrAfterView.swift; sourceTree = "<group>"; };
 		124DAE792D2FD1330050104C /* LegacyDarkTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyDarkTheme.swift; sourceTree = "<group>"; };
 		124DAE7A2D2FD1330050104C /* RecoveredLegacyTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecoveredLegacyTheme.swift; sourceTree = "<group>"; };
 		124DAE7B2D2FD1330050104C /* LegacyThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyThemeManager.swift; sourceTree = "<group>"; };
@@ -10633,6 +10635,7 @@
 		2CFEA0382D455BD500B25CE0 /* NTP */ = {
 			isa = PBXGroup;
 			children = (
+				123475CB2DA7D6580017B0C2 /* BeforeOrAfterView.swift */,
 				2CFEA0192D455BD500B25CE0 /* ClimateImpactCounter */,
 				2CFEA01D2D455BD500B25CE0 /* Customization */,
 				2CFEA0242D455BD500B25CE0 /* Impact */,
@@ -16978,6 +16981,7 @@
 				E1CD81BE290C5C7500124B27 /* DevicePickerTableViewHeaderCell.swift in Sources */,
 				12C11E992D28279C00E4DDBF /* SeedCounterNTPExperiment.swift in Sources */,
 				B2FEA68B2B460D1D0058E616 /* AddressAutofillSettingsView.swift in Sources */,
+				123475CC2DA7D6620017B0C2 /* BeforeOrAfterView.swift in Sources */,
 				E12BD0AC28AC37F00029AAF0 /* UIColor+Extension.swift in Sources */,
 				E4A961181AC041C40069AD6F /* ReadabilityService.swift in Sources */,
 				AB42CC752A1F5240003C9594 /* CreditCardBottomSheetHeaderView.swift in Sources */,

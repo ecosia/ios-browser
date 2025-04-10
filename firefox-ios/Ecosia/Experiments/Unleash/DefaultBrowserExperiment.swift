@@ -106,6 +106,13 @@ public struct DefaultBrowserExperiment {
             break
         }
         let fullText = String(format: text, highlight)
+        let attributedText = NSMutableAttributedString(string: fullText,
+                                                       attributes: [.font: font])
+        if let range = fullText.range(of: highlight) {
+            attributedText.addAttributes([
+                .font: UIFont.systemFont(ofSize: font.pointSize, weight: .semibold)
+            ], range: .init(range, in: fullText))
+        }
         return fullText.attributedText(boldString: highlight, font: font)
     }
 }

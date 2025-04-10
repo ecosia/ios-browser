@@ -18,6 +18,7 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
         static let wavesHeight: CGFloat = 92
         static let buttonHeight: CGFloat = 48
         static let checksSize: CGFloat = 24
+        static let beforeOrAfterYOffset: CGFloat = 45
     }
 
     /// The minimum amount of searches required to show the Default Browser
@@ -140,7 +141,7 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
         let label = UILabel()
         label.text = .localized(.defaultBrowserPromptExperimentDescriptionTitleVarBC)
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .preferredFont(forTextStyle: .body).bold()
+        label.font = .preferredFont(forTextStyle: .body).semibold()
         return label
     }()
     private lazy var triviaDecriptionLabel: UILabel = {
@@ -151,6 +152,20 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
         label.numberOfLines = 0
         return label
     }()
+    private lazy var beforeView: BeforeOrAfterView = {
+        let view = BeforeOrAfterView(type: .before)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    private lazy var afterView: BeforeOrAfterView = {
+        let view = BeforeOrAfterView(type: .after)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    private var beforeOrAfterCenterXOffset: CGFloat {
+        let screenWidth = UIScreen.main.bounds.width
+        return screenWidth/4 + BeforeOrAfterView.UX.estimatedEllipsePlusDotWidth
+    }
 
     // MARK: Themeable Properties
     let windowUUID: WindowUUID
@@ -232,6 +247,8 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
             variationContentStack.addArrangedSubview(triviaView)
             triviaView.addSubview(triviaTitleLabel)
             triviaView.addSubview(triviaDecriptionLabel)
+            contentView.addSubview(beforeView)
+            contentView.addSubview(afterView)
             let padding: CGFloat = .ecosia.space._m
             NSLayoutConstraint.activate([
                 triviaTitleLabel.topAnchor.constraint(equalTo: triviaView.topAnchor, constant: padding),
@@ -240,7 +257,12 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
                 triviaTitleLabel.leadingAnchor.constraint(equalTo: triviaView.leadingAnchor, constant: padding),
                 triviaTitleLabel.trailingAnchor.constraint(equalTo: triviaView.trailingAnchor, constant: -padding),
                 triviaDecriptionLabel.leadingAnchor.constraint(equalTo: triviaView.leadingAnchor, constant: padding),
-                triviaDecriptionLabel.trailingAnchor.constraint(equalTo: triviaView.trailingAnchor, constant: -padding)
+                triviaDecriptionLabel.trailingAnchor.constraint(equalTo: triviaView.trailingAnchor, constant: -padding),
+
+                beforeView.centerYAnchor.constraint(equalTo: imageView.centerYAnchor, constant: -UX.beforeOrAfterYOffset),
+                beforeView.centerXAnchor.constraint(equalTo: imageView.centerXAnchor, constant: -beforeOrAfterCenterXOffset),
+                afterView.centerYAnchor.constraint(equalTo: imageView.centerYAnchor, constant: UX.beforeOrAfterYOffset),
+                afterView.centerXAnchor.constraint(equalTo: imageView.centerXAnchor, constant: beforeOrAfterCenterXOffset)
             ])
         }
     }
@@ -300,6 +322,8 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
         triviaView.backgroundColor = theme.colors.ecosia.backgroundSecondary
         triviaTitleLabel.textColor = theme.colors.ecosia.textPrimary
         triviaDecriptionLabel.textColor = theme.colors.ecosia.textSecondary
+        beforeView.applyTheme(theme: theme)
+        afterView.applyTheme(theme: theme)
     }
 
     @objc private func skipAction() {
