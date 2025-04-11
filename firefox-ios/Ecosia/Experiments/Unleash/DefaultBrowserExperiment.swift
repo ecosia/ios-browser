@@ -15,11 +15,11 @@ public struct DefaultBrowserExperiment {
     private init() {}
 
     public static var isEnabled: Bool {
-        Unleash.isEnabled(.defaultBrowser)
+        Unleash.isEnabled(.defaultBrowserPromoCTR)
     }
 
     private static var variant: Variant {
-        Variant(rawValue: Unleash.getVariant(.defaultBrowser).name) ?? .control
+        Variant(rawValue: Unleash.getVariant(.defaultBrowserPromoCTR).name) ?? .control
     }
 
     public static var title: String {

@@ -1077,7 +1077,7 @@ extension BrowserCoordinator {
 
     private var shouldShowDefaultBrowserPromo: Bool {
         browserViewController.profile.prefs.intForKey(PrefsKeys.IntroSeen) == nil &&
-        DefaultBrowserViewController.minPromoSearches <= User.shared.searchCount
+        DefaultBrowserExperiment.isEnabled
     }
 
     private var presentableCards: [() -> Bool] {

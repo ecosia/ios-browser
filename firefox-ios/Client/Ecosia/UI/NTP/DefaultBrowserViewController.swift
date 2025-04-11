@@ -21,9 +21,6 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
         static let beforeOrAfterYOffset: CGFloat = 45
     }
 
-    /// The minimum amount of searches required to show the Default Browser
-    static var minPromoSearches = 50
-
     private lazy var contentView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
