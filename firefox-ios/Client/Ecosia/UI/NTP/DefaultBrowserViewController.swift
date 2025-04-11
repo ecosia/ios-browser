@@ -208,7 +208,6 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        // TODO: Review Analytics
         Analytics.shared.defaultBrowser(.view)
     }
 
@@ -327,13 +326,11 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
     }
 
     @objc private func skipAction() {
-        // TODO: Review Analytics
         Analytics.shared.defaultBrowser(.close)
         dismiss(animated: true)
     }
 
     @objc private func clickAction() {
-        // TODO: Review Analytics
         Analytics.shared.defaultBrowser(.click)
 
         dismiss(animated: true) {
