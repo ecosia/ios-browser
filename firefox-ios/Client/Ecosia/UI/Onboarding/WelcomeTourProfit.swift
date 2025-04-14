@@ -6,6 +6,10 @@ import UIKit
 import Common
 
 final class WelcomeTourProfit: UIView, ThemeApplicable {
+    struct UX {
+        static let offsetY: CGFloat = 50
+    }
+
     private lazy var beforeView: BeforeOrAfterView = {
         let view = BeforeOrAfterView(type: .before)
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -32,10 +36,10 @@ final class WelcomeTourProfit: UIView, ThemeApplicable {
         addSubview(afterView)
 
         NSLayoutConstraint.activate([
-            beforeView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 0),
-            beforeView.centerYAnchor.constraint(equalTo: centerYAnchor, constant: -50),
-            afterView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: 0),
-            afterView.centerYAnchor.constraint(equalTo: centerYAnchor, constant: 50)
+            beforeView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            beforeView.centerYAnchor.constraint(equalTo: centerYAnchor, constant: -UX.offsetY),
+            afterView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            afterView.centerYAnchor.constraint(equalTo: centerYAnchor, constant: UX.offsetY)
         ])
     }
 
