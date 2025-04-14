@@ -6,12 +6,10 @@ import UIKit
 import Common
 import Ecosia
 
-@available(iOS 14, *)
 protocol DefaultBrowserDelegate: AnyObject {
     func defaultBrowserDidShow(_ defaultBrowser: DefaultBrowserViewController)
 }
 
-@available(iOS 14, *)
 final class DefaultBrowserViewController: UIViewController, Themeable {
     struct UX {
         static let imageHeight: CGFloat = 300
