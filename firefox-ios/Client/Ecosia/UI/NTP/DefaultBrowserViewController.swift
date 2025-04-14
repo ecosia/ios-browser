@@ -21,7 +21,7 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
     private lazy var contentView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.layer.cornerRadius = 10
+        view.layer.cornerRadius = .ecosia.borderRadius._l
         view.clipsToBounds = true
         return view
     }()
