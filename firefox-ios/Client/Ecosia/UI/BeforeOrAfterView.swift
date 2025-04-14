@@ -11,10 +11,6 @@ final class BeforeOrAfterView: UIView, ThemeApplicable {
         case before
         case after
     }
-    struct UX {
-        // TODO: Update view to encompass everything so centering doesn't require this offset
-        static let estimatedEllipsePlusDotWidth: CGFloat = 34
-    }
 
     private lazy var container: UIView = {
         let view = UIView()
@@ -77,9 +73,10 @@ final class BeforeOrAfterView: UIView, ThemeApplicable {
 
     private func setupConstraints() {
         var constraints: [NSLayoutConstraint] = [
-            widthAnchor.constraint(equalTo: container.widthAnchor),
-            container.centerXAnchor.constraint(equalTo: centerXAnchor),
-            container.centerYAnchor.constraint(equalTo: centerYAnchor),
+            // View's height equals dot's since that's desired our Y anchor
+            topAnchor.constraint(equalTo: dot.topAnchor),
+            bottomAnchor.constraint(equalTo: dot.bottomAnchor),
+
             labelStack.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: .ecosia.space._s),
             labelStack.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -.ecosia.space._s),
             labelStack.topAnchor.constraint(equalTo: container.topAnchor, constant: .ecosia.space._s),
@@ -88,6 +85,8 @@ final class BeforeOrAfterView: UIView, ThemeApplicable {
 
         if isBefore {
             constraints.append(contentsOf: [
+                leadingAnchor.constraint(equalTo: container.leadingAnchor),
+                trailingAnchor.constraint(equalTo: dot.trailingAnchor),
                 ellipse.leadingAnchor.constraint(equalTo: container.trailingAnchor),
                 ellipse.topAnchor.constraint(equalTo: container.centerYAnchor),
                 dot.topAnchor.constraint(equalTo: ellipse.bottomAnchor),
@@ -95,6 +94,8 @@ final class BeforeOrAfterView: UIView, ThemeApplicable {
             ])
         } else {
             constraints.append(contentsOf: [
+                leadingAnchor.constraint(equalTo: dot.leadingAnchor),
+                trailingAnchor.constraint(equalTo: container.trailingAnchor),
                 ellipse.trailingAnchor.constraint(equalTo: container.leadingAnchor),
                 ellipse.bottomAnchor.constraint(equalTo: container.centerYAnchor),
                 dot.bottomAnchor.constraint(equalTo: ellipse.topAnchor),

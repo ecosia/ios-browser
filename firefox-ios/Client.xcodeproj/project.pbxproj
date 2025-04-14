@@ -10419,6 +10419,7 @@
 			children = (
 				2CFE9FF82D455BD500B25CE0 /* Colours.xcassets */,
 				2CFE9FF92D455BD500B25CE0 /* Ecosia.xcassets */,
+				123475CB2DA7D6580017B0C2 /* BeforeOrAfterView.swift */,
 				2CFE9FFA2D455BD500B25CE0 /* EcosiaFindInPageBar.swift */,
 				2CFE9FFB2D455BD500B25CE0 /* EcosiaNavigation.swift */,
 				2CFE9FFC2D455BD500B25CE0 /* EcosiaPrimaryButton.swift */,
@@ -10635,7 +10636,6 @@
 		2CFEA0382D455BD500B25CE0 /* NTP */ = {
 			isa = PBXGroup;
 			children = (
-				123475CB2DA7D6580017B0C2 /* BeforeOrAfterView.swift */,
 				2CFEA0192D455BD500B25CE0 /* ClimateImpactCounter */,
 				2CFEA01D2D455BD500B25CE0 /* Customization */,
 				2CFEA0242D455BD500B25CE0 /* Impact */,

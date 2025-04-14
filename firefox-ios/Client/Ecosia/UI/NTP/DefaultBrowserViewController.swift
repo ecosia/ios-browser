@@ -18,7 +18,6 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
         static let wavesHeight: CGFloat = 92
         static let buttonHeight: CGFloat = 48
         static let checksSize: CGFloat = 24
-        static let beforeOrAfterYOffset: CGFloat = 45
     }
 
     private lazy var contentView: UIView = {
@@ -159,10 +158,7 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
-    private var beforeOrAfterCenterXOffset: CGFloat {
-        let screenWidth = UIScreen.main.bounds.width
-        return screenWidth/4 + BeforeOrAfterView.UX.estimatedEllipsePlusDotWidth
-    }
+    var screenWidth: CGFloat { UIScreen.main.bounds.width }
 
     // MARK: Themeable Properties
     let windowUUID: WindowUUID
@@ -255,10 +251,10 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
                 triviaDecriptionLabel.leadingAnchor.constraint(equalTo: triviaView.leadingAnchor, constant: padding),
                 triviaDecriptionLabel.trailingAnchor.constraint(equalTo: triviaView.trailingAnchor, constant: -padding),
 
-                beforeView.centerYAnchor.constraint(equalTo: imageView.centerYAnchor, constant: -UX.beforeOrAfterYOffset),
-                beforeView.centerXAnchor.constraint(equalTo: imageView.centerXAnchor, constant: -beforeOrAfterCenterXOffset),
-                afterView.centerYAnchor.constraint(equalTo: imageView.centerYAnchor, constant: UX.beforeOrAfterYOffset),
-                afterView.centerXAnchor.constraint(equalTo: imageView.centerXAnchor, constant: beforeOrAfterCenterXOffset)
+                beforeView.centerYAnchor.constraint(equalTo: imageView.centerYAnchor),
+                afterView.centerYAnchor.constraint(equalTo: beforeView.centerYAnchor),
+                beforeView.centerXAnchor.constraint(equalTo: imageView.centerXAnchor, constant: -screenWidth/4),
+                afterView.centerXAnchor.constraint(equalTo: imageView.centerXAnchor, constant: screenWidth/4)
             ])
         }
     }
