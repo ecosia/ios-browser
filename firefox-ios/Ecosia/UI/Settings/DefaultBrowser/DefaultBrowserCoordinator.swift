@@ -52,6 +52,9 @@ public struct DefaultBrowserCoordinator {
                 }
             }
         }
+        .onAppear {
+            Analytics.shared.defaultBrowserSettingsShowsDetailViewVia(analyticsLabel)
+        }
         .onDisappear {
             Analytics.shared.defaultBrowserSettingsDismissDetailViewVia(analyticsLabel)
         }
