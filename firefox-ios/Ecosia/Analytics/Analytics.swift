@@ -16,8 +16,29 @@ open class Analytics {
 
     private static var tracker: TrackerController {
 
+        let env = Environment.current
+        var network = NetworkConfiguration(endpoint: env.urlProvider.snowplow)
+        if let auth = env.auth {
+            network = network.requestHeaders([
+                CloudflareKeyProvider.clientId: auth.id,
+                CloudflareKeyProvider.clientSecret: auth.secret
+            ])
+//            network.requestHeaders?[CloudflareKeyProvider.clientId] = auth.id
+//            network.requestHeaders?[CloudflareKeyProvider.clientSecret] = auth.secret
+        }
+
+//        let network = DefaultNetworkConnection(urlString: env.urlProvider.snowplow, httpMethod: .post)
+//        network.emitThreadPoolSize = 20
+//        network.byteLimitPost = 52000
+//        if let auth = env.auth {
+//            network.requestHeaders?[CloudflareKeyProvider.clientId] = auth.id
+//            network.requestHeaders?[CloudflareKeyProvider.clientSecret] = auth.secret
+//        }
+//
+//        let networkConfig = NetworkConfiguration(networkConnection: network)
+
         return Snowplow.createTracker(namespace: namespace,
-                                      network: .init(endpoint: Environment.current.urlProvider.snowplow),
+                                      network: network,//.init(endpoint: Environment.current.urlProvider.snowplow),
                                       configurations: [Self.trackerConfiguration,
                                                        Self.subjectConfiguration,
                                                        Self.appInstallTrackingPluginConfiguration,
@@ -41,6 +62,9 @@ open class Analytics {
 
     private func track(_ event: SnowplowTracker.Event) {
         guard User.shared.sendAnonymousUsageData else { return }
+
+        print("[TEST] Tracking with headers \(tracker.network?.requestHeaders)")
+
         _ = tracker.track(event)
     }
 

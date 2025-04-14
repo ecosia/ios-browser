@@ -38,12 +38,13 @@ public enum URLProvider {
     }
 
     public var snowplow: String {
-        switch self {
-        case .production:
-            return "sp.ecosia.org"
-        case .staging:
-            return "org-ecosia-prod1.mini.snplow.net"
-        }
+        return "ecosia-staging.xyz/analytics-test-micro"
+//        switch self {
+//        case .production:
+//            return "sp.ecosia.org"
+//        case .staging:
+//            return "org-ecosia-prod1.mini.snplow.net"
+//        }
     }
 
     var unleash: String {
