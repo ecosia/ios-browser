@@ -864,23 +864,19 @@ final class AnalyticsSpyTests: XCTestCase {
 
     // MARK: Analytics Default Browser
 
-    func testTappingNudgeCardTriggersAnalyticsEvent() {
+    func testShowInstructionStepsTriggersAnalyticsEvent() throws {
+        User.shared.showDefaultBrowserSettingNudgeCard()
         DependencyHelperMock().bootstrapDependencies()
         LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: AppContainer.shared.resolve())
-        User.shared.showDefaultBrowserSettingNudgeCard()
-        let vc = AppSettingsTableViewController(with: profileMock,
-                                                and: tabManagerMock)
-        vc.loadViewIfNeeded()
-        vc.viewWillAppear(false)
 
-        guard let header = vc.tableView(vc.tableView, viewForHeaderInSection: 0) as? DefaultBrowserSettingsNudgeCardHeaderView else {
-            XCTFail("Expected nudge card header")
-            return
-        }
+        let view = makeInstructionsViewSUT()
+            .onAppear {
+                Analytics.shared.defaultBrowserSettingsDismissDetailViewVia(.settingsNudgeCard)
+            }
 
-        header.onTap?()
+        try view.inspect().callOnAppear()
 
-        XCTAssertEqual(analyticsSpy.defaultBrowserSettingsShowsDetailViewLabelCalled, .settingsNudgeCard)
+        XCTAssertEqual(analyticsSpy.defaultBrowserSettingsDismissDetailViewLabelCalled, .settingsNudgeCard)
     }
 
     func testTappingDismissButtonOnNudgeCardTriggersAnalyticsEvent() {
