@@ -74,7 +74,7 @@ public struct ConfigurableNudgeCardView: View {
     }
 
     public var body: some View {
-        HStack(alignment: .top, spacing: UX.mainContainerSpacing) {
+        HStack(alignment: .top, spacing: .ecosia.space._2s) {
             // Image
             if let image = viewModel?.image {
                 Image(uiImage: image)
@@ -84,7 +84,7 @@ public struct ConfigurableNudgeCardView: View {
             }
 
             // Text and Action Stack
-            VStack(alignment: .leading, spacing: UX.textSpacing) {
+            VStack(alignment: .leading, spacing: .ecosia.space._2s) {
                 if let title = viewModel?.title {
                     Text(title)
                         .font(.headline.bold())
@@ -111,7 +111,7 @@ public struct ConfigurableNudgeCardView: View {
                             .font(.subheadline)
                             .foregroundColor(viewModel?.style.actionButtonTextColor)
                     }
-                    .padding(.top, UX.buttonAdditionalSpacing)
+                    .padding(.top, .ecosia.space._1s)
                     .accessibilityLabel(buttonText)
                     .accessibilityIdentifier("nudge_card_cta_button")
                     .accessibilityAddTraits(.isButton)
@@ -140,11 +140,11 @@ public struct ConfigurableNudgeCardView: View {
         }
         .accessibilityElement(children: .combine)
         .accessibilityAddTraits(.isButton)
-        .padding(UX.insetMargin)
+        .padding(.ecosia.space._m)
         .background(viewModel?.style.backgroundColor)
-        .clipShape(RoundedRectangle(cornerRadius: UX.cornerRadius))
+        .clipShape(RoundedRectangle(cornerRadius: .ecosia.borderRadius._l))
         .overlay(
-            RoundedRectangle(cornerRadius: UX.cornerRadius)
+            RoundedRectangle(cornerRadius: .ecosia.borderRadius._l)
                 .stroke(.border, lineWidth: 1)
         )
     }
@@ -152,12 +152,7 @@ public struct ConfigurableNudgeCardView: View {
     // MARK: - UX Constants
 
     private enum UX {
-        static let cornerRadius: CGFloat = 10
         static let closeButtonWidthHeight: CGFloat = 15
-        static let insetMargin: CGFloat = 16
-        static let textSpacing: CGFloat = 4
-        static let mainContainerSpacing: CGFloat = 4
-        static let buttonAdditionalSpacing: CGFloat = 8
         static let imageWidthHeight: CGFloat = 48
     }
 }

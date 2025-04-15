@@ -6,14 +6,8 @@ import SwiftUI
 import Lottie
 
 private struct InstructionStepsViewLayout {
-    static let screenPadding: CGFloat = 24
-    static let spacingBetweenSections: CGFloat = 24
-    static let spacingBetweenTextStepss: CGFloat = 12
-    static let stepNumberSpacing: CGFloat = 12
     static let stepNumberWidthHeight: CGFloat = 24
-    static let buttonCornerRadius: CGFloat = 22
     static let stepsContainerCornerRadius: CGFloat = 10
-    static let stepsContainerPadding: CGFloat = 16
     static let wavesHeight: CGFloat = 11
 }
 
@@ -73,7 +67,7 @@ struct InstructionStepsView<TopContentView: View>: View {
         ZStack {
             style.backgroundPrimaryColor
                 .ignoresSafeArea()
-            VStack(spacing: InstructionStepsViewLayout.spacingBetweenSections) {
+            VStack(spacing: .ecosia.space._1l) {
                 ZStack(alignment: .bottom) {
                     style.topContentBackgroundColor
                         .ignoresSafeArea(edges: .top)
@@ -86,9 +80,9 @@ struct InstructionStepsView<TopContentView: View>: View {
                         .accessibilityHidden(true)
                 }
 
-                VStack(spacing: InstructionStepsViewLayout.spacingBetweenSections) {
+                VStack(spacing: .ecosia.space._1l) {
                     VStack(alignment: .leading,
-                           spacing: InstructionStepsViewLayout.spacingBetweenTextStepss) {
+                           spacing: .ecosia.space._s) {
                         EcosiaText(title)
                             .font(.title2.bold())
                             .foregroundColor(style.textPrimaryColor)
@@ -96,14 +90,14 @@ struct InstructionStepsView<TopContentView: View>: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
 
                         VStack(alignment: .leading,
-                               spacing: InstructionStepsViewLayout.spacingBetweenTextStepss) {
+                               spacing: .ecosia.space._s) {
                             renderedSteps
                         }
                     }
                            .frame(maxWidth: .infinity)
-                           .padding(InstructionStepsViewLayout.stepsContainerPadding)
+                           .padding(.ecosia.space._m)
                            .background(style.stepsBackgroundColor)
-                           .cornerRadius(InstructionStepsViewLayout.stepsContainerCornerRadius)
+                           .cornerRadius(.ecosia.borderRadius._l)
 
                     Button(action: onButtonTap) {
                         EcosiaText(buttonTitle)
@@ -118,7 +112,7 @@ struct InstructionStepsView<TopContentView: View>: View {
                     .accessibilityLabel(Text(buttonTitle.rawValue))
                     .accessibilityAddTraits(.isButton)
                 }
-                .padding([.bottom, .leading, .trailing], InstructionStepsViewLayout.screenPadding)
+                .padding([.bottom, .leading, .trailing], .ecosia.space._1l)
             }
         }
     }
@@ -153,7 +147,7 @@ private struct StepRow: View {
 
     var body: some View {
         HStack(alignment: .center,
-               spacing: InstructionStepsViewLayout.stepNumberSpacing) {
+               spacing: .ecosia.space._s) {
             Text("\(index + 1)")
                 .font(.subheadline.bold())
                 .foregroundColor(style.stepNumberColor)
