@@ -155,4 +155,15 @@ public enum URLProvider {
         ]
         return components.url!
     }
+    
+    public var storePage: URL {
+        switch Language.current {
+            case .de:
+                return URL(string: "https://apps.apple.com/de/app/ecosia/id1474845552")!
+            case .fr:
+                return URL(string: "https://apps.apple.com/fr/app/ecosia/id1474845552")!
+            default:
+                return URL(string: "https://apps.apple.com/us/app/ecosia/id1474845552")!
+        }
+    }
 }
