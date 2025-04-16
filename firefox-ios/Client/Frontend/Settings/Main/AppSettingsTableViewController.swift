@@ -44,6 +44,11 @@ class AppSettingsTableViewController: SettingsTableViewController,
                                       DebugSettingsDelegate,
                                       SearchBarLocationProvider,
                                       SharedSettingsDelegate {
+
+    enum activityType: String {
+        case openURL = "org.mozilla.ios.Firefox.newTab"
+    }
+
     // MARK: - Properties
     private var showDebugSettings = false
     private var debugSettingsClickCount: Int = 0
@@ -137,7 +142,7 @@ class AppSettingsTableViewController: SettingsTableViewController,
         case .creditCard:
             authenticateUserFor(route: route)
         case .rateApp:
-            RatingPromptManager.goToAppStoreReview()
+            interceptNegativeReviews()
         default:
             break
         }
@@ -153,7 +158,25 @@ class AppSettingsTableViewController: SettingsTableViewController,
         }
     }
 
-    // MARK: - User Authentication
+    // MARK: Ecosia
+
+    private func interceptNegativeReviews() {
+        let rateAction = UIAlertAction(title: .localized("Yes"), style: .default) { _ in
+            RatingPromptManager.goToAppStoreReview()
+        }
+
+        let helpAction = UIAlertAction(title: .localized("No"), style: .destructive) { _ in
+            let helpActivity = NSUserActivity(activityType: activityType.openURL.rawValue)
+            // TODO: open help page
+        }
+
+        let alertController = UIAlertController(title: .SettingsRatingPromptTitle, message: nil, preferredStyle: .alert)
+        alertController.addAction(rateAction)
+        alertController.addAction(helpAction)
+        present(alertController, animated: true)
+    }
+
+    // MARK: - User AutheSntication
 
     // Authenticates the user prior to allowing access to sensitive sections
     private func authenticateUserFor(route: Route.SettingsSection) {
@@ -387,6 +410,8 @@ class AppSettingsTableViewController: SettingsTableViewController,
     }
 
     private func getAboutSettings() -> [SettingSection] {
+        
+        
         let aboutSettings = [
             AppStoreReviewSetting(settingsDelegate: parentCoordinator),
             VersionSetting(settingsDelegate: self),

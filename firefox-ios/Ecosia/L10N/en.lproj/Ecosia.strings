@@ -65,6 +65,9 @@
 "Show on homepage" = "Show on homepage";
 "Top Sites" = "Top Sites";
 "Not now" = "Not now";
+"Do you enjoy Ecosia?" = "Do you enjoy Ecosia?";
+"Yes" = "Yes";
+"No" = "No";
 
 // Impact
 "A friend accepted your invitation and each of you will help plant 1 tree!" = "A friend has accepted your invite! You have each helped plant 1 extra tree.";
@@ -227,3 +230,6 @@
 "Select **Default Browser App**" = "Select **Default Browser App**";
 "Choose **Ecosia**" = "Choose **Ecosia**";
 "Make default in settings" = "Make default in settings";
+"Do you enjoy Ecosia?" = "Do you enjoy Ecosia?";
+"Yes" = "Yes";
+"No" = "No";
