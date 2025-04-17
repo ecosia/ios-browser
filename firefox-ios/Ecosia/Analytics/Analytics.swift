@@ -5,6 +5,75 @@
 import Foundation
 internal import SnowplowTracker
 
+class CustomNetworkConnection: NSObject, NetworkConnection {
+    var urlEndpoint: URL? {
+        let host = Environment.current.urlProvider.snowplow
+        return URL(string: "https://\(host)/com.snowplowanalytics.snowplow/tp2")
+    }
+    var httpMethod: HttpMethodOptions { .post }
+
+    func sendRequests(_ requests: [Request]) -> [RequestResult] {
+        guard let endpoint = urlEndpoint else {
+            return requests.map {
+                RequestResult(statusCode: nil, oversize: false, storeIds: $0.emitterEventIds)
+            }
+        }
+
+        var results: [RequestResult] = []
+        let session = URLSession(configuration: .default)
+        let semaphore = DispatchSemaphore(value: 0)
+
+        for request in requests {
+            var urlRequest = URLRequest(url: endpoint)
+            urlRequest.httpMethod = "POST"
+            urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            urlRequest.cachePolicy = .reloadIgnoringLocalCacheData
+            if let payload = request.payload {
+                urlRequest.httpBody = encodePayload(payload)
+            }
+
+            // Cloudflare Access headers
+            if let auth = Environment.current.auth {
+                urlRequest.setValue(auth.id, forHTTPHeaderField: CloudflareKeyProvider.clientId)
+                urlRequest.setValue(auth.secret, forHTTPHeaderField: CloudflareKeyProvider.clientSecret)
+            }
+
+            var statusCode: Int?
+            let storeIds = request.emitterEventIds
+            var isOversize = request.oversize
+
+            let task = session.dataTask(with: urlRequest) { _, response, error in
+                defer { semaphore.signal() }
+
+                if let httpResponse = response as? HTTPURLResponse {
+                    statusCode = httpResponse.statusCode
+                }
+            }
+
+            task.resume()
+            _ = semaphore.wait(timeout: .now() + 5)
+
+            let result = RequestResult(
+                statusCode: statusCode.map { NSNumber(value: $0) },
+                oversize: false,
+                storeIds: storeIds
+            )
+
+            results.append(result)
+        }
+
+        return results
+    }
+
+    private func encodePayload(_ payload: Payload) -> Data? {
+        let dict = payload.dictionary
+        guard let data = try? JSONSerialization.data(withJSONObject: dict, options: []) else {
+            return nil
+        }
+        return data
+    }
+}
+
 open class Analytics {
     static let installSchema = "iglu:org.ecosia/ios_install_event/jsonschema/1-0-0"
     private static let abTestSchema = "iglu:org.ecosia/abtest_context/jsonschema/1-0-1"
@@ -16,29 +85,19 @@ open class Analytics {
 
     private static var tracker: TrackerController {
 
-        let env = Environment.current
-        var network = NetworkConfiguration(endpoint: env.urlProvider.snowplow)
-        if let auth = env.auth {
-            network = network.requestHeaders([
-                CloudflareKeyProvider.clientId: auth.id,
-                CloudflareKeyProvider.clientSecret: auth.secret
-            ])
-//            network.requestHeaders?[CloudflareKeyProvider.clientId] = auth.id
-//            network.requestHeaders?[CloudflareKeyProvider.clientSecret] = auth.secret
-        }
-
-//        let network = DefaultNetworkConnection(urlString: env.urlProvider.snowplow, httpMethod: .post)
-//        network.emitThreadPoolSize = 20
-//        network.byteLimitPost = 52000
+//        let env = Environment.current
+//        var network = NetworkConfiguration(endpoint: env.urlProvider.snowplow)
 //        if let auth = env.auth {
-//            network.requestHeaders?[CloudflareKeyProvider.clientId] = auth.id
-//            network.requestHeaders?[CloudflareKeyProvider.clientSecret] = auth.secret
+//            network = network.requestHeaders([
+//                CloudflareKeyProvider.clientId: auth.id,
+//                CloudflareKeyProvider.clientSecret: auth.secret
+//            ])
 //        }
-//
-//        let networkConfig = NetworkConfiguration(networkConnection: network)
+
+        let networkConfig = NetworkConfiguration(networkConnection: CustomNetworkConnection())
 
         return Snowplow.createTracker(namespace: namespace,
-                                      network: network,//.init(endpoint: Environment.current.urlProvider.snowplow),
+                                      network: networkConfig,//.init(endpoint: Environment.current.urlProvider.snowplow),
                                       configurations: [Self.trackerConfiguration,
                                                        Self.subjectConfiguration,
                                                        Self.appInstallTrackingPluginConfiguration,
@@ -62,8 +121,6 @@ open class Analytics {
 
     private func track(_ event: SnowplowTracker.Event) {
         guard User.shared.sendAnonymousUsageData else { return }
-
-        print("[TEST] Tracking with headers \(tracker.network?.requestHeaders)")
 
         _ = tracker.track(event)
     }
