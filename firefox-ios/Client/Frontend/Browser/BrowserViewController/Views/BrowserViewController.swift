@@ -36,6 +36,7 @@ class BrowserViewController: UIViewController,
                              FeatureFlaggable {
 
     // Ecosia: Used inside webview delegate to decide if search should be tracked
+    // (for now this is not cleared across sections or tabs, but shouldn't be an issue)
     var previousUrl: URL?
 
     private enum UX {

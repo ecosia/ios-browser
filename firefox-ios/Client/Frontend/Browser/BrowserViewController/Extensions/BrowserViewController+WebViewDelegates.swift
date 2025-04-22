@@ -581,7 +581,8 @@ extension BrowserViewController: WKNavigationDelegate {
             // Ecosia: Track search if is Ecosia's vertical
             let urlChanged = url != previousUrl
             let isReload = navigationAction.navigationType == .reload
-            if (urlChanged || isReload) && url.isEcosiaSearchVertical() {
+            let isBackForward = navigationAction.navigationType == .backForward
+            if !isBackForward && (urlChanged || isReload) && url.isEcosiaSearchVertical() {
                 Analytics.shared.inappSearch(url: url)
             }
             previousUrl = url
