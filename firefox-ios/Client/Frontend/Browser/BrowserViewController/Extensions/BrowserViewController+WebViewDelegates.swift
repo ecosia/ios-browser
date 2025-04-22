@@ -8,6 +8,7 @@ import Common
 import Shared
 import UIKit
 import Photos
+import Ecosia
 
 // MARK: - WKUIDelegate
 extension BrowserViewController: WKUIDelegate {
@@ -576,6 +577,13 @@ extension BrowserViewController: WKNavigationDelegate {
                     return
                 }
             }
+
+            // Ecosia: Track search if url changed and is Ecosia's vertical
+            let urlChanged = url != previousUrl
+            if urlChanged && url.isEcosiaSearchVertical() {
+                Analytics.shared.inappSearch(url: url)
+            }
+            previousUrl = url
 
             decisionHandler(.allow)
             return

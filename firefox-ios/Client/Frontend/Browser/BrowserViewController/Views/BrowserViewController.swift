@@ -34,6 +34,10 @@ class BrowserViewController: UIViewController,
                              NavigationToolbarContainerDelegate,
                              AddressToolbarContainerDelegate,
                              FeatureFlaggable {
+
+    // Ecosia: Used inside webview delegate to decide if search should be tracked
+    var previousUrl: URL?
+
     private enum UX {
         static let ShowHeaderTapAreaHeight: CGFloat = 32
         static let ActionSheetTitleMaxLength = 120
