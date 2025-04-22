@@ -312,12 +312,15 @@ class LegacyTabManager: NSObject, FeatureFlaggable, TabManager, TabEventHandler 
         // FXIOS-9519: By default if no bool value is set we close the private tabs and mark it true
         return profile.prefs.boolForKey(PrefsKeys.Settings.closePrivateTabs) ?? true
          */
-        let currentValue = profile.prefs.boolForKey(PrefsKeys.Settings.closePrivateTabs)
+        var currentValue = profile.prefs.boolForKey(PrefsKeys.Settings.closePrivateTabs)
 
-        // Only necessary for migration to version 11.x.x - remove after enough users migrated
-        let oldClosePrivateTabsValue = profile.prefs.boolForKey("settings.closePrivateTabs")
+        // Ecosia: Only necessary for migration to version 11.x.x - remove after enough users migrated
+        let oldKey = "settings.closePrivateTabs"
+        let oldClosePrivateTabsValue = profile.prefs.boolForKey(oldKey)
         if let oldValue = oldClosePrivateTabsValue, currentValue == nil {
+            currentValue = oldValue
             profile.prefs.setBool(oldValue, forKey: PrefsKeys.Settings.closePrivateTabs)
+            profile.prefs.removeObjectForKey(oldKey)
         }
 
         return currentValue ?? false
