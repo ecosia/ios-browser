@@ -115,7 +115,7 @@ extension AppSettingsTableViewController {
             BoolSetting(prefs: profile.prefs,
                         theme: themeManager.getCurrentTheme(for: windowUUID),
                         prefKey: PrefsKeys.Settings.closePrivateTabs,
-                        defaultValue: false,
+                        defaultValue: false, // Ecosia: This is different from Firefox
                         titleText: .AppSettingsClosePrivateTabsTitle,
                         statusText: .AppSettingsClosePrivateTabsDescription),
             ContentBlockerSetting(settings: self, settingsDelegate: parentCoordinator),
