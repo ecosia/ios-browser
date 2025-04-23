@@ -323,7 +323,7 @@ class LegacyTabManager: NSObject, FeatureFlaggable, TabManager, TabEventHandler 
             profile.prefs.removeObjectForKey(oldKey)
         }
 
-        return currentValue ?? false
+        return currentValue ?? PrefsKeysDefaultValues.Settings.closePrivateTabs
     }
 
     func cleanupClosedTabs(_ closedTabs: [Tab], previous: Tab?, isPrivate: Bool = false) {
