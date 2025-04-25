@@ -115,6 +115,7 @@ private struct EcosiaLightSemanticColors: EcosiaSemanticColors {
     var backgroundSecondary: UIColor = EcosiaColor.Gray10
     var backgroundTertiary: UIColor = EcosiaColor.Gray20
     var backgroundQuaternary: UIColor = EcosiaColor.DarkGreen50
+    var backgroundElevation1: UIColor = EcosiaColor.White
     var borderDecorative: UIColor = EcosiaColor.Gray30
     var brandPrimary: UIColor = EcosiaColor.Green50
     var buttonBackgroundPrimary: UIColor = EcosiaColor.Green50
