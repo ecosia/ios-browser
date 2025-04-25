@@ -15,6 +15,7 @@ public protocol EcosiaSemanticColors {
     var backgroundTertiary: UIColor { get }
     var backgroundQuaternary: UIColor { get }
     var backgroundElevation1: UIColor { get }
+    var backgroundElevation2: UIColor { get }
 
     // MARK: - Border
     var borderDecorative: UIColor { get }
@@ -79,6 +80,7 @@ class FakeEcosiaSemanticColors: EcosiaSemanticColors {
     var backgroundTertiary: UIColor = .systemGray
     var backgroundQuaternary: UIColor = .systemGray
     var backgroundElevation1: UIColor = .systemGray
+    var backgroundElevation2: UIColor = .systemGray
     var borderDecorative: UIColor = .systemGray
     var brandPrimary: UIColor = .systemGray
     var buttonBackgroundPrimary: UIColor = .systemGray
