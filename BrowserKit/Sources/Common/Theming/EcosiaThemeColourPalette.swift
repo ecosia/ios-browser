@@ -32,6 +32,9 @@ public protocol EcosiaSemanticColors {
     var buttonContentSecondary: UIColor { get }
     var buttonBackgroundTransparentActive: UIColor { get }
 
+    // MARK: - Icon
+    var iconSecondary: UIColor { get }
+
     // MARK: - State
     var stateInformation: UIColor { get }
     var stateDisabled: UIColor { get }
@@ -43,7 +46,6 @@ public protocol EcosiaSemanticColors {
     var textTertiary: UIColor { get }
 
     // MARK: - Snowflakes ⚠️ to be assessed ⚠️
-    var iconSecondary: UIColor { get }
     var iconDecorative: UIColor { get }
     var stateError: UIColor { get }
     var backgroundHighlighted: UIColor { get } // Mapped as "loading"
