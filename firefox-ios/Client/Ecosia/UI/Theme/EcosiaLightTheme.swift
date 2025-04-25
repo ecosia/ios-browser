@@ -112,6 +112,7 @@ class EcosiaLightColourPalette: EcosiaThemeColourPalette {
 
 private struct EcosiaLightSemanticColors: EcosiaSemanticColors {
     var backgroundPrimary: UIColor = EcosiaColor.White
+    var backgroundPrimaryDecorative: UIColor = EcosiaColor.Gray10
     var backgroundSecondary: UIColor = EcosiaColor.Gray10
     var backgroundTertiary: UIColor = EcosiaColor.Gray20
     var backgroundQuaternary: UIColor = EcosiaColor.DarkGreen50

@@ -22,6 +22,7 @@ private class EcosiaDarkColourPalette: EcosiaLightColourPalette {
 
 private struct EcosiaDarkSemanticColors: EcosiaSemanticColors {
     var backgroundPrimary: UIColor = EcosiaColor.Gray90
+    var backgroundPrimaryDecorative: UIColor = EcosiaColor.Gray90
     var backgroundSecondary: UIColor = EcosiaColor.Gray80
     var backgroundTertiary: UIColor = EcosiaColor.Gray70
     var backgroundQuaternary: UIColor = EcosiaColor.Green20
