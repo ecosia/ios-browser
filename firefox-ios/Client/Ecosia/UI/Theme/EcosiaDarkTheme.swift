@@ -37,7 +37,6 @@ private struct EcosiaDarkSemanticColors: EcosiaSemanticColors {
     var buttonContentSecondary: UIColor = EcosiaColor.White
     var buttonBackgroundTransparentActive: UIColor = EcosiaColor.Gray30.withAlphaComponent(0.32)
     var backgroundHighlighted: UIColor = EcosiaColor.DarkGreen30
-    var iconPrimary: UIColor = EcosiaColor.White
     var iconSecondary: UIColor = EcosiaColor.Green30
     var iconDecorative: UIColor = EcosiaColor.Gray40 // ⚠️ Mismatch
     var stateError: UIColor = EcosiaColor.Red30

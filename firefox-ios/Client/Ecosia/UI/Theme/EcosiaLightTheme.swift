@@ -84,7 +84,7 @@ class EcosiaLightColourPalette: EcosiaThemeColourPalette {
     var textInvertedDisabled: UIColor { fallbackTheme.colors.textInvertedDisabled }
 
     // MARK: - Icons
-    var iconPrimary: UIColor { ecosia.iconPrimary }
+    var iconPrimary: UIColor { ecosia.buttonContentSecondary }
     var iconSecondary: UIColor { ecosia.iconSecondary }
     var iconDisabled: UIColor { fallbackTheme.colors.iconDisabled }
     var iconAccent: UIColor { ecosia.iconSecondary }
@@ -127,7 +127,6 @@ private struct EcosiaLightSemanticColors: EcosiaSemanticColors {
     var buttonContentSecondary: UIColor = EcosiaColor.Gray70
     var buttonBackgroundTransparentActive: UIColor = EcosiaColor.Green70.withAlphaComponent(0.24)
     var backgroundHighlighted: UIColor = EcosiaColor.Green10
-    var iconPrimary: UIColor = EcosiaColor.Black // ⚠️ Mismatch
     var iconSecondary: UIColor = EcosiaColor.Green60 // ⚠️ Mismatch
     var iconDecorative: UIColor = EcosiaColor.Gray50
     var stateError: UIColor = EcosiaColor.Red40

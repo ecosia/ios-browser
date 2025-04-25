@@ -43,7 +43,6 @@ public protocol EcosiaSemanticColors {
     var textTertiary: UIColor { get }
 
     // MARK: - Snowflakes ⚠️ to be assessed ⚠️
-    var iconPrimary: UIColor { get }
     var iconSecondary: UIColor { get }
     var iconDecorative: UIColor { get }
     var stateError: UIColor { get }
@@ -91,7 +90,6 @@ class FakeEcosiaSemanticColors: EcosiaSemanticColors {
     var buttonBackgroundSecondaryHover: UIColor = .systemGray
     var buttonContentSecondary: UIColor = .systemGray
     var buttonBackgroundTransparentActive: UIColor = .systemGray
-    var iconPrimary: UIColor = .systemGray
     var iconSecondary: UIColor = .systemGray
     var iconDecorative: UIColor = .systemGray
     var stateError: UIColor = .systemGray
