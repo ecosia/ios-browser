@@ -99,7 +99,7 @@ class EcosiaLightColourPalette: EcosiaThemeColourPalette {
     var iconRatingNeutral: UIColor { fallbackTheme.colors.iconRatingNeutral }
 
     // MARK: - Border
-    var borderPrimary: UIColor { ecosia.barSeparator }
+    var borderPrimary: UIColor { ecosia.borderDecorative }
     var borderAccent: UIColor { actionPrimary }
     var borderAccentNonOpaque: UIColor { actionPrimary }
     var borderAccentPrivate: UIColor { actionPrimary }
@@ -139,7 +139,6 @@ private struct EcosiaLightSemanticColors: EcosiaSemanticColors {
 
     // MARK: Unmapped Snowflakes
     var barBackground: UIColor = EcosiaColor.White
-    var barSeparator: UIColor = .Photon.Grey20
     var ntpCellBackground: UIColor = EcosiaColor.White
     var ntpBackground: UIColor = EcosiaColor.Gray20
     var ntpIntroBackground: UIColor = EcosiaColor.White

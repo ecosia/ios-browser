@@ -50,7 +50,6 @@ public protocol EcosiaSemanticColors {
 
     // MARK: - Snowflakes ⚠️ to be assessed ⚠️
     var barBackground: UIColor { get } // Light.backgroundPrimary + Dark.backgroundSecondary
-    var barSeparator: UIColor { get }
     var ntpCellBackground: UIColor { get }
     var ntpBackground: UIColor { get } // Light.backgroundTertiary + Dark.backgroundPrimary
     var ntpIntroBackground: UIColor { get } // == barBackground

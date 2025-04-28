@@ -1059,10 +1059,9 @@ extension URLBarView: ThemeApplicable {
         showQRButtonTintColor = theme.colors.textPrimary
         /* Ecosia: update background
         backgroundColor = theme.colors.layer1
-        line.backgroundColor = theme.colors.borderPrimary
          */
         backgroundColor = theme.colors.ecosia.backgroundPrimary
-        line.backgroundColor = theme.colors.ecosia.barSeparator
+        line.backgroundColor = theme.colors.borderPrimary
 
         /* Ecosia: Remove color for non-active location border state
         locationBorderColor = theme.colors.borderPrimary
