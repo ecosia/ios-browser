@@ -129,7 +129,7 @@ private struct EcosiaLightSemanticColors: EcosiaSemanticColors {
     var backgroundHighlighted: UIColor = EcosiaColor.Green10
     var iconSecondary: UIColor = EcosiaColor.Green50
     var iconDecorative: UIColor = EcosiaColor.Gray50
-    var stateError: UIColor = EcosiaColor.Red40
+    var stateError: UIColor = EcosiaColor.Red50
     var stateInformation: UIColor = EcosiaColor.Blue50 // ⚠️ No match
     var stateDisabled: UIColor = EcosiaColor.Gray30
     var textPrimary: UIColor = EcosiaColor.Black // ⚠️ Mismatch

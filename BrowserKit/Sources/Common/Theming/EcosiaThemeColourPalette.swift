@@ -37,6 +37,7 @@ public protocol EcosiaSemanticColors {
     var iconDecorative: UIColor { get }
 
     // MARK: - State
+    var stateError: UIColor { get }
     var stateInformation: UIColor { get }
     var stateDisabled: UIColor { get }
 
@@ -47,7 +48,6 @@ public protocol EcosiaSemanticColors {
     var textTertiary: UIColor { get }
 
     // MARK: - Snowflakes ⚠️ to be assessed ⚠️
-    var stateError: UIColor { get }
     var backgroundHighlighted: UIColor { get } // Mapped as "loading"
 
     // MARK: Unmapped Snowflakes
