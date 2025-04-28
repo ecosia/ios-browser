@@ -36,12 +36,12 @@ private struct EcosiaDarkSemanticColors: EcosiaSemanticColors {
     var buttonBackgroundSecondaryHover: UIColor = EcosiaColor.Gray70
     var buttonContentSecondary: UIColor = EcosiaColor.White
     var buttonBackgroundTransparentActive: UIColor = EcosiaColor.Gray30.withAlphaComponent(0.32)
-    var backgroundHighlighted: UIColor = EcosiaColor.DarkGreen30
     var iconSecondary: UIColor = EcosiaColor.Green30
     var iconDecorative: UIColor = EcosiaColor.White
+    var stateDisabled: UIColor = EcosiaColor.Gray50
     var stateError: UIColor = EcosiaColor.Red30
     var stateInformation: UIColor = EcosiaColor.Blue30 // ⚠️ No match
-    var stateDisabled: UIColor = EcosiaColor.Gray50
+    var stateLoading: UIColor = EcosiaColor.DarkGreen30
     var textPrimary: UIColor = EcosiaColor.White
     var textInversePrimary: UIColor = EcosiaColor.Black // ⚠️ Mismatch
     var textSecondary: UIColor = EcosiaColor.Gray30

@@ -37,9 +37,10 @@ public protocol EcosiaSemanticColors {
     var iconDecorative: UIColor { get }
 
     // MARK: - State
+    var stateDisabled: UIColor { get }
     var stateError: UIColor { get }
     var stateInformation: UIColor { get }
-    var stateDisabled: UIColor { get }
+    var stateLoading: UIColor { get }
 
     // MARK: - Text
     var textPrimary: UIColor { get }
@@ -48,9 +49,6 @@ public protocol EcosiaSemanticColors {
     var textTertiary: UIColor { get }
 
     // MARK: - Snowflakes ⚠️ to be assessed ⚠️
-    var backgroundHighlighted: UIColor { get } // Mapped as "loading"
-
-    // MARK: Unmapped Snowflakes
     var barBackground: UIColor { get } // Light.backgroundPrimary + Dark.backgroundSecondary
     var barSeparator: UIColor { get }
     var ntpCellBackground: UIColor { get }
@@ -94,9 +92,10 @@ class FakeEcosiaSemanticColors: EcosiaSemanticColors {
     var buttonBackgroundTransparentActive: UIColor = .systemGray
     var iconSecondary: UIColor = .systemGray
     var iconDecorative: UIColor = .systemGray
+    var stateDisabled: UIColor = .systemGray
     var stateError: UIColor = .systemGray
     var stateInformation: UIColor = .systemGray
-    var stateDisabled: UIColor = .systemGray
+    var stateLoading: UIColor = .systemGray
     var textPrimary: UIColor = .systemGray
     var textInversePrimary: UIColor = .systemGray
     var textSecondary: UIColor = .systemGray
