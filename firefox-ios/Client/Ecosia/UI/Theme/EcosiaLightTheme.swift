@@ -138,7 +138,6 @@ private struct EcosiaLightSemanticColors: EcosiaSemanticColors {
     var textTertiary: UIColor = EcosiaColor.White
 
     // MARK: Unmapped Snowflakes
-    var barBackground: UIColor = EcosiaColor.White
     var ntpCellBackground: UIColor = EcosiaColor.White
     var ntpBackground: UIColor = EcosiaColor.Gray20
     var ntpIntroBackground: UIColor = EcosiaColor.White
