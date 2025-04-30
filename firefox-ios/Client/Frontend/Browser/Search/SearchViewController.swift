@@ -618,7 +618,7 @@ class SearchViewController: SiteTableViewController,
         }
 
         // Ecosia: Update cell background
-        cell.backgroundColor = currentTheme().colors.ecosia.ntpCellBackground
+        cell.backgroundColor = currentTheme().colors.ecosia.backgroundElevation1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
