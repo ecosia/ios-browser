@@ -329,7 +329,6 @@ class LibraryViewController: UIViewController, Themeable {
         /* Ecosia: Update theming
         standardAppearance.backgroundColor = theme.colors.layer1
         */
-        standardAppearance.backgroundColor = theme.colors.ecosia.modalBackground
         standardAppearance.backgroundColor = theme.colors.ecosia.backgroundPrimary
         standardAppearance.shadowColor = theme.colors.ecosia.borderDecorative
 
@@ -359,12 +358,12 @@ class LibraryViewController: UIViewController, Themeable {
         segmentControlToolbar.barTintColor = theme.colors.layer1
          */
         view.backgroundColor = theme.colors.layer3
-        navigationController?.navigationBar.barTintColor = theme.colors.ecosia.modalBackground
+        navigationController?.navigationBar.barTintColor = theme.colors.ecosia.backgroundPrimaryDecorative
         navigationController?.navigationBar.tintColor = theme.colors.actionPrimary
-        navigationController?.navigationBar.backgroundColor = theme.colors.ecosia.modalBackground
-        navigationController?.toolbar.barTintColor = theme.colors.ecosia.modalBackground
+        navigationController?.navigationBar.backgroundColor = theme.colors.ecosia.backgroundPrimaryDecorative
+        navigationController?.toolbar.barTintColor = theme.colors.ecosia.backgroundPrimaryDecorative
         navigationController?.toolbar.tintColor = theme.colors.actionPrimary
-        segmentControlToolbar.barTintColor = theme.colors.ecosia.modalBackground
+        segmentControlToolbar.barTintColor = theme.colors.ecosia.backgroundPrimaryDecorative
 
         segmentControlToolbar.tintColor = theme.colors.textPrimary
         segmentControlToolbar.isTranslucent = false
