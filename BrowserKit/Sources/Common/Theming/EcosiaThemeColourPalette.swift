@@ -49,7 +49,6 @@ public protocol EcosiaSemanticColors {
     var textTertiary: UIColor { get }
 
     // MARK: - Snowflakes ⚠️ to be assessed ⚠️
-    var ntpIntroBackground: UIColor { get } // == barBackground
     var impactMultiplyCardBackground: UIColor { get } // == ntpCellBackground
     var newsPlaceholder: UIColor { get }
     var modalBackground: UIColor { get } // Light.backgroundTertiary + Dark.backgroundSecondary
@@ -98,7 +97,6 @@ class FakeEcosiaSemanticColors: EcosiaSemanticColors {
     var textTertiary: UIColor = .systemGray
     var backgroundHighlighted: UIColor = .systemGray
     var barSeparator: UIColor = .systemGray
-    var ntpIntroBackground: UIColor = .systemGray
     var impactMultiplyCardBackground: UIColor = .systemGray
     var newsPlaceholder: UIColor = .systemGray
     var modalBackground: UIColor = .systemGray
