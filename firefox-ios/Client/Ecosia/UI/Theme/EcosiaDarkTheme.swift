@@ -32,7 +32,7 @@ private struct EcosiaDarkSemanticColors: EcosiaSemanticColors {
     var brandPrimary: UIColor = EcosiaColor.Green30
     var buttonBackgroundPrimary: UIColor = EcosiaColor.Green30
     var buttonBackgroundPrimaryActive: UIColor = EcosiaColor.Green50 // ⚠️ Mismatch
-    var buttonBackgroundSecondary: UIColor = EcosiaColor.Gray70 // ⚠️ Mismatch
+    var buttonBackgroundSecondary: UIColor = EcosiaColor.Gray90
     var buttonBackgroundSecondaryHover: UIColor = EcosiaColor.Gray70
     var buttonContentSecondary: UIColor = EcosiaColor.White
     var buttonBackgroundTransparentActive: UIColor = EcosiaColor.Gray30.withAlphaComponent(0.32)
@@ -48,7 +48,6 @@ private struct EcosiaDarkSemanticColors: EcosiaSemanticColors {
     var textTertiary: UIColor = EcosiaColor.Gray70 // ⚠️ Mismatch
 
     // MARK: Unmapped Snowflakes
-    var buttonBackgroundNTPCustomization: UIColor = EcosiaColor.Gray80
     var privateButtonBackground: UIColor = EcosiaColor.White
     var tabSelectedPrivateBackground: UIColor = EcosiaColor.White
     var toastImageTint: UIColor = EcosiaColor.DarkGreen50
