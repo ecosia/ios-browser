@@ -49,7 +49,6 @@ public protocol EcosiaSemanticColors {
     var textTertiary: UIColor { get }
 
     // MARK: - Snowflakes ⚠️ to be assessed ⚠️
-    var newsPlaceholder: UIColor { get }
     var modalBackground: UIColor { get } // Light.backgroundTertiary + Dark.backgroundSecondary
     var secondarySelectedBackground: UIColor { get }
     var buttonBackgroundNTPCustomization: UIColor { get }

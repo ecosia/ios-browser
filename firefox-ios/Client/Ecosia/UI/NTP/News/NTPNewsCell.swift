@@ -216,7 +216,7 @@ final class NTPNewsCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
         selectedBackgroundColor = theme.colors.ecosia.secondarySelectedBackground
         background.backgroundColor = defaultBackgroundColor
         placeholder.tintColor = theme.colors.ecosia.iconDecorative
-        placeholder.backgroundColor = theme.colors.ecosia.newsPlaceholder
+        placeholder.backgroundColor = theme.colors.ecosia.backgroundQuaternary
         border.backgroundColor = theme.colors.ecosia.borderDecorative
         title.textColor = theme.colors.ecosia.textPrimary
         bottomLabel.textColor = theme.colors.ecosia.textSecondary
