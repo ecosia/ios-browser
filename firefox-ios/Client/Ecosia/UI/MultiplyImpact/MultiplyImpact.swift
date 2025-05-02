@@ -425,15 +425,15 @@ class MultiplyImpact: UIViewController, Themeable {
     func applyTheme() {
         let theme = themeManager.getCurrentTheme(for: windowUUID)
 
-        view.backgroundColor = theme.colors.ecosia.modalBackground
+        view.backgroundColor = theme.colors.ecosia.backgroundPrimaryDecorative
         inviteButton.backgroundColor = theme.colors.ecosia.brandPrimary
         inviteButton.setTitleColor(theme.colors.ecosia.textInversePrimary, for: .normal)
         inviteButton.setTitleColor(theme.colors.ecosia.textInversePrimary, for: .highlighted)
         inviteButton.setTitleColor(theme.colors.ecosia.textInversePrimary, for: .selected)
         learnMoreButton?.setTitleColor(theme.colors.ecosia.brandPrimary, for: .normal)
-        waves?.tintColor = theme.colors.ecosia.modalBackground
+        waves?.tintColor = theme.colors.ecosia.backgroundPrimaryDecorative
         topBackground?.backgroundColor = theme.colors.ecosia.impactNavigationBarTitleBackground
-        forestOverlay?.backgroundColor = theme.colors.ecosia.modalBackground
+        forestOverlay?.backgroundColor = theme.colors.ecosia.backgroundPrimaryDecorative
         subtitle?.textColor = UX.hardcodedDarkTextColor
         copyControl?.backgroundColor = theme.colors.ecosia.backgroundSecondary
         copyControl?.layer.borderColor = theme.colors.ecosia.borderDecorative.cgColor
