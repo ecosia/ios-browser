@@ -138,7 +138,6 @@ private struct EcosiaLightSemanticColors: EcosiaSemanticColors {
     var textTertiary: UIColor = EcosiaColor.White
 
     // MARK: Unmapped Snowflakes
-    var modalBackground: UIColor = EcosiaColor.Gray20
     var secondarySelectedBackground: UIColor = EcosiaColor.Gray10
     var buttonBackgroundNTPCustomization: UIColor = EcosiaColor.Gray10
     var privateButtonBackground: UIColor = .Photon.Grey70
