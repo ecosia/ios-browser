@@ -48,7 +48,6 @@ private struct EcosiaDarkSemanticColors: EcosiaSemanticColors {
     var textTertiary: UIColor = EcosiaColor.Gray70 // ⚠️ Mismatch
 
     // MARK: Unmapped Snowflakes
-    var secondarySelectedBackground: UIColor = .init(rgb: 0x3A3A3A)
     var buttonBackgroundNTPCustomization: UIColor = EcosiaColor.Gray80
     var privateButtonBackground: UIColor = EcosiaColor.White
     var tabSelectedPrivateBackground: UIColor = EcosiaColor.White

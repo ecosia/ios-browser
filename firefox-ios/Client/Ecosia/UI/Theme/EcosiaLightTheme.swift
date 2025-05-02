@@ -25,7 +25,7 @@ class EcosiaLightColourPalette: EcosiaThemeColourPalette {
     var layer3: UIColor { ecosia.backgroundPrimaryDecorative }
     var layer4: UIColor { fallbackTheme.colors.layer4 }
     var layer5: UIColor { ecosia.backgroundSecondary }
-    var layer5Hover: UIColor { ecosia.secondarySelectedBackground }
+    var layer5Hover: UIColor { ecosia.backgroundQuaternary }
     var layerScrim: UIColor { fallbackTheme.colors.layerScrim }
     var layerGradient: Gradient { fallbackTheme.colors.layerGradient }
     var layerGradientOverlay: Gradient { fallbackTheme.colors.layerGradientOverlay }
@@ -138,7 +138,6 @@ private struct EcosiaLightSemanticColors: EcosiaSemanticColors {
     var textTertiary: UIColor = EcosiaColor.White
 
     // MARK: Unmapped Snowflakes
-    var secondarySelectedBackground: UIColor = EcosiaColor.Gray10
     var buttonBackgroundNTPCustomization: UIColor = EcosiaColor.Gray10
     var privateButtonBackground: UIColor = .Photon.Grey70
     var tabSelectedPrivateBackground: UIColor = EcosiaColor.Gray80
