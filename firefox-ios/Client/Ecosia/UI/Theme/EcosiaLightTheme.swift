@@ -138,7 +138,6 @@ private struct EcosiaLightSemanticColors: EcosiaSemanticColors {
     var textTertiary: UIColor = EcosiaColor.White
 
     // MARK: Unmapped Snowflakes
-    var impactMultiplyCardBackground: UIColor = EcosiaColor.White
     var newsPlaceholder: UIColor = EcosiaColor.Gray10
     var modalBackground: UIColor = EcosiaColor.Gray20
     var secondarySelectedBackground: UIColor = EcosiaColor.Gray10

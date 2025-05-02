@@ -48,7 +48,6 @@ private struct EcosiaDarkSemanticColors: EcosiaSemanticColors {
     var textTertiary: UIColor = EcosiaColor.Gray70 // ⚠️ Mismatch
 
     // MARK: Unmapped Snowflakes
-    var impactMultiplyCardBackground: UIColor = EcosiaColor.Gray70
     var newsPlaceholder: UIColor = EcosiaColor.Gray50
     var modalBackground: UIColor = EcosiaColor.Gray80
     var secondarySelectedBackground: UIColor = .init(rgb: 0x3A3A3A)
