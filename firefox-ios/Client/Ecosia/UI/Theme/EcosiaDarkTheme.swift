@@ -28,6 +28,7 @@ private struct EcosiaDarkSemanticColors: EcosiaSemanticColors {
     var backgroundQuaternary: UIColor = EcosiaColor.Gray70
     var backgroundElevation1: UIColor = EcosiaColor.Gray80
     var backgroundElevation2: UIColor = EcosiaColor.Gray70
+    var backgroundBrandSecondaryAlt: UIColor = EcosiaColor.Gray80
     var borderDecorative: UIColor = EcosiaColor.Gray60
     var brandPrimary: UIColor = EcosiaColor.Green30
     var buttonBackgroundPrimary: UIColor = EcosiaColor.Green30
@@ -47,7 +48,4 @@ private struct EcosiaDarkSemanticColors: EcosiaSemanticColors {
     var textInversePrimary: UIColor = EcosiaColor.Black // ⚠️ Mismatch
     var textSecondary: UIColor = EcosiaColor.Gray30
     var textTertiary: UIColor = EcosiaColor.Gray70 // ⚠️ Mismatch
-
-    // MARK: Unmapped Snowflakes
-    var impactNavigationBarTitleBackground: UIColor = EcosiaColor.Gray70
 }

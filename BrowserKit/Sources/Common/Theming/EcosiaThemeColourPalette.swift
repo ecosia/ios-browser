@@ -17,6 +17,7 @@ public protocol EcosiaSemanticColors {
     var backgroundQuaternary: UIColor { get }
     var backgroundElevation1: UIColor { get }
     var backgroundElevation2: UIColor { get }
+    var backgroundBrandSecondaryAlt: UIColor { get }
 
     // MARK: - Border
     var borderDecorative: UIColor { get }
@@ -48,9 +49,6 @@ public protocol EcosiaSemanticColors {
     var textInversePrimary: UIColor { get }
     var textSecondary: UIColor { get }
     var textTertiary: UIColor { get }
-
-    // MARK: - Snowflakes ⚠️ to be assessed ⚠️
-    var impactNavigationBarTitleBackground: UIColor { get }
 }
 
 public protocol EcosiaThemeColourPalette: ThemeColourPalette {
@@ -67,6 +65,7 @@ class FakeEcosiaSemanticColors: EcosiaSemanticColors {
     var backgroundQuaternary: UIColor = .systemGray
     var backgroundElevation1: UIColor = .systemGray
     var backgroundElevation2: UIColor = .systemGray
+    var backgroundBrandSecondaryAlt: UIColor = .systemGray
     var borderDecorative: UIColor = .systemGray
     var brandPrimary: UIColor = .systemGray
     var buttonBackgroundPrimary: UIColor = .systemGray
@@ -86,5 +85,4 @@ class FakeEcosiaSemanticColors: EcosiaSemanticColors {
     var textInversePrimary: UIColor = .systemGray
     var textSecondary: UIColor = .systemGray
     var textTertiary: UIColor = .systemGray
-    var impactNavigationBarTitleBackground: UIColor = .systemGray
 }

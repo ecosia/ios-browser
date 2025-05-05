@@ -118,6 +118,7 @@ private struct EcosiaLightSemanticColors: EcosiaSemanticColors {
     var backgroundQuaternary: UIColor = EcosiaColor.Gray20
     var backgroundElevation1: UIColor = EcosiaColor.White
     var backgroundElevation2: UIColor = EcosiaColor.White
+    var backgroundBrandSecondaryAlt: UIColor = EcosiaColor.DarkGreen50
     var borderDecorative: UIColor = EcosiaColor.Gray30
     var brandPrimary: UIColor = EcosiaColor.Green50
     var buttonBackgroundPrimary: UIColor = EcosiaColor.Green50
@@ -137,7 +138,4 @@ private struct EcosiaLightSemanticColors: EcosiaSemanticColors {
     var textInversePrimary: UIColor = EcosiaColor.White
     var textSecondary: UIColor = EcosiaColor.Gray50
     var textTertiary: UIColor = EcosiaColor.White
-
-    // MARK: Unmapped Snowflakes
-    var impactNavigationBarTitleBackground: UIColor = EcosiaColor.DarkGreen50
 }

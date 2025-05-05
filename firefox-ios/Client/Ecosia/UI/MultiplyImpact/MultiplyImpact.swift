@@ -432,7 +432,7 @@ class MultiplyImpact: UIViewController, Themeable {
         inviteButton.setTitleColor(theme.colors.ecosia.textInversePrimary, for: .selected)
         learnMoreButton?.setTitleColor(theme.colors.ecosia.brandPrimary, for: .normal)
         waves?.tintColor = theme.colors.ecosia.backgroundPrimaryDecorative
-        topBackground?.backgroundColor = theme.colors.ecosia.impactNavigationBarTitleBackground
+        topBackground?.backgroundColor = theme.colors.ecosia.backgroundBrandSecondaryAlt
         forestOverlay?.backgroundColor = theme.colors.ecosia.backgroundPrimaryDecorative
         subtitle?.textColor = UX.hardcodedDarkTextColor
         copyControl?.backgroundColor = theme.colors.ecosia.backgroundSecondary
@@ -467,11 +467,11 @@ class MultiplyImpact: UIViewController, Themeable {
         appearance.configureWithOpaqueBackground()
         appearance.largeTitleTextAttributes = [.foregroundColor: UX.hardcodedDarkTextColor]
         appearance.titleTextAttributes = [.foregroundColor: UX.hardcodedDarkTextColor]
-        appearance.backgroundColor = theme.colors.ecosia.impactNavigationBarTitleBackground
+        appearance.backgroundColor = theme.colors.ecosia.backgroundBrandSecondaryAlt
         appearance.shadowColor = nil
         navigationItem.standardAppearance = appearance
         navigationItem.scrollEdgeAppearance = appearance
-        navigationController?.navigationBar.backgroundColor = theme.colors.ecosia.impactNavigationBarTitleBackground
+        navigationController?.navigationBar.backgroundColor = theme.colors.ecosia.backgroundBrandSecondaryAlt
         navigationController?.navigationBar.tintColor = theme.type == .light ? UX.hardcodedDarkTextColor : theme.colors.ecosia.brandPrimary
     }
 
