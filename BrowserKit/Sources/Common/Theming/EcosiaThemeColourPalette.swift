@@ -35,6 +35,7 @@ public protocol EcosiaSemanticColors {
     // MARK: - Icon
     var iconSecondary: UIColor { get }
     var iconDecorative: UIColor { get }
+    var iconInverseStrong: UIColor { get }
 
     // MARK: - State
     var stateDisabled: UIColor { get }
@@ -49,7 +50,6 @@ public protocol EcosiaSemanticColors {
     var textTertiary: UIColor { get }
 
     // MARK: - Snowflakes ⚠️ to be assessed ⚠️
-    var toastImageTint: UIColor { get }
     var newSeedCollectedCircle: UIColor { get }
     var tabTrayScreenshotBackground: UIColor { get }
     var tableViewRowText: UIColor { get }
@@ -80,6 +80,7 @@ class FakeEcosiaSemanticColors: EcosiaSemanticColors {
     var buttonBackgroundTransparentActive: UIColor = .systemGray
     var iconSecondary: UIColor = .systemGray
     var iconDecorative: UIColor = .systemGray
+    var iconInverseStrong: UIColor = .systemGray
     var stateDisabled: UIColor = .systemGray
     var stateError: UIColor = .systemGray
     var stateInformation: UIColor = .systemGray
@@ -88,7 +89,6 @@ class FakeEcosiaSemanticColors: EcosiaSemanticColors {
     var textInversePrimary: UIColor = .systemGray
     var textSecondary: UIColor = .systemGray
     var textTertiary: UIColor = .systemGray
-    var toastImageTint: UIColor = .systemGray
     var newSeedCollectedCircle: UIColor = .systemGray
     var tabTrayScreenshotBackground: UIColor = .systemGray
     var tableViewRowText: UIColor = .systemGray

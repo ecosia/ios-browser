@@ -38,6 +38,7 @@ private struct EcosiaDarkSemanticColors: EcosiaSemanticColors {
     var buttonBackgroundTransparentActive: UIColor = EcosiaColor.Gray30.withAlphaComponent(0.32)
     var iconSecondary: UIColor = EcosiaColor.Green30
     var iconDecorative: UIColor = EcosiaColor.White
+    var iconInverseStrong: UIColor = EcosiaColor.Black
     var stateDisabled: UIColor = EcosiaColor.Gray50
     var stateError: UIColor = EcosiaColor.Red30
     var stateInformation: UIColor = EcosiaColor.Blue30 // ⚠️ No match
@@ -48,7 +49,6 @@ private struct EcosiaDarkSemanticColors: EcosiaSemanticColors {
     var textTertiary: UIColor = EcosiaColor.Gray70 // ⚠️ Mismatch
 
     // MARK: Unmapped Snowflakes
-    var toastImageTint: UIColor = EcosiaColor.DarkGreen50
     var newSeedCollectedCircle: UIColor = .init(rgb: 0xCC7722)
     var tabTrayScreenshotBackground: UIColor = .Photon.DarkGrey30
     var tableViewRowText: UIColor = .Photon.Grey10
