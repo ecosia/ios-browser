@@ -49,7 +49,6 @@ private struct EcosiaDarkSemanticColors: EcosiaSemanticColors {
     var textTertiary: UIColor = EcosiaColor.Gray70 // ⚠️ Mismatch
 
     // MARK: Unmapped Snowflakes
-    var newSeedCollectedCircle: UIColor = .init(rgb: 0xCC7722)
     var tabTrayScreenshotBackground: UIColor = .Photon.DarkGrey30
     var tableViewRowText: UIColor = .Photon.Grey10
     var impactNavigationBarTitleBackground: UIColor = EcosiaColor.Gray70
