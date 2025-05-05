@@ -163,7 +163,7 @@ class TabCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
         backgroundHolder.backgroundColor = theme.colors.ecosia.backgroundPrimary
         closeButton.tintColor = theme.colors.ecosia.textPrimary
         titleText.textColor = theme.colors.ecosia.textPrimary
-        screenshotView.backgroundColor = theme.colors.ecosia.tabTrayScreenshotBackground
+        screenshotView.backgroundColor = theme.colors.ecosia.backgroundElevation1
         favicon.tintColor = theme.colors.ecosia.textPrimary
     }
 
