@@ -44,7 +44,7 @@ extension SimpleToast {
         stack.distribution = .fill
         stack.spacing = 8
         stack.layer.cornerRadius = 10
-        stack.backgroundColor = theme.colors.ecosia.backgroundQuaternary
+        stack.backgroundColor = theme.colors.ecosia.buttonBackgroundPrimaryActive
 
         let toast = UILabel()
         toast.text = text
