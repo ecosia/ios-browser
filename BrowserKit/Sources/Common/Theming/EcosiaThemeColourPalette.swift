@@ -50,7 +50,6 @@ public protocol EcosiaSemanticColors {
     var textTertiary: UIColor { get }
 
     // MARK: - Snowflakes ⚠️ to be assessed ⚠️
-    var tableViewRowText: UIColor { get }
     var impactNavigationBarTitleBackground: UIColor { get }
 }
 
@@ -87,6 +86,5 @@ class FakeEcosiaSemanticColors: EcosiaSemanticColors {
     var textInversePrimary: UIColor = .systemGray
     var textSecondary: UIColor = .systemGray
     var textTertiary: UIColor = .systemGray
-    var tableViewRowText: UIColor = .systemGray
     var impactNavigationBarTitleBackground: UIColor = .systemGray
 }

@@ -139,6 +139,5 @@ private struct EcosiaLightSemanticColors: EcosiaSemanticColors {
     var textTertiary: UIColor = EcosiaColor.White
 
     // MARK: Unmapped Snowflakes
-    var tableViewRowText: UIColor = .Photon.Grey90
     var impactNavigationBarTitleBackground: UIColor = EcosiaColor.DarkGreen50
 }
