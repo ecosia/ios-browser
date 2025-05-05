@@ -49,7 +49,6 @@ public protocol EcosiaSemanticColors {
     var textTertiary: UIColor { get }
 
     // MARK: - Snowflakes ⚠️ to be assessed ⚠️
-    var tabSelectedPrivateBackground: UIColor { get }
     var toastImageTint: UIColor { get }
     var newSeedCollectedCircle: UIColor { get }
     var tabTrayScreenshotBackground: UIColor { get }
@@ -89,7 +88,6 @@ class FakeEcosiaSemanticColors: EcosiaSemanticColors {
     var textInversePrimary: UIColor = .systemGray
     var textSecondary: UIColor = .systemGray
     var textTertiary: UIColor = .systemGray
-    var tabSelectedPrivateBackground: UIColor = .systemGray
     var toastImageTint: UIColor = .systemGray
     var newSeedCollectedCircle: UIColor = .systemGray
     var tabTrayScreenshotBackground: UIColor = .systemGray
