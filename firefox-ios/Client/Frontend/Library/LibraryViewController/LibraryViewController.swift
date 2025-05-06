@@ -364,9 +364,12 @@ class LibraryViewController: UIViewController, Themeable {
         navigationController?.toolbar.barTintColor = theme.colors.ecosia.backgroundPrimaryDecorative
         navigationController?.toolbar.tintColor = theme.colors.actionPrimary
         segmentControlToolbar.barTintColor = theme.colors.ecosia.backgroundPrimaryDecorative
-
-        segmentControlToolbar.tintColor = theme.colors.textPrimary
         segmentControlToolbar.isTranslucent = false
+
+        // Ecosia: Add segmented control colors
+        librarySegmentControl.backgroundColor = theme.colors.ecosia.segmentedControlBackgroundRest
+        librarySegmentControl.selectedSegmentTintColor = theme.colors.ecosia.segmentedControlBackgroundActive
+        librarySegmentControl.tintColor = theme.colors.ecosia.buttonContentSecondary
 
         setNeedsStatusBarAppearanceUpdate()
         setupToolBarAppearance()

@@ -38,6 +38,10 @@ public protocol EcosiaSemanticColors {
     var iconDecorative: UIColor { get }
     var iconInverseStrong: UIColor { get }
 
+    // MARK: - Segmented Control
+    var segmentedControlBackgroundActive: UIColor { get }
+    var segmentedControlBackgroundRest: UIColor { get }
+
     // MARK: - State
     var stateDisabled: UIColor { get }
     var stateError: UIColor { get }
@@ -77,6 +81,8 @@ class FakeEcosiaSemanticColors: EcosiaSemanticColors {
     var iconSecondary: UIColor = .systemGray
     var iconDecorative: UIColor = .systemGray
     var iconInverseStrong: UIColor = .systemGray
+    var segmentedControlBackgroundActive: UIColor = .systemGray
+    var segmentedControlBackgroundRest: UIColor = .systemGray
     var stateDisabled: UIColor = .systemGray
     var stateError: UIColor = .systemGray
     var stateInformation: UIColor = .systemGray

@@ -40,6 +40,8 @@ private struct EcosiaDarkSemanticColors: EcosiaSemanticColors {
     var iconSecondary: UIColor = EcosiaColor.Green30
     var iconDecorative: UIColor = EcosiaColor.White
     var iconInverseStrong: UIColor = EcosiaColor.Black
+    var segmentedControlBackgroundActive: UIColor = EcosiaColor.Gray60
+    var segmentedControlBackgroundRest: UIColor = EcosiaColor.Gray80
     var stateDisabled: UIColor = EcosiaColor.Gray50
     var stateError: UIColor = EcosiaColor.Red30
     var stateInformation: UIColor = EcosiaColor.Blue30 // ⚠️ No match
