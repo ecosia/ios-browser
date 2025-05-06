@@ -9,7 +9,7 @@ Object.defineProperty(window.__firefox__, "download", {
   enumerable: false,
   configurable: false,
   writable: false,
-  value: function(url, appIdToken) {
+  value: function(url, appIdToken, fileName = null) {
     if (appIdToken !== APP_ID_TOKEN) {
       return;
     }
@@ -37,13 +37,20 @@ Object.defineProperty(window.__firefox__, "download", {
         }
 
         var blob = this.response;
-
+        
+        // Checking if the blob is a pkpass (Passbook Pass) or download, if not, continue navigation
+        if (blob.type != "application/vnd.apple.pkpass" && !fileName) {
+          window.location.href = url;
+          return
+        }
+      
         blobToBase64String(blob, function(base64String) {
           webkit.messageHandlers.downloadManager.postMessage({
             url: url,
             mimeType: blob.type,
             size: blob.size,
-            base64String: base64String
+            base64String: base64String,
+            fileName
           });
         });
       };
@@ -59,4 +66,11 @@ Object.defineProperty(window.__firefox__, "download", {
 });
 }
 
-
+document.addEventListener("click", (event) => {
+  if (event.target.localName == "a" && event.target.hasAttribute("download")) {
+    event.preventDefault();
+    // The APP_ID_TOKEN is a unique identifier associated with the app used by scripts to verify the *app*
+    // (not JS on the web) is calling into them.
+    window.__firefox__.download(event.target.href, APP_ID_TOKEN, event.target.download)
+  }
+})
