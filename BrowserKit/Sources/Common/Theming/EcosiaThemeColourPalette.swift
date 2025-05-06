@@ -45,7 +45,6 @@ public protocol EcosiaSemanticColors {
     // MARK: - State
     var stateDisabled: UIColor { get }
     var stateError: UIColor { get }
-    var stateInformation: UIColor { get }
     var stateLoading: UIColor { get }
 
     // MARK: - Text
@@ -85,7 +84,6 @@ class FakeEcosiaSemanticColors: EcosiaSemanticColors {
     var segmentedControlBackgroundRest: UIColor = .systemGray
     var stateDisabled: UIColor = .systemGray
     var stateError: UIColor = .systemGray
-    var stateInformation: UIColor = .systemGray
     var stateLoading: UIColor = .systemGray
     var textPrimary: UIColor = .systemGray
     var textInversePrimary: UIColor = .systemGray

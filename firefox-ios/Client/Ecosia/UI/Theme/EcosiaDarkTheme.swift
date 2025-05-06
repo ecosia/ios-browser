@@ -44,7 +44,6 @@ private struct EcosiaDarkSemanticColors: EcosiaSemanticColors {
     var segmentedControlBackgroundRest: UIColor = EcosiaColor.Gray80
     var stateDisabled: UIColor = EcosiaColor.Gray50
     var stateError: UIColor = EcosiaColor.Red30
-    var stateInformation: UIColor = EcosiaColor.Blue30 // ⚠️ No match
     var stateLoading: UIColor = EcosiaColor.DarkGreen30
     var textPrimary: UIColor = EcosiaColor.White
     var textInversePrimary: UIColor = EcosiaColor.Black // ⚠️ Mismatch
