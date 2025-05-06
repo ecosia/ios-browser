@@ -100,7 +100,7 @@ class NTPLibraryCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
         shortcuts.forEach { item in
             item.title.textColor = theme.colors.ecosia.textPrimary
             item.button.tintColor = theme.colors.ecosia.buttonBackgroundPrimary
-            item.button.backgroundColor = theme.colors.ecosia.buttonBackgroundSecondary
+            item.button.backgroundColor = theme.colors.ecosia.backgroundElevation1
         }
     }
 

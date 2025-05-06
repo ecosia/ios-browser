@@ -201,7 +201,7 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
     // MARK: - ThemeApplicable
 
     func applyTheme(theme: Theme) {
-        backgroundColor = customBackgroundColor ?? theme.colors.ecosia.backgroundSecondary
+        backgroundColor = customBackgroundColor ?? theme.colors.ecosia.backgroundElevation1
         titleLabel.textColor = theme.colors.ecosia.textPrimary
         subtitleLabel.textColor = theme.colors.ecosia.textSecondary
         actionButton.setTitleColor(theme.colors.ecosia.buttonBackgroundPrimary, for: .normal)
