@@ -9,6 +9,7 @@ import UIKit.UIContextMenuConfiguration
 class MockEngineSessionDelegate: EngineSessionDelegate {
     var onTitleChangeCalled = 0
     var onProgressCalled = 0
+    var onHideProgressCalled = 0
     var onNavigationStateChangeCalled = 0
     var onLoadingStateChangeCalled = 0
     var onLocationChangedCalled = 0
@@ -19,6 +20,7 @@ class MockEngineSessionDelegate: EngineSessionDelegate {
     var searchCalled = 0
     var onProvideContextualMenuCalled = 0
     var onWillDisplayAcccessoryViewCalled = 0
+    var requestMediaCapturePermissionCalled = 0
 
     var savedTitleChange: String?
     var savedURL: String?
@@ -31,6 +33,8 @@ class MockEngineSessionDelegate: EngineSessionDelegate {
     var savedError: NSError?
     var savedFindInPageSelection: String?
     var savedSearchSelection: String?
+
+    var hasMediaCapturePermission = true
 
     func onTitleChange(title: String) {
         onTitleChangeCalled += 1
@@ -50,6 +54,10 @@ class MockEngineSessionDelegate: EngineSessionDelegate {
     func onProgress(progress: Double) {
         onProgressCalled += 1
         savedProgressValue = progress
+    }
+
+    func onHideProgressBar() {
+        onHideProgressCalled += 1
     }
 
     func onNavigationStateChange(canGoBack: Bool, canGoForward: Bool) {
@@ -91,6 +99,11 @@ class MockEngineSessionDelegate: EngineSessionDelegate {
     func onWillDisplayAccessoryView() -> EngineInputAccessoryView {
         onWillDisplayAcccessoryViewCalled += 1
         return .default
+    }
+
+    func requestMediaCapturePermission() -> Bool {
+        requestMediaCapturePermissionCalled += 1
+        return hasMediaCapturePermission
     }
 
     func adsSearchProviderModels() -> [EngineSearchProviderModel] {
