@@ -2,10 +2,10 @@ name: Snapshot Tests
 
 on:
   pull_request:
-    paths:
-      - 'firefox-ios/Client/Configuration/Common.xcconfig'
+    # paths:
+    #   - 'firefox-ios/Client/Configuration/Common.xcconfig'
     branches-ignore:
-      - ls-mob-3181-color-snowflakes
+      - 'ls-mob-3181-color-snowflakes'
 
 jobs:
   execute_snapshot_tests:
