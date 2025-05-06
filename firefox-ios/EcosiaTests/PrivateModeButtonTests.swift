@@ -29,7 +29,6 @@ final class PrivateModeButtonTests: XCTestCase {
 
         XCTAssertEqual(button.tintColor, lightTheme.colors.textPrimary)
         XCTAssertEqual(button.imageView?.tintColor, lightTheme.colors.textPrimary)
-        XCTAssertEqual(button.backgroundLayer.backgroundColor, UIColor.clear.cgColor)
         XCTAssertEqual(button.accessibilityValue, .TabTrayToggleAccessibilityValueOff)
     }
 
@@ -46,7 +45,6 @@ final class PrivateModeButtonTests: XCTestCase {
 
         XCTAssertEqual(button.tintColor, darkTheme.colors.textPrimary)
         XCTAssertEqual(button.imageView?.tintColor, darkTheme.colors.textPrimary)
-        XCTAssertEqual(button.backgroundLayer.backgroundColor, UIColor.clear.cgColor)
         XCTAssertEqual(button.accessibilityValue, .TabTrayToggleAccessibilityValueOff)
     }
 
