@@ -5,7 +5,7 @@ on:
     # paths:
     #   - 'firefox-ios/Client/Configuration/Common.xcconfig'
     branches-ignore:
-      - 'ls-mob-3181-color-snowflakes'
+      - 'main'
 
 jobs:
   execute_snapshot_tests:
