@@ -6,6 +6,12 @@ import Common
 import Foundation
 @preconcurrency import WebKit
 
+protocol SessionHandler: AnyObject {
+    func commitURLChange()
+    func fetchMetadata(withURL url: URL)
+    func received(error: NSError, forURL url: URL)
+}
+
 class WKEngineSession: NSObject,
                        EngineSession,
                        WKUIDelegate,
@@ -335,6 +341,15 @@ class WKEngineSession: NSObject,
         metadataFetcher.fetch(fromSession: self, url: url)
     }
 
+    func fetchMetadata(withURL url: URL) {
+        metadataFetcher.fetch(fromSession: self, url: url)
+    }
+
+    func received(error: NSError, forURL url: URL) {
+        telemetryProxy?.handleTelemetry(event: .showErrorPage(errorCode: error.code))
+        delegate?.onErrorPageRequest(error: error)
+    }
+
     // MARK: - Content scripts
 
     private func addContentScripts() {
@@ -410,7 +425,7 @@ class WKEngineSession: NSObject,
     func webView(_ webView: WKWebView,
                  didCommit navigation: WKNavigation!) {
         // TODO: FXIOS-8277 - Determine navigation calls with EngineSessionDelegate
-        telemetryProxy?.handleTelemetry(session: self, event: .pageLoadStarted)
+        telemetryProxy?.handleTelemetry(event: .pageLoadStarted)
 
         // TODO: Revisit possible duplicate delegate callbacks when navigating to URL in same origin [PR #19083] [FXIOS-8351]
         commitURLChange()
@@ -423,22 +438,22 @@ class WKEngineSession: NSObject,
         if let url = webView.url {
             metadataFetcher.fetch(fromSession: self, url: url)
         }
-        telemetryProxy?.handleTelemetry(session: self, event: .pageLoadFinished)
+        telemetryProxy?.handleTelemetry(event: .pageLoadFinished)
     }
 
     func webView(_ webView: WKWebView,
                  didFail navigation: WKNavigation!,
                  withError error: Error) {
-        telemetryProxy?.handleTelemetry(session: self, event: .didFailNavigation)
-        telemetryProxy?.handleTelemetry(session: self, event: .pageLoadCancelled)
+        telemetryProxy?.handleTelemetry(event: .didFailNavigation)
+        telemetryProxy?.handleTelemetry(event: .pageLoadCancelled)
         // TODO: FXIOS-8277 - Determine navigation calls with EngineSessionDelegate
     }
 
     func webView(_ webView: WKWebView,
                  didFailProvisionalNavigation navigation: WKNavigation!,
                  withError error: Error) {
-        telemetryProxy?.handleTelemetry(session: self, event: .didFailProvisionalNavigation)
-        telemetryProxy?.handleTelemetry(session: self, event: .pageLoadCancelled)
+        telemetryProxy?.handleTelemetry(event: .didFailProvisionalNavigation)
+        telemetryProxy?.handleTelemetry(event: .pageLoadCancelled)
         // TODO: FXIOS-8277 - Determine navigation calls with EngineSessionDelegate
     }
 
@@ -497,11 +512,11 @@ class WKEngineSession: NSObject,
     // MARK: - AdsTelemetryScriptDelegate
 
     func trackAdsClickedOnPage(providerName: String) {
-        telemetryProxy?.handleTelemetry(session: self, event: .trackAdsClickedOnPage(providerName: providerName))
+        telemetryProxy?.handleTelemetry(event: .trackAdsClickedOnPage(providerName: providerName))
     }
 
     func trackAdsFoundOnPage(providerName: String, urls: [String]) {
-        telemetryProxy?.handleTelemetry(session: self, event: .trackAdsFoundOnPage(providerName: providerName, adUrls: urls))
+        telemetryProxy?.handleTelemetry(event: .trackAdsFoundOnPage(providerName: providerName, adUrls: urls))
     }
 
     func searchProviderModels() -> [EngineSearchProviderModel] {

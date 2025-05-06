@@ -100,7 +100,7 @@ class RootViewControllerModel {
                 self.addressToolbarDelegate?.didTapMenu()
             })]
 
-        let locationViewState = LocationViewState(
+        let locationViewConfig = LocationViewConfiguration(
             searchEngineImageViewA11yId: "searchEngine",
             searchEngineImageViewA11yLabel: "Search engine icon",
             lockIconButtonA11yId: "lockButton",
@@ -121,7 +121,7 @@ class RootViewControllerModel {
             toolbarPosition: .top,
             scrollY: 0,
             isPrivate: false,
-            locationViewState: locationViewState,
+            locationViewConfiguration: locationViewConfig,
             navigationActions: [],
             pageActions: pageActions,
             browserActions: browserActions)
