@@ -46,7 +46,6 @@ private struct EcosiaDarkSemanticColors: EcosiaSemanticColors {
     var stateError: UIColor = EcosiaColor.Red30
     var stateLoading: UIColor = EcosiaColor.DarkGreen30
     var textPrimary: UIColor = EcosiaColor.White
-    var textInversePrimary: UIColor = EcosiaColor.Black // ⚠️ Mismatch
+    var textInversePrimary: UIColor = EcosiaColor.Gray90
     var textSecondary: UIColor = EcosiaColor.Gray30
-    var textTertiary: UIColor = EcosiaColor.Gray70 // ⚠️ Mismatch
 }

@@ -51,7 +51,6 @@ public protocol EcosiaSemanticColors {
     var textPrimary: UIColor { get }
     var textInversePrimary: UIColor { get }
     var textSecondary: UIColor { get }
-    var textTertiary: UIColor { get }
 }
 
 public protocol EcosiaThemeColourPalette: ThemeColourPalette {
@@ -88,5 +87,4 @@ class FakeEcosiaSemanticColors: EcosiaSemanticColors {
     var textPrimary: UIColor = .systemGray
     var textInversePrimary: UIColor = .systemGray
     var textSecondary: UIColor = .systemGray
-    var textTertiary: UIColor = .systemGray
 }
