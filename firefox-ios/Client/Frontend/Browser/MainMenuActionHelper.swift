@@ -580,8 +580,8 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
     private func getHelpAction(_ viewController: UIViewController?) -> PhotonRowActions {
         return SingleActionViewModel(title: .LegacyAppMenu.Help,
                                      iconString: StandardImageIdentifiers.Large.helpCircle) { _ in
-            
-            let rateAction = UIAlertAction(title: .localized("Yes"), style:. default) { _ in
+
+            let rateAction = UIAlertAction(title:.localized("Yes"), style:. default) { _ in
                 self.delegate?.openURLInCurrentTab(Environment.current.urlProvider.storePage)
             }
 
