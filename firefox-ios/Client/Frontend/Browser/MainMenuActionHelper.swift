@@ -120,7 +120,7 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
                 firstMiscSection
                  */
                 getLibrarySection(),
-                getLastSection()
+                getLastSection(navigationController)
             ])
 
             completion(actions)
@@ -137,7 +137,7 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
                      */
                     self.getPageActionsSection(navigationController),
                     self.getLibrarySection(),
-                    self.getLastSection()
+                    self.getLastSection(navigationController)
                 ])
 
                 DispatchQueue.main.async {
@@ -334,7 +334,7 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
         }
 
         // Ecosia: Adding help button
-        let helpAction = getHelpAction()
+        let helpAction = getHelpAction(navigationController)
         section.append(helpAction)
 
         /* Ecosia: Disable night mode feature flag
@@ -388,7 +388,7 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
         return section
     }
 
-    private func getLastSection() -> [PhotonRowActions] {
+    private func getLastSection(_ viewController: UIViewController?) -> [PhotonRowActions] {
         var section = [PhotonRowActions]()
 
         /* Ecosia: Return different items for this sections
@@ -413,9 +413,8 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
         let customizeHomePageAction = getCustomizeHomePageAction()
         append(to: &section, action: customizeHomePageAction)
 
-        let helpAction = getHelpAction()
+        let helpAction = getHelpAction(viewController)
         section.append(helpAction)
-
         return section
     }
 
@@ -578,17 +577,24 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
         }.items
     }
 
-    private func getHelpAction() -> PhotonRowActions {
+    private func getHelpAction(_ viewController: UIViewController?) -> PhotonRowActions {
         return SingleActionViewModel(title: .LegacyAppMenu.Help,
                                      iconString: StandardImageIdentifiers.Large.helpCircle) { _ in
-            /* Ecosia: Replacing Firefox Support URL with Ecosia FAQ URL
-            if let url = URL(string: "https://support.mozilla.org/products/ios") {
-                self.delegate?.openURLInNewTab(url, isPrivate: self.tabManager.selectedTab?.isPrivate ?? false)
+
+            let rateAction = UIAlertAction(title: .localized("Yes"), style: .default) { _ in
+                self.delegate?.openURLInCurrentTab(Environment.current.urlProvider.storePage)
             }
-            TelemetryWrapper.recordEvent(category: .action, method: .tap, object: .help)
-             */
-            self.delegate?.openURLInCurrentTab(Environment.current.urlProvider.faq)
-            Analytics.shared.menuClick(.help)
+
+            let helpPageAction = UIAlertAction(title: .localized("No"), style: .default) { _ in
+                self.delegate?.openURLInCurrentTab(Environment.current.urlProvider.faq)
+                // Analytics.shared.menuClick(.help)
+            }
+
+            let alertController = UIAlertController(title: nil, message: .localized("Do you enjoy Ecosia?"), preferredStyle: .actionSheet)
+            alertController.addAction(rateAction)
+            alertController.addAction(helpPageAction)
+
+            viewController?.present(alertController, animated: true)
         }.items
     }
 
