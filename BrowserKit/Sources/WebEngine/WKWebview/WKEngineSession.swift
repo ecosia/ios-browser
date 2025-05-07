@@ -18,8 +18,13 @@ class WKEngineSession: NSObject,
                        WKNavigationDelegate,
                        WKEngineWebViewDelegate,
                        MetadataFetcherDelegate,
-                       AdsTelemetryScriptDelegate {
-    weak var delegate: EngineSessionDelegate?
+                       AdsTelemetryScriptDelegate,
+                       SessionHandler {
+    weak var delegate: EngineSessionDelegate? {
+        didSet {
+            uiHandler.delegate = delegate
+        }
+    }
     private(set) var webView: WKEngineWebView
     var sessionData: WKEngineSessionData
     var telemetryProxy: EngineTelemetryProxy?
@@ -28,6 +33,13 @@ class WKEngineSession: NSObject,
     private var contentScriptManager: WKContentScriptManager
     private var metadataFetcher: MetadataFetcherHelper
     private var contentBlockingSettings: WKContentBlockingSettings = []
+    private let navigationHandler: WKNavigationHandler
+    private let uiHandler: WKUIHandler
+    public var isActive = false {
+        didSet {
+            self.uiHandler.isActive = self.isActive
+        }
+    }
 
     init?(userScriptManager: WKUserScriptManager,
           telemetryProxy: EngineTelemetryProxy? = nil,
@@ -51,11 +63,16 @@ class WKEngineSession: NSObject,
         self.sessionData = sessionData
         self.contentScriptManager = contentScriptManager
         self.metadataFetcher = metadataFetcher
+        self.navigationHandler = navigationHandler
+        self.uiHandler = uiHandler
         super.init()
 
         self.metadataFetcher.delegate = self
-        webView.uiDelegate = self
-        webView.navigationDelegate = self
+        navigationHandler.session = self
+        uiHandler.delegate = delegate
+        uiHandler.isActive = isActive
+        webView.uiDelegate = uiHandler
+        webView.navigationDelegate = navigationHandler
         webView.delegate = self
         userScriptManager.injectUserScriptsIntoWebView(webView)
         addContentScripts()
