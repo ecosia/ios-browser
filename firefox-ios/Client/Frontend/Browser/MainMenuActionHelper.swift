@@ -584,16 +584,16 @@ class MainMenuActionHelper: PhotonActionSheetProtocol,
             let rateAction = UIAlertAction(title: .localized("Yes"), style:. default) { _ in
                 self.delegate?.openURLInCurrentTab(Environment.current.urlProvider.storePage)
             }
-                        
+
             let helpPageAction = UIAlertAction(title: .localized("No"), style: .default) { _ in
                 self.delegate?.openURLInCurrentTab(Environment.current.urlProvider.faq)
                 // Analytics.shared.menuClick(.help)
             }
-            
-            let alertController = UIAlertController.init(title: nil, message: .localized("Do you enjoy Ecosia?"), preferredStyle: .actionSheet)
+
+            let alertController = UIAlertController(title: nil, message: .localized("Do you enjoy Ecosia?"), preferredStyle: .actionSheet)
             alertController.addAction(rateAction)
             alertController.addAction(helpPageAction)
-            
+
             viewController?.present(alertController, animated: true)
         }.items
     }
