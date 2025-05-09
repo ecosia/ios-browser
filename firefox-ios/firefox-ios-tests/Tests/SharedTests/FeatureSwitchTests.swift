@@ -4,6 +4,7 @@
 
 import Common
 @testable import Shared
+import Common
 import XCTest
 
 class FeatureSwitchTests: XCTestCase {
