@@ -36,7 +36,7 @@ class ContentContainer: UIView {
     var hasHomepage: Bool {
         return type == .homepage
     }
-    
+
     // Ecosia: add computed var due to cherry pick https://github.com/mozilla-mobile/firefox-ios/pull/24609
     var hasAnyHomepage: Bool {
         return hasLegacyHomepage || hasHomepage || hasPrivateHomepage
