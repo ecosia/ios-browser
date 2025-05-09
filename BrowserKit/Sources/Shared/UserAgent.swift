@@ -5,7 +5,6 @@
 import Common
 import WebKit
 import UIKit
-import Ecosia
 
 open class UserAgent {
     public static let uaBitSafari = "Safari/605.1.15"
@@ -147,8 +146,8 @@ struct CustomUserAgentConstant {
     public static let customDesktopUAForDomain = [
         "firefox.com": defaultMobileUA,
         // Ecosia: Add Ecosia URLs
-        Ecosia.URLProvider.production.domain: UserAgent.ecosiaDesktopUA,
-        Ecosia.URLProvider.staging.domain: UserAgent.ecosiaDesktopUA
+        "ecosia.org": UserAgent.ecosiaDesktopUA,
+        "ecosia-staging.xyz": UserAgent.ecosiaDesktopUA
     ]
 }
 
