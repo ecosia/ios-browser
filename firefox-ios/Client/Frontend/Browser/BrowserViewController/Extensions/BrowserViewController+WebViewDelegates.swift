@@ -178,58 +178,58 @@ extension BrowserViewController: WKUIDelegate {
     }
 
     // MARK: - Helpers
-        private func contextMenuConfiguration(for url: URL,
-                                              webView: WKWebView,
-                                              elements: ContextMenuHelper.Elements) -> UIContextMenuConfiguration {
-            return UIContextMenuConfiguration(identifier: nil,
-                                              previewProvider: contextMenuPreviewProvider(for: url, webView: webView),
-                                              actionProvider: contextMenuActionProvider(for: url,
-                                                                                        webView: webView,
-                                                                                        elements: elements))
+    private func contextMenuConfiguration(for url: URL,
+                                          webView: WKWebView,
+                                          elements: ContextMenuHelper.Elements) -> UIContextMenuConfiguration {
+        return UIContextMenuConfiguration(identifier: nil,
+                                          previewProvider: contextMenuPreviewProvider(for: url, webView: webView),
+                                          actionProvider: contextMenuActionProvider(for: url,
+                                                                                    webView: webView,
+                                                                                    elements: elements))
+    }
+
+    private func contextMenuActionProvider(for url: URL,
+                                           webView: WKWebView,
+                                           elements: ContextMenuHelper.Elements) -> UIContextMenuActionProvider {
+        return { [self] (suggested) -> UIMenu? in
+            guard let currentTab = tabManager.selectedTab else { return nil }
+
+            let isPrivate = currentTab.isPrivate
+
+            let actions = createActions(isPrivate: isPrivate,
+                                        url: url,
+                                        addTab: self.addTab,
+                                        title: elements.title,
+                                        image: elements.image,
+                                        currentTab: currentTab,
+                                        webView: webView)
+            return UIMenu(title: url.normalizedHost ?? url.absoluteString, children: actions)
         }
+    }
 
-        private func contextMenuActionProvider(for url: URL,
-                                               webView: WKWebView,
-                                               elements: ContextMenuHelper.Elements) -> UIContextMenuActionProvider {
-            return { [self] (suggested) -> UIMenu? in
-                guard let currentTab = tabManager.selectedTab else { return nil }
+    private func contextMenuPreviewProvider(for url: URL, webView: WKWebView) -> UIContextMenuContentPreviewProvider? {
+        let provider: UIContextMenuContentPreviewProvider = {
+            guard self.profile.prefs.boolForKey(PrefsKeys.ContextMenuShowLinkPreviews) ?? true else { return nil }
 
-                let isPrivate = currentTab.isPrivate
+            let previewViewController = UIViewController()
+            previewViewController.view.isUserInteractionEnabled = false
+            let clonedWebView = WKWebView(frame: webView.frame, configuration: webView.configuration)
 
-                let actions = createActions(isPrivate: isPrivate,
-                                            url: url,
-                                            addTab: self.addTab,
-                                            title: elements.title,
-                                            image: elements.image,
-                                            currentTab: currentTab,
-                                            webView: webView)
-                return UIMenu(title: url.normalizedHost ?? url.absoluteString, children: actions)
-            }
+            previewViewController.view.addSubview(clonedWebView)
+            NSLayoutConstraint.activate([
+                clonedWebView.topAnchor.constraint(equalTo: previewViewController.view.topAnchor),
+                clonedWebView.leadingAnchor.constraint(equalTo: previewViewController.view.leadingAnchor),
+                clonedWebView.trailingAnchor.constraint(equalTo: previewViewController.view.trailingAnchor),
+                clonedWebView.bottomAnchor.constraint(equalTo: previewViewController.view.bottomAnchor)
+            ])
+            clonedWebView.translatesAutoresizingMaskIntoConstraints = false
+
+            clonedWebView.load(URLRequest(url: url))
+
+            return previewViewController
         }
-
-        private func contextMenuPreviewProvider(for url: URL, webView: WKWebView) -> UIContextMenuContentPreviewProvider? {
-            let provider: UIContextMenuContentPreviewProvider = {
-                guard self.profile.prefs.boolForKey(PrefsKeys.ContextMenuShowLinkPreviews) ?? true else { return nil }
-
-                let previewViewController = UIViewController()
-                previewViewController.view.isUserInteractionEnabled = false
-                let clonedWebView = WKWebView(frame: webView.frame, configuration: webView.configuration)
-
-                previewViewController.view.addSubview(clonedWebView)
-                NSLayoutConstraint.activate([
-                    clonedWebView.topAnchor.constraint(equalTo: previewViewController.view.topAnchor),
-                    clonedWebView.leadingAnchor.constraint(equalTo: previewViewController.view.leadingAnchor),
-                    clonedWebView.trailingAnchor.constraint(equalTo: previewViewController.view.trailingAnchor),
-                    clonedWebView.bottomAnchor.constraint(equalTo: previewViewController.view.bottomAnchor)
-                ])
-                clonedWebView.translatesAutoresizingMaskIntoConstraints = false
-
-                clonedWebView.load(URLRequest(url: url))
-
-                return previewViewController
-            }
-            return provider
-        }
+        return provider
+    }
 
     func addTab(rURL: URL, isPrivate: Bool, currentTab: Tab) {
         var setAddTabAdSearchParam = false
