@@ -137,14 +137,12 @@ struct CustomUserAgentConstant {
     private static let defaultMobileUA = UserAgentBuilder.defaultMobileUserAgent().userAgent()
     private static let customDesktopUA = UserAgentBuilder.defaultDesktopUserAgent().clone(extensions: "Version/\(AppInfo.appVersion) \(UserAgent.uaBitSafari)")
 
-    public static let customMobileUAForDomain = [
-        // Ecosia: Update paypal UA
-        // "paypal.com": defaultMobileUA,
-        "paypal.com": UserAgentBuilder.defaultPayPalMobileUserAgent().userAgent(),
-        "yahoo.com": defaultMobileUA,
-        "disneyplus.com": customDesktopUA]
+    static let customMobileUAForDomain = [
+        "disneyplus.com": customDesktopUA
+    ]
 
-    public static let customDesktopUAForDomain = [
+    static let customDesktopUAForDomain = [
+        "paypal.com": defaultMobileUA,
         "firefox.com": defaultMobileUA,
         // Ecosia: Add Ecosia URLs
         Ecosia.URLProvider.production.domain: UserAgent.ecosiaDesktopUA,
