@@ -1052,7 +1052,7 @@ class BrowserCoordinator: BaseCoordinator,
     }
 }
 
-// Ecosia: BrowserCoordinator extention that implements the overlay card logic
+// Ecosia: BrowserCoordinator extension that implements the overlay card logic
 extension BrowserCoordinator {
 
     func showPendingOverlayCard(inline: Bool) {
