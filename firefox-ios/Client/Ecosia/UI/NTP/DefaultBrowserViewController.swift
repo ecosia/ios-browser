@@ -52,14 +52,6 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
         label.setContentCompressionResistancePriority(.required, for: .vertical)
         return label
     }()
-    private lazy var variationContentStack: UIStackView = {
-        let stack = UIStackView()
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        stack.axis = .vertical
-        stack.spacing = .ecosia.space._1s
-        stack.setContentCompressionResistancePriority(.required, for: .vertical)
-        return stack
-    }()
     private lazy var actionButton: UIButton = {
         let button = EcosiaPrimaryButton(windowUUID: windowUUID)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -174,28 +166,12 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
         contentView.addSubview(titleLabel)
         contentView.addSubview(actionButton)
         contentView.addSubview(skipButton)
-        view.addSubview(variationContentStack)
+        view.addSubview(triviaView)
 
-        variationContentStack.addArrangedSubview(triviaView)
         triviaView.addSubview(triviaTitleLabel)
         triviaView.addSubview(triviaDecriptionLabel)
         contentView.addSubview(beforeView)
         contentView.addSubview(afterView)
-        let padding: CGFloat = .ecosia.space._m
-        NSLayoutConstraint.activate([
-            triviaTitleLabel.topAnchor.constraint(equalTo: triviaView.topAnchor, constant: padding),
-            triviaDecriptionLabel.topAnchor.constraint(equalTo: triviaTitleLabel.bottomAnchor, constant: padding),
-            triviaDecriptionLabel.bottomAnchor.constraint(equalTo: triviaView.bottomAnchor, constant: -padding),
-            triviaTitleLabel.leadingAnchor.constraint(equalTo: triviaView.leadingAnchor, constant: padding),
-            triviaTitleLabel.trailingAnchor.constraint(equalTo: triviaView.trailingAnchor, constant: -padding),
-            triviaDecriptionLabel.leadingAnchor.constraint(equalTo: triviaView.leadingAnchor, constant: padding),
-            triviaDecriptionLabel.trailingAnchor.constraint(equalTo: triviaView.trailingAnchor, constant: -padding),
-
-            beforeView.centerYAnchor.constraint(equalTo: imageView.centerYAnchor),
-            afterView.centerYAnchor.constraint(equalTo: beforeView.centerYAnchor),
-            beforeView.centerXAnchor.constraint(equalTo: imageView.centerXAnchor, constant: -screenWidth/4),
-            afterView.centerXAnchor.constraint(equalTo: imageView.centerXAnchor, constant: screenWidth/4)
-        ])
     }
 
     private func setupConstraints() {
@@ -219,11 +195,11 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
             titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: .ecosia.space._m),
             titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -.ecosia.space._m),
 
-            variationContentStack.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: .ecosia.space._m),
-            variationContentStack.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
-            variationContentStack.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor),
+            triviaView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: .ecosia.space._m),
+            triviaView.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
+            triviaView.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor),
 
-            actionButton.topAnchor.constraint(equalTo: variationContentStack.bottomAnchor, constant: .ecosia.space._1l).priority(.defaultLow),
+            actionButton.topAnchor.constraint(equalTo: triviaView.bottomAnchor, constant: .ecosia.space._1l).priority(.defaultLow),
             actionButton.heightAnchor.constraint(greaterThanOrEqualToConstant: UX.buttonHeight),
             actionButton.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
             actionButton.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor),
@@ -233,6 +209,19 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
             skipButton.trailingAnchor.constraint(equalTo: actionButton.trailingAnchor),
             skipButton.heightAnchor.constraint(greaterThanOrEqualToConstant: UX.buttonHeight),
             skipButton.bottomAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.bottomAnchor, constant: -.ecosia.space._m),
+
+            triviaTitleLabel.topAnchor.constraint(equalTo: triviaView.topAnchor, constant: .ecosia.space._m),
+            triviaDecriptionLabel.topAnchor.constraint(equalTo: triviaTitleLabel.bottomAnchor, constant: .ecosia.space._m),
+            triviaDecriptionLabel.bottomAnchor.constraint(equalTo: triviaView.bottomAnchor, constant: -.ecosia.space._m),
+            triviaTitleLabel.leadingAnchor.constraint(equalTo: triviaView.leadingAnchor, constant: .ecosia.space._m),
+            triviaTitleLabel.trailingAnchor.constraint(equalTo: triviaView.trailingAnchor, constant: -.ecosia.space._m),
+            triviaDecriptionLabel.leadingAnchor.constraint(equalTo: triviaView.leadingAnchor, constant: .ecosia.space._m),
+            triviaDecriptionLabel.trailingAnchor.constraint(equalTo: triviaView.trailingAnchor, constant: -.ecosia.space._m),
+
+            beforeView.centerYAnchor.constraint(equalTo: imageView.centerYAnchor),
+            afterView.centerYAnchor.constraint(equalTo: beforeView.centerYAnchor),
+            beforeView.centerXAnchor.constraint(equalTo: imageView.centerXAnchor, constant: -screenWidth/4),
+            afterView.centerXAnchor.constraint(equalTo: imageView.centerXAnchor, constant: screenWidth/4)
         ])
     }
 
