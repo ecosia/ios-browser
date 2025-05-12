@@ -28,7 +28,7 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
         return view
     }()
     private lazy var imageView: UIImageView = {
-        let view = UIImageView(image: .init(named: "defaultBrowserVarBC"))
+        let view = UIImageView(image: .init(named: "defaultBrowser"))
         view.contentMode = .scaleAspectFill
         view.clipsToBounds = true
         view.translatesAutoresizingMaskIntoConstraints = false
