@@ -44,7 +44,7 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
     }()
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
-        label.text = .localized(.defaultBrowserPromptExperimentTitleVarBC)
+        label.text = .localized(.defaultBrowserPromptExperimentTitle)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .preferredFont(forTextStyle: .title2).bold()
         label.adjustsFontForContentSizeCategory = true
@@ -63,7 +63,7 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
     private lazy var actionButton: UIButton = {
         let button = EcosiaPrimaryButton(windowUUID: windowUUID)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle(.localized(.defaultBrowserPromptExperimentButtonVarABC), for: .normal)
+        button.setTitle(.localized(.defaultBrowserPromptExperimentButton), for: .normal)
         button.titleLabel?.font = .preferredFont(forTextStyle: .body)
         button.titleLabel?.adjustsFontForContentSizeCategory = true
         button.layer.cornerRadius = UX.buttonHeight/2
@@ -90,15 +90,15 @@ final class DefaultBrowserViewController: UIViewController, Themeable {
     }()
     private lazy var triviaTitleLabel: UILabel = {
         let label = UILabel()
-        label.text = .localized(.defaultBrowserPromptExperimentDescriptionTitleVarBC)
+        label.text = .localized(.defaultBrowserPromptExperimentDescriptionTitle)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .preferredFont(forTextStyle: .body).semibold()
         return label
     }()
     private lazy var triviaDecriptionLabel: UILabel = {
         let label = UILabel()
-        let text = String.localized(.defaultBrowserPromptExperimentDescriptionVarB)
-        let highlight = String.localized(.defaultBrowserPromptExperimentDescriptionHighlightVarB)
+        let text = String.localized(.defaultBrowserPromptExperimentDescription)
+        let highlight = String.localized(.defaultBrowserPromptExperimentDescriptionHighlight)
         label.attributedText = text.semiboldHighlight(highlight)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.adjustsFontForContentSizeCategory = true
