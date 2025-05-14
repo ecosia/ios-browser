@@ -8,69 +8,124 @@ internal import SnowplowTracker
 class CustomNetworkConnection: NSObject, NetworkConnection {
     var urlEndpoint: URL? {
         let host = Environment.current.urlProvider.snowplow
-        return URL(string: "https://\(host)/com.snowplowanalytics.snowplow/tp2")
+        return URL(string: host)?.appendingPathComponent(kSPEndpointPost)
     }
+    private var dataOperationQueue = OperationQueue()
+    private lazy var urlSession: URLSession = {
+        let sessionConfig: URLSessionConfiguration = .default
+        sessionConfig.timeoutIntervalForRequest = TimeInterval(emitTimeout)
+        sessionConfig.timeoutIntervalForResource = TimeInterval(emitTimeout)
+
+        let urlSession = URLSession(configuration: sessionConfig)
+        return urlSession
+    }()
     var httpMethod: HttpMethodOptions { .post }
 
     func sendRequests(_ requests: [Request]) -> [RequestResult] {
-        guard let endpoint = urlEndpoint else {
-            return requests.map {
-                RequestResult(statusCode: nil, oversize: false, storeIds: $0.emitterEventIds)
+        let urlRequests = requests.map {
+            var request = buildPost($0)
+            // Cloudflare Access headers
+            if let auth = Environment.current.auth {
+                request.setValue(auth.id, forHTTPHeaderField: CloudflareKeyProvider.clientId)
+                request.setValue(auth.secret, forHTTPHeaderField: CloudflareKeyProvider.clientSecret)
             }
+            return request
         }
 
         var results: [RequestResult] = []
-        let session = URLSession(configuration: .default)
-        let semaphore = DispatchSemaphore(value: 0)
+        if requests.count == 1 {
+            if let request = requests.first, let urlRequest = urlRequests.first {
+                let result = makeRequest(
+                    request: request,
+                    urlRequest: urlRequest,
+                    urlSession: urlSession
+                )
 
-        for request in requests {
-            var urlRequest = URLRequest(url: endpoint)
-            urlRequest.httpMethod = "POST"
-            urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
-            urlRequest.cachePolicy = .reloadIgnoringLocalCacheData
-            if let payload = request.payload {
-                urlRequest.httpBody = encodePayload(payload)
+                results.append(result)
             }
+        }
+        // if there are more than 1 request, use the operation queue
+        else if requests.count > 1 {
+            for (request, urlRequest) in zip(requests, urlRequests) {
+                dataOperationQueue.addOperation({
+                    let result = self.makeRequest(
+                        request: request,
+                        urlRequest: urlRequest,
+                        urlSession: self.urlSession
+                    )
 
-            // Cloudflare Access headers
-            if let auth = Environment.current.auth {
-                urlRequest.setValue(auth.id, forHTTPHeaderField: CloudflareKeyProvider.clientId)
-                urlRequest.setValue(auth.secret, forHTTPHeaderField: CloudflareKeyProvider.clientSecret)
+                    objc_sync_enter(self)
+                    results.append(result)
+                    objc_sync_exit(self)
+                })
             }
-
-            var statusCode: Int?
-            let storeIds = request.emitterEventIds
-            var isOversize = request.oversize
-
-            let task = session.dataTask(with: urlRequest) { _, response, error in
-                defer { semaphore.signal() }
-
-                if let httpResponse = response as? HTTPURLResponse {
-                    statusCode = httpResponse.statusCode
-                }
-            }
-
-            task.resume()
-            _ = semaphore.wait(timeout: .now() + 5)
-
-            let result = RequestResult(
-                statusCode: statusCode.map { NSNumber(value: $0) },
-                oversize: false,
-                storeIds: storeIds
-            )
-
-            results.append(result)
+            dataOperationQueue.waitUntilAllOperationsAreFinished()
         }
 
         return results
     }
 
-    private func encodePayload(_ payload: Payload) -> Data? {
-        let dict = payload.dictionary
-        guard let data = try? JSONSerialization.data(withJSONObject: dict, options: []) else {
-            return nil
+    // MARK: Copied from SnowplowTraqcker internals
+    let kSPEndpointPost = "/com.snowplowanalytics.snowplow/tp2"
+    private let kSPAcceptContentHeader = "text/html, application/x-www-form-urlencoded, text/plain, image/gif"
+    private let kSPContentTypeHeader = "application/json; charset=utf-8"
+    private var emitTimeout = TimeInterval(30)
+    private func buildPost(_ request: Request) -> URLRequest {
+        var requestData: Data?
+        do {
+            requestData = try JSONSerialization.data(withJSONObject: request.payload?.dictionary ?? [:], options: [])
+        } catch {
         }
-        return data
+        let url = URL(string: urlEndpoint!.absoluteString)!
+        var urlRequest = URLRequest(url: url)
+        urlRequest.setValue("\(NSNumber(value: requestData?.count ?? 0).stringValue)", forHTTPHeaderField: "Content-Length")
+        urlRequest.setValue(kSPAcceptContentHeader, forHTTPHeaderField: "Accept")
+        urlRequest.setValue(kSPContentTypeHeader, forHTTPHeaderField: "Content-Type")
+        urlRequest.httpMethod = "POST"
+        urlRequest.httpBody = requestData
+        return urlRequest
+    }
+
+    private func urlEncode(_ dictionary: [String: Any]) -> String {
+        return dictionary.map { (key: String, value: Any) in
+            "\(self.urlEncode(key))=\(self.urlEncode(String(describing: value)))"
+        }.joined(separator: "&")
+    }
+
+    private func urlEncode(_ string: String) -> String {
+        var allowedCharSet = CharacterSet.urlQueryAllowed
+        allowedCharSet.remove(charactersIn: "!*'\"();:@&=+$,/?%#[]% ")
+        return string.addingPercentEncoding(withAllowedCharacters: allowedCharSet) ?? string
+    }
+
+    private func makeRequest(request: Request, urlRequest: URLRequest, urlSession: URLSession?) -> RequestResult {
+        var httpResponse: HTTPURLResponse?
+        var connectionError: Error?
+        let sem = DispatchSemaphore(value: 0)
+
+        urlSession?.dataTask(with: urlRequest) { data, urlResponse, error in
+            connectionError = error
+            httpResponse = urlResponse as? HTTPURLResponse
+            sem.signal()
+        }.resume()
+
+        _ = sem.wait(timeout: .distantFuture)
+        var statusCode: NSNumber?
+        if let httpResponse = httpResponse { statusCode = NSNumber(value: httpResponse.statusCode) }
+
+        let result = RequestResult(statusCode: statusCode, oversize: request.oversize, storeIds: request.emitterEventIds)
+        if !result.isSuccessful {
+            logError(message: "Connection error: " + (connectionError?.localizedDescription ?? "-"))
+        }
+
+        return result
+    }
+
+    private func logError(message: String,
+                          file: String = #file,
+                          line: Int = #line,
+                          function: String = #function) {
+        print("[TEST] \(file):\(line) : \(function)", message)
     }
 }
 
@@ -97,7 +152,8 @@ open class Analytics {
         let networkConfig = NetworkConfiguration(networkConnection: CustomNetworkConnection())
 
         return Snowplow.createTracker(namespace: namespace,
-                                      network: networkConfig,//.init(endpoint: Environment.current.urlProvider.snowplow),
+                                      network: networkConfig,
+//                                      network: .init(endpoint: Environment.current.urlProvider.snowplow),
                                       configurations: [Self.trackerConfiguration,
                                                        Self.subjectConfiguration,
                                                        Self.appInstallTrackingPluginConfiguration,

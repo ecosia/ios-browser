@@ -38,7 +38,9 @@ public enum URLProvider {
     }
 
     public var snowplow: String {
-        return "ecosia-staging.xyz/analytics-test-micro"
+//        return "http://local.ecosia.org:9090"
+        return "https://ecosia-staging.xyz/analytics-test-micro"
+
 //        switch self {
 //        case .production:
 //            return "sp.ecosia.org"
