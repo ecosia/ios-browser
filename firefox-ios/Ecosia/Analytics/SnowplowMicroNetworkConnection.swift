@@ -24,6 +24,7 @@ class SnowplowMicroNetworkConnection: NSObject, NetworkConnection {
         let sessionConfig: URLSessionConfiguration = .default
         sessionConfig.timeoutIntervalForRequest = TimeInterval(EmitterDefaults.emitTimeout)
         sessionConfig.timeoutIntervalForResource = TimeInterval(EmitterDefaults.emitTimeout)
+        sessionConfig.protocolClasses = nil
 
         let urlSession = URLSession(configuration: sessionConfig)
         return urlSession
@@ -113,6 +114,8 @@ private class Internals {
         var connectionError: Error?
         let sem = DispatchSemaphore(value: 0)
 
+        logInfo(message: "Executing request with url: \(urlRequest.url?.absoluteString ?? "<unknown>")")
+        logInfo(message: "Body: \(String(decoding: urlRequest.httpBody ?? .init(), as: UTF8.self))")
         urlSession?.dataTask(with: urlRequest) { data, urlResponse, error in
             connectionError = error
             httpResponse = urlResponse as? HTTPURLResponse
@@ -122,6 +125,7 @@ private class Internals {
         _ = sem.wait(timeout: .distantFuture)
         var statusCode: NSNumber?
         if let httpResponse = httpResponse { statusCode = NSNumber(value: httpResponse.statusCode) }
+        logInfo(message: "Response status: \(httpResponse?.statusCode ?? -999))")
 
         let result = RequestResult(statusCode: statusCode, oversize: request.oversize, storeIds: request.emitterEventIds)
         if !result.isSuccessful {
@@ -131,10 +135,17 @@ private class Internals {
         return result
     }
 
+    static func logInfo(message: String,
+                        file: String = #file,
+                        line: Int = #line,
+                        function: String = #function) {
+        print("ℹ️ [TEST] \(file):\(line) : \(function)", message)
+    }
+
     static func logError(message: String,
                          file: String = #file,
                          line: Int = #line,
                          function: String = #function) {
-        print("[TEST] \(file):\(line) : \(function)", message)
+        print("⚠️ [TEST] \(file):\(line) : \(function)", message)
     }
 }

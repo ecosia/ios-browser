@@ -38,9 +38,16 @@ public enum URLProvider {
     }
 
     public var snowplowMicro: String? {
+        // TODO: Leave only staging, others are for debugging
         if case .staging = self {
-//            return "https://ecosia-staging.xyz/analytics-test-micro"
-            return "http://local.ecosia.org:9090"
+            // Staging Micro
+            return "https://ecosia-staging.xyz/analytics-test-micro"
+            // Mini
+//            return "https://org-ecosia-prod1.mini.snplow.net"
+            // Local Micro (with custom connection)
+//            return "http://local.ecosia.org:9090"
+            // Force to use regular library on staging (using mini with no custom connection)
+//            return nil
         }
         return nil
     }
@@ -51,6 +58,8 @@ public enum URLProvider {
             return "sp.ecosia.org"
         case .staging:
             return "org-ecosia-prod1.mini.snplow.net"
+            // Staging Micro
+//            return "ecosia-staging.xyz/analytics-test-micro"
         }
     }
 
