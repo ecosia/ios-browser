@@ -37,16 +37,21 @@ public enum URLProvider {
         }
     }
 
-    public var snowplow: String {
-//        return "http://local.ecosia.org:9090"
-        return "https://ecosia-staging.xyz/analytics-test-micro"
+    public var snowplowMicro: String? {
+        if case .staging = self {
+//            return "https://ecosia-staging.xyz/analytics-test-micro"
+            return "http://local.ecosia.org:9090"
+        }
+        return nil
+    }
 
-//        switch self {
-//        case .production:
-//            return "sp.ecosia.org"
-//        case .staging:
-//            return "org-ecosia-prod1.mini.snplow.net"
-//        }
+    public var snowplow: String {
+        switch self {
+        case .production:
+            return "sp.ecosia.org"
+        case .staging:
+            return "org-ecosia-prod1.mini.snplow.net"
+        }
     }
 
     var unleash: String {

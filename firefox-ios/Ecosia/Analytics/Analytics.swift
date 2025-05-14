@@ -5,130 +5,6 @@
 import Foundation
 internal import SnowplowTracker
 
-class CustomNetworkConnection: NSObject, NetworkConnection {
-    var urlEndpoint: URL? {
-        let host = Environment.current.urlProvider.snowplow
-        return URL(string: host)?.appendingPathComponent(kSPEndpointPost)
-    }
-    private var dataOperationQueue = OperationQueue()
-    private lazy var urlSession: URLSession = {
-        let sessionConfig: URLSessionConfiguration = .default
-        sessionConfig.timeoutIntervalForRequest = TimeInterval(emitTimeout)
-        sessionConfig.timeoutIntervalForResource = TimeInterval(emitTimeout)
-
-        let urlSession = URLSession(configuration: sessionConfig)
-        return urlSession
-    }()
-    var httpMethod: HttpMethodOptions { .post }
-
-    func sendRequests(_ requests: [Request]) -> [RequestResult] {
-        let urlRequests = requests.map {
-            var request = buildPost($0)
-            // Cloudflare Access headers
-            if let auth = Environment.current.auth {
-                request.setValue(auth.id, forHTTPHeaderField: CloudflareKeyProvider.clientId)
-                request.setValue(auth.secret, forHTTPHeaderField: CloudflareKeyProvider.clientSecret)
-            }
-            return request
-        }
-
-        var results: [RequestResult] = []
-        if requests.count == 1 {
-            if let request = requests.first, let urlRequest = urlRequests.first {
-                let result = makeRequest(
-                    request: request,
-                    urlRequest: urlRequest,
-                    urlSession: urlSession
-                )
-
-                results.append(result)
-            }
-        }
-        // if there are more than 1 request, use the operation queue
-        else if requests.count > 1 {
-            for (request, urlRequest) in zip(requests, urlRequests) {
-                dataOperationQueue.addOperation({
-                    let result = self.makeRequest(
-                        request: request,
-                        urlRequest: urlRequest,
-                        urlSession: self.urlSession
-                    )
-
-                    objc_sync_enter(self)
-                    results.append(result)
-                    objc_sync_exit(self)
-                })
-            }
-            dataOperationQueue.waitUntilAllOperationsAreFinished()
-        }
-
-        return results
-    }
-
-    // MARK: Copied from SnowplowTraqcker internals
-    let kSPEndpointPost = "/com.snowplowanalytics.snowplow/tp2"
-    private let kSPAcceptContentHeader = "text/html, application/x-www-form-urlencoded, text/plain, image/gif"
-    private let kSPContentTypeHeader = "application/json; charset=utf-8"
-    private var emitTimeout = TimeInterval(30)
-    private func buildPost(_ request: Request) -> URLRequest {
-        var requestData: Data?
-        do {
-            requestData = try JSONSerialization.data(withJSONObject: request.payload?.dictionary ?? [:], options: [])
-        } catch {
-        }
-        let url = URL(string: urlEndpoint!.absoluteString)!
-        var urlRequest = URLRequest(url: url)
-        urlRequest.setValue("\(NSNumber(value: requestData?.count ?? 0).stringValue)", forHTTPHeaderField: "Content-Length")
-        urlRequest.setValue(kSPAcceptContentHeader, forHTTPHeaderField: "Accept")
-        urlRequest.setValue(kSPContentTypeHeader, forHTTPHeaderField: "Content-Type")
-        urlRequest.httpMethod = "POST"
-        urlRequest.httpBody = requestData
-        return urlRequest
-    }
-
-    private func urlEncode(_ dictionary: [String: Any]) -> String {
-        return dictionary.map { (key: String, value: Any) in
-            "\(self.urlEncode(key))=\(self.urlEncode(String(describing: value)))"
-        }.joined(separator: "&")
-    }
-
-    private func urlEncode(_ string: String) -> String {
-        var allowedCharSet = CharacterSet.urlQueryAllowed
-        allowedCharSet.remove(charactersIn: "!*'\"();:@&=+$,/?%#[]% ")
-        return string.addingPercentEncoding(withAllowedCharacters: allowedCharSet) ?? string
-    }
-
-    private func makeRequest(request: Request, urlRequest: URLRequest, urlSession: URLSession?) -> RequestResult {
-        var httpResponse: HTTPURLResponse?
-        var connectionError: Error?
-        let sem = DispatchSemaphore(value: 0)
-
-        urlSession?.dataTask(with: urlRequest) { data, urlResponse, error in
-            connectionError = error
-            httpResponse = urlResponse as? HTTPURLResponse
-            sem.signal()
-        }.resume()
-
-        _ = sem.wait(timeout: .distantFuture)
-        var statusCode: NSNumber?
-        if let httpResponse = httpResponse { statusCode = NSNumber(value: httpResponse.statusCode) }
-
-        let result = RequestResult(statusCode: statusCode, oversize: request.oversize, storeIds: request.emitterEventIds)
-        if !result.isSuccessful {
-            logError(message: "Connection error: " + (connectionError?.localizedDescription ?? "-"))
-        }
-
-        return result
-    }
-
-    private func logError(message: String,
-                          file: String = #file,
-                          line: Int = #line,
-                          function: String = #function) {
-        print("[TEST] \(file):\(line) : \(function)", message)
-    }
-}
-
 open class Analytics {
     static let installSchema = "iglu:org.ecosia/ios_install_event/jsonschema/1-0-0"
     private static let abTestSchema = "iglu:org.ecosia/abtest_context/jsonschema/1-0-1"
@@ -139,21 +15,17 @@ open class Analytics {
     private static let namespace = "ios_sp"
 
     private static var tracker: TrackerController {
+        let urlProvider = Environment.current.urlProvider
+        var networkConfig = NetworkConfiguration(endpoint: urlProvider.snowplow)
 
-//        let env = Environment.current
-//        var network = NetworkConfiguration(endpoint: env.urlProvider.snowplow)
-//        if let auth = env.auth {
-//            network = network.requestHeaders([
-//                CloudflareKeyProvider.clientId: auth.id,
-//                CloudflareKeyProvider.clientSecret: auth.secret
-//            ])
-//        }
-
-        let networkConfig = NetworkConfiguration(networkConnection: CustomNetworkConnection())
+        // To enable automated tests, we sometimes need to use the Micro Instance
+        // TODO: How might we better control when to use this?
+        if urlProvider.snowplowMicro != nil {
+            networkConfig = NetworkConfiguration(networkConnection: SnowplowMicroNetworkConnection())
+        }
 
         return Snowplow.createTracker(namespace: namespace,
                                       network: networkConfig,
-//                                      network: .init(endpoint: Environment.current.urlProvider.snowplow),
                                       configurations: [Self.trackerConfiguration,
                                                        Self.subjectConfiguration,
                                                        Self.appInstallTrackingPluginConfiguration,
