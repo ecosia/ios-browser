@@ -8,6 +8,8 @@ settings:
     es: es-ES
     es_MX: es-MX
     en_AU: en-AU
+    ar_SA: ar-SA
+    en_CA: en-CA
 
 filters:
 
