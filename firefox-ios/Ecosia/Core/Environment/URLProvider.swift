@@ -41,13 +41,13 @@ public enum URLProvider {
         // TODO: Leave only staging, others are for debugging
         if case .staging = self {
             // Staging Micro
-            return "https://ecosia-staging.xyz/analytics-test-micro"
+//            return "https://ecosia-staging.xyz/analytics-test-micro"
             // Mini
 //            return "https://org-ecosia-prod1.mini.snplow.net"
             // Local Micro (with custom connection)
 //            return "http://local.ecosia.org:9090"
             // Force to use regular library on staging (using mini with no custom connection)
-//            return nil
+            return nil
         }
         return nil
     }
@@ -57,9 +57,11 @@ public enum URLProvider {
         case .production:
             return "sp.ecosia.org"
         case .staging:
-            return "org-ecosia-prod1.mini.snplow.net"
+//            return "org-ecosia-prod1.mini.snplow.net"
             // Staging Micro
-//            return "ecosia-staging.xyz/analytics-test-micro"
+            return "ecosia-staging.xyz/analytics-test-micro"
+            // Local Micro
+//            return "http://local.ecosia.org:9090"
         }
     }
 

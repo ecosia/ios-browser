@@ -18,21 +18,19 @@ open class Analytics {
         let urlProvider = Environment.current.urlProvider
         var networkConfig = NetworkConfiguration(endpoint: urlProvider.snowplow)
 
-        // Even if Snowplow includes the headers like this,
-        // The Cloudflare authentication redirect that sets cookies is not properly handled.
-        // TODO: Remove this if confirmed this way doesn't work
+        // Adding Cloudflare headers if needed
         if let auth = Environment.current.auth {
             networkConfig = networkConfig.requestHeaders([
-                auth.id: CloudflareKeyProvider.clientId,
-                auth.secret: CloudflareKeyProvider.clientSecret
+                CloudflareKeyProvider.clientId: auth.id,
+                CloudflareKeyProvider.clientSecret: auth.secret
             ])
         }
 
         // To enable automated tests, we sometimes need to use the Micro Instance
         // TODO: How might we better control when to use this?
-        if urlProvider.snowplowMicro != nil {
-            networkConfig = NetworkConfiguration(networkConnection: SnowplowMicroNetworkConnection())
-        }
+//        if urlProvider.snowplowMicro != nil {
+//            networkConfig = NetworkConfiguration(networkConnection: SnowplowMicroNetworkConnection())
+//        }
 
         return Snowplow.createTracker(namespace: namespace,
                                       network: networkConfig,
