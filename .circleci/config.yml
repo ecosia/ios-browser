@@ -110,5 +110,5 @@ workflows:
           filters:
             branches:
               only: 
-                - main
+                - ls-mob-3181-color-snowflakes
           context: napps

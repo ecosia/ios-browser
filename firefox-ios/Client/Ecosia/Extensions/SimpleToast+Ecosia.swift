@@ -44,7 +44,7 @@ extension SimpleToast {
         stack.distribution = .fill
         stack.spacing = 8
         stack.layer.cornerRadius = 10
-        stack.backgroundColor = theme.colors.ecosia.backgroundQuaternary
+        stack.backgroundColor = theme.colors.ecosia.buttonBackgroundPrimaryActive
 
         let toast = UILabel()
         toast.text = text
@@ -61,7 +61,7 @@ extension SimpleToast {
         switch image {
         case let .named(name):
             imageView = UIImageView(image: .init(named: name)?.withRenderingMode(.alwaysTemplate))
-            imageView.tintColor = theme.colors.ecosia.toastImageTint
+            imageView.tintColor = theme.colors.ecosia.iconInverseStrong
             imageView.contentMode = .scaleAspectFit
             imageView.setContentHuggingPriority(.required, for: .horizontal)
         case let .view(view):
