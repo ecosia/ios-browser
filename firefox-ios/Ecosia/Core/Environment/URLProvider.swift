@@ -59,7 +59,7 @@ public enum URLProvider {
         case .staging:
 //            return "org-ecosia-prod1.mini.snplow.net"
             // Staging Micro
-            return "ecosia-staging.xyz/analytics-test-micro"
+            return "https://www.ecosia-staging.xyz/analytics-test-micro"
             // Local Micro
 //            return "http://local.ecosia.org:9090"
         }
