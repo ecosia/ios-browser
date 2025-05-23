@@ -78,14 +78,29 @@ jobs:
           name: Upload to Browserstack
           command: bundle exec fastlane upload_to_browserstack
 
-  debug-browserstack-app-id:
-    docker:
-      - image: cimg/base:stable
-    steps:
-      - run:
-          name: Print BrowserStack App ID
-          command: echo "$BROWSERSTACK_APP_ID"
-      - jira/notify:
+execute-critical-health-checks-ios:
+  docker:
+    - image: cimg/base:stable
+  steps:
+    - checkout
+    - run:
+        name: Clone mobile acceptance tests
+        command: |
+          git clone https://github.com/ecosia/acceptance-testing.git
+    - run:
+        name: Install dependencies
+        command: |
+          echo "Installing required dependencies..."
+          sudo apt-get update
+          sudo apt-get install -y maven jq curl
+    - run:
+        name: Run iOS Critical Health Checks on BrowserStack
+        command: |
+          echo "Running iOS tests on BrowserStack..."
+          echo "Using App URL: $BROWSERSTACK_APP_ID"
+          cd acceptance-testing
+          mvn test -PiOSCHCTests -DBStackIOSAppUrl="$BROWSERSTACK_APP_ID"
+    - jira/notify:
           issue_regexp: "([A-Za-z]{2,30}-[0-9]+)"
           pipeline_id: "<< pipeline.id >>"
           pipeline_number: "<< pipeline.number >>"
@@ -122,9 +137,7 @@ workflows:
                 - main
           context: napps
       
-  test-browserstack-upload-debug:
-    jobs:
-      - build-and-deploy-firebase-and-browserstack
-      - debug-browserstack-app-id:
+      - execute-critical-health-checks-ios:
           requires:
             - build-and-deploy-firebase-and-browserstack
+          context: napps
