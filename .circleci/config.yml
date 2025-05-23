@@ -78,29 +78,26 @@ jobs:
           name: Upload to Browserstack
           command: bundle exec fastlane upload_to_browserstack
 
-execute-critical-health-checks-ios:
-  docker:
-    - image: cimg/base:stable
-  steps:
-    - checkout
-    - run:
-        name: Clone mobile acceptance tests
-        command: |
+  execute-critical-health-checks-ios:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - run: |
+          echo "Cloning mobile acceptance tests..."
           git clone https://github.com/ecosia/acceptance-testing.git
-    - run:
-        name: Install dependencies
-        command: |
-          echo "Installing required dependencies..."
-          sudo apt-get update
-          sudo apt-get install -y maven jq curl
-    - run:
-        name: Run iOS Critical Health Checks on BrowserStack
-        command: |
+      - run:
+          name: Install dependencies
+          command: |
+            echo "Installing required dependencies..."
+            sudo apt-get update
+            sudo apt-get install -y maven jq curl
+      - run: |
           echo "Running iOS tests on BrowserStack..."
           echo "Using App URL: $BROWSERSTACK_APP_ID"
           cd acceptance-testing
           mvn test -PiOSCHCTests -DBStackIOSAppUrl="$BROWSERSTACK_APP_ID"
-    - jira/notify:
+      - jira/notify:
           issue_regexp: "([A-Za-z]{2,30}-[0-9]+)"
           pipeline_id: "<< pipeline.id >>"
           pipeline_number: "<< pipeline.number >>"
