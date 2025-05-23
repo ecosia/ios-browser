@@ -81,7 +81,7 @@ jobs:
   
   execute-critical-health-checks-ios:
     docker:
-      - image: cimg/base:stable
+      - image: cimg/openjdk:11.0
     steps:
       - checkout
       - run: |
