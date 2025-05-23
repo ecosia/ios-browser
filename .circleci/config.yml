@@ -87,12 +87,6 @@ jobs:
       - run: |
           echo "Cloning mobile acceptance tests..."
           git clone https://github.com/ecosia/acceptance-testing.git
-      - run:
-          name: Install dependencies
-          command: |
-            echo "Installing required dependencies..."
-            sudo apt-get update
-            sudo apt-get install -y maven jq curl
       - run: |
           echo "Running iOS tests on BrowserStack..."
           echo "Using App URL: $BROWSERSTACK_APP_ID"
