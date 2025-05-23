@@ -4,18 +4,19 @@ setup: true
 
 environment_common: &environment_common
   environment:
-    CI: true
+    CI: "true"
 
 macos_common: &macos_common
   macos:
-    xcode: "16.2"
+    xcode: 16.2.0
   resource_class: macos.m1.medium.gen1
 
 jobs:
 
   build-and-deploy-testflight-beta:
-    <<: *environment_common
-    <<: *macos_common
+    <<: 
+      - *environment_common
+      - *macos_common
     steps:
       - checkout
       - macos/switch-ruby:
@@ -41,10 +42,10 @@ jobs:
       - run:
           name: Build and deploy to Testflight
           command: bundle exec fastlane testflight_beta
-
   build-and-deploy-firebase-and-browserstack:
-    <<: *environment_common
-    <<: *macos_common
+    <<: 
+      - *environment_common
+      - *macos_common
     steps:
       - checkout
       - macos/switch-ruby:
@@ -76,10 +77,28 @@ jobs:
       - run:
           name: Upload to Browserstack
           command: bundle exec fastlane upload_to_browserstack
-      - jira/notify:
-          issue_regexp: "([A-Za-z]{2,30}-[0-9]+)"
-          pipeline_id: << pipeline.id >>
-          pipeline_number: << pipeline.number >>
+
+      - run:
+          name: Save BrowserStack App ID
+          command: |
+            echo $BROWSERSTACK_APP_ID > browserstack_app_id.txt
+            cat browserstack_app_id.txt  # Just to verify in logs
+
+  debug-browserstack-app-id:
+    docker:
+      - image: cimg/base:stable
+    steps:
+        - attach_workspace:
+            at: ~/workspace
+
+        - run:
+            name: Print BrowserStack App ID
+            command: |
+              echo "BROWSERSTACK_APP_ID file contents:"
+        - jira/notify:
+            issue_regexp: "([A-Za-z]{2,30}-[0-9]+)"
+            pipeline_id: << pipeline.id >>
+            pipeline_number: << pipeline.number >>
 orbs:
   path-filtering: circleci/path-filtering@0.1.1
   macos: circleci/macos@2
@@ -112,3 +131,10 @@ workflows:
               only: 
                 - main
           context: napps
+      
+  test-browserstack-upload-debug:
+    jobs:
+      - build-and-deploy-firebase-and-browserstack
+      - debug-browserstack-app-id:
+          requires:
+            - build-and-deploy-firebase-and-browserstack
