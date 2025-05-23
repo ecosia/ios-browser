@@ -42,11 +42,11 @@ jobs:
       - run:
           name: Build and deploy to Testflight
           command: bundle exec fastlane testflight_beta
-  build-and-deploy-firebase-and-browserstack:
-    <<: 
-      - *environment_common
-      - *macos_common
-    steps:
+build-and-deploy-firebase-and-browserstack:
+  <<: 
+    - *environment_common
+    - *macos_common
+  steps:
       - checkout
       - macos/switch-ruby:
           version: "3.2"
@@ -78,7 +78,7 @@ jobs:
           name: Upload to Browserstack
           command: bundle exec fastlane upload_to_browserstack
 
-  execute-critical-health-checks-ios:
+execute-critical-health-checks-ios:
     docker:
       - image: cimg/base:stable
     steps:
