@@ -131,9 +131,14 @@ workflows:
             branches:
               only: 
                 - main
+                - MOB-3448-ci-job-ios-chc
           context: napps
-      
       - execute-critical-health-checks-ios:
           requires:
             - build-and-deploy-firebase-and-browserstack
+          filters:
+            branches:
+              only: 
+                - main
+                - MOB-3448-ci-job-ios-chc
           context: napps
