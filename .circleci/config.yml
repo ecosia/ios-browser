@@ -78,27 +78,17 @@ jobs:
           name: Upload to Browserstack
           command: bundle exec fastlane upload_to_browserstack
 
-      - run:
-          name: Save BrowserStack App ID
-          command: |
-            echo $BROWSERSTACK_APP_ID > browserstack_app_id.txt
-            cat browserstack_app_id.txt  # Just to verify in logs
-
   debug-browserstack-app-id:
     docker:
       - image: cimg/base:stable
     steps:
-        - attach_workspace:
-            at: ~/workspace
-
-        - run:
-            name: Print BrowserStack App ID
-            command: |
-              echo "BROWSERSTACK_APP_ID file contents:"
-        - jira/notify:
-            issue_regexp: "([A-Za-z]{2,30}-[0-9]+)"
-            pipeline_id: << pipeline.id >>
-            pipeline_number: << pipeline.number >>
+      - run:
+          name: Print BrowserStack App ID
+          command: echo "$BROWSERSTACK_APP_ID"
+      - jira/notify:
+          issue_regexp: "([A-Za-z]{2,30}-[0-9]+)"
+          pipeline_id: "<< pipeline.id >>"
+          pipeline_number: "<< pipeline.number >>"
 orbs:
   path-filtering: circleci/path-filtering@0.1.1
   macos: circleci/macos@2
