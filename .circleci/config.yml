@@ -90,7 +90,7 @@ jobs:
       - run: |
           echo "Running iOS tests on BrowserStack..."
           echo "Using App URL: $BROWSERSTACK_APP_ID"
-          cd acceptance-testing
+          cd mobile-acceptance-testing
           mvn test -PiOSCHCTests -DBStackIOSAppUrl="$BROWSERSTACK_APP_ID"
       - jira/notify:
           issue_regexp: "([A-Za-z]{2,30}-[0-9]+)"
