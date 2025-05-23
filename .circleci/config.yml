@@ -77,7 +77,6 @@ jobs:
       - run:
           name: Upload to Browserstack
           command: bundle exec fastlane upload_to_browserstack
-
   execute-critical-health-checks-ios:
     docker:
       - image: cimg/base:stable
