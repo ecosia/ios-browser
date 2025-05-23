@@ -4,18 +4,19 @@ setup: true
 
 environment_common: &environment_common
   environment:
-    CI: true
+    CI: "true"
 
 macos_common: &macos_common
   macos:
-    xcode: "16.2"
+    xcode: 16.2.0
   resource_class: macos.m1.medium.gen1
 
 jobs:
 
   build-and-deploy-testflight-beta:
-    <<: *environment_common
-    <<: *macos_common
+    <<: 
+      - *environment_common
+      - *macos_common
     steps:
       - checkout
       - macos/switch-ruby:
@@ -43,8 +44,9 @@ jobs:
           command: bundle exec fastlane testflight_beta
 
   build-and-deploy-firebase-and-browserstack:
-    <<: *environment_common
-    <<: *macos_common
+    <<: 
+    - *environment_common
+    - *macos_common
     steps:
       - checkout
       - macos/switch-ruby:
@@ -76,10 +78,24 @@ jobs:
       - run:
           name: Upload to Browserstack
           command: bundle exec fastlane upload_to_browserstack
+  
+  execute-critical-health-checks-ios:
+    docker:
+      - image: cimg/openjdk:17.0
+    steps:
+      - checkout
+      - run: |
+          echo "Cloning mobile acceptance tests..."
+          git clone https://github.com/ecosia/mobile-acceptance-testing.git
+      - run: |
+          echo "Running iOS tests on BrowserStack..."
+          echo "Using App URL: $BROWSERSTACK_APP_ID"
+          cd mobile-acceptance-testing
+          mvn test -PiOSCHCTests -DBStackIOSAppUrl="$BROWSERSTACK_APP_ID"
       - jira/notify:
           issue_regexp: "([A-Za-z]{2,30}-[0-9]+)"
-          pipeline_id: << pipeline.id >>
-          pipeline_number: << pipeline.number >>
+          pipeline_id: "<< pipeline.id >>"
+          pipeline_number: "<< pipeline.number >>"
 orbs:
   path-filtering: circleci/path-filtering@0.1.1
   macos: circleci/macos@2
@@ -111,4 +127,12 @@ workflows:
             branches:
               only: 
                 - main
+          context: napps
+
+  test-browserstack-critical-health-checks:
+    jobs:
+      - build-and-deploy-firebase-and-browserstack
+      - execute-critical-health-checks-ios:
+          requires:
+            - build-and-deploy-firebase-and-browserstack
           context: napps
