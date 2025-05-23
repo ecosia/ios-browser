@@ -42,6 +42,7 @@ jobs:
       - run:
           name: Build and deploy to Testflight
           command: bundle exec fastlane testflight_beta
+
   build-and-deploy-firebase-and-browserstack:
     <<: 
     - *environment_common
@@ -77,6 +78,7 @@ jobs:
       - run:
           name: Upload to Browserstack
           command: bundle exec fastlane upload_to_browserstack
+  
   execute-critical-health-checks-ios:
     docker:
       - image: cimg/base:stable
@@ -133,7 +135,7 @@ workflows:
                 - main
           context: napps
 
-test-browserstack-critical-health-checks:
+  test-browserstack-critical-health-checks:
     jobs:
       - build-and-deploy-firebase-and-browserstack
       - execute-critical-health-checks-ios:
