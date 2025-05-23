@@ -86,7 +86,7 @@ jobs:
       - checkout
       - run: |
           echo "Cloning mobile acceptance tests..."
-          git clone https://github.com/ecosia/acceptance-testing.git
+          git clone https://github.com/ecosia/mobile-acceptance-testing.git
       - run: |
           echo "Running iOS tests on BrowserStack..."
           echo "Using App URL: $BROWSERSTACK_APP_ID"
