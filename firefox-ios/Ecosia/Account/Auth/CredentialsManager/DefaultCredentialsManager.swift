@@ -5,10 +5,18 @@
 import Auth0
 
 struct DefaultCredentialsManager: CredentialsManagerProtocol {
-
-    private let credentialManager = CredentialsManager(authentication: Auth0.authentication(bundle: .ecosia),
-                                                       storage: EcosiaKeychainStorage())
-
+    
+    let auth0SettingsProvider: Auth0SettingsProviderProtocol
+    private let credentialManager: CredentialsManager
+    
+    init(auth0SettingsProvider: Auth0SettingsProviderProtocol = DefaultAuth0SettingsProvider()) {
+        self.auth0SettingsProvider = auth0SettingsProvider
+        self.credentialManager = CredentialsManager(authentication: Auth0.authentication(clientId: auth0SettingsProvider.id,
+                                                                                                domain: auth0SettingsProvider.domain),
+                                                    storage: EcosiaKeychainStorage())
+                                                         
+    }
+    
     func store(credentials: Auth0.Credentials) -> Bool {
         credentialManager.store(credentials: credentials)
     }

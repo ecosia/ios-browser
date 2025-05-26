@@ -62,7 +62,7 @@ extension Auth0ProviderProtocol {
     /// - Returns: An HTTPS `WebAuth`
     func makeHttpsWebAuth() -> WebAuth {
         Auth0
-            .webAuth(bundle: .ecosia)
+            .webAuth(clientId: credentialsManager.auth0SettingsProvider.id, domain: credentialsManager.auth0SettingsProvider.domain)
             .useHTTPS()
     }
 }

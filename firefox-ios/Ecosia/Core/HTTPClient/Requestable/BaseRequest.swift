@@ -40,7 +40,7 @@ public extension BaseRequest {
         request.httpBody = body
 
         if baseURL == environment.urlProvider.apiRoot,
-           let auth = environment.auth {
+           let auth = environment.cloudFlareAuth {
             request.setValue(auth.id, forHTTPHeaderField: CloudflareKeyProvider.clientId)
             request.setValue(auth.secret, forHTTPHeaderField: CloudflareKeyProvider.clientSecret)
         }

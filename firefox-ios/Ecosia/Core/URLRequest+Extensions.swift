@@ -6,8 +6,8 @@ import Foundation
 
 extension URLRequest {
 
-    public mutating func withAuthParameters(environment: Environment = Environment.current) -> URLRequest {
-        if let auth = environment.auth {
+    public mutating func withCloudFlareAuthParameters(environment: Environment = Environment.current) -> URLRequest {
+        if let auth = environment.cloudFlareAuth {
             setValue(auth.id, forHTTPHeaderField: CloudflareKeyProvider.clientId)
             setValue(auth.secret, forHTTPHeaderField: CloudflareKeyProvider.clientSecret)
         }

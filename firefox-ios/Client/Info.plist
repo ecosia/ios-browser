@@ -51,6 +51,10 @@
 	<string>1</string>
 	<key>CF_ACCESS_CLIENT_ID</key>
 	<string>$(CF_ACCESS_CLIENT_ID)</string>
+	<key>AUTH0_DOMAIN</key>
+	<string>$(AUTH0_DOMAIN)</string>
+	<key>AUTH0_CLIENT_ID</key>
+	<string>$(AUTH0_CLIENT_ID)</string>
 	<key>CF_ACCESS_CLIENT_SECRET</key>
 	<string>$(CF_ACCESS_CLIENT_SECRET)</string>
 	<key>INIntentsSupported</key>
