@@ -82,7 +82,6 @@ jobs:
           export BS_URL="$BROWSERSTACK_APP_ID"
           echo "export BS_URL=$BS_URL" >> $BASH_ENV
       - run: |
-          printenv BROWSERSTACK_APP_ID
           printenv BS_URL
       - run: |
           cp $BASH_ENV bash.env
