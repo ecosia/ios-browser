@@ -6,6 +6,8 @@ import Auth0
 
 /// A protocol for managing authentication credentials.
 public protocol CredentialsManagerProtocol {
+    
+    var auth0SettingsProvider: Auth0SettingsProviderProtocol { get }
 
     /// Stores the provided credentials securely.
     ///
