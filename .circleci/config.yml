@@ -95,11 +95,23 @@ jobs:
     steps:
       - attach_workspace:
           at: /tmp/workspace
-      - run: |
-          cat bash.env >> $BASH_ENV
-      - run: |
-          printenv BS_URL
+      - run:
+          name: Load Bash ENV from workspace
+          command: cat /tmp/workspace/bash.env >> $BASH_ENV
+
+      - run:
+          name: Confirm BrowserStack URL
+          command: printenv BS_URL
+
+      
+      - run:
+          name: Confirm BS_URL is available
+          command: |
+            source $BASH_ENV
+            echo "BS_URL is: $BS_URL"
+
       - checkout
+
       - run: |
           echo "Cloning mobile acceptance tests..."
           git clone https://github.com/ecosia/mobile-acceptance-testing.git
