@@ -94,7 +94,7 @@ jobs:
       - image: cimg/openjdk:17.0
     steps:
       - attach_workspace:
-          at: .
+          at: /tmp/workspace
       - run: |
           cat bash.env >> $BASH_ENV
       - run: |
