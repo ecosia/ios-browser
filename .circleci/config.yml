@@ -78,11 +78,27 @@ jobs:
       - run:
           name: Upload to Browserstack
           command: bundle exec fastlane upload_to_browserstack
-  
+      - run: |
+          echo "$BROWSERSTACK_APP_ID" >> $BASH_ENV
+      - run: |
+          # verify; optional step
+          printenv BROWSERSTACK_APP_ID
+      - run: |
+          cp $BASH_ENV bash.env
+      - persist_to_workspace:
+          root: .
+          paths:
+            - bash.env
   execute-critical-health-checks-ios:
     docker:
       - image: cimg/openjdk:17.0
     steps:
+      - attach_workspace:
+          at: .
+      - run: |
+          cat bash.env >> $BASH_ENV
+      - run: |
+          printenv BROWSERSTACK_APP_ID
       - checkout
       - run: |
           echo "Cloning mobile acceptance tests..."
