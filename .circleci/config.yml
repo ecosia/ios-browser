@@ -93,6 +93,7 @@ jobs:
     docker:
       - image: cimg/openjdk:17.0
     steps:
+      - checkout
       - attach_workspace:
           at: .
       - run:
@@ -106,7 +107,6 @@ jobs:
           command: |
             source $BASH_ENV
             echo "BROWSERSTACK_URL is: $BROWSERSTACK_URL"
-      - checkout
       - run: |
           echo "Cloning mobile acceptance tests..."
           git clone https://github.com/ecosia/mobile-acceptance-testing.git
