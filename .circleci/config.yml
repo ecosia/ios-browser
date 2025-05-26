@@ -79,10 +79,10 @@ jobs:
           name: Upload to Browserstack
           command: bundle exec fastlane upload_to_browserstack
       - run: |
-          echo "$BROWSERSTACK_APP_ID" >> $BASH_ENV
+          export BS_URL="$BROWSERSTACK_APP_ID" >> $BASH_ENV
       - run: |
-          # verify; optional step
           printenv BROWSERSTACK_APP_ID
+          printenv BS_URL
       - run: |
           cp $BASH_ENV bash.env
       - persist_to_workspace:
@@ -98,16 +98,16 @@ jobs:
       - run: |
           cat bash.env >> $BASH_ENV
       - run: |
-          printenv BROWSERSTACK_APP_ID
+          printenv BS_URL
       - checkout
       - run: |
           echo "Cloning mobile acceptance tests..."
           git clone https://github.com/ecosia/mobile-acceptance-testing.git
       - run: |
           echo "Running iOS tests on BrowserStack..."
-          echo "Using App URL: $BROWSERSTACK_APP_ID"
+          echo "Using App URL: $BS_URL"
           cd mobile-acceptance-testing
-          mvn test -PiOSCHCTests -DBStackIOSAppUrl="$BROWSERSTACK_APP_ID"
+          mvn test -PiOSCHCTests -DBStackIOSAppUrl="$BS_URL"
       - jira/notify:
           issue_regexp: "([A-Za-z]{2,30}-[0-9]+)"
           pipeline_id: "<< pipeline.id >>"
