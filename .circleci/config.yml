@@ -79,39 +79,34 @@ jobs:
           name: Upload to Browserstack
           command: bundle exec fastlane upload_to_browserstack
       - run: |
-          export BS_URL="$BROWSERSTACK_APP_ID"
-          echo "export BS_URL=$BS_URL" >> $BASH_ENV
+          echo "export BROWSERSTACK_URL=$BROWSERSTACK_APP_ID" >> $BASH_ENV
       - run: |
-          printenv BS_URL
+          printenv BROWSERSTACK_URL
       - run: |
           cp $BASH_ENV bash.env
       - persist_to_workspace:
           root: .
           paths:
             - bash.env
+
   execute-critical-health-checks-ios:
     docker:
       - image: cimg/openjdk:17.0
     steps:
       - attach_workspace:
-          at: /tmp/workspace
+          at: .
       - run:
           name: Load Bash ENV from workspace
-          command: cat /tmp/workspace/bash.env >> $BASH_ENV
-
+          command: cat bash.env >> $BASH_ENV
       - run:
           name: Confirm BrowserStack URL
-          command: printenv BS_URL
-
-      
+          command: printenv BROWSERSTACK_URL
       - run:
-          name: Confirm BS_URL is available
+          name: Confirm BROWSERSTACK_URL is available
           command: |
             source $BASH_ENV
-            echo "BS_URL is: $BS_URL"
-
+            echo "BROWSERSTACK_URL is: $BROWSERSTACK_URL"
       - checkout
-
       - run: |
           echo "Cloning mobile acceptance tests..."
           git clone https://github.com/ecosia/mobile-acceptance-testing.git
@@ -119,7 +114,7 @@ jobs:
           echo "Running iOS tests on BrowserStack..."
           echo "Using App URL: $BS_URL"
           cd mobile-acceptance-testing
-          mvn test -PiOSCHCTests -DBStackIOSAppUrl="$BS_URL"
+          mvn test -PiOSCHCTests -DBStackIOSAppUrl="$BROWSERSTACK_URL"
       - jira/notify:
           issue_regexp: "([A-Za-z]{2,30}-[0-9]+)"
           pipeline_id: "<< pipeline.id >>"
