@@ -79,8 +79,6 @@ jobs:
           name: Upload to Browserstack
           command: bundle exec fastlane upload_to_browserstack
       - run: |
-          echo "export BROWSERSTACK_URL=$BROWSERSTACK_APP_ID" >> $BASH_ENV
-      - run: |
           printenv BROWSERSTACK_URL
       - run: |
           cp $BASH_ENV bash.env
