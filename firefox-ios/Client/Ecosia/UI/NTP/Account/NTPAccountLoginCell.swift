@@ -104,12 +104,18 @@ final class NTPAccountLoginCell: UICollectionViewCell, ThemeApplicable, Reusable
     }
 
     private func updateLoginButtonTitle() {
-        // Update button title and background color based on login state
         loginButton.setTitle(Auth.shared.isLoggedIn ? "Sign Out" : "Sign In", for: .normal)
+        guard let currentWindowUUID else { return }
+        let themeManager: ThemeManager = AppContainer.shared.resolve()
+        applyTheme(theme: themeManager.getCurrentTheme(for: currentWindowUUID))
     }
 
     private func updateSessionTokenButtonTitle() {
-        sessionTokenButton.setTitle("Fetch session token: \(Auth.shared.currentSessionToken?.prefix(10) ?? "none")", for: .normal)
+        let sessionTokenAuxiliaryText = ((Auth.shared.currentSessionToken?.prefix(10)) != nil) ? "Fetched session token: " : "Click to fetch session token (after login)"
+        sessionTokenButton.setTitle("\(sessionTokenAuxiliaryText)\(Auth.shared.currentSessionToken?.prefix(10) ?? "")", for: .normal)
+        guard let currentWindowUUID else { return }
+        let themeManager: ThemeManager = AppContainer.shared.resolve()
+        applyTheme(theme: themeManager.getCurrentTheme(for: currentWindowUUID))
     }
 
     @objc private func fetchSessionToken() {

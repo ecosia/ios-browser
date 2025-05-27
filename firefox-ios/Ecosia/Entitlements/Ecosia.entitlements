@@ -6,7 +6,7 @@
 	<string>development</string>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
-		<string>webcredentials:login.ecosia-dev.xyz</string>
+		<string>webcredentials:ecosia-dev.eu.auth0.com</string>
 	</array>
 	<key>com.apple.developer.browser.app-installation</key>
 	<true/>
