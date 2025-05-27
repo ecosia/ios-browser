@@ -61,8 +61,12 @@ extension Auth0ProviderProtocol {
 
     /// - Returns: An HTTPS `WebAuth`
     func makeHttpsWebAuth() -> WebAuth {
-        Auth0
-            .webAuth(clientId: credentialsManager.auth0SettingsProvider.id, domain: credentialsManager.auth0SettingsProvider.domain)
+        let configuration: URLSessionConfiguration = .default
+        let ecosiaAuth0Session = URLSession(configuration: configuration.withCloudFlareAuthParameters())
+        return Auth0
+            .webAuth(clientId: credentialsManager.auth0SettingsProvider.id,
+                     domain: credentialsManager.auth0SettingsProvider.domain,
+                     session: ecosiaAuth0Session)
             .useHTTPS()
     }
 }

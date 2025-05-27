@@ -46,13 +46,9 @@ extension NativeToWebSSOAuth0Provider {
             throw NativeToWebSSOError.missingRefreshToken("Refresh token is missing. Please check your credentials.")
         }
 
-        guard let values = configurationValues() else {
-            throw NativeToWebSSOError.missingConfiguration("Missing Auth0.plist file")
-        }
-
-        let request = Auth0SessionTokenRequest(domain: values.domain,
+        let request = Auth0SessionTokenRequest(domain: credentialsManager.auth0SettingsProvider.domain,
                                                refreshToken: refreshToken,
-                                               clientId: values.clientId)
+                                               clientId: credentialsManager.auth0SettingsProvider.id)
         let (data, response) = try await client.perform(request)
 
         guard let httpResponse = response, httpResponse.statusCode == 200 else {
