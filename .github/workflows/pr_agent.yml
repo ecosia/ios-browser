@@ -20,7 +20,7 @@ jobs:
         env:
           OPENAI_KEY: ${{ secrets.OPENAI_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # from https://github.com/qodo-ai/pr-agent/blob/main/pr_agent/settings/configuration.toml tmp
+          # from https://github.com/qodo-ai/pr-agent/blob/main/pr_agent/settings/configuration.toml
           github_action_config.auto_review: "true" 
           github_action_config.auto_describe: "false" 
           github_action_config.auto_improve: "true" 
