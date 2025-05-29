@@ -87,7 +87,6 @@ jobs:
                 configuration_path: .circleci/release-config.yml
                 parameters: |
                   {
-                    "dry-run-mode": << pipeline.parameters.dry-run-mode >>,
                     "is-release-pipeline": true
                   }
       - run:

@@ -1,10 +1,28 @@
 version: 2.1
 
-# Pipeline parameters for release pipeline
+# Pipeline parameters for release pipeline - must match main config
 parameters:
+  run-browserstack-tests:
+    type: boolean
+    default: false
+  run-firebase-deploy:
+    type: boolean
+    default: false
+  run-testflight-beta:
+    type: boolean
+    default: false
+  run-release-deploy:
+    type: boolean
+    default: false
   dry-run-mode:
     type: boolean
     default: false
+    description: "Enable dry-run mode to simulate all operations without actual deployments"
+  simulate-version-change:
+    type: boolean
+    default: false
+    description: "For dry-run mode: simulate version change (true) or no change (false)"
+  # Internal parameter - set when continuing to release pipeline
   is-release-pipeline:
     type: boolean
     default: false
