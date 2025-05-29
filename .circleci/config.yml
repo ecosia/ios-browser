@@ -73,15 +73,34 @@ jobs:
               fi
             fi
             
-            # Save result for continuation decision
-            echo "export VERSION_CHANGED=$VERSION_CHANGED" >> $BASH_ENV
+            # Save version change result to file
+            echo "$VERSION_CHANGED" > /tmp/version_changed
+            echo "Version change result saved: $VERSION_CHANGED"
       - run:
-          name: Load workspace environment and capture BROWSERSTACK_URL
+          name: Extract BrowserStack URL from workspace
           command: |
-            # Load the bash.env from workspace
+            # Load the bash.env from workspace to get BROWSERSTACK_URL
             source bash.env
-            # Save BROWSERSTACK_URL for continuation
-            echo "export BROWSERSTACK_URL_FOR_CONTINUATION=$BROWSERSTACK_URL" >> $BASH_ENV
+            
+            # Save BROWSERSTACK_URL to file
+            echo "$BROWSERSTACK_URL" > /tmp/browserstack_url
+            echo "BrowserStack URL saved: $BROWSERSTACK_URL"
+      - run:
+          name: Create continuation parameters
+          command: |
+            VERSION_CHANGED=$(cat /tmp/version_changed)
+            BROWSERSTACK_URL_VALUE=$(cat /tmp/browserstack_url)
+            
+            if [[ "$VERSION_CHANGED" == "true" ]]; then
+              echo "Creating continuation parameters with BrowserStack URL: $BROWSERSTACK_URL_VALUE"
+              
+              # Create parameters file for continuation
+              echo "{\"is-release-pipeline\": true, \"browserstack-url\": \"$BROWSERSTACK_URL_VALUE\"}" > /tmp/continuation_params.json
+              
+              echo "Continuation parameters created"
+            else
+              echo "No version change - skipping parameter creation"
+            fi
       - when:
           condition:
             or:
@@ -90,19 +109,15 @@ jobs:
                 - << pipeline.parameters.simulate-version-change >>
               - and:
                 - not: << pipeline.parameters.dry-run-mode >>
-                # In production, we'll use a more complex condition
+                # In production, we'll check VERSION_CHANGED from file
           steps:
             - continuation/continue:
                 configuration_path: .circleci/release-config.yml
-                parameters: |
-                  {
-                    "is-release-pipeline": true,
-                    "browserstack-url": "${BROWSERSTACK_URL_FOR_CONTINUATION}"
-                  }
+                parameters: /tmp/continuation_params.json
       - run:
           name: Pipeline complete
           command: |
-            source $BASH_ENV
+            VERSION_CHANGED=$(cat /tmp/version_changed)
             if [[ "$VERSION_CHANGED" == "true" ]]; then
               echo "🚀 Release pipeline triggered for version change"
             else
