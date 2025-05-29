@@ -24,6 +24,10 @@ parameters:
     type: boolean
     default: false
     description: "For dry-run mode: simulate version change (true) or no change (false)"
+  # Internal parameter - set when continuing to release pipeline
+  is-release-pipeline:
+    type: boolean
+    default: false
 
 environment_common: &environment_common
   environment:
@@ -43,7 +47,7 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Check for MARKETING_VERSION change and save result
+          name: Check for MARKETING_VERSION change
           command: |
             VERSION_CHANGED=false
             
@@ -67,19 +71,34 @@ jobs:
               fi
             fi
             
-            # Save result to workspace for other jobs to read
-            mkdir -p /tmp/version-check
-            echo "$VERSION_CHANGED" > /tmp/version-check/version_changed
-            
+            # Save result for continuation decision
+            echo "export VERSION_CHANGED=$VERSION_CHANGED" >> $BASH_ENV
+      - when:
+          condition:
+            or:
+              - and:
+                - << pipeline.parameters.dry-run-mode >>
+                - << pipeline.parameters.simulate-version-change >>
+              - and:
+                - not: << pipeline.parameters.dry-run-mode >>
+                # In production, we'll use a more complex condition
+          steps:
+            - continuation/continue:
+                configuration_path: .circleci/release-config.yml
+                parameters: |
+                  {
+                    "dry-run-mode": << pipeline.parameters.dry-run-mode >>,
+                    "is-release-pipeline": true
+                  }
+      - run:
+          name: Pipeline complete
+          command: |
+            source $BASH_ENV
             if [[ "$VERSION_CHANGED" == "true" ]]; then
-              echo "🚀 Version changed - release pipeline will be triggered"
+              echo "🚀 Release pipeline triggered for version change"
             else
-              echo "ℹ️  No version change - release pipeline will be skipped"
+              echo "ℹ️  No version change - pipeline complete"
             fi
-      - persist_to_workspace:
-          root: /tmp/version-check
-          paths:
-            - version_changed
 
   build-and-deploy-testflight-beta:
     <<: *environment_common
@@ -185,174 +204,6 @@ jobs:
           root: .
           paths:
             - bash.env
-
-  execute-critical-health-checks-ios:
-    docker:
-      - image: cimg/openjdk:17.0
-    steps:
-      - checkout
-      - attach_workspace:
-          at: /tmp/version-check
-      - attach_workspace:
-          at: .
-      - run:
-          name: Check if this is a dry-run
-          command: |
-            if [[ "<< pipeline.parameters.dry-run-mode >>" == "true" ]]; then
-              echo "🧪 DRY RUN MODE: Will simulate health checks without actual execution"
-              echo "export HEALTH_CHECKS_DRY_RUN=true" >> $BASH_ENV
-            else
-              echo "🚀 PRODUCTION MODE: Will run actual health checks"
-              echo "export HEALTH_CHECKS_DRY_RUN=false" >> $BASH_ENV
-            fi
-      - run:
-          name: Load Bash ENV from workspace
-          command: |
-            if [[ -f "/tmp/version-check/version_changed" ]] && [[ "$(cat /tmp/version-check/version_changed)" == "true" ]]; then
-              echo "✅ Version changed detected - proceeding with health checks"
-              cat bash.env >> $BASH_ENV
-            else
-              echo "ℹ️  No version change - skipping health checks"
-              exit 0
-            fi
-      - run:
-          name: Confirm BrowserStack URL
-          command: |
-            if [[ -f "/tmp/version-check/version_changed" ]] && [[ "$(cat /tmp/version-check/version_changed)" == "true" ]]; then
-              printenv BROWSERSTACK_URL
-            else
-              echo "Skipping - no version change detected"
-              exit 0
-            fi
-      - run:
-          name: Confirm BROWSERSTACK_URL is available
-          command: |
-            if [[ -f "/tmp/version-check/version_changed" ]] && [[ "$(cat /tmp/version-check/version_changed)" == "true" ]]; then
-              source $BASH_ENV
-              echo "BROWSERSTACK_URL is: $BROWSERSTACK_URL"
-            else
-              echo "Skipping - no version change detected"
-              exit 0
-            fi
-      - run:
-          name: Clone mobile acceptance tests (with dry-run support)
-          command: |
-            if [[ -f "/tmp/version-check/version_changed" ]] && [[ "$(cat /tmp/version-check/version_changed)" == "true" ]]; then
-              if [[ "$HEALTH_CHECKS_DRY_RUN" == "true" ]]; then
-                echo "🧪 DRY RUN: Simulating test repository clone"
-                echo "Would run: git clone https://github.com/ecosia/mobile-acceptance-testing.git"
-              else
-                echo "🚀 PRODUCTION: Cloning mobile acceptance tests"
-                git clone https://github.com/ecosia/mobile-acceptance-testing.git
-              fi
-            else
-              echo "Skipping - no version change detected"
-              exit 0
-            fi
-      - run:
-          name: Run iOS tests on BrowserStack (with dry-run support)
-          command: |
-            if [[ -f "/tmp/version-check/version_changed" ]] && [[ "$(cat /tmp/version-check/version_changed)" == "true" ]]; then
-              if [[ "$HEALTH_CHECKS_DRY_RUN" == "true" ]]; then
-                echo "🧪 DRY RUN: Simulating iOS health checks on BrowserStack"
-                echo "Would run: mvn test -PiOSCHCTests -DBStackIOSAppUrl=$BROWSERSTACK_URL"
-                echo "✅ SIMULATED: Health checks completed successfully"
-              else
-                echo "🚀 PRODUCTION: Running iOS tests on BrowserStack"
-                echo "Using App URL: $BS_URL"
-                cd mobile-acceptance-testing
-                mvn test -PiOSCHCTests -DBStackIOSAppUrl="$BROWSERSTACK_URL" || {
-                  echo "Health checks failed, but continuing with deployment..."
-                  exit 0
-                }
-              fi
-            else
-              echo "Skipping - no version change detected"
-              exit 0
-            fi
-      - jira/notify:
-          issue_regexp: "([A-Za-z]{2,30}-[0-9]+)"
-          pipeline_id: << pipeline.id >>
-          pipeline_number: << pipeline.number >>
-
-  build-testflight-deploy:
-    <<: *environment_common
-    <<: *macos_common
-    steps:
-      - checkout
-      - attach_workspace:
-          at: /tmp/version-check
-      - run:
-          name: Check if this is a dry-run
-          command: |
-            if [[ "<< pipeline.parameters.dry-run-mode >>" == "true" ]]; then
-              echo "🧪 DRY RUN MODE: Will not actually upload to TestFlight"
-              echo "export TESTFLIGHT_DRY_RUN=true" >> $BASH_ENV
-            else
-              echo "🚀 PRODUCTION MODE: Will upload to TestFlight"
-              echo "export TESTFLIGHT_DRY_RUN=false" >> $BASH_ENV
-            fi
-      - macos/switch-ruby:
-          version: "3.2"
-      - restore_cache:
-          key: 1-gems-{{ checksum "Gemfile.lock" }}
-      - run:
-          name: Bundle install
-          command: |
-            if [[ -f "/tmp/version-check/version_changed" ]] && [[ "$(cat /tmp/version-check/version_changed)" == "true" ]]; then
-              bundle check || bundle install --path vendor/bundle
-            else
-              echo "Skipping - no version change detected"
-              exit 0
-            fi
-      - save_cache:
-          key: 1-gems-{{ checksum "Gemfile.lock" }}
-          paths:
-            - vendor/bundle
-      - run:
-          name: verify github
-          command: |
-            if [[ -f "/tmp/version-check/version_changed" ]] && [[ "$(cat /tmp/version-check/version_changed)" == "true" ]]; then
-              for ip in $(dig @8.8.8.8 github.com +short); do ssh-keyscan github.com,$ip; ssh-keyscan $ip; done 2>/dev/null >> ~/.ssh/known_hosts
-            else
-              echo "Skipping - no version change detected"
-              exit 0
-            fi
-      - run:
-          name: extract Production XCConfig
-          command: |
-            if [[ -f "/tmp/version-check/version_changed" ]] && [[ "$(cat /tmp/version-check/version_changed)" == "true" ]]; then
-              echo "$PRODUCTION_XCCONFIG" | base64 --decode > firefox-ios/Client/Configuration/Production.xcconfig
-            else
-              echo "Skipping - no version change detected"
-              exit 0
-            fi
-      - run:
-          name: Execute bootstrap
-          command: |
-            if [[ -f "/tmp/version-check/version_changed" ]] && [[ "$(cat /tmp/version-check/version_changed)" == "true" ]]; then
-              ./bootstrap.sh
-            else
-              echo "Skipping - no version change detected"
-              exit 0
-            fi
-      - run:
-          name: Build and deploy to Testflight (with dry-run support)
-          no_output_timeout: 35m
-          command: |
-            if [[ -f "/tmp/version-check/version_changed" ]] && [[ "$(cat /tmp/version-check/version_changed)" == "true" ]]; then
-              if [[ "$TESTFLIGHT_DRY_RUN" == "true" ]]; then
-                echo "🧪 DRY RUN MODE: Building app but NOT uploading to TestFlight"
-                echo "Would run: bundle exec fastlane testflight_live"
-                echo "✅ Test successful - workflow reached TestFlight deployment step"
-              else
-                echo "🚀 PRODUCTION MODE: Building and uploading to TestFlight"
-                bundle exec fastlane testflight_live
-              fi
-            else
-              echo "Skipping - no version change detected"
-              exit 0
-            fi
 
   build-and-deploy-firebase:
     <<: *environment_common
@@ -480,10 +331,12 @@ orbs:
   path-filtering: circleci/path-filtering@0.1.1
   macos: circleci/macos@2
   jira: circleci/jira@2.0
+  continuation: circleci/continuation@1.0.0
 
 workflows:
-  # Main workflow - all jobs run but conditionally execute based on version check
-  build-and-upload-to-delivery-platforms-with-health-checks:
+  # Setup workflow - runs on main branch merges or manual triggers
+  setup-workflow:
+    unless: << pipeline.parameters.is-release-pipeline >>
     jobs:
       # Always run on main branch merges
       - build-and-deploy-firebase-and-browserstack:
@@ -495,7 +348,7 @@ workflows:
                 - /^main-\d+$/
           context: napps
 
-      # Check if version was bumped and save result to workspace
+      # Check if version was bumped and conditionally continue to release pipeline
       - check-version-bump:
           name: Check for version bump
           requires:
@@ -507,32 +360,9 @@ workflows:
                 - /^main-\d+$/
           context: napps
 
-      # Run health checks (conditionally based on version check result)
-      - execute-critical-health-checks-ios:
-          name: Critical Health Checks (release cut pipeline)
-          requires:
-            - Check for version bump
-          filters:
-            branches:
-              only: 
-                - main
-                - /^main-\d+$/
-          context: napps
-
-      # Deploy to TestFlight (conditionally based on version check result)
-      - build-testflight-deploy:
-          name: Auto Deploy release version to TestFlight
-          requires:
-            - Critical Health Checks (release cut pipeline)
-          filters:
-            branches:
-              only: 
-                - main
-                - /^main-\d+$/
-          context: napps
-
   # Beta deployment triggered by tags
   beta-deployment:
+    unless: << pipeline.parameters.is-release-pipeline >>
     jobs:
       - build-and-deploy-testflight-beta:
           name: Deploy beta version over Testflight (tags)
@@ -545,32 +375,40 @@ workflows:
 
   # Manual triggers as separate workflows
   manual-testflight-beta:
-    when: << pipeline.parameters.run-testflight-beta >>
+    when: 
+      and:
+        - << pipeline.parameters.run-testflight-beta >>
+        - not: << pipeline.parameters.is-release-pipeline >>
     jobs:
       - build-and-deploy-testflight-beta:
           name: Manual Deploy beta version over Testflight
           context: napps
 
   manual-firebase-deploy:
-    when: << pipeline.parameters.run-firebase-deploy >>
+    when: 
+      and:
+        - << pipeline.parameters.run-firebase-deploy >>
+        - not: << pipeline.parameters.is-release-pipeline >>
     jobs:
       - build-and-deploy-firebase:
           name: Manual Deploy ad-hoc version over Firebase
           context: napps
 
   manual-browserstack-tests:
-    when: << pipeline.parameters.run-browserstack-tests >>
+    when: 
+      and:
+        - << pipeline.parameters.run-browserstack-tests >>
+        - not: << pipeline.parameters.is-release-pipeline >>
     jobs:
       - build-and-deploy-browserstack:
           name: Manual Upload to Browserstack
           context: napps
-      - execute-critical-health-checks-ios:
-          requires:
-            - Manual Upload to Browserstack
-          context: napps
 
   manual-release-deploy:
-    when: << pipeline.parameters.run-release-deploy >>
+    when: 
+      and:
+        - << pipeline.parameters.run-release-deploy >>
+        - not: << pipeline.parameters.is-release-pipeline >>
     jobs:
       - build-testflight-deploy:
           name: Manual Deploy release version to TestFlight
@@ -578,32 +416,21 @@ workflows:
 
   # Manual full workflow for testing
   manual-full-workflow:
-    when: << pipeline.parameters.dry-run-mode >>
+    when: 
+      and:
+        - << pipeline.parameters.dry-run-mode >>
+        - not: << pipeline.parameters.is-release-pipeline >>
     jobs:
       # Always run deployment
       - build-and-deploy-firebase-and-browserstack:
           name: Manual Deploy ad-hoc version over Firebase + Upload to Browserstack
           context: napps
 
-      # Check if version was bumped and save result to workspace
+      # Check if version was bumped and conditionally continue to release pipeline
       - check-version-bump:
           name: Manual Check for version bump
           requires:
             - Manual Deploy ad-hoc version over Firebase + Upload to Browserstack
-          context: napps
-
-      # Run health checks (conditionally based on version check result)
-      - execute-critical-health-checks-ios:
-          name: Manual Critical Health Checks (release cut pipeline)
-          requires:
-            - Manual Check for version bump
-          context: napps
-
-      # Deploy to TestFlight (conditionally based on version check result)
-      - build-testflight-deploy:
-          name: Manual Auto Deploy release version to TestFlight
-          requires:
-            - Manual Critical Health Checks (release cut pipeline)
           context: napps
 
 
