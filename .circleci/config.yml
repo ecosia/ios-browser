@@ -208,7 +208,7 @@ orbs:
   jira: circleci/jira@2.0
 
 workflows:
-  build-and-upload-to-delivery-platforms:
+  build-and-upload-to-delivery-platforms-with-health-checks:
     jobs:
       # Always run on main branch merges
       - build-and-deploy-firebase-and-browserstack:
@@ -223,7 +223,7 @@ workflows:
 
       # Run health checks after deployment (will check version internally)
       - execute-critical-health-checks-ios:
-          name: Critical Health Checks (version-conditional)
+          name: Critical Health Checks (release cut pipeline)
           requires:
             - Deploy ad-hoc version over Firebase + Upload to Browserstack
           filters:
@@ -238,7 +238,7 @@ workflows:
       - build-testflight-deploy:
           name: Auto Deploy release version to TestFlight
           requires:
-            - Critical Health Checks (version-conditional)
+            - Critical Health Checks (release cut pipeline)
           filters:
             branches:
               only: 
