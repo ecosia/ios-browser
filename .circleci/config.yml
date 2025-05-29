@@ -247,56 +247,44 @@ workflows:
                 - dc-mob-3472-automation-tests  # TEMPORARY: for testing
           context: napps
 
+      # Beta deployment triggered by tags
       - build-and-deploy-testflight-beta:
-          name: Deploy beta version over Testflight
+          name: Deploy beta version over Testflight (tags)
           filters:
             branches:
-              only:
-                - main
-                - /^main-\d+$/
-          when:
-            or:
-              - << pipeline.parameters.run-testflight-beta >>
-              - matches:
-                  pattern: "^beta.*"
-                  value: << pipeline.git.tag >>
-      
+              ignore: /.*/
+            tags:
+              only: /^beta.*/
+
+  # Manual triggers as separate workflows
+  manual-testflight-beta:
+    when: << pipeline.parameters.run-testflight-beta >>
+    jobs:
+      - build-and-deploy-testflight-beta:
+          name: Manual Deploy beta version over Testflight
+          context: napps
+
+  manual-firebase-deploy:
+    when: << pipeline.parameters.run-firebase-deploy >>
+    jobs:
       - build-and-deploy-firebase:
-          name: Deploy ad-hoc version over Firebase
-          filters:
-            branches:
-              only: 
-                - main
-                - /^main-\d+$/
-          when: << pipeline.parameters.run-firebase-deploy >>
-          context: napps
-      
-      - build-and-deploy-browserstack:
-          name: Upload to Browserstack
-          filters:
-            branches:
-              only: 
-                - main
-                - /^main-\d+$/
-          when: << pipeline.parameters.run-browserstack-tests >>
+          name: Manual Deploy ad-hoc version over Firebase
           context: napps
 
-      # Manual release deployment trigger
-      - build-testflight-deploy:
-          name: Manual Deploy release version to TestFlight
-          filters:
-            branches:
-              only:
-                - main
-                - /^main-\d+$/
-          when: << pipeline.parameters.run-release-deploy >>
-          context: napps
-
-  test-browserstack-critical-health-checks:
+  manual-browserstack-tests:
     when: << pipeline.parameters.run-browserstack-tests >>
     jobs:
-      - build-and-deploy-browserstack
+      - build-and-deploy-browserstack:
+          name: Manual Upload to Browserstack
+          context: napps
       - execute-critical-health-checks-ios:
           requires:
-            - build-and-deploy-browserstack
+            - Manual Upload to Browserstack
+          context: napps
+
+  manual-release-deploy:
+    when: << pipeline.parameters.run-release-deploy >>
+    jobs:
+      - build-testflight-deploy:
+          name: Manual Deploy release version to TestFlight
           context: napps
