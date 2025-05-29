@@ -144,6 +144,16 @@ jobs:
               echo "No version change detected, skipping TestFlight deployment"
               circleci-agent step halt
             fi
+      - run:
+          name: Check if this is a test run
+          command: |
+            if [[ "$CIRCLE_BRANCH" == "dc-mob-3472-automation-tests" ]]; then
+              echo "TEST MODE: Will not actually upload to TestFlight"
+              echo "export TESTFLIGHT_DRY_RUN=true" >> $BASH_ENV
+            else
+              echo "PRODUCTION MODE: Will upload to TestFlight"
+              echo "export TESTFLIGHT_DRY_RUN=false" >> $BASH_ENV
+            fi
       - macos/switch-ruby:
           version: "3.2"
       - restore_cache:
@@ -165,9 +175,17 @@ jobs:
           name: Execute bootstrap
           command: ./bootstrap.sh
       - run:
-          name: Build and deploy to Testflight
+          name: Build and deploy to Testflight (with dry-run support)
           no_output_timeout: 35m
-          command: bundle exec fastlane testflight_live
+          command: |
+            if [[ "$TESTFLIGHT_DRY_RUN" == "true" ]]; then
+              echo "🧪 DRY RUN MODE: Building app but NOT uploading to TestFlight"
+              echo "Would run: bundle exec fastlane testflight_live"
+              echo "✅ Test successful - workflow reached TestFlight deployment step"
+            else
+              echo "🚀 PRODUCTION MODE: Building and uploading to TestFlight"
+              bundle exec fastlane testflight_live
+            fi
 
 orbs:
   path-filtering: circleci/path-filtering@0.1.1
@@ -185,6 +203,7 @@ workflows:
               only: 
                 - main
                 - /^main-\d+$/
+                - dc-mob-3472-automation-tests  # TEMPORARY: for testing
           context: napps
 
       # Run health checks after deployment (will check version internally)
@@ -197,6 +216,7 @@ workflows:
               only: 
                 - main
                 - /^main-\d+$/
+                - dc-mob-3472-automation-tests  # TEMPORARY: for testing
           context: napps
 
       # Deploy to TestFlight after health checks
@@ -209,6 +229,7 @@ workflows:
               only: 
                 - main
                 - /^main-\d+$/
+                - dc-mob-3472-automation-tests  # TEMPORARY: for testing
           context: napps
 
       - build-and-deploy-testflight-beta:
