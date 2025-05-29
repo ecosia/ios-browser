@@ -46,6 +46,8 @@ jobs:
       - image: cimg/base:stable
     steps:
       - checkout
+      - attach_workspace:
+          at: .
       - run:
           name: Check for MARKETING_VERSION change
           command: |
@@ -73,6 +75,13 @@ jobs:
             
             # Save result for continuation decision
             echo "export VERSION_CHANGED=$VERSION_CHANGED" >> $BASH_ENV
+      - run:
+          name: Load workspace environment and capture BROWSERSTACK_URL
+          command: |
+            # Load the bash.env from workspace
+            source bash.env
+            # Save BROWSERSTACK_URL for continuation
+            echo "export BROWSERSTACK_URL_FOR_CONTINUATION=$BROWSERSTACK_URL" >> $BASH_ENV
       - when:
           condition:
             or:
@@ -87,7 +96,8 @@ jobs:
                 configuration_path: .circleci/release-config.yml
                 parameters: |
                   {
-                    "is-release-pipeline": true
+                    "is-release-pipeline": true,
+                    "browserstack-url": "${BROWSERSTACK_URL_FOR_CONTINUATION}"
                   }
       - run:
           name: Pipeline complete
