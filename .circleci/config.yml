@@ -2,6 +2,21 @@ version: 2.1
 
 setup: true
 
+# Add pipeline parameters for manual triggers
+parameters:
+  run-browserstack-tests:
+    type: boolean
+    default: false
+  run-firebase-deploy:
+    type: boolean
+    default: false
+  run-testflight-beta:
+    type: boolean
+    default: false
+  run-release-deploy:
+    type: boolean
+    default: false
+
 environment_common: &environment_common
   environment:
     CI: true
