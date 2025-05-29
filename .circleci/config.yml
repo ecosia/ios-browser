@@ -28,6 +28,23 @@ macos_common: &macos_common
 
 jobs:
 
+  check-version-bump:
+    <<: *environment_common
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - run:
+          name: Check for MARKETING_VERSION change
+          command: |
+            if sh ./check_marketing_version.sh; then
+              echo "✅ Version changed, continuing with release pipeline"
+              exit 0
+            else
+              echo "ℹ️  No version change detected, halting release pipeline"
+              circleci-agent step halt
+            fi
+
   build-and-deploy-testflight-beta:
     <<: *environment_common
     <<: *macos_common
@@ -108,15 +125,6 @@ jobs:
       - attach_workspace:
           at: .
       - run:
-          name: Check for MARKETING_VERSION change
-          command: |
-            if sh ./check_marketing_version.sh; then
-              echo "Version changed, proceeding with health checks"
-            else
-              echo "No version change detected, skipping health checks"
-              circleci-agent step halt
-            fi
-      - run:
           name: Load Bash ENV from workspace
           command: cat bash.env >> $BASH_ENV
       - run:
@@ -150,15 +158,6 @@ jobs:
     <<: *macos_common
     steps:
       - checkout
-      - run:
-          name: Check for MARKETING_VERSION change
-          command: |
-            if sh ./check_marketing_version.sh; then
-              echo "Version changed, proceeding with TestFlight deployment"
-            else
-              echo "No version change detected, skipping TestFlight deployment"
-              circleci-agent step halt
-            fi
       - run:
           name: Check if this is a test run
           command: |
@@ -221,9 +220,9 @@ workflows:
                 - dc-mob-3472-automation-tests  # TEMPORARY: for testing
           context: napps
 
-      # Run health checks after deployment (will check version internally)
-      - execute-critical-health-checks-ios:
-          name: Critical Health Checks (release cut pipeline)
+      # Check if version was bumped
+      - check-version-bump:
+          name: Check for version bump
           requires:
             - Deploy ad-hoc version over Firebase + Upload to Browserstack
           filters:
@@ -232,9 +231,21 @@ workflows:
                 - main
                 - /^main-\d+$/
                 - dc-mob-3472-automation-tests  # TEMPORARY: for testing
+
+      # Run health checks only if version was bumped
+      - execute-critical-health-checks-ios:
+          name: Critical Health Checks (release cut pipeline)
+          requires:
+            - Check for version bump
+          filters:
+            branches:
+              only: 
+                - main
+                - /^main-\d+$/
+                - dc-mob-3472-automation-tests  # TEMPORARY: for testing
           context: napps
 
-      # Deploy to TestFlight after health checks
+      # Deploy to TestFlight only if health checks completed
       - build-testflight-deploy:
           name: Auto Deploy release version to TestFlight
           requires:
