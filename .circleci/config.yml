@@ -16,6 +16,14 @@ parameters:
   run-release-deploy:
     type: boolean
     default: false
+  dry-run-mode:
+    type: boolean
+    default: false
+    description: "Enable dry-run mode to simulate all operations without actual deployments"
+  simulate-version-change:
+    type: boolean
+    default: true
+    description: "For dry-run mode: simulate version change (true) or no change (false)"
 
 environment_common: &environment_common
   environment:
@@ -37,10 +45,15 @@ jobs:
       - run:
           name: Check for MARKETING_VERSION change (with dry-run support)
           command: |
-            if [[ "$CIRCLE_BRANCH" == "dc-mob-3472-automation-tests" ]]; then
-              echo "🧪 DRY RUN MODE: Simulating version change detection"
-              echo "✅ SIMULATED: Version changed, continuing with release pipeline"
-              exit 0
+            if [[ "<< pipeline.parameters.dry-run-mode >>" == "true" ]]; then
+              echo "🧪 DRY RUN MODE: Testing version change detection"
+              if [[ "<< pipeline.parameters.simulate-version-change >>" == "true" ]]; then
+                echo "✅ SIMULATED: Version changed, continuing with release pipeline"
+                exit 0
+              else
+                echo "ℹ️  SIMULATED: No version change detected, halting release pipeline gracefully"
+                circleci-agent step halt
+              fi
             else
               echo "🚀 PRODUCTION MODE: Checking actual version change"
               if sh ./check_marketing_version.sh; then
@@ -87,9 +100,9 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Check if this is a test run
+          name: Check if this is a dry-run
           command: |
-            if [[ "$CIRCLE_BRANCH" == "dc-mob-3472-automation-tests" ]]; then
+            if [[ "<< pipeline.parameters.dry-run-mode >>" == "true" ]]; then
               echo "🧪 DRY RUN MODE: Will simulate deployments without actual uploads"
               echo "export DEPLOYMENT_DRY_RUN=true" >> $BASH_ENV
             else
@@ -165,9 +178,9 @@ jobs:
       - attach_workspace:
           at: .
       - run:
-          name: Check if this is a test run
+          name: Check if this is a dry-run
           command: |
-            if [[ "$CIRCLE_BRANCH" == "dc-mob-3472-automation-tests" ]]; then
+            if [[ "<< pipeline.parameters.dry-run-mode >>" == "true" ]]; then
               echo "🧪 DRY RUN MODE: Will simulate health checks without actual execution"
               echo "export HEALTH_CHECKS_DRY_RUN=true" >> $BASH_ENV
             else
@@ -222,13 +235,13 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Check if this is a test run
+          name: Check if this is a dry-run
           command: |
-            if [[ "$CIRCLE_BRANCH" == "dc-mob-3472-automation-tests" ]]; then
-              echo "TEST MODE: Will not actually upload to TestFlight"
+            if [[ "<< pipeline.parameters.dry-run-mode >>" == "true" ]]; then
+              echo "🧪 DRY RUN MODE: Will not actually upload to TestFlight"
               echo "export TESTFLIGHT_DRY_RUN=true" >> $BASH_ENV
             else
-              echo "PRODUCTION MODE: Will upload to TestFlight"
+              echo "🚀 PRODUCTION MODE: Will upload to TestFlight"
               echo "export TESTFLIGHT_DRY_RUN=false" >> $BASH_ENV
             fi
       - macos/switch-ruby:
@@ -280,7 +293,6 @@ workflows:
               only: 
                 - main
                 - /^main-\d+$/
-                - dc-mob-3472-automation-tests  # TEMPORARY: for testing
           context: napps
 
       # Check if version was bumped
@@ -293,7 +305,7 @@ workflows:
               only: 
                 - main
                 - /^main-\d+$/
-                - dc-mob-3472-automation-tests  # TEMPORARY: for testing
+          context: napps
 
       # Run health checks only if version was bumped
       - execute-critical-health-checks-ios:
@@ -305,7 +317,6 @@ workflows:
               only: 
                 - main
                 - /^main-\d+$/
-                - dc-mob-3472-automation-tests  # TEMPORARY: for testing
           context: napps
 
       # Deploy to TestFlight only if health checks completed
@@ -318,7 +329,6 @@ workflows:
               only: 
                 - main
                 - /^main-\d+$/
-                - dc-mob-3472-automation-tests  # TEMPORARY: for testing
           context: napps
 
       # Beta deployment triggered by tags
