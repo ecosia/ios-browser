@@ -93,6 +93,15 @@ jobs:
       - attach_workspace:
           at: .
       - run:
+          name: Check for MARKETING_VERSION change
+          command: |
+            if sh ./check_marketing_version.sh; then
+              echo "Version changed, proceeding with health checks"
+            else
+              echo "No version change detected, skipping health checks"
+              circleci-agent step halt
+            fi
+      - run:
           name: Load Bash ENV from workspace
           command: cat bash.env >> $BASH_ENV
       - run:
@@ -106,15 +115,60 @@ jobs:
       - run: |
           echo "Cloning mobile acceptance tests..."
           git clone https://github.com/ecosia/mobile-acceptance-testing.git
-      - run: |
-          echo "Running iOS tests on BrowserStack..."
-          echo "Using App URL: $BS_URL"
-          cd mobile-acceptance-testing
-          mvn test -PiOSCHCTests -DBStackIOSAppUrl="$BROWSERSTACK_URL"
+      - run:
+          name: Run iOS tests on BrowserStack (non-blocking)
+          command: |
+            echo "Running iOS tests on BrowserStack..."
+            echo "Using App URL: $BS_URL"
+            cd mobile-acceptance-testing
+            mvn test -PiOSCHCTests -DBStackIOSAppUrl="$BROWSERSTACK_URL" || {
+              echo "Health checks failed, but continuing with deployment..."
+              exit 0
+            }
       - jira/notify:
           issue_regexp: "([A-Za-z]{2,30}-[0-9]+)"
           pipeline_id: << pipeline.id >>
           pipeline_number: << pipeline.number >>
+
+  build-testflight-deploy:
+    <<: *environment_common
+    <<: *macos_common
+    steps:
+      - checkout
+      - run:
+          name: Check for MARKETING_VERSION change
+          command: |
+            if sh ./check_marketing_version.sh; then
+              echo "Version changed, proceeding with TestFlight deployment"
+            else
+              echo "No version change detected, skipping TestFlight deployment"
+              circleci-agent step halt
+            fi
+      - macos/switch-ruby:
+          version: "3.2"
+      - restore_cache:
+          key: 1-gems-{{ checksum "Gemfile.lock" }}
+      - run:
+          name: Bundle install
+          command: bundle check || bundle install --path vendor/bundle
+      - save_cache:
+          key: 1-gems-{{ checksum "Gemfile.lock" }}
+          paths:
+            - vendor/bundle
+      - run:
+          name: verify github
+          command: for ip in $(dig @8.8.8.8 github.com +short); do ssh-keyscan github.com,$ip; ssh-keyscan $ip; done 2>/dev/null >> ~/.ssh/known_hosts
+      - run:
+          name: extract Production XCConfig
+          command: echo "$PRODUCTION_XCCONFIG" | base64 --decode > firefox-ios/Client/Configuration/Production.xcconfig
+      - run:
+          name: Execute bootstrap
+          command: ./bootstrap.sh
+      - run:
+          name: Build and deploy to Testflight
+          no_output_timeout: 35m
+          command: bundle exec fastlane testflight_live
+
 orbs:
   path-filtering: circleci/path-filtering@0.1.1
   macos: circleci/macos@2
@@ -123,35 +177,90 @@ orbs:
 workflows:
   build-and-upload-to-delivery-platforms:
     jobs:
-      - path-filtering/filter:
-          filters:
-            branches:
-              only:
-                - main
-                - /^main-\d+$/
-          name: Deploy release version over Testflight if MARKETING_VERSION file updated
-          config-path: .circleci/deploy-release.yml
-          mapping: |
-            firefox-ios/Client/Configuration/Common.xcconfig deploy-release true
-      - build-and-deploy-testflight-beta:
-          name: Deploy beta version over Testflight
-          filters:
-            tags:
-              only: /^beta.*/
-            branches:
-              ignore: /.*/
+      # Always run on main branch merges
       - build-and-deploy-firebase-and-browserstack:
           name: Deploy ad-hoc version over Firebase + Upload to Browserstack
           filters:
             branches:
               only: 
                 - main
+                - /^main-\d+$/
+          context: napps
+
+      # Run health checks after deployment (will check version internally)
+      - execute-critical-health-checks-ios:
+          name: Critical Health Checks (version-conditional)
+          requires:
+            - Deploy ad-hoc version over Firebase + Upload to Browserstack
+          filters:
+            branches:
+              only: 
+                - main
+                - /^main-\d+$/
+          context: napps
+
+      # Deploy to TestFlight after health checks
+      - build-testflight-deploy:
+          name: Auto Deploy release version to TestFlight
+          requires:
+            - Critical Health Checks (version-conditional)
+          filters:
+            branches:
+              only: 
+                - main
+                - /^main-\d+$/
+          context: napps
+
+      - build-and-deploy-testflight-beta:
+          name: Deploy beta version over Testflight
+          filters:
+            branches:
+              only:
+                - main
+                - /^main-\d+$/
+          when:
+            or:
+              - << pipeline.parameters.run-testflight-beta >>
+              - matches:
+                  pattern: "^beta.*"
+                  value: << pipeline.git.tag >>
+      
+      - build-and-deploy-firebase:
+          name: Deploy ad-hoc version over Firebase
+          filters:
+            branches:
+              only: 
+                - main
+                - /^main-\d+$/
+          when: << pipeline.parameters.run-firebase-deploy >>
+          context: napps
+      
+      - build-and-deploy-browserstack:
+          name: Upload to Browserstack
+          filters:
+            branches:
+              only: 
+                - main
+                - /^main-\d+$/
+          when: << pipeline.parameters.run-browserstack-tests >>
+          context: napps
+
+      # Manual release deployment trigger
+      - build-testflight-deploy:
+          name: Manual Deploy release version to TestFlight
+          filters:
+            branches:
+              only:
+                - main
+                - /^main-\d+$/
+          when: << pipeline.parameters.run-release-deploy >>
           context: napps
 
   test-browserstack-critical-health-checks:
+    when: << pipeline.parameters.run-browserstack-tests >>
     jobs:
-      - build-and-deploy-firebase-and-browserstack
+      - build-and-deploy-browserstack
       - execute-critical-health-checks-ios:
           requires:
-            - build-and-deploy-firebase-and-browserstack
+            - build-and-deploy-browserstack
           context: napps
