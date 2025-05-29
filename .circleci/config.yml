@@ -35,14 +35,21 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Check for MARKETING_VERSION change
+          name: Check for MARKETING_VERSION change (with dry-run support)
           command: |
-            if sh ./check_marketing_version.sh; then
-              echo "✅ Version changed, continuing with release pipeline"
+            if [[ "$CIRCLE_BRANCH" == "dc-mob-3472-automation-tests" ]]; then
+              echo "🧪 DRY RUN MODE: Simulating version change detection"
+              echo "✅ SIMULATED: Version changed, continuing with release pipeline"
               exit 0
             else
-              echo "ℹ️  No version change detected, halting release pipeline"
-              circleci-agent step halt
+              echo "🚀 PRODUCTION MODE: Checking actual version change"
+              if sh ./check_marketing_version.sh; then
+                echo "✅ Version changed, continuing with release pipeline"
+                exit 0
+              else
+                echo "ℹ️  No version change detected, halting release pipeline"
+                circleci-agent step halt
+              fi
             fi
 
   build-and-deploy-testflight-beta:
@@ -79,6 +86,16 @@ jobs:
     <<: *macos_common
     steps:
       - checkout
+      - run:
+          name: Check if this is a test run
+          command: |
+            if [[ "$CIRCLE_BRANCH" == "dc-mob-3472-automation-tests" ]]; then
+              echo "🧪 DRY RUN MODE: Will simulate deployments without actual uploads"
+              echo "export DEPLOYMENT_DRY_RUN=true" >> $BASH_ENV
+            else
+              echo "🚀 PRODUCTION MODE: Will perform actual deployments"
+              echo "export DEPLOYMENT_DRY_RUN=false" >> $BASH_ENV
+            fi
       - macos/switch-ruby:
           version: "3.2"
       - restore_cache:
@@ -100,14 +117,37 @@ jobs:
           name: Execute bootstrap
           command: ./bootstrap.sh
       - run:
-          name: Build the Ecosia app
-          command: bundle exec fastlane build_ecosia_app
+          name: Build the Ecosia app (with dry-run support)
+          command: |
+            if [[ "$DEPLOYMENT_DRY_RUN" == "true" ]]; then
+              echo "🧪 DRY RUN: Simulating app build"
+              echo "Would run: bundle exec fastlane build_ecosia_app"
+            else
+              echo "🚀 PRODUCTION: Building Ecosia app"
+              bundle exec fastlane build_ecosia_app
+            fi
       - run:
-          name: Upload to Firebase
-          command: bundle exec fastlane upload_to_firebase
+          name: Upload to Firebase (with dry-run support)
+          command: |
+            if [[ "$DEPLOYMENT_DRY_RUN" == "true" ]]; then
+              echo "🧪 DRY RUN: Simulating Firebase upload"
+              echo "Would run: bundle exec fastlane upload_to_firebase"
+            else
+              echo "🚀 PRODUCTION: Uploading to Firebase"
+              bundle exec fastlane upload_to_firebase
+            fi
       - run:
-          name: Upload to Browserstack
-          command: bundle exec fastlane upload_to_browserstack
+          name: Upload to Browserstack (with dry-run support)
+          command: |
+            if [[ "$DEPLOYMENT_DRY_RUN" == "true" ]]; then
+              echo "🧪 DRY RUN: Simulating BrowserStack upload"
+              echo "Would run: bundle exec fastlane upload_to_browserstack"
+              # Simulate the BrowserStack URL for downstream jobs
+              echo "export BROWSERSTACK_URL=https://fake-browserstack-url-for-testing.com" >> $BASH_ENV
+            else
+              echo "🚀 PRODUCTION: Uploading to BrowserStack"
+              bundle exec fastlane upload_to_browserstack
+            fi
       - run: |
           printenv BROWSERSTACK_URL
       - run: |
@@ -125,6 +165,16 @@ jobs:
       - attach_workspace:
           at: .
       - run:
+          name: Check if this is a test run
+          command: |
+            if [[ "$CIRCLE_BRANCH" == "dc-mob-3472-automation-tests" ]]; then
+              echo "🧪 DRY RUN MODE: Will simulate health checks without actual execution"
+              echo "export HEALTH_CHECKS_DRY_RUN=true" >> $BASH_ENV
+            else
+              echo "🚀 PRODUCTION MODE: Will run actual health checks"
+              echo "export HEALTH_CHECKS_DRY_RUN=false" >> $BASH_ENV
+            fi
+      - run:
           name: Load Bash ENV from workspace
           command: cat bash.env >> $BASH_ENV
       - run:
@@ -135,19 +185,32 @@ jobs:
           command: |
             source $BASH_ENV
             echo "BROWSERSTACK_URL is: $BROWSERSTACK_URL"
-      - run: |
-          echo "Cloning mobile acceptance tests..."
-          git clone https://github.com/ecosia/mobile-acceptance-testing.git
       - run:
-          name: Run iOS tests on BrowserStack (non-blocking)
+          name: Clone mobile acceptance tests (with dry-run support)
           command: |
-            echo "Running iOS tests on BrowserStack..."
-            echo "Using App URL: $BS_URL"
-            cd mobile-acceptance-testing
-            mvn test -PiOSCHCTests -DBStackIOSAppUrl="$BROWSERSTACK_URL" || {
-              echo "Health checks failed, but continuing with deployment..."
-              exit 0
-            }
+            if [[ "$HEALTH_CHECKS_DRY_RUN" == "true" ]]; then
+              echo "🧪 DRY RUN: Simulating test repository clone"
+              echo "Would run: git clone https://github.com/ecosia/mobile-acceptance-testing.git"
+            else
+              echo "🚀 PRODUCTION: Cloning mobile acceptance tests"
+              git clone https://github.com/ecosia/mobile-acceptance-testing.git
+            fi
+      - run:
+          name: Run iOS tests on BrowserStack (with dry-run support)
+          command: |
+            if [[ "$HEALTH_CHECKS_DRY_RUN" == "true" ]]; then
+              echo "🧪 DRY RUN: Simulating iOS health checks on BrowserStack"
+              echo "Would run: mvn test -PiOSCHCTests -DBStackIOSAppUrl=$BROWSERSTACK_URL"
+              echo "✅ SIMULATED: Health checks completed successfully"
+            else
+              echo "🚀 PRODUCTION: Running iOS tests on BrowserStack"
+              echo "Using App URL: $BS_URL"
+              cd mobile-acceptance-testing
+              mvn test -PiOSCHCTests -DBStackIOSAppUrl="$BROWSERSTACK_URL" || {
+                echo "Health checks failed, but continuing with deployment..."
+                exit 0
+              }
+            fi
       - jira/notify:
           issue_regexp: "([A-Za-z]{2,30}-[0-9]+)"
           pipeline_id: << pipeline.id >>
