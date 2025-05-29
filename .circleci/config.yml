@@ -576,4 +576,34 @@ workflows:
           name: Manual Deploy release version to TestFlight
           context: napps
 
+  # Manual full workflow for testing
+  manual-full-workflow:
+    when: << pipeline.parameters.dry-run-mode >>
+    jobs:
+      # Always run deployment
+      - build-and-deploy-firebase-and-browserstack:
+          name: Manual Deploy ad-hoc version over Firebase + Upload to Browserstack
+          context: napps
+
+      # Check if version was bumped and save result to workspace
+      - check-version-bump:
+          name: Manual Check for version bump
+          requires:
+            - Manual Deploy ad-hoc version over Firebase + Upload to Browserstack
+          context: napps
+
+      # Run health checks (conditionally based on version check result)
+      - execute-critical-health-checks-ios:
+          name: Manual Critical Health Checks (release cut pipeline)
+          requires:
+            - Manual Check for version bump
+          context: napps
+
+      # Deploy to TestFlight (conditionally based on version check result)
+      - build-testflight-deploy:
+          name: Manual Auto Deploy release version to TestFlight
+          requires:
+            - Manual Critical Health Checks (release cut pipeline)
+          context: napps
+
 
