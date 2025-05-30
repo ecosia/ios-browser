@@ -109,7 +109,6 @@ jobs:
                 - << pipeline.parameters.simulate-version-change >>
               - and:
                 - not: << pipeline.parameters.dry-run-mode >>
-                # In production, we'll check VERSION_CHANGED from file
           steps:
             - continuation/continue:
                 configuration_path: .circleci/release-config.yml
