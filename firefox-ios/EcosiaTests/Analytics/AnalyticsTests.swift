@@ -150,15 +150,27 @@ final class AnalyticsTests: XCTestCase {
 
     func test_makeNetworkConfig_usesStandardEndpoint_whenShouldUseMicroIsFalse() {
         Analytics.shouldUseMicroInstance = false
-        let config = Analytics.makeNetworkConfig()
-        XCTAssertEqual(Environment.current.urlProvider.snowplow, config.endpoint)
+        let mockUrlProvider: URLProvider = .staging
+        let config = Analytics.makeNetworkConfig(urlProvider: mockUrlProvider)
+        XCTAssertEqual(mockUrlProvider.snowplow, config.endpoint?.asURL?.host)
     }
 
     func test_makeNetworkConfig_usesMicroEndpoint_whenShouldUseMicroIsTrue() {
-        Analytics.shouldUseMicroInstance = false
-        let config = Analytics.makeNetworkConfig()
-        XCTAssertEqual(Environment.current.urlProvider.snowplowMicro, config.endpoint)
+        Analytics.shouldUseMicroInstance = true
+        let mockUrlProvider: URLProvider = .staging
+        let config = Analytics.makeNetworkConfig(urlProvider: mockUrlProvider)
+        XCTAssertEqual(mockUrlProvider.snowplowMicro, config.endpoint)
         XCTAssertEqual(config.requestHeaders?.keys.contains(CloudflareKeyProvider.clientId), true)
         XCTAssertEqual(config.requestHeaders?.keys.contains(CloudflareKeyProvider.clientSecret), true)
+    }
+    
+    func test_makeNetworkConfig_usesProductionEndpoint_whenShouldUseMicroIsFalse_andUrlProvider_isProduction() {
+        Analytics.shouldUseMicroInstance = false
+        let mockUrlProvider: URLProvider = .production
+        let config = Analytics.makeNetworkConfig(urlProvider: mockUrlProvider)
+        XCTAssertEqual(mockUrlProvider.snowplow, "sp.ecosia.org")
+        XCTAssertEqual(mockUrlProvider.snowplow, config.endpoint?.asURL?.host)
+        XCTAssertEqual(config.requestHeaders?.keys.contains(CloudflareKeyProvider.clientId), false)
+        XCTAssertEqual(config.requestHeaders?.keys.contains(CloudflareKeyProvider.clientSecret), false)
     }
 }

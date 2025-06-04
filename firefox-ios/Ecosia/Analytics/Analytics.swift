@@ -370,8 +370,9 @@ extension Analytics {
     /// including authentication headers if using a micro instance.
     ///
     /// - Returns: A configured `NetworkConfiguration` object.
-    static func makeNetworkConfig() -> NetworkConfiguration {
-        let urlProvider = Environment.current.urlProvider
+    /// - Parameters:
+    ///   - urlProvider: The urlProvider in use. Useful for testing purposes.
+    static func makeNetworkConfig(urlProvider: URLProvider = Environment.current.urlProvider) -> NetworkConfiguration {
         let endpoint = shouldUseMicroInstance ? urlProvider.snowplowMicro : urlProvider.snowplow
         var networkConfig = NetworkConfiguration(endpoint: endpoint!)
 
