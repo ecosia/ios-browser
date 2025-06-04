@@ -163,14 +163,14 @@ final class AnalyticsTests: XCTestCase {
         XCTAssertEqual(config.requestHeaders?.keys.contains(CloudflareKeyProvider.clientId), true)
         XCTAssertEqual(config.requestHeaders?.keys.contains(CloudflareKeyProvider.clientSecret), true)
     }
-    
+
     func test_makeNetworkConfig_usesProductionEndpoint_whenShouldUseMicroIsFalse_andUrlProvider_isProduction() {
         Analytics.shouldUseMicroInstance = false
         let mockUrlProvider: URLProvider = .production
         let config = Analytics.makeNetworkConfig(urlProvider: mockUrlProvider)
         XCTAssertEqual(mockUrlProvider.snowplow, "sp.ecosia.org")
         XCTAssertEqual(mockUrlProvider.snowplow, config.endpoint?.asURL?.host)
-        XCTAssertEqual(config.requestHeaders?.keys.contains(CloudflareKeyProvider.clientId), false)
-        XCTAssertEqual(config.requestHeaders?.keys.contains(CloudflareKeyProvider.clientSecret), false)
+        XCTAssertNil(config.requestHeaders?.keys.contains(CloudflareKeyProvider.clientId))
+        XCTAssertNil(config.requestHeaders?.keys.contains(CloudflareKeyProvider.clientSecret))
     }
 }
