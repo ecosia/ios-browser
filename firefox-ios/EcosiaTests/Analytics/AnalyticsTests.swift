@@ -146,4 +146,19 @@ final class AnalyticsTests: XCTestCase {
 
         // Then: The result should be false because it's an upgrade
         XCTAssertFalse(result, "The first install should return FALSE when it's an upgrade")
-    }}
+    }
+
+    func test_makeNetworkConfig_usesStandardEndpoint_whenShouldUseMicroIsFalse() {
+        Analytics.shouldUseMicroInstance = false
+        let config = Analytics.makeNetworkConfig()
+        XCTAssertEqual(Environment.current.urlProvider.snowplow, config.endpoint)
+    }
+
+    func test_makeNetworkConfig_usesMicroEndpoint_whenShouldUseMicroIsTrue() {
+        Analytics.shouldUseMicroInstance = false
+        let config = Analytics.makeNetworkConfig()
+        XCTAssertEqual(Environment.current.urlProvider.snowplowMicro, config.endpoint)
+        XCTAssertEqual(config.requestHeaders?.keys.contains(CloudflareKeyProvider.clientId), true)
+        XCTAssertEqual(config.requestHeaders?.keys.contains(CloudflareKeyProvider.clientSecret), true)
+    }
+}
