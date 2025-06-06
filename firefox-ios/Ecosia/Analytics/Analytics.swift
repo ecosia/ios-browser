@@ -377,7 +377,6 @@ extension Analytics {
         var networkConfig = NetworkConfiguration(endpoint: endpoint!)
 
         if shouldUseMicroInstance,
-           urlProvider.snowplowMicro != nil,
            let auth = Environment.current.auth {
             networkConfig = networkConfig
                 .requestHeaders([
