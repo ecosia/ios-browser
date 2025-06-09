@@ -120,7 +120,7 @@ public struct FeedbackView: View {
         let deviceType = UIDevice.current.model
         let operatingSystem = "iOS \(UIDevice.current.systemVersion)"
         let idiom = UIDevice.current.userInterfaceIdiom == .pad ? "iPadOS" : "iOS"
-        let browserVersion = "Ecosia \(idiom) \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "") (\(Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? ""))"
+        let browserVersion = "Ecosia \(idiom) \(Bundle.version)"
 
         // Send the feedback using the navigation method with the collected data
         Analytics.shared.sendFeedback([
@@ -133,7 +133,7 @@ public struct FeedbackView: View {
 
         // Notify that feedback was submitted
         onFeedbackSubmitted?()
-        
+
         // Dismiss the view
         dismiss()
     }
@@ -302,12 +302,12 @@ class FeedbackViewModel: ObservableObject {
 public class FeedbackViewController: UIHostingController<FeedbackView> {
     /// Completion handler to be called when feedback is submitted
     public var onFeedbackSubmitted: (() -> Void)?
-    
+
     public init(windowUUID: WindowUUID? = nil) {
         // Get the current theme from the theme manager
         let themeManager = AppContainer.shared.resolve() as ThemeManager
         let theme = themeManager.getCurrentTheme(for: windowUUID)
-        
+
         // Create the FeedbackView with the current theme
         var feedbackView = FeedbackView(windowUUID: windowUUID, initialTheme: theme)
 
@@ -318,7 +318,7 @@ public class FeedbackViewController: UIHostingController<FeedbackView> {
         feedbackView.onDismiss = { [weak self] in
             self?.dismiss(animated: true)
         }
-        
+
         // Add callback for feedback submission
         feedbackView.onFeedbackSubmitted = { [weak self] in
             self?.onFeedbackSubmitted?()
