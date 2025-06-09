@@ -4,6 +4,7 @@
 
 import SwiftUI
 import UIKit
+import Common
 
 /// FeedbackType represents the type of feedback a user can submit
 enum FeedbackType: String, CaseIterable, Identifiable {
@@ -12,6 +13,17 @@ enum FeedbackType: String, CaseIterable, Identifiable {
     case suggestionOrFeedback = "Suggestion or feedback"
 
     var id: String { self.rawValue }
+    
+    var analyticsIdentfier: String {
+        switch self {
+        case .reportIssue:
+            return "report_issue"
+        case .generalQuestion:
+            return "general_question"
+        case .suggestionOrFeedback:
+            return "suggestion_or_feedback"
+        }
+    }
 
     var localizedString: String {
         switch self {
@@ -27,105 +39,65 @@ enum FeedbackType: String, CaseIterable, Identifiable {
 
 /// The SwiftUI view for collecting user feedback
 public struct FeedbackView: View {
-    // Avoid using Environment property wrapper due to conflicts
+    // User input state
     @State private var selectedFeedbackType: FeedbackType?
     @State private var feedbackText: String = ""
     @State private var isButtonEnabled: Bool = false
 
+    // Theme handling
+    @StateObject private var viewModel = FeedbackViewModel()
+    let windowUUID: WindowUUID?
+
     // Define a dismiss callback that will be injected by the hosting controller
     var onDismiss: (() -> Void)?
 
-    // Use Ecosia's green color
-    private let ecosiaGreenColor = Color.ecosiaBundledColorWithName("Green")
+    // Layout constants
+    private struct Layout {
+        static let cornerRadius: CGFloat = .ecosia.borderRadius._l
+        static let buttonCornerRadius: CGFloat = 25
+        static let textEditorHeight: CGFloat = 100
+    }
+
+    public init(windowUUID: WindowUUID? = nil,
+                initialTheme: Theme? = nil) {
+        self.windowUUID = windowUUID
+
+        // Apply initial theme if provided
+        if let theme = initialTheme {
+            _viewModel = StateObject(wrappedValue: FeedbackViewModel(theme: theme))
+        }
+    }
 
     public var body: some View {
         NavigationView {
-            VStack(alignment: .leading, spacing: 20) {
-                // Header section
-                Text(String.localized(.whatWouldYouLikeToShare))
-                    .font(.headline)
-                    .padding(.horizontal)
+            ZStack {
+                // Background color - using ntpBackground like in MarketsController
+                viewModel.ntpBackgroundColor.ignoresSafeArea()
 
-                // Feedback type selection section
-                VStack(spacing: 0) {
-                    ForEach(FeedbackType.allCases) { type in
-                        Button(action: {
-                            selectedFeedbackType = type
-                            updateButtonState()
-                        }) {
-                            HStack {
-                                Text(type.localizedString)
-                                    .foregroundColor(.primary)
-
-                                Spacer()
-
-                                if selectedFeedbackType == type {
-                                    Image(systemName: "checkmark")
-                                        .foregroundColor(ecosiaGreenColor)
-                                }
-                            }
-                            .padding()
+                FeedbackContentView(
+                    viewModel: viewModel,
+                    selectedFeedbackType: $selectedFeedbackType,
+                    feedbackText: $feedbackText,
+                    isButtonEnabled: $isButtonEnabled,
+                    updateButtonState: updateButtonState,
+                    sendFeedback: sendFeedback
+                )
+                .navigationTitle(String.localized(.sendFeedback))
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button(String.localized(.close)) {
+                            dismiss()
                         }
-                        .background(Color(UIColor.systemBackground))
-
-                        if type != FeedbackType.allCases.last {
-                            Divider()
-                                .padding(.leading)
-                        }
+                        .foregroundColor(viewModel.brandPrimaryColor)
+                        .accessibilityIdentifier("close_feedback_button")
                     }
                 }
-                .background(Color(UIColor.secondarySystemGroupedBackground))
-                .cornerRadius(12)
-                .padding(.horizontal)
-
-                // Feedback text input section
-                TextEditor(text: $feedbackText)
-                    .frame(minHeight: 150)
-                    .padding(8)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(Color(UIColor.systemGray5), lineWidth: 1)
-                    )
-                    .padding(.horizontal)
-                    .overlay(
-                        Group {
-                            if feedbackText.isEmpty {
-                                Text(String.localized(.addMoreDetailAboutYourFeedback))
-                                    .foregroundColor(Color(UIColor.placeholderText))
-                                    .padding(.leading, 22)
-                                    .padding(.top, 16)
-                                    .allowsHitTesting(false)
-                                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                            }
-                        }
-                    )
-                    .onChange(of: feedbackText) { _ in
-                        updateButtonState()
-                    }
-
-                Spacer()
-
-                // Send button
-                Button(action: sendFeedback) {
-                    Text(String.localized(.send))
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .foregroundColor(.white)
-                        .background(isButtonEnabled ? ecosiaGreenColor : Color(UIColor.systemGray4))
-                        .cornerRadius(25)
-                }
-                .disabled(!isButtonEnabled)
-                .padding(.horizontal)
-                .padding(.bottom, 20)
             }
-            .navigationTitle(String.localized(.sendFeedback))
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(String.localized(.close)) {
-                        dismiss()
-                    }
-                }
+            .onReceive(NotificationCenter.default.publisher(for: .ThemeDidChange)) { notification in
+                guard let uuid = notification.windowUUID, uuid == windowUUID else { return }
+                let themeManager = AppContainer.shared.resolve() as ThemeManager
+                viewModel.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
             }
         }
     }
@@ -145,17 +117,16 @@ public struct FeedbackView: View {
         // Gather system information to include in analytics event
         let deviceType = UIDevice.current.model
         let operatingSystem = "iOS \(UIDevice.current.systemVersion)"
-        let browserVersion = "Ecosia iOS \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "") (\(Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? ""))"
+        let idiom = UIDevice.current.userInterfaceIdiom == .pad ? "iPadOS" : "iOS"
+        let browserVersion = "Ecosia \(idiom) \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "") (\(Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? ""))"
 
-        // Include the feedback type in the event
-        let feedbackTypeValue = selectedFeedbackType?.rawValue ?? ""
-
-        // Log analytics event
+        // Send the feedback using the navigation method with the collected data
         Analytics.shared.navigation(.click, label: .sendFeedback, options: [
-            "feedback_type": feedbackTypeValue,
+            "feedback_type": selectedFeedbackType?.analyticsIdentfier ?? "",
             "device_type": deviceType,
             "os": operatingSystem,
-            "browser_version": browserVersion
+            "browser_version": browserVersion,
+            "feedback_text": feedbackText
         ])
 
         // Dismiss the view
@@ -163,11 +134,218 @@ public struct FeedbackView: View {
     }
 }
 
+// Break down content into separate view to avoid SwiftUI type-checking time limitation
+private struct FeedbackContentView: View {
+    let viewModel: FeedbackViewModel
+    @Binding var selectedFeedbackType: FeedbackType?
+    @Binding var feedbackText: String
+    @Binding var isButtonEnabled: Bool
+    let updateButtonState: () -> Void
+    let sendFeedback: () -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: .ecosia.space._1l) {
+            // Header section
+            Text(String.localized(.whatWouldYouLikeToShare))
+                .font(.title3)
+                .foregroundColor(viewModel.textPrimaryColor)
+                .padding(.horizontal, .ecosia.space._m)
+                .padding(.top, .ecosia.space._m)
+                .accessibilityIdentifier("feedback_title")
+
+            // Feedback type selection section
+            FeedbackTypeSection(
+                viewModel: viewModel,
+                selectedFeedbackType: $selectedFeedbackType,
+                updateButtonState: updateButtonState
+            )
+
+            // Feedback text and send button wrapped in a VStack with 16pt spacing
+            VStack(spacing: .ecosia.space._m) {
+                // Feedback text input section
+                FeedbackTextSection(
+                    viewModel: viewModel,
+                    feedbackText: $feedbackText,
+                    updateButtonState: updateButtonState
+                )
+
+                // Send button container
+                SendButtonSection(
+                    viewModel: viewModel,
+                    isButtonEnabled: isButtonEnabled,
+                    sendFeedback: sendFeedback
+                )
+            }
+            .padding(.horizontal, .ecosia.space._m)
+            Spacer()
+        }
+        .background(viewModel.ntpBackgroundColor)
+    }
+}
+
+private struct FeedbackTypeSection: View {
+    let viewModel: FeedbackViewModel
+    @Binding var selectedFeedbackType: FeedbackType?
+    let updateButtonState: () -> Void
+
+    var body: some View {
+        VStack {
+            VStack(spacing: 0) {
+                ForEach(FeedbackType.allCases) { type in
+                    Button(action: {
+                        selectedFeedbackType = type
+                        updateButtonState()
+                    }) {
+                        HStack {
+                            Text(type.localizedString)
+                                .font(.body)
+                                .foregroundColor(viewModel.textPrimaryColor)
+
+                            Spacer()
+
+                            if selectedFeedbackType == type {
+                                Image(systemName: "checkmark")
+                                    .foregroundColor(viewModel.brandPrimaryColor)
+                                    .accessibility(label: Text("Selected"))
+                            }
+                        }
+                        .padding(.ecosia.space._m)
+                        .background(viewModel.barBackgroundColor)
+                    }
+
+                    if type != FeedbackType.allCases.last {
+                        Divider()
+                            .padding(.leading, .ecosia.space._m)
+                    }
+                }
+            }
+            .frame(minHeight: 44 * CGFloat(FeedbackType.allCases.count))
+        }
+        .background(viewModel.barBackgroundColor)
+        .cornerRadius(.ecosia.borderRadius._l)
+        .overlay(
+            RoundedRectangle(cornerRadius: .ecosia.borderRadius._l)
+                .stroke(viewModel.borderColor, lineWidth: 1)
+        )
+        .padding(.horizontal, .ecosia.space._m)
+    }
+}
+
+private struct FeedbackTextSection: View {
+    let viewModel: FeedbackViewModel
+    @Binding var feedbackText: String
+    let updateButtonState: () -> Void
+
+    var body: some View {
+        VStack {
+            TextEditor(text: $feedbackText)
+                .frame(height: 100)
+                .font(.body)
+                .foregroundColor(viewModel.textPrimaryColor)
+                .padding(.ecosia.space._s)
+                .background(viewModel.barBackgroundColor)
+                .cornerRadius(.ecosia.borderRadius._l)
+                .overlay(
+                    ZStack {
+                        if feedbackText.isEmpty {
+                            HStack {
+                                Text(String.localized(.addMoreDetailAboutYourFeedback))
+                                    .font(.subheadline)
+                                    .foregroundColor(viewModel.textSecondaryColor)
+                                    .padding(.horizontal, .ecosia.space._s)
+                                    .padding(.top, .ecosia.space._s)
+                                    .allowsHitTesting(false)
+                                Spacer()
+                            }
+                        }
+                    }
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: .ecosia.borderRadius._l)
+                        .stroke(viewModel.borderColor, lineWidth: 1)
+                )
+                .onChange(of: feedbackText) { _ in
+                    updateButtonState()
+                }
+        }
+        .background(viewModel.barBackgroundColor)
+        .cornerRadius(.ecosia.borderRadius._l)
+    }
+}
+
+private struct SendButtonSection: View {
+    let viewModel: FeedbackViewModel
+    let isButtonEnabled: Bool
+    let sendFeedback: () -> Void
+
+    var body: some View {
+        VStack {
+            Button(action: sendFeedback) {
+                Text(String.localized(.send))
+                    .font(.body.bold())
+                    .frame(maxWidth: .infinity)
+                    .padding(.ecosia.space._m)
+                    .foregroundColor(.white)
+                    .background(isButtonEnabled ? viewModel.buttonColor : Color(UIColor.systemGray4))
+                    .cornerRadius(.ecosia.borderRadius._1l)
+            }
+            .disabled(!isButtonEnabled)
+        }
+        .background(viewModel.barBackgroundColor)
+        .cornerRadius(.ecosia.borderRadius._l)
+        .overlay(
+            RoundedRectangle(cornerRadius: .ecosia.borderRadius._l)
+                .stroke(viewModel.borderColor, lineWidth: 1)
+        )
+        .padding(.bottom, .ecosia.space._m)
+        .accessibilityIdentifier("send_feedback_button")
+    }
+}
+
+/// View model to handle theming for the FeedbackView
+class FeedbackViewModel: ObservableObject {
+    @Published var backgroundColor = Color.white
+    @Published var ntpBackgroundColor = Color.white
+    @Published var barBackgroundColor = Color.white
+    @Published var stepsBackgroundColor = Color(UIColor.secondarySystemGroupedBackground)
+    @Published var cellBackgroundColor = Color(UIColor.systemBackground)
+    @Published var tableViewRowTextColor = Color.black
+    @Published var textPrimaryColor = Color.black
+    @Published var textSecondaryColor = Color.gray
+    @Published var buttonColor = Color.blue
+    @Published var brandPrimaryColor = Color.blue
+    @Published var borderColor = Color.gray.opacity(0.2)
+
+    init(theme: Theme? = nil) {
+        if let theme = theme {
+            applyTheme(theme: theme)
+        }
+    }
+
+    func applyTheme(theme: Theme) {
+        backgroundColor = Color(theme.colors.ecosia.backgroundPrimary)
+        ntpBackgroundColor = Color(theme.colors.ecosia.ntpBackground)
+        barBackgroundColor = Color(theme.colors.ecosia.barBackground)
+        stepsBackgroundColor = Color(theme.colors.ecosia.backgroundSecondary)
+        cellBackgroundColor = Color(theme.colors.ecosia.backgroundPrimary)
+        tableViewRowTextColor = Color(theme.colors.ecosia.tableViewRowText)
+        textPrimaryColor = Color(theme.colors.ecosia.textPrimary)
+        textSecondaryColor = Color(theme.colors.ecosia.textSecondary)
+        buttonColor = Color(theme.colors.ecosia.buttonBackgroundPrimaryActive)
+        brandPrimaryColor = Color(theme.colors.ecosia.brandPrimary)
+        borderColor = Color.border
+    }
+}
+
 /// UIKit wrapper for the SwiftUI FeedbackView
 public class FeedbackViewController: UIHostingController<FeedbackView> {
-    public init() {
-        // Create the FeedbackView first without setting the dismiss callback
-        var feedbackView = FeedbackView()
+    public init(windowUUID: WindowUUID? = nil) {
+        // Get the current theme from the theme manager
+        let themeManager = AppContainer.shared.resolve() as ThemeManager
+        let theme = themeManager.getCurrentTheme(for: windowUUID)
+
+        // Create the FeedbackView with the current theme
+        var feedbackView = FeedbackView(windowUUID: windowUUID, initialTheme: theme)
 
         // Call super.init before using self
         super.init(rootView: feedbackView)

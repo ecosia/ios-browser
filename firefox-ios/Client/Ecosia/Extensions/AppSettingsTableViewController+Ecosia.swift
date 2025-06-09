@@ -104,7 +104,7 @@ extension AppSettingsTableViewController {
 
     private func getEcosiaSupportSection() -> SettingSection {
         let helpCenterSetting = HelpCenterSetting()
-        let sendFeedbackSetting = EcosiaSendFeedbackSetting()
+        let sendFeedbackSetting = EcosiaSendFeedbackSetting(settings: self)
 
         return .init(title: NSAttributedString(string: .AppSettingsSupport),
                      children: [helpCenterSetting, sendFeedbackSetting])

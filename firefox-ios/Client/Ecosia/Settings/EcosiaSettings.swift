@@ -233,13 +233,18 @@ class HelpCenterSetting: Setting {
 
     override var accessibilityIdentifier: String? { return "HelpCenter" }
 
-    override func onClick(_ navigationController: UINavigationController?) {
-        if let helpCenterURL = URL(string: "https://ecosia.zendesk.com/hc/en-us") {
-            UIApplication.shared.open(helpCenterURL, options: [:], completionHandler: nil)
+    override var url: URL? {
+        return Environment.current.urlProvider.faq
+    }
 
-            // Log analytics event for help center access
-            Analytics.shared.navigation(.open, label: .help)
-        }
+    let windowUUID = WindowUUID()
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        // Use the setUpAndPushSettingsContentViewController method to open the URL in-app
+        setUpAndPushSettingsContentViewController(navigationController, url: self.url, windowUUID: windowUUID)
+
+        // Log analytics event for help center access
+        Analytics.shared.navigation(.open, label: .help)
     }
 
     init() {
@@ -253,12 +258,20 @@ class EcosiaSendFeedbackSetting: Setting {
 
     override var accessibilityIdentifier: String? { return "SendFeedback" }
 
+    let windowUUID: WindowUUID
+
     override func onClick(_ navigationController: UINavigationController?) {
-        let feedbackVC = FeedbackViewController()
+        let feedbackVC = FeedbackViewController(windowUUID: windowUUID)
         navigationController?.present(feedbackVC, animated: true)
     }
 
+    init(settings: SettingsTableViewController) {
+        self.windowUUID = settings.windowUUID
+        super.init(title: NSAttributedString(string: String.localized(.sendFeedback)))
+    }
+
     init() {
+        self.windowUUID = WindowUUID()
         super.init(title: NSAttributedString(string: String.localized(.sendFeedback)))
     }
 }
