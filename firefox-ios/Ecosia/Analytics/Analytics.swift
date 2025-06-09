@@ -11,7 +11,7 @@ open class Analytics {
     private static let consentSchema = "iglu:org.ecosia/eccc_context/jsonschema/1-0-2"
     static let userSchema = "iglu:org.ecosia/app_user_state_context/jsonschema/1-0-0"
     static let inappSearchSchema = "iglu:org.ecosia/inapp_search_event/jsonschema/1-0-1"
-    static let feedbackSchema = "iglu:org.ecosia/feedback_event/jsonschema/1-0-0"
+    static let feedbackSchema = "iglu:org.ecosia/ios_feedback_event/jsonschema/1-0-0"
     private static let abTestRoot = "ab_tests"
     private static let namespace = "ios_sp"
     private static let shouldUseMicroInstanceKey = "shouldUseMicroInstance"
@@ -318,7 +318,7 @@ open class Analytics {
             .label(Analytics.Label.clear.rawValue)
             .property(section.rawValue))
     }
-    
+
     // MARK: Feedback
     public func sendFeedback(_ data: [String: Any]) {
         track(SelfDescribing(schema: Self.feedbackSchema,
