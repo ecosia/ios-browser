@@ -7,10 +7,18 @@ import Foundation
 import Shared
 
 struct SimpleToast: ThemeApplicable {
+    // Ecosia: Add padding and corner radius same as ButtonToast
+    struct UX {
+        static let standardCornerRadius: CGFloat = .ecosia.borderRadius._l
+        static let padding: CGFloat = .ecosia.space._1s
+    }
+    
     private let toastLabel: UILabel = .build { label in
         label.font = FXFontStyles.Bold.subheadline.scaledFont()
         label.numberOfLines = 0
         label.textAlignment = .center
+        // Ecosia: Adjust font properties
+        label.adjustsFontForContentSizeCategory = true
     }
 
     private let heightConstraint: NSLayoutConstraint
@@ -28,12 +36,21 @@ struct SimpleToast: ThemeApplicable {
         bottomContainer.addSubview(toastLabel)
         NSLayoutConstraint.activate([
             heightConstraint,
+            /* Ecosia: Adjust constraints to add padding
             toastLabel.widthAnchor.constraint(equalTo: bottomContainer.widthAnchor),
             toastLabel.leadingAnchor.constraint(equalTo: bottomContainer.leadingAnchor),
+            */
+            toastLabel.leadingAnchor.constraint(equalTo: bottomContainer.leadingAnchor, constant: Toast.UX.toastOffset),
+            toastLabel.trailingAnchor.constraint(equalTo: bottomContainer.trailingAnchor, constant: -Toast.UX.toastOffset),
             toastLabel.bottomAnchor.constraint(equalTo: bottomContainer.safeAreaLayoutGuide.bottomAnchor,
-                                               constant: bottomConstraintPadding)
+                                               constant: bottomConstraintPadding - Toast.UX.toastOffset),            
         ])
         applyTheme(theme: theme)
+        
+        // Ecosia: Add corner radius
+        toastLabel.layer.cornerRadius = UX.standardCornerRadius
+        toastLabel.layer.masksToBounds = true
+        
         animate(toastLabel)
         if UIAccessibility.isVoiceOverRunning {
             UIAccessibility.post(notification: .announcement, argument: text)
@@ -42,7 +59,10 @@ struct SimpleToast: ThemeApplicable {
 
     func applyTheme(theme: Theme) {
         toastLabel.textColor = theme.colors.textInverted
+        /* Ecosia: Update background color
         toastLabel.backgroundColor = theme.colors.actionPrimary
+        */
+        toastLabel.backgroundColor = theme.colors.ecosia.backgroundQuaternary
     }
 
     private func dismiss(_ toast: UIView) {

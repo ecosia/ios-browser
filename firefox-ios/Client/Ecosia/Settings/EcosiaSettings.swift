@@ -259,35 +259,33 @@ class EcosiaSendFeedbackSetting: Setting {
     override var accessibilityIdentifier: String? { return "SendFeedback" }
 
     let windowUUID: WindowUUID
-    private let toast = SimpleToast()
-    
+
     override func onClick(_ navigationController: UINavigationController?) {
         let feedbackVC = FeedbackViewController(windowUUID: windowUUID)
-        
+
         // Add callback for when feedback is submitted
         feedbackVC.onFeedbackSubmitted = { [weak self, weak navigationController] in
             // Show the thank you toast
-            self?.showThankYouToast(in: navigationController?.view.window)
+            self?.showThankYouToast(in: navigationController?.view)
         }
-        
+
         navigationController?.present(feedbackVC, animated: true)
     }
-    
+
     /// Show a toast thanking the user for their feedback
-    private func showThankYouToast(in window: UIWindow?) {
-        guard let window = window,
+    private func showThankYouToast(in view: UIView?) {
+        guard let view,
               let themeManager: ThemeManager = AppContainer.shared.resolve() else {
             return
         }
-        
+
         // Get the default theme
         let theme = themeManager.getCurrentTheme(for: windowUUID)
-        
+
         // Show the thank you message
-        toast.showAlertWithText(
+        SimpleToast().showAlertWithText(
             String.localized(.thankYouForYourFeedback),
-            image: .named("checkmark.circle.fill"),
-            bottomContainer: window,
+            bottomContainer: view,
             theme: theme
         )
     }

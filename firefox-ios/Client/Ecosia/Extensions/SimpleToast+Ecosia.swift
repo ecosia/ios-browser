@@ -21,7 +21,8 @@ extension SimpleToast {
         bottomInset: CGFloat? = nil
     ) -> SimpleToast {
         let toast = self.createView(text: text, image: image, theme: theme)
-        toast.layer.cornerRadius = 10
+        // Ecosia: Use standardCornerRadius from UX
+        toast.layer.cornerRadius = UX.standardCornerRadius
         toast.layer.masksToBounds = true
 
         bottomContainer.addSubview(toast)
@@ -42,15 +43,18 @@ extension SimpleToast {
         stack.axis = .horizontal
         stack.alignment = .center
         stack.distribution = .fill
-        stack.spacing = 8
-        stack.layer.cornerRadius = 10
+        // Ecosia: Use padding from UX
+        stack.spacing = UX.padding
+        // Ecosia: Use standardCornerRadius from UX
+        stack.layer.cornerRadius = UX.standardCornerRadius
         stack.backgroundColor = theme.colors.ecosia.backgroundQuaternary
 
         let toast = UILabel()
         toast.text = text
         toast.numberOfLines = 1
         toast.textColor = theme.colors.ecosia.textInversePrimary
-        toast.font = UIFont.preferredFont(forTextStyle: .body)
+        // Ecosia: Use consistent font style with main implementation
+        toast.font = DefaultDynamicFontHelper.preferredFont(withTextStyle: .body, size: 17)
         toast.adjustsFontForContentSizeCategory = true
         toast.adjustsFontSizeToFitWidth = true
         toast.textAlignment = .left
@@ -69,12 +73,14 @@ extension SimpleToast {
         }
 
         let leftSpace = UIView()
-        leftSpace.widthAnchor.constraint(equalToConstant: 8).isActive = true
+        // Ecosia: Use padding from UX
+        leftSpace.widthAnchor.constraint(equalToConstant: UX.padding).isActive = true
         stack.addArrangedSubview(leftSpace)
         stack.addArrangedSubview(imageView)
         stack.addArrangedSubview(toast)
         let rightSpace = UIView()
-        rightSpace.widthAnchor.constraint(equalToConstant: 8).isActive = true
+        // Ecosia: Use padding from UX
+        rightSpace.widthAnchor.constraint(equalToConstant: UX.padding).isActive = true
         stack.addArrangedSubview(rightSpace)
         return stack
     }
