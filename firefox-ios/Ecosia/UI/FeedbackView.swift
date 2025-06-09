@@ -13,7 +13,7 @@ enum FeedbackType: String, CaseIterable, Identifiable {
     case suggestionOrFeedback = "Suggestion or feedback"
 
     var id: String { self.rawValue }
-    
+
     var analyticsIdentfier: String {
         switch self {
         case .reportIssue:
@@ -50,6 +50,8 @@ public struct FeedbackView: View {
 
     // Define a dismiss callback that will be injected by the hosting controller
     var onDismiss: (() -> Void)?
+    // Callback for notifying when feedback was submitted
+    var onFeedbackSubmitted: (() -> Void)?
 
     // Layout constants
     private struct Layout {
@@ -129,6 +131,9 @@ public struct FeedbackView: View {
             "feedback_text": feedbackText
         ])
 
+        // Notify that feedback was submitted
+        onFeedbackSubmitted?()
+        
         // Dismiss the view
         dismiss()
     }
@@ -160,23 +165,50 @@ private struct FeedbackContentView: View {
                 updateButtonState: updateButtonState
             )
 
-            // Feedback text and send button wrapped in a VStack with 16pt spacing
+            // Combined container for text input and send button
             VStack(spacing: .ecosia.space._m) {
-                // Feedback text input section
-                FeedbackTextSection(
-                    viewModel: viewModel,
-                    feedbackText: $feedbackText,
-                    updateButtonState: updateButtonState
-                )
+                // Feedback text input section with proper placeholder
+                ZStack(alignment: .topLeading) {
+                    TextEditor(text: $feedbackText)
+                        .frame(height: 100)
+                        .font(.body)
+                        .foregroundColor(viewModel.textPrimaryColor)
+                        .padding(.ecosia.space._s)
+                        .onChange(of: feedbackText) { _ in
+                            updateButtonState()
+                        }
 
-                // Send button container
-                SendButtonSection(
-                    viewModel: viewModel,
-                    isButtonEnabled: isButtonEnabled,
-                    sendFeedback: sendFeedback
-                )
+                    if feedbackText.isEmpty {
+                        Text(String.localized(.addMoreDetailAboutYourFeedback))
+                            .font(.subheadline)
+                            .foregroundColor(viewModel.textSecondaryColor)
+                            .padding(.horizontal, .ecosia.space._s)
+                            .padding(.top, .ecosia.space._1s)
+                            .padding(.leading, .ecosia.space._2s)
+                    }
+                }
+
+                // Send button
+                Button(action: sendFeedback) {
+                    Text(String.localized(.send))
+                        .font(.body.bold())
+                        .frame(maxWidth: .infinity)
+                        .padding(.ecosia.space._m)
+                        .foregroundColor(.white)
+                        .background(isButtonEnabled ? viewModel.buttonColor : Color(UIColor.systemGray4))
+                        .cornerRadius(.ecosia.borderRadius._1l)
+                }
+                .disabled(!isButtonEnabled)
             }
+            .padding(.ecosia.space._m)
+            .background(viewModel.barBackgroundColor)
+            .cornerRadius(.ecosia.borderRadius._l)
+            .overlay(
+                RoundedRectangle(cornerRadius: .ecosia.borderRadius._l)
+                    .stroke(viewModel.borderColor, lineWidth: 1)
+            )
             .padding(.horizontal, .ecosia.space._m)
+
             Spacer()
         }
         .background(viewModel.ntpBackgroundColor)
@@ -231,77 +263,6 @@ private struct FeedbackTypeSection: View {
     }
 }
 
-private struct FeedbackTextSection: View {
-    let viewModel: FeedbackViewModel
-    @Binding var feedbackText: String
-    let updateButtonState: () -> Void
-
-    var body: some View {
-        VStack {
-            TextEditor(text: $feedbackText)
-                .frame(height: 100)
-                .font(.body)
-                .foregroundColor(viewModel.textPrimaryColor)
-                .padding(.ecosia.space._s)
-                .background(viewModel.barBackgroundColor)
-                .cornerRadius(.ecosia.borderRadius._l)
-                .overlay(
-                    ZStack {
-                        if feedbackText.isEmpty {
-                            HStack {
-                                Text(String.localized(.addMoreDetailAboutYourFeedback))
-                                    .font(.subheadline)
-                                    .foregroundColor(viewModel.textSecondaryColor)
-                                    .padding(.horizontal, .ecosia.space._s)
-                                    .padding(.top, .ecosia.space._s)
-                                    .allowsHitTesting(false)
-                                Spacer()
-                            }
-                        }
-                    }
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: .ecosia.borderRadius._l)
-                        .stroke(viewModel.borderColor, lineWidth: 1)
-                )
-                .onChange(of: feedbackText) { _ in
-                    updateButtonState()
-                }
-        }
-        .background(viewModel.barBackgroundColor)
-        .cornerRadius(.ecosia.borderRadius._l)
-    }
-}
-
-private struct SendButtonSection: View {
-    let viewModel: FeedbackViewModel
-    let isButtonEnabled: Bool
-    let sendFeedback: () -> Void
-
-    var body: some View {
-        VStack {
-            Button(action: sendFeedback) {
-                Text(String.localized(.send))
-                    .font(.body.bold())
-                    .frame(maxWidth: .infinity)
-                    .padding(.ecosia.space._m)
-                    .foregroundColor(.white)
-                    .background(isButtonEnabled ? viewModel.buttonColor : Color(UIColor.systemGray4))
-                    .cornerRadius(.ecosia.borderRadius._1l)
-            }
-            .disabled(!isButtonEnabled)
-        }
-        .background(viewModel.barBackgroundColor)
-        .cornerRadius(.ecosia.borderRadius._l)
-        .overlay(
-            RoundedRectangle(cornerRadius: .ecosia.borderRadius._l)
-                .stroke(viewModel.borderColor, lineWidth: 1)
-        )
-        .padding(.bottom, .ecosia.space._m)
-        .accessibilityIdentifier("send_feedback_button")
-    }
-}
-
 /// View model to handle theming for the FeedbackView
 class FeedbackViewModel: ObservableObject {
     @Published var backgroundColor = Color.white
@@ -339,11 +300,14 @@ class FeedbackViewModel: ObservableObject {
 
 /// UIKit wrapper for the SwiftUI FeedbackView
 public class FeedbackViewController: UIHostingController<FeedbackView> {
+    /// Completion handler to be called when feedback is submitted
+    public var onFeedbackSubmitted: (() -> Void)?
+    
     public init(windowUUID: WindowUUID? = nil) {
         // Get the current theme from the theme manager
         let themeManager = AppContainer.shared.resolve() as ThemeManager
         let theme = themeManager.getCurrentTheme(for: windowUUID)
-
+        
         // Create the FeedbackView with the current theme
         var feedbackView = FeedbackView(windowUUID: windowUUID, initialTheme: theme)
 
@@ -353,6 +317,11 @@ public class FeedbackViewController: UIHostingController<FeedbackView> {
         // Now it's safe to use self
         feedbackView.onDismiss = { [weak self] in
             self?.dismiss(animated: true)
+        }
+        
+        // Add callback for feedback submission
+        feedbackView.onFeedbackSubmitted = { [weak self] in
+            self?.onFeedbackSubmitted?()
         }
 
         // Update the rootView with the complete FeedbackView

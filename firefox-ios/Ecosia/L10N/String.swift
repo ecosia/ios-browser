@@ -242,5 +242,6 @@ extension String {
         case whatWouldYouLikeToShare = "What would you like to share?"
         case send = "Send"
         case close = "Close"
+        case thankYouForYourFeedback = "Thank you for your feedback!"
     }
 }
