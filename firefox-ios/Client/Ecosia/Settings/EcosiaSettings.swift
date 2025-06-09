@@ -160,39 +160,7 @@ final class EcosiaPrivacyPolicySetting: Setting {
     }
 }
 
-final class EcosiaSendFeedbackSetting: Setting {
-    private var device: String {
-        var systemInfo = utsname()
-        uname(&systemInfo)
-        let machineMirror = Mirror(reflecting: systemInfo.machine)
-        let identifier = machineMirror.children.reduce("") { identifier, element in
-            guard let value = element.value as? Int8, value != 0 else { return identifier }
-            return identifier + String(UnicodeScalar(UInt8(value)))
-        }
-        return identifier
-    }
-
-    private var mailURL: String {
-        """
-        mailto:iosapp@ecosia.org?subject=\
-        iOS%20App%20Feedback%20-\
-        %20Version_\(Bundle.version)\
-        %20iOS_\(UIDevice.current.systemVersion)\
-        %20\(device)
-        """
-    }
-
-    override var title: NSAttributedString? {
-        return NSAttributedString(string: .localized(.sendFeedback), attributes: [NSAttributedString.Key.foregroundColor: theme.colors.ecosia.tableViewRowText])
-    }
-
-    override func onClick(_ navigationController: UINavigationController?) {
-        _ = URL(string: mailURL).map {
-            UIApplication.shared.open($0, options: [:], completionHandler: nil)
-        }
-        Analytics.shared.navigation(.open, label: .sendFeedback)
-    }
-}
+// Replaced with SwiftUI FeedbackView implementation
 
 final class EcosiaTermsSetting: Setting {
     override var title: NSAttributedString? {
@@ -256,6 +224,42 @@ final class HomepageSettings: Setting {
         customizationViewController.profile = profile
         customizationViewController.settingsDelegate = delegate
         navigationController?.pushViewController(customizationViewController, animated: true)
+    }
+}
+
+/// Setting option that opens the Ecosia Help Center
+class HelpCenterSetting: Setting {
+    override var accessoryType: UITableViewCell.AccessoryType { return .disclosureIndicator }
+
+    override var accessibilityIdentifier: String? { return "HelpCenter" }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        if let helpCenterURL = URL(string: "https://ecosia.zendesk.com/hc/en-us") {
+            UIApplication.shared.open(helpCenterURL, options: [:], completionHandler: nil)
+
+            // Log analytics event for help center access
+            Analytics.shared.navigation(.open, label: .help)
+        }
+    }
+
+    init() {
+        super.init(title: NSAttributedString(string: String.localized(.helpCenter)))
+    }
+}
+
+/// Setting for displaying the feedback view from the settings menu
+class EcosiaSendFeedbackSetting: Setting {
+    override var accessoryType: UITableViewCell.AccessoryType { return .disclosureIndicator }
+
+    override var accessibilityIdentifier: String? { return "SendFeedback" }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        let feedbackVC = FeedbackViewController()
+        navigationController?.present(feedbackVC, animated: true)
+    }
+
+    init() {
+        super.init(title: NSAttributedString(string: String.localized(.sendFeedback)))
     }
 }
 
