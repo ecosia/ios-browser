@@ -123,7 +123,7 @@ public struct FeedbackView: View {
         let browserVersion = "Ecosia \(idiom) \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "") (\(Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? ""))"
 
         // Send the feedback using the navigation method with the collected data
-        Analytics.shared.navigation(.click, label: .sendFeedback, options: [
+        Analytics.shared.sendFeedback([
             "feedback_type": selectedFeedbackType?.analyticsIdentfier ?? "",
             "device_type": deviceType,
             "os": operatingSystem,
