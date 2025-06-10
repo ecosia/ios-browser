@@ -118,7 +118,7 @@ public struct FeedbackView: View {
     private func sendFeedback() {
         // Gather system information to include in analytics event
         let deviceType = UIDevice.current.model
-        let operatingSystem = "iOS \(UIDevice.current.systemVersion)"
+        let operatingSystem = "\(UIDevice.current.systemName) \(UIDevice.current.systemVersion)"
         let idiom = UIDevice.current.userInterfaceIdiom == .pad ? "iPadOS" : "iOS"
         let browserVersion = "Ecosia \(idiom) \(Bundle.version)"
 
