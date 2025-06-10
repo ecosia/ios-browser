@@ -240,10 +240,7 @@ class HelpCenterSetting: Setting {
     let windowUUID = WindowUUID()
 
     override func onClick(_ navigationController: UINavigationController?) {
-        // Use the setUpAndPushSettingsContentViewController method to open the URL in-app
         setUpAndPushSettingsContentViewController(navigationController, url: self.url, windowUUID: windowUUID)
-
-        // Log analytics event for help center access
         Analytics.shared.navigation(.open, label: .help)
     }
 
@@ -262,14 +259,11 @@ class EcosiaSendFeedbackSetting: Setting {
 
     override func onClick(_ navigationController: UINavigationController?) {
         let feedbackVC = FeedbackViewController(windowUUID: windowUUID)
-
-        // Add callback for when feedback is submitted
         feedbackVC.onFeedbackSubmitted = { [weak self, weak navigationController] in
-            // Show the thank you toast
             self?.showThankYouToast(in: navigationController?.view)
         }
-
         navigationController?.present(feedbackVC, animated: true)
+        Analytics.shared.navigation(.open, label: .sendFeedback)
     }
 
     /// Show a toast thanking the user for their feedback
