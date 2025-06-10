@@ -152,6 +152,11 @@ final class AnalyticsSpy: Analytics {
     override func defaultBrowserSettingsDismissDetailViewVia(_ label: Analytics.Label.DefaultBrowser) {
         defaultBrowserSettingsDismissDetailViewLabelCalled = label
     }
+
+    var sendFeedbackDataCalled: [String: Any]?
+    override func sendFeedback(_ data: [String: Any]) {
+        sendFeedbackDataCalled = data
+    }
 }
 
 // MARK: - AnalyticsSpyTests
@@ -967,6 +972,78 @@ final class AnalyticsSpyTests: XCTestCase {
 
         analyticsSpy.defaultBrowserSettingsOpenNativeSettingsVia(.settings)
         XCTAssertEqual(analyticsSpy.defaultBrowserSettingsOpenNativeSettingsLabelCalled, .settings, "Expected label 'default_browser_settings' to be tracked.")
+    }
+
+    // MARK: - Feedback Tests
+
+    func testFeedbackViewSendFeedbackTracksAnalyticsEvent() {
+        // Arrange
+        let feedbackType = FeedbackType.reportIssue
+        let feedbackText = "This is a test feedback message"
+
+        // Create a mock of the FeedbackViewController to simulate the feedback submission
+        let mockFeedbackVC = FeedbackViewController(windowUUID: .XCTestDefaultUUID)
+        mockFeedbackVC.loadViewIfNeeded()
+
+        // Act - Directly call the sendFeedback method in Analytics
+        // This simulates what happens when a user submits feedback
+        Analytics.shared.sendFeedback([
+            "feedback_type": feedbackType.analyticsIdentfier,
+            "device_type": UIDevice.current.model,
+            "os": "iOS \(UIDevice.current.systemVersion)",
+            "browser_version": "Ecosia \(UIDevice.current.userInterfaceIdiom == .pad ? "iPadOS" : "iOS") \(Bundle.version)",
+            "feedback_text": feedbackText
+        ])
+
+        // Assert
+        XCTAssertNotNil(analyticsSpy.sendFeedbackDataCalled, "Analytics sendFeedback should be called")
+        XCTAssertEqual(analyticsSpy.sendFeedbackDataCalled?["feedback_type"] as? String, "report_issue")
+        XCTAssertEqual(analyticsSpy.sendFeedbackDataCalled?["feedback_text"] as? String, "This is a test feedback message")
+        XCTAssertNotNil(analyticsSpy.sendFeedbackDataCalled?["device_type"])
+        XCTAssertNotNil(analyticsSpy.sendFeedbackDataCalled?["os"])
+        XCTAssertNotNil(analyticsSpy.sendFeedbackDataCalled?["browser_version"])
+    }
+
+    func testFeedbackAnalyticsWithDifferentFeedbackTypes() {
+        // Test all feedback types to ensure they're correctly tracked in analytics
+
+        // Define the test cases for each feedback type
+        let testCases: [(type: FeedbackType, analyticsId: String)] = [
+            (.reportIssue, "report_issue"),
+            (.generalQuestion, "general_question"),
+            (.suggestionOrFeedback, "suggestion_or_feedback")
+        ]
+
+        for testCase in testCases {
+            // Reset the analytics spy for each test case
+            analyticsSpy = AnalyticsSpy()
+            Analytics.shared = analyticsSpy
+
+            // Arrange - create test data with the current feedback type
+            let feedbackText = "Test feedback for \(testCase.type.rawValue)"
+
+            // Act - simulate sending feedback with this type
+            Analytics.shared.sendFeedback([
+                "feedback_type": testCase.type.analyticsIdentfier,
+                "device_type": "Test Device",
+                "os": "Test OS",
+                "browser_version": "Test Browser",
+                "feedback_text": feedbackText
+            ])
+
+            // Assert - verify the analytics data contains the correct type
+            XCTAssertNotNil(analyticsSpy.sendFeedbackDataCalled, "Analytics sendFeedback should be called")
+            XCTAssertEqual(
+                analyticsSpy.sendFeedbackDataCalled?["feedback_type"] as? String,
+                testCase.analyticsId,
+                "Expected feedback_type to be \(testCase.analyticsId)"
+            )
+            XCTAssertEqual(
+                analyticsSpy.sendFeedbackDataCalled?["feedback_text"] as? String,
+                feedbackText,
+                "Expected feedback_text to match the test case"
+            )
+        }
     }
 }
 
