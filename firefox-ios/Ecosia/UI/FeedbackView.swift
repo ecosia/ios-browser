@@ -54,10 +54,10 @@ public struct FeedbackView: View {
     var onFeedbackSubmitted: (() -> Void)?
 
     // Layout constants
-    private struct Layout {
+    struct UX {
         static let cornerRadius: CGFloat = .ecosia.borderRadius._l
         static let buttonCornerRadius: CGFloat = 25
-        static let textEditorHeight: CGFloat = 100
+        static let textEditorHeight: CGFloat = 200
     }
 
     public init(windowUUID: WindowUUID? = nil,
@@ -73,8 +73,8 @@ public struct FeedbackView: View {
     public var body: some View {
         NavigationView {
             ZStack {
-                // Background color - using ntpBackground like in MarketsController
-                viewModel.ntpBackgroundColor.ignoresSafeArea()
+
+                viewModel.backgroundColor.ignoresSafeArea()
 
                 FeedbackContentView(
                     viewModel: viewModel,
@@ -169,24 +169,33 @@ private struct FeedbackContentView: View {
             VStack(spacing: .ecosia.space._m) {
                 // Feedback text input section with proper placeholder
                 ZStack(alignment: .topLeading) {
+                    
+                    viewModel.backgroundColor
+                    
                     TextEditor(text: $feedbackText)
-                        .frame(height: 100)
                         .font(.body)
+                        .transparentScrolling()
                         .foregroundColor(viewModel.textPrimaryColor)
-                        .padding(.ecosia.space._s)
+                        .padding(.horizontal, .ecosia.space._s)
+                        .padding(.vertical, .ecosia.space._m)
+                        .border(viewModel.borderColor, width: viewModel.borderWidth)
                         .onChange(of: feedbackText) { _ in
                             updateButtonState()
                         }
 
                     if feedbackText.isEmpty {
                         Text(String.localized(.addMoreDetailAboutYourFeedback))
-                            .font(.subheadline)
+                            .font(.body)
                             .foregroundColor(viewModel.textSecondaryColor)
-                            .padding(.horizontal, .ecosia.space._s)
-                            .padding(.top, .ecosia.space._1s)
-                            .padding(.leading, .ecosia.space._2s)
+                            .padding(.horizontal, .ecosia.space._m)
+                            .padding(.vertical, .ecosia.space._1l)
+                            .frame(maxWidth: .infinity, alignment: .leading)
                     }
                 }
+                .frame(maxHeight: FeedbackView.UX.textEditorHeight)
+                .cornerRadius(.ecosia.borderRadius._l)
+                .padding(.top, .ecosia.space._m)
+                .padding(.horizontal, .ecosia.space._m)
 
                 // Send button
                 Button(action: sendFeedback) {
@@ -195,23 +204,24 @@ private struct FeedbackContentView: View {
                         .frame(maxWidth: .infinity)
                         .padding(.ecosia.space._m)
                         .foregroundColor(.white)
-                        .background(isButtonEnabled ? viewModel.buttonColor : Color(UIColor.systemGray4))
-                        .cornerRadius(.ecosia.borderRadius._1l)
+                        .background(isButtonEnabled ? viewModel.buttonBackgroundColor : viewModel.buttonDisabledBackgroundColor)
+                        .cornerRadius(.ecosia.borderRadius._m)
                 }
                 .disabled(!isButtonEnabled)
+                .clipShape(Capsule())
+                .padding(.horizontal, .ecosia.space._m)
+                .padding(.bottom, .ecosia.space._m)
+                .accessibilityIdentifier("feedback_cta_button")
+                .accessibilityLabel(Text("Send feedback"))
+                .accessibilityAddTraits(.isButton)
             }
-            .padding(.ecosia.space._m)
-            .background(viewModel.barBackgroundColor)
+            .background(viewModel.sectionBackgroundColor)
             .cornerRadius(.ecosia.borderRadius._l)
-            .overlay(
-                RoundedRectangle(cornerRadius: .ecosia.borderRadius._l)
-                    .stroke(viewModel.borderColor, lineWidth: 1)
-            )
             .padding(.horizontal, .ecosia.space._m)
 
             Spacer()
         }
-        .background(viewModel.ntpBackgroundColor)
+        .background(viewModel.backgroundColor)
     }
 }
 
@@ -242,7 +252,7 @@ private struct FeedbackTypeSection: View {
                             }
                         }
                         .padding(.ecosia.space._m)
-                        .background(viewModel.barBackgroundColor)
+                        .background(viewModel.sectionBackgroundColor)
                     }
 
                     if type != FeedbackType.allCases.last {
@@ -253,12 +263,8 @@ private struct FeedbackTypeSection: View {
             }
             .frame(minHeight: 44 * CGFloat(FeedbackType.allCases.count))
         }
-        .background(viewModel.barBackgroundColor)
+        .background(viewModel.sectionBackgroundColor)
         .cornerRadius(.ecosia.borderRadius._l)
-        .overlay(
-            RoundedRectangle(cornerRadius: .ecosia.borderRadius._l)
-                .stroke(viewModel.borderColor, lineWidth: 1)
-        )
         .padding(.horizontal, .ecosia.space._m)
     }
 }
@@ -266,16 +272,15 @@ private struct FeedbackTypeSection: View {
 /// View model to handle theming for the FeedbackView
 class FeedbackViewModel: ObservableObject {
     @Published var backgroundColor = Color.white
-    @Published var ntpBackgroundColor = Color.white
-    @Published var barBackgroundColor = Color.white
-    @Published var stepsBackgroundColor = Color(UIColor.secondarySystemGroupedBackground)
-    @Published var cellBackgroundColor = Color(UIColor.systemBackground)
-    @Published var tableViewRowTextColor = Color.black
+    @Published var sectionBackgroundColor = Color.white
+    @Published var feedbackTypeListItemBackgroundColor = Color(UIColor.systemBackground)
     @Published var textPrimaryColor = Color.black
     @Published var textSecondaryColor = Color.gray
-    @Published var buttonColor = Color.blue
+    @Published var buttonBackgroundColor = Color.blue
+    @Published var buttonDisabledBackgroundColor = Color.gray
     @Published var brandPrimaryColor = Color.blue
     @Published var borderColor = Color.gray.opacity(0.2)
+    @Published var borderWidth: CGFloat = 1
 
     init(theme: Theme? = nil) {
         if let theme = theme {
@@ -284,17 +289,15 @@ class FeedbackViewModel: ObservableObject {
     }
 
     func applyTheme(theme: Theme) {
-        backgroundColor = Color(theme.colors.ecosia.backgroundPrimary)
-        ntpBackgroundColor = Color(theme.colors.ecosia.ntpBackground)
-        barBackgroundColor = Color(theme.colors.ecosia.barBackground)
-        stepsBackgroundColor = Color(theme.colors.ecosia.backgroundSecondary)
-        cellBackgroundColor = Color(theme.colors.ecosia.backgroundPrimary)
-        tableViewRowTextColor = Color(theme.colors.ecosia.tableViewRowText)
+        backgroundColor = Color(theme.colors.ecosia.ntpBackground)
+        sectionBackgroundColor = Color(theme.colors.ecosia.barBackground)
+        feedbackTypeListItemBackgroundColor = Color(theme.colors.ecosia.backgroundPrimary)
         textPrimaryColor = Color(theme.colors.ecosia.textPrimary)
         textSecondaryColor = Color(theme.colors.ecosia.textSecondary)
-        buttonColor = Color(theme.colors.ecosia.buttonBackgroundPrimaryActive)
+        buttonBackgroundColor = Color(theme.colors.ecosia.buttonBackgroundPrimaryActive)
+        buttonDisabledBackgroundColor = Color(theme.colors.ecosia.stateDisabled)
         brandPrimaryColor = Color(theme.colors.ecosia.brandPrimary)
-        borderColor = Color.border
+        borderColor = Color(theme.colors.ecosia.borderDecorative)
     }
 }
 
@@ -332,4 +335,8 @@ public class FeedbackViewController: UIHostingController<FeedbackView> {
     @MainActor dynamic required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+}
+
+#Preview {
+    FeedbackView(windowUUID: UUID())
 }
