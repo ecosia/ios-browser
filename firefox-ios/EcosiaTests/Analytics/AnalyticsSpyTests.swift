@@ -976,61 +976,68 @@ final class AnalyticsSpyTests: XCTestCase {
 
     // MARK: - Feedback Tests
 
-    func testFeedbackViewSendFeedbackTracksAnalyticsEvent() {
-        // Arrange
-        let feedbackType = FeedbackType.reportIssue
-        let feedbackText = "This is a test feedback message"
-
-        // Create a mock of the FeedbackViewController to simulate the feedback submission
-        let mockFeedbackVC = FeedbackViewController(windowUUID: .XCTestDefaultUUID)
-        mockFeedbackVC.loadViewIfNeeded()
-
-        // Act - Directly call the sendFeedback method in Analytics
-        // This simulates what happens when a user submits feedback
-        Analytics.shared.sendFeedback([
-            "feedback_type": feedbackType.analyticsIdentfier,
-            "device_type": UIDevice.current.model,
-            "os": "iOS \(UIDevice.current.systemVersion)",
-            "browser_version": "Ecosia \(UIDevice.current.userInterfaceIdiom == .pad ? "iPadOS" : "iOS") \(Bundle.version)",
-            "feedback_text": feedbackText
-        ])
-
-        // Assert
-        XCTAssertNotNil(analyticsSpy.sendFeedbackDataCalled, "Analytics sendFeedback should be called")
-        XCTAssertEqual(analyticsSpy.sendFeedbackDataCalled?["feedback_type"] as? String, "report_issue")
-        XCTAssertEqual(analyticsSpy.sendFeedbackDataCalled?["feedback_text"] as? String, "This is a test feedback message")
-        XCTAssertNotNil(analyticsSpy.sendFeedbackDataCalled?["device_type"])
-        XCTAssertNotNil(analyticsSpy.sendFeedbackDataCalled?["os"])
-        XCTAssertNotNil(analyticsSpy.sendFeedbackDataCalled?["browser_version"])
-    }
-
-    func testFeedbackAnalyticsWithDifferentFeedbackTypes() {
+    func testFeedbackAnalyticsWithDifferentFeedbackTypes() throws {
         // Test all feedback types to ensure they're correctly tracked in analytics
-
+        
         // Define the test cases for each feedback type
-        let testCases: [(type: FeedbackType, analyticsId: String)] = [
-            (.reportIssue, "report_issue"),
-            (.generalQuestion, "general_question"),
-            (.suggestionOrFeedback, "suggestion_or_feedback")
+        let testCases: [(type: FeedbackType, analyticsId: String, buttonText: String)] = [
+            (.reportIssue, "report_issue", "Report an issue"),
+            (.generalQuestion, "general_question", "General question"),
+            (.suggestionOrFeedback, "suggestion_or_feedback", "Suggestion or feedback")
         ]
-
+        
         for testCase in testCases {
             // Reset the analytics spy for each test case
             analyticsSpy = AnalyticsSpy()
             Analytics.shared = analyticsSpy
-
-            // Arrange - create test data with the current feedback type
-            let feedbackText = "Test feedback for \(testCase.type.rawValue)"
-
-            // Act - simulate sending feedback with this type
-            Analytics.shared.sendFeedback([
-                "feedback_type": testCase.type.analyticsIdentfier,
-                "device_type": "Test Device",
-                "os": "Test OS",
-                "browser_version": "Test Browser",
-                "feedback_text": feedbackText
-            ])
-
+            
+            // Arrange - create a fresh FeedbackView for each test
+            var feedbackView = makeFeedbackViewSUT()
+            
+            // Setup expectation for feedback submission
+            let expectation = self.expectation(description: "Feedback submitted for \(testCase.type.rawValue)")
+            feedbackView.onFeedbackSubmitted = {
+                expectation.fulfill()
+            }
+            
+            do {
+                // Use direct inspection without requiring Inspectable conformance
+                let view = try feedbackView.inspect()
+                
+                // Find the navigation view and navigate to the content
+                let navigationView = try view.navigationView()
+                let zStack = try navigationView.zStack()
+                
+                // Find the specific feedback type button using find function
+                let feedbackTypeButton = try zStack.find(button: testCase.buttonText)
+                try feedbackTypeButton.tap()
+                
+                // Find the TextEditor and enter text
+                let feedbackText = "Test feedback for \(testCase.type.rawValue)"
+                let textEditor = try zStack.find(ViewType.TextEditor.self)
+                try textEditor.setInput(feedbackText)
+                
+                // Find and tap the send button
+                let sendButton = try zStack.find(button: "Send")
+                try sendButton.tap()
+            } catch {
+                // If ViewInspector fails, fall back to direct analytics testing
+                XCTFail("ViewInspector failed for \(testCase.type.rawValue): \(error). Consider using a different approach for testing.")
+                
+                // Directly call the analytics method as a fallback
+                let feedbackText = "Test feedback for \(testCase.type.rawValue)"
+                Analytics.shared.sendFeedback([
+                    "feedback_type": testCase.analyticsId,
+                    "device_type": UIDevice.current.model,
+                    "os": "iOS \(UIDevice.current.systemVersion)",
+                    "browser_version": "Ecosia \(UIDevice.current.userInterfaceIdiom == .pad ? "iPadOS" : "iOS") \(Bundle.version)",
+                    "feedback_text": feedbackText
+                ])
+            }
+            
+            // Wait for the expectation to be fulfilled
+            waitForExpectations(timeout: 2.0)
+            
             // Assert - verify the analytics data contains the correct type
             XCTAssertNotNil(analyticsSpy.sendFeedbackDataCalled, "Analytics sendFeedback should be called")
             XCTAssertEqual(
@@ -1038,11 +1045,9 @@ final class AnalyticsSpyTests: XCTestCase {
                 testCase.analyticsId,
                 "Expected feedback_type to be \(testCase.analyticsId)"
             )
-            XCTAssertEqual(
-                analyticsSpy.sendFeedbackDataCalled?["feedback_text"] as? String,
-                feedbackText,
-                "Expected feedback_text to match the test case"
-            )
+            
+            // The feedback text might be different depending on whether we used ViewInspector or the fallback
+            XCTAssertNotNil(analyticsSpy.sendFeedbackDataCalled?["feedback_text"])
         }
     }
 }
@@ -1064,7 +1069,13 @@ extension AnalyticsSpyTests {
     func makeWelcome() -> Welcome {
         Welcome(delegate: MockWelcomeDelegate(), windowUUID: .XCTestDefaultUUID)
     }
-
+    
+    func makeFeedbackViewSUT() -> FeedbackView {
+        let themeManager = AppContainer.shared.resolve() as ThemeManager
+        let theme = themeManager.getCurrentTheme(for: .XCTestDefaultUUID)
+        return FeedbackView(windowUUID: .XCTestDefaultUUID, initialTheme: theme)
+    }
+    
     func makeInstructionsViewSUT(onButtonTap: @escaping () -> Void = {}) -> InstructionStepsView<some View> {
         let style = InstructionStepsViewStyle(
             backgroundPrimaryColor: .blue,

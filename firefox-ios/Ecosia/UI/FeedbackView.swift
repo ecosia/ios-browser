@@ -140,7 +140,7 @@ public struct FeedbackView: View {
 }
 
 // Break down content into separate view to avoid SwiftUI type-checking time limitation
-private struct FeedbackContentView: View {
+struct FeedbackContentView: View {
     let viewModel: FeedbackViewModel
     @Binding var selectedFeedbackType: FeedbackType?
     @Binding var feedbackText: String
@@ -225,7 +225,7 @@ private struct FeedbackContentView: View {
     }
 }
 
-private struct FeedbackTypeSection: View {
+struct FeedbackTypeSection: View {
     let viewModel: FeedbackViewModel
     @Binding var selectedFeedbackType: FeedbackType?
     let updateButtonState: () -> Void
