@@ -283,11 +283,11 @@ class EcosiaSendFeedbackSetting: Setting {
         let theme = themeManager.getCurrentTheme(for: windowUUID)
 
         // Show the thank you message
-        SimpleToast().showAlertWithText(
+        SimpleToast().ecosiaShowAlertWithText(
             String.localized(.thankYouForYourFeedback),
             bottomContainer: view,
-            theme: theme
-        )
+            theme: theme,
+            bottomInset: view.layoutMargins.bottom)
     }
 
     init(settings: SettingsTableViewController) {

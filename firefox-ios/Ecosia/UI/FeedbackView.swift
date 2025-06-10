@@ -169,9 +169,9 @@ private struct FeedbackContentView: View {
             VStack(spacing: .ecosia.space._m) {
                 // Feedback text input section with proper placeholder
                 ZStack(alignment: .topLeading) {
-                    
+
                     viewModel.backgroundColor
-                    
+
                     TextEditor(text: $feedbackText)
                         .font(.body)
                         .transparentScrolling()
