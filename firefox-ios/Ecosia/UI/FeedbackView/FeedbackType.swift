@@ -6,12 +6,12 @@ import Foundation
 import Common
 
 /// FeedbackType represents the type of feedback a user can submit
-enum FeedbackType: String, CaseIterable, Identifiable {
+public enum FeedbackType: String, CaseIterable, Identifiable {
     case reportIssue = "Report an issue"
     case generalQuestion = "General question"
     case suggestionOrFeedback = "Suggestion or feedback"
 
-    var id: String { self.rawValue }
+    public var id: String { self.rawValue }
 
     var analyticsIdentfier: String {
         switch self {
@@ -34,4 +34,4 @@ enum FeedbackType: String, CaseIterable, Identifiable {
             return String.localized(.suggestionOrFeedback)
         }
     }
-} 
+}

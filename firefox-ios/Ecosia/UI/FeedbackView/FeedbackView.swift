@@ -85,25 +85,11 @@ public struct FeedbackView: View {
 
     /// Send the feedback to analytics and dismiss the view
     private func sendFeedback() {
-        // Gather system information to include in analytics event
-        let deviceType = UIDevice.current.model
-        let operatingSystem = "\(UIDevice.current.systemName) \(UIDevice.current.systemVersion)"
-        let idiom = UIDevice.current.userInterfaceIdiom == .pad ? "iPadOS" : "iOS"
-        let browserVersion = "Ecosia \(idiom) \(Bundle.version)"
+        guard let selectedFeedbackType else { return }
 
-        // Send the feedback using the navigation method with the collected data
-        Analytics.shared.sendFeedback([
-            "feedback_type": selectedFeedbackType?.analyticsIdentfier ?? "",
-            "device_type": deviceType,
-            "os": operatingSystem,
-            "browser_version": browserVersion,
-            "feedback_text": feedbackText
-        ])
-
-        // Notify that feedback was submitted
+        Analytics.shared.sendFeedback(feedbackText,
+                                      withType: selectedFeedbackType)
         onFeedbackSubmitted?()
-
-        // Dismiss the view
         dismiss()
     }
 }

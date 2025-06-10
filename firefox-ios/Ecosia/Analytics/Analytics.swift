@@ -4,6 +4,7 @@
 
 import Foundation
 internal import SnowplowTracker
+internal import UIKit
 
 open class Analytics {
     private static let abTestSchema = "iglu:org.ecosia/abtest_context/jsonschema/1-0-1"
@@ -320,9 +321,24 @@ open class Analytics {
     }
 
     // MARK: Feedback
-    public func sendFeedback(_ data: [String: Any]) {
+    
+    public func sendFeedback(_ feedback: String, withType feedbackType: FeedbackType) {
+        
+        let deviceType = UIDevice.current.model
+        let operatingSystem = "\(UIDevice.current.systemName) \(UIDevice.current.systemVersion)"
+        let idiom = UIDevice.current.userInterfaceIdiom == .pad ? "iPadOS" : "iOS"
+        let browserVersion = "Ecosia \(idiom) \(Bundle.version)"
+
+        let payload: [String: Any] = [
+            "feedback_type": feedbackType.analyticsIdentfier,
+            "device_type": deviceType,
+            "os": operatingSystem,
+            "browser_version": browserVersion,
+            "feedback_text": feedback
+        ]
+        
         track(SelfDescribing(schema: Self.feedbackSchema,
-                             payload: data))
+                             payload: payload))
     }
 }
 
