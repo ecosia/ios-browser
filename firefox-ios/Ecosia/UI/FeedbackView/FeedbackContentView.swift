@@ -88,4 +88,4 @@ struct FeedbackContentView: View {
         }
         .background(viewModel.backgroundColor)
     }
-} 
+}

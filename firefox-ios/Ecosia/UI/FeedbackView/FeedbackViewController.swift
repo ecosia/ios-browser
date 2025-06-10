@@ -15,9 +15,9 @@ public class FeedbackViewController: UIHostingController<FeedbackView> {
         let themeManager = AppContainer.shared.resolve() as ThemeManager
         let theme = themeManager.getCurrentTheme(for: windowUUID)
         var feedbackView = FeedbackView(windowUUID: windowUUID, initialTheme: theme)
-        
+
         super.init(rootView: feedbackView)
-        
+
         feedbackView.onDismiss = { [weak self] in
             self?.dismiss(animated: true)
         }
@@ -33,4 +33,4 @@ public class FeedbackViewController: UIHostingController<FeedbackView> {
     @MainActor dynamic required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-} 
+}

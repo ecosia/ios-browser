@@ -35,4 +35,4 @@ class FeedbackViewModel: ObservableObject {
         brandPrimaryColor = Color(theme.colors.ecosia.brandPrimary)
         borderColor = Color(theme.colors.ecosia.borderDecorative)
     }
-} 
+}

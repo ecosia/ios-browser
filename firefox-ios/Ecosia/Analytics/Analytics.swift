@@ -3,8 +3,8 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
+import UIKit
 internal import SnowplowTracker
-internal import UIKit
 
 open class Analytics {
     private static let abTestSchema = "iglu:org.ecosia/abtest_context/jsonschema/1-0-1"
@@ -321,9 +321,8 @@ open class Analytics {
     }
 
     // MARK: Feedback
-    
+
     public func sendFeedback(_ feedback: String, withType feedbackType: FeedbackType) {
-        
         let deviceType = UIDevice.current.model
         let operatingSystem = "\(UIDevice.current.systemName) \(UIDevice.current.systemVersion)"
         let idiom = UIDevice.current.userInterfaceIdiom == .pad ? "iPadOS" : "iOS"
@@ -336,7 +335,7 @@ open class Analytics {
             "browser_version": browserVersion,
             "feedback_text": feedback
         ]
-        
+
         track(SelfDescribing(schema: Self.feedbackSchema,
                              payload: payload))
     }

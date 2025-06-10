@@ -47,4 +47,4 @@ struct FeedbackTypeSection: View {
         .cornerRadius(.ecosia.borderRadius._l)
         .padding(.horizontal, .ecosia.space._m)
     }
-} 
+}
