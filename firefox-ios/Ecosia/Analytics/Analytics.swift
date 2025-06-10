@@ -6,14 +6,14 @@ import Foundation
 internal import SnowplowTracker
 
 open class Analytics {
-    static let installSchema = "iglu:org.ecosia/ios_install_event/jsonschema/1-0-0"
     private static let abTestSchema = "iglu:org.ecosia/abtest_context/jsonschema/1-0-1"
     private static let consentSchema = "iglu:org.ecosia/eccc_context/jsonschema/1-0-2"
-    static let userSchema = "iglu:org.ecosia/app_user_state_context/jsonschema/1-0-0"
-    static let inappSearchSchema = "iglu:org.ecosia/inapp_search_event/jsonschema/1-0-1"
-    static let feedbackSchema = "iglu:org.ecosia/ios_feedback_event/jsonschema/1-0-0"
+    private static let feedbackSchema = "iglu:org.ecosia/ios_feedback_event/jsonschema/1-0-0"
     private static let abTestRoot = "ab_tests"
     private static let namespace = "ios_sp"
+    static let installSchema = "iglu:org.ecosia/ios_install_event/jsonschema/1-0-0"
+    static let userSchema = "iglu:org.ecosia/app_user_state_context/jsonschema/1-0-0"
+    static let inappSearchSchema = "iglu:org.ecosia/inapp_search_event/jsonschema/1-0-1"
     private static let shouldUseMicroInstanceKey = "shouldUseMicroInstance"
     public static var shouldUseMicroInstance: Bool {
         get {
