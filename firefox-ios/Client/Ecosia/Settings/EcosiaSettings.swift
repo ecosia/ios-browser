@@ -160,8 +160,6 @@ final class EcosiaPrivacyPolicySetting: Setting {
     }
 }
 
-// Replaced with SwiftUI FeedbackView implementation
-
 final class EcosiaTermsSetting: Setting {
     override var title: NSAttributedString? {
         return NSAttributedString(string: .localized(.terms), attributes: [NSAttributedString.Key.foregroundColor: theme.colors.ecosia.tableViewRowText])
