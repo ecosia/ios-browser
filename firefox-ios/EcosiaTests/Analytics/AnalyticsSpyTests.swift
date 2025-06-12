@@ -152,11 +152,6 @@ final class AnalyticsSpy: Analytics {
     override func defaultBrowserSettingsDismissDetailViewVia(_ label: Analytics.Label.DefaultBrowser) {
         defaultBrowserSettingsDismissDetailViewLabelCalled = label
     }
-
-    var sendFeedbackDataCalled: [String: Any]?
-    override func sendFeedback(_ feedback: String, withType feedbackType: FeedbackType) {
-        sendFeedbackDataCalled = ["feedback": feedback, "feedbackType": feedbackType]
-    }
 }
 
 // MARK: - AnalyticsSpyTests
@@ -972,46 +967,6 @@ final class AnalyticsSpyTests: XCTestCase {
 
         analyticsSpy.defaultBrowserSettingsOpenNativeSettingsVia(.settings)
         XCTAssertEqual(analyticsSpy.defaultBrowserSettingsOpenNativeSettingsLabelCalled, .settings, "Expected label 'default_browser_settings' to be tracked.")
-    }
-
-    // MARK: - Feedback Tests
-
-    func testFeedbackAnalyticsWithDifferentFeedbackTypes() throws {
-        // Test the Analytics.sendFeedback method directly to ensure it sends the correct data
-
-        for testCase in FeedbackType.allCases {
-            // Reset the analytics spy for each test case
-            analyticsSpy = AnalyticsSpy()
-            Analytics.shared = analyticsSpy
-
-            // Setup expectation for feedback submission
-            let expectation = self.expectation(description: "Feedback submitted for \(testCase.localizedString)")
-
-            // Test the updated Analytics.sendFeedback(_:withType:) method
-            let feedbackText = "Test feedback for \(testCase.localizedString)"
-            Analytics.shared.sendFeedback(feedbackText, withType: testCase)
-
-            // Fulfill the expectation immediately since we're not waiting for UI interaction
-            expectation.fulfill()
-
-            // Wait for the expectation to be fulfilled
-            waitForExpectations(timeout: 1.0)
-
-            // Assert - verify the analytics data contains the correct type
-            XCTAssertNotNil(analyticsSpy.sendFeedbackDataCalled, "Analytics sendFeedback should be called")
-            XCTAssertEqual(
-                analyticsSpy.sendFeedbackDataCalled?["feedbackType"] as? FeedbackType,
-                testCase,
-                "Expected feedbackType to be \(testCase)"
-            )
-
-            // Verify the feedback text was sent correctly
-            XCTAssertEqual(
-                analyticsSpy.sendFeedbackDataCalled?["feedback"] as? String,
-                feedbackText,
-                "Expected feedback to match what was sent"
-            )
-        }
     }
 }
 
