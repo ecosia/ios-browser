@@ -31,7 +31,7 @@ final class NTPAccountLoginCell: UICollectionViewCell, ThemeApplicable, Reusable
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.backgroundColor = .clear
-        button.addTarget(self, action: #selector(fetchSessionToken), for: .touchUpInside)
+        button.addTarget(self, action: #selector(getSessionTransferToken), for: .touchUpInside)
         button.titleLabel?.font = .preferredFont(forTextStyle: .subheadline)
         button.contentHorizontalAlignment = .trailing
         return button
@@ -118,10 +118,10 @@ final class NTPAccountLoginCell: UICollectionViewCell, ThemeApplicable, Reusable
         applyTheme(theme: themeManager.getCurrentTheme(for: currentWindowUUID))
     }
 
-    @objc private func fetchSessionToken() {
+    @objc private func getSessionTransferToken() {
         sessionTokenTask?.cancel()
         sessionTokenTask = Task {
-            await Auth.shared.fetchSessionToken()
+            await Auth.shared.getSessionTransferToken()
             updateSessionTokenButtonTitle()
         }
     }

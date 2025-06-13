@@ -42,7 +42,7 @@ final class NativeToWebSSOAuth0ProviderTests: XCTestCase {
         mockHTTPClient.performResult = (try JSONEncoder().encode(Auth0SessionTokenResponse(accessToken: expectedToken)), response)
 
         // Act
-        let sessionToken = try await provider.getSessionToken()
+        let sessionToken = try await provider.getSSOCredentials().sessionTransferToken
 
         // Assert
         XCTAssertEqual(sessionToken, expectedToken)
@@ -54,7 +54,7 @@ final class NativeToWebSSOAuth0ProviderTests: XCTestCase {
 
         // Act & Assert
         do {
-            _ = try await provider.getSessionToken()
+            _ = try await provider.getSSOCredentials()
             XCTFail("Expected error to be thrown")
         } catch {
             XCTAssertEqual(error as? NativeToWebSSOAuth0Provider.NativeToWebSSOError,
@@ -77,7 +77,7 @@ final class NativeToWebSSOAuth0ProviderTests: XCTestCase {
 
         // Act & Assert
         do {
-            _ = try await provider.getSessionToken()
+            _ = try await provider.getSSOCredentials()
             XCTFail("Expected error to be thrown")
         } catch {
             XCTAssertEqual(error as? NativeToWebSSOAuth0Provider.NativeToWebSSOError, .invalidResponse)
