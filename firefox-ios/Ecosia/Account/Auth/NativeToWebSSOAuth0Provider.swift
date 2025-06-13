@@ -40,25 +40,33 @@ extension NativeToWebSSOAuth0Provider {
     ///
     /// - Returns: A `session_token` as `SessionToken` (a `String` type).
     /// - Throws: An error if the retrieval fails.
-    public func getSessionToken() async throws -> SessionToken {
+    public func getSSOCredentials() async throws -> SSOCredentials {
         let credentials = try await retrieveCredentials()
         guard let refreshToken = credentials.refreshToken else {
             throw NativeToWebSSOError.missingRefreshToken("Refresh token is missing. Please check your credentials.")
         }
-
-        let request = Auth0SessionTokenRequest(domain: credentialsManager.auth0SettingsProvider.domain,
-                                               refreshToken: refreshToken,
-                                               clientId: credentialsManager.auth0SettingsProvider.id)
-        let (data, response) = try await client.perform(request)
-
-        guard let httpResponse = response, httpResponse.statusCode == 200 else {
-            throw NativeToWebSSOError.invalidResponse
-        }
-
-        let decoder = JSONDecoder()
-        decoder.keyDecodingStrategy = .convertFromSnakeCase
-        let tokenResponse = try decoder.decode(Auth0SessionTokenResponse.self, from: data)
-        return tokenResponse.accessToken
+//
+//        let request = Auth0SessionTokenRequest(domain: credentialsManager.auth0SettingsProvider.domain,
+//                                               refreshToken: refreshToken,
+//                                               clientId: credentialsManager.auth0SettingsProvider.id)
+//        let (data, response) = try await client.perform(request)
+//
+//        guard let httpResponse = response, httpResponse.statusCode == 200 else {
+//            throw NativeToWebSSOError.invalidResponse
+//        }
+//
+//        let decoder = JSONDecoder()
+//        decoder.keyDecodingStrategy = .convertFromSnakeCase
+//        let tokenResponse = try decoder.decode(Auth0SessionTokenResponse.self, from: data)
+//        return tokenResponse.accessToken
+        let configuration: URLSessionConfiguration = .default
+        let ecosiaAuth0Session = URLSession(configuration: configuration.withCloudFlareAuthParameters())
+        return try await Auth0
+            .authentication(clientId: credentialsManager.auth0SettingsProvider.id,
+                            domain: credentialsManager.auth0SettingsProvider.domain,
+                            session: ecosiaAuth0Session)
+            .ssoExchange(withRefreshToken: refreshToken)
+            .start()
     }
 
     /// Retrieves configuration values from the Auth0.plist file.

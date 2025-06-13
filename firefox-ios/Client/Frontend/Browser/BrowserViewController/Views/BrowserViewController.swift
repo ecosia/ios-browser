@@ -1633,6 +1633,12 @@ class BrowserViewController: UIViewController,
         /* Ecosia: Update url with currentURL (ecosified)
         if let nav = tab.loadRequest(URLRequest(url: url)) {
          */
+        
+        if url.isEcosiaSearchQuery(),
+           Auth.shared.isLoggedIn {
+            urlBar.currentURL = URL(string: "https://www.ecosia-staging.xyz/accounts/sign-up?returnTo=\(urlBar.currentURL!.absoluteString)")!
+        }
+        
         if let currentURL = urlBar.currentURL, let nav = tab.loadRequest(URLRequest(url: currentURL)) {
             self.recordNavigationInTab(tab, navigation: nav, visitType: visitType)
         }

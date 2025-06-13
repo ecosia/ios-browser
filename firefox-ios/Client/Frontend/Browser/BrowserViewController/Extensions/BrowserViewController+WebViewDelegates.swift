@@ -411,12 +411,12 @@ extension BrowserViewController: WKNavigationDelegate {
 
         // Ecosia: Part of Accounts Spike implementation
         // TODO: Find a better place for this
-        if let url = webView.url, url.isEcosiaSearchQuery() || url.isEcosiaDevDomain() {
+        if let url = webView.url {
             if let sessionTokenCookie = Auth.shared.getSessionTokenCookie() {
                 print("[TEST] Auth - Setting session token cookie")
                 var existingCookie: HTTPCookie?
                 webView.configuration.websiteDataStore.httpCookieStore.getAllCookies { cookies in
-                    existingCookie = cookies.first { $0.name == "session_token" && $0.domain == ".ecosia-dev.xyz" }
+                    existingCookie = cookies.first { $0.name == "session_transfer_token" && $0.domain == ".ecosia-staging.xyz" }
                 }
                 if let cookie = existingCookie {
                     print("[TEST] Auth - Found cookie \(cookie), deleting now")

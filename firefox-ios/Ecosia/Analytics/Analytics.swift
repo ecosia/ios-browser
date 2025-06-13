@@ -382,7 +382,7 @@ extension Analytics {
         var networkConfig = NetworkConfiguration(endpoint: endpoint!)
 
         if shouldUseMicroInstance,
-           let auth = Environment.current.auth {
+           let auth = Environment.current.cloudFlareAuth {
             networkConfig = networkConfig
                 .requestHeaders([
                     CloudflareKeyProvider.clientId: auth.id,
