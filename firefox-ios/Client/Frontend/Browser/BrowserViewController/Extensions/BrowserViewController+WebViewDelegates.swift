@@ -409,25 +409,6 @@ extension BrowserViewController: WKNavigationDelegate {
     func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
         if tabManager.selectedTab?.webView !== webView { return }
 
-        // Ecosia: Part of Accounts Spike implementation
-        // TODO: Find a better place for this
-        if let url = webView.url {
-            if let sessionTokenCookie = Auth.shared.getSessionTokenCookie() {
-                print("[TEST] Auth - Setting session token cookie")
-                var existingCookie: HTTPCookie?
-                webView.configuration.websiteDataStore.httpCookieStore.getAllCookies { cookies in
-                    existingCookie = cookies.first { $0.name == "session_transfer_token" && $0.domain == ".ecosia-staging.xyz" }
-                }
-                if let cookie = existingCookie {
-                    print("[TEST] Auth - Found cookie \(cookie), deleting now")
-                    Task {
-                        await webView.configuration.websiteDataStore.httpCookieStore.deleteCookie(cookie)
-                    }
-                }
-                webView.configuration.websiteDataStore.httpCookieStore.setCookie(sessionTokenCookie)
-            }
-        }
-
         updateFindInPageVisibility(isVisible: false)
 
         // If we are going to navigate to a new page, hide the reader mode button. Unless we
@@ -457,6 +438,10 @@ extension BrowserViewController: WKNavigationDelegate {
             decisionHandler(.cancel)
             return
         }
+
+        // Ecosia: Handle authentication URLs and cookie management for any tab (including background tabs)
+        handleAuthenticationForURL(url, webView: webView)
+
         updateZoomPageBarVisibility(visible: false)
         if tab == tabManager.selectedTab,
            navigationAction.navigationType == .linkActivated,
@@ -1117,6 +1102,55 @@ private extension BrowserViewController {
             state: .tabNavigatedToDifferentUrl,
             searchData: searchData,
             isPrivate: isPrivate)
+    }
+
+    // Ecosia: Handle authentication-related URL navigation
+    func handleAuthenticationForURL(_ url: URL, webView: WKWebView) {
+        let urlString = url.absoluteString
+
+        // Check for sign-out URL and trigger logout
+        if urlString == "https://www.ecosia-staging.xyz/accounts/sign-out" {
+            print("Detected sign-out URL, triggering logout")
+            Task {
+                await Auth.shared.logout()
+            }
+            return
+        }
+
+        // Set session token cookie only for sign-up URL
+        if urlString == "https://www.ecosia-staging.xyz/accounts/sign-up" {
+            setSessionTokenCookieForURL(url, webView: webView)
+        }
+    }
+
+        // Ecosia: Set session token cookie for authenticated requests
+    func setSessionTokenCookieForURL(_ url: URL, webView: WKWebView) {
+        guard Auth.shared.isLoggedIn,
+              let sessionTokenCookie = Auth.shared.getSessionTokenCookie() else {
+            print("No session token available or user not logged in")
+            return
+        }
+
+        print("Setting session token cookie for URL: \(url.absoluteString)")
+
+        // Clean up any existing session token cookies first
+        webView.configuration.websiteDataStore.httpCookieStore.getAllCookies { cookies in
+            let existingCookies = cookies.filter {
+                $0.name == "auth0_session_transfer_token" && $0.domain.contains("ecosia-staging.xyz")
+            }
+            for cookie in existingCookies {
+                print("Removing existing session token cookie: \(cookie)")
+                Task {
+                    await webView.configuration.websiteDataStore.httpCookieStore.deleteCookie(cookie)
+                }
+            }
+
+            // Set the new session token cookie after cleanup
+            DispatchQueue.main.async {
+                webView.configuration.websiteDataStore.httpCookieStore.setCookie(sessionTokenCookie)
+                print("Session token cookie set successfully")
+            }
+        }
     }
 }
 

@@ -6,6 +6,15 @@ import Foundation
 import Auth0
 import WebKit
 
+// MARK: - Auth Notifications
+extension Notification.Name {
+    /// Posted when user successfully logs in and session token is ready
+    public static let EcosiaAuthDidLoginWithSessionToken = Notification.Name("EcosiaEcosiaAuthDidLoginWithSessionToken")
+
+    /// Posted when user logs out and session should be cleared
+    public static let EcosiaAuthDidLogout = Notification.Name("EcosiaEcosiaAuthDidLogout")
+}
+
 /// The `Auth` class manages user authentication, credential storage, and renewal using Auth0.
 public class Auth {
     public static var shared = Auth()
@@ -40,9 +49,26 @@ public class Auth {
             if didStore {
                 isLoggedIn = true
                 print("\(#file).\(#function) - 👤 Auth - Credentials stored successfully.")
+
+                // Automatically get session token and trigger authentication flow
+                await performPostLoginAuthentication()
             }
         } catch {
             print("\(#file).\(#function) - 👤 Auth - Login failed with error: \(error)")
+        }
+    }
+
+    /// Handles post-login authentication flow: gets session token and notifies observers
+    private func performPostLoginAuthentication() async {
+        await getSessionTransferToken()
+
+        // Post notification that successful login occurred with session token ready
+        await MainActor.run {
+            NotificationCenter.default.post(
+                name: .EcosiaAuthDidLoginWithSessionToken,
+                object: nil,
+                userInfo: ["sessionToken": currentSessionToken as Any]
+            )
         }
     }
 
@@ -55,11 +81,25 @@ public class Auth {
                 self.idToken = nil
                 self.accessToken = nil
                 self.refreshToken = nil
+                self.ssoCredentials = nil
                 isLoggedIn = false
                 print("\(#file).\(#function) - 👤 Auth - Session and credentials cleared.")
+
+                // Notify that logout occurred
+                await postLogoutNotification()
             }
         } catch {
             print("\(#file).\(#function) - 👤 Auth - Logout failed with error: \(error)")
+        }
+    }
+
+    /// Posts logout notification to notify observers that user logged out
+    private func postLogoutNotification() async {
+        await MainActor.run {
+            NotificationCenter.default.post(
+                name: .EcosiaAuthDidLogout,
+                object: nil
+            )
         }
     }
 
