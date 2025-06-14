@@ -3,7 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 extension URLSessionConfiguration {
-    
+
     public func withCloudFlareAuthParameters(environment: Environment = Environment.current) -> URLSessionConfiguration {
         if let auth = environment.cloudFlareAuth {
             httpAdditionalHeaders = [

@@ -581,6 +581,41 @@ class BrowserViewController: UIViewController,
         }
 
         browserDidBecomeActive()
+
+        // Ecosia: Check authentication and open sign-up tab if logged in
+        handleAuthenticationOnAppActivation()
+    }
+
+    // Ecosia: Handle authentication logic when app becomes active
+    private func handleAuthenticationOnAppActivation() {
+        guard Auth.shared.isLoggedIn else { return }
+
+        // Get session transfer token silently
+        Task {
+            await Auth.shared.getSessionTransferToken()
+
+            // Open sign-up tab silently on main thread
+            await MainActor.run {
+                openAuthenticationTab()
+            }
+        }
+    }
+
+    // Ecosia: Open the authentication sign-up tab
+    private func openAuthenticationTab() {
+        guard let signUpURL = URL(string: "https://www.ecosia-staging.xyz/accounts/sign-up") else {
+            print("Failed to create sign-up URL")
+            return
+        }
+
+        // Check if we already have a tab with this URL to avoid duplicates
+        if let existingTab = tabManager.getTabForURL(signUpURL) {
+            tabManager.selectTab(existingTab)
+        } else {
+            // Open new tab silently (don't select it to keep it in background)
+            _ = tabManager.addTab(URLRequest(url: signUpURL), isPrivate: false)
+            print("Opened authentication tab for logged-in user")
+        }
     }
 
     func browserDidBecomeActive() {
@@ -884,6 +919,18 @@ class BrowserViewController: UIViewController,
             self,
             selector: #selector(openRecentlyClosedTabs),
             name: .RemoteTabNotificationTapped,
+            object: nil
+        )
+        notificationCenter.addObserver(
+            self,
+            selector: #selector(handleAuthDidLogin),
+            name: .EcosiaAuthDidLoginWithSessionToken,
+            object: nil
+        )
+        notificationCenter.addObserver(
+            self,
+            selector: #selector(handleEcosiaAuthDidLogout),
+            name: .EcosiaAuthDidLogout,
             object: nil
         )
     }
@@ -1633,12 +1680,7 @@ class BrowserViewController: UIViewController,
         /* Ecosia: Update url with currentURL (ecosified)
         if let nav = tab.loadRequest(URLRequest(url: url)) {
          */
-        
-        if url.isEcosiaSearchQuery(),
-           Auth.shared.isLoggedIn {
-            urlBar.currentURL = URL(string: "https://www.ecosia-staging.xyz/accounts/sign-up?returnTo=\(urlBar.currentURL!.absoluteString)")!
-        }
-        
+
         if let currentURL = urlBar.currentURL, let nav = tab.loadRequest(URLRequest(url: currentURL)) {
             self.recordNavigationInTab(tab, navigation: nav, visitType: visitType)
         }
@@ -3644,6 +3686,51 @@ extension BrowserViewController: HomePanelDelegate {
             self.notificationCenter.post(name: .OpenRecentlyClosedTabs)
         }
      }
+
+    // Ecosia: Handle authentication login notification
+    @objc
+    func handleAuthDidLogin(_ notification: Notification) {
+        print("Received auth login notification, opening authentication tab")
+        openAuthenticationTab()
+    }
+
+    // Ecosia: Handle authentication logout notification
+    @objc
+    func handleEcosiaAuthDidLogout(_ notification: Notification) {
+        print("Received auth logout notification, cleaning up authentication state")
+        cleanupAuthenticationState()
+    }
+
+    // Ecosia: Clean up authentication-related state after logout
+    private func cleanupAuthenticationState() {
+        // Find and close any authentication tabs
+        let authURLs = [
+            "https://www.ecosia-staging.xyz/accounts/sign-up",
+            "https://www.ecosia-staging.xyz/accounts/sign-out"
+        ]
+
+        for url in authURLs {
+            if let urlObject = URL(string: url),
+               let tab = tabManager.getTabForURL(urlObject) {
+                tabManager.removeTab(tab)
+                print("Removed authentication tab: \(url)")
+            }
+        }
+
+        // Clear any cached authentication cookies
+        let cookieStore = WKWebsiteDataStore.default().httpCookieStore
+        cookieStore.getAllCookies { cookies in
+            let authCookies = cookies.filter { cookie in
+                cookie.name == "auth0_session_transfer_token" &&
+                cookie.domain.contains("ecosia-staging.xyz")
+            }
+
+            for cookie in authCookies {
+                cookieStore.delete(cookie)
+                print("Removed authentication cookie: \(cookie.name)")
+            }
+        }
+    }
 }
 
 // MARK: - SearchViewController

@@ -101,6 +101,7 @@ final class NTPAccountLoginCell: UICollectionViewCell, ThemeApplicable, Reusable
             await Auth.shared.login()
         }
         updateLoginButtonTitle()
+        updateSessionTokenButtonTitle() // Update session token display after auth action
     }
 
     private func updateLoginButtonTitle() {

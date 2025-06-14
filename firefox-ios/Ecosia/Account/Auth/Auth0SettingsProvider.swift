@@ -8,14 +8,14 @@ public protocol Auth0SettingsProviderProtocol {
 }
 
 struct DefaultAuth0SettingsProvider: Auth0SettingsProviderProtocol {
-    
+
     var id: String {
         guard let clientId = EnvironmentFetcher.valueFromMainBundleOrProcessInfo(forKey: "AUTH0_CLIENT_ID") else {
             fatalError("AUTH0_CLIENT_ID not found")
         }
         return clientId
     }
-    
+
     var domain: String {
         guard let domain = EnvironmentFetcher.valueFromMainBundleOrProcessInfo(forKey: "AUTH0_DOMAIN") else {
             fatalError("AUTH0_DOMAIN not found")
