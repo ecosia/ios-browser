@@ -339,6 +339,9 @@
 		2CC24C752D52478E0098467A /* MockTabManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A36AC2B2886F27F00CDC0AD /* MockTabManager.swift */; };
 		2CF989332D6393C400A2E79F /* NTPAccountLoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CF989322D6393C400A2E79F /* NTPAccountLoginViewModel.swift */; };
 		2CF989342D6393C400A2E79F /* NTPAccountLoginCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CF989312D6393C400A2E79F /* NTPAccountLoginCell.swift */; };
+		2CFC5D322DFDB6F400F61EAE /* AuthenticationAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFC5D302DFDB6F300F61EAE /* AuthenticationAction.swift */; };
+		2CFC5D342DFDBCB100F61EAE /* AuthenticationBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFC5D332DFDBCB100F61EAE /* AuthenticationBridge.swift */; };
+		2CFC5D362DFDBFC600F61EAE /* Redux in Frameworks */ = {isa = PBXBuildFile; productRef = 2CFC5D352DFDBFC600F61EAE /* Redux */; };
 		2CFE9FBF2D45348200B25CE0 /* SnowplowTracker in Frameworks */ = {isa = PBXBuildFile; productRef = 2CFE9FBE2D45348200B25CE0 /* SnowplowTracker */; };
 		2CFE9FC02D45348700B25CE0 /* RustMozillaAppServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43BE578A278BA4D900491291 /* RustMozillaAppServices.framework */; };
 		2CFE9FC22D4535FD00B25CE0 /* Ecosia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CFE99662D45329200B25CE0 /* Ecosia.framework */; };
@@ -2813,6 +2816,8 @@
 		2CF989312D6393C400A2E79F /* NTPAccountLoginCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPAccountLoginCell.swift; sourceTree = "<group>"; };
 		2CF989322D6393C400A2E79F /* NTPAccountLoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPAccountLoginViewModel.swift; sourceTree = "<group>"; };
 		2CF9D9A920067FA10083DF2A /* BrowsingPDFTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowsingPDFTests.swift; sourceTree = "<group>"; };
+		2CFC5D302DFDB6F300F61EAE /* AuthenticationAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationAction.swift; sourceTree = "<group>"; };
+		2CFC5D332DFDBCB100F61EAE /* AuthenticationBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationBridge.swift; sourceTree = "<group>"; };
 		2CFE99662D45329200B25CE0 /* Ecosia.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Ecosia.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2CFE996F2D45329300B25CE0 /* EcosiaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EcosiaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2CFE9FEB2D4557EF00B25CE0 /* Metrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Metrics.swift; sourceTree = "<group>"; };
@@ -9714,6 +9719,7 @@
 				2CFE9FCE2D45363500B25CE0 /* BrazeUI in Frameworks */,
 				2CFE9FD22D45364600B25CE0 /* Common in Frameworks */,
 				2CFE9FEA2D45404800B25CE0 /* SwiftSoup in Frameworks */,
+				2CFC5D362DFDBFC600F61EAE /* Redux in Frameworks */,
 				2C2EA77F2DA3F2990085F5BC /* Lottie in Frameworks */,
 				2C7548F72DDC9EF6000C1929 /* Auth0 in Frameworks */,
 			);
@@ -10413,6 +10419,7 @@
 		2CB288D92B07C8EF00A8FCB3 /* Ecosia */ = {
 			isa = PBXGroup;
 			children = (
+				2CFC5D312DFDB6F300F61EAE /* Redux */,
 				2CFE9FEF2D4557EF00B25CE0 /* PersistedGenerated */,
 				124DAE782D2FD0C90050104C /* RecoveredFromUpgrade */,
 				2CB288DC2B07C8EF00A8FCB3 /* UI */,
@@ -10532,6 +10539,15 @@
 				2CF989322D6393C400A2E79F /* NTPAccountLoginViewModel.swift */,
 			);
 			path = Account;
+			sourceTree = "<group>";
+		};
+		2CFC5D312DFDB6F300F61EAE /* Redux */ = {
+			isa = PBXGroup;
+			children = (
+				2CFC5D302DFDB6F300F61EAE /* AuthenticationAction.swift */,
+				2CFC5D332DFDBCB100F61EAE /* AuthenticationBridge.swift */,
+			);
+			path = Redux;
 			sourceTree = "<group>";
 		};
 		2CFE9FEC2D4557EF00B25CE0 /* Metrics */ = {
@@ -14918,6 +14934,7 @@
 				2CFE9FE92D45404800B25CE0 /* SwiftSoup */,
 				2C2EA77E2DA3F2990085F5BC /* Lottie */,
 				2C7548F62DDC9EF6000C1929 /* Auth0 */,
+				2CFC5D352DFDBFC600F61EAE /* Redux */,
 			);
 			productName = Ecosia;
 			productReference = 2CFE99662D45329200B25CE0 /* Ecosia.framework */;
@@ -16961,6 +16978,7 @@
 				96A562A027D6D0E80045144A /* ContileProvider.swift in Sources */,
 				8A5D1CAC2A30D70B005AD35C /* OpenWithSetting.swift in Sources */,
 				8AFA263227B6E9AB00D0C33B /* ToolbarBadge.swift in Sources */,
+				2CFC5D322DFDB6F400F61EAE /* AuthenticationAction.swift in Sources */,
 				12AEB1242D37CC6F0035D7D8 /* TabTrayButtonExtensions.swift in Sources */,
 				43D16B7A29831C7F009F8279 /* CreditCardAutofillToggle.swift in Sources */,
 				C23889E12A4F3E7200429673 /* ParentCoordinatorDelegate.swift in Sources */,
@@ -17054,6 +17072,7 @@
 				8A7653BF28A2C92600924ABF /* PocketStandardCellViewModel.swift in Sources */,
 				0B8BF3752CA2EFC000E9812D /* EditBookmarkCell.swift in Sources */,
 				8A5D1CAE2A30D71A005AD35C /* ThemeSetting.swift in Sources */,
+				2CFC5D342DFDBCB100F61EAE /* AuthenticationBridge.swift in Sources */,
 				1BE7A4902C636AC800460798 /* URLSession+sharedMPTCP.swift in Sources */,
 				C82F4C2B29AE2DF1005BD116 /* NotificationsSettingsViewController.swift in Sources */,
 				59A68B280D62462B85CF57A4 /* HistoryPanel.swift in Sources */,
@@ -27345,6 +27364,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 2CC0C2A72DA802CD006FE9B7 /* XCRemoteSwiftPackageReference "ViewInspector" */;
 			productName = ViewInspector;
+		};
+		2CFC5D352DFDBFC600F61EAE /* Redux */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Redux;
 		};
 		2CFE9FBE2D45348200B25CE0 /* SnowplowTracker */ = {
 			isa = XCSwiftPackageProductDependency;

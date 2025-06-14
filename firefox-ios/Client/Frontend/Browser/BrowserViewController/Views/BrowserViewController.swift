@@ -700,6 +700,11 @@ class BrowserViewController: UIViewController,
     func newState(state: BrowserViewControllerState) {
         browserViewControllerState = state
 
+        // Ecosia: Handle authentication state changes
+        if state.authStateLoaded {
+            handleAuthenticationStateUpdate(isLoggedIn: state.isUserLoggedIn)
+        }
+
         // opens or close sidebar/bottom sheet to match the saved state
         if state.fakespotState.isOpen {
             let productURL = isToolbarRefactorEnabled ?
@@ -930,6 +935,7 @@ class BrowserViewController: UIViewController,
             name: .RemoteTabNotificationTapped,
             object: nil
         )
+        // Ecosia: Authentication notifications - using notificationCenter property for consistency
         notificationCenter.addObserver(
             self,
             selector: #selector(handleAuthDidLogin),
@@ -942,28 +948,15 @@ class BrowserViewController: UIViewController,
             name: .EcosiaAuthDidLogout,
             object: nil
         )
-        // Ecosia: Listen for auth state changes
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(handleAuthDidLogin),
-            name: .EcosiaAuthDidLoginWithSessionToken,
-            object: nil
-        )
-
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(handleEcosiaAuthDidLogout),
-            name: .EcosiaAuthDidLogout,
-            object: nil
-        )
-
-        // Ecosia: Listen for web logout trigger
-        NotificationCenter.default.addObserver(
+        notificationCenter.addObserver(
             self,
             selector: #selector(handleWebLogoutRequest),
             name: .EcosiaAuthShouldLogoutFromWeb,
             object: nil
         )
+
+        // Ecosia: Initialize authentication bridge for Redux dispatching
+        _ = AuthenticationBridge.shared
     }
 
     private func switchToolbarIfNeeded() {
@@ -3792,6 +3785,16 @@ extension BrowserViewController: HomePanelDelegate {
         print("✅ Web logout tab opened silently with UUID: \(newTab.tabUUID)")
     }
 
+    // Ecosia: Handle authentication state updates via Redux
+    private func handleAuthenticationStateUpdate(isLoggedIn: Bool) {
+        print("🔄 Authentication state updated via Redux: \(isLoggedIn ? "logged in" : "logged out")")
+        // Post notification to update UI components that aren't connected to Redux
+        DispatchQueue.main.async {
+            let notificationName: Notification.Name = isLoggedIn ? .EcosiaAuthDidLoginWithSessionToken : .EcosiaAuthDidLogout
+            NotificationCenter.default.post(name: notificationName, object: nil)
+        }
+    }
+
         // Ecosia: Auto-close authentication tabs after they finish loading
     func autoCloseAuthenticationTabIfNeeded(tab: Tab, webView: WKWebView) {
         guard let url = webView.url else {
@@ -3801,7 +3804,8 @@ extension BrowserViewController: HomePanelDelegate {
 
         let authDomains = [
             "https://www.ecosia-staging.xyz/accounts/",
-            "https://www.ecosia-staging.xyz/"
+            "https://www.ecosia-staging.xyz/",
+            "https://login.ecosia-staging.xyz/"
         ]
 
         // Check if this tab is an authentication tab that should be auto-closed
