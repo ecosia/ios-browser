@@ -928,6 +928,10 @@ extension BrowserViewController: WKNavigationDelegate {
            let metadataManager = tab.metadataManager {
             navigateInTab(tab: tab, to: navigation, webViewStatus: .finishedNavigation)
 
+            // Ecosia: Auto-close authentication tabs after they finish loading
+            print("🏁 didFinish called for tab with URL: \(webView.url?.absoluteString ?? "nil")")
+            autoCloseAuthenticationTabIfNeeded(tab: tab, webView: webView)
+
             // Only update search term data with valid search term data
             if metadataManager.shouldUpdateSearchTermData(webViewUrl: webView.url?.absoluteString) {
                 updateObservationReferral(
@@ -1108,17 +1112,19 @@ private extension BrowserViewController {
     func handleAuthenticationForURL(_ url: URL, webView: WKWebView) {
         let urlString = url.absoluteString
 
-        // Check for sign-out URL and trigger logout
-        if urlString == "https://www.ecosia-staging.xyz/accounts/sign-out" {
-            print("Detected sign-out URL, triggering logout")
+        // Check for sign-out URL and trigger logout (handle redirects and variations)
+        if urlString.contains("ecosia-staging.xyz") &&
+           (urlString.contains("/accounts/sign-out") || urlString.contains("logout") || urlString.contains("signed-out")) {
+            print("Detected sign-out URL: \(urlString), triggering logout")
             Task {
                 await Auth.shared.logout()
             }
             return
         }
 
-        // Set session token cookie only for sign-up URL
-        if urlString == "https://www.ecosia-staging.xyz/accounts/sign-up" {
+        // Set session token cookie for authentication URLs (sign-up and related pages)
+        if urlString.contains("ecosia-staging.xyz") &&
+           (urlString.contains("/accounts/sign-up") || urlString.contains("/accounts/login") || urlString.contains("/auth")) {
             setSessionTokenCookieForURL(url, webView: webView)
         }
     }
@@ -1145,13 +1151,13 @@ private extension BrowserViewController {
                 }
             }
 
-            // Set the new session token cookie after cleanup
-            DispatchQueue.main.async {
-                webView.configuration.websiteDataStore.httpCookieStore.setCookie(sessionTokenCookie)
-                print("Session token cookie set successfully")
-            }
+                    // Set the new session token cookie after cleanup
+        DispatchQueue.main.async {
+            webView.configuration.websiteDataStore.httpCookieStore.setCookie(sessionTokenCookie)
+            print("Session token cookie set successfully")
         }
-    }
+        }
+}
 }
 
 extension WKNavigationAction {
