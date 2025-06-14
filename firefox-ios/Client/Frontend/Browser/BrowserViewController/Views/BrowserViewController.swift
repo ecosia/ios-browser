@@ -248,6 +248,9 @@ class BrowserViewController: UIViewController,
     let whatsNewDataProvider = WhatsNewLocalDataProvider()
     let referrals = Referrals()
 
+    // Ecosia: Track silent authentication tabs for auto-closing
+    var silentAuthenticationTabs = Set<String>()
+
     // Ecosia: Make `menuHelper` available at class level
     var menuHelper: MainMenuActionHelper?
 
@@ -601,7 +604,7 @@ class BrowserViewController: UIViewController,
         }
     }
 
-    // Ecosia: Open the authentication sign-up tab
+            // Ecosia: Open the authentication sign-up tab
     private func openAuthenticationTab() {
         guard let signUpURL = URL(string: "https://www.ecosia-staging.xyz/accounts/sign-up") else {
             print("Failed to create sign-up URL")
@@ -610,11 +613,17 @@ class BrowserViewController: UIViewController,
 
         // Check if we already have a tab with this URL to avoid duplicates
         if let existingTab = tabManager.getTabForURL(signUpURL) {
-            tabManager.selectTab(existingTab)
+            // Mark existing tab as silent authentication tab but DON'T select it to keep it silent
+            silentAuthenticationTabs.insert(existingTab.tabUUID)
+            print("🔄 Marked existing tab as silent auth tab: \(existingTab.tabUUID)")
+            // Don't select the tab - keep it silent in background
         } else {
             // Open new tab silently (don't select it to keep it in background)
-            _ = tabManager.addTab(URLRequest(url: signUpURL), isPrivate: false)
-            print("Opened authentication tab for logged-in user")
+            let newTab = tabManager.addTab(URLRequest(url: signUpURL), isPrivate: false)
+            // Mark this tab as a silent authentication tab for auto-closing
+            silentAuthenticationTabs.insert(newTab.tabUUID)
+            print("🆕 Opened silent authentication tab: \(newTab.tabUUID)")
+            print("📊 Silent auth tabs count: \(silentAuthenticationTabs.count)")
         }
     }
 
@@ -931,6 +940,28 @@ class BrowserViewController: UIViewController,
             self,
             selector: #selector(handleEcosiaAuthDidLogout),
             name: .EcosiaAuthDidLogout,
+            object: nil
+        )
+        // Ecosia: Listen for auth state changes
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleAuthDidLogin),
+            name: .EcosiaAuthDidLoginWithSessionToken,
+            object: nil
+        )
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleEcosiaAuthDidLogout),
+            name: .EcosiaAuthDidLogout,
+            object: nil
+        )
+
+        // Ecosia: Listen for web logout trigger
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleWebLogoutRequest),
+            name: .EcosiaAuthShouldLogoutFromWeb,
             object: nil
         )
     }
@@ -3701,6 +3732,13 @@ extension BrowserViewController: HomePanelDelegate {
         cleanupAuthenticationState()
     }
 
+    // Ecosia: Handle web logout request from native logout
+    @objc
+    func handleWebLogoutRequest(_ notification: Notification) {
+        print("Received web logout request, opening sign-out URL silently")
+        openWebLogoutURL()
+    }
+
     // Ecosia: Clean up authentication-related state after logout
     private func cleanupAuthenticationState() {
         // Find and close any authentication tabs
@@ -3712,6 +3750,8 @@ extension BrowserViewController: HomePanelDelegate {
         for url in authURLs {
             if let urlObject = URL(string: url),
                let tab = tabManager.getTabForURL(urlObject) {
+                // Remove from silent auth tracking
+                silentAuthenticationTabs.remove(tab.tabUUID)
                 tabManager.removeTab(tab)
                 print("Removed authentication tab: \(url)")
             }
@@ -3729,6 +3769,83 @@ extension BrowserViewController: HomePanelDelegate {
                 cookieStore.delete(cookie)
                 print("Removed authentication cookie: \(cookie.name)")
             }
+        }
+
+        // Clear all silent authentication tab tracking
+        silentAuthenticationTabs.removeAll()
+    }
+
+    // Ecosia: Open web logout URL silently to logout from web after native logout
+    private func openWebLogoutURL() {
+        guard let signOutURL = URL(string: "https://www.ecosia-staging.xyz/accounts/sign-out") else {
+            print("Failed to create sign-out URL")
+            return
+        }
+
+        print("🔓 Opening web logout URL silently: \(signOutURL.absoluteString)")
+
+        // Open the sign-out URL silently (don't select the tab)
+        let newTab = tabManager.addTab(URLRequest(url: signOutURL), isPrivate: false)
+        // Mark this tab as a silent authentication tab for auto-closing
+        silentAuthenticationTabs.insert(newTab.tabUUID)
+
+        print("✅ Web logout tab opened silently with UUID: \(newTab.tabUUID)")
+    }
+
+        // Ecosia: Auto-close authentication tabs after they finish loading
+    func autoCloseAuthenticationTabIfNeeded(tab: Tab, webView: WKWebView) {
+        guard let url = webView.url else {
+            print("⚠️ No URL for tab in autoCloseAuthenticationTabIfNeeded")
+            return
+        }
+
+        let authDomains = [
+            "https://www.ecosia-staging.xyz/accounts/",
+            "https://www.ecosia-staging.xyz/"
+        ]
+
+        // Check if this tab is an authentication tab that should be auto-closed
+        let isAuthTab = authDomains.contains { authDomain in
+            url.absoluteString.hasPrefix(authDomain)
+        }
+
+        print("🔍 Checking tab for auto-close:")
+        print("   URL: \(url.absoluteString)")
+        print("   Tab UUID: \(tab.tabUUID)")
+        print("   Is Auth Tab: \(isAuthTab)")
+        print("   Is Silent Tab: \(silentAuthenticationTabs.contains(tab.tabUUID))")
+        print("   Silent tabs: \(silentAuthenticationTabs)")
+
+        // Only auto-close if it's an auth tab AND it was opened silently
+        guard isAuthTab && silentAuthenticationTabs.contains(tab.tabUUID) else {
+            print("❌ Not auto-closing tab - conditions not met")
+            return
+        }
+
+        print("✅ Will auto-close silent authentication tab in 2 seconds")
+
+        // Close the tab after a brief delay to ensure authentication processing is complete
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
+            guard let self = self,
+                  let currentTab = self.tabManager[webView] else {
+                print("⚠️ Self or tab no longer available for auto-close")
+                return
+            }
+
+            print("🗑️ Auto-closing silent authentication tab: \(url.absoluteString)")
+
+            // Remove from tracking set
+            self.silentAuthenticationTabs.remove(currentTab.tabUUID)
+
+            // Remove the tab
+            self.tabManager.removeTab(currentTab)
+
+            // If we just closed the selected tab, select another tab
+            if self.tabManager.selectedTab == nil && !self.tabManager.normalTabs.isEmpty {
+                self.tabManager.selectTab(self.tabManager.normalTabs.last)
+            }
+
+            print("✅ Tab auto-closed successfully")
         }
     }
 }

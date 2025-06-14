@@ -6,6 +6,21 @@ import Foundation
 import Auth0
 import WebKit
 
+// MARK: - User Profile Model
+public struct UserProfile {
+    public let name: String?
+    public let email: String?
+    public let picture: String? // Avatar URL
+    public let sub: String? // User ID
+
+    public init(name: String?, email: String?, picture: String?, sub: String?) {
+        self.name = name
+        self.email = email
+        self.picture = picture
+        self.sub = sub
+    }
+}
+
 // MARK: - Auth Notifications
 extension Notification.Name {
     /// Posted when user successfully logs in and session token is ready
@@ -13,6 +28,12 @@ extension Notification.Name {
 
     /// Posted when user logs out and session should be cleared
     public static let EcosiaAuthDidLogout = Notification.Name("EcosiaEcosiaAuthDidLogout")
+
+    /// Posted when user should logout from web
+    public static let EcosiaAuthShouldLogoutFromWeb = Notification.Name("EcosiaEcosiaAuthShouldLogoutFromWeb")
+
+    /// Posted when credentials have been retrieved and auth state is ready
+    public static let EcosiaAuthStateReady = Notification.Name("EcosiaEcosiaAuthStateReady")
 }
 
 /// The `Auth` class manages user authentication, credential storage, and renewal using Auth0.
@@ -27,6 +48,9 @@ public class Auth {
     private(set) var refreshToken: String?
     private(set) var ssoCredentials: SSOCredentials?
     public var currentSessionToken: String? { ssoCredentials?.sessionTransferToken }
+
+    /// The current user's profile information extracted from the ID token
+    public private(set) var userProfile: UserProfile?
 
     /// Indicates whether the user is currently logged in.
     public private(set) var isLoggedIn: Bool = false
@@ -47,8 +71,15 @@ public class Auth {
             let credentials = try await auth0Provider.startAuth()
             let didStore = try auth0Provider.storeCredentials(credentials)
             if didStore {
+                // Set credential properties FIRST
+                self.idToken = credentials.idToken
+                self.accessToken = credentials.accessToken
+                self.refreshToken = credentials.refreshToken
                 isLoggedIn = true
                 print("\(#file).\(#function) - 👤 Auth - Credentials stored successfully.")
+
+                // Now extract user profile (self.accessToken is available)
+                self.extractUserProfile(from: credentials.idToken)
 
                 // Automatically get session token and trigger authentication flow
                 await performPostLoginAuthentication()
@@ -72,7 +103,7 @@ public class Auth {
         }
     }
 
-    /// Logs out the user asynchronously and clears stored credentials.
+    /// Logs out the user by clearing stored credentials and session.
     public func logout() async {
         do {
             try await auth0Provider.clearSession()
@@ -82,9 +113,12 @@ public class Auth {
                 self.accessToken = nil
                 self.refreshToken = nil
                 self.ssoCredentials = nil
+                self.userProfile = nil // Clear user profile
                 isLoggedIn = false
                 print("\(#file).\(#function) - 👤 Auth - Session and credentials cleared.")
 
+                // Post logout notification to trigger web logout as well
+                await postWebLogoutNotification()
                 // Notify that logout occurred
                 await postLogoutNotification()
             }
@@ -93,25 +127,36 @@ public class Auth {
         }
     }
 
-    /// Posts logout notification to notify observers that user logged out
-    private func postLogoutNotification() async {
+    /// Posts logout notification to trigger web logout
+    private func postWebLogoutNotification() async {
         await MainActor.run {
-            NotificationCenter.default.post(
-                name: .EcosiaAuthDidLogout,
-                object: nil
-            )
+            NotificationCenter.default.post(name: .EcosiaAuthShouldLogoutFromWeb, object: nil)
         }
+    }
+
+    /// Posts logout notification and triggers web logout
+    @MainActor
+    private func postLogoutNotification() {
+        NotificationCenter.default.post(name: .EcosiaAuthDidLogout, object: nil)
     }
 
     /// Retrieves stored credentials asynchronously, if available.
     public func retrieveStoredCredentials() async {
         do {
             let credentials = try await auth0Provider.retrieveCredentials()
+            // Set credential properties FIRST
             self.idToken = credentials.idToken
             self.accessToken = credentials.accessToken
             self.refreshToken = credentials.refreshToken
             print("\(#file).\(#function) - 👤 Auth - Retrieved credentials: \(credentials)")
+
             isLoggedIn = true
+
+            // Now extract user profile (self.accessToken is available)
+            self.extractUserProfile(from: credentials.idToken)
+
+            // Post notification that auth state is ready
+            await postAuthStateReadyNotification()
         } catch {
             print("\(#file).\(#function) - 👤 Auth - Failed to retrieve credentials: \(error)")
         }
@@ -126,11 +171,16 @@ public class Auth {
 
         do {
             let credentials = try await auth0Provider.renewCredentials()
+            // Set credential properties FIRST
             self.idToken = credentials.idToken
             self.accessToken = credentials.accessToken
             self.refreshToken = credentials.refreshToken
             print("\(#file).\(#function) - 👤 Auth - Renewed credentials: \(credentials)")
+
             isLoggedIn = true
+
+            // Now extract user profile from renewed ID token (self.accessToken is available)
+            self.extractUserProfile(from: credentials.idToken)
         } catch {
             print("\(#file).\(#function) - 👤 Auth - Failed to renew credentials: \(error)")
         }
@@ -155,18 +205,13 @@ public class Auth {
         return makeSessionTokenCookie(ssoCredentials: ssoCredentials)
     }
 
-    // TODO: We'll need this in the future for syncs with web, not used now
-//    /// Clears the auth cookie in WKWebView.
-//    private func clearAuthCookieInWebView() {
-//        // Implement the logic to clear the auth cookie in your WKWebView instances
-//        let dataStore = WKWebsiteDataStore.default()
-//        dataStore.fetchDataRecords(ofTypes: [WKWebsiteDataTypeCookies]) { records in
-//            let authCookieRecords = records.filter { $0.displayName.contains(Environment.current.urlProvider.root.baseURL!.absoluteString) }
-//            dataStore.removeData(ofTypes: [WKWebsiteDataTypeCookies], for: authCookieRecords) {
-//                print("Auth cookie cleared in WKWebView.")
-//            }
-//        }
-//    }
+    /// Posts auth state ready notification
+    private func postAuthStateReadyNotification() async {
+        await MainActor.run {
+            print("\(#file).\(#function) - 👤 Auth - Posting auth state ready notification")
+            NotificationCenter.default.post(name: .EcosiaAuthStateReady, object: nil)
+        }
+    }
 }
 
 extension Auth {
@@ -198,5 +243,47 @@ extension Auth {
             .expires: ssoCredentials.expiresIn,
             .secure: true
         ])
+    }
+
+    /// Extracts user profile from ID token and optionally fetches additional info from Auth0
+    private func extractUserProfile(from idToken: String) {
+        // For now, create a basic profile with minimal info
+        // TODO: Implement proper JWT decoding when JWT library is available
+        self.userProfile = UserProfile(name: "User", email: nil, picture: nil, sub: nil)
+        print("\(#file).\(#function) - 👤 Auth - Created basic user profile")
+
+        // Try to fetch additional user info from Auth0 if we have an access token
+        if let accessToken = self.accessToken {
+            Task {
+                await fetchUserInfoFromAuth0(accessToken: accessToken)
+            }
+        }
+    }
+
+    /// Fetches detailed user information from Auth0's userInfo endpoint
+    private func fetchUserInfoFromAuth0(accessToken: String) async {
+        do {
+            let userInfo = try await Auth0
+                .authentication(clientId: auth0Provider.credentialsManager.auth0SettingsProvider.id,
+                               domain: auth0Provider.credentialsManager.auth0SettingsProvider.domain)
+                .userInfo(withAccessToken: accessToken)
+                .start()
+
+            // Update user profile with actual data from Auth0
+            self.userProfile = UserProfile(
+                name: userInfo.name ?? userInfo.nickname,
+                email: userInfo.email,
+                picture: userInfo.picture?.absoluteString,
+                sub: userInfo.sub
+            )
+            print("\(#file).\(#function) - 👤 Auth - Updated user profile with Auth0 data: name=\(userInfo.name ?? "nil"), email=\(userInfo.email ?? "nil"), picture=\(userInfo.picture?.absoluteString ?? "nil")")
+
+            // Notify UI that profile was updated
+            await MainActor.run {
+                NotificationCenter.default.post(name: .EcosiaAuthStateReady, object: nil)
+            }
+        } catch {
+            print("\(#file).\(#function) - 👤 Auth - Failed to fetch user info from Auth0: \(error)")
+        }
     }
 }
