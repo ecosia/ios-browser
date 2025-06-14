@@ -7,6 +7,7 @@ import Redux
 import Shared
 import Common
 import WebKit
+import Ecosia
 
 struct BrowserViewControllerState: ScreenState, Equatable {
     enum NavigationType {
@@ -49,6 +50,9 @@ struct BrowserViewControllerState: ScreenState, Equatable {
     var buttonTapped: UIButton?
     var frame: WKFrameInfo?
     var microsurveyState: MicrosurveyPromptState
+    // Ecosia: Authentication state tracking
+    var isUserLoggedIn: Bool
+    var authStateLoaded: Bool
 
     init(appState: AppState, uuid: WindowUUID) {
         guard let bvcState = store.state.screenState(
@@ -72,7 +76,9 @@ struct BrowserViewControllerState: ScreenState, Equatable {
                   displayView: bvcState.displayView,
                   buttonTapped: bvcState.buttonTapped,
                   frame: bvcState.frame,
-                  microsurveyState: bvcState.microsurveyState)
+                  microsurveyState: bvcState.microsurveyState,
+                  isUserLoggedIn: bvcState.isUserLoggedIn,
+                  authStateLoaded: bvcState.authStateLoaded)
     }
 
     init(windowUUID: WindowUUID) {
@@ -87,7 +93,9 @@ struct BrowserViewControllerState: ScreenState, Equatable {
             navigateTo: nil,
             displayView: nil,
             buttonTapped: nil,
-            microsurveyState: MicrosurveyPromptState(windowUUID: windowUUID))
+            microsurveyState: MicrosurveyPromptState(windowUUID: windowUUID),
+            isUserLoggedIn: false,
+            authStateLoaded: false)
     }
 
     init(
@@ -103,7 +111,9 @@ struct BrowserViewControllerState: ScreenState, Equatable {
         displayView: DisplayType? = nil,
         buttonTapped: UIButton? = nil,
         frame: WKFrameInfo? = nil,
-        microsurveyState: MicrosurveyPromptState
+        microsurveyState: MicrosurveyPromptState,
+        isUserLoggedIn: Bool,
+        authStateLoaded: Bool
     ) {
         self.searchScreenState = searchScreenState
         self.showDataClearanceFlow = showDataClearanceFlow
@@ -118,6 +128,8 @@ struct BrowserViewControllerState: ScreenState, Equatable {
         self.buttonTapped = buttonTapped
         self.frame = frame
         self.microsurveyState = microsurveyState
+        self.isUserLoggedIn = isUserLoggedIn
+        self.authStateLoaded = authStateLoaded
     }
 
     static let reducer: Reducer<Self> = { state, action in
@@ -130,6 +142,8 @@ struct BrowserViewControllerState: ScreenState, Equatable {
             return BrowserViewControllerState.reduceStateForMicrosurveyAction(action: action, state: state)
         } else if let action = action as? GeneralBrowserAction {
             return BrowserViewControllerState.reduceStateForGeneralBrowserAction(action: action, state: state)
+        } else if let action = action as? AuthenticationAction {
+            return BrowserViewControllerState.reduceStateForAuthenticationAction(action: action, state: state)
         } else {
             return BrowserViewControllerState(
                 searchScreenState: state.searchScreenState,
@@ -138,7 +152,9 @@ struct BrowserViewControllerState: ScreenState, Equatable {
                 windowUUID: state.windowUUID,
                 reloadWebView: false,
                 browserViewType: state.browserViewType,
-                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
+                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action),
+                isUserLoggedIn: state.isUserLoggedIn,
+                authStateLoaded: state.authStateLoaded)
         }
     }
 
@@ -150,7 +166,9 @@ struct BrowserViewControllerState: ScreenState, Equatable {
             fakespotState: FakespotState.reducer(state.fakespotState, action),
             windowUUID: state.windowUUID,
             browserViewType: state.browserViewType,
-            microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
+            microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action),
+            isUserLoggedIn: state.isUserLoggedIn,
+            authStateLoaded: state.authStateLoaded)
     }
 
     static func reduceStateForMicrosurveyAction(action: MicrosurveyPromptAction,
@@ -161,7 +179,9 @@ struct BrowserViewControllerState: ScreenState, Equatable {
             fakespotState: state.fakespotState,
             windowUUID: state.windowUUID,
             browserViewType: state.browserViewType,
-            microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
+            microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action),
+            isUserLoggedIn: state.isUserLoggedIn,
+            authStateLoaded: state.authStateLoaded)
     }
 
     static func reduceStateForGeneralBrowserAction(action: GeneralBrowserAction,
@@ -176,7 +196,9 @@ struct BrowserViewControllerState: ScreenState, Equatable {
                 toast: toastType,
                 windowUUID: state.windowUUID,
                 browserViewType: state.browserViewType,
-                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
+                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action),
+                isUserLoggedIn: state.isUserLoggedIn,
+                authStateLoaded: state.authStateLoaded)
 
         case GeneralBrowserActionType.showOverlay,
             GeneralBrowserActionType.leaveOverlay:
@@ -188,7 +210,9 @@ struct BrowserViewControllerState: ScreenState, Equatable {
                 showOverlay: showOverlay,
                 windowUUID: state.windowUUID,
                 browserViewType: state.browserViewType,
-                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
+                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action),
+                isUserLoggedIn: state.isUserLoggedIn,
+                authStateLoaded: state.authStateLoaded)
 
         case GeneralBrowserActionType.updateSelectedTab:
             return BrowserViewControllerState.resolveStateForUpdateSelectedTab(action: action, state: state)
@@ -202,7 +226,9 @@ struct BrowserViewControllerState: ScreenState, Equatable {
                 windowUUID: state.windowUUID,
                 browserViewType: state.browserViewType,
                 navigateTo: .home,
-                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
+                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action),
+                isUserLoggedIn: state.isUserLoggedIn,
+                authStateLoaded: state.authStateLoaded)
 
         case GeneralBrowserActionType.addNewTab:
             return BrowserViewControllerState(
@@ -213,7 +239,9 @@ struct BrowserViewControllerState: ScreenState, Equatable {
                 windowUUID: state.windowUUID,
                 browserViewType: state.browserViewType,
                 navigateTo: .newTab,
-                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
+                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action),
+                isUserLoggedIn: state.isUserLoggedIn,
+                authStateLoaded: state.authStateLoaded)
 
         case GeneralBrowserActionType.showQRcodeReader:
             return BrowserViewControllerState(
@@ -224,7 +252,9 @@ struct BrowserViewControllerState: ScreenState, Equatable {
                 windowUUID: state.windowUUID,
                 browserViewType: state.browserViewType,
                 displayView: .qrCodeReader,
-                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
+                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action),
+                isUserLoggedIn: state.isUserLoggedIn,
+                authStateLoaded: state.authStateLoaded)
 
         case GeneralBrowserActionType.showBackForwardList:
             return BrowserViewControllerState(
@@ -235,7 +265,9 @@ struct BrowserViewControllerState: ScreenState, Equatable {
                 windowUUID: state.windowUUID,
                 browserViewType: state.browserViewType,
                 displayView: .backForwardList,
-                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
+                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action),
+                isUserLoggedIn: state.isUserLoggedIn,
+                authStateLoaded: state.authStateLoaded)
 
         case GeneralBrowserActionType.showTrackingProtectionDetails:
             return BrowserViewControllerState(
@@ -247,7 +279,9 @@ struct BrowserViewControllerState: ScreenState, Equatable {
                     browserViewType: state.browserViewType,
                     displayView: .trackingProtectionDetails,
                     buttonTapped: action.buttonTapped,
-                    microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
+                    microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action),
+                    isUserLoggedIn: state.isUserLoggedIn,
+                    authStateLoaded: state.authStateLoaded)
 
         case GeneralBrowserActionType.showMenu:
             return BrowserViewControllerState(
@@ -259,7 +293,9 @@ struct BrowserViewControllerState: ScreenState, Equatable {
                     browserViewType: state.browserViewType,
                     displayView: .menu,
                     buttonTapped: action.buttonTapped,
-                    microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
+                    microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action),
+                    isUserLoggedIn: state.isUserLoggedIn,
+                    authStateLoaded: state.authStateLoaded)
 
         case GeneralBrowserActionType.showTabsLongPressActions:
             return BrowserViewControllerState(
@@ -270,7 +306,9 @@ struct BrowserViewControllerState: ScreenState, Equatable {
                 windowUUID: state.windowUUID,
                 browserViewType: state.browserViewType,
                 displayView: .tabsLongPressActions,
-                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
+                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action),
+                isUserLoggedIn: state.isUserLoggedIn,
+                authStateLoaded: state.authStateLoaded)
 
         case GeneralBrowserActionType.showReloadLongPressAction:
             return BrowserViewControllerState(
@@ -282,7 +320,9 @@ struct BrowserViewControllerState: ScreenState, Equatable {
                 browserViewType: state.browserViewType,
                 displayView: .reloadLongPressAction,
                 buttonTapped: action.buttonTapped,
-                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
+                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action),
+                isUserLoggedIn: state.isUserLoggedIn,
+                authStateLoaded: state.authStateLoaded)
 
         case GeneralBrowserActionType.showLocationViewLongPressActionSheet:
             return BrowserViewControllerState(
@@ -293,7 +333,9 @@ struct BrowserViewControllerState: ScreenState, Equatable {
                 windowUUID: state.windowUUID,
                 browserViewType: state.browserViewType,
                 displayView: .locationViewLongPressAction,
-                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
+                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action),
+                isUserLoggedIn: state.isUserLoggedIn,
+                authStateLoaded: state.authStateLoaded)
 
         case GeneralBrowserActionType.navigateBack:
             return BrowserViewControllerState(
@@ -304,7 +346,9 @@ struct BrowserViewControllerState: ScreenState, Equatable {
                 windowUUID: state.windowUUID,
                 browserViewType: state.browserViewType,
                 navigateTo: .back,
-                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
+                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action),
+                isUserLoggedIn: state.isUserLoggedIn,
+                authStateLoaded: state.authStateLoaded)
         case GeneralBrowserActionType.navigateForward:
             return BrowserViewControllerState(
                 searchScreenState: state.searchScreenState,
@@ -314,7 +358,9 @@ struct BrowserViewControllerState: ScreenState, Equatable {
                 windowUUID: state.windowUUID,
                 browserViewType: state.browserViewType,
                 navigateTo: .forward,
-                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
+                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action),
+                isUserLoggedIn: state.isUserLoggedIn,
+                authStateLoaded: state.authStateLoaded)
 
         case GeneralBrowserActionType.showTabTray:
             return BrowserViewControllerState(
@@ -325,7 +371,9 @@ struct BrowserViewControllerState: ScreenState, Equatable {
                 windowUUID: state.windowUUID,
                 browserViewType: state.browserViewType,
                 displayView: .tabTray,
-                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
+                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action),
+                isUserLoggedIn: state.isUserLoggedIn,
+                authStateLoaded: state.authStateLoaded)
 
         case GeneralBrowserActionType.reloadWebsite:
             return BrowserViewControllerState(
@@ -336,7 +384,9 @@ struct BrowserViewControllerState: ScreenState, Equatable {
                 windowUUID: state.windowUUID,
                 browserViewType: state.browserViewType,
                 navigateTo: .reload,
-                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
+                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action),
+                isUserLoggedIn: state.isUserLoggedIn,
+                authStateLoaded: state.authStateLoaded)
 
         case GeneralBrowserActionType.reloadWebsiteNoCache:
             return BrowserViewControllerState(
@@ -347,7 +397,9 @@ struct BrowserViewControllerState: ScreenState, Equatable {
                 windowUUID: state.windowUUID,
                 browserViewType: state.browserViewType,
                 navigateTo: .reloadNoCache,
-                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
+                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action),
+                isUserLoggedIn: state.isUserLoggedIn,
+                authStateLoaded: state.authStateLoaded)
 
         case GeneralBrowserActionType.stopLoadingWebsite:
             return BrowserViewControllerState(
@@ -358,7 +410,9 @@ struct BrowserViewControllerState: ScreenState, Equatable {
                 windowUUID: state.windowUUID,
                 browserViewType: state.browserViewType,
                 navigateTo: .stopLoading,
-                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
+                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action),
+                isUserLoggedIn: state.isUserLoggedIn,
+                authStateLoaded: state.authStateLoaded)
 
         case GeneralBrowserActionType.showShare:
             return BrowserViewControllerState(
@@ -370,7 +424,9 @@ struct BrowserViewControllerState: ScreenState, Equatable {
                 browserViewType: state.browserViewType,
                 displayView: .share,
                 buttonTapped: action.buttonTapped,
-                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
+                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action),
+                isUserLoggedIn: state.isUserLoggedIn,
+                authStateLoaded: state.authStateLoaded)
 
         case GeneralBrowserActionType.showReaderMode:
             return BrowserViewControllerState(
@@ -381,7 +437,9 @@ struct BrowserViewControllerState: ScreenState, Equatable {
                 windowUUID: state.windowUUID,
                 browserViewType: state.browserViewType,
                 displayView: .readerMode,
-                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
+                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action),
+                isUserLoggedIn: state.isUserLoggedIn,
+                authStateLoaded: state.authStateLoaded)
 
         case GeneralBrowserActionType.showNewTabLongPressActions:
             return BrowserViewControllerState(
@@ -392,7 +450,9 @@ struct BrowserViewControllerState: ScreenState, Equatable {
                 windowUUID: state.windowUUID,
                 browserViewType: state.browserViewType,
                 displayView: .newTabLongPressActions,
-                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
+                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action),
+                isUserLoggedIn: state.isUserLoggedIn,
+                authStateLoaded: state.authStateLoaded)
 
         case GeneralBrowserActionType.addToReadingListLongPressAction:
             return BrowserViewControllerState(
@@ -403,7 +463,9 @@ struct BrowserViewControllerState: ScreenState, Equatable {
                 windowUUID: state.windowUUID,
                 browserViewType: state.browserViewType,
                 displayView: .readerModeLongPressAction,
-                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
+                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action),
+                isUserLoggedIn: state.isUserLoggedIn,
+                authStateLoaded: state.authStateLoaded)
 
         case GeneralBrowserActionType.clearData:
             return BrowserViewControllerState(
@@ -413,7 +475,9 @@ struct BrowserViewControllerState: ScreenState, Equatable {
                 windowUUID: state.windowUUID,
                 browserViewType: state.browserViewType,
                 displayView: .dataClearance,
-                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
+                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action),
+                isUserLoggedIn: state.isUserLoggedIn,
+                authStateLoaded: state.authStateLoaded)
         case GeneralBrowserActionType.showPasswordGenerator:
             return BrowserViewControllerState(
                 searchScreenState: state.searchScreenState,
@@ -423,8 +487,50 @@ struct BrowserViewControllerState: ScreenState, Equatable {
                 browserViewType: state.browserViewType,
                 displayView: .passwordGenerator,
                 frame: action.frame,
-                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action)
-                )
+                microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action),
+                isUserLoggedIn: state.isUserLoggedIn,
+                authStateLoaded: state.authStateLoaded)
+        default:
+            return state
+        }
+    }
+
+    static func reduceStateForAuthenticationAction(action: AuthenticationAction,
+                                                   state: BrowserViewControllerState) -> BrowserViewControllerState {
+        switch action.actionType {
+        case AuthenticationActionType.authStateLoaded:
+            return BrowserViewControllerState(
+                searchScreenState: state.searchScreenState,
+                showDataClearanceFlow: state.showDataClearanceFlow,
+                fakespotState: state.fakespotState,
+                windowUUID: state.windowUUID,
+                browserViewType: state.browserViewType,
+                microsurveyState: state.microsurveyState,
+                isUserLoggedIn: action.isLoggedIn ?? false,
+                authStateLoaded: true)
+
+        case AuthenticationActionType.userLoggedIn:
+            return BrowserViewControllerState(
+                searchScreenState: state.searchScreenState,
+                showDataClearanceFlow: state.showDataClearanceFlow,
+                fakespotState: state.fakespotState,
+                windowUUID: state.windowUUID,
+                browserViewType: state.browserViewType,
+                microsurveyState: state.microsurveyState,
+                isUserLoggedIn: true,
+                authStateLoaded: state.authStateLoaded)
+
+        case AuthenticationActionType.userLoggedOut:
+            return BrowserViewControllerState(
+                searchScreenState: state.searchScreenState,
+                showDataClearanceFlow: state.showDataClearanceFlow,
+                fakespotState: state.fakespotState,
+                windowUUID: state.windowUUID,
+                browserViewType: state.browserViewType,
+                microsurveyState: state.microsurveyState,
+                isUserLoggedIn: false,
+                authStateLoaded: state.authStateLoaded)
+
         default:
             return state
         }
@@ -453,6 +559,8 @@ struct BrowserViewControllerState: ScreenState, Equatable {
             windowUUID: state.windowUUID,
             reloadWebView: true,
             browserViewType: browserViewType,
-            microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
+            microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action),
+            isUserLoggedIn: state.isUserLoggedIn,
+            authStateLoaded: state.authStateLoaded)
     }
 }

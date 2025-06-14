@@ -1115,9 +1115,10 @@ private extension BrowserViewController {
         // Check for sign-out URL and trigger logout (handle redirects and variations)
         if urlString.contains("ecosia-staging.xyz") &&
            (urlString.contains("/accounts/sign-out") || urlString.contains("logout") || urlString.contains("signed-out")) {
-            print("Detected sign-out URL: \(urlString), triggering logout")
+            print("🔓 Detected sign-out URL: \(urlString), triggering silent logout")
             Task {
-                await Auth.shared.logout()
+                // Use silent logout since this is web-initiated to avoid clearing Auth0 session
+                await Auth.shared.logout(triggerWebLogout: false)
             }
             return
         }

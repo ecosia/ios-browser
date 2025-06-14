@@ -5,13 +5,16 @@
 import Foundation
 import Auth0
 import WebKit
+import Redux
+import Common
+import UIKit
 
 // MARK: - User Profile Model
 public struct UserProfile {
     public let name: String?
     public let email: String?
-    public let picture: String? // Avatar URL
-    public let sub: String? // User ID
+    public let picture: String?
+    public let sub: String?
 
     public init(name: String?, email: String?, picture: String?, sub: String?) {
         self.name = name
@@ -19,6 +22,13 @@ public struct UserProfile {
         self.picture = picture
         self.sub = sub
     }
+}
+
+// MARK: - Authentication Action Types for Redux
+public enum EcosiaAuthActionType: String, CaseIterable {
+    case authStateLoaded
+    case userLoggedIn
+    case userLoggedOut
 }
 
 // MARK: - Auth Notifications
@@ -34,6 +44,9 @@ extension Notification.Name {
 
     /// Posted when credentials have been retrieved and auth state is ready
     public static let EcosiaAuthStateReady = Notification.Name("EcosiaEcosiaAuthStateReady")
+
+    /// Posted when auth state should be dispatched to Redux store
+    public static let EcosiaAuthReduxDispatch = Notification.Name("EcosiaEcosiaAuthReduxDispatch")
 }
 
 /// The `Auth` class manages user authentication, credential storage, and renewal using Auth0.
@@ -100,13 +113,25 @@ public class Auth {
                 object: nil,
                 userInfo: ["sessionToken": currentSessionToken as Any]
             )
+
+            // Dispatch login state to Redux store
+            dispatchAuthStateToRedux(isLoggedIn: true, actionType: .userLoggedIn)
         }
     }
 
     /// Logs out the user by clearing stored credentials and session.
     public func logout() async {
+        await logout(triggerWebLogout: true)
+    }
+
+    /// Logs out the user with option to skip web logout (for web-initiated logout)
+    public func logout(triggerWebLogout: Bool = true) async {
         do {
-            try await auth0Provider.clearSession()
+            // Only clear Auth0 session if this is not web-initiated logout
+            if triggerWebLogout {
+                try await auth0Provider.clearSession()
+            }
+
             let didClear = auth0Provider.clearCredentials()
             if didClear {
                 self.idToken = nil
@@ -117,8 +142,10 @@ public class Auth {
                 isLoggedIn = false
                 print("\(#file).\(#function) - 👤 Auth - Session and credentials cleared.")
 
-                // Post logout notification to trigger web logout as well
-                await postWebLogoutNotification()
+                // Post logout notification to trigger web logout if needed
+                if triggerWebLogout {
+                    await postWebLogoutNotification()
+                }
                 // Notify that logout occurred
                 await postLogoutNotification()
             }
@@ -138,6 +165,9 @@ public class Auth {
     @MainActor
     private func postLogoutNotification() {
         NotificationCenter.default.post(name: .EcosiaAuthDidLogout, object: nil)
+
+        // Dispatch logout state to Redux store
+        dispatchAuthStateToRedux(isLoggedIn: false, actionType: .userLoggedOut)
     }
 
     /// Retrieves stored credentials asynchronously, if available.
@@ -210,7 +240,30 @@ public class Auth {
         await MainActor.run {
             print("\(#file).\(#function) - 👤 Auth - Posting auth state ready notification")
             NotificationCenter.default.post(name: .EcosiaAuthStateReady, object: nil)
+
+            // If user is logged in, also post login notification for UI consistency
+            if isLoggedIn {
+                NotificationCenter.default.post(
+                    name: .EcosiaAuthDidLoginWithSessionToken,
+                    object: nil,
+                    userInfo: ["sessionToken": currentSessionToken as Any]
+                )
+            }
+
+            // Dispatch authentication state to Redux store
+            dispatchAuthStateToRedux(isLoggedIn: isLoggedIn, actionType: .authStateLoaded)
         }
+    }
+
+    /// Dispatches authentication state changes to Redux store via notification
+    private func dispatchAuthStateToRedux(isLoggedIn: Bool, actionType: EcosiaAuthActionType) {
+        // Post notification with auth state info for the bridge to handle
+        let userInfo: [String: Any] = [
+            "isLoggedIn": isLoggedIn,
+            "actionType": actionType.rawValue
+        ]
+        NotificationCenter.default.post(name: .EcosiaAuthReduxDispatch, object: nil, userInfo: userInfo)
+        print("🔄 Auth - Posted Redux dispatch notification for \(actionType)")
     }
 }
 

@@ -6,16 +6,29 @@ import UIKit
 import SwiftUI
 import Common
 import Ecosia
+import Redux
 
 final class NTPAccountLoginCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
 
     // MARK: - UX Constants
     private enum UX {
-        static let containerHeight: CGFloat = 48
+        static let containerHeight: CGFloat = 64
         static let insetMargin: CGFloat = 16
+        static let avatarSize: CGFloat = 32
+        static let stackSpacing: CGFloat = 4
     }
 
     // MARK: - Properties
+    private lazy var containerStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .vertical
+        stackView.alignment = .trailing
+        stackView.spacing = UX.stackSpacing
+        stackView.distribution = .fill
+        return stackView
+    }()
+
     private lazy var loginButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -27,26 +40,30 @@ final class NTPAccountLoginCell: UICollectionViewCell, ThemeApplicable, Reusable
         button.contentHorizontalAlignment = .trailing
         return button
     }()
-    private lazy var sessionTokenButton = {
+
+    private lazy var sessionTokenButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.backgroundColor = .clear
         button.addTarget(self, action: #selector(getSessionTransferToken), for: .touchUpInside)
         button.titleLabel?.font = .preferredFont(forTextStyle: .subheadline)
         button.contentHorizontalAlignment = .trailing
+        button.isHidden = true // Hidden by default as requested
         return button
     }()
-    // User avatar image view
+
+    // User avatar image view - positioned on top of the button when visible
     private lazy var avatarImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.layer.cornerRadius = 16 // Half of 32x32 for circular shape
+        imageView.layer.cornerRadius = UX.avatarSize / 2 // Circular shape
         imageView.layer.masksToBounds = true
         imageView.contentMode = .scaleAspectFill
         imageView.backgroundColor = .systemGray5
         imageView.isHidden = true // Hidden by default
         return imageView
     }()
+
     // Task for managing login/logout async operations
     private var authTask: Task<Void, Never>?
     // Task for managing fetching the session token async operations
@@ -57,20 +74,19 @@ final class NTPAccountLoginCell: UICollectionViewCell, ThemeApplicable, Reusable
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
-        // Listen for auth state changes
         setupNotificationObservers()
     }
 
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         setup()
-        // Listen for auth state changes
         setupNotificationObservers()
     }
 
     deinit {
         // Cancel any ongoing task when the cell is deallocated
         authTask?.cancel()
+        sessionTokenTask?.cancel()
         // Remove notification observers
         NotificationCenter.default.removeObserver(self)
     }
@@ -78,33 +94,27 @@ final class NTPAccountLoginCell: UICollectionViewCell, ThemeApplicable, Reusable
     // MARK: - Setup
 
     private func setup() {
-        contentView.addSubview(loginButton)
-        contentView.addSubview(sessionTokenButton)
-        contentView.addSubview(avatarImageView)
+        contentView.addSubview(containerStackView)
+
+        // Add buttons to stack view
+        containerStackView.addArrangedSubview(avatarImageView)
+        containerStackView.addArrangedSubview(loginButton)
+        containerStackView.addArrangedSubview(sessionTokenButton)
+
         setupConstraints()
         updateLoginButtonTitle()
         updateSessionTokenButtonTitle()
     }
 
     private func setupConstraints() {
-        loginButton.translatesAutoresizingMaskIntoConstraints = false
-        loginButton.backgroundColor = .clear
-        loginButton.addTarget(self, action: #selector(toggleAccountState), for: .touchUpInside)
-        loginButton.titleLabel?.font = .preferredFont(forTextStyle: .headline)
-        loginButton.contentHorizontalAlignment = .trailing
         NSLayoutConstraint.activate([
-            loginButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -UX.insetMargin),
-            loginButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            loginButton.heightAnchor.constraint(equalToConstant: UX.containerHeight),
-            loginButton.widthAnchor.constraint(equalToConstant: 100),
-            sessionTokenButton.topAnchor.constraint(equalTo: loginButton.bottomAnchor, constant: 4),
-            sessionTokenButton.trailingAnchor.constraint(equalTo: loginButton.trailingAnchor),
-
-            // Avatar positioned to the left of the sign out button
-            avatarImageView.trailingAnchor.constraint(equalTo: loginButton.leadingAnchor, constant: -8),
-            avatarImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            avatarImageView.widthAnchor.constraint(equalToConstant: 32),
-            avatarImageView.heightAnchor.constraint(equalToConstant: 32),
+            // Container stack view constraints
+            containerStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -UX.insetMargin),
+            containerStackView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            containerStackView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            containerStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            avatarImageView.widthAnchor.constraint(equalToConstant: UX.avatarSize),
+            avatarImageView.heightAnchor.constraint(equalToConstant: UX.avatarSize)
         ])
     }
 
@@ -113,21 +123,21 @@ final class NTPAccountLoginCell: UICollectionViewCell, ThemeApplicable, Reusable
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(handleAuthDidLogin),
-            name: Notification.Name("EcosiaAuthDidLoginWithSessionToken"),
+            name: .EcosiaAuthDidLoginWithSessionToken,
             object: nil
         )
 
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(handleAuthDidLogout),
-            name: Notification.Name("EcosiaAuthDidLogout"),
+            name: .EcosiaAuthDidLogout,
             object: nil
         )
 
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(handleAuthStateReady),
-            name: Notification.Name("EcosiaAuthStateReady"),
+            name: .EcosiaAuthStateReady,
             object: nil
         )
     }
@@ -179,7 +189,9 @@ final class NTPAccountLoginCell: UICollectionViewCell, ThemeApplicable, Reusable
     }
 
     private func updateLoginButtonTitle() {
-        loginButton.setTitle(Auth.shared.isLoggedIn ? "Sign Out" : "Sign In", for: .normal)
+        // Use Redux state if available, otherwise fall back to Auth.shared
+        let isLoggedIn = getCurrentAuthState()
+        loginButton.setTitle(isLoggedIn ? "Sign Out" : "Sign In", for: .normal)
 
         // Update avatar visibility and load avatar if logged in
         updateAvatarDisplay()
@@ -189,19 +201,42 @@ final class NTPAccountLoginCell: UICollectionViewCell, ThemeApplicable, Reusable
         applyTheme(theme: themeManager.getCurrentTheme(for: currentWindowUUID))
     }
 
+    // Get current auth state from Redux if available, otherwise from Auth.shared
+    private func getCurrentAuthState() -> Bool {
+        if let windowUUID = currentWindowUUID,
+           let browserState = store.state.screenState(BrowserViewControllerState.self, for: .browserViewController, window: windowUUID),
+           browserState.authStateLoaded {
+            return browserState.isUserLoggedIn
+        }
+        return Auth.shared.isLoggedIn
+    }
+
     // Update avatar display based on login state
     private func updateAvatarDisplay() {
-        if Auth.shared.isLoggedIn {
-            avatarImageView.isHidden = false
-            loadUserAvatar()
-        } else {
-            avatarImageView.isHidden = true
-            avatarImageView.image = nil
+        let isLoggedIn = getCurrentAuthState()
+
+        // Animate avatar visibility changes for smooth UX
+        UIView.animate(withDuration: 0.3, animations: {
+            if isLoggedIn {
+                self.avatarImageView.isHidden = false
+                self.avatarImageView.alpha = 1.0
+                self.loadUserAvatar()
+            } else {
+                self.avatarImageView.alpha = 0.0
+            }
+        }) { _ in
+            if !isLoggedIn {
+                self.avatarImageView.isHidden = true
+                self.avatarImageView.image = nil
+            }
         }
     }
 
     // Load user avatar from profile
     private func loadUserAvatar() {
+        // Ensure avatar is visible and set initial alpha
+        avatarImageView.alpha = 1.0
+
         guard let pictureURL = Auth.shared.userProfile?.picture,
               let url = URL(string: pictureURL) else {
             // Show default avatar if no picture URL
@@ -211,7 +246,13 @@ final class NTPAccountLoginCell: UICollectionViewCell, ThemeApplicable, Reusable
 
         // Load avatar image asynchronously
         URLSession.shared.dataTask(with: url) { [weak self] data, _, _ in
-            guard let data = data, let image = UIImage(data: data) else { return }
+            guard let data = data, let image = UIImage(data: data) else {
+                // Fallback to default avatar on load failure
+                DispatchQueue.main.async {
+                    self?.avatarImageView.image = UIImage(systemName: "person.circle.fill")
+                }
+                return
+            }
             DispatchQueue.main.async {
                 self?.avatarImageView.image = image
             }
@@ -237,7 +278,8 @@ final class NTPAccountLoginCell: UICollectionViewCell, ThemeApplicable, Reusable
     // MARK: - Theming
 
     func applyTheme(theme: Theme) {
-        loginButton.setTitleColor(Auth.shared.isLoggedIn ? .red : theme.colors.ecosia.buttonBackgroundPrimaryActive, for: .normal)
-        sessionTokenButton.setTitleColor(Auth.shared.isLoggedIn ? theme.colors.ecosia.buttonBackgroundPrimaryActive : .red, for: .normal)
+        let isLoggedIn = getCurrentAuthState()
+        loginButton.setTitleColor(isLoggedIn ? .red : theme.colors.ecosia.buttonBackgroundPrimaryActive, for: .normal)
+        sessionTokenButton.setTitleColor(isLoggedIn ? theme.colors.ecosia.buttonBackgroundPrimaryActive : .red, for: .normal)
     }
 }

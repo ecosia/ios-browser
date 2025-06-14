@@ -68,7 +68,7 @@ extension HomepageSectionType {
                        topSpacing: CGFloat = 0,
                        bottomSpacing: CGFloat = 32) -> NSDirectionalEdgeInsets {
         switch self {
-        case .libraryShortcuts, .topSites, .impact, .news, .ntpCustomization, .accountLogin:
+        case .libraryShortcuts, .topSites, .impact, .news, .ntpCustomization:
             guard let window = UIApplication.shared.windows.first(where: \.isKeyWindow) else {
                 return NSDirectionalEdgeInsets(top: 0,
                                                leading: MinimumInsets,
@@ -89,7 +89,7 @@ extension HomepageSectionType {
                                            leading: horizontal,
                                            bottom: bottomSpacing,
                                            trailing: horizontal)
-        case .homepageHeader, .climateImpactCounter:
+        case .homepageHeader, .climateImpactCounter, .accountLogin:
             return .init(top: 0, leading: 0, bottom: 0, trailing: 0)
         }
     }
