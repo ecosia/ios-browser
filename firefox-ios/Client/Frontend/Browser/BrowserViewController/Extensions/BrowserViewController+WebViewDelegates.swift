@@ -1111,10 +1111,20 @@ private extension BrowserViewController {
     // Ecosia: Handle authentication-related URL navigation
     func handleAuthenticationForURL(_ url: URL, webView: WKWebView) {
         let urlString = url.absoluteString
+        
+        // Only process URLs that are specifically authentication-related
+        // Check for exact authentication domain patterns to avoid triggering on search results
+        let isAuthenticationURL = urlString.hasPrefix("https://www.ecosia-staging.xyz/accounts/") ||
+                                 urlString.hasPrefix("https://login.ecosia-staging.xyz/") ||
+                                 (urlString.hasPrefix("https://www.ecosia-staging.xyz/") && 
+                                  (urlString.contains("/accounts/") || urlString.contains("/auth")))
+
+        guard isAuthenticationURL else {
+            return // Skip non-authentication URLs to avoid triggering on search results
+        }
 
         // Check for sign-out URL and trigger logout (handle redirects and variations)
-        if urlString.contains("ecosia-staging.xyz") &&
-           (urlString.contains("/accounts/sign-out") || urlString.contains("logout") || urlString.contains("signed-out")) {
+        if urlString.contains("/accounts/sign-out") || urlString.contains("logout") || urlString.contains("signed-out") {
             print("🔓 Detected sign-out URL: \(urlString), triggering silent logout")
             Task {
                 // Use silent logout since this is web-initiated to avoid clearing Auth0 session
@@ -1124,8 +1134,7 @@ private extension BrowserViewController {
         }
 
         // Set session token cookie for authentication URLs (sign-up and related pages)
-        if urlString.contains("ecosia-staging.xyz") &&
-           (urlString.contains("/accounts/sign-up") || urlString.contains("/accounts/login") || urlString.contains("/auth")) {
+        if urlString.contains("/accounts/sign-up") || urlString.contains("/accounts/login") || urlString.contains("/auth") {
             setSessionTokenCookieForURL(url, webView: webView)
         }
     }
