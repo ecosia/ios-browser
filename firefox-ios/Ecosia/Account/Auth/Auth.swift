@@ -191,7 +191,7 @@ public class Auth {
             print("\(#file).\(#function) - 👤 Auth - Failed to retrieve credentials: \(error)")
         }
     }
-
+ 
     /// Renews credentials if they are renewable.
     public func renewCredentialsIfNeeded() async {
         guard auth0Provider.canRenewCredentials() else {

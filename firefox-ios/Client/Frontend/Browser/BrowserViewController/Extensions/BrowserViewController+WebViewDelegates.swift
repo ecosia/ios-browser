@@ -1112,7 +1112,7 @@ private extension BrowserViewController {
     func handleAuthenticationForURL(_ url: URL, webView: WKWebView) {
         let urlString = url.absoluteString
         
-        // Only process URLs that are specifically authentication-related
+        // Ecosia: Only process URLs that are specifically authentication-related
         // Check for exact authentication domain patterns to avoid triggering on search results
         let isAuthenticationURL = urlString.hasPrefix("https://www.ecosia-staging.xyz/accounts/") ||
                                  urlString.hasPrefix("https://login.ecosia-staging.xyz/") ||
