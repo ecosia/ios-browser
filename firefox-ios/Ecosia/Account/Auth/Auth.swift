@@ -51,7 +51,7 @@ extension Notification.Name {
 
 /// The `Auth` class manages user authentication, credential storage, and renewal using Auth0.
 public class Auth {
-    public static var shared = Auth()
+    public static let shared = Auth()
 
     public static let defaultCredentialsManager: CredentialsManagerProtocol = DefaultCredentialsManager()
     public let auth0Provider: Auth0ProviderProtocol
