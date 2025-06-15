@@ -592,6 +592,12 @@ class BrowserViewController: UIViewController,
     // Ecosia: Handle authentication logic when app becomes active
     private func handleAuthenticationOnAppActivation() {
         guard Auth.shared.isLoggedIn else { return }
+        
+        // Don't open auth tab if we already have silent auth tabs (prevents duplicates)
+        guard silentAuthenticationTabs.isEmpty else {
+            print("🔄 Skipping auth tab opening - already have \(silentAuthenticationTabs.count) silent auth tabs")
+            return
+        }
 
         // Get session transfer token silently
         Task {
@@ -608,6 +614,12 @@ class BrowserViewController: UIViewController,
     private func openAuthenticationTab() {
         guard let signUpURL = URL(string: "https://www.ecosia-staging.xyz/accounts/sign-up") else {
             print("Failed to create sign-up URL")
+            return
+        }
+        
+        // Prevent opening multiple auth tabs - check if we already have any silent auth tabs
+        guard silentAuthenticationTabs.isEmpty else {
+            print("🚫 Skipping auth tab opening - already have \(silentAuthenticationTabs.count) silent auth tabs active")
             return
         }
 
