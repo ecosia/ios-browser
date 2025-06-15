@@ -250,6 +250,9 @@ class BrowserViewController: UIViewController,
 
     // Ecosia: Track silent authentication tabs for auto-closing
     var silentAuthenticationTabs = Set<String>()
+    
+    // Ecosia: Track notification observers for auth tab auto-closing
+    var authTabObservers: [String: NSObjectProtocol] = [:]
 
     // Ecosia: Make `menuHelper` available at class level
     var menuHelper: MainMenuActionHelper?
@@ -306,6 +309,12 @@ class BrowserViewController: UIViewController,
         logger.log("BVC deallocating", level: .info, category: .lifecycle)
         unsubscribeFromRedux()
         observedWebViews.forEach({ stopObserving(webView: $0) })
+        
+        // Ecosia: Clean up auth tab observers to prevent memory leaks
+        for (_, observer) in authTabObservers {
+            NotificationCenter.default.removeObserver(observer)
+        }
+        authTabObservers.removeAll()
     }
 
     override var prefersStatusBarHidden: Bool {
@@ -3785,6 +3794,12 @@ extension BrowserViewController: HomePanelDelegate {
 
         // Clear all silent authentication tab tracking
         silentAuthenticationTabs.removeAll()
+        
+        // Ecosia: Clean up all auth tab observers
+        for (_, observer) in authTabObservers {
+            NotificationCenter.default.removeObserver(observer)
+        }
+        authTabObservers.removeAll()
     }
 
     // Ecosia: Open web logout URL silently to logout from web after native logout
@@ -3842,17 +3857,42 @@ extension BrowserViewController: HomePanelDelegate {
             return
         }
 
-        print("✅ Will auto-close silent authentication tab in 1 seconds")
+        print("✅ Will auto-close silent authentication tab when authentication completes")
 
-        // Close the tab after a brief delay to ensure authentication processing is complete
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
-            guard let self = self,
-                  let currentTab = self.tabManager[webView] else {
-                print("⚠️ Self or tab no longer available for auto-close")
+        let tabUUID = tab.tabUUID
+        
+        // Ecosia: Clean up any existing observer for this tab
+        if let existingObserver = authTabObservers[tabUUID] {
+            NotificationCenter.default.removeObserver(existingObserver)
+            authTabObservers.removeValue(forKey: tabUUID)
+        }
+
+        // Ecosia: Wait for authentication completion notification instead of arbitrary delay
+        let observer = NotificationCenter.default.addObserver(
+            forName: .EcosiaAuthDidLoginWithSessionToken,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            guard let self = self else { return }
+            
+            // Clean up observer immediately
+            if let obs = self.authTabObservers[tabUUID] {
+                NotificationCenter.default.removeObserver(obs)
+                self.authTabObservers.removeValue(forKey: tabUUID)
+            }
+            
+            guard let currentTab = self.tabManager[webView] else {
+                print("⚠️ Tab no longer available for auto-close")
                 return
             }
 
-            print("🗑️ Auto-closing silent authentication tab: \(url.absoluteString)")
+            // Only close if this tab is still in our silent auth tracking set
+            guard self.silentAuthenticationTabs.contains(currentTab.tabUUID) else {
+                print("⚠️ Tab no longer tracked as silent auth tab")
+                return
+            }
+
+            print("🗑️ Auto-closing silent authentication tab after auth completion: \(url.absoluteString)")
 
             // Remove from tracking set
             self.silentAuthenticationTabs.remove(currentTab.tabUUID)
@@ -3865,7 +3905,36 @@ extension BrowserViewController: HomePanelDelegate {
                 self.tabManager.selectTab(self.tabManager.normalTabs.last)
             }
 
-            print("✅ Tab auto-closed successfully")
+            print("✅ Tab auto-closed successfully after authentication completion")
+        }
+
+        // Ecosia: Store observer for cleanup
+        authTabObservers[tabUUID] = observer
+        
+        // Ecosia: Add fallback timeout in case notification doesn't arrive (network issues, etc.)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 10) { [weak self] in
+            guard let self = self,
+                  self.silentAuthenticationTabs.contains(tabUUID) else {
+                return // Tab already closed or not tracked
+            }
+            
+            print("⚠️ Authentication completion timeout reached, closing tab with fallback")
+            
+            // Clean up observer
+            if let obs = self.authTabObservers[tabUUID] {
+                NotificationCenter.default.removeObserver(obs)
+                self.authTabObservers.removeValue(forKey: tabUUID)
+            }
+            
+            if let currentTab = self.tabManager.tabs.first(where: { $0.tabUUID == tabUUID }) {
+                self.silentAuthenticationTabs.remove(tabUUID)
+                self.tabManager.removeTab(currentTab)
+                
+                if self.tabManager.selectedTab == nil && !self.tabManager.normalTabs.isEmpty {
+                    self.tabManager.selectTab(self.tabManager.normalTabs.last)
+                }
+                print("✅ Tab auto-closed with fallback timeout")
+            }
         }
     }
 }
