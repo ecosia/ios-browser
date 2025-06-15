@@ -710,11 +710,18 @@ class BrowserViewController: UIViewController,
     }
 
     func newState(state: BrowserViewControllerState) {
+        let previousState = browserViewControllerState
         browserViewControllerState = state
-
-        // Ecosia: Handle authentication state changes
+        
+        // Ecosia: Handle authentication state changes only when state actually changes
         if state.authStateLoaded {
-            handleAuthenticationStateUpdate(isLoggedIn: state.isUserLoggedIn)
+            let previousAuthState = previousState?.isUserLoggedIn ?? false
+            let currentAuthState = state.isUserLoggedIn
+            
+            // Ecosia: Only handle update if the authentication state actually changed
+            if previousAuthState != currentAuthState {
+                handleAuthenticationStateUpdate(isLoggedIn: currentAuthState)
+            }
         }
 
         // opens or close sidebar/bottom sheet to match the saved state
@@ -3800,11 +3807,9 @@ extension BrowserViewController: HomePanelDelegate {
     // Ecosia: Handle authentication state updates via Redux
     private func handleAuthenticationStateUpdate(isLoggedIn: Bool) {
         print("🔄 Authentication state updated via Redux: \(isLoggedIn ? "logged in" : "logged out")")
-        // Post notification to update UI components that aren't connected to Redux
-        DispatchQueue.main.async {
-            let notificationName: Notification.Name = isLoggedIn ? .EcosiaAuthDidLoginWithSessionToken : .EcosiaAuthDidLogout
-            NotificationCenter.default.post(name: notificationName, object: nil)
-        }
+        // Note: We don't post notifications here to avoid circular loops
+        // UI components should subscribe to Redux state directly or use existing notification observers
+        // that are triggered by the original Auth.swift notifications, not Redux state changes
     }
 
         // Ecosia: Auto-close authentication tabs after they finish loading
@@ -3814,34 +3819,33 @@ extension BrowserViewController: HomePanelDelegate {
             return
         }
 
-        let authDomains = [
-            "https://www.ecosia-staging.xyz/accounts/",
-            "https://www.ecosia-staging.xyz/",
-            "https://login.ecosia-staging.xyz/"
-        ]
-
-        // Check if this tab is an authentication tab that should be auto-closed
-        let isAuthTab = authDomains.contains { authDomain in
-            url.absoluteString.hasPrefix(authDomain)
+        // Ecosia: Only proceed if this tab was opened silently for authentication
+        guard silentAuthenticationTabs.contains(tab.tabUUID) else {
+            return // Not a silent auth tab, no need to auto-close
         }
 
-        print("🔍 Checking tab for auto-close:")
-        print("   URL: \(url.absoluteString)")
+        // Ecosia: Check if this silent tab has reached a URL that indicates auth completion
+        let urlString = url.absoluteString
+        let shouldAutoClose = urlString.hasPrefix("https://www.ecosia-staging.xyz/accounts/") ||
+                             urlString.hasPrefix("https://login.ecosia-staging.xyz/") ||
+                             urlString.hasPrefix("https://www.ecosia-staging.xyz/") // Main domain after auth redirect
+
+        print("🔍 Checking silent auth tab for auto-close:")
+        print("   URL: \(urlString)")
         print("   Tab UUID: \(tab.tabUUID)")
-        print("   Is Auth Tab: \(isAuthTab)")
-        print("   Is Silent Tab: \(silentAuthenticationTabs.contains(tab.tabUUID))")
+        print("   Should Auto-Close: \(shouldAutoClose)")
         print("   Silent tabs: \(silentAuthenticationTabs)")
 
-        // Only auto-close if it's an auth tab AND it was opened silently
-        guard isAuthTab && silentAuthenticationTabs.contains(tab.tabUUID) else {
-            print("❌ Not auto-closing tab - conditions not met")
+        // Only auto-close if this silent tab has reached an auth-related URL
+        guard shouldAutoClose else {
+            print("❌ Not auto-closing tab - URL doesn't indicate auth completion")
             return
         }
 
-        print("✅ Will auto-close silent authentication tab in 2 seconds")
+        print("✅ Will auto-close silent authentication tab in 1 seconds")
 
         // Close the tab after a brief delay to ensure authentication processing is complete
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
             guard let self = self,
                   let currentTab = self.tabManager[webView] else {
                 print("⚠️ Self or tab no longer available for auto-close")
