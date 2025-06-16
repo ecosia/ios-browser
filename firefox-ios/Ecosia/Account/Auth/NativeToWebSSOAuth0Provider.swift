@@ -26,6 +26,12 @@ public struct NativeToWebSSOAuth0Provider: Auth0ProviderProtocol {
     public var webAuth: WebAuth {
         makeHttpsWebAuth()
             .scope("openid profile email offline_access")
+            .onClose {
+                // Show loading overlay when Auth0 popup closes
+                Task { @MainActor in
+                    LoadingOverlayManager.shared.showAuthenticationLoadingIfNeeded()
+                }
+            }
     }
 
     /// The `startAuth` method configured to explicity request the `offline_access` scope in order to obtain a `refresh_token`.

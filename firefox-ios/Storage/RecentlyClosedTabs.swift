@@ -90,10 +90,10 @@ open class ClosedTab: NSObject, NSSecureCoding {
         self.lastExecutedTime = date
         super.init()
         */
-        
+
         // Ecosia: Fixed NSSecureCoding by specifying allowed classes and making optional fields properly optional
         guard let url = coder.decodeObject(of: [NSURL.self], forKey: CodingKeys.url.rawValue) as? URL else { return nil }
-        
+
         let title = coder.decodeObject(of: [NSString.self], forKey: CodingKeys.title.rawValue) as? String
         let date = coder.decodeObject(of: [NSNumber.self], forKey: CodingKeys.lastExecutedTime.rawValue) as? Timestamp
 

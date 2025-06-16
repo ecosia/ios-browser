@@ -1111,12 +1111,12 @@ private extension BrowserViewController {
     // Ecosia: Handle authentication-related URL navigation
     func handleAuthenticationForURL(_ url: URL, webView: WKWebView) {
         let urlString = url.absoluteString
-        
+
         // Ecosia: Only process URLs that are specifically authentication-related
         // Check for exact authentication domain patterns to avoid triggering on search results
         let isAuthenticationURL = urlString.hasPrefix("https://www.ecosia-staging.xyz/accounts/") ||
                                  urlString.hasPrefix("https://login.ecosia-staging.xyz/") ||
-                                 (urlString.hasPrefix("https://www.ecosia-staging.xyz/") && 
+                                 (urlString.hasPrefix("https://www.ecosia-staging.xyz/") &&
                                   (urlString.contains("/accounts/") || urlString.contains("/auth")))
 
         guard isAuthenticationURL else {

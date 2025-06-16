@@ -182,7 +182,8 @@ final class NTPAccountLoginCell: UICollectionViewCell, ThemeApplicable, Reusable
         if Auth.shared.isLoggedIn {
             await Auth.shared.logout()
         } else {
-            await Auth.shared.login()
+            // Ecosia: Use delayed completion for seamless UX - Auth0 popup stays visible during session transfer
+            await Auth.shared.login(withDelayedCompletion: true)
         }
         updateLoginButtonTitle()
         updateSessionTokenButtonTitle() // Update session token display after auth action

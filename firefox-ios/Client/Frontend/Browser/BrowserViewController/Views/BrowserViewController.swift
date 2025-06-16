@@ -250,7 +250,7 @@ class BrowserViewController: UIViewController,
 
     // Ecosia: Track silent authentication tabs for auto-closing
     var silentAuthenticationTabs = Set<String>()
-    
+
     // Ecosia: Track notification observers for auth tab auto-closing
     var authTabObservers: [String: NSObjectProtocol] = [:]
 
@@ -309,7 +309,7 @@ class BrowserViewController: UIViewController,
         logger.log("BVC deallocating", level: .info, category: .lifecycle)
         unsubscribeFromRedux()
         observedWebViews.forEach({ stopObserving(webView: $0) })
-        
+
         // Ecosia: Clean up auth tab observers to prevent memory leaks
         for (_, observer) in authTabObservers {
             NotificationCenter.default.removeObserver(observer)
@@ -601,7 +601,7 @@ class BrowserViewController: UIViewController,
     // Ecosia: Handle authentication logic when app becomes active
     private func handleAuthenticationOnAppActivation() {
         guard Auth.shared.isLoggedIn else { return }
-        
+
         // Don't open auth tab if we already have silent auth tabs (prevents duplicates)
         guard silentAuthenticationTabs.isEmpty else {
             print("🔄 Skipping auth tab opening - already have \(silentAuthenticationTabs.count) silent auth tabs")
@@ -625,7 +625,7 @@ class BrowserViewController: UIViewController,
             print("Failed to create sign-up URL")
             return
         }
-        
+
         // Prevent opening multiple auth tabs - check if we already have any silent auth tabs
         guard silentAuthenticationTabs.isEmpty else {
             print("🚫 Skipping auth tab opening - already have \(silentAuthenticationTabs.count) silent auth tabs active")
@@ -650,14 +650,14 @@ class BrowserViewController: UIViewController,
             newTab.isInvisible = true
             print("🔧 Tab isInvisible after setting: \(newTab.isInvisible)")
             print("🔧 About to add invisible tab to TabManager")
-            
+
             // Now add the pre-configured invisible tab to TabManager
             // We use the internal configureTab method to avoid the standard addTab flow
             if let legacyTabManager = tabManager as? LegacyTabManager {
-                legacyTabManager.configureTab(newTab, 
-                                            request: URLRequest(url: signUpURL), 
-                                            afterTab: nil, 
-                                            flushToDisk: true, 
+                legacyTabManager.configureTab(newTab,
+                                            request: URLRequest(url: signUpURL),
+                                            afterTab: nil,
+                                            flushToDisk: true,
                                             zombie: false)
                 print("🔧 Tab added to LegacyTabManager, isInvisible: \(newTab.isInvisible)")
             } else {
@@ -666,7 +666,7 @@ class BrowserViewController: UIViewController,
                 addedTab.isInvisible = true
                 print("🔧 Tab added via fallback method, isInvisible: \(addedTab.isInvisible)")
             }
-            
+
             // Mark this tab as a silent authentication tab for auto-closing
             silentAuthenticationTabs.insert(newTab.tabUUID)
             print("🆕 Opened invisible authentication tab: \(newTab.tabUUID)")
@@ -747,12 +747,12 @@ class BrowserViewController: UIViewController,
     func newState(state: BrowserViewControllerState) {
         let previousState = browserViewControllerState
         browserViewControllerState = state
-        
+
         // Ecosia: Handle authentication state changes only when state actually changes
         if state.authStateLoaded {
             let previousAuthState = previousState?.isUserLoggedIn ?? false
             let currentAuthState = state.isUserLoggedIn
-            
+
             // Ecosia: Only handle update if the authentication state actually changed
             if previousAuthState != currentAuthState {
                 handleAuthenticationStateUpdate(isLoggedIn: currentAuthState)
@@ -3821,7 +3821,7 @@ extension BrowserViewController: HomePanelDelegate {
 
         // Clear all silent authentication tab tracking
         silentAuthenticationTabs.removeAll()
-        
+
         // Ecosia: Clean up all auth tab observers
         for (_, observer) in authTabObservers {
             NotificationCenter.default.removeObserver(observer)
@@ -3840,10 +3840,10 @@ extension BrowserViewController: HomePanelDelegate {
 
         // Open the sign-out URL silently (don't select the tab)
         let newTab = tabManager.addTab(URLRequest(url: signOutURL), isPrivate: false)
-        
+
         // Set the tab as invisible for silent operation
         newTab.isInvisible = true
-        
+
         // Mark this tab as a silent authentication tab for auto-closing
         silentAuthenticationTabs.insert(newTab.tabUUID)
 
@@ -3898,7 +3898,7 @@ extension BrowserViewController: HomePanelDelegate {
         print("✅ Authentication tab loaded successfully, closing immediately")
 
         let tabUUID = tab.tabUUID
-        
+
         // Ecosia: Clean up any existing observer for this tab
         if let existingObserver = authTabObservers[tabUUID] {
             NotificationCenter.default.removeObserver(existingObserver)
@@ -3924,6 +3924,9 @@ extension BrowserViewController: HomePanelDelegate {
         }
 
         print("✅ Tab auto-closed successfully after authentication completion")
+
+        // Ecosia: Post notification that the entire authentication flow is complete
+        NotificationCenter.default.post(name: .EcosiaAuthFlowCompleted, object: nil)
     }
 }
 
@@ -4255,12 +4258,12 @@ extension BrowserViewController: TabManagerDelegate {
     func updateTabCountUsingTabManager(_ tabManager: TabManager, animated: Bool = true) {
         if let selectedTab = tabManager.selectedTab {
             let count = selectedTab.isPrivate ? tabManager.privateTabs.count : tabManager.normalTabs.count
-            
+
             // Ecosia: Debug logging for invisible tabs
             let totalTabs = selectedTab.isPrivate ? tabManager.tabs.filter { $0.isPrivate }.count : tabManager.tabs.filter { !$0.isPrivate }.count
             let invisibleTabs = selectedTab.isPrivate ? tabManager.tabs.filter { $0.isPrivate && $0.isInvisible }.count : tabManager.tabs.filter { !$0.isPrivate && $0.isInvisible }.count
             print("🔢 Tab count update - Visible: \(count), Total: \(totalTabs), Invisible: \(invisibleTabs)")
-            
+
             if isToolbarRefactorEnabled {
                updateToolbarTabCount(count)
             } else if !isToolbarRefactorEnabled {

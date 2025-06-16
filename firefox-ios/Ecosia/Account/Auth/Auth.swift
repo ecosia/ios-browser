@@ -8,6 +8,7 @@ import WebKit
 import Redux
 import Common
 import UIKit
+import SwiftUI
 
 // MARK: - User Profile Model
 public struct UserProfile {
@@ -47,6 +48,9 @@ extension Notification.Name {
 
     /// Posted when auth state should be dispatched to Redux store
     public static let EcosiaAuthReduxDispatch = Notification.Name("EcosiaEcosiaAuthReduxDispatch")
+
+    /// Posted when the entire authentication flow is complete (including invisible tab workflow)
+    public static let EcosiaAuthFlowCompleted = Notification.Name("EcosiaEcosiaAuthFlowCompleted")
 }
 
 /// The `Auth` class manages user authentication, credential storage, and renewal using Auth0.
@@ -80,8 +84,15 @@ public class Auth {
 
     /// Logs in the user asynchronously and stores credentials if successful.
     public func login() async {
+        await login(withDelayedCompletion: false)
+    }
+
+    /// Logs in the user with option to show loading overlay during session transfer
+    public func login(withDelayedCompletion: Bool) async {
         do {
+            // The onClose callback is now built into the webAuth property
             let credentials = try await auth0Provider.startAuth()
+
             let didStore = try auth0Provider.storeCredentials(credentials)
             if didStore {
                 // Set credential properties FIRST
@@ -95,15 +106,20 @@ public class Auth {
                 self.extractUserProfile(from: credentials.idToken)
 
                 // Automatically get session token and trigger authentication flow
-                await performPostLoginAuthentication()
+                await performPostLoginAuthentication(withDelayedCompletion: withDelayedCompletion)
             }
         } catch {
             print("\(#file).\(#function) - 👤 Auth - Login failed with error: \(error)")
+
+            // If we had delayed completion, make sure to dismiss loading overlay on error
+            if withDelayedCompletion {
+                await dismissLoadingOverlayIfNeeded()
+            }
         }
     }
 
     /// Handles post-login authentication flow: gets session token and notifies observers
-    private func performPostLoginAuthentication() async {
+    private func performPostLoginAuthentication(withDelayedCompletion: Bool = false) async {
         await getSessionTransferToken()
 
         // Post notification that successful login occurred with session token ready
@@ -111,11 +127,41 @@ public class Auth {
             NotificationCenter.default.post(
                 name: .EcosiaAuthDidLoginWithSessionToken,
                 object: nil,
-                userInfo: ["sessionToken": currentSessionToken as Any]
+                userInfo: [
+                    "sessionToken": currentSessionToken as Any,
+                    "hasDelayedCompletion": withDelayedCompletion
+                ]
             )
 
             // Dispatch login state to Redux store
             dispatchAuthStateToRedux(isLoggedIn: true, actionType: .userLoggedIn)
+        }
+
+        // If we have delayed completion, set up observer for flow completion
+        if withDelayedCompletion {
+            await setupAuthFlowCompletionObserver()
+        }
+    }
+
+    /// Sets up observer to dismiss loading overlay when authentication flow completes
+    private func setupAuthFlowCompletionObserver() async {
+        await MainActor.run {
+            NotificationCenter.default.addObserver(
+                forName: .EcosiaAuthFlowCompleted,
+                object: nil,
+                queue: .main
+            ) { [weak self] _ in
+                Task {
+                    await self?.dismissLoadingOverlayIfNeeded()
+                }
+            }
+        }
+    }
+
+    /// Dismisses loading overlay if it's currently visible
+    private func dismissLoadingOverlayIfNeeded() async {
+        await MainActor.run {
+            LoadingOverlayManager.shared.dismissLoading()
         }
     }
 
@@ -191,7 +237,7 @@ public class Auth {
             print("\(#file).\(#function) - 👤 Auth - Failed to retrieve credentials: \(error)")
         }
     }
- 
+
     /// Renews credentials if they are renewable.
     public func renewCredentialsIfNeeded() async {
         guard auth0Provider.canRenewCredentials() else {
@@ -342,7 +388,7 @@ extension Auth {
 }
 
 extension Auth {
-    
+
     // Ecosia: Set session token cookie for authenticated requests
     public func setSessionTokenCookieForURL(_ url: URL, webView: WKWebView) {
         guard Auth.shared.isLoggedIn,
@@ -350,9 +396,9 @@ extension Auth {
             print("No session token available or user not logged in")
             return
         }
-        
+
         print("Setting session token cookie for URL: \(url.absoluteString)")
-        
+
         // Set the session token cookie
         webView.configuration.websiteDataStore.httpCookieStore.setCookie(sessionTokenCookie)
         print("Session token cookie set successfully")
