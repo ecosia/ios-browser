@@ -3843,6 +3843,8 @@ extension BrowserViewController: HomePanelDelegate {
         silentAuthenticationTabs.insert(newTab.tabUUID)
 
         print("✅ Web logout tab opened silently with UUID: \(newTab.tabUUID)")
+        print("🔍 DEBUG: Silent auth tabs now contains: \(silentAuthenticationTabs)")
+        print("🔍 DEBUG: Tab isInvisible: \(newTab.isInvisible)")
     }
 
     // Ecosia: Handle authentication state updates via Redux
@@ -3876,6 +3878,11 @@ extension BrowserViewController: HomePanelDelegate {
         print("   Tab UUID: \(tab.tabUUID)")
         print("   Should Auto-Close: \(shouldAutoClose)")
         print("   Silent tabs: \(silentAuthenticationTabs)")
+        print("🔍 DEBUG: URL analysis:")
+        print("   - Starts with /accounts/: \(urlString.hasPrefix("https://www.ecosia-staging.xyz/accounts/"))")
+        print("   - Starts with login domain: \(urlString.hasPrefix("https://login.ecosia-staging.xyz/"))")
+        print("   - Starts with main domain: \(urlString.hasPrefix("https://www.ecosia-staging.xyz/"))")
+        print("   - Is logout URL: \(urlString.contains("/accounts/sign-out"))")
 
         // Only auto-close if this silent tab has reached an auth-related URL
         guard shouldAutoClose else {
