@@ -233,6 +233,7 @@ class TabManagerMiddleware {
                                     isFxHomeTab: tab.isFxHomeTab,
                                     tabTitle: tab.displayTitle,
                                     url: tab.url,
+                                    isInvisible: tab.isInvisible,
                                     screenshot: tab.screenshot,
                                     hasHomeScreenshot: tab.hasHomeScreenshot)
             tabs.append(tabModel)

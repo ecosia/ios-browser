@@ -57,6 +57,7 @@ class TabCellTests: XCTestCase {
                         isFxHomeTab: false,
                         tabTitle: "Firefox Browser",
                         url: URL(string: "https://www.mozilla.org/en-US/firefox/")!,
+                        isInvisible: false,
                         screenshot: nil,
                         hasHomeScreenshot: false)
     }
