@@ -3788,10 +3788,11 @@ extension BrowserViewController: HomePanelDelegate {
 
     // Ecosia: Clean up authentication-related state after logout
     private func cleanupAuthenticationState() {
-        // Find and close any authentication tabs
+        // Find and close any authentication tabs, but exclude logout tabs that are currently processing
         let authURLs = [
-            "https://www.ecosia-staging.xyz/accounts/sign-up",
-            "https://www.ecosia-staging.xyz/accounts/sign-out"
+            "https://www.ecosia-staging.xyz/accounts/sign-up"
+            // Note: We don't include sign-out URL here because logout tabs should complete their navigation
+            // and auto-close naturally, just like login tabs do
         ]
 
         for url in authURLs {
@@ -3839,6 +3840,10 @@ extension BrowserViewController: HomePanelDelegate {
 
         // Open the sign-out URL silently (don't select the tab)
         let newTab = tabManager.addTab(URLRequest(url: signOutURL), isPrivate: false)
+        
+        // Set the tab as invisible for silent operation
+        newTab.isInvisible = true
+        
         // Mark this tab as a silent authentication tab for auto-closing
         silentAuthenticationTabs.insert(newTab.tabUUID)
 
