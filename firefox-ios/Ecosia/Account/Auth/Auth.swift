@@ -340,3 +340,21 @@ extension Auth {
         }
     }
 }
+
+extension Auth {
+    
+    // Ecosia: Set session token cookie for authenticated requests
+    public func setSessionTokenCookieForURL(_ url: URL, webView: WKWebView) {
+        guard Auth.shared.isLoggedIn,
+              let sessionTokenCookie = Auth.shared.getSessionTokenCookie() else {
+            print("No session token available or user not logged in")
+            return
+        }
+        
+        print("Setting session token cookie for URL: \(url.absoluteString)")
+        
+        // Set the session token cookie
+        webView.configuration.websiteDataStore.httpCookieStore.setCookie(sessionTokenCookie)
+        print("Session token cookie set successfully")
+    }
+}
