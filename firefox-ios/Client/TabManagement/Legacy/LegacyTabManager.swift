@@ -664,12 +664,24 @@ class LegacyTabManager: NSObject, FeatureFlaggable, TabManager, TabEventHandler 
                                         restorePosition: removalIndex,
                                         isSelected: selectedTab?.tabUUID == tab.tabUUID)
         let prevCount = count
+        // Ecosia: Track if tab was visible before removal to fix assertion for invisible auth tabs
+        let wasVisible = !tab.isInvisible
         tabs.remove(at: removalIndex)
+        /* Ecosia: Only assert count change for visible tabs, since invisible tabs don't affect the count
         assert(count == prevCount - 1, "Make sure the tab count was actually removed")
         if count != prevCount - 1 {
             logger.log("Make sure the tab count was actually removed",
                        level: .warning,
                        category: .tabs)
+        }
+         */
+        if wasVisible {
+            assert(count == prevCount - 1, "Make sure the tab count was actually removed")
+            if count != prevCount - 1 {
+                logger.log("Make sure the tab count was actually removed",
+                           level: .warning,
+                           category: .tabs)
+            }
         }
 
         if tab.isPrivate && privateTabs.count < 1 {
