@@ -12,6 +12,7 @@ struct TabModel: Equatable, Identifiable, Hashable {
     let isFxHomeTab: Bool
     let tabTitle: String
     let url: URL?
+    let isInvisible: Bool
 
     let screenshot: UIImage?
     let hasHomeScreenshot: Bool
@@ -20,7 +21,8 @@ struct TabModel: Equatable, Identifiable, Hashable {
         tabUUID: TabUUID,
         title: String,
         isPrivate: Bool = false,
-        isSelected: Bool = false
+        isSelected: Bool = false,
+        isInvisible: Bool = false
     ) -> TabModel {
         return TabModel(
             tabUUID: tabUUID,
@@ -29,6 +31,7 @@ struct TabModel: Equatable, Identifiable, Hashable {
             isFxHomeTab: false,
             tabTitle: title,
             url: nil,
+            isInvisible: isInvisible,
             screenshot: nil,
             hasHomeScreenshot: false
         )

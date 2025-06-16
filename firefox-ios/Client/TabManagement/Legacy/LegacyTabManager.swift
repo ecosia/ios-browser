@@ -85,7 +85,7 @@ class LegacyTabManager: NSObject, FeatureFlaggable, TabManager, TabEventHandler 
     let delaySelectingNewPopupTab: TimeInterval = 0.1
 
     var normalTabs: [Tab] {
-        return tabs.filter { !$0.isPrivate }
+        return tabs.filter { !$0.isPrivate && !$0.isInvisible }
     }
 
     var normalActiveTabs: [Tab] {
@@ -101,7 +101,7 @@ class LegacyTabManager: NSObject, FeatureFlaggable, TabManager, TabEventHandler 
     }
 
     var privateTabs: [Tab] {
-        return tabs.filter { $0.isPrivate }
+        return tabs.filter { $0.isPrivate && !$0.isInvisible }
     }
 
     var isInactiveTabsEnabled: Bool {
@@ -131,8 +131,13 @@ class LegacyTabManager: NSObject, FeatureFlaggable, TabManager, TabEventHandler 
         return eligibleTabs
     }
 
+    // Ecosia: All tabs visible to the user (excludes invisible authentication tabs)
+    var visibleTabs: [Tab] {
+        return tabs.filter { !$0.isInvisible }
+    }
+
     var count: Int {
-        return tabs.count
+        return visibleTabs.count
     }
 
     var selectedTab: Tab? {

@@ -96,6 +96,9 @@ class Tab: NSObject, ThemeApplicable, FeatureFlaggable {
         return !isPrivate && (isInactiveTabsEnabled ? isInactive : false)
     }
 
+    // Ecosia: Track tabs that should be completely hidden from user interface
+    var isInvisible: Bool = false
+
     /// The window associated with the tab (where the tab lives and will be displayed).
     /// Currently tabs cannot be actively moved between windows on iPadOS, however this
     /// may change in the future.

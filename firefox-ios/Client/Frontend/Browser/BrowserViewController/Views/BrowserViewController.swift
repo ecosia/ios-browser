@@ -634,16 +634,42 @@ class BrowserViewController: UIViewController,
 
         // Check if we already have a tab with this URL to avoid duplicates
         if let existingTab = tabManager.getTabForURL(signUpURL) {
+            print("🔧 Existing tab isInvisible before setting: \(existingTab.isInvisible)")
+            // Ecosia: Mark existing tab as invisible so it doesn't appear in tab switcher
+            existingTab.isInvisible = true
+            print("🔧 Existing tab isInvisible after setting: \(existingTab.isInvisible)")
             // Mark existing tab as silent authentication tab but DON'T select it to keep it silent
             silentAuthenticationTabs.insert(existingTab.tabUUID)
-            print("🔄 Marked existing tab as silent auth tab: \(existingTab.tabUUID)")
+            print("🔄 Marked existing tab as invisible auth tab: \(existingTab.tabUUID)")
             // Don't select the tab - keep it silent in background
         } else {
-            // Open new tab silently (don't select it to keep it in background)
-            let newTab = tabManager.addTab(URLRequest(url: signUpURL), isPrivate: false)
+            // Create tab manually to set isInvisible before adding to TabManager
+            let newTab = Tab(profile: profile, isPrivate: false, windowUUID: tabManager.windowUUID)
+            print("🔧 Tab created, isInvisible before setting: \(newTab.isInvisible)")
+            // Ecosia: Mark tab as invisible BEFORE adding to TabManager
+            newTab.isInvisible = true
+            print("🔧 Tab isInvisible after setting: \(newTab.isInvisible)")
+            print("🔧 About to add invisible tab to TabManager")
+            
+            // Now add the pre-configured invisible tab to TabManager
+            // We use the internal configureTab method to avoid the standard addTab flow
+            if let legacyTabManager = tabManager as? LegacyTabManager {
+                legacyTabManager.configureTab(newTab, 
+                                            request: URLRequest(url: signUpURL), 
+                                            afterTab: nil, 
+                                            flushToDisk: true, 
+                                            zombie: false)
+                print("🔧 Tab added to LegacyTabManager, isInvisible: \(newTab.isInvisible)")
+            } else {
+                // Fallback for non-legacy tab managers - this shouldn't happen in current architecture
+                let addedTab = tabManager.addTab(URLRequest(url: signUpURL), isPrivate: false)
+                addedTab.isInvisible = true
+                print("🔧 Tab added via fallback method, isInvisible: \(addedTab.isInvisible)")
+            }
+            
             // Mark this tab as a silent authentication tab for auto-closing
             silentAuthenticationTabs.insert(newTab.tabUUID)
-            print("🆕 Opened silent authentication tab: \(newTab.tabUUID)")
+            print("🆕 Opened invisible authentication tab: \(newTab.tabUUID)")
             print("📊 Silent auth tabs count: \(silentAuthenticationTabs.count)")
         }
     }
@@ -3892,10 +3918,13 @@ extension BrowserViewController: HomePanelDelegate {
                 return
             }
 
-            print("🗑️ Auto-closing silent authentication tab after auth completion: \(url.absoluteString)")
+            print("🗑️ Auto-closing invisible authentication tab after auth completion: \(url.absoluteString)")
 
             // Remove from tracking set
             self.silentAuthenticationTabs.remove(currentTab.tabUUID)
+
+            // Ecosia: Reset invisible state before removal (cleanup)
+            currentTab.isInvisible = false
 
             // Remove the tab
             self.tabManager.removeTab(currentTab)
@@ -3928,6 +3957,8 @@ extension BrowserViewController: HomePanelDelegate {
             
             if let currentTab = self.tabManager.tabs.first(where: { $0.tabUUID == tabUUID }) {
                 self.silentAuthenticationTabs.remove(tabUUID)
+                // Ecosia: Reset invisible state before removal (cleanup)
+                currentTab.isInvisible = false
                 self.tabManager.removeTab(currentTab)
                 
                 if self.tabManager.selectedTab == nil && !self.tabManager.normalTabs.isEmpty {
@@ -4267,6 +4298,12 @@ extension BrowserViewController: TabManagerDelegate {
     func updateTabCountUsingTabManager(_ tabManager: TabManager, animated: Bool = true) {
         if let selectedTab = tabManager.selectedTab {
             let count = selectedTab.isPrivate ? tabManager.privateTabs.count : tabManager.normalTabs.count
+            
+            // Ecosia: Debug logging for invisible tabs
+            let totalTabs = selectedTab.isPrivate ? tabManager.tabs.filter { $0.isPrivate }.count : tabManager.tabs.filter { !$0.isPrivate }.count
+            let invisibleTabs = selectedTab.isPrivate ? tabManager.tabs.filter { $0.isPrivate && $0.isInvisible }.count : tabManager.tabs.filter { !$0.isPrivate && $0.isInvisible }.count
+            print("🔢 Tab count update - Visible: \(count), Total: \(totalTabs), Invisible: \(invisibleTabs)")
+            
             if isToolbarRefactorEnabled {
                updateToolbarTabCount(count)
             } else if !isToolbarRefactorEnabled {
