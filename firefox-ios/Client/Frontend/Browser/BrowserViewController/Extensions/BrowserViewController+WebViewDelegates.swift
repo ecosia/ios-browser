@@ -1135,39 +1135,9 @@ private extension BrowserViewController {
 
         // Set session token cookie for authentication URLs (sign-up and related pages)
         if urlString.contains("/accounts/sign-up") || urlString.contains("/accounts/login") || urlString.contains("/auth") {
-            setSessionTokenCookieForURL(url, webView: webView)
+            Auth.shared.setSessionTokenCookieForURL(url, webView: webView)
         }
     }
-
-        // Ecosia: Set session token cookie for authenticated requests
-    func setSessionTokenCookieForURL(_ url: URL, webView: WKWebView) {
-        guard Auth.shared.isLoggedIn,
-              let sessionTokenCookie = Auth.shared.getSessionTokenCookie() else {
-            print("No session token available or user not logged in")
-            return
-        }
-
-        print("Setting session token cookie for URL: \(url.absoluteString)")
-
-        // Clean up any existing session token cookies first
-        webView.configuration.websiteDataStore.httpCookieStore.getAllCookies { cookies in
-            let existingCookies = cookies.filter {
-                $0.name == "auth0_session_transfer_token" && $0.domain.contains("ecosia-staging.xyz")
-            }
-            for cookie in existingCookies {
-                print("Removing existing session token cookie: \(cookie)")
-                Task {
-                    await webView.configuration.websiteDataStore.httpCookieStore.deleteCookie(cookie)
-                }
-            }
-
-                    // Set the new session token cookie after cleanup
-        DispatchQueue.main.async {
-            webView.configuration.websiteDataStore.httpCookieStore.setCookie(sessionTokenCookie)
-            print("Session token cookie set successfully")
-        }
-        }
-}
 }
 
 extension WKNavigationAction {
