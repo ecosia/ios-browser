@@ -3883,7 +3883,7 @@ extension BrowserViewController: HomePanelDelegate {
             return
         }
 
-        print("✅ Will auto-close silent authentication tab when authentication completes")
+        print("✅ Authentication tab loaded successfully, closing immediately")
 
         let tabUUID = tab.tabUUID
         
@@ -3893,80 +3893,25 @@ extension BrowserViewController: HomePanelDelegate {
             authTabObservers.removeValue(forKey: tabUUID)
         }
 
-        // Ecosia: Wait for authentication completion notification instead of arbitrary delay
-        let observer = NotificationCenter.default.addObserver(
-            forName: .EcosiaAuthDidLoginWithSessionToken,
-            object: nil,
-            queue: .main
-        ) { [weak self] _ in
-            guard let self = self else { return }
-            
-            // Clean up observer immediately
-            if let obs = self.authTabObservers[tabUUID] {
-                NotificationCenter.default.removeObserver(obs)
-                self.authTabObservers.removeValue(forKey: tabUUID)
-            }
-            
-            guard let currentTab = self.tabManager[webView] else {
-                print("⚠️ Tab no longer available for auto-close")
-                return
-            }
+        // Ecosia: Close the tab immediately since authentication is complete
+        // (The login notification has already been posted, no need to wait for it again)
+        print("🗑️ Auto-closing invisible authentication tab immediately: \(url.absoluteString)")
 
-            // Only close if this tab is still in our silent auth tracking set
-            guard self.silentAuthenticationTabs.contains(currentTab.tabUUID) else {
-                print("⚠️ Tab no longer tracked as silent auth tab")
-                return
-            }
+        // Remove from tracking set
+        silentAuthenticationTabs.remove(tabUUID)
 
-            print("🗑️ Auto-closing invisible authentication tab after auth completion: \(url.absoluteString)")
+        // Ecosia: Reset invisible state before removal (cleanup)
+        tab.isInvisible = false
 
-            // Remove from tracking set
-            self.silentAuthenticationTabs.remove(currentTab.tabUUID)
+        // Remove the tab
+        tabManager.removeTab(tab)
 
-            // Ecosia: Reset invisible state before removal (cleanup)
-            currentTab.isInvisible = false
-
-            // Remove the tab
-            self.tabManager.removeTab(currentTab)
-
-            // If we just closed the selected tab, select another tab
-            if self.tabManager.selectedTab == nil && !self.tabManager.normalTabs.isEmpty {
-                self.tabManager.selectTab(self.tabManager.normalTabs.last)
-            }
-
-            print("✅ Tab auto-closed successfully after authentication completion")
+        // If we just closed the selected tab, select another tab
+        if tabManager.selectedTab == nil && !tabManager.normalTabs.isEmpty {
+            tabManager.selectTab(tabManager.normalTabs.last)
         }
 
-        // Ecosia: Store observer for cleanup
-        authTabObservers[tabUUID] = observer
-        
-        // Ecosia: Add fallback timeout in case notification doesn't arrive (network issues, etc.)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 10) { [weak self] in
-            guard let self = self,
-                  self.silentAuthenticationTabs.contains(tabUUID) else {
-                return // Tab already closed or not tracked
-            }
-            
-            print("⚠️ Authentication completion timeout reached, closing tab with fallback")
-            
-            // Clean up observer
-            if let obs = self.authTabObservers[tabUUID] {
-                NotificationCenter.default.removeObserver(obs)
-                self.authTabObservers.removeValue(forKey: tabUUID)
-            }
-            
-            if let currentTab = self.tabManager.tabs.first(where: { $0.tabUUID == tabUUID }) {
-                self.silentAuthenticationTabs.remove(tabUUID)
-                // Ecosia: Reset invisible state before removal (cleanup)
-                currentTab.isInvisible = false
-                self.tabManager.removeTab(currentTab)
-                
-                if self.tabManager.selectedTab == nil && !self.tabManager.normalTabs.isEmpty {
-                    self.tabManager.selectTab(self.tabManager.normalTabs.last)
-                }
-                print("✅ Tab auto-closed with fallback timeout")
-            }
-        }
+        print("✅ Tab auto-closed successfully after authentication completion")
     }
 }
 
