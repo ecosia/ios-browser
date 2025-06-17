@@ -285,16 +285,6 @@ final class UnleashNativeSRPVAnalyticsSetting: UnleashVariantResetSetting {
     }
 }
 
-final class UnleashDefaultBrowserPromoSetting: UnleashVariantResetSetting {
-    override var titleName: String? {
-        "Default Browser Promo"
-    }
-
-    override var variant: Unleash.Variant? {
-        Unleash.getVariant(.defaultBrowserPromoCTR)
-    }
-}
-
 final class AnalyticsIdentifierSetting: HiddenSetting {
     override var title: NSAttributedString? {
         return NSAttributedString(string: "Debug: Analytics Identifier", attributes: [:])
@@ -308,5 +298,23 @@ final class AnalyticsIdentifierSetting: HiddenSetting {
 
     override func onClick(_ navigationController: UINavigationController?) {
         UIPasteboard.general.string = analyticsIdentifier
+    }
+}
+
+final class AnalyticsStagingUrlSetting: HiddenSetting {
+
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Toggle - Swap Analytics Staging URL", attributes: [NSAttributedString.Key.foregroundColor: theme.colors.ecosia.tableViewRowText])
+    }
+
+    override var status: NSAttributedString? {
+        let isOn = Analytics.shouldUseMicroInstance
+        let snowplowInstance = isOn ? "Micro" : "Mini"
+        return NSAttributedString(string: "\(snowplowInstance) instance (Click to toggle)", attributes: [NSAttributedString.Key.foregroundColor: theme.colors.ecosia.tableViewRowText])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        Analytics.shouldUseMicroInstance.toggle()
+        settings.tableView.reloadData()
     }
 }

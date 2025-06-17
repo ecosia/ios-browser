@@ -3,25 +3,27 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
+import UIKit
 internal import SnowplowTracker
 
 open class Analytics {
-    static let installSchema = "iglu:org.ecosia/ios_install_event/jsonschema/1-0-0"
     private static let abTestSchema = "iglu:org.ecosia/abtest_context/jsonschema/1-0-1"
     private static let consentSchema = "iglu:org.ecosia/eccc_context/jsonschema/1-0-2"
-    static let userSchema = "iglu:org.ecosia/app_user_state_context/jsonschema/1-0-0"
-    static let inappSearchSchema = "iglu:org.ecosia/inapp_search_event/jsonschema/1-0-1"
+    private static let feedbackSchema = "iglu:org.ecosia/ios_feedback_event/jsonschema/1-0-0"
     private static let abTestRoot = "ab_tests"
     private static let namespace = "ios_sp"
-
-    private static var tracker: TrackerController {
-
-        return Snowplow.createTracker(namespace: namespace,
-                                      network: .init(endpoint: Environment.current.urlProvider.snowplow),
-                                      configurations: [Self.trackerConfiguration,
-                                                       Self.subjectConfiguration,
-                                                       Self.appInstallTrackingPluginConfiguration,
-                                                       Self.appResumeDailyTrackingPluginConfiguration])
+    static let installSchema = "iglu:org.ecosia/ios_install_event/jsonschema/1-0-0"
+    static let userSchema = "iglu:org.ecosia/app_user_state_context/jsonschema/1-0-0"
+    static let inappSearchSchema = "iglu:org.ecosia/inapp_search_event/jsonschema/1-0-1"
+    private static let shouldUseMicroInstanceKey = "shouldUseMicroInstance"
+    public static var shouldUseMicroInstance: Bool {
+        get {
+            UserDefaults.standard.bool(forKey: shouldUseMicroInstanceKey)
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: shouldUseMicroInstanceKey)
+            Analytics.updateTrackerController()
+        }
     }
 
     public static var shared = Analytics()
@@ -29,7 +31,7 @@ open class Analytics {
     private let notificationCenter: AnalyticsUserNotificationCenterProtocol
 
     internal init(notificationCenter: AnalyticsUserNotificationCenterProtocol = AnalyticsUserNotificationCenterWrapper()) {
-        tracker = Self.tracker
+        tracker = Self.makeTracker()
         tracker.installAutotracking = true
         tracker.screenViewAutotracking = false
         tracker.lifecycleAutotracking = false
@@ -44,6 +46,10 @@ open class Analytics {
         _ = tracker.track(event)
     }
 
+    private static func updateTrackerController() {
+        Analytics.shared.tracker = makeTracker()
+    }
+
     private static func getTestContext(from toggle: Unleash.Toggle.Name) -> SelfDescribingJson? {
         let variant = Unleash.getVariant(toggle).name
         guard variant != "disabled" else { return nil }
@@ -55,7 +61,7 @@ open class Analytics {
 
     public func reset() {
         User.shared.analyticsId = .init()
-        tracker = Self.tracker
+        tracker = Self.makeTracker()
     }
 
     // MARK: App events
@@ -116,14 +122,10 @@ open class Analytics {
     }
 
     public func defaultBrowser(_ action: Action.Promo) {
-        let event = Structured(category: Category.browser.rawValue,
-                               action: action.rawValue)
+        track(Structured(category: Category.browser.rawValue,
+                         action: action.rawValue)
             .label(Label.DefaultBrowser.promo.rawValue)
-            .property(Property.home.rawValue)
-
-        addABTestContexts(to: event, toggles: [.defaultBrowserPromoCTR])
-
-        track(event)
+            .property(Property.home.rawValue))
     }
 
     public func defaultBrowserSettingsShowsDetailViewVia(_ label: Label.DefaultBrowser) {
@@ -317,6 +319,26 @@ open class Analytics {
             .label(Analytics.Label.clear.rawValue)
             .property(section.rawValue))
     }
+
+    // MARK: Feedback
+
+    public func sendFeedback(_ feedback: String, withType feedbackType: FeedbackType) {
+        let deviceType = UIDevice.current.model
+        let operatingSystem = "\(UIDevice.current.systemName) \(UIDevice.current.systemVersion)"
+        let idiom = UIDevice.current.userInterfaceIdiom == .pad ? "iPadOS" : "iOS"
+        let browserVersion = "Ecosia \(idiom) \(Bundle.version)"
+
+        let payload: [String: Any] = [
+            "feedback_type": feedbackType.analyticsIdentfier,
+            "device_type": deviceType,
+            "os": operatingSystem,
+            "browser_version": browserVersion,
+            "feedback_text": feedback
+        ]
+
+        track(SelfDescribing(schema: Self.feedbackSchema,
+                             payload: payload))
+    }
 }
 
 extension Analytics {
@@ -353,5 +375,43 @@ extension Analytics {
             event.entities.append(userContext)
             completion()
         }
+    }
+}
+
+extension Analytics {
+
+    /// Creates and configures a new instance of `TrackerController` using Snowplow.
+    ///
+    /// - Returns: A configured `TrackerController` instance, which in non-release builds can either point to mini or micro Snowplow instance.
+    private static func makeTracker() -> TrackerController {
+        return Snowplow.createTracker(namespace: namespace,
+                                      network: makeNetworkConfig(),
+                                      configurations: [
+                                        Self.trackerConfiguration,
+                                        Self.subjectConfiguration,
+                                        Self.appInstallTrackingPluginConfiguration,
+                                        Self.appResumeDailyTrackingPluginConfiguration])
+    }
+
+    /// Factory that builds the `NetworkConfiguration` for the Snowplow tracker, optionally
+    /// including authentication headers if using a micro instance.
+    ///
+    /// - Returns: A configured `NetworkConfiguration` object.
+    /// - Parameters:
+    ///   - urlProvider: The urlProvider in use. Useful for testing purposes.
+    static func makeNetworkConfig(urlProvider: URLProvider = Environment.current.urlProvider) -> NetworkConfiguration {
+        let endpoint = shouldUseMicroInstance ? urlProvider.snowplowMicro : urlProvider.snowplow
+        var networkConfig = NetworkConfiguration(endpoint: endpoint!)
+
+        if shouldUseMicroInstance,
+           let auth = Environment.current.auth {
+            networkConfig = networkConfig
+                .requestHeaders([
+                    CloudflareKeyProvider.clientId: auth.id,
+                    CloudflareKeyProvider.clientSecret: auth.secret
+                ])
+        }
+
+        return networkConfig
     }
 }

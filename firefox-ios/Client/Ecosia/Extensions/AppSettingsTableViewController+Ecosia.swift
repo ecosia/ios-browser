@@ -103,8 +103,11 @@ extension AppSettingsTableViewController {
     }
 
     private func getEcosiaSupportSection() -> SettingSection {
-        .init(title: NSAttributedString(string: .AppSettingsSupport),
-              children: [EcosiaSendFeedbackSetting()])
+        let helpCenterSetting = HelpCenterSetting()
+        let sendFeedbackSetting = EcosiaSendFeedbackSetting(settings: self)
+
+        return .init(title: NSAttributedString(string: .AppSettingsSupport),
+                     children: [helpCenterSetting, sendFeedbackSetting])
     }
 
     private func getEcosiaPrivacySection() -> SettingSection {
@@ -155,14 +158,17 @@ extension AppSettingsTableViewController {
             ChangeSearchCount(settings: self),
             ResetSearchCount(settings: self),
             ResetDefaultBrowserNudgeCard(settings: self),
-            AnalyticsIdentifierSetting(settings: self),
             FasterInactiveTabs(settings: self, settingsDelegate: self),
+            UnleashSeedCounterNTPSetting(settings: self),
             UnleashBrazeIntegrationSetting(settings: self),
             UnleashAPNConsent(settings: self),
+            AnalyticsIdentifierSetting(settings: self),
             UnleashNativeSRPVAnalyticsSetting(settings: self),
-            UnleashDefaultBrowserPromoSetting(settings: self),
-            UnleashSeedCounterNTPSetting(settings: self),
         ]
+
+        if Environment.current == .staging {
+            hiddenDebugSettings.append(AnalyticsStagingUrlSetting(settings: self))
+        }
 
         if SeedCounterNTPExperiment.isEnabled {
             hiddenDebugSettings.append(AddOneSeedSetting(settings: self,

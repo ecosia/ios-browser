@@ -18,24 +18,18 @@ extension String {
     }
 
     public enum Key: String {
+        case addMoreDetailAboutYourFeedback = "Add more detail about your feedback..."
         case allRegions = "All regions"
         case autocomplete = "Autocomplete"
         case climateImpact = "Climate Impact"
         case closeAll = "Close all"
         case customizeHomepage = "Customize homepage"
         case daysAgo = "%@ days ago"
-        case defaultBrowserPromptExperimentButtonControl = "Open settings"
-        case defaultBrowserPromptExperimentButtonVarABC = "Set as default in Settings"
-        case defaultBrowserPromptExperimentControlCheck1 = "Open all links with Ecosia to plant more trees"
-        case defaultBrowserPromptExperimentControlCheck2 = "Grow your impact with your web searches"
-        case defaultBrowserPromptExperimentDescriptionVarA = "Safely open links from other apps (eg. mails, websites and messages) in Ecosia, turning every tap into action for the planet."
-        case defaultBrowserPromptExperimentDescriptionVarB = "People who set Ecosia as their default browser plant %@ per year."
-        case defaultBrowserPromptExperimentDescriptionVarC = "If all mobile users set Ecosia as their default browser, we could plant an extra %@ annually."
-        case defaultBrowserPromptExperimentDescriptionTitleVarBC = "Did you know?"
-        case defaultBrowserPromptExperimentDescriptionHighlightVarB = "6 more trees"
-        case defaultBrowserPromptExperimentDescriptionHighlightVarC = "2 million trees"
-        case defaultBrowserPromptExperimentTitleVarA = "Set Ecosia as default"
-        case defaultBrowserPromptExperimentTitleVarBC = "Make all your browsing green"
+        case defaultBrowserPromptExperimentButton = "Set as default in Settings"
+        case defaultBrowserPromptExperimentDescription = "People who set Ecosia as their default browser plant %@ per year."
+        case defaultBrowserPromptExperimentDescriptionTitle = "Did you know?"
+        case defaultBrowserPromptExperimentDescriptionHighlight = "6 more trees"
+        case defaultBrowserPromptExperimentTitle = "Make all your browsing green"
         case ecosiaNews = "Ecosia news"
         case ecosiaRecommends = "Ecosia recommends"
         case estimatedImpact = "Estimated impact"
@@ -57,7 +51,6 @@ extension String {
         case learnMore = "Learn more"
         case linkAlreadyUsedTitle = "Link already used"
         case linkAlreadyUsedMessage = "You can only use an invitation link once."
-        case makeEcosiaYourDefaultBrowser = "Make Ecosia your default browser"
         case moderate = "Moderate"
         case seeAll = "See all"
         case multiplyImpact = "Multiply impact"
@@ -240,5 +233,14 @@ extension String {
         case defaultBrowserCardDetailInstructionStep2 = "Select **Default Browser App**"
         case defaultBrowserCardDetailInstructionStep3 = "Choose **Ecosia**"
         case defaultBrowserCardDetailButton = "Make default in settings"
+
+        // MARK: - Feedback View
+        case reportIssue = "Report an issue"
+        case helpCenter = "Help Center"
+        case suggestionOrFeedback = "Suggestion or feedback"
+        case whatWouldYouLikeToShare = "What would you like to share?"
+        case send = "Send"
+        case close = "Close"
+        case thankYouForYourFeedback = "Thank you for your feedback!"
     }
 }
