@@ -304,13 +304,13 @@ final class AnalyticsIdentifierSetting: HiddenSetting {
 final class AnalyticsStagingUrlSetting: HiddenSetting {
 
     override var title: NSAttributedString? {
-        return NSAttributedString(string: "Debug: Toggle - Swap Analytics Staging URL", attributes: [NSAttributedString.Key.foregroundColor: theme.colors.ecosia.tableViewRowText])
+        return NSAttributedString(string: "Debug: Toggle - Swap Analytics Staging URL", attributes: [:])
     }
 
     override var status: NSAttributedString? {
         let isOn = Analytics.shouldUseMicroInstance
         let snowplowInstance = isOn ? "Micro" : "Mini"
-        return NSAttributedString(string: "\(snowplowInstance) instance (Click to toggle)", attributes: [NSAttributedString.Key.foregroundColor: theme.colors.ecosia.tableViewRowText])
+        return NSAttributedString(string: "\(snowplowInstance) instance (Click to toggle)", attributes: [:])
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
