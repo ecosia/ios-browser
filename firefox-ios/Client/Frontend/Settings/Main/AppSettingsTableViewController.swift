@@ -44,11 +44,11 @@ class AppSettingsTableViewController: SettingsTableViewController,
                                       DebugSettingsDelegate,
                                       SearchBarLocationProvider,
                                       SharedSettingsDelegate {
-    
+
     enum activityType: String {
         case openURL = "org.mozilla.ios.Firefox.newTab"
     }
-    
+
     // MARK: - Properties
     private var showDebugSettings = false
     private var debugSettingsClickCount: Int = 0
@@ -142,7 +142,7 @@ class AppSettingsTableViewController: SettingsTableViewController,
         case .creditCard:
             authenticateUserFor(route: route)
         case .rateApp:
-            RatingPromptManager.goToAppStoreReview()
+            interceptNegativeReviews()
         default:
             break
         }
@@ -161,11 +161,19 @@ class AppSettingsTableViewController: SettingsTableViewController,
     // MARK: Ecosia
 
     private func interceptNegativeReviews() {
-        let activity = NSUserActivity(activityType: activityType.openURL.rawValue)
-
         let rateAction = UIAlertAction(title: .localized("Yes"), style: .default) { _ in
-            // TODO: OPEN URL
+            RatingPromptManager.goToAppStoreReview()
         }
+
+        let helpAction = UIAlertAction(title: .localized("No"), style: .destructive) { _ in
+            let helpActivity = NSUserActivity(activityType: activityType.openURL.rawValue)
+            // TODO: open help page
+        }
+
+        let alertController = UIAlertController(title: .SettingsRatingPromptTitle, message: nil, preferredStyle: .alert)
+        alertController.addAction(rateAction)
+        alertController.addAction(helpAction)
+        present(alertController, animated: true)
     }
 
     // MARK: - User AutheSntication
