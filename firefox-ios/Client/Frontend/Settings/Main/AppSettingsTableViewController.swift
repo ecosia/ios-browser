@@ -44,6 +44,11 @@ class AppSettingsTableViewController: SettingsTableViewController,
                                       DebugSettingsDelegate,
                                       SearchBarLocationProvider,
                                       SharedSettingsDelegate {
+    
+    enum activityType: String {
+        case openURL = "org.mozilla.ios.Firefox.newTab"
+    }
+    
     // MARK: - Properties
     private var showDebugSettings = false
     private var debugSettingsClickCount: Int = 0
@@ -153,7 +158,17 @@ class AppSettingsTableViewController: SettingsTableViewController,
         }
     }
 
-    // MARK: - User Authentication
+    // MARK: Ecosia
+
+    private func interceptNegativeReviews() {
+        let activity = NSUserActivity(activityType: activityType.openURL.rawValue)
+
+        let rateAction = UIAlertAction(title: .localized("Yes"), style: .default) { _ in
+            // TODO: OPEN URL
+        }
+    }
+
+    // MARK: - User AutheSntication
 
     // Authenticates the user prior to allowing access to sensitive sections
     private func authenticateUserFor(route: Route.SettingsSection) {
@@ -387,6 +402,8 @@ class AppSettingsTableViewController: SettingsTableViewController,
     }
 
     private func getAboutSettings() -> [SettingSection] {
+        
+        
         let aboutSettings = [
             AppStoreReviewSetting(settingsDelegate: parentCoordinator),
             VersionSetting(settingsDelegate: self),

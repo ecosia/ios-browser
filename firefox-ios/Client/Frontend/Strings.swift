@@ -2829,6 +2829,21 @@ extension String {
         tableName: "Settings",
         value: "Addresses",
         comment: "Label used as an item in Settings screen. When touched, it will take user to address autofill settings page to that will allow user to add or modify saved addresses to allow for autofill in a webpage.")
+    public static let SettingsRatingPromptTitle = MZLocalizedString(
+        key: "Settings.RatingPrompt.Title",
+        tableName: "Settings",
+        value: "Do you enjoy Ecosia?",
+        comment: "This is what we prompt our users if they hit the rate button from within the settings")
+    public static let SettingsRatingPromptYes = MZLocalizedString(
+        key: "Settings.RatingPrompt.Yes",
+        tableName: "Settings",
+        value: "Yes",
+        comment: "When hit will redirect the user to rate the app on the app store")
+    public static let SettingsRatingPromptNo = MZLocalizedString(
+        key: "Settings.RatingPrompt.No",
+        tableName: "Settings",
+        value: "No",
+        comment: "Used to indicate the user does not like ecosia and will redirect them to our help pages")
 }
 
 // MARK: - Error pages
