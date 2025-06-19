@@ -2,10 +2,8 @@ name: Snapshot Tests
 
 on:
   pull_request:
-    # paths:
-    #   - 'firefox-ios/Client/Configuration/Common.xcconfig'
-    branches-ignore:
-      - 'main'
+    paths:
+      - 'firefox-ios/Client/Configuration/Common.xcconfig'
 
 jobs:
   execute_snapshot_tests:

@@ -367,7 +367,7 @@ workflows:
           filters:
             branches:
               only: 
-                - ls-mob-3181-color-snowflakes
+                - main
                 - /^main-\d+$/
           context: napps
 
@@ -446,9 +446,12 @@ workflows:
     jobs:
       # Always run deployment
       - build-and-deploy-firebase-and-browserstack:
-          name: Deploy ad-hoc version over Firebase + Upload to Browserstack
-          filters:
-            branches:
-              only: 
-                - ls-mob-3181-color-snowflakes
+          name: Manual Deploy ad-hoc version over Firebase + Upload to Browserstack
+          context: napps
+
+      # Check if version was bumped and conditionally continue to release pipeline
+      - check-version-bump:
+          name: Manual Check for version bump
+          requires:
+            - Manual Deploy ad-hoc version over Firebase + Upload to Browserstack
           context: napps
