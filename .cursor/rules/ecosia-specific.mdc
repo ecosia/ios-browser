@@ -1,0 +1,41 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Ecosia-Specific Guidelines
+
+## Code Customization
+
+- Use "Ecosia:" comments to mark Ecosia customizations in Firefox code
+- Use `//` for new code introductions
+- Use `/* */` for commenting out existing Firefox code
+- Maintain separation between Firefox base and Ecosia customizations
+- Follow the Framework approach for Ecosia-specific code
+
+## Analytics and Features
+
+- Use proper analytics tracking through `Analytics.shared` (avoid reassignment)
+- Implement proper feature flagging for A/B testing
+- Handle market-specific configurations via `markets.json`
+
+## Testing
+
+- Write unit tests using XCTest for business logic
+- Implement UI tests using XCUITest for critical user flows
+- Test all accessibility features and edge cases
+- Use mocks and dependency injection for testable code
+- Organize tests in `EcosiaTests/` with clear structure
+- Test performance scenarios and memory usage
+- Implement snapshot tests for UI components
+- Follow TDD principles where appropriate
+
+## Security
+
+- Encrypt sensitive data using Keychain Services
+- Use secure communication (Certificate pinning where needed)
+- Implement biometric authentication for sensitive operations
+- Follow App Transport Security requirements
+- Validate and sanitize all user inputs
+- Handle sensitive data appropriately (passwords, personal info)
+- Follow Mozilla's security guidelines
