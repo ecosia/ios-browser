@@ -1,0 +1,34 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Localization Standards
+
+## String Management
+
+- Localization keys should be organized in the enum `Key` within `firefox-ios/Ecosia/L10N/String.swift`
+- Store localization keys using clear, descriptive naming
+- All user-facing strings MUST be localized using the appropriate function in `firefox-ios/Ecosia/L10N/String.swift`
+- Reference language is 'en' (English)
+- Always add the reference in `firefox-ios/Ecosia/L10N/en.lproj/Ecosia.strings` for the newly added localization
+- Ecosia strings are managed separately in `Ecosia.strings` files
+- DO NOT localize debug strings or developer-only content
+- Consider string context when providing translations
+
+## Example
+
+Add a new string in `firefox-ios/Ecosia/L10N/String.swift` `Key` enum
+
+```swift
+case addMoreDetailAboutYourFeedback = "Add more detail about your feedback..."
+```
+
+Then in `firefox-ios/Ecosia/L10N/en.lproj/Ecosia.strings` add:
+
+`"Add more detail about your feedback..." = "Add more detail about your feedback...";`
+
+Then reference when being used in code with:
+
+`String.localized(.addMoreDetailAboutYourFeedback)` for SwiftUI
+`label.text = .localized(.addMoreDetailAboutYourFeedback` for UIKit
