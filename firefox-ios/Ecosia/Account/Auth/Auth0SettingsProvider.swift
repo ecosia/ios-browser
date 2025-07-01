@@ -23,7 +23,7 @@ struct DefaultAuth0SettingsProvider: Auth0SettingsProviderProtocol {
         }
         return domain
     }
-    
+
     var cookieDomain: String {
         guard let cookieDomain = EnvironmentFetcher.valueFromMainBundleOrProcessInfo(forKey: "AUTH0_COOKIE_DOMAIN") else {
             fatalError("AUTH0_COOKIE_DOMAIN not found")
