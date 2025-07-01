@@ -100,6 +100,20 @@ public class Auth {
                 throw AuthError.credentialsClearingFailed
             }
         }
+
+        // Try to clear credentials - if this succeeds, we log out regardless of session clearing
+        let credentialsCleared = auth0Provider.clearCredentials()
+
+        if credentialsCleared {
+            self.idToken = nil
+            self.accessToken = nil
+            self.refreshToken = nil
+            isLoggedIn = false
+            print("\(#file).\(#function) - 👤 Auth - Session and credentials cleared.")
+        } else {
+            // If we couldn't clear credentials, keep the user logged in
+            print("\(#file).\(#function) - 👤 Auth - Failed to clear credentials, maintaining logged in state.")
+        }
     }
 
     /// Retrieves stored credentials asynchronously, if available.
