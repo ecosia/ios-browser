@@ -210,6 +210,7 @@ final class DefaultCredentialsManagerTests: XCTestCase {
             // Verify it's the expected Auth0 error
             let errorMessage = error.localizedDescription
             XCTAssertTrue(errorMessage.contains("refresh token") || errorMessage.contains("renewal"),
+
                           "Error should be related to credential renewal")
         }
     }
