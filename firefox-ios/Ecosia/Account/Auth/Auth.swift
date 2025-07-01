@@ -5,53 +5,7 @@
 import Foundation
 import Auth0
 import WebKit
-import Redux
 import Common
-import UIKit
-import SwiftUI
-
-// MARK: - User Profile Model
-public struct UserProfile {
-    public let name: String?
-    public let email: String?
-    public let picture: String?
-    public let sub: String?
-
-    public init(name: String?, email: String?, picture: String?, sub: String?) {
-        self.name = name
-        self.email = email
-        self.picture = picture
-        self.sub = sub
-    }
-}
-
-// MARK: - Authentication Action Types for Redux
-public enum EcosiaAuthActionType: String, CaseIterable {
-    case authStateLoaded
-    case userLoggedIn
-    case userLoggedOut
-}
-
-// MARK: - Auth Notifications
-extension Notification.Name {
-    /// Posted when user successfully logs in and session token is ready
-    public static let EcosiaAuthDidLoginWithSessionToken = Notification.Name("EcosiaEcosiaAuthDidLoginWithSessionToken")
-
-    /// Posted when user logs out and session should be cleared
-    public static let EcosiaAuthDidLogout = Notification.Name("EcosiaEcosiaAuthDidLogout")
-
-    /// Posted when user should logout from web
-    public static let EcosiaAuthShouldLogoutFromWeb = Notification.Name("EcosiaEcosiaAuthShouldLogoutFromWeb")
-
-    /// Posted when credentials have been retrieved and auth state is ready
-    public static let EcosiaAuthStateReady = Notification.Name("EcosiaEcosiaAuthStateReady")
-
-    /// Posted when auth state should be dispatched to Redux store
-    public static let EcosiaAuthReduxDispatch = Notification.Name("EcosiaEcosiaAuthReduxDispatch")
-
-    /// Posted when the entire authentication flow is complete (including invisible tab workflow)
-    public static let EcosiaAuthFlowCompleted = Notification.Name("EcosiaEcosiaAuthFlowCompleted")
-}
 
 /// The `Auth` class manages user authentication, credential storage, and renewal using Auth0.
 public class Auth {
@@ -63,10 +17,7 @@ public class Auth {
     private(set) var idToken: String?
     private(set) var accessToken: String?
     private(set) var refreshToken: String?
-    
-    /// The current user's profile information extracted from the ID token
-    public private(set) var userProfile: UserProfile?
-    
+
     /// Indicates whether the user is currently logged in.
     public private(set) var isLoggedIn: Bool = false
     
@@ -118,7 +69,6 @@ public class Auth {
                 self.idToken = nil
                 self.accessToken = nil
                 self.refreshToken = nil
-                self.userProfile = nil // Clear user profile
                 isLoggedIn = false
                 print("\(#file).\(#function) - 👤 Auth - Session and credentials cleared.")
             }
