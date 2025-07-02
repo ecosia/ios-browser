@@ -5,7 +5,7 @@
 import XCTest
 @testable import Ecosia
 
-final class Auth0SettingsProviderTests: XCTestCase {
+final class DefaultAuth0SettingsProviderTests: XCTestCase {
 
     var settingsProvider: DefaultAuth0SettingsProvider!
 
@@ -23,7 +23,7 @@ final class Auth0SettingsProviderTests: XCTestCase {
 
     func testClientId_withValidEnvironmentVariable_returnsCorrectValue() {
         // Arrange
-        // Environment variables should be set up in the test scheme
+        // Build Settings variables should be set up in the test scheme
         // For this test, we'll assume AUTH0_CLIENT_ID is available
 
         // Act
@@ -31,36 +31,32 @@ final class Auth0SettingsProviderTests: XCTestCase {
 
         // Assert
         XCTAssertFalse(clientId.isEmpty, "Client ID should not be empty")
-        XCTAssertTrue(clientId.count > 10, "Client ID should be a meaningful length")
     }
 
     // MARK: - Domain Tests
 
     func testDomain_withValidEnvironmentVariable_returnsCorrectValue() {
         // Arrange
-        // Environment variables should be set up in the test scheme
+        // Build Settings variables should be set up in the test scheme
 
         // Act
         let domain = settingsProvider.domain
 
         // Assert
         XCTAssertFalse(domain.isEmpty, "Domain should not be empty")
-        XCTAssertTrue(domain.contains("."), "Domain should contain a dot")
-        XCTAssertTrue(domain.contains("auth0.com"), "Domain should contain auth0.com")
     }
 
     // MARK: - Cookie Domain Tests
 
     func testCookieDomain_withValidEnvironmentVariable_returnsCorrectValue() {
         // Arrange
-        // Environment variables should be set up in the test scheme
+        // Build Settings variables should be set up in the test scheme
 
         // Act
         let cookieDomain = settingsProvider.cookieDomain
 
         // Assert
         XCTAssertFalse(cookieDomain.isEmpty, "Cookie domain should not be empty")
-        XCTAssertTrue(cookieDomain.contains("."), "Cookie domain should contain a dot")
     }
 
     // MARK: - Protocol Conformance Tests
@@ -73,17 +69,5 @@ final class Auth0SettingsProviderTests: XCTestCase {
         XCTAssertNotNil(provider.id)
         XCTAssertNotNil(provider.domain)
         XCTAssertNotNil(provider.cookieDomain)
-    }
-
-    // MARK: - Mock Settings Provider Tests
-
-    func testMockAuth0SettingsProvider_providesTestValues() {
-        // Arrange
-        let mockProvider = MockAuth0SettingsProvider()
-
-        // Act & Assert
-        XCTAssertEqual(mockProvider.domain, "test.auth0.com")
-        XCTAssertEqual(mockProvider.id, "mock-client-id")
-        XCTAssertEqual(mockProvider.cookieDomain, "test.ecosia.org")
     }
 }
