@@ -79,12 +79,7 @@ runs:
 
     - name: Extract Staging XCConfig
       shell: bash
-      run: |
-        # Force remove existing Staging.xcconfig if present
-        rm -f firefox-ios/Client/Configuration/Staging.xcconfig
-        # Create new Staging.xcconfig from environment variable
-        echo "$STAGING_XCCONFIG" | base64 --decode > firefox-ios/Client/Configuration/Staging.xcconfig
-        echo "✅ Staging.xcconfig extracted and replaced successfully"
+      run: echo "$STAGING_XCCONFIG" | base64 --decode > firefox-ios/Client/Configuration/Staging.xcconfig
 
     - name: List Available Simulator Runtimes
       shell: bash
