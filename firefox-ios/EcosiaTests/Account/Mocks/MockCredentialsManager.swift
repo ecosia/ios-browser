@@ -27,9 +27,6 @@ class MockCredentialsManager: CredentialsManagerProtocol {
     var clearCallCount = 0
     var canRenewCallCount = 0
 
-    // MARK: - Protocol Requirements
-    var auth0SettingsProvider: Auth0SettingsProviderProtocol = MockAuth0SettingsProvider()
-
     // MARK: - Mock Implementations
     func credentials() async throws -> Credentials {
         credentialsCallCount += 1

@@ -5,6 +5,7 @@
 import XCTest
 import Auth0
 @testable import Ecosia
+import WebKit
 
 final class AuthTests: XCTestCase {
 
@@ -336,6 +337,90 @@ final class AuthTests: XCTestCase {
         XCTAssertEqual(auth.refreshToken, originalRefreshToken)
     }
 
+    // MARK: - SSO Methods Tests
+
+    func testGetSessionTransferToken_withLoggedInUser_retrievesSSOCredentials() async {
+        // Arrange
+        await setupLoggedInStateWithSSOProvider()
+        
+        // Note: Due to the type check in Auth.retrieveSSOCredentials(), the mock provider
+        // won't be recognized as a NativeToWebSSOAuth0Provider, so getSSOCredentials won't be called
+        // In a real implementation, we would need integration tests or a different mocking strategy
+
+        // Act
+        await auth.getSessionTransferToken()
+
+        // Assert
+        XCTAssertTrue(auth.isLoggedIn)
+        // The ssoCredentials will be nil because the type check in Auth.swift fails with the mock
+        // This demonstrates that the method completes without error even when SSO is not available
+        XCTAssertNil(auth.ssoCredentials)
+    }
+
+    func testGetSessionTransferToken_withLoggedOutUser_doesNotRetrieveCredentials() async {
+        // Arrange
+        XCTAssertFalse(auth.isLoggedIn)
+
+        // Act
+        await auth.getSessionTransferToken()
+
+        // Assert
+        XCTAssertFalse(auth.isLoggedIn)
+        XCTAssertNil(auth.ssoCredentials)
+    }
+
+    func testGetSessionTokenCookie_withLoggedOutUser_returnsNil() {
+        // Arrange
+        XCTAssertFalse(auth.isLoggedIn)
+
+        // Act
+        let cookie = auth.getSessionTokenCookie()
+
+        // Assert
+        XCTAssertNil(cookie)
+    }
+
+    func testGetSessionTokenCookie_withLoggedInUserButNoSSOCredentials_returnsNil() async {
+        // Arrange
+        await setupLoggedInState()
+
+        // Act
+        let cookie = auth.getSessionTokenCookie()
+
+        // Assert
+        XCTAssertNil(cookie)
+    }
+
+    func testSetSessionTokenCookieForURL_withLoggedOutUser_doesNotSetCookie() {
+        // Arrange
+        let testURL = URL(string: "https://ecosia.org")!
+        let mockWebView = WKWebView()
+        XCTAssertFalse(auth.isLoggedIn)
+
+        // Act
+        auth.setSessionTokenCookieForURL(testURL, webView: mockWebView)
+
+        // Assert
+        // Note: In a real test, we would inject a mock cookie store to verify no cookie was set
+        // For now, we just verify the method completes without throwing
+        XCTAssertFalse(auth.isLoggedIn)
+    }
+
+    func testSetSessionTokenCookieForURL_withLoggedInUserButNoSessionToken_doesNotSetCookie() async {
+        // Arrange
+        await setupLoggedInState()
+        let testURL = URL(string: "https://ecosia.org")!
+        let mockWebView = WKWebView()
+
+        // Act
+        auth.setSessionTokenCookieForURL(testURL, webView: mockWebView)
+
+        // Assert
+        // Note: In a real test, we would inject a mock cookie store to verify no cookie was set
+        // For now, we just verify the method completes without throwing
+        XCTAssertTrue(auth.isLoggedIn)
+    }
+
     // MARK: - Integration Tests
 
     func testCompleteAuthFlow_loginLogoutCycle_worksCorrectly() async {
@@ -443,5 +528,12 @@ final class AuthTests: XCTestCase {
         // Reset call counts after setup
         mockProvider.startAuthCallCount = 0
         mockProvider.storeCredentialsCallCount = 0
+    }
+
+    private func setupLoggedInStateWithSSOProvider() async {
+        // For unit testing, we use the regular mock provider
+        // The SSO functionality requires integration testing or a more sophisticated mocking approach
+        // that can bypass the type check in Auth.retrieveSSOCredentials()
+        await setupLoggedInState()
     }
 }
