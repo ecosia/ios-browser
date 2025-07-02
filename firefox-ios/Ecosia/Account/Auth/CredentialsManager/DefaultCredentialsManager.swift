@@ -6,13 +6,11 @@ import Auth0
 
 struct DefaultCredentialsManager: CredentialsManagerProtocol {
 
-    let auth0SettingsProvider: Auth0SettingsProviderProtocol
     private let credentialManager: CredentialsManager
 
-    init(auth0SettingsProvider: Auth0SettingsProviderProtocol = DefaultAuth0SettingsProvider()) {
-        self.auth0SettingsProvider = auth0SettingsProvider
-        self.credentialManager = CredentialsManager(authentication: Auth0.authentication(clientId: auth0SettingsProvider.id,
-                                                                                         domain: auth0SettingsProvider.domain),
+    init(settings: Auth0SettingsProviderProtocol = DefaultAuth0SettingsProvider()) {
+        self.credentialManager = CredentialsManager(authentication: Auth0.authentication(clientId: settings.id,
+                                                                                         domain: settings.domain),
                                                     storage: EcosiaKeychainStorage())
     }
 
