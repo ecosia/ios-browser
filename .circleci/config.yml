@@ -144,12 +144,7 @@ jobs:
           command: for ip in $(dig @8.8.8.8 github.com +short); do ssh-keyscan github.com,$ip; ssh-keyscan $ip; done 2>/dev/null >> ~/.ssh/known_hosts
       - run:
           name: extract Staging XCConfig
-          command: |
-            # Force remove existing Staging.xcconfig if present
-            rm -f firefox-ios/Client/Configuration/Staging.xcconfig
-            # Create new Staging.xcconfig from environment variable
-            echo "$STAGING_XCCONFIG" | base64 --decode > firefox-ios/Client/Configuration/Staging.xcconfig
-            echo "✅ Staging.xcconfig extracted and replaced successfully"
+          command: echo "$STAGING_XCCONFIG" | base64 --decode > firefox-ios/Client/Configuration/Staging.xcconfig
       - run:
           name: Execute bootstrap
           command: ./bootstrap.sh
@@ -188,12 +183,7 @@ jobs:
           command: for ip in $(dig @8.8.8.8 github.com +short); do ssh-keyscan github.com,$ip; ssh-keyscan $ip; done 2>/dev/null >> ~/.ssh/known_hosts
       - run:
           name: Extract Staging XCConfig
-          command: |
-            # Force remove existing Staging.xcconfig if present
-            rm -f firefox-ios/Client/Configuration/Staging.xcconfig
-            # Create new Staging.xcconfig from environment variable
-            echo "$STAGING_XCCONFIG" | base64 --decode > firefox-ios/Client/Configuration/Staging.xcconfig
-            echo "✅ Staging.xcconfig extracted and replaced successfully"
+          command: echo "$STAGING_XCCONFIG" | base64 --decode > firefox-ios/Client/Configuration/Staging.xcconfig
       - run:
           name: Execute bootstrap
           command: ./bootstrap.sh
@@ -269,12 +259,7 @@ jobs:
           command: for ip in $(dig @8.8.8.8 github.com +short); do ssh-keyscan github.com,$ip; ssh-keyscan $ip; done 2>/dev/null >> ~/.ssh/known_hosts
       - run:
           name: Extract Staging XCConfig
-          command: |
-            # Force remove existing Staging.xcconfig if present
-            rm -f firefox-ios/Client/Configuration/Staging.xcconfig
-            # Create new Staging.xcconfig from environment variable
-            echo "$STAGING_XCCONFIG" | base64 --decode > firefox-ios/Client/Configuration/Staging.xcconfig
-            echo "✅ Staging.xcconfig extracted and replaced successfully"
+          command: echo "$STAGING_XCCONFIG" | base64 --decode > firefox-ios/Client/Configuration/Staging.xcconfig
       - run:
           name: Execute bootstrap
           command: ./bootstrap.sh
@@ -330,12 +315,7 @@ jobs:
           command: for ip in $(dig @8.8.8.8 github.com +short); do ssh-keyscan github.com,$ip; ssh-keyscan $ip; done 2>/dev/null >> ~/.ssh/known_hosts
       - run:
           name: Extract Staging XCConfig
-          command: |
-            # Force remove existing Staging.xcconfig if present
-            rm -f firefox-ios/Client/Configuration/Staging.xcconfig
-            # Create new Staging.xcconfig from environment variable
-            echo "$STAGING_XCCONFIG" | base64 --decode > firefox-ios/Client/Configuration/Staging.xcconfig
-            echo "✅ Staging.xcconfig extracted and replaced successfully"
+          command: echo "$STAGING_XCCONFIG" | base64 --decode > firefox-ios/Client/Configuration/Staging.xcconfig
       - run:
           name: Execute bootstrap
           command: ./bootstrap.sh
