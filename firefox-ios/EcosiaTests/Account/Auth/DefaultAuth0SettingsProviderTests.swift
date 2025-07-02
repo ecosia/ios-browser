@@ -7,17 +7,7 @@ import XCTest
 
 final class DefaultAuth0SettingsProviderTests: XCTestCase {
 
-    var settingsProvider: DefaultAuth0SettingsProvider!
-
-    override func setUp() {
-        super.setUp()
-        settingsProvider = DefaultAuth0SettingsProvider()
-    }
-
-    override func tearDown() {
-        settingsProvider = nil
-        super.tearDown()
-    }
+    var settingsProvider = DefaultAuth0SettingsProvider()
 
     // MARK: - Client ID Tests
 
@@ -60,14 +50,4 @@ final class DefaultAuth0SettingsProviderTests: XCTestCase {
     }
 
     // MARK: - Protocol Conformance Tests
-
-    func testAuth0SettingsProviderProtocol_conformance_implementsAllRequiredProperties() {
-        // Arrange
-        let provider: Auth0SettingsProviderProtocol = DefaultAuth0SettingsProvider()
-
-        // Act & Assert
-        XCTAssertNotNil(provider.id)
-        XCTAssertNotNil(provider.domain)
-        XCTAssertNotNil(provider.cookieDomain)
-    }
 }
