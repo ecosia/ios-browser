@@ -17,6 +17,9 @@ public class Auth {
     private(set) var idToken: String?
     private(set) var accessToken: String?
     private(set) var refreshToken: String?
+    private(set) var ssoCredentials: SSOCredentials?
+
+    /// Indicates whether the user is currently logged in.
     public private(set) var isLoggedIn: Bool = false
 
     /// Initializes a new instance of the `Auth` class with a specified authentication provider.
@@ -160,5 +163,70 @@ public class Auth {
         self.accessToken = credentials?.accessToken
         self.refreshToken = credentials?.refreshToken
         self.isLoggedIn = isLoggedIn
+    }
+    
+    public func getSessionTransferToken() async {
+        guard isLoggedIn else {
+            print("\(#file).\(#function) - 👤 Auth - User not logged in")
+            return
+        }
+        ssoCredentials = await retrieveSSOCredentials()
+        print("\(#file).\(#function) - 👤 Auth - Retrieved sessionToken \(ssoCredentials?.sessionTransferToken ?? "nil")")
+    }
+
+    /// Returns session token cookie if it can be retrieved
+    public func getSessionTokenCookie() -> HTTPCookie? {
+        guard isLoggedIn else {
+            print("\(#file).\(#function) - 👤 Auth - \(isLoggedIn ? "User not logged in" : "Token missing")")
+            return nil
+        }
+        print("[TEST] Auth - Making cookie for \(ssoCredentials?.sessionTransferToken ?? "nil")")
+        return makeSessionTokenCookieWithSSOCredentials(ssoCredentials)
+    }
+}
+
+extension Auth {
+
+    /// Retrieves the session token if the `auth0Provider` is of type `NativeToWebSSOAuth0Provider`.
+    /// This method ensures that the session token is only retrieved for the specific provider type.
+    /// - Note: This method performs a type check and calls `getSessionToken` on the provider if the type matches.
+    private func retrieveSSOCredentials() async -> SSOCredentials? {
+        if let authProvider = auth0Provider as? NativeToWebSSOAuth0Provider {
+            do {
+                return try await authProvider.getSSOCredentials()
+            } catch {
+                print("\(#file).\(#function) - 👤 Auth - Failed to retrieve SSO Credentials: \(error)")
+            }
+        }
+        return nil
+    }
+
+    private func makeSessionTokenCookieWithSSOCredentials(_ ssoCredentials: SSOCredentials?) -> HTTPCookie? {
+        guard let ssoCredentials else {
+            print("\(#file).\(#function) - 👤 Auth - No SSO credentials available to create cookie")
+            return nil
+        }
+        return HTTPCookie(properties: [
+            .domain: auth0Provider.credentialsManager.auth0SettingsProvider.domain,
+            .path: "/",
+            .name: "auth0_session_transfer_token",
+            .value: ssoCredentials.sessionTransferToken,
+            .expires: ssoCredentials.expiresIn,
+            .secure: true
+        ])
+    }
+
+    public func setSessionTokenCookieForURL(_ url: URL, webView: WKWebView) {
+        guard Auth.shared.isLoggedIn,
+              let sessionTokenCookie = getSessionTokenCookie() else {
+            print("No session token available or user not logged in")
+            return
+        }
+
+        print("Setting session token cookie for URL: \(url.absoluteString)")
+
+        // Set the session token cookie
+        webView.configuration.websiteDataStore.httpCookieStore.setCookie(sessionTokenCookie)
+        print("Session token cookie set successfully")
     }
 }
