@@ -7,6 +7,7 @@ import Auth0
 /// Native to Web SSO implementation of `Auth0ProviderProtocol` using Auth0's SDK and performing Native to Web SSO via REST API to perform the session token exchange.
 public struct NativeToWebSSOAuth0Provider: Auth0ProviderProtocol {
 
+    public let settings: Auth0SettingsProviderProtocol
     public let credentialsManager: CredentialsManagerProtocol
     private var client: HTTPClient
     public typealias SessionToken = String
@@ -18,9 +19,11 @@ public struct NativeToWebSSOAuth0Provider: Auth0ProviderProtocol {
     }
 
     public init(client: HTTPClient = URLSessionHTTPClient(),
-                credentialsManager: CredentialsManagerProtocol = Auth.defaultCredentialsManager) {
+                settings: Auth0SettingsProviderProtocol = DefaultAuth0SettingsProvider(),
+                credentialsManager: CredentialsManagerProtocol? = nil) {
         self.client = client
-        self.credentialsManager = credentialsManager
+        self.settings = settings
+        self.credentialsManager = credentialsManager ?? DefaultCredentialsManager(settings: settings)
     }
 
     public var webAuth: WebAuth {
@@ -49,8 +52,8 @@ extension NativeToWebSSOAuth0Provider {
         let configuration: URLSessionConfiguration = .default
         let ecosiaAuth0Session = URLSession(configuration: configuration.withCloudFlareAuthParameters())
         return try await Auth0
-            .authentication(clientId: credentialsManager.auth0SettingsProvider.id,
-                            domain: credentialsManager.auth0SettingsProvider.domain,
+            .authentication(clientId: settings.id,
+                            domain: settings.domain,
                             session: ecosiaAuth0Session)
             .ssoExchange(withRefreshToken: refreshToken)
             .start()
