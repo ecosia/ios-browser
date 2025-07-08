@@ -6,10 +6,8 @@ extension URLSessionConfiguration {
 
     public func withCloudFlareAuthParameters(environment: Environment = Environment.current) -> URLSessionConfiguration {
         if let auth = environment.cloudFlareAuth {
-            httpAdditionalHeaders = [
-                CloudflareKeyProvider.clientId: auth.id,
-                CloudflareKeyProvider.clientSecret: auth.secret
-            ]
+            httpAdditionalHeaders?[CloudflareKeyProvider.clientId] = auth.secret
+            httpAdditionalHeaders?[CloudflareKeyProvider.clientSecret] = auth.id
         }
         return self
     }

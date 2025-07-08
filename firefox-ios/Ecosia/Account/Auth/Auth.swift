@@ -9,16 +9,14 @@ import Common
 
 /// The `Auth` class manages user authentication, credential storage, and renewal using Auth0.
 public class Auth {
+
     public static let shared = Auth()
 
     public static let defaultCredentialsManager: CredentialsManagerProtocol = DefaultCredentialsManager()
     public let auth0Provider: Auth0ProviderProtocol
-
     private(set) var idToken: String?
     private(set) var accessToken: String?
     private(set) var refreshToken: String?
-
-    /// Indicates whether the user is currently logged in.
     public private(set) var isLoggedIn: Bool = false
 
     /// Initializes a new instance of the `Auth` class with a specified authentication provider.
@@ -32,53 +30,75 @@ public class Auth {
     }
 
     /// Logs in the user asynchronously and stores credentials if successful.
-    public func login() async {
+    /// - Throws: `LoginError.authenticationFailed` if Auth0 authentication fails,
+    ///           `LoginError.credentialStorageError` if credential storage throws an error,
+    ///           `LoginError.credentialStorageFailed` if credential storage returns false.
+    public func login() async throws {
+        // First, attempt authentication
+        let credentials: Credentials
         do {
-            // The onClose callback is now built into the webAuth property
-            let credentials = try await auth0Provider.startAuth()
+            credentials = try await auth0Provider.startAuth()
+            print("\(#file).\(#function) - 👤 Auth - Authentication successful.")
+        } catch {
+            print("\(#file).\(#function) - 👤 Auth - Authentication failed: \(error)")
+            throw AuthError.authenticationFailed(error)
+        }
 
+        // Then, attempt to store credentials
+        do {
             let didStore = try auth0Provider.storeCredentials(credentials)
             if didStore {
-                // Set credential properties FIRST
-                self.idToken = credentials.idToken
-                self.accessToken = credentials.accessToken
-                self.refreshToken = credentials.refreshToken
-                isLoggedIn = true
-                print("\(#file).\(#function) - 👤 Auth - Credentials stored successfully.")
+                setupTokensWithCredentials(credentials, settingLoggedInStateTo: true)
+                print("\(#file).\(#function) - 👤 Auth - Login completed successfully.")
+            } else {
+                print("\(#file).\(#function) - 👤 Auth - Credential storage failed (returned false).")
+                throw AuthError.credentialsStorageFailed
             }
         } catch {
-            print("\(#file).\(#function) - 👤 Auth - Login failed with error: \(error)")
+            print("\(#file).\(#function) - 👤 Auth - Credential storage error: \(error)")
+            throw AuthError.credentialsStorageError(error)
         }
-    }
-
-    /// Logs out the user by clearing stored credentials and session.
-    public func logout() async {
-        await logout(triggerWebLogout: true)
     }
 
     /// Logs out the user with option to skip web logout (for web-initiated logout)
-    public func logout(triggerWebLogout: Bool = true) async {
-        do {
-            // Only clear Auth0 session if this is not web-initiated logout
-            if triggerWebLogout {
+    /// - Parameter triggerWebLogout: Whether to clear the web session. Defaults to true.
+    /// - Throws: `LogoutError.sessionClearingFailed` if both web session and credential clearing fail,
+    ///           `LogoutError.credentialsClearingFailed` if only credential clearing fails.
+    public func logout(triggerWebLogout: Bool = true) async throws {
+        var sessionClearingError: Error?
+
+        // First, try to clear the web session if requested
+        if triggerWebLogout {
+            do {
                 try await auth0Provider.clearSession()
+                print("\(#file).\(#function) - 👤 Auth - Web session cleared successfully.")
+            } catch {
+                sessionClearingError = error
+                print("\(#file).\(#function) - 👤 Auth - Failed to clear web session: \(error)")
             }
-        } catch {
-            print("\(#file).\(#function) - 👤 Auth - Logout failed with error: \(error)")
         }
 
-        // Try to clear credentials - if this succeeds, we log out regardless of session clearing
+        // Then, try to clear stored credentials
         let credentialsCleared = auth0Provider.clearCredentials()
 
         if credentialsCleared {
-            self.idToken = nil
-            self.accessToken = nil
-            self.refreshToken = nil
-            isLoggedIn = false
-            print("\(#file).\(#function) - 👤 Auth - Session and credentials cleared.")
+            setupTokensWithCredentials(nil)
+            print("\(#file).\(#function) - 👤 Auth - Credentials cleared successfully.")
+
+            // If we had a session clearing error but credentials cleared successfully,
+            // we still consider the logout successful since the user is logged out locally
+            if let sessionError = sessionClearingError {
+                print("\(#file).\(#function) - 👤 Auth - Logout completed with web session clearing warning: \(sessionError)")
+            }
         } else {
-            // If we couldn't clear credentials, keep the user logged in
-            print("\(#file).\(#function) - 👤 Auth - Failed to clear credentials, maintaining logged in state.")
+            // If credentials clearing failed, throw appropriate error
+            if let sessionError = sessionClearingError {
+                // Both session and credentials clearing failed
+                throw AuthError.sessionClearingFailed(sessionError)
+            } else {
+                // Only credentials clearing failed
+                throw AuthError.credentialsClearingFailed
+            }
         }
     }
 
@@ -86,20 +106,15 @@ public class Auth {
     public func retrieveStoredCredentials() async {
         do {
             let credentials = try await auth0Provider.retrieveCredentials()
-            // Set credential properties FIRST
-            self.idToken = credentials.idToken
-            self.accessToken = credentials.accessToken
-            self.refreshToken = credentials.refreshToken
+            setupTokensWithCredentials(credentials, settingLoggedInStateTo: true)
             print("\(#file).\(#function) - 👤 Auth - Retrieved credentials: \(credentials)")
-
-            isLoggedIn = true
         } catch {
             print("\(#file).\(#function) - 👤 Auth - Failed to retrieve credentials: \(error)")
         }
     }
 
     /// Renews credentials if they are renewable.
-    public func renewCredentialsIfNeeded() async {
+    public func renewCredentialsIfNeeded() async throws {
         guard auth0Provider.canRenewCredentials() else {
             print("\(#file).\(#function) - 👤 Auth - No renewable credentials available.")
             return
@@ -107,15 +122,20 @@ public class Auth {
 
         do {
             let credentials = try await auth0Provider.renewCredentials()
-            // Set credential properties FIRST
-            self.idToken = credentials.idToken
-            self.accessToken = credentials.accessToken
-            self.refreshToken = credentials.refreshToken
+            setupTokensWithCredentials(credentials, settingLoggedInStateTo: true)
             print("\(#file).\(#function) - 👤 Auth - Renewed credentials: \(credentials)")
-
-            isLoggedIn = true
         } catch {
             print("\(#file).\(#function) - 👤 Auth - Failed to renew credentials: \(error)")
+            throw AuthError.credentialsRenewalFailed(error)
         }
+    }
+
+    /// Helper method to setup tokens and login flag
+    private func setupTokensWithCredentials(_ credentials: Credentials?,
+                                            settingLoggedInStateTo isLoggedIn: Bool = false) {
+        self.idToken = credentials?.idToken
+        self.accessToken = credentials?.accessToken
+        self.refreshToken = credentials?.refreshToken
+        self.isLoggedIn = isLoggedIn
     }
 }
