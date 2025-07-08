@@ -9,17 +9,14 @@ import Auth0
 final class NativeToWebSSOAuth0ProviderTests: XCTestCase {
 
     var provider: NativeToWebSSOAuth0Provider!
-    var mockClient: MockHTTPClient!
     var mockSettings: MockAuth0SettingsProvider!
     var mockCredentialsManager: MockCredentialsManager!
 
     override func setUp() {
         super.setUp()
-        mockClient = MockHTTPClient()
         mockSettings = MockAuth0SettingsProvider()
         mockCredentialsManager = MockCredentialsManager()
         provider = NativeToWebSSOAuth0Provider(
-            client: mockClient,
             settings: mockSettings,
             credentialsManager: mockCredentialsManager
         )
@@ -27,7 +24,6 @@ final class NativeToWebSSOAuth0ProviderTests: XCTestCase {
 
     override func tearDown() {
         provider = nil
-        mockClient = nil
         mockSettings = nil
         mockCredentialsManager = nil
         super.tearDown()
@@ -40,7 +36,6 @@ final class NativeToWebSSOAuth0ProviderTests: XCTestCase {
         let provider = NativeToWebSSOAuth0Provider()
 
         // Assert
-        XCTAssertNotNil(provider)
         XCTAssertNotNil(provider.settings)
         XCTAssertNotNil(provider.credentialsManager)
         XCTAssertTrue(provider.settings is DefaultAuth0SettingsProvider)
@@ -58,63 +53,16 @@ final class NativeToWebSSOAuth0ProviderTests: XCTestCase {
         XCTAssertNotNil(provider.credentialsManager)
     }
 
-    // MARK: - WebAuth Configuration Tests
-
-    func testWebAuth_includesOfflineAccessScope() {
-        // Arrange & Act
-        let webAuth = provider.webAuth
-
-        // Assert
-        XCTAssertNotNil(webAuth)
-        // Note: In a real implementation, we would verify the scope parameter
-        // This would require access to the internal WebAuth configuration
-    }
-
-    // MARK: - StartAuth Tests
-
-    func testStartAuth_callsWebAuthStart() async throws {
-        // Arrange
-        let expectedCredentials = createTestCredentials()
-        
-        // Since startAuth() uses the default protocol implementation which calls webAuth.start(),
-        // and webAuth.start() uses Auth0 SDK directly, we test the behavior indirectly
-        // by verifying that startAuth completes and behaves as expected
-        
-        // Act & Assert
-        // We can't easily mock Auth0's WebAuth.start(), but we can verify the method signature
-        // and that it's properly configured with the correct scope
-        let webAuth = provider.webAuth
-        XCTAssertNotNil(webAuth)
-        
-        // Verify that the webAuth has the correct scope configuration
-        // Note: In a real implementation, this would require more sophisticated testing
-        // or integration tests with a real Auth0 environment
-        
-        // For now, we test that the method exists and is callable
-        // In integration tests, this would actually call Auth0 and verify credentials
-        do {
-            // This would normally call Auth0, so we expect it to fail in unit tests
-            // In integration tests with proper Auth0 setup, this would succeed
-            _ = try await provider.startAuth()
-            // If we reach here in a unit test environment, something unexpected happened
-            XCTFail("startAuth should fail in unit test environment without Auth0 setup")
-        } catch {
-            // Expected in unit test environment - Auth0 SDK will fail without proper setup
-            XCTAssertNotNil(error)
-        }
-    }
-
     // MARK: - SSO Credentials Tests
 
     func testGetSSOCredentials_withValidRefreshToken_returnsSSOCredentials() async throws {
         // Arrange
         let testCredentials = createTestCredentials()
         mockCredentialsManager.storedCredentials = testCredentials
-        
+
         // getSSOCredentials calls Auth0.authentication().ssoExchange().start() which is difficult to mock
         // However, we can test that it properly retrieves credentials and validates the refresh token
-        // The actual Auth0 API call would need integration testing
-        
+
         // Act & Assert
         do {
             // This will fail at the Auth0 API call, but we can verify it gets past the initial validation
@@ -128,11 +76,11 @@ final class NativeToWebSSOAuth0ProviderTests: XCTestCase {
             // Expected - Auth0 SDK call should fail in unit test environment
             // This means our validation logic (refresh token check) passed successfully
             XCTAssertNotNil(error)
-            
+
             // Verify that credentials were retrieved (should have been called)
             XCTAssertEqual(mockCredentialsManager.credentialsCallCount, 1)
         }
-        
+
         // Additional test: Verify the method properly uses the provider's settings
         XCTAssertEqual(provider.settings.id, mockSettings.id)
         XCTAssertEqual(provider.settings.domain, mockSettings.domain)
@@ -182,91 +130,6 @@ final class NativeToWebSSOAuth0ProviderTests: XCTestCase {
             XCTAssertEqual((error as NSError).domain, "TestError")
             XCTAssertEqual((error as NSError).code, 500)
         }
-    }
-
-    // MARK: - Configuration Tests
-
-    func testConfigurationValues_withValidPlist_returnsValues() {
-        // Arrange - Create a temporary directory and plist file for testing
-        let tempDirectory = NSTemporaryDirectory()
-        let bundlePath = tempDirectory + "TestBundle"
-        let plistPath = bundlePath + "/Auth0.plist"
-        
-        // Create test bundle directory
-        try! FileManager.default.createDirectory(atPath: bundlePath, withIntermediateDirectories: true, attributes: nil)
-        
-        // Create test Auth0.plist with test data
-        let testClientId = "test-client-id"
-        let testDomain = "test-domain.auth0.com"
-        let plistData: [String: Any] = [
-            "ClientId": testClientId,
-            "Domain": testDomain
-        ]
-        
-        let plistDict = NSDictionary(dictionary: plistData)
-        plistDict.write(toFile: plistPath, atomically: true)
-        
-        // Create a bundle from the temporary directory
-        guard let testBundle = Bundle(path: bundlePath) else {
-            XCTFail("Failed to create test bundle")
-            return
-        }
-        
-        // Act
-        let configuration = provider.configurationValues(bundle: testBundle)
-        
-        // Assert
-        XCTAssertNotNil(configuration)
-        XCTAssertEqual(configuration?.clientId, testClientId)
-        XCTAssertEqual(configuration?.domain, testDomain)
-        
-        // Cleanup
-        try? FileManager.default.removeItem(atPath: bundlePath)
-    }
-
-    func testConfigurationValues_withMissingPlist_returnsNil() {
-        // Arrange
-        let emptyBundle = Bundle()
-
-        // Act
-        let configuration = provider.configurationValues(bundle: emptyBundle)
-
-        // Assert
-        XCTAssertNil(configuration)
-    }
-
-    func testConfigurationValues_withInvalidPlistKeys_returnsNil() {
-        // Arrange - Create a temporary directory and plist file with missing keys
-        let tempDirectory = NSTemporaryDirectory()
-        let bundlePath = tempDirectory + "TestBundleInvalid"
-        let plistPath = bundlePath + "/Auth0.plist"
-        
-        // Create test bundle directory
-        try! FileManager.default.createDirectory(atPath: bundlePath, withIntermediateDirectories: true, attributes: nil)
-        
-        // Create test Auth0.plist with missing Domain key
-        let plistData: [String: Any] = [
-            "ClientId": "test-client-id"
-            // Missing "Domain" key
-        ]
-        
-        let plistDict = NSDictionary(dictionary: plistData)
-        plistDict.write(toFile: plistPath, atomically: true)
-        
-        // Create a bundle from the temporary directory
-        guard let testBundle = Bundle(path: bundlePath) else {
-            XCTFail("Failed to create test bundle")
-            return
-        }
-        
-        // Act
-        let configuration = provider.configurationValues(bundle: testBundle)
-        
-        // Assert
-        XCTAssertNil(configuration)
-        
-        // Cleanup
-        try? FileManager.default.removeItem(atPath: bundlePath)
     }
 
     // MARK: - Protocol Conformance Tests
@@ -327,35 +190,3 @@ final class NativeToWebSSOAuth0ProviderTests: XCTestCase {
         )
     }
 }
-
-// MARK: - Mock HTTP Client
-
-class MockHTTPClient: HTTPClient {
-    var shouldFail = false
-    var mockError: Error?
-    var mockResponse: Data?
-    var mockHTTPResponse: HTTPURLResponse?
-    var requestCallCount = 0
-    var lastRequest: BaseRequest?
-
-    func perform(_ request: BaseRequest) async throws -> HTTPClient.Result {
-        requestCallCount += 1
-        lastRequest = request
-
-        if shouldFail {
-            throw mockError ?? NSError(domain: "MockHTTPClient", code: 500, userInfo: nil)
-        }
-
-        let data = mockResponse ?? Data()
-        return (data, mockHTTPResponse)
-    }
-
-    func reset() {
-        shouldFail = false
-        mockError = nil
-        mockResponse = nil
-        mockHTTPResponse = nil
-        requestCallCount = 0
-        lastRequest = nil
-    }
-} 

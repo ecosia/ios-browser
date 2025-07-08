@@ -342,7 +342,7 @@ final class AuthTests: XCTestCase {
     func testGetSessionTransferToken_withLoggedInUser_retrievesSSOCredentials() async {
         // Arrange
         await setupLoggedInStateWithSSOProvider()
-        
+
         // Note: Due to the type check in Auth.retrieveSSOCredentials(), the mock provider
         // won't be recognized as a NativeToWebSSOAuth0Provider, so getSSOCredentials won't be called
         // In a real implementation, we would need integration tests or a different mocking strategy
