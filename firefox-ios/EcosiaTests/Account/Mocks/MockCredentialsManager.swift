@@ -6,7 +6,7 @@ import Foundation
 import Auth0
 @testable import Ecosia
 
-class MockCredentialsManager: CredentialsManagerProtocol {
+final class MockCredentialsManager: CredentialsManagerProtocol {
 
     // MARK: - Test Control Properties
     var shouldFailCredentials = false

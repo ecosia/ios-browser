@@ -8,43 +8,43 @@ import Combine
 @testable import Ecosia
 /// Mock implementation of WebAuth protocol for testing protocol default implementations
 class MockWebAuth: WebAuth {
-    
+
     // MARK: - Required Properties
     var clientId: String = "test-client-id"
     var url = URL(string: "https://test.auth0.com")!
     var telemetry = Telemetry()
     var logger: Logger?
     var session = URLSession.shared
-    
+
     // MARK: - Test Control Properties
     var shouldFailStart = false
     var shouldFailClearSession = false
     var mockError: Error?
     var mockCredentials: Credentials?
-    
+
     // MARK: - Call Tracking
     var startCallCount = 0
     var clearSessionCallCount = 0
-    
+
     // MARK: - Mock Implementation
     func start() async throws -> Credentials {
         startCallCount += 1
-        
+
         if shouldFailStart {
             throw mockError ?? NSError(domain: "MockWebAuth", code: 3001, userInfo: [NSLocalizedDescriptionKey: "Mock start failure"])
         }
-        
+
         return mockCredentials ?? createMockCredentials()
     }
-    
+
     func clearSession() async throws {
         clearSessionCallCount += 1
-        
+
         if shouldFailClearSession {
             throw mockError ?? NSError(domain: "MockWebAuth", code: 3002, userInfo: [NSLocalizedDescriptionKey: "Mock clear session failure"])
         }
     }
-    
+
     // MARK: - Required Methods (unused in our tests but required by protocol)
     func connectionScope(_ connectionScope: String) -> Self { return self }
     func headers(_ headers: [String: String]) -> Self { return self }
@@ -67,17 +67,17 @@ class MockWebAuth: WebAuth {
     func organization(_ organization: String) -> Self { return self }
     func invitationURL(_ invitationURL: URL) -> Self { return self }
     func maxAge(_ maxAge: Int) -> Self { return self }
-    
+
     // MARK: - Required callback and publisher methods
     func start(_ callback: @escaping (WebAuthResult<Credentials>) -> Void) {
         // Not used in our tests, but required by protocol
     }
-    
+
     func start() -> AnyPublisher<Credentials, WebAuthError> {
         // Not used in our tests, but required by protocol
         return Empty<Credentials, WebAuthError>().eraseToAnyPublisher()
     }
-    
+
     // MARK: - Helper Methods
     private func createMockCredentials() -> Credentials {
         return Credentials(
@@ -89,7 +89,7 @@ class MockWebAuth: WebAuth {
             scope: "openid profile email"
         )
     }
-    
+
     func reset() {
         shouldFailStart = false
         shouldFailClearSession = false
