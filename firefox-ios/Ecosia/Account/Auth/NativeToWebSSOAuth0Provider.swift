@@ -9,7 +9,6 @@ public struct NativeToWebSSOAuth0Provider: Auth0ProviderProtocol {
 
     public let settings: Auth0SettingsProviderProtocol
     public let credentialsManager: CredentialsManagerProtocol
-    private var client: HTTPClient
     public typealias SessionToken = String
 
     enum NativeToWebSSOError: Error, Equatable {
@@ -18,12 +17,10 @@ public struct NativeToWebSSOAuth0Provider: Auth0ProviderProtocol {
         case missingConfiguration(String)
     }
 
-    public init(client: HTTPClient = URLSessionHTTPClient(),
-                settings: Auth0SettingsProviderProtocol = DefaultAuth0SettingsProvider(),
+    public init(settings: Auth0SettingsProviderProtocol = DefaultAuth0SettingsProvider(),
                 credentialsManager: CredentialsManagerProtocol? = nil) {
-        self.client = client
         self.settings = settings
-        self.credentialsManager = credentialsManager ?? DefaultCredentialsManager(settings: settings)
+        self.credentialsManager = credentialsManager ?? DefaultCredentialsManager(auth0SettingsProvider: settings)
     }
 
     public var webAuth: WebAuth {
