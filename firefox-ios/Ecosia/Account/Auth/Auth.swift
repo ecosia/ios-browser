@@ -101,18 +101,27 @@ public class Auth {
             }
         }
 
-        // Try to clear credentials - if this succeeds, we log out regardless of session clearing
+        // Then, try to clear stored credentials
         let credentialsCleared = auth0Provider.clearCredentials()
 
         if credentialsCleared {
-            self.idToken = nil
-            self.accessToken = nil
-            self.refreshToken = nil
-            isLoggedIn = false
-            print("\(#file).\(#function) - 👤 Auth - Session and credentials cleared.")
+            setupTokensWithCredentials(nil)
+            print("\(#file).\(#function) - 👤 Auth - Credentials cleared successfully.")
+
+            // If we had a session clearing error but credentials cleared successfully,
+            // we still consider the logout successful since the user is logged out locally
+            if let sessionError = sessionClearingError {
+                print("\(#file).\(#function) - 👤 Auth - Logout completed with web session clearing warning: \(sessionError)")
+            }
         } else {
-            // If we couldn't clear credentials, keep the user logged in
-            print("\(#file).\(#function) - 👤 Auth - Failed to clear credentials, maintaining logged in state.")
+            // If credentials clearing failed, throw appropriate error
+            if let sessionError = sessionClearingError {
+                // Both session and credentials clearing failed
+                throw AuthError.sessionClearingFailed(sessionError)
+            } else {
+                // Only credentials clearing failed
+                throw AuthError.credentialsClearingFailed
+            }
         }
     }
 
