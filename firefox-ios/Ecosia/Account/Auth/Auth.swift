@@ -14,34 +14,34 @@ import Common
  including login, logout, credential renewal, and session token management for web-to-native SSO..
  */
 public class Auth {
-    
+
     // MARK: - Public Properties
-    
+
     /// The shared singleton instance of the Auth class.
     public static let shared = Auth()
 
     /// The default credentials manager used across the application.
     /// This is a static property to ensure consistent credential storage.
     public static let defaultCredentialsManager: CredentialsManagerProtocol = DefaultCredentialsManager()
-    
+
     /// The Auth0 provider responsible for authentication operations.
     /// This can be customized to use different authentication flows (e.g., web auth, native-to-web SSO).
     public let auth0Provider: Auth0ProviderProtocol
 
     // MARK: - Private Properties
-    
+
     /// The current ID token for the authenticated user.
     /// This token contains user identity information and is used for authentication.
     private(set) var idToken: String?
-    
+
     /// The current access token for the authenticated user.
     /// This token is used to access protected resources.
     private(set) var accessToken: String?
-    
+
     /// The current refresh token for the authenticated user.
     /// This token is used to obtain new access tokens when they expire.
     private(set) var refreshToken: String?
-    
+
     /// The current SSO credentials for session transfer between web and native contexts.
     private(set) var ssoCredentials: SSOCredentials?
 
@@ -50,7 +50,7 @@ public class Auth {
     public private(set) var isLoggedIn: Bool = false
 
     // MARK: - Initialization
-    
+
     /**
      Initializes a new instance of the `Auth` class with a specified authentication provider.
      
@@ -66,23 +66,12 @@ public class Auth {
         }
     }
 
-    // MARK: - Authentication Methods
-    
-    /**
-     Logs in the user asynchronously using the configured Auth0 provider.
-     
-     This method initiates the authentication flow, presents the login interface to the user,
-     and stores the received credentials securely upon successful authentication.
-     
-     - Note: This method will update the `isLoggedIn` property and credential properties
-       (`idToken`, `accessToken`, `refreshToken`) upon successful completion.
-     
-     ## Error Handling
-     
-     If authentication fails, the method will log the error and leave the user in their current state.
-     The `isLoggedIn` property will remain `false` if the user was not previously authenticated.
-     */
+    /// Logs in the user asynchronously and stores credentials if successful.
+    /// - Throws: `LoginError.authenticationFailed` if Auth0 authentication fails,
+    ///           `LoginError.credentialStorageError` if credential storage throws an error,
+    ///           `LoginError.credentialStorageFailed` if credential storage returns false.
     public func login() async throws {
+        // First, attempt authentication
         let credentials: Credentials
         do {
             credentials = try await auth0Provider.startAuth()
@@ -108,22 +97,10 @@ public class Auth {
         }
     }
 
-    /**
-     Logs out the user with an option to skip web logout.
-     
-     This method provides flexibility for handling different logout scenarios, such as when the logout
-     is initiated from the web context and doesn't require clearing the web session.
-     
-     - Parameter triggerWebLogout: A Boolean value indicating whether to clear the Auth0 web session.
-       Set to `false` when the logout is initiated from the web to avoid redundant session clearing.
-       Defaults to `true`.
-     - Throws: `LogoutError.sessionClearingFailed` if both web session and credential clearing fail,
-                `LogoutError.credentialsClearingFailed` if only credential clearing fails.
-
-     - Note: Even if session clearing fails, the method will still attempt to clear local credentials.
-       The user will only be considered logged out if credential clearing succeeds.
-     */
-
+    /// Logs out the user with option to skip web logout (for web-initiated logout)
+    /// - Parameter triggerWebLogout: Whether to clear the web session. Defaults to true.
+    /// - Throws: `LogoutError.sessionClearingFailed` if both web session and credential clearing fail,
+    ///           `LogoutError.credentialsClearingFailed` if only credential clearing fails.
     public func logout(triggerWebLogout: Bool = true) async throws {
         var sessionClearingError: Error?
 
@@ -249,9 +226,9 @@ public class Auth {
         self.refreshToken = credentials?.refreshToken
         self.isLoggedIn = isLoggedIn
     }
-    
+
     // MARK: - SSO Methods
-    
+
     /**
      Retrieves the session transfer token for native-to-web SSO.
      
@@ -298,7 +275,6 @@ public class Auth {
             print("\(#file).\(#function) - 👤 Auth - \(isLoggedIn ? "User not logged in" : "Token missing")")
             return nil
         }
-        print("[TEST] Auth - Making cookie for \(ssoCredentials?.sessionTransferToken ?? "nil")")
         return makeSessionTokenCookieWithSSOCredentials(ssoCredentials)
     }
 }
@@ -355,7 +331,7 @@ extension Auth {
             return nil
         }
         return HTTPCookie(properties: [
-            .domain: auth0Provider.settings.domain,
+            .domain: auth0Provider.settings.cookieDomain,
             .path: "/",
             .name: "auth0_session_transfer_token",
             .value: ssoCredentials.sessionTransferToken,

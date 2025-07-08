@@ -78,7 +78,7 @@ extension Auth0ProviderProtocol {
 extension Auth0ProviderProtocol {
 
     public var settings: Auth0SettingsProviderProtocol { DefaultAuth0SettingsProvider() }
-    
+
     public var credentialsManager: CredentialsManagerProtocol { Auth.defaultCredentialsManager }
 
     public func startAuth() async throws -> Credentials {
