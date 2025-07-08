@@ -71,7 +71,11 @@ final class AuthTests: XCTestCase {
         mockProvider.mockCredentials = expectedCredentials
 
         // Act
-        await auth.login()
+        do {
+            try await auth.login()
+        } catch {
+            XCTFail("Login should succeed, but failed with: \(error)")
+        }
 
         // Assert
         XCTAssertEqual(mockProvider.startAuthCallCount, 1)
@@ -88,7 +92,12 @@ final class AuthTests: XCTestCase {
         let initialLoginState = auth.isLoggedIn
 
         // Act
-        await auth.login()
+        do {
+            try await auth.login()
+            XCTFail("Expected login to throw but it didn't")
+        } catch {
+            // Expected to fail
+        }
 
         // Assert
         XCTAssertEqual(mockProvider.startAuthCallCount, 1)
@@ -105,7 +114,12 @@ final class AuthTests: XCTestCase {
         let initialLoginState = auth.isLoggedIn
 
         // Act
-        await auth.login()
+        do {
+            try await auth.login()
+            XCTFail("Expected login to throw but it didn't")
+        } catch {
+            // Expected to fail
+        }
 
         // Assert
         XCTAssertEqual(mockProvider.startAuthCallCount, 1)
@@ -123,7 +137,11 @@ final class AuthTests: XCTestCase {
         await setupLoggedInState()
 
         // Act
-        await auth.logout()
+        do {
+            try await auth.logout()
+        } catch {
+            XCTFail("Logout should succeed, but failed with: \(error)")
+        }
 
         // Assert
         XCTAssertEqual(mockProvider.clearSessionCallCount, 1)
@@ -139,7 +157,11 @@ final class AuthTests: XCTestCase {
         await setupLoggedInState()
 
         // Act
-        await auth.logout(triggerWebLogout: false)
+        do {
+            try await auth.logout(triggerWebLogout: false)
+        } catch {
+            XCTFail("Logout should succeed, but failed with: \(error)")
+        }
 
         // Assert
         XCTAssertEqual(mockProvider.clearSessionCallCount, 0)
@@ -156,7 +178,11 @@ final class AuthTests: XCTestCase {
         mockProvider.shouldFailClearSession = true
 
         // Act
-        await auth.logout()
+        do {
+            try await auth.logout()
+        } catch {
+            XCTFail("Logout should succeed, but failed with: \(error)")
+        }
 
         // Assert
         XCTAssertEqual(mockProvider.clearSessionCallCount, 1)
@@ -173,7 +199,12 @@ final class AuthTests: XCTestCase {
         mockProvider.clearCredentialsResult = false
 
         // Act
-        await auth.logout()
+        do {
+            try await auth.logout()
+            XCTFail("Expected logout to throw but it didn't")
+        } catch {
+            // Expected to fail
+        }
 
         // Assert
         XCTAssertEqual(mockProvider.clearSessionCallCount, 1)
@@ -244,7 +275,11 @@ final class AuthTests: XCTestCase {
         mockProvider.mockCredentials = renewedCredentials
 
         // Act
-        await auth.renewCredentialsIfNeeded()
+        do {
+            try await auth.renewCredentialsIfNeeded()
+        } catch {
+            XCTFail("Renew credentials should succeed, but failed with: \(error)")
+        }
 
         // Assert
         XCTAssertEqual(mockProvider.canRenewCredentialsCallCount, 1)
@@ -262,7 +297,11 @@ final class AuthTests: XCTestCase {
         let originalIdToken = auth.idToken
 
         // Act
-        await auth.renewCredentialsIfNeeded()
+        do {
+            try await auth.renewCredentialsIfNeeded()
+        } catch {
+            XCTFail("Renew credentials should succeed, but failed with: \(error)")
+        }
 
         // Assert
         XCTAssertEqual(mockProvider.canRenewCredentialsCallCount, 1)
@@ -281,7 +320,12 @@ final class AuthTests: XCTestCase {
         let originalRefreshToken = auth.refreshToken
 
         // Act
-        await auth.renewCredentialsIfNeeded()
+        do {
+            try await auth.renewCredentialsIfNeeded()
+        } catch {
+            // This test expects renewal to fail, so we should catch the error
+            // but the test should continue to verify the state is maintained
+        }
 
         // Assert
         XCTAssertEqual(mockProvider.canRenewCredentialsCallCount, 1)
@@ -299,7 +343,11 @@ final class AuthTests: XCTestCase {
         XCTAssertFalse(auth.isLoggedIn)
 
         // Act - Login
-        await auth.login()
+        do {
+            try await auth.login()
+        } catch {
+            XCTFail("Login should succeed, but failed with: \(error)")
+        }
 
         // Assert - Logged in
         XCTAssertTrue(auth.isLoggedIn)
@@ -308,7 +356,11 @@ final class AuthTests: XCTestCase {
         XCTAssertNotNil(auth.refreshToken)
 
         // Act - Logout
-        await auth.logout()
+        do {
+            try await auth.logout()
+        } catch {
+            XCTFail("Logout should succeed, but failed with: \(error)")
+        }
 
         // Assert - Logged out
         XCTAssertFalse(auth.isLoggedIn)
@@ -322,7 +374,11 @@ final class AuthTests: XCTestCase {
         mockProvider.canRenewCredentialsResult = true
 
         // Act - Login
-        await auth.login()
+        do {
+            try await auth.login()
+        } catch {
+            XCTFail("Login should succeed, but failed with: \(error)")
+        }
         let originalIdToken = auth.idToken
 
         // Assert - Logged in
@@ -339,7 +395,11 @@ final class AuthTests: XCTestCase {
             scope: "openid profile email"
         )
         mockProvider.mockCredentials = renewedCredentials
-        await auth.renewCredentialsIfNeeded()
+        do {
+            try await auth.renewCredentialsIfNeeded()
+        } catch {
+            XCTFail("Renew credentials should succeed, but failed with: \(error)")
+        }
 
         // Assert - Credentials renewed
         XCTAssertTrue(auth.isLoggedIn)
@@ -347,7 +407,11 @@ final class AuthTests: XCTestCase {
         XCTAssertEqual(auth.idToken, renewedCredentials.idToken)
 
         // Act - Logout
-        await auth.logout()
+        do {
+            try await auth.logout()
+        } catch {
+            XCTFail("Logout should succeed, but failed with: \(error)")
+        }
 
         // Assert - Logged out
         XCTAssertFalse(auth.isLoggedIn)
@@ -369,7 +433,12 @@ final class AuthTests: XCTestCase {
         )
         mockProvider.mockCredentials = credentials
         mockProvider.hasStoredCredentials = true  // Simulate having stored credentials
-        await auth.login()
+
+        do {
+            try await auth.login()
+        } catch {
+            XCTFail("Login should not fail in test setup: \(error)")
+        }
 
         // Reset call counts after setup
         mockProvider.startAuthCallCount = 0

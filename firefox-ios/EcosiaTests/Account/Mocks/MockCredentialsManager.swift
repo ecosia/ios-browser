@@ -16,7 +16,9 @@ class MockCredentialsManager: CredentialsManagerProtocol {
 
     // MARK: - Mock Data
     var storedCredentials: Credentials?
+    var mockCredentials: Credentials?
     var mockError: Error?
+    var lastStoredCredentials: Credentials? // Track the last credentials that were stored
 
     // MARK: - Call Tracking
     var credentialsCallCount = 0
@@ -36,7 +38,7 @@ class MockCredentialsManager: CredentialsManagerProtocol {
             throw mockError ?? NSError(domain: "MockCredentialsManager", code: 2001, userInfo: [NSLocalizedDescriptionKey: "Mock credentials failure"])
         }
 
-        return storedCredentials ?? createMockCredentials()
+        return mockCredentials ?? storedCredentials ?? createMockCredentials()
     }
 
     func renew() async throws -> Credentials {
@@ -46,7 +48,7 @@ class MockCredentialsManager: CredentialsManagerProtocol {
             throw mockError ?? NSError(domain: "MockCredentialsManager", code: 2002, userInfo: [NSLocalizedDescriptionKey: "Mock renew failure"])
         }
 
-        let renewedCredentials = createMockCredentials()
+        let renewedCredentials = mockCredentials ?? createMockCredentials()
         storedCredentials = renewedCredentials
         return renewedCredentials
     }
@@ -54,6 +56,7 @@ class MockCredentialsManager: CredentialsManagerProtocol {
     func store(credentials: Credentials) -> Bool {
         storeCallCount += 1
         storedCredentials = credentials
+        lastStoredCredentials = credentials // Track the last stored credentials
         return true
     }
 
@@ -61,6 +64,7 @@ class MockCredentialsManager: CredentialsManagerProtocol {
         clearCallCount += 1
         if clearResult {
             storedCredentials = nil
+            lastStoredCredentials = nil
         }
         return clearResult
     }
@@ -89,7 +93,9 @@ class MockCredentialsManager: CredentialsManagerProtocol {
         clearResult = true
 
         storedCredentials = nil
+        mockCredentials = nil
         mockError = nil
+        lastStoredCredentials = nil
 
         credentialsCallCount = 0
         renewCallCount = 0
