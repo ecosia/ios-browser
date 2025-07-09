@@ -369,7 +369,7 @@ final class AuthNotificationSystemTests: XCTestCase {
 
 // MARK: - Helper Classes
 
-private class NotificationObserver {
+fileprivate class NotificationObserver {
     var receivedNotifications: [Notification] = []
     private var expectations: [XCTestExpectation] = []
 
@@ -396,7 +396,7 @@ private class NotificationObserver {
     }
 }
 
-private class TestNotificationObserver: NSObject {
+fileprivate class TestNotificationObserver: NSObject {
     var receivedNotifications: [Notification] = []
     var expectation: XCTestExpectation?
 
