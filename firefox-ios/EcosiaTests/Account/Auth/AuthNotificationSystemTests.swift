@@ -11,7 +11,7 @@ final class AuthNotificationSystemTests: XCTestCase {
     var authStateManager: AuthStateManager!
     var windowRegistry: EcosiaAuthWindowRegistry!
     var testWindowUUID: WindowUUID!
-    var notificationObserver: NotificationObserver!
+    fileprivate var notificationObserver: NotificationObserver!
 
     override func setUp() {
         super.setUp()
@@ -47,10 +47,8 @@ final class AuthNotificationSystemTests: XCTestCase {
         XCTAssertEqual(Notification.Name.EcosiaAuthStateChanged.rawValue, "EcosiaAuthStateChanged")
         XCTAssertEqual(Notification.Name.EcosiaAuthDidLoginWithSessionToken.rawValue, "EcosiaAuthDidLoginWithSessionToken")
         XCTAssertEqual(Notification.Name.EcosiaAuthDidLogout.rawValue, "EcosiaAuthDidLogout")
-        XCTAssertEqual(Notification.Name.EcosiaAuthDidFailToLogin.rawValue, "EcosiaAuthDidFailToLogin")
-        XCTAssertEqual(Notification.Name.EcosiaAuthDidFailToLogout.rawValue, "EcosiaAuthDidFailToLogout")
-        XCTAssertEqual(Notification.Name.EcosiaAuthDidStartLogin.rawValue, "EcosiaAuthDidStartLogin")
-        XCTAssertEqual(Notification.Name.EcosiaAuthDidStartLogout.rawValue, "EcosiaAuthDidStartLogout")
+        XCTAssertEqual(Notification.Name.EcosiaAuthStateReady.rawValue, "EcosiaAuthStateReady")
+        XCTAssertEqual(Notification.Name.EcosiaAuthShouldLogoutFromWeb.rawValue, "EcosiaAuthShouldLogoutFromWeb")
     }
 
     // MARK: - EcosiaAuthStateChanged Notification Tests
@@ -288,17 +286,13 @@ final class AuthNotificationSystemTests: XCTestCase {
         // Test that legacy notification names are accessible
         let loginNotification = Notification.Name.EcosiaAuthDidLoginWithSessionToken
         let logoutNotification = Notification.Name.EcosiaAuthDidLogout
-        let failToLoginNotification = Notification.Name.EcosiaAuthDidFailToLogin
-        let failToLogoutNotification = Notification.Name.EcosiaAuthDidFailToLogout
-        let startLoginNotification = Notification.Name.EcosiaAuthDidStartLogin
-        let startLogoutNotification = Notification.Name.EcosiaAuthDidStartLogout
+        let stateReadyNotification = Notification.Name.EcosiaAuthStateReady
+        let shouldLogoutFromWebNotification = Notification.Name.EcosiaAuthShouldLogoutFromWeb
         
         XCTAssertNotNil(loginNotification, "Login notification should be accessible")
         XCTAssertNotNil(logoutNotification, "Logout notification should be accessible")
-        XCTAssertNotNil(failToLoginNotification, "Fail to login notification should be accessible")
-        XCTAssertNotNil(failToLogoutNotification, "Fail to logout notification should be accessible")
-        XCTAssertNotNil(startLoginNotification, "Start login notification should be accessible")
-        XCTAssertNotNil(startLogoutNotification, "Start logout notification should be accessible")
+        XCTAssertNotNil(stateReadyNotification, "State ready notification should be accessible")
+        XCTAssertNotNil(shouldLogoutFromWebNotification, "Should logout from web notification should be accessible")
     }
 
     func testLegacyNotificationObservation_worksWithNewSystem() {
@@ -426,7 +420,7 @@ final class AuthNotificationSystemTests: XCTestCase {
 
 // MARK: - Helper Classes
 
-private class NotificationObserver {
+fileprivate class NotificationObserver {
     var receivedNotifications: [Notification] = []
     private var expectations: [XCTestExpectation] = []
     
@@ -453,7 +447,7 @@ private class NotificationObserver {
     }
 }
 
-private class TestNotificationObserver: NSObject {
+fileprivate class TestNotificationObserver: NSObject {
     var receivedNotifications: [Notification] = []
     
     @objc func handleAuthStateChanged(_ notification: Notification) {

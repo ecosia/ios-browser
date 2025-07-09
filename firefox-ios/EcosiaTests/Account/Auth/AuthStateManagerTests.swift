@@ -10,7 +10,6 @@ final class AuthStateManagerTests: XCTestCase {
 
     var authStateManager: AuthStateManager!
     var windowRegistry: EcosiaAuthWindowRegistry!
-    var mockNotificationCenter: MockNotificationCenter!
     var testWindowUUID1: WindowUUID!
     var testWindowUUID2: WindowUUID!
 
@@ -18,7 +17,6 @@ final class AuthStateManagerTests: XCTestCase {
         super.setUp()
         authStateManager = AuthStateManager.shared
         windowRegistry = EcosiaAuthWindowRegistry.shared
-        mockNotificationCenter = MockNotificationCenter()
         testWindowUUID1 = WindowUUID.XCTestDefaultUUID
         testWindowUUID2 = WindowUUID()
         
@@ -33,7 +31,6 @@ final class AuthStateManagerTests: XCTestCase {
         windowRegistry.clearAllWindows()
         authStateManager = nil
         windowRegistry = nil
-        mockNotificationCenter = nil
         testWindowUUID1 = nil
         testWindowUUID2 = nil
         super.tearDown()
@@ -320,7 +317,7 @@ final class AuthStateManagerTests: XCTestCase {
 
 // MARK: - Mock Classes
 
-private class MockNotificationCenter: NotificationCenter {
+fileprivate class MockNotificationCenter: NotificationCenter, @unchecked Sendable {
     var postedNotifications: [Notification] = []
     
     override func post(_ notification: Notification) {
