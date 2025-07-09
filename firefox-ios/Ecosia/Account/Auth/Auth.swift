@@ -7,21 +7,58 @@ import Auth0
 import WebKit
 import Common
 
-/// The `Auth` class manages user authentication, credential storage, and renewal using Auth0.
+/**
+ The `Auth` class manages user authentication, credential storage, and session management using Auth0.
+ 
+ This class provides a centralized interface for all authentication operations in the Ecosia app,
+ including login, logout, credential renewal, and session token management for web-to-native SSO..
+ */
 public class Auth {
 
+    // MARK: - Public Properties
+
+    /// The shared singleton instance of the Auth class.
     public static let shared = Auth()
 
+    /// The default credentials manager used across the application.
+    /// This is a static property to ensure consistent credential storage.
     public static let defaultCredentialsManager: CredentialsManagerProtocol = DefaultCredentialsManager()
+
+    /// The Auth0 provider responsible for authentication operations.
+    /// This can be customized to use different authentication flows (e.g., web auth, native-to-web SSO).
     public let auth0Provider: Auth0ProviderProtocol
+
+    // MARK: - Private Properties
+
+    /// The current ID token for the authenticated user.
+    /// This token contains user identity information and is used for authentication.
     private(set) var idToken: String?
+
+    /// The current access token for the authenticated user.
+    /// This token is used to access protected resources.
     private(set) var accessToken: String?
+
+    /// The current refresh token for the authenticated user.
+    /// This token is used to obtain new access tokens when they expire.
     private(set) var refreshToken: String?
+
+    /// The current SSO credentials for session transfer between web and native contexts.
+    private(set) var ssoCredentials: SSOCredentials?
+
+    /// Indicates whether the user is currently logged in.
+    /// This property is automatically updated when login/logout operations complete successfully.
     public private(set) var isLoggedIn: Bool = false
 
-    /// Initializes a new instance of the `Auth` class with a specified authentication provider.
-    ///
-    /// - Parameter auth0Provider: An object conforming to `Auth0ProviderProtocol`.
+    // MARK: - Initialization
+
+    /**
+     Initializes a new instance of the `Auth` class with a specified authentication provider.
+     
+     - Parameter auth0Provider: An object conforming to `Auth0ProviderProtocol` that handles
+       the actual authentication operations. Defaults to `WebAuth0Provider()` for standard web authentication.
+     
+     - Note: The initializer automatically attempts to retrieve any stored credentials from the previous session.
+     */
     public init(auth0Provider: Auth0ProviderProtocol = WebAuth0Provider()) {
         self.auth0Provider = auth0Provider
         Task {
@@ -102,7 +139,20 @@ public class Auth {
         }
     }
 
-    /// Retrieves stored credentials asynchronously, if available.
+    /**
+     Retrieves stored credentials asynchronously from secure storage.
+     
+     This method attempts to retrieve previously stored credentials from the device's secure storage.
+     If successful, it updates the authentication state and credential properties.
+     
+     - Note: This method is automatically called during initialization to restore the user's
+       authentication state from a previous session.
+     
+     ## Error Handling
+     
+     If credential retrieval fails (e.g., no stored credentials, corrupted data, or keychain access issues),
+     the method will log the error and leave the user in an unauthenticated state.
+     */
     public func retrieveStoredCredentials() async {
         do {
             let credentials = try await auth0Provider.retrieveCredentials()
@@ -113,7 +163,22 @@ public class Auth {
         }
     }
 
-    /// Renews credentials if they are renewable.
+    /**
+     Renews credentials if they are renewable and close to expiration.
+     
+     This method checks if the current credentials can be renewed (i.e., a valid refresh token exists)
+     and attempts to obtain new credentials using the refresh token. This is useful for maintaining
+     long-lived sessions without requiring user re-authentication.
+     
+     - Note: This method will update the credential properties with the new tokens upon successful renewal.
+     
+     ## When to Use
+     
+     Call this method when:
+     - You detect that access tokens are expired or about to expire
+     - You want to proactively refresh tokens to maintain session continuity
+     - You encounter authentication errors that might be resolved by token renewal
+     */
     public func renewCredentialsIfNeeded() async throws {
         guard auth0Provider.canRenewCredentials() else {
             print("\(#file).\(#function) - 👤 Auth - No renewable credentials available.")
@@ -137,5 +202,153 @@ public class Auth {
         self.accessToken = credentials?.accessToken
         self.refreshToken = credentials?.refreshToken
         self.isLoggedIn = isLoggedIn
+    }
+
+    // MARK: - SSO Methods
+
+    /**
+     Retrieves the session transfer token for native-to-web SSO.
+     
+     This method obtains a session transfer token that can be used to authenticate the user
+     in web contexts without requiring them to log in again. This enables seamless transitions
+     between native and web experiences.
+     
+     - Note: This method requires the user to be logged in and only works with providers that
+       support SSO credentials (e.g., `NativeToWebSSOAuth0Provider`).
+     
+     ## Prerequisites
+     
+     - User must be logged in (`isLoggedIn` must be `true`)
+     - The auth provider must support SSO credential retrieval
+     */
+    public func getSessionTransferToken() async {
+        guard isLoggedIn else {
+            print("\(#file).\(#function) - 👤 Auth - User not logged in")
+            return
+        }
+        ssoCredentials = await retrieveSSOCredentials()
+        print("\(#file).\(#function) - 👤 Auth - Retrieved sessionToken \(ssoCredentials?.sessionTransferToken ?? "nil")")
+    }
+
+    /**
+     Returns a session token cookie for web authentication.
+     
+     This method creates an HTTP cookie containing the session transfer token that can be used
+     to authenticate the user in web views or web contexts.
+     
+     - Returns: An `HTTPCookie` object containing the session transfer token, or `nil` if the user
+       is not logged in or no session token is available.
+     
+     ## Usage
+     
+     ```swift
+     if let cookie = auth.getSessionTokenCookie() {
+         webView.configuration.websiteDataStore.httpCookieStore.setCookie(cookie)
+     }
+     ```
+     */
+    public func getSessionTokenCookie() -> HTTPCookie? {
+        guard isLoggedIn else {
+            print("\(#file).\(#function) - 👤 Auth - \(isLoggedIn ? "User not logged in" : "Token missing")")
+            return nil
+        }
+        return makeSessionTokenCookieWithSSOCredentials(ssoCredentials)
+    }
+}
+
+// MARK: - Private Extension
+
+extension Auth {
+
+    /**
+     Retrieves SSO credentials from the authentication provider if supported.
+     
+     This method checks if the current authentication provider supports SSO credential retrieval
+     (specifically `NativeToWebSSOAuth0Provider`) and requests the session transfer token.
+     
+     - Returns: `SSOCredentials` containing the session transfer token and expiration information,
+       or `nil` if the provider doesn't support SSO or if the request fails.
+     
+     - Note: This method performs a type check to ensure the provider supports SSO operations
+       before attempting to retrieve credentials.
+     */
+    private func retrieveSSOCredentials() async -> SSOCredentials? {
+        if let authProvider = auth0Provider as? NativeToWebSSOAuth0Provider {
+            do {
+                return try await authProvider.getSSOCredentials()
+            } catch {
+                print("\(#file).\(#function) - 👤 Auth - Failed to retrieve SSO Credentials: \(error)")
+            }
+        }
+        return nil
+    }
+
+    /**
+     Creates an HTTP cookie containing the session transfer token.
+     
+     This method constructs a properly formatted HTTP cookie that can be used to authenticate
+     the user in web contexts. The cookie includes security attributes and expiration information.
+     
+     - Parameter ssoCredentials: The SSO credentials containing the session transfer token.
+     - Returns: An `HTTPCookie` object configured for the Auth0 domain, or `nil` if credentials are unavailable.
+     
+     ## Cookie Properties
+     
+     The created cookie includes:
+     - Domain: Set to the Auth0 domain from the provider settings
+     - Path: Set to "/" for site-wide access
+     - Name: "auth0_session_transfer_token"
+     - Value: The session transfer token
+     - Expires: Set to the token's expiration time
+     - Secure: Set to `true` for HTTPS-only transmission
+     */
+    private func makeSessionTokenCookieWithSSOCredentials(_ ssoCredentials: SSOCredentials?) -> HTTPCookie? {
+        guard let ssoCredentials else {
+            print("\(#file).\(#function) - 👤 Auth - No SSO credentials available to create cookie")
+            return nil
+        }
+        return HTTPCookie(properties: [
+            .domain: auth0Provider.settings.cookieDomain,
+            .path: "/",
+            .name: "auth0_session_transfer_token",
+            .value: ssoCredentials.sessionTransferToken,
+            .expires: ssoCredentials.expiresIn,
+            .secure: true
+        ])
+    }
+
+    /**
+     Sets the session token cookie for a specific URL in the provided web view.
+     
+     This method configures the web view's cookie store with the session transfer token,
+     enabling automatic authentication for web requests to the specified URL.
+     
+     - Parameters:
+     -   url: The URL for which to set the session token cookie
+     -   webView: The `WKWebView` instance that will receive the cookie
+     
+     - Note: This method only sets the cookie if the user is logged in and a valid session token is available.
+     
+     ## Usage
+     
+     Call this method before loading a URL that requires authentication:
+     
+     ```swift
+     auth.setSessionTokenCookieForURL(url, webView: webView)
+     webView.load(URLRequest(url: url))
+     ```
+     */
+    public func setSessionTokenCookieForURL(_ url: URL, webView: WKWebView) {
+        guard Auth.shared.isLoggedIn,
+              let sessionTokenCookie = getSessionTokenCookie() else {
+            print("No session token available or user not logged in")
+            return
+        }
+
+        print("Setting session token cookie for URL: \(url.absoluteString)")
+
+        // Set the session token cookie
+        webView.configuration.websiteDataStore.httpCookieStore.setCookie(sessionTokenCookie)
+        print("Session token cookie set successfully")
     }
 }
