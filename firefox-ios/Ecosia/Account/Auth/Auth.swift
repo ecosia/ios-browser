@@ -177,8 +177,14 @@ public class Auth {
         do {
             let credentials = try await auth0Provider.retrieveCredentials()
             setupTokensWithCredentials(credentials, settingLoggedInStateTo: true)
+            print("\(#file).\(#function) - 👤 Auth - Retrieved credentials: \(credentials)")
+            
+            // Dispatch state loaded with current authentication status
+            await dispatchAuthStateChange(isLoggedIn: self.isLoggedIn, fromCredentialRetrieval: true)
         } catch {
             print("\(#file).\(#function) - 👤 Auth - Failed to retrieve credentials: \(error)")
+            // Even if retrieval fails, dispatch state loaded as false
+            await dispatchAuthStateChange(isLoggedIn: false, fromCredentialRetrieval: true)
         }
     }
 
@@ -221,6 +227,11 @@ public class Auth {
         self.accessToken = credentials?.accessToken
         self.refreshToken = credentials?.refreshToken
         self.isLoggedIn = isLoggedIn
+        
+        // Dispatch state change to the new state management system
+        Task {
+            await dispatchAuthStateChange(isLoggedIn: isLoggedIn, fromCredentialRetrieval: false)
+        }
     }
 
     // MARK: - SSO Methods
