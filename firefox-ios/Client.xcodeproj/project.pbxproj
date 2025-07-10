@@ -11645,6 +11645,33 @@
 			path = Home;
 			sourceTree = "<group>";
 		};
+		2C3982862E200C1100AB8035 /* API */ = {
+			isa = PBXGroup;
+			children = (
+				2C39828D2E201ECA00AB8035 /* InvisibleTabAPI.swift */,
+			);
+			path = API;
+			sourceTree = "<group>";
+		};
+		2C3982872E200C1100AB8035 /* Integration */ = {
+			isa = PBXGroup;
+			children = (
+				2C39828F2E201ED300AB8035 /* BrowserViewController+InvisibleTab.swift */,
+			);
+			path = Integration;
+			sourceTree = "<group>";
+		};
+		2C3982882E200C1100AB8035 /* TabManagement */ = {
+			isa = PBXGroup;
+			children = (
+				2C3982912E201EDC00AB8035 /* InvisibleTabManager.swift */,
+				2C3982922E201EDC00AB8035 /* InvisibleTabManaging.swift */,
+				2C3982932E201EDC00AB8035 /* TabAutoCloseManager.swift */,
+				2C3982942E201EDC00AB8035 /* VisibleTabProvider.swift */,
+			);
+			path = TabManagement;
+			sourceTree = "<group>";
+		};
 		2C7DC2332B15F6BB00C049C8 /* Cell */ = {
 			isa = PBXGroup;
 			children = (
@@ -18711,6 +18738,7 @@
 				215B457F27D7FD4B00E5E800 /* LegacyTabGroupData.swift in Sources */,
 				E12BD0B028AC3A7E0029AAF0 /* UIEdgeInsets+Extension.swift in Sources */,
 				C2D80BE72AADE38100CDF7A9 /* CredentialAutofillCoordinator.swift in Sources */,
+				2C3982902E201ED300AB8035 /* BrowserViewController+InvisibleTab.swift in Sources */,
 				C8BE692729BA2FBB0015C4A2 /* SurveySurfaceInfoModel.swift in Sources */,
 				D0152245229855A8009DE753 /* OneLineTableViewCell.swift in Sources */,
 				8AAAB0592C1B7240008830B3 /* MockRustFirefoxSuggest.swift in Sources */,
@@ -19258,6 +19286,7 @@
 				A5519CF52B5D57560062BECB /* SearchSettingsState.swift in Sources */,
 				AB936A692C05F2B100600F82 /* TrackingProtectionButton.swift in Sources */,
 				74F80D342A0A52D700013C3D /* PrivacyPolicyViewController.swift in Sources */,
+				2C39828E2E201ECA00AB8035 /* InvisibleTabAPI.swift in Sources */,
 				274A36CE239EB9EC00A21587 /* LibraryViewController+LibraryPanelDelegate.swift in Sources */,
 				C869912D28917688007ACC5C /* WallpaperImageLoader.swift in Sources */,
 				96A5F73829928B3700234E5F /* GeneralizedImageFetcher.swift in Sources */,
