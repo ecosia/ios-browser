@@ -7,7 +7,7 @@ import Foundation
 /// Extension to add invisible tab capability to existing Tab class
 /// Provides a convenient interface without modifying the core Tab implementation
 extension Tab {
-    
+
     /// Indicates whether this tab is invisible (hidden from user interface)
     /// 
     /// When set to true, the tab will be excluded from:
@@ -30,22 +30,22 @@ extension Tab {
             }
         }
     }
-    
+
     /// Convenience method to mark this tab as invisible
     /// Equivalent to setting `isInvisible = true`
     func markAsInvisible() {
         isInvisible = true
     }
-    
+
     /// Convenience method to mark this tab as visible
     /// Equivalent to setting `isInvisible = false`
     func markAsVisible() {
         isInvisible = false
     }
-    
+
     /// Convenience method to toggle the visibility state
     /// If currently invisible, makes it visible and vice versa
     func toggleVisibility() {
         isInvisible = !isInvisible
     }
-} 
+}
